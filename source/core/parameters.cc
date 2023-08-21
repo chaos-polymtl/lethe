@@ -418,15 +418,21 @@ namespace Parameters
   {
     prm.declare_entry(
       "surface tension coefficient",
-      "0",
+      "0.0",
       Patterns::Double(),
       "Surface tension coefficient for the corresponding pair of fluids or fluid-solid pair");
+    prm.declare_entry(
+      "surface tension gradient",
+      "0.0",
+      Patterns::Double(),
+      "Surface tension gradient with respect to the temperature for the corresponding pair of fluids or fluid-solid pair");
   }
 
   void
   SurfaceTensionParameters::parse_parameters(ParameterHandler &prm)
   {
     surface_tension_coefficient = prm.get_double("surface tension coefficient");
+    surface_tension_gradient    = prm.get_double("surface tension gradient");
   }
 
   void
@@ -951,7 +957,7 @@ namespace Parameters
         "type",
         "fluid-fluid",
         Patterns::Selection("fluid-fluid|fluid-solid"),
-        "Type of materials interacting. Choices are <fluid-fluid|fluid-solid>");
+        "Type of materials interacting. The choices are <fluid-fluid|fluid-solid>");
 
       // Fluid-fluid interactions
       prm.enter_subsection("fluid-fluid interaction");
@@ -971,9 +977,9 @@ namespace Parameters
         prm.declare_entry(
           "surface tension model",
           "constant",
-          Patterns::Selection("constant"),
-          "Model used for the calculation of the surface tension coefficient"
-          "At the moment, the only choice is <constant>");
+          Patterns::Selection("constant|linear"),
+          "Model used for the calculation of the surface tension coefficient\n"
+          "The choices are <constant|linear>.");
         surface_tension_parameters.declare_parameters(prm);
 
         // Cahn-Hilliard mobility
@@ -981,8 +987,8 @@ namespace Parameters
           "cahn hilliard mobility model",
           "constant",
           Patterns::Selection("constant|quartic"),
-          "Model used for the calculation of the mobility in the Cahn-Hilliard equations"
-          "Choices are <constant|quartic>");
+          "Model used for the calculation of the mobility in the Cahn-Hilliard equations\n"
+          "The choices are <constant|quartic>.");
         mobility_cahn_hilliard_parameters.declare_parameters(prm);
       }
       prm.leave_subsection();
@@ -1003,9 +1009,9 @@ namespace Parameters
         prm.declare_entry(
           "surface tension model",
           "constant",
-          Patterns::Selection("constant"),
-          "Model used for the calculation of the surface tension coefficient"
-          "At the moment, the only choice is <constant>");
+          Patterns::Selection("constant|linear"),
+          "Model used for the calculation of the surface tension coefficient\n"
+          "The choices are <constant|linear>.");
         surface_tension_parameters.declare_parameters(prm);
       }
       prm.leave_subsection();
@@ -1027,7 +1033,7 @@ namespace Parameters
         material_interaction_type = MaterialInteractionsType::fluid_solid;
       else
         throw(std::runtime_error(
-          "Invalid material interaction type. Choices are <fluid-fluid|fluid-solid>"));
+          "Invalid material interaction type. The choices are <fluid-fluid|fluid-solid>."));
 
       if (material_interaction_type == MaterialInteractionsType::fluid_fluid)
         {
@@ -1050,9 +1056,14 @@ namespace Parameters
               surface_tension_model = SurfaceTensionModel::constant;
               surface_tension_parameters.parse_parameters(prm);
             }
+          else if (op == "linear")
+            {
+              surface_tension_model = SurfaceTensionModel::linear;
+              surface_tension_parameters.parse_parameters(prm);
+            }
           else
             throw(std::runtime_error(
-              "Invalid surface tension model. At the moment, the only choice is <constant>"));
+              "Invalid surface tension model. The choices are <constant|linear>."));
 
           // Cahn-Hilliard mobility
           op = prm.get("cahn hilliard mobility model");
@@ -1069,7 +1080,7 @@ namespace Parameters
             }
           else
             throw(std::runtime_error(
-              "Invalid mobility model. The choices are <constant|quartic>"));
+              "Invalid mobility model. The choices are <constant|quartic>."));
 
           prm.leave_subsection();
         }
@@ -1090,9 +1101,14 @@ namespace Parameters
               surface_tension_model = SurfaceTensionModel::constant;
               surface_tension_parameters.parse_parameters(prm);
             }
+          else if (op == "linear")
+            {
+              surface_tension_model = SurfaceTensionModel::linear;
+              surface_tension_parameters.parse_parameters(prm);
+            }
           else
             throw(std::runtime_error(
-              "Invalid surface tension model. At the moment, the only choice is <constant>"));
+              "Invalid surface tension model. The choices are <constant|linear>."));
           std::pair<std::pair<unsigned int, unsigned int>, SurfaceTensionModel>
             fluid_solid_surface_tension_interaction(fluid_solid_interaction,
                                                     surface_tension_model);

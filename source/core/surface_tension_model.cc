@@ -18,8 +18,14 @@
 
 std::shared_ptr<SurfaceTensionModel>
 SurfaceTensionModel::model_cast(
-  const Parameters::SurfaceTensionParameters &surface_tension_parameters)
+  const Parameters::MaterialInteractions &material_interaction_parameter)
 {
-  return std::make_shared<SurfaceTensionConstant>(
-    surface_tension_parameters.surface_tension_coefficient);
+  if (material_interaction_parameter.surface_tension_model ==
+      Parameters::MaterialInteractions::SurfaceTensionModel::linear)
+    return std::make_shared<SurfaceTensionLinear>(
+      material_interaction_parameter.surface_tension_parameters);
+  else
+    return std::make_shared<SurfaceTensionConstant>(
+      material_interaction_parameter.surface_tension_parameters
+        .surface_tension_coefficient);
 }

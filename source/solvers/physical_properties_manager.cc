@@ -145,8 +145,7 @@ PhysicalPropertiesManager::initialize(
   for (unsigned int i = 0; i < number_of_material_interactions; ++i)
     {
       surface_tension.push_back(SurfaceTensionModel::model_cast(
-        physical_properties.material_interactions[i]
-          .surface_tension_parameters));
+        physical_properties.material_interactions[i]));
       establish_fields_required_by_model(*surface_tension[i]);
       mobility_ch.push_back(MobilityCahnHilliardModel::model_cast(
         physical_properties.material_interactions[i]));
