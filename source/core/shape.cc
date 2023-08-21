@@ -1509,28 +1509,38 @@ RBFShape<dim>::remove_superfluous_data()
   std::vector<double>           temp_support_radii;
   std::vector<RBFBasisFunction> temp_basis_functions;
 
+  // Here we treat all vectors separately to keep the maximum memory low
+  // Weights treatment
   temp_weights.resize(current_number_of_kept_rbf_nodes);
-  temp_rotated_nodes_positions.resize(current_number_of_kept_rbf_nodes);
-  temp_support_radii.resize(current_number_of_kept_rbf_nodes);
-  temp_basis_functions.resize(current_number_of_kept_rbf_nodes);
-
   for (auto it = useful_rbf_node_map.cbegin(); it != useful_rbf_node_map.cend();
        it++)
-    {
-      temp_weights[it->second] = weights[it->first];
-      temp_rotated_nodes_positions[it->second] =
-        rotated_nodes_positions[it->first];
-      temp_support_radii[it->second]   = support_radii[it->first];
-      temp_basis_functions[it->second] = basis_functions[it->first];
-    }
+    temp_weights[it->second] = weights[it->first];
   weights.swap(temp_weights);
-  rotated_nodes_positions.swap(temp_rotated_nodes_positions);
-  support_radii.swap(temp_support_radii);
-  basis_functions.swap(temp_basis_functions);
-
   temp_weights.clear();
+
+  // Nodes positions treatment
+  temp_rotated_nodes_positions.resize(current_number_of_kept_rbf_nodes);
+  for (auto it = useful_rbf_node_map.cbegin(); it != useful_rbf_node_map.cend();
+       it++)
+    temp_rotated_nodes_positions[it->second] =
+      rotated_nodes_positions[it->first];
+  rotated_nodes_positions.swap(temp_rotated_nodes_positions);
   temp_rotated_nodes_positions.clear();
+
+  // Support radii treatment
+  temp_support_radii.resize(current_number_of_kept_rbf_nodes);
+  for (auto it = useful_rbf_node_map.cbegin(); it != useful_rbf_node_map.cend();
+       it++)
+    temp_support_radii[it->second] = support_radii[it->first];
+  support_radii.swap(temp_support_radii);
   temp_support_radii.clear();
+
+  // Basis functions treatment
+  temp_basis_functions.resize(current_number_of_kept_rbf_nodes);
+  for (auto it = useful_rbf_node_map.cbegin(); it != useful_rbf_node_map.cend();
+       it++)
+    temp_basis_functions[it->second] = basis_functions[it->first];
+  basis_functions.swap(temp_basis_functions);
   temp_basis_functions.clear();
 }
 
