@@ -16,9 +16,9 @@ Features
 ---------------------------
 Files Used in This Example
 ---------------------------
-``/examples/unresolved-cfd-dem/boycott-effect/boycott-effect.prm``
-``/examples/unresolved-cfd-dem/boycott-effect/particle_generator.prm``
 
+- Parameter file for particle generation and packing: ``/examples/unresolved-cfd-dem/boycott-effect/particle_generator.prm``
+- Parameter file for CFD-DEM simulation of the Boycot effect: ``/examples/unresolved-cfd-dem/boycott-effect/boycott-effect.prm``
 
 -----------------------
 Description of the Case
@@ -89,9 +89,11 @@ The section on model parameters is explained in the DEM examples. We show the ch
 .. code-block:: text
 
     subsection model parameters
-      set contact detection method               = dynamic
-      set contact detection frequency            = 10
-      set neighborhood threshold                 = 1.3
+      subsection contact detection
+        set contact detection method = dynamic
+        set neighborhood threshold   = 1.3
+        set frequency                = 1
+      end
       set rolling resistance torque method       = constant_resistance
       set particle particle contact force method = hertz_mindlin_limit_force
       set particle wall contact force method     = nonlinear
@@ -302,7 +304,6 @@ We also enable grad-div stabilization in order to improve local mass conservatio
       set shear force                   = true
       set pressure force                = true
       set drag model                    = difelice
-      set post processing               = true
       set coupling frequency            = 250
       set grad-div length scale         = 0.005
       set vans model                    = modelA
@@ -344,7 +345,7 @@ Linear Solver
       set max krylov vectors                    = 200
     end
 
-For more information about the non-linear solver, please refer to the `Linear Solver Section <../../../parameters/cfd/linear_solver_control.html>`_
+For more information about the linear solver, please refer to the `Linear Solver Section <../../../parameters/cfd/linear_solver_control.html>`_
 
 
 ------------------------------
