@@ -163,13 +163,15 @@ For 2D problems, the AMG preconditioner is an adequate preconditioner. It is esp
 .. code-block:: text
 
   subsection linear solver
-    set verbosity                                 = verbose
-    set method                                    = amg
-    set relative residual                         = 1e-4
-    set minimum residual                          = 1e-8
-    set amg preconditioner ilu fill               = 0
-    set amg preconditioner ilu absolute tolerance = 1e-12
-    set amg preconditioner ilu relative tolerance = 1.00
+    subsection fluid dynamics
+      set verbosity                                 = verbose
+      set method                                    = amg
+      set relative residual                         = 1e-4
+      set minimum residual                          = 1e-8
+      set amg preconditioner ilu fill               = 0
+      set amg preconditioner ilu absolute tolerance = 1e-12
+      set amg preconditioner ilu relative tolerance = 1.00
+    end
   end
 
 
