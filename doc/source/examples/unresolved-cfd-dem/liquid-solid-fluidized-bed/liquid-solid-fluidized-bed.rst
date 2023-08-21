@@ -341,7 +341,6 @@ We choose the `particle centroid method (PCM) <../../../parameters/unresolved-cf
       set read dem            = true
       set dem file name       = dem
       set l2 smoothing factor = 2.8387584e-5
-      set bound void fraction = false
     end
 
 .. note::
@@ -414,6 +413,11 @@ The simulation is run (on :math:`8 \: \text{cores}`) using the ``cfd_dem_couplin
     mpirun -np 8 cfd_dem_coupling liquid-solid-fluidized-bed.prm
 
 
+The :math:`20`-second simulations with alumina took approximately :math:`24 \: \text{hours}` and :math:`30 \: \text{minutes}` on :math:`16 \: \text{cores}` and :math:`8 \: \text{hours}` and :math:`44 \: \text{minutes}` on :math:`32 \: \text{cores}`.
+
+The :math:`35`-second simulations with alginate particles took about :math:`28 \: \text{hours}` on :math:`16 \: \text{cores}`.
+
+
 --------
 Results
 --------
@@ -481,12 +485,6 @@ The following animation is in real time. It is possible to notice that, for a si
 
     <p align="center"><iframe width="560" height="315" src="https://www.youtube.com/embed/kMp86PdZ6tU" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
 
-Notes on Performance
-~~~~~~~~~~~~~~~~~~~~~~
-    
-The :math:`20`-second simulations with alumina took approximately :math:`24 \: \text{hours}` and :math:`30 \: \text{minutes}` on :math:`16 \: \text{cores}` and :math:`8 \: \text{hours}` and :math:`44 \: \text{minutes}` on :math:`32 \: \text{cores}`.
-
-The :math:`35`-second simulations with alginate particles took about :math:`28 \: \text{hours}` on :math:`16 \: \text{cores}`.
 
 
 -----------

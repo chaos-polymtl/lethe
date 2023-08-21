@@ -92,7 +92,7 @@ The section on model parameters is explained in the DEM examples. We show the ch
       subsection contact detection
         set contact detection method = dynamic
         set neighborhood threshold   = 1.3
-        set frequency                = 10
+        set frequency                = 1
       end
       set rolling resistance torque method       = constant_resistance
       set particle particle contact force method = hertz_mindlin_limit_force
@@ -304,7 +304,6 @@ We also enable grad-div stabilization in order to improve local mass conservatio
       set shear force                   = true
       set pressure force                = true
       set drag model                    = difelice
-      set post processing               = true
       set coupling frequency            = 250
       set grad-div length scale         = 0.005
       set vans model                    = modelA
