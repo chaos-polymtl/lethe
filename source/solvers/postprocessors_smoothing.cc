@@ -112,7 +112,8 @@ PostProcessorSmoothing<dim, VectorType>::solve_L2_projection()
                                   this->mpi_communicator);
 
   SolverControl solver_control(this->simulation_parameters.linear_solver
-                                 .max_iterations[PhysicsID::fluid_dynamics],
+                                 .at(PhysicsID::fluid_dynamics)
+                                 .max_iterations,
                                linear_solver_tolerance,
                                true,
                                true);

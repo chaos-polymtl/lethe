@@ -21,8 +21,6 @@
 #define lethe_gd_navier_stokes_h
 
 #include <core/exceptions.h>
-#include <core/multiphysics.h>
-#include <core/parameters.h>
 
 #include <solvers/navier_stokes_base.h>
 
@@ -58,7 +56,7 @@ public:
 private:
   const double                               gamma;
   const double                               viscosity;
-  const Parameters::LinearSolver             &linear_solver_parameters;
+  const Parameters::LinearSolver             linear_solver_parameters;
   const TrilinosWrappers::BlockSparseMatrix &stokes_matrix;
   const TrilinosWrappers::SparseMatrix &     pressure_mass_matrix;
   const BSPreconditioner *                   amat_preconditioner;
@@ -305,12 +303,11 @@ BlockSchurPreconditioner<BSPreconditioner>::vmult(
   {
     //        computing_timer.enter_section("Pressure");
     SolverControl solver_control(
-      linear_solver_parameters.max_iterations.at(PhysicsID::fluid_dynamics),
+      linear_solver_parameters.max_iterations,
       std::max(
         1e-3 * src.block(1).l2_norm(),
         // linear_solver_parameters.relative_residual*src.block(0).l2_norm(),
-        linear_solver_parameters.minimum_residual.at(
-          PhysicsID::fluid_dynamics)));
+        linear_solver_parameters.minimum_residual));
     TrilinosWrappers::SolverCG cg(solver_control);
 
     dst.block(1) = 0.0;
@@ -332,10 +329,9 @@ BlockSchurPreconditioner<BSPreconditioner>::vmult(
   {
     //        computing_timer.enter_section("A Matrix");
     SolverControl solver_control(
-      linear_solver_parameters.max_iterations.at(PhysicsID::fluid_dynamics),
+      linear_solver_parameters.max_iterations,
       std::max(1e-1 * src.block(0).l2_norm(),
-               linear_solver_parameters.minimum_residual.at(
-                 PhysicsID::fluid_dynamics)));
+               linear_solver_parameters.minimum_residual));
 
 
 

@@ -1285,7 +1285,8 @@ GLSVANSSolver<dim>::solve_L2_system_void_fraction()
   const double linear_solver_tolerance = 1e-15;
 
   if (this->cfd_dem_simulation_parameters.cfd_parameters.linear_solver
-        .verbosity[PhysicsID::fluid_dynamics] != Parameters::Verbosity::quiet)
+        .at(PhysicsID::fluid_dynamics)
+        .verbosity != Parameters::Verbosity::quiet)
     {
       this->pcout << "  -Tolerance of iterative solver is : "
                   << linear_solver_tolerance << std::endl;
@@ -1299,7 +1300,8 @@ GLSVANSSolver<dim>::solve_L2_system_void_fraction()
 
   SolverControl solver_control(
     this->cfd_dem_simulation_parameters.cfd_parameters.linear_solver
-      .max_iterations[PhysicsID::fluid_dynamics],
+      .at(PhysicsID::fluid_dynamics)
+      .max_iterations,
     linear_solver_tolerance,
     true,
     true);
@@ -1311,13 +1313,16 @@ GLSVANSSolver<dim>::solve_L2_system_void_fraction()
   //*********************************************
   const double ilu_fill =
     this->cfd_dem_simulation_parameters.cfd_parameters.linear_solver
-      .ilu_precond_fill[PhysicsID::fluid_dynamics];
+      .at(PhysicsID::fluid_dynamics)
+      .ilu_precond_fill;
   const double ilu_atol =
     this->cfd_dem_simulation_parameters.cfd_parameters.linear_solver
-      .ilu_precond_atol[PhysicsID::fluid_dynamics];
+      .at(PhysicsID::fluid_dynamics)
+      .ilu_precond_atol;
   const double ilu_rtol =
     this->cfd_dem_simulation_parameters.cfd_parameters.linear_solver
-      .ilu_precond_rtol[PhysicsID::fluid_dynamics];
+      .at(PhysicsID::fluid_dynamics)
+      .ilu_precond_rtol;
 
   TrilinosWrappers::PreconditionILU::AdditionalData preconditionerOptions(
     ilu_fill, ilu_atol, ilu_rtol, 0);
@@ -1333,7 +1338,8 @@ GLSVANSSolver<dim>::solve_L2_system_void_fraction()
                *ilu_preconditioner);
 
   if (this->cfd_dem_simulation_parameters.cfd_parameters.linear_solver
-        .verbosity[PhysicsID::fluid_dynamics] != Parameters::Verbosity::quiet)
+        .at(PhysicsID::fluid_dynamics)
+        .verbosity != Parameters::Verbosity::quiet)
     {
       this->pcout << "  -Iterative solver took : " << solver_control.last_step()
                   << " steps " << std::endl;

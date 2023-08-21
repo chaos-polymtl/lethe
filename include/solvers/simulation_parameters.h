@@ -37,7 +37,7 @@ class SimulationParameters
 {
 public:
   Parameters::Testing                               test;
-  Parameters::LinearSolver                          linear_solver;
+  std::map<PhysicsID, Parameters::LinearSolver>     linear_solver;
   Parameters::NonLinearSolver                       non_linear_solver;
   Parameters::MeshAdaptation                        mesh_adaptation;
   Parameters::Mesh                                  mesh;
@@ -101,9 +101,13 @@ public:
     Parameters::MeshAdaptation::declare_parameters(prm);
     mesh_box_refinement = std::make_shared<Parameters::MeshBoxRefinement>();
     mesh_box_refinement->declare_parameters(prm);
-
     Parameters::NonLinearSolver::declare_parameters(prm);
-    Parameters::LinearSolver::declare_parameters(prm);
+
+    std::vector<std::string> physics_names = {
+      "fluid dynamics", "heat transfer", "tracer", "VOF", "cahn hilliard"};
+    for (auto physics_name : physics_names)
+      Parameters::LinearSolver::declare_parameters(prm, physics_name);
+
     Parameters::PostProcessing::declare_parameters(prm);
     Parameters::DynamicFlowControl ::declare_parameters(prm);
     particlesParameters = std::make_shared<Parameters::IBParticles<dim>>();
@@ -128,7 +132,25 @@ public:
   {
     dimensionality.parse_parameters(prm);
     test.parse_parameters(prm);
-    linear_solver.parse_parameters(prm);
+
+    std::vector<std::string> physics_names = {
+      "fluid dynamics", "heat transfer", "tracer", "VOF", "cahn hilliard"};
+    for (auto physics_name : physics_names)
+      {
+        PhysicsID physics_id;
+        if (physics_name == "fluid dynamics")
+          physics_id = PhysicsID::fluid_dynamics;
+        else if (physics_name == "heat transfer")
+          physics_id = PhysicsID::heat_transfer;
+        else if (physics_name == "tracer")
+          physics_id = PhysicsID::tracer;
+        else if (physics_name == "VOF")
+          physics_id = PhysicsID::VOF;
+        else if (physics_name == "cahn hilliard")
+          physics_id = PhysicsID::cahn_hilliard;
+        linear_solver[physics_id].parse_parameters(prm, physics_name);
+      }
+
     non_linear_solver.parse_parameters(prm);
     mesh_adaptation.parse_parameters(prm);
     mesh.parse_parameters(prm);

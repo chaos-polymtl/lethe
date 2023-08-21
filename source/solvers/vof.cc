@@ -1405,7 +1405,7 @@ VolumeOfFluid<dim>::solve_projection_phase_fraction(
     this->locally_owned_dofs, triangulation->get_communicator());
 
   SolverControl solver_control(
-    this->simulation_parameters.linear_solver.max_iterations[PhysicsID::VOF],
+    this->simulation_parameters.linear_solver.at(PhysicsID::VOF).max_iterations,
     linear_solver_tolerance,
     true,
     true);
@@ -1413,11 +1413,14 @@ VolumeOfFluid<dim>::solve_projection_phase_fraction(
   TrilinosWrappers::SolverCG solver(solver_control);
 
   const double ilu_fill =
-    this->simulation_parameters.linear_solver.ilu_precond_fill[PhysicsID::VOF];
+    this->simulation_parameters.linear_solver.at(PhysicsID::VOF)
+      .ilu_precond_fill;
   const double ilu_atol =
-    this->simulation_parameters.linear_solver.ilu_precond_atol[PhysicsID::VOF];
+    this->simulation_parameters.linear_solver.at(PhysicsID::VOF)
+      .ilu_precond_atol;
   const double ilu_rtol =
-    this->simulation_parameters.linear_solver.ilu_precond_rtol[PhysicsID::VOF];
+    this->simulation_parameters.linear_solver.at(PhysicsID::VOF)
+      .ilu_precond_rtol;
 
   TrilinosWrappers::PreconditionILU::AdditionalData preconditionerOptions(
     ilu_fill, ilu_atol, ilu_rtol, 0);
@@ -1611,7 +1614,7 @@ VolumeOfFluid<dim>::solve_projected_phase_fraction_gradient()
     present_projected_phase_fraction_gradient_solution;
 
   SolverControl solver_control(
-    this->simulation_parameters.linear_solver.max_iterations[PhysicsID::VOF],
+    this->simulation_parameters.linear_solver.at(PhysicsID::VOF).max_iterations,
     linear_solver_tolerance,
     true,
     true);
@@ -1619,11 +1622,14 @@ VolumeOfFluid<dim>::solve_projected_phase_fraction_gradient()
   TrilinosWrappers::SolverCG solver(solver_control);
 
   const double ilu_fill =
-    this->simulation_parameters.linear_solver.ilu_precond_fill[PhysicsID::VOF];
+    this->simulation_parameters.linear_solver.at(PhysicsID::VOF)
+      .ilu_precond_fill;
   const double ilu_atol =
-    this->simulation_parameters.linear_solver.ilu_precond_atol[PhysicsID::VOF];
+    this->simulation_parameters.linear_solver.at(PhysicsID::VOF)
+      .ilu_precond_atol;
   const double ilu_rtol =
-    this->simulation_parameters.linear_solver.ilu_precond_rtol[PhysicsID::VOF];
+    this->simulation_parameters.linear_solver.at(PhysicsID::VOF)
+      .ilu_precond_rtol;
 
   TrilinosWrappers::PreconditionILU::AdditionalData preconditionerOptions(
     ilu_fill, ilu_atol, ilu_rtol, 0);
@@ -1798,7 +1804,7 @@ VolumeOfFluid<dim>::solve_curvature()
   completely_distributed_curvature_solution = present_curvature_solution;
 
   SolverControl solver_control(
-    this->simulation_parameters.linear_solver.max_iterations[PhysicsID::VOF],
+    this->simulation_parameters.linear_solver.at(PhysicsID::VOF).max_iterations,
     linear_solver_tolerance,
     true,
     true);
@@ -1806,11 +1812,14 @@ VolumeOfFluid<dim>::solve_curvature()
   TrilinosWrappers::SolverCG solver(solver_control);
 
   const double ilu_fill =
-    this->simulation_parameters.linear_solver.ilu_precond_fill[PhysicsID::VOF];
+    this->simulation_parameters.linear_solver.at(PhysicsID::VOF)
+      .ilu_precond_fill;
   const double ilu_atol =
-    this->simulation_parameters.linear_solver.ilu_precond_atol[PhysicsID::VOF];
+    this->simulation_parameters.linear_solver.at(PhysicsID::VOF)
+      .ilu_precond_atol;
   const double ilu_rtol =
-    this->simulation_parameters.linear_solver.ilu_precond_rtol[PhysicsID::VOF];
+    this->simulation_parameters.linear_solver.at(PhysicsID::VOF)
+      .ilu_precond_rtol;
 
   TrilinosWrappers::PreconditionILU::AdditionalData preconditionerOptions(
     ilu_fill, ilu_atol, ilu_rtol, 0);
@@ -2310,14 +2319,14 @@ VolumeOfFluid<dim>::solve_linear_system(const bool initial_step,
     initial_step ? this->nonzero_constraints : this->zero_constraints;
 
   const double absolute_residual =
-    simulation_parameters.linear_solver.minimum_residual[PhysicsID::VOF];
+    simulation_parameters.linear_solver.at(PhysicsID::VOF).minimum_residual;
   const double relative_residual =
-    simulation_parameters.linear_solver.relative_residual[PhysicsID::VOF];
+    simulation_parameters.linear_solver.at(PhysicsID::VOF).relative_residual;
 
   const double linear_solver_tolerance =
     std::max(relative_residual * this->system_rhs.l2_norm(), absolute_residual);
 
-  if (this->simulation_parameters.linear_solver.verbosity[PhysicsID::VOF] !=
+  if (this->simulation_parameters.linear_solver.at(PhysicsID::VOF).verbosity !=
       Parameters::Verbosity::quiet)
     {
       this->pcout << "  -Tolerance of iterative solver is : "
@@ -2325,11 +2334,11 @@ VolumeOfFluid<dim>::solve_linear_system(const bool initial_step,
     }
 
   const double ilu_fill =
-    simulation_parameters.linear_solver.ilu_precond_fill[PhysicsID::VOF];
+    simulation_parameters.linear_solver.at(PhysicsID::VOF).ilu_precond_fill;
   const double ilu_atol =
-    simulation_parameters.linear_solver.ilu_precond_atol[PhysicsID::VOF];
+    simulation_parameters.linear_solver.at(PhysicsID::VOF).ilu_precond_atol;
   const double ilu_rtol =
-    simulation_parameters.linear_solver.ilu_precond_rtol[PhysicsID::VOF];
+    simulation_parameters.linear_solver.at(PhysicsID::VOF).ilu_precond_rtol;
   TrilinosWrappers::PreconditionILU::AdditionalData preconditionerOptions(
     ilu_fill, ilu_atol, ilu_rtol, 0);
 
@@ -2341,14 +2350,14 @@ VolumeOfFluid<dim>::solve_linear_system(const bool initial_step,
     this->locally_owned_dofs, mpi_communicator);
 
   SolverControl solver_control(
-    simulation_parameters.linear_solver.max_iterations[PhysicsID::VOF],
+    simulation_parameters.linear_solver.at(PhysicsID::VOF).max_iterations,
     linear_solver_tolerance,
     true,
     true);
 
   TrilinosWrappers::SolverGMRES::AdditionalData solver_parameters(
     false,
-    simulation_parameters.linear_solver.max_krylov_vectors[PhysicsID::VOF]);
+    simulation_parameters.linear_solver.at(PhysicsID::VOF).max_krylov_vectors);
 
 
   TrilinosWrappers::SolverGMRES solver(solver_control, solver_parameters);
@@ -2359,7 +2368,7 @@ VolumeOfFluid<dim>::solve_linear_system(const bool initial_step,
                this->system_rhs,
                ilu_preconditioner);
 
-  if (simulation_parameters.linear_solver.verbosity[PhysicsID::VOF] !=
+  if (simulation_parameters.linear_solver.at(PhysicsID::VOF).verbosity !=
       Parameters::Verbosity::quiet)
     {
       this->pcout << "  -Iterative solver took : " << solver_control.last_step()
@@ -2558,7 +2567,7 @@ VolumeOfFluid<dim>::solve_interface_sharpening(
 
 
   SolverControl solver_control(
-    this->simulation_parameters.linear_solver.max_iterations[PhysicsID::VOF],
+    this->simulation_parameters.linear_solver.at(PhysicsID::VOF).max_iterations,
     linear_solver_tolerance,
     true,
     true);
@@ -2569,11 +2578,14 @@ VolumeOfFluid<dim>::solve_interface_sharpening(
   // Trillinos Wrapper ILU Preconditioner
   //*********************************************
   const double ilu_fill =
-    this->simulation_parameters.linear_solver.ilu_precond_fill[PhysicsID::VOF];
+    this->simulation_parameters.linear_solver.at(PhysicsID::VOF)
+      .ilu_precond_fill;
   const double ilu_atol =
-    this->simulation_parameters.linear_solver.ilu_precond_atol[PhysicsID::VOF];
+    this->simulation_parameters.linear_solver.at(PhysicsID::VOF)
+      .ilu_precond_atol;
   const double ilu_rtol =
-    this->simulation_parameters.linear_solver.ilu_precond_rtol[PhysicsID::VOF];
+    this->simulation_parameters.linear_solver.at(PhysicsID::VOF)
+      .ilu_precond_rtol;
 
   TrilinosWrappers::PreconditionILU::AdditionalData preconditionerOptions(
     ilu_fill, ilu_atol, ilu_rtol, 0);

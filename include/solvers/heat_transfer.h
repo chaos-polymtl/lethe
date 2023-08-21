@@ -481,7 +481,7 @@ private:
 
   TimerOutput computing_timer;
 
-  SimulationParameters<dim> simulation_parameters;
+  const SimulationParameters<dim> &simulation_parameters;
 
 
   // Core elements for the heat transfer simulation

@@ -880,7 +880,8 @@ namespace Parameters
 
   /**
    * @brief LinearSolver - Parameters that control the solution of the
-   * linear system of equations that arise from the finite element problem for each of the physics available in Lethe
+   * linear system of equations that arise from the finite element problem for
+   * each of the physics available in Lethe
    */
   struct LinearSolver
   {
@@ -893,65 +894,63 @@ namespace Parameters
       direct
     };
 
-    // Create maps for the parameters of different physics
-    // Type of linear solver
-    std::map<PhysicsID, SolverType> solver;
+    SolverType solver;
 
-    // Verbosity
-    std::map<PhysicsID, Verbosity> verbosity;
+    // Verbosity of linear solver
+    Verbosity verbosity;
 
     // Relative residuals of the iterative solver
-    std::map<PhysicsID, double> relative_residual;
+    double relative_residual;
 
     // Minimum residual of the iterative solver
-    std::map<PhysicsID, double> minimum_residual;
+    double minimum_residual;
 
     // Maximum number of iterations
-    std::map<PhysicsID, int> max_iterations;
+    int max_iterations;
 
     // Maximum number of krylov vectors
-    std::map<PhysicsID, int> max_krylov_vectors;
+    int max_krylov_vectors;
 
     // ILU or ILUT fill
-    std::map<PhysicsID, double> ilu_precond_fill;
+    double ilu_precond_fill;
 
     // ILU or ILUT absolute tolerance
-    std::map<PhysicsID, double> ilu_precond_atol;
+    double ilu_precond_atol;
 
     // ILU or ILUT relative tolerance
-    std::map<PhysicsID, double> ilu_precond_rtol;
+    double ilu_precond_rtol;
 
     // ILU or ILUT fill
-    std::map<PhysicsID, double> amg_precond_ilu_fill;
+    double amg_precond_ilu_fill;
 
     // ILU or ILUT absolute tolerance
-    std::map<PhysicsID, double> amg_precond_ilu_atol;
+    double amg_precond_ilu_atol;
 
     // ILU or ILUT relative tolerance
-    std::map<PhysicsID, double> amg_precond_ilu_rtol;
+    double amg_precond_ilu_rtol;
 
     // AMG aggregation threshold
-    std::map<PhysicsID, double> amg_aggregation_threshold;
+    double amg_aggregation_threshold;
 
     // AMG number of cycles
-    std::map<PhysicsID, int> amg_n_cycles;
+    int amg_n_cycles;
 
     // AMG W_cycle
-    std::map<PhysicsID, bool> amg_w_cycles;
+    bool amg_w_cycles;
 
     // AMG Smoother sweeps
-    std::map<PhysicsID, int> amg_smoother_sweeps;
+    int amg_smoother_sweeps;
 
     // AMG Smoother overalp
-    std::map<PhysicsID, int> amg_smoother_overlap;
+    int amg_smoother_overlap;
 
     // Block linear solver to throw error.
-    std::map<PhysicsID, bool> force_linear_solver_continuation;
+    bool force_linear_solver_continuation;
 
     static void
-    declare_parameters(ParameterHandler &prm);
+    declare_parameters(ParameterHandler &prm, const std::string &physics_name);
     void
-    parse_parameters(ParameterHandler &prm);
+    parse_parameters(ParameterHandler &prm, const std::string &physics_name);
   };
 
   /**

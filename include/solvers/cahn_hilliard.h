@@ -394,7 +394,7 @@ private:
 
   TimerOutput computing_timer;
 
-  SimulationParameters<dim> simulation_parameters;
+  const SimulationParameters<dim> &simulation_parameters;
 
 
   // Core elements for the Cahn-Hilliard equations variables (Phi and eta)

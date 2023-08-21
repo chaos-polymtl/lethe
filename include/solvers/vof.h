@@ -719,7 +719,7 @@ private:
 
   TimerOutput computing_timer;
 
-  SimulationParameters<dim> simulation_parameters;
+  const SimulationParameters<dim> &simulation_parameters;
 
   // Core elements for the VOF simulation
   std::shared_ptr<parallel::DistributedTriangulationBase<dim>> triangulation;

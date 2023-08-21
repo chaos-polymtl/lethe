@@ -838,22 +838,21 @@ GDNavierStokesSolver<dim>::solve_linear_system(const bool initial_step,
                                                const bool renewed_matrix)
 {
   const double absolute_residual =
-    this->simulation_parameters.linear_solver
-      .minimum_residual[PhysicsID::fluid_dynamics];
+    this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+      .minimum_residual;
   const double relative_residual =
-    this->simulation_parameters.linear_solver
-      .relative_residual[PhysicsID::fluid_dynamics];
+    this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+      .relative_residual;
 
-  if (this->simulation_parameters.linear_solver
-        .solver[PhysicsID::fluid_dynamics] ==
-      Parameters::LinearSolver::SolverType::gmres)
+  if (this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+        .solver == Parameters::LinearSolver::SolverType::gmres)
     solve_system_GMRES(initial_step,
                        absolute_residual,
                        relative_residual,
                        renewed_matrix);
   else if (this->simulation_parameters.linear_solver
-             .solver[PhysicsID::fluid_dynamics] ==
-           Parameters::LinearSolver::SolverType::amg)
+             .at(PhysicsID::fluid_dynamics)
+             .solver == Parameters::LinearSolver::SolverType::amg)
     solve_system_AMG(initial_step,
                      absolute_residual,
                      relative_residual,
@@ -872,12 +871,15 @@ GDNavierStokesSolver<dim>::setup_ILU()
   //**********************************************
   // Trillinos Wrapper ILU Preconditioner
   //*********************************************
-  const double ilu_fill = this->simulation_parameters.linear_solver
-                            .ilu_precond_fill[PhysicsID::fluid_dynamics];
-  const double ilu_atol = this->simulation_parameters.linear_solver
-                            .ilu_precond_atol[PhysicsID::fluid_dynamics];
-  const double ilu_rtol = this->simulation_parameters.linear_solver
-                            .ilu_precond_rtol[PhysicsID::fluid_dynamics];
+  const double ilu_fill =
+    this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+      .ilu_precond_fill;
+  const double ilu_atol =
+    this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+      .ilu_precond_atol;
+  const double ilu_rtol =
+    this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+      .ilu_precond_rtol;
 
   velocity_ilu_preconditioner =
     std::make_shared<TrilinosWrappers::PreconditionILU>();
@@ -900,7 +902,7 @@ GDNavierStokesSolver<dim>::setup_ILU()
     pressure_mass_matrix,
     &(*velocity_ilu_preconditioner),
     &(*pressure_ilu_preconditioner),
-    this->simulation_parameters.linear_solver);
+    this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics));
 }
 
 template <int dim>
@@ -939,19 +941,21 @@ GDNavierStokesSolver<dim>::setup_AMG()
   bool       higher_order_elements = false;
   if (this->fe->degree > 1)
     higher_order_elements = true;
-  const unsigned int n_cycles = this->simulation_parameters.linear_solver
-                                  .amg_n_cycles[PhysicsID::fluid_dynamics];
-  const bool w_cycle = this->simulation_parameters.linear_solver
-                         .amg_w_cycles[PhysicsID::fluid_dynamics];
+  const unsigned int n_cycles =
+    this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+      .amg_n_cycles;
+  const bool w_cycle =
+    this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+      .amg_w_cycles;
   const double aggregation_threshold =
-    this->simulation_parameters.linear_solver
-      .amg_aggregation_threshold[PhysicsID::fluid_dynamics];
+    this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+      .amg_aggregation_threshold;
   const unsigned int smoother_sweeps =
-    this->simulation_parameters.linear_solver
-      .amg_smoother_sweeps[PhysicsID::fluid_dynamics];
+    this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+      .amg_smoother_sweeps;
   const unsigned int smoother_overlap =
-    this->simulation_parameters.linear_solver
-      .amg_smoother_overlap[PhysicsID::fluid_dynamics];
+    this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+      .amg_smoother_overlap;
   const bool  output_details = false;
   const char *smoother_type  = "Chebyshev";  //"ILU";
   const char *coarse_type    = "Amesos-KLU"; //"ILU";
@@ -1025,7 +1029,7 @@ GDNavierStokesSolver<dim>::setup_AMG()
     pressure_mass_matrix,
     &(*velocity_amg_preconditioner),
     &(*pressure_amg_preconditioner),
-    this->simulation_parameters.linear_solver);
+    this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics));
 }
 
 
@@ -1042,8 +1046,8 @@ GDNavierStokesSolver<dim>::solve_system_GMRES(const bool   initial_step,
   const double linear_solver_tolerance =
     std::max(relative_residual * this->system_rhs.l2_norm(), absolute_residual);
 
-  if (this->simulation_parameters.linear_solver
-        .verbosity[PhysicsID::fluid_dynamics] != Parameters::Verbosity::quiet)
+  if (this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+        .verbosity != Parameters::Verbosity::quiet)
     {
       this->pcout << "  -Tolerance of iterative solver is : "
                   << linear_solver_tolerance << std::endl;
@@ -1054,7 +1058,8 @@ GDNavierStokesSolver<dim>::solve_system_GMRES(const bool   initial_step,
     this->locally_owned_dofs, this->mpi_communicator);
 
   SolverControl solver_control(this->simulation_parameters.linear_solver
-                                 .max_iterations[PhysicsID::fluid_dynamics],
+                                 .at(PhysicsID::fluid_dynamics)
+                                 .max_iterations,
                                linear_solver_tolerance,
                                true,
                                true);
@@ -1071,8 +1076,8 @@ GDNavierStokesSolver<dim>::solve_system_GMRES(const bool   initial_step,
                  this->newton_update,
                  this->system_rhs,
                  *system_ilu_preconditioner);
-    if (this->simulation_parameters.linear_solver
-          .verbosity[PhysicsID::fluid_dynamics] != Parameters::Verbosity::quiet)
+    if (this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+          .verbosity != Parameters::Verbosity::quiet)
       {
         this->pcout << "  -Iterative solver took : "
                     << solver_control.last_step() << " steps " << std::endl;
@@ -1099,8 +1104,8 @@ GDNavierStokesSolver<dim>::solve_system_AMG(const bool   initial_step,
   const double linear_solver_tolerance =
     std::max(relative_residual * system_rhs.l2_norm(), absolute_residual);
 
-  if (this->simulation_parameters.linear_solver
-        .verbosity[PhysicsID::fluid_dynamics] != Parameters::Verbosity::quiet)
+  if (this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+        .verbosity != Parameters::Verbosity::quiet)
     {
       this->pcout << "  -Tolerance of iterative solver is : "
                   << linear_solver_tolerance << std::endl;
@@ -1112,7 +1117,8 @@ GDNavierStokesSolver<dim>::solve_system_AMG(const bool   initial_step,
 
 
   SolverControl solver_control(this->simulation_parameters.linear_solver
-                                 .max_iterations[PhysicsID::fluid_dynamics],
+                                 .at(PhysicsID::fluid_dynamics)
+                                 .max_iterations,
                                linear_solver_tolerance,
                                true,
                                true);
@@ -1126,8 +1132,8 @@ GDNavierStokesSolver<dim>::solve_system_AMG(const bool   initial_step,
                  this->newton_update,
                  this->system_rhs,
                  *system_amg_preconditioner);
-    if (this->simulation_parameters.linear_solver
-          .verbosity[PhysicsID::fluid_dynamics] != Parameters::Verbosity::quiet)
+    if (this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+          .verbosity != Parameters::Verbosity::quiet)
       {
         this->pcout << "  -Iterative solver took : "
                     << solver_control.last_step() << " steps " << std::endl;
@@ -1153,8 +1159,8 @@ GDNavierStokesSolver<dim>::solve_L2_system(const bool initial_step,
   const double linear_solver_tolerance =
     std::max(relative_residual * system_rhs.l2_norm(), absolute_residual);
 
-  if (this->simulation_parameters.linear_solver
-        .verbosity[PhysicsID::fluid_dynamics] != Parameters::Verbosity::quiet)
+  if (this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+        .verbosity != Parameters::Verbosity::quiet)
     {
       this->pcout << "  -Tolerance of iterative solver is : "
                   << linear_solver_tolerance << std::endl;
@@ -1163,7 +1169,8 @@ GDNavierStokesSolver<dim>::solve_L2_system(const bool initial_step,
     this->locally_owned_dofs, this->mpi_communicator);
 
   SolverControl solver_control(this->simulation_parameters.linear_solver
-                                 .max_iterations[PhysicsID::fluid_dynamics],
+                                 .at(PhysicsID::fluid_dynamics)
+                                 .max_iterations,
                                linear_solver_tolerance,
                                true,
                                true);
@@ -1173,12 +1180,15 @@ GDNavierStokesSolver<dim>::solve_L2_system(const bool initial_step,
   //**********************************************
   // Trillinos Wrapper ILU Preconditioner
   //*********************************************
-  const double ilu_fill = this->simulation_parameters.linear_solver
-                            .ilu_precond_fill[PhysicsID::fluid_dynamics];
-  const double ilu_atol = this->simulation_parameters.linear_solver
-                            .ilu_precond_atol[PhysicsID::fluid_dynamics];
-  const double ilu_rtol = this->simulation_parameters.linear_solver
-                            .ilu_precond_rtol[PhysicsID::fluid_dynamics];
+  const double ilu_fill =
+    this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+      .ilu_precond_fill;
+  const double ilu_atol =
+    this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+      .ilu_precond_atol;
+  const double ilu_rtol =
+    this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+      .ilu_precond_rtol;
   TrilinosWrappers::PreconditionILU::AdditionalData preconditionerOptions(
     ilu_fill, ilu_atol, ilu_rtol, 0);
   pmass_preconditioner.initialize(pressure_mass_matrix, preconditionerOptions);
@@ -1194,8 +1204,8 @@ GDNavierStokesSolver<dim>::solve_L2_system(const bool initial_step,
                system_rhs,
                preconditioner);
 
-  if (this->simulation_parameters.linear_solver
-        .verbosity[PhysicsID::fluid_dynamics] != Parameters::Verbosity::quiet)
+  if (this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+        .verbosity != Parameters::Verbosity::quiet)
     {
       this->pcout << "  -Iterative solver took : " << solver_control.last_step()
                   << " steps " << std::endl;
