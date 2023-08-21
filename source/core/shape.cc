@@ -1403,6 +1403,7 @@ RBFShape<dim>::RBFShape(const std::string   shape_arguments_str,
   , number_of_nodes(1)
   , iterable_nodes(1)
   , likely_nodes_map()
+  , useful_rbf_node_map()
   , max_number_of_inside_nodes(1)
   , minimal_support_radius(1)
   , nodes_id(1)
@@ -1477,7 +1478,61 @@ RBFShape<dim>::load_data_from_file()
 template <int dim>
 void
 RBFShape<dim>::remove_superfluous_data()
-{}
+{
+  // We loop over the likely nodes map and take note of the RBF nodes that are
+  // required
+
+  useful_rbf_node_map.clear();
+  size_t current_number_of_kept_rbf_nodes = 0;
+  for (auto it = likely_nodes_map.cbegin(); it != likely_nodes_map.cend(); it++)
+    {
+      auto cell = it->first;
+      prepare_iterable_nodes(cell);
+      for (size_t portion_id = 0; portion_id < iterable_nodes.size();
+           portion_id++)
+        {
+          for (const size_t &node_id :
+               *(std::get<2>(iterable_nodes[portion_id])))
+            {
+              current_number_of_kept_rbf_nodes = useful_rbf_node_map.size();
+              if (useful_rbf_node_map.find(node_id) ==
+                  useful_rbf_node_map.end())
+                useful_rbf_node_map[node_id] = current_number_of_kept_rbf_nodes;
+              current_number_of_kept_rbf_nodes++;
+            }
+        }
+      reset_iterable_nodes(cell);
+    }
+
+  std::vector<double>           temp_weights;
+  std::vector<Point<dim>>       temp_rotated_nodes_positions;
+  std::vector<double>           temp_support_radii;
+  std::vector<RBFBasisFunction> temp_basis_functions;
+
+  temp_weights.resize(current_number_of_kept_rbf_nodes);
+  temp_rotated_nodes_positions.resize(current_number_of_kept_rbf_nodes);
+  temp_support_radii.resize(current_number_of_kept_rbf_nodes);
+  temp_basis_functions.resize(current_number_of_kept_rbf_nodes);
+
+  for (auto it = useful_rbf_node_map.cbegin(); it != useful_rbf_node_map.cend();
+       it++)
+    {
+      temp_weights[it->second] = weights[it->first];
+      temp_rotated_nodes_positions[it->second] =
+        rotated_nodes_positions[it->first];
+      temp_support_radii[it->second]   = support_radii[it->first];
+      temp_basis_functions[it->second] = basis_functions[it->first];
+    }
+  weights.swap(temp_weights);
+  rotated_nodes_positions.swap(temp_rotated_nodes_positions);
+  support_radii.swap(temp_support_radii);
+  basis_functions.swap(temp_basis_functions);
+
+  temp_weights.clear();
+  temp_rotated_nodes_positions.clear();
+  temp_support_radii.clear();
+  temp_basis_functions.clear();
+}
 
 template <int dim>
 double
@@ -1557,11 +1612,14 @@ RBFShape<dim>::value(const Point<dim> &evaluation_point,
       for (const size_t &node_id : *(std::get<2>(iterable_nodes[portion_id])))
         {
           normalized_distance =
-            (evaluation_point - rotated_nodes_positions[node_id]).norm() /
-            support_radii[node_id];
-          basis = evaluate_basis_function(basis_functions[node_id],
-                                          normalized_distance);
-          value += basis * weights[node_id];
+            (evaluation_point -
+             rotated_nodes_positions[useful_rbf_node_map.find(node_id)->second])
+              .norm() /
+            support_radii[useful_rbf_node_map.find(node_id)->second];
+          basis = evaluate_basis_function(
+            basis_functions[useful_rbf_node_map.find(node_id)->second],
+            normalized_distance);
+          value += basis * weights[useful_rbf_node_map.find(node_id)->second];
         }
     }
   return value;
@@ -1602,9 +1660,12 @@ RBFShape<dim>::gradient(const Point<dim> &evaluation_point,
         {
           // Calculation of the dr/dx
           relative_position =
-            (evaluation_point - rotated_nodes_positions[node_id]);
-          distance            = (relative_position).norm();
-          normalized_distance = distance / support_radii[node_id];
+            (evaluation_point -
+             rotated_nodes_positions[useful_rbf_node_map.find(node_id)
+                                       ->second]);
+          distance = (relative_position).norm();
+          normalized_distance =
+            distance / support_radii[useful_rbf_node_map.find(node_id)->second];
           if (distance > 1e-16)
             dr_dx_derivative = relative_position / distance;
           else
@@ -1621,14 +1682,16 @@ RBFShape<dim>::gradient(const Point<dim> &evaluation_point,
                 dr_dx_derivative[d] = 0;
             }
           // Calculation of the dr_norm/dr
-          drnorm_dr_derivative = 1.0 / support_radii[node_id];
+          drnorm_dr_derivative =
+            1.0 / support_radii[useful_rbf_node_map.find(node_id)->second];
           // Calculation of the d(basis)/dr
-          dbasis_drnorm_derivative =
-            evaluate_basis_function_derivative(basis_functions[node_id],
-                                               normalized_distance);
+          dbasis_drnorm_derivative = evaluate_basis_function_derivative(
+            basis_functions[useful_rbf_node_map.find(node_id)->second],
+            normalized_distance);
           // Sum
           gradient += dbasis_drnorm_derivative * drnorm_dr_derivative *
-                      dr_dx_derivative * weights[node_id];
+                      dr_dx_derivative *
+                      weights[useful_rbf_node_map.find(node_id)->second];
         }
     }
   return gradient;

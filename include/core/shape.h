@@ -1794,9 +1794,10 @@ private:
     const typename DoFHandler<dim>::cell_iterator,
     std::shared_ptr<std::vector<
       std::tuple<Point<dim>, double, std::shared_ptr<std::vector<size_t>>>>>>
-                   likely_nodes_map;
-  size_t           max_number_of_inside_nodes;
-  DoFHandler<dim> *dof_handler;
+                                     likely_nodes_map;
+  std::unordered_map<size_t, size_t> useful_rbf_node_map;
+  size_t                             max_number_of_inside_nodes;
+  DoFHandler<dim> *                  dof_handler;
 
   double minimal_support_radius;
 
