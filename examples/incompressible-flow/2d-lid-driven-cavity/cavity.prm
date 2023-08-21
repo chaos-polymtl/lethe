@@ -93,5 +93,7 @@ end
 #---------------------------------------------------
 
 subsection linear solver
-  set verbosity = verbose
+  subsection fluid dynamics
+    set verbosity = verbose
+  end
 end
