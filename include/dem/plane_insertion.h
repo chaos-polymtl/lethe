@@ -89,15 +89,14 @@ private:
     Point<3>                                         plane_point,
     Tensor<1, 3>                                     plane_normal_vector);
 
-  void
-  mark_for_update();
-
   /**
    * @brief Store the location of the centers of all the cells that are in the plane
    */
   void
   find_centers_of_inplane_cells();
 
+  void
+  Update_insertion_cell();
 
   std::set<typename Triangulation<dim>::active_cell_iterator>
                                                plane_cells_for_insertion;
@@ -106,7 +105,7 @@ private:
   std::unordered_map<unsigned int, Point<dim>> cells_centers;
   std::unordered_map<unsigned int, double>     number_particles_to_insert;
   std::unordered_map<unsigned int, double>     type_of_particle_left_to_insert;
-  bool                                         load_balancing_was_done;
+  bool                                         mark_for_update;
   boost::signals2::connection                  change_to_triangulation;
 };
 

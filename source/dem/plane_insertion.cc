@@ -24,19 +24,10 @@ PlaneInsertion<dim>::PlaneInsertion(
     dem_parameters.insertion_info.insertion_plane_normal_vector);
   // // Finding the center of those cells
   this->find_centers_of_inplane_cells();
-  load_balancing_was_done = false;
+  mark_for_update = false;
 
-  change_to_triangulation = triangulation.signals.any_change.connect(
-    [&]() { load_balancing_was_done = true; });
-  
-}
-
-
-template <int dim>
-void
-PlaneInsertion<dim>::mark_for_update()
-{
-  load_balancing_was_done = true;
+  change_to_triangulation =
+    triangulation.signals.any_change.connect([&] { mark_for_update = true; });
 }
 
 template <int dim>
@@ -46,6 +37,7 @@ PlaneInsertion<dim>::find_inplane_cells(
   Point<3>                                         plane_point,
   Tensor<1, 3>                                     plane_normal_vector)
 { // Looping through cells
+  plane_cells_for_insertion.clear();
   for (const auto &cell : triangulation.active_cell_iterators())
     {
       // If the cell is owned by owned by the processor
@@ -97,6 +89,7 @@ template <int dim>
 void
 PlaneInsertion<dim>::find_centers_of_inplane_cells()
 {
+  cells_centers.clear();
   for (const auto &cell : plane_cells_for_insertion)
     {
       cells_centers.insert({cell->active_cell_index(), cell->center()});
@@ -122,14 +115,14 @@ PlaneInsertion<dim>::insert(
     }
   if (remained_particles_of_each_type > 0)
     {
-      if (load_balancing_was_done)
+      if (mark_for_update)
         {
           find_inplane_cells(
             triangulation,
             dem_parameters.insertion_info.insertion_plane_point,
             dem_parameters.insertion_info.insertion_plane_normal_vector);
           find_centers_of_inplane_cells();
-          load_balancing_was_done = false;
+          mark_for_update = false;
         }
 
       MPI_Comm           communicator = triangulation.get_communicator();
@@ -340,5 +333,7 @@ PlaneInsertion<dim>::insert(
         }
     }
 }
+
 template class PlaneInsertion<2>;
+
 template class PlaneInsertion<3>;
