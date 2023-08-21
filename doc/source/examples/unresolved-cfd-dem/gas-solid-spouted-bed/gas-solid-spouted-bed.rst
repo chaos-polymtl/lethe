@@ -18,8 +18,8 @@ Features
 Files Used in This Example
 ---------------------------
 
-- Parameters file of particles generation and packing: ``/examples/unresolved-cfd-dem/gas-solid-spouted-bed/dem-packing-in-spouted-bed.prm``
-- Parameters file of CFD-DEM simulation of the spouted bed: ``/examples/unresolved-cfd-dem/gas-solid-spouted-bed/gas-solid-spouted-bed.prm``
+- Parameter file for particle generation and packing: ``/examples/unresolved-cfd-dem/gas-solid-spouted-bed/dem-packing-in-spouted-bed.prm``
+- Parameter file for CFD-DEM simulation of the spouted bed: ``/examples/unresolved-cfd-dem/gas-solid-spouted-bed/gas-solid-spouted-bed.prm``
 
 
 

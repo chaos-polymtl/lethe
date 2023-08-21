@@ -18,8 +18,8 @@ Features
 Files Used in This Example
 ---------------------------
 
-- Parameters file of particles generation and packing: ``/examples/unresolved-cfd-dem/gas-solid-fluidized-bed/dem-packing-in-fluidized-bed.prm``
-- Parameters file of CFD-DEM simulation of the gas-solid fluidized bed:``/examples/unresolved-cfd-dem/gas-solid-fluidized-bed/gas-solid-fluidized-bed.prm``
+- Parameter file for particle generation and packing: ``/examples/unresolved-cfd-dem/gas-solid-fluidized-bed/dem-packing-in-fluidized-bed.prm``
+- Parameter file for CFD-DEM simulation of the gas-solid fluidized bed: ``/examples/unresolved-cfd-dem/gas-solid-fluidized-bed/gas-solid-fluidized-bed.prm``
 
 
 

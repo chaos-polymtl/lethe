@@ -17,8 +17,8 @@ Features
 Files Used in This Example
 ---------------------------
 
-- Parameters file of particles generation and packing:``/examples/unresolved-cfd-dem/boycott-effect/particle_generator.prm``
-- Parameters file of CFD-DEM simulation of the Boycot effect: ``/examples/unresolved-cfd-dem/boycott-effect/boycott-effect.prm``
+- Parameter file for particle generation and packing: ``/examples/unresolved-cfd-dem/boycott-effect/particle_generator.prm``
+- Parameter file for CFD-DEM simulation of the Boycot effect: ``/examples/unresolved-cfd-dem/boycott-effect/boycott-effect.prm``
 
 -----------------------
 Description of the Case

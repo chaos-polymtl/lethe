@@ -19,9 +19,9 @@ Features
 Files Used in This Example
 ---------------------------
 
-- Parameters file of particles generation and packing: ``/examples/unresolved-cfd-dem/gas-solid-fluidized-bed/dem-packing-in-lsfb.prm``
-- Parameters file for the liquid-solid fluidized bed unresolved CFD-DEM simulation: ``/examples/unresolved-cfd-dem/gas-solid-fluidized-bed/liquid-solid-fluidized-bed.prm``
-- Post-processing Python code: ``/examples/unresolved-cfd-dem/gas-solid-fluidized-bed/lsfb_postprocessing.py``
+- Parameter file of particles generation and packing: ``/examples/unresolved-cfd-dem/gas-solid-fluidized-bed/dem-packing-in-lsfb.prm``
+- Parameter file for the liquid-solid fluidized bed unresolved CFD-DEM simulation: ``/examples/unresolved-cfd-dem/gas-solid-fluidized-bed/liquid-solid-fluidized-bed.prm``
+- Post-processing Python script: ``/examples/unresolved-cfd-dem/gas-solid-fluidized-bed/lsfb_postprocessing.py``
 
 
 -----------------------
@@ -30,15 +30,15 @@ Description of the Case
 
 This example simulates the fluidization of spherical particles in water. It is meant to reproduce the behavior observed experimentally in a pilot-scale equipment with the same characteristics as the simulations.
 
-We use two different types of particles `[1] <https://doi.org/10.1016/j.powtec.2023.118652>`_: alginate (:math:`d_p = 2.66 \: mm`, :math:`\rho_p = 1029 \: kg \cdot m^{-3}`) and alumina (:math:`d_p = 3.09 \: mm`, :math:`\rho_p = 3586 \: kg \cdot m^{-3}`).
+We use two different types of particles `[1] <https://doi.org/10.1016/j.powtec.2023.118652>`_: alginate :math:`(d_p = 2.66 \: \text{mm}`, :math:`\rho_p = 1029 \: \text{kg} \cdot \text{m}^{-3})` and alumina :math:`(d_p = 3.09 \: \text{mm}`, :math:`\rho_p = 3586 \: \text{kg} \cdot \text{m}^{-3})`.
 
-A representation of this equipment is shown. The fluidization region comprises a 1.0 m height, 10 cm diameter cylinder made of acrylic. More details about the experimental setup can be found in Ferreira *et al*. `[1] <https://doi.org/10.1016/j.powtec.2023.118652>`_ and Ferreira *et al* `[2] <https://doi.org/10.1016/j.enconman.2023.117224>`_.
+A representation of this equipment is shown. The fluidization region comprises a :math:`1.0 \: \text{m}` height, :math:`10 \: \text{cm}` diameter cylinder made of acrylic. More details about the experimental setup can be found in Ferreira *et al*. `[1] <https://doi.org/10.1016/j.powtec.2023.118652>`_ and Ferreira *et al*. `[2] <https://doi.org/10.1016/j.enconman.2023.117224>`_
 
 .. figure:: images/experimental_setup.png
     :alt: particle packing
     :align: center
 
-    Pilot-scale fluidized bed used as reference for simulations in this example. Image includes (a) schematic representation of the bed and (b) picture of the equipment in operation. Adapted from Ferreira *et al* [1].
+    Pilot-scale fluidized bed used as reference for simulations in this example. Image includes (a) schematic representation of the bed and (b) picture of the equipment in operation. Adapted from Ferreira *et al*. [1]
 
 -------------------
 DEM Parameter File
@@ -46,7 +46,7 @@ DEM Parameter File
 
 As in the other examples of this documentation, we use Lethe-DEM to fill the bed with particles. We enable check-pointing in order to write the DEM checkpoint files which will be used as the starting point of the CFD-DEM simulation. Then, we use the ``cfd_dem_coupling`` solver within Lethe to simulate the fluidization of the particles by initially reading the checkpoint files from the DEM simulation.
 
-All parameter subsections are described in the `parameter section <../../../parameters/parameters.html>`_ of the documentation.
+All parameter subsections are described in the `Parameters section <../../../parameters/parameters.html>`_ of the documentation.
 
 To set-up the cylinder fluidized bed case, we first fill the bed with particles.
 
@@ -55,7 +55,7 @@ We first introduce the different sections of the parameter file ``dem-packing-in
 Mesh
 ~~~~~
 
-In this example, we are simulating a cylindrical fluidized bed that has a half length of 0.55 m (10 cm higher than the fluidization region in the experimental setup), and a diameter of 10 cm. We use the `subdivided_cylinder GridGenerator <https://www.dealii.org/current/doxygen/deal.II/namespaceGridGenerator.html#a95f6e6a7ae2fe3a862df035dd2cb4467:~:text=%E2%97%86-,subdivided_cylinder,-()>`_  in order to generate the mesh. The cylindrical bed is divided 132 times in the x direction (height) and 12 times in y and z directions (6 times in the radius). The following portion of the DEM parameter file shows the function called:
+In this example, we are simulating a cylindrical fluidized bed that has a half length of :math:`0.55 \: \text{m}` (:math:`10 \: \text{cm}` higher than the fluidization region in the experimental setup), and a diameter of :math:`10 \: \text{cm}`. We use the `subdivided_cylinder GridGenerator <https://www.dealii.org/current/doxygen/deal.II/namespaceGridGenerator.html#a95f6e6a7ae2fe3a862df035dd2cb4467:~:text=%E2%97%86-,subdivided_cylinder,-()>`_  in order to generate the mesh. The cylindrical bed is divided  :math:`132 \: \text{times}` in the :math:`x` direction (height) and :math:`12 \: \text{times}` in :math:`y` and :math:`z` directions (:math:`6 \: \text{times}` along the radius). The following portion of the DEM parameter file shows the function called:
 
 .. code-block:: text
 
@@ -81,7 +81,7 @@ A cross-section of the resulting mesh is presented in the following figure.
 Floating Walls
 ~~~~~~~~~~~~~~~~~~~
 
-A floating wall is added 10 cm above the bottom of the mesh, so that void fraction discontinuities can be avoided. The remaining region above the floating wall is 1 m high, as in the experimental setup.
+A floating wall is added :math:`10 \: \text{cm}` above the bottom of the mesh, so that void fraction discontinuities can be avoided. The remaining region above the floating wall is :math:`1 \: \text{m}` high, as in the experimental setup.
 
 .. code-block:: text
 
@@ -127,7 +127,7 @@ Here, we define the time-step and the simulation end time.
 Restart
 ~~~~~~~~
 
-The ``cfd_dem_coupling`` solver requires reading several DEM files to start the simulation. For this, we have to write the DEM simulation information. This is done by enabling the check-pointing option in the restart subsection. We give the written files a prefix "dem" set in the "set filename" option. The DEM parameter file is initialized exactly as the cylindrical packed bed example. The difference is in the number of particles, their physical properties, and the insertion box defined based on the new geometry. For more explanation about the individual subsections, refer to the `DEM parameters <../../../parameters/dem/dem.html>`_ and the `CFD-DEM parameters <../../../parameters/unresolved-cfd-dem/unresolved-cfd-dem.html>`_.
+The ``cfd_dem_coupling`` solver requires reading several DEM files to start the simulation. For this, we have to write the DEM simulation information. This is done by enabling the check-pointing option in the restart subsection. We give the written files a prefix "dem" set in the ``set filename`` option. The DEM parameter file is initialized exactly as the cylindrical packed bed example. The difference is in the number of particles, their physical properties, and the insertion box defined based on the new geometry. For more explanation about the individual subsections, refer to the `DEM parameters <../../../parameters/dem/dem.html>`_ and the `CFD-DEM parameters <../../../parameters/unresolved-cfd-dem/unresolved-cfd-dem.html>`_.
 
 .. code-block:: text
 
@@ -165,7 +165,7 @@ The subsection on model parameters is explained in the `DEM model parameters gui
 Lagrangian Physical Properties
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The lagrangian properties were taken from Ferreira *et al*. `[1] <https://doi.org/10.1016/j.powtec.2023.118652>`_.
+The lagrangian properties were taken from Ferreira *et al*. `[1] <https://doi.org/10.1016/j.powtec.2023.118652>`_
 
 .. code-block:: text
 
@@ -192,7 +192,7 @@ The lagrangian properties were taken from Ferreira *et al*. `[1] <https://doi.or
       set rolling friction wall        = 0.3
     end
 
-The number of particles used for alginate particles is 107960.
+The number of particles used for alginate particles is :math:`107\;\! 960`.
     
 Insertion Info
 ~~~~~~~~~~~~~~~~~~~
@@ -226,12 +226,14 @@ Running the DEM Simulation
 Launching the simulation is as simple as specifying the executable name and the parameter file. Assuming that the ``dem`` executable is within your path, the simulation can be launched on a single processor by typing:
 
 .. code-block:: text
+  :class: copy-button
 
   dem dem-packing-in-fluidized-bed.prm
 
-or in parallel (where 8 represents the number of processors)
+or in parallel (where :math:`8` represents the number of processors)
 
 .. code-block:: text
+  :class: copy-button
 
   mpirun -np 8 dem dem-packing-in-fluidized-bed.prm
 
@@ -239,7 +241,7 @@ Lethe will generate a number of files. The most important one bears the extensio
 
 
 .. note:: 
-    Running the packing of alumina particles should take approximately 57 minutes on 16 cores. For the alginate particles, it takes approximately 1 hour and 53 minutes.
+    Running the packing of alumina particles should take approximately :math:`57 \: \text{minutes}` on :math:`16 \: \text{cores}`. For the alginate particles, it takes approximately :math:`1 \: \text{hour}` and :math:`53 \: \text{minutes}`.
 
 Now that the particles have been packed inside the cylinder, it is possible to simulate the fluidization of particles.
 
@@ -266,12 +268,12 @@ The long simulation is due to the small difference between particles and liquid 
       set output path       = ./output/
     end
 
-Since the alumina particles are more than 3 times denser than alginate particles, the pseudo-steady state is reached after very different times (according to Ferreira *et al*. `[1] <https://doi.org/10.1016/j.powtec.2023.118652>`_ 4 and 10 seconds of real time, respectively). Because of this, we use ``set time end = 35`` for the alginate.
+Since the alumina particles are more than :math:`3 \: \text{times}` denser than alginate particles, the pseudo-steady state is reached after very different times (according to Ferreira *et al*. `[1] <https://doi.org/10.1016/j.powtec.2023.118652>`_ :math:`4` and :math:`10 \: \text{seconds}` of real time, respectively). Because of this, we use ``set time end = 35`` for the alginate.
 
 Physical Properties
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The physical properties subsection allows us to determine the density and viscosity of the fluid. The values are meant to reproduce the characteristics of water at :math:`30 \: ^oC`.
+The physical properties subsection allows us to determine the density and viscosity of the fluid. The values are meant to reproduce the characteristics of water at :math:`30 \: \text{°C}`.
 
 .. code-block:: text
 
@@ -301,7 +303,7 @@ For the initial conditions, we choose zero initial conditions for the velocity.
 Boundary Conditions
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-For the boundary conditions, we choose a slip boundary condition on the walls (ID = 0) and an inlet velocity of 0.157033 m/s at the lower face of the bed (ID = 1).
+For the boundary conditions, we choose a slip boundary condition on the walls (``id = 0``) and an inlet velocity of :math:`0.157\;\! 033 \: \text{m/s}` at the lower face of the bed (``id = 1``).
 
 .. code-block:: text
 
@@ -405,9 +407,10 @@ Linear Solver
 Running the CFD-DEM Simulation
 ------------------------------
 
-The simulation is run (on 8 core) using the ``cfd_dem_coupling`` application as follows:
+The simulation is run (on :math:`8 \: \text{cores}`) using the ``cfd_dem_coupling`` application as follows:
 
 .. code-block:: text
+  :class: copy-button
 
     mpirun -np 8 cfd_dem_coupling liquid-solid-fluidized-bed.prm
 
@@ -425,7 +428,7 @@ We briefly comment on some results that can be extracted from this example.
     To use the code, run ``python3 lsfb_postprocessing.py $PATH_TO_YOUR_CASE_FOLDER``. The code will generate several graphics showing the pressure profile within the bed, which are going to be stored in ``$PATH_TO_YOUR_CASE_FOLDER/P_x``. It will also generate a ``deltaP_t.csv`` file with the total pressure difference for each time-step. Additionally, it generates a void fraction as a function of time graphic (``eps_t.png``).
 
 
-Side view
+Side View
 ~~~~~~~~~~~
 
 Here we show comparison between the experimentally observed and simulated behavior of the liquid-solid fluidized bed with alumina.
@@ -437,7 +440,7 @@ The void fraction and velocity profile of the fluid are also shown.
     <p align="center"><iframe width="560" height="315" src="https://www.youtube.com/embed/Ra7d-p7wD8Y" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
 
 
-Total pressure drop and bed expansion
+Total Pressure Drop and Bed Expansion
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 In fluidized beds, the total pressure drop (:math:`- \Delta p`) reflects the total weight of particles (:math:`M`). The following equation is derived from a force balance inside the fluidized bed `[3] <https://doi.org/10.1201/9780203912744>`_.
@@ -468,7 +471,7 @@ The resulting behavior of the pressure along the bed height and the void fractio
     :name: press_t
 
 
-Particles dynamics
+Particles Dynamics
 ~~~~~~~~~~~~~~~~~~~~
 
 Since the fluidization occurs in a high density fluid, the density difference between alginate and alumina particles have a significant impact on the velocity of the particles inside the bed.
@@ -479,20 +482,20 @@ The following animation is in real time. It is possible to notice that, for a si
 
     <p align="center"><iframe width="560" height="315" src="https://www.youtube.com/embed/kMp86PdZ6tU" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
 
-Notes on performance
+Notes on Performance
 ~~~~~~~~~~~~~~~~~~~~~~
     
-The 20 second simulations with alumina took approximately 24 hours and 30 minutes on 16 core and 8 hours and 44 minutes on 32 core.
+The :math:`20`-second simulations with alumina took approximately :math:`24 \: \text{hours}` and :math:`30 \: \text{minutes}` on :math:`16 \: \text{cores}` and :math:`8 \: \text{hours}` and :math:`44 \: \text{minutes}` on :math:`32 \: \text{cores}`.
 
-The 35 second simulations with alginate particles took about 28 hours on 16 core.
+The :math:`35`-second simulations with alginate particles took about :math:`28 \: \text{hours}` on :math:`16 \: \text{cores}`.
 
 
 -----------
 References
 -----------
 
-`[1] <https://doi.org/10.1016/j.powtec.2023.118652>`_ V. O. Ferreira, T. El Geitani, D. Silva Junior, B. Blais, and G. C. Lopes, "In-depth validation of unresolved CFD-DEM simulations of liquid fluidized beds", Powder Technology, 2023.
+`[1] <https://doi.org/10.1016/j.powtec.2023.118652>`_ V. O. Ferreira, T. E. Geitani, D. Silva, B. Blais, and G. C. Lopes, “In-depth validation of unresolved CFD-DEM simulations of liquid fluidized beds,” *Powder Technol.*, vol. 426, p. 118652, Aug. 2023, doi: 10.1016/j.powtec.2023.118652.
 
-`[2] <https://doi.org/10.1016/j.enconman.2023.117224>`_ V. O. Ferreira, D. Silva Junior, K. R. B. Melo, B. Blais, and G. C. Lopes, "Prediction of the bed expansion of a liquid fluidized bed bioreactor applied to wastewater treatment and biogas production", Energy Conversion and Management, 2023.
+`[2] <https://doi.org/10.1016/j.enconman.2023.117224>`_ V. O. Ferreira, D. Silva Junior, K. R. B. de Melo, B. Blais, and G. C. Lopes, “Prediction of the bed expansion of a liquid fluidized bed bioreactor applied to wastewater treatment and biogas production,” *Energy Convers. Manag.*, vol. 290, p. 117224, Aug. 2023, doi: 10.1016/j.enconman.2023.117224.
 
-`[3] <https://doi.org/10.1201/9780203912744>`_ Norman Epstein. "Handbook of fluidization and fluid-particle systems". CRC Press, 2003. ISBN 0-8247-0259-X.
+`[3] <https://doi.org/10.1201/9780203912744>`_ W.-C. Yang, Ed., *Handbook of Fluidization and Fluid-Particle Systems*, 1st ed. Boca Raton: CRC Press, 2003. doi: 10.1201/9780203912744.
