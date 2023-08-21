@@ -103,8 +103,6 @@ public:
     mesh_box_refinement->declare_parameters(prm);
     Parameters::NonLinearSolver::declare_parameters(prm);
 
-    std::vector<std::string> physics_names = {
-      "fluid dynamics", "heat transfer", "tracer", "VOF", "cahn hilliard"};
     for (auto physics_name : physics_names)
       Parameters::LinearSolver::declare_parameters(prm, physics_name);
 
@@ -133,21 +131,9 @@ public:
     dimensionality.parse_parameters(prm);
     test.parse_parameters(prm);
 
-    std::vector<std::string> physics_names = {
-      "fluid dynamics", "heat transfer", "tracer", "VOF", "cahn hilliard"};
     for (auto physics_name : physics_names)
       {
-        PhysicsID physics_id;
-        if (physics_name == "fluid dynamics")
-          physics_id = PhysicsID::fluid_dynamics;
-        else if (physics_name == "heat transfer")
-          physics_id = PhysicsID::heat_transfer;
-        else if (physics_name == "tracer")
-          physics_id = PhysicsID::tracer;
-        else if (physics_name == "VOF")
-          physics_id = PhysicsID::VOF;
-        else if (physics_name == "cahn hilliard")
-          physics_id = PhysicsID::cahn_hilliard;
+        PhysicsID physics_id = get_physics_id(physics_name);
         linear_solver[physics_id].parse_parameters(prm, physics_name);
       }
 
@@ -280,6 +266,12 @@ public:
 
 private:
   Parameters::PhysicalProperties physical_properties;
+  // names for the physics supported by Lethe
+  std::vector<std::string> physics_names = {"fluid dynamics",
+                                            "heat transfer",
+                                            "tracer",
+                                            "VOF",
+                                            "cahn hilliard"};
 };
 
 #endif
