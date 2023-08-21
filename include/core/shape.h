@@ -16,6 +16,8 @@
 #ifndef lethe_shape_h
 #define lethe_shape_h
 
+#include <core/utilities.h>
+
 #include <deal.II/base/auto_derivative_function.h>
 #include <deal.II/base/function.h>
 
@@ -1284,36 +1286,26 @@ public:
    * distance field with a linear combination of radial basis functions. Each
    * radial basis function has a location and properties that are used in the
    * sum.
-   * @param support_radius the scaling of the reach of the nodes
-   * @param basis_function the basis function that is used to parametrize the RBF object
-   * @param weight the weighting associated to each node for the sum operation
-   * @param nodes the center of each basis function
+   * @param shape_arguments_str the name of the file used to load the data
    * @param position the location of the RBF shape
    * @param orientation the orientation of the shape in relation to each main
    * axis
    */
-  RBFShape<dim>(const std::vector<double> &          support_radii,
-                const std::vector<RBFBasisFunction> &basis_functions,
-                const std::vector<double> &          weights,
-                const std::vector<Point<dim>> &      nodes,
-                const Point<dim> &                   position,
-                const Tensor<1, 3> &                 orientation);
+  RBFShape<dim>(const std::string   shape_arguments_str,
+                const Point<dim> &  position,
+                const Tensor<1, 3> &orientation);
 
   /**
-   * @brief An RBFShape represents a physical object by describing its signed
-   * distance field with a linear combination of radial basis functions. Each
-   * radial basis function has a location and properties that are used in the
-   * sum.
-   * @param shape_arguments the concatenated vector of all shape arguments for
-   * an RBF in the order: weights, support_radii, basis_functions, nodes_x,
-   * nodes_y, nodes_z
-   * @param position the location of the RBF shape
-   * @param orientation the orientation of the shape in relation to each main
-   * axis
+   * @brief Load RBF data from file
    */
-  RBFShape<dim>(const std::vector<double> &shape_arguments,
-                const Point<dim> &         position,
-                const Tensor<1, 3> &       orientation);
+  void
+  load_data_from_file();
+
+  /**
+   * @brief Remove data that doesn't affect the cells owned by local process
+   */
+  void
+  remove_superfluous_data();
 
   /**
    * @brief Return the evaluation of the signed distance function of this solid
@@ -1774,12 +1766,6 @@ public:
   }
 
   /**
-   * @brief Checks if the particle moved since the last precalculations
-   */
-  bool
-  has_shape_moved();
-
-  /**
    * @brief Checks if possible nodes affecting the current cell have been identified, and returns the proper vector to use for iteration
    * @param cell A likely one where the evaluation point is located
    */
@@ -1796,7 +1782,9 @@ public:
     const typename DoFHandler<dim>::active_cell_iterator cell);
 
 private:
+  std::string                          filename;
   size_t                               number_of_nodes;
+  size_t                               total_number_of_nodes;
   std::shared_ptr<HyperRectangle<dim>> bounding_box;
   std::vector<
     std::tuple<Point<dim>, double, std::shared_ptr<std::vector<size_t>>>>
@@ -1809,8 +1797,6 @@ private:
                    likely_nodes_map;
   size_t           max_number_of_inside_nodes;
   DoFHandler<dim> *dof_handler;
-  Point<dim>       position_precalculated;
-  Tensor<1, 3>     orientation_precalculated;
 
   double minimal_support_radius;
 

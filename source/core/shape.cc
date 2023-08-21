@@ -1396,27 +1396,59 @@ CompositeShape<dim>::clear_cache()
 }
 
 template <int dim>
-RBFShape<dim>::RBFShape(const std::vector<double> &          support_radii,
-                        const std::vector<RBFBasisFunction> &basis_functions,
-                        const std::vector<double> &          weights,
-                        const std::vector<Point<dim>> &      nodes,
-                        const Point<dim> &                   position,
-                        const Tensor<1, 3> &                 orientation)
-  : Shape<dim>(support_radii[0], position, orientation)
-  , number_of_nodes(weights.size())
+RBFShape<dim>::RBFShape(const std::string   shape_arguments_str,
+                        const Point<dim> &  position,
+                        const Tensor<1, 3> &orientation)
+  : Shape<dim>(1, position, orientation)
+  , number_of_nodes(1)
   , iterable_nodes(1)
   , likely_nodes_map()
   , max_number_of_inside_nodes(1)
-  , position_precalculated(position)
-  , orientation_precalculated(orientation)
-  , minimal_support_radius(
-      *std::min_element(std::begin(support_radii), std::end(support_radii)))
+  , minimal_support_radius(1)
   , nodes_id(1)
-  , weights(weights)
-  , nodes_positions(nodes)
-  , support_radii(support_radii)
-  , basis_functions(basis_functions)
+  , weights(1)
+  , nodes_positions(1)
+  , support_radii(1)
+  , basis_functions(1)
 {
+  this->filename = shape_arguments_str;
+
+  max_number_of_inside_nodes = 1;
+}
+
+template <int dim>
+void
+RBFShape<dim>::load_data_from_file()
+{
+  weights.clear();
+  support_radii.clear();
+  basis_functions.clear();
+  nodes_positions.clear();
+
+  // The following lines retrieve information regarding an RBF
+  // with a given file name. Then, it converts the information
+  // into one vector which is used to initialize the RBF shape.
+  // All the information is concatenated into only one object so
+  // that the usual initialization function can be called.
+  std::map<std::string, std::vector<double>> rbf_data;
+  fill_vectors_from_file(rbf_data, filename, " ");
+  number_of_nodes       = rbf_data["weight"].size();
+  total_number_of_nodes = number_of_nodes;
+  weights.resize(number_of_nodes);
+  support_radii.resize(number_of_nodes);
+  basis_functions.resize(number_of_nodes);
+  nodes_positions.resize(number_of_nodes);
+  for (size_t n_i = 0; n_i < number_of_nodes; n_i++)
+    {
+      weights[n_i]         = rbf_data["weight"][n_i];
+      support_radii[n_i]   = rbf_data["support_radius"][n_i];
+      basis_functions[n_i] = static_cast<enum RBFShape<dim>::RBFBasisFunction>(
+        round(rbf_data["basis_function"][n_i]));
+      nodes_positions[n_i][0] = rbf_data["node_x"][n_i];
+      nodes_positions[n_i][1] = rbf_data["node_y"][n_i];
+      nodes_positions[n_i][2] = rbf_data["node_z"][n_i];
+    }
+
   std::shared_ptr<std::vector<size_t>> temp_nodes_id_1 =
     std::make_shared<std::vector<size_t>>(number_of_nodes);
   std::shared_ptr<std::vector<size_t>> temp_nodes_id_2 =
@@ -1426,73 +1458,26 @@ RBFShape<dim>::RBFShape(const std::vector<double> &          support_radii,
       (*temp_nodes_id_1)[i] = i;
       (*temp_nodes_id_2)[i] = i;
     }
+  nodes_id.resize(1);
+  iterable_nodes.resize(1);
   nodes_id[0]       = {Point<dim>{},
                  std::numeric_limits<double>::max(),
                  temp_nodes_id_1};
   iterable_nodes[0] = {Point<dim>{},
                        std::numeric_limits<double>::max(),
                        temp_nodes_id_2};
-  rotate_nodes();
-  initialize_bounding_box();
-  this->effective_radius = bounding_box->half_lengths.norm();
-}
 
-template <int dim>
-RBFShape<dim>::RBFShape(const std::vector<double> &shape_arguments,
-                        const Point<dim> &         position,
-                        const Tensor<1, 3> &       orientation)
-  : Shape<dim>(shape_arguments[shape_arguments.size() / (dim + 3)],
-               position,
-               orientation)
-// The effective radius is extracted at the proper index from shape_arguments
-{
-  // When constructing the RBF from a single vector of doubles, the vector is
-  // composed of these vectors, in this order: weights(vector),
-  // support_radii(vector), basis_functions(vector), nodes_positions_x(vector),
-  // nodes_positions_y(vector), nodes_positions_z(vector).
-  number_of_nodes = shape_arguments.size() / (dim + 3);
-  weights.resize(number_of_nodes);
-  support_radii.resize(number_of_nodes);
-  basis_functions.resize(number_of_nodes);
-  nodes_positions.resize(number_of_nodes);
-  nodes_id.resize(1);
-  iterable_nodes.resize(1);
-
-  std::shared_ptr<std::vector<size_t>> temp_nodes_id_1 =
-    std::make_shared<std::vector<size_t>>(number_of_nodes);
-  std::shared_ptr<std::vector<size_t>> temp_nodes_id_2 =
-    std::make_shared<std::vector<size_t>>(number_of_nodes);
-  for (size_t i = 0; i < number_of_nodes; i++)
-    {
-      (*temp_nodes_id_1)[i] = i;
-      (*temp_nodes_id_2)[i] = i;
-    }
-  nodes_id[0]                = {Point<dim>{},
-                 std::numeric_limits<double>::max(),
-                 temp_nodes_id_1};
-  iterable_nodes[0]          = {Point<dim>{},
-                       std::numeric_limits<double>::max(),
-                       temp_nodes_id_2};
-  max_number_of_inside_nodes = 1;
-  position_precalculated     = Point<dim>(this->position);
-  orientation_precalculated  = Tensor<1, 3>(this->orientation);
-
-  for (size_t n_i = 0; n_i < number_of_nodes; n_i++)
-    {
-      weights[n_i]         = shape_arguments[0 * number_of_nodes + n_i];
-      support_radii[n_i]   = shape_arguments[1 * number_of_nodes + n_i];
-      basis_functions[n_i] = static_cast<enum RBFShape<dim>::RBFBasisFunction>(
-        round(shape_arguments[2 * number_of_nodes + n_i]));
-      nodes_positions[n_i][0] = shape_arguments[3 * number_of_nodes + n_i];
-      nodes_positions[n_i][1] = shape_arguments[4 * number_of_nodes + n_i];
-      nodes_positions[n_i][2] = shape_arguments[5 * number_of_nodes + n_i];
-    }
   minimal_support_radius =
     *std::min_element(std::begin(support_radii), std::end(support_radii));
   rotate_nodes();
   initialize_bounding_box();
   this->effective_radius = bounding_box->half_lengths.norm();
 }
+
+template <int dim>
+void
+RBFShape<dim>::remove_superfluous_data()
+{}
 
 template <int dim>
 double
@@ -1654,10 +1639,7 @@ std::shared_ptr<Shape<dim>>
 RBFShape<dim>::static_copy() const
 {
   std::shared_ptr<Shape<dim>> copy =
-    std::make_shared<RBFShape<dim>>(this->support_radii,
-                                    this->basis_functions,
-                                    this->weights,
-                                    this->nodes_positions,
+    std::make_shared<RBFShape<dim>>(this->filename,
                                     this->position,
                                     this->orientation);
   return copy;
@@ -1775,6 +1757,8 @@ RBFShape<dim>::update_precalculations(
   const unsigned int levels_not_precalculated,
   const bool         mesh_based_precalculations)
 {
+  this->load_data_from_file();
+
   if (!mesh_based_precalculations)
     return;
 
@@ -1783,7 +1767,6 @@ RBFShape<dim>::update_precalculations(
   // We first reset the mapping, since the grid partitioning may change between
   // calls of this function. The precalculation cost is low enough that this
   // reset does not have a significant impact of global computational cost.
-  likely_nodes_map.clear();
   this->dof_handler                = &dof_handler;
   const unsigned int maximal_level = dof_handler.get_triangulation().n_levels();
 
@@ -1937,8 +1920,7 @@ RBFShape<dim>::update_precalculations(
         it++;
     }
 
-  position_precalculated    = Point<dim>(this->position);
-  orientation_precalculated = Tensor<1, 3>(this->orientation);
+  this->remove_superfluous_data();
 }
 
 template <int dim>
@@ -1952,6 +1934,7 @@ RBFShape<dim>::rotate_nodes()
       rotated_nodes_positions[i] =
         this->reverse_align_and_center(nodes_positions[i]);
     }
+  nodes_positions.clear();
 }
 
 
@@ -2035,19 +2018,6 @@ RBFShape<dim>::evaluate_basis_function_derivative(
         return RBFShape<dim>::linear_derivative(distance);
     }
 }
-
-
-template <int dim>
-bool
-RBFShape<dim>::has_shape_moved()
-{
-  if ((this->position - position_precalculated).norm() > 1e-12)
-    return true;
-  if ((this->orientation - orientation_precalculated).norm() > 1e-12)
-    return true;
-  return false;
-}
-
 
 template <int dim>
 void
