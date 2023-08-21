@@ -60,7 +60,8 @@ Physical Properties
 
         # Surface tension
         set surface tension model       = constant
-        set surface tension coefficient = 0
+        set surface tension coefficient = 0.0
+        set surface tension gradient    = 0.0
       end
     end
   end
@@ -112,14 +113,16 @@ Physical Properties
       .. attention::
           The ``second fluid id`` should be greater than the ``first fluid id``.
 
-    * The ``surface tension model`` specifies the model used to calculate the surface tension coefficient of the fluid-fluid pair. At the moment, only the ``constant`` model is supported.
+    * The ``surface tension model`` specifies the model used to calculate the surface tension coefficient of the fluid-fluid pair. At the moment, a ``constant`` and a ``linear`` model are supported. For more detail on the surface tension models, see `Surface Tension Models`_.
 
-    * The ``surface tension coefficient`` parameter is the constant surface tension coefficient of the two interacting fluids in units of :math:`\text{Mass} \cdot \text{Time}^{-2}`. In SI, this is :math:`\text{N} \cdot \text{m}^{-1}`. The surface tension coefficient is used to define the Weber number (:math:`We`):
+    * The ``surface tension coefficient`` parameter is the constant surface tension coefficient of the two interacting fluids in units of :math:`\text{Mass} \cdot \text{Time}^{-2}`. In SI, this is :math:`\text{N} \cdot \text{m}^{-1}`. The surface tension coefficient is used as defined in the Weber number (:math:`We`):
 
       .. math::
           We = Re \cdot \frac{\mu_\text{ref} \; u_\text{ref}}{\sigma}
 
       where :math:`Re` is the Reynolds number, :math:`\mu_\text{ref}` and :math:`u_\text{ref}` are some reference viscosity and velocity characterizing the flow problem, and :math:`\sigma` is the surface tension coefficient.
+
+    * The ``surface tension gradient`` parameter is the surface tension gradient with respect to the temperature of the two interacting fluids in units of :math:`\text{Mass} \cdot \text{Time}^{-2} \cdot \text{Temperature}^{-1}`. In SI, this is :math:`\text{N} \cdot \text{m}^{-1} \cdot \text{K}^{-1}`. This parameter is used in the calculation of the surface tension using the ``linear`` surface tension model (see `Surface Tension Models`_).
       
     * The ``cahn hilliard mobility model`` specifies the model used to calculate the mobility used in the Cahn-Hilliard equations for the fluid-fluid pair. Two models are available: a ``constant`` mobility and a ``quartic`` mobility. The reader is refered to :doc:`cahn_hilliard` for more details.
       
@@ -135,6 +138,10 @@ Physical Properties
 
 .. note:: 
   The default values for all physical properties models in Lethe is ``constant``. Consequently, it is not necessary (and not recommended) to specify the physical property model unless this model is not constant. This generates parameter files that are easier to read.
+
+
+Material Physical Properties
+****************************
 
 .. _two phase simulations:
 
@@ -481,8 +488,27 @@ This model is parameterized using the following section:
 
 * The ``specific heat solid`` is :math:`C_{p,s}`
 
-Cahn-Hilliard Mobility Model
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Interface Physical Properties
+*****************************
+
+.. _surface_tension_models:
+
+Surface Tension Models
+~~~~~~~~~~~~~~~~~~~~~~
+
+Lethe supports two types of surface tension models: ``constant`` and ``linear``. A ``constant`` surface tension model assumes a constant value of surface tension. While, a ``linear`` surface tension assumes that the surface tension evolves linearly with the temperature:
+
+.. math::
+  \sigma(T) = \sigma_0 + \frac{d\sigma}{dT} \cdot T
+
+where :math:`\sigma_0` is the ``surface tension coefficient`` and :math:`\frac{d\sigma}{dT}` is the ``surface tension gradient`` with respect to the temperature :math:`T`.
+
+.. Warning::
+    In Lethe, the ``linear`` surface tension model is only used to account for the thermocapillary effect known as the Marangoni effect. Therefore, to enable the Marangoni effect, the surface tension model must be set to ``linear`` and a ``surface tension gradient`` different from zero :math:`(\frac{d\sigma}{dT} \neq 0)` must be specified.
+
+Cahn-Hilliard Mobility Models
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Lethe supports two types of mobility models for the Cahn-Hilliard equations. Setting ``cahn hilliard mobility model = constant`` sets a constant mobility. Setting a ``cahn hilliard mobility model = quartic`` sets a quartic model for mobility:
 
