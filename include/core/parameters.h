@@ -933,16 +933,16 @@ namespace Parameters
     double amg_aggregation_threshold;
 
     // AMG number of cycles
-    int amg_n_cycles;
+    unsigned int amg_n_cycles;
 
     // AMG W_cycle
     bool amg_w_cycles;
 
     // AMG Smoother sweeps
-    int amg_smoother_sweeps;
+    unsigned int amg_smoother_sweeps;
 
     // AMG Smoother overalp
-    int amg_smoother_overlap;
+    unsigned int amg_smoother_overlap;
 
     // Block linear solver to throw error.
     bool force_linear_solver_continuation;
