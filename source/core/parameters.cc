@@ -1302,10 +1302,6 @@ namespace Parameters
       prm.enter_subsection("path");
       laser_scan_path = std::make_shared<Functions::ParsedFunction<dim>>(dim);
       laser_scan_path->declare_parameters(prm, dim);
-      if (dim == 2)
-        prm.set("Function expression", "0; 0");
-      if (dim == 3)
-        prm.set("Function expression", "0; 0; 0");
       prm.leave_subsection();
 
       prm.declare_entry("start time",
@@ -2419,34 +2415,24 @@ namespace Parameters
     particles[index].f_position =
       std::make_shared<Functions::ParsedFunction<dim>>(dim);
     particles[index].f_position->declare_parameters(prm, dim);
-    if (dim == 2)
-      prm.set("Function expression", "0; 0");
-    if (dim == 3)
-      prm.set("Function expression", "0; 0; 0");
     prm.leave_subsection();
 
     prm.enter_subsection("orientation");
     particles[index].f_orientation =
       std::make_shared<Functions::ParsedFunction<dim>>(3);
-    particles[index].f_orientation->declare_parameters(prm, dim);
-    prm.set("Function expression", "0; 0; 0");
+    particles[index].f_orientation->declare_parameters(prm, 3);
     prm.leave_subsection();
 
     prm.enter_subsection("velocity");
     particles[index].f_velocity =
       std::make_shared<Functions::ParsedFunction<dim>>(dim);
     particles[index].f_velocity->declare_parameters(prm, dim);
-    if (dim == 2)
-      prm.set("Function expression", "0; 0");
-    if (dim == 3)
-      prm.set("Function expression", "0; 0; 0");
     prm.leave_subsection();
 
     prm.enter_subsection("omega");
     particles[index].f_omega =
       std::make_shared<Functions::ParsedFunction<dim>>(3);
-    particles[index].f_omega->declare_parameters(prm, dim);
-    prm.set("Function expression", "0; 0; 0");
+    particles[index].f_omega->declare_parameters(prm, 3);
     prm.leave_subsection();
 
     prm.declare_entry(
@@ -2727,10 +2713,6 @@ namespace Parameters
 
         prm.enter_subsection("gravity");
         f_gravity->declare_parameters(prm, dim);
-        if (dim == 2)
-          prm.set("Function expression", "0; 0");
-        if (dim == 3)
-          prm.set("Function expression", "0; 0; 0");
         prm.leave_subsection();
 
         prm.leave_subsection();
