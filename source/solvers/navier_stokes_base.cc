@@ -1923,23 +1923,60 @@ NavierStokesBase<dim, VectorType, DofsType>::write_output_results(
   VorticityPostprocessor<dim>  vorticity;
   data_out.add_data_vector(solution, vorticity);
 
+  // Get physical properties models
   std::vector<std::shared_ptr<DensityModel>> density_models =
     this->simulation_parameters.physical_properties_manager
       .get_density_vector();
+  std::vector<std::shared_ptr<RheologicalModel>> rheological_models =
+    this->simulation_parameters.physical_properties_manager
+      .get_rheology_vector();
+
+  const double n_fluids = this->simulation_parameters
+                            .physical_properties_manager.get_number_of_fluids();
+
   std::vector<DensityPostprocessor<dim>> density_postprocessors;
-  for (unsigned int f_id = 0; f_id < density_models.size(); ++f_id)
+  density_postprocessors.reserve(n_fluids);
+  std::vector<KinematicViscosityPostprocessor<dim>>
+    kinematic_viscosity_postprocessors;
+  kinematic_viscosity_postprocessors.reserve(n_fluids);
+  std::vector<DynamicViscosityPostprocessor<dim>>
+    dynamic_viscosity_postprocessors;
+  dynamic_viscosity_postprocessors.reserve(n_fluids);
+
+  for (unsigned int f_id = 0; f_id < n_fluids; ++f_id)
     {
-      // Only output when density is not constant
-      if (density_models[f_id]->get_psi() != 0)
-        {
-          density_postprocessors.push_back(
-            DensityPostprocessor<dim>(density_models[f_id], f_id));
-        }
+      density_postprocessors.push_back(
+        DensityPostprocessor<dim>(density_models[f_id], f_id));
+      kinematic_viscosity_postprocessors.push_back(
+        KinematicViscosityPostprocessor<dim>(rheological_models[f_id], f_id));
+      dynamic_viscosity_postprocessors.push_back(
+        DynamicViscosityPostprocessor<dim>(
+          rheological_models[f_id],
+          density_models[f_id]->get_density_ref(),
+          f_id));
+
+      // Only output when density is not constant or if it is a multiphase flow
+      if (!density_models[f_id]->is_constant_density_model() ||
+          this->simulation_parameters.multiphysics.VOF ||
+          this->simulation_parameters.multiphysics.cahn_hilliard)
+        data_out.add_data_vector(solution, density_postprocessors[f_id]);
+
+      // Only output the kinematic viscosity for non-newtonian rheology
+      if (rheological_models[f_id]->is_non_newtonian_rheological_model())
+        data_out.add_data_vector(solution,
+                                 kinematic_viscosity_postprocessors[f_id]);
+
+      // Only output the dynamic viscosity for multiphase flows
+      if (this->simulation_parameters.multiphysics.VOF ||
+          this->simulation_parameters.multiphysics.cahn_hilliard)
+        data_out.add_data_vector(solution,
+                                 dynamic_viscosity_postprocessors[f_id]);
     }
-  for (const auto &density_postprocessor : density_postprocessors)
-    {
-      data_out.add_data_vector(solution, density_postprocessor);
-    }
+
+  ShearRatePostprocessor<dim> shear_rate_processor;
+  if (this->simulation_parameters.physical_properties_manager
+        .is_non_newtonian())
+    data_out.add_data_vector(solution, shear_rate_processor);
 
   // Trilinos vector for the smoothed output fields
   QcriterionPostProcessorSmoothing<dim, VectorType> qcriterion_smoothing(
@@ -2012,17 +2049,6 @@ NavierStokesBase<dim, VectorType, DofsType>::write_output_results(
   if (simulation_parameters.velocity_sources.type ==
       Parameters::VelocitySource::VelocitySourceType::srf)
     data_out.add_data_vector(solution, srf);
-
-  NonNewtonianViscosityPostprocessor<dim> non_newtonian_viscosity(
-    this->simulation_parameters.physical_properties_manager.get_rheology());
-  ShearRatePostprocessor<dim> shear_rate_processor;
-
-  if (this->simulation_parameters.physical_properties_manager
-        .is_non_newtonian())
-    {
-      data_out.add_data_vector(solution, non_newtonian_viscosity);
-      data_out.add_data_vector(solution, shear_rate_processor);
-    }
 
   output_field_hook(data_out);
 

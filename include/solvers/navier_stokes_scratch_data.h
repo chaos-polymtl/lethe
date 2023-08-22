@@ -774,7 +774,8 @@ public:
     // Relative velocity and particle Reynolds
     unsigned int particle_no                 = 0;
     average_fluid_particle_relative_velocity = 0;
-    double viscosity = properties_manager.get_viscosity_scale();
+    double kinematic_viscosity =
+      properties_manager.get_kinematic_viscosity_scale();
 
     for (auto &particle : pic)
       {
@@ -791,7 +792,7 @@ public:
             fluid_particle_relative_velocity_at_particle_location[particle_no]
               .norm() *
             particle_properties[DEM::PropertiesIndex::dp] /
-            (viscosity + DBL_MIN);
+            (kinematic_viscosity + DBL_MIN);
         particle_no++;
       }
     if (particle_no > 0)
@@ -861,7 +862,8 @@ public:
 
 
   /**
-   * @brief enable_heat_transfer Enables the collection of the heat transfer data (Temperature field) by the scratch
+   * @brief enable_heat_transfer Enables the collection of the heat transfer
+   * data (Temperature field) by the scratch
    *
    * @param fe FiniteElement associated with the heat transfer.
    *
@@ -884,7 +886,8 @@ public:
    *
    * @param current_solution The present value of the solution for temperature
    *
-   * @param previous_solutions The solutions at the previous time steps for temperature
+   * @param previous_solutions The solutions at the previous time steps for
+   * temperature
    *
    */
 
@@ -906,7 +909,8 @@ public:
   }
 
   /**
-   * @brief enable_cahn_hilliard Enables the collection of the CahnHilliard data by the scratch
+   * @brief enable_cahn_hilliard Enables the collection of the CahnHilliard data
+   * by the scratch
    *
    * @param fe FiniteElement associated with the CahnHilliard physics
    *
@@ -963,9 +967,9 @@ public:
   }
 
 
-  /** @brief Calculates the physical properties. This function calculates the physical properties
-   * that may be required by the fluid dynamics problem. Namely the kinematic
-   * viscosity and, when required, the density.
+  /** @brief Calculates the physical properties. This function calculates the
+   * physical properties that may be required by the fluid dynamics problem.
+   * Namely the kinematic viscosity and, when required, the density.
    */
   void
   calculate_physical_properties();
@@ -976,10 +980,11 @@ public:
   std::vector<double>                  density;
   double                               density_ref;
   double                               density_psi;
-  std::vector<double>                  viscosity;
-  double                               viscosity_scale;
+  std::vector<double>                  dynamic_viscosity;
+  std::vector<double>                  kinematic_viscosity;
+  double                               kinematic_viscosity_scale;
   std::vector<double>                  thermal_expansion;
-  std::vector<double>                  grad_viscosity_shear_rate;
+  std::vector<double>                  grad_kinematic_viscosity_shear_rate;
   std::vector<std::vector<double>>     previous_density;
 
   // Pressure scaling factor to facilitate different scales between velocity and
@@ -991,12 +996,13 @@ public:
   std::vector<double> density_1;
   double              density_ref_0;
   double              density_ref_1;
-  std::vector<double> density_ref_eq;
   double              density_psi_0;
   double              density_psi_1;
   std::vector<double> compressibility_multiplier;
-  std::vector<double> viscosity_0;
-  std::vector<double> viscosity_1;
+  std::vector<double> dynamic_viscosity_0;
+  std::vector<double> dynamic_viscosity_1;
+  std::vector<double> kinematic_viscosity_0;
+  std::vector<double> kinematic_viscosity_1;
   std::vector<double> thermal_expansion_0;
   std::vector<double> thermal_expansion_1;
   std::vector<double> surface_tension;

@@ -159,7 +159,7 @@ namespace Parameters
       "grad-div length scale",
       "1",
       Patterns::Double(),
-      "Constant cs for the calculation of the grad-div stabilization (gamma = viscosity + cs * velocity)");
+      "Constant cs for the calculation of the grad-div stabilization (gamma = kinematic_viscosity + cs * velocity)");
     prm.declare_entry(
       "implicit stabilization",
       "true",

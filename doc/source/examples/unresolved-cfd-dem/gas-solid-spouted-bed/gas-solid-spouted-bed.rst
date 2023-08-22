@@ -262,7 +262,6 @@ For the initial conditions, we choose zero initial conditions for the velocity.
 .. code-block:: text
 
     subsection initial conditions
-      set type = nodal
       subsection uvwp
           set Function expression = 0; 0; 0; 0
       end

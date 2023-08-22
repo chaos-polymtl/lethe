@@ -213,8 +213,8 @@ An initial condition is introduced for the Re = 150 problem. This way, a Re = 10
 .. code-block:: text
 
     subsection initial conditions
-      set type      = viscous
-      set viscosity = 0.1
+      set type                = viscous
+      set kinematic viscosity = 0.1
     end
 
 

@@ -41,8 +41,8 @@ template <class BSPreconditioner>
 class BlockSchurPreconditioner : public Subscriptor
 {
 public:
-  BlockSchurPreconditioner(double                                     gamma,
-                           double                                     viscosity,
+  BlockSchurPreconditioner(double gamma,
+                           double kinematic_viscosity,
                            const TrilinosWrappers::BlockSparseMatrix &S,
                            const TrilinosWrappers::SparseMatrix &     P,
                            const BSPreconditioner * p_amat_preconditioner,
@@ -55,7 +55,7 @@ public:
 
 private:
   const double                               gamma;
-  const double                               viscosity;
+  const double                               kinematic_viscosity;
   const Parameters::LinearSolver             linear_solver_parameters;
   const TrilinosWrappers::BlockSparseMatrix &stokes_matrix;
   const TrilinosWrappers::SparseMatrix &     pressure_mass_matrix;
@@ -274,7 +274,7 @@ private:
 template <typename BSPreconditioner>
 BlockSchurPreconditioner<BSPreconditioner>::BlockSchurPreconditioner(
   double                                     gamma,
-  double                                     viscosity,
+  double                                     kinematic_viscosity,
   const TrilinosWrappers::BlockSparseMatrix &S,
   const TrilinosWrappers::SparseMatrix &     P,
   const BSPreconditioner *                   p_amat_preconditioner,
@@ -282,7 +282,7 @@ BlockSchurPreconditioner<BSPreconditioner>::BlockSchurPreconditioner(
 
   Parameters::LinearSolver p_solver_parameters)
   : gamma(gamma)
-  , viscosity(viscosity)
+  , kinematic_viscosity(kinematic_viscosity)
   , linear_solver_parameters(p_solver_parameters)
   , stokes_matrix(S)
   , pressure_mass_matrix(P)
@@ -316,7 +316,7 @@ BlockSchurPreconditioner<BSPreconditioner>::vmult(
              dst.block(1),
              src.block(1),
              *pmass_preconditioner);
-    dst.block(1) *= -(viscosity + gamma);
+    dst.block(1) *= -(kinematic_viscosity + gamma);
     //        computing_timer.exit_section("Pressure");
   }
 

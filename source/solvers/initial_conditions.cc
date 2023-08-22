@@ -61,24 +61,24 @@ namespace Parameters
   void
   Ramp_viscosity::declare_parameters(ParameterHandler &prm)
   {
-    prm.enter_subsection("viscosity");
+    prm.enter_subsection("kinematic viscosity");
     {
       prm.declare_entry(
-        "initial viscosity",
+        "initial kinematic viscosity",
         "1.0",
         Patterns::Double(),
-        "First viscosity value with which to start the initial condition");
+        "First kinematic viscosity value with which to start the initial condition");
 
       prm.declare_entry(
         "iterations",
         "0",
         Patterns::Integer(),
-        "Number of iterations used in the ramp before reaching the final viscosity value");
+        "Number of iterations used in the ramp before reaching the final kinematic viscosity value");
 
       prm.declare_entry("alpha",
                         "0.5",
                         Patterns::Double(),
-                        "Coefficient used for viscosity-spacing.");
+                        "Coefficient used for kinematic viscosity-spacing.");
     }
     prm.leave_subsection();
   }
@@ -86,11 +86,11 @@ namespace Parameters
   void
   Ramp_viscosity::parse_parameters(ParameterHandler &prm)
   {
-    prm.enter_subsection("viscosity");
+    prm.enter_subsection("kinematic viscosity");
     {
-      viscosity_init = prm.get_double("initial viscosity");
-      n_iter         = prm.get_integer("iterations");
-      alpha          = prm.get_double("alpha");
+      kinematic_viscosity_init = prm.get_double("initial kinematic viscosity");
+      n_iter                   = prm.get_integer("iterations");
+      alpha                    = prm.get_double("alpha");
     }
     prm.leave_subsection();
   }

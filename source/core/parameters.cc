@@ -303,11 +303,11 @@ namespace Parameters
       prm.declare_entry("viscosity_0",
                         "1.0",
                         Patterns::Double(),
-                        "Viscosity at rest");
+                        "Kinematic viscosity at rest");
       prm.declare_entry("viscosity_inf",
                         "1.0",
                         Patterns::Double(),
-                        "Viscosity for an infinite shear rate");
+                        "Kinematic viscosity for an infinite shear rate");
       prm.declare_entry("lambda", "1.0", Patterns::Double(), "Relaxation time");
       prm.declare_entry("a", "2.0", Patterns::Double(), "Carreau parameter");
       prm.declare_entry("n", "0.5", Patterns::Double(), "Power parameter");
@@ -321,12 +321,12 @@ namespace Parameters
   {
     prm.enter_subsection("carreau");
     {
-      viscosity_0   = prm.get_double("viscosity_0");
-      viscosity_inf = prm.get_double("viscosity_inf");
+      kinematic_viscosity_0   = prm.get_double("viscosity_0");
+      kinematic_viscosity_inf = prm.get_double("viscosity_inf");
 
-      // Both viscosities are in L^2 T^-1
-      viscosity_0 *= dimensions.viscosity_scaling;
-      viscosity_inf *= dimensions.viscosity_scaling;
+      // Both kinematic viscosities are in L^2 T^-1
+      kinematic_viscosity_0 *= dimensions.viscosity_scaling;
+      kinematic_viscosity_inf *= dimensions.viscosity_scaling;
 
       lambda = prm.get_double("lambda");
 
@@ -520,12 +520,12 @@ namespace Parameters
       cp_s = prm.get_double("specific heat solid");
       // cp_s  in L^2 theta^-1 T^-2
       cp_s *= dimensions.specific_heat_scaling;
-      viscosity_l = prm.get_double("viscosity liquid");
+      kinematic_viscosity_l = prm.get_double("viscosity liquid");
       // viscosity_l  in L^2 T^-1
-      viscosity_l *= dimensions.viscosity_scaling;
-      viscosity_s = prm.get_double("viscosity solid");
+      kinematic_viscosity_l *= dimensions.viscosity_scaling;
+      kinematic_viscosity_s = prm.get_double("viscosity solid");
       // viscosity_l  in L^2 T^-1
-      viscosity_s *= dimensions.viscosity_scaling;
+      kinematic_viscosity_s *= dimensions.viscosity_scaling;
       thermal_conductivity_l = prm.get_double("thermal conductivity liquid");
       // thermal_conductivity_l is in M L T^-3 theta ^-1
       thermal_conductivity_l *= dimensions.thermal_conductivity_scaling;
@@ -598,12 +598,12 @@ namespace Parameters
       prm.declare_entry("viscosity liquid",
                         "1",
                         Patterns::Double(),
-                        "Viscosity of the liquid phase");
+                        "Kinematic viscosity of the liquid phase");
 
       prm.declare_entry("viscosity solid",
                         "1",
                         Patterns::Double(),
-                        "Viscosity of the solid phase");
+                        "Kinematic viscosity of the solid phase");
     }
     prm.leave_subsection();
   }
@@ -847,7 +847,7 @@ namespace Parameters
       isothermal_ideal_gas_density_parameters.parse_parameters(prm, dimensions);
 
       //---------------------------------------------------
-      // Viscosity and Rheology
+      // Kinematic viscosity and Rheology
       //---------------------------------------------------
       op = prm.get("rheological model");
       if (op == "power-law")
@@ -867,9 +867,9 @@ namespace Parameters
           rheological_model = RheologicalModel::phase_change;
         }
 
-      viscosity = prm.get_double("kinematic viscosity");
+      kinematic_viscosity = prm.get_double("kinematic viscosity");
       // Kinematic viscosity is in L^2 T^-1, rescale
-      viscosity *= dimensions.viscosity_scaling;
+      kinematic_viscosity *= dimensions.viscosity_scaling;
       non_newtonian_parameters.parse_parameters(prm, dimensions);
 
       //--------------

@@ -78,7 +78,7 @@ NavierStokesOperatorBase<dim, number>::NavierStokesOperatorBase(
   const AffineConstraints<number> &constraints,
   const Quadrature<dim> &          quadrature,
   const Function<dim> *            forcing_function,
-  const double                     viscosity,
+  const double                     kinematic_viscosity,
   const unsigned int               mg_level)
 {
   this->reinit(mapping,
@@ -86,7 +86,7 @@ NavierStokesOperatorBase<dim, number>::NavierStokesOperatorBase(
                constraints,
                quadrature,
                forcing_function,
-               viscosity,
+               kinematic_viscosity,
                mg_level);
 }
 
@@ -98,7 +98,7 @@ NavierStokesOperatorBase<dim, number>::reinit(
   const AffineConstraints<number> &constraints,
   const Quadrature<dim> &          quadrature,
   const Function<dim> *            forcing_function,
-  const double                     viscosity,
+  const double                     kinematic_viscosity,
   const unsigned int               mg_level)
 {
   this->system_matrix.clear();
@@ -117,7 +117,7 @@ NavierStokesOperatorBase<dim, number>::reinit(
 
   this->forcing_function = forcing_function;
 
-  this->viscosity = viscosity;
+  this->kinematic_viscosity = kinematic_viscosity;
 
   this->compute_element_size();
 
@@ -598,16 +598,17 @@ NavierStokesSUPGPSPGOperator<dim, number>::do_cell_integral_local(
 
       for (unsigned int v = 0; v < VectorizedArray<number>::size(); ++v)
         {
-          tau[v] = 1. / std::sqrt(4. * u_mag[v] / h[v] / h[v] +
-                                  9 * Utilities::fixed_power<2>(
-                                        4 * this->viscosity / (h[v] * h[v])));
+          tau[v] = 1. / std::sqrt(
+                          4. * u_mag[v] / h[v] / h[v] +
+                          9 * Utilities::fixed_power<2>(
+                                4 * this->kinematic_viscosity / (h[v] * h[v])));
         }
 
       // Weak form jacobian
       for (unsigned int i = 0; i < dim; ++i)
         {
           // ν(∇v,∇δu)
-          gradient_result[i] = this->viscosity * gradient[i];
+          gradient_result[i] = this->kinematic_viscosity * gradient[i];
           // -(∇·v,δp)
           gradient_result[i][i] += -value[dim];
           // +(q,∇δu)
@@ -629,7 +630,7 @@ NavierStokesSUPGPSPGOperator<dim, number>::do_cell_integral_local(
             {
               // (-ν∆δu)τ·∇q
               gradient_result[dim][i] +=
-                -tau * this->viscosity * hessian_diagonal[i][k];
+                -tau * this->kinematic_viscosity * hessian_diagonal[i][k];
               // +((u·∇)δu)τ·∇q
               gradient_result[dim][i] +=
                 tau * gradient[i][k] * previous_values[k];
@@ -657,7 +658,7 @@ NavierStokesSUPGPSPGOperator<dim, number>::do_cell_integral_local(
               gradient_result[i][k] +=
                 tau * previous_values[k] * gradient[dim][i];
               // (-ν∆δu)τu·∇v
-              gradient_result[i][k] += -tau * this->viscosity *
+              gradient_result[i][k] += -tau * this->kinematic_viscosity *
                                        previous_values[k] *
                                        hessian_diagonal[i][k];
 
@@ -669,7 +670,8 @@ NavierStokesSUPGPSPGOperator<dim, number>::do_cell_integral_local(
               gradient_result[i][k] +=
                 tau * value[k] * previous_gradient[dim][i];
               // (-ν∆u)τδu·∇v
-              gradient_result[i][k] += -tau * this->viscosity * value[k] *
+              gradient_result[i][k] += -tau * this->kinematic_viscosity *
+                                       value[k] *
                                        previous_hessian_diagonal[i][k];
               // (-f)τδu·∇v
               gradient_result[i][k] += -tau * value[k] * source_value[i];
@@ -737,9 +739,10 @@ NavierStokesSUPGPSPGOperator<dim, number>::local_evaluate_residual(
           for (unsigned int v = 0; v < VectorizedArray<double>::size(); ++v)
             {
               tau[v] =
-                1. / std::sqrt(4. * u_mag[v] / h[v] / h[v] +
-                               9 * Utilities::fixed_power<2>(
-                                     4 * this->viscosity / (h[v] * h[v])));
+                1. /
+                std::sqrt(4. * u_mag[v] / h[v] / h[v] +
+                          9 * Utilities::fixed_power<2>(
+                                4 * this->kinematic_viscosity / (h[v] * h[v])));
             }
           // Result value/gradient we will use
           typename FECellIntegrator::value_type    value_result;
@@ -749,7 +752,7 @@ NavierStokesSUPGPSPGOperator<dim, number>::local_evaluate_residual(
           for (unsigned int i = 0; i < dim; ++i)
             {
               // ν(∇v,∇u)
-              gradient_result[i] = this->viscosity * gradient[i];
+              gradient_result[i] = this->kinematic_viscosity * gradient[i];
               // -(∇·v,p)
               gradient_result[i][i] += -value[dim];
               // -(v,f)
@@ -773,7 +776,7 @@ NavierStokesSUPGPSPGOperator<dim, number>::local_evaluate_residual(
                 {
                   //(-ν∆u)τ∇·q
                   gradient_result[dim][i] +=
-                    -tau * this->viscosity * hessian_diagonal[i][k];
+                    -tau * this->kinematic_viscosity * hessian_diagonal[i][k];
                   //+((u·∇)u)τ∇·q
                   gradient_result[dim][i] += tau * gradient[i][k] * value[k];
                 }
@@ -789,8 +792,8 @@ NavierStokesSUPGPSPGOperator<dim, number>::local_evaluate_residual(
                   // (-f)τu·∇v
                   gradient_result[i][k] += -tau * value[k] * source_value[i];
                   // (-ν∆u)τu·∇v
-                  gradient_result[i][k] +=
-                    -tau * this->viscosity * value[k] * hessian_diagonal[i][k];
+                  gradient_result[i][k] += -tau * this->kinematic_viscosity *
+                                           value[k] * hessian_diagonal[i][k];
                   // + ((u·∇)u)τu·∇v
                   gradient_result[i][k] +=
                     tau * value[k] * gradient[i][k] * value[k];

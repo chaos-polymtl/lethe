@@ -331,14 +331,14 @@ public:
   dealii::types::material_id           material_id;
   double                               epsilon;
   std::vector<double>                  density;
-  std::vector<double>                  viscosity;
+  std::vector<double>                  kinematic_viscosity;
 
   // Auxiliary property vector for CH simulations
   std::vector<double> density_0;
-  std::vector<double> viscosity_0;
+  std::vector<double> kinematic_viscosity_0;
 
   std::vector<double> density_1;
-  std::vector<double> viscosity_1;
+  std::vector<double> kinematic_viscosity_1;
 
   FEValuesExtractors::Scalar phase_order;
   FEValuesExtractors::Scalar chemical_potential;

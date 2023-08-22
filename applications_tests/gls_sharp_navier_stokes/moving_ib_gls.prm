@@ -192,8 +192,8 @@ end
 subsection initial conditions
   # Type of initial conditionChoices are <L2projection|viscous|nodal>.
   set type = nodal
-  # viscosity for viscous initial conditions
-  set viscosity = 0.005
+  # Kinematic viscosity for viscous initial conditions
+  set kinematic viscosity = 0.005
 end
 
 # --------------------------------------------------

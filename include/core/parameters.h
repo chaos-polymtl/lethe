@@ -199,10 +199,10 @@ namespace Parameters
     double thermal_expansion_s;
 
     // kinematic viscosity liquid - Units in m^2/(s)
-    double viscosity_l;
+    double kinematic_viscosity_l;
 
     // kinematic viscosity solid - Units in in m^2/(s)
-    double viscosity_s;
+    double kinematic_viscosity_s;
 
     static void
     declare_parameters(ParameterHandler &prm);
@@ -220,8 +220,8 @@ namespace Parameters
     double K;
     // Flow behavior index"
     double n;
-    // Minimal shear rate magnitude for which we calculate viscosity, since
-    // power-law does not allow for minimal viscosity
+    // Minimal shear rate magnitude for which we calculate kinematic viscosity,
+    // since power-law does not allow for minimal kinematic viscosity
     double shear_rate_min;
 
     static void
@@ -236,10 +236,11 @@ namespace Parameters
    */
   struct CarreauParameters
   {
-    // Viscosity of the flow when the shear rate tends to 0
-    double viscosity_0;
-    // Hypothetical viscosity of the flow when the shear rate is very high
-    double viscosity_inf;
+    // Kinematic viscosity of the flow when the shear rate tends to 0
+    double kinematic_viscosity_0;
+    // Hypothetical kinematic viscosity of the flow when the shear rate is very
+    // high
+    double kinematic_viscosity_inf;
     // Relaxation time
     double lambda;
     // Carreau parameter
@@ -254,9 +255,8 @@ namespace Parameters
   };
 
   /**
-   * @brief Non Newtonian - Defines the parameters for
-   * non newtonian flows according to the chosen
-   * rheological model.
+   * @brief Non Newtonian - Defines the parameters for non newtonian flows
+   * according to the chosen rheological model.
    */
   struct NonNewtonian
   {
@@ -271,8 +271,8 @@ namespace Parameters
 
 
   /**
-   * @brief Isothermal ideal gas model to solve for isothermal weakly compressible fluid
-   * flows.
+   * @brief Isothermal ideal gas model to solve for isothermal weakly
+   * compressible fluid flows.
    */
   struct IsothermalIdealGasDensityParameters
   {
@@ -290,7 +290,8 @@ namespace Parameters
   };
 
   /**
-   * @brief SurfaceTensionParameters - Defines parameters for surface tension models
+   * @brief SurfaceTensionParameters - Defines parameters for surface tension
+   * models
    */
   struct SurfaceTensionParameters
   {
@@ -304,7 +305,8 @@ namespace Parameters
   };
 
   /**
-   * @brief MobilityCahnHilliardParameters - Defines parameters for the mobility models used in the Cahn-Hilliard equations.
+   * @brief MobilityCahnHilliardParameters - Defines parameters for the mobility
+   * models used in the Cahn-Hilliard equations.
    */
   struct MobilityCahnHilliardParameters
   {
@@ -340,7 +342,7 @@ namespace Parameters
                      const Dimensionality dimensions);
 
     // Kinematic viscosity (nu = mu/rho) in units of L^2/s
-    double viscosity;
+    double kinematic_viscosity;
     // volumetric mass density (rho) in units of kg/m^3
     double density;
     // specific heat capacity (cp) in J/K/kg

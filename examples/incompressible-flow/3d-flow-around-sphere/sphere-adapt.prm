@@ -56,8 +56,8 @@ end
 #---------------------------------------------------
 
 subsection initial conditions
-  set type      = viscous
-  set viscosity = 0.1
+  set type                = viscous
+  set kinematic viscosity = 0.1
 end
 
 #---------------------------------------------------
