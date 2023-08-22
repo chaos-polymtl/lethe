@@ -451,12 +451,14 @@ MFNavierStokesSolver<dim>::solve_linear_system(const bool initial_step,
                                                const bool /* renewed_matrix */)
 {
   const double absolute_residual =
-    this->simulation_parameters.linear_solver.minimum_residual;
+    this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+      .minimum_residual;
   const double relative_residual =
-    this->simulation_parameters.linear_solver.relative_residual;
+    this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+      .relative_residual;
 
-  if (this->simulation_parameters.linear_solver.solver ==
-      Parameters::LinearSolver::SolverType::gmres)
+  if (this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+        .solver == Parameters::LinearSolver::SolverType::gmres)
     solve_system_GMRES(initial_step, absolute_residual, relative_residual);
   else
     AssertThrow(false, ExcMessage("This solver is not allowed"));
@@ -489,23 +491,25 @@ MFNavierStokesSolver<dim>::solve_system_GMRES(const bool   initial_step,
   const double linear_solver_tolerance =
     std::max(relative_residual * system_rhs.l2_norm(), absolute_residual);
 
-  if (this->simulation_parameters.linear_solver.verbosity !=
-      Parameters::Verbosity::quiet)
+  if (this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+        .verbosity != Parameters::Verbosity::quiet)
     {
       this->pcout << "  -Tolerance of iterative solver is : "
                   << linear_solver_tolerance << std::endl;
     }
 
-  SolverControl solver_control(
-    this->simulation_parameters.linear_solver.max_iterations,
-    linear_solver_tolerance,
-    true,
-    true);
+  SolverControl solver_control(this->simulation_parameters.linear_solver
+                                 .at(PhysicsID::fluid_dynamics)
+                                 .max_iterations,
+                               linear_solver_tolerance,
+                               true,
+                               true);
 
   SolverGMRES<VectorType>::AdditionalData solver_parameters;
 
   solver_parameters.max_n_tmp_vectors =
-    this->simulation_parameters.linear_solver.max_krylov_vectors;
+    this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+      .max_krylov_vectors;
 
   while (success == false and iter < max_iter)
     {
@@ -529,8 +533,9 @@ MFNavierStokesSolver<dim>::solve_system_GMRES(const bool   initial_step,
                          system_rhs,
                          preconditioner);
 
-            if (this->simulation_parameters.linear_solver.verbosity !=
-                Parameters::Verbosity::quiet)
+            if (this->simulation_parameters.linear_solver
+                  .at(PhysicsID::fluid_dynamics)
+                  .verbosity != Parameters::Verbosity::quiet)
               {
                 this->pcout
                   << "  -Iterative solver took : " << solver_control.last_step()
@@ -546,6 +551,7 @@ MFNavierStokesSolver<dim>::solve_system_GMRES(const bool   initial_step,
           this->pcout << " GMRES solver failed!" << std::endl;
 
           if (iter == max_iter - 1 && !this->simulation_parameters.linear_solver
+                                         .at(PhysicsID::fluid_dynamics)
                                          .force_linear_solver_continuation)
             throw e;
         }

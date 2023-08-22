@@ -236,15 +236,17 @@ Linear Solver
 .. code-block:: text
 
     subsection linear solver
-      set method                                = gmres
-      set max iters                             = 1000
-      set relative residual                     = 1e-4
-      set minimum residual                      = 1e-11
-      set ilu preconditioner fill               = 0
-      set ilu preconditioner absolute tolerance = 1e-20
-      set ilu preconditioner relative tolerance = 1.00
-      set verbosity                             = verbose
-      set max krylov vectors                    = 1000
+      subsection fluid dynamics
+        set method                                = gmres
+        set max iters                             = 1000
+        set relative residual                     = 1e-4
+        set minimum residual                      = 1e-11
+        set ilu preconditioner fill               = 0
+        set ilu preconditioner absolute tolerance = 1e-20
+        set ilu preconditioner relative tolerance = 1.00
+        set verbosity                             = verbose
+        set max krylov vectors                    = 1000
+      end
     end
 
 * The ``method`` is set to ``gmres``. This solver is less computationally expensive than the other option, and this case does not require any special preconditioner. This makes the ``gmres`` solver the best option available.

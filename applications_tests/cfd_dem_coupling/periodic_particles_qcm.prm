@@ -193,15 +193,17 @@ end
 #---------------------------------------------------
 
 subsection linear solver
-  set method                                = gmres
-  set max iters                             = 200
-  set relative residual                     = 1e-4
-  set minimum residual                      = 1e-12
-  set ilu preconditioner fill               = 0
-  set ilu preconditioner absolute tolerance = 1e-14
-  set ilu preconditioner relative tolerance = 1.00
-  set verbosity                             = quiet
-  set max krylov vectors                    = 200
+  subsection fluid dynamics
+    set method                                = gmres
+    set max iters                             = 200
+    set relative residual                     = 1e-4
+    set minimum residual                      = 1e-12
+    set ilu preconditioner fill               = 0
+    set ilu preconditioner absolute tolerance = 1e-14
+    set ilu preconditioner relative tolerance = 1.00
+    set verbosity                             = quiet
+    set max krylov vectors                    = 200
+  end
 end
 
 #---------------------------------------------------

@@ -1,77 +1,79 @@
-=====================
-Linear Solver Control
-=====================
+=============
+Linear Solver
+=============
 
-In this subsection, the control options of linear solvers are specified. These control options may include solution method, maximum number of iterations, tolerance, residual precision and preconditioner information. The default values for these parameters are given in the text box below.
+In this subsection, the control options of the linear solvers are specified. The default values for the linear solver parameters are given in the text box below. Lethe supports different physics (``fluid dynamics``, ``VOF``, ``heat transfer``, ``cahn hilliard`` and ``tracer``) and it is possible to specify linear solver parameters for each of them. In the example below, only ``fluid dynamics`` is used but the same block can be used for other physics.
 
 .. seealso::
-	For further understanding about the numerical method used and advanced parameters, the interested reader is referred to the Theory Documentation.
+	For further understanding about the linear solvers used, the preconditioners supported and all parameters, see the :doc:`../../theory/fluid_dynamics/linear_solvers` theory section.
 
 .. code-block:: text
 
   subsection linear solver
-    # Iterative solver for the linear system of equations
-    set method                                    = gmres
+    subsection fluid dynamics
+      # Iterative solver for the linear system of equations
+      set method                                    = gmres
 
-    # State whether information from the linear solver should be printed
-    set verbosity                                 = verbose
+      # State whether information from the linear solver should be printed
+      set verbosity                                 = verbose
 
-    # Linear solver minimum residual
-    set minimum residual                          = 1e-12
+      # Linear solver minimum residual
+      set minimum residual                          = 1e-12
 
-    # Linear solver residual
-    set relative residual                         = 1e-3
+      # Linear solver residual
+      set relative residual                         = 1e-3
 
-    # Maximum solver iterations
-    set max iters                                 = 1000
+      # Maximum solver iterations
+      set max iters                                 = 1000
 
-    # Force the linear solver to continue even if it fails
-    set force linear solver continuation          = false
+      # Force the linear solver to continue even if it fails
+      set force linear solver continuation          = false
 
-    # Maximum number of krylov vectors for GMRES and AMG solvers
-    set max krylov vectors                        = 100
+      # Maximum number of krylov vectors for GMRES and AMG solvers
+      set max krylov vectors                        = 100
 
-    #-------------------------------------------------------------
-    # ILU preconditioner parameters for GMRES and BICGSTAB solvers
-    #-------------------------------------------------------------
-    # ILU preconditioner fill
-    set ilu preconditioner fill                   = 0
+      #-------------------------------------------------------------
+      # ILU preconditioner parameters for GMRES and BICGSTAB solvers
+      #-------------------------------------------------------------
+      # ILU preconditioner fill
+      set ilu preconditioner fill                   = 0
 
-    # ILU preconditioner tolerance
-    set ilu preconditioner absolute tolerance     = 1e-12
+      # ILU preconditioner tolerance
+      set ilu preconditioner absolute tolerance     = 1e-12
 
-    # ILU relative tolerance
-    set ilu preconditioner relative tolerance     = 1.00
+      # ILU relative tolerance
+      set ilu preconditioner relative tolerance     = 1.00
 
-    #---------------------------------------------------------
-    # ILU smoother/coarsener parameters for AMG preconditioner
-    #---------------------------------------------------------
-    # AMG preconditioner ILU smoother/coarsener fill
-    set amg preconditioner ilu fill               = 0
+      #---------------------------------------------------------
+      # ILU smoother/coarsener parameters for AMG preconditioner
+      #---------------------------------------------------------
+      # AMG preconditioner ILU smoother/coarsener fill
+      set amg preconditioner ilu fill               = 0
 
-    # AMG preconditioner ILU smoother/coarsener absolute tolerance
-    set amg preconditioner ilu absolute tolerance = 1e-12
+      # AMG preconditioner ILU smoother/coarsener absolute tolerance
+      set amg preconditioner ilu absolute tolerance = 1e-12
 
-    # AMG preconditioner ILU smoother/coarsener relative tolerance
-    set amg preconditioner ilu relative tolerance = 1.00
+      # AMG preconditioner ILU smoother/coarsener relative tolerance
+      set amg preconditioner ilu relative tolerance = 1.00
 
-    #---------------------------------------------------
-    # other AMG solver parameters
-    #---------------------------------------------------
-    # AMG aggregation threshold
-    set amg aggregation threshold                 = 1e-14
+      #---------------------------------------------------
+      # other AMG solver parameters
+      #---------------------------------------------------
+      # AMG aggregation threshold
+      set amg aggregation threshold                 = 1e-14
 
-    # AMG number of cycles
-    set amg n cycles                              = 1
+      # AMG number of cycles
+      set amg n cycles                              = 1
 
-    # AMG w cycling. If this is set to true, W cycling is used. Otherwise, V cycling is used.
-    set amg w cycles                              = false
+      # AMG w cycling. If this is set to true, W cycling is used. Otherwise, V cycling is used.
+      set amg w cycles                              = false
 
-    # AMG smoother sweeps
-    set amg smoother sweeps                       = 2
+      # AMG smoother sweeps
+      set amg smoother sweeps                       = 2
 
-    # amg smoother overlap
-    set amg smoother overlap                      = 1
+      # amg smoother overlap
+      set amg smoother overlap                      = 1
+    end
   end
 
 

@@ -175,8 +175,10 @@ Each non-linear solver step requires the solution of a linear system of equation
 .. code-block:: text
 
   subsection linear solver
-    set method    = amg
-    set verbosity = verbose
+    subsection fluid dynamics
+      set method    = amg
+      set verbosity = verbose
+    end
   end
 
 Simulation Control

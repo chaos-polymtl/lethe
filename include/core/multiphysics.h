@@ -35,4 +35,24 @@ enum PhysicsID : unsigned int
   cahn_hilliard  = 4
 };
 
+/**
+ * @brief Utility function used for parsing physics-based
+ * parameters
+ *
+ */
+inline PhysicsID
+get_physics_id(std::string physics_name)
+{
+  if (physics_name == "fluid dynamics")
+    return PhysicsID::fluid_dynamics;
+  else if (physics_name == "heat transfer")
+    return PhysicsID::heat_transfer;
+  else if (physics_name == "tracer")
+    return PhysicsID::tracer;
+  else if (physics_name == "VOF")
+    return PhysicsID::VOF;
+  else
+    return PhysicsID::cahn_hilliard;
+}
+
 #endif

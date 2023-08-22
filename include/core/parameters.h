@@ -881,8 +881,9 @@ namespace Parameters
   };
 
   /**
-   * @brief LinearSolver - Parameters that controls the solution of the
-   * linear system of equations that arise from the finite element problem.
+   * @brief LinearSolver - Parameters that control the solution of the
+   * linear system of equations that arise from the finite element problem for
+   * each of the physics available in Lethe
    */
   struct LinearSolver
   {
@@ -894,11 +895,13 @@ namespace Parameters
       amg,
       direct
     };
+
     SolverType solver;
 
+    // Verbosity of linear solver
     Verbosity verbosity;
 
-    // Relative residual of the iterative solver
+    // Relative residuals of the iterative solver
     double relative_residual;
 
     // Minimum residual of the iterative solver
@@ -947,9 +950,9 @@ namespace Parameters
     bool force_linear_solver_continuation;
 
     static void
-    declare_parameters(ParameterHandler &prm);
+    declare_parameters(ParameterHandler &prm, const std::string &physics_name);
     void
-    parse_parameters(ParameterHandler &prm);
+    parse_parameters(ParameterHandler &prm, const std::string &physics_name);
   };
 
   /**

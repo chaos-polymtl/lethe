@@ -279,8 +279,7 @@ BlockSchurPreconditioner<BSPreconditioner>::BlockSchurPreconditioner(
   const TrilinosWrappers::SparseMatrix &     P,
   const BSPreconditioner *                   p_amat_preconditioner,
   const BSPreconditioner *                   p_pmass_preconditioner,
-
-  Parameters::LinearSolver p_solver_parameters)
+  Parameters::LinearSolver                   p_solver_parameters)
   : gamma(gamma)
   , kinematic_viscosity(kinematic_viscosity)
   , linear_solver_parameters(p_solver_parameters)

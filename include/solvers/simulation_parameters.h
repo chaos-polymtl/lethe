@@ -37,7 +37,7 @@ class SimulationParameters
 {
 public:
   Parameters::Testing                               test;
-  Parameters::LinearSolver                          linear_solver;
+  std::map<PhysicsID, Parameters::LinearSolver>     linear_solver;
   Parameters::NonLinearSolver                       non_linear_solver;
   Parameters::MeshAdaptation                        mesh_adaptation;
   Parameters::Mesh                                  mesh;
@@ -101,9 +101,11 @@ public:
     Parameters::MeshAdaptation::declare_parameters(prm);
     mesh_box_refinement = std::make_shared<Parameters::MeshBoxRefinement>();
     mesh_box_refinement->declare_parameters(prm);
-
     Parameters::NonLinearSolver::declare_parameters(prm);
-    Parameters::LinearSolver::declare_parameters(prm);
+
+    for (auto physics_name : physics_names)
+      Parameters::LinearSolver::declare_parameters(prm, physics_name);
+
     Parameters::PostProcessing::declare_parameters(prm);
     Parameters::DynamicFlowControl ::declare_parameters(prm);
     particlesParameters = std::make_shared<Parameters::IBParticles<dim>>();
@@ -128,7 +130,13 @@ public:
   {
     dimensionality.parse_parameters(prm);
     test.parse_parameters(prm);
-    linear_solver.parse_parameters(prm);
+
+    for (auto physics_name : physics_names)
+      {
+        PhysicsID physics_id = get_physics_id(physics_name);
+        linear_solver[physics_id].parse_parameters(prm, physics_name);
+      }
+
     non_linear_solver.parse_parameters(prm);
     mesh_adaptation.parse_parameters(prm);
     mesh.parse_parameters(prm);
@@ -258,6 +266,12 @@ public:
 
 private:
   Parameters::PhysicalProperties physical_properties;
+  // names for the physics supported by Lethe
+  std::vector<std::string> physics_names = {"fluid dynamics",
+                                            "heat transfer",
+                                            "tracer",
+                                            "VOF",
+                                            "cahn hilliard"};
 };
 
 #endif

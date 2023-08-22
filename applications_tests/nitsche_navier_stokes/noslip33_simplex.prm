@@ -143,20 +143,22 @@ end
 #---------------------------------------------------
 
 subsection linear solver
-  set verbosity                                 = quiet
-  set method                                    = gmres
-  set max iters                                 = 500
-  set max krylov vectors                        = 30
-  set relative residual                         = 1e-3
-  set minimum residual                          = 1e-10
-  set ilu preconditioner fill                   = 3
-  set ilu preconditioner absolute tolerance     = 1e-12
-  set ilu preconditioner relative tolerance     = 1.00
-  set amg preconditioner ilu fill               = 5
-  set amg preconditioner ilu absolute tolerance = 1e-6
-  set amg preconditioner ilu relative tolerance = 1.00
-  set amg n cycles                              = 1
-  set amg w cycles                              = false
-  set amg smoother sweeps                       = 2
-  set amg smoother overlap                      = 1
+  subsection fluid dynamics
+    set verbosity                                 = quiet
+    set method                                    = gmres
+    set max iters                                 = 500
+    set max krylov vectors                        = 30
+    set relative residual                         = 1e-3
+    set minimum residual                          = 1e-10
+    set ilu preconditioner fill                   = 3
+    set ilu preconditioner absolute tolerance     = 1e-12
+    set ilu preconditioner relative tolerance     = 1.00
+    set amg preconditioner ilu fill               = 5
+    set amg preconditioner ilu absolute tolerance = 1e-6
+    set amg preconditioner ilu relative tolerance = 1.00
+    set amg n cycles                              = 1
+    set amg w cycles                              = false
+    set amg smoother sweeps                       = 2
+    set amg smoother overlap                      = 1
+  end
 end

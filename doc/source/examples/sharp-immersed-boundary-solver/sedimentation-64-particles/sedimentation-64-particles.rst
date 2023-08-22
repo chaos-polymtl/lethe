@@ -207,14 +207,16 @@ Linear Solver
 .. code-block:: text
 
     subsection linear solver
-      set method                                = gmres
-      set max iters                             = 1000
-      set relative residual                     = 1e-4
-      set minimum residual                      = 1e-11
-      set ilu preconditioner fill               = 0
-      set ilu preconditioner absolute tolerance = 1e-6
-      set verbosity                             = verbose
-      set max krylov vectors                    = 1000
+      subsection fluid dynamics
+        set method                                = gmres
+        set max iters                             = 1000
+        set relative residual                     = 1e-4
+        set minimum residual                      = 1e-11
+        set ilu preconditioner fill               = 0
+        set ilu preconditioner absolute tolerance = 1e-6
+        set verbosity                             = verbose
+        set max krylov vectors                    = 1000
+      end
     end
 
 

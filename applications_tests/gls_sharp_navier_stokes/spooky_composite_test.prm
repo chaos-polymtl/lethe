@@ -105,5 +105,7 @@ subsection timer
 end
 
 subsection linear solver
-  set verbosity = quiet
+  subsection fluid dynamics
+    set verbosity = quiet
+  end
 end
