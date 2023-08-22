@@ -334,15 +334,17 @@ Linear Solver
 .. code-block:: text
 
     subsection linear solver
-      set method                                = gmres
-      set max iters                             = 5000
-      set relative residual                     = 1e-3
-      set minimum residual                      = 1e-10
-      set ilu preconditioner fill               = 0
-      set ilu preconditioner absolute tolerance = 1e-12
-      set ilu preconditioner relative tolerance = 1
-      set verbosity                             = verbose
-      set max krylov vectors                    = 200
+      subsection fluid dynamics
+        set method                                = gmres
+        set max iters                             = 5000
+        set relative residual                     = 1e-3
+        set minimum residual                      = 1e-10
+        set ilu preconditioner fill               = 0
+        set ilu preconditioner absolute tolerance = 1e-12
+        set ilu preconditioner relative tolerance = 1
+        set verbosity                             = verbose
+        set max krylov vectors                    = 200
+      end
     end
 
 For more information about the linear solver, please refer to the `Linear Solver Section <../../../parameters/cfd/linear_solver_control.html>`_

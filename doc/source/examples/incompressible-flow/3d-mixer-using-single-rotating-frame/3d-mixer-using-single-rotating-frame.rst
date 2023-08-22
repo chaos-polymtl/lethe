@@ -228,20 +228,22 @@ Relatively standard parameters are used for the linear solver. From our experien
 .. code-block:: text
 
     subsection linear solver
-      set method                                    = amg
-      set max iters                                 = 100
-      set relative residual                         = 1e-4
-      set minimum residual                          = 1e-10
-      set amg preconditioner ilu fill               = 0
-      set amg preconditioner ilu absolute tolerance = 1e-11
-      set amg preconditioner ilu relative tolerance = 1.00
-      set amg aggregation threshold                 = 1e-14  # Aggregation
-      set amg n cycles                              = 2      # Number of AMG cycles
-      set amg w cycles                              = false  # W cycles, otherwise V cycles
-      set amg smoother sweeps                       = 2      # Sweeps
-      set amg smoother overlap                      = 1      # Overlap
-      set verbosity                                 = verbose
-      set max krylov vectors                        = 500
+      subsection fluid dynamics
+        set method                                    = amg
+        set max iters                                 = 100
+        set relative residual                         = 1e-4
+        set minimum residual                          = 1e-10
+        set amg preconditioner ilu fill               = 0
+        set amg preconditioner ilu absolute tolerance = 1e-11
+        set amg preconditioner ilu relative tolerance = 1.00
+        set amg aggregation threshold                 = 1e-14  # Aggregation
+        set amg n cycles                              = 2      # Number of AMG cycles
+        set amg w cycles                              = false  # W cycles, otherwise V cycles
+        set amg smoother sweeps                       = 2      # Sweeps
+        set amg smoother overlap                      = 1      # Overlap
+        set verbosity                                 = verbose
+        set max krylov vectors                        = 500
+      end
     end
 
 

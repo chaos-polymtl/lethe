@@ -55,10 +55,12 @@ GLSNavierStokesSolver<dim>::GLSNavierStokesSolver(
   : NavierStokesBase<dim, TrilinosWrappers::MPI::Vector, IndexSet>(p_nsparam)
 {
   initial_preconditioner_fill_level =
-    ((this->simulation_parameters.linear_solver.solver ==
-      Parameters::LinearSolver::SolverType::amg) ?
-       this->simulation_parameters.linear_solver.amg_precond_ilu_fill :
-       this->simulation_parameters.linear_solver.ilu_precond_fill);
+    ((this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+        .solver == Parameters::LinearSolver::SolverType::amg) ?
+       this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+         .amg_precond_ilu_fill :
+       this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+         .ilu_precond_fill);
 }
 
 template <int dim>
@@ -1034,8 +1036,9 @@ GLSNavierStokesSolver<dim>::set_initial_condition_fd(
       assemble_L2_projection();
       setup_preconditioner();
 
-      if (this->simulation_parameters.linear_solver.solver ==
-          Parameters::LinearSolver::SolverType::amg)
+      if (this->simulation_parameters.linear_solver
+            .at(PhysicsID::fluid_dynamics)
+            .solver == Parameters::LinearSolver::SolverType::amg)
         solve_system_AMG(true, 1e-15, 1e-15);
       else
         solve_system_GMRES(true, 1e-15, 1e-15);
@@ -1253,21 +1256,26 @@ GLSNavierStokesSolver<dim>::solve_linear_system(const bool initial_step,
                                                 const bool /* renewed_matrix */)
 {
   const double absolute_residual =
-    this->simulation_parameters.linear_solver.minimum_residual;
+    this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+      .minimum_residual;
   const double relative_residual =
-    this->simulation_parameters.linear_solver.relative_residual;
+    this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+      .relative_residual;
 
-  if (this->simulation_parameters.linear_solver.solver ==
-      Parameters::LinearSolver::SolverType::gmres)
+  if (this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+        .solver == Parameters::LinearSolver::SolverType::gmres)
     solve_system_GMRES(initial_step, absolute_residual, relative_residual);
-  else if (this->simulation_parameters.linear_solver.solver ==
-           Parameters::LinearSolver::SolverType::bicgstab)
+  else if (this->simulation_parameters.linear_solver
+             .at(PhysicsID::fluid_dynamics)
+             .solver == Parameters::LinearSolver::SolverType::bicgstab)
     solve_system_BiCGStab(initial_step, absolute_residual, relative_residual);
-  else if (this->simulation_parameters.linear_solver.solver ==
-           Parameters::LinearSolver::SolverType::amg)
+  else if (this->simulation_parameters.linear_solver
+             .at(PhysicsID::fluid_dynamics)
+             .solver == Parameters::LinearSolver::SolverType::amg)
     solve_system_AMG(initial_step, absolute_residual, relative_residual);
-  else if (this->simulation_parameters.linear_solver.solver ==
-           Parameters::LinearSolver::SolverType::direct)
+  else if (this->simulation_parameters.linear_solver
+             .at(PhysicsID::fluid_dynamics)
+             .solver == Parameters::LinearSolver::SolverType::direct)
     solve_system_direct(initial_step, absolute_residual, relative_residual);
   else
     throw(std::runtime_error("This solver is not allowed"));
@@ -1278,13 +1286,14 @@ template <int dim>
 void
 GLSNavierStokesSolver<dim>::setup_preconditioner()
 {
-  if (this->simulation_parameters.linear_solver.solver ==
-        Parameters::LinearSolver::SolverType::gmres ||
-      this->simulation_parameters.linear_solver.solver ==
-        Parameters::LinearSolver::SolverType::bicgstab)
+  if (this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+          .solver == Parameters::LinearSolver::SolverType::gmres ||
+      this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+          .solver == Parameters::LinearSolver::SolverType::bicgstab)
     setup_ILU();
-  else if (this->simulation_parameters.linear_solver.solver ==
-           Parameters::LinearSolver::SolverType::amg)
+  else if (this->simulation_parameters.linear_solver
+             .at(PhysicsID::fluid_dynamics)
+             .solver == Parameters::LinearSolver::SolverType::amg)
     setup_AMG();
 }
 
@@ -1296,9 +1305,11 @@ GLSNavierStokesSolver<dim>::setup_ILU()
   TimerOutput::Scope t(this->computing_timer, "Setup ILU");
 
   const double ilu_atol =
-    this->simulation_parameters.linear_solver.ilu_precond_atol;
+    this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+      .ilu_precond_atol;
   const double ilu_rtol =
-    this->simulation_parameters.linear_solver.ilu_precond_rtol;
+    this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+      .ilu_precond_rtol;
   TrilinosWrappers::PreconditionILU::AdditionalData preconditionerOptions(
     current_preconditioner_fill_level, ilu_atol, ilu_rtol, 0);
 
@@ -1330,14 +1341,20 @@ GLSNavierStokesSolver<dim>::setup_AMG()
   if (this->velocity_fem_degree > 1)
     higher_order_elements = true;
   const unsigned int n_cycles =
-    this->simulation_parameters.linear_solver.amg_n_cycles;
-  const bool   w_cycle = this->simulation_parameters.linear_solver.amg_w_cycles;
+    this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+      .amg_n_cycles;
+  const bool w_cycle =
+    this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+      .amg_w_cycles;
   const double aggregation_threshold =
-    this->simulation_parameters.linear_solver.amg_aggregation_threshold;
+    this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+      .amg_aggregation_threshold;
   const unsigned int smoother_sweeps =
-    this->simulation_parameters.linear_solver.amg_smoother_sweeps;
+    this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+      .amg_smoother_sweeps;
   const unsigned int smoother_overlap =
-    this->simulation_parameters.linear_solver.amg_smoother_overlap;
+    this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+      .amg_smoother_overlap;
   const bool                                        output_details = false;
   const char *                                      smoother_type  = "ILU";
   const char *                                      coarse_type    = "ILU";
@@ -1361,9 +1378,11 @@ GLSNavierStokesSolver<dim>::setup_AMG()
                                        system_matrix);
   const double ilu_fill = current_preconditioner_fill_level;
   const double ilu_atol =
-    this->simulation_parameters.linear_solver.amg_precond_ilu_atol;
+    this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+      .amg_precond_ilu_atol;
   const double ilu_rtol =
-    this->simulation_parameters.linear_solver.amg_precond_ilu_rtol;
+    this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+      .amg_precond_ilu_rtol;
   parameter_ml.set("smoother: ifpack level-of-fill", ilu_fill);
   parameter_ml.set("smoother: ifpack absolute threshold", ilu_atol);
   parameter_ml.set("smoother: ifpack relative threshold", ilu_rtol);
@@ -1401,8 +1420,8 @@ GLSNavierStokesSolver<dim>::solve_system_GMRES(const bool   initial_step,
   const double linear_solver_tolerance =
     std::max(relative_residual * system_rhs.l2_norm(), absolute_residual);
 
-  if (this->simulation_parameters.linear_solver.verbosity !=
-      Parameters::Verbosity::quiet)
+  if (this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+        .verbosity != Parameters::Verbosity::quiet)
     {
       this->pcout << "  -Tolerance of iterative solver is : "
                   << linear_solver_tolerance << std::endl;
@@ -1410,19 +1429,21 @@ GLSNavierStokesSolver<dim>::solve_system_GMRES(const bool   initial_step,
   TrilinosWrappers::MPI::Vector completely_distributed_solution(
     this->locally_owned_dofs, this->mpi_communicator);
 
-  SolverControl solver_control(
-    this->simulation_parameters.linear_solver.max_iterations,
-    linear_solver_tolerance,
-    true,
-    true);
-  bool extra_verbose = false;
-  if (this->simulation_parameters.linear_solver.verbosity ==
-      Parameters::Verbosity::extra_verbose)
+  SolverControl solver_control(this->simulation_parameters.linear_solver
+                                 .at(PhysicsID::fluid_dynamics)
+                                 .max_iterations,
+                               linear_solver_tolerance,
+                               true,
+                               true);
+  bool          extra_verbose = false;
+  if (this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+        .verbosity == Parameters::Verbosity::extra_verbose)
     extra_verbose = true;
 
   TrilinosWrappers::SolverGMRES::AdditionalData solver_parameters(
     extra_verbose,
-    this->simulation_parameters.linear_solver.max_krylov_vectors);
+    this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+      .max_krylov_vectors);
   while (success == false and iter < max_iter)
     {
       try
@@ -1441,8 +1462,9 @@ GLSNavierStokesSolver<dim>::solve_system_GMRES(const bool   initial_step,
                          system_rhs,
                          *ilu_preconditioner);
 
-            if (this->simulation_parameters.linear_solver.verbosity !=
-                Parameters::Verbosity::quiet)
+            if (this->simulation_parameters.linear_solver
+                  .at(PhysicsID::fluid_dynamics)
+                  .verbosity != Parameters::Verbosity::quiet)
               {
                 this->pcout
                   << "  -Iterative solver took : " << solver_control.last_step()
@@ -1463,6 +1485,7 @@ GLSNavierStokesSolver<dim>::solve_system_GMRES(const bool   initial_step,
           setup_preconditioner();
 
           if (iter == max_iter - 1 && !this->simulation_parameters.linear_solver
+                                         .at(PhysicsID::fluid_dynamics)
                                          .force_linear_solver_continuation)
             throw e;
         }
@@ -1491,8 +1514,8 @@ GLSNavierStokesSolver<dim>::solve_system_BiCGStab(
     initial_step ? nonzero_constraints : this->zero_constraints;
   const double linear_solver_tolerance =
     std::max(relative_residual * system_rhs.l2_norm(), absolute_residual);
-  if (this->simulation_parameters.linear_solver.verbosity !=
-      Parameters::Verbosity::quiet)
+  if (this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+        .verbosity != Parameters::Verbosity::quiet)
     {
       this->pcout << "  -Tolerance of iterative solver is : "
                   << linear_solver_tolerance << std::endl;
@@ -1501,17 +1524,18 @@ GLSNavierStokesSolver<dim>::solve_system_BiCGStab(
     this->locally_owned_dofs, this->mpi_communicator);
 
   bool extra_verbose = false;
-  if (this->simulation_parameters.linear_solver.verbosity ==
-      Parameters::Verbosity::extra_verbose)
+  if (this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+        .verbosity == Parameters::Verbosity::extra_verbose)
     extra_verbose = true;
   TrilinosWrappers::SolverBicgstab::AdditionalData solver_parameters(
     extra_verbose);
 
-  SolverControl solver_control(
-    this->simulation_parameters.linear_solver.max_iterations,
-    linear_solver_tolerance,
-    true,
-    true);
+  SolverControl solver_control(this->simulation_parameters.linear_solver
+                                 .at(PhysicsID::fluid_dynamics)
+                                 .max_iterations,
+                               linear_solver_tolerance,
+                               true,
+                               true);
   TrilinosWrappers::SolverBicgstab solver(solver_control, solver_parameters);
   while (success == false and iter < max_iter)
     {
@@ -1528,8 +1552,9 @@ GLSNavierStokesSolver<dim>::solve_system_BiCGStab(
                          system_rhs,
                          *ilu_preconditioner);
 
-            if (this->simulation_parameters.linear_solver.verbosity !=
-                Parameters::Verbosity::quiet)
+            if (this->simulation_parameters.linear_solver
+                  .at(PhysicsID::fluid_dynamics)
+                  .verbosity != Parameters::Verbosity::quiet)
               {
                 this->pcout
                   << "  -Iterative solver took : " << solver_control.last_step()
@@ -1549,6 +1574,7 @@ GLSNavierStokesSolver<dim>::solve_system_BiCGStab(
           setup_preconditioner();
 
           if (iter == max_iter - 1 && !this->simulation_parameters.linear_solver
+                                         .at(PhysicsID::fluid_dynamics)
                                          .force_linear_solver_continuation)
             throw e;
         }
@@ -1576,8 +1602,8 @@ GLSNavierStokesSolver<dim>::solve_system_AMG(const bool   initial_step,
 
   const double linear_solver_tolerance =
     std::max(relative_residual * system_rhs.l2_norm(), absolute_residual);
-  if (this->simulation_parameters.linear_solver.verbosity !=
-      Parameters::Verbosity::quiet)
+  if (this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+        .verbosity != Parameters::Verbosity::quiet)
     {
       this->pcout << "  -Tolerance of iterative solver is : "
                   << linear_solver_tolerance << std::endl;
@@ -1585,18 +1611,20 @@ GLSNavierStokesSolver<dim>::solve_system_AMG(const bool   initial_step,
   TrilinosWrappers::MPI::Vector completely_distributed_solution(
     this->locally_owned_dofs, this->mpi_communicator);
 
-  SolverControl solver_control(
-    this->simulation_parameters.linear_solver.max_iterations,
-    linear_solver_tolerance,
-    true,
-    true);
-  bool extra_verbose = false;
-  if (this->simulation_parameters.linear_solver.verbosity ==
-      Parameters::Verbosity::extra_verbose)
+  SolverControl solver_control(this->simulation_parameters.linear_solver
+                                 .at(PhysicsID::fluid_dynamics)
+                                 .max_iterations,
+                               linear_solver_tolerance,
+                               true,
+                               true);
+  bool          extra_verbose = false;
+  if (this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+        .verbosity == Parameters::Verbosity::extra_verbose)
     extra_verbose = true;
   TrilinosWrappers::SolverGMRES::AdditionalData solver_parameters(
     extra_verbose,
-    this->simulation_parameters.linear_solver.max_krylov_vectors);
+    this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+      .max_krylov_vectors);
 
   TrilinosWrappers::SolverGMRES solver(solver_control, solver_parameters);
   while (success == false and iter < max_iter)
@@ -1614,8 +1642,9 @@ GLSNavierStokesSolver<dim>::solve_system_AMG(const bool   initial_step,
                          system_rhs,
                          *amg_preconditioner);
 
-            if (this->simulation_parameters.linear_solver.verbosity !=
-                Parameters::Verbosity::quiet)
+            if (this->simulation_parameters.linear_solver
+                  .at(PhysicsID::fluid_dynamics)
+                  .verbosity != Parameters::Verbosity::quiet)
               {
                 this->pcout
                   << "  -Iterative solver took : " << solver_control.last_step()
@@ -1637,6 +1666,7 @@ GLSNavierStokesSolver<dim>::solve_system_AMG(const bool   initial_step,
           setup_preconditioner();
 
           if (iter == max_iter - 1 && !this->simulation_parameters.linear_solver
+                                         .at(PhysicsID::fluid_dynamics)
                                          .force_linear_solver_continuation)
             throw e;
         }
@@ -1663,11 +1693,12 @@ GLSNavierStokesSolver<dim>::solve_system_direct(const bool   initial_step,
   TrilinosWrappers::MPI::Vector completely_distributed_solution(
     this->locally_owned_dofs, this->mpi_communicator);
 
-  SolverControl solver_control(
-    this->simulation_parameters.linear_solver.max_iterations,
-    linear_solver_tolerance,
-    true,
-    true);
+  SolverControl solver_control(this->simulation_parameters.linear_solver
+                                 .at(PhysicsID::fluid_dynamics)
+                                 .max_iterations,
+                               linear_solver_tolerance,
+                               true,
+                               true);
   TrilinosWrappers::SolverDirect solver(solver_control);
 
   solver.initialize(system_matrix);

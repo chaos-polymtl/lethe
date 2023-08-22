@@ -177,13 +177,37 @@ end
 #---------------------------------------------------
 
 subsection linear solver
-  set verbosity                             = quiet
-  set method                                = gmres
-  set max iters                             = 5000
-  set relative residual                     = 1e-10
-  set minimum residual                      = 1e-10
-  set ilu preconditioner fill               = 1
-  set ilu preconditioner absolute tolerance = 1e-11
-  set ilu preconditioner relative tolerance = 1.00
-  set max krylov vectors                    = 200
+  subsection fluid dynamics
+    set verbosity                             = quiet
+    set method                                = gmres
+    set max iters                             = 5000
+    set relative residual                     = 1e-10
+    set minimum residual                      = 1e-10
+    set ilu preconditioner fill               = 1
+    set ilu preconditioner absolute tolerance = 1e-11
+    set ilu preconditioner relative tolerance = 1.00
+    set max krylov vectors                    = 200
+  end
+  subsection VOF
+    set verbosity                             = quiet
+    set method                                = gmres
+    set max iters                             = 5000
+    set relative residual                     = 1e-10
+    set minimum residual                      = 1e-10
+    set ilu preconditioner fill               = 1
+    set ilu preconditioner absolute tolerance = 1e-11
+    set ilu preconditioner relative tolerance = 1.00
+    set max krylov vectors                    = 200
+  end
+  subsection heat transfer
+    set verbosity                             = quiet
+    set method                                = gmres
+    set max iters                             = 5000
+    set relative residual                     = 1e-10
+    set minimum residual                      = 1e-10
+    set ilu preconditioner fill               = 1
+    set ilu preconditioner absolute tolerance = 1e-11
+    set ilu preconditioner relative tolerance = 1.00
+    set max krylov vectors                    = 200
+  end
 end
