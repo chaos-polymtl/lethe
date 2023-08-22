@@ -541,7 +541,7 @@ calculate_apparent_viscosity(const DoFHandler<dim> &    dof_handler,
   double         integral_shear_rate             = 0;
   double         shear_rate_magnitude;
   Tensor<2, dim> shear_rate;
-  double         viscosity;
+  double         kinematic_viscosity;
   const auto     rheological_model = properties_manager.get_rheology();
 
   const FESystem<dim, dim> fe = dof_handler.get_fe();
@@ -586,10 +586,11 @@ calculate_apparent_viscosity(const DoFHandler<dim> &    dof_handler,
               std::map<field, double> field_values;
               field_values[field::shear_rate] = shear_rate_magnitude;
 
-              viscosity = rheological_model->value(field_values);
+              kinematic_viscosity = rheological_model->value(field_values);
 
               integral_viscosity_x_shear_rate +=
-                viscosity * shear_rate_x_velocity_gradient * fe_values.JxW(q);
+                kinematic_viscosity * shear_rate_x_velocity_gradient *
+                fe_values.JxW(q);
               integral_shear_rate +=
                 shear_rate_x_velocity_gradient * fe_values.JxW(q);
             }
@@ -664,7 +665,7 @@ calculate_forces(
   const FESystem<dim, dim> fe = dof_handler.get_fe();
 
   // Rheological model for viscosity properties
-  double     viscosity;
+  double     kinematic_viscosity;
   const auto rheological_model = properties_manager.get_rheology();
 
 
@@ -737,9 +738,10 @@ calculate_forces(
                               field_values[field::shear_rate] =
                                 shear_rate_magnitude;
 
-                              viscosity =
+                              kinematic_viscosity =
                                 rheological_model->value(field_values);
-                              fluid_viscous_stress = -viscosity * shear_rate;
+                              fluid_viscous_stress =
+                                -kinematic_viscosity * shear_rate;
                               fluid_stress =
                                 -fluid_viscous_stress - fluid_pressure;
 
@@ -841,7 +843,7 @@ calculate_torques(
   const FESystem<dim, dim> fe = dof_handler.get_fe();
 
   // Rheological model for viscosity properties
-  double     viscosity;
+  double     kinematic_viscosity;
   const auto rheological_model = properties_manager.get_rheology();
 
 
@@ -905,11 +907,11 @@ calculate_torques(
                               field_values[field::shear_rate] =
                                 shear_rate_magnitude;
 
-                              viscosity =
+                              kinematic_viscosity =
                                 rheological_model->value(field_values);
 
-                              fluid_stress =
-                                viscosity * shear_rate - fluid_pressure;
+                              fluid_stress = kinematic_viscosity * shear_rate -
+                                             fluid_pressure;
                               auto force = fluid_stress * normal_vector *
                                            fe_face_values.JxW(q);
 

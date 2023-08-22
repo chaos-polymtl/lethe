@@ -1002,7 +1002,7 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
   std::vector<double> ib_coef = stencil.coefficients(order, length_ratio);
 
   // Rheological model for viscosity properties
-  double     viscosity;
+  double     kinematic_viscosity;
   const auto rheological_model =
     this->simulation_parameters.physical_properties_manager.get_rheology();
 
@@ -1275,11 +1275,11 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                                       field_values[field::shear_rate] =
                                         shear_rate_magnitude;
 
-                                      viscosity =
+                                      kinematic_viscosity =
                                         rheological_model->value(field_values);
 
                                       fluid_viscous_stress =
-                                        -viscosity * shear_rate;
+                                        -kinematic_viscosity * shear_rate;
 
                                       fluid_viscous_stress_at_ib -=
                                         fluid_viscous_stress * ib_coef[k];
@@ -2088,12 +2088,13 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
       auto density_model =
         this->simulation_parameters.physical_properties_manager.get_density(0);
       double fluid_density = density_model->value(field_values);
-      double viscosity = rheological_model->value(field_values) * fluid_density;
+      double kinematic_viscosity =
+        rheological_model->value(field_values) * fluid_density;
 
       Vector<double> particles_residual_vect;
       particles_residual_vect.reinit(particles.size());
       ib_dem.integrate_particles_motion(
-        dt, h_max, h_min, fluid_density, viscosity);
+        dt, h_max, h_min, fluid_density, kinematic_viscosity);
       unsigned int worst_residual_particle_id = UINT_MAX;
 
       for (unsigned int p = 0; p < particles.size(); ++p)

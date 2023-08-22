@@ -514,8 +514,8 @@ HeatTransferAssemblerViscousDissipation<dim>::assemble_rhs(
   const unsigned int n_q_points = scratch_data.n_q_points;
   const unsigned int n_dofs     = scratch_data.n_dofs;
 
-  const std::vector<double> &density   = scratch_data.density;
-  const std::vector<double> &viscosity = scratch_data.viscosity;
+  const std::vector<double> &dynamic_viscosity_vector =
+    scratch_data.dynamic_viscosity;
 
   // Time steps and inverse time steps which is used for stabilization
   // constant
@@ -530,7 +530,7 @@ HeatTransferAssemblerViscousDissipation<dim>::assemble_rhs(
     {
       // Gather physical properties in case of mono fluids simulations (to be
       // modified by cell in case of multiple fluids simulations)
-      const double dynamic_viscosity = viscosity[q] * density[q];
+      const double dynamic_viscosity = dynamic_viscosity_vector[q];
 
       // Store JxW in local variable for faster access
       const double JxW = scratch_data.fe_values_T.JxW(q);
@@ -571,8 +571,8 @@ HeatTransferAssemblerViscousDissipationVOF<dim>::assemble_rhs(
   const unsigned int n_q_points = scratch_data.n_q_points;
   const unsigned int n_dofs     = scratch_data.n_dofs;
 
-  const std::vector<double> &density   = scratch_data.density;
-  const std::vector<double> &viscosity = scratch_data.viscosity;
+  const std::vector<double> &dynamic_viscosity_vector =
+    scratch_data.dynamic_viscosity;
 
   double viscous_dissipation_coefficient(0.);
 
@@ -589,7 +589,7 @@ HeatTransferAssemblerViscousDissipationVOF<dim>::assemble_rhs(
     {
       // Gather physical properties in case of mono fluids simulations (to be
       // modified by cell in case of multiple fluids simulations)
-      const double dynamic_viscosity = viscosity[q] * density[q];
+      const double dynamic_viscosity = dynamic_viscosity_vector[q];
 
       // Store JxW in local variable for faster access
       const double JxW = scratch_data.fe_values_T.JxW(q);

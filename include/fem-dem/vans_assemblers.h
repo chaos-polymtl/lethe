@@ -705,9 +705,12 @@ public:
 };
 
 inline double
-calculate_gamma(double velocity, double viscosity, double /*h*/, double c_star)
+calculate_gamma(double velocity,
+                double kinematic_viscosity,
+                double /*h*/,
+                double c_star)
 {
-  return viscosity + c_star * velocity;
+  return kinematic_viscosity + c_star * velocity;
 }
 
 #endif

@@ -68,9 +68,7 @@ GLSIsothermalCompressibleNavierStokesVOFAssemblerCore<dim>::assemble_matrix(
       // Calculation of the equivalent properties at the quadrature point
       double       density_eq           = scratch_data.density[q];
       double       density_0            = scratch_data.density_0[q];
-      double       density_ref_eq       = scratch_data.density_ref_eq[q];
-      double       viscosity_eq         = scratch_data.viscosity[q];
-      const double dynamic_viscosity_eq = density_ref_eq * viscosity_eq;
+      const double dynamic_viscosity_eq = scratch_data.dynamic_viscosity[q];
 
       double compressibility_multiplier =
         scratch_data.compressibility_multiplier[q];
@@ -82,9 +80,10 @@ GLSIsothermalCompressibleNavierStokesVOFAssemblerCore<dim>::assemble_matrix(
       const double tau =
         this->simulation_control->get_assembly_method() ==
             Parameters::SimulationControl::TimeSteppingMethod::steady ?
-          calculate_navier_stokes_gls_tau_steady(u_mag, viscosity_eq, h, 1) :
+          calculate_navier_stokes_gls_tau_steady(
+            u_mag, dynamic_viscosity_eq / density_eq, h) :
           calculate_navier_stokes_gls_tau_transient(
-            u_mag, viscosity_eq, h, sdt, 1);
+            u_mag, dynamic_viscosity_eq / density_eq, h, sdt);
 
       // Calculate the strong residual for GLS stabilization
       auto strong_residual = density_eq * velocity_gradient * velocity +
@@ -245,9 +244,7 @@ GLSIsothermalCompressibleNavierStokesVOFAssemblerCore<dim>::assemble_rhs(
       // Calculation of the equivalent properties at the quadrature point
       double       density_eq           = scratch_data.density[q];
       double       density_0            = scratch_data.density_0[q];
-      double       density_ref_eq       = scratch_data.density_ref_eq[q];
-      double       viscosity_eq         = scratch_data.viscosity[q];
-      const double dynamic_viscosity_eq = density_ref_eq * viscosity_eq;
+      const double dynamic_viscosity_eq = scratch_data.dynamic_viscosity[q];
 
       double compressibility_multiplier =
         scratch_data.compressibility_multiplier[q];
@@ -259,9 +256,10 @@ GLSIsothermalCompressibleNavierStokesVOFAssemblerCore<dim>::assemble_rhs(
       const double tau =
         this->simulation_control->get_assembly_method() ==
             Parameters::SimulationControl::TimeSteppingMethod::steady ?
-          calculate_navier_stokes_gls_tau_steady(u_mag, viscosity_eq, h, 1.) :
+          calculate_navier_stokes_gls_tau_steady(
+            u_mag, dynamic_viscosity_eq / density_eq, h) :
           calculate_navier_stokes_gls_tau_transient(
-            u_mag, viscosity_eq, h, sdt, 1.);
+            u_mag, dynamic_viscosity_eq / density_eq, h, sdt);
 
 
       // Calculate the strong residual for GLS stabilization

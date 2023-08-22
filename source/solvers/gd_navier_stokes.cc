@@ -811,7 +811,7 @@ GDNavierStokesSolver<dim>::set_initial_condition_fd(
       // Temporarily set the rheology to be newtonian with predefined viscosity
       std::shared_ptr<Newtonian> temporary_rheology =
         std::make_shared<Newtonian>(
-          this->simulation_parameters.initial_condition->viscosity);
+          this->simulation_parameters.initial_condition->kinematic_viscosity);
 
       this->simulation_parameters.physical_properties_manager.set_rheology(
         temporary_rheology);
@@ -891,7 +891,7 @@ GDNavierStokesSolver<dim>::setup_ILU()
     BlockSchurPreconditioner<TrilinosWrappers::PreconditionILU>>(
     gamma,
     this->simulation_parameters.physical_properties_manager
-      .get_viscosity_scale(),
+      .get_kinematic_viscosity_scale(),
     system_matrix,
     pressure_mass_matrix,
     &(*velocity_ilu_preconditioner),
@@ -1012,7 +1012,7 @@ GDNavierStokesSolver<dim>::setup_AMG()
     BlockSchurPreconditioner<TrilinosWrappers::PreconditionAMG>>(
     gamma,
     this->simulation_parameters.physical_properties_manager
-      .get_viscosity_scale(),
+      .get_kinematic_viscosity_scale(),
     system_matrix,
     pressure_mass_matrix,
     &(*velocity_amg_preconditioner),

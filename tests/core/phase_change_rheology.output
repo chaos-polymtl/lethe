@@ -1,0 +1,14 @@
+
+DEAL::Beginning
+DEAL::Testing phase change kinematic viscosity - nu
+DEAL:: T = 100.1, nu = 8.20000, dnu/dT analytical = 0.00000, dnu/dT numerical = 0.00000
+DEAL:: T = 100.2, nu = 6.40000, dnu/dT analytical = 0.00000, dnu/dT numerical = 0.00000
+DEAL:: T = 100.3, nu = 4.60000, dnu/dT analytical = 0.00000, dnu/dT numerical = 0.00000
+DEAL::Testing phase change dynamic viscosity - mu (T = 100.2)
+DEAL:: density_ref = 1, nu = 6.40000, mu = 6.40000
+DEAL:: density_ref = 2, nu = 6.40000, mu = 12.8000
+DEAL:: density_ref = 3, nu = 6.40000, mu = 19.2000
+DEAL::Dynamic viscosity vector values (density_ref = 1)
+DEAL:: T = {100.1, 100.2, 100.3}
+DEAL:: mu = {8.20000, 6.40000, 4.60000}
+DEAL::OK

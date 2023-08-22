@@ -61,7 +61,7 @@ public:
    * @param constraints Object with constraints according to DoFs.
    * @param quadrature Required for local operations on cells.
    * @param forcing_function Function specified in parameter file as source term.
-   * @param viscosity Kinematic viscosity.
+   * @param kinematic_viscosity Kinematic viscosity.
    * @param mg_level Level of the operator in case of MG methods.
    */
   NavierStokesOperatorBase(const Mapping<dim> &             mapping,
@@ -69,7 +69,7 @@ public:
                            const AffineConstraints<number> &constraints,
                            const Quadrature<dim> &          quadrature,
                            const Function<dim> *            forcing_function,
-                           const double                     viscosity,
+                           const double                     kinematic_viscosity,
                            const unsigned int               mg_level);
   /**
    * @brief Initialize the main matrix free object that contains all data and is
@@ -81,7 +81,7 @@ public:
    * @param constraints Object with constraints according to DoFs.
    * @param quadrature Required for local operations on cells.
    * @param forcing_function Function specified in parameter file as source term.
-   * @param viscosity Kinematic viscosity.
+   * @param kinematic_viscosity Kinematic viscosity.
    * @param mg_level Level of the operator in case of MG methods.
    */
   void
@@ -90,7 +90,7 @@ public:
          const AffineConstraints<number> &constraints,
          const Quadrature<dim> &          quadrature,
          const Function<dim> *            forcing_function,
-         const double                     viscosity,
+         const double                     kinematic_viscosity,
          const unsigned int               mg_level);
 
   /**
@@ -292,7 +292,7 @@ protected:
   AlignedVector<VectorizedArray<number>> element_size;
   unsigned int                           fe_degree;
   const Function<dim> *                  forcing_function;
-  double                                 viscosity;
+  double                                 kinematic_viscosity;
 
   // Variables needed from the last Newton step vector
   Table<2, Tensor<1, dim + 1, VectorizedArray<number>>>

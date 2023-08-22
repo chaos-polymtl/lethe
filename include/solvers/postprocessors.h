@@ -66,7 +66,7 @@ public:
 /**
  * @class QCriterionPostprocessor Post-processor class used to calculate
  * the QCriterion field within the domain. The Q Criterion is defined as
- * as $Q = ||\Omega||^2 -||S||^2$ where $S$ is the symetric deformation tensor
+ * as $Q = ||\Omega||^2 -||S||^2$ where $S$ is the symmetric deformation tensor
  */
 template <int dim>
 class QCriterionPostprocessor : public DataPostprocessorScalar<dim>
@@ -205,16 +205,22 @@ private:
 };
 
 /**
- * @class Calculates de viscosity on each quadrature point for a non Newtonian
- * flow. The equation of the viscosity depends on the used rheological model.
+ * @class Calculates the kinematic viscosity of a fluid on each quadrature point
+ * of a flow. The equation of the viscosity depends on the used rheological
+ * model.
+ * @param rheological_model Rheological model of the fluid
+ * @param fluid_id ID corresponding to the fluid
  */
 template <int dim>
-class NonNewtonianViscosityPostprocessor : public DataPostprocessorScalar<dim>
+class KinematicViscosityPostprocessor : public DataPostprocessorScalar<dim>
 {
 public:
-  NonNewtonianViscosityPostprocessor(
-    std::shared_ptr<RheologicalModel> rheological_model)
-    : DataPostprocessorScalar<dim>("viscosity", update_gradients)
+  KinematicViscosityPostprocessor(
+    std::shared_ptr<RheologicalModel> rheological_model,
+    const unsigned int                fluid_id = 0)
+    : DataPostprocessorScalar<dim>("kinematic_viscosity" +
+                                     Utilities::to_string(fluid_id, 2),
+                                   update_gradients)
     , rheological_model(rheological_model)
   {}
 
@@ -248,6 +254,62 @@ public:
 
 private:
   std::shared_ptr<RheologicalModel> rheological_model;
+};
+
+/**
+ * @class Calculates the dynamic viscosity of a fluid on each quadrature point
+ * of a flow. The equation of the viscosity depends on the used rheological
+ * model.
+ * @param rheological_model Rheological model of the fluid
+ * @param fluid_id ID corresponding to the fluid
+ */
+template <int dim>
+class DynamicViscosityPostprocessor : public DataPostprocessorScalar<dim>
+{
+public:
+  DynamicViscosityPostprocessor(
+    std::shared_ptr<RheologicalModel> rheological_model,
+    const double                      density_ref,
+    const unsigned int                fluid_id = 0)
+    : DataPostprocessorScalar<dim>("dynamic_viscosity_" +
+                                     Utilities::to_string(fluid_id, 2),
+                                   update_gradients)
+    , rheological_model(rheological_model)
+    , density_ref(density_ref)
+  {}
+
+  virtual void
+  evaluate_vector_field(
+    const DataPostprocessorInputs::Vector<dim> &inputs,
+    std::vector<Vector<double>> &computed_quantities) const override
+  {
+    const unsigned int n_quadrature_points = inputs.solution_gradients.size();
+
+    for (unsigned int q = 0; q < n_quadrature_points; ++q)
+      {
+        const auto     gradient = inputs.solution_gradients[q];
+        Tensor<2, dim> shear_rate;
+        for (int i = 0; i < dim; ++i)
+          {
+            for (int j = 0; j < dim; ++j)
+              {
+                shear_rate[i][j] += gradient[i][j] + gradient[j][i];
+              }
+          }
+        const double shear_rate_magnitude =
+          calculate_shear_rate_magnitude(shear_rate);
+
+        std::map<field, double> field_values;
+        field_values[field::shear_rate] = shear_rate_magnitude;
+
+        computed_quantities[q] =
+          rheological_model->get_dynamic_viscosity(density_ref, field_values);
+      }
+  }
+
+private:
+  std::shared_ptr<RheologicalModel> rheological_model;
+  double                            density_ref;
 };
 
 
@@ -411,10 +473,8 @@ private:
 
 /**
  * @class Calculates the density on post-processing points this is used when the
- * density isn't considered constant
- *
- * @param p_density_model Density model of the material\
- *
+ * density isn't considered constant.
+ * @param p_density_model Density model of the material
  * @param material_id ID corresponding to the material (fluid or solid)
  */
 template <int dim>

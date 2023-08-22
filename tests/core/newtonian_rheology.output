@@ -1,6 +1,12 @@
 
-DEAL::Beggining
-DEAL::Testing constant viscosity - nu
-DEAL:: gamma = 1 , nu = 5.00000
-DEAL:: gamma = 2 , nu = 5.00000
+DEAL::Beginning
+DEAL::Testing constant kinematic viscosity - nu
+DEAL:: gamma = 1, nu = 5.00000
+DEAL:: gamma = 2, nu = 5.00000
+DEAL::Testing newtonian dynamic viscosity - mu (gamma = 1)
+DEAL:: density_ref = 1, nu = 5.00000, mu = 5.00000
+DEAL:: density_ref = 2, nu = 5.00000, mu = 10.0000
+DEAL::Dynamic viscosity vector values (density_ref = 1)
+DEAL:: gamma = {1, 2, 3}
+DEAL:: mu = {5.00000, 5.00000, 5.00000}
 DEAL::OK

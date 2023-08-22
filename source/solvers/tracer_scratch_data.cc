@@ -62,7 +62,7 @@ TracerScratchData<dim>::calculate_physical_properties()
           break;
         }
         case 2: {
-          // In this case,  we need both density and viscosity
+          // In this case, we need both density and viscosity
           const auto diffusivity_models =
             properties_manager.get_tracer_diffusivity_vector();
 

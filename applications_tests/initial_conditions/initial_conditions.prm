@@ -40,8 +40,8 @@ end
 #---------------------------------------------------
 
 subsection initial conditions
-  set type      = L2projection # Type of ways to set initial conditions <none|L2Projection|viscous>
-  set viscosity = 1            # Viscosity used for viscous solution
+  set type                = L2projection # Type of ways to set initial conditions <none|L2Projection|viscous>
+  set kinematic viscosity = 1            # Kinematic viscosity used for viscous solution
   subsection uvwp
     set Function expression = x; y; y # Analytical formula used for the L2 projection
   end

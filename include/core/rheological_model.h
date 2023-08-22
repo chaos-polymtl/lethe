@@ -37,8 +37,8 @@ public:
   {}
 
   /**
-   * @brief Instanciates and returns a pointer to a RheologicalModel object by casting it to
-   * the proper child class
+   * @brief Instanciates and returns a pointer to a RheologicalModel object by
+   * casting it to the proper child class
    *
    * @param material_properties Parsed physical properties that will provide
    * either the model rheological model being used or say it is a
@@ -48,7 +48,8 @@ public:
   model_cast(const Parameters::Material &material_properties);
 
   /**
-   * @brief Returns the value of the n parameters of the model, is the model has one.
+   * @brief Returns the value of the n parameters of the model, if the model
+   * has one.
    */
   virtual double
   get_n() const
@@ -64,29 +65,79 @@ public:
   {}
 
   /**
-   * @brief Returns the value of the viscosity, is the model has one.
+   * @brief Returns the value of the kinematic viscosity, if the model has one.
    */
   virtual double
-  get_viscosity() const
+  get_kinematic_viscosity() const
   {
     return 1.0;
   }
 
   /**
-   * @brief Returns the viscosity scale. This is used to get the viscosity scale in the problem when it's not constant. This is useful for weak boundary conditions.
+   * @brief Returns the kinematic viscosity scale. This is used to get the
+   * kinematic viscosity scale in the problem when it's not constant. This is
+   * useful for weak boundary conditions.
    */
   virtual double
-  get_viscosity_scale() const
+  get_kinematic_viscosity_scale() const
   {
     return 1.0;
   }
 
   /**
-   * @brief Sets a new viscosity value, if the models has one.
+   * @brief Sets a new kinematic viscosity value, if the models has one.
+   * @param p_kinematic_viscosity The kinematic viscosity value
    */
   virtual void
-  set_viscosity(const double &)
+  set_kinematic_viscosity(const double & /*p_kinematic_viscosity*/)
   {}
+
+  /**
+   * @brief Sets a new dynamic viscosity value, if the models has a constant
+   * dynamic viscosity value.
+   * @param p_density_ref The density of the fluid at the reference state
+   */
+  virtual void
+  set_dynamic_viscosity(const double & /*p_density_ref*/)
+  {}
+
+  /**
+   * @brief Calculates the dynamic viscosity, if a kinematic viscosity
+   * and a reference density value is specified.
+   * @param p_density_ref The density of the fluid at the reference state
+   * @param field_values Value of the various fields on which the property may
+   * depend.
+   */
+  virtual double
+  get_dynamic_viscosity(const double &                 p_density_ref,
+                        const std::map<field, double> &field_values) const = 0;
+
+  /**
+   * @brief Calculates the vector values of the dynamic viscosity.
+   * @param p_density_ref The density of the fluid at the reference state
+   * @param field_vectors Values of the field on which the dynamic viscosity may
+   * depend on.
+   */
+  virtual void
+  get_dynamic_viscosity_vector(
+    const double &                              p_density_ref,
+    const std::map<field, std::vector<double>> &field_vectors,
+    std::vector<double> &                       property_vector) = 0;
+
+  /**
+   * @brief is_non_newtonian_rheological_model Returns a boolean indicating if
+   * the model is a non newtonian rheological model.
+   * @return Boolean value of if the model corresponds to a non newtonian
+   * rheological model.
+   */
+  bool
+  is_non_newtonian_rheological_model() const
+  {
+    return non_newtonian_rheological_model;
+  }
+
+protected:
+  bool non_newtonian_rheological_model = false;
 };
 
 class Newtonian : public RheologicalModel
@@ -95,39 +146,48 @@ public:
   /**
    * @brief Parameter constructor
    *
-   * @param viscosity The constant newtonian viscosity
+   * @param p_kinematic_viscosity The constant newtonian viscosity
    */
-  Newtonian(const double &p_viscosity)
-    : viscosity(p_viscosity)
+  Newtonian(const double &p_kinematic_viscosity)
+    : kinematic_viscosity(p_kinematic_viscosity)
   {}
 
   /**
-   * @brief Returns the viscosity.
+   * @brief Returns the kinematic viscosity.
    *
-   * @param field_values Values of the field on which the viscosity may depend on.
-   * For the constant viscosity, the viscosity does not depend on anything.
+   * @param field_values Values of the field on which the viscosity may depend
+   * on.
+   * For the constant kinematic viscosity, the kinematic viscosity does not
+   * depend on anything.
    */
   double
   value(const std::map<field, double> & /*field_values*/) override;
 
   /**
-   * @brief vector_value Calculates the vector values of the viscosity.
-   * @param field_vectors Values of the field on which the viscosity may depend on. These are not used for the constant viscosity
+   * @brief vector_value Calculates the vector values of the kinematic
+   * viscosity.
+   * @param field_vectors Values of the field on which the kinematic viscosity
+   * may depend on. These are not used for the constant kinematic viscosity
    */
   void
   vector_value(const std::map<field, std::vector<double>> & /*field_vectors*/,
                std::vector<double> &property_vector) override
   {
-    std::fill(property_vector.begin(), property_vector.end(), viscosity);
+    std::fill(property_vector.begin(),
+              property_vector.end(),
+              kinematic_viscosity);
   }
 
   /**
-   * @brief jacobian Calculates the jacobian (the partial derivative) of the viscosity
+   * @brief jacobian Calculates the jacobian (the partial derivative) of the
+   * kinematic viscosity
    * with respect to a field
-   * @param field_values Value of the various fields on which the property may depend. The constant viscosity does not depend on anything
+   * @param field_values Value of the various fields on which the property may
+   * depend. The constant kinematic viscosity does not depend on anything
    * @param id Indicator of the field with respect to which the jacobian
    * should be calculated
-   * @return value of the partial derivative of the viscosity with respect to the field.
+   * @return value of the partial derivative of the kinematic viscosity with
+   * respect to the field.
    */
 
   double
@@ -138,10 +198,14 @@ public:
   };
 
   /**
-   * @brief vector_jacobian Calculate the derivative of the with respect to a field
-   * @param field_vectors Vector for the values of the fields used to evaluate the property
-   * @param id Identifier of the field with respect to which a derivative should be calculated
-   * @param jacobian Vector of the value of the derivative of the viscosity with respect to the field id
+   * @brief vector_jacobian Calculate the derivative of the with respect to a
+   * field
+   * @param field_vectors Vector for the values of the fields used to evaluate
+   * the property
+   * @param id Identifier of the field with respect to which a derivative should
+   * be calculated
+   * @param jacobian Vector of the value of the derivative of the kinematic
+   * viscosity with respect to the field id
    */
 
   void
@@ -154,25 +218,73 @@ public:
   }
 
   double
-  get_viscosity() const override
+  get_kinematic_viscosity() const override
   {
-    return viscosity;
+    return kinematic_viscosity;
   }
 
   double
-  get_viscosity_scale() const override
+  get_kinematic_viscosity_scale() const override
   {
-    return viscosity;
+    return kinematic_viscosity;
   }
 
   void
-  set_viscosity(const double &p_viscosity) override
+  set_kinematic_viscosity(const double &p_kinematic_viscosity) override
   {
-    viscosity = p_viscosity;
+    kinematic_viscosity = p_kinematic_viscosity;
+  }
+
+  void
+  set_dynamic_viscosity(const double &p_density_ref) override
+  {
+    dynamic_viscosity = kinematic_viscosity * p_density_ref;
+  }
+
+  /**
+   * @brief Calculates the dynamic viscosity, if a kinematic viscosity
+   * and a reference density value is specified.
+   * @param p_density_ref The density of the fluid at the reference state
+   * @param field_values Value of the various fields on which the property may
+   * depend. The constant dynamic viscosity does not depend on anything.
+   *
+   * These parameters are not needed if the model has a constant kinematic
+   * viscosity, since it implies a constant dynamic viscosity also. The value of
+   * the dynamic viscosity needs to be set with
+   * "set_dynamic_viscosity(density_ref)" before calling this function.
+   */
+  double
+  get_dynamic_viscosity(
+    const double & /*p_density_ref*/,
+    const std::map<field, double> & /*field_values*/) const override
+  {
+    return dynamic_viscosity;
+  }
+
+  /**
+   * @brief Calculates the vector values of the dynamic viscosity.
+   * @param p_density_ref The density of the fluid at the reference state. This
+   * value is not needed if the model has a constant kinematic viscosity, since
+   * it implies a constant dynamic viscosity also. The value of the dynamic
+   * viscosity needs to be set with "set_dynamic_viscosity(density_ref)"
+   * before calling this function.
+   * @param field_vectors Values of the field on which the dynamic viscosity may
+   * depend on. These are not used for the constant kinematic viscosity.
+   */
+  void
+  get_dynamic_viscosity_vector(
+    const double & /*p_density_ref*/,
+    const std::map<field, std::vector<double>> & /*field_vectors*/,
+    std::vector<double> &property_vector) override
+  {
+    std::fill(property_vector.begin(),
+              property_vector.end(),
+              dynamic_viscosity);
   }
 
 private:
-  double viscosity;
+  double kinematic_viscosity;
+  double dynamic_viscosity;
 };
 
 class PowerLaw : public RheologicalModel
@@ -188,13 +300,16 @@ public:
     , n(n)
     , shear_rate_min(shear_rate_min)
   {
-    this->model_depends_on[shear_rate] = true;
+    this->model_depends_on[shear_rate]    = true;
+    this->non_newtonian_rheological_model = true;
   }
 
   /**
-   * @brief Returns the non-newtonian viscosity.
+   * @brief Returns the non-newtonian kinematic viscosity.
    *
-   * @param field_values The values Values of the field on which the viscosity may depend on. For this model, it only depends on the magnitude of the shear rate tensor
+   * @param field_values The values Values of the field on which the kinematic
+   * viscosity may depend on. For this model, it only depends on the magnitude
+   * of the shear rate tensor
    *
    * Source : Morrison, F. A. (2001). No Memory: Generalized Newtonian Fluids.
    * Understanding Rheology. Raymond F. Boyer Librabry Collection, Oxford
@@ -204,20 +319,24 @@ public:
   value(const std::map<field, double> &field_values) override;
 
   /**
-   * @brief vector_value Calculates the vector values of the viscosity.
-   * @param field_vectors Values of the field on which the viscosity may depend on. The power-law viscosity depends on the shear rate.
+   * @brief vector_value Calculates the vector values of the kinematic
+   * viscosity.
+   * @param field_vectors Values of the field on which the kinematic viscosity
+   * may depend on. The power-law kinematic viscosity depends on the shear rate.
    */
   void
   vector_value(const std::map<field, std::vector<double>> & /*field_vectors*/,
                std::vector<double> &property_vector) override;
 
   /**
-   * @brief jacobian Calculates the jacobian (the partial derivative) of the viscosity
-   * with respect to a field
-   * @param field_values Value of the various fields on which the property may depend. The constant viscosity does not depend on anything
+   * @brief jacobian Calculates the jacobian (the partial derivative) of the
+   * kinematic viscosity with respect to a field
+   * @param field_values Value of the various fields on which the property may
+   * depend. The constant kinematic viscosity does not depend on anything.
    * @param id Indicator of the field with respect to which the jacobian
    * should be calculated
-   * @return value of the partial derivative of the viscosity with respect to the field.
+   * @return value of the partial derivative of the kinematic viscosity with
+   * respect to the field.
    */
 
   double
@@ -225,10 +344,14 @@ public:
            field /*id*/) override;
 
   /**
-   * @brief vector_jacobian Calculate the derivative of the with respect to a field
-   * @param field_vectors Vector for the values of the fields used to evaluate the property
-   * @param id Identifier of the field with respect to which a derivative should be calculated
-   * @param jacobian Vector of the value of the derivative of the viscosity with respect to the field id
+   * @brief vector_jacobian Calculate the derivative of the with respect to a
+   * field
+   * @param field_vectors Vector for the values of the fields used to evaluate
+   * the property
+   * @param id Identifier of the field with respect to which a derivative
+   * should be calculated
+   * @param jacobian Vector of the value of the derivative of the kinematic
+   * viscosity with respect to the field id
    */
 
   void
@@ -250,27 +373,64 @@ public:
   }
 
   double
-  get_viscosity() const override
+  get_kinematic_viscosity() const override
   {
     return K;
   }
 
   double
-  get_viscosity_scale() const override
+  get_kinematic_viscosity_scale() const override
   {
     return 1.0 > shear_rate_min ? K * std::pow(1.0, n - 1) :
                                   K * std::pow(shear_rate_min, n - 1);
   }
 
   void
-  set_viscosity(const double &p_viscosity) override
+  set_kinematic_viscosity(const double &p_kinematic_viscosity) override
   {
-    K = p_viscosity;
+    K = p_kinematic_viscosity;
+  }
+
+  /**
+   * @brief Calculates the dynamic viscosity, if a kinematic viscosity
+   * and a reference density value is specified.
+   * @param p_density_ref The density of the fluid at the reference state
+   * @param field_values Value of the various fields on which the property may
+   * depend. The power law dynamic viscosity depends on the shear rate
+   * magnitude.
+   */
+  double
+  get_dynamic_viscosity(
+    const double &                 p_density_ref,
+    const std::map<field, double> &field_values) const override
+  {
+    const double shear_rate_magnitude = field_values.at(field::shear_rate);
+    return calculate_kinematic_viscosity(shear_rate_magnitude) * p_density_ref;
+  }
+
+  /**
+   * @brief Calculates the vector values of the dynamic viscosity.
+   * @param p_density_ref The density of the fluid at the reference state
+   * @param field_vectors Values of the field on which the dynamic viscosity may
+   * depend on.
+   */
+  void
+  get_dynamic_viscosity_vector(
+    const double &                              p_density_ref,
+    const std::map<field, std::vector<double>> &field_vectors,
+    std::vector<double> &                       property_vector) override
+  {
+    const std::vector<double> &shear_rate_magnitude =
+      field_vectors.at(field::shear_rate);
+
+    for (unsigned int i = 0; i < property_vector.size(); ++i)
+      property_vector[i] =
+        calculate_kinematic_viscosity(shear_rate_magnitude[i]) * p_density_ref;
   }
 
 private:
   inline double
-  calculate_viscosity(const double shear_rate_magnitude)
+  calculate_kinematic_viscosity(const double shear_rate_magnitude) const
   {
     return shear_rate_magnitude > shear_rate_min ?
              K * std::pow(shear_rate_magnitude, n - 1) :
@@ -298,24 +458,27 @@ public:
    *
    * @param non_newtonian_parameters The non newtonian parameters
    */
-  Carreau(const double viscosity_0,
-          const double viscosity_inf,
-          const double lambda,
-          const double a,
-          const double n)
-    : viscosity_0(viscosity_0)
-    , viscosity_inf(viscosity_inf)
-    , lambda(lambda)
-    , a(a)
-    , n(n)
+  Carreau(const double p_kinematic_viscosity_0,
+          const double p_kinematicviscosity_inf,
+          const double p_lambda,
+          const double p_a,
+          const double p_n)
+    : kinematic_viscosity_0(p_kinematic_viscosity_0)
+    , kinematic_viscosity_inf(p_kinematicviscosity_inf)
+    , lambda(p_lambda)
+    , a(p_a)
+    , n(p_n)
   {
-    this->model_depends_on[shear_rate] = true;
+    this->model_depends_on[shear_rate]    = true;
+    this->non_newtonian_rheological_model = true;
   }
 
   /**
    * @brief Returns the non-newtonian viscosity.
    *
-   * @param field_values The values of the field on which the viscosity may depend on. For this model, it only depends on the magnitude of the shear rate tensor
+   * @param field_values The values of the field on which the viscosity may
+   * depend on. For this model, it only depends on the magnitude of the shear
+   * rate tensor.
    *
    * Source : Morrison, F. A. (2001). No Memory: Generalized Newtonian Fluids.
    * Understanding Rheology. Raymond F. Boyer Librabry Collection, Oxford
@@ -326,29 +489,36 @@ public:
 
   /**
    * @brief vector_value Calculates the vector values of the viscosity.
-   * @param field_vectors Values of the field on which the viscosity may depend on. The power-law viscosity depends on the shear rate.
+   * @param field_vectors Values of the field on which the viscosity may depend
+   * on. The power-law viscosity depends on the shear rate.
    */
   void
   vector_value(const std::map<field, std::vector<double>> & /*field_vectors*/,
                std::vector<double> &property_vector) override;
 
   /**
-   * @brief jacobian Calculates the jacobian (the partial derivative) of the viscosity
-   * with respect to a field
-   * @param field_values Value of the various fields on which the property may depend. The constant viscosity does not depend on anything
+   * @brief jacobian Calculates the jacobian (the partial derivative) of the
+   * viscosity with respect to a field
+   * @param field_values Value of the various fields on which the property may
+   * depend. The constant viscosity does not depend on anything
    * @param id Indicator of the field with respect to which the jacobian
    * should be calculated
-   * @return value of the partial derivative of the viscosity with respect to the field.
+   * @return value of the partial derivative of the viscosity with respect to
+   * the field.
    */
   double
   jacobian(const std::map<field, double> & /*field_values*/,
            field /*id*/) override;
 
   /**
-   * @brief vector_jacobian Calculate the derivative of the with respect to a field
-   * @param field_vectors Vector for the values of the fields used to evaluate the property
-   * @param id Identifier of the field with respect to which a derivative should be calculated
-   * @param jacobian Vector of the value of the derivative of the viscosity with respect to the field id
+   * @brief vector_jacobian Calculate the derivative of the with respect to a
+   * field
+   * @param field_vectors Vector for the values of the fields used to evaluate
+   * the property
+   * @param id Identifier of the field with respect to which a derivative should
+   * be calculated
+   * @param jacobian Vector of the value of the derivative of the viscosity with
+   * respect to the field id
    */
 
   void
@@ -370,38 +540,66 @@ public:
   }
 
   double
-  get_viscosity() const override
+  get_kinematic_viscosity() const override
   {
-    return viscosity_0;
+    return kinematic_viscosity_0;
   }
 
   double
-  get_viscosity_scale() const override
+  get_kinematic_viscosity_scale() const override
   {
-    return viscosity_inf +
-           (viscosity_0 - viscosity_inf) *
+    return kinematic_viscosity_inf +
+           (kinematic_viscosity_0 - kinematic_viscosity_inf) *
              std::pow(1.0 + std::pow(1.0 * lambda, a), (n - 1) / a);
   }
 
   void
-  set_viscosity(const double &p_viscosity) override
+  set_kinematic_viscosity(const double &p_kinematic_viscosity) override
   {
-    viscosity_0 = p_viscosity;
+    kinematic_viscosity_0 = p_kinematic_viscosity;
   }
 
+  double
+  get_dynamic_viscosity(
+    const double &                 p_density_ref,
+    const std::map<field, double> &field_values) const override
+  {
+    const double shear_rate_magnitude = field_values.at(field::shear_rate);
+    return calculate_kinematic_viscosity(shear_rate_magnitude) * p_density_ref;
+  }
+
+  /**
+   * @brief Calculates the vector values of the dynamic viscosity.
+   * @param p_density_ref The density of the fluid at the reference state
+   * @param field_vectors Values of the field on which the dynamic viscosity may
+   * depend on.
+   */
+  void
+  get_dynamic_viscosity_vector(
+    const double &                              p_density_ref,
+    const std::map<field, std::vector<double>> &field_vectors,
+    std::vector<double> &                       property_vector) override
+  {
+    const std::vector<double> &shear_rate_magnitude =
+      field_vectors.at(field::shear_rate);
+
+    for (unsigned int i = 0; i < property_vector.size(); ++i)
+      property_vector[i] =
+        calculate_kinematic_viscosity(shear_rate_magnitude[i]) * p_density_ref;
+  }
 
 private:
   inline double
-  calculate_viscosity(const double shear_rate_magnitude)
+  calculate_kinematic_viscosity(const double shear_rate_magnitude) const
   {
-    return viscosity_inf +
-           (viscosity_0 - viscosity_inf) *
+    return kinematic_viscosity_inf +
+           (kinematic_viscosity_0 - kinematic_viscosity_inf) *
              std::pow(1.0 + std::pow(shear_rate_magnitude * lambda, a),
                       (n - 1) / a);
   }
 
-  double viscosity_0;
-  double viscosity_inf;
+  double kinematic_viscosity_0;
+  double kinematic_viscosity_inf;
   double lambda;
   double a;
   double n;
@@ -435,7 +633,8 @@ public:
   /**
    * @brief Parameter constructor
    *
-   * @param p_phase_change parameters The parameters needed by the phase change rheology
+   * @param p_phase_change parameters The parameters needed by the phase change
+   * rheology
    */
   PhaseChangeRheology(const Parameters::PhaseChange p_phase_change_parameters)
     : param(p_phase_change_parameters)
@@ -444,29 +643,35 @@ public:
   }
 
   /**
-   * @brief Returns the viscosity.
+   * @brief Returns the kinematic viscosity.
    *
-   * @param field_values Values of the field on which the viscosity may depend on.
-   * For the constant viscosity, the viscosity does not depend on anything.
+   * @param field_values Values of the field on which the kinematic viscosity
+   * may depend on.
+   * For the constant kinematic viscosity, the kinematic viscosity does not
+   * depend on anything.
    */
   double
   value(const std::map<field, double> & /*field_values*/) override;
 
   /**
-   * @brief vector_value Calculates the vector values of the viscosity.
-   * @param field_vectors Values of the field on which the viscosity may depend on. These are not used for the constant viscosity
+   * @brief vector_value Calculates the vector values of the kinematic
+   * viscosity.
+   * @param field_vectors Values of the field on which the kinematic viscosity
+   * may depend on. These are not used for the constant kinematic viscosity.
    */
   void
   vector_value(const std::map<field, std::vector<double>> & /*field_vectors*/,
                std::vector<double> &property_vector) override;
 
   /**
-   * @brief jacobian Calculates the jacobian (the partial derivative) of the viscosity
-   * with respect to a field
-   * @param field_values Value of the various fields on which the property may depend. The constant viscosity does not depend on anything
+   * @brief jacobian Calculates the jacobian (the partial derivative) of the
+   * kinematic viscosity with respect to a field
+   * @param field_values Value of the various fields on which the property may
+   * depend. The constant kinematic viscosity does not depend on anything.
    * @param id Indicator of the field with respect to which the jacobian
    * should be calculated
-   * @return value of the partial derivative of the viscosity with respect to the field.
+   * @return value of the partial derivative of the kinematic viscosity with
+   * respect to the field.
    */
 
   double
@@ -474,10 +679,14 @@ public:
            field /*id*/) override;
 
   /**
-   * @brief vector_jacobian Calculate the derivative of the with respect to a field
-   * @param field_vectors Vector for the values of the fields used to evaluate the property
-   * @param id Identifier of the field with respect to which a derivative should be calculated
-   * @param jacobian Vector of the value of the derivative of the viscosity with respect to the field id
+   * @brief vector_jacobian Calculate the derivative of the with respect to a
+   * field
+   * @param field_vectors Vector for the values of the fields used to evaluate
+   * the property
+   * @param id Identifier of the field with respect to which a derivative should
+   * be calculated
+   * @param jacobian Vector of the value of the derivative of the kinematic
+   * viscosity with respect to the field id
    */
 
   void
@@ -486,16 +695,45 @@ public:
     const field /*id*/,
     std::vector<double> &jacobian_vector) override;
 
+  double
+  get_dynamic_viscosity(
+    const double &                 p_density_ref,
+    const std::map<field, double> &field_values) const override
+  {
+    const double temperature = field_values.at(field::temperature);
+    return kinematic_viscosity(temperature) * p_density_ref;
+  }
+
+  /**
+   * @brief Calculates the vector values of the dynamic viscosity.
+   * @param p_density_ref The density of the fluid at the reference state
+   * @param field_vectors Values of the field on which the dynamic viscosity may
+   * depend on.
+   */
+  void
+  get_dynamic_viscosity_vector(
+    const double &                              p_density_ref,
+    const std::map<field, std::vector<double>> &field_vectors,
+    std::vector<double> &                       property_vector) override
+  {
+    const std::vector<double> &temperature =
+      field_vectors.at(field::temperature);
+
+    for (unsigned int i = 0; i < property_vector.size(); ++i)
+      property_vector[i] = kinematic_viscosity(temperature[i]) * p_density_ref;
+  }
+
 private:
   /**
-   * @brief viscosity Calculates the viscosity from the temperature using the liquid fraction
+   * @brief kinematic_viscosity Calculates the kinematic viscosity from the
+   * temperature using the liquid fraction
    *
    * @param T value of the temperature
-   * @return value of the viscosity
+   * @return value of the kinematic viscosity
    *
    */
   inline double
-  viscosity(const double T)
+  kinematic_viscosity(const double T) const
   {
     const double l_frac =
       std::min(std::max((T - param.T_solidus) /
@@ -503,7 +741,8 @@ private:
                         0.),
                1.);
 
-    return param.viscosity_l * l_frac + param.viscosity_s * (1. - l_frac);
+    return param.kinematic_viscosity_l * l_frac +
+           param.kinematic_viscosity_s * (1. - l_frac);
   }
 
   Parameters::PhaseChange param;

@@ -400,7 +400,7 @@ public:
   std::vector<double>                  specific_heat;
   std::vector<double>                  thermal_conductivity;
   std::vector<double>                  density;
-  std::vector<double>                  viscosity;
+  std::vector<double>                  dynamic_viscosity;
   // Gradient of the specific heat with respect to the temperature
   // This is calculated by deriving the specific heat by the temperature
   // (dCp/dT)
@@ -410,13 +410,13 @@ public:
   std::vector<double> specific_heat_0;
   std::vector<double> thermal_conductivity_0;
   std::vector<double> density_0;
-  std::vector<double> viscosity_0;
+  std::vector<double> dynamic_viscosity_0;
   std::vector<double> grad_specific_heat_temperature_0;
 
   std::vector<double> specific_heat_1;
   std::vector<double> thermal_conductivity_1;
   std::vector<double> density_1;
-  std::vector<double> viscosity_1;
+  std::vector<double> dynamic_viscosity_1;
   std::vector<double> grad_specific_heat_temperature_1;
 
   // FEValues for the HT problem
@@ -424,7 +424,6 @@ public:
   unsigned int  n_dofs;
   unsigned int  n_q_points;
   double        cell_size;
-
 
 
   // Quadrature

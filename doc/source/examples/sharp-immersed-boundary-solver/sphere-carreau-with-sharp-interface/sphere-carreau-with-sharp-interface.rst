@@ -111,7 +111,7 @@ We define the boundary conditions in order to have an inlet velocity of :math:`1
 Physical Properties
 ~~~~~~~~~~~~~~~~~~~~
 
-This example showcases a shear-thinning flow, for which the viscosity decreases when the local shear rate increases. The Carreau model is being used. For more information on rheological models, see :doc:`../../../parameters/cfd/physical_properties`
+This example showcases a shear-thinning flow, for which the kinematic viscosity decreases when the local shear rate increases. The Carreau model is being used. For more information on rheological models, see :doc:`../../../parameters/cfd/physical_properties`
 
 .. code-block:: text
 
@@ -138,7 +138,7 @@ With ``viscosity_inf = 0`` (3-parameter Carreau model), the *a priori* Reynolds 
 
 	 Re = \frac{u_{\infty}D(1+(\lambda(\frac{u_\infty}{D}))^2)^{\frac{1-n}{2}}}{\eta_0}
 
-We use an *a priori* Reynolds number, since it is not possible, *a priori*, to know the effective viscosity of the flow. For the given parameters, the *a priori* Reynolds number is :math:`50`. 
+We use an *a priori* Reynolds number, since it is not possible, *a priori*, to know the effective kinematic viscosity of the flow. For the given parameters, the *a priori* Reynolds number is :math:`50`.
 
 Initial Conditions
 ~~~~~~~~~~~~~~~~~~~~
@@ -155,10 +155,10 @@ This example uses a ramping initial condition that first ramps on the ``n`` para
           set iterations = 2
           set alpha      = 0.5
         end
-        subsection viscosity
-          set initial viscosity = 1.0
-          set iterations        = 2
-          set alpha             = 0.5
+        subsection kinematic viscosity
+          set initial kinematic viscosity = 1.0
+          set iterations                  = 2
+          set alpha                       = 0.5
         end
       end
     end
@@ -166,8 +166,8 @@ This example uses a ramping initial condition that first ramps on the ``n`` para
 The first initial condition simulation solves for ``n=1.0``, ``viscosity_0 = 1.0``, ``viscosity_inf = 0``, ``lambda=10`` and ``a=2``. The subsequent initial simulations are:
 
 * (Second ``n`` iteration) ``n=0.75``, ``viscosity_0 = 1.0``, ``viscosity_inf = 0``, ``lambda=10`` and ``a=2`` ;
-* (First ``viscosity`` iteration) ``n=0.5``, ``viscosity_0 = 1.0``, ``viscosity_inf = 0``, ``lambda=10`` and ``a=2`` ;
-* (Second ``viscosity`` iteration) ``n=0.5``, ``viscosity_0 = 0.531702``, ``viscosity_inf = 0``, ``lambda=10`` and ``a=2`` 
+* (First ``kinematic viscosity`` iteration) ``n=0.5``, ``viscosity_0 = 1.0``, ``viscosity_inf = 0``, ``lambda=10`` and ``a=2`` ;
+* (Second ``kinematic viscosity`` iteration) ``n=0.5``, ``viscosity_0 = 0.531702``, ``viscosity_inf = 0``, ``lambda=10`` and ``a=2``
 
 and the first simulation uses the parameters in the ``subsection physical properties``. For more information on ramping initial conditions, see :doc:`../../../parameters/cfd/initial_conditions`.
 
@@ -248,7 +248,7 @@ Using Paraview, the steady-state velocity profile and the pressure profile can b
 .. image:: images/pressure.png
 	:align: center
 
-We can also see the viscosity profile throughout the domain, that is a function of the shear rate magnitude profile. Close to the particle, the shear rate is high which decreases the viscosity. 
+We can also see the kinematic viscosity profile throughout the domain, that is a function of the shear rate magnitude profile. Close to the particle, the shear rate is high which decreases the kinematic viscosity.
 
 .. image:: images/viscosity.png
 	:align: center
@@ -256,7 +256,7 @@ We can also see the viscosity profile throughout the domain, that is a function 
 .. image:: images/shear-rate.png
 	:align: center
 
-We can notice that the viscosity rapidly reaches a plateau at :math:`\eta=0.063`. Given the parameters in the ``subsection physical properties``, the viscosity behavior should be given  by:
+We can notice that the kinematic viscosity rapidly reaches a plateau at :math:`\eta=0.063`. Given the parameters in the ``subsection physical properties``, the kinematic viscosity behavior should be given  by:
 
 .. image:: images/carreau.png
 	:align: center
