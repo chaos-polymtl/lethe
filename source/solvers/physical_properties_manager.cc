@@ -58,8 +58,9 @@ PhysicalPropertiesManager::initialize(
   kinematic_viscosity_scale = physical_properties.fluids[0].kinematic_viscosity;
   density_scale             = physical_properties.fluids[0].density;
 
-  non_newtonian_flow = false;
-  constant_density   = true;
+  non_newtonian_flow       = false;
+  constant_density         = true;
+  constant_surface_tension = true;
 
   required_fields[field::temperature]               = false;
   required_fields[field::previous_temperature]      = false;
@@ -147,6 +148,8 @@ PhysicalPropertiesManager::initialize(
       surface_tension.push_back(SurfaceTensionModel::model_cast(
         physical_properties.material_interactions[i]));
       establish_fields_required_by_model(*surface_tension[i]);
+      if (!surface_tension.back()->is_constant_surface_tension_model())
+        constant_surface_tension = false;
       mobility_ch.push_back(MobilityCahnHilliardModel::model_cast(
         physical_properties.material_interactions[i]));
       establish_fields_required_by_model(*mobility_ch[i]);

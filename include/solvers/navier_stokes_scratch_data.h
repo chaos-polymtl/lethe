@@ -1006,6 +1006,7 @@ public:
   std::vector<double> thermal_expansion_0;
   std::vector<double> thermal_expansion_1;
   std::vector<double> surface_tension;
+  std::vector<double> surface_tension_gradient;
   std::vector<double> mobility_cahn_hilliard;
 
   // FEValues for the Navier-Stokes problem

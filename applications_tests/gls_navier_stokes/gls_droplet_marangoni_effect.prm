@@ -3,6 +3,7 @@
 
 set dimension = 2
 
+#---------------------------------------------------
 # Simulation and IO Control
 #---------------------------------------------------
 
@@ -28,17 +29,17 @@ subsection multiphysics
   set fluid dynamics = true
 end
 
+#---------------------------------------------------
+# VOF
+#---------------------------------------------------
+
 subsection VOF
   subsection surface tension force
     set enable                                   = true
     set phase fraction gradient diffusion factor = 4
     set curvature diffusion factor               = 1
     set output auxiliary fields                  = true
-
-    subsection marangoni effect
-      set enable                   = true
-      set surface tension gradient = 0.1
-    end
+    set enable marangoni effect                  = true
   end
 end
 
@@ -102,8 +103,9 @@ subsection physical properties
     subsection fluid-fluid interaction
       set first fluid id              = 0
       set second fluid id             = 1
-      set surface tension model       = constant
+      set surface tension model       = linear
       set surface tension coefficient = 0.023
+      set surface tension gradient    = 0.1
     end
   end
 end

@@ -297,7 +297,8 @@ namespace Parameters
   {
     // Surface tension coefficient (sigma) in N/m
     double surface_tension_coefficient;
-    // Surface tension gradient (dsigma/dT) in N/(m*K)
+    // Surface tension gradient with respect to the temperature (dsigma/dT) in
+    // N/(m*K)
     double surface_tension_gradient;
 
     void

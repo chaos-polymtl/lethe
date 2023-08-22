@@ -36,6 +36,21 @@ public:
   static std::shared_ptr<SurfaceTensionModel>
   model_cast(
     const Parameters::MaterialInteractions &material_interaction_parameters);
+
+  /**
+   * @brief is_constant_surface_tension_model Returns a boolean indicating if
+   * the model is a constant surface tension model.
+   * @return Boolean value of if the model corresponds to a constant surface
+   * tension model.
+   */
+  bool
+  is_constant_surface_tension_model()
+  {
+    return surface_tension_is_constant;
+  }
+
+protected:
+  bool surface_tension_is_constant = false;
 };
 
 
@@ -50,7 +65,9 @@ public:
    */
   SurfaceTensionConstant(const double p_surface_tension_coefficient)
     : surface_tension_coefficient(p_surface_tension_coefficient)
-  {}
+  {
+    this->surface_tension_is_constant = true;
+  }
 
   /**
    * @brief value Calculates the surface tension coefficient

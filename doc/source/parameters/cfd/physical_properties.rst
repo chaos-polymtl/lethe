@@ -140,13 +140,13 @@ Physical Properties
   The default values for all physical properties models in Lethe is ``constant``. Consequently, it is not necessary (and not recommended) to specify the physical property model unless this model is not constant. This generates parameter files that are easier to read.
 
 
-Material Physical Properties
-****************************
+Material Physical Property Models
+**********************************
 
 .. _two phase simulations:
 
 Two Phase Simulations
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~
 .. note:: 
   Two phase simulations require that either ``set VOF = true`` or ``set cahn hilliard = true`` in the :doc:`multiphysics` subsection. By convention, air is usually the ``fluid 0`` and the other fluid of interest is the ``fluid 1``.
 
@@ -182,7 +182,7 @@ For two phases, the properties are defined for each fluid. Default values are:
 .. _conjugate heat transfer:
 
 Conjugate Heat Transfer
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~
 
 Conjugate heat transfer enables the addition of solid regions in which the fluid dynamics is not solved for. To enable the presence of a solid region, ``number of solids`` must be set to 1. By default, the region with the ``material_id=0`` will be the fluid region whereas the region with ``material_id=1`` will be the solid region. The physical properties of the solid region are set in an identical fashion as those of the fluid.
 
@@ -215,7 +215,7 @@ Conjugate heat transfer enables the addition of solid regions in which the fluid
 .. _rheological_models:
 
 Rheological Models
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~
 
 Two families of rheological models are supported in Lethe. The first one are generalized non Newtonian rheologies (for shear thinning and shear thickening flows). In these models, the viscosity depends on the shear rate. The second family of rheological models possess a viscosity that is independent of the shear rate, but that may depend on other fields such as the temperature.
 
@@ -372,7 +372,7 @@ This model is parameterized using the ``phase change`` subsection
 .. _density_models:
 
 Density Models
-~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~
 
 Lethe supports both ``constant`` and ``isothermal_ideal_gas`` density models. Constant density assumes a constant density value. Isothermal ideal gas density assumes that the fluid's density varies according the following state equation:
 
@@ -432,7 +432,7 @@ In the ``phase_change`` thermal conductivity model, two different values (``ther
 where :math:`k_l`, :math:`k_s` and  :math:`\alpha_l` denote thermal conductivities of the liquid and solid phases and the liquid fraction.
 
 Specific Heat Models
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~
 
 Lethe supports two types of specific heat models. Setting ``specific heat=constant`` sets a constant specific heat. Lethe also supports a ``phase_change`` specific heat model. This model can simulate the melting and solidification of a material. The model follows the work of Blais & Ilinca `[1] <https://doi.org/10.1016/j.compfluid.2018.03.037>`_. This approach defines the specific heat :math:`C_p` as:
 
@@ -489,15 +489,15 @@ This model is parameterized using the following section:
 * The ``specific heat solid`` is :math:`C_{p,s}`
 
 
-Interface Physical Properties
-*****************************
+Interface Physical Property Models
+***********************************
 
 .. _surface_tension_models:
 
 Surface Tension Models
-~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~
 
-Lethe supports two types of surface tension models: ``constant`` and ``linear``. A ``constant`` surface tension model assumes a constant value of surface tension. While, a ``linear`` surface tension assumes that the surface tension evolves linearly with the temperature:
+Lethe supports two types of surface tension models: ``constant`` and ``linear``. A ``constant`` surface tension model assumes a constant value of surface tension. While a ``linear`` surface tension assumes that the surface tension evolves linearly with the temperature:
 
 .. math::
   \sigma(T) = \sigma_0 + \frac{d\sigma}{dT} \cdot T
@@ -518,7 +518,7 @@ Lethe supports two types of mobility models for the Cahn-Hilliard equations. Set
 with :math:`D` the value set for ``cahn hilliard mobility constant``. A quartic mobility is required to recover a correct velocity according to Bretin *et al.* `[2] <https://doi.org/10.48550/arXiv.2105.09627>`_ Therefore, it is preferable to use it when solving the coupled Cahn-Hilliard and Navier-Stokes equations.
 
 References
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+***********
 
 `[1] <https://doi.org/10.1016/j.compfluid.2018.03.037>`_ B. Blais and F. Ilinca, “Development and validation of a stabilized immersed boundary CFD model for freezing and melting with natural convection,” *Comput. Fluids*, vol. 172, pp. 564–581, Aug. 2018, doi: 10.1016/j.compfluid.2018.03.037.
 
