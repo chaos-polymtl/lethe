@@ -2021,9 +2021,9 @@ namespace Parameters
 
         prm.declare_entry("preconditioner",
                           "ilu",
-                          Patterns::Selection("amg|ilu"),
+                          Patterns::Selection("amg|ilu|lsmg|gcmg"),
                           "The preconditioner for the linear solver."
-                          "Choices are <amg|ilu>.");
+                          "Choices are <amg|ilu|lsmg|gcmg>.");
 
         prm.declare_entry("ilu preconditioner fill",
                           "0",
@@ -2128,6 +2128,10 @@ namespace Parameters
           preconditioner = PreconditionerType::amg;
         else if (precond == "ilu")
           preconditioner = PreconditionerType::ilu;
+        else if (precond == "lsmg")
+          preconditioner = PreconditionerType::lsmg;
+        else if (precond == "gcmg")
+          preconditioner = PreconditionerType::gcmg;
         else
           throw std::logic_error(
             "Error, invalid preconditioner type. Choices are amg or ilu");

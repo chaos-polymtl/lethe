@@ -924,9 +924,10 @@ namespace Parameters
     enum class PreconditionerType
     {
       ilu,
-      amg
+      amg,
+      lsmg,
+      gcmg
     };
-
     PreconditionerType preconditioner;
 
     // ILU or ILUT fill
