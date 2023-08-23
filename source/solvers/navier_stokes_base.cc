@@ -114,7 +114,12 @@ NavierStokesBase<dim, VectorType, DofsType>::NavierStokesBase(
           this->mpi_communicator,
           typename Triangulation<dim>::MeshSmoothing(
             Triangulation<dim>::smoothing_on_refinement |
-            Triangulation<dim>::smoothing_on_coarsening));
+            Triangulation<dim>::smoothing_on_coarsening),
+          (p_nsparam.linear_solver.preconditioner ==
+           Parameters::LinearSolver::PreconditionerType::lsmg) ?
+            parallel::distributed::Triangulation<
+              dim>::construct_multigrid_hierarchy :
+            parallel::distributed::Triangulation<dim>::default_setting);
       dof_handler.clear();
       dof_handler.reinit(*this->triangulation);
     }
