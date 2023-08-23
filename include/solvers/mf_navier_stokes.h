@@ -21,6 +21,13 @@
 #include <solvers/mf_navier_stokes_operators.h>
 #include <solvers/navier_stokes_base.h>
 
+#include <deal.II/lac/solver_gmres.h>
+
+#include <deal.II/multigrid/mg_transfer_global_coarsening.h>
+#include <deal.II/multigrid/mg_transfer_matrix_free.h>
+#include <deal.II/multigrid/multigrid.h>
+
+
 using namespace dealii;
 
 /**
@@ -36,7 +43,9 @@ class MFNavierStokesSolver
                             LinearAlgebra::distributed::Vector<double>,
                             IndexSet>
 {
-  using VectorType = LinearAlgebra::distributed::Vector<double>;
+  using VectorType     = LinearAlgebra::distributed::Vector<double>;
+  using LSTransferType = MGTransferMatrixFree<dim, double>;
+  using GCTransferType = MGTransferGlobalCoarsening<dim, VectorType>;
 
 public:
   /**
@@ -115,7 +124,7 @@ protected:
    * @brief  Set up the appropriate preconditioner.
    */
   void
-  setup_preconditioner();
+  setup_preconditioner(SolverGMRES<VectorType> &solver);
 
   /**
    * @brief Define the non-zero constraints used to solve the problem.
@@ -163,9 +172,26 @@ private:
                      const double absolute_residual,
                      const double relative_residual);
 
+  /**
+   * @brief  Set-up local smoothing MG preconditioner
+   */
+  void
+  setup_LSMG(SolverGMRES<VectorType> &solver);
+
+  /**
+   * @brief Set-up global coarsening MG preconditioner
+   */
+  void
+  setup_GCMG();
+
 protected:
   // Matrix-free operator
   std::shared_ptr<NavierStokesOperatorBase<dim, double>> system_operator;
+  // Multigrid preconditioners
+  std::shared_ptr<PreconditionMG<dim, VectorType, LSTransferType>>
+    ls_multigrid_preconditioner;
+  std::shared_ptr<PreconditionMG<dim, VectorType, GCTransferType>>
+    gc_multigrid_preconditioner;
 };
 
 #endif
