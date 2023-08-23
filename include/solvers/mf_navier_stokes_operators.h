@@ -135,6 +135,12 @@ public:
   initialize_dof_vector(VectorType &vec) const;
 
   /**
+   * @brief Get the vector partitioner object required for LS multigrid
+   */
+  const std::shared_ptr<const Utilities::MPI::Partitioner> &
+  get_vector_partitioner() const;
+
+  /**
    * @brief Perform an operator evaluation dst = A*src by looping with the help of the
    * MatrixFree object over all cells and evaluatinf the effect of cell
    * integrals.

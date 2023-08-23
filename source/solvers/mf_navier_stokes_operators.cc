@@ -263,6 +263,13 @@ NavierStokesOperatorBase<dim, number>::initialize_dof_vector(
 }
 
 template <int dim, typename number>
+const std::shared_ptr<const Utilities::MPI::Partitioner> &
+NavierStokesOperatorBase<dim, number>::get_vector_partitioner() const
+{
+  return matrix_free.get_vector_partitioner();
+}
+
+template <int dim, typename number>
 void
 NavierStokesOperatorBase<dim, number>::vmult(VectorType       &dst,
                                              const VectorType &src) const
