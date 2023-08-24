@@ -190,7 +190,7 @@ public:
         not(multiphysics.vof_parameters.conservation.monitoring))
       {
         throw std::logic_error(
-          "Inconsistency in .prm!\n in subsection vof, with sharpening type = adaptative\n "
+          "Inconsistency in .prm!\n in subsection VOF, with sharpening type = adaptative\n "
           "use: monitoring = true");
       }
     if (multiphysics.vof_parameters.surface_tension_force.enable &&
@@ -199,7 +199,7 @@ public:
       {
         throw std::logic_error(
           "Inconsistency in .prm!\n "
-          "In subsection vof, with surface tension force enabled,\n "
+          "In subsection VOF, with surface tension force enabled,\n "
           "but no material interactions specified in\n subsection physical properties.\n "
           "Use:\n\n"
           "  set number of material interactions = 1\n"
@@ -231,7 +231,7 @@ public:
         if (no_fluid_fluid_interaction_error)
           {
             throw std::logic_error(
-              "Inconsistency in .prm!\n in subsection vof, with surface tension force enabled,\n "
+              "Inconsistency in .prm!\n in subsection VOF, with surface tension force enabled,\n "
               "but no fluid-fluid material interactions specified in\n subsection physical properties\n "
               "Use:\n\n"
               "  subsection material interaction $material_interaction_id\n"
@@ -281,8 +281,8 @@ public:
           {
             throw std::logic_error(
               "Inconsistency in .prm!\n "
-              "In subsection multiphysics, with VOF and heat transfer enabled,\n "
-              "and in subsection vof, with marangoni effect enabled,\n "
+              "In subsection multiphysics, VOF and heat transfer enabled,\n "
+              "and in subsection vof, marangoni effect enabled,\n "
               "but no material interactions specified in subsection physical\n "
               "properties. This is necessary to account for Marangoni \n "
               "effect. In subsection physical properties, use:\n\n"
