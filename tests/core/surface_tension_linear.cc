@@ -1,5 +1,5 @@
 /**
- * @brief Tests the constant surface tension model. This model should always
+ * @brief Tests the linear surface tension model. This model should always
  * return sigma_0 + dsigma/dT * T.
  */
 

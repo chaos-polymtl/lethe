@@ -497,7 +497,7 @@ Interface Physical Property Models
 Surface Tension Models
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-Lethe supports two types of surface tension models: ``constant`` and ``linear``. A ``constant`` surface tension model assumes a constant value of surface tension. While a ``linear`` surface tension assumes that the surface tension evolves linearly with the temperature:
+Lethe supports two types of surface tension models: ``constant`` and ``linear``. A ``constant`` surface tension model assumes a constant value of surface tension, while a ``linear`` surface tension assumes that the surface tension evolves linearly with the temperature:
 
 .. math::
   \sigma(T) = \sigma_0 + \frac{d\sigma}{dT} \cdot T

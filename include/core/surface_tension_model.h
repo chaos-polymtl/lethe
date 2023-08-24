@@ -158,7 +158,7 @@ public:
 
   /**
    * @brief value Calculates the surface tension coefficient
-   * @param fields_value Value of the various field on which the property 
+* @param field_vectors Vectors of the fields on which the surface tension
    * depends. In this case, it depends on the temperature.
    * @return value of the physical property calculated with the fields_value
    */
