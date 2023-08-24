@@ -1013,6 +1013,20 @@ public:
                          const bool         mesh_based_precalculations);
 
   /**
+   * @brief Load data from file
+   */
+  void
+  load_data_from_file();
+
+  /**
+   * @brief Remove data that doesn't affect the cells owned by local process
+   */
+  void
+  remove_superfluous_data(DoFHandler<dim> &  updated_dof_handler,
+                          const unsigned int levels_not_precalculated,
+                          const bool         mesh_based_precalculations);
+
+  /**
    * @brief Computes the assigned boolean operations
    * @param constituent_shapes_values map containing the computed values for the component shapes
    * @param constituent_shapes_gradients map containing the computed gradients for the component shapes
@@ -1305,7 +1319,9 @@ public:
    * @brief Remove data that doesn't affect the cells owned by local process
    */
   void
-  remove_superfluous_data();
+  remove_superfluous_data(DoFHandler<dim> &  dof_handler,
+                          const unsigned int levels_not_precalculated,
+                          const bool         mesh_based_precalculations);
 
   /**
    * @brief Return the evaluation of the signed distance function of this solid
@@ -1766,19 +1782,11 @@ public:
   }
 
   /**
-   * @brief Checks if possible nodes affecting the current cell have been identified, and returns the proper vector to use for iteration
+   * @brief Swap the vector of all nodes with a likely node vector
    * @param cell A likely one where the evaluation point is located
    */
   void
-  prepare_iterable_nodes(
-    const typename DoFHandler<dim>::active_cell_iterator cell);
-
-  /**
-   * @brief Resets the iterable nodes to all nodes
-   * @param cell A likely one where the evaluation point is located
-   */
-  void
-  reset_iterable_nodes(
+  swap_iterable_nodes(
     const typename DoFHandler<dim>::active_cell_iterator cell);
 
 private:
@@ -1802,9 +1810,6 @@ private:
   double minimal_support_radius;
 
 public:
-  std::vector<
-    std::tuple<Point<dim>, double, std::shared_ptr<std::vector<size_t>>>>
-                          nodes_id;
   std::vector<double>     weights;
   std::vector<double>     nodes_positions_x;
   std::vector<double>     nodes_positions_y;

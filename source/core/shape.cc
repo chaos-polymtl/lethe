@@ -1308,6 +1308,38 @@ CompositeShape<dim>::update_precalculations(
 }
 
 template <int dim>
+void
+CompositeShape<dim>::load_data_from_file()
+{
+  for (auto const &[component_id, component] : constituents)
+    if (typeid(*component) == typeid(RBFShape<dim>))
+      std::static_pointer_cast<RBFShape<dim>>(component)->load_data_from_file();
+    else if (typeid(*component) == typeid(CompositeShape<dim>))
+      std::static_pointer_cast<CompositeShape<dim>>(component)
+        ->load_data_from_file();
+}
+
+template <int dim>
+void
+CompositeShape<dim>::remove_superfluous_data(
+  DoFHandler<dim> &  updated_dof_handler,
+  const unsigned int levels_not_precalculated,
+  const bool         mesh_based_precalculations)
+{
+  for (auto const &[component_id, component] : constituents)
+    if (typeid(*component) == typeid(RBFShape<dim>))
+      std::static_pointer_cast<RBFShape<dim>>(component)
+        ->remove_superfluous_data(updated_dof_handler,
+                                  levels_not_precalculated,
+                                  mesh_based_precalculations);
+    else if (typeid(*component) == typeid(CompositeShape<dim>))
+      std::static_pointer_cast<CompositeShape<dim>>(component)
+        ->remove_superfluous_data(updated_dof_handler,
+                                  levels_not_precalculated,
+                                  mesh_based_precalculations);
+}
+
+template <int dim>
 std::pair<double, Tensor<1, dim>>
 CompositeShape<dim>::apply_boolean_operations(
   std::map<unsigned int, double>         constituent_shapes_values,
@@ -1414,120 +1446,7 @@ RBFShape<dim>::RBFShape(const std::string   shape_arguments_str,
   , basis_functions(1)
 {
   this->filename = shape_arguments_str;
-
-  max_number_of_inside_nodes = 1;
-}
-
-template <int dim>
-void
-RBFShape<dim>::load_data_from_file()
-{
-  weights.clear();
-  support_radii.clear();
-  basis_functions.clear();
-  nodes_positions_x.clear();
-  nodes_positions_y.clear();
-  nodes_positions_z.clear();
-
-  // The following lines retrieve information regarding an RBF
-  // with a given file name. Then, it converts the information
-  // into one vector which is used to initialize the RBF shape.
-  // All the information is concatenated into only one object so
-  // that the usual initialization function can be called.
-  std::map<std::string, std::vector<double>> rbf_data;
-  fill_vectors_from_file(rbf_data, filename, " ");
-  number_of_nodes       = rbf_data["weight"].size();
-  total_number_of_nodes = number_of_nodes;
-
-  weights.swap(rbf_data["weight"]);
-  support_radii.swap(rbf_data["support_radius"]);
-  basis_functions.swap(rbf_data["basis_function"]);
-  nodes_positions_x.swap(rbf_data["node_x"]);
-  nodes_positions_y.swap(rbf_data["node_y"]);
-  nodes_positions_z.swap(rbf_data["node_z"]);
-
-  std::shared_ptr<std::vector<size_t>> temp_nodes_id =
-    std::make_shared<std::vector<size_t>>(number_of_nodes);
-  std::iota(std::begin(*temp_nodes_id), std::end(*temp_nodes_id), 0);
-  iterable_nodes.resize(1);
-  iterable_nodes[0] = {Point<dim>{},
-                       std::numeric_limits<double>::max(),
-                       temp_nodes_id};
-
-  minimal_support_radius =
-    *std::min_element(std::begin(support_radii), std::end(support_radii));
-  rotate_nodes();
-  initialize_bounding_box();
-  this->effective_radius = bounding_box->half_lengths.norm();
-}
-
-template <int dim>
-void
-RBFShape<dim>::remove_superfluous_data()
-{
-  // We loop over the likely nodes map and take note of the RBF nodes that are
-  // required
-
-  useful_rbf_node_map.clear();
-  size_t current_number_of_kept_rbf_nodes = 0;
-  for (auto it = likely_nodes_map.cbegin(); it != likely_nodes_map.cend(); it++)
-    {
-      auto cell = it->first;
-      prepare_iterable_nodes(cell);
-      for (size_t portion_id = 0; portion_id < iterable_nodes.size();
-           portion_id++)
-        {
-          for (const size_t &node_id :
-               *(std::get<2>(iterable_nodes[portion_id])))
-            {
-              current_number_of_kept_rbf_nodes = useful_rbf_node_map.size();
-              if (useful_rbf_node_map.find(node_id) ==
-                  useful_rbf_node_map.end())
-                useful_rbf_node_map[node_id] = current_number_of_kept_rbf_nodes;
-              current_number_of_kept_rbf_nodes++;
-            }
-        }
-      reset_iterable_nodes(cell);
-    }
-
-  std::vector<double>     temp_weights;
-  std::vector<Point<dim>> temp_rotated_nodes_positions;
-  std::vector<double>     temp_support_radii;
-  std::vector<double>     temp_basis_functions;
-
-  // Here we treat all vectors separately to keep the maximum memory low
-  // Weights treatment
-  temp_weights.resize(current_number_of_kept_rbf_nodes);
-  for (auto it = useful_rbf_node_map.cbegin(); it != useful_rbf_node_map.cend();
-       it++)
-    temp_weights[it->second] = weights[it->first];
-  weights.swap(temp_weights);
-  temp_weights.clear();
-
-  // Nodes positions treatment
-  temp_rotated_nodes_positions.resize(current_number_of_kept_rbf_nodes);
-  for (auto it = useful_rbf_node_map.cbegin(); it != useful_rbf_node_map.cend();
-       it++)
-    temp_rotated_nodes_positions[it->second] =
-      rotated_nodes_positions[it->first];
-  rotated_nodes_positions.swap(temp_rotated_nodes_positions);
-  temp_rotated_nodes_positions.clear();
-
-  // Support radii treatment
-  temp_support_radii.resize(current_number_of_kept_rbf_nodes);
-  for (auto it = useful_rbf_node_map.cbegin(); it != useful_rbf_node_map.cend();
-       it++)
-    temp_support_radii[it->second] = support_radii[it->first];
-  support_radii.swap(temp_support_radii);
-  temp_support_radii.clear();
-
-  // Basis functions treatment
-  temp_basis_functions.resize(current_number_of_kept_rbf_nodes);
-  for (auto it = useful_rbf_node_map.cbegin(); it != useful_rbf_node_map.cend();
-       it++)
-    temp_basis_functions[it->second] = basis_functions[it->first];
-  basis_functions.swap(temp_basis_functions);
-  temp_basis_functions.clear();
+  this->load_data_from_file();
 }
 
 template <int dim>
@@ -1545,9 +1464,9 @@ RBFShape<dim>::value_with_cell_guess(
   auto iterator        = this->value_cache.find(point_in_string);
   if (iterator == this->value_cache.end())
     {
-      prepare_iterable_nodes(cell);
+      swap_iterable_nodes(cell);
       double value = this->value(evaluation_point);
-      reset_iterable_nodes(cell);
+      swap_iterable_nodes(cell);
       this->value_cache[point_in_string] = value;
       return value;
     }
@@ -1574,9 +1493,9 @@ RBFShape<dim>::gradient_with_cell_guess(
   auto iterator        = this->gradient_cache.find(point_in_string);
   if (iterator == this->gradient_cache.end())
     {
-      prepare_iterable_nodes(cell);
+      swap_iterable_nodes(cell);
       Tensor<1, dim> gradient = this->gradient(evaluation_point);
-      reset_iterable_nodes(cell);
+      swap_iterable_nodes(cell);
       this->gradient_cache[point_in_string] = gradient;
       return gradient;
     }
@@ -1608,15 +1527,13 @@ RBFShape<dim>::value(const Point<dim> &evaluation_point,
       for (const size_t &node_id : *(std::get<2>(iterable_nodes[portion_id])))
         {
           normalized_distance =
-            (evaluation_point -
-             rotated_nodes_positions[useful_rbf_node_map.find(node_id)->second])
-              .norm() /
-            support_radii[useful_rbf_node_map.find(node_id)->second];
+            (evaluation_point - rotated_nodes_positions[node_id]).norm() /
+            support_radii[node_id];
           basis = evaluate_basis_function(
-            static_cast<enum RBFShape<dim>::RBFBasisFunction>(round(
-              basis_functions[useful_rbf_node_map.find(node_id)->second])),
+            static_cast<enum RBFShape<dim>::RBFBasisFunction>(
+              round(basis_functions[node_id])),
             normalized_distance);
-          value += basis * weights[useful_rbf_node_map.find(node_id)->second];
+          value += basis * weights[node_id];
         }
     }
   return value;
@@ -1657,12 +1574,9 @@ RBFShape<dim>::gradient(const Point<dim> &evaluation_point,
         {
           // Calculation of the dr/dx
           relative_position =
-            (evaluation_point -
-             rotated_nodes_positions[useful_rbf_node_map.find(node_id)
-                                       ->second]);
-          distance = (relative_position).norm();
-          normalized_distance =
-            distance / support_radii[useful_rbf_node_map.find(node_id)->second];
+            (evaluation_point - rotated_nodes_positions[node_id]);
+          distance            = (relative_position).norm();
+          normalized_distance = distance / support_radii[node_id];
           if (distance > 1e-16)
             dr_dx_derivative = relative_position / distance;
           else
@@ -1679,17 +1593,15 @@ RBFShape<dim>::gradient(const Point<dim> &evaluation_point,
                 dr_dx_derivative[d] = 0;
             }
           // Calculation of the dr_norm/dr
-          drnorm_dr_derivative =
-            1.0 / support_radii[useful_rbf_node_map.find(node_id)->second];
+          drnorm_dr_derivative = 1.0 / support_radii[node_id];
           // Calculation of the d(basis)/dr
           dbasis_drnorm_derivative = evaluate_basis_function_derivative(
-            static_cast<enum RBFShape<dim>::RBFBasisFunction>(round(
-              basis_functions[useful_rbf_node_map.find(node_id)->second])),
+            static_cast<enum RBFShape<dim>::RBFBasisFunction>(
+              round(basis_functions[node_id])),
             normalized_distance);
           // Sum
           gradient += dbasis_drnorm_derivative * drnorm_dr_derivative *
-                      dr_dx_derivative *
-                      weights[useful_rbf_node_map.find(node_id)->second];
+                      dr_dx_derivative * weights[node_id];
         }
     }
   return gradient;
@@ -1745,6 +1657,218 @@ RBFShape<dim>::initialize_bounding_box()
                                           this->reverse_align_and_center(
                                             bounding_box_center),
                                           this->orientation);
+}
+
+template <int dim>
+void
+RBFShape<dim>::update_precalculations(
+  DoFHandler<dim> &  dof_handler,
+  const unsigned int levels_not_precalculated,
+  const bool         mesh_based_precalculations)
+{
+  if (!mesh_based_precalculations)
+    return;
+  // We first reset the mapping, since the grid partitioning may change between
+  // calls of this function. The precalculation cost is low enough that this
+  // reset does not have a significant impact of global computational cost.
+  // Here we do a "hard clear" then a soft clear
+  std::shared_ptr<std::vector<size_t>> temp_vector =
+    std::make_shared<std::vector<size_t>>();
+  for (auto it = likely_nodes_map.cbegin(); it != likely_nodes_map.cend();)
+    {
+      likely_nodes_map[it++->first] = std::make_shared<std::vector<
+        std::
+          tuple<Point<dim>, double, std::shared_ptr<std::vector<size_t>>>>>();
+    }
+  likely_nodes_map.clear();
+
+
+
+  const auto &test_cell_iterator = dof_handler.active_cell_iterators();
+  for (const auto &cell : test_cell_iterator)
+    {
+      likely_nodes_map[cell] = std::make_shared<std::vector<
+        std::
+          tuple<Point<dim>, double, std::shared_ptr<std::vector<size_t>>>>>();
+      likely_nodes_map[cell]->push_back(iterable_nodes[0]);
+    }
+  return;
+
+
+
+  this->dof_handler                = &dof_handler;
+  const unsigned int maximal_level = dof_handler.get_triangulation().n_levels();
+
+  // We start by dividing the list of RBF nodes into manageable portions
+  number_of_nodes = std::get<2>(iterable_nodes[0])->size();
+  std::shared_ptr<std::vector<size_t>> temporary_node_numbers =
+    std::make_shared<std::vector<size_t>>(number_of_nodes);
+  std::iota(std::begin(*temporary_node_numbers),
+            std::end(*temporary_node_numbers),
+            0);
+  std::map<const typename DoFHandler<dim>::cell_iterator,
+           std::tuple<Point<dim>, double, std::shared_ptr<std::vector<size_t>>>>
+    temporary_nodes_portions_map;
+  temporary_nodes_portions_map.clear();
+  for (unsigned int level = 0; level + levels_not_precalculated < maximal_level;
+       level++)
+    {
+      max_number_of_inside_nodes = 1;
+      const auto &cell_iterator  = dof_handler.cell_iterators_on_level(level);
+      for (const auto &cell : cell_iterator)
+        {
+          if (cell->is_artificial_on_level())
+            continue;
+          if (cell->level() > 0)
+            try
+              {
+                const auto cell_parent = cell->parent();
+                const auto parent_iterator =
+                  temporary_nodes_portions_map.find(cell_parent);
+                if (parent_iterator != temporary_nodes_portions_map.end())
+                  {
+                    temporary_node_numbers =
+                      std::get<2>(parent_iterator->second);
+                  }
+                else
+                  // If the parent doesn't contain any node, the child will not
+                  // either
+                  continue;
+              }
+            catch (TriaAccessorExceptions::ExcCellHasNoParent())
+              {}
+
+          std::shared_ptr<std::vector<size_t>> current_cell_nodes =
+            std::make_shared<std::vector<size_t>>();
+          current_cell_nodes->reserve(max_number_of_inside_nodes);
+          for (unsigned int i = 0; i < temporary_node_numbers->size(); i++)
+            {
+              if (cell->point_inside(
+                    rotated_nodes_positions[(*temporary_node_numbers)[i]]))
+                current_cell_nodes->push_back(temporary_node_numbers->at(i));
+            }
+          max_number_of_inside_nodes =
+            std::max(max_number_of_inside_nodes, current_cell_nodes->size());
+          current_cell_nodes->shrink_to_fit();
+          if (current_cell_nodes->size() > 0)
+            temporary_nodes_portions_map[cell] =
+              std::make_tuple(cell->barycenter(),
+                              cell->diameter(),
+                              current_cell_nodes);
+
+          // We currently ignore RBF nodes that are in no cells
+          // A fix for this will be implemented shortly
+        }
+      // We need to remove all cells that are not needed anymore
+      // from the map
+      for (auto it = temporary_nodes_portions_map.cbegin();
+           it != temporary_nodes_portions_map.cend();)
+        {
+          auto               cell       = it->first;
+          const unsigned int cell_level = cell->level();
+          bool cell_still_needed = cell->is_active() || cell_level == level;
+          if (!cell_still_needed)
+            {
+              temporary_nodes_portions_map.erase(it++->first);
+            }
+          else
+            it++;
+        }
+    }
+
+  // We give all the subsets to the 0 level, as an initial partitioning
+  const auto &cell_iterator = dof_handler.cell_iterators_on_level(0);
+  double      distance;
+  std::shared_ptr<std::vector<size_t>> temp_nodes =
+    std::make_shared<std::vector<size_t>>();
+  typename DoFHandler<dim>::cell_iterator temp_cell;
+  std::tuple<Point<dim>, double, std::shared_ptr<std::vector<size_t>>>
+    temp_cell_tuple{};
+  for (const auto &cell : cell_iterator)
+    {
+      if (cell->is_artificial_on_level())
+        continue;
+
+      likely_nodes_map[cell] = std::make_shared<std::vector<
+        std::
+          tuple<Point<dim>, double, std::shared_ptr<std::vector<size_t>>>>>();
+      for (auto it = temporary_nodes_portions_map.cbegin();
+           it != temporary_nodes_portions_map.cend();
+           it++)
+        {
+          temp_cell = it->first;
+          if (temp_cell->is_active() ||
+              static_cast<unsigned int>(temp_cell->level() + 1 +
+                                        levels_not_precalculated) >=
+                maximal_level)
+            if (cell->point_inside(temp_cell->barycenter()))
+              {
+                temp_cell_tuple = std::make_tuple(temp_cell->barycenter(),
+                                                  temp_cell->diameter(),
+                                                  std::get<2>(it->second));
+                likely_nodes_map[cell]->push_back(temp_cell_tuple);
+              }
+            else
+              for (const size_t &node_id : *temp_nodes)
+                {
+                  distance =
+                    (cell->barycenter() - rotated_nodes_positions[node_id])
+                      .norm();
+                  if (distance + 0.5 * cell->diameter() <
+                      support_radii[node_id])
+                    {
+                      temp_cell_tuple =
+                        std::make_tuple(temp_cell->barycenter(),
+                                        temp_cell->diameter(),
+                                        std::get<2>(it->second));
+                      likely_nodes_map[cell]->push_back(temp_cell_tuple);
+                      break;
+                    }
+                }
+        }
+      if (likely_nodes_map[cell]->size() < 1)
+        likely_nodes_map.erase(cell);
+    }
+
+  // We then treat all other levels
+  for (unsigned int level = 1; level < maximal_level; level++)
+    {
+      const auto &cell_iterator_on_level =
+        dof_handler.cell_iterators_on_level(level);
+      for (const auto &cell : cell_iterator_on_level)
+        {
+          if (cell->is_artificial_on_level())
+            continue;
+
+          // We also check if the cell diameter is lower than the minimal
+          // support radius. In that case, the likely nodes should stay more
+          // or less the same.
+          const bool cell_smaller_than_rbf_radius =
+            (cell->diameter() < minimal_support_radius);
+          if (cell_smaller_than_rbf_radius ||
+              (level + 1) + levels_not_precalculated >= maximal_level)
+            {
+              likely_nodes_map[cell] = likely_nodes_map[cell->parent()];
+            }
+          else
+            determine_likely_nodes_for_one_cell(cell, cell->barycenter());
+        }
+    }
+
+  // We need to remove all cells that are not needed anymore
+  // from the map
+  for (auto it = likely_nodes_map.cbegin(); it != likely_nodes_map.cend();)
+    {
+      auto cell              = it->first;
+      bool cell_still_needed = cell->is_active() && !cell->is_artificial();
+      if (!cell_still_needed)
+        {
+          likely_nodes_map.erase(it++->first);
+        }
+      else
+        it++;
+    }
+  std::cout << "We have updated precalculations" << std::endl;
 }
 
 template <int dim>
@@ -1817,175 +1941,145 @@ RBFShape<dim>::determine_likely_nodes_for_one_cell(
 
 template <int dim>
 void
-RBFShape<dim>::update_precalculations(
-  DoFHandler<dim> &  dof_handler,
+RBFShape<dim>::load_data_from_file()
+{
+  weights.clear();
+  support_radii.clear();
+  basis_functions.clear();
+  rotated_nodes_positions.clear();
+  nodes_positions_x.clear();
+  nodes_positions_y.clear();
+  nodes_positions_z.clear();
+
+  // The following lines retrieve information regarding an RBF
+  // with a given file name. Then, it converts the information
+  // into one vector which is used to initialize the RBF shape.
+  // All the information is concatenated into only one object so
+  // that the usual initialization function can be called.
+  std::map<std::string, std::vector<double>> rbf_data;
+  fill_vectors_from_file(rbf_data, filename, " ");
+  number_of_nodes       = rbf_data["weight"].size();
+  total_number_of_nodes = number_of_nodes;
+
+  weights.swap(rbf_data["weight"]);
+  support_radii.swap(rbf_data["support_radius"]);
+  basis_functions.swap(rbf_data["basis_function"]);
+  nodes_positions_x.swap(rbf_data["node_x"]);
+  nodes_positions_y.swap(rbf_data["node_y"]);
+  nodes_positions_z.swap(rbf_data["node_z"]);
+
+  std::shared_ptr<std::vector<size_t>> temp_nodes_id =
+    std::make_shared<std::vector<size_t>>(number_of_nodes);
+  std::iota(std::begin(*temp_nodes_id), std::end(*temp_nodes_id), 0);
+  iterable_nodes.resize(1);
+  iterable_nodes[0] = {Point<dim>{},
+                       std::numeric_limits<double>::max(),
+                       temp_nodes_id};
+
+  minimal_support_radius =
+    *std::min_element(std::begin(support_radii), std::end(support_radii));
+  initialize_bounding_box();
+  rotate_nodes();
+  this->effective_radius = bounding_box->half_lengths.norm();
+}
+
+template <int dim>
+void
+RBFShape<dim>::remove_superfluous_data(
+  DoFHandler<dim> &  updated_dof_handler,
   const unsigned int levels_not_precalculated,
   const bool         mesh_based_precalculations)
 {
-  this->load_data_from_file();
-
   if (!mesh_based_precalculations)
     return;
 
-  likely_nodes_map.clear();
-  rotate_nodes();
-  // We first reset the mapping, since the grid partitioning may change between
-  // calls of this function. The precalculation cost is low enough that this
-  // reset does not have a significant impact of global computational cost.
-  this->dof_handler                = &dof_handler;
-  const unsigned int maximal_level = dof_handler.get_triangulation().n_levels();
+  this->update_precalculations(updated_dof_handler,
+                               levels_not_precalculated,
+                               mesh_based_precalculations);
 
-  // We start by dividing the list of RBF nodes into manageable portions
-  std::shared_ptr<std::vector<size_t>> temporary_node_numbers =
-    std::make_shared<std::vector<size_t>>(number_of_nodes);
-  std::iota(std::begin(*temporary_node_numbers),
-            std::end(*temporary_node_numbers),
-            0);
-  std::map<const typename DoFHandler<dim>::cell_iterator,
-           std::tuple<Point<dim>, double, std::shared_ptr<std::vector<size_t>>>>
-    temporary_nodes_portions_map;
-  temporary_nodes_portions_map.clear();
-  for (unsigned int level = 0; level + levels_not_precalculated < maximal_level;
-       level++)
+  // We loop over the likely nodes map and take note of the RBF nodes that are
+  // required
+  useful_rbf_node_map.clear();
+  size_t current_number_of_kept_rbf_nodes = 0;
+  for (auto it = likely_nodes_map.cbegin(); it != likely_nodes_map.cend(); it++)
     {
-      max_number_of_inside_nodes = 1;
-      const auto &cell_iterator  = dof_handler.cell_iterators_on_level(level);
-      for (const auto &cell : cell_iterator)
+      auto cell = it->first;
+      swap_iterable_nodes(cell);
+      for (size_t portion_id = 0; portion_id < iterable_nodes.size();
+           portion_id++)
         {
-          if (cell->is_artificial_on_level())
-            continue;
-          if (cell->level() > 0)
-            try
-              {
-                const auto cell_parent = cell->parent();
-                const auto parent_iterator =
-                  temporary_nodes_portions_map.find(cell_parent);
-                if (parent_iterator != temporary_nodes_portions_map.end())
-                  {
-                    temporary_node_numbers =
-                      std::get<2>(parent_iterator->second);
-                  }
-                else
-                  // If the parent doesn't contain any node, the child will not
-                  // either
-                  continue;
-              }
-            catch (TriaAccessorExceptions::ExcCellHasNoParent())
-              {}
-
-          std::shared_ptr<std::vector<size_t>> current_cell_nodes =
-            std::make_shared<std::vector<size_t>>();
-          current_cell_nodes->reserve(max_number_of_inside_nodes);
-          for (unsigned int i = 0; i < temporary_node_numbers->size(); i++)
+          for (const size_t &node_id :
+               *(std::get<2>(iterable_nodes[portion_id])))
             {
-              if (cell->point_inside(
-                    rotated_nodes_positions[(*temporary_node_numbers)[i]]))
-                current_cell_nodes->push_back(temporary_node_numbers->at(i));
+              current_number_of_kept_rbf_nodes = useful_rbf_node_map.size();
+              if (useful_rbf_node_map.find(node_id) ==
+                  useful_rbf_node_map.end())
+                {
+                  useful_rbf_node_map[node_id] =
+                    current_number_of_kept_rbf_nodes;
+                  current_number_of_kept_rbf_nodes++;
+                }
             }
-          max_number_of_inside_nodes =
-            std::max(max_number_of_inside_nodes, current_cell_nodes->size());
-          current_cell_nodes->shrink_to_fit();
-          if (current_cell_nodes->size() > 0)
-            temporary_nodes_portions_map[cell] =
-              std::make_tuple(cell->barycenter(),
-                              cell->diameter(),
-                              current_cell_nodes);
-
-          // We currently ignore RBF nodes that are in no cells
-          // A fix for this will be implemented shortly
         }
-
-      // We need to remove all cells that are not needed anymore
-      // from the map
-      for (auto it = temporary_nodes_portions_map.cbegin();
-           it != temporary_nodes_portions_map.cend();)
-        {
-          auto               cell       = it->first;
-          const unsigned int cell_level = cell->level();
-          bool cell_still_needed = cell->is_active() || cell_level == level;
-          if (!cell_still_needed)
-            {
-              temporary_nodes_portions_map.erase(it++->first);
-            }
-          else
-            it++;
-        }
+      swap_iterable_nodes(cell);
     }
 
-  // We give all the subsets to the 0 level, as an initial partitioning
-  const auto &cell_iterator = dof_handler.cell_iterators_on_level(0);
-  std::shared_ptr<std::vector<size_t>> temp_nodes =
-    std::make_shared<std::vector<size_t>>();
-  typename DoFHandler<dim>::cell_iterator temp_cell;
-  std::tuple<Point<dim>, double, std::shared_ptr<std::vector<size_t>>>
-    temp_cell_tuple{};
-  for (const auto &cell : cell_iterator)
-    {
-      if (cell->is_artificial_on_level())
-        continue;
+  std::vector<double>     temp_weights;
+  std::vector<Point<dim>> temp_rotated_nodes_positions;
+  std::vector<double>     temp_support_radii;
+  std::vector<double>     temp_basis_functions;
 
-      likely_nodes_map[cell] = std::make_shared<std::vector<
-        std::
-          tuple<Point<dim>, double, std::shared_ptr<std::vector<size_t>>>>>();
-      for (auto it = temporary_nodes_portions_map.cbegin();
-           it != temporary_nodes_portions_map.cend();
-           it++)
-        {
-          temp_cell = it->first;
-          if (temp_cell->is_active() ||
-              static_cast<unsigned int>(temp_cell->level() + 1 +
-                                        levels_not_precalculated) >=
-                maximal_level)
-            if (cell->point_inside(temp_cell->barycenter()))
-              {
-                temp_cell_tuple = std::make_tuple(temp_cell->barycenter(),
-                                                  temp_cell->diameter(),
-                                                  std::get<2>(it->second));
-                likely_nodes_map[cell]->push_back(temp_cell_tuple);
-              }
-        }
-    }
+  // Here we treat all vectors separately to keep the maximum memory low
+  std::shared_ptr<std::vector<size_t>> temp_nodes_id =
+    std::make_shared<std::vector<size_t>>(current_number_of_kept_rbf_nodes);
+  number_of_nodes = current_number_of_kept_rbf_nodes;
+  std::iota(std::begin(*temp_nodes_id), std::end(*temp_nodes_id), 0);
+  iterable_nodes.resize(1);
+  iterable_nodes[0] = {Point<dim>{},
+                       std::numeric_limits<double>::max(),
+                       temp_nodes_id};
+  std::get<2>(iterable_nodes[0])->shrink_to_fit();
 
-  // We then treat all other levels
-  for (unsigned int level = 1; level < maximal_level; level++)
-    {
-      const auto &cell_iterator_on_level =
-        dof_handler.cell_iterators_on_level(level);
-      for (const auto &cell : cell_iterator_on_level)
-        {
-          if (cell->is_artificial_on_level())
-            continue;
+  // Weights treatment
+  temp_weights.resize(current_number_of_kept_rbf_nodes);
+  for (auto it = useful_rbf_node_map.cbegin(); it != useful_rbf_node_map.cend();
+       it++)
+    temp_weights[it->second] = weights[it->first];
+  weights.swap(temp_weights);
+  weights.shrink_to_fit();
+  temp_weights.clear();
 
-          // We also check if the cell diameter is lower than the minimal
-          // support radius. In that case, the likely nodes should stay more
-          // or less the same.
-          const bool cell_smaller_than_rbf_radius =
-            (cell->diameter() < minimal_support_radius);
-          if (cell_smaller_than_rbf_radius ||
-              (level + 1) + levels_not_precalculated >= maximal_level)
-            {
-              likely_nodes_map[cell] = likely_nodes_map[cell->parent()];
-            }
-          else
-            determine_likely_nodes_for_one_cell(cell, cell->barycenter());
-        }
-    }
+  // Nodes positions treatment
+  temp_rotated_nodes_positions.resize(current_number_of_kept_rbf_nodes);
+  for (auto it = useful_rbf_node_map.cbegin(); it != useful_rbf_node_map.cend();
+       it++)
+    temp_rotated_nodes_positions[it->second] =
+      rotated_nodes_positions[it->first];
+  rotated_nodes_positions.swap(temp_rotated_nodes_positions);
+  rotated_nodes_positions.shrink_to_fit();
+  temp_rotated_nodes_positions.clear();
 
-  // We need to remove all cells that are not needed anymore
-  // from the map
-  for (auto it = likely_nodes_map.cbegin(); it != likely_nodes_map.cend();)
-    {
-      auto cell              = it->first;
-      bool cell_still_needed = cell->is_active() && !cell->is_artificial();
-      if (!cell_still_needed)
-        {
-          likely_nodes_map.erase(it++->first);
-        }
-      else
-        it++;
-    }
+  // Support radii treatment
+  temp_support_radii.resize(current_number_of_kept_rbf_nodes);
+  for (auto it = useful_rbf_node_map.cbegin(); it != useful_rbf_node_map.cend();
+       it++)
+    temp_support_radii[it->second] = support_radii[it->first];
+  support_radii.swap(temp_support_radii);
+  support_radii.shrink_to_fit();
+  temp_support_radii.clear();
 
-  this->remove_superfluous_data();
+  // Basis functions treatment
+  temp_basis_functions.resize(current_number_of_kept_rbf_nodes);
+  for (auto it = useful_rbf_node_map.cbegin(); it != useful_rbf_node_map.cend();
+       it++)
+    temp_basis_functions[it->second] = basis_functions[it->first];
+  basis_functions.swap(temp_basis_functions);
+  basis_functions.shrink_to_fit();
+  temp_basis_functions.clear();
+
+  this->update_precalculations(updated_dof_handler,
+                               levels_not_precalculated,
+                               mesh_based_precalculations);
 }
 
 template <int dim>
@@ -2091,18 +2185,7 @@ RBFShape<dim>::evaluate_basis_function_derivative(
 
 template <int dim>
 void
-RBFShape<dim>::prepare_iterable_nodes(
-  const typename DoFHandler<dim>::active_cell_iterator cell)
-{
-  // Here we check if the likely nodes have been identified
-  auto iterator = likely_nodes_map.find(cell);
-  if (iterator != likely_nodes_map.end())
-    iterable_nodes.swap(*likely_nodes_map[cell]);
-}
-
-template <int dim>
-void
-RBFShape<dim>::reset_iterable_nodes(
+RBFShape<dim>::swap_iterable_nodes(
   const typename DoFHandler<dim>::active_cell_iterator cell)
 {
   // Here we check if the likely nodes have been identified
