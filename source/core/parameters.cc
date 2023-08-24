@@ -2083,6 +2083,11 @@ namespace Parameters
           "false",
           Patterns::Bool(),
           "A boolean that will force the linear solver to continue even if it fails");
+
+        prm.declare_entry("mg smoother relaxation",
+                        "0.5",
+                        Patterns::Double(),
+                        "mg smoother relaxation");
       }
       prm.leave_subsection();
     }
@@ -2153,6 +2158,7 @@ namespace Parameters
         amg_smoother_overlap      = prm.get_integer("amg smoother overlap");
         force_linear_solver_continuation =
           prm.get_bool("force linear solver continuation");
+        mg_smoother_relaxation = prm.get_double("mg smoother relaxation");
       }
       prm.leave_subsection();
     }

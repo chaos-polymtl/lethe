@@ -966,6 +966,9 @@ namespace Parameters
     // Block linear solver to throw error.
     bool force_linear_solver_continuation;
 
+    // MG relaxation parameter
+    double mg_smoother_relaxation;
+
     static void
     declare_parameters(ParameterHandler &prm, const std::string &physics_name);
     void

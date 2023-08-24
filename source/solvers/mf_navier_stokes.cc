@@ -409,7 +409,8 @@ MFNavierStokesSolver<dim>::setup_LSMG(SolverGMRES<VectorType> &solver)
       mg_operators[level]->compute_inverse_diagonal(
         smoother_data[level].preconditioner->get_vector());
       smoother_data[level].n_iterations = 10;
-      smoother_data[level].relaxation   = 0.5;
+      smoother_data[level].relaxation =
+        this->simulation_parameters.linear_solver.mg_smoother_relaxation;
     }
 
   MGSmootherPrecondition<OperatorType, SmootherType, VectorType> mg_smoother;
@@ -584,7 +585,8 @@ MFNavierStokesSolver<dim>::setup_GCMG(SolverGMRES<VectorType> &solver)
       operators[level]->compute_inverse_diagonal(
         smoother_data[level].preconditioner->get_vector());
       smoother_data[level].n_iterations = 10;
-      smoother_data[level].relaxation   = 0.5;
+      smoother_data[level].relaxation =
+        this->simulation_parameters.linear_solver.mg_smoother_relaxation;
     }
 
   MGSmootherPrecondition<OperatorType, SmootherType, VectorType> mg_smoother;
