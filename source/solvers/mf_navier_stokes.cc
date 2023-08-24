@@ -660,11 +660,6 @@ MFNavierStokesSolver<dim>::solve_system_GMRES(const bool   initial_step,
                                               const double absolute_residual,
                                               const double relative_residual)
 {
-  const unsigned int max_iter = 3;
-  unsigned int       iter     = 0;
-  bool               success  = false;
-
-
   auto &system_rhs          = this->system_rhs;
   auto &nonzero_constraints = this->nonzero_constraints;
 
@@ -693,14 +688,10 @@ MFNavierStokesSolver<dim>::solve_system_GMRES(const bool   initial_step,
     this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
       .max_krylov_vectors;
 
-  while (success == false and iter < max_iter)
-    {
-      try
-        {
-          // if (!ls_multigrid_preconditioner)
-          //   setup_preconditioner();
+  // if (!ls_multigrid_preconditioner)
+  //   setup_preconditioner();
 
-          SolverGMRES<VectorType> solver(solver_control, solver_parameters);
+  SolverGMRES<VectorType> solver(solver_control, solver_parameters);
 
           {
             TimerOutput::Scope t(this->computing_timer, "solve_linear_system");
@@ -746,12 +737,13 @@ MFNavierStokesSolver<dim>::solve_system_GMRES(const bool   initial_step,
               }
           }
 
-          constraints_used.distribute(this->newton_update);
-          success = true;
-        }
-      catch (std::exception &e)
-        {
-          this->pcout << " GMRES solver failed!" << std::endl;
+    if (this->simulation_parameters.linear_solver.verbosity !=
+        Parameters::Verbosity::quiet)
+      {
+        this->pcout << "  -Iterative solver took : "
+                    << solver_control.last_step() << " steps " << std::endl;
+      }
+  }
 
           if (iter == max_iter - 1 && !this->simulation_parameters.linear_solver
                                          .at(PhysicsID::fluid_dynamics)
