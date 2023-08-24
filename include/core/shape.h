@@ -1792,7 +1792,6 @@ public:
 private:
   std::string                          filename;
   size_t                               number_of_nodes;
-  size_t                               total_number_of_nodes;
   std::shared_ptr<HyperRectangle<dim>> bounding_box;
   std::vector<
     std::tuple<Point<dim>, double, std::shared_ptr<std::vector<size_t>>>>

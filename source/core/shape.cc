@@ -1958,8 +1958,7 @@ RBFShape<dim>::load_data_from_file()
   // that the usual initialization function can be called.
   std::map<std::string, std::vector<double>> rbf_data;
   fill_vectors_from_file(rbf_data, filename, " ");
-  number_of_nodes       = rbf_data["weight"].size();
-  total_number_of_nodes = number_of_nodes;
+  number_of_nodes = rbf_data["weight"].size();
 
   weights.swap(rbf_data["weight"]);
   support_radii.swap(rbf_data["support_radius"]);

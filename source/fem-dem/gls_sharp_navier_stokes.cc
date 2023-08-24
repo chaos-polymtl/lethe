@@ -437,18 +437,18 @@ GLSSharpNavierStokesSolver<dim>::refinement_control(
           update_precalculations_for_ib();
         }
     }
-   if (triangulation_modified_at_least_once || initial_refinement)
-     {
-       for (unsigned int p_i = 0; p_i < particles.size(); ++p_i)
-         {
-           TimerOutput::Scope t(this->computing_timer, "removing_rbf_nodes");
-           particles[p_i].remove_superfluous_data(
-             this->dof_handler,
-             this->simulation_parameters.particlesParameters
-               ->levels_not_precalculated,
-             particles[p_i].mesh_based_precalculations);
-         }
-     }
+  if (triangulation_modified_at_least_once || initial_refinement)
+    {
+      for (unsigned int p_i = 0; p_i < particles.size(); ++p_i)
+        {
+          TimerOutput::Scope t(this->computing_timer, "removing_rbf_nodes");
+          particles[p_i].remove_superfluous_data(
+            this->dof_handler,
+            this->simulation_parameters.particlesParameters
+              ->levels_not_precalculated,
+            particles[p_i].mesh_based_precalculations);
+        }
+    }
 }
 
 
