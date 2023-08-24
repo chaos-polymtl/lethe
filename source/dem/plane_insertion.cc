@@ -254,9 +254,9 @@ PlaneInsertion<dim>::insert(
       while (empty_cells_on_proc.size() >
              number_of_particles_to_insert_on_this_core)
         {
-          auto it =
-            empty_cells_on_proc.begin(); // Get an iterator to the last element
-          empty_cells_on_proc.erase(it); // Erase the last element
+          auto it = empty_cells_on_proc
+                      .begin(); // Get the iterator of the first element
+          empty_cells_on_proc.erase(it); // Erase the first element
         }
 
       // There's probably a better ways to define the properties of a particle,
