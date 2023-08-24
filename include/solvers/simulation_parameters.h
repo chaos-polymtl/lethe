@@ -214,7 +214,8 @@ public:
           "  end\n");
       }
     if (multiphysics.vof_parameters.surface_tension_force.enable &&
-        !multiphysics.heat_transfer)
+        !multiphysics.vof_parameters.surface_tension_force
+           .enable_marangoni_effect)
       {
         bool no_fluid_fluid_interaction_error = true;
         for (unsigned int i = 0;
@@ -271,35 +272,11 @@ public:
           "  end\n");
       }
 
-    if (multiphysics.heat_transfer &&
-        multiphysics.vof_parameters.surface_tension_force
-          .enable_marangoni_effect &&
-        !multiphysics.VOF)
-      {
-        throw std::logic_error(
-          "Inconsistency in .prm!\n "
-          "In subsection multiphysics, with heat transfer enabled, and in \n "
-          "subsection vof with marangoni effect enabled, but VOF not enabled in \n "
-          "subsection multiphysics. This is necessary to account for Marangoni \n "
-          "effect. In subsection multiphysics, use:\n\n"
-          "  set VOF  = true\n");
-      }
-
-    if (multiphysics.VOF &&
+    if (multiphysics.VOF && multiphysics.heat_transfer &&
         multiphysics.vof_parameters.surface_tension_force
           .enable_marangoni_effect &&
         multiphysics.vof_parameters.surface_tension_force.enable)
       {
-        if (!multiphysics.heat_transfer)
-          {
-            throw std::logic_error(
-              "Inconsistency in .prm!\n "
-              "In subsection multiphysics, with VOF enabled, and in subsection vof\n "
-              "with marangoni effect enabled, but heat transfer not enabled in \n "
-              "subsection multiphysics. This is necessary to account for Marangoni \n "
-              "effect. In subsection multiphysics, use:\n\n"
-              "  set heat transfer  = true\n");
-          }
         if (physical_properties.number_of_material_interactions == 0)
           {
             throw std::logic_error(
@@ -412,23 +389,6 @@ public:
               "    set enable marangoni effect = true\n"
               "  end\n");
           }
-      }
-
-    if (multiphysics.VOF && multiphysics.heat_transfer &&
-        multiphysics.vof_parameters.surface_tension_force
-          .enable_marangoni_effect &&
-        !multiphysics.vof_parameters.surface_tension_force.enable)
-      {
-        throw std::logic_error(
-          "Inconsistency in .prm!\n "
-          "In subsection multiphysics, with VOF and heat transfer enabled,\n "
-          "and in subsection vof, with marangoni effect enabled, but surface\n "
-          "tension force disabled in subsection surface tension force of \n "
-          "subsection vof. In subsection vof, use:\n\n"
-          "  subsection surface tension force\n"
-          "    set enable                  = true\n"
-          "    set enable marangoni effect = true\n"
-          "  end\n");
       }
   }
 

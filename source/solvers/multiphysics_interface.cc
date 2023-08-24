@@ -10,56 +10,56 @@
 DeclException1(
   BuoyancyWithoutFluidDynamicsError,
   bool,
-  << "Buoyancy force is activated (" << arg1
+  << std::boolalpha << "Buoyancy force is activated (" << arg1
   << "), while fluid dynamics is not activated (false)." << std::endl
   << "Buoyancy force cannot be activated without activating fluid dynamics.");
 
 DeclException1(
   BuoyancyWithoutHeatTransferError,
   bool,
-  << "Buoyancy force is activated (" << arg1
+  << std::boolalpha << "Buoyancy force is activated (" << arg1
   << "), while heat transfer is not activated (false)." << std::endl
   << "Buoyancy force cannot be activated without activating heat transfer.");
 
 DeclException1(
   MarangoniWithoutFluidDynamicsError,
   bool,
-  << "Marangoni effect is activated (" << arg1
+  << std::boolalpha << "Marangoni effect is activated (" << arg1
   << "), while fluid dynamics is not activated (false)." << std::endl
   << "Marangoni effect cannot be activated without activating fluid dynamics.");
 
 DeclException1(
   MarangoniWithoutHeatTransferError,
   bool,
-  << "Marangoni effect is activated (" << arg1
+  << std::boolalpha << "Marangoni effect is activated (" << arg1
   << "), while heat transfer is not activated (false)." << std::endl
   << "Marangoni effect cannot be activated without activating heat transfer.");
 
 DeclException1(
   MarangoniWithoutSurfaceTensionForceError,
   bool,
-  << "Marangoni effect is activated (" << arg1
+  << std::boolalpha << "Marangoni effect is activated (" << arg1
   << "), while surface tension force is not activated (false)." << std::endl
   << "Marangoni effect cannot be activated without activating surface tension force.");
 
 DeclException1(
   SurfaceTensionForceWithoutVOFError,
   bool,
-  << "Surface tension force is activated (" << arg1
+  << std::boolalpha << "Surface tension force is activated (" << arg1
   << "), while VOF is not activated (false)." << std::endl
   << "Surface tension force cannot be activated without activating VOF.");
 
 DeclException1(
   MarangoniWithoutVOFError,
   bool,
-  << "Marangoni effect is activated (" << arg1
+  << std::boolalpha << "Marangoni effect is activated (" << arg1
   << "), while VOF is not activated (false)." << std::endl
   << "Marangoni effect cannot be activated without activating VOF.");
 
 DeclException1(
   InterfaceSharpeningWithoutVOFError,
   bool,
-  << "Interface sharpening is activated (" << arg1
+  << std::boolalpha << "Interface sharpening is activated (" << arg1
   << "), while VOF is not activated (false)." << std::endl
   << "Interface sharpening cannot be activated without activating VOF.");
 
@@ -205,37 +205,43 @@ MultiphysicsInterface<dim>::inspect_multiphysics_models_dependencies(
           VOF_enabled);
 
   // Dependence of buoyant force on fluid dynamics
-  Assert(!(buoyancy_force_enabled == true && fluid_dynamics_enabled == false),
-         BuoyancyWithoutFluidDynamicsError(buoyancy_force_enabled));
+  AssertThrow(!(buoyancy_force_enabled == true &&
+                fluid_dynamics_enabled == false),
+              BuoyancyWithoutFluidDynamicsError(buoyancy_force_enabled));
 
   // Dependence of buoyant force on heat transfer
-  Assert(!(buoyancy_force_enabled == true && heat_transfer_enabled == false),
-         BuoyancyWithoutHeatTransferError(buoyancy_force_enabled));
+  AssertThrow(!(buoyancy_force_enabled == true &&
+                heat_transfer_enabled == false),
+              BuoyancyWithoutHeatTransferError(buoyancy_force_enabled));
 
   // Dependence of Marangoni effect on fluid dynamics
-  Assert(!(marangoni_effect_enabled == true && fluid_dynamics_enabled == false),
-         MarangoniWithoutFluidDynamicsError(marangoni_effect_enabled));
+  AssertThrow(!(marangoni_effect_enabled == true &&
+                fluid_dynamics_enabled == false),
+              MarangoniWithoutFluidDynamicsError(marangoni_effect_enabled));
 
   // Dependence of Marangoni effect on heat transfer
-  Assert(!(marangoni_effect_enabled == true && heat_transfer_enabled == false),
-         MarangoniWithoutHeatTransferError(marangoni_effect_enabled));
+  AssertThrow(!(marangoni_effect_enabled == true &&
+                heat_transfer_enabled == false),
+              MarangoniWithoutHeatTransferError(marangoni_effect_enabled));
 
   // Dependence of Marangoni effect on surface tension force
-  Assert(!(marangoni_effect_enabled == true &&
-           surface_tension_force_enabled == false),
-         MarangoniWithoutSurfaceTensionForceError(marangoni_effect_enabled));
+  AssertThrow(!(marangoni_effect_enabled == true &&
+                surface_tension_force_enabled == false),
+              MarangoniWithoutSurfaceTensionForceError(
+                marangoni_effect_enabled));
 
   // Dependence of surface tension force on VOF
-  Assert(!(surface_tension_force_enabled == true && VOF_enabled == false),
-         SurfaceTensionForceWithoutVOFError(surface_tension_force_enabled));
+  AssertThrow(!(surface_tension_force_enabled == true && VOF_enabled == false),
+              SurfaceTensionForceWithoutVOFError(
+                surface_tension_force_enabled));
 
   // Dependence of Marangoni effect on VOF
-  Assert(!(marangoni_effect_enabled == true && VOF_enabled == false),
-         MarangoniWithoutVOFError(marangoni_effect_enabled));
+  AssertThrow(!(marangoni_effect_enabled == true && VOF_enabled == false),
+              MarangoniWithoutVOFError(marangoni_effect_enabled));
 
   // Dependence of interface sharpening on VOF
-  Assert(!(interface_sharpening_enabled == true && VOF_enabled == false),
-         InterfaceSharpeningWithoutVOFError(interface_sharpening_enabled));
+  AssertThrow(!(interface_sharpening_enabled == true && VOF_enabled == false),
+              InterfaceSharpeningWithoutVOFError(interface_sharpening_enabled));
 }
 
 template class MultiphysicsInterface<2>;
