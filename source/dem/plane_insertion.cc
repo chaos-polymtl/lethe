@@ -255,8 +255,7 @@ PlaneInsertion<dim>::insert(
              number_of_particles_to_insert_on_this_core)
         {
           auto it =
-            empty_cells_on_proc.end();   // Get an iterator to the last element
-          std::advance(it, -1);          // Move the iterator back by one step
+            empty_cells_on_proc.begin(); // Get an iterator to the last element
           empty_cells_on_proc.erase(it); // Erase the last element
         }
 
