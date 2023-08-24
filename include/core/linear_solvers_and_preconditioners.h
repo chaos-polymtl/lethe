@@ -142,6 +142,18 @@ struct MultigridParameters
   } smoother;
 };
 
+// setup_ls_multigrid_preconditioner(
+//   this->ls_multigrid_preconditioner,
+//   this->simulation_parameters,
+//   *this->system_operator,
+//   *this->mapping,
+//   this->dof_handler,
+//   *this->cell_quadrature,
+//   this->present_solution,
+//   this->forcing_function,
+//   this->simulation_parameters.physical_properties_manager
+//     .get_viscosity_scale());
+
 template <int dim,
           typename VectorType,
           typename OperatorType,

@@ -182,7 +182,7 @@ private:
    * @brief Set-up global coarsening MG preconditioner
    */
   void
-  setup_GCMG();
+  setup_GCMG(SolverGMRES<VectorType> &solver);
 
 protected:
   // Matrix-free operator
