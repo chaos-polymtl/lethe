@@ -203,8 +203,11 @@ class lethe_pyvista_tools():
                             # If line matches one of the files
                             if path in line:
                                 line = line.replace('.pvtu', '.0000.vtu')
-                                line = line.replace('file="', f'file="{prefix}')
-                                pvd_out.write(line)
+                                
+                                # If vtu is in list_vtu
+                                if line.split('file="')[1].split('"/>')[0] in list_vtu:
+                                    line = line.replace('file="', f'file="{prefix}')
+                                    pvd_out.write(line)
                                 read_files_path_list.remove(path)
                                 pass
                     
@@ -302,8 +305,11 @@ class lethe_pyvista_tools():
                             # If line matches one of the files
                             if path in line:
                                 line = line.replace('.pvtu', '.0000.vtu')
-                                line = line.replace('file="', f'file="{prefix}')
-                                pvd_out.write(line)
+                                
+                                # If vtu is in list_vtu
+                                if line.split('file="')[1].split('"/>')[0] in self.list_vtu:
+                                    line = line.replace('file="', f'file="{prefix}')
+                                    pvd_out.write(line)
                                 read_files_path_list.remove(path)
                                 pass
                     
