@@ -1671,30 +1671,7 @@ RBFShape<dim>::update_precalculations(
   // We first reset the mapping, since the grid partitioning may change between
   // calls of this function. The precalculation cost is low enough that this
   // reset does not have a significant impact of global computational cost.
-  // Here we do a "hard clear" then a soft clear
-  std::shared_ptr<std::vector<size_t>> temp_vector =
-    std::make_shared<std::vector<size_t>>();
-  for (auto it = likely_nodes_map.cbegin(); it != likely_nodes_map.cend();)
-    {
-      likely_nodes_map[it++->first] = std::make_shared<std::vector<
-        std::
-          tuple<Point<dim>, double, std::shared_ptr<std::vector<size_t>>>>>();
-    }
   likely_nodes_map.clear();
-
-
-
-  const auto &test_cell_iterator = dof_handler.active_cell_iterators();
-  for (const auto &cell : test_cell_iterator)
-    {
-      likely_nodes_map[cell] = std::make_shared<std::vector<
-        std::
-          tuple<Point<dim>, double, std::shared_ptr<std::vector<size_t>>>>>();
-      likely_nodes_map[cell]->push_back(iterable_nodes[0]);
-    }
-  return;
-
-
 
   this->dof_handler                = &dof_handler;
   const unsigned int maximal_level = dof_handler.get_triangulation().n_levels();
@@ -1868,7 +1845,6 @@ RBFShape<dim>::update_precalculations(
       else
         it++;
     }
-  std::cout << "We have updated precalculations" << std::endl;
 }
 
 template <int dim>
@@ -1999,7 +1975,6 @@ RBFShape<dim>::remove_superfluous_data(
   // We loop over the likely nodes map and take note of the RBF nodes that are
   // required
   useful_rbf_node_map.clear();
-  size_t current_number_of_kept_rbf_nodes = 0;
   for (auto it = likely_nodes_map.cbegin(); it != likely_nodes_map.cend(); it++)
     {
       auto cell = it->first;
@@ -2010,18 +1985,12 @@ RBFShape<dim>::remove_superfluous_data(
           for (const size_t &node_id :
                *(std::get<2>(iterable_nodes[portion_id])))
             {
-              current_number_of_kept_rbf_nodes = useful_rbf_node_map.size();
-              if (useful_rbf_node_map.find(node_id) ==
-                  useful_rbf_node_map.end())
-                {
-                  useful_rbf_node_map[node_id] =
-                    current_number_of_kept_rbf_nodes;
-                  current_number_of_kept_rbf_nodes++;
-                }
+              useful_rbf_node_map[node_id] = node_id;
             }
         }
       swap_iterable_nodes(cell);
     }
+  size_t current_number_of_kept_rbf_nodes = useful_rbf_node_map.size();
 
   std::vector<double>     temp_weights;
   std::vector<Point<dim>> temp_rotated_nodes_positions;
@@ -2040,38 +2009,54 @@ RBFShape<dim>::remove_superfluous_data(
   std::get<2>(iterable_nodes[0])->shrink_to_fit();
 
   // Weights treatment
+  size_t counter = 0;
   temp_weights.resize(current_number_of_kept_rbf_nodes);
   for (auto it = useful_rbf_node_map.cbegin(); it != useful_rbf_node_map.cend();
        it++)
-    temp_weights[it->second] = weights[it->first];
+    {
+      temp_weights[counter] = weights[it->second];
+      counter++;
+    }
   weights.swap(temp_weights);
   weights.shrink_to_fit();
   temp_weights.clear();
 
   // Nodes positions treatment
+  counter = 0;
   temp_rotated_nodes_positions.resize(current_number_of_kept_rbf_nodes);
   for (auto it = useful_rbf_node_map.cbegin(); it != useful_rbf_node_map.cend();
        it++)
-    temp_rotated_nodes_positions[it->second] =
-      rotated_nodes_positions[it->first];
+    {
+      temp_rotated_nodes_positions[counter] =
+        rotated_nodes_positions[it->second];
+      counter++;
+    }
   rotated_nodes_positions.swap(temp_rotated_nodes_positions);
   rotated_nodes_positions.shrink_to_fit();
   temp_rotated_nodes_positions.clear();
 
   // Support radii treatment
+  counter = 0;
   temp_support_radii.resize(current_number_of_kept_rbf_nodes);
   for (auto it = useful_rbf_node_map.cbegin(); it != useful_rbf_node_map.cend();
        it++)
-    temp_support_radii[it->second] = support_radii[it->first];
+    {
+      temp_support_radii[counter] = support_radii[it->second];
+      counter++;
+    }
   support_radii.swap(temp_support_radii);
   support_radii.shrink_to_fit();
   temp_support_radii.clear();
 
   // Basis functions treatment
+  counter = 0;
   temp_basis_functions.resize(current_number_of_kept_rbf_nodes);
   for (auto it = useful_rbf_node_map.cbegin(); it != useful_rbf_node_map.cend();
        it++)
-    temp_basis_functions[it->second] = basis_functions[it->first];
+    {
+      temp_basis_functions[counter] = basis_functions[it->second];
+      counter++;
+    }
   basis_functions.swap(temp_basis_functions);
   basis_functions.shrink_to_fit();
   temp_basis_functions.clear();
