@@ -379,9 +379,12 @@ Superquadric<dim>::closest_surface_point(
       Point<dim> copy_closest_point{};
       for (unsigned int d = 0; d < dim; d++)
         copy_closest_point[d] = closest_point[d];
-      this->closest_point_cache[point_in_string] = copy_closest_point;
-      this->value_cache[point_in_string]         = this->value(p);
-      this->gradient_cache[point_in_string]      = this->gradient(p);
+      if (!this->part_of_a_composite)
+        {
+          this->closest_point_cache[point_in_string] = copy_closest_point;
+          this->value_cache[point_in_string]         = this->value(p);
+          this->gradient_cache[point_in_string]      = this->gradient(p);
+        }
     }
   else
     closest_point = iterator->second;
@@ -476,10 +479,13 @@ Superquadric<dim>::value_with_cell_guess(
         copy_closest_point[d] = closest_point[d];
 
       double levelset = this->value(evaluation_point);
-
-      this->closest_point_cache[point_in_string] = copy_closest_point;
-      this->value_cache[point_in_string]         = levelset;
-      this->gradient_cache[point_in_string] = this->gradient(evaluation_point);
+      if (!this->part_of_a_composite)
+        {
+          this->closest_point_cache[point_in_string] = copy_closest_point;
+          this->value_cache[point_in_string]         = levelset;
+          this->gradient_cache[point_in_string] =
+            this->gradient(evaluation_point);
+        }
       return levelset;
     }
   else
@@ -540,9 +546,12 @@ Superquadric<dim>::gradient_with_cell_guess(
         copy_closest_point[d] = closest_point[d];
 
       Tensor<1, dim> gradient = this->gradient(evaluation_point);
-      this->closest_point_cache[point_in_string] = copy_closest_point;
-      this->value_cache[point_in_string]    = this->value(evaluation_point);
-      this->gradient_cache[point_in_string] = gradient;
+      if (!this->part_of_a_composite)
+        {
+          this->closest_point_cache[point_in_string] = copy_closest_point;
+          this->value_cache[point_in_string]    = this->value(evaluation_point);
+          this->gradient_cache[point_in_string] = gradient;
+        }
       return gradient;
     }
   else
@@ -646,24 +655,30 @@ OpenCascadeShape<dim>::value_with_cell_guess(
           // evaluate the distance of the point with the shell of the shape.
           // Rotate the solution found to the global reference frame and cache
           // the solution.
-          this->value_cache[point_in_string] =
-            -(centered_point - projected_point).norm();
-          auto rotate_in_globalpoint =
-            this->reverse_align_and_center(projected_point);
-          this->gradient_cache[point_in_string] =
-            (rotate_in_globalpoint - evaluation_point) /
-            ((rotate_in_globalpoint - evaluation_point).norm() + 1.0e-16);
+          if (!this->part_of_a_composite)
+            {
+              this->value_cache[point_in_string] =
+                -(centered_point - projected_point).norm();
+              auto rotate_in_globalpoint =
+                this->reverse_align_and_center(projected_point);
+              this->gradient_cache[point_in_string] =
+                (rotate_in_globalpoint - evaluation_point) /
+                ((rotate_in_globalpoint - evaluation_point).norm() + 1.0e-16);
+            }
           return -(centered_point - projected_point).norm();
         }
       else
         {
-          this->value_cache[point_in_string] =
-            (centered_point - projected_point).norm();
-          auto rotate_in_globalpoint =
-            this->reverse_align_and_center(projected_point);
-          this->gradient_cache[point_in_string] =
-            -(rotate_in_globalpoint - evaluation_point) /
-            ((rotate_in_globalpoint - evaluation_point).norm() + 1.0e-16);
+          if (!this->part_of_a_composite)
+            {
+              this->value_cache[point_in_string] =
+                (centered_point - projected_point).norm();
+              auto rotate_in_globalpoint =
+                this->reverse_align_and_center(projected_point);
+              this->gradient_cache[point_in_string] =
+                -(rotate_in_globalpoint - evaluation_point) /
+                ((rotate_in_globalpoint - evaluation_point).norm() + 1.0e-16);
+            }
           return (centered_point - projected_point).norm();
         }
     }
@@ -789,25 +804,39 @@ OpenCascadeShape<dim>::gradient_with_cell_guess(
         {
           // Rotate the solution found to the global reference frame and cache
           // the solution.
-          this->value_cache[point_in_string] =
-            -(centered_point - projected_point).norm();
-          auto rotate_in_globalpoint =
-            this->reverse_align_and_center(projected_point);
-          this->gradient_cache[point_in_string] =
-            (rotate_in_globalpoint - evaluation_point) /
-            ((rotate_in_globalpoint - evaluation_point).norm() + 1.0e-16);
-          return this->gradient_cache[point_in_string];
+          if (!this->part_of_a_composite)
+            {
+              this->value_cache[point_in_string] =
+                -(centered_point - projected_point).norm();
+              auto rotate_in_globalpoint =
+                this->reverse_align_and_center(projected_point);
+              this->gradient_cache[point_in_string] =
+                (rotate_in_globalpoint - evaluation_point) /
+                ((rotate_in_globalpoint - evaluation_point).norm() + 1.0e-16);
+              return this->gradient_cache[point_in_string];
+            }
+          else
+            return (rotate_in_globalpoint - evaluation_point) /
+                   ((rotate_in_globalpoint - evaluation_point).norm() +
+                    1.0e-16);
         }
       else
         {
-          this->value_cache[point_in_string] =
-            (centered_point - projected_point).norm();
-          auto rotate_in_globalpoint =
-            this->reverse_align_and_center(projected_point);
-          this->gradient_cache[point_in_string] =
-            -(rotate_in_globalpoint - evaluation_point) /
-            ((rotate_in_globalpoint - evaluation_point).norm() + 1.0e-16);
-          return this->gradient_cache[point_in_string];
+          if (!this->part_of_a_composite)
+            {
+              this->value_cache[point_in_string] =
+                (centered_point - projected_point).norm();
+              auto rotate_in_globalpoint =
+                this->reverse_align_and_center(projected_point);
+              this->gradient_cache[point_in_string] =
+                -(rotate_in_globalpoint - evaluation_point) /
+                ((rotate_in_globalpoint - evaluation_point).norm() + 1.0e-16);
+              return this->gradient_cache[point_in_string];
+            }
+          else
+            return -(rotate_in_globalpoint - evaluation_point) /
+                   ((rotate_in_globalpoint - evaluation_point).norm() +
+                    1.0e-16);
         }
     }
   else
@@ -1172,7 +1201,10 @@ CompositeShape<dim>::value_with_cell_guess(
       std::tie(levelset, std::ignore) =
         apply_boolean_operations(constituent_shapes_values,
                                  constituent_shapes_gradients);
-      this->value_cache[point_in_string] = levelset;
+      if (!this->part_of_a_composite)
+        {
+          this->value_cache[point_in_string] = levelset;
+        }
       return levelset;
     }
   else
@@ -1268,8 +1300,10 @@ CompositeShape<dim>::gradient_with_cell_guess(
       gradient = -(closest_point_global_referential - evaluation_point) /
                  ((closest_point_global_referential - evaluation_point).norm() +
                   1.0e-16);
-
-      this->gradient_cache[point_in_string] = gradient;
+      if (!this->part_of_a_composite)
+        {
+          this->gradient_cache[point_in_string] = gradient;
+        }
       return gradient;
     }
   else
@@ -1467,7 +1501,10 @@ RBFShape<dim>::value_with_cell_guess(
       swap_iterable_nodes(cell);
       double value = this->value(evaluation_point);
       swap_iterable_nodes(cell);
-      this->value_cache[point_in_string] = value;
+      if (!this->part_of_a_composite)
+        {
+          this->value_cache[point_in_string] = value;
+        }
       return value;
     }
   else
@@ -1496,7 +1533,10 @@ RBFShape<dim>::gradient_with_cell_guess(
       swap_iterable_nodes(cell);
       Tensor<1, dim> gradient = this->gradient(evaluation_point);
       swap_iterable_nodes(cell);
-      this->gradient_cache[point_in_string] = gradient;
+      if (!this->part_of_a_composite)
+        {
+          this->gradient_cache[point_in_string] = gradient;
+        }
       return gradient;
     }
   else

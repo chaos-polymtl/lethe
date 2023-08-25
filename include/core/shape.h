@@ -100,6 +100,7 @@ public:
     , effective_radius(radius)
     , position(position)
     , orientation(orientation)
+    , part_of_a_composite(false)
   {}
 
   /**
@@ -280,6 +281,15 @@ public:
   std::string
   point_to_string(const Point<dim> &evaluation_point) const;
 
+  /**
+   * Sets whether the shape is part of a composite
+   */
+  void
+  set_part_of_a_composite(const bool part_of_a_composite)
+  {
+    this->part_of_a_composite = part_of_a_composite;
+  }
+
   // Effective radius used for crown refinement
   double effective_radius;
 
@@ -301,6 +311,7 @@ protected:
   std::unordered_map<std::string, double>         value_cache;
   std::unordered_map<std::string, Tensor<1, dim>> gradient_cache;
   std::unordered_map<std::string, Point<dim>>     closest_point_cache;
+  bool                                            part_of_a_composite;
 };
 
 
@@ -901,11 +912,12 @@ public:
     , constituents(constituents)
     , operations(operations)
   {
-    // Calculation of the effective radius
-    for (auto const &[component_id, component] : constituents)
+    // Calculation of the effective radius and setting of status for components
+    for (auto const &[constituent_id, constituent] : constituents)
       {
         this->effective_radius =
-          std::max(this->effective_radius, component->effective_radius);
+          std::max(this->effective_radius, constituent->effective_radius);
+        constituent->set_part_of_a_composite(true);
       }
   }
 
