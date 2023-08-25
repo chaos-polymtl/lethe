@@ -1469,7 +1469,6 @@ RBFShape<dim>::RBFShape(const std::string   shape_arguments_str,
   , number_of_nodes(1)
   , iterable_nodes(1)
   , likely_nodes_map()
-  , useful_rbf_node_map()
   , max_number_of_inside_nodes(1)
   , minimal_support_radius(1)
   , weights(1)
@@ -2018,7 +2017,9 @@ RBFShape<dim>::remove_superfluous_data(
 
   // We loop over the likely nodes map and take note of the RBF nodes that are
   // required
-  useful_rbf_node_map.clear();
+  number_of_nodes = weights.size();
+  std::vector<bool> useful_rbf_nodes;
+  useful_rbf_nodes.resize(number_of_nodes);
   for (auto it = likely_nodes_map.cbegin(); it != likely_nodes_map.cend(); it++)
     {
       auto cell = it->first;
@@ -2029,12 +2030,22 @@ RBFShape<dim>::remove_superfluous_data(
           for (const size_t &node_id :
                *(std::get<2>(iterable_nodes[portion_id])))
             {
-              useful_rbf_node_map[node_id] = node_id;
+              useful_rbf_nodes[node_id] =
+                true; // We use values that are higher than 0 to
+                      // distinguish from nodes that aren't used
             }
         }
       swap_iterable_nodes(cell);
     }
-  size_t current_number_of_kept_rbf_nodes = useful_rbf_node_map.size();
+  size_t counter = 0;
+  for (size_t i = 0; i < number_of_nodes; i++)
+    {
+      if (useful_rbf_nodes[i])
+        {
+          counter++;
+        }
+    }
+  size_t current_number_of_kept_rbf_nodes = counter;
 
   std::vector<double>     temp_weights;
   std::vector<Point<dim>> temp_rotated_nodes_positions;
@@ -2044,7 +2055,6 @@ RBFShape<dim>::remove_superfluous_data(
   // Here we treat all vectors separately to keep the maximum memory low
   std::shared_ptr<std::vector<size_t>> temp_nodes_id =
     std::make_shared<std::vector<size_t>>(current_number_of_kept_rbf_nodes);
-  number_of_nodes = current_number_of_kept_rbf_nodes;
   std::iota(std::begin(*temp_nodes_id), std::end(*temp_nodes_id), 0);
   iterable_nodes.resize(1);
   iterable_nodes[0] = {Point<dim>{},
@@ -2053,56 +2063,63 @@ RBFShape<dim>::remove_superfluous_data(
   std::get<2>(iterable_nodes[0])->shrink_to_fit();
 
   // Weights treatment
-  size_t counter = 0;
+  counter = 0;
   temp_weights.resize(current_number_of_kept_rbf_nodes);
-  for (auto it = useful_rbf_node_map.cbegin(); it != useful_rbf_node_map.cend();
-       it++)
+  for (size_t i = 0; i < number_of_nodes; i++)
     {
-      temp_weights[counter] = weights[it->second];
-      counter++;
+      if (useful_rbf_nodes[i])
+        {
+          // We put back the value to the real node id
+          temp_weights[counter] = weights[i];
+          counter++;
+        }
     }
   weights.swap(temp_weights);
-  weights.shrink_to_fit();
   temp_weights.clear();
 
   // Nodes positions treatment
   counter = 0;
   temp_rotated_nodes_positions.resize(current_number_of_kept_rbf_nodes);
-  for (auto it = useful_rbf_node_map.cbegin(); it != useful_rbf_node_map.cend();
-       it++)
+  for (size_t i = 0; i < number_of_nodes; i++)
     {
-      temp_rotated_nodes_positions[counter] =
-        rotated_nodes_positions[it->second];
-      counter++;
+      if (useful_rbf_nodes[i])
+        {
+          // We put back the value to the real node id
+          temp_rotated_nodes_positions[counter] = rotated_nodes_positions[i];
+          counter++;
+        }
     }
   rotated_nodes_positions.swap(temp_rotated_nodes_positions);
-  rotated_nodes_positions.shrink_to_fit();
   temp_rotated_nodes_positions.clear();
 
   // Support radii treatment
   counter = 0;
   temp_support_radii.resize(current_number_of_kept_rbf_nodes);
-  for (auto it = useful_rbf_node_map.cbegin(); it != useful_rbf_node_map.cend();
-       it++)
+  for (size_t i = 0; i < number_of_nodes; i++)
     {
-      temp_support_radii[counter] = support_radii[it->second];
-      counter++;
+      if (useful_rbf_nodes[i])
+        {
+          // We put back the value to the real node id
+          temp_support_radii[counter] = support_radii[i];
+          counter++;
+        }
     }
   support_radii.swap(temp_support_radii);
-  support_radii.shrink_to_fit();
   temp_support_radii.clear();
 
   // Basis functions treatment
   counter = 0;
   temp_basis_functions.resize(current_number_of_kept_rbf_nodes);
-  for (auto it = useful_rbf_node_map.cbegin(); it != useful_rbf_node_map.cend();
-       it++)
+  for (size_t i = 0; i < number_of_nodes; i++)
     {
-      temp_basis_functions[counter] = basis_functions[it->second];
-      counter++;
+      if (useful_rbf_nodes[i])
+        {
+          // We put back the value to the real node id
+          temp_basis_functions[counter] = basis_functions[i];
+          counter++;
+        }
     }
   basis_functions.swap(temp_basis_functions);
-  basis_functions.shrink_to_fit();
   temp_basis_functions.clear();
 
   this->update_precalculations(updated_dof_handler,
