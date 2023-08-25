@@ -171,6 +171,7 @@ subsection linear solver
     set max iters                             = 1000
     set relative residual                     = 1e-6
     set minimum residual                      = 1e-8
+    set preconditioner                        = ilu
     set ilu preconditioner fill               = 0
     set ilu preconditioner absolute tolerance = 1e-14
     set ilu preconditioner relative tolerance = 1.00
@@ -181,6 +182,7 @@ subsection linear solver
     set max iters                             = 1000
     set relative residual                     = 1e-6
     set minimum residual                      = 1e-8
+    set preconditioner                        = ilu
     set ilu preconditioner fill               = 0
     set ilu preconditioner absolute tolerance = 1e-14
     set ilu preconditioner relative tolerance = 1.00
