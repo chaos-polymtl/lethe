@@ -297,6 +297,9 @@ namespace Parameters
   {
     // Surface tension coefficient (sigma) in N/m
     double surface_tension_coefficient;
+    // Surface tension gradient with respect to the temperature (dsigma/dT) in
+    // N/(m*K)
+    double surface_tension_gradient;
 
     void
     declare_parameters(ParameterHandler &prm);
@@ -416,7 +419,8 @@ namespace Parameters
     // Surface tension models
     enum class SurfaceTensionModel
     {
-      constant
+      constant,
+      linear
     } surface_tension_model;
     SurfaceTensionParameters surface_tension_parameters;
 

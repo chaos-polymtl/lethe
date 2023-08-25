@@ -571,10 +571,6 @@ GLSNavierStokesVOFAssemblerMarangoni<dim>::assemble_rhs(
   NavierStokesScratchData<dim> &        scratch_data,
   StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
-  // Surface tension gradient
-  const double surface_tension_gradient =
-    STF_properties.surface_tension_gradient;
-
   // Densities of phases
   Assert(scratch_data.properties_manager.density_is_constant(),
          RequiresConstantDensity(
@@ -592,8 +588,11 @@ GLSNavierStokesVOFAssemblerMarangoni<dim>::assemble_rhs(
   // Loop over the quadrature points
   for (unsigned int q = 0; q < n_q_points; ++q)
     {
-      // Surface tension coefficient
-      const double surface_tension_coef = scratch_data.surface_tension[q];
+      // Surface tension
+      const double surface_tension = scratch_data.surface_tension[q];
+      // Surface tension gradient with respect to the temperature
+      const double surface_tension_gradient =
+        scratch_data.surface_tension_gradient[q];
 
       const double &curvature_value = scratch_data.curvature_values[q];
 
@@ -606,9 +605,6 @@ GLSNavierStokesVOFAssemblerMarangoni<dim>::assemble_rhs(
       const Tensor<1, dim> normalized_phase_fraction_gradient =
         phase_gradient_value / (phase_gradient_norm + DBL_MIN);
 
-      // Gather temperature
-      const double temperature = scratch_data.temperature_values[q];
-
       // Gather temperature gradient
       const Tensor<1, dim> temperature_gradient =
         scratch_data.temperature_gradients[q];
@@ -617,8 +613,7 @@ GLSNavierStokesVOFAssemblerMarangoni<dim>::assemble_rhs(
 
 
       const Tensor<1, dim> surface_tension_force =
-        -(surface_tension_coef + surface_tension_gradient * temperature) *
-        curvature_value * phase_gradient_value;
+        -surface_tension * curvature_value * phase_gradient_value;
 
       const Tensor<1, dim> marangoni_effect =
         -surface_tension_gradient *

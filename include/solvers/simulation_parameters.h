@@ -193,50 +193,124 @@ public:
           "Inconsistency in .prm!\n in subsection VOF, with sharpening type = adaptative\n "
           "use: monitoring = true");
       }
-    if (multiphysics.vof_parameters.surface_tension_force.enable &&
-        physical_properties.number_of_material_interactions == 0)
+
+    // Interface physical property models consistency check
+    if (multiphysics.vof_parameters.surface_tension_force.enable)
       {
-        throw std::logic_error(
-          "Inconsistency in .prm!\n in subsection VOF, with surface tension force enabled,\n but no material interactions specified in\n subsection physical properties\n"
-          "use:\n"
-          "  set number of material interactions = 1\n"
-          "  subsection material interaction 0\n"
-          "    set type = fluid-fluid\n"
+        std::string constant_surface_tension_model(
           "    subsection fluid-fluid interaction\n"
           "      set first fluid id              = 0\n"
           "      set second fluid id             = 1\n"
           "      set surface tension model       = constant\n"
           "      set surface tension coefficient = $value_of_coefficient\n"
-          "    end\n"
-          "  end");
-      }
-    if (multiphysics.vof_parameters.surface_tension_force.enable)
-      {
-        bool error = true;
-        for (unsigned int i = 0;
-             i < physical_properties.number_of_material_interactions;
-             ++i)
+          "    end\n");
+
+        std::string linear_surface_tension_model(
+          "    subsection fluid-fluid interaction\n"
+          "      set first fluid id                              = 0\n"
+          "      set second fluid id                             = 1\n"
+          "      set surface tension model                       = linear\n"
+          "      set surface tension coefficient                 = $value_of_coefficient\n"
+          "      set temperature-driven surface tension gradient = $value_of_gradient\n"
+          "    end\n");
+
+        if (!multiphysics.vof_parameters.surface_tension_force
+               .enable_marangoni_effect) // constant surface tension model
           {
-            if (physical_properties.material_interactions[i]
-                  .material_interaction_type ==
-                Parameters::MaterialInteractions::MaterialInteractionsType::
-                  fluid_fluid)
-              error = false;
+            if (physical_properties.number_of_material_interactions == 0)
+              {
+                throw std::logic_error(
+                  "Inconsistency in .prm!\n "
+                  "In subsection VOF, with surface tension force enabled,\n "
+                  "but no material interactions specified in\n "
+                  "subsection physical properties.\n "
+                  "Use:\n\n"
+                  "  set number of material interactions = 1\n"
+                  "  subsection material interaction 0\n"
+                  "    set type = fluid-fluid\n" +
+                  constant_surface_tension_model + "  end\n");
+              }
+            else if (multiphysics.VOF &&
+                     multiphysics
+                       .heat_transfer) // disabled Marangoni effect error
+              {
+                if (!is_constant_surface_tension_model(
+                      physical_properties.material_interactions))
+                  {
+                    throw std::logic_error(
+                      "Inconsistency in .prm!\n "
+                      "In subsection multiphysics, VOF and heat transfer enabled,\n "
+                      "and in subsection physical properties, a non-constant surface\n "
+                      "tension model, but Marangoni effect disabled in subsection\n "
+                      "surface tension force of subsection VOF. This is necessary to account\n "
+                      "for Marangoni effect. In subsection VOF, use:\n\n "
+                      "  subsection surface tension force\n"
+                      "    set enable                  = true\n"
+                      "    set enable marangoni effect = true\n"
+                      "  end\n");
+                  }
+              }
+            else
+              {
+                if (no_fluid_fluid_interaction_error(
+                      physical_properties.material_interactions))
+                  {
+                    throw std::logic_error(
+                      "Inconsistency in .prm!\n "
+                      "in subsection VOF, surface tension force enabled,\n "
+                      "but no fluid-fluid material interactions specified in \n "
+                      "subsection physical properties\n "
+                      "Use:\n\n"
+                      "  subsection material interaction $material_interaction_id\n"
+                      "    set type = fluid-fluid\n" +
+                      constant_surface_tension_model + "  end\n");
+                  }
+              }
           }
-        if (error)
+        else // non-constant surface tension model
           {
-            throw std::logic_error(
-              "Inconsistency in .prm!\n in subsection VOF, with surface tension force enabled,\n but no fluid-fluid material interactions specified in\n subsection physical properties\n"
-              "use:\n"
-              "  subsection material interaction $material_interaction_id\n"
-              "    set type = fluid-fluid\n"
-              "    subsection fluid-fluid interaction\n"
-              "      set first fluid id              = 0\n"
-              "      set second fluid id             = 1\n"
-              "      set surface tension model       = constant\n"
-              "      set surface tension coefficient = $value_of_coefficient\n"
-              "    end\n"
-              "  end");
+            if (physical_properties.number_of_material_interactions == 0)
+              {
+                throw std::logic_error(
+                  "Inconsistency in .prm!\n "
+                  "In subsection VOF, marangoni effect enabled,\n "
+                  "but no material interactions specified in subsection physical\n "
+                  "properties. This is necessary to account for Marangoni \n "
+                  "effect. In subsection physical properties, use:\n\n"
+                  "  set number of material interactions = 1\n"
+                  "  subsection material interaction 0\n"
+                  "    set type = fluid-fluid\n" +
+                  linear_surface_tension_model + "  end\n");
+              }
+            else
+              {
+                if (no_fluid_fluid_interaction_error(
+                      physical_properties.material_interactions))
+                  {
+                    throw std::logic_error(
+                      "Inconsistency in .prm!\n "
+                      "In subsection VOF, Marangoni effect enabled,\n "
+                      "but no fluid-fluid material interactions specified in subsection\n "
+                      "physical properties. This is necessary to account for Marangoni\n "
+                      "effect. In subsection physical properties, use:\n\n"
+                      "  subsection material interaction $material_interaction_id\n"
+                      "    set type = fluid-fluid\n" +
+                      linear_surface_tension_model + "  end\n");
+                  }
+                if (is_constant_surface_tension_model(
+                      physical_properties.material_interactions))
+                  {
+                    throw std::logic_error(
+                      "Inconsistency in .prm!\n "
+                      "In subsection VOF, Marangoni effect enabled,\n "
+                      "but a constant surface tension model is specified in subsection\n "
+                      "physical properties. This is necessary to account for Marangoni \n "
+                      "effect. In subsection physical properties, use:\n\n"
+                      "  subsection material interaction $material_interaction_id\n"
+                      "    set type = fluid-fluid\n" +
+                      linear_surface_tension_model + "  end\n");
+                  }
+              }
           }
       }
 
@@ -250,8 +324,11 @@ public:
         physical_properties.number_of_material_interactions == 0)
       {
         throw std::logic_error(
-          "Inconsistency in .prm!\n cahn hilliard = true\n but no fluid-fluid material interactions specified in\n subsection physical properties\n"
-          " use:\n"
+          "Inconsistency in .prm!\n "
+          "cahn hilliard = true, \n "
+          "but no fluid-fluid material interactions specified in\n "
+          "subsection physical properties\n "
+          "Use:\n\n"
           "  subsection material interaction $material_interaction_id\n"
           "    set type = fluid-fluid\n"
           "    subsection fluid-fluid interaction\n"
@@ -260,8 +337,41 @@ public:
           "      set cahn hilliard mobility model       = constant\n"
           "      set cahn hilliard mobility coefficient = $value_of_coefficient\n"
           "    end\n"
-          "  end");
+          "  end\n");
       }
+  }
+
+  inline bool
+  no_fluid_fluid_interaction_error(
+    std::vector<Parameters::MaterialInteractions> &material_interactions)
+  {
+    for (const Parameters::MaterialInteractions &material_interaction :
+         material_interactions)
+      {
+        if (material_interaction.material_interaction_type ==
+            Parameters::MaterialInteractions::MaterialInteractionsType::
+              fluid_fluid)
+          {
+            return false;
+          }
+      }
+    return true;
+  }
+
+  inline bool
+  is_constant_surface_tension_model(
+    std::vector<Parameters::MaterialInteractions> &material_interactions)
+  {
+    for (const Parameters::MaterialInteractions &material_interaction :
+         material_interactions)
+      {
+        if (material_interaction.surface_tension_model !=
+            Parameters::MaterialInteractions::SurfaceTensionModel::constant)
+          {
+            return false;
+          }
+      }
+    return true;
   }
 
 private:

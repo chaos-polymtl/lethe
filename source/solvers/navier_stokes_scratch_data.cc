@@ -117,6 +117,7 @@ NavierStokesScratchData<dim>::enable_vof(
   thermal_expansion_0        = std::vector<double>(n_q_points);
   thermal_expansion_1        = std::vector<double>(n_q_points);
   surface_tension            = std::vector<double>(n_q_points);
+  surface_tension_gradient   = std::vector<double>(n_q_points);
   compressibility_multiplier = std::vector<double>(n_q_points);
 
   // Create filter
@@ -154,6 +155,7 @@ NavierStokesScratchData<dim>::enable_vof(
   thermal_expansion_0        = std::vector<double>(n_q_points);
   thermal_expansion_1        = std::vector<double>(n_q_points);
   surface_tension            = std::vector<double>(n_q_points);
+  surface_tension_gradient   = std::vector<double>(n_q_points);
   compressibility_multiplier = std::vector<double>(n_q_points);
 
   // Create filter
@@ -188,14 +190,15 @@ NavierStokesScratchData<dim>::enable_cahn_hilliard(
                                           n_q_points));
 
   // Allocate physical properties
-  density_0              = std::vector<double>(n_q_points);
-  density_1              = std::vector<double>(n_q_points);
-  dynamic_viscosity_0    = std::vector<double>(n_q_points);
-  dynamic_viscosity_1    = std::vector<double>(n_q_points);
-  thermal_expansion_0    = std::vector<double>(n_q_points);
-  thermal_expansion_1    = std::vector<double>(n_q_points);
-  surface_tension        = std::vector<double>(n_q_points);
-  mobility_cahn_hilliard = std::vector<double>(n_q_points);
+  density_0                = std::vector<double>(n_q_points);
+  density_1                = std::vector<double>(n_q_points);
+  dynamic_viscosity_0      = std::vector<double>(n_q_points);
+  dynamic_viscosity_1      = std::vector<double>(n_q_points);
+  thermal_expansion_0      = std::vector<double>(n_q_points);
+  thermal_expansion_1      = std::vector<double>(n_q_points);
+  surface_tension          = std::vector<double>(n_q_points);
+  surface_tension_gradient = std::vector<double>(n_q_points);
+  mobility_cahn_hilliard   = std::vector<double>(n_q_points);
 }
 
 
@@ -386,6 +389,10 @@ NavierStokesScratchData<dim>::calculate_physical_properties()
               const auto surface_tension_model =
                 properties_manager.get_surface_tension(material_interaction_id);
               surface_tension_model->vector_value(fields, surface_tension);
+              // Gather surface tension gradient only if necessary
+              if (!properties_manager.surface_tension_is_constant())
+                surface_tension_model->vector_jacobian(
+                  fields, field::temperature, surface_tension_gradient);
             }
 
           density_model_0->vector_value(fields, density_0);
