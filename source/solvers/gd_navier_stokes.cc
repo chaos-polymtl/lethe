@@ -850,15 +850,11 @@ GDNavierStokesSolver<dim>::solve_linear_system(const bool initial_step,
                        absolute_residual,
                        relative_residual,
                        renewed_matrix);
-  else if (this->simulation_parameters.linear_solver
-             .at(PhysicsID::fluid_dynamics)
-             .solver == Parameters::LinearSolver::SolverType::amg)
-    solve_system_AMG(initial_step,
-                     absolute_residual,
-                     relative_residual,
-                     renewed_matrix);
   else
-    throw(std::runtime_error("This solver is not allowed"));
+    AssertThrow(this->simulation_parameters.linear_solver
+                    .at(PhysicsID::fluid_dynamics)
+                    .solver == Parameters::LinearSolver::SolverType::gmres,
+                ExcMessage("This linear solver is not allowed."));
   this->rescale_pressure_dofs_in_newton_update();
 }
 
@@ -1066,72 +1062,50 @@ GDNavierStokesSolver<dim>::solve_system_GMRES(const bool   initial_step,
 
   SolverFGMRES<TrilinosWrappers::MPI::BlockVector> solver(solver_control);
 
-  if (renewed_matrix || velocity_ilu_preconditioner == 0 ||
-      pressure_ilu_preconditioner == 0 || system_ilu_preconditioner == 0)
-    setup_ILU();
-
-  {
-    TimerOutput::Scope t(this->computing_timer, "Solve linear system");
-    solver.solve(this->system_matrix,
-                 this->newton_update,
-                 this->system_rhs,
-                 *system_ilu_preconditioner);
-    if (this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
-          .verbosity != Parameters::Verbosity::quiet)
-      {
-        this->pcout << "  -Iterative solver took : "
-                    << solver_control.last_step() << " steps " << std::endl;
-      }
-
-    constraints_used.distribute(this->newton_update);
-  }
-}
-
-
-
-template <int dim>
-void
-GDNavierStokesSolver<dim>::solve_system_AMG(const bool   initial_step,
-                                            const double absolute_residual,
-                                            const double relative_residual,
-                                            const bool   renewed_matrix)
-{
-  auto &system_rhs          = this->system_rhs;
-  auto &nonzero_constraints = this->nonzero_constraints;
-
-  const AffineConstraints<double> &constraints_used =
-    initial_step ? nonzero_constraints : this->zero_constraints;
-  const double linear_solver_tolerance =
-    std::max(relative_residual * system_rhs.l2_norm(), absolute_residual);
-
   if (this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
-        .verbosity != Parameters::Verbosity::quiet)
+        .preconditioner == Parameters::LinearSolver::PreconditionerType::ilu)
     {
-      this->pcout << "  -Tolerance of iterative solver is : "
-                  << linear_solver_tolerance << std::endl;
+      if (renewed_matrix || velocity_ilu_preconditioner == 0 ||
+          pressure_ilu_preconditioner == 0 || system_ilu_preconditioner == 0)
+        setup_ILU();
+    }
+  else if (this->simulation_parameters.linear_solver
+             .at(PhysicsID::fluid_dynamics)
+             .preconditioner ==
+           Parameters::LinearSolver::PreconditionerType::amg)
+    {
+      if (renewed_matrix || velocity_amg_preconditioner == 0 ||
+          pressure_amg_preconditioner == 0 || system_amg_preconditioner == 0)
+        setup_AMG();
     }
 
-  if (renewed_matrix || velocity_amg_preconditioner == 0 ||
-      pressure_amg_preconditioner == 0 || system_amg_preconditioner == 0)
-    setup_AMG();
-
-
-  SolverControl solver_control(this->simulation_parameters.linear_solver
-                                 .at(PhysicsID::fluid_dynamics)
-                                 .max_iterations,
-                               linear_solver_tolerance,
-                               true,
-                               true);
-
-  SolverFGMRES<TrilinosWrappers::MPI::BlockVector> solver(solver_control);
-
   {
     TimerOutput::Scope t(this->computing_timer, "Solve linear system");
+    if (this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+          .preconditioner == Parameters::LinearSolver::PreconditionerType::ilu)
+      solver.solve(this->system_matrix,
+                   this->newton_update,
+                   this->system_rhs,
+                   *system_ilu_preconditioner);
+    else if (this->simulation_parameters.linear_solver
+               .at(PhysicsID::fluid_dynamics)
+               .preconditioner ==
+             Parameters::LinearSolver::PreconditionerType::amg)
+      solver.solve(this->system_matrix,
+                   this->newton_update,
+                   this->system_rhs,
+                   *system_amg_preconditioner);
+    else
+      AssertThrow(
+        this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+              .preconditioner ==
+            Parameters::LinearSolver::PreconditionerType::ilu ||
+          this->simulation_parameters.linear_solver
+              .at(PhysicsID::fluid_dynamics)
+              .preconditioner ==
+            Parameters::LinearSolver::PreconditionerType::amg,
+        ExcMessage("This linear solver does not support this preconditioner."));
 
-    solver.solve(this->system_matrix,
-                 this->newton_update,
-                 this->system_rhs,
-                 *system_amg_preconditioner);
     if (this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
           .verbosity != Parameters::Verbosity::quiet)
       {

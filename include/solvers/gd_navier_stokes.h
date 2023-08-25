@@ -208,22 +208,13 @@ private:
                       const bool renewed_matrix) override;
 
   /**
-   * GMRES solver with ILU preconditioning
+   * GMRES solver with ILU preconditioning or AMG preconditioning
    */
   void
   solve_system_GMRES(const bool   initial_step,
                      const double relative_residual,
                      const double minimum_residual,
                      const bool   renewed_matrix);
-  /**
-   * GMRES solver with AMG preconditioning
-   */
-  void
-  solve_system_AMG(const bool   initial_step,
-                   const double relative_residual,
-                   const double minimum_residual,
-                   const bool   renewed_matrix);
-
   /**
    * Set-up AMG preconditioner
    */

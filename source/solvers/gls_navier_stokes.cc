@@ -56,7 +56,7 @@ GLSNavierStokesSolver<dim>::GLSNavierStokesSolver(
 {
   initial_preconditioner_fill_level =
     ((this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
-        .solver == Parameters::LinearSolver::SolverType::amg) ?
+        .preconditioner == Parameters::LinearSolver::PreconditionerType::amg) ?
        this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
          .amg_precond_ilu_fill :
        this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
@@ -1038,9 +1038,7 @@ GLSNavierStokesSolver<dim>::set_initial_condition_fd(
 
       if (this->simulation_parameters.linear_solver
             .at(PhysicsID::fluid_dynamics)
-            .solver == Parameters::LinearSolver::SolverType::amg)
-        solve_system_AMG(true, 1e-15, 1e-15);
-      else
+            .solver == Parameters::LinearSolver::SolverType::gmres)
         solve_system_GMRES(true, 1e-15, 1e-15);
 
       this->present_solution = this->newton_update;
@@ -1271,14 +1269,18 @@ GLSNavierStokesSolver<dim>::solve_linear_system(const bool initial_step,
     solve_system_BiCGStab(initial_step, absolute_residual, relative_residual);
   else if (this->simulation_parameters.linear_solver
              .at(PhysicsID::fluid_dynamics)
-             .solver == Parameters::LinearSolver::SolverType::amg)
-    solve_system_AMG(initial_step, absolute_residual, relative_residual);
-  else if (this->simulation_parameters.linear_solver
-             .at(PhysicsID::fluid_dynamics)
              .solver == Parameters::LinearSolver::SolverType::direct)
     solve_system_direct(initial_step, absolute_residual, relative_residual);
   else
-    throw(std::runtime_error("This solver is not allowed"));
+    AssertThrow(
+      this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+            .solver == Parameters::LinearSolver::SolverType::gmres ||
+        this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+            .solver == Parameters::LinearSolver::SolverType::bicgstab ||
+        this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+            .solver == Parameters::LinearSolver::SolverType::direct,
+      ExcMessage("This linear solver is not supported."));
+
   this->rescale_pressure_dofs_in_newton_update();
 }
 
@@ -1287,14 +1289,22 @@ void
 GLSNavierStokesSolver<dim>::setup_preconditioner()
 {
   if (this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
-          .solver == Parameters::LinearSolver::SolverType::gmres ||
-      this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
-          .solver == Parameters::LinearSolver::SolverType::bicgstab)
+        .preconditioner == Parameters::LinearSolver::PreconditionerType::ilu)
     setup_ILU();
   else if (this->simulation_parameters.linear_solver
              .at(PhysicsID::fluid_dynamics)
-             .solver == Parameters::LinearSolver::SolverType::amg)
+             .preconditioner ==
+           Parameters::LinearSolver::PreconditionerType::amg)
     setup_AMG();
+  else
+    AssertThrow(
+      this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+            .preconditioner ==
+          Parameters::LinearSolver::PreconditionerType::ilu ||
+        this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+            .preconditioner ==
+          Parameters::LinearSolver::PreconditionerType::amg,
+      ExcMessage("This linear solver does not support this preconditioner."));
 }
 
 
@@ -1400,13 +1410,6 @@ GLSNavierStokesSolver<dim>::solve_system_GMRES(const bool   initial_step,
                                                const double absolute_residual,
                                                const double relative_residual)
 {
-  // Try multiple fill of the ILU preconditioner. Start from the initial fill
-  // given in the parameter file. If for any reason the linear solver would have
-  // crash it will restart with a fill level increased by 1. This restart
-  // process will happen up to a maximum of 20 times, after which it will let
-  // the solver crash. if a change happened on the fill level it will go back to
-  // its original value at the end of the restart process.
-
   const unsigned int max_iter = 3;
   unsigned int       iter     = 0;
   bool               success  = false;
@@ -1444,11 +1447,18 @@ GLSNavierStokesSolver<dim>::solve_system_GMRES(const bool   initial_step,
     extra_verbose,
     this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
       .max_krylov_vectors);
+
+  // The solver starts from the initial fill level for the ILU(n) or the ILU
+  // smoother provided in the parameter file. If for any reason the linear
+  // solver crashes, it will restart with a fill level increased by 1. This
+  // restart happens up to a maximum of 20 times, after which it will let the
+  // solver crash. If a change happened on the fill level, it will go back
+  // to its original value at the end of the restart process.
   while (success == false and iter < max_iter)
     {
       try
         {
-          if (!ilu_preconditioner)
+          if (!ilu_preconditioner || !amg_preconditioner)
             setup_preconditioner();
 
           TrilinosWrappers::SolverGMRES solver(solver_control,
@@ -1457,10 +1467,34 @@ GLSNavierStokesSolver<dim>::solve_system_GMRES(const bool   initial_step,
           {
             TimerOutput::Scope t(this->computing_timer, "Solve linear system");
 
-            solver.solve(system_matrix,
-                         completely_distributed_solution,
-                         system_rhs,
-                         *ilu_preconditioner);
+            if (this->simulation_parameters.linear_solver
+                  .at(PhysicsID::fluid_dynamics)
+                  .preconditioner ==
+                Parameters::LinearSolver::PreconditionerType::ilu)
+              solver.solve(system_matrix,
+                           completely_distributed_solution,
+                           system_rhs,
+                           *ilu_preconditioner);
+            else if (this->simulation_parameters.linear_solver
+                       .at(PhysicsID::fluid_dynamics)
+                       .preconditioner ==
+                     Parameters::LinearSolver::PreconditionerType::amg)
+              solver.solve(system_matrix,
+                           completely_distributed_solution,
+                           system_rhs,
+                           *amg_preconditioner);
+            else
+              AssertThrow(
+                this->simulation_parameters.linear_solver
+                      .at(PhysicsID::fluid_dynamics)
+                      .preconditioner ==
+                    Parameters::LinearSolver::PreconditionerType::ilu ||
+                  this->simulation_parameters.linear_solver
+                      .at(PhysicsID::fluid_dynamics)
+                      .preconditioner ==
+                    Parameters::LinearSolver::PreconditionerType::amg,
+                ExcMessage(
+                  "This linear solver does not support this preconditioner."));
 
             if (this->simulation_parameters.linear_solver
                   .at(PhysicsID::fluid_dynamics)
@@ -1547,10 +1581,22 @@ GLSNavierStokesSolver<dim>::solve_system_BiCGStab(
           {
             TimerOutput::Scope t(this->computing_timer, "Solve linear system");
 
-            solver.solve(system_matrix,
-                         completely_distributed_solution,
-                         system_rhs,
-                         *ilu_preconditioner);
+            if (this->simulation_parameters.linear_solver
+                  .at(PhysicsID::fluid_dynamics)
+                  .preconditioner ==
+                Parameters::LinearSolver::PreconditionerType::ilu)
+              solver.solve(system_matrix,
+                           completely_distributed_solution,
+                           system_rhs,
+                           *ilu_preconditioner);
+            else
+              AssertThrow(
+                this->simulation_parameters.linear_solver
+                    .at(PhysicsID::fluid_dynamics)
+                    .preconditioner ==
+                  Parameters::LinearSolver::PreconditionerType::ilu,
+                ExcMessage(
+                  "This linear solver does not support this preconditioner."));
 
             if (this->simulation_parameters.linear_solver
                   .at(PhysicsID::fluid_dynamics)
@@ -1582,99 +1628,6 @@ GLSNavierStokesSolver<dim>::solve_system_BiCGStab(
     }
   current_preconditioner_fill_level = initial_preconditioner_fill_level;
 }
-
-template <int dim>
-void
-GLSNavierStokesSolver<dim>::solve_system_AMG(const bool   initial_step,
-                                             const double absolute_residual,
-                                             const double relative_residual)
-{
-  const unsigned int max_iter = 3;
-  unsigned int       iter     = 0;
-  bool               success  = false;
-
-
-  auto &system_rhs          = this->system_rhs;
-  auto &nonzero_constraints = this->nonzero_constraints;
-
-  const AffineConstraints<double> &constraints_used =
-    initial_step ? nonzero_constraints : this->zero_constraints;
-
-  const double linear_solver_tolerance =
-    std::max(relative_residual * system_rhs.l2_norm(), absolute_residual);
-  if (this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
-        .verbosity != Parameters::Verbosity::quiet)
-    {
-      this->pcout << "  -Tolerance of iterative solver is : "
-                  << linear_solver_tolerance << std::endl;
-    }
-  TrilinosWrappers::MPI::Vector completely_distributed_solution(
-    this->locally_owned_dofs, this->mpi_communicator);
-
-  SolverControl solver_control(this->simulation_parameters.linear_solver
-                                 .at(PhysicsID::fluid_dynamics)
-                                 .max_iterations,
-                               linear_solver_tolerance,
-                               true,
-                               true);
-  bool          extra_verbose = false;
-  if (this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
-        .verbosity == Parameters::Verbosity::extra_verbose)
-    extra_verbose = true;
-  TrilinosWrappers::SolverGMRES::AdditionalData solver_parameters(
-    extra_verbose,
-    this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
-      .max_krylov_vectors);
-
-  TrilinosWrappers::SolverGMRES solver(solver_control, solver_parameters);
-  while (success == false and iter < max_iter)
-    {
-      try
-        {
-          if (!amg_preconditioner)
-            setup_preconditioner();
-
-          {
-            TimerOutput::Scope t(this->computing_timer, "Solve linear system");
-
-            solver.solve(system_matrix,
-                         completely_distributed_solution,
-                         system_rhs,
-                         *amg_preconditioner);
-
-            if (this->simulation_parameters.linear_solver
-                  .at(PhysicsID::fluid_dynamics)
-                  .verbosity != Parameters::Verbosity::quiet)
-              {
-                this->pcout
-                  << "  -Iterative solver took : " << solver_control.last_step()
-                  << " steps " << std::endl;
-              }
-
-            constraints_used.distribute(completely_distributed_solution);
-
-            this->newton_update = completely_distributed_solution;
-            success             = true;
-          }
-        }
-      catch (std::exception &e)
-        {
-          current_preconditioner_fill_level += 1;
-          this->pcout
-            << " AMG solver failed! Trying with a higher preconditioner fill level. New fill = "
-            << current_preconditioner_fill_level << std::endl;
-          setup_preconditioner();
-
-          if (iter == max_iter - 1 && !this->simulation_parameters.linear_solver
-                                         .at(PhysicsID::fluid_dynamics)
-                                         .force_linear_solver_continuation)
-            throw e;
-        }
-      iter += 1;
-    }
-  current_preconditioner_fill_level = initial_preconditioner_fill_level;
-}
-
 
 template <int dim>
 void
