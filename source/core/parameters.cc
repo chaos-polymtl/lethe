@@ -432,7 +432,8 @@ namespace Parameters
   SurfaceTensionParameters::parse_parameters(ParameterHandler &prm)
   {
     surface_tension_coefficient = prm.get_double("surface tension coefficient");
-    surface_tension_gradient    = prm.get_double("temperature-driven surface tension gradient");
+    surface_tension_gradient =
+      prm.get_double("temperature-driven surface tension gradient");
   }
 
   void
