@@ -422,7 +422,7 @@ namespace Parameters
       Patterns::Double(),
       "Surface tension coefficient for the corresponding pair of fluids or fluid-solid pair");
     prm.declare_entry(
-      "surface tension gradient",
+      "temperature-driven surface tension gradient",
       "0.0",
       Patterns::Double(),
       "Surface tension gradient with respect to the temperature for the corresponding pair of fluids or fluid-solid pair");
@@ -432,7 +432,7 @@ namespace Parameters
   SurfaceTensionParameters::parse_parameters(ParameterHandler &prm)
   {
     surface_tension_coefficient = prm.get_double("surface tension coefficient");
-    surface_tension_gradient    = prm.get_double("surface tension gradient");
+    surface_tension_gradient    = prm.get_double("temperature-driven surface tension gradient");
   }
 
   void
@@ -700,6 +700,7 @@ namespace Parameters
       AssertThrow(number_of_material_interactions <= max_material_interactions,
                   NumberOfMaterialInteractionsError(
                     number_of_material_interactions));
+      material_interactions.resize(number_of_material_interactions);
       for (unsigned int i_material_interaction = 0;
            i_material_interaction < number_of_material_interactions;
            ++i_material_interaction)

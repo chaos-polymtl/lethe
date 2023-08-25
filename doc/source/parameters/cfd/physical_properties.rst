@@ -59,9 +59,9 @@ Physical Properties
         set solid id                    = 0
 
         # Surface tension
-        set surface tension model       = constant
-        set surface tension coefficient = 0.0
-        set surface tension gradient    = 0.0
+        set surface tension model                       = constant
+        set surface tension coefficient                 = 0
+        set temperature-driven surface tension gradient = 0
       end
     end
   end
@@ -115,14 +115,14 @@ Physical Properties
 
     * The ``surface tension model`` specifies the model used to calculate the surface tension coefficient of the fluid-fluid pair. At the moment, a ``constant`` and a ``linear`` model are supported. For more detail on the surface tension models, see `Surface Tension Models`_.
 
-    * The ``surface tension coefficient`` parameter is the constant surface tension coefficient of the two interacting fluids in units of :math:`\text{Mass} \cdot \text{Time}^{-2}`. In SI, this is :math:`\text{N} \cdot \text{m}^{-1}`. The surface tension coefficient is used as defined in the Weber number (:math:`We`):
+    * The ``surface tension coefficient`` parameter is a constant surface tension coefficient of the two interacting fluids in units of :math:`\text{Mass} \cdot \text{Time}^{-2}`. In SI, this is :math:`\text{N} \cdot \text{m}^{-1}`. The surface tension coefficient is used as defined in the Weber number (:math:`We`):
 
       .. math::
           We = Re \cdot \frac{\mu_\text{ref} \; u_\text{ref}}{\sigma}
 
       where :math:`Re` is the Reynolds number, :math:`\mu_\text{ref}` and :math:`u_\text{ref}` are some reference viscosity and velocity characterizing the flow problem, and :math:`\sigma` is the surface tension coefficient.
 
-    * The ``surface tension gradient`` parameter is the surface tension gradient with respect to the temperature of the two interacting fluids in units of :math:`\text{Mass} \cdot \text{Time}^{-2} \cdot \text{Temperature}^{-1}`. In SI, this is :math:`\text{N} \cdot \text{m}^{-1} \cdot \text{K}^{-1}`. This parameter is used in the calculation of the surface tension using the ``linear`` surface tension model (see `Surface Tension Models`_).
+    * The ``temperature-driven surface tension gradient`` parameter is the surface tension gradient with respect to the temperature of the two interacting fluids in units of :math:`\text{Mass} \cdot \text{Time}^{-2} \cdot \text{Temperature}^{-1}`. In SI, this is :math:`\text{N} \cdot \text{m}^{-1} \cdot \text{K}^{-1}`. This parameter is used in the calculation of the surface tension using the ``linear`` surface tension model (see `Surface Tension Models`_).
       
     * The ``cahn hilliard mobility model`` specifies the model used to calculate the mobility used in the Cahn-Hilliard equations for the fluid-fluid pair. Two models are available: a ``constant`` mobility and a ``quartic`` mobility. The reader is refered to :doc:`cahn_hilliard` for more details.
       
@@ -502,7 +502,7 @@ Lethe supports two types of surface tension models: ``constant`` and ``linear``.
 .. math::
   \sigma(T) = \sigma_0 + \frac{d\sigma}{dT} \cdot T
 
-where :math:`\sigma_0` is the ``surface tension coefficient`` and :math:`\frac{d\sigma}{dT}` is the ``surface tension gradient`` with respect to the temperature :math:`T`.
+where :math:`\sigma_0` is the ``surface tension coefficient`` evaluated at :math:`T = 0 \: \text{K}` and :math:`\frac{d\sigma}{dT}` is the ``surface tension gradient`` with respect to the temperature :math:`T`.
 
 .. Warning::
     In Lethe, the ``linear`` surface tension model is only used to account for the thermocapillary effect known as the Marangoni effect. Therefore, to enable the Marangoni effect, the surface tension model must be set to ``linear`` and a ``surface tension gradient`` different from zero :math:`(\frac{d\sigma}{dT} \neq 0)` must be specified.
