@@ -2011,9 +2011,10 @@ RBFShape<dim>::remove_superfluous_data(
   if (!mesh_based_precalculations)
     return;
 
-  this->update_precalculations(updated_dof_handler,
-                               levels_not_precalculated,
-                               mesh_based_precalculations);
+  if (likely_nodes_map.empty())
+    this->update_precalculations(updated_dof_handler,
+                                 levels_not_precalculated,
+                                 mesh_based_precalculations);
 
   // We loop over the likely nodes map and take note of the RBF nodes that are
   // required
