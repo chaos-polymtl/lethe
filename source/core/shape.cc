@@ -1800,7 +1800,8 @@ RBFShape<dim>::update_precalculations(
     std::make_shared<std::vector<size_t>>();
   typename DoFHandler<dim>::cell_iterator temp_cell;
   std::tuple<Point<dim>, double, std::shared_ptr<std::vector<size_t>>>
-    temp_cell_tuple{};
+       temp_cell_tuple{};
+  bool level_above_precalculation_limit;
   for (const auto &cell : cell_iterator)
     {
       if (cell->is_artificial_on_level())
@@ -1814,34 +1815,37 @@ RBFShape<dim>::update_precalculations(
            it++)
         {
           temp_cell = it->first;
-          if (temp_cell->is_active() ||
-              static_cast<unsigned int>(temp_cell->level() + 1 +
-                                        levels_not_precalculated) >=
-                maximal_level)
-            if (cell->point_inside(temp_cell->barycenter()))
-              {
-                temp_cell_tuple = std::make_tuple(temp_cell->barycenter(),
-                                                  temp_cell->diameter(),
-                                                  std::get<2>(it->second));
-                likely_nodes_map[cell]->push_back(temp_cell_tuple);
-              }
-            else
-              for (const size_t &node_id : *temp_nodes)
+          level_above_precalculation_limit =
+            static_cast<unsigned int>(temp_cell->level() + 1 +
+                                      levels_not_precalculated) >=
+            maximal_level;
+          if (temp_cell->is_active() || level_above_precalculation_limit)
+            {
+              if (cell->point_inside(temp_cell->barycenter()))
                 {
-                  distance =
-                    (cell->barycenter() - rotated_nodes_positions[node_id])
-                      .norm();
-                  if (distance + 0.5 * cell->diameter() <
-                      support_radii[node_id])
-                    {
-                      temp_cell_tuple =
-                        std::make_tuple(temp_cell->barycenter(),
-                                        temp_cell->diameter(),
-                                        std::get<2>(it->second));
-                      likely_nodes_map[cell]->push_back(temp_cell_tuple);
-                      break;
-                    }
+                  temp_cell_tuple = std::make_tuple(temp_cell->barycenter(),
+                                                    temp_cell->diameter(),
+                                                    std::get<2>(it->second));
+                  likely_nodes_map[cell]->push_back(temp_cell_tuple);
                 }
+              else
+                for (const size_t &node_id : *temp_nodes)
+                  {
+                    distance =
+                      (cell->barycenter() - rotated_nodes_positions[node_id])
+                        .norm();
+                    if (distance + 0.5 * cell->diameter() <
+                        support_radii[node_id])
+                      {
+                        temp_cell_tuple =
+                          std::make_tuple(temp_cell->barycenter(),
+                                          temp_cell->diameter(),
+                                          std::get<2>(it->second));
+                        likely_nodes_map[cell]->push_back(temp_cell_tuple);
+                        break;
+                      }
+                  }
+            }
         }
       if (likely_nodes_map[cell]->size() < 1)
         likely_nodes_map.erase(cell);
