@@ -93,6 +93,5 @@ add_library(lethe-dem
   ../../include/dem/visualization.h
   ../../include/dem/write_checkpoint.h)
 
-
 deal_ii_setup_target(lethe-dem)
 target_link_libraries(lethe-dem lethe-core)

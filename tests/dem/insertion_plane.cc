@@ -14,11 +14,10 @@
 * ---------------------------------------------------------------------
 
 *
- * Author: Olivier Gaboriault, Polytechnique Montreal, 2019-
-                           */
+*/
 
 /**
- * @brief Insertion particles using plane insertion class.
+ * @brief Insertion of particles using the plane insertion class.
  */
 
 // Deal.II includes

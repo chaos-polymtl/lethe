@@ -11,7 +11,7 @@ template <int dim>
 PlaneInsertion<dim>::PlaneInsertion(
   const DEMSolverParameters<dim> &                 dem_parameters,
   const parallel::distributed::Triangulation<dim> &triangulation)
-  : remained_particles_of_each_type(
+  : particles_of_each_type_remaining(
       dem_parameters.lagrangian_physical_properties.number.at(0))
 {
   // Initializing current inserting particle type
@@ -22,12 +22,19 @@ PlaneInsertion<dim>::PlaneInsertion(
     triangulation,
     dem_parameters.insertion_info.insertion_plane_point,
     dem_parameters.insertion_info.insertion_plane_normal_vector);
-  // // Finding the center of those cells
+
+  // Finding the center of those cells
   this->find_centers_of_inplane_cells();
   mark_for_update = false;
 
+  // Boost signal for load balancing
   change_to_triangulation =
     triangulation.signals.any_change.connect([&] { mark_for_update = true; });
+
+  // Initializing the variable for the random position of particle
+  maximum_range_for_randomness =
+    dem_parameters.insertion_info.random_number_range /
+    static_cast<double>(RAND_MAX);
 }
 
 template <int dim>
@@ -36,16 +43,15 @@ PlaneInsertion<dim>::find_inplane_cells(
   const parallel::distributed::Triangulation<dim> &triangulation,
   Point<3>                                         plane_point,
   Tensor<1, 3>                                     plane_normal_vector)
-{ // Looping through cells
+{
   plane_cells_for_insertion.clear();
+
+  // Looping through cells
   for (const auto &cell : triangulation.active_cell_iterators())
     {
-      // If the cell is owned by owned by the processor
+      // If the cell is owned by the processor
       if (cell->is_locally_owned())
         {
-          bool cell_in_plane = false;
-          // Initializing the values
-
           // Vector that goes from the plane reference point to the vertex 0.
           Tensor<1, 3> connecting_vector_ref =
             point_nd_to_3d(cell->vertex(0)) - plane_point;
@@ -63,7 +69,7 @@ PlaneInsertion<dim>::find_inplane_cells(
               Tensor<1, 3> connecting_vector =
                 point_nd_to_3d(cell->vertex(vertex_id)) - plane_point;
 
-              // Normal distance between vertex n-th and the plan
+              // Normal distance between vertex n-th and the plane
               double vertex_wall_distance =
                 connecting_vector * plane_normal_vector;
 
@@ -73,13 +79,9 @@ PlaneInsertion<dim>::find_inplane_cells(
               // the plane.
               if (vertex_wall_distance_ref * vertex_wall_distance <= 0)
                 {
-                  cell_in_plane = true;
-                  break; // If so, we brake the loop, and go to the next cell
+                  plane_cells_for_insertion.insert(cell);
+                  break; // If so, we break the loop, and go to the next cell
                 }
-            }
-          if (cell_in_plane)
-            {
-              plane_cells_for_insertion.insert(cell);
             }
         }
     }
@@ -96,7 +98,7 @@ PlaneInsertion<dim>::find_centers_of_inplane_cells()
     }
 }
 
-// The main insertion function. insert_particle is utilized to insert the
+// The main insertion function, insert_particle, is utilized to insert the
 // particle at the cell center with a random shifts particles
 template <int dim>
 void
@@ -105,15 +107,15 @@ PlaneInsertion<dim>::insert(
   const parallel::distributed::Triangulation<dim> &triangulation,
   const DEMSolverParameters<dim> &                 dem_parameters)
 {
-  if (remained_particles_of_each_type == 0 &&
+  if (particles_of_each_type_remaining == 0 &&
       this->current_inserting_particle_type !=
         dem_parameters.lagrangian_physical_properties.particle_type_number - 1)
     {
-      remained_particles_of_each_type =
+      particles_of_each_type_remaining =
         dem_parameters.lagrangian_physical_properties.number.at(
           ++current_inserting_particle_type);
     }
-  if (remained_particles_of_each_type > 0)
+  if (particles_of_each_type_remaining > 0)
     {
       if (mark_for_update)
         {
@@ -166,20 +168,20 @@ PlaneInsertion<dim>::insert(
           for (unsigned int i = 0; i < total_mpi_process; ++i)
             {
               // We subtract those integer from the following variable
-              remained_particles_of_each_type -=
+              particles_of_each_type_remaining -=
                 number_of_particles_to_insert_per_core[i];
 
-              // If the remained_particles_of_each_type variable become
-              // negative, this means that we are trying to insert to many
+              // If the particles_of_each_type_remaining variable become
+              // negative, this means that we are trying to insert too many
               // particle in the simulation. Thus, we need to decrease the
               // number of empty_cell we want to insert in at this time step.
-              if (remained_particles_of_each_type < 0)
+              if (particles_of_each_type_remaining < 0)
                 {
                   // At this point, we know the current processor have to many
                   // available cell to insert in (or just the right amount). The
                   // excess number of available cell on this processor is equal
                   // to the positive value of the
-                  // remained_particles_of_each_type variable since that
+                  // particles_of_each_type_remaining variable since that
                   // variable became negative on this processor.
 
                   // Thus, we decrease the number of particle to insert on the
@@ -189,12 +191,12 @@ PlaneInsertion<dim>::insert(
                   // its maximum on this processor.
 
                   number_of_particles_to_insert_per_core[i] +=
-                    remained_particles_of_each_type;
+                    particles_of_each_type_remaining;
 
-                  // We put the remained_particles_of_each_type variable  back
+                  // We put the particles_of_each_type_remaining variable  back
                   // to zero since we have just lower the number of cell
                   // available on this processor by the exceeding amount.
-                  remained_particles_of_each_type = 0;
+                  particles_of_each_type_remaining = 0;
 
                   starting_IDs_on_every_proc[i] = starting_id_on_proc;
                   starting_id_on_proc +=
@@ -214,21 +216,21 @@ PlaneInsertion<dim>::insert(
             }
           std::fill(remained_particles_for_every_proc.begin(),
                     remained_particles_for_every_proc.end(),
-                    remained_particles_of_each_type);
+                    particles_of_each_type_remaining);
         }
 
       // Now, processor zero knows how many particles will be inserted by every
       // processor without exceeding the maximum number of particles.
 
-      // We now need to scatter 3 information processor, first how
+      // We now need to scatter 3 information per processor, first how
       // many particles it needs to insert. Second what is the ID of the
       // first particle it will insert at this insertion step. The starting ID
       // is mandatory, since we don't want two particles to have the same ID,
       // and we don't want to use the global_insertion method because it uses an
       // all_gather, which has a high computational cost. Third, the
-      // remained_particles_of_each_type variable need to be updated proc other
-      // than proc 0 will enter the insert function dans the simulation will
-      // stop.
+      // particles_of_each_type_remaining variable needs to be updated on
+      // processors other than processor 0 otherwise the insert function will
+      // become incoherent.
 
       // This scatters the number of particles to insert
       unsigned int number_of_particles_to_insert_on_this_core =
@@ -240,17 +242,14 @@ PlaneInsertion<dim>::insert(
       unsigned int starting_ID_on_proc =
         Utilities::MPI::scatter(communicator, starting_IDs_on_every_proc, 0);
 
-      // This scatters remained_particles_of_each_type on every proc
-      remained_particles_of_each_type =
+      // This scatters particles_of_each_type_remaining on every proc
+      particles_of_each_type_remaining =
         Utilities::MPI::scatter(communicator,
                                 remained_particles_for_every_proc,
                                 0);
 
-      // We yet didn't say which empty cells won't be use anymore.
-      // empty_cells_on_proc needs to be shorter for some processor.
+      // We yet didn't choose which empty cells won't be used anymore.
 
-      // There's probably a better way without using a while loop, but we enter
-      // in this while only once.
       while (empty_cells_on_proc.size() >
              number_of_particles_to_insert_on_this_core)
         {
@@ -308,18 +307,15 @@ PlaneInsertion<dim>::insert(
 
           // Generate the random point of insertion
           insertion_location(0) +=
-            static_cast<double>(rand()) / static_cast<double>(RAND_MAX) *
-            dem_parameters.insertion_info.random_number_range;
+            static_cast<double>(rand()) * maximum_range_for_randomness;
 
           insertion_location(1) +=
-            static_cast<double>(rand()) / static_cast<double>(RAND_MAX) *
-            dem_parameters.insertion_info.random_number_range;
+            static_cast<double>(rand()) * maximum_range_for_randomness;
 
           if constexpr (dim == 3)
             {
               insertion_location(2) +=
-                static_cast<double>(rand()) / static_cast<double>(RAND_MAX) *
-                dem_parameters.insertion_info.random_number_range;
+                static_cast<double>(rand()) * maximum_range_for_randomness;
             }
 
           // Insertion

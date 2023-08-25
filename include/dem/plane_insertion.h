@@ -14,7 +14,6 @@
  * ---------------------------------------------------------------------
 
  *
- * Author: Olivier Gaboriault, Polytechnique Montreal, 2023
  */
 
 #include <dem/dem_solver_parameters.h>
@@ -33,7 +32,6 @@
  *
  * @note
  *
- * @author Olivier Gaboriault, Polytechnique Montreal 2023-
  * Paticle insertion using cells cut by a plane. Locally own cells that are
  * cut by the plane are flag. From those flag cells, we insert a particle at
  * their center's if they are individually empty (contain no particle). This
@@ -95,12 +93,11 @@ private:
   void
   find_centers_of_inplane_cells();
 
-  void
-  Update_insertion_cell();
 
   std::set<typename Triangulation<dim>::active_cell_iterator>
                                                plane_cells_for_insertion;
-  int                                          remained_particles_of_each_type;
+  double                                       maximum_range_for_randomness;
+  int                                          particles_of_each_type_remaining;
   unsigned int                                 current_inserting_particle_type;
   std::unordered_map<unsigned int, Point<dim>> cells_centers;
   std::unordered_map<unsigned int, double>     number_particles_to_insert;
