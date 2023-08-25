@@ -255,6 +255,12 @@ public:
     return constant_density;
   }
 
+  bool
+  surface_tension_is_constant() const
+  {
+    return constant_surface_tension;
+  }
+
   unsigned int
   get_material_interaction_id(
     const material_interactions_type material_interaction_type,
@@ -327,6 +333,7 @@ private:
 
   bool non_newtonian_flow;
   bool constant_density;
+  bool constant_surface_tension;
 
   // Temporary scaling variable are overly used right now. They will eventually
   // be deprecated for the majority of places they are used.
