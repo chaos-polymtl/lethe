@@ -804,12 +804,12 @@ OpenCascadeShape<dim>::gradient_with_cell_guess(
         {
           // Rotate the solution found to the global reference frame and cache
           // the solution.
+          auto rotate_in_globalpoint =
+            this->reverse_align_and_center(projected_point);
           if (!this->part_of_a_composite)
             {
               this->value_cache[point_in_string] =
                 -(centered_point - projected_point).norm();
-              auto rotate_in_globalpoint =
-                this->reverse_align_and_center(projected_point);
               this->gradient_cache[point_in_string] =
                 (rotate_in_globalpoint - evaluation_point) /
                 ((rotate_in_globalpoint - evaluation_point).norm() + 1.0e-16);
@@ -822,12 +822,12 @@ OpenCascadeShape<dim>::gradient_with_cell_guess(
         }
       else
         {
+          auto rotate_in_globalpoint =
+            this->reverse_align_and_center(projected_point);
           if (!this->part_of_a_composite)
             {
               this->value_cache[point_in_string] =
                 (centered_point - projected_point).norm();
-              auto rotate_in_globalpoint =
-                this->reverse_align_and_center(projected_point);
               this->gradient_cache[point_in_string] =
                 -(rotate_in_globalpoint - evaluation_point) /
                 ((rotate_in_globalpoint - evaluation_point).norm() + 1.0e-16);
