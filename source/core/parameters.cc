@@ -1981,18 +1981,10 @@ namespace Parameters
         prm.declare_entry(
           "method",
           "gmres",
-          Patterns::Selection("gmres|bicgstab|amg|direct"),
+          Patterns::Selection("gmres|bicgstab|direct"),
           "The iterative solver for the linear system of equations. "
-          "Choices are <gmres|bicgstab|amg|tfqmr|direct>. gmres is a GMRES iterative "
-          "solver "
-          "with ILU preconditioning. bicgstab is a BICGSTAB iterative solver "
-          "with ILU preconditioning. "
-          "amg is GMRES + AMG preconditioning with an ILU coarsener and "
-          "smoother. On coarse meshes, the gmres/bicgstab solver with ILU "
-          "preconditioning is more efficient. "
-          "As the number of mesh elements increase, the amg solver is the most "
-          "efficient. Generally, at 1M elements, the amg solver always "
-          "outperforms the gmres or bicgstab");
+          "Choices are <gmres|bicgstab|direct>.");
+
         prm.declare_entry("relative residual",
                           "1e-3",
                           Patterns::Double(),
@@ -2010,6 +2002,12 @@ namespace Parameters
                           "100",
                           Patterns::Integer(),
                           "Maximum number of krylov vectors for GMRES");
+
+        prm.declare_entry("preconditioner",
+                          "ilu",
+                          Patterns::Selection("amg|ilu"),
+                          "The preconditioner for the linear solver."
+                          "Choices are <amg|ilu>.");
 
         prm.declare_entry("ilu preconditioner fill",
                           "0",
@@ -2083,9 +2081,7 @@ namespace Parameters
       prm.enter_subsection(physics_name);
       {
         const std::string sv = prm.get("method");
-        if (sv == "amg")
-          solver = SolverType::amg;
-        else if (sv == "gmres")
+        if (sv == "gmres")
           solver = SolverType::gmres;
         else if (sv == "bicgstab")
           solver = SolverType::bicgstab;
@@ -2110,6 +2106,15 @@ namespace Parameters
         minimum_residual   = prm.get_double("minimum residual");
         max_iterations     = prm.get_integer("max iters");
         max_krylov_vectors = prm.get_integer("max krylov vectors");
+
+        const std::string precond = prm.get("preconditioner");
+        if (precond == "amg")
+          preconditioner = PreconditionerType::amg;
+        else if (precond == "ilu")
+          preconditioner = PreconditionerType::ilu;
+        else
+          throw std::logic_error(
+            "Error, invalid preconditioner type. Choices are amg or ilu");
 
         ilu_precond_fill = prm.get_double("ilu preconditioner fill");
         ilu_precond_atol =

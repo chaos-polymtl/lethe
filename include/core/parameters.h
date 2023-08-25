@@ -896,7 +896,6 @@ namespace Parameters
     {
       gmres,
       bicgstab,
-      amg,
       direct
     };
 
@@ -916,6 +915,15 @@ namespace Parameters
 
     // Maximum number of krylov vectors
     int max_krylov_vectors;
+
+    // Type of preconditioner
+    enum class PreconditionerType
+    {
+      ilu,
+      amg
+    };
+
+    PreconditionerType preconditioner;
 
     // ILU or ILUT fill
     double ilu_precond_fill;
