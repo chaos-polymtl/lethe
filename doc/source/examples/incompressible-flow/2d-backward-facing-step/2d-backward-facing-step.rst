@@ -213,6 +213,7 @@ For :math:`Re < 700`, standard parameters are suitable to achieve convergence.
         set max iters                             = 10000
         set relative residual                     = 1e-4
         set minimum residual                      = 1e-9
+        set preconditioner                        = ilu
         set ilu preconditioner fill               = 2
         set ilu preconditioner absolute tolerance = 1e-12
         set ilu preconditioner relative tolerance = 1.00
@@ -230,6 +231,7 @@ For :math:`Re \geq 700`, however, it is often necessary to set ``ilu precondtion
         set max iters                             = 10000
         set relative residual                     = 1e-4
         set minimum residual                      = 1e-9
+        set preconditioner                        = ilu
         set ilu preconditioner fill               = 2
         set ilu preconditioner absolute tolerance = 1e-12
         set ilu preconditioner relative tolerance = 1.00

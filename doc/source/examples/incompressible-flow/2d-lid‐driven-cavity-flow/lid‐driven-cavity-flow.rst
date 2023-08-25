@@ -176,8 +176,9 @@ Each non-linear solver step requires the solution of a linear system of equation
 
   subsection linear solver
     subsection fluid dynamics
-      set method    = amg
-      set verbosity = verbose
+      set method         = gmres
+      set preconditioner = amg
+      set verbosity      = verbose
     end
   end
 

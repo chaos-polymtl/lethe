@@ -223,16 +223,17 @@ Lethe is an implicit CFD solver. Solving a steady-state problem requires the sol
 
 Linear Solver
 ~~~~~~~~~~~~~
-Relatively standard parameters are used for the linear solver. From our experience, the ``AMG`` preconditioner is more robust and for that reason we will use it.
+Relatively standard parameters are used for the linear solver. From our experience, the ``amg`` preconditioner is more robust and for that reason we will use it.
 
 .. code-block:: text
 
     subsection linear solver
       subsection fluid dynamics
-        set method                                    = amg
+        set method                                    = gmres
         set max iters                                 = 100
         set relative residual                         = 1e-4
         set minimum residual                          = 1e-10
+        set preconditioner                            = amg
         set amg preconditioner ilu fill               = 0
         set amg preconditioner ilu absolute tolerance = 1e-11
         set amg preconditioner ilu relative tolerance = 1.00

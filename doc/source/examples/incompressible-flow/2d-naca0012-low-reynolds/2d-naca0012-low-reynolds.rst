@@ -191,6 +191,7 @@ Again, in order to reduce the computational time, the ``minimum residual`` for t
         set max iters                             = 5000
         set relative residual                     = 1e-3
         set minimum residual                      = 1e-8
+        set preconditioner                        = ilu
         set ilu preconditioner fill               = 1
         set ilu preconditioner absolute tolerance = 1e-10
         set ilu preconditioner relative tolerance = 1.00

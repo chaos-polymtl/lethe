@@ -241,6 +241,7 @@ Linear Solver
         set max iters                             = 1000
         set relative residual                     = 1e-4
         set minimum residual                      = 1e-11
+        set preconditioner                        = ilu
         set ilu preconditioner fill               = 0
         set ilu preconditioner absolute tolerance = 1e-20
         set ilu preconditioner relative tolerance = 1.00
@@ -249,7 +250,7 @@ Linear Solver
       end
     end
 
-* The ``method`` is set to ``gmres``. This solver is less computationally expensive than the other option, and this case does not require any special preconditioner. This makes the ``gmres`` solver the best option available.
+* The ``method`` is set to ``gmres``. This solver is less computationally expensive than the other option, and this case does not require any special preconditioner. This makes the ``gmres`` solver with ``ilu`` preconditioner the best option available.
 
 * The ``max iters`` is set to 1000. This is a lot more steps than how much it should take to solve the system.
 
