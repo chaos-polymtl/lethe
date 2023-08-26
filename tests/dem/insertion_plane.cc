@@ -1,24 +1,23 @@
 /* ---------------------------------------------------------------------
- *
- * Copyright (C) 2019 - 2019 by the Lethe authors
- *
- * This file is part of the Lethe library
- *
- * The Lethe library is free software; you can use it, redistribute
- * it, and/or modify it under the terms of the GNU Lesser General
- * Public License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
- * The full text of the license can be found in the file LICENSE at
- * the top level of the Lethe distribution.
- *
- * ---------------------------------------------------------------------
+*
+* Copyright (C) 2019 - 2019 by the Lethe authors
+*
+* This file is part of the Lethe library
+*
+* The Lethe library is free software; you can use it, redistribute
+* it, and/or modify it under the terms of the GNU Lesser General
+* Public License as published by the Free Software Foundation; either
+* version 2.1 of the License, or (at your option) any later version.
+* The full text of the license can be found in the file LICENSE at
+* the top level of the Lethe distribution.
+*
+* ---------------------------------------------------------------------
 
- *
- * Author: Shahab Golshan, Polytechnique Montreal, 2019-
- */
+*
+*/
 
 /**
- * @brief Inserting one particle using uniform insertion class.
+ * @brief Insertion of particles using the plane insertion class.
  */
 
 // Deal.II includes
@@ -30,7 +29,7 @@
 
 // Lethe
 #include <dem/dem_solver_parameters.h>
-#include <dem/non_uniform_insertion.h>
+#include <dem/plane_insertion.h>
 
 // Tests (with common definitions)
 #include <../tests/tests.h>
@@ -43,7 +42,7 @@ test()
 {
   // Creating the mesh and refinement
   parallel::distributed::Triangulation<dim> tr(MPI_COMM_WORLD);
-  int                                       hyper_cube_length = 1;
+  int                                       hyper_cube_length = 2;
   GridGenerator::hyper_cube(tr,
                             -1 * hyper_cube_length,
                             hyper_cube_length,
@@ -55,34 +54,28 @@ test()
   DEMSolverParameters<dim> dem_parameters;
 
   // Defining simulation general parameters
-  dem_parameters.insertion_info.x_min                                = -0.05;
-  dem_parameters.insertion_info.y_min                                = -0.05;
-  dem_parameters.insertion_info.z_min                                = -0.05;
-  dem_parameters.insertion_info.x_max                                = 0.05;
-  dem_parameters.insertion_info.y_max                                = 0.05;
-  dem_parameters.insertion_info.z_max                                = 0.05;
-  dem_parameters.insertion_info.axis_0                               = 0;
-  dem_parameters.insertion_info.axis_1                               = 1;
-  dem_parameters.insertion_info.axis_2                               = 2;
-  dem_parameters.insertion_info.inserted_this_step                   = 10;
-  dem_parameters.insertion_info.distance_threshold                   = 2;
+  dem_parameters.insertion_info.insertion_plane_normal_vector =
+    Tensor<1, 3>({0., 1., 0.});
+  dem_parameters.insertion_info.insertion_plane_point = Point<3>({0., 1.75, 0});
+  dem_parameters.insertion_info.distance_threshold    = 0.25;
   dem_parameters.lagrangian_physical_properties.particle_type_number = 1;
   dem_parameters.lagrangian_physical_properties.particle_average_diameter[0] =
-    0.005;
+    0.2;
   dem_parameters.lagrangian_physical_properties.particle_size_std[0] = 0;
   dem_parameters.lagrangian_physical_properties.density_particle[0]  = 2500;
-  dem_parameters.lagrangian_physical_properties.number[0]            = 10;
-  dem_parameters.insertion_info.random_number_range                  = 0.75;
+  dem_parameters.lagrangian_physical_properties.number[0]            = 16;
+  dem_parameters.insertion_info.random_number_range                  = 0.2;
   dem_parameters.insertion_info.random_number_seed                   = 19;
+  dem_parameters.insertion_info.insertion_frequency                  = 2;
+
 
   // Defining particle handler
   Particles::ParticleHandler<dim> particle_handler(
     tr, mapping, DEM::get_number_properties());
 
-  // Calling non-uniform insertion
-  NonUniformInsertion<dim> insertion_object(
-    dem_parameters,
-    dem_parameters.lagrangian_physical_properties.particle_average_diameter[0]);
+  // Calling plane insertion
+  PlaneInsertion<dim> insertion_object(dem_parameters, tr);
+
   insertion_object.insert(particle_handler, tr, dem_parameters);
 
   // Output
