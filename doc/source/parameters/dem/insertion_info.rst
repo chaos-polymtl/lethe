@@ -2,28 +2,24 @@
 Insertion Info
 ==============
 
-In Lethe, particles are inserted using the Insertion class. We need an insertion box (which is defined by its minimum and maximum values in `x`, `y`, and `z` directions), ``insertion frequency``, the inserted number of particles at each insertion step, and other parameters to specify the relative positions of the particles during insertion.
-
-Particle insertion information is defined in this section. This information includes ``insertion method``, ``inserted number of particles at each insertion step``, ``insertion frequency``, dimensions of the insertion box, approximate initial distance between particles at insertion steps, and information about the randomness of initial positions of particles. If the insertion method is ``uniform``, the particles are uniformly (without randomness in initial location) inserted. On the other hand, in ``non_uniform`` insertion, the initial locations of particles are chosen randomly. Using ``non_uniform`` insertion, insertion ``random number range`` and ``insertion random number seed`` are also required in the parameter handler file.
+In this subsection, insertion methods which are ``uniform``, ``non_unifom``, ``plane`` and ``list`` are defined.
 
 .. note::
-    Insertion in Lethe-DEM starts inserting particles from type 0 and proceeds to the next type when all the particles from the previous type are inserted.
+    Insertion in Lethe starts inserting particles from type 0 and proceeds to the next type when all the particles from the previous type are inserted.
 
 
 .. code-block:: text
 
   subsection insertion info
-    # Insertion method
-    # Choices are uniform|non_uniform
+    # Choices are uniform|non_uniform|plane|list
     set insertion method                               = non_uniform
 
-    # Number of inserted particles at each insertion step. This value may change automatically if the insertion box is not adequately large to handle all the inserted particles
-    set inserted number of particles at each time step = 100
-
-    # Insertion frequency
+    # Every method
     set insertion frequency                            = 20000
 
-    # Insertion box dimensions (xmin, xmax, ymin, ymax, zmin, zmax)
+    # If method = uniform or non_unifom
+    set inserted number of particles at each time step = 100
+
     set insertion box minimum x                        = -0.05
     set insertion box minimum y                        = -0.05
     set insertion box minimum z                        = -0.03
@@ -31,12 +27,10 @@ Particle insertion information is defined in this section. This information incl
     set insertion box maximum y                        = 0.05
     set insertion box maximum z                        = 0.07
 
-    # Directions of insertion (0: x, 1: y, 2: z)
     set insertion first direction                      = 0
     set insertion second direction                     = 1
     set insertion third direction                      = 2
 
-    # Initial conditions at insertion
     set velocity x                                     = 0.0
     set velocity y                                     = 0.0
     set velocity z                                     = 0.0
@@ -44,29 +38,40 @@ Particle insertion information is defined in this section. This information incl
     set omega y                                        = 0.0
     set omega z                                        = 0.0
 
-    # insertion distance threshold controls the distance between the center of inserted particles (the distance is: [distance threshold] * [diameter of particles]). The distance is modified by a random number if non_uniform insertion is chosen
     set insertion distance threshold                   = 2
 
-    # Random number range and seed for non_uniform insertion
+    # If method = plane
+    set insertion method                               = plane
+    set insertion plane point                          = 0, 0, 0
+    set insertion plane normal vector                  = 1, 0, 0
+
+    # If method = non_uniform or plane
     set insertion random number range                  = 0.75
     set insertion random number seed                   = 19
+
+    # If method = list
+    set list x                                         = 0.
+    set list y                                         = 0.
+    set list z                                         = 0.
+
   end
 
-* The ``insertion method`` parameter chooses the type of insertion. Acceptable choices are ``uniform`` and ``non_uniform``.
+The ``insertion method`` parameter chooses the type of insertion. Acceptable choices are ``uniform``, ``non_uniform``, ``plane`` and ``list``. Different insertion method can share the same parameter.
+
+* The ``insertion frequency`` parameter defines the frequency of insertion. For example, if the ``insertion frequency`` is set equal to 10000, the iterations 1, 10001, 20001, ... will be defined as insertion steps.  The ``insertion frequency`` should be selected adequately depending on the insertion method. For ``uniform`` and ``non_uniform`` it should be large, so that the inserted particles at the previous insertion step have enough time to leave the insertion box for the next time step, otherwise large overlap may occur which leads to a large velocity of particles. For the ``plane`` method, it should be small so that particles are being inserted as soon as a cell is empty.
+
+* The ``random number range`` and ``insertion random number seed`` parameters determine the random added values to the positions of particles during a ``non_uniform`` and ``plane`` insertion. ``random number range`` defines the maximum value for the random displacement. ``insertion random number seed`` is the seed for the random number generator.
 
 .. note::
-    In ``uniform`` insertion, the insertion locations of the particles inside the insertion box are tidy. In ``non_uniform`` insertion, however, the insertion locations of particles are randomly selected.
+    The ``random number range`` and ``insertion random number seed`` are only being use by ``non_uniform`` and ``plane`` insertion methods.
 
+------------------------
+Uniform and Non-uniform
+------------------------
 
-* The ``inserted number of particles at each time step`` defines the desired number of particles to be inserted at each insertion step.
+Uniform and Non-uniform insertion methods are really similar in their functioning. Both methods use an insertion box where particles will be insert. In ``uniform`` insertion, the insertion locations of the particles inside the insertion box are tidy. In ``non_uniform`` insertion however, the insertion locations of particles are randomly selected.
 
-.. note::
-    If the insertion box is not adequately large to insert ``inserted number of particles at each time step`` particles with the defined arrangement (initial distance between the inserted particles), Lethe prints a warning and inserts the maximum number of particles that fit inside the insertion box at each insertion step.
-
-* The ``insertion frequency`` parameter defines the frequency of insertion. For example, if the ``insertion frequency`` is set equal to 10000, the iterations 0, 10000, 20000, ... will be defined as insertion steps.
-
-.. note::
-    The ``insertion frequency`` should be selected adequately large, so that the inserted particles at the previous insertion step have enough time to leave the insertion box, and the insertion box becomes empty for the next insertion. If ``insertion frequency`` does not meet this criterion, particles may have large overlaps during the insertion steps which leads to a large velocity of particles. Some particles may leave the simulation domain in this case.
+* The ``inserted number of particles at each time step`` defines the desired number of particles to be inserted at each insertion step. If the insertion box is not adequately large to insert ``inserted number of particles at each time step`` particles with the defined arrangement (initial distance between the inserted particles), Lethe prints a warning and inserts the maximum number of particles that fit inside the insertion box at each insertion step.
 
 * The ``insertion box minimum x``, ``insertion box minimum y``, ``insertion box minimum z``, ``insertion box maximum x``, ``insertion box maximum y``, ``insertion box maximum z`` parameters define the insertion box dimensions.
 
@@ -82,9 +87,7 @@ Particle insertion information is defined in this section. This information incl
 .. note:: 
     Since the ``insertion info`` subsection is valid for all particle types, by using ``velocity x``, ``velocity y``, ``velocity z``, ``omega x``, ``omega y``, or ``omega z``, the given condition is applied to all particles, indistinctively.
 
-* The ``insertion distance threshold`` parameter determines the initial distance between the particles in the insertion. As a result, it must be larger than 1 to avoid any initial collision between the inserted particles.
-
-* The ``random number range`` and ``insertion random number seed`` parameters determine the random added values to the positions of particles during a ``non_uniform`` insertion. ``random number range`` defines the maximum value for the random displacement in the ``non_uniform`` insertion locations. ``insertion random number seed`` is the seed for the random number generator.
+* The ``insertion distance threshold`` parameter determines the initial distance between the particles in the insertion box. As a result, it must be larger than 1 to avoid any initial collision between the inserted particles.
 
 The distance between the inserted particles is equal to:
 
@@ -101,3 +104,24 @@ in a ``non_uniform`` insertion. :math:`{\epsilon}`, :math:`{\psi}`, and :math:`{
 .. note::
      ``insertion distance threshold`` should also be compatible with the ``random number range``; especially if the ``random number range`` is large, a large value should be defined for ``insertion distance threshold``. Generally, we recommend users to use a value in the range of 1.3-2 (depending on the value of ``random number range``) for the ``insertion distance threshold``.
 
+--------------------
+Plane
+--------------------
+The Plane insertion method inserts particles at the centroid of insertion cells. These cells are defined as intersected by a mathematical plane. This plane is define by an ``insertion plane point`` and an ``insertion plane normal vector``. A cell is considered as intersected by the plane if at least one of its vertex is on each side of the plane of if at least one of its vertex is directly on the plane (the normal distance between the vertex and the plane is zero). At each insertion step, a particle will be inserted in a insertion cell if that cell is empty (no particle is present inside it). This guarantee the absence of big overlap with the particles already inserted. This method of inserting is useful when dealing with a domain dense with particles.
+
+* The ``insert plane point`` defines the point coordinates for the plane. Each component of this parameter represent the x, y and z directions, respectively.
+
+* The ``insertion plane normal vector`` define the normal vector component for the plane. of the  Each component of the parameter represent the x, y and z directions, respectively.
+
+--------------------
+List
+--------------------
+The List insertion method insert particles at precis coordinates. This method is preferred for small number of particles.
+
+* The ``list x``, ``list y`` and ``list z`` define the coordinates of every particles in the x, y and z directions, respectively. For example, if you want to insert particles at two locations, ``(0.,0.,0.) and (1.,2.,3.)`` , the list parameters should look like this :
+
+.. code-block:: text
+
+    set list x = 0., 1.
+    set list y = 0., 2.
+    set list z = 0., 3.

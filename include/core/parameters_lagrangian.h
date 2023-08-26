@@ -142,7 +142,8 @@ namespace Parameters
       {
         uniform,
         non_uniform,
-        list
+        list,
+        plane
       } insertion_method;
 
       // Inserted number of particles at each time step
@@ -170,6 +171,10 @@ namespace Parameters
       int random_number_seed;
 
       std::vector<double> list_x, list_y, list_z;
+
+      // Insertion plane definition
+      Tensor<1, 3> insertion_plane_normal_vector;
+      Point<3>     insertion_plane_point;
 
       static void
       declare_parameters(ParameterHandler &prm);

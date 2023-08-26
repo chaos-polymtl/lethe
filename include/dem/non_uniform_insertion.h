@@ -106,7 +106,7 @@ private:
 
   // Number of particles of each type that remain to be inserted in the
   // upcoming insertion steps
-  unsigned int remained_particles_of_each_type;
+  unsigned int particles_of_each_type_remaining;
 };
 
 #endif /* nonuniform_insertion_h */

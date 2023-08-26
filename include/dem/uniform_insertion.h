@@ -78,7 +78,7 @@ private:
 
   // Number of remained particles of each type that should be inserted in the
   // upcoming insertion steps
-  unsigned int remained_particles_of_each_type;
+  unsigned int particles_of_each_type_remaining;
 
   unsigned int current_inserting_particle_type;
 };
