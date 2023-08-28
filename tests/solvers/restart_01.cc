@@ -168,9 +168,9 @@ test()
   // Manually alter some of the default parameters of the solver
   NSparam.restart_parameters.checkpoint = true;
   NSparam.restart_parameters.frequency  = 1;
-  NSparam.non_linear_solver.verbosity   = Parameters::Verbosity::quiet;
   NSparam.linear_solver.at(PhysicsID::fluid_dynamics).verbosity =
     Parameters::Verbosity::quiet;
+  NSparam.non_linear_solver.at(PhysicsID::fluid_dynamics).verbosity   = Parameters::Verbosity::quiet;
   NSparam.boundary_conditions.createNoSlip();
 
   RestartNavierStokes<2> problem_2d(NSparam);

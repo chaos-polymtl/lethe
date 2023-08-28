@@ -1666,131 +1666,140 @@ namespace Parameters
   }
 
   void
-  NonLinearSolver::declare_parameters(ParameterHandler &prm)
+  NonLinearSolver::declare_parameters(ParameterHandler &prm, const std::string &physics_name)
   {
     prm.enter_subsection("non-linear solver");
     {
-      prm.declare_entry(
-        "verbosity",
-        "verbose",
-        Patterns::Selection("quiet|verbose"),
-        "State whether the outputs from the non-linear solver should be printed. "
-        "Choices are <quiet|verbose>.");
 
-      prm.declare_entry(
-        "solver",
-        "newton",
-        Patterns::Selection("newton|kinsol_newton|inexact_newton"),
-        "Non-linear solver that will be used "
-        "Choices are <newton|kinsol_newton|inexact_newton>."
-        " The newton solver is a traditional newton solver with"
-        "an analytical jacobian formulation. The jacobian matrix and the preconditioner"
-        "are assembled every iteration. In the kinsol_newton method, the nonlinear solver"
-        "Kinsol from the SUNDIALS library is used. This solver has an internal algorithm"
-        "that decides whether to reassemble the Jacobian matrix or not.");
+      prm.enter_subsection(physics_name);
+      {
+        prm.declare_entry(
+          "verbosity",
+          "verbose",
+          Patterns::Selection("quiet|verbose"),
+          "State whether the outputs from the non-linear solver should be printed. "
+          "Choices are <quiet|verbose>.");
 
-      prm.declare_entry(
-        "kinsol strategy",
-        "line_search",
-        Patterns::Selection("normal_newton|line_search|fixed_point|picard"),
-        "Strategy that will be used by the kinsol newton solver");
+        prm.declare_entry(
+          "solver",
+          "newton",
+          Patterns::Selection("newton|kinsol_newton|inexact_newton"),
+          "Non-linear solver that will be used "
+          "Choices are <newton|kinsol_newton|inexact_newton>."
+          " The newton solver is a traditional newton solver with"
+          "an analytical jacobian formulation. The jacobian matrix and the preconditioner"
+          "are assembled every iteration. In the kinsol_newton method, the nonlinear solver"
+          "Kinsol from the SUNDIALS library is used. This solver has an internal algorithm"
+          "that decides whether to reassemble the Jacobian matrix or not.");
 
-      prm.declare_entry("tolerance",
-                        "1e-6",
-                        Patterns::Double(),
-                        "Newton solver tolerance");
-      prm.declare_entry("max iterations",
-                        "10",
-                        Patterns::Integer(),
-                        "Maximum number of Newton Iterations");
-      prm.declare_entry(
-        "step tolerance",
-        "0.9",
-        Patterns::Double(),
-        "Newton solver relative tolerance between steps."
-        " If a newton iteration leads to a residual > step tolerance"
-        " * previous residual then the theta relaxation"
-        " is applied until this criteria is satisfied");
+        prm.declare_entry(
+          "kinsol strategy",
+          "line_search",
+          Patterns::Selection("normal_newton|line_search|fixed_point|picard"),
+          "Strategy that will be used by the kinsol newton solver");
 
-      prm.declare_entry(
-        "matrix tolerance",
-        "0.1",
-        Patterns::Double(),
-        "This parameter controls the frequency at which the matrix is refreshed in the inexact Newton solvers"
-        "If the residual after a newton step < previous residual * matrix tolerance, the matrix is not re-assembled");
+        prm.declare_entry("tolerance",
+                          "1e-6",
+                          Patterns::Double(),
+                          "Newton solver tolerance");
+        prm.declare_entry("max iterations",
+                          "10",
+                          Patterns::Integer(),
+                          "Maximum number of Newton Iterations");
+        prm.declare_entry(
+          "step tolerance",
+          "0.9",
+          Patterns::Double(),
+          "Newton solver relative tolerance between steps."
+          " If a newton iteration leads to a residual > step tolerance"
+          " * previous residual then the theta relaxation"
+          " is applied until this criteria is satisfied");
 
-      prm.declare_entry(
-        "force rhs calculation",
-        "false",
-        Patterns::Bool(),
-        "This is required if there is a fixed point component to the non-linear"
-        "solver that is changed at the beginning of every newton iteration."
-        "This is notably the case of the sharp edge method."
-        "The default value of this parameter is false.");
+        prm.declare_entry(
+          "matrix tolerance",
+          "0.1",
+          Patterns::Double(),
+          "This parameter controls the frequency at which the matrix is refreshed in the inexact Newton solvers"
+          "If the residual after a newton step < previous residual * matrix tolerance, the matrix is not re-assembled");
+
+        prm.declare_entry(
+          "force rhs calculation",
+          "false",
+          Patterns::Bool(),
+          "This is required if there is a fixed point component to the non-linear"
+          "solver that is changed at the beginning of every newton iteration."
+          "This is notably the case of the sharp edge method."
+          "The default value of this parameter is false.");
 
 
-      prm.declare_entry("residual precision",
-                        "4",
-                        Patterns::Integer(),
-                        "Number of digits displayed when showing residuals");
-      prm.declare_entry(
-        "reuse matrix",
-        "false",
-        Patterns::Bool(),
-        "Reuse the last jacobian matrix for the next non-linear problem solution");
+        prm.declare_entry("residual precision",
+                          "4",
+                          Patterns::Integer(),
+                          "Number of digits displayed when showing residuals");
+        prm.declare_entry(
+          "reuse matrix",
+          "false",
+          Patterns::Bool(),
+          "Reuse the last jacobian matrix for the next non-linear problem solution");
 
-      prm.declare_entry(
-        "abort at convergence failure",
-        "false",
-        Patterns::Bool(),
-        "Aborts Lethe by throwing an exception if non-linear solver convergence has failed");
+        prm.declare_entry(
+          "abort at convergence failure",
+          "false",
+          Patterns::Bool(),
+          "Aborts Lethe by throwing an exception if non-linear solver convergence has failed");
+      }
+      prm.leave_subsection();
     }
     prm.leave_subsection();
   }
 
   void
-  NonLinearSolver::parse_parameters(ParameterHandler &prm)
+  NonLinearSolver::parse_parameters(ParameterHandler &prm, const std::string &physics_name)
   {
     prm.enter_subsection("non-linear solver");
     {
-      const std::string op = prm.get("verbosity");
-      if (op == "verbose")
-        verbosity = Parameters::Verbosity::verbose;
-      else if (op == "quiet")
-        verbosity = Parameters::Verbosity::quiet;
-      else
-        throw(std::runtime_error("Invalid verbosity level"));
+      prm.enter_subsection(physics_name);
+      {
+        const std::string op = prm.get("verbosity");
+        if (op == "verbose")
+          verbosity= Parameters::Verbosity::verbose;
+        else if (op == "quiet")
+          verbosity= Parameters::Verbosity::quiet;
+        else
+          throw(std::runtime_error("Invalid verbosity level"));
 
-      const std::string str_solver = prm.get("solver");
-      if (str_solver == "newton")
-        solver = SolverType::newton;
-      else if (str_solver == "kinsol_newton")
-        solver = SolverType::kinsol_newton;
-      else if (str_solver == "inexact_newton")
-        solver = SolverType::inexact_newton;
-      else
-        throw(std::runtime_error("Invalid non-linear solver "));
+        const std::string str_solver = prm.get("solver");
+        if (str_solver == "newton")
+          solver= SolverType::newton;
+        else if (str_solver == "kinsol_newton")
+          solver= SolverType::kinsol_newton;
+        else if (str_solver == "inexact_newton")
+          solver= SolverType::inexact_newton;
+        else
+          throw(std::runtime_error("Invalid non-linear solver "));
 
-      const std::string str_kinsol_strategy = prm.get("kinsol strategy");
-      if (str_kinsol_strategy == "normal_newton")
-        kinsol_strategy = KinsolStrategy::normal_newton;
-      else if (str_kinsol_strategy == "line_search")
-        kinsol_strategy = KinsolStrategy::line_search;
-      else if (str_kinsol_strategy == "picard")
-        kinsol_strategy = KinsolStrategy::picard;
-      else
-        throw(
-          std::runtime_error("Invalid strategy for kinsol non-linear solver "));
+        const std::string str_kinsol_strategy = prm.get("kinsol strategy");
+        if (str_kinsol_strategy == "normal_newton")
+          kinsol_strategy= KinsolStrategy::normal_newton;
+        else if (str_kinsol_strategy == "line_search")
+          kinsol_strategy= KinsolStrategy::line_search;
+        else if (str_kinsol_strategy == "picard")
+          kinsol_strategy= KinsolStrategy::picard;
+        else
+          throw(
+            std::runtime_error("Invalid strategy for kinsol non-linear solver "));
 
-      tolerance             = prm.get_double("tolerance");
-      step_tolerance        = prm.get_double("step tolerance");
-      matrix_tolerance      = prm.get_double("matrix tolerance");
-      max_iterations        = prm.get_integer("max iterations");
-      display_precision     = prm.get_integer("residual precision");
-      force_rhs_calculation = prm.get_bool("force rhs calculation");
-      reuse_matrix          = prm.get_bool("reuse matrix");
-      abort_at_convergence_failure =
-        prm.get_bool("abort at convergence failure");
+        tolerance            = prm.get_double("tolerance");
+        step_tolerance       = prm.get_double("step tolerance");
+        matrix_tolerance     = prm.get_double("matrix tolerance");
+        max_iterations       = prm.get_integer("max iterations");
+        display_precision    = prm.get_integer("residual precision");
+        force_rhs_calculation= prm.get_bool("force rhs calculation");
+        reuse_matrix         = prm.get_bool("reuse matrix");
+        abort_at_convergence_failure=
+          prm.get_bool("abort at convergence failure");
+      }
+      prm.leave_subsection();
     }
     prm.leave_subsection();
   }

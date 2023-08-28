@@ -70,7 +70,7 @@ MultiphysicsInterface<dim>::MultiphysicsInterface(
   std::shared_ptr<SimulationControl> p_simulation_control,
   ConditionalOStream &               p_pcout)
   : multiphysics_parameters(nsparam.multiphysics)
-  , verbosity(nsparam.non_linear_solver.verbosity)
+  // , verbosity(nsparam.non_linear_solver.at(PhysicsID::fluid_dynamics).verbosity)
   , pcout(p_pcout)
 {
   inspect_multiphysics_models_dependencies(nsparam);
@@ -80,22 +80,26 @@ MultiphysicsInterface<dim>::MultiphysicsInterface(
   // the other physics. Consequently, disabling it only
   // prevents solving it, but not allocating it.
   {
+    verbosity[PhysicsID::fluid_dynamics] = nsparam.non_linear_solver.at(PhysicsID::fluid_dynamics).verbosity;
     active_physics.push_back(PhysicsID::fluid_dynamics);
   }
   if (multiphysics_parameters.heat_transfer)
     {
+      verbosity[PhysicsID::heat_transfer] = nsparam.non_linear_solver.at(PhysicsID::heat_transfer).verbosity;
       active_physics.push_back(PhysicsID::heat_transfer);
       physics[PhysicsID::heat_transfer] = std::make_shared<HeatTransfer<dim>>(
         this, nsparam, p_triangulation, p_simulation_control);
     }
   if (multiphysics_parameters.tracer)
     {
+      verbosity[PhysicsID::tracer] = nsparam.non_linear_solver.at(PhysicsID::tracer).verbosity;
       active_physics.push_back(PhysicsID::tracer);
       physics[PhysicsID::tracer] = std::make_shared<Tracer<dim>>(
         this, nsparam, p_triangulation, p_simulation_control);
     }
   if (multiphysics_parameters.VOF)
     {
+      verbosity[PhysicsID::VOF] = nsparam.non_linear_solver.at(PhysicsID::VOF).verbosity;
       active_physics.push_back(PhysicsID::VOF);
       physics[PhysicsID::VOF] = std::make_shared<VolumeOfFluid<dim>>(
         this, nsparam, p_triangulation, p_simulation_control);
@@ -103,6 +107,7 @@ MultiphysicsInterface<dim>::MultiphysicsInterface(
 
   if (multiphysics_parameters.cahn_hilliard)
     {
+      verbosity[PhysicsID::cahn_hilliard] = nsparam.non_linear_solver.at(PhysicsID::cahn_hilliard).verbosity;
       active_physics.push_back(PhysicsID::cahn_hilliard);
       physics[PhysicsID::cahn_hilliard] = std::make_shared<CahnHilliard<dim>>(
         this, nsparam, p_triangulation, p_simulation_control);

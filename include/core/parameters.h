@@ -882,9 +882,9 @@ namespace Parameters
 
 
     static void
-    declare_parameters(ParameterHandler &prm);
+    declare_parameters(ParameterHandler &prm, const std::string &physics_name);
     void
-    parse_parameters(ParameterHandler &prm);
+    parse_parameters(ParameterHandler &prm, const std::string &physics_name);
   };
 
   /**
