@@ -1827,6 +1827,7 @@ public:
   std::vector<Point<dim>> rotated_nodes_positions;
   std::vector<double>     support_radii;
   std::vector<double>     basis_functions;
+  std::vector<bool>       useful_rbf_nodes;
 };
 
 

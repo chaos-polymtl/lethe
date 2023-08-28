@@ -1477,6 +1477,7 @@ RBFShape<dim>::RBFShape(const std::string   shape_arguments_str,
   , nodes_positions_z(1)
   , support_radii(1)
   , basis_functions(1)
+  , useful_rbf_nodes(1)
 {
   this->filename = shape_arguments_str;
   this->load_data_from_file();
@@ -1888,6 +1889,25 @@ RBFShape<dim>::update_precalculations(
       else
         it++;
     }
+
+  // Here we loop on all (local or ghost) and active cells to define which RBF
+  // nodes are useful to keep We loop over the likely nodes map and take note of
+  // the RBF nodes that are required
+  number_of_nodes = weights.size();
+  useful_rbf_nodes.clear();
+  useful_rbf_nodes.resize(number_of_nodes);
+  for (auto it = temporary_nodes_portions_map.cbegin();
+       it != temporary_nodes_portions_map.cend();
+       it++)
+    {
+      auto cell = it->first;
+      if (!cell->is_active())
+        continue;
+      if (std::get<2>(it->second).use_count() <= 1)
+        continue;
+      for (const size_t &node_id : *(std::get<2>(it->second)))
+        useful_rbf_nodes[node_id] = true;
+    }
 }
 
 template <int dim>
@@ -1965,6 +1985,7 @@ RBFShape<dim>::load_data_from_file()
   weights.clear();
   support_radii.clear();
   basis_functions.clear();
+  useful_rbf_nodes.clear();
   rotated_nodes_positions.clear();
   nodes_positions_x.clear();
   nodes_positions_y.clear();
@@ -2016,37 +2037,11 @@ RBFShape<dim>::remove_superfluous_data(
                                  levels_not_precalculated,
                                  mesh_based_precalculations);
 
-  // We loop over the likely nodes map and take note of the RBF nodes that are
-  // required
-  number_of_nodes = weights.size();
-  std::vector<bool> useful_rbf_nodes;
-  useful_rbf_nodes.resize(number_of_nodes);
-  for (auto it = likely_nodes_map.cbegin(); it != likely_nodes_map.cend(); it++)
-    {
-      auto cell = it->first;
-      swap_iterable_nodes(cell);
-      for (size_t portion_id = 0; portion_id < iterable_nodes.size();
-           portion_id++)
-        {
-          for (const size_t &node_id :
-               *(std::get<2>(iterable_nodes[portion_id])))
-            {
-              useful_rbf_nodes[node_id] =
-                true; // We use values that are higher than 0 to
-                      // distinguish from nodes that aren't used
-            }
-        }
-      swap_iterable_nodes(cell);
-    }
-  size_t counter = 0;
+  number_of_nodes                         = useful_rbf_nodes.size();
+  size_t current_number_of_kept_rbf_nodes = 0;
   for (size_t i = 0; i < number_of_nodes; i++)
-    {
-      if (useful_rbf_nodes[i])
-        {
-          counter++;
-        }
-    }
-  size_t current_number_of_kept_rbf_nodes = counter;
+    if (useful_rbf_nodes[i])
+      current_number_of_kept_rbf_nodes++;
 
   std::vector<double>     temp_weights;
   std::vector<Point<dim>> temp_rotated_nodes_positions;
@@ -2064,7 +2059,7 @@ RBFShape<dim>::remove_superfluous_data(
   std::get<2>(iterable_nodes[0])->shrink_to_fit();
 
   // Weights treatment
-  counter = 0;
+  size_t counter = 0;
   temp_weights.resize(current_number_of_kept_rbf_nodes);
   for (size_t i = 0; i < number_of_nodes; i++)
     {
