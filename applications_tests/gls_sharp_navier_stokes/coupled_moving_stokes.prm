@@ -12,7 +12,6 @@ subsection simulation control
   set time step         = 0.125
   set number mesh adapt = 2     # If steady, nb mesh adaptation
   set time end          = 0.125 # End time of simulation
-  set output name       = out   # Prefix for VTU outputs
   set output frequency  = 0     # Frequency of simulation output
   set log precision     = 12
 end

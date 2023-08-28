@@ -2576,7 +2576,10 @@ GLSSharpNavierStokesSolver<dim>::finish_time_step_particles()
   const unsigned int group_files =
     this->simulation_parameters.simulation_control.group_files;
 
-  // If the processor id is id=0 we write the particles pvd.
+  // We only write the particle pvd when outputs are enabled
+  if (this->simulation_control->output_enabled())
+  {
+  // If the processor id is id=0 we write the particles pvd
   if (Utilities::MPI::this_mpi_process(this->mpi_communicator) == 0)
     {
       Visualization_IB ib_particles_data;
@@ -2605,6 +2608,7 @@ GLSSharpNavierStokesSolver<dim>::finish_time_step_particles()
                                 group_files,
                                 this->mpi_communicator);
     }
+  }
 
 
   table_all_p.clear();
