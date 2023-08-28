@@ -1279,7 +1279,8 @@ GLSNavierStokesSolver<dim>::solve_linear_system(const bool initial_step,
             .solver == Parameters::LinearSolver::SolverType::bicgstab ||
         this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
             .solver == Parameters::LinearSolver::SolverType::direct,
-      ExcMessage("This linear solver is not supported."));
+      ExcMessage(
+        "This linear solver is not supported. Only <gmres>, <bicgstab> and <direct> linear solvers are supported."));
 
   this->rescale_pressure_dofs_in_newton_update();
 }
@@ -1304,7 +1305,8 @@ GLSNavierStokesSolver<dim>::setup_preconditioner()
         this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
             .preconditioner ==
           Parameters::LinearSolver::PreconditionerType::amg,
-      ExcMessage("This linear solver does not support this preconditioner."));
+      ExcMessage(
+        "This linear solver does not support this preconditioner. Only <ilu> and <amg> preconditioners are supported."));
 }
 
 
@@ -1494,7 +1496,7 @@ GLSNavierStokesSolver<dim>::solve_system_GMRES(const bool   initial_step,
                       .preconditioner ==
                     Parameters::LinearSolver::PreconditionerType::amg,
                 ExcMessage(
-                  "This linear solver does not support this preconditioner."));
+                  "This linear solver does not support this preconditioner. Only <ilu> and <amg> preconditioners are supported."));
 
             if (this->simulation_parameters.linear_solver
                   .at(PhysicsID::fluid_dynamics)
@@ -1596,7 +1598,7 @@ GLSNavierStokesSolver<dim>::solve_system_BiCGStab(
                     .preconditioner ==
                   Parameters::LinearSolver::PreconditionerType::ilu,
                 ExcMessage(
-                  "This linear solver does not support this preconditioner."));
+                  "This linear solver does not support this preconditioner. Only <ilu> preconditioner is supported."));
 
             if (this->simulation_parameters.linear_solver
                   .at(PhysicsID::fluid_dynamics)

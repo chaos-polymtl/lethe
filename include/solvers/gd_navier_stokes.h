@@ -215,6 +215,7 @@ private:
                      const double relative_residual,
                      const double minimum_residual,
                      const bool   renewed_matrix);
+
   /**
    * Set-up AMG preconditioner
    */

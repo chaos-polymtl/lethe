@@ -851,10 +851,11 @@ GDNavierStokesSolver<dim>::solve_linear_system(const bool initial_step,
                        relative_residual,
                        renewed_matrix);
   else
-    AssertThrow(this->simulation_parameters.linear_solver
-                    .at(PhysicsID::fluid_dynamics)
-                    .solver == Parameters::LinearSolver::SolverType::gmres,
-                ExcMessage("This linear solver is not allowed."));
+    AssertThrow(
+      this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+          .solver == Parameters::LinearSolver::SolverType::gmres,
+      ExcMessage(
+        "This linear solver is not allowed. Only <gmres> linear solver is allowed."));
   this->rescale_pressure_dofs_in_newton_update();
 }
 
@@ -1104,7 +1105,8 @@ GDNavierStokesSolver<dim>::solve_system_GMRES(const bool   initial_step,
               .at(PhysicsID::fluid_dynamics)
               .preconditioner ==
             Parameters::LinearSolver::PreconditionerType::amg,
-        ExcMessage("This linear solver does not support this preconditioner."));
+        ExcMessage(
+          "This linear solver does not support this preconditioner. Only <ilu> and <amg> preconditioners are supported."));
 
     if (this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
           .verbosity != Parameters::Verbosity::quiet)
