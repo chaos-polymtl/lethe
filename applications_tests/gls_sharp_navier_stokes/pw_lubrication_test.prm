@@ -240,5 +240,7 @@ subsection linear solver
     set ilu preconditioner fill                   = 0
     set ilu preconditioner absolute tolerance     = 1e-20
     set ilu preconditioner relative tolerance     = 1.00
+    set verbosity                                 = quiet
+    set max krylov vectors                        = 1000
   end
 end
