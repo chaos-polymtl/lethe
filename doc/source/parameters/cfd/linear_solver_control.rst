@@ -74,13 +74,13 @@ In this subsection, the control options of the linear solvers are specified. The
       # AMG smoother sweeps
       set amg smoother sweeps                       = 2
 
-      # amg smoother overlap
+      # AMG smoother overlap
       set amg smoother overlap                      = 1
     end
   end
 
 
-* The ``method`` parameter enables to choose an iterative solver for the linear system of equations. Lethe currently supports these core solution strategies:
+* The ``method`` parameter enables to choose an iterative solver for the linear system of equations. Lethe currently supports the following core solution strategies:
 	* ``gmres`` (default parameter value), a GMRES iterative solver with ILU preconditioning or AMG preconditioning with an ILU coarsener and smoother.
 	* ``bicgstab``, a BICGSTAB iterative solver with ILU preconditioning.
 	* ``direct``, a direct solver using `TrilinosWrappers::SolverDirect <https://www.dealii.org/current/doxygen/deal.II/classTrilinosWrappers_1_1SolverDirect.html>`_.
@@ -90,9 +90,9 @@ In this subsection, the control options of the linear solvers are specified. The
 		
 		* For steady-state problems (2D and 3D):
 			* coarse meshes: ``gmres``/``bicgstab`` solver with ``ilu`` preconditioner.
-			* fine meshes (from :math:`\approx 1` M cells): ``gmres`` solver with ``amg`` preconditioner.
+			* fine meshes (from :math:`\sim 1` M cells): ``gmres`` solver with ``amg`` preconditioner.
 		* For transient problems, this is much more problem dependent, but generally:
-			* relatively low :math:`\text{CFL}` condition: ``gmres`` solver with ``ilu`` preconditioner with a low fill level, for instance ``set ilu preconditioner fill = 0``. This applies even the mesh is very large (:math:`>10` M cells), because the transient version of the system of equation is much easier to solve.
+			* relatively low :math:`\text{CFL}` condition: ``gmres`` solver with ``ilu`` preconditioner with a low fill level, for instance ``set ilu preconditioner fill = 0``. This applies even if the mesh is very large (:math:`>10` M cells), because the transient version of the system of equations is much easier to solve.
 			* large :math:`\text{CFL}` condition (:math:`\text{CFL}>10`) and/or very large mesh: ``gmres`` solver with ``amg`` preconditioner may become preferable.
 
 	.. caution:: 
@@ -140,9 +140,9 @@ In this subsection, the control options of the linear solvers are specified. The
 	
 		GMRES solver failed! Trying with a higher preconditioner fill level.
 
-	meaning that the code increases the preconditioner fill (see definition below) in order to converge within the number of solver iterations. If you encounter this, consider increasing the ``max iters`` or adjusting other parameters, for example increasing ``max krylov vectors``.
+	meaning that the code increases the preconditioner fill (see tip on default values below) in order to converge within the number of solver iterations. If you encounter this, consider increasing the ``max iters`` or adjusting other parameters, for example increasing ``max krylov vectors``.
 
-* ``force linear solver continuation`` enables, when set to ``true``, to force the linear solver to continue, even if the ``minimum residual`` is not reached. Only available for ``gmres`` and ``bicgstab`` solver within the ``gls_navier_stokes`` application.
+* ``force linear solver continuation`` when set to ``true``, forces the linear solver to continue, even if the ``minimum residual`` is not reached. Only available for ``gmres`` and ``bicgstab`` solvers within the ``gls_navier_stokes`` application.
 
 .. warning::
 	With this mode on, errors on the linear solver convergence are not thrown. Forcing the solver to continue can be useful for debugging purposes if a given iteration is hard to pass, but use it with caution!
@@ -151,6 +151,8 @@ In this subsection, the control options of the linear solvers are specified. The
 
 .. tip::
 	Consider using ``set max krylov vectors = 200`` for complex simulations with convergence issues. 
+
+* ``preconditioner`` sets the type of preconditioning used for the linear solver. It can be either ``ilu`` for an Incomplete LU decomposition or ``amg`` for an Algebraic Multigrid. 
 
 * ``ilu preconditioner fill``, ``ilu preconditioner absolute tolerance`` and ``ilu preconditioner relative tolerance`` are parameters that control the ``ilu`` preconditioner. Conversely, ``amg preconditioner ilu fill``, ``amg preconditioner ilu absolute tolerance`` and ``amg preconditioner ilu relative tolerance`` control the ILU coarsener and smoother used by the ``amg`` preconditioner.
  
@@ -170,4 +172,4 @@ In this subsection, the control options of the linear solvers are specified. The
 * ``amg aggregation threshold``, ``amg n cycles``, ``amg w cycles`` (if this is set to ``true``, W cycling is used, if ``false``, V cycling is used), ``amg smoother sweeps``, and ``amg smoother overlap`` are parameters used for the ``amg`` preconditioner only. 
 
 .. seealso::
-	For more information about the ``amg`` solver parameters, the reader is referred to the deal.II documentation for the `AMG preconditioner <https://www.dealii.org/current/doxygen/deal.II/classTrilinosWrappers_1_1PreconditionAMG.html>`_ and its `Additional Data <https://www.dealii.org/current/doxygen/deal.II/structTrilinosWrappers_1_1PreconditionAMG_1_1AdditionalData.html>`_
+	For more information about the ``amg`` preconditioner parameters, the reader is referred to the deal.II documentation for the `AMG preconditioner <https://www.dealii.org/current/doxygen/deal.II/classTrilinosWrappers_1_1PreconditionAMG.html>`_ and its `Additional Data <https://www.dealii.org/current/doxygen/deal.II/structTrilinosWrappers_1_1PreconditionAMG_1_1AdditionalData.html>`_
