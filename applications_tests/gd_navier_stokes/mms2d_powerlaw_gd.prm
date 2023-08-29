@@ -11,6 +11,7 @@ subsection simulation control
   set method            = steady
   set number mesh adapt = 2
   set output name       = mms2d_powerlaw
+  set output frequency  = 0
 end
 
 #---------------------------------------------------

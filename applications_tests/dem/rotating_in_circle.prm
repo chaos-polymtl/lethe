@@ -11,7 +11,7 @@ subsection simulation control
   set time step        = 0.00001
   set time end         = 0.4
   set log frequency    = 1000000
-  set output frequency = 1000000
+  set output frequency = 0
 end
 
 #---------------------------------------------------

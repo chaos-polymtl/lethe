@@ -2576,34 +2576,38 @@ GLSSharpNavierStokesSolver<dim>::finish_time_step_particles()
   const unsigned int group_files =
     this->simulation_parameters.simulation_control.group_files;
 
-  // If the processor id is id=0 we write the particles pvd.
-  if (Utilities::MPI::this_mpi_process(this->mpi_communicator) == 0)
+  // We only write the particle pvd when outputs are enabled
+  if (this->simulation_control->output_enabled())
     {
-      Visualization_IB ib_particles_data;
-      ib_particles_data.build_patches(particles);
-      write_vtu_and_pvd<0, dim>(ib_particles_pvdhandler,
-                                ib_particles_data,
-                                folder,
-                                particles_solution_name,
-                                time,
-                                iter,
-                                group_files,
-                                this->mpi_communicator);
-    }
-  else
-    {
-      // If the processor id is not id=0 we add an empty particle vector.
-      Visualization_IB             ib_particles_data;
-      std::vector<IBParticle<dim>> empty_particle_vector(0);
-      ib_particles_data.build_patches(empty_particle_vector);
-      write_vtu_and_pvd<0, dim>(ib_particles_pvdhandler,
-                                ib_particles_data,
-                                folder,
-                                particles_solution_name,
-                                time,
-                                iter,
-                                group_files,
-                                this->mpi_communicator);
+      // If the processor id is id=0 we write the particles pvd
+      if (Utilities::MPI::this_mpi_process(this->mpi_communicator) == 0)
+        {
+          Visualization_IB ib_particles_data;
+          ib_particles_data.build_patches(particles);
+          write_vtu_and_pvd<0, dim>(ib_particles_pvdhandler,
+                                    ib_particles_data,
+                                    folder,
+                                    particles_solution_name,
+                                    time,
+                                    iter,
+                                    group_files,
+                                    this->mpi_communicator);
+        }
+      else
+        {
+          // If the processor id is not id=0 we add an empty particle vector.
+          Visualization_IB             ib_particles_data;
+          std::vector<IBParticle<dim>> empty_particle_vector(0);
+          ib_particles_data.build_patches(empty_particle_vector);
+          write_vtu_and_pvd<0, dim>(ib_particles_pvdhandler,
+                                    ib_particles_data,
+                                    folder,
+                                    particles_solution_name,
+                                    time,
+                                    iter,
+                                    group_files,
+                                    this->mpi_communicator);
+        }
     }
 
 

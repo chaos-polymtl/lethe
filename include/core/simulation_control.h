@@ -223,6 +223,15 @@ public:
   print_progression(const ConditionalOStream &pcout) = 0;
 
   /**
+   * @brief Check if VTU/PVTU/PVD outputs are disabled
+   */
+  bool
+  output_enabled() const
+  {
+    return output_frequency != 0;
+  }
+
+  /**
    * @brief Check if the present iteration is an output iteration depending on the
    * output control chosen.
    */
