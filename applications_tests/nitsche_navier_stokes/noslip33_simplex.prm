@@ -8,9 +8,10 @@ set dimension = 3
 #---------------------------------------------------
 
 subsection simulation control
-  set method        = steady
-  set output name   = noslip33_simplex
-  set log precision = 0
+  set method           = steady
+  set output name      = noslip33_simplex
+  set log precision    = 0
+  set output frequency = 0
 end
 
 #---------------------------------------------------

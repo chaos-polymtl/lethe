@@ -14,7 +14,7 @@ subsection simulation control
   set time step        = 0.0001
   set time end         = 0.5
   set log frequency    = 1000000
-  set output frequency = 1000000
+  set output frequency = 0
   #set output path     = ./output_dem/
 end
 
