@@ -138,7 +138,7 @@ private:
 
 /**
  * @brief Linear surface tension. The surface tension is given by:
- * sigma_0 + dsimga/dT * T.
+ * sigma_0 + dsimga/dT * (T-T_0).
  */
 class SurfaceTensionLinear : public SurfaceTensionModel
 {
@@ -150,6 +150,7 @@ public:
     const Parameters::SurfaceTensionParameters &p_surface_tension_parameters)
     : surface_tension_coefficient(
         p_surface_tension_parameters.surface_tension_coefficient)
+    , T_0(p_surface_tension_parameters.T_0)
     , surface_tension_gradient(
         p_surface_tension_parameters.surface_tension_gradient)
   {
@@ -166,7 +167,8 @@ public:
   value(const std::map<field, double> &fields_value) override
   {
     const double temperature = fields_value.at(field::temperature);
-    return surface_tension_coefficient + surface_tension_gradient * temperature;
+    return surface_tension_coefficient +
+           surface_tension_gradient * (temperature - T_0);
   }
 
   /**
@@ -182,8 +184,8 @@ public:
     const std::vector<double> &temperature =
       field_vectors.at(field::temperature);
     for (unsigned int i = 0; i < property_vector.size(); ++i)
-      property_vector[i] =
-        surface_tension_coefficient + surface_tension_gradient * temperature[i];
+      property_vector[i] = surface_tension_coefficient +
+                           surface_tension_gradient * (temperature[i] - T_0);
   }
 
   /**
@@ -231,6 +233,7 @@ public:
 
 private:
   const double surface_tension_coefficient;
+  const double T_0;
   const double surface_tension_gradient;
 };
 

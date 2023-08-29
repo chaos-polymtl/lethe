@@ -422,6 +422,11 @@ namespace Parameters
       Patterns::Double(),
       "Surface tension coefficient for the corresponding pair of fluids or fluid-solid pair");
     prm.declare_entry(
+      "reference state temperature",
+      "0.0",
+      Patterns::Double(),
+      "Temperature of the reference state corresponding to the surface tension coefficient");
+    prm.declare_entry(
       "temperature-driven surface tension gradient",
       "0.0",
       Patterns::Double(),
@@ -432,6 +437,7 @@ namespace Parameters
   SurfaceTensionParameters::parse_parameters(ParameterHandler &prm)
   {
     surface_tension_coefficient = prm.get_double("surface tension coefficient");
+    T_0                         = prm.get_double("reference state temperature");
     surface_tension_gradient =
       prm.get_double("temperature-driven surface tension gradient");
   }
