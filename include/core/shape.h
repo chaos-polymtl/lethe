@@ -1805,10 +1805,23 @@ private:
   std::string                          filename;
   size_t                               number_of_nodes;
   std::shared_ptr<HyperRectangle<dim>> bounding_box;
+
+  // Elements of this vector contain the RBF nones located in an active cell of
+  // which the tuple contains: the cell barycenter, the cell diameter, and the
+  // RBF nodes located inside
   std::vector<
     std::tuple<Point<dim>, double, std::shared_ptr<std::vector<size_t>>>>
     iterable_nodes;
-
+  // Entries of this map contain vectors of tuples containing the cell
+  // barycenter, diameter and likely nodes that are in that cell. The various
+  // elements of the vector are the tuples which contain information on the RBF
+  // nodes that affect the levelset evaluation in this cell. Note: the division
+  // of RBF nodes is made by separating nodes by which active cells they are in,
+  // and then these RBF nodes groups are referenced by the cells in a subsequent
+  // cell (by using a vector of pointers). This is required to avoid repeating
+  // the nodes IDs multiple times (to keep memory requirements low); they only
+  // appear once in a vector, then this vector is used by passing its shared
+  // pointer.
   std::map<
     const typename DoFHandler<dim>::cell_iterator,
     std::shared_ptr<std::vector<
@@ -1817,7 +1830,7 @@ private:
   size_t           max_number_of_inside_nodes;
   DoFHandler<dim> *dof_handler;
 
-  double minimal_support_radius;
+  double maximal_support_radius;
 
 public:
   std::vector<double>     weights;

@@ -1470,7 +1470,7 @@ RBFShape<dim>::RBFShape(const std::string   shape_arguments_str,
   , iterable_nodes(1)
   , likely_nodes_map()
   , max_number_of_inside_nodes(1)
-  , minimal_support_radius(1)
+  , maximal_support_radius(1)
   , weights(1)
   , nodes_positions_x(1)
   , nodes_positions_y(1)
@@ -1562,6 +1562,9 @@ RBFShape<dim>::value(const Point<dim> &evaluation_point,
   double value = std::max(bounding_box_distance, 0.0);
   double normalized_distance, basis;
   // Algorithm inspired by Optimad Bitpit. https://github.com/optimad/bitpit
+  // Here we loop on ever portions (of RBF nodes located in active cells close
+  // to the evaluation point) and on every RBF node located in these active
+  // cells.
   for (size_t portion_id = 0; portion_id < iterable_nodes.size(); portion_id++)
     {
       for (const size_t &node_id : *(std::get<2>(iterable_nodes[portion_id])))
@@ -1569,6 +1572,7 @@ RBFShape<dim>::value(const Point<dim> &evaluation_point,
           normalized_distance =
             (evaluation_point - rotated_nodes_positions[node_id]).norm() /
             support_radii[node_id];
+          // We cast the basis function value to the proper RBFBasisFunction
           basis = evaluate_basis_function(
             static_cast<enum RBFShape<dim>::RBFBasisFunction>(
               round(basis_functions[node_id])),
@@ -1608,6 +1612,9 @@ RBFShape<dim>::gradient(const Point<dim> &evaluation_point,
         "of at least one RBF node. It this isn't the case, an error has been "
         "introduced in the code. ");
     }
+  // Here we loop on ever portions (of RBF nodes located in active cells close
+  // to the evaluation point) and on every RBF node located in these active
+  // cells.
   for (size_t portion_id = 0; portion_id < iterable_nodes.size(); portion_id++)
     {
       for (const size_t &node_id : *(std::get<2>(iterable_nodes[portion_id])))
@@ -1635,6 +1642,7 @@ RBFShape<dim>::gradient(const Point<dim> &evaluation_point,
           // Calculation of the dr_norm/dr
           drnorm_dr_derivative = 1.0 / support_radii[node_id];
           // Calculation of the d(basis)/dr
+          // We cast the basis function value to the proper RBFBasisFunction
           dbasis_drnorm_derivative = evaluate_basis_function_derivative(
             static_cast<enum RBFShape<dim>::RBFBasisFunction>(
               round(basis_functions[node_id])),
@@ -1819,7 +1827,7 @@ RBFShape<dim>::update_precalculations(
             static_cast<unsigned int>(temp_cell->level() + 1 +
                                       levels_not_precalculated) >=
             maximal_level;
-          if (temp_cell->is_active() || level_above_precalculation_limit)
+          if (temp_cell->is_active() && !level_above_precalculation_limit)
             {
               if (cell->point_inside(temp_cell->barycenter()))
                 {
@@ -1865,7 +1873,7 @@ RBFShape<dim>::update_precalculations(
           // support radius. In that case, the likely nodes should stay more
           // or less the same.
           const bool cell_smaller_than_rbf_radius =
-            (cell->diameter() < minimal_support_radius);
+            (cell->diameter() < maximal_support_radius);
           if (cell_smaller_than_rbf_radius ||
               (level + 1) + levels_not_precalculated >= maximal_level)
             {
@@ -1891,8 +1899,8 @@ RBFShape<dim>::update_precalculations(
     }
 
   // Here we loop on all (local or ghost) and active cells to define which RBF
-  // nodes are useful to keep We loop over the likely nodes map and take note of
-  // the RBF nodes that are required
+  // nodes are useful to keep. We loop over the likely nodes map and take note
+  // of the RBF nodes that are required in at least one active cell.
   number_of_nodes = weights.size();
   useful_rbf_nodes.clear();
   useful_rbf_nodes.resize(number_of_nodes);
@@ -1962,7 +1970,7 @@ RBFShape<dim>::determine_likely_nodes_for_one_cell(
       // only check the distance with 1 support point, added to the support
       // radius
       max_distance =
-        0.5 * cell_diameter + 0.5 * temp_cell_diameter + minimal_support_radius;
+        0.5 * cell_diameter + 0.5 * temp_cell_diameter + maximal_support_radius;
       if (distance < max_distance)
         {
           likely_nodes_map[cell]->push_back(iterable_nodes[portion_id]);
@@ -2015,8 +2023,8 @@ RBFShape<dim>::load_data_from_file()
                        std::numeric_limits<double>::max(),
                        temp_nodes_id};
 
-  minimal_support_radius =
-    *std::min_element(std::begin(support_radii), std::end(support_radii));
+  maximal_support_radius =
+    *std::max_element(std::begin(support_radii), std::end(support_radii));
   initialize_bounding_box();
   rotate_nodes();
   this->effective_radius = bounding_box->half_lengths.norm();
