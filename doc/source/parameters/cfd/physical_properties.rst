@@ -123,7 +123,7 @@ Physical Properties
 
       where :math:`Re` is the Reynolds number, :math:`\mu_\text{ref}` and :math:`u_\text{ref}` are some reference viscosity and velocity characterizing the flow problem, and :math:`\sigma` is the surface tension coefficient.
 
-    * The ``reference state temperature`` parameter is the temperature of the reference state at which the surface ``surface tension coefficient`` is evaluated.
+    * The ``reference state temperature`` parameter is the temperature of the reference state at which the ``surface tension coefficient`` is evaluated. This parameter is used in the calculation of the surface tension using the ``linear`` surface tension model (see `Surface Tension Models`_).
 
     * The ``temperature-driven surface tension gradient`` parameter is the surface tension gradient with respect to the temperature of the two interacting fluids in units of :math:`\text{Mass} \cdot \text{Time}^{-2} \cdot \text{Temperature}^{-1}`. In SI, this is :math:`\text{N} \cdot \text{m}^{-1} \cdot \text{K}^{-1}`. This parameter is used in the calculation of the surface tension using the ``linear`` surface tension model (see `Surface Tension Models`_).
       
