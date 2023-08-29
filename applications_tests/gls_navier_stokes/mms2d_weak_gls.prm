@@ -104,6 +104,7 @@ subsection linear solver
     set method                                = gmres
     set relative residual                     = 1e-7
     set minimum residual                      = 1e-11
+    set preconditioner                        = ilu
     set ilu preconditioner fill               = 0
     set ilu preconditioner absolute tolerance = 1e-13
     set ilu preconditioner relative tolerance = 1.00

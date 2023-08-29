@@ -339,6 +339,7 @@ Linear Solver
         set max iters                             = 5000
         set relative residual                     = 1e-3
         set minimum residual                      = 1e-10
+        set preconditioner                        = ilu
         set ilu preconditioner fill               = 0
         set ilu preconditioner absolute tolerance = 1e-12
         set ilu preconditioner relative tolerance = 1

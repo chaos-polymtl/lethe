@@ -100,6 +100,7 @@ end
 subsection linear solver
 subsection fluid dynamics
   set method                  = gmres
+  set preconditioner          = ilu
   set ilu preconditioner fill = 2
   set verbosity               = verbose
 end

@@ -135,6 +135,7 @@ subsection linear solver
     set relative residual = 1e-3
     set minimum residual  = 1e-8
     set verbosity         = verbose
+    set preconditioner    = ilu
   end
   subsection tracer
     set method            = gmres
@@ -142,5 +143,6 @@ subsection linear solver
     set relative residual = 1e-3
     set minimum residual  = 1e-8
     set verbosity         = verbose
+    set preconditioner    = ilu
   end
 end

@@ -158,16 +158,17 @@ The Reynolds number must be high enough to capture a transient flow and study th
 Linear Solver
 ~~~~~~~~~~~~~
 
-For 2D problems, the AMG preconditioner is an adequate preconditioner. It is especially robust for the first few time-steps for which the velocity and pressure profile is not well-defined because the initial conditions are not mass conservative.
+For 2D problems, the ``amg`` preconditioner is an adequate preconditioner. It is especially robust for the first few time-steps for which the velocity and pressure profile is not well-defined because the initial conditions are not mass conservative.
 
 .. code-block:: text
 
   subsection linear solver
     subsection fluid dynamics
       set verbosity                                 = verbose
-      set method                                    = amg
+      set method                                    = gmres
       set relative residual                         = 1e-4
       set minimum residual                          = 1e-8
+      set preconditioner                            = amg
       set amg preconditioner ilu fill               = 0
       set amg preconditioner ilu absolute tolerance = 1e-12
       set amg preconditioner ilu relative tolerance = 1.00

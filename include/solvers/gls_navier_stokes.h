@@ -226,7 +226,7 @@ private:
 
 
   /**
-   * @brief GMRES solver with ILU(N) preconditioning
+   * @brief GMRES solver with ILU(N) preconditioning or AMG preconditioning
    */
   void
   solve_system_GMRES(const bool   initial_step,
@@ -240,14 +240,6 @@ private:
   solve_system_BiCGStab(const bool   initial_step,
                         const double absolute_residual,
                         const double relative_residual);
-
-  /**
-   * @brief GMRES solver with AMG preconditioner with ILU smoother and coarsener
-   */
-  void
-  solve_system_AMG(const bool   initial_step,
-                   const double absolute_residual,
-                   const double relative_residual);
 
   /**
    * @brief Direct solver using TrilinosWrappers::SolverDirect

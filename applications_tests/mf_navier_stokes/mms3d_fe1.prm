@@ -111,5 +111,6 @@ subsection linear solver
     set relative residual = 1e-4
     set minimum residual  = 1e-9
     set verbosity         = quiet
+    set preconditioner    = ilu
   end
 end

@@ -175,6 +175,7 @@ subsection linear solver
     set max krylov vectors                    = 750
     set relative residual                     = 1e-3
     set minimum residual                      = 1e-7
+    set preconditioner                        = ilu
     set ilu preconditioner fill               = 0
     set ilu preconditioner absolute tolerance = 1e-14
     set ilu preconditioner relative tolerance = 1.00
@@ -186,6 +187,7 @@ subsection linear solver
     set max krylov vectors                    = 750
     set relative residual                     = 1e-3
     set minimum residual                      = 1e-7
+    set preconditioner                        = ilu
     set ilu preconditioner fill               = 0
     set ilu preconditioner absolute tolerance = 1e-14
     set ilu preconditioner relative tolerance = 1.00
