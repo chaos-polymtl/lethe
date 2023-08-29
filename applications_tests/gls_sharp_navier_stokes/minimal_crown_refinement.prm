@@ -105,7 +105,8 @@ end
 
 subsection linear solver
   subsection fluid dynamics
-    set method    = gmres
-    set verbosity = quiet
+    set method         = gmres
+    set verbosity      = quiet
+    set preconditioner = ilu
   end
 end
