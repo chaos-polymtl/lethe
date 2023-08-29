@@ -1,6 +1,6 @@
 /**
  * @brief Tests the linear surface tension model. This model should always
- * return sigma_0 + dsigma/dT * T.
+ * return sigma_0 + dsigma/dT * (T-T_0).
  */
 
 // Lethe
@@ -16,12 +16,13 @@ test()
 
   Parameters::SurfaceTensionParameters surface_tension_parameters;
   surface_tension_parameters.surface_tension_coefficient = 72.86;
+  surface_tension_parameters.T_0                         = 0.0;
   surface_tension_parameters.surface_tension_gradient    = 0.5;
 
   SurfaceTensionLinear surface_tension_model(surface_tension_parameters);
 
   deallog
-    << "Testing linear surface tension - sigma (sigma_0 = 72.86, dsigma/dT = 0.5)"
+    << "Testing linear surface tension - sigma (sigma_0 = 72.86, T_0 = 0.0, dsigma/dT = 0.5)"
     << std::endl;
 
   // Field values must contain temperature
@@ -47,8 +48,25 @@ test()
                                                       field::temperature)
           << std::endl;
 
+  surface_tension_parameters.T_0 = 298.15;
+  SurfaceTensionLinear surface_tension_model_2(surface_tension_parameters);
   deallog
-    << "Surface tension vector values - sigma (sigma_0 = 72.86, dsigma/dT = 0.5)"
+    << "Testing linear surface tension - sigma (sigma_0 = 72.86, T_0 = 298.15, dsigma/dT = 0.5)"
+    << std::endl;
+
+  field_values[field::temperature] = 300;
+  deallog << " T = 300, surface tension = "
+          << surface_tension_model_2.value(field_values)
+          << ", dsigma/dT analytical = "
+          << surface_tension_model_2.jacobian(field_values, field::temperature)
+          << ", dsigma/dT numerical = "
+          << surface_tension_model_2.numerical_jacobian(field_values,
+                                                        field::temperature)
+          << std::endl;
+
+  surface_tension_parameters.T_0 = 0.0;
+  deallog
+    << "Surface tension vector values - sigma (sigma_0 = 72.86, T_0 = 0.0, dsigma/dT = 0.5)"
     << std::endl;
   std::vector<double>                  temperature_vector({300, 400, 500, 600});
   std::map<field, std::vector<double>> field_vectors;
