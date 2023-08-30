@@ -1827,7 +1827,7 @@ RBFShape<dim>::update_precalculations(
             static_cast<unsigned int>(temp_cell->level() + 1 +
                                       levels_not_precalculated) >=
             maximal_level;
-          if (temp_cell->is_active() && !level_above_precalculation_limit)
+          if (temp_cell->is_active() || level_above_precalculation_limit)
             {
               if (cell->point_inside(temp_cell->barycenter()))
                 {
