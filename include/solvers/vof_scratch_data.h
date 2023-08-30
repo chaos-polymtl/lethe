@@ -76,10 +76,10 @@ public:
    *
    */
   VOFScratchData(const PhysicalPropertiesManager properties_manager,
-                 const FiniteElement<dim> &      fe_vof,
-                 const Quadrature<dim> &         quadrature,
-                 const Mapping<dim> &            mapping,
-                 const FiniteElement<dim> &      fe_fd)
+                 const FiniteElement<dim>       &fe_vof,
+                 const Quadrature<dim>          &quadrature,
+                 const Mapping<dim>             &mapping,
+                 const FiniteElement<dim>       &fe_fd)
     : properties_manager(properties_manager)
     , fe_values_vof(mapping,
                     fe_vof,
@@ -144,7 +144,7 @@ public:
   template <typename VectorType>
   void
   reinit(const typename DoFHandler<dim>::active_cell_iterator &cell,
-         const VectorType &                                    current_solution,
+         const VectorType                                     &current_solution,
          const std::vector<VectorType> &previous_solutions)
   {
     fe_values_vof.reinit(cell);
@@ -163,6 +163,9 @@ public:
                                          this->phase_gradients);
     fe_values_vof.get_function_laplacians(current_solution,
                                           this->phase_laplacians);
+
+    fe_values_vof.get_function_gradients(previous_solutions[0],
+                                         this->previous_phase_gradients);
 
 
     // Gather previous vof values
@@ -201,7 +204,7 @@ public:
   template <typename VectorType>
   void
   reinit_velocity(const typename DoFHandler<dim>::active_cell_iterator &cell,
-                  const VectorType &             current_solution,
+                  const VectorType              &current_solution,
                   const std::vector<VectorType> &previous_solutions)
   {
     fe_values_fd.reinit(cell);
@@ -249,8 +252,10 @@ public:
   std::vector<Point<dim>> quadrature_points;
 
   // VOF values
-  std::vector<double>              present_phase_values;
-  std::vector<Tensor<1, dim>>      phase_gradients;
+  std::vector<double>         present_phase_values;
+  std::vector<Tensor<1, dim>> phase_gradients;
+  std::vector<Tensor<1, dim>> previous_phase_gradients;
+
   std::vector<double>              phase_laplacians;
   std::vector<std::vector<double>> previous_phase_values;
 

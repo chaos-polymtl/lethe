@@ -8,14 +8,14 @@
 
 template <int dim>
 void
-VOFAssemblerCore<dim>::assemble_matrix(VOFScratchData<dim> &      scratch_data,
+VOFAssemblerCore<dim>::assemble_matrix(VOFScratchData<dim>       &scratch_data,
                                        StabilizedMethodsCopyData &copy_data)
 {
   // Scheme and physical properties
   const auto method = this->simulation_control->get_assembly_method();
 
   // Loop and quadrature information
-  const auto &       JxW_vec    = scratch_data.JxW;
+  const auto        &JxW_vec    = scratch_data.JxW;
   const unsigned int n_q_points = scratch_data.n_q_points;
   const unsigned int n_dofs     = scratch_data.n_dofs;
   const double       h          = scratch_data.cell_size;
@@ -44,7 +44,10 @@ VOFAssemblerCore<dim>::assemble_matrix(VOFScratchData<dim> &      scratch_data,
       const double JxW = JxW_vec[q];
 
       const Tensor<1, dim> phase_gradient = scratch_data.phase_gradients[q];
-      const double         phase_gradient_norm = phase_gradient.norm();
+      const Tensor<1, dim> previous_phase_gradient =
+        scratch_data.previous_phase_gradients[q];
+
+      const double phase_gradient_norm = previous_phase_gradient.norm();
 
       // Calculation of the magnitude of the velocity for the
       // stabilization parameter and the compression term for the phase
@@ -60,9 +63,10 @@ VOFAssemblerCore<dim>::assemble_matrix(VOFScratchData<dim> &      scratch_data,
 
       const double tolerance = 1e-12;
 
+
       // In Tezduyar 2003, this is denoted r
       Tensor<1, dim> gradient_unit_vector =
-        phase_gradient / (phase_gradient_norm + tolerance);
+        previous_phase_gradient / (phase_gradient_norm + tolerance);
 
       // Calculate the artificial viscosity of the shock capture
       const double vdcdd =
@@ -163,7 +167,7 @@ VOFAssemblerCore<dim>::assemble_matrix(VOFScratchData<dim> &      scratch_data,
 
 template <int dim>
 void
-VOFAssemblerCore<dim>::assemble_rhs(VOFScratchData<dim> &      scratch_data,
+VOFAssemblerCore<dim>::assemble_rhs(VOFScratchData<dim>       &scratch_data,
                                     StabilizedMethodsCopyData &copy_data)
 {
   // Scheme and physical properties
@@ -173,7 +177,7 @@ VOFAssemblerCore<dim>::assemble_rhs(VOFScratchData<dim> &      scratch_data,
   const double diffusivity = this->vof_parameters.diffusivity;
 
   // Loop and quadrature information
-  const auto &       JxW_vec    = scratch_data.JxW;
+  const auto        &JxW_vec    = scratch_data.JxW;
   const unsigned int n_q_points = scratch_data.n_q_points;
   const unsigned int n_dofs     = scratch_data.n_dofs;
   const double       h          = scratch_data.cell_size;
@@ -193,14 +197,16 @@ VOFAssemblerCore<dim>::assemble_rhs(VOFScratchData<dim> &      scratch_data,
     {
       // Gather into local variables the relevant fields
       const double         phase = scratch_data.present_phase_values[q];
-      const Tensor<1, dim> phase_gradient   = scratch_data.phase_gradients[q];
+      const Tensor<1, dim> phase_gradient = scratch_data.phase_gradients[q];
+      const Tensor<1, dim> previous_phase_gradient =
+        scratch_data.previous_phase_gradients[q];
       const double         phase_laplacians = scratch_data.phase_laplacians[q];
       const Tensor<1, dim> velocity         = scratch_data.velocity_values[q];
       const double velocity_divergence = scratch_data.velocity_divergences[q];
 
       // Store JxW in local variable for faster access;
       const double JxW                 = JxW_vec[q];
-      const double phase_gradient_norm = phase_gradient.norm();
+      const double phase_gradient_norm = previous_phase_gradient.norm();
 
       // Implementation of a DCDD shock capturing scheme.
       // For more information see
@@ -213,7 +219,7 @@ VOFAssemblerCore<dim>::assemble_rhs(VOFScratchData<dim> &      scratch_data,
 
       // In Tezduyar 2003, this is denoted r
       Tensor<1, dim> gradient_unit_vector =
-        phase_gradient / (phase_gradient_norm + tolerance);
+        previous_phase_gradient / (phase_gradient_norm + tolerance);
 
       // Calculate the artificial viscosity of the shock capture
       const double vdcdd =
@@ -290,11 +296,11 @@ template class VOFAssemblerCore<3>;
 
 template <int dim>
 void
-VOFAssemblerBDF<dim>::assemble_matrix(VOFScratchData<dim> &      scratch_data,
+VOFAssemblerBDF<dim>::assemble_matrix(VOFScratchData<dim>       &scratch_data,
                                       StabilizedMethodsCopyData &copy_data)
 {
   // Loop and quadrature information
-  const auto &       JxW        = scratch_data.JxW;
+  const auto        &JxW        = scratch_data.JxW;
   const unsigned int n_q_points = scratch_data.n_q_points;
   const unsigned int n_dofs     = scratch_data.n_dofs;
 
@@ -356,11 +362,11 @@ VOFAssemblerBDF<dim>::assemble_matrix(VOFScratchData<dim> &      scratch_data,
 
 template <int dim>
 void
-VOFAssemblerBDF<dim>::assemble_rhs(VOFScratchData<dim> &      scratch_data,
+VOFAssemblerBDF<dim>::assemble_rhs(VOFScratchData<dim>       &scratch_data,
                                    StabilizedMethodsCopyData &copy_data)
 {
   // Loop and quadrature information
-  const auto &       JxW        = scratch_data.JxW;
+  const auto        &JxW        = scratch_data.JxW;
   const unsigned int n_q_points = scratch_data.n_q_points;
   const unsigned int n_dofs     = scratch_data.n_dofs;
 
