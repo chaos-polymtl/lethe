@@ -1,9 +1,11 @@
 
 DEAL::Beginning
-DEAL::Testing linear surface tension - sigma (sigma_0 = 72.86, dsigma/dT = 0.5)
+DEAL::Testing linear surface tension - sigma (sigma_0 = 72.86, T_0 = 0.0, dsigma/dT = 0.5)
 DEAL:: T = 0, surface tension = 72.86, dsigma/dT analytical = 0.500000, dsigma/dT numerical = 0.500000
 DEAL:: T = 300, surface tension = 222.860, dsigma/dT analytical = 0.500000, dsigma/dT numerical = 0.500000
-DEAL::Surface tension vector values - sigma (sigma_0 = 72.86, dsigma/dT = 0.5)
+DEAL::Testing linear surface tension - sigma (sigma_0 = 72.86, T_0 = 298.15, dsigma/dT = 0.5)
+DEAL:: T = 300, surface tension = 73.7850, dsigma/dT analytical = 0.500000, dsigma/dT numerical = 0.500000
+DEAL::Surface tension vector values - sigma (sigma_0 = 72.86, T_0 = 0.0, dsigma/dT = 0.5)
 DEAL:: T = {300, 400, 500, 600}
 DEAL:: sigma = {222.860, 272.860, 322.860, 372.860}
 DEAL:: dsigma/dT = {0.500000, 0.500000, 0.500000, 0.500000}

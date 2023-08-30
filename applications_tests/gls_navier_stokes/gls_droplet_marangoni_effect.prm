@@ -105,6 +105,7 @@ subsection physical properties
       set second fluid id                             = 1
       set surface tension model                       = linear
       set surface tension coefficient                 = 0.023
+      set reference state temperature                 = 0.0
       set temperature-driven surface tension gradient = 0.1
     end
   end
