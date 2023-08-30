@@ -192,6 +192,8 @@ protected:
     ls_multigrid_preconditioner;
   std::shared_ptr<PreconditionMG<dim, VectorType, GCTransferType>>
     gc_multigrid_preconditioner;
+
+  std::shared_ptr<TrilinosWrappers::PreconditionILU> ilu_preconditioner;
 };
 
 #endif
