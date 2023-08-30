@@ -61,6 +61,7 @@ Physical Properties
         # Surface tension
         set surface tension model                       = constant
         set surface tension coefficient                 = 0
+        set reference state temperature                 = 0
         set temperature-driven surface tension gradient = 0
       end
     end
@@ -121,6 +122,8 @@ Physical Properties
           We = Re \cdot \frac{\mu_\text{ref} \; u_\text{ref}}{\sigma}
 
       where :math:`Re` is the Reynolds number, :math:`\mu_\text{ref}` and :math:`u_\text{ref}` are some reference viscosity and velocity characterizing the flow problem, and :math:`\sigma` is the surface tension coefficient.
+
+    * The ``reference state temperature`` parameter is the temperature of the reference state at which the ``surface tension coefficient`` is evaluated. This parameter is used in the calculation of the surface tension using the ``linear`` surface tension model (see `Surface Tension Models`_).
 
     * The ``temperature-driven surface tension gradient`` parameter is the surface tension gradient with respect to the temperature of the two interacting fluids in units of :math:`\text{Mass} \cdot \text{Time}^{-2} \cdot \text{Temperature}^{-1}`. In SI, this is :math:`\text{N} \cdot \text{m}^{-1} \cdot \text{K}^{-1}`. This parameter is used in the calculation of the surface tension using the ``linear`` surface tension model (see `Surface Tension Models`_).
       
@@ -500,9 +503,9 @@ Surface Tension Models
 Lethe supports two types of surface tension models: ``constant`` and ``linear``. A ``constant`` surface tension model assumes a constant value of surface tension, while a ``linear`` surface tension assumes that the surface tension evolves linearly with the temperature:
 
 .. math::
-  \sigma(T) = \sigma_0 + \frac{d\sigma}{dT} \cdot T
+  \sigma(T) = \sigma_0 + \frac{d\sigma}{dT} (T-T_0)
 
-where :math:`\sigma_0` is the ``surface tension coefficient`` evaluated at :math:`T = 0 \: \text{K}` and :math:`\frac{d\sigma}{dT}` is the ``surface tension gradient`` with respect to the temperature :math:`T`.
+where :math:`\sigma_0` is the ``surface tension coefficient`` evaluated at ``reference state temperature`` :math:`T_0` and :math:`\frac{d\sigma}{dT}` is the ``surface tension gradient`` with respect to the temperature :math:`T`.
 
 .. Warning::
     In Lethe, the ``linear`` surface tension model is only used to account for the thermocapillary effect known as the Marangoni effect. Therefore, to enable the Marangoni effect, the surface tension model must be set to ``linear`` and a ``surface tension gradient`` different from zero :math:`(\frac{d\sigma}{dT} \neq 0)` must be specified.

@@ -295,8 +295,11 @@ namespace Parameters
    */
   struct SurfaceTensionParameters
   {
-    // Surface tension coefficient (sigma) in N/m
+    // Surface tension coefficient (sigma or sigma_0) in N/m
     double surface_tension_coefficient;
+    // Temperature of the reference state corresponding to the surface tension
+    // coefficient (T_0) in K
+    double T_0;
     // Surface tension gradient with respect to the temperature (dsigma/dT) in
     // N/(m*K)
     double surface_tension_gradient;
