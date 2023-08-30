@@ -112,9 +112,7 @@ NavierStokesBase<dim, VectorType, DofsType>::NavierStokesBase(
       triangulation =
         std::make_shared<parallel::distributed::Triangulation<dim>>(
           this->mpi_communicator,
-          typename Triangulation<dim>::MeshSmoothing(
-            Triangulation<dim>::smoothing_on_refinement |
-            Triangulation<dim>::smoothing_on_coarsening),
+          Triangulation<dim>::limit_level_difference_at_vertices,
           (p_nsparam.linear_solver.preconditioner ==
            Parameters::LinearSolver::PreconditionerType::lsmg) ?
             parallel::distributed::Triangulation<
