@@ -162,7 +162,7 @@ subsection linear solver
     set minimum residual  = 1e-10
     set preconditioner    = ilu
   end
-  subsection fVOF
+  subsection VOF
     set verbosity         = verbose
     set method            = gmres
     set relative residual = 1e-3
