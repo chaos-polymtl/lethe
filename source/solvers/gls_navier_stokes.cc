@@ -1460,7 +1460,7 @@ GLSNavierStokesSolver<dim>::solve_system_GMRES(const bool   initial_step,
     {
       try
         {
-          if (!ilu_preconditioner || !amg_preconditioner)
+          if (!ilu_preconditioner && !amg_preconditioner)
             setup_preconditioner();
 
           TrilinosWrappers::SolverGMRES solver(solver_control,
