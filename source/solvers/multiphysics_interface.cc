@@ -80,7 +80,7 @@ MultiphysicsInterface<dim>::MultiphysicsInterface(
   // the other physics. Consequently, disabling it only
   // prevents solving it, but not allocating it.
   {
-    verbosity[PhysicsID::fluid_dynamics] = nsparam.non_linear_solver.at(PhysicsID::fluid_dynamics).verbosity;
+    // verbosity[PhysicsID::fluid_dynamics] = (nsparam.non_linear_solver.at(PhysicsID::fluid_dynamics).verbosity  != Parameters::Verbosity::quiet || nsparam.linear_solver.at(PhysicsID::fluid_dynamics).verbosity  != Parameters::Verbosity::quiet) ? Parameters::Verbosity::verbose : Parameters::Verbosity::quiet;
     active_physics.push_back(PhysicsID::fluid_dynamics);
   }
   if (multiphysics_parameters.heat_transfer)
