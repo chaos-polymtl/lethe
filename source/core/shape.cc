@@ -1766,7 +1766,7 @@ RBFShape<dim>::update_precalculations(DoFHandler<dim> &dof_handler,
           max_number_of_inside_nodes =
             std::max(max_number_of_inside_nodes, current_cell_nodes->size());
           current_cell_nodes->shrink_to_fit();
-          if (current_cell_nodes->size() > 0)
+          if (!current_cell_nodes->empty())
             temporary_nodes_portions_map[cell] =
               std::make_tuple(cell->barycenter(),
                               cell->diameter(),
@@ -1783,10 +1783,11 @@ RBFShape<dim>::update_precalculations(DoFHandler<dim> &dof_handler,
           auto               cell       = it->first;
           const unsigned int cell_level = cell->level();
           bool cell_still_needed = cell->is_active() || cell_level == level;
+
+          auto previous_it = it;
+          ++it;
           if (!cell_still_needed)
-            temporary_nodes_portions_map.erase(it++->first);
-          else
-            it++;
+            temporary_nodes_portions_map.erase(previous_it);
         }
     }
 
@@ -1851,10 +1852,11 @@ RBFShape<dim>::update_precalculations(DoFHandler<dim> &dof_handler,
     {
       auto cell              = it->first;
       bool cell_still_needed = cell->is_active() && !cell->is_artificial();
+
+      auto previous_it = it;
+      ++it;
       if (!cell_still_needed)
-        likely_nodes_map.erase(it++->first);
-      else
-        it++;
+        likely_nodes_map.erase(previous_it);
     }
 
   // Here we loop on all (local or ghost) and active cells to define which RBF
