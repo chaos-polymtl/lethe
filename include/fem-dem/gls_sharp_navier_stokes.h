@@ -476,7 +476,9 @@ Return a bool that describes  if a cell contains a specific point
   double
   get_current_residual() override
   {
-    double scalling = this->simulation_parameters.non_linear_solver.at(PhysicsID::fluid_dynamics).tolerance /
+    double scalling = this->simulation_parameters.non_linear_solver
+                        .at(PhysicsID::fluid_dynamics)
+                        .tolerance /
                       this->simulation_parameters.particlesParameters
                         ->particle_nonlinear_tolerance;
     return std::max(this->system_rhs.l2_norm(), particle_residual * scalling);

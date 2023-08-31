@@ -60,7 +60,8 @@
 template <int dim, typename VectorType, typename DofsType>
 NavierStokesBase<dim, VectorType, DofsType>::NavierStokesBase(
   SimulationParameters<dim> &p_nsparam)
-  : PhysicsSolver<VectorType>(p_nsparam.non_linear_solver.at(PhysicsID::fluid_dynamics))
+  : PhysicsSolver<VectorType>(
+      p_nsparam.non_linear_solver.at(PhysicsID::fluid_dynamics))
   , mpi_communicator(MPI_COMM_WORLD)
   , n_mpi_processes(Utilities::MPI::n_mpi_processes(mpi_communicator))
   , this_mpi_process(Utilities::MPI::this_mpi_process(mpi_communicator))
@@ -559,7 +560,10 @@ NavierStokesBase<dim, VectorType, DofsType>::iterate()
                           simulation_parameters.simulation_control.method);
       multiphysics->percolate_time_vectors(false);
 
-      if (simulation_parameters.non_linear_solver.at(PhysicsID::fluid_dynamics).verbosity != Parameters::Verbosity::quiet || simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics).verbosity != Parameters::Verbosity::quiet)
+      if (simulation_parameters.non_linear_solver.at(PhysicsID::fluid_dynamics)
+              .verbosity != Parameters::Verbosity::quiet ||
+          simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+              .verbosity != Parameters::Verbosity::quiet)
         announce_string(this->pcout, "Fluid Dynamics");
       PhysicsSolver<VectorType>::solve_non_linear_system(false);
 

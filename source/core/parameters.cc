@@ -1666,11 +1666,11 @@ namespace Parameters
   }
 
   void
-  NonLinearSolver::declare_parameters(ParameterHandler &prm, const std::string &physics_name)
+  NonLinearSolver::declare_parameters(ParameterHandler & prm,
+                                      const std::string &physics_name)
   {
     prm.enter_subsection("non-linear solver");
     {
-
       prm.enter_subsection(physics_name);
       {
         prm.declare_entry(
@@ -1754,7 +1754,8 @@ namespace Parameters
   }
 
   void
-  NonLinearSolver::parse_parameters(ParameterHandler &prm, const std::string &physics_name)
+  NonLinearSolver::parse_parameters(ParameterHandler & prm,
+                                    const std::string &physics_name)
   {
     prm.enter_subsection("non-linear solver");
     {
@@ -1762,41 +1763,41 @@ namespace Parameters
       {
         const std::string op = prm.get("verbosity");
         if (op == "verbose")
-          verbosity= Parameters::Verbosity::verbose;
+          verbosity = Parameters::Verbosity::verbose;
         else if (op == "quiet")
-          verbosity= Parameters::Verbosity::quiet;
+          verbosity = Parameters::Verbosity::quiet;
         else
           throw(std::runtime_error("Invalid verbosity level"));
 
         const std::string str_solver = prm.get("solver");
         if (str_solver == "newton")
-          solver= SolverType::newton;
+          solver = SolverType::newton;
         else if (str_solver == "kinsol_newton")
-          solver= SolverType::kinsol_newton;
+          solver = SolverType::kinsol_newton;
         else if (str_solver == "inexact_newton")
-          solver= SolverType::inexact_newton;
+          solver = SolverType::inexact_newton;
         else
           throw(std::runtime_error("Invalid non-linear solver "));
 
         const std::string str_kinsol_strategy = prm.get("kinsol strategy");
         if (str_kinsol_strategy == "normal_newton")
-          kinsol_strategy= KinsolStrategy::normal_newton;
+          kinsol_strategy = KinsolStrategy::normal_newton;
         else if (str_kinsol_strategy == "line_search")
-          kinsol_strategy= KinsolStrategy::line_search;
+          kinsol_strategy = KinsolStrategy::line_search;
         else if (str_kinsol_strategy == "picard")
-          kinsol_strategy= KinsolStrategy::picard;
+          kinsol_strategy = KinsolStrategy::picard;
         else
-          throw(
-            std::runtime_error("Invalid strategy for kinsol non-linear solver "));
+          throw(std::runtime_error(
+            "Invalid strategy for kinsol non-linear solver "));
 
-        tolerance            = prm.get_double("tolerance");
-        step_tolerance       = prm.get_double("step tolerance");
-        matrix_tolerance     = prm.get_double("matrix tolerance");
-        max_iterations       = prm.get_integer("max iterations");
-        display_precision    = prm.get_integer("residual precision");
-        force_rhs_calculation= prm.get_bool("force rhs calculation");
-        reuse_matrix         = prm.get_bool("reuse matrix");
-        abort_at_convergence_failure=
+        tolerance             = prm.get_double("tolerance");
+        step_tolerance        = prm.get_double("step tolerance");
+        matrix_tolerance      = prm.get_double("matrix tolerance");
+        max_iterations        = prm.get_integer("max iterations");
+        display_precision     = prm.get_integer("residual precision");
+        force_rhs_calculation = prm.get_bool("force rhs calculation");
+        reuse_matrix          = prm.get_bool("reuse matrix");
+        abort_at_convergence_failure =
           prm.get_bool("abort at convergence failure");
       }
       prm.leave_subsection();

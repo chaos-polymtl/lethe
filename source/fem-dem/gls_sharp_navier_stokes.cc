@@ -2390,8 +2390,9 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
         }
 
 
-      if (this->simulation_parameters.non_linear_solver.at(PhysicsID::fluid_dynamics).verbosity !=
-          Parameters::Verbosity::quiet)
+      if (this->simulation_parameters.non_linear_solver
+            .at(PhysicsID::fluid_dynamics)
+            .verbosity != Parameters::Verbosity::quiet)
         {
           this->pcout << "L_inf particle residual : " << particle_residual
                       << " particle id : " << worst_residual_particle_id

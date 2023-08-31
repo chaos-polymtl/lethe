@@ -835,9 +835,9 @@ public:
   };
 
 private:
-  const Parameters::Multiphysics multiphysics_parameters;
-  std::map<PhysicsID, Parameters::Verbosity>    verbosity;
-  ConditionalOStream             pcout;
+  const Parameters::Multiphysics             multiphysics_parameters;
+  std::map<PhysicsID, Parameters::Verbosity> verbosity;
+  ConditionalOStream                         pcout;
 
   // Data structure to store all physics which were enabled
   std::vector<PhysicsID> active_physics;

@@ -102,11 +102,11 @@ public:
     mesh_box_refinement = std::make_shared<Parameters::MeshBoxRefinement>();
     mesh_box_refinement->declare_parameters(prm);
     for (auto physics_name : physics_names)
-    {
-      Parameters::LinearSolver::declare_parameters(prm, physics_name);
-      Parameters::NonLinearSolver::declare_parameters(prm, physics_name);
-    }
-    
+      {
+        Parameters::LinearSolver::declare_parameters(prm, physics_name);
+        Parameters::NonLinearSolver::declare_parameters(prm, physics_name);
+      }
+
     Parameters::PostProcessing::declare_parameters(prm);
     Parameters::DynamicFlowControl ::declare_parameters(prm);
     particlesParameters = std::make_shared<Parameters::IBParticles<dim>>();
