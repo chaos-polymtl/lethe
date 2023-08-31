@@ -1556,7 +1556,7 @@ RBFShape<dim>::value(const Point<dim> &evaluation_point,
   double value = std::max(bounding_box_distance, 0.0);
   double normalized_distance, basis;
   // Algorithm inspired by Optimad Bitpit. https://github.com/optimad/bitpit
-  // Here we loop on ever portions (of RBF nodes located in active cells close
+  // Here we loop on every portion (of RBF nodes located in active cells close
   // to the evaluation point) and on every RBF node located in these active
   // cells.
   for (size_t portion_id = 0; portion_id < iterable_nodes.size(); portion_id++)
@@ -1606,14 +1606,14 @@ RBFShape<dim>::gradient(const Point<dim> &evaluation_point,
         "of at least one RBF node. It this isn't the case, an error has been "
         "introduced in the code. ");
     }
-  // Here we loop on ever portions (of RBF nodes located in active cells close
+  // Here we loop on every portion (of RBF nodes located in active cells close
   // to the evaluation point) and on every RBF node located in these active
   // cells.
   for (size_t portion_id = 0; portion_id < iterable_nodes.size(); portion_id++)
     {
       for (const size_t &node_id : *(std::get<2>(iterable_nodes[portion_id])))
         {
-          // Calculation of the dr/dx
+          // Calculation of dr/dx
           relative_position =
             (evaluation_point - rotated_nodes_positions[node_id]);
           distance            = (relative_position).norm();

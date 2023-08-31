@@ -912,7 +912,7 @@ public:
     , constituents(constituents)
     , operations(operations)
   {
-    // Calculation of the effective radius and setting of status for components
+    // Calculation of the effective radius and setting of constituents' status
     for (auto const &[constituent_id, constituent] : constituents)
       {
         this->effective_radius =
@@ -1016,7 +1016,7 @@ public:
    * @brief Sets the proper dof handler, then computes/updates the map of cells
    * and their likely non-null nodes
    * @param updated_dof_handler the reference to the new dof_handler
-   * @param mesh_based_precalculations mesh based precalculations that can lead to slight shape misrepresentation (if RBF typed)
+  * @param mesh_based_precalculations mesh based precalculations that can lead to slight shape misrepresentation (if RBF typed)
    */
   void
   update_precalculations(DoFHandler<dim> &updated_dof_handler,
