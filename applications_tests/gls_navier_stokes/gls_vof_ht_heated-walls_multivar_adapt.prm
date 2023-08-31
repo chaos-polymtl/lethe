@@ -154,7 +154,15 @@ end
 #---------------------------------------------------
 
 subsection non-linear solver
-  set verbosity = quiet
+  subsection heat transfer
+    set verbosity = quiet
+  end
+  subsection VOF
+    set verbosity = quiet
+  end
+  subsection fluid dynamics
+    set verbosity = quiet
+  end
 end
 
 # --------------------------------------------------

@@ -180,12 +180,14 @@ end
 #---------------------------------------------------
 
 subsection non-linear solver
-  set solver           = inexact_newton
-  set matrix tolerance = 0.1
-  set reuse matrix     = true
-  set tolerance        = 1e-9
-  set max iterations   = 10
-  set verbosity        = quiet
+  subsection fluid dynamics
+    set solver           = inexact_newton
+    set matrix tolerance = 0.1
+    set reuse matrix     = true
+    set tolerance        = 1e-9
+    set max iterations   = 10
+    set verbosity        = quiet
+  end
 end
 
 # --------------------------------------------------

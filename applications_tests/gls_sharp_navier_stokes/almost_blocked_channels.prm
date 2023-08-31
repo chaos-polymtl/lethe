@@ -105,8 +105,10 @@ subsection forces
 end
 
 subsection non-linear solver
-  set verbosity = quiet
-  set tolerance = 1e-9
+  subsection fluid dynamics
+    set verbosity = quiet
+    set tolerance = 1e-9
+  end
 end
 
 subsection linear solver

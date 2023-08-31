@@ -21,6 +21,7 @@ end
 #---------------------------------------------------
 # Timer
 #---------------------------------------------------
+
 subsection timer
   set type = none
 end
@@ -28,6 +29,7 @@ end
 #---------------------------------------------------
 # Test
 #---------------------------------------------------
+
 subsection test
   set enable = true
 end
@@ -80,13 +82,13 @@ end
 #---------------------------------------------------
 
 subsection insertion info
-  set insertion method                               = plane
-  set insertion plane point                          = 0, 0.45, 0
-  set insertion plane normal vector                  = 0, 1, 0  
-  set insertion frequency                            = 2
-  set insertion distance threshold                   = 1.5
-  set insertion random number range                  = 0.1
-  set insertion random number seed                   = 16
+  set insertion method              = plane
+  set insertion plane point         = 0, 0.45, 0
+  set insertion plane normal vector = 0, 1, 0
+  set insertion frequency           = 2
+  set insertion distance threshold  = 1.5
+  set insertion random number range = 0.1
+  set insertion random number seed  = 16
 end
 
 #---------------------------------------------------

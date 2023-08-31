@@ -176,11 +176,13 @@ end
 #---------------------------------------------------
 
 subsection non-linear solver
-  set tolerance             = 1e-8
-  set max iterations        = 6
-  set residual precision    = 5
-  set verbosity             = quiet
-  set force rhs calculation = true
+  subsection fluid dynamics
+    set tolerance             = 1e-8
+    set max iterations        = 6
+    set residual precision    = 5
+    set verbosity             = quiet
+    set force rhs calculation = true
+  end
 end
 
 # --------------------------------------------------
@@ -197,14 +199,14 @@ end
 
 subsection linear solver
   subsection fluid dynamics
-    set method                                    = gmres
-    set max iters                                 = 500
-    set relative residual                         = 1e-6
-    set minimum residual                          = 1e-9
-    set preconditioner                            = ilu
-    set ilu preconditioner fill                   = 0
-    set ilu preconditioner absolute tolerance     = 1e-10
-    set ilu preconditioner relative tolerance     = 1.00
-    set verbosity                                 = quiet
+    set method                                = gmres
+    set max iters                             = 500
+    set relative residual                     = 1e-6
+    set minimum residual                      = 1e-9
+    set preconditioner                        = ilu
+    set ilu preconditioner fill               = 0
+    set ilu preconditioner absolute tolerance = 1e-10
+    set ilu preconditioner relative tolerance = 1.00
+    set verbosity                             = quiet
   end
 end

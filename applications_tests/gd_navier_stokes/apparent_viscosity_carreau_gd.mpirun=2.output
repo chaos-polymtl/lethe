@@ -7,9 +7,6 @@ Apparent viscosity: 0.750259 m^2/s
 *****************************
 Steady iteration:        1/1
 *****************************
----------------
-Fluid Dynamics
----------------
 Apparent viscosity: 0.750259 m^2/s
 L2 error velocity : 5.19289e-07
 cells error_velocity error_pressure 
