@@ -1816,13 +1816,10 @@ RBFShape<dim>::update_precalculations(DoFHandler<dim> &dof_handler,
           temp_cell = it->first;
           if (temp_cell->is_active())
             {
-              if (cell->point_inside(temp_cell->barycenter()))
-                {
-                  temp_cell_tuple = std::make_tuple(temp_cell->barycenter(),
-                                                    temp_cell->diameter(),
-                                                    std::get<2>(it->second));
-                  likely_nodes_map[cell]->push_back(temp_cell_tuple);
-                }
+              temp_cell_tuple = std::make_tuple(temp_cell->barycenter(),
+                                                temp_cell->diameter(),
+                                                std::get<2>(it->second));
+              likely_nodes_map[cell]->push_back(temp_cell_tuple);
             }
         }
     }
@@ -1843,9 +1840,7 @@ RBFShape<dim>::update_precalculations(DoFHandler<dim> &dof_handler,
           const bool cell_smaller_than_rbf_radius =
             (cell->diameter() < maximal_support_radius);
           if (cell_smaller_than_rbf_radius)
-            {
-              likely_nodes_map[cell] = likely_nodes_map[cell->parent()];
-            }
+            likely_nodes_map[cell] = likely_nodes_map[cell->parent()];
           else
             determine_likely_nodes_for_one_cell(cell, cell->barycenter());
         }
