@@ -66,4 +66,7 @@ cmake-build-release/*
 # Doc
 doc/build/*
 contrib/utilities/programs/*
+contrib/postprocessing/build
+contrib/postprocessing/dist
+contrib/postprocessing/lethe_pyvista_tools.egg-info
 /.github/
