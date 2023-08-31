@@ -1633,9 +1633,9 @@ RBFShape<dim>::gradient(const Point<dim> &evaluation_point,
               for (int d = 0; d < dim; d++)
                 dr_dx_derivative[d] = 0;
             }
-          // Calculation of the dr_norm/dr
+          // Calculation of dr_norm/dr
           drnorm_dr_derivative = 1.0 / support_radii[node_id];
-          // Calculation of the d(basis)/dr
+          // Calculation of d(basis)/dr
           // We cast the basis function value to the proper RBFBasisFunction
           dbasis_drnorm_derivative = evaluate_basis_function_derivative(
             static_cast<enum RBFShape<dim>::RBFBasisFunction>(
@@ -1710,7 +1710,7 @@ RBFShape<dim>::update_precalculations(DoFHandler<dim> &dof_handler,
     return;
   // We first reset the mapping, since the grid partitioning may change between
   // calls of this function. The precalculation cost is low enough that this
-  // reset does not have a significant impact of global computational cost.
+  // reset does not have a significant impact on global computational cost.
   likely_nodes_map.clear();
 
   this->dof_handler                = &dof_handler;
@@ -1890,10 +1890,8 @@ RBFShape<dim>::determine_likely_nodes_for_one_cell(
   bool parent_found = false;
   std::vector<
     std::tuple<Point<dim>, double, std::shared_ptr<std::vector<size_t>>>>
-    temporary_iterable_nodes{1};
-  temporary_iterable_nodes[0] = {Point<dim>{},
-                                 0,
-                                 std::make_shared<std::vector<size_t>>()};
+    temporary_iterable_nodes{
+      {Point<dim>{}, 0, std::make_shared<std::vector<size_t>>()}};
   if (cell->level() > 0)
     try
       {
@@ -1912,7 +1910,7 @@ RBFShape<dim>::determine_likely_nodes_for_one_cell(
   double     distance, max_distance;
   double     cell_diameter = cell->diameter();
   Point<dim> centered_support_point;
-  Point<dim> temp_cell_barycenter{};
+  Point<dim> temp_cell_barycenter;
   double     temp_cell_diameter;
 
   likely_nodes_map[cell]          = std::make_shared<std::vector<
@@ -1960,7 +1958,7 @@ RBFShape<dim>::load_data_from_file()
 
   // The following lines retrieve information regarding an RBF
   // with a given file name. Then, it converts the information
-  // into one vector which is used to initialize the RBF shape.
+  // into a vector which is used to initialize the RBF shape.
   // All the information is concatenated into only one object so
   // that the usual initialization function can be called.
   std::map<std::string, std::vector<double>> rbf_data;
@@ -2037,7 +2035,7 @@ RBFShape<dim>::remove_superfluous_data(DoFHandler<dim> &updated_dof_handler,
   weights.swap(temp_weights);
   temp_weights.clear();
 
-  // Nodes positions treatment
+  // Nodes' positions treatment
   counter = 0;
   temp_rotated_nodes_positions.resize(current_number_of_kept_rbf_nodes);
   for (size_t i = 0; i < number_of_nodes; i++)
