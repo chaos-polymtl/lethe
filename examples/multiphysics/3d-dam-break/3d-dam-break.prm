@@ -157,10 +157,18 @@ end
 #---------------------------------------------------
 
 subsection non-linear solver
-  set tolerance      = 1e-4
-  set max iterations = 5
-  set verbosity      = verbose
-  set solver         = inexact_newton
+  subsection VOF
+    set tolerance      = 1e-4
+    set max iterations = 5
+    set verbosity      = verbose
+    set solver         = inexact_newton
+  end
+  subsection fluid dynamics
+    set tolerance      = 1e-4
+    set max iterations = 5
+    set verbosity      = verbose
+    set solver         = inexact_newton
+  end
 end
 
 # --------------------------------------------------

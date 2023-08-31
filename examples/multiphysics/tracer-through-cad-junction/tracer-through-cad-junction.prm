@@ -118,10 +118,18 @@ end
 #---------------------------------------------------
 
 subsection non-linear solver
-  set tolerance          = 1e-6
-  set max iterations     = 10
-  set residual precision = 5
-  set verbosity          = verbose
+  subsection tracer
+    set tolerance          = 1e-6
+    set max iterations     = 10
+    set residual precision = 5
+    set verbosity          = verbose
+  end
+  subsection fluid dynamics
+    set tolerance          = 1e-6
+    set max iterations     = 10
+    set residual precision = 5
+    set verbosity          = verbose
+  end
 end
 
 # --------------------------------------------------
