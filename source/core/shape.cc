@@ -1671,25 +1671,29 @@ template <int dim>
 void
 RBFShape<dim>::initialize_bounding_box()
 {
-  Point<dim>     high_bounding_point{};
-  Point<dim>     low_bounding_point{};
-  Point<dim>     bounding_box_center{};
-  Point<dim>     temp_point{};
-  Tensor<1, dim> half_lengths = Tensor<1, dim>();
+  Point<dim>           high_bounding_point{};
+  Point<dim>           low_bounding_point{};
+  Point<dim>           bounding_box_center{};
+  double               temp_coordinate;
+  Tensor<1, dim>       half_lengths = Tensor<1, dim>();
+  std::vector<double> *nodes_positions_d;
   for (int d = 0; d < dim; d++)
     {
       high_bounding_point[d] = std::numeric_limits<double>::lowest();
       low_bounding_point[d]  = std::numeric_limits<double>::max();
+      if (d == 0)
+        nodes_positions_d = &nodes_positions_x;
+      else if (d == 1)
+        nodes_positions_d = &nodes_positions_y;
+      else if constexpr (dim == 3)
+        nodes_positions_d = &nodes_positions_z;
       for (size_t i = 0; i < number_of_nodes; i++)
         {
-          temp_point[0] = nodes_positions_x[i];
-          temp_point[1] = nodes_positions_y[i];
-          if constexpr (dim == 3)
-            temp_point[2] = nodes_positions_z[i];
+          temp_coordinate = (*nodes_positions_d)[i];
           low_bounding_point[d] =
-            std::min(low_bounding_point[d], temp_point[d]);
+            std::min(low_bounding_point[d], temp_coordinate);
           high_bounding_point[d] =
-            std::max(high_bounding_point[d], temp_point[d]);
+            std::max(high_bounding_point[d], temp_coordinate);
         }
       bounding_box_center[d] =
         0.5 * (low_bounding_point[d] + high_bounding_point[d]);
