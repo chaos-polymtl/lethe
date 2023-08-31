@@ -1803,9 +1803,6 @@ RBFShape<dim>::update_precalculations(
 
   // We give all the subsets to the 0 level, as an initial partitioning
   const auto &cell_iterator = dof_handler.cell_iterators_on_level(0);
-  double      distance;
-  std::shared_ptr<std::vector<size_t>> temp_nodes =
-    std::make_shared<std::vector<size_t>>();
   typename DoFHandler<dim>::cell_iterator temp_cell;
   std::tuple<Point<dim>, double, std::shared_ptr<std::vector<size_t>>>
        temp_cell_tuple{};
@@ -1836,27 +1833,8 @@ RBFShape<dim>::update_precalculations(
                                                     std::get<2>(it->second));
                   likely_nodes_map[cell]->push_back(temp_cell_tuple);
                 }
-              else
-                for (const size_t &node_id : *temp_nodes)
-                  {
-                    distance =
-                      (cell->barycenter() - rotated_nodes_positions[node_id])
-                        .norm();
-                    if (distance + 0.5 * cell->diameter() <
-                        support_radii[node_id])
-                      {
-                        temp_cell_tuple =
-                          std::make_tuple(temp_cell->barycenter(),
-                                          temp_cell->diameter(),
-                                          std::get<2>(it->second));
-                        likely_nodes_map[cell]->push_back(temp_cell_tuple);
-                        break;
-                      }
-                  }
             }
         }
-      if (likely_nodes_map[cell]->size() < 1)
-        likely_nodes_map.erase(cell);
     }
 
   // We then treat all other levels
@@ -2240,7 +2218,7 @@ RBFShape<dim>::swap_iterable_nodes(
   // Here we check if the likely nodes have been identified
   auto iterator = likely_nodes_map.find(cell);
   if (iterator != likely_nodes_map.end())
-    iterable_nodes.swap(*likely_nodes_map[cell]);
+    iterable_nodes.swap(*(likely_nodes_map[cell]));
 }
 
 template <int dim>
