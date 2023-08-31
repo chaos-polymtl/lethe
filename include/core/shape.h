@@ -1029,7 +1029,9 @@ public:
   load_data_from_file();
 
   /**
-   * @brief Remove data that doesn't affect the cells owned by local process
+   * @brief Remove data that doesn't affect the cells owned by local process   *
+   * @param dof_handler the reference to the new dof_handler
+   * @param mesh_based_precalculations mesh based precalculations that can lead to slight shape misrepresentation (if RBF typed)
    */
   void
   remove_superfluous_data(DoFHandler<dim> &updated_dof_handler,
