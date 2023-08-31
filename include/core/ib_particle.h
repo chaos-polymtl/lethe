@@ -224,26 +224,20 @@ public:
    * @brief Sets the proper dof handler, then computes/updates the map of cells
    * and their likely non-null nodes
    * @param updated_dof_handler the reference to the new dof_handler
-   * @param levels_not_precalculated the number of finer levels that won't be
-   * precalculated
    * @param mesh_based_precalculations mesh based precalculations that can lead to slight shape misrepresentation (if RBF typed)
    */
   void
-  update_precalculations(DoFHandler<dim> &  updated_dof_handler,
-                         const unsigned int levels_not_precalculated,
-                         const bool         mesh_based_precalculations);
+  update_precalculations(DoFHandler<dim> &updated_dof_handler,
+                         const bool       mesh_based_precalculations);
 
   /**
    * @brief Updates precalculations if needed, then computes and removes superfluous data
    * @param updated_dof_handler the reference to the new dof_handler
-   * @param levels_not_precalculated the number of finer levels that won't be
-   * precalculated
    * @param mesh_based_precalculations mesh based precalculations that can lead to slight shape misrepresentation (if RBF typed)
    */
   void
-  remove_superfluous_data(DoFHandler<dim> &  updated_dof_handler,
-                          const unsigned int levels_not_precalculated,
-                          const bool         mesh_based_precalculations);
+  remove_superfluous_data(DoFHandler<dim> &updated_dof_handler,
+                          const bool       mesh_based_precalculations);
 
   /**
    * Loads data from the files for file-based Shapes (RBF at the moment)

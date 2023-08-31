@@ -2585,14 +2585,6 @@ namespace Parameters
         "The number of particles represented by IB. The maximal number of particles is equal to 10 when defined individually. If particles are loaded from a file, this parameter is overridden, and there is no limit to the number of particles.");
 
       prm.declare_entry(
-        "levels not precalculated",
-        "0",
-        Patterns::Integer(),
-        "Number of levels that are ignored in precalculations. Setting this "
-        "parameter higher allows for a lower memory footprint at the cost of"
-        " higher computing time.");
-
-      prm.declare_entry(
         "assemble Navier-Stokes inside particles",
         "false",
         Patterns::Bool(),
@@ -2865,7 +2857,6 @@ namespace Parameters
 
       nb = prm.get_integer("number of particles");
 
-      levels_not_precalculated = prm.get_integer("levels not precalculated");
       assemble_navier_stokes_inside =
         prm.get_bool("assemble Navier-Stokes inside particles");
 

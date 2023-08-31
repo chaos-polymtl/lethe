@@ -1322,9 +1322,8 @@ CompositeShape<dim>::static_copy() const
 template <int dim>
 void
 CompositeShape<dim>::update_precalculations(
-  DoFHandler<dim> &  updated_dof_handler,
-  const unsigned int levels_not_precalculated,
-  const bool         mesh_based_precalculations)
+  DoFHandler<dim> &updated_dof_handler,
+  const bool       mesh_based_precalculations)
 {
   if (!mesh_based_precalculations)
     return;
@@ -1332,12 +1331,10 @@ CompositeShape<dim>::update_precalculations(
     if (typeid(*component) == typeid(RBFShape<dim>))
       std::static_pointer_cast<RBFShape<dim>>(component)
         ->update_precalculations(updated_dof_handler,
-                                 levels_not_precalculated,
                                  mesh_based_precalculations);
     else if (typeid(*component) == typeid(CompositeShape<dim>))
       std::static_pointer_cast<CompositeShape<dim>>(component)
         ->update_precalculations(updated_dof_handler,
-                                 levels_not_precalculated,
                                  mesh_based_precalculations);
 }
 
@@ -1356,20 +1353,17 @@ CompositeShape<dim>::load_data_from_file()
 template <int dim>
 void
 CompositeShape<dim>::remove_superfluous_data(
-  DoFHandler<dim> &  updated_dof_handler,
-  const unsigned int levels_not_precalculated,
-  const bool         mesh_based_precalculations)
+  DoFHandler<dim> &updated_dof_handler,
+  const bool       mesh_based_precalculations)
 {
   for (auto const &[component_id, component] : constituents)
     if (typeid(*component) == typeid(RBFShape<dim>))
       std::static_pointer_cast<RBFShape<dim>>(component)
         ->remove_superfluous_data(updated_dof_handler,
-                                  levels_not_precalculated,
                                   mesh_based_precalculations);
     else if (typeid(*component) == typeid(CompositeShape<dim>))
       std::static_pointer_cast<CompositeShape<dim>>(component)
         ->remove_superfluous_data(updated_dof_handler,
-                                  levels_not_precalculated,
                                   mesh_based_precalculations);
 }
 
@@ -1709,10 +1703,8 @@ RBFShape<dim>::initialize_bounding_box()
 
 template <int dim>
 void
-RBFShape<dim>::update_precalculations(
-  DoFHandler<dim> &  dof_handler,
-  const unsigned int levels_not_precalculated,
-  const bool         mesh_based_precalculations)
+RBFShape<dim>::update_precalculations(DoFHandler<dim> &dof_handler,
+                                      const bool mesh_based_precalculations)
 {
   if (!mesh_based_precalculations)
     return;
@@ -1735,8 +1727,7 @@ RBFShape<dim>::update_precalculations(
            std::tuple<Point<dim>, double, std::shared_ptr<std::vector<size_t>>>>
     temporary_nodes_portions_map;
   temporary_nodes_portions_map.clear();
-  for (unsigned int level = 0; level + levels_not_precalculated < maximal_level;
-       level++)
+  for (unsigned int level = 0; level < maximal_level; level++)
     {
       max_number_of_inside_nodes = 1;
       const auto &cell_iterator  = dof_handler.cell_iterators_on_level(level);
@@ -1793,9 +1784,7 @@ RBFShape<dim>::update_precalculations(
           const unsigned int cell_level = cell->level();
           bool cell_still_needed = cell->is_active() || cell_level == level;
           if (!cell_still_needed)
-            {
-              temporary_nodes_portions_map.erase(it++->first);
-            }
+            temporary_nodes_portions_map.erase(it++->first);
           else
             it++;
         }
@@ -1805,8 +1794,7 @@ RBFShape<dim>::update_precalculations(
   const auto &cell_iterator = dof_handler.cell_iterators_on_level(0);
   typename DoFHandler<dim>::cell_iterator temp_cell;
   std::tuple<Point<dim>, double, std::shared_ptr<std::vector<size_t>>>
-       temp_cell_tuple{};
-  bool level_above_precalculation_limit;
+    temp_cell_tuple{};
   for (const auto &cell : cell_iterator)
     {
       if (cell->is_artificial_on_level())
@@ -1820,11 +1808,7 @@ RBFShape<dim>::update_precalculations(
            it++)
         {
           temp_cell = it->first;
-          level_above_precalculation_limit =
-            static_cast<unsigned int>(temp_cell->level() + 1 +
-                                      levels_not_precalculated) >=
-            maximal_level;
-          if (temp_cell->is_active() || level_above_precalculation_limit)
+          if (temp_cell->is_active())
             {
               if (cell->point_inside(temp_cell->barycenter()))
                 {
@@ -1852,8 +1836,7 @@ RBFShape<dim>::update_precalculations(
           // or less the same.
           const bool cell_smaller_than_rbf_radius =
             (cell->diameter() < maximal_support_radius);
-          if (cell_smaller_than_rbf_radius ||
-              (level + 1) + levels_not_precalculated >= maximal_level)
+          if (cell_smaller_than_rbf_radius)
             {
               likely_nodes_map[cell] = likely_nodes_map[cell->parent()];
             }
@@ -1869,9 +1852,7 @@ RBFShape<dim>::update_precalculations(
       auto cell              = it->first;
       bool cell_still_needed = cell->is_active() && !cell->is_artificial();
       if (!cell_still_needed)
-        {
-          likely_nodes_map.erase(it++->first);
-        }
+        likely_nodes_map.erase(it++->first);
       else
         it++;
     }
@@ -2010,17 +1991,14 @@ RBFShape<dim>::load_data_from_file()
 
 template <int dim>
 void
-RBFShape<dim>::remove_superfluous_data(
-  DoFHandler<dim> &  updated_dof_handler,
-  const unsigned int levels_not_precalculated,
-  const bool         mesh_based_precalculations)
+RBFShape<dim>::remove_superfluous_data(DoFHandler<dim> &updated_dof_handler,
+                                       const bool mesh_based_precalculations)
 {
   if (!mesh_based_precalculations)
     return;
 
   if (likely_nodes_map.empty())
     this->update_precalculations(updated_dof_handler,
-                                 levels_not_precalculated,
                                  mesh_based_precalculations);
 
   number_of_nodes                         = useful_rbf_nodes.size();
@@ -2104,9 +2082,7 @@ RBFShape<dim>::remove_superfluous_data(
   basis_functions.swap(temp_basis_functions);
   temp_basis_functions.clear();
 
-  this->update_precalculations(updated_dof_handler,
-                               levels_not_precalculated,
-                               mesh_based_precalculations);
+  this->update_precalculations(updated_dof_handler, mesh_based_precalculations);
 }
 
 template <int dim>
