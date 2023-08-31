@@ -69,4 +69,5 @@ contrib/utilities/programs/*
 contrib/postprocessing/build
 contrib/postprocessing/dist
 contrib/postprocessing/lethe_pyvista_tools.egg-info
+*__pycache__
 /.github/
