@@ -1,0 +1,24 @@
+Running on 1 MPI rank(s)...
+   Number of active cells:       64
+   Number of degrees of freedom: 1875
+   Volume of triangulation:      4
+
+*****************************
+Steady iteration:        1/2
+*****************************
+---------------
+Fluid Dynamics
+---------------
+
+*****************************
+Steady iteration:        2/2
+*****************************
+   Number of active cells:       256
+   Number of degrees of freedom: 7203
+   Volume of triangulation:      4
+---------------
+Fluid Dynamics
+---------------
+cells  error_velocity    error_pressure   
+   64 1.160902e-03    - 1.104346e-02    - 
+  256 7.756655e-05 3.90 1.217306e-03 3.18 
