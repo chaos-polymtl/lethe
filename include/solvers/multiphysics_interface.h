@@ -151,7 +151,7 @@ public:
                   time_stepping_method)
   {
     // Announce physic solved (verbosity = non_linear_solver.verbosity)
-    if (verbosity != Parameters::Verbosity::quiet)
+    if (verbosity.at(physics_id) != Parameters::Verbosity::quiet)
       announce_physics(physics_id);
 
     AssertThrow(std::find(active_physics.begin(),
@@ -175,7 +175,7 @@ public:
                         time_stepping_method)
   {
     // Announce physic solved (verbosity = non_linear_solver.verbosity)
-    if (verbosity != Parameters::Verbosity::quiet)
+    if (verbosity.at(physics_id) != Parameters::Verbosity::quiet)
       announce_physics(physics_id);
 
     AssertThrow(std::find(active_physics.begin(),
@@ -835,9 +835,9 @@ public:
   };
 
 private:
-  const Parameters::Multiphysics multiphysics_parameters;
-  const Parameters::Verbosity    verbosity;
-  ConditionalOStream             pcout;
+  const Parameters::Multiphysics             multiphysics_parameters;
+  std::map<PhysicsID, Parameters::Verbosity> verbosity;
+  ConditionalOStream                         pcout;
 
   // Data structure to store all physics which were enabled
   std::vector<PhysicsID> active_physics;

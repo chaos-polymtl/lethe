@@ -6,9 +6,6 @@ Running on 1 MPI rank(s)...
 *****************************
 Steady iteration:        1/2
 *****************************
----------------
-Fluid Dynamics
----------------
 
 +------------------------------------------+
 |  Force  summary                          |
@@ -23,9 +20,6 @@ Steady iteration:        2/2
    Number of active cells:       512
    Number of degrees of freedom: 2916
    Volume of triangulation:      1
----------------
-Fluid Dynamics
----------------
 
 +------------------------------------------+
 |  Force  summary                          |

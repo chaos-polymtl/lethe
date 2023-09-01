@@ -134,9 +134,11 @@ end
 #---------------------------------------------------
 
 subsection non-linear solver
-  set verbosity      = quiet
-  set tolerance      = 1e-8
-  set max iterations = 10
+  subsection fluid dynamics
+    set verbosity      = quiet
+    set tolerance      = 1e-8
+    set max iterations = 10
+  end
 end
 
 # --------------------------------------------------

@@ -202,10 +202,12 @@ The non-linear solver control section allows us to choose a method suitable for 
 .. code-block:: text
 
     subsection non-linear solver
-      set solver         = inexact_newton
-      set tolerance      = 1e-5
-      set max iterations = 10
-      set verbosity      = verbose
+      subsection fluid dynamics
+        set solver         = inexact_newton
+        set tolerance      = 1e-5
+        set max iterations = 10
+        set verbosity      = verbose
+      end
     end
 
 In this case, we use the ``inexact_newton`` method that reuses the Jacobian matrix between iterations. This is a known strategy to reduce the cost of reassembling the Jacobian in every iteration. 

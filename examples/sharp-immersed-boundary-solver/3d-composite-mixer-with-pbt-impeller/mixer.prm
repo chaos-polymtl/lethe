@@ -115,10 +115,12 @@ subsection particles
 end
 
 subsection non-linear solver
-  set tolerance      = 1e-4
-  set max iterations = 10
-  set verbosity      = verbose
-  set solver         = newton
+  subsection fluid dynamics
+    set tolerance      = 1e-4
+    set max iterations = 10
+    set verbosity      = verbose
+    set solver         = newton
+  end
 end
 
 subsection linear solver

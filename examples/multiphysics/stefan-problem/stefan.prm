@@ -112,9 +112,11 @@ end
 #---------------------------------------------------
 
 subsection non-linear solver
-  set verbosity      = verbose
-  set tolerance      = 1e-12
-  set max iterations = 100
+  subsection heat transfer
+    set verbosity      = verbose
+    set tolerance      = 1e-12
+    set max iterations = 100
+  end
 end
 
 # --------------------------------------------------

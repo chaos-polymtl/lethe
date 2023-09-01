@@ -117,8 +117,18 @@ subsection boundary conditions
 end
 
 subsection non-linear solver
-  set tolerance = 1e-8
-  set verbosity = quiet
+  subsection heat transfer
+    set tolerance = 1e-8
+    set verbosity = quiet
+  end
+  subsection VOF
+    set tolerance = 1e-8
+    set verbosity = quiet
+  end
+  subsection fluid dynamics
+    set tolerance = 1e-8
+    set verbosity = quiet
+  end
 end
 
 subsection linear solver

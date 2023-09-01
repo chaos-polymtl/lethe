@@ -132,8 +132,10 @@ end
 #---------------------------------------------------
 
 subsection non-linear solver
-  set tolerance = 1e-4
-  set solver    = inexact_newton
+  subsection fluid dynamics
+    set tolerance = 1e-4
+    set solver    = inexact_newton
+  end
 end
 
 # --------------------------------------------------

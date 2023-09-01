@@ -283,8 +283,10 @@ Since this is a transient problem, it is not highly non-linear except for the fi
 .. code-block:: text
 
     subsection non-linear solver
-      set tolerance = 1e-4
-      set solver    = inexact_newton
+      subsection fluid dynamics
+        set tolerance = 1e-4
+        set solver    = inexact_newton
+      end
     end
 
 Because the assembly of the Nitsche restriction for the immersed boundary is relatively expensive, we reuse the Jacobian matrix as much as possible. This is accomplished by setting ``solver = inexact_newton``.

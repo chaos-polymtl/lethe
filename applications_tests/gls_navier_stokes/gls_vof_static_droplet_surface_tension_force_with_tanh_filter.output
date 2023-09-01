@@ -2187,9 +2187,6 @@ Filtered phase values:
 2.06115e-09
 2.06115e-09
 2.06115e-09
----------------
-Fluid Dynamics
----------------
 L2 error velocity : 1.53677e-07
 L2 error phase : 3.40945e-06
 
@@ -3286,9 +3283,6 @@ Filtered phase values:
 2.06115e-09
 2.06115e-09
 2.06115e-09
----------------
-Fluid Dynamics
----------------
 L2 error velocity : 2.07529e-07
 L2 error phase : 3.4095e-06
 
@@ -4385,9 +4379,6 @@ Filtered phase values:
 2.06115e-09
 2.06115e-09
 2.06115e-09
----------------
-Fluid Dynamics
----------------
 L2 error velocity : 2.34654e-07
 L2 error phase : 3.40956e-06
 
@@ -5484,9 +5475,6 @@ Filtered phase values:
 2.06115e-09
 2.06115e-09
 2.06115e-09
----------------
-Fluid Dynamics
----------------
 L2 error velocity : 2.50907e-07
 L2 error phase : 3.40963e-06
  time  error_velocity error_pressure 

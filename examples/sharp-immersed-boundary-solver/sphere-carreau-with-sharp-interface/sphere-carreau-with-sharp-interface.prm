@@ -194,10 +194,12 @@ end
 #---------------------------------------------------
 
 subsection non-linear solver
-  set verbosity             = verbose
-  set tolerance             = 1e-5
-  set max iterations        = 20
-  set force rhs calculation = true
+  subsection fluid dynamics
+    set verbosity             = verbose
+    set tolerance             = 1e-5
+    set max iterations        = 20
+    set force rhs calculation = true
+  end
 end
 
 # --------------------------------------------------

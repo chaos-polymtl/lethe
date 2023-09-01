@@ -42,10 +42,10 @@ end
 #---------------------------------------------------
 
 subsection mesh
-  set type               = dealii
-  set grid type          = subdivided_cylinder
-  set grid arguments     = 33:0.05:0.55
-  set initial refinement = 2
+  set type                                = dealii
+  set grid type                           = subdivided_cylinder
+  set grid arguments                      = 33:0.05:0.55
+  set initial refinement                  = 2
   set expand particle-wall contact search = true
 end
 
@@ -65,14 +65,14 @@ end
 #---------------------------------------------------
 
 subsection cfd-dem
-  set vans model         = modelA
-  set grad div           = true
-  set drag model         = rong
-  set buoyancy force     = true
-  set shear force        = true
-  set pressure force     = true
-  set saffman lift force = true
-  set coupling frequency = 100
+  set vans model                    = modelA
+  set grad div                      = true
+  set drag model                    = rong
+  set buoyancy force                = true
+  set shear force                   = true
+  set pressure force                = true
+  set saffman lift force            = true
+  set coupling frequency            = 100
   set void fraction time derivative = false
 end
 
@@ -206,10 +206,12 @@ end
 #---------------------------------------------------
 
 subsection non-linear solver
-  set solver           = inexact_newton
-  set tolerance        = 1e-10
-  set max iterations   = 10
-  set verbosity        = verbose
+  subsection fluid dynamics
+    set solver         = inexact_newton
+    set tolerance      = 1e-10
+    set max iterations = 10
+    set verbosity      = verbose
+  end
 end
 
 # --------------------------------------------------

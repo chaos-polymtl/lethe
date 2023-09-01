@@ -97,7 +97,9 @@ end
 #---------------------------------------------------
 
 subsection non-linear solver
-  set tolerance = 1e-10
+  subsection fluid dynamics
+    set tolerance = 1e-10
+  end
 end
 
 # --------------------------------------------------

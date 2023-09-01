@@ -107,7 +107,7 @@ subsection floating walls
   set number of floating walls = 1
   subsection wall 0
     subsection point on wall
-      set x = -0.45 
+      set x = -0.45
       set y = 0
       set z = 0
     end
@@ -126,9 +126,9 @@ end
 #---------------------------------------------------
 
 subsection mesh
-  set type               = dealii
-  set grid type          = subdivided_cylinder
-  set grid arguments     = 33:0.05:0.55
-  set initial refinement = 2
+  set type                                = dealii
+  set grid type                           = subdivided_cylinder
+  set grid arguments                      = 33:0.05:0.55
+  set initial refinement                  = 2
   set expand particle-wall contact search = true
 end

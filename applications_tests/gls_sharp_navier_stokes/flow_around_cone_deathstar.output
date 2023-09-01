@@ -10,9 +10,6 @@ Initial refinement around IB particles - Step : 1 of 1
 *****************************
 Steady iteration:        1/2
 *****************************
----------------
-Fluid Dynamics
----------------
 +------------------------------------------+
 |  Force  summary particles                |
 +------------------------------------------+
@@ -26,9 +23,6 @@ Steady iteration:        2/2
    Number of active cells:       9276
    Number of degrees of freedom: 45368
    Volume of triangulation:      512
----------------
-Fluid Dynamics
----------------
 +------------------------------------------+
 |  Force  summary particles                |
 +------------------------------------------+

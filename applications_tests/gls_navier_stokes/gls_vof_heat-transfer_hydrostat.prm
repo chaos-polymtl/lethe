@@ -165,10 +165,24 @@ end
 #---------------------------------------------------
 
 subsection non-linear solver
-  set verbosity          = quiet
-  set tolerance          = 1e-9
-  set max iterations     = 10
-  set residual precision = 2
+  subsection VOF
+    set verbosity          = quiet
+    set tolerance          = 1e-9
+    set max iterations     = 10
+    set residual precision = 2
+  end
+  subsection heat transfer
+    set verbosity          = quiet
+    set tolerance          = 1e-9
+    set max iterations     = 10
+    set residual precision = 2
+  end
+  subsection fluid dynamics
+    set verbosity          = quiet
+    set tolerance          = 1e-9
+    set max iterations     = 10
+    set residual precision = 2
+  end
 end
 
 # --------------------------------------------------

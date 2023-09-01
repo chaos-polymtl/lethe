@@ -357,11 +357,13 @@ We use the inexact Newton non-linear solver to minimize the number of time the m
 .. code-block:: text
 
   subsection non-linear solver
-    set solver           = inexact_newton
-    set tolerance        = 1e-7
-    set max iterations   = 20
-    set matrix tolerance = 0.2
-    set verbosity        = verbose
+    subsection fluid dynamics
+      set solver           = inexact_newton
+      set tolerance        = 1e-7
+      set max iterations   = 20
+      set matrix tolerance = 0.2
+      set verbosity        = verbose
+    end
   end
     
 Linear Solver
