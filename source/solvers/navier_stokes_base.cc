@@ -1963,14 +1963,16 @@ NavierStokesBase<dim, VectorType, DofsType>::write_output_results(
 
       // Only output the kinematic viscosity for non-newtonian rheology
       if (rheological_models[f_id]->is_non_newtonian_rheological_model())
-        data_out.add_data_vector(solution,
-                                 kinematic_viscosity_postprocessors[f_id]);
+        {
+          data_out.add_data_vector(solution,
+                                   kinematic_viscosity_postprocessors[f_id]);
 
-      // Only output the dynamic viscosity for multiphase flows
-      if (this->simulation_parameters.multiphysics.VOF ||
-          this->simulation_parameters.multiphysics.cahn_hilliard)
-        data_out.add_data_vector(solution,
-                                 dynamic_viscosity_postprocessors[f_id]);
+          // Only output the dynamic viscosity for multiphase flows
+          if (this->simulation_parameters.multiphysics.VOF ||
+              this->simulation_parameters.multiphysics.cahn_hilliard)
+            data_out.add_data_vector(solution,
+                                     dynamic_viscosity_postprocessors[f_id]);
+        }
     }
 
   ShearRatePostprocessor<dim> shear_rate_processor;
