@@ -180,31 +180,13 @@ GLSSharpNavierStokesSolver<dim>::generate_cut_cells_map()
                           // previously evaluated cell. If we didn't find it in
                           // the previous evaluation, we assess whether the DOF
                           // is inside or outside the shape.
-                          auto iterator =
-                            inside_outside_support_point_vector[p].find(
-                              local_dof_indices[j]);
-                          if (iterator ==
-                              inside_outside_support_point_vector[p].end())
+                          if (particles[p].get_levelset(
+                                support_points[local_dof_indices[j]], cell) <=
+                              0)
                             {
-                              if (particles[p].get_levelset(
-                                    support_points[local_dof_indices[j]],
-                                    cell) <= 0)
-                                {
-                                  ++nb_dof_inside;
-                                  inside_outside_support_point_vector
-                                    [p][local_dof_indices[j]] = true;
-                                }
-                              else
-                                inside_outside_support_point_vector
-                                  [p][local_dof_indices[j]] = false;
-                            }
-                          else
-                            {
-                              if (inside_outside_support_point_vector
-                                    [p][local_dof_indices[j]] == true)
-                                {
-                                  ++nb_dof_inside;
-                                }
+                              ++nb_dof_inside;
+                              inside_outside_support_point_vector
+                                [p][local_dof_indices[j]] = true;
                             }
                         }
                     }
