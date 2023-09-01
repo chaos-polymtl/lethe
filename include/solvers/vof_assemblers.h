@@ -45,7 +45,7 @@ public:
    */
 
   virtual void
-  assemble_matrix(VOFScratchData<dim>       &scratch_data,
+  assemble_matrix(VOFScratchData<dim> &      scratch_data,
                   StabilizedMethodsCopyData &copy_data) = 0;
 
 
@@ -58,7 +58,7 @@ public:
    */
 
   virtual void
-  assemble_rhs(VOFScratchData<dim>       &scratch_data,
+  assemble_rhs(VOFScratchData<dim> &      scratch_data,
                StabilizedMethodsCopyData &copy_data) = 0;
 };
 
@@ -94,7 +94,7 @@ public:
    * @param copy_data (see base class)
    */
   virtual void
-  assemble_matrix(VOFScratchData<dim>       &scratch_data,
+  assemble_matrix(VOFScratchData<dim> &      scratch_data,
                   StabilizedMethodsCopyData &copy_data) override;
 
 
@@ -104,7 +104,7 @@ public:
    * @param copy_data (see base class)
    */
   virtual void
-  assemble_rhs(VOFScratchData<dim>       &scratch_data,
+  assemble_rhs(VOFScratchData<dim> &      scratch_data,
                StabilizedMethodsCopyData &copy_data) override;
 
   // enable/disable DCDD shock capturing model, for debugging purposes
@@ -143,7 +143,7 @@ public:
    */
 
   virtual void
-  assemble_matrix(VOFScratchData<dim>       &scratch_data,
+  assemble_matrix(VOFScratchData<dim> &      scratch_data,
                   StabilizedMethodsCopyData &copy_data) override;
 
   /**
@@ -152,7 +152,7 @@ public:
    * @param copy_data (see base class)
    */
   virtual void
-  assemble_rhs(VOFScratchData<dim>       &scratch_data,
+  assemble_rhs(VOFScratchData<dim> &      scratch_data,
                StabilizedMethodsCopyData &copy_data) override;
 
   std::shared_ptr<SimulationControl> simulation_control;

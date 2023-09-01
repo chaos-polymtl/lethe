@@ -8,14 +8,14 @@
 
 template <int dim>
 void
-VOFAssemblerCore<dim>::assemble_matrix(VOFScratchData<dim>       &scratch_data,
+VOFAssemblerCore<dim>::assemble_matrix(VOFScratchData<dim> &      scratch_data,
                                        StabilizedMethodsCopyData &copy_data)
 {
   // Scheme and physical properties
   const auto method = this->simulation_control->get_assembly_method();
 
   // Loop and quadrature information
-  const auto        &JxW_vec    = scratch_data.JxW;
+  const auto &       JxW_vec    = scratch_data.JxW;
   const unsigned int n_q_points = scratch_data.n_q_points;
   const unsigned int n_dofs     = scratch_data.n_dofs;
   const double       h          = scratch_data.cell_size;
@@ -75,13 +75,12 @@ VOFAssemblerCore<dim>::assemble_matrix(VOFScratchData<dim>       &scratch_data,
       // We neglect to remove the diffusion aligned with the velocity
       // as is done in the original article. This term generates poorer
       // results than just using the vdcdd approach.
-      // Tensor<1, dim> s = velocity / (velocity.norm() + 1e-12);
-      // const Tensor<2, dim> k_corr      = (r * s) * outer_product(s,
-      // s);
-      // const Tensor<2, dim> k_corr      = (r * s) * outer_product(s, s);
+      Tensor<1, dim>       s = velocity / (velocity.norm() + 1e-12);
+      const Tensor<2, dim> k_corr =
+        (gradient_unit_vector * s) * outer_product(s, s);
       const Tensor<2, dim> gradient_unit_tensor =
         outer_product(gradient_unit_vector, gradient_unit_vector);
-      const Tensor<2, dim> dcdd_factor = gradient_unit_tensor; // - k_corr;
+      const Tensor<2, dim> dcdd_factor = gradient_unit_tensor - k_corr;
 
       // We neglect the gradient of the shock capturing viscosity in the
       // jacobian matrix since it tends to destabilize the matrix Gradient of
@@ -165,7 +164,7 @@ VOFAssemblerCore<dim>::assemble_matrix(VOFScratchData<dim>       &scratch_data,
 
 template <int dim>
 void
-VOFAssemblerCore<dim>::assemble_rhs(VOFScratchData<dim>       &scratch_data,
+VOFAssemblerCore<dim>::assemble_rhs(VOFScratchData<dim> &      scratch_data,
                                     StabilizedMethodsCopyData &copy_data)
 {
   // Scheme and physical properties
@@ -175,7 +174,7 @@ VOFAssemblerCore<dim>::assemble_rhs(VOFScratchData<dim>       &scratch_data,
   const double diffusivity = this->vof_parameters.diffusivity;
 
   // Loop and quadrature information
-  const auto        &JxW_vec    = scratch_data.JxW;
+  const auto &       JxW_vec    = scratch_data.JxW;
   const unsigned int n_q_points = scratch_data.n_q_points;
   const unsigned int n_dofs     = scratch_data.n_dofs;
   const double       h          = scratch_data.cell_size;
@@ -225,13 +224,12 @@ VOFAssemblerCore<dim>::assemble_rhs(VOFScratchData<dim>       &scratch_data,
 
       // We neglect to remove the diffusion aligned with the velocity
       // as is done in the original article.
-      // Tensor<1, dim> s = velocity / (velocity.norm() + 1e-12);
-      // const Tensor<2, dim> k_corr      = (r * s) * outer_product(s,
-      // s);
-      // const Tensor<2, dim> k_corr      = (r * s) * outer_product(s, s);
+      Tensor<1, dim>       s = velocity / (velocity.norm() + 1e-12);
+      const Tensor<2, dim> k_corr =
+        (gradient_unit_vector * s) * outer_product(s, s);
       const Tensor<2, dim> gradient_unit_tensor =
         outer_product(gradient_unit_vector, gradient_unit_vector);
-      const Tensor<2, dim> dcdd_factor = gradient_unit_tensor; // - k_corr;
+      const Tensor<2, dim> dcdd_factor = gradient_unit_tensor - k_corr;
 
       // Calculation of the magnitude of the velocity for the
       // stabilization parameter
@@ -294,11 +292,11 @@ template class VOFAssemblerCore<3>;
 
 template <int dim>
 void
-VOFAssemblerBDF<dim>::assemble_matrix(VOFScratchData<dim>       &scratch_data,
+VOFAssemblerBDF<dim>::assemble_matrix(VOFScratchData<dim> &      scratch_data,
                                       StabilizedMethodsCopyData &copy_data)
 {
   // Loop and quadrature information
-  const auto        &JxW        = scratch_data.JxW;
+  const auto &       JxW        = scratch_data.JxW;
   const unsigned int n_q_points = scratch_data.n_q_points;
   const unsigned int n_dofs     = scratch_data.n_dofs;
 
@@ -360,11 +358,11 @@ VOFAssemblerBDF<dim>::assemble_matrix(VOFScratchData<dim>       &scratch_data,
 
 template <int dim>
 void
-VOFAssemblerBDF<dim>::assemble_rhs(VOFScratchData<dim>       &scratch_data,
+VOFAssemblerBDF<dim>::assemble_rhs(VOFScratchData<dim> &      scratch_data,
                                    StabilizedMethodsCopyData &copy_data)
 {
   // Loop and quadrature information
-  const auto        &JxW        = scratch_data.JxW;
+  const auto &       JxW        = scratch_data.JxW;
   const unsigned int n_q_points = scratch_data.n_q_points;
   const unsigned int n_dofs     = scratch_data.n_dofs;
 
