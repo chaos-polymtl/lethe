@@ -1625,6 +1625,7 @@ RBFShape<dim>::gradient(const Point<dim> &evaluation_point,
               // If the evaluation point overlaps with the node position, we
               // assume that the contribution of this node is 0. This assumption
               // can be made because radial basis functions are symmetrical. If
+              // can be made because radial basis functions are symmetrical. If
               // the basis function is not differentiable at its node (e.g.
               // linear function), this approximation will still hold since the
               // approximated distance field is already imperfect and
@@ -1685,7 +1686,7 @@ RBFShape<dim>::initialize_bounding_box()
         nodes_positions_d = &nodes_positions_x;
       else if (d == 1)
         nodes_positions_d = &nodes_positions_y;
-      else if constexpr (dim == 3)
+      else
         nodes_positions_d = &nodes_positions_z;
       for (size_t i = 0; i < number_of_nodes; i++)
         {

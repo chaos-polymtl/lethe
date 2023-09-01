@@ -224,7 +224,7 @@ public:
    * @brief Sets the proper dof handler, then computes/updates the map of cells
    * and their likely non-null nodes
    * @param updated_dof_handler the reference to the new dof_handler
-   * @param mesh_based_precalculations mesh based precalculations that can lead to slight shape misrepresentation (if RBF typed)
+   * @param mesh_based_precalculations mesh-based precalculations that can lead to slight shape misrepresentation (if RBF typed)
    */
   void
   update_precalculations(DoFHandler<dim> &updated_dof_handler,
@@ -233,7 +233,7 @@ public:
   /**
    * @brief Updates precalculations if needed, then computes and removes superfluous data
    * @param updated_dof_handler the reference to the new dof_handler
-   * @param mesh_based_precalculations mesh based precalculations that can lead to slight shape misrepresentation (if RBF typed)
+   * @param mesh_based_precalculations mesh-based precalculations that can lead to slight shape misrepresentation (if RBF typed)
    */
   void
   remove_superfluous_data(DoFHandler<dim> &updated_dof_handler,
@@ -350,9 +350,9 @@ public:
   // Bool that indicates if the motion of this particle must be integrated. If
   // it is false, the position and velocity are defined by the function.
   bool integrate_motion;
-  // Bool that indicates if mesh based precalculations should be performed.
+  // Bool that indicates if mesh-based precalculations should be performed.
   // For RBF shapes with nodes outside the background mesh, slight deformations
-  // can happen near the boundary when mesh based precalculations is used (due
+  // can happen near the boundary when mesh-based precalculations is used (due
   // to the RBF nodes partitioning algorithm).
   bool mesh_based_precalculations;
   // Current residual of the particle velocity.

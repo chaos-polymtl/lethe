@@ -1016,7 +1016,7 @@ public:
    * @brief Sets the proper dof handler, then computes/updates the map of cells
    * and their likely non-null nodes
    * @param updated_dof_handler the reference to the new dof_handler
-  * @param mesh_based_precalculations mesh based precalculations that can lead to slight shape misrepresentation (if RBF typed)
+   * @param mesh_based_precalculations mesh-based precalculations that can lead to slight shape misrepresentation (if RBF typed)
    */
   void
   update_precalculations(DoFHandler<dim> &updated_dof_handler,
@@ -1032,7 +1032,7 @@ public:
   /**
    * @brief Remove data that doesn't affect the cells owned by local process   *
    * @param dof_handler the reference to the new dof_handler
-   * @param mesh_based_precalculations mesh based precalculations that can lead to slight shape misrepresentation (if RBF typed)
+   * @param mesh_based_precalculations mesh-based precalculations that can lead to slight shape misrepresentation (if RBF typed)
    */
   void
   remove_superfluous_data(DoFHandler<dim> &updated_dof_handler,
@@ -1314,7 +1314,7 @@ public:
    * sum.
    * @param shape_arguments_str the name of the file used to load the data
    * @param position the location of the RBF shape
-   * @param orientation the orientation of the shape in relation to each main
+   * @param orientation the orientation of the shape with respect to each main
    * axis
    */
   RBFShape<dim>(const std::string   shape_arguments_str,
@@ -1449,7 +1449,7 @@ public:
    * @brief Sets the proper dof handler, then computes/updates the map of cells
    * and their likely non-null nodes
    * @param dof_handler the reference to the new dof_handler
-   * @param mesh_based_precalculations mesh based precalculations that can lead to slight shape misrepresentation (if RBF typed)
+   * @param mesh_based_precalculations mesh-based precalculations that can lead to slight shape misrepresentation (if RBF typed)
    * */
   void
   update_precalculations(DoFHandler<dim> &updated_dof_handler,
@@ -1804,9 +1804,8 @@ private:
   size_t                               number_of_nodes;
   std::shared_ptr<HyperRectangle<dim>> bounding_box;
 
-  // Elements of this vector contain the RBF nones located in an active cell of
-  // which the tuple contains: the cell barycenter, the cell diameter, and the
-  // RBF nodes located inside
+  // Elements of this vector are tuples containing: the cell barycenter, the
+  // cell diameter, and the RBF nodes located inside the active cell
   std::vector<
     std::tuple<Point<dim>, double, std::shared_ptr<std::vector<size_t>>>>
     iterable_nodes;
