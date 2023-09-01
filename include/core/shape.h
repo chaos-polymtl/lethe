@@ -1023,7 +1023,8 @@ public:
                          const bool       mesh_based_precalculations);
 
   /**
-   * @brief Load data from file
+   * @brief Load data from file. To be called at initialization, after repartitioning or when shape has moved.
+   * This function is used only for RBF shapes and its composites at the moment.
    */
   void
   load_data_from_file();
@@ -1321,7 +1322,8 @@ public:
                 const Tensor<1, 3> &orientation);
 
   /**
-   * @brief Load RBF data from file
+   * @brief Load RBF data from file. To be called at initialization, after repartitioning or when shape has moved.
+   * This function is used only for RBF shapes and its composites at the moment.
    */
   void
   load_data_from_file();
