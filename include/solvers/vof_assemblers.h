@@ -45,7 +45,7 @@ public:
    */
 
   virtual void
-  assemble_matrix(VOFScratchData<dim> &      scratch_data,
+  assemble_matrix(VOFScratchData<dim>       &scratch_data,
                   StabilizedMethodsCopyData &copy_data) = 0;
 
 
@@ -58,7 +58,7 @@ public:
    */
 
   virtual void
-  assemble_rhs(VOFScratchData<dim> &      scratch_data,
+  assemble_rhs(VOFScratchData<dim>       &scratch_data,
                StabilizedMethodsCopyData &copy_data) = 0;
 };
 
@@ -80,11 +80,12 @@ class VOFAssemblerCore : public VOFAssemblerBase<dim>
 {
 public:
   VOFAssemblerCore(std::shared_ptr<SimulationControl> simulation_control,
-                   Parameters::FEM                    fem_parameters,
-                   Parameters::VOF                    vof_parameters)
+                   const Parameters::FEM              fem_parameters,
+                   const Parameters::VOF              vof_parameters)
     : simulation_control(simulation_control)
     , fem_parameters(fem_parameters)
     , vof_parameters(vof_parameters)
+    , compressible(vof_parameters.compressible)
   {}
 
   /**
@@ -93,7 +94,7 @@ public:
    * @param copy_data (see base class)
    */
   virtual void
-  assemble_matrix(VOFScratchData<dim> &      scratch_data,
+  assemble_matrix(VOFScratchData<dim>       &scratch_data,
                   StabilizedMethodsCopyData &copy_data) override;
 
 
@@ -103,15 +104,18 @@ public:
    * @param copy_data (see base class)
    */
   virtual void
-  assemble_rhs(VOFScratchData<dim> &      scratch_data,
+  assemble_rhs(VOFScratchData<dim>       &scratch_data,
                StabilizedMethodsCopyData &copy_data) override;
 
   // enable/disable DCDD shock capturing model, for debugging purposes
   const bool DCDD = true;
 
   std::shared_ptr<SimulationControl> simulation_control;
-  Parameters::FEM                    fem_parameters;
-  Parameters::VOF                    vof_parameters;
+  const Parameters::FEM              fem_parameters;
+  const Parameters::VOF              vof_parameters;
+
+  // Controls if the compressibility term are assembled in the VOF equations
+  const bool compressible;
 };
 
 /**
@@ -139,7 +143,7 @@ public:
    */
 
   virtual void
-  assemble_matrix(VOFScratchData<dim> &      scratch_data,
+  assemble_matrix(VOFScratchData<dim>       &scratch_data,
                   StabilizedMethodsCopyData &copy_data) override;
 
   /**
@@ -148,7 +152,7 @@ public:
    * @param copy_data (see base class)
    */
   virtual void
-  assemble_rhs(VOFScratchData<dim> &      scratch_data,
+  assemble_rhs(VOFScratchData<dim>       &scratch_data,
                StabilizedMethodsCopyData &copy_data) override;
 
   std::shared_ptr<SimulationControl> simulation_control;

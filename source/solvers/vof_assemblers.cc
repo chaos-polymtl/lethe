@@ -43,7 +43,7 @@ VOFAssemblerCore<dim>::assemble_matrix(VOFScratchData<dim>       &scratch_data,
       // Store JxW in local variable for faster access;
       const double JxW = JxW_vec[q];
 
-      const Tensor<1, dim> phase_gradient = scratch_data.phase_gradients[q];
+      // We use the previous phase gradient for the shock capture
       const Tensor<1, dim> previous_phase_gradient =
         scratch_data.previous_phase_gradients[q];
 
@@ -111,13 +111,11 @@ VOFAssemblerCore<dim>::assemble_matrix(VOFScratchData<dim>       &scratch_data,
 
           // Strong Jacobian associated with the GLS
           // stabilization
-          strong_jacobian_vec[q][j] += velocity * grad_phi_phase_j +
-                                       phi_phase_j * velocity_divergence -
-                                       diffusivity * laplacian_phi_phase_j;
+          strong_jacobian_vec[q][j] +=
+            velocity * grad_phi_phase_j - diffusivity * laplacian_phi_phase_j;
 
-          // DCDD shock capturing
-          if (DCDD)
-            strong_jacobian_vec[q][j] += -vdcdd * laplacian_phi_phase_j;
+          if (compressible)
+            strong_jacobian_vec[q][j] += phi_phase_j * velocity_divergence;
         }
 
 
@@ -142,6 +140,11 @@ VOFAssemblerCore<dim>::assemble_matrix(VOFScratchData<dim>       &scratch_data,
                  diffusivity * grad_phi_phase_i * grad_phi_phase_j) *
                 JxW;
 
+              // Add compressibility term if the VOF is compressible
+              if (compressible)
+                local_matrix(i, j) +=
+                  phi_phase_i * phi_phase_j * velocity_divergence * JxW;
+
               // Addition to the cell matrix for GLS stabilization
               local_matrix(i, j) += tau * strong_jacobian_vec[q][j] *
                                     (grad_phi_phase_i * velocity) * JxW;
@@ -151,11 +154,7 @@ VOFAssemblerCore<dim>::assemble_matrix(VOFScratchData<dim>       &scratch_data,
                 {
                   local_matrix(i, j) +=
                     (vdcdd * scalar_product(grad_phi_phase_j,
-                                            dcdd_factor * grad_phi_phase_i) //+
-                     // d_vdcdd * grad_phi_phase_j.norm() *
-                     //   scalar_product(phase_gradient,
-                     //                  dcdd_factor * grad_phi_phase_i)
-                     ) *
+                                            dcdd_factor * grad_phi_phase_i)) *
                     JxW;
                 }
             }
@@ -257,9 +256,8 @@ VOFAssemblerCore<dim>::assemble_rhs(VOFScratchData<dim>       &scratch_data,
                                 phase * velocity_divergence -
                                 diffusivity * phase_laplacians;
 
-      // DCDD shock capturing
-      if (DCDD)
-        strong_residual_vec[q] += -vdcdd * phase_laplacians;
+      if (compressible)
+        strong_residual_vec[q] += phase * velocity_divergence;
 
       for (unsigned int i = 0; i < n_dofs; ++i)
         {
@@ -273,6 +271,9 @@ VOFAssemblerCore<dim>::assemble_rhs(VOFScratchData<dim>       &scratch_data,
                            phi_phase_i * phase * velocity_divergence +
                            diffusivity * grad_phi_phase_i * phase_gradient) *
                           JxW;
+
+          if (compressible)
+            local_rhs(i) -= phi_phase_i * phase * velocity_divergence * JxW;
 
 
           local_rhs(i) -=
