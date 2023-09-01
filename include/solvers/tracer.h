@@ -59,7 +59,7 @@ public:
                                                  p_triangulation,
               std::shared_ptr<SimulationControl> p_simulation_control)
     : AuxiliaryPhysics<dim, TrilinosWrappers::MPI::Vector>(
-        p_simulation_parameters.non_linear_solver)
+        p_simulation_parameters.non_linear_solver.at(PhysicsID::tracer))
     , multiphysics(multiphysics_interface)
     , computing_timer(p_triangulation->get_communicator(),
                       this->pcout,

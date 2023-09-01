@@ -171,10 +171,12 @@ The ``inexact_newton`` non-linear solver is used with a high ``tolerance``, sinc
 .. code-block:: text
 
     subsection non-linear solver
-      set solver         = inexact_newton
-      set verbosity      = verbose
-      set tolerance      = 1e-3
-      set max iterations = 10
+      subsection fluid dynamics
+        set solver         = inexact_newton
+        set verbosity      = verbose
+        set tolerance      = 1e-3
+        set max iterations = 10
+      end
     end
 
 Linear Solver

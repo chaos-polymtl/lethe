@@ -10,9 +10,6 @@ Initial refinement around IB particles - Step : 1 of 1
 *****************************
 Steady iteration:        1/2
 *****************************
----------------
-Fluid Dynamics
----------------
 div u : -3.08744e-18
 error at the weak BC : 0
 L2 error velocity : 0.111966 L2 error pressure: 1.00592
@@ -23,9 +20,6 @@ Steady iteration:        2/2
    Number of active cells:       1156
    Number of degrees of freedom: 7344
    Volume of triangulation:      8
----------------
-Fluid Dynamics
----------------
 div u : -0.0284233
 error at the weak BC : 0.125942
 L2 error velocity : 0.0936695 L2 error pressure: 1.10592

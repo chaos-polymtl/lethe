@@ -194,9 +194,11 @@ The ``newton`` non-linear solver is used with a medium ``tolerance``, since conv
 .. code-block:: text
 
     subsection non-linear solver
-      set verbosity      = verbose
-      set tolerance      = 1e-6
-      set max iterations = 10
+      subsection fluid dynamics
+        set verbosity      = verbose
+        set tolerance      = 1e-6
+        set max iterations = 10
+      end
     end
 
 Linear Solver

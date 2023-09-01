@@ -7,9 +7,6 @@ Running on 2 MPI rank(s)...
 *******************************************************************************
 Transient iteration: 1        Time: 0.01     Time step: 0.01     CFL: 0       
 *******************************************************************************
----------------
-Fluid Dynamics
----------------
 L2 error velocity : 0
 L2 error phase : 1.46905
 
@@ -36,18 +33,12 @@ Sharpening interface at step 2
    ... search algorithm took : 15 step(s) 
    ... error on mass conservation reached: 4.89308e-08
    ... final sharpening is : 0.435583
----------------
-Fluid Dynamics
----------------
 L2 error velocity : 0
 L2 error phase : 0.933933
 
 *******************************************************************************
 Transient iteration: 3        Time: 0.03     Time step: 0.01     CFL: 0       
 *******************************************************************************
----------------
-Fluid Dynamics
----------------
 L2 error velocity : 0
 L2 error phase : 0.933933
 
@@ -78,9 +69,6 @@ Sharpening interface at step 4
    ... search algorithm took : 19 step(s) 
    ... error on mass conservation reached: -7.08318e-08
    ... final sharpening is : 0.458224
----------------
-Fluid Dynamics
----------------
 L2 error velocity : 0
 L2 error phase : 0.605039
  time  error_velocity error_pressure 

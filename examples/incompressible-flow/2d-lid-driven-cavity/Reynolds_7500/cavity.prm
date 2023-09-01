@@ -89,8 +89,10 @@ end
 #---------------------------------------------------
 
 subsection non-linear solver
-  set tolerance = 1e-7
-  set verbosity = verbose
+  subsection fluid dynamics
+    set tolerance = 1e-7
+    set verbosity = verbose
+  end
 end
 
 # --------------------------------------------------
@@ -98,9 +100,9 @@ end
 #---------------------------------------------------
 
 subsection linear solver
-subsection fluid dynamics
-  set method                  = gmres
-  set preconditioner          = ilu
-  set ilu preconditioner fill = 2
-  set verbosity               = verbose
-end
+  subsection fluid dynamics
+    set method                  = gmres
+    set preconditioner          = ilu
+    set ilu preconditioner fill = 2
+    set verbosity               = verbose
+  end

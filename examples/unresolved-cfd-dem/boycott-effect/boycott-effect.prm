@@ -236,11 +236,13 @@ end
 #---------------------------------------------------
 
 subsection non-linear solver
-  set solver           = inexact_newton
-  set tolerance        = 1e-8
-  set max iterations   = 10
-  set verbosity        = verbose
-  set matrix tolerance = 0.75
+  subsection fluid dynamics
+    set solver           = inexact_newton
+    set tolerance        = 1e-8
+    set max iterations   = 10
+    set verbosity        = verbose
+    set matrix tolerance = 0.75
+  end
 end
 
 # --------------------------------------------------

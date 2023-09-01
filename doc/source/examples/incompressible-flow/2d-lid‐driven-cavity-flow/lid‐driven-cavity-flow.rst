@@ -156,8 +156,10 @@ Lethe is an implicit CFD solver. Consequently, each time-step requires the solut
 .. code-block:: text
 
     subsection non-linear solver
-      set tolerance = 1e-8
-      set verbosity = verbose
+      subsection fluid dynamics
+        set tolerance = 1e-8
+        set verbosity = verbose
+      end
     end
 
 The ``verbosity`` option specifies if details about the non-linear solver steps (residual value and iteration number) will be printed out to the terminal. By setting it to ``verbose``, this information is printed out, whereas ``quiet`` would mute all outputs of the non-linear solver. We recommend to always set ``verbosity=verbose`` in order to monitor possible non-convergence of the solver.

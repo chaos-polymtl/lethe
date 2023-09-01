@@ -96,7 +96,9 @@ subsection initial conditions
 end
 
 subsection non-linear solver
-  set verbosity = quiet
+  subsection fluid dynamics
+    set verbosity = quiet
+  end
 end
 
 subsection forces
