@@ -212,11 +212,13 @@ Non-linear Solver
 .. code-block:: text
 
     subsection non-linear solver
-      set verbosity             = verbose
-      set tolerance             = 1e-6
-      set max iterations        = 10
-      set residual precision    = 5
-      set force rhs calculation = true
+      subsection fluid dynamics
+        set verbosity             = verbose
+        set tolerance             = 1e-6
+        set max iterations        = 10
+        set residual precision    = 5
+        set force rhs calculation = true
+      end
     end
 	
 * The ``tolerance`` is set to 1e-6. This is small enough to ensure that the flow field is adequately resolved, as here, we expect a velocity of the particle of the order of 10.

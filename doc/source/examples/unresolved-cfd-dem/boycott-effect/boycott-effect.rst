@@ -319,11 +319,13 @@ Non-linear Solver
 .. code-block:: text
 
     subsection non-linear solver
-      set solver           = inexact_newton
-      set tolerance        = 1e-8
-      set max iterations   = 10
-      set verbosity        = verbose
-      set matrix tolerance = 0.75
+      subsection fluid dynamics
+        set solver           = inexact_newton
+        set tolerance        = 1e-8
+        set max iterations   = 10
+        set verbosity        = verbose
+        set matrix tolerance = 0.75
+      end
     end
 
 We use the ``inexact_newton`` solver as to avoid the reconstruction of the system matrix at each Newton iteration. For more information about the non-linear solver, please refer to the `Non Linear Solver Section <../../../parameters/cfd/non-linear_solver_control.html>`_

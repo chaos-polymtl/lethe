@@ -334,9 +334,11 @@ Non-linear Solver
 .. code-block:: text
 
   subsection non-linear solver
-    set tolerance      = 1e-9
-    set max iterations = 10
-    set verbosity      = verbose
+    subsection fluid dynamics
+      set tolerance      = 1e-9
+      set max iterations = 10
+      set verbosity      = verbose
+    end
   end
     
 Linear Solver
