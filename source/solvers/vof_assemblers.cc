@@ -136,7 +136,6 @@ VOFAssemblerCore<dim>::assemble_matrix(VOFScratchData<dim>       &scratch_data,
               // laplacian(phase) = 0
               local_matrix(i, j) +=
                 (phi_phase_i * velocity * grad_phi_phase_j +
-                 phi_phase_i * phi_phase_j * velocity_divergence +
                  diffusivity * grad_phi_phase_i * grad_phi_phase_j) *
                 JxW;
 
@@ -252,9 +251,8 @@ VOFAssemblerCore<dim>::assemble_rhs(VOFScratchData<dim>       &scratch_data,
                          9 * std::pow(4 * diffusivity / (h * h), 2));
 
       // Calculate the strong residual for GLS stabilization
-      strong_residual_vec[q] += velocity * phase_gradient +
-                                phase * velocity_divergence -
-                                diffusivity * phase_laplacians;
+      strong_residual_vec[q] +=
+        velocity * phase_gradient - diffusivity * phase_laplacians;
 
       if (compressible)
         strong_residual_vec[q] += phase * velocity_divergence;
@@ -268,7 +266,6 @@ VOFAssemblerCore<dim>::assemble_rhs(VOFScratchData<dim>       &scratch_data,
           // rhs for: u * grad(phase) + phase * grad(u) - diffusivity *
           // laplacian(phase) = 0
           local_rhs(i) -= (phi_phase_i * velocity * phase_gradient +
-                           phi_phase_i * phase * velocity_divergence +
                            diffusivity * grad_phi_phase_i * phase_gradient) *
                           JxW;
 
