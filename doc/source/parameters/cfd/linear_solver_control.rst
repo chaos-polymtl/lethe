@@ -96,12 +96,7 @@ In this subsection, the control options of the linear solvers are specified. The
 			* large :math:`\text{CFL}` condition (:math:`\text{CFL}>10`) and/or very large mesh: ``gmres`` solver with ``amg`` preconditioner may become preferable.
 
 	.. caution:: 
-		Be aware that the setup of the ``amg`` preconditioner is very expensive and does not scale linearly with the size of the matrix. As such, it is generally preferable to minimize the number of assembly of such preconditioner. This can be achieved by using the ``inexact newton`` (see :doc:`non-linear_solver_control`).
-		
-		The use of ``direct`` solver should be avoided for 3D problems.
-
-.. warning::
-    Currently, the ``gls_sharp_navier_stokes`` and ``gls_sharp_navier_stokes`` solvers make it almost impossible to reach convergence with the ``amg`` linear solver. It is recommended to use ``gmres`` instead, even for fine meshes.
+		The use of ``direct`` solver should be in general avoided as it is not efficient for large problems. It can be, however, used for debugging purposes or the development of new features.
 
 
 * The ``verbosity`` option enables the display of the residual at each non-linear iteration, to monitor the progress of the linear iterations.
@@ -153,6 +148,12 @@ In this subsection, the control options of the linear solvers are specified. The
 	Consider using ``set max krylov vectors = 200`` for complex simulations with convergence issues. 
 
 * ``preconditioner`` sets the type of preconditioning used for the linear solver. It can be either ``ilu`` for an Incomplete LU decomposition or ``amg`` for an Algebraic Multigrid. 
+
+.. warning::
+    Currently, the ``gls_sharp_navier_stokes`` and ``gls_sharp_navier_stokes`` solvers make it almost impossible to reach convergence with the ``amg`` preconditioner. Therefore, it is recommended to use ``ilu`` instead, even for fine meshes. In addition, the ``VOF``, ``heat transfer``, ``cahn hilliard`` and ``tracer`` physics only support ``ilu``.
+
+.. caution:: 
+		Be aware that the setup of the ``amg`` preconditioner is very expensive and does not scale linearly with the size of the matrix. As such, it is generally preferable to minimize the number of assembly of such preconditioner. This can be achieved by using the ``inexact newton`` for the nonlinear solver (see :doc:`non-linear_solver_control`).
 
 * ``ilu preconditioner fill``, ``ilu preconditioner absolute tolerance`` and ``ilu preconditioner relative tolerance`` are parameters that control the ``ilu`` preconditioner. Conversely, ``amg preconditioner ilu fill``, ``amg preconditioner ilu absolute tolerance`` and ``amg preconditioner ilu relative tolerance`` control the ILU coarsener and smoother used by the ``amg`` preconditioner.
  
