@@ -72,7 +72,7 @@ def mixing_index_doucet(self, reference_time_step = 0, use_cyl = False, increasi
 
     # Create list of mixing indices per time-step and array of eigenvectors
     self.mixing_index = Manager().list(np.empty(len(self.list_vtu)))
-    self.mixing_eigenvector = Manager().list(np.empty(len(self.list_vtu)))
+    self.mixing_eigenvector = Manager().list(np.empty((len(self.list_vtu), 3)))
 
     # Loop through dataframes and find its mixing index
     global mixing_index_doucet_loop
