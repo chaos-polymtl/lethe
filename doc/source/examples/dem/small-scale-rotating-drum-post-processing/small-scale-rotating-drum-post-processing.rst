@@ -2,11 +2,13 @@
 Small Scale Rotating Drum Post-processing
 ==========================================
 
-This is an example of how to post-process results obtained in the `Small scale rotating drum example <../../dem/small-scale-rotating-drum/small-scale-rotating-drum.html>`_ using `lethe_pyvista_tools <https://github.com/lethe-cfd/lethe/tree/master/contrib/postprocessing>`_, a Python module is based on `PyVista <https://docs.pyvista.org/>`_, built to facilitate the reading of Lethe results using `Python <https://www.python.org/>`_.
+This is an example of how to post-process results obtained in the `Small scale rotating drum example`_ using `lethe_pyvista_tools <https://github.com/lethe-cfd/lethe/tree/master/contrib/postprocessing>`_, a Python module is based on `PyVista <https://docs.pyvista.org/>`_, built to facilitate the reading of Lethe results using `Python <https://www.python.org/>`_.
+
+.. _`Small scale rotating drum example`: ../../dem/small-scale-rotating-drum/small-scale-rotating-drum.html
 
 .. important::
   
-  This example uses the DEM files of the `Small scale rotating drum example <../../dem/small-scale-rotating-drum/small-scale-rotating-drum.html>`_.
+  This example uses the DEM files of the `Small scale rotating drum example`_.
 
 .. warning::
   
@@ -39,7 +41,7 @@ In this example, we illustrate the mixing inside a rotating drum by coloring the
 
 Additionally, we calculate the mixing index using the Nearest Neighbors Method (NNM) [`1 <https://www.researchgate.net/profile/Niels-Deen/publication/228722534_Characterizing_solids_mixing_in_DEM_simulations/links/00b495289f429c5b39000000/Characterizing-solids-mixing-in-DEM-simulations.pdf>`_] and Doucet method [`2 <https://www.sciencedirect.com/science/article/abs/pii/S0263876208002724>`_, `3 <https://doi.org/10.1016/j.cherd.2016.12.018>`_].
 
-The DEM files used in this example are obtained following the `Small scale rotating drum example <../../dem/rotating-drum/small-scale-rotating-drum.html>`_.
+The DEM files used in this example are obtained following the `Small scale rotating drum example`_.
 
 .. note::
   It is not necessary to use all mentioned tools, but they are used in this example to show different ways to process the data according to user's need.
