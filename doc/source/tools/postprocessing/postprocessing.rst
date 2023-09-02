@@ -29,11 +29,15 @@ or
 
 .. code-block::
 
-    pip3 install .
+    pip install .
 
 .. note::
 
     If you do not have ``pip`` on your machine, run ``sudo apt install python3-pip``.
+
+.. tip::
+
+    Uninstalling ``lethe_pyvista_tools`` is exactly like doing so to any other library: ``pip3 uninstall lethe_pyvista_tools`` or ``pip3 uninstall lethe_pyvista_tools``.
 
 Importing without installing
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
