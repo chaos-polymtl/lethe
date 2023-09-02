@@ -47,7 +47,6 @@ def modify_array(self, reference_array_name = "ID", array_name = "new_array", re
     print("Generating array based on condition and array_value")
 
     # Sort all data by reference_array_name
-    print(f"Sort array by {reference_array_name}")
     self.sort_by_array(reference_array_name)
 
     # Time array
@@ -163,39 +162,39 @@ def modify_array(self, reference_array_name = "ID", array_name = "new_array", re
             else:
                 df = self.get_df(i)
 
-            exec(f"global x; x = df.points[:, 0]")
-            exec(f'global y; y = df.points[:, 1]')
-            exec(f'global z; z = df.points[:, 2]')
+            x = df.points[:, 0]
+            y = df.points[:, 1]
+            z = df.points[:, 2]
 
 
             # In case velocity is written with caps V or v
             if "velocity" in array_names:
-                exec(f'global u; u = df["velocity"][:, 0]')
-                exec(f'global v; v = df["velocity"][:, 1]')
-                exec(f'global w; w = df["velocity"][:, 2]')
+                u = df["velocity"][:, 0]
+                v = df["velocity"][:, 1]
+                w = df["velocity"][:, 2]
 
 
             elif "Velocity" in array_names:
-                exec(f'global u; u = df["Velocity"][:, 0]')
-                exec(f'global v; v = df["Velocity"][:, 1]')
-                exec(f'global w; w = df["Velocity"][:, 2]')
+                u = df["Velocity"][:, 0]
+                v = df["Velocity"][:, 1]
+                w = df["Velocity"][:, 2]
 
             # In case of FemForce or fem_force
             if "FemForce" in array_names:
-                exec(f'global f_x; f_x = df["FemForce"][:, 0]')
-                exec(f'global f_y; f_y = df["FemForce"][:, 1]')
-                exec(f'global f_z; f_z = df["FemForce"][:, 2]')
+                f_x = df["FemForce"][:, 0]
+                f_y = df["FemForce"][:, 1]
+                f_z = df["FemForce"][:, 2]
 
             elif "fem_force" in array_names:
-                exec(f'global f_x; f_x = df["fem_force"][:, 0]')
-                exec(f'global f_y; f_y = df["fem_force"][:, 1]')
-                exec(f'global f_z; f_z = df["fem_force"][:, 2]')
+                f_x = df["fem_force"][:, 0]
+                f_y = df["fem_force"][:, 1]
+                f_z = df["fem_force"][:, 2]
 
             # In case of fem_torque
             if "fem_torque" in array_names:
-                exec(f'global t_x; t_x = df["fem_torque"][:, 0]')
-                exec(f'global t_y; t_y = df["fem_torque"][:, 1]')
-                exec(f'global t_z; t_z = df["fem_torque"][:, 2]')
+                t_x = df["fem_torque"][:, 0]
+                t_y = df["fem_torque"][:, 1]
+                t_z = df["fem_torque"][:, 2]
 
             # Update lists used either in "condition" or "array_value":
             for variable in new_variables:
@@ -243,39 +242,39 @@ def modify_array(self, reference_array_name = "ID", array_name = "new_array", re
         else:
             df_reference = self.get_df(reference_time_step)
 
-        exec(f'global x; x = df_reference.points[:, 0]')
-        exec(f'global y; y = df_reference.points[:, 1]')
-        exec(f'global z; z = df_reference.points[:, 2]')
+        x = df_reference.points[:, 0]
+        y = df_reference.points[:, 1]
+        z = df_reference.points[:, 2]
 
 
         # In case velocity is written with caps V or v
         if "velocity" in array_names:
-            exec(f'global u; u = df_reference["velocity"][:, 0]')
-            exec(f'global v; v = df_reference["velocity"][:, 1]')
-            exec(f'global w; w = df_reference["velocity"][:, 2]')
+            u = df_reference["velocity"][:, 0]
+            v = df_reference["velocity"][:, 1]
+            w = df_reference["velocity"][:, 2]
 
 
         elif "Velocity" in array_names:
-            exec(f'global u; u = df_reference["Velocity"][:, 0]')
-            exec(f'global v; v = df_reference["Velocity"][:, 1]')
-            exec(f'global w; w = df_reference["Velocity"][:, 2]')
+            u = df_reference["Velocity"][:, 0]
+            v = df_reference["Velocity"][:, 1]
+            w = df_reference["Velocity"][:, 2]
 
         # In case of FemForce or fem_force
         if "FemForce" in array_names:
-            exec(f'global f_x; f_x = df_reference["FemForce"][:, 0]')
-            exec(f'global f_y; f_y = df_reference["FemForce"][:, 1]')
-            exec(f'global f_z; f_z = df_reference["FemForce"][:, 2]')
+            f_x = df_reference["FemForce"][:, 0]
+            f_y = df_reference["FemForce"][:, 1]
+            f_z = df_reference["FemForce"][:, 2]
 
         elif "fem_force" in array_names:
-            exec(f'global f_x; f_x = df_reference["fem_force"][:, 0]')
-            exec(f'global f_y; f_y = df_reference["fem_force"][:, 1]')
-            exec(f'global f_z; f_z = df_reference["fem_force"][:, 2]')
+            f_x = df_reference["fem_force"][:, 0]
+            f_y = df_reference["fem_force"][:, 1]
+            f_z = df_reference["fem_force"][:, 2]
 
         # In case of fem_torque
         if "fem_torque" in array_names:
-            exec(f'global t_x; t_x = df_reference["fem_torque"][:, 0]')
-            exec(f'global t_y; t_y = df_reference["fem_torque"][:, 1]')
-            exec(f'global t_z; t_z = df_reference["fem_torque"][:, 2]')
+            t_x = df_reference["fem_torque"][:, 0]
+            t_y = df_reference["fem_torque"][:, 1]
+            t_z = df_reference["fem_torque"][:, 2]
 
         # Fill new_array with array_value
         print(f"Creating new array named: {array_name}")

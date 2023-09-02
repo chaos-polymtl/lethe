@@ -37,6 +37,9 @@ def get_nearest_neighbors(self, return_id = True, n_neighbors = 15):
     At the moment of the implementation, sklearn version was: 1.2.1
     '''
 
+    if self.has_neighbors:
+        return
+
     # Loop through dataframes to search for neighbors
     pbar = tqdm(total = len(self.list_vtu), desc = "Finding neighbors")
     for i in range(len(self.list_vtu)):
@@ -73,3 +76,5 @@ def get_nearest_neighbors(self, return_id = True, n_neighbors = 15):
             df.save(f'{self.path_output}/{self.list_vtu[i]}')
 
         pbar.update(1)
+
+    self.has_neighbors = True

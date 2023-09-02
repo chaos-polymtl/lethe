@@ -53,7 +53,7 @@ def mixing_index_doucet(self, reference_time_step = 0, use_cyl = False, increasi
     else:
         df = self.get_df(reference_time_step)
 
-    if use_cyl and hasattr(df, "points_cyl") == False:
+    if use_cyl:
         self.get_cylindrical_coords()
 
         if self.df_available == False:

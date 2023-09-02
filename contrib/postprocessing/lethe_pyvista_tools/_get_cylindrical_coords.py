@@ -15,6 +15,9 @@ def get_cylindrical_coords(self, radial_components = "yz"):
     self.df[$TIME-STEP]['points_cyl'] -> Returns a .points like array with all 
     points in cylindrical [radius, theta, height].
     '''
+    
+    if self.has_cylindrical_coords:
+        return
 
     # List of indices of radial components
     radial_indices = []
@@ -70,3 +73,5 @@ def get_cylindrical_coords(self, radial_components = "yz"):
             df.save(f'{self.path_output}/{self.list_vtu[i]}')
 
         pbar.update(1)
+    
+    self.has_cylindrical_coords = True

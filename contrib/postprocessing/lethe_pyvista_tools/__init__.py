@@ -11,7 +11,7 @@ from tqdm import tqdm
 class lethe_pyvista_tools():
 
     def __init__(self, case_path = ".", prm_file_name = "", pvd_name = "", prefix = "mod_", first = 0, last = None,
-                    step = 1, read_to_df = False, ignore_data = []):
+                    step = 1, read_to_df = False, ignore_data = [], n_procs = None):
         '''
         Contructor of post-processing object.
         
@@ -56,6 +56,8 @@ class lethe_pyvista_tools():
 
         self.ignore_data        -> List of data to be ignored when reading
 
+        self.n_procs            -> Number of processors used to run each function using parallel_run. If None, use the number of available.
+
         This method assigns the following attributes to the object:
         
         self.pvd_name           -> Returns the name of the .pvd file.
@@ -70,6 +72,15 @@ class lethe_pyvista_tools():
         self.path_case = case_path
         self.prm_file = prm_file_name
         self.ignore_data = ignore_data
+        self.sorted = False
+        self.has_neighbors = False
+        self.has_cylindrical_coords = False
+
+        if n_procs == None:
+            from os import cpu_count
+            self.n_procs = cpu_count()
+        else:
+            self.n_procs = n_procs
 
         if not ".prm" in self.prm_file:
             self.prm_file = self.prm_file + ".prm"
@@ -264,6 +275,9 @@ class lethe_pyvista_tools():
 
     # IMPORT FUNCTIONS:
 
+    # Calculate mixing index using the method by Doucet et al. (2008)
+    from .parallel_run import parallel_run
+
     # Return single pyvista dataset from list
     from ._get_df import get_df
 
@@ -271,7 +285,7 @@ class lethe_pyvista_tools():
     from ._write_df_to_vtu import write_df_to_vtu
 
     # Sort all data given reference array
-    from ._sort_by_array import sort_by_array
+    from ._sort_by_array import sort_by_array#, sort_by_array_loop
 
     # Creates or modifies array
     from ._modify_array import modify_array
@@ -283,7 +297,7 @@ class lethe_pyvista_tools():
     from ._get_nearest_neighbors import get_nearest_neighbors
 
     # Calculate mixing index using Nearest Neighbors Method
-    from ._mixing_index_nearest_neighbors import mixing_index_nearest_neighbors
+    from ._mixing_index_nearest_neighbors import mixing_index_nearest_neighbors, mixing_index_nearest_neighbors_loop
 
     # Calculate mixing index using the method by Doucet et al. (2008)
     from ._mixing_index_doucet import mixing_index_doucet
