@@ -1,48 +1,48 @@
 import numpy as np
-from tqdm import tqdm
 from operator import itemgetter
 
-# Creates or modifies array
-def modify_array(self, reference_array_name = "ID", array_name = "new_array", restart_array = False,  condition = "", array_values = 0, standard_value = 0, reference_time_step = 0, time_dependent = False):
-    '''
-    Creates or modifies array
-    
-    Parameters are:
 
-    reference_array_name = "ID"        -> array to be used as reference to
+# Creates or modifies array
+def modify_array(self, reference_array_name = "ID", array_name = "new_array", restart_array = False,  condition = "",
+                 array_values = 0, standard_value = 0, reference_time_step = 0, time_dependent = False):
+    """
+    Creates or modifies array
+
+    Parameters are:
+    :param reference_array_name = "ID"        -> array to be used as reference to
     create or modify the other. All arrays will be sorted and written according to this one.
 
-    array_name           = "new_array" -> name of the new array. If there is an
+    :param array_name           = "new_array" -> name of the new array. If there is an
     array with the same name, it will be rewritten according to the other
     arguments.
 
-    restart_array        = False       -> if True, zeroes the entire array before
+    :param restart_array        = False       -> if True, zeroes the entire array before
     modifying it. If you want to modify part of the array keeping the rest
     intact, set it to False
 
-    condition            = ""          -> takes a string and uses it in an if
+    :param condition            = ""          -> takes a string and uses it in an if
     condition to modify the array. Variables accepted include x, y, z, u, v, w,
     t, and any other array.It also accepts a combination of them, such as:
     "x*w**2 + t > 2"
 
-    array_values         = 0           -> new values to the array. This argument
+    :param array_values         = 0           -> new values to the array. This argument
     accepts a single value (which will be repeated to all data respecting the
     given condition), an numpy array or python list (with the same len of all
     other arrays), or a string such as "2*x + t" (working just like the condition
     argument)
 
-    standard_value       = 0           -> if restart array is True, the
+    :param standard_value       = 0           -> if restart array is True, the
     standard_value will be the one plugged to the entire array before modifying
     it.
 
-    reference_time_step  = 0           -> reference time step to which the
+    :param reference_time_step  = 0           -> reference time step to which the
     modification will be applied. The others will follow this given one.
 
-    time_dependent       = False       -> the modifier can be time dependent or
+    :param time_dependent       = False       -> the modifier can be time dependent or
     not. If set True, the condition will be tested to each of the time-steps,
     while if False, it will be applied using the reference_time_step instead, and
     the modification will be just replicated to the other time steps
-    '''
+    """
 
     print("Generating array based on condition and array_value")
 
@@ -79,14 +79,14 @@ def modify_array(self, reference_array_name = "ID", array_name = "new_array", re
     # The previous values in it will be preserved.
     # This can be used to apply multiple conditions without affecting
     # Previous modifications, for example. 
-    if restart_array == True or array_name not in df.array_names:
-        # Create array if does not exist
+    if restart_array or array_name not in df.array_names:
+        # Create array if it does not exist
         new_array = np.repeat(standard_value, len(df[reference_array_name]))
         print(f"Creating array '{array_name}' with standard_value {standard_value}")
 
         # Push array to all pyvista arrays
-        pbar = tqdm(total = len(self.list_vtu), desc = f"Creating array: {array_name}")
-        for i in range(len(self.list_vtu)):
+        global create_array
+        def create_array(i):
             if self.df_available:
                 self.df[i][array_name] = np.repeat(standard_value, len(self.df[i][reference_array_name]))
             
@@ -95,7 +95,7 @@ def modify_array(self, reference_array_name = "ID", array_name = "new_array", re
                 df[array_name] = np.repeat(standard_value, len(df[reference_array_name]))
                 df.save(f'{self.path_output}/{self.list_vtu[i]}')
 
-            pbar.update(1)
+        self.parallel_run(create_array, range(len(self.list_vtu)), tqdm_desc = f"Creating array {array_name}")
 
     else:
         if self.df_available:
@@ -107,7 +107,6 @@ def modify_array(self, reference_array_name = "ID", array_name = "new_array", re
             print("Reading previous array")
             df_reference = self.get_df(reference_time_step)
             new_array = df_reference[array_name]
-
 
     # Create a list of array names that are used either in
     # "conditions" or in "array_values"
@@ -150,10 +149,9 @@ def modify_array(self, reference_array_name = "ID", array_name = "new_array", re
     # If results vary with time,
     # the condition and array_values will be applied
     # to all time steps
+    global modify_array_loop
     if time_dependent:
-        ("Creating time-dependent array:")
-        pbar = tqdm(total = len(self.time_list), desc = f"Looping through time-steps")
-        for i in range(len(self.list_vtu)):
+        def modify_array_loop(i):
             # Assign velocities and positions to variables using the ith
             # time step
             if self.df_available:
@@ -220,8 +218,6 @@ def modify_array(self, reference_array_name = "ID", array_name = "new_array", re
                 self.df[i] = df
             else:
                 df.save(f'{self.path_output}/{self.list_vtu[i]}')
-
-            pbar.update(1)
 
     # If not time dependent, the condition and array_values will be applied
     # at the reference_time_step.
@@ -305,8 +301,7 @@ def modify_array(self, reference_array_name = "ID", array_name = "new_array", re
         # according to the user by changin the parameter
         # "reference_array_name" to any other array name in the original
         # pyvista arrays
-        pbar = tqdm(total = len(self.list_vtu), desc = f"Assigning {array_name} to dataframes")
-        for i in range(len(self.list_vtu)):
+        def modify_array_loop(i):
             # Find elements in common in current and reference arrays
             if self.df_available:
                 df = self.df[i]
@@ -321,5 +316,4 @@ def modify_array(self, reference_array_name = "ID", array_name = "new_array", re
                 df[array_name][indices] = itemgetter(*keys)(reference_time_step_dict)
                 df.save(f'{self.path_output}/{self.list_vtu[i]}')
 
-
-            pbar.update(1)
+    self.parallel_run(modify_array_loop, range(len(self.list_vtu)), tqdm_desc = "Assigning array")

@@ -1,5 +1,6 @@
 import numpy as np
 from scipy.linalg import eigh
+from multiprocessing import Manager
 
 
 # Calculate mixing index using the method by Doucet et al. (2008)
@@ -70,8 +71,8 @@ def mixing_index_doucet(self, reference_time_step = 0, use_cyl = False, increasi
     id_keys = df["ID"]
 
     # Create list of mixing indices per time-step and array of eigenvectors
-    self.mixing_index = []
-    self.mixing_eigenvector = np.empty((len(self.list_vtu), 3))
+    self.mixing_index = Manager().list(np.empty(len(self.list_vtu)))
+    self.mixing_eigenvector = Manager().list(np.empty(len(self.list_vtu)))
 
     # Loop through dataframes and find its mixing index
     global mixing_index_doucet_loop
@@ -104,22 +105,19 @@ def mixing_index_doucet(self, reference_time_step = 0, use_cyl = False, increasi
         max_eigenvalue, assoc_eigenvectors = eigh(M, subset_by_index=[2, 2])
         max_eigenvalue = max_eigenvalue[0]
 
-        # Store reference eigenvalue for further normalization
-        max_eigenvalue_reference = 1
-        if i == reference_time_step:
-            max_eigenvalue_reference = max_eigenvalue
-
         # Store mixing index and associated eigenvector
-        self.mixing_index.append(max_eigenvalue)
+        self.mixing_index[i] = max_eigenvalue
         self.mixing_eigenvector[i] = assoc_eigenvectors.flatten()
 
-        # Normalize index
-        if normalize:
-            self.mixing_index = np.divide(self.mixing_index, max_eigenvalue_reference)
-
-        # Use increasing instead of decreasing index
-        if increasing_index:
-            self.mixing_index = 1 - self.mixing_index
-
     self.parallel_run(mixing_index_doucet_loop, range(len(self.list_vtu)), tqdm_desc = "Calculating mixing index")
-    
+
+    # Normalize index
+    if normalize:
+        max_eigenvalue_reference = self.mixing_index[reference_time_step]
+        self.mixing_index = np.divide(self.mixing_index, max_eigenvalue_reference)
+
+    # Use increasing instead of decreasing index
+    if increasing_index:
+        self.mixing_index = 1 - self.mixing_index
+
+

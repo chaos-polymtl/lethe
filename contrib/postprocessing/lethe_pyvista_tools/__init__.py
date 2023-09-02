@@ -123,7 +123,7 @@ class lethe_pyvista_tools():
                     try:
                         clean_line[1] = float(clean_line[1])
 
-                    finally:
+                    except:
                         pass
                     
                     # Define [variable, value] as key and value in the
