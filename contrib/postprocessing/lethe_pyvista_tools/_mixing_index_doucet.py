@@ -107,9 +107,12 @@ def mixing_index_doucet(self, reference_time_step = 0, use_cyl = False, increasi
 
         # Store mixing index and associated eigenvector
         self.mixing_index[i] = max_eigenvalue
-        self.mixing_eigenvector[i] = assoc_eigenvectors.flatten()
+        self.mixing_eigenvector[i] = assoc_eigenvectors.flatten().tolist()
 
     self.parallel_run(mixing_index_doucet_loop, range(len(self.list_vtu)), tqdm_desc = "Calculating mixing index")
+
+    # Fix eigenvector data structure
+    self.mixing_eigenvector = np.asarray(self.mixing_eigenvector)
 
     # Normalize index
     if normalize:
