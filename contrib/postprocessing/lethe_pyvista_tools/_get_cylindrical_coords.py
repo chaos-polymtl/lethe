@@ -1,20 +1,20 @@
 import numpy as np
-from tqdm import tqdm
+
 
 # Get cylindrical coordinates of each point of all dataframes
 def get_cylindrical_coords(self, radial_components = "yz"):
-    '''
+    """
     Get cylindrical coordinates of points in self.df datasets
 
     Parameter:
-    radial_components = "yz"         -> Cartesian directions of radial 
+    :param radial_components = "yz"           -> Cartesian directions of radial
     component.
 
     This method assigns the following attribute to the object:
     
-    self.df[$TIME-STEP]['points_cyl'] -> Returns a .points like array with all 
+    :return self.df[$TIME-STEP]['points_cyl'] -> Returns a .points like array with all
     points in cylindrical [radius, theta, height].
-    '''
+    """
     
     if self.has_cylindrical_coords:
         return
@@ -39,8 +39,8 @@ def get_cylindrical_coords(self, radial_components = "yz"):
     z_index = [x for x in [0, 1, 2] if x not in radial_indices]
 
     # Loop through data
-    pbar = tqdm(total = len(self.list_vtu), desc = "Getting cylindrical coords")
-    for i in range(len(self.list_vtu)):
+    global get_cylindrical_coords_loop
+    def get_cylindrical_coords_loop(i):
 
         if self.df_available:
             df = self.df[i]
@@ -72,6 +72,6 @@ def get_cylindrical_coords(self, radial_components = "yz"):
             df['points_cyl'][:, 2] = z
             df.save(f'{self.path_output}/{self.list_vtu[i]}')
 
-        pbar.update(1)
-    
+    self.parallel_run(get_cylindrical_coords_loop, range(len(self.list_vtu)), tqdm_desc = "Getting cylindrical coords")
+
     self.has_cylindrical_coords = True

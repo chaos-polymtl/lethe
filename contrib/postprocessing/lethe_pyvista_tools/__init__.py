@@ -10,55 +10,57 @@ from tqdm import tqdm
 # Define class:
 class lethe_pyvista_tools():
 
-    def __init__(self, case_path = ".", prm_file_name = "", pvd_name = "", prefix = "mod_", first = 0, last = None,
+    def __init__(self, case_path = '.', prm_file_name = '', pvd_name = '', prefix = 'mod_', first = 0, last = None,
                     step = 1, read_to_df = False, ignore_data = [], n_procs = None):
-        '''
-        Contructor of post-processing object.
+        """
+        Constructor of post-processing object.
         
         The data follows the data models provided by PyVista.
         For further information, consult:
         https://docs.pyvista.org/user-guide/data_model.html
         
-        The constructor parameters are:
+        The constructor parameters are (all accessible by self.$param):
 
-        case_path = "."         -> Path to the case, that is, the folder with 
+        :param case_path = '.'         -> Path to the case, that is, the folder with
         the prm file. By default, the present folder.
         
-        prm_file_name = ""      -> Name of the .prm file (including ".prm") 
+        :param prm_file_name = ''      -> Name of the .prm file (including '.prm')
         with simulation setup.
-
-        The resulting objects own the following attributes:
         
-        self.case_path          -> Returns the path to the case.
+        :param case_path               -> Path to the case.
         
-        self.prm_file           -> Returns the name of the prm_file.
+        :param prm_file_name           -> Name of the prm_file.
 
-        self.prm_dict.get($PARAMETER)-> Returns the parameter value given a
-        string with the parameter's name.
+        :param pvd_name                -> Name of the .pvd file containing the
+        reference to Lethe data.
+
+        :param prefix                  -> Prefix of the modified vtu and pvd files. By default, 'mod_'.
+        IMPORTANT!!!! If this parameter is empty, that is,  '',
+        data will be written over the original vtu and pvd files.
+
+        :param first = 0               -> First time-step to be read into PyVista
+        dataset.
+
+        :param last  = None            -> Last time-step to be read into PyVista
+        dataset.
+
+        :param step  = 1               -> Step between datasets.
+
+        :param read_to_df = False      -> Choose whether dataframes will be stored on
+        RAM, that is, will be available on self.df list.
+
+        :param ignore_data             -> List of data to be ignored when reading
+
+        :param n_procs                 -> Number of processors used to run each function using parallel_run.
+        If None, use the number of available.
+
+
+        This method assigns the following attributes to the object:
 
         self.path_output        -> Returns the path to the output folder.
 
-        pvd_name                -> Name of the .pvd file containing the 
-        reference to Lethe data.
-
-        prefix                  -> Prefix of the modified vtu and pvd files. By default, "mod_". IMPORTANT!!!! If this parameter is empty, that is,  "", data will be written over the original vtu and pvd files.
-
-        first = 0               -> First time-step to be read into PyVista 
-        dataset.
-
-        last  = None            -> Last time-step to be read into PyVista 
-        dataset.
-
-        step  = 1               -> Step between datasets.
-
-        read_to_df = False      -> Choose whether dataframes will be stored on
-        RAM, that is, will be available on self.df list.
-
-        self.ignore_data        -> List of data to be ignored when reading
-
-        self.n_procs            -> Number of processors used to run each function using parallel_run. If None, use the number of available.
-
-        This method assigns the following attributes to the object:
+        self.prm_dict.get($PARAMETER)-> Returns the parameter value given a
+        string with the parameter's name.
         
         self.pvd_name           -> Returns the name of the .pvd file.
         
@@ -67,7 +69,7 @@ class lethe_pyvista_tools():
 
         self.list_vtu           -> Returns the list of names of .vtu files.
 
-        '''
+        """
 
         self.path_case = case_path
         self.prm_file = prm_file_name
@@ -76,13 +78,13 @@ class lethe_pyvista_tools():
         self.has_neighbors = False
         self.has_cylindrical_coords = False
 
-        if n_procs == None:
+        if n_procs is None:
             from os import cpu_count
             self.n_procs = cpu_count()
         else:
             self.n_procs = n_procs
 
-        if not ".prm" in self.prm_file:
+        if ".prm" not in self.prm_file:
             self.prm_file = self.prm_file + ".prm"
         
         # Read .prm file to dictionary
@@ -98,7 +100,7 @@ class lethe_pyvista_tools():
                 # If the line has 'subsection' in it (and it is not commented)
                 if 'subsection' in line and not '#' in line:
 
-                    # Remove "subsetction"
+                    # Remove "subsection"
                     subsection_clean_line = line.replace('subsection', '')
                     # Clean line from spaces and assign key-value
                     subsection_clean_line = subsection_clean_line.strip()
@@ -119,10 +121,9 @@ class lethe_pyvista_tools():
                     
                     # Convert values to float when possible
                     try:
-                    
                         clean_line[1] = float(clean_line[1])
-                    except:
-                    
+
+                    finally:
                         pass
                     
                     # Define [variable, value] as key and value in the
@@ -180,7 +181,7 @@ class lethe_pyvista_tools():
         list_vtu = list(dict.fromkeys(list_vtu))
 
         # Select data
-        if last == None:
+        if last is None:
             list_vtu = list_vtu[first::step]
             self.time_list = self.time_list[first::step]
             self.first = first
@@ -197,7 +198,7 @@ class lethe_pyvista_tools():
         read_files_path_list = [pvd_datasets[x].path for x in range(len(pvd_datasets))]
 
         # Write new vtu and pvd files to store modified data.
-        # IMPORTANT!!!! If this parameter is empty, that is,  "", data will be written over the original vtu and pvd files.
+        # IMPORTANT!!!! If this parameter is empty, that is,  "", data will be written over original vtu and pvd files.
         with open(f'{self.path_output}/{pvd_name}') as pvd_in:
             with open(f'{self.path_output}/{prefix}{pvd_name}', 'w') as pvd_out:
                 for line in pvd_in:
@@ -224,8 +225,8 @@ class lethe_pyvista_tools():
                         pvd_out.write(line)
 
         # Make a copy of VTU files
-        N_vtu = len(list_vtu)
-        pbar = tqdm(total = N_vtu, desc="Writting modified VTU and PVD files")
+        n_vtu = len(list_vtu)
+        pbar = tqdm(total = n_vtu, desc="Writing modified VTU and PVD files")
         self.list_vtu = []
         for i in range(len(list_vtu)):
             # Copy file
@@ -259,8 +260,8 @@ class lethe_pyvista_tools():
             self.df = []
 
             # Read VTU data
-            N_vtu = len(self.list_vtu)
-            pbar = tqdm(total = N_vtu, desc="Reading VTU files")
+            n_vtu = len(self.list_vtu)
+            pbar = tqdm(total = n_vtu, desc="Reading VTU files")
             for i in range(len(self.list_vtu)):
                 
                 # Read dataframes from VTU files into df
@@ -270,8 +271,6 @@ class lethe_pyvista_tools():
             self.df_available = True
 
             print(f'Written .df[timestep] from timestep = 0 to timestep = {len(self.list_vtu)-1}')
-
-
 
     # IMPORT FUNCTIONS:
 
@@ -285,7 +284,7 @@ class lethe_pyvista_tools():
     from ._write_df_to_vtu import write_df_to_vtu
 
     # Sort all data given reference array
-    from ._sort_by_array import sort_by_array#, sort_by_array_loop
+    from ._sort_by_array import sort_by_array
 
     # Creates or modifies array
     from ._modify_array import modify_array
@@ -297,7 +296,7 @@ class lethe_pyvista_tools():
     from ._get_nearest_neighbors import get_nearest_neighbors
 
     # Calculate mixing index using Nearest Neighbors Method
-    from ._mixing_index_nearest_neighbors import mixing_index_nearest_neighbors, mixing_index_nearest_neighbors_loop
+    from ._mixing_index_nearest_neighbors import mixing_index_nearest_neighbors
 
     # Calculate mixing index using the method by Doucet et al. (2008)
     from ._mixing_index_doucet import mixing_index_doucet

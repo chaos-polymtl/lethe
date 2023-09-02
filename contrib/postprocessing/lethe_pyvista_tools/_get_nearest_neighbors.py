@@ -1,20 +1,22 @@
-from tqdm import tqdm
 from sklearn.neighbors import KDTree
+
 
 # Get neighbors of points
 def get_nearest_neighbors(self, return_id = True, n_neighbors = 15):
-    '''
-    Get indices, distances, and "ID" (if requested) of nearest neighbors of 
+    """
+    Get indices, distances, and "ID" (if requested) of nearest neighbors of
     each point in self.df.
 
     Parameters:
-    return_id = False         -> Decide whether ID is returned or not. If 
+    :param return_id = False         -> Decide whether ID is returned or not. If
     True, but self.df does not have "ID", attribute neighbors_id is not
     assigned.
 
+    :param n_neighbors = 15         -> Number of neighbors to search for.
+
     This method assigns the following attributes to the object:
-    
-    self.df[$TIME-STEP].neighbors       -> Returns a lists with 
+
+    self.df[$TIME-STEP].neighbors       -> Returns a lists with
     indices of neighbors per point in dataset.
 
     self.df[$TIME-STEP].neighbors_dist  -> Returns a list with distances
@@ -24,7 +26,7 @@ def get_nearest_neighbors(self, return_id = True, n_neighbors = 15):
     of neighbor points per point in dataset.
 
     !!!IMPORTANT!!!
-    
+
     This method uses KDTree to find neighbors.
     Details:
     https://scikit-learn.org/stable/modules/generated/sklearn.neighbors.KDTree.html
@@ -35,14 +37,14 @@ def get_nearest_neighbors(self, return_id = True, n_neighbors = 15):
     or
     $ pip3 install scikit-learn
     At the moment of the implementation, sklearn version was: 1.2.1
-    '''
+    """
 
     if self.has_neighbors:
         return
 
     # Loop through dataframes to search for neighbors
-    pbar = tqdm(total = len(self.list_vtu), desc = "Finding neighbors")
-    for i in range(len(self.list_vtu)):
+    global get_nearest_neighbors_loop
+    def get_nearest_neighbors_loop(i):
 
         if self.df_available:
             df = self.df[i]
@@ -75,6 +77,6 @@ def get_nearest_neighbors(self, return_id = True, n_neighbors = 15):
             df["neighbors_dist"] = dist
             df.save(f'{self.path_output}/{self.list_vtu[i]}')
 
-        pbar.update(1)
+    self.parallel_run(get_nearest_neighbors_loop, range(len(self.list_vtu)), tqdm_desc = "Finding neighbors")
 
     self.has_neighbors = True

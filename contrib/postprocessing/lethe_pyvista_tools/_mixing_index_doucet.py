@@ -1,44 +1,44 @@
 import numpy as np
-from tqdm import tqdm
 from scipy.linalg import eigh
+
 
 # Calculate mixing index using the method by Doucet et al. (2008)
 def mixing_index_doucet(self, reference_time_step = 0, use_cyl = False, increasing_index = False, normalize = True):
-    '''
+    """
     Calculates mixing index per time-step using the method by
     Doucet et al. (2008).
-    J. Doucet, F. Bertrand, J. Chaouki. "A measure of mixing from 
-    Lagrangian tracking and its application to granular and fluid flow 
-    systems." Chemical Engineering Research and Design 86.12 (2008): 
+    J. Doucet, F. Bertrand, J. Chaouki. "A measure of mixing from
+    Lagrangian tracking and its application to granular and fluid flow
+    systems." Chemical Engineering Research and Design 86.12 (2008):
     1313-1321.
 
     Parameters:
-    
-    reference_time_step = 0     -> Time-step used as reference to 
+
+    :param reference_time_step = 0     -> Time-step used as reference to
     calculate mixing index.
 
-    use_cyl = False             -> Choose whether to use cylindrical or 
-    cartesian coordinates. If use_cyl = True, .point_cyl will be used 
-    (check get_cylindrical_coords method). Otherwise cartesian .points are 
+    :param use_cyl = False             -> Choose whether to use cylindrical or
+    cartesian coordinates. If use_cyl = True, .point_cyl will be used
+    (check get_cylindrical_coords method). Otherwise, cartesian .points are
     used.
 
-    increasing_index = False    -> Choose whether the mixing index is
-    increasing or decreasing with mixing. Doucet et al. (2008) uses a 
-    decreasing mixing index, however, most mixing indices increase with 
+    :param increasing_index = False    -> Choose whether the mixing index is
+    increasing or decreasing with mixing. Doucet et al. (2008) uses a
+    decreasing mixing index, however, most mixing indices increase with
     mixing.
 
-    normalize = False           -> Choose whether the mixing index is
+    :param normalize = False           -> Choose whether the mixing index is
     normalized according to the mixing index of the reference_time_step.
 
     This method assigns the following attributes to the object:
 
-    self.mixing_index           -> Normalized Doucet mixing index per 
+    self.mixing_index           -> Normalized Doucet mixing index per
     time-step. The normalization is done using the mixing index at
     reference_time_step.
-    
-    self.mixing_eigenvector     -> Eigenvector associated to the 
+
+    self.mixing_eigenvector     -> Eigenvector associated to the
     mixing index.
-    '''
+    """
 
     # Apply method by  J. Doucet, F. Bertrand, J. Chaouki.
     # "A measure of mixing from Lagrangian tracking and its application to 
@@ -56,7 +56,7 @@ def mixing_index_doucet(self, reference_time_step = 0, use_cyl = False, increasi
     if use_cyl:
         self.get_cylindrical_coords()
 
-        if self.df_available == False:
+        if not self.df_available:
             df = self.get_df(reference_time_step)
 
     # If cylindrical coordinates requested, assign points_cyl to reference
@@ -69,15 +69,13 @@ def mixing_index_doucet(self, reference_time_step = 0, use_cyl = False, increasi
     # Get position of particles corresponding IDs
     id_keys = df["ID"]
 
-
     # Create list of mixing indices per time-step and array of eigenvectors
     self.mixing_index = []
     self.mixing_eigenvector = np.empty((len(self.list_vtu), 3))
 
     # Loop through dataframes and find its mixing index
-    pbar = tqdm(total = len(self.list_vtu), desc = "Calculating mixing index")
-    for i in range(len(self.list_vtu)):
-
+    global mixing_index_doucet_loop
+    def mixing_index_doucet_loop(i):
         if self.df_available:
             df = self.df[i]
         else:
@@ -107,18 +105,21 @@ def mixing_index_doucet(self, reference_time_step = 0, use_cyl = False, increasi
         max_eigenvalue = max_eigenvalue[0]
 
         # Store reference eigenvalue for further normalization
+        max_eigenvalue_reference = 1
         if i == reference_time_step:
             max_eigenvalue_reference = max_eigenvalue
 
         # Store mixing index and associated eigenvector
         self.mixing_index.append(max_eigenvalue)
         self.mixing_eigenvector[i] = assoc_eigenvectors.flatten()
-        pbar.update(1)
-    
-    # Normalize index
-    if normalize:
-        self.mixing_index = np.divide(self.mixing_index, max_eigenvalue_reference)
 
-    # Use increasing instead of decreasing index
-    if increasing_index:
-        self.mixing_index = 1 - self.mixing_index
+        # Normalize index
+        if normalize:
+            self.mixing_index = np.divide(self.mixing_index, max_eigenvalue_reference)
+
+        # Use increasing instead of decreasing index
+        if increasing_index:
+            self.mixing_index = 1 - self.mixing_index
+
+    self.parallel_run(mixing_index_doucet_loop, range(len(self.list_vtu)), tqdm_desc = "Calculating mixing index")
+    
