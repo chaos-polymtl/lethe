@@ -60,7 +60,6 @@ VOFAssemblerCore<dim>::assemble_matrix(VOFScratchData<dim> &      scratch_data,
       // stabilization parameters. International Journal for Numerical Methods
       // in Fluids, 43(5), 555-575. Our implementation is based on equations
       // (70) and (79), which are adapted for the VOF solver.
-
       const double tolerance = 1e-12;
 
 
@@ -72,22 +71,17 @@ VOFAssemblerCore<dim>::assemble_matrix(VOFScratchData<dim> &      scratch_data,
       const double vdcdd =
         (0.5 * h * h) * velocity.norm() * phase_gradient_norm;
 
-      // We neglect to remove the diffusion aligned with the velocity
-      // as is done in the original article. This term generates poorer
-      // results than just using the vdcdd approach.
-      Tensor<1, dim>       s = velocity / (velocity.norm() + 1e-12);
+      // We remove the diffusion aligned with the velocity
+      // as is done in the original article.  In Tezduyar 2003, this is denoted
+      // s.
+      Tensor<1, dim> velocity_unit_vector =
+        velocity / (velocity.norm() + 1e-12);
       const Tensor<2, dim> k_corr =
-        (gradient_unit_vector * s) * outer_product(s, s);
+        (gradient_unit_vector * velocity_unit_vector) *
+        outer_product(velocity_unit_vector, velocity_unit_vector);
       const Tensor<2, dim> gradient_unit_tensor =
         outer_product(gradient_unit_vector, gradient_unit_vector);
       const Tensor<2, dim> dcdd_factor = gradient_unit_tensor - k_corr;
-
-      // We neglect the gradient of the shock capturing viscosity in the
-      // jacobian matrix since it tends to destabilize the matrix Gradient of
-      // the shock capturing viscosity for the assembly of the jacobian matrix
-      // const double d_vdcdd = order * (0.5 * h * h) *
-      //                       (velocity.norm() * velocity.norm()) *
-      //                       pow(phase_gradient_norm * h, order - 1);
 
       // Calculation of the GLS stabilization parameter. The
       // stabilization parameter used is different if the simulation is
@@ -222,11 +216,14 @@ VOFAssemblerCore<dim>::assemble_rhs(VOFScratchData<dim> &      scratch_data,
       const double vdcdd =
         (0.5 * h * h) * velocity.norm() * phase_gradient_norm;
 
-      // We neglect to remove the diffusion aligned with the velocity
-      // as is done in the original article.
-      Tensor<1, dim>       s = velocity / (velocity.norm() + 1e-12);
+      // We  remove the diffusion aligned with the velocity
+      // as is done in the original article. In Tezduyar 2003, this is denoted
+      // s.
+      Tensor<1, dim> velocity_unit_vector =
+        velocity / (velocity.norm() + 1e-12);
       const Tensor<2, dim> k_corr =
-        (gradient_unit_vector * s) * outer_product(s, s);
+        (gradient_unit_vector * velocity_unit_vector) *
+        outer_product(velocity_unit_vector, velocity_unit_vector);
       const Tensor<2, dim> gradient_unit_tensor =
         outer_product(gradient_unit_vector, gradient_unit_vector);
       const Tensor<2, dim> dcdd_factor = gradient_unit_tensor - k_corr;
