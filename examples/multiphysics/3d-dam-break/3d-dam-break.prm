@@ -46,12 +46,7 @@ end
 subsection physical properties
   set number of fluids = 2
   subsection fluid 0
-      set density model = isothermal_ideal_gas
-    subsection isothermal_ideal_gas
-      set density_ref = 1.204
-      set R           = 287.05
-      set T           = 293.15
-    end
+    set density             = 1.204
     set kinematic viscosity = 0.01516
   end
   subsection fluid 1
