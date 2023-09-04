@@ -38,7 +38,8 @@ namespace Parameters
       linear,
       hertz_mindlin_limit_force,
       hertz_mindlin_limit_overlap,
-      hertz
+      hertz,
+      hertz_JKR
     };
 
     enum RollingResistanceMethod
@@ -82,7 +83,10 @@ namespace Parameters
       // Poisson's ratio of each particle type
       std::unordered_map<unsigned int, double> poisson_ratio_particle;
 
-      // Coefficients of restituion of each particle type
+      // Surface energy of each particle type
+      std::unordered_map<unsigned int, double> surface_energy_particle;
+
+      // Coefficients of restitution of each particle type
       std::unordered_map<unsigned int, double> restitution_coefficient_particle;
 
       // Friction coefficient of each particle type
@@ -106,6 +110,9 @@ namespace Parameters
 
       // Rolling friction coefficient wall
       double rolling_friction_wall;
+
+      // Surface energy wall
+      double surface_energy_wall;
 
       void
       declare_parameters(ParameterHandler &prm);
@@ -132,7 +139,8 @@ namespace Parameters
           &restitution_coefficient_particle,
         std::unordered_map<unsigned int, double> &friction_coefficient_particle,
         std::unordered_map<unsigned int, double>
-          &rolling_friction_coefficient_particle);
+          &rolling_friction_coefficient_particle,
+        std::unordered_map<unsigned int, double> &surface_energy_particle);
     };
 
     struct InsertionInfo
@@ -240,7 +248,8 @@ namespace Parameters
       enum class ParticleWallContactForceModel
       {
         linear,
-        nonlinear
+        nonlinear,
+        JKR
       } particle_wall_contact_force_method;
 
       // Rolling resistance torque method

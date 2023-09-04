@@ -195,6 +195,50 @@ set_particle_particle_contact_force_model(
               "Invalid contact force model and rolling resistance method combination");
         }
     }
+  else if (dem_parameters.model_parameters
+             .particle_particle_contact_force_model ==
+           Parameters::Lagrangian::ParticleParticleContactForceModel::hertz_JKR)
+    {
+      switch (dem_parameters.model_parameters.rolling_resistance_method)
+        {
+            case Parameters::Lagrangian::RollingResistanceMethod::
+              no_resistance: {
+              particle_particle_contact_force_object =
+                std::make_shared<ParticleParticleContactForce<
+                  dim,
+                  Parameters::Lagrangian::ParticleParticleContactForceModel::
+                    hertz_JKR,
+                  Parameters::Lagrangian::RollingResistanceMethod::
+                    no_resistance>>(dem_parameters);
+              break;
+            }
+            case Parameters::Lagrangian::RollingResistanceMethod::
+              constant_resistance: {
+              particle_particle_contact_force_object =
+                std::make_shared<ParticleParticleContactForce<
+                  dim,
+                  Parameters::Lagrangian::ParticleParticleContactForceModel::
+                    hertz_JKR,
+                  Parameters::Lagrangian::RollingResistanceMethod::
+                    constant_resistance>>(dem_parameters);
+              break;
+            }
+            case Parameters::Lagrangian::RollingResistanceMethod::
+              viscous_resistance: {
+              particle_particle_contact_force_object =
+                std::make_shared<ParticleParticleContactForce<
+                  dim,
+                  Parameters::Lagrangian::ParticleParticleContactForceModel::
+                    hertz_JKR,
+                  Parameters::Lagrangian::RollingResistanceMethod::
+                    viscous_resistance>>(dem_parameters);
+              break;
+            }
+          default:
+            throw std::runtime_error(
+              "Invalid contact force model and rolling resistance method combination");
+        }
+    }
   else
     {
       throw std::runtime_error(
