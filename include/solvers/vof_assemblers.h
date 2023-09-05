@@ -114,7 +114,7 @@ public:
   const Parameters::FEM              fem_parameters;
   const Parameters::VOF              vof_parameters;
 
-  // Controls if the compressibility term are assembled in the VOF equations
+  // Controls if the compressibility term is assembled in the VOF equation
   const bool compressible;
 };
 
