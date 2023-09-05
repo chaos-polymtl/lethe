@@ -274,7 +274,7 @@ class lethe_pyvista_tools():
 
     # IMPORT FUNCTIONS:
 
-    # Calculate mixing index using the method by Doucet et al. (2008)
+    # Apply multiprocessing imap
     from .parallel_run import parallel_run
 
     # Return single pyvista dataset from list
@@ -286,7 +286,7 @@ class lethe_pyvista_tools():
     # Sort all data given reference array
     from ._sort_by_array import sort_by_array
 
-    # Creates or modifies array
+    # Create or modifie array
     from ._modify_array import modify_array
 
     # Get cylindrical coordinates of each point of all dataframes
