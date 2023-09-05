@@ -240,7 +240,7 @@ public:
                           const bool       mesh_based_precalculations);
 
   /**
-   * Loads data from the files for file-based Shapes (RBF at the moment)
+   * @brief Loads data from the files for file-based Shapes (RBF at the moment)
    */
   void
   load_data_from_file();

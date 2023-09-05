@@ -72,7 +72,7 @@ Shape<dim>::align_and_center(const Point<dim> &evaluation_point) const
   // In 2D, only rotation around the z axis is possible
   if constexpr (dim == 2)
     {
-      if (std::abs(theta[2]) > 1e-10)
+      if (std::abs(theta[2]) > 1e-10 * this->effective_radius)
         {
           Tensor<2, 2> rotation_matrix =
             Physics::Transformations::Rotations::rotation_matrix_2d(-theta[2]);
@@ -94,7 +94,7 @@ Shape<dim>::align_and_center(const Point<dim> &evaluation_point) const
     {
       for (unsigned int i = 0; i < 3; ++i)
         {
-          if (std::abs(theta[i]) > 1e-10)
+          if (std::abs(theta[i]) > 1e-10 * this->effective_radius)
             {
               Tensor<1, 3> axis;
               axis[i] = 1.0;
@@ -151,7 +151,7 @@ Shape<dim>::reverse_align_and_center(const Point<dim> &evaluation_point) const
 
   if constexpr (dim == 2)
     {
-      if (std::abs(theta[2]) > 1e-10)
+      if (std::abs(theta[2]) > 1e-10 * this->effective_radius)
         {
           Tensor<2, 2> rotation_matrix =
             Physics::Transformations::Rotations::rotation_matrix_2d(theta[2]);
@@ -173,7 +173,7 @@ Shape<dim>::reverse_align_and_center(const Point<dim> &evaluation_point) const
     {
       for (unsigned int i = 0; i < dim; ++i)
         {
-          if (std::abs(theta[2 - i]) > 1e-10)
+          if (std::abs(theta[2 - i]) > 1e-10 * this->effective_radius)
             {
               Tensor<1, 3> axis;
               axis[2 - i] = 1.0;
@@ -241,7 +241,8 @@ Shape<dim>::closest_surface_point(
   // Check if the gradient is well-defined. If the point is on the surface,
   // the gradient can be badly defined for some shapes. We return the point
   // directly in these cases since it would be on the surface.
-  closest_point = p - (actual_gradient / (actual_gradient.norm() + 1e-16)) *
+  closest_point = p - (actual_gradient / (actual_gradient.norm() +
+                                          1e-16 * this->effective_radius)) *
                         distance_from_surface;
 }
 
@@ -259,7 +260,8 @@ Shape<dim>::closest_surface_point(const Point<dim> &p,
   // Check if the gradient is well-defined. If the point is on the surface,
   // the gradient can be badly defined for some shapes. We return the point
   // directly in these cases since it would be on the surface.
-  closest_point = p - (actual_gradient / (actual_gradient.norm() + 1e-16)) *
+  closest_point = p - (actual_gradient / (actual_gradient.norm() +
+                                          1e-16 * this->effective_radius)) *
                         distance_from_surface;
 }
 
@@ -517,9 +519,9 @@ Superquadric<dim>::gradient(const Point<dim> &evaluation_point,
       Point<dim> closest_point{};
       this->closest_surface_point(evaluation_point, closest_point);
 
-      Tensor<1, dim> gradient =
-        (evaluation_point - closest_point) /
-        ((evaluation_point - closest_point).norm() + 1e-16);
+      Tensor<1, dim> gradient = (evaluation_point - closest_point) /
+                                ((evaluation_point - closest_point).norm() +
+                                 1e-16 * this->effective_radius);
       return gradient;
     }
   else
@@ -1245,7 +1247,9 @@ CompositeShape<dim>::gradient(const Point<dim> &evaluation_point,
       // shape referential), we return that point to its global referential
       // equivalent, then compute the gradient in the global referential.
       Point<dim> closest_point_shape_referential =
-        centered_point - (gradient / (gradient.norm() + 1e-16)) * levelset;
+        centered_point -
+        (gradient / (gradient.norm() + 1e-16 * this->effective_radius)) *
+          levelset;
       Point<dim> closest_point_global_referential =
         this->reverse_align_and_center(closest_point_shape_referential);
       gradient = -(closest_point_global_referential - evaluation_point) /
@@ -1294,7 +1298,9 @@ CompositeShape<dim>::gradient_with_cell_guess(
       // shape referential), we return that point to its global referential
       // equivalent, then compute the gradient in the global referential.
       Point<dim> closest_point_shape_referential =
-        centered_point - (gradient / (gradient.norm() + 1e-16)) * levelset;
+        centered_point -
+        (gradient / (gradient.norm() + 1e-16 * this->effective_radius)) *
+          levelset;
       Point<dim> closest_point_global_referential =
         this->reverse_align_and_center(closest_point_shape_referential);
       gradient = -(closest_point_global_referential - evaluation_point) /
@@ -1618,7 +1624,7 @@ RBFShape<dim>::gradient(const Point<dim> &evaluation_point,
             (evaluation_point - rotated_nodes_positions[node_id]);
           distance            = (relative_position).norm();
           normalized_distance = distance / support_radii[node_id];
-          if (distance > 1e-16)
+          if (distance > 1e-16 * this->effective_radius)
             dr_dx_derivative = relative_position / distance;
           else
             {
@@ -2352,7 +2358,7 @@ CylindricalHelix<dim>::value(const Point<dim> &evaluation_point,
   unsigned int i = 0;
 
   // Newton iterations.
-  while (abs(residual) > 1e-8 && i < 20)
+  while (abs(residual) > 1e-8 * this->effective_radius && i < 20)
     {
       residual = -(radius * cos(t) - centered_point[0]) * sin(t) * radius +
                  (radius * sin(t) - centered_point[1]) * cos(t) * radius +
@@ -2402,7 +2408,7 @@ CylindricalHelix<dim>::value(const Point<dim> &evaluation_point,
                (2 * numbers::PI);
 
   i = 0;
-  while (abs(residual) > 1e-8 && i < 20)
+  while (abs(residual) > 1e-8 * this->effective_radius && i < 20)
     {
       residual = -(radius * cos(t) - centered_point[0]) * sin(t) * radius +
                  (radius * sin(t) - centered_point[1]) * cos(t) * radius +

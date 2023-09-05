@@ -352,11 +352,15 @@ void
 GLSSharpNavierStokesSolver<dim>::refinement_control(
   const bool initial_refinement)
 {
-  // We add a post-refinement check to update precalculations only if needed
-  bool triangulation_modified_here          = false;
-  bool triangulation_modified_at_least_once = false;
+  // We add a post-refinement check to update precalculations only if needed.
+  // Two booleans are used: the first one is used to update the precalculations,
+  // and the other one is used to remove superfluous nodes. We make this
+  // separation between the steps to avoid removing useful information until all
+  // triangulation refinement steps are done.
+  bool update_precalculations_flag  = false;
+  bool remove_superfluous_data_flag = false;
   this->triangulation->signals.post_refinement.connect(
-    [&triangulation_modified_here]() { triangulation_modified_here = true; });
+    [&update_precalculations_flag]() { update_precalculations_flag = true; });
 
   //  This function applies the various refinement steps depending on the
   //  parameters and the state.
@@ -387,7 +391,7 @@ GLSSharpNavierStokesSolver<dim>::refinement_control(
            this->simulation_parameters.particlesParameters->initial_refinement;
            ++i)
         {
-          triangulation_modified_here = false;
+          update_precalculations_flag = false;
           this->pcout << "Initial refinement around IB particles - Step : "
                       << i + 1 << " of "
                       << this->simulation_parameters.particlesParameters
@@ -396,9 +400,9 @@ GLSSharpNavierStokesSolver<dim>::refinement_control(
           refine_ib();
           NavierStokesBase<dim, TrilinosWrappers::MPI::Vector, IndexSet>::
             refine_mesh();
-          if (triangulation_modified_here)
+          if (update_precalculations_flag)
             {
-              triangulation_modified_at_least_once = true;
+              remove_superfluous_data_flag = true;
               update_precalculations_for_ib();
             }
         }
@@ -409,17 +413,17 @@ GLSSharpNavierStokesSolver<dim>::refinement_control(
     }
   if (initial_refinement == false)
     {
-      triangulation_modified_here = false;
+      update_precalculations_flag = false;
       refine_ib();
       NavierStokesBase<dim, TrilinosWrappers::MPI::Vector, IndexSet>::
         refine_mesh();
-      if (triangulation_modified_here)
+      if (update_precalculations_flag)
         {
-          triangulation_modified_at_least_once = true;
+          remove_superfluous_data_flag = true;
           update_precalculations_for_ib();
         }
     }
-  if (triangulation_modified_at_least_once || initial_refinement)
+  if (remove_superfluous_data_flag || initial_refinement)
     {
       for (unsigned int p_i = 0; p_i < particles.size(); ++p_i)
         {
