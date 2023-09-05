@@ -19,6 +19,7 @@ The default values of the VOF parameters are given in the text box below.
 
     set viscous dissipative fluid = fluid 1
     set diffusivity               = 0
+    set compressible              = false
 
     subsection interface sharpening
       set enable                  = false
@@ -78,6 +79,7 @@ The default values of the VOF parameters are given in the text box below.
     Applying viscous dissipation in one of the fluids instead of both is particularly useful when one of the fluids is air. For numerical stability, the ``kinematic viscosity`` of the air is usually increased. However, we do not want to have viscous dissipation in the air, because it would result in an unrealistic increase in its temperature. This parameter is used only if ``set heat transfer = true`` and ``set viscous dissipation = true`` in :doc:`./multiphysics`.
 
 * ``diffusivity``: value of the diffusivity (diffusion coefficient) in the transport equation of the phase fraction. Default value is ``0`` to have pure advection. Increase ``diffusivity`` to :ref:`improve wetting`.
+* ``compressible``: enables interface compression (:math:`\phi \nabla \cdot \mathbf{u}`) in the VOF equation.  This term should be kept to its default value of ``false`` except when compressible equations of state are used.
 
 
 Interface Sharpening

@@ -140,6 +140,13 @@ Parameters::VOF::declare_parameters(ParameterHandler &prm)
       Patterns::Double(),
       "Diffusivity (diffusion coefficient in L^2/s) in the VOF transport equation. "
       "Default value is 0 to have pure advection.");
+
+    prm.declare_entry(
+      "compressible",
+      "false",
+      Patterns::Bool(),
+      "Enable phase compressibility in the VOF equation. This leads to the inclusion of the phase * div(u) term in the VOF conservation equation. "
+      "It should be set to false when the phases are incompressible");
   }
   prm.leave_subsection();
 }
@@ -168,6 +175,9 @@ Parameters::VOF::parse_parameters(ParameterHandler &prm)
                                "Options are 'fluid 0', 'fluid 1' or 'both'."));
 
     diffusivity = prm.get_double("diffusivity");
+
+    compressible = prm.get_bool("compressible");
+
 
     // Error definitions
     if (sharpening.type == Parameters::SharpeningType::adaptative)

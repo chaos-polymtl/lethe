@@ -164,6 +164,9 @@ public:
     fe_values_vof.get_function_laplacians(current_solution,
                                           this->phase_laplacians);
 
+    fe_values_vof.get_function_gradients(previous_solutions[0],
+                                         this->previous_phase_gradients);
+
 
     // Gather previous vof values
     for (unsigned int p = 0; p < previous_solutions.size(); ++p)
@@ -249,8 +252,10 @@ public:
   std::vector<Point<dim>> quadrature_points;
 
   // VOF values
-  std::vector<double>              present_phase_values;
-  std::vector<Tensor<1, dim>>      phase_gradients;
+  std::vector<double>         present_phase_values;
+  std::vector<Tensor<1, dim>> phase_gradients;
+  std::vector<Tensor<1, dim>> previous_phase_gradients;
+
   std::vector<double>              phase_laplacians;
   std::vector<std::vector<double>> previous_phase_values;
 

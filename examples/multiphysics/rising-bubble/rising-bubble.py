@@ -58,9 +58,9 @@ plt.show()
 
 
 # Make the plot of the contour of the bubble
-list_vtu = os.listdir(output_dir)
-list_vtu = [(output_dir+"/"+x) for x in list_vtu if  ("vtu" in x and "pvtu" not in x) ]
-latest_file = max(list_vtu, key=os.path.getctime)
+list_pvtu = os.listdir(output_dir)
+list_pvtu = [(output_dir+"/"+x) for x in list_pvtu if  ("pvtu" in x)]
+latest_file = max(list_pvtu, key=os.path.getctime)
 print("Opening file: ", latest_file)
 sim = pv.read(latest_file)
 sim.set_active_scalars("filtered_phase")

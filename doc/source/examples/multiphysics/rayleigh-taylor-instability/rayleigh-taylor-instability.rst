@@ -77,15 +77,15 @@ and the max CFL is :math:`0.9`.
 .. code-block:: text
 
     subsection simulation control
-      set method         = bdf1
-      set time end       = 0.75
-      set time step      = 0.0002
-      set adapt          = true
-      set max cfl        = 0.9
-      set output name    = rayleigh-taylor
-      set output path    = ./output/
-      set output control = time
-      set output time    = 0.005
+      set method           = bdf2
+      set time end         = 0.75
+      set time step        = 0.001
+      set adapt            = true
+      set max cfl          = 0.8
+      set output control   = iteration
+      set output frequency = 10
+      set output name      = rayleigh-taylor
+      set output path      = ./output/
     end
 
 Multiphysics

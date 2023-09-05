@@ -44,7 +44,7 @@ output_path = sys.argv[1]
 
 #Define list of VTU files
 list_vtu = os.listdir(output_path)
-list_vtu = [x for x in list_vtu if ("vtu" in x and "pvtu" not in x)]
+list_vtu = [x for x in list_vtu if ("pvtu" in x)]
 
 # Sort VTU files to ensure they are in the same order as the time step
 list_vtu = sorted(list_vtu)
@@ -156,7 +156,7 @@ def read_my_data(results_path):
                     list_of_list_of_vars[nb_set_of_vars].append(np.array([]))
     return list_of_list_of_vars_name, list_of_list_of_vars
 
-list_of_list_of_vars_name,list_of_list_of_vars=read_my_data(output_path + "VOF_monitoring_fluid_1.dat")
+list_of_list_of_vars_name,list_of_list_of_vars=read_my_data(output_path + "/VOF_monitoring_fluid_1.dat")
 
 
 plt.plot(list_of_list_of_vars[0][0],list_of_list_of_vars[0][2])

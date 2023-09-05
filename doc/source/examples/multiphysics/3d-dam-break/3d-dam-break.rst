@@ -88,7 +88,7 @@ Simulation Control
 ~~~~~~~~~~~~~~~~~~
 
 Time integration is handled by a 1st order backward differentiation scheme (`bdf1`), for a :math:`6 \ \text{s}` simulation time with an initial time step of :math:`0.001 \ \text{s}`. Time-step adaptation is enabled using ``adapt=true``
-and the max CFL is :math:`0.5`.
+and the max CFL is :math:`0.8`.
 
 .. note::
     This example uses an adaptive time-stepping method, where the time-steps are modified during the simulation to keep the maximum value of the CFL condition below the given threshold (0.5).
@@ -100,7 +100,7 @@ and the max CFL is :math:`0.5`.
       set time end                     = 6
       set time step                    = 0.001
       set adapt                        = true
-      set max cfl                      = 0.5
+      set max cfl                      = 0.8
       set output name                  = 3d-dam-break
       set output frequency             = 5
       set output path                  = ./output/
@@ -146,7 +146,7 @@ The ``physical properties`` subsection defines the physical properties of the fl
 Initial Conditions
 ~~~~~~~~~~~~~~~~~~
 
-In the ``initial conditions`` subsection, we need to define the interface between the two fluids. We define this interface by using a function expression in the ``VOF`` subsection of ``initial conditions``.
+In the ``initial conditions`` subsection, we need to define the interface between the two fluids. We define this interface by using a function expression in the ``VOF`` subsection of ``initial conditions``. A projection step is applied to ensure a smooth definition of the initial condition.
 
 .. code-block:: text
 
@@ -158,6 +158,10 @@ In the ``initial conditions`` subsection, we need to define the interface betwee
 
       subsection VOF
         set Function expression = if (x>1.992 & z<0.55 & y>=-0.5, 1, 0)
+        subsection projection step
+          set enable           = true
+          set diffusion factor = 1
+        end
       end
     end
 

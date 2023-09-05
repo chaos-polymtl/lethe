@@ -220,6 +220,8 @@ namespace Parameters
     // more details.
     double diffusivity;
 
+    bool compressible;
+
     void
     declare_parameters(ParameterHandler &prm);
     void
