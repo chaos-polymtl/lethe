@@ -298,9 +298,10 @@ def modify_array(self, reference_array_name = "ID", array_name = "new_array", re
         # Use the same values for all time steps
         # Note that "reference_array_name" is used as criterium here
         # for sorting purposes, and that it can be changed
-        # according to the user by changin the parameter
+        # according to the user by changing the parameter
         # "reference_array_name" to any other array name in the original
         # pyvista arrays
+
         def modify_array_loop(i):
             # Find elements in common in current and reference arrays
             if self.df_available:

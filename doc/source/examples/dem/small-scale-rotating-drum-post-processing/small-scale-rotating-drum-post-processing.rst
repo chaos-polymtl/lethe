@@ -2,7 +2,7 @@
 Small Scale Rotating Drum Post-processing
 ==========================================
 
-This is an example of how to post-process results obtained in the `Small scale rotating drum example`_ using `lethe_pyvista_tools <https://github.com/lethe-cfd/lethe/tree/master/contrib/postprocessing>`_, a Python module is based on `PyVista <https://docs.pyvista.org/>`_, built to facilitate the reading of Lethe results using `Python <https://www.python.org/>`_.
+This is an example of how to post-process results obtained in the `Small scale rotating drum example`_ using `lethe_pyvista_tools <https://github.com/lethe-cfd/lethe/tree/master/contrib/postprocessing>`_, a Python module based on `PyVista <https://docs.pyvista.org/>`_, built to facilitate the reading of Lethe results using `Python <https://www.python.org/>`_.
 
 .. _`Small scale rotating drum example`: ../../dem/small-scale-rotating-drum/small-scale-rotating-drum.html
 
@@ -12,7 +12,7 @@ This is an example of how to post-process results obtained in the `Small scale r
 
 .. warning::
   
-  Details about installing the module or using it without installing are available on this `documentation <../../../tools/postprocessing/postprocessing.py>`_.
+  Details about installing the module or using it without installing it are available on this `documentation <../../../tools/postprocessing/postprocessing.py>`_.
 
 
 ----------------------------------

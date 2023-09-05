@@ -429,7 +429,7 @@ We briefly comment on some results that can be extracted from this example.
 
 .. important::
 
-    This example includes a post-processing file written in Python and using `lethe_pyvista_tools <../../../tools/postprocessing/postprocessing.html>`_. module.
+    This example includes a post-processing file written in Python that uses the `lethe_pyvista_tools <../../../tools/postprocessing/postprocessing.html>`_. module.
 
 .. important::
 
