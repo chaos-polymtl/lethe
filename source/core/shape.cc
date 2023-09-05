@@ -1472,9 +1472,7 @@ RBFShape<dim>::RBFShape(const std::string   shape_arguments_str,
   , max_number_of_inside_nodes(1)
   , maximal_support_radius(1)
   , weights(1)
-  , nodes_positions_x(1)
-  , nodes_positions_y(1)
-  , nodes_positions_z(1)
+  , nodes_positions(1)
   , support_radii(1)
   , basis_functions(1)
   , useful_rbf_nodes(1)
@@ -1678,29 +1676,20 @@ template <int dim>
 void
 RBFShape<dim>::initialize_bounding_box()
 {
-  Point<dim>           high_bounding_point{};
-  Point<dim>           low_bounding_point{};
-  Point<dim>           bounding_box_center{};
-  double               temp_coordinate;
-  Tensor<1, dim>       half_lengths = Tensor<1, dim>();
-  std::vector<double> *nodes_positions_d;
+  Point<dim>     high_bounding_point{};
+  Point<dim>     low_bounding_point{};
+  Point<dim>     bounding_box_center{};
+  Tensor<1, dim> half_lengths = Tensor<1, dim>();
   for (int d = 0; d < dim; d++)
     {
       high_bounding_point[d] = std::numeric_limits<double>::lowest();
       low_bounding_point[d]  = std::numeric_limits<double>::max();
-      if (d == 0)
-        nodes_positions_d = &nodes_positions_x;
-      else if (d == 1)
-        nodes_positions_d = &nodes_positions_y;
-      else
-        nodes_positions_d = &nodes_positions_z;
       for (size_t i = 0; i < number_of_nodes; i++)
         {
-          temp_coordinate = (*nodes_positions_d)[i];
           low_bounding_point[d] =
-            std::min(low_bounding_point[d], temp_coordinate);
+            std::min(low_bounding_point[d], nodes_positions[i][d]);
           high_bounding_point[d] =
-            std::max(high_bounding_point[d], temp_coordinate);
+            std::max(high_bounding_point[d], nodes_positions[i][d]);
         }
       bounding_box_center[d] =
         0.5 * (low_bounding_point[d] + high_bounding_point[d]);
@@ -1960,10 +1949,8 @@ RBFShape<dim>::load_data_from_file()
   support_radii.clear();
   basis_functions.clear();
   useful_rbf_nodes.clear();
+  nodes_positions.clear();
   rotated_nodes_positions.clear();
-  nodes_positions_x.clear();
-  nodes_positions_y.clear();
-  nodes_positions_z.clear();
 
   // The following lines retrieve information regarding an RBF
   // with a given file name. Then, it converts the information
@@ -1977,10 +1964,16 @@ RBFShape<dim>::load_data_from_file()
   weights.swap(rbf_data["weight"]);
   support_radii.swap(rbf_data["support_radius"]);
   basis_functions.swap(rbf_data["basis_function"]);
-  nodes_positions_x.swap(rbf_data["node_x"]);
-  nodes_positions_y.swap(rbf_data["node_y"]);
-  if constexpr (dim == 3)
-    nodes_positions_z.swap(rbf_data["node_z"]);
+  nodes_positions.resize(number_of_nodes);
+  Point<dim> temp_point;
+  for (unsigned int i = 0; i < number_of_nodes; i++)
+    {
+      temp_point[0] = rbf_data["node_x"][i];
+      temp_point[1] = rbf_data["node_y"][i];
+      if constexpr (dim == 3)
+        temp_point[2] = rbf_data["node_z"][i];
+      nodes_positions[i] = temp_point;
+    }
 
   std::shared_ptr<std::vector<size_t>> temp_nodes_id =
     std::make_shared<std::vector<size_t>>(number_of_nodes);
@@ -2098,19 +2091,11 @@ void
 RBFShape<dim>::rotate_nodes()
 {
   rotated_nodes_positions.clear();
-  Point<dim> temp_point{};
   rotated_nodes_positions.resize(weights.size());
   for (unsigned int i = 0; i < weights.size(); ++i)
-    {
-      temp_point[0] = nodes_positions_x[i];
-      temp_point[1] = nodes_positions_y[i];
-      if constexpr (dim == 3)
-        temp_point[2] = nodes_positions_z[i];
-      rotated_nodes_positions[i] = this->reverse_align_and_center(temp_point);
-    }
-  nodes_positions_x.clear();
-  nodes_positions_y.clear();
-  nodes_positions_z.clear();
+    rotated_nodes_positions[i] =
+      this->reverse_align_and_center(nodes_positions[i]);
+  nodes_positions.clear();
 }
 
 

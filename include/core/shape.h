@@ -1838,9 +1838,7 @@ private:
 
 public:
   std::vector<double>     weights;
-  std::vector<double>     nodes_positions_x;
-  std::vector<double>     nodes_positions_y;
-  std::vector<double>     nodes_positions_z;
+  std::vector<Point<dim>> nodes_positions;
   std::vector<Point<dim>> rotated_nodes_positions;
   std::vector<double>     support_radii;
   std::vector<double>     basis_functions;
