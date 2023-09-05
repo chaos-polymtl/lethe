@@ -8,15 +8,15 @@ set dimension = 2
 #---------------------------------------------------
 
 subsection simulation control
-  set method         = bdf1
-  set time end       = 0.75
-  set time step      = 0.0002
-  set adapt          = true
-  set max cfl        = 0.9
-  set output name    = rayleigh-taylor-constant-sharpening
-  set output path    = ./output/constant/
-  set output control = time
-  set output time    = 0.005
+  set method           = bdf2
+  set time end         = 0.75
+  set time step        = 0.001
+  set adapt            = true
+  set max cfl          = 0.8
+  set output name      = rayleigh-taylor-constant-sharpening
+  set output path      = ./output/constant/
+  set output control   = iteration
+  set output frequency = 10
 end
 
 #---------------------------------------------------
@@ -165,13 +165,13 @@ end
 subsection non-linear solver
   subsection VOF
     set verbosity      = verbose
-    set tolerance      = 1e-6
-    set max iterations = 20
+    set tolerance      = 1e-10
+    set max iterations = 2
   end
   subsection fluid dynamics
     set verbosity      = verbose
     set tolerance      = 1e-6
-    set max iterations = 20
+    set max iterations = 5
   end
 end
 
@@ -197,8 +197,8 @@ subsection linear solver
     set method                                = gmres
     set max krylov vectors                    = 500
     set max iters                             = 1000
-    set relative residual                     = 1e-5
-    set minimum residual                      = 1e-7
+    set relative residual                     = 1e-8
+    set minimum residual                      = 1e-11
     set preconditioner                        = ilu
     set ilu preconditioner fill               = 0
     set ilu preconditioner absolute tolerance = 1e-12
