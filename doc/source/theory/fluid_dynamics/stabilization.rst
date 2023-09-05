@@ -9,7 +9,8 @@ It is well known that, in the absence of stabilization, the choice of the veloci
 SUPG/PSPG Monolithic Formulation
 -----------------------------------
 
-This approach consists of two new terms that are added to the classic weak formulation. The first one is known as SUPG (Streamline-Upwind/ Petro-Galerkin) formulation and it is in charge of stabilizing the formulation for convection-dominated flows. The second one is known as PSPG (Pressure-Stabilizing/ Petrov-Galerkin) and as its name indicates, it reduces pressure oscillations when using equal order elements (e.g. Q1 elements for the velocity and Q1 elements for the pressure). Thus, the new weak form of the Navier-Stokes equation is given by:
+This approach consists of two new terms that are added to the classic weak formulation. The first one is known as
+SUPG (Streamline-Upwind/ Petrov-Galerkin) formulation and it is in charge of stabilizing the formulation for convection-dominated flows. The second one is known as PSPG (Pressure-Stabilizing/ Petrov-Galerkin) and as its name indicates, it reduces pressure oscillations when using equal order elements (e.g. Q1 elements for the velocity and Q1 elements for the pressure). Thus, the new weak form of the Navier-Stokes equation is given by:
 
 .. math::
 
