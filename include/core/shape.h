@@ -24,6 +24,8 @@
 #include <deal.II/grid/manifold.h>
 #include <deal.II/grid/manifold_lib.h>
 
+#include <boost/range/adaptor/map.hpp>
+
 #ifdef DEAL_II_WITH_OPENCASCADE
 #  include <deal.II/opencascade/manifold_lib.h>
 #  include <deal.II/opencascade/utilities.h>
@@ -916,7 +918,7 @@ public:
     , operations(operations)
   {
     // Calculation of the effective radius and setting of constituents' status
-    for (auto const &[constituent_id, constituent] : constituents)
+    for (auto const &constituent : constituents | boost::adaptors::map_values)
       {
         this->effective_radius =
           std::max(this->effective_radius, constituent->effective_radius);
@@ -956,7 +958,7 @@ public:
           }
       }
     // Calculation of the effective radius
-    for (auto const &[constituent_id, constituent] : constituents)
+    for (auto const &constituent : constituents | boost::adaptors::map_values)
       {
         this->effective_radius =
           std::max(this->effective_radius, constituent->effective_radius);

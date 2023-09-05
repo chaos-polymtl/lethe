@@ -1333,13 +1333,13 @@ CompositeShape<dim>::update_precalculations(
 {
   if (!mesh_based_precalculations)
     return;
-  for (auto const &[component_id, component] : constituents)
-    if (typeid(*component) == typeid(RBFShape<dim>))
-      std::static_pointer_cast<RBFShape<dim>>(component)
+  for (auto const &constituent : constituents | boost::adaptors::map_values)
+    if (typeid(*constituent) == typeid(RBFShape<dim>))
+      std::static_pointer_cast<RBFShape<dim>>(constituent)
         ->update_precalculations(updated_dof_handler,
                                  mesh_based_precalculations);
-    else if (typeid(*component) == typeid(CompositeShape<dim>))
-      std::static_pointer_cast<CompositeShape<dim>>(component)
+    else if (typeid(*constituent) == typeid(CompositeShape<dim>))
+      std::static_pointer_cast<CompositeShape<dim>>(constituent)
         ->update_precalculations(updated_dof_handler,
                                  mesh_based_precalculations);
 }
@@ -1348,11 +1348,12 @@ template <int dim>
 void
 CompositeShape<dim>::load_data_from_file()
 {
-  for (auto const &[component_id, component] : constituents)
-    if (typeid(*component) == typeid(RBFShape<dim>))
-      std::static_pointer_cast<RBFShape<dim>>(component)->load_data_from_file();
-    else if (typeid(*component) == typeid(CompositeShape<dim>))
-      std::static_pointer_cast<CompositeShape<dim>>(component)
+  for (auto const &constituent : constituents | boost::adaptors::map_values)
+    if (typeid(*constituent) == typeid(RBFShape<dim>))
+      std::static_pointer_cast<RBFShape<dim>>(constituent)
+        ->load_data_from_file();
+    else if (typeid(*constituent) == typeid(CompositeShape<dim>))
+      std::static_pointer_cast<CompositeShape<dim>>(constituent)
         ->load_data_from_file();
 }
 
@@ -1362,13 +1363,13 @@ CompositeShape<dim>::remove_superfluous_data(
   DoFHandler<dim> &updated_dof_handler,
   const bool       mesh_based_precalculations)
 {
-  for (auto const &[component_id, component] : constituents)
-    if (typeid(*component) == typeid(RBFShape<dim>))
-      std::static_pointer_cast<RBFShape<dim>>(component)
+  for (auto const &constituent : constituents | boost::adaptors::map_values)
+    if (typeid(*constituent) == typeid(RBFShape<dim>))
+      std::static_pointer_cast<RBFShape<dim>>(constituent)
         ->remove_superfluous_data(updated_dof_handler,
                                   mesh_based_precalculations);
-    else if (typeid(*component) == typeid(CompositeShape<dim>))
-      std::static_pointer_cast<CompositeShape<dim>>(component)
+    else if (typeid(*constituent) == typeid(CompositeShape<dim>))
+      std::static_pointer_cast<CompositeShape<dim>>(constituent)
         ->remove_superfluous_data(updated_dof_handler,
                                   mesh_based_precalculations);
 }
