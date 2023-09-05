@@ -6,6 +6,7 @@ Lethe has a `post-processing module <https://github.com/lethe-cfd/lethe/tree/mas
 
 The module is powered by `PyVista <https://docs.pyvista.org/>`_, a powerful 3D plotting and mesh analysis tool. It is a "pythonic" interface to deal wih Visualization Toolkit (VTK) data. The module also uses the powerful `multiprocessing <https://docs.python.org/3/library/multiprocessing.html>`_ Python library to increase post-processing speed by running tasks in multiple processors.
 
+
 .. warning::
 
   For `lethe_pyvista_tools <https://github.com/lethe-cfd/lethe/tree/master/contrib/postprocessing>`_ to work, along with `Python 3 <https://www.python.org/downloads/>`_, the following libraries are needed: `os <https://docs.python.org/3/library/os.html>`_, `NumPy <https://numpy.org/>`_, `PyVista <https://docs.pyvista.org/>`_, `tqdm <https://tqdm.github.io/>`_, `matplotlib <https://matplotlib.org/stable/index.html>`_, and `SciPy <https://scipy.org/>`_, and `scikit-learn <https://scikit-learn.org/stable/index.html>`_. If any of the modules are missing, use `pip <https://pypi.org/project/pip/>`_ to install it running ``pip3 install $NAME_OF_THE_MODULE`` on the terminal. Alternatively, use the ``requirements.txt`` file and install them all at once running ``pip install -r requirements.txt`` at ``contrib/postprocessing/``
@@ -14,12 +15,14 @@ The module is powered by `PyVista <https://docs.pyvista.org/>`_, a powerful 3D p
 Importing lethe_pyvista_tools
 ------------------------------
 
-There are to ways to have access to ``lethe_pyvista_tools``: you can install the module and have it on your machine just like ``os``, ``sys``, or other PyPi modules; or, you can use it without installing. Here, we explain how to do both.
+There are two ways to have access to ``lethe_pyvista_tools``: you can install the module and have it on your machine just like ``os``, ``sys``, or other PyPi modules; or, you can use it without installing. Here, we explain how to do both.
+
 
 Installing
 ~~~~~~~~~~
 
-Installing ``lethe_pyvista_tools`` is very simple. In the `contrib/protprocessing <https://github.com/lethe-cfd/lethe/tree/master/contrib/postprocessing>`_ of your Lethe version you will find all source files, including ``setup.py`` and ``requirements.txt``. Those two files take care of configuring your installation and assuring that everything is set. To install it, navigate to `contrib/protprocessing <https://github.com/lethe-cfd/lethe/tree/master/contrib/postprocessing>`_ on your terminal and run:
+Installing ``lethe_pyvista_tools`` is very simple. In the `contrib/postprocessing <https://github.com/lethe-cfd/lethe/tree/master/contrib/postprocessing>`_ of your Lethe version you will find all source files, including ``setup.py`` and ``requirements.txt``. Those two files take care of configuring your installation and assuring that everything is set. To install it, navigate to `contrib/postprocessing <https://github.com/lethe-cfd/lethe/tree/master/contrib/postprocessing>`_ on your terminal and run:
+
 
 .. code-block::
 
