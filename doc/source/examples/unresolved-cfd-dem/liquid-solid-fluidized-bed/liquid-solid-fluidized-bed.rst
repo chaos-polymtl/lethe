@@ -437,7 +437,7 @@ We briefly comment on some results that can be extracted from this example.
 
 .. important::
 
-    You need to ensure that the ``lethe_pyvista_tools`` is working on you machine. Click `here <../../../tools/postprocessing/postprocessing.html>`_ for details.
+    You need to ensure that the ``lethe_pyvista_tools`` is working on your machine. Click `here <../../../tools/postprocessing/postprocessing.html>`_ for details.
 
 Side View
 ~~~~~~~~~~~

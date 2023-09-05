@@ -224,7 +224,7 @@ It is possible to run the post-processing code with the following line. The argu
 
 .. important::
 
-    You need to ensure that ``lethe_pyvista_tools`` is working on you machine. Click `here <../../../tools/postprocessing/postprocessing.html>`_ for details.
+    You need to ensure that ``lethe_pyvista_tools`` is working on your machine. Click `here <../../../tools/postprocessing/postprocessing.html>`_ for details.
 
 
 -----------------------

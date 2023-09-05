@@ -4,7 +4,7 @@ Post-processing Lethe with PyVista
 
 Lethe has a `post-processing module <https://github.com/lethe-cfd/lethe/tree/master/contrib/postprocessing>`_ written in Python based on Lethe users specific needs. `lethe_pyvista_tools <https://github.com/lethe-cfd/lethe/tree/master/contrib/postprocessing>`_ was conceived to optimize the reading and post-treatment of Lethe data using Python.
 
-The module is powered by `PyVista <https://docs.pyvista.org/>`_, a powerful 3D plotting and mesh analysis tool. It is a "pythonic" interface to deal wih Visualization Toolkit (VTK) data. The module also uses the powerful `multiprocessing <https://docs.python.org/3/library/multiprocessing.html>`_ Python library to increase post-processing speed by running tasks in multiple processors.
+The module is powered by `PyVista <https://docs.pyvista.org/>`_, a powerful 3D plotting and mesh analysis tool. It is a *pythonic* interface to deal wih Visualization Toolkit (VTK) data. The module also uses the powerful `multiprocessing <https://docs.python.org/3/library/multiprocessing.html>`_ Python library to increase post-processing speed by running tasks in multiple processors.
 
 
 .. warning::
@@ -50,7 +50,7 @@ In this case, we use the `sys <https://docs.python.org/3/library/sys.html>`_ mod
 .. code-block::
 
   import sys
-  path_to_module = '$PATH_TO_LETHE/contrib/postprocessing/'
+  path_to_module = '$LETHE_PATH/contrib/postprocessing/'
   sys.path.append(path_to_module)
   from lethe_pyvista_tools import *
   import matplotlib.pyplot as plt
