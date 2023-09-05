@@ -63,7 +63,7 @@ This subsection contains the parameters related to the sharp immersed boundary s
         set shape arguments            = 1
         set integrate motion           = false
         set pressure location          = 0; 0; 0
-        set mesh based precalculations = true
+        set mesh-based precalculations = true
         
         subsection position
           set Function expression = 0; 0; 0
@@ -253,7 +253,7 @@ The following parameter and subsection are all inside the subsection ``particle 
 
 * The ``integrate motion`` parameter controls if the dynamics equations of the particles are calculated. If this parameter is set to false, the particles position, velocity, and angular velocity are defined directly by the functions. If ``integrate motion=true`` the position and the velocity will be defined by the integration of the particle dynamic.
 
-* The ``mesh based precalculations`` parameter controls if the mesh-based precalculations are applied. These precalculations are critical for good performance in medium to high detailed RBFs (and its composites), but can introduce deformations. These deformations appear when some RBF nodes are located outside of the background mesh.
+* The ``mesh-based precalculations`` parameter controls if the mesh-based precalculations are applied. These precalculations are critical for good performance in medium to high detailed RBFs (and its composites), but can introduce deformations. These deformations appear when some RBF nodes are located outside of the background mesh.
 
 * The ``pressure location`` parameter is used to define the X, Y, and Z coordinate offsets of the pressure reference point relative to the center of the particle. These parameters are used when the ``assemble Navier-Stokes inside particles`` parameter is set to ``true`` to define the pressure reference point.
 

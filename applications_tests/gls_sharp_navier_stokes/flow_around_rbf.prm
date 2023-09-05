@@ -77,7 +77,7 @@ subsection particles
   subsection particle info 0
     set type                       = rbf
     set shape arguments            = rbf_test_shape.input
-    set mesh based precalculations = false
+    set mesh-based precalculations = false
     subsection position
       set Function expression = 0.01;0.01;0.01
     end

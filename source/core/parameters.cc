@@ -2460,7 +2460,7 @@ namespace Parameters
       Patterns::Bool(),
       "Bool to define if the particle trajectory is integrated meaning its velocity and position will be updated at each time step according to the hydrodynamic force applied to it");
     prm.declare_entry(
-      "mesh based precalculations",
+      "mesh-based precalculations",
       "true",
       Patterns::Bool(),
       "Bool to define if precalculations should be performed between refinements. Precalculations can introduce shape deformation when the type is RBF and some nodes are located outside the background mesh.");
@@ -2869,7 +2869,7 @@ namespace Parameters
 
           particles[i].integrate_motion = prm.get_bool("integrate motion");
           particles[i].mesh_based_precalculations =
-            prm.get_bool("mesh based precalculations");
+            prm.get_bool("mesh-based precalculations");
 
           prm.enter_subsection("position");
           particles[i].f_position->parse_parameters(prm);
