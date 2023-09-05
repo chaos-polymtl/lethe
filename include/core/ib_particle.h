@@ -233,7 +233,7 @@ public:
   /**
    * @brief Updates precalculations if needed, then computes and removes superfluous data
    * @param updated_dof_handler the reference to the new dof_handler
-   * @param mesh_based_precalculations mesh-based precalculations that can lead to slight shape misrepresentation (if RBF typed)
+   * @param mesh_based_precalculations mesh-based precalculations that can lead to slight shape misrepresentation (if type=RBF)
    */
   void
   remove_superfluous_data(DoFHandler<dim> &updated_dof_handler,
