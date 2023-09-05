@@ -124,6 +124,11 @@ MFNavierStokesSolver<dim>::setup_dofs_fd()
 {
   TimerOutput::Scope t(this->computing_timer, "setup_dofs");
 
+  // Clear the preconditioners
+  ilu_preconditioner.reset();
+  gc_multigrid_preconditioner.reset();
+  ls_multigrid_preconditioner.reset();
+
   // Clear matrix free operator
   this->system_operator->clear();
 
@@ -364,7 +369,8 @@ MFNavierStokesSolver<dim>::setup_LSMG(SolverGMRES<VectorType> &solver)
         *this->mapping,
         this->dof_handler,
         level_constraints[level],
-        *this->cell_quadrature,
+        QGauss<1>(this->simulation_parameters.fem_parameters.velocity_order +
+                  1),
         this->forcing_function,
         this->simulation_parameters.physical_properties_manager
           .get_viscosity_scale(),
@@ -474,6 +480,7 @@ MFNavierStokesSolver<dim>::setup_GCMG(SolverGMRES<VectorType> &solver)
   MGLevelObject<std::shared_ptr<OperatorType>>       mg_operators;
   MGLevelObject<MGTwoLevelTransfer<dim, VectorType>> transfers;
   MGLevelObject<VectorType>                          mg_solution;
+  MGLevelObject<AffineConstraints<typename VectorType::value_type>> constraints;
 
   std::vector<std::shared_ptr<const Triangulation<dim>>>
     coarse_grid_triangulations;
@@ -491,15 +498,13 @@ MFNavierStokesSolver<dim>::setup_GCMG(SolverGMRES<VectorType> &solver)
   mg_operators.resize(minlevel, maxlevel);
   transfers.resize(minlevel, maxlevel);
   mg_solution.resize(minlevel, maxlevel);
+  constraints.resize(minlevel, maxlevel);
 
   for (unsigned int l = minlevel; l <= maxlevel; ++l)
     {
       dof_handlers[l].reinit(*coarse_grid_triangulations[l]);
       dof_handlers[l].distribute_dofs(this->dof_handler.get_fe());
     }
-
-  MGLevelObject<AffineConstraints<typename VectorType::value_type>> constraints(
-    minlevel, maxlevel);
 
   for (unsigned int level = minlevel; level <= maxlevel; ++level)
     {
@@ -537,7 +542,8 @@ MFNavierStokesSolver<dim>::setup_GCMG(SolverGMRES<VectorType> &solver)
         *this->mapping,
         level_dof_handler,
         level_constraint,
-        *this->cell_quadrature,
+        QGauss<1>(this->simulation_parameters.fem_parameters.velocity_order +
+                  1),
         this->forcing_function,
         this->simulation_parameters.physical_properties_manager
           .get_viscosity_scale(),
