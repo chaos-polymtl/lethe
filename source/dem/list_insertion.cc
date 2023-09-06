@@ -68,7 +68,7 @@ ListInsertion<dim>::ListInsertion(
   if (dim == 3)
     {
       Assert(list_x.size() == list_z.size(),
-             ListSizeCoherence(list_x.size(), list_z.size()));
+             PositionSizeCoherence(list_x.size(), list_z.size()));
 
       Assert(list_vx.size() == list_vz.size(),
              VelocitySizeCoherence(list_vx.size(), list_vz.size()));
@@ -79,6 +79,8 @@ ListInsertion<dim>::ListInsertion(
                                            list_wy.size(),
                                            list_wz.size()));
     }
+  Assert(list_x.size() == list_d.size(),
+         DiameterSizeCoherence(list_x.size(), list_d.size()));
 
   // Generate vector of insertion position
   for (unsigned int i = 0; i < list_x.size(); ++i)
