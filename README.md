@@ -78,9 +78,9 @@ Contributors (in alphabetical order):
 - Victor Oliveira Ferreira
 - Hélène Papillon-Laroche
 - Paul Patience
+- Laura Prieto Saavedra
 - Catherine Radburn
 - Philippe Rivest
-- Laura Prieto Saavedra
 - Mikael Vaillant
 
 ## License
