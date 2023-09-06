@@ -367,22 +367,43 @@ NavierStokesOperatorBase<dim, number>::get_system_matrix() const
     {
       const auto &dof_handler = this->matrix_free.get_dof_handler();
 
-      TrilinosWrappers::SparsityPattern dsp(
-        this->matrix_free.get_mg_level() != numbers::invalid_unsigned_int ?
-          dof_handler.locally_owned_mg_dofs(this->matrix_free.get_mg_level()) :
-          dof_handler.locally_owned_dofs(),
-        dof_handler.get_triangulation().get_communicator());
+      IndexSet locally_relevant_dofs;
+      DoFTools::extract_locally_relevant_dofs(dof_handler,
+                                              locally_relevant_dofs);
+      DynamicSparsityPattern dsp(locally_relevant_dofs);
 
-      if (this->matrix_free.get_mg_level() != numbers::invalid_unsigned_int)
-        MGTools::make_sparsity_pattern(dof_handler,
-                                       dsp,
-                                       this->matrix_free.get_mg_level(),
-                                       this->constraints);
-      else
-        DoFTools::make_sparsity_pattern(dof_handler, dsp, this->constraints);
+      DoFTools::make_sparsity_pattern(dof_handler,
+                                      dsp,
+                                      this->constraints,
+                                      false);
 
-      dsp.compress();
-      system_matrix.reinit(dsp);
+      SparsityTools::distribute_sparsity_pattern(
+        dsp,
+        dof_handler.locally_owned_dofs(),
+        dof_handler.get_triangulation().get_communicator(),
+        locally_relevant_dofs);
+
+      system_matrix.reinit(dof_handler.locally_owned_dofs(),
+                           dof_handler.locally_owned_dofs(),
+                           dsp,
+                           dof_handler.get_triangulation().get_communicator());
+
+      // TrilinosWrappers::SparsityPattern dsp(
+      //   this->matrix_free.get_mg_level() != numbers::invalid_unsigned_int ?
+      //     dof_handler.locally_owned_mg_dofs(this->matrix_free.get_mg_level())
+      //     : dof_handler.locally_owned_dofs(),
+      //   dof_handler.get_triangulation().get_communicator());
+
+      // if (this->matrix_free.get_mg_level() != numbers::invalid_unsigned_int)
+      //   MGTools::make_sparsity_pattern(dof_handler,
+      //                                  dsp,
+      //                                  this->matrix_free.get_mg_level(),
+      //                                  this->constraints);
+      // else
+      //   DoFTools::make_sparsity_pattern(dof_handler, dsp, this->constraints);
+
+      // dsp.compress();
+      // system_matrix.reinit(dsp);
 
       MatrixFreeTools::compute_matrix(
         matrix_free,
