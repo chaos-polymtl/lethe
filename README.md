@@ -68,6 +68,7 @@ Contributors (in alphabetical order):
 - Rajeshwari Kamble
 - Martin Kronbichler
 - Maxime Landry
+- Pierre Laurentin
 - Charles Le Pailleur
 - Oreste Marquis
 - Ghazaleh Mirakhori
