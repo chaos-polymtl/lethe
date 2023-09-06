@@ -56,6 +56,7 @@ Contributors (in alphabetical order):
 - Antoine Avrit
 - Lucka Barbeau
 - Valérie Bibeau
+- Bianca Bugeaud
 - Audrey Collard-Daigneault
 - Carole-Anne Daunais
 - Toni El Geitani
