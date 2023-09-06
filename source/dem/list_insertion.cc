@@ -14,11 +14,24 @@ DeclException2(VelocitySizeCoherence,
                << "Incoherent particle velocity lists n=" << arg1
                << ", m=" << arg2);
 
-DeclException2(AngularVelocitySizeCoherence,
+DeclException2(AngularVelocitySizeCoherence2,
                int,
                int,
-               << "Incoherent particle omega lists n=" << arg1
-               << ", m=" << arg2);
+               << "Incoherent particle omega lists w=" << arg1
+               << ", x=" << arg2);
+
+DeclException3(AngularVelocitySizeCoherence3,
+               int,
+               int,
+               int,
+               << "Incoherent particle omega lists wx=" << arg1
+               << ", wy=" << arg2 << ", wz=" << arg3);
+
+DeclException2(DiameterSizeCoherence,
+               int,
+               int,
+               << "Incoherent particle diameter lists n=" << arg1
+               << ", d=" << arg2);
 
 // The constructor of list insertion class does not accomplish anything other
 // than check if the position list are of the coherent size and to
@@ -45,19 +58,26 @@ ListInsertion<dim>::ListInsertion(
 
   Assert(list_x.size() == list_y.size(),
          PositionSizeCoherence(list_x.size(), list_y.size()));
+
   Assert(list_vx.size() == list_vy.size(),
          VelocitySizeCoherence(list_vx.size(), list_vy.size()));
-  Assert(list_wx.size() == list_wy.size(),
-         AngularVelocitySizeCoherence(list_wx.size(), list_wy.size()));
+
+  Assert(list_wz.size() == list_x.size(),
+         AngularVelocitySizeCoherence2(list_wz.size(), list_x.size()));
 
   if (dim == 3)
     {
-      Assert(list_y.size() == list_z.size(),
-             ListSizeCoherence(list_y.size(), list_z.size()));
-      Assert(list_vy.size() == list_vz.size(),
-             VelocitySizeCoherence(list_vy.size(), list_vz.size()));
-      Assert(list_wy.size() == list_wz.size(),
-             AngularVelocitySizeCoherence(list_wy.size(), list_wz.size()));
+      Assert(list_x.size() == list_z.size(),
+             ListSizeCoherence(list_x.size(), list_z.size()));
+
+      Assert(list_vx.size() == list_vz.size(),
+             VelocitySizeCoherence(list_vx.size(), list_vz.size()));
+
+      Assert(list_wx.size() == list_wy.size() &&
+               list_wx.size() == list_wz.size(),
+             AngularVelocitySizeCoherence3(list_wx.size(),
+                                           list_wy.size(),
+                                           list_wz.size()));
     }
 
   // Generate vector of insertion position

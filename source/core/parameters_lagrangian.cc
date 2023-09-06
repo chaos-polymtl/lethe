@@ -340,14 +340,10 @@ namespace Parameters
                           Patterns::List(Patterns::Double()),
                           "List of initial velocities x");
 
-        std::cout << __LINE__ << std::endl;
-
-
         prm.declare_entry("list velocity y",
                           "0",
                           Patterns::List(Patterns::Double()),
                           "List of initial velocities y");
-        std::cout << __LINE__ << std::endl;
 
         prm.declare_entry("list velocity z",
                           "0",

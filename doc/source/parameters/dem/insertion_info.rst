@@ -53,6 +53,13 @@ In this subsection, insertion methods which are ``uniform``, ``non_unifom``, ``p
     set list x                                         = 0.
     set list y                                         = 0.
     set list z                                         = 0.
+    set list velocity x                                = 0.
+    set list velocity y                                = 0.
+    set list velocity z                                = 0.
+    set list omega x                                   = 0.
+    set list omega y                                   = 0.
+    set list omega z                                   = 0.
+    set list diameters                                 = 0.
 
   end
 
@@ -116,7 +123,7 @@ The Plane insertion method inserts particles at the centroid of insertion cells.
 --------------------
 List
 --------------------
-The List insertion method insert particles at precis coordinates. This method is preferred for small number of particles.
+The List insertion method insert particles at precis coordinates with specific velocities (translational and angular) and diameters.  This method is preferred for small number of particles.
 
 * The ``list x``, ``list y`` and ``list z`` define the coordinates of every particles in the x, y and z directions, respectively. For example, if you want to insert particles at two locations, ``(0.,0.,0.) and (1.,2.,3.)`` , the list parameters should look like this :
 
@@ -125,3 +132,5 @@ The List insertion method insert particles at precis coordinates. This method is
     set list x = 0., 1.
     set list y = 0., 2.
     set list z = 0., 3.
+
+* The ``list velocity x``, ``list velocity y``, ``list velocity z``, ``list omega x``, ``list omega y``, ``list omega z`` and ``list diameters`` define the initial translational velocities, the initial angular velocities and diameters of each particles respectively following the same logic as the insertion coordinates.
