@@ -62,13 +62,26 @@ public:
          const parallel::distributed::Triangulation<dim> &triangulation,
          const DEMSolverParameters<dim> &dem_parameters) override;
 
+
+
+  void
+  assign_particle_properties_for_list_insertion(
+    const DEMSolverParameters<dim> &  dem_parameters,
+    const unsigned int &              inserted_this_step_this_proc,
+    const unsigned int &              current_inserting_particle_type,
+    std::vector<std::vector<double>> &particle_properties);
+
   // Number of remaining particles of each type that should be inserted in the
   // upcoming insertion steps
   unsigned int remaining_particles_of_each_type;
   unsigned int current_inserting_particle_type;
 
-  // Vector of the location used to insert the particles
+  // Vector of the location, velocity and angular velocity used to insert the
+  // particles
   std::vector<Point<dim>> insertion_points;
+  std::vector<Point<dim>> insertion_velocities;
+  std::vector<Point<dim>> insertion_angular_velocities;
+  std::vector<double>     insertion_diameters;
 };
 
 #endif /* uniform_insertion_h */

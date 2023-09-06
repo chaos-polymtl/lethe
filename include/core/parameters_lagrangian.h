@@ -170,7 +170,8 @@ namespace Parameters
       // Insertion random number seed
       int random_number_seed;
 
-      std::vector<double> list_x, list_y, list_z;
+      std::vector<double> list_x, list_y, list_z, list_vx, list_vy, list_vz,
+        list_wx, list_wy, list_wz, list_d;
 
       // Insertion plane definition
       Tensor<1, 3> insertion_plane_normal_vector;

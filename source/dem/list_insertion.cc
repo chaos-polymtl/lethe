@@ -2,10 +2,22 @@
 
 using namespace DEM;
 
-DeclException2(ListSizeCoherence,
+DeclException2(PositionSizeCoherence,
                int,
                int,
                << "Incoherent particle position lists n=" << arg1
+               << ", m=" << arg2);
+
+DeclException2(VelocitySizeCoherence,
+               int,
+               int,
+               << "Incoherent particle velocity lists n=" << arg1
+               << ", m=" << arg2);
+
+DeclException2(AngularVelocitySizeCoherence,
+               int,
+               int,
+               << "Incoherent particle omega lists n=" << arg1
                << ", m=" << arg2);
 
 // The constructor of list insertion class does not accomplish anything other
@@ -20,27 +32,55 @@ ListInsertion<dim>::ListInsertion(
   // Inializing current inserting particle type
   current_inserting_particle_type = 0;
 
-  const auto &list_x = dem_parameters.insertion_info.list_x;
-  const auto &list_y = dem_parameters.insertion_info.list_y;
-  const auto &list_z = dem_parameters.insertion_info.list_z;
-
+  const auto &list_x  = dem_parameters.insertion_info.list_x;
+  const auto &list_y  = dem_parameters.insertion_info.list_y;
+  const auto &list_z  = dem_parameters.insertion_info.list_z;
+  const auto &list_vx = dem_parameters.insertion_info.list_vx;
+  const auto &list_vy = dem_parameters.insertion_info.list_vy;
+  const auto &list_vz = dem_parameters.insertion_info.list_vz;
+  const auto &list_wx = dem_parameters.insertion_info.list_wx;
+  const auto &list_wy = dem_parameters.insertion_info.list_wy;
+  const auto &list_wz = dem_parameters.insertion_info.list_wz;
+  const auto &list_d  = dem_parameters.insertion_info.list_d;
 
   Assert(list_x.size() == list_y.size(),
-         ListSizeCoherence(list_x.size(), list_y.size()));
+         PositionSizeCoherence(list_x.size(), list_y.size()));
+  Assert(list_vx.size() == list_vy.size(),
+         VelocitySizeCoherence(list_vx.size(), list_vy.size()));
+  Assert(list_wx.size() == list_wy.size(),
+         AngularVelocitySizeCoherence(list_wx.size(), list_wy.size()));
+
   if (dim == 3)
     {
       Assert(list_y.size() == list_z.size(),
              ListSizeCoherence(list_y.size(), list_z.size()));
+      Assert(list_vy.size() == list_vz.size(),
+             VelocitySizeCoherence(list_vy.size(), list_vz.size()));
+      Assert(list_wy.size() == list_wz.size(),
+             AngularVelocitySizeCoherence(list_wy.size(), list_wz.size()));
     }
 
   // Generate vector of insertion position
   for (unsigned int i = 0; i < list_x.size(); ++i)
     {
       if (dim == 2)
-        insertion_points.emplace_back(Point<dim>({list_x[i], list_y[i]}));
+        {
+          insertion_points.emplace_back(Point<dim>({list_x[i], list_y[i]}));
+          insertion_velocities.emplace_back(
+            Point<dim>({list_vx[i], list_vy[i]}));
+          insertion_angular_velocities.emplace_back(
+            Point<dim>({list_wx[i], list_wy[i]}));
+        }
       else
-        insertion_points.emplace_back(
-          Point<dim>({list_x[i], list_y[i], list_z[i]}));
+        {
+          insertion_points.emplace_back(
+            Point<dim>({list_x[i], list_y[i], list_z[i]}));
+          insertion_velocities.emplace_back(
+            Point<dim>({list_vx[i], list_vy[i], list_vz[i]}));
+          insertion_angular_velocities.emplace_back(
+            Point<dim>({list_wx[i], list_wy[i], list_wz[i]}));
+        }
+      insertion_diameters.emplace_back(list_d[i]);
     }
 }
 
@@ -99,10 +139,11 @@ ListInsertion<dim>::insert(
 
 
       // Assign inserted particles properties
-      this->assign_particle_properties(dem_parameters,
-                                       n_particles_to_insert_this_proc,
-                                       current_inserting_particle_type,
-                                       this->particle_properties);
+      this->assign_particle_properties_for_list_insertion(
+        dem_parameters,
+        n_particles_to_insert_this_proc,
+        current_inserting_particle_type,
+        this->particle_properties);
 
       // Insert the particles using the points and assigned properties
       particle_handler.insert_global_particles(
@@ -122,6 +163,71 @@ ListInsertion<dim>::insert(
                                  pcout);
     }
 }
+
+template <int dim>
+void
+ListInsertion<dim>::assign_particle_properties_for_list_insertion(
+  const DEMSolverParameters<dim> &  dem_parameters,
+  const unsigned int &              inserted_this_step_this_proc,
+  const unsigned int &              current_inserting_particle_type,
+  std::vector<std::vector<double>> &particle_properties)
+{
+  // Clearing and resizing particle_properties
+  particle_properties.clear();
+  particle_properties.reserve(inserted_this_step_this_proc);
+
+  // Getting properties as local parameters
+  // TODO: MAYBE CHANGE THE INPUT TO PHYSICAL PROPERTIES DIRECTLY
+  auto physical_properties = dem_parameters.lagrangian_physical_properties;
+
+  // A loop is defined over the number of particles which are going to be
+  // inserted at this step
+  for (unsigned int particle_counter = 0;
+       particle_counter < inserted_this_step_this_proc;
+       ++particle_counter)
+    {
+      double type     = current_inserting_particle_type;
+      double diameter = this->insertion_diameters[particle_counter];
+      double density =
+        physical_properties.density_particle[current_inserting_particle_type];
+      double vel_x   = this->insertion_velocities[particle_counter][0];
+      double vel_y   = this->insertion_velocities[particle_counter][1];
+      double vel_z   = this->insertion_velocities[particle_counter][2];
+      double omega_x = this->insertion_angular_velocities[particle_counter][0];
+      double omega_y = this->insertion_angular_velocities[particle_counter][1];
+      double omega_z = this->insertion_angular_velocities[particle_counter][2];
+      double fem_force_x  = 0.;
+      double fem_force_y  = 0.;
+      double fem_force_z  = 0.;
+      double fem_torque_x = 0.;
+      double fem_torque_y = 0.;
+      double fem_torque_z = 0.;
+      double mass         = density * 4. / 3. * M_PI *
+                    Utilities::fixed_power<3, double>(diameter * 0.5);
+      double volumetric_contribution = 0.;
+
+      std::vector<double> properties_of_one_particle{type,
+                                                     diameter,
+                                                     vel_x,
+                                                     vel_y,
+                                                     vel_z,
+                                                     omega_x,
+                                                     omega_y,
+                                                     omega_z,
+                                                     fem_force_x,
+                                                     fem_force_y,
+                                                     fem_force_z,
+                                                     fem_torque_x,
+                                                     fem_torque_y,
+                                                     fem_torque_z,
+                                                     mass,
+                                                     volumetric_contribution};
+
+      particle_properties.push_back(properties_of_one_particle);
+      properties_of_one_particle.clear();
+    }
+}
+
 
 template class ListInsertion<2>;
 template class ListInsertion<3>;

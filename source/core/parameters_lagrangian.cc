@@ -335,30 +335,75 @@ namespace Parameters
                           Patterns::List(Patterns::Double()),
                           "List of particles z positions");
 
+        prm.declare_entry("list velocity x",
+                          "0",
+                          Patterns::List(Patterns::Double()),
+                          "List of initial velocities x");
+
+        std::cout << __LINE__ << std::endl;
+
+
+        prm.declare_entry("list velocity y",
+                          "0",
+                          Patterns::List(Patterns::Double()),
+                          "List of initial velocities y");
+        std::cout << __LINE__ << std::endl;
+
+        prm.declare_entry("list velocity z",
+                          "0",
+                          Patterns::List(Patterns::Double()),
+                          "List of initial velocities z");
+
+        prm.declare_entry("list omega x",
+                          "0",
+                          Patterns::List(Patterns::Double()),
+                          "List of initial omega x");
+
+        prm.declare_entry("list omega y",
+                          "0",
+                          Patterns::List(Patterns::Double()),
+                          "List of initial omega y");
+
+        prm.declare_entry("list omega z",
+                          "0",
+                          Patterns::List(Patterns::Double()),
+                          "List of initial omega z");
+
+        prm.declare_entry("list diameters",
+                          "1.0",
+                          Patterns::List(Patterns::Double()),
+                          "List of diameters");
+
         prm.declare_entry("velocity x",
                           "0.0",
                           Patterns::Double(),
                           "Initial velocity x");
+
         prm.declare_entry("velocity y",
                           "0.0",
                           Patterns::Double(),
                           "Initial velocity y");
+
         prm.declare_entry("velocity z",
                           "0.0",
                           Patterns::Double(),
                           "Initial velocity z");
+
         prm.declare_entry("omega x",
                           "0.0",
                           Patterns::Double(),
                           "Initial omega x");
+
         prm.declare_entry("omega y",
                           "0.0",
                           Patterns::Double(),
                           "Initial omega y");
+
         prm.declare_entry("omega z",
                           "0.0",
                           Patterns::Double(),
                           "Initial omega z");
+
         prm.declare_entry("insertion plane point",
                           "0., 0., 0.",
                           Patterns::List(Patterns::Double()),
@@ -436,6 +481,55 @@ namespace Parameters
         list_x = Utilities::string_to_double(x_str_list);
         list_y = Utilities::string_to_double(y_str_list);
         list_z = Utilities::string_to_double(z_str_list);
+
+        // Read vx, vv and vz list as a single string
+        std::string vx_str = prm.get("list velocity x");
+        std::string vy_str = prm.get("list velocity y");
+        std::string vz_str = prm.get("list velocity z");
+
+
+        // Convert vx,vy andv vz string to vector of strings
+        std::vector<std::string> vx_str_list(
+          Utilities::split_string_list(vx_str));
+        std::vector<std::string> vy_str_list(
+          Utilities::split_string_list(vy_str));
+        std::vector<std::string> vz_str_list(
+          Utilities::split_string_list(vz_str));
+
+        // Convert vx,vy and vz string vector to double vector
+        list_vx = Utilities::string_to_double(vx_str_list);
+
+        list_vy = Utilities::string_to_double(vy_str_list);
+        list_vz = Utilities::string_to_double(vz_str_list);
+
+
+        // Read wx, wy and wz list as a single string
+        std::string wx_str = prm.get("list omega x");
+        std::string wy_str = prm.get("list omega y");
+        std::string wz_str = prm.get("list omega z");
+
+        // Convert wx,wy and wz string to vector of strings
+        std::vector<std::string> wx_str_list(
+          Utilities::split_string_list(vx_str));
+        std::vector<std::string> wy_str_list(
+          Utilities::split_string_list(vy_str));
+        std::vector<std::string> wz_str_list(
+          Utilities::split_string_list(vz_str));
+
+        // Convert x,y and z string vector to double vector
+        list_wx = Utilities::string_to_double(wx_str_list);
+        list_wy = Utilities::string_to_double(wy_str_list);
+        list_wz = Utilities::string_to_double(wz_str_list);
+
+        // Read the diameters list as a single string
+        std::string d_str = prm.get("list diameters");
+
+        // Convert the diameters list to a vector of strings
+        std::vector<std::string> d_str_list(
+          Utilities::split_string_list(d_str));
+
+        // Convert the diameters string vector to a double vector
+        list_d = Utilities::string_to_double(d_str_list);
 
         // Insertion plane normal vector
         std::string plane_vector_str = prm.get("insertion plane normal vector");
