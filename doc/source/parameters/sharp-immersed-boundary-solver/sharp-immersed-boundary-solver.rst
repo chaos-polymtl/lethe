@@ -8,7 +8,6 @@ This subsection contains the parameters related to the sharp immersed boundary s
 
     subsection particles
       set assemble Navier-Stokes inside particles = false
-      set levels not precalculated                = 0
       set number of particles                     = 1
       
       subsection extrapolation function
@@ -60,10 +59,11 @@ This subsection contains the parameters related to the sharp immersed boundary s
       end
       
       subsection particle info 0
-        set type              = sphere 
-        set shape arguments   = 1
-        set integrate motion  = false
-        set pressure location = 0; 0; 0
+        set type                       = sphere
+        set shape arguments            = 1
+        set integrate motion           = false
+        set pressure location          = 0; 0; 0
+        set mesh-based precalculations = true
         
         subsection position
           set Function expression = 0; 0; 0
@@ -92,8 +92,6 @@ This subsection contains the parameters related to the sharp immersed boundary s
   end
 
 * The ``number of particles`` is the number of particles simulated by the sharp-edge IB.
-
-* The ``levels not precalculated`` parameter controls the number of layers of the hierarchical grid used by Lethe that are ignored by precalculations. It allows to reduce the memory footprint at the cost of an increased computing time. At the moment, this is used only for RBF shapes. The value should be increased when the RBF contains a lot of nodes and/or the grid is extremely fine.
 
 * The ``assemble Navier-Stokes inside particles`` parameter determines if the Navier-Stokes equations are solved inside the particles or not. If the Navier-Stokes equations are not solved (the parameter is false), the solver will solve a Poisson equation for each variable in the problem. This eliminates the need to define a reference value for the pressure.
 
@@ -254,6 +252,8 @@ The following parameter and subsection are all inside the subsection ``particle 
         As could be expected, using this type of shape requires that ``dealii`` be compiled with OpenCascade. This module can be installed with candi, by uncommenting the appropriate line in ``candi.cfg``.
 
 * The ``integrate motion`` parameter controls if the dynamics equations of the particles are calculated. If this parameter is set to false, the particles position, velocity, and angular velocity are defined directly by the functions. If ``integrate motion=true`` the position and the velocity will be defined by the integration of the particle dynamic.
+
+* The ``mesh-based precalculations`` parameter controls if the mesh-based precalculations are applied. These precalculations are critical for good performance in medium to high detailed RBFs (and its composites), but can introduce deformations. These deformations appear when some RBF nodes are located outside of the background mesh.
 
 * The ``pressure location`` parameter is used to define the X, Y, and Z coordinate offsets of the pressure reference point relative to the center of the particle. These parameters are used when the ``assemble Navier-Stokes inside particles`` parameter is set to ``true`` to define the pressure reference point.
 

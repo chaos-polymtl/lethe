@@ -138,11 +138,6 @@ ShapeGenerator::initialize_shape_from_vector(
                                                  position,
                                                  orientation);
     }
-  else if (type == "rbf")
-    {
-      shape =
-        std::make_shared<RBFShape<dim>>(shape_arguments, position, orientation);
-    }
   else
     StandardExceptions::ExcNotImplemented();
   return shape;
@@ -159,50 +154,7 @@ ShapeGenerator::initialize_shape_from_file(const std::string   type,
   std::vector<double>         shape_arguments;
   if (type == "rbf")
     {
-      bool default_case = (file_name == "1"); // Default case. This is the
-                                              // default argument for
-                                              // shapes defined in the parameter
-                                              // file.
-      if (!default_case)
-        {
-          // The following lines retrieve information regarding an RBF
-          // with a given file name. Then, it converts the information
-          // into one vector which is used to initialize the RBF shape.
-          // All the information is concatenated into only one object so
-          // that the usual initialization function can be called.
-          std::map<std::string, std::vector<double>> rbf_data;
-          fill_vectors_from_file(rbf_data, file_name, " ");
-          size_t number_of_nodes = rbf_data["weight"].size();
-          shape_arguments.reserve((dim + 3) * number_of_nodes);
-          shape_arguments.insert(shape_arguments.end(),
-                                 rbf_data["weight"].begin(),
-                                 rbf_data["weight"].end());
-          shape_arguments.insert(shape_arguments.end(),
-                                 rbf_data["support_radius"].begin(),
-                                 rbf_data["support_radius"].end());
-          shape_arguments.insert(shape_arguments.end(),
-                                 rbf_data["basis_function"].begin(),
-                                 rbf_data["basis_function"].end());
-          shape_arguments.insert(shape_arguments.end(),
-                                 rbf_data["node_x"].begin(),
-                                 rbf_data["node_x"].end());
-          shape_arguments.insert(shape_arguments.end(),
-                                 rbf_data["node_y"].begin(),
-                                 rbf_data["node_y"].end());
-          shape_arguments.insert(shape_arguments.end(),
-                                 rbf_data["node_z"].begin(),
-                                 rbf_data["node_z"].end());
-        }
-      else
-        {
-          // Default weight, support radius, basis function, x, y
-          shape_arguments = {2.0, 1.0, 2.0, 0.0, 0.0};
-          if constexpr (dim == 3)
-            // and z
-            shape_arguments.insert(shape_arguments.end(), 0.0);
-        }
-      shape =
-        std::make_shared<RBFShape<dim>>(shape_arguments, position, orientation);
+      shape = std::make_shared<RBFShape<dim>>(file_name, position, orientation);
     }
   else if (type == "composite")
     {

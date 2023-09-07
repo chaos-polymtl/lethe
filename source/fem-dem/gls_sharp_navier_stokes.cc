@@ -180,31 +180,13 @@ GLSSharpNavierStokesSolver<dim>::generate_cut_cells_map()
                           // previously evaluated cell. If we didn't find it in
                           // the previous evaluation, we assess whether the DOF
                           // is inside or outside the shape.
-                          auto iterator =
-                            inside_outside_support_point_vector[p].find(
-                              local_dof_indices[j]);
-                          if (iterator ==
-                              inside_outside_support_point_vector[p].end())
+                          if (particles[p].get_levelset(
+                                support_points[local_dof_indices[j]], cell) <=
+                              0)
                             {
-                              if (particles[p].get_levelset(
-                                    support_points[local_dof_indices[j]],
-                                    cell) <= 0)
-                                {
-                                  ++nb_dof_inside;
-                                  inside_outside_support_point_vector
-                                    [p][local_dof_indices[j]] = true;
-                                }
-                              else
-                                inside_outside_support_point_vector
-                                  [p][local_dof_indices[j]] = false;
-                            }
-                          else
-                            {
-                              if (inside_outside_support_point_vector
-                                    [p][local_dof_indices[j]] == true)
-                                {
-                                  ++nb_dof_inside;
-                                }
+                              ++nb_dof_inside;
+                              inside_outside_support_point_vector
+                                [p][local_dof_indices[j]] = true;
                             }
                         }
                     }
@@ -370,6 +352,16 @@ void
 GLSSharpNavierStokesSolver<dim>::refinement_control(
   const bool initial_refinement)
 {
+  // We add a post-refinement check to update precalculations only if needed.
+  // Two booleans are used: the first one is used to update the precalculations,
+  // and the other one is used to remove superfluous nodes. We make this
+  // separation between the steps to avoid removing useful information until all
+  // triangulation refinement steps are done.
+  bool update_precalculations_flag  = false;
+  bool remove_superfluous_data_flag = false;
+  this->triangulation->signals.post_refinement.connect(
+    [&update_precalculations_flag]() { update_precalculations_flag = true; });
+
   //  This function applies the various refinement steps depending on the
   //  parameters and the state.
   if (initial_refinement)
@@ -399,6 +391,7 @@ GLSSharpNavierStokesSolver<dim>::refinement_control(
            this->simulation_parameters.particlesParameters->initial_refinement;
            ++i)
         {
+          update_precalculations_flag = false;
           this->pcout << "Initial refinement around IB particles - Step : "
                       << i + 1 << " of "
                       << this->simulation_parameters.particlesParameters
@@ -407,7 +400,11 @@ GLSSharpNavierStokesSolver<dim>::refinement_control(
           refine_ib();
           NavierStokesBase<dim, TrilinosWrappers::MPI::Vector, IndexSet>::
             refine_mesh();
-          update_precalculations_for_ib();
+          if (update_precalculations_flag)
+            {
+              remove_superfluous_data_flag = true;
+              update_precalculations_for_ib();
+            }
         }
       this->simulation_parameters.mesh_adaptation.variables.begin()
         ->second.refinement_fraction = temp_refine;
@@ -416,10 +413,24 @@ GLSSharpNavierStokesSolver<dim>::refinement_control(
     }
   if (initial_refinement == false)
     {
+      update_precalculations_flag = false;
       refine_ib();
       NavierStokesBase<dim, TrilinosWrappers::MPI::Vector, IndexSet>::
         refine_mesh();
-      update_precalculations_for_ib();
+      if (update_precalculations_flag)
+        {
+          remove_superfluous_data_flag = true;
+          update_precalculations_for_ib();
+        }
+    }
+  if (remove_superfluous_data_flag || initial_refinement)
+    {
+      for (unsigned int p_i = 0; p_i < particles.size(); ++p_i)
+        {
+          TimerOutput::Scope t(this->computing_timer, "removing_rbf_nodes");
+          particles[p_i].remove_superfluous_data(
+            this->dof_handler, particles[p_i].mesh_based_precalculations);
+        }
     }
 }
 
@@ -1605,8 +1616,13 @@ GLSSharpNavierStokesSolver<dim>::output_field_hook(DataOut<dim> &data_out)
     {
       all_shapes.push_back(particle.shape);
     }
-  std::shared_ptr<Shape<dim>> combined_shapes =
-    std::make_shared<CompositeShape<dim>>(all_shapes, Point<dim>(), Point<3>());
+  std::shared_ptr<Shape<dim>> combined_shapes;
+  if (particles.size() == 1)
+    combined_shapes = particles[0].shape;
+  else
+    combined_shapes = std::make_shared<CompositeShape<dim>>(all_shapes,
+                                                            Point<dim>(),
+                                                            Point<3>());
 
   levelset_postprocessor =
     std::make_shared<LevelsetPostprocessor<dim>>(combined_shapes);
@@ -1669,11 +1685,6 @@ template <int dim>
 void
 GLSSharpNavierStokesSolver<dim>::postprocess_fd(bool firstIter)
 {
-  if (this->simulation_control->is_output_iteration())
-    {
-      this->write_output_results(this->present_solution);
-    }
-
   bool enable =
     this->simulation_parameters.analytical_solution->calculate_error();
   this->simulation_parameters.analytical_solution->set_enable(false);
@@ -4512,9 +4523,7 @@ GLSSharpNavierStokesSolver<dim>::update_precalculations_for_ib()
   for (unsigned int p_i = 0; p_i < particles.size(); ++p_i)
     {
       particles[p_i].update_precalculations(
-        this->dof_handler,
-        this->simulation_parameters.particlesParameters
-          ->levels_not_precalculated);
+        this->dof_handler, particles[p_i].mesh_based_precalculations);
     }
 }
 
