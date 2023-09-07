@@ -124,8 +124,9 @@ subsection particles
   end
 
   subsection particle info 0
-    set type            = rbf
-    set shape arguments = rbf_sphere.input
+    set type                       = rbf
+    set shape arguments            = rbf_sphere.input
+    set mesh-based precalculations = false
   end
 end
 
@@ -157,3 +158,4 @@ subsection linear solver
     set verbosity = quiet
   end
 end
+

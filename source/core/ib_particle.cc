@@ -255,20 +255,48 @@ IBParticle<dim>::set_orientation(const Tensor<1, 3> new_orientation)
 
 template <int dim>
 void
-IBParticle<dim>::update_precalculations(
-  DoFHandler<dim> &  updated_dof_handler,
-  const unsigned int levels_not_precalculated)
+IBParticle<dim>::update_precalculations(DoFHandler<dim> &updated_dof_handler,
+                                        const bool mesh_based_precalculations)
 {
+  if (integrate_motion || velocity.norm() > 1e-16 || omega.norm() > 1e-16)
+    {
+      this->load_data_from_file();
+    }
   if (typeid(*shape) == typeid(RBFShape<dim>))
     {
       std::static_pointer_cast<RBFShape<dim>>(shape)->update_precalculations(
-        updated_dof_handler, levels_not_precalculated);
+        updated_dof_handler, mesh_based_precalculations);
     }
   else if (typeid(*shape) == typeid(CompositeShape<dim>))
     {
       std::static_pointer_cast<CompositeShape<dim>>(shape)
-        ->update_precalculations(updated_dof_handler, levels_not_precalculated);
+        ->update_precalculations(updated_dof_handler,
+                                 mesh_based_precalculations);
     }
+}
+
+template <int dim>
+void
+IBParticle<dim>::remove_superfluous_data(DoFHandler<dim> &updated_dof_handler,
+                                         const bool mesh_based_precalculations)
+{
+  if (typeid(*shape) == typeid(RBFShape<dim>))
+    std::static_pointer_cast<RBFShape<dim>>(shape)->remove_superfluous_data(
+      updated_dof_handler, mesh_based_precalculations);
+  else if (typeid(*shape) == typeid(CompositeShape<dim>))
+    std::static_pointer_cast<CompositeShape<dim>>(shape)
+      ->remove_superfluous_data(updated_dof_handler,
+                                mesh_based_precalculations);
+}
+
+template <int dim>
+void
+IBParticle<dim>::load_data_from_file()
+{
+  if (typeid(*shape) == typeid(RBFShape<dim>))
+    std::static_pointer_cast<RBFShape<dim>>(shape)->load_data_from_file();
+  else if (typeid(*shape) == typeid(CompositeShape<dim>))
+    std::static_pointer_cast<CompositeShape<dim>>(shape)->load_data_from_file();
 }
 
 template class IBParticle<2>;
