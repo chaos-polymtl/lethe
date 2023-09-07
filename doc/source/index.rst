@@ -68,25 +68,33 @@ Main developer:
 
 Contributors (in alphabetical order):
 
-* Antoine Avrit
 * Amishga Alphonius
+* Antoine Avrit
 * Lucka Barbeau
 * Valérie Bibeau
+* Bianca Bugeaud
 * Audrey Collard-Daigneault
 * Carole-Anne Daunais
 * Toni El Geitani
+* Olivier Gaboriault
 * Simon Gauvin
 * Shahab Golshan
+* Olivier Guévremont
 * Marion Hanne
 * Jeanne Joachim
 * Rajeshwari Kamble
 * Martin Kronbichler
+* Maxime Landry
+* Pierre Laurentin
 * Charles Le Pailleur
+* Oreste Marquis
 * Ghazaleh Mirakhori
+* Thomas Monatte
 * Peter Munch
 * Victor Oliveira Ferreira
 * Hélène Papillon-Laroche
 * Paul Patience
+* Laura Prieto Saavedra
 * Catherine Radburn
 * Philippe Rivest
-* Laura Prieto Saavedra
+* Mikael Vaillant
