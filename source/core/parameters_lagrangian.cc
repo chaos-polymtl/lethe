@@ -351,17 +351,17 @@ namespace Parameters
                           "List of initial velocities z");
 
         prm.declare_entry("list omega x",
-                          "0",
+                          "0.",
                           Patterns::List(Patterns::Double()),
                           "List of initial omega x");
 
         prm.declare_entry("list omega y",
-                          "0",
+                          "0.",
                           Patterns::List(Patterns::Double()),
                           "List of initial omega y");
 
         prm.declare_entry("list omega z",
-                          "0",
+                          "0.",
                           Patterns::List(Patterns::Double()),
                           "List of initial omega z");
 
@@ -494,10 +494,8 @@ namespace Parameters
 
         // Convert vx,vy and vz string vector to double vector
         list_vx = Utilities::string_to_double(vx_str_list);
-
         list_vy = Utilities::string_to_double(vy_str_list);
         list_vz = Utilities::string_to_double(vz_str_list);
-
 
         // Read wx, wy and wz list as a single string
         std::string wx_str = prm.get("list omega x");
@@ -506,11 +504,11 @@ namespace Parameters
 
         // Convert wx,wy and wz string to vector of strings
         std::vector<std::string> wx_str_list(
-          Utilities::split_string_list(vx_str));
+          Utilities::split_string_list(wx_str));
         std::vector<std::string> wy_str_list(
-          Utilities::split_string_list(vy_str));
+          Utilities::split_string_list(wy_str));
         std::vector<std::string> wz_str_list(
-          Utilities::split_string_list(vz_str));
+          Utilities::split_string_list(wz_str));
 
         // Convert x,y and z string vector to double vector
         list_wx = Utilities::string_to_double(wx_str_list);

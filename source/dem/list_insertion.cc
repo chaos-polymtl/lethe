@@ -5,19 +5,19 @@ using namespace DEM;
 DeclException2(PositionSizeCoherence,
                int,
                int,
-               << "Incoherent particle position lists n=" << arg1
-               << ", m=" << arg2);
+               << "Incoherent particle position lists size p1=" << arg1
+               << ", p2=" << arg2);
 
 DeclException2(VelocitySizeCoherence,
                int,
                int,
-               << "Incoherent particle velocity lists n=" << arg1
-               << ", m=" << arg2);
+               << "Incoherent particle velocity lists size v1=" << arg1
+               << ", v2=" << arg2);
 
 DeclException2(AngularVelocitySizeCoherence2,
                int,
                int,
-               << "Incoherent particle omega lists w=" << arg1
+               << "Incoherent particle omega lists size wz=" << arg1
                << ", x=" << arg2);
 
 DeclException3(AngularVelocitySizeCoherence3,
@@ -30,7 +30,7 @@ DeclException3(AngularVelocitySizeCoherence3,
 DeclException2(DiameterSizeCoherence,
                int,
                int,
-               << "Incoherent particle diameter lists n=" << arg1
+               << "Incoherent particle diameter lists x=" << arg1
                << ", d=" << arg2);
 
 // The constructor of list insertion class does not accomplish anything other
@@ -89,18 +89,18 @@ ListInsertion<dim>::ListInsertion(
         {
           insertion_points.emplace_back(Point<dim>({list_x[i], list_y[i]}));
           insertion_velocities.emplace_back(
-            Point<dim>({list_vx[i], list_vy[i]}));
+            Tensor<1, 3>({list_vx[i], list_vy[i], 0.}));
           insertion_angular_velocities.emplace_back(
-            Point<dim>({list_wx[i], list_wy[i]}));
+            Tensor<1, 3>({0., 0., list_wz[i]}));
         }
       else
         {
           insertion_points.emplace_back(
             Point<dim>({list_x[i], list_y[i], list_z[i]}));
           insertion_velocities.emplace_back(
-            Point<dim>({list_vx[i], list_vy[i], list_vz[i]}));
+            Tensor<1, 3>({list_vx[i], list_vy[i], list_vz[i]}));
           insertion_angular_velocities.emplace_back(
-            Point<dim>({list_wx[i], list_wy[i], list_wz[i]}));
+            Tensor<1, 3>({list_wx[i], list_wy[i], list_wz[i]}));
         }
       insertion_diameters.emplace_back(list_d[i]);
     }
