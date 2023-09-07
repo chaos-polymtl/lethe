@@ -122,7 +122,7 @@ template <int dim>
 void
 MFNavierStokesSolver<dim>::setup_dofs_fd()
 {
-  TimerOutput::Scope t(this->computing_timer, "setup_dofs");
+  TimerOutput::Scope t(this->computing_timer, "Setup DoFs");
 
   // Clear the preconditioners
   ilu_preconditioner.reset();
@@ -284,20 +284,10 @@ MFNavierStokesSolver<dim>::update_multiphysics_time_average_solution()
 
 template <int dim>
 void
-MFNavierStokesSolver<dim>::setup_preconditioner(SolverGMRES<VectorType> &solver)
+MFNavierStokesSolver<dim>::solve_with_LSMG(SolverGMRES<VectorType> &solver)
 {
-  if (this->simulation_parameters.linear_solver.preconditioner ==
-      Parameters::LinearSolver::PreconditionerType::lsmg)
-    setup_LSMG(solver);
-  else if (this->simulation_parameters.linear_solver.preconditioner ==
-           Parameters::LinearSolver::PreconditionerType::gcmg)
-    setup_GCMG(solver);
-}
+  this->computing_timer.enter_subsection("Setup preconditioner");
 
-template <int dim>
-void
-MFNavierStokesSolver<dim>::setup_LSMG(SolverGMRES<VectorType> &solver)
-{
   using OperatorType               = NavierStokesSUPGPSPGOperator<dim, double>;
   using LSTransferType             = MGTransferMatrixFree<dim, double>;
   using SmootherPreconditionerType = DiagonalMatrix<VectorType>;
@@ -459,16 +449,25 @@ MFNavierStokesSolver<dim>::setup_LSMG(SolverGMRES<VectorType> &solver)
     std::make_shared<PreconditionMG<dim, VectorType, LSTransferType>>(
       this->dof_handler, mg, mg_transfer);
 
+  this->computing_timer.leave_subsection("Setup preconditioner");
+
+
+  this->computing_timer.enter_subsection("Solve linear system");
+
   solver.solve(*(system_operator),
                this->newton_update,
                this->system_rhs,
                *ls_multigrid_preconditioner);
+
+  this->computing_timer.leave_subsection("Solve linear system");
 }
 
 template <int dim>
 void
-MFNavierStokesSolver<dim>::setup_GCMG(SolverGMRES<VectorType> &solver)
+MFNavierStokesSolver<dim>::solve_with_GCMG(SolverGMRES<VectorType> &solver)
 {
+  this->computing_timer.enter_subsection("Setup preconditioner");
+
   using OperatorType   = NavierStokesSUPGPSPGOperator<dim, double>;
   using GCTransferType = MGTransferGlobalCoarsening<dim, VectorType>;
   using SmootherPreconditionerType = DiagonalMatrix<VectorType>;
@@ -627,10 +626,49 @@ MFNavierStokesSolver<dim>::setup_GCMG(SolverGMRES<VectorType> &solver)
     std::make_shared<PreconditionMG<dim, VectorType, GCTransferType>>(
       this->dof_handler, mg, mg_transfer);
 
+  this->computing_timer.leave_subsection("Setup preconditioner");
+
+  this->computing_timer.enter_subsection("Solve linear system");
+
   solver.solve(*(system_operator),
                this->newton_update,
                this->system_rhs,
                *gc_multigrid_preconditioner);
+
+  this->computing_timer.leave_subsection("Solve linear system");
+}
+
+template <int dim>
+void
+MFNavierStokesSolver<dim>::solve_with_ILU(SolverGMRES<VectorType> &solver)
+{
+  this->computing_timer.enter_subsection("Setup preconditioner");
+
+  int current_preconditioner_fill_level =
+    this->simulation_parameters.linear_solver.ilu_precond_fill;
+
+  const double ilu_atol =
+    this->simulation_parameters.linear_solver.ilu_precond_atol;
+  const double ilu_rtol =
+    this->simulation_parameters.linear_solver.ilu_precond_rtol;
+  TrilinosWrappers::PreconditionILU::AdditionalData preconditionerOptions(
+    current_preconditioner_fill_level, ilu_atol, ilu_rtol, 0);
+
+  ilu_preconditioner = std::make_shared<TrilinosWrappers::PreconditionILU>();
+
+  ilu_preconditioner->initialize(system_operator->get_system_matrix(),
+                                 preconditionerOptions);
+
+  this->computing_timer.leave_subsection("Setup preconditioner");
+
+  this->computing_timer.enter_subsection("Solve linear system");
+
+  solver.solve(*(system_operator),
+               this->newton_update,
+               this->system_rhs,
+               *ilu_preconditioner);
+
+  this->computing_timer.leave_subsection("Solve linear system");
 }
 
 template <int dim>
@@ -868,8 +906,6 @@ MFNavierStokesSolver<dim>::solve_system_GMRES(const bool   initial_step,
   SolverGMRES<VectorType> solver(solver_control, solver_parameters);
 
   {
-    TimerOutput::Scope t(this->computing_timer, "solve_linear_system");
-
     this->present_solution.update_ghost_values();
 
     this->system_operator->evaluate_non_linear_term(this->present_solution);
@@ -878,55 +914,26 @@ MFNavierStokesSolver<dim>::solve_system_GMRES(const bool   initial_step,
 
     if (this->simulation_parameters.linear_solver.preconditioner ==
         Parameters::LinearSolver::PreconditionerType::lsmg)
-      setup_preconditioner(solver);
-    // solver.solve(*(system_operator),
-    //              this->newton_update,
-    //              system_rhs,
-    //              *ls_multigrid_preconditioner);
+      solve_with_LSMG(solver);
     else if (this->simulation_parameters.linear_solver.preconditioner ==
              Parameters::LinearSolver::PreconditionerType::gcmg)
-      setup_preconditioner(solver);
-    // solver.solve(*(system_operator),
-    //              this->newton_update,
-    //              system_rhs,
-    //              *gc_multigrid_preconditioner);
+      solve_with_GCMG(solver);
     else if (this->simulation_parameters.linear_solver.preconditioner ==
              Parameters::LinearSolver::PreconditionerType::ilu)
-      {
-        int current_preconditioner_fill_level =
-          this->simulation_parameters.linear_solver.ilu_precond_fill;
-
-        const double ilu_atol =
-          this->simulation_parameters.linear_solver.ilu_precond_atol;
-        const double ilu_rtol =
-          this->simulation_parameters.linear_solver.ilu_precond_rtol;
-        TrilinosWrappers::PreconditionILU::AdditionalData preconditionerOptions(
-          current_preconditioner_fill_level, ilu_atol, ilu_rtol, 0);
-
-        ilu_preconditioner =
-          std::make_shared<TrilinosWrappers::PreconditionILU>();
-
-        ilu_preconditioner->initialize(system_operator->get_system_matrix(),
-                                       preconditionerOptions);
-
-        solver.solve(*(system_operator),
-                     this->newton_update,
-                     system_rhs,
-                     *ilu_preconditioner);
-      }
+      solve_with_ILU(solver);
     else
-      {
-        // throw(std::runtime_error(
-        //   "This solver with this preconditioner is not allowed"));
-        PreconditionIdentity preconditioner;
-        solver.solve(*(system_operator),
-                     this->newton_update,
-                     system_rhs,
-                     preconditioner);
-      }
+      AssertThrow(
+        this->simulation_parameters.linear_solver.preconditioner ==
+            Parameters::LinearSolver::PreconditionerType::ilu ||
+          this->simulation_parameters.linear_solver.preconditioner ==
+            Parameters::LinearSolver::PreconditionerType::lsmg ||
+          this->simulation_parameters.linear_solver.preconditioner ==
+            Parameters::LinearSolver::PreconditionerType::gcmg,
+        ExcMessage(
+          "This linear solver does not support this preconditioner. Only <ilu|lsmg|gcmg> preconditioners are supported."))
 
-    if (this->simulation_parameters.linear_solver.verbosity !=
-        Parameters::Verbosity::quiet)
+        if (this->simulation_parameters.linear_solver.verbosity !=
+            Parameters::Verbosity::quiet)
       {
         this->pcout << "  -Iterative solver took : "
                     << solver_control.last_step() << " steps " << std::endl;

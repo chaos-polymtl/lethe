@@ -121,12 +121,6 @@ protected:
   update_multiphysics_time_average_solution() override;
 
   /**
-   * @brief  Set up the appropriate preconditioner.
-   */
-  void
-  setup_preconditioner(SolverGMRES<VectorType> &solver);
-
-  /**
    * @brief Define the non-zero constraints used to solve the problem.
    */
   void
@@ -176,23 +170,28 @@ private:
    * @brief  Set-up local smoothing MG preconditioner
    */
   void
-  setup_LSMG(SolverGMRES<VectorType> &solver);
+  solve_with_LSMG(SolverGMRES<VectorType> &solver);
 
   /**
    * @brief Set-up global coarsening MG preconditioner
    */
   void
-  setup_GCMG(SolverGMRES<VectorType> &solver);
+  solve_with_GCMG(SolverGMRES<VectorType> &solver);
+
+  /**
+   * @brief Set-up ILU preconditioner
+   */
+  void
+  solve_with_ILU(SolverGMRES<VectorType> &solver);
 
 protected:
   // Matrix-free operator
   std::shared_ptr<NavierStokesOperatorBase<dim, double>> system_operator;
-  // Multigrid preconditioners
+  // Preconditioners
   std::shared_ptr<PreconditionMG<dim, VectorType, LSTransferType>>
     ls_multigrid_preconditioner;
   std::shared_ptr<PreconditionMG<dim, VectorType, GCTransferType>>
     gc_multigrid_preconditioner;
-
   std::shared_ptr<TrilinosWrappers::PreconditionILU> ilu_preconditioner;
 };
 
