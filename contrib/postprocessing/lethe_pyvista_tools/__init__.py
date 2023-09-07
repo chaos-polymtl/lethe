@@ -52,7 +52,7 @@ class lethe_pyvista_tools():
         :param ignore_data             -> List of data to be ignored when reading
 
         :param n_procs                 -> Number of processors used to run each function using parallel_run.
-        If None, use the number of available.
+        If None, use the number of processors available.
 
 
         This method assigns the following attributes to the object:

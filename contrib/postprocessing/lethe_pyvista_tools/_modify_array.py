@@ -27,7 +27,8 @@ def modify_array(self, reference_array_name = "ID", array_name = "new_array", re
 
     :param array_values         = 0           -> new values to the array. This argument
     accepts a single value (which will be repeated to all data respecting the
-    given condition), an numpy array or python list (with the same len of all
+    given condition), an numpy array or python list (with the same length as all
+
     other arrays), or a string such as "2*x + t" (working just like the condition
     argument)
 
