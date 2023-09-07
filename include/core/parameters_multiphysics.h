@@ -182,7 +182,8 @@ namespace Parameters
 
     // artificial diffusivity (diffusion coefficient) (in L^2/s) added to the
     // VOF transport equation. This parameter is zero by default, and can be
-    // increased to improve the wetting of the phases in the vicinity of boundaries
+    // increased to improve the wetting of the phases in the vicinity of
+    // boundaries
     double diffusivity;
 
     bool compressible;
