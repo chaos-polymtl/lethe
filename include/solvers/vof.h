@@ -538,48 +538,6 @@ private:
   void
   assemble_mass_matrix(TrilinosWrappers::SparseMatrix &mass_matrix);
 
-
-  /**
-   * @brief Carries out peeling and wetting. It is called in the modify solution function.
-   * Launches apply_peeling_wetting on affected boundaries and handles output
-   * messages.
-   */
-  void
-  handle_peeling_wetting();
-
-  /**
-   * @brief Modification of the solution to take into account peeling and wetting
-   *
-   * @tparam VectorType The Vector type used for the solvers
-   *
-   * @param i_bc peeling-wetting boundary index
-   *
-   * @param current_solution_fd current solution for the fluid dynamics
-   */
-  template <typename VectorType>
-  void
-  apply_peeling_wetting(const unsigned int i_bc,
-                        const VectorType & current_solution_fd);
-
-  /**
-   * @brief Change cell phase, small method called to avoid code repetition and reduce sloppy
-   * error likelihood in apply_peeling_wetting.
-   *
-   * @param type a parameter of class PhaseChange (see below) stating the needed change
-   *
-   * @param new_phase the new phase value for the cell (0 or 1)
-   *
-   * @param solution_pw VOF solution after peeling and wetting corrections are applied
-   *
-   * @param dof_indices_vof local index for the VOF solution
-   */
-  void
-  change_cell_phase(
-    const PhaseChange &                         type,
-    const double &                              new_phase,
-    TrilinosWrappers::MPI::Vector &             solution_pw,
-    const std::vector<types::global_dof_index> &dof_indices_vof);
-
   /**
    * @brief Carries out interface sharpening. It is called in the modify solution function.
    * Launches sharpen_interface with the possibility to ensure conservation and

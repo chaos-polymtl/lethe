@@ -124,7 +124,6 @@ Parameters::VOF::declare_parameters(ParameterHandler &prm)
   {
     conservation.declare_parameters(prm);
     sharpening.declare_parameters(prm);
-    peeling_wetting.declare_parameters(prm);
     surface_tension_force.declare_parameters(prm);
     phase_filter.declare_parameters(prm);
 
@@ -158,7 +157,6 @@ Parameters::VOF::parse_parameters(ParameterHandler &prm)
   {
     conservation.parse_parameters(prm);
     sharpening.parse_parameters(prm);
-    peeling_wetting.parse_parameters(prm);
     surface_tension_force.parse_parameters(prm);
     phase_filter.parse_parameters(prm);
 
@@ -181,15 +179,15 @@ Parameters::VOF::parse_parameters(ParameterHandler &prm)
 
     // Error definitions
     if (sharpening.type == Parameters::SharpeningType::adaptative)
-      Assert(conservation.monitoring == true,
-             AdaptativeSharpeningError(conservation.monitoring));
-
-    if (sharpening.type == Parameters::SharpeningType::adaptative)
-
-      Assert(
-        (conservation.conservative_fluid == Parameters::FluidIndicator::both) or
-          (conservation.conservative_fluid == conservation.monitored_fluid),
-        MonitoringConservationError(conservation.monitoring));
+      {
+        Assert(conservation.monitoring == true,
+               AdaptativeSharpeningError(conservation.monitoring));
+        Assert((conservation.conservative_fluid ==
+                Parameters::FluidIndicator::both) or
+                 (conservation.conservative_fluid ==
+                  conservation.monitored_fluid),
+               MonitoringConservationError(conservation.monitoring));
+      }
   }
   prm.leave_subsection();
 }
@@ -386,52 +384,6 @@ Parameters::VOF_InterfaceSharpening::parse_parameters(ParameterHandler &prm)
       verbosity = Parameters::Verbosity::quiet;
     else if (op == "extra verbose")
       verbosity = Parameters::Verbosity::extra_verbose;
-    else
-      throw(std::runtime_error("Invalid verbosity level"));
-  }
-  prm.leave_subsection();
-}
-
-void
-Parameters::VOF_PeelingWetting::declare_parameters(ParameterHandler &prm)
-{
-  prm.enter_subsection("peeling wetting");
-  {
-    prm.declare_entry(
-      "enable peeling",
-      "false",
-      Patterns::Bool(),
-      "Enable peeling mechanism in free surface simulation <true|false>");
-
-    prm.declare_entry(
-      "enable wetting",
-      "false",
-      Patterns::Bool(),
-      "Enable wetting mechanism in free surface simulation <true|false>");
-
-    prm.declare_entry(
-      "verbosity",
-      "quiet",
-      Patterns::Selection("quiet|verbose"),
-      "State whether from the number of wet and peeled cells should be printed. "
-      "Choices are <quiet|verbose>.");
-  }
-  prm.leave_subsection();
-}
-
-void
-Parameters::VOF_PeelingWetting::parse_parameters(ParameterHandler &prm)
-{
-  prm.enter_subsection("peeling wetting");
-  {
-    enable_peeling = prm.get_bool("enable peeling");
-    enable_wetting = prm.get_bool("enable wetting");
-
-    const std::string op = prm.get("verbosity");
-    if (op == "verbose")
-      verbosity = Parameters::Verbosity::verbose;
-    else if (op == "quiet")
-      verbosity = Parameters::Verbosity::quiet;
     else
       throw(std::runtime_error("Invalid verbosity level"));
   }
