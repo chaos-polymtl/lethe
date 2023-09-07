@@ -111,7 +111,7 @@ NavierStokesOperatorBase<dim, number>::reinit(
   additional_data.mg_level = mg_level;
 
   matrix_free.reinit(
-    mapping, dof_handler, constraints, quadrature, additional_data);
+    mapping, dof_handler, this->constraints, quadrature, additional_data);
 
   this->fe_degree = dof_handler.get_fe().degree;
 
@@ -368,42 +368,49 @@ NavierStokesOperatorBase<dim, number>::get_system_matrix() const
       const auto &dof_handler = this->matrix_free.get_dof_handler();
 
       IndexSet locally_relevant_dofs;
-      DoFTools::extract_locally_relevant_dofs(dof_handler,
-                                              locally_relevant_dofs);
+      IndexSet locally_owned_dofs;
+
+      if (this->matrix_free.get_mg_level() != numbers::invalid_unsigned_int)
+        {
+          DoFTools::extract_locally_relevant_level_dofs(
+            dof_handler,
+            this->matrix_free.get_mg_level(),
+            locally_relevant_dofs);
+          locally_owned_dofs =
+            dof_handler.locally_owned_mg_dofs(this->matrix_free.get_mg_level());
+        }
+      else
+        {
+          DoFTools::extract_locally_relevant_dofs(dof_handler,
+                                                  locally_relevant_dofs);
+          locally_owned_dofs = dof_handler.locally_owned_dofs();
+        }
+
       DynamicSparsityPattern dsp(locally_relevant_dofs);
 
-      DoFTools::make_sparsity_pattern(dof_handler,
-                                      dsp,
-                                      this->constraints,
-                                      false);
+      if (this->matrix_free.get_mg_level() != numbers::invalid_unsigned_int)
+        MGTools::make_sparsity_pattern(dof_handler,
+                                       dsp,
+                                       this->matrix_free.get_mg_level(),
+                                       this->constraints,
+                                       false);
+      else
+        DoFTools::make_sparsity_pattern(dof_handler,
+                                        dsp,
+                                        this->constraints,
+                                        false);
+
 
       SparsityTools::distribute_sparsity_pattern(
         dsp,
-        dof_handler.locally_owned_dofs(),
+        locally_owned_dofs,
         dof_handler.get_triangulation().get_communicator(),
         locally_relevant_dofs);
 
-      system_matrix.reinit(dof_handler.locally_owned_dofs(),
-                           dof_handler.locally_owned_dofs(),
+      system_matrix.reinit(locally_owned_dofs,
+                           locally_owned_dofs,
                            dsp,
                            dof_handler.get_triangulation().get_communicator());
-
-      // TrilinosWrappers::SparsityPattern dsp(
-      //   this->matrix_free.get_mg_level() != numbers::invalid_unsigned_int ?
-      //     dof_handler.locally_owned_mg_dofs(this->matrix_free.get_mg_level())
-      //     : dof_handler.locally_owned_dofs(),
-      //   dof_handler.get_triangulation().get_communicator());
-
-      // if (this->matrix_free.get_mg_level() != numbers::invalid_unsigned_int)
-      //   MGTools::make_sparsity_pattern(dof_handler,
-      //                                  dsp,
-      //                                  this->matrix_free.get_mg_level(),
-      //                                  this->constraints);
-      // else
-      //   DoFTools::make_sparsity_pattern(dof_handler, dsp, this->constraints);
-
-      // dsp.compress();
-      // system_matrix.reinit(dsp);
 
       MatrixFreeTools::compute_matrix(
         matrix_free,
