@@ -1056,17 +1056,16 @@ protected:
 
     const double w      = std::sqrt(c2 + 2. * s);
     const double lambda = 0.5 * c1 / w;
-    const double root2  = std::max(0., w * w - 4. * (c2 + s + lambda));
+    const double root2  = w * w - 4. * (c2 + s + lambda);
     const double a      = 0.5 * (w + std::sqrt(root2));
 
     // Calculation of the normal damping constant. The normal spring constant
     // is direcly calculated in it since it is only use here.
     const double normal_damping_constant =
       -2. *
-      sqrt(std::max(0.,
-                    this->effective_mass * 2. * a *
-                      this->effective_youngs_modulus[vec_particle_type_index(
-                        particle_one_type, particle_two_type)])) *
+      sqrt(this->effective_mass * 2. * a *
+           this->effective_youngs_modulus[vec_particle_type_index(
+             particle_one_type, particle_two_type)]) *
       this->model_parameter_beta[vec_particle_type_index(particle_one_type,
                                                          particle_two_type)];
     // Calculation of the tangential spring constant
@@ -1076,9 +1075,7 @@ protected:
                                                             particle_two_type)];
     // Calculation of the tangential damping constant
     const double tangential_damping_constant =
-      -2. *
-      std::sqrt(
-        std::max(0., this->effective_mass * tangential_spring_constant)) *
+      -2. * std::sqrt(this->effective_mass * tangential_spring_constant) *
       this->model_parameter_beta[vec_particle_type_index(particle_one_type,
                                                          particle_two_type)];
     // Calculation of the normal force coefficient (F_n_JKR) # Eq 20

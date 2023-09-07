@@ -269,6 +269,8 @@ public:
   double rolling_friction_coefficient;
   // The particle mass.
   double mass;
+  // The surface energy of the particle
+  double surface_energy;
   // The particle rotational inertia. It is uniform in all directions.
   Tensor<2, 3> inertia;
   // The particle position.

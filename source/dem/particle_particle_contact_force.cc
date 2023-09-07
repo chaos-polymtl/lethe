@@ -1293,6 +1293,79 @@ ParticleParticleContactForce<dim, contact_model, rolling_friction_model>::
                               particle_two_tangential_torque,
                               rolling_resistance_torque);
     }
+  if constexpr (contact_model == Parameters::Lagrangian::
+                                   ParticleParticleContactForceModel::hertz_JKR)
+    {
+      this->effective_youngs_modulus[vec_particle_type_index(
+        particle_one_type, particle_two_type)] =
+        (particle_one.youngs_modulus * particle_two.youngs_modulus) /
+        ((particle_two.youngs_modulus *
+          (1.0 - particle_one.poisson_ratio * particle_one.poisson_ratio)) +
+         (particle_one.youngs_modulus *
+          (1.0 - particle_two.poisson_ratio * particle_two.poisson_ratio)) +
+         DBL_MIN);
+
+      this->effective_shear_modulus[vec_particle_type_index(
+        particle_one_type, particle_two_type)] =
+        (particle_one.youngs_modulus * particle_two.youngs_modulus) /
+        (2.0 *
+           ((particle_two.youngs_modulus * (2.0 - particle_one.poisson_ratio) *
+             (1.0 + particle_one.poisson_ratio)) +
+            (particle_one.youngs_modulus * (2.0 - particle_two.poisson_ratio) *
+             (1.0 + particle_two.poisson_ratio))) +
+         DBL_MIN);
+
+      this->effective_coefficient_of_restitution[vec_particle_type_index(
+        particle_one_type, particle_two_type)] =
+        harmonic_mean(particle_one.restitution_coefficient,
+                      particle_two.restitution_coefficient);
+      this->effective_coefficient_of_friction[vec_particle_type_index(
+        particle_one_type, particle_two_type)] =
+        harmonic_mean(particle_one.friction_coefficient,
+                      particle_two.friction_coefficient);
+      this->effective_coefficient_of_rolling_friction[vec_particle_type_index(
+        particle_one_type, particle_two_type)] =
+        harmonic_mean(particle_one.rolling_friction_coefficient,
+                      particle_two.rolling_friction_coefficient);
+      this->effective_surface_energy[vec_particle_type_index(
+        particle_one_type, particle_two_type)] =
+        particle_one.surface_energy + particle_two.surface_energy;
+
+      const double restitution_coefficient_particle_log = std::log(
+        this->effective_coefficient_of_restitution[vec_particle_type_index(
+          particle_one_type, particle_two_type)]);
+
+      this->model_parameter_beta[vec_particle_type_index(particle_one_type,
+                                                         particle_two_type)] =
+        restitution_coefficient_particle_log /
+        sqrt(restitution_coefficient_particle_log *
+               restitution_coefficient_particle_log +
+             9.8696);
+
+      // Since the normal overlap is already calculated we update
+      // this element of the container here. The rest of information
+      // are updated using the following function
+      this->update_contact_information(contact_info,
+                                       this->normal_relative_velocity_value,
+                                       this->normal_unit_vector,
+                                       particle_one_properties,
+                                       particle_two_properties,
+                                       particle_one_location_3d,
+                                       particle_two_location_3d,
+                                       dt);
+
+      calculate_hertz_JKR_contact(contact_info,
+                                  this->normal_relative_velocity_value,
+                                  this->normal_unit_vector,
+                                  normal_overlap,
+                                  particle_one_properties,
+                                  particle_two_properties,
+                                  normal_force,
+                                  tangential_force,
+                                  particle_one_tangential_torque,
+                                  particle_two_tangential_torque,
+                                  rolling_resistance_torque);
+    }
   if constexpr (contact_model ==
                 Parameters::Lagrangian::ParticleParticleContactForceModel::
                   hertz_mindlin_limit_force)
