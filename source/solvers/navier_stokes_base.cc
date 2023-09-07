@@ -113,7 +113,7 @@ NavierStokesBase<dim, VectorType, DofsType>::NavierStokesBase(
         std::make_shared<parallel::distributed::Triangulation<dim>>(
           this->mpi_communicator,
           Triangulation<dim>::limit_level_difference_at_vertices,
-          (p_nsparam.linear_solver.preconditioner ==
+          (p_nsparam.linear_solver.at(fluid_dynamics).preconditioner ==
            Parameters::LinearSolver::PreconditionerType::lsmg) ?
             parallel::distributed::Triangulation<
               dim>::construct_multigrid_hierarchy :

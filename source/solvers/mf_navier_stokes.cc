@@ -135,8 +135,8 @@ MFNavierStokesSolver<dim>::setup_dofs_fd()
   // Fill the dof handler and initialize vectors
   this->dof_handler.distribute_dofs(*this->fe);
 
-  if (this->simulation_parameters.linear_solver.preconditioner ==
-      Parameters::LinearSolver::PreconditionerType::lsmg)
+  if (this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+        .preconditioner == Parameters::LinearSolver::PreconditionerType::lsmg)
     this->dof_handler.distribute_mg_dofs();
 
   DoFRenumbering::Cuthill_McKee(this->dof_handler);
@@ -363,7 +363,7 @@ MFNavierStokesSolver<dim>::solve_with_LSMG(SolverGMRES<VectorType> &solver)
                   1),
         this->forcing_function,
         this->simulation_parameters.physical_properties_manager
-          .get_viscosity_scale(),
+          .get_kinematic_viscosity_scale(),
         level);
 
       mg_operators[level]->initialize_dof_vector(mg_solution[level]);
@@ -406,7 +406,8 @@ MFNavierStokesSolver<dim>::solve_with_LSMG(SolverGMRES<VectorType> &solver)
         smoother_data[level].preconditioner->get_vector());
       smoother_data[level].n_iterations = 10;
       smoother_data[level].relaxation =
-        this->simulation_parameters.linear_solver.mg_smoother_relaxation;
+        this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+          .mg_smoother_relaxation;
     }
 
   MGSmootherPrecondition<OperatorType, SmootherType, VectorType> mg_smoother;
@@ -510,6 +511,7 @@ MFNavierStokesSolver<dim>::solve_with_GCMG(SolverGMRES<VectorType> &solver)
       const auto &level_dof_handler = dof_handlers[level];
       auto &      level_constraint  = constraints[level];
 
+      level_constraint.clear();
       const IndexSet locally_relevant_dofs =
         DoFTools::extract_locally_relevant_dofs(level_dof_handler);
       level_constraint.reinit(locally_relevant_dofs);
@@ -545,7 +547,7 @@ MFNavierStokesSolver<dim>::solve_with_GCMG(SolverGMRES<VectorType> &solver)
                   1),
         this->forcing_function,
         this->simulation_parameters.physical_properties_manager
-          .get_viscosity_scale(),
+          .get_kinematic_viscosity_scale(),
         numbers::invalid_unsigned_int);
     }
 
@@ -589,7 +591,8 @@ MFNavierStokesSolver<dim>::solve_with_GCMG(SolverGMRES<VectorType> &solver)
         smoother_data[level].preconditioner->get_vector());
       smoother_data[level].n_iterations = 10;
       smoother_data[level].relaxation =
-        this->simulation_parameters.linear_solver.mg_smoother_relaxation;
+        this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+          .mg_smoother_relaxation;
     }
 
   MGSmootherPrecondition<OperatorType, SmootherType, VectorType> mg_smoother;
@@ -645,12 +648,14 @@ MFNavierStokesSolver<dim>::solve_with_ILU(SolverGMRES<VectorType> &solver)
   this->computing_timer.enter_subsection("Setup preconditioner");
 
   int current_preconditioner_fill_level =
-    this->simulation_parameters.linear_solver.ilu_precond_fill;
-
+    this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+      .ilu_precond_fill;
   const double ilu_atol =
-    this->simulation_parameters.linear_solver.ilu_precond_atol;
+    this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+      .ilu_precond_atol;
   const double ilu_rtol =
-    this->simulation_parameters.linear_solver.ilu_precond_rtol;
+    this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+      .ilu_precond_rtol;
   TrilinosWrappers::PreconditionILU::AdditionalData preconditionerOptions(
     current_preconditioner_fill_level, ilu_atol, ilu_rtol, 0);
 
@@ -900,45 +905,50 @@ MFNavierStokesSolver<dim>::solve_system_GMRES(const bool   initial_step,
       .max_krylov_vectors;
   solver_parameters.right_preconditioning = true;
 
-  // if (!ls_multigrid_preconditioner)
-  //   setup_preconditioner();
-
   SolverGMRES<VectorType> solver(solver_control, solver_parameters);
 
-  {
-    this->present_solution.update_ghost_values();
+  this->present_solution.update_ghost_values();
 
-    this->system_operator->evaluate_non_linear_term(this->present_solution);
+  this->system_operator->evaluate_non_linear_term(this->present_solution);
 
-    this->newton_update = 0.0;
+  this->newton_update = 0.0;
 
-    if (this->simulation_parameters.linear_solver.preconditioner ==
-        Parameters::LinearSolver::PreconditionerType::lsmg)
-      solve_with_LSMG(solver);
-    else if (this->simulation_parameters.linear_solver.preconditioner ==
-             Parameters::LinearSolver::PreconditionerType::gcmg)
-      solve_with_GCMG(solver);
-    else if (this->simulation_parameters.linear_solver.preconditioner ==
-             Parameters::LinearSolver::PreconditionerType::ilu)
-      solve_with_ILU(solver);
-    else
-      AssertThrow(
-        this->simulation_parameters.linear_solver.preconditioner ==
-            Parameters::LinearSolver::PreconditionerType::ilu ||
-          this->simulation_parameters.linear_solver.preconditioner ==
-            Parameters::LinearSolver::PreconditionerType::lsmg ||
-          this->simulation_parameters.linear_solver.preconditioner ==
-            Parameters::LinearSolver::PreconditionerType::gcmg,
-        ExcMessage(
-          "This linear solver does not support this preconditioner. Only <ilu|lsmg|gcmg> preconditioners are supported."))
+  if (this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+        .preconditioner == Parameters::LinearSolver::PreconditionerType::lsmg)
+    solve_with_LSMG(solver);
+  else if (this->simulation_parameters.linear_solver
+             .at(PhysicsID::fluid_dynamics)
+             .preconditioner ==
+           Parameters::LinearSolver::PreconditionerType::gcmg)
+    solve_with_GCMG(solver);
+  else if (this->simulation_parameters.linear_solver
+             .at(PhysicsID::fluid_dynamics)
+             .preconditioner ==
+           Parameters::LinearSolver::PreconditionerType::ilu)
+    solve_with_ILU(solver);
+  else
+    AssertThrow(
+      this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+            .preconditioner ==
+          Parameters::LinearSolver::PreconditionerType::ilu ||
+        this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+            .preconditioner ==
+          Parameters::LinearSolver::PreconditionerType::lsmg ||
+        this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+            .preconditioner ==
+          Parameters::LinearSolver::PreconditionerType::gcmg,
+      ExcMessage(
+        "This linear solver does not support this preconditioner. Only <ilu|lsmg|gcmg> preconditioners are supported."))
 
-        if (this->simulation_parameters.linear_solver.verbosity !=
-            Parameters::Verbosity::quiet)
-      {
-        this->pcout << "  -Iterative solver took : "
-                    << solver_control.last_step() << " steps " << std::endl;
-      }
-  }
+      if (this->simulation_parameters.linear_solver
+            .at(PhysicsID::fluid_dynamics)
+            .verbosity != Parameters::Verbosity::quiet)
+    {
+      this->pcout << "  -Iterative solver took : " << solver_control.last_step()
+                  << " steps " << std::endl;
+    }
+
+  constraints_used.distribute(this->newton_update);
 }
 
 template class MFNavierStokesSolver<2>;
