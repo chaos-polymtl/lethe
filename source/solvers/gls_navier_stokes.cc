@@ -1345,9 +1345,6 @@ GLSNavierStokesSolver<dim>::setup_AMG()
                                    components,
                                    constant_modes);
 
-  TrilinosWrappers::PreconditionAMG::AdditionalData amg_data;
-  amg_data.constant_modes = constant_modes;
-
   const bool elliptic              = false;
   bool       higher_order_elements = false;
   if (this->velocity_fem_degree > 1)
