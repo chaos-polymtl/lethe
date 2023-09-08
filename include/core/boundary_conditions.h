@@ -972,7 +972,7 @@ namespace BoundaryConditions
                       "none",
                       Patterns::Selection("none|dirichlet"),
                       "Type of boundary condition for VOF"
-                      "Choices are <none|dirichlet.");
+                      "Choices are <none|dirichlet>.");
 
     prm.declare_entry("id",
                       Utilities::int_to_string(i_bc, 2),
