@@ -87,7 +87,7 @@ For tracer boundary conditions, the defaults parameters are:
 VOF
 ^^^
 
-For VOF boundary conditions (multiphase flow), the possible ``types`` are ``none`` (default), and ``dirichlet``, as shown below.
+For VOF boundary conditions (multiphase flow), the possible ``types`` are ``none`` (default) and ``dirichlet``, as shown below.
 
 .. code-block:: text
 
