@@ -246,7 +246,6 @@ public:
 
   /**
    * @brief Carry out modifications on the auxiliary physic solution.
-   * Used in vof method for interface sharpening and wetting/peeling.
    */
   void
   modify_solution() override;
