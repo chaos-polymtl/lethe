@@ -97,7 +97,7 @@ For VOF boundary conditions (multiphase flow), the possible ``types`` are ``none
       set id   = 0
       set type = none
     end
-    subsection bc 21
+    subsection bc 1
       set id   = 1
       set type = dirichlet
       subsection dirichlet
