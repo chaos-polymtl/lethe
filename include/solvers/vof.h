@@ -45,6 +45,13 @@
 
 #include <deal.II/numerics/error_estimator.h>
 
+DeclException1(
+  InvalidNumberOfFluid,
+  int,
+  << "The VOF physics is enabled, but the number of fluids is set to " << arg1
+  << ". The VOF solver only supports 2 fluids.");
+
+
 template <int dim>
 class VolumeOfFluid
   : public AuxiliaryPhysics<dim, TrilinosWrappers::MPI::Vector>
@@ -75,6 +82,13 @@ public:
     , sharpening_threshold(
         simulation_parameters.multiphysics.vof_parameters.sharpening.threshold)
   {
+    AssertThrow(simulation_parameters.physical_properties_manager
+                    .get_number_of_fluids() != 2,
+                InvalidNumberOfFluid(
+                  simulation_parameters.physical_properties_manager
+                    .get_number_of_fluids()));
+
+
     if (simulation_parameters.mesh.simplex)
       {
         // for simplex meshes
