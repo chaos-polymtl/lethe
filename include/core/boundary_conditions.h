@@ -55,7 +55,6 @@ namespace BoundaryConditions
     // for tracer
     tracer_dirichlet,
     // for vof
-    pw,
     vof_dirichlet,
     // for cahn hilliard
     cahn_hilliard_noflux,
@@ -935,9 +934,6 @@ namespace BoundaryConditions
    * It introduces the boundary functions and declares the boundary conditions
    * coherently.
    *
-   *  - if bc type is "peeling/wetting", peeling/wetting of the free surface
-   * will be applied. See vof.cc for further implementation details.
-   *
    * - if bc type is "dirichlet", the function is applied on the selected
    * boundary
    *
@@ -974,9 +970,9 @@ namespace BoundaryConditions
   {
     prm.declare_entry("type",
                       "none",
-                      Patterns::Selection("none|dirichlet|peeling/wetting"),
+                      Patterns::Selection("none|dirichlet"),
                       "Type of boundary condition for VOF"
-                      "Choices are <none|dirichlet|peeling/wetting>.");
+                      "Choices are <none|dirichlet.");
 
     prm.declare_entry("id",
                       Utilities::int_to_string(i_bc, 2),
@@ -1048,11 +1044,6 @@ namespace BoundaryConditions
         phase_fraction[i_bc]->parse_parameters(prm);
         prm.leave_subsection();
       }
-    else if (op == "peeling/wetting")
-      {
-        this->type[i_bc] = BoundaryType::pw;
-      }
-
     this->id[i_bc] = prm.get_integer("id");
   }
 

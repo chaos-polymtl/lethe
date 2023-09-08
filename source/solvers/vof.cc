@@ -595,107 +595,6 @@ VolumeOfFluid<dim>::calculate_volume_and_mass(
 }
 
 template <int dim>
-template <typename VectorType>
-double
-VolumeOfFluid<dim>::find_monitored_fluid_avg_pressure(
-  const TrilinosWrappers::MPI::Vector &solution,
-  const VectorType &                   current_solution_fd,
-  const Parameters::FluidIndicator     monitored_fluid)
-{
-  QGauss<dim>    quadrature_formula(this->cell_quadrature->size());
-  const MPI_Comm mpi_communicator = this->triangulation->get_communicator();
-
-  FEValues<dim> fe_values_vof(*this->mapping,
-                              *this->fe,
-                              *this->cell_quadrature,
-                              update_values);
-
-  const DoFHandler<dim> *dof_handler_fd =
-    multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
-
-  FEValues<dim> fe_values_fd(*this->mapping,
-                             dof_handler_fd->get_fe(),
-                             quadrature_formula,
-                             update_values);
-
-  const unsigned int  n_q_points = quadrature_formula.size();
-  std::vector<double> local_phase_values(n_q_points);
-
-  const FEValuesExtractors::Scalar pressure(dim);
-  std::vector<double>              local_pressure_values(n_q_points);
-
-  double pressure_monitored_avg = 0.;
-  int    nb_values(0);
-
-  for (const auto &cell_vof : this->dof_handler.active_cell_iterators())
-    {
-      if (cell_vof->is_locally_owned())
-        {
-          fe_values_vof.reinit(cell_vof);
-          fe_values_vof.get_function_values(solution, local_phase_values);
-
-          // Get fluid dynamics active cell iterator
-          typename DoFHandler<dim>::active_cell_iterator cell_fd(
-            &(*(this->triangulation)),
-            cell_vof->level(),
-            cell_vof->index(),
-            dof_handler_fd);
-
-          fe_values_fd.reinit(cell_fd);
-          fe_values_fd[pressure].get_function_values(current_solution_fd,
-                                                     local_pressure_values);
-
-          for (unsigned int q = 0; q < n_q_points; q++)
-            {
-              // Gather minimum and maximum pressure on the phase of interest
-              if ((monitored_fluid == Parameters::FluidIndicator::fluid0 &&
-                   local_phase_values[q] < 0.5) ||
-                  (monitored_fluid == Parameters::FluidIndicator::fluid1 &&
-                   local_phase_values[q] > 0.5))
-                {
-                  pressure_monitored_avg += local_pressure_values[q];
-                  nb_values++;
-                }
-            }
-        }
-    }
-
-  pressure_monitored_avg =
-    Utilities::MPI::sum(pressure_monitored_avg, mpi_communicator) /
-    static_cast<double>(Utilities::MPI::sum(nb_values, mpi_communicator));
-
-  return pressure_monitored_avg;
-}
-
-template double
-VolumeOfFluid<2>::find_monitored_fluid_avg_pressure<
-  TrilinosWrappers::MPI::Vector>(
-  const TrilinosWrappers::MPI::Vector &solution,
-  const TrilinosWrappers::MPI::Vector &current_solution_fd,
-  const Parameters::FluidIndicator     monitored_fluid);
-
-template double
-VolumeOfFluid<3>::find_monitored_fluid_avg_pressure<
-  TrilinosWrappers::MPI::Vector>(
-  const TrilinosWrappers::MPI::Vector &solution,
-  const TrilinosWrappers::MPI::Vector &current_solution_fd,
-  const Parameters::FluidIndicator     monitored_fluid);
-
-template double
-VolumeOfFluid<2>::find_monitored_fluid_avg_pressure<
-  TrilinosWrappers::MPI::BlockVector>(
-  const TrilinosWrappers::MPI::Vector &     solution,
-  const TrilinosWrappers::MPI::BlockVector &current_solution_fd,
-  const Parameters::FluidIndicator          monitored_fluid);
-
-template double
-VolumeOfFluid<3>::find_monitored_fluid_avg_pressure<
-  TrilinosWrappers::MPI::BlockVector>(
-  const TrilinosWrappers::MPI::Vector &     solution,
-  const TrilinosWrappers::MPI::BlockVector &current_solution_fd,
-  const Parameters::FluidIndicator          monitored_fluid);
-
-template <int dim>
 void
 VolumeOfFluid<dim>::finish_simulation()
 {
@@ -2161,9 +2060,6 @@ VolumeOfFluid<dim>::setup_dofs()
                              this->locally_owned_dofs,
                              dsp,
                              mpi_communicator);
-
-  // Initialize peeling/wetting variables
-  marker_pw.reinit(locally_owned_dofs, mpi_communicator);
 
   this->pcout << "   Number of VOF degrees of freedom: "
               << this->dof_handler.n_dofs() << std::endl;

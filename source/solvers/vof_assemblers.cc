@@ -26,7 +26,7 @@ VOFAssemblerCore<dim>::assemble_matrix(VOFScratchData<dim> &      scratch_data,
   const double dt  = time_steps_vector[0];
   const double sdt = 1. / dt;
 
-  // Add a small diffusivity, used in the context of the wetting mechanism
+  // Add a small diffusivity, used to artificially diffuse VOF
   const double diffusivity = this->vof_parameters.diffusivity;
 
   // Copy data elements
@@ -164,7 +164,7 @@ VOFAssemblerCore<dim>::assemble_rhs(VOFScratchData<dim> &      scratch_data,
   // Scheme and physical properties
   const auto method = this->simulation_control->get_assembly_method();
 
-  // Add a small diffusivity, used in the context of the wetting mechanism
+  // Add a small diffusivity, used to artificially diffuse VOF
   const double diffusivity = this->vof_parameters.diffusivity;
 
   // Loop and quadrature information

@@ -212,26 +212,6 @@ public:
 
 
   /**
-   * @brief Calculate the average pressure value of the monitored fluid. Used for
-   * the wetting mechanism.
-   *
-   * @tparam VectorType The Vector type used for the solvers
-   *
-   * @param solution VOF solution (phase fraction)
-   *
-   * @param current_solution_fd current solution for the fluid dynamics
-   *
-   * @param monitored_fluid Fluid indicator (fluid0 or fluid1) corresponding to
-   * the phase of interest.
-   */
-  template <typename VectorType>
-  double
-  find_monitored_fluid_avg_pressure(
-    const TrilinosWrappers::MPI::Vector &solution,
-    const VectorType &                   current_solution_fd,
-    const Parameters::FluidIndicator     monitored_fluid);
-
-  /**
    * @brief Carry out the operations required to finish a simulation correctly.
    */
   void
@@ -401,14 +381,6 @@ public:
   {
     return &present_curvature_solution;
   }
-
-
-  // enum class used for peeling/wetting
-  enum class PhaseChange
-  {
-    peeling,
-    wetting
-  };
 
 private:
   /**
@@ -729,11 +701,6 @@ private:
   TrilinosWrappers::MPI::Vector  system_rhs_phase_fraction;
   TrilinosWrappers::MPI::Vector  complete_system_rhs_phase_fraction;
   TrilinosWrappers::SparseMatrix mass_matrix_phase_fraction;
-
-  // Peeling/Wetting analysis
-  TrilinosWrappers::MPI::Vector marker_pw;
-  unsigned int                  nb_cells_wet;
-  unsigned int                  nb_cells_peeled;
 
   // Projected phase fraction gradient (pfg) solution
   TrilinosWrappers::MPI::Vector
