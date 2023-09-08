@@ -389,6 +389,8 @@ get_last_value_of_parameter(const std::string &file_name,
   std::string return_value;
 
   std::ifstream x_file(file_name);
+  AssertThrow(x_file.fail() == false, ExcIO());
+
   while (x_file)
     {
       // Get one line and then match a regex to it that matches the parameter
