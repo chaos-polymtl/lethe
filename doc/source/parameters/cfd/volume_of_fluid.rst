@@ -72,7 +72,7 @@ The default values of the VOF parameters are given in the text box below.
   .. tip::
     Applying viscous dissipation in one of the fluids instead of both is particularly useful when one of the fluids is air. For numerical stability, the ``kinematic viscosity`` of the air is usually increased. However, we do not want to have viscous dissipation in the air, because it would result in an unrealistic increase in its temperature. This parameter is used only if ``set heat transfer = true`` and ``set viscous dissipation = true`` in :doc:`./multiphysics`.
 
-* ``diffusivity``: value of the diffusivity (diffusion coefficient) in the transport equation of the phase fraction. Default value is ``0`` to have pure advection. Increase ``diffusivity`` to :ref:`improve wetting`.
+* ``diffusivity``: value of the diffusivity (diffusion coefficient) in the transport equation of the phase fraction. Default value is ``0`` to have pure advection. 
 * ``compressible``: enables interface compression (:math:`\phi \nabla \cdot \mathbf{u}`) in the VOF equation.  This term should be kept to its default value of ``false`` except when compressible equations of state are used.
 
 
@@ -187,7 +187,7 @@ The following procedure is recommended to choose proper values for the ``phase f
 Mass Conservation
 ~~~~~~~~~~~~~~~~~~~~~
 
-* ``subsection mass conservation``: By default, mass conservation (continuity) equations are solved on the whole domain, i.e. on both fluids (``set conservative fluid = both``). However, replacing the mass conservation by a zero-pressure condition on one of the fluid (typically, the air), so that it can get in and out of the domain, can be useful to :ref:`improve wetting`. This subsection defines parameters that can be used to solve mass conservation in one fluid instead of both, and to monitor the surface/volume (2D/3D) occupied by the other fluid of interest.
+* ``subsection mass conservation``: By default, mass conservation (continuity) equations are solved on the whole domain, i.e. on both fluids (``set conservative fluid = both``).  This subsection defines parameters that can be used to solve mass conservation in one fluid instead of both, and to monitor the surface/volume (2D/3D) occupied by the other fluid of interest.
 
   * ``conservative fluid``: defines fluid(s) for which conservation is solved. 
 
