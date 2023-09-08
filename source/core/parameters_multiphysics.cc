@@ -213,9 +213,7 @@ Parameters::VOF_MassConservation::declare_parameters(ParameterHandler &prm)
       "conservative fluid",
       "both",
       Patterns::Selection("fluid 0|fluid 1|both"),
-      "Fluid for which conservation is solved <fluid 0|fluid 1|both>. "
-      "Conservation on one fluid instead of both can be used to improve the wetting mechanism. "
-      "See documentation for further details.");
+      "Fluid for which conservation is solved <fluid 0|fluid 1|both>. ");
 
     prm.declare_entry(
       "monitored fluid",
