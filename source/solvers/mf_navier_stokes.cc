@@ -286,7 +286,7 @@ template <int dim>
 void
 MFNavierStokesSolver<dim>::solve_with_LSMG(SolverGMRES<VectorType> &solver)
 {
-  this->computing_timer.enter_subsection("Setup preconditioner");
+  this->computing_timer.enter_subsection("Setup LSMG");
 
   using OperatorType               = NavierStokesSUPGPSPGOperator<dim, double>;
   using LSTransferType             = MGTransferMatrixFree<dim, double>;
@@ -352,8 +352,7 @@ MFNavierStokesSolver<dim>::solve_with_LSMG(SolverGMRES<VectorType> &solver)
         mg_constrained_dofs.get_boundary_indices(level));
       level_constraints[level].close();
 
-      mg_operators[level] =
-        std::make_shared<NavierStokesSUPGPSPGOperator<dim, double>>();
+      mg_operators[level] = std::make_shared<OperatorType>();
 
       mg_operators[level]->reinit(
         *this->mapping,
@@ -420,15 +419,59 @@ MFNavierStokesSolver<dim>::solve_with_LSMG(SolverGMRES<VectorType> &solver)
 
   TrilinosWrappers::PreconditionAMG                 precondition_amg;
   TrilinosWrappers::PreconditionAMG::AdditionalData amg_data;
-  amg_data.elliptic        = false;
-  amg_data.smoother_sweeps = 1;
-  amg_data.n_cycles        = 1;
-  amg_data.smoother_type   = "ILU";
+  amg_data.elliptic = false;
   if (this->dof_handler.get_fe().degree > 1)
     amg_data.higher_order_elements = true;
+  amg_data.n_cycles =
+    this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+      .amg_n_cycles;
+  amg_data.w_cycle =
+    this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+      .amg_w_cycles;
+  amg_data.aggregation_threshold =
+    this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+      .amg_aggregation_threshold;
+  amg_data.smoother_sweeps =
+    this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+      .amg_smoother_sweeps;
+  amg_data.smoother_overlap =
+    this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+      .amg_smoother_overlap;
+  amg_data.output_details = false;
+  amg_data.smoother_type  = "ILU";
+  amg_data.coarse_type    = "ILU";
+  // Constant modes for velocity
+  std::vector<std::vector<bool>> constant_modes;
+  ComponentMask                  components(dim + 1, true);
+  DoFTools::extract_constant_modes(this->dof_handler,
+                                   components,
+                                   constant_modes);
+  amg_data.constant_modes = constant_modes;
+
+  Teuchos::ParameterList              parameter_ml;
+  std::unique_ptr<Epetra_MultiVector> distributed_constant_modes;
+  amg_data.set_parameters(parameter_ml,
+                          distributed_constant_modes,
+                          mg_operators[minlevel]->get_system_matrix());
+  const double ilu_fill =
+    this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+      .ilu_precond_fill;
+  const double ilu_atol =
+    this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+      .amg_precond_ilu_atol;
+  const double ilu_rtol =
+    this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+      .amg_precond_ilu_rtol;
+  parameter_ml.set("smoother: ifpack level-of-fill", ilu_fill);
+  parameter_ml.set("smoother: ifpack absolute threshold", ilu_atol);
+  parameter_ml.set("smoother: ifpack relative threshold", ilu_rtol);
+
+  parameter_ml.set("coarse: ifpack level-of-fill", ilu_fill);
+  parameter_ml.set("coarse: ifpack absolute threshold", ilu_atol);
+  parameter_ml.set("coarse: ifpack relative threshold", ilu_rtol);
 
   precondition_amg.initialize(mg_operators[minlevel]->get_system_matrix(),
-                              amg_data);
+                              parameter_ml);
 
   mg_coarse =
     std::make_shared<MGCoarseGridIterativeSolver<VectorType,
@@ -450,8 +493,7 @@ MFNavierStokesSolver<dim>::solve_with_LSMG(SolverGMRES<VectorType> &solver)
     std::make_shared<PreconditionMG<dim, VectorType, LSTransferType>>(
       this->dof_handler, mg, mg_transfer);
 
-  this->computing_timer.leave_subsection("Setup preconditioner");
-
+  this->computing_timer.leave_subsection("Setup LSMG");
 
   this->computing_timer.enter_subsection("Solve linear system");
 
@@ -467,7 +509,7 @@ template <int dim>
 void
 MFNavierStokesSolver<dim>::solve_with_GCMG(SolverGMRES<VectorType> &solver)
 {
-  this->computing_timer.enter_subsection("Setup preconditioner");
+  this->computing_timer.enter_subsection("Setup GCMG");
 
   using OperatorType   = NavierStokesSUPGPSPGOperator<dim, double>;
   using GCTransferType = MGTransferGlobalCoarsening<dim, VectorType>;
@@ -605,12 +647,56 @@ MFNavierStokesSolver<dim>::solve_with_GCMG(SolverGMRES<VectorType> &solver)
 
   TrilinosWrappers::PreconditionAMG                 precondition_amg;
   TrilinosWrappers::PreconditionAMG::AdditionalData amg_data;
-  amg_data.elliptic        = false;
-  amg_data.smoother_sweeps = 1;
-  amg_data.n_cycles        = 1;
-  amg_data.smoother_type   = "ILU";
+  amg_data.elliptic = false;
   if (this->dof_handler.get_fe().degree > 1)
     amg_data.higher_order_elements = true;
+  amg_data.n_cycles =
+    this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+      .amg_n_cycles;
+  amg_data.w_cycle =
+    this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+      .amg_w_cycles;
+  amg_data.aggregation_threshold =
+    this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+      .amg_aggregation_threshold;
+  amg_data.smoother_sweeps =
+    this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+      .amg_smoother_sweeps;
+  amg_data.smoother_overlap =
+    this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+      .amg_smoother_overlap;
+  amg_data.output_details = false;
+  amg_data.smoother_type  = "ILU";
+  // amg_data.coarse_type    = "ILU";
+  // Constant modes for velocity
+  std::vector<std::vector<bool>> constant_modes;
+  ComponentMask                  components(dim + 1, true);
+  DoFTools::extract_constant_modes(dof_handlers[minlevel],
+                                   components,
+                                   constant_modes);
+  amg_data.constant_modes = constant_modes;
+
+  Teuchos::ParameterList              parameter_ml;
+  std::unique_ptr<Epetra_MultiVector> distributed_constant_modes;
+  amg_data.set_parameters(parameter_ml,
+                          distributed_constant_modes,
+                          mg_operators[minlevel]->get_system_matrix());
+  const double ilu_fill =
+    this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+      .ilu_precond_fill;
+  const double ilu_atol =
+    this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+      .amg_precond_ilu_atol;
+  const double ilu_rtol =
+    this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+      .amg_precond_ilu_rtol;
+  parameter_ml.set("smoother: ifpack level-of-fill", ilu_fill);
+  parameter_ml.set("smoother: ifpack absolute threshold", ilu_atol);
+  parameter_ml.set("smoother: ifpack relative threshold", ilu_rtol);
+
+  parameter_ml.set("coarse: ifpack level-of-fill", ilu_fill);
+  parameter_ml.set("coarse: ifpack absolute threshold", ilu_atol);
+  parameter_ml.set("coarse: ifpack relative threshold", ilu_rtol);
 
   precondition_amg.initialize(mg_operators[minlevel]->get_system_matrix(),
                               amg_data);
@@ -629,7 +715,7 @@ MFNavierStokesSolver<dim>::solve_with_GCMG(SolverGMRES<VectorType> &solver)
     std::make_shared<PreconditionMG<dim, VectorType, GCTransferType>>(
       this->dof_handler, mg, mg_transfer);
 
-  this->computing_timer.leave_subsection("Setup preconditioner");
+  this->computing_timer.leave_subsection("Setup GCMG");
 
   this->computing_timer.enter_subsection("Solve linear system");
 
@@ -645,7 +731,7 @@ template <int dim>
 void
 MFNavierStokesSolver<dim>::solve_with_ILU(SolverGMRES<VectorType> &solver)
 {
-  this->computing_timer.enter_subsection("Setup preconditioner");
+  this->computing_timer.enter_subsection("Setup ILU");
 
   int current_preconditioner_fill_level =
     this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
@@ -664,7 +750,7 @@ MFNavierStokesSolver<dim>::solve_with_ILU(SolverGMRES<VectorType> &solver)
   ilu_preconditioner->initialize(system_operator->get_system_matrix(),
                                  preconditionerOptions);
 
-  this->computing_timer.leave_subsection("Setup preconditioner");
+  this->computing_timer.leave_subsection("Setup ILU");
 
   this->computing_timer.enter_subsection("Solve linear system");
 
