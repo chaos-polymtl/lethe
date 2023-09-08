@@ -79,9 +79,9 @@ public:
   // Vector of the location, velocity and angular velocity used to insert the
   // particles
   std::vector<Point<dim>>   insertion_points;
-  std::vector<Tensor<1, 3>> insertion_velocities;
-  std::vector<Tensor<1, 3>> insertion_angular_velocities;
-  std::vector<double>       insertion_diameters;
+  std::vector<Tensor<1, 3>> velocities;
+  std::vector<Tensor<1, 3>> angular_velocities;
+  std::vector<double>       diameters;
 };
 
 #endif /* uniform_insertion_h */

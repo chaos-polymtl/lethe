@@ -321,7 +321,6 @@ namespace Parameters
                           "1",
                           Patterns::Integer(),
                           "Random number seed");
-
         prm.declare_entry("list x",
                           "0",
                           Patterns::List(Patterns::Double()),
@@ -334,82 +333,66 @@ namespace Parameters
                           "0",
                           Patterns::List(Patterns::Double()),
                           "List of particles z positions");
-
         prm.declare_entry("list velocity x",
                           "0",
                           Patterns::List(Patterns::Double()),
                           "List of initial velocities x");
-
         prm.declare_entry("list velocity y",
                           "0",
                           Patterns::List(Patterns::Double()),
                           "List of initial velocities y");
-
         prm.declare_entry("list velocity z",
                           "0",
                           Patterns::List(Patterns::Double()),
                           "List of initial velocities z");
-
         prm.declare_entry("list omega x",
                           "0.",
                           Patterns::List(Patterns::Double()),
                           "List of initial omega x");
-
         prm.declare_entry("list omega y",
                           "0.",
                           Patterns::List(Patterns::Double()),
                           "List of initial omega y");
-
         prm.declare_entry("list omega z",
                           "0.",
                           Patterns::List(Patterns::Double()),
                           "List of initial omega z");
-
         prm.declare_entry("list diameters",
                           "1.0",
                           Patterns::List(Patterns::Double()),
                           "List of diameters");
-
         prm.declare_entry("velocity x",
                           "0.0",
                           Patterns::Double(),
                           "Initial velocity x");
-
         prm.declare_entry("velocity y",
                           "0.0",
                           Patterns::Double(),
                           "Initial velocity y");
-
         prm.declare_entry("velocity z",
                           "0.0",
                           Patterns::Double(),
                           "Initial velocity z");
-
         prm.declare_entry("omega x",
                           "0.0",
                           Patterns::Double(),
                           "Initial omega x");
-
         prm.declare_entry("omega y",
                           "0.0",
                           Patterns::Double(),
                           "Initial omega y");
-
         prm.declare_entry("omega z",
                           "0.0",
                           Patterns::Double(),
                           "Initial omega z");
-
         prm.declare_entry("insertion plane point",
                           "0., 0., 0.",
                           Patterns::List(Patterns::Double()),
                           "Insertion plane point location");
-
         prm.declare_entry("insertion plane normal vector",
                           "1., 0., 0.",
                           Patterns::List(Patterns::Double()),
                           "Insertion plane normal vector");
-
         prm.declare_entry(
           "insertion plane threshold distance",
           "0.",

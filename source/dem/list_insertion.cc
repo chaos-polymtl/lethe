@@ -65,7 +65,7 @@ ListInsertion<dim>::ListInsertion(
   Assert(list_wz.size() == list_x.size(),
          AngularVelocitySizeCoherence2(list_wz.size(), list_x.size()));
 
-  if (dim == 3)
+  if constexpr (dim == 3)
     {
       Assert(list_x.size() == list_z.size(),
              PositionSizeCoherence(list_x.size(), list_z.size()));
@@ -85,24 +85,22 @@ ListInsertion<dim>::ListInsertion(
   // Generate vector of insertion position
   for (unsigned int i = 0; i < list_x.size(); ++i)
     {
-      if (dim == 2)
+      if constexpr (dim == 2)
         {
           insertion_points.emplace_back(Point<dim>({list_x[i], list_y[i]}));
-          insertion_velocities.emplace_back(
-            Tensor<1, 3>({list_vx[i], list_vy[i], 0.}));
-          insertion_angular_velocities.emplace_back(
-            Tensor<1, 3>({0., 0., list_wz[i]}));
+          velocities.emplace_back(Tensor<1, 3>({list_vx[i], list_vy[i], 0.}));
+          angular_velocities.emplace_back(Tensor<1, 3>({0., 0., list_wz[i]}));
         }
-      else
+      if constexpr (dim == 3)
         {
           insertion_points.emplace_back(
             Point<dim>({list_x[i], list_y[i], list_z[i]}));
-          insertion_velocities.emplace_back(
+          velocities.emplace_back(
             Tensor<1, 3>({list_vx[i], list_vy[i], list_vz[i]}));
-          insertion_angular_velocities.emplace_back(
+          angular_velocities.emplace_back(
             Tensor<1, 3>({list_wx[i], list_wy[i], list_wz[i]}));
         }
-      insertion_diameters.emplace_back(list_d[i]);
+      diameters.emplace_back(list_d[i]);
     }
 }
 
@@ -209,15 +207,15 @@ ListInsertion<dim>::assign_particle_properties_for_list_insertion(
        ++particle_counter)
     {
       double type     = current_inserting_particle_type;
-      double diameter = this->insertion_diameters[particle_counter];
+      double diameter = this->diameters[particle_counter];
       double density =
         physical_properties.density_particle[current_inserting_particle_type];
-      double vel_x   = this->insertion_velocities[particle_counter][0];
-      double vel_y   = this->insertion_velocities[particle_counter][1];
-      double vel_z   = this->insertion_velocities[particle_counter][2];
-      double omega_x = this->insertion_angular_velocities[particle_counter][0];
-      double omega_y = this->insertion_angular_velocities[particle_counter][1];
-      double omega_z = this->insertion_angular_velocities[particle_counter][2];
+      double vel_x        = this->velocities[particle_counter][0];
+      double vel_y        = this->velocities[particle_counter][1];
+      double vel_z        = this->velocities[particle_counter][2];
+      double omega_x      = this->angular_velocities[particle_counter][0];
+      double omega_y      = this->angular_velocities[particle_counter][1];
+      double omega_z      = this->angular_velocities[particle_counter][2];
       double fem_force_x  = 0.;
       double fem_force_y  = 0.;
       double fem_force_z  = 0.;
