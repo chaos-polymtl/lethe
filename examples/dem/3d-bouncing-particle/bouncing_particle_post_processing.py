@@ -13,6 +13,7 @@
 
 import sys
 import matplotlib.pyplot as plt
+import numpy as np
 # Path to the module
 path_to_module = '$LETHE_PATH/contrib/postprocessing/'
 sys.path.append(path_to_module)

@@ -13,7 +13,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 import sys
-sys.path.append("../../../../contrib/postprocessing/")
+sys.path.append("$LETHE_PATH/contrib/postprocessing/")
 from lethe_pyvista_tools import *
 
 #############################################################################

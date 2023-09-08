@@ -4,7 +4,7 @@
 import sys
 
 # Path to the module
-path_to_module = '../../../contrib/postprocessing/'
+path_to_module = '$LETHE_PATH/contrib/postprocessing/'
 sys.path.append(path_to_module)
 
 # Import tools from module

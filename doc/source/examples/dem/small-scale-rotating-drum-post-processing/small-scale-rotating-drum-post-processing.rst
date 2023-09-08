@@ -2,15 +2,17 @@
 Small Scale Rotating Drum Post-processing
 ==========================================
 
-This is an example of how to post-process results obtained in the `Small scale rotating drum example <../../dem/rotating-drum/small-scale-rotating-drum.html>`_ using `lethe_pyvista_tools <https://github.com/lethe-cfd/lethe/tree/master/contrib/postprocessing>`_, a Python module is based on `PyVista <https://docs.pyvista.org/>`_, built to facilitate the reading of Lethe results using `Python <https://www.python.org/>`_. 
+This is an example of how to post-process results obtained in the `Small scale rotating drum example`_ using `lethe_pyvista_tools <https://github.com/lethe-cfd/lethe/tree/master/contrib/postprocessing>`_, a Python module based on `PyVista <https://docs.pyvista.org/>`_, built to facilitate the reading of Lethe results using `Python <https://www.python.org/>`_.
+
+.. _`Small scale rotating drum example`: ../../dem/small-scale-rotating-drum/small-scale-rotating-drum.html
 
 .. important::
   
-  This example uses the DEM files of the `Small scale rotating drum example <../../dem/rotating-drum/small-scale-rotating-drum.html>`_.
+  This example uses the DEM files of the `Small scale rotating drum example`_.
 
 .. warning::
   
-  For `lethe_pyvista_tools <https://github.com/lethe-cfd/lethe/tree/master/contrib/postprocessing>`_ to work, along with `Python 3 <https://www.python.org/downloads/>`_, the following libraries are needed: `os <https://docs.python.org/3/library/os.html>`_, `NumPy <https://numpy.org/>`_, `PyVista <https://docs.pyvista.org/>`_, `tqdm <https://tqdm.github.io/>`_, `matplotlib <https://matplotlib.org/stable/index.html>`_, and `SciPy <https://scipy.org/>`_, and `scikit-learn <https://scikit-learn.org/stable/index.html>`_. If any of the modules are missing, use `pip <https://pypi.org/project/pip/>`_ to install it running ``pip3 install $NAME_OF_THE_MODULE`` on the terminal.
+  Details about installing the module or using it without installing it are available on this `documentation <../../../tools/postprocessing/postprocessing.py>`_.
 
 
 ----------------------------------
@@ -27,7 +29,7 @@ Files Used in This Example
 
 - Parameters file for particle insertion: ``/examples/dem/3d-small-scale-rotating-drum/packing-rotating-drum.prm``
 - Parameters file for drum rotation: ``/examples/dem/3d-small-scale-rotating-drum/small-rotating-drum-dem.prm``
-- Python module for Lethe data post-processing: ``/contrib/postprocessing/lethe_pyvista_tools.py``
+- Python module for Lethe data post-processing: ``/contrib/postprocessing/lethe_pyvista_tools``
 - Python script using module for rotating drum post-processing: ``/examples/postprocessing/small-scale-rotating-drum-postprocessing/example_small_rotating_drum.py``
 
 
@@ -39,7 +41,7 @@ In this example, we illustrate the mixing inside a rotating drum by coloring the
 
 Additionally, we calculate the mixing index using the Nearest Neighbors Method (NNM) [`1 <https://www.researchgate.net/profile/Niels-Deen/publication/228722534_Characterizing_solids_mixing_in_DEM_simulations/links/00b495289f429c5b39000000/Characterizing-solids-mixing-in-DEM-simulations.pdf>`_] and Doucet method [`2 <https://www.sciencedirect.com/science/article/abs/pii/S0263876208002724>`_, `3 <https://doi.org/10.1016/j.cherd.2016.12.018>`_].
 
-The DEM files used in this example are obtained following the `Small scale rotating drum example <../../dem/rotating-drum/small-scale-rotating-drum.html>`_.
+The DEM files used in this example are obtained following the `Small scale rotating drum example`_.
 
 .. note::
   It is not necessary to use all mentioned tools, but they are used in this example to show different ways to process the data according to user's need.
@@ -49,41 +51,22 @@ The DEM files used in this example are obtained following the `Small scale rotat
 Python Code
 ---------------
 
-Module Importing
-~~~~~~~~~~~~~~~~~
-
-The module `lethe_pyvista_tools <https://github.com/lethe-cfd/lethe/tree/master/contrib/postprocessing>`_ was conceived to optimize the reading and post-treatment of Lethe data using Python. It is based on `PyVista <https://docs.pyvista.org/>`_, a versatile module that can be used to manipulate Lethe results.
-
-First of all, we import the module to our Python script. There are two ways to do so. In the case of this example, we use the `sys <https://docs.python.org/3/library/sys.html>`_ module to import it directly from Lethe's directory:
-
-.. code-block::
-
-  import sys
-  path_to_module = '../../../contrib/postprocessing/'
-  sys.path.append(path_to_module)
-  from lethe_pyvista_tools import *
-  import matplotlib.pyplot as plt
-
-where `sys.path <https://docs.python.org/3/library/sys.html#sys.path:~:text=in%20version%203.10.-,sys.path%C2%B6,-A%20list%20of>`_ is a list of strings that specifies the search path for modules. However, one can simply copy the `lethe_pyvista_tools.py <https://github.com/lethe-cfd/lethe/tree/master/contrib/postprocessing>`_ file to the same folder as the Python post-processing script is and import it, such as:
- 
-.. code-block::
-
-  from lethe_pyvista_tools import *
-
-One third and very convenient way to always import the module without copying it or even adding the ``sys.path.append(path_to_module)`` is permanentely adding the path to the module (``/contrib/postprocessing/``) to your `PYTHONPATH <https://docs.python.org/3/library/sys_path_init.html#:~:text=The%20PYTHONPATH%20environment%20variable%20is,all%20installed%20Python%20versions%2Fenvironments.>`_.
-
-The ``*`` means that we want to import all members of lethe_pyvista_tools.
+Please, read this `documentation <../../../tools/postprocessing/postprocessing.py>`_ before jumping to the following steps.
 
 Constructing the Object
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The following step is to create an object to receive the data. In the present case, the object is called ``particles``.
+The first step is to create an object to receive the data. In the present case, the object is called ``particles``.
 
 .. code-block::
 
-  particles = lethe_pyvista_tools(case_path = ".", prm_file_name = "small-rotating-drum-dem.prm", pvd_name = "out.pvd", prefix = "mod_")
+  particles = lethe_pyvista_tools(case_path = ".", prm_file_name = "small-rotating-drum-dem.prm", pvd_name = "out.pvd", prefix = "mod_", n_procs = None)
 
-Here, the constructor ``lethe_pyvista_tools`` receives two arguments: ``case_path``, ``prm_file_name``, and the name of the ``.pvd`` file generated by the simulation. In the above code line, ``"."`` means that the ``case_path`` is the path where we currently are, but it can be any path where the case is. The ``prm_file_name`` argument takes ``"small-rotating-drum-dem.prm"``. The constructor can take 3 other arguments: ``first``, ``last``, and ``step``, standing for the first and last time-steps to be read and the interval between the time-steps, respectively. By default, ``first = 0``, ``step = 1``, and ``last`` is the last time-step of the data.
+Here, the constructor ``lethe_pyvista_tools`` receives three arguments: ``case_path``, ``prm_file_name``, and the name of the ``.pvd`` file generated by the simulation. In the above code line, ``"."`` means that the ``case_path`` is the path where we currently are, but it can be any path where the case is. The ``prm_file_name`` argument takes ``"small-rotating-drum-dem.prm"``. The constructor can take 3 other arguments: ``first``, ``last``, and ``step``, standing for the first and last time-steps to be read and the interval between the time-steps, respectively. By default, ``first = 0``, ``step = 1``, and ``last`` is the last time-step of the data.
+
+.. important::
+
+    The special ``n_procs`` parameter controls the number of cores used in the post-processing routine. By default, it is set to ``None``. If no other value is provided, the ``n_procs`` will be the number of CPUs on your machines.
 
 .. note:: 
   
@@ -92,9 +75,9 @@ Here, the constructor ``lethe_pyvista_tools`` receives two arguments: ``case_pat
 .. tip::
   Together with the object ``particles``, ``lethe_pyvista_tools`` creates a dictionary with all parameters in the ``.prm`` file. To access the parameter, we can use ``particles.prm_dict['$NAME_OF_THE_PARAMETER']``. In the present case for example, the diameter of the particles can be easily printed using ``print(particles.prm_dict['diameter'])``. This can be useful for post-processing routines with multiple simulations.
 
-  Note that a list of values is returned when there is more than one parameter with the same name in the ``.prm`` file. The list is sorted according to parameters' occurancy.
+  Note that a list of values is returned when there is more than one parameter with the same name in the ``.prm`` file. The list is sorted according to parameters' occurrence.
 
-This command will also read all information necessary to read the data from the pvd file. To ensure that no original data will not be lost during the post-processing, on calling the contructor, copies of the ``.pvd`` and all ``.vtu`` files are created with a given ``prefix``. This parameter can be added to ``lethe_pyvista_tools`` and is ``mod_`` by default. If you wish to work with the original ``.vtu`` and ``.pvd`` files, just use ``prefix = ""``.
+This command will also read all information necessary to read the data from the pvd file. To ensure that no original data will not be lost during the post-processing, on calling the constructor, copies of the ``.pvd`` and all ``.vtu`` files are created with a given ``prefix``. This parameter can be added to ``lethe_pyvista_tools`` and is ``mod_`` by default. If you wish to work with the original ``.vtu`` and ``.pvd`` files, just use ``prefix = ""``.
 
 The ``read_lethe_to_pyvista`` reading function assigns the datasets of each time-step to the object ``particles``. Each time-step corresponds to a `PyVista dataset <https://docs.pyvista.org/user-guide/vtk_to_pyvista.html#>`_, and can be accessed using ``particles.df[$TIME-step_NUMBER]``.
 
