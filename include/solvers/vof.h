@@ -83,7 +83,7 @@ public:
         simulation_parameters.multiphysics.vof_parameters.sharpening.threshold)
   {
     AssertThrow(simulation_parameters.physical_properties_manager
-                    .get_number_of_fluids() != 2,
+                    .get_number_of_fluids() == 2,
                 InvalidNumberOfFluid(
                   simulation_parameters.physical_properties_manager
                     .get_number_of_fluids()));
