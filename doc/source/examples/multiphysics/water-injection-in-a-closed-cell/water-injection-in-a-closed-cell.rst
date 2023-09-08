@@ -273,7 +273,8 @@ The results can be post-processed by invoking the following command from the fol
   python3 water-injection-in-a-closed-cell-postprocessing.py . water-injection-in-a-closed-cell.prm
 
 .. important::
-    You need to ensure that the ``lethe_pyvista_tools`` module included within Lethe is in your Python path.
+
+    You need to ensure that the ``lethe_pyvista_tools`` is working on your machine. Click `here <../../../tools/postprocessing/postprocessing.html>`_ for details.
 
 The following figures present the comparison between the analytical results and the simulation results for the density and pressure evolutions evaluated at the center of the cavity in the air. A great agreement between the simulation and analytical results is observed.
 

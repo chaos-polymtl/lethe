@@ -431,10 +431,15 @@ We briefly comment on some results that can be extracted from this example.
 
 .. important::
 
-    This example includes a post-processing file written in Python and using `lethe_pyvista_tools <../../dem/small-scale-rotating-drum-post-processing/small-scale-rotating-drum-post-processing.html>`_. module.
+    This example includes a post-processing file written in Python that uses the `lethe_pyvista_tools <../../../tools/postprocessing/postprocessing.html>`_. module.
+
+.. important::
 
     To use the code, run ``python3 lsfb_postprocessing.py $PATH_TO_YOUR_CASE_FOLDER``. The code will generate several graphics showing the pressure profile within the bed, which are going to be stored in ``$PATH_TO_YOUR_CASE_FOLDER/P_x``. It will also generate a ``deltaP_t.csv`` file with the total pressure difference for each time-step. Additionally, it generates a void fraction as a function of time graphic (``eps_t.png``).
 
+.. important::
+
+    You need to ensure that the ``lethe_pyvista_tools`` is working on your machine. Click `here <../../../tools/postprocessing/postprocessing.html>`_ for details.
 
 Side View
 ~~~~~~~~~~~

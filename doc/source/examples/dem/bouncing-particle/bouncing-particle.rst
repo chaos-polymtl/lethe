@@ -128,6 +128,10 @@ Once the 6 simulations have been run, use the following line in your command lin
 
   python3 bouncing_particle_post_processing.py
 
+.. important::
+
+    You need to ensure that ``lethe_pyvista_tools`` is working on your machine. Click `here <../../../tools/postprocessing/postprocessing.html>`_ for details.
+
 A figure will be generated which compares the analytical solution with the simulation results.
 
 ----------------------

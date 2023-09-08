@@ -222,9 +222,9 @@ It is possible to run the post-processing code with the following line. The argu
     python3 hopper_post_processing.py ./ hopper.prm
 
 
-.. note:: 
+.. important::
 
-  The ``hopper_post_processing.py`` uses the ``lethe_pyvista_tools.py`` module. For more information about the module, refer to the `Small rotating drum post-processing example <../small-scale-rotating-drum-post-processing/small-scale-rotating-drum-post-processing.html>`_
+    You need to ensure that ``lethe_pyvista_tools`` is working on your machine. Click `here <../../../tools/postprocessing/postprocessing.html>`_ for details.
 
 
 -----------------------
