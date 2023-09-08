@@ -466,7 +466,6 @@ namespace Parameters
         std::string vy_str = prm.get("list velocity y");
         std::string vz_str = prm.get("list velocity z");
 
-
         // Convert vx,vy andv vz string to vector of strings
         std::vector<std::string> vx_str_list(
           Utilities::split_string_list(vx_str));
@@ -479,6 +478,14 @@ namespace Parameters
         list_vx = Utilities::string_to_double(vx_str_list);
         list_vy = Utilities::string_to_double(vy_str_list);
         list_vz = Utilities::string_to_double(vz_str_list);
+
+        // Fill the velocity vector with zeros to match the size of list_x
+        if (list_vx != list_x)
+          list_vx.resize(list_x.size());
+        if (list_vy != list_x)
+          list_vy.resize(list_x.size());
+        if (list_vz != list_x)
+          list_vz.resize(list_x.size());
 
         // Read wx, wy and wz list as a single string
         std::string wx_str = prm.get("list omega x");
@@ -497,6 +504,15 @@ namespace Parameters
         list_wx = Utilities::string_to_double(wx_str_list);
         list_wy = Utilities::string_to_double(wy_str_list);
         list_wz = Utilities::string_to_double(wz_str_list);
+
+        // Fill the angular velocity vector with zeros to match the size of
+        // list_x
+        if (list_wx != list_x)
+          list_wx.resize(list_x.size());
+        if (list_wy != list_x)
+          list_wy.resize(list_x.size());
+        if (list_wz != list_x)
+          list_wz.resize(list_x.size());
 
         // Read the diameters list as a single string
         std::string d_str = prm.get("list diameters");

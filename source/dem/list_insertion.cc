@@ -8,25 +8,6 @@ DeclException2(PositionSizeCoherence,
                << "Incoherent particle position lists size p1=" << arg1
                << ", p2=" << arg2);
 
-DeclException2(VelocitySizeCoherence,
-               int,
-               int,
-               << "Incoherent particle velocity lists size v1=" << arg1
-               << ", v2=" << arg2);
-
-DeclException2(AngularVelocitySizeCoherence2,
-               int,
-               int,
-               << "Incoherent particle omega lists size wz=" << arg1
-               << ", x=" << arg2);
-
-DeclException3(AngularVelocitySizeCoherence3,
-               int,
-               int,
-               int,
-               << "Incoherent particle omega lists wx=" << arg1
-               << ", wy=" << arg2 << ", wz=" << arg3);
-
 DeclException2(DiameterSizeCoherence,
                int,
                int,
@@ -58,26 +39,10 @@ ListInsertion<dim>::ListInsertion(
 
   Assert(list_x.size() == list_y.size(),
          PositionSizeCoherence(list_x.size(), list_y.size()));
-
-  Assert(list_vx.size() == list_vy.size(),
-         VelocitySizeCoherence(list_vx.size(), list_vy.size()));
-
-  Assert(list_wz.size() == list_x.size(),
-         AngularVelocitySizeCoherence2(list_wz.size(), list_x.size()));
-
-  if constexpr (dim == 3)
+  if (dim == 3)
     {
       Assert(list_x.size() == list_z.size(),
              PositionSizeCoherence(list_x.size(), list_z.size()));
-
-      Assert(list_vx.size() == list_vz.size(),
-             VelocitySizeCoherence(list_vx.size(), list_vz.size()));
-
-      Assert(list_wx.size() == list_wy.size() &&
-               list_wx.size() == list_wz.size(),
-             AngularVelocitySizeCoherence3(list_wx.size(),
-                                           list_wy.size(),
-                                           list_wz.size()));
     }
   Assert(list_x.size() == list_d.size(),
          DiameterSizeCoherence(list_x.size(), list_d.size()));
