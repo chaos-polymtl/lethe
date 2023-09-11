@@ -181,7 +181,7 @@ Parameters::VOF::parse_parameters(ParameterHandler &prm)
     if (sharpening.type == Parameters::SharpeningType::adaptative)
       {
         AssertThrow(conservation.monitoring,
-               AdaptativeSharpeningError(conservation.monitoring));
+                    AdaptativeSharpeningError(conservation.monitoring));
       }
   }
   prm.leave_subsection();
