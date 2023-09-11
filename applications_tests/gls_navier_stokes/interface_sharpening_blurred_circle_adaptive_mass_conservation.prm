@@ -33,7 +33,6 @@ subsection VOF
   end
 
   subsection mass conservation
-    set conservative fluid = both
     set monitoring         = true
     set monitored fluid    = fluid 1
     # parameters used with adaptative sharpening

@@ -70,11 +70,11 @@ namespace Parameters
   struct VOF_MassConservation
   {
     bool monitoring;
+
     // Conservation tolerance on the fluid monitored,
     // used with adaptative Sharpening
     double tolerance;
 
-    Parameters::FluidIndicator conservative_fluid;
     Parameters::FluidIndicator monitored_fluid;
 
     // Type of verbosity for the mass conservation algorithm

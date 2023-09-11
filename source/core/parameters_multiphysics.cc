@@ -180,13 +180,8 @@ Parameters::VOF::parse_parameters(ParameterHandler &prm)
     // Error definitions
     if (sharpening.type == Parameters::SharpeningType::adaptative)
       {
-        Assert(conservation.monitoring == true,
+        AssertThrow(conservation.monitoring,
                AdaptativeSharpeningError(conservation.monitoring));
-        Assert((conservation.conservative_fluid ==
-                Parameters::FluidIndicator::both) or
-                 (conservation.conservative_fluid ==
-                  conservation.monitored_fluid),
-               MonitoringConservationError(conservation.monitoring));
       }
   }
   prm.leave_subsection();
@@ -208,12 +203,6 @@ Parameters::VOF_MassConservation::declare_parameters(ParameterHandler &prm)
       "1e-6",
       Patterns::Double(),
       "Tolerance on the mass conservation of the monitored fluid, used with adaptative sharpening");
-
-    prm.declare_entry(
-      "conservative fluid",
-      "both",
-      Patterns::Selection("fluid 0|fluid 1|both"),
-      "Fluid for which conservation is solved <fluid 0|fluid 1|both>. ");
 
     prm.declare_entry(
       "monitored fluid",
@@ -238,18 +227,6 @@ Parameters::VOF_MassConservation::parse_parameters(ParameterHandler &prm)
   {
     monitoring = prm.get_bool("monitoring");
     tolerance  = prm.get_double("tolerance");
-
-    // Conservative fluid
-    const std::string op_cf = prm.get("conservative fluid");
-    if (op_cf == "fluid 1")
-      conservative_fluid = Parameters::FluidIndicator::fluid1;
-    else if (op_cf == "fluid 0")
-      conservative_fluid = Parameters::FluidIndicator::fluid0;
-    else if (op_cf == "both")
-      conservative_fluid = Parameters::FluidIndicator::both;
-    else
-      throw(std::runtime_error("Invalid conservative fluid. "
-                               "Options are 'fluid 0', 'fluid 1' or 'both'."));
 
     // Monitored fluid
     const std::string op_mf = prm.get("monitored fluid");
