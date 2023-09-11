@@ -227,19 +227,9 @@ public:
       }
   }
 
-  /** @brief Calculates the physical properties. This method calculates the physical properties
-   * that may be required by the VOF problem. Namely the density to apply
-   * peeling/wetting.
-   *
-   */
-  void
-  calculate_physical_properties();
-
   // Physical properties
   PhysicalPropertiesManager            properties_manager;
   std::map<field, std::vector<double>> fields;
-  std::vector<double>                  density_0;
-  std::vector<double>                  density_1;
 
   // FEValues for the VOF problem
   FEValues<dim> fe_values_vof;

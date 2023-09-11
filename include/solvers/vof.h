@@ -45,6 +45,13 @@
 
 #include <deal.II/numerics/error_estimator.h>
 
+DeclException1(
+  InvalidNumberOfFluid,
+  int,
+  << "The VOF physics is enabled, but the number of fluids is set to " << arg1
+  << ". The VOF solver only supports 2 fluids.");
+
+
 template <int dim>
 class VolumeOfFluid
   : public AuxiliaryPhysics<dim, TrilinosWrappers::MPI::Vector>
@@ -75,6 +82,13 @@ public:
     , sharpening_threshold(
         simulation_parameters.multiphysics.vof_parameters.sharpening.threshold)
   {
+    AssertThrow(simulation_parameters.physical_properties_manager
+                    .get_number_of_fluids() == 2,
+                InvalidNumberOfFluid(
+                  simulation_parameters.physical_properties_manager
+                    .get_number_of_fluids()));
+
+
     if (simulation_parameters.mesh.simplex)
       {
         // for simplex meshes
@@ -210,26 +224,6 @@ public:
   calculate_barycenter(const TrilinosWrappers::MPI::Vector &solution,
                        const VectorType &current_solution_fd);
 
-
-  /**
-   * @brief Calculate the average pressure value of the monitored fluid. Used for
-   * the wetting mechanism.
-   *
-   * @tparam VectorType The Vector type used for the solvers
-   *
-   * @param solution VOF solution (phase fraction)
-   *
-   * @param current_solution_fd current solution for the fluid dynamics
-   *
-   * @param monitored_fluid Fluid indicator (fluid0 or fluid1) corresponding to
-   * the phase of interest.
-   */
-  template <typename VectorType>
-  double
-  find_monitored_fluid_avg_pressure(
-    const TrilinosWrappers::MPI::Vector &solution,
-    const VectorType &                   current_solution_fd,
-    const Parameters::FluidIndicator     monitored_fluid);
 
   /**
    * @brief Carry out the operations required to finish a simulation correctly.
@@ -402,14 +396,6 @@ public:
     return &present_curvature_solution;
   }
 
-
-  // enum class used for peeling/wetting
-  enum class PhaseChange
-  {
-    peeling,
-    wetting
-  };
-
 private:
   /**
    *  @brief Assembles the matrix associated with the solver
@@ -537,48 +523,6 @@ private:
    */
   void
   assemble_mass_matrix(TrilinosWrappers::SparseMatrix &mass_matrix);
-
-
-  /**
-   * @brief Carries out peeling and wetting. It is called in the modify solution function.
-   * Launches apply_peeling_wetting on affected boundaries and handles output
-   * messages.
-   */
-  void
-  handle_peeling_wetting();
-
-  /**
-   * @brief Modification of the solution to take into account peeling and wetting
-   *
-   * @tparam VectorType The Vector type used for the solvers
-   *
-   * @param i_bc peeling-wetting boundary index
-   *
-   * @param current_solution_fd current solution for the fluid dynamics
-   */
-  template <typename VectorType>
-  void
-  apply_peeling_wetting(const unsigned int i_bc,
-                        const VectorType & current_solution_fd);
-
-  /**
-   * @brief Change cell phase, small method called to avoid code repetition and reduce sloppy
-   * error likelihood in apply_peeling_wetting.
-   *
-   * @param type a parameter of class PhaseChange (see below) stating the needed change
-   *
-   * @param new_phase the new phase value for the cell (0 or 1)
-   *
-   * @param solution_pw VOF solution after peeling and wetting corrections are applied
-   *
-   * @param dof_indices_vof local index for the VOF solution
-   */
-  void
-  change_cell_phase(
-    const PhaseChange &                         type,
-    const double &                              new_phase,
-    TrilinosWrappers::MPI::Vector &             solution_pw,
-    const std::vector<types::global_dof_index> &dof_indices_vof);
 
   /**
    * @brief Carries out interface sharpening. It is called in the modify solution function.
@@ -771,11 +715,6 @@ private:
   TrilinosWrappers::MPI::Vector  system_rhs_phase_fraction;
   TrilinosWrappers::MPI::Vector  complete_system_rhs_phase_fraction;
   TrilinosWrappers::SparseMatrix mass_matrix_phase_fraction;
-
-  // Peeling/Wetting analysis
-  TrilinosWrappers::MPI::Vector marker_pw;
-  unsigned int                  nb_cells_wet;
-  unsigned int                  nb_cells_peeled;
 
   // Projected phase fraction gradient (pfg) solution
   TrilinosWrappers::MPI::Vector
