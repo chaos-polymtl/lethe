@@ -54,12 +54,6 @@ The default values of the VOF parameters are given in the text box below.
       set enable marangoni effect               = false
     end
 
-    subsection peeling wetting
-      set enable peeling = false
-      set enable wetting = false
-      set verbosity      = quiet
-    end
-
     subsection mass conservation
       set conservative fluid = both
       set monitoring         = false
@@ -78,7 +72,7 @@ The default values of the VOF parameters are given in the text box below.
   .. tip::
     Applying viscous dissipation in one of the fluids instead of both is particularly useful when one of the fluids is air. For numerical stability, the ``kinematic viscosity`` of the air is usually increased. However, we do not want to have viscous dissipation in the air, because it would result in an unrealistic increase in its temperature. This parameter is used only if ``set heat transfer = true`` and ``set viscous dissipation = true`` in :doc:`./multiphysics`.
 
-* ``diffusivity``: value of the diffusivity (diffusion coefficient) in the transport equation of the phase fraction. Default value is ``0`` to have pure advection. Increase ``diffusivity`` to :ref:`improve wetting`.
+* ``diffusivity``: value of the diffusivity (diffusion coefficient) in the transport equation of the phase fraction. Default value is ``0`` to have pure advection. 
 * ``compressible``: enables interface compression (:math:`\phi \nabla \cdot \mathbf{u}`) in the VOF equation.  This term should be kept to its default value of ``false`` except when compressible equations of state are used.
 
 
@@ -187,76 +181,13 @@ The following procedure is recommended to choose proper values for the ``phase f
 3. Run the simulation and check whether the filtered phase fraction gradient field is smooth and without oscillation.
 4.  If the filtered phase fraction gradient and filtered curvature fields show oscillations, increase the value :math:`\alpha` and :math:`\beta` to larger values, and repeat this process until reaching smooth filtered phase fraction gradient and filtered curvature fields without oscillations.
 
-Peeling and Wetting
-~~~~~~~~~~~~~~~~~~~~~~
-
-* ``subsection peeling wetting``: Peeling and wetting mechanisms are very important to consider when there are solid boundaries in the domain, like a wall. If the fluid is already on the wall and its velocity drives it away from it, the fluid should be able to detach from the wall, meaning to `peel` from it. If the fluid is not already on the wall and its velocity drives it toward it, the fluid should be able to attach to the wall, meaning to `wet` it. This subsection defines the parameters for peeling and wetting mechanisms at the VOF boundaries, as defined in :doc:`boundary_conditions_multiphysics`. 
-
-  .. important::
-    This peeling/wetting mechanism implementation is a heuristic. It has been developed to meet the need of specific projects and gave satisfactory results as is, but it has not been broadly tested nor demonstrated, so its results should be considered with caution. Do not hesitate to write to the team through the `Lethe GitHub page <https://github.com/lethe-cfd/lethe>`_ would you need assistance.
-
-  .. warning::
-
-    As peeling/wetting mechanisms result in fluid generation and loss, it is highly advised to monitor the mass conservation of the fluid of interest (``subsection mass conservation``) and to change the type of sharpening threshold to adaptative (``subsection sharpening``).
-
-  * ``enable peeling``: controls if peeling mechanism is enabled. Peeling occurs in a cell where the following conditions are met:
-
-    * the cell is in the domain of the higher density fluid,
-    * the cell pressure value is below the average pressure of the ``monitored fluid`` (``fluid 1`` by default, see ``subsection mass conservation``), and
-    * the pressure gradient is negative for more than half of the quadrature points.
-
-    The cell is then filled with the lower density fluid by changing its phase value progressively.
-
-    .. important::
-      Even if ``monitoring`` is not enabled, the ``monitored fluid`` (``fluid 1`` by default) will be considered the fluid of interest for the average pressure calculation in the peeling/wetting mechanism.
-
-  * ``enable wetting``: controls if the wetting mechanism is enabled. Wetting occurs in a cell where those conditions are met: 
-
-    * the cell is in the domain of the lower density fluid,
-    * the cell pressure value is above the average pressure of the ``monitored fluid`` (``fluid 1`` by default, see ``subsection mass conservation``), and
-    * the pressure gradient is positive for more than half of the quadrature points.
-
-    The cell is then filled with the higher density fluid by changing its phase value progressively.
-
-    .. tip ::
-
-      Using ``set enable wetting = false`` and relying on the ``diffusivity`` to wet the boundaries (see :ref:`improve wetting`) can give better results when the densities of the two fluids are of a very different order of magnitude.
-
-      Typically, when one fluid is more than a hundred times denser than the other, the wetting mechanism can result in the denser fluid crawling on the wall in a non-physical way. Again, this is still a heuristic, so do not hesitate to write to the team through the `Lethe GitHub page <https://github.com/lethe-cfd/lethe>`_ would you need assistance.
-
-  * ``verbosity``: enables the display of the number of peeled and wet cells at each time-step. Choices are: ``quiet`` (default, no output) and ``verbose``.
-
-    .. admonition:: Example of a ``set verbosity = verbose`` output:
-  
-      .. code-block:: text
-
-        Peeling/wetting correction at step 2
-          -number of wet cells: 24
-          -number of peeled cells: 1
-
-.. _improve wetting:
-
-Improving the Wetting Mechanism
-+++++++++++++++++++++++++++++++++++
-
-In the framework of incompressible fluids, a layer of the lowest density fluid (e.g. air) can form between the highest density fluid (e.g. water) and the boundary, preventing its wetting. Two strategies can be used to improve the wetting mechanism:
-
-1. Increase the ``diffusivity`` to the transport equation (e.g. ``set diffusivity = 1e-2``), so that the higher density fluid spreads even more to the boundary location.
-
-.. tip::
-  It is strongly advised to sharpen the interface more often (e.g. ``set frequency = 2`` or even ``1``) to limit interface blurriness due the added diffusivity. As peeling-wetting is handled after the transport equation is solved, but before interface sharpening, sharpening will not prevent the wetting from occurring.
-
-2. Remove the conservation condition on the lowest density fluid (e.g. ``set conservative fluid = fluid 1``). The mass conservation equation in the cells of interest is replaced by a zero-pressure condition, to allow the fluid to get out of the domain.
-
-.. tip::
-  This can give more precise results as the interface remains sharp, but the time step (in :doc:`simulation_control`) must be low enough to prevent numerical instabilities.
 
 .. _mass conservation:
 
 Mass Conservation
 ~~~~~~~~~~~~~~~~~~~~~
 
-* ``subsection mass conservation``: By default, mass conservation (continuity) equations are solved on the whole domain, i.e. on both fluids (``set conservative fluid = both``). However, replacing the mass conservation by a zero-pressure condition on one of the fluid (typically, the air), so that it can get in and out of the domain, can be useful to :ref:`improve wetting`. This subsection defines parameters that can be used to solve mass conservation in one fluid instead of both, and to monitor the surface/volume (2D/3D) occupied by the other fluid of interest.
+* ``subsection mass conservation``: By default, mass conservation (continuity) equations are solved on the whole domain, i.e. on both fluids (``set conservative fluid = both``).  This subsection defines parameters that can be used to solve mass conservation in one fluid instead of both, and to monitor the surface/volume (2D/3D) occupied by the other fluid of interest.
 
   * ``conservative fluid``: defines fluid(s) for which conservation is solved. 
 

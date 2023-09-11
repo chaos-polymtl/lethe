@@ -47,36 +47,6 @@ VOFScratchData<dim>::allocate()
   this->laplacian_phi =
     std::vector<std::vector<double>>(this->n_q_points,
                                      std::vector<double>(this->n_dofs));
-
-  // Allocate memory for the physical properties
-  density_0 = std::vector<double>(n_q_points);
-  density_1 = std::vector<double>(n_q_points);
-}
-
-template <int dim>
-void
-VOFScratchData<dim>::calculate_physical_properties()
-{
-  switch (properties_manager.get_number_of_fluids())
-    {
-        case 1: {
-          // Cannot proceed a two-phase flow simulations if only one fluid is
-          // defined. This error must have been thrown a long time ago by the
-          // code, it is repeated here for clarity.
-          throw std::runtime_error(
-            "Cannot run VOF simulations with only 1 fluid, review the Physical Properties section of the .prm");
-        }
-        case 2: {
-          const auto density_models = properties_manager.get_density_vector();
-
-          density_models[0]->vector_value(fields, density_0);
-          density_models[1]->vector_value(fields, density_1);
-
-          break;
-        }
-      default:
-        throw std::runtime_error("Unsupported number of fluids (>2)");
-    }
 }
 
 template class VOFScratchData<2>;

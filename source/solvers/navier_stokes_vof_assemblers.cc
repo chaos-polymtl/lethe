@@ -39,9 +39,6 @@ GLSNavierStokesVOFAssemblerCore<dim>::assemble_matrix(
   const double phase_cutoff = 1e-6;
 
   // Determine whether continuity condition is solved in this cell.
-  // Removing the conservation condition on the lowest density fluid
-  // can improve the wetting mechanism in the framework of incompressible
-  // fluids. See documentation for more details.
   auto max_phase_cell =
     std::max_element(std::begin(phase_values), std::end(phase_values));
   bool solve_continuity(true);
@@ -240,9 +237,6 @@ GLSNavierStokesVOFAssemblerCore<dim>::assemble_rhs(
   const double phase_cutoff = 1e-6;
 
   // Determine whether continuity condition is solved in this cell.
-  // Removing the conservation condition on the lowest density fluid
-  // can improve the wetting mechanism in the framework of incompressible
-  // fluids. See documentation for more details.
   auto max_phase_cell =
     std::max_element(std::begin(phase_values), std::end(phase_values));
   bool solve_continuity(true);
@@ -664,18 +658,11 @@ GLSNavierStokesVOFAssemblerNonNewtonianCore<dim>::assemble_matrix(
 
   // Phase values and limiters
   std::vector<double> &phase_values = scratch_data.phase_values;
-  // std::vector<double> &phase_values_m1 =
-  // scratch_data.previous_phase_values[0];
-  // std::vector<Tensor<1, dim>> &phase_gradient_values =
-  // scratch_data.phase_gradient_values;
 
   // Phase cutoff to limit continuity application on non-conservative fluid
   const double phase_cutoff = 1e-6;
 
   // Determine whether continuity condition is solved in this cell.
-  // Removing the conservation condition on the lowest density fluid
-  // can improve the wetting mechanism in the framework of incompressible
-  // fluids. See documentation for more details.
   auto max_phase_cell =
     std::max_element(std::begin(phase_values), std::end(phase_values));
   bool solve_continuity(true);
@@ -904,9 +891,6 @@ GLSNavierStokesVOFAssemblerNonNewtonianCore<dim>::assemble_rhs(
   const double phase_cutoff = 1e-6;
 
   // Determine whether continuity condition is solved in this cell.
-  // Removing the conservation condition on the lowest density fluid
-  // can improve the wetting mechanism in the framework of incompressible
-  // fluids. See documentation for more details.
   auto max_phase_cell =
     std::max_element(std::begin(phase_values), std::end(phase_values));
   bool solve_continuity(true);
