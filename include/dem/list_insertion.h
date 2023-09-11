@@ -67,7 +67,7 @@ public:
   /**
    * @brief Carries out assigning the properties of inserted particles specificly
    * for the list insertion method. In this method, the initial translationnal
-   * and angular velocities of each particles is set.
+   * and angular velocities and the diameter of each particles is set.
    *
    * @param dem_parameters DEM parameters declared in the .prm file
    * @param inserted_this_step_this_proc Number of particles that are inserted
