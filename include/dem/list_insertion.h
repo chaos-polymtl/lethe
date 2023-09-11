@@ -64,6 +64,18 @@ public:
 
 
 
+  /**
+   * @brief Carries out assigning the properties of inserted particles specificly
+   * for the list insertion method. In this method, the initial translationnal
+   * and angular velocities of each particles is set.
+   *
+   * @param dem_parameters DEM parameters declared in the .prm file
+   * @param inserted_this_step_this_proc Number of particles that are inserted
+   * at each insertion step on each processor. This value can change in the last
+   * insertion step to reach the desired number of particles
+   * @param current_inserting_particle_type Type of inserting particles
+   * @param particle_properties Properties of all inserted particles at each insertion step
+   */
   void
   assign_particle_properties_for_list_insertion(
     const DEMSolverParameters<dim> &  dem_parameters,
