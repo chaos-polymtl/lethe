@@ -443,12 +443,12 @@ namespace Parameters
         omega_y = prm.get_double("omega y");
         omega_z = prm.get_double("omega z");
 
-        // Read x, y and z list as a single string
+        // Read x, y and z lists as singles strings
         std::string x_str = prm.get("list x");
         std::string y_str = prm.get("list y");
         std::string z_str = prm.get("list z");
 
-        // Convert x,y and z string to vector of strings
+        // Convert x,y and z strings to vectors of strings
         std::vector<std::string> x_str_list(
           Utilities::split_string_list(x_str));
         std::vector<std::string> y_str_list(
@@ -456,17 +456,25 @@ namespace Parameters
         std::vector<std::string> z_str_list(
           Utilities::split_string_list(z_str));
 
-        // Convert x,y and z string vector to double vector
+        // Convert x,y and z string vectors to vectors of doubles
         list_x = Utilities::string_to_double(x_str_list);
         list_y = Utilities::string_to_double(y_str_list);
         list_z = Utilities::string_to_double(z_str_list);
 
-        // Read vx, vv and vz list as a single string
+        // Find which vector is the longest
+        int max_size = std::max({list_x.size(), list_y.size(), list_z.size()});
+
+        // Resize the vectors in the case that one was longer
+        list_x.resize(max_size);
+        list_y.resize(max_size);
+        list_z.resize(max_size);
+
+        // Read vx, vv and vz lists as singles strings
         std::string vx_str = prm.get("list velocity x");
         std::string vy_str = prm.get("list velocity y");
         std::string vz_str = prm.get("list velocity z");
 
-        // Convert vx,vy andv vz string to vector of strings
+        // Convert vx, vy and vz strings to vectors of strings
         std::vector<std::string> vx_str_list(
           Utilities::split_string_list(vx_str));
         std::vector<std::string> vy_str_list(
@@ -474,25 +482,25 @@ namespace Parameters
         std::vector<std::string> vz_str_list(
           Utilities::split_string_list(vz_str));
 
-        // Convert vx,vy and vz string vector to double vector
+        // Convert vx, vy and vz string vectors to vectors of doubles
         list_vx = Utilities::string_to_double(vx_str_list);
         list_vy = Utilities::string_to_double(vy_str_list);
         list_vz = Utilities::string_to_double(vz_str_list);
 
-        // Fill the velocity vector with zeros to match the size of list_x
+        // Fill the velocity vectors with zeros to match the size of list_x
         if (list_vx != list_x)
-          list_vx.resize(list_x.size());
+          list_vx.resize(max_size);
         if (list_vy != list_x)
-          list_vy.resize(list_x.size());
+          list_vy.resize(max_size);
         if (list_vz != list_x)
-          list_vz.resize(list_x.size());
+          list_vz.resize(max_size);
 
-        // Read wx, wy and wz list as a single string
+        // Read wx, wy and wz lists as singles strings
         std::string wx_str = prm.get("list omega x");
         std::string wy_str = prm.get("list omega y");
         std::string wz_str = prm.get("list omega z");
 
-        // Convert wx,wy and wz string to vector of strings
+        // Convert wx, wy and wz strings to vectors of strings
         std::vector<std::string> wx_str_list(
           Utilities::split_string_list(wx_str));
         std::vector<std::string> wy_str_list(
@@ -500,19 +508,19 @@ namespace Parameters
         std::vector<std::string> wz_str_list(
           Utilities::split_string_list(wz_str));
 
-        // Convert x,y and z string vector to double vector
+        // Convert x, y and z string vectors to vectors of doubles
         list_wx = Utilities::string_to_double(wx_str_list);
         list_wy = Utilities::string_to_double(wy_str_list);
         list_wz = Utilities::string_to_double(wz_str_list);
 
-        // Fill the angular velocity vector with zeros to match the size of
+        // Fill the angular velocity vectors with zeros to match the size of
         // list_x
         if (list_wx != list_x)
-          list_wx.resize(list_x.size());
+          list_wx.resize(max_size);
         if (list_wy != list_x)
-          list_wy.resize(list_x.size());
+          list_wy.resize(max_size);
         if (list_wz != list_x)
-          list_wz.resize(list_x.size());
+          list_wz.resize(max_size);
 
         // Read the diameters list as a single string
         std::string d_str = prm.get("list diameters");
