@@ -29,32 +29,9 @@ GLSNavierStokesVOFAssemblerCore<dim>::assemble_matrix(
   const double dt  = time_steps_vector[0];
   const double sdt = 1. / dt;
 
-  std::vector<double> &phase_values = scratch_data.phase_values;
-
   Assert(scratch_data.properties_manager.density_is_constant(),
          RequiresConstantDensity(
            "GLSNavierStokesVOFAssemblerCore<dim>::assemble_matrix"));
-
-  // Phase cutoff to limit continuity application on non-conservative fluid
-  const double phase_cutoff = 1e-6;
-
-  // Determine whether continuity condition is solved in this cell.
-  auto max_phase_cell =
-    std::max_element(std::begin(phase_values), std::end(phase_values));
-  bool solve_continuity(true);
-
-  if (vof_parameters.conservation.conservative_fluid ==
-      Parameters::FluidIndicator::fluid0)
-    {
-      if (*max_phase_cell > 1. - phase_cutoff)
-        solve_continuity = false;
-    }
-  else if (vof_parameters.conservation.conservative_fluid ==
-           Parameters::FluidIndicator::fluid1)
-    {
-      if (*max_phase_cell < phase_cutoff)
-        solve_continuity = false;
-    }
 
   // Loop over the quadrature points
   for (unsigned int q = 0; q < n_q_points; ++q)
@@ -179,20 +156,11 @@ GLSNavierStokesVOFAssemblerCore<dim>::assemble_matrix(
                 density_eq * grad_phi_u_j_x_velocity[j] * phi_u_i -
                 div_phi_u_i * phi_p_j;
 
-              if (solve_continuity)
-                {
-                  // Continuity
-                  local_matrix_ij += phi_p_i * div_phi_u_j;
+              // Continuity
+              local_matrix_ij += phi_p_i * div_phi_u_j;
 
-                  // PSPG GLS term
-                  local_matrix_ij +=
-                    tau / density_eq * (strong_jac * grad_phi_p_i);
-                }
-              else
-                {
-                  // assemble Jacobian corresponding to p = 0
-                  local_matrix_ij += phi_p_i * phi_p_j;
-                }
+              // PSPG GLS term
+              local_matrix_ij += tau / density_eq * (strong_jac * grad_phi_p_i);
 
               // Jacobian is currently incomplete
               if (SUPG)
@@ -230,29 +198,6 @@ GLSNavierStokesVOFAssemblerCore<dim>::assemble_rhs(
     this->simulation_control->get_time_steps_vector();
   const double dt  = time_steps_vector[0];
   const double sdt = 1. / dt;
-
-  std::vector<double> &phase_values = scratch_data.phase_values;
-
-  // Phase cutoff to limit continuity application on non-conservative fluid
-  const double phase_cutoff = 1e-6;
-
-  // Determine whether continuity condition is solved in this cell.
-  auto max_phase_cell =
-    std::max_element(std::begin(phase_values), std::end(phase_values));
-  bool solve_continuity(true);
-
-  if (vof_parameters.conservation.conservative_fluid ==
-      Parameters::FluidIndicator::fluid0)
-    {
-      if (*max_phase_cell > 1. - phase_cutoff)
-        solve_continuity = false;
-    }
-  else if (vof_parameters.conservation.conservative_fluid ==
-           Parameters::FluidIndicator::fluid1)
-    {
-      if (*max_phase_cell < phase_cutoff)
-        solve_continuity = false;
-    }
 
   Assert(scratch_data.properties_manager.density_is_constant(),
          RequiresConstantDensity(
@@ -347,20 +292,12 @@ GLSNavierStokesVOFAssemblerCore<dim>::assemble_rhs(
              pressure * div_phi_u_i + density_eq * force * phi_u_i) *
             JxW;
 
-          if (solve_continuity)
-            {
-              // Continuity
-              local_rhs(i) += -(velocity_divergence * phi_p_i) * JxW;
+          // Continuity
+          local_rhs(i) += -(velocity_divergence * phi_p_i) * JxW;
 
-              // PSPG GLS term
-              local_rhs(i) +=
-                -tau / density_eq * (strong_residual * grad_phi_p_i) * JxW;
-            }
-          else
-            {
-              // assemble RHS for p = 0
-              local_rhs(i) += -phi_p_i * pressure * JxW;
-            }
+          // PSPG GLS term
+          local_rhs(i) +=
+            -tau / density_eq * (strong_residual * grad_phi_p_i) * JxW;
 
           // SUPG GLS term
           if (SUPG)
@@ -656,30 +593,6 @@ GLSNavierStokesVOFAssemblerNonNewtonianCore<dim>::assemble_matrix(
   const double dt  = time_steps_vector[0];
   const double sdt = 1. / dt;
 
-  // Phase values and limiters
-  std::vector<double> &phase_values = scratch_data.phase_values;
-
-  // Phase cutoff to limit continuity application on non-conservative fluid
-  const double phase_cutoff = 1e-6;
-
-  // Determine whether continuity condition is solved in this cell.
-  auto max_phase_cell =
-    std::max_element(std::begin(phase_values), std::end(phase_values));
-  bool solve_continuity(true);
-
-  if (vof_parameters.conservation.conservative_fluid ==
-      Parameters::FluidIndicator::fluid0)
-    {
-      if (*max_phase_cell > 1. - phase_cutoff)
-        solve_continuity = false;
-    }
-  else if (vof_parameters.conservation.conservative_fluid ==
-           Parameters::FluidIndicator::fluid1)
-    {
-      if (*max_phase_cell < phase_cutoff)
-        solve_continuity = false;
-    }
-
   Assert(
     scratch_data.properties_manager.density_is_constant(),
     RequiresConstantDensity(
@@ -826,19 +739,11 @@ GLSNavierStokesVOFAssemblerNonNewtonianCore<dim>::assemble_matrix(
                 density_eq * grad_phi_u_j_x_velocity[j] * phi_u_i -
                 div_phi_u_i * phi_p_j;
 
-              if (solve_continuity)
-                {
-                  // Continuity
-                  local_matrix_ij += phi_p_i * div_phi_u_j;
+              // Continuity
+              local_matrix_ij += phi_p_i * div_phi_u_j;
 
-                  // PSPG GLS term
-                  local_matrix_ij += tau * (strong_jac * grad_phi_p_i);
-                }
-              else
-                {
-                  // assemble Jacobian corresponding to p = 0
-                  local_matrix_ij += phi_p_i * phi_p_j;
-                }
+              // PSPG GLS term
+              local_matrix_ij += tau * (strong_jac * grad_phi_p_i);
 
               // The jacobian matrix for the SUPG formulation
               // currently does not include the jacobian of the stabilization
@@ -879,34 +784,6 @@ GLSNavierStokesVOFAssemblerNonNewtonianCore<dim>::assemble_rhs(
     this->simulation_control->get_time_steps_vector();
   const double dt  = time_steps_vector[0];
   const double sdt = 1. / dt;
-
-  // Phase values and limiters
-  std::vector<double> &phase_values = scratch_data.phase_values;
-  // std::vector<double> &phase_values_m1 =
-  // scratch_data.previous_phase_values[0];
-  // std::vector<Tensor<1, dim>> &phase_gradient_values =
-  // scratch_data.phase_gradient_values;
-
-  // Phase cutoff to limit continuity application on non-conservative fluid
-  const double phase_cutoff = 1e-6;
-
-  // Determine whether continuity condition is solved in this cell.
-  auto max_phase_cell =
-    std::max_element(std::begin(phase_values), std::end(phase_values));
-  bool solve_continuity(true);
-
-  if (vof_parameters.conservation.conservative_fluid ==
-      Parameters::FluidIndicator::fluid0)
-    {
-      if (*max_phase_cell > 1. - phase_cutoff)
-        solve_continuity = false;
-    }
-  else if (vof_parameters.conservation.conservative_fluid ==
-           Parameters::FluidIndicator::fluid1)
-    {
-      if (*max_phase_cell < phase_cutoff)
-        solve_continuity = false;
-    }
 
   Assert(scratch_data.properties_manager.density_is_constant(),
          RequiresConstantDensity(
@@ -1002,19 +879,11 @@ GLSNavierStokesVOFAssemblerNonNewtonianCore<dim>::assemble_rhs(
               pressure * div_phi_u_i + density_eq * force * phi_u_i) *
             JxW;
 
-          if (solve_continuity)
-            {
-              // Continuity
-              local_rhs(i) += -(velocity_divergence * phi_p_i) * JxW;
+          // Continuity
+          local_rhs(i) += -(velocity_divergence * phi_p_i) * JxW;
 
-              // PSPG GLS term
-              local_rhs(i) += -tau * (strong_residual * grad_phi_p_i) * JxW;
-            }
-          else
-            {
-              // assemble RHS for p = 0
-              local_rhs(i) += -phi_p_i * pressure * JxW;
-            }
+          // PSPG GLS term
+          local_rhs(i) += -tau * (strong_residual * grad_phi_p_i) * JxW;
 
           // SUPG GLS term
           if (SUPG)

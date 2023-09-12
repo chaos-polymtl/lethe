@@ -55,7 +55,6 @@ The default values of the VOF parameters are given in the text box below.
     end
 
     subsection mass conservation
-      set conservative fluid = both
       set monitoring         = false
       set monitored fluid    = fluid 1
 
@@ -187,11 +186,7 @@ The following procedure is recommended to choose proper values for the ``phase f
 Mass Conservation
 ~~~~~~~~~~~~~~~~~~~~~
 
-* ``subsection mass conservation``: By default, mass conservation (continuity) equations are solved on the whole domain, i.e. on both fluids (``set conservative fluid = both``).  This subsection defines parameters that can be used to solve mass conservation in one fluid instead of both, and to monitor the surface/volume (2D/3D) occupied by the other fluid of interest.
-
-  * ``conservative fluid``: defines fluid(s) for which conservation is solved. 
-
-    Choices are: ``fluid 0``, ``fluid 1`` or ``both`` (default), with the fluid IDs defined in :ref:`Physical properties - Two Phase Simulations<two phase simulations>`.
+* ``subsection mass conservation``: By default, mass conservation (continuity) equations are solved on the whole domain, i.e. on both fluids. This subsection defines parameters that are used to solve mass conservation in both fluids, and to monitor the surface/volume (2D/3D) occupied by the fluid of interest (``monitored fluid``).
 
   * ``monitoring``: controls if conservation is monitored at each iteration, through the volume (3D) or surface (2D) computation of the fluid given as ``monitored fluid`` (``fluid 1`` (default) or ``fluid 0``). Results are outputted in a data table (`VOF_monitoring_fluid_0.dat` or `VOF_monitoring_fluid_1.dat`).
 
