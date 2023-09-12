@@ -1,4 +1,11 @@
+# Listing of Parameters
+#----------------------
+
 set dimension = 2
+
+#---------------------------------------------------
+# Simulation and IO Control
+#---------------------------------------------------
 
 subsection simulation control
   set method           = bdf1
@@ -7,6 +14,10 @@ subsection simulation control
   set output name      = out
   set output frequency = 0
 end
+
+#---------------------------------------------------
+# Initial Conditions
+#---------------------------------------------------
 
 subsection initial conditions
   set type = nodal
@@ -19,6 +30,10 @@ subsection initial conditions
     end
   end
 end
+
+#---------------------------------------------------
+# Physical Properties
+#---------------------------------------------------
 
 subsection physical properties
   set number of fluids = 2
@@ -37,6 +52,10 @@ subsection physical properties
   set number of solids = 0
 end
 
+#---------------------------------------------------
+# Multiphysics
+#---------------------------------------------------
+
 subsection multiphysics
   set fluid dynamics = false
   set heat transfer  = true
@@ -45,12 +64,20 @@ subsection multiphysics
   set use time average velocity field = true
 end
 
+#---------------------------------------------------
+# Post-Processing
+#---------------------------------------------------
+
 subsection post-processing
   set verbosity                        = verbose
   set calculate temperature statistics = true
   set calculate average velocities     = true
   set initial time                     = 0.1
 end
+
+#---------------------------------------------------
+# Checkpoint/Restart Control
+#---------------------------------------------------
 
 subsection restart
   set checkpoint = false
@@ -59,12 +86,20 @@ subsection restart
   set restart    = true
 end
 
+#---------------------------------------------------
+# Mesh
+#---------------------------------------------------
+
 subsection mesh
   set type               = dealii
   set grid type          = hyper_cube
   set grid arguments     = 0 : 1 : true
   set initial refinement = 6
 end
+
+#---------------------------------------------------
+# Boundary Conditions Heat Transfer
+#---------------------------------------------------
 
 subsection boundary conditions heat transfer
   set number = 4
@@ -89,6 +124,10 @@ subsection boundary conditions heat transfer
     set value = 1
   end
 end
+
+#---------------------------------------------------
+# Boundary Conditions
+#---------------------------------------------------
 
 subsection boundary conditions
   set number = 4
@@ -116,6 +155,10 @@ subsection boundary conditions
   end
 end
 
+#---------------------------------------------------
+# Non-Linear Solver Control
+#---------------------------------------------------
+
 subsection non-linear solver
   subsection heat transfer
     set tolerance = 1e-8
@@ -130,6 +173,10 @@ subsection non-linear solver
     set verbosity = quiet
   end
 end
+
+#---------------------------------------------------
+# Linear Solver Control
+#---------------------------------------------------
 
 subsection linear solver
   subsection fluid dynamics

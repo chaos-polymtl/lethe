@@ -1,4 +1,11 @@
+# Listing of Parameters
+#----------------------
+
 set dimension = 3
+
+#---------------------------------------------------
+# Simulation Control
+#---------------------------------------------------
 
 subsection simulation control
   set method            = steady
@@ -7,10 +14,18 @@ subsection simulation control
   set output frequency  = 0
 end
 
+#---------------------------------------------------
+# FEM
+#---------------------------------------------------
+
 subsection FEM
   set velocity order = 1
   set pressure order = 1
 end
+
+#---------------------------------------------------
+# Initial Conditions
+#---------------------------------------------------
 
 subsection initial conditions
   set type = nodal
@@ -19,11 +34,19 @@ subsection initial conditions
   end
 end
 
+#---------------------------------------------------
+# Physical Properties
+#---------------------------------------------------
+
 subsection physical properties
   subsection fluid 0
     set kinematic viscosity = 1
   end
 end
+
+#---------------------------------------------------
+# Mesh
+#---------------------------------------------------
 
 subsection mesh
   set type               = dealii
@@ -31,6 +54,10 @@ subsection mesh
   set grid arguments     = 1,1,1: -2,-0.25,-0.5 : 0.5,2.25,2  : true
   set initial refinement = 4
 end
+
+#---------------------------------------------------
+# Boundary Conditions
+#---------------------------------------------------
 
 subsection boundary conditions
   set number = 5
@@ -65,6 +92,10 @@ subsection boundary conditions
   end
 end
 
+#---------------------------------------------------
+# IB particules
+#---------------------------------------------------
+
 subsection particles
   set number of particles                     = 1
   set assemble Navier-Stokes inside particles = false
@@ -87,9 +118,17 @@ subsection particles
   end
 end
 
+#---------------------------------------------------
+# Force
+#---------------------------------------------------
+
 subsection forces
   set verbosity = verbose
 end
+
+#---------------------------------------------------
+# Non-Linear Solver Control
+#---------------------------------------------------
 
 subsection non-linear solver
   subsection fluid dynamics
@@ -98,6 +137,10 @@ subsection non-linear solver
     set max iterations = 10
   end
 end
+
+#---------------------------------------------------
+# Linear Solver Control
+#---------------------------------------------------
 
 subsection linear solver
   subsection fluid dynamics
