@@ -321,7 +321,6 @@ namespace Parameters
                           "1",
                           Patterns::Integer(),
                           "Random number seed");
-
         prm.declare_entry("list x",
                           "0",
                           Patterns::List(Patterns::Double()),
@@ -334,7 +333,34 @@ namespace Parameters
                           "0",
                           Patterns::List(Patterns::Double()),
                           "List of particles z positions");
-
+        prm.declare_entry("list velocity x",
+                          "0",
+                          Patterns::List(Patterns::Double()),
+                          "List of initial velocities x");
+        prm.declare_entry("list velocity y",
+                          "0",
+                          Patterns::List(Patterns::Double()),
+                          "List of initial velocities y");
+        prm.declare_entry("list velocity z",
+                          "0",
+                          Patterns::List(Patterns::Double()),
+                          "List of initial velocities z");
+        prm.declare_entry("list omega x",
+                          "0.",
+                          Patterns::List(Patterns::Double()),
+                          "List of initial omega x");
+        prm.declare_entry("list omega y",
+                          "0.",
+                          Patterns::List(Patterns::Double()),
+                          "List of initial omega y");
+        prm.declare_entry("list omega z",
+                          "0.",
+                          Patterns::List(Patterns::Double()),
+                          "List of initial omega z");
+        prm.declare_entry("list diameters",
+                          "1.0",
+                          Patterns::List(Patterns::Double()),
+                          "List of diameters");
         prm.declare_entry("velocity x",
                           "0.0",
                           Patterns::Double(),
@@ -363,12 +389,10 @@ namespace Parameters
                           "0., 0., 0.",
                           Patterns::List(Patterns::Double()),
                           "Insertion plane point location");
-
         prm.declare_entry("insertion plane normal vector",
                           "1., 0., 0.",
                           Patterns::List(Patterns::Double()),
                           "Insertion plane normal vector");
-
         prm.declare_entry(
           "insertion plane threshold distance",
           "0.",
@@ -419,12 +443,12 @@ namespace Parameters
         omega_y = prm.get_double("omega y");
         omega_z = prm.get_double("omega z");
 
-        // Read x, y and z list as a single string
+        // Read x, y and z lists as singles strings
         std::string x_str = prm.get("list x");
         std::string y_str = prm.get("list y");
         std::string z_str = prm.get("list z");
 
-        // Convert x,y and z string to vector of strings
+        // Convert x,y and z strings to vectors of strings
         std::vector<std::string> x_str_list(
           Utilities::split_string_list(x_str));
         std::vector<std::string> y_str_list(
@@ -432,10 +456,81 @@ namespace Parameters
         std::vector<std::string> z_str_list(
           Utilities::split_string_list(z_str));
 
-        // Convert x,y and z string vector to double vector
+        // Convert x,y and z string vectors to vectors of doubles
         list_x = Utilities::string_to_double(x_str_list);
         list_y = Utilities::string_to_double(y_str_list);
         list_z = Utilities::string_to_double(z_str_list);
+
+        // Find which vector is the longest
+        int max_size = std::max({list_x.size(), list_y.size(), list_z.size()});
+
+        // Resize the vectors in the case that one was longer
+        list_x.resize(max_size);
+        list_y.resize(max_size);
+        list_z.resize(max_size);
+
+        // Read vx, vv and vz lists as singles strings
+        std::string vx_str = prm.get("list velocity x");
+        std::string vy_str = prm.get("list velocity y");
+        std::string vz_str = prm.get("list velocity z");
+
+        // Convert vx, vy and vz strings to vectors of strings
+        std::vector<std::string> vx_str_list(
+          Utilities::split_string_list(vx_str));
+        std::vector<std::string> vy_str_list(
+          Utilities::split_string_list(vy_str));
+        std::vector<std::string> vz_str_list(
+          Utilities::split_string_list(vz_str));
+
+        // Convert vx, vy and vz string vectors to vectors of doubles
+        list_vx = Utilities::string_to_double(vx_str_list);
+        list_vy = Utilities::string_to_double(vy_str_list);
+        list_vz = Utilities::string_to_double(vz_str_list);
+
+        // Fill the velocity vectors with zeros to match the size of list_x
+        if (list_vx != list_x)
+          list_vx.resize(max_size);
+        if (list_vy != list_x)
+          list_vy.resize(max_size);
+        if (list_vz != list_x)
+          list_vz.resize(max_size);
+
+        // Read wx, wy and wz lists as singles strings
+        std::string wx_str = prm.get("list omega x");
+        std::string wy_str = prm.get("list omega y");
+        std::string wz_str = prm.get("list omega z");
+
+        // Convert wx, wy and wz strings to vectors of strings
+        std::vector<std::string> wx_str_list(
+          Utilities::split_string_list(wx_str));
+        std::vector<std::string> wy_str_list(
+          Utilities::split_string_list(wy_str));
+        std::vector<std::string> wz_str_list(
+          Utilities::split_string_list(wz_str));
+
+        // Convert x, y and z string vectors to vectors of doubles
+        list_wx = Utilities::string_to_double(wx_str_list);
+        list_wy = Utilities::string_to_double(wy_str_list);
+        list_wz = Utilities::string_to_double(wz_str_list);
+
+        // Fill the angular velocity vectors with zeros to match the size of
+        // list_x
+        if (list_wx != list_x)
+          list_wx.resize(max_size);
+        if (list_wy != list_x)
+          list_wy.resize(max_size);
+        if (list_wz != list_x)
+          list_wz.resize(max_size);
+
+        // Read the diameters list as a single string
+        std::string d_str = prm.get("list diameters");
+
+        // Convert the diameters list to a vector of strings
+        std::vector<std::string> d_str_list(
+          Utilities::split_string_list(d_str));
+
+        // Convert the diameters string vector to a double vector
+        list_d = Utilities::string_to_double(d_str_list);
 
         // Insertion plane normal vector
         std::string plane_vector_str = prm.get("insertion plane normal vector");

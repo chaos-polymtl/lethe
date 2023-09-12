@@ -80,8 +80,12 @@ subsection insertion info
   set insertion method                               = list
   set inserted number of particles at each time step = 50
   set insertion frequency                            = 20000
-  set list x                                         = 0, 0.01
-  set list y                                         = 0.01, 0.02
+  set list x                                         = 0.000 , 0.010
+  set list y                                         = 0.010 , 0.020
+  set list velocity x                                = 0.000 , 0.000
+  set list velocity y                                = 0.000 , 0.000
+  set list omega z                                   = 0.000 , 0.000
+  set list diameters                                 = 0.005 , 0.005
 end
 
 #---------------------------------------------------
