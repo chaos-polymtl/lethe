@@ -2,12 +2,6 @@
 
 using namespace DEM;
 
-DeclException2(PositionSizeCoherence,
-               int,
-               int,
-               << "Incoherent particle position lists size p1=" << arg1
-               << ", p2=" << arg2);
-
 DeclException2(DiameterSizeCoherence,
                int,
                int,
@@ -37,13 +31,6 @@ ListInsertion<dim>::ListInsertion(
   const auto &list_wz = dem_parameters.insertion_info.list_wz;
   const auto &list_d  = dem_parameters.insertion_info.list_d;
 
-  Assert(list_x.size() == list_y.size(),
-         PositionSizeCoherence(list_x.size(), list_y.size()));
-  if (dim == 3)
-    {
-      Assert(list_x.size() == list_z.size(),
-             PositionSizeCoherence(list_x.size(), list_z.size()));
-    }
   Assert(list_x.size() == list_d.size(),
          DiameterSizeCoherence(list_x.size(), list_d.size()));
 
