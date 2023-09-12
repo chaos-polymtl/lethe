@@ -19,7 +19,6 @@
 
 #include <core/bdf.h>
 #include <core/grids.h>
-#include <core/linear_solvers_and_preconditioners.h>
 #include <core/manifolds.h>
 #include <core/multiphysics.h>
 #include <core/time_integration_utilities.h>

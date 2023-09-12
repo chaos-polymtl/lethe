@@ -15,7 +15,6 @@
 
 #include <core/bdf.h>
 #include <core/grids.h>
-#include <core/linear_solvers_and_preconditioners.h>
 #include <core/manifolds.h>
 #include <core/multiphysics.h>
 #include <core/time_integration_utilities.h>
@@ -32,6 +31,15 @@
 #include <deal.II/lac/solver_cg.h>
 #include <deal.II/lac/solver_gmres.h>
 #include <deal.II/lac/vector.h>
+
+#include <deal.II/multigrid/mg_coarse.h>
+#include <deal.II/multigrid/mg_constrained_dofs.h>
+#include <deal.II/multigrid/mg_matrix.h>
+#include <deal.II/multigrid/mg_smoother.h>
+#include <deal.II/multigrid/mg_tools.h>
+#include <deal.II/multigrid/mg_transfer_global_coarsening.h>
+#include <deal.II/multigrid/mg_transfer_matrix_free.h>
+#include <deal.II/multigrid/multigrid.h>
 
 #include <deal.II/numerics/vector_tools.h>
 
@@ -394,6 +402,7 @@ MFNavierStokesSolver<dim>::solve_with_LSMG(SolverGMRES<VectorType> &solver)
 
   mg::Matrix<VectorType> mg_matrix(ls_mg_operators);
 
+  MGSmootherPrecondition<OperatorType, SmootherType, VectorType> mg_smoother;
   MGLevelObject<typename SmootherType::AdditionalData> smoother_data(minlevel,
                                                                      maxlevel);
 
@@ -409,7 +418,6 @@ MFNavierStokesSolver<dim>::solve_with_LSMG(SolverGMRES<VectorType> &solver)
           .mg_smoother_relaxation;
     }
 
-  MGSmootherPrecondition<OperatorType, SmootherType, VectorType> mg_smoother;
   mg_smoother.initialize(mg_operators, smoother_data);
 
   ReductionControl coarse_grid_solver_control(2000, 1e-14, 1e-4, false, false);
@@ -622,6 +630,7 @@ MFNavierStokesSolver<dim>::solve_with_GCMG(SolverGMRES<VectorType> &solver)
 
   mg::Matrix<VectorType> mg_matrix(mg_operators);
 
+  MGSmootherPrecondition<OperatorType, SmootherType, VectorType> mg_smoother;
   MGLevelObject<typename SmootherType::AdditionalData> smoother_data(minlevel,
                                                                      maxlevel);
 
@@ -637,7 +646,6 @@ MFNavierStokesSolver<dim>::solve_with_GCMG(SolverGMRES<VectorType> &solver)
           .mg_smoother_relaxation;
     }
 
-  MGSmootherPrecondition<OperatorType, SmootherType, VectorType> mg_smoother;
   mg_smoother.initialize(mg_operators, smoother_data);
 
   ReductionControl coarse_grid_solver_control(2000, 1e-14, 1e-4, false, false);
@@ -667,7 +675,7 @@ MFNavierStokesSolver<dim>::solve_with_GCMG(SolverGMRES<VectorType> &solver)
       .amg_smoother_overlap;
   amg_data.output_details = false;
   amg_data.smoother_type  = "ILU";
-  // amg_data.coarse_type    = "ILU";
+  amg_data.coarse_type    = "ILU";
   // Constant modes for velocity
   std::vector<std::vector<bool>> constant_modes;
   ComponentMask                  components(dim + 1, true);
@@ -699,7 +707,7 @@ MFNavierStokesSolver<dim>::solve_with_GCMG(SolverGMRES<VectorType> &solver)
   parameter_ml.set("coarse: ifpack relative threshold", ilu_rtol);
 
   precondition_amg.initialize(mg_operators[minlevel]->get_system_matrix(),
-                              amg_data);
+                              parameter_ml);
 
   mg_coarse =
     std::make_shared<MGCoarseGridIterativeSolver<VectorType,
