@@ -89,11 +89,11 @@ Gauss quadrature points of the immersed mesh to represent the immersed body. For
 .. code-block:: text
 
     subsection nitsche
-      set beta             = 10
       set verbosity        = verbose
       set number of solids = 1
     
       subsection nitsche solid 0
+        set beta             = 10
         subsection mesh
           set type               = dealii
           set grid type          = hyper_ball
@@ -107,8 +107,8 @@ Gauss quadrature points of the immersed mesh to represent the immersed body. For
       end
     end
 
-The ``beta`` coefficient is a parameter used to enforce the Nitsche IB. It's value is generally between 1 and 100, according to the size of the mesh. 
-A value of 10 is reasonable. Then, we specify the ``number of solids`` geometries that with be represented with Nitsche IB. 
+The ``beta`` coefficient is a parameter used to enforce the Nitsche IB. It's value is generally between 1 and 100 (10 being a reasonable value). The restriction automatically scales with the mesh size.
+Then, we specify the ``number of solids`` geometries that with be represented with Nitsche IB. 
 For each Nitsche IB, a mesh representing the immersed solid has to be specified. Additionally, the solid velocity of the Nitsche IB is specified using the ``solid velocity`` 
 subsection. Finally, the motion of the particle is disabled. This means that even if the immersed particles have a non-zero velocity, they will not physically move in the fluid domain. In this case, this is because our problem has rotation symmetry and we will be seeking steady-state solutions. We note that in this problem, the Nitsche solid grid has the same dimension as the background grid. This is necessary for 2D simulations. Additionally, the Nitsche solid grid is well-refined to ensure that at approximately each fluid cell contains one particle of the immersed body. Finally, we enable the calculation of the torque on the Nitsche IB by setting ``calculate torque on solid = true``. 
 
