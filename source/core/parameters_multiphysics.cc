@@ -33,15 +33,6 @@ DeclException1(
   << "Adaptative sharpening requires to set 'monitoring = true', and to define"
   << " the 'fluid monitored' and the 'tolerance' to reach. See documentation for further details.");
 
-DeclException1(
-  MonitoringConservationError,
-  bool,
-  << "Sharpening type is set to 'adaptative' and monitoring is set to " << arg1
-  << " but " << std::endl
-  << "conservative fluid (choices are <fluid 0, fluid 1, both>) does not include the monitored fluid. "
-  << std::endl
-  << "Conservation must be solved on the monitored fluid for adaptative sharpening to work properly.");
-
 void
 Parameters::Multiphysics::declare_parameters(ParameterHandler &prm)
 {
