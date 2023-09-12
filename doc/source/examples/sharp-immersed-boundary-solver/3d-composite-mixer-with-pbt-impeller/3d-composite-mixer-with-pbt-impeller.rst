@@ -42,23 +42,23 @@ Shapes and boolean operations each have an ID, and boolean operations can refere
 The ``impeller.composite`` file contains these instructions.
 
 .. warning:: 
-	The .composite file cannot contain comments at this point in time.
+    The .composite file cannot contain comments at this point in time.
 
 .. code-block:: text
 
-  shapes
-  0;       cylinder; 0.025:0.375; 0:0:0.125 ; 0:0:0
-  1;       cylinder; 0.05:0.0416666;0:0:-0.208333 ; 0:0:0
-  2; hyper rectangle; 0.083333333:0.00625:0.0416666;0.08333333:0:-0.208333 ; 0.7853981:0:0
-  3; hyper rectangle; 0.00625:0.083333333:0.0416666;0:0.08333333:-0.208333; 0:0.7853981:0
-  4; hyper rectangle; 0.083333333:0.00625:0.0416666;-0.08333333:0:-0.208333 ; -0.7853981:0:0
-  5; hyper rectangle; 0.00625:0.083333333:0.0416666;0:-0.08333333:-0.208333 ; 0:-0.7853981:0
-  operations
-  6; union     ; 0:1
-  7; union     ; 6:2
-  8; union     ; 7:3
-  9; union     ; 8:4
-  10; union    ; 9:5
+    shapes
+    0;       cylinder; 0.025:0.375; 0:0:0.125 ; 0:0:0
+    1;       cylinder; 0.05:0.0416666;0:0:-0.208333 ; 0:0:0
+    2; hyper rectangle; 0.083333333:0.00625:0.0416666;0.08333333:0:-0.208333 ; 0.7853981:0:0
+    3; hyper rectangle; 0.00625:0.083333333:0.0416666;0:0.08333333:-0.208333; 0:0.7853981:0
+    4; hyper rectangle; 0.083333333:0.00625:0.0416666;-0.08333333:0:-0.208333 ; -0.7853981:0:0
+    5; hyper rectangle; 0.00625:0.083333333:0.0416666;0:-0.08333333:-0.208333 ; 0:-0.7853981:0
+    operations
+    6; union     ; 0:1
+    7; union     ; 6:2
+    8; union     ; 7:3
+    9; union     ; 8:4
+    10; union    ; 9:5
   
 Let go over each line:
 

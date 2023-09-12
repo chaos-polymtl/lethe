@@ -1,5 +1,5 @@
 # Listing of Parameters
-# ---------------------
+#----------------------
 
 set dimension = 3
 
@@ -34,7 +34,7 @@ subsection mesh
   set expand particle-wall contact search = false
 end
 
-# --------------------------------------------------
+#---------------------------------------------------
 # Model parameters
 #---------------------------------------------------
 
