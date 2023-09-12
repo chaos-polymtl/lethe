@@ -62,13 +62,38 @@ public:
          const parallel::distributed::Triangulation<dim> &triangulation,
          const DEMSolverParameters<dim> &dem_parameters) override;
 
+
+
+  /**
+   * @brief Carries out assigning the properties of inserted particles specificly
+   * for the list insertion method. In this method, the initial translationnal
+   * and angular velocities and the diameter of each particles is set.
+   *
+   * @param dem_parameters DEM parameters declared in the .prm file
+   * @param inserted_this_step_this_proc Number of particles that are inserted
+   * at each insertion step on each processor. This value can change in the last
+   * insertion step to reach the desired number of particles
+   * @param current_inserting_particle_type Type of inserting particles
+   * @param particle_properties Properties of all inserted particles at each insertion step
+   */
+  void
+  assign_particle_properties_for_list_insertion(
+    const DEMSolverParameters<dim> &  dem_parameters,
+    const unsigned int &              inserted_this_step_this_proc,
+    const unsigned int &              current_inserting_particle_type,
+    std::vector<std::vector<double>> &particle_properties);
+
   // Number of remaining particles of each type that should be inserted in the
   // upcoming insertion steps
   unsigned int remaining_particles_of_each_type;
   unsigned int current_inserting_particle_type;
 
-  // Vector of the location used to insert the particles
-  std::vector<Point<dim>> insertion_points;
+  // Vector of the location, velocity and angular velocity used to insert the
+  // particles
+  std::vector<Point<dim>>   insertion_points;
+  std::vector<Tensor<1, 3>> velocities;
+  std::vector<Tensor<1, 3>> angular_velocities;
+  std::vector<double>       diameters;
 };
 
 #endif /* uniform_insertion_h */
