@@ -15,8 +15,9 @@ end
 
 #---------------------------------------------------
 # Physical Properties
+#---------------------------------------------------
 
-#---------------------------------------------------subsection physical properties
+subsection physical properties
   set number of fluids = 1
   subsection fluid 0
     set kinematic viscosity = 0.01 # Re_h=2/nu
