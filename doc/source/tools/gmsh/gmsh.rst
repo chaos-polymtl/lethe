@@ -336,7 +336,7 @@ Creating a structured quad-mesh usually takes a lot more time than an unstructur
 .. seealso::
   You can find a step-by-step `video <https://youtu.be/1A-b84kloFs?t=316>`_, with a similar geometry (cylinder in flow). 
 
-A mesh can also be partially structured, to better encounter for a boundary layer for instance: see the ``.geo`` file provided with the :doc:`../../examples/incompressible-flow/2d-transient-around-ahmed-body/2d-transient-around-ahmed-body` example. 
+A mesh can also be partially structured, to better encounter for a boundary layer for instance: see the ``.geo`` file provided with the :doc:`../../examples/incompressible-flow/2d-transient-flow-around-ahmed-body/2d-transient-flow-around-ahmed-body` example. 
 
 .. _tips:
 

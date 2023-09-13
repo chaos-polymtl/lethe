@@ -180,9 +180,8 @@ In fact, for the Re = 0.1, we have a laminar to creeping flow, meaning that the 
     subsection simulation control
       set method            = steady
       set number mesh adapt = 0
-      set output name       = sphere-output
+      set output path       = sphere-0.1/
       set output frequency  = 1
-      set subdivision       = 1
     end
 
 At Re = 150, the flow has separated, resulting in an unstable wake and recirculation. It is hence more difficult to converge to a steady-state solution. 
@@ -196,10 +195,8 @@ At Re = 150, the flow has separated, resulting in an unstable wake and recircula
       set max cfl                      = 1000
       set stop tolerance               = 1e-5
       set adaptative time step scaling = 1.2
-      set number mesh adapt            = 0
-      set output name                  = sphere-output
+      set output path                  = sphere-150/
       set output frequency             = 1
-      set subdivision                  = 1
     end
 
 The ``steady_bdf`` method solves for a steady-state simulation using adjoint time stepping with a bdf1 scheme. An initial time step is used to complete a transient iteration, and with each iteration, the time step is increased. The simulation is considered to have reached steady-state when the L2 norm of the initial residual is lower than stop tolerance at the start of a non-linear solution step, i.e. until the time step is large enough that a pseudo-steady-state has been reached.

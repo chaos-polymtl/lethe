@@ -188,16 +188,15 @@ Again, in order to reduce the computational time, the ``minimum residual`` for t
 
     subsection linear solver
       subsection fluid dynamics
-        set verbosity                             = verbose
-        set method                                = gmres
-        set max iters                             = 5000
-        set relative residual                     = 1e-3
-        set minimum residual                      = 1e-8
-        set preconditioner                        = ilu
-        set ilu preconditioner fill               = 1
-        set ilu preconditioner absolute tolerance = 1e-10
-        set ilu preconditioner relative tolerance = 1.00
-        set max krylov vectors                    = 1000
+        set verbosity                                 = verbose
+        set method                                    = gmres
+        set relative residual                         = 1e-3
+        set minimum residual                          = 1e-8
+        set preconditioner                            = amg
+        set amg preconditioner ilu fill               = 0
+        set amg preconditioner ilu absolute tolerance = 1e-12
+        set amg preconditioner ilu relative tolerance = 1.00
+        set max krylov vectors                        = 1000
       end
     end      
 	
