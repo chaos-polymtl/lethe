@@ -1,4 +1,11 @@
+# Listing of Parameters
+#----------------------
+
 set dimension = 2
+
+#---------------------------------------------------
+# Simulation Control
+#---------------------------------------------------
 
 subsection simulation control
   set method           = steady
@@ -7,10 +14,18 @@ subsection simulation control
   set subdivision      = 1
 end
 
+#---------------------------------------------------
+# FEM
+#---------------------------------------------------
+
 subsection FEM
   set velocity order = 1
   set pressure order = 1
 end
+
+#---------------------------------------------------
+# Mesh
+#---------------------------------------------------
 
 subsection mesh
   set type               = dealii
@@ -18,6 +33,10 @@ subsection mesh
   set grid arguments     = 1,1: -1.5,-1.5 : 1.5,1.5  : true
   set initial refinement = 3
 end
+
+#---------------------------------------------------
+# Boundary Conditions
+#---------------------------------------------------
 
 subsection boundary conditions
   set number = 6
@@ -56,6 +75,10 @@ subsection boundary conditions
   end
 end
 
+#---------------------------------------------------
+# IB particules
+#---------------------------------------------------
+
 subsection particles
   set number of particles = 1
 
@@ -88,9 +111,17 @@ subsection particles
   end
 end
 
+#---------------------------------------------------
+# Force
+#---------------------------------------------------
+
 subsection forces
   set verbosity = verbose
 end
+
+#---------------------------------------------------
+# Mesh Adaptation Control
+#---------------------------------------------------
 
 subsection mesh adaptation
   set type                 = kelly
@@ -99,11 +130,19 @@ subsection mesh adaptation
   set min refinement level = 1
 end
 
+#---------------------------------------------------
+# Non-Linear Solver Control
+#---------------------------------------------------
+
 subsection non-linear solver
   subsection fluid dynamics
     set verbosity = quiet
   end
 end
+
+#---------------------------------------------------
+# Linear Solver Control
+#---------------------------------------------------
 
 subsection linear solver
   subsection fluid dynamics

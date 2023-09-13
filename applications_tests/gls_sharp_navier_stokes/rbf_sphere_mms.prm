@@ -1,4 +1,11 @@
+# Listing of Parameters
+#----------------------
+
 set dimension = 3
+
+#---------------------------------------------------
+# Simulation Control
+#---------------------------------------------------
 
 subsection simulation control
   set method            = steady
@@ -8,9 +15,17 @@ subsection simulation control
   set log precision     = 4
 end
 
+#---------------------------------------------------
+# Mesh Adaptation Control
+#---------------------------------------------------
+
 subsection mesh adaptation
   set type = uniform
 end
+
+#---------------------------------------------------
+# Physical Properties
+#---------------------------------------------------
 
 subsection physical properties
   subsection fluid 0
@@ -18,12 +33,20 @@ subsection physical properties
   end
 end
 
+#---------------------------------------------------
+# Mesh
+#---------------------------------------------------
+
 subsection mesh
   set type               = dealii
   set grid type          = hyper_cube
   set grid arguments     = -1:1:true
   set initial refinement = 2
 end
+
+#---------------------------------------------------
+# Boundary Conditions
+#---------------------------------------------------
 
 subsection boundary conditions
   set number = 6
@@ -114,6 +137,10 @@ subsection boundary conditions
   end
 end
 
+#---------------------------------------------------
+# IB particules
+#---------------------------------------------------
+
 subsection particles
   set number of particles                     = 1
   set assemble Navier-Stokes inside particles = false
@@ -130,6 +157,10 @@ subsection particles
   end
 end
 
+#---------------------------------------------------
+# Source Term Control
+#---------------------------------------------------
+
 subsection source term
   set enable = true
   subsection xyz
@@ -137,6 +168,10 @@ subsection source term
     set Function expression = (-r + (x^2 + y^2 + z^2)^0.5>0)?(pi*cos(pi*x) + (-r + (x^2 + y^2 + z^2)^0.5)*(2*pi*(-r + (x^2 + y^2 + z^2)^0.5)*sin(pi*x)*sin(pi*y)*sin(pi*z)*cos(pi*x)*cos(pi*y)*cos(pi*z) + 1.0*x*sin(pi*x)^2*sin(pi*y)*sin(pi*z)*cos(pi*y)*cos(pi*z)/(x^2 + y^2 + z^2)^0.5)*sin(pi*x)^2*sin(pi*y)*sin(pi*z)*cos(pi*y)*cos(pi*z) - 2*(-r + (x^2 + y^2 + z^2)^0.5)*(-pi*(-r + (x^2 + y^2 + z^2)^0.5)*sin(pi*x)^2*sin(pi*y)*sin(pi*z)^2*cos(pi*y) + pi*(-r + (x^2 + y^2 + z^2)^0.5)*sin(pi*x)^2*sin(pi*y)*cos(pi*y)*cos(pi*z)^2 + 1.0*z*sin(pi*x)^2*sin(pi*y)*sin(pi*z)*cos(pi*y)*cos(pi*z)/(x^2 + y^2 + z^2)^0.5)*sin(pi*x)*sin(pi*y)*sin(pi*z)^2*cos(pi*x)*cos(pi*y) + (-r + (x^2 + y^2 + z^2)^0.5)*(-pi*(-r + (x^2 + y^2 + z^2)^0.5)*sin(pi*x)^2*sin(pi*y)^2*sin(pi*z)*cos(pi*z) + pi*(-r + (x^2 + y^2 + z^2)^0.5)*sin(pi*x)^2*sin(pi*z)*cos(pi*y)^2*cos(pi*z) + 1.0*y*sin(pi*x)^2*sin(pi*y)*sin(pi*z)*cos(pi*y)*cos(pi*z)/(x^2 + y^2 + z^2)^0.5)*sin(pi*x)*sin(pi*y)^2*sin(pi*z)*cos(pi*x)*cos(pi*z) - (2*pi^2*(r - (x^2 + y^2 + z^2)^0.5)*(sin(pi*x)^2 - cos(pi*x)^2) + 4.0*pi*x*sin(pi*x)*cos(pi*x)/(x^2 + y^2 + z^2)^0.5 - 1.0*(x^2/(x^2 + y^2 + z^2)^1.5 - 1/(x^2 + y^2 + z^2)^0.5)*sin(pi*x)^2)*sin(pi*y)*sin(pi*z)*cos(pi*y)*cos(pi*z) - (4*pi^2*(r - (x^2 + y^2 + z^2)^0.5)*sin(pi*y)*cos(pi*y) - 2.0*pi*y*sin(pi*y)^2/(x^2 + y^2 + z^2)^0.5 + 2.0*pi*y*cos(pi*y)^2/(x^2 + y^2 + z^2)^0.5 - 1.0*(y^2/(x^2 + y^2 + z^2)^1.5 - 1/(x^2 + y^2 + z^2)^0.5)*sin(pi*y)*cos(pi*y))*sin(pi*x)^2*sin(pi*z)*cos(pi*z) - (4*pi^2*(r - (x^2 + y^2 + z^2)^0.5)*sin(pi*z)*cos(pi*z) - 2.0*pi*z*sin(pi*z)^2/(x^2 + y^2 + z^2)^0.5 + 2.0*pi*z*cos(pi*z)^2/(x^2 + y^2 + z^2)^0.5 - 1.0*(z^2/(x^2 + y^2 + z^2)^1.5 - 1/(x^2 + y^2 + z^2)^0.5)*sin(pi*z)*cos(pi*z))*sin(pi*x)^2*sin(pi*y)*cos(pi*y)):0;(-r + (x^2 + y^2 + z^2)^0.5>0)?(pi*cos(pi*y) + (-r + (x^2 + y^2 + z^2)^0.5)*(2*pi*(-r + (x^2 + y^2 + z^2)^0.5)*sin(pi*x)*sin(pi*y)*sin(pi*z)*cos(pi*x)*cos(pi*y)*cos(pi*z) + 1.0*y*sin(pi*x)*sin(pi*y)^2*sin(pi*z)*cos(pi*x)*cos(pi*z)/(x^2 + y^2 + z^2)^0.5)*sin(pi*x)*sin(pi*y)^2*sin(pi*z)*cos(pi*x)*cos(pi*z) - 2*(-r + (x^2 + y^2 + z^2)^0.5)*(-pi*(-r + (x^2 + y^2 + z^2)^0.5)*sin(pi*x)*sin(pi*y)^2*sin(pi*z)^2*cos(pi*x) + pi*(-r + (x^2 + y^2 + z^2)^0.5)*sin(pi*x)*sin(pi*y)^2*cos(pi*x)*cos(pi*z)^2 + 1.0*z*sin(pi*x)*sin(pi*y)^2*sin(pi*z)*cos(pi*x)*cos(pi*z)/(x^2 + y^2 + z^2)^0.5)*sin(pi*x)*sin(pi*y)*sin(pi*z)^2*cos(pi*x)*cos(pi*y) + (-r + (x^2 + y^2 + z^2)^0.5)*(-pi*(-r + (x^2 + y^2 + z^2)^0.5)*sin(pi*x)^2*sin(pi*y)^2*sin(pi*z)*cos(pi*z) + pi*(-r + (x^2 + y^2 + z^2)^0.5)*sin(pi*y)^2*sin(pi*z)*cos(pi*x)^2*cos(pi*z) + 1.0*x*sin(pi*x)*sin(pi*y)^2*sin(pi*z)*cos(pi*x)*cos(pi*z)/(x^2 + y^2 + z^2)^0.5)*sin(pi*x)^2*sin(pi*y)*sin(pi*z)*cos(pi*y)*cos(pi*z) - (2*pi^2*(r - (x^2 + y^2 + z^2)^0.5)*(sin(pi*y)^2 - cos(pi*y)^2) + 4.0*pi*y*sin(pi*y)*cos(pi*y)/(x^2 + y^2 + z^2)^0.5 - 1.0*(y^2/(x^2 + y^2 + z^2)^1.5 - 1/(x^2 + y^2 + z^2)^0.5)*sin(pi*y)^2)*sin(pi*x)*sin(pi*z)*cos(pi*x)*cos(pi*z) - (4*pi^2*(r - (x^2 + y^2 + z^2)^0.5)*sin(pi*x)*cos(pi*x) - 2.0*pi*x*sin(pi*x)^2/(x^2 + y^2 + z^2)^0.5 + 2.0*pi*x*cos(pi*x)^2/(x^2 + y^2 + z^2)^0.5 - 1.0*(x^2/(x^2 + y^2 + z^2)^1.5 - 1/(x^2 + y^2 + z^2)^0.5)*sin(pi*x)*cos(pi*x))*sin(pi*y)^2*sin(pi*z)*cos(pi*z) - (4*pi^2*(r - (x^2 + y^2 + z^2)^0.5)*sin(pi*z)*cos(pi*z) - 2.0*pi*z*sin(pi*z)^2/(x^2 + y^2 + z^2)^0.5 + 2.0*pi*z*cos(pi*z)^2/(x^2 + y^2 + z^2)^0.5 - 1.0*(z^2/(x^2 + y^2 + z^2)^1.5 - 1/(x^2 + y^2 + z^2)^0.5)*sin(pi*z)*cos(pi*z))*sin(pi*x)*sin(pi*y)^2*cos(pi*x)):0;(-r + (x^2 + y^2 + z^2)^0.5>0)?(pi*cos(pi*z) - 2*(-r + (x^2 + y^2 + z^2)^0.5)*(-4*pi*(-r + (x^2 + y^2 + z^2)^0.5)*sin(pi*x)*sin(pi*y)*sin(pi*z)*cos(pi*x)*cos(pi*y)*cos(pi*z) - 2.0*z*sin(pi*x)*sin(pi*y)*sin(pi*z)^2*cos(pi*x)*cos(pi*y)/(x^2 + y^2 + z^2)^0.5)*sin(pi*x)*sin(pi*y)*sin(pi*z)^2*cos(pi*x)*cos(pi*y) + (-r + (x^2 + y^2 + z^2)^0.5)*(2*pi*(-r + (x^2 + y^2 + z^2)^0.5)*sin(pi*x)*sin(pi*y)^2*sin(pi*z)^2*cos(pi*x) - 2*pi*(-r + (x^2 + y^2 + z^2)^0.5)*sin(pi*x)*sin(pi*z)^2*cos(pi*x)*cos(pi*y)^2 - 2.0*y*sin(pi*x)*sin(pi*y)*sin(pi*z)^2*cos(pi*x)*cos(pi*y)/(x^2 + y^2 + z^2)^0.5)*sin(pi*x)*sin(pi*y)^2*sin(pi*z)*cos(pi*x)*cos(pi*z) + (-r + (x^2 + y^2 + z^2)^0.5)*(2*pi*(-r + (x^2 + y^2 + z^2)^0.5)*sin(pi*x)^2*sin(pi*y)*sin(pi*z)^2*cos(pi*y) - 2*pi*(-r + (x^2 + y^2 + z^2)^0.5)*sin(pi*y)*sin(pi*z)^2*cos(pi*x)^2*cos(pi*y) - 2.0*x*sin(pi*x)*sin(pi*y)*sin(pi*z)^2*cos(pi*x)*cos(pi*y)/(x^2 + y^2 + z^2)^0.5)*sin(pi*x)^2*sin(pi*y)*sin(pi*z)*cos(pi*y)*cos(pi*z) - (-4*pi^2*(r - (x^2 + y^2 + z^2)^0.5)*(sin(pi*z)^2 - cos(pi*z)^2) - 8.0*pi*z*sin(pi*z)*cos(pi*z)/(x^2 + y^2 + z^2)^0.5 + 2.0*(z^2/(x^2 + y^2 + z^2)^1.5 - 1/(x^2 + y^2 + z^2)^0.5)*sin(pi*z)^2)*sin(pi*x)*sin(pi*y)*cos(pi*x)*cos(pi*y) - (-8*pi^2*(r - (x^2 + y^2 + z^2)^0.5)*sin(pi*x)*cos(pi*x) + 4.0*pi*x*sin(pi*x)^2/(x^2 + y^2 + z^2)^0.5 - 4.0*pi*x*cos(pi*x)^2/(x^2 + y^2 + z^2)^0.5 + 2.0*(x^2/(x^2 + y^2 + z^2)^1.5 - 1/(x^2 + y^2 + z^2)^0.5)*sin(pi*x)*cos(pi*x))*sin(pi*y)*sin(pi*z)^2*cos(pi*y) - (-8*pi^2*(r - (x^2 + y^2 + z^2)^0.5)*sin(pi*y)*cos(pi*y) + 4.0*pi*y*sin(pi*y)^2/(x^2 + y^2 + z^2)^0.5 - 4.0*pi*y*cos(pi*y)^2/(x^2 + y^2 + z^2)^0.5 + 2.0*(y^2/(x^2 + y^2 + z^2)^1.5 - 1/(x^2 + y^2 + z^2)^0.5)*sin(pi*y)*cos(pi*y))*sin(pi*x)*sin(pi*z)^2*cos(pi*x)):0;(-r + (x^2 + y^2 + z^2)^0.5>0)?(1.0*x*sin(pi*x)^2*sin(pi*y)*sin(pi*z)*cos(pi*y)*cos(pi*z)/(x^2 + y^2 + z^2)^0.5 + 1.0*y*sin(pi*x)*sin(pi*y)^2*sin(pi*z)*cos(pi*x)*cos(pi*z)/(x^2 + y^2 + z^2)^0.5 - 2.0*z*sin(pi*x)*sin(pi*y)*sin(pi*z)^2*cos(pi*x)*cos(pi*y)/(x^2 + y^2 + z^2)^0.5):0
   end
 end
+
+#---------------------------------------------------
+# Analytical Solution
+#---------------------------------------------------
 
 subsection analytical solution
   set enable    = true
@@ -147,11 +182,19 @@ subsection analytical solution
   end
 end
 
+#---------------------------------------------------
+# Non-Linear Solver Control
+#---------------------------------------------------
+
 subsection non-linear solver
   subsection fluid dynamics
     set verbosity = quiet
   end
 end
+
+#---------------------------------------------------
+# Linear Solver Control
+#---------------------------------------------------
 
 subsection linear solver
   subsection fluid dynamics
