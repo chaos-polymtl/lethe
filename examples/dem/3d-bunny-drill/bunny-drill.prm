@@ -1,0 +1,118 @@
+# Listing of Parameters
+# ---------------------
+
+set dimension = 3
+
+#---------------------------------------------------
+# Simulation and IO Control
+#---------------------------------------------------
+
+subsection simulation control
+  set time step         = 2e-6
+  set time end          = 4.75
+  set log frequency     = 1000
+  set output frequency  = 1000
+  set output path       = ./output/
+  set output boundaries = true
+end
+
+#---------------------------------------------------
+# Model parameters
+#---------------------------------------------------
+
+subsection model parameters
+  subsection contact detection
+    set contact detection method                = dynamic
+    set dynamic contact search size coefficient = 0.9
+    set neighborhood threshold                  = 1.3
+  end
+  subsection load balancing
+    set load balance method = frequent
+    set frequency           = 20000
+  end
+  set particle particle contact force method = hertz_mindlin_limit_overlap
+  set rolling resistance torque method       = constant_resistance
+  set particle wall contact force method     = nonlinear
+  set integration method                     = velocity_verlet
+  subsection dynamic disabling contacts
+    set enable dynamic disabling contacts = false
+    set granular temperature threshold    = 0.01
+  end
+end
+
+subsection restart
+  set checkpoint = false
+  set frequency  = 25000
+  set restart    = true
+  set filename   = dem
+end
+
+#---------------------------------------------------
+# Physical Properties
+#---------------------------------------------------
+
+subsection lagrangian physical properties
+  set gx                       = -9.81
+  set gy                       = 0
+  set gz                       = 0
+  set number of particle types = 1
+  subsection particle type 0
+    set size distribution type            = uniform
+    set diameter                          = 0.01
+    set number                            = 8000
+    set density particles                 = 2560
+    set young modulus particles           = 1e7
+    set poisson ratio particles           = 0.3
+    set restitution coefficient particles = 0.9
+    set friction coefficient particles    = 0.2
+    set rolling friction particles        = 0.3
+  end
+  set young modulus wall           = 1e7
+  set poisson ratio wall           = 0.3
+  set restitution coefficient wall = 0.9
+  set friction coefficient wall    = 0.6
+  set rolling friction wall        = 0.1
+end
+
+#---------------------------------------------------
+# Timer
+#---------------------------------------------------
+
+subsection timer
+  set type = iteration
+end
+
+#---------------------------------------------------
+# Mesh
+#---------------------------------------------------
+
+subsection mesh
+  set type               = cylinder
+  set grid type          = balanced
+  set grid arguments     = 6 : 0.1 : 0.25
+  set initial refinement = 2
+end
+
+#---------------------------------------------------
+# Solid Objects
+#---------------------------------------------------
+
+subsection solid objects
+  set number of solids = 1
+  subsection solid object 0
+    subsection mesh
+      set type                   = gmsh
+      set file name              = bunny-low-poly.msh
+      set simplex                = true
+      set initial rotation axis  = 0, 1, 0
+      set initial rotation angle = 1.5708 # pi/2
+      set initial translation    = 0.05, 0, 0.035
+    end
+    subsection translational velocity
+      set Function expression = -0.27*sin(0.8*3.1416*(t-2)) ; 0 ; 0
+    end
+    subsection angular velocity
+      set Function expression = 31.42 ; 0 ; 0
+    end
+  end
+end
