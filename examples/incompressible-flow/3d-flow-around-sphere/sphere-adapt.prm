@@ -14,10 +14,8 @@ subsection simulation control
   set max cfl                      = 1000
   set stop tolerance               = 1e-5
   set adaptative time step scaling = 1.2
-  set number mesh adapt            = 0
-  set output name                  = sphere-output
+  set output path                  = sphere-adapt/
   set output frequency             = 1
-  set subdivision                  = 1
 end
 
 #---------------------------------------------------
