@@ -291,6 +291,57 @@ MFNavierStokesSolver<dim>::update_multiphysics_time_average_solution()
 }
 
 template <int dim>
+double
+MFNavierStokesSolver<dim>::estimate_omega(
+  std::shared_ptr<NavierStokesSUPGPSPGOperator<dim, double>> &mg_operator)
+{
+  double omega = 0.0;
+
+  using OperatorType               = NavierStokesSUPGPSPGOperator<dim, double>;
+  using SmootherPreconditionerType = DiagonalMatrix<VectorType>;
+  using ChebyshevPreconditionerType =
+    PreconditionChebyshev<OperatorType, VectorType, SmootherPreconditionerType>;
+  typename ChebyshevPreconditionerType::AdditionalData
+    chebyshev_additional_data;
+
+  chebyshev_additional_data.preconditioner =
+    std::make_shared<SmootherPreconditionerType>();
+  mg_operator->compute_inverse_diagonal(
+    chebyshev_additional_data.preconditioner->get_vector());
+  chebyshev_additional_data.constraints.copy_from(this->zero_constraints);
+  chebyshev_additional_data.degree               = 3;
+  chebyshev_additional_data.smoothing_range      = 20;
+  chebyshev_additional_data.eig_cg_n_iterations  = 40;
+  chebyshev_additional_data.eigenvalue_algorithm = ChebyshevPreconditionerType::
+    AdditionalData::EigenvalueAlgorithm::power_iteration;
+  chebyshev_additional_data.polynomial_type =
+    ChebyshevPreconditionerType::AdditionalData::PolynomialType::fourth_kind;
+
+  auto chebyshev = std::make_shared<ChebyshevPreconditionerType>();
+  chebyshev->initialize(*mg_operator, chebyshev_additional_data);
+
+  VectorType vec;
+  mg_operator->initialize_dof_vector(vec);
+
+  const auto evs = chebyshev->estimate_eigenvalues(vec);
+
+  const unsigned int smoothing_range = 20;
+
+  const double alpha =
+    (smoothing_range > 1. ? evs.max_eigenvalue_estimate / smoothing_range :
+                            std::min(0.9 * evs.max_eigenvalue_estimate,
+                                     evs.min_eigenvalue_estimate));
+
+  omega = 2.0 / (alpha + evs.max_eigenvalue_estimate);
+
+  this->pcout << "    - min ev: " << evs.min_eigenvalue_estimate << std::endl;
+  this->pcout << "    - max ev: " << evs.max_eigenvalue_estimate << std::endl;
+  this->pcout << "    - omega: " << omega << std::endl;
+
+  return omega;
+}
+
+template <int dim>
 void
 MFNavierStokesSolver<dim>::solve_with_LSMG(SolverGMRES<VectorType> &solver)
 {
@@ -416,6 +467,7 @@ MFNavierStokesSolver<dim>::solve_with_LSMG(SolverGMRES<VectorType> &solver)
       smoother_data[level].relaxation =
         this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
           .mg_smoother_relaxation;
+      // smoother_data[level].relaxation = estimate_omega(mg_operators[level]);
     }
 
   mg_smoother.initialize(mg_operators, smoother_data);
@@ -644,6 +696,7 @@ MFNavierStokesSolver<dim>::solve_with_GCMG(SolverGMRES<VectorType> &solver)
       smoother_data[level].relaxation =
         this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
           .mg_smoother_relaxation;
+      // smoother_data[level].relaxation = estimate_omega(mg_operators[level]);
     }
 
   mg_smoother.initialize(mg_operators, smoother_data);

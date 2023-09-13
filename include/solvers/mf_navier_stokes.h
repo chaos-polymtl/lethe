@@ -184,6 +184,17 @@ private:
   void
   solve_with_ILU(SolverGMRES<VectorType> &solver);
 
+  /**
+   * @brief Estimate the eigenvalues to obtain a relaxation parameter for the
+   *  MG smoother
+   *
+   * @param operator Operator for which the estimation needs to be done
+   * @return double Omega relaxation parameter
+   */
+  double
+  estimate_omega(
+    std::shared_ptr<NavierStokesSUPGPSPGOperator<dim, double>> &mg_operator);
+
 protected:
   // Matrix-free operator
   std::shared_ptr<NavierStokesOperatorBase<dim, double>> system_operator;
