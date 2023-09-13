@@ -304,6 +304,12 @@ namespace Parameters
     // N/(m*K)
     double surface_tension_gradient;
 
+    // Solidus temperature - Units in K
+    double T_solidus;
+
+    // Liquidus temperature - Units in K
+    double T_liquidus;
+
     void
     declare_parameters(ParameterHandler &prm);
     void
@@ -423,7 +429,8 @@ namespace Parameters
     enum class SurfaceTensionModel
     {
       constant,
-      linear
+      linear,
+      phase_change
     } surface_tension_model;
     SurfaceTensionParameters surface_tension_parameters;
 

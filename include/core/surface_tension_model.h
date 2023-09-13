@@ -249,12 +249,10 @@ public:
    * @brief Default constructor
    */
   SurfaceTensionPhaseChange(
-    const Parameters::SurfaceTensionParameters &p_surface_tension_parameters,
-    const Parameters::PhaseChange p_phase_change_params)
+    const Parameters::SurfaceTensionParameters &p_surface_tension_parameters)
     : SurfaceTensionLinear(p_surface_tension_parameters)
-    , phase_change_params(p_phase_change_params)
-    , T_solidus(p_phase_change_params.T_solidus)
-    , T_liquidus(p_phase_change_params.T_liquidus)
+    , T_solidus(p_surface_tension_parameters.T_solidus)
+    , T_liquidus(p_surface_tension_parameters.T_liquidus)
   {
     this->model_depends_on[field::temperature] = true;
   }
@@ -276,15 +274,15 @@ public:
       surface_tension = 0.0;
     else if (temperature > T_liquidus)
       surface_tension = surface_tension_coefficient +
-             surface_tension_gradient * (temperature - T_0);
+                        surface_tension_gradient * (temperature - T_0);
     else
       {
         const double l_frac =
-          calculate_liquid_fraction(temperature,
-                                    phase_change_params);
+          calculate_liquid_fraction(temperature, T_solidus, T_liquidus);
 
         surface_tension = (surface_tension_coefficient +
-               surface_tension_gradient * (temperature - T_0)) * l_frac;
+                           surface_tension_gradient * (temperature - T_0)) *
+                          l_frac;
       }
     return surface_tension;
   }
@@ -306,15 +304,16 @@ public:
         property_vector[i] = 0.0;
       else if (temperature[i] > T_liquidus)
         property_vector[i] = surface_tension_coefficient +
-               surface_tension_gradient * (temperature[i] - T_0);
+                             surface_tension_gradient * (temperature[i] - T_0);
       else
         {
           const double l_frac =
-            calculate_liquid_fraction(temperature[i],
-                                      phase_change_params);
+            calculate_liquid_fraction(temperature[i], T_solidus, T_liquidus);
 
-          property_vector[i] = (surface_tension_coefficient +
-                 surface_tension_gradient * (temperature[i] - T_0)) * l_frac;
+          property_vector[i] =
+            (surface_tension_coefficient +
+             surface_tension_gradient * (temperature[i] - T_0)) *
+            l_frac;
         }
   }
 
@@ -329,24 +328,22 @@ public:
    * with respect to the field.
    */
   double
-  jacobian(const std::map<field, double> & field_values, field id) override
+  jacobian(const std::map<field, double> &field_values, field id) override
   {
     if (id == field::temperature)
-    {
-      const double temperature = field_values.at(field::temperature);
-      if (temperature < T_solidus)
-        return 0;
-      else if (temperature > T_liquidus)
-        return surface_tension_gradient;
-      else
       {
-        const double l_frac =
-            calculate_liquid_fraction(temperature,
-                                      phase_change_params);
-        return surface_tension_gradient*l_frac;
+        const double temperature = field_values.at(field::temperature);
+        if (temperature < T_solidus)
+          return 0;
+        else if (temperature > T_liquidus)
+          return surface_tension_gradient;
+        else
+          {
+            const double l_frac =
+              calculate_liquid_fraction(temperature, T_solidus, T_liquidus);
+            return surface_tension_gradient * l_frac;
+          }
       }
-
-    }
     else
       return 0;
   }
@@ -362,36 +359,32 @@ public:
    * tension coefficient with respect to the field id.
    */
   void
-  vector_jacobian(
-    const std::map<field, std::vector<double>> & field_vectors,
-    const field          id,
-    std::vector<double> &jacobian_vector) override
+  vector_jacobian(const std::map<field, std::vector<double>> &field_vectors,
+                  const field                                 id,
+                  std::vector<double> &jacobian_vector) override
   {
     if (id == field::temperature)
-    {
-
-      const std::vector<double> &temperature =
-        field_vectors.at(field::temperature);
-      for (unsigned int i = 0; i < jacobian_vector.size(); ++i)
-        if (temperature[i] < T_solidus)
-          jacobian_vector[i] = 0.0;
-        else if (temperature[i] > T_liquidus)
-          jacobian_vector[i] = surface_tension_gradient;
-        else
-          {
-            const double l_frac =
-              calculate_liquid_fraction(temperature[i],
-                                        phase_change_params);
-            jacobian_vector[i] = surface_tension_gradient*l_frac;
-          }
-    }
+      {
+        const std::vector<double> &temperature =
+          field_vectors.at(field::temperature);
+        for (unsigned int i = 0; i < jacobian_vector.size(); ++i)
+          if (temperature[i] < T_solidus)
+            jacobian_vector[i] = 0.0;
+          else if (temperature[i] > T_liquidus)
+            jacobian_vector[i] = surface_tension_gradient;
+          else
+            {
+              const double l_frac = calculate_liquid_fraction(temperature[i],
+                                                              T_solidus,
+                                                              T_liquidus);
+              jacobian_vector[i]  = surface_tension_gradient * l_frac;
+            }
+      }
     else
       std::fill(jacobian_vector.begin(), jacobian_vector.end(), 0);
-
   }
 
 private:
-  const Parameters::PhaseChange phase_change_params;
   const double T_solidus;
   const double T_liquidus;
 };

@@ -41,4 +41,20 @@ calculate_liquid_fraction(
                   1.);
 }
 
+/**
+ * @brief calculate_liquid_fraction Calculates the liquid fraction of a phase change material at
+ * a temperature T
+ *
+ * @param T temperature at which to calculate the solid fraction
+ * @return value of the liquid_fraction
+ *
+ */
+inline double
+calculate_liquid_fraction(const double &T,
+                          const double  T_solidus,
+                          const double  T_liquidus)
+{
+  return std::min(std::max((T - T_solidus) / (T_liquidus - T_solidus), 0.), 1.);
+}
+
 #endif

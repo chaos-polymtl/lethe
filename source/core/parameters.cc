@@ -431,6 +431,16 @@ namespace Parameters
       "0.0",
       Patterns::Double(),
       "Surface tension gradient with respect to the temperature for the corresponding pair of fluids or fluid-solid pair");
+    prm.declare_entry(
+      "solidus temperature",
+      "0",
+      Patterns::Double(),
+      "Temperature of the solidus for the corresponding pair of fluids or fluid-solid pair");
+    prm.declare_entry(
+      "liquidus temperature",
+      "1",
+      Patterns::Double(),
+      "Temperature of the liquidus for the corresponding pair of fluids or fluid-solid pair");
   }
 
   void
@@ -440,6 +450,11 @@ namespace Parameters
     T_0                         = prm.get_double("reference state temperature");
     surface_tension_gradient =
       prm.get_double("temperature-driven surface tension gradient");
+    T_solidus  = prm.get_double("solidus temperature");
+    T_liquidus = prm.get_double("liquidus temperature");
+
+    Assert(T_liquidus > T_solidus,
+           PhaseChangeIntervalError(T_liquidus, T_solidus));
   }
 
   void
@@ -985,9 +1000,9 @@ namespace Parameters
         prm.declare_entry(
           "surface tension model",
           "constant",
-          Patterns::Selection("constant|linear"),
+          Patterns::Selection("constant|linear|phase change"),
           "Model used for the calculation of the surface tension coefficient\n"
-          "The choices are <constant|linear>.");
+          "The choices are <constant|linear|phase change>.");
         surface_tension_parameters.declare_parameters(prm);
 
         // Cahn-Hilliard mobility
@@ -1017,9 +1032,9 @@ namespace Parameters
         prm.declare_entry(
           "surface tension model",
           "constant",
-          Patterns::Selection("constant|linear"),
+          Patterns::Selection("constant|linear|phase change"),
           "Model used for the calculation of the surface tension coefficient\n"
-          "The choices are <constant|linear>.");
+          "The choices are <constant|linear|phase change>.");
         surface_tension_parameters.declare_parameters(prm);
       }
       prm.leave_subsection();
@@ -1069,9 +1084,14 @@ namespace Parameters
               surface_tension_model = SurfaceTensionModel::linear;
               surface_tension_parameters.parse_parameters(prm);
             }
+          else if (op == "phase change")
+            {
+              surface_tension_model = SurfaceTensionModel::phase_change;
+              surface_tension_parameters.parse_parameters(prm);
+            }
           else
             throw(std::runtime_error(
-              "Invalid surface tension model. The choices are <constant|linear>."));
+              "Invalid surface tension model. The choices are <constant|linear|phase change>."));
 
           // Cahn-Hilliard mobility
           op = prm.get("cahn hilliard mobility model");
@@ -1114,9 +1134,14 @@ namespace Parameters
               surface_tension_model = SurfaceTensionModel::linear;
               surface_tension_parameters.parse_parameters(prm);
             }
+          else if (op == "phase change")
+            {
+              surface_tension_model = SurfaceTensionModel::phase_change;
+              surface_tension_parameters.parse_parameters(prm);
+            }
           else
             throw(std::runtime_error(
-              "Invalid surface tension model. The choices are <constant|linear>."));
+              "Invalid surface tension model. The choices are <constant|linear|phase change>."));
           std::pair<std::pair<unsigned int, unsigned int>, SurfaceTensionModel>
             fluid_solid_surface_tension_interaction(fluid_solid_interaction,
                                                     surface_tension_model);
