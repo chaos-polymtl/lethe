@@ -11,7 +11,7 @@ Incompressible Flow
     2d-flow-around-cylinder/2d-flow-around-cylinder
     2d-taylor-couette-flow/2d-taylor-couette-flow
     2d-backward-facing-step/2d-backward-facing-step
-    2d-transient-around-ahmed-body/2d-transient-around-ahmed-body
+    2d-transient-flow-around-ahmed-body/2d-transient-flow-around-ahmed-body
     2d-transient-flow-around-cylinder/2d-transient-flow-around-cylinder
     2d-naca0012-low-reynolds/2d-naca0012-low-reynolds
     2d-taylor-couette-flow-nitsche/2d-taylor-couette-flow-nitsche

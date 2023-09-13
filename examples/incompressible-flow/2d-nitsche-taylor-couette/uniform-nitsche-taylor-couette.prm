@@ -73,7 +73,6 @@ end
 #---------------------------------------------------
 
 subsection nitsche
-  set beta             = 10
   set verbosity        = verbose
   set number of solids = 1
 
@@ -88,6 +87,7 @@ subsection nitsche
       set Function expression = -y ; x
     end
     set calculate torque on solid = true
+    set beta             = 10
   end
 end
 

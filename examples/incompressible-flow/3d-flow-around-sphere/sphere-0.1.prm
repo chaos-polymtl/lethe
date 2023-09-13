@@ -10,9 +10,8 @@ set dimension = 3
 subsection simulation control
   set method            = steady
   set number mesh adapt = 0
-  set output name       = sphere-output
+  set output path       = sphere-0.1/
   set output frequency  = 1
-  set subdivision       = 1
 end
 
 #---------------------------------------------------

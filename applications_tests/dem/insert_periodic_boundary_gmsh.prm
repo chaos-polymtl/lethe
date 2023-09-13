@@ -69,9 +69,16 @@ end
 subsection insertion info
   set insertion method    = list
   set insertion frequency = 10
-  set list x              = 0.01, 0.005, 0.002
-  set list y              = 0.002, 0.002, 0.002
-  set list z              = 0.005, 0.005, 0.005
+  set list x              = 0.010 , 0.005 , 0.002
+  set list y              = 0.002 , 0.002 , 0.002
+  set list z              = 0.005 , 0.005 , 0.005
+  set list velocity x     = 0.000 , 0.000 , 0.000
+  set list velocity y     = 0.000 , 0.000 , 0.000
+  set list velocity z     = 0.000 , 0.000 , 0.000
+  set list omega x        = 0.000 , 0.000 , 0.000
+  set list omega y        = 0.000 , 0.000 , 0.000
+  set list omega z        = 0.000 , 0.000 , 0.000
+  set list diameters      = 2e-4  , 2e-4  , 2e-4
 end
 
 #---------------------------------------------------

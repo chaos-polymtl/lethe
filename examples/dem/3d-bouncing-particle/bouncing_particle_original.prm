@@ -71,6 +71,13 @@ subsection insertion info
   set list x              = 1.
   set list y              = 1.
   set list z              = 0.5
+  set list velocity x     = 0.0
+  set list velocity y     = 0.0
+  set list velocity z     = 0.0
+  set list omega x        = 0.0
+  set list omega y        = 0.0
+  set list omega z        = 0.0
+  set list diameters      = 0.2
 end
 
 #---------------------------------------------------

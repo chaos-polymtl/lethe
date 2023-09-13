@@ -1,5 +1,8 @@
 # Listing of Parameters
 #----------------------
+
+set dimension = 2
+
 #---------------------------------------------------
 # Simulation and IO Control
 #---------------------------------------------------
@@ -106,3 +109,4 @@ subsection linear solver
     set ilu preconditioner fill = 2
     set verbosity               = verbose
   end
+end
