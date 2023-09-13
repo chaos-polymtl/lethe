@@ -1,4 +1,11 @@
+# Listing of Parameters
+#----------------------
+
 set dimension = 3
+
+#---------------------------------------------------
+# Simulation Control
+#---------------------------------------------------
 
 subsection simulation control
   set method            = steady
@@ -7,16 +14,28 @@ subsection simulation control
   set output name       = almost_blocked_channels
 end
 
+#---------------------------------------------------
+# FEM
+#---------------------------------------------------
+
 subsection FEM
   set velocity order = 1
   set pressure order = 1
 end
+
+#---------------------------------------------------
+# Physical Properties
+#---------------------------------------------------
 
 subsection physical properties
   subsection fluid 0
     set kinematic viscosity = 1
   end
 end
+
+#---------------------------------------------------
+# Mesh
+#---------------------------------------------------
 
 subsection mesh
   set type               = dealii
@@ -25,9 +44,17 @@ subsection mesh
   set initial refinement = 2
 end
 
+#---------------------------------------------------
+# Mesh Adaptation Control
+#---------------------------------------------------
+
 subsection mesh adaptation
   set type = uniform
 end
+
+#---------------------------------------------------
+# Boundary Conditions
+#---------------------------------------------------
 
 subsection boundary conditions
   set number = 5
@@ -56,12 +83,20 @@ subsection boundary conditions
   end
 end
 
+#---------------------------------------------------
+# Source Term
+#---------------------------------------------------
+
 subsection source term
   set enable = true
   subsection xyz
     set Function expression = 0.01; 0; 0; 0
   end
 end
+
+#---------------------------------------------------
+# IB particules
+#---------------------------------------------------
 
 subsection particles
   set number of particles = 3
@@ -100,9 +135,17 @@ subsection particles
   end
 end
 
+#---------------------------------------------------
+# Force
+#---------------------------------------------------
+
 subsection forces
   set verbosity = verbose
 end
+
+#---------------------------------------------------
+# Non-Linear Solver Control
+#---------------------------------------------------
 
 subsection non-linear solver
   subsection fluid dynamics
@@ -110,6 +153,10 @@ subsection non-linear solver
     set tolerance = 1e-9
   end
 end
+
+#---------------------------------------------------
+# Linear Solver Control
+#---------------------------------------------------
 
 subsection linear solver
   subsection fluid dynamics
