@@ -1,5 +1,5 @@
 ==================================
-Rectangular Hopper
+Bunny Drill
 ==================================
 
 This example simulates the drilling motion of a bunny within a bed of particles. It illustrates how the DEM module of Lethe can simulate complex moving objects and is a testament to our love of lagomorphs. Do not worry friend, no bunnies were hurt in the making of this example!
@@ -183,3 +183,25 @@ Whereas the drilling is launched after the loading using:
 Results
 -------
 As seen in the following two animations, the bunny drills into the particles which generates a complex motion within the granular matter. There is not much more to say here, it is a bunny drill.
+
+The first animation displays the drill with the entirety of the particles. It is difficult to see the dynamics of the mighty bunny within these circumstances.
+
+.. raw:: html
+
+    <iframe width="500" height="600" src="https://www.youtube.com/embed/GI_jfsO0ZeM" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
+The following animation displays the drill with half of the particles clipped. Here we can clearly see the bunny in action.
+
+.. raw:: html
+
+    <iframe width="500" height="600" src="https://www.youtube.com/embed/VcJ_nt9iNmA" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
+----------------------------
+Possibilities for Extension
+----------------------------
+
+- Use finer particles to see if the drilling dynamics if affected by the particle size
+- Use an STL of an alternative animal. Although we believe lagomorphs are amazing, we are also fans of mustelidae (e.g. otters) and chinchillidae (e.g. chinchillas or, even better, viscachas). Feel free to replace the drill with your favorite animal and to send us your animation to lethe.cfd@gmail.com
+
+
+ 
