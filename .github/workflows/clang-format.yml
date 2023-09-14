@@ -21,7 +21,7 @@ jobs:
 
       # Executes the specified version of clang-format
       - name: clang-format lint
-        uses: DoozyX/clang-format-lint-action@v0.16.0
+        uses: DoozyX/clang-format-lint-action@v0.16
         with:
           source: 'applications source include'
           clangFormatVersion: ${{ env.CLANG_FORMAT_VERSION }}
