@@ -802,8 +802,7 @@ namespace BoundaryConditions
     prm.declare_entry(
       "type",
       "noflux",
-      Patterns::Selection(
-        "noflux|dirichlet|angle_of_contact|free_angle"),
+      Patterns::Selection("noflux|dirichlet|angle_of_contact|free_angle"),
       "Type of boundary condition for the Cahn-Hilliard equations"
       "Choices are <noflux|dirichlet|angle_of_contact|free_angle>.");
 
