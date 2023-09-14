@@ -1,8 +1,0 @@
-Simulation control
-dt_0 0.0001
-dt_1 0.0001
-dt_2 0.0001
-dt_3 0.0001
-CFL  0
-Time 1
-Iter 1
