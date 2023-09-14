@@ -627,7 +627,8 @@ LetheGridTools::project_to_d_linear_object(
         {
           break;
         }
-  } while (true);
+    }
+  while (true);
   Tensor<1, spacedim> normal;
   if (spacedim == 3)
     {

@@ -311,9 +311,9 @@ DEMSolver<dim>::cell_weight(
 #endif
 
 #if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 6)
-        case parallel::distributed::Triangulation<dim>::CELL_COARSEN:
+      case parallel::distributed::Triangulation<dim>::CELL_COARSEN:
 #else
-        case CellStatus::children_will_be_coarsened:
+      case CellStatus::children_will_be_coarsened:
 #endif
         {
           unsigned int n_particles_in_cell = 0;
@@ -378,10 +378,10 @@ DEMSolver<dim>::cell_weight_with_mobility_status(
     {
 #if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 6)
       case parallel::distributed::Triangulation<dim>::CELL_PERSIST:
-        case parallel::distributed::Triangulation<dim>::CELL_REFINE:
+      case parallel::distributed::Triangulation<dim>::CELL_REFINE:
 #else
       case dealii::CellStatus::cell_will_persist:
-        case dealii::CellStatus::cell_will_be_refined:
+      case dealii::CellStatus::cell_will_be_refined:
 
 #endif
         {
@@ -400,9 +400,9 @@ DEMSolver<dim>::cell_weight_with_mobility_status(
 #endif
 
 #if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 6)
-        case parallel::distributed::Triangulation<dim>::CELL_COARSEN:
+      case parallel::distributed::Triangulation<dim>::CELL_COARSEN:
 #else
-        case dealii::CellStatus::children_will_be_coarsened:
+      case dealii::CellStatus::children_will_be_coarsened:
 #endif
         {
           unsigned int n_particles_in_cell = 0;
@@ -834,13 +834,15 @@ DEMSolver<dim>::finish_simulation()
     {
       switch (parameters.test.test_type)
         {
-            case Parameters::Testing::TestType::particles: {
+          case Parameters::Testing::TestType::particles:
+            {
               visualization_object.print_xyz(particle_handler,
                                              mpi_communicator,
                                              pcout);
               break;
             }
-            case Parameters::Testing::TestType::mobility_status: {
+          case Parameters::Testing::TestType::mobility_status:
+            {
               // Get mobility status vector sorted by cell id
               Vector<float> mobility_status(triangulation.n_active_cells());
               disable_contacts_object.get_mobility_status_vector(
@@ -852,7 +854,8 @@ DEMSolver<dim>::finish_simulation()
                                                              mpi_communicator);
               break;
             }
-            case Parameters::Testing::TestType::subdomain: {
+          case Parameters::Testing::TestType::subdomain:
+            {
               // Get mobility status vector sorted by cell id
               Vector<float> subdomain(triangulation.n_active_cells());
               for (unsigned int i = 0; i < subdomain.size(); ++i)

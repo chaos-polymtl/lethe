@@ -332,7 +332,8 @@ NavierStokesScratchData<dim>::calculate_physical_properties()
 
   switch (properties_manager.get_number_of_fluids())
     {
-        case 1: {
+      case 1:
+        {
           // In the case of an incompressible flow, viscosity is the only
           // required property
           const auto rheology_model = properties_manager.get_rheology();
@@ -369,7 +370,8 @@ NavierStokesScratchData<dim>::calculate_physical_properties()
             }
           break;
         }
-        case 2: {
+      case 2:
+        {
           // We need both density and viscosity
           const auto density_model_0  = properties_manager.get_density(0);
           const auto rheology_model_0 = properties_manager.get_rheology(0);

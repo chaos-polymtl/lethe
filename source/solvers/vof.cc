@@ -565,7 +565,8 @@ VolumeOfFluid<dim>::calculate_volume_and_mass(
             {
               switch (monitored_fluid)
                 {
-                    case Parameters::FluidIndicator::fluid0: {
+                  case Parameters::FluidIndicator::fluid0:
+                    {
                       this->volume_monitored +=
                         fe_values_vof.JxW(q) * (1 - phase_values[q]);
                       this->mass_monitored += fe_values_vof.JxW(q) *
@@ -573,7 +574,8 @@ VolumeOfFluid<dim>::calculate_volume_and_mass(
                                               density_0[q];
                       break;
                     }
-                    case Parameters::FluidIndicator::fluid1: {
+                  case Parameters::FluidIndicator::fluid1:
+                    {
                       this->volume_monitored +=
                         fe_values_vof.JxW(q) * phase_values[q];
                       this->mass_monitored +=
@@ -1026,8 +1028,9 @@ VolumeOfFluid<dim>::find_sharpening_threshold()
           st_min             = st_avg;
           mass_deviation_min = mass_deviation_avg;
         }
-  } while (std::abs(mass_deviation_avg) > mass_deviation_tol &&
-           nb_search_ite < max_iterations);
+    }
+  while (std::abs(mass_deviation_avg) > mass_deviation_tol &&
+         nb_search_ite < max_iterations);
 
   // Take minimum deviation in between the two endpoints of the last
   // interval searched, if out of the do-while loop because max_iterations is

@@ -306,7 +306,8 @@ namespace ankerl::unordered_dense
                     see2 = mix(r8(p + 32) ^ secret[3], r8(p + 40) ^ see2);
                     p += 48;
                     i -= 48;
-                } while (ANKERL_UNORDERED_DENSE_LIKELY(i > 48));
+                  }
+                while (ANKERL_UNORDERED_DENSE_LIKELY(i > 48));
                 seed ^= see1 ^ see2;
               }
             while (ANKERL_UNORDERED_DENSE_UNLIKELY(i > 16))
