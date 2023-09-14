@@ -392,7 +392,7 @@ private:
   /**
    * @brief Calculates the barycenter of the fluid and its velocity
    *
-   * @param solution VOF solution
+   * @param solution Cahn-Hilliard solution
    *
    * @param solution Fluid dynamics solution
    *

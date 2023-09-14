@@ -3,16 +3,16 @@ Running on 1 MPI rank(s)...
    Number of degrees of freedom: 3267
    Volume of triangulation:      1
    Number of Cahn-Hilliard degrees of freedom: 2178
-Phase statistics : 
-	     Min : 0
-	     Max : 0
-	 Average : 0
-	 Integral : 0
+Phase statistics :
+	     Min : -1
+	     Max : 1
+	 Average : 0.801589
+	 Integral : 0.801589
 
 *******************************************************************************
 Transient iteration: 1        Time: 0.004    Time step: 0.004    CFL: 0
 *******************************************************************************
-Phase statistics : 
+Phase statistics :
 	     Min : -1.01454
 	     Max : 1.00577
 	 Average : 0.801589
