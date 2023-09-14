@@ -7,7 +7,7 @@
 set dimension = 3
 
 #---------------------------------------------------
-# Simulation and IO Control
+# Simulation Control
 #---------------------------------------------------
 
 subsection simulation control
