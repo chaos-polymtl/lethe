@@ -2,7 +2,7 @@
 Bunny Drill
 ==================================
 
-This example simulates the drilling motion of a bunny within a bed of particles. It illustrates how the DEM module of Lethe can simulate complex moving objects and is a testament to our love of lagomorphs. Do not worry friend, no bunnies were hurt in the making of this example!
+This example simulates the drilling motion of a bunny within a bed of particles. It illustrates that the DEM module of Lethe can simulate complex moving objects and is a testament to our love of lagomorphs. Do not worry friend, no bunnies were hurt in the making of this example!
 
 
 ----------------------------------
@@ -17,7 +17,7 @@ Files Used in This Example
 ----------------------------
 - Parameter file used to load the particles: ``examples/dem/3d-bunny-drill/bunny-drill-loading.prm``
 - Parameter file used to simulate the bunny drill: ``examples/dem/3d-bunny-drill/bunny-drill.prm``
-- GMSH mesh of the bunny: ``examples/dem/3d-bunny-drill/bunny-drill.prm``
+- GMSH mesh of the bunny: ``examples/dem/3d-bunny-drill/bunny-low-poly.msh`` generated using the corresponding STL file ``examples/dem/3d-bunny-drill/bunny-low-poly.stl``
 
 -----------------------
 Description of the Case
@@ -46,7 +46,7 @@ The mesh is a cylinder generated using the deal.II grid generator.
 Insertion Info
 ~~~~~~~~~~~~~~~~~~~
 
-An insertion box is defined inside and the top part of the cylinder. The insertion region is sufficiently high to ensure that there are no collisiosn between the particles bouncing on the bottom wall (or on particles accumulated at the bottom) and the ones being inserted.
+An insertion box is defined inside at the top part of the cylinder. The insertion region is sufficiently high to ensure that there are no collisions between the particles bouncing on the bottom wall (or particles accumulated at the bottom) and the ones being inserted.
 
 .. code-block:: text
 
@@ -72,7 +72,7 @@ An insertion box is defined inside and the top part of the cylinder. The inserti
 Lagrangian Physical Properties
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The total number of particles in this simulation is 8000. All particles have a diameter of 10 mm. The particles are relatively stiff with a Young Modulus of :math:`E=10^7` to ensure that the overlap between the bunny drill and the particles does not become sufficiently large to allow particles to *jump through* the bunny.
+The total number of particles in this simulation is 8000. All particles have a diameter of 10 mm. The particles are relatively stiff, with a Young Modulus of :math:`E=10^7` to ensure that the overlap between the bunny drill and the particles does not become sufficiently large to allow particles to *jump through* the bunny.
 
 .. code-block:: text
 
@@ -120,7 +120,7 @@ The time end of the simulation is 2 seconds after all particles have been loaded
 Simulation Control (Drilling)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The time end of the simulation is 4.75 seconds after which the drill has done one back-and-forth drilling motion.
+The time end of the simulation is 4.75 seconds after which the bunny has done one back-and-forth drilling motion.
 
 .. code-block:: text
 
@@ -138,7 +138,7 @@ The time end of the simulation is 4.75 seconds after which the drill has done on
 Solid Objects (Drilling)
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The bunny is defined using the solid objects feature of Lethe. The surface mesh of the bunny is a GMSH file. The translational of the velocity is defined to have a periodic motion of the motion in along the axis of the cylinder and the bunny is  rotating at a constant angular velocity. This complex drilling motion is fully parametrized from the input file using the function parser functionallities of the translational and the angular velocity of the solid object.
+The bunny is defined using the solid objects feature of Lethe. The surface mesh of the bunny is a GMSH file. The translational of the velocity is defined to have a periodic motion along the axis of the cylinder and the bunny is rotating at a constant angular velocity. This complex drilling motion is fully parametrized from the input file using the function parser functionalities of the translational and the angular velocity of the solid object.
 
 .. code-block:: text
 
@@ -166,7 +166,7 @@ The bunny is defined using the solid objects feature of Lethe. The surface mesh 
 ----------------------
 Running the Simulation
 ----------------------
-The loading can be simulated using:
+The loading can be simulated using the following command:
 
 .. code-block:: text
 
@@ -200,8 +200,8 @@ The following animation displays the drill with half of the particles clipped. H
 Possibilities for Extension
 ----------------------------
 
-- Use finer particles to see if the drilling dynamics if affected by the particle size
-- Use an STL of an alternative animal. Although we believe lagomorphs are amazing, we are also fans of mustelidae (e.g. otters) and chinchillidae (e.g. chinchillas or, even better, viscachas). Feel free to replace the drill with your favorite animal and to send us your animation to lethe.cfd@gmail.com
+- Use finer particles to see if the drilling dynamics are affected by the particle size.
+- Use an STL of an alternative animal. Although we believe lagomorphs are amazing, we are also fans of mustelidae (e.g., otters) and chinchillidae (e.g., chinchillas or, even better, viscachas). Feel free to replace the drill with your favorite animal and to send us your animation to lethe.cfd@gmail.com.
 
 
  
