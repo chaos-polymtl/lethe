@@ -81,6 +81,11 @@ subsection boundary conditions cahn hilliard
     set type        = angle_of_contact
     set angle value = 135
   end
+    subsection bc 1
+      set id          = 1
+      set type        = free_angle
+      set angle value = 135
+    end
 end
 
 #---------------------------------------------------

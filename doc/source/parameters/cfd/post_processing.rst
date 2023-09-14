@@ -7,64 +7,67 @@ This subsection controls the post-processing other than the forces and torque on
 .. code-block:: text
 
   subsection post-processing
-    set verbosity                        = quiet
-    set output frequency                 = 1
+    set verbosity                          = quiet
+    set output frequency                   = 1
 
     #---------------------------------------------------
     # Fluid dynamic post-processing
     #---------------------------------------------------
     # Kinetic energy calculation
-    set calculate kinetic energy         = false
-    set kinetic energy name              = kinetic_energy
+    set calculate kinetic energy           = false
+    set kinetic energy name                = kinetic_energy
 
     # Average velocities calculation
-    set calculate average velocities     = false
-    set initial time                     = 0.0
+    set calculate average velocities       = false
+    set initial time                       = 0.0
 
     # Pressure drop calculation
-    set calculate pressure drop          = false
-    set pressure drop name               = pressure_drop
-    set inlet boundary id                = 0
-    set outlet boundary id               = 1
+    set calculate pressure drop            = false
+    set pressure drop name                 = pressure_drop
+    set inlet boundary id                  = 0
+    set outlet boundary id                 = 1
 
     # Flow rate at boundaries calculation
-    set calculate flow rate              = false
-    set flow rate name                   = flow_rate
+    set calculate flow rate                = false
+    set flow rate name                     = flow_rate
 
     # Enstrophy calculation
-    set calculate enstrophy              = false
-    set enstrophy name                   = enstrophy
+    set calculate enstrophy                = false
+    set enstrophy name                     = enstrophy
 
     # Others
-    set smoothed output fields           = false
+    set smoothed output fields             = false
 
     #---------------------------------------------------
     # Physical properties post-processing
     #---------------------------------------------------
-    set calculate apparent viscosity     = false
-    set apparent viscosity name          = apparent_viscosity
+    set calculate apparent viscosity       = false
+    set apparent viscosity name            = apparent_viscosity
 
     #---------------------------------------------------
     # Multiphysics post-processing
     #---------------------------------------------------
     # Tracer statistics
-    set calculate tracer statistics      = false
-    set tracer statistics name           = tracer_statistics
+    set calculate tracer statistics        = false
+    set tracer statistics name             = tracer_statistics
 
     # Thermal postprocesses
-    set postprocessed fluid              = both
-    set calculate temperature statistics = false
-    set temperature statistics name      = temperature_statistics
-    set calculate heat flux              = false
-    set heat flux name                   = heat_flux
+    set postprocessed fluid                = both
+    set calculate temperature statistics   = false
+    set temperature statistics name        = temperature_statistics
+    set calculate heat flux                = false
+    set heat flux name                     = heat_flux
 
     # VOF postprocessing
-    set calculate VOF barycenter         = false
-    set VOF barycenter name              = vof_barycenter_information
+    set calculate VOF barycenter           = false
+    set VOF barycenter name                = vof_barycenter_information
 
     # Cahn-Hilliard statistics
-    set calculate phase statistics       = true
-    set phase statistics name            = phase_statistics
+    set calculate phase statistics         = false
+    set phase statistics name              = phase_statistics
+    
+    set calculate cahn hilliard barycenter = false
+    set cahn hilliard barycenter name      = cahn_hilliard_barycenter_information
   end
 
 * ``verbosity``: enables the display of the post-processing values in the terminal. This does not affect the printing of output files. Choices are: ``quiet`` (default, no output) or ``verbose`` (output at every iteration).
@@ -170,7 +173,7 @@ This subsection controls the post-processing other than the forces and torque on
 		0.0000          0.0000               0.0000               0.0000            1000.0000 
 		1.0000         -0.9732               0.0000               1.4856               0.9732 
 
-* ``calculate VOF barycenter``: calculates the barycenter of fluid 1 and its velocity VOF simulations. The barycenter :math:`\mathbf{x}_b` and its velocity :math:`\mathbf{v}_b` are defined as:
+* ``calculate VOF barycenter``: calculates the barycenter of fluid 1 and its velocity in VOF simulations. The barycenter :math:`\mathbf{x}_b` and its velocity :math:`\mathbf{v}_b` are defined as:
 
   .. math::
 
@@ -182,13 +185,29 @@ This subsection controls the post-processing other than the forces and torque on
 
   where :math:`\psi` is the filtered phase indicator.
   
+* ``set VOF barycenter name`` name of the output file contianing the position and velocity of the barycenter for VOF simulations.
+  
+* ``calculate cahn hilliard barycenter``: calculates the barycenter of fluid 1 and its velocity in Cahn-Hilliard simulations. The barycenter :math:`\mathbf{x}_b` and its velocity :math:`\mathbf{v}_b` are defined as:
+
+  .. math::
+
+      \mathbf{x_b} = \frac{\int_{\Omega} 0.5\cdot(1-\phi) \mathbf{x} \mathrm{d}\Omega }{\int_{\Omega} \psi \mathrm{d}\Omega}
+
+  .. math::
+
+      \mathbf{v_b} = \frac{\int_{\Omega} 0.5\cdot(1-\phi) \mathbf{u} \mathrm{d}\Omega }{\int_{\Omega} \psi \mathrm{d}\Omega}
+
+  where :math:`\phi` is the phase parameter.
+  
+* ``set cahn hilliard barycenter name`` name of the output file contianing the position and velocity of the barycenter for Cahn-Hilliard simulations
+  
   * ``calculate phase statistics``: controls if calculation of phase statistics coming from the solution of the Cahn-Hilliard equations is enabled. Statistics include: minimum, maximum, average and standard-deviation of the phase order parameter.
   
     .. warning::
 
         Do not forget to ``set cahn hilliard = true`` in the :doc:`multiphysics` subsection of the ``.prm``.
 
-    * ``phase statistics name``: output filename for phase statistics calculations.
+  * ``phase statistics name``: output filename for phase statistics calculations.
 
 
 
