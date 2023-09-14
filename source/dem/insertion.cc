@@ -43,9 +43,9 @@ Insertion<dim>::print_insertion_info(const unsigned int &inserted_this_step,
 template <int dim>
 void
 Insertion<dim>::assign_particle_properties(
-  const DEMSolverParameters<dim> &  dem_parameters,
-  const unsigned int &              inserted_this_step_this_proc,
-  const unsigned int &              current_inserting_particle_type,
+  const DEMSolverParameters<dim>   &dem_parameters,
+  const unsigned int               &inserted_this_step_this_proc,
+  const unsigned int               &current_inserting_particle_type,
   std::vector<std::vector<double>> &particle_properties)
 {
   // Clearing and resizing particle_properties
@@ -136,7 +136,7 @@ template <int dim>
 void
 Insertion<dim>::calculate_insertion_domain_maximum_particle_number(
   const DEMSolverParameters<dim> &dem_parameters,
-  const ConditionalOStream &      pcout)
+  const ConditionalOStream       &pcout)
 {
   // Getting properties as local parameters
   const auto insertion_information = dem_parameters.insertion_info;

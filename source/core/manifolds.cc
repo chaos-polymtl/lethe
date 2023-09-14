@@ -285,7 +285,8 @@ attach_manifolds_to_triangulation(
                                  manifolds.id[i]);
         }
       else if (manifolds.types[i] == Parameters::Manifolds::ManifoldType::none)
-        {}
+        {
+        }
       else
         throw std::runtime_error("Unsupported manifolds type");
     }

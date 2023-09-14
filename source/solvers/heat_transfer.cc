@@ -409,8 +409,8 @@ template <int dim>
 void
 HeatTransfer<dim>::assemble_local_system_matrix(
   const typename DoFHandler<dim>::active_cell_iterator &cell,
-  HeatTransferScratchData<dim> &                        scratch_data,
-  StabilizedMethodsCopyData &                           copy_data)
+  HeatTransferScratchData<dim>                         &scratch_data,
+  StabilizedMethodsCopyData                            &copy_data)
 {
   copy_data.cell_is_local = cell->is_locally_owned();
   if (!cell->is_locally_owned())
@@ -560,8 +560,8 @@ template <int dim>
 void
 HeatTransfer<dim>::assemble_local_system_rhs(
   const typename DoFHandler<dim>::active_cell_iterator &cell,
-  HeatTransferScratchData<dim> &                        scratch_data,
-  StabilizedMethodsCopyData &                           copy_data)
+  HeatTransferScratchData<dim>                         &scratch_data,
+  StabilizedMethodsCopyData                            &copy_data)
 {
   copy_data.cell_is_local = cell->is_locally_owned();
   if (!cell->is_locally_owned())
@@ -1201,7 +1201,7 @@ HeatTransfer<dim>::postprocess_temperature_statistics(
                              update_values | update_JxW_values);
 
   // Initialize VOF information
-  const DoFHandler<dim> *        dof_handler_vof = NULL;
+  const DoFHandler<dim>         *dof_handler_vof = NULL;
   std::shared_ptr<FEValues<dim>> fe_values_vof;
   std::vector<double>            filtered_phase_values(n_q_points);
 
@@ -1401,7 +1401,7 @@ HeatTransfer<dim>::postprocess_heat_flux_on_bc(
                                       update_values);
 
   // Initialize VOF information
-  DoFHandler<dim> *                  dof_handler_vof = NULL;
+  DoFHandler<dim>                   *dof_handler_vof = NULL;
   std::shared_ptr<FEFaceValues<dim>> fe_face_values_vof;
   std::vector<double>                filtered_phase_values(n_q_points_face);
 
@@ -1677,7 +1677,7 @@ HeatTransfer<dim>::postprocess_thermal_energy_in_fluid(
   const bool                       gather_vof,
   const Parameters::FluidIndicator monitored_fluid,
   const std::string                domain_name,
-  const VectorType &               current_solution_fd)
+  const VectorType                &current_solution_fd)
 {
   const unsigned int n_q_points       = this->cell_quadrature->size();
   const MPI_Comm     mpi_communicator = this->dof_handler.get_communicator();
@@ -1701,7 +1701,7 @@ HeatTransfer<dim>::postprocess_thermal_energy_in_fluid(
                              update_values);
 
   // Initialize VOF information
-  const DoFHandler<dim> *        dof_handler_vof = NULL;
+  const DoFHandler<dim>         *dof_handler_vof = NULL;
   std::shared_ptr<FEValues<dim>> fe_values_vof;
   std::vector<double>            filtered_phase_values(n_q_points);
 

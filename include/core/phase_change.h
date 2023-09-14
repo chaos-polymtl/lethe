@@ -31,7 +31,7 @@ using namespace dealii;
  */
 inline double
 calculate_liquid_fraction(
-  const double &                 T,
+  const double                  &T,
   const Parameters::PhaseChange &phase_change_parameters)
 {
   return std::min(std::max((T - phase_change_parameters.T_solidus) /

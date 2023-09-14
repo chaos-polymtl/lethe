@@ -9,7 +9,7 @@ using namespace DEM;
 // those cells.
 template <int dim>
 PlaneInsertion<dim>::PlaneInsertion(
-  const DEMSolverParameters<dim> &                 dem_parameters,
+  const DEMSolverParameters<dim>                  &dem_parameters,
   const parallel::distributed::Triangulation<dim> &triangulation)
   : particles_of_each_type_remaining(
       dem_parameters.lagrangian_physical_properties.number.at(0))
@@ -103,9 +103,9 @@ PlaneInsertion<dim>::find_centers_of_inplane_cells()
 template <int dim>
 void
 PlaneInsertion<dim>::insert(
-  Particles::ParticleHandler<dim> &                particle_handler,
+  Particles::ParticleHandler<dim>                 &particle_handler,
   const parallel::distributed::Triangulation<dim> &triangulation,
-  const DEMSolverParameters<dim> &                 dem_parameters)
+  const DEMSolverParameters<dim>                  &dem_parameters)
 {
   if (particles_of_each_type_remaining == 0 &&
       this->current_inserting_particle_type !=

@@ -73,7 +73,7 @@ public:
    */
   virtual void
   vector_value(const std::map<field, std::vector<double>> &field_vectors,
-               std::vector<double> &                       property_vector) = 0;
+               std::vector<double>                        &property_vector) = 0;
 
   /**
    * @brief jacobian Calculates the jacobian (the partial derivative) of the interface
@@ -133,7 +133,7 @@ public:
   vector_numerical_jacobian(
     const std::map<field, std::vector<double>> &field_vectors,
     const field                                 id,
-    std::vector<double> &                       jacobian_vector)
+    std::vector<double>                        &jacobian_vector)
   {
     const unsigned int n_pts = jacobian_vector.size();
 

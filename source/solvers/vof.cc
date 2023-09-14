@@ -97,8 +97,8 @@ template <int dim>
 void
 VolumeOfFluid<dim>::assemble_local_system_matrix(
   const typename DoFHandler<dim>::active_cell_iterator &cell,
-  VOFScratchData<dim> &                                 scratch_data,
-  StabilizedMethodsCopyData &                           copy_data)
+  VOFScratchData<dim>                                  &scratch_data,
+  StabilizedMethodsCopyData                            &copy_data)
 {
   copy_data.cell_is_local = cell->is_locally_owned();
   if (!cell->is_locally_owned())
@@ -217,8 +217,8 @@ template <int dim>
 void
 VolumeOfFluid<dim>::assemble_local_system_rhs(
   const typename DoFHandler<dim>::active_cell_iterator &cell,
-  VOFScratchData<dim> &                                 scratch_data,
-  StabilizedMethodsCopyData &                           copy_data)
+  VOFScratchData<dim>                                  &scratch_data,
+  StabilizedMethodsCopyData                            &copy_data)
 {
   copy_data.cell_is_local = cell->is_locally_owned();
   if (!cell->is_locally_owned())
@@ -389,7 +389,7 @@ template <typename VectorType>
 std::pair<Tensor<1, dim>, Tensor<1, dim>>
 VolumeOfFluid<dim>::calculate_barycenter(
   const TrilinosWrappers::MPI::Vector &solution,
-  const VectorType &                   solution_fd)
+  const VectorType                    &solution_fd)
 {
   const MPI_Comm mpi_communicator = this->triangulation->get_communicator();
 
@@ -482,13 +482,13 @@ VolumeOfFluid<3>::calculate_barycenter<TrilinosWrappers::MPI::Vector>(
 
 template std::pair<Tensor<1, 2>, Tensor<1, 2>>
 VolumeOfFluid<2>::calculate_barycenter<TrilinosWrappers::MPI::BlockVector>(
-  const TrilinosWrappers::MPI::Vector &     solution,
+  const TrilinosWrappers::MPI::Vector      &solution,
   const TrilinosWrappers::MPI::BlockVector &current_solution_fd);
 
 
 template std::pair<Tensor<1, 3>, Tensor<1, 3>>
 VolumeOfFluid<3>::calculate_barycenter<TrilinosWrappers::MPI::BlockVector>(
-  const TrilinosWrappers::MPI::Vector &     solution,
+  const TrilinosWrappers::MPI::Vector      &solution,
   const TrilinosWrappers::MPI::BlockVector &current_solution_fd);
 
 
@@ -497,7 +497,7 @@ template <typename VectorType>
 void
 VolumeOfFluid<dim>::calculate_volume_and_mass(
   const TrilinosWrappers::MPI::Vector &solution,
-  const VectorType &                   current_solution_fd,
+  const VectorType                    &current_solution_fd,
   const Parameters::FluidIndicator     monitored_fluid)
 {
   const MPI_Comm mpi_communicator = this->triangulation->get_communicator();

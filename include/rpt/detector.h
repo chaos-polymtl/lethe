@@ -45,8 +45,8 @@ public:
    */
   Detector(Parameters::DetectorParameters &detector_parameters,
            int                             n,
-           Point<dim> &                    face_point,
-           Point<dim> &                    middle_point)
+           Point<dim>                     &face_point,
+           Point<dim>                     &middle_point)
     : radius(detector_parameters.radius)
     , length(detector_parameters.length)
     , id(n)

@@ -159,7 +159,7 @@ public:
   void
   execute_particle_particle_broad_search(
     dealii::Particles::ParticleHandler<dim> &particle_handler,
-    const DisableContacts<dim> &             disable_particle_contact_object,
+    const DisableContacts<dim>              &disable_particle_contact_object,
     const bool                               has_periodic_boundaries = false);
 
   /**
@@ -179,7 +179,7 @@ public:
   void
   execute_particle_wall_broad_search(
     const Particles::ParticleHandler<dim> &particle_handler,
-    BoundaryCellsInformation<dim> &        boundary_cell_object,
+    BoundaryCellsInformation<dim>         &boundary_cell_object,
     const typename dem_data_structures<dim>::floating_mesh_information
                                                       floating_mesh_info,
     const Parameters::Lagrangian::FloatingWalls<dim> &floating_walls,
@@ -203,7 +203,7 @@ public:
   void
   execute_particle_wall_broad_search(
     const Particles::ParticleHandler<dim> &particle_handler,
-    BoundaryCellsInformation<dim> &        boundary_cell_object,
+    BoundaryCellsInformation<dim>         &boundary_cell_object,
     const typename dem_data_structures<dim>::floating_mesh_information
                                                       floating_mesh_info,
     const Parameters::Lagrangian::FloatingWalls<dim> &floating_walls,

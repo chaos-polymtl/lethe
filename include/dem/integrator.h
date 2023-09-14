@@ -63,11 +63,11 @@ public:
   virtual void
   integrate_half_step_location(
     Particles::ParticleHandler<dim> &particle_handler,
-    const Tensor<1, 3> &             body_force,
+    const Tensor<1, 3>              &body_force,
     const double                     time_step,
     const std::vector<Tensor<1, 3>> &torque,
     const std::vector<Tensor<1, 3>> &force,
-    const std::vector<double> &      MOI) = 0;
+    const std::vector<double>       &MOI) = 0;
 
   /**
    * Carries out integrating of particles' velocity and position.
@@ -82,19 +82,19 @@ public:
    */
   virtual void
   integrate(Particles::ParticleHandler<dim> &particle_handler,
-            const Tensor<1, 3> &             body_force,
+            const Tensor<1, 3>              &body_force,
             const double                     time_step,
-            std::vector<Tensor<1, 3>> &      torque,
-            std::vector<Tensor<1, 3>> &      force,
-            const std::vector<double> &      MOI) = 0;
+            std::vector<Tensor<1, 3>>       &torque,
+            std::vector<Tensor<1, 3>>       &force,
+            const std::vector<double>       &MOI) = 0;
 
   virtual void
-  integrate(Particles::ParticleHandler<dim> &                particle_handler,
-            const Tensor<1, 3> &                             body_force,
+  integrate(Particles::ParticleHandler<dim>                 &particle_handler,
+            const Tensor<1, 3>                              &body_force,
             const double                                     time_step,
-            std::vector<Tensor<1, 3>> &                      torque,
-            std::vector<Tensor<1, 3>> &                      force,
-            const std::vector<double> &                      MOI,
+            std::vector<Tensor<1, 3>>                       &torque,
+            std::vector<Tensor<1, 3>>                       &force,
+            const std::vector<double>                       &MOI,
             const parallel::distributed::Triangulation<dim> &triangulation,
             typename DEM::dem_data_structures<dim>::cell_index_int_map
               &cell_mobility_status_map) = 0;

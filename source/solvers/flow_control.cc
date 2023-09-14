@@ -17,8 +17,8 @@ FlowControl<dim>::FlowControl(
 
 template <int dim>
 void
-FlowControl<dim>::calculate_beta(const double &      average_velocity_n,
-                                 const double &      dt,
+FlowControl<dim>::calculate_beta(const double       &average_velocity_n,
+                                 const double       &dt,
                                  const unsigned int &step_number)
 {
   double beta_n1;

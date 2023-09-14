@@ -3,8 +3,8 @@
 template <int dim, typename VectorType>
 PostProcessorSmoothing<dim, VectorType>::PostProcessorSmoothing(
   const parallel::DistributedTriangulationBase<dim> &triangulation,
-  const SimulationParameters<dim> &                  simulation_parameters,
-  const unsigned int &                               number_quadrature_points)
+  const SimulationParameters<dim>                   &simulation_parameters,
+  const unsigned int                                &number_quadrature_points)
   : fe_q(1)
   , dof_handler(triangulation)
   , simulation_parameters(simulation_parameters)
@@ -149,8 +149,8 @@ PostProcessorSmoothing<dim, VectorType>::solve_L2_projection()
 template <int dim, typename VectorType>
 const TrilinosWrappers::MPI::Vector &
 PostProcessorSmoothing<dim, VectorType>::calculate_smoothed_field(
-  const VectorType &            solution,
-  const DoFHandler<dim> &       dof_handler_velocity,
+  const VectorType             &solution,
+  const DoFHandler<dim>        &dof_handler_velocity,
   std::shared_ptr<Mapping<dim>> mapping_velocity)
 {
   generate_mass_matrix();
@@ -181,8 +181,8 @@ template <int dim, typename VectorType>
 QcriterionPostProcessorSmoothing<dim, VectorType>::
   QcriterionPostProcessorSmoothing(
     const parallel::DistributedTriangulationBase<dim> &triangulation,
-    const SimulationParameters<dim> &                  simulation_parameters,
-    const unsigned int &                               number_quadrature_points)
+    const SimulationParameters<dim>                   &simulation_parameters,
+    const unsigned int                                &number_quadrature_points)
   : PostProcessorSmoothing<dim, VectorType>(triangulation,
                                             simulation_parameters,
                                             number_quadrature_points)
@@ -191,8 +191,8 @@ QcriterionPostProcessorSmoothing<dim, VectorType>::
 template <int dim, typename VectorType>
 void
 QcriterionPostProcessorSmoothing<dim, VectorType>::generate_rhs(
-  const VectorType &            solution,
-  const DoFHandler<dim> &       dof_handler_velocity,
+  const VectorType             &solution,
+  const DoFHandler<dim>        &dof_handler_velocity,
   std::shared_ptr<Mapping<dim>> mapping_velocity)
 {
   QGauss<dim> quadrature_formula(this->number_quadrature_points);
@@ -311,8 +311,8 @@ template <int dim, typename VectorType>
 ContinuityPostProcessorSmoothing<dim, VectorType>::
   ContinuityPostProcessorSmoothing(
     const parallel::DistributedTriangulationBase<dim> &triangulation,
-    const SimulationParameters<dim> &                  simulation_parameters,
-    const unsigned int &                               number_quadrature_points)
+    const SimulationParameters<dim>                   &simulation_parameters,
+    const unsigned int                                &number_quadrature_points)
   : PostProcessorSmoothing<dim, VectorType>(triangulation,
                                             simulation_parameters,
                                             number_quadrature_points)
@@ -321,8 +321,8 @@ ContinuityPostProcessorSmoothing<dim, VectorType>::
 template <int dim, typename VectorType>
 void
 ContinuityPostProcessorSmoothing<dim, VectorType>::generate_rhs(
-  const VectorType &            solution,
-  const DoFHandler<dim> &       dof_handler_velocity,
+  const VectorType             &solution,
+  const DoFHandler<dim>        &dof_handler_velocity,
   std::shared_ptr<Mapping<dim>> mapping_velocity)
 {
   this->system_rhs.reinit(this->locally_owned_dofs, this->mpi_communicator);

@@ -9,7 +9,7 @@
 template <int dim>
 void
 GLSNavierStokesCahnHilliardAssemblerCore<dim>::assemble_matrix(
-  NavierStokesScratchData<dim> &        scratch_data,
+  NavierStokesScratchData<dim>         &scratch_data,
   StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
   const double well_height  = scratch_data.well_height;
@@ -17,7 +17,7 @@ GLSNavierStokesCahnHilliardAssemblerCore<dim>::assemble_matrix(
   const double density_diff = scratch_data.density_diff;
 
   // Loop and quadrature information
-  const auto &       JxW_vec    = scratch_data.JxW;
+  const auto        &JxW_vec    = scratch_data.JxW;
   const unsigned int n_q_points = scratch_data.n_q_points;
   const unsigned int n_dofs     = scratch_data.n_dofs;
   const double       h          = scratch_data.cell_size;
@@ -200,7 +200,7 @@ GLSNavierStokesCahnHilliardAssemblerCore<dim>::assemble_matrix(
 template <int dim>
 void
 GLSNavierStokesCahnHilliardAssemblerCore<dim>::assemble_rhs(
-  NavierStokesScratchData<dim> &        scratch_data,
+  NavierStokesScratchData<dim>         &scratch_data,
   StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
   const double well_height  = scratch_data.well_height;
@@ -209,7 +209,7 @@ GLSNavierStokesCahnHilliardAssemblerCore<dim>::assemble_rhs(
   const double h            = scratch_data.cell_size;
 
   // Loop and quadrature information
-  const auto &       JxW_vec    = scratch_data.JxW;
+  const auto        &JxW_vec    = scratch_data.JxW;
   const unsigned int n_q_points = scratch_data.n_q_points;
   const unsigned int n_dofs     = scratch_data.n_dofs;
 
@@ -357,11 +357,11 @@ template class GLSNavierStokesCahnHilliardAssemblerCore<3>;
 template <int dim>
 void
 GLSNavierStokesCahnHilliardAssemblerBDF<dim>::assemble_matrix(
-  NavierStokesScratchData<dim> &        scratch_data,
+  NavierStokesScratchData<dim>         &scratch_data,
   StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
   // Loop and quadrature informations
-  const auto &       JxW        = scratch_data.JxW;
+  const auto        &JxW        = scratch_data.JxW;
   const unsigned int n_q_points = scratch_data.n_q_points;
   const unsigned int n_dofs     = scratch_data.n_dofs;
 
@@ -418,11 +418,11 @@ GLSNavierStokesCahnHilliardAssemblerBDF<dim>::assemble_matrix(
 template <int dim>
 void
 GLSNavierStokesCahnHilliardAssemblerBDF<dim>::assemble_rhs(
-  NavierStokesScratchData<dim> &        scratch_data,
+  NavierStokesScratchData<dim>         &scratch_data,
   StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
   // Loop and quadrature informations
-  const auto &       JxW        = scratch_data.JxW;
+  const auto        &JxW        = scratch_data.JxW;
   const unsigned int n_q_points = scratch_data.n_q_points;
   const unsigned int n_dofs     = scratch_data.n_dofs;
 

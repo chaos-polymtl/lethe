@@ -5,11 +5,11 @@
 
 template <int dim, int spacedim>
 void
-read_mesh(const Parameters::Mesh &  mesh_parameters,
+read_mesh(const Parameters::Mesh   &mesh_parameters,
           const bool                restart,
           const ConditionalOStream &pcout,
           parallel::DistributedTriangulationBase<dim, spacedim> &triangulation,
-          double &                             triangulation_cell_diameter,
+          double                              &triangulation_cell_diameter,
           const Parameters::Lagrangian::BCDEM &bc_params)
 {
   pcout << "Reading triangulation" << std::endl;
@@ -51,7 +51,7 @@ read_mesh(const Parameters::Mesh &  mesh_parameters,
 
 template <int dim, int spacedim>
 void
-match_periodic_boundaries(Triangulation<dim, spacedim> &       triangulation,
+match_periodic_boundaries(Triangulation<dim, spacedim>        &triangulation,
                           const Parameters::Lagrangian::BCDEM &bc_param)
 {
   std::vector<GridTools::PeriodicFacePair<
@@ -67,25 +67,25 @@ match_periodic_boundaries(Triangulation<dim, spacedim> &       triangulation,
 }
 
 template void
-read_mesh<2, 2>(const Parameters::Mesh &                      mesh_parameters,
+read_mesh<2, 2>(const Parameters::Mesh                       &mesh_parameters,
                 const bool                                    restart,
-                const ConditionalOStream &                    pcout,
+                const ConditionalOStream                     &pcout,
                 parallel::DistributedTriangulationBase<2, 2> &triangulation,
                 double &triangulation_cell_diameter,
                 const Parameters::Lagrangian::BCDEM &bc_params);
 
 template void
-read_mesh<2, 3>(const Parameters::Mesh &                      mesh_parameters,
+read_mesh<2, 3>(const Parameters::Mesh                       &mesh_parameters,
                 const bool                                    restart,
-                const ConditionalOStream &                    pcout,
+                const ConditionalOStream                     &pcout,
                 parallel::DistributedTriangulationBase<2, 3> &triangulation,
                 double &triangulation_cell_diameter,
                 const Parameters::Lagrangian::BCDEM &bc_params);
 
 template void
-read_mesh<3, 3>(const Parameters::Mesh &                      mesh_parameters,
+read_mesh<3, 3>(const Parameters::Mesh                       &mesh_parameters,
                 const bool                                    restart,
-                const ConditionalOStream &                    pcout,
+                const ConditionalOStream                     &pcout,
                 parallel::DistributedTriangulationBase<3, 3> &triangulation,
                 double &triangulation_cell_diameter,
                 const Parameters::Lagrangian::BCDEM &bc_params);

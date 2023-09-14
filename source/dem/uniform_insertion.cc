@@ -27,9 +27,9 @@ UniformInsertion<dim>::UniformInsertion(
 template <int dim>
 void
 UniformInsertion<dim>::insert(
-  Particles::ParticleHandler<dim> &                particle_handler,
+  Particles::ParticleHandler<dim>                 &particle_handler,
   const parallel::distributed::Triangulation<dim> &triangulation,
-  const DEMSolverParameters<dim> &                 dem_parameters)
+  const DEMSolverParameters<dim>                  &dem_parameters)
 {
   if (particles_of_each_type_remaining == 0 &&
       current_inserting_particle_type !=
@@ -130,8 +130,8 @@ UniformInsertion<dim>::insert(
 template <>
 void
 UniformInsertion<2>::find_insertion_location_uniform(
-  Point<2> &                                   insertion_location,
-  const unsigned int &                         id,
+  Point<2>                                    &insertion_location,
+  const unsigned int                          &id,
   const Parameters::Lagrangian::InsertionInfo &insertion_information)
 {
   std::vector<int> insertion_index;
@@ -161,8 +161,8 @@ UniformInsertion<2>::find_insertion_location_uniform(
 template <>
 void
 UniformInsertion<3>::find_insertion_location_uniform(
-  Point<3> &                                   insertion_location,
-  const unsigned int &                         id,
+  Point<3>                                    &insertion_location,
+  const unsigned int                          &id,
   const Parameters::Lagrangian::InsertionInfo &insertion_information)
 {
   std::vector<int> insertion_index;

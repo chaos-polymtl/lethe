@@ -16,7 +16,7 @@ TracerAssemblerCore<dim>::assemble_matrix(TracerScratchData<dim> &scratch_data,
   const auto method = this->simulation_control->get_assembly_method();
 
   // Loop and quadrature informations
-  const auto &       JxW_vec    = scratch_data.JxW;
+  const auto        &JxW_vec    = scratch_data.JxW;
   const unsigned int n_q_points = scratch_data.n_q_points;
   const unsigned int n_dofs     = scratch_data.n_dofs;
   const double       h          = scratch_data.cell_size;
@@ -127,7 +127,7 @@ TracerAssemblerCore<dim>::assemble_matrix(TracerScratchData<dim> &scratch_data,
 
 template <int dim>
 void
-TracerAssemblerCore<dim>::assemble_rhs(TracerScratchData<dim> &   scratch_data,
+TracerAssemblerCore<dim>::assemble_rhs(TracerScratchData<dim>    &scratch_data,
                                        StabilizedMethodsCopyData &copy_data)
 {
   // Scheme and physical properties
@@ -136,7 +136,7 @@ TracerAssemblerCore<dim>::assemble_rhs(TracerScratchData<dim> &   scratch_data,
   const auto method = this->simulation_control->get_assembly_method();
 
   // Loop and quadrature informations
-  const auto &       JxW_vec    = scratch_data.JxW;
+  const auto        &JxW_vec    = scratch_data.JxW;
   const unsigned int n_q_points = scratch_data.n_q_points;
   const unsigned int n_dofs     = scratch_data.n_dofs;
   const double       h          = scratch_data.cell_size;
@@ -234,7 +234,7 @@ TracerAssemblerBDF<dim>::assemble_matrix(TracerScratchData<dim> &scratch_data,
                                          StabilizedMethodsCopyData &copy_data)
 {
   // Loop and quadrature informations
-  const auto &       JxW        = scratch_data.JxW;
+  const auto        &JxW        = scratch_data.JxW;
   const unsigned int n_q_points = scratch_data.n_q_points;
   const unsigned int n_dofs     = scratch_data.n_dofs;
 
@@ -286,11 +286,11 @@ TracerAssemblerBDF<dim>::assemble_matrix(TracerScratchData<dim> &scratch_data,
 
 template <int dim>
 void
-TracerAssemblerBDF<dim>::assemble_rhs(TracerScratchData<dim> &   scratch_data,
+TracerAssemblerBDF<dim>::assemble_rhs(TracerScratchData<dim>    &scratch_data,
                                       StabilizedMethodsCopyData &copy_data)
 {
   // Loop and quadrature informations
-  const auto &       JxW        = scratch_data.JxW;
+  const auto        &JxW        = scratch_data.JxW;
   const unsigned int n_q_points = scratch_data.n_q_points;
   const unsigned int n_dofs     = scratch_data.n_dofs;
 

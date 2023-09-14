@@ -48,8 +48,8 @@ public:
    */
 
   particle_wall_contact_info(const Particles::ParticleIterator<dim> &particle,
-                             const Tensor<1, 3> &      normal_vector,
-                             const Point<3> &          point_on_boundary,
+                             const Tensor<1, 3>       &normal_vector,
+                             const Point<3>           &point_on_boundary,
                              const types::boundary_id &boundary_id)
     : particle(particle)
     , normal_vector(normal_vector)

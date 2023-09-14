@@ -7,11 +7,11 @@
 template <int dim>
 void
 GLSIsothermalCompressibleNavierStokesVOFAssemblerCore<dim>::assemble_matrix(
-  NavierStokesScratchData<dim> &        scratch_data,
+  NavierStokesScratchData<dim>         &scratch_data,
   StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
   // Loop and quadrature information
-  const auto &       JxW_vec    = scratch_data.JxW;
+  const auto        &JxW_vec    = scratch_data.JxW;
   const unsigned int n_q_points = scratch_data.n_q_points;
   const unsigned int n_dofs     = scratch_data.n_dofs;
   const double       h          = scratch_data.cell_size;
@@ -177,11 +177,11 @@ GLSIsothermalCompressibleNavierStokesVOFAssemblerCore<dim>::assemble_matrix(
 template <int dim>
 void
 GLSIsothermalCompressibleNavierStokesVOFAssemblerCore<dim>::assemble_rhs(
-  NavierStokesScratchData<dim> &        scratch_data,
+  NavierStokesScratchData<dim>         &scratch_data,
   StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
   // Loop and quadrature information
-  const auto &       JxW_vec    = scratch_data.JxW;
+  const auto        &JxW_vec    = scratch_data.JxW;
   const unsigned int n_q_points = scratch_data.n_q_points;
   const unsigned int n_dofs     = scratch_data.n_dofs;
   const double       h          = scratch_data.cell_size;
@@ -307,11 +307,11 @@ template class GLSIsothermalCompressibleNavierStokesVOFAssemblerCore<3>;
 template <int dim>
 void
 GLSIsothermalCompressibleNavierStokesVOFAssemblerBDF<dim>::assemble_matrix(
-  NavierStokesScratchData<dim> &        scratch_data,
+  NavierStokesScratchData<dim>         &scratch_data,
   StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
   // Loop and quadrature information
-  const auto &       JxW        = scratch_data.JxW;
+  const auto        &JxW        = scratch_data.JxW;
   const unsigned int n_q_points = scratch_data.n_q_points;
   const unsigned int n_dofs     = scratch_data.n_dofs;
 
@@ -375,11 +375,11 @@ GLSIsothermalCompressibleNavierStokesVOFAssemblerBDF<dim>::assemble_matrix(
 template <int dim>
 void
 GLSIsothermalCompressibleNavierStokesVOFAssemblerBDF<dim>::assemble_rhs(
-  NavierStokesScratchData<dim> &        scratch_data,
+  NavierStokesScratchData<dim>         &scratch_data,
   StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
   // Loop and quadrature information
-  const auto &       JxW        = scratch_data.JxW;
+  const auto        &JxW        = scratch_data.JxW;
   const unsigned int n_q_points = scratch_data.n_q_points;
   const unsigned int n_dofs     = scratch_data.n_dofs;
 

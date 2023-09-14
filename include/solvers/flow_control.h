@@ -57,8 +57,8 @@ public:
    * @param step_number. The current step
    */
   void
-  calculate_beta(const double &      average_velocity,
-                 const double &      dt,
+  calculate_beta(const double       &average_velocity,
+                 const double       &dt,
                  const unsigned int &step_number);
 
   /**

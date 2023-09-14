@@ -176,8 +176,8 @@ IBParticle<dim>::initialize_shape(const std::string type,
 template <int dim>
 void
 IBParticle<dim>::closest_surface_point(
-  const Point<dim> &                                    p,
-  Point<dim> &                                          closest_point,
+  const Point<dim>                                     &p,
+  Point<dim>                                           &closest_point,
   const typename DoFHandler<dim>::active_cell_iterator &cell_guess)
 {
   shape->closest_surface_point(p, closest_point, cell_guess);
@@ -186,7 +186,7 @@ IBParticle<dim>::closest_surface_point(
 template <int dim>
 void
 IBParticle<dim>::closest_surface_point(const Point<dim> &p,
-                                       Point<dim> &      closest_point)
+                                       Point<dim>       &closest_point)
 {
   shape->closest_surface_point(p, closest_point);
 }
@@ -194,7 +194,7 @@ IBParticle<dim>::closest_surface_point(const Point<dim> &p,
 template <int dim>
 bool
 IBParticle<dim>::is_inside_crown(
-  const Point<dim> &                                    evaluation_point,
+  const Point<dim>                                     &evaluation_point,
   const double                                          outer_radius,
   const double                                          inside_radius,
   const bool                                            absolute_distance,

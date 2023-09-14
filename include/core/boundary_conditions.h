@@ -155,7 +155,7 @@ namespace BoundaryConditions
   {
   public:
     // Functions for (u,v,w) for all boundaries
-    NSBoundaryFunctions<dim> *        bcFunctions;
+    NSBoundaryFunctions<dim>         *bcFunctions;
     NSPressureBoundaryFunctions<dim> *bcPressureFunction;
 
     void
@@ -873,7 +873,7 @@ namespace BoundaryConditions
 
   template <int dim>
   void
-  CahnHilliardBoundaryConditions<dim>::parse_boundary(ParameterHandler & prm,
+  CahnHilliardBoundaryConditions<dim>::parse_boundary(ParameterHandler  &prm,
                                                       const unsigned int i_bc)
   {
     const std::string op = prm.get("type");
@@ -1116,7 +1116,7 @@ public:
  */
 template <int dim>
 double
-NavierStokesFunctionDefined<dim>::value(const Point<dim> & p,
+NavierStokesFunctionDefined<dim>::value(const Point<dim>  &p,
                                         const unsigned int component) const
 {
   Assert(component < this->n_components,
@@ -1165,7 +1165,7 @@ public:
 template <int dim>
 double
 NavierStokesPressureFunctionDefined<dim>::value(
-  const Point<dim> & point,
+  const Point<dim>  &point,
   const unsigned int component) const
 {
   if (component == dim)
@@ -1205,7 +1205,7 @@ public:
  */
 template <int dim>
 double
-CahnHilliardFunctionDefined<dim>::value(const Point<dim> & p,
+CahnHilliardFunctionDefined<dim>::value(const Point<dim>  &p,
                                         const unsigned int component) const
 {
   Assert(component < this->n_components,

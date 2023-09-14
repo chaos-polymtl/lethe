@@ -66,7 +66,7 @@ public:
   typename DEM::dem_data_structures<dim>::particle_point_line_contact_info
   particle_point_fine_search(
     const typename DEM::dem_data_structures<dim>::particle_point_candidates
-      &          particle_point_contact_candidates,
+                &particle_point_contact_candidates,
     const double neighborhood_threshold);
 
   /**
@@ -86,7 +86,7 @@ public:
   typename DEM::dem_data_structures<dim>::particle_point_line_contact_info
   particle_line_fine_search(
     const typename DEM::dem_data_structures<dim>::particle_line_candidates
-      &          particle_line_contact_candidates,
+                &particle_line_contact_candidates,
     const double neighborhood_threshold);
 
 private:

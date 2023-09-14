@@ -136,7 +136,7 @@ DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
 
   triangulation.signals.weight.connect(
     [&](const typename parallel::distributed::Triangulation<dim>::cell_iterator
-          &              cell,
+                        &cell,
         const CellStatus status) -> unsigned int {
       return this->cell_weight(cell, status);
     });
@@ -662,7 +662,7 @@ DEMSolver<dim>::check_load_balance_with_disabled_contacts()
 
   triangulation.signals.weight.connect(
     [&](const typename parallel::distributed::Triangulation<dim>::cell_iterator
-          &cell,
+                        &cell,
         const CellStatus status) -> unsigned int {
       return this->cell_weight_with_mobility_status(cell, status);
     });
@@ -748,7 +748,7 @@ template <int dim>
 void
 DEMSolver<dim>::update_moment_of_inertia(
   dealii::Particles::ParticleHandler<dim> &particle_handler,
-  std::vector<double> &                    MOI)
+  std::vector<double>                     &MOI)
 {
   MOI.resize(torque.size());
 

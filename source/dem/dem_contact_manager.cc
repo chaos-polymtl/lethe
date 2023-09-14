@@ -265,7 +265,7 @@ template <int dim>
 void
 DEMContactManager<dim>::execute_particle_particle_broad_search(
   dealii::Particles::ParticleHandler<dim> &particle_handler,
-  const DisableContacts<dim> &             disable_contacts_object,
+  const DisableContacts<dim>              &disable_contacts_object,
   const bool                               has_periodic_boundaries)
 {
   particle_particle_broad_search_object.find_particle_particle_contact_pairs(
@@ -284,7 +284,7 @@ template <int dim>
 void
 DEMContactManager<dim>::execute_particle_wall_broad_search(
   const Particles::ParticleHandler<dim> &particle_handler,
-  BoundaryCellsInformation<dim> &        boundary_cell_object,
+  BoundaryCellsInformation<dim>         &boundary_cell_object,
   const typename dem_data_structures<dim>::floating_mesh_information
                                                     floating_mesh_info,
   const Parameters::Lagrangian::FloatingWalls<dim> &floating_walls,
@@ -337,12 +337,12 @@ template <int dim>
 void
 DEMContactManager<dim>::execute_particle_wall_broad_search(
   const Particles::ParticleHandler<dim> &particle_handler,
-  BoundaryCellsInformation<dim> &        boundary_cell_object,
+  BoundaryCellsInformation<dim>         &boundary_cell_object,
   const typename dem_data_structures<dim>::floating_mesh_information
                                                     floating_mesh_info,
   const Parameters::Lagrangian::FloatingWalls<dim> &floating_walls,
   const double                                      simulation_time,
-  const DisableContacts<dim> &                      disable_contacts_object,
+  const DisableContacts<dim>                       &disable_contacts_object,
   const bool                                        has_floating_mesh)
 {
   // Particle-wall contact candidates

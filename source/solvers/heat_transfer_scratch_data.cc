@@ -71,9 +71,9 @@ HeatTransferScratchData<dim>::allocate()
 template <int dim>
 void
 HeatTransferScratchData<dim>::enable_vof(
-  const FiniteElement<dim> &         fe,
-  const Quadrature<dim> &            quadrature,
-  const Mapping<dim> &               mapping,
+  const FiniteElement<dim>          &fe,
+  const Quadrature<dim>             &quadrature,
+  const Mapping<dim>                &mapping,
   const Parameters::VOF_PhaseFilter &phase_filter_parameters)
 {
   gather_vof    = true;
@@ -105,9 +105,9 @@ HeatTransferScratchData<dim>::enable_vof(
 template <int dim>
 void
 HeatTransferScratchData<dim>::enable_vof(
-  const FiniteElement<dim> &                      fe,
-  const Quadrature<dim> &                         quadrature,
-  const Mapping<dim> &                            mapping,
+  const FiniteElement<dim>                       &fe,
+  const Quadrature<dim>                          &quadrature,
+  const Mapping<dim>                             &mapping,
   const std::shared_ptr<VolumeOfFluidFilterBase> &filter)
 {
   gather_vof    = true;

@@ -95,11 +95,11 @@ public:
    *
    */
   HeatTransferScratchData(const PhysicalPropertiesManager properties_manager,
-                          const FiniteElement<dim> &      fe_ht,
-                          const Quadrature<dim> &         quadrature,
-                          const Mapping<dim> &            mapping,
-                          const FiniteElement<dim> &      fe_fd,
-                          const Quadrature<dim - 1> &     face_quadrature)
+                          const FiniteElement<dim>       &fe_ht,
+                          const Quadrature<dim>          &quadrature,
+                          const Mapping<dim>             &mapping,
+                          const FiniteElement<dim>       &fe_fd,
+                          const Quadrature<dim - 1>      &face_quadrature)
     : properties_manager(properties_manager)
     , fe_values_T(mapping,
                   fe_ht,
@@ -182,9 +182,9 @@ public:
   template <typename VectorType>
   void
   reinit(const typename DoFHandler<dim>::active_cell_iterator &cell,
-         const VectorType &                                    current_solution,
+         const VectorType                                     &current_solution,
          const std::vector<TrilinosWrappers::MPI::Vector> &previous_solutions,
-         Function<dim> *                                   source_function)
+         Function<dim>                                    *source_function)
   {
     material_id = cell->material_id();
     this->fe_values_T.reinit(cell);
@@ -332,9 +332,9 @@ public:
    */
 
   void
-  enable_vof(const FiniteElement<dim> &         fe,
-             const Quadrature<dim> &            quadrature,
-             const Mapping<dim> &               mapping,
+  enable_vof(const FiniteElement<dim>          &fe,
+             const Quadrature<dim>             &quadrature,
+             const Mapping<dim>                &mapping,
              const Parameters::VOF_PhaseFilter &phase_filter_parameters);
 
   /**
@@ -350,9 +350,9 @@ public:
    */
 
   void
-  enable_vof(const FiniteElement<dim> &                      fe,
-             const Quadrature<dim> &                         quadrature,
-             const Mapping<dim> &                            mapping,
+  enable_vof(const FiniteElement<dim>                       &fe,
+             const Quadrature<dim>                          &quadrature,
+             const Mapping<dim>                             &mapping,
              const std::shared_ptr<VolumeOfFluidFilterBase> &filter);
 
   /** @brief Reinitialize the content of the scratch for VOF.

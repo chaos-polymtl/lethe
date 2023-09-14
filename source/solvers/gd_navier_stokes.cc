@@ -224,8 +224,8 @@ template <int dim>
 void
 GDNavierStokesSolver<dim>::assemble_local_system_matrix(
   const typename DoFHandler<dim>::active_cell_iterator &cell,
-  NavierStokesScratchData<dim> &                        scratch_data,
-  StabilizedMethodsTensorCopyData<dim> &                copy_data)
+  NavierStokesScratchData<dim>                         &scratch_data,
+  StabilizedMethodsTensorCopyData<dim>                 &copy_data)
 {
   copy_data.cell_is_local = cell->is_locally_owned();
   if (!cell->is_locally_owned())
@@ -351,8 +351,8 @@ template <int dim>
 void
 GDNavierStokesSolver<dim>::assemble_local_system_rhs(
   const typename DoFHandler<dim>::active_cell_iterator &cell,
-  NavierStokesScratchData<dim> &                        scratch_data,
-  StabilizedMethodsTensorCopyData<dim> &                copy_data)
+  NavierStokesScratchData<dim>                         &scratch_data,
+  StabilizedMethodsTensorCopyData<dim>                 &copy_data)
 {
   copy_data.cell_is_local = cell->is_locally_owned();
   if (!cell->is_locally_owned())

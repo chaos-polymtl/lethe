@@ -15,10 +15,10 @@ AverageVelocities<dim, VectorType, DofsType>::AverageVelocities(
 template <int dim, typename VectorType, typename DofsType>
 void
 AverageVelocities<dim, VectorType, DofsType>::calculate_average_velocities(
-  const VectorType &                local_evaluation_point,
+  const VectorType                 &local_evaluation_point,
   const Parameters::PostProcessing &post_processing,
-  const double &                    current_time,
-  const double &                    time_step)
+  const double                     &current_time,
+  const double                     &time_step)
 {
   const double epsilon      = 1e-6;
   const double initial_time = post_processing.initial_time;
@@ -96,7 +96,7 @@ AverageVelocities<dim, VectorType, DofsType>::calculate_reynolds_stresses(
       };
 
       const TrilinosWrappers::MPI::Vector *local_solution, *local_average;
-      TrilinosWrappers::MPI::Vector *      rns_dt, *rss_dt, *k_dt;
+      TrilinosWrappers::MPI::Vector       *rns_dt, *rss_dt, *k_dt;
 
       if constexpr (std::is_same_v<VectorType, TrilinosWrappers::MPI::Vector>)
         {
@@ -177,10 +177,10 @@ AverageVelocities<dim, VectorType, DofsType>::calculate_reynolds_stresses(
 template <int dim, typename VectorType, typename DofsType>
 void
 AverageVelocities<dim, VectorType, DofsType>::initialize_vectors(
-  const DofsType &    locally_owned_dofs,
-  const DofsType &    locally_relevant_dofs,
+  const DofsType     &locally_owned_dofs,
+  const DofsType     &locally_relevant_dofs,
   const unsigned int &dofs_per_vertex,
-  const MPI_Comm &    mpi_communicator)
+  const MPI_Comm     &mpi_communicator)
 {
   // Save the number of dofs per vertex. If solution is in block vectors,
   // this is the number of dofs about velocity, dim.

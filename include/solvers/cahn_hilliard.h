@@ -58,7 +58,7 @@ template <int dim>
 class CahnHilliard : public AuxiliaryPhysics<dim, TrilinosWrappers::MPI::Vector>
 {
 public:
-  CahnHilliard<dim>(MultiphysicsInterface<dim> *     multiphysics_interface,
+  CahnHilliard<dim>(MultiphysicsInterface<dim>      *multiphysics_interface,
                     const SimulationParameters<dim> &p_simulation_parameters,
                     std::shared_ptr<parallel::DistributedTriangulationBase<dim>>
                                                        p_triangulation,
@@ -333,8 +333,8 @@ private:
   virtual void
   assemble_local_system_matrix(
     const typename DoFHandler<dim>::active_cell_iterator &cell,
-    CahnHilliardScratchData<dim> &                        scratch_data,
-    StabilizedMethodsCopyData &                           copy_data);
+    CahnHilliardScratchData<dim>                         &scratch_data,
+    StabilizedMethodsCopyData                            &copy_data);
 
   /**
    * @brief Assemble the local rhs for a given cell
@@ -352,8 +352,8 @@ private:
   virtual void
   assemble_local_system_rhs(
     const typename DoFHandler<dim>::active_cell_iterator &cell,
-    CahnHilliardScratchData<dim> &                        scratch_data,
-    StabilizedMethodsCopyData &                           copy_data);
+    CahnHilliardScratchData<dim>                         &scratch_data,
+    StabilizedMethodsCopyData                            &copy_data);
 
   /**
    * @brief sets up the vector of assembler functions
