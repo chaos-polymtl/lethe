@@ -1603,17 +1603,17 @@ namespace Parameters
         Patterns::FileName(),
         "File name output for the barycenter information in VOF simulations");
 
-        prm.declare_entry(
-                "calculate cahn hilliard barycenter",
-                "false",
-                Patterns::Bool(),
-                "Enable calculation of the barycenter location and velocity of the fluid 1 in Cahn-Hilliard simulations.");
+      prm.declare_entry(
+        "calculate cahn hilliard barycenter",
+        "false",
+        Patterns::Bool(),
+        "Enable calculation of the barycenter location and velocity of the fluid 1 in Cahn-Hilliard simulations.");
 
-        prm.declare_entry(
-                "cahn hilliard barycenter name",
-                "cahn_hilliard_barycenter_information",
-                Patterns::FileName(),
-                "File name output for the barycenter information in Cahn-Hilliard simulations");
+      prm.declare_entry(
+        "cahn hilliard barycenter name",
+        "cahn_hilliard_barycenter_information",
+        Patterns::FileName(),
+        "File name output for the barycenter information in Cahn-Hilliard simulations");
     }
     prm.leave_subsection();
   }
@@ -1657,8 +1657,10 @@ namespace Parameters
       heat_flux_output_name    = prm.get("heat flux name");
       calculate_vof_barycenter = prm.get_bool("calculate VOF barycenter");
       barycenter_output_name   = prm.get("VOF barycenter name");
-      calculate_cahn_hilliard_barycenter = prm.get_bool("calculate cahn hilliard barycenter");
-      barycenter_cahn_hilliard_output_name   = prm.get("cahn hilliard barycenter name");
+      calculate_cahn_hilliard_barycenter =
+        prm.get_bool("calculate cahn hilliard barycenter");
+      barycenter_cahn_hilliard_output_name =
+        prm.get("cahn hilliard barycenter name");
 
 
       // Viscous dissipative fluid
