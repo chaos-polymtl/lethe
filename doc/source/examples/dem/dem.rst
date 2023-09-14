@@ -20,6 +20,7 @@ We organize the DEM examples from the simplest to the most complicated example:
     silo/silo
     rectangular-hopper/rectangular-hopper
     granular-dam-break/granular-dam-break
+    bunny-drill/bunny-drill
     granular-mixer/granular-mixer
 
 .. graphviz:: 
@@ -55,7 +56,11 @@ We organize the DEM examples from the simplest to the most complicated example:
 
       dem_11 [label="Granular Dam-Break", href="https://lethe-cfd.github.io/lethe/examples/dem/granular-dam-break/granular-dam-break.html"];
 
-      dem_12 [label="Granular Mixer", href="https://lethe-cfd.github.io/lethe/examples/dem/granular-mixer/granular-mixer.html"];
+      dem_12 [label="Bunny Drill", href="https://lethe-cfd.github.io/lethe/examples/dem/bunny-drill/bunny-drill.html"];
+
+      dem_13 [label="Granular Mixer", href="https://lethe-cfd.github.io/lethe/examples/dem/granular-mixer/granular-mixer.html"];
+
+      
 
       dem -> dem_1:w;
       dem -> dem_2:w;
@@ -69,4 +74,5 @@ We organize the DEM examples from the simplest to the most complicated example:
       dem -> dem_10:w;
       dem -> dem_11:w;
       dem -> dem_12:w;
+      dem -> dem_13:w;
     }
