@@ -104,7 +104,7 @@ The total number of particles in this simulation is 8000. All particles have a d
 Simulation Control (Loading)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The time end of the simulation is 2 after all particles have been loaded.
+The time end of the simulation is 2 seconds after all particles have been loaded.
 
 .. code-block:: text
 
@@ -120,7 +120,7 @@ The time end of the simulation is 2 after all particles have been loaded.
 Simulation Control (Drilling)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The time end of the simulation is 4.75 after which the drill has done one back-and-forth drilling motion.
+The time end of the simulation is 4.75 seconds after which the drill has done one back-and-forth drilling motion.
 
 .. code-block:: text
 
