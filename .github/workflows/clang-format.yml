@@ -7,8 +7,7 @@ on:
       - 'doc/**'
 
 env:
-  # Supports version 5 up to version 12
-  CLANG_FORMAT_VERION: 11
+  CLANG_FORMAT_VERSION: 16
 
 jobs:
   clang-format:
@@ -25,4 +24,4 @@ jobs:
         uses: DoozyX/clang-format-lint-action@v0.12
         with:
           source: 'applications source include'
-          clangFormatVersion: ${{ env.CLANG_FORMAT_VERION }}
+          clangFormatVersion: ${{ env.CLANG_FORMAT_VERSION }}
