@@ -1,27 +1,28 @@
-# Independent workflow to allow greater flexibility in triggers and schedules
-name: clang-format
+name: indent
 
-on:
-  push:
-    paths-ignore:
-      - 'doc/**'
+on: [push, pull_request]
 
-env:
-  CLANG_FORMAT_VERSION: 16
+concurrency:
+  group: ${ {github.event_name }}-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{github.event_name == 'pull_request'}}
+
+permissions:
+  contents: read
 
 jobs:
-  clang-format:
-    name: Run clang-format
-    runs-on: ubuntu-latest
+  indent:
+    # run the indent checks
+
+    name: indent
+    runs-on: [ubuntu-20.04]
 
     steps:
-      # Checks-out Lethe with branch of triggering commit
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      # Executes the specified version of clang-format
-      - name: clang-format lint
-        uses: DoozyX/clang-format-lint-action@v0.16
-        with:
-          source: 'applications source include'
-          clangFormatVersion: ${{ env.CLANG_FORMAT_VERSION }}
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 100
+    - name: setup
+      run: |
+        ./contrib/utilities/download_clang_format
+    - name: indent
+      run: |
+        ./contrib/utilities/check_indentation.sh
