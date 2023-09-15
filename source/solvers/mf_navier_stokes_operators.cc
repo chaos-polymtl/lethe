@@ -495,38 +495,6 @@ NavierStokesOperatorBase<dim, number>::compute_inverse_diagonal(
 
 template <int dim, typename number>
 void
-NavierStokesOperatorBase<dim, number>::do_cell_integral_local(
-  FECellIntegrator &integrator) const
-{
-  (void)integrator;
-
-  AssertThrow(
-    false,
-    dealii::ExcMessage(
-      "NavierStokesOperatorBase::do_cell_integral_local() has not been implemented!"));
-}
-
-template <int dim, typename number>
-void
-NavierStokesOperatorBase<dim, number>::local_evaluate_residual(
-  const MatrixFree<dim, number>               &matrix_free,
-  VectorType                                  &dst,
-  const VectorType                            &src,
-  const std::pair<unsigned int, unsigned int> &range) const
-{
-  (void)matrix_free;
-  (void)dst;
-  (void)src;
-  (void)range;
-
-  AssertThrow(
-    false,
-    dealii::ExcMessage(
-      "NavierStokesOperatorBase::local_evaluate_residual() has not been implemented!"));
-}
-
-template <int dim, typename number>
-void
 NavierStokesOperatorBase<dim, number>::do_cell_integral_range(
   const MatrixFree<dim, number>               &matrix_free,
   VectorType                                  &dst,

@@ -243,7 +243,7 @@ protected:
    * quadrature points and perform cell integrations.
    */
   virtual void
-  do_cell_integral_local(FECellIntegrator &integrator) const;
+  do_cell_integral_local(FECellIntegrator &integrator) const = 0;
 
   /**
    * @brief Loop over all cell batches withing certain range and perform a cell
@@ -275,10 +275,10 @@ protected:
    */
   virtual void
   local_evaluate_residual(
-    const MatrixFree<dim, number>               &matrix_free,
-    VectorType                                  &dst,
-    const VectorType                            &src,
-    const std::pair<unsigned int, unsigned int> &range) const;
+    const MatrixFree<dim, number> &              matrix_free,
+    VectorType &                                 dst,
+    const VectorType &                           src,
+    const std::pair<unsigned int, unsigned int> &range) const = 0;
 
 
 private:
@@ -336,7 +336,7 @@ public:
 
   NavierStokesSUPGPSPGOperator();
 
-private:
+protected:
   /**
    * @brief Perform cell integral on a cell batch without gathering and scattering
    * the values, and according to the Jacobian of the Navier-Stokes equations
