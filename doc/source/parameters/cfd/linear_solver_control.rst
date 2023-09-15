@@ -2,7 +2,7 @@
 Linear Solver
 =============
 
-In this subsection, the control options of the linear solvers are specified. The default values for the linear solver parameters are given in the text box below. Lethe supports different physics (``fluid dynamics``, ``VOF``, ``heat transfer``, ``cahn hilliard`` and ``tracer``) and it is possible to specify linear solver parameters for each of them. In the example below, only ``fluid dynamics`` is used but the same block can be used for other physics.
+In this subsection, the control options of the linear solvers are specified. The default values for the linear solver parameters are given in the text box below. Lethe supports different physics (``fluid dynamics``, ``VOF``, ``heat transfer``, ``cahn hilliard`` and ``tracer``) and it is possible to specify linear solver parameters for each of them. In the example below, only ``fluid dynamics`` is used, however, the same block can be used for other physics.
 
 .. seealso::
 	For further understanding about the linear solvers used, the preconditioners supported and all parameters, see the :doc:`../../theory/fluid_dynamics/linear_solvers` theory section.
@@ -12,70 +12,28 @@ In this subsection, the control options of the linear solvers are specified. The
   subsection linear solver
     subsection fluid dynamics
       # Iterative solver for the linear system of equations
-      set method                                    = gmres
+      set method                           = gmres
 
       # State whether information from the linear solver should be printed
-      set verbosity                                 = verbose
+      set verbosity                        = verbose
 
       # Linear solver minimum residual
-      set minimum residual                          = 1e-12
+      set minimum residual                 = 1e-12
 
       # Linear solver residual
-      set relative residual                         = 1e-3
+      set relative residual                = 1e-3
 
       # Maximum solver iterations
-      set max iters                                 = 1000
+      set max iters                        = 1000
 
       # Force the linear solver to continue even if it fails
-      set force linear solver continuation          = false
+      set force linear solver continuation = false
 
       # Maximum number of krylov vectors for GMRES solver
-      set max krylov vectors                        = 100
+      set max krylov vectors               = 100
 
       # Set type of preconditioner for the iterative solver
-      set preconditioner                            = ilu
-
-      #------------------------------------------------------------------
-      # Parameters for GMRES and BICGSTAB solvers with ILU preconditioner
-      #------------------------------------------------------------------
-      # ILU preconditioner fill
-      set ilu preconditioner fill                   = 0
-
-      # ILU preconditioner tolerance
-      set ilu preconditioner absolute tolerance     = 1e-12
-
-      # ILU relative tolerance
-      set ilu preconditioner relative tolerance     = 1.00
-
-      #---------------------------------------------------------------------------
-      # ILU smoother/coarsener parameters for GMRES solver with AMG preconditioner
-      #---------------------------------------------------------------------------
-      # AMG preconditioner ILU smoother/coarsener fill
-      set amg preconditioner ilu fill               = 0
-
-      # AMG preconditioner ILU smoother/coarsener absolute tolerance
-      set amg preconditioner ilu absolute tolerance = 1e-12
-
-      # AMG preconditioner ILU smoother/coarsener relative tolerance
-      set amg preconditioner ilu relative tolerance = 1.00
-
-      #----------------------------------------------------------
-      # Other parameters for GMRES solver with AMG preconditioner
-      #----------------------------------------------------------
-      # AMG aggregation threshold
-      set amg aggregation threshold                 = 1e-14
-
-      # AMG number of cycles
-      set amg n cycles                              = 1
-
-      # AMG w cycling. If this is set to true, W cycling is used. Otherwise, V cycling is used.
-      set amg w cycles                              = false
-
-      # AMG smoother sweeps
-      set amg smoother sweeps                       = 2
-
-      # AMG smoother overlap
-      set amg smoother overlap                      = 1
+      set preconditioner                   = ilu
     end
   end
 
@@ -155,8 +113,23 @@ In this subsection, the control options of the linear solvers are specified. The
 .. caution:: 
 		Be aware that the setup of the ``amg`` preconditioner is very expensive and does not scale linearly with the size of the matrix. As such, it is generally preferable to minimize the number of assembly of such preconditioner. This can be achieved by using the ``inexact newton`` for the nonlinear solver (see :doc:`non-linear_solver_control`).
 
-* ``ilu preconditioner fill``, ``ilu preconditioner absolute tolerance`` and ``ilu preconditioner relative tolerance`` are parameters that control the ``ilu`` preconditioner. Conversely, ``amg preconditioner ilu fill``, ``amg preconditioner ilu absolute tolerance`` and ``amg preconditioner ilu relative tolerance`` control the ILU coarsener and smoother used by the ``amg`` preconditioner.
- 
+In addition to the method parameters, one can also set specific parameters for each of the preconditioners by adding specific lines inside of the specific physics subsection:
+
+-------------------
+ILU preconditioner
+-------------------
+
+.. code-block:: text
+
+    # ILU preconditioner fill
+    set ilu preconditioner fill               = 0
+
+    # ILU preconditioner tolerance
+    set ilu preconditioner absolute tolerance = 1e-12
+
+    # ILU relative tolerance
+    set ilu preconditioner relative tolerance = 1.00
+
 .. tip::
 	The default values for these parameters are good starting values. 
 
@@ -170,7 +143,35 @@ In this subsection, the control options of the linear solvers are specified. The
 
 	and it does not disappear when increasing ``max iters``, increasing the ``ilu preconditioner fill`` in the ``.prm`` file will make the computation slightly faster.
 
-* ``amg aggregation threshold``, ``amg n cycles``, ``amg w cycles`` (if this is set to ``true``, W cycling is used, if ``false``, V cycling is used), ``amg smoother sweeps``, and ``amg smoother overlap`` are parameters used for the ``amg`` preconditioner only. 
+-------------------
+AMG preconditioner
+-------------------
+
+.. code-block:: text
+
+    # AMG preconditioner ILU smoother/coarsener fill
+    set amg preconditioner ilu fill               = 0
+
+    # AMG preconditioner ILU smoother/coarsener absolute tolerance
+    set amg preconditioner ilu absolute tolerance = 1e-12
+
+    # AMG preconditioner ILU smoother/coarsener relative tolerance
+    set amg preconditioner ilu relative tolerance = 1.00
+
+    # AMG aggregation threshold
+    set amg aggregation threshold                 = 1e-14
+
+    # AMG number of cycles
+    set amg n cycles                              = 1
+
+    # AMG w cycling. If this is set to true, W cycling is used. Otherwise, V cycling is used.
+    set amg w cycles                              = false
+
+    # AMG smoother sweeps
+    set amg smoother sweeps                       = 2
+
+    # AMG smoother overlap
+    set amg smoother overlap                      = 1
 
 .. seealso::
-	For more information about the ``amg`` preconditioner parameters, the reader is referred to the deal.II documentation for the `AMG preconditioner <https://www.dealii.org/current/doxygen/deal.II/classTrilinosWrappers_1_1PreconditionAMG.html>`_ and its `Additional Data <https://www.dealii.org/current/doxygen/deal.II/structTrilinosWrappers_1_1PreconditionAMG_1_1AdditionalData.html>`_
+	For more information about the ``amg`` preconditioner parameters, the reader is referred to the deal.II documentation for the `AMG preconditioner <https://www.dealii.org/current/doxygen/deal.II/classTrilinosWrappers_1_1PreconditionAMG.html>`_ and its `Additional Data <https://www.dealii.org/current/doxygen/deal.II/structTrilinosWrappers_1_1PreconditionAMG_1_1AdditionalData.html>`_.
