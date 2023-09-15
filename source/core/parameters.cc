@@ -2084,10 +2084,42 @@ namespace Parameters
           Patterns::Bool(),
           "A boolean that will force the linear solver to continue even if it fails");
 
+        prm.declare_entry("mg smoother iterations",
+                          "10",
+                          Patterns::Integer(),
+                          "mg smoother iterations for lsmg or gcmg");
+
         prm.declare_entry("mg smoother relaxation",
                           "0.5",
                           Patterns::Double(),
-                          "mg smoother relaxation");
+                          "mg smoother relaxation for lsmg or gcmg");
+
+        prm.declare_entry("mg coarse grid max iterations",
+                          "2000",
+                          Patterns::Integer(),
+                          "mg coarse grid iterations for lsmg or gcmg");
+
+        prm.declare_entry("mg coarse grid tolerance",
+                          "1e-14",
+                          Patterns::Double(),
+                          "mg coarse grid tolerance n for lsmg or gcmg");
+
+        prm.declare_entry("mg coarse grid reduce",
+                          "1e-4",
+                          Patterns::Double(),
+                          "mg coarse grid reduce for lsmg or gcmg");
+
+        prm.declare_entry("mg coarse grid max krylov vectors",
+                          "30",
+                          Patterns::Integer(),
+                          "mg coarse grid max krylov vectors for lsmg or gcmg");
+
+        prm.declare_entry(
+          "mg verbosity",
+          "verbose",
+          Patterns::Selection("quiet|verbose"),
+          "State whether LSMG or GCMG should print information about levels "
+          "Choices are <quiet|verbose>.");
       }
       prm.leave_subsection();
     }
@@ -2158,7 +2190,22 @@ namespace Parameters
         amg_smoother_overlap      = prm.get_integer("amg smoother overlap");
         force_linear_solver_continuation =
           prm.get_bool("force linear solver continuation");
+        mg_smoother_iterations = prm.get_integer("mg smoother iterations");
         mg_smoother_relaxation = prm.get_double("mg smoother relaxation");
+        mg_coarse_grid_max_iterations =
+          prm.get_integer("mg coarse grid max iterations");
+        mg_coarse_grid_tolerance = prm.get_double("mg coarse grid tolerance");
+        mg_coarse_grid_reduce    = prm.get_double("mg coarse grid reduce");
+        mg_coarse_grid_max_krylov_vectors =
+          prm.get_integer("mg coarse grid max krylov vectors");
+        const std::string mg_op = prm.get("mg verbosity");
+        if (mg_op == "verbose")
+          mg_verbosity = Parameters::Verbosity::verbose;
+        else if (mg_op == "quiet")
+          mg_verbosity = Parameters::Verbosity::quiet;
+        else
+          throw(std::runtime_error(
+            "Unknown verbosity mode for the LSMG or GCMG preconditioners"));
       }
       prm.leave_subsection();
     }
