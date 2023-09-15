@@ -197,7 +197,7 @@ public:
    */
   virtual void
   assemble_matrix(CahnHilliardScratchData<dim> &scratch_data,
-                  StabilizedMethodsCopyData &   copy_data) override;
+                  StabilizedMethodsCopyData    &copy_data) override;
 
 
   /**
@@ -207,7 +207,7 @@ public:
    */
   virtual void
   assemble_rhs(CahnHilliardScratchData<dim> &scratch_data,
-               StabilizedMethodsCopyData &   copy_data) override;
+               StabilizedMethodsCopyData    &copy_data) override;
 
 
   const BoundaryConditions::CahnHilliardBoundaryConditions<dim>

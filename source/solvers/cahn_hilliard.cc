@@ -1031,7 +1031,7 @@ template <typename VectorType>
 std::pair<Tensor<1, dim>, Tensor<1, dim>>
 CahnHilliard<dim>::calculate_barycenter(
   const TrilinosWrappers::MPI::Vector &solution,
-  const VectorType &                   solution_fd)
+  const VectorType                    &solution_fd)
 {
   const MPI_Comm mpi_communicator = this->triangulation->get_communicator();
 
@@ -1123,13 +1123,13 @@ CahnHilliard<3>::calculate_barycenter<TrilinosWrappers::MPI::Vector>(
 
 template std::pair<Tensor<1, 2>, Tensor<1, 2>>
 CahnHilliard<2>::calculate_barycenter<TrilinosWrappers::MPI::BlockVector>(
-  const TrilinosWrappers::MPI::Vector &     solution,
+  const TrilinosWrappers::MPI::Vector      &solution,
   const TrilinosWrappers::MPI::BlockVector &current_solution_fd);
 
 
 template std::pair<Tensor<1, 3>, Tensor<1, 3>>
 CahnHilliard<3>::calculate_barycenter<TrilinosWrappers::MPI::BlockVector>(
-  const TrilinosWrappers::MPI::Vector &     solution,
+  const TrilinosWrappers::MPI::Vector      &solution,
   const TrilinosWrappers::MPI::BlockVector &current_solution_fd);
 
 

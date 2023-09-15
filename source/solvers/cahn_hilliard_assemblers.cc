@@ -378,7 +378,7 @@ template <int dim>
 void
 CahnHilliardAssemblerFreeAngle<dim>::assemble_matrix(
   CahnHilliardScratchData<dim> &scratch_data,
-  StabilizedMethodsCopyData &   copy_data)
+  StabilizedMethodsCopyData    &copy_data)
 {
   if (!scratch_data.is_boundary_cell)
     return;
@@ -432,7 +432,7 @@ template <int dim>
 void
 CahnHilliardAssemblerFreeAngle<dim>::assemble_rhs(
   CahnHilliardScratchData<dim> &scratch_data,
-  StabilizedMethodsCopyData &   copy_data)
+  StabilizedMethodsCopyData    &copy_data)
 {
   if (!scratch_data.is_boundary_cell)
     return;
