@@ -26,7 +26,7 @@
  */
 template <int dim, typename Number>
 VectorizedArray<Number>
-evaluate_function(const Function<dim> &                      function,
+evaluate_function(const Function<dim>                       &function,
                   const Point<dim, VectorizedArray<Number>> &p_vectorized)
 {
   VectorizedArray<Number> result;
@@ -52,7 +52,7 @@ evaluate_function(const Function<dim> &                      function,
  */
 template <int dim, typename Number, int components>
 Tensor<1, components, VectorizedArray<Number>>
-evaluate_function(const Function<dim> &                      function,
+evaluate_function(const Function<dim>                       &function,
                   const Point<dim, VectorizedArray<Number>> &p_vectorized)
 {
   Tensor<1, components, VectorizedArray<Number>> result;
@@ -73,11 +73,11 @@ NavierStokesOperatorBase<dim, number>::NavierStokesOperatorBase()
 
 template <int dim, typename number>
 NavierStokesOperatorBase<dim, number>::NavierStokesOperatorBase(
-  const Mapping<dim> &             mapping,
-  const DoFHandler<dim> &          dof_handler,
+  const Mapping<dim>              &mapping,
+  const DoFHandler<dim>           &dof_handler,
   const AffineConstraints<number> &constraints,
-  const Quadrature<dim> &          quadrature,
-  const Function<dim> *            forcing_function,
+  const Quadrature<dim>           &quadrature,
+  const Function<dim>             *forcing_function,
   const double                     kinematic_viscosity,
   const unsigned int               mg_level)
 {
@@ -93,11 +93,11 @@ NavierStokesOperatorBase<dim, number>::NavierStokesOperatorBase(
 template <int dim, typename number>
 void
 NavierStokesOperatorBase<dim, number>::reinit(
-  const Mapping<dim> &             mapping,
-  const DoFHandler<dim> &          dof_handler,
+  const Mapping<dim>              &mapping,
+  const DoFHandler<dim>           &dof_handler,
   const AffineConstraints<number> &constraints,
-  const Quadrature<dim> &          quadrature,
-  const Function<dim> *            forcing_function,
+  const Quadrature<dim>           &quadrature,
+  const Function<dim>             *forcing_function,
   const double                     kinematic_viscosity,
   const unsigned int               mg_level)
 {
@@ -264,7 +264,7 @@ NavierStokesOperatorBase<dim, number>::initialize_dof_vector(
 
 template <int dim, typename number>
 void
-NavierStokesOperatorBase<dim, number>::vmult(VectorType &      dst,
+NavierStokesOperatorBase<dim, number>::vmult(VectorType       &dst,
                                              const VectorType &src) const
 {
   // save values for edge constrained dofs and set them to 0 in src vector
@@ -299,7 +299,7 @@ NavierStokesOperatorBase<dim, number>::vmult(VectorType &      dst,
 
 template <int dim, typename number>
 void
-NavierStokesOperatorBase<dim, number>::Tvmult(VectorType &      dst,
+NavierStokesOperatorBase<dim, number>::Tvmult(VectorType       &dst,
                                               const VectorType &src) const
 {
   this->vmult(dst, src);
@@ -308,7 +308,7 @@ NavierStokesOperatorBase<dim, number>::Tvmult(VectorType &      dst,
 template <int dim, typename number>
 void
 NavierStokesOperatorBase<dim, number>::vmult_interface_down(
-  VectorType &      dst,
+  VectorType       &dst,
   VectorType const &src) const
 {
   this->matrix_free.cell_loop(
@@ -323,7 +323,7 @@ NavierStokesOperatorBase<dim, number>::vmult_interface_down(
 template <int dim, typename number>
 void
 NavierStokesOperatorBase<dim, number>::vmult_interface_up(
-  VectorType &      dst,
+  VectorType       &dst,
   VectorType const &src) const
 {
   if (has_edge_constrained_indices == false)
@@ -432,7 +432,7 @@ NavierStokesOperatorBase<dim, number>::evaluate_non_linear_term(
 
 template <int dim, typename number>
 void
-NavierStokesOperatorBase<dim, number>::evaluate_residual(VectorType &      dst,
+NavierStokesOperatorBase<dim, number>::evaluate_residual(VectorType       &dst,
                                                          const VectorType &src)
 {
   this->matrix_free.cell_loop(
@@ -474,9 +474,9 @@ NavierStokesOperatorBase<dim, number>::do_cell_integral_local(
 template <int dim, typename number>
 void
 NavierStokesOperatorBase<dim, number>::local_evaluate_residual(
-  const MatrixFree<dim, number> &              matrix_free,
-  VectorType &                                 dst,
-  const VectorType &                           src,
+  const MatrixFree<dim, number>               &matrix_free,
+  VectorType                                  &dst,
+  const VectorType                            &src,
   const std::pair<unsigned int, unsigned int> &range) const
 {
   (void)matrix_free;
@@ -493,9 +493,9 @@ NavierStokesOperatorBase<dim, number>::local_evaluate_residual(
 template <int dim, typename number>
 void
 NavierStokesOperatorBase<dim, number>::do_cell_integral_range(
-  const MatrixFree<dim, number> &              matrix_free,
-  VectorType &                                 dst,
-  const VectorType &                           src,
+  const MatrixFree<dim, number>               &matrix_free,
+  VectorType                                  &dst,
+  const VectorType                            &src,
   const std::pair<unsigned int, unsigned int> &range) const
 {
   FECellIntegrator integrator(matrix_free, range);
@@ -704,9 +704,9 @@ NavierStokesSUPGPSPGOperator<dim, number>::do_cell_integral_local(
 template <int dim, typename number>
 void
 NavierStokesSUPGPSPGOperator<dim, number>::local_evaluate_residual(
-  const MatrixFree<dim, number> &              matrix_free,
-  VectorType &                                 dst,
-  const VectorType &                           src,
+  const MatrixFree<dim, number>               &matrix_free,
+  VectorType                                  &dst,
+  const VectorType                            &src,
   const std::pair<unsigned int, unsigned int> &range) const
 {
   FECellIntegrator integrator(matrix_free);

@@ -55,7 +55,7 @@ public:
    * @param triangulation Triangulation object used in the simulation.
    */
   PlaneInsertion<dim>(
-    const DEMSolverParameters<dim> &                 dem_parameters,
+    const DEMSolverParameters<dim>                  &dem_parameters,
     const parallel::distributed::Triangulation<dim> &triangulation);
 
   /**
@@ -67,7 +67,7 @@ public:
    * @param dem_parameters DEM parameters declared in the .prm file.
    */
   virtual void
-  insert(Particles::ParticleHandler<dim> &                particle_handler,
+  insert(Particles::ParticleHandler<dim>                 &particle_handler,
          const parallel::distributed::Triangulation<dim> &triangulation,
          const DEMSolverParameters<dim> &dem_parameters) override;
 

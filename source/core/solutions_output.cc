@@ -14,14 +14,14 @@
 
 template <int dim, int spacedim>
 void
-write_vtu_and_pvd(PVDHandler &                           pvd_handler,
+write_vtu_and_pvd(PVDHandler                            &pvd_handler,
                   const DataOutInterface<dim, spacedim> &data_out,
                   const std::string                      folder,
                   const std::string                      file_prefix,
                   const double                           time,
                   const unsigned int                     iter,
                   const unsigned int                     group_files,
-                  const MPI_Comm &                       mpi_communicator,
+                  const MPI_Comm                        &mpi_communicator,
                   const unsigned int                     digits)
 {
   const int my_id = Utilities::MPI::this_mpi_process(mpi_communicator);
@@ -76,7 +76,7 @@ write_boundaries_vtu(const DataOutFaces<dim> &data_out_faces,
                      const std::string        folder,
                      const double,
                      const unsigned int iter,
-                     const MPI_Comm &   mpi_communicator,
+                     const MPI_Comm    &mpi_communicator,
                      const std::string  file_prefix,
                      const unsigned int digits)
 {
@@ -95,69 +95,69 @@ write_boundaries_vtu(const DataOutFaces<dim> &data_out_faces,
 }
 
 template void
-write_vtu_and_pvd(PVDHandler &                  pvd_handler,
+write_vtu_and_pvd(PVDHandler                   &pvd_handler,
                   const DataOutInterface<1, 2> &data_out,
                   const std::string             folder,
                   const std::string             file_prefix,
                   const double                  time,
                   const unsigned int            iter,
                   const unsigned int            group_files,
-                  const MPI_Comm &              mpi_communicator,
+                  const MPI_Comm               &mpi_communicator,
                   const unsigned int            digits);
 
 template void
-write_vtu_and_pvd(PVDHandler &                  pvd_handler,
+write_vtu_and_pvd(PVDHandler                   &pvd_handler,
                   const DataOutInterface<2, 2> &data_out,
                   const std::string             folder,
                   const std::string             file_prefix,
                   const double                  time,
                   const unsigned int            iter,
                   const unsigned int            group_files,
-                  const MPI_Comm &              mpi_communicator,
+                  const MPI_Comm               &mpi_communicator,
                   const unsigned int            digits);
 
 template void
-write_vtu_and_pvd(PVDHandler &                  pvd_handler,
+write_vtu_and_pvd(PVDHandler                   &pvd_handler,
                   const DataOutInterface<2, 3> &data_out,
                   const std::string             folder,
                   const std::string             file_prefix,
                   const double                  time,
                   const unsigned int            iter,
                   const unsigned int            group_files,
-                  const MPI_Comm &              mpi_communicator,
+                  const MPI_Comm               &mpi_communicator,
                   const unsigned int            digits);
 
 template void
-write_vtu_and_pvd(PVDHandler &                  pvd_handler,
+write_vtu_and_pvd(PVDHandler                   &pvd_handler,
                   const DataOutInterface<3, 3> &data_out,
                   const std::string             folder,
                   const std::string             file_prefix,
                   const double                  time,
                   const unsigned int            iter,
                   const unsigned int            group_files,
-                  const MPI_Comm &              mpi_communicator,
+                  const MPI_Comm               &mpi_communicator,
                   const unsigned int            digits);
 
 template void
-write_vtu_and_pvd(PVDHandler &                  pvd_handler,
+write_vtu_and_pvd(PVDHandler                   &pvd_handler,
                   const DataOutInterface<0, 2> &data_out,
                   const std::string             folder,
                   const std::string             file_prefix,
                   const double                  time,
                   const unsigned int            iter,
                   const unsigned int            group_files,
-                  const MPI_Comm &              mpi_communicator,
+                  const MPI_Comm               &mpi_communicator,
                   const unsigned int            digits);
 
 template void
-write_vtu_and_pvd(PVDHandler &                  pvd_handler,
+write_vtu_and_pvd(PVDHandler                   &pvd_handler,
                   const DataOutInterface<0, 3> &data_out,
                   const std::string             folder,
                   const std::string             file_prefix,
                   const double                  time,
                   const unsigned int            iter,
                   const unsigned int            group_files,
-                  const MPI_Comm &              mpi_communicator,
+                  const MPI_Comm               &mpi_communicator,
                   const unsigned int            digits);
 
 
@@ -166,7 +166,7 @@ write_boundaries_vtu(const DataOutFaces<2> &data_out_faces,
                      const std::string      folder,
                      const double           time,
                      const unsigned int     iter,
-                     const MPI_Comm &       mpi_communicator,
+                     const MPI_Comm        &mpi_communicator,
                      const std::string      file_prefix,
                      const unsigned int     digits);
 
@@ -175,6 +175,6 @@ write_boundaries_vtu(const DataOutFaces<3> &data_out_faces,
                      const std::string      folder,
                      const double           time,
                      const unsigned int     iter,
-                     const MPI_Comm &       mpi_communicator,
+                     const MPI_Comm        &mpi_communicator,
                      const std::string      file_prefix,
                      const unsigned int     digits);

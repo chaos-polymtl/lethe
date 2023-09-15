@@ -57,7 +57,7 @@ private:
 
 template <typename VectorType>
 InexactNewtonNonLinearSolver<VectorType>::InexactNewtonNonLinearSolver(
-  PhysicsSolver<VectorType> *        physics_solver,
+  PhysicsSolver<VectorType>         *physics_solver,
   const Parameters::NonLinearSolver &params)
   : NonLinearSolver<VectorType>(physics_solver, params)
   , matrix_requires_assembly(true)

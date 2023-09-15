@@ -24,11 +24,11 @@ BoundaryCellsInformation<dim>::BoundaryCellsInformation()
 template <int dim>
 void
 BoundaryCellsInformation<dim>::build(
-  const parallel::distributed::Triangulation<dim> & triangulation,
+  const parallel::distributed::Triangulation<dim>  &triangulation,
   const Parameters::Lagrangian::FloatingWalls<dim> &floating_wall_properties,
-  const std::vector<unsigned int> &                 outlet_boundaries,
-  const bool &                                      check_diamond_cells,
-  const bool &              expand_particle_wall_contact_search,
+  const std::vector<unsigned int>                  &outlet_boundaries,
+  const bool                                       &check_diamond_cells,
+  const bool               &expand_particle_wall_contact_search,
   const ConditionalOStream &pcout)
 {
   boundary_cells_with_faces.clear();
@@ -97,9 +97,9 @@ template <int dim>
 void
 BoundaryCellsInformation<dim>::build(
   const parallel::distributed::Triangulation<dim> &triangulation,
-  const std::vector<unsigned int> &                outlet_boundaries,
-  const bool &                                     check_diamond_cells,
-  const ConditionalOStream &                       pcout)
+  const std::vector<unsigned int>                 &outlet_boundaries,
+  const bool                                      &check_diamond_cells,
+  const ConditionalOStream                        &pcout)
 {
   boundary_cells_with_faces.clear();
   global_boundary_cells_with_faces.clear();
@@ -129,7 +129,7 @@ template <int dim>
 void
 BoundaryCellsInformation<dim>::find_boundary_cells_information(
   const parallel::distributed::Triangulation<dim> &triangulation,
-  const std::vector<unsigned int> &                outlet_boundaries)
+  const std::vector<unsigned int>                 &outlet_boundaries)
 {
   // Initializing output_vector and a search_vector (containing boundary_id and
   // cell) to avoid replication of a boundary face. All the found boundary faces
@@ -438,7 +438,7 @@ template <int dim>
 void
 BoundaryCellsInformation<dim>::find_global_boundary_cells_with_faces(
   const parallel::distributed::Triangulation<dim> &triangulation,
-  const std::vector<unsigned int> &                outlet_boundaries)
+  const std::vector<unsigned int>                 &outlet_boundaries)
 {
   // Iterating over the active cells in the triangulation
   for (const auto &cell : triangulation.active_cell_iterators())
@@ -466,9 +466,9 @@ template <int dim>
 void
 BoundaryCellsInformation<dim>::add_cells_with_boundary_lines_to_boundary_cells(
   const parallel::distributed::Triangulation<dim> &triangulation,
-  const std::vector<unsigned int> &                outlet_boundaries,
-  const bool &                                     check_diamond_cells,
-  const ConditionalOStream &                       pcout)
+  const std::vector<unsigned int>                 &outlet_boundaries,
+  const bool                                      &check_diamond_cells,
+  const ConditionalOStream                        &pcout)
 {
   std::vector<typename Triangulation<dim>::active_cell_iterator>
     boundary_neighbor_cells;
@@ -638,7 +638,7 @@ BoundaryCellsInformation<dim>::add_cells_with_boundary_lines_to_boundary_cells(
 template <int dim>
 void
 BoundaryCellsInformation<dim>::find_boundary_cells_for_floating_walls(
-  const parallel::distributed::Triangulation<dim> & triangulation,
+  const parallel::distributed::Triangulation<dim>  &triangulation,
   const Parameters::Lagrangian::FloatingWalls<dim> &floating_wall_properties,
   const double                                      maximum_cell_diameter)
 {
@@ -689,8 +689,8 @@ template <int dim>
 void
 BoundaryCellsInformation<dim>::add_boundary_neighbors_of_boundary_cells(
   const parallel::distributed::Triangulation<dim> &triangulation,
-  const std::vector<unsigned int> &                outlet_boundaries,
-  std::map<int, boundary_cells_info_struct<dim>> & boundary_cells_information,
+  const std::vector<unsigned int>                 &outlet_boundaries,
+  std::map<int, boundary_cells_info_struct<dim>>  &boundary_cells_information,
   const std::map<int, boundary_cells_info_struct<dim>>
     &global_boundary_cells_information)
 {

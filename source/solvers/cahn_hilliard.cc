@@ -100,8 +100,8 @@ template <int dim>
 void
 CahnHilliard<dim>::assemble_local_system_matrix(
   const typename DoFHandler<dim>::active_cell_iterator &cell,
-  CahnHilliardScratchData<dim> &                        scratch_data,
-  StabilizedMethodsCopyData &                           copy_data)
+  CahnHilliardScratchData<dim>                         &scratch_data,
+  StabilizedMethodsCopyData                            &copy_data)
 {
   copy_data.cell_is_local = cell->is_locally_owned();
   if (!copy_data.cell_is_local)
@@ -196,8 +196,8 @@ template <int dim>
 void
 CahnHilliard<dim>::assemble_local_system_rhs(
   const typename DoFHandler<dim>::active_cell_iterator &cell,
-  CahnHilliardScratchData<dim> &                        scratch_data,
-  StabilizedMethodsCopyData &                           copy_data)
+  CahnHilliardScratchData<dim>                         &scratch_data,
+  StabilizedMethodsCopyData                            &copy_data)
 {
   copy_data.cell_is_local = cell->is_locally_owned();
   if (!copy_data.cell_is_local)

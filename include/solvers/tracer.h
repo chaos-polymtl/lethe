@@ -53,7 +53,7 @@ template <int dim>
 class Tracer : public AuxiliaryPhysics<dim, TrilinosWrappers::MPI::Vector>
 {
 public:
-  Tracer<dim>(MultiphysicsInterface<dim> *     multiphysics_interface,
+  Tracer<dim>(MultiphysicsInterface<dim>      *multiphysics_interface,
               const SimulationParameters<dim> &p_simulation_parameters,
               std::shared_ptr<parallel::DistributedTriangulationBase<dim>>
                                                  p_triangulation,
@@ -300,8 +300,8 @@ private:
   virtual void
   assemble_local_system_matrix(
     const typename DoFHandler<dim>::active_cell_iterator &cell,
-    TracerScratchData<dim> &                              scratch_data,
-    StabilizedMethodsCopyData &                           copy_data);
+    TracerScratchData<dim>                               &scratch_data,
+    StabilizedMethodsCopyData                            &copy_data);
 
   /**
    * @brief Assemble the local rhs for a given cell
@@ -319,8 +319,8 @@ private:
   virtual void
   assemble_local_system_rhs(
     const typename DoFHandler<dim>::active_cell_iterator &cell,
-    TracerScratchData<dim> &                              scratch_data,
-    StabilizedMethodsCopyData &                           copy_data);
+    TracerScratchData<dim>                               &scratch_data,
+    StabilizedMethodsCopyData                            &copy_data);
 
   /**
    * @brief sets up the vector of assembler functions

@@ -42,7 +42,7 @@ public:
    * @param param Non-linear solver parameters
    *
    */
-  NonLinearSolver(PhysicsSolver<VectorType> *        physics_solver,
+  NonLinearSolver(PhysicsSolver<VectorType>         *physics_solver,
                   const Parameters::NonLinearSolver &params);
 
   virtual ~NonLinearSolver()
@@ -58,13 +58,13 @@ public:
   solve(const bool is_initial_step) = 0;
 
 protected:
-  PhysicsSolver<VectorType> * physics_solver;
+  PhysicsSolver<VectorType>  *physics_solver;
   Parameters::NonLinearSolver params;
 };
 
 template <typename VectorType>
 NonLinearSolver<VectorType>::NonLinearSolver(
-  PhysicsSolver<VectorType> *        physics_solver,
+  PhysicsSolver<VectorType>         *physics_solver,
   const Parameters::NonLinearSolver &params)
   : physics_solver(physics_solver)
   , params(params)

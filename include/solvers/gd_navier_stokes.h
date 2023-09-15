@@ -44,13 +44,13 @@ public:
   BlockSchurPreconditioner(double gamma,
                            double kinematic_viscosity,
                            const TrilinosWrappers::BlockSparseMatrix &S,
-                           const TrilinosWrappers::SparseMatrix &     P,
-                           const BSPreconditioner * p_amat_preconditioner,
-                           const BSPreconditioner * p_pmass_preconditioner,
+                           const TrilinosWrappers::SparseMatrix      &P,
+                           const BSPreconditioner  *p_amat_preconditioner,
+                           const BSPreconditioner  *p_pmass_preconditioner,
                            Parameters::LinearSolver solver_parameters);
 
   void
-  vmult(TrilinosWrappers::MPI::BlockVector &      dst,
+  vmult(TrilinosWrappers::MPI::BlockVector       &dst,
         const TrilinosWrappers::MPI::BlockVector &src) const;
 
 private:
@@ -58,9 +58,9 @@ private:
   const double                               kinematic_viscosity;
   const Parameters::LinearSolver             linear_solver_parameters;
   const TrilinosWrappers::BlockSparseMatrix &stokes_matrix;
-  const TrilinosWrappers::SparseMatrix &     pressure_mass_matrix;
-  const BSPreconditioner *                   amat_preconditioner;
-  const BSPreconditioner *                   pmass_preconditioner;
+  const TrilinosWrappers::SparseMatrix      &pressure_mass_matrix;
+  const BSPreconditioner                    *amat_preconditioner;
+  const BSPreconditioner                    *pmass_preconditioner;
 };
 
 /**
@@ -126,8 +126,8 @@ private:
   void
   assemble_local_system_matrix(
     const typename DoFHandler<dim>::active_cell_iterator &cell,
-    NavierStokesScratchData<dim> &                        scratch_data,
-    StabilizedMethodsTensorCopyData<dim> &                copy_data);
+    NavierStokesScratchData<dim>                         &scratch_data,
+    StabilizedMethodsTensorCopyData<dim>                 &copy_data);
 
   /**
    * @brief Assemble the local rhs for a given cell
@@ -145,8 +145,8 @@ private:
   void
   assemble_local_system_rhs(
     const typename DoFHandler<dim>::active_cell_iterator &cell,
-    NavierStokesScratchData<dim> &                        scratch_data,
-    StabilizedMethodsTensorCopyData<dim> &                copy_data);
+    NavierStokesScratchData<dim>                         &scratch_data,
+    StabilizedMethodsTensorCopyData<dim>                 &copy_data);
 
   /**
    * @brief sets up the vector of assembler functions
@@ -268,9 +268,9 @@ BlockSchurPreconditioner<BSPreconditioner>::BlockSchurPreconditioner(
   double                                     gamma,
   double                                     kinematic_viscosity,
   const TrilinosWrappers::BlockSparseMatrix &S,
-  const TrilinosWrappers::SparseMatrix &     P,
-  const BSPreconditioner *                   p_amat_preconditioner,
-  const BSPreconditioner *                   p_pmass_preconditioner,
+  const TrilinosWrappers::SparseMatrix      &P,
+  const BSPreconditioner                    *p_amat_preconditioner,
+  const BSPreconditioner                    *p_pmass_preconditioner,
   Parameters::LinearSolver                   p_solver_parameters)
   : gamma(gamma)
   , kinematic_viscosity(kinematic_viscosity)
@@ -284,7 +284,7 @@ BlockSchurPreconditioner<BSPreconditioner>::BlockSchurPreconditioner(
 template <class BSPreconditioner>
 void
 BlockSchurPreconditioner<BSPreconditioner>::vmult(
-  TrilinosWrappers::MPI::BlockVector &      dst,
+  TrilinosWrappers::MPI::BlockVector       &dst,
   const TrilinosWrappers::MPI::BlockVector &src) const
 {
   //    TimerOutput computing_timer(std::cout,
@@ -348,25 +348,25 @@ class BlockDiagPreconditioner : public Subscriptor
 public:
   BlockDiagPreconditioner(const TrilinosWrappers::BlockSparseMatrix &S,
                           const PreconditionerMp &Mppreconditioner,
-                          SolverControl &         A_parameters);
+                          SolverControl          &A_parameters);
 
   void
-  vmult(TrilinosWrappers::MPI::BlockVector &      dst,
+  vmult(TrilinosWrappers::MPI::BlockVector       &dst,
         const TrilinosWrappers::MPI::BlockVector &src) const;
 
 private:
-  const TrilinosWrappers::BlockSparseMatrix & stokes_matrix;
+  const TrilinosWrappers::BlockSparseMatrix  &stokes_matrix;
   TrilinosWrappers::PreconditionILU           amat_preconditioner;
   TrilinosWrappers::PreconditionILU           pmat_preconditioner;
-  const PreconditionerMp &                    mp_preconditioner;
+  const PreconditionerMp                     &mp_preconditioner;
   SolverFGMRES<TrilinosWrappers::MPI::Vector> A_inverse;
 };
 
 template <class PreconditionerMp>
 BlockDiagPreconditioner<PreconditionerMp>::BlockDiagPreconditioner(
   const TrilinosWrappers::BlockSparseMatrix &S,
-  const PreconditionerMp &                   Mppreconditioner,
-  SolverControl &                            A_parameters)
+  const PreconditionerMp                    &Mppreconditioner,
+  SolverControl                             &A_parameters)
   : stokes_matrix(S)
   , mp_preconditioner(Mppreconditioner)
   , A_inverse(A_parameters)
@@ -388,7 +388,7 @@ BlockDiagPreconditioner<PreconditionerMp>::BlockDiagPreconditioner(
 template <class PreconditionerMp>
 void
 BlockDiagPreconditioner<PreconditionerMp>::vmult(
-  TrilinosWrappers::MPI::BlockVector &      dst,
+  TrilinosWrappers::MPI::BlockVector       &dst,
   const TrilinosWrappers::MPI::BlockVector &src) const
 {
   {

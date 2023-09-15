@@ -62,7 +62,7 @@ public:
     const std::unordered_map<unsigned int, Tensor<1, 3>>
                                           boundary_rotational_vector,
     const double                          triangulation_radius,
-    const DEMSolverParameters<dim> &      dem_parameters,
+    const DEMSolverParameters<dim>       &dem_parameters,
     const std::vector<types::boundary_id> boundary_index = {});
 
   /**
@@ -79,7 +79,7 @@ public:
   virtual void
   calculate_particle_wall_contact_force(
     typename DEM::dem_data_structures<dim>::particle_wall_in_contact
-      &                        particle_wall_pairs_in_contact,
+                              &particle_wall_pairs_in_contact,
     const double               dt,
     std::vector<Tensor<1, 3>> &torque,
     std::vector<Tensor<1, 3>> &force) override;
@@ -98,7 +98,7 @@ public:
   virtual void
   calculate_particle_floating_wall_contact_force(
     typename DEM::dem_data_structures<dim>::particle_floating_mesh_in_contact
-      &                        particle_floating_mesh_in_contact,
+                              &particle_floating_mesh_in_contact,
     const double               dt,
     std::vector<Tensor<1, 3>> &torque,
     std::vector<Tensor<1, 3>> &force,
@@ -126,11 +126,11 @@ public:
   virtual void
   calculate_IB_particle_wall_contact_force(
     particle_wall_contact_info<dim> &contact_info,
-    Tensor<1, 3> &                   normal_force,
-    Tensor<1, 3> &                   tangential_force,
-    Tensor<1, 3> &                   tangential_torque,
-    Tensor<1, 3> &                   rolling_resistance_torque,
-    IBParticle<dim> &                particle,
+    Tensor<1, 3>                    &normal_force,
+    Tensor<1, 3>                    &tangential_force,
+    Tensor<1, 3>                    &tangential_torque,
+    Tensor<1, 3>                    &rolling_resistance_torque,
+    IBParticle<dim>                 &particle,
     const double                     wall_youngs_modulus,
     const double                     wall_poisson_ratio,
     const double                     wall_restitution_coefficient,
@@ -266,7 +266,7 @@ private:
   std::tuple<Tensor<1, 3>, Tensor<1, 3>, Tensor<1, 3>, Tensor<1, 3>>
   calculate_nonlinear_contact_force_and_torque(
     particle_wall_contact_info<dim> &contact_info,
-    const ArrayView<const double> &  particle_properties);
+    const ArrayView<const double>   &particle_properties);
 };
 
 #endif

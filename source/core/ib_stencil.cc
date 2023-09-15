@@ -95,8 +95,8 @@ std::tuple<Point<dim>, std::vector<Point<dim>>>
 IBStencil<dim>::support_points_for_interpolation(
   const unsigned int                                    order,
   const double                                          length_ratio,
-  IBParticle<dim> &                                     p,
-  const Point<dim> &                                    dof_point,
+  IBParticle<dim>                                      &p,
+  const Point<dim>                                     &dof_point,
   const typename DoFHandler<dim>::active_cell_iterator &cell_guess)
 {
   // Create the vector of points used for the stencil based on the order of the
@@ -141,7 +141,7 @@ template <int dim>
 std::tuple<Point<dim>, std::vector<Point<dim>>>
 IBStencil<dim>::support_points_for_interpolation(const unsigned int order,
                                                  const double      length_ratio,
-                                                 IBParticle<dim> & p,
+                                                 IBParticle<dim>  &p,
                                                  const Point<dim> &dof_point)
 {
   // Create the vector of points used for the stencil based on the order of the
@@ -185,8 +185,8 @@ IBStencil<dim>::support_points_for_interpolation(const unsigned int order,
 template <int dim>
 Point<dim>
 IBStencil<dim>::point_for_cell_detection(
-  IBParticle<dim> &                                     p,
-  const Point<dim> &                                    dof_point,
+  IBParticle<dim>                                      &p,
+  const Point<dim>                                     &dof_point,
   const typename DoFHandler<dim>::active_cell_iterator &cell_guess)
 {
   // Create the vector of points used for the stencil based on the order of the
@@ -203,7 +203,7 @@ IBStencil<dim>::point_for_cell_detection(
 
 template <int dim>
 Point<dim>
-IBStencil<dim>::point_for_cell_detection(IBParticle<dim> & p,
+IBStencil<dim>::point_for_cell_detection(IBParticle<dim>  &p,
                                          const Point<dim> &dof_point)
 {
   // Create the vector of points used for the stencil based on the order of the
@@ -221,8 +221,8 @@ IBStencil<dim>::point_for_cell_detection(IBParticle<dim> & p,
 template <int dim>
 double
 IBStencil<dim>::ib_velocity(
-  IBParticle<dim> &                                     p,
-  const Point<dim> &                                    dof_point,
+  IBParticle<dim>                                      &p,
+  const Point<dim>                                     &dof_point,
   unsigned int                                          component,
   const typename DoFHandler<dim>::active_cell_iterator &cell_guess)
 {
@@ -287,7 +287,7 @@ IBStencil<dim>::ib_velocity(
 
 template <int dim>
 double
-IBStencil<dim>::ib_velocity(IBParticle<dim> & p,
+IBStencil<dim>::ib_velocity(IBParticle<dim>  &p,
                             const Point<dim> &dof_point,
                             unsigned int      component)
 {

@@ -83,8 +83,8 @@ template <int dim>
 void
 Visualization<dim>::print_xyz(
   dealii::Particles::ParticleHandler<dim> &particle_handler,
-  const MPI_Comm &                         mpi_communicator,
-  const ConditionalOStream &               pcout)
+  const MPI_Comm                          &mpi_communicator,
+  const ConditionalOStream                &pcout)
 {
   pcout << "id, type, dp, x, y, z " << std::endl;
   usleep(100);
@@ -135,9 +135,9 @@ Visualization<dim>::print_xyz(
 template <int dim>
 void
 Visualization<dim>::print_intermediate_format(
-  const Vector<float> &  data_to_print,
+  const Vector<float>   &data_to_print,
   const DoFHandler<dim> &background_dh,
-  const MPI_Comm &       mpi_communicator)
+  const MPI_Comm        &mpi_communicator)
 {
   unsigned int n_mpi_processes(
     Utilities::MPI::n_mpi_processes(mpi_communicator));

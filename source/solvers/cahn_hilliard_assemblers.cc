@@ -9,7 +9,7 @@ template <int dim>
 void
 CahnHilliardAssemblerCore<dim>::assemble_matrix(
   CahnHilliardScratchData<dim> &scratch_data,
-  StabilizedMethodsCopyData &   copy_data)
+  StabilizedMethodsCopyData    &copy_data)
 {
   // Gather physical properties
   const double well_height       = this->cahn_hilliard_parameters.well_height;
@@ -17,7 +17,7 @@ CahnHilliardAssemblerCore<dim>::assemble_matrix(
   const double epsilon           = scratch_data.epsilon;
 
   // Loop and quadrature informations
-  const auto &       JxW_vec    = scratch_data.JxW;
+  const auto        &JxW_vec    = scratch_data.JxW;
   const unsigned int n_q_points = scratch_data.n_q_points;
   const unsigned int n_dofs     = scratch_data.n_dofs;
 
@@ -142,7 +142,7 @@ template <int dim>
 void
 CahnHilliardAssemblerCore<dim>::assemble_rhs(
   CahnHilliardScratchData<dim> &scratch_data,
-  StabilizedMethodsCopyData &   copy_data)
+  StabilizedMethodsCopyData    &copy_data)
 {
   // Gather physical properties
   const double well_height       = this->cahn_hilliard_parameters.well_height;
@@ -150,7 +150,7 @@ CahnHilliardAssemblerCore<dim>::assemble_rhs(
   const double epsilon           = scratch_data.epsilon;
 
   // Loop and quadrature informations
-  const auto &       JxW_vec    = scratch_data.JxW;
+  const auto        &JxW_vec    = scratch_data.JxW;
   const unsigned int n_q_points = scratch_data.n_q_points;
   const unsigned int n_dofs     = scratch_data.n_dofs;
 
@@ -262,7 +262,7 @@ template <int dim>
 void
 CahnHilliardAssemblerAngleOfContact<dim>::assemble_matrix(
   CahnHilliardScratchData<dim> &scratch_data,
-  StabilizedMethodsCopyData &   copy_data)
+  StabilizedMethodsCopyData    &copy_data)
 {
   if (!scratch_data.is_boundary_cell)
     return;
@@ -323,7 +323,7 @@ template <int dim>
 void
 CahnHilliardAssemblerAngleOfContact<dim>::assemble_rhs(
   CahnHilliardScratchData<dim> &scratch_data,
-  StabilizedMethodsCopyData &   copy_data)
+  StabilizedMethodsCopyData    &copy_data)
 {
   if (!scratch_data.is_boundary_cell)
     return;
@@ -379,10 +379,10 @@ template <int dim>
 void
 CahnHilliardAssemblerBDF<dim>::assemble_matrix(
   CahnHilliardScratchData<dim> &scratch_data,
-  StabilizedMethodsCopyData &   copy_data)
+  StabilizedMethodsCopyData    &copy_data)
 {
   // Loop and quadrature informations
-  const auto &       JxW        = scratch_data.JxW;
+  const auto        &JxW        = scratch_data.JxW;
   const unsigned int n_q_points = scratch_data.n_q_points;
   const unsigned int n_dofs     = scratch_data.n_dofs;
 
@@ -423,10 +423,10 @@ template <int dim>
 void
 CahnHilliardAssemblerBDF<dim>::assemble_rhs(
   CahnHilliardScratchData<dim> &scratch_data,
-  StabilizedMethodsCopyData &   copy_data)
+  StabilizedMethodsCopyData    &copy_data)
 {
   // Loop and quadrature informations
-  const auto &       JxW        = scratch_data.JxW;
+  const auto        &JxW        = scratch_data.JxW;
   const unsigned int n_q_points = scratch_data.n_q_points;
   const unsigned int n_dofs     = scratch_data.n_dofs;
 

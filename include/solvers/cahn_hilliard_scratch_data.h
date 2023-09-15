@@ -85,11 +85,11 @@ public:
    *
    */
   CahnHilliardScratchData(const PhysicalPropertiesManager &properties_manager,
-                          const FESystem<dim> &            fe_cahn_hilliard,
-                          const Quadrature<dim> &          quadrature,
-                          const Mapping<dim> &             mapping,
-                          const FiniteElement<dim> &       fe_fd,
-                          const Quadrature<dim - 1> &      face_quadrature)
+                          const FESystem<dim>             &fe_cahn_hilliard,
+                          const Quadrature<dim>           &quadrature,
+                          const Mapping<dim>              &mapping,
+                          const FiniteElement<dim>        &fe_fd,
+                          const Quadrature<dim - 1>       &face_quadrature)
     : properties_manager(properties_manager)
     , fe_values_cahn_hilliard(mapping,
                               fe_cahn_hilliard,
@@ -171,9 +171,9 @@ public:
   template <typename VectorType>
   void
   reinit(const typename DoFHandler<dim>::active_cell_iterator &cell,
-         const VectorType &                                    current_solution,
+         const VectorType                                     &current_solution,
          const std::vector<VectorType> &previous_solutions,
-         Function<dim> *                source_function,
+         Function<dim>                 *source_function,
          Parameters::CahnHilliard       cahn_hilliard_parameters)
   {
     this->phase_order.component        = 0;

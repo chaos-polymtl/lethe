@@ -65,10 +65,10 @@ DeclException1(
 
 template <int dim>
 MultiphysicsInterface<dim>::MultiphysicsInterface(
-  const SimulationParameters<dim> &                            nsparam,
+  const SimulationParameters<dim>                             &nsparam,
   std::shared_ptr<parallel::DistributedTriangulationBase<dim>> p_triangulation,
   std::shared_ptr<SimulationControl> p_simulation_control,
-  ConditionalOStream &               p_pcout)
+  ConditionalOStream                &p_pcout)
   : multiphysics_parameters(nsparam.multiphysics)
   // ,
   // verbosity(nsparam.non_linear_solver.at(PhysicsID::fluid_dynamics).verbosity)

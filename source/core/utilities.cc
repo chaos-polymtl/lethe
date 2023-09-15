@@ -8,10 +8,10 @@
 template <int dim, typename T>
 TableHandler
 make_table_scalars_tensors(
-  const std::vector<T> &             independent_vector,
-  const std::string &                independent_column_name,
+  const std::vector<T>              &independent_vector,
+  const std::string                 &independent_column_name,
   const std::vector<Tensor<1, dim>> &dependent_vector,
-  const std::vector<std::string> &   dependent_column_name,
+  const std::vector<std::string>    &dependent_column_name,
   const unsigned int                 display_precision)
 {
   AssertDimension(independent_vector.size(), dependent_vector.size());
@@ -37,10 +37,10 @@ make_table_scalars_tensors(
 template <int dim, typename T>
 TableHandler
 make_table_scalars_tensors(
-  const std::vector<T> &                          independent_vector,
-  const std::string &                             independent_column_name,
+  const std::vector<T>                           &independent_vector,
+  const std::string                              &independent_column_name,
   const std::vector<std::vector<Tensor<1, dim>>> &dependent_vectors,
-  const std::vector<std::string> &                dependent_column_name,
+  const std::vector<std::string>                 &dependent_column_name,
   const unsigned int                              display_precision)
 {
   AssertDimension(dependent_column_name.size(), 3 * dim);
@@ -77,9 +77,9 @@ template <int dim>
 TableHandler
 make_table_tensors_tensors(
   const std::vector<Tensor<1, dim>> &independent_vector,
-  const std::vector<std::string> &   independent_column_name,
+  const std::vector<std::string>    &independent_column_name,
   const std::vector<Tensor<1, dim>> &dependent_vector,
-  const std::vector<std::string> &   dependent_column_name,
+  const std::vector<std::string>    &dependent_column_name,
   const unsigned int                 display_precision)
 {
   AssertDimension(independent_vector.size(), dependent_vector.size());
@@ -110,9 +110,9 @@ template <int dim>
 TableHandler
 make_table_tensors_scalars(
   const std::vector<Tensor<1, dim>> &independent_vector,
-  const std::vector<std::string> &   independent_column_name,
-  const std::vector<double> &        dependent_vector,
-  const std::string &                dependent_column_name,
+  const std::vector<std::string>    &independent_column_name,
+  const std::vector<double>         &dependent_vector,
+  const std::string                 &dependent_column_name,
   const unsigned int                 display_precision)
 {
   AssertDimension(independent_vector.size(), dependent_vector.size());
@@ -136,7 +136,7 @@ make_table_tensors_scalars(
 }
 
 void
-fill_table_from_file(TableHandler &    table,
+fill_table_from_file(TableHandler     &table,
                      const std::string file_name,
                      const std::string delimiter)
 {
@@ -255,130 +255,130 @@ create_output_folder(const std::string &dirname)
 
 template TableHandler
 make_table_scalars_tensors(
-  const std::vector<double> &      independent_values,
-  const std::string &              independent_column_name,
+  const std::vector<double>       &independent_values,
+  const std::string               &independent_column_name,
   const std::vector<Tensor<1, 2>> &dependent_vector,
-  const std::vector<std::string> & dependent_column_name,
+  const std::vector<std::string>  &dependent_column_name,
   const unsigned int               display_precision);
 
 template TableHandler
 make_table_scalars_tensors(
-  const std::vector<double> &      independent_values,
-  const std::string &              independent_column_name,
+  const std::vector<double>       &independent_values,
+  const std::string               &independent_column_name,
   const std::vector<Tensor<1, 3>> &dependent_vector,
-  const std::vector<std::string> & dependent_column_name,
+  const std::vector<std::string>  &dependent_column_name,
   const unsigned int               display_precision);
 
 template TableHandler
 make_table_scalars_tensors(
-  const std::vector<double> &                   independent_values,
-  const std::string &                           independent_column_name,
+  const std::vector<double>                    &independent_values,
+  const std::string                            &independent_column_name,
   const std::vector<std::vector<Tensor<1, 2>>> &dependent_vector,
-  const std::vector<std::string> &              dependent_column_name,
+  const std::vector<std::string>               &dependent_column_name,
   const unsigned int                            display_precision);
 
 template TableHandler
 make_table_scalars_tensors(
-  const std::vector<double> &                   independent_values,
-  const std::string &                           independent_column_name,
+  const std::vector<double>                    &independent_values,
+  const std::string                            &independent_column_name,
   const std::vector<std::vector<Tensor<1, 3>>> &dependent_vector,
-  const std::vector<std::string> &              dependent_column_name,
+  const std::vector<std::string>               &dependent_column_name,
   const unsigned int                            display_precision);
 
 template TableHandler
 make_table_scalars_tensors(
   const std::vector<unsigned int> &independent_values,
-  const std::string &              independent_column_name,
+  const std::string               &independent_column_name,
   const std::vector<Tensor<1, 2>> &dependent_vector,
-  const std::vector<std::string> & dependent_column_name,
+  const std::vector<std::string>  &dependent_column_name,
   const unsigned int               display_precision);
 
 template TableHandler
 make_table_scalars_tensors(
   const std::vector<unsigned int> &independent_values,
-  const std::string &              independent_column_name,
+  const std::string               &independent_column_name,
   const std::vector<Tensor<1, 3>> &dependent_vector,
-  const std::vector<std::string> & dependent_column_name,
+  const std::vector<std::string>  &dependent_column_name,
   const unsigned int               display_precision);
 
 template TableHandler
 make_table_scalars_tensors(
-  const std::vector<unsigned int> &             independent_values,
-  const std::string &                           independent_column_name,
+  const std::vector<unsigned int>              &independent_values,
+  const std::string                            &independent_column_name,
   const std::vector<std::vector<Tensor<1, 2>>> &dependent_vector,
-  const std::vector<std::string> &              dependent_column_name,
+  const std::vector<std::string>               &dependent_column_name,
   const unsigned int                            display_precision);
 
 template TableHandler
 make_table_scalars_tensors(
-  const std::vector<unsigned int> &             independent_values,
-  const std::string &                           independent_column_name,
+  const std::vector<unsigned int>              &independent_values,
+  const std::string                            &independent_column_name,
   const std::vector<std::vector<Tensor<1, 3>>> &dependent_vector,
-  const std::vector<std::string> &              dependent_column_name,
+  const std::vector<std::string>               &dependent_column_name,
   const unsigned int                            display_precision);
 
 template TableHandler
 make_table_scalars_tensors(
-  const std::vector<int> &         independent_values,
-  const std::string &              independent_column_name,
+  const std::vector<int>          &independent_values,
+  const std::string               &independent_column_name,
   const std::vector<Tensor<1, 2>> &dependent_vector,
-  const std::vector<std::string> & dependent_column_name,
+  const std::vector<std::string>  &dependent_column_name,
   const unsigned int               display_precision);
 
 template TableHandler
 make_table_scalars_tensors(
-  const std::vector<int> &         independent_values,
-  const std::string &              independent_column_name,
+  const std::vector<int>          &independent_values,
+  const std::string               &independent_column_name,
   const std::vector<Tensor<1, 3>> &dependent_vector,
-  const std::vector<std::string> & dependent_column_name,
+  const std::vector<std::string>  &dependent_column_name,
   const unsigned int               display_precision);
 
 template TableHandler
 make_table_scalars_tensors(
-  const std::vector<int> &                      independent_values,
-  const std::string &                           independent_column_name,
+  const std::vector<int>                       &independent_values,
+  const std::string                            &independent_column_name,
   const std::vector<std::vector<Tensor<1, 2>>> &dependent_vector,
-  const std::vector<std::string> &              dependent_column_name,
+  const std::vector<std::string>               &dependent_column_name,
   const unsigned int                            display_precision);
 
 template TableHandler
 make_table_scalars_tensors(
-  const std::vector<int> &                      independent_values,
-  const std::string &                           independent_column_name,
+  const std::vector<int>                       &independent_values,
+  const std::string                            &independent_column_name,
   const std::vector<std::vector<Tensor<1, 3>>> &dependent_vector,
-  const std::vector<std::string> &              dependent_column_name,
+  const std::vector<std::string>               &dependent_column_name,
   const unsigned int                            display_precision);
 
 template TableHandler
 make_table_tensors_tensors(
   const std::vector<Tensor<1, 2>> &independent_values,
-  const std::vector<std::string> & independent_column_name,
+  const std::vector<std::string>  &independent_column_name,
   const std::vector<Tensor<1, 2>> &dependent_vector,
-  const std::vector<std::string> & dependent_column_name,
+  const std::vector<std::string>  &dependent_column_name,
   const unsigned int               display_precision);
 
 template TableHandler
 make_table_tensors_tensors(
   const std::vector<Tensor<1, 3>> &independent_values,
-  const std::vector<std::string> & independent_column_name,
+  const std::vector<std::string>  &independent_column_name,
   const std::vector<Tensor<1, 3>> &dependent_vector,
-  const std::vector<std::string> & dependent_column_name,
+  const std::vector<std::string>  &dependent_column_name,
   const unsigned int               display_precision);
 
 template TableHandler
 make_table_tensors_scalars(
   const std::vector<Tensor<1, 2>> &independent_vector,
-  const std::vector<std::string> & independent_column_name,
-  const std::vector<double> &      dependent_values,
-  const std::string &              dependent_column_name,
+  const std::vector<std::string>  &independent_column_name,
+  const std::vector<double>       &dependent_values,
+  const std::string               &dependent_column_name,
   const unsigned int               display_precision);
 
 template TableHandler
 make_table_tensors_scalars(
   const std::vector<Tensor<1, 3>> &independent_vector,
-  const std::vector<std::string> & independent_column_name,
-  const std::vector<double> &      dependent_values,
-  const std::string &              dependent_column_name,
+  const std::vector<std::string>  &independent_column_name,
+  const std::vector<double>       &dependent_values,
+  const std::string               &dependent_column_name,
   const unsigned int               display_precision);
 
 

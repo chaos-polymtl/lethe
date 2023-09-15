@@ -96,7 +96,7 @@ public:
 
   virtual void
   vector_value(const Point<spacedim> &np,
-               Vector<double> &       values) const override;
+               Vector<double>        &values) const override;
 
   virtual double
   value(const Point<spacedim> &np, const unsigned int component) const override;
@@ -160,7 +160,7 @@ template <int dim, int spacedim>
 void
 PeriodicHillsPushForward<dim, spacedim>::vector_value(
   const Point<spacedim> &op,
-  Vector<double> &       values) const
+  Vector<double>        &values) const
 {
   const Point<spacedim> np =
     PeriodicHillsGrid<dim, spacedim>::hill_geometry(op, spacing_y, alpha);

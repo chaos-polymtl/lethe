@@ -37,8 +37,8 @@ template <int dim>
 class ParticleVisualization
 {
 public:
-  ParticleVisualization(Triangulation<dim> &     background_triangulation,
-                        std::string &            filename,
+  ParticleVisualization(Triangulation<dim>      &background_triangulation,
+                        std::string             &filename,
                         std::vector<Point<dim>> &positions,
                         std::vector<std::vector<double>> &counts);
 

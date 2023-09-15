@@ -60,7 +60,7 @@ public:
                                       boundary_conditions_cahn_hilliard;
   Parameters::InitialConditions<dim> *initial_condition;
   AnalyticalSolutions::AnalyticalSolution<dim> *analytical_solution;
-  SourceTerms::SourceTerm<dim> *                source_term;
+  SourceTerms::SourceTerm<dim>                 *source_term;
   Parameters::VelocitySource                    velocity_sources;
   std::shared_ptr<Parameters::IBParticles<dim>> particlesParameters;
   Parameters::DynamicFlowControl                flow_control;

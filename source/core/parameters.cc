@@ -276,7 +276,7 @@ namespace Parameters
   }
 
   void
-  PowerLawParameters::parse_parameters(ParameterHandler &   prm,
+  PowerLawParameters::parse_parameters(ParameterHandler    &prm,
                                        const Dimensionality dimensions)
   {
     prm.enter_subsection("power-law");
@@ -316,7 +316,7 @@ namespace Parameters
   }
 
   void
-  CarreauParameters::parse_parameters(ParameterHandler &   prm,
+  CarreauParameters::parse_parameters(ParameterHandler    &prm,
                                       const Dimensionality dimensions)
   {
     prm.enter_subsection("carreau");
@@ -352,7 +352,7 @@ namespace Parameters
   }
 
   void
-  NonNewtonian::parse_parameters(ParameterHandler &   prm,
+  NonNewtonian::parse_parameters(ParameterHandler    &prm,
                                  const Dimensionality dimensions)
   {
     prm.enter_subsection("non newtonian");
@@ -392,7 +392,7 @@ namespace Parameters
 
   void
   IsothermalIdealGasDensityParameters::parse_parameters(
-    ParameterHandler &   prm,
+    ParameterHandler    &prm,
     const Dimensionality dimensions)
   {
     prm.enter_subsection("isothermal_ideal_gas");
@@ -511,7 +511,7 @@ namespace Parameters
   }
 
   void
-  PhaseChange::parse_parameters(ParameterHandler &   prm,
+  PhaseChange::parse_parameters(ParameterHandler    &prm,
                                 const Dimensionality dimensions)
   {
     prm.enter_subsection("phase change");
@@ -677,7 +677,7 @@ namespace Parameters
   }
 
   void
-  PhysicalProperties::parse_parameters(ParameterHandler &   prm,
+  PhysicalProperties::parse_parameters(ParameterHandler    &prm,
                                        const Dimensionality dimensions)
   {
     prm.enter_subsection("physical properties");
@@ -832,7 +832,7 @@ namespace Parameters
   }
 
   void
-  Material::parse_parameters(ParameterHandler &               prm,
+  Material::parse_parameters(ParameterHandler                &prm,
                              std::string                      material_prefix,
                              const unsigned int               id,
                              const Parameters::Dimensionality dimensions)
@@ -1666,7 +1666,7 @@ namespace Parameters
   }
 
   void
-  NonLinearSolver::declare_parameters(ParameterHandler & prm,
+  NonLinearSolver::declare_parameters(ParameterHandler  &prm,
                                       const std::string &physics_name)
   {
     prm.enter_subsection("non-linear solver");
@@ -1754,7 +1754,7 @@ namespace Parameters
   }
 
   void
-  NonLinearSolver::parse_parameters(ParameterHandler & prm,
+  NonLinearSolver::parse_parameters(ParameterHandler  &prm,
                                     const std::string &physics_name)
   {
     prm.enter_subsection("non-linear solver");
@@ -1981,7 +1981,7 @@ namespace Parameters
   }
 
   void
-  LinearSolver::declare_parameters(ParameterHandler & prm,
+  LinearSolver::declare_parameters(ParameterHandler  &prm,
                                    const std::string &physics_name)
   {
     prm.enter_subsection("linear solver");
@@ -2089,7 +2089,7 @@ namespace Parameters
     prm.leave_subsection();
   }
   void
-  LinearSolver::parse_parameters(ParameterHandler & prm,
+  LinearSolver::parse_parameters(ParameterHandler  &prm,
                                  const std::string &physics_name)
   {
     prm.enter_subsection("linear solver");

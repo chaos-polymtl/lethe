@@ -109,7 +109,7 @@ public:
    * depend.
    */
   virtual double
-  get_dynamic_viscosity(const double &                 p_density_ref,
+  get_dynamic_viscosity(const double                  &p_density_ref,
                         const std::map<field, double> &field_values) const = 0;
 
   /**
@@ -120,9 +120,9 @@ public:
    */
   virtual void
   get_dynamic_viscosity_vector(
-    const double &                              p_density_ref,
+    const double                               &p_density_ref,
     const std::map<field, std::vector<double>> &field_vectors,
-    std::vector<double> &                       property_vector) = 0;
+    std::vector<double>                        &property_vector) = 0;
 
   /**
    * @brief is_non_newtonian_rheological_model Returns a boolean indicating if
@@ -401,7 +401,7 @@ public:
    */
   double
   get_dynamic_viscosity(
-    const double &                 p_density_ref,
+    const double                  &p_density_ref,
     const std::map<field, double> &field_values) const override
   {
     const double shear_rate_magnitude = field_values.at(field::shear_rate);
@@ -416,9 +416,9 @@ public:
    */
   void
   get_dynamic_viscosity_vector(
-    const double &                              p_density_ref,
+    const double                               &p_density_ref,
     const std::map<field, std::vector<double>> &field_vectors,
-    std::vector<double> &                       property_vector) override
+    std::vector<double>                        &property_vector) override
   {
     const std::vector<double> &shear_rate_magnitude =
       field_vectors.at(field::shear_rate);
@@ -561,7 +561,7 @@ public:
 
   double
   get_dynamic_viscosity(
-    const double &                 p_density_ref,
+    const double                  &p_density_ref,
     const std::map<field, double> &field_values) const override
   {
     const double shear_rate_magnitude = field_values.at(field::shear_rate);
@@ -576,9 +576,9 @@ public:
    */
   void
   get_dynamic_viscosity_vector(
-    const double &                              p_density_ref,
+    const double                               &p_density_ref,
     const std::map<field, std::vector<double>> &field_vectors,
-    std::vector<double> &                       property_vector) override
+    std::vector<double>                        &property_vector) override
   {
     const std::vector<double> &shear_rate_magnitude =
       field_vectors.at(field::shear_rate);
@@ -697,7 +697,7 @@ public:
 
   double
   get_dynamic_viscosity(
-    const double &                 p_density_ref,
+    const double                  &p_density_ref,
     const std::map<field, double> &field_values) const override
   {
     const double temperature = field_values.at(field::temperature);
@@ -712,9 +712,9 @@ public:
    */
   void
   get_dynamic_viscosity_vector(
-    const double &                              p_density_ref,
+    const double                               &p_density_ref,
     const std::map<field, std::vector<double>> &field_vectors,
-    std::vector<double> &                       property_vector) override
+    std::vector<double>                        &property_vector) override
   {
     const std::vector<double> &temperature =
       field_vectors.at(field::temperature);

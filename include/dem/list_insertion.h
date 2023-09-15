@@ -58,7 +58,7 @@ public:
    * @param dem_parameters DEM parameters declared in the .prm file
    */
   virtual void
-  insert(Particles::ParticleHandler<dim> &                particle_handler,
+  insert(Particles::ParticleHandler<dim>                 &particle_handler,
          const parallel::distributed::Triangulation<dim> &triangulation,
          const DEMSolverParameters<dim> &dem_parameters) override;
 
@@ -78,9 +78,9 @@ public:
    */
   void
   assign_particle_properties_for_list_insertion(
-    const DEMSolverParameters<dim> &  dem_parameters,
-    const unsigned int &              inserted_this_step_this_proc,
-    const unsigned int &              current_inserting_particle_type,
+    const DEMSolverParameters<dim>   &dem_parameters,
+    const unsigned int               &inserted_this_step_this_proc,
+    const unsigned int               &current_inserting_particle_type,
     std::vector<std::vector<double>> &particle_properties);
 
   // Number of remaining particles of each type that should be inserted in the

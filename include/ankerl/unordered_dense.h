@@ -306,7 +306,8 @@ namespace ankerl::unordered_dense
                     see2 = mix(r8(p + 32) ^ secret[3], r8(p + 40) ^ see2);
                     p += 48;
                     i -= 48;
-                } while (ANKERL_UNORDERED_DENSE_LIKELY(i > 48));
+                  }
+                while (ANKERL_UNORDERED_DENSE_LIKELY(i > 48));
                 seed ^= see1 ^ see2;
               }
             while (ANKERL_UNORDERED_DENSE_UNLIKELY(i > 16))
@@ -955,7 +956,7 @@ constexpr bool is_transparent_v = is_detected_v<detect_is_transparent, Hash>&& i
         auto
         do_place_element(dist_and_fingerprint_type dist_and_fingerprint,
                          value_idx_type            bucket_idx,
-                         K &&                      key,
+                         K                       &&key,
                          Args &&...args) -> std::pair<iterator, bool>
         {
           // emplace the new value. If that throws an exception, no harm done;
@@ -1102,8 +1103,8 @@ constexpr bool is_transparent_v = is_detected_v<detect_is_transparent, Hash>&& i
 
         explicit table(
           size_t                bucket_count,
-          Hash const &          hash               = Hash(),
-          KeyEqual const &      equal              = KeyEqual(),
+          Hash const           &hash               = Hash(),
+          KeyEqual const       &equal              = KeyEqual(),
           allocator_type const &alloc_or_container = allocator_type())
           : m_values(alloc_or_container)
           , m_hash(hash)
@@ -1120,7 +1121,7 @@ constexpr bool is_transparent_v = is_detected_v<detect_is_transparent, Hash>&& i
         {}
 
         table(size_t                bucket_count,
-              Hash const &          hash,
+              Hash const           &hash,
               allocator_type const &alloc)
           : table(bucket_count, hash, KeyEqual(), alloc)
         {}
@@ -1133,8 +1134,8 @@ constexpr bool is_transparent_v = is_detected_v<detect_is_transparent, Hash>&& i
         table(InputIt               first,
               InputIt               last,
               size_type             bucket_count = 0,
-              Hash const &          hash         = Hash(),
-              KeyEqual const &      equal        = KeyEqual(),
+              Hash const           &hash         = Hash(),
+              KeyEqual const       &equal        = KeyEqual(),
               allocator_type const &alloc        = allocator_type())
           : table(bucket_count, hash, equal, alloc)
         {
@@ -1153,7 +1154,7 @@ constexpr bool is_transparent_v = is_detected_v<detect_is_transparent, Hash>&& i
         table(InputIt               first,
               InputIt               last,
               size_type             bucket_count,
-              Hash const &          hash,
+              Hash const           &hash,
               allocator_type const &alloc)
           : table(first, last, bucket_count, hash, KeyEqual(), alloc)
         {}
@@ -1191,9 +1192,9 @@ constexpr bool is_transparent_v = is_detected_v<detect_is_transparent, Hash>&& i
 
         table(std::initializer_list<value_type> ilist,
               size_t                            bucket_count = 0,
-              Hash const &                      hash         = Hash(),
-              KeyEqual const &                  equal        = KeyEqual(),
-              allocator_type const &            alloc        = allocator_type())
+              Hash const                       &hash         = Hash(),
+              KeyEqual const                   &equal        = KeyEqual(),
+              allocator_type const             &alloc        = allocator_type())
           : table(bucket_count, hash, equal, alloc)
         {
           insert(ilist);
@@ -1201,14 +1202,14 @@ constexpr bool is_transparent_v = is_detected_v<detect_is_transparent, Hash>&& i
 
         table(std::initializer_list<value_type> ilist,
               size_type                         bucket_count,
-              allocator_type const &            alloc)
+              allocator_type const             &alloc)
           : table(ilist, bucket_count, Hash(), KeyEqual(), alloc)
         {}
 
         table(std::initializer_list<value_type> init,
               size_type                         bucket_count,
-              Hash const &                      hash,
-              allocator_type const &            alloc)
+              Hash const                       &hash,
+              allocator_type const             &alloc)
           : table(init, bucket_count, hash, KeyEqual(), alloc)
         {}
 
@@ -1241,7 +1242,7 @@ constexpr bool is_transparent_v = is_detected_v<detect_is_transparent, Hash>&& i
         auto
         operator=(table &&other) noexcept(noexcept(
           std::is_nothrow_move_assignable_v<value_container_type>
-            &&  std::is_nothrow_move_assignable_v<Hash>
+              &&std::is_nothrow_move_assignable_v<Hash>
               &&std::is_nothrow_move_assignable_v<KeyEqual>)) -> table &
         {
           if (&other != this)
@@ -1808,7 +1809,7 @@ constexpr bool is_transparent_v = is_detected_v<detect_is_transparent, Hash>&& i
         void
         swap(table &other) noexcept(
           noexcept(std::is_nothrow_swappable_v<value_container_type>
-                     &&  std::is_nothrow_swappable_v<Hash>
+                       &&std::is_nothrow_swappable_v<Hash>
                        &&std::is_nothrow_swappable_v<KeyEqual>))
         {
           using std::swap;

@@ -50,8 +50,8 @@ public:
    *
    * @param attenuation_coefficient_reactor Attenuation_coefficient_reactor defines the homogeneous attenuation coefficient of the reactor with respect to the reactor
    */
-  ParticleDetectorInteractions(RadioParticle<dim> &       particle,
-                               Detector<dim> &            detector,
+  ParticleDetectorInteractions(RadioParticle<dim>        &particle,
+                               Detector<dim>             &detector,
                                Parameters::RPTParameters &rpt_parameters)
     : particle_position(particle.get_position())
     , detector_face_position(detector.get_face_position())

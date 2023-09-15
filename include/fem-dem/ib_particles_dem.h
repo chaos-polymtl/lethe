@@ -69,7 +69,7 @@ public:
   initialize(const std::shared_ptr<Parameters::IBParticles<dim>> &p_nsparam,
              const std::shared_ptr<Parameters::Lagrangian::FloatingWalls<dim>>
                                                  floating_walls_parameters,
-             const MPI_Comm &                    mpi_communicator_input,
+             const MPI_Comm                     &mpi_communicator_input,
              const std::vector<IBParticle<dim>> &particles);
 
 
@@ -211,9 +211,9 @@ public:
   void
   update_particles_boundary_contact(
     const std::vector<IBParticle<dim>> &particles,
-    const DoFHandler<dim> &             dof_handler,
-    const Quadrature<dim - 1> &         face_quadrature_formula,
-    const Mapping<dim> &                mapping);
+    const DoFHandler<dim>              &dof_handler,
+    const Quadrature<dim - 1>          &face_quadrature_formula,
+    const Mapping<dim>                 &mapping);
 
 
   std::vector<IBParticle<dim>> dem_particles;

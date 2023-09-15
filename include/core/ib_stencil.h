@@ -66,8 +66,8 @@ public:
   support_points_for_interpolation(
     const unsigned int                                    order,
     const double                                          length_ratio,
-    IBParticle<dim> &                                     p,
-    const Point<dim> &                                    dof_point,
+    IBParticle<dim>                                      &p,
+    const Point<dim>                                     &dof_point,
     const typename DoFHandler<dim>::active_cell_iterator &cell_guess);
 
   /**
@@ -76,8 +76,8 @@ public:
   virtual std::tuple<Point<dim>, std::vector<Point<dim>>>
   support_points_for_interpolation(const unsigned int order,
                                    const double       length_ratio,
-                                   IBParticle<dim> &  p,
-                                   const Point<dim> & dof_point);
+                                   IBParticle<dim>   &p,
+                                   const Point<dim>  &dof_point);
 
   /**
    * @brief
@@ -90,8 +90,8 @@ public:
    */
   virtual Point<dim>
   point_for_cell_detection(
-    IBParticle<dim> &                                     p,
-    const Point<dim> &                                    dof_point,
+    IBParticle<dim>                                      &p,
+    const Point<dim>                                     &dof_point,
     const typename DoFHandler<dim>::active_cell_iterator &cell_guess);
 
   /**
@@ -126,8 +126,8 @@ public:
    *  is useful to reduce computation time
    */
   virtual double
-  ib_velocity(IBParticle<dim> &                                     p,
-              const Point<dim> &                                    dof_point,
+  ib_velocity(IBParticle<dim>                                      &p,
+              const Point<dim>                                     &dof_point,
               const unsigned int                                    component,
               const typename DoFHandler<dim>::active_cell_iterator &cell_guess);
 
@@ -135,8 +135,8 @@ public:
    * See overloaded function
    */
   virtual double
-  ib_velocity(IBParticle<dim> &  p,
-              const Point<dim> & dof_point,
+  ib_velocity(IBParticle<dim>   &p,
+              const Point<dim>  &dof_point,
               const unsigned int component);
 
 private:

@@ -55,7 +55,7 @@ namespace DEM
   statistics
   calculate_granular_statistics(
     const Particles::ParticleHandler<dim> &particle_handler,
-    const MPI_Comm &                       mpi_communicator);
+    const MPI_Comm                        &mpi_communicator);
 
 
 } // namespace DEM

@@ -1,5 +1,6 @@
 #
-# The clang-format (Clang 6) style file used by deal.II.
+# The clang-format (Clang 16) style file used by deal.II.
+# Slightly modified to be used in Lethe
 #
 
 AccessModifierOffset: -2
@@ -26,8 +27,9 @@ BinPackArguments: false
 BinPackParameters: false
 
 BraceWrapping:
+  AfterCaseLabel: true
   AfterClass: true
-  AfterControlStatement: true
+  AfterControlStatement: Always
   AfterEnum: true
   AfterExternBlock: true
   AfterFunction: true
@@ -36,6 +38,8 @@ BraceWrapping:
   AfterUnion: true
   BeforeCatch: true
   BeforeElse: true
+  BeforeLambdaBody: false
+  BeforeWhile: true
   IndentBraces: true
   SplitEmptyFunction: false
   SplitEmptyRecord: false
@@ -175,7 +179,7 @@ SpacesInContainerLiterals: false
 SpacesInParentheses: false
 SpacesInSquareBrackets: false
 
-Standard: Cpp11
+Standard: c++20
 
 TabWidth: 2
 

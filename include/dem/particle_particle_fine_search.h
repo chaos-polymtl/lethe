@@ -86,7 +86,7 @@ public:
     typename DEM::dem_data_structures<dim>::adjacent_particle_pairs
       &adjacent_particles,
     const typename DEM::dem_data_structures<dim>::particle_particle_candidates
-      &                  contact_pair_candidates,
+                        &contact_pair_candidates,
     const double         neighborhood_threshold,
     const Tensor<1, dim> periodic_offset = Tensor<1, dim>());
 };

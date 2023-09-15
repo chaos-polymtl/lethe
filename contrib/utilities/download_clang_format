@@ -24,23 +24,23 @@
 # This can be done with the compile_clang_format script.
 #
 
-VERSION=11
+VERSION=16
 PRG="$(cd "$(dirname "$0")" && pwd)/programs"
 CLANG_PATH="${PRG}/clang-${VERSION}"
 
-URL="https://github.com/dealii/dealii/releases/download/v9.3.0"
+URL="https://github.com/dealii/dealii/releases/download/v9.5.1"
 
 # Find out which kind of OS we are running and set the appropriate settings
 case "${OSTYPE}" in
   linux*)
     FILENAME="clang-format-${VERSION}-linux.tar.gz"
     CHECKSUM_CMD="sha256sum"
-    CHECKSUM="9420c4ed80268500ef357eb42b2e77dc55e807e559d6d9851f4808a9939fa47b  $FILENAME"
+    CHECKSUM="e6d92ab1b385f5e4392466a3cf651a9e403a5c212f4c1c3737ee173bc6d79d93  $FILENAME"
     ;;
   darwin*)
     FILENAME="clang-format-${VERSION}-darwin-intel.tar.gz"
     CHECKSUM_CMD="shasum"
-    CHECKSUM="5b8c310a660102a1aa46cc0242294fb14271797a4027883a698651411f8e51bf  $FILENAME"
+    CHECKSUM="edff4341fb3b9e25c670902227538be6348d3b91ff88aa676ff8e7bb589b2ae5  $FILENAME"
     ;;
   *)
     echo "unknown: ${OSTYPE}"

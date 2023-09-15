@@ -27,9 +27,9 @@ NonUniformInsertion<dim>::NonUniformInsertion(
 template <int dim>
 void
 NonUniformInsertion<dim>::insert(
-  Particles::ParticleHandler<dim> &                particle_handler,
+  Particles::ParticleHandler<dim>                 &particle_handler,
   const parallel::distributed::Triangulation<dim> &triangulation,
-  const DEMSolverParameters<dim> &                 dem_parameters)
+  const DEMSolverParameters<dim>                  &dem_parameters)
 {
   if (particles_of_each_type_remaining == 0 &&
       current_inserting_particle_type !=
@@ -160,7 +160,7 @@ NonUniformInsertion<dim>::create_random_number_container(
 template <>
 void
 NonUniformInsertion<2>::find_insertion_location_nonuniform(
-  Point<2> &                                   insertion_location,
+  Point<2>                                    &insertion_location,
   const unsigned int                           id,
   const double                                 random_number1,
   const double                                 random_number2,
@@ -195,7 +195,7 @@ NonUniformInsertion<2>::find_insertion_location_nonuniform(
 template <>
 void
 NonUniformInsertion<3>::find_insertion_location_nonuniform(
-  Point<3> &                                   insertion_location,
+  Point<3>                                    &insertion_location,
   const unsigned int                           id,
   const double                                 random_number1,
   const double                                 random_number2,

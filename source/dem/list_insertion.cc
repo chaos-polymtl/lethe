@@ -61,9 +61,9 @@ ListInsertion<dim>::ListInsertion(
 template <int dim>
 void
 ListInsertion<dim>::insert(
-  Particles::ParticleHandler<dim> &                particle_handler,
+  Particles::ParticleHandler<dim>                 &particle_handler,
   const parallel::distributed::Triangulation<dim> &triangulation,
-  const DEMSolverParameters<dim> &                 dem_parameters)
+  const DEMSolverParameters<dim>                  &dem_parameters)
 {
   // TODO refactor into a function call
   if (remaining_particles_of_each_type == 0 &&
@@ -139,9 +139,9 @@ ListInsertion<dim>::insert(
 template <int dim>
 void
 ListInsertion<dim>::assign_particle_properties_for_list_insertion(
-  const DEMSolverParameters<dim> &  dem_parameters,
-  const unsigned int &              inserted_this_step_this_proc,
-  const unsigned int &              current_inserting_particle_type,
+  const DEMSolverParameters<dim>   &dem_parameters,
+  const unsigned int               &inserted_this_step_this_proc,
+  const unsigned int               &current_inserting_particle_type,
   std::vector<std::vector<double>> &particle_properties)
 {
   // Clearing and resizing particle_properties

@@ -61,7 +61,7 @@ public:
    * @brief VOF - Base constructor.
    */
   VolumeOfFluid<dim>(
-    MultiphysicsInterface<dim> *     multiphysics_interface,
+    MultiphysicsInterface<dim>      *multiphysics_interface,
     const SimulationParameters<dim> &p_simulation_parameters,
     std::shared_ptr<parallel::DistributedTriangulationBase<dim>>
                                        p_triangulation,
@@ -429,8 +429,8 @@ private:
   virtual void
   assemble_local_system_matrix(
     const typename DoFHandler<dim>::active_cell_iterator &cell,
-    VOFScratchData<dim> &                                 scratch_data,
-    StabilizedMethodsCopyData &                           copy_data);
+    VOFScratchData<dim>                                  &scratch_data,
+    StabilizedMethodsCopyData                            &copy_data);
 
   /**
    * @brief Assemble the local rhs for a given cell
@@ -448,8 +448,8 @@ private:
   virtual void
   assemble_local_system_rhs(
     const typename DoFHandler<dim>::active_cell_iterator &cell,
-    VOFScratchData<dim> &                                 scratch_data,
-    StabilizedMethodsCopyData &                           copy_data);
+    VOFScratchData<dim>                                  &scratch_data,
+    StabilizedMethodsCopyData                            &copy_data);
 
   /**
    * @brief sets up the vector of assembler functions

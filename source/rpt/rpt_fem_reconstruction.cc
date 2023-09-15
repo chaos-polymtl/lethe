@@ -495,7 +495,7 @@ template <int dim>
 Vector<double>
 assemble_matrix_and_rhs(
   std::vector<std::vector<double>> &vertex_count,
-  std::vector<double> &             experimental_count,
+  std::vector<double>              &experimental_count,
   Parameters::RPTFEMReconstructionParameters::FEMCostFunction
     &cost_function_type)
 {
@@ -590,7 +590,7 @@ template <int dim>
 double
 RPTFEMReconstruction<dim>::calculate_reference_location_error(
   Vector<double> &reference_location,
-  const double &  last_constraint)
+  const double   &last_constraint)
 {
   std::vector<double> err_coordinates(dim + 1, 0);
   double              norm_error_coordinates = 0;
@@ -633,8 +633,8 @@ template <int dim>
 double
 RPTFEMReconstruction<dim>::calculate_cost(
   const TriaActiveIterator<DoFCellAccessor<dim, dim, false>> &cell,
-  Vector<double> &     reference_location,
-  const double &       last_constraint,
+  Vector<double>      &reference_location,
+  const double        &last_constraint,
   std::vector<double> &experimental_count)
 {
   double cost  = 0;
@@ -695,13 +695,13 @@ template <int dim>
 void
 RPTFEMReconstruction<dim>::search_position_in_reference_space(
   std::vector<std::vector<double>> &count_from_all_detectors,
-  std::vector<double> &             experimental_count,
+  std::vector<double>              &experimental_count,
   const typename DoFHandler<dim>::active_cell_iterator &cell,
-  const double &                                        tol_reference_location,
-  double &                                              max_cost,
-  Vector<double> &                                      reference_location,
-  bool &                                                position_found,
-  Point<dim> &                                          real_location)
+  const double                                         &tol_reference_location,
+  double                                               &max_cost,
+  Vector<double>                                       &reference_location,
+  bool                                                 &position_found,
+  Point<dim>                                           &real_location)
 {
   double last_constraint_reference_location;
   double norm_error_coordinates;

@@ -40,7 +40,7 @@ using namespace std;
 template <int dim>
 void
 input_parameter_inspection(const DEMSolverParameters<dim> &dem_parameters,
-                           const ConditionalOStream &      pcout,
+                           const ConditionalOStream       &pcout,
                            const double standard_deviation_multiplier);
 
 #endif /* input_parameter_inspection_h */
