@@ -40,8 +40,17 @@ main(int argc, char *argv[])
           prm.parse_input(argv[1]);
           NSparam.parse(prm);
 
-          MFNavierStokesSolver<2> problem(NSparam);
-          problem.solve();
+          if (NSparam.stabilization.use_default_stabilization == true ||
+              NSparam.stabilization.stabilization ==
+                Parameters::Stabilization::NavierStokesStabilization::pspg_supg)
+            {
+              MFNavierStokesSolver<2, NavierStokesSUPGPSPGOperator<2, double>>
+                problem(NSparam);
+              problem.solve();
+            }
+          else
+            throw std::runtime_error(
+              "Only SUPG/PSPG stabilization is supported at the moment.");
         }
 
       else if (dim == 3)
@@ -53,8 +62,17 @@ main(int argc, char *argv[])
           prm.parse_input(argv[1]);
           NSparam.parse(prm);
 
-          MFNavierStokesSolver<3> problem(NSparam);
-          problem.solve();
+          if (NSparam.stabilization.use_default_stabilization == true ||
+              NSparam.stabilization.stabilization ==
+                Parameters::Stabilization::NavierStokesStabilization::pspg_supg)
+            {
+              MFNavierStokesSolver<3, NavierStokesSUPGPSPGOperator<3, double>>
+                problem(NSparam);
+              problem.solve();
+            }
+          else
+            throw std::runtime_error(
+              "Only SUPG/PSPG stabilization is supported at the moment.");
         }
       else
         {

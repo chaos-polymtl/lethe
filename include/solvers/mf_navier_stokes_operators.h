@@ -68,8 +68,8 @@ public:
   NavierStokesOperatorBase(const Mapping<dim>              &mapping,
                            const DoFHandler<dim>           &dof_handler,
                            const AffineConstraints<number> &constraints,
-                           const Quadrature<1> &            quadrature,
-                           const Function<dim> *            forcing_function,
+                           const Quadrature<1>             &quadrature,
+                           const Function<dim>             *forcing_function,
                            const double                     kinematic_viscosity,
                            const unsigned int               mg_level);
   /**
@@ -89,8 +89,8 @@ public:
   reinit(const Mapping<dim>              &mapping,
          const DoFHandler<dim>           &dof_handler,
          const AffineConstraints<number> &constraints,
-         const Quadrature<1> &            quadrature,
-         const Function<dim> *            forcing_function,
+         const Quadrature<1>             &quadrature,
+         const Function<dim>             *forcing_function,
          const double                     kinematic_viscosity,
          const unsigned int               mg_level);
 
@@ -275,9 +275,9 @@ protected:
    */
   virtual void
   local_evaluate_residual(
-    const MatrixFree<dim, number> &              matrix_free,
-    VectorType &                                 dst,
-    const VectorType &                           src,
+    const MatrixFree<dim, number>               &matrix_free,
+    VectorType                                  &dst,
+    const VectorType                            &src,
     const std::pair<unsigned int, unsigned int> &range) const = 0;
 
 
