@@ -331,7 +331,6 @@ public:
   }
 
 
-
   // Physical properties
   PhysicalPropertiesManager            properties_manager;
   std::map<field, std::vector<double>> fields;

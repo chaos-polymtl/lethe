@@ -1601,7 +1601,7 @@ namespace Parameters
         "VOF barycenter name",
         "vof_barycenter_information",
         Patterns::FileName(),
-        "File name output for the barycenter information in VOF simulations");
+        "Output file name for the barycenter information in VOF simulations");
 
       prm.declare_entry(
         "calculate cahn hilliard barycenter",
@@ -1613,7 +1613,7 @@ namespace Parameters
         "cahn hilliard barycenter name",
         "cahn_hilliard_barycenter_information",
         Patterns::FileName(),
-        "File name output for the barycenter information in Cahn-Hilliard simulations");
+        "Output file name for the barycenter information in Cahn-Hilliard simulations");
     }
     prm.leave_subsection();
   }

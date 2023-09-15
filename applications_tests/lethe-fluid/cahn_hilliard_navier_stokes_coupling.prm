@@ -39,11 +39,10 @@ end
 #---------------------------------------------------
 
 subsection post-processing
-  set verbosity = verbose
+  set verbosity                            = verbose
   # Cahn-Hilliard statistics
   set calculate phase statistics = true
   set phase statistics name      = phase_statistics
-
 end
 
 #---------------------------------------------------
@@ -75,7 +74,7 @@ end
 #---------------------------------------------------
 
 subsection boundary conditions cahn hilliard
-  set number = 1
+  set number = 2
   subsection bc 0
     set id          = 2
     set type        = angle_of_contact
@@ -84,7 +83,6 @@ subsection boundary conditions cahn hilliard
     subsection bc 1
       set id          = 1
       set type        = free_angle
-      set angle value = 135
     end
 end
 

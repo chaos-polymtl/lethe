@@ -340,29 +340,6 @@ public:
           "    end\n"
           "  end\n");
       }
-
-    if (multiphysics.cahn_hilliard && multiphysics.VOF)
-      {
-        throw std::runtime_error(
-          "Cannot solve a multiphase problem using VOF and Cahn-Hilliard at the same time");
-      }
-
-    if (multiphysics.cahn_hilliard &&
-        physical_properties.number_of_material_interactions == 0)
-      {
-        throw std::logic_error(
-          "Inconsistency in .prm!\n cahn hilliard = true\n but no fluid-fluid material interactions specified in\n subsection physical properties\n"
-          " use:\n"
-          "  subsection material interaction $material_interaction_id\n"
-          "    set type = fluid-fluid\n"
-          "    subsection fluid-fluid interaction\n"
-          "      set first fluid id                     = 0\n"
-          "      set second fluid id                    = 1\n"
-          "      set cahn hilliard mobility model       = constant\n"
-          "      set cahn hilliard mobility coefficient = $value_of_coefficient\n"
-          "    end\n"
-          "  end");
-      }
   }
 
   inline bool

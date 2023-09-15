@@ -310,7 +310,6 @@ namespace Parameters
     parse_parameters(ParameterHandler &prm);
   };
 
-
   /**
    * @brief MobilityCahnHilliardParameters - Defines parameters for the mobility
    * models used in the Cahn-Hilliard equations.
@@ -766,7 +765,7 @@ namespace Parameters
     // Prefix for the barycenter output
     std::string barycenter_output_name;
 
-    // Prefix for the barycenter output fo Cahn-Hilliard simulations
+    // Prefix for the barycenter output of Cahn-Hilliard simulations
     std::string barycenter_cahn_hilliard_output_name;
 
     // Enable smoothing postprocessed vectors and scalars

@@ -591,11 +591,11 @@ CahnHilliard<dim>::postprocess(bool first_iteration)
               std::vector<std::string> dependent_column_names;
               dependent_column_names.push_back("x_cahn_hilliard");
               dependent_column_names.push_back("y_cahn_hilliard");
-              if (dim == 3)
+              if constexpr (dim == 3)
                 dependent_column_names.push_back("z_cahn_hilliard");
               dependent_column_names.push_back("vx_cahn_hilliard");
               dependent_column_names.push_back("vy_cahn_hilliard");
-              if (dim == 3)
+              if constexpr (dim == 3)
                 dependent_column_names.push_back("vz_cahn_hilliard");
 
               std::vector<Tensor<1, dim>> position_vector{
@@ -1070,8 +1070,6 @@ CahnHilliard<dim>::calculate_barycenter(
       if (cell->is_locally_owned())
         {
           fe_values_cahn_hilliard.reinit(cell);
-          //          quadrature_locations =
-          //            fe_values_cahn_hilliard[phase_order].get_quadrature_points();
           quadrature_locations =
             fe_values_cahn_hilliard.get_quadrature_points();
           fe_values_cahn_hilliard[phase_order].get_function_values(

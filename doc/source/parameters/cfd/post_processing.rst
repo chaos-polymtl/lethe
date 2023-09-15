@@ -173,7 +173,7 @@ This subsection controls the post-processing other than the forces and torque on
 		0.0000          0.0000               0.0000               0.0000            1000.0000 
 		1.0000         -0.9732               0.0000               1.4856               0.9732 
 
-* ``calculate VOF barycenter``: calculates the barycenter of fluid 1 and its velocity in VOF simulations. The barycenter :math:`\mathbf{x}_b` and its velocity :math:`\mathbf{v}_b` are defined as:
+* ``calculate VOF barycenter``: calculates the barycenter of ``fluid 1`` and its velocity in VOF simulations. The barycenter :math:`\mathbf{x}_b` and its velocity :math:`\mathbf{v}_b` are defined as:
 
   .. math::
 
@@ -185,31 +185,28 @@ This subsection controls the post-processing other than the forces and torque on
 
   where :math:`\psi` is the filtered phase indicator.
   
-* ``set VOF barycenter name`` name of the output file contianing the position and velocity of the barycenter for VOF simulations.
+* ``set VOF barycenter name``: name of the output file containing the position and velocity of the barycenter for VOF simulations.
   
-* ``calculate cahn hilliard barycenter``: calculates the barycenter of fluid 1 and its velocity in Cahn-Hilliard simulations. The barycenter :math:`\mathbf{x}_b` and its velocity :math:`\mathbf{v}_b` are defined as:
+* ``calculate cahn hilliard barycenter``: calculates the barycenter of ``fluid 1`` and its velocity in Cahn-Hilliard simulations. The barycenter :math:`\mathbf{x}_b` and its velocity :math:`\mathbf{v}_b` are defined as:
 
   .. math::
 
-      \mathbf{x_b} = \frac{\int_{\Omega} 0.5\cdot(1-\phi) \mathbf{x} \mathrm{d}\Omega }{\int_{\Omega} \psi \mathrm{d}\Omega}
+      \mathbf{x_b} = \frac{\int_{\Omega} 0.5(1-\phi) \mathbf{x} \mathrm{d}\Omega }{\int_{\Omega} \psi \mathrm{d}\Omega}
 
   .. math::
 
-      \mathbf{v_b} = \frac{\int_{\Omega} 0.5\cdot(1-\phi) \mathbf{u} \mathrm{d}\Omega }{\int_{\Omega} \psi \mathrm{d}\Omega}
+      \mathbf{v_b} = \frac{\int_{\Omega} 0.5(1-\phi) \mathbf{u} \mathrm{d}\Omega }{\int_{\Omega} \psi \mathrm{d}\Omega}
 
-  where :math:`\phi` is the phase parameter.
+  where :math:`\phi` is the phase order parameter.
   
 * ``set cahn hilliard barycenter name`` name of the output file contianing the position and velocity of the barycenter for Cahn-Hilliard simulations
   
-  * ``calculate phase statistics``: controls if calculation of phase statistics coming from the solution of the Cahn-Hilliard equations is enabled. Statistics include: minimum, maximum, average and standard-deviation of the phase order parameter.
-  
-    .. warning::
+* ``calculate phase statistics``: controls if calculation of phase statistics coming from the solution of the Cahn-Hilliard equations is enabled. Statistics include: minimum, maximum, average and standard-deviation of the phase order parameter.
 
-        Do not forget to ``set cahn hilliard = true`` in the :doc:`multiphysics` subsection of the ``.prm``.
+  .. warning::
 
-  * ``phase statistics name``: output filename for phase statistics calculations.
+      Do not forget to ``set cahn hilliard = true`` in the :doc:`multiphysics` subsection of the ``.prm``.
 
-
-
+* ``phase statistics name``: name of the output file containing phase order parameter statistics.
 
         

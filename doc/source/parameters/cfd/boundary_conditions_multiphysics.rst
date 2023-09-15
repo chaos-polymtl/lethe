@@ -129,7 +129,7 @@ For VOF boundary conditions (multiphase flow), the possible ``types`` are ``none
 Cahn-Hilliard
 ^^^^^^^^^^^^^^
 
-For Cahn-Hilliard boundary conditions, the possible ``types`` are ``noflux`` (default), ``dirichlet``,``angle_of_contact`` and ``free_angle`` . The parameters for ``dirichlet`` , ``angle_of_contact`` and ``free_angle``  are shown:
+For Cahn-Hilliard boundary conditions, the possible ``types`` are ``noflux`` (default), ``dirichlet``, ``angle_of_contact`` and ``free_angle``. The parameters for each type of Cahn-Hilliard boundary conditions are shown:
 
 .. code-block:: text
 
@@ -165,5 +165,5 @@ For Cahn-Hilliard boundary conditions, the possible ``types`` are ``noflux`` (de
     * ``noflux`` (default) so that no phase leave the simulation domain.
     * ``dirichlet`` to impose a given phase order parameter function on the boundary. This function can depend on position (:math:`x,y,z`) and on time (:math:`t`).
     * ``angle_of_contact`` to impose a given angle of contact ``angle value`` between the two phases at the boundary. It refers to the inner angle of contact, in degrees (°).
-    * ``free_angle` to leave the angle as a free variable to be solved. 
+    * ``free_angle`` to leave the angle as a free variable to be solved. 
 

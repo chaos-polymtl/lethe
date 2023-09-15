@@ -22,8 +22,6 @@ test()
   deallog << "Test 1, mobility = " << mobility_model.value(field_values)
           << std::endl;
   field_values[field::phase_order_cahn_hilliard] = -0.3;
-  // field values can remain empty since the surface tension density does
-  // not depend on any fields
   deallog << "Test 2, mobility = " << mobility_model.value(field_values)
           << std::endl;
 

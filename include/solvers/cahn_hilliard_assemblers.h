@@ -172,7 +172,7 @@ public:
 };
 
 /**
- * @brief Class that assembles the boundary condition to let the angle of contact being free, thus adding a degree of freedom to the problem
+ * @brief Class that assembles the boundary condition that allows a free angle of contact, thus adding a degree of freedom to the problem
  *
  * @tparam dim An integer that denotes the number of spatial dimensions
  *
@@ -184,11 +184,9 @@ class CahnHilliardAssemblerFreeAngle : public CahnHilliardAssemblerBase<dim>
 public:
   CahnHilliardAssemblerFreeAngle(
     std::shared_ptr<SimulationControl> simulation_control,
-    Parameters::CahnHilliard           cahn_hilliard_parameters,
     const BoundaryConditions::CahnHilliardBoundaryConditions<dim>
       &p_boundary_conditions_cahn_hilliard)
     : CahnHilliardAssemblerBase<dim>(simulation_control)
-    , cahn_hilliard_parameters(cahn_hilliard_parameters)
     , boundary_conditions_cahn_hilliard(p_boundary_conditions_cahn_hilliard)
   {}
 
@@ -212,7 +210,6 @@ public:
                StabilizedMethodsCopyData &   copy_data) override;
 
 
-  Parameters::CahnHilliard cahn_hilliard_parameters;
   const BoundaryConditions::CahnHilliardBoundaryConditions<dim>
     &boundary_conditions_cahn_hilliard;
 };
