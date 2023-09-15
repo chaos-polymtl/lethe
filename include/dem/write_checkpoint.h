@@ -55,14 +55,14 @@ using namespace std;
 
 template <int dim>
 void
-write_checkpoint(TimerOutput &                       computing_timer,
-                 const DEMSolverParameters<dim> &    dem_parameters,
+write_checkpoint(TimerOutput                        &computing_timer,
+                 const DEMSolverParameters<dim>     &dem_parameters,
                  std::shared_ptr<SimulationControl> &simulation_control,
-                 PVDHandler &                        particles_pvdhandler,
-                 PVDHandler &                        grid_pvdhandler,
+                 PVDHandler                         &particles_pvdhandler,
+                 PVDHandler                         &grid_pvdhandler,
                  parallel::distributed::Triangulation<dim> &triangulation,
-                 Particles::ParticleHandler<dim> &          particle_handler,
-                 const ConditionalOStream &                 pcout,
-                 MPI_Comm &                                 mpi_communicator);
+                 Particles::ParticleHandler<dim>           &particle_handler,
+                 const ConditionalOStream                  &pcout,
+                 MPI_Comm                                  &mpi_communicator);
 
 #endif /* write_checkpoint_h */

@@ -64,11 +64,11 @@ public:
    * @param kinematic_viscosity Kinematic viscosity.
    * @param mg_level Level of the operator in case of MG methods.
    */
-  NavierStokesOperatorBase(const Mapping<dim> &             mapping,
-                           const DoFHandler<dim> &          dof_handler,
+  NavierStokesOperatorBase(const Mapping<dim>              &mapping,
+                           const DoFHandler<dim>           &dof_handler,
                            const AffineConstraints<number> &constraints,
-                           const Quadrature<dim> &          quadrature,
-                           const Function<dim> *            forcing_function,
+                           const Quadrature<dim>           &quadrature,
+                           const Function<dim>             *forcing_function,
                            const double                     kinematic_viscosity,
                            const unsigned int               mg_level);
   /**
@@ -85,11 +85,11 @@ public:
    * @param mg_level Level of the operator in case of MG methods.
    */
   void
-  reinit(const Mapping<dim> &             mapping,
-         const DoFHandler<dim> &          dof_handler,
+  reinit(const Mapping<dim>              &mapping,
+         const DoFHandler<dim>           &dof_handler,
          const AffineConstraints<number> &constraints,
-         const Quadrature<dim> &          quadrature,
-         const Function<dim> *            forcing_function,
+         const Quadrature<dim>           &quadrature,
+         const Function<dim>             *forcing_function,
          const double                     kinematic_viscosity,
          const unsigned int               mg_level);
 
@@ -250,9 +250,9 @@ protected:
    */
   void
   do_cell_integral_range(
-    const MatrixFree<dim, number> &              matrix_free,
-    VectorType &                                 dst,
-    const VectorType &                           src,
+    const MatrixFree<dim, number>               &matrix_free,
+    VectorType                                  &dst,
+    const VectorType                            &src,
     const std::pair<unsigned int, unsigned int> &range) const;
 
 
@@ -268,9 +268,9 @@ protected:
    */
   virtual void
   local_evaluate_residual(
-    const MatrixFree<dim, number> &              matrix_free,
-    VectorType &                                 dst,
-    const VectorType &                           src,
+    const MatrixFree<dim, number>               &matrix_free,
+    VectorType                                  &dst,
+    const VectorType                            &src,
     const std::pair<unsigned int, unsigned int> &range) const;
 
 
@@ -291,7 +291,7 @@ protected:
   mutable TrilinosWrappers::SparseMatrix system_matrix;
   AlignedVector<VectorizedArray<number>> element_size;
   unsigned int                           fe_degree;
-  const Function<dim> *                  forcing_function;
+  const Function<dim>                   *forcing_function;
   double                                 kinematic_viscosity;
 
   // Variables needed from the last Newton step vector
@@ -353,9 +353,9 @@ private:
    */
   void
   local_evaluate_residual(
-    const MatrixFree<dim, number> &              matrix_free,
-    VectorType &                                 dst,
-    const VectorType &                           src,
+    const MatrixFree<dim, number>               &matrix_free,
+    VectorType                                  &dst,
+    const VectorType                            &src,
     const std::pair<unsigned int, unsigned int> &range) const override;
 };
 

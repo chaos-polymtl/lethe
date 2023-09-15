@@ -59,7 +59,7 @@ public:
 
   virtual void
   assemble_matrix(HeatTransferScratchData<dim> &scratch_data,
-                  StabilizedMethodsCopyData &   copy_data) = 0;
+                  StabilizedMethodsCopyData    &copy_data) = 0;
 
   /**
    * @brief assemble_matrix Interface for the call to rhs
@@ -71,7 +71,7 @@ public:
 
   virtual void
   assemble_rhs(HeatTransferScratchData<dim> &scratch_data,
-               StabilizedMethodsCopyData &   copy_data) = 0;
+               StabilizedMethodsCopyData    &copy_data) = 0;
 
 protected:
   std::shared_ptr<SimulationControl> simulation_control;
@@ -105,7 +105,7 @@ public:
    */
   virtual void
   assemble_matrix(HeatTransferScratchData<dim> &scratch_data,
-                  StabilizedMethodsCopyData &   copy_data) override;
+                  StabilizedMethodsCopyData    &copy_data) override;
 
 
   /**
@@ -115,7 +115,7 @@ public:
    */
   virtual void
   assemble_rhs(HeatTransferScratchData<dim> &scratch_data,
-               StabilizedMethodsCopyData &   copy_data) override;
+               StabilizedMethodsCopyData    &copy_data) override;
 };
 
 /**
@@ -143,7 +143,7 @@ public:
 
   virtual void
   assemble_matrix(HeatTransferScratchData<dim> &scratch_data,
-                  StabilizedMethodsCopyData &   copy_data) override;
+                  StabilizedMethodsCopyData    &copy_data) override;
 
   /**
    * @brief assemble_rhs Assembles the rhs
@@ -152,7 +152,7 @@ public:
    */
   virtual void
   assemble_rhs(HeatTransferScratchData<dim> &scratch_data,
-               StabilizedMethodsCopyData &   copy_data) override;
+               StabilizedMethodsCopyData    &copy_data) override;
 
   const bool GGLS = true;
 };
@@ -184,7 +184,7 @@ public:
 
   virtual void
   assemble_matrix(HeatTransferScratchData<dim> &scratch_data,
-                  StabilizedMethodsCopyData &   copy_data) override;
+                  StabilizedMethodsCopyData    &copy_data) override;
 
   /**
    * @brief assemble_rhs Assembles the rhs
@@ -193,7 +193,7 @@ public:
    */
   virtual void
   assemble_rhs(HeatTransferScratchData<dim> &scratch_data,
-               StabilizedMethodsCopyData &   copy_data) override;
+               StabilizedMethodsCopyData    &copy_data) override;
 
   const BoundaryConditions::HTBoundaryConditions<dim> &boundary_conditions_ht;
 };
@@ -218,7 +218,7 @@ public:
 
   virtual void
   assemble_matrix(HeatTransferScratchData<dim> &scratch_data,
-                  StabilizedMethodsCopyData &   copy_data) override;
+                  StabilizedMethodsCopyData    &copy_data) override;
 
   /**
    * @brief assemble_rhs Assembles the rhs
@@ -227,7 +227,7 @@ public:
    */
   virtual void
   assemble_rhs(HeatTransferScratchData<dim> &scratch_data,
-               StabilizedMethodsCopyData &   copy_data) override;
+               StabilizedMethodsCopyData    &copy_data) override;
 };
 
 /**
@@ -254,7 +254,7 @@ public:
 
   virtual void
   assemble_matrix(HeatTransferScratchData<dim> &scratch_data,
-                  StabilizedMethodsCopyData &   copy_data) override;
+                  StabilizedMethodsCopyData    &copy_data) override;
 
   /**
    * @brief assemble_rhs Assembles the rhs
@@ -263,7 +263,7 @@ public:
    */
   virtual void
   assemble_rhs(HeatTransferScratchData<dim> &scratch_data,
-               StabilizedMethodsCopyData &   copy_data) override;
+               StabilizedMethodsCopyData    &copy_data) override;
 
 
 protected:
@@ -300,7 +300,7 @@ public:
 
   virtual void
   assemble_matrix(HeatTransferScratchData<dim> &scratch_data,
-                  StabilizedMethodsCopyData &   copy_data) override;
+                  StabilizedMethodsCopyData    &copy_data) override;
 
   /**
    * @brief assemble_rhs Assembles the rhs
@@ -309,7 +309,7 @@ public:
    */
   virtual void
   assemble_rhs(HeatTransferScratchData<dim> &scratch_data,
-               StabilizedMethodsCopyData &   copy_data) override;
+               StabilizedMethodsCopyData    &copy_data) override;
 
 protected:
   std::shared_ptr<Parameters::Laser<dim>> laser_parameters;
@@ -347,7 +347,7 @@ public:
    */
   virtual void
   assemble_matrix(HeatTransferScratchData<dim> &scratch_data,
-                  StabilizedMethodsCopyData &   copy_data) override;
+                  StabilizedMethodsCopyData    &copy_data) override;
 
   /**
    * @brief assemble_rhs Assembles the rhs
@@ -356,7 +356,7 @@ public:
    */
   virtual void
   assemble_rhs(HeatTransferScratchData<dim> &scratch_data,
-               StabilizedMethodsCopyData &   copy_data) override;
+               StabilizedMethodsCopyData    &copy_data) override;
 
 protected:
   std::shared_ptr<Parameters::Laser<dim>> laser_parameters;
@@ -396,7 +396,7 @@ public:
    */
   virtual void
   assemble_matrix(HeatTransferScratchData<dim> &scratch_data,
-                  StabilizedMethodsCopyData &   copy_data) override;
+                  StabilizedMethodsCopyData    &copy_data) override;
 
   /**
    * @brief assemble_rhs Assembles the rhs
@@ -405,7 +405,7 @@ public:
    */
   virtual void
   assemble_rhs(HeatTransferScratchData<dim> &scratch_data,
-               StabilizedMethodsCopyData &   copy_data) override;
+               StabilizedMethodsCopyData    &copy_data) override;
 
 protected:
   std::shared_ptr<Parameters::Laser<dim>> laser_parameters;

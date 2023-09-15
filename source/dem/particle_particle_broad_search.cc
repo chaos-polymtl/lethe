@@ -11,7 +11,7 @@ template <int dim>
 void
 ParticleParticleBroadSearch<dim>::find_particle_particle_contact_pairs(
   dealii::Particles::ParticleHandler<dim> &particle_handler,
-  DEMContactManager<dim> &                 container_manager)
+  DEMContactManager<dim>                  &container_manager)
 {
   // Pre-fetch and clear containers
   auto &local_contact_pair_candidates =
@@ -136,8 +136,8 @@ template <int dim>
 void
 ParticleParticleBroadSearch<dim>::find_particle_particle_contact_pairs(
   dealii::Particles::ParticleHandler<dim> &particle_handler,
-  DEMContactManager<dim> &                 container_manager,
-  const DisableContacts<dim> &             disable_contacts_object)
+  DEMContactManager<dim>                  &container_manager,
+  const DisableContacts<dim>              &disable_contacts_object)
 {
   // Pre-fetch and clear containers
   auto &local_contact_pair_candidates =
@@ -295,7 +295,7 @@ template <int dim>
 void
 ParticleParticleBroadSearch<dim>::find_particle_particle_periodic_contact_pairs(
   dealii::Particles::ParticleHandler<dim> &particle_handler,
-  DEMContactManager<dim> &                 container_manager)
+  DEMContactManager<dim>                  &container_manager)
 {
   // Pre-fetch and clear containers
   auto &local_contact_pair_periodic_candidates =
@@ -471,8 +471,8 @@ template <int dim>
 void
 ParticleParticleBroadSearch<dim>::find_particle_particle_periodic_contact_pairs(
   dealii::Particles::ParticleHandler<dim> &particle_handler,
-  DEMContactManager<dim> &                 container_manager,
-  const DisableContacts<dim> &             disable_contacts_object)
+  DEMContactManager<dim>                  &container_manager,
+  const DisableContacts<dim>              &disable_contacts_object)
 {
   // Pre-fetch and clear containers
   auto &local_contact_pair_periodic_candidates =

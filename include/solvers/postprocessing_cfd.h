@@ -64,11 +64,11 @@
  */
 template <int dim, typename VectorType>
 std::pair<double, double>
-calculate_pressure_drop(const DoFHandler<dim> &       dof_handler,
+calculate_pressure_drop(const DoFHandler<dim>        &dof_handler,
                         std::shared_ptr<Mapping<dim>> mapping,
-                        const VectorType &            evaluation_point,
-                        const Quadrature<dim> &       cell_quadrature_formula,
-                        const Quadrature<dim - 1> &   face_quadrature_formula,
+                        const VectorType             &evaluation_point,
+                        const Quadrature<dim>        &cell_quadrature_formula,
+                        const Quadrature<dim - 1>    &face_quadrature_formula,
                         const unsigned int            inlet_boundary_id,
                         const unsigned int            outlet_boundary_id);
 
@@ -89,10 +89,10 @@ calculate_pressure_drop(const DoFHandler<dim> &       dof_handler,
 template <int dim, typename VectorType>
 double
 calculate_CFL(const DoFHandler<dim> &dof_handler,
-              const VectorType &     evaluation_point,
+              const VectorType      &evaluation_point,
               const double           time_step,
               const Quadrature<dim> &quadrature_formula,
-              const Mapping<dim> &   mapping);
+              const Mapping<dim>    &mapping);
 
 /**
  * @brief Calculate the average enstrophy in the simulation domain
@@ -111,9 +111,9 @@ calculate_CFL(const DoFHandler<dim> &dof_handler,
 template <int dim, typename VectorType>
 double
 calculate_enstrophy(const DoFHandler<dim> &dof_handler,
-                    const VectorType &     evaluation_point,
+                    const VectorType      &evaluation_point,
                     const Quadrature<dim> &quadrature_formula,
-                    const Mapping<dim> &   mapping);
+                    const Mapping<dim>    &mapping);
 
 /**
  * @brief Calculate the average kinetic energy in the simulation domain
@@ -132,9 +132,9 @@ calculate_enstrophy(const DoFHandler<dim> &dof_handler,
 template <int dim, typename VectorType>
 double
 calculate_kinetic_energy(const DoFHandler<dim> &dof_handler,
-                         const VectorType &     evaluation_point,
+                         const VectorType      &evaluation_point,
                          const Quadrature<dim> &quadrature_formula,
-                         const Mapping<dim> &   mapping);
+                         const Mapping<dim>    &mapping);
 
 /**
  * @brief Calculates the apparent viscosity of the fluid for non Newtonian flows.
@@ -153,10 +153,10 @@ calculate_kinetic_energy(const DoFHandler<dim> &dof_handler,
  */
 template <int dim, typename VectorType>
 double
-calculate_apparent_viscosity(const DoFHandler<dim> &    dof_handler,
-                             const VectorType &         evaluation_point,
-                             const Quadrature<dim> &    quadrature_formula,
-                             const Mapping<dim> &       mapping,
+calculate_apparent_viscosity(const DoFHandler<dim>     &dof_handler,
+                             const VectorType          &evaluation_point,
+                             const Quadrature<dim>     &quadrature_formula,
+                             const Mapping<dim>        &mapping,
                              PhysicalPropertiesManager &properties_manager);
 
 /**
@@ -182,12 +182,12 @@ calculate_apparent_viscosity(const DoFHandler<dim> &    dof_handler,
 template <int dim, typename VectorType>
 std::vector<std::vector<Tensor<1, dim>>>
 calculate_forces(
-  const DoFHandler<dim> &                              dof_handler,
-  const VectorType &                                   evaluation_point,
-  PhysicalPropertiesManager &                          properties_manager,
+  const DoFHandler<dim>                               &dof_handler,
+  const VectorType                                    &evaluation_point,
+  PhysicalPropertiesManager                           &properties_manager,
   const BoundaryConditions::NSBoundaryConditions<dim> &boundary_conditions,
-  const Quadrature<dim - 1> &                          face_quadrature_formula,
-  const Mapping<dim> &                                 mapping);
+  const Quadrature<dim - 1>                           &face_quadrature_formula,
+  const Mapping<dim>                                  &mapping);
 
 
 /**
@@ -213,12 +213,12 @@ calculate_forces(
 template <int dim, typename VectorType>
 std::vector<Tensor<1, 3>>
 calculate_torques(
-  const DoFHandler<dim> &                              dof_handler,
-  const VectorType &                                   evaluation_point,
-  PhysicalPropertiesManager &                          properties_manager,
+  const DoFHandler<dim>                               &dof_handler,
+  const VectorType                                    &evaluation_point,
+  PhysicalPropertiesManager                           &properties_manager,
   const BoundaryConditions::NSBoundaryConditions<dim> &boundary_conditions,
-  const Quadrature<dim - 1> &                          face_quadrature_formula,
-  const Mapping<dim> &                                 mapping);
+  const Quadrature<dim - 1>                           &face_quadrature_formula,
+  const Mapping<dim>                                  &mapping);
 
 
 /**
@@ -243,10 +243,10 @@ calculate_torques(
 template <int dim, typename VectorType>
 std::pair<double, double>
 calculate_L2_error(const DoFHandler<dim> &dof_handler,
-                   const VectorType &     evaluation_point,
-                   const Function<dim> *  exact_solution,
+                   const VectorType      &evaluation_point,
+                   const Function<dim>   *exact_solution,
                    const Quadrature<dim> &quadrature_formula,
-                   const Mapping<dim> &   mapping);
+                   const Mapping<dim>    &mapping);
 
 /**
  * @brief calculate_flow_rate. This function calculates the volumetric flow
@@ -267,11 +267,11 @@ calculate_L2_error(const DoFHandler<dim> &dof_handler,
  */
 template <int dim, typename VectorType>
 std::pair<double, double>
-calculate_flow_rate(const DoFHandler<dim> &    dof_handler,
-                    const VectorType &         present_solution,
-                    const unsigned int &       boundary_id,
+calculate_flow_rate(const DoFHandler<dim>     &dof_handler,
+                    const VectorType          &present_solution,
+                    const unsigned int        &boundary_id,
                     const Quadrature<dim - 1> &face_quadrature_formula,
-                    const Mapping<dim> &       mapping);
+                    const Mapping<dim>        &mapping);
 
 /**
  * @brief calculate_average_velocity. This function calculates average velocity
@@ -290,11 +290,11 @@ calculate_flow_rate(const DoFHandler<dim> &    dof_handler,
  */
 template <int dim, typename VectorType>
 double
-calculate_average_velocity(const DoFHandler<dim> &    dof_handler,
-                           const VectorType &         present_solution,
-                           const unsigned int &       boundary_id,
+calculate_average_velocity(const DoFHandler<dim>     &dof_handler,
+                           const VectorType          &present_solution,
+                           const unsigned int        &boundary_id,
                            const Quadrature<dim - 1> &face_quadrature_formula,
-                           const Mapping<dim> &       mapping);
+                           const Mapping<dim>        &mapping);
 
 /**
  * @brief calculate_average_velocity. This function calculates the average velocity of
@@ -323,11 +323,11 @@ template <int dim, typename VectorType>
 double
 calculate_average_velocity(const DoFHandler<dim> &dof_handler,
                            const DoFHandler<dim> &void_fraction_dof_handler,
-                           const VectorType &     present_solution,
-                           const VectorType &  present_void_fraction_solution,
+                           const VectorType      &present_solution,
+                           const VectorType   &present_void_fraction_solution,
                            const unsigned int &flow_direction,
                            const Quadrature<dim> &quadrature_formula,
-                           const Mapping<dim> &   mapping);
+                           const Mapping<dim>    &mapping);
 
 
 

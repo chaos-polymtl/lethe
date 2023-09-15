@@ -21,7 +21,7 @@ public:
 template <int dim>
 void
 ExactInitialSolution<dim>::vector_value(const Point<dim> &p,
-                                        Vector<double> &  values) const
+                                        Vector<double>   &values) const
 {
   double x  = p[0];
   double y  = p[1];

@@ -71,9 +71,9 @@ HeatTransferScratchData<dim>::allocate()
 template <int dim>
 void
 HeatTransferScratchData<dim>::enable_vof(
-  const FiniteElement<dim> &         fe,
-  const Quadrature<dim> &            quadrature,
-  const Mapping<dim> &               mapping,
+  const FiniteElement<dim>          &fe,
+  const Quadrature<dim>             &quadrature,
+  const Mapping<dim>                &mapping,
   const Parameters::VOF_PhaseFilter &phase_filter_parameters)
 {
   gather_vof    = true;
@@ -105,9 +105,9 @@ HeatTransferScratchData<dim>::enable_vof(
 template <int dim>
 void
 HeatTransferScratchData<dim>::enable_vof(
-  const FiniteElement<dim> &                      fe,
-  const Quadrature<dim> &                         quadrature,
-  const Mapping<dim> &                            mapping,
+  const FiniteElement<dim>                       &fe,
+  const Quadrature<dim>                          &quadrature,
+  const Mapping<dim>                             &mapping,
   const std::shared_ptr<VolumeOfFluidFilterBase> &filter)
 {
   gather_vof    = true;
@@ -170,7 +170,8 @@ HeatTransferScratchData<dim>::calculate_physical_properties()
     {
       switch (properties_manager.get_number_of_fluids())
         {
-            case 1: {
+          case 1:
+            {
               const auto density_model = properties_manager.get_density();
               const auto specific_heat_model =
                 properties_manager.get_specific_heat();
@@ -189,7 +190,8 @@ HeatTransferScratchData<dim>::calculate_physical_properties()
 
               break;
             }
-            case 2: {
+          case 2:
+            {
               const auto density_models =
                 properties_manager.get_density_vector();
               const auto specific_heat_models =

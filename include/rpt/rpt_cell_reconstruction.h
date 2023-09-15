@@ -54,9 +54,9 @@ public:
    *
    */
   RPTCellReconstruction(
-    Parameters::RPTParameters &              rpt_parameters,
+    Parameters::RPTParameters               &rpt_parameters,
     Parameters::RPTReconstructionParameters &rpt_reconstruction_parameters,
-    Parameters::DetectorParameters &         rpt_detector_parameters);
+    Parameters::DetectorParameters          &rpt_detector_parameters);
 
   /**
    * @brief Set up grid and find positions for every unknown particle positions.

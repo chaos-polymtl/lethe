@@ -35,6 +35,6 @@ using namespace std;
 
 void
 print_initial_information(const ConditionalOStream &pcout,
-                          const unsigned int &      n_mpi_processes);
+                          const unsigned int       &n_mpi_processes);
 
 #endif /* print_initial_information_h */

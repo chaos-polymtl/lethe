@@ -5,7 +5,7 @@ using namespace dealii;
 template <int dim>
 std::shared_ptr<ParticleWallContactForce<dim>>
 set_particle_wall_contact_force_model(
-  const DEMSolverParameters<dim> &                 dem_parameters,
+  const DEMSolverParameters<dim>                  &dem_parameters,
   const parallel::distributed::Triangulation<dim> &triangulation,
   const double                                     triangulation_cell_diameter)
 {
@@ -49,12 +49,12 @@ set_particle_wall_contact_force_model(
 
 template std::shared_ptr<ParticleWallContactForce<2>>
 set_particle_wall_contact_force_model(
-  const DEMSolverParameters<2> &                 dem_parameters,
+  const DEMSolverParameters<2>                  &dem_parameters,
   const parallel::distributed::Triangulation<2> &triangulation,
   const double                                   triangulation_cell_diameter);
 
 template std::shared_ptr<ParticleWallContactForce<3>>
 set_particle_wall_contact_force_model(
-  const DEMSolverParameters<3> &                 dem_parameters,
+  const DEMSolverParameters<3>                  &dem_parameters,
   const parallel::distributed::Triangulation<3> &triangulation,
   const double                                   triangulation_cell_diameter);

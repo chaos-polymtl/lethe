@@ -65,7 +65,7 @@ public:
   void
   find_particle_particle_contact_pairs(
     dealii::Particles::ParticleHandler<dim> &particle_handler,
-    DEMContactManager<dim> &                 container_manager);
+    DEMContactManager<dim>                  &container_manager);
 
   /**
    * @brief Finds a vector of pairs (particle_particle_candidates) which shows the
@@ -86,8 +86,8 @@ public:
   void
   find_particle_particle_contact_pairs(
     dealii::Particles::ParticleHandler<dim> &particle_handler,
-    DEMContactManager<dim> &                 container_manager,
-    const DisableContacts<dim> &             disable_contacts_object);
+    DEMContactManager<dim>                  &container_manager,
+    const DisableContacts<dim>              &disable_contacts_object);
 
   /**
    * @brief Finds a vector of pairs (particle_particle_candidates) which contains the
@@ -104,7 +104,7 @@ public:
   void
   find_particle_particle_periodic_contact_pairs(
     dealii::Particles::ParticleHandler<dim> &particle_handler,
-    DEMContactManager<dim> &                 container_manager);
+    DEMContactManager<dim>                  &container_manager);
 
   /**
    * @brief Finds a vector of pairs (particle_particle_candidates) which contains the
@@ -125,8 +125,8 @@ public:
   void
   find_particle_particle_periodic_contact_pairs(
     dealii::Particles::ParticleHandler<dim> &particle_handler,
-    DEMContactManager<dim> &                 container_manager,
-    const DisableContacts<dim> &             disable_contacts_object);
+    DEMContactManager<dim>                  &container_manager,
+    const DisableContacts<dim>              &disable_contacts_object);
 
 private:
   /**
@@ -148,7 +148,7 @@ private:
     const typename Particles::ParticleHandler<
       dim>::particle_iterator_range::iterator &particle_begin,
     const typename Particles::ParticleHandler<dim>::particle_iterator_range
-      &                                 particles_to_evaluate,
+                                       &particles_to_evaluate,
     std::vector<types::particle_index> &contact_pair_candidates_container)
   {
     // Create a arbitrary temporary empty container

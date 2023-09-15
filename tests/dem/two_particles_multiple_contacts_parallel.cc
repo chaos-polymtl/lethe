@@ -29,8 +29,8 @@ using namespace dealii;
 template <int dim>
 void
 reinitialize_force(Particles::ParticleHandler<dim> &particle_handler,
-                   std::vector<Tensor<1, 3>> &      torque,
-                   std::vector<Tensor<1, 3>> &      force)
+                   std::vector<Tensor<1, 3>>       &torque,
+                   std::vector<Tensor<1, 3>>       &force)
 {
   for (auto particle = particle_handler.begin();
        particle != particle_handler.end();

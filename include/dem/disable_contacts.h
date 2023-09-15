@@ -173,7 +173,7 @@ public:
    */
   void
   identify_mobility_status(
-    const DoFHandler<dim> &                background_dh,
+    const DoFHandler<dim>                 &background_dh,
     const Particles::ParticleHandler<dim> &particle_handler,
     const unsigned int                     n_active_cells,
     MPI_Comm                               mpi_communicator);
@@ -259,7 +259,7 @@ private:
   calculate_granular_temperature_and_solid_fraction(
     const Particles::ParticleHandler<dim> &particle_handler,
     const std::set<typename DoFHandler<dim>::active_cell_iterator>
-      &             local_and_ghost_cells_with_particles,
+                   &local_and_ghost_cells_with_particles,
     Vector<double> &cell_granular_temperature,
     Vector<double> &cell_solid_fraction);
 

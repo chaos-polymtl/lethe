@@ -42,7 +42,7 @@ template <int dim, int spacedim = dim>
 void
 attach_grid_to_triangulation(
   parallel::DistributedTriangulationBase<dim, spacedim> &triangulation,
-  const Parameters::Mesh &                               mesh_parameters);
+  const Parameters::Mesh                                &mesh_parameters);
 
 
 /**
@@ -55,7 +55,7 @@ attach_grid_to_triangulation(
 template <int dim, int spacedim = dim>
 void
 setup_periodic_boundary_conditions(
-  parallel::DistributedTriangulationBase<dim, spacedim> & triangulation,
+  parallel::DistributedTriangulationBase<dim, spacedim>  &triangulation,
   const BoundaryConditions::BoundaryConditions<spacedim> &boundary_conditions);
 
 /**
@@ -72,10 +72,10 @@ setup_periodic_boundary_conditions(
 template <int dim, int spacedim = dim>
 void
 read_mesh_and_manifolds(
-  parallel::DistributedTriangulationBase<dim, spacedim> & triangulation,
-  const Parameters::Mesh &                                mesh_parameters,
-  const Parameters::Manifolds &                           manifolds_parameters,
-  const bool &                                            restart,
+  parallel::DistributedTriangulationBase<dim, spacedim>  &triangulation,
+  const Parameters::Mesh                                 &mesh_parameters,
+  const Parameters::Manifolds                            &manifolds_parameters,
+  const bool                                             &restart,
   const BoundaryConditions::BoundaryConditions<spacedim> &boundary_conditions);
 
 

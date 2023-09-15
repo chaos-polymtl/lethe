@@ -230,8 +230,8 @@ Shape<dim>::point_to_string(const Point<dim> &evaluation_point) const
 template <int dim>
 void
 Shape<dim>::closest_surface_point(
-  const Point<dim> &                                    p,
-  Point<dim> &                                          closest_point,
+  const Point<dim>                                     &p,
+  Point<dim>                                           &closest_point,
   const typename DoFHandler<dim>::active_cell_iterator &cell_guess)
 {
   Tensor<1, dim> actual_gradient;
@@ -250,7 +250,7 @@ Shape<dim>::closest_surface_point(
 template <int dim>
 void
 Shape<dim>::closest_surface_point(const Point<dim> &p,
-                                  Point<dim> &      closest_point) const
+                                  Point<dim>       &closest_point) const
 {
   Tensor<1, dim> actual_gradient;
   double         distance_from_surface;
@@ -369,7 +369,7 @@ template <int dim>
 void
 Superquadric<dim>::closest_surface_point(
   const Point<dim> &p,
-  Point<dim> &      closest_point,
+  Point<dim>       &closest_point,
   const typename DoFHandler<dim>::active_cell_iterator & /*cell_guess*/)
 {
   auto point_in_string = this->point_to_string(p);
@@ -395,7 +395,7 @@ Superquadric<dim>::closest_surface_point(
 template <int dim>
 void
 Superquadric<dim>::closest_surface_point(const Point<dim> &p,
-                                         Point<dim> &      closest_point) const
+                                         Point<dim>       &closest_point) const
 {
   auto point_in_string = this->point_to_string(p);
   auto iterator        = this->closest_point_cache.find(point_in_string);
@@ -1173,7 +1173,7 @@ CompositeShape<dim>::value(const Point<dim> &evaluation_point,
 template <int dim>
 double
 CompositeShape<dim>::value_with_cell_guess(
-  const Point<dim> &                                   evaluation_point,
+  const Point<dim>                                    &evaluation_point,
   const typename DoFHandler<dim>::active_cell_iterator cell,
   const unsigned int /*component*/)
 {
@@ -1265,7 +1265,7 @@ CompositeShape<dim>::gradient(const Point<dim> &evaluation_point,
 template <int dim>
 Tensor<1, dim>
 CompositeShape<dim>::gradient_with_cell_guess(
-  const Point<dim> &                                   evaluation_point,
+  const Point<dim>                                    &evaluation_point,
   const typename DoFHandler<dim>::active_cell_iterator cell,
   const unsigned int /*component*/)
 {
@@ -1464,7 +1464,7 @@ CompositeShape<dim>::clear_cache()
 
 template <int dim>
 RBFShape<dim>::RBFShape(const std::string   shape_arguments_str,
-                        const Point<dim> &  position,
+                        const Point<dim>   &position,
                         const Tensor<1, 3> &orientation)
   : Shape<dim>(1, position, orientation)
   , number_of_nodes(1)
@@ -1485,7 +1485,7 @@ RBFShape<dim>::RBFShape(const std::string   shape_arguments_str,
 template <int dim>
 double
 RBFShape<dim>::value_with_cell_guess(
-  const Point<dim> &                                   evaluation_point,
+  const Point<dim>                                    &evaluation_point,
   const typename DoFHandler<dim>::active_cell_iterator cell,
   const unsigned int /*component*/)
 {
@@ -1515,7 +1515,7 @@ RBFShape<dim>::value_with_cell_guess(
 template <int dim>
 Tensor<1, dim>
 RBFShape<dim>::gradient_with_cell_guess(
-  const Point<dim> &                                   evaluation_point,
+  const Point<dim>                                    &evaluation_point,
   const typename DoFHandler<dim>::active_cell_iterator cell,
   const unsigned int /*component*/)
 {

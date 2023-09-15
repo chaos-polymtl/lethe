@@ -17,7 +17,7 @@ ParticlePointLineForce<dim>::calculate_particle_point_contact_force(
   const typename DEM::dem_data_structures<dim>::particle_point_line_contact_info
     *particle_point_pairs_in_contact,
   const Parameters::Lagrangian::LagrangianPhysicalProperties
-    &                        physical_properties,
+                            &physical_properties,
   std::vector<Tensor<1, 3>> &force)
 
 {
@@ -141,7 +141,7 @@ ParticlePointLineForce<dim>::calculate_particle_line_contact_force(
   const typename DEM::dem_data_structures<dim>::particle_point_line_contact_info
     *particle_line_pairs_in_contact,
   const Parameters::Lagrangian::LagrangianPhysicalProperties
-    &                        physical_properties,
+                            &physical_properties,
   std::vector<Tensor<1, 3>> &force)
 {
   // Looping over particle_point_line_pairs_in_contact

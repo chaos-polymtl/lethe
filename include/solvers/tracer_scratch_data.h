@@ -78,10 +78,10 @@ public:
    *
    */
   TracerScratchData(const PhysicalPropertiesManager &properties_manager,
-                    const FiniteElement<dim> &       fe_tracer,
-                    const Quadrature<dim> &          quadrature,
-                    const Mapping<dim> &             mapping,
-                    const FiniteElement<dim> &       fe_fd)
+                    const FiniteElement<dim>        &fe_tracer,
+                    const Quadrature<dim>           &quadrature,
+                    const Mapping<dim>              &mapping,
+                    const FiniteElement<dim>        &fe_fd)
     : properties_manager(properties_manager)
     , fe_values_tracer(mapping,
                        fe_tracer,
@@ -149,9 +149,9 @@ public:
   template <typename VectorType>
   void
   reinit(const typename DoFHandler<dim>::active_cell_iterator &cell,
-         const VectorType &                                    current_solution,
+         const VectorType                                     &current_solution,
          const std::vector<VectorType> &previous_solutions,
-         Function<dim> *                source_function)
+         Function<dim>                 *source_function)
   {
     this->fe_values_tracer.reinit(cell);
 

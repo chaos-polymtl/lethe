@@ -322,10 +322,10 @@ void
 FindCellNeighbors<dim>::get_periodic_neighbor_list(
   const typename Triangulation<dim>::active_cell_iterator &cell,
   const std::map<unsigned int, std::vector<unsigned int>>
-    &                                         coinciding_vertex_groups,
+                                             &coinciding_vertex_groups,
   const std::map<unsigned int, unsigned int> &vertex_to_coinciding_vertex_group,
   const std::vector<std::set<typename Triangulation<dim>::active_cell_iterator>>
-    &                                                  v_to_c,
+                                                      &v_to_c,
   typename DEM::dem_data_structures<dim>::cell_vector &periodic_neighbor_list)
 {
   // Loop over vertices of the cell

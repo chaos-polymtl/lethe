@@ -45,11 +45,11 @@ using namespace std;
  */
 template <int dim, int spacedim = dim>
 void
-read_mesh(const Parameters::Mesh &  mesh_parameters,
+read_mesh(const Parameters::Mesh   &mesh_parameters,
           const bool                restart,
           const ConditionalOStream &pcout,
           parallel::DistributedTriangulationBase<dim, spacedim> &triangulation,
-          double &                             triangulation_cell_diameter,
+          double                              &triangulation_cell_diameter,
           const Parameters::Lagrangian::BCDEM &bc_params);
 
 /**
@@ -61,7 +61,7 @@ read_mesh(const Parameters::Mesh &  mesh_parameters,
  */
 template <int dim, int spacedim>
 void
-match_periodic_boundaries(Triangulation<dim, spacedim> &       triangulation,
+match_periodic_boundaries(Triangulation<dim, spacedim>        &triangulation,
                           const Parameters::Lagrangian::BCDEM &bc_params);
 
 #endif /* read_mesh_h */

@@ -20,7 +20,7 @@ template <int dim>
 void
 LagrangianPostProcessing<dim>::calculate_average_particles_velocity(
   const parallel::distributed::Triangulation<dim> &triangulation,
-  const Particles::ParticleHandler<dim> &          particle_handler)
+  const Particles::ParticleHandler<dim>           &particle_handler)
 {
   velocity_average_x.reinit(triangulation.n_active_cells());
   velocity_average_y.reinit(triangulation.n_active_cells());
@@ -61,7 +61,7 @@ template <int dim>
 void
 LagrangianPostProcessing<dim>::calculate_average_granular_temperature(
   const parallel::distributed::Triangulation<dim> &triangulation,
-  const Particles::ParticleHandler<dim> &          particle_handler)
+  const Particles::ParticleHandler<dim>           &particle_handler)
 {
   granular_temperature_average.reinit(triangulation.n_active_cells());
 
@@ -175,14 +175,14 @@ template <int dim>
 void
 LagrangianPostProcessing<dim>::write_post_processing_results(
   const parallel::distributed::Triangulation<dim> &triangulation,
-  PVDHandler &                                     grid_pvdhandler,
-  const DoFHandler<dim> &                          background_dh,
-  const Particles::ParticleHandler<dim> &          particle_handler,
-  const DEMSolverParameters<dim> &                 dem_parameters,
+  PVDHandler                                      &grid_pvdhandler,
+  const DoFHandler<dim>                           &background_dh,
+  const Particles::ParticleHandler<dim>           &particle_handler,
+  const DEMSolverParameters<dim>                  &dem_parameters,
   const double                                     current_time,
   const unsigned int                               step_number,
-  const MPI_Comm &                                 mpi_communicator,
-  DisableContacts<dim> &                           disable_contacts_object)
+  const MPI_Comm                                  &mpi_communicator,
+  DisableContacts<dim>                            &disable_contacts_object)
 {
   const std::string folder = dem_parameters.simulation_control.output_folder;
   const std::string particles_solution_name =

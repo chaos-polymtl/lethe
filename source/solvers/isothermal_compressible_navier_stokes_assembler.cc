@@ -8,7 +8,7 @@
 template <int dim>
 void
 GLSIsothermalCompressibleNavierStokesAssemblerCore<dim>::assemble_matrix(
-  NavierStokesScratchData<dim> &        scratch_data,
+  NavierStokesScratchData<dim>         &scratch_data,
   StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
   // Physical properties
@@ -18,7 +18,7 @@ GLSIsothermalCompressibleNavierStokesAssemblerCore<dim>::assemble_matrix(
   const double density_psi = scratch_data.density_psi;
 
   // Loop and quadrature information
-  const auto &       JxW_vec    = scratch_data.JxW;
+  const auto        &JxW_vec    = scratch_data.JxW;
   const unsigned int n_q_points = scratch_data.n_q_points;
   const unsigned int n_dofs     = scratch_data.n_dofs;
   const double       h          = scratch_data.cell_size;
@@ -198,7 +198,7 @@ GLSIsothermalCompressibleNavierStokesAssemblerCore<dim>::assemble_matrix(
 template <int dim>
 void
 GLSIsothermalCompressibleNavierStokesAssemblerCore<dim>::assemble_rhs(
-  NavierStokesScratchData<dim> &        scratch_data,
+  NavierStokesScratchData<dim>         &scratch_data,
   StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
   // Physical properties
@@ -208,7 +208,7 @@ GLSIsothermalCompressibleNavierStokesAssemblerCore<dim>::assemble_rhs(
   const double density_psi = scratch_data.density_psi;
 
   // Loop and quadrature information
-  const auto &       JxW_vec    = scratch_data.JxW;
+  const auto        &JxW_vec    = scratch_data.JxW;
   const unsigned int n_q_points = scratch_data.n_q_points;
   const unsigned int n_dofs     = scratch_data.n_dofs;
   const double       h          = scratch_data.cell_size;
@@ -318,7 +318,7 @@ template class GLSIsothermalCompressibleNavierStokesAssemblerCore<3>;
 template <int dim>
 void
 GLSIsothermalCompressibleNavierStokesAssemblerBDF<dim>::assemble_matrix(
-  NavierStokesScratchData<dim> &        scratch_data,
+  NavierStokesScratchData<dim>         &scratch_data,
   StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
   // Physical properties
@@ -326,7 +326,7 @@ GLSIsothermalCompressibleNavierStokesAssemblerBDF<dim>::assemble_matrix(
   const double               density_psi    = scratch_data.density_psi;
 
   // Loop and quadrature information
-  const auto &       JxW        = scratch_data.JxW;
+  const auto        &JxW        = scratch_data.JxW;
   const unsigned int n_q_points = scratch_data.n_q_points;
   const unsigned int n_dofs     = scratch_data.n_dofs;
 
@@ -370,7 +370,7 @@ GLSIsothermalCompressibleNavierStokesAssemblerBDF<dim>::assemble_matrix(
           const Tensor<1, dim> &phi_u_i = scratch_data.phi_u[q][i];
           for (unsigned int j = 0; j < n_dofs; ++j)
             {
-              const double &        phi_p_j = scratch_data.phi_p[q][j];
+              const double         &phi_p_j = scratch_data.phi_p[q][j];
               const Tensor<1, dim> &phi_u_j = scratch_data.phi_u[q][j];
 
               local_matrix(i, j) +=
@@ -385,7 +385,7 @@ GLSIsothermalCompressibleNavierStokesAssemblerBDF<dim>::assemble_matrix(
 template <int dim>
 void
 GLSIsothermalCompressibleNavierStokesAssemblerBDF<dim>::assemble_rhs(
-  NavierStokesScratchData<dim> &        scratch_data,
+  NavierStokesScratchData<dim>         &scratch_data,
   StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
   // Physical properties
@@ -393,7 +393,7 @@ GLSIsothermalCompressibleNavierStokesAssemblerBDF<dim>::assemble_rhs(
   const double               density_psi    = scratch_data.density_psi;
 
   // Loop and quadrature information
-  const auto &       JxW        = scratch_data.JxW;
+  const auto        &JxW        = scratch_data.JxW;
   const unsigned int n_q_points = scratch_data.n_q_points;
   const unsigned int n_dofs     = scratch_data.n_dofs;
 

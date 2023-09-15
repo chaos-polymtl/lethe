@@ -142,7 +142,7 @@ private:
   check_and_move_particles(
     const periodic_boundaries_cells_info_struct<dim> &boundaries_cells_content,
     typename Particles::ParticleHandler<dim>::particle_iterator_range
-      &        particles_in_cell,
+              &particles_in_cell,
     const bool particles_in_pb0_cell);
 
   types::boundary_id periodic_boundary_0;

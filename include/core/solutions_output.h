@@ -56,14 +56,14 @@ using namespace dealii;
  */
 template <int dim, int spacedim = dim>
 void
-write_vtu_and_pvd(PVDHandler &                           pvd_handler,
+write_vtu_and_pvd(PVDHandler                            &pvd_handler,
                   const DataOutInterface<dim, spacedim> &data_out,
                   const std::string                      folder,
                   const std::string                      file_prefix,
                   const double                           time,
                   const unsigned int                     iter,
                   const unsigned int                     group_files,
-                  const MPI_Comm &                       mpi_communicator,
+                  const MPI_Comm                        &mpi_communicator,
                   const unsigned int                     digits = 4);
 
 /**
@@ -86,7 +86,7 @@ write_boundaries_vtu(const DataOutFaces<dim> &data_out,
                      const std::string        folder,
                      const double             time,
                      const unsigned int       iter,
-                     const MPI_Comm &         mpi_communicator,
+                     const MPI_Comm          &mpi_communicator,
                      const std::string  file_prefix = std::string("boundaries"),
                      const unsigned int digits      = 4);
 #endif

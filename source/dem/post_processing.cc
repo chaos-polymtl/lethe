@@ -8,7 +8,7 @@ namespace DEM
   statistics
   calculate_granular_statistics(
     const Particles::ParticleHandler<dim> &particle_handler,
-    const MPI_Comm &                       mpi_communicator)
+    const MPI_Comm                        &mpi_communicator)
   {
     double total_variable = 0;
     double max_variable   = DBL_MIN;
@@ -110,48 +110,48 @@ namespace DEM
     2,
     dem_statistic_variable::translational_kinetic_energy>(
     const Particles::ParticleHandler<2, 2> &particle_handler,
-    const MPI_Comm &                        mpi_communicator);
+    const MPI_Comm                         &mpi_communicator);
 
   template statistics
   calculate_granular_statistics<
     3,
     dem_statistic_variable::translational_kinetic_energy>(
     const Particles::ParticleHandler<3, 3> &particle_handler,
-    const MPI_Comm &                        mpi_communicator);
+    const MPI_Comm                         &mpi_communicator);
 
   template statistics
   calculate_granular_statistics<
     2,
     dem_statistic_variable::rotational_kinetic_energy>(
     const Particles::ParticleHandler<2, 2> &particle_handler,
-    const MPI_Comm &                        mpi_communicator);
+    const MPI_Comm                         &mpi_communicator);
 
   template statistics
   calculate_granular_statistics<
     3,
     dem_statistic_variable::rotational_kinetic_energy>(
     const Particles::ParticleHandler<3, 3> &particle_handler,
-    const MPI_Comm &                        mpi_communicator);
+    const MPI_Comm                         &mpi_communicator);
 
   template statistics
   calculate_granular_statistics<2, dem_statistic_variable::velocity>(
     const Particles::ParticleHandler<2, 2> &particle_handler,
-    const MPI_Comm &                        mpi_communicator);
+    const MPI_Comm                         &mpi_communicator);
 
   template statistics
   calculate_granular_statistics<3, dem_statistic_variable::velocity>(
     const Particles::ParticleHandler<3, 3> &particle_handler,
-    const MPI_Comm &                        mpi_communicator);
+    const MPI_Comm                         &mpi_communicator);
 
   template statistics
   calculate_granular_statistics<2, dem_statistic_variable::omega>(
     const Particles::ParticleHandler<2, 2> &particle_handler,
-    const MPI_Comm &                        mpi_communicator);
+    const MPI_Comm                         &mpi_communicator);
 
   template statistics
   calculate_granular_statistics<3, dem_statistic_variable::omega>(
     const Particles::ParticleHandler<3, 3> &particle_handler,
-    const MPI_Comm &                        mpi_communicator);
+    const MPI_Comm                         &mpi_communicator);
 
 
 

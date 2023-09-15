@@ -49,9 +49,9 @@ test()
 
   const unsigned int n_particle = 4;
   RadioParticle<3>   particle_positions[n_particle]{position0,
-                                                  position1,
-                                                  position2,
-                                                  position3};
+                                                    position1,
+                                                    position2,
+                                                    position3};
 
   // Detector position
   Parameters::DetectorParameters detector_param;

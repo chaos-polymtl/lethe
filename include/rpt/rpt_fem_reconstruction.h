@@ -248,8 +248,8 @@ private:
   double
   calculate_cost(
     const TriaActiveIterator<DoFCellAccessor<dim, dim, false>> &cell,
-    Vector<double> &     reference_location,
-    const double &       last_constraint,
+    Vector<double>      &reference_location,
+    const double        &last_constraint,
     std::vector<double> &experimental_count);
 
   /**
@@ -265,7 +265,7 @@ private:
    */
   double
   calculate_reference_location_error(Vector<double> &reference_location,
-                                     const double &  last_constraint);
+                                     const double   &last_constraint);
 
   /**
    * @brief Searches in the reference space the position of the particle.
@@ -291,13 +291,13 @@ private:
   void
   search_position_in_reference_space(
     std::vector<std::vector<double>> &count_from_all_detectors,
-    std::vector<double> &             experimental_count,
+    std::vector<double>              &experimental_count,
     const typename DoFHandler<dim>::active_cell_iterator &cell,
-    const double &  tol_reference_location,
-    double &        max_cost,
+    const double   &tol_reference_location,
+    double         &max_cost,
     Vector<double> &reference_location,
-    bool &          position_found,
-    Point<dim> &    real_location);
+    bool           &position_found,
+    Point<dim>     &real_location);
 
   /**
    * @brief Finds and saves the position of the particle in system coordinates.
@@ -398,7 +398,7 @@ template <int dim>
 Vector<double>
 assemble_matrix_and_rhs(
   std::vector<std::vector<double>> &vertex_count,
-  std::vector<double> &             experimental_count,
+  std::vector<double>              &experimental_count,
   Parameters::RPTFEMReconstructionParameters::FEMCostFunction
     &cost_function_type);
 

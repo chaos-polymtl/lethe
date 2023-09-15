@@ -52,12 +52,12 @@ using namespace std;
  */
 template <int dim>
 void
-read_checkpoint(TimerOutput &                              computing_timer,
-                const DEMSolverParameters<dim> &           dem_parameters,
-                std::shared_ptr<SimulationControl> &       simulation_control,
-                PVDHandler &                               particles_pvdhandler,
-                PVDHandler &                               grid_pvdhandler,
+read_checkpoint(TimerOutput                               &computing_timer,
+                const DEMSolverParameters<dim>            &dem_parameters,
+                std::shared_ptr<SimulationControl>        &simulation_control,
+                PVDHandler                                &particles_pvdhandler,
+                PVDHandler                                &grid_pvdhandler,
                 parallel::distributed::Triangulation<dim> &triangulation,
-                Particles::ParticleHandler<dim> &          particle_handler);
+                Particles::ParticleHandler<dim>           &particle_handler);
 
 #endif /* read_checkpoint_h */

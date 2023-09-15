@@ -69,10 +69,10 @@ public:
    */
   void
   calculate_average_velocities(
-    const VectorType &                local_evaluation_point,
+    const VectorType                 &local_evaluation_point,
     const Parameters::PostProcessing &post_processing,
-    const double &                    current_time,
-    const double &                    time_step);
+    const double                     &current_time,
+    const double                     &time_step);
 
 
   void
@@ -132,10 +132,10 @@ public:
    * @param mpi_communicator. The mpi communicator information
    */
   void
-  initialize_vectors(const DofsType &    locally_owned_dofs,
-                     const DofsType &    locally_relevant_dofs,
+  initialize_vectors(const DofsType     &locally_owned_dofs,
+                     const DofsType     &locally_relevant_dofs,
                      const unsigned int &dofs_per_vertex,
-                     const MPI_Comm &    mpi_communicator);
+                     const MPI_Comm     &mpi_communicator);
 
   /**
    * @brief initialize_checkpoint_vectors. This function initializes all the

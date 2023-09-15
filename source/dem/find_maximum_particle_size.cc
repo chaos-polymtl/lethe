@@ -3,7 +3,7 @@
 double
 find_maximum_particle_size(
   const Parameters::Lagrangian::LagrangianPhysicalProperties
-    &          physical_properties,
+              &physical_properties,
   const double standard_deviation_multiplier)
 {
   double maximum_particle_size = 0;

@@ -4,13 +4,13 @@ using namespace dealii;
 
 template <int dim>
 void
-read_checkpoint(TimerOutput &                              computing_timer,
-                const DEMSolverParameters<dim> &           parameters,
-                std::shared_ptr<SimulationControl> &       simulation_control,
-                PVDHandler &                               particles_pvdhandler,
-                PVDHandler &                               grid_pvdhandler,
+read_checkpoint(TimerOutput                               &computing_timer,
+                const DEMSolverParameters<dim>            &parameters,
+                std::shared_ptr<SimulationControl>        &simulation_control,
+                PVDHandler                                &particles_pvdhandler,
+                PVDHandler                                &grid_pvdhandler,
                 parallel::distributed::Triangulation<dim> &triangulation,
-                Particles::ParticleHandler<dim> &          particle_handler)
+                Particles::ParticleHandler<dim>           &particle_handler)
 {
   TimerOutput::Scope timer(computing_timer, "read_checkpoint");
   std::string        prefix = parameters.restart.filename;
@@ -61,19 +61,19 @@ read_checkpoint(TimerOutput &                              computing_timer,
 }
 
 template void
-read_checkpoint(TimerOutput &                            computing_timer,
-                const DEMSolverParameters<2> &           parameters,
-                std::shared_ptr<SimulationControl> &     simulation_control,
-                PVDHandler &                             particles_pvdhandler,
-                PVDHandler &                             grid_pvdhandler,
+read_checkpoint(TimerOutput                             &computing_timer,
+                const DEMSolverParameters<2>            &parameters,
+                std::shared_ptr<SimulationControl>      &simulation_control,
+                PVDHandler                              &particles_pvdhandler,
+                PVDHandler                              &grid_pvdhandler,
                 parallel::distributed::Triangulation<2> &triangulation,
-                Particles::ParticleHandler<2> &          particle_handler);
+                Particles::ParticleHandler<2>           &particle_handler);
 
 template void
-read_checkpoint(TimerOutput &                            computing_timer,
-                const DEMSolverParameters<3> &           parameters,
-                std::shared_ptr<SimulationControl> &     simulation_control,
-                PVDHandler &                             particles_pvdhandler,
-                PVDHandler &                             grid_pvdhandler,
+read_checkpoint(TimerOutput                             &computing_timer,
+                const DEMSolverParameters<3>            &parameters,
+                std::shared_ptr<SimulationControl>      &simulation_control,
+                PVDHandler                              &particles_pvdhandler,
+                PVDHandler                              &grid_pvdhandler,
                 parallel::distributed::Triangulation<3> &triangulation,
-                Particles::ParticleHandler<3> &          particle_handler);
+                Particles::ParticleHandler<3>           &particle_handler);

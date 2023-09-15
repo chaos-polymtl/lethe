@@ -65,7 +65,7 @@ public:
    *
    */
   virtual void
-  insert(Particles::ParticleHandler<dim> &                particle_handler,
+  insert(Particles::ParticleHandler<dim>                 &particle_handler,
          const parallel::distributed::Triangulation<dim> &triangulation,
          const DEMSolverParameters<dim> &dem_parameters) override;
 
@@ -96,7 +96,7 @@ private:
    */
   void
   find_insertion_location_nonuniform(
-    Point<dim> &                                 insertion_location,
+    Point<dim>                                  &insertion_location,
     const unsigned int                           id,
     const double                                 random_number1,
     const double                                 random_number2,
