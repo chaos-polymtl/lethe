@@ -1,31 +1,31 @@
-i/* ---------------------------------------------------------------------
- *
- * Copyright (C) 2019 - by the Lethe authors
- *
- * This file is part of the Lethe library
- *
- * The Lethe library is free software; you can use it, redistribute
- * it, and/or modify it under the terms of the GNU Lesser General
- * Public License as published by the Free Software Foundation; either
- * version 3.1 of the License, or (at your option) any later version.
- * The full text of the license can be found in the file LICENSE at
- * the top level of the Lethe distribution.
- *
- * ---------------------------------------------------------------------
+i /* ---------------------------------------------------------------------
+  *
+  * Copyright (C) 2019 - by the Lethe authors
+  *
+  * This file is part of the Lethe library
+  *
+  * The Lethe library is free software; you can use it, redistribute
+  * it, and/or modify it under the terms of the GNU Lesser General
+  * Public License as published by the Free Software Foundation; either
+  * version 3.1 of the License, or (at your option) any later version.
+  * The full text of the license can be found in the file LICENSE at
+  * the top level of the Lethe distribution.
+  *
+  * ---------------------------------------------------------------------
 
-*
-* Author: Bruno Blais, Polytechnique Montreal, 2019-
-*/
+ *
+ * Author: Bruno Blais, Polytechnique Montreal, 2019-
+ */
 
 #include "solvers/gls_navier_stokes.h"
 
-int
-main(int argc, char *argv[])
+  int
+  main(int argc, char *argv[])
 {
   try
     {
       Utilities::MPI::MPI_InitFinalize mpi_initialization(
-                                                     argc, argv, numbers::invalid_unsigned_int);
+        argc, argv, numbers::invalid_unsigned_int);
 
       if (argc != 2)
         {
