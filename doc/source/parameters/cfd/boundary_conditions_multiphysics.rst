@@ -134,7 +134,7 @@ For Cahn-Hilliard boundary conditions, the possible ``types`` are ``noflux`` (de
 .. code-block:: text
 
     subsection boundary conditions cahn hilliard
-    set number                  = 2
+    set number                  = 3
     set time dependent          = false
         subsection bc 0
             set id 		= 0
@@ -157,7 +157,7 @@ For Cahn-Hilliard boundary conditions, the possible ``types`` are ``noflux`` (de
 
 * ``number``: This is the number of boundary conditions of the problem. 
 
-* ``time dependent`` specifies if a  boundary condition is time dependent (``true``) or steady (``false```). By default, this parameter is set to ``false``. This is there to improve the computational efficiency for transient cases in which the boundary conditions do not change. 
+* ``time dependent`` specifies if a  boundary condition is time dependent (``true``) or steady (``false``). By default, this parameter is set to ``false``. This is there to improve the computational efficiency for transient cases in which the boundary conditions do not change. 
 
 * ``id`` is the number associated with the boundary condition. By default, Lethe assumes that the id is equivalent to the number of the bc.
 
