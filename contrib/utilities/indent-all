@@ -65,28 +65,28 @@ checks
 # Process all source and header files:
 #
 
-process "tests include source" ".*\.(cc|h)" format_file
+process "tests applications include source" ".*\.(cc|h)" format_file
 
 #
 # Fix permissions and convert to unix line ending if necessary:
 #
 
-process "tests include source examples" \
+process "tests applications include source examples" \
   ".*\.(cc|h|inst.in|output.*|cmake)" fix_permissions
 
-process "tests include source examples" \
+process "tests applications include source examples" \
   ".*\.(cc|h|inst.in|cmake)" dos_to_unix
 
 #
 # Removing trailing whitespace
 #
 
-process "tests include source doc" \
+process "tests applications include source doc" \
   ".*\.(cc|h|html|dox|txt)" remove_trailing_whitespace
 
 #
 # Ensure only a single newline at end of files
 #
 
-process "tests include source doc" \
+process "tests applications include source doc" \
   ".*\.(cc|h|html|dox|txt)" ensure_single_trailing_newline
