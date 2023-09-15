@@ -1,4 +1,4 @@
-/* ---------------------------------------------------------------------
+i/* ---------------------------------------------------------------------
  *
  * Copyright (C) 2019 - by the Lethe authors
  *
@@ -25,7 +25,7 @@ main(int argc, char *argv[])
   try
     {
       Utilities::MPI::MPI_InitFinalize mpi_initialization(
-        argc, argv, numbers::invalid_unsigned_int);
+                                                     argc, argv, numbers::invalid_unsigned_int);
 
       if (argc != 2)
         {

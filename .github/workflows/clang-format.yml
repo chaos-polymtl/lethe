@@ -1,4 +1,4 @@
-name: indent
+name: Check_indent
 
 on: [push, pull_request]
 
