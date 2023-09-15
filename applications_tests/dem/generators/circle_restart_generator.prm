@@ -1,7 +1,10 @@
 # Listing of Parameters
 #----------------------
+
+set dimension = 2
+
 #---------------------------------------------------
-# Simulation and IO Control
+# Simulation Control
 #---------------------------------------------------
 
 subsection simulation control
