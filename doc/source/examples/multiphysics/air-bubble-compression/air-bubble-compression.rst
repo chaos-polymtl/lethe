@@ -82,19 +82,21 @@ The ``multiphysics`` subsection is used to enable the VOF solver.
 VOF
 ~~~
 
-In the ``VOF`` subsection, the ``interface sharpening`` and the ``phase filtration`` features are enabled.
-The interface sharpening method and its parameters are explained in the :doc:`../dam-break/dam-break` example.
-The phase filtration filters the phase field used for the calculation of physical properties by stiffening the value of the phase fraction.
-We refer the reader to :doc:`../../../../theory/multiphysics/vof` theory guide for further explanation on the phase filtration.
+In the ``VOF`` subsection, the ``compressible`` the ``interface sharpening`` and the ``phase filtration`` features are enabled.
+The enabled ``compressible`` parameter allows interface compression by adding the :math:`\phi (\nabla \cdot \mathbf{u})` term to the VOF equation.
+The ``interface sharpening`` method and its parameters are explained in the :doc:`../dam-break/dam-break` example.
+The ``phase filtration filters`` the phase field used for the calculation of physical properties by stiffening the value of the phase fraction.
+We refer the reader to :doc:`../../../../theory/multiphysics/vof` theory guide for further explanation on the ``phase filtration``.
 
 .. code-block:: text
 
     subsection VOF
+      set compressible = true
       subsection interface sharpening
         set enable              = true
         set threshold           = 0.5
-        set interface sharpness = 1.7
-        set frequency           = 15
+        set interface sharpness = 2.2
+        set frequency           = 8
       end
       subsection phase filtration
         set type      = tanh
@@ -274,7 +276,7 @@ We can call the ``lethe-fluid`` by invoking the following command:
 to run the simulation using eight CPU cores. Feel free to use more.
 
 .. warning:: 
-    Make sure to compile lethe in `Release` mode and run in parallel using mpirun. This simulation takes :math:`\sim` 3 minutes on 8 processes.
+    Make sure to compile lethe in `Release` mode and run in parallel using mpirun. This simulation takes :math:`\sim` 1.5 minute on 8 processes.
 
 
 -------
