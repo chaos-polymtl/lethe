@@ -1,3 +1,0 @@
-add_executable(rpt_cell_reconstruction_3d rpt_cell_reconstruction_3d.cc)
-deal_ii_setup_target(rpt_cell_reconstruction_3d)
-target_link_libraries(rpt_cell_reconstruction_3d lethe-rpt)
