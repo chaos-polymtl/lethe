@@ -969,6 +969,12 @@ namespace Parameters
     // Block linear solver to throw error.
     bool force_linear_solver_continuation;
 
+    // MG min level
+    int mg_min_level;
+
+    // MG minimum number of cells per level
+    int mg_level_min_cells;
+
     // LSMG or GCMG smoother number of iterations
     int mg_smoother_iterations;
 

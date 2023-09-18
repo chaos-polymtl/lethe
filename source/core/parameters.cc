@@ -2084,6 +2084,16 @@ namespace Parameters
           Patterns::Bool(),
           "A boolean that will force the linear solver to continue even if it fails");
 
+        prm.declare_entry("mg min level",
+                          "-1",
+                          Patterns::Integer(),
+                          "mg min level");
+
+        prm.declare_entry("mg level min cells",
+                          "-1",
+                          Patterns::Integer(),
+                          "mg minimum number of cells for coarse level");
+
         prm.declare_entry("mg smoother iterations",
                           "10",
                           Patterns::Integer(),
@@ -2190,6 +2200,8 @@ namespace Parameters
         amg_smoother_overlap      = prm.get_integer("amg smoother overlap");
         force_linear_solver_continuation =
           prm.get_bool("force linear solver continuation");
+        mg_min_level           = prm.get_integer("mg min level");
+        mg_level_min_cells     = prm.get_integer("mg level min cells");
         mg_smoother_iterations = prm.get_integer("mg smoother iterations");
         mg_smoother_relaxation = prm.get_double("mg smoother relaxation");
         mg_coarse_grid_max_iterations =
