@@ -34,7 +34,7 @@ This subsection specifies the characteristics of the finite element method used 
 
 * ``velocity order`` specifies the interpolation order for velocity.
 
-* ``pressure order`` specifies the interpolation order for pressure. For the **gls_navier_stokes** family of solvers, the interpolation order for pressure can be equal or lower than that of velocity. For the **gd_navier_stokes** family of solvers, the interpolation order for pressure has to be one degree lower than that of velocity.
+* ``pressure order`` specifies the interpolation order for pressure. For the **lethe-fluid** family of solvers, the interpolation order for pressure can be equal or lower than that of velocity. For the **lethe-fluid-block** family of solvers, the interpolation order for pressure has to be one degree lower than that of velocity.
 
 * ``temperature order`` specifies the interpolation order for temperature for the heat transfer physics.
 
