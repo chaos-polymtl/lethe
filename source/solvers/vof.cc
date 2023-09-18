@@ -763,7 +763,7 @@ VolumeOfFluid<dim>::postprocess(bool first_iteration)
         }
     }
 
-  if (this->simulation_parameters.post_processing.calculate_vof_barycenter)
+  if (this->simulation_parameters.post_processing.calculate_barycenter)
     {
       // Calculate volume and mass (this->mass_monitored)
       std::pair<Tensor<1, dim>, Tensor<1, dim>> position_and_velocity;
@@ -881,7 +881,7 @@ VolumeOfFluid<dim>::postprocess(bool first_iteration)
               std::string filename =
                 this->simulation_parameters.simulation_control.output_folder +
                 this->simulation_parameters.post_processing
-                  .barycenter_output_name +
+                  .barycenter_vof_output_name +
                 ".dat";
               std::ofstream output(filename.c_str());
               this->table_barycenter.write_text(output);

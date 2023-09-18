@@ -172,7 +172,8 @@ public:
 };
 
 /**
- * @brief Class that assembles the boundary condition that allows a free angle of contact, thus adding a degree of freedom to the problem
+ * @brief Class that assembles the boundary condition that allows a free angle of
+ * contact, thus adding a degree of freedom to the problem
  *
  * @tparam dim An integer that denotes the number of spatial dimensions
  *

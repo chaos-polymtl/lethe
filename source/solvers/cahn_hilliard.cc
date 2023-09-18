@@ -405,11 +405,11 @@ CahnHilliard<dim>::calculate_phase_statistics()
   if (simulation_parameters.post_processing.verbosity ==
       Parameters::Verbosity::verbose)
     {
-      this->pcout << "Phase statistics : " << std::endl;
-      this->pcout << "\t     Min : " << min_phase_value << std::endl;
-      this->pcout << "\t     Max : " << max_phase_value << std::endl;
-      this->pcout << "\t Average : " << phase_average << std::endl;
-      this->pcout << "\t Integral : " << integral << std::endl;
+      this->pcout << "Phase statistics: " << std::endl;
+      this->pcout << "\t     Min: " << min_phase_value << std::endl;
+      this->pcout << "\t     Max: " << max_phase_value << std::endl;
+      this->pcout << "\t Average: " << phase_average << std::endl;
+      this->pcout << "\t Integral: " << integral << std::endl;
     }
 
   statistics_table.add_value("time", simulation_control->get_current_time());
@@ -533,8 +533,7 @@ CahnHilliard<dim>::postprocess(bool first_iteration)
       this->computing_timer.reset();
     }
 
-  if (this->simulation_parameters.post_processing
-        .calculate_cahn_hilliard_barycenter)
+  if (this->simulation_parameters.post_processing.calculate_barycenter)
     {
       // Calculate volume and mass (this->mass_monitored)
       std::pair<Tensor<1, dim>, Tensor<1, dim>> position_and_velocity;
@@ -615,13 +614,17 @@ CahnHilliard<dim>::postprocess(bool first_iteration)
                 dependent_column_names,
                 this->simulation_parameters.simulation_control.log_precision);
 
-              std::cout << "+------------------------------------------+"
-                        << std::endl;
-              std::cout
-                << "|  Cahn-Hilliard Barycenter                          |"
-                << std::endl;
-              std::cout << "+------------------------------------------+"
-                        << std::endl;
+              //              std::cout <<
+              //              "+------------------------------------------+"
+              //                        << std::endl;
+              //              std::cout
+              //                << "|  Cahn-Hilliard Barycenter |"
+              //                << std::endl;
+              //              std::cout <<
+              //              "+------------------------------------------+"
+              //                        << std::endl;
+              announce_string(this->pcout, "Cahn-Hilliard Barycenter");
+
               table.write_text(std::cout);
             }
 

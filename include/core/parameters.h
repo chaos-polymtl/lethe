@@ -756,14 +756,12 @@ namespace Parameters
     // Fluid domain, used when post-processing a multiphase simulation
     Parameters::FluidIndicator postprocessed_fluid;
 
-    // Enable barycenter calculation for fluid 1 in VOF simulations
-    bool calculate_vof_barycenter;
+    // Enable barycenter calculation for fluid 1 in VOF and Cahn-Hilliard
+    // simulations
+    bool calculate_barycenter;
 
-    // Enable barycenter calculation for fluid 1 in Cahn-Hilliard simulations
-    bool calculate_cahn_hilliard_barycenter;
-
-    // Prefix for the barycenter output
-    std::string barycenter_output_name;
+    // Prefix for the vof barycenter output
+    std::string barycenter_vof_output_name;
 
     // Prefix for the barycenter output of Cahn-Hilliard simulations
     std::string barycenter_cahn_hilliard_output_name;

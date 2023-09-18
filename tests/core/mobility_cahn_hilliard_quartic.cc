@@ -3,7 +3,7 @@
  */
 
 // Lethe
-#include <core/mobility_ch_model.h>
+#include <core/mobility_cahn_hilliard_model.h>
 
 // Tests (with common definitions)
 #include <../tests/tests.h>

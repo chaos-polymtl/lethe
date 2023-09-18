@@ -14,7 +14,7 @@
  * ---------------------------------------------------------------------
  */
 
-#include <core/mobility_ch_model.h>
+#include <core/mobility_cahn_hilliard_model.h>
 
 std::shared_ptr<MobilityCahnHilliardModel>
 MobilityCahnHilliardModel::model_cast(

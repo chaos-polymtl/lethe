@@ -16,7 +16,7 @@ CahnHilliardAssemblerCore<dim>::assemble_matrix(
   const double mobility_constant = this->mobility_constant;
   const double epsilon           = scratch_data.epsilon;
 
-  // Loop and quadrature informations
+  // Loop and quadrature information
   const auto        &JxW_vec    = scratch_data.JxW;
   const unsigned int n_q_points = scratch_data.n_q_points;
   const unsigned int n_dofs     = scratch_data.n_dofs;
@@ -149,7 +149,7 @@ CahnHilliardAssemblerCore<dim>::assemble_rhs(
   const double mobility_constant = this->mobility_constant;
   const double epsilon           = scratch_data.epsilon;
 
-  // Loop and quadrature informations
+  // Loop and quadrature information
   const auto        &JxW_vec    = scratch_data.JxW;
   const unsigned int n_q_points = scratch_data.n_q_points;
   const unsigned int n_dofs     = scratch_data.n_dofs;
@@ -488,7 +488,7 @@ CahnHilliardAssemblerBDF<dim>::assemble_matrix(
   CahnHilliardScratchData<dim> &scratch_data,
   StabilizedMethodsCopyData    &copy_data)
 {
-  // Loop and quadrature informations
+  // Loop and quadrature information
   const auto        &JxW        = scratch_data.JxW;
   const unsigned int n_q_points = scratch_data.n_q_points;
   const unsigned int n_dofs     = scratch_data.n_dofs;
@@ -532,7 +532,7 @@ CahnHilliardAssemblerBDF<dim>::assemble_rhs(
   CahnHilliardScratchData<dim> &scratch_data,
   StabilizedMethodsCopyData    &copy_data)
 {
-  // Loop and quadrature informations
+  // Loop and quadrature information
   const auto        &JxW        = scratch_data.JxW;
   const unsigned int n_q_points = scratch_data.n_q_points;
   const unsigned int n_dofs     = scratch_data.n_dofs;
