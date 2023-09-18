@@ -129,7 +129,7 @@ Once all files are created, the simulation can be launched in parallel using the
 
 .. code-block:: text
 
-  for i in $(ls run_oblique_impact*); do dem $i & ; sleep 2; done
+  for i in $(ls run_oblique_impact*); do dem $i & sleep 2; done
 
 Depending on the speed of your computer, all 34 simulation should be completed in less than two minutes. A folder named according to the angle of every simulation used will be generated (``/xx``).
 
