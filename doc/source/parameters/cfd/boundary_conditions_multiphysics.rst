@@ -129,7 +129,7 @@ For VOF boundary conditions (multiphase flow), the possible ``types`` are ``none
 Cahn-Hilliard
 ^^^^^^^^^^^^^^
 
-For Cahn-Hilliard boundary conditions, the possible ``types`` are ``noflux`` (default), ``dirichlet``, ``angle_of_contact`` and ``free_angle``. The parameters for each type of Cahn-Hilliard boundary conditions are shown:
+For Cahn-Hilliard boundary conditions, the available ``types`` are ``noflux`` (default), ``dirichlet``, ``angle_of_contact``, and ``free_angle``. The parameters for each type of Cahn-Hilliard boundary conditions are:
 
 .. code-block:: text
 
@@ -157,13 +157,13 @@ For Cahn-Hilliard boundary conditions, the possible ``types`` are ``noflux`` (de
 
 * ``number``: This is the number of boundary conditions of the problem. 
 
-* ``time dependent`` specifies if a  boundary condition is time dependent (``true``) or steady (``false``). By default, this parameter is set to ``false``. This is there to improve the computational efficiency for transient cases in which the boundary conditions do not change. 
+* ``time dependent`` specifies if a boundary condition is time dependent (``true``) or not (``false``). By default, this parameter is set to ``false``. It is used to improve the computational efficiency of transient cases in which the boundary conditions do not change. 
 
 * ``id`` is the number associated with the boundary condition. By default, Lethe assumes that the id is equivalent to the number of the bc.
 
-* ``type``: This is the type of boundary condition being imposed. At the moment, choices are:
-    * ``noflux`` (default) so that no phase leave the simulation domain.
-    * ``dirichlet`` to impose a given phase order parameter function on the boundary. This function can depend on position (:math:`x,y,z`) and on time (:math:`t`).
-    * ``angle_of_contact`` to impose a given angle of contact ``angle value`` between the two phases at the boundary. It refers to the inner angle of contact, in degrees (°).
-    * ``free_angle`` to leave the angle as a free variable to be solved. 
+* ``type``: Type of boundary condition being imposed. At the moment, the choices are:
+    * ``noflux`` (default): no phase leaves the simulation domain.
+    * ``dirichlet``: Imposes a given phase order parameter function on the boundary. This function can depend on position (:math:`x,y,z`) and on time (:math:`t`).
+    * ``angle_of_contact``: Imposes a given angle of contact ``angle value`` between the two phases at the boundary. It refers to the inner angle of contact, in degrees (°).
+    * ``free_angle``: Leaves the angle as a free variable to be solved.
 

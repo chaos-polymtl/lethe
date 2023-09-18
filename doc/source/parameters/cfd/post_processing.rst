@@ -185,7 +185,7 @@ This subsection controls the post-processing other than the forces and torque on
 
   where :math:`\psi` is the filtered phase indicator.
   
-* ``set VOF barycenter name``: name of the output file containing the position and velocity of the barycenter for VOF simulations.
+* ``VOF barycenter name``: name of the output file containing the position and velocity of the barycenter for VOF simulations.
   
 * ``calculate cahn hilliard barycenter``: calculates the barycenter of ``fluid 1`` and its velocity in Cahn-Hilliard simulations. The barycenter :math:`\mathbf{x}_b` and its velocity :math:`\mathbf{v}_b` are defined as:
 
@@ -199,9 +199,9 @@ This subsection controls the post-processing other than the forces and torque on
 
   where :math:`\phi` is the phase order parameter.
   
-* ``set cahn hilliard barycenter name`` name of the output file contianing the position and velocity of the barycenter for Cahn-Hilliard simulations
+* ``cahn hilliard barycenter name`` name of the output file containing the position and velocity of the barycenter for Cahn-Hilliard simulations
   
-* ``calculate phase statistics``: controls if calculation of phase statistics coming from the solution of the Cahn-Hilliard equations is enabled. Statistics include: minimum, maximum, average and standard-deviation of the phase order parameter.
+* ``calculate phase statistics``: outputs phase statistics from the solution of the Cahn-Hilliard equations, including minimum, maximum, average, and standard deviation of the phase order parameter.
 
   .. warning::
 

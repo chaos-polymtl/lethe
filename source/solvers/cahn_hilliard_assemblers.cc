@@ -416,8 +416,8 @@ CahnHilliardAssemblerFreeAngle<dim>::assemble_matrix(
                               const Tensor<1, dim> grad_phi_face_phase_j =
                                 scratch_data.grad_phi_face_phase[f][q][j];
 
-                              local_matrix(i, j) +=
-                                -epsilon * epsilon * phi_potential_i *
+                              local_matrix(i, j) -=
+                                epsilon * epsilon * phi_potential_i *
                                 grad_phi_face_phase_j * face_normal * JxW_face;
                             }
                         }

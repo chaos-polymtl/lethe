@@ -1114,7 +1114,6 @@ CahnHilliard<2>::calculate_barycenter<TrilinosWrappers::MPI::Vector>(
   const TrilinosWrappers::MPI::Vector &solution,
   const TrilinosWrappers::MPI::Vector &current_solution_fd);
 
-
 template std::pair<Tensor<1, 3>, Tensor<1, 3>>
 CahnHilliard<3>::calculate_barycenter<TrilinosWrappers::MPI::Vector>(
   const TrilinosWrappers::MPI::Vector &solution,
