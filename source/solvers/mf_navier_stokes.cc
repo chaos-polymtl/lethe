@@ -520,7 +520,7 @@ MFNavierStokesSolver<dim, OperatorType>::solve_with_LSMG(
   amg_data.output_details = false;
   amg_data.smoother_type  = "ILU";
   amg_data.coarse_type    = "ILU";
-  // Constant modes for velocity
+  // Constant modes for velocity and pressure
   std::vector<std::vector<bool>> constant_modes;
   ComponentMask                  components(dim + 1, true);
   DoFTools::extract_constant_modes(this->dof_handler,
@@ -616,6 +616,48 @@ MFNavierStokesSolver<dim, OperatorType>::solve_with_GCMG(
   coarse_grid_triangulations =
     MGTransferGlobalCoarseningTools::create_geometric_coarsening_sequence(
       this->dof_handler.get_triangulation());
+
+  // Modify the triangulations if multigrid number of levels or minimum number
+  // of cells in level is specified
+  std::vector<std::shared_ptr<const Triangulation<dim>>> temp;
+
+  int mg_min_level =
+    this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+      .mg_min_level;
+
+  int mg_level_min_cells =
+    this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+      .mg_level_min_cells;
+
+  // find first relevant coarse-grid triangulation
+  auto ptr =
+    std::find_if(coarse_grid_triangulations.begin(),
+                 coarse_grid_triangulations.end() - 1,
+                 [&mg_min_level, &mg_level_min_cells](const auto &tria) {
+                   if (mg_min_level != -1) // minimum number of levels
+                     {
+                       if ((mg_min_level + 1) <=
+                           static_cast<int>(tria->n_global_levels()))
+                         return true;
+                     }
+                   else if (mg_level_min_cells != -1) // minimum number of cells
+                     {
+                       if (static_cast<int>(tria->n_global_active_cells()) >=
+                           mg_level_min_cells)
+                         return true;
+                     }
+                   else
+                     {
+                       return true;
+                     }
+                   return false;
+                 });
+
+  // consider all triangulations from that one
+  while (ptr != coarse_grid_triangulations.end())
+    temp.push_back(*(ptr++));
+
+  coarse_grid_triangulations = temp;
 
   // Extract min and max levels and resize mg level objects accordingly
   const unsigned int n_h_levels = coarse_grid_triangulations.size();
