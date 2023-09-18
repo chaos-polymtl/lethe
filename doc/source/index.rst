@@ -45,6 +45,7 @@ Contents
 
    installation/installation
    structure
+   applications
    first_simulation
    parameters/parameters
    examples/examples
