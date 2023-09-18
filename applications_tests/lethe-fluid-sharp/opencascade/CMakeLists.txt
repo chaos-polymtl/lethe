@@ -1,5 +1,5 @@
 IF(DEAL_II_WITH_OPENCASCADE)
-set(TEST_TARGET gls_sharp_navier_stokes)
+set(TEST_TARGET lethe-fluid-sharp)
 
 string(TOLOWER ${CMAKE_BUILD_TYPE} _build_type)
 

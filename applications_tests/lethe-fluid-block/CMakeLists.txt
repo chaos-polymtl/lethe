@@ -7,6 +7,6 @@ file(COPY square.msh DESTINATION "${CMAKE_CURRENT_BINARY_DIR}")
 deal_ii_pickup_tests()
 
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
-  set_tests_properties(gd_navier_stokes/mms3d_gd.mpirun=2.debug PROPERTIES TIMEOUT 2000)
+  set_tests_properties(lethe-fluid-block/mms3d_gd.mpirun=2.debug PROPERTIES TIMEOUT 2000)
 endif()
 
