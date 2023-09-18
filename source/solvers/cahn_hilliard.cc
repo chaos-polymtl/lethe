@@ -50,7 +50,6 @@ CahnHilliard<dim>::setup_assemblers()
   this->assemblers.push_back(
     std::make_shared<CahnHilliardAssemblerFreeAngle<dim>>(
       this->simulation_control,
-      this->simulation_parameters.multiphysics.cahn_hilliard_parameters,
       this->simulation_parameters.boundary_conditions_cahn_hilliard));
 
 
@@ -626,23 +625,23 @@ CahnHilliard<dim>::postprocess(bool first_iteration)
               table.write_text(std::cout);
             }
 
-          this->table_barycenter.add_value(
+          this->barycenter_table.add_value(
             "time", simulation_control->get_current_time());
 
-          this->table_barycenter.add_value("x_cahn_hilliard",
+          this->barycenter_table.add_value("x_cahn_hilliard",
                                            position_and_velocity.first[0]);
-          this->table_barycenter.add_value("y_cahn_hilliard",
+          this->barycenter_table.add_value("y_cahn_hilliard",
                                            position_and_velocity.first[1]);
           if constexpr (dim == 3)
-            this->table_barycenter.add_value("z_cahn_hilliard",
+            this->barycenter_table.add_value("z_cahn_hilliard",
                                              position_and_velocity.first[2]);
 
-          this->table_barycenter.add_value("vx_cahn_hilliard",
+          this->barycenter_table.add_value("vx_cahn_hilliard",
                                            position_and_velocity.second[0]);
-          this->table_barycenter.add_value("vy_cahn_hilliard",
+          this->barycenter_table.add_value("vy_cahn_hilliard",
                                            position_and_velocity.second[1]);
           if constexpr (dim == 3)
-            this->table_barycenter.add_value("vz_cahn_hilliard",
+            this->barycenter_table.add_value("vz_cahn_hilliard",
                                              position_and_velocity.second[2]);
 
 
@@ -657,7 +656,7 @@ CahnHilliard<dim>::postprocess(bool first_iteration)
                   .barycenter_cahn_hilliard_output_name +
                 ".dat";
               std::ofstream output(filename.c_str());
-              this->table_barycenter.write_text(output);
+              this->barycenter_table.write_text(output);
               output.close();
             }
         }
