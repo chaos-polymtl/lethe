@@ -11,7 +11,7 @@ This example simulates a two-dimensional gallium melting cavity `[1] <https://do
 Features
 ----------------------------------
 
-- Solver: ``gls_navier_stokes`` 
+- Solver: ``lethe-fluid`` 
 - Phase change (solid-liquid)
 - Buoyant force (natural convection)
 - Unsteady problem handled by an adaptive BDF2 time-stepping scheme 
@@ -193,9 +193,9 @@ The solid block melts into liquid in this example, hence in the ``physical prope
 Running the Simulation
 ---------------------------
 
-Call the gls_navier_stokes by invoking:  
+Call the lethe-fluid by invoking:  
 
-``mpirun -np 12 gls_navier_stokes melting-cavity.prm``
+``mpirun -np 12 lethe-fluid melting-cavity.prm``
 
 to run the simulation using twelve CPU cores. Feel free to use more.
 

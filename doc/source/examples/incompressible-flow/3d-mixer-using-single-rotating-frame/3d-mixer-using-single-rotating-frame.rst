@@ -21,7 +21,7 @@ where
 Features
 -------------
 
-- Solver: ``gls_navier_stokes`` (with Q1-Q1)
+- Solver: ``lethe-fluid`` (with Q1-Q1)
 - Steady-state problem
 - Displays the use of a single rotating frame (``srf``) when modeling a complex rotating geometry
 - Calculation of the power number (:math:`N_p`) using a python script
@@ -279,11 +279,11 @@ and then move it to the ``Np_vs_Re`` folder:
 
 Simulating for a Specific Flow Condition :math:`(Re=1)`
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-Launching the simulation is as simple as specifying the executable name and the parameter file. Assuming that the ``gls_navier_stokes`` executable is within your path, the simulation can be launched by typing:
+Launching the simulation is as simple as specifying the executable name and the parameter file. Assuming that the ``lethe-fluid`` executable is within your path, the simulation can be launched by typing:
 
 .. code-block:: text
 
-    mpirun -np $number_of_CPUs gls_navier_stokes ribbon-gls-Re1.prm
+    mpirun -np $number_of_CPUs lethe-fluid ribbon-gls-Re1.prm
 
 Generating :math:`N_p` vs :math:`Re` Curves :math:`(Re \in [0.1, 100])`
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

@@ -7,8 +7,8 @@ The calculation is performed for a given set of positions inside a square.
 ----------------------------------
 Features
 ----------------------------------
-- Solver: ``rpt_l2_projection_3d``
-- Solver: ``rpt_fem_reconstruction_3d``
+- Solver: ``lethe-rpt-l2-projection-3d``
+- Solver: ``lethe-rpt-fem-reconstruction-3d``
 - Displays the use of the inverse FEM in reconstruction of the radioactive particle positions
 
 ---------------------------
@@ -119,17 +119,17 @@ In the subsection ``FEM reconstruction parameters``, we specify the file that co
 
 Running the Simulation
 ----------------------------------
-Assuming that ``rpt_l2_projection_3d`` and ``rpt_fem_reconstruction_3d`` executables are within your path, you can start launching FEM-PR by typing :
+Assuming that ``lethe-rpt-l2-projection-3d`` and ``lethe-rpt-fem-reconstruction-3d`` executables are within your path, you can start launching FEM-PR by typing :
 
 .. code-block:: text
 
-    rpt_l2_projection_3d rpt-fem-reconstruction.prm
+    lethe-rpt-l2-projection-3d rpt-fem-reconstruction.prm
 
 This step uses the L2 projection technique to smooth the noise of the Monte Carlo method and calculates the photon counts at the nodes. After this part is done, the program generates the file of nodal counts from each detector as such : ``temp_nodal_counts_detector00.counts``. The next step is to launch the position reconstruction as follows:
 
 .. code-block:: text
 
-	rpt_fem_reconstruction_3d rpt-fem-reconstruction.prm
+	lethe-rpt-fem-reconstruction-3d rpt-fem-reconstruction.prm
 
 
 Results

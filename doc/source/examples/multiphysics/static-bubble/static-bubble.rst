@@ -9,7 +9,7 @@ This example simulates a two-dimensional static bubble `[1] <https://doi.org/10.
 Features
 ----------------------------------
 
-- Solver: ``gls_navier_stokes``
+- Solver: ``lethe-fluid``
 - Two phase flow handled by the Volume of fluids (VOF) approach with surface tension force
 - Calculation of filtered phase fraction gradient and curvature fields
 - Unsteady problem handled by a BDF1 time-stepping scheme
@@ -201,9 +201,9 @@ When providing the analytical solution in the ``analytical solution`` subsection
 Running the Simulation
 ---------------------------
 
-Call the ``gls_navier_stokes`` by invoking:
+Call the ``lethe-fluid`` by invoking:
 
-``mpirun -np 8 gls_navier_stokes static-bubble.prm``
+``mpirun -np 8 lethe-fluid static-bubble.prm``
 
 to run the simulation using eight CPU cores. Feel free to use more.
 

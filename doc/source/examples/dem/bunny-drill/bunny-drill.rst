@@ -8,7 +8,7 @@ This example simulates the drilling motion of a bunny within a bed of particles.
 ----------------------------------
 Features
 ----------------------------------
-- Solvers: ``dem``
+- Solvers: ``lethe-particles``
 - Floating walls
 - `GMSH <https://gmsh.info/>`_ grids
 
@@ -170,13 +170,13 @@ The loading can be simulated using the following command:
 
 .. code-block:: text
 
-  mpirun -np 8 dem bunny-drill-loading.prm
+  mpirun -np 8 lethe-particles bunny-drill-loading.prm
 
 Whereas the drilling is launched after the loading using:
 
 .. code-block:: text
 
-  mpirun -np 8 dem bunny-drill.prm
+  mpirun -np 8 lethe-particles bunny-drill.prm
 
 
 -------

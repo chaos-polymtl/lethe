@@ -8,7 +8,7 @@ This example showcases a laminar non-Newtonian flow around a sphere, with an *a 
 ----------------------------------
 Features
 ----------------------------------
-- Solvers: ``gls_sharp_navier_stokes`` (with Q1-Q1) 
+- Solvers: ``lethe-fluid-sharp`` (with Q1-Q1) 
 - Steady-state problem
 - Non-Newtonian behavior
 - Ramping initial condition

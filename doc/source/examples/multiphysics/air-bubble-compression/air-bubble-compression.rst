@@ -10,7 +10,7 @@ The problem is inspired by the test case of Caltagirone *et al.* `[1] <https://d
 Features
 --------
 
-- Solver: ``gls_navier_stokes`` (with Q1-Q1)
+- Solver: ``lethe-fluid`` (with Q1-Q1)
 - Volume of fluid (VOF)
 - Isothermal compressible fluid
 - Unsteady problem handled by an adaptive BDF2 time-stepping scheme
@@ -264,12 +264,12 @@ In the ``mesh adaptation`` subsection, adaptive mesh refinement is defined for t
 Running the Simulation
 -----------------------
 
-We can call the ``gls_navier_stokes`` by invoking the following command:
+We can call the ``lethe-fluid`` by invoking the following command:
 
 .. code-block:: text
   :class: copy-button
 
-  mpirun -np 8 gls_navier_stokes air-bubble-compression.prm
+  mpirun -np 8 lethe-fluid air-bubble-compression.prm
 
 to run the simulation using eight CPU cores. Feel free to use more.
 

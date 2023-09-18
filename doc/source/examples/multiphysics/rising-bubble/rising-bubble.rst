@@ -9,7 +9,7 @@ This example simulates a two-dimensional rising bubble `[1] <https://doi.org/10.
 Features
 --------
 
-- Solver: ``gls_navier_stokes`` 
+- Solver: ``lethe-fluid`` 
 - Two phase flow handled by the Volume of fluids (VOF) approach with phase filtering, phase sharpening, and surface tension force
 - Calculation of filtered phase fraction gradient and curvature fields
 - Unsteady problem handled by an adaptive BDF1 time-stepping scheme 
@@ -239,9 +239,9 @@ To compare our simulation results to the literature, we extract the position and
 Running the Simulation
 ---------------------------
 
-Call the gls_navier_stokes by invoking:  
+Call the lethe-fluid by invoking:  
 
-``mpirun -np 8 gls_navier_stokes rising-bubble.prm``
+``mpirun -np 8 lethe-fluid rising-bubble.prm``
 
 to run the simulation using eight CPU cores. Feel free to use more.
 

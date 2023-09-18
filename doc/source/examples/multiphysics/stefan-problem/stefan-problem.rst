@@ -9,7 +9,7 @@ This example simulates the Stefan `[1] <https://en.wikipedia.org/wiki/Stefan_pro
 Features
 ----------------------------------
 
-- Solver: ``gls_navier_stokes`` 
+- Solver: ``lethe-fluid`` 
 - Heat transfer pĥysics
 - Unsteady problem handled by a BDF1 time-stepping scheme
 - Phase change specific heat model
