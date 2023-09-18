@@ -10,6 +10,7 @@ We organize the DEM examples from the simplest to the most complicated example:
     :glob:
 
     bouncing-particle/bouncing-particle
+    oblique-wall-impact/oblique-wall-impact
     packing-in-circle/packing-in-circle
     packing-in-ball/packing-in-ball
     small-scale-rotating-drum/small-scale-rotating-drum
@@ -36,29 +37,31 @@ We organize the DEM examples from the simplest to the most complicated example:
 
       dem_1 [label="Bouncing Particle", href="https://lethe-cfd.github.io/lethe/examples/dem/bouncing-particle/bouncing-particle.html"];
 
-      dem_2 [label="Packing in Circle", href="https://lethe-cfd.github.io/lethe/examples/dem/packing-in-circle/packing-in-circle.html"];
+      dem_2 [label="Oblique Wall Impact", href="https://lethe-cfd.github.io/lethe/examples/dem/oblique-wall-impact/oblique-wall-impact.html"];
 
-      dem_3 [label="Packing in Ball", href="https://lethe-cfd.github.io/lethe/examples/dem/packing-in-ball/packing-in-ball.html"];
+      dem_3 [label="Packing in Circle", href="https://lethe-cfd.github.io/lethe/examples/dem/packing-in-circle/packing-in-circle.html"];
 
-      dem_4 [label="Small Scale Rotating Drum", href="https://lethe-cfd.github.io/lethe/examples/dem/small-scale-rotating-drum/small-scale-rotating-drum.html"];
+      dem_4 [label="Packing in Ball", href="https://lethe-cfd.github.io/lethe/examples/dem/packing-in-ball/packing-in-ball.html"];
+
+      dem_5 [label="Small Scale Rotating Drum", href="https://lethe-cfd.github.io/lethe/examples/dem/small-scale-rotating-drum/small-scale-rotating-drum.html"];
     
-      dem_5 [label="Small Scale Rotating Drum Post-processing", href="https://lethe-cfd.github.io/lethe/examples/dem/small-scale-rotating-drum-post-processing/small-scale-rotating-drum-post-processing.html"];
+      dem_6 [label="Small Scale Rotating Drum Post-processing", href="https://lethe-cfd.github.io/lethe/examples/dem/small-scale-rotating-drum-post-processing/small-scale-rotating-drum-post-processing.html"];
 
-      dem_6 [label="Rotating Drum", href="https://lethe-cfd.github.io/lethe/examples/dem/rotating-drum/rotating-drum.html"];
+      dem_7 [label="Rotating Drum", href="https://lethe-cfd.github.io/lethe/examples/dem/rotating-drum/rotating-drum.html"];
 
-      dem_7 [label="Rotating Drum with Post-processing", href="https://lethe-cfd.github.io/lethe/examples/dem/rotating-drum-with-post-processing/rotating-drum-with-post-processing.html"];
+      dem_8 [label="Rotating Drum with Post-processing", href="https://lethe-cfd.github.io/lethe/examples/dem/rotating-drum-with-post-processing/rotating-drum-with-post-processing.html"];
 
-      dem_8 [label="Rotation of Box", href="https://lethe-cfd.github.io/lethe/examples/dem/rotation-of-box/rotation-of-box.html"];
+      dem_9 [label="Rotation of Box", href="https://lethe-cfd.github.io/lethe/examples/dem/rotation-of-box/rotation-of-box.html"];
 
-      dem_9 [label="Silo", href="https://lethe-cfd.github.io/lethe/examples/dem/silo/silo.html"]; 
+      dem_10 [label="Silo", href="https://lethe-cfd.github.io/lethe/examples/dem/silo/silo.html"]; 
 
-      dem_10 [label="Rectangular Hopper", href="https://lethe-cfd.github.io/lethe/examples/dem/rectangular-hopper/rectangular-hopper.html"];
+      dem_11 [label="Rectangular Hopper", href="https://lethe-cfd.github.io/lethe/examples/dem/rectangular-hopper/rectangular-hopper.html"];
 
-      dem_11 [label="Granular Dam-Break", href="https://lethe-cfd.github.io/lethe/examples/dem/granular-dam-break/granular-dam-break.html"];
+      dem_12 [label="Granular Dam-Break", href="https://lethe-cfd.github.io/lethe/examples/dem/granular-dam-break/granular-dam-break.html"];
 
-      dem_12 [label="Bunny Drill", href="https://lethe-cfd.github.io/lethe/examples/dem/bunny-drill/bunny-drill.html"];
+      dem_13 [label="Bunny Drill", href="https://lethe-cfd.github.io/lethe/examples/dem/bunny-drill/bunny-drill.html"];
 
-      dem_13 [label="Granular Mixer", href="https://lethe-cfd.github.io/lethe/examples/dem/granular-mixer/granular-mixer.html"];
+      dem_14 [label="Granular Mixer", href="https://lethe-cfd.github.io/lethe/examples/dem/granular-mixer/granular-mixer.html"];
 
       
 
@@ -75,4 +78,5 @@ We organize the DEM examples from the simplest to the most complicated example:
       dem -> dem_11:w;
       dem -> dem_12:w;
       dem -> dem_13:w;
+      dem -> dem_14:w;
     }
