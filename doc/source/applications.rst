@@ -1,6 +1,6 @@
-#######################
-Applications in Lethe
-#######################
+######################
+Applications Overview
+######################
 
 Lethe has several applications that can be used depending on the problem that wants to be solved. Once Lethe is compiled, all the executables to these applications become available. In what follows, a brief description of each application is provided:
 
@@ -11,19 +11,19 @@ Lethe has several applications that can be used depending on the problem that wa
     * - Application
       - Description
     * - ``lethe-fluid``
-      - This is a Navier-Stokes solver...
+      - This application solves the Navier-Stokes equations in a monolithic way.
     * - ``lethe-fluid-block``
-      - This is a block Navier-Stokes solver...
+      - This application solves the Navier-Stokes equations in a monolithic way with a block approach.
     * - ``lethe-fluid-matrix-free``
-      - Description 
+      - This application solves the Navier-Stokes equations in a monolithic way and using a matrix-free approach. 
     * - ``lethe-fluid-sharp``
       - Description    
     * - ``lethe-fluid-vans``
-      - Description
+      - This application solves the Volume-Averaged Navier-Stokes equations in a monolithic way.
     * - ``lethe-particles``
-      - Description
+      - This application uses the Discrete Element Method (DEM) to simulate particles.
     * - ``lethe-fluid-particles``
-      - Description 
+      - This application allows to run simulations that require a CFD and Discrete Element Method (DEM) coupling.
     * - ``lethe-rpt-3d``
       - Description
     * - ``lethe-rpt-cell-reconstruction-3d``
