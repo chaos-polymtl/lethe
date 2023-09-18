@@ -440,7 +440,7 @@ protected:
     const double characteristic_velocity =
       1.0; // Characteristic velocity is set at 1.0 so that the normal and
            // tangential spring_constant remain constant throughout a
-           // simululation.
+           // simulation.
 
     // Calculation of normal and tangential spring and dashpot constants
     // using particle properties

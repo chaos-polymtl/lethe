@@ -169,4 +169,4 @@ As the stiffness is increased, the agreement between the results obtained in the
 Reference
 ---------
 
-`[1] <https://mfix.netl.doe.gov/doc/vvuq-manual/main/html/dem/dem-02.html>`_ “4.2. DEM02: Bouncing particle¶,” 4.2. DEM02: Bouncing particle - MFiX Third Edition documentation, https://mfix.netl.doe.gov/doc/vvuq-manual/main/html/dem/dem-02.html  (accessed Jun. 8, 2023).
+`[1] <https://mfix.netl.doe.gov/doc/vvuq-manual/main/html/dem/dem-02.html>`_ “4.2. DEM02: Bouncing particle,” 4.2. DEM02: Bouncing particle - MFiX Third Edition documentation, https://mfix.netl.doe.gov/doc/vvuq-manual/main/html/dem/dem-02.html  (accessed Jun. 8, 2023).
