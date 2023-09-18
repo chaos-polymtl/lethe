@@ -6,18 +6,18 @@ The objective of this section is to highlight the steps that are necessary to la
 
 Launching an application requires an executable of the required solver, and a parameters file (with extension .prm). After building Lethe, the solver executable files can be found in : ``$BUILD_FOLDER/applications`` directory.
 
-For instance, ``gd_navier_stokes`` executable is located in the ``$BUILD_FOLDER/applications/gd_navier_stokes`` directory.
+For instance, ``lethe-fluid-block`` executable is located in the ``$BUILD_FOLDER/applications/lethe-fluid-block`` directory.
 
 The executable for the solvers can be used directly from the folder it is compiled to. This can be achieved by:
 
-* Writing the absolute path of the solver (e.g. ``$BUILD_FOLDER/applications/gd_navier_stokes/gd_navier_stokes``);
+* Writing the absolute path of the solver (e.g. ``$BUILD_FOLDER/applications/lethe-fluid-block/lethe-fluid-block``);
 * Adding the lethe folder paths to your ``PATH`` environment variable;
 * Specifying an installation folder when you compile Lethe to ensure that all the applications are grouped within a single folder;
 * Locally copying the executable to the folder you are running your simulation from.
 
 All these workflows can achieve the same result.
 
-To launch a simulation, you must specify the solver executable and the parameter file in the following format: ``solver parameter_file``. For example, ``gls_navier_stokes poiseuille2d.prm``
+To launch a simulation, you must specify the solver executable and the parameter file in the following format: ``solver parameter_file``. For example, ``lethe-fluid poiseuille2d.prm``
 
 In what follows, we describe a simple procedure to launch your first simulation using Lethe.
 
@@ -33,7 +33,7 @@ The source folder of lethe contains an examples folder. This folder contains rea
 Step 2: Launching the Example
 -----------------------------
 
-The cavity example we are launching uses the *gls_navier_stokes* solver. All of the solvers of Lethe can be found in the build folder where you have compiled Lethe or within the installation folder. Inside of your build folder, six sub folders should be found:
+The cavity example we are launching uses the *lethe-fluid* solver. All of the solvers of Lethe can be found in the build folder where you have compiled Lethe or within the installation folder. Inside of your build folder, six sub folders should be found:
 
 * ``/applications``
 * ``/applications_tests``
@@ -42,9 +42,9 @@ The cavity example we are launching uses the *gls_navier_stokes* solver. All of 
 * ``/source``
 * ``/tests``
 
-Inside the ``/applications`` folder, there is one folder for each solver of Lethe. In the ``/gls_navier_stokes`` folder, we find the executable file with the same name as the folder: ``gls_navier_stokes``. This solver solves the 2D incompressible Navier-Stokes equations using a Galerkin Least-Square formulation.
+Inside the ``/applications`` folder, there is one folder for each solver of Lethe. In the ``/lethe-fluid`` folder, we find the executable file with the same name as the folder: ``lethe-fluid``. This solver solves the 2D incompressible Navier-Stokes equations using a Galerkin Least-Square formulation.
 
-From the ``/first_simulation`` folder we have created, we can launch the simulation directly. If you have decided to copy the executable to the ``first_simulation`` folder, you can launch using the following command: ``./gls_navier_stokes cavity.prm``. You can also launch the simulation using the absolute path of the executable: ``$BUILD_FOLDER/applications/gls_navier_stokes/gls_navier_stokes cavity.prm``.
+From the ``/first_simulation`` folder we have created, we can launch the simulation directly. If you have decided to copy the executable to the ``first_simulation`` folder, you can launch using the following command: ``./lethe-fluid cavity.prm``. You can also launch the simulation using the absolute path of the executable: ``$BUILD_FOLDER/applications/lethe-fluid/lethe-fluid cavity.prm``.
 
 
 Step 3: Post-processing the Results
