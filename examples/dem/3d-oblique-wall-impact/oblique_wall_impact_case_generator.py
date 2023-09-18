@@ -7,7 +7,7 @@ import os
 
 # Case generator
 PATH = os.getcwd()
-PRM_FILE = 'oblique_wall_collision_template.prm'
+PRM_FILE = 'oblique_wall_impact_template.prm'
 
 # System characteristics
 theta = np.linspace(1,70,34)      # Restitution coefficient
@@ -20,7 +20,7 @@ template = templateEnv.get_template(PRM_FILE)
 for val in theta:
 
     output_text = template.render(FN=f"{int(val):02d}", vz=-velocity*np.cos(val/360*2*np.pi), vy=velocity*np.sin(val/360*2*np.pi))
-    prm_file_name = f"run_oblique_collision_{int(val):02d}.prm"
+    prm_file_name = f"run_oblique_impact_{int(val):02d}.prm"
 
     # Write the output text to the prm file
     output_file_path = os.path.join("./", prm_file_name)

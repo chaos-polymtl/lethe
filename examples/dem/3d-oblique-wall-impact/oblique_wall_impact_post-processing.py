@@ -59,7 +59,7 @@ restitution_mfix = [1.000,1,0.965,0.94,0.91,0.869,0.846,0.823,0.798,0.7507,0.72,
 
 
 for i,x in enumerate(theta): # loop over the .prm
-    e = lethe_pyvista_tools('.', f"run_oblique_collision_{int(x):02d}.prm", 'out.pvd',read_to_df=True)
+    e = lethe_pyvista_tools('.', f"run_oblique_impact_{int(x):02d}.prm", 'out.pvd',read_to_df=True)
     # Get the last vtu
     last_df = e.get_df(len(e.list_vtu)-1)
     vy = last_df['velocity'][0, 1]
