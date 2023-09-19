@@ -231,8 +231,9 @@ To compare our simulation results to the literature, we extract the position and
 .. code-block:: text
 
     subsection post-processing
-      set verbosity                = quiet
-      set calculate VOF barycenter = true
+      set verbosity            = quiet
+      set calculate barycenter = true
+      set barycenter name      = vof_barycenter_information
     end
 
 ---------------------------
