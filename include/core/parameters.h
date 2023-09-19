@@ -760,11 +760,8 @@ namespace Parameters
     // simulations
     bool calculate_barycenter;
 
-    // Prefix for the vof barycenter output
-    std::string barycenter_vof_output_name;
-
-    // Prefix for the barycenter output of Cahn-Hilliard simulations
-    std::string barycenter_cahn_hilliard_output_name;
+    // Prefix for the vof and Cahn-Hilliard barycenter output
+    std::string barycenter_output_name;
 
     // Enable smoothing postprocessed vectors and scalars
     bool smoothed_output_fields;

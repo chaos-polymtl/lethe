@@ -60,13 +60,8 @@ This subsection controls the post-processing other than the forces and torque on
 
     # Multiphase postprocessing
     set calculate barycenter             = false
-        
-      # VOF barycenter
-      set VOF barycenter name            = vof_barycenter_information
-        
-      # Cahn-Hilliard barycenter
-      set cahn hilliard barycenter name  = cahn_hilliard_barycenter_information
-        
+    set barycenter name                  = barycenter_information
+
     # Other Cahn-Hilliard postprocessing
     set calculate phase statistics       = false
     set phase statistics name            = phase_statistics
@@ -200,10 +195,8 @@ This subsection controls the post-processing other than the forces and torque on
       
   where :math:`\phi` is the phase order parameter.
   
-* ``VOF barycenter name``: name of the output file containing the position and velocity of the barycenter for VOF simulations.
   
-  
-* ``cahn hilliard barycenter name``: name of the output file containing the position and velocity of the barycenter for Cahn-Hilliard simulations. The default file name is ``cahn_hilliard_barycenter_information``.
+* ``barycenter name``: name of the output file containing the position and velocity of the barycenter for VOF and Cahn-Hilliard simulations. The default file name is ``barycenter_information``.
   
 * ``calculate phase statistics``: outputs phase statistics from the solution of the Cahn-Hilliard equations, including minimum, maximum, average, and standard deviation of the phase order parameter. This works only with the :doc:`cahn_hilliard` solver.
 

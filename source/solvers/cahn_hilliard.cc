@@ -614,15 +614,6 @@ CahnHilliard<dim>::postprocess(bool first_iteration)
                 dependent_column_names,
                 this->simulation_parameters.simulation_control.log_precision);
 
-              //              std::cout <<
-              //              "+------------------------------------------+"
-              //                        << std::endl;
-              //              std::cout
-              //                << "|  Cahn-Hilliard Barycenter |"
-              //                << std::endl;
-              //              std::cout <<
-              //              "+------------------------------------------+"
-              //                        << std::endl;
               announce_string(this->pcout, "Cahn-Hilliard Barycenter");
 
               table.write_text(std::cout);
@@ -656,7 +647,7 @@ CahnHilliard<dim>::postprocess(bool first_iteration)
               std::string filename =
                 this->simulation_parameters.simulation_control.output_folder +
                 this->simulation_parameters.post_processing
-                  .barycenter_cahn_hilliard_output_name +
+                  .barycenter_output_name +
                 ".dat";
               std::ofstream output(filename.c_str());
               this->barycenter_table.write_text(output);

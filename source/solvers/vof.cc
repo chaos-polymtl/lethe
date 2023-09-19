@@ -881,7 +881,7 @@ VolumeOfFluid<dim>::postprocess(bool first_iteration)
               std::string filename =
                 this->simulation_parameters.simulation_control.output_folder +
                 this->simulation_parameters.post_processing
-                  .barycenter_vof_output_name +
+                  .barycenter_output_name +
                 ".dat";
               std::ofstream output(filename.c_str());
               this->table_barycenter.write_text(output);
