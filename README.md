@@ -7,7 +7,7 @@
 Lethe (pronounced /ˈliːθiː/) is open-source computational fluid dynamics
 (CFD), discrete element method (DEM) and coupled CFD-DEM
 software which uses high-order continuous Galerkin formulations to
-simulate single or multiphase flows.
+simulate single and multiphase flows.
 Lethe contains a family of solvers that are based on
 [deal.II](https://www.dealii.org/), a finite element library.
 Through deal.II, Lethe uses [Trilinos](https://trilinos.github.io/) for
