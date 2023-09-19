@@ -1595,13 +1595,13 @@ namespace Parameters
         "calculate barycenter",
         "false",
         Patterns::Bool(),
-        "Enable calculation of the barycenter location and velocity of the fluid 1 in VOF and Cahn-Hilliard simulations.");
+        "Enable calculation of the barycenter location and velocity of fluid 1 in VOF and Cahn-Hilliard simulations.");
 
       prm.declare_entry(
         "barycenter name",
         "barycenter_information",
         Patterns::FileName(),
-        "Name of barycenter information output file in VOF or Cahn-Hilliard= simulations");
+        "Name of barycenter information output file in VOF or Cahn-Hilliard simulations");
     }
     prm.leave_subsection();
   }

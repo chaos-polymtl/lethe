@@ -181,7 +181,7 @@ This subsection controls the post-processing other than the forces and torque on
 
       \mathbf{v_b} = \frac{\int_{\Omega} \psi \mathbf{u} \mathrm{d}\Omega }{\int_{\Omega} \psi \mathrm{d}\Omega}
 
-  where :math:`\psi` is the filtered phase indicator for VOF simulations. 
+  where :math:`\psi \in [0,1]` is the filtered phase indicator for VOF simulations. 
   
   For Cahn-Hilliard the formula is slightly different since the phase order parameter :math:`\phi` belongs to the :math:`[-1,1]` interval:
   
