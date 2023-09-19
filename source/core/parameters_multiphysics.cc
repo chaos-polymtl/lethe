@@ -167,7 +167,6 @@ Parameters::VOF::parse_parameters(ParameterHandler &prm)
 
     compressible = prm.get_bool("compressible");
 
-
     // Error definitions
     if (sharpening.type == Parameters::SharpeningType::adaptive)
       {
