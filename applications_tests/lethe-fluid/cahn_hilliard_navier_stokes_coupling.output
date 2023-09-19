@@ -3,62 +3,62 @@ Running on 1 MPI rank(s)...
    Number of degrees of freedom: 3267
    Volume of triangulation:      1
    Number of Cahn-Hilliard degrees of freedom: 2178
-Phase statistics :
-	     Min : -1
-	     Max : 1
-	 Average : 0.801589
-	 Integral : 0.801589
+Phase statistics:
+	     Min: -1
+	     Max: 1
+	 Average: 0.801589
+	 Integral: 0.801589
 
 *******************************************************************************
 Transient iteration: 1        Time: 0.004    Time step: 0.004    CFL: 0
 *******************************************************************************
-Phase statistics :
-	     Min : -1.01454
-	     Max : 1.00577
-	 Average : 0.801589
-	 Integral : 0.801589
+Phase statistics:
+	     Min: -1.01454
+	     Max: 1.00577
+	 Average: 0.801589
+	 Integral: 0.801589
 
 *********************************************************************************
 Transient iteration: 2        Time: 0.01     Time step: 0.006    CFL: 0.00704985
 *********************************************************************************
-Phase statistics :
-	     Min : -1.01314
-	     Max : 1.00482
-	 Average : 0.801589
-	 Integral : 0.801589
+Phase statistics:
+	     Min: -1.01314
+	     Max: 1.00482
+	 Average: 0.801589
+	 Integral: 0.801589
 
 ********************************************************************************
 Transient iteration: 3        Time: 0.02     Time step: 0.01     CFL: 0.0139298
 ********************************************************************************
-Phase statistics :
-	     Min : -1.00767
-	     Max : 1.00366
-	 Average : 0.801589
-	 Integral : 0.801589
+Phase statistics:
+	     Min: -1.00767
+	     Max: 1.00366
+	 Average: 0.801589
+	 Integral: 0.801589
 
 ********************************************************************************
 Transient iteration: 4        Time: 0.03     Time step: 0.01     CFL: 0.0229055
 ********************************************************************************
-Phase statistics :
-	     Min : -1.01001
-	     Max : 1.00324
-	 Average : 0.801589
-	 Integral : 0.801589
+Phase statistics:
+	     Min: -1.01001
+	     Max: 1.00324
+	 Average: 0.801589
+	 Integral: 0.801589
 
 ********************************************************************************
 Transient iteration: 5        Time: 0.04     Time step: 0.01     CFL: 0.0214444
 ********************************************************************************
-Phase statistics :
-	     Min : -1.00819
-	     Max : 1.00303
-	 Average : 0.801589
-	 Integral : 0.801589
+Phase statistics:
+	     Min: -1.00819
+	     Max: 1.00303
+	 Average: 0.801589
+	 Integral: 0.801589
 
 ********************************************************************************
 Transient iteration: 6        Time: 0.05     Time step: 0.01     CFL: 0.0202958
 ********************************************************************************
-Phase statistics :
-	     Min : -1.00512
-	     Max : 1.0029
-	 Average : 0.801589
-	 Integral : 0.801589
+Phase statistics:
+	     Min: -1.00512
+	     Max: 1.0029
+	 Average: 0.801589
+	 Integral: 0.801589
