@@ -39,8 +39,8 @@ In this subsection, the control options of the linear solvers are specified. The
 
 
 * The ``method`` parameter enables to choose an iterative solver for the linear system of equations. Lethe currently supports the following core solution strategies:
-	* ``gmres`` (default parameter value), a GMRES iterative solver with ILU preconditioning or AMG preconditioning with an ILU coarsener and smoother.
-	* ``bicgstab``, a BICGSTAB iterative solver with ILU preconditioning.
+	* ``gmres`` (default parameter value), a preconditioned GMRES iterative solver.
+	* ``bicgstab``, a preconditioned BICGSTAB iterative solver.
 	* ``direct``, a direct solver using `TrilinosWrappers::SolverDirect <https://www.dealii.org/current/doxygen/deal.II/classTrilinosWrappers_1_1SolverDirect.html>`_.
 
 	.. hint::
@@ -105,7 +105,7 @@ In this subsection, the control options of the linear solvers are specified. The
 .. tip::
 	Consider using ``set max krylov vectors = 200`` for complex simulations with convergence issues. 
 
-* ``preconditioner`` sets the type of preconditioning used for the linear solver. It can be either ``ilu`` for an Incomplete LU decomposition or ``amg`` for an Algebraic Multigrid. 
+* ``preconditioner`` sets the type of preconditioning used for the linear solver. It can be either ``ilu`` for an Incomplete LU decomposition, ``amg`` for an Algebraic Multigrid, ``lsmg`` for a Local Smoothing Multigrid, or ``gcmg`` for a Global Coarsening Multigrid. The latter two are only available for the ``lethe-fluid-matrix-free`` application.
 
 .. warning::
     Currently, the ``lethe-fluid-sharp`` solver makes it almost impossible to reach convergence with the ``amg`` preconditioner. Therefore, it is recommended to use ``ilu`` instead, even for fine meshes. In addition, the ``VOF``, ``heat transfer``, ``cahn hilliard`` and ``tracer`` physics only support ``ilu``.
@@ -175,3 +175,45 @@ AMG preconditioner
 
 .. seealso::
 	For more information about the ``amg`` preconditioner parameters, the reader is referred to the deal.II documentation for the `AMG preconditioner <https://www.dealii.org/current/doxygen/deal.II/classTrilinosWrappers_1_1PreconditionAMG.html>`_ and its `Additional Data <https://www.dealii.org/current/doxygen/deal.II/structTrilinosWrappers_1_1PreconditionAMG_1_1AdditionalData.html>`_.
+
+------------------------------
+LSMG and GCMG preconditioners
+------------------------------
+
+Different parameters for the main components of the two geometric multigrid algorithms can be specified. The parameters can be general or can belong to either the smoother, the coarse-grid solver or the coarse-grid solver preconditioner.
+
+.. code-block:: text
+
+    # General MG verbosity
+    set mg verbosity       = quiet
+    set mg min level       = -1
+    set mg level min cells = -1
+
+    # Smoother iterations and relaxation
+    set mg smoother iterations = 10
+    set mg smoother relaxation = 0.5
+
+    # Coarse-grid solver parameters
+    set mg coarse grid max iterations     = 2000
+    set mg coarse grid tolerance          = 1e-14
+    set mg coarse grid reduce             = 1e-4
+    set mg coarse grid max krylov vectors = 30
+    
+    # Coarse-grid AMG preconditioner parameters
+    set amg preconditioner ilu fill               = 0
+    set amg preconditioner ilu absolute tolerance = 1e-12
+    set amg preconditioner ilu relative tolerance = 1.00
+    set amg aggregation threshold                 = 1e-14
+    set amg n cycles                              = 1
+    set amg w cycles                              = false
+    set amg smoother sweeps                       = 2
+    set amg smoother overlap                      = 1
+    set amg preconditioner ilu fill               = 0
+    set amg preconditioner ilu absolute tolerance = 1e-12
+    set amg preconditioner ilu relative tolerance = 1.00
+
+.. tip::
+  The default algorithms built and use ALL the multigrid levels. There are two ways to change the number of levels, either by setting the ``mg min level`` parameter OR the ``mg level min cells`` parameter. 
+
+.. warning::
+    Currently, these preconditioners can only be used within the ``lethe-fluid-matrix-free`` application.
