@@ -288,8 +288,8 @@ to run the simulations using eight CPU cores. Feel free to use more.
 
 .. warning:: 
     Make sure to compile lethe in `Release` mode and 
-    run in parallel using mpirun. This simulation takes
-    :math:`\sim` 2 minutes on 8 processes for the ``adaptive`` sharpening and :math:`\sim` 4 minutes on 8 processes  for ``constant`` sharpening.
+    run in parallel using mpirun. On :math:`8` processes, this simulation takes
+    :math:`\sim` :math:`2` minutes for the ``adaptive`` sharpening and :math:`\sim` :math:`4` minutes for ``constant`` sharpening.
 
 
 -----------------------
