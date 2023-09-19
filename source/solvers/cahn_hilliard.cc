@@ -405,11 +405,11 @@ CahnHilliard<dim>::calculate_phase_statistics()
   if (simulation_parameters.post_processing.verbosity ==
       Parameters::Verbosity::verbose)
     {
-      this->pcout << "Phase statistics: " << std::endl;
-      this->pcout << "\t     Min: " << min_phase_value << std::endl;
-      this->pcout << "\t     Max: " << max_phase_value << std::endl;
-      this->pcout << "\t Average: " << phase_average << std::endl;
-      this->pcout << "\t Integral: " << integral << std::endl;
+      announce_string(this->pcout, "Phase statistics");
+      this->pcout << "Min: " << min_phase_value << std::endl;
+      this->pcout << "Max: " << max_phase_value << std::endl;
+      this->pcout << "Average: " << phase_average << std::endl;
+      this->pcout << "Integral: " << integral << std::endl;
     }
 
   statistics_table.add_value("time", simulation_control->get_current_time());
