@@ -20,7 +20,7 @@ import sys
 #--------------------------------------------
 
 #To make it work, type "python3 rayleigh-taylor_postprocess.py ./output/adaptive/" or
-#"python3 rayleigh-taylor_postprocess.py ./output/constant /" into the terminal.
+#"python3 rayleigh-taylor_postprocess.py ./output/constant/" into the terminal.
 
 
 #Load reference data from He et al (1999)
@@ -39,8 +39,6 @@ phase_limit = 0.5
 
 #Take case path as argument and store it
 output_path = sys.argv[1]
-
-
 
 #Define list of VTU files
 list_vtu = os.listdir(output_path)
@@ -123,7 +121,7 @@ plt.show()
 #Plot the mass of fluid along the simulation
 
 #Functions to turn .dat data in numpy array
-#Credits to Lucka Barbeau for the two functions below !
+#Credits to Lucka Barbeau for the two functions below!
 def is_number(s):
     try:
         float(s)
@@ -163,7 +161,7 @@ plt.plot(list_of_list_of_vars[0][0],list_of_list_of_vars[0][2])
 plt.title("Evolution of the mass of fluid 1 with {} interface sharpening".format(output_path[9:-1]))
 plt.xlabel("Time (s)")
 plt.ylabel("Mass of fluid 1 (kg)")
-plt.ylim(37.4,37.6)
+plt.ylim(37.4,37.7)
 plt.savefig('./mass_of_fluid_1_{}.png'.format(output_path[9:-1]))
 plt.show()
 
