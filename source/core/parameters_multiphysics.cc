@@ -15,7 +15,7 @@ DeclException1(
   double,
   << "Sharpening threshold max deviation : " << arg1
   << " is smaller than 0 or larger than 0.5." << std::endl
-  << "Adaptative interface sharpening requires a maximum deviation of the"
+  << "Adaptive interface sharpening requires a maximum deviation of the"
   << " sharpening threshold between 0.0 and 0.5. See documentation for further details");
 
 DeclException1(
@@ -26,11 +26,11 @@ DeclException1(
   << "Interface sharpening model requires an integer sharpening frequency larger than 0.");
 
 DeclException1(
-  AdaptativeSharpeningError,
+  AdaptiveSharpeningError,
   bool,
-  << "Sharpening type is set to 'adaptative' but monitoring is : " << arg1
+  << "Sharpening type is set to 'adaptive' but monitoring is : " << arg1
   << std::endl
-  << "Adaptative sharpening requires to set 'monitoring = true', and to define"
+  << "Adaptive sharpening requires to set 'monitoring = true', and to define"
   << " the 'fluid monitored' and the 'tolerance' to reach. See documentation for further details.");
 
 void
@@ -169,10 +169,10 @@ Parameters::VOF::parse_parameters(ParameterHandler &prm)
 
 
     // Error definitions
-    if (sharpening.type == Parameters::SharpeningType::adaptative)
+    if (sharpening.type == Parameters::SharpeningType::adaptive)
       {
         AssertThrow(conservation.monitoring,
-                    AdaptativeSharpeningError(conservation.monitoring));
+                    AdaptiveSharpeningError(conservation.monitoring));
       }
   }
   prm.leave_subsection();
@@ -193,7 +193,7 @@ Parameters::VOF_MassConservation::declare_parameters(ParameterHandler &prm)
       "tolerance",
       "1e-6",
       Patterns::Double(),
-      "Tolerance on the mass conservation of the monitored fluid, used with adaptative sharpening");
+      "Tolerance on the mass conservation of the monitored fluid, used with adaptive sharpening");
 
     prm.declare_entry(
       "monitored fluid",
@@ -258,10 +258,10 @@ Parameters::VOF_InterfaceSharpening::declare_parameters(ParameterHandler &prm)
     prm.declare_entry(
       "type",
       "constant",
-      Patterns::Selection("constant|adaptative"),
+      Patterns::Selection("constant|adaptive"),
       "VOF interface sharpening type, "
       "if constant the sharpening threshold is the same throughout the simulation, "
-      "if adaptative the sharpening threshold is determined by binary search, "
+      "if adaptive the sharpening threshold is determined by binary search, "
       "to ensure mass conservation of the monitored phase");
 
     // Parameters for constant sharpening
@@ -272,7 +272,7 @@ Parameters::VOF_InterfaceSharpening::declare_parameters(ParameterHandler &prm)
       "Interface sharpening threshold that represents the phase fraction at which "
       "the interphase is considered located");
 
-    // Parameters for adaptative sharpening
+    // Parameters for adaptive sharpening
     prm.declare_entry(
       "threshold max deviation",
       "0.20",
@@ -323,13 +323,13 @@ Parameters::VOF_InterfaceSharpening::parse_parameters(ParameterHandler &prm)
     const std::string t = prm.get("type");
     if (t == "constant")
       type = Parameters::SharpeningType::constant;
-    if (t == "adaptative")
-      type = Parameters::SharpeningType::adaptative;
+    if (t == "adaptive")
+      type = Parameters::SharpeningType::adaptive;
 
     // Parameters for constant sharpening
     threshold = prm.get_double("threshold");
 
-    // Parameters for adaptative sharpening
+    // Parameters for adaptive sharpening
     threshold_max_deviation = prm.get_double("threshold max deviation");
     max_iterations          = prm.get_double("max iterations");
 

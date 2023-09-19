@@ -544,7 +544,7 @@ private:
    * @brief Calculate the mass deviation of the monitored fluid, between the current
    * iteration and the mass at first iteration (mass_first_iteration). Used to
    * test multiple sharpening threshold in the binary search algorithm
-   * (adaptative sharpening).
+   * (adaptive sharpening).
    *
    * @param monitored_fluid Fluid indicator (fluid0 or fluid1) corresponding to
    * the phase of interest.
