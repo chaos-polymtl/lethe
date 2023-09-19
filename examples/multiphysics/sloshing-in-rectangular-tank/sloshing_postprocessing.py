@@ -70,10 +70,10 @@ for i in range(len(fluids.list_vtu)):
 relative_amplitude = [h/amplitude_0 for h in H]
 
 # Validation data
-nu = fluids.prm_dict["kinematic viscosity"]
 g = 1
 if Re >= 2000 :
     k = np.pi
+    nu = 0.0005
     tf = time_list[len(time_list)-1]
     analytical_time = np.linspace(0,tf,1000)
     analytical_solution = [1-(1/(1+4*nu*nu*k*k*k/g)*(1-np.exp(-2*nu*k*k*t)*(np.cos(np.sqrt(k*g)*t)+2*nu*k*k*np.sin(np.sqrt(k*g)*t)/np.sqrt(k*g)))) for t in analytical_time] # this solution is only valid for high Re [1]
