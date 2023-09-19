@@ -11,7 +11,7 @@ We will also demonstrate the tracer physics capabilities.
 Features
 ----------------------------------
 
-- Solver: ``gls_navier_stokes`` 
+- Solver: ``lethe-fluid`` 
 - Transient problem
 - Displays the use of the tracer physics
 - Displays the use of a simplex mesh generated with a CAD platform
@@ -89,7 +89,7 @@ The last step in Gmsh is to generate the 3D mesh, and then save it to a ``.msh``
 Parameter File
 --------------
 
-Using Lethe requires a solver executable, in this case ``gls_navier_stokes``, and a ``.prm`` file. This second one can be setup in many ways, but for this specific case two aspects must be treated with more care: the enabling of simplex mode, and the setup of the tracer physics. 
+Using Lethe requires a solver executable, in this case ``lethe-fluid``, and a ``.prm`` file. This second one can be setup in many ways, but for this specific case two aspects must be treated with more care: the enabling of simplex mode, and the setup of the tracer physics. 
 
 Enabling the Simplex Mode
 ~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -235,12 +235,12 @@ Running the Simulation
 
 The case must be run with the solver and the parameter file. 
 The simulation is launched in the same folder as the ``.prm`` file,
-using the ``gls_navier_stokes`` solver. It takes a long time since problem is 
+using the ``lethe-fluid`` solver. It takes a long time since problem is 
 transient and the time steps are short:
 
 .. code-block:: sh
     
-    ../../exe/bin/gls_navier_stokes tracer-through-cad-junction.prm
+    ../../exe/bin/lethe-fluid tracer-through-cad-junction.prm
 
 
 -------

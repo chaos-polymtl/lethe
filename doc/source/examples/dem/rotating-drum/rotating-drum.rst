@@ -7,7 +7,7 @@ This example simulates a rotating drum. We setup this simulation according to th
 ----------------------------------
 Features
 ----------------------------------
-- Solvers: ``dem``
+- Solvers: ``lethe-particles``
 - Rotational boundary
 - Load-balancing
 
@@ -184,13 +184,13 @@ This simulation can be launched in two steps. First the particles need to be loa
 
 .. code-block:: text
 
-  mpirun -np 8 dem load-rotating-drum.prm
+  mpirun -np 8 lethe-particles load-rotating-drum.prm
 
 Then we run the simulation with the rotating walls:
 
 .. code-block:: text
 
-  mpirun -np 8 dem rotating-drum.prm
+  mpirun -np 8 lethe-particles rotating-drum.prm
 
 .. warning::
   In this example, particles insertion requires approximately 50 minutes, while simulating their motion requires additional 8 hours on 8 cores. The high computational cost is due to the large number of particles and the long duration of the simulation.

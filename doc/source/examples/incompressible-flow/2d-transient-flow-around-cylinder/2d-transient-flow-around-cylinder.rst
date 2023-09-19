@@ -8,7 +8,7 @@ This example corresponds to a transient flow around a fixed cylinder at a high R
 Features
 ---------
 
-- Solver: ``gls_navier_stokes`` (with Q2-Q1)
+- Solver: ``lethe-fluid`` (with Q2-Q1)
 - Transient problem
 - Usage of Gnuplot and Python scripts for the data post-processing
 
@@ -218,7 +218,7 @@ The simulation is launched in parallel using 10 CPUs, as explained in `2D Transi
 
 .. code-block:: text
 
-  mpirun -np 10 gls_navier_stokes cylinder.prm
+  mpirun -np 10 lethe-fluid cylinder.prm
 
 .. warning::
 

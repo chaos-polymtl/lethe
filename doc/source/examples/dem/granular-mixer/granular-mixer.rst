@@ -8,7 +8,7 @@ This example simulates the packing and mixing of particles in a mixer with a pit
 ----------------------------------
 Features
 ----------------------------------
-- Solvers: ``dem``
+- Solvers: ``lethe-particles``
 - Floating mesh
 - Gmsh grids
 - Bidispersed particles (same size and properties, but different types)
@@ -87,7 +87,7 @@ As mentioned earlier, there are two types of particles with the same size and pr
 Solid Objects
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-In this subsection, the floating meshes are defined. We can use dealii or gmsh to create the floating meshes. At the moment, solid objects (floating meshes) in Lethe have to be defined using triangular (simplex) meshes. Only triangular 2D meshes of 3D surfaces in the dem solver are presently supported. Quadrilateral 2D meshes of 3D surfaces and 1D mesh of 2D surfaces are not supported at the moment. For each floating mesh, we need to specify a ``translational velocity``, an ``angular velocity``, and a ``center of rotation``. In this example, we only need an angular motion of the impeller. Note that the ``center of rotation`` of the impeller is at 0, 0, 0.
+In this subsection, the floating meshes are defined. We can use dealii or gmsh to create the floating meshes. At the moment, solid objects (floating meshes) in Lethe have to be defined using triangular (simplex) meshes. Only triangular 2D meshes of 3D surfaces in the ``lethe-particles`` solver are presently supported. Quadrilateral 2D meshes of 3D surfaces and 1D mesh of 2D surfaces are not supported at the moment. For each floating mesh, we need to specify a ``translational velocity``, an ``angular velocity``, and a ``center of rotation``. In this example, we only need an angular motion of the impeller. Note that the ``center of rotation`` of the impeller is at 0, 0, 0.
 
 .. code-block:: text
 
@@ -127,7 +127,7 @@ This simulation can be launched by (in parallel mode on 8 processes):
 
 .. code-block:: text
 
-  mpirun -np 8 dem granular-mixer.prm
+  mpirun -np 8 lethe-particles granular-mixer.prm
 
 .. warning::
 	This example takes approximately 2 hours on 8 cores.

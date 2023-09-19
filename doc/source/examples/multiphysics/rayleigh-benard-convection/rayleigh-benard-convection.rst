@@ -9,7 +9,7 @@ This example simulates two-dimensional Rayleigh–Benard convection `[1] <https:
 Features
 ----------------------------------
 
-- Solver: ``gls_navier_stokes`` 
+- Solver: ``lethe-fluid`` 
 - Buoyant force (natural convection)
 - Unsteady problem handled by an adaptive BDF1 time-stepping scheme 
 
@@ -26,7 +26,7 @@ Files Used in This Example
 Description of the Case
 -----------------------------
 
-In this example, we evaluate the performance of the ``gls_navier_stokes`` solver in the simulation of the stability of natural convection within a two-dimensional rectangular domain. The following schematic describes the geometry and dimensions of the simulation in the :math:`(x,y)` plane:
+In this example, we evaluate the performance of the ``lethe-fluid`` solver in the simulation of the stability of natural convection within a two-dimensional rectangular domain. The following schematic describes the geometry and dimensions of the simulation in the :math:`(x,y)` plane:
 
 .. image:: images/geometry.png
     :alt: Schematic
@@ -145,13 +145,13 @@ The ``physical properties`` subsection defines the physical properties of the fl
 Running the Simulation
 ---------------------------
 
-Call the gls_navier_stokes by invoking:  
+Call the lethe-fluid by invoking:  
 
-``mpirun -np 8 gls_navier_stokes rayleigh-benard-convection-Ra10k.prm``
+``mpirun -np 8 lethe-fluid rayleigh-benard-convection-Ra10k.prm``
 
 and
 
-``mpirun -np 8 gls_navier_stokes rayleigh-benard-convection-Ra25k.prm``
+``mpirun -np 8 lethe-fluid rayleigh-benard-convection-Ra25k.prm``
 
 to run the simulations using eight CPU cores. Feel free to use more. Note that the first and second commands belong to the simulations at :math:`Ra=10^4` and :math:`Ra=2.5 \times 10^4`, repectively.
 

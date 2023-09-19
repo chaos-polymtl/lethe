@@ -2,7 +2,7 @@
 FEM Reconstruction
 ===================
 
-In this subsection, the parameters used for ``rpt_l2_projection_3d`` and ``rpt_fem_reconstruction_3d`` applications are defined.
+In this subsection, the parameters used for ``lethe-rpt-l2-projection-3d`` and ``lethe-rpt-fem-reconstruction-3d`` applications are defined.
 Here are the default values:
 
 .. code-block:: text
@@ -24,7 +24,7 @@ Here are the default values:
     set verbose clock                       = false
   end
 
-For both ``rpt_l2_projection_3d`` and ``rpt_fem_reconstruction_3d`` applications, we have to define the mesh:
+For both ``lethe-rpt-l2-projection-3d`` and ``lethe-rpt-fem-reconstruction-3d`` applications, we have to define the mesh:
 
 - ``mesh type``: Type of mesh used. Choosing the ``dealii`` option will generate a ``subdivided_cylinder`` grid, for that reason the number of subdivision in the z direction must be specified with the ``z subdivisions`` parameter. For the ``gmsh`` option, only meshes for a cylindrical geometry with tetrahedral elements are accepted at the moment. Furthermore, the z-axis should be the axis of symmetry of the cylinder.
     Options: ``dealii`` or ``gmsh``
@@ -35,9 +35,9 @@ For both ``rpt_l2_projection_3d`` and ``rpt_fem_reconstruction_3d`` applications
 - ``mesh refinement``: Number of global mesh refinements. Specify only if ``dealii`` was the selected option for the ``mesh type``.
     Options: Any positive integer
 
-For the ``rpt_fem_reconstruction_3d`` application only, we have to define the following parameters:
+For the ``lethe-rpt-fem-reconstruction-3d`` application only, we have to define the following parameters:
 
-- ``l2 projection before reconstruction``: Enable to run the ``rpt_l2_projection_3d`` application before the reconstruction.
+- ``l2 projection before reconstruction``: Enable to run the ``lethe-rpt-l2-projection-3d`` application before the reconstruction.
     Options : ``true`` or ``false``
 - ``experimental counts file``: Filename of the file containing the experimental photon counts.
     Options: Any ``.txt`` file

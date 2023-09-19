@@ -2,7 +2,7 @@
 Unresolved CFD-DEM
 ****************************
 
-This section includes examples related to multiphase fluid-solid flows. We organize the examples from the single phase flow in porous media (packed bed example) to multiphase flows (solid-gas and solid-liquid fluidized beds). The packed bed example uses the ``gls_vans`` solver which solves the Volume Average Navier Stokes (VANS) equations. The fluidized bed, the spouted bed and the Boycott effect examples use the ``cfd_dem_coupling`` solver which solves the VANS equations for the fluid phase coupled with the DEM equations for the solid phase.
+This section includes examples related to multiphase fluid-solid flows. We organize the examples from the single phase flow in porous media (packed bed example) to multiphase flows (solid-gas and solid-liquid fluidized beds). The packed bed example uses the ``lethe-fluid-vans`` solver which solves the Volume Average Navier Stokes (VANS) equations. The fluidized bed, the spouted bed and the Boycott effect examples use the ``lethe-fluid-particles`` solver which solves the VANS equations for the fluid phase coupled with the DEM equations for the solid phase.
 
 .. toctree::
     :hidden:

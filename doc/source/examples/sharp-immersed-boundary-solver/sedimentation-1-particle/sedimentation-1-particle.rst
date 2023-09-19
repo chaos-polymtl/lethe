@@ -14,7 +14,7 @@ This example aims to numerically reproduce the results obtained by Ten Cate `et 
 Features
 ----------------------------------
 
-- Solvers: ``gls_sharp_navier_stokes`` (with Q1-Q1)
+- Solvers: ``lethe-fluid-sharp`` (with Q1-Q1)
 - Transient problem
 - Displays the capability of the resolved CFD-DEM solver for the flow around one particle
 

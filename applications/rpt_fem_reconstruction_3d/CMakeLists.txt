@@ -1,3 +1,0 @@
-add_executable(rpt_fem_reconstruction_3d rpt_fem_reconstruction_3d.cc)
-deal_ii_setup_target(rpt_fem_reconstruction_3d)
-target_link_libraries(rpt_fem_reconstruction_3d lethe-rpt)

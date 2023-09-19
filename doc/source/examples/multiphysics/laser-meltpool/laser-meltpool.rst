@@ -9,7 +9,7 @@ This example simulates a two-dimensional melt pool with a laser `[1] <https://do
 Features
 ----------------------------------
 
-- Solver: ``gls_navier_stokes`` 
+- Solver: ``lethe-fluid`` 
 - Laser heat source
 - Phase change (solid-liquid)
 - Buoyant force (natural convection)
@@ -249,9 +249,9 @@ This allows for the initial mesh to be composed of perfect squares. We proceed t
 Running the Simulation
 ----------------------
 
-Call the gls_navier_stokes by invoking:  
+Call the lethe-fluid by invoking:  
 
-``mpirun -np 12 gls_navier_stokes laser-meltpool.prm``
+``mpirun -np 12 lethe-fluid laser-meltpool.prm``
 
 to run the simulation using twelve CPU cores. Feel free to use more.
 

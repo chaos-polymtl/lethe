@@ -9,7 +9,7 @@ This example of Lethe simulates the impact of a single  aluminium oxide particle
 Features
 --------
 
-- Solvers: ``dem``
+- Solvers: ``lethe-particles``
 - Post-processing using `Python <https://www.python.org/>`_, `PyVista <https://docs.pyvista.org/>`_, `lethe_pyvista_tools <https://github.com/lethe-cfd/lethe/tree/master/contrib/postprocessing>`_
 
 ----------------------------
@@ -129,7 +129,7 @@ Once all files are created, the simulation can be launched in parallel using the
 
 .. code-block:: text
 
-  for i in $(ls run_oblique_impact*); do dem $i & sleep 2; done
+  for i in $(ls run_oblique_impact*); do lethe-particles $i & sleep 2; done
 
 Depending on the speed of your computer, all 34 simulation should be completed in less than two minutes. A folder named according to the angle of every simulation used will be generated (``/xx``).
 

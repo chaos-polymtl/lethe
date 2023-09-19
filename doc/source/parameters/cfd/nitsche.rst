@@ -8,7 +8,7 @@ These parameters are used for simulations using the Nitsche immersed boundary me
 	For further understanding about the numerical method used and advanced parameters, the interested reader is referred to this article (to be published).
 
 .. warning::
-	The ``nitsche_navier_stokes`` solver must be used for the Nitsche solid to be accounted for.
+	The ``lethe-fluid-nitsche`` solver must be used for the Nitsche solid to be accounted for.
 
 .. code-block:: text
 

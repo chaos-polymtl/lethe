@@ -2,7 +2,7 @@
 Sharp-Immersed-Boundary-Solver
 ***********************************************
 
-This subsection contains the parameters related to the sharp immersed boundary solver using a **sharp interface immersed boundary** (IB) **method**. This part of the parameter file concerns the usage of the ``gls_sharp_navier_stokes``. This solver can simulate the flow around static or moving objects (with a predetermined trajectory). It can also simulate the coupled flow around spherical particles (Resolved CFD-DEM). Using this solver eliminates the need to define a conformal mesh for the fluid between the particles.
+This subsection contains the parameters related to the sharp immersed boundary solver using a **sharp interface immersed boundary** (IB) **method**. This part of the parameter file concerns the usage of the ``lethe-fluid-sharp``. This solver can simulate the flow around static or moving objects (with a predetermined trajectory). It can also simulate the coupled flow around spherical particles (Resolved CFD-DEM). Using this solver eliminates the need to define a conformal mesh for the fluid between the particles.
 
 .. code-block:: text
 

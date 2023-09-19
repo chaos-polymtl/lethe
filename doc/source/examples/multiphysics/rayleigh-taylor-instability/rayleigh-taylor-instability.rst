@@ -9,7 +9,7 @@ This example simulates the dynamic evolution of the single-mode Rayleigh-Taylor 
 Features
 --------
 
-- Solver: ``gls_navier_stokes`` 
+- Solver: ``lethe-fluid`` 
 - Mesh adaptation using phase fraction
 - Periodic boundary condition
 - Unsteady problem handled by an adaptive BDF1 time-stepping scheme 
@@ -290,9 +290,9 @@ documentation for more explanation on the phase filtration.
 Running the Simulation
 ---------------------------
 
-Call the gls_navier_stokes by invoking:  
+Call the lethe-fluid by invoking:  
 
-``mpirun -np 8 gls_navier_stokes rayleigh-taylor-instability-adaptive-sharpening.prm``
+``mpirun -np 8 lethe-fluid rayleigh-taylor-instability-adaptive-sharpening.prm``
 
 
 to run the simulations using eight CPU cores. Feel free to use more.

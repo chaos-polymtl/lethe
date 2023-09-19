@@ -11,7 +11,7 @@ This example simulates a dam break experiment from the Maritime Research Institu
 Features
 ----------------------------------
 
-- Solver: ``gls_navier_stokes`` (Q1-Q1)
+- Solver: ``lethe-fluid`` (Q1-Q1)
 - Two phase flow handled by the Volume-of-Fluids (VOF) approach with phase fraction filtration
 - Mesh adaptation using phase fraction
 - Unsteady problem handled by an adaptive BDF1 time-stepping scheme
@@ -231,9 +231,9 @@ The ``mesh adaptation`` section controls the dynamic mesh adaptation. Here, we c
 Running the Simulation
 -----------------------
 
-We call the gls_navier_stokes by invoking:
+We call the lethe-fluid by invoking:
 
-``mpirun -np $number_of_CPU_cores gls_navier_stokes 3d-dam-break.prm``
+``mpirun -np $number_of_CPU_cores lethe-fluid 3d-dam-break.prm``
 
 .. warning::
     Make sure to compile Lethe in `Release` mode and run in parallel using ``mpirun``. This simulation took :math:`\approx` 17 hours on 64 processes (runned on the `Narval <https://docs.alliancecan.ca/wiki/Narval/en>`_ cluster).
