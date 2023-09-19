@@ -444,14 +444,6 @@ MFNavierStokesSolver<dim, OperatorType>::solve_with_LSMG(
       mg_operators[level]->evaluate_non_linear_term(mg_solution[level]);
     }
 
-  if (this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
-        .mg_verbosity != Parameters::Verbosity::quiet)
-    for (unsigned int level = minlevel; level <= maxlevel; ++level)
-      this->pcout << "   MG Level " << level << ": "
-                  << this->dof_handler.n_dofs(level) << " DoFs, "
-                  << this->dof_handler.get_triangulation().n_cells(level)
-                  << " cells" << std::endl;
-
   mg::Matrix<VectorType> mg_matrix(ls_mg_operators);
 
   // Create smoother, fill parameters for each level and intialize it
@@ -475,6 +467,52 @@ MFNavierStokesSolver<dim, OperatorType>::solve_with_LSMG(
     }
 
   mg_smoother.initialize(mg_operators, smoother_data);
+
+  // If multigrid number of levels or minimum number of cells in level are
+  // specified, change the min level for the coarse-grid solver and the
+  // multigrid object, and print levels with appropriate numbering
+
+  int mg_min_level =
+    this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+      .mg_min_level;
+
+  AssertThrow(
+    mg_min_level <= static_cast<int>(maxlevel),
+    ExcMessage(
+      "The mg min level specified is higher than the finest mg level."));
+
+  int mg_level_min_cells =
+    this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+      .mg_level_min_cells;
+
+  AssertThrow(
+    mg_level_min_cells <=
+      static_cast<int>(this->dof_handler.get_triangulation().n_cells(maxlevel)),
+    ExcMessage(
+      "The mg level min cells specified are larger than the cells of the finest mg level."));
+
+
+  if (mg_min_level != -1)
+    minlevel = mg_min_level;
+
+  if (mg_level_min_cells != -1)
+    {
+      for (unsigned int level = minlevel; level <= maxlevel; ++level)
+        if (static_cast<int>(this->dof_handler.get_triangulation().n_cells(
+              level)) >= mg_level_min_cells)
+          {
+            minlevel = level;
+            break;
+          }
+    }
+
+  if (this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+        .mg_verbosity != Parameters::Verbosity::quiet)
+    for (unsigned int level = minlevel; level <= maxlevel; ++level)
+      this->pcout << "   MG Level " << level - minlevel << ": "
+                  << this->dof_handler.n_dofs(level) << " DoFs, "
+                  << this->dof_handler.get_triangulation().n_cells(level)
+                  << " cells" << std::endl;
 
   // Create coarse-grid GMRES solver and AMG preconditioner
   const int max_iterations =
@@ -521,12 +559,12 @@ MFNavierStokesSolver<dim, OperatorType>::solve_with_LSMG(
   amg_data.smoother_type  = "ILU";
   amg_data.coarse_type    = "ILU";
   // Constant modes for velocity and pressure
-  std::vector<std::vector<bool>> constant_modes;
-  ComponentMask                  components(dim + 1, true);
-  DoFTools::extract_constant_modes(this->dof_handler,
-                                   components,
-                                   constant_modes);
-  amg_data.constant_modes = constant_modes;
+  // std::vector<std::vector<bool>> constant_modes;
+  // ComponentMask                  components(dim + 1, true);
+  // DoFTools::extract_constant_modes(this->dof_handler,
+  //                                  components,
+  //                                  constant_modes);
+  // amg_data.constant_modes = constant_modes;
 
   Teuchos::ParameterList              parameter_ml;
   std::unique_ptr<Epetra_MultiVector> distributed_constant_modes;
@@ -567,7 +605,7 @@ MFNavierStokesSolver<dim, OperatorType>::solve_with_LSMG(
 
   // Create main MG object
   Multigrid<VectorType> mg(
-    mg_matrix, *mg_coarse, mg_transfer, mg_smoother, mg_smoother);
+    mg_matrix, *mg_coarse, mg_transfer, mg_smoother, mg_smoother, minlevel);
 
   if (this->dof_handler.get_triangulation().has_hanging_nodes())
     mg.set_edge_matrices(mg_interface_matrix_in, mg_interface_matrix_out);
@@ -618,16 +656,29 @@ MFNavierStokesSolver<dim, OperatorType>::solve_with_GCMG(
       this->dof_handler.get_triangulation());
 
   // Modify the triangulations if multigrid number of levels or minimum number
-  // of cells in level is specified
+  // of cells in level are specified
   std::vector<std::shared_ptr<const Triangulation<dim>>> temp;
 
   int mg_min_level =
     this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
       .mg_min_level;
 
+  AssertThrow(
+    (mg_min_level + 1) <= static_cast<int>(coarse_grid_triangulations.size()),
+    ExcMessage(
+      "The mg min level specified is higher than the finest mg level."));
+
   int mg_level_min_cells =
     this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
       .mg_level_min_cells;
+
+  AssertThrow(
+    mg_level_min_cells <=
+      static_cast<int>(
+        coarse_grid_triangulations[coarse_grid_triangulations.size() - 1]
+          ->n_global_active_cells()),
+    ExcMessage(
+      "The mg level min cells specified are larger than the cells of the finest mg level."));
 
   // find first relevant coarse-grid triangulation
   auto ptr =
