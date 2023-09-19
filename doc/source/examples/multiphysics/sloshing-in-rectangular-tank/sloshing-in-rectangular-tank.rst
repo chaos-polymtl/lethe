@@ -9,7 +9,7 @@ This example simulates the damping of a small amplitude wave for Reynolds number
 Features
 --------
 
-- Solver: ``gls_navier_stokes`` 
+- Solver: ``lethe-fluid`` 
 - Volume of fluid (VOF)
 - Unsteady problem handled by an adaptive BDF2 time-stepping scheme 
 - Usage of a python script for post-processing data
@@ -157,11 +157,11 @@ The ``source term`` subsection is used to enable the gravitational acceleration 
 Running the Simulation
 -----------------------
 
-We can call the gls_navier_stokes for each Reynolds number. For :math:`Re=20`, this can be done by invoking the following command:
+We can call the lethe-fluid for each Reynolds number. For :math:`Re=20`, this can be done by invoking the following command:
 
 .. code-block:: text
 
-  mpirun -np 8 gls_navier_stokes sloshing-in-rectangular-tank_Re0020.prm
+  mpirun -np 8 lethe-fluid sloshing-in-rectangular-tank_Re0020.prm
 
 to run the simulation using eight CPU cores. Feel free to use more.
 

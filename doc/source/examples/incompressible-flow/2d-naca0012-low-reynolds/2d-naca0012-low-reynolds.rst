@@ -7,7 +7,7 @@ Flow around NACA0012 at Low Reynolds Number
 Features
 --------
 
-- Solver: ``gls_navier_stokes`` (with Q1-Q1)
+- Solver: ``lethe-fluid`` (with Q1-Q1)
 - Transient problem
 - Boundary Layer Mesh - Transfinite Mesh
 - Spectral analysis - Fourier transform
@@ -213,13 +213,13 @@ The simulation can be launched using the following command:
 
 .. code-block:: text
 
-	gls_navier_stokes naca.prm
+	lethe-fluid naca.prm
 
 It can also run in parallel using:
 
 .. code-block:: text
 
-	mpirun -np X gls_navier_stokes naca.prm
+	mpirun -np X lethe-fluid naca.prm
 
 with X the number of processors used to run it.
 	

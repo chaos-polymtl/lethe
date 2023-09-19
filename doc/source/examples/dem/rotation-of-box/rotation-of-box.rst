@@ -7,7 +7,7 @@ This example simulates a triangulation (box) rotation. It is recommended to visi
 ----------------------------------
 Features
 ----------------------------------
-- Solvers: ``dem``
+- Solvers: ``lethe-particles``
 - Rotating a triangulation
 
 
@@ -135,7 +135,7 @@ This simulation can be launched by:
 
 .. code-block:: text
 
-  dem grid-rotation-box.prm
+  lethe-particles grid-rotation-box.prm
 
 
 ---------

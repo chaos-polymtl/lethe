@@ -7,7 +7,7 @@ In this example, using a Monte Carlo technique, we perform the calculation of ph
 --------
 Features
 --------
-- Solver: ``rpt_3d``
+- Solver: ``lethe-rpt-3d``
 - Displays the use of the Monte Carlo method in the calculation of photon count
 
 
@@ -160,11 +160,11 @@ In the subsection ``detector parameters``, we specify the file that contains two
 ----------------------------------
 Running the Simulation
 ----------------------------------
-Launching the simulation is as simple as specifying the executable name and the parameter file. Assuming that the ``rpt_3d`` executable is within your path, the simulation can be launched by typing:
+Launching the simulation is as simple as specifying the executable name and the parameter file. Assuming that the ``lethe-rpt-3d`` executable is within your path, the simulation can be launched by typing:
 
 .. code-block:: text
 
-    rpt_3d rpt-count-calculation.prm
+    lethe-rpt-3d rpt-count-calculation.prm
   
 Lethe will generate a ``.csv`` file with the name specified next to the ``counts file`` parameter in ``rpt-count-calculation.prm``. The generated ``.csv`` file will contain the :math:`(x,y,z)` coordinates of the particle with its respective photon count measured by a given detector. Each detector is identified by its id number (``detector_id``). In this example, as we have only one detector, all values in the ``detector_id`` column should be :math:`0`.
 

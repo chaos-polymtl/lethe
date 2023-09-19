@@ -7,7 +7,7 @@ Transient Flow around an Ahmed Body
 Features
 ---------
 
-- Solver: ``gls_navier_stokes`` (with Q1-Q1) 
+- Solver: ``lethe-fluid`` (with Q1-Q1) 
 - Transient problem
 - Displays how to import and easily adapt a gmsh file
 - Displays how to run case in parallel with mpirun
@@ -158,21 +158,21 @@ Ahmed bodies are typically studied considering a 60 m/s flow of air. Here, the f
       end
     end
 
-The simulation is launched in the same folder as the ``.prm`` and ``.msh`` file, using the ``gls_navier_stokes`` solver. To decrease simulation time, it is advised to run on multiple cpu, using ``mpirun``:
+The simulation is launched in the same folder as the ``.prm`` and ``.msh`` file, using the ``lethe-fluid`` solver. To decrease simulation time, it is advised to run on multiple cpu, using ``mpirun``:
 
-To do so, copy and paste the ``gls_navier_stokes`` executable to the same folder as your ``.prm`` file and launch it running the following line:
+To do so, copy and paste the ``lethe-fluid`` executable to the same folder as your ``.prm`` file and launch it running the following line:
 
 .. code-block:: text
 
-      mpirun -np 6 gls_navier_stokes ahmed.prm
+      mpirun -np 6 lethe-fluid ahmed.prm
 
 where 6 is the number of CPUs used. The estimated execution time for a 4 seconds simulation with 6 CPUs is 6 minutes and 53 seconds. For 1 CPU, the estimated time is 30 minutes and 37 seconds.
 
-Alternatively, specify the path to the ``gls_navier_stokes`` in your ``build/applications`` folder, as follows:
+Alternatively, specify the path to the ``lethe-fluid`` in your ``build/applications`` folder, as follows:
 
 .. code-block:: text
 
-      mpirun -np 6 ../build/applications/gls_navier_stokes/gls_navier_stokes ahmed.prm
+      mpirun -np 6 ../build/applications/lethe-fluid/lethe-fluid ahmed.prm
 
 Guidelines for parameters other than the previous mentioned are found at the `Parameters guide <https://lethe-cfd.github.io/lethe/parameters/parameters.html>`_.
 

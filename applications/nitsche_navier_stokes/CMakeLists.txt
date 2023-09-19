@@ -1,3 +1,0 @@
-add_executable(nitsche_navier_stokes nitsche_navier_stokes.cc)
-deal_ii_setup_target(nitsche_navier_stokes)
-target_link_libraries(nitsche_navier_stokes lethe-solvers)

@@ -9,7 +9,7 @@ This example is the three-dimensional version of the ``packing_in_circle`` examp
 Features
 ----------------------------------
 
-- Solvers: ``dem``
+- Solvers: ``lethe-particles``
 - Three-dimensional problem
 - Parallelism
 
@@ -28,7 +28,7 @@ Description of the Case
 Packing in ball example is the three-dimensional version of the packing in circle example.
 
 .. warning::
-	Two-dimensional DEM solver (dem) is not an accurate model, since several phenomena including torque on particles are intrinsically three-dimensional. dem solver may only be used for simple basic analyses before performing three-dimensional simulations with dem solver becomes necessary.
+	The ``lethe-particles`` DEM solver in two dimensions is not an accurate model, since several phenomena including torque on particles are intrinsically three-dimensional. Therefore, it should only be used for simple basic analyses before performing three-dimensional simulations.
 
 
 --------------
@@ -143,13 +143,13 @@ This simulation can be launched by:
 
 .. code-block:: text
 
-  dem packing-in-ball.prm
+  lethe-particles packing-in-ball.prm
 
 We can also launch this simulation in parallel mode. For example, to launch the simulation on 8 processes:
 
 .. code-block:: text
 
-  mpirun -np 8 dem packing-in-ball.prm
+  mpirun -np 8 lethe-particles packing-in-ball.prm
 
 .. note::
 	The parallel simulations are generally faster than simulations on a single process. However, to leverage the full performance of a parallel simulation, it should be performed with a load-balancing strategy throughout the simulation. Load-balancing is explained in the `next example <../rotating-drum/rotating-drum.html>`_.

@@ -13,7 +13,7 @@ This example aims to introduce the user on how to carry resolved CFD-DEM simulat
 Features
 ----------------------------------
 
-- Solvers: ``gls_sharp_navier_stokes`` (with Q1Q1)
+- Solvers: ``lethe-fluid-sharp`` (with Q1Q1)
 - Transient problem
 - Displays the capability of the resolved CFD-DEM solver for the flow around multiple particles
 - Displays the robustness of the resolved CFD-DEM Solver.

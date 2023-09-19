@@ -9,7 +9,7 @@ This example simulates the dam break experiments of Martin and Moyce `[1] <https
 Features
 ----------------------------------
 
-- Solver: ``gls_navier_stokes``  (with Q1-Q1)
+- Solver: ``lethe-fluid``  (with Q1-Q1)
 - Two phase flow handled by the Volume of fluids (VOF) approach with interface sharpening
 - Unsteady problem handled by an adaptive BDF1 time-stepping scheme 
 - The use of a python script for post-processing data
@@ -217,9 +217,9 @@ is adapted to the initial condition for the phase.
 Running the Simulation
 ----------------------
 
-Call the gls_navier_stokes by invoking:  
+Call the lethe-fluid by invoking:  
 
-``mpirun -np 2 gls_navier_stokes dam-break-Martin-and-Moyce.prm``
+``mpirun -np 2 lethe-fluid dam-break-Martin-and-Moyce.prm``
 
 to run the simulation using two CPU cores. Feel free to use more.
 

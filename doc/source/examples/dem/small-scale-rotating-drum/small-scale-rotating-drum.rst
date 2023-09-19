@@ -8,7 +8,7 @@ This example of Lethe-DEM simulates dry granular flow behaviour in a small scale
 ----------------------------------
 Features
 ----------------------------------
-- Solvers: ``dem``
+- Solvers: ``lethe-particles``
 - Three-dimensional problem
 - Rotational boundary
 - Load-balancing
@@ -26,7 +26,7 @@ Files Used in This Example
 Description of the Case
 -----------------------
 
-This example simulates a rolling regime in a small scale rotating drum. First, we use Lethe-DEM to fill the bed with 20000 particles. We enable check-pointing in order to write the DEM checkpoint files for the packing which then will be used as the starting point of the DEM simulation of the rotating drum. The solver ``dem`` is used to simulate the behaviour of dry granular flow within the rotating drum.
+This example simulates a rolling regime in a small scale rotating drum. First, we use Lethe-DEM to fill the bed with 20000 particles. We enable check-pointing in order to write the DEM checkpoint files for the packing which then will be used as the starting point of the DEM simulation of the rotating drum. The solver ``lethe-particles`` is used to simulate the behaviour of dry granular flow within the rotating drum.
 
 
 --------------
@@ -152,7 +152,7 @@ The rotation of the cylinder is applied using a rotational boundary condition wi
 Simulation Control
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The packing dem simulation was run for 2 seconds in real time.
+The packing ``lethe-particles`` simulation was run for 2 seconds in real time.
 
 .. code-block:: text
 
@@ -164,7 +164,7 @@ The packing dem simulation was run for 2 seconds in real time.
       set output path      = ./output_dem/
     end
     
-The actual rotation of the drum is 3 seconds in real time. We set the time equal to 5 seconds as the simulation is restarted after the packing dem simulation.
+The actual rotation of the drum is 3 seconds in real time. We set the time equal to 5 seconds as the simulation is restarted after the packing ``lethe-particles`` simulation.
 
 .. code-block:: text
 
@@ -185,8 +185,8 @@ The simulation is launched in two steps: the first step packs the particle in th
 
 .. code-block:: text
 
-   mpirun -np 8 dem packing-rotating-drum.prm
-   mpirun -np 8 dem small-rotating-drum-dem.prm
+   mpirun -np 8 lethe-particles packing-rotating-drum.prm
+   mpirun -np 8 lethe-particles small-rotating-drum-dem.prm
 
 
 .. note::
