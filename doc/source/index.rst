@@ -44,8 +44,8 @@ Contents
    :maxdepth: 2
 
    installation/installation
-   structure
    applications
+   structure
    first_simulation
    parameters/parameters
    examples/examples
