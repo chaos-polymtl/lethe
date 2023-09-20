@@ -107,7 +107,7 @@ CahnHilliard<dim>::assemble_local_system_matrix(
   if (!copy_data.cell_is_local)
     return;
 
-  auto source_term = simulation_parameters.source_term->cahn_hilliard_source;
+  auto source_term = simulation_parameters.source_term.cahn_hilliard_source;
   source_term->set_time(simulation_control->get_current_time());
 
   scratch_data.reinit(
@@ -203,7 +203,7 @@ CahnHilliard<dim>::assemble_local_system_rhs(
   if (!copy_data.cell_is_local)
     return;
 
-  auto source_term = simulation_parameters.source_term->cahn_hilliard_source;
+  auto source_term = simulation_parameters.source_term.cahn_hilliard_source;
   source_term->set_time(simulation_control->get_current_time());
 
   scratch_data.reinit(

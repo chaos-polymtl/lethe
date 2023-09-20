@@ -84,7 +84,7 @@ Tracer<dim>::assemble_local_system_matrix(
   if (!cell->is_locally_owned())
     return;
 
-  auto source_term = simulation_parameters.source_term->tracer_source;
+  auto source_term = simulation_parameters.source_term.tracer_source;
   source_term->set_time(simulation_control->get_current_time());
 
   scratch_data.reinit(cell,
@@ -206,7 +206,7 @@ Tracer<dim>::assemble_local_system_rhs(
   if (!cell->is_locally_owned())
     return;
 
-  auto source_term = simulation_parameters.source_term->tracer_source;
+  auto source_term = simulation_parameters.source_term.tracer_source;
   source_term->set_time(simulation_control->get_current_time());
 
   scratch_data.reinit(cell,

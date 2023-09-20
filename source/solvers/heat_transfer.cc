@@ -416,7 +416,7 @@ HeatTransfer<dim>::assemble_local_system_matrix(
   if (!cell->is_locally_owned())
     return;
 
-  auto source_term = simulation_parameters.source_term->heat_transfer_source;
+  auto source_term = simulation_parameters.source_term.heat_transfer_source;
   source_term->set_time(simulation_control->get_current_time());
 
   scratch_data.reinit(cell,
@@ -567,7 +567,7 @@ HeatTransfer<dim>::assemble_local_system_rhs(
   if (!cell->is_locally_owned())
     return;
 
-  auto source_term = simulation_parameters.source_term->heat_transfer_source;
+  auto source_term = simulation_parameters.source_term.heat_transfer_source;
   source_term->set_time(simulation_control->get_current_time());
 
   scratch_data.reinit(cell,
