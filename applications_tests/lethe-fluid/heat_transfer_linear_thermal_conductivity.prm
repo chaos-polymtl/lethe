@@ -130,10 +130,6 @@ end
 #---------------------------------------------------
 
 subsection source term
-  set enable = true
-  subsection heat transfer
-    set Function expression = 0
-  end
 end
 
 #---------------------------------------------------

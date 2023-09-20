@@ -79,14 +79,6 @@ subsection multiphysics
 end
 
 #---------------------------------------------------
-# Analytical Solution
-#---------------------------------------------------
-
-subsection analytical solution
-  set enable = false
-end
-
-#---------------------------------------------------
 # Mesh Adaptation Control
 #---------------------------------------------------
 

@@ -102,8 +102,6 @@ end
 #---------------------------------------------------
 
 subsection source term
-  set enable = true
-
   subsection cahn hilliard
     set Function constants  = W=1.25, eps=1
     set Function expression = 0;-4*W*(sin(pi*x)^3*sin(pi*y)^3 - sin(pi*x)*sin(pi*y)) - eps*eps*2*pi*pi*sin(pi*x)*sin(pi*y)

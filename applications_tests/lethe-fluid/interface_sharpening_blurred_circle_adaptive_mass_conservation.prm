@@ -61,8 +61,6 @@ end
 #---------------------------------------------------
 
 subsection source term
-  set enable = true
-
   subsection xyz
     set Function expression = 0; 0; 0
   end

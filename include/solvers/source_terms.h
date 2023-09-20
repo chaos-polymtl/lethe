@@ -64,7 +64,6 @@ namespace SourceTerms
     virtual void
     parse_parameters(ParameterHandler &prm);
 
-
     // Velocity-pressure components
     std::shared_ptr<Functions::ParsedFunction<dim>> navier_stokes_source;
 
@@ -76,9 +75,6 @@ namespace SourceTerms
 
     // Cahn-Hilliard source
     std::shared_ptr<Functions::ParsedFunction<dim>> cahn_hilliard_source;
-
-  protected:
-    bool enable;
   };
 
   template <int dim>
@@ -86,10 +82,6 @@ namespace SourceTerms
   SourceTerm<dim>::declare_parameters(ParameterHandler &prm)
   {
     prm.enter_subsection("source term");
-    prm.declare_entry("enable",
-                      "true",
-                      Patterns::Bool(),
-                      "Enable the calculation of a source term");
 
     prm.enter_subsection("xyz");
     navier_stokes_source->declare_parameters(prm, dim + 1);
@@ -115,7 +107,6 @@ namespace SourceTerms
   SourceTerm<dim>::parse_parameters(ParameterHandler &prm)
   {
     prm.enter_subsection("source term");
-    enable = prm.get_bool("enable");
 
     prm.enter_subsection("xyz");
     navier_stokes_source->parse_parameters(prm);
