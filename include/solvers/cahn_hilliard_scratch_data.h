@@ -317,6 +317,13 @@ public:
                       2 * this->cell_size;
   }
 
+    /** @brief Calculates the physical properties. This function calculates the
+   * physical properties that may be required by the Cahn-Hilliard problem.
+   * Namely the surface tension coefficient.
+   */
+    void
+    calculate_physical_properties();
+
   template <typename VectorType>
   void
   reinit_velocity(const typename DoFHandler<dim>::active_cell_iterator &cell,
@@ -359,6 +366,7 @@ public:
   double                               epsilon;
   std::vector<double>                  density;
   std::vector<double>                  kinematic_viscosity;
+  std::vector<double>                  surface_tension;
 
   // Auxiliary property vector for CH simulations
   std::vector<double> density_0;

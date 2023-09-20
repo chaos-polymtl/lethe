@@ -144,6 +144,7 @@ CahnHilliard<dim>::assemble_local_system_matrix(
                                    this->simulation_parameters.ale);
     }
 
+  scratch_data.calculate_physical_properties();
   copy_data.reset();
 
   for (auto &assembler : this->assemblers)
@@ -243,6 +244,7 @@ CahnHilliard<dim>::assemble_local_system_rhs(
                                    this->simulation_parameters.ale);
     }
 
+  scratch_data.calculate_physical_properties();
   copy_data.reset();
 
   for (auto &assembler : this->assemblers)
