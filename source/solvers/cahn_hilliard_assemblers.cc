@@ -12,9 +12,10 @@ CahnHilliardAssemblerCore<dim>::assemble_matrix(
   StabilizedMethodsCopyData    &copy_data)
 {
   // Gather physical properties
-  const double well_height       = this->cahn_hilliard_parameters.well_height;
+  //const double well_height       = this->cahn_hilliard_parameters.well_height;
   const double mobility_constant = this->mobility_constant;
   const double epsilon           = scratch_data.epsilon;
+  const double alpha_beta_coefficient = 3/(2*sqrt(2));
 
   // Loop and quadrature information
   const auto        &JxW_vec    = scratch_data.JxW;
@@ -35,6 +36,11 @@ CahnHilliardAssemblerCore<dim>::assemble_matrix(
           const double JxW = JxW_vec[q];
 
           const double phase_order_value = scratch_data.phase_order_values[q];
+
+          const double alpha = alpha_beta_coefficient*scratch_data.surface_tension[q]*epsilon;
+          const double beta = alpha_beta_coefficient*scratch_data.surface_tension[q]/epsilon;
+
+          std::cout<< "coeff tension surface = "<< scratch_data.surface_tension[q]<<std::endl;
 
           for (unsigned int i = 0; i < n_dofs; ++i)
             {
@@ -65,10 +71,10 @@ CahnHilliardAssemblerCore<dim>::assemble_matrix(
                        grad_phi_potential_j +
                      // Second equation
                      phi_potential_i * phi_potential_j -
-                     4 * well_height * phi_potential_i *
+                     beta * phi_potential_i *
                        (3 * phase_order_value * phase_order_value - 1.0) *
                        phi_phase_j -
-                     epsilon * epsilon * grad_phi_potential_i *
+                     alpha * grad_phi_potential_i *
                        grad_phi_phase_j) *
                     JxW;
                 }
@@ -99,6 +105,9 @@ CahnHilliardAssemblerCore<dim>::assemble_matrix(
               const Tensor<1, dim> grad_phi_potential_i =
                 scratch_data.grad_phi_potential[q][i];
 
+                const double alpha = alpha_beta_coefficient*scratch_data.surface_tension[q]*epsilon;
+                const double beta = alpha_beta_coefficient*scratch_data.surface_tension[q]/epsilon;
+
 
               for (unsigned int j = 0; j < n_dofs; ++j)
                 {
@@ -124,10 +133,10 @@ CahnHilliardAssemblerCore<dim>::assemble_matrix(
                        (1 - phase_order_value * phase_order_value) +
                      // Second equation
                      phi_potential_i * phi_potential_j -
-                     4 * well_height * phi_potential_i *
+                     beta* phi_potential_i *
                        (3 * phase_order_value * phase_order_value - 1.0) *
                        phi_phase_j -
-                     epsilon * epsilon * grad_phi_potential_i *
+                     alpha * grad_phi_potential_i *
                        grad_phi_phase_j) *
                     JxW;
                 }
@@ -145,9 +154,11 @@ CahnHilliardAssemblerCore<dim>::assemble_rhs(
   StabilizedMethodsCopyData    &copy_data)
 {
   // Gather physical properties
-  const double well_height       = this->cahn_hilliard_parameters.well_height;
+  //const double well_height       = this->cahn_hilliard_parameters.well_height;
   const double mobility_constant = this->mobility_constant;
   const double epsilon           = scratch_data.epsilon;
+  const double alpha_beta_coefficient = 3/(2*sqrt(2));
+
 
   // Loop and quadrature information
   const auto        &JxW_vec    = scratch_data.JxW;
@@ -177,6 +188,9 @@ CahnHilliardAssemblerCore<dim>::assemble_rhs(
           const double source_chemical_potential =
             scratch_data.source_chemical_potential[q];
 
+          const double alpha = alpha_beta_coefficient*scratch_data.surface_tension[q]*epsilon;
+          const double beta = alpha_beta_coefficient*scratch_data.surface_tension[q]/epsilon;
+
           for (unsigned int i = 0; i < n_dofs; ++i)
             {
               const double         phi_phase_i = scratch_data.phi_phase[q][i];
@@ -192,10 +206,10 @@ CahnHilliardAssemblerCore<dim>::assemble_rhs(
                  mobility_constant * grad_phi_phase_i * potential_gradient
                  // Second equation
                  - phi_potential_i * potential_value +
-                 4 * well_height * phi_potential_i *
+                 beta * phi_potential_i *
                    (phase_order_value * phase_order_value - 1) *
                    phase_order_value +
-                 epsilon * epsilon * grad_phi_potential_i * phase_order_gradient
+                 alpha * grad_phi_potential_i * phase_order_gradient
                  // Source term
                  + source_phase_order * phi_phase_i +
                  source_chemical_potential * phi_potential_i) *
@@ -225,6 +239,9 @@ CahnHilliardAssemblerCore<dim>::assemble_rhs(
           const double source_chemical_potential =
             scratch_data.source_chemical_potential[q];
 
+          const double alpha = alpha_beta_coefficient*scratch_data.surface_tension[q]*epsilon;
+          const double beta = alpha_beta_coefficient*scratch_data.surface_tension[q]/epsilon;
+
           for (unsigned int i = 0; i < n_dofs; ++i)
             {
               const double         phi_phase_i = scratch_data.phi_phase[q][i];
@@ -242,10 +259,10 @@ CahnHilliardAssemblerCore<dim>::assemble_rhs(
                    (1 - phase_order_value * phase_order_value)
                  // Second equation
                  - phi_potential_i * potential_value +
-                 4 * well_height * phi_potential_i *
+                 beta * phi_potential_i *
                    (phase_order_value * phase_order_value - 1) *
                    phase_order_value +
-                 epsilon * epsilon * grad_phi_potential_i * phase_order_gradient
+                 alpha * grad_phi_potential_i * phase_order_gradient
                  // Source term
                  + source_phase_order * phi_phase_i +
                  source_chemical_potential * phi_potential_i) *
@@ -268,6 +285,7 @@ CahnHilliardAssemblerAngleOfContact<dim>::assemble_matrix(
     return;
 
   const double epsilon = scratch_data.epsilon;
+  const double alpha_beta_coefficient = 3/(2*sqrt(2));
 
   auto &local_matrix = copy_data.local_matrix;
 
@@ -293,6 +311,8 @@ CahnHilliardAssemblerAngleOfContact<dim>::assemble_matrix(
 
                       const double JxW_face = scratch_data.face_JxW[f][q];
 
+                      const double alpha = alpha_beta_coefficient*scratch_data.surface_tension[q]*epsilon;
+
                       for (unsigned int i = 0; i < scratch_data.n_dofs; ++i)
                         {
                           const double phi_potential_i =
@@ -304,7 +324,7 @@ CahnHilliardAssemblerAngleOfContact<dim>::assemble_matrix(
                                 scratch_data.grad_phi_face_phase[f][q][j];
 
                               local_matrix(i, j) +=
-                                -epsilon * epsilon * phi_potential_i *
+                                -alpha * phi_potential_i *
                                 grad_phi_face_phase_j * face_phase_grad_value *
                                 std::cos(angle_of_contact * M_PI / 180.0) *
                                 (1.0 / (face_phase_grad_value.norm() +
@@ -329,6 +349,7 @@ CahnHilliardAssemblerAngleOfContact<dim>::assemble_rhs(
     return;
 
   const double epsilon = scratch_data.epsilon;
+  const double alpha_beta_coefficient = 3/(2*sqrt(2));
 
   auto &local_rhs = copy_data.local_rhs;
 
@@ -354,13 +375,15 @@ CahnHilliardAssemblerAngleOfContact<dim>::assemble_rhs(
 
                       const double JxW_face = scratch_data.face_JxW[f][q];
 
+                      const double alpha = alpha_beta_coefficient*scratch_data.surface_tension[q]*epsilon;
+
                       for (unsigned int i = 0; i < scratch_data.n_dofs; ++i)
                         {
                           const double phi_potential_i =
                             scratch_data.phi_potential[q][i];
 
                           local_rhs(i) +=
-                            epsilon * epsilon * phi_potential_i *
+                            alpha * phi_potential_i *
                             std::cos(angle_of_contact * M_PI / 180.0) *
                             (face_phase_grad_value.norm()) * JxW_face;
                         }
@@ -384,6 +407,7 @@ CahnHilliardAssemblerFreeAngle<dim>::assemble_matrix(
     return;
 
   const double epsilon = scratch_data.epsilon;
+  const double alpha_beta_coefficient = 3/(2*sqrt(2));
 
   auto &local_matrix = copy_data.local_matrix;
 
@@ -406,6 +430,8 @@ CahnHilliardAssemblerFreeAngle<dim>::assemble_matrix(
                         scratch_data.face_normal[f][q];
                       const double JxW_face = scratch_data.face_JxW[f][q];
 
+                      const double alpha = alpha_beta_coefficient*scratch_data.surface_tension[q]*epsilon;
+
                       for (unsigned int i = 0; i < scratch_data.n_dofs; ++i)
                         {
                           const double phi_potential_i =
@@ -417,7 +443,7 @@ CahnHilliardAssemblerFreeAngle<dim>::assemble_matrix(
                                 scratch_data.grad_phi_face_phase[f][q][j];
 
                               local_matrix(i, j) -=
-                                epsilon * epsilon * phi_potential_i *
+                                alpha * phi_potential_i *
                                 grad_phi_face_phase_j * face_normal * JxW_face;
                             }
                         }
@@ -438,6 +464,7 @@ CahnHilliardAssemblerFreeAngle<dim>::assemble_rhs(
     return;
 
   const double epsilon = scratch_data.epsilon;
+  const double alpha_beta_coefficient = 3/(2*sqrt(2));
 
   auto &local_rhs = copy_data.local_rhs;
 
@@ -462,12 +489,14 @@ CahnHilliardAssemblerFreeAngle<dim>::assemble_rhs(
                         scratch_data.face_normal[f][q];
                       const double JxW_face = scratch_data.face_JxW[f][q];
 
+                      const double alpha = alpha_beta_coefficient*scratch_data.surface_tension[q]*epsilon;
+
                       for (unsigned int i = 0; i < scratch_data.n_dofs; ++i)
                         {
                           const double phi_potential_i =
                             scratch_data.phi_potential[q][i];
 
-                          local_rhs(i) += epsilon * epsilon * phi_potential_i *
+                          local_rhs(i) += alpha * phi_potential_i *
                                           face_phase_grad_value * face_normal *
                                           JxW_face;
                         }
