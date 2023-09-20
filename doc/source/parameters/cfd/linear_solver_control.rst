@@ -184,12 +184,12 @@ Different parameters for the main components of the two geometric multigrid algo
 
 .. code-block:: text
 
-    # General MG verbosity
+    # General MG parameters
     set mg verbosity       = quiet
     set mg min level       = -1
     set mg level min cells = -1
 
-    # Smoother iterations and relaxation
+    # Relaxation smoother parameters
     set mg smoother iterations = 10
     set mg smoother relaxation = 0.5
 
@@ -213,7 +213,7 @@ Different parameters for the main components of the two geometric multigrid algo
     set amg preconditioner ilu relative tolerance = 1.00
 
 .. tip::
-  The default algorithms built and use ALL the multigrid levels. There are two ways to change the number of levels, either by setting the ``mg min level`` parameter OR the ``mg level min cells`` parameter. 
+  The default algorithms build and use ALL the multigrid levels. There are two ways to change the number of levels, either by setting the ``mg min level`` parameter OR the ``mg level min cells`` parameter. For LSMG the coarsest mesh should cover the whole domain, i.e., no hanging nodes are allowed. 
 
 .. warning::
     Currently, these preconditioners can only be used within the ``lethe-fluid-matrix-free`` application.
