@@ -2,6 +2,13 @@
 All notable changes to the Lethe project will be documented in this file.
  
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
+
+## [Master] - 2023-09-20
+  
+### Deprecated
+
+- MINOR The calculation of the source term was enabled using a parameter called "enable". This parameter was used in some physics, not in others and was poorly implemented. We deprecate the usage of this parameter and always enable source term, considering the fact that the default value of the source term is zero anyway. This prevent the false perception that source terms could be enabled or disabled, while the behavior was inconsistent across physics.
+
  
 ## [Master] - 2023-09-19
   
