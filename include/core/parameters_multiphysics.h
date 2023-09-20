@@ -37,13 +37,13 @@ namespace Parameters
   /** @brief Class to account for different sharpening types:
    *  - constant: the sharpening threshold is the same throughout the
    * simulation,
-   *  - adaptative: the sharpening threshold is determined by binary search, to
+   *  - adaptive: the sharpening threshold is determined by binary search, to
    * ensure mass conservation of the monitored phase
    */
   enum class SharpeningType
   {
     constant,
-    adaptative
+    adaptive
   };
 
   /** @brief Class to account for different phase fraction filtering types:
@@ -64,7 +64,7 @@ namespace Parameters
   };
 
   /**
-   * @brief Defines the subparameters for free surface mass conservation.
+   * @brief Defines the sub-parameters for free surface mass conservation.
    * Has to be declared before member creation in VOF structure.
    */
   struct VOF_MassConservation
@@ -72,7 +72,7 @@ namespace Parameters
     bool monitoring;
 
     // Conservation tolerance on the fluid monitored,
-    // used with adaptative Sharpening
+    // used with adaptive Sharpening
     double tolerance;
 
     Parameters::FluidIndicator monitored_fluid;
@@ -103,7 +103,7 @@ namespace Parameters
     // Parameters for constant sharpening
     double threshold;
 
-    // Parameters for adaptative sharpening
+    // Parameters for adaptive sharpening
     double threshold_max_deviation;
     int    max_iterations;
 

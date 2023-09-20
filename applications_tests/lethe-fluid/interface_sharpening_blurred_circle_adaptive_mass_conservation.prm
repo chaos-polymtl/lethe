@@ -28,14 +28,14 @@ subsection VOF
     set threshold           = 0.5
     set interface sharpness = 2
     set frequency           = 2
-    set type                = adaptative
+    set type                = adaptive
     set max iterations      = 50
   end
 
   subsection mass conservation
     set monitoring         = true
     set monitored fluid    = fluid 1
-    # parameters used with adaptative sharpening
+    # parameters used with adaptive sharpening
     set tolerance = 1e-8
     set verbosity = verbose
   end

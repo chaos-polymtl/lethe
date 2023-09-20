@@ -223,7 +223,7 @@ The boundary conditions applied on the left and right boundaries are ``periodic`
 VOF
 ~~~
 
-In the ``VOF`` subsection, we enable ``interface sharpening`` to reconstruct the interface and keep it sharp during the simulation. Note that here we use the ``constant`` and ``adaptive`` methods for interface sharpening. The ``mass conservation`` results show that choosing a ``constant`` method does not affect the mass conservation significantly. Hence, the results of both methods are almost identical. For the ``constant`` refinement we use
+In the ``VOF`` subsection, we enable ``interface sharpening`` to reconstruct the interface and keep it sharp during the simulation. Note that here we use the ``constant`` and ``adaptive`` methods for interface sharpening. The ``mass conservation`` results show that choosing a ``constant`` method does not affect the mass conservation significantly. Hence, the results of both methods are almost identical. For the ``constant`` sharpening we use
 
 
 .. code-block:: text
@@ -252,7 +252,7 @@ In the ``VOF`` subsection, we enable ``interface sharpening`` to reconstruct the
    end
 
 
-and for the ``adaptive`` refinement
+and for the ``adaptive`` sharpening
 
 
 .. code-block:: text
@@ -263,7 +263,7 @@ and for the ``adaptive`` refinement
        set threshold               = 0.5
        set interface sharpness     = 1.5
        set frequency               = 25
-       set type                    = adaptative
+       set type                    = adaptive
        set threshold max deviation = 0.2
        set max iterations          = 50
      end
