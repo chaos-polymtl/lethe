@@ -30,7 +30,7 @@ The default values of the VOF parameters are given in the text box below.
       # parameter for constant sharpening
       set threshold               = 0.5
 
-      # parameters for adaptative sharpening
+      # parameters for adaptive sharpening
       set threshold max deviation = 0.20
       set max iterations          = 20
 
@@ -58,7 +58,7 @@ The default values of the VOF parameters are given in the text box below.
       set monitoring         = false
       set monitored fluid    = fluid 1
 
-      # parameters used with adaptative sharpening
+      # parameters used with adaptive sharpening
       set tolerance          = 1e-6
       set verbosity          = quiet
     end
@@ -84,21 +84,21 @@ Interface Sharpening
   * ``frequency``: sets the frequency (in number of iterations) for the interface sharpening computation.
   * ``interface sharpness``: sharpness of the moving interface (parameter :math:`a` in the `interface sharpening model <https://www.researchgate.net/publication/287118331_Development_of_efficient_interface_sharpening_procedure_for_viscous_incompressible_flows>`_). This parameter must be larger than 1 for interface sharpening. Choosing values less than 1 leads to interface smoothing instead of sharpening. A good value would be around 1.5.
 
-  * ``type``: defines the interface sharpening type, either ``constant`` or ``adaptative``
+  * ``type``: defines the interface sharpening type, either ``constant`` or ``adaptive``
 
     * ``set type = constant``: the sharpening ``threshold`` is the same throughout the simulation. This ``threshold``, between ``0`` and ``1`` (``0.5`` by default), corresponds to the phase fraction at which the interface is located.
-    * ``set type = adaptative``: the sharpening threshold is searched in the range :math:`\left[0.5-c_\text{dev} \; ; 0.5+c_\text{dev}\right]`, with :math:`c_\text{dev}` the ``threshold max deviation`` (``0.2`` by default), to ensure mass conservation. The search algorithm will stop either if the mass conservation ``tolerance`` is reached (see ``subsection mass conservation``), or if the number of search steps reach the number of ``max iterations``. If the ``tolerance`` is not reached, a warning message will be printed.
+    * ``set type = adaptive``: the sharpening threshold is searched in the range :math:`\left[0.5-c_\text{dev} \; ; 0.5+c_\text{dev}\right]`, with :math:`c_\text{dev}` the ``threshold max deviation`` (``0.2`` by default), to ensure mass conservation. The search algorithm will stop either if the mass conservation ``tolerance`` is reached (see ``subsection mass conservation``), or if the number of search steps reach the number of ``max iterations``. If the ``tolerance`` is not reached, a warning message will be printed.
 
     .. warning::
 
-      In case of adaptative interface sharpening (``set type = adaptative``), mass conservation must be monitored (``set monitoring = true`` in ``mass conservation`` subsection).
+      In case of adaptive interface sharpening (``set type = adaptive``), mass conservation must be monitored (``set monitoring = true`` in ``mass conservation`` subsection).
 
-    .. admonition:: Example of a warning message if sharpening is adaptative but the mass conservation tolerance is not reached:
+    .. admonition:: Example of a warning message if sharpening is adaptive but the mass conservation tolerance is not reached:
 
       .. code-block:: text
 
         WARNING: Maximum number of iterations (5) reached in the
-        adaptative sharpening threshold algorithm, remaining error
+        adaptive sharpening threshold algorithm, remaining error
         on mass conservation is: 0.02
         Consider increasing the sharpening threshold range or the
         number of iterations to reach the mass conservation tolerance.
@@ -212,7 +212,7 @@ Mass Conservation
         0.0450     4.9144e-01   3.8185e+02               0.5000 
         0.0500     5.0639e-01   3.9346e+02               0.5000 
 
-  * ``tolerance``: value for the tolerance on the mass conservation of the monitored fluid, used with adaptative sharpening (see the ``subsection sharpening``). 
+  * ``tolerance``: value for the tolerance on the mass conservation of the monitored fluid, used with adaptive sharpening (see the ``subsection sharpening``).
   
     For instance, with ``set tolerance = 0.02`` the sharpening threshold will be adapted so that the mass of the ``monitored fluid`` varies less than :math:`\pm 2\%` from the initial mass (at :math:`t = 0.0` sec).
 

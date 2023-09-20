@@ -938,7 +938,7 @@ VolumeOfFluid<dim>::handle_interface_sharpening()
                   << this->simulation_control->get_step_number() << std::endl;
     }
   if (this->simulation_parameters.multiphysics.vof_parameters.sharpening.type ==
-      Parameters::SharpeningType::adaptative)
+      Parameters::SharpeningType::adaptive)
     {
       if (this->simulation_parameters.multiphysics.vof_parameters.conservation
             .verbosity != Parameters::Verbosity::quiet)
@@ -1060,7 +1060,7 @@ VolumeOfFluid<dim>::find_sharpening_threshold()
           this->pcout
             << "  WARNING: Maximum number of iterations (" << nb_search_ite
             << ") reached in the " << std::endl
-            << "  adaptative sharpening threshold algorithm, remaining error"
+            << "  adaptive sharpening threshold algorithm, remaining error"
             << std::endl
             << "  on mass conservation is: "
             << (this->mass_monitored - this->mass_first_iteration) /

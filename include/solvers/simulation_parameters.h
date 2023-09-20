@@ -187,11 +187,11 @@ public:
       }
 
     if (multiphysics.vof_parameters.sharpening.type ==
-          Parameters::SharpeningType::adaptative &&
+          Parameters::SharpeningType::adaptive &&
         not(multiphysics.vof_parameters.conservation.monitoring))
       {
         throw std::logic_error(
-          "Inconsistency in .prm!\n in subsection VOF, with sharpening type = adaptative\n "
+          "Inconsistency in .prm!\n in subsection VOF, with sharpening type = adaptive\n "
           "use: monitoring = true");
       }
 

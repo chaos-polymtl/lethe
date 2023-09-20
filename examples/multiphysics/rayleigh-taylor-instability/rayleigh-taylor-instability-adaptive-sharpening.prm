@@ -109,7 +109,7 @@ subsection VOF
     set threshold               = 0.5
     set interface sharpness     = 1.5
     set frequency               = 25
-    set type                    = adaptative
+    set type                    = adaptive
     set threshold max deviation = 0.2
     set max iterations          = 50
   end
