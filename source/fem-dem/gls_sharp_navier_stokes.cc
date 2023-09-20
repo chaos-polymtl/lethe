@@ -1977,7 +1977,7 @@ GLSSharpNavierStokesSolver<dim>::calculate_L2_error_particles()
                     trace(present_velocity_gradients[q]);
                   double mass_source =
                     this->simulation_parameters.source_term
-                      ->navier_stokes_source.value(
+                      ->navier_stokes_source->value(
                         fe_values.get_quadrature_points()[q], dim);
 
 

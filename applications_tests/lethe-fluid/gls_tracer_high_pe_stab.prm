@@ -138,21 +138,6 @@ subsection boundary conditions tracer
 end
 
 #---------------------------------------------------
-# Source term
-#---------------------------------------------------
-
-subsection source term
-  set enable = false
-  subsection xyz
-    set Function expression = 0 ; 0 ; 0
-  end
-
-  subsection heat transfer
-    set Function expression = 0
-  end
-end
-
-#---------------------------------------------------
 # Non-Linear Solver Control
 #---------------------------------------------------
 

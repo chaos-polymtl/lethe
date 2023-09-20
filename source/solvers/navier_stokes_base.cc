@@ -180,10 +180,7 @@ NavierStokesBase<dim, VectorType, DofsType>::NavierStokesBase(
   exact_solution = &simulation_parameters.analytical_solution->uvwp;
 
   // If there is a forcing function, get it from the parser
-  if (simulation_parameters.source_term->source_term())
-    forcing_function = &simulation_parameters.source_term->navier_stokes_source;
-  else
-    forcing_function = new NoForce<dim>;
+    forcing_function = simulation_parameters.source_term->navier_stokes_source;
 
   if (this->simulation_parameters.post_processing.calculate_average_velocities)
     average_velocities =

@@ -55,7 +55,6 @@ InitialConditionsNavierStokes<dim>::run()
     this->simulation_parameters.restart_parameters.restart,
     this->simulation_parameters.boundary_conditions);
   this->setup_dofs_fd();
-  this->forcing_function = new NoForce<dim>;
   this->set_initial_condition(
     this->simulation_parameters.initial_condition->type,
     this->simulation_parameters.restart_parameters.restart);

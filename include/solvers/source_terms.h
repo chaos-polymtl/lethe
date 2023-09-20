@@ -29,6 +29,8 @@
 
 #include <deal.II/lac/vector.h>
 
+#include <memory>
+
 using namespace dealii;
 /**
  * The source term class provides an interface for all common
@@ -47,11 +49,13 @@ namespace SourceTerms
   {
   public:
     SourceTerm()
-      : navier_stokes_source(dim + 1)
-      , heat_transfer_source(1)
-      , tracer_source(1)
-      , cahn_hilliard_source(2)
-    {}
+    {
+      navier_stokes_source = std::make_shared<Functions::ParsedFunction<dim>>(dim + 1);
+      heat_transfer_source = std::make_shared<Functions::ParsedFunction<dim>>(1);
+      tracer_source = std::make_shared<Functions::ParsedFunction<dim>>(1);
+      cahn_hilliard_source = std::make_shared<Functions::ParsedFunction<dim>>(2);
+
+    }
 
     virtual void
     declare_parameters(ParameterHandler &prm);
@@ -59,23 +63,17 @@ namespace SourceTerms
     parse_parameters(ParameterHandler &prm);
 
 
-    bool
-    source_term()
-    {
-      return enable;
-    }
-
     // Velocity-pressure components
-    Functions::ParsedFunction<dim> navier_stokes_source;
+    std::shared_ptr<Functions::ParsedFunction<dim>> navier_stokes_source;
 
     // Heat transfer source
-    Functions::ParsedFunction<dim> heat_transfer_source;
+    std::shared_ptr<Functions::ParsedFunction<dim>> heat_transfer_source;
 
     // Tracer source
-    Functions::ParsedFunction<dim> tracer_source;
+    std::shared_ptr<Functions::ParsedFunction<dim>> tracer_source;
 
     // Cahn-Hilliard source
-    Functions::ParsedFunction<dim> cahn_hilliard_source;
+    std::shared_ptr<Functions::ParsedFunction<dim>> cahn_hilliard_source;
 
   protected:
     bool enable;
@@ -87,24 +85,24 @@ namespace SourceTerms
   {
     prm.enter_subsection("source term");
     prm.declare_entry("enable",
-                      "false",
+                      "true",
                       Patterns::Bool(),
                       "Enable the calculation of a source term");
 
     prm.enter_subsection("xyz");
-    navier_stokes_source.declare_parameters(prm, dim + 1);
+    navier_stokes_source->declare_parameters(prm, dim + 1);
     prm.leave_subsection();
 
     prm.enter_subsection("heat transfer");
-    heat_transfer_source.declare_parameters(prm);
+    heat_transfer_source->declare_parameters(prm);
     prm.leave_subsection();
 
     prm.enter_subsection("tracer");
-    tracer_source.declare_parameters(prm);
+    tracer_source->declare_parameters(prm);
     prm.leave_subsection();
 
     prm.enter_subsection("cahn hilliard");
-    cahn_hilliard_source.declare_parameters(prm, 2);
+    cahn_hilliard_source->declare_parameters(prm, 2);
     prm.leave_subsection();
 
     prm.leave_subsection();
@@ -118,44 +116,24 @@ namespace SourceTerms
     enable = prm.get_bool("enable");
 
     prm.enter_subsection("xyz");
-    navier_stokes_source.parse_parameters(prm);
+    navier_stokes_source->parse_parameters(prm);
     prm.leave_subsection();
 
     prm.enter_subsection("heat transfer");
-    heat_transfer_source.parse_parameters(prm);
+    heat_transfer_source->parse_parameters(prm);
     prm.leave_subsection();
 
     prm.enter_subsection("tracer");
-    tracer_source.parse_parameters(prm);
+    tracer_source->parse_parameters(prm);
     prm.leave_subsection();
 
     prm.enter_subsection("cahn hilliard");
-    cahn_hilliard_source.parse_parameters(prm);
+    cahn_hilliard_source->parse_parameters(prm);
     prm.leave_subsection();
 
     prm.leave_subsection();
   }
 } // namespace SourceTerms
-
-template <int dim>
-class NoForce : public Function<dim>
-{
-public:
-  NoForce()
-    : Function<dim>(3){};
-  virtual void
-  vector_value(const Point<dim> &p, Vector<double> &values) const override;
-};
-template <int dim>
-void
-NoForce<dim>::vector_value(const Point<dim> & /*p*/,
-                           Vector<double> &values) const
-{
-  values(0) = 0.;
-  values(1) = 0.;
-  if (dim == 3)
-    values(2) = 0.;
-}
 
 
 #endif

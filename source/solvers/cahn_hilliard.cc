@@ -107,14 +107,14 @@ CahnHilliard<dim>::assemble_local_system_matrix(
   if (!copy_data.cell_is_local)
     return;
 
-  auto &source_term = simulation_parameters.source_term->cahn_hilliard_source;
-  source_term.set_time(simulation_control->get_current_time());
+  auto source_term = simulation_parameters.source_term->cahn_hilliard_source;
+  source_term->set_time(simulation_control->get_current_time());
 
   scratch_data.reinit(
     cell,
     this->evaluation_point,
     this->previous_solutions,
-    &source_term,
+    &(*source_term),
     this->simulation_parameters.multiphysics.cahn_hilliard_parameters);
 
   const DoFHandler<dim> *dof_handler_fluid =
@@ -203,14 +203,14 @@ CahnHilliard<dim>::assemble_local_system_rhs(
   if (!copy_data.cell_is_local)
     return;
 
-  auto &source_term = simulation_parameters.source_term->cahn_hilliard_source;
-  source_term.set_time(simulation_control->get_current_time());
+  auto source_term = simulation_parameters.source_term->cahn_hilliard_source;
+  source_term->set_time(simulation_control->get_current_time());
 
   scratch_data.reinit(
     cell,
     this->evaluation_point,
     this->previous_solutions,
-    &source_term,
+    &(*source_term),
     this->simulation_parameters.multiphysics.cahn_hilliard_parameters);
 
   const DoFHandler<dim> *dof_handler_fluid =

@@ -99,7 +99,7 @@ RestartNavierStokes<dim>::run()
   this->triangulation->refine_global(initialSize);
   this->setup_dofs_fd();
   this->exact_solution   = new ExactSolutionMMS<dim>;
-  this->forcing_function = new MMSSineForcingFunction<dim>;
+  this->forcing_function = std::make_shared<MMSSineForcingFunction<dim>>();
   Parameters::PhysicalProperties physical_properties;
   physical_properties.fluids.push_back(Parameters::Material());
   physical_properties.number_of_fluids = 1;

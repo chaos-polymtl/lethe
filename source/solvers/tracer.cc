@@ -84,13 +84,13 @@ Tracer<dim>::assemble_local_system_matrix(
   if (!cell->is_locally_owned())
     return;
 
-  auto &source_term = simulation_parameters.source_term->tracer_source;
-  source_term.set_time(simulation_control->get_current_time());
+  auto source_term = simulation_parameters.source_term->tracer_source;
+  source_term->set_time(simulation_control->get_current_time());
 
   scratch_data.reinit(cell,
                       this->evaluation_point,
                       this->previous_solutions,
-                      &source_term);
+                      &(*source_term));
 
   const DoFHandler<dim> *dof_handler_fluid =
     multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
@@ -206,13 +206,13 @@ Tracer<dim>::assemble_local_system_rhs(
   if (!cell->is_locally_owned())
     return;
 
-  auto &source_term = simulation_parameters.source_term->tracer_source;
-  source_term.set_time(simulation_control->get_current_time());
+  auto source_term = simulation_parameters.source_term->tracer_source;
+  source_term->set_time(simulation_control->get_current_time());
 
   scratch_data.reinit(cell,
                       this->evaluation_point,
                       this->previous_solutions,
-                      &source_term);
+                      &(*source_term));
 
   const DoFHandler<dim> *dof_handler_fluid =
     multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
