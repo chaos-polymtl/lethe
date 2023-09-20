@@ -232,7 +232,7 @@ to run the simulation using six CPU cores. Feel free to use more.
 .. warning:: 
     The code will compute :math:`35,000+` dofs for :math:`600+` time iterations.
     Make sure to compile Lethe in `Release` mode and run in parallel using mpirun.
-    This simulation takes approximately 3 minutes on 6 processes.
+    This simulation takes :math:`\sim \, 3` minutes on :math:`6` processes.
 
 
 -----------------------

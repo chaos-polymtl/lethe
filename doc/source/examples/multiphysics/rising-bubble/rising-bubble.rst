@@ -253,7 +253,7 @@ to run the simulation using eight CPU cores. Feel free to use more.
 .. warning:: 
     Make sure to compile lethe in `Release` mode and 
     run in parallel using mpirun. This simulation takes
-    :math:`\sim~10` minutes on :math:`8` processes.
+    :math:`\sim \,7` minutes on :math:`8` processes.
 
 
 -----------------------
