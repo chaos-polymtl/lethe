@@ -145,7 +145,6 @@ end
 #---------------------------------------------------
 
 subsection source term
-  set enable = true
   subsection xyz
     set Function expression = if(y >= 0., 1, 0) ; 0 ; 0
   end

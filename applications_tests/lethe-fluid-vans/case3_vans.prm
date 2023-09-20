@@ -94,7 +94,6 @@ end
 #---------------------------------------------------
 
 subsection source term
-  set enable = true
   subsection xyz
     set Function expression = pi*(2*pi*exp(sin(pi*x)*sin(pi*y) + 1)*cos(2*pi*t) - 2*(exp(sin(pi*x)*sin(pi*y)) - 0.1*cos(2*pi*t))*sin(2*pi*t) - (exp(sin(pi*x)*sin(pi*y)) - 0.1*cos(2*pi*t))*sin(pi*x)*cos(2*pi*t)^2*cos(pi*y) - (exp(sin(pi*x)*sin(pi*y)) - 0.1*cos(2*pi*t))*sin(pi*y)*cos(2*pi*t)^2*cos(pi*x))*cos(pi*x)*cos(pi*y)/(exp(sin(pi*x)*sin(pi*y)) - 0.1*cos(2*pi*t)); pi*(2*pi*exp(sin(pi*x)*sin(pi*y) + 1)*cos(2*pi*t) - 2*(exp(sin(pi*x)*sin(pi*y)) - 0.1*cos(2*pi*t))*sin(2*pi*t) - (exp(sin(pi*x)*sin(pi*y)) - 0.1*cos(2*pi*t))*sin(pi*x)*cos(2*pi*t)^2*cos(pi*y) - (exp(sin(pi*x)*sin(pi*y)) - 0.1*cos(2*pi*t))*sin(pi*y)*cos(2*pi*t)^2*cos(pi*x))*cos(pi*x)*cos(pi*y)/(exp(sin(pi*x)*sin(pi*y)) - 0.1*cos(2*pi*t)); pi*(-(exp(sin(pi*x)*sin(pi*y)) - 0.1*cos(2*pi*t))*sin(pi*(x + y))*cos(2*pi*t) + 0.2*sin(2*pi*t) + 0.1*sin(pi*x)*cos(2*pi*t)^2*cos(pi*x)*cos(pi*y)^2 + 0.1*sin(pi*y)*cos(2*pi*t)^2*cos(pi*x)^2*cos(pi*y))*exp(-sin(pi*x)*sin(pi*y) - 1)
   end
