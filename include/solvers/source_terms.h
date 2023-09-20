@@ -50,11 +50,13 @@ namespace SourceTerms
   public:
     SourceTerm()
     {
-      navier_stokes_source = std::make_shared<Functions::ParsedFunction<dim>>(dim + 1);
-      heat_transfer_source = std::make_shared<Functions::ParsedFunction<dim>>(1);
+      navier_stokes_source =
+        std::make_shared<Functions::ParsedFunction<dim>>(dim + 1);
+      heat_transfer_source =
+        std::make_shared<Functions::ParsedFunction<dim>>(1);
       tracer_source = std::make_shared<Functions::ParsedFunction<dim>>(1);
-      cahn_hilliard_source = std::make_shared<Functions::ParsedFunction<dim>>(2);
-
+      cahn_hilliard_source =
+        std::make_shared<Functions::ParsedFunction<dim>>(2);
     }
 
     virtual void

@@ -225,7 +225,7 @@ public:
   reinit(const typename DoFHandler<dim>::active_cell_iterator &cell,
          const VectorType                                     &current_solution,
          const std::vector<VectorType> &previous_solutions,
-         std::shared_ptr<Function<dim>>                 forcing_function,
+         std::shared_ptr<Function<dim>> forcing_function,
          Tensor<1, dim>                 beta_force,
          const double                   pressure_scaling_factor)
   {
