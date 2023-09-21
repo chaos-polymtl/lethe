@@ -157,7 +157,7 @@ The ``source term`` subsection is used to enable the gravitational acceleration 
 Running the Simulation
 -----------------------
 
-We can call the lethe-fluid for each Reynolds number. For :math:`Re=20`, this can be done by invoking the following command:
+We can call ``lethe-fluid`` for each Reynolds number. For :math:`Re=20`, this can be done by invoking the following command:
 
 .. code-block:: text
   :class: copy-button
