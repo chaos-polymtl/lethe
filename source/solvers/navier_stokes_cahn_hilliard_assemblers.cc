@@ -247,7 +247,6 @@ GLSNavierStokesCahnHilliardAssemblerCore<dim>::assemble_rhs(
         scratch_data.velocity_gradients[q];
       const Tensor<1, dim> velocity_laplacian =
         scratch_data.velocity_laplacians[q];
-      scratch_data.velocity_gradients[q];
       const Tensor<3, dim> &velocity_hessian =
         scratch_data.velocity_hessians[q];
       // From hessian, calculate grad (div (u)) term needed for CH problems
