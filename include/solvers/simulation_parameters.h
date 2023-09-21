@@ -20,6 +20,7 @@
 #ifndef lethe_navier_stokes_solver_parameters_h
 #define lethe_navier_stokes_solver_parameters_h
 
+#include <core/ale.h>
 #include <core/boundary_conditions.h>
 #include <core/dimensionality.h>
 #include <core/manifolds.h>
@@ -66,6 +67,7 @@ public:
   Parameters::DynamicFlowControl                flow_control;
   Parameters::Multiphysics                      multiphysics;
   Parameters::Stabilization                     stabilization;
+  Parameters::ALE<dim>                          ale;
 
 
 
