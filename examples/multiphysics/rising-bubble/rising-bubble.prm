@@ -113,8 +113,9 @@ end
 #---------------------------------------------------
 
 subsection post-processing
-  set verbosity                = quiet
-  set calculate VOF barycenter = true
+  set verbosity            = quiet
+  set calculate barycenter = true
+  set barycenter name      = vof_barycenter_information
 end
 
 #---------------------------------------------------

@@ -46,6 +46,12 @@ CahnHilliard<dim>::setup_assemblers()
       this->simulation_control,
       this->simulation_parameters.boundary_conditions_cahn_hilliard));
 
+  // Free angle of contact boundary condition
+  this->assemblers.push_back(
+    std::make_shared<CahnHilliardAssemblerFreeAngle<dim>>(
+      this->simulation_control,
+      this->simulation_parameters.boundary_conditions_cahn_hilliard));
+
 
   // Core assembler
   // For the time being, only a two-fluid system is considered for the
@@ -356,9 +362,9 @@ CahnHilliard<dim>::calculate_phase_statistics()
 {
   auto mpi_communicator = triangulation->get_communicator();
 
-  FEValues<dim> fe_values(*this->mapping,
+  FEValues<dim> fe_values(*mapping,
                           *fe,
-                          *this->cell_quadrature,
+                          *cell_quadrature,
                           update_values | update_gradients |
                             update_quadrature_points | update_JxW_values);
 
@@ -376,7 +382,7 @@ CahnHilliard<dim>::calculate_phase_statistics()
       if (cell->is_locally_owned())
         {
           fe_values.reinit(cell);
-          fe_values[phase_order].get_function_values(evaluation_point,
+          fe_values[phase_order].get_function_values(present_solution,
                                                      local_phase_order_values);
 
           for (unsigned int q = 0; q < n_q_points; q++)
@@ -399,11 +405,11 @@ CahnHilliard<dim>::calculate_phase_statistics()
   if (simulation_parameters.post_processing.verbosity ==
       Parameters::Verbosity::verbose)
     {
-      this->pcout << "Phase statistics : " << std::endl;
-      this->pcout << "\t     Min : " << min_phase_value << std::endl;
-      this->pcout << "\t     Max : " << max_phase_value << std::endl;
-      this->pcout << "\t Average : " << phase_average << std::endl;
-      this->pcout << "\t Integral : " << integral << std::endl;
+      announce_string(this->pcout, "Phase statistics");
+      this->pcout << "Min: " << min_phase_value << std::endl;
+      this->pcout << "Max: " << max_phase_value << std::endl;
+      this->pcout << "Average: " << phase_average << std::endl;
+      this->pcout << "Integral: " << integral << std::endl;
     }
 
   statistics_table.add_value("time", simulation_control->get_current_time());
@@ -475,6 +481,10 @@ template <int dim>
 void
 CahnHilliard<dim>::postprocess(bool first_iteration)
 {
+  auto         mpi_communicator = this->triangulation->get_communicator();
+  unsigned int this_mpi_process(
+    Utilities::MPI::this_mpi_process(mpi_communicator));
+
   if (simulation_parameters.analytical_solution->calculate_error() == true &&
       !first_iteration)
     {
@@ -521,6 +531,129 @@ CahnHilliard<dim>::postprocess(bool first_iteration)
       announce_string(this->pcout, "Cahn-Hilliard");
       this->computing_timer.print_summary();
       this->computing_timer.reset();
+    }
+
+  if (this->simulation_parameters.post_processing.calculate_barycenter)
+    {
+      // Calculate volume and mass (this->mass_monitored)
+      std::pair<Tensor<1, dim>, Tensor<1, dim>> position_and_velocity;
+
+      if (multiphysics->fluid_dynamics_is_block())
+        {
+          if (this->simulation_parameters.multiphysics
+                .use_time_average_velocity_field &&
+              simulation_control->get_current_time() >
+                this->simulation_parameters.post_processing.initial_time)
+            {
+              position_and_velocity = calculate_barycenter(
+                this->present_solution,
+                *multiphysics->get_block_time_average_solution(
+                  PhysicsID::fluid_dynamics));
+            }
+          else
+            {
+              position_and_velocity =
+                calculate_barycenter(this->present_solution,
+                                     *multiphysics->get_block_solution(
+                                       PhysicsID::fluid_dynamics));
+            }
+        }
+      else
+        {
+          if (this->simulation_parameters.multiphysics
+                .use_time_average_velocity_field &&
+              simulation_control->get_current_time() >
+                this->simulation_parameters.post_processing.initial_time)
+            {
+              position_and_velocity =
+                calculate_barycenter(this->present_solution,
+                                     *multiphysics->get_time_average_solution(
+                                       PhysicsID::fluid_dynamics));
+            }
+          else
+            {
+              position_and_velocity =
+                calculate_barycenter(this->present_solution,
+                                     *multiphysics->get_solution(
+                                       PhysicsID::fluid_dynamics));
+            }
+        }
+      if (this_mpi_process == 0)
+        {
+          if (simulation_parameters.post_processing.verbosity ==
+              Parameters::Verbosity::verbose)
+            {
+              std::cout << std::endl;
+              std::string independent_column_names = "time";
+
+              std::vector<std::string> dependent_column_names;
+              dependent_column_names.push_back("x_cahn_hilliard");
+              dependent_column_names.push_back("y_cahn_hilliard");
+              if constexpr (dim == 3)
+                dependent_column_names.push_back("z_cahn_hilliard");
+              dependent_column_names.push_back("vx_cahn_hilliard");
+              dependent_column_names.push_back("vy_cahn_hilliard");
+              if constexpr (dim == 3)
+                dependent_column_names.push_back("vz_cahn_hilliard");
+
+              std::vector<Tensor<1, dim>> position_vector{
+                position_and_velocity.first};
+              std::vector<Tensor<1, dim>> velocity_vector{
+                position_and_velocity.second};
+
+              std::vector<std::vector<Tensor<1, dim>>>
+                position_and_velocity_vectors{position_vector, velocity_vector};
+
+              std::vector<double> time = {
+                this->simulation_control->get_current_time()};
+
+              TableHandler table = make_table_scalars_tensors(
+                time,
+                independent_column_names,
+                position_and_velocity_vectors,
+                dependent_column_names,
+                this->simulation_parameters.simulation_control.log_precision);
+
+              announce_string(this->pcout, "Cahn-Hilliard Barycenter");
+
+              table.write_text(std::cout);
+            }
+
+          this->barycenter_table.add_value(
+            "time", simulation_control->get_current_time());
+
+          this->barycenter_table.add_value("x_cahn_hilliard",
+                                           position_and_velocity.first[0]);
+          this->barycenter_table.add_value("y_cahn_hilliard",
+                                           position_and_velocity.first[1]);
+          if constexpr (dim == 3)
+            this->barycenter_table.add_value("z_cahn_hilliard",
+                                             position_and_velocity.first[2]);
+
+          this->barycenter_table.add_value("vx_cahn_hilliard",
+                                           position_and_velocity.second[0]);
+          this->barycenter_table.add_value("vy_cahn_hilliard",
+                                           position_and_velocity.second[1]);
+          if constexpr (dim == 3)
+            this->barycenter_table.add_value("vz_cahn_hilliard",
+                                             position_and_velocity.second[2]);
+
+
+          if (this->simulation_control->get_step_number() %
+                this->simulation_parameters.post_processing.output_frequency ==
+              0)
+            {
+              // Save table to .dat
+              std::string filename =
+                this->simulation_parameters.simulation_control.output_folder +
+                this->simulation_parameters.post_processing
+                  .barycenter_output_name +
+                ".dat";
+              std::ofstream output(filename.c_str());
+              this->barycenter_table.write_text(output);
+              output.close();
+            }
+        }
     }
 }
 
@@ -886,6 +1019,110 @@ CahnHilliard<dim>::solve_linear_system(const bool initial_step,
   newton_update = completely_distributed_solution;
 }
 
+template <int dim>
+template <typename VectorType>
+std::pair<Tensor<1, dim>, Tensor<1, dim>>
+CahnHilliard<dim>::calculate_barycenter(
+  const TrilinosWrappers::MPI::Vector &solution,
+  const VectorType                    &solution_fd)
+{
+  const MPI_Comm mpi_communicator = this->triangulation->get_communicator();
+
+  FEValues<dim> fe_values_cahn_hilliard(*this->mapping,
+                                        *this->fe,
+                                        *this->cell_quadrature,
+                                        update_values |
+                                          update_quadrature_points |
+                                          update_JxW_values);
+
+  const DoFHandler<dim> *dof_handler_fd =
+    multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
+
+  FEValues<dim> fe_values_fd(*this->mapping,
+                             dof_handler_fd->get_fe(),
+                             *this->cell_quadrature,
+                             update_values);
+
+  const unsigned int          n_q_points = this->cell_quadrature->size();
+  std::vector<double>         phase_cahn_hilliard_values(n_q_points);
+  std::vector<Tensor<1, dim>> velocity_values(n_q_points);
+  std::vector<Point<dim>>     quadrature_locations(n_q_points);
+
+  const FEValuesExtractors::Vector velocity(0);
+  const FEValuesExtractors::Scalar phase_order(0);
+
+  Tensor<1, dim> barycenter_location;
+  Tensor<1, dim> barycenter_velocity;
+  double         volume = 0;
+
+
+  std::map<field, std::vector<double>> fields;
+
+  for (const auto &cell : this->dof_handler.active_cell_iterators())
+    {
+      if (cell->is_locally_owned())
+        {
+          fe_values_cahn_hilliard.reinit(cell);
+          quadrature_locations =
+            fe_values_cahn_hilliard.get_quadrature_points();
+          fe_values_cahn_hilliard[phase_order].get_function_values(
+            solution, phase_cahn_hilliard_values);
+
+          // Get fluid dynamics active cell iterator
+          typename DoFHandler<dim>::active_cell_iterator cell_fd(
+            &(*(this->triangulation)),
+            cell->level(),
+            cell->index(),
+            dof_handler_fd);
+
+          fe_values_fd.reinit(cell_fd);
+          fe_values_fd[velocity].get_function_values(solution_fd,
+                                                     velocity_values);
+
+          for (unsigned int q = 0; q < n_q_points; q++)
+            {
+              const double JxW = fe_values_cahn_hilliard.JxW(q);
+
+
+              volume += (1 - phase_cahn_hilliard_values[q]) * 0.5 * JxW;
+              barycenter_location += (1 - phase_cahn_hilliard_values[q]) * 0.5 *
+                                     quadrature_locations[q] * JxW;
+              barycenter_velocity += (1 - phase_cahn_hilliard_values[q]) * 0.5 *
+                                     velocity_values[q] * JxW;
+            }
+        }
+    }
+
+  volume = Utilities::MPI::sum(volume, mpi_communicator);
+  barycenter_location =
+    Utilities::MPI::sum(barycenter_location, mpi_communicator) / volume;
+  barycenter_velocity =
+    Utilities::MPI::sum(barycenter_velocity, mpi_communicator) / volume;
+
+  return std::pair<Tensor<1, dim>, Tensor<1, dim>>(barycenter_location,
+                                                   barycenter_velocity);
+}
+
+template std::pair<Tensor<1, 2>, Tensor<1, 2>>
+CahnHilliard<2>::calculate_barycenter<TrilinosWrappers::MPI::Vector>(
+  const TrilinosWrappers::MPI::Vector &solution,
+  const TrilinosWrappers::MPI::Vector &current_solution_fd);
+
+template std::pair<Tensor<1, 3>, Tensor<1, 3>>
+CahnHilliard<3>::calculate_barycenter<TrilinosWrappers::MPI::Vector>(
+  const TrilinosWrappers::MPI::Vector &solution,
+  const TrilinosWrappers::MPI::Vector &current_solution_fd);
+
+template std::pair<Tensor<1, 2>, Tensor<1, 2>>
+CahnHilliard<2>::calculate_barycenter<TrilinosWrappers::MPI::BlockVector>(
+  const TrilinosWrappers::MPI::Vector      &solution,
+  const TrilinosWrappers::MPI::BlockVector &current_solution_fd);
+
+
+template std::pair<Tensor<1, 3>, Tensor<1, 3>>
+CahnHilliard<3>::calculate_barycenter<TrilinosWrappers::MPI::BlockVector>(
+  const TrilinosWrappers::MPI::Vector      &solution,
+  const TrilinosWrappers::MPI::BlockVector &current_solution_fd);
 
 
 template class CahnHilliard<2>;
