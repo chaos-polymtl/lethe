@@ -1168,7 +1168,7 @@ HeatTransferAssemblerALE<dim>::assemble_rhs(
       for (unsigned int i = 0; i < n_dofs; ++i)
         {
           const auto phi_T_i = scratch_data.phi_T[q][i];
-          local_rhs[i] += -rho_cp * phi_T_i * velocity_ale *
+          local_rhs[i] += rho_cp * phi_T_i * velocity_ale *
                           scratch_data.temperature_gradients[q] * JxW;
         }
     } // end loop on quadrature points
