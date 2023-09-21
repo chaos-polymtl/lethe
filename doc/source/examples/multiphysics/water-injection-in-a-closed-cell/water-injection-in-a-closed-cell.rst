@@ -233,7 +233,7 @@ In the ``mesh adaptation`` subsection, adaptive mesh refinement is defined for t
 Running the Simulation
 -----------------------
 
-We can call the ``lethe-fluid`` by invoking the following command:
+We can call ``lethe-fluid`` by invoking the following command:
 
 .. code-block:: text
   :class: copy-button
