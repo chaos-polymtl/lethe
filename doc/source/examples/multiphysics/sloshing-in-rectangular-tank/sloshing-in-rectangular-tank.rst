@@ -2,7 +2,7 @@
 Sloshing in a Rectangular Tank
 ================================
 
-This example simulates the damping of a small amplitude wave for Reynolds number of (2, 20, 200 and 2000). The problem is inspired by the test case of Carrica *et al.* `[1] <https://onlinelibrary.wiley.com/doi/abs/10.1002/fld.1279>`_
+This example simulates the damping of a small amplitude wave for Reynolds number of (:math:`2`, :math:`20`, :math:`200` and :math:`2000`). The problem is inspired by the test case of Carrica *et al.* `[1] <https://onlinelibrary.wiley.com/doi/abs/10.1002/fld.1279>`_
 
 
 --------
@@ -26,7 +26,7 @@ Files Used in This Example
 - Parameter file for :math:`Re=20`:``examples/multiphysics/sloshing-in-rectangular-tank/sloshing_0020/sloshing-in-rectangular-tank_Re0020.prm``
 - Parameter file for :math:`Re=200`:``examples/multiphysics/sloshing-in-rectangular-tank/sloshing_0200/sloshing-in-rectangular-tank_Re0200.prm``
 - Parameter file for :math:`Re=2000`:``examples/multiphysics/sloshing-in-rectangular-tank/sloshing_2000/sloshing-in-rectangular-tank_Re2000.prm``
-- Python script for postprocessing: ``examples/multiphysics/sloshing-in-rectangular-tank/sloshing_postprocessing.py``
+- Postprocessing Python script: ``examples/multiphysics/sloshing-in-rectangular-tank/sloshing_postprocessing.py``
 
 
 -----------------------
@@ -50,7 +50,7 @@ In this problem, we simulate the damping of a small amplitude wave in a rectangu
 |                                                                                                                   |
 +-------------------------------------------------------------------------------------------------------------------+
 
-Four values of the Reynolds number are investigated: 2, 20, 200 and 2000. 
+Four values of the Reynolds number are investigated: :math:`2`, :math:`20`, :math:`200` and :math:`2000`.
 
 
 --------------
@@ -60,7 +60,7 @@ Parameter File
 Simulation Control
 ~~~~~~~~~~~~~~~~~~
 
-The results for this problem are highly sensitive to the accuracy of the time-stepping scheme. For this reason, we use a 2nd order backward differentiation scheme (``bdf2``) with a variable time step. The ``adaptive time step scaling`` is set to 1.025 to ensure that the time-step does not rise too quickly during wave oscillations.
+The results for this problem are highly sensitive to the accuracy of the time-stepping scheme. For this reason, we use a 2nd order backward differentiation scheme (``bdf2``) with a variable time step. The ``adaptive time step scaling`` is set to :math:`1.025` to ensure that the time-step does not rise too quickly during wave oscillations.
 
 .. code-block:: text
 
@@ -160,6 +160,7 @@ Running the Simulation
 We can call the lethe-fluid for each Reynolds number. For :math:`Re=20`, this can be done by invoking the following command:
 
 .. code-block:: text
+  :class: copy-button
 
   mpirun -np 8 lethe-fluid sloshing-in-rectangular-tank_Re0020.prm
 
@@ -169,16 +170,17 @@ to run the simulation using eight CPU cores. Feel free to use more.
 .. warning:: 
     Make sure to compile lethe in `Release` mode and 
     run in parallel using mpirun. This simulation takes
-    :math:`\approx` 8 minutes (Re=2) to 6 hours (Re=2000) on 8 processes.
+    :math:`\sim \, 8` minutes (:math:`Re=2`) to :math:`6` hours (:math:`Re=2000`) on :math:`8` processes.
 
 
 -------
 Results
 -------
 
-We compare the relative height of the free surface at :math:`x=0` with an analytical solution proposed by Wu *et al.* `[2] <https://link.springer.com/article/10.1023/A:1017558826258>`_ For the Reynolds number of 2, 20 and 200, data were directly extracted from Carrica *et al.* `[1] <https://onlinelibrary.wiley.com/doi/abs/10.1002/fld.1279>`_, whereas for the Reynolds of 2000, the simplified analytical expression of Wu *et al.* `[2] <https://link.springer.com/article/10.1023/A:1017558826258>`_ is used. The results for Reynolds number of 2, 20, 200 and 2000 can be post-processed by invoking the following command from the folder of the Reynolds number of interest (Re=20 in the example below):
+We compare the relative height of the free surface at :math:`x=0` with an analytical solution proposed by Wu *et al.* `[2] <https://link.springer.com/article/10.1023/A:1017558826258>`_ For the Reynolds number of :math:`2`, :math:`20` and :math:`200`, data were directly extracted from Carrica *et al.* `[1] <https://onlinelibrary.wiley.com/doi/abs/10.1002/fld.1279>`_, whereas for the Reynolds of :math:`2000`, the simplified analytical expression of Wu *et al.* `[2] <https://link.springer.com/article/10.1023/A:1017558826258>`_ is used. The results for Reynolds number of :math:`2`, :math:`20`, :math:`200` and :math:`2000` can be post-processed by invoking the following command from the folder of the Reynolds number of interest (:math:`Re=20` in the example below):
 
 .. code-block:: text
+  :class: copy-button
 
   python3 ../sloshing_postprocessing.py . sloshing-in-rectangular-tank_Re0020.prm
 
@@ -189,17 +191,24 @@ We compare the relative height of the free surface at :math:`x=0` with an analyt
 
 The following table presents a comparison between the analytical results and the simulation results for all Reynolds numbers mentioned above. A very good agreement is obtained for each of them, demonstrating the accuracy of the VOF solver.
 
-+------+--------------------------------------+
-| Re   | Results                              |
-+======+======================================+
-| 2    | .. image:: images/Re2.png            |
-+------+--------------------------------------+
-| 20   | .. image:: images/Re20.png           |
-+------+--------------------------------------+
-| 200  | .. image:: images/Re200.png          |
-+------+--------------------------------------+
-| 2000 | .. image:: images/Re2000.png         |
-+------+--------------------------------------+
+.. table::
+   :align: center
+
+   +-------------+--------------------------------------------------------------------------------------------------------+
+   |Re           | Results                                                                                                |
+   +=============+========================================================================================================+
+   |:math:`2`    | .. image:: images/Re2.png                                                                              |
+   |             |    :align: center                                                                                      |
+   +-------------+--------------------------------------------------------------------------------------------------------+
+   |:math:`20`   | .. image:: images/Re20.png                                                                             |
+   |             |    :align: center                                                                                      |
+   +-------------+--------------------------------------------------------------------------------------------------------+
+   |:math:`200`  | .. image:: images/Re200.png                                                                            |
+   |             |    :align: center                                                                                      |
+   +-------------+--------------------------------------------------------------------------------------------------------+
+   |:math:`2000` | .. image:: images/Re2000.png                                                                           |
+   |             |    :align: center                                                                                      |
+   +-------------+--------------------------------------------------------------------------------------------------------+
 
 
 ----------
