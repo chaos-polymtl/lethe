@@ -126,6 +126,8 @@ public:
 
     Parameters::Stabilization::declare_parameters(prm);
 
+    ale.declare_parameters(prm);
+
     multiphysics.declare_parameters(prm);
   }
 
@@ -169,6 +171,7 @@ public:
     particlesParameters->parse_parameters(prm);
     multiphysics.parse_parameters(prm);
     stabilization.parse_parameters(prm);
+    ale.parse_parameters(prm);
 
     physical_properties_manager.initialize(physical_properties);
 

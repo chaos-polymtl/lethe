@@ -54,7 +54,7 @@ namespace Parameters
     std::shared_ptr<Functions::ParsedFunction<dim>> velocity;
 
     bool
-    enabled()
+    enabled() const
     {
       return enable;
     }

@@ -1,19 +1,13 @@
 #include <core/bdf.h>
 #include <core/time_integration_utilities.h>
-#include <core/utilities.h>
 
 #include <solvers/heat_transfer.h>
-#include <solvers/heat_transfer_assemblers.h>
-#include <solvers/heat_transfer_scratch_data.h>
-#include <solvers/postprocessing_cfd.h>
 
 #include <deal.II/base/work_stream.h>
 
-#include <deal.II/dofs/dof_renumbering.h>
 #include <deal.II/dofs/dof_tools.h>
 
 #include <deal.II/fe/mapping.h>
-#include <deal.II/fe/mapping_q.h>
 
 #include <deal.II/lac/affine_constraints.h>
 #include <deal.II/lac/dynamic_sparsity_pattern.h>
@@ -53,19 +47,6 @@ HeatTransfer<dim>::assemble_nitsche_heat_restriction(bool assemble_matrix)
   Assert(
     !this->simulation_parameters.physical_properties_manager.is_non_newtonian(),
     RequiresConstantViscosity("assemble_nitsche_heat_restriction"));
-
-  // Evaluate fluid properties
-  // auto density_model =
-  //  this->simulation_parameters.physical_properties_manager.get_density();
-  // auto specific_heat_model =
-  //  this->simulation_parameters.physical_properties_manager.get_specific_heat();
-  // auto conductivity_model =
-  //  this->simulation_parameters.physical_properties_manager
-  //    .get_thermal_conductivity();
-  // std::map<field, double> field_values;
-
-  // double rho_cp = density_model->value(field_values) *
-  //                 specific_heat_model->value(field_values);
 
   auto solids = *this->multiphysics->get_solids(
     this->simulation_parameters.nitsche->number_solids);
@@ -344,6 +325,14 @@ HeatTransfer<dim>::setup_assemblers()
             std::make_shared<HeatTransferAssemblerViscousDissipation<dim>>(
               this->simulation_control));
         }
+    }
+
+  // ALE
+  if (this->simulation_parameters.ale.enabled())
+    {
+      this->assemblers.push_back(
+        std::make_shared<HeatTransferAssemblerALE<dim>>(
+          this->simulation_control, this->simulation_parameters.ale));
     }
 
   // Time-stepping schemes
