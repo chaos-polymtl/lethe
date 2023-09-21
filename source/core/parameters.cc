@@ -1592,16 +1592,16 @@ namespace Parameters
                         "Enable smoothing postprocessed vectors and scalars.");
 
       prm.declare_entry(
-        "calculate VOF barycenter",
+        "calculate barycenter",
         "false",
         Patterns::Bool(),
-        "Enable calculation of the barycenter location and velocity of the fluid 1 in VOF simulations.");
+        "Enable calculation of the barycenter location and velocity of fluid 1 in VOF and Cahn-Hilliard simulations.");
 
       prm.declare_entry(
-        "VOF barycenter name",
-        "vof_barycenter_information",
+        "barycenter name",
+        "barycenter_information",
         Patterns::FileName(),
-        "File name output for the barycenter information in VOF simulations");
+        "Name of barycenter information output file in VOF or Cahn-Hilliard simulations");
     }
     prm.leave_subsection();
   }
@@ -1640,11 +1640,11 @@ namespace Parameters
       phase_output_name           = prm.get("phase statistics name");
       calculate_temperature_statistics =
         prm.get_bool("calculate temperature statistics");
-      temperature_output_name  = prm.get("temperature statistics name");
-      calculate_heat_flux      = prm.get_bool("calculate heat flux");
-      heat_flux_output_name    = prm.get("heat flux name");
-      calculate_vof_barycenter = prm.get_bool("calculate VOF barycenter");
-      barycenter_output_name   = prm.get("VOF barycenter name");
+      temperature_output_name = prm.get("temperature statistics name");
+      calculate_heat_flux     = prm.get_bool("calculate heat flux");
+      heat_flux_output_name   = prm.get("heat flux name");
+      calculate_barycenter    = prm.get_bool("calculate barycenter");
+      barycenter_output_name  = prm.get("barycenter name");
 
 
       // Viscous dissipative fluid

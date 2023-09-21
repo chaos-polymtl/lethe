@@ -171,7 +171,49 @@ public:
     &boundary_conditions_cahn_hilliard;
 };
 
+/**
+ * @brief Class that assembles the boundary condition that allows a free angle of
+ * contact, thus adding a degree of freedom to the problem
+ *
+ * @tparam dim An integer that denotes the number of spatial dimensions
+ *
+ * @ingroup assemblers
+ */
+template <int dim>
+class CahnHilliardAssemblerFreeAngle : public CahnHilliardAssemblerBase<dim>
+{
+public:
+  CahnHilliardAssemblerFreeAngle(
+    std::shared_ptr<SimulationControl> simulation_control,
+    const BoundaryConditions::CahnHilliardBoundaryConditions<dim>
+      &p_boundary_conditions_cahn_hilliard)
+    : CahnHilliardAssemblerBase<dim>(simulation_control)
+    , boundary_conditions_cahn_hilliard(p_boundary_conditions_cahn_hilliard)
+  {}
 
+  /**
+   * @brief assemble_matrix Assembles the matrix
+   * @param scratch_data (see base class)
+   * @param copy_data (see base class)
+   */
+  virtual void
+  assemble_matrix(CahnHilliardScratchData<dim> &scratch_data,
+                  StabilizedMethodsCopyData    &copy_data) override;
+
+
+  /**
+   * @brief assemble_rhs Assembles the rhs
+   * @param scratch_data (see base class)
+   * @param copy_data (see base class)
+   */
+  virtual void
+  assemble_rhs(CahnHilliardScratchData<dim> &scratch_data,
+               StabilizedMethodsCopyData    &copy_data) override;
+
+
+  const BoundaryConditions::CahnHilliardBoundaryConditions<dim>
+    &boundary_conditions_cahn_hilliard;
+};
 
 /**
  * @brief Class that assembles the transient time arising from BDF time

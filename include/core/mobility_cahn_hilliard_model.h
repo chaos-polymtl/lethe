@@ -93,7 +93,7 @@ public:
   }
 
   /**
-   * @brief value Calculates the mobility_ch
+   * @brief value Computes mobility_cahn_hilliard.
    * @param fields_value Value of the various field on which the property may depend.
    * @return value of the physical property calculated with the fields_value
    */
@@ -104,9 +104,9 @@ public:
   }
 
   /**
-   * @brief vector_value Calculates the vector of mobility_ch.
-   * @param field_vectors Vectors of the fields on which the mobility_ch may depend.
-   * @param property_vector Vectors of the mobility_ch values
+   * @brief vector_value Calculates the vector of mobility_cahn_hilliard.
+   * @param field_vectors Vectors of the fields on which the mobility_cahn_hilliard may depend.
+   * @param property_vector Vectors of the mobility_cahn_hilliard values
    */
   void
   vector_value(const std::map<field, std::vector<double>> & /*field_vectors*/,
@@ -154,7 +154,7 @@ private:
 };
 
 /**
- * @brief Quartic mobility_ch.
+ * @brief Quartic mobility_cahn_hilliard.
  */
 class MobilityCahnHilliardModelQuartic : public MobilityCahnHilliardModel
 {
@@ -191,9 +191,9 @@ public:
   }
 
   /**
-   * @brief value Calculates the mobility_ch
+   * @brief value Calculates the mobility_cahn_hilliard.
    * @param fields_value Value of the various field on which the property may depend.
-   * @return value of the physical property calculated with the fields_value
+   * @return value of the physical property calculated with the fields_value.
    */
   double
   value(const std::map<field, double> &fields_value) override
@@ -206,9 +206,9 @@ public:
   }
 
   /**
-   * @brief vector_value Calculates the vector of mobility_ch_constant.
-   * @param field_vectors Vectors of the fields on which the mobility_ch_constant may depend.
-   * @param property_vector Vectors of the mobility_ch_constant values
+   * @brief vector_value Calculates the vector of mobility_cahn_hilliard_constant.
+   * @param field_vectors Vectors of the fields on which the mobility_cahn_hilliard_constant may depend.
+   * @param property_vector Vectors of the mobility_cahn_hilliard_constant values
    */
   void
   vector_value(const std::map<field, std::vector<double>> &field_vectors,

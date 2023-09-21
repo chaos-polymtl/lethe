@@ -58,13 +58,14 @@ This subsection controls the post-processing other than the forces and torque on
     set calculate heat flux              = false
     set heat flux name                   = heat_flux
 
-    # VOF postprocessing
-    set calculate VOF barycenter         = false
-    set VOF barycenter name              = vof_barycenter_information
+    # Multiphase postprocessing
+    set calculate barycenter             = false
+    set barycenter name                  = barycenter_information
 
-    # Cahn-Hilliard statistics
-    set calculate phase statistics       = true
+    # Other Cahn-Hilliard postprocessing
+    set calculate phase statistics       = false
     set phase statistics name            = phase_statistics
+    
   end
 
 * ``verbosity``: enables the display of the post-processing values in the terminal. This does not affect the printing of output files. Choices are: ``quiet`` (default, no output) or ``verbose`` (output at every iteration).
@@ -170,7 +171,7 @@ This subsection controls the post-processing other than the forces and torque on
 		0.0000          0.0000               0.0000               0.0000            1000.0000 
 		1.0000         -0.9732               0.0000               1.4856               0.9732 
 
-* ``calculate VOF barycenter``: calculates the barycenter of fluid 1 and its velocity VOF simulations. The barycenter :math:`\mathbf{x}_b` and its velocity :math:`\mathbf{v}_b` are defined as:
+* ``calculate barycenter``: calculates the barycenter of ``fluid 1`` and its velocity in VOF and Cahn-Hilliard simulations. The barycenter :math:`\mathbf{x}_b` and its velocity :math:`\mathbf{v}_b` are defined as:
 
   .. math::
 
@@ -180,17 +181,25 @@ This subsection controls the post-processing other than the forces and torque on
 
       \mathbf{v_b} = \frac{\int_{\Omega} \psi \mathbf{u} \mathrm{d}\Omega }{\int_{\Omega} \psi \mathrm{d}\Omega}
 
-  where :math:`\psi` is the filtered phase indicator.
+  where :math:`\psi \in [0,1]` is the filtered phase indicator for VOF simulations. 
   
-  * ``calculate phase statistics``: controls if calculation of phase statistics coming from the solution of the Cahn-Hilliard equations is enabled. Statistics include: minimum, maximum, average and standard-deviation of the phase order parameter.
+  For Cahn-Hilliard the formula is slightly different since the phase order parameter :math:`\phi` belongs to the :math:`[-1,1]` interval:
   
-    .. warning::
+  .. math::
 
-        Do not forget to ``set cahn hilliard = true`` in the :doc:`multiphysics` subsection of the ``.prm``.
+      \mathbf{x_b} = \frac{\int_{\Omega} 0.5(1-\phi) \mathbf{x} \mathrm{d}\Omega }{\int_{\Omega} 0.5(1-\phi) \mathrm{d}\Omega}
 
-    * ``phase statistics name``: output filename for phase statistics calculations.
+  .. math::
 
+      \mathbf{v_b} = \frac{\int_{\Omega} 0.5(1-\phi) \mathbf{u} \mathrm{d}\Omega }{\int_{\Omega} 0.5(1-\phi) \mathrm{d}\Omega}
+      
+  where :math:`\phi` is the phase order parameter.
+  
+  
+* ``barycenter name``: name of the output file containing the position and velocity of the barycenter for VOF and Cahn-Hilliard simulations. The default file name is ``barycenter_information``.
+  
+* ``calculate phase statistics``: outputs phase statistics from the solution of the Cahn-Hilliard equations, including minimum, maximum, average, and standard deviation of the phase order parameter. This works only with the :doc:`cahn_hilliard` solver.
 
-
+* ``phase statistics name``: name of the output file containing phase order parameter statistics from Cahn-Hilliard simulations. The default file name is ``phase_statistics``.
 
         

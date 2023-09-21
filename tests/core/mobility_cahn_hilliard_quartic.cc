@@ -3,7 +3,7 @@
  */
 
 // Lethe
-#include <core/mobility_ch_model.h>
+#include <core/mobility_cahn_hilliard_model.h>
 
 // Tests (with common definitions)
 #include <../tests/tests.h>
@@ -17,7 +17,6 @@ test()
   MobilityCahnHilliardModelQuartic mobility_model(10);
 
   deallog << "Testing quartic mobility" << std::endl;
-
   std::map<field, double> field_values;
   field_values[field::phase_order_cahn_hilliard] = 0.5;
   deallog << "Test 1, mobility = " << mobility_model.value(field_values)

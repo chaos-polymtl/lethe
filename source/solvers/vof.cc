@@ -763,7 +763,7 @@ VolumeOfFluid<dim>::postprocess(bool first_iteration)
         }
     }
 
-  if (this->simulation_parameters.post_processing.calculate_vof_barycenter)
+  if (this->simulation_parameters.post_processing.calculate_barycenter)
     {
       // Calculate volume and mass (this->mass_monitored)
       std::pair<Tensor<1, dim>, Tensor<1, dim>> position_and_velocity;
