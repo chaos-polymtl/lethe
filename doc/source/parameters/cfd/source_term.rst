@@ -7,8 +7,6 @@ If the problem being simulated has a source, it can be added in this section. Th
 .. code-block:: text
 
   subsection source term
-    set enable = false
-
     subsection xyz
       # Default values in 2D
       set Function expression = 0; 0; 0
@@ -37,8 +35,6 @@ If the problem being simulated has a source, it can be added in this section. Th
   * use ``if`` statements
 
   Check the :ref:`ex function` for further help.
-
-* ``enable``: controls if the problem has a source term and enables its calculation.
 
 * ``subsection xyz``: defines the parameters for a Navier-Stokes source term. This source term is defined by a ``Function expression`` and can depend on both space and time.
 

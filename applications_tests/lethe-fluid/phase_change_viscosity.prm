@@ -73,17 +73,6 @@ subsection physical properties
 end
 
 #---------------------------------------------------
-# Source term
-#---------------------------------------------------
-
-subsection source term
-  set enable = false
-  subsection xyz
-    set Function expression = 10; 0 ; 0
-  end
-end
-
-#---------------------------------------------------
 # Analytical Solution
 #---------------------------------------------------
 
