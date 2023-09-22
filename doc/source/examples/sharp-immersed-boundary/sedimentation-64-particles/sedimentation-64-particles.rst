@@ -2,7 +2,7 @@
 Sedimentation of 64 Particles
 ==============================================================================
 
-This example aims to introduce the user on how to carry resolved CFD-DEM simulation with a larger number of particles.
+This example aims to introduce the user to resolved CFD-DEM simulations with a larger number of particles.
 
 
 .. warning:: 
@@ -13,7 +13,7 @@ This example aims to introduce the user on how to carry resolved CFD-DEM simulat
 Features
 ----------------------------------
 
-- Solvers: ``lethe-fluid-sharp`` (with Q1Q1)
+- Solvers: ``lethe-fluid-sharp`` (with Q1-Q1)
 - Transient problem
 - Displays the capability of the resolved CFD-DEM solver for the flow around multiple particles
 - Displays the robustness of the resolved CFD-DEM Solver.
@@ -29,16 +29,16 @@ Files Used in This Example
 -----------------------
 Description of the Case
 -----------------------
-The case consists in the release of 64 particles (:math:`\rho_p=0.0015 \frac{\text{kg}}{\text{cm}^{3}}`) with a diameter of 0.25 cm arranged in a 4 by 4 by 4 cubic array centered 21 cm above the bottom of the container. The container is a 2 by 2 by 24 cm rectangle. The viscosity of the fluid is :math:`\mu_f=0.0001 \frac{\text{kg}}{\text{s cm}}`. The density of the fluid is :math:`\rho_f=0.001 \frac{\text{kg}}{\text{cm}^{3}}`. The gravity constant is :math:`g= -981 \frac{\text{cm}}{\text{s}^{2}}`. The particles accelerate due to gravity until they hit the bottom of the container, which at this point, we stop the simulation. All the container walls have no-slip boundary conditions except at the top of the container, where we define an open boundary.
+The case consists of the release of 64 particles (:math:`\rho_p=0.0015 \frac{\text{kg}}{\text{cm}^{3}}`) with a diameter of 0.25 cm arranged in a 4 by 4 by 4 cubic array centered 21 cm above the bottom of the container. The container is a 2 by 2 by 24 cm rectangle. The viscosity of the fluid is :math:`\mu_f=0.0001 \frac{\text{kg}}{\text{s cm}}`. The density of the fluid is :math:`\rho_f=0.001 \frac{\text{kg}}{\text{cm}^{3}}`. The gravity constant is :math:`g= -981 \frac{\text{cm}}{\text{s}^{2}}`. The particles accelerate due to gravity until they hit the bottom of the container, which at this point, we stop the simulation. All the container walls have no-slip boundary conditions except at the top of the container, where we define an open boundary.
 
 
 ---------------
 Parameter File
 ---------------
 
-We explain every part of this parameter file in detail. In each section of the parameter file, we describe relevant parameters. The omitted parameters are only user preference parameters and have no impact on the simulation results. For more information on these parameters we suggest visiting the :doc:`../../../parameters/parameters`.
+We explain every part of this parameter file in detail. In each section of the parameter file, we describe relevant parameters. The omitted parameters are only user preference parameters and have no impact on the simulation results. For more information on these parameters, refer to :doc:`../../../parameters/parameters`.
  
-Simulation and IO Control
+Simulation Control
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 .. code-block:: text
 
@@ -83,7 +83,7 @@ FEM
       set velocity order = 1
       set pressure order = 1
     end
-	
+
 Here we use Q1Q1 elements to reduce the computational cost.
 
 Mesh
@@ -92,14 +92,14 @@ Mesh
 
     subsection mesh
         set type                 = dealii
-    	set grid type            = subdivided_hyper_rectangle
-    	set grid arguments       = 1,1,12: 0,0,0 : 2 , 2 , 24 : true
-    	set initial refinement   = 4
+        set grid type            = subdivided_hyper_rectangle
+        set grid arguments       = 1,1,12: 0,0,0 : 2 , 2 , 24 : true
+        set initial refinement   = 4
     end
 
 The domain is a rectangular box: we can directly use a subdivided hyper rectangle mesh from the deal.II library. In this case, we have oriented the z-direction with gravity. As such, we have the long side of the box along this axis.
 
-* The ``grid arguments`` is set to  ``1,1,12: 0,0,0 : 2,2,24 : true``. This section has 3 subsections. First ``1,1,12`` describes the initial subdivision of the box. This subdivision has been chosen as it is the smallest mesh we can do of the box in order to have cubic elements. Secondly ``0,0,0 : 2,2,24`` describes the 2 points from which we have derived the rectangular box (0,0,0) and  (2,2,24). Finally, we have ``true``, which is a boolean to activate the coloration of the boundary. This allows us to define separate boundary conditions at each side of the box.
+* The ``grid arguments`` is set to  ``1,1,12: 0,0,0 : 2,2,24 : true``. This section has 3 subsections. First ``1,1,12`` describes the initial subdivision of the box. This subdivision has been chosen as it is the smallest mesh we can do of the box to have cubic elements. Secondly ``0,0,0 : 2,2,24`` describes the 2 points from which we have derived the rectangular box (0,0,0) and  (2,2,24). Finally, we have ``true``, which is a boolean to activate the coloration of the boundary. This allows us to define separate boundary conditions at each side of the box.
 
 * The ``initial refinement`` is set to 4. This will ensure to have a base mesh that is a bit finer than the particle size.
 
@@ -135,6 +135,7 @@ Boundary Conditions
 
     subsection boundary conditions
       set number = 5
+
       subsection bc 0
         set id   = 0
         set type = noslip
@@ -148,19 +149,28 @@ Boundary Conditions
         set type = noslip
       end
       subsection bc 3
-        set id   = 4
+        set id   = 3
         set type = noslip
       end
       subsection bc 4
-        set id   = 5
-        set type = noslip
+        set id   = 4
+        set beta = 10
+        set type = function
+      subsection u
+        set Function expression = 0
+      end
+      subsection v
+        set Function expression = 0
+      end
+      subsection w
+         set Function expression = 0
       end
     end
 
 Here we define the 5 ``no slip`` boundaries for all the box walls and let the 6th boundary free, to represent the top of the box. We refer the reader to the :doc:`../../../parameters/cfd/boundary_conditions_cfd` section on how those boundaries are defined. 
 
 .. note:: 
-	The boundary id of dealii rectangular mesh are numbered as such:  :math:`x_{min}=0`, :math:`x_{max}=1`, :math:`y_{min}=2`, :math:`y_{max}=3`, :math:`z_{min}=4`, :math:`z_{max}=5`.
+    The boundary id of dealii rectangular mesh are numbered as such:  :math:`x_{min}=0`, :math:`x_{max}=1`, :math:`y_{min}=2`, :math:`y_{max}=3`, :math:`z_{min}=4`, :math:`z_{max}=5`.
 
 
 Initial Conditions
@@ -190,19 +200,19 @@ Non-linear Solver
         set force rhs calculation = true
       end
     end
-	
+
 * The ``tolerance`` is set to 1e-4. This is small enough to ensure that the flow field is adequately resolved, since here we expect a velocity of the particle of the order of 10.
 
 * The ``max iterations`` is set to 10. The objective here is to allow enough Newton non-linear steps to ensure the convergence to the tolerance. Also, we should limit the time spent on a single time step if the system is too stiff.  
 
 * The ``force rhs calculation`` is set to ``true``. This is the most important modification for resolved CFD-DEM simulation. By default, the non-linear solver will recalculate the RHS only after the update of the solution. But here, we need to evaluate it before every matrix resolution, and we cannot use the last RHS evaluation that was done after the last newton iteration. The particle position was updated between these two steps, changing the RHS evaluation. This means that for every non-linear step, we evaluate the RHS twice. The non-linear solver follows this sequence of steps for each newton iteration.
-	* update the particles positions
-	* update the Jacobian matrix
-	* update the RHS
-	* solve the matrix system
-	* reevaluate the RHS to check the convergence.
-	
-	
+    * update the particles positions
+    * update the Jacobian matrix
+    * update the RHS
+    * solve the matrix system
+    * reevaluate the RHS to check the convergence.
+
+
 Linear Solver
 ~~~~~~~~~~~~~
 
@@ -231,7 +241,7 @@ Linear Solver
 
 * The ``relative residual`` is set to 1e-4. This is small enough, so we don't under-resolve our matrix and do extra non-linear steps because of it, and at the same, it doesn't require too many ``gmres`` iterations.
 
-* The ``ilu preconditioner fill`` is set to 0. This is the fastest option with the current simulation parameters. In this case, we are able to use this option without having to do too many ``gmres`` iterations. It requires less computational time to do a few more  ``gmres`` iterations than building the preconditioner and doing fewer ``gmres`` iterations.
+* The ``ilu preconditioner fill`` is set to 0. This is the fastest option with the current simulation parameters. In this case, we can use this option without having to do too many ``gmres`` iterations. It requires less computational time to do a few more  ``gmres`` iterations than building the preconditioner and doing fewer ``gmres`` iterations.
 
 * The ``ilu preconditioner absolute tolerance`` is set to 1e-6. This slightly speeds up the first few matrix resolutions. 
 
@@ -286,7 +296,7 @@ In this subsection, we define most of the parameters that are related to the par
 
 * The ``assemble Navier-Stokes inside particles`` is set to false because we are not interested in the flow inside of the particle.
 
-* The ``length ratio`` has been set to 2. This is small enough so it does not impact too much the conditioning of the matrix while avoiding interpolation of the immersed boundary stencil in multiple elements.
+* The ``length ratio`` has been set to 2. This is small enough so it does not impact the conditioning of the matrix while avoiding interpolation of the immersed boundary stencil in multiple elements.
 
 * The ``contact search radius factor`` is set to 1.5. This parameter is smaller than the default one since the particle motion relative to their size is relatively slow. This enables the use of a smaller search radius which increases the DEM calculation speed.
 
@@ -294,11 +304,11 @@ In this subsection, we define most of the parameters that are related to the par
 
 * The ``DEM coupling frequency`` is set to 1000. This is the number of DEM time steps performed per CFD time step. Here 1000 is enough to prevent instability due to particles' contact.
 
-* The ``enable lubrication force`` is set to true since the subgrid lubrication force model is required to capture the lubrication force between the particle when the gap between them is inferior to two times the mesh size.
+* The ``enable lubrication force`` is set to true since the subgrid lubrication force model is required to capture the lubrication force between the particles when the gap between them is inferior to two times the mesh size.
 
-* The ``lubrication range max`` is set to 2. The subgrid lubrication force model is enabled when the gap between the particle is smaller than two times the mesh size.
+* The ``lubrication range max`` is set to 2. The subgrid lubrication force model is enabled when the gap between the particles is smaller than two times the mesh size.
 
-* The ``lubrication range min`` is set to 0.1. The subgrid lubrication force model minimal gap considered between the particle is 0.1 times the mesh size.         
+* The ``lubrication range min`` is set to 0.1. The subgrid lubrication force model minimal gap considered between the particles is 0.1 times the mesh size.
 
 * The ``load particles from file`` is set to true to enable the particle to be defined using an external file.
 
@@ -313,19 +323,19 @@ In this subsection, we define most of the parameters that are related to the par
 ---------------
 Particles File
 ---------------
-The file from which the particles are defined have a header line that goes as followed:
+The file from which the particles are defined has a header line that goes as follows:
 
 .. code-block:: text
 
    type shape_argument_0 shape_argument_1 shape_argument_2 p_x p_y p_z v_x v_y v_z omega_x omega_y omega_z orientation_x orientation_y orientation_z density inertia pressure_x pressure_y pressure_z youngs_modulus restitution_coefficient friction_coefficient poisson_ratio rolling_friction_coefficient.
 
 
-Each line corresponds to a particle and its properties. A space separates each property. For the details on the properties, see the section :doc:`../../../parameters/sharp-immersed-boundary-solver/sharp-immersed-boundary-solver`. Here the particles' Young's moduli are set to 100MPa, the restitution coefficients to 0.9, the Poisson ratios to 0.30, and the friction coefficients to zero.
+Each line corresponds to a particle and its properties. A space separates each property. For the details on the properties, see the section :doc:`../../../parameters/sharp-immersed-boundary/sharp-immersed-boundary`. Here the particles' Young's moduli are set to 100MPa, the restitution coefficients to 0.9, the Poisson ratios to 0.30, and the friction coefficients to zero.
 
 .. code-block:: text
 
-   type shape_argument_0 shape_argument_1 shape_argument_2 p_x p_y p_z v_x v_y v_z omega_x omega_y omega_z orientation_x orientation_y orientation_z density inertia pressure_x pressure_y pressure_z youngs_modulus restitution_coefficient friction_coefficient poisson_ratio rolling_friction_coefficient. 
-   0.0 0.125 0.125 0.125 0.25 0.25 20.25 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0015 7.6698974609375e-08 0.0 0.0 0.0 1000000.0 0.9 0.0 0.3 0.0
+   type shape_argument_0 shape_argument_1 shape_argument_2 p_x p_y p_z v_x v_y v_z omega_x omega_y omega_z orientation_x orientation_y orientation_z density inertia pressure_x pressure_y pressure_z youngs_modulus restitution_coefficient friction_coefficient poisson_ratio rolling_friction_coefficient integrate_motion
+   0.0 0.125 0.125 0.125 0.25 0.25 20.25 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0015 7.6698974609375e-08 0.0 0.0 0.0 1000000.0 0.9 0.0 0.3 0.0 1.0
 
 
 ---------------

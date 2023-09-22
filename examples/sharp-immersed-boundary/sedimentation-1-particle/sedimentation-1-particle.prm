@@ -10,10 +10,11 @@ set dimension = 3
 subsection simulation control
   set method             = bdf2
   set bdf startup method = multiple step bdf
-  set time step          = 0.0025
-  set time end           = 5
-  set output name        = out
-  set output frequency   = 1
+  set time step          = 0.0025 # Time step
+  set time end           = 1.3    # End time of simulation
+  set output name        = out    # Prefix for VTU outputs
+  set output frequency   = 1      # Frequency of simulation output
+  set subdivision        = 1      # Mesh subdivision when output end
 end
 
 #---------------------------------------------------
@@ -22,8 +23,8 @@ end
 
 subsection physical properties
   subsection fluid 0
-    set kinematic viscosity = 0.1
-    set density             = 0.001
+    set kinematic viscosity = 0.6041666666666
+    set density             = 0.000960
   end
 end
 
@@ -51,8 +52,8 @@ end
 subsection mesh
   set type               = dealii
   set grid type          = subdivided_hyper_rectangle
-  set grid arguments     = 1,1,12: 0,0,0 : 2 , 2 , 24 : true
-  set initial refinement = 4
+  set grid arguments     = 5,8,5: 0,0,0 : 10 , 16 ,10 : true
+  set initial refinement = 1
 end
 
 #---------------------------------------------------
@@ -75,58 +76,54 @@ subsection boundary conditions
     set type = noslip
   end
   subsection bc 3
-    set id   = 3
+    set id   = 4
     set type = noslip
   end
   subsection bc 4
-    set id   = 4
-    set beta = 10
-    set type = function
-    subsection u
-      set Function expression = 0
-    end
-    subsection v
-      set Function expression = 0
-    end
-    subsection w
-      set Function expression = 0
-    end
+    set id   = 5
+    set type = noslip
   end
 end
 
 #---------------------------------------------------
-# IB particules
+# IB particles
 #---------------------------------------------------
 
 subsection particles
   set assemble Navier-Stokes inside particles = false
-
+  set number of particles                     = 1
   subsection extrapolation function
     set length ratio  = 2
-    set stencil order = 2
+    set stencil order = 3
   end
 
   subsection local mesh refinement
-    set initial refinement                = 3
-    set refine mesh inside radius factor  = 0
-    set refine mesh outside radius factor = 2
+    set initial refinement                = 6
+    set refine mesh inside radius factor  = 0.8
+    set refine mesh outside radius factor = 1.3
   end
 
   subsection DEM
-    set DEM coupling frequency       = 1000
-    set particle nonlinear tolerance = 1e-3
-    set contact search radius factor = 1.5
-    set enable lubrication force     = true
-    set lubrication range max        = 2
-    set lubrication range min        = 0.1
+    set particle nonlinear tolerance = 1e-5
     subsection gravity
-      set Function expression = 0;0;-981
+      set Function expression = 0;-981;0
     end
   end
 
-  subsection input file
-    set load particles from file = true
-    set particles file           = particles.input
+  subsection particle info 0
+    set type             = sphere
+    set shape arguments  = 0.75
+    set integrate motion = true
+    subsection position
+      set Function expression = 5;12.75;5
+    end
+    subsection velocity
+      set Function expression = 0;0;0
+    end
+
+    subsection physical properties
+      set density = 0.001120
+    end
   end
 end
 
@@ -135,15 +132,32 @@ end
 #---------------------------------------------------
 
 subsection mesh adaptation
-  set fraction coarsening  = 0.2
-  set fraction refinement  = 0.025
-  set fraction type        = number
-  set frequency            = 1
-  set max number elements  = 7500000
+  # Fraction of coarsened elements
+  set fraction coarsening = 0.3
+
+  # Fraction of refined elements
+  set fraction refinement = 0.05
+
+  # How the fraction of refinement/coarsening are interpreted. Choices are
+  # <number|fraction>.
+  set fraction type = number
+
+  # Frequency of the mesh refinement
+  set frequency = 1
+
+  # Maximum number of elements
+  set max number elements = 750000
+
+  # Maximum refinement level
   set max refinement level = 6
-  set min refinement level = 4
-  set type                 = kelly
-  set variable             = velocity
+  # minimum refinement level
+  set min refinement level = 0
+
+  # Type of mesh adaptationChoices are <none|uniform|kelly>.
+  set type = kelly
+
+  # Variable for kelly estimationChoices are <velocity|pressure>.
+  set variable = velocity
 end
 
 #---------------------------------------------------
@@ -151,6 +165,7 @@ end
 #---------------------------------------------------
 
 subsection initial conditions
+  # Type of initial conditionChoices are <L2projection|viscous|nodal>.
   set type = nodal
   subsection uvwp
     set Function expression = 0; 0; 0;0
@@ -164,11 +179,19 @@ end
 subsection non-linear solver
   subsection fluid dynamics
     set verbosity             = verbose
-    set tolerance             = 1e-4
+    set tolerance             = 1e-6
     set max iterations        = 10
     set residual precision    = 5
     set force rhs calculation = true
   end
+end
+
+#---------------------------------------------------
+# Forces
+#---------------------------------------------------
+
+subsection forces
+  set verbosity = verbose
 end
 
 #---------------------------------------------------
@@ -177,25 +200,6 @@ end
 
 subsection timer
   set type = iteration
-end
-
-#---------------------------------------------------
-# Restart
-#---------------------------------------------------
-
-subsection restart
-  set checkpoint = true
-  set filename   = restart
-  set frequency  = 10
-  set restart    = false
-end
-
-#---------------------------------------------------
-# Forces
-#---------------------------------------------------
-
-subsection forces
-  set verbosity = quiet
 end
 
 #---------------------------------------------------
@@ -210,8 +214,9 @@ subsection linear solver
     set minimum residual                      = 1e-11
     set preconditioner                        = ilu
     set ilu preconditioner fill               = 0
-    set ilu preconditioner absolute tolerance = 1e-6
+    set ilu preconditioner absolute tolerance = 1e-20
+    set ilu preconditioner relative tolerance = 1.00
     set verbosity                             = verbose
-    set max krylov vectors                    = 1000
+    set max krylov vectors                    = 100
   end
 end

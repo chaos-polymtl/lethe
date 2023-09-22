@@ -2,7 +2,7 @@
 3D Mixer with Pitched-Blade Turbine Impeller Using Composite Sharp-Immersed Boundary
 =====================================================================================
 
-The mixing of stirred-tanks is a common chemical engineering problem that can be tackled through immersed boundary simulation. This example, a variation of :doc:`../../incompressible-flow/3d-nitsche-mixer-with-pbt-impeller/nitsche-mixer-with-pbt-impeller`, illustrates how the transient flow in a stirred-tank can be simulated by Lethe using the Sharp-Immersed Boundary formulation with a composite shape.
+The mixing of stirred tanks is a common chemical engineering problem that can be tackled through immersed boundary simulation. This example, a variation of :doc:`../../incompressible-flow/3d-nitsche-mixer-with-pbt-impeller/nitsche-mixer-with-pbt-impeller`, illustrates how the transient flow in a stirred-tank can be simulated by Lethe using the Sharp-Immersed Boundary formulation with a composite shape.
 
 
 ----------------------------------
@@ -10,15 +10,15 @@ Features
 ----------------------------------
 - Solvers: ``lethe-fluid-sharp``
 - Transient problem
-- Rotating complex solid  modelled with the sharp immersed boundary method
+- Rotating complex solid modeled with the sharp immersed boundary method
 
 
 ----------------------------
 Files Used in This Example
 ----------------------------
 
-* Parameter file: ``/examples/sharp-immersed-boundary-solver/3d-composite-mixer-with-pbt-impeller/mixer.prm``
-* Composite geometry file: ``/examples/sharp-immersed-boundary-solver/3d-composite-mixer-with-pbt-impeller/impeller.composite``
+* Parameter file: ``/examples/sharp-immersed-boundary/3d-composite-mixer-with-pbt-impeller/mixer.prm``
+* Composite geometry file: ``/examples/sharp-immersed-boundary/3d-composite-mixer-with-pbt-impeller/impeller.composite``
 
 
 -----------------------
@@ -32,9 +32,9 @@ In this example, we simulate a mixer using a PBT impeller through the usage of S
 Creation of the Composite Shape File
 ------------------------------------
 
-The shape is created in two steps inspired from the GMSH syntax. 
+The shape is created in two steps inspired by the GMSH syntax.
 
-1. Basic shapes definitions. Shapes are defined with different parameters: shape ID, shape type, arguments, position, orientation.
+1. Basic shape definitions. Shapes are defined with different parameters: shape ID, shape type, arguments, position, and orientation.
 2. Boolean operations definitions. Operations are defined by: operation ID, operation type, shape 1 ID, shape 2 ID. 
 
 Shapes and boolean operations each have an ID, and boolean operations can reference previous operations to build upon them. 
@@ -42,7 +42,7 @@ Shapes and boolean operations each have an ID, and boolean operations can refere
 The ``impeller.composite`` file contains these instructions.
 
 .. warning:: 
-    The .composite file cannot contain comments at this point in time.
+    The .composite file cannot contain comments to this moment.
 
 .. code-block:: text
 
@@ -60,19 +60,18 @@ The ``impeller.composite`` file contains these instructions.
     9; union     ; 8:4
     10; union    ; 9:5
   
-Let go over each line:
+Line-by-line:
 
 * ``shapes``: introduces the shapes section.
 * ``0; cylinder; 0.025:0.375; 0:0:0.125 ; 0:0:0``: defines a cylinder, with ID equal to 0. Its radius is 0.025 and its half-length 0.375. Its z position is 0.125 and its orientation is default (aligned with Z axis).
-* ``2; hyper rectangle; 0.083333333:0.00625:0.0416666;0.08333333:0:-0.208333 ; 0.7853981:0:0``: defines a hyper rectangle, with ID equal to 1. Its has half-lengths of 0.083, 0.00625 and 0.0417 in X, Y and Z directions, respectively, in its own referential. Its center is at 0.083, 0 and -0.208 in the global referential and it is rotated by 0.787 radians around the X axis.
-* The other shapes are defined in a similar fashion, and are assigned IDs 1, 3, 4, and 5.
+* ``2; hyper rectangle; 0.083333333:0.00625:0.0416666;0.08333333:0:-0.208333 ; 0.7853981:0:0``: defines a hyper rectangle, with ID equal to 1. Its has half-lengths of 0.083, 0.00625, and 0.0417 in X, Y, and Z directions, respectively, in its own referential. Its center is at 0.083, 0, and -0.208 in the global referential and it is rotated by 0.787 radians around the X axis.
+* The other shapes are defined in a similar fashion and are assigned IDs 1, 3, 4, and 5.
 * ``operations``: introduces the operations section.
 * ``6; union; 0:1``: defines an intermediate shape that is the union of shapes 0 and 1, and assigns it the ID 6.
 * The next operations build iteratively on this intermediate shape.
-* The result of the last defined operation is considered as the final shape to be used for simulation, regardless of its ID number.
+* The result of the last defined operation is considered the final shape to be used for simulation, regardless of its ID number.
 
-
-For more detail on the the definition of the shape see: :doc:`../../../parameters/sharp-immersed-boundary-solver/sharp-immersed-boundary-solver`.
+For more detail on the the definition of the shape see: :doc:`../../../parameters/sharp-immersed-boundary/sharp-immersed-boundary`.
 
 ---------------
 Parameter File
@@ -129,7 +128,7 @@ Boundary Conditions
 Because the interpolation of the velocity field at the surface of a moving particle is not guaranteed to be divergence-free, it is necessary to have at least one boundary condition that is weakly imposed to ensure the system of equations is well-posed. For this purpose, a ``function weak`` type of boundary is used.
 Two aspects need special consideration:
 
-1. ``function weak`` is a variation of ``function``. It is used to weakly imposed a Dirichlet boundary condition, and it is necessary when using ``lethe-fluid-sharp``.
+1. ``function weak`` is a variation of ``function``. It is used to weakly impose a Dirichlet boundary condition, and it is necessary when using ``lethe-fluid-sharp``.
 2. ``beta`` has to be defined. It is a Nitsche penalization parameter that enforces more strongly the boundary condition when it increases (see :doc:`../../../parameters/cfd/nitsche`).
 
 .. code-block:: text
