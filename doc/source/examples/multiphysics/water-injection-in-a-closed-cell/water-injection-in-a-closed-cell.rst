@@ -82,7 +82,7 @@ VOF
 ~~~
 
 In the ``VOF`` subsection, the ``compressible``, the ``interface sharpening``, and the ``phase filtration`` features are enabled.
-The enabled ``compressible`` parameter allows interface compression by adding the :math:`\phi (\nabla \cdot \mathbf{u})` term to the VOF equation.
+The enabled ``compressible`` parameter allows interface compression by adding the term :math:`\phi (\nabla \cdot \mathbf{u})` to the VOF equation.
 The ``interface sharpening`` method and its parameters are explained in the :doc:`../dam-break/dam-break` example.
 The ``phase filtration`` filters the phase field used for the calculation of physical properties by stiffening the value of the phase fraction.
 We refer the reader to :doc:`../../../../theory/multiphysics/vof` theory guide for further explanation on the ``phase filtration``.
