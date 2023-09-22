@@ -2043,19 +2043,17 @@ namespace Parameters
         prm.declare_entry("amg preconditioner ilu fill",
                           "0",
                           Patterns::Double(),
-                          "amg preconditioner ilu smoother/coarsener fill");
+                          "amg preconditioner ilu smoother fill");
 
-        prm.declare_entry(
-          "amg preconditioner ilu absolute tolerance",
-          "1e-12",
-          Patterns::Double(),
-          "amg preconditioner ilu smoother/coarsener absolute tolerance");
+        prm.declare_entry("amg preconditioner ilu absolute tolerance",
+                          "1e-12",
+                          Patterns::Double(),
+                          "amg preconditioner ilu smoother absolute tolerance");
 
-        prm.declare_entry(
-          "amg preconditioner ilu relative tolerance",
-          "1.00",
-          Patterns::Double(),
-          "amg preconditioner ilu smoother/coarsener relative tolerance");
+        prm.declare_entry("amg preconditioner ilu relative tolerance",
+                          "1.00",
+                          Patterns::Double(),
+                          "amg preconditioner ilu smoother relative tolerance");
 
         prm.declare_entry("amg aggregation threshold",
                           "1e-14",

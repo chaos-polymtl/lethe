@@ -149,13 +149,13 @@ AMG preconditioner
 
 .. code-block:: text
 
-    # AMG preconditioner ILU smoother/coarsener fill
+    # AMG preconditioner ILU smoother fill
     set amg preconditioner ilu fill               = 0
 
-    # AMG preconditioner ILU smoother/coarsener absolute tolerance
+    # AMG preconditioner ILU smoother absolute tolerance
     set amg preconditioner ilu absolute tolerance = 1e-12
 
-    # AMG preconditioner ILU smoother/coarsener relative tolerance
+    # AMG preconditioner ILU smoother relative tolerance
     set amg preconditioner ilu relative tolerance = 1.00
 
     # AMG aggregation threshold

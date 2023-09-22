@@ -942,13 +942,13 @@ namespace Parameters
     // AMG parameters either as linear solver preconditioner or as
     // preconditioner of a coarse-grid solver for LSMG or GCMG
 
-    // ILU or ILUT fill for smoother and coarsener
+    // ILU or ILUT fill for smoother
     double amg_precond_ilu_fill;
 
-    // ILU or ILUT absolute tolerance for smoother and coarsener
+    // ILU or ILUT absolute tolerance for smoother
     double amg_precond_ilu_atol;
 
-    // ILU or ILUT relative tolerance for smoother and coarsener
+    // ILU or ILUT relative tolerance for smoother
     double amg_precond_ilu_rtol;
 
     // AMG aggregation threshold
