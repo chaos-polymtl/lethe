@@ -38,7 +38,7 @@ Parameter File
 
 We explain every part of this parameter file in detail. In each section of the parameter file, we describe relevant parameters. The omitted parameters are only user preference parameters and have no impact on the simulation results. For more information on these parameters, refer to :doc:`../../../parameters/parameters`.
  
-Simulation and IO Control
+Simulation Control
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 .. code-block:: text
 

@@ -44,7 +44,7 @@ Parameter File
 
 We explain every part of this parameter file in detail. In each section of the parameter file, we describe relevant parameters. The omitted parameters are only user preference parameters and do not impact the simulation results. For more detail, we suggest visiting the :doc:`../../../parameters/parameters`.
  
-Simulation and IO Control
+Simulation Control
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 .. code-block:: text
 
@@ -55,7 +55,6 @@ Simulation and IO Control
       set time end           = 1.3    # End time of simulation
       set output name        = out    # Prefix for VTU outputs
       set output frequency   = 1      # Frequency of simulation output
-      set subdivision        = 1      # Mesh subdivision when output end
     end
 
 
@@ -79,9 +78,6 @@ Physical Properties
     end
 
 * The ``kinematic viscosity`` is set to  0.6041666666666. This value is derived from the case description by dividing :math:`\mu_f` by :math:`\rho_f`.
-
-.. note:: text
-    The fluid density is not set here as the sharp interface solver has its own definition of the density of the fluid. This will be modified soon to unify both definitions in the parameter.
 
 
 FEM
