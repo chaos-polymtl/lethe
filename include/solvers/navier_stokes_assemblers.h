@@ -14,6 +14,7 @@
  * ---------------------------------------------------------------------*/
 
 
+#include <core/ale.h>
 #include <core/boundary_conditions.h>
 #include <core/rheological_model.h>
 #include <core/simulation_control.h>
@@ -692,5 +693,43 @@ public:
 
   std::shared_ptr<SimulationControl> simulation_control;
 };
+
+
+template <int dim>
+class NavierStokesAssemblerALE : public NavierStokesAssemblerBase<dim>
+{
+public:
+  NavierStokesAssemblerALE(
+    std::shared_ptr<SimulationControl> simulation_control,
+    const Parameters::ALE<dim>        &ale)
+    : simulation_control(simulation_control)
+    , ale(ale)
+  {}
+
+  /**
+   * @brief assemble_matrix Assembles the matrix
+   * @param scratch_data (see base class)
+   * @param copy_data (see base class)
+   */
+  virtual void
+  assemble_matrix(NavierStokesScratchData<dim>         &scratch_data,
+                  StabilizedMethodsTensorCopyData<dim> &copy_data) override;
+
+
+  /**
+   * @brief assemble_rhs Assembles the rhs
+   * @param scratch_data (see base class)
+   * @param copy_data (see base class)
+   */
+  virtual void
+  assemble_rhs(NavierStokesScratchData<dim>         &scratch_data,
+               StabilizedMethodsTensorCopyData<dim> &copy_data) override;
+
+
+  std::shared_ptr<SimulationControl> simulation_control;
+  const Parameters::ALE<dim>        &ale;
+};
+
+
 
 #endif

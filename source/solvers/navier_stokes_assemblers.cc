@@ -2528,3 +2528,118 @@ OutletBoundaryCondition<dim>::assemble_rhs(
 
 template class OutletBoundaryCondition<2>;
 template class OutletBoundaryCondition<3>;
+
+
+template <int dim>
+void
+NavierStokesAssemblerALE<dim>::assemble_matrix(
+  NavierStokesScratchData<dim>         &scratch_data,
+  StabilizedMethodsTensorCopyData<dim> &copy_data)
+{
+  /// Loop and quadrature informations
+  const auto                   &JxW_vec    = scratch_data.JxW;
+  const unsigned int            n_q_points = scratch_data.n_q_points;
+  const std::vector<Point<dim>> quadrature_points =
+    scratch_data.quadrature_points;
+  const unsigned int n_dofs = scratch_data.n_dofs;
+
+  // Copy data elements
+  auto &strong_residual_vec = copy_data.strong_residual;
+  auto &strong_jacobian_vec = copy_data.strong_jacobian;
+  auto &local_matrix        = copy_data.local_matrix;
+
+  // ALE components
+  Tensor<1, dim>                                  velocity_ale;
+  std::shared_ptr<Functions::ParsedFunction<dim>> velocity_ale_function =
+    ale.velocity;
+  Vector<double> velocity_ale_vector(dim);
+
+  // assembling local matrix and right hand side
+  for (unsigned int q = 0; q < n_q_points; ++q)
+    {
+      velocity_ale_function->vector_value(quadrature_points[q],
+                                          velocity_ale_vector);
+      for (unsigned int d = 0; d < dim; ++d)
+        velocity_ale[d] = velocity_ale_vector[d];
+
+      // Store JxW in local variable for faster access
+      const double JxW = JxW_vec[q];
+
+      // Calculate strong residual vector
+      strong_residual_vec[q] +=
+        -scratch_data.velocity_gradients[q] * velocity_ale;
+
+      // Strong residual jacobian calculation
+      for (unsigned int j = 0; j < n_dofs; ++j)
+        {
+          strong_jacobian_vec[q][j] +=
+            -scratch_data.grad_phi_u[q][j] * velocity_ale;
+        }
+
+      for (unsigned int i = 0; i < n_dofs; ++i)
+        {
+          const auto phi_u_i = scratch_data.phi_u[q][i];
+
+          for (unsigned int j = 0; j < n_dofs; ++j)
+            {
+              const Tensor<2, dim> grad_phi_u_j = scratch_data.grad_phi_u[q][j];
+
+              // Weak form for : -u_ALE * gradu
+              local_matrix(i, j) +=
+                -phi_u_i * (grad_phi_u_j * velocity_ale) * JxW;
+            }
+        }
+
+    } // end loop on quadrature points
+}
+
+template <int dim>
+void
+NavierStokesAssemblerALE<dim>::assemble_rhs(
+  NavierStokesScratchData<dim>         &scratch_data,
+  StabilizedMethodsTensorCopyData<dim> &copy_data)
+{
+  // Loop and quadrature informations
+  const auto                   &JxW_vec    = scratch_data.JxW;
+  const unsigned int            n_q_points = scratch_data.n_q_points;
+  const std::vector<Point<dim>> quadrature_points =
+    scratch_data.quadrature_points;
+  const unsigned int n_dofs = scratch_data.n_dofs;
+
+  // Copy data elements
+  auto &strong_residual_vec = copy_data.strong_residual;
+  auto &local_rhs           = copy_data.local_rhs;
+
+  // ALE components
+  Tensor<1, dim>                                  velocity_ale;
+  std::shared_ptr<Functions::ParsedFunction<dim>> velocity_ale_function =
+    ale.velocity;
+  Vector<double> velocity_ale_vector(dim);
+
+  // assembling local matrix and right hand side
+  for (unsigned int q = 0; q < n_q_points; ++q)
+    {
+      velocity_ale_function->vector_value(quadrature_points[q],
+                                          velocity_ale_vector);
+      for (unsigned int d = 0; d < dim; ++d)
+        velocity_ale[d] = velocity_ale_vector[d];
+
+      // Store JxW in local variable for faster access
+      const double JxW = JxW_vec[q];
+
+      // Calculate strong residual vector
+      strong_residual_vec[q] +=
+        -scratch_data.velocity_gradients[q] * velocity_ale;
+
+      for (unsigned int i = 0; i < n_dofs; ++i)
+        {
+          local_rhs[i] +=
+            (scratch_data.phi_u[q][i] *
+             (scratch_data.velocity_gradients[q] * velocity_ale)) *
+            JxW;
+        }
+    } // end loop on quadrature points
+}
+
+template class NavierStokesAssemblerALE<3>;
+template class NavierStokesAssemblerALE<2>;
