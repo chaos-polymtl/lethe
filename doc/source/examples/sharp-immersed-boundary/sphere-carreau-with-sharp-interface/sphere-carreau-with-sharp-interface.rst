@@ -68,7 +68,7 @@ The dimensions of the used domain are :math:`(60 \times 30 \times 30)`, and the 
 
 Boundary Conditions
 ~~~~~~~~~~~~~~~~~~~~
-We define the boundary conditions in order to have an inlet velocity of :math:`1~m/s` on the left, ``slip`` boundary conditions parallel to the flow direction, and an outlet on the right of the domain (unspecified condition at ``id = 1``).
+We define the boundary conditions to have an inlet velocity of :math:`1~m/s` on the left, ``slip`` boundary conditions parallel to the flow direction, and an outlet on the right of the domain (unspecified condition at ``id = 1``).
 
 .. code-block:: text
 
@@ -143,7 +143,7 @@ We use an *a priori* Reynolds number, since it is not possible, *a priori*, to k
 Initial Conditions
 ~~~~~~~~~~~~~~~~~~~~
 
-This example uses a ramping initial condition that first ramps on the ``n`` parameter, and then on the ``viscosity_0`` parameter. This allows for a smooth transition of non-Newtonian behavior level and of regime.
+This example uses a ramping initial condition that first ramps on the ``n`` parameter, and then on the ``viscosity_0`` parameter. This allows for a smooth transition of non-Newtonian behavior level and regime.
 
 .. code-block:: text
 
@@ -219,7 +219,7 @@ The simulation is solved at steady-state with 2 mesh adaptations.
 Mesh Adaptation
 ~~~~~~~~~~~~~~~
 
-In order to generate an additional refinement zone around the immersed boundary, the ``mesh adaptation`` ``type`` must be set to ``kelly``. During both of the mesh refinement steps, :math:`40\%` of the cells with be split in :math:`8` (``fraction refinement = 0.4``) using a velocity-gradient Kelly operator.
+To generate an additional refinement zone around the immersed boundary, the ``mesh adaptation`` ``type`` must be set to ``kelly``. During both of the mesh refinement steps, :math:`40\%` of the cells with be split in :math:`8` (``fraction refinement = 0.4``) using a velocity-gradient Kelly operator.
 
 .. code-block:: text
 
@@ -280,7 +280,7 @@ Possibilities for Extension
 
 * **High-order methods** : Lethe supports higher order interpolation. This can yield much better results with an equal number of degrees of freedom than traditional second-order (Q1-Q1) methods, especially at higher Reynolds numbers.
 * **Reynolds number** : By changing the inlet velocity, it can be interesting to see the impact of the shear-thinning behavior on the effective drag force.
-* **Non-Newtonian parameters** : It can also be interesting to change the Carreau model parameters, i.e. changing the slope to appreciate the change in behavior.
+* **Non-Newtonian parameters** : It can also be interesting to change the Carreau model parameters, i.e. changing the slope to appreciate the behavior change.
 
 .. note::
 	It is not possible to use the Carreau model for a shear-thickening flow. You should change the model to power-law, and use the decribed parameters in :doc:`../../../parameters/cfd/physical_properties`

@@ -11,10 +11,10 @@ subsection simulation control
   set method             = bdf2
   set bdf startup method = multiple step bdf
   set time step          = 0.0025 # Time step
-  set time end           = 1.2    # End time of simulation
+  set time end           = 1.3    # End time of simulation
   set output name        = out    # Prefix for VTU outputs
   set output frequency   = 1      # Frequency of simulation output
-  set subdivision        = 1      # Mesh subdivision when outputend
+  set subdivision        = 1      # Mesh subdivision when output end
 end
 
 #---------------------------------------------------
@@ -138,7 +138,7 @@ subsection mesh adaptation
   # Fraction of refined elements
   set fraction refinement = 0.05
 
-  # How the fraction of refinement/coarsening are interepretedChoices are
+  # How the fraction of refinement/coarsening are interepreted. Choices are
   # <number|fraction>.
   set fraction type = number
 

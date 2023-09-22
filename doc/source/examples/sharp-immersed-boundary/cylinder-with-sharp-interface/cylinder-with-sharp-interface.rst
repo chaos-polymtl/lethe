@@ -170,12 +170,12 @@ We get the following force applied on the particle for each of the mesh refineme
 
 .. code-block:: text
 
-    particle_ID    T_z      f_x       f_y    
-          0 -0.033177 5.698080  0.016542 
-          0 -0.006670 6.438133  0.004265 
-          0 -0.000349 6.773126 -0.000063 
-          0  0.000040 6.905268 -0.000170 
-          0 -0.000014 6.962307  0.000057 
+    particle_ID    T_z        f_x         f_y
+            0   -0.006703   6.447400    0.004273
+            0   -0.000389   6.775330    0.000379
+            0   -0.000040   6.906123    0.000377
+            0   -0.000053   6.962566    0.000310
+            0   -0.000039   6.992112    0.000193
           
 .. note:: 
     The drag coefficient obtained in this case is higher than the drag coefficient for a cylinder at a Reynolds number of 1 as the size of the domain is not large enough relative to the diameter of the cylinder. The flow around the cylinder is then constrained by the lateral boundaries, and this increases the drag coefficient.

@@ -30,7 +30,7 @@ Files Used in This Example
 Description of the Case
 -----------------------
 
-The E4 experiment consists in the release of a particle made of Nylon (:math:`\rho_p=0.001120 \frac{\text{kg}}{\text{cm}^{3}}`)  with a diameter of 1.5cm. The center of the particle is located 12.75 cm above the bottom of a 10x16x10 cm container. The viscosity of the fluid is :math:`\mu_f=0.00058 \frac{\text{kg}}{\text{s cm}}` which is equivalent to :math:`\mu_f=0.058 \frac{\text{N s}}{\text{m}^{2}}`. The density of the fluid is :math:`\rho_f=0.000960 \frac{\text{kg}}{\text{cm}^{3}}`. The gravity constant is :math:`g= -981 \frac{\text{cm}}{\text{s}^{2}}`. The particle accelerates due to gravity until it hits the bottom of the container, at which point we stop the simulation.
+The E4 experiment consists of the release of a particle made of Nylon (:math:`\rho_p=0.001120 \frac{\text{kg}}{\text{cm}^{3}}`)  with a diameter of 1.5cm. The center of the particle is located 12.75 cm above the bottom of a 10x16x10 cm container. The viscosity of the fluid is :math:`\mu_f=0.00058 \frac{\text{kg}}{\text{s cm}}` which is equivalent to :math:`\mu_f=0.058 \frac{\text{N s}}{\text{m}^{2}}`. The density of the fluid is :math:`\rho_f=0.000960 \frac{\text{kg}}{\text{cm}^{3}}`. The gravity constant is :math:`g= -981 \frac{\text{cm}}{\text{s}^{2}}`. The particle accelerates due to gravity until it hits the bottom of the container, at which point we stop the simulation.
 
 .. note:: 
    You will note that we have transformed every length unit into centimeters. The reason is that the particle's size is very close to 1 cm. Representing the problem in this way helps the linear solver converge. It avoids extremely small values in the matrix due to the volume of cells being expressed in :math:`\text{cm}^{3}` instead of :math:`\text{m}^{3}`. 
@@ -42,7 +42,7 @@ All the container walls have no-slip boundary conditions except at the top of th
 Parameter File
 ---------------
 
-We explain every part of this prm file in detail. In each section of the parameter file, we describe relevant parameters. The omitted parameters are only user preference parameters and do not impact the simulation results. For more detail on these parameter we suggest visiting the :doc:`../../../parameters/parameters`.
+We explain every part of this `prm` file in detail. In each section of the parameter file, we describe relevant parameters. The omitted parameters are only user preference parameters and do not impact the simulation results. For more detail, we suggest visiting the :doc:`../../../parameters/parameters`.
  
 Simulation and IO Control
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -55,7 +55,7 @@ Simulation and IO Control
       set time end           = 1.3    # End time of simulation
       set output name        = out    # Prefix for VTU outputs
       set output frequency   = 1      # Frequency of simulation output
-      set subdivision        = 1      # Mesh subdivision when outputend
+      set subdivision        = 1      # Mesh subdivision when output end
     end
 
 
@@ -81,8 +81,8 @@ Physical Properties
 * The ``kinematic viscosity`` is set to  0.6041666666666. This value is derived from the case description by dividing :math:`\mu_f` by :math:`\rho_f`.
 
 .. note:: text
-	The fluid density is not set here as the sharp interface solver has his own definition of the density of the fluid. This will be modified soon to unify both definitions in the parameter. 
-	
+    The fluid density is not set here as the sharp interface solver has its own definition of the density of the fluid. This will be modified soon to unify both definitions in the parameter.
+
 
 FEM
 ~~~
@@ -92,8 +92,8 @@ FEM
       set velocity order = 1
       set pressure order = 1
     end
-	
-Here we use Q1Q1 elements. This case is only for demonstration purposes as such we want to propose a simulation that is not too costly to run. 
+
+Here we use Q1-Q1 elements. This case is only for demonstration purposes as such we want to propose a simulation that is not too costly to run.
 
 Mesh
 ~~~~~~
@@ -124,7 +124,7 @@ Mesh Adaptation
       # Fraction of refined elements
       set fraction refinement = 0.05
     
-      # How the fraction of refinement/coarsening are interepretedChoices are
+      # How the fraction of refinement/coarsening are interepreted. Choices are
       # <number|fraction>.
       set fraction type = number
     
@@ -189,7 +189,7 @@ Boundary Conditions
 Here we define the 5 ``no slip`` boundary for all the box walls and let the boundary with ``id=3`` free to represent the top of the box. We refer the reader to the :doc:`../../../parameters/cfd/boundary_conditions_cfd` section on how those boundaries are defined. 
 
 .. note:: 
-	The boundary id of dealii rectangular mesh are numbered as such:  :math:`x_{min}=0`, :math:`x_{max}=1`, :math:`y_{min}=2`, :math:`y_{max}=3`, :math:`z_{min}=4`, :math:`z_{max}=5`.
+    The boundary id of dealii rectangular mesh are numbered as such:  :math:`x_{min}=0`, :math:`x_{max}=1`, :math:`y_{min}=2`, :math:`y_{max}=3`, :math:`z_{min}=4`, :math:`z_{max}=5`.
 
 
 Initial Conditions
@@ -220,19 +220,19 @@ Non-linear Solver
         set force rhs calculation = true
       end
     end
-	
+
 * The ``tolerance`` is set to 1e-6. This is small enough to ensure that the flow field is adequately resolved, as here, we expect a velocity of the particle of the order of 10.
 
 * The ``max iterations`` is set to 10. The objective here is to allow enough Newton non-linear steps to ensure the convergence to the tolerance. Also, we should limit the time pass on a single time step if the system is too stiff.  
 
 * The ``force rhs calculation`` is set to ``true``. This is the most important modification with most of the other examples. By default, the non-linear solver will recalculate the RHS only after the update of the solution. But here, we need to evaluate it before every matrix resolution, and we cannot use the last RHS evaluation that was done after the last newton iteration. The particle position was updated between these two steps, changing the RHS evaluation. This means that for every non-linear step, we evaluate the RHS twice. The non-linear solver follows this sequence of steps for each newton iteration.
-	* update the particle position
-	* update the Jacobian matrix
-	* update the RHS
-	* solve the matrix system
-	* reevaluate the RHS to check the convergence.
-	
-	
+    * update the particle position
+    * update the Jacobian matrix
+    * update the RHS
+    * solve the matrix system
+    * reevaluate the RHS to check the convergence.
+
+
 Linear Solver
 ~~~~~~~~~~~~~
 .. code-block:: text
@@ -260,7 +260,7 @@ Linear Solver
 
 * The ``relative residual`` is set to 1e-4. This is small enough, so we don't under-resolve our matrix and do extra non-linear steps because of it, and at the same, it doesn't require too many ``gmres`` iterations.
 
-* The ``ilu preconditioner fill`` is set to 0. This means that we have a Jacobi preconditioner. This is the cheapest option. In this case, we are able to use this option without having to do too many ``gmres`` iterations. It requires less computational time to do a few more  ``gmres`` iterations than building the preconditioner and doing fewer ``gmres`` iterations.
+* The ``ilu preconditioner fill`` is set to 0. This means that we have a Jacobi preconditioner. This is the cheapest option. In this case, we can use this option without having to do too many ``gmres`` iterations. It requires less computational time to do a few more  ``gmres`` iterations than building the preconditioner and doing fewer ``gmres`` iterations.
 
 IB Particles
 ~~~~~~~~~~~~~~
@@ -311,40 +311,40 @@ In this subsection, we define most of the parameters that are related to the par
 
 * The ``number of particles`` is set to one as we only want one particle.
 
-* The ``stencil order`` is set to 3 as this is the highest order we can use for this case, and it will not lead to Runge instability.
+* ``stencil order`` is set to 3 as this is the highest order we can use for this case, and it will not lead to Runge instability.
 
-* The ``refine mesh inside radius factor`` is set to 0.8. This creates a mesh refinement around the particle that avoids having hanging nodes in the calculation and helps ensure a small enough mesh around the particle.
+* ``refine mesh inside radius factor`` is set to 0.8. This creates a mesh refinement around the particle that avoids having hanging nodes in the calculation and helps ensure a small enough mesh around the particle.
 
-* The ``refine mesh outside radius factor`` is set to 1.3. This creates a mesh refinement around the particle that avoids having hanging nodes in the calculation and helps ensure a small enough mesh around the particle.
+* ``refine mesh outside radius factor`` is set to 1.3. This creates a mesh refinement around the particle that avoids having hanging nodes in the calculation and helps ensure a small enough mesh around the particle.
 
-* The ``initial refinement`` is set to 6. Here we want to have the mesh as small as possible for the first time step. To achieve this, we refine every element with at least one vertex in the refinement zone around the particle 6 times before the simulation starts. This ensures that all the cells in the refinement zone around the particle is as small as possible. This number of refinement is 1 more than necessary. This is to avoid having part of the particle not properly refined as the initial mesh is big enough that some elements cut by the IB may not be properly detected at the beginning of the process. Doing one more refinement ensures that all the elements are properly refined. 
+* ``initial refinement`` is set to 6. Here we want to have the mesh as small as possible for the first time step. To achieve this, we refine every element with at least one vertex in the refinement zone around the particle 6 times before the simulation starts. This ensures that all the cells in the refinement zone around the particle is as small as possible. This number of refinements is 1 more than necessary. This is to avoid having part of the particle not properly refined as the initial mesh is big enough that some elements cut by the IB may not be properly detected at the beginning of the process. Doing one more refinement ensures that all the elements are properly refined.
 
-* The ``integrate motion`` is set to true because we are interested in the dynamic of the particle as it sediments in the rectangular box.
+* ``integrate motion`` is set to true because we are interested in the dynamic of the particle as it sediments in the rectangular box.
 
-* The ``assemble Navier-Stokes inside particles`` is set to false because we are not interested in the flow inside of the particle.
+* ``assemble Navier-Stokes inside particles`` is set to false because we are not interested in the flow inside of the particle.
 
-* The ``length ratio`` as been set to 2. This is small enough, so it does not impact too much the conditioning of the matrix while avoiding interpolation of the immersed boundary stencil in multiple elements.
+* ``length ratio`` has been set to 2. This is small enough, so it does not impact too much the conditioning of the matrix while avoiding interpolation of the immersed boundary stencil in multiple elements.
 
-* The ``particle nonlinear tolerance`` has been set to 1e-5. This is small enough to ensure that the particle dynamics are adequately resolved. We expect a velocity of the particle of the order of 10.
+* ``particle nonlinear tolerance`` has been set to 1e-5. This is small enough to ensure that the particle dynamics are adequately resolved. We expect a velocity of the particle of the order of 10.
 
-* The ``gravity`` ``Function expression`` is set to 0;-981;0 according to the definition of the case. As we choose the long axis of the rectangular box along the Y, we define gravity in this direction. 
+* ``gravity`` ``Function expression`` is set to 0;-981;0 according to the definition of the case. As we choose the long axis of the rectangular box along the Y, we define gravity in this direction.
 
 The following parameters are defined in the particle subsection.
 
-* The ``position`` Function expression is set to 5;12.75;5. This is the initial position of the particle according to the description of the case.
+* ``position`` Function expression is set to 5;12.75;5. This is the initial position of the particle according to the description of the case.
 
-* The ``velocity`` Function expression is set to 0;0;0. This is the initial velocity of the particle since it starts at rest. 
+* ``velocity`` Function expression is set to 0;0;0. This is the initial velocity of the particle since it starts at rest.
 
-* The ``radius`` is set to 0.75. This is according to the definition of the case where the particle has a diameter of 1.5 cm. 
+* ``radius`` is set to 0.75. This is according to the definition of the case where the particle has a diameter of 1.5 cm.
 
-* The ``density`` is set to 0.001120. This is according to the definition of the case.
+* ``density`` is set to 0.001120. This is according to the definition of the case.
 
 
 ---------------
 Results
 ---------------
 
-In this section we will briefly show some results of this simulation.
+In this section, we will briefly show some results of this simulation.
 
 First, we look at a slice of the velocity profile during the acceleration phase.
 
@@ -354,7 +354,7 @@ First, we look at a slice of the velocity profile during the acceleration phase.
 
 We can also compare the results obtained for the velocity in time with the results proposed by the article of Ten Cate `et al.` `[1] <https://doi.org/10.1063/1.1512918>`_
 
-.. image:: images/velocity-comparaison.png
+.. image:: images/velocity-comparison.png
     :alt: flow_field_acceleration
     :align: center
 
