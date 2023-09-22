@@ -391,6 +391,7 @@ ParticleWallNonLinearForce<dim>::calculate_nonlinear_contact_force_and_torque(
   particle_wall_contact_info<dim> &contact_info,
   const ArrayView<const double>   &particle_properties)
 {
+  Tensor<1, 3>       normal_vector = -contact_info.normal_vector;
   const unsigned int particle_type =
     particle_properties[DEM::PropertiesIndex::type];
 
@@ -425,7 +426,7 @@ ParticleWallNonLinearForce<dim>::calculate_nonlinear_contact_force_and_torque(
 
   // Calculation of tangential force
   Tensor<1, 3> tangential_force =
-    -tangential_spring_constant * contact_info.tangential_overlap;
+    tangential_spring_constant * contact_info.tangential_overlap;
 
   double coulomb_threshold =
     this->effective_coefficient_of_friction[particle_type] *
@@ -447,7 +448,7 @@ ParticleWallNonLinearForce<dim>::calculate_nonlinear_contact_force_and_torque(
   // Torque caused by tangential force (tangential_torque)
   Tensor<1, 3> tangential_torque =
     cross_product_3d((0.5 * particle_properties[DEM::PropertiesIndex::dp] *
-                      contact_info.normal_vector),
+                      normal_vector),
                      tangential_force);
 
 
