@@ -140,8 +140,6 @@ MFNavierStokesSolver<dim, OperatorType>::setup_dofs_fd()
         .preconditioner == Parameters::LinearSolver::PreconditionerType::lsmg)
     this->dof_handler.distribute_mg_dofs();
 
-  DoFRenumbering::Cuthill_McKee(this->dof_handler);
-
   this->locally_owned_dofs = this->dof_handler.locally_owned_dofs();
   DoFTools::extract_locally_relevant_dofs(this->dof_handler,
                                           this->locally_relevant_dofs);
@@ -414,8 +412,7 @@ MFNavierStokesSolver<dim, OperatorType>::solve_with_LSMG(
         *this->mapping,
         this->dof_handler,
         level_constraints[level],
-        QGauss<1>(this->simulation_parameters.fem_parameters.velocity_order +
-                  1),
+        *this->cell_quadrature,
         this->forcing_function,
         this->simulation_parameters.physical_properties_manager
           .get_kinematic_viscosity_scale(),
@@ -477,9 +474,13 @@ MFNavierStokesSolver<dim, OperatorType>::solve_with_LSMG(
       .mg_min_level;
 
   AssertThrow(
-    mg_min_level <= static_cast<int>(maxlevel),
-    ExcMessage(
-      "The mg min level specified is higher than the finest mg level."));
+    mg_min_level <= static_cast<int>(MGTools::max_level_for_coarse_mesh(
+                      this->dof_handler.get_triangulation())),
+    ExcMessage(std::string(
+      "The maximum level allowed for the coarse mesh (mg min level) is: " +
+      std::to_string(MGTools::max_level_for_coarse_mesh(
+        this->dof_handler.get_triangulation())) +
+      ".")));
 
   int mg_level_min_cells =
     this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
@@ -531,7 +532,8 @@ MFNavierStokesSolver<dim, OperatorType>::solve_with_LSMG(
     this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
       .mg_coarse_grid_max_krylov_vectors;
 
-  SolverGMRES<VectorType> coarse_grid_solver(coarse_grid_solver_control);
+  SolverGMRES<VectorType> coarse_grid_solver(coarse_grid_solver_control,
+                                             solver_parameters);
 
   std::shared_ptr<MGCoarseGridBase<VectorType>> mg_coarse;
 
@@ -767,8 +769,7 @@ MFNavierStokesSolver<dim, OperatorType>::solve_with_GCMG(
         *this->mapping,
         level_dof_handler,
         level_constraint,
-        QGauss<1>(this->simulation_parameters.fem_parameters.velocity_order +
-                  1),
+        *this->cell_quadrature,
         this->forcing_function,
         this->simulation_parameters.physical_properties_manager
           .get_kinematic_viscosity_scale(),

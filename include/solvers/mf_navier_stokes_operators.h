@@ -68,7 +68,7 @@ public:
   NavierStokesOperatorBase(const Mapping<dim>              &mapping,
                            const DoFHandler<dim>           &dof_handler,
                            const AffineConstraints<number> &constraints,
-                           const Quadrature<1>             &quadrature,
+                           const Quadrature<dim>           &quadrature,
                            const Function<dim>             *forcing_function,
                            const double                     kinematic_viscosity,
                            const unsigned int               mg_level);
@@ -89,7 +89,7 @@ public:
   reinit(const Mapping<dim>              &mapping,
          const DoFHandler<dim>           &dof_handler,
          const AffineConstraints<number> &constraints,
-         const Quadrature<1>             &quadrature,
+         const Quadrature<dim>           &quadrature,
          const Function<dim>             *forcing_function,
          const double                     kinematic_viscosity,
          const unsigned int               mg_level);
