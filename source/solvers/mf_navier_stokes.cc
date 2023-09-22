@@ -413,7 +413,7 @@ MFNavierStokesSolver<dim, OperatorType>::solve_with_LSMG(
         this->dof_handler,
         level_constraints[level],
         *this->cell_quadrature,
-        this->forcing_function,
+        &(*this->forcing_function),
         this->simulation_parameters.physical_properties_manager
           .get_kinematic_viscosity_scale(),
         level);
@@ -770,7 +770,7 @@ MFNavierStokesSolver<dim, OperatorType>::solve_with_GCMG(
         level_dof_handler,
         level_constraint,
         *this->cell_quadrature,
-        this->forcing_function,
+        &(*this->forcing_function),
         this->simulation_parameters.physical_properties_manager
           .get_kinematic_viscosity_scale(),
         numbers::invalid_unsigned_int);
