@@ -42,7 +42,7 @@ All the container walls have no-slip boundary conditions except at the top of th
 Parameter File
 ---------------
 
-We explain every part of this `prm` file in detail. In each section of the parameter file, we describe relevant parameters. The omitted parameters are only user preference parameters and do not impact the simulation results. For more detail, we suggest visiting the :doc:`../../../parameters/parameters`.
+We explain every part of this parameter file in detail. In each section of the parameter file, we describe relevant parameters. The omitted parameters are only user preference parameters and do not impact the simulation results. For more detail, we suggest visiting the :doc:`../../../parameters/parameters`.
  
 Simulation and IO Control
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
