@@ -59,8 +59,7 @@ The section defining the solid is almost the same as in :doc:`../3d-composite-mi
       end
     end
 
-Additional information on the ``particles`` parameters can be found on :doc:`../../.
-./parameters/sharp-immersed-boundary/sharp-immersed-boundary`.
+Additional information on the ``particles`` parameters can be found on :doc:`../../../parameters/sharp-immersed-boundary/sharp-immersed-boundary`.
 
 
 --------
