@@ -424,8 +424,8 @@ protected:
   PVDHandler                pvdhandler;
 
   // Functions used for source term and error analysis
-  Function<dim> *exact_solution;
-  Function<dim> *forcing_function;
+  Function<dim>                 *exact_solution;
+  std::shared_ptr<Function<dim>> forcing_function;
 
   // Dynamic flow control
   FlowControl<dim> flow_control;

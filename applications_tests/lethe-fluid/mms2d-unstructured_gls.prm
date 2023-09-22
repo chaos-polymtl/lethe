@@ -57,7 +57,6 @@ end
 #---------------------------------------------------
 
 subsection source term
-  set enable = true
   subsection xyz
     set Function expression = (2*pi*pi*(-sin(pi*x) * sin(pi*x) + cos(pi*x) * (cos(pi*x))) * sin(pi*y)*cos(pi*y) - 4*pi*pi*sin(pi*x)*sin(pi*x)*sin(pi*y)*cos(pi*y)-pi*cos(pi*x))*(-1.) + pi * (sin(pi * x)^3) * (sin(pi * y)^2) * cos(pi * x); (2*pi*pi*(sin(pi*y)*(sin(pi*y))-cos(pi*y)*cos(pi*y))*sin(pi*x)*cos(pi*x) + 4*pi*pi*sin(pi*x)*sin(pi*y)*sin(pi*y)*cos(pi*x) -  pi*cos(pi*y))*(-1) + pi*(sin(pi*x)^2)*(sin(pi*y)^3.)*cos(pi*y) ; 0
   end

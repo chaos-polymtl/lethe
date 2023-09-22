@@ -101,7 +101,6 @@ end
 #---------------------------------------------------
 
 subsection source term
-  set enable = true
   subsection xyz
     set Function expression = 0.707106781186548*(y^2)^1.0/((y^2)^1.0 + 0.25)^1.25 - 1.4142135623731/((y^2)^1.0 + 0.25)^0.25; 2*y; 0
   end

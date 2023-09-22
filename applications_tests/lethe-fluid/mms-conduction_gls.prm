@@ -121,11 +121,6 @@ end
 #---------------------------------------------------
 
 subsection source term
-  set enable = true
-  subsection xyz
-    set Function expression = 0 ; 0 ; 0
-  end
-
   subsection heat transfer
     set Function expression = 2*pi*pi*sin(pi*x)*sin(pi*y)
   end

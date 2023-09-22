@@ -124,7 +124,6 @@ end
 #---------------------------------------------------
 
 subsection source term
-  set enable = true
   subsection heat transfer
     set Function expression = -20
   end

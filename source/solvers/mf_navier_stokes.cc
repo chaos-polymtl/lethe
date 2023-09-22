@@ -147,7 +147,7 @@ MFNavierStokesSolver<dim>::setup_dofs_fd()
     this->dof_handler,
     this->zero_constraints,
     *this->cell_quadrature,
-    this->forcing_function,
+    &(*this->forcing_function),
     this->simulation_parameters.physical_properties_manager
       .get_kinematic_viscosity_scale(),
     mg_level);

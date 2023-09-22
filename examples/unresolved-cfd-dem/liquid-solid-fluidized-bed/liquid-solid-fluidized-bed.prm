@@ -112,17 +112,6 @@ subsection boundary conditions
 end
 
 #---------------------------------------------------
-# Source term
-#---------------------------------------------------
-
-subsection source term
-  set enable = false
-  subsection xyz
-    set Function expression = 0; 0; 0; 0
-  end
-end
-
-#---------------------------------------------------
 # Mesh Adaptation Control
 #---------------------------------------------------
 
