@@ -260,7 +260,7 @@ to run the simulation using eight CPU cores. Feel free to use more.
 Results and Discussion
 -----------------------
 
-The following image shows the shape and dimensions of the bubble after :math:`3` seconds of simulation, and compares it with results of `[1] <https://doi.org/10.1002/fld.2643>`_, `[2] <https://doi.org/10.1002/fld.1934>`_.
+The following image shows the shape and dimensions of the bubble after :math:`3` seconds of simulation, and compares it with results of `[1] <https://doi.org/10.1002/fld.2643>`_.
 
 .. image:: images/bubble.png
     :alt: bubble
