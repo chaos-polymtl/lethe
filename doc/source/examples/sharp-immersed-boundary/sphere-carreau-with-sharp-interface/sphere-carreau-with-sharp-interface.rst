@@ -106,7 +106,7 @@ We define the boundary conditions to have an inlet velocity of :math:`1~m/s` on 
     end
 
 .. note::
-	Since using a `deal.ii mesh <https://www.dealii.org/current/doxygen/deal.II/namespaceGridGenerator.html>`_, the boundary ``id = 1`` is by default the second boundary in the *x* axis, hence the free boundary in this problem. This is why all boundary indices are shifted.
+    Since using a `deal.ii mesh <https://www.dealii.org/current/doxygen/deal.II/namespaceGridGenerator.html>`_, the boundary ``id = 1`` is by default the second boundary in the *x* axis, hence the free boundary in this problem. This is why all boundary indices are shifted.
 
 Physical Properties
 ~~~~~~~~~~~~~~~~~~~~
@@ -136,7 +136,7 @@ With ``viscosity_inf = 0`` (3-parameter Carreau model), the *a priori* Reynolds 
 
 .. math::
 
-	 Re = \frac{u_{\infty}D(1+(\lambda(\frac{u_\infty}{D}))^2)^{\frac{1-n}{2}}}{\eta_0}
+     Re = \frac{u_{\infty}D(1+(\lambda(\frac{u_\infty}{D}))^2)^{\frac{1-n}{2}}}{\eta_0}
 
 We use an *a priori* Reynolds number, since it is not possible, *a priori*, to know the effective kinematic viscosity of the flow. For the given parameters, the *a priori* Reynolds number is :math:`50`.
 
@@ -162,7 +162,7 @@ This example uses a ramping initial condition that first ramps on the ``n`` para
         end
       end
     end
-	
+
 The first initial condition simulation solves for ``n=1.0``, ``viscosity_0 = 1.0``, ``viscosity_inf = 0``, ``lambda=10`` and ``a=2``. The subsequent initial simulations are:
 
 * (Second ``n`` iteration) ``n=0.75``, ``viscosity_0 = 1.0``, ``viscosity_inf = 0``, ``lambda=10`` and ``a=2`` ;
@@ -243,36 +243,36 @@ Results
 Using Paraview, the steady-state velocity profile and the pressure profile can be visualized by operating a *slice* along the xy-plane (z-normal) that cuts in the middle of the sphere (See `documentation <https://forgeanalytics.io/blog/creating-slices-in-paraview/>`_). 
 
 .. image:: images/velocity.png
-	:align: center
+    :align: center
 
 .. image:: images/pressure.png
-	:align: center
+    :align: center
 
 We can also see the kinematic viscosity profile throughout the domain, that is a function of the shear rate magnitude profile. Close to the particle, the shear rate is high which decreases the kinematic viscosity.
 
 .. image:: images/viscosity.png
-	:align: center
+    :align: center
 
 .. image:: images/shear-rate.png
-	:align: center
+    :align: center
 
 We can notice that the kinematic viscosity rapidly reaches a plateau at :math:`\eta=0.063`. Given the parameters in the ``subsection physical properties``, the kinematic viscosity behavior should be given  by:
 
 .. image:: images/carreau.png
-	:align: center
+    :align: center
 
 We get the following torques and forces applied on the particle for each of the mesh refinements. The drag force applied on the particle in the effective force in the same direction fo the flow, which is in the math:`x` direction in this case. 
 
 .. code-block:: text
 
- particle_ID    T_x       T_y       T_z      f_x       f_y       f_z      f_xv     f_yv     f_zv     f_xp     f_yp      f_zp    
- 	0   -0.000008  0.000019 -0.000022 0.412183  0.000019  0.000038 0.143783 0.000019 0.000038 0.268400 -0.000000  0.000000 
- 	0    0.000001  0.000000 -0.000003 0.415760  0.000001  0.000000 0.162431 0.000001 0.000001 0.253330  0.000000 -0.000000 
- 	0   -0.000000 -0.000000 -0.000000 0.424786 -0.000000 -0.000003 0.176203 0.000001 0.000000 0.248584 -0.000001 -0.000003 
+  particle_ID    T_x      T_y       T_z      f_x       f_y       f_z      f_xv     f_yv      f_zv     f_xp      f_yp      f_zp
+          0   -0.000010 0.000019 -0.000041 0.412175  0.000036  0.000026 0.143775 0.000036  0.000026 0.268400  0.000000  0.000000
+          0   -0.000000 0.000001 -0.000007 0.415760  0.000006 -0.000001 0.162430 0.000006 -0.000001 0.253330 -0.000000 -0.000000
+          0   -0.000000 0.000000 -0.000001 0.424786 -0.000002 -0.000002 0.176205 0.000001 -0.000000 0.248581 -0.000002 -0.000001
 
           
 .. note:: 
-	Because this analysis concerns non-Newtonian flow, there is no known solution for the drag coefficient. For a Newtonian flow at :math:`Re = 50`, the drag force would be :math:`0.6165`. Therefore, the drag force was decreased using a shear-thinning fluid.
+    Because this analysis concerns non-Newtonian flow, there is no known solution for the drag coefficient. For a Newtonian flow at :math:`Re = 50`, the drag force would be :math:`0.6165`. Therefore, the drag force was decreased using a shear-thinning fluid.
 
 -----------------------------
 Possibilities for Extension
@@ -283,4 +283,4 @@ Possibilities for Extension
 * **Non-Newtonian parameters** : It can also be interesting to change the Carreau model parameters, i.e. changing the slope to appreciate the behavior change.
 
 .. note::
-	It is not possible to use the Carreau model for a shear-thickening flow. You should change the model to power-law, and use the decribed parameters in :doc:`../../../parameters/cfd/physical_properties`
+    It is not possible to use the Carreau model for a shear-thickening flow. You should change the model to power-law, and use the decribed parameters in :doc:`../../../parameters/cfd/physical_properties`
