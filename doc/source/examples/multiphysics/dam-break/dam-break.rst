@@ -96,7 +96,7 @@ Interface Sharpening Parameters
 VOF
 ***
 
-If the interface sharpening is not enabled in :doc:`VOF <../../../parameters/cfd/volume_of_fluid>` subsection, the interface between phases will become blurry (due to diffusion). Furthermore, the phase filtration is enabled in this example. We refer the reader to the :doc:`../../../theory/multiphysics/vof` documentation for more explanation on both methods.
+If the ``interface sharpening`` is not enabled in :doc:`VOF <../../../parameters/cfd/volume_of_fluid>` subsection, the interface between phases will become blurry (due to diffusion). Furthermore, the ``phase filtration`` is enabled in this example. We refer the reader to the :doc:`../../../theory/multiphysics/vof` documentation for more explanation on both methods.
 
 .. code-block:: text
 

@@ -55,7 +55,7 @@ which result in Reynolds and Atwood numbers equal to
         At = \frac{\rho_r - 1}{\rho_r + 1} = 0.5
 
 
-A perturbed interface defined as :math:`y = 2H + 0.1 H \cos{(2 \pi x / H)}` separates the fluids. At the top and bottom boundaries, a no-slip boundary condition is applied, while on the left and right walls, a periodic boundary condition is used. The temporal evolution of the interface is visually compared with the simulations of Garoosi and Hooman `[2] <https://doi.org/10.1016/j.ijmecsci.2021.106956>`_ at dimensionless times (:math:`t^* = t \sqrt{\mathbf{g} / H}`) of :math:`1.5`, :math:`2.5`, :math:`3.5`, :math:`4.0` and :math:`4.5`. The temporal evolution of the spike and the bubble positions are then compared to the results of He *et al.* `[1] <https://doi.org/10.1006/jcph.1999.6257>`_ The term "spike" refers to the lowest point of ``fluid 1`` and the term "bubble" refers to the highest point of ``fluid 0``.
+A perturbed interface defined as :math:`y = 2H + 0.1 H \cos{(2 \pi x / H)}` separates the fluids. At the top and bottom boundaries, a ``no-slip`` boundary condition is applied, while on the left and right walls, a ``periodic`` boundary condition is used. The temporal evolution of the interface is visually compared with the simulations of Garoosi and Hooman `[2] <https://doi.org/10.1016/j.ijmecsci.2021.106956>`_ at dimensionless times (:math:`t^* = t \sqrt{\mathbf{g} / H}`) of :math:`1.5`, :math:`2.5`, :math:`3.5`, :math:`4.0` and :math:`4.5`. The temporal evolution of the spike and the bubble positions are then compared to the results of He *et al.* `[1] <https://doi.org/10.1006/jcph.1999.6257>`_ The term "spike" refers to the lowest point of ``fluid 1`` and the term "bubble" refers to the highest point of ``fluid 0``.
 
 
 --------------
@@ -67,7 +67,7 @@ Simulation Control
 
 Time integration is handled by a 2nd order backward differentiation scheme
 (``bdf2``), for a :math:`0.75\, \text{s}` simulation time with an initial
-time step of :math:`0.0002` seconds. Time-step adaptation is enabled using ``adapt=true``
+time step of :math:`0.0002` seconds. Time-step adaptation is enabled using ``adapt = true``
 and the max CFL is :math:`0.8`.
 
 .. note::   
@@ -136,7 +136,7 @@ The ``physical properties`` subsection defines the physical properties of the fl
 Initial Conditions
 ~~~~~~~~~~~~~~~~~~
 
-In the ``initial conditions`` subsection, we need to define the interface between the heavy and light fluids. We define this interface by using a function expression in the ``VOF`` subsection of the ``initial conditions``. The interface between the two fluids is made smoother with the :doc:`projection step <../../../parameters/cfd/initial_conditions>` parameter.
+In the ``initial conditions`` subsection, we need to define the interface between the heavy and light fluids. We define this interface by using a ``Function expression`` in the ``VOF`` subsection of the ``initial conditions``. The interface between the two fluids is made smoother with the :doc:`projection step <../../../parameters/cfd/initial_conditions>` parameter.
 
 .. code-block:: text
 
