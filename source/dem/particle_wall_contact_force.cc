@@ -55,7 +55,7 @@ ParticleWallContactForce<dim>::update_contact_information(
                       this->triangulation_radius *
                         this->boundary_rotational_speed_map[boundary_id] *
                         this->boundary_rotational_vector[boundary_id]),
-                     normal_vector);
+                     -normal_vector);
 
   // Calculation of normal relative velocity
   double normal_relative_velocity_value =

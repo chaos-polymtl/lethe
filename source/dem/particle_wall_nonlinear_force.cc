@@ -447,7 +447,7 @@ ParticleWallNonLinearForce<dim>::calculate_nonlinear_contact_force_and_torque(
   // Torque caused by tangential force (tangential_torque)
   Tensor<1, 3> tangential_torque =
     cross_product_3d((0.5 * particle_properties[DEM::PropertiesIndex::dp] *
-                      contact_info.normal_vector),
+                      -contact_info.normal_vector),
                      tangential_force);
 
 
