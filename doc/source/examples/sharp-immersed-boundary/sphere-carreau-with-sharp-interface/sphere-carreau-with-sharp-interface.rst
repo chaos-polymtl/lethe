@@ -19,7 +19,7 @@ Features
 Files Used in This Example
 ---------------------------
 
-- Parameter file: ``/examples/sharp-immersed-boundary-solver/sphere-carreau-with-sharp-inferface/sphere-carreau-with-sharp-interface.prm``
+- Parameter file: ``/examples/sharp-immersed-boundary/sphere-carreau-with-sharp-inferface/sphere-carreau-with-sharp-interface.prm``
 
 
 -----------------------
@@ -174,7 +174,7 @@ and the first simulation uses the parameters in the ``subsection physical proper
 Particle
 ~~~~~~~~~~~~~~~~~~~~
 
-In this case, we want to define a spherical boundary of radius :math:`0.5`, with its center at :math:`(0,0,0)` and that has no velocity. For more information on particle immersed boundary conditions using a sharp interface, see :doc:`../../../parameters/sharp-immersed-boundary-solver/sharp-immersed-boundary-solver`.
+In this case, we want to define a spherical boundary of radius :math:`0.5`, with its center at :math:`(0,0,0)` and that has no velocity. For more information on particle immersed boundary conditions using a sharp interface, see :doc:`../../../parameters/sharp-immersed-boundary/sharp-immersed-boundary`.
 
 .. code-block:: text
 

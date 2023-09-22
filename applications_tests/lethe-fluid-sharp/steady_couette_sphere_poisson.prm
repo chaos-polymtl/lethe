@@ -91,7 +91,7 @@ subsection boundary conditions
 end
 
 #---------------------------------------------------
-# IB particules
+# IB particles
 #---------------------------------------------------
 
 subsection particles

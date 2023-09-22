@@ -10,6 +10,7 @@ set dimension = 3
 subsection simulation control
   set method            = bdf2
   set output name       = mixer
+  set output path       = ./output_composite/
   set output frequency  = 1
   set time end          = 5
   set time step         = 0.02
@@ -116,7 +117,7 @@ subsection boundary conditions
 end
 
 #---------------------------------------------------
-# IB particules
+# IB particles
 #---------------------------------------------------
 
 subsection particles
@@ -127,7 +128,7 @@ subsection particles
     set length ratio  = 3
   end
   subsection local mesh refinement
-    set initial refinement                = 4
+    set initial refinement                = 3
     set refine mesh inside radius factor  = 0.0
     set refine mesh outside radius factor = 1.1
   end
@@ -136,7 +137,7 @@ subsection particles
   end
   subsection particle info 0
     subsection position
-      set Function expression = -0.25;0;0
+      set Function expression = 0;0;0
     end
     subsection velocity
       set Function expression = 0;0;0
@@ -147,8 +148,8 @@ subsection particles
     subsection omega
       set Function expression = -1*2*pi;0;0
     end
-    set type            = opencascade
-    set shape arguments = impeller.step
+    set type            = composite
+    set shape arguments = impeller.composite
   end
 end
 

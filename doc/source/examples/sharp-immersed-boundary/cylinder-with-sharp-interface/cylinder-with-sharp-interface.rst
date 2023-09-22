@@ -17,7 +17,7 @@ Features
 Files Used in This Example
 ---------------------------
 
-- Parameter file: ``/examples/sharp-immersed-boundary-solver/cylinder-with-sharp-interface/cylinder-with-sharp-interface.prm``
+- Parameter file: ``/examples/sharp-immersed-boundary/cylinder-with-sharp-interface/cylinder-with-sharp-interface.prm``
 
 
 -----------------------
@@ -43,13 +43,13 @@ The mesh is defined using the following subsection.
         set type               = dealii
         set grid type          = subdivided_hyper_rectangle
         set grid arguments     = 2,1: 0,0 : 32 , 16  : true
-        set initial refinement = 6
+        set initial refinement = 7
     end
 
 Boundary Conditions
 ~~~~~~~~~~~~~~~~~~~
 
-As for the :doc:`../../incompressible-flow/2d-flow-around-cylinder/2d-flow-around-cylinder`, we define the boundary conditions in order to have an inlet on the left, two slip boundary conditions at the top and bottom, and an outlet on the right of the domain.
+As for the :doc:`../../incompressible-flow/2d-flow-around-cylinder/2d-flow-around-cylinder`, we define the boundary conditions to have an inlet on the left, two slip boundary conditions at the top and bottom, and an outlet on the right of the domain.
 
 
 .. code-block:: text
@@ -90,13 +90,13 @@ The initial condition has been modified compared to the initial solution propose
     subsection initial conditions
       set type = nodal
       subsection uvwp
-          set Function expression = 0; 0; 0
+        set Function expression = 0; 0; 0
       end
     end
 
 IB Particles
 ~~~~~~~~~~~~~
-	
+
 The only thing that is left to define is the immersed boundary.
 In this case, we want to define a circular boundary of radius 0.5 center at (8,8) that has no velocity. We use the sphere to model the cylinder in 2D.
 
@@ -126,23 +126,23 @@ In this case, we want to define a circular boundary of radius 0.5 center at (8,8
       end
     end
     
-* The ``number of particles`` is set to one as we only want one particle.
+* ``number of particles`` is set to one as we only want one particle.
 
-* The ``stencil order`` is set to 2 as this is the highest order that is compatible with the FEM scheme and it does not lead to Runge instability. The highest order of stencil compatible with a FEM scheme is defined by the polynomial order of the scheme time the number of dimensions. In this case 2.
+* ``stencil order`` is set to 2 as this is the highest order that is compatible with the FEM scheme and it does not lead to Runge instability. The highest order of stencil compatible with a FEM scheme is defined by the polynomial order of the scheme time the number of dimensions. In this case 2.
 
-* The ``refine mesh inside radius factor`` is set to 0.8. This will create a mesh refinement around the particle that avoids having hanging nodes in the calculation and help ensure an adequately fine mesh around the particle.
+* ``refine mesh inside radius factor`` is set to 0.8. This will create a mesh refinement around the particle that avoids having hanging nodes in the calculation and helps ensure an adequately fine mesh around the particle.
 
-* The ``refine mesh outside radius factor`` is set to 1.2. This will create a mesh refinement around the particle that avoids having hanging nodes in the calculation and help ensure an adequately fine mesh around the particle.
+* ``refine mesh outside radius factor`` is set to 1.2. This will create a mesh refinement around the particle that avoids having hanging nodes in the calculation and helps ensure an adequately fine mesh around the particle.
 
-* The ``initial refinement`` is set to 0. In this case, the initial mesh is small enough to ensure that the mesh around the particle is sufficiently smaller than the particle. In this case, it is not necessary to pre-refine the mesh around the particle.
+* ``initial refinement`` is set to 0. In this case, the initial mesh is small enough to ensure that the mesh around the particle is sufficiently smaller than the particle. In this case, it is not necessary to pre-refine the mesh around the particle.
 
-* The ``integrate motion`` is set to false because we are not interested in the dynamic of the particle as this is a steady case.
+* ``integrate motion`` is set to false because we are not interested in the dynamic of the particle as this is a steady case.
 
-* The ``assemble Navier-Stokes inside particles`` is set to false because we are not interested in the flow inside of the particle.
+* ``assemble Navier-Stokes inside particles`` is set to false because we are not interested in the flow inside of the particle.
 
-* The ``position`` Function expression is set to 8;8 as the position of the particle is constant in time, and the center of the particle is at this position. 
+* ``position`` Function expression is set to 8;8 as the position of the particle is constant in time, and the center of the particle is at this position.
 
-* The ``velocity`` Function expression is set to 0;0 as the velocity of the particle is 0 and the case is steady. 
+* ``velocity`` Function expression is set to 0;0 as the velocity of the particle is 0 and the case is steady.
 
 All the other parameters have been set to their default values since they do not play a role in this case.
 
@@ -156,13 +156,13 @@ The simulation of this case results in the following solution for the velocity a
 
 Velocity:
  
-.. image:: images/exemple10-velocite.png
+.. image:: images/example10-velocity.png
     :alt: Simulation schematic
     :align: center
 
 Pressure: 
 
-.. image:: images/exemple10-pression.png
+.. image:: images/example10-pressure.png
     :alt: Simulation schematic
     :align: center
 
@@ -178,7 +178,7 @@ We get the following force applied on the particle for each of the mesh refineme
           0 -0.000014 6.962307  0.000057 
           
 .. note:: 
-	The drag coefficient obtained in this case is higher than the drag coefficient for a cylinder at a Reynolds number of 1 as the size of the domain is not large enough relative to the diameter of the cylinder. The flow around the cylinder is then constrained by the lateral boundaries, and this incrases the drag coefficient.
-	
-	
-	
+    The drag coefficient obtained in this case is higher than the drag coefficient for a cylinder at a Reynolds number of 1 as the size of the domain is not large enough relative to the diameter of the cylinder. The flow around the cylinder is then constrained by the lateral boundaries, and this increases the drag coefficient.
+
+
+

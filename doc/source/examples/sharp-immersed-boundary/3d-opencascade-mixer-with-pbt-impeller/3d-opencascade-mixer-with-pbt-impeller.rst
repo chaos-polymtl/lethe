@@ -2,7 +2,7 @@
 3D Mixer with Pitched-Blade Turbine Impeller Using OpenCascade Sharp-Immersed Boundary
 =======================================================================================
 
-The mixing of stirred-tanks is a common chemical engineering problem that can be tackled through immersed boundary simulation. This example, a variation of :doc:`../3d-composite-mixer-with-pbt-impeller/3d-composite-mixer-with-pbt-impeller`, illustrates how the transient flow in a stirred-tank can be simulated by Lethe using the Sharp-Immersed Boundary formulation with a OpenCasacade shape from a step file.
+The mixing of stirred tanks is a common chemical engineering problem that can be tackled through immersed boundary simulation. This example, a variation of :doc:`../3d-composite-mixer-with-pbt-impeller/3d-composite-mixer-with-pbt-impeller`, illustrates how the transient flow in a stirred-tank can be simulated by Lethe using the Sharp-Immersed Boundary formulation with an OpenCasacade shape from a step file.
 
 
 ----------------------------------
@@ -11,15 +11,15 @@ Features
 
 - Solvers: ``lethe-fluid-sharp``
 - Transient problem
-- Rotating complex solid, defined by a step file using the OpenCascade shape, modelled with sharp immersed boundary
+- Rotating complex solid, defined by a step file using the OpenCascade shape, modeled with sharp immersed boundary
 
 
 ----------------------------
 Files Used in This Example
 ----------------------------
 
-* Parameter file: ``/examples/sharp-immersed-boundary-solver/3d-opencascade-mixer-with-pbt-impeller/mixer.prm``
-* Step file: ``/examples/sharp-immersed-boundary-solver/3d-opencascade-mixer-with-pbt-impeller/impeller.step``
+* Parameter file: ``/examples/sharp-immersed-boundary/3d-opencascade-mixer-with-pbt-impeller/mixer.prm``
+* Step file: ``/examples/sharp-immersed-boundary/3d-opencascade-mixer-with-pbt-impeller/impeller.step``
 
 
 -----------------------
@@ -33,10 +33,10 @@ In this example, we simulate a mixer using a PBT impeller through the usage of a
 Creation of the STEP File
 ------------------------------------
 
-The step file can be defined using any CAD tool available to the user. The step file must represent a solid. It's favorable to avoid step file that represent shells, composite of solids or compound of objects.
+The step file can be defined using any CAD tool available to the user. The step file must represent a solid. It is preferable to avoid step files that represent shells, composite of solids or a compound of objects.
 
 .. tip::
-	Use the union tool at your disposal to avoid issues with step files that are defined by a composite of solids. Most CAD software offers the possibility to define a solid from the union of multiple solids. Similarly, if the step file is only defined by a shell, it is usually possible to define a solid from that shell. If your CAD tool does not allow these operations, the FreeCAD software allows you to do these operations using the part toolbox.
+    Use the union tool at your disposal to avoid issues with step files that are defined by a composite of solids. Most CAD software offers the possibility to define a solid from the union of multiple solids. Similarly, if the step file is only defined by a shell, it is usually possible to define a solid from that shell. If your CAD tool does not allow these operations, the FreeCAD software allows you to do these operations using the part toolbox.
 
 
 ---------------
@@ -59,7 +59,8 @@ The section defining the solid is almost the same as in :doc:`../3d-composite-mi
       end
     end
 
-Additionnal information on the ``particles`` parameters can be found on :doc:`../../../parameters/sharp-immersed-boundary-solver/sharp-immersed-boundary-solver`.
+Additional information on the ``particles`` parameters can be found on :doc:`../../.
+./parameters/sharp-immersed-boundary/sharp-immersed-boundary`.
 
 
 --------
