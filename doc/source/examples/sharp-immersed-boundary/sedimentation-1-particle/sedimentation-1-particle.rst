@@ -256,7 +256,7 @@ Linear Solver
 
 * The ``relative residual`` is set to 1e-4. This is small enough, so we don't under-resolve our matrix and do extra non-linear steps because of it, and at the same, it doesn't require too many ``gmres`` iterations.
 
-* The ``ilu preconditioner fill`` is set to 0. This means that we have a Jacobi preconditioner. This is the cheapest option. In this case, we can use this option without having to do too many ``gmres`` iterations. It requires less computational time to do a few more  ``gmres`` iterations than building the preconditioner and doing fewer ``gmres`` iterations.
+* The ``ilu preconditioner fill`` is set to 0. This is the cheapest option. In this case, we can use this option without having to do too many ``gmres`` iterations. It requires less computational time to do a few more  ``gmres`` iterations than building the preconditioner and doing fewer ``gmres`` iterations.
 
 IB Particles
 ~~~~~~~~~~~~~~
