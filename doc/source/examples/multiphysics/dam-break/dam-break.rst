@@ -20,7 +20,7 @@ Files Used in This Example
 ---------------------------
 
 - Parameter file: ``examples/multiphysics/dam-break/``
-- Python script for postprocessing: ``examples/multiphysics/dam-break/dam-break-2d.py``
+- Postprocessing python script: ``examples/multiphysics/dam-break/dam-break-2d.py``
 
 
 ---------------------------
@@ -44,7 +44,7 @@ The following schematic describes the geometry and dimensions of the simulation 
 
 .. note:: 
     All the four boundary conditions are ``slip``, and an external 
-    gravity field of :math:`-1` is applied in the y direction.
+    gravity field of :math:`-1` is applied in the :math:`y` direction.
 
 
 --------------
@@ -96,7 +96,7 @@ Interface Sharpening Parameters
 VOF
 ***
 
-If the interface sharpening is not enabled in the :doc:`VOF <../../../parameters/cfd/volume_of_fluid>` subsection, the interface between phases will become blurry (due to diffusion). Futhermore, the phase filtration is enabled in this example. We refer the reader to the :doc:`../../../theory/multiphysics/vof` documentation for more explanation both methods.
+If the interface sharpening is not enabled in :doc:`VOF <../../../parameters/cfd/volume_of_fluid>` subsection, the interface between phases will become blurry (due to diffusion). Furthermore, the phase filtration is enabled in this example. We refer the reader to the :doc:`../../../theory/multiphysics/vof` documentation for more explanation on both methods.
 
 .. code-block:: text
 

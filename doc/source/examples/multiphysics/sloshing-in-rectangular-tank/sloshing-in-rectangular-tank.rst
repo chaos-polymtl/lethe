@@ -22,18 +22,21 @@ Files Used in This Example
 - Analytical data for :math:`Re=2`: ``examples/multiphysics/sloshing-in-rectangular-tank/sloshing_0002/analytical_solution_Re2.csv``
 - Analytical data for :math:`Re=20`: ``examples/multiphysics/sloshing-in-rectangular-tank/sloshing_0020/analytical_solution_Re20.csv``
 - Analytical data for :math:`Re=200`: ``examples/multiphysics/sloshing-in-rectangular-tank/sloshing_0200/analytical_solution_Re200.csv``
-- Parameter file for :math:`Re=2`:``examples/multiphysics/sloshing-in-rectangular-tank/sloshing_0002/sloshing-in-rectangular-tank_Re0002.prm``
-- Parameter file for :math:`Re=20`:``examples/multiphysics/sloshing-in-rectangular-tank/sloshing_0020/sloshing-in-rectangular-tank_Re0020.prm``
-- Parameter file for :math:`Re=200`:``examples/multiphysics/sloshing-in-rectangular-tank/sloshing_0200/sloshing-in-rectangular-tank_Re0200.prm``
-- Parameter file for :math:`Re=2000`:``examples/multiphysics/sloshing-in-rectangular-tank/sloshing_2000/sloshing-in-rectangular-tank_Re2000.prm``
-- Postprocessing Python script: ``examples/multiphysics/sloshing-in-rectangular-tank/sloshing_postprocessing.py``
+- Parameter file for :math:`Re=2`: ``examples/multiphysics/sloshing-in-rectangular-tank/sloshing_0002/sloshing-in-rectangular-tank_Re0002.prm``
+- Parameter file for :math:`Re=20`: ``examples/multiphysics/sloshing-in-rectangular-tank/sloshing_0020/sloshing-in-rectangular-tank_Re0020.prm``
+- Parameter file for :math:`Re=200`: ``examples/multiphysics/sloshing-in-rectangular-tank/sloshing_0200/sloshing-in-rectangular-tank_Re0200.prm``
+- Parameter file for :math:`Re=2000`: ``examples/multiphysics/sloshing-in-rectangular-tank/sloshing_2000/sloshing-in-rectangular-tank_Re2000.prm``
+- Postprocessing python script: ``examples/multiphysics/sloshing-in-rectangular-tank/sloshing_postprocessing.py``
 
 
 -----------------------
 Description of the Case
 -----------------------
 
-Predicting the dynamics of free surface waves is essential for many industrial applications (e.g. transport of liquified natural gas). Yet, simulating their dynamics is difficult, especially for high Reynolds number values . Indeed, in this case, the amplitude of the waves dampen very slowly. This leads to an oscillatory wave problem which is highly sensitive to the time integration scheme and the coupling between the VOF solver and the Navier-Stokes solver. 
+Predicting the dynamics of free surface waves is essential for many industrial applications (e.g. transport of liquified natural gas).
+Yet, simulating their dynamics is difficult, especially for high Reynolds number values.
+Indeed, in this case, the amplitude of the waves dampen very slowly.
+This leads to an oscillatory wave problem which is highly sensitive to the time integration scheme and the coupling between the VOF solver and the Navier-Stokes solver.
 
 In this problem, we simulate the damping of a small amplitude wave in a rectangular cavity defined from  :math:`(-1,-1)` to :math:`(1,0.1)`. The initial height of the wave :math:`\xi (x)` is given by:
 
@@ -99,7 +102,6 @@ In the ``initial conditions``, we define the initial height of the wave, such th
       subsection uvwp
         set Function expression = 0; 0; 0
       end
-    
       subsection VOF
         set Function expression =  if (y<=(0.01*sin(3.1416*(x+0.5))), min(0.5-(y-0.01*sin(3.1416*(x+0.5)))/0.0025,1), max(0.5-(y-0.01*sin(3.1416*(x+0.5)))/0.0025,0))
       end

@@ -22,7 +22,7 @@ Files Used in This Example
 ---------------------------
 
 - Parameter file: ``examples/multiphysics/water-injection-in-a-closed-cell/water-injection-in-a-closed-cell.prm``
-- Python script for postprocessing: ``examples/multiphysics/air-bubble-compression/air-bubble-compression-postprocessing.py``
+- Postprocessing python script: ``examples/multiphysics/air-bubble-compression/air-bubble-compression-postprocessing.py``
 
 
 -----------------------

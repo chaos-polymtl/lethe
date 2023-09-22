@@ -91,7 +91,7 @@ and the max CFL is :math:`0.8`.
 Multiphysics
 ~~~~~~~~~~~~
 
-The ``multiphysics`` subsection enables to turn on ``true`` and off ``false`` the physics of interest. Here ``VOF`` and ``fluid dynamics`` are chosen (``fluid dynamics`` is true by default).
+The ``multiphysics`` subsection enables to turn on (``true``) and off (``false``) the physics of interest. Here ``VOF`` and ``fluid dynamics`` are chosen (``fluid dynamics`` is ``true`` by default).
 
 .. code-block:: text
 
@@ -353,7 +353,7 @@ With higher levels of refinement, we can see better correspondence between the v
 |                                                                                       |
 +---------------------------------------------------------------------------------------+
 
-The following figures shows the mass of ``fluid 1`` throughout the simulation with a constant (left) and adaptive (right) interface sharpening.
+The following figures show the mass of ``fluid 1`` throughout the simulation with a constant (left) and adaptive (right) interface sharpening.
 
 +---------------------------------------------+---------------------------------------------+
 |  .. image:: images/constant_mass.png        |  .. image:: images/adaptive_mass.png        |

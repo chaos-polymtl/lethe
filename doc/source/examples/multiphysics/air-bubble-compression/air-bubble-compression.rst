@@ -22,7 +22,7 @@ Files Used in This Example
 ---------------------------
 
 - Parameter file: ``examples/multiphysics/air-bubble-compression/air-bubble-compression.prm``
-- Python script for postprocessing: ``examples/multiphysics/air-bubble-compression/air-bubble-compression-postprocessing.py``
+- Postprocessing python script: ``examples/multiphysics/air-bubble-compression/air-bubble-compression-postprocessing.py``
 
 
 -----------------------
@@ -125,7 +125,7 @@ An initial velocity field is used to avoid discontinuities in the solution.
 Boundary Conditions
 ~~~~~~~~~~~~~~~~~~~
 
-On all fours sides of the domain, water which is associated with the phase fraction :math:`\phi=1` is injected.
+On all four sides of the domain, water which is associated with the phase fraction :math:`\phi=1` is injected.
 This is done in the simulation by setting the velocities of the fluid in the ``boundary conditions`` subsection and by selecting the correct fluid in the ``boundary conditions VOF`` subsection with a ``dirichlet`` boundary condition on the phase fraction as shown below.
 
 Boundary Conditions - Fluid Dynamics

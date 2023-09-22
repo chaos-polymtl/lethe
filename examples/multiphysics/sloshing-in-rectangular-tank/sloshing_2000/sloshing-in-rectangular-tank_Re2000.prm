@@ -45,7 +45,6 @@ subsection initial conditions
   subsection uvwp
     set Function expression = 0; 0; 0
   end
-
   subsection VOF
     set Function expression = if (y<=(0.01*sin(3.1416*(x+0.5))), min(0.5-(y-0.01*sin(3.1416*(x+0.5)))/0.0025,1), max(0.5-(y-0.01*sin(3.1416*(x+0.5)))/0.0025,0))
   end
@@ -108,9 +107,8 @@ end
 
 subsection VOF
   subsection phase filtration
-    set type      = tanh
-    set verbosity = quiet
-    set beta      = 20
+    set type = tanh
+    set beta = 20
   end
 end
 
@@ -152,13 +150,13 @@ end
 #---------------------------------------------------
 
 subsection non-linear solver
-  subsection VOF
+  subsection fluid dynamics
     set verbosity      = verbose
     set tolerance      = 1e-7
     set max iterations = 20
     set solver         = inexact_newton
   end
-  subsection fluid dynamics
+  subsection VOF
     set verbosity      = verbose
     set tolerance      = 1e-7
     set max iterations = 20

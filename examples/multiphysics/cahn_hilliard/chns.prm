@@ -177,12 +177,12 @@ end
 #---------------------------------------------------
 
 subsection non-linear solver
-  subsection cahn hilliard
+  subsection fluid dynamics
     set tolerance      = 1e-7
     set max iterations = 20
     set verbosity      = verbose
   end
-  subsection fluid dynamics
+  subsection cahn hilliard
     set tolerance      = 1e-7
     set max iterations = 20
     set verbosity      = verbose
