@@ -283,4 +283,4 @@ Possibilities for Extension
 * **Non-Newtonian parameters** : It can also be interesting to change the Carreau model parameters, i.e. changing the slope to appreciate the behavior change.
 
 .. note::
-    It is not possible to use the Carreau model for a shear-thickening flow. You should change the model to power-law, and use the decribed parameters in :doc:`../../../parameters/cfd/physical_properties`
+    The Carreau model is limited to shear-thinning flows. For shear-thickening models (e.g., the power-law model), we refer the reader to :doc:`../../../parameters/cfd/physical_properties`.
