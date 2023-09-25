@@ -37,10 +37,6 @@ In this subsection, contact detection, force models, time integration, load bala
     # Choices are euler|velocity_verlet
     set integration method                     = velocity_verlet
 
-    # Integration method
-    # Choices are euler|velocity_verlet
-    set integration method                     = velocity_verlet
-
     # Rolling resistance method
     # Choices are no_resistance|constant_resistance|viscous_resistance
     set rolling resistance torque method       = constant_resistance
