@@ -1,6 +1,6 @@
 name: CI-Release
 
-on:
+on: [push, pull_request]
   # Runs on every push on master branch. If a push contains multiple commits, it will be ran on the latest one.
   push:
     paths-ignore:
@@ -11,8 +11,8 @@ on:
 
 # Cancels running instances when a pull request is updated by a commit
 concurrency:
-  group: ${ {github.event_name }}-${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: ${{github.event_name == 'pull_request'}}
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
 
 env:
   COMPILE_JOBS: 2
