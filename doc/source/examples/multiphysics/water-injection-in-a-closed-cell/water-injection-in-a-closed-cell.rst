@@ -22,7 +22,7 @@ Files Used in This Example
 ---------------------------
 
 - Parameter file: ``examples/multiphysics/water-injection-in-a-closed-cell/water-injection-in-a-closed-cell.prm``
-- Python script for postprocessing: ``examples/multiphysics/air-bubble-compression/air-bubble-compression-postprocessing.py``
+- Postprocessing python script: ``examples/multiphysics/air-bubble-compression/air-bubble-compression-postprocessing.py``
 
 
 -----------------------
@@ -61,7 +61,7 @@ The initial time step is set to :math:`0.005 \, \text{s}` and the simulation end
       set time end         = 0.49
       set time step        = 0.005
       set adapt            = true
-      set max cfl          = 0.5
+      set max cfl          = 0.75
       set output name      = water-injection-in-a-closed-cell
       set output frequency = 5
       set output path      = ./output/
@@ -81,21 +81,22 @@ The ``multiphysics`` subsection is used to enable the VOF solver.
 VOF
 ~~~
 
-In the ``VOF`` subsection, the ``interface sharpening`` and the ``phase filtration`` features are enabled.
-The interface sharpening method and its parameters are explained in the :doc:`../dam-break/dam-break` example.
-The phase filtration filters the phase field used for the calculation of physical properties by stiffening the value of the phase fraction.
-We refer the reader to :doc:`../../../../theory/multiphysics/vof` theory guide for further explanation on the phase filtration.
+In the ``VOF`` subsection, the ``compressible``, the ``interface sharpening``, and the ``phase filtration`` features are enabled.
+The enabled ``compressible`` parameter allows interface compression by adding the term :math:`\phi (\nabla \cdot \mathbf{u})` to the VOF equation.
+The ``interface sharpening`` method and its parameters are explained in the :doc:`../dam-break/dam-break` example.
+The ``phase filtration`` filters the phase field used for the calculation of physical properties by stiffening the value of the phase fraction.
+We refer the reader to :doc:`../../../../theory/multiphysics/vof` theory guide for further explanation on the ``phase filtration``.
 
 .. code-block:: text
 
     subsection VOF
+      set compressible = true
       subsection interface sharpening
         set enable              = true
         set threshold           = 0.5
-        set interface sharpness = 2
-        set frequency           = 50
+        set interface sharpness = 1.8
+        set frequency           = 25
       end
-
       subsection phase filtration
         set type      = tanh
         set beta      = 10
@@ -232,7 +233,7 @@ In the ``mesh adaptation`` subsection, adaptive mesh refinement is defined for t
 Running the Simulation
 -----------------------
 
-We can call the ``lethe-fluid`` by invoking the following command:
+We can call ``lethe-fluid`` by invoking the following command:
 
 .. code-block:: text
   :class: copy-button
@@ -242,7 +243,7 @@ We can call the ``lethe-fluid`` by invoking the following command:
 to run the simulation using eight CPU cores.
 
 .. warning:: 
-    Make sure to compile lethe in `Release` mode and run in parallel using mpirun. This simulation takes approximately one minute on 8 processes.
+    Make sure to compile lethe in `Release` mode and run in parallel using mpirun. This simulation takes approximately half a minute on 8 processes.
 
 
 -------

@@ -22,7 +22,7 @@ Files Used in This Example
 ---------------------------
 
 - Parameter file: ``examples/multiphysics/air-bubble-compression/air-bubble-compression.prm``
-- Python script for postprocessing: ``examples/multiphysics/air-bubble-compression/air-bubble-compression-postprocessing.py``
+- Postprocessing python script: ``examples/multiphysics/air-bubble-compression/air-bubble-compression-postprocessing.py``
 
 
 -----------------------
@@ -82,19 +82,21 @@ The ``multiphysics`` subsection is used to enable the VOF solver.
 VOF
 ~~~
 
-In the ``VOF`` subsection, the ``interface sharpening`` and the ``phase filtration`` features are enabled.
-The interface sharpening method and its parameters are explained in the :doc:`../dam-break/dam-break` example.
-The phase filtration filters the phase field used for the calculation of physical properties by stiffening the value of the phase fraction.
-We refer the reader to :doc:`../../../../theory/multiphysics/vof` theory guide for further explanation on the phase filtration.
+In the ``VOF`` subsection, the ``compressible``, the ``interface sharpening``, and the ``phase filtration`` features are enabled.
+The enabled ``compressible`` parameter allows interface compression by adding the term :math:`\phi (\nabla \cdot \mathbf{u})` to the VOF equation.
+The ``interface sharpening`` method and its parameters are explained in the :doc:`../dam-break/dam-break` example.
+The ``phase filtration`` filters the phase field used for the calculation of physical properties by stiffening the value of the phase fraction.
+We refer the reader to :doc:`../../../../theory/multiphysics/vof` theory guide for further explanation on the ``phase filtration``.
 
 .. code-block:: text
 
     subsection VOF
+      set compressible = true
       subsection interface sharpening
         set enable              = true
         set threshold           = 0.5
-        set interface sharpness = 1.7
-        set frequency           = 15
+        set interface sharpness = 2.2
+        set frequency           = 8
       end
       subsection phase filtration
         set type      = tanh
@@ -123,7 +125,7 @@ An initial velocity field is used to avoid discontinuities in the solution.
 Boundary Conditions
 ~~~~~~~~~~~~~~~~~~~
 
-On all fours sides of the domain, water which is associated with the phase fraction :math:`\phi=1` is injected.
+On all four sides of the domain, water which is associated with the phase fraction :math:`\phi=1` is injected.
 This is done in the simulation by setting the velocities of the fluid in the ``boundary conditions`` subsection and by selecting the correct fluid in the ``boundary conditions VOF`` subsection with a ``dirichlet`` boundary condition on the phase fraction as shown below.
 
 Boundary Conditions - Fluid Dynamics
@@ -264,7 +266,7 @@ In the ``mesh adaptation`` subsection, adaptive mesh refinement is defined for t
 Running the Simulation
 -----------------------
 
-We can call the ``lethe-fluid`` by invoking the following command:
+We can call ``lethe-fluid`` by invoking the following command:
 
 .. code-block:: text
   :class: copy-button
@@ -274,7 +276,7 @@ We can call the ``lethe-fluid`` by invoking the following command:
 to run the simulation using eight CPU cores. Feel free to use more.
 
 .. warning:: 
-    Make sure to compile lethe in `Release` mode and run in parallel using mpirun. This simulation takes :math:`\sim` 3 minutes on 8 processes.
+    Make sure to compile lethe in `Release` mode and run in parallel using mpirun. This simulation takes :math:`\sim` 1.5 minute on 8 processes.
 
 
 -------
