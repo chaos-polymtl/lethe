@@ -25,14 +25,31 @@ subsection multiphysics
 end
 
 #---------------------------------------------------
-# Cahn-Hilliard order
+# FEM
 #---------------------------------------------------
 
 subsection FEM
-  set phase ch order     = 1
-  set potential ch order = 1
-  set velocity order     = 1
-  set pressure order     = 1
+  set phase cahn hilliard order     = 1
+  set potential cahn hilliard order = 1
+  set velocity order                = 1
+  set pressure order                = 1
+end
+
+#---------------------------------------------------
+# Physical Properties
+#---------------------------------------------------
+
+subsection physical properties
+  set number of fluids = 2
+  set number of material interactions = 1
+  subsection material interaction 0
+    set type = fluid-fluid
+    subsection fluid-fluid interaction
+      set first fluid id                  = 0
+      set second fluid id                 = 1
+      set cahn hilliard mobility model    = constant
+      set cahn hilliard mobility constant = 1
+    end
 end
 
 #---------------------------------------------------
@@ -54,11 +71,6 @@ subsection cahn hilliard
   set well height = 2.5
   subsection epsilon
     set method = automatic
-  end
-
-  subsection mobility
-    set model             = constant
-    set mobility constant = 1
   end
 end
 
@@ -165,12 +177,12 @@ end
 #---------------------------------------------------
 
 subsection non-linear solver
-  subsection cahn hilliard
+  subsection fluid dynamics
     set tolerance      = 1e-7
     set max iterations = 20
     set verbosity      = verbose
   end
-  subsection fluid dynamics
+  subsection cahn hilliard
     set tolerance      = 1e-7
     set max iterations = 20
     set verbosity      = verbose

@@ -21,14 +21,14 @@ Files Used in This Example
 --------------------------
 
 - Parameter file: ``examples/multiphysics/rising-bubble/rising_bubble.prm``
-- Python file to generate plot: ``examples/multiphysics/rising-bubble/rising_bubble.py``
+- Postprocessing python script: ``examples/multiphysics/rising-bubble/rising_bubble.py``
 
 
 -----------------------
 Description of the Case
 -----------------------
 
-A circular bubble with density of 100 and kinematic viscosity of 0.01 (all the units in this example are dimensionless) is defined at an initial location (0.5, 0.5) in a rectangular column filled with a denser fluid (with a density of 1000 and kinematic viscosity of 0.01). At :math:`t = 0` the bubble is released to rise inside the denser fluid column. The corresponding parameter file is 
+A circular bubble with density of :math:`100` and kinematic viscosity of :math:`0.01` (all the units in this example are dimensionless) is defined at an initial location :math:`(0.5, 0.5)` in a rectangular column filled with a denser fluid (with a density of :math:`1000` and kinematic viscosity of :math:`0.01`). At :math:`t = 0` the bubble is released to rise inside the denser fluid column. The corresponding parameter file is
 ``rising-bubble.prm``.
 
 The following schematic describes the geometry and dimensions of the simulation in the :math:`(x,y)` plane:
@@ -40,7 +40,7 @@ The following schematic describes the geometry and dimensions of the simulation 
 
 .. note:: 
     On the upper and bottom walls ``slip`` boundary conditions are applied, and on side walls the boundary conditions are ``noslip``.
-    An external gravity field of :math:`-0.98` is applied in the y direction.
+    An external gravity field of :math:`-0.98` is applied in the :math:`y` direction.
 
 
 --------------
@@ -50,11 +50,11 @@ Parameter File
 Simulation Control
 ~~~~~~~~~~~~~~~~~~
 
-Time integration is handled by a 1st order backward differentiation scheme `(bdf1)`, for a :math:`3~\text{s}` simulation time with an initial time step of :math:`0.001~\text{s}`.
+Time integration is handled by a 1st order backward differentiation scheme (``bdf1``), for a :math:`3~\text{s}` simulation time with an initial time step of :math:`0.001~\text{s}`.
 
 .. note::   
     This example uses an adaptive time-stepping method, where the 
-    time-step is modified during the simulation to keep the maximum value of the CFL condition below a given threshold. Using ``output frequency = 20`` ensures that the results are written every 20 iterations. Consequently, the time increment between each vtu file is not constant.
+    time-step is modified during the simulation to keep the maximum value of the CFL condition below a given threshold. Using ``output frequency = 20`` ensures that the results are written every :math:`20` iterations. Consequently, the time increment between each vtu file is not constant.
 
 .. code-block:: text
 
@@ -72,8 +72,8 @@ Time integration is handled by a 1st order backward differentiation scheme `(bdf
 Multiphysics
 ~~~~~~~~~~~~
 
-The ``multiphysics`` subsection enables to turn on `(true)` 
-and off `(false)` the physics of interest. Here ``VOF`` is chosen. The ``phase filtration``, ``interface sharpening``, and ``surface tension force`` are enabled in the VOF subsection.
+The ``multiphysics`` subsection enables to turn on (``true``)
+and off (``false``) the physics of interest. Here ``VOF`` is chosen. The ``phase filtration``, ``interface sharpening``, and ``surface tension force`` are enabled in the VOF subsection.
 
 
 .. code-block:: text
@@ -157,8 +157,8 @@ sufficiently smooth, as explained in the :doc:`../static-bubble/static-bubble` e
 Physical Properties
 ~~~~~~~~~~~~~~~~~~~~
 We define two fluids here simply by setting the number of fluids to be :math:`2`.
-In ``subsection fluid 0``, we set the density and the kinematic viscosity for the phase associated with a VOF indicator of 0. 
-A similar procedure is done for the phase associated with a VOF indicator of 1 in ``subsection fluid 1``. Then a ``fluid-fluid`` type of material interaction is added to specify the ``surface tension model``. In this case, it is set to ``constant`` with the ``surface tension coefficient`` :math:`\sigma` set to :math:`24.5`.
+In ``subsection fluid 0``, we set the density and the kinematic viscosity for the phase associated with a VOF indicator of :math:`0`.
+A similar procedure is done for the phase associated with a VOF indicator of :math:`1` in ``subsection fluid 1``. Then a ``fluid-fluid`` type of ``material interaction`` is added to specify the ``surface tension model``. In this case, it is set to ``constant`` with the ``surface tension coefficient`` :math:`\sigma` set to :math:`24.5`.
 
 
 .. code-block:: text
@@ -206,7 +206,7 @@ Mesh Adaptation
 ~~~~~~~~~~~~~~~
 
 In the ``mesh adaptation subsection``, adaptive mesh refinement is 
-defined for ``phase``. ``min refinement level`` and ``max refinement level`` are 6 and 9, respectively. Since the bubble rises and changes its location, we choose a rather large ``fraction refinement`` (0.99) and moderate ``fraction coarsening`` (0.01).
+defined for ``phase``. ``min refinement level`` and ``max refinement level`` are :math:`6` and :math:`9`, respectively. Since the bubble rises and changes its location, we choose a rather large ``fraction refinement`` (:math:`0.99`) and moderate ``fraction coarsening`` (:math:`0.01`).
 To capture the bubble adequately, we set ``initial refinement steps = 5`` so that the initial mesh is adapted to ensure that the initial condition is imposed for the VOF phase with maximal accuracy.
 
 .. code-block:: text
@@ -240,9 +240,12 @@ To compare our simulation results to the literature, we extract the position and
 Running the Simulation
 ---------------------------
 
-Call the lethe-fluid by invoking:  
+Call ``lethe-fluid`` by invoking:
 
-``mpirun -np 8 lethe-fluid rising-bubble.prm``
+.. code-block:: text
+  :class: copy-button
+
+  mpirun -np 8 lethe-fluid rising-bubble.prm
 
 to run the simulation using eight CPU cores. Feel free to use more.
 
@@ -250,22 +253,29 @@ to run the simulation using eight CPU cores. Feel free to use more.
 .. warning:: 
     Make sure to compile lethe in `Release` mode and 
     run in parallel using mpirun. This simulation takes
-    :math:`\approx` 10 mins on 8 processes.
+    :math:`\sim \,7` minutes on :math:`8` processes.
 
 
 -----------------------
 Results and Discussion
 -----------------------
 
-The following image shows the shape and dimensions of the bubble after 3 seconds of simulation, and compares it with results of `[1] <https://doi.org/10.1002/fld.2643>`_, `[2] <https://doi.org/10.1002/fld.1934>`_.
+The following image shows the shape and dimensions of the bubble after :math:`3` seconds of simulation, and compares it with results of `[1] <https://doi.org/10.1002/fld.2643>`_.
 
 .. image:: images/bubble.png
     :alt: bubble
     :align: center
     :width: 400
 
-A python post-processing code `(rising-bubble.py)` is added to the example folder to post-process the data files generated by the barycenter post-processing.
-Run ``python3 ./rising-bubble.py output`` to execute this post-processing code, where ``output`` is the directory that 
+A python post-processing code (``rising-bubble.py``) is added to the example folder to post-process the data files generated by the barycenter post-processing.
+Run
+
+.. code-block:: text
+  :class: copy-button
+
+  python3 ./rising-bubble.py output
+
+to execute this post-processing code, where ``output`` is the directory that
 contains the simulation results. The results for the barycenter position and velocity of the bubble are compared with the simulations of Zahedi *et al.* `[1] <https://doi.org/10.1002/fld.2643>`_ and Hysing *et al.* `[2] <https://doi.org/10.1002/fld.1934>`_. The following images show the results of these comparisons. The agreement between the two simulations is remarkable considering the coarse mesh used within this example.
 
 .. image:: images/ymean-t.png

@@ -20,7 +20,7 @@ Files Used in This Example
 ---------------------------
 
 - Parameter file: ``examples/multiphysics/dam-break/``
-- Python script for postprocessing: ``examples/multiphysics/dam-break/dam-break-2d.py``
+- Postprocessing python script: ``examples/multiphysics/dam-break/dam-break-2d.py``
 
 
 ---------------------------
@@ -34,13 +34,17 @@ the liquid is released into the total simulation domain.
 
 The following schematic describes the geometry and dimensions of the simulation in the :math:`(x,y)` plane:
 
-.. image:: images/VOF-dam-break-initial-configuration.svg
-    :alt: Schematic
-    :align: center
++---------------------------------------------------------+
+|  .. image:: images/dam-break-initial-configuration.svg  |
+|     :alt: Schematic                                     |
+|     :width: 800                                         |
+|     :align: center                                      |
+|                                                         |
++---------------------------------------------------------+
 
 .. note:: 
     All the four boundary conditions are ``slip``, and an external 
-    gravity field of :math:`-1` is applied in the y direction.
+    gravity field of :math:`-1` is applied in the :math:`y` direction.
 
 
 --------------
@@ -92,7 +96,7 @@ Interface Sharpening Parameters
 VOF
 ***
 
-If the interface sharpening is not enabled in the :doc:`VOF <../../../parameters/cfd/volume_of_fluid>` subsection, the interface between phases will become blurry (due to diffusion). Futhermore, the phase filtration is enabled in this example. We refer the reader to the :doc:`../../../theory/multiphysics/vof` documentation for more explanation both methods.
+If the ``interface sharpening`` is not enabled in :doc:`VOF <../../../parameters/cfd/volume_of_fluid>` subsection, the interface between phases will become blurry (due to diffusion). Furthermore, the ``phase filtration`` is enabled in this example. We refer the reader to the :doc:`../../../theory/multiphysics/vof` documentation for more explanation on both methods.
 
 .. code-block:: text
 
@@ -100,13 +104,11 @@ If the interface sharpening is not enabled in the :doc:`VOF <../../../parameters
       subsection interface sharpening
         set enable              = true
         set threshold           = 0.5
-        set interface sharpness = 2
+        set interface sharpness = 1.5
         set frequency           = 20
       end
-
       subsection phase filtration
         set type            = tanh
-        set verbosity       = quiet
         set beta            = 10
       end
     end
@@ -217,17 +219,20 @@ is adapted to the initial condition for the phase.
 Running the Simulation
 ----------------------
 
-Call the lethe-fluid by invoking:  
+Call ``lethe-fluid`` by invoking:
 
-``mpirun -np 2 lethe-fluid dam-break-Martin-and-Moyce.prm``
+.. code-block:: text
+  :class: copy-button
 
-to run the simulation using two CPU cores. Feel free to use more.
+  mpirun -np 6 lethe-fluid dam-break-Martin-and-Moyce.prm
+
+to run the simulation using six CPU cores. Feel free to use more.
 
 
 .. warning:: 
-    The code will compute :math:`35,000+` dofs for :math:`600+` time 
-    iterations. Make sure to compile lethe in `Release` mode and 
-    run in parallel using mpirun 
+    The code will compute :math:`35,000+` dofs for :math:`600+` time iterations.
+    Make sure to compile Lethe in `Release` mode and run in parallel using mpirun.
+    This simulation takes :math:`\sim \, 3` minutes on :math:`6` processes.
 
 
 -----------------------
@@ -244,13 +249,17 @@ The red area corresponds to the liquid phase and the blue area corresponds to th
 
 A python post-processing code `(dam-break-2d.py)` 
 is added to the example folder to post-process the results.
-Run ``python3 ./dam-break-2d.py ./output`` to execute this 
-post-processing code, where ``./output`` is the directory that 
-contains the simulation results. In post-processing, the maximum 
-dimensionless lateral position of the liquid phase is tracked 
-through time and compared with the experiments of Martin and Moyce
-(1952) `[1] <https://doi.org/10.1098/rsta.1952.0006>`_. The following figure shows the result of
-the post-processing, with a good agreement between the simulation and the experiment:
+Run
+
+.. code-block:: text
+  :class: copy-button
+
+  python3 ./dam-break-2d.py ./output
+
+to execute this post-processing code, where ``./output`` is the directory that contains the simulation results.
+In post-processing, the maximum dimensionless lateral position of the liquid phase is tracked
+through time and compared with the experiments of Martin and Moyce (1952) `[1] <https://doi.org/10.1098/rsta.1952.0006>`_.
+The following figure shows the result of the post-processing, with a good agreement between the simulation and the experiment:
 
 .. image:: images/xmax-t.png
     :alt: xmax_t

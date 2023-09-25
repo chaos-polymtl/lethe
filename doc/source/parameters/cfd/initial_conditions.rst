@@ -57,8 +57,6 @@ It is often necessary to set-up complex initial conditions when simulating trans
 
 * The ``subsection VOF`` defines the areas where both fluids lay at the initial state (see section :doc:`multiphysics`). In this example, the ``Function expression`` is used with a boolean condition to establish the region where the fluid indicator is :math:`0` or :math:`1`: ``if (condition, value if true, value if false)``. ``if (x<0.5 & y<1, 1, 0)`` means that ``fluid 1`` initially fills the surface where ``x<0.5`` and ``y<1``, the rest being filled with ``fluid 0``.
 
-* The ``subsection cahn hilliard`` defines the areas where both fluids lay at the initial state (see section :doc:`multiphysics`). It works similarly to the ``subsection VOF`` for the first component, which corresponds to the phase order parameter. The user also has the choice to specify initial conditions for the chemical potential, although it is often more suitable to leave it at :math:`0`.
-
   .. note::
     The ``Function expression`` can be used to establish an even more complex free surface initial geometry. For example, one can create a circle of fluid : ``if ( (x^2+y^2)<=(r)^2 ,1,0)``
 
@@ -74,6 +72,7 @@ It is often necessary to set-up complex initial conditions when simulating trans
 
     where :math:`\psi(\Omega_K)` corresponds to a color function value on the Kth element, :math:`\phi` is the phase fraction, :math:`\psi^*` is the smoothed phase fraction, :math:`\eta_\psi = \alpha h^2` with :math:`\alpha` corresponding to the ``diffusion factor`` and :math:`h` to the cell size, and :math:`v` is a test function.
 
+* The ``subsection cahn hilliard`` defines the areas where both fluids lay at the initial state (see section :doc:`multiphysics`). It works similarly to the ``subsection VOF`` for the first component, which corresponds to the phase order parameter. The user also has the choice to specify initial conditions for the chemical potential, although it is often more suitable to leave it at :math:`0`.
 * The ``subsection temperature`` allows the user to define an initial temperature for the fluid domain (if ``set heat tranfer = true`` in :doc:`multiphysics`).
 
 * The ``subsection ramp`` holds the parameters to operate a ramp on either or both the kinematic viscosity and the ``n`` parameter in rheological models (see :doc:`physical_properties` for more information on this parameter). When ramping on the kinematic viscosity value,
