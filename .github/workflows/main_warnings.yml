@@ -9,6 +9,11 @@ on:
     paths-ignore:
       - 'doc/**'
 
+
+concurrency:
+  group: ${ {github.event_name }}-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{github.event_name == 'pull_request'}}
+
 env:
   COMPILE_JOBS: 2
   MULTI_CORE_TESTS_REGEX: "mpirun=2"
