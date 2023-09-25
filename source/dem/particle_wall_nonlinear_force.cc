@@ -392,8 +392,8 @@ ParticleWallNonLinearForce<dim>::calculate_nonlinear_contact_force_and_torque(
   const ArrayView<const double>   &particle_properties)
 {
   // i is the particle, j is the wall.
-  // we need to put a minus sign infront of the normal_vector because it doesn't
-  // respect de convention (i -> j)
+  // we need to put a minus sign infront of the normal_vector to respect the
+  // convention (i -> j)
   Tensor<1, 3>       normal_vector = -contact_info.normal_vector;
   const unsigned int particle_type =
     particle_properties[DEM::PropertiesIndex::type];

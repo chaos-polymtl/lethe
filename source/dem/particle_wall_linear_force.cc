@@ -381,6 +381,10 @@ ParticleWallLinearForce<dim>::calculate_linear_contact_force_and_torque(
   particle_wall_contact_info<dim> &contact_info,
   const ArrayView<const double>   &particle_properties)
 {
+  // i is the particle, j is the wall.
+  // we need to put a minus sign infront of the normal_vector to respect the
+  // convention (i -> j)
+  Tensor<1, 3>       normal_vector = -contact_info.normal_vector;
   const unsigned int particle_type =
     particle_properties[DEM::PropertiesIndex::type];
 
@@ -395,31 +399,32 @@ ParticleWallLinearForce<dim>::calculate_linear_contact_force_and_torque(
          (rp_sqrt * this->effective_youngs_modulus[particle_type])),
         0.2);
 
-  // REF :  R. Garg, J. Galvin-Carney, T. Li, and S. Pannala, “Documentation of
-  // open-source MFIX–DEM software for gas-solids flows,” Tingwen Li Dr., p. 10,
-  // Sep. 2012.
-  double tangential_spring_constant = normal_spring_constant * 0.4;
-
+  // There is no minus sign here since model_parameter_beta is negative or
+  // equal to zero.
   double normal_damping_constant =
-    -2 * this->model_parameter_beta[particle_type] *
+    2 * this->model_parameter_beta[particle_type] *
     sqrt(particle_properties[DEM::PropertiesIndex::mass] *
          normal_spring_constant);
 
+  // REF :  R. Garg, J. Galvin-Carney, T. Li, and S. Pannala, “Documentation of
+  // open-source MFIX–DEM software for gas-solids flows,” Tingwen Li Dr., p. 10,
+  // Sep. 2012.
+  // There is a minus sign since the tangential force is apply in the opposite
+  // direction of the tangential_overlap
+  double tangential_spring_constant = -normal_spring_constant * 0.4;
 
   double tangential_damping_constant =
     normal_damping_constant * 0.6324555320336759; // sqrt(0.4)
 
   // Calculation of normal force using spring and dashpot normal forces
-  // TODO , there's an inconsistency with the particle-particle force
-  //  calculation. The sign of the damping part should be a "+" and not a "-"
   Tensor<1, 3> normal_force =
-    (normal_spring_constant * contact_info.normal_overlap - // TODO
+    (normal_spring_constant * contact_info.normal_overlap +
      normal_damping_constant * contact_info.normal_relative_velocity) *
-    contact_info.normal_vector;
+    normal_vector;
 
   // Calculation of tangential force
   Tensor<1, 3> tangential_force =
-    (tangential_spring_constant * contact_info.tangential_overlap -
+    (tangential_spring_constant * contact_info.tangential_overlap +
      tangential_damping_constant * contact_info.tangential_relative_velocity);
 
   double coulomb_threshold =
@@ -437,14 +442,13 @@ ParticleWallLinearForce<dim>::calculate_linear_contact_force_and_torque(
         tangential_force / (tangential_spring_constant + DBL_MIN);
     }
 
-  // Calculation of torque
-  // First calculation of torque due to tangential force acting on
-  // particle
+  // Calculation torque caused by tangential force
+  // We add the minus sign here since the tangential_force apply on the particle
+  // is in the opposite direction
   Tensor<1, 3> tangential_torque =
     cross_product_3d((0.5 * particle_properties[DEM::PropertiesIndex::dp] *
-                      contact_info.normal_vector),
-                     tangential_force);
-
+                      normal_vector),
+                     -tangential_force);
 
   // Rolling resistance torque
   Tensor<1, 3> rolling_resistance_torque =

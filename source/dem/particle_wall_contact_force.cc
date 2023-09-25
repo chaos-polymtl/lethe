@@ -29,8 +29,8 @@ ParticleWallContactForce<dim>::update_contact_information(
   const double                     dt)
 {
   // i is the particle, j is the wall.
-  // we need to put a minus sign infront of the normal_vector because it doesn't
-  // respect de convention (i -> j)
+  // we need to put a minus sign infront of the normal_vector to respect the
+  // convention (i -> j)
   auto               normal_vector = -contact_info.normal_vector;
   const unsigned int boundary_id   = contact_info.boundary_id;
 
@@ -41,7 +41,6 @@ ParticleWallContactForce<dim>::update_contact_information(
   particle_velocity[1] = particle_properties[DEM::PropertiesIndex::v_y];
   particle_velocity[2] = particle_properties[DEM::PropertiesIndex::v_z];
 
-
   Tensor<1, 3> particle_angular_velocity;
   particle_angular_velocity[0] =
     particle_properties[DEM::PropertiesIndex::omega_x];
@@ -50,7 +49,7 @@ ParticleWallContactForce<dim>::update_contact_information(
   particle_angular_velocity[2] =
     particle_properties[DEM::PropertiesIndex::omega_z];
 
-  // Defining relative contact velocity
+  // Defining relative contact velocity using the convention
   // v_ij = v_j - v_i
   Tensor<1, 3> contact_relative_velocity =
     this->boundary_translational_velocity_map[boundary_id] - particle_velocity +
@@ -100,8 +99,8 @@ ParticleWallContactForce<dim>::
     const double                     center_of_rotation_particle_distance)
 {
   // i is the particle, j is the wall.
-  // we need to put a minus sign infront of the normal_vector because it doesn't
-  // respect de convention (i -> j)
+  // we need to put a minus sign infront of the normal_vector to respect the
+  // convention (i -> j)
   const Tensor<1, 3> normal_vector = -contact_info.normal_vector;
 
   // Using velocity and angular velocity of particle as
