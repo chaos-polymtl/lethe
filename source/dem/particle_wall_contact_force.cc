@@ -53,10 +53,10 @@ ParticleWallContactForce<dim>::update_contact_information(
   // Defining relative contact velocity
   // v_ij = v_j - v_i
   Tensor<1, 3> contact_relative_velocity =
-    this->boundary_translational_velocity_map[boundary_id] - particle_velocity -
+    this->boundary_translational_velocity_map[boundary_id] - particle_velocity +
     cross_product_3d((this->triangulation_radius *
                         this->boundary_rotational_speed_map[boundary_id] *
-                        this->boundary_rotational_vector[boundary_id] +
+                        this->boundary_rotational_vector[boundary_id] -
                       0.5 * particle_properties[DEM::PropertiesIndex::dp] *
                         particle_angular_velocity),
                      normal_vector);
@@ -66,9 +66,6 @@ ParticleWallContactForce<dim>::update_contact_information(
     contact_relative_velocity * normal_vector;
   Tensor<1, 3> normal_relative_velocity =
     normal_relative_velocity_value * normal_vector;
-
-
-  // std::cout << normal_relative_velocity_value << std::endl;
 
   // Calculation of tangential relative velocity
   Tensor<1, 3> tangential_relative_velocity =
@@ -102,7 +99,10 @@ ParticleWallContactForce<dim>::
     const Tensor<1, 3>              &cut_cell_rotational_velocity,
     const double                     center_of_rotation_particle_distance)
 {
-  const Tensor<1, 3> normal_vector = contact_info.normal_vector;
+  // i is the particle, j is the wall.
+  // we need to put a minus sign infront of the normal_vector because it doesn't
+  // respect de convention (i -> j)
+  const Tensor<1, 3> normal_vector = -contact_info.normal_vector;
 
   // Using velocity and angular velocity of particle as
   // local vectors
@@ -121,12 +121,13 @@ ParticleWallContactForce<dim>::
     particle_properties[DEM::PropertiesIndex::omega_z];
 
   // Defining relative contact velocity
+  // v_ij = v_j - v_i
   Tensor<1, 3> contact_relative_velocity =
-    particle_velocity - cut_cell_translational_velocity +
-    cross_product_3d((0.5 * particle_properties[DEM::PropertiesIndex::dp] *
-                        particle_angular_velocity +
-                      center_of_rotation_particle_distance *
-                        cut_cell_rotational_velocity),
+    cut_cell_translational_velocity - particle_velocity +
+    cross_product_3d((center_of_rotation_particle_distance *
+                        cut_cell_rotational_velocity -
+                      0.5 * particle_properties[DEM::PropertiesIndex::dp] *
+                        particle_angular_velocity),
                      normal_vector);
 
   // Calculation of normal relative velocity
