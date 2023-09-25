@@ -627,8 +627,8 @@ IBParticlesDEM<dim>::calculate_pw_contact_force(
                   particle.mass,
                   particle.radius);
               // Updating the force of particles in the particle handler
-              contact_force[particle.particle_id] +=
-                normal_force + tangential_force;
+              contact_force[particle.particle_id] -=
+                (normal_force + tangential_force);
               // Updating the torque acting on particles
               contact_torque[particle.particle_id] +=
                 tangential_torque + rolling_resistance_torque;
