@@ -43,8 +43,8 @@
 
 #include <deal.II/numerics/vector_tools.h>
 
-template <int dim, typename OperatorType>
-MFNavierStokesSolver<dim, OperatorType>::MFNavierStokesSolver(
+template <int dim>
+MFNavierStokesSolver<dim>::MFNavierStokesSolver(
   SimulationParameters<dim> &nsparam)
   : NavierStokesBase<dim, VectorType, IndexSet>(nsparam)
 {
@@ -56,19 +56,25 @@ MFNavierStokesSolver<dim, OperatorType>::MFNavierStokesSolver(
 
   this->fe = std::make_shared<FESystem<dim>>(
     FE_Q<dim>(nsparam.fem_parameters.velocity_order), dim + 1);
-
-  system_operator = std::make_shared<OperatorType>();
+  if ((nsparam.stabilization.use_default_stabilization == true) ||
+      nsparam.stabilization.stabilization ==
+        Parameters::Stabilization::NavierStokesStabilization::pspg_supg)
+    system_operator =
+      std::make_shared<NavierStokesSUPGPSPGOperator<dim, double>>();
+  else
+    throw std::runtime_error(
+      "Only SUPG/PSPG stabilization is supported at the moment.");
 }
 
-template <int dim, typename OperatorType>
-MFNavierStokesSolver<dim, OperatorType>::~MFNavierStokesSolver()
+template <int dim>
+MFNavierStokesSolver<dim>::~MFNavierStokesSolver()
 {
   this->dof_handler.clear();
 }
 
-template <int dim, typename OperatorType>
+template <int dim>
 void
-MFNavierStokesSolver<dim, OperatorType>::solve()
+MFNavierStokesSolver<dim>::solve()
 {
   read_mesh_and_manifolds(
     *this->triangulation,
@@ -119,9 +125,9 @@ MFNavierStokesSolver<dim, OperatorType>::solve()
   this->finish_simulation();
 }
 
-template <int dim, typename OperatorType>
+template <int dim>
 void
-MFNavierStokesSolver<dim, OperatorType>::setup_dofs_fd()
+MFNavierStokesSolver<dim>::setup_dofs_fd()
 {
   TimerOutput::Scope t(this->computing_timer, "Setup DoFs");
 
@@ -204,9 +210,9 @@ MFNavierStokesSolver<dim, OperatorType>::setup_dofs_fd()
               << std::endl;
 }
 
-template <int dim, typename OperatorType>
+template <int dim>
 void
-MFNavierStokesSolver<dim, OperatorType>::update_boundary_conditions()
+MFNavierStokesSolver<dim>::update_boundary_conditions()
 {
   double time = this->simulation_control->get_current_time();
   for (unsigned int i_bc = 0;
@@ -229,9 +235,9 @@ MFNavierStokesSolver<dim, OperatorType>::update_boundary_conditions()
   this->present_solution = this->local_evaluation_point;
 }
 
-template <int dim, typename OperatorType>
+template <int dim>
 void
-MFNavierStokesSolver<dim, OperatorType>::set_initial_condition_fd(
+MFNavierStokesSolver<dim>::set_initial_condition_fd(
   Parameters::InitialConditionType initial_condition_type,
   bool                             restart)
 {
@@ -254,17 +260,17 @@ MFNavierStokesSolver<dim, OperatorType>::set_initial_condition_fd(
     }
 }
 
-template <int dim, typename OperatorType>
+template <int dim>
 void
-MFNavierStokesSolver<dim, OperatorType>::assemble_system_matrix()
+MFNavierStokesSolver<dim>::assemble_system_matrix()
 {
   // Required for compilation but not used for matrix free solvers.
   TimerOutput::Scope t(this->computing_timer, "Assemble matrix");
 }
 
-template <int dim, typename OperatorType>
+template <int dim>
 void
-MFNavierStokesSolver<dim, OperatorType>::assemble_system_rhs()
+MFNavierStokesSolver<dim>::assemble_system_rhs()
 {
   TimerOutput::Scope t(this->computing_timer, "Assemble RHS");
 
@@ -274,21 +280,21 @@ MFNavierStokesSolver<dim, OperatorType>::assemble_system_rhs()
   this->system_rhs *= -1.0;
 }
 
-template <int dim, typename OperatorType>
+template <int dim>
 void
-MFNavierStokesSolver<dim,
-                     OperatorType>::update_multiphysics_time_average_solution()
+MFNavierStokesSolver<dim>::update_multiphysics_time_average_solution()
 {
   // TODO
 }
 
-template <int dim, typename OperatorType>
+template <int dim>
 double
-MFNavierStokesSolver<dim, OperatorType>::estimate_omega(
-  std::shared_ptr<OperatorType> &mg_operator)
+MFNavierStokesSolver<dim>::estimate_omega(
+  std::shared_ptr<NavierStokesOperatorBase<dim, double>> &mg_operator)
 {
   double omega = 0.0;
 
+  using OperatorType               = NavierStokesOperatorBase<dim, double>;
   using SmootherPreconditionerType = DiagonalMatrix<VectorType>;
   using ChebyshevPreconditionerType =
     PreconditionChebyshev<OperatorType, VectorType, SmootherPreconditionerType>;
@@ -332,13 +338,13 @@ MFNavierStokesSolver<dim, OperatorType>::estimate_omega(
   return omega;
 }
 
-template <int dim, typename OperatorType>
+template <int dim>
 void
-MFNavierStokesSolver<dim, OperatorType>::solve_with_LSMG(
-  SolverGMRES<VectorType> &solver)
+MFNavierStokesSolver<dim>::solve_with_LSMG(SolverGMRES<VectorType> &solver)
 {
   this->computing_timer.enter_subsection("Setup LSMG");
 
+  using OperatorType               = NavierStokesOperatorBase<dim, double>;
   using LSTransferType             = MGTransferMatrixFree<dim, double>;
   using SmootherPreconditionerType = DiagonalMatrix<VectorType>;
   using SmootherType =
@@ -406,7 +412,12 @@ MFNavierStokesSolver<dim, OperatorType>::solve_with_LSMG(
         mg_constrained_dofs.get_boundary_indices(level));
       level_constraints[level].close();
 
-      mg_operators[level] = std::make_shared<OperatorType>();
+      if ((this->simulation_parameters.stabilization
+             .use_default_stabilization == true) ||
+          this->simulation_parameters.stabilization.stabilization ==
+            Parameters::Stabilization::NavierStokesStabilization::pspg_supg)
+        mg_operators[level] =
+          std::make_shared<NavierStokesSUPGPSPGOperator<dim, double>>();
 
       mg_operators[level]->reinit(
         *this->mapping,
@@ -629,13 +640,13 @@ MFNavierStokesSolver<dim, OperatorType>::solve_with_LSMG(
   this->computing_timer.leave_subsection("Solve linear system");
 }
 
-template <int dim, typename OperatorType>
+template <int dim>
 void
-MFNavierStokesSolver<dim, OperatorType>::solve_with_GCMG(
-  SolverGMRES<VectorType> &solver)
+MFNavierStokesSolver<dim>::solve_with_GCMG(SolverGMRES<VectorType> &solver)
 {
   this->computing_timer.enter_subsection("Setup GCMG");
 
+  using OperatorType   = NavierStokesOperatorBase<dim, double>;
   using GCTransferType = MGTransferGlobalCoarsening<dim, VectorType>;
   using SmootherPreconditionerType = DiagonalMatrix<VectorType>;
   using SmootherType =
@@ -763,7 +774,12 @@ MFNavierStokesSolver<dim, OperatorType>::solve_with_GCMG(
 
       level_constraint.close();
 
-      mg_operators[level] = std::make_shared<OperatorType>();
+      if ((this->simulation_parameters.stabilization
+             .use_default_stabilization == true) ||
+          this->simulation_parameters.stabilization.stabilization ==
+            Parameters::Stabilization::NavierStokesStabilization::pspg_supg)
+        mg_operators[level] =
+          std::make_shared<NavierStokesSUPGPSPGOperator<dim, double>>();
 
       mg_operators[level]->reinit(
         *this->mapping,
@@ -937,10 +953,9 @@ MFNavierStokesSolver<dim, OperatorType>::solve_with_GCMG(
   this->computing_timer.leave_subsection("Solve linear system");
 }
 
-template <int dim, typename OperatorType>
+template <int dim>
 void
-MFNavierStokesSolver<dim, OperatorType>::solve_with_ILU(
-  SolverGMRES<VectorType> &solver)
+MFNavierStokesSolver<dim>::solve_with_ILU(SolverGMRES<VectorType> &solver)
 {
   this->computing_timer.enter_subsection("Setup ILU");
 
@@ -973,9 +988,9 @@ MFNavierStokesSolver<dim, OperatorType>::solve_with_ILU(
   this->computing_timer.leave_subsection("Solve linear system");
 }
 
-template <int dim, typename OperatorType>
+template <int dim>
 void
-MFNavierStokesSolver<dim, OperatorType>::define_non_zero_constraints()
+MFNavierStokesSolver<dim>::define_non_zero_constraints()
 {
   double time = this->simulation_control->get_current_time();
   FEValuesExtractors::Vector velocities(0);
@@ -1061,9 +1076,9 @@ MFNavierStokesSolver<dim, OperatorType>::define_non_zero_constraints()
   nonzero_constraints.close();
 }
 
-template <int dim, typename OperatorType>
+template <int dim>
 void
-MFNavierStokesSolver<dim, OperatorType>::define_zero_constraints()
+MFNavierStokesSolver<dim>::define_zero_constraints()
 {
   FEValuesExtractors::Vector velocities(0);
   FEValuesExtractors::Scalar pressure(dim);
@@ -1140,11 +1155,10 @@ MFNavierStokesSolver<dim, OperatorType>::define_zero_constraints()
   this->zero_constraints.close();
 }
 
-template <int dim, typename OperatorType>
+template <int dim>
 void
-MFNavierStokesSolver<dim, OperatorType>::solve_linear_system(
-  const bool initial_step,
-  const bool /* renewed_matrix */)
+MFNavierStokesSolver<dim>::solve_linear_system(const bool initial_step,
+                                               const bool /* renewed_matrix */)
 {
   const double absolute_residual =
     this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
@@ -1161,19 +1175,18 @@ MFNavierStokesSolver<dim, OperatorType>::solve_linear_system(
   this->rescale_pressure_dofs_in_newton_update();
 }
 
-template <int dim, typename OperatorType>
+template <int dim>
 void
-MFNavierStokesSolver<dim, OperatorType>::assemble_L2_projection()
+MFNavierStokesSolver<dim>::assemble_L2_projection()
 {
   // TODO
 }
 
-template <int dim, typename OperatorType>
+template <int dim>
 void
-MFNavierStokesSolver<dim, OperatorType>::solve_system_GMRES(
-  const bool   initial_step,
-  const double absolute_residual,
-  const double relative_residual)
+MFNavierStokesSolver<dim>::solve_system_GMRES(const bool   initial_step,
+                                              const double absolute_residual,
+                                              const double relative_residual)
 {
   auto &system_rhs          = this->system_rhs;
   auto &nonzero_constraints = this->nonzero_constraints;
@@ -1250,5 +1263,5 @@ MFNavierStokesSolver<dim, OperatorType>::solve_system_GMRES(
   constraints_used.distribute(this->newton_update);
 }
 
-template class MFNavierStokesSolver<2, NavierStokesSUPGPSPGOperator<2, double>>;
-template class MFNavierStokesSolver<3, NavierStokesSUPGPSPGOperator<3, double>>;
+template class MFNavierStokesSolver<2>;
+template class MFNavierStokesSolver<3>;

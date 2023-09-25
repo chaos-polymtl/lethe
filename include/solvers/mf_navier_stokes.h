@@ -37,7 +37,7 @@ using namespace dealii;
  * @tparam dim An integer that denotes the dimension of the space in which
  * the flow is solved.
  */
-template <int dim, typename OperatorType>
+template <int dim>
 class MFNavierStokesSolver
   : public NavierStokesBase<dim,
                             LinearAlgebra::distributed::Vector<double>,
@@ -192,11 +192,12 @@ private:
    * @return double Omega relaxation parameter
    */
   double
-  estimate_omega(std::shared_ptr<OperatorType> &mg_operator);
+  estimate_omega(
+    std::shared_ptr<NavierStokesOperatorBase<dim, double>> &mg_operator);
 
 protected:
   // Matrix-free operator
-  std::shared_ptr<OperatorType> system_operator;
+  std::shared_ptr<NavierStokesOperatorBase<dim, double>> system_operator;
   // Preconditioners
   std::shared_ptr<PreconditionMG<dim, VectorType, LSTransferType>>
     ls_multigrid_preconditioner;
