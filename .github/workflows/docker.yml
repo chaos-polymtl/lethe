@@ -1,4 +1,3 @@
-#Generates a docker image for Lethe
 name: Docker Image Build & Push
 
 on:
