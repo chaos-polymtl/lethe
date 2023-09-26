@@ -11,7 +11,6 @@ permissions:
 
 jobs:
   indent:
-    # run the indent checks
 
     name: indent
     runs-on: [ubuntu-20.04]

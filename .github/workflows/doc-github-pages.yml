@@ -2,6 +2,11 @@ name: Publish doc to GitHub Pages
 
 on: push
 
+# Cancels running instances when a pull request is updated by a commit
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref || github.run_id }}
+  cancel-in-progress: true
+
 env:
   SPHINX_VERSION: 4.3.1
 

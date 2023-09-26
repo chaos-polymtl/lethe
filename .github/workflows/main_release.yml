@@ -9,6 +9,11 @@ on:
     paths-ignore:
       - 'doc/**'
 
+# Cancels running instances when a pull request is updated by a commit
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref || github.run_id }}
+  cancel-in-progress: true
+
 env:
   COMPILE_JOBS: 2
   MULTI_CORE_TESTS_REGEX: "mpirun=2"
