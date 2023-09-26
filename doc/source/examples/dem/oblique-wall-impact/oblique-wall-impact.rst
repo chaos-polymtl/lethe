@@ -16,9 +16,9 @@ Features
 Files Used in This Example
 ----------------------------
 
-- ``/examples/dem/3d-bouncing-particle/oblique_wall_collilsion_template.prm``
-- ``/examples/dem/3d-bouncing-particle/oblique_wall_collision_case_generator.py``
-- ``/examples/dem/3d-bouncing-particle/oblique_wall_collision_post-processing.py``
+- ``/examples/dem/3d-bouncing-particle/oblique_wall_impact_template.prm``
+- ``/examples/dem/3d-bouncing-particle/ooblique_wall_impact_case_generator.py``
+- ``/examples/dem/3d-bouncing-particle/oblique_wall_impact_post-processing.py``
 
 
 -------------------------
@@ -118,9 +118,9 @@ Using the following command:
 
 .. code-block:: 
 
-  python3 oblique_wall_collision_case_generator.py
+  python3 oblique_wall_impact_case_generator.py
 
-Generates 34 file with the prefix ``run_oblique_collision`` and the ``{angle}.prm`` as a suffix. 
+Generates 34 file with the prefix ``run_oblique_impact_`` and the ``{angle}.prm`` as a suffix.
 
 ----------------------
 Running the Simulation
@@ -136,11 +136,11 @@ Depending on the speed of your computer, all 34 simulation should be completed i
 ---------------
 Post-processing
 ---------------
-A Python post-processing code called ``blique_wall_collision_post-processing.py`` is provided with this example. It is used to compare the rebound angle, the angular velocity and the tangential coefficient of restituion of the particles. Use the following line in your command line to run the post-processing code :
+A Python post-processing code called ``oblique_wall_impact_post-processing.py`` is provided with this example. It is used to compare the rebound angle, the angular velocity and the tangential coefficient of restituion of the particles. Use the following line in your command line to run the post-processing code :
 
 .. code-block:: text
 
-  python3 bouncing_particle_post_processing.py
+  python3 oblique_wall_impact_post-processing.py
 
 .. important::
 

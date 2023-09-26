@@ -26,7 +26,7 @@ subsection model parameters
     set dynamic contact search size coefficient = 0.9
     set neighborhood threshold                  = 1.3
   end
-  subsection contact model
+  subsection load balancing
     set load balance method = frequent
     set frequency           = 10000
   end
