@@ -11,7 +11,7 @@ on:
 
 # Cancels running instances when a pull request is updated by a commit
 concurrency:
-  group: ${ {github.event_name }}-${{ github.workflow }}-${{ github.ref }}
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: ${{github.event_name == 'pull_request'}}
 
 env:
