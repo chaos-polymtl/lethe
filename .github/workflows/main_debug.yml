@@ -5,9 +5,6 @@ on:
   push:
     paths-ignore:
       - 'doc/**'
-  pull_request_target:
-    paths-ignore:
-      - 'doc/**'
     
 # Cancels running instances when a pull request is updated by a commit
 concurrency:
