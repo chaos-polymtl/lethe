@@ -9,7 +9,7 @@ set dimension = 3
 
 subsection simulation control
   set method            = steady
-  set number mesh adapt = 1
+  set number mesh adapt = 0
   set output frequency  = 0
 end
 
