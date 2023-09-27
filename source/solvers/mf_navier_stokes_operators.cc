@@ -111,7 +111,7 @@ NavierStokesOperatorBase<dim, number>::reinit(
   additional_data.mg_level = mg_level;
 
   matrix_free.reinit(
-    mapping, dof_handler, constraints, quadrature, additional_data);
+    mapping, dof_handler, this->constraints, quadrature, additional_data);
 
   this->fe_degree = dof_handler.get_fe().degree;
 
@@ -119,7 +119,7 @@ NavierStokesOperatorBase<dim, number>::reinit(
 
   this->kinematic_viscosity = kinematic_viscosity;
 
-  this->compute_element_size();
+  // this->compute_element_size();
 
   constrained_indices.clear();
   for (auto i : this->matrix_free.get_constrained_dofs())
@@ -263,6 +263,13 @@ NavierStokesOperatorBase<dim, number>::initialize_dof_vector(
 }
 
 template <int dim, typename number>
+const std::shared_ptr<const Utilities::MPI::Partitioner> &
+NavierStokesOperatorBase<dim, number>::get_vector_partitioner() const
+{
+  return matrix_free.get_vector_partitioner();
+}
+
+template <int dim, typename number>
 void
 NavierStokesOperatorBase<dim, number>::vmult(VectorType       &dst,
                                              const VectorType &src) const
@@ -360,22 +367,50 @@ NavierStokesOperatorBase<dim, number>::get_system_matrix() const
     {
       const auto &dof_handler = this->matrix_free.get_dof_handler();
 
-      TrilinosWrappers::SparsityPattern dsp(
-        this->matrix_free.get_mg_level() != numbers::invalid_unsigned_int ?
-          dof_handler.locally_owned_mg_dofs(this->matrix_free.get_mg_level()) :
-          dof_handler.locally_owned_dofs(),
-        dof_handler.get_triangulation().get_communicator());
+      IndexSet locally_relevant_dofs;
+      IndexSet locally_owned_dofs;
+
+      if (this->matrix_free.get_mg_level() != numbers::invalid_unsigned_int)
+        {
+          DoFTools::extract_locally_relevant_level_dofs(
+            dof_handler,
+            this->matrix_free.get_mg_level(),
+            locally_relevant_dofs);
+          locally_owned_dofs =
+            dof_handler.locally_owned_mg_dofs(this->matrix_free.get_mg_level());
+        }
+      else
+        {
+          DoFTools::extract_locally_relevant_dofs(dof_handler,
+                                                  locally_relevant_dofs);
+          locally_owned_dofs = dof_handler.locally_owned_dofs();
+        }
+
+      DynamicSparsityPattern dsp(locally_relevant_dofs);
 
       if (this->matrix_free.get_mg_level() != numbers::invalid_unsigned_int)
         MGTools::make_sparsity_pattern(dof_handler,
                                        dsp,
                                        this->matrix_free.get_mg_level(),
-                                       this->constraints);
+                                       this->constraints,
+                                       false);
       else
-        DoFTools::make_sparsity_pattern(dof_handler, dsp, this->constraints);
+        DoFTools::make_sparsity_pattern(dof_handler,
+                                        dsp,
+                                        this->constraints,
+                                        false);
 
-      dsp.compress();
-      system_matrix.reinit(dsp);
+
+      SparsityTools::distribute_sparsity_pattern(
+        dsp,
+        locally_owned_dofs,
+        dof_handler.get_triangulation().get_communicator(),
+        locally_relevant_dofs);
+
+      system_matrix.reinit(locally_owned_dofs,
+                           locally_owned_dofs,
+                           dsp,
+                           dof_handler.get_triangulation().get_communicator());
 
       MatrixFreeTools::compute_matrix(
         matrix_free,
@@ -460,38 +495,6 @@ NavierStokesOperatorBase<dim, number>::compute_inverse_diagonal(
 
 template <int dim, typename number>
 void
-NavierStokesOperatorBase<dim, number>::do_cell_integral_local(
-  FECellIntegrator &integrator) const
-{
-  (void)integrator;
-
-  AssertThrow(
-    false,
-    dealii::ExcMessage(
-      "NavierStokesOperatorBase::do_cell_integral_local() has not been implemented!"));
-}
-
-template <int dim, typename number>
-void
-NavierStokesOperatorBase<dim, number>::local_evaluate_residual(
-  const MatrixFree<dim, number>               &matrix_free,
-  VectorType                                  &dst,
-  const VectorType                            &src,
-  const std::pair<unsigned int, unsigned int> &range) const
-{
-  (void)matrix_free;
-  (void)dst;
-  (void)src;
-  (void)range;
-
-  AssertThrow(
-    false,
-    dealii::ExcMessage(
-      "NavierStokesOperatorBase::local_evaluate_residual() has not been implemented!"));
-}
-
-template <int dim, typename number>
-void
 NavierStokesOperatorBase<dim, number>::do_cell_integral_range(
   const MatrixFree<dim, number>               &matrix_free,
   VectorType                                  &dst,
@@ -560,7 +563,7 @@ NavierStokesSUPGPSPGOperator<dim, number>::do_cell_integral_local(
 
   const unsigned int cell = integrator.get_current_cell_index();
 
-  auto h = integrator.read_cell_data(this->get_element_size());
+  // auto h = integrator.read_cell_data(this->get_element_size());
 
   for (unsigned int q = 0; q < integrator.n_q_points; ++q)
     {
@@ -592,6 +595,29 @@ NavierStokesSUPGPSPGOperator<dim, number>::do_cell_integral_local(
       // Calculate tau
       VectorizedArray<number> u_mag = VectorizedArray<number>(1e-12);
       VectorizedArray<number> tau   = VectorizedArray<number>(0.0);
+
+      std::array<number, VectorizedArray<number>::size()> h_k;
+      std::array<number, VectorizedArray<number>::size()> h;
+
+      for (auto lane = 0u;
+           lane < this->matrix_free.n_active_entries_per_cell_batch(cell);
+           lane++)
+        {
+          h_k[lane] =
+            this->matrix_free.get_cell_iterator(cell, lane)->measure();
+        }
+
+      for (unsigned int v = 0; v < VectorizedArray<number>::size(); ++v)
+        {
+          if (dim == 2)
+            {
+              h[v] = std::sqrt(4. * h_k[v] / M_PI) / this->fe_degree;
+            }
+          else if (dim == 3)
+            {
+              h[v] = std::pow(6 * h_k[v] / M_PI, 1. / 3.) / this->fe_degree;
+            }
+        }
 
       for (unsigned int k = 0; k < dim; ++k)
         u_mag += Utilities::fixed_power<2>(previous_values[k]);
@@ -718,7 +744,7 @@ NavierStokesSUPGPSPGOperator<dim, number>::local_evaluate_residual(
       integrator.evaluate(EvaluationFlags::values | EvaluationFlags::gradients |
                           EvaluationFlags::hessians);
 
-      auto h = integrator.read_cell_data(this->get_element_size());
+      // auto h = integrator.read_cell_data(this->get_element_size());
 
       for (unsigned int q = 0; q < integrator.n_q_points; ++q)
         {
@@ -740,6 +766,28 @@ NavierStokesSUPGPSPGOperator<dim, number>::local_evaluate_residual(
           // Calculate tau
           VectorizedArray<number> u_mag = VectorizedArray<number>(1e-12);
           VectorizedArray<number> tau   = VectorizedArray<number>(0.0);
+
+          std::array<number, VectorizedArray<number>::size()> h_k;
+          std::array<number, VectorizedArray<number>::size()> h;
+
+          for (auto lane = 0u;
+               lane < matrix_free.n_active_entries_per_cell_batch(cell);
+               lane++)
+            {
+              h_k[lane] = matrix_free.get_cell_iterator(cell, lane)->measure();
+            }
+
+          for (unsigned int v = 0; v < VectorizedArray<number>::size(); ++v)
+            {
+              if (dim == 2)
+                {
+                  h[v] = std::sqrt(4. * h_k[v] / M_PI) / this->fe_degree;
+                }
+              else if (dim == 3)
+                {
+                  h[v] = std::pow(6 * h_k[v] / M_PI, 1. / 3.) / this->fe_degree;
+                }
+            }
 
           for (unsigned int k = 0; k < dim; ++k)
             u_mag += Utilities::fixed_power<2>(value[k]);

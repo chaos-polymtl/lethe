@@ -18,8 +18,9 @@
 
 #include <solvers/simulation_parameters.h>
 
+#include <deal.II/lac/dynamic_sparsity_pattern.h>
+#include <deal.II/lac/sparsity_tools.h>
 #include <deal.II/lac/trilinos_sparse_matrix.h>
-#include <deal.II/lac/trilinos_sparsity_pattern.h>
 
 #include <deal.II/matrix_free/fe_evaluation.h>
 #include <deal.II/matrix_free/matrix_free.h>
@@ -135,6 +136,12 @@ public:
   initialize_dof_vector(VectorType &vec) const;
 
   /**
+   * @brief Get the vector partitioner object required for LS multigrid
+   */
+  const std::shared_ptr<const Utilities::MPI::Partitioner> &
+  get_vector_partitioner() const;
+
+  /**
    * @brief Perform an operator evaluation dst = A*src by looping with the help of the
    * MatrixFree object over all cells and evaluatinf the effect of cell
    * integrals.
@@ -236,7 +243,7 @@ protected:
    * quadrature points and perform cell integrations.
    */
   virtual void
-  do_cell_integral_local(FECellIntegrator &integrator) const;
+  do_cell_integral_local(FECellIntegrator &integrator) const = 0;
 
   /**
    * @brief Loop over all cell batches withing certain range and perform a cell
@@ -271,7 +278,7 @@ protected:
     const MatrixFree<dim, number>               &matrix_free,
     VectorType                                  &dst,
     const VectorType                            &src,
-    const std::pair<unsigned int, unsigned int> &range) const;
+    const std::pair<unsigned int, unsigned int> &range) const = 0;
 
 
 private:
@@ -329,7 +336,7 @@ public:
 
   NavierStokesSUPGPSPGOperator();
 
-private:
+protected:
   /**
    * @brief Perform cell integral on a cell batch without gathering and scattering
    * the values, and according to the Jacobian of the Navier-Stokes equations

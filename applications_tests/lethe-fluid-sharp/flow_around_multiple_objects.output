@@ -3,12 +3,12 @@ Running on 1 MPI rank(s)...
    Number of degrees of freedom: 3267
    Volume of triangulation:      64
 Initial refinement around IB particles - Step : 1 of 2
-   Number of active cells:       1786
-   Number of degrees of freedom: 5688
+   Number of active cells:       1780
+   Number of degrees of freedom: 5676
    Volume of triangulation:      64
 Initial refinement around IB particles - Step : 2 of 2
-   Number of active cells:       4456
-   Number of degrees of freedom: 14019
+   Number of active cells:       4432
+   Number of degrees of freedom: 13974
    Volume of triangulation:      64
 
 *****************************
@@ -18,20 +18,20 @@ Steady iteration:        1/2
 |  Force  summary particles                |
 +------------------------------------------+
 particle_ID  time     T_z       f_x       f_y      f_xv      f_yv      f_xp      f_yp    
-          0 1.0000 -0.532797 29.507038  6.017977 11.315508  0.902214 18.191530  5.115764 
-          1 1.0000 -1.234651 33.907446 -0.997743  9.437199  5.217402 24.470247 -6.215145 
-          2 1.0000  4.586123 39.240155 -8.988232 14.382027 -2.839330 24.858128 -6.148902 
+          0 1.0000 -0.532677 29.507053  6.018805 11.315712  0.902144 18.191341  5.116661 
+          1 1.0000 -1.234538 33.907395 -0.998367  9.436954  5.217027 24.470442 -6.215393 
+          2 1.0000  4.586253 39.240008 -8.987872 14.381745 -2.839149 24.858263 -6.148722 
 
 *****************************
 Steady iteration:        2/2
 *****************************
-   Number of active cells:       15058
-   Number of degrees of freedom: 46578
+   Number of active cells:       14995
+   Number of degrees of freedom: 46473
    Volume of triangulation:      64
 +------------------------------------------+
 |  Force  summary particles                |
 +------------------------------------------+
 particle_ID  time     T_z       f_x       f_y      f_xv      f_yv      f_xp      f_yp    
-          0 2.0000 -0.856059 30.311155  6.042428 12.072314  0.826379 18.238841  5.216049 
-          1 2.0000 -1.447507 34.394864 -0.379059  9.679203  5.717367 24.715661 -6.096426 
-          2 2.0000  4.925797 39.640418 -8.931217 14.831124 -2.722333 24.809293 -6.208884 
+          0 2.0000 -0.855855 30.309240  6.042398 12.071573  0.826363 18.237667  5.216034 
+          1 2.0000 -1.447204 34.394128 -0.379702  9.678809  5.716880 24.715319 -6.096582 
+          2 2.0000  4.925764 39.639927 -8.928739 14.830778 -2.721482 24.809149 -6.207257 

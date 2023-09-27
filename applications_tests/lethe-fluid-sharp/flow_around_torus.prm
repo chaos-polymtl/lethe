@@ -98,7 +98,7 @@ subsection particles
 
   subsection local mesh refinement
     set initial refinement                = 1
-    set refine mesh inside radius factor  = 0.7
+    set refine mesh inside radius factor  = 0
     set refine mesh outside radius factor = 1.5
   end
 

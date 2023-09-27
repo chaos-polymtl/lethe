@@ -19,11 +19,11 @@ particle_ID  time    T_x      T_y       T_z        f_x        f_y      f_z      
 *****************************
 Steady iteration:        2/2
 *****************************
-   Number of active cells:       1597
-   Number of degrees of freedom: 8468
+   Number of active cells:       1569
+   Number of degrees of freedom: 8400
    Volume of triangulation:      4096
 +------------------------------------------+
 |  Force  summary particles                |
 +------------------------------------------+
 particle_ID  time     T_x      T_y       T_z       f_x       f_y       f_z      f_xv      f_yv      f_zv      f_xp      f_yp     f_zp    
-          0 2.0000 -5.892127 4.167713 49.214558 101.737292 5.530502 -1.637036 62.065099 -1.767011 -0.074418 39.672193 7.297513 -1.562618 
+          0 2.0000 -5.892136 4.172980 49.199106 101.531504 5.536231 -1.635766 61.966744 -1.760997 -0.073103 39.564760 7.297228 -1.562663

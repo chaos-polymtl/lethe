@@ -17,12 +17,12 @@ L2 error velocity : 0.111966 L2 error pressure: 1.00592
 *****************************
 Steady iteration:        2/2
 *****************************
-   Number of active cells:       1156
-   Number of degrees of freedom: 7344
+   Number of active cells:       1121
+   Number of degrees of freedom: 7368
    Volume of triangulation:      8
-div u : -0.0284233
-error at the weak BC : 0.125942
-L2 error velocity : 0.0936695 L2 error pressure: 1.10592
+div u : -0.0424303
+error at the weak BC : 0.12895
+L2 error velocity : 0.0949945 L2 error pressure: 1.10734
 cells  error_velocity     error_pressure   
   288 1.119665e-01    - 1.005917e+00     - 
- 1156 9.366954e-02 0.26 1.105916e+00 -0.14 
+ 1121 9.499450e-02 0.24 1.107336e+00 -0.14 

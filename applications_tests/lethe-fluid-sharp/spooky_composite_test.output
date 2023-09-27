@@ -7,8 +7,8 @@ Initial refinement around IB particles - Step : 1 of 2
    Number of degrees of freedom: 8508
    Volume of triangulation:      64
 Initial refinement around IB particles - Step : 2 of 2
-   Number of active cells:       5984
-   Number of degrees of freedom: 29332
+   Number of active cells:       6019
+   Number of degrees of freedom: 29572
    Volume of triangulation:      64
 
 *****************************
@@ -18,4 +18,4 @@ Steady iteration:        1/1
 |  Force  summary particles                |
 +------------------------------------------+
 particle_ID  time   T_x    T_y     T_z     f_x    f_y     f_z    f_xv    f_yv   f_zv    f_xp    f_yp   f_zp   
-          0 1.0000 0.2655 8.0513 -0.0310 43.0198 0.5542 -2.3635 19.8553 0.1188 -0.1908 23.1645 0.4354 -2.1727 
+          0 1.0000 0.2655 8.0514 -0.0309 43.0160 0.5542 -2.3626 19.8551 0.1188 -0.1902 23.1608 0.4354 -2.1724

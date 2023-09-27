@@ -2021,9 +2021,9 @@ namespace Parameters
 
         prm.declare_entry("preconditioner",
                           "ilu",
-                          Patterns::Selection("amg|ilu"),
+                          Patterns::Selection("amg|ilu|lsmg|gcmg"),
                           "The preconditioner for the linear solver."
-                          "Choices are <amg|ilu>.");
+                          "Choices are <amg|ilu|lsmg|gcmg>.");
 
         prm.declare_entry("ilu preconditioner fill",
                           "0",
@@ -2043,19 +2043,17 @@ namespace Parameters
         prm.declare_entry("amg preconditioner ilu fill",
                           "0",
                           Patterns::Double(),
-                          "amg preconditioner ilu smoother/coarsener fill");
+                          "amg preconditioner ilu smoother fill");
 
-        prm.declare_entry(
-          "amg preconditioner ilu absolute tolerance",
-          "1e-12",
-          Patterns::Double(),
-          "amg preconditioner ilu smoother/coarsener absolute tolerance");
+        prm.declare_entry("amg preconditioner ilu absolute tolerance",
+                          "1e-12",
+                          Patterns::Double(),
+                          "amg preconditioner ilu smoother absolute tolerance");
 
-        prm.declare_entry(
-          "amg preconditioner ilu relative tolerance",
-          "1.00",
-          Patterns::Double(),
-          "amg preconditioner ilu smoother/coarsener relative tolerance");
+        prm.declare_entry("amg preconditioner ilu relative tolerance",
+                          "1.00",
+                          Patterns::Double(),
+                          "amg preconditioner ilu smoother relative tolerance");
 
         prm.declare_entry("amg aggregation threshold",
                           "1e-14",
@@ -2083,6 +2081,53 @@ namespace Parameters
           "false",
           Patterns::Bool(),
           "A boolean that will force the linear solver to continue even if it fails");
+
+        prm.declare_entry("mg min level",
+                          "-1",
+                          Patterns::Integer(),
+                          "mg min level");
+
+        prm.declare_entry("mg level min cells",
+                          "-1",
+                          Patterns::Integer(),
+                          "mg minimum number of cells for coarse level");
+
+        prm.declare_entry("mg smoother iterations",
+                          "10",
+                          Patterns::Integer(),
+                          "mg smoother iterations for lsmg or gcmg");
+
+        prm.declare_entry("mg smoother relaxation",
+                          "0.5",
+                          Patterns::Double(),
+                          "mg smoother relaxation for lsmg or gcmg");
+
+        prm.declare_entry("mg coarse grid max iterations",
+                          "2000",
+                          Patterns::Integer(),
+                          "mg coarse grid iterations for lsmg or gcmg");
+
+        prm.declare_entry("mg coarse grid tolerance",
+                          "1e-14",
+                          Patterns::Double(),
+                          "mg coarse grid tolerance n for lsmg or gcmg");
+
+        prm.declare_entry("mg coarse grid reduce",
+                          "1e-4",
+                          Patterns::Double(),
+                          "mg coarse grid reduce for lsmg or gcmg");
+
+        prm.declare_entry("mg coarse grid max krylov vectors",
+                          "30",
+                          Patterns::Integer(),
+                          "mg coarse grid max krylov vectors for lsmg or gcmg");
+
+        prm.declare_entry(
+          "mg verbosity",
+          "verbose",
+          Patterns::Selection("quiet|verbose"),
+          "State whether LSMG or GCMG should print information about levels "
+          "Choices are <quiet|verbose>.");
       }
       prm.leave_subsection();
     }
@@ -2128,6 +2173,10 @@ namespace Parameters
           preconditioner = PreconditionerType::amg;
         else if (precond == "ilu")
           preconditioner = PreconditionerType::ilu;
+        else if (precond == "lsmg")
+          preconditioner = PreconditionerType::lsmg;
+        else if (precond == "gcmg")
+          preconditioner = PreconditionerType::gcmg;
         else
           throw std::logic_error(
             "Error, invalid preconditioner type. Choices are amg or ilu");
@@ -2149,6 +2198,24 @@ namespace Parameters
         amg_smoother_overlap      = prm.get_integer("amg smoother overlap");
         force_linear_solver_continuation =
           prm.get_bool("force linear solver continuation");
+        mg_min_level           = prm.get_integer("mg min level");
+        mg_level_min_cells     = prm.get_integer("mg level min cells");
+        mg_smoother_iterations = prm.get_integer("mg smoother iterations");
+        mg_smoother_relaxation = prm.get_double("mg smoother relaxation");
+        mg_coarse_grid_max_iterations =
+          prm.get_integer("mg coarse grid max iterations");
+        mg_coarse_grid_tolerance = prm.get_double("mg coarse grid tolerance");
+        mg_coarse_grid_reduce    = prm.get_double("mg coarse grid reduce");
+        mg_coarse_grid_max_krylov_vectors =
+          prm.get_integer("mg coarse grid max krylov vectors");
+        const std::string mg_op = prm.get("mg verbosity");
+        if (mg_op == "verbose")
+          mg_verbosity = Parameters::Verbosity::verbose;
+        else if (mg_op == "quiet")
+          mg_verbosity = Parameters::Verbosity::quiet;
+        else
+          throw(std::runtime_error(
+            "Unknown verbosity mode for the LSMG or GCMG preconditioners"));
       }
       prm.leave_subsection();
     }
