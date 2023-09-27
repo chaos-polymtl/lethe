@@ -21,6 +21,13 @@
 #include <solvers/mf_navier_stokes_operators.h>
 #include <solvers/navier_stokes_base.h>
 
+#include <deal.II/lac/solver_gmres.h>
+
+#include <deal.II/multigrid/mg_transfer_global_coarsening.h>
+#include <deal.II/multigrid/mg_transfer_matrix_free.h>
+#include <deal.II/multigrid/multigrid.h>
+
+
 using namespace dealii;
 
 /**
@@ -36,7 +43,9 @@ class MFNavierStokesSolver
                             LinearAlgebra::distributed::Vector<double>,
                             IndexSet>
 {
-  using VectorType = LinearAlgebra::distributed::Vector<double>;
+  using VectorType     = LinearAlgebra::distributed::Vector<double>;
+  using LSTransferType = MGTransferMatrixFree<dim, double>;
+  using GCTransferType = MGTransferGlobalCoarsening<dim, VectorType>;
 
 public:
   /**
@@ -112,12 +121,6 @@ protected:
   update_multiphysics_time_average_solution() override;
 
   /**
-   * @brief  Set up the appropriate preconditioner.
-   */
-  void
-  setup_preconditioner();
-
-  /**
    * @brief Define the non-zero constraints used to solve the problem.
    */
   void
@@ -163,9 +166,44 @@ private:
                      const double absolute_residual,
                      const double relative_residual);
 
+  /**
+   * @brief  Set-up local smoothing MG preconditioner
+   */
+  void
+  solve_with_LSMG(SolverGMRES<VectorType> &solver);
+
+  /**
+   * @brief Set-up global coarsening MG preconditioner
+   */
+  void
+  solve_with_GCMG(SolverGMRES<VectorType> &solver);
+
+  /**
+   * @brief Set-up ILU preconditioner
+   */
+  void
+  solve_with_ILU(SolverGMRES<VectorType> &solver);
+
+  /**
+   * @brief Estimate the eigenvalues to obtain a relaxation parameter for the
+   *  MG smoother
+   *
+   * @param operator Operator for which the estimation needs to be done
+   * @return double Omega relaxation parameter
+   */
+  double
+  estimate_omega(
+    std::shared_ptr<NavierStokesOperatorBase<dim, double>> &mg_operator);
+
 protected:
   // Matrix-free operator
   std::shared_ptr<NavierStokesOperatorBase<dim, double>> system_operator;
+  // Preconditioners
+  std::shared_ptr<PreconditionMG<dim, VectorType, LSTransferType>>
+    ls_multigrid_preconditioner;
+  std::shared_ptr<PreconditionMG<dim, VectorType, GCTransferType>>
+    gc_multigrid_preconditioner;
+  std::shared_ptr<TrilinosWrappers::PreconditionILU> ilu_preconditioner;
 };
 
 #endif

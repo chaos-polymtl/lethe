@@ -32,6 +32,15 @@
 #include <deal.II/lac/solver_gmres.h>
 #include <deal.II/lac/vector.h>
 
+#include <deal.II/multigrid/mg_coarse.h>
+#include <deal.II/multigrid/mg_constrained_dofs.h>
+#include <deal.II/multigrid/mg_matrix.h>
+#include <deal.II/multigrid/mg_smoother.h>
+#include <deal.II/multigrid/mg_tools.h>
+#include <deal.II/multigrid/mg_transfer_global_coarsening.h>
+#include <deal.II/multigrid/mg_transfer_matrix_free.h>
+#include <deal.II/multigrid/multigrid.h>
+
 #include <deal.II/numerics/vector_tools.h>
 
 template <int dim>
@@ -47,7 +56,6 @@ MFNavierStokesSolver<dim>::MFNavierStokesSolver(
 
   this->fe = std::make_shared<FESystem<dim>>(
     FE_Q<dim>(nsparam.fem_parameters.velocity_order), dim + 1);
-
   if ((nsparam.stabilization.use_default_stabilization == true) ||
       nsparam.stabilization.stabilization ==
         Parameters::Stabilization::NavierStokesStabilization::pspg_supg)
@@ -121,14 +129,22 @@ template <int dim>
 void
 MFNavierStokesSolver<dim>::setup_dofs_fd()
 {
-  TimerOutput::Scope t(this->computing_timer, "setup_dofs");
+  TimerOutput::Scope t(this->computing_timer, "Setup DoFs");
+
+  // Clear the preconditioners
+  ilu_preconditioner.reset();
+  gc_multigrid_preconditioner.reset();
+  ls_multigrid_preconditioner.reset();
 
   // Clear matrix free operator
   this->system_operator->clear();
 
   // Fill the dof handler and initialize vectors
   this->dof_handler.distribute_dofs(*this->fe);
-  DoFRenumbering::Cuthill_McKee(this->dof_handler);
+
+  if (this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+        .preconditioner == Parameters::LinearSolver::PreconditionerType::lsmg)
+    this->dof_handler.distribute_mg_dofs();
 
   this->locally_owned_dofs = this->dof_handler.locally_owned_dofs();
   DoFTools::extract_locally_relevant_dofs(this->dof_handler,
@@ -272,10 +288,704 @@ MFNavierStokesSolver<dim>::update_multiphysics_time_average_solution()
 }
 
 template <int dim>
-void
-MFNavierStokesSolver<dim>::setup_preconditioner()
+double
+MFNavierStokesSolver<dim>::estimate_omega(
+  std::shared_ptr<NavierStokesOperatorBase<dim, double>> &mg_operator)
 {
-  // TODO
+  double omega = 0.0;
+
+  using OperatorType               = NavierStokesOperatorBase<dim, double>;
+  using SmootherPreconditionerType = DiagonalMatrix<VectorType>;
+  using ChebyshevPreconditionerType =
+    PreconditionChebyshev<OperatorType, VectorType, SmootherPreconditionerType>;
+  typename ChebyshevPreconditionerType::AdditionalData
+    chebyshev_additional_data;
+
+  chebyshev_additional_data.preconditioner =
+    std::make_shared<SmootherPreconditionerType>();
+  mg_operator->compute_inverse_diagonal(
+    chebyshev_additional_data.preconditioner->get_vector());
+  chebyshev_additional_data.constraints.copy_from(this->zero_constraints);
+  chebyshev_additional_data.degree               = 3;
+  chebyshev_additional_data.smoothing_range      = 20;
+  chebyshev_additional_data.eig_cg_n_iterations  = 40;
+  chebyshev_additional_data.eigenvalue_algorithm = ChebyshevPreconditionerType::
+    AdditionalData::EigenvalueAlgorithm::power_iteration;
+  chebyshev_additional_data.polynomial_type =
+    ChebyshevPreconditionerType::AdditionalData::PolynomialType::fourth_kind;
+
+  auto chebyshev = std::make_shared<ChebyshevPreconditionerType>();
+  chebyshev->initialize(*mg_operator, chebyshev_additional_data);
+
+  VectorType vec;
+  mg_operator->initialize_dof_vector(vec);
+
+  const auto evs = chebyshev->estimate_eigenvalues(vec);
+
+  const unsigned int smoothing_range = 20;
+
+  const double alpha =
+    (smoothing_range > 1. ? evs.max_eigenvalue_estimate / smoothing_range :
+                            std::min(0.9 * evs.max_eigenvalue_estimate,
+                                     evs.min_eigenvalue_estimate));
+
+  omega = 2.0 / (alpha + evs.max_eigenvalue_estimate);
+
+  this->pcout << "    - min ev: " << evs.min_eigenvalue_estimate << std::endl;
+  this->pcout << "    - max ev: " << evs.max_eigenvalue_estimate << std::endl;
+  this->pcout << "    - omega: " << omega << std::endl;
+
+  return omega;
+}
+
+template <int dim>
+void
+MFNavierStokesSolver<dim>::solve_with_LSMG(SolverGMRES<VectorType> &solver)
+{
+  this->computing_timer.enter_subsection("Setup LSMG");
+
+  using OperatorType               = NavierStokesOperatorBase<dim, double>;
+  using LSTransferType             = MGTransferMatrixFree<dim, double>;
+  using SmootherPreconditionerType = DiagonalMatrix<VectorType>;
+  using SmootherType =
+    PreconditionRelaxation<OperatorType, SmootherPreconditionerType>;
+  using PreconditionerType = PreconditionMG<dim, VectorType, LSTransferType>;
+
+  // Create level objects
+  MGLevelObject<std::shared_ptr<OperatorType>> mg_operators;
+  LSTransferType                               mg_transfer;
+  MGLevelObject<VectorType>                    mg_solution;
+  MGLevelObject<std::shared_ptr<OperatorType>> mg_interface_in;
+  MGLevelObject<std::shared_ptr<OperatorType>> mg_interface_out;
+  MGLevelObject<AffineConstraints<double>>     level_constraints;
+  MGConstrainedDoFs                            mg_constrained_dofs;
+  MGLevelObject<MatrixFreeOperators::MGInterfaceOperator<OperatorType>>
+    ls_mg_operators;
+  MGLevelObject<MatrixFreeOperators::MGInterfaceOperator<OperatorType>>
+    ls_mg_interface_in;
+  MGLevelObject<MatrixFreeOperators::MGInterfaceOperator<OperatorType>>
+    ls_mg_interface_out;
+  std::vector<std::shared_ptr<const Utilities::MPI::Partitioner>> partitioners(
+    this->dof_handler.get_triangulation().n_global_levels());
+
+  // Extract min and max levels and resize mg level objects accordingly
+  const unsigned int n_h_levels =
+    this->dof_handler.get_triangulation().n_global_levels();
+
+  unsigned int minlevel = 0;
+  unsigned int maxlevel = n_h_levels - 1;
+
+  mg_operators.resize(0, n_h_levels - 1);
+  mg_solution.resize(0, n_h_levels - 1);
+  level_constraints.resize(0, n_h_levels - 1);
+  ls_mg_interface_in.resize(0, n_h_levels - 1);
+  ls_mg_interface_out.resize(0, n_h_levels - 1);
+  ls_mg_operators.resize(0, n_h_levels - 1);
+
+  // Fill the constraints
+  mg_constrained_dofs.initialize(this->dof_handler);
+
+  FEValuesExtractors::Vector velocities(0);
+  FEValuesExtractors::Scalar pressure(dim);
+
+  for (unsigned int i_bc = 0;
+       i_bc < this->simulation_parameters.boundary_conditions.size;
+       ++i_bc)
+    {
+      std::set<types::boundary_id> dirichlet_boundary_id = {
+        this->simulation_parameters.boundary_conditions.id[i_bc]};
+      mg_constrained_dofs.make_zero_boundary_constraints(
+        this->dof_handler,
+        dirichlet_boundary_id,
+        this->fe->component_mask(velocities));
+    }
+
+  // Create mg operators for each level and additional operators needed only for
+  // local smoothing
+  for (unsigned int level = minlevel; level <= maxlevel; ++level)
+    {
+      const IndexSet relevant_dofs =
+        DoFTools::extract_locally_relevant_level_dofs(this->dof_handler, level);
+
+      level_constraints[level].reinit(relevant_dofs);
+      level_constraints[level].add_lines(
+        mg_constrained_dofs.get_boundary_indices(level));
+      level_constraints[level].close();
+
+      if ((this->simulation_parameters.stabilization
+             .use_default_stabilization == true) ||
+          this->simulation_parameters.stabilization.stabilization ==
+            Parameters::Stabilization::NavierStokesStabilization::pspg_supg)
+        mg_operators[level] =
+          std::make_shared<NavierStokesSUPGPSPGOperator<dim, double>>();
+
+      mg_operators[level]->reinit(
+        *this->mapping,
+        this->dof_handler,
+        level_constraints[level],
+        *this->cell_quadrature,
+        &(*this->forcing_function),
+        this->simulation_parameters.physical_properties_manager
+          .get_kinematic_viscosity_scale(),
+        level);
+
+      mg_operators[level]->initialize_dof_vector(mg_solution[level]);
+
+      ls_mg_operators[level].initialize(*mg_operators[level]);
+      ls_mg_interface_in[level].initialize(*mg_operators[level]);
+      ls_mg_interface_out[level].initialize(*mg_operators[level]);
+
+      partitioners[level] = mg_operators[level]->get_vector_partitioner();
+    }
+
+  // Create transfer operator and transfer solution to mg levels
+  mg_transfer.initialize_constraints(mg_constrained_dofs);
+  mg_transfer.build(this->dof_handler, partitioners);
+  mg_transfer.interpolate_to_mg(this->dof_handler,
+                                mg_solution,
+                                this->present_solution);
+
+  // Evaluate non linear terms for all mg operators
+  for (unsigned int level = minlevel; level <= maxlevel; ++level)
+    {
+      mg_solution[level].update_ghost_values();
+      mg_operators[level]->evaluate_non_linear_term(mg_solution[level]);
+    }
+
+  mg::Matrix<VectorType> mg_matrix(ls_mg_operators);
+
+  // Create smoother, fill parameters for each level and intialize it
+  MGSmootherPrecondition<OperatorType, SmootherType, VectorType> mg_smoother;
+  MGLevelObject<typename SmootherType::AdditionalData> smoother_data(minlevel,
+                                                                     maxlevel);
+
+  for (unsigned int level = minlevel; level <= maxlevel; ++level)
+    {
+      smoother_data[level].preconditioner =
+        std::make_shared<SmootherPreconditionerType>();
+      mg_operators[level]->compute_inverse_diagonal(
+        smoother_data[level].preconditioner->get_vector());
+      smoother_data[level].n_iterations =
+        this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+          .mg_smoother_iterations;
+      smoother_data[level].relaxation =
+        this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+          .mg_smoother_relaxation;
+      // smoother_data[level].relaxation = estimate_omega(mg_operators[level]);
+    }
+
+  mg_smoother.initialize(mg_operators, smoother_data);
+
+  // If multigrid number of levels or minimum number of cells in level are
+  // specified, change the min level for the coarse-grid solver and the
+  // multigrid object, and print levels with appropriate numbering
+
+  int mg_min_level =
+    this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+      .mg_min_level;
+
+  AssertThrow(
+    mg_min_level <= static_cast<int>(MGTools::max_level_for_coarse_mesh(
+                      this->dof_handler.get_triangulation())),
+    ExcMessage(std::string(
+      "The maximum level allowed for the coarse mesh (mg min level) is: " +
+      std::to_string(MGTools::max_level_for_coarse_mesh(
+        this->dof_handler.get_triangulation())) +
+      ".")));
+
+  int mg_level_min_cells =
+    this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+      .mg_level_min_cells;
+
+  AssertThrow(
+    mg_level_min_cells <=
+      static_cast<int>(this->dof_handler.get_triangulation().n_cells(maxlevel)),
+    ExcMessage(
+      "The mg level min cells specified are larger than the cells of the finest mg level."));
+
+
+  if (mg_min_level != -1)
+    minlevel = mg_min_level;
+
+  if (mg_level_min_cells != -1)
+    {
+      for (unsigned int level = minlevel; level <= maxlevel; ++level)
+        if (static_cast<int>(this->dof_handler.get_triangulation().n_cells(
+              level)) >= mg_level_min_cells)
+          {
+            minlevel = level;
+            break;
+          }
+    }
+
+  if (this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+        .mg_verbosity != Parameters::Verbosity::quiet)
+    for (unsigned int level = minlevel; level <= maxlevel; ++level)
+      this->pcout << "   MG Level " << level - minlevel << ": "
+                  << this->dof_handler.n_dofs(level) << " DoFs, "
+                  << this->dof_handler.get_triangulation().n_cells(level)
+                  << " cells" << std::endl;
+
+  // Create coarse-grid GMRES solver and AMG preconditioner
+  const int max_iterations =
+    this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+      .mg_coarse_grid_max_iterations;
+  const double tolerance =
+    this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+      .mg_coarse_grid_tolerance;
+  const double reduce =
+    this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+      .mg_coarse_grid_reduce;
+  ReductionControl coarse_grid_solver_control(
+    max_iterations, tolerance, reduce, false, false);
+  SolverGMRES<VectorType>::AdditionalData solver_parameters;
+  solver_parameters.max_n_tmp_vectors =
+    this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+      .mg_coarse_grid_max_krylov_vectors;
+
+  SolverGMRES<VectorType> coarse_grid_solver(coarse_grid_solver_control,
+                                             solver_parameters);
+
+  std::shared_ptr<MGCoarseGridBase<VectorType>> mg_coarse;
+
+  TrilinosWrappers::PreconditionAMG                 precondition_amg;
+  TrilinosWrappers::PreconditionAMG::AdditionalData amg_data;
+  amg_data.elliptic = false;
+  if (this->dof_handler.get_fe().degree > 1)
+    amg_data.higher_order_elements = true;
+  amg_data.n_cycles =
+    this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+      .amg_n_cycles;
+  amg_data.w_cycle =
+    this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+      .amg_w_cycles;
+  amg_data.aggregation_threshold =
+    this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+      .amg_aggregation_threshold;
+  amg_data.smoother_sweeps =
+    this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+      .amg_smoother_sweeps;
+  amg_data.smoother_overlap =
+    this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+      .amg_smoother_overlap;
+  amg_data.output_details = false;
+  amg_data.smoother_type  = "ILU";
+  amg_data.coarse_type    = "ILU";
+  // Constant modes for velocity and pressure
+  // std::vector<std::vector<bool>> constant_modes;
+  // ComponentMask                  components(dim + 1, true);
+  // DoFTools::extract_constant_modes(this->dof_handler,
+  //                                  components,
+  //                                  constant_modes);
+  // amg_data.constant_modes = constant_modes;
+
+  Teuchos::ParameterList              parameter_ml;
+  std::unique_ptr<Epetra_MultiVector> distributed_constant_modes;
+  amg_data.set_parameters(parameter_ml,
+                          distributed_constant_modes,
+                          mg_operators[minlevel]->get_system_matrix());
+  const double ilu_fill =
+    this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+      .ilu_precond_fill;
+  const double ilu_atol =
+    this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+      .amg_precond_ilu_atol;
+  const double ilu_rtol =
+    this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+      .amg_precond_ilu_rtol;
+  parameter_ml.set("smoother: ifpack level-of-fill", ilu_fill);
+  parameter_ml.set("smoother: ifpack absolute threshold", ilu_atol);
+  parameter_ml.set("smoother: ifpack relative threshold", ilu_rtol);
+
+  parameter_ml.set("coarse: ifpack level-of-fill", ilu_fill);
+  parameter_ml.set("coarse: ifpack absolute threshold", ilu_atol);
+  parameter_ml.set("coarse: ifpack relative threshold", ilu_rtol);
+
+  precondition_amg.initialize(mg_operators[minlevel]->get_system_matrix(),
+                              parameter_ml);
+
+  mg_coarse =
+    std::make_shared<MGCoarseGridIterativeSolver<VectorType,
+                                                 SolverGMRES<VectorType>,
+                                                 OperatorType,
+                                                 decltype(precondition_amg)>>(
+      coarse_grid_solver, *mg_operators[minlevel], precondition_amg);
+
+  // Create interface matrices needed for local smoothing in case of local
+  // refinement
+  mg::Matrix<VectorType> mg_interface_matrix_in(ls_mg_interface_in);
+  mg::Matrix<VectorType> mg_interface_matrix_out(ls_mg_interface_out);
+
+  // Create main MG object
+  Multigrid<VectorType> mg(
+    mg_matrix, *mg_coarse, mg_transfer, mg_smoother, mg_smoother, minlevel);
+
+  if (this->dof_handler.get_triangulation().has_hanging_nodes())
+    mg.set_edge_matrices(mg_interface_matrix_in, mg_interface_matrix_out);
+
+  // Create MG preconditioner
+  ls_multigrid_preconditioner =
+    std::make_shared<PreconditionMG<dim, VectorType, LSTransferType>>(
+      this->dof_handler, mg, mg_transfer);
+
+  this->computing_timer.leave_subsection("Setup LSMG");
+
+  this->computing_timer.enter_subsection("Solve linear system");
+
+  solver.solve(*(system_operator),
+               this->newton_update,
+               this->system_rhs,
+               *ls_multigrid_preconditioner);
+
+  this->computing_timer.leave_subsection("Solve linear system");
+}
+
+template <int dim>
+void
+MFNavierStokesSolver<dim>::solve_with_GCMG(SolverGMRES<VectorType> &solver)
+{
+  this->computing_timer.enter_subsection("Setup GCMG");
+
+  using OperatorType   = NavierStokesOperatorBase<dim, double>;
+  using GCTransferType = MGTransferGlobalCoarsening<dim, VectorType>;
+  using SmootherPreconditionerType = DiagonalMatrix<VectorType>;
+  using SmootherType =
+    PreconditionRelaxation<OperatorType, SmootherPreconditionerType>;
+  using PreconditionerType = PreconditionMG<dim, VectorType, GCTransferType>;
+
+  // Create level objects
+  MGLevelObject<DoFHandler<dim>>                     dof_handlers;
+  MGLevelObject<std::shared_ptr<OperatorType>>       mg_operators;
+  MGLevelObject<MGTwoLevelTransfer<dim, VectorType>> transfers;
+  MGLevelObject<VectorType>                          mg_solution;
+  MGLevelObject<AffineConstraints<typename VectorType::value_type>> constraints;
+
+  // Create triangulations for all levels
+  std::vector<std::shared_ptr<const Triangulation<dim>>>
+    coarse_grid_triangulations;
+
+  coarse_grid_triangulations =
+    MGTransferGlobalCoarseningTools::create_geometric_coarsening_sequence(
+      this->dof_handler.get_triangulation());
+
+  // Modify the triangulations if multigrid number of levels or minimum number
+  // of cells in level are specified
+  std::vector<std::shared_ptr<const Triangulation<dim>>> temp;
+
+  int mg_min_level =
+    this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+      .mg_min_level;
+
+  AssertThrow(
+    (mg_min_level + 1) <= static_cast<int>(coarse_grid_triangulations.size()),
+    ExcMessage(
+      "The mg min level specified is higher than the finest mg level."));
+
+  int mg_level_min_cells =
+    this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+      .mg_level_min_cells;
+
+  AssertThrow(
+    mg_level_min_cells <=
+      static_cast<int>(
+        coarse_grid_triangulations[coarse_grid_triangulations.size() - 1]
+          ->n_global_active_cells()),
+    ExcMessage(
+      "The mg level min cells specified are larger than the cells of the finest mg level."));
+
+  // find first relevant coarse-grid triangulation
+  auto ptr =
+    std::find_if(coarse_grid_triangulations.begin(),
+                 coarse_grid_triangulations.end() - 1,
+                 [&mg_min_level, &mg_level_min_cells](const auto &tria) {
+                   if (mg_min_level != -1) // minimum number of levels
+                     {
+                       if ((mg_min_level + 1) <=
+                           static_cast<int>(tria->n_global_levels()))
+                         return true;
+                     }
+                   else if (mg_level_min_cells != -1) // minimum number of cells
+                     {
+                       if (static_cast<int>(tria->n_global_active_cells()) >=
+                           mg_level_min_cells)
+                         return true;
+                     }
+                   else
+                     {
+                       return true;
+                     }
+                   return false;
+                 });
+
+  // consider all triangulations from that one
+  while (ptr != coarse_grid_triangulations.end())
+    temp.push_back(*(ptr++));
+
+  coarse_grid_triangulations = temp;
+
+  // Extract min and max levels and resize mg level objects accordingly
+  const unsigned int n_h_levels = coarse_grid_triangulations.size();
+
+  unsigned int minlevel = 0;
+  unsigned int maxlevel = n_h_levels - 1;
+
+  dof_handlers.resize(minlevel, maxlevel);
+  mg_operators.resize(minlevel, maxlevel);
+  transfers.resize(minlevel, maxlevel);
+  mg_solution.resize(minlevel, maxlevel);
+  constraints.resize(minlevel, maxlevel);
+
+  // Distribute DoFs for each level
+  for (unsigned int l = minlevel; l <= maxlevel; ++l)
+    {
+      dof_handlers[l].reinit(*coarse_grid_triangulations[l]);
+      dof_handlers[l].distribute_dofs(this->dof_handler.get_fe());
+    }
+
+  // Apply constraints and create mg operators for each level
+  for (unsigned int level = minlevel; level <= maxlevel; ++level)
+    {
+      const auto &level_dof_handler = dof_handlers[level];
+      auto       &level_constraint  = constraints[level];
+
+      level_constraint.clear();
+      const IndexSet locally_relevant_dofs =
+        DoFTools::extract_locally_relevant_dofs(level_dof_handler);
+      level_constraint.reinit(locally_relevant_dofs);
+
+      DoFTools::make_hanging_node_constraints(level_dof_handler,
+                                              level_constraint);
+
+      FEValuesExtractors::Vector velocities(0);
+      FEValuesExtractors::Scalar pressure(dim);
+
+      for (unsigned int i_bc = 0;
+           i_bc < this->simulation_parameters.boundary_conditions.size;
+           ++i_bc)
+        {
+          VectorTools::interpolate_boundary_values(
+            *this->mapping,
+            level_dof_handler,
+            this->simulation_parameters.boundary_conditions.id[i_bc],
+            dealii::Functions::ZeroFunction<dim>(dim + 1),
+            level_constraint,
+            this->fe->component_mask(velocities));
+        }
+
+      level_constraint.close();
+
+      if ((this->simulation_parameters.stabilization
+             .use_default_stabilization == true) ||
+          this->simulation_parameters.stabilization.stabilization ==
+            Parameters::Stabilization::NavierStokesStabilization::pspg_supg)
+        mg_operators[level] =
+          std::make_shared<NavierStokesSUPGPSPGOperator<dim, double>>();
+
+      mg_operators[level]->reinit(
+        *this->mapping,
+        level_dof_handler,
+        level_constraint,
+        *this->cell_quadrature,
+        &(*this->forcing_function),
+        this->simulation_parameters.physical_properties_manager
+          .get_kinematic_viscosity_scale(),
+        numbers::invalid_unsigned_int);
+    }
+
+  // Create transfer operators and transfer solution to mg levels
+  for (unsigned int level = minlevel; level < maxlevel; ++level)
+    transfers[level + 1].reinit(dof_handlers[level + 1],
+                                dof_handlers[level],
+                                constraints[level + 1],
+                                constraints[level]);
+
+  MGTransferGlobalCoarsening<dim, VectorType> mg_transfer(
+    transfers, [&](const auto l, auto &vec) {
+      mg_operators[l]->initialize_dof_vector(vec);
+    });
+
+  mg_transfer.interpolate_to_mg(this->dof_handler,
+                                mg_solution,
+                                this->present_solution);
+
+  // Evaluate non linear terms for all mg operators
+  for (unsigned int level = minlevel; level <= maxlevel; ++level)
+    {
+      mg_solution[level].update_ghost_values();
+      mg_operators[level]->evaluate_non_linear_term(mg_solution[level]);
+    }
+
+  if (this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+        .mg_verbosity != Parameters::Verbosity::quiet)
+    for (unsigned int level = minlevel; level <= maxlevel; ++level)
+      this->pcout << "   MG Level " << level << ": "
+                  << dof_handlers[level].n_dofs() << " DoFs, "
+                  << coarse_grid_triangulations[level]->n_global_active_cells()
+                  << " cells" << std::endl;
+
+  mg::Matrix<VectorType> mg_matrix(mg_operators);
+
+  // Create smoother, fill parameters for each level and intialize it
+  MGSmootherPrecondition<OperatorType, SmootherType, VectorType> mg_smoother;
+  MGLevelObject<typename SmootherType::AdditionalData> smoother_data(minlevel,
+                                                                     maxlevel);
+
+  for (unsigned int level = minlevel; level <= maxlevel; ++level)
+    {
+      smoother_data[level].preconditioner =
+        std::make_shared<SmootherPreconditionerType>();
+      mg_operators[level]->compute_inverse_diagonal(
+        smoother_data[level].preconditioner->get_vector());
+      smoother_data[level].n_iterations =
+        this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+          .mg_smoother_iterations;
+      smoother_data[level].relaxation =
+        this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+          .mg_smoother_relaxation;
+      // smoother_data[level].relaxation = estimate_omega(mg_operators[level]);
+    }
+
+  mg_smoother.initialize(mg_operators, smoother_data);
+
+  // Create coarse-grid GMRES solver and AMG preconditioner
+  const int max_iterations =
+    this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+      .mg_coarse_grid_max_iterations;
+  const double tolerance =
+    this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+      .mg_coarse_grid_tolerance;
+  const double reduce =
+    this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+      .mg_coarse_grid_reduce;
+  ReductionControl coarse_grid_solver_control(
+    max_iterations, tolerance, reduce, false, false);
+  SolverGMRES<VectorType>::AdditionalData solver_parameters;
+  solver_parameters.max_n_tmp_vectors =
+    this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+      .mg_coarse_grid_max_krylov_vectors;
+
+  SolverGMRES<VectorType> coarse_grid_solver(coarse_grid_solver_control,
+                                             solver_parameters);
+
+  std::shared_ptr<MGCoarseGridBase<VectorType>> mg_coarse;
+
+  TrilinosWrappers::PreconditionAMG                 precondition_amg;
+  TrilinosWrappers::PreconditionAMG::AdditionalData amg_data;
+  amg_data.elliptic = false;
+  if (this->dof_handler.get_fe().degree > 1)
+    amg_data.higher_order_elements = true;
+  amg_data.n_cycles =
+    this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+      .amg_n_cycles;
+  amg_data.w_cycle =
+    this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+      .amg_w_cycles;
+  amg_data.aggregation_threshold =
+    this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+      .amg_aggregation_threshold;
+  amg_data.smoother_sweeps =
+    this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+      .amg_smoother_sweeps;
+  amg_data.smoother_overlap =
+    this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+      .amg_smoother_overlap;
+  amg_data.output_details = false;
+  amg_data.smoother_type  = "ILU";
+  amg_data.coarse_type    = "ILU";
+  // Constant modes for velocity
+  std::vector<std::vector<bool>> constant_modes;
+  ComponentMask                  components(dim + 1, true);
+  DoFTools::extract_constant_modes(dof_handlers[minlevel],
+                                   components,
+                                   constant_modes);
+  amg_data.constant_modes = constant_modes;
+
+  Teuchos::ParameterList              parameter_ml;
+  std::unique_ptr<Epetra_MultiVector> distributed_constant_modes;
+  amg_data.set_parameters(parameter_ml,
+                          distributed_constant_modes,
+                          mg_operators[minlevel]->get_system_matrix());
+  const double ilu_fill =
+    this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+      .ilu_precond_fill;
+  const double ilu_atol =
+    this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+      .amg_precond_ilu_atol;
+  const double ilu_rtol =
+    this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+      .amg_precond_ilu_rtol;
+  parameter_ml.set("smoother: ifpack level-of-fill", ilu_fill);
+  parameter_ml.set("smoother: ifpack absolute threshold", ilu_atol);
+  parameter_ml.set("smoother: ifpack relative threshold", ilu_rtol);
+
+  parameter_ml.set("coarse: ifpack level-of-fill", ilu_fill);
+  parameter_ml.set("coarse: ifpack absolute threshold", ilu_atol);
+  parameter_ml.set("coarse: ifpack relative threshold", ilu_rtol);
+
+  precondition_amg.initialize(mg_operators[minlevel]->get_system_matrix(),
+                              parameter_ml);
+
+  mg_coarse =
+    std::make_shared<MGCoarseGridIterativeSolver<VectorType,
+                                                 SolverGMRES<VectorType>,
+                                                 OperatorType,
+                                                 decltype(precondition_amg)>>(
+      coarse_grid_solver, *mg_operators[minlevel], precondition_amg);
+
+  // Create main MG object
+  Multigrid<VectorType> mg(
+    mg_matrix, *mg_coarse, mg_transfer, mg_smoother, mg_smoother);
+
+  // Create MG preconditioner
+  gc_multigrid_preconditioner =
+    std::make_shared<PreconditionMG<dim, VectorType, GCTransferType>>(
+      this->dof_handler, mg, mg_transfer);
+
+  this->computing_timer.leave_subsection("Setup GCMG");
+
+  this->computing_timer.enter_subsection("Solve linear system");
+
+  solver.solve(*(system_operator),
+               this->newton_update,
+               this->system_rhs,
+               *gc_multigrid_preconditioner);
+
+  this->computing_timer.leave_subsection("Solve linear system");
+}
+
+template <int dim>
+void
+MFNavierStokesSolver<dim>::solve_with_ILU(SolverGMRES<VectorType> &solver)
+{
+  this->computing_timer.enter_subsection("Setup ILU");
+
+  int current_preconditioner_fill_level =
+    this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+      .ilu_precond_fill;
+  const double ilu_atol =
+    this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+      .ilu_precond_atol;
+  const double ilu_rtol =
+    this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+      .ilu_precond_rtol;
+  TrilinosWrappers::PreconditionILU::AdditionalData preconditionerOptions(
+    current_preconditioner_fill_level, ilu_atol, ilu_rtol, 0);
+
+  ilu_preconditioner = std::make_shared<TrilinosWrappers::PreconditionILU>();
+
+  ilu_preconditioner->initialize(system_operator->get_system_matrix(),
+                                 preconditionerOptions);
+
+  this->computing_timer.leave_subsection("Setup ILU");
+
+  this->computing_timer.enter_subsection("Solve linear system");
+
+  solver.solve(*(system_operator),
+               this->newton_update,
+               this->system_rhs,
+               *ilu_preconditioner);
+
+  this->computing_timer.leave_subsection("Solve linear system");
 }
 
 template <int dim>
@@ -478,11 +1188,6 @@ MFNavierStokesSolver<dim>::solve_system_GMRES(const bool   initial_step,
                                               const double absolute_residual,
                                               const double relative_residual)
 {
-  const unsigned int max_iter = 3;
-  unsigned int       iter     = 0;
-  bool               success  = false;
-
-
   auto &system_rhs          = this->system_rhs;
   auto &nonzero_constraints = this->nonzero_constraints;
 
@@ -510,53 +1215,52 @@ MFNavierStokesSolver<dim>::solve_system_GMRES(const bool   initial_step,
   solver_parameters.max_n_tmp_vectors =
     this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
       .max_krylov_vectors;
+  solver_parameters.right_preconditioning = true;
 
-  while (success == false and iter < max_iter)
+  SolverGMRES<VectorType> solver(solver_control, solver_parameters);
+
+  this->present_solution.update_ghost_values();
+
+  this->system_operator->evaluate_non_linear_term(this->present_solution);
+
+  this->newton_update = 0.0;
+
+  if (this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+        .preconditioner == Parameters::LinearSolver::PreconditionerType::lsmg)
+    solve_with_LSMG(solver);
+  else if (this->simulation_parameters.linear_solver
+             .at(PhysicsID::fluid_dynamics)
+             .preconditioner ==
+           Parameters::LinearSolver::PreconditionerType::gcmg)
+    solve_with_GCMG(solver);
+  else if (this->simulation_parameters.linear_solver
+             .at(PhysicsID::fluid_dynamics)
+             .preconditioner ==
+           Parameters::LinearSolver::PreconditionerType::ilu)
+    solve_with_ILU(solver);
+  else
+    AssertThrow(
+      this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+            .preconditioner ==
+          Parameters::LinearSolver::PreconditionerType::ilu ||
+        this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+            .preconditioner ==
+          Parameters::LinearSolver::PreconditionerType::lsmg ||
+        this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+            .preconditioner ==
+          Parameters::LinearSolver::PreconditionerType::gcmg,
+      ExcMessage(
+        "This linear solver does not support this preconditioner. Only <ilu|lsmg|gcmg> preconditioners are supported."))
+
+      if (this->simulation_parameters.linear_solver
+            .at(PhysicsID::fluid_dynamics)
+            .verbosity != Parameters::Verbosity::quiet)
     {
-      try
-        {
-          SolverGMRES<VectorType> solver(solver_control, solver_parameters);
-
-          {
-            TimerOutput::Scope t(this->computing_timer, "solve_linear_system");
-
-            this->present_solution.update_ghost_values();
-
-            this->system_operator->evaluate_non_linear_term(
-              this->present_solution);
-
-            this->newton_update = 0.0;
-
-            PreconditionIdentity preconditioner;
-            solver.solve(*(system_operator),
-                         this->newton_update,
-                         system_rhs,
-                         preconditioner);
-
-            if (this->simulation_parameters.linear_solver
-                  .at(PhysicsID::fluid_dynamics)
-                  .verbosity != Parameters::Verbosity::quiet)
-              {
-                this->pcout
-                  << "  -Iterative solver took : " << solver_control.last_step()
+      this->pcout << "  -Iterative solver took : " << solver_control.last_step()
                   << " steps " << std::endl;
-              }
-          }
-
-          constraints_used.distribute(this->newton_update);
-          success = true;
-        }
-      catch (std::exception &e)
-        {
-          this->pcout << " GMRES solver failed!" << std::endl;
-
-          if (iter == max_iter - 1 && !this->simulation_parameters.linear_solver
-                                         .at(PhysicsID::fluid_dynamics)
-                                         .force_linear_solver_continuation)
-            throw e;
-        }
-      iter += 1;
     }
+
+  constraints_used.distribute(this->newton_update);
 }
 
 template class MFNavierStokesSolver<2>;

@@ -924,9 +924,10 @@ namespace Parameters
     enum class PreconditionerType
     {
       ilu,
-      amg
+      amg,
+      lsmg,
+      gcmg
     };
-
     PreconditionerType preconditioner;
 
     // ILU or ILUT fill
@@ -938,13 +939,16 @@ namespace Parameters
     // ILU or ILUT relative tolerance
     double ilu_precond_rtol;
 
-    // ILU or ILUT fill
+    // AMG parameters either as linear solver preconditioner or as
+    // preconditioner of a coarse-grid solver for LSMG or GCMG
+
+    // ILU or ILUT fill for smoother
     double amg_precond_ilu_fill;
 
-    // ILU or ILUT absolute tolerance
+    // ILU or ILUT absolute tolerance for smoother
     double amg_precond_ilu_atol;
 
-    // ILU or ILUT relative tolerance
+    // ILU or ILUT relative tolerance for smoother
     double amg_precond_ilu_rtol;
 
     // AMG aggregation threshold
@@ -964,6 +968,33 @@ namespace Parameters
 
     // Block linear solver to throw error.
     bool force_linear_solver_continuation;
+
+    // MG min level
+    int mg_min_level;
+
+    // MG minimum number of cells per level
+    int mg_level_min_cells;
+
+    // LSMG or GCMG smoother number of iterations
+    int mg_smoother_iterations;
+
+    // LSMG or GCMG smoother relaxation parameter
+    double mg_smoother_relaxation;
+
+    // LSMG or GCMG coarse-grid solver maximum number of iterations
+    int mg_coarse_grid_max_iterations;
+
+    // LSMG or GCMG coarse-grid solver tolerance
+    double mg_coarse_grid_tolerance;
+
+    // LSMG or GCMG coarse-grid solver reduce
+    double mg_coarse_grid_reduce;
+
+    // LSMG or GCMG coarse-grid solver maximum number of krylov vectors
+    int mg_coarse_grid_max_krylov_vectors;
+
+    // LSMG or GCMG information about levels
+    Verbosity mg_verbosity;
 
     static void
     declare_parameters(ParameterHandler &prm, const std::string &physics_name);

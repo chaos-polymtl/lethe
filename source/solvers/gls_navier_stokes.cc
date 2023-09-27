@@ -1420,6 +1420,7 @@ GLSNavierStokesSolver<dim>::solve_system_GMRES(const bool   initial_step,
 
   const AffineConstraints<double> &constraints_used =
     initial_step ? nonzero_constraints : this->zero_constraints;
+
   const double linear_solver_tolerance =
     std::max(relative_residual * system_rhs.l2_norm(), absolute_residual);
 
@@ -1528,6 +1529,11 @@ GLSNavierStokesSolver<dim>::solve_system_GMRES(const bool   initial_step,
   current_preconditioner_fill_level = initial_preconditioner_fill_level;
 }
 
+// The solver starts from the initial fill levle provided in the parameter file.
+// If for any reason the linear solver crashes, it will restart with a fill
+// level increased by 1. This restart happens up to a maximum of 20 times, after
+// which it will let the solver cras. If a change happened on the fill level, it
+// will go back to its original value at the end of the restart process.
 template <int dim>
 void
 GLSNavierStokesSolver<dim>::solve_system_BiCGStab(
