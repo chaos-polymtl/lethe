@@ -10,7 +10,7 @@ Initial refinement around IB particles - Step : 1 of 1
 *****************************
 Steady iteration:        1/2
 *****************************
-div u : -3.08744e-18
+div u : 9.85142e-18
 error at the weak BC : 0
 L2 error velocity : 0.111966 L2 error pressure: 1.00592
 
@@ -25,4 +25,4 @@ error at the weak BC : 0.12895
 L2 error velocity : 0.0949945 L2 error pressure: 1.10734
 cells  error_velocity     error_pressure   
   288 1.119665e-01    - 1.005917e+00     - 
- 1121 9.499450e-02 0.24 1.107336e+00 -0.14 
+ 1121 9.499450e-02 0.24 1.107336e+00 -0.14

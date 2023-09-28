@@ -18,7 +18,7 @@ Initial refinement in box - Step  3 of 3
 *****************************
 Steady iteration:        1/1
 *****************************
-div u : 1.47164e-12
+div u : 1.46618e-12
 error at the weak BC : 0.00105126
 L2 error velocity : 0.0335513 L2 error pressure: 0.157093
 +------------------------------------------+
