@@ -391,6 +391,10 @@ ParticleWallNonLinearForce<dim>::calculate_nonlinear_contact_force_and_torque(
   particle_wall_contact_info<dim> &contact_info,
   const ArrayView<const double>   &particle_properties)
 {
+  // i is the particle, j is the wall.
+  // we need to put a minus sign infront of the normal_vector to respect the
+  // convention (i -> j)
+  Tensor<1, 3>       normal_vector = -contact_info.normal_vector;
   const unsigned int particle_type =
     particle_properties[DEM::PropertiesIndex::type];
 
@@ -409,19 +413,26 @@ ParticleWallNonLinearForce<dim>::calculate_nonlinear_contact_force_and_torque(
   double normal_spring_constant =
     1.3333 * this->effective_youngs_modulus[particle_type] *
     radius_times_overlap_sqrt;
+
+  // There is no minus sign here since model_parameter_beta is negative or
+  // equal to zero.
   double normal_damping_constant =
     1.8257 * this->model_parameter_beta[particle_type] *
     sqrt(model_parameter_sn * particle_properties[DEM::PropertiesIndex::mass]);
+
+  // There is a minus sign since the tangential force is applied in the opposite
+  // direction of the tangential_overlap
   double tangential_spring_constant =
-    -8 * this->effective_shear_modulus[particle_type] *
+    -8. * this->effective_shear_modulus[particle_type] *
       radius_times_overlap_sqrt +
     DBL_MIN;
+  // TODO add the tangential damping
 
   // Calculation of normal force using spring and dashpot normal forces
   Tensor<1, 3> normal_force =
     (normal_spring_constant * contact_info.normal_overlap +
      normal_damping_constant * contact_info.normal_relative_velocity) *
-    contact_info.normal_vector;
+    normal_vector;
 
   // Calculation of tangential force
   Tensor<1, 3> tangential_force =
@@ -443,13 +454,13 @@ ParticleWallNonLinearForce<dim>::calculate_nonlinear_contact_force_and_torque(
         tangential_force / (tangential_spring_constant + DBL_MIN);
     }
 
-  // Calculation of torque
-  // Torque caused by tangential force (tangential_torque)
+  // Calculation torque caused by tangential force
+  // We add the minus sign here since the tangential_force is applied on the
+  // particle is in the opposite direction
   Tensor<1, 3> tangential_torque =
     cross_product_3d((0.5 * particle_properties[DEM::PropertiesIndex::dp] *
-                      contact_info.normal_vector),
-                     tangential_force);
-
+                      normal_vector),
+                     -tangential_force);
 
   // Rolling resistance torque
   Tensor<1, 3> rolling_resistance_torque =

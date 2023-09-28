@@ -48,8 +48,8 @@ DEM
 ----
 Finished 10 DEM iterations 
 ---------------------------------------------------------------
-Global continuity equation error: -1.170105274e-11 s^-1
-Max local continuity error: 2.667638909e-07 s^-1
+Global continuity equation error: -1.170121873e-11 s^-1
+Max local continuity error: 2.667643882e-07 s^-1
 
 *********************************************************************************
 Transient iteration: 3        Time: 0.0003   Time step: 0.0001   CFL: 0.00426006
@@ -65,8 +65,8 @@ DEM
 ----
 Finished 10 DEM iterations 
 ---------------------------------------------------------------
-Global continuity equation error: -4.570819666e-12 s^-1
-Max local continuity error: 2.431890226e-07 s^-1
+Global continuity equation error: -4.571130678e-12 s^-1
+Max local continuity error: 2.431890062e-07 s^-1
 
 *********************************************************************************
 Transient iteration: 4        Time: 0.0004   Time step: 0.0001   CFL: 0.00397426
@@ -82,12 +82,12 @@ DEM
 ----
 Finished 10 DEM iterations 
 ---------------------------------------------------------------
-Global continuity equation error: -1.841918533e-13 s^-1
-Max local continuity error: 2.522960823e-07 s^-1
+Global continuity equation error: -1.841910551e-13 s^-1
+Max local continuity error: 2.522960494e-07 s^-1
 
-*********************************************************************************
-Transient iteration: 5        Time: 0.0005   Time step: 0.0001   CFL: 0.00396937
-*********************************************************************************
+********************************************************************************
+Transient iteration: 5        Time: 0.0005   Time step: 0.0001   CFL: 0.0039694
+********************************************************************************
 --------------
 Void Fraction
 --------------
@@ -99,5 +99,5 @@ DEM
 ----
 Finished 10 DEM iterations 
 ---------------------------------------------------------------
-Global continuity equation error: 3.672093461e-13 s^-1
-Max local continuity error: 2.600760617e-07 s^-1
+Global continuity equation error: 3.672326588e-13 s^-1
+Max local continuity error: 2.600760002e-07 s^-1
