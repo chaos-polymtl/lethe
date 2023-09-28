@@ -16,13 +16,13 @@ concurrency:
 
 
 env:
-  COMPILE_JOBS: 2
+  COMPILE_JOBS: 6
   MULTI_CORE_TESTS_REGEX: "mpirun=2"
 
 jobs:
   build:
     name: Build (deal.ii:${{ matrix.dealii_version }})
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
 
     strategy:
       fail-fast: false
@@ -67,19 +67,7 @@ jobs:
           export OMPI_ALLOW_RUN_AS_ROOT=1
           export OMPI_ALLOW_RUN_AS_ROOT_CONFIRM=1
           cd build-debug
-          # Print the tests to be executed
-          ctest -N --exclude-regex ${{ env.MULTI_CORE_TESTS_REGEX }}
-          # Run in parallel
-          ctest --output-on-failure -j${{ env.COMPILE_JOBS }} --exclude-regex ${{ env.MULTI_CORE_TESTS_REGEX }}
+          ctest -N
 
-      # These tests require two cores each so we will run them sequencially
-      - name: Run multi-core Lethe tests (Debug-deal.ii:${{ matrix.dealii_version }})
-        run: |
-          #Allow OMPI to run as root
-          export OMPI_ALLOW_RUN_AS_ROOT=1
-          export OMPI_ALLOW_RUN_AS_ROOT_CONFIRM=1
-          cd build-debug
-          # Print the tests to be executed
-          ctest -N --tests-regex ${{ env.MULTI_CORE_TESTS_REGEX }}
-          # Run sequencially
-          ctest --output-on-failure --tests-regex ${{ env.MULTI_CORE_TESTS_REGEX }}
+          # Run in parallel
+          ctest --output-on-failure -j${{ env.COMPILE_JOBS }} 
