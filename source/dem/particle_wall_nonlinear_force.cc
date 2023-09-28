@@ -420,7 +420,7 @@ ParticleWallNonLinearForce<dim>::calculate_nonlinear_contact_force_and_torque(
     1.8257 * this->model_parameter_beta[particle_type] *
     sqrt(model_parameter_sn * particle_properties[DEM::PropertiesIndex::mass]);
 
-  // There is a minus sign since the tangential force is apply in the opposite
+  // There is a minus sign since the tangential force is applied in the opposite
   // direction of the tangential_overlap
   double tangential_spring_constant =
     -8. * this->effective_shear_modulus[particle_type] *
@@ -455,8 +455,8 @@ ParticleWallNonLinearForce<dim>::calculate_nonlinear_contact_force_and_torque(
     }
 
   // Calculation torque caused by tangential force
-  // We add the minus sign here since the tangential_force apply on the particle
-  // is in the opposite direction
+  // We add the minus sign here since the tangential_force is applied on the
+  // particle is in the opposite direction
   Tensor<1, 3> tangential_torque =
     cross_product_3d((0.5 * particle_properties[DEM::PropertiesIndex::dp] *
                       normal_vector),

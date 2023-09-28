@@ -409,7 +409,7 @@ ParticleWallLinearForce<dim>::calculate_linear_contact_force_and_torque(
   // REF :  R. Garg, J. Galvin-Carney, T. Li, and S. Pannala, “Documentation of
   // open-source MFIX–DEM software for gas-solids flows,” Tingwen Li Dr., p. 10,
   // Sep. 2012.
-  // There is a minus sign since the tangential force is apply in the opposite
+  // There is a minus sign since the tangential force is applied in the opposite
   // direction of the tangential_overlap
   double tangential_spring_constant = -normal_spring_constant * 0.4;
 
@@ -443,8 +443,8 @@ ParticleWallLinearForce<dim>::calculate_linear_contact_force_and_torque(
     }
 
   // Calculation torque caused by tangential force
-  // We add the minus sign here since the tangential_force apply on the particle
-  // is in the opposite direction
+  // We add the minus sign here since the tangential_force is applied on the
+  // particle is in the opposite direction
   Tensor<1, 3> tangential_torque =
     cross_product_3d((0.5 * particle_properties[DEM::PropertiesIndex::dp] *
                       normal_vector),

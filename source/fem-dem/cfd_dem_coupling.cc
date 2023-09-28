@@ -1284,7 +1284,6 @@ CFDDEMSolver<dim>::print_particles_summary()
          << "v_y: " << particle_properties[DEM::PropertiesIndex::v_y] << ",  "
          << "vz: " << particle_properties[DEM::PropertiesIndex::v_z];
       this->pcout << ss.str() << std::endl;
-      // announce_string(this->pcout, ss.str(), '-');
     }
 }
 
