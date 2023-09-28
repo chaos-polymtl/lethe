@@ -627,8 +627,8 @@ IBParticlesDEM<dim>::calculate_pw_contact_force(
                   particle.mass,
                   particle.radius);
               // Updating the force of particles in the particle handler
-              contact_force[particle.particle_id] +=
-                normal_force + tangential_force;
+              contact_force[particle.particle_id] -=
+                (normal_force + tangential_force);
               // Updating the torque acting on particles
               contact_torque[particle.particle_id] +=
                 tangential_torque + rolling_resistance_torque;
@@ -1082,10 +1082,10 @@ IBParticlesDEM<dim>::integrate_particles_motion(const double dt,
             }
 
           dem_particles[p_i].omega =
-            last_velocity[p_i] + dt_dem *
-                                   (k_omega[p_i][0] + 2 * k_omega[p_i][1] +
-                                    2 * k_omega[p_i][2] + k_omega[p_i][3]) /
-                                   6;
+            last_omega[p_i] + dt_dem *
+                                (k_omega[p_i][0] + 2 * k_omega[p_i][1] +
+                                 2 * k_omega[p_i][2] + k_omega[p_i][3]) /
+                                6;
 
           // Integration of the impulsion applied to the particle.
           // This is what will be transferred to the CFD to integrate the

@@ -238,9 +238,12 @@ protected:
                                            point_on_boundary);
 
     // Updating the force of particles in the particle handler
-    particle_force += total_force;
+    // Since the forces were calculated on the wall, we use the -= operator
+    particle_force -= total_force;
 
     // Updating the torque acting on particles
+    // The torque was direcly calculated on the particle, thus we use the +=
+    // operator
     particle_torque += tangential_torque + rolling_resistance_torque;
   }
 
