@@ -121,6 +121,13 @@ protected:
   update_multiphysics_time_average_solution() override;
 
   /**
+   * @brief Updates the solutions of the previous time steps needed for the time-stepping
+   * scheme at the end of a time step
+   */
+  virtual void
+  percolate_time_vectors_fd() override;
+
+  /**
    * @brief Define the non-zero constraints used to solve the problem.
    */
   void

@@ -59,8 +59,14 @@ MFNavierStokesSolver<dim>::MFNavierStokesSolver(
   if ((nsparam.stabilization.use_default_stabilization == true) ||
       nsparam.stabilization.stabilization ==
         Parameters::Stabilization::NavierStokesStabilization::pspg_supg)
-    system_operator =
-      std::make_shared<NavierStokesSUPGPSPGOperator<dim, double>>();
+    {
+      if (is_bdf(this->simulation_control->get_assembly_method()))
+        system_operator = std::make_shared<
+          NavierStokesTransientSUPGPSPGOperator<dim, double>>();
+      else
+        system_operator =
+          std::make_shared<NavierStokesSUPGPSPGOperator<dim, double>>();
+    }
   else
     throw std::runtime_error(
       "Only SUPG/PSPG stabilization is supported at the moment.");
@@ -166,7 +172,8 @@ MFNavierStokesSolver<dim>::setup_dofs_fd()
     &(*this->forcing_function),
     this->simulation_parameters.physical_properties_manager
       .get_kinematic_viscosity_scale(),
-    mg_level);
+    mg_level,
+    this->simulation_control);
 
 
   // Initialize vectors using operator
@@ -272,6 +279,10 @@ template <int dim>
 void
 MFNavierStokesSolver<dim>::assemble_system_rhs()
 {
+  if (is_bdf(this->simulation_control->get_assembly_method()))
+    this->system_operator->evaluate_time_derivative_previous_solutions(
+      this->previous_solutions);
+
   TimerOutput::Scope t(this->computing_timer, "Assemble RHS");
 
   this->system_operator->evaluate_residual(this->system_rhs,
@@ -285,6 +296,20 @@ void
 MFNavierStokesSolver<dim>::update_multiphysics_time_average_solution()
 {
   // TODO
+}
+
+template <int dim>
+void
+MFNavierStokesSolver<dim>::percolate_time_vectors_fd()
+{
+  for (unsigned int i = this->previous_solutions.size() - 1; i > 0; --i)
+    {
+      this->previous_solutions[i] = this->previous_solutions[i - 1];
+    }
+  this->previous_solutions[0] = this->present_solution;
+
+  this->system_operator->evaluate_time_derivative_previous_solutions(
+    this->previous_solutions);
 }
 
 template <int dim>
@@ -427,7 +452,8 @@ MFNavierStokesSolver<dim>::solve_with_LSMG(SolverGMRES<VectorType> &solver)
         &(*this->forcing_function),
         this->simulation_parameters.physical_properties_manager
           .get_kinematic_viscosity_scale(),
-        level);
+        level,
+        this->simulation_control);
 
       mg_operators[level]->initialize_dof_vector(mg_solution[level]);
 
@@ -789,7 +815,8 @@ MFNavierStokesSolver<dim>::solve_with_GCMG(SolverGMRES<VectorType> &solver)
         &(*this->forcing_function),
         this->simulation_parameters.physical_properties_manager
           .get_kinematic_viscosity_scale(),
-        numbers::invalid_unsigned_int);
+        numbers::invalid_unsigned_int,
+        this->simulation_control);
     }
 
   // Create transfer operators and transfer solution to mg levels
