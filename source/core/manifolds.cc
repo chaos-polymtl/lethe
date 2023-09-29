@@ -275,8 +275,6 @@ attach_manifolds_to_triangulation(
           static const SphericalManifold<dim, spacedim> manifold_description(
             circleCenter);
           triangulation.set_manifold(manifolds.id[i], manifold_description);
-          triangulation.set_all_manifold_ids_on_boundary(manifolds.id[i],
-                                                         manifolds.id[i]);
         }
       else if (manifolds.types[i] == Parameters::Manifolds::ManifoldType::iges)
         {

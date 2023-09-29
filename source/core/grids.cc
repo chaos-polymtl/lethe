@@ -58,6 +58,16 @@ attach_grid_to_triangulation(
           grid_in.attach_triangulation(triangulation);
           std::ifstream input_file(mesh_parameters.file_name);
           grid_in.read_msh(input_file);
+
+          // Give a manifold id to the faces
+          // that corresponds to their boundary id. Otherwise all manifold IDs
+          // will be set to zero.
+          triangulation.reset_all_manifolds();
+          for (const auto &face : triangulation.active_face_iterators())
+            {
+              if (face->at_boundary())
+                face->set_all_manifold_ids(face->boundary_id());
+            }
         }
     }
   // Dealii grids
