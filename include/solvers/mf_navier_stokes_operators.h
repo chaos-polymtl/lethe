@@ -16,6 +16,9 @@
 #ifndef lethe_mf_navier_stokes_operators_h
 #define lethe_mf_navier_stokes_operators_h
 
+#include <core/bdf.h>
+#include <core/simulation_control.h>
+
 #include <solvers/simulation_parameters.h>
 
 #include <deal.II/lac/dynamic_sparsity_pattern.h>
@@ -65,13 +68,15 @@ public:
    * @param kinematic_viscosity Kinematic viscosity.
    * @param mg_level Level of the operator in case of MG methods.
    */
-  NavierStokesOperatorBase(const Mapping<dim>              &mapping,
-                           const DoFHandler<dim>           &dof_handler,
-                           const AffineConstraints<number> &constraints,
-                           const Quadrature<dim>           &quadrature,
-                           const Function<dim>             *forcing_function,
-                           const double                     kinematic_viscosity,
-                           const unsigned int               mg_level);
+  NavierStokesOperatorBase(
+    const Mapping<dim>                &mapping,
+    const DoFHandler<dim>             &dof_handler,
+    const AffineConstraints<number>   &constraints,
+    const Quadrature<dim>             &quadrature,
+    const Function<dim>               *forcing_function,
+    const double                       kinematic_viscosity,
+    const unsigned int                 mg_level,
+    std::shared_ptr<SimulationControl> simulation_control);
   /**
    * @brief Initialize the main matrix free object that contains all data and is
    * needed to perform loops over cells, and initialize relevant member
@@ -86,13 +91,14 @@ public:
    * @param mg_level Level of the operator in case of MG methods.
    */
   void
-  reinit(const Mapping<dim>              &mapping,
-         const DoFHandler<dim>           &dof_handler,
-         const AffineConstraints<number> &constraints,
-         const Quadrature<dim>           &quadrature,
-         const Function<dim>             *forcing_function,
-         const double                     kinematic_viscosity,
-         const unsigned int               mg_level);
+  reinit(const Mapping<dim>                &mapping,
+         const DoFHandler<dim>             &dof_handler,
+         const AffineConstraints<number>   &constraints,
+         const Quadrature<dim>             &quadrature,
+         const Function<dim>               *forcing_function,
+         const double                       kinematic_viscosity,
+         const unsigned int                 mg_level,
+         std::shared_ptr<SimulationControl> simulation_control);
 
   /**
    * @brief Compute the element size h of the cells required to calculate
@@ -225,6 +231,16 @@ public:
   evaluate_non_linear_term(const VectorType &newton_step);
 
   /**
+   * @brief Store time derivatives of previous solutions according to time-stepping
+   * scheme to use them in the Jacobian and residual cell integrals
+   *
+   * @param previous_solutions Vector with the previous solutions.
+   */
+  void
+  evaluate_time_derivative_previous_solutions(
+    const std::vector<VectorType> previous_solutions);
+
+  /**
    * @brief Evaluate right hand side using the matrix-free operator
    *
    * @param dst Destination vector holding the result
@@ -300,6 +316,7 @@ protected:
   unsigned int                           fe_degree;
   const Function<dim>                   *forcing_function;
   double                                 kinematic_viscosity;
+  std::shared_ptr<SimulationControl>     simulation_control;
 
   // Variables needed from the last Newton step vector
   Table<2, Tensor<1, dim + 1, VectorizedArray<number>>>
@@ -308,6 +325,10 @@ protected:
     nonlinear_previous_gradient;
   Table<2, Tensor<1, dim + 1, Tensor<1, dim, VectorizedArray<number>>>>
     nonlinear_previous_hessian_diagonal;
+
+  // Variable needed to store the time derivative of the previous solutions
+  Table<2, Tensor<1, dim + 1, VectorizedArray<number>>>
+    time_derivatives_previous_solutions;
 
   // Variables needed for the local smoothing approach
   std::vector<unsigned int>                      constrained_indices;
@@ -365,5 +386,54 @@ protected:
     const VectorType                            &src,
     const std::pair<unsigned int, unsigned int> &range) const override;
 };
+
+/**
+ * @brief Class in charge of implementing the main function required to
+ * solve the transient Navier-Stokes equations using SUPG/PSPG stabilization
+ * and the matrix-free approach.
+ *
+ * @tparam dim An integer that denotes the number of spatial dimensions.
+ * @tparam number Abstract type for number across the class (i.e., double).
+ */
+template <int dim, typename number>
+class NavierStokesTransientSUPGPSPGOperator
+  : public NavierStokesOperatorBase<dim, number>
+{
+public:
+  using FECellIntegrator = FEEvaluation<dim, -1, 0, dim + 1, number>;
+  using VectorType       = LinearAlgebra::distributed::Vector<number>;
+
+  NavierStokesTransientSUPGPSPGOperator();
+
+protected:
+  /**
+   * @brief Perform cell integral on a cell batch without gathering and scattering
+   * the values, and according to the Jacobian of the Navier-Stokes equations
+   * with SUPG/PSPG stabilization.
+   *
+   * @param integrator FEEvaluation object that allows to evaluate functions at
+   * quadrature points and perform cell integrations.
+   */
+  void
+  do_cell_integral_local(FECellIntegrator &integrator) const override;
+
+  /**
+   * @brief Perform cell integral on a cell batch with gathering and scattering
+   * the values, and according to the residual of the Navier-Stokes equations
+   * with SUPG/PSPG stabilization.
+   *
+   * @param matrix_free Object that contains all data.
+   * @param dst Global vector where the final result is added.
+   * @param src Input vector with all values in all cells.
+   * @param range Range of the cell batch.
+   */
+  void
+  local_evaluate_residual(
+    const MatrixFree<dim, number>               &matrix_free,
+    VectorType                                  &dst,
+    const VectorType                            &src,
+    const std::pair<unsigned int, unsigned int> &range) const override;
+};
+
 
 #endif
