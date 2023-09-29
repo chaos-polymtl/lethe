@@ -201,8 +201,8 @@ set_particle_particle_contact_force_model(
     {
       switch (dem_parameters.model_parameters.rolling_resistance_method)
         {
-            case Parameters::Lagrangian::RollingResistanceMethod::
-              no_resistance: {
+          case Parameters::Lagrangian::RollingResistanceMethod::no_resistance:
+            {
               particle_particle_contact_force_object =
                 std::make_shared<ParticleParticleContactForce<
                   dim,
@@ -212,8 +212,9 @@ set_particle_particle_contact_force_model(
                     no_resistance>>(dem_parameters);
               break;
             }
-            case Parameters::Lagrangian::RollingResistanceMethod::
-              constant_resistance: {
+          case Parameters::Lagrangian::RollingResistanceMethod::
+            constant_resistance:
+            {
               particle_particle_contact_force_object =
                 std::make_shared<ParticleParticleContactForce<
                   dim,
@@ -223,8 +224,9 @@ set_particle_particle_contact_force_model(
                     constant_resistance>>(dem_parameters);
               break;
             }
-            case Parameters::Lagrangian::RollingResistanceMethod::
-              viscous_resistance: {
+          case Parameters::Lagrangian::RollingResistanceMethod::
+            viscous_resistance:
+            {
               particle_particle_contact_force_object =
                 std::make_shared<ParticleParticleContactForce<
                   dim,

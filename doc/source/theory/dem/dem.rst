@@ -160,6 +160,64 @@ The tangential overlap is calculated with the tangential force with no damping f
 
 Regarding the particle-wall contacts, applied models are the same than particle-particle contacts with a background triangulation and mapping with walls.
 
+---------------------------------------------
+Johnson-Kendall-Roberts force model
+---------------------------------------------
+The Johnson-Kendall-Roberts (JKR) force model enable the modelisation of attractive forces due to the van der Waals effects.
+This model modifies the Hertz formulation by defining a larger contact path radius (:math:`\mathbf{a}`) and by taking into account a new parameter, the effective surface energy (:math:`\mathbf{\gamma}_{e}`).
+The model is define by the following equation.
+
+.. math::
+    a^{3} = \frac{3 R_{e}}{4 E_{e}} \left[F_{n}^{JKR} + 3\pi\gamma_{e}R_{e}  + \sqrt{6 F_{n}^{JKR} \pi\gamma_{e}R_{e} + (3\pi\gamma_{e}R_{e})^2 }\right]
+
+Where :math:`\mathbf{F_{n}^{JKR}}` correspond to the normal spring force and attractive force combine and :math:`\mathbf{\gamma_{e}}` is the effective surface energy.
+Note that if the effective surface energy is equal to zero, the JKR model goes back the Hertz definition.
+
+The effective surface energy can be computed like so :
+
+.. math::
+    \gamma_{e} = \gamma_{1} + \gamma_{2} - 2\gamma_{1,2}
+
+Where :math:`\gamma_{1}` and :math:`\gamma_{2}` are the surface energy of each surface and :math:`\gamma_{1,2}` is the interface energy which is equal to zero when both surface are coming form the same material.
+In Lethe, the interface energy term is negleted since it is hard to properly measure this parameter experimentaly.
+
+To compute the :math:`\mathbf{F_{n}^{JKR}}`, the contact patch radius need to be determied. The contact patch radius can be related to the normal overlap as follow:
+
+.. math::
+    \delta_{n} = \frac{ a^{2} }{ R_{e} } -  \sqrt{ \frac{2 \pi \gamma_{e} a }{ Y_{e} } }
+
+This last equation can be rewrite as a fourth order polynomial function with two imaginary root and two real root.
+
+.. math::
+    0 = a^{4} - 2R_{e}\delta_{n}a^{2} - 2\pi\gamma_{e}R_{e}^{2}a + R_{e}^{2}\delta_{n}^{2}
+
+Since we are always trying to solve for the same real root, a straightforward procedure, describe by Parteli et al. `[3] <https://doi.org/10.1038/srep06227>`_, can be use.
+The procedure goes as follow :
+
+.. math::
+    c_{0} &= R_{e}^{2}\delta_{n}^{2} \\
+    c_{1} &= 2\pi\gamma_{e}R_{e}^{2}\\
+    c_{2} &= -2R_{e}\delta_{n}\\
+    P &= -\frac{c_{2} }{12} - c_{0} \\
+    Q &= - \frac{c_{2}^{3}}{108} + \frac{c_{0}c_{2}}{3} - \frac{c_{1}^{2}}{8} \\
+    U &= \left[ -\frac{ Q }{ 2 } + \sqrt{  \frac{ Q^{2} } {4} + \frac{ P^{3} }{ 27 }  }  \right]^{ \frac{1}{3} } \\
+    s &=
+    \begin{cases}
+    -5c_2/6 + U - \frac{P}{3U} &{if}\: P \neq 0 \\
+    -5c_2/6 + Q^{\frac{1}{3}}  &{if}\: P = 0
+    \end{cases}\\
+    \omega &= \sqrt{c_{2} + 2 s} \\
+    \lambda &= \frac{c_{1} }{2 \omega}\\
+    a &= \frac{1}{2}\left(\omega + \sqrt{\omega^{2} - 4(c_{2} + s + \lambda ) } \right)
+
+Finally, the :math:`\mathbf{F_{n}^{JKR}}` can be compute as followed:
+
+.. math::
+    F_{n}^{JKR} = \frac{4 Y_{e} a^{3}}{3 R_{e}} - \sqrt{8 \pi \gamma_{e} Y_{e} a^{3} }
+
+
+
+
 
 --------------------
 Integration Methods
@@ -192,3 +250,4 @@ References
 
 `[2] <https://mfix.netl.doe.gov/doc/mfix-archive/mfix_current_documentation/dem_doc_2012-1.pdf>`_ R. Garg, J. Galvin-Carney, T. Li, and S. Pannala, “Documentation of open-source MFIX–DEM software for gas-solids flows,” Tingwen Li Dr., p. 10, Sep. 2012.
 
+`[3] <https://doi.org/10.1038/srep06227>`_ E. J. R. Parteli, J. Schmidt, C. Blümel, K.-E. Wirth, W. Peukert, and T. Pöschel, “Attractive particle interaction forces and packing density of fine glass powders,” Sci Rep, vol. 4, no. 1, Art. no. 1, Sep. 2014, doi: 10.1038/srep06227.

@@ -1007,15 +1007,15 @@ protected:
   calculate_hertz_JKR_contact(
     particle_particle_contact_info<dim> &contact_info,
     const double                         normal_relative_velocity_value,
-    const Tensor<1, 3> &                 normal_unit_vector,
+    const Tensor<1, 3>                  &normal_unit_vector,
     const double                         normal_overlap,
-    const ArrayView<const double> &      particle_one_properties,
-    const ArrayView<const double> &      particle_two_properties,
-    Tensor<1, 3> &                       normal_force,
-    Tensor<1, 3> &                       tangential_force,
-    Tensor<1, 3> &                       particle_one_tangential_torque,
-    Tensor<1, 3> &                       particle_two_tangential_torque,
-    Tensor<1, 3> &                       rolling_resistance_torque)
+    const ArrayView<const double>       &particle_one_properties,
+    const ArrayView<const double>       &particle_two_properties,
+    Tensor<1, 3>                        &normal_force,
+    Tensor<1, 3>                        &tangential_force,
+    Tensor<1, 3>                        &particle_one_tangential_torque,
+    Tensor<1, 3>                        &particle_two_tangential_torque,
+    Tensor<1, 3>                        &rolling_resistance_torque)
   {
     // Calculation of effective radius and mass
     const unsigned int particle_one_type =

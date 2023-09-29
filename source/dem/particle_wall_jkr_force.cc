@@ -13,7 +13,7 @@ ParticleWallJKRForce<dim>::ParticleWallJKRForce(
   const std::unordered_map<unsigned int, Tensor<1, 3>>
                                         boundary_rotational_vector,
   const double                          triangulation_radius,
-  const DEMSolverParameters<dim> &      dem_parameters,
+  const DEMSolverParameters<dim>       &dem_parameters,
   const std::vector<types::boundary_id> boundary_index)
   : ParticleWallContactForce<dim>(dem_parameters)
 {
@@ -131,7 +131,7 @@ template <int dim>
 void
 ParticleWallJKRForce<dim>::calculate_particle_wall_contact_force(
   typename DEM::dem_data_structures<dim>::particle_wall_in_contact
-    &                        particle_wall_pairs_in_contact,
+                            &particle_wall_pairs_in_contact,
   const double               dt,
   std::vector<Tensor<1, 3>> &torque,
   std::vector<Tensor<1, 3>> &force)
@@ -232,7 +232,7 @@ template <int dim>
 void
 ParticleWallJKRForce<dim>::calculate_particle_floating_wall_contact_force(
   typename DEM::dem_data_structures<dim>::particle_floating_mesh_in_contact
-    &                        particle_floating_mesh_in_contact,
+                            &particle_floating_mesh_in_contact,
   const double               dt,
   std::vector<Tensor<1, 3>> &torque,
   std::vector<Tensor<1, 3>> &force,
@@ -396,14 +396,20 @@ template <int dim>
 std::tuple<Tensor<1, 3>, Tensor<1, 3>, Tensor<1, 3>, Tensor<1, 3>>
 ParticleWallJKRForce<dim>::calculate_jkr_contact_force_and_torque(
   particle_wall_contact_info<dim> &contact_info,
-  const ArrayView<const double> &  particle_properties)
+  const ArrayView<const double>   &particle_properties)
 {
+  // i is the particle, j is the wall.
+  // we need to put a minus sign infront of the normal_vector to respect the
+  // convention (i -> j)
+  Tensor<1, 3>       normal_vector = -contact_info.normal_vector;
   const unsigned int particle_type =
     particle_properties[DEM::PropertiesIndex::type];
+
   const double effective_radius =
     0.5 * particle_properties[DEM::PropertiesIndex::dp];
 
-  // Calculation of the contact patch radius (a) using the analytical solution.
+  // Calculation of the contact patch radius (a) using the analytical solution
+  // describe in the theory guide.
   const double c0 =
     Utilities::fixed_power<2>(effective_radius * contact_info.normal_overlap);
   const double c1 = -2 * Utilities::fixed_power<2>(effective_radius) * M_PI *
