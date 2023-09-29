@@ -7,19 +7,10 @@ using namespace dealii;
 
 template <int dim>
 ParticleWallNonLinearForce<dim>::ParticleWallNonLinearForce(
-  const double                          triangulation_radius,
   const DEMSolverParameters<dim>       &dem_parameters,
   const std::vector<types::boundary_id> boundary_index)
   : ParticleWallContactForce<dim>(dem_parameters)
 {
-  this->boundary_translational_velocity_map =
-    dem_parameters.boundary_conditions.boundary_translational_velocity;
-  this->boundary_rotational_speed_map =
-    dem_parameters.boundary_conditions.boundary_rotational_speed;
-  this->boundary_rotational_vector =
-    dem_parameters.boundary_conditions.boundary_rotational_vector;
-  this->triangulation_radius = triangulation_radius;
-
   const double wall_youngs_modulus =
     dem_parameters.lagrangian_physical_properties.youngs_modulus_wall;
   const double wall_poisson_ratio =

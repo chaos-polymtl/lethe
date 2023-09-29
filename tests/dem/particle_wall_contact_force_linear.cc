@@ -174,7 +174,7 @@ test()
     particle_wall_contact_list, particle_wall_contact_information);
 
   // Calling linear force
-  ParticleWallLinearForce<dim> force_object(grid_radius, dem_parameters);
+  ParticleWallLinearForce<dim> force_object(dem_parameters);
   force_object.calculate_particle_wall_contact_force(
     particle_wall_contact_information, dt, torque, force);
 

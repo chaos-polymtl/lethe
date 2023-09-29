@@ -19,16 +19,16 @@ set_particle_wall_contact_force_model(
         linear)
     {
       particle_wall_contact_force_object =
-        std::make_shared<ParticleWallLinearForce<dim>>(
-          triangulation_cell_diameter, dem_parameters, boundary_index);
+        std::make_shared<ParticleWallLinearForce<dim>>(dem_parameters,
+                                                       boundary_index);
     }
   else if (dem_parameters.model_parameters.particle_wall_contact_force_method ==
            Parameters::Lagrangian::ModelParameters::
              ParticleWallContactForceModel::nonlinear)
     {
       particle_wall_contact_force_object =
-        std::make_shared<ParticleWallNonLinearForce<dim>>(
-          triangulation_cell_diameter, dem_parameters, boundary_index);
+        std::make_shared<ParticleWallNonLinearForce<dim>>(dem_parameters,
+                                                          boundary_index);
     }
   else
     {

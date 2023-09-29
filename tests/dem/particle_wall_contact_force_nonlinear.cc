@@ -175,7 +175,7 @@ test()
     particle_wall_contact_list, particle_wall_contact_information);
 
   // Calling non-linear force
-  ParticleWallNonLinearForce<dim> force_object(grid_radius, dem_parameters);
+  ParticleWallNonLinearForce<dim> force_object(dem_parameters);
   force_object.calculate_particle_wall_contact_force(
     particle_wall_contact_information, dt, torque, force);
 

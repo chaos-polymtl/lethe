@@ -56,7 +56,6 @@ class ParticleWallLinearForce : public ParticleWallContactForce<dim>
 
 public:
   ParticleWallLinearForce<dim>(
-    const double                          triangulation_radius,
     const DEMSolverParameters<dim>       &dem_parameters,
     const std::vector<types::boundary_id> boundary_index = {});
 

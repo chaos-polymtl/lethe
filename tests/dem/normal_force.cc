@@ -167,8 +167,7 @@ test()
   ParticleWallFineSearch<dim> particle_wall_fine_search_object;
   typename DEM::dem_data_structures<dim>::particle_wall_in_contact
                                   particle_wall_contact_information;
-  ParticleWallNonLinearForce<dim> particle_wall_force_object(grid_radius,
-                                                             dem_parameters);
+  ParticleWallNonLinearForce<dim> particle_wall_force_object(dem_parameters);
   VelocityVerletIntegrator<dim>   integrator_object;
   double                          distance;
   double                          time = 0.0;
