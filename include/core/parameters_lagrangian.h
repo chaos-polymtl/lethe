@@ -361,6 +361,9 @@ namespace Parameters
       // Rotational axes of rotating boundaries
       std::unordered_map<unsigned int, Tensor<1, 3>> boundary_rotational_vector;
 
+      // Point on rotational axis
+      std::unordered_map<unsigned int, Point<3>> point_on_rotation_axis;
+
       // Periodic boundary IDs
       types::boundary_id periodic_boundary_0;
       types::boundary_id periodic_boundary_1;
@@ -384,8 +387,9 @@ namespace Parameters
           &boundary_translational_velocity,
         std::unordered_map<unsigned int, double> &boundary_rotational_speed,
         std::unordered_map<unsigned int, Tensor<1, 3>>
-                                  &boundary_rotational_vector,
-        std::vector<unsigned int> &outlet_boundaries);
+                                                   &boundary_rotational_vector,
+        std::unordered_map<unsigned int, Point<3>> &point_on_rotation_axis,
+        std::vector<unsigned int>                  &outlet_boundaries);
     };
 
     template <int dim>

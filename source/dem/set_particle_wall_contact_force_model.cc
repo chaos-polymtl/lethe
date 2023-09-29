@@ -20,12 +20,7 @@ set_particle_wall_contact_force_model(
     {
       particle_wall_contact_force_object =
         std::make_shared<ParticleWallLinearForce<dim>>(
-          dem_parameters.boundary_conditions.boundary_translational_velocity,
-          dem_parameters.boundary_conditions.boundary_rotational_speed,
-          dem_parameters.boundary_conditions.boundary_rotational_vector,
-          triangulation_cell_diameter,
-          dem_parameters,
-          boundary_index);
+          triangulation_cell_diameter, dem_parameters, boundary_index);
     }
   else if (dem_parameters.model_parameters.particle_wall_contact_force_method ==
            Parameters::Lagrangian::ModelParameters::
@@ -33,12 +28,7 @@ set_particle_wall_contact_force_model(
     {
       particle_wall_contact_force_object =
         std::make_shared<ParticleWallNonLinearForce<dim>>(
-          dem_parameters.boundary_conditions.boundary_translational_velocity,
-          dem_parameters.boundary_conditions.boundary_rotational_speed,
-          dem_parameters.boundary_conditions.boundary_rotational_vector,
-          triangulation_cell_diameter,
-          dem_parameters,
-          boundary_index);
+          triangulation_cell_diameter, dem_parameters, boundary_index);
     }
   else
     {

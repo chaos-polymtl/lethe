@@ -25,6 +25,7 @@ template <int dim>
 void
 ParticleWallContactForce<dim>::update_contact_information(
   particle_wall_contact_info<dim> &contact_info,
+  const Point<3>                  &particle_position,
   const ArrayView<const double>   &particle_properties,
   const double                     dt)
 {
@@ -48,6 +49,9 @@ ParticleWallContactForce<dim>::update_contact_information(
     particle_properties[DEM::PropertiesIndex::omega_y];
   particle_angular_velocity[2] =
     particle_properties[DEM::PropertiesIndex::omega_z];
+
+  // Get vector pointing from the particle to a point on the rotation axis
+  // Tensor<1,3> vector_to_rotation_axis = this->boundary_rotational_speed_map
 
   // Defining relative contact velocity using the convention
   // v_ij = v_j - v_i

@@ -1141,6 +1141,11 @@ namespace Parameters
                         "0",
                         Patterns::Integer(),
                         "Periodic boundary ID 1");
+
+      prm.declare_entry("point on rotational vector",
+                        "0, 0, 0",
+                        Patterns::List(Patterns::Double()),
+                        "Point on the rotational vector");
       prm.declare_entry(
         "periodic direction",
         "0",
@@ -1180,8 +1185,22 @@ namespace Parameters
           rotational_vector[1] = prm.get_double("rotational vector y");
           rotational_vector[2] = prm.get_double("rotational vector z");
 
+
+          // Read the point from a list of doubles
+          Tensor<1, 3> point_on_rotation_axis_tensor;
+
+          std::string point_on_vector = prm.get("point on rotational vector");
+          std::vector<std::string> point_on_vector_str_list(
+            Utilities::split_string_list(point_on_vector));
+          std::vector<double> point_on_vector_list =
+            Utilities::string_to_double(point_on_vector_str_list);
+          for (unsigned int i = 0; i < 3; ++i)
+            point_on_rotation_axis_tensor[i] = point_on_vector_list[i];
+
           this->boundary_rotational_speed.at(boundary_id)  = rotational_speed;
           this->boundary_rotational_vector.at(boundary_id) = rotational_vector;
+          this->point_on_rotation_axis.at(boundary_id) =
+            point_on_rotation_axis_tensor;
         }
       else if (boundary_type == "fixed_wall")
         {
@@ -1233,6 +1252,7 @@ namespace Parameters
       initialize_containers(boundary_translational_velocity,
                             boundary_rotational_speed,
                             boundary_rotational_vector,
+                            point_on_rotation_axis,
                             outlet_boundaries);
 
       for (unsigned int counter = 0; counter < DEM_BC_number; ++counter)
@@ -1253,8 +1273,9 @@ namespace Parameters
                                                &boundary_translational_velocity,
       std::unordered_map<unsigned int, double> &boundary_rotational_speed,
       std::unordered_map<unsigned int, Tensor<1, 3>>
-                                &boundary_rotational_vector,
-      std::vector<unsigned int> &outlet_boundaries)
+                                                 &boundary_rotational_vector,
+      std::unordered_map<unsigned int, Point<3>> &point_on_rotation_axis,
+      std::vector<unsigned int>                  &outlet_boundaries)
     {
       Tensor<1, 3> zero_tensor({0.0, 0.0, 0.0});
 
@@ -1263,6 +1284,7 @@ namespace Parameters
           boundary_translational_velocity.insert({counter, zero_tensor});
           boundary_rotational_speed.insert({counter, 0});
           boundary_rotational_vector.insert({counter, zero_tensor});
+          point_on_rotation_axis.insert({counter, Point<3>(zero_tensor)});
         }
 
       outlet_boundaries.reserve(DEM_BC_number);

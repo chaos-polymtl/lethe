@@ -56,11 +56,6 @@ class ParticleWallLinearForce : public ParticleWallContactForce<dim>
 
 public:
   ParticleWallLinearForce<dim>(
-    const std::unordered_map<unsigned int, Tensor<1, 3>>
-      boundary_translational_velocity,
-    const std::unordered_map<unsigned int, double> boundary_rotational_speed,
-    const std::unordered_map<unsigned int, Tensor<1, 3>>
-                                          boundary_rotational_vector,
     const double                          triangulation_radius,
     const DEMSolverParameters<dim>       &dem_parameters,
     const std::vector<types::boundary_id> boundary_index = {});

@@ -175,6 +175,7 @@ protected:
   void
   update_contact_information(
     particle_wall_contact_info<dim> &contact_pair_information,
+    const Point<3>                  &particle_position,
     const ArrayView<const double>   &particle_properties,
     const double                     dt);
 
@@ -274,7 +275,9 @@ protected:
                                            boundary_translational_velocity_map;
   std::unordered_map<unsigned int, double> boundary_rotational_speed_map;
   std::unordered_map<unsigned int, Tensor<1, 3>> boundary_rotational_vector;
-  unsigned int                                   n_particle_types;
+  std::unordered_map<unsigned int, Point<3>>     point_on_rotation_vector;
+
+  unsigned int n_particle_types;
 
   std::vector<double> effective_youngs_modulus;
   std::vector<double> effective_shear_modulus;
