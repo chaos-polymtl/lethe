@@ -280,7 +280,7 @@ public:
       }
   }
 
-  /** @brief Reinitialize the velocity, calculated by the Fluid Dynamics
+  /** @brief Reinitialize the velocity, calculated by the fluid dynamics while also taking into account ALE
    *
    * @tparam VectorType The Vector type used for the solvers
    *
@@ -289,17 +289,40 @@ public:
    *
    * @param current_solution The present value of the solution for [u,p]
    *
+   * @param ale The ALE parameters which include the ALE function
+   *
    */
 
   template <typename VectorType>
   void
   reinit_velocity(const typename DoFHandler<dim>::active_cell_iterator &cell,
-                  const VectorType &current_solution)
+                  const VectorType           &current_solution,
+                  const Parameters::ALE<dim> &ale)
   {
     this->fe_values_fd.reinit(cell);
 
     this->fe_values_fd[velocities].get_function_values(current_solution,
                                                        velocity_values);
+
+    if (!ale.enabled())
+      return;
+
+    // ALE enabled, so extract the ALE velocity and subtract it from the
+    // velocity obtained from the fluid dynamics
+    Tensor<1, dim>                                  velocity_ale;
+    std::shared_ptr<Functions::ParsedFunction<dim>> velocity_ale_function =
+      ale.velocity;
+    Vector<double> velocity_ale_vector(dim);
+
+    for (unsigned int q = 0; q < n_q_points; ++q)
+      {
+        velocity_ale_function->vector_value(quadrature_points[q],
+                                            velocity_ale_vector);
+        for (unsigned int d = 0; d < dim; ++d)
+          velocity_ale[d] = velocity_ale_vector[d];
+
+        velocity_values[q] -= velocity_ale;
+      }
   }
 
   /** @brief Reinitialize the velocity gradient, calculated by the Fluid Dynamics

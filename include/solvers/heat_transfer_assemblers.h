@@ -412,46 +412,4 @@ protected:
   std::shared_ptr<Parameters::Laser<dim>> laser_parameters;
 };
 
-/**
- * @brief Class that assembles the terms arising from Abitrary Lagrangian-Eulerian
- * simulation in a Galilean frame of reference.
- *
- * @tparam dim An integer that denotes the number of spatial dimensions
- *
- * @ingroup assemblers
- */
-template <int dim>
-class HeatTransferAssemblerALE : public HeatTransferAssemblerBase<dim>
-{
-public:
-  HeatTransferAssemblerALE(
-    std::shared_ptr<SimulationControl> simulation_control,
-    const Parameters::ALE<dim>        &ale)
-    : HeatTransferAssemblerBase<dim>(simulation_control)
-    , ale(ale)
-  {}
-
-  /**
-   * @brief assemble_matrix Assembles the matrix
-   * @param scratch_data (see base class)
-   * @param copy_data (see base class)
-   */
-
-  virtual void
-  assemble_matrix(HeatTransferScratchData<dim> &scratch_data,
-                  StabilizedMethodsCopyData    &copy_data) override;
-
-  /**
-   * @brief assemble_rhs Assembles the rhs
-   * @param scratch_data (see base class)
-   * @param copy_data (see base class)
-   */
-  virtual void
-  assemble_rhs(HeatTransferScratchData<dim> &scratch_data,
-               StabilizedMethodsCopyData    &copy_data) override;
-
-private:
-  Parameters::ALE<dim> ale;
-};
-
 #endif

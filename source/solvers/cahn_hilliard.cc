@@ -133,12 +133,15 @@ CahnHilliard<dim>::assemble_local_system_matrix(
     {
       scratch_data.reinit_velocity(velocity_cell,
                                    *multiphysics->get_block_solution(
-                                     PhysicsID::fluid_dynamics));
+                                     PhysicsID::fluid_dynamics),
+                                   this->simulation_parameters.ale);
     }
   else
     {
-      scratch_data.reinit_velocity(
-        velocity_cell, *multiphysics->get_solution(PhysicsID::fluid_dynamics));
+      scratch_data.reinit_velocity(velocity_cell,
+                                   *multiphysics->get_solution(
+                                     PhysicsID::fluid_dynamics),
+                                   this->simulation_parameters.ale);
     }
 
   copy_data.reset();
@@ -229,12 +232,15 @@ CahnHilliard<dim>::assemble_local_system_rhs(
     {
       scratch_data.reinit_velocity(velocity_cell,
                                    *multiphysics->get_block_solution(
-                                     PhysicsID::fluid_dynamics));
+                                     PhysicsID::fluid_dynamics),
+                                   this->simulation_parameters.ale);
     }
   else
     {
-      scratch_data.reinit_velocity(
-        velocity_cell, *multiphysics->get_solution(PhysicsID::fluid_dynamics));
+      scratch_data.reinit_velocity(velocity_cell,
+                                   *multiphysics->get_solution(
+                                     PhysicsID::fluid_dynamics),
+                                   this->simulation_parameters.ale);
     }
 
   copy_data.reset();

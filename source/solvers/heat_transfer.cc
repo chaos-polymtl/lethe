@@ -327,14 +327,6 @@ HeatTransfer<dim>::setup_assemblers()
         }
     }
 
-  // ALE
-  if (this->simulation_parameters.ale.enabled())
-    {
-      this->assemblers.push_back(
-        std::make_shared<HeatTransferAssemblerALE<dim>>(
-          this->simulation_control, this->simulation_parameters.ale));
-    }
-
   // Time-stepping schemes
   if (is_bdf(this->simulation_control->get_assembly_method()))
     {
@@ -429,13 +421,16 @@ HeatTransfer<dim>::assemble_local_system_matrix(
           scratch_data.reinit_velocity(
             velocity_cell,
             *multiphysics->get_block_time_average_solution(
-              PhysicsID::fluid_dynamics));
+              PhysicsID::fluid_dynamics),
+            this->simulation_parameters.ale);
         }
       else
         {
-          scratch_data.reinit_velocity(velocity_cell,
-                                       *multiphysics->get_block_solution(
-                                         PhysicsID::fluid_dynamics));
+          if (!this->simulation_parameters.ale.enabled())
+            scratch_data.reinit_velocity(velocity_cell,
+                                         *multiphysics->get_block_solution(
+                                           PhysicsID::fluid_dynamics),
+                                         this->simulation_parameters.ale);
         }
     }
   else
@@ -447,13 +442,15 @@ HeatTransfer<dim>::assemble_local_system_matrix(
         {
           scratch_data.reinit_velocity(velocity_cell,
                                        *multiphysics->get_time_average_solution(
-                                         PhysicsID::fluid_dynamics));
+                                         PhysicsID::fluid_dynamics),
+                                       this->simulation_parameters.ale);
         }
       else
         {
           scratch_data.reinit_velocity(velocity_cell,
                                        *multiphysics->get_solution(
-                                         PhysicsID::fluid_dynamics));
+                                         PhysicsID::fluid_dynamics),
+                                       this->simulation_parameters.ale);
         }
     }
 
@@ -580,13 +577,15 @@ HeatTransfer<dim>::assemble_local_system_rhs(
           scratch_data.reinit_velocity(
             velocity_cell,
             *multiphysics->get_block_time_average_solution(
-              PhysicsID::fluid_dynamics));
+              PhysicsID::fluid_dynamics),
+            this->simulation_parameters.ale);
         }
       else
         {
           scratch_data.reinit_velocity(velocity_cell,
                                        *multiphysics->get_block_solution(
-                                         PhysicsID::fluid_dynamics));
+                                         PhysicsID::fluid_dynamics),
+                                       this->simulation_parameters.ale);
         }
       scratch_data.reinit_velocity_gradient(
         *multiphysics->get_block_solution(PhysicsID::fluid_dynamics));
@@ -600,13 +599,15 @@ HeatTransfer<dim>::assemble_local_system_rhs(
         {
           scratch_data.reinit_velocity(velocity_cell,
                                        *multiphysics->get_time_average_solution(
-                                         PhysicsID::fluid_dynamics));
+                                         PhysicsID::fluid_dynamics),
+                                       this->simulation_parameters.ale);
         }
       else
         {
           scratch_data.reinit_velocity(velocity_cell,
                                        *multiphysics->get_solution(
-                                         PhysicsID::fluid_dynamics));
+                                         PhysicsID::fluid_dynamics),
+                                       this->simulation_parameters.ale);
         }
 
       scratch_data.reinit_velocity_gradient(

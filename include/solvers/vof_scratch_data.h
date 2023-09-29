@@ -205,7 +205,8 @@ public:
   void
   reinit_velocity(const typename DoFHandler<dim>::active_cell_iterator &cell,
                   const VectorType              &current_solution,
-                  const std::vector<VectorType> &previous_solutions)
+                  const std::vector<VectorType> &previous_solutions,
+                  const Parameters::ALE<dim>    &ale)
   {
     fe_values_fd.reinit(cell);
 
@@ -224,6 +225,31 @@ public:
       {
         fe_values_fd[velocities_fd].get_function_values(
           previous_solutions[p], this->previous_velocity_values[p]);
+      }
+
+    if (!ale.enabled())
+      return;
+
+    // ALE enabled, so extract the ALE velocity and subtract it from the
+    // velocity obtained from the fluid dynamics
+    Tensor<1, dim>                                  velocity_ale;
+    std::shared_ptr<Functions::ParsedFunction<dim>> velocity_ale_function =
+      ale.velocity;
+    Vector<double> velocity_ale_vector(dim);
+
+    for (unsigned int q = 0; q < n_q_points; ++q)
+      {
+        velocity_ale_function->vector_value(quadrature_points[q],
+                                            velocity_ale_vector);
+        for (unsigned int d = 0; d < dim; ++d)
+          velocity_ale[d] = velocity_ale_vector[d];
+
+        velocity_values[q] -= velocity_ale;
+
+        for (unsigned int p = 0; p < previous_solutions.size(); ++p)
+          {
+            this->previous_velocity_values[p][q] -= velocity_ale;
+          }
       }
   }
 
