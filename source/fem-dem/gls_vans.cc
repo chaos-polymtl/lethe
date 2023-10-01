@@ -326,7 +326,7 @@ GLSVANSSolver<dim>::update_solution_and_constraints()
 
   void_fraction_constraints.clear();
 
-  // reinitialize affine constraints with the correct size
+  // reinitialize affine constraints
   void_fraction_constraints.reinit(locally_relevant_dofs_voidfraction);
 
   // Remake hanging node constraints
