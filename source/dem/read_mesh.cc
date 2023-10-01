@@ -9,14 +9,11 @@ read_mesh(const Parameters::Mesh   &mesh_parameters,
           const bool                restart,
           const ConditionalOStream &pcout,
           parallel::DistributedTriangulationBase<dim, spacedim> &triangulation,
-          double                              &triangulation_cell_diameter,
-          const Parameters::Lagrangian::BCDEM &bc_params)
+          const Parameters::Lagrangian::BCDEM                   &bc_params)
 {
   pcout << "Reading triangulation" << std::endl;
 
   attach_grid_to_triangulation(triangulation, mesh_parameters);
-
-  triangulation_cell_diameter = 0.5 * GridTools::diameter(triangulation);
 
   if (bc_params.BC_type ==
       Parameters::Lagrangian::BCDEM::BoundaryType::periodic)
@@ -71,21 +68,18 @@ read_mesh<2, 2>(const Parameters::Mesh                       &mesh_parameters,
                 const bool                                    restart,
                 const ConditionalOStream                     &pcout,
                 parallel::DistributedTriangulationBase<2, 2> &triangulation,
-                double &triangulation_cell_diameter,
-                const Parameters::Lagrangian::BCDEM &bc_params);
+                const Parameters::Lagrangian::BCDEM          &bc_params);
 
 template void
 read_mesh<2, 3>(const Parameters::Mesh                       &mesh_parameters,
                 const bool                                    restart,
                 const ConditionalOStream                     &pcout,
                 parallel::DistributedTriangulationBase<2, 3> &triangulation,
-                double &triangulation_cell_diameter,
-                const Parameters::Lagrangian::BCDEM &bc_params);
+                const Parameters::Lagrangian::BCDEM          &bc_params);
 
 template void
 read_mesh<3, 3>(const Parameters::Mesh                       &mesh_parameters,
                 const bool                                    restart,
                 const ConditionalOStream                     &pcout,
                 parallel::DistributedTriangulationBase<3, 3> &triangulation,
-                double &triangulation_cell_diameter,
-                const Parameters::Lagrangian::BCDEM &bc_params);
+                const Parameters::Lagrangian::BCDEM          &bc_params);

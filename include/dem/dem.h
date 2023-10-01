@@ -328,7 +328,6 @@ private:
   bool                                 load_balance_step;
   bool                                 checkpoint_step;
   Tensor<1, 3>                         g;
-  double                               triangulation_cell_diameter;
 
   DEM::DEMProperties<dim>                  properties_class;
   std::vector<std::pair<std::string, int>> properties =

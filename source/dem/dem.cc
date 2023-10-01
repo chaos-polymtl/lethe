@@ -1091,7 +1091,6 @@ DEMSolver<dim>::solve()
             parameters.restart.restart,
             pcout,
             triangulation,
-            triangulation_cell_diameter,
             parameters.boundary_conditions);
 
   // Store information about floating mesh/background mesh intersection
