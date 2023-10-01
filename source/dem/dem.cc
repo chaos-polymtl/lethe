@@ -1189,9 +1189,7 @@ DEMSolver<dim>::solve()
   particle_particle_contact_force_object =
     set_particle_particle_contact_force_model(parameters);
   particle_wall_contact_force_object =
-    set_particle_wall_contact_force_model(parameters,
-                                          triangulation,
-                                          triangulation_cell_diameter);
+    set_particle_wall_contact_force_model(parameters, triangulation);
 
   // Setup background dof
   setup_background_dofs();
