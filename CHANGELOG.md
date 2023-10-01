@@ -3,6 +3,12 @@ All notable changes to the Lethe project will be documented in this file.
  
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Master] - 2023-09-30
+  
+### Fixed
+
+- MINOR There was an error in the application of the affine constraints used to clip the void fraction in the lethe-fluid-vans and lethe-fluid-particles solvers. This led to assertions being thrown in debug. This has been corrected by reiniting the constraints with the appropriate size.
+
 ## [Master] - 2023-09-20
   
 ### Deprecated
