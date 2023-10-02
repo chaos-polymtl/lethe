@@ -16,8 +16,7 @@ concurrency:
 
 
 env:
-  COMPILE_JOBS: 6
-  MULTI_CORE_TESTS_REGEX: "mpirun=2"
+  COMPILE_JOBS: 5
 
 jobs:
   build:
