@@ -97,7 +97,9 @@ ParticleParticleContactForce<dim, contact_model, rolling_friction_model>::
                           rolling_friction_coefficient_j);
 
           this->effective_surface_energy[k] =
-            surface_energy_i + surface_energy_j;
+            surface_energy_i + surface_energy_j -
+            std::pow(std::sqrt(surface_energy_i) - std::sqrt(surface_energy_j),
+                     2);
 
           double restitution_coefficient_particle_log =
             std::log(this->effective_coefficient_of_restitution[k]);

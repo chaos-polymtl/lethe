@@ -79,7 +79,10 @@ ParticleWallJKRForce<dim>::ParticleWallJKRForce(
          DBL_MIN);
 
       this->effective_surface_energy[i] =
-        particle_surface_energy + wall_surface_energy;
+        particle_surface_energy + wall_surface_energy -
+        std::pow(std::sqrt(particle_surface_energy) -
+                   std::sqrt(wall_surface_energy),
+                 2);
 
       const double log_coeff_restitution =
         log(this->effective_coefficient_of_restitution[i]);
