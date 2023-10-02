@@ -22,7 +22,6 @@
 
 #include <solvers/mf_navier_stokes.h>
 
-#include <deal.II/dofs/dof_renumbering.h>
 #include <deal.II/dofs/dof_tools.h>
 
 #include <deal.II/grid/grid_tools.h>
