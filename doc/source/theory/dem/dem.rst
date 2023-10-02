@@ -178,23 +178,23 @@ The effective surface energy can be computed like so :
 .. math::
     \gamma_{e} = \gamma_{1} + \gamma_{2} - 2\gamma_{1,2}
 
-Where :math:`\gamma_{1}` and :math:`\gamma_{2}` are the surface energy of each surface and :math:`\gamma_{1,2}` is the interface energy which is equal to zero when both surface are coming form the same material.
-In Lethe, the interface energy term is approximated using : `[4] <https://doi.org/10.1016/B978-0-12-391927-4.10013-1>`_
+Where :math:`\gamma_{1}` and :math:`\gamma_{2}` are the surface energy of each material (particle or wall) :math:`\gamma_{1,2}` is the interface energy which is equal to zero when both surface are coming form the same material.
+In Lethe, the interface energy term is approximated using : `[3] <https://doi.org/10.1016/B978-0-12-391927-4.10013-1>`_
 
 .. math::
-    \gamma_{1,2} \approx = \left( \sqrt{\gamma_{1}} - \sqrt{\gamma_{2}}  \right)^{2}
+    \gamma_{1,2} \approx \left( \sqrt{\gamma_{1}} - \sqrt{\gamma_{2}}  \right)^{2}
 
 To compute the :math:`\mathbf{F_{n}^{JKR}}`, the contact patch radius need to be determied. The contact patch radius can be related to the normal overlap as follow:
 
 .. math::
     \delta_{n} = \frac{ a^{2} }{ R_{e} } -  \sqrt{ \frac{2 \pi \gamma_{e} a }{ Y_{e} } }
 
-This last equation can be rewrite as a fourth order polynomial function with two imaginary root and two real root.
+This equation can be rewrited as a fourth order polynomial function with two imaginary root and two real root.
 
 .. math::
     0 = a^{4} - 2R_{e}\delta_{n}a^{2} - 2\pi\gamma_{e}R_{e}^{2}a + R_{e}^{2}\delta_{n}^{2}
 
-Since we are always trying to solve for the same real root, a straightforward procedure, describe by Parteli et al. `[3] <https://doi.org/10.1038/srep06227>`_, can be use.
+Since we are always trying to solve for the same real root, a straightforward procedure, describe by Parteli et al. can be use. `[4] <https://doi.org/10.1038/srep06227>`_
 The procedure goes as follow :
 
 .. math::
@@ -218,6 +218,9 @@ Finally, the :math:`\mathbf{F_{n}^{JKR}}` can be compute as followed:
 .. math::
     F_{n}^{JKR} = \frac{4 Y_{e} a^{3}}{3 R_{e}} - \sqrt{8 \pi \gamma_{e} Y_{e} a^{3} }
 
+The normal damping, tangential damping and tangential spring constants still need to be compute using the same procedure as the nonlinear model.
+
+For implementation reasons, a simplified version of the JKR model (SJKR-A) is implemented in Lethe. This version does not calculate non-contact forces. Please refer to C. J. Coetzee and O. C. Scheffler for more information on the different versions of the JKR model and their specific features. `[5] <https://doi.org/10.3390/pr11010005>`_
 
 --------------------
 Integration Methods
@@ -250,6 +253,8 @@ References
 
 `[2] <https://mfix.netl.doe.gov/doc/mfix-archive/mfix_current_documentation/dem_doc_2012-1.pdf>`_ R. Garg, J. Galvin-Carney, T. Li, and S. Pannala, “Documentation of open-source MFIX–DEM software for gas-solids flows,” Tingwen Li Dr., p. 10, Sep. 2012.
 
-`[3] <https://doi.org/10.1038/srep06227>`_ E. J. R. Parteli, J. Schmidt, C. Blümel, K.-E. Wirth, W. Peukert, and T. Pöschel, “Attractive particle interaction forces and packing density of fine glass powders,” Sci Rep, vol. 4, no. 1, Art. no. 1, Sep. 2014, doi: 10.1038/srep06227.
+`[3] <https://doi.org/10.1016/B978-0-12-391927-4.10013-1>`_ J. N. Israelachvili, “Chapter 13 - Van der Waals Forces between Particles and Surfaces,” in Intermolecular and Surface Forces (Third Edition), Third Edition., J. N. Israelachvili, Ed., Boston: Academic Press, 2011, pp. 253–289. doi: https://doi.org/10.1016/B978-0-12-391927-4.10013-1.
 
-`[4] <https://doi.org/10.1016/B978-0-12-391927-4.10013-1>`_ J. N. Israelachvili, “Chapter 13 - Van der Waals Forces between Particles and Surfaces,” in Intermolecular and Surface Forces (Third Edition), Third Edition., J. N. Israelachvili, Ed., Boston: Academic Press, 2011, pp. 253–289. doi: https://doi.org/10.1016/B978-0-12-391927-4.10013-1.
+`[4] <https://doi.org/10.1038/srep06227>`_ E. J. R. Parteli, J. Schmidt, C. Blümel, K.-E. Wirth, W. Peukert, and T. Pöschel, “Attractive particle interaction forces and packing density of fine glass powders,” Sci Rep, vol. 4, no. 1, Art. no. 1, Sep. 2014, doi: 10.1038/srep06227.
+
+`[5] <https://doi.org/10.3390/pr11010005>`_ C. J. Coetzee and O. C. Scheffler, “Review: The Calibration of DEM Parameters for the Bulk Modelling of Cohesive Materials,” Processes, vol. 11, no. 1, Art. no. 1, Jan. 2023, doi: 10.3390/pr11010005.
