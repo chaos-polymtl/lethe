@@ -182,6 +182,8 @@ MFNavierStokesSolver<dim>::setup_dofs_fd()
   this->system_operator->initialize_dof_vector(this->newton_update);
   this->system_operator->initialize_dof_vector(this->system_rhs);
   this->system_operator->initialize_dof_vector(this->local_evaluation_point);
+  this->system_operator->initialize_dof_vector(
+    this->time_derivative_previous_solutions);
 
   // Initialize vectors of previous solutions
   for (auto &solution : this->previous_solutions)
@@ -258,6 +260,7 @@ MFNavierStokesSolver<dim>::set_initial_condition_fd(
   else if (initial_condition_type == Parameters::InitialConditionType::nodal)
     {
       this->set_nodal_values();
+      this->present_solution.update_ghost_values();
       this->finish_time_step();
     }
   else
@@ -280,8 +283,12 @@ void
 MFNavierStokesSolver<dim>::assemble_system_rhs()
 {
   if (is_bdf(this->simulation_control->get_assembly_method()))
-    this->system_operator->evaluate_time_derivative_previous_solutions(
-      this->previous_solutions);
+    {
+      calculate_time_derivative_previous_solutions();
+      this->time_derivative_previous_solutions.update_ghost_values();
+      this->system_operator->evaluate_time_derivative_previous_solutions(
+        this->time_derivative_previous_solutions);
+    }
 
   TimerOutput::Scope t(this->computing_timer, "Assemble RHS");
 
@@ -308,8 +315,28 @@ MFNavierStokesSolver<dim>::percolate_time_vectors_fd()
     }
   this->previous_solutions[0] = this->present_solution;
 
+  calculate_time_derivative_previous_solutions();
+  this->time_derivative_previous_solutions.update_ghost_values();
   this->system_operator->evaluate_time_derivative_previous_solutions(
-    this->previous_solutions);
+    this->time_derivative_previous_solutions);
+}
+
+template <int dim>
+void
+MFNavierStokesSolver<dim>::calculate_time_derivative_previous_solutions()
+{
+  this->time_derivative_previous_solutions = 0;
+
+  const auto          method = this->simulation_control->get_assembly_method();
+  std::vector<double> time_steps_vector =
+    this->simulation_control->get_time_steps_vector();
+  Vector<double> bdf_coefs = bdf_coefficients(method, time_steps_vector);
+
+  for (unsigned int p = 0; p < number_of_previous_solutions(method); ++p)
+    {
+      this->time_derivative_previous_solutions.add(bdf_coefs[p + 1],
+                                                   this->previous_solutions[p]);
+    }
 }
 
 template <int dim>
@@ -380,6 +407,7 @@ MFNavierStokesSolver<dim>::solve_with_LSMG(SolverGMRES<VectorType> &solver)
   MGLevelObject<std::shared_ptr<OperatorType>> mg_operators;
   LSTransferType                               mg_transfer;
   MGLevelObject<VectorType>                    mg_solution;
+  MGLevelObject<VectorType> mg_time_derivative_previous_solutions;
   MGLevelObject<std::shared_ptr<OperatorType>> mg_interface_in;
   MGLevelObject<std::shared_ptr<OperatorType>> mg_interface_out;
   MGLevelObject<AffineConstraints<double>>     level_constraints;
@@ -402,6 +430,7 @@ MFNavierStokesSolver<dim>::solve_with_LSMG(SolverGMRES<VectorType> &solver)
 
   mg_operators.resize(0, n_h_levels - 1);
   mg_solution.resize(0, n_h_levels - 1);
+  mg_time_derivative_previous_solutions.resize(0, n_h_levels - 1);
   level_constraints.resize(0, n_h_levels - 1);
   ls_mg_interface_in.resize(0, n_h_levels - 1);
   ls_mg_interface_out.resize(0, n_h_levels - 1);
@@ -441,8 +470,14 @@ MFNavierStokesSolver<dim>::solve_with_LSMG(SolverGMRES<VectorType> &solver)
              .use_default_stabilization == true) ||
           this->simulation_parameters.stabilization.stabilization ==
             Parameters::Stabilization::NavierStokesStabilization::pspg_supg)
-        mg_operators[level] =
-          std::make_shared<NavierStokesSUPGPSPGOperator<dim, double>>();
+        {
+          if (is_bdf(this->simulation_control->get_assembly_method()))
+            mg_operators[level] = std::make_shared<
+              NavierStokesTransientSUPGPSPGOperator<dim, double>>();
+          else
+            mg_operators[level] =
+              std::make_shared<NavierStokesSUPGPSPGOperator<dim, double>>();
+        }
 
       mg_operators[level]->reinit(
         *this->mapping,
@@ -456,6 +491,8 @@ MFNavierStokesSolver<dim>::solve_with_LSMG(SolverGMRES<VectorType> &solver)
         this->simulation_control);
 
       mg_operators[level]->initialize_dof_vector(mg_solution[level]);
+      mg_operators[level]->initialize_dof_vector(
+        mg_time_derivative_previous_solutions[level]);
 
       ls_mg_operators[level].initialize(*mg_operators[level]);
       ls_mg_interface_in[level].initialize(*mg_operators[level]);
@@ -471,11 +508,23 @@ MFNavierStokesSolver<dim>::solve_with_LSMG(SolverGMRES<VectorType> &solver)
                                 mg_solution,
                                 this->present_solution);
 
+  if (is_bdf(this->simulation_control->get_assembly_method()))
+    mg_transfer.interpolate_to_mg(this->dof_handler,
+                                  mg_time_derivative_previous_solutions,
+                                  this->time_derivative_previous_solutions);
+
   // Evaluate non linear terms for all mg operators
   for (unsigned int level = minlevel; level <= maxlevel; ++level)
     {
       mg_solution[level].update_ghost_values();
       mg_operators[level]->evaluate_non_linear_term(mg_solution[level]);
+
+      if (is_bdf(this->simulation_control->get_assembly_method()))
+        {
+          mg_time_derivative_previous_solutions[level].update_ghost_values();
+          mg_operators[level]->evaluate_time_derivative_previous_solutions(
+            mg_time_derivative_previous_solutions[level]);
+        }
     }
 
   mg::Matrix<VectorType> mg_matrix(ls_mg_operators);
@@ -684,6 +733,7 @@ MFNavierStokesSolver<dim>::solve_with_GCMG(SolverGMRES<VectorType> &solver)
   MGLevelObject<std::shared_ptr<OperatorType>>       mg_operators;
   MGLevelObject<MGTwoLevelTransfer<dim, VectorType>> transfers;
   MGLevelObject<VectorType>                          mg_solution;
+  MGLevelObject<VectorType> mg_time_derivative_previous_solutions;
   MGLevelObject<AffineConstraints<typename VectorType::value_type>> constraints;
 
   // Create triangulations for all levels
@@ -759,6 +809,7 @@ MFNavierStokesSolver<dim>::solve_with_GCMG(SolverGMRES<VectorType> &solver)
   mg_operators.resize(minlevel, maxlevel);
   transfers.resize(minlevel, maxlevel);
   mg_solution.resize(minlevel, maxlevel);
+  mg_time_derivative_previous_solutions.resize(minlevel, maxlevel);
   constraints.resize(minlevel, maxlevel);
 
   // Distribute DoFs for each level
@@ -804,8 +855,14 @@ MFNavierStokesSolver<dim>::solve_with_GCMG(SolverGMRES<VectorType> &solver)
              .use_default_stabilization == true) ||
           this->simulation_parameters.stabilization.stabilization ==
             Parameters::Stabilization::NavierStokesStabilization::pspg_supg)
-        mg_operators[level] =
-          std::make_shared<NavierStokesSUPGPSPGOperator<dim, double>>();
+        {
+          if (is_bdf(this->simulation_control->get_assembly_method()))
+            mg_operators[level] = std::make_shared<
+              NavierStokesTransientSUPGPSPGOperator<dim, double>>();
+          else
+            mg_operators[level] =
+              std::make_shared<NavierStokesSUPGPSPGOperator<dim, double>>();
+        }
 
       mg_operators[level]->reinit(
         *this->mapping,
@@ -835,11 +892,23 @@ MFNavierStokesSolver<dim>::solve_with_GCMG(SolverGMRES<VectorType> &solver)
                                 mg_solution,
                                 this->present_solution);
 
+  if (is_bdf(this->simulation_control->get_assembly_method()))
+    mg_transfer.interpolate_to_mg(this->dof_handler,
+                                  mg_time_derivative_previous_solutions,
+                                  this->time_derivative_previous_solutions);
+
   // Evaluate non linear terms for all mg operators
   for (unsigned int level = minlevel; level <= maxlevel; ++level)
     {
       mg_solution[level].update_ghost_values();
       mg_operators[level]->evaluate_non_linear_term(mg_solution[level]);
+
+      if (is_bdf(this->simulation_control->get_assembly_method()))
+        {
+          mg_time_derivative_previous_solutions[level].update_ghost_values();
+          mg_operators[level]->evaluate_time_derivative_previous_solutions(
+            mg_time_derivative_previous_solutions[level]);
+        }
     }
 
   if (this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)

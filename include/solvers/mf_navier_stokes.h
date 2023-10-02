@@ -121,11 +121,18 @@ protected:
   update_multiphysics_time_average_solution() override;
 
   /**
-   * @brief Updates the solutions of the previous time steps needed for the time-stepping
-   * scheme at the end of a time step
+   * @brief Update the solutions of the previous time steps needed for the time-stepping
+   * scheme at the end of a time step.
    */
   virtual void
   percolate_time_vectors_fd() override;
+
+  /**
+   * @brief Calculate and store time derivatives of previous solutions according to
+   * time-stepping scheme to use them in the operator.
+   */
+  void
+  calculate_time_derivative_previous_solutions();
 
   /**
    * @brief Define the non-zero constraints used to solve the problem.
@@ -211,6 +218,9 @@ protected:
   std::shared_ptr<PreconditionMG<dim, VectorType, GCTransferType>>
     gc_multigrid_preconditioner;
   std::shared_ptr<TrilinosWrappers::PreconditionILU> ilu_preconditioner;
+  // Vector to store the time derivative of the previous solutions at the end
+  // of each time step
+  VectorType time_derivative_previous_solutions;
 };
 
 #endif
