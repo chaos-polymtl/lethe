@@ -474,30 +474,20 @@ template <int dim, typename number>
 void
 NavierStokesOperatorBase<dim, number>::
   evaluate_time_derivative_previous_solutions(
-    const std::vector<VectorType> previous_solutions)
+    const VectorType &time_derivative_previous_solutions)
 {
   const unsigned int n_cells = matrix_free.n_cell_batches();
   FECellIntegrator   phi(matrix_free);
 
   time_derivatives_previous_solutions.reinit(n_cells, phi.n_q_points);
 
-  // Time stepping information
-  const auto          method = this->simulation_control->get_assembly_method();
-  std::vector<double> time_steps_vector =
-    this->simulation_control->get_time_steps_vector();
-  Vector<double> bdf_coefs = bdf_coefficients(method, time_steps_vector);
-
   for (unsigned int cell = 0; cell < n_cells; ++cell)
     {
       phi.reinit(cell);
-      for (unsigned int p = 0; p < number_of_previous_solutions(method); ++p)
-        {
-          phi.read_dof_values_plain(previous_solutions[p]);
-          phi.evaluate(EvaluationFlags::values);
-          for (unsigned int q = 0; q < phi.n_q_points; ++q)
-            time_derivatives_previous_solutions(cell, q) +=
-              bdf_coefs[p + 1] * phi.get_value(q);
-        }
+      phi.read_dof_values_plain(time_derivative_previous_solutions);
+      phi.evaluate(EvaluationFlags::values);
+      for (unsigned int q = 0; q < phi.n_q_points; ++q)
+        time_derivatives_previous_solutions(cell, q) += phi.get_value(q);
     }
 }
 

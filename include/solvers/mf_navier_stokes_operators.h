@@ -231,14 +231,15 @@ public:
   evaluate_non_linear_term(const VectorType &newton_step);
 
   /**
-   * @brief Store time derivatives of previous solutions according to time-stepping
-   * scheme to use them in the Jacobian and residual cell integrals
+   * @brief Store the values of the vector containing the time derivatives of
+   * previous solutions to use them in the Jacobian and residual cell integrals
    *
-   * @param previous_solutions Vector with the previous solutions.
+   * @param time_derivative_previous_solutions Vector with the time derivative
+   * of previous solutions.
    */
   void
   evaluate_time_derivative_previous_solutions(
-    const std::vector<VectorType> previous_solutions);
+    const VectorType &time_derivative_previous_solutions);
 
   /**
    * @brief Evaluate right hand side using the matrix-free operator
