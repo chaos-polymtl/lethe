@@ -16,7 +16,9 @@ concurrency:
 
 
 env:
-  COMPILE_JOBS: 5
+  COMPILE_JOBS: 8
+  TEST_JOBS: 5
+
 
 jobs:
   build:
@@ -69,4 +71,4 @@ jobs:
           ctest -N
 
           # Run in parallel
-          ctest --output-on-failure -j${{ env.COMPILE_JOBS }} 
+          ctest --output-on-failure -j${{ env.TEST_JOBS }} 
