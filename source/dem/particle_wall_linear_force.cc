@@ -7,21 +7,10 @@ using namespace dealii;
 
 template <int dim>
 ParticleWallLinearForce<dim>::ParticleWallLinearForce(
-  const std::unordered_map<unsigned int, Tensor<1, 3>>
-    boundary_translational_velocity,
-  const std::unordered_map<unsigned int, double> boundary_rotational_speed,
-  const std::unordered_map<unsigned int, Tensor<1, 3>>
-                                        boundary_rotational_vector,
-  const double                          triangulation_radius,
   const DEMSolverParameters<dim>       &dem_parameters,
   const std::vector<types::boundary_id> boundary_index)
   : ParticleWallContactForce<dim>(dem_parameters)
 {
-  this->boundary_translational_velocity_map = boundary_translational_velocity;
-  this->boundary_rotational_speed_map       = boundary_rotational_speed;
-  this->boundary_rotational_vector          = boundary_rotational_vector;
-  this->triangulation_radius                = triangulation_radius;
-
   const double wall_youngs_modulus =
     dem_parameters.lagrangian_physical_properties.youngs_modulus_wall;
   const double wall_poisson_ratio =
@@ -145,13 +134,17 @@ ParticleWallLinearForce<dim>::calculate_particle_wall_contact_force(
           Tensor<1, 3> normal_vector = contact_information.normal_vector;
           auto point_on_boundary     = contact_information.point_on_boundary;
 
-          Point<3> particle_location_3d;
-
-          if constexpr (dim == 3)
-            particle_location_3d = particle->get_location();
-
-          if constexpr (dim == 2)
-            particle_location_3d = point_nd_to_3d(particle->get_location());
+          Point<3> particle_location_3d = [&] {
+            if constexpr (dim == 3)
+              {
+                return particle->get_location();
+              }
+            if constexpr (dim == 2)
+              {
+                return (point_nd_to_3d(particle->get_location()));
+              }
+          }();
+          ;
 
           // A vector (point_to_particle_vector) is defined which connects the
           // center of particle to the point_on_boundary. This vector will then
@@ -174,6 +167,7 @@ ParticleWallLinearForce<dim>::calculate_particle_wall_contact_force(
               contact_information.normal_overlap = normal_overlap;
 
               this->update_contact_information(contact_information,
+                                               particle_location_3d,
                                                particle_properties,
                                                dt);
 

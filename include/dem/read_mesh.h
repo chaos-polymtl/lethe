@@ -49,8 +49,7 @@ read_mesh(const Parameters::Mesh   &mesh_parameters,
           const bool                restart,
           const ConditionalOStream &pcout,
           parallel::DistributedTriangulationBase<dim, spacedim> &triangulation,
-          double                              &triangulation_cell_diameter,
-          const Parameters::Lagrangian::BCDEM &bc_params);
+          const Parameters::Lagrangian::BCDEM                   &bc_params);
 
 /**
  * Allows periodic faces mapping in triangulation of mesh with boundary ids

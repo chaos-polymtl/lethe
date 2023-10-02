@@ -60,13 +60,8 @@ IBParticlesDEM<dim>::initialize(
       dem_parameters);
   std::vector<types::boundary_id> boundary_index(0);
   particle_wall_contact_force_object =
-    std::make_shared<ParticleWallNonLinearForce<dim>>(
-      dem_parameters.boundary_conditions.boundary_translational_velocity,
-      dem_parameters.boundary_conditions.boundary_rotational_speed,
-      dem_parameters.boundary_conditions.boundary_rotational_vector,
-      triangulation_cell_diameter,
-      dem_parameters,
-      boundary_index);
+    std::make_shared<ParticleWallNonLinearForce<dim>>(dem_parameters,
+                                                      boundary_index);
 }
 template <int dim>
 void

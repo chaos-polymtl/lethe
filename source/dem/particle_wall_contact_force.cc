@@ -25,6 +25,7 @@ template <int dim>
 void
 ParticleWallContactForce<dim>::update_contact_information(
   particle_wall_contact_info<dim> &contact_info,
+  const Point<3>                  &particle_position,
   const ArrayView<const double>   &particle_properties,
   const double                     dt)
 {
@@ -49,16 +50,35 @@ ParticleWallContactForce<dim>::update_contact_information(
   particle_angular_velocity[2] =
     particle_properties[DEM::PropertiesIndex::omega_z];
 
+  // Calculate approximation of the contact point using the normal vector
+  Point<3> contact_point =
+    particle_position +
+    0.5 * particle_properties[DEM::PropertiesIndex::dp] * normal_vector;
+
+  // Get vector pointing from the contact point to the origin of the rotation
+  // axis
+  Tensor<1, 3> vector_to_rotating_axis =
+    contact_point - this->point_on_rotation_vector[boundary_id];
+
+  // Remove the rotating axis component of that vector
+  vector_to_rotating_axis =
+    vector_to_rotating_axis -
+    (vector_to_rotating_axis * this->boundary_rotational_vector[boundary_id]) *
+      this->boundary_rotational_vector[boundary_id] /
+      (this->boundary_rotational_vector[boundary_id].norm_square() + 1e-16);
+
+  // Tensor<1,3> vector_to_rotation_axis = this->boundary_rotational_speed_map
+
   // Defining relative contact velocity using the convention
   // v_ij = v_j - v_i
   Tensor<1, 3> contact_relative_velocity =
     this->boundary_translational_velocity_map[boundary_id] - particle_velocity +
-    cross_product_3d((this->triangulation_radius *
-                        this->boundary_rotational_speed_map[boundary_id] *
-                        this->boundary_rotational_vector[boundary_id] -
-                      0.5 * particle_properties[DEM::PropertiesIndex::dp] *
-                        particle_angular_velocity),
-                     normal_vector);
+    cross_product_3d((-0.5 * particle_properties[DEM::PropertiesIndex::dp] *
+                      particle_angular_velocity),
+                     normal_vector) +
+    cross_product_3d(this->boundary_rotational_speed_map[boundary_id] *
+                       this->boundary_rotational_vector[boundary_id],
+                     vector_to_rotating_axis);
 
   // Calculation of normal relative velocity
   double normal_relative_velocity_value =
