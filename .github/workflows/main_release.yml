@@ -15,7 +15,7 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  COMPILE_JOBS: 2
+  COMPILE_JOBS: 8
   MULTI_CORE_TESTS_REGEX: "mpirun=2"
 
 jobs:
