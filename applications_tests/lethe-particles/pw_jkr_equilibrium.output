@@ -1,0 +1,34 @@
+
+*********************
+Running on 1 rank(s)
+*********************
+DEM time-step is 0.00011331% of Rayleigh time step
+Warning: It is recommended to increase the time-step
+Reading triangulation
+
+Finished reading triangulation
+Warning: expansion of particle-wall contact list is disabled.
+This feature is useful in geometries with concave boundaries.
+*********************************************************************
+1 particles of type 0 were inserted, 0 particles of type 0 remaining
+*********************************************************************
+-->Repartitionning triangulation
+Load balance finished
+Average, minimum and maximum number of particles on the processors are 1 , 1 and 1
+Minimum and maximum number of cells owned by the processors are 1 and 1
+-->Repartitionning triangulation
+Load balance finished
+Average, minimum and maximum number of particles on the processors are 1 , 1 and 1
+Minimum and maximum number of cells owned by the processors are 1 and 1
+
+*****************************************************************
+Transient iteration: 20000000 Time: 20       Time step: 1e-06
+*****************************************************************
+| Variable                     | Min        | Max         | Average    | Total      |
+| Contact list generation      | 0.0000e+00 | 2.0010e+03  | 2.0010e+03 | 2.0010e+03 |
+| Velocity magnitude           | 9.4056e-07 | 9.4056e-07  | 9.4056e-07 | 9.4056e-07 |
+| Angular velocity magnitude   | 0.0000e+00 | 2.2251e-308 | 0.0000e+00 | 0.0000e+00 |
+| Translational kinetic energy | 4.8173e-09 | 4.8173e-09  | 4.8173e-09 | 4.8173e-09 |
+| Rotational kinetic energy    | 0.0000e+00 | 2.2251e-308 | 0.0000e+00 | 0.0000e+00 |
+id, type, dp, x, y, z
+0 0 2.00000 0.9709 1.0000 1.0000

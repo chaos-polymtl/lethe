@@ -415,26 +415,18 @@ ParticleWallJKRForce<dim>::calculate_jkr_contact_force_and_torque(
   // describe in the theory guide.
   const double c0 =
     Utilities::fixed_power<2>(effective_radius * contact_info.normal_overlap);
-  const double c1 = -2 * Utilities::fixed_power<2>(effective_radius) * M_PI *
+  const double c1 = -2. * Utilities::fixed_power<2>(effective_radius) * M_PI *
                     this->effective_surface_energy[particle_type] /
                     this->effective_youngs_modulus[particle_type];
-  const double c2 = -2 * contact_info.normal_overlap * effective_radius;
+  const double c2 = -2. * contact_info.normal_overlap * effective_radius;
   const double P  = -Utilities::fixed_power<2>(c2) / 12. - c0;
-  const double Q  = -Utilities::fixed_power<3>(c2) / 108. + c0 * c2 / 3 -
+  const double Q  = -Utilities::fixed_power<3>(c2) / 108. + c0 * c2 / 3. -
                    Utilities::fixed_power<2>(c1) * 0.125;
-  const double root1 = std::max(0.,
+  const double root1  = std::max(0.,
                                 (0.25 * Utilities::fixed_power<2>(Q)) +
                                   (Utilities::fixed_power<3>(P) / 27.));
-  const double U     = std::cbrt(-0.5 * Q + std::sqrt(root1)) + DBL_MIN;
-  double       s;
-  if (P == 0.)
-    {
-      s = -c2 * (5. / 6.) - std::pow(Q, 1. / 3.);
-    }
-  else
-    {
-      s = -c2 * (5. / 6.) + U - P / (3. * U);
-    }
+  const double U      = std::cbrt(-0.5 * Q + std::sqrt(root1)) + DBL_MIN;
+  double       s      = -c2 * (5. / 6.) + U - P / (3. * U);
   const double w      = std::sqrt(c2 + 2. * s);
   const double lambda = 0.5 * c1 / w;
   const double root2  = std::max(0., w * w - 4. * (c2 + s + lambda));
@@ -487,7 +479,7 @@ ParticleWallJKRForce<dim>::calculate_jkr_contact_force_and_torque(
                                 this->effective_surface_energy[particle_type] *
                                 effective_radius;
   const double modified_coulomb_threshold =
-    (normal_force_coefficient + 2 * pull_off_force) *
+    (normal_force_coefficient + 2. * pull_off_force) *
     this->effective_coefficient_of_friction[particle_type];
 
   // Check for gross sliding
