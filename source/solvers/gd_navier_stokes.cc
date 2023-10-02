@@ -559,6 +559,8 @@ GDNavierStokesSolver<dim>::setup_dofs_fd()
   auto &nonzero_constraints = this->nonzero_constraints;
   {
     nonzero_constraints.clear();
+    nonzero_constraints.reinit(locally_relevant_dofs_acquisition);
+
 
     DoFTools::make_hanging_node_constraints(this->dof_handler,
                                             nonzero_constraints);
@@ -627,6 +629,8 @@ GDNavierStokesSolver<dim>::setup_dofs_fd()
 
   {
     this->zero_constraints.clear();
+    this->zero_constraints.reinit(locally_relevant_dofs_acquisition);
+
     DoFTools::make_hanging_node_constraints(this->dof_handler,
                                             this->zero_constraints);
 
