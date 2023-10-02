@@ -295,8 +295,24 @@ public:
     this->part_of_a_composite = part_of_a_composite;
   }
 
+  /**
+   * @brief
+   * Sets the layer thickening value (positive or negative) of the particle's
+   * shape
+   *
+   * @param layer_thickening Thickness to be artificially added to the particle
+   */
+  virtual void
+  set_layer_thickening(const double layer_thickening)
+  {
+    this->layer_thickening = layer_thickening;
+  }
+
   // Effective radius used for crown refinement
   double effective_radius;
+
+  // Layer thickening: used to artificially inflate/deflate the shape
+  double layer_thickening;
 
   // The string contains additional information on the shape. This may refer to
   // the file type used to define the shape or any other information relative to
@@ -1060,6 +1076,13 @@ public:
    */
   virtual void
   clear_cache() override;
+
+  /**
+   * @brief
+   * See base
+   */
+  void
+  set_layer_thickening(const double layer_thickening) override;
 
 private:
   // The members of this class are all the constituent and operations that are

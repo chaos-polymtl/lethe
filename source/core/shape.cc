@@ -1463,6 +1463,15 @@ CompositeShape<dim>::clear_cache()
 }
 
 template <int dim>
+void
+CompositeShape<dim>::set_layer_thickening(const double layer_thickening)
+{
+  this->Shape<dim>::set_layer_thickening(layer_thickening);
+  for (auto const &constituent : constituents | boost::adaptors::map_values)
+    constituent->set_layer_thickening(layer_thickening);
+}
+
+template <int dim>
 RBFShape<dim>::RBFShape(const std::string   shape_arguments_str,
                         const Point<dim>   &position,
                         const Tensor<1, 3> &orientation)
@@ -1579,7 +1588,7 @@ RBFShape<dim>::value(const Point<dim> &evaluation_point,
           value += basis * weights[node_id];
         }
     }
-  return value;
+  return value - this->layer_thickening;
 }
 
 template <int dim>
