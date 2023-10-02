@@ -291,9 +291,10 @@ Sphere<dim>::value(const Point<dim> &evaluation_point,
                    const unsigned int /*component*/) const
 {
 #if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 4)
-  return evaluation_point.distance(this->position) - this->effective_radius;
+  return evaluation_point.distance(this->position) - this->effective_radius -
+         this->layer_thickening;
 #else
-  return sphere_function->value(evaluation_point);
+  return sphere_function->value(evaluation_point) - this->layer_thickening;
 #endif
 }
 
@@ -453,9 +454,11 @@ Superquadric<dim>::value(const Point<dim> &evaluation_point,
 
       Point<dim> centered_point = this->align_and_center(evaluation_point);
       if (superquadric(centered_point) > 0)
-        return (closest_point - evaluation_point).norm();
+        return (closest_point - evaluation_point).norm() -
+               this->layer_thickening;
       else
-        return -(closest_point - evaluation_point).norm();
+        return -(closest_point - evaluation_point).norm() -
+               this->layer_thickening;
     }
   else
     return iterator->second;
@@ -599,13 +602,15 @@ OpenCascadeShape<dim>::value(const Point<dim> &evaluation_point,
       // Rotate the solution found to the global reference frame.
       auto rotate_in_globalpoint =
         this->reverse_align_and_center(projected_point);
-      return -(rotate_in_globalpoint - evaluation_point).norm();
+      return -(rotate_in_globalpoint - evaluation_point).norm() -
+             this->layer_thickening;
     }
   else
     {
       auto rotate_in_globalpoint =
         this->reverse_align_and_center(projected_point);
-      return (rotate_in_globalpoint - evaluation_point).norm();
+      return (rotate_in_globalpoint - evaluation_point).norm() -
+             this->layer_thickening;
     }
 
 #else
@@ -667,7 +672,8 @@ OpenCascadeShape<dim>::value_with_cell_guess(
                 (rotate_in_globalpoint - evaluation_point) /
                 ((rotate_in_globalpoint - evaluation_point).norm() + 1.0e-16);
             }
-          return -(centered_point - projected_point).norm();
+          return -(centered_point - projected_point).norm() -
+                 this->layer_thickening;
         }
       else
         {
@@ -681,7 +687,8 @@ OpenCascadeShape<dim>::value_with_cell_guess(
                 -(rotate_in_globalpoint - evaluation_point) /
                 ((rotate_in_globalpoint - evaluation_point).norm() + 1.0e-16);
             }
-          return (centered_point - projected_point).norm();
+          return (centered_point - projected_point).norm() -
+                 this->layer_thickening;
         }
     }
   else
@@ -892,7 +899,7 @@ HyperRectangle<dim>::value(const Point<dim> &evaluation_point,
       max_q_0[i] = std::max(q[i], 0.0);
     }
   double max_q = std::max(q[0], std::max(q[1], q[dim - 1]));
-  return max_q_0.norm() + std::min(max_q, 0.0);
+  return max_q_0.norm() + std::min(max_q, 0.0) - this->layer_thickening;
 }
 
 template <int dim>
@@ -935,7 +942,7 @@ Ellipsoid<dim>::value(const Point<dim> &evaluation_point,
     }
   double k0 = v_k0.norm();
   double k1 = v_k1.norm();
-  return k0 * (k0 - 1.) / k1;
+  return k0 * (k0 - 1.) / k1 - this->layer_thickening;
 }
 
 template <int dim>
@@ -973,7 +980,7 @@ Torus<dim>::value(const Point<dim> &evaluation_point,
 
   Point<2> p_xz({centered_point[0], centered_point[2]});
   Point<2> q({p_xz.norm() - ring_radius, centered_point[1]});
-  return q.norm() - ring_thickness;
+  return q.norm() - ring_thickness - this->layer_thickening;
 }
 
 template <int dim>
@@ -1020,7 +1027,7 @@ Cone<dim>::value(const Point<dim> &evaluation_point,
   double s = std::max(k * (w[0] * intermediate_q[1] - w[1] * intermediate_q[0]),
                       k * (w[1] - intermediate_q[1]));
 
-  return sqrt(d) * ((s > 0) ? 1 : ((s < 0) ? -1 : 0));
+  return sqrt(d) * ((s > 0) ? 1 : ((s < 0) ? -1 : 0)) - this->layer_thickening;
 }
 
 template <int dim>
@@ -1055,11 +1062,12 @@ CutHollowSphere<dim>::value(const Point<dim> &evaluation_point,
   if (cut_depth * q[0] < intermediate_w * q[1])
     {
       Point<2> wh({intermediate_w, cut_depth});
-      return (q - wh).norm();
+      return (q - wh).norm() - this->layer_thickening;
     }
   else
     {
-      return std::abs(q.norm() - radius) - shell_thickness;
+      return std::abs(q.norm() - radius) - shell_thickness -
+             this->layer_thickening;
     }
 }
 
@@ -1102,13 +1110,14 @@ DeathStar<dim>::value(const Point<dim> &evaluation_point,
       spheres_distance * std::max(intermediate_b - corrected_p_2d[1], 0.0))
     {
       Point<2> ab({intermediate_a, intermediate_b});
-      return (corrected_p_2d - ab).norm();
+      return (corrected_p_2d - ab).norm() - this->layer_thickening;
     }
   else
     {
       Point<2> d0({spheres_distance, 0.});
       return std::max(corrected_p_2d.norm() - radius,
-                      -((corrected_p_2d - d0).norm() - hole_radius));
+                      -((corrected_p_2d - d0).norm() - hole_radius)) -
+             this->layer_thickening;
     }
 }
 
@@ -1560,7 +1569,8 @@ RBFShape<dim>::value(const Point<dim> &evaluation_point,
 {
   double bounding_box_distance = bounding_box->value(evaluation_point);
   if (bounding_box_distance >= 0)
-    return bounding_box_distance + this->effective_radius;
+    return bounding_box_distance + this->effective_radius -
+           this->layer_thickening;
 
   auto point_in_string = this->point_to_string(evaluation_point);
   auto iterator        = this->value_cache.find(point_in_string);
@@ -2216,13 +2226,14 @@ Cylinder<dim>::value(const Point<dim> &evaluation_point,
   double h_diff      = abs(centered_point[2]) - half_length;
 
   if (radius_diff > 0 && h_diff > 0)
-    return std::pow(radius_diff * radius_diff + h_diff * h_diff, 0.5);
+    return std::pow(radius_diff * radius_diff + h_diff * h_diff, 0.5) -
+           this->layer_thickening;
   else if (radius_diff <= 0 && h_diff > 0)
-    return h_diff;
+    return h_diff - this->layer_thickening;
   else if (radius_diff > 0 && h_diff <= 0)
-    return radius_diff;
+    return radius_diff - this->layer_thickening;
 
-  return std::max(radius_diff, h_diff);
+  return std::max(radius_diff, h_diff) - this->layer_thickening;
 }
 
 template <int dim>
@@ -2277,7 +2288,7 @@ CylindricalTube<dim>::value(const Point<dim> &evaluation_point,
     level_set_of_cylinder_hollow =
       std::max(std::max(radius_diff_o, h_diff_o), -radius_diff_i);
 
-  return level_set_of_cylinder_hollow;
+  return level_set_of_cylinder_hollow - this->layer_thickening;
 }
 
 template <int dim>
@@ -2516,7 +2527,7 @@ CylindricalHelix<dim>::value(const Point<dim> &evaluation_point,
     level_set =
       std::max(std::max(level_set_tube, -dist_from_cap_top), -dist_from_cap);
 
-  return level_set;
+  return level_set - this->layer_thickening;
 }
 
 template <int dim>

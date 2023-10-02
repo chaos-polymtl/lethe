@@ -103,6 +103,7 @@ public:
     , position(position)
     , orientation(orientation)
     , part_of_a_composite(false)
+    , layer_thickening(0.)
   {}
 
   /**
@@ -311,9 +312,6 @@ public:
   // Effective radius used for crown refinement
   double effective_radius;
 
-  // Layer thickening: used to artificially inflate/deflate the shape
-  double layer_thickening;
-
   // The string contains additional information on the shape. This may refer to
   // the file type used to define the shape or any other information relative to
   // how the shape was defined.
@@ -333,6 +331,9 @@ protected:
   std::unordered_map<std::string, Tensor<1, dim>> gradient_cache;
   std::unordered_map<std::string, Point<dim>>     closest_point_cache;
   bool                                            part_of_a_composite;
+
+  // Layer thickening: used to artificially inflate/deflate the shape
+  double layer_thickening;
 };
 
 
