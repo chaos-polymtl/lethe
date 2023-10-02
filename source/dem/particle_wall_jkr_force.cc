@@ -7,21 +7,10 @@ using namespace dealii;
 
 template <int dim>
 ParticleWallJKRForce<dim>::ParticleWallJKRForce(
-  const std::unordered_map<unsigned int, Tensor<1, 3>>
-    boundary_translational_velocity,
-  const std::unordered_map<unsigned int, double> boundary_rotational_speed,
-  const std::unordered_map<unsigned int, Tensor<1, 3>>
-                                        boundary_rotational_vector,
-  const double                          triangulation_radius,
   const DEMSolverParameters<dim>       &dem_parameters,
   const std::vector<types::boundary_id> boundary_index)
   : ParticleWallContactForce<dim>(dem_parameters)
 {
-  this->boundary_translational_velocity_map = boundary_translational_velocity;
-  this->boundary_rotational_speed_map       = boundary_rotational_speed;
-  this->boundary_rotational_vector          = boundary_rotational_vector;
-  this->triangulation_radius                = triangulation_radius;
-
   const double wall_youngs_modulus =
     dem_parameters.lagrangian_physical_properties.youngs_modulus_wall;
   const double wall_poisson_ratio =
@@ -164,13 +153,17 @@ ParticleWallJKRForce<dim>::calculate_particle_wall_contact_force(
           auto normal_vector     = contact_information.normal_vector;
           auto point_on_boundary = contact_information.point_on_boundary;
 
-          Point<3> particle_location_3d;
 
-          if constexpr (dim == 3)
-            particle_location_3d = particle->get_location();
-
-          if constexpr (dim == 2)
-            particle_location_3d = point_nd_to_3d(particle->get_location());
+          Point<3> particle_location_3d = [&] {
+            if constexpr (dim == 3)
+              {
+                return particle->get_location();
+              }
+            if constexpr (dim == 2)
+              {
+                return (point_nd_to_3d(particle->get_location()));
+              }
+          }();
 
           // A vector (point_to_particle_vector) is defined which connects the
           // center of particle to the point_on_boundary. This vector will then
@@ -194,6 +187,7 @@ ParticleWallJKRForce<dim>::calculate_particle_wall_contact_force(
               contact_information.normal_overlap = normal_overlap;
 
               this->update_contact_information(contact_information,
+                                               particle_location_3d,
                                                particle_properties,
                                                dt);
 
@@ -411,6 +405,19 @@ ParticleWallJKRForce<dim>::calculate_jkr_contact_force_and_torque(
   const double effective_radius =
     0.5 * particle_properties[DEM::PropertiesIndex::dp];
 
+  // Calculation of model parameters (beta, sn and st). These values
+  // are used to consider non-linear relation of the contact force to
+  // the normal overlap
+  double radius_times_overlap_sqrt =
+    sqrt(particle_properties[DEM::PropertiesIndex::dp] * 0.5 *
+         contact_info.normal_overlap);
+  double model_parameter_sn = 2 *
+                              this->effective_youngs_modulus[particle_type] *
+                              radius_times_overlap_sqrt;
+
+  double model_parameter_st = 8 * this->effective_shear_modulus[particle_type] *
+                              radius_times_overlap_sqrt;
+
   // Calculation of the contact patch radius (a) using the analytical solution
   // describe in the theory guide.
   const double c0 =
@@ -434,23 +441,24 @@ ParticleWallJKRForce<dim>::calculate_jkr_contact_force_and_torque(
 
   // Calculation of normal damping and tangential spring and dashpot constants
   // using particle and wall properties.
+  // There is no minus sign here since model_parameter_beta is negative or
+  // equal to zero.
   const double normal_damping_constant =
-    2. * this->model_parameter_beta[particle_type] *
-    sqrt(particle_properties[DEM::PropertiesIndex::mass] * 2. *
-         this->effective_youngs_modulus[particle_type] * a);
+    1.8257 * this->model_parameter_beta[particle_type] * // 2. * sqrt(5./6.)
+    sqrt(model_parameter_sn * particle_properties[DEM::PropertiesIndex::mass]);
 
   // Tangential spring constant is set as a negative just like in the other
   // particle-wall models. This must be taken into account for the square root
   // in the tangential_damping_calculation.
   double tangential_spring_constant =
-    -8. * this->effective_shear_modulus[particle_type] * a + DBL_MIN;
+    -8. * this->effective_shear_modulus[particle_type] *
+      radius_times_overlap_sqrt +
+    DBL_MIN;
 
-  // There is a minus sign since the tangential damping force is applied in the
-  // opposite direction of the tangential_relive_velocity vector
+  // There is no minus sign here since model_parameter_beta is negative or
+  // equal to zero.
   const double tangential_damping_constant =
-    -2. * this->model_parameter_beta[particle_type] *
-      std::sqrt(particle_properties[DEM::PropertiesIndex::mass] *
-                -tangential_spring_constant) +
+    normal_damping_constant * sqrt(model_parameter_st / model_parameter_sn) +
     DBL_MIN;
 
   // Calculation of the normal force coefficient (F_n_JKR)

@@ -144,7 +144,6 @@ ParticleWallLinearForce<dim>::calculate_particle_wall_contact_force(
                 return (point_nd_to_3d(particle->get_location()));
               }
           }();
-          ;
 
           // A vector (point_to_particle_vector) is defined which connects the
           // center of particle to the point_on_boundary. This vector will then

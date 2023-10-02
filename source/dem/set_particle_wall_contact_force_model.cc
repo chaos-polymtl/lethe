@@ -35,13 +35,8 @@ set_particle_wall_contact_force_model(
              ParticleWallContactForceModel::JKR)
     {
       particle_wall_contact_force_object =
-        std::make_shared<ParticleWallJKRForce<dim>>(
-          dem_parameters.boundary_conditions.boundary_translational_velocity,
-          dem_parameters.boundary_conditions.boundary_rotational_speed,
-          dem_parameters.boundary_conditions.boundary_rotational_vector,
-          triangulation_cell_diameter,
-          dem_parameters,
-          boundary_index);
+        std::make_shared<ParticleWallJKRForce<dim>>(dem_parameters,
+                                                    boundary_index);
     }
   else
     {
