@@ -55,7 +55,8 @@ ParticleWallContactForce<dim>::update_contact_information(
     particle_position +
     0.5 * particle_properties[DEM::PropertiesIndex::dp] * normal_vector;
 
-  // Get vector pointing from the contact point to the origin of the rotation axis
+  // Get vector pointing from the contact point to the origin of the rotation
+  // axis
   Tensor<1, 3> vector_to_rotating_axis =
     contact_point - this->point_on_rotation_vector[boundary_id];
 
