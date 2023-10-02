@@ -39,9 +39,6 @@ using namespace dealii;
  * information obtained from the fine search and physical properties of
  * particles and walls
  *
- * @note
- *
- * @author Shahab Golshan, Bruno Blais, Polytechnique Montreal 2019-
  */
 
 template <int dim>
@@ -56,12 +53,6 @@ class ParticleWallNonLinearForce : public ParticleWallContactForce<dim>
 
 public:
   ParticleWallNonLinearForce<dim>(
-    const std::unordered_map<unsigned int, Tensor<1, 3>>
-      boundary_translational_velocity,
-    const std::unordered_map<unsigned int, double> boundary_rotational_speed,
-    const std::unordered_map<unsigned int, Tensor<1, 3>>
-                                          boundary_rotational_vector,
-    const double                          triangulation_radius,
     const DEMSolverParameters<dim>       &dem_parameters,
     const std::vector<types::boundary_id> boundary_index = {});
 

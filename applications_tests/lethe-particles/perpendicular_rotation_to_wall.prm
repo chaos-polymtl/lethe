@@ -1,0 +1,148 @@
+# Listing of Parameters
+#----------------------
+
+set dimension = 3
+
+#---------------------------------------------------
+# Simulation Control
+#---------------------------------------------------
+
+subsection simulation control
+  set time step         = 5e-6
+  set time end          = 1
+  set log frequency     = 10000
+  set output frequency  = 0
+  set output path       = ./output_dem/
+  set output boundaries = true
+end
+
+
+#---------------------------------------------------
+# Lagrangian post-processing
+#---------------------------------------------------
+
+subsection post-processing
+  set Lagrangian post-processing = true
+end
+
+#---------------------------------------------------
+# Model parameters
+#---------------------------------------------------
+
+subsection model parameters
+  subsection contact detection
+    set contact detection method                = dynamic
+    set dynamic contact search size coefficient = 0.9
+    set neighborhood threshold                  = 1.2
+  end
+  subsection load balancing
+    set load balance method     = dynamic
+    set threshold               = 0.5
+    set dynamic check frequency = 10000
+  end
+  set particle particle contact force method = hertz_mindlin_limit_overlap
+  set particle wall contact force method     = nonlinear
+  set rolling resistance torque method       = constant_resistance
+  set integration method                     = velocity_verlet
+end
+
+#---------------------------------------------------
+# Physical Properties
+#---------------------------------------------------
+
+subsection lagrangian physical properties
+  set gx                       = -10.
+  set gy                       = 0.
+  set gz                       = -0.
+  set number of particle types = 1
+  subsection particle type 0
+    set size distribution type            = uniform
+    set diameter                          = 0.2
+    set number                            = 1
+    set density particles                 = 2500
+    set young modulus particles           = 1e8
+    set poisson ratio particles           = 0.24
+    set restitution coefficient particles = 0.97
+    set friction coefficient particles    = 0.3
+    set rolling friction particles        = 0.
+  end
+  set young modulus wall           = 1e8
+  set poisson ratio wall           = 0.24
+  set restitution coefficient wall = 0.85
+  set friction coefficient wall    = 0.3
+  set rolling friction wall        = 0.
+end
+
+#---------------------------------------------------
+# Insertion Info
+#---------------------------------------------------
+
+subsection insertion info
+  set insertion method    = list
+  set insertion frequency = 100000
+  set list x              = -0.85
+  set list y              = 0.0
+  set list z              = -0.8
+  set list velocity x     = 0.
+  set list velocity y     = 0.0
+  set list velocity z     = 0.0
+  set list omega x        = 0.0
+  set list omega y        = 0.0
+  set list omega z        = 0.0
+  set list diameters      = 0.2
+end
+
+#---------------------------------------------------
+# Mesh
+#---------------------------------------------------
+
+subsection mesh
+  set type                                = dealii
+  set grid type                           = cylinder
+  set grid arguments                      = 1.0:1.0
+  set initial refinement                  = 1
+  set expand particle-wall contact search = true
+end
+
+#---------------------------------------------------
+# Testing
+#---------------------------------------------------
+subsection test
+  set enable = true
+end   
+
+
+#-----------------------------------------
+# Boundary Conditions
+#---------------------------------------------------
+
+subsection DEM boundary conditions
+  set number of boundary conditions = 3
+  subsection boundary condition 0
+    set boundary id         = 0
+    set type                = rotational
+    set rotational speed    = 0.7
+    set rotational vector x = 1
+    set rotational vector y = 0
+    set rotational vector z = 0
+  end
+
+    subsection boundary condition 1
+    set boundary id         = 1
+    set type                = rotational
+    set rotational speed    = 0.7
+    set rotational vector x = 1
+    set rotational vector y = 0
+    set rotational vector z = 0
+  end
+
+  subsection boundary condition 2
+    set boundary id         = 2
+    set type                = rotational
+    set rotational speed    = 0.7
+    set rotational vector x = 1
+    set rotational vector y = 0
+    set rotational vector z = 0
+    set point on rotational vector = 0,0,0
+  end
+end

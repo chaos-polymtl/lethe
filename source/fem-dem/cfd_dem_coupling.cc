@@ -720,8 +720,7 @@ CFDDEMSolver<dim>::initialize_dem_parameters()
       this->cfd_dem_simulation_parameters.dem_parameters);
   particle_wall_contact_force_object = set_particle_wall_contact_force_model(
     this->cfd_dem_simulation_parameters.dem_parameters,
-    *parallel_triangulation,
-    triangulation_cell_diameter);
+    *parallel_triangulation);
 
   this->particle_handler.sort_particles_into_subdomains_and_cells();
 

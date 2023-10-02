@@ -54,6 +54,15 @@ public:
     effective_coefficient_of_friction.resize(n_particle_types);
     effective_coefficient_of_rolling_friction.resize(n_particle_types);
     model_parameter_beta.resize(n_particle_types);
+
+    this->boundary_translational_velocity_map =
+      dem_parameters.boundary_conditions.boundary_translational_velocity;
+    this->boundary_rotational_speed_map =
+      dem_parameters.boundary_conditions.boundary_rotational_speed;
+    this->boundary_rotational_vector =
+      dem_parameters.boundary_conditions.boundary_rotational_vector;
+    this->point_on_rotation_vector =
+      dem_parameters.boundary_conditions.point_on_rotation_axis;
   }
 
   virtual ~ParticleWallContactForce()
@@ -175,6 +184,7 @@ protected:
   void
   update_contact_information(
     particle_wall_contact_info<dim> &contact_pair_information,
+    const Point<3>                  &particle_position,
     const ArrayView<const double>   &particle_properties,
     const double                     dt);
 
@@ -267,14 +277,15 @@ protected:
   void
   mpi_correction_over_calculation_of_forces_and_torques();
 
-  double triangulation_radius;
   double effective_radius;
   double effective_mass;
   std::unordered_map<unsigned int, Tensor<1, 3>>
                                            boundary_translational_velocity_map;
   std::unordered_map<unsigned int, double> boundary_rotational_speed_map;
   std::unordered_map<unsigned int, Tensor<1, 3>> boundary_rotational_vector;
-  unsigned int                                   n_particle_types;
+  std::unordered_map<unsigned int, Point<3>>     point_on_rotation_vector;
+
+  unsigned int n_particle_types;
 
   std::vector<double> effective_youngs_modulus;
   std::vector<double> effective_shear_modulus;

@@ -28,6 +28,9 @@ In this subsection, the boundary conditions of the DEM simulation are defined. F
       set rotational vector x = 1
       set rotational vector y = 0
       set rotational vector z = 0
+
+      # Point on rotational vector
+      set point on rotational vector = 0, 0, 0
     end
 
     # OR for translational motion
@@ -63,5 +66,7 @@ In this subsection, the boundary conditions of the DEM simulation are defined. F
 * The ``rotational speed`` parameter defines the rotational speed of the specified boundary.  
 
 * The ``rotational vector`` parameter specifies the rotational vector in `x`, `y`, and `z` directions.
+
+* The ``point on rotational vector`` parameter specifies a point `x, y, z` on the rotating axis.
 
 * The ``speed`` parameter defines the translational speed of the specified boundary.
