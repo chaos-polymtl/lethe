@@ -440,7 +440,7 @@ ParticleWallJKRForce<dim>::calculate_jkr_contact_force_and_torque(
   // Calculation of normal damping and tangential spring and dashpot constants
   // using particle and wall properties.
   const double normal_damping_constant =
-    -2. * this->model_parameter_beta[particle_type] *
+    2. * this->model_parameter_beta[particle_type] *
     sqrt(particle_properties[DEM::PropertiesIndex::mass] * 2. *
          this->effective_youngs_modulus[particle_type] * a);
 
@@ -449,6 +449,9 @@ ParticleWallJKRForce<dim>::calculate_jkr_contact_force_and_torque(
   // in the tangential_damping_calculation.
   double tangential_spring_constant =
     -8. * this->effective_shear_modulus[particle_type] * a + DBL_MIN;
+
+  // There is a minus sign since the tangential damping force is applied in the
+  // opposite direction of the tangential_relive_velocity vector
   const double tangential_damping_constant =
     -2. * this->model_parameter_beta[particle_type] *
       std::sqrt(particle_properties[DEM::PropertiesIndex::mass] *
@@ -466,15 +469,14 @@ ParticleWallJKRForce<dim>::calculate_jkr_contact_force_and_torque(
   // Calculation of normal force using the normal_force_coefficient and dashpot
   // force model.
   Tensor<1, 3> normal_force =
-    (normal_force_coefficient -
+    (normal_force_coefficient +
      normal_damping_constant * contact_info.normal_relative_velocity) *
-    contact_info.normal_vector;
+    normal_vector;
 
   // Calculation of tangential forces.
-  Tensor<1, 3> tangential_spring_force =
-    tangential_spring_constant * contact_info.tangential_overlap;
-  Tensor<1, 3> tangential_damping_force =
-    -tangential_damping_constant * contact_info.tangential_relative_velocity;
+  Tensor<1, 3> tangential_force =
+    tangential_spring_constant * contact_info.tangential_overlap +
+    tangential_damping_constant * contact_info.tangential_relative_velocity;
 
   // JKR theory says that the coulomb threshold must be modified with the
   // pull-out force.
@@ -486,25 +488,23 @@ ParticleWallJKRForce<dim>::calculate_jkr_contact_force_and_torque(
     this->effective_coefficient_of_friction[particle_type];
 
   // Check for gross sliding
-  if (tangential_spring_force.norm() > modified_coulomb_threshold)
+  if (tangential_force.norm() > modified_coulomb_threshold)
     {
       // Gross sliding occurs and the tangential overlap and tangential
       // force are limited to Coulomb's criterion
-      tangential_spring_force = modified_coulomb_threshold *
-                                tangential_spring_force /
-                                tangential_spring_force.norm();
+      tangential_force = modified_coulomb_threshold *
+                         (tangential_force / tangential_force.norm());
       contact_info.tangential_overlap =
-        tangential_spring_force / (tangential_spring_constant + DBL_MIN);
+        tangential_force / (tangential_spring_constant + DBL_MIN);
     }
-  Tensor<1, 3> tangential_force =
-    tangential_spring_force + tangential_damping_force;
 
-  // Calculation of torque
-  // Torque caused by tangential force (tangential_torque)
+  // Calculation torque caused by tangential force
+  // We add the minus sign here since the tangential_force is applied on the
+  // particle is in the opposite direction
   Tensor<1, 3> tangential_torque =
     cross_product_3d((0.5 * particle_properties[DEM::PropertiesIndex::dp] *
-                      contact_info.normal_vector),
-                     tangential_force);
+                      normal_vector),
+                     -tangential_force);
 
   // Rolling resistance torque
   Tensor<1, 3> rolling_resistance_torque =
