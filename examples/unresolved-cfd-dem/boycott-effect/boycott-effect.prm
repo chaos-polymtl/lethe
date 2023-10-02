@@ -106,7 +106,6 @@ subsection cfd-dem
   set shear force                   = true
   set pressure force                = true
   set drag model                    = difelice
-  set post processing               = true
   set coupling frequency            = 250
   set grad-div length scale         = 0.005
   set vans model                    = modelA
