@@ -60,7 +60,7 @@ The contact normal vector :math:`\mathbf{n}_{ij}` is computed as:
 .. math::
     \mathbf{n}_{ij}=\frac{\mathbf{x}_{j}-\mathbf{x}_{i}}{\left|\mathbf{x}_{j}-\mathbf{x}_{i}\right|}
 
-The normal overlap (:math:`\delta_n`) is the contact distance between the particles i and j. The tangential overlap (:math:`\delta_t`) depends on the contact history and is updated during a contact.
+The normal overlap (:math:`\delta_n`) is the contact distance between the particles i and j. In the case of a collision between a particle and a wall, the wall is consider as j. The tangential overlap (:math:`\delta_t`) depends on the contact history and is updated during a contact.
 The normal and tangential overlaps are calculated as follow:
 
 .. math::
