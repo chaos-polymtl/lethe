@@ -11,9 +11,9 @@ Lethe contains a small Arbitrary Lagrangian-Eulerian module which enables the us
     set enable                = false
 
     subsection uvw
-      set Function expression = 0; 0; 0  # In 2D : u;v
+      set Function expression = 0; 0 # In 2D : u;v
         or
-      set Function expression = 0; 0; 0; 0  #In 3D u;v;w
+      set Function expression = 0; 0; 0 #In 3D u;v;w
     end
    
    end
