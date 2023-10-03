@@ -24,13 +24,8 @@
 
 using namespace dealii;
 /**
- * The source term class provides an interface for all common
- * Element required for the introduction of a source term in equations
- * All equation-specific source term should derive
- * from the base class but also call it's declare_parameters and
- *parse_parameters routine. This allows specialize class to focus on their
- *specificity and forget about other non-specific elements that are generic to
- *the calculation of analytical solutions
+ * The ALE class provides an interface for all common
+ * element required for the introduction of the required terms for a moving referential in the governing equations.
  **/
 
 namespace Parameters
