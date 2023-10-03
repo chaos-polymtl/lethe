@@ -1,5 +1,5 @@
 =====================================
-Arbitrary Lagrangian-Eulerian (ALE)
+Arbitrary Lagrangian-Eulerian
 =====================================
 
 Lethe contains a small Arbitrary Lagrangian-Eulerian module which enables the user to simulate domains which are moving at time and space-dependent velocities. All physics support the ALE module.
