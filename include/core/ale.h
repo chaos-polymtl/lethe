@@ -25,7 +25,8 @@
 using namespace dealii;
 /**
  * The ALE class provides an interface for all common
- * element required for the introduction of the required terms for a moving referential in the governing equations.
+ * element required for the introduction of the required terms for a moving
+ *referential in the governing equations.
  **/
 
 namespace Parameters
