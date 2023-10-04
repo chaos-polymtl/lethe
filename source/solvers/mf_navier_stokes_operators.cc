@@ -565,20 +565,20 @@ NavierStokesOperatorBase<dim, number>::get_refinement_edges(
 template class NavierStokesOperatorBase<2, double>;
 template class NavierStokesOperatorBase<3, double>;
 
+template <int dim, typename number>
+NavierStokesSUPGPSPGOperator<dim, number>::NavierStokesSUPGPSPGOperator() =
+  default;
+
 /**
  * @brief This function performs a cell integral, i.e., the jacobian of the discretization
  * of the Navier-Stokes equations with SUPG PSPG stabilization in a cell batch.
  * The equations are given as follows:
  * (q,∇δu) + (v,(u·∇)δu) + (v,(δu·∇)u) - (∇·v,δp) + ν(∇v,∇δu) (Weak form
- * jacobian)
+ * Jacobian)
  * + ((u·∇)δu + (δu·∇)u + ∇δp - ν∆δu)τ·∇q (PSPG Jacobian)
- * + ((u·∇)δu + (δu·∇)u + ∇δp - ν∆δu)τu·∇v (SUPG Part 1)
- * + ((u·∇)u + ∇p - ν∆u - f )τδu·∇v (SUPG Part 2)
+ * + ((u·∇)δu + (δu·∇)u + ∇δp - ν∆δu)τu·∇v (SUPG Jacobian Part 1)
+ * + ((u·∇)u + ∇p - ν∆u - f )τδu·∇v (SUPG Jacobian Part 2)
  */
-template <int dim, typename number>
-NavierStokesSUPGPSPGOperator<dim, number>::NavierStokesSUPGPSPGOperator()
-{}
-
 template <int dim, typename number>
 void
 NavierStokesSUPGPSPGOperator<dim, number>::do_cell_integral_local(
@@ -656,7 +656,7 @@ NavierStokesSUPGPSPGOperator<dim, number>::do_cell_integral_local(
                                 4 * this->kinematic_viscosity / (h[v] * h[v])));
         }
 
-      // Weak form jacobian
+      // Weak form Jacobian
       for (unsigned int i = 0; i < dim; ++i)
         {
           // ν(∇v,∇δu)
@@ -675,7 +675,7 @@ NavierStokesSUPGPSPGOperator<dim, number>::do_cell_integral_local(
             }
         }
 
-      // PSPG jacobian
+      // PSPG Jacobian
       for (unsigned int i = 0; i < dim; ++i)
         {
           for (unsigned int k = 0; k < dim; ++k)
@@ -694,7 +694,7 @@ NavierStokesSUPGPSPGOperator<dim, number>::do_cell_integral_local(
       // (∇δp)τ·∇q
       gradient_result[dim] += tau * gradient[dim];
 
-      // SUPG jacobian
+      // SUPG Jacobian
       for (unsigned int i = 0; i < dim; ++i)
         {
           for (unsigned int k = 0; k < dim; ++k)
@@ -748,8 +748,8 @@ NavierStokesSUPGPSPGOperator<dim, number>::do_cell_integral_local(
 /**
  * @brief This function computes the residual of the weak form of the Navier-Stokes
  * equations with SUPG PSPG discretization performing a cell integral in a cell
- * batch. The equations are given as follows: (q, ∇·u) + (v,(u·∇)u) - (∇·v,p) +
- * ν(∇v,∇u) - (v,f) (Weak form)
+ * batch. The equations are given as follows:
+ * (q, ∇·u) + (v,(u·∇)u) - (∇·v,p) + ν(∇v,∇u) - (v,f) (Weak form)
  * + ((u·∇)u + ∇p - ν∆u - f)τ∇·q (PSPG term)
  * + ((u·∇)u + ∇p - ν∆u - f)τu·∇v (SUPG term)
  */
@@ -904,19 +904,20 @@ NavierStokesSUPGPSPGOperator<dim, number>::local_evaluate_residual(
 template class NavierStokesSUPGPSPGOperator<2, double>;
 template class NavierStokesSUPGPSPGOperator<3, double>;
 
-/**
- * @brief This function performs a cell integral, i.e., the Jacobian of the discretization
- * of the transient Navier-Stokes equations with SUPG PSPG stabilization in a
- * cell batch. The equations are given as follows:
- * (q,∇δu) + (v,∂t δu) + (v,(u·∇)δu) + (v,(δu·∇)u) - (∇·v,δp) + ν(∇v,∇δu) (Weak form Jacobian)
- * + (∂t δu +(u·∇)δu + (δu·∇)u + ∇δp - ν∆δu)τ·∇q (PSPG Jacobian)
- * + (∂t δu +(u·∇)δu + (δu·∇)u + ∇δp - ν∆δu)τu·∇v (SUPG Part 1)
- * + (∂t u +(u·∇)u + ∇p - ν∆u - f )τδu·∇v (SUPG Part 2)
- */
 template <int dim, typename number>
 NavierStokesTransientSUPGPSPGOperator<dim, number>::
   NavierStokesTransientSUPGPSPGOperator() = default;
 
+/**
+ * @brief This function performs a cell integral, i.e., the Jacobian of the discretization
+ * of the transient Navier-Stokes equations with SUPG PSPG stabilization in a
+ * cell batch. The equations are given as follows:
+ * (q,∇δu) + (v,∂t δu) + (v,(u·∇)δu) + (v,(δu·∇)u) - (∇·v,δp) + ν(∇v,∇δu) (Weak
+ * form Jacobian)
+ * + (∂t δu +(u·∇)δu + (δu·∇)u + ∇δp - ν∆δu)τ·∇q (PSPG Jacobian)
+ * + (∂t δu +(u·∇)δu + (δu·∇)u + ∇δp - ν∆δu)τu·∇v (SUPG Jacobian Part 1)
+ * + (∂t u +(u·∇)u + ∇p - ν∆u - f )τδu·∇v (SUPG Jacobian Part 2)
+ */
 template <int dim, typename number>
 void
 NavierStokesTransientSUPGPSPGOperator<dim, number>::do_cell_integral_local(
@@ -1029,7 +1030,7 @@ NavierStokesTransientSUPGPSPGOperator<dim, number>::do_cell_integral_local(
           value_result[i] += bdf_coefs[0] * value[i];
         }
 
-      // PSPG jacobian
+      // PSPG Jacobian
       for (unsigned int i = 0; i < dim; ++i)
         {
           for (unsigned int k = 0; k < dim; ++k)
@@ -1050,7 +1051,7 @@ NavierStokesTransientSUPGPSPGOperator<dim, number>::do_cell_integral_local(
       // (∇δp)τ·∇q
       gradient_result[dim] += tau * gradient[dim];
 
-      // SUPG jacobian
+      // SUPG Jacobian
       for (unsigned int i = 0; i < dim; ++i)
         {
           for (unsigned int k = 0; k < dim; ++k)
