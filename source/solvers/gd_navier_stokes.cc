@@ -71,6 +71,14 @@ GDNavierStokesSolver<dim>::setup_assemblers()
         std::make_shared<BuoyancyAssembly<dim>>(this->simulation_control));
     }
 
+  // ALE
+  if (this->simulation_parameters.ale.enabled())
+    {
+      this->assemblers.push_back(
+        std::make_shared<NavierStokesAssemblerALE<dim>>(
+          this->simulation_control, this->simulation_parameters.ale));
+    }
+
   if (this->simulation_parameters.multiphysics.VOF)
     {
       // Time-stepping schemes
