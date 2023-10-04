@@ -6,6 +6,7 @@ General, CFD and Multiphysics
 .. toctree::
    :maxdepth: 1
 
+   ale
    analytical_solution
    boundary_conditions_cfd
    boundary_conditions_multiphysics

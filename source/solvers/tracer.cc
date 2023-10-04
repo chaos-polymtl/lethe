@@ -108,13 +108,15 @@ Tracer<dim>::assemble_local_system_matrix(
           scratch_data.reinit_velocity(
             velocity_cell,
             *multiphysics->get_block_time_average_solution(
-              PhysicsID::fluid_dynamics));
+              PhysicsID::fluid_dynamics),
+            this->simulation_parameters.ale);
         }
       else
         {
           scratch_data.reinit_velocity(velocity_cell,
                                        *multiphysics->get_block_solution(
-                                         PhysicsID::fluid_dynamics));
+                                         PhysicsID::fluid_dynamics),
+                                       this->simulation_parameters.ale);
         }
     }
   else
@@ -126,13 +128,15 @@ Tracer<dim>::assemble_local_system_matrix(
         {
           scratch_data.reinit_velocity(velocity_cell,
                                        *multiphysics->get_time_average_solution(
-                                         PhysicsID::fluid_dynamics));
+                                         PhysicsID::fluid_dynamics),
+                                       this->simulation_parameters.ale);
         }
       else
         {
           scratch_data.reinit_velocity(velocity_cell,
                                        *multiphysics->get_solution(
-                                         PhysicsID::fluid_dynamics));
+                                         PhysicsID::fluid_dynamics),
+                                       this->simulation_parameters.ale);
         }
     }
 
@@ -230,13 +234,15 @@ Tracer<dim>::assemble_local_system_rhs(
           scratch_data.reinit_velocity(
             velocity_cell,
             *multiphysics->get_block_time_average_solution(
-              PhysicsID::fluid_dynamics));
+              PhysicsID::fluid_dynamics),
+            this->simulation_parameters.ale);
         }
       else
         {
           scratch_data.reinit_velocity(velocity_cell,
                                        *multiphysics->get_block_solution(
-                                         PhysicsID::fluid_dynamics));
+                                         PhysicsID::fluid_dynamics),
+                                       this->simulation_parameters.ale);
         }
     }
   else
@@ -248,13 +254,15 @@ Tracer<dim>::assemble_local_system_rhs(
         {
           scratch_data.reinit_velocity(velocity_cell,
                                        *multiphysics->get_time_average_solution(
-                                         PhysicsID::fluid_dynamics));
+                                         PhysicsID::fluid_dynamics),
+                                       this->simulation_parameters.ale);
         }
       else
         {
           scratch_data.reinit_velocity(velocity_cell,
                                        *multiphysics->get_solution(
-                                         PhysicsID::fluid_dynamics));
+                                         PhysicsID::fluid_dynamics),
+                                       this->simulation_parameters.ale);
         }
     }
 

@@ -1,0 +1,15 @@
+Running on 1 MPI rank(s)...
+   Number of active cells:       1024
+   Number of degrees of freedom: 3267
+   Volume of triangulation:      0.001
+   Number of thermal degrees of freedom: 1089
+
+*****************************
+Steady iteration:        1/1
+*****************************
+L2 error velocity : 3.99229e-09
+L2 error temperature : 3.66401e-17
+cells error_velocity error_pressure 
+ 1024 3.992290e-09 - 5.353477e-08 - 
+cells error_temperature 
+ 1024 3.664015e-17    - 

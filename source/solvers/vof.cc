@@ -125,7 +125,8 @@ VolumeOfFluid<dim>::assemble_local_system_matrix(
             *multiphysics->get_block_time_average_solution(
               PhysicsID::fluid_dynamics),
             *multiphysics->get_block_previous_solutions(
-              PhysicsID::fluid_dynamics));
+              PhysicsID::fluid_dynamics),
+            this->simulation_parameters.ale);
         }
       else
         {
@@ -133,7 +134,8 @@ VolumeOfFluid<dim>::assemble_local_system_matrix(
             velocity_cell,
             *multiphysics->get_block_solution(PhysicsID::fluid_dynamics),
             *multiphysics->get_block_previous_solutions(
-              PhysicsID::fluid_dynamics));
+              PhysicsID::fluid_dynamics),
+            this->simulation_parameters.ale);
         }
     }
   else
@@ -146,14 +148,16 @@ VolumeOfFluid<dim>::assemble_local_system_matrix(
           scratch_data.reinit_velocity(
             velocity_cell,
             *multiphysics->get_time_average_solution(PhysicsID::fluid_dynamics),
-            *multiphysics->get_previous_solutions(PhysicsID::fluid_dynamics));
+            *multiphysics->get_previous_solutions(PhysicsID::fluid_dynamics),
+            this->simulation_parameters.ale);
         }
       else
         {
           scratch_data.reinit_velocity(
             velocity_cell,
             *multiphysics->get_solution(PhysicsID::fluid_dynamics),
-            *multiphysics->get_previous_solutions(PhysicsID::fluid_dynamics));
+            *multiphysics->get_previous_solutions(PhysicsID::fluid_dynamics),
+            this->simulation_parameters.ale);
         }
     }
 
@@ -244,7 +248,8 @@ VolumeOfFluid<dim>::assemble_local_system_rhs(
             *multiphysics->get_block_time_average_solution(
               PhysicsID::fluid_dynamics),
             *multiphysics->get_block_previous_solutions(
-              PhysicsID::fluid_dynamics));
+              PhysicsID::fluid_dynamics),
+            this->simulation_parameters.ale);
         }
       else
         {
@@ -252,7 +257,8 @@ VolumeOfFluid<dim>::assemble_local_system_rhs(
             velocity_cell,
             *multiphysics->get_block_solution(PhysicsID::fluid_dynamics),
             *multiphysics->get_block_previous_solutions(
-              PhysicsID::fluid_dynamics));
+              PhysicsID::fluid_dynamics),
+            this->simulation_parameters.ale);
         }
     }
   else
@@ -265,14 +271,16 @@ VolumeOfFluid<dim>::assemble_local_system_rhs(
           scratch_data.reinit_velocity(
             velocity_cell,
             *multiphysics->get_time_average_solution(PhysicsID::fluid_dynamics),
-            *multiphysics->get_previous_solutions(PhysicsID::fluid_dynamics));
+            *multiphysics->get_previous_solutions(PhysicsID::fluid_dynamics),
+            this->simulation_parameters.ale);
         }
       else
         {
           scratch_data.reinit_velocity(
             velocity_cell,
             *multiphysics->get_solution(PhysicsID::fluid_dynamics),
-            *multiphysics->get_previous_solutions(PhysicsID::fluid_dynamics));
+            *multiphysics->get_previous_solutions(PhysicsID::fluid_dynamics),
+            this->simulation_parameters.ale);
         }
     }
 

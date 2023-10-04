@@ -31,6 +31,7 @@ add_library(lethe-core
   tracer_diffusivity_model.cc
   utilities.cc
   # Headers
+  ../../include/core/ale.h
   ../../include/core/auxiliary_math_functions.h
   ../../include/core/bdf.h
   ../../include/core/boundary_conditions.h
