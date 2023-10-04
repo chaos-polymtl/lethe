@@ -38,9 +38,6 @@ using namespace dealii;
  * information obtained from the fine search and physical properties of
  * particles and walls
  *
- * @note
- *
- * @author Shahab Golshan, Bruno Blais, Polytechnique Montreal 2019-
  */
 
 template <int dim>

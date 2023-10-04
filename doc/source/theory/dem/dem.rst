@@ -163,15 +163,15 @@ Regarding the particle-wall contacts, applied models are the same than particle-
 ---------------------------------------------
 Johnson-Kendall-Roberts force model
 ---------------------------------------------
-The Johnson-Kendall-Roberts (JKR) force model enable the modelisation of attractive forces due to the van der Waals effects.
+The Johnson-Kendall-Roberts (JKR) force models enable the modelisation of attractive forces due to the van der Waals effects.
 This model modifies the Hertz formulation by defining a larger contact path radius (:math:`\mathbf{a}`) and by taking into account a new parameter, the effective surface energy (:math:`\mathbf{\gamma}_{e}`).
-The model is define by the following equation.
+The model is defined by the following equation.
 
 .. math::
     a^{3} = \frac{3 R_{e}}{4 E_{e}} \left[F_{n}^{JKR} + 3\pi\gamma_{e}R_{e}  + \sqrt{6 F_{n}^{JKR} \pi\gamma_{e}R_{e} + (3\pi\gamma_{e}R_{e})^2 }\right]
 
-Where :math:`\mathbf{F_{n}^{JKR}}` correspond to the normal spring force and attractive force combine and :math:`\mathbf{\gamma_{e}}` is the effective surface energy.
-Note that if the effective surface energy is equal to zero, the JKR model goes back the Hertz definition.
+Where :math:`\mathbf{F_{n}^{JKR}}` correspond to the normal spring force and attractive force combined and :math:`\mathbf{\gamma_{e}}` is the effective surface energy.
+Note that if the effective surface energy is equal to zero, the JKR model revert to Hertz model.
 
 The effective surface energy can be computed like so :
 
@@ -179,7 +179,7 @@ The effective surface energy can be computed like so :
     \gamma_{e} = \gamma_{1} + \gamma_{2} - 2\gamma_{1,2}
 
 Where :math:`\gamma_{1}` and :math:`\gamma_{2}` are the surface energy of each material (particle or wall) :math:`\gamma_{1,2}` is the interface energy which is equal to zero when both surface are coming form the same material.
-In Lethe, the interface energy term is approximated using : `[3] <https://doi.org/10.1016/B978-0-12-391927-4.10013-1>`_
+In Lethe, the interface energy term is approximated using `[3] <https://doi.org/10.1016/B978-0-12-391927-4.10013-1>`_ :
 
 .. math::
     \gamma_{1,2} \approx \left( \sqrt{\gamma_{1}} - \sqrt{\gamma_{2}}  \right)^{2}
@@ -189,13 +189,12 @@ To compute the :math:`\mathbf{F_{n}^{JKR}}`, the contact patch radius need to be
 .. math::
     \delta_{n} = \frac{ a^{2} }{ R_{e} } -  \sqrt{ \frac{2 \pi \gamma_{e} a }{ Y_{e} } }
 
-This equation can be rewrited as a fourth order polynomial function with two imaginary root and two real root.
+This equation can be rewrited as a fourth order polynomial function with two complex root and two real root.
 
 .. math::
     0 = a^{4} - 2R_{e}\delta_{n}a^{2} - 2\pi\gamma_{e}R_{e}^{2}a + R_{e}^{2}\delta_{n}^{2}
 
-Since we are always trying to solve for the same real root, a straightforward procedure, describe by Parteli et al. can be use. `[4] <https://doi.org/10.1038/srep06227>`_
-The procedure goes as follow :
+Since we are always trying to solve for the same real root, a straightforward procedure, describe by Parteli et al. can be used `[4] <https://doi.org/10.1038/srep06227>`_ :
 
 .. math::
     c_{0} &= R_{e}^{2}\delta_{n}^{2} \\
@@ -213,7 +212,7 @@ The procedure goes as follow :
     \lambda &= \frac{c_{1} }{2 \omega}\\
     a &= \frac{1}{2}\left(\omega + \sqrt{\omega^{2} - 4(c_{2} + s + \lambda ) } \right)
 
-Finally, the :math:`\mathbf{F_{n}^{JKR}}` can be compute as followed:
+Finally, the :math:`\mathbf{F_{n}^{JKR}}` can be computed as follows:
 
 .. math::
     F_{n}^{JKR} = \frac{4 Y_{e} a^{3}}{3 R_{e}} - \sqrt{8 \pi \gamma_{e} Y_{e} a^{3} }
