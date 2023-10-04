@@ -185,7 +185,7 @@ private:
         particle_wall_angular_velocity = angular_velocity / omega_value;
       }
 
-    // Calcualation of rolling resistance torque
+    // Calculation of rolling resistance torque
     Tensor<1, 3> rolling_resistance_torque =
       -effective_rolling_friction_coefficient *
       (particle_properties[DEM::PropertiesIndex::dp] * 0.5) *

@@ -60,7 +60,7 @@ The contact normal vector :math:`\mathbf{n}_{ij}` is computed as:
 .. math::
     \mathbf{n}_{ij}=\frac{\mathbf{x}_{j}-\mathbf{x}_{i}}{\left|\mathbf{x}_{j}-\mathbf{x}_{i}\right|}
 
-The normal overlap (:math:`\delta_n`) is the contact distance between the particles i and j. In the case of a collision between a particle and a wall, the wall is consider as j. The tangential overlap (:math:`\delta_t`) depends on the contact history and is updated during a contact.
+The normal overlap (:math:`\delta_n`) is the contact distance between the particles i and j. In the case of a collision between a particle and a wall, the wall is considered as j. The tangential overlap (:math:`\delta_t`) depends on the contact history and is updated during a contact.
 The normal and tangential overlaps are calculated as follow:
 
 .. math::
@@ -170,31 +170,31 @@ The model is defined by the following equation.
 .. math::
     a^{3} = \frac{3 R_{e}}{4 E_{e}} \left[F_{n}^{JKR} + 3\pi\gamma_{e}R_{e}  + \sqrt{6 F_{n}^{JKR} \pi\gamma_{e}R_{e} + (3\pi\gamma_{e}R_{e})^2 }\right]
 
-Where :math:`\mathbf{F_{n}^{JKR}}` correspond to the normal spring force and attractive force combined and :math:`\mathbf{\gamma_{e}}` is the effective surface energy.
-Note that if the effective surface energy is equal to zero, the JKR model revert to Hertz model.
+Where :math:`\mathbf{F_{n}^{JKR}}` corresponds to the normal spring force and attractive force combined and :math:`\mathbf{\gamma_{e}}` is the effective surface energy.
+Note that if the effective surface energy is equal to zero, the JKR model reverts to Hertz model.
 
-The effective surface energy can be computed like so :
+The effective surface energy can be computed as :
 
 .. math::
     \gamma_{e} = \gamma_{1} + \gamma_{2} - 2\gamma_{1,2}
 
-Where :math:`\gamma_{1}` and :math:`\gamma_{2}` are the surface energy of each material (particle or wall) :math:`\gamma_{1,2}` is the interface energy which is equal to zero when both surface are coming form the same material.
+Where :math:`\gamma_{1}` and :math:`\gamma_{2}` are the surface energy of each material (particle or wall) :math:`\gamma_{1,2}` is the interface energy which is equal to zero when both surfaces are coming form the same material.
 In Lethe, the interface energy term is approximated using `[3] <https://doi.org/10.1016/B978-0-12-391927-4.10013-1>`_ :
 
 .. math::
     \gamma_{1,2} \approx \left( \sqrt{\gamma_{1}} - \sqrt{\gamma_{2}}  \right)^{2}
 
-To compute the :math:`\mathbf{F_{n}^{JKR}}`, the contact patch radius need to be determied. The contact patch radius can be related to the normal overlap as follow:
+To compute the :math:`\mathbf{F_{n}^{JKR}}`, the contact patch radius need to be determined. The contact patch radius can be related to the normal overlap as follows:
 
 .. math::
     \delta_{n} = \frac{ a^{2} }{ R_{e} } -  \sqrt{ \frac{2 \pi \gamma_{e} a }{ Y_{e} } }
 
-This equation can be rewrited as a fourth order polynomial function with two complex root and two real root.
+This equation can be rewritten as a fourth order polynomial function with two complex and two real roots.
 
 .. math::
     0 = a^{4} - 2R_{e}\delta_{n}a^{2} - 2\pi\gamma_{e}R_{e}^{2}a + R_{e}^{2}\delta_{n}^{2}
 
-Since we are always trying to solve for the same real root, a straightforward procedure, describe by Parteli et al. can be used `[4] <https://doi.org/10.1038/srep06227>`_ :
+Since we are always solving for the same real root, a straightforward procedure, described by Parteli et al. can be used `[4] <https://doi.org/10.1038/srep06227>`_ :
 
 .. math::
     c_{0} &= R_{e}^{2}\delta_{n}^{2} \\
@@ -217,7 +217,7 @@ Finally, the :math:`\mathbf{F_{n}^{JKR}}` can be computed as follows:
 .. math::
     F_{n}^{JKR} = \frac{4 Y_{e} a^{3}}{3 R_{e}} - \sqrt{8 \pi \gamma_{e} Y_{e} a^{3} }
 
-The normal damping, tangential damping and tangential spring constants still need to be compute using the same procedure as the nonlinear model.
+The normal damping, tangential damping and tangential spring constants need to be computed using the same procedure as the nonlinear model.
 
 For implementation reasons, a simplified version of the JKR model (SJKR-A) is implemented in Lethe. This version does not calculate non-contact forces. Please refer to C. J. Coetzee and O. C. Scheffler for more information on the different versions of the JKR model and their specific features. `[5] <https://doi.org/10.3390/pr11010005>`_
 
