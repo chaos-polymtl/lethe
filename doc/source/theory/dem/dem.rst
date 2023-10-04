@@ -163,7 +163,7 @@ Regarding the particle-wall contacts, applied models are the same than particle-
 ---------------------------------------------
 Johnson-Kendall-Roberts force model
 ---------------------------------------------
-The Johnson-Kendall-Roberts (JKR) force models enable the modelisation of attractive forces due to the van der Waals effects.
+The Johnson-Kendall-Roberts (JKR) force models attractive forces due to the van der Waals effects.
 This model modifies the Hertz formulation by defining a larger contact path radius (:math:`\mathbf{a}`) and by taking into account a new parameter, the effective surface energy (:math:`\mathbf{\gamma}_{e}`).
 The model is defined by the following equation.
 
