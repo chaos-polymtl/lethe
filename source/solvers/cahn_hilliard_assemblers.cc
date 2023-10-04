@@ -5,6 +5,8 @@
 #include <solvers/copy_data.h>
 
 
+//const double xi = 0.001;
+
 template <int dim>
 void
 CahnHilliardAssemblerCore<dim>::assemble_matrix(
@@ -15,7 +17,9 @@ CahnHilliardAssemblerCore<dim>::assemble_matrix(
   //const double well_height       = this->cahn_hilliard_parameters.well_height;
   const double mobility_constant = this->mobility_constant;
   const double epsilon           = scratch_data.epsilon;
+  const double cell_size = scratch_data.cell_size;
   const double alpha_beta_coefficient = 3/(2*sqrt(2));
+  const double xi = 1;
 
   // Loop and quadrature information
   const auto        &JxW_vec    = scratch_data.JxW;
@@ -23,7 +27,7 @@ CahnHilliardAssemblerCore<dim>::assemble_matrix(
   const unsigned int n_dofs     = scratch_data.n_dofs;
 
   auto &local_matrix = copy_data.local_matrix;
-
+    //std::cout<<"test"<<std::endl;
   // Constant mobility model
   if (this->mobility_model == MobilityModel::constant)
     {
@@ -40,7 +44,7 @@ CahnHilliardAssemblerCore<dim>::assemble_matrix(
           const double alpha = alpha_beta_coefficient*scratch_data.surface_tension[q]*epsilon;
           const double beta = alpha_beta_coefficient*scratch_data.surface_tension[q]/epsilon;
 
-          std::cout<< "coeff tension surface = "<< scratch_data.surface_tension[q]<<std::endl;
+          //std::cout<< "coeff tension surface = "<< scratch_data.surface_tension[q]<<std::endl;
 
           for (unsigned int i = 0; i < n_dofs; ++i)
             {
@@ -75,7 +79,10 @@ CahnHilliardAssemblerCore<dim>::assemble_matrix(
                        (3 * phase_order_value * phase_order_value - 1.0) *
                        phi_phase_j -
                      alpha * grad_phi_potential_i *
-                       grad_phi_phase_j) *
+                       grad_phi_phase_j
+                     //Chemical potential smoothing
+                      +xi*cell_size*cell_size*grad_phi_potential_i*grad_phi_potential_j
+                      ) *
                     JxW;
                 }
             }
@@ -137,7 +144,10 @@ CahnHilliardAssemblerCore<dim>::assemble_matrix(
                        (3 * phase_order_value * phase_order_value - 1.0) *
                        phi_phase_j -
                      alpha * grad_phi_potential_i *
-                       grad_phi_phase_j) *
+                       grad_phi_phase_j
+                     //Chemical potential smoothing
+                     +xi*cell_size*cell_size*grad_phi_potential_i*grad_phi_potential_j
+                     ) *
                     JxW;
                 }
             }
@@ -158,6 +168,8 @@ CahnHilliardAssemblerCore<dim>::assemble_rhs(
   const double mobility_constant = this->mobility_constant;
   const double epsilon           = scratch_data.epsilon;
   const double alpha_beta_coefficient = 3/(2*sqrt(2));
+  const double cell_size = scratch_data.cell_size;
+  const double xi = 1;
 
 
   // Loop and quadrature information
@@ -210,6 +222,8 @@ CahnHilliardAssemblerCore<dim>::assemble_rhs(
                    (phase_order_value * phase_order_value - 1) *
                    phase_order_value +
                  alpha * grad_phi_potential_i * phase_order_gradient
+                 //Chemical potential smoothing
+                 -xi*cell_size*cell_size*grad_phi_potential_i*potential_gradient
                  // Source term
                  + source_phase_order * phi_phase_i +
                  source_chemical_potential * phi_potential_i) *
@@ -263,6 +277,8 @@ CahnHilliardAssemblerCore<dim>::assemble_rhs(
                    (phase_order_value * phase_order_value - 1) *
                    phase_order_value +
                  alpha * grad_phi_potential_i * phase_order_gradient
+                 //Chemical potential smoothing
+                 -xi*cell_size*cell_size*grad_phi_potential_i*potential_gradient
                  // Source term
                  + source_phase_order * phi_phase_i +
                  source_chemical_potential * phi_potential_i) *
