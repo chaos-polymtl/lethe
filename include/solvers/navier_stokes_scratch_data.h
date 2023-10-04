@@ -958,10 +958,14 @@ public:
                               this->chemical_potential_cahn_hilliard_gradients);
 
     // Initialize parameters
-    this->epsilon     = (cahn_hilliard_parameters.epsilon_set_method ==
-                     Parameters::EpsilonSetStrategy::manual) ?
+//    this->epsilon     = (cahn_hilliard_parameters.epsilon_set_method ==
+//                     Parameters::EpsilonSetStrategy::manual) ?
+//                          cahn_hilliard_parameters.epsilon :
+//                          2 * this->cell_size;
+      this->epsilon     = (cahn_hilliard_parameters.epsilon_set_method ==
+                           Parameters::EpsilonSetStrategy::manual) ?
                           cahn_hilliard_parameters.epsilon :
-                          2 * this->cell_size;
+                          7 * this->cell_size;
     this->well_height = cahn_hilliard_parameters.well_height;
   }
 
