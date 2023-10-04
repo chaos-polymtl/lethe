@@ -310,7 +310,7 @@ MFNavierStokesSolver<dim>::percolate_time_vectors_fd()
 {
   for (unsigned int i = this->previous_solutions.size() - 1; i > 0; --i)
     {
-      this->previous_solutions[i] = this->previous_solutions[i - 1];
+      this->previous_solutions[i].swap(this->previous_solutions[i - 1]);
     }
   this->previous_solutions[0] = this->present_solution;
 
