@@ -121,13 +121,6 @@ protected:
   update_multiphysics_time_average_solution() override;
 
   /**
-   * @brief Update the solutions of the previous time steps needed for the time-stepping
-   * scheme at the end of a time step.
-   */
-  virtual void
-  percolate_time_vectors_fd() override;
-
-  /**
    * @brief Calculate and store time derivatives of previous solutions according to
    * time-stepping scheme to use them in the operator.
    */

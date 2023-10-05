@@ -22,6 +22,8 @@
 
 #include <solvers/mf_navier_stokes.h>
 
+#include <deal.II/base/multithread_info.h>
+
 #include <deal.II/dofs/dof_tools.h>
 
 #include <deal.II/grid/grid_tools.h>
@@ -81,6 +83,8 @@ template <int dim>
 void
 MFNavierStokesSolver<dim>::solve()
 {
+  MultithreadInfo::set_thread_limit(1);
+
   read_mesh_and_manifolds(
     *this->triangulation,
     this->simulation_parameters.mesh,
@@ -113,15 +117,20 @@ MFNavierStokesSolver<dim>::solve()
       this->simulation_control->print_progression(this->pcout);
       this->dynamic_flow_control();
 
-      if (this->simulation_control->is_at_start())
-        {
-          this->iterate();
-        }
-      else
+      if (!this->simulation_control->is_at_start())
         {
           NavierStokesBase<dim, VectorType, IndexSet>::refine_mesh();
-          this->iterate();
         }
+
+      if (is_bdf(this->simulation_control->get_assembly_method()))
+        {
+          calculate_time_derivative_previous_solutions();
+          this->time_derivative_previous_solutions.update_ghost_values();
+          this->system_operator->evaluate_time_derivative_previous_solutions(
+            this->time_derivative_previous_solutions);
+        }
+
+      this->iterate();
 
       this->postprocess(false);
       this->finish_time_step();
@@ -281,14 +290,6 @@ template <int dim>
 void
 MFNavierStokesSolver<dim>::assemble_system_rhs()
 {
-  if (is_bdf(this->simulation_control->get_assembly_method()))
-    {
-      calculate_time_derivative_previous_solutions();
-      this->time_derivative_previous_solutions.update_ghost_values();
-      this->system_operator->evaluate_time_derivative_previous_solutions(
-        this->time_derivative_previous_solutions);
-    }
-
   TimerOutput::Scope t(this->computing_timer, "Assemble RHS");
 
   this->system_operator->evaluate_residual(this->system_rhs,
@@ -302,22 +303,6 @@ void
 MFNavierStokesSolver<dim>::update_multiphysics_time_average_solution()
 {
   // TODO
-}
-
-template <int dim>
-void
-MFNavierStokesSolver<dim>::percolate_time_vectors_fd()
-{
-  for (unsigned int i = this->previous_solutions.size() - 1; i > 0; --i)
-    {
-      this->previous_solutions[i].swap(this->previous_solutions[i - 1]);
-    }
-  this->previous_solutions[0] = this->present_solution;
-
-  calculate_time_derivative_previous_solutions();
-  this->time_derivative_previous_solutions.update_ghost_values();
-  this->system_operator->evaluate_time_derivative_previous_solutions(
-    this->time_derivative_previous_solutions);
 }
 
 template <int dim>
