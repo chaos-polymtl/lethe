@@ -294,9 +294,9 @@ BoundaryCellsInformation<dim>::find_particle_point_and_line_contact_cells(
   // Boundary lines only exist in three-dimensional cases
   if (dim == 3)
     {
-      std::unordered_map<
-        std::string,
-        std::unordered_map<unsigned int, std::pair<Point<dim>, Point<dim>>>>
+      std::unordered_map<std::string,
+                         std::unordered_map<types::global_dof_index,
+                                            std::pair<Point<dim>, Point<dim>>>>
         all_cells_with_boundary_lines;
 
       // Iterating over the active cells in the triangulation
@@ -364,7 +364,7 @@ BoundaryCellsInformation<dim>::find_particle_point_and_line_contact_cells(
               if (cell->is_locally_owned())
                 {
                   std::string cell_id_string = cell->id().to_string();
-                  std::unordered_map<unsigned int,
+                  std::unordered_map<types::global_dof_index,
                                      std::pair<Point<dim>, Point<dim>>>
                     &cell_boundary_lines =
                       all_cells_with_boundary_lines[cell_id_string];
