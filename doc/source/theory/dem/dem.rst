@@ -165,7 +165,7 @@ Johnson-Kendall-Roberts force model
 ---------------------------------------------
 The Johnson-Kendall-Roberts (JKR) force models attractive forces due to van der Waals effects. `[3] <https://doi.org/10.3390/pr11010005>`_
 This model modifies the Hertz formulation by defining a larger contact path radius (:math:`\mathbf{a}`) and taking into account the effective surface energy (:math:`\mathbf{\gamma}_{e}`).
-The model is defined by :
+The model is defined by:
 
 .. math::
     a^{3} = \frac{3 R_{e}}{4 E_{e}} \left[F_{n}^{JKR} + 3\pi\gamma_{e}R_{e}  + \sqrt{6 F_{n}^{JKR} \pi\gamma_{e}R_{e} + (3\pi\gamma_{e}R_{e})^2 }\right]
@@ -173,28 +173,28 @@ The model is defined by :
 Where :math:`\mathbf{F_{n}^{JKR}}` corresponds to the normal spring force and attractive force combined and :math:`\mathbf{\gamma_{e}}` is the effective surface energy.
 Note that if the effective surface energy is equal to zero, the JKR model reverts to Hertz model.
 
-The effective surface energy can be computed as :
+The effective surface energy can be computed as:
 
 .. math::
     \gamma_{e} = \gamma_{1} + \gamma_{2} - 2\gamma_{1,2}
 
-Where :math:`\gamma_{1}` and :math:`\gamma_{2}` are the surface energy of each material (particle or wall) :math:`\gamma_{1,2}` is the interface energy which is equal to zero when both surfaces are coming form the same material.
-In Lethe, the interface energy term is approximated using `[4] <https://doi.org/10.1016/B978-0-12-391927-4.10013-1>`_ :
+Where :math:`\gamma_{1}` and :math:`\gamma_{2}` are the surface energy of each material (particle or wall) :math:`\gamma_{1,2}` is the interface energy which is equal to zero when both surfaces are coming from the same material.
+In Lethe, the interface energy term is approximated using `[4] <https://doi.org/10.1016/B978-0-12-391927-4.10013-1>`_:
 
 .. math::
     \gamma_{1,2} \approx \left( \sqrt{\gamma_{1}} - \sqrt{\gamma_{2}}  \right)^{2}
 
-To compute the :math:`\mathbf{F_{n}^{JKR}}`, the contact patch radius need to be determined. The contact patch radius can be related to the normal overlap as follows:
+To compute the :math:`\mathbf{F_{n}^{JKR}}`, the contact patch radius needs to be determined. The contact patch radius can be related to the normal overlap as follows:
 
 .. math::
     \delta_{n} = \frac{ a^{2} }{ R_{e} } -  \sqrt{ \frac{2 \pi \gamma_{e} a }{ Y_{e} } }
 
-This equation can be rewritten as a fourth order polynomial function with two complex and two real roots.
+This equation can be rewritten as a fourth-order polynomial function with two complex and two real roots.
 
 .. math::
     0 = a^{4} - 2R_{e}\delta_{n}a^{2} - 2\pi\gamma_{e}R_{e}^{2}a + R_{e}^{2}\delta_{n}^{2}
 
-Since we are always solving for the same real root, a straightforward procedure, described by Parteli et al. can be used `[5] <https://doi.org/10.1038/srep06227>`_ :
+Since we are always solving for the same real root, a straightforward procedure, described by Parteli et al. can be used `[5] <https://doi.org/10.1038/srep06227>`_:
 
 .. math::
     c_{0} &= R_{e}^{2}\delta_{n}^{2} \\

@@ -103,7 +103,7 @@ In this subsection, gravitational acceleration, and the physical properties of t
 
 * The ``rolling friction particles`` defines the rolling friction coefficient of particles for each type.
 
-* The ``surface energy particles`` defines the surface energy of particles for each type. This parameters is being use with the JKR force model.
+* The ``surface energy particles`` defines the surface energy of particles for each type. This parameter is used with the JKR force model.
 
 * The ``young modulus wall`` defines the Young's modulus of the walls.
 
@@ -115,5 +115,5 @@ In this subsection, gravitational acceleration, and the physical properties of t
 
 * The ``rolling friction wall`` defines the rolling friction coefficient of the walls.
 
-* The ``surface energy wall`` defines the surface energy of the walls. This parameters is being use with the JKR force model.
+* The ``surface energy wall`` defines the surface energy of the walls. This parameter is used with the JKR force model.
 
