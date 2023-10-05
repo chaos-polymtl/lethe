@@ -163,9 +163,9 @@ Regarding the particle-wall contacts, applied models are the same than particle-
 ---------------------------------------------
 Johnson-Kendall-Roberts force model
 ---------------------------------------------
-The Johnson-Kendall-Roberts (JKR) force models attractive forces due to the van der Waals effects.
-This model modifies the Hertz formulation by defining a larger contact path radius (:math:`\mathbf{a}`) and by taking into account a new parameter, the effective surface energy (:math:`\mathbf{\gamma}_{e}`).
-The model is defined by the following equation.
+The Johnson-Kendall-Roberts (JKR) force models attractive forces due to van der Waals effects. `[3] <https://doi.org/10.3390/pr11010005>`_
+This model modifies the Hertz formulation by defining a larger contact path radius (:math:`\mathbf{a}`) and taking into account the effective surface energy (:math:`\mathbf{\gamma}_{e}`).
+The model is defined by :
 
 .. math::
     a^{3} = \frac{3 R_{e}}{4 E_{e}} \left[F_{n}^{JKR} + 3\pi\gamma_{e}R_{e}  + \sqrt{6 F_{n}^{JKR} \pi\gamma_{e}R_{e} + (3\pi\gamma_{e}R_{e})^2 }\right]
@@ -179,7 +179,7 @@ The effective surface energy can be computed as :
     \gamma_{e} = \gamma_{1} + \gamma_{2} - 2\gamma_{1,2}
 
 Where :math:`\gamma_{1}` and :math:`\gamma_{2}` are the surface energy of each material (particle or wall) :math:`\gamma_{1,2}` is the interface energy which is equal to zero when both surfaces are coming form the same material.
-In Lethe, the interface energy term is approximated using `[3] <https://doi.org/10.1016/B978-0-12-391927-4.10013-1>`_ :
+In Lethe, the interface energy term is approximated using `[4] <https://doi.org/10.1016/B978-0-12-391927-4.10013-1>`_ :
 
 .. math::
     \gamma_{1,2} \approx \left( \sqrt{\gamma_{1}} - \sqrt{\gamma_{2}}  \right)^{2}
@@ -194,13 +194,13 @@ This equation can be rewritten as a fourth order polynomial function with two co
 .. math::
     0 = a^{4} - 2R_{e}\delta_{n}a^{2} - 2\pi\gamma_{e}R_{e}^{2}a + R_{e}^{2}\delta_{n}^{2}
 
-Since we are always solving for the same real root, a straightforward procedure, described by Parteli et al. can be used `[4] <https://doi.org/10.1038/srep06227>`_ :
+Since we are always solving for the same real root, a straightforward procedure, described by Parteli et al. can be used `[5] <https://doi.org/10.1038/srep06227>`_ :
 
 .. math::
     c_{0} &= R_{e}^{2}\delta_{n}^{2} \\
-    c_{1} &= 2\pi\gamma_{e}R_{e}^{2}\\
+    c_{1} &= -2\pi\gamma_{e}R_{e}^{2}\\
     c_{2} &= -2R_{e}\delta_{n}\\
-    P &= -\frac{c_{2} }{12} - c_{0} \\
+    P &= -\frac{c_{2}^{2}}{12} - c_{0} \\
     Q &= - \frac{c_{2}^{3}}{108} + \frac{c_{0}c_{2}}{3} - \frac{c_{1}^{2}}{8} \\
     U &= \left[ -\frac{ Q }{ 2 } + \sqrt{  \frac{ Q^{2} } {4} + \frac{ P^{3} }{ 27 }  }  \right]^{ \frac{1}{3} } \\
     s &=
@@ -219,7 +219,7 @@ Finally, the :math:`\mathbf{F_{n}^{JKR}}` can be computed as follows:
 
 The normal damping, tangential damping and tangential spring constants need to be computed using the same procedure as the nonlinear model.
 
-For implementation reasons, a simplified version of the JKR model (SJKR-A) is implemented in Lethe. This version does not calculate non-contact forces. Please refer to C. J. Coetzee and O. C. Scheffler for more information on the different versions of the JKR model and their specific features. `[5] <https://doi.org/10.3390/pr11010005>`_
+For implementation reasons, a simplified version of the JKR model (SJKR-A) is implemented in Lethe. This version does not calculate non-contact forces. Please refer to C. J. Coetzee and O. C. Scheffler for more information on the different versions of the JKR model and their specific features. `[3] <https://doi.org/10.3390/pr11010005>`_
 
 --------------------
 Integration Methods
@@ -252,8 +252,8 @@ References
 
 `[2] <https://mfix.netl.doe.gov/doc/mfix-archive/mfix_current_documentation/dem_doc_2012-1.pdf>`_ R. Garg, J. Galvin-Carney, T. Li, and S. Pannala, “Documentation of open-source MFIX–DEM software for gas-solids flows,” Tingwen Li Dr., p. 10, Sep. 2012.
 
-`[3] <https://doi.org/10.1016/B978-0-12-391927-4.10013-1>`_ J. N. Israelachvili, “Chapter 13 - Van der Waals Forces between Particles and Surfaces,” in Intermolecular and Surface Forces (Third Edition), Third Edition., J. N. Israelachvili, Ed., Boston: Academic Press, 2011, pp. 253–289. doi: https://doi.org/10.1016/B978-0-12-391927-4.10013-1.
+`[3] <https://doi.org/10.3390/pr11010005>`_ C. J. Coetzee and O. C. Scheffler, “Review: The Calibration of DEM Parameters for the Bulk Modelling of Cohesive Materials,” Processes, vol. 11, no. 1, Art. no. 1, Jan. 2023, doi: 10.3390/pr11010005.
 
-`[4] <https://doi.org/10.1038/srep06227>`_ E. J. R. Parteli, J. Schmidt, C. Blümel, K.-E. Wirth, W. Peukert, and T. Pöschel, “Attractive particle interaction forces and packing density of fine glass powders,” Sci Rep, vol. 4, no. 1, Art. no. 1, Sep. 2014, doi: 10.1038/srep06227.
+`[4] <https://doi.org/10.1016/B978-0-12-391927-4.10013-1>`_ J. N. Israelachvili, “Chapter 13 - Van der Waals Forces between Particles and Surfaces,” in Intermolecular and Surface Forces (Third Edition), Third Edition., J. N. Israelachvili, Ed., Boston: Academic Press, 2011, pp. 253–289. doi: https://doi.org/10.1016/B978-0-12-391927-4.10013-1.
 
-`[5] <https://doi.org/10.3390/pr11010005>`_ C. J. Coetzee and O. C. Scheffler, “Review: The Calibration of DEM Parameters for the Bulk Modelling of Cohesive Materials,” Processes, vol. 11, no. 1, Art. no. 1, Jan. 2023, doi: 10.3390/pr11010005.
+`[5] <https://doi.org/10.1038/srep06227>`_ E. J. R. Parteli, J. Schmidt, C. Blümel, K.-E. Wirth, W. Peukert, and T. Pöschel, “Attractive particle interaction forces and packing density of fine glass powders,” Sci Rep, vol. 4, no. 1, Art. no. 1, Sep. 2014, doi: 10.1038/srep06227.

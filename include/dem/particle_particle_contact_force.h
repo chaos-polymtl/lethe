@@ -1106,7 +1106,7 @@ protected:
         particle_one_type, particle_two_type)] *
       this->effective_radius;
     const double modified_coulomb_threshold =
-      (normal_force_coefficient + 2 * pull_off_force) *
+      (normal_force_coefficient + 2. * pull_off_force) *
       this->effective_coefficient_of_friction[vec_particle_type_index(
         particle_one_type, particle_two_type)];
 
