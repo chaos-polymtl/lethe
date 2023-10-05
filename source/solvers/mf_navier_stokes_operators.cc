@@ -1093,14 +1093,13 @@ NavierStokesTransientSUPGPSPGOperator<dim, number>::do_cell_integral_local(
               // +(∇p)τ(δu·∇)v
               gradient_result[i][k] +=
                 tau * value[k] * previous_gradient[dim][i];
-              // (-f)τδ(u·∇)v
+              // (-f)τ(δu·∇)v
               gradient_result[i][k] += -tau * value[k] * source_value[i];
 
               // +(∂t u)τ(δu·∇)v
-              gradient_result[i][k] +=
-                tau * value[k] * bdf_coefs[0] * previous_values[i];
-              gradient_result[i][k] +=
-                tau * value[k] * previous_time_derivatives[i];
+              gradient_result[i][k] += tau * value[k] *
+                                       (bdf_coefs[0] * previous_values[i] +
+                                        previous_time_derivatives[i]);
             }
         }
 
@@ -1227,8 +1226,8 @@ NavierStokesTransientSUPGPSPGOperator<dim, number>::local_evaluate_residual(
                   value_result[i] += gradient[i][k] * value[k];
                 }
               // + (v,∂t u)
-              value_result[i] += bdf_coefs[0] * value[i];
-              value_result[i] += previous_time_derivatives[i];
+              value_result[i] +=
+                (bdf_coefs[0] * value[i] + previous_time_derivatives[i]);
             }
 
           // PSPG term
@@ -1246,8 +1245,8 @@ NavierStokesTransientSUPGPSPGOperator<dim, number>::local_evaluate_residual(
                   gradient_result[dim][i] += tau * gradient[i][k] * value[k];
                 }
               // +(∂t u)·τ∇q
-              gradient_result[dim][i] += tau * bdf_coefs[0] * value[i];
-              gradient_result[dim][i] += tau * previous_time_derivatives[i];
+              gradient_result[dim][i] +=
+                tau * (bdf_coefs[0] * value[i] + previous_time_derivatives[i]);
             }
           // +(∇p)τ∇·q
           gradient_result[dim] += tau * gradient[dim];
@@ -1276,9 +1275,8 @@ NavierStokesTransientSUPGPSPGOperator<dim, number>::local_evaluate_residual(
 
                   // + (∂t u)τ(u·∇)v
                   gradient_result[i][k] +=
-                    tau * value[k] * bdf_coefs[0] * value[i];
-                  gradient_result[i][k] +=
-                    tau * value[k] * previous_time_derivatives[i];
+                    tau * value[k] *
+                    (bdf_coefs[0] * value[i] + previous_time_derivatives[i]);
                 }
             }
 
