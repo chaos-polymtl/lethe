@@ -824,13 +824,54 @@ MFNavierStokesSolver<dim>::solve_with_GCMG(SolverGMRES<VectorType> &solver)
            i_bc < this->simulation_parameters.boundary_conditions.size;
            ++i_bc)
         {
-          VectorTools::interpolate_boundary_values(
-            *this->mapping,
-            level_dof_handler,
-            this->simulation_parameters.boundary_conditions.id[i_bc],
-            dealii::Functions::ZeroFunction<dim>(dim + 1),
-            level_constraint,
-            this->fe->component_mask(velocities));
+          if (this->simulation_parameters.boundary_conditions.type[i_bc] ==
+              BoundaryConditions::BoundaryType::slip)
+            {
+              std::set<types::boundary_id> no_normal_flux_boundaries;
+              no_normal_flux_boundaries.insert(
+                this->simulation_parameters.boundary_conditions.id[i_bc]);
+              VectorTools::compute_no_normal_flux_constraints(
+                level_dof_handler,
+                0,
+                no_normal_flux_boundaries,
+                level_constraint,
+                *this->mapping);
+            }
+          else if (this->simulation_parameters.boundary_conditions.type[i_bc] ==
+                   BoundaryConditions::BoundaryType::periodic)
+            {
+              // TODO
+            }
+          else if (this->simulation_parameters.boundary_conditions.type[i_bc] ==
+                   BoundaryConditions::BoundaryType::pressure)
+            {
+              /*do nothing*/
+            }
+          else if (this->simulation_parameters.boundary_conditions.type[i_bc] ==
+                   BoundaryConditions::BoundaryType::function_weak)
+            {
+              /*do nothing*/
+            }
+          else if (this->simulation_parameters.boundary_conditions.type[i_bc] ==
+                   BoundaryConditions::BoundaryType::partial_slip)
+            {
+              /*do nothing*/
+            }
+          else if (this->simulation_parameters.boundary_conditions.type[i_bc] ==
+                   BoundaryConditions::BoundaryType::outlet)
+            {
+              /*do nothing*/
+            }
+          else
+            {
+              VectorTools::interpolate_boundary_values(
+                *this->mapping,
+                level_dof_handler,
+                this->simulation_parameters.boundary_conditions.id[i_bc],
+                dealii::Functions::ZeroFunction<dim>(dim + 1),
+                level_constraint,
+                this->fe->component_mask(velocities));
+            }
         }
 
       level_constraint.close();
