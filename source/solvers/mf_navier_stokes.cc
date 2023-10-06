@@ -538,12 +538,50 @@ MFNavierStokesSolver<dim>::solve_with_LSMG(SolverGMRES<VectorType> &solver)
        i_bc < this->simulation_parameters.boundary_conditions.size;
        ++i_bc)
     {
-      std::set<types::boundary_id> dirichlet_boundary_id = {
-        this->simulation_parameters.boundary_conditions.id[i_bc]};
-      mg_constrained_dofs.make_zero_boundary_constraints(
-        this->dof_handler,
-        dirichlet_boundary_id,
-        this->fe->component_mask(velocities));
+      if (this->simulation_parameters.boundary_conditions.type[i_bc] ==
+          BoundaryConditions::BoundaryType::slip)
+        {
+          std::set<types::boundary_id> no_normal_flux_boundaries;
+          no_normal_flux_boundaries.insert(
+            this->simulation_parameters.boundary_conditions.id[i_bc]);
+          for (auto bid : no_normal_flux_boundaries)
+            mg_constrained_dofs.make_no_normal_flux_constraints(
+              this->dof_handler, bid, 0);
+        }
+      else if (this->simulation_parameters.boundary_conditions.type[i_bc] ==
+               BoundaryConditions::BoundaryType::periodic)
+        {
+          // TODO
+        }
+      else if (this->simulation_parameters.boundary_conditions.type[i_bc] ==
+               BoundaryConditions::BoundaryType::pressure)
+        {
+          /*do nothing*/
+        }
+      else if (this->simulation_parameters.boundary_conditions.type[i_bc] ==
+               BoundaryConditions::BoundaryType::function_weak)
+        {
+          /*do nothing*/
+        }
+      else if (this->simulation_parameters.boundary_conditions.type[i_bc] ==
+               BoundaryConditions::BoundaryType::partial_slip)
+        {
+          /*do nothing*/
+        }
+      else if (this->simulation_parameters.boundary_conditions.type[i_bc] ==
+               BoundaryConditions::BoundaryType::outlet)
+        {
+          /*do nothing*/
+        }
+      else
+        {
+          std::set<types::boundary_id> dirichlet_boundary_id = {
+            this->simulation_parameters.boundary_conditions.id[i_bc]};
+          mg_constrained_dofs.make_zero_boundary_constraints(
+            this->dof_handler,
+            dirichlet_boundary_id,
+            this->fe->component_mask(velocities));
+        }
     }
 
   // Create mg operators for each level and additional operators needed only for
