@@ -18,6 +18,7 @@
  */
 
 #include <dem/dem_solver_parameters.h>
+#include <dem/particle_wall_jkr_force.h>
 #include <dem/particle_wall_linear_force.h>
 #include <dem/particle_wall_nonlinear_force.h>
 
