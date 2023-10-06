@@ -28,6 +28,7 @@ add_library(lethe-dem
   particle_wall_broad_search.cc
   particle_wall_contact_force.cc
   particle_wall_fine_search.cc
+  particle_wall_jkr_force.cc
   particle_wall_linear_force.cc
   particle_wall_nonlinear_force.cc
   periodic_boundaries_manipulator.cc
@@ -76,6 +77,7 @@ add_library(lethe-dem
   ../../include/dem/particle_wall_contact_force.h
   ../../include/dem/particle_wall_contact_info.h
   ../../include/dem/particle_wall_fine_search.h
+  ../../include/dem/particle_wall_jkr_force.h
   ../../include/dem/particle_wall_linear_force.h
   ../../include/dem/particle_wall_nonlinear_force.h
   ../../include/dem/periodic_boundaries_manipulator.h

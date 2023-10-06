@@ -60,7 +60,7 @@ The contact normal vector :math:`\mathbf{n}_{ij}` is computed as:
 .. math::
     \mathbf{n}_{ij}=\frac{\mathbf{x}_{j}-\mathbf{x}_{i}}{\left|\mathbf{x}_{j}-\mathbf{x}_{i}\right|}
 
-The normal overlap (:math:`\delta_n`) is the contact distance between the particles i and j. The tangential overlap (:math:`\delta_t`) depends on the contact history and is updated during a contact.
+The normal overlap (:math:`\delta_n`) is the contact distance between the particles i and j. In the case of a collision between a particle and a wall, the wall is considered as j. The tangential overlap (:math:`\delta_t`) depends on the contact history and is updated during a contact.
 The normal and tangential overlaps are calculated as follow:
 
 .. math::
@@ -160,6 +160,66 @@ The tangential overlap is calculated with the tangential force with no damping f
 
 Regarding the particle-wall contacts, applied models are the same than particle-particle contacts with a background triangulation and mapping with walls.
 
+---------------------------------------------
+Johnson-Kendall-Roberts force model
+---------------------------------------------
+The Johnson-Kendall-Roberts (JKR) force models attractive forces due to van der Waals effects. `[3] <https://doi.org/10.3390/pr11010005>`_
+This model modifies the Hertz formulation by defining a larger contact path radius (:math:`\mathbf{a}`) and taking into account the effective surface energy (:math:`\mathbf{\gamma}_{e}`).
+The model is defined by:
+
+.. math::
+    a^{3} = \frac{3 R_{e}}{4 E_{e}} \left[F_{n}^{JKR} + 3\pi\gamma_{e}R_{e}  + \sqrt{6 F_{n}^{JKR} \pi\gamma_{e}R_{e} + (3\pi\gamma_{e}R_{e})^2 }\right]
+
+Where :math:`\mathbf{F_{n}^{JKR}}` corresponds to the normal spring force and attractive force combined and :math:`\mathbf{\gamma_{e}}` is the effective surface energy.
+Note that if the effective surface energy is equal to zero, the JKR model reverts to Hertz model.
+
+The effective surface energy can be computed as:
+
+.. math::
+    \gamma_{e} = \gamma_{1} + \gamma_{2} - 2\gamma_{1,2}
+
+Where :math:`\gamma_{1}` and :math:`\gamma_{2}` are the surface energy of each material (particle or wall) :math:`\gamma_{1,2}` is the interface energy which is equal to zero when both surfaces are coming from the same material.
+In Lethe, the interface energy term is approximated using `[4] <https://doi.org/10.1016/B978-0-12-391927-4.10013-1>`_:
+
+.. math::
+    \gamma_{1,2} \approx \left( \sqrt{\gamma_{1}} - \sqrt{\gamma_{2}}  \right)^{2}
+
+To compute the :math:`\mathbf{F_{n}^{JKR}}`, the contact patch radius needs to be determined. The contact patch radius can be related to the normal overlap as follows:
+
+.. math::
+    \delta_{n} = \frac{ a^{2} }{ R_{e} } -  \sqrt{ \frac{2 \pi \gamma_{e} a }{ Y_{e} } }
+
+This equation can be rewritten as a fourth-order polynomial function with two complex and two real roots.
+
+.. math::
+    0 = a^{4} - 2R_{e}\delta_{n}a^{2} - 2\pi\gamma_{e}R_{e}^{2}a + R_{e}^{2}\delta_{n}^{2}
+
+Since we are always solving for the same real root, a straightforward procedure, described by Parteli et al. can be used `[5] <https://doi.org/10.1038/srep06227>`_:
+
+.. math::
+    c_{0} &= R_{e}^{2}\delta_{n}^{2} \\
+    c_{1} &= -2\pi\gamma_{e}R_{e}^{2}\\
+    c_{2} &= -2R_{e}\delta_{n}\\
+    P &= -\frac{c_{2}^{2}}{12} - c_{0} \\
+    Q &= - \frac{c_{2}^{3}}{108} + \frac{c_{0}c_{2}}{3} - \frac{c_{1}^{2}}{8} \\
+    U &= \left[ -\frac{ Q }{ 2 } + \sqrt{  \frac{ Q^{2} } {4} + \frac{ P^{3} }{ 27 }  }  \right]^{ \frac{1}{3} } \\
+    s &=
+    \begin{cases}
+    -5c_2/6 + U - \frac{P}{3U} &{if}\: P \neq 0 \\
+    -5c_2/6 + Q^{\frac{1}{3}}  &{if}\: P = 0
+    \end{cases}\\
+    \omega &= \sqrt{c_{2} + 2 s} \\
+    \lambda &= \frac{c_{1} }{2 \omega}\\
+    a &= \frac{1}{2}\left(\omega + \sqrt{\omega^{2} - 4(c_{2} + s + \lambda ) } \right)
+
+Finally, the :math:`\mathbf{F_{n}^{JKR}}` can be computed as follows:
+
+.. math::
+    F_{n}^{JKR} = \frac{4 Y_{e} a^{3}}{3 R_{e}} - \sqrt{8 \pi \gamma_{e} Y_{e} a^{3} }
+
+The normal damping, tangential damping and tangential spring constants need to be computed using the same procedure as the nonlinear model.
+
+For implementation reasons, a simplified version of the JKR model (SJKR-A) is implemented in Lethe. This version does not calculate non-contact forces. Please refer to C. J. Coetzee and O. C. Scheffler for more information on the different versions of the JKR model and their specific features. `[3] <https://doi.org/10.3390/pr11010005>`_
 
 --------------------
 Integration Methods
@@ -192,3 +252,8 @@ References
 
 `[2] <https://mfix.netl.doe.gov/doc/mfix-archive/mfix_current_documentation/dem_doc_2012-1.pdf>`_ R. Garg, J. Galvin-Carney, T. Li, and S. Pannala, “Documentation of open-source MFIX–DEM software for gas-solids flows,” Tingwen Li Dr., p. 10, Sep. 2012.
 
+`[3] <https://doi.org/10.3390/pr11010005>`_ C. J. Coetzee and O. C. Scheffler, “Review: The Calibration of DEM Parameters for the Bulk Modelling of Cohesive Materials,” Processes, vol. 11, no. 1, Art. no. 1, Jan. 2023, doi: 10.3390/pr11010005.
+
+`[4] <https://doi.org/10.1016/B978-0-12-391927-4.10013-1>`_ J. N. Israelachvili, “Chapter 13 - Van der Waals Forces between Particles and Surfaces,” in Intermolecular and Surface Forces (Third Edition), Third Edition., J. N. Israelachvili, Ed., Boston: Academic Press, 2011, pp. 253–289. doi: https://doi.org/10.1016/B978-0-12-391927-4.10013-1.
+
+`[5] <https://doi.org/10.1038/srep06227>`_ E. J. R. Parteli, J. Schmidt, C. Blümel, K.-E. Wirth, W. Peukert, and T. Pöschel, “Attractive particle interaction forces and packing density of fine glass powders,” Sci Rep, vol. 4, no. 1, Art. no. 1, Sep. 2014, doi: 10.1038/srep06227.

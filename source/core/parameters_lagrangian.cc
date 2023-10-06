@@ -54,6 +54,10 @@ namespace Parameters
                         "0.1",
                         Patterns::Double(),
                         "Particle rolling friction");
+      prm.declare_entry("surface energy particles",
+                        "0.0",
+                        Patterns::Double(),
+                        "Particle surface energy");
     }
 
     void
@@ -91,6 +95,8 @@ namespace Parameters
         prm.get_double("friction coefficient particles");
       rolling_friction_coefficient_particle.at(particle_type) =
         prm.get_double("rolling friction particles");
+      surface_energy_particle.at(particle_type) =
+        prm.get_double("surface energy particles");
     }
 
     void
@@ -148,6 +154,10 @@ namespace Parameters
                           "0.1",
                           Patterns::Double(),
                           "Rolling friction coefficient of wall");
+        prm.declare_entry("surface energy wall",
+                          "0.0",
+                          Patterns::Double(),
+                          "Surface energy of wall");
       }
       prm.leave_subsection();
     }
@@ -164,7 +174,8 @@ namespace Parameters
                             poisson_ratio_particle,
                             restitution_coefficient_particle,
                             friction_coefficient_particle,
-                            rolling_friction_coefficient_particle);
+                            rolling_friction_coefficient_particle,
+                            surface_energy_particle);
       {
         g[0] = prm.get_double("gx");
         g[1] = prm.get_double("gy");
@@ -220,6 +231,7 @@ namespace Parameters
           prm.get_double("restitution coefficient wall");
         friction_coefficient_wall = prm.get_double("friction coefficient wall");
         rolling_friction_wall     = prm.get_double("rolling friction wall");
+        surface_energy_wall       = prm.get_double("surface energy wall");
       }
       prm.leave_subsection();
     }
@@ -236,7 +248,8 @@ namespace Parameters
         &restitution_coefficient_particle,
       std::unordered_map<unsigned int, double> &friction_coefficient_particle,
       std::unordered_map<unsigned int, double>
-        &rolling_friction_coefficient_particle)
+        &rolling_friction_coefficient_particle,
+      std::unordered_map<unsigned int, double> &surface_energy)
     {
       for (unsigned int counter = 0; counter < particle_type_maximum_number;
            ++counter)
@@ -250,6 +263,7 @@ namespace Parameters
           restitution_coefficient_particle.insert({counter, 0.});
           friction_coefficient_particle.insert({counter, 0.});
           rolling_friction_coefficient_particle.insert({counter, 0.});
+          surface_energy.insert({counter, 0.});
         }
     }
 
@@ -644,15 +658,15 @@ namespace Parameters
           "particle particle contact force method",
           "hertz_mindlin_limit_overlap",
           Patterns::Selection(
-            "linear|hertz_mindlin_limit_force|hertz_mindlin_limit_overlap|hertz"),
+            "linear|hertz_mindlin_limit_force|hertz_mindlin_limit_overlap|hertz|hertz_JKR"),
           "Choosing particle-particle contact force model"
-          "Choices are <linear|hertz_mindlin_limit_force|hertz_mindlin_limit_overlap|hertz>.");
+          "Choices are <linear|hertz_mindlin_limit_force|hertz_mindlin_limit_overlap|hertz|hertz_JKR>.");
 
         prm.declare_entry("particle wall contact force method",
                           "nonlinear",
-                          Patterns::Selection("linear|nonlinear"),
+                          Patterns::Selection("linear|nonlinear|JKR"),
                           "Choosing particle-wall contact force model"
-                          "Choices are <linear|nonlinear>.");
+                          "Choices are <linear|nonlinear|JKR>.");
 
         prm.declare_entry(
           "rolling resistance torque method",
@@ -806,6 +820,9 @@ namespace Parameters
         else if (ppcf == "hertz")
           particle_particle_contact_force_model =
             ParticleParticleContactForceModel::hertz;
+        else if (ppcf == "hertz_JKR")
+          particle_particle_contact_force_model =
+            ParticleParticleContactForceModel::hertz_JKR;
         else
           {
             throw(std::runtime_error(
@@ -819,6 +836,11 @@ namespace Parameters
         else if (pwcf == "nonlinear")
           particle_wall_contact_force_method =
             ParticleWallContactForceModel::nonlinear;
+        else if (pwcf == "JKR")
+          {
+            particle_wall_contact_force_method =
+              ParticleWallContactForceModel::JKR;
+          }
         else
           {
             throw(

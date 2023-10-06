@@ -53,6 +53,7 @@ public:
     effective_coefficient_of_restitution.resize(n_particle_types);
     effective_coefficient_of_friction.resize(n_particle_types);
     effective_coefficient_of_rolling_friction.resize(n_particle_types);
+    effective_surface_energy.resize(n_particle_types);
     model_parameter_beta.resize(n_particle_types);
 
     this->boundary_translational_velocity_map =
@@ -292,6 +293,7 @@ protected:
   std::vector<double> effective_coefficient_of_restitution;
   std::vector<double> effective_coefficient_of_friction;
   std::vector<double> effective_coefficient_of_rolling_friction;
+  std::vector<double> effective_surface_energy;
   std::vector<double> model_parameter_beta;
 
   std::map<unsigned int, Tensor<1, 3>> force_on_walls;

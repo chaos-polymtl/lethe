@@ -30,8 +30,12 @@ In this subsection, contact detection, force models, time integration, load bala
     end
 
     # Particle-particle contact force model
-    # Choices are linear|hertz_mindlin_limit_overlap|hertz_mindlin_limit_force|hertz
+    # Choices are linear|hertz_mindlin_limit_overlap|hertz_mindlin_limit_force|hertz|hertz_JKR
     set particle particle contact force method = hertz_mindlin_limit_overlap
+
+    # Particle-wall contact force model
+    # Choices are linear|nonlinear|JKR
+    set particle wall contact force method = nonlinear
 
     # Integration method
     # Choices are euler|velocity_verlet
@@ -88,9 +92,9 @@ All contact force models are described in the :doc:`../../theory/dem/dem` sectio
 
 * ``integration`` controls the integration method  used. Lethe supports ``euler`` (1st order) and ``velocity-verlet`` (2nd order) time-integrators. The velocity-verlet should be used at all times. 
 
-* ``particle particle contact force method`` control the particle-particle contact force model used. Four models are available in Lethe: ``hertz_mindlin_limit_overlap``, ``hertz_mindlin_limit_force``, ``hertz``, and ``linear``. 
+* ``particle particle contact force method`` controls the particle-particle contact force model. Five models are available in Lethe: ``hertz_mindlin_limit_overlap``, ``hertz_mindlin_limit_force``, ``hertz``, ``hertz_JKR`` and ``linear``.
   
-* ``particle wall contact force method`` controls the particle-wall contact force model used. Two models are available: ``linear`` and ``non-linear``.
+* ``particle wall contact force method`` controls the particle-wall contact force model used. Three models are available: ``linear``, ``non-linear`` and ``JKR``.
 
 * ``rolling resistance method`` controls the rolling resistance model used. Three rolling resistance models are available: ``no_resistance``, ``constant_resistance``, ``viscous_resistance``
 

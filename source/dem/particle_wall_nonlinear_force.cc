@@ -439,8 +439,8 @@ ParticleWallNonLinearForce<dim>::calculate_nonlinear_contact_force_and_torque(
   // Check for gross sliding
   if (tangential_force.norm() > coulomb_threshold)
     {
-      // Gross sliding occurs and the tangential overlap and tangnetial
-      // force are limited to Coulumb's criterion
+      // Gross sliding occurs and the tangential overlap and tangential
+      // force are limited to Coulomb's criterion
       tangential_force =
         coulomb_threshold * (tangential_force / tangential_force.norm());
 
