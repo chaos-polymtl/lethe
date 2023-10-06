@@ -494,6 +494,11 @@ Parameters::CahnHilliard::declare_parameters(ParameterHandler &prm)
                       Patterns::Double(),
                       "Potential height well for the Cahn-Hilliard equations.");
 
+    prm.declare_entry("potential smoothing coefficient",
+                        "1",
+                        Patterns::Double(),
+                        "Smoothing coefficient for the chemical potential in the Cahn-Hilliard equations.");
+
     prm.enter_subsection("epsilon");
     {
       prm.declare_entry(
@@ -519,6 +524,7 @@ Parameters::CahnHilliard::parse_parameters(ParameterHandler &prm)
   prm.enter_subsection("cahn hilliard");
   {
     well_height = prm.get_double("well height");
+    potential_smoothing_coefficient = prm.get_double("potential smoothing coefficient");
 
     prm.enter_subsection("epsilon");
     {

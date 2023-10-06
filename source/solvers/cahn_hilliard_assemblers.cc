@@ -5,7 +5,7 @@
 #include <solvers/copy_data.h>
 
 
-//const double xi = 0.001;
+
 
 template <int dim>
 void
@@ -19,7 +19,8 @@ CahnHilliardAssemblerCore<dim>::assemble_matrix(
   const double epsilon           = scratch_data.epsilon;
   const double cell_size = scratch_data.cell_size;
   const double alpha_beta_coefficient = 3/(2*sqrt(2));
-  const double xi = 1;
+  const double xi = this->cahn_hilliard_parameters.potential_smoothing_coefficient;
+  //std::cout<< "xi = "<< xi<<std::endl;
 
   // Loop and quadrature information
   const auto        &JxW_vec    = scratch_data.JxW;
@@ -27,7 +28,7 @@ CahnHilliardAssemblerCore<dim>::assemble_matrix(
   const unsigned int n_dofs     = scratch_data.n_dofs;
 
   auto &local_matrix = copy_data.local_matrix;
-    //std::cout<<"test"<<std::endl;
+
   // Constant mobility model
   if (this->mobility_model == MobilityModel::constant)
     {
@@ -43,8 +44,6 @@ CahnHilliardAssemblerCore<dim>::assemble_matrix(
 
           const double alpha = alpha_beta_coefficient*scratch_data.surface_tension[q]*epsilon;
           const double beta = alpha_beta_coefficient*scratch_data.surface_tension[q]/epsilon;
-
-          //std::cout<< "coeff tension surface = "<< scratch_data.surface_tension[q]<<std::endl;
 
           for (unsigned int i = 0; i < n_dofs; ++i)
             {
@@ -169,7 +168,7 @@ CahnHilliardAssemblerCore<dim>::assemble_rhs(
   const double epsilon           = scratch_data.epsilon;
   const double alpha_beta_coefficient = 3/(2*sqrt(2));
   const double cell_size = scratch_data.cell_size;
-  const double xi = 1;
+  const double xi = this->cahn_hilliard_parameters.potential_smoothing_coefficient;
 
 
   // Loop and quadrature information

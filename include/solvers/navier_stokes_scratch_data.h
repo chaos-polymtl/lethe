@@ -958,15 +958,13 @@ public:
                               this->chemical_potential_cahn_hilliard_gradients);
 
     // Initialize parameters
-//    this->epsilon     = (cahn_hilliard_parameters.epsilon_set_method ==
-//                     Parameters::EpsilonSetStrategy::manual) ?
-//                          cahn_hilliard_parameters.epsilon :
-//                          2 * this->cell_size;
-      this->epsilon     = (cahn_hilliard_parameters.epsilon_set_method ==
-                           Parameters::EpsilonSetStrategy::manual) ?
+    this->epsilon     = (cahn_hilliard_parameters.epsilon_set_method ==
+                     Parameters::EpsilonSetStrategy::manual) ?
                           cahn_hilliard_parameters.epsilon :
-                          7 * this->cell_size;
+                          3 * this->cell_size;
+
     this->well_height = cahn_hilliard_parameters.well_height;
+    this->potential_smoothing_coefficient = cahn_hilliard_parameters.potential_smoothing_coefficient;
   }
 
 
@@ -1126,6 +1124,7 @@ public:
    */
   double                      epsilon;
   double                      well_height;
+  double                      potential_smoothing_coefficient;
   double                      density_diff;
   bool                        gather_cahn_hilliard;
   unsigned int                n_dofs_cahn_hilliard;
