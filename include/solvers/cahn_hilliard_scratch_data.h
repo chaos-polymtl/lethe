@@ -314,7 +314,7 @@ public:
     this->epsilon = (cahn_hilliard_parameters.epsilon_set_method ==
                      Parameters::EpsilonSetStrategy::manual) ?
                       cahn_hilliard_parameters.epsilon :
-                      2 * this->cell_size;
+                      3 * this->cell_size;
   }
 
     /** @brief Calculates the physical properties. This function calculates the

@@ -199,6 +199,9 @@ namespace Parameters
     // Well height value (W) in the Cahn-Hilliard equations
     double well_height;
 
+    // Smoothing parameter Xi in the Cahn-Hilliard equations (potential equation)
+    double potential_smoothing_coefficient;
+
     // Epsilon set strategy (automatic|manual)
     Parameters::EpsilonSetStrategy epsilon_set_method;
 
