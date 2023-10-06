@@ -4291,6 +4291,14 @@ GLSSharpNavierStokesSolver<dim>::read_checkpoint()
       particles[p_i].residual_omega       = DBL_MAX;
     }
   // Finish the time step of the particle.
+
+  update_precalculations_for_ib();
+  for (unsigned int p_i = 0; p_i < particles.size(); ++p_i)
+    {
+      TimerOutput::Scope t(this->computing_timer, "removing_rbf_nodes");
+      particles[p_i].remove_superfluous_data(
+        this->dof_handler, particles[p_i].mesh_based_precalculations);
+    }
 }
 
 template <int dim>
