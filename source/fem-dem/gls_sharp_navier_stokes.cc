@@ -3974,10 +3974,8 @@ GLSSharpNavierStokesSolver<dim>::write_checkpoint()
         this->simulation_parameters.simulation_control.output_folder +
         this->simulation_parameters.restart_parameters.filename;
 
-      TableHandler particles_information_table;
-      std::string  filename =
-        this->simulation_parameters.simulation_control.output_folder + prefix +
-        ".ib_particles";
+      TableHandler  particles_information_table;
+      std::string   filename = prefix + ".ib_particles";
       std::ofstream output(filename.c_str());
       this->simulation_control->save(prefix);
       ib_particles_pvdhandler.save(prefix + ".ib_particles");
@@ -4107,9 +4105,7 @@ GLSSharpNavierStokesSolver<dim>::read_checkpoint()
     this->simulation_parameters.simulation_control.output_folder +
     this->simulation_parameters.restart_parameters.filename;
 
-  std::string filename =
-    this->simulation_parameters.simulation_control.output_folder + prefix +
-    ".ib_particles";
+  std::string filename = prefix + ".ib_particles";
 
   ib_particles_pvdhandler.read(prefix + ".ib_particles");
   // refill the table from checkpoint
@@ -4295,6 +4291,14 @@ GLSSharpNavierStokesSolver<dim>::read_checkpoint()
       particles[p_i].residual_omega       = DBL_MAX;
     }
   // Finish the time step of the particle.
+
+  update_precalculations_for_ib();
+  for (unsigned int p_i = 0; p_i < particles.size(); ++p_i)
+    {
+      TimerOutput::Scope t(this->computing_timer, "removing_rbf_nodes");
+      particles[p_i].remove_superfluous_data(
+        this->dof_handler, particles[p_i].mesh_based_precalculations);
+    }
 }
 
 template <int dim>
