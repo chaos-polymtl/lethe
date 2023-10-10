@@ -69,7 +69,7 @@ GLSNavierStokesCahnHilliardAssemblerCore<dim>::assemble_matrix(
       const Tensor<1, dim> phase_order_gradient =
         scratch_data.phase_order_cahn_hilliard_gradients[q];
 
-      double               mobility = scratch_data.mobility_cahn_hilliard[q];
+      double mobility = scratch_data.mobility_cahn_hilliard[q];
 
       // Forcing term
       Tensor<1, dim> force = scratch_data.force[q];
@@ -105,8 +105,7 @@ GLSNavierStokesCahnHilliardAssemblerCore<dim>::assemble_matrix(
         density_eq * velocity_gradient * velocity + pressure_gradient -
         dynamic_viscosity_eq * velocity_laplacian -
         dynamic_viscosity_eq * grad_div_velocity - density_eq * force -
-        potential_value * phase_order_gradient +
-        strong_residual_vec[q];
+        potential_value * phase_order_gradient + strong_residual_vec[q];
 
       std::vector<Tensor<1, dim>> grad_phi_u_j_x_velocity(n_dofs);
       std::vector<Tensor<1, dim>> velocity_gradient_x_phi_u_j(n_dofs);
@@ -222,7 +221,7 @@ GLSNavierStokesCahnHilliardAssemblerCore<dim>::assemble_rhs(
   for (unsigned int q = 0; q < n_q_points; ++q)
     {
       // Gather into local variables the fields for Cahn-Hilliard terms
-      double               mobility = scratch_data.mobility_cahn_hilliard[q];
+      double       mobility = scratch_data.mobility_cahn_hilliard[q];
       const double potential_value =
         scratch_data.chemical_potential_cahn_hilliard_values[q];
       const Tensor<1, dim> phase_order_gradient =
@@ -291,8 +290,7 @@ GLSNavierStokesCahnHilliardAssemblerCore<dim>::assemble_rhs(
         density_eq * velocity_gradient * velocity + pressure_gradient -
         dynamic_viscosity_eq * velocity_laplacian -
         dynamic_viscosity_eq * grad_div_velocity - density_eq * force -
-        potential_value * phase_order_gradient +
-        strong_residual_vec[q];
+        potential_value * phase_order_gradient + strong_residual_vec[q];
 
       // Assembly of the right-hand side
       for (unsigned int i = 0; i < n_dofs; ++i)
@@ -315,8 +313,7 @@ GLSNavierStokesCahnHilliardAssemblerCore<dim>::assemble_rhs(
              // Continuity equation
              - velocity_divergence * phi_p_i
              // Surface tension term (Cahn-Hilliard)
-             + potential_value *
-                 phase_order_gradient * phi_u_i) *
+             + potential_value * phase_order_gradient * phi_u_i) *
             JxW;
 
           // PSPG GLS term
