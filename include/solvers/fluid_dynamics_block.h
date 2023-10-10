@@ -60,6 +60,34 @@ private:
   const BSPreconditioner                    *pmass_preconditioner;
 };
 
+
+template <class BSPreconditioner>
+class BlockRawSchurPreconditioner : public Subscriptor
+{
+public:
+  BlockRawSchurPreconditioner(double gamma,
+                              double kinematic_viscosity,
+                              const TrilinosWrappers::BlockSparseMatrix &S,
+                              const TrilinosWrappers::SparseMatrix      &P,
+                              const BSPreconditioner  *p_amat_preconditioner,
+                              const BSPreconditioner  *p_pmass_preconditioner,
+                              Parameters::LinearSolver solver_parameters);
+
+  void
+  vmult(TrilinosWrappers::MPI::BlockVector       &dst,
+        const TrilinosWrappers::MPI::BlockVector &src) const;
+
+private:
+  const double                               gamma;
+  const double                               kinematic_viscosity;
+  const Parameters::LinearSolver             linear_solver_parameters;
+  const TrilinosWrappers::BlockSparseMatrix &stokes_matrix;
+  const TrilinosWrappers::SparseMatrix      &pressure_mass_matrix;
+  const BSPreconditioner                    *amat_preconditioner;
+  const BSPreconditioner                    *pmass_preconditioner;
+};
+
+
 /**
  * A solver class for the Navier-Stokes equation using Grad-Div
  * stabilization
@@ -252,6 +280,11 @@ private:
   std::shared_ptr<BlockSchurPreconditioner<TrilinosWrappers::PreconditionILU>>
     system_ilu_preconditioner;
 
+
+  std::shared_ptr<
+    BlockRawSchurPreconditioner<TrilinosWrappers::PreconditionILU>>
+    system_gls_ilu_preconditioner;
+
   std::shared_ptr<BlockSchurPreconditioner<TrilinosWrappers::PreconditionAMG>>
     system_amg_preconditioner;
 
@@ -412,6 +445,87 @@ BlockDiagPreconditioner<PreconditionerMp>::vmult(
                  dst.block(0),
                  src.block(0),
                  amat_preconditioner);
+  }
+}
+
+
+// We can notice that the initialization of the inverse of the matrix at the
+// top left corner is completed in the constructor. If so, every application
+// of the preconditioner then no longer requires the computation of the
+// matrix factors.
+template <typename BSPreconditioner>
+BlockRawSchurPreconditioner<BSPreconditioner>::BlockRawSchurPreconditioner(
+  double                                     gamma,
+  double                                     kinematic_viscosity,
+  const TrilinosWrappers::BlockSparseMatrix &S,
+  const TrilinosWrappers::SparseMatrix      &P,
+  const BSPreconditioner                    *p_amat_preconditioner,
+  const BSPreconditioner                    *p_pmass_preconditioner,
+  Parameters::LinearSolver                   p_solver_parameters)
+  : gamma(gamma)
+  , kinematic_viscosity(kinematic_viscosity)
+  , linear_solver_parameters(p_solver_parameters)
+  , stokes_matrix(S)
+  , pressure_mass_matrix(P)
+  , amat_preconditioner(p_amat_preconditioner)
+  , pmass_preconditioner(p_pmass_preconditioner)
+{}
+
+template <class BSPreconditioner>
+void
+BlockRawSchurPreconditioner<BSPreconditioner>::vmult(
+  TrilinosWrappers::MPI::BlockVector       &dst,
+  const TrilinosWrappers::MPI::BlockVector &src) const
+{
+//  TimerOutput computing_timer(std::cout,
+//                              TimerOutput::summary,
+//                              TimerOutput::wall_times);
+
+  TrilinosWrappers::MPI::Vector utmp(src.block(0));
+  {
+//    computing_timer.enter_subsection("Pressure");
+    SolverControl solver_control(
+      linear_solver_parameters.max_iterations,
+      std::max(linear_solver_parameters.relative_residual *
+                 src.block(0).l2_norm(),
+               linear_solver_parameters.minimum_residual));
+    TrilinosWrappers::SolverCG cg(solver_control);
+
+    dst.block(1) = 0.0;
+    cg.solve(pressure_mass_matrix,
+             dst.block(1),
+             src.block(1),
+             *pmass_preconditioner);
+    dst.block(1) *= -(kinematic_viscosity + gamma);
+//    computing_timer.leave_subsection("Pressure");
+  }
+
+  {
+//    computing_timer.enter_subsection("Operations");
+    stokes_matrix.block(0, 1).vmult(utmp, dst.block(1));
+    utmp *= -1.0;
+    utmp += src.block(0);
+//    computing_timer.leave_subsection("Operations");
+  }
+  {
+//    computing_timer.enter_subsection("A Matrix");
+    SolverControl solver_control(
+      linear_solver_parameters.max_iterations,
+      std::max(linear_solver_parameters.relative_residual * src.block(0).l2_norm(),
+               linear_solver_parameters.minimum_residual));
+
+
+
+    // TrilinosWrappers::SolverBicgstab solver(solver_control);
+    TrilinosWrappers::SolverGMRES solver(solver_control);
+
+    // A_inverse.solve(stokes_matrix.block(0, 0),dst.block(0), utmp,
+    // mp_preconditioner);
+    solver.solve(stokes_matrix.block(0, 0),
+                 dst.block(0),
+                 utmp,
+                 *amat_preconditioner);
+//    computing_timer.leave_subsection("A Matrix");
   }
 }
 

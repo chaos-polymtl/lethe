@@ -174,6 +174,13 @@ FluidDynamicsBlock<dim>::setup_assemblers()
               std::make_shared<BlockNavierStokesAssemblerCore<dim>>(
                 this->simulation_control, gamma));
 
+          // Experimental GLS assembler
+          else if (this->simulation_parameters.stabilization.stabilization ==
+                   Parameters::Stabilization::NavierStokesStabilization::gls)
+            this->assemblers.push_back(
+              std::make_shared<GLSNavierStokesAssemblerCore<dim>>(
+                this->simulation_control));
+
           else
             throw std::runtime_error(
               "Using the GD solver with a stabilization other than the grad_div "
@@ -241,13 +248,20 @@ FluidDynamicsBlock<dim>::assemble_system_matrix()
   pressure_mass_matrix.reinit(sparsity_pattern.block(1, 1));
   pressure_mass_matrix.copy_from(system_matrix.block(1, 1));
 
-  // Note that settings this pressure block to zero is not identical to
-  // not assembling anything in this block, because this operation here
-  // will (incorrectly) delete diagonal entries that come in from
-  // hanging node constraints for pressure DoFs. This means that our
-  // whole system matrix will have rows that are completely
-  // zero. Luckily, FGMRES handles these rows without any problem.
-  system_matrix.block(1, 1) = 0;
+  if ((this->simulation_parameters.stabilization.use_default_stabilization ==
+       true) ||
+      this->simulation_parameters.stabilization.stabilization ==
+        Parameters::Stabilization::NavierStokesStabilization::grad_div)
+    {
+      // Note that settings this pressure block to zero is not identical to
+      // not assembling anything in this block, because this operation here
+      // will (incorrectly) delete diagonal entries that come in from
+      // hanging node constraints for pressure DoFs. This means that our
+      // whole system matrix will have rows that are completely
+      // zero. Luckily, FGMRES handles these rows without any problem.
+
+      system_matrix.block(1, 1) = 0;
+    }
 }
 
 
@@ -923,16 +937,30 @@ FluidDynamicsBlock<dim>::setup_ILU()
 
   pressure_ilu_preconditioner->initialize(system_matrix.block(1, 1),
                                           preconditionerOptions);
-  system_ilu_preconditioner = std::make_shared<
-    BlockSchurPreconditioner<TrilinosWrappers::PreconditionILU>>(
-    gamma,
-    this->simulation_parameters.physical_properties_manager
-      .get_kinematic_viscosity_scale(),
-    system_matrix,
-    pressure_mass_matrix,
-    &(*velocity_ilu_preconditioner),
-    &(*pressure_ilu_preconditioner),
-    this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics));
+
+  if (this->simulation_parameters.stabilization.stabilization ==
+      Parameters::Stabilization::NavierStokesStabilization::gls)
+    system_gls_ilu_preconditioner = std::make_shared<
+      BlockRawSchurPreconditioner<TrilinosWrappers::PreconditionILU>>(
+      gamma,
+      this->simulation_parameters.physical_properties_manager
+        .get_kinematic_viscosity_scale(),
+      system_matrix,
+      pressure_mass_matrix,
+      &(*velocity_ilu_preconditioner),
+      &(*pressure_ilu_preconditioner),
+      this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics));
+  else
+    system_ilu_preconditioner = std::make_shared<
+      BlockSchurPreconditioner<TrilinosWrappers::PreconditionILU>>(
+      gamma,
+      this->simulation_parameters.physical_properties_manager
+        .get_kinematic_viscosity_scale(),
+      system_matrix,
+      pressure_mass_matrix,
+      &(*velocity_ilu_preconditioner),
+      &(*pressure_ilu_preconditioner),
+      this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics));
 }
 
 template <int dim>
@@ -1119,10 +1147,24 @@ FluidDynamicsBlock<dim>::solve_system_GMRES(const bool   initial_step,
     TimerOutput::Scope t(this->computing_timer, "Solve linear system");
     if (this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
           .preconditioner == Parameters::LinearSolver::PreconditionerType::ilu)
-      solver.solve(this->system_matrix,
-                   this->newton_update,
-                   this->system_rhs,
-                   *system_ilu_preconditioner);
+      {
+        if (this->simulation_parameters.stabilization.stabilization ==
+            Parameters::Stabilization::NavierStokesStabilization::gls)
+          {
+            solver.solve(this->system_matrix,
+                         this->newton_update,
+                         this->system_rhs,
+                         *system_gls_ilu_preconditioner);
+          }
+
+        else
+          {
+            solver.solve(this->system_matrix,
+                         this->newton_update,
+                         this->system_rhs,
+                         *system_ilu_preconditioner);
+          }
+      }
     else if (this->simulation_parameters.linear_solver
                .at(PhysicsID::fluid_dynamics)
                .preconditioner ==
