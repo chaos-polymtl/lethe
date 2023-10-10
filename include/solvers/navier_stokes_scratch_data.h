@@ -958,13 +958,14 @@ public:
                               this->chemical_potential_cahn_hilliard_gradients);
 
     // Initialize parameters
-    this->epsilon     = (cahn_hilliard_parameters.epsilon_set_method ==
+    this->epsilon = (cahn_hilliard_parameters.epsilon_set_method ==
                      Parameters::EpsilonSetStrategy::manual) ?
-                          cahn_hilliard_parameters.epsilon :
-                          3 * this->cell_size;
+                      cahn_hilliard_parameters.epsilon :
+                      3 * this->cell_size;
 
     this->well_height = cahn_hilliard_parameters.well_height;
-    this->potential_smoothing_coefficient = cahn_hilliard_parameters.potential_smoothing_coefficient;
+    this->potential_smoothing_coefficient =
+      cahn_hilliard_parameters.potential_smoothing_coefficient;
   }
 
 

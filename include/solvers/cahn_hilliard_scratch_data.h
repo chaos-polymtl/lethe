@@ -317,12 +317,12 @@ public:
                       3 * this->cell_size;
   }
 
-    /** @brief Calculates the physical properties. This function calculates the
+  /** @brief Calculates the physical properties. This function calculates the
    * physical properties that may be required by the Cahn-Hilliard problem.
    * Namely the surface tension coefficient.
    */
-    void
-    calculate_physical_properties();
+  void
+  calculate_physical_properties();
 
   template <typename VectorType>
   void
