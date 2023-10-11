@@ -2600,7 +2600,8 @@ namespace Parameters
       "layer thickening",
       "0",
       Patterns::Double(),
-      "Thickness (positive or negative) of uniform additional layer of solid on particle");
+      "Thickness (positive or negative) of uniform additional layer of solid on particle."
+      "A negative value will decrease the particle's thickness by subtracting a layer of specified width.");
 
     prm.declare_entry(
       "pressure location",

@@ -225,7 +225,9 @@ public:
    * Sets the layer thickening value (positive or negative) of the particle's
    * shape
    *
-   * @param layer_thickening Thickness to be artificially added to the particle
+   * @param layer_thickening Thickness to be artificially added to the particle.
+   * A negative value will decrease the particle's thickness by subtracting a 
+   * layer of specified width.
    */
   void
   set_layer_thickening(const double layer_thickening)
