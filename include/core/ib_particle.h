@@ -226,7 +226,7 @@ public:
    * shape
    *
    * @param layer_thickening Thickness to be artificially added to the particle.
-   * A negative value will decrease the particle's thickness by subtracting a 
+   * A negative value will decrease the particle's thickness by subtracting a
    * layer of specified width.
    */
   void
