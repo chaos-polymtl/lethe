@@ -25,7 +25,7 @@ using namespace dealii;
  * @brief calculate_liquid_fraction Calculates the liquid fraction of a phase change material at
  * a temperature T
  *
- * @param T temperature at which to calculate the solid fraction
+ * @param T temperature at which to calculate the liquid fraction
  * @return value of the liquid_fraction
  *
  */
@@ -45,7 +45,9 @@ calculate_liquid_fraction(
  * @brief calculate_liquid_fraction Calculates the liquid fraction of a phase change material at
  * a temperature T
  *
- * @param T temperature at which to calculate the solid fraction
+ * @param T temperature at which to calculate the liquid fraction
+ * @param solidus temperature
+ * @param liquidus temperature
  * @return value of the liquid_fraction
  *
  */

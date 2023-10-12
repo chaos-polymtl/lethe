@@ -239,8 +239,8 @@ protected:
 };
 
 /**
- * @brief Linear surface tension. The surface tension is given by:
- * sigma_0 + dsimga/dT * (T-T_0).
+ * @brief Linear surface tension with phase change. The surface tension is given by:
+ * alpha_l*(sigma_0 + dsimga/dT * (T-T_0)).
  */
 class SurfaceTensionPhaseChange : public SurfaceTensionLinear
 {
