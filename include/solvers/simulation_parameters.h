@@ -220,7 +220,17 @@ public:
           "      set surface tension coefficient                 = $value_of_coefficient\n"
           "      set temperature-driven surface tension gradient = $value_of_gradient\n"
           "    end\n");
-
+          
+        std::string phase_change_surface_tension_model(
+          "    subsection fluid-fluid interaction\n"
+          "      set first fluid id                              = 0\n"
+          "      set second fluid id                             = 1\n"
+          "      set surface tension model                       = phase change\n"
+          "      set surface tension coefficient                 = $value_of_coefficient\n"
+          "      set temperature-driven surface tension gradient = $value_of_gradient\n"
+          "      set solidus temperature                         = $value_of_solidus_temperature\n"
+          "      set liquidus temperature                        = $value_of_liquidus_temperature\n"
+          "    end\n");
         if (!multiphysics.vof_parameters.surface_tension_force
                .enable_marangoni_effect) // constant surface tension model
           {
@@ -287,7 +297,12 @@ public:
                   "  set number of material interactions = 1\n"
                   "  subsection material interaction 0\n"
                   "    set type = fluid-fluid\n" +
-                  linear_surface_tension_model + "  end\n");
+                  linear_surface_tension_model + "\n"
+                  "or: \n\n"
+                  "  set number of material interactions = 1\n"
+                  "  subsection material interaction 0\n"
+                  "    set type = fluid-fluid\n" +
+                  phase_change_surface_tension_model + "  end\n");
               }
             else
               {
@@ -302,7 +317,12 @@ public:
                       "effect. In subsection physical properties, use:\n\n"
                       "  subsection material interaction $material_interaction_id\n"
                       "    set type = fluid-fluid\n" +
-                      linear_surface_tension_model + "  end\n");
+                      linear_surface_tension_model + "\n"
+                      "or:\n\n"
+                      "  set number of material interactions = 1\n"
+                      "  subsection material interaction 0\n"
+                      "    set type = fluid-fluid\n" +
+                      phase_change_surface_tension_model + "  end\n");
                   }
                 if (is_constant_surface_tension_model(
                       physical_properties.material_interactions))
@@ -315,7 +335,12 @@ public:
                       "effect. In subsection physical properties, use:\n\n"
                       "  subsection material interaction $material_interaction_id\n"
                       "    set type = fluid-fluid\n" +
-                      linear_surface_tension_model + "  end\n");
+                      linear_surface_tension_model + "\n"
+                      "or:\n\n"
+                      "  set number of material interactions = 1\n"
+                      "  subsection material interaction 0\n"
+                      "    set type = fluid-fluid\n" +
+                      phase_change_surface_tension_model + "  end\n");
                   }
               }
           }
