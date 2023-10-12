@@ -551,7 +551,38 @@ MFNavierStokesSolver<dim>::solve_with_LSMG(SolverGMRES<VectorType> &solver)
       else if (this->simulation_parameters.boundary_conditions.type[i_bc] ==
                BoundaryConditions::BoundaryType::periodic)
         {
-          // TODO
+          // IndexSet locally_relevant_dofs;
+          // DoFTools::extract_locally_relevant_dofs(this->dof_handler,
+          //                                         locally_relevant_dofs);
+          // AffineConstraints<double> temp_constraints;
+          // DoFTools::make_hanging_node_constraints(this->dof_handler,
+          //                                         temp_constraints);
+          // std::vector<GridTools::PeriodicFacePair<
+          //   typename DoFHandler<dim>::cell_iterator>>
+          //   dof_matched_pairs;
+          // GridTools::collect_periodic_faces(
+          //   this->dof_handler,
+          //   this->simulation_parameters.boundary_conditions.id[i_bc],
+          //   this->simulation_parameters.boundary_conditions.periodic_id[i_bc],
+          //   this->simulation_parameters.boundary_conditions
+          //     .periodic_direction[i_bc],
+          //   dof_matched_pairs);
+          // DoFTools::make_periodicity_constraints<dim, dim>(dof_matched_pairs,
+          //                                                  temp_constraints);
+
+          // DoFTools::make_periodicity_constraints(
+          //   this->dof_handler,
+          //   this->simulation_parameters.boundary_conditions.id[i_bc],
+          //
+          // this->simulation_parameters.boundary_conditions.periodic_id[i_bc],
+          //   this->simulation_parameters.boundary_conditions
+          //     .periodic_direction[i_bc],
+          //   temp_constraints);
+          // mg_constrained_dofs.add_user_constraints(maxlevel,
+          // temp_constraints);
+          // for (unsigned int level = minlevel; level <= maxlevel; ++level)
+          //   mg_constrained_dofs.add_user_constraints(
+          //     level, mg_constrained_dofs.get_level_constraints(level));
         }
       else if (this->simulation_parameters.boundary_conditions.type[i_bc] ==
                BoundaryConditions::BoundaryType::pressure)
@@ -592,8 +623,17 @@ MFNavierStokesSolver<dim>::solve_with_LSMG(SolverGMRES<VectorType> &solver)
         DoFTools::extract_locally_relevant_level_dofs(this->dof_handler, level);
 
       level_constraints[level].reinit(relevant_dofs);
-      level_constraints[level].add_lines(
-        mg_constrained_dofs.get_boundary_indices(level));
+      DoFTools::make_hanging_node_constraints(this->dof_handler,
+                                              level_constraints[level]);
+      // level_constraints[level].add_lines(
+      //   mg_constrained_dofs.get_boundary_indices(level));
+      // mg_constrained_dofs.add_user_constraints(
+      //   level, mg_constrained_dofs.get_level_constraints(level));
+      // level_constraints[level].merge(
+      //   mg_constrained_dofs.get_level_constraints(level));
+      // level_constraints[level].merge(
+      //   mg_constrained_dofs.get_user_constraint_matrix(level));
+
       level_constraints[level].close();
 
       if ((this->simulation_parameters.stabilization
@@ -1026,7 +1066,14 @@ MFNavierStokesSolver<dim>::solve_with_GCMG(SolverGMRES<VectorType> &solver)
           else if (this->simulation_parameters.boundary_conditions.type[i_bc] ==
                    BoundaryConditions::BoundaryType::periodic)
             {
-              // TODO
+              DoFTools::make_periodicity_constraints(
+                level_dof_handler,
+                this->simulation_parameters.boundary_conditions.id[i_bc],
+                this->simulation_parameters.boundary_conditions
+                  .periodic_id[i_bc],
+                this->simulation_parameters.boundary_conditions
+                  .periodic_direction[i_bc],
+                level_constraint);
             }
           else if (this->simulation_parameters.boundary_conditions.type[i_bc] ==
                    BoundaryConditions::BoundaryType::pressure)
