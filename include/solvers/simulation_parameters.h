@@ -220,7 +220,7 @@ public:
           "      set surface tension coefficient                 = $value_of_coefficient\n"
           "      set temperature-driven surface tension gradient = $value_of_gradient\n"
           "    end\n");
-          
+
         std::string phase_change_surface_tension_model(
           "    subsection fluid-fluid interaction\n"
           "      set first fluid id                              = 0\n"
@@ -297,7 +297,8 @@ public:
                   "  set number of material interactions = 1\n"
                   "  subsection material interaction 0\n"
                   "    set type = fluid-fluid\n" +
-                  linear_surface_tension_model + "\n"
+                  linear_surface_tension_model +
+                  "\n"
                   "or: \n\n"
                   "  set number of material interactions = 1\n"
                   "  subsection material interaction 0\n"
@@ -317,7 +318,8 @@ public:
                       "effect. In subsection physical properties, use:\n\n"
                       "  subsection material interaction $material_interaction_id\n"
                       "    set type = fluid-fluid\n" +
-                      linear_surface_tension_model + "\n"
+                      linear_surface_tension_model +
+                      "\n"
                       "or:\n\n"
                       "  set number of material interactions = 1\n"
                       "  subsection material interaction 0\n"
@@ -335,7 +337,8 @@ public:
                       "effect. In subsection physical properties, use:\n\n"
                       "  subsection material interaction $material_interaction_id\n"
                       "    set type = fluid-fluid\n" +
-                      linear_surface_tension_model + "\n"
+                      linear_surface_tension_model +
+                      "\n"
                       "or:\n\n"
                       "  set number of material interactions = 1\n"
                       "  subsection material interaction 0\n"
