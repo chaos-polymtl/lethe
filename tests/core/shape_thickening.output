@@ -1,0 +1,18 @@
+
+DEAL::Beginning
+DEAL::Testing value
+DEAL:: Sphere , SD = 0.984082
+DEAL:: Sphere , SD = 0.884082
+DEAL:: Sphere , SD = 1.08408
+DEAL::OK
+DEAL::Testing gradient
+DEAL:: Gradient for sphere at p[0] = 0.673817
+DEAL:: Gradient for sphere at p[1] = 0.539054
+DEAL:: Gradient for sphere at p[2] = 0.505363
+DEAL:: Gradient for sphere at p[0] = 0.673817
+DEAL:: Gradient for sphere at p[1] = 0.539054
+DEAL:: Gradient for sphere at p[2] = 0.505363
+DEAL:: Gradient for sphere at p[0] = 0.673817
+DEAL:: Gradient for sphere at p[1] = 0.539054
+DEAL:: Gradient for sphere at p[2] = 0.505363
+DEAL::OK
