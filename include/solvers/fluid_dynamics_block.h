@@ -477,55 +477,96 @@ BlockRawSchurPreconditioner<BSPreconditioner>::vmult(
   TrilinosWrappers::MPI::BlockVector       &dst,
   const TrilinosWrappers::MPI::BlockVector &src) const
 {
-//  TimerOutput computing_timer(std::cout,
-//                              TimerOutput::summary,
-//                              TimerOutput::wall_times);
+  TimerOutput computing_timer(std::cout,
+                              TimerOutput::summary,
+                              TimerOutput::wall_times);
 
-  TrilinosWrappers::MPI::Vector utmp(src.block(0));
+  const double alpha = 0.9;
+
+  TrilinosWrappers::MPI::Vector utmp(dst.block(0));
+  TrilinosWrappers::MPI::Vector dutmp(dst.block(0));
+  TrilinosWrappers::MPI::Vector ptmp(dst.block(1));
+
+  TrilinosWrappers::MPI::Vector fp(src.block(1));
+  TrilinosWrappers::MPI::Vector fu(src.block(0));
+
+
+
+
+  // Solve for u*
   {
-//    computing_timer.enter_subsection("Pressure");
+    computing_timer.enter_subsection("U*");
+
     SolverControl solver_control(
       linear_solver_parameters.max_iterations,
       std::max(linear_solver_parameters.relative_residual *
                  src.block(0).l2_norm(),
                linear_solver_parameters.minimum_residual));
-    TrilinosWrappers::SolverCG cg(solver_control);
+    TrilinosWrappers::SolverGMRES gmres(solver_control);
 
-    dst.block(1) = 0.0;
-    cg.solve(pressure_mass_matrix,
-             dst.block(1),
-             src.block(1),
-             *pmass_preconditioner);
-    dst.block(1) *= -(kinematic_viscosity + gamma);
-//    computing_timer.leave_subsection("Pressure");
+    //dst.block(0) = 0.0;
+    gmres.solve(stokes_matrix.block(0, 0),
+             utmp,
+             src.block(0),
+             *amat_preconditioner);
+    computing_timer.leave_subsection("U*");
   }
 
+  // solve for p
   {
-//    computing_timer.enter_subsection("Operations");
-    stokes_matrix.block(0, 1).vmult(utmp, dst.block(1));
-    utmp *= -1.0;
-    utmp += src.block(0);
-//    computing_timer.leave_subsection("Operations");
-  }
-  {
-//    computing_timer.enter_subsection("A Matrix");
+    computing_timer.enter_subsection("Pressure");
+    stokes_matrix.block(1, 0).vmult(fp, utmp);
+    fp *= -1;
+    fp += src.block(1);
+
     SolverControl solver_control(
       linear_solver_parameters.max_iterations,
-      std::max(linear_solver_parameters.relative_residual * src.block(0).l2_norm(),
+      std::max(1e-3*linear_solver_parameters.relative_residual *
+                 fp.l2_norm(),
                linear_solver_parameters.minimum_residual));
+    TrilinosWrappers::SolverGMRES gmres(solver_control);
+
+    gmres.solve(stokes_matrix.block(1, 1),
+                 ptmp,
+                 fp,
+                 *pmass_preconditioner);
+    // Relaxation
+    ptmp*=alpha;
+    computing_timer.leave_subsection("Pressure");
+
+  }
+
+  // Solve for final u
+  {
+     stokes_matrix.block(0, 1).vmult(fu,ptmp);
+
+     fu *=-1;
 
 
 
-    // TrilinosWrappers::SolverBicgstab solver(solver_control);
-    TrilinosWrappers::SolverGMRES solver(solver_control);
-
-    // A_inverse.solve(stokes_matrix.block(0, 0),dst.block(0), utmp,
-    // mp_preconditioner);
-    solver.solve(stokes_matrix.block(0, 0),
-                 dst.block(0),
-                 utmp,
+    computing_timer.enter_subsection("DU");
+    SolverControl solver_control(
+      linear_solver_parameters.max_iterations,
+      std::max(linear_solver_parameters.relative_residual *
+                 fu.l2_norm(),
+               linear_solver_parameters.minimum_residual));
+    TrilinosWrappers::SolverGMRES gmres(solver_control);
+    gmres.solve(stokes_matrix.block(0, 0),
+                 dutmp,
+                 fu,
                  *amat_preconditioner);
-//    computing_timer.leave_subsection("A Matrix");
+
+
+    dst.block(1) = ptmp;
+    dst.block(0) = dutmp;
+    dst.block(0) += utmp;
+
+    std::cout << "U correction : " << dutmp.l2_norm() << std::endl ;
+    std::cout << "U            : " << utmp.l2_norm() << std::endl ;
+    std::cout << "P            : " << ptmp.l2_norm() << std::endl ;
+
+
+    computing_timer.leave_subsection("DU");
   }
 }
 

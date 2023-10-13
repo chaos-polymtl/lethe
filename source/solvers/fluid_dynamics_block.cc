@@ -1155,6 +1155,7 @@ FluidDynamicsBlock<dim>::solve_system_GMRES(const bool   initial_step,
                          this->newton_update,
                          this->system_rhs,
                          *system_gls_ilu_preconditioner);
+            std::cout << "Finished solving" << std::endl;
           }
 
         else
