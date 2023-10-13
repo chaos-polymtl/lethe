@@ -13,9 +13,7 @@ subsection simulation control
   set time step        = 0.005
   set adapt            = false
   set max cfl          = 0
-  set output name      = thermocapillary_migration-lambda1-beta1
-  set output frequency = 1
-  set output path      = ./output-thermocapillary-migration/
+  set output frequency = 0
 end
 
 #---------------------------------------------------
@@ -89,7 +87,7 @@ subsection physical properties
       set surface tension coefficient                 = 3.0
       set reference state temperature                 = 0.0
       set temperature-driven surface tension gradient = -1.0
-      set liquidus temperature 		= 6
+      set liquidus temperature 		= 7
       set solidus temperature  		= 6
     end
   end

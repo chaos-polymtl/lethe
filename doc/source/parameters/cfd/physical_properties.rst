@@ -49,8 +49,8 @@ Physical Properties
         set surface tension coefficient                 = 0
         set reference state temperature                 = 0
         set temperature-driven surface tension gradient = 0
-        set liquidus temperature 		                    = 0
-        set solidus temperature  		                    = 0
+        set liquidus temperature                        = 0
+        set solidus temperature                         = 0
         
         # Mobility Cahn-Hilliard
         set cahn hilliard mobility model    = constant
@@ -67,8 +67,8 @@ Physical Properties
         set surface tension coefficient                 = 0
         set reference state temperature                 = 0
         set temperature-driven surface tension gradient = 0
-        set liquidus temperature 		                    = 0
-        set solidus temperature  		                    = 0
+        set liquidus temperature                        = 0
+        set solidus temperature                         = 0
       end
     end
   end
@@ -120,7 +120,7 @@ Physical Properties
       .. attention::
           The ``second fluid id`` should be greater than the ``first fluid id``.
 
-    * The ``surface tension model`` specifies the model used to calculate the surface tension coefficient of the fluid-fluid pair. At the moment, ``constant``, ``linear``, and ``phase change`` models are supported. For more detail on the surface tension models, see `Surface Tension Models`_.
+    * The ``surface tension model`` specifies the model used to calculate the surface tension coefficient of the fluid-fluid pair. At the moment, ``constant``, ``linear``, and ``phase change`` models are supported. For more details on the surface tension models, see `Surface Tension Models`_.
 
     * The ``surface tension coefficient`` parameter is a constant surface tension coefficient of the two interacting fluids in units of :math:`\text{Mass} \cdot \text{Time}^{-2}`. In SI, this is :math:`\text{N} \cdot \text{m}^{-1}`. The surface tension coefficient is used as defined in the Weber number (:math:`We`):
 
@@ -515,12 +515,17 @@ Lethe supports three types of surface tension models: ``constant``, ``linear``, 
 
 where :math:`\sigma_0` is the ``surface tension coefficient`` evaluated at ``reference state temperature`` :math:`T_0` and :math:`\frac{d\sigma}{dT}` is the ``surface tension gradient`` with respect to the temperature :math:`T`.
 
-The ``phase change`` model also assumes linear variation of the surface tension, however it considers the liquid fraction :math:`\alpha_\mathrm{l}` to apply the associated force only if the fluid is liquid:
+For problems treating solid-liquid phase change, the ``phase change`` model is intended to apply the surface tension force only when the fluid is liquid such that:
 
 .. math::
-  \sigma(T) = \alpha_\mathrm{l}\left(\sigma_0 + \frac{d\sigma}{dT} (T-T_0)\right)
-  
-where 
+  \sigma(T) = 
+    \begin{cases}
+        0 &\quad\text{if}\; T<T_\mathrm{s}\\
+        \alpha_\mathrm{l}\left(\sigma_0 + \dfrac{d\sigma}{dT} (T-T_0)\right) &\quad\text{if}\; T_\mathrm{l}\le T \le T_\mathrm{s}\\
+        \sigma_0 + \dfrac{d\sigma}{dT} (T-T_0) &\quad\text{if}\; T_\mathrm{l} <T
+    \end{cases}
+    
+where :math:`T_\mathrm{s}` and :math:`T_\mathrm{l}` correspond to the ``solidus temperature`` and ``liquidus temperature`` defined in the ``material interaction`` subsection, and :math:`\alpha_{\mathrm{l}}` is the liquid fraction. The latter is defined as:
 
 .. math::
   \alpha_{\mathrm{l}} = 
@@ -530,10 +535,8 @@ where
         1 &\quad\text{if}\; T_\mathrm{l} <T
     \end{cases}
 
-with :math:`T_\mathrm{s}` and :math:`T_\mathrm{l}` corresding to the ``solidus temperature`` and ``liquidus temperature`` defined in the ``material interaction`` subsection.
-
 .. Warning::
-    In Lethe, the ``linear`` surface tension model is only used to account for the thermocapillary effect known as the Marangoni effect. Therefore, to enable the Marangoni effect, the surface tension model must be set to ``linear`` and a ``surface tension gradient`` different from zero :math:`(\frac{d\sigma}{dT} \neq 0)` must be specified.
+    In Lethe, the ``linear`` and ``phase change`` surface tension models are only used to account for the thermocapillary effect known as the Marangoni effect. Therefore, to enable the Marangoni effect, the surface tension model must be set to ``linear`` or ``phase change`` and a ``surface tension gradient`` different from zero :math:`(\frac{d\sigma}{dT} \neq 0)` must be specified.
 
 Cahn-Hilliard Mobility Models
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

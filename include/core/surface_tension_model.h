@@ -146,6 +146,9 @@ class SurfaceTensionLinear : public SurfaceTensionModel
 public:
   /**
    * @brief Default constructor
+   * @param p_surface_tension_parameters The parameters for the surface tension
+   * model, including the surface tension coefficient sigma_0 and surface
+   * tension gradient dsimga/dT at the reference temperature T_0
    */
   SurfaceTensionLinear(
     const Parameters::SurfaceTensionParameters &p_surface_tension_parameters)
@@ -240,13 +243,17 @@ protected:
 
 /**
  * @brief Linear surface tension with phase change. The surface tension is given by:
- * alpha_l*(sigma_0 + dsimga/dT * (T-T_0)).
+ * alpha_l*(sigma_0 + dsigma/dT * (T-T_0)).
  */
 class SurfaceTensionPhaseChange : public SurfaceTensionLinear
 {
 public:
   /**
    * @brief Default constructor
+   * @param p_surface_tension_parameters The parameters for the surface tension
+   * model, including the surface tension coefficient sigma_0 and surface
+   * tension gradient dsimga/dT at the reference temperature T_0, and the
+   * solidus and liquidus temperatures T_solidus and T_liquidus respectively.
    */
   SurfaceTensionPhaseChange(
     const Parameters::SurfaceTensionParameters &p_surface_tension_parameters)
@@ -258,10 +265,10 @@ public:
   }
 
   /**
-   * @brief value Calculates the surface tension coefficient
+   * @brief value Calculates the surface tension coefficient.
    * @param field_vectors Vectors of the fields on which the surface tension
    * depends. In this case, it depends on the temperature.
-   * @return value of the physical property calculated with the fields_value
+   * @return value of the physical property calculated with the fields_value.
    */
   double
   value(const std::map<field, double> &fields_value) override
@@ -291,7 +298,7 @@ public:
    * @brief vector_value Calculates the vector of surface tension coefficient.
    * @param field_vectors Vectors of the fields on which the surface tension
    * depends. In this case, it depends on the temperature.
-   * @param property_vector Vectors of the surface tension coefficient values
+   * @param property_vector Vectors of the surface tension coefficient values.
    */
   void
   vector_value(const std::map<field, std::vector<double>> &field_vectors,
@@ -319,7 +326,7 @@ public:
 
   /**
    * @brief jacobian Calculates the jacobian (the partial derivative) of the
-   * surface tension coefficient with respect to a field
+   * surface tension coefficient with respect to a field.
    * @param field_values Value of the various fields on which the property may
    * depend.
    * @param id Indicator of the field with respect to which the jacobian
