@@ -2597,6 +2597,13 @@ namespace Parameters
                       "Arguments defining the geometry");
 
     prm.declare_entry(
+      "layer thickening",
+      "0",
+      Patterns::Double(),
+      "Thickness (positive or negative) of uniform additional layer of solid on particle."
+      "A negative value will decrease the particle's thickness by subtracting a layer of specified width.");
+
+    prm.declare_entry(
       "pressure location",
       "0; 0; 0",
       Patterns::Anything(),
@@ -2996,6 +3003,8 @@ namespace Parameters
           std::string shape_type          = prm.get("type");
           std::string shape_arguments_str = prm.get("shape arguments");
           particles[i].initialize_shape(shape_type, shape_arguments_str);
+
+          particles[i].set_layer_thickening(prm.get_double("layer thickening"));
 
           particles[i].radius = particles[i].shape->effective_radius;
           prm.enter_subsection("physical properties");

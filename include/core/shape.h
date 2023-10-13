@@ -103,6 +103,7 @@ public:
     , position(position)
     , orientation(orientation)
     , part_of_a_composite(false)
+    , layer_thickening(0.)
   {}
 
   /**
@@ -295,6 +296,21 @@ public:
     this->part_of_a_composite = part_of_a_composite;
   }
 
+  /**
+   * @brief
+   * Sets the layer thickening value (positive or negative) of the particle's
+   * shape
+   *
+   * @param layer_thickening Thickness to be artificially added to the particle.
+   * A negative value will decrease the particle's thickness by subtracting a
+   * layer of specified width.
+   */
+  virtual void
+  set_layer_thickening(const double layer_thickening)
+  {
+    this->layer_thickening = layer_thickening;
+  }
+
   // Effective radius used for crown refinement
   double effective_radius;
 
@@ -317,6 +333,9 @@ protected:
   std::unordered_map<std::string, Tensor<1, dim>> gradient_cache;
   std::unordered_map<std::string, Point<dim>>     closest_point_cache;
   bool                                            part_of_a_composite;
+
+  // Layer thickening: used to artificially inflate/deflate the shape
+  double layer_thickening;
 };
 
 
@@ -1060,6 +1079,13 @@ public:
    */
   virtual void
   clear_cache() override;
+
+  /**
+   * @brief
+   * See base
+   */
+  void
+  set_layer_thickening(const double layer_thickening) override;
 
 private:
   // The members of this class are all the constituent and operations that are

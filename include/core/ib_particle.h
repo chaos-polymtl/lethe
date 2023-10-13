@@ -221,6 +221,21 @@ public:
   set_orientation(const Tensor<1, 3> orientation);
 
   /**
+   * @brief
+   * Sets the layer thickening value (positive or negative) of the particle's
+   * shape
+   *
+   * @param layer_thickening Thickness to be artificially added to the particle.
+   * A negative value will decrease the particle's thickness by subtracting a
+   * layer of specified width.
+   */
+  void
+  set_layer_thickening(const double layer_thickening)
+  {
+    shape->set_layer_thickening(layer_thickening);
+  }
+
+  /**
    * @brief Sets the proper dof handler, then computes/updates the map of cells
    * and their likely non-null nodes
    * @param updated_dof_handler the reference to the new dof_handler
