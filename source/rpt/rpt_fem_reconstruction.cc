@@ -71,6 +71,23 @@ RPTL2Projection<dim>::setup_triangulation()
               "The imported mesh has to have only tetrahedral elements"));
         }
     }
+  else if (1 == 1)
+    {
+      Triangulation<dim> temp_triangulation;
+      Triangulation<dim> flat_temp_triangulation;
+
+      GridGenerator::hyper_cube(temp_triangulation, 0.06);
+      temp_triangulation.refine_global(
+        fem_reconstruction_parameters.mesh_refinement);
+
+      // Flatten the triangulation
+      GridGenerator::flatten_triangulation(temp_triangulation,
+                                           flat_temp_triangulation);
+      // Convert to simplex elements
+      GridGenerator::convert_hypercube_to_simplex_mesh(flat_temp_triangulation,
+                                                       triangulation);
+      triangulation.set_all_manifold_ids(0);
+    }
   else
     {
       Triangulation<dim> temp_triangulation;
@@ -215,6 +232,105 @@ RPTL2Projection<dim>::setup_system()
 
 template <int dim>
 void
+RPTL2Projection<dim>::setup_particles()
+{
+  TimerOutput::Scope t(computing_timer, "setup_particles");
+
+  std::vector<Point<dim>> positions;
+
+  // Read the particle position file. The particle position file consists of
+  // three columns (x,y,z). The first line is skipped. Only processor 0 reads
+  // the file.
+  if (Utilities::MPI::this_mpi_process(mpi_communicator) == 0)
+    {
+      std::ifstream file("positions.dat");
+
+      if (!file.is_open())
+        {
+          throw(std::runtime_error(
+            "Unable to open the file that contains the position of the data points"));
+        }
+
+      std::string line;
+      // Skip the first line
+      if (std::getline(file, line))
+        {
+          // Do nothing with line
+        }
+
+      // Read the rest of the lines
+      while (std::getline(file, line))
+        {
+          std::istringstream iss(line);
+          Point<dim>         data;
+          if (!(iss >> data[0] >> data[1] >> data[2]))
+            {
+              std::cerr << "Error reading line" << std::endl;
+              continue; // Skip to next iteration
+            }
+          positions.push_back(data);
+        }
+    }
+
+  // Read the particle counts. The particle counts consists of n detector
+  // columns. The first line is skipped. Only processor 0 reads the file.
+  if (Utilities::MPI::this_mpi_process(mpi_communicator) == 0)
+    {
+      std::ifstream file("counts.dat");
+
+      std::vector<std::vector<double>> counts;
+      int                              n = n_detector;
+
+      if (!file.is_open())
+        {
+          throw(std::runtime_error(
+            "Unable to open the file that contains the counts"));
+        }
+
+      std::string line;
+      // Skip the first line
+      std::getline(file, line);
+
+      // Read the rest of the lines
+      while (std::getline(file, line))
+        {
+          std::istringstream  iss(line);
+          std::vector<double> row;
+          double              item;
+          for (int i = 0; i < n; ++i)
+            {
+              if (!(iss >> item))
+                {
+                  std::cerr << "Error reading item on line" << std::endl;
+                  break; // Skip to next line
+                }
+              row.push_back(item);
+            }
+          if (row.size() == n)
+            {
+              counts.push_back(row);
+            }
+        }
+    }
+
+  // Initialize particle handler class on the triangulation
+  particle_handler.initialize(triangulation, mapping, n_detector);
+
+  // Calculate bounding box which are used for the particle insertion
+  const auto my_bounding_box = GridTools::compute_mesh_predicate_bounding_box(
+    triangulation, IteratorFilters::LocallyOwnedCell());
+  const auto global_bounding_boxes =
+    Utilities::MPI::all_gather(MPI_COMM_WORLD, my_bounding_box);
+
+  // Allocate properties. Properties are used to store the count for each
+  // detector registered at the particle location
+  std::vector<std::vector<double>> properties(1000,
+                                              std::vector<double>(n_detector,
+                                                                  0.));
+}
+
+template <int dim>
+void
 RPTL2Projection<dim>::solve_linear_system(unsigned detector_no)
 {
   TimerOutput::Scope t(computing_timer, "solve_linear_system");
@@ -240,9 +356,9 @@ RPTL2Projection<dim>::solve_linear_system(unsigned detector_no)
 
 template <int dim>
 void
-RPTL2Projection<dim>::assemble_system(unsigned no_detector)
+RPTL2Projection<dim>::assemble_system_monte_carlo(unsigned no_detector)
 {
-  TimerOutput::Scope t(computing_timer, "assemble_system");
+  TimerOutput::Scope t(computing_timer, "assemble_system_monte_carlo");
 
   system_rhs    = 0;
   system_matrix = 0;
@@ -319,6 +435,53 @@ RPTL2Projection<dim>::assemble_system(unsigned no_detector)
   system_matrix.compress(VectorOperation::add);
   system_rhs.compress(VectorOperation::add);
 }
+
+template <int dim>
+void
+RPTL2Projection<dim>::assemble_system_data(unsigned no_detector)
+{
+  TimerOutput::Scope t(computing_timer, "assemble_system_monte_carlo");
+
+  system_rhs    = 0;
+  system_matrix = 0;
+
+  const QGaussSimplex<dim> quadrature_formula(fe.degree + 1);
+
+  FEValues<dim> fe_values(mapping,
+                          fe,
+                          quadrature_formula,
+                          update_values | update_quadrature_points |
+                            update_JxW_values);
+
+  const unsigned int dofs_per_cell = fe.n_dofs_per_cell();
+
+  FullMatrix<double> cell_matrix(dofs_per_cell, dofs_per_cell);
+  Vector<double>     cell_rhs(dofs_per_cell);
+
+  std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
+
+  for (const auto &cell : dof_handler.active_cell_iterators())
+    {
+      if (cell->subdomain_id() ==
+          Utilities::MPI::this_mpi_process(mpi_communicator))
+        {
+          cell_matrix = 0;
+          cell_rhs    = 0;
+          fe_values.reinit(cell);
+
+
+          cell->get_dof_indices(local_dof_indices);
+          constraints.distribute_local_to_global(cell_matrix,
+                                                 cell_rhs,
+                                                 local_dof_indices,
+                                                 system_matrix,
+                                                 system_rhs);
+        }
+    }
+  system_matrix.compress(VectorOperation::add);
+  system_rhs.compress(VectorOperation::add);
+}
+
 
 template <int dim>
 void
@@ -469,7 +632,13 @@ RPTL2Projection<dim>::L2_project()
     {
       pcout << "Detector_id: " << Utilities::to_string(d, 2) << std::endl;
       pcout << "Assembling system" << std::endl;
-      assemble_system(d);
+      if (fem_reconstruction_parameters.model_type ==
+          Parameters::RPTFEMReconstructionParameters::FEMModel::monte_carlo)
+        assemble_system_monte_carlo(d);
+      else if (fem_reconstruction_parameters.model_type ==
+               Parameters::RPTFEMReconstructionParameters::FEMModel::data)
+        assemble_system_monte_carlo(d);
+
       pcout << "Solving system" << std::endl;
       solve_linear_system(d);
       pcout << "System solved" << std::endl;

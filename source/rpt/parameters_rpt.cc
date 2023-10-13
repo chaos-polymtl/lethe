@@ -375,6 +375,12 @@ Parameters::RPTFEMReconstructionParameters::declare_parameters(
       "Type of search algorithm used when finding the particle's real position");
 
     prm.declare_entry(
+      "model",
+      "monte_carlo",
+      Patterns::Selection("monte_carlo|data"),
+      "Type of model used to build the data set for the L2 projection");
+
+    prm.declare_entry(
       "search cell proximity level",
       "1",
       Patterns::Integer(),
@@ -425,6 +431,15 @@ Parameters::RPTFEMReconstructionParameters::parse_parameters(
       fem_cost_function = FEMCostFunction::absolute;
     else if (fem_cf == "relative")
       fem_cost_function = FEMCostFunction::relative;
+    else
+      throw std::logic_error(
+        "Error, invalid cost function type. Choices are 'absolute' or 'relative'");
+
+    const std::string fem_model = prm.get("model type");
+    if (fem_model == "monte_carlo")
+      model_type = FEMModel::monte_carlo;
+    else if (fem_model == "data")
+      model_type = FEMModel::data;
     else
       throw std::logic_error(
         "Error, invalid cost function type. Choices are 'absolute' or 'relative'");

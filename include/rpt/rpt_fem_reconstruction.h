@@ -48,6 +48,8 @@
 
 #include <deal.II/numerics/data_out.h>
 
+#include <deal.II/particles/particle_handler.h>
+
 #include <rpt/detector.h>
 #include <rpt/parameters_rpt.h>
 #include <rpt/particle_detector_interactions.h>
@@ -124,14 +126,32 @@ public:
   setup_system();
 
   /**
+   * @brief Set up the particle_handler used for the data interpolation
+   */
+  void
+  setup_particles();
+
+  /**
    * @brief Assemble matrix and right hand side that form the linear system
-   * that need to be solved for a given detector.
+   * that need to be solved for a given detector using the Beam Monte-Carlo
+   * model.
    *
    * @param detector_no detector_no defines the detector for which the
    * linear system is being assembled.
    */
   void
-  assemble_system(unsigned detector_no);
+  assemble_system_monte_carlo(unsigned detector_no);
+
+
+  /**
+   * @brief Assemble matrix and right hand side that form the linear system
+   * that need to be solved for a given detector using raw experimental data.
+   *
+   * @param detector_no detector_no defines the detector for which the
+   * linear system is being assembled.
+   */
+  void
+  assemble_system_data(unsigned detector_no);
 
   /**
    * @brief Solve the linear system for a given detector to get the nodal
@@ -173,6 +193,11 @@ public:
   Parameters::RPTParameters                  parameters;
   Parameters::RPTFEMReconstructionParameters fem_reconstruction_parameters;
   Parameters::DetectorParameters             detector_parameters;
+
+  // In the data reconstruction mode, a particle handler is used to store the
+  // information
+  Particles::ParticleHandler<dim> particle_handler;
+
 
   std::vector<Detector<dim>> detectors;
   unsigned int               n_detector;
@@ -369,6 +394,7 @@ private:
   Parameters::RPTParameters                  parameters;
   Parameters::RPTFEMReconstructionParameters fem_reconstruction_parameters;
   Parameters::DetectorParameters             detector_parameters;
+
 
   std::vector<Detector<dim>>                     detectors;
   unsigned int                                   n_detector;

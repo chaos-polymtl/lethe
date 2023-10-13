@@ -198,6 +198,14 @@ namespace Parameters
     };
     FEMSearchType search_type;
 
+    // type of model used to build the L2 projection
+    enum class FEMModel
+    {
+      monte_carlo,
+      data
+    };
+    FEMModel model_type;
+
     unsigned int
          search_proximity_level; // level of proximity of the search scope
     bool verbose_clock_fem_reconstruction; // allow to show total wallclock time
