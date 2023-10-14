@@ -34,9 +34,9 @@ Regular Installation on Linux
 Installing deal.II using apt (Step #1)
 -----------------------------------------
 
-This is done following `this procedure<https://www.dealii.org/download.html#:~:text=page%20for%20details.-,Linux%20distributions,-Arch%20Linux>`_.
+This is done following `this procedure <https://www.dealii.org/download.html#:~:text=page%20for%20details.-,Linux%20distributions,-Arch%20Linux>`_.
 
-In case you are using Ubuntu, you will need to `update the backports<https://launchpad.net/~ginggs/+archive/ubuntu/deal.ii-9.5.1-backports>`_:
+In case you are using Ubuntu, you will need to `update the backports <https://launchpad.net/~ginggs/+archive/ubuntu/deal.ii-9.5.1-backports>`_:
 
 .. code-block:: text
   :class: copy-button
@@ -62,7 +62,7 @@ This should output several information about the installed version. Everything w
 
 .. note::
 
-  If the installed version is other than ``deal.ii-9.5.1``, follow the procedure `here<https://github.com/dealii/dealii/wiki/Getting-deal.II>`_.
+  If the installed version is other than ``deal.ii-9.5.1``, follow `this link <https://github.com/dealii/dealii/wiki/Getting-deal.II>`_.
 
 Installing deal.II using Candi (Step #1)
 -----------------------------------------
@@ -258,6 +258,17 @@ where $numprocs can be the number of physical cores on your machine.
 
 Updating deal.II
 -------------------
+
+Through apt
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+As all other ``apt`` packages, run:
+
+.. code-block:: text
+  :class: copy-button
+
+  sudo apt update
+  sudo apt upgrade -y
 
 Through the Git Repository
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~

@@ -55,11 +55,13 @@ Installing WSL and Ubuntu (Step #0)
 When prompted "do you want to continue?", proceed by typing ``y`` and hitting ``Enter``.
 
 3. |win_shell| (optional) To activate copy/paste in the Linux sub-terminal (`tutorial with screenshots <https://defragged.org/2020/10/29/how-to-copy-paste-in-windows-subsystem-for-linux-wsl/>`_):
+
   * right-click on the Ubuntu Window pane header
   * in ``Properties``, select ``Use Ctrl+Shift+C/V as Copy/Paste``
   * you can then use ``Ctrl+Shift+V`` to paste text or commands in the Linux sub-terminal
 
 4. |win_shell| (optional) For better ease in the Linux terminal (better coloring, multiple tabs), change the default terminal:
+
   * in the microsoft store, download ``Windows Terminal``
   * in the ``parameters`` of ``Windows Terminal``, select on the left pannel "start": change default profile with ``Ubuntu-22.04``
   * from now on, you can use this application instead to launch Ubuntu terminal
@@ -84,9 +86,9 @@ The following step is to install deal.II. This can be done through
 Installing deal.II using apt (Step #1)
 -----------------------------------------
 
-This is done following `this procedure<https://www.dealii.org/download.html#:~:text=page%20for%20details.-,Linux%20distributions,-Arch%20Linux>`_.
+This is done following `this procedure <https://www.dealii.org/download.html#:~:text=page%20for%20details.-,Linux%20distributions,-Arch%20Linux>`_.
 
-In case you are using Ubuntu, you will need to `update the backports<https://launchpad.net/~ginggs/+archive/ubuntu/deal.ii-9.5.1-backports>`_:
+In case you are using Ubuntu, you will need to `update the backports <https://launchpad.net/~ginggs/+archive/ubuntu/deal.ii-9.5.1-backports>`_:
 
 .. code-block:: text
   :class: copy-button
@@ -112,7 +114,7 @@ This should output several information about the installed version. Everything w
 
 .. note::
 
-  If the installed version is other than ``deal.ii-9.5.1``, follow the procedure `here<https://github.com/dealii/dealii/wiki/Getting-deal.II>`_.
+  If the installed version is other than ``deal.ii-9.5.1``, follow `this link <https://github.com/dealii/dealii/wiki/Getting-deal.II>`_.
 
 
 Installing deal.II using Candi (Step #1)
@@ -172,6 +174,7 @@ Note the use of ``;`` which enable to serialize operations on a single execution
 Do not forget the ``.`` at the end of the command, which means "here".
 
 5. |win_shell| Modify installation parameters (deal.II version and trilinos version):
+
   * open Windows file manager, and on the left panel (along with ``Files``, ``Computer`` etc.) click on the ``Ubuntu`` mount.
 
   .. tip::
@@ -251,6 +254,7 @@ Where ``$numprocs`` corresponds to the number of processors used for the compila
   You can exit the installation at any time hitting ``Ctrl+C`` 2-3 times.
 
 7. |win_shell| At the end of the installation, check that you have deal.II and its dependencies installed:
+
   * on Windows file manager, go to the Ubuntu mount
   * in ``home/<user_name>`` you should have a folder ``deal.ii-candi``, or ``dealii-candi``
   * inside this folder, you should have folders for the dependencies, namely: p4est, petsc, parmetis, trilinos
@@ -316,6 +320,7 @@ Where ``$numprocs`` corresponds to the number of processors used for the compila
   * if you have 16Gb of RAM and above, ``$numprocs`` can be the number of physical cores minus 1. For instance, for a computer with 6 physical cores: ``make -j5``
 
 5. |linux_shell| (optional) Finally, it is recommended to test your installation:
+
   * If you are running these tests for the first time, install ``numdiff``:
 
   .. code-block:: text
@@ -418,6 +423,7 @@ Modify Candi Installation Parameters with Nano
 2. Modify the text in the file, using only the keyboard. 
 
 3. Save the file: 
+
   * hit ``Ctrl + X``
   * a prompt will appear at the bottom of the terminal asking ``Save modified buffer?``
   * confirm by hitting ``y``
