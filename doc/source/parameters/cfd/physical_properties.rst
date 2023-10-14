@@ -45,8 +45,12 @@ Physical Properties
         set second fluid id             = 1
 
         # Surface tension
-        set surface tension model       = constant
-        set surface tension coefficient = 0
+        set surface tension model                       = constant
+        set surface tension coefficient                 = 0
+        set reference state temperature                 = 0
+        set temperature-driven surface tension gradient = 0
+        set liquidus temperature                        = 0
+        set solidus temperature                         = 0
         
         # Mobility Cahn-Hilliard
         set cahn hilliard mobility model    = constant
@@ -63,6 +67,8 @@ Physical Properties
         set surface tension coefficient                 = 0
         set reference state temperature                 = 0
         set temperature-driven surface tension gradient = 0
+        set liquidus temperature                        = 0
+        set solidus temperature                         = 0
       end
     end
   end
@@ -114,7 +120,7 @@ Physical Properties
       .. attention::
           The ``second fluid id`` should be greater than the ``first fluid id``.
 
-    * The ``surface tension model`` specifies the model used to calculate the surface tension coefficient of the fluid-fluid pair. At the moment, a ``constant`` and a ``linear`` model are supported. For more detail on the surface tension models, see `Surface Tension Models`_.
+    * The ``surface tension model`` specifies the model used to calculate the surface tension coefficient of the fluid-fluid pair. At the moment, ``constant``, ``linear``, and ``phase change`` models are supported. For more details on the surface tension models, see `Surface Tension Models`_.
 
     * The ``surface tension coefficient`` parameter is a constant surface tension coefficient of the two interacting fluids in units of :math:`\text{Mass} \cdot \text{Time}^{-2}`. In SI, this is :math:`\text{N} \cdot \text{m}^{-1}`. The surface tension coefficient is used as defined in the Weber number (:math:`We`):
 
@@ -126,6 +132,8 @@ Physical Properties
     * The ``reference state temperature`` parameter is the temperature of the reference state at which the ``surface tension coefficient`` is evaluated. This parameter is used in the calculation of the surface tension using the ``linear`` surface tension model (see `Surface Tension Models`_).
 
     * The ``temperature-driven surface tension gradient`` parameter is the surface tension gradient with respect to the temperature of the two interacting fluids in units of :math:`\text{Mass} \cdot \text{Time}^{-2} \cdot \text{Temperature}^{-1}`. In SI, this is :math:`\text{N} \cdot \text{m}^{-1} \cdot \text{K}^{-1}`. This parameter is used in the calculation of the surface tension using the ``linear`` surface tension model (see `Surface Tension Models`_).
+    
+    * The ``solidus temperature`` and ``liquidus temperature`` parameters are used in the calculation of the surface tension using the ``phase change`` surface tension model (see `Surface Tension Models`_).
       
     * The ``cahn hilliard mobility model`` specifies the model used to calculate the mobility used in the Cahn-Hilliard equations for the pair of fluid. Two models are available: a ``constant`` mobility and a ``quartic`` mobility. The reader is refered to :doc:`cahn_hilliard` for more details.
       
@@ -500,15 +508,35 @@ Interface Physical Property Models
 Surface Tension Models
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-Lethe supports two types of surface tension models: ``constant`` and ``linear``. A ``constant`` surface tension model assumes a constant value of surface tension, while a ``linear`` surface tension assumes that the surface tension evolves linearly with the temperature:
+Lethe supports three types of surface tension models: ``constant``, ``linear``, and ``phase change``. A ``constant`` surface tension model assumes a constant value of surface tension, while a ``linear`` surface tension assumes that the surface tension evolves linearly with the temperature:
 
 .. math::
   \sigma(T) = \sigma_0 + \frac{d\sigma}{dT} (T-T_0)
 
 where :math:`\sigma_0` is the ``surface tension coefficient`` evaluated at ``reference state temperature`` :math:`T_0` and :math:`\frac{d\sigma}{dT}` is the ``surface tension gradient`` with respect to the temperature :math:`T`.
 
+For problems treating solid-liquid phase change, the ``phase change`` model is intended to apply the surface tension force only when the fluid is liquid such that:
+
+.. math::
+  \sigma(T) = 
+    \begin{cases}
+        0 &\quad\text{if}\; T<T_\mathrm{s}\\
+        \alpha_\mathrm{l}\left(\sigma_0 + \dfrac{d\sigma}{dT} (T-T_0)\right) &\quad\text{if}\; T_\mathrm{l}\le T \le T_\mathrm{s}\\
+        \sigma_0 + \dfrac{d\sigma}{dT} (T-T_0) &\quad\text{if}\; T_\mathrm{l} <T
+    \end{cases}
+    
+where :math:`T_\mathrm{s}` and :math:`T_\mathrm{l}` correspond to the ``solidus temperature`` and ``liquidus temperature`` defined in the ``material interaction`` subsection, and :math:`\alpha_{\mathrm{l}}` is the liquid fraction. The latter is defined as:
+
+.. math::
+  \alpha_{\mathrm{l}} = 
+    \begin{cases}
+        0 &\quad\text{if}\; T<T_\mathrm{s}\\
+        \dfrac{T-T_\mathrm{s}}{T_\mathrm{L}-T_\mathrm{s}} &\quad\text{if}\; T_\mathrm{l}\le T \le T_\mathrm{s}\\
+        1 &\quad\text{if}\; T_\mathrm{l} <T
+    \end{cases}
+
 .. Warning::
-    In Lethe, the ``linear`` surface tension model is only used to account for the thermocapillary effect known as the Marangoni effect. Therefore, to enable the Marangoni effect, the surface tension model must be set to ``linear`` and a ``surface tension gradient`` different from zero :math:`(\frac{d\sigma}{dT} \neq 0)` must be specified.
+    In Lethe, the ``linear`` and ``phase change`` surface tension models are only used to account for the thermocapillary effect known as the Marangoni effect. Therefore, to enable the Marangoni effect, the surface tension model must be set to ``linear`` or ``phase change`` and a ``surface tension gradient`` different from zero :math:`(\frac{d\sigma}{dT} \neq 0)` must be specified.
 
 Cahn-Hilliard Mobility Models
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -526,5 +554,3 @@ References
 `[1] <https://doi.org/10.1016/j.compfluid.2018.03.037>`_ B. Blais and F. Ilinca, “Development and validation of a stabilized immersed boundary CFD model for freezing and melting with natural convection,” *Comput. Fluids*, vol. 172, pp. 564–581, Aug. 2018, doi: 10.1016/j.compfluid.2018.03.037.
 
 `[2] <https://doi.org/10.48550/arXiv.2105.09627>`_  E. Bretin, R. Denis, S. Masnou, A. Sengers, and G. Terii, “A multiphase Cahn-Hilliard system with mobilities and the numerical simulation of dewetting.” arXiv, Apr. 18, 2023. doi: 10.48550/arXiv.2105.09627.
-
-
