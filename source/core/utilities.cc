@@ -43,7 +43,7 @@ make_table_scalars_tensors(
   const std::vector<std::string>                 &dependent_column_name,
   const unsigned int                              display_precision)
 {
-  AssertDimension(dependent_column_name.size(), 3 * dim);
+  AssertDimension(dependent_column_name.size(), dependent_vectors.size() * dim);
 
   TableHandler table;
   unsigned int vect_index = 0;
