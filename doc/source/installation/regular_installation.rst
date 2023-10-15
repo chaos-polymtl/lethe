@@ -6,29 +6,63 @@ Regular Installation on Linux
    :height: 100px
 
 .. important::
-	Distributions compatibility: Ubuntu 18.04 LTS, Ubuntu 20.04 LTS, Ubuntu 22.04 LTS, Centos 7 and Manjaro
+  Distributions compatibility: Ubuntu 18.04 LTS, Ubuntu 20.04 LTS, Ubuntu 22.04 LTS, Centos 7 and Manjaro
 
 * Dependencies: deal.II library (`deal.II website <https://www.dealii.org/>`_) and its dependencies (MPI, numdiff, p4est, trilinos and METIS)
-	* Lethe requires a modern version of the deal.II library. At the time of this writing, ``deal.II 9.4`` and ``deal.II 10.0pre`` (the ``master`` branch version) are supported. 
-	* The compatibility with these two branches is ensured by Continuous Integration (CI) using Github Actions. 
-	* A `dealii fork <https://github.com/lethe-cfd/dealii>`_ is maintained by Lethe team. This fork does not include any modification to deal.II library, but it is the latest version with which Lethe was tested. We work hard to ensure compatibility with the latest deal.II version and we do not modify the library except through pull requests on the official deal.II repository.
+  * Lethe requires a modern version of the deal.II library. At the time of this writing, ``deal.II 9.5`` and ``deal.II 9.6pre`` (the ``master`` branch version) are supported.
+  * The compatibility with these two branches is ensured by Continuous Integration (CI) using Github Actions.
+  * A `dealii fork <https://github.com/lethe-cfd/dealii>`_ is maintained by Lethe team. This fork does not include any modification to deal.II library, but it is the latest version with which Lethe was tested. We work hard to ensure compatibility with the latest deal.II version and we do not modify the library except through pull requests on the official deal.II repository.
 
 .. warning:: 
-	Lethe cannot be installed if deal.II has not been configured with p4est, trilinos and METIS. Although Lethe can be run in serial and parallel mode (through MPI), it uses p4est, METIS and trilinos for mesh decomposition and the linear solvers respectively. 
+  Lethe cannot be installed if deal.II has not been configured with p4est, trilinos and METIS. Although Lethe can be run in serial and parallel mode (through MPI), it uses p4est, METIS and trilinos for mesh decomposition and the linear solvers respectively.
 
 * Lethe installation steps:
-	1. Installation of deal.II dependencies (MPI, numdiff, p4est, trilinos and METIS)
-	2. Installation of the deal.II library
-	3. Installation of Lethe
+  1. Installation of deal.II dependencies (MPI, numdiff, p4est, trilinos and METIS)
+  2. Installation of the deal.II library
+  3. Installation of Lethe
 
 * Methods to install deal.II and its dependencies:
-	1. through candi shell script (`candi github page <https://github.com/dealii/candi>`_): **this is by far the easiest way to proceed**, since it requires much less manual intervention. Even if you do not want to use candi to install deal.II, you can use it for the dependencies.	
-	
-	2. manually 
+  1. Through Advanced Packaging Tool (apt): **this is by far the easiest way to proceed**, since it requires much less manual intervention.
+
+  2. through candi shell script (`candi github page <https://github.com/dealii/candi>`_). Even if you do not want to use candi to install deal.II, you can use it for the dependencies.
+
+  3. manually
 
 .. warning::
-	On a single core computer with 8GB of RAM, count up to 8 hours for a first installation, and 3 hours for a deal.II update. On a machine with 16 cores and 32GB of RAM, this process will take less than an hour or so. The installation of deal.II and its dependencies (especially trilinos), can be extremely RAM consuming. Installation on a machine with less than 8GB of RAM is difficult at best, impossible at worst.
+  On a single core computer with 8GB of RAM, count up to 8 hours for a first installation, and 3 hours for a deal.II update. On a machine with 16 cores and 32GB of RAM, this process will take less than an hour or so. The installation of deal.II and its dependencies (especially trilinos), can be extremely RAM consuming. Installation on a machine with less than 8GB of RAM is difficult at best, impossible at worst.
 
+Installing deal.II using apt (Step #1)
+-----------------------------------------
+
+This is done following `this procedure <https://www.dealii.org/download.html#:~:text=page%20for%20details.-,Linux%20distributions,-Arch%20Linux>`_.
+
+In case you are using Ubuntu, you will need to `update the backports <https://launchpad.net/~ginggs/+archive/ubuntu/deal.ii-9.5.1-backports>`_:
+
+.. code-block:: text
+  :class: copy-button
+
+  sudo add-apt-repository ppa:ginggs/deal.ii-9.5.1-backports
+  sudo apt update
+
+To install deal.II, run:
+
+.. code-block:: text
+  :class: copy-button
+
+  sudo apt-get install libdeal.ii-dev
+
+To verify if the correct version of deal.II is installed, run:
+
+.. code-block:: text
+  :class: copy-button
+
+  apt show libdeal.ii-dev
+
+This should output several information about the installed version. Everything worked as expected if ``deal.ii-9.5.1`` is output
+
+.. note::
+
+  If the installed version is other than ``deal.ii-9.5.1``, follow `this link <https://github.com/dealii/dealii/wiki/Getting-deal.II>`_.
 
 Installing deal.II using Candi (Step #1)
 -----------------------------------------
@@ -224,6 +258,17 @@ where $numprocs can be the number of physical cores on your machine.
 
 Updating deal.II
 -------------------
+
+Through apt
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+As all other ``apt`` packages, run:
+
+.. code-block:: text
+  :class: copy-button
+
+  sudo apt update
+  sudo apt upgrade -y
 
 Through the Git Repository
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
