@@ -961,7 +961,7 @@ public:
     this->epsilon = (cahn_hilliard_parameters.epsilon_set_method ==
                      Parameters::EpsilonSetStrategy::manual) ?
                       cahn_hilliard_parameters.epsilon :
-                      1 * this->cell_size;
+                      2 * this->cell_size;
 
     this->well_height = cahn_hilliard_parameters.well_height;
     this->potential_smoothing_coefficient =
