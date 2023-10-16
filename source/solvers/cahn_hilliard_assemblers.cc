@@ -13,11 +13,10 @@ CahnHilliardAssemblerCore<dim>::assemble_matrix(
   StabilizedMethodsCopyData    &copy_data)
 {
   // Gather physical properties
-  // const double well_height       =
-  // this->cahn_hilliard_parameters.well_height;
-  const double mobility_constant      = this->mobility_constant;
-  const double epsilon                = scratch_data.epsilon;
-  const double cell_size              = scratch_data.cell_size;
+  const double well_height       = this->cahn_hilliard_parameters.well_height;
+  const double mobility_constant = this->mobility_constant;
+  const double epsilon           = scratch_data.epsilon;
+  const double cell_size         = scratch_data.cell_size;
   const double alpha_beta_coefficient = 3 / (2 * sqrt(2));
   const double xi =
     this->cahn_hilliard_parameters.potential_smoothing_coefficient;
@@ -77,7 +76,7 @@ CahnHilliardAssemblerCore<dim>::assemble_matrix(
                        grad_phi_potential_j +
                      // Second equation
                      phi_potential_i * phi_potential_j -
-                     beta * phi_potential_i *
+                     well_height * beta * phi_potential_i *
                        (3 * phase_order_value * phase_order_value - 1.0) *
                        phi_phase_j -
                      alpha * grad_phi_potential_i * grad_phi_phase_j
@@ -143,7 +142,7 @@ CahnHilliardAssemblerCore<dim>::assemble_matrix(
                        (1 - phase_order_value * phase_order_value) +
                      // Second equation
                      phi_potential_i * phi_potential_j -
-                     beta * phi_potential_i *
+                     well_height * beta * phi_potential_i *
                        (3 * phase_order_value * phase_order_value - 1.0) *
                        phi_phase_j -
                      alpha * grad_phi_potential_i * grad_phi_phase_j
@@ -166,10 +165,9 @@ CahnHilliardAssemblerCore<dim>::assemble_rhs(
   StabilizedMethodsCopyData    &copy_data)
 {
   // Gather physical properties
-  // const double well_height       =
-  // this->cahn_hilliard_parameters.well_height;
-  const double mobility_constant      = this->mobility_constant;
-  const double epsilon                = scratch_data.epsilon;
+  const double well_height       = this->cahn_hilliard_parameters.well_height;
+  const double mobility_constant = this->mobility_constant;
+  const double epsilon           = scratch_data.epsilon;
   const double alpha_beta_coefficient = 3 / (2 * sqrt(2));
   const double cell_size              = scratch_data.cell_size;
   const double xi =
@@ -224,7 +222,7 @@ CahnHilliardAssemblerCore<dim>::assemble_rhs(
                  mobility_constant * grad_phi_phase_i * potential_gradient
                  // Second equation
                  - phi_potential_i * potential_value +
-                 beta * phi_potential_i *
+                 well_height * beta * phi_potential_i *
                    (phase_order_value * phase_order_value - 1) *
                    phase_order_value +
                  alpha * grad_phi_potential_i * phase_order_gradient
@@ -282,7 +280,7 @@ CahnHilliardAssemblerCore<dim>::assemble_rhs(
                    (1 - phase_order_value * phase_order_value)
                  // Second equation
                  - phi_potential_i * potential_value +
-                 beta * phi_potential_i *
+                 well_height * beta * phi_potential_i *
                    (phase_order_value * phase_order_value - 1) *
                    phase_order_value +
                  alpha * grad_phi_potential_i * phase_order_gradient
