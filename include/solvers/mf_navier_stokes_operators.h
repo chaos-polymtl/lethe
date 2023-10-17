@@ -251,10 +251,9 @@ public:
   evaluate_residual(VectorType &dst, const VectorType &src);
 
   /**
-   * @brief Evaluate right hand side using the matrix-free operator
+   * @brief Sets the kinematic viscosity in the operator
    *
-   * @param dst Destination vector holding the result
-   * @param src Input vector for which the residual is evaluated
+   * @param p_kinematic_viscosity New value of the kinematic viscosity
    */
   void
   set_kinematic_viscosity(const double p_kinematic_viscosity)
