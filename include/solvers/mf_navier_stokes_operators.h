@@ -250,6 +250,18 @@ public:
   void
   evaluate_residual(VectorType &dst, const VectorType &src);
 
+  /**
+   * @brief Evaluate right hand side using the matrix-free operator
+   *
+   * @param dst Destination vector holding the result
+   * @param src Input vector for which the residual is evaluated
+   */
+  void
+  set_kinematic_viscosity(const double p_kinematic_viscosity)
+  {
+    kinematic_viscosity = p_kinematic_viscosity;
+  }
+
 protected:
   /**
    * @brief Interface to function that performs a cell integral in a cell batch
