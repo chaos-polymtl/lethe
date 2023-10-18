@@ -221,13 +221,13 @@ public:
   double
   get_kinematic_viscosity_scale() const
   {
-    return kinematic_viscosity_scale;
+    return rheology[0]->get_kinematic_viscosity_scale();
   }
 
   double
   get_density_scale() const
   {
-    return density_scale;
+    return density[0]->get_density_ref();
   }
 
   void
@@ -335,11 +335,6 @@ private:
   bool non_newtonian_flow;
   bool constant_density;
   bool constant_surface_tension;
-
-  // Temporary scaling variable are overly used right now. They will eventually
-  // be deprecated for the majority of places they are used.
-  double kinematic_viscosity_scale;
-  double density_scale;
 
   unsigned int number_of_fluids;
   unsigned int number_of_solids;
