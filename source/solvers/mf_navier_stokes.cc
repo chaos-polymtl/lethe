@@ -544,9 +544,25 @@ MFNavierStokesSolver<dim>::solve_with_LSMG(SolverGMRES<VectorType> &solver)
           std::set<types::boundary_id> no_normal_flux_boundaries;
           no_normal_flux_boundaries.insert(
             this->simulation_parameters.boundary_conditions.id[i_bc]);
-          for (auto bid : no_normal_flux_boundaries)
-            mg_constrained_dofs.make_no_normal_flux_constraints(
-              this->dof_handler, bid, 0);
+          for (unsigned int level = minlevel; level <= maxlevel; ++level)
+            {
+              AffineConstraints<double> temp_constraints;
+              temp_constraints.clear();
+              IndexSet locally_relevant_level_dofs;
+              DoFTools::extract_locally_relevant_level_dofs(
+                this->dof_handler, level, locally_relevant_level_dofs);
+              temp_constraints.reinit(locally_relevant_level_dofs);
+              VectorTools::compute_no_normal_flux_constraints_on_level(
+                this->dof_handler,
+                0,
+                no_normal_flux_boundaries,
+                temp_constraints,
+                *this->mapping,
+                mg_constrained_dofs.get_refinement_edge_indices(level),
+                level);
+              temp_constraints.close();
+              mg_constrained_dofs.add_user_constraints(level, temp_constraints);
+            }
         }
       else if (this->simulation_parameters.boundary_conditions.type[i_bc] ==
                BoundaryConditions::BoundaryType::periodic)
