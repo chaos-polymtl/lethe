@@ -173,6 +173,10 @@ namespace Parameters
                                     // in the reference space to find the
                                     // particle's position
 
+
+    std::string input_positions_file;
+    std::string input_counts_file;
+
     // type of cost function applied when evaluating the particle's real
     // position
     enum class FEMCostFunction
@@ -186,7 +190,8 @@ namespace Parameters
     enum class FEMMeshType
     {
       dealii, // the grid used is a subdivided cylinder
-      gmsh
+      gmsh,
+      dealiigen
     };
     FEMMeshType mesh_type;
 

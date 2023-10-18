@@ -89,14 +89,16 @@ public:
   RPTL2Projection(Parameters::RPTParameters &rpt_parameters,
                   Parameters::RPTFEMReconstructionParameters
                     &rpt_fem_reconstruction_parameters,
-                  Parameters::DetectorParameters &rpt_detector_parameters)
+                  Parameters::DetectorParameters &rpt_detector_parameters,
+                  Parameters::Mesh               &mesh_parameters)
     : mpi_communicator(MPI_COMM_WORLD)
     , fe(1)
     , dof_handler(triangulation)
     , mapping(FE_SimplexP<dim>(1))
-    , parameters(rpt_parameters)
+    , rpt_parameters(rpt_parameters)
     , fem_reconstruction_parameters(rpt_fem_reconstruction_parameters)
     , detector_parameters(rpt_detector_parameters)
+    , mesh_parameters(mesh_parameters)
     , pcout(std::cout,
             (Utilities::MPI::this_mpi_process(mpi_communicator) == 0))
     , computing_timer(mpi_communicator,
@@ -190,9 +192,10 @@ public:
   FE_SimplexP<dim>                           fe;
   DoFHandler<dim>                            dof_handler;
   MappingFE<dim>                             mapping;
-  Parameters::RPTParameters                  parameters;
+  Parameters::RPTParameters                  rpt_parameters;
   Parameters::RPTFEMReconstructionParameters fem_reconstruction_parameters;
   Parameters::DetectorParameters             detector_parameters;
+  Parameters::Mesh                           mesh_parameters;
 
   // In the data reconstruction mode, a particle handler is used to store the
   // information
@@ -228,13 +231,15 @@ public:
   RPTFEMReconstruction(Parameters::RPTParameters &rpt_parameters,
                        Parameters::RPTFEMReconstructionParameters
                          &rpt_fem_reconstruction_parameters,
-                       Parameters::DetectorParameters &rpt_detector_parameters)
+                       Parameters::DetectorParameters &rpt_detector_parameters,
+                       Parameters::Mesh               &mesh_parameters)
     : fe(1)
     , dof_handler(triangulation)
     , mapping(FE_SimplexP<dim>(1))
     , parameters(rpt_parameters)
     , fem_reconstruction_parameters(rpt_fem_reconstruction_parameters)
     , detector_parameters(rpt_detector_parameters)
+    , mesh_parameters(mesh_parameters)
     , computing_timer(std::cout, TimerOutput::summary, TimerOutput::wall_times)
   {}
 
@@ -394,6 +399,10 @@ private:
   Parameters::RPTParameters                  parameters;
   Parameters::RPTFEMReconstructionParameters fem_reconstruction_parameters;
   Parameters::DetectorParameters             detector_parameters;
+  // Work in progress to migrate the mesh functionalities
+  // to use the regular mesh data container
+  Parameters::Mesh mesh_parameters;
+
 
 
   std::vector<Detector<dim>>                     detectors;

@@ -45,6 +45,7 @@ public:
   Parameters::DetectorParameters             detector_param;
   Parameters::RPTReconstructionParameters    reconstruction_param;
   Parameters::RPTFEMReconstructionParameters fem_reconstruction_param;
+  Parameters::Mesh                           mesh;
 };
 
 

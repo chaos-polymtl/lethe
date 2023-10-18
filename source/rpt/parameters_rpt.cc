@@ -311,7 +311,7 @@ Parameters::RPTFEMReconstructionParameters::declare_parameters(
   {
     prm.declare_entry("mesh type",
                       "dealii",
-                      Patterns::Selection("dealii|gmsh"),
+                      Patterns::Selection("dealii|gmsh|dealiigen"),
                       "Type of mesh used");
 
     prm.declare_entry("mesh filename",
@@ -351,6 +351,7 @@ Parameters::RPTFEMReconstructionParameters::declare_parameters(
                       Patterns::FileName(),
                       "Exported particle positions filename");
 
+
     prm.declare_entry(
       "cost function type",
       "relative",
@@ -375,10 +376,21 @@ Parameters::RPTFEMReconstructionParameters::declare_parameters(
       "Type of search algorithm used when finding the particle's real position");
 
     prm.declare_entry(
-      "model",
+      "model type",
       "monte_carlo",
       Patterns::Selection("monte_carlo|data"),
       "Type of model used to build the data set for the L2 projection");
+
+    prm.declare_entry("input positions file",
+                      "positions.dat",
+                      Patterns::FileName(),
+                      "Input positions for the data-based model L2projection");
+
+    prm.declare_entry("input counts file",
+                      "counts.dat",
+                      Patterns::FileName(),
+                      "Input counts for the data-based model L2projection");
+
 
     prm.declare_entry(
       "search cell proximity level",
@@ -405,6 +417,8 @@ Parameters::RPTFEMReconstructionParameters::parse_parameters(
       mesh_type = FEMMeshType::dealii;
     else if (fem_mesh == "gmsh")
       mesh_type = FEMMeshType::gmsh;
+    else if (fem_mesh == "dealiigen")
+      mesh_type = FEMMeshType::dealiigen;
     else
       throw std::logic_error(
         "Error, invalid mesh type. Choices are 'dealii' or 'gmsh'");
@@ -425,6 +439,9 @@ Parameters::RPTFEMReconstructionParameters::parse_parameters(
     experimental_counts_file = prm.get("experimental counts file");
     export_positions_file    = prm.get("export positions file");
     extrapolation_tolerance  = prm.get_double("search extrapolation limit");
+
+    input_counts_file    = prm.get("input counts file");
+    input_positions_file = prm.get("input positions file");
 
     const std::string fem_cf = prm.get("cost function type");
     if (fem_cf == "absolute")

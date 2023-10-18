@@ -34,13 +34,14 @@
 using namespace dealii;
 
 /**
- * @brief Create grid of the reactor vessel (cylinder).
+ * @brief Create grid of the reactor vessel (cylinder). This function will be refactored to be deprecated and use the regular mesh functionnalities of Lethe.
  */
 template <int dim>
 void
-attach_grid_to_triangulation(Triangulation<dim>              &triangulation,
-                             const Parameters::RPTParameters &parameters,
-                             const unsigned int               n_refinement)
+attach_grid_to_triangulation_temporary(
+  Triangulation<dim>              &triangulation,
+  const Parameters::RPTParameters &parameters,
+  const unsigned int               n_refinement)
 {
   // Generate cylinder (needs rotation and shift to get origin at the bottom
   // with z towards top)

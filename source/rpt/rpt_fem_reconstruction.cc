@@ -1,3 +1,5 @@
+#include <core/grids.h>
+
 #include <deal.II/base/multithread_info.h>
 #include <deal.II/base/quadrature_lib.h>
 #include <deal.II/base/work_stream.h>
@@ -17,7 +19,11 @@
 #include <deal.II/lac/precondition.h>
 #include <deal.II/lac/solver_cg.h>
 
+#include <deal.II/matrix_free/fe_point_evaluation.h>
+
 #include <deal.II/numerics/data_out.h>
+
+#include <deal.II/particles/data_out.h>
 
 #include <boost/archive/text_iarchive.hpp>
 #include <boost/archive/text_oarchive.hpp>
@@ -71,22 +77,28 @@ RPTL2Projection<dim>::setup_triangulation()
               "The imported mesh has to have only tetrahedral elements"));
         }
     }
-  else if (1 == 1)
+  else if (fem_reconstruction_parameters.mesh_type ==
+           Parameters::RPTFEMReconstructionParameters::FEMMeshType::dealiigen)
     {
-      Triangulation<dim> temp_triangulation;
-      Triangulation<dim> flat_temp_triangulation;
-
-      GridGenerator::hyper_cube(temp_triangulation, 0.06);
-      temp_triangulation.refine_global(
-        fem_reconstruction_parameters.mesh_refinement);
-
-      // Flatten the triangulation
-      GridGenerator::flatten_triangulation(temp_triangulation,
-                                           flat_temp_triangulation);
-      // Convert to simplex elements
-      GridGenerator::convert_hypercube_to_simplex_mesh(flat_temp_triangulation,
-                                                       triangulation);
-      triangulation.set_all_manifold_ids(0);
+      attach_grid_to_triangulation(triangulation, mesh_parameters);
+      AssertThrow(
+        mesh_parameters.simplex,
+        ExcMessage(
+          "The Deal.II mesh generated must only contain simplices (tetrahedral elements)"))
+      // Triangulation<dim> temp_triangulation;
+      // Triangulation<dim> flat_temp_triangulation;
+      //
+      // GridGenerator::hyper_cube(temp_triangulation, 0.06);
+      // temp_triangulation.refine_global(
+      //  fem_reconstruction_parameters.mesh_refinement);
+      //
+      //// Flatten the triangulation
+      // GridGenerator::flatten_triangulation(temp_triangulation,
+      //                                      flat_temp_triangulation);
+      //// Convert to simplex elements
+      // GridGenerator::convert_hypercube_to_simplex_mesh(flat_temp_triangulation,
+      //                                                  triangulation);
+      // triangulation.set_all_manifold_ids(0);
     }
   else
     {
@@ -96,8 +108,8 @@ RPTL2Projection<dim>::setup_triangulation()
       GridGenerator::subdivided_cylinder(
         temp_triangulation,
         fem_reconstruction_parameters.z_subdivisions,
-        parameters.reactor_radius,
-        parameters.reactor_height * 0.5);
+        rpt_parameters.reactor_radius,
+        rpt_parameters.reactor_height * 0.5);
       temp_triangulation.refine_global(
         fem_reconstruction_parameters.mesh_refinement);
 
@@ -112,7 +124,7 @@ RPTL2Projection<dim>::setup_triangulation()
       // Grid transformation
       Tensor<1, dim, double> axis({0, 1, 0});
       GridTools::rotate(axis, M_PI_2, triangulation);
-      Tensor<1, dim> shift_vector({0, 0, parameters.reactor_height * 0.5});
+      Tensor<1, dim> shift_vector({0, 0, rpt_parameters.reactor_height * 0.5});
       GridTools::shift(shift_vector, triangulation);
     }
 }
@@ -243,7 +255,7 @@ RPTL2Projection<dim>::setup_particles()
   // the file.
   if (Utilities::MPI::this_mpi_process(mpi_communicator) == 0)
     {
-      std::ifstream file("positions.dat");
+      std::ifstream file(fem_reconstruction_parameters.input_positions_file);
 
       if (!file.is_open())
         {
@@ -272,14 +284,16 @@ RPTL2Projection<dim>::setup_particles()
         }
     }
 
+  this->pcout << "-> Positions have been read" << std::endl;
+
+  std::vector<std::vector<double>> counts;
   // Read the particle counts. The particle counts consists of n detector
   // columns. The first line is skipped. Only processor 0 reads the file.
   if (Utilities::MPI::this_mpi_process(mpi_communicator) == 0)
     {
-      std::ifstream file("counts.dat");
+      std::ifstream file(fem_reconstruction_parameters.input_counts_file);
 
-      std::vector<std::vector<double>> counts;
-      int                              n = n_detector;
+      unsigned int n = n_detector;
 
       if (!file.is_open())
         {
@@ -297,7 +311,7 @@ RPTL2Projection<dim>::setup_particles()
           std::istringstream  iss(line);
           std::vector<double> row;
           double              item;
-          for (int i = 0; i < n; ++i)
+          for (unsigned int i = 0; i < n; ++i)
             {
               if (!(iss >> item))
                 {
@@ -313,6 +327,12 @@ RPTL2Projection<dim>::setup_particles()
         }
     }
 
+  this->pcout << "-> Counts have been read" << std::endl;
+
+
+  // Carry out some sanity checks on the particle data that has been read
+  AssertDimension(positions.size(), counts.size());
+
   // Initialize particle handler class on the triangulation
   particle_handler.initialize(triangulation, mapping, n_detector);
 
@@ -322,11 +342,10 @@ RPTL2Projection<dim>::setup_particles()
   const auto global_bounding_boxes =
     Utilities::MPI::all_gather(MPI_COMM_WORLD, my_bounding_box);
 
-  // Allocate properties. Properties are used to store the count for each
-  // detector registered at the particle location
-  std::vector<std::vector<double>> properties(1000,
-                                              std::vector<double>(n_detector,
-                                                                  0.));
+  // Generate the particles using insert global particles
+  particle_handler.insert_global_particles(positions,
+                                           global_bounding_boxes,
+                                           counts);
 }
 
 template <int dim>
@@ -335,14 +354,15 @@ RPTL2Projection<dim>::solve_linear_system(unsigned detector_no)
 {
   TimerOutput::Scope t(computing_timer, "solve_linear_system");
 
-  this->pcout << "Norm of RHS is : " << system_rhs.l2_norm() << std::endl;
+  this->pcout << "Norm of RHS is      : " << system_rhs.l2_norm() << std::endl;
 
-  SolverControl   solver_control(10000000,
-                               std::max(1e-6, system_rhs.l2_norm() * 1e-6));
+  SolverControl solver_control(1000,
+                               std::max(1e-9, system_rhs.l2_norm() * 1e-6));
+
   LA::SolverGMRES solver(solver_control);
 
   LA::MPI::PreconditionILU                 preconditioner;
-  LA::MPI::PreconditionILU::AdditionalData data(0, 1e-10, 1, 0);
+  LA::MPI::PreconditionILU::AdditionalData data(1, 1e-10, 1, 0);
   preconditioner.initialize(system_matrix, data);
 
   solver.solve(system_matrix, solution, system_rhs, preconditioner);
@@ -394,7 +414,7 @@ RPTL2Projection<dim>::assemble_system_monte_carlo(unsigned no_detector)
               RadioParticle<dim> particle(q_point_position, 0);
 
               ParticleDetectorInteractions<dim> p_q_interaction(
-                particle, detectors[no_detector], parameters);
+                particle, detectors[no_detector], rpt_parameters);
 
               double count = p_q_interaction.calculate_count();
 
@@ -451,7 +471,12 @@ RPTL2Projection<dim>::assemble_system_data(unsigned no_detector)
                           fe,
                           quadrature_formula,
                           update_values | update_quadrature_points |
-                            update_JxW_values);
+                            update_gradients | update_JxW_values);
+
+  FEPointEvaluation<1, dim> fe_values_point(mapping,
+                                            fe,
+                                            update_values | update_JxW_values);
+
 
   const unsigned int dofs_per_cell = fe.n_dofs_per_cell();
 
@@ -468,6 +493,62 @@ RPTL2Projection<dim>::assemble_system_data(unsigned no_detector)
           cell_matrix = 0;
           cell_rhs    = 0;
           fe_values.reinit(cell);
+
+          double cell_volume = 0;
+          for (const unsigned int q_index :
+               fe_values.quadrature_point_indices())
+            {
+              cell_volume += fe_values.JxW(q_index);
+            }
+
+          unsigned int n_particles_in_cell =
+            particle_handler.n_particles_in_cell(cell);
+          if (n_particles_in_cell > 0)
+            {
+              for (const unsigned int q_index :
+                   fe_values.quadrature_point_indices())
+                {
+                  for (const unsigned int i : fe_values.dof_indices())
+                    {
+                      for (const unsigned int j : fe_values.dof_indices())
+                        cell_matrix(i, j) +=
+                          (fe_values.shape_value(i, q_index) * // phi_i(x_q)
+                           fe_values.shape_value(j, q_index) * // phi_j(x_q)
+                           fe_values.JxW(q_index));            // dx
+                    }
+                }
+
+              for (auto &particle : particle_handler.particles_in_cell(cell))
+                {
+                  const Point<dim> &reference_location =
+                    particle.get_reference_location();
+
+                  ArrayView<double> properties = particle.get_properties();
+
+                  for (const unsigned int i : fe_values.dof_indices())
+                    cell_rhs(i) +=
+                      (fe.shape_value(i, reference_location) * // phi_i(x_p)
+                       (properties[no_detector])) /
+                      n_particles_in_cell * cell_volume; // count
+                }
+            }
+          else
+            {
+              // Assemble a dummy Poisson matrix
+
+              for (const unsigned int q_index :
+                   fe_values.quadrature_point_indices())
+                for (const unsigned int i : fe_values.dof_indices())
+                  {
+                    for (const unsigned int j : fe_values.dof_indices())
+                      cell_matrix(i, j) +=
+                        std::pow(cell_volume, 2. / 3.) *
+                        (fe_values.shape_grad(i, q_index) * // phi_i(x_q)
+                         fe_values.shape_grad(j, q_index) * // phi_j(x_q)
+                         fe_values.JxW(q_index));           // dx
+                  }
+            }
+
 
 
           cell->get_dof_indices(local_dof_indices);
@@ -503,6 +584,26 @@ RPTL2Projection<dim>::output_results()
         }
       data_out.build_patches();
       data_out.write_vtk(output);
+    }
+
+  if (fem_reconstruction_parameters.model_type ==
+      Parameters::RPTFEMReconstructionParameters::FEMModel::data)
+    {
+      Particles::DataOut<dim, dim> particle_output;
+
+      std::vector<std::string> solution_names;
+      for (unsigned d = 0; d < n_detector; ++d)
+        solution_names.push_back("Detector - " + Utilities::int_to_string(d));
+
+
+      particle_output.build_patches(particle_handler, solution_names);
+      const std::string output_folder("./");
+      const std::string file_name("data-particles");
+
+      pcout << "Writing particle output file: " << file_name << std::endl;
+
+      particle_output.write_vtu_with_pvtu_record(
+        output_folder, file_name, 0, mpi_communicator, 6);
     }
 }
 
@@ -541,7 +642,7 @@ RPTL2Projection<dim>::output_raw_results()
       myfile << std::endl;
 
       // Output in file and on terminal
-      if (parameters.verbosity == Parameters::Verbosity::verbose)
+      if (rpt_parameters.verbosity == Parameters::Verbosity::verbose)
         {
           for (auto it = dof_index_and_location.begin();
                it != dof_index_and_location.end();
@@ -626,6 +727,18 @@ RPTL2Projection<dim>::L2_project()
         << std::endl;
   pcout << "***********************************************" << std::endl;
 
+
+  if (fem_reconstruction_parameters.model_type ==
+      Parameters::RPTFEMReconstructionParameters::FEMModel::data)
+    {
+      pcout << "***********************************************" << std::endl;
+      pcout << "Setting up the particles" << std::endl;
+      setup_particles();
+      pcout << "Number of particles: " << particle_handler.n_global_particles()
+            << std::endl;
+      pcout << "***********************************************" << std::endl;
+    }
+
   setup_system();
 
   for (unsigned d = 0; d < n_detector; ++d)
@@ -637,7 +750,7 @@ RPTL2Projection<dim>::L2_project()
         assemble_system_monte_carlo(d);
       else if (fem_reconstruction_parameters.model_type ==
                Parameters::RPTFEMReconstructionParameters::FEMModel::data)
-        assemble_system_monte_carlo(d);
+        assemble_system_data(d);
 
       pcout << "Solving system" << std::endl;
       solve_linear_system(d);

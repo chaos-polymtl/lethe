@@ -38,7 +38,8 @@ main(int argc, char *argv[])
       RPTFEMReconstruction<3> rpt_reconstruct(
         rpt_parameters.rpt_param,
         rpt_parameters.fem_reconstruction_param,
-        rpt_parameters.detector_param);
+        rpt_parameters.detector_param,
+        rpt_parameters.mesh);
 
       // Calculate an L2 projection of nodal counts before reconstructing
       // particle position
@@ -47,7 +48,8 @@ main(int argc, char *argv[])
           RPTL2Projection<3> rpt_l2_project(
             rpt_parameters.rpt_param,
             rpt_parameters.fem_reconstruction_param,
-            rpt_parameters.detector_param);
+            rpt_parameters.detector_param,
+            rpt_parameters.mesh);
           rpt_l2_project.L2_project();
         }
 

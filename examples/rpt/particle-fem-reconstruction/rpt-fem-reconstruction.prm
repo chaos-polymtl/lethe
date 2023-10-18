@@ -6,7 +6,7 @@
 
 subsection rpt parameters
   set verbosity                        = quiet
-  set monte carlo iteration            = 10000
+  set monte carlo iteration            = 1000
   set random number seed               = 0
   set reactor height                   = 0.1
   set reactor radius                   = 0.15
@@ -36,7 +36,7 @@ end
 subsection fem reconstruction
   set mesh type                = dealii
   set z subdivisions           = 2
-  set mesh refinement          = 2
+  set mesh refinement          = 1
   set experimental counts file = experimental-counts.txt
   set export positions file    = found_positions
   set cost function type       = relative

@@ -48,7 +48,7 @@ RPTCellReconstruction<dim>::execute_cell_reconstruction()
     }
 
   // Create a grid for the reactor vessel
-  attach_grid_to_triangulation<dim>(
+  attach_grid_to_triangulation_temporary<dim>(
     triangulation, parameters, reconstruction_parameters.reactor_refinement);
 
   // Calculate counts at vertices of the coarse mesh

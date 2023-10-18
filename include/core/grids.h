@@ -35,9 +35,8 @@ using namespace dealii;
  */
 template <int dim, int spacedim = dim>
 void
-attach_grid_to_triangulation(
-  parallel::DistributedTriangulationBase<dim, spacedim> &triangulation,
-  const Parameters::Mesh                                &mesh_parameters);
+attach_grid_to_triangulation(Triangulation<dim, spacedim> &triangulation,
+                             const Parameters::Mesh       &mesh_parameters);
 
 
 /**
