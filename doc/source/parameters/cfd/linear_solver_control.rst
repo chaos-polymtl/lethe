@@ -180,7 +180,7 @@ AMG preconditioner
 LSMG and GCMG preconditioners
 ------------------------------
 
-Different parameters for the main components of the two geometric multigrid algorithms can be specified. The parameters can be general or can belong to either the smoother, the coarse-grid solver or the coarse-grid solver preconditioner.
+Different parameters for the main components of the two geometric multigrid algorithms can be specified. The parameters can be general or can belong to either the smoother, the coarse-grid solver or the coarse-grid solver preconditioner. For the latter, one can choose between ``amg`` or ``ilu``.
 
 .. code-block:: text
 
@@ -198,6 +198,7 @@ Different parameters for the main components of the two geometric multigrid algo
     set mg coarse grid tolerance          = 1e-14
     set mg coarse grid reduce             = 1e-4
     set mg coarse grid max krylov vectors = 30
+    set mg coarse grid preconditioner     = amg
     
     # Coarse-grid AMG preconditioner parameters
     set amg preconditioner ilu fill               = 0
@@ -212,8 +213,13 @@ Different parameters for the main components of the two geometric multigrid algo
     set amg preconditioner ilu absolute tolerance = 1e-12
     set amg preconditioner ilu relative tolerance = 1.00
 
+    # Coarse-grid ILU preconditioner parameters
+    set ilu preconditioner fill               = 1
+    set ilu preconditioner absolute tolerance = 1e-12
+    set ilu preconditioner relative tolerance = 1
+
 .. tip::
-  The default algorithms build and use ALL the multigrid levels. There are two ways to change the number of levels, either by setting the ``mg min level`` parameter OR the ``mg level min cells`` parameter. For LSMG the coarsest mesh should cover the whole domain, i.e., no hanging nodes are allowed. 
+  The default algorithms build and use ALL the multigrid levels. There are two ways to change the number of levels, either by setting the ``mg min level`` parameter OR the ``mg level min cells`` parameter. For ``lsmg`` the coarsest mesh should cover the whole domain, i.e., no hanging nodes are allowed. 
 
 .. warning::
     Currently, these preconditioners can only be used within the ``lethe-fluid-matrix-free`` application.
