@@ -551,34 +551,7 @@ MFNavierStokesSolver<dim>::solve_with_LSMG(SolverGMRES<VectorType> &solver)
       else if (this->simulation_parameters.boundary_conditions.type[i_bc] ==
                BoundaryConditions::BoundaryType::periodic)
         {
-          // Option 2:
-          // IndexSet locally_relevant_dofs;
-          // DoFTools::extract_locally_relevant_dofs(this->dof_handler,
-          //                                         locally_relevant_dofs);
-          // AffineConstraints<double> constraints;
-          // constraints.reinit(locally_relevant_dofs);
-          // DoFTools::make_hanging_node_constraints(this->dof_handler,
-          //                                         constraints);
-
-          // std::vector<GridTools::PeriodicFacePair<
-          //   typename DoFHandler<dim>::cell_iterator>>
-          //   dof_matched_pairs;
-          // GridTools::collect_periodic_faces(
-          //   this->dof_handler,
-          //   this->simulation_parameters.boundary_conditions.id[i_bc],
-          //   this->simulation_parameters.boundary_conditions.periodic_id[i_bc],
-          //   this->simulation_parameters.boundary_conditions
-          //     .periodic_direction[i_bc],
-          //   dof_matched_pairs);
-          // DoFTools::make_periodicity_constraints<dim, dim>(dof_matched_pairs,
-          //                                                  constraints);
-          // constraints.close();
-
-          // this->pcout << "Temp constraints size: " <<
-          // constraints.n_constraints()
-          //           << std::endl;
-
-          // mg_constrained_dofs.add_user_constraints(maxlevel, constraints);
+          /*already taken into account when mg_constrained_dofs is initialized*/
         }
       else if (this->simulation_parameters.boundary_conditions.type[i_bc] ==
                BoundaryConditions::BoundaryType::pressure)
@@ -624,39 +597,10 @@ MFNavierStokesSolver<dim>::solve_with_LSMG(SolverGMRES<VectorType> &solver)
       DoFTools::make_hanging_node_constraints(this->dof_handler,
                                               level_constraints[level]);
 
-      // Option 1: merges the constraints, gets correct number but it does not
-      // converge (?) coarse-grid solver fails last step residual 103.943
-      // mg_constrained_dofs.merge_constraints(
-      //   level_constraints[level], level, true, false, false, true);
-
-      // Option 2: merges the constraints and gets the right number, but the
-      // periodicity constraints need to be defined manually for each level,
-      // which is something I can do using make_periodicity_constraints but only
-      // for fine level, i.e., it converges just fine with 1 level
-      // mg_constrained_dofs.merge_constraints(
-      //   level_constraints[level], level, true, true, false, true);
-
-      // Option 3: merges the constraints, gets correct number but it does not
-      // converge (?) coarse-grid solver fails same value of residual as Option
-      // 1
-      level_constraints[level].add_lines(
-        mg_constrained_dofs.get_boundary_indices(level));
-      level_constraints[level].merge(
-        mg_constrained_dofs.get_level_constraints(level),
-        AffineConstraints<double>::MergeConflictBehavior::right_object_wins);
+      mg_constrained_dofs.merge_constraints(
+        level_constraints[level], level, true, false, true, true);
 
       level_constraints[level].close();
-
-      this->pcout
-        << "Number of MG constrained dofs for periodicity: " << level << ": "
-        << mg_constrained_dofs.get_level_constraints(level).n_constraints()
-        << std::endl;
-      this->pcout
-        << "Number of MG constrained dofs for other BCs " << level << ": "
-        << mg_constrained_dofs.get_user_constraint_matrix(level).n_constraints()
-        << std::endl;
-      this->pcout << "Number of constraints for level " << level << ": "
-                  << level_constraints[level].n_constraints() << std::endl;
 
       if ((this->simulation_parameters.stabilization
              .use_default_stabilization == true) ||
@@ -1031,18 +975,6 @@ MFNavierStokesSolver<dim>::solve_with_GCMG(SolverGMRES<VectorType> &solver)
 
   coarse_grid_triangulations = temp;
 
-
-  this->pcout << "Size of periodic face map :"
-              << this->triangulation->get_periodic_face_map().size()
-              << std::endl;
-
-  this->pcout
-    << "Size of periodic face map fine tria :"
-    << coarse_grid_triangulations[coarse_grid_triangulations.size() - 1]
-         ->get_periodic_face_map()
-         .size()
-    << std::endl;
-
   // Extract min and max levels and resize mg level objects accordingly
   const unsigned int n_h_levels = coarse_grid_triangulations.size();
 
@@ -1142,9 +1074,6 @@ MFNavierStokesSolver<dim>::solve_with_GCMG(SolverGMRES<VectorType> &solver)
         }
 
       level_constraint.close();
-
-      this->pcout << "Number of constraints for level " << level << ": "
-                  << level_constraint.n_constraints() << std::endl;
 
       if ((this->simulation_parameters.stabilization
              .use_default_stabilization == true) ||
@@ -1505,9 +1434,6 @@ MFNavierStokesSolver<dim>::define_non_zero_constraints()
   this->establish_solid_domain(true);
 
   nonzero_constraints.close();
-
-  this->pcout << "Number of non zero constraints: "
-              << nonzero_constraints.n_constraints() << std::endl;
 }
 
 template <int dim>
@@ -1587,9 +1513,6 @@ MFNavierStokesSolver<dim>::define_zero_constraints()
   this->establish_solid_domain(false);
 
   this->zero_constraints.close();
-
-  this->pcout << "Number of zero constraints: "
-              << this->zero_constraints.n_constraints() << std::endl;
 }
 
 template <int dim>
