@@ -250,6 +250,17 @@ public:
   void
   evaluate_residual(VectorType &dst, const VectorType &src);
 
+  /**
+   * @brief Sets the kinematic viscosity in the operator
+   *
+   * @param p_kinematic_viscosity New value of the kinematic viscosity
+   */
+  void
+  set_kinematic_viscosity(const double p_kinematic_viscosity)
+  {
+    kinematic_viscosity = p_kinematic_viscosity;
+  }
+
 protected:
   /**
    * @brief Interface to function that performs a cell integral in a cell batch

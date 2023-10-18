@@ -271,6 +271,103 @@ MFNavierStokesSolver<dim>::set_initial_condition_fd(
       this->present_solution.update_ghost_values();
       this->finish_time_step();
     }
+  else if (initial_condition_type == Parameters::InitialConditionType::viscous)
+    {
+      AssertThrow(
+        this->simulation_control->is_steady(),
+        dealii::ExcMessage(
+          "The lethe-fluid-matrix-free solver does not support viscous initial conditions for transient simulations."));
+
+      // Set the nodal values to have an initial condition that is adequate
+      this->set_nodal_values();
+      this->present_solution.update_ghost_values();
+
+      // Create a pointer to the current viscosity model
+      std::shared_ptr<RheologicalModel> viscosity_model =
+        this->simulation_parameters.physical_properties_manager.get_rheology();
+
+      viscosity_model->set_kinematic_viscosity(
+        this->simulation_parameters.initial_condition->kinematic_viscosity);
+
+      // Set the kinematic viscosity in the system operator to be the temporary
+      // viscosity
+      this->system_operator->set_kinematic_viscosity(
+        this->simulation_parameters.physical_properties_manager
+          .get_kinematic_viscosity_scale());
+
+      // Solve the problem with the temporary viscosity
+      PhysicsSolver<LinearAlgebra::distributed::Vector<double>>::
+        solve_non_linear_system(false);
+      this->finish_time_step();
+
+      // Set the kinematic viscosity in the system operator to be the original
+      // viscosity
+      this->system_operator->set_kinematic_viscosity(
+        this->simulation_parameters.physical_properties_manager
+          .get_kinematic_viscosity_scale());
+    }
+  else if (initial_condition_type == Parameters::InitialConditionType::ramp)
+    {
+      this->pcout << "*********************************" << std::endl;
+      this->pcout << " Initial condition using ramp " << std::endl;
+      this->pcout << "*********************************" << std::endl;
+
+      // Set the nodal values to have an initial condition that is adequate
+      this->set_nodal_values();
+      this->present_solution.update_ghost_values();
+
+      // Create a pointer to the current viscosity model
+      std::shared_ptr<RheologicalModel> viscosity_model =
+        this->simulation_parameters.physical_properties_manager.get_rheology();
+
+      // Gather viscosity final parameters
+      const double viscosity_end = viscosity_model->get_kinematic_viscosity();
+
+      // Kinematic viscosity ramp parameters
+      const int n_iter_viscosity =
+        this->simulation_parameters.initial_condition->ramp.ramp_viscosity
+          .n_iter;
+      double kinematic_viscosity =
+        n_iter_viscosity > 0 ?
+          this->simulation_parameters.initial_condition->ramp.ramp_viscosity
+            .kinematic_viscosity_init :
+          viscosity_end;
+      const double alpha_viscosity =
+        this->simulation_parameters.initial_condition->ramp.ramp_viscosity
+          .alpha;
+
+      viscosity_model->set_kinematic_viscosity(kinematic_viscosity);
+
+      // Ramp on kinematic viscosity
+      for (int i = 0; i < n_iter_viscosity; ++i)
+        {
+          this->pcout << std::setprecision(4)
+                      << "********* Solution for kinematic viscosity = " +
+                           std::to_string(kinematic_viscosity) + " *********"
+                      << std::endl;
+
+          viscosity_model->set_kinematic_viscosity(kinematic_viscosity);
+
+          // Set the kinematic viscosity in the system operator to be the
+          // temporary viscosity
+          this->system_operator->set_kinematic_viscosity(
+            this->simulation_parameters.physical_properties_manager
+              .get_kinematic_viscosity_scale());
+
+          this->simulation_control->set_assembly_method(
+            Parameters::SimulationControl::TimeSteppingMethod::steady);
+          // Solve the problem with the temporary viscosity
+          PhysicsSolver<LinearAlgebra::distributed::Vector<double>>::
+            solve_non_linear_system(false);
+          this->finish_time_step();
+
+          kinematic_viscosity +=
+            alpha_viscosity * (viscosity_end - kinematic_viscosity);
+        }
+      // Reset kinematic viscosity to simulation parameters
+      viscosity_model->set_kinematic_viscosity(viscosity_end);
+      this->system_operator->set_kinematic_viscosity(viscosity_end);
+    }
   else
     {
       throw std::runtime_error(
