@@ -128,6 +128,7 @@ subsection linear solver
     set mg coarse grid tolerance          = 1e-14
     set mg coarse grid reduce             = 1e-4
     set mg coarse grid max krylov vectors = 30
+    set mg coarse grid preconditioner     = amg
 
     #coarse-grid AMG preconditioner
     set amg aggregation threshold                 = 1e-14

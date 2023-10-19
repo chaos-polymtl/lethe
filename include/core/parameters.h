@@ -1000,6 +1000,9 @@ namespace Parameters
     // LSMG or GCMG coarse-grid solver maximum number of krylov vectors
     int mg_coarse_grid_max_krylov_vectors;
 
+    // LSMG or GCMG coarse-grid solver preconditioner
+    PreconditionerType mg_coarse_grid_preconditioner;
+
     // LSMG or GCMG information about levels
     Verbosity mg_verbosity;
 
