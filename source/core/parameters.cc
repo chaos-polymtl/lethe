@@ -2147,6 +2147,12 @@ namespace Parameters
                           Patterns::Integer(),
                           "mg coarse grid max krylov vectors for lsmg or gcmg");
 
+        prm.declare_entry("mg coarse grid preconditioner",
+                          "amg",
+                          Patterns::Selection("amg|ilu"),
+                          "The preconditioner for the mg coarse grid solver"
+                          "Choices are <amg|ilu>.");
+
         prm.declare_entry(
           "mg verbosity",
           "verbose",
@@ -2204,7 +2210,7 @@ namespace Parameters
           preconditioner = PreconditionerType::gcmg;
         else
           throw std::logic_error(
-            "Error, invalid preconditioner type. Choices are amg or ilu");
+            "Error, invalid preconditioner type. Choices are amg, ilu, lsmg or gcmg.");
 
         ilu_precond_fill = prm.get_double("ilu preconditioner fill");
         ilu_precond_atol =
@@ -2233,6 +2239,16 @@ namespace Parameters
         mg_coarse_grid_reduce    = prm.get_double("mg coarse grid reduce");
         mg_coarse_grid_max_krylov_vectors =
           prm.get_integer("mg coarse grid max krylov vectors");
+
+        const std::string cg_precond = prm.get("mg coarse grid preconditioner");
+        if (cg_precond == "amg")
+          mg_coarse_grid_preconditioner = PreconditionerType::amg;
+        else if (cg_precond == "ilu")
+          mg_coarse_grid_preconditioner = PreconditionerType::ilu;
+        else
+          throw std::logic_error(
+            "Error, invalid preconditioner type for mg coarse grid solver. Choices are amg or ilu.");
+
         const std::string mg_op = prm.get("mg verbosity");
         if (mg_op == "verbose")
           mg_verbosity = Parameters::Verbosity::verbose;
