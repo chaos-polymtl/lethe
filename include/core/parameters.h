@@ -982,28 +982,43 @@ namespace Parameters
     // MG minimum number of cells per level
     int mg_level_min_cells;
 
-    // LSMG or GCMG smoother number of iterations
+    // MG smoother number of iterations
     int mg_smoother_iterations;
 
-    // LSMG or GCMG smoother relaxation parameter
+    // MG smoother relaxation parameter
     double mg_smoother_relaxation;
 
-    // LSMG or GCMG coarse-grid solver maximum number of iterations
+    // MG eigenvalue estimation for smoother relaxation parameter
+    bool mg_smoother_eig_estimation;
+
+    // MG degree of Chebyshev polynomial used for eigenvalue estimation
+    int eig_estimation_degree;
+
+    // MG smoothing range to set range between eigenvalues
+    int eig_estimation_smoothing_range;
+
+    // MG number of cg iterations to find eigenvalue
+    int eig_estimation_cg_n_iterations;
+
+    // MG print max, min, eigenvalues
+    Verbosity eig_estimation_verbose;
+
+    // MG coarse-grid solver maximum number of iterations
     int mg_coarse_grid_max_iterations;
 
-    // LSMG or GCMG coarse-grid solver tolerance
+    // MG coarse-grid solver tolerance
     double mg_coarse_grid_tolerance;
 
-    // LSMG or GCMG coarse-grid solver reduce
+    // MG coarse-grid solver reduce
     double mg_coarse_grid_reduce;
 
-    // LSMG or GCMG coarse-grid solver maximum number of krylov vectors
+    // MG coarse-grid solver maximum number of krylov vectors
     int mg_coarse_grid_max_krylov_vectors;
 
-    // LSMG or GCMG coarse-grid solver preconditioner
+    // MG coarse-grid solver preconditioner
     PreconditionerType mg_coarse_grid_preconditioner;
 
-    // LSMG or GCMG information about levels
+    // MG information about levels
     Verbosity mg_verbosity;
 
     static void
