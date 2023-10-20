@@ -1125,18 +1125,20 @@ NavierStokesFunctionDefined<dim>::value(const Point<dim>  &p,
                                         const unsigned int component) const
 {
   Assert(component < this->n_components,
-         ExcIndexRange(component, 0, this->n_components)) if (component == 0)
-  {
-    return u->value(p);
-  }
+         ExcIndexRange(component, 0, this->n_components));
+
+  if (component == 0)
+    {
+      return u->value(p);
+    }
   else if (component == 1)
-  {
-    return v->value(p);
-  }
+    {
+      return v->value(p);
+    }
   else if (component == 2)
-  {
-    return w->value(p);
-  }
+    {
+      return w->value(p);
+    }
   return 0.;
 }
 
@@ -1214,14 +1216,16 @@ CahnHilliardFunctionDefined<dim>::value(const Point<dim>  &p,
                                         const unsigned int component) const
 {
   Assert(component < this->n_components,
-         ExcIndexRange(component, 0, this->n_components)) if (component == 0)
-  {
-    return phi->value(p);
-  }
+         ExcIndexRange(component, 0, this->n_components));
+
+  if (component == 0)
+    {
+      return phi->value(p);
+    }
   else if (component == 1)
-  {
-    return 0.;
-  }
+    {
+      return 0.;
+    }
   return 0.;
 }
 

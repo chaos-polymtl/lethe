@@ -43,10 +43,10 @@ RPT<dim>::setup_and_calculate()
         ExcMessage(
           "Prior tuning parameters, the number of particle positions provided"
           " has to be the same number of counts of experimental data. "
-          "Note : The experimental counts also have to be at the same positions which can not be verified."))
+          "Note : The experimental counts also have to be at the same positions which can not be verified."));
 
-        double cost_function =
-          calculate_cost_function(measured_counts, calculated_counts);
+      double cost_function =
+        calculate_cost_function(measured_counts, calculated_counts);
       std::cout << cost_function << std::endl;
     }
 }

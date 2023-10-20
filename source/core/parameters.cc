@@ -2127,6 +2127,32 @@ namespace Parameters
                           Patterns::Double(),
                           "mg smoother relaxation for lsmg or gcmg");
 
+        prm.declare_entry("mg smoother eig estimation",
+                          "false",
+                          Patterns::Bool(),
+                          "estimate eigenvalues for relaxation parameter");
+
+        prm.declare_entry("eig estimation degree",
+                          "3",
+                          Patterns::Integer(),
+                          "degree used for the Chebyshev polynomial");
+
+        prm.declare_entry("eig estimation smoothing range",
+                          "10",
+                          Patterns::Integer(),
+                          "sets range between largest and smallest eig");
+
+        prm.declare_entry("eig estimation cg n iterations",
+                          "10",
+                          Patterns::Integer(),
+                          "cg iterations performed to find eigenvalue");
+
+        prm.declare_entry("eig estimation verbosity",
+                          "verbose",
+                          Patterns::Selection("quiet|verbose"),
+                          "State whether MG should print max and min eigenvalue"
+                          "Choices are <quiet|verbose>.");
+
         prm.declare_entry("mg coarse grid max iterations",
                           "2000",
                           Patterns::Integer(),
@@ -2218,6 +2244,7 @@ namespace Parameters
         ilu_precond_rtol =
           prm.get_double("ilu preconditioner relative tolerance");
         amg_precond_ilu_fill = prm.get_double("amg preconditioner ilu fill");
+
         amg_precond_ilu_atol =
           prm.get_double("amg preconditioner ilu absolute tolerance");
         amg_precond_ilu_rtol =
@@ -2227,12 +2254,32 @@ namespace Parameters
         amg_w_cycles              = prm.get_bool("amg w cycles");
         amg_smoother_sweeps       = prm.get_integer("amg smoother sweeps");
         amg_smoother_overlap      = prm.get_integer("amg smoother overlap");
+
         force_linear_solver_continuation =
           prm.get_bool("force linear solver continuation");
-        mg_min_level           = prm.get_integer("mg min level");
-        mg_level_min_cells     = prm.get_integer("mg level min cells");
-        mg_smoother_iterations = prm.get_integer("mg smoother iterations");
-        mg_smoother_relaxation = prm.get_double("mg smoother relaxation");
+
+        mg_min_level       = prm.get_integer("mg min level");
+        mg_level_min_cells = prm.get_integer("mg level min cells");
+
+        mg_smoother_iterations     = prm.get_integer("mg smoother iterations");
+        mg_smoother_relaxation     = prm.get_double("mg smoother relaxation");
+        mg_smoother_eig_estimation = prm.get_bool("mg smoother eig estimation");
+        eig_estimation_degree      = prm.get_integer("eig estimation degree");
+        eig_estimation_smoothing_range =
+          prm.get_integer("eig estimation smoothing range");
+        eig_estimation_cg_n_iterations =
+          prm.get_integer("eig estimation cg n iterations");
+
+        const std::string eig_estimation_v =
+          prm.get("eig estimation verbosity");
+        if (eig_estimation_v == "verbose")
+          eig_estimation_verbose = Parameters::Verbosity::verbose;
+        else if (eig_estimation_v == "quiet")
+          eig_estimation_verbose = Parameters::Verbosity::quiet;
+        else
+          throw(std::runtime_error(
+            "Unknown verbosity mode for the eigenvalue estimation"));
+
         mg_coarse_grid_max_iterations =
           prm.get_integer("mg coarse grid max iterations");
         mg_coarse_grid_tolerance = prm.get_double("mg coarse grid tolerance");
