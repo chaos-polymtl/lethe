@@ -373,7 +373,7 @@ namespace Parameters
   DEMSolidObjects<dim>::declare_parameters(ParameterHandler &prm)
   {
     solids.resize(max_number_of_solids);
-    number_solids = 0;
+    number_solids = 50;
 
     prm.enter_subsection("solid objects");
     {
