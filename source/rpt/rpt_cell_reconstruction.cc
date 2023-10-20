@@ -44,7 +44,7 @@ RPTCellReconstruction<dim>::execute_cell_reconstruction()
       AssertThrow(
         known_positions.size() == reconstruction_counts.size(),
         ExcMessage(
-          "Reconstruction counts and known positions files do not have data for the same number of positions."))
+          "Reconstruction counts and known positions files do not have data for the same number of positions."));
     }
 
   // Create a grid for the reactor vessel

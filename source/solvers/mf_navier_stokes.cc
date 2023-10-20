@@ -439,9 +439,15 @@ MFNavierStokesSolver<dim>::estimate_omega(
   mg_operator->compute_inverse_diagonal(
     chebyshev_additional_data.preconditioner->get_vector());
   chebyshev_additional_data.constraints.copy_from(this->zero_constraints);
-  chebyshev_additional_data.degree               = 3;
-  chebyshev_additional_data.smoothing_range      = 20;
-  chebyshev_additional_data.eig_cg_n_iterations  = 40;
+  chebyshev_additional_data.degree =
+    this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+      .eig_estimation_degree;
+  chebyshev_additional_data.smoothing_range =
+    this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+      .eig_estimation_smoothing_range;
+  chebyshev_additional_data.eig_cg_n_iterations =
+    this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+      .eig_estimation_cg_n_iterations;
   chebyshev_additional_data.eigenvalue_algorithm = ChebyshevPreconditionerType::
     AdditionalData::EigenvalueAlgorithm::power_iteration;
   chebyshev_additional_data.polynomial_type =
@@ -455,18 +461,23 @@ MFNavierStokesSolver<dim>::estimate_omega(
 
   const auto evs = chebyshev->estimate_eigenvalues(vec);
 
-  const unsigned int smoothing_range = 20;
-
   const double alpha =
-    (smoothing_range > 1. ? evs.max_eigenvalue_estimate / smoothing_range :
-                            std::min(0.9 * evs.max_eigenvalue_estimate,
-                                     evs.min_eigenvalue_estimate));
+    (chebyshev_additional_data.smoothing_range > 1. ?
+       evs.max_eigenvalue_estimate / chebyshev_additional_data.smoothing_range :
+       std::min(0.9 * evs.max_eigenvalue_estimate,
+                evs.min_eigenvalue_estimate));
 
   omega = 2.0 / (alpha + evs.max_eigenvalue_estimate);
 
-  this->pcout << "    - min ev: " << evs.min_eigenvalue_estimate << std::endl;
-  this->pcout << "    - max ev: " << evs.max_eigenvalue_estimate << std::endl;
-  this->pcout << "    - omega: " << omega << std::endl;
+  if (this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+        .eig_estimation_verbose != Parameters::Verbosity::quiet)
+    {
+      this->pcout << "    - minimum eigenvalue: " << evs.min_eigenvalue_estimate
+                  << std::endl;
+      this->pcout << "    - maximum eigenvalue: " << evs.max_eigenvalue_estimate
+                  << std::endl;
+      this->pcout << "    - relaxation parameter: " << omega << std::endl;
+    }
 
   return omega;
 }
@@ -624,10 +635,15 @@ MFNavierStokesSolver<dim>::solve_with_LSMG(SolverGMRES<VectorType> &solver)
       smoother_data[level].n_iterations =
         this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
           .mg_smoother_iterations;
-      smoother_data[level].relaxation =
-        this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
-          .mg_smoother_relaxation;
-      // smoother_data[level].relaxation = estimate_omega(mg_operators[level]);
+      if (this->simulation_parameters.linear_solver
+            .at(PhysicsID::fluid_dynamics)
+            .mg_smoother_eig_estimation)
+        smoother_data[level].relaxation = estimate_omega(mg_operators[level]);
+      else
+        smoother_data[level].relaxation =
+          this->simulation_parameters.linear_solver
+            .at(PhysicsID::fluid_dynamics)
+            .mg_smoother_relaxation;
     }
 
   mg_smoother.initialize(mg_operators, smoother_data);
@@ -1092,10 +1108,15 @@ MFNavierStokesSolver<dim>::solve_with_GCMG(SolverGMRES<VectorType> &solver)
       smoother_data[level].n_iterations =
         this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
           .mg_smoother_iterations;
-      smoother_data[level].relaxation =
-        this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
-          .mg_smoother_relaxation;
-      // smoother_data[level].relaxation = estimate_omega(mg_operators[level]);
+      if (this->simulation_parameters.linear_solver
+            .at(PhysicsID::fluid_dynamics)
+            .mg_smoother_eig_estimation)
+        smoother_data[level].relaxation = estimate_omega(mg_operators[level]);
+      else
+        smoother_data[level].relaxation =
+          this->simulation_parameters.linear_solver
+            .at(PhysicsID::fluid_dynamics)
+            .mg_smoother_relaxation;
     }
 
   mg_smoother.initialize(mg_operators, smoother_data);
@@ -1538,11 +1559,10 @@ MFNavierStokesSolver<dim>::solve_system_GMRES(const bool   initial_step,
             .preconditioner ==
           Parameters::LinearSolver::PreconditionerType::gcmg,
       ExcMessage(
-        "This linear solver does not support this preconditioner. Only <ilu|lsmg|gcmg> preconditioners are supported."))
+        "This linear solver does not support this preconditioner. Only <ilu|lsmg|gcmg> preconditioners are supported."));
 
-      if (this->simulation_parameters.linear_solver
-            .at(PhysicsID::fluid_dynamics)
-            .verbosity != Parameters::Verbosity::quiet)
+  if (this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+        .verbosity != Parameters::Verbosity::quiet)
     {
       this->pcout << "  -Iterative solver took : " << solver_control.last_step()
                   << " steps " << std::endl;
