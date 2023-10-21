@@ -45,8 +45,7 @@ class MFNavierStokesSolver
                             IndexSet>
 {
   using VectorType     = LinearAlgebra::distributed::Vector<double>;
-  using LSTransferType = MGTransferMatrixFree<dim, double>;
-  using GCTransferType = MGTransferGlobalCoarsening<dim, VectorType>;
+  using MGTransferType = MGTransferMF<dim, double>;
 
 public:
   /**
@@ -207,10 +206,8 @@ protected:
   // Matrix-free operator
   std::shared_ptr<NavierStokesOperatorBase<dim, double>> system_operator;
   // Preconditioners
-  std::shared_ptr<PreconditionMG<dim, VectorType, LSTransferType>>
-    ls_multigrid_preconditioner;
-  std::shared_ptr<PreconditionMG<dim, VectorType, GCTransferType>>
-    gc_multigrid_preconditioner;
+  std::shared_ptr<PreconditionMG<dim, VectorType, MGTransferType>>
+                                                     multigrid_preconditioner;
   std::shared_ptr<TrilinosWrappers::PreconditionILU> ilu_preconditioner;
   // Vector to store the time derivative of the previous solutions at the end
   // of each time step
