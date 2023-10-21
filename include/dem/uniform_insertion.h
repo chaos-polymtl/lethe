@@ -41,8 +41,8 @@ template <int dim>
 class UniformInsertion : public Insertion<dim>
 {
 public:
-  UniformInsertion<dim>(const DEMSolverParameters<dim> &dem_parameters,
-                        const double maximum_particle_diameter);
+  UniformInsertion(const DEMSolverParameters<dim> &dem_parameters,
+                   const double                    maximum_particle_diameter);
 
   /**
    * Carries out the insertion of particles by discretizing and looping over the

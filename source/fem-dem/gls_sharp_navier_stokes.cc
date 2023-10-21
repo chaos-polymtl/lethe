@@ -2051,7 +2051,7 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
   // implicit Euler algorithm. To find the force at t+dt the function use the
   // fix point algorithm in parallel to the newton iteration used for the fluid
   // resolution.
-  using numbers::PI;
+  using dealii::numbers::PI;
   double dt    = this->simulation_control->get_time_steps_vector()[0];
   double time  = this->simulation_control->get_current_time();
   double alpha = this->simulation_parameters.particlesParameters->alpha;
@@ -2901,7 +2901,7 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
   // on a solid of dim=2 or dim=3
 
   TimerOutput::Scope t(this->computing_timer, "assemble_sharp");
-  using numbers::PI;
+  using dealii::numbers::PI;
   Point<dim>                                                  center_immersed;
   Point<dim>                                                  pressure_bridge;
   std::vector<typename DoFHandler<dim>::active_cell_iterator> active_neighbors;
@@ -4305,7 +4305,7 @@ template <int dim>
 void
 GLSSharpNavierStokesSolver<dim>::load_particles_from_file()
 {
-  using numbers::PI;
+  using dealii::numbers::PI;
   TimerOutput::Scope t(this->computing_timer,
                        "Reset Sharp-Edge particle information");
   this->pcout << "Loading particles from a file" << std::endl;

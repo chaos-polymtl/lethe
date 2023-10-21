@@ -49,7 +49,7 @@ template <int dim>
 class PeriodicBoundariesManipulator
 {
 public:
-  PeriodicBoundariesManipulator<dim>();
+  PeriodicBoundariesManipulator();
 
   /**
    * @brief Sets the periodic boundaries parameters

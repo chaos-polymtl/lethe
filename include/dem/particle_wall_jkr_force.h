@@ -51,7 +51,7 @@ class ParticleWallJKRForce : public ParticleWallContactForce<dim>
   FuncPtrType calculate_rolling_resistance_torque;
 
 public:
-  ParticleWallJKRForce<dim>(
+  ParticleWallJKRForce(
     const DEMSolverParameters<dim>       &dem_parameters,
     const std::vector<types::boundary_id> boundary_index = {});
 

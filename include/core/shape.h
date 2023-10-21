@@ -349,9 +349,9 @@ public:
    * @param position The sphere center
    * @param orientation The sphere orientation
    */
-  Sphere<dim>(double              radius,
-              const Point<dim>   &position,
-              const Tensor<1, 3> &orientation)
+  Sphere(double              radius,
+         const Point<dim>   &position,
+         const Tensor<1, 3> &orientation)
     : Shape<dim>(radius, position, orientation)
   {
 #if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 4)
@@ -435,11 +435,11 @@ public:
    * @param position The superquadric center
    * @param orientation The superquadric orientation
    */
-  Superquadric<dim>(const Tensor<1, dim> half_lengths,
-                    const Tensor<1, dim> exponents,
-                    const double         epsilon,
-                    const Point<dim>    &position,
-                    const Tensor<1, 3>  &orientation)
+  Superquadric(const Tensor<1, dim> half_lengths,
+               const Tensor<1, dim> exponents,
+               const double         epsilon,
+               const Point<dim>    &position,
+               const Tensor<1, 3>  &orientation)
     : Shape<dim>(half_lengths.norm(), position, orientation)
     , half_lengths(half_lengths)
     , exponents(exponents)
@@ -588,9 +588,9 @@ public:
    * @param position The hyper rectangle center
    * @param orientation The hyper rectangle orientation
    */
-  HyperRectangle<dim>(const Tensor<1, dim> &half_lengths,
-                      const Point<dim>     &position,
-                      const Tensor<1, 3>   &orientation)
+  HyperRectangle(const Tensor<1, dim> &half_lengths,
+                 const Point<dim>     &position,
+                 const Tensor<1, 3>   &orientation)
     : Shape<dim>(half_lengths.norm(), position, orientation)
     , half_lengths(half_lengths)
   {}
@@ -635,9 +635,9 @@ public:
    * @param position The ellipsoid center
    * @param orientation The ellipsoid orientation
    */
-  Ellipsoid<dim>(const Tensor<1, dim> &radii,
-                 const Point<dim>     &position,
-                 const Tensor<1, 3>   &orientation)
+  Ellipsoid(const Tensor<1, dim> &radii,
+            const Point<dim>     &position,
+            const Tensor<1, 3>   &orientation)
     : Shape<dim>(radii.norm(), position, orientation)
     , radii(radii)
   {}
@@ -684,10 +684,10 @@ public:
    * @param position The torus center
    * @param orientation The orientation of the axis at the center of the torus
    */
-  Torus<dim>(double              ring_radius,
-             double              ring_thickness,
-             const Point<dim>   &position,
-             const Tensor<1, 3> &orientation)
+  Torus(double              ring_radius,
+        double              ring_thickness,
+        const Point<dim>   &position,
+        const Tensor<1, 3> &orientation)
     : Shape<dim>(ring_thickness, position, orientation)
     , ring_radius(ring_radius)
     , ring_thickness(ring_thickness)
@@ -735,10 +735,10 @@ public:
    * @param position The position of the center of cone's base
    * @param orientation The orientation of the cone axis, from its base to its tip
    */
-  Cone<dim>(double              tan_base_angle,
-            double              height,
-            const Point<dim>   &position,
-            const Tensor<1, 3> &orientation)
+  Cone(double              tan_base_angle,
+       double              height,
+       const Point<dim>   &position,
+       const Tensor<1, 3> &orientation)
     : Shape<dim>(height, position, orientation)
     , tan_base_angle(tan_base_angle)
     , height(height)
@@ -793,11 +793,11 @@ public:
    * @param position The center of the sphere
    * @param orientation The orientation of the sphere, from it's center to the cut's center
    */
-  CutHollowSphere<dim>(double              radius,
-                       double              cut_depth,
-                       double              shell_thickness,
-                       const Point<dim>   &position,
-                       const Tensor<1, 3> &orientation)
+  CutHollowSphere(double              radius,
+                  double              cut_depth,
+                  double              shell_thickness,
+                  const Point<dim>   &position,
+                  const Tensor<1, 3> &orientation)
     : Shape<dim>(radius, position, orientation)
     , radius(radius)
     , cut_depth(cut_depth)
@@ -852,11 +852,11 @@ public:
    * @param position The main sphere's center
    * @param orientation The orientation from the main sphere's center to the removed sphere's center
    */
-  DeathStar<dim>(double              radius,
-                 double              hole_radius,
-                 double              spheres_distance,
-                 const Point<dim>   &position,
-                 const Tensor<1, 3> &orientation)
+  DeathStar(double              radius,
+            double              hole_radius,
+            double              spheres_distance,
+            const Point<dim>   &position,
+            const Tensor<1, 3> &orientation)
     : Shape<dim>(radius, position, orientation)
     , radius(radius)
     , hole_radius(hole_radius)
@@ -925,7 +925,7 @@ public:
    * @param constituents The shapes from which this composite shape will be composed
    * @param operations The list of operations to perform to construct the composite
    */
-  CompositeShape<dim>(
+  CompositeShape(
     std::map<unsigned int, std::shared_ptr<Shape<dim>>> constituents,
     std::map<unsigned int,
              std::tuple<BooleanOperation, unsigned int, unsigned int>>
@@ -951,10 +951,9 @@ public:
    * global levelset function defined as a union.
    * @param constituents_vector The shapes from which this composite sphere will be composed
    */
-  CompositeShape<dim>(
-    std::vector<std::shared_ptr<Shape<dim>>> constituents_vector,
-    const Point<dim>                        &position,
-    const Tensor<1, 3>                      &orientation)
+  CompositeShape(std::vector<std::shared_ptr<Shape<dim>>> constituents_vector,
+                 const Point<dim>                        &position,
+                 const Tensor<1, 3>                      &orientation)
     : Shape<dim>(0., position, orientation)
   {
     size_t number_of_constituents = constituents_vector.size();
@@ -1111,9 +1110,9 @@ public:
    * @param position The shape center
    * @param orientation The shape orientation
    */
-  OpenCascadeShape<dim>(const std::string   file_name,
-                        const Point<dim>   &position,
-                        const Tensor<1, 3> &orientation)
+  OpenCascadeShape(const std::string   file_name,
+                   const Point<dim>   &position,
+                   const Tensor<1, 3> &orientation)
     : Shape<dim>(0.1, position, orientation)
   {
     // First, we read the shape file name
@@ -1349,9 +1348,9 @@ public:
    * @param orientation the orientation of the shape with respect to each main
    * axis
    */
-  RBFShape<dim>(const std::string   shape_arguments_str,
-                const Point<dim>   &position,
-                const Tensor<1, 3> &orientation);
+  RBFShape(const std::string   shape_arguments_str,
+           const Point<dim>   &position,
+           const Tensor<1, 3> &orientation);
 
   /**
    * @brief Load RBF data from file. To be called at initialization, after repartitioning or when shape has moved.
@@ -1885,10 +1884,10 @@ public:
    * @param position position of the barycenter of the cylinder
    * @param orientation orientation of the cylinder
    */
-  Cylinder<dim>(double              radius,
-                double              half_length,
-                const Point<dim>   &position,
-                const Tensor<1, 3> &orientation)
+  Cylinder(double              radius,
+           double              half_length,
+           const Point<dim>   &position,
+           const Tensor<1, 3> &orientation)
     : Shape<dim>(radius, position, orientation)
     , radius(radius)
     , half_length(half_length)
@@ -1938,11 +1937,11 @@ public:
    * @param position position of the barycenter of the cylinder
    * @param orientation orientation of the cylinder
    */
-  CylindricalTube<dim>(double              radius_inside,
-                       double              radius_outside,
-                       double              half_length,
-                       const Point<dim>   &position,
-                       const Tensor<1, 3> &orientation)
+  CylindricalTube(double              radius_inside,
+                  double              radius_outside,
+                  double              half_length,
+                  const Point<dim>   &position,
+                  const Tensor<1, 3> &orientation)
     : Shape<dim>((radius_outside + radius_inside) / 2., position, orientation)
     , radius((radius_outside + radius_inside) / 2.)
     , height(half_length * 2.)
@@ -1996,12 +1995,12 @@ public:
    * @param position the position of the helix base
    * @param orientation the orientation of the helix axis compared to the z axis
    */
-  CylindricalHelix<dim>(double              radius_helix,
-                        double              radius_disk,
-                        double              height,
-                        double              pitch,
-                        const Point<dim>   &position,
-                        const Tensor<1, 3> &orientation)
+  CylindricalHelix(double              radius_helix,
+                   double              radius_disk,
+                   double              height,
+                   double              pitch,
+                   const Point<dim>   &position,
+                   const Tensor<1, 3> &orientation)
     : Shape<dim>(radius_disk, position, orientation)
     , radius(radius_helix)
     , height(height)

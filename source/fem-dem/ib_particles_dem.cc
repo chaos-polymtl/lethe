@@ -319,7 +319,7 @@ IBParticlesDEM<dim>::calculate_pp_lubrication_force(
   std::vector<Tensor<1, 3>> &lubrication_force,
   std::vector<Tensor<1, 3>> & /*lubrication_torque*/)
 {
-  using numbers::PI;
+  using dealii::numbers::PI;
   // loop over all particles to find pair of close partilces
   for (auto &particle_one : dem_particles)
     {
@@ -652,7 +652,7 @@ IBParticlesDEM<dim>::calculate_pw_lubrication_force(
   std::vector<Tensor<1, 3>> &lubrication_force,
   std::vector<Tensor<1, 3>> & /*lubrication_torque*/)
 {
-  using numbers::PI;
+  using dealii::numbers::PI;
 
   // Loop over the particles
   for (auto &particle : dem_particles)
@@ -773,7 +773,7 @@ IBParticlesDEM<dim>::integrate_particles_motion(const double dt,
                                                 const double mu)
 {
   // Initialize local containers and physical variables
-  using numbers::PI;
+  using dealii::numbers::PI;
   double dt_dem = dt / parameters->coupling_frequency;
 
   std::vector<Tensor<1, 3>> contact_force(dem_particles.size());
