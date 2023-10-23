@@ -438,7 +438,8 @@ MFNavierStokesSolver<dim>::calculate_time_derivative_previous_solutions()
 template <int dim>
 double
 MFNavierStokesSolver<dim>::estimate_omega(
-  std::shared_ptr<NavierStokesOperatorBase<dim, double>> &mg_operator)
+  std::shared_ptr<NavierStokesOperatorBase<dim, double>> &mg_operator,
+  const unsigned int                                     &level)
 {
   double omega = 0.0;
 
@@ -487,11 +488,15 @@ MFNavierStokesSolver<dim>::estimate_omega(
   if (this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
         .eig_estimation_verbose != Parameters::Verbosity::quiet)
     {
-      this->pcout << "    - minimum eigenvalue: " << evs.min_eigenvalue_estimate
+      this->pcout << std::endl;
+      this->pcout << "  -Eigenvalue estimation level " << level << ":"
                   << std::endl;
-      this->pcout << "    - maximum eigenvalue: " << evs.max_eigenvalue_estimate
+      this->pcout << "    Relaxation parameter: " << omega << std::endl;
+      this->pcout << "    Minimum eigenvalue: " << evs.min_eigenvalue_estimate
                   << std::endl;
-      this->pcout << "    - relaxation parameter: " << omega << std::endl;
+      this->pcout << "    Maximum eigenvalue: " << evs.max_eigenvalue_estimate
+                  << std::endl;
+      this->pcout << std::endl;
     }
 
   return omega;
@@ -735,7 +740,8 @@ MFNavierStokesSolver<dim>::solve_with_LSMG(SolverGMRES<VectorType> &solver)
       if (this->simulation_parameters.linear_solver
             .at(PhysicsID::fluid_dynamics)
             .mg_smoother_eig_estimation)
-        smoother_data[level].relaxation = estimate_omega(mg_operators[level]);
+        smoother_data[level].relaxation =
+          estimate_omega(mg_operators[level], level);
       else
         smoother_data[level].relaxation =
           this->simulation_parameters.linear_solver
@@ -792,11 +798,16 @@ MFNavierStokesSolver<dim>::solve_with_LSMG(SolverGMRES<VectorType> &solver)
 
   if (this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
         .mg_verbosity != Parameters::Verbosity::quiet)
-    for (unsigned int level = minlevel; level <= maxlevel; ++level)
-      this->pcout << "   MG Level " << level - minlevel << ": "
-                  << this->dof_handler.n_dofs(level) << " DoFs, "
-                  << this->dof_handler.get_triangulation().n_cells(level)
-                  << " cells" << std::endl;
+    {
+      this->pcout << std::endl;
+      this->pcout << "  -Levels of MG preconditioner:" << std::endl;
+      for (unsigned int level = minlevel; level <= maxlevel; ++level)
+        this->pcout << "    Level " << level - minlevel << ": "
+                    << this->dof_handler.n_dofs(level) << " DoFs, "
+                    << this->dof_handler.get_triangulation().n_cells(level)
+                    << " cells" << std::endl;
+      this->pcout << std::endl;
+    }
 
   // Create coarse-grid GMRES solver and AMG preconditioner
   this->mg_computing_timer.enter_subsection("Create coarse-grid solver");
@@ -950,10 +961,13 @@ MFNavierStokesSolver<dim>::solve_with_LSMG(SolverGMRES<VectorType> &solver)
   this->computing_timer.leave_subsection("Solve linear system");
 
   if (this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
-        .mg_verbosity == Parameters::Verbosity::extra_verbose)
-    this->pcout << "    Coarse grid solver took : "
-                << coarse_grid_solver_control.last_step() << " steps "
-                << std::endl;
+        .mg_verbosity != Parameters::Verbosity::quiet)
+    {
+      this->pcout << "  -Coarse grid solver took: "
+                  << coarse_grid_solver_control.last_step() << " steps "
+                  << std::endl;
+      this->pcout << std::endl;
+    }
 }
 
 template <int dim>
@@ -1224,11 +1238,17 @@ MFNavierStokesSolver<dim>::solve_with_GCMG(SolverGMRES<VectorType> &solver)
 
   if (this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
         .mg_verbosity != Parameters::Verbosity::quiet)
-    for (unsigned int level = minlevel; level <= maxlevel; ++level)
-      this->pcout << "   MG Level " << level << ": "
-                  << dof_handlers[level].n_dofs() << " DoFs, "
-                  << coarse_grid_triangulations[level]->n_global_active_cells()
-                  << " cells" << std::endl;
+    {
+      this->pcout << std::endl;
+      this->pcout << "  -Levels of MG preconditioner:" << std::endl;
+      for (unsigned int level = minlevel; level <= maxlevel; ++level)
+        this->pcout
+          << "    Level " << level << ": " << dof_handlers[level].n_dofs()
+          << " DoFs, "
+          << coarse_grid_triangulations[level]->n_global_active_cells()
+          << " cells" << std::endl;
+      this->pcout << std::endl;
+    }
 
   mg::Matrix<VectorType> mg_matrix(mg_operators);
 
@@ -1251,7 +1271,8 @@ MFNavierStokesSolver<dim>::solve_with_GCMG(SolverGMRES<VectorType> &solver)
       if (this->simulation_parameters.linear_solver
             .at(PhysicsID::fluid_dynamics)
             .mg_smoother_eig_estimation)
-        smoother_data[level].relaxation = estimate_omega(mg_operators[level]);
+        smoother_data[level].relaxation =
+          estimate_omega(mg_operators[level], level);
       else
         smoother_data[level].relaxation =
           this->simulation_parameters.linear_solver
@@ -1408,10 +1429,13 @@ MFNavierStokesSolver<dim>::solve_with_GCMG(SolverGMRES<VectorType> &solver)
   this->computing_timer.leave_subsection("Solve linear system");
 
   if (this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
-        .mg_verbosity == Parameters::Verbosity::extra_verbose)
-    this->pcout << "    Coarse grid solver took : "
-                << coarse_grid_solver_control.last_step() << " steps "
-                << std::endl;
+        .mg_verbosity != Parameters::Verbosity::quiet)
+    {
+      this->pcout << "  -Coarse grid solver took: "
+                  << coarse_grid_solver_control.last_step() << " steps "
+                  << std::endl;
+      this->pcout << std::endl;
+    }
 }
 
 template <int dim>

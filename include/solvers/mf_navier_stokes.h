@@ -197,11 +197,15 @@ private:
    *  MG smoother
    *
    * @param operator Operator for which the estimation needs to be done
+   *
+   * @param level Corresponding MG level
+   *
    * @return double Omega relaxation parameter
    */
   double
   estimate_omega(
-    std::shared_ptr<NavierStokesOperatorBase<dim, double>> &mg_operator);
+    std::shared_ptr<NavierStokesOperatorBase<dim, double>> &mg_operator,
+    const unsigned int                                     &level);
 
 protected:
   // Matrix-free operator
@@ -215,7 +219,7 @@ protected:
   // Vector to store the time derivative of the previous solutions at the end
   // of each time step
   VectorType time_derivative_previous_solutions;
-  // Time within MG preconditioners
+  // Setup timings for all MG components
   TimerOutput mg_computing_timer;
 };
 
