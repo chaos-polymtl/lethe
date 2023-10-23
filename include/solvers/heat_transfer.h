@@ -54,11 +54,11 @@ template <int dim>
 class HeatTransfer : public AuxiliaryPhysics<dim, TrilinosWrappers::MPI::Vector>
 {
 public:
-  HeatTransfer<dim>(MultiphysicsInterface<dim>      *multiphysics_interface,
-                    const SimulationParameters<dim> &p_simulation_parameters,
-                    std::shared_ptr<parallel::DistributedTriangulationBase<dim>>
-                                                       p_triangulation,
-                    std::shared_ptr<SimulationControl> p_simulation_control)
+  HeatTransfer(MultiphysicsInterface<dim>      *multiphysics_interface,
+               const SimulationParameters<dim> &p_simulation_parameters,
+               std::shared_ptr<parallel::DistributedTriangulationBase<dim>>
+                                                  p_triangulation,
+               std::shared_ptr<SimulationControl> p_simulation_control)
     : AuxiliaryPhysics<dim, TrilinosWrappers::MPI::Vector>(
         p_simulation_parameters.non_linear_solver.at(PhysicsID::heat_transfer))
     , multiphysics(multiphysics_interface)

@@ -50,7 +50,7 @@ template <int dim>
 class LagrangianPostProcessing
 {
 public:
-  LagrangianPostProcessing<dim>();
+  LagrangianPostProcessing();
 
   /**
    * Carries out writing the grid of the domain

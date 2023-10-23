@@ -52,7 +52,7 @@ template <int dim>
 class ParticleWallBroadSearch
 {
 public:
-  ParticleWallBroadSearch<dim>();
+  ParticleWallBroadSearch();
 
   /**
    * Finds unordered map of tuples (tuple of particle located in

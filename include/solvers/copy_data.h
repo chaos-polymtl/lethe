@@ -156,8 +156,8 @@ public:
    *
    * @param n_q_points Number of quadrature points
    */
-  StabilizedMethodsTensorCopyData<dim>(const unsigned int n_dofs,
-                                       const unsigned int n_q_points)
+  StabilizedMethodsTensorCopyData(const unsigned int n_dofs,
+                                  const unsigned int n_q_points)
     : local_matrix(n_dofs, n_dofs)
     , local_rhs(n_dofs)
     , local_dof_indices(n_dofs)

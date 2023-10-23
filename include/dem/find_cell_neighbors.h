@@ -46,7 +46,7 @@ template <int dim>
 class FindCellNeighbors
 {
 public:
-  FindCellNeighbors<dim>();
+  FindCellNeighbors();
 
   /**
    * @brief Finds the neighbor list (without repetition) of all the active

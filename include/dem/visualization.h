@@ -46,7 +46,7 @@ template <int dim>
 class Visualization : public dealii::DataOutInterface<0, dim>
 {
 public:
-  Visualization<dim>();
+  Visualization();
 
   /**
    * Carries out building the patches of properties of particles for

@@ -52,7 +52,7 @@ template <int dim>
 class ParticleParticleFineSearch
 {
 public:
-  ParticleParticleFineSearch<dim>();
+  ParticleParticleFineSearch();
 
   /**
    * Iterates over a vector of maps (pairs_in_contact) to see if the particles

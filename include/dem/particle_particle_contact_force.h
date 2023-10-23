@@ -141,8 +141,7 @@ class ParticleParticleContactForce
   : public ParticleParticleContactForceBase<dim>
 {
 public:
-  ParticleParticleContactForce<dim, force_model, rolling_friction_model>(
-    const DEMSolverParameters<dim> &dem_parameters);
+  ParticleParticleContactForce(const DEMSolverParameters<dim> &dem_parameters);
 
 
   virtual ~ParticleParticleContactForce()
