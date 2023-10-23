@@ -50,7 +50,7 @@ MFNavierStokesSolver<dim>::MFNavierStokesSolver(
   : NavierStokesBase<dim, VectorType, IndexSet>(nsparam)
   , mg_computing_timer(this->mpi_communicator,
                        this->pcout,
-                       TimerOutput::summary,
+                       TimerOutput::never,
                        TimerOutput::wall_times)
 {
   AssertThrow(
@@ -1297,7 +1297,7 @@ MFNavierStokesSolver<dim>::solve_with_GCMG(SolverGMRES<VectorType> &solver)
     this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
       .mg_coarse_grid_reduce;
   ReductionControl coarse_grid_solver_control(
-    max_iterations, tolerance, reduce, true, true);
+    max_iterations, tolerance, reduce, false, false);
   SolverGMRES<VectorType>::AdditionalData solver_parameters;
   solver_parameters.max_n_tmp_vectors =
     this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
