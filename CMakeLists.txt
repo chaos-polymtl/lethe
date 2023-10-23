@@ -67,6 +67,7 @@ if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
   add_compile_options(
     -Wall -Wextra -Wpedantic # Actually already in DEAL_II_CXX_FLAGS
     -Wunused-variable -Wdisabled-optimization -std=c++17)
+    
 
   if(CMAKE_VERSION VERSION_LESS 3.24)
     option(CMAKE_COMPILE_WARNING_AS_ERROR "Treat warnings on compile as errors")
@@ -122,6 +123,7 @@ if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
   endif()
 endif()
 
+
 add_subdirectory(source)
 add_subdirectory(applications)
 
@@ -131,6 +133,8 @@ if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
   endif()
 
   if(BUILD_TESTING)
+    set(DEAL_II_WITH_DEALII ON)
+    set(DEAL_II_DEALII_VERSION ${DEAL_II_VERSION})
     add_subdirectory(tests)
     add_subdirectory(applications_tests)
 
