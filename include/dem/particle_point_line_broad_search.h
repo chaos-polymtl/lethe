@@ -44,7 +44,7 @@ template <int dim>
 class ParticlePointLineBroadSearch
 {
 public:
-  ParticlePointLineBroadSearch<dim>();
+  ParticlePointLineBroadSearch();
 
   /**
    * Finds a map of pairs (pair of particle and the boundary vertex location)

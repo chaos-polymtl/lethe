@@ -53,7 +53,7 @@ template <int dim>
 class BoundaryCellsInformation
 {
 public:
-  BoundaryCellsInformation<dim>();
+  BoundaryCellsInformation();
 
   /**
    * @brief The build function builds all the boundary cell information

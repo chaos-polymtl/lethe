@@ -47,7 +47,7 @@ template <int dim>
 class ParticlePointLineFineSearch
 {
 public:
-  ParticlePointLineFineSearch<dim>();
+  ParticlePointLineFineSearch();
 
   /**
    * Iterates over a map of pairs (particle_point_contact_candidates) to see if

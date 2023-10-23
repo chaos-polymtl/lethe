@@ -48,7 +48,7 @@ template <int dim>
 class ParticleParticleBroadSearch
 {
 public:
-  ParticleParticleBroadSearch<dim>();
+  ParticleParticleBroadSearch();
 
   /**
    * @brief Finds a vector of pairs (particle_particle_candidates) which shows the

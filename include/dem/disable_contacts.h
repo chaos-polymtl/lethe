@@ -86,7 +86,7 @@ template <int dim>
 class DisableContacts
 {
 public:
-  DisableContacts<dim>();
+  DisableContacts();
 
   /**
    * Mobility status flag used to identify the status at nodes and the status

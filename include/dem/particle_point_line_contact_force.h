@@ -47,7 +47,7 @@ template <int dim>
 class ParticlePointLineForce
 {
 public:
-  ParticlePointLineForce<dim>();
+  ParticlePointLineForce();
 
   /**
    * Carries out the calculation of the particle-point contact force using

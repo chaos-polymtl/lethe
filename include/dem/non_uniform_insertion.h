@@ -51,8 +51,8 @@ public:
    * @param maximum_particle_diameter Maximum particle diameter based on values
    * defined in the parameter handler
    */
-  NonUniformInsertion<dim>(const DEMSolverParameters<dim> &dem_parameters,
-                           const double maximum_particle_diameter);
+  NonUniformInsertion(const DEMSolverParameters<dim> &dem_parameters,
+                      const double maximum_particle_diameter);
 
   /**
    * Carries out the non-uniform insertion of particles.

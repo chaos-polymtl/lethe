@@ -54,7 +54,7 @@ public:
    * @param dem_parameters DEM parameters declared in the .prm file
    * @param triangulation Triangulation object used in the simulation.
    */
-  PlaneInsertion<dim>(
+  PlaneInsertion(
     const DEMSolverParameters<dim>                  &dem_parameters,
     const parallel::distributed::Triangulation<dim> &triangulation);
 

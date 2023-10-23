@@ -50,7 +50,7 @@ template <int dim>
 class ParticleWallFineSearch
 {
 public:
-  ParticleWallFineSearch<dim>();
+  ParticleWallFineSearch();
 
   /**
    * Iterates over the contact candidates from particle-wall broad search
