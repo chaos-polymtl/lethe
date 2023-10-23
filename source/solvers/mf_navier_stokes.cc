@@ -538,24 +538,90 @@ MFNavierStokesSolver<dim>::solve_with_LSMG(SolverGMRES<VectorType> &solver)
        i_bc < this->simulation_parameters.boundary_conditions.size;
        ++i_bc)
     {
-      std::set<types::boundary_id> dirichlet_boundary_id = {
-        this->simulation_parameters.boundary_conditions.id[i_bc]};
-      mg_constrained_dofs.make_zero_boundary_constraints(
-        this->dof_handler,
-        dirichlet_boundary_id,
-        this->fe->component_mask(velocities));
+      if (this->simulation_parameters.boundary_conditions.type[i_bc] ==
+          BoundaryConditions::BoundaryType::slip)
+        {
+          std::set<types::boundary_id> no_normal_flux_boundaries;
+          no_normal_flux_boundaries.insert(
+            this->simulation_parameters.boundary_conditions.id[i_bc]);
+          for (unsigned int level = minlevel; level <= maxlevel; ++level)
+            {
+              AffineConstraints<double> temp_constraints;
+              temp_constraints.clear();
+              IndexSet locally_relevant_level_dofs;
+              DoFTools::extract_locally_relevant_level_dofs(
+                this->dof_handler, level, locally_relevant_level_dofs);
+              temp_constraints.reinit(locally_relevant_level_dofs);
+              VectorTools::compute_no_normal_flux_constraints_on_level(
+                this->dof_handler,
+                0,
+                no_normal_flux_boundaries,
+                temp_constraints,
+                *this->mapping,
+                mg_constrained_dofs.get_refinement_edge_indices(level),
+                level);
+              temp_constraints.close();
+              mg_constrained_dofs.add_user_constraints(level, temp_constraints);
+            }
+        }
+      else if (this->simulation_parameters.boundary_conditions.type[i_bc] ==
+               BoundaryConditions::BoundaryType::periodic)
+        {
+          /*already taken into account when mg_constrained_dofs is initialized*/
+        }
+      else if (this->simulation_parameters.boundary_conditions.type[i_bc] ==
+               BoundaryConditions::BoundaryType::pressure)
+        {
+          /*do nothing*/
+        }
+      else if (this->simulation_parameters.boundary_conditions.type[i_bc] ==
+               BoundaryConditions::BoundaryType::function_weak)
+        {
+          /*do nothing*/
+        }
+      else if (this->simulation_parameters.boundary_conditions.type[i_bc] ==
+               BoundaryConditions::BoundaryType::partial_slip)
+        {
+          /*do nothing*/
+        }
+      else if (this->simulation_parameters.boundary_conditions.type[i_bc] ==
+               BoundaryConditions::BoundaryType::outlet)
+        {
+          /*do nothing*/
+        }
+      else
+        {
+          std::set<types::boundary_id> dirichlet_boundary_id = {
+            this->simulation_parameters.boundary_conditions.id[i_bc]};
+          mg_constrained_dofs.make_zero_boundary_constraints(
+            this->dof_handler,
+            dirichlet_boundary_id,
+            this->fe->component_mask(velocities));
+        }
     }
 
   // Create mg operators for each level and additional operators needed only for
   // local smoothing
   for (unsigned int level = minlevel; level <= maxlevel; ++level)
     {
+      level_constraints[level].clear();
+
       const IndexSet relevant_dofs =
         DoFTools::extract_locally_relevant_level_dofs(this->dof_handler, level);
 
       level_constraints[level].reinit(relevant_dofs);
-      level_constraints[level].add_lines(
-        mg_constrained_dofs.get_boundary_indices(level));
+      DoFTools::make_hanging_node_constraints(this->dof_handler,
+                                              level_constraints[level]);
+#if DEAL_II_VERSION_GTE(9, 6, 0)
+      mg_constrained_dofs.merge_constraints(
+        level_constraints[level], level, true, false, true, true);
+#else
+      AssertThrow(
+        false,
+        ExcMessage(
+          "The constraints for the lsmg preconditioner require a most recent version of deal.II."));
+#endif
+
       level_constraints[level].close();
 
       if ((this->simulation_parameters.stabilization
@@ -988,7 +1054,14 @@ MFNavierStokesSolver<dim>::solve_with_GCMG(SolverGMRES<VectorType> &solver)
           else if (this->simulation_parameters.boundary_conditions.type[i_bc] ==
                    BoundaryConditions::BoundaryType::periodic)
             {
-              // TODO
+              DoFTools::make_periodicity_constraints(
+                level_dof_handler,
+                this->simulation_parameters.boundary_conditions.id[i_bc],
+                this->simulation_parameters.boundary_conditions
+                  .periodic_id[i_bc],
+                this->simulation_parameters.boundary_conditions
+                  .periodic_direction[i_bc],
+                level_constraint);
             }
           else if (this->simulation_parameters.boundary_conditions.type[i_bc] ==
                    BoundaryConditions::BoundaryType::pressure)
