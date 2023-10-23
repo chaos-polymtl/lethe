@@ -215,6 +215,8 @@ protected:
   // Vector to store the time derivative of the previous solutions at the end
   // of each time step
   VectorType time_derivative_previous_solutions;
+  // Time within MG preconditioners
+  TimerOutput mg_computing_timer;
 };
 
 #endif
