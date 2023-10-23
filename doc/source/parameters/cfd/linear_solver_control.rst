@@ -229,4 +229,7 @@ Different parameters for the main components of the two geometric multigrid algo
     set ilu preconditioner relative tolerance = 1
 
 .. tip::
-  The default algorithms build and use ALL the multigrid levels. There are two ways to change the number of levels, either by setting the ``mg min level`` parameter OR the ``mg level min cells`` parameter. For ``lsmg`` the coarsest mesh should cover the whole domain, i.e., no hanging nodes are allowed. 
+  The default algorithms build and use ALL the multigrid levels. There are two ways to change the number of levels, either by setting the ``mg min level`` parameter OR the ``mg level min cells`` parameter. For ``lsmg`` the coarsest mesh should cover the whole domain, i.e., no hanging nodes are allowed.
+
+.. tip::
+  If ``mg verbosity`` is set to ``verbose``, the information about the levels (cells and degrees of freedom) and the number of iterations of the coarse grid solver are displayed. If this parameter is set to ``extra verbose``, apart from all the previous information, an additional table with the time it took to set up the different components of the multigrid preconditioners is also displayed. 
