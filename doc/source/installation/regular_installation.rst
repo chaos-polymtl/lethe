@@ -9,8 +9,8 @@ Regular Installation on Linux
   Distributions compatibility: Ubuntu 18.04 LTS, Ubuntu 20.04 LTS, Ubuntu 22.04 LTS, Centos 7 and Manjaro
 
 * Dependencies: deal.II library (`deal.II website <https://www.dealii.org/>`_) and its dependencies (MPI, numdiff, p4est, trilinos and METIS)
-  * Lethe requires a modern version of the deal.II library. At the time of this writing, ``deal.II 9.5`` and ``deal.II 9.6pre`` (the ``master`` branch version) are supported.
-  * The compatibility with these two branches is ensured by Continuous Integration (CI) using Github Actions.
+  * Lethe requires a modern version of the deal.II library. At the time of this writing, only the ``deal.II 9.6pre`` (the ``master`` branch version) is supported.
+  * The compatibility with this branch is ensured by Continuous Integration (CI) using Github Actions.
   * A `dealii fork <https://github.com/lethe-cfd/dealii>`_ is maintained by Lethe team. This fork does not include any modification to deal.II library, but it is the latest version with which Lethe was tested. We work hard to ensure compatibility with the latest deal.II version and we do not modify the library except through pull requests on the official deal.II repository.
 
 .. warning:: 
