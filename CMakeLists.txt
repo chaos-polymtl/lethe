@@ -16,7 +16,7 @@ set_property(GLOBAL PROPERTY TARGET_SUPPORTS_SHARED_LIBS TRUE)
 if(DEFINED deal.II_DIR)
   set(_had_deal_ii TRUE)
 endif()
-find_package(deal.II 9.4.0 QUIET REQUIRED
+find_package(deal.II 9.5.0 QUIET REQUIRED
   HINTS "${deal.II_DIR}" "${DEAL_II_DIR}" "$ENV{DEAL_II_DIR}")
 deal_ii_initialize_cached_variables()
 
