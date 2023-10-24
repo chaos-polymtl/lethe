@@ -1195,20 +1195,6 @@ private:
 
   double effective_radius;
   double effective_mass;
-
-
-
-  // Normal and tangential contact forces, tangential and rolling torques,
-  // normal unit vector of the contact and contact relative velocity in the
-  // normal direction
-  Tensor<1, 3> normal_unit_vector;
-  Tensor<1, 3> normal_force;
-  Tensor<1, 3> tangential_force;
-  Tensor<1, 3> particle_one_tangential_torque;
-  Tensor<1, 3> particle_two_tangential_torque;
-  Tensor<1, 3> rolling_resistance_torque;
-  double       normal_relative_velocity_value;
-  Tensor<1, 3> tangential_relative_velocity;
 };
 
 #endif /* particle_particle_contact_force_h */

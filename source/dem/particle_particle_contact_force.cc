@@ -135,6 +135,19 @@ ParticleParticleContactForce<dim, contact_model, rolling_friction_model>::
   auto &ghost_local_periodic_adjacent_particles =
     container_manager.ghost_local_periodic_adjacent_particles;
 
+  // Define local variables which will be used within the contact calculation
+  //  Namely: normal and tangential contact forces, tangential and rolling
+  //  torques, normal unit vector of the contact and contact relative velocity
+  //  in the normal direction
+  Tensor<1, 3> normal_unit_vector;
+  Tensor<1, 3> normal_force;
+  Tensor<1, 3> tangential_force;
+  Tensor<1, 3> particle_one_tangential_torque;
+  Tensor<1, 3> particle_two_tangential_torque;
+  Tensor<1, 3> rolling_resistance_torque;
+  double       normal_relative_velocity_value;
+  Tensor<1, 3> tangential_relative_velocity;
+
   // Contact forces calculations of local-local and local-ghost particle
   // pairs are performed in separate loops
 
@@ -197,14 +210,16 @@ ParticleParticleContactForce<dim, contact_model, rolling_friction_model>::
                 {
                   // This means that the adjacent particles are in contact
 
+
+
                   // Since the normal overlap is already calculated, we update
                   // this element of the container here. The rest of information
                   // are updated using the following function
                   this->update_contact_information(
                     contact_info,
-                    this->tangential_relative_velocity,
-                    this->normal_relative_velocity_value,
-                    this->normal_unit_vector,
+                    tangential_relative_velocity,
+                    normal_relative_velocity_value,
+                    normal_unit_vector,
                     particle_one_properties,
                     particle_two_properties,
                     particle_one_location,
@@ -215,19 +230,18 @@ ParticleParticleContactForce<dim, contact_model, rolling_friction_model>::
                                 Parameters::Lagrangian::
                                   ParticleParticleContactForceModel::linear)
                     {
-                      calculate_linear_contact(
-                        contact_info,
-                        this->tangential_relative_velocity,
-                        this->normal_relative_velocity_value,
-                        this->normal_unit_vector,
-                        normal_overlap,
-                        particle_one_properties,
-                        particle_two_properties,
-                        this->normal_force,
-                        this->tangential_force,
-                        this->particle_one_tangential_torque,
-                        this->particle_two_tangential_torque,
-                        this->rolling_resistance_torque);
+                      calculate_linear_contact(contact_info,
+                                               tangential_relative_velocity,
+                                               normal_relative_velocity_value,
+                                               normal_unit_vector,
+                                               normal_overlap,
+                                               particle_one_properties,
+                                               particle_two_properties,
+                                               normal_force,
+                                               tangential_force,
+                                               particle_one_tangential_torque,
+                                               particle_two_tangential_torque,
+                                               rolling_resistance_torque);
                     }
 
                   if constexpr (contact_model ==
@@ -236,17 +250,17 @@ ParticleParticleContactForce<dim, contact_model, rolling_friction_model>::
                     {
                       this->calculate_hertz_contact(
                         contact_info,
-                        this->tangential_relative_velocity,
-                        this->normal_relative_velocity_value,
-                        this->normal_unit_vector,
+                        tangential_relative_velocity,
+                        normal_relative_velocity_value,
+                        normal_unit_vector,
                         normal_overlap,
                         particle_one_properties,
                         particle_two_properties,
-                        this->normal_force,
-                        this->tangential_force,
-                        this->particle_one_tangential_torque,
-                        this->particle_two_tangential_torque,
-                        this->rolling_resistance_torque);
+                        normal_force,
+                        tangential_force,
+                        particle_one_tangential_torque,
+                        particle_two_tangential_torque,
+                        rolling_resistance_torque);
                     }
 
                   if constexpr (contact_model ==
@@ -255,17 +269,17 @@ ParticleParticleContactForce<dim, contact_model, rolling_friction_model>::
                     {
                       this->calculate_hertz_JKR_contact(
                         contact_info,
-                        this->tangential_relative_velocity,
-                        this->normal_relative_velocity_value,
-                        this->normal_unit_vector,
+                        tangential_relative_velocity,
+                        normal_relative_velocity_value,
+                        normal_unit_vector,
                         normal_overlap,
                         particle_one_properties,
                         particle_two_properties,
-                        this->normal_force,
-                        this->tangential_force,
-                        this->particle_one_tangential_torque,
-                        this->particle_two_tangential_torque,
-                        this->rolling_resistance_torque);
+                        normal_force,
+                        tangential_force,
+                        particle_one_tangential_torque,
+                        particle_two_tangential_torque,
+                        rolling_resistance_torque);
                     }
 
                   if constexpr (contact_model ==
@@ -275,17 +289,17 @@ ParticleParticleContactForce<dim, contact_model, rolling_friction_model>::
                     {
                       calculate_hertz_mindlin_limit_force_contact(
                         contact_info,
-                        this->tangential_relative_velocity,
-                        this->normal_relative_velocity_value,
-                        this->normal_unit_vector,
+                        tangential_relative_velocity,
+                        normal_relative_velocity_value,
+                        normal_unit_vector,
                         normal_overlap,
                         particle_one_properties,
                         particle_two_properties,
-                        this->normal_force,
-                        this->tangential_force,
-                        this->particle_one_tangential_torque,
-                        this->particle_two_tangential_torque,
-                        this->rolling_resistance_torque);
+                        normal_force,
+                        tangential_force,
+                        particle_one_tangential_torque,
+                        particle_two_tangential_torque,
+                        rolling_resistance_torque);
                     }
 
                   if constexpr (contact_model ==
@@ -295,17 +309,17 @@ ParticleParticleContactForce<dim, contact_model, rolling_friction_model>::
                     {
                       calculate_hertz_mindlin_limit_overlap_contact(
                         contact_info,
-                        this->tangential_relative_velocity,
-                        this->normal_relative_velocity_value,
-                        this->normal_unit_vector,
+                        tangential_relative_velocity,
+                        normal_relative_velocity_value,
+                        normal_unit_vector,
                         normal_overlap,
                         particle_one_properties,
                         particle_two_properties,
-                        this->normal_force,
-                        this->tangential_force,
-                        this->particle_one_tangential_torque,
-                        this->particle_two_tangential_torque,
-                        this->rolling_resistance_torque);
+                        normal_force,
+                        tangential_force,
+                        particle_one_tangential_torque,
+                        particle_two_tangential_torque,
+                        rolling_resistance_torque);
                     }
 
 
@@ -318,11 +332,11 @@ ParticleParticleContactForce<dim, contact_model, rolling_friction_model>::
                   // Apply the calculated forces and torques on the particle
                   // pair
                   this->apply_force_and_torque_on_local_particles(
-                    this->normal_force,
-                    this->tangential_force,
-                    this->particle_one_tangential_torque,
-                    this->particle_two_tangential_torque,
-                    this->rolling_resistance_torque,
+                    normal_force,
+                    tangential_force,
+                    particle_one_tangential_torque,
+                    particle_two_tangential_torque,
+                    rolling_resistance_torque,
                     particle_one_torque,
                     particle_two_torque,
                     particle_one_force,
@@ -404,9 +418,9 @@ ParticleParticleContactForce<dim, contact_model, rolling_friction_model>::
                   // are updated using the following function
                   this->update_contact_information(
                     contact_info,
-                    this->tangential_relative_velocity,
-                    this->normal_relative_velocity_value,
-                    this->normal_unit_vector,
+                    tangential_relative_velocity,
+                    normal_relative_velocity_value,
+                    normal_unit_vector,
                     particle_one_properties,
                     particle_two_properties,
                     particle_one_location,
@@ -417,19 +431,18 @@ ParticleParticleContactForce<dim, contact_model, rolling_friction_model>::
                                 Parameters::Lagrangian::
                                   ParticleParticleContactForceModel::linear)
                     {
-                      calculate_linear_contact(
-                        contact_info,
-                        this->tangential_relative_velocity,
-                        this->normal_relative_velocity_value,
-                        this->normal_unit_vector,
-                        normal_overlap,
-                        particle_one_properties,
-                        particle_two_properties,
-                        this->normal_force,
-                        this->tangential_force,
-                        this->particle_one_tangential_torque,
-                        this->particle_two_tangential_torque,
-                        this->rolling_resistance_torque);
+                      calculate_linear_contact(contact_info,
+                                               tangential_relative_velocity,
+                                               normal_relative_velocity_value,
+                                               normal_unit_vector,
+                                               normal_overlap,
+                                               particle_one_properties,
+                                               particle_two_properties,
+                                               normal_force,
+                                               tangential_force,
+                                               particle_one_tangential_torque,
+                                               particle_two_tangential_torque,
+                                               rolling_resistance_torque);
                     }
 
                   if constexpr (contact_model ==
@@ -438,17 +451,17 @@ ParticleParticleContactForce<dim, contact_model, rolling_friction_model>::
                     {
                       this->calculate_hertz_contact(
                         contact_info,
-                        this->tangential_relative_velocity,
-                        this->normal_relative_velocity_value,
-                        this->normal_unit_vector,
+                        tangential_relative_velocity,
+                        normal_relative_velocity_value,
+                        normal_unit_vector,
                         normal_overlap,
                         particle_one_properties,
                         particle_two_properties,
-                        this->normal_force,
-                        this->tangential_force,
-                        this->particle_one_tangential_torque,
-                        this->particle_two_tangential_torque,
-                        this->rolling_resistance_torque);
+                        normal_force,
+                        tangential_force,
+                        particle_one_tangential_torque,
+                        particle_two_tangential_torque,
+                        rolling_resistance_torque);
                     }
 
                   if constexpr (contact_model ==
@@ -457,17 +470,17 @@ ParticleParticleContactForce<dim, contact_model, rolling_friction_model>::
                     {
                       this->calculate_hertz_JKR_contact(
                         contact_info,
-                        this->tangential_relative_velocity,
-                        this->normal_relative_velocity_value,
-                        this->normal_unit_vector,
+                        tangential_relative_velocity,
+                        normal_relative_velocity_value,
+                        normal_unit_vector,
                         normal_overlap,
                         particle_one_properties,
                         particle_two_properties,
-                        this->normal_force,
-                        this->tangential_force,
-                        this->particle_one_tangential_torque,
-                        this->particle_two_tangential_torque,
-                        this->rolling_resistance_torque);
+                        normal_force,
+                        tangential_force,
+                        particle_one_tangential_torque,
+                        particle_two_tangential_torque,
+                        rolling_resistance_torque);
                     }
 
                   if constexpr (contact_model ==
@@ -477,17 +490,17 @@ ParticleParticleContactForce<dim, contact_model, rolling_friction_model>::
                     {
                       calculate_hertz_mindlin_limit_force_contact(
                         contact_info,
-                        this->tangential_relative_velocity,
-                        this->normal_relative_velocity_value,
-                        this->normal_unit_vector,
+                        tangential_relative_velocity,
+                        normal_relative_velocity_value,
+                        normal_unit_vector,
                         normal_overlap,
                         particle_one_properties,
                         particle_two_properties,
-                        this->normal_force,
-                        this->tangential_force,
-                        this->particle_one_tangential_torque,
-                        this->particle_two_tangential_torque,
-                        this->rolling_resistance_torque);
+                        normal_force,
+                        tangential_force,
+                        particle_one_tangential_torque,
+                        particle_two_tangential_torque,
+                        rolling_resistance_torque);
                     }
 
                   if constexpr (contact_model ==
@@ -497,27 +510,27 @@ ParticleParticleContactForce<dim, contact_model, rolling_friction_model>::
                     {
                       calculate_hertz_mindlin_limit_overlap_contact(
                         contact_info,
-                        this->tangential_relative_velocity,
-                        this->normal_relative_velocity_value,
-                        this->normal_unit_vector,
+                        tangential_relative_velocity,
+                        normal_relative_velocity_value,
+                        normal_unit_vector,
                         normal_overlap,
                         particle_one_properties,
                         particle_two_properties,
-                        this->normal_force,
-                        this->tangential_force,
-                        this->particle_one_tangential_torque,
-                        this->particle_two_tangential_torque,
-                        this->rolling_resistance_torque);
+                        normal_force,
+                        tangential_force,
+                        particle_one_tangential_torque,
+                        particle_two_tangential_torque,
+                        rolling_resistance_torque);
                     }
 
 
                   // Apply the calculated forces and torques on the particle
                   // pair
                   this->apply_force_and_torque_on_single_local_particle(
-                    this->normal_force,
-                    this->tangential_force,
-                    this->particle_one_tangential_torque,
-                    this->rolling_resistance_torque,
+                    normal_force,
+                    tangential_force,
+                    particle_one_tangential_torque,
+                    rolling_resistance_torque,
                     particle_one_torque,
                     particle_one_force);
                 }
@@ -596,9 +609,9 @@ ParticleParticleContactForce<dim, contact_model, rolling_friction_model>::
                   // are updated using the following function
                   this->update_contact_information(
                     contact_info,
-                    this->tangential_relative_velocity,
-                    this->normal_relative_velocity_value,
-                    this->normal_unit_vector,
+                    tangential_relative_velocity,
+                    normal_relative_velocity_value,
+                    normal_unit_vector,
                     particle_one_properties,
                     particle_two_properties,
                     particle_one_location,
@@ -609,19 +622,18 @@ ParticleParticleContactForce<dim, contact_model, rolling_friction_model>::
                                 Parameters::Lagrangian::
                                   ParticleParticleContactForceModel::linear)
                     {
-                      calculate_linear_contact(
-                        contact_info,
-                        this->tangential_relative_velocity,
-                        this->normal_relative_velocity_value,
-                        this->normal_unit_vector,
-                        normal_overlap,
-                        particle_one_properties,
-                        particle_two_properties,
-                        this->normal_force,
-                        this->tangential_force,
-                        this->particle_one_tangential_torque,
-                        this->particle_two_tangential_torque,
-                        this->rolling_resistance_torque);
+                      calculate_linear_contact(contact_info,
+                                               tangential_relative_velocity,
+                                               normal_relative_velocity_value,
+                                               normal_unit_vector,
+                                               normal_overlap,
+                                               particle_one_properties,
+                                               particle_two_properties,
+                                               normal_force,
+                                               tangential_force,
+                                               particle_one_tangential_torque,
+                                               particle_two_tangential_torque,
+                                               rolling_resistance_torque);
                     }
 
                   if constexpr (contact_model ==
@@ -630,17 +642,17 @@ ParticleParticleContactForce<dim, contact_model, rolling_friction_model>::
                     {
                       this->calculate_hertz_contact(
                         contact_info,
-                        this->tangential_relative_velocity,
-                        this->normal_relative_velocity_value,
-                        this->normal_unit_vector,
+                        tangential_relative_velocity,
+                        normal_relative_velocity_value,
+                        normal_unit_vector,
                         normal_overlap,
                         particle_one_properties,
                         particle_two_properties,
-                        this->normal_force,
-                        this->tangential_force,
-                        this->particle_one_tangential_torque,
-                        this->particle_two_tangential_torque,
-                        this->rolling_resistance_torque);
+                        normal_force,
+                        tangential_force,
+                        particle_one_tangential_torque,
+                        particle_two_tangential_torque,
+                        rolling_resistance_torque);
                     }
 
                   if constexpr (contact_model ==
@@ -649,17 +661,17 @@ ParticleParticleContactForce<dim, contact_model, rolling_friction_model>::
                     {
                       this->calculate_hertz_JKR_contact(
                         contact_info,
-                        this->tangential_relative_velocity,
-                        this->normal_relative_velocity_value,
-                        this->normal_unit_vector,
+                        tangential_relative_velocity,
+                        normal_relative_velocity_value,
+                        normal_unit_vector,
                         normal_overlap,
                         particle_one_properties,
                         particle_two_properties,
-                        this->normal_force,
-                        this->tangential_force,
-                        this->particle_one_tangential_torque,
-                        this->particle_two_tangential_torque,
-                        this->rolling_resistance_torque);
+                        normal_force,
+                        tangential_force,
+                        particle_one_tangential_torque,
+                        particle_two_tangential_torque,
+                        rolling_resistance_torque);
                     }
 
                   if constexpr (contact_model ==
@@ -669,17 +681,17 @@ ParticleParticleContactForce<dim, contact_model, rolling_friction_model>::
                     {
                       calculate_hertz_mindlin_limit_force_contact(
                         contact_info,
-                        this->tangential_relative_velocity,
-                        this->normal_relative_velocity_value,
-                        this->normal_unit_vector,
+                        tangential_relative_velocity,
+                        normal_relative_velocity_value,
+                        normal_unit_vector,
                         normal_overlap,
                         particle_one_properties,
                         particle_two_properties,
-                        this->normal_force,
-                        this->tangential_force,
-                        this->particle_one_tangential_torque,
-                        this->particle_two_tangential_torque,
-                        this->rolling_resistance_torque);
+                        normal_force,
+                        tangential_force,
+                        particle_one_tangential_torque,
+                        particle_two_tangential_torque,
+                        rolling_resistance_torque);
                     }
 
                   if constexpr (contact_model ==
@@ -689,17 +701,17 @@ ParticleParticleContactForce<dim, contact_model, rolling_friction_model>::
                     {
                       calculate_hertz_mindlin_limit_overlap_contact(
                         contact_info,
-                        this->tangential_relative_velocity,
-                        this->normal_relative_velocity_value,
-                        this->normal_unit_vector,
+                        tangential_relative_velocity,
+                        normal_relative_velocity_value,
+                        normal_unit_vector,
                         normal_overlap,
                         particle_one_properties,
                         particle_two_properties,
-                        this->normal_force,
-                        this->tangential_force,
-                        this->particle_one_tangential_torque,
-                        this->particle_two_tangential_torque,
-                        this->rolling_resistance_torque);
+                        normal_force,
+                        tangential_force,
+                        particle_one_tangential_torque,
+                        particle_two_tangential_torque,
+                        rolling_resistance_torque);
                     }
 
 
@@ -712,11 +724,11 @@ ParticleParticleContactForce<dim, contact_model, rolling_friction_model>::
                   // Apply the calculated forces and torques on the particle
                   // pair
                   this->apply_force_and_torque_on_local_particles(
-                    this->normal_force,
-                    this->tangential_force,
-                    this->particle_one_tangential_torque,
-                    this->particle_two_tangential_torque,
-                    this->rolling_resistance_torque,
+                    normal_force,
+                    tangential_force,
+                    particle_one_tangential_torque,
+                    particle_two_tangential_torque,
+                    rolling_resistance_torque,
                     particle_one_torque,
                     particle_two_torque,
                     particle_one_force,
@@ -799,9 +811,9 @@ ParticleParticleContactForce<dim, contact_model, rolling_friction_model>::
                   // are updated using the following function
                   this->update_contact_information(
                     contact_info,
-                    this->tangential_relative_velocity,
-                    this->normal_relative_velocity_value,
-                    this->normal_unit_vector,
+                    tangential_relative_velocity,
+                    normal_relative_velocity_value,
+                    normal_unit_vector,
                     particle_one_properties,
                     particle_two_properties,
                     particle_one_location,
@@ -812,19 +824,18 @@ ParticleParticleContactForce<dim, contact_model, rolling_friction_model>::
                                 Parameters::Lagrangian::
                                   ParticleParticleContactForceModel::linear)
                     {
-                      calculate_linear_contact(
-                        contact_info,
-                        this->tangential_relative_velocity,
-                        this->normal_relative_velocity_value,
-                        this->normal_unit_vector,
-                        normal_overlap,
-                        particle_one_properties,
-                        particle_two_properties,
-                        this->normal_force,
-                        this->tangential_force,
-                        this->particle_one_tangential_torque,
-                        this->particle_two_tangential_torque,
-                        this->rolling_resistance_torque);
+                      calculate_linear_contact(contact_info,
+                                               tangential_relative_velocity,
+                                               normal_relative_velocity_value,
+                                               normal_unit_vector,
+                                               normal_overlap,
+                                               particle_one_properties,
+                                               particle_two_properties,
+                                               normal_force,
+                                               tangential_force,
+                                               particle_one_tangential_torque,
+                                               particle_two_tangential_torque,
+                                               rolling_resistance_torque);
                     }
 
                   if constexpr (contact_model ==
@@ -833,17 +844,17 @@ ParticleParticleContactForce<dim, contact_model, rolling_friction_model>::
                     {
                       this->calculate_hertz_contact(
                         contact_info,
-                        this->tangential_relative_velocity,
-                        this->normal_relative_velocity_value,
-                        this->normal_unit_vector,
+                        tangential_relative_velocity,
+                        normal_relative_velocity_value,
+                        normal_unit_vector,
                         normal_overlap,
                         particle_one_properties,
                         particle_two_properties,
-                        this->normal_force,
-                        this->tangential_force,
-                        this->particle_one_tangential_torque,
-                        this->particle_two_tangential_torque,
-                        this->rolling_resistance_torque);
+                        normal_force,
+                        tangential_force,
+                        particle_one_tangential_torque,
+                        particle_two_tangential_torque,
+                        rolling_resistance_torque);
                     }
 
                   if constexpr (contact_model ==
@@ -852,17 +863,17 @@ ParticleParticleContactForce<dim, contact_model, rolling_friction_model>::
                     {
                       this->calculate_hertz_JKR_contact(
                         contact_info,
-                        this->tangential_relative_velocity,
-                        this->normal_relative_velocity_value,
-                        this->normal_unit_vector,
+                        tangential_relative_velocity,
+                        normal_relative_velocity_value,
+                        normal_unit_vector,
                         normal_overlap,
                         particle_one_properties,
                         particle_two_properties,
-                        this->normal_force,
-                        this->tangential_force,
-                        this->particle_one_tangential_torque,
-                        this->particle_two_tangential_torque,
-                        this->rolling_resistance_torque);
+                        normal_force,
+                        tangential_force,
+                        particle_one_tangential_torque,
+                        particle_two_tangential_torque,
+                        rolling_resistance_torque);
                     }
 
                   if constexpr (contact_model ==
@@ -872,17 +883,17 @@ ParticleParticleContactForce<dim, contact_model, rolling_friction_model>::
                     {
                       calculate_hertz_mindlin_limit_force_contact(
                         contact_info,
-                        this->tangential_relative_velocity,
-                        this->normal_relative_velocity_value,
-                        this->normal_unit_vector,
+                        tangential_relative_velocity,
+                        normal_relative_velocity_value,
+                        normal_unit_vector,
                         normal_overlap,
                         particle_one_properties,
                         particle_two_properties,
-                        this->normal_force,
-                        this->tangential_force,
-                        this->particle_one_tangential_torque,
-                        this->particle_two_tangential_torque,
-                        this->rolling_resistance_torque);
+                        normal_force,
+                        tangential_force,
+                        particle_one_tangential_torque,
+                        particle_two_tangential_torque,
+                        rolling_resistance_torque);
                     }
 
                   if constexpr (contact_model ==
@@ -892,27 +903,27 @@ ParticleParticleContactForce<dim, contact_model, rolling_friction_model>::
                     {
                       calculate_hertz_mindlin_limit_overlap_contact(
                         contact_info,
-                        this->tangential_relative_velocity,
-                        this->normal_relative_velocity_value,
-                        this->normal_unit_vector,
+                        tangential_relative_velocity,
+                        normal_relative_velocity_value,
+                        normal_unit_vector,
                         normal_overlap,
                         particle_one_properties,
                         particle_two_properties,
-                        this->normal_force,
-                        this->tangential_force,
-                        this->particle_one_tangential_torque,
-                        this->particle_two_tangential_torque,
-                        this->rolling_resistance_torque);
+                        normal_force,
+                        tangential_force,
+                        particle_one_tangential_torque,
+                        particle_two_tangential_torque,
+                        rolling_resistance_torque);
                     }
 
 
                   // Apply the calculated forces and torques on the particle
                   // pair
                   this->apply_force_and_torque_on_single_local_particle(
-                    this->normal_force,
-                    this->tangential_force,
-                    this->particle_one_tangential_torque,
-                    this->rolling_resistance_torque,
+                    normal_force,
+                    tangential_force,
+                    particle_one_tangential_torque,
+                    rolling_resistance_torque,
                     particle_one_torque,
                     particle_one_force);
                 }
@@ -990,9 +1001,9 @@ ParticleParticleContactForce<dim, contact_model, rolling_friction_model>::
                   // are updated using the following function
                   this->update_contact_information(
                     contact_info,
-                    this->tangential_relative_velocity,
-                    this->normal_relative_velocity_value,
-                    this->normal_unit_vector,
+                    tangential_relative_velocity,
+                    normal_relative_velocity_value,
+                    normal_unit_vector,
                     particle_two_properties,
                     particle_one_properties,
                     particle_two_location,
@@ -1003,19 +1014,18 @@ ParticleParticleContactForce<dim, contact_model, rolling_friction_model>::
                                 Parameters::Lagrangian::
                                   ParticleParticleContactForceModel::linear)
                     {
-                      calculate_linear_contact(
-                        contact_info,
-                        this->tangential_relative_velocity,
-                        this->normal_relative_velocity_value,
-                        this->normal_unit_vector,
-                        normal_overlap,
-                        particle_two_properties,
-                        particle_one_properties,
-                        this->normal_force,
-                        this->tangential_force,
-                        this->particle_one_tangential_torque,
-                        this->particle_two_tangential_torque,
-                        this->rolling_resistance_torque);
+                      calculate_linear_contact(contact_info,
+                                               tangential_relative_velocity,
+                                               normal_relative_velocity_value,
+                                               normal_unit_vector,
+                                               normal_overlap,
+                                               particle_two_properties,
+                                               particle_one_properties,
+                                               normal_force,
+                                               tangential_force,
+                                               particle_one_tangential_torque,
+                                               particle_two_tangential_torque,
+                                               rolling_resistance_torque);
                     }
 
                   if constexpr (contact_model ==
@@ -1024,17 +1034,17 @@ ParticleParticleContactForce<dim, contact_model, rolling_friction_model>::
                     {
                       this->calculate_hertz_contact(
                         contact_info,
-                        this->tangential_relative_velocity,
-                        this->normal_relative_velocity_value,
-                        this->normal_unit_vector,
+                        tangential_relative_velocity,
+                        normal_relative_velocity_value,
+                        normal_unit_vector,
                         normal_overlap,
                         particle_two_properties,
                         particle_one_properties,
-                        this->normal_force,
-                        this->tangential_force,
-                        this->particle_two_tangential_torque,
-                        this->particle_one_tangential_torque,
-                        this->rolling_resistance_torque);
+                        normal_force,
+                        tangential_force,
+                        particle_two_tangential_torque,
+                        particle_one_tangential_torque,
+                        rolling_resistance_torque);
                     }
 
                   if constexpr (contact_model ==
@@ -1043,17 +1053,17 @@ ParticleParticleContactForce<dim, contact_model, rolling_friction_model>::
                     {
                       this->calculate_hertz_JKR_contact(
                         contact_info,
-                        this->tangential_relative_velocity,
-                        this->normal_relative_velocity_value,
-                        this->normal_unit_vector,
+                        tangential_relative_velocity,
+                        normal_relative_velocity_value,
+                        normal_unit_vector,
                         normal_overlap,
                         particle_two_properties,
                         particle_one_properties,
-                        this->normal_force,
-                        this->tangential_force,
-                        this->particle_two_tangential_torque,
-                        this->particle_one_tangential_torque,
-                        this->rolling_resistance_torque);
+                        normal_force,
+                        tangential_force,
+                        particle_two_tangential_torque,
+                        particle_one_tangential_torque,
+                        rolling_resistance_torque);
                     }
 
                   if constexpr (contact_model ==
@@ -1063,17 +1073,17 @@ ParticleParticleContactForce<dim, contact_model, rolling_friction_model>::
                     {
                       calculate_hertz_mindlin_limit_force_contact(
                         contact_info,
-                        this->tangential_relative_velocity,
-                        this->normal_relative_velocity_value,
-                        this->normal_unit_vector,
+                        tangential_relative_velocity,
+                        normal_relative_velocity_value,
+                        normal_unit_vector,
                         normal_overlap,
                         particle_two_properties,
                         particle_one_properties,
-                        this->normal_force,
-                        this->tangential_force,
-                        this->particle_two_tangential_torque,
-                        this->particle_one_tangential_torque,
-                        this->rolling_resistance_torque);
+                        normal_force,
+                        tangential_force,
+                        particle_two_tangential_torque,
+                        particle_one_tangential_torque,
+                        rolling_resistance_torque);
                     }
 
                   if constexpr (contact_model ==
@@ -1083,26 +1093,26 @@ ParticleParticleContactForce<dim, contact_model, rolling_friction_model>::
                     {
                       calculate_hertz_mindlin_limit_overlap_contact(
                         contact_info,
-                        this->tangential_relative_velocity,
-                        this->normal_relative_velocity_value,
-                        this->normal_unit_vector,
+                        tangential_relative_velocity,
+                        normal_relative_velocity_value,
+                        normal_unit_vector,
                         normal_overlap,
                         particle_two_properties,
                         particle_one_properties,
-                        this->normal_force,
-                        this->tangential_force,
-                        this->particle_two_tangential_torque,
-                        this->particle_one_tangential_torque,
-                        this->rolling_resistance_torque);
+                        normal_force,
+                        tangential_force,
+                        particle_two_tangential_torque,
+                        particle_one_tangential_torque,
+                        rolling_resistance_torque);
                     }
 
                   // Apply the calculated forces and torques on the particle
                   // pair
                   this->apply_force_and_torque_on_single_local_particle(
-                    this->normal_force,
-                    this->tangential_force,
-                    this->particle_two_tangential_torque,
-                    this->rolling_resistance_torque,
+                    normal_force,
+                    tangential_force,
+                    particle_two_tangential_torque,
+                    rolling_resistance_torque,
                     particle_two_torque,
                     particle_two_force);
                 }
@@ -1183,6 +1193,15 @@ ParticleParticleContactForce<dim, contact_model, rolling_friction_model>::
                                                    n_particle_types);
   model_parameter_beta.resize(n_particle_types * n_particle_types);
 
+
+  // Define local variables which will be used within the contact calculation
+  //  Namely: normal and tangential contact forces, tangential and rolling
+  //  torques, normal unit vector of the contact and contact relative velocity
+  //  in the normal direction
+  Tensor<1, 3> normal_unit_vector;
+  double       normal_relative_velocity_value;
+  Tensor<1, 3> tangential_relative_velocity;
+
   // DEM::PropertiesIndex::type is the first (0) property of particles in the
   // DEM solver. For the IB particles, the first property is ID. For force and
   // torque calculations, we need pairwise properties (such as effective
@@ -1233,9 +1252,9 @@ ParticleParticleContactForce<dim, contact_model, rolling_friction_model>::
       // this element of the container here. The rest of information
       // are updated using the following function
       update_contact_information(contact_info,
-                                 this->tangential_relative_velocity,
-                                 this->normal_relative_velocity_value,
-                                 this->normal_unit_vector,
+                                 tangential_relative_velocity,
+                                 normal_relative_velocity_value,
+                                 normal_unit_vector,
                                  particle_one_properties,
                                  particle_two_properties,
                                  particle_one_location_3d,
@@ -1244,17 +1263,17 @@ ParticleParticleContactForce<dim, contact_model, rolling_friction_model>::
 
 
       calculate_linear_contact(contact_info,
-                               this->tangential_relative_velocity,
-                               this->normal_relative_velocity_value,
-                               this->normal_unit_vector,
+                               tangential_relative_velocity,
+                               normal_relative_velocity_value,
+                               normal_unit_vector,
                                normal_overlap,
                                particle_one_properties,
                                particle_two_properties,
-                               this->normal_force,
-                               this->tangential_force,
-                               this->particle_one_tangential_torque,
-                               this->particle_two_tangential_torque,
-                               this->rolling_resistance_torque);
+                               normal_force,
+                               tangential_force,
+                               particle_one_tangential_torque,
+                               particle_two_tangential_torque,
+                               rolling_resistance_torque);
     }
 
   if constexpr (contact_model == Parameters::Lagrangian::
@@ -1307,9 +1326,9 @@ ParticleParticleContactForce<dim, contact_model, rolling_friction_model>::
       // this element of the container here. The rest of information
       // are updated using the following function
       this->update_contact_information(contact_info,
-                                       this->tangential_relative_velocity,
-                                       this->normal_relative_velocity_value,
-                                       this->normal_unit_vector,
+                                       tangential_relative_velocity,
+                                       normal_relative_velocity_value,
+                                       normal_unit_vector,
                                        particle_one_properties,
                                        particle_two_properties,
                                        particle_one_location_3d,
@@ -1317,9 +1336,9 @@ ParticleParticleContactForce<dim, contact_model, rolling_friction_model>::
                                        dt);
 
       calculate_hertz_contact(contact_info,
-                              this->tangential_relative_velocity,
-                              this->normal_relative_velocity_value,
-                              this->normal_unit_vector,
+                              tangential_relative_velocity,
+                              normal_relative_velocity_value,
+                              normal_unit_vector,
                               normal_overlap,
                               particle_one_properties,
                               particle_two_properties,
@@ -1382,9 +1401,9 @@ ParticleParticleContactForce<dim, contact_model, rolling_friction_model>::
       // this element of the container here. The rest of information
       // are updated using the following function
       this->update_contact_information(contact_info,
-                                       this->tangential_relative_velocity,
-                                       this->normal_relative_velocity_value,
-                                       this->normal_unit_vector,
+                                       tangential_relative_velocity,
+                                       normal_relative_velocity_value,
+                                       normal_unit_vector,
                                        particle_one_properties,
                                        particle_two_properties,
                                        particle_one_location_3d,
@@ -1392,9 +1411,9 @@ ParticleParticleContactForce<dim, contact_model, rolling_friction_model>::
                                        dt);
 
       calculate_hertz_JKR_contact(contact_info,
-                                  this->tangential_relative_velocity,
-                                  this->normal_relative_velocity_value,
-                                  this->normal_unit_vector,
+                                  tangential_relative_velocity,
+                                  normal_relative_velocity_value,
+                                  normal_unit_vector,
                                   normal_overlap,
                                   particle_one_properties,
                                   particle_two_properties,
@@ -1455,9 +1474,9 @@ ParticleParticleContactForce<dim, contact_model, rolling_friction_model>::
       // this element of the container here. The rest of information
       // are updated using the following function
       this->update_contact_information(contact_info,
-                                       this->tangential_relative_velocity,
-                                       this->normal_relative_velocity_value,
-                                       this->normal_unit_vector,
+                                       tangential_relative_velocity,
+                                       normal_relative_velocity_value,
+                                       normal_unit_vector,
                                        particle_one_properties,
                                        particle_two_properties,
                                        particle_one_location_3d,
@@ -1466,9 +1485,9 @@ ParticleParticleContactForce<dim, contact_model, rolling_friction_model>::
 
       calculate_hertz_mindlin_limit_force_contact(
         contact_info,
-        this->tangential_relative_velocity,
-        this->normal_relative_velocity_value,
-        this->normal_unit_vector,
+        tangential_relative_velocity,
+        normal_relative_velocity_value,
+        normal_unit_vector,
         normal_overlap,
         particle_one_properties,
         particle_two_properties,
@@ -1530,9 +1549,9 @@ ParticleParticleContactForce<dim, contact_model, rolling_friction_model>::
       // this element of the container here. The rest of information
       // are updated using the following function
       this->update_contact_information(contact_info,
-                                       this->tangential_relative_velocity,
-                                       this->normal_relative_velocity_value,
-                                       this->normal_unit_vector,
+                                       tangential_relative_velocity,
+                                       normal_relative_velocity_value,
+                                       normal_unit_vector,
                                        particle_one_properties,
                                        particle_two_properties,
                                        particle_one_location_3d,
@@ -1541,9 +1560,9 @@ ParticleParticleContactForce<dim, contact_model, rolling_friction_model>::
 
       calculate_hertz_mindlin_limit_overlap_contact(
         contact_info,
-        this->tangential_relative_velocity,
-        this->normal_relative_velocity_value,
-        this->normal_unit_vector,
+        tangential_relative_velocity,
+        normal_relative_velocity_value,
+        normal_unit_vector,
         normal_overlap,
         particle_one_properties,
         particle_two_properties,
