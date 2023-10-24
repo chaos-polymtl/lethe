@@ -142,7 +142,7 @@ MFNavierStokesSolver<dim>::solve()
             .at(PhysicsID::fluid_dynamics)
             .mg_verbosity == Parameters::Verbosity::extra_verbose)
         {
-          announce_string(this->pcout, "Multigrid setup timings:");
+          announce_string(this->pcout, "Multigrid setup timings");
           this->mg_computing_timer.print_summary();
         }
       this->mg_computing_timer.reset();
@@ -439,8 +439,11 @@ template <int dim>
 double
 MFNavierStokesSolver<dim>::estimate_omega(
   std::shared_ptr<NavierStokesOperatorBase<dim, double>> &mg_operator,
-  const unsigned int                                     &level)
+  const unsigned int                                     &level,
+  const VectorType                                       &diagonal)
 {
+  TimerOutput::Scope t(this->mg_computing_timer, "Estimate eigenvalues");
+
   double omega = 0.0;
 
   using OperatorType               = NavierStokesOperatorBase<dim, double>;
@@ -451,9 +454,7 @@ MFNavierStokesSolver<dim>::estimate_omega(
     chebyshev_additional_data;
 
   chebyshev_additional_data.preconditioner =
-    std::make_shared<SmootherPreconditionerType>();
-  mg_operator->compute_inverse_diagonal(
-    chebyshev_additional_data.preconditioner->get_vector());
+    std::make_shared<SmootherPreconditionerType>(diagonal);
   chebyshev_additional_data.constraints.copy_from(this->zero_constraints);
   chebyshev_additional_data.degree =
     this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
@@ -730,10 +731,10 @@ MFNavierStokesSolver<dim>::solve_with_LSMG(SolverGMRES<VectorType> &solver)
 
   for (unsigned int level = minlevel; level <= maxlevel; ++level)
     {
+      VectorType diagonal_vector;
+      mg_operators[level]->compute_inverse_diagonal(diagonal_vector);
       smoother_data[level].preconditioner =
-        std::make_shared<SmootherPreconditionerType>();
-      mg_operators[level]->compute_inverse_diagonal(
-        smoother_data[level].preconditioner->get_vector());
+        std::make_shared<SmootherPreconditionerType>(diagonal_vector);
       smoother_data[level].n_iterations =
         this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
           .mg_smoother_iterations;
@@ -741,7 +742,7 @@ MFNavierStokesSolver<dim>::solve_with_LSMG(SolverGMRES<VectorType> &solver)
             .at(PhysicsID::fluid_dynamics)
             .mg_smoother_eig_estimation)
         smoother_data[level].relaxation =
-          estimate_omega(mg_operators[level], level);
+          estimate_omega(mg_operators[level], level, diagonal_vector);
       else
         smoother_data[level].relaxation =
           this->simulation_parameters.linear_solver
@@ -1261,10 +1262,10 @@ MFNavierStokesSolver<dim>::solve_with_GCMG(SolverGMRES<VectorType> &solver)
 
   for (unsigned int level = minlevel; level <= maxlevel; ++level)
     {
+      VectorType diagonal_vector;
+      mg_operators[level]->compute_inverse_diagonal(diagonal_vector);
       smoother_data[level].preconditioner =
-        std::make_shared<SmootherPreconditionerType>();
-      mg_operators[level]->compute_inverse_diagonal(
-        smoother_data[level].preconditioner->get_vector());
+        std::make_shared<SmootherPreconditionerType>(diagonal_vector);
       smoother_data[level].n_iterations =
         this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
           .mg_smoother_iterations;
@@ -1272,7 +1273,7 @@ MFNavierStokesSolver<dim>::solve_with_GCMG(SolverGMRES<VectorType> &solver)
             .at(PhysicsID::fluid_dynamics)
             .mg_smoother_eig_estimation)
         smoother_data[level].relaxation =
-          estimate_omega(mg_operators[level], level);
+          estimate_omega(mg_operators[level], level, diagonal_vector);
       else
         smoother_data[level].relaxation =
           this->simulation_parameters.linear_solver

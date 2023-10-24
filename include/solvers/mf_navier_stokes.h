@@ -200,12 +200,15 @@ private:
    *
    * @param level Corresponding MG level
    *
+   * @param diagonal Pre-computed diagonal of level operator
+   *
    * @return double Omega relaxation parameter
    */
   double
   estimate_omega(
     std::shared_ptr<NavierStokesOperatorBase<dim, double>> &mg_operator,
-    const unsigned int                                     &level);
+    const unsigned int                                     &level,
+    const VectorType                                       &diagonal);
 
 protected:
   // Matrix-free operator
