@@ -231,6 +231,7 @@ protected:
   inline void
   update_contact_information(
     particle_particle_contact_info<dim> &contact_info,
+    Tensor<1, 3>                        &tangential_relative_velocity,
     double                              &normal_relative_velocity_value,
     Tensor<1, 3>                        &normal_unit_vector,
     const ArrayView<const double>       &particle_one_properties,
@@ -291,9 +292,8 @@ protected:
 
     // Calculation of tangential relative velocity
     // v_rt = v_ij - (v_ij⋅n_ij)*n_ij
-    contact_info.tangential_relative_velocity =
-      contact_relative_velocity -
-      (normal_relative_velocity_value * normal_unit_vector);
+    tangential_relative_velocity = contact_relative_velocity -
+                                   (normal_relative_velocity_value * normal_unit_vector);
 
     // Calculation of new tangential_overlap, since this value is
     // history-dependent it needs the value at previous time-step
@@ -304,7 +304,7 @@ protected:
     // new particles are equal to zero
     // delta_t_new = delta_t_old + v_rt*dt
     contact_info.tangential_overlap +=
-      contact_info.tangential_relative_velocity * dt;
+      tangential_relative_velocity * dt;
   }
 
   /**
@@ -417,6 +417,7 @@ protected:
   inline void
   calculate_linear_contact(
     particle_particle_contact_info<dim> &contact_info,
+    const Tensor<1,3>                   &tangential_relative_velocity,
     const double                         normal_relative_velocity_value,
     const Tensor<1, 3>                  &normal_unit_vector,
     const double                         normal_overlap,
@@ -475,7 +476,7 @@ protected:
     // Calculation of tangential force. Since we need damping tangential force
     // in the gross sliding again, we define it as a separate variable
     Tensor<1, 3> damping_tangential_force =
-      tangential_damping_constant * contact_info.tangential_relative_velocity;
+      tangential_damping_constant * tangential_relative_velocity;
 
     tangential_force =
       (tangential_spring_constant * contact_info.tangential_overlap) +
@@ -570,6 +571,7 @@ protected:
   inline void
   calculate_hertz_mindlin_limit_overlap_contact(
     particle_particle_contact_info<dim> &contact_info,
+    const Tensor<1,3>                   &tangential_relative_velocity,
     const double                         normal_relative_velocity_value,
     const Tensor<1, 3>                  &normal_unit_vector,
     const double                         normal_overlap,
@@ -629,7 +631,7 @@ protected:
     // Calculation of tangential force. Since we need damping tangential force
     // in the gross sliding again, we define it as a separate variable
     Tensor<1, 3> damping_tangential_force =
-      tangential_damping_constant * contact_info.tangential_relative_velocity;
+      tangential_damping_constant * tangential_relative_velocity;
     tangential_force =
       (tangential_spring_constant * contact_info.tangential_overlap) +
       damping_tangential_force;
@@ -721,6 +723,7 @@ protected:
   inline void
   calculate_hertz_mindlin_limit_force_contact(
     particle_particle_contact_info<dim> &contact_info,
+    const Tensor<1,3>                   &tangential_relative_velocity,
     const double                         normal_relative_velocity_value,
     const Tensor<1, 3>                  &normal_unit_vector,
     const double                         normal_overlap,
@@ -782,7 +785,7 @@ protected:
     // again, we define it as a separate variable
     tangential_force =
       tangential_spring_constant * contact_info.tangential_overlap +
-      tangential_damping_constant * contact_info.tangential_relative_velocity;
+      tangential_damping_constant * tangential_relative_velocity;
 
     double coulomb_threshold =
       this->effective_coefficient_of_friction[vec_particle_type_index(
@@ -865,6 +868,7 @@ protected:
   inline void
   calculate_hertz_contact(
     particle_particle_contact_info<dim> &contact_info,
+    const Tensor<1, 3>                  &/*tangential_relative_velocity*/,
     const double                         normal_relative_velocity_value,
     const Tensor<1, 3>                  &normal_unit_vector,
     const double                         normal_overlap,
@@ -1005,6 +1009,7 @@ protected:
   inline void
   calculate_hertz_JKR_contact(
     particle_particle_contact_info<dim> &contact_info,
+    const Tensor<1, 3>                  &tangential_relative_velocity,
     const double                         normal_relative_velocity_value,
     const Tensor<1, 3>                  &normal_unit_vector,
     const double                         normal_overlap,
@@ -1095,7 +1100,7 @@ protected:
 
     tangential_force =
       tangential_spring_constant * contact_info.tangential_overlap +
-      tangential_damping_constant * contact_info.tangential_relative_velocity;
+      tangential_damping_constant * tangential_relative_velocity;
 
     // JKR theory says that the coulomb threshold must be modified with the
     // pull-out force.
@@ -1198,6 +1203,7 @@ private:
   Tensor<1, 3> particle_two_tangential_torque;
   Tensor<1, 3> rolling_resistance_torque;
   double       normal_relative_velocity_value;
+  Tensor<1, 3> tangential_relative_velocity;
 };
 
 #endif /* particle_particle_contact_force_h */
