@@ -2182,9 +2182,9 @@ namespace Parameters
         prm.declare_entry(
           "mg verbosity",
           "verbose",
-          Patterns::Selection("quiet|verbose"),
+          Patterns::Selection("quiet|verbose|extra verbose"),
           "State whether LSMG or GCMG should print information about levels "
-          "Choices are <quiet|verbose>.");
+          "Choices are <quiet|verbose|extra verbose>.");
       }
       prm.leave_subsection();
     }
@@ -2299,6 +2299,8 @@ namespace Parameters
         const std::string mg_op = prm.get("mg verbosity");
         if (mg_op == "verbose")
           mg_verbosity = Parameters::Verbosity::verbose;
+        else if (mg_op == "extra verbose")
+          mg_verbosity = Parameters::Verbosity::extra_verbose;
         else if (mg_op == "quiet")
           mg_verbosity = Parameters::Verbosity::quiet;
         else
