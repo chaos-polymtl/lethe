@@ -292,8 +292,9 @@ protected:
 
     // Calculation of tangential relative velocity
     // v_rt = v_ij - (v_ij⋅n_ij)*n_ij
-    tangential_relative_velocity = contact_relative_velocity -
-                                   (normal_relative_velocity_value * normal_unit_vector);
+    tangential_relative_velocity =
+      contact_relative_velocity -
+      (normal_relative_velocity_value * normal_unit_vector);
 
     // Calculation of new tangential_overlap, since this value is
     // history-dependent it needs the value at previous time-step
@@ -303,8 +304,7 @@ protected:
     // modified using its history, while the tangential_overlaps of
     // new particles are equal to zero
     // delta_t_new = delta_t_old + v_rt*dt
-    contact_info.tangential_overlap +=
-      tangential_relative_velocity * dt;
+    contact_info.tangential_overlap += tangential_relative_velocity * dt;
   }
 
   /**
@@ -403,6 +403,7 @@ protected:
    *
    * @param contact_info A container that contains the required information for
    * calculation of the contact force for a particle pair in contact
+   * @param tangential_relative_velocity Tangential relative velocity
    * @param normal_relative_velocity_value Normal relative contact velocity
    * @param normal_unit_vector Contact normal unit vector
    * @param normal_overlap Contact normal overlap
@@ -417,7 +418,7 @@ protected:
   inline void
   calculate_linear_contact(
     particle_particle_contact_info<dim> &contact_info,
-    const Tensor<1,3>                   &tangential_relative_velocity,
+    const Tensor<1, 3>                  &tangential_relative_velocity,
     const double                         normal_relative_velocity_value,
     const Tensor<1, 3>                  &normal_unit_vector,
     const double                         normal_overlap,
@@ -557,6 +558,7 @@ protected:
    *
    * @param contact_info A container that contains the required information for
    * calculation of the contact force for a particle pair in contact
+   * @param tangential_relative_velocity Tangential relative velocity
    * @param normal_relative_velocity_value Normal relative contact velocity
    * @param normal_unit_vector Contact normal unit vector
    * @param normal_overlap Contact normal overlap
@@ -571,7 +573,7 @@ protected:
   inline void
   calculate_hertz_mindlin_limit_overlap_contact(
     particle_particle_contact_info<dim> &contact_info,
-    const Tensor<1,3>                   &tangential_relative_velocity,
+    const Tensor<1, 3>                  &tangential_relative_velocity,
     const double                         normal_relative_velocity_value,
     const Tensor<1, 3>                  &normal_unit_vector,
     const double                         normal_overlap,
@@ -710,6 +712,7 @@ protected:
    *
    * @param contact_info A container that contains the required information for
    * calculation of the contact force for a particle pair in contact
+   * @param tangential_relative_velocity Tangential relative velocity
    * @param normal_relative_velocity_value Normal relative contact velocity
    * @param normal_unit_vector Contact normal unit vector
    * @param normal_overlap Contact normal overlap
@@ -723,7 +726,7 @@ protected:
   inline void
   calculate_hertz_mindlin_limit_force_contact(
     particle_particle_contact_info<dim> &contact_info,
-    const Tensor<1,3>                   &tangential_relative_velocity,
+    const Tensor<1, 3>                  &tangential_relative_velocity,
     const double                         normal_relative_velocity_value,
     const Tensor<1, 3>                  &normal_unit_vector,
     const double                         normal_overlap,
@@ -855,6 +858,7 @@ protected:
    *
    * @param contact_info A container that contains the required information for
    * calculation of the contact force for a particle pair in contact
+   * @param tangential_relative_velocity Tangential relative velocity
    * @param normal_relative_velocity_value Normal relative contact velocity
    * @param normal_unit_vector Contact normal unit vector
    * @param normal_overlap Contact normal overlap
@@ -868,17 +872,17 @@ protected:
   inline void
   calculate_hertz_contact(
     particle_particle_contact_info<dim> &contact_info,
-    const Tensor<1, 3>                  &/*tangential_relative_velocity*/,
-    const double                         normal_relative_velocity_value,
-    const Tensor<1, 3>                  &normal_unit_vector,
-    const double                         normal_overlap,
-    const ArrayView<const double>       &particle_one_properties,
-    const ArrayView<const double>       &particle_two_properties,
-    Tensor<1, 3>                        &normal_force,
-    Tensor<1, 3>                        &tangential_force,
-    Tensor<1, 3>                        &particle_one_tangential_torque,
-    Tensor<1, 3>                        &particle_two_tangential_torque,
-    Tensor<1, 3>                        &rolling_resistance_torque)
+    const Tensor<1, 3> & /*tangential_relative_velocity*/,
+    const double                   normal_relative_velocity_value,
+    const Tensor<1, 3>            &normal_unit_vector,
+    const double                   normal_overlap,
+    const ArrayView<const double> &particle_one_properties,
+    const ArrayView<const double> &particle_two_properties,
+    Tensor<1, 3>                  &normal_force,
+    Tensor<1, 3>                  &tangential_force,
+    Tensor<1, 3>                  &particle_one_tangential_torque,
+    Tensor<1, 3>                  &particle_two_tangential_torque,
+    Tensor<1, 3>                  &rolling_resistance_torque)
   {
     // Calculation of effective radius and mass
     this->find_effective_radius_and_mass(particle_one_properties,
@@ -995,6 +999,7 @@ protected:
    *
    * @param contact_info A container that contains the required information for
    * calculation of the contact force for a particle pair in contact
+   * @param tangential_relative_velocity Tangential relative velocity
    * @param normal_relative_velocity_value Normal relative contact velocity
    * @param normal_unit_vector Contact normal unit vector
    * @param normal_overlap Contact normal overlap
