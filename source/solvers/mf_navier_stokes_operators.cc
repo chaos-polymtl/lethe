@@ -668,10 +668,9 @@ NavierStokesSUPGPSPGOperator<dim, number>::do_cell_integral_local(
 
           for (unsigned int k = 0; k < dim; ++k)
             {
-              // +(v,(u·∇)δu)
-              value_result[i] += gradient[i][k] * previous_values[k];
-              // +(v,(δu·∇)u)
-              value_result[i] += previous_gradient[i][k] * value[k];
+              // +(v,(u·∇)δu + (δu·∇)u)
+              value_result[i] += gradient[i][k] * previous_values[k] +
+                                 previous_gradient[i][k] * value[k];
             }
         }
 
@@ -680,15 +679,11 @@ NavierStokesSUPGPSPGOperator<dim, number>::do_cell_integral_local(
         {
           for (unsigned int k = 0; k < dim; ++k)
             {
-              // (-ν∆δu)·τ∇q
+              // (-ν∆δu + (u·∇)δu + (δu·∇)u)·τ∇q
               gradient_result[dim][i] +=
-                -tau * this->kinematic_viscosity * hessian_diagonal[i][k];
-              // +((u·∇)δu)·τ∇q
-              gradient_result[dim][i] +=
-                tau * gradient[i][k] * previous_values[k];
-              // +((δu·∇)u)·τ∇q
-              gradient_result[dim][i] +=
-                tau * previous_gradient[i][k] * value[k];
+                tau * (-this->kinematic_viscosity * hessian_diagonal[i][k] +
+                       gradient[i][k] * previous_values[k] +
+                       previous_gradient[i][k] * value[k]);
             }
         }
       // (∇δp)τ·∇q
@@ -702,16 +697,12 @@ NavierStokesSUPGPSPGOperator<dim, number>::do_cell_integral_local(
               // Part 1
               for (unsigned int l = 0; l < dim; ++l)
                 {
-                  // +((u·∇)δu)τ(u·∇)v
-                  gradient_result[i][k] += tau * previous_values[k] *
-                                           gradient[i][l] * previous_values[l];
-                  // +((δu·∇)u)τ(u·∇)v
-                  gradient_result[i][k] += tau * previous_values[k] *
-                                           previous_gradient[i][l] * value[l];
-                  // (-ν∆δu)τ(u·∇)v
-                  gradient_result[i][k] += -tau * this->kinematic_viscosity *
-                                           previous_values[k] *
-                                           hessian_diagonal[i][l];
+                  // +((u·∇)δu + (δu·∇)u - ν∆δu)τ(u·∇)v
+                  gradient_result[i][k] +=
+                    tau * previous_values[k] *
+                    (gradient[i][l] * previous_values[l] +
+                     previous_gradient[i][l] * value[l] -
+                     this->kinematic_viscosity * hessian_diagonal[i][l]);
                 }
 
               // +(∇δp)τ(u·∇)v
@@ -721,20 +712,16 @@ NavierStokesSUPGPSPGOperator<dim, number>::do_cell_integral_local(
               // Part 2
               for (unsigned int l = 0; l < dim; ++l)
                 {
-                  // +((u·∇)u)τ(δu·∇)v
-                  gradient_result[i][k] += tau * value[k] *
-                                           previous_gradient[i][l] *
-                                           previous_values[l];
-                  // (-ν∆u)τ(δu·∇)v
-                  gradient_result[i][k] += -tau * this->kinematic_viscosity *
-                                           value[k] *
-                                           previous_hessian_diagonal[i][l];
+                  // +((u·∇)u -ν∆u)τ(δu·∇)v
+                  gradient_result[i][k] +=
+                    tau * value[k] *
+                    (previous_gradient[i][l] * previous_values[l] -
+                     this->kinematic_viscosity *
+                       previous_hessian_diagonal[i][l]);
                 }
-              // +(∇p)τ(δu·∇)v
+              // +(∇p - f)τ(δu·∇)v
               gradient_result[i][k] +=
-                tau * value[k] * previous_gradient[dim][i];
-              // (-f)τδ(u·∇)v
-              gradient_result[i][k] += -tau * value[k] * source_value[i];
+                tau * value[k] * (previous_gradient[dim][i] - source_value[i]);
             }
         }
 
@@ -857,11 +844,10 @@ NavierStokesSUPGPSPGOperator<dim, number>::local_evaluate_residual(
 
               for (unsigned int k = 0; k < dim; ++k)
                 {
-                  //(-ν∆u)·τ∇q
+                  //(-ν∆u + (u·∇)u)·τ∇q
                   gradient_result[dim][i] +=
-                    -tau * this->kinematic_viscosity * hessian_diagonal[i][k];
-                  //+((u·∇)u)·τ∇q
-                  gradient_result[dim][i] += tau * gradient[i][k] * value[k];
+                    tau * (-this->kinematic_viscosity * hessian_diagonal[i][k] +
+                           gradient[i][k] * value[k]);
                 }
             }
           // +(∇p)τ∇·q
@@ -872,22 +858,17 @@ NavierStokesSUPGPSPGOperator<dim, number>::local_evaluate_residual(
             {
               for (unsigned int k = 0; k < dim; ++k)
                 {
-                  // (-f)τ(u·∇)v
-                  gradient_result[i][k] += -tau * value[k] * source_value[i];
-
                   for (unsigned int l = 0; l < dim; ++l)
                     {
-                      // (-ν∆u)τ(u·∇)v
+                      // (-ν∆u + (u·∇)u)τ(u·∇)v
                       gradient_result[i][k] +=
-                        -tau * this->kinematic_viscosity * value[k] *
-                        hessian_diagonal[i][l];
-
-                      // + ((u·∇)u)τ(u·∇)v
-                      gradient_result[i][k] +=
-                        tau * value[k] * gradient[i][l] * value[l];
+                        tau * value[k] *
+                        (-this->kinematic_viscosity * hessian_diagonal[i][l] +
+                         gradient[i][l] * value[l]);
                     }
-                  // + (∇p)τ(u·∇)v
-                  gradient_result[i][k] += tau * value[k] * gradient[dim][i];
+                  // + (∇p - f)τ(u·∇)v
+                  gradient_result[i][k] +=
+                    tau * value[k] * (gradient[dim][i] - source_value[i]);
                 }
             }
 
@@ -1021,10 +1002,9 @@ NavierStokesTransientSUPGPSPGOperator<dim, number>::do_cell_integral_local(
 
           for (unsigned int k = 0; k < dim; ++k)
             {
-              // +(v,(u·∇)δu)
-              value_result[i] += gradient[i][k] * previous_values[k];
-              // +(v,(δu·∇)u)
-              value_result[i] += previous_gradient[i][k] * value[k];
+              // +(v,(u·∇)δu + (δu·∇)u)
+              value_result[i] += gradient[i][k] * previous_values[k] +
+                                 previous_gradient[i][k] * value[k];
             }
           // +(v,∂t δu)
           value_result[i] += bdf_coefs[0] * value[i];
@@ -1035,15 +1015,11 @@ NavierStokesTransientSUPGPSPGOperator<dim, number>::do_cell_integral_local(
         {
           for (unsigned int k = 0; k < dim; ++k)
             {
-              // (-ν∆δu)·τ∇q
+              // (-ν∆δu + (u·∇)δu + (δu·∇)u)·τ∇q
               gradient_result[dim][i] +=
-                -tau * this->kinematic_viscosity * hessian_diagonal[i][k];
-              // +((u·∇)δu)·τ∇q
-              gradient_result[dim][i] +=
-                tau * gradient[i][k] * previous_values[k];
-              // +((δu·∇)u)·τ∇q
-              gradient_result[dim][i] +=
-                tau * previous_gradient[i][k] * value[k];
+                tau * (-this->kinematic_viscosity * hessian_diagonal[i][k] +
+                       gradient[i][k] * previous_values[k] +
+                       previous_gradient[i][k] * value[k]);
             }
           // +(∂t δu)·τ∇q
           gradient_result[dim][i] += tau * bdf_coefs[0] * value[i];
@@ -1059,47 +1035,34 @@ NavierStokesTransientSUPGPSPGOperator<dim, number>::do_cell_integral_local(
               // Part 1
               for (unsigned int l = 0; l < dim; ++l)
                 {
-                  // +((u·∇)δu)τ(u·∇)v
-                  gradient_result[i][k] += tau * previous_values[k] *
-                                           gradient[i][l] * previous_values[l];
-                  // +((δu·∇)u)τ(u·∇)v
-                  gradient_result[i][k] += tau * previous_values[k] *
-                                           previous_gradient[i][l] * value[l];
-                  // (-ν∆δu)τ(u·∇)v
-                  gradient_result[i][k] += -tau * this->kinematic_viscosity *
-                                           previous_values[k] *
-                                           hessian_diagonal[i][l];
+                  // +((u·∇)δu + (δu·∇)u - ν∆δu)τ(u·∇)v
+                  gradient_result[i][k] +=
+                    tau * previous_values[k] *
+                    (gradient[i][l] * previous_values[l] +
+                     previous_gradient[i][l] * value[l] -
+                     this->kinematic_viscosity * hessian_diagonal[i][l]);
                 }
-              // +(∇δp)τ(u·∇)v
+              // +(∇δp + ∂t δu)τ(u·∇)v
               gradient_result[i][k] +=
-                tau * previous_values[k] * gradient[dim][i];
-
-              // +(∂t δu)τ(u·∇)v
-              gradient_result[i][k] +=
-                tau * previous_values[k] * bdf_coefs[0] * value[i];
+                tau * previous_values[k] *
+                (gradient[dim][i] + bdf_coefs[0] * value[i]);
 
               // Part 2
               for (unsigned int l = 0; l < dim; ++l)
                 {
-                  // +((u·∇)u)τ(δu·∇)v
-                  gradient_result[i][k] += tau * value[k] *
-                                           previous_gradient[i][l] *
-                                           previous_values[l];
-                  // (-ν∆u)τ(δu·∇)v
-                  gradient_result[i][k] += -tau * this->kinematic_viscosity *
-                                           value[k] *
-                                           previous_hessian_diagonal[i][l];
+                  // +((u·∇)u - ν∆u)τ(δu·∇)v
+                  gradient_result[i][k] +=
+                    tau * value[k] *
+                    (previous_gradient[i][l] * previous_values[l] -
+                     this->kinematic_viscosity *
+                       previous_hessian_diagonal[i][l]);
                 }
-              // +(∇p)τ(δu·∇)v
+              // +(∇p - f + ∂t u)τ(δu·∇)v
               gradient_result[i][k] +=
-                tau * value[k] * previous_gradient[dim][i];
-              // (-f)τ(δu·∇)v
-              gradient_result[i][k] += -tau * value[k] * source_value[i];
-
-              // +(∂t u)τ(δu·∇)v
-              gradient_result[i][k] += tau * value[k] *
-                                       (bdf_coefs[0] * previous_values[i] +
-                                        previous_time_derivatives[i]);
+                tau * value[k] *
+                (previous_gradient[dim][i] - source_value[i] +
+                 bdf_coefs[0] * previous_values[i] +
+                 previous_time_derivatives[i]);
             }
         }
 
@@ -1215,8 +1178,9 @@ NavierStokesTransientSUPGPSPGOperator<dim, number>::local_evaluate_residual(
               gradient_result[i] = this->kinematic_viscosity * gradient[i];
               // -(∇·v,p)
               gradient_result[i][i] += -value[dim];
-              // -(v,f)
-              value_result[i] = -source_value[i];
+              // +(v,-f + ∂t u)
+              value_result[i] = -source_value[i] + bdf_coefs[0] * value[i] +
+                                previous_time_derivatives[i];
               // +(q,∇·u)
               value_result[dim] += gradient[i][i];
 
@@ -1225,28 +1189,22 @@ NavierStokesTransientSUPGPSPGOperator<dim, number>::local_evaluate_residual(
                   // +(v,(u·∇)u)
                   value_result[i] += gradient[i][k] * value[k];
                 }
-              // + (v,∂t u)
-              value_result[i] +=
-                (bdf_coefs[0] * value[i] + previous_time_derivatives[i]);
             }
 
           // PSPG term
           for (unsigned int i = 0; i < dim; ++i)
             {
-              // (-f)·τ∇q
-              gradient_result[dim][i] += -tau * source_value[i];
-
               for (unsigned int k = 0; k < dim; ++k)
                 {
-                  // (-ν∆u)·τ∇q
+                  // (-ν∆u + (u·∇)u)·τ∇q
                   gradient_result[dim][i] +=
-                    -tau * this->kinematic_viscosity * hessian_diagonal[i][k];
-                  // +((u·∇)u)·τ∇q
-                  gradient_result[dim][i] += tau * gradient[i][k] * value[k];
+                    tau * (-this->kinematic_viscosity * hessian_diagonal[i][k] +
+                           gradient[i][k] * value[k]);
                 }
-              // +(∂t u)·τ∇q
+              // +(-f + ∂t u)·τ∇q
               gradient_result[dim][i] +=
-                tau * (bdf_coefs[0] * value[i] + previous_time_derivatives[i]);
+                tau * (-source_value[i] + bdf_coefs[0] * value[i] +
+                       previous_time_derivatives[i]);
             }
           // +(∇p)τ∇·q
           gradient_result[dim] += tau * gradient[dim];
@@ -1256,9 +1214,6 @@ NavierStokesTransientSUPGPSPGOperator<dim, number>::local_evaluate_residual(
             {
               for (unsigned int k = 0; k < dim; ++k)
                 {
-                  // (-f)τ(u·∇)v
-                  gradient_result[i][k] += -tau * value[k] * source_value[i];
-
                   for (unsigned int l = 0; l < dim; ++l)
                     {
                       // (-ν∆u)τ(u·∇)v
@@ -1270,13 +1225,11 @@ NavierStokesTransientSUPGPSPGOperator<dim, number>::local_evaluate_residual(
                       gradient_result[i][k] +=
                         tau * value[k] * gradient[i][l] * value[l];
                     }
-                  // + (∇p)τ(u·∇)v
-                  gradient_result[i][k] += tau * value[k] * gradient[dim][i];
-
-                  // + (∂t u)τ(u·∇)v
+                  // + (∇p - f + ∂t u)τ(u·∇)v
                   gradient_result[i][k] +=
                     tau * value[k] *
-                    (bdf_coefs[0] * value[i] + previous_time_derivatives[i]);
+                    (gradient[dim][i] - source_value[i] +
+                     bdf_coefs[0] * value[i] + previous_time_derivatives[i]);
                 }
             }
 
