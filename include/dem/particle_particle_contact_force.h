@@ -248,20 +248,22 @@ protected:
 
     // Defining velocities and angular velocities of particles one and
     // two as vectors
-    Tensor<1, 3> particle_one_velocity, particle_two_velocity,
-      particle_one_omega, particle_two_omega;
+    Tensor<1, 3> particle_one_omega, particle_two_omega;
 
     // Defining relative contact velocity
     Tensor<1, 3> contact_relative_velocity;
 
-    // Assigning velocities and angular velocities of particles
-    particle_one_velocity[0] = particle_one_properties[PropertiesIndex::v_x];
-    particle_one_velocity[1] = particle_one_properties[PropertiesIndex::v_y];
-    particle_one_velocity[2] = particle_one_properties[PropertiesIndex::v_z];
 
-    particle_two_velocity[0] = particle_two_properties[PropertiesIndex::v_x];
-    particle_two_velocity[1] = particle_two_properties[PropertiesIndex::v_y];
-    particle_two_velocity[2] = particle_two_properties[PropertiesIndex::v_z];
+    // Assigning velocities and angular velocities of particles
+    contact_relative_velocity[0] =
+      particle_one_properties[PropertiesIndex::v_x] -
+      particle_two_properties[PropertiesIndex::v_x];
+    contact_relative_velocity[1] =
+      particle_one_properties[PropertiesIndex::v_y] -
+      particle_two_properties[PropertiesIndex::v_y];
+    contact_relative_velocity[2] =
+      particle_one_properties[PropertiesIndex::v_z] -
+      particle_two_properties[PropertiesIndex::v_z];
 
     particle_one_omega[0] = particle_one_properties[PropertiesIndex::omega_x];
     particle_one_omega[1] = particle_one_properties[PropertiesIndex::omega_y];
@@ -274,13 +276,10 @@ protected:
 
     // Calculation of contact relative velocity
     // v_ij = (v_i - v_j) + (R_i*omega_i + R_j*omega_j) × n_ij
-    contact_relative_velocity =
-      (particle_one_velocity - particle_two_velocity) +
-      (cross_product_3d(0.5 * (particle_one_properties[PropertiesIndex::dp] *
-                                 particle_one_omega +
-                               particle_two_properties[PropertiesIndex::dp] *
-                                 particle_two_omega),
-                        normal_unit_vector));
+    contact_relative_velocity += (cross_product_3d(
+      0.5 * (particle_one_properties[PropertiesIndex::dp] * particle_one_omega +
+             particle_two_properties[PropertiesIndex::dp] * particle_two_omega),
+      normal_unit_vector));
 
 
     // Calculation of normal relative velocity. Note that in the
@@ -625,10 +624,10 @@ protected:
       normal_damping_constant * sqrt(model_parameter_st / model_parameter_sn);
 
     // Calculation of normal force
-    normal_force =
-      ((normal_spring_constant * normal_overlap) * normal_unit_vector) +
-      ((normal_damping_constant * normal_relative_velocity_value) *
-       normal_unit_vector);
+    const double normal_force_norm =
+      normal_spring_constant * normal_overlap +
+      normal_damping_constant * normal_relative_velocity_value;
+    normal_force = normal_force_norm * normal_unit_vector;
 
     // Calculation of tangential force. Since we need damping tangential force
     // in the gross sliding again, we define it as a separate variable
@@ -641,16 +640,17 @@ protected:
     double coulomb_threshold =
       this->effective_coefficient_of_friction[vec_particle_type_index(
         particle_one_type, particle_two_type)] *
-      normal_force.norm();
+      normal_force_norm;
 
     // Check for gross sliding
-    if (tangential_force.norm() > coulomb_threshold)
+    const double tangential_force_norm = tangential_force.norm();
+    if (tangential_force_norm > coulomb_threshold)
       {
         // Gross sliding occurs and the tangential overlap and tangential
         // force are limited to Coulomb's criterion
         contact_info.tangential_overlap =
           (coulomb_threshold *
-             (tangential_force / (tangential_force.norm() + DBL_MIN)) -
+             (tangential_force / (tangential_force_norm + DBL_MIN)) -
            damping_tangential_force) /
           (tangential_spring_constant + DBL_MIN);
 
