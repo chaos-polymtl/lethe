@@ -160,8 +160,7 @@ IBParticlesDEM<dim>::calculate_pp_contact_force(
                 {
                   for (int d = 0; d < dim; ++d)
                     {
-                      contact_info.tangential_overlap[d]           = 0;
-                      contact_info.tangential_relative_velocity[d] = 0;
+                      contact_info.tangential_overlap[d] = 0;
                     }
                   pp_contact_map[particle_one.particle_id]
                                 [particle_two.particle_id] = contact_info;
@@ -298,8 +297,7 @@ IBParticlesDEM<dim>::calculate_pp_contact_force(
                   // if the adjacent pair is not in contact anymore
                   for (int d = 0; d < dim; ++d)
                     {
-                      contact_info.tangential_overlap[d]           = 0;
-                      contact_info.tangential_relative_velocity[d] = 0;
+                      contact_info.tangential_overlap[d] = 0;
                     }
                   pp_contact_map[particle_one.particle_id].erase(
                     particle_two.particle_id);
@@ -320,7 +318,7 @@ IBParticlesDEM<dim>::calculate_pp_lubrication_force(
   std::vector<Tensor<1, 3>> & /*lubrication_torque*/)
 {
   using dealii::numbers::PI;
-  // loop over all particles to find pair of close partilces
+  // loop over all particles to find pair of close particles
   for (auto &particle_one : dem_particles)
     {
       for (auto particle_contact_candidates_id =

@@ -17,5 +17,6 @@ ________________________________________________________________________________
 |master                                          | d3b06b889e54356dd1addcf2cb7db867566f96ff  |   16/12/2022   |    52.6       |     23.1      |     14.6      |    18.1        |      16.4 
 |dem_bcs_optimize                                | 927ca632a9f8d6e73b29e4e2bf5be0695b2bd4f4  |   21/12/2022   |    49.3       |     21.3      |     13.7      |    17.3        |      15.1 
 |master                                          | 0652b8c75da540931f3ec035ae4fd417bf8064ae  |   30/03/2023   |    45.3       |     19.3      |     11.5      |    15.1        |      14.1 
-
+|master                                          | 58e9f4f1ddf7287954687d196a98cf0b597e79b1  |   24/10/2023   |    41.8       |     21.4      |     16.0      #comment : MPI Issues on Manjaro
+|dem_contact_storage                             | 58e9f4f1ddf7287954687d196a98cf0b597e79b1  |   24/10/2023   |    41.1       |     21        |     14.3      #comment : MPI Issues on Manjaro
 
