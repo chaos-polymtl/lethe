@@ -106,11 +106,9 @@ end
 subsection DEM boundary conditions
   set number of boundary conditions = 1
   subsection boundary condition 0
-    set boundary id         = 0
-    set type                = rotational
-    set rotational speed    = 0.2
-    set rotational vector x = 0
-    set rotational vector y = 0
-    set rotational vector z = 1
+    set boundary id       = 0
+    set type              = rotational
+    set rotational speed  = 0.2
+    set rotational vector = 0,0,1
   end
 end

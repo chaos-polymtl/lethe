@@ -1143,8 +1143,13 @@ namespace Parameters
                         "0.",
                         Patterns::Double(),
                         "Rotational boundary speed");
-      prm.declare_entry("rotational vector x",
-                        "0.",
+
+      prm.declare_entry("rotational vector",
+                        "1.,0.,0.",
+                        Patterns::List(Patterns::Double()),
+                        "Rotational vector elements");
+      /*prm.declare_entry("rotational vector x",
+                        "1.",
                         Patterns::Double(),
                         "Rotational vector element in x direction");
       prm.declare_entry("rotational vector y",
@@ -1155,6 +1160,7 @@ namespace Parameters
                         "0.",
                         Patterns::Double(),
                         "Rotational vector element in z direction");
+      */
       prm.declare_entry("periodic id 0",
                         "0",
                         Patterns::Integer(),
@@ -1199,14 +1205,19 @@ namespace Parameters
         }
       else if (boundary_type == "rotational")
         {
-          BC_type                       = BoundaryType::rotational;
-          double       rotational_speed = prm.get_double("rotational speed");
+          BC_type                 = BoundaryType::rotational;
+          double rotational_speed = prm.get_double("rotational speed");
+
+          // Read the rotational vector from a list of doubles
           Tensor<1, 3> rotational_vector;
 
-          rotational_vector[0] = prm.get_double("rotational vector x");
-          rotational_vector[1] = prm.get_double("rotational vector y");
-          rotational_vector[2] = prm.get_double("rotational vector z");
-
+          std::string rotational_vector_str = prm.get("rotational vector");
+          std::vector<std::string> rotational_vector_str_list(
+            Utilities::split_string_list(rotational_vector_str));
+          std::vector<double> rotational_vector_list =
+            Utilities::string_to_double(rotational_vector_str_list);
+          for (unsigned int i = 0; i < 3; ++i)
+            rotational_vector[i] = rotational_vector_list[i];
 
           // Read the point from a list of doubles
           Tensor<1, 3> point_on_rotation_axis_tensor;
@@ -1219,8 +1230,9 @@ namespace Parameters
           for (unsigned int i = 0; i < 3; ++i)
             point_on_rotation_axis_tensor[i] = point_on_vector_list[i];
 
-          this->boundary_rotational_speed.at(boundary_id)  = rotational_speed;
-          this->boundary_rotational_vector.at(boundary_id) = rotational_vector;
+          this->boundary_rotational_speed.at(boundary_id) = rotational_speed;
+          this->boundary_rotational_vector.at(boundary_id) =
+            rotational_vector / rotational_vector.norm();
           this->point_on_rotation_axis.at(boundary_id) =
             point_on_rotation_axis_tensor;
         }
