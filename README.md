@@ -3,10 +3,10 @@
 ![Lethe](logo/logo_black.png?raw=true)
 
 [![CI-Debug](https://github.com/lethe-cfd/lethe/actions/workflows/main_debug.yml/badge.svg)](https://github.com/lethe-cfd/lethe/actions/workflows/main_debug.yml)
-
 [![CI-Release](https://github.com/lethe-cfd/lethe/actions/workflows/main_release.yml/badge.svg)](https://github.com/lethe-cfd/lethe/actions/workflows/main_release.yml)
-
 [![CI-Warnings](https://github.com/lethe-cfd/lethe/actions/workflows/main_warnings.yml/badge.svg)](https://github.com/lethe-cfd/lethe/actions/workflows/main_warnings.yml)
+[![Docker Image Build & Push](https://github.com/lethe-cfd/lethe/actions/workflows/docker.yml/badge.svg)](https://github.com/lethe-cfd/lethe/actions/workflows/docker.yml)
+[![Publish doc to GitHub Pages](https://github.com/lethe-cfd/lethe/actions/workflows/doc-github-pages.yml/badge.svg)](https://github.com/lethe-cfd/lethe/actions/workflows/doc-github-pages.yml)
 
 Lethe (pronounced /ˈliːθiː/) is open-source computational fluid dynamics
 (CFD), discrete element method (DEM) and coupled CFD-DEM
