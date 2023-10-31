@@ -31,7 +31,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ## [Master] - 2023-10-30
 
-- MINOR The rotational vector for the rotational boundary condition in the lethe-particles solver is now define with one line in the parameters file. [#914](https://github.com/lethe-cfd/lethe/pull/914)
+- MINOR The rotational vector for the rotational boundary condition in the lethe-particles solver is now define with one line in the parameters file. [#920](https://github.com/lethe-cfd/lethe/pull/920)
 
 ## [Sample] - YYYY/MM/DD
 
