@@ -1332,5 +1332,17 @@ namespace Parameters
     parse_parameters(ParameterHandler &prm);
   };
 
+  /**
+   * @brief Return the tensor of entry @p entry_string. If the entry was changed,
+   * then the changed value is returned, otherwise the default value is
+   * returned. If the entry is not a Tensor, an Throw_error will occur.
+   * This function can be use for Point variables.
+   *
+   * @param entry_string A declare string
+   */
+  Tensor<1, 3>
+  entry_string_to_tensor(ParameterHandler  &prm,
+                         const std::string &entry_string);
+
 } // namespace Parameters
 #endif
