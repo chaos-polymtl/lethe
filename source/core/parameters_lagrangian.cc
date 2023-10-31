@@ -1199,10 +1199,13 @@ namespace Parameters
           // Read the rotational vector from a list of doubles
           Tensor<1, 3> rotational_vector;
 
-          rotational_vector[0] = prm.get_double("rotational vector x");
-          rotational_vector[1] = prm.get_double("rotational vector y");
-          rotational_vector[2] = prm.get_double("rotational vector z");
-
+          std::string rotational_vector_str = prm.get("rotational vector");
+          std::vector<std::string> rotational_vector_str_list(
+            Utilities::split_string_list(rotational_vector_str));
+          std::vector<double> rotational_vector_list =
+            Utilities::string_to_double(rotational_vector_str_list);
+          for (unsigned int i = 0; i < 3; ++i)
+            rotational_vector[i] = rotational_vector_list[i];
 
           // Read the point from a list of doubles
           Tensor<1, 3> point_on_rotation_axis_tensor;
