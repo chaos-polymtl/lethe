@@ -210,6 +210,9 @@ GLSNavierStokesSolver<dim>::update_boundary_conditions()
   auto &nonzero_constraints = this->nonzero_constraints;
   nonzero_constraints.distribute(this->local_evaluation_point);
   this->present_solution = this->local_evaluation_point;
+
+  // We also update the boundary conditions for the auxiliary physics
+  this->multiphysics->update_boundary_conditions();
 }
 
 template <int dim>

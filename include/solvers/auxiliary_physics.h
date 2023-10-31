@@ -104,6 +104,12 @@ public:
   modify_solution(){};
 
   /**
+   * @brief Update non zero constraints if the boundary is time dependent
+   */
+  virtual void
+  update_boundary_conditions(){};
+
+  /**
    * @brief Provide the dof handler associated with an auxiliary physics
    * TODO : delete as the auxiliary physics are supposed to pass their
    * dof_handler to the multiphysics_interface directly
