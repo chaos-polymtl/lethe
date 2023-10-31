@@ -957,15 +957,26 @@ public:
       .get_function_gradients(current_solution,
                               this->chemical_potential_cahn_hilliard_gradients);
 
+    auto &fe_cahn_hilliard = this->fe_values_cahn_hilliard->get_fe();
+
+      if (dim == 2)
+          this->cell_size_cahn_hilliard =
+                  std::sqrt(4. * cell->measure() / M_PI) / fe_cahn_hilliard.degree;
+      else if (dim == 3)
+          this->cell_size_cahn_hilliard =
+                  pow(6 * cell->measure() / M_PI, 1. / 3.) / fe_cahn_hilliard.degree;
+
+
     // Initialize parameters
     this->epsilon = (cahn_hilliard_parameters.epsilon_set_method ==
                      Parameters::EpsilonSetStrategy::manual) ?
                       cahn_hilliard_parameters.epsilon :
-                      2 * this->cell_size;
+                      2 * this->cell_size_cahn_hilliard;
 
     this->well_height = cahn_hilliard_parameters.well_height;
     this->potential_smoothing_coefficient =
       cahn_hilliard_parameters.potential_smoothing_coefficient;
+    this->spring_constant_correction = cahn_hilliard_parameters.spring_constant_correction;
   }
 
 
@@ -1126,6 +1137,7 @@ public:
   double                      epsilon;
   double                      well_height;
   double                      potential_smoothing_coefficient;
+  double spring_constant_correction;
   double                      density_diff;
   bool                        gather_cahn_hilliard;
   unsigned int                n_dofs_cahn_hilliard;
@@ -1137,6 +1149,7 @@ public:
   std::shared_ptr<FEValues<dim>> fe_values_cahn_hilliard;
   FEValuesExtractors::Scalar     phase_order;
   FEValuesExtractors::Scalar     chemical_potential;
+  double                         cell_size_cahn_hilliard;
 
   /**
    * Is boundary cell indicator

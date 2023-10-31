@@ -500,6 +500,12 @@ Parameters::CahnHilliard::declare_parameters(ParameterHandler &prm)
       Patterns::Double(),
       "Smoothing coefficient for the chemical potential in the Cahn-Hilliard equations.");
 
+      prm.declare_entry(
+              "spring constant correction",
+              "1",
+              Patterns::Double(),
+              "Spring constant correction in the CHNS coupled system of equations.");
+
     prm.enter_subsection("epsilon");
     {
       prm.declare_entry(
@@ -527,6 +533,7 @@ Parameters::CahnHilliard::parse_parameters(ParameterHandler &prm)
     well_height = prm.get_double("well height");
     potential_smoothing_coefficient =
       prm.get_double("potential smoothing coefficient");
+    spring_constant_correction = prm.get_double(("spring constant correction"));
 
     prm.enter_subsection("epsilon");
     {
