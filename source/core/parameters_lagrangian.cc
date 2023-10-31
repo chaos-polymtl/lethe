@@ -1148,19 +1148,7 @@ namespace Parameters
                         "1.,0.,0.",
                         Patterns::List(Patterns::Double()),
                         "Rotational vector elements");
-      /*prm.declare_entry("rotational vector x",
-                        "1.",
-                        Patterns::Double(),
-                        "Rotational vector element in x direction");
-      prm.declare_entry("rotational vector y",
-                        "0.",
-                        Patterns::Double(),
-                        "Rotational vector element in y direction");
-      prm.declare_entry("rotational vector z",
-                        "0.",
-                        Patterns::Double(),
-                        "Rotational vector element in z direction");
-      */
+
       prm.declare_entry("periodic id 0",
                         "0",
                         Patterns::Integer(),
@@ -1218,7 +1206,11 @@ namespace Parameters
             Utilities::string_to_double(rotational_vector_str_list);
           for (unsigned int i = 0; i < 3; ++i)
             rotational_vector[i] = rotational_vector_list[i];
-
+          if (rotational_vector.norm() == 0.)
+            {
+              throw(std::runtime_error(
+                "Invalid rotational vector. Its norm cannot be equal to zero."));
+            }
           // Read the point from a list of doubles
           Tensor<1, 3> point_on_rotation_axis_tensor;
 
