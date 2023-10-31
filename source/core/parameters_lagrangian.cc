@@ -547,23 +547,12 @@ namespace Parameters
         list_d = Utilities::string_to_double(d_str_list);
 
         // Insertion plane normal vector
-        std::string plane_vector_str = prm.get("insertion plane normal vector");
-        std::vector<std::string> plane_vector_str_list =
-          Utilities::split_string_list(plane_vector_str);
         insertion_plane_normal_vector =
-          Tensor<1, 3>({Utilities::string_to_double(plane_vector_str_list[0]),
-                        Utilities::string_to_double(plane_vector_str_list[1]),
-                        Utilities::string_to_double(plane_vector_str_list[2])});
-
+          entry_string_to_tensor3(prm, "insertion plane normal vector");
 
         // Insertion plane point
-        std::string plane_point_str = prm.get("insertion plane point");
-        std::vector<std::string> plane_point_str_list =
-          Utilities::split_string_list(plane_point_str);
         insertion_plane_point =
-          Point<3>({Utilities::string_to_double(plane_point_str_list[0]),
-                    Utilities::string_to_double(plane_point_str_list[1]),
-                    Utilities::string_to_double(plane_point_str_list[2])});
+          entry_string_to_tensor3(prm, "insertion plane point");
       }
       prm.leave_subsection();
     }
@@ -1206,7 +1195,11 @@ namespace Parameters
             Utilities::string_to_double(rotational_vector_str_list);
           for (unsigned int i = 0; i < 3; ++i)
             rotational_vector[i] = rotational_vector_list[i];
-
+          if (rotational_vector.norm() == 0.)
+            {
+              throw(std::runtime_error(
+                "Invalid rotational vector. Its norm cannot be equal to zero."));
+            }
           // Read the point from a list of doubles
           Tensor<1, 3> point_on_rotation_axis_tensor;
 
