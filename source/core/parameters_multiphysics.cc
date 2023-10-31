@@ -500,11 +500,11 @@ Parameters::CahnHilliard::declare_parameters(ParameterHandler &prm)
       Patterns::Double(),
       "Smoothing coefficient for the chemical potential in the Cahn-Hilliard equations.");
 
-      prm.declare_entry(
-              "spring constant correction",
-              "1",
-              Patterns::Double(),
-              "Spring constant correction in the CHNS coupled system of equations.");
+    prm.declare_entry(
+      "spring constant correction",
+      "1",
+      Patterns::Double(),
+      "Spring constant correction in the CHNS coupled system of equations.");
 
     prm.enter_subsection("epsilon");
     {

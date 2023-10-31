@@ -15,7 +15,8 @@ GLSNavierStokesCahnHilliardAssemblerCore<dim>::assemble_matrix(
   const double well_height  = scratch_data.well_height;
   const double epsilon      = scratch_data.epsilon;
   const double density_diff = scratch_data.density_diff;
-  const double spring_constant_correction  = scratch_data.spring_constant_correction;
+  const double spring_constant_correction =
+    scratch_data.spring_constant_correction;
 
   // Loop and quadrature information
   const auto        &JxW_vec    = scratch_data.JxW;
@@ -94,8 +95,7 @@ GLSNavierStokesCahnHilliardAssemblerCore<dim>::assemble_matrix(
       const double dynamic_viscosity_eq = scratch_data.dynamic_viscosity[q];
       double       curvature_cahn_hilliard =
         3 * scratch_data.surface_tension[q] /
-        (4 * std::sqrt(2 * well_height) * epsilon)
-        * spring_constant_correction;
+        (4 * std::sqrt(2 * well_height) * epsilon) * spring_constant_correction;
 
       // Calculation of the GLS stabilization parameter. The
       // stabilization parameter used is different if the simulation
@@ -210,7 +210,8 @@ GLSNavierStokesCahnHilliardAssemblerCore<dim>::assemble_rhs(
   const double epsilon      = scratch_data.epsilon;
   const double density_diff = scratch_data.density_diff;
   const double h            = scratch_data.cell_size;
-  const double spring_constant_correction  = scratch_data.spring_constant_correction;
+  const double spring_constant_correction =
+    scratch_data.spring_constant_correction;
 
   // Loop and quadrature information
   const auto        &JxW_vec    = scratch_data.JxW;
@@ -290,8 +291,7 @@ GLSNavierStokesCahnHilliardAssemblerCore<dim>::assemble_rhs(
       const double dynamic_viscosity_eq = scratch_data.dynamic_viscosity[q];
       double       curvature_cahn_hilliard =
         3 * scratch_data.surface_tension[q] /
-        (4 * std::sqrt(2 * well_height) * epsilon)
-        * spring_constant_correction;
+        (4 * std::sqrt(2 * well_height) * epsilon) * spring_constant_correction;
 
       // Calculation of the GLS stabilization parameter. The
       // stabilization parameter used is different if the simulation
