@@ -203,7 +203,8 @@ namespace Parameters
     // equation)
     double potential_smoothing_coefficient;
 
-    // Spring constant correction in front of the surface tension coefficient in CHNS
+    // Spring constant correction in front of the surface tension coefficient in
+    // CHNS
     double spring_constant_correction;
 
     // Epsilon set strategy (automatic|manual)
