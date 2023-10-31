@@ -1467,8 +1467,8 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess_fd(bool firstIter)
               if (this->simulation_parameters.multiphysics.VOF)
                 this->error_table.add_value("error_pressure", error_pressure);
 
-              // Calculate error on pressure for VOF simulations
-              if (this->simulation_parameters.multiphysics.VOF)
+              // Calculate error on pressure for Cahn-Hilliard simulations
+              if (this->simulation_parameters.multiphysics.cahn_hilliard)
                 this->error_table.add_value("error_pressure", error_pressure);
             }
           if (this->simulation_parameters.analytical_solution->verbosity ==
