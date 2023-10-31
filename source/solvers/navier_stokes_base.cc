@@ -1469,7 +1469,10 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess_fd(bool firstIter)
 
               // Calculate error on pressure for Cahn-Hilliard simulations
               if (this->simulation_parameters.multiphysics.cahn_hilliard)
-                this->error_table.add_value("error_pressure", error_pressure);
+                {
+                  std::cout << "printing pressure error" << std::endl;
+                  this->error_table.add_value("error_pressure", error_pressure);
+                }
             }
           if (this->simulation_parameters.analytical_solution->verbosity ==
               Parameters::Verbosity::verbose)
@@ -1478,6 +1481,13 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess_fd(bool firstIter)
                           << std::setprecision(
                                simulation_control->get_log_precision())
                           << error_velocity << std::endl;
+              if (this->simulation_parameters.multiphysics.cahn_hilliard)
+                {
+                  this->pcout << "L2 error pressure : "
+                              << std::setprecision(
+                                   simulation_control->get_log_precision())
+                              << error_pressure << std::endl;
+                }
             }
         }
     }
