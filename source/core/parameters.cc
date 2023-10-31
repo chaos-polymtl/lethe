@@ -3199,7 +3199,8 @@ namespace Parameters
   }
 
   Tensor<1, 3>
-  entry_string_to_tensor3(ParameterHandler &prm, const std::string &entry_string)
+  entry_string_to_tensor3(ParameterHandler  &prm,
+                          const std::string &entry_string)
   {
     std::string              full_str = prm.get(entry_string);
     std::vector<std::string> vector_of_string(
