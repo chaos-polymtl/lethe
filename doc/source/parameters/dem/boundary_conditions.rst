@@ -25,9 +25,7 @@ In this subsection, the boundary conditions of the DEM simulation are defined. F
       set rotational speed    = 2.5
 
       # Rotational vector
-      set rotational vector x = 1
-      set rotational vector y = 0
-      set rotational vector z = 0
+      set rotational vector   = 1, 0, 0
 
       # Point on rotational vector
       set point on rotational vector = 0, 0, 0

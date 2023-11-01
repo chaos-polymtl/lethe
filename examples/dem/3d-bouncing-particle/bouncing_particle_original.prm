@@ -101,9 +101,5 @@ subsection DEM boundary conditions
   subsection boundary condition 0
     set boundary id         = 0
     set type                = fixed_wall
-    set rotational speed    = 0
-    set rotational vector x = 1
-    set rotational vector y = 0
-    set rotational vector z = 0
   end
 end
