@@ -10,8 +10,8 @@ set dimension = 3
 subsection simulation control
   set time step         = 1e-5
   set time end          = 7.5
-  set log frequency     = -1000
-  set output frequency  = -1000
+  set log frequency     = 1000
+  set output frequency  = 1000
   set output path       = ./output/
   set output name       = hopper
   set output boundaries = true
