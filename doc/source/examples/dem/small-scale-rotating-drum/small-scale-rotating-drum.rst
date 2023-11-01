@@ -142,9 +142,7 @@ The rotation of the cylinder is applied using a rotational boundary condition wi
         set boundary id         = 0
         set type                = rotational
         set rotational speed    = 1
-        set rotational vector x = 1
-        set rotational vector y = 0
-        set rotational vector z = 0
+        set rotational vector   = 1, 0, 0
       end
     end
 

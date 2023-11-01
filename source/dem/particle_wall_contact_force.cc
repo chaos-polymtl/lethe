@@ -64,8 +64,7 @@ ParticleWallContactForce<dim>::update_contact_information(
   vector_to_rotating_axis =
     vector_to_rotating_axis -
     (vector_to_rotating_axis * this->boundary_rotational_vector[boundary_id]) *
-      this->boundary_rotational_vector[boundary_id] /
-      (this->boundary_rotational_vector[boundary_id].norm_square() + 1e-16);
+      this->boundary_rotational_vector[boundary_id];
 
   // Tensor<1,3> vector_to_rotation_axis = this->boundary_rotational_speed_map
 
