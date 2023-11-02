@@ -13,7 +13,7 @@
  *
  * ---------------------------------------------------------------------*/
 
-
+#include <core/evaporation_model.h>
 #include <core/simulation_control.h>
 
 #include <solvers/auxiliary_physics.h>
@@ -207,6 +207,51 @@ public:
 
   // Surface tension force (STF)
   const Parameters::VOF_SurfaceTensionForce STF_properties;
+};
+
+/**
+ * @brief Class that assembles the momentum source due to evaporation for the
+ * Navier-Stokes equations.
+ *
+ * @tparam dim An integer that denotes the number of spatial dimensions
+ *
+ * @ingroup assemblers
+ */
+template <int dim>
+class NavierStokesVOFAssemblerEvaporation
+  : public NavierStokesAssemblerBase<dim>
+{
+public:
+  NavierStokesVOFAssemblerEvaporation(
+    std::shared_ptr<SimulationControl>  p_simulation_control,
+    const Parameters::Evaporation &p_evaporation)
+    : simulation_control(p_simulation_control)
+  {
+    this->evaporation_model = EvaporationModel::model_cast(p_evaporation);
+  }
+
+  /**
+   * @brief assemble_matrix Assembles the matrix
+   * @param scratch_data (see base class)
+   * @param copy_data (see base class)
+   */
+  virtual void
+  assemble_matrix(NavierStokesScratchData<dim>         &scratch_data,
+                  StabilizedMethodsTensorCopyData<dim> &copy_data) override;
+
+  /**
+   * @brief assemble_rhs Assembles the rhs
+   * @param scratch_data (see base class)
+   * @param copy_data (see base class)
+   */
+  virtual void
+  assemble_rhs(NavierStokesScratchData<dim>         &scratch_data,
+               StabilizedMethodsTensorCopyData<dim> &copy_data) override;
+
+  std::shared_ptr<SimulationControl> simulation_control;
+  
+  // Evaporation model
+  std::shared_ptr<EvaporationModel> evaporation_model;
 };
 
 /**

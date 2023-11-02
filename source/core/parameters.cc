@@ -3237,6 +3237,81 @@ namespace Parameters
 
     prm.leave_subsection();
   }
+  
+  void
+  Evaporation::declare_parameters(dealii::ParameterHandler &prm)
+  {
+    prm.enter_subsection("evaporation");
+    {
+      prm.declare_entry(
+        "evaporative mass flux model",
+        "constant",
+        Patterns::Selection("constant"),
+        "Model used for the calculation of the evaporative mass flux"
+        "Choices are <constant|pure material>.");
+      prm.declare_entry(
+        "enable evaporative cooling",
+        "false",
+        Patterns::Bool(),
+        "Enable the evaporative cooling at the free surface (air/metal interface) in the energy equation <true|false>");
+      prm.declare_entry(
+        "enable recoil pressure",
+        "false",
+        Patterns::Bool(),
+        "Enable the recoil pressure due to evaporation at the free surface (air/metal interface) in the momentum equation <true|false>");
+      prm.declare_entry(
+        "evaporation coefficient",
+        "0.82",
+        Patterns::Double(),
+        "Evaporation coefficient corresponding to the ratio between the net mass flux (evaporation-condensation) and the mass flux of evaporation");
+      prm.declare_entry(
+        "molar mass",
+        "0.0",
+        Patterns::Double(),
+        "Molar mass of the material in kg/mol");
+      prm.declare_entry(
+        "boiling temperature",
+        "0.0",
+        Patterns::Double(),
+        "Boiling temperature in K");
+      prm.declare_entry(
+        "latent heat of evaporation",
+        "0.0",
+        Patterns::Double(),
+        "Latent heat of evaporation in J/kg");
+      prm.declare_entry(
+        "ambient pressure",
+        "101.325",
+        Patterns::Double(),
+        "Ambient pressure in kPa");
+    }
+  }
+
+  void
+  Evaporation::parse_parameters(ParameterHandler &prm)
+  {
+    prm.enter_subsection("evaporation");
+    {
+      std::string op;
+      op = prm.get("evaporative mass flux model");
+      if (op == "constant")
+        {
+          evaporative_mass_flux_model_type = EvaporativeMassFluxModelType::constant;
+        }
+      else
+        throw(std::runtime_error(
+          "Invalid evaporative mass flux model. The choices are <constant>."));
+
+      enable_evaporation_cooling = prm.get_bool("enable evaporative cooling");
+      enable_recoil_pressure = prm.get_bool("enable recoil pressure");
+      
+      evaporation_coefficient =  prm.get_double("evaporation coefficient");
+      molar_mass = prm.get_double("molar mass");
+      boiling_temperature = prm.get_double("boiling temperature");
+      latent_heat_evaporation = prm.get_double("latent heat of evaporation");
+      ambient_pressure = prm.get_double("ambient pressure");
+    }
+  }
 
   Tensor<1, 3>
   entry_string_to_tensor3(ParameterHandler  &prm,

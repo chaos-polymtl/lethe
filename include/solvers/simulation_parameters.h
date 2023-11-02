@@ -68,6 +68,7 @@ public:
   Parameters::Multiphysics                      multiphysics;
   Parameters::Stabilization                     stabilization;
   Parameters::ALE<dim>                          ale;
+  Parameters::Evaporation                       evaporation;
 
 
 
@@ -133,13 +134,16 @@ public:
     Parameters::Stabilization::declare_parameters(prm);
 
     ale.declare_parameters(prm);
+    
+    evaporation.declare_parameters(prm);
 
     multiphysics.declare_parameters(prm);
   }
 
   void
   parse(ParameterHandler &prm)
-  {
+  {    
+
     dimensionality.parse_parameters(prm);
     test.parse_parameters(prm);
 
@@ -178,7 +182,8 @@ public:
     multiphysics.parse_parameters(prm);
     stabilization.parse_parameters(prm);
     ale.parse_parameters(prm);
-
+    evaporation.parse_parameters(prm);
+    
     physical_properties_manager.initialize(physical_properties);
 
 
