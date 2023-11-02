@@ -99,13 +99,19 @@ subsection boundary conditions heat transfer
   subsection bc 0
     set id    = 0
     set type  = temperature
-    set value = 0
+    subsection value
+      set Function expression = 0
+    end
   end
   subsection bc 1
     set id   = 1
     set type = convection-radiation
-    set h    = 1000
-    set Tinf = 1
+    subsection h
+      set Function expression = 1000
+    end
+    subsection Tinf
+      set Function expression = 1
+    end
   end
 end
 
