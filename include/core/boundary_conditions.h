@@ -567,22 +567,10 @@ namespace BoundaryConditions
     if (op == "temperature")
       {
         this->type[i_bc] = BoundaryType::temperature;
-        prm.enter_subsection("value");
-        this->value[i_bc]->parse_parameters(prm);
-        prm.leave_subsection();
       }
     else if (op == "convection-radiation")
       {
         this->type[i_bc] = BoundaryType::convection_radiation;
-        prm.enter_subsection("h");
-        this->h[i_bc]->parse_parameters(prm);
-        prm.leave_subsection();
-        prm.enter_subsection("Tinf");
-        this->Tinf[i_bc]->parse_parameters(prm);
-        prm.leave_subsection();
-        prm.enter_subsection("emissivity");
-        this->emissivity[i_bc]->parse_parameters(prm);
-        prm.leave_subsection();
 
         // This assertion might be deleted or moved since it is difficult to
         // evaluate the maximum and minimum of a function
@@ -590,6 +578,20 @@ namespace BoundaryConditions
         // 0.0,
         //        EmissivityError(this->emissivity[i_bc]));
       }
+
+    // All the functions are parsed since they might be used for post-processing
+    prm.enter_subsection("value");
+    this->value[i_bc]->parse_parameters(prm);
+    prm.leave_subsection();
+    prm.enter_subsection("h");
+    this->h[i_bc]->parse_parameters(prm);
+    prm.leave_subsection();
+    prm.enter_subsection("Tinf");
+    this->Tinf[i_bc]->parse_parameters(prm);
+    prm.leave_subsection();
+    prm.enter_subsection("emissivity");
+    this->emissivity[i_bc]->parse_parameters(prm);
+    prm.leave_subsection();
 
     this->id[i_bc] = prm.get_integer("id");
   }
