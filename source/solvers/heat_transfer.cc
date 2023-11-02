@@ -1084,6 +1084,14 @@ HeatTransfer<dim>::setup_dofs()
 
 template <int dim>
 void
+HeatTransfer<dim>::update_boundary_conditions()
+{
+  // No update is done at the moment since boundary conditions are defined
+  // without functions
+}
+
+template <int dim>
+void
 HeatTransfer<dim>::set_initial_conditions()
 {
   VectorTools::interpolate(*this->temperature_mapping,
