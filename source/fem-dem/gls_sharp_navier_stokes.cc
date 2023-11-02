@@ -4574,8 +4574,7 @@ GLSSharpNavierStokesSolver<dim>::solve()
              0 ||
            this->simulation_parameters.mesh_adaptation.type ==
              Parameters::MeshAdaptation::Type::none ||
-           this->simulation_control->is_at_start()) &&
-          this->simulation_parameters.boundary_conditions.time_dependent)
+           this->simulation_control->is_at_start()))
         {
           this->update_boundary_conditions();
         }

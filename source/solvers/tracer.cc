@@ -716,6 +716,9 @@ template <int dim>
 void
 Tracer<dim>::update_boundary_conditions()
 {
+  if (!this->simulation_parameters.boundary_conditions_tracer.time_dependent)
+    return;
+
   double time = this->simulation_control->get_current_time();
   {
     nonzero_constraints.clear();

@@ -191,27 +191,32 @@ template <int dim>
 void
 GLSNavierStokesSolver<dim>::update_boundary_conditions()
 {
-  double time = this->simulation_control->get_current_time();
-  for (unsigned int i_bc = 0;
-       i_bc < this->simulation_parameters.boundary_conditions.size;
-       ++i_bc)
+  if (this->simulation_parameters.boundary_conditions.time_dependent)
     {
-      this->simulation_parameters.boundary_conditions.bcFunctions[i_bc]
-        .u.set_time(time);
-      this->simulation_parameters.boundary_conditions.bcFunctions[i_bc]
-        .v.set_time(time);
-      this->simulation_parameters.boundary_conditions.bcFunctions[i_bc]
-        .w.set_time(time);
-      this->simulation_parameters.boundary_conditions.bcPressureFunction[i_bc]
-        .p.set_time(time);
+      double time = this->simulation_control->get_current_time();
+      for (unsigned int i_bc = 0;
+           i_bc < this->simulation_parameters.boundary_conditions.size;
+           ++i_bc)
+        {
+          this->simulation_parameters.boundary_conditions.bcFunctions[i_bc]
+            .u.set_time(time);
+          this->simulation_parameters.boundary_conditions.bcFunctions[i_bc]
+            .v.set_time(time);
+          this->simulation_parameters.boundary_conditions.bcFunctions[i_bc]
+            .w.set_time(time);
+          this->simulation_parameters.boundary_conditions
+            .bcPressureFunction[i_bc]
+            .p.set_time(time);
+        }
+      define_non_zero_constraints();
+      // Distribute constraints
+      auto &nonzero_constraints = this->nonzero_constraints;
+      nonzero_constraints.distribute(this->local_evaluation_point);
+      this->present_solution = this->local_evaluation_point;
     }
-  define_non_zero_constraints();
-  // Distribute constraints
-  auto &nonzero_constraints = this->nonzero_constraints;
-  nonzero_constraints.distribute(this->local_evaluation_point);
-  this->present_solution = this->local_evaluation_point;
 
-  // We also update the boundary conditions for the auxiliary physics
+  // We allow the multiphysics to update their boundary conditions according to
+  // their own parameters
   this->multiphysics->update_boundary_conditions();
 }
 

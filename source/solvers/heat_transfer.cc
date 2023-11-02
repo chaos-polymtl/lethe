@@ -1085,6 +1085,9 @@ template <int dim>
 void
 HeatTransfer<dim>::update_boundary_conditions()
 {
+  if (!this->simulation_parameters.boundary_conditions_ht.time_dependent)
+    return;
+
   double time = this->simulation_control->get_current_time();
   for (unsigned int i_bc = 0;
        i_bc < this->simulation_parameters.boundary_conditions_ht.size;
