@@ -1098,6 +1098,12 @@ HeatTransfer<dim>::update_boundary_conditions()
         time);
       this->simulation_parameters.boundary_conditions_ht.emissivity[i_bc]
         ->set_time(time);
+
+      const double emissivity =
+        this->simulation_parameters.boundary_conditions_ht.emissivity[i_bc]
+          ->value(Point<dim>());
+      Assert(emissivity <= 1.0 && emissivity >= 0.0,
+             EmissivityError(emissivity));
     }
   // TODO update the non_zero_constraints and zero_contraints (? if applicable
   // to newton or robin BC)

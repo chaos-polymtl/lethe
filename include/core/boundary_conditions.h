@@ -572,11 +572,8 @@ namespace BoundaryConditions
       {
         this->type[i_bc] = BoundaryType::convection_radiation;
 
-        // This assertion might be deleted or moved since it is difficult to
-        // evaluate the maximum and minimum of a function
-        // Assert(this->emissivity[i_bc] <= 1.0 && this->emissivity[i_bc] >=
-        // 0.0,
-        //        EmissivityError(this->emissivity[i_bc]));
+        // Emissivity validity (0 <= emissivity <=1) will be checked at
+        // evaluation.
       }
 
     // All the functions are parsed since they might be used for post-processing
