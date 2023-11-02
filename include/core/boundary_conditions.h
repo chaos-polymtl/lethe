@@ -440,11 +440,11 @@ namespace BoundaryConditions
   class HTBoundaryConditions : public BoundaryConditions<dim>
   {
   public:
-    std::vector<double> value;
-    std::vector<double> h;
-    std::vector<double> Tinf;
-    std::vector<double> emissivity;
-    double              Stefan_Boltzmann_constant;
+    std::vector<std::shared_ptr<Functions::ParsedFunction<dim>>> value;
+    std::vector<std::shared_ptr<Functions::ParsedFunction<dim>>> h;
+    std::vector<std::shared_ptr<Functions::ParsedFunction<dim>>> Tinf;
+    std::vector<std::shared_ptr<Functions::ParsedFunction<dim>>> emissivity;
+    double Stefan_Boltzmann_constant;
 
     void
     declareDefaultEntry(ParameterHandler &prm, unsigned int i_bc);
@@ -480,27 +480,29 @@ namespace BoundaryConditions
                       Patterns::Integer(),
                       "Mesh id for boundary conditions");
 
-    prm.declare_entry("value",
-                      "0",
-                      Patterns::Double(),
-                      "Value (Double) for constant temperature at bc");
+    // Expression for the temperature for an imposed temperature at bc
+    prm.enter_subsection("value");
+    value[i_bc] = std::make_shared<Functions::ParsedFunction<dim>>();
+    value[i_bc]->declare_parameters(prm);
+    prm.leave_subsection();
 
-    prm.declare_entry(
-      "h",
-      "0",
-      Patterns::Double(),
-      "Value (Double) for the h coefficient of convection-radiation bc");
+    // Expression for the h coefficient of convection-radiation bc
+    prm.enter_subsection("h");
+    h[i_bc] = std::make_shared<Functions::ParsedFunction<dim>>();
+    h[i_bc]->declare_parameters(prm);
+    prm.leave_subsection();
 
-    prm.declare_entry(
-      "Tinf",
-      "0",
-      Patterns::Double(),
-      "Temperature (Double) of environment for convection-radiation bc");
+    // Temperature of environment for convection-radiation bc
+    prm.enter_subsection("Tinf");
+    Tinf[i_bc] = std::make_shared<Functions::ParsedFunction<dim>>();
+    Tinf[i_bc]->declare_parameters(prm);
+    prm.leave_subsection();
 
-    prm.declare_entry("emissivity",
-                      "0.0",
-                      Patterns::Double(),
-                      "Emissivity of the boundary for convection-radiation bc");
+    // Emissivity of the boundary for convection-radiation bc
+    prm.enter_subsection("emissivity");
+    emissivity[i_bc] = std::make_shared<Functions::ParsedFunction<dim>>();
+    emissivity[i_bc]->declare_parameters(prm);
+    prm.leave_subsection();
   }
 
   /**
@@ -523,6 +525,10 @@ namespace BoundaryConditions
                         "Number of boundary conditions");
       this->id.resize(this->max_size);
       this->type.resize(this->max_size);
+      value.resize(this->max_size);
+      h.resize(this->max_size);
+      Tinf.resize(this->max_size);
+      emissivity.resize(this->max_size);
 
       for (unsigned int n = 0; n < this->max_size; n++)
         {
@@ -560,18 +566,29 @@ namespace BoundaryConditions
       }
     if (op == "temperature")
       {
-        this->type[i_bc]  = BoundaryType::temperature;
-        this->value[i_bc] = prm.get_double("value");
+        this->type[i_bc] = BoundaryType::temperature;
+        prm.enter_subsection("value");
+        this->value[i_bc]->parse_parameters(prm);
+        prm.leave_subsection();
       }
     else if (op == "convection-radiation")
       {
-        this->type[i_bc]       = BoundaryType::convection_radiation;
-        this->h[i_bc]          = prm.get_double("h");
-        this->Tinf[i_bc]       = prm.get_double("Tinf");
-        this->emissivity[i_bc] = prm.get_double("emissivity");
+        this->type[i_bc] = BoundaryType::convection_radiation;
+        prm.enter_subsection("h");
+        this->h[i_bc]->parse_parameters(prm);
+        prm.leave_subsection();
+        prm.enter_subsection("Tinf");
+        this->Tinf[i_bc]->parse_parameters(prm);
+        prm.leave_subsection();
+        prm.enter_subsection("emissivity");
+        this->emissivity[i_bc]->parse_parameters(prm);
+        prm.leave_subsection();
 
-        Assert(this->emissivity[i_bc] <= 1.0 && this->emissivity[i_bc] >= 0.0,
-               EmissivityError(this->emissivity[i_bc]));
+        // This assertion might be deleted or moved since it is difficult to
+        // evaluate the maximum and minimum of a function
+        // Assert(this->emissivity[i_bc] <= 1.0 && this->emissivity[i_bc] >=
+        // 0.0,
+        //        EmissivityError(this->emissivity[i_bc]));
       }
 
     this->id[i_bc] = prm.get_integer("id");

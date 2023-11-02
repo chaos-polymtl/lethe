@@ -1023,8 +1023,7 @@ HeatTransfer<dim>::setup_dofs()
             VectorTools::interpolate_boundary_values(
               this->dof_handler,
               this->simulation_parameters.boundary_conditions_ht.id[i_bc],
-              dealii::Functions::ConstantFunction<dim>(
-                this->simulation_parameters.boundary_conditions_ht.value[i_bc]),
+              *this->simulation_parameters.boundary_conditions_ht.value[i_bc],
               nonzero_constraints);
           }
       }
@@ -1086,8 +1085,22 @@ template <int dim>
 void
 HeatTransfer<dim>::update_boundary_conditions()
 {
-  // No update is done at the moment since boundary conditions are defined
-  // without functions
+  double time = this->simulation_control->get_current_time();
+  for (unsigned int i_bc = 0;
+       i_bc < this->simulation_parameters.boundary_conditions_ht.size;
+       ++i_bc)
+    {
+      this->simulation_parameters.boundary_conditions_ht.value[i_bc]->set_time(
+        time);
+      this->simulation_parameters.boundary_conditions_ht.h[i_bc]->set_time(
+        time);
+      this->simulation_parameters.boundary_conditions_ht.Tinf[i_bc]->set_time(
+        time);
+      this->simulation_parameters.boundary_conditions_ht.emissivity[i_bc]
+        ->set_time(time);
+    }
+  // TODO update the non_zero_constraints and zero_contraints (? if applicable
+  // to newton or robin BC)
 }
 
 template <int dim>
@@ -1507,10 +1520,12 @@ HeatTransfer<dim>::postprocess_heat_flux_on_bc(
                       // Gather h coefficient and T_inf
                       const double h_coefficient =
                         this->simulation_parameters.boundary_conditions_ht
-                          .h[vector_index];
+                          .h[vector_index]
+                          ->value(Point<dim>());
                       const double T_inf =
                         this->simulation_parameters.boundary_conditions_ht
-                          .Tinf[vector_index];
+                          .Tinf[vector_index]
+                          ->value(Point<dim>());
 
 
                       // Gather heat transfer information
