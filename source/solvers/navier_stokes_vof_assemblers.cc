@@ -607,14 +607,7 @@ NavierStokesVOFAssemblerEvaporation<dim>::assemble_rhs(
       const Tensor<1, dim> &phase_gradient_value =
         scratch_data.filtered_phase_gradient_values[q];
 
-      const double phase_gradient_norm = phase_gradient_value.norm();
-
-      const Tensor<1, dim> normalized_phase_fraction_gradient =
-        phase_gradient_value / (phase_gradient_norm + DBL_MIN);
-
-
       const double JxW_value = JxW[q];
-
 
       const Tensor<1, dim> recoil_pressure_force =
         recoil_pressure * phase_gradient_value;

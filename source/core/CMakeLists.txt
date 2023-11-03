@@ -5,6 +5,7 @@ add_library(lethe-core
   dem_properties.cc
   density_model.cc
   dimensionality.cc
+  evaporation_model.cc
   grids.cc
   ib_particle.cc
   ib_stencil.cc

@@ -20,5 +20,5 @@ std::shared_ptr<EvaporationModel>
 EvaporationModel::model_cast(
   const Parameters::Evaporation &evaporation_parameters)
 {
-    return std::make_shared<EvaporationModel>();
+    return std::make_shared<EvaporationModelConstant>(evaporation_parameters);
 }
