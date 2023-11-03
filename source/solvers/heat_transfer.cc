@@ -1089,6 +1089,9 @@ HeatTransfer<dim>::update_boundary_conditions()
     return;
 
   double time = this->simulation_control->get_current_time();
+  // We begin by setting the new time for all expressions, although the change
+  // for the convection-radiation boundary conditions won't be applied in this
+  // function
   for (unsigned int i_bc = 0;
        i_bc < this->simulation_parameters.boundary_conditions_ht.size;
        ++i_bc)
@@ -1108,8 +1111,30 @@ HeatTransfer<dim>::update_boundary_conditions()
       Assert(emissivity <= 1.0 && emissivity >= 0.0,
              EmissivityError(emissivity));
     }
-  // TODO update the non_zero_constraints and zero_contraints (? if applicable
-  // to newton or robin BC)
+
+  {
+    nonzero_constraints.clear();
+    nonzero_constraints.reinit(this->locally_relevant_dofs);
+    DoFTools::make_hanging_node_constraints(this->dof_handler,
+                                            nonzero_constraints);
+
+    for (unsigned int i_bc = 0;
+         i_bc < this->simulation_parameters.boundary_conditions_ht.size;
+         ++i_bc)
+      {
+        // Dirichlet condition : imposed temperature at i_bc
+        if (this->simulation_parameters.boundary_conditions_ht.type[i_bc] ==
+            BoundaryConditions::BoundaryType::temperature)
+          {
+            VectorTools::interpolate_boundary_values(
+              this->dof_handler,
+              this->simulation_parameters.boundary_conditions_ht.id[i_bc],
+              *this->simulation_parameters.boundary_conditions_ht.value[i_bc],
+              nonzero_constraints);
+          }
+      }
+  }
+  nonzero_constraints.close();
 }
 
 template <int dim>
