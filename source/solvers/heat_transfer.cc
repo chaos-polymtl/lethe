@@ -1105,11 +1105,14 @@ HeatTransfer<dim>::update_boundary_conditions()
       this->simulation_parameters.boundary_conditions_ht.emissivity[i_bc]
         ->set_time(time);
 
-      const double emissivity =
+      Assert(
         this->simulation_parameters.boundary_conditions_ht.emissivity[i_bc]
-          ->value(Point<dim>());
-      Assert(emissivity <= 1.0 && emissivity >= 0.0,
-             EmissivityError(emissivity));
+              ->value(Point<dim>()) <= 1.0 &&
+          this->simulation_parameters.boundary_conditions_ht.emissivity[i_bc]
+              ->value(Point<dim>()) >= 0.0,
+        EmissivityError(
+          this->simulation_parameters.boundary_conditions_ht.emissivity[i_bc]
+            ->value(Point<dim>())));
     }
 
   {
