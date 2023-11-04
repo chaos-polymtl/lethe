@@ -1333,12 +1333,13 @@ namespace Parameters
   };
 
   /**
-   * @brief Return the tensor of entry @p entry_string. If the entry was changed,
+   * @brief Return the tensor of entry @p entry_string. If the entry is specified in the .prm file,
    * then the changed value is returned, otherwise the default value is
-   * returned. If the entry is not a Tensor, an Throw_error will occur.
+   * returned. If the entry is not a Tensor, an AssertThrow will occur.
    * This function can be use for Point variables.
    *
-   * @param entry_string A declare string
+   * @param prm A parameter handler which is currently used to parse the simulation information
+   * @param entry_string A declare string in the parameter file.
    */
   Tensor<1, 3>
   entry_string_to_tensor3(ParameterHandler  &prm,

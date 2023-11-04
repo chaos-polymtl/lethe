@@ -3208,12 +3208,11 @@ namespace Parameters
     std::vector<double> vector_of_double =
       Utilities::string_to_double(vector_of_string);
 
-    if (vector_of_double.size() != 3)
-      {
-        throw(
-          std::runtime_error("Invalid " + entry_string +
-                             ". This should be a three dimensional vector."));
-      }
+    AssertThrow(vector_of_double.size() == 3,
+                ExcMessage(
+                  "Invalid " + entry_string +
+                  ". This should be a three dimensional vector or point."));
+
     Tensor<1, 3> output_tensor;
     for (unsigned int i = 0; i < 3; ++i)
       output_tensor[i] = vector_of_double[i];
