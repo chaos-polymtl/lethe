@@ -1953,25 +1953,10 @@ namespace Parameters
       target_size = prm.get_double("target size");
 
       // Initial translation
-      std::string              translation_str = prm.get("initial translation");
-      std::vector<std::string> translate_str_list =
-        Utilities::split_string_list(translation_str);
-      translation =
-        Tensor<1, 3>({Utilities::string_to_double(translate_str_list[0]),
-                      Utilities::string_to_double(translate_str_list[1]),
-                      Utilities::string_to_double(translate_str_list[2])});
+      translation = entry_string_to_tensor3(prm, "initial translation");
 
-      // Initial rotation
-      // Create a string from the input file, split the string into smaller
-      // strings and store them in a vector, transform the strings into doubles
-      // and stores those in a tensor
-      std::string              axis_str = prm.get("initial rotation axis");
-      std::vector<std::string> axis_str_list =
-        Utilities::split_string_list(axis_str);
-      rotation_axis =
-        Tensor<1, 3>({Utilities::string_to_double(axis_str_list[0]),
-                      Utilities::string_to_double(axis_str_list[1]),
-                      Utilities::string_to_double(axis_str_list[2])});
+      // Initial rotation axis and angle
+      rotation_axis  = entry_string_to_tensor3(prm, "initial rotation axis");
       rotation_angle = prm.get_double("initial rotation angle");
     }
     prm.leave_subsection();
@@ -3211,6 +3196,28 @@ namespace Parameters
     }
 
     prm.leave_subsection();
+  }
+
+  Tensor<1, 3>
+  entry_string_to_tensor3(ParameterHandler  &prm,
+                          const std::string &entry_string)
+  {
+    std::string              full_str = prm.get(entry_string);
+    std::vector<std::string> vector_of_string(
+      Utilities::split_string_list(full_str));
+    std::vector<double> vector_of_double =
+      Utilities::string_to_double(vector_of_string);
+
+    AssertThrow(vector_of_double.size() == 3,
+                ExcMessage(
+                  "Invalid " + entry_string +
+                  ". This should be a three dimensional vector or point."));
+
+    Tensor<1, 3> output_tensor;
+    for (unsigned int i = 0; i < 3; ++i)
+      output_tensor[i] = vector_of_double[i];
+
+    return output_tensor;
   }
 
   template class Laser<2>;

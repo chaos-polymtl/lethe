@@ -547,23 +547,12 @@ namespace Parameters
         list_d = Utilities::string_to_double(d_str_list);
 
         // Insertion plane normal vector
-        std::string plane_vector_str = prm.get("insertion plane normal vector");
-        std::vector<std::string> plane_vector_str_list =
-          Utilities::split_string_list(plane_vector_str);
         insertion_plane_normal_vector =
-          Tensor<1, 3>({Utilities::string_to_double(plane_vector_str_list[0]),
-                        Utilities::string_to_double(plane_vector_str_list[1]),
-                        Utilities::string_to_double(plane_vector_str_list[2])});
-
+          entry_string_to_tensor3(prm, "insertion plane normal vector");
 
         // Insertion plane point
-        std::string plane_point_str = prm.get("insertion plane point");
-        std::vector<std::string> plane_point_str_list =
-          Utilities::split_string_list(plane_point_str);
         insertion_plane_point =
-          Point<3>({Utilities::string_to_double(plane_point_str_list[0]),
-                    Utilities::string_to_double(plane_point_str_list[1]),
-                    Utilities::string_to_double(plane_point_str_list[2])});
+          entry_string_to_tensor3(prm, "insertion plane point");
       }
       prm.leave_subsection();
     }
@@ -1197,30 +1186,16 @@ namespace Parameters
           double rotational_speed = prm.get_double("rotational speed");
 
           // Read the rotational vector from a list of doubles
-          Tensor<1, 3> rotational_vector;
-
-          std::string rotational_vector_str = prm.get("rotational vector");
-          std::vector<std::string> rotational_vector_str_list(
-            Utilities::split_string_list(rotational_vector_str));
-          std::vector<double> rotational_vector_list =
-            Utilities::string_to_double(rotational_vector_str_list);
-          for (unsigned int i = 0; i < 3; ++i)
-            rotational_vector[i] = rotational_vector_list[i];
+          Tensor<1, 3> rotational_vector =
+            entry_string_to_tensor3(prm, "rotational vector");
           if (rotational_vector.norm() == 0.)
             {
               throw(std::runtime_error(
                 "Invalid rotational vector. Its norm cannot be equal to zero."));
             }
           // Read the point from a list of doubles
-          Tensor<1, 3> point_on_rotation_axis_tensor;
-
-          std::string point_on_vector = prm.get("point on rotational vector");
-          std::vector<std::string> point_on_vector_str_list(
-            Utilities::split_string_list(point_on_vector));
-          std::vector<double> point_on_vector_list =
-            Utilities::string_to_double(point_on_vector_str_list);
-          for (unsigned int i = 0; i < 3; ++i)
-            point_on_rotation_axis_tensor[i] = point_on_vector_list[i];
+          Tensor<1, 3> point_on_rotation_axis_tensor =
+            entry_string_to_tensor3(prm, "point on rotational vector");
 
           this->boundary_rotational_speed.at(boundary_id) = rotational_speed;
           this->boundary_rotational_vector.at(boundary_id) =
