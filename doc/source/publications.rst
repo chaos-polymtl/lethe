@@ -4,6 +4,11 @@ Publications
 
 This section regroups the peer-reviewed journal articles that **describe** core functionalities of Lethe or that **use** Lethe. The publications are grouped by the year of the publications and displayed in the IEEE format.
 
+2024
+----
+
+* `L. Barbeau, S. Golshan, J. Deng, S. Étienne, C. Béguin et B. Blais, “High-order moving immersed boundary and its application to a resolved cfd-dem model,” Computers Fluids, vol. 268, p. 106094, 2024 <https://doi.org/10.1016/j.compfluid.2023.106094>`_.
+
 2023
 ----
 
