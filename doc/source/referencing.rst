@@ -30,6 +30,9 @@ Sharp-Edge Immersed Boundary Method
 
 * `L. Barbeau, S. Étienne, C. Béguin, and B. Blais, "Development of a high-order continuous Galerkin sharp-interface immersed boundary method and its application to incompressible flow problems", Computers & Fluids, 239, 105415, 2022 <https://www.sciencedirect.com/science/article/pii/S0045793022000780?via%3Dihub>`_
 
+* `L. Barbeau, S. Golshan, J. Deng, S. Étienne, C. Béguin et B. Blais, “High-order moving immersed boundary and its application to a resolved cfd-dem model,” Computers Fluids, vol. 268, p. 106094, 2024 <https://doi.org/10.1016/j.compfluid.2023.106094>`_.
+
+
 Nitsche Immersed Boundary Method
 ------------------------------------
 
