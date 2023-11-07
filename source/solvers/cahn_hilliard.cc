@@ -921,7 +921,8 @@ template <int dim>
 void
 CahnHilliard<dim>::update_boundary_conditions()
 {
-  if (!this->simulation_parameters.boundary_conditions_tracer.time_dependent)
+  if (!this->simulation_parameters.boundary_conditions_cahn_hilliard
+         .time_dependent)
     return;
 
   double time = this->simulation_control->get_current_time();
@@ -945,11 +946,9 @@ CahnHilliard<dim>::update_boundary_conditions()
               .type[i_bc] == BoundaryConditions::BoundaryType::
                                cahn_hilliard_dirichlet_phase_order)
           {
-            CahnHilliardFunctionDefined<dim>(
-              &this->simulation_parameters.boundary_conditions_cahn_hilliard
-                 .bcFunctions[i_bc]
-                 .phi)
-              .set_time(time);
+            this->simulation_parameters.boundary_conditions_cahn_hilliard
+              .bcFunctions[i_bc]
+              .phi.set_time(time);
             VectorTools::interpolate_boundary_values(
               this->dof_handler,
               this->simulation_parameters.boundary_conditions_cahn_hilliard
@@ -962,11 +961,11 @@ CahnHilliard<dim>::update_boundary_conditions()
               mask);
           }
       }
+    nonzero_constraints.close();
+    auto &nonzero_constraints = this->nonzero_constraints;
+    nonzero_constraints.distribute(this->local_evaluation_point);
+    this->present_solution = this->local_evaluation_point;
   }
-  nonzero_constraints.close();
-  auto &nonzero_constraints = this->nonzero_constraints;
-  nonzero_constraints.distribute(this->local_evaluation_point);
-  this->present_solution = this->local_evaluation_point;
 }
 
 template <int dim>
