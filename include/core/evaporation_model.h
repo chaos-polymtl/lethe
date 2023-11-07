@@ -174,7 +174,7 @@ protected:
 class EvaporationModelConstant : public EvaporationModel
 {
 public:
-  EvaporationModelConstant(const Parameters::Evaporation &p_evaporation): evaporation_coefficient(p_evaporation.evaporation_coefficient), latent_heat_evaporation(p_evaporation.latent_heat_evaporation)
+  EvaporationModelConstant(const Parameters::Evaporation &p_evaporation): n_evaporation(p_evaporation.n_evaporation), latent_heat_evaporation(p_evaporation.latent_heat_evaporation), ambient_gas_density_inv(1.0/p_evaporation.ambient_gas_density), liquid_density_inv(1.0/p_evaporation.liquid_density)
   {
     model_depends_on[temperature] = false;
   }
@@ -188,7 +188,7 @@ public:
   double
   mass_flux(const std::map<field, double> & /*fields_value*/) override
   {
-    return evaporation_coefficient;
+    return n_evaporation;
   }
   
   /**
@@ -201,7 +201,7 @@ public:
   vector_mass_flux(const std::map<field, std::vector<double>> & /*fields_value*/,
                std::vector<double>                        &mass_flux_vector) override
   {
-    std::fill(mass_flux_vector.begin(), mass_flux_vector.end(), evaporation_coefficient);
+    std::fill(mass_flux_vector.begin(), mass_flux_vector.end(), n_evaporation);
   }
                
   /**
@@ -212,7 +212,7 @@ public:
   double
   heat_flux(const std::map<field, double> & /*fields_value*/) override
   {
-    return evaporation_coefficient*latent_heat_evaporation;
+    return n_evaporation*latent_heat_evaporation;
   }
   
   /**
@@ -225,7 +225,7 @@ public:
   vector_heat_flux(const std::map<field, std::vector<double>> &/*field_vectors*/,
                std::vector<double>                        &heat_flux_vector) override
   {
-    std::fill(heat_flux_vector.begin(), heat_flux_vector.end(),  evaporation_coefficient*latent_heat_evaporation);
+    std::fill(heat_flux_vector.begin(), heat_flux_vector.end(),  n_evaporation*latent_heat_evaporation);
   }
 
   /**
@@ -268,7 +268,7 @@ public:
   double
   recoil_pressure(const std::map<field, double> & /*fields_value*/) override
   {
-    return 0.0;
+    return -n_evaporation*n_evaporation*(liquid_density_inv - ambient_gas_density_inv);
   }
   
   /**
@@ -277,11 +277,14 @@ public:
    * @param field_vectors Value of the various fields on which the flux may depend.
    * @param recoil_pressure_vector Vectors of the recoil pressure values
    */
-  virtual void
+  void
   vector_recoil_pressure(const std::map<field, std::vector<double>> &/*field_vectors*/,
                std::vector<double>                        &recoil_pressure_vector) override
-  {            
-    std::fill(recoil_pressure_vector.begin(), recoil_pressure_vector.end(), 0);
+  { 
+    
+    const double recoil_pressure_value = -n_evaporation*n_evaporation*(liquid_density_inv - ambient_gas_density_inv);
+    
+    std::fill(recoil_pressure_vector.begin(), recoil_pressure_vector.end(), recoil_pressure_value);
   }
 
   /**
@@ -320,8 +323,10 @@ public:
 
 private:
   
-  double evaporation_coefficient;
-  double latent_heat_evaporation;
+  const double n_evaporation;
+  const double latent_heat_evaporation;
+  const double ambient_gas_density_inv;
+  const double liquid_density_inv;
 };
 
 #endif

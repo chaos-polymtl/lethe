@@ -135,7 +135,7 @@ public:
 
     ale.declare_parameters(prm);
     
-    evaporation.declare_parameters(prm);
+    Parameters::Evaporation::declare_parameters(prm);
 
     multiphysics.declare_parameters(prm);
   }

@@ -20,5 +20,8 @@ std::shared_ptr<EvaporationModel>
 EvaporationModel::model_cast(
   const Parameters::Evaporation &evaporation_parameters)
 {
+  if (evaporation_parameters.evaporative_mass_flux_model_type == Parameters::Evaporation::EvaporativeMassFluxModelType::constant)
+    return std::make_shared<EvaporationModelConstant>(evaporation_parameters);
+  else 
     return std::make_shared<EvaporationModelConstant>(evaporation_parameters);
 }

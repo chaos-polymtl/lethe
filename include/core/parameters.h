@@ -1373,14 +1373,15 @@ namespace Parameters
     bool enable_recoil_pressure;
     
     // Parameters for the evaporation terms at the melt pool free surface
+    double n_evaporation;
     double evaporation_coefficient;
     double molar_mass;
     double boiling_temperature;
     double latent_heat_evaporation;
     double ambient_pressure;
-    
-    
-    
+    double ambient_gas_density;
+    double liquid_density;
+
     static void
     declare_parameters(ParameterHandler &prm);
     void

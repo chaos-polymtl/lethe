@@ -598,7 +598,10 @@ NavierStokesVOFAssemblerEvaporation<dim>::assemble_rhs(
       // Only temporary, should change if the evaporation also depends on the 
       // species concentration
       std::map<field, double> field_value;
-      field_value[field::temperature] = scratch_data.temperature_values[q];
+      if (this->evaporation_model->depends_on(field::temperature))
+      {
+        field_value[field::temperature] = scratch_data.temperature_values[q];
+      }
       
       // Recoil pressure
       const double recoil_pressure = this->evaporation_model->recoil_pressure(field_value);

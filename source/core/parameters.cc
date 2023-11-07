@@ -3260,6 +3260,11 @@ namespace Parameters
         Patterns::Bool(),
         "Enable the recoil pressure due to evaporation at the free surface (air/metal interface) in the momentum equation <true|false>");
       prm.declare_entry(
+        "evaporation mass flux",
+        "0.1",
+        Patterns::Double(),
+        "Evaporation mass flux used if the constant evaporation model is selected");
+      prm.declare_entry(
         "evaporation coefficient",
         "0.82",
         Patterns::Double(),
@@ -3284,7 +3289,18 @@ namespace Parameters
         "101.325",
         Patterns::Double(),
         "Ambient pressure in kPa");
+      prm.declare_entry(
+        "ambient gas density",
+        "1.0",
+        Patterns::Double(),
+        "Ambient gas density in kg/m3");
+      prm.declare_entry(
+        "liquid density",
+        "10.0",
+        Patterns::Double(),
+        "Liquid density in kg/m3");
     }
+    prm.leave_subsection();
   }
 
   void
@@ -3305,12 +3321,17 @@ namespace Parameters
       enable_evaporation_cooling = prm.get_bool("enable evaporative cooling");
       enable_recoil_pressure = prm.get_bool("enable recoil pressure");
       
+      n_evaporation =  prm.get_double("evaporation mass flux");
       evaporation_coefficient =  prm.get_double("evaporation coefficient");
       molar_mass = prm.get_double("molar mass");
       boiling_temperature = prm.get_double("boiling temperature");
       latent_heat_evaporation = prm.get_double("latent heat of evaporation");
       ambient_pressure = prm.get_double("ambient pressure");
+      ambient_gas_density = prm.get_double("ambient gas density");
+      liquid_density = prm.get_double("liquid density");
+      
     }
+    prm.leave_subsection();
   }
 
   Tensor<1, 3>
