@@ -72,7 +72,7 @@ end
 #---------------------------------------------------
 
 subsection insertion info
-  set insertion method                               = non_uniform
+  set insertion method                               = volume
   set inserted number of particles at each time step = 20000
   set insertion frequency                            = 20000
   set insertion box minimum x                        = 0.02

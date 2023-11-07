@@ -18,7 +18,7 @@
  */
 
 /**
- * @brief Inserting one particle using uniform insertion class.
+ * @brief Inserting one particle using volume insertion class.
  */
 
 // Deal.II includes
@@ -33,7 +33,7 @@
 
 // Lethe
 #include <dem/dem_solver_parameters.h>
-#include <dem/uniform_insertion.h>
+#include <dem/volume_insertion.h>
 
 // Tests (with common definitions)
 #include <../tests/tests.h>
@@ -73,6 +73,7 @@ test()
   dem_parameters.lagrangian_physical_properties.particle_average_diameter[0] =
     0.005;
   dem_parameters.lagrangian_physical_properties.particle_size_std[0] = 0;
+  dem_parameters.insertion_info.random_number_range                  = 0;
   dem_parameters.lagrangian_physical_properties.density_particle[0]  = 2500;
   dem_parameters.lagrangian_physical_properties.number[0]            = 10;
 
@@ -81,7 +82,7 @@ test()
     tr, mapping, DEM::get_number_properties());
 
   // Calling uniform insertion
-  UniformInsertion<dim> insertion_object(
+  VolumeInsertion<dim> insertion_object(
     dem_parameters,
     dem_parameters.lagrangian_physical_properties.particle_average_diameter[0]);
   insertion_object.insert(particle_handler, tr, dem_parameters);

@@ -78,7 +78,7 @@ end
 #---------------------------------------------------
 
 subsection insertion info
-  set insertion method                               = uniform
+  set insertion method                               = volume
   set inserted number of particles at each time step = 1
   set insertion frequency                            = 2000
   set insertion box minimum x                        = -0.006
@@ -88,7 +88,7 @@ subsection insertion info
   set insertion box maximum y                        = 0.090
   set insertion box maximum z                        = 0.006
   set insertion distance threshold                   = 1.01
-  set insertion random number range                  = 0.5
+  set insertion random number range                  = 0.
   set insertion random number seed                   = 19
 
   set velocity y = 10.0

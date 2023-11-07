@@ -27,13 +27,13 @@
 #include <dem/insertion.h>
 #include <dem/integrator.h>
 #include <dem/lagrangian_post_processing.h>
-#include <dem/non_uniform_insertion.h>
 #include <dem/output_force_torque_calculation.h>
 #include <dem/particle_particle_contact_force.h>
 #include <dem/particle_point_line_contact_force.h>
 #include <dem/particle_wall_contact_force.h>
 #include <dem/periodic_boundaries_manipulator.h>
 #include <dem/visualization.h>
+#include <dem/volume_insertion.h>
 
 #include <deal.II/base/tensor.h>
 #include <deal.II/base/timer.h>

@@ -25,7 +25,6 @@
 #include <dem/gear3_integrator.h>
 #include <dem/input_parameter_inspection.h>
 #include <dem/list_insertion.h>
-#include <dem/non_uniform_insertion.h>
 #include <dem/particle_wall_nonlinear_force.h>
 #include <dem/plane_insertion.h>
 #include <dem/post_processing.h>
@@ -33,8 +32,8 @@
 #include <dem/read_mesh.h>
 #include <dem/set_particle_particle_contact_force_model.h>
 #include <dem/set_particle_wall_contact_force_model.h>
-#include <dem/uniform_insertion.h>
 #include <dem/velocity_verlet_integrator.h>
+#include <dem/volume_insertion.h>
 #include <dem/write_checkpoint.h>
 
 #include <deal.II/base/table_handler.h>
@@ -888,18 +887,11 @@ std::shared_ptr<Insertion<dim>>
 DEMSolver<dim>::set_insertion_type(const DEMSolverParameters<dim> &parameters)
 {
   if (parameters.insertion_info.insertion_method ==
-      Parameters::Lagrangian::InsertionInfo::InsertionMethod::uniform)
+      Parameters::Lagrangian::InsertionInfo::InsertionMethod::volume)
     {
       insertion_object =
-        std::make_shared<UniformInsertion<dim>>(parameters,
-                                                maximum_particle_diameter);
-    }
-  else if (parameters.insertion_info.insertion_method ==
-           Parameters::Lagrangian::InsertionInfo::InsertionMethod::non_uniform)
-    {
-      insertion_object =
-        std::make_shared<NonUniformInsertion<dim>>(parameters,
-                                                   maximum_particle_diameter);
+        std::make_shared<VolumeInsertion<dim>>(parameters,
+                                               maximum_particle_diameter);
     }
   else if (parameters.insertion_info.insertion_method ==
            Parameters::Lagrangian::InsertionInfo::InsertionMethod::list)

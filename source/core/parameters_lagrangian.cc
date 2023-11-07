@@ -273,10 +273,10 @@ namespace Parameters
       prm.enter_subsection("insertion info");
       {
         prm.declare_entry("insertion method",
-                          "non_uniform",
-                          Patterns::Selection("uniform|non_uniform|list|plane"),
+                          "volume",
+                          Patterns::Selection("volume|list|plane"),
                           "Choosing insertion method. "
-                          "Choices are <uniform|non_uniform|list|plane>.");
+                          "Choices are <volume|list|plane>.");
         prm.declare_entry("inserted number of particles at each time step",
                           "1",
                           Patterns::Integer(),
@@ -422,10 +422,8 @@ namespace Parameters
       prm.enter_subsection("insertion info");
       {
         const std::string insertion = prm.get("insertion method");
-        if (insertion == "uniform")
-          insertion_method = InsertionMethod::uniform;
-        else if (insertion == "non_uniform")
-          insertion_method = InsertionMethod::non_uniform;
+        if (insertion == "volume")
+          insertion_method = InsertionMethod::volume;
         else if (insertion == "list")
           insertion_method = InsertionMethod::list;
         else if (insertion == "plane")

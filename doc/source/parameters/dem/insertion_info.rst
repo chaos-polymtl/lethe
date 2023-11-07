@@ -11,8 +11,8 @@ In this subsection, insertion methods which are ``uniform``, ``non_unifom``, ``p
 .. code-block:: text
 
   subsection insertion info
-    # Choices are uniform|non_uniform|plane|list
-    set insertion method                               = non_uniform
+    # Choices are volume|plane|list
+    set insertion method                               = volume
 
     # Every method
     set insertion frequency                            = 20000
