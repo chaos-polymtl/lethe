@@ -1039,6 +1039,11 @@ namespace BoundaryConditions
                         "0",
                         Patterns::Integer(),
                         "Number of boundary conditions");
+      prm.declare_entry(
+        "time dependent",
+        "false",
+        Patterns::Bool(),
+        "Bool to define if the boundary condition is time dependent");
       this->id.resize(this->max_size);
       this->type.resize(this->max_size);
       phase_fraction.resize(this->max_size);
@@ -1096,7 +1101,8 @@ namespace BoundaryConditions
   {
     prm.enter_subsection("boundary conditions VOF");
     {
-      this->size = prm.get_integer("number");
+      this->size           = prm.get_integer("number");
+      this->time_dependent = prm.get_bool("time dependent");
 
       this->type.resize(this->size);
       this->id.resize(this->size);
