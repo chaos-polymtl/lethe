@@ -1,0 +1,122 @@
+set dimension = 2
+
+subsection simulation control
+  set method           = bdf1
+  set time end         = 1
+  set time step        = 0.5
+  set output name      = out
+  set output frequency = 0
+end
+
+subsection initial conditions
+  set type = nodal
+end
+
+subsection boundary conditions
+  set number         = 4
+  set time dependent = false
+  subsection bc 0
+    set id   = 0
+    set type = noslip
+  end
+  subsection bc 1
+    set id   = 1
+    set type = noslip
+  end
+  subsection bc 2
+    set id   = 2
+    set type = noslip
+  end
+  subsection bc 3
+    set id   = 3
+    set type = function
+    subsection u
+      set Function expression = 1
+    end
+    subsection v
+      set Function expression = 0
+    end
+  end
+end
+
+subsection boundary conditions tracer
+  set number         = 4
+  set time dependent = true
+  subsection bc 0
+    set id   = 0
+    set type = dirichlet
+    subsection dirichlet
+      set Function expression = t
+    end
+  end
+  subsection bc 1
+    set id   = 1
+    set type = dirichlet
+    subsection dirichlet
+      set Function expression = t
+    end
+  end
+  subsection bc 2
+    set id   = 2
+    set type = dirichlet
+    subsection dirichlet
+      set Function expression = 1-t
+    end
+  end
+  subsection bc 3
+    set id   = 3
+    set type = dirichlet
+    subsection dirichlet
+      set Function expression = 1-t
+    end
+  end
+end
+
+subsection physical properties
+  subsection fluid 0
+    set rheological model   = newtonian
+    set kinematic viscosity = 1
+    set tracer diffusivity  = 1
+  end
+end
+
+subsection multiphysics
+  set fluid dynamics = true
+  set tracer         = true
+end
+
+subsection post-processing
+  set verbosity                   = verbose
+  set calculate tracer statistics = true
+end
+
+subsection mesh
+  set type               = dealii
+  set grid type          = hyper_cube
+  set grid arguments     = 0 : 1 : true
+  set initial refinement = 3
+end
+
+subsection FEM
+  set velocity order = 1
+  set pressure order = 1
+  set tracer order   = 1
+end
+
+subsection non-linear solver
+  subsection fluid dynamics
+    set verbosity = quiet
+  end
+  subsection tracer
+    set verbosity = quiet
+  end
+end
+
+subsection linear solver
+  subsection fluid dynamics
+    set verbosity = quiet
+  end
+  subsection tracer
+    set verbosity = quiet
+  end
+end
