@@ -12,5 +12,5 @@ This feature is useful in geometries with concave boundaries.
 2 particles of type 0 were inserted, 0 particles of type 0 remaining
 *********************************************************************
 id, type, dp, x, y, z 
-0 0 0.00500 -0.0227 -0.0475 0.0195
-1 0 0.00500 -0.0102 -0.0475 0.0340
+0 0 0.00500 -0.0228 -0.0475 0.0195
+1 0 0.00500 -0.0102 -0.0475 0.0341
