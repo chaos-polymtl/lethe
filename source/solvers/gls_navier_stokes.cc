@@ -214,10 +214,6 @@ GLSNavierStokesSolver<dim>::update_boundary_conditions()
       nonzero_constraints.distribute(this->local_evaluation_point);
       this->present_solution = this->local_evaluation_point;
     }
-
-  // We allow the multiphysics to update their boundary conditions according to
-  // their own parameters
-  this->multiphysics->update_boundary_conditions();
 }
 
 template <int dim>
@@ -1715,10 +1711,12 @@ GLSNavierStokesSolver<dim>::solve()
              0 ||
            this->simulation_parameters.mesh_adaptation.type ==
              Parameters::MeshAdaptation::Type::none ||
-           this->simulation_control->is_at_start()) &&
-          this->simulation_parameters.boundary_conditions.time_dependent)
+           this->simulation_control->is_at_start()))
         {
-          update_boundary_conditions();
+          // We allow the physics to update their boundary conditions
+          // according to their own parameters
+          this->update_boundary_conditions();
+          this->multiphysics->update_boundary_conditions();
         }
 
       this->simulation_control->print_progression(this->pcout);
