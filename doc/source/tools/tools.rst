@@ -10,4 +10,5 @@ Tools
     updating-test-results
     gmsh/gmsh
     automatic_launch/automatic_launch
-    postprocessing/postprocessing
+    postprocessing/postprocessing_paraview
+    postprocessing/postprocessing_pyvista
