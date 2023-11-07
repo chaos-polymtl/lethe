@@ -1172,3 +1172,99 @@ HeatTransferAssemblerFreeSurfaceRadiationVOF<dim>::assemble_rhs(
 
 template class HeatTransferAssemblerFreeSurfaceRadiationVOF<2>;
 template class HeatTransferAssemblerFreeSurfaceRadiationVOF<3>;
+
+template <int dim>
+void
+HeatTransferAssemblerVOFEvaporation<dim>::assemble_matrix(
+  HeatTransferScratchData<dim> &scratch_data,
+  StabilizedMethodsCopyData    &copy_data)
+{
+  // Loop and quadrature informations
+  const unsigned int n_q_points = scratch_data.n_q_points;
+  const unsigned int n_dofs     = scratch_data.n_dofs;
+
+  // Copy data elements
+  auto &local_matrix = copy_data.local_matrix;
+
+  // assembling local matrix and right hand side
+  for (unsigned int q = 0; q < n_q_points; ++q)
+    {
+      const double temperature = scratch_data.present_temperature_values[q];
+      
+      std::map<field, double> field_value;
+      field_value[field::temperature] = temperature;
+      
+      const double evaporative_heat_flux_jacobian = this->evaporation_model->heat_flux_jacobian(field_value, field::temperature);
+
+      const Tensor<1, dim> phase_gradient_q =
+        scratch_data.filtered_phase_gradient_values[q];
+        
+      // Store JxW in local variable for faster access
+      const double JxW = scratch_data.fe_values_T.JxW(q);
+
+      for (unsigned int i = 0; i < n_dofs; ++i)
+        {
+          const auto phi_T_i = scratch_data.phi_T[q][i];
+
+          for (unsigned int j = 0; j < n_dofs; ++j)
+            {
+              const auto phi_T_j = scratch_data.phi_T[q][j];
+              
+              local_matrix(i, j) +=
+                phase_gradient_q.norm() *
+                evaporative_heat_flux_jacobian *
+                phi_T_i * phi_T_j * JxW;
+            }
+        }
+    } // end loop on quadrature points
+}
+
+template <int dim>
+void
+HeatTransferAssemblerVOFEvaporation<dim>::assemble_rhs(
+  HeatTransferScratchData<dim> &scratch_data,
+  StabilizedMethodsCopyData    &copy_data)
+{
+  // Loop and quadrature informations
+  const unsigned int n_q_points = scratch_data.n_q_points;
+  const unsigned int n_dofs     = scratch_data.n_dofs;
+
+  // Copy data elements
+  auto &local_rhs = copy_data.local_rhs;
+
+  // assembling local matrix and right hand side
+  for (unsigned int q = 0; q < n_q_points; ++q)
+    {
+      const double temperature = scratch_data.present_temperature_values[q];
+      
+      std::map<field, double> field_value;
+      field_value[field::temperature] = temperature;
+      
+      const double evaporative_heat_flux = this->evaporation_model->heat_flux(field_value);
+      
+      const Tensor<1, dim> phase_gradient_q =
+        scratch_data.filtered_phase_gradient_values[q];
+      // Store JxW in local variable for faster access
+      const double JxW = scratch_data.fe_values_T.JxW(q);
+
+      for (unsigned int i = 0; i < n_dofs; ++i)
+        {
+          const auto phi_T_i = scratch_data.phi_T[q][i];
+
+          // Rhs for the linearised radiation sink term at the meltpool free
+          // surface: |grad alpha|* sigma * epsilon * (T^3 - T_inf^3),
+          // where |grad alpha| is the phase gradient norm (which indicates an
+          // interface between the metal and air if non-null), sigma is the
+          // Stefan Boltzmann constant, epsilon is the emissivity of the free
+          // surface, T is the current temperature and T_inf is the reference
+          // (environment) temperature.
+          local_rhs(i) -=
+            phase_gradient_q.norm() * evaporative_heat_flux *
+            phi_T_i * JxW;
+        }
+
+    } // end loop on quadrature points
+}
+
+template class HeatTransferAssemblerVOFEvaporation<2>;
+template class HeatTransferAssemblerVOFEvaporation<3>;

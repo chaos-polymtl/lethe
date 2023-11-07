@@ -3244,7 +3244,7 @@ namespace Parameters
     prm.enter_subsection("evaporation");
     {
       prm.declare_entry(
-        "evaporative mass flux model",
+        "evaporation mass flux model",
         "constant",
         Patterns::Selection("constant"),
         "Model used for the calculation of the evaporative mass flux"
@@ -3280,7 +3280,7 @@ namespace Parameters
         Patterns::Double(),
         "Boiling temperature in K");
       prm.declare_entry(
-        "latent heat of evaporation",
+        "evaporation latent heat",
         "0.0",
         Patterns::Double(),
         "Latent heat of evaporation in J/kg");
@@ -3309,7 +3309,7 @@ namespace Parameters
     prm.enter_subsection("evaporation");
     {
       std::string op;
-      op = prm.get("evaporative mass flux model");
+      op = prm.get("evaporation mass flux model");
       if (op == "constant")
         {
           evaporative_mass_flux_model_type = EvaporativeMassFluxModelType::constant;
@@ -3325,7 +3325,7 @@ namespace Parameters
       evaporation_coefficient =  prm.get_double("evaporation coefficient");
       molar_mass = prm.get_double("molar mass");
       boiling_temperature = prm.get_double("boiling temperature");
-      latent_heat_evaporation = prm.get_double("latent heat of evaporation");
+      latent_heat_evaporation = prm.get_double("evaporation latent heat");
       ambient_pressure = prm.get_double("ambient pressure");
       ambient_gas_density = prm.get_double("ambient gas density");
       liquid_density = prm.get_double("liquid density");

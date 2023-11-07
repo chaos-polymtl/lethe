@@ -250,6 +250,7 @@ public:
 
   std::shared_ptr<SimulationControl> simulation_control;
   
+private:
   // Evaporation model
   std::shared_ptr<EvaporationModel> evaporation_model;
 };
