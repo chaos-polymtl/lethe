@@ -94,30 +94,54 @@ All the four boundary conditions are ``noslip``, and the heat transfer boundary 
       subsection bc 0
         set id         = 0
         set type       = convection-radiation
-        set h          = 80
-        set Tinf       = 20
-        set emissivity = 0.6
+        subsection h
+          set Function expression = 80
+        end
+        subsection Tinf
+          set Function expression = 20
+        end
+        subsection emissivity
+          set Function expression = 0.6
+        end
       end
       subsection bc 1
         set id         = 1
         set type       = convection-radiation
-        set h          = 80
-        set Tinf       = 20
-        set emissivity = 0.6
+        subsection h
+          set Function expression = 80
+        end
+        subsection Tinf
+          set Function expression = 20
+        end
+        subsection emissivity
+          set Function expression = 0.6
+        end
       end
       subsection bc 2
         set id         = 2
         set type       = convection-radiation
-        set h          = 80
-        set Tinf       = 20
-        set emissivity = 0.6
+        subsection h
+          set Function expression = 80
+        end
+        subsection Tinf
+          set Function expression = 20
+        end
+        subsection emissivity
+          set Function expression = 0.6
+        end
       end
       subsection bc 3
         set id         = 3
         set type       = convection-radiation
-        set h          = 80
-        set Tinf       = 20
-        set emissivity = 0.6
+        subsection h
+          set Function expression = 80
+        end
+        subsection Tinf
+          set Function expression = 20
+        end
+        subsection emissivity
+          set Function expression = 0.6
+        end
       end
     end
 

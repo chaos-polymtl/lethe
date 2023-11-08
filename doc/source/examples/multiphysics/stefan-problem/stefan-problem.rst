@@ -10,7 +10,7 @@ Features
 ----------------------------------
 
 - Solver: ``lethe-fluid`` 
-- Heat transfer pĥysics
+- Heat transfer physics
 - Unsteady problem handled by a BDF1 time-stepping scheme
 - Phase change specific heat model
 
@@ -100,7 +100,9 @@ The next step is establishing the boundary conditions:
       subsection bc 0
         set id    = 0
         set type  = temperature
-        set value = 1
+        subsection value
+          set Function expression = 1
+        end
       end
     end
 

@@ -116,26 +116,42 @@ subsection boundary conditions heat transfer
   subsection bc 0
     set id         = 0
     set type       = convection-radiation
-    set h          = 0
-    set Tinf       = 0
-    set emissivity = 0
+    subsection h
+      set Function expression = 0
+    end
+    subsection Tinf
+      set Function expression = 0
+    end
+    subsection emissivity
+      set Function expression = 0
+    end
   end
   subsection bc 1
     set id         = 1
     set type       = convection-radiation
-    set h          = 0
-    set Tinf       = 0
-    set emissivity = 0
+    subsection h
+      set Function expression = 0
+    end
+    subsection Tinf
+      set Function expression = 0
+    end
+    subsection emissivity
+      set Function expression = 0
+    end
   end
   subsection bc 2
     set id    = 2
     set type  = temperature
-    set value = 50
+    subsection value
+      set Function expression = 50
+    end
   end
   subsection bc 3
     set id    = 3
     set type  = temperature
-    set value = 0
+    subsection value
+      set Function expression = 0
+    end
   end
 end
 
@@ -144,7 +160,6 @@ end
 #---------------------------------------------------
 
 subsection source term
-  set enable = true
   subsection xyz
     set Function expression = 0 ; -10 ; 0
   end
