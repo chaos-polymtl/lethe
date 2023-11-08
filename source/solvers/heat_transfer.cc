@@ -1115,28 +1115,26 @@ HeatTransfer<dim>::update_boundary_conditions()
             ->value(Point<dim>())));
     }
 
-  {
-    nonzero_constraints.clear();
-    nonzero_constraints.reinit(this->locally_relevant_dofs);
-    DoFTools::make_hanging_node_constraints(this->dof_handler,
-                                            nonzero_constraints);
+  nonzero_constraints.clear();
+  nonzero_constraints.reinit(this->locally_relevant_dofs);
+  DoFTools::make_hanging_node_constraints(this->dof_handler,
+                                          nonzero_constraints);
 
-    for (unsigned int i_bc = 0;
-         i_bc < this->simulation_parameters.boundary_conditions_ht.size;
-         ++i_bc)
-      {
-        // Dirichlet condition : imposed temperature at i_bc
-        if (this->simulation_parameters.boundary_conditions_ht.type[i_bc] ==
-            BoundaryConditions::BoundaryType::temperature)
-          {
-            VectorTools::interpolate_boundary_values(
-              this->dof_handler,
-              this->simulation_parameters.boundary_conditions_ht.id[i_bc],
-              *this->simulation_parameters.boundary_conditions_ht.value[i_bc],
-              nonzero_constraints);
-          }
-      }
-  }
+  for (unsigned int i_bc = 0;
+       i_bc < this->simulation_parameters.boundary_conditions_ht.size;
+       ++i_bc)
+    {
+      // Dirichlet condition : imposed temperature at i_bc
+      if (this->simulation_parameters.boundary_conditions_ht.type[i_bc] ==
+          BoundaryConditions::BoundaryType::temperature)
+        {
+          VectorTools::interpolate_boundary_values(
+            this->dof_handler,
+            this->simulation_parameters.boundary_conditions_ht.id[i_bc],
+            *this->simulation_parameters.boundary_conditions_ht.value[i_bc],
+            nonzero_constraints);
+        }
+    }
   nonzero_constraints.close();
 }
 

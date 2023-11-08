@@ -720,30 +720,28 @@ Tracer<dim>::update_boundary_conditions()
     return;
 
   double time = this->simulation_control->get_current_time();
-  {
-    nonzero_constraints.clear();
-    DoFTools::make_hanging_node_constraints(this->dof_handler,
-                                            nonzero_constraints);
+  nonzero_constraints.clear();
+  DoFTools::make_hanging_node_constraints(this->dof_handler,
+                                          nonzero_constraints);
 
-    for (unsigned int i_bc = 0;
-         i_bc < this->simulation_parameters.boundary_conditions_tracer.size;
-         ++i_bc)
-      {
-        // Dirichlet condition : imposed temperature at i_bc
-        if (this->simulation_parameters.boundary_conditions_tracer.type[i_bc] ==
-            BoundaryConditions::BoundaryType::tracer_dirichlet)
-          {
-            this->simulation_parameters.boundary_conditions_tracer.tracer[i_bc]
-              ->set_time(time);
-            VectorTools::interpolate_boundary_values(
-              this->dof_handler,
-              this->simulation_parameters.boundary_conditions_tracer.id[i_bc],
-              *this->simulation_parameters.boundary_conditions_tracer
-                 .tracer[i_bc],
-              nonzero_constraints);
-          }
-      }
-  }
+  for (unsigned int i_bc = 0;
+       i_bc < this->simulation_parameters.boundary_conditions_tracer.size;
+       ++i_bc)
+    {
+      // Dirichlet condition : imposed temperature at i_bc
+      if (this->simulation_parameters.boundary_conditions_tracer.type[i_bc] ==
+          BoundaryConditions::BoundaryType::tracer_dirichlet)
+        {
+          this->simulation_parameters.boundary_conditions_tracer.tracer[i_bc]
+            ->set_time(time);
+          VectorTools::interpolate_boundary_values(
+            this->dof_handler,
+            this->simulation_parameters.boundary_conditions_tracer.id[i_bc],
+            *this->simulation_parameters.boundary_conditions_tracer
+               .tracer[i_bc],
+            nonzero_constraints);
+        }
+    }
   nonzero_constraints.close();
   auto &nonzero_constraints = this->nonzero_constraints;
   nonzero_constraints.distribute(this->local_evaluation_point);

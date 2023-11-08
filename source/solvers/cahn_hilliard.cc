@@ -926,46 +926,44 @@ CahnHilliard<dim>::update_boundary_conditions()
     return;
 
   double time = this->simulation_control->get_current_time();
-  {
-    nonzero_constraints.clear();
-    DoFTools::make_hanging_node_constraints(this->dof_handler,
-                                            nonzero_constraints);
+  nonzero_constraints.clear();
+  DoFTools::make_hanging_node_constraints(this->dof_handler,
+                                          nonzero_constraints);
 
-    for (unsigned int i_bc = 0;
-         i_bc <
-         this->simulation_parameters.boundary_conditions_cahn_hilliard.size;
-         ++i_bc)
-      {
-        ComponentMask mask(2, true);
-        mask.set(1, false);
+  for (unsigned int i_bc = 0;
+       i_bc <
+       this->simulation_parameters.boundary_conditions_cahn_hilliard.size;
+       ++i_bc)
+    {
+      ComponentMask mask(2, true);
+      mask.set(1, false);
 
-        // Dirichlet condition: imposed phase_order at i_bc
-        // To impose the boundary condition only on the phase order, a component
-        // mask is used at the end of the interpolate_boundary_values function
-        if (this->simulation_parameters.boundary_conditions_cahn_hilliard
-              .type[i_bc] == BoundaryConditions::BoundaryType::
-                               cahn_hilliard_dirichlet_phase_order)
-          {
+      // Dirichlet condition: imposed phase_order at i_bc
+      // To impose the boundary condition only on the phase order, a component
+      // mask is used at the end of the interpolate_boundary_values function
+      if (this->simulation_parameters.boundary_conditions_cahn_hilliard
+            .type[i_bc] ==
+          BoundaryConditions::BoundaryType::cahn_hilliard_dirichlet_phase_order)
+        {
+          this->simulation_parameters.boundary_conditions_cahn_hilliard
+            .bcFunctions[i_bc]
+            .phi.set_time(time);
+          VectorTools::interpolate_boundary_values(
+            this->dof_handler,
             this->simulation_parameters.boundary_conditions_cahn_hilliard
-              .bcFunctions[i_bc]
-              .phi.set_time(time);
-            VectorTools::interpolate_boundary_values(
-              this->dof_handler,
-              this->simulation_parameters.boundary_conditions_cahn_hilliard
-                .id[i_bc],
-              CahnHilliardFunctionDefined<dim>(
-                &this->simulation_parameters.boundary_conditions_cahn_hilliard
-                   .bcFunctions[i_bc]
-                   .phi),
-              nonzero_constraints,
-              mask);
-          }
-      }
-    nonzero_constraints.close();
-    auto &nonzero_constraints = this->nonzero_constraints;
-    nonzero_constraints.distribute(this->local_evaluation_point);
-    this->present_solution = this->local_evaluation_point;
-  }
+              .id[i_bc],
+            CahnHilliardFunctionDefined<dim>(
+              &this->simulation_parameters.boundary_conditions_cahn_hilliard
+                 .bcFunctions[i_bc]
+                 .phi),
+            nonzero_constraints,
+            mask);
+        }
+    }
+  nonzero_constraints.close();
+  auto &nonzero_constraints = this->nonzero_constraints;
+  nonzero_constraints.distribute(this->local_evaluation_point);
+  this->present_solution = this->local_evaluation_point;
 }
 
 template <int dim>
