@@ -3246,9 +3246,9 @@ namespace Parameters
       prm.declare_entry(
         "evaporation mass flux model",
         "constant",
-        Patterns::Selection("constant"),
+        Patterns::Selection("constant|temperature dependent"),
         "Model used for the calculation of the evaporative mass flux"
-        "Choices are <constant|pure material>.");
+        "Choices are <constant|temperature dependent>.");
       prm.declare_entry(
         "enable evaporative cooling",
         "false",
@@ -3261,7 +3261,7 @@ namespace Parameters
         "Enable the recoil pressure due to evaporation at the free surface (air/metal interface) in the momentum equation <true|false>");
       prm.declare_entry(
         "evaporation mass flux",
-        "0.1",
+        "0.0",
         Patterns::Double(),
         "Evaporation mass flux used if the constant evaporation model is selected");
       prm.declare_entry(
@@ -3271,12 +3271,12 @@ namespace Parameters
         "Evaporation coefficient corresponding to the ratio between the net mass flux (evaporation-condensation) and the mass flux of evaporation");
       prm.declare_entry(
         "molar mass",
-        "0.0",
+        "1.0",
         Patterns::Double(),
         "Molar mass of the material in kg/mol");
       prm.declare_entry(
         "boiling temperature",
-        "0.0",
+        "1.0",
         Patterns::Double(),
         "Boiling temperature in K");
       prm.declare_entry(
@@ -3313,6 +3313,10 @@ namespace Parameters
       if (op == "constant")
         {
           evaporative_mass_flux_model_type = EvaporativeMassFluxModelType::constant;
+        }
+      else if (op == "temperature dependent")
+        {
+          evaporative_mass_flux_model_type = EvaporativeMassFluxModelType::temperature_dependent;
         }
       else
         throw(std::runtime_error(

@@ -1366,7 +1366,8 @@ namespace Parameters
   {
     enum class EvaporativeMassFluxModelType
     {
-      constant
+      constant,
+      temperature_dependent
     } evaporative_mass_flux_model_type;
     
     bool enable_evaporation_cooling;
