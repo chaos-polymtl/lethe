@@ -9,7 +9,7 @@ Lethe is developed with special care for scalability; it is intended to be used 
 Client-server visualization
 ------------------------------
 
-The first limitation that is encountered when FEM problems contain :math:`\sim 15`M cells (when using a 32GB-RAM machine) is lack of memory. Even though the VTU files weigh 2GB, they are decompressed by Paraview when opened.
+The first limitation that is encountered when FEM problems contain :math:`\sim 15` M cells (when using a 32GB-RAM machine) is lack of memory. Even though the VTU files weigh 2GB, they are decompressed by Paraview when opened.
 
 
 Clusters such as those of the Digital Research Alliance of Canada allow to launch interactive jobs in which a Paraview-server can be used. Detailed instructions on how to setup and use such a server are available on this `page <https://docs.alliancecan.ca/wiki/ParaView>`_. However, here is an overview of the required steps to use Client-server visualization:
