@@ -10,22 +10,22 @@ Client-server visualization
 
 The first limitation that is encountered when FEM problems contain :math:`\approx 15M` cells (when using a 32Gb-RAM machine) is a lack of memory. Even though the VTU files weigh 2Gb, they are decompressed by Paraview when opened.
 
-Clusters such as those of Digital Research Alliance of Canada allow to launch interactive jobs in which a Paraview-server can be used. Instructions on how to setup and use such a server is available on this `page <https://docs.alliancecan.ca/wiki/ParaView>`_. Here is an overview of the required steps to use Client-server visualization:
+Clusters such as those of Digital Research Alliance of Canada allow to launch interactive jobs in which a Paraview-server can be used. Instructions on how to setup and use such a server are available on this `page <https://docs.alliancecan.ca/wiki/ParaView>`_. Here is an overview of the required steps to use Client-server visualization:
 
 
 1. Open 3 terminals: #1 will be used to run the server, #2 will be used to link the local-remote ports, #3 will be used to run the client.
 2. Ensure that the files to visualize are on the cluster. ``scp`` can be used to move them there.
 3. (in #1)
     1. Login the cluster.
-    2. Request an interactive job, specifying the number of tasks per node, the number of nodes, the memory per node, the required time and the account : ``salloc –ntasks-per-node=5 –mem=200G –time=2:00:00 –account=rrg-blaisbru –nodes=2``. The selection of the parameters is covered in the next subsection.
+    2. Request an interactive job, specifying the number of tasks per node, the number of nodes, the memory per node, the required time and the account : ``salloc --ntasks-per-node=5 --mem=200G --time=2:00:00 --account=rrg-blaisbru --nodes=2``. The selection of the parameters is covered in the next subsection.
     3. Once the job is running, load the Paraview module : ``module load gcc/9.3.0 paraview-offscreen/5.11.0``. The Paraview version must be the same as the client. The cluster used in this example is Narval.
-    4. Start the server : ``srun pvserver --force-offscreen-rendering``. ``srun`` is used to run the server with all the available cores.
+    4. Start the server : ``srun pvserver --force-offscreen-rendering``. ``srun`` is used to run the server with all the available cores. Make a note of the assigned node.
 4. (in #2) Start the port tunneling: ``ssh user@narval.computecanada.ca -L 11111:nc10133:11111``. Use the assigned node (in this case ``nc10133``) and the port declared by the server (here ``11111``).
 5. (in #3)
     1. Launch Paraview: ``paraview``.
     2. Add the server in File -> Connect -> Add Server.
-    3. Input the proper port, and give a name to the connection.
-    4. Then, click Connect and open files as in local mode: the shown files should be the ones in the cluster. Notice that the available memory shown in the lower right in now much higher.
+    3. Input the proper port, and assign a name to the connection.
+    4. Then, click Connect and open files as in local mode: the shown files should be the ones on the cluster. Notice that the available memory shown in the lower right in now much higher.
 
 
 ------------------------------------
@@ -36,9 +36,9 @@ The ``group files`` parameter in the ``simulation control`` `subsection <../../p
 
 Paraview, when used in parallel as it is described in this section, aims to balance the load on the available cores. This implies that if an output contains only one VTU, only one core will be able to open it. If this core belongs to a node that doesn't have enough memory, Paraview will not be able to open the file.
 
-The number of parts to select should:
+For this reason, we have to take into account post-processing in advance and select the proper number of parts. The number of parts should:
 
-* Allow the individual part to be not higher than 4Gb, for performance.
+* Allow the individual parts to be not higher than 4Gb, for performance.
 * Be high enough so that Paraview can benefit from parallelization and share the load on its available cores.
 
-As an example, a 300M cells problem can be split in about 10 parts of 30M cells each. These 10 parts need about 400Gb of memory to open in Paraview. When using a cluster where nodes have 200Gb of memory, we need 2 nodes to have access to enough memory. To ensure that each node has to open only 5 parts, we request 5 cores per node. We then have to use the line ``salloc –ntasks-per-node=5 –mem=200G –time=2:00:00 –account=rrg-blaisbru –nodes=2`` to request to appropriate resources. A higher number of parts can be used so that postprocessing can be done on a higher number of cores.
+As an example, a 300M cells problem can be split in about 10 parts of 30M cells each. These 10 parts need about 400Gb of memory to be opened in Paraview. When using a cluster where nodes have 200Gb of memory, we need 2 nodes to have access to enough memory. To ensure that each node has to open only 5 parts, we request 5 cores per node. We then have to use the line ``salloc –ntasks-per-node=5 –mem=200G –time=2:00:00 –account=rrg-blaisbru –nodes=2`` to request to appropriate resources. A higher number of parts can be used so that postprocessing can be done using the actual available cores on each node. Information on the resources available on the Alliance clusters is available `here <https://docs.alliancecan.ca/wiki/>`_.
