@@ -528,7 +528,7 @@ namespace BoundaryConditions
         "time dependent",
         "false",
         Patterns::Bool(),
-        "Bool to define if the boundary condition is time dependent");
+        "Bool to define if the boundary condition is time-dependent");
 
       this->id.resize(this->max_size);
       this->type.resize(this->max_size);
@@ -579,7 +579,7 @@ namespace BoundaryConditions
       {
         this->type[i_bc] = BoundaryType::convection_radiation;
 
-        // Emissivity validity (0 <= emissivity <=1) will be checked at
+        // Emissivity validity (0 <= emissivity <= 1) will be checked at
         // evaluation.
       }
 
@@ -718,7 +718,7 @@ namespace BoundaryConditions
         "time dependent",
         "false",
         Patterns::Bool(),
-        "Bool to define if the boundary condition is time dependent");
+        "Bool to define if the boundary condition is time-dependent");
 
       this->id.resize(this->max_size);
       this->type.resize(this->max_size);
@@ -1043,7 +1043,7 @@ namespace BoundaryConditions
         "time dependent",
         "false",
         Patterns::Bool(),
-        "Bool to define if the boundary condition is time dependent");
+        "Bool to define if the boundary condition is time-dependent");
       this->id.resize(this->max_size);
       this->type.resize(this->max_size);
       phase_fraction.resize(this->max_size);

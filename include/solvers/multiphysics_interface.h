@@ -268,7 +268,7 @@ public:
   }
 
   /**
-   * @param Update the boundary conditions of the auxiliary physics if they are time dependent
+   * @param Update the boundary conditions of the auxiliary physics if they are time-dependent
    */
   void
   update_boundary_conditions()

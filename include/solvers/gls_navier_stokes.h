@@ -65,7 +65,7 @@ protected:
   setup_dofs_fd() override;
 
   /**
-   * @brief update non zero constraint if the boundary is time dependent
+   * @brief update non zero constraint if the boundary is time-dependent
    */
   void
   update_boundary_conditions();

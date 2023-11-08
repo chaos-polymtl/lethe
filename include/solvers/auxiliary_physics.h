@@ -104,7 +104,7 @@ public:
   modify_solution(){};
 
   /**
-   * @brief Update non zero constraints if the boundary is time dependent
+   * @brief Update non zero constraints if the boundary is time-dependent
    */
   virtual void
   update_boundary_conditions(){};
