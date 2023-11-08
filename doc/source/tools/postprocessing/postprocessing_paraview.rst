@@ -47,8 +47,8 @@ Paraview, when used in parallel as it is described in this section, aims to bala
 
 For this reason, we have to take into account post-processing in advance and select the proper number of parts. The number of parts should:
 
-* Allow the individual parts to be not higher than 4Gb, for performance.
+* Allow the individual parts to have a size equal or lower than 4GB, for performance.
 * Be high enough so that Paraview can benefit from parallelization and share the load on its available cores.
 
-As an example, a 300M cells problem can be split in about 10 parts of 30M cells each. These 10 parts need about 400Gb of memory to be opened in Paraview. When using a cluster where nodes have 200Gb of memory, we need 2 nodes to have access to enough memory. To ensure that each node has to open only 5 parts, we request 5 cores per node. We then have to use the line ``salloc –ntasks-per-node=5 –mem=200G –time=2:00:00 –account=rrg-blaisbru –nodes=2`` to request the appropriate resources. A higher number of parts can be used so that post-processing can be done using the actual available cores on each node. More information on the resources available on the Alliance clusters can be found `here <https://docs.alliancecan.ca/wiki/>`_.
+As an example, a 300M cells problem can be split in about 10 parts of 30M cells each. These 10 parts need about 400GB of memory to be opened in Paraview. When using a cluster where nodes have 200GB of memory, we need 2 nodes to have access to enough memory. To ensure that each node has to open only 5 parts, we request 5 cores per node. We then have to use the line ``salloc –ntasks-per-node=5 –mem=200G –time=2:00:00 –account=rrg-blaisbru –nodes=2`` to request the appropriate resources. A higher number of parts can be used so that post-processing can be done using the actual available cores on each node. More information on the resources available on the Alliance clusters can be found `here <https://docs.alliancecan.ca/wiki/>`_.
 
