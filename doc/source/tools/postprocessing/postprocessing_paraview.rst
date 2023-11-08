@@ -20,16 +20,13 @@ Clusters such as those of the Digital Research Alliance of Canada allow to launc
 
 2. Ensure that the files to visualize are on the cluster. ``scp`` can be used to move them there.
 3. In #1:
-
     1. Log in to the cluster.
-
     2. Request an interactive job, specifying the number of tasks per node, the number of nodes, the memory per node, the required time and the account : ``salloc --ntasks-per-node=5 --mem=200G --time=2:00:00 --account=rrg-blaisbru --nodes=2``. The selection of the parameters is covered in the next subsection.
     3. Once the job is running, load the Paraview module : ``module load gcc/9.3.0 paraview-offscreen/5.11.0``. The Paraview version must be the same as the client. The cluster used in this example is Narval.
     4. Start the server : ``srun pvserver --force-offscreen-rendering``. ``srun`` is used to run the server with all the available cores. Make a note of the assigned node.
 4. In #2: start the port tunneling by executing ``ssh user@narval.computecanada.ca -L 11111:nc10133:11111``. Use the assigned node (in this case ``nc10133``) and the port declared by the server (here ``11111``).
 
 5. In #3:
-
     1. Launch Paraview: ``paraview``.
     2. Add the server in File -> Connect -> Add Server.
     3. Input the proper port, and assign a name to the connection.
