@@ -1023,7 +1023,8 @@ HeatTransfer<dim>::setup_dofs()
             VectorTools::interpolate_boundary_values(
               this->dof_handler,
               this->simulation_parameters.boundary_conditions_ht.id[i_bc],
-              *this->simulation_parameters.boundary_conditions_ht.value[i_bc],
+              *this->simulation_parameters.boundary_conditions_ht
+                 .dirichlet_value[i_bc],
               nonzero_constraints);
           }
       }
@@ -1096,8 +1097,8 @@ HeatTransfer<dim>::update_boundary_conditions()
        i_bc < this->simulation_parameters.boundary_conditions_ht.size;
        ++i_bc)
     {
-      this->simulation_parameters.boundary_conditions_ht.value[i_bc]->set_time(
-        time);
+      this->simulation_parameters.boundary_conditions_ht.dirichlet_value[i_bc]
+        ->set_time(time);
       this->simulation_parameters.boundary_conditions_ht.h[i_bc]->set_time(
         time);
       this->simulation_parameters.boundary_conditions_ht.Tinf[i_bc]->set_time(
@@ -1131,7 +1132,8 @@ HeatTransfer<dim>::update_boundary_conditions()
           VectorTools::interpolate_boundary_values(
             this->dof_handler,
             this->simulation_parameters.boundary_conditions_ht.id[i_bc],
-            *this->simulation_parameters.boundary_conditions_ht.value[i_bc],
+            *this->simulation_parameters.boundary_conditions_ht
+               .dirichlet_value[i_bc],
             nonzero_constraints);
         }
     }

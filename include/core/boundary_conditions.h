@@ -440,7 +440,8 @@ namespace BoundaryConditions
   class HTBoundaryConditions : public BoundaryConditions<dim>
   {
   public:
-    std::vector<std::shared_ptr<Functions::ParsedFunction<dim>>> value;
+    std::vector<std::shared_ptr<Functions::ParsedFunction<dim>>>
+      dirichlet_value;
     std::vector<std::shared_ptr<Functions::ParsedFunction<dim>>> h;
     std::vector<std::shared_ptr<Functions::ParsedFunction<dim>>> Tinf;
     std::vector<std::shared_ptr<Functions::ParsedFunction<dim>>> emissivity;
@@ -482,8 +483,8 @@ namespace BoundaryConditions
 
     // Expression for the temperature for an imposed temperature at bc
     prm.enter_subsection("value");
-    value[i_bc] = std::make_shared<Functions::ParsedFunction<dim>>();
-    value[i_bc]->declare_parameters(prm);
+    dirichlet_value[i_bc] = std::make_shared<Functions::ParsedFunction<dim>>();
+    dirichlet_value[i_bc]->declare_parameters(prm);
     prm.leave_subsection();
 
     // Expression for the h coefficient of convection-radiation bc
@@ -532,7 +533,7 @@ namespace BoundaryConditions
 
       this->id.resize(this->max_size);
       this->type.resize(this->max_size);
-      value.resize(this->max_size);
+      dirichlet_value.resize(this->max_size);
       h.resize(this->max_size);
       Tinf.resize(this->max_size);
       emissivity.resize(this->max_size);
@@ -585,7 +586,7 @@ namespace BoundaryConditions
 
     // All the functions are parsed since they might be used for post-processing
     prm.enter_subsection("value");
-    this->value[i_bc]->parse_parameters(prm);
+    this->dirichlet_value[i_bc]->parse_parameters(prm);
     prm.leave_subsection();
     prm.enter_subsection("h");
     this->h[i_bc]->parse_parameters(prm);
@@ -618,7 +619,7 @@ namespace BoundaryConditions
 
       this->type.resize(this->size);
       this->id.resize(this->size);
-      this->value.resize(this->size);
+      this->dirichlet_value.resize(this->size);
       this->h.resize(this->size);
 
       this->Tinf.resize(this->size);
