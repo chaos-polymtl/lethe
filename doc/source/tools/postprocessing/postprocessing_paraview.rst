@@ -51,12 +51,14 @@ Splitting the output files in groups
 The ``group files`` parameter in the ``simulation control`` `subsection <../../parameters/cfd/simulation_control.html>`_ is used to split the obtained VTU files into multiple parts. Not only does this make them easier to manage and copy, but it also helps with post-processing.
 
 
-ParaView, when used in parallel as it is described in this section, aims to balance the load on the available cores. This implies that if an output contains only one VTU, only one core will be able to open it. If this core belongs to a node that does not have enough memory, ParaView will not be able to open the file.
+ParaView, when used in parallel, aims to balance the load on the available cores. This implies that if an output contains only one VTU, only one core will be able to open it. If this core belongs to a node that does not have enough memory, ParaView will not be able to open the file.
+
 
 
 For this reason, we have to take into account post-processing in advance and select the proper number of parts. The number of parts should:
 
-* Allow the individual parts to have a size equal or lower than 4GB, for performance.
+* Allow the individual parts to have a size equal to or lower than 4 GB, for performance.
+
 * Be high enough so that ParaView can benefit from parallelization and share the load on its available cores.
 
 
