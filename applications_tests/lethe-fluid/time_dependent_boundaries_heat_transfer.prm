@@ -85,7 +85,7 @@ subsection boundary conditions heat transfer
       set Function expression = 1
     end
     subsection emissivity
-      set Function expression = 5*t
+      set Function expression = t
     end
   end
 end
