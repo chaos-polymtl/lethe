@@ -149,7 +149,7 @@ On the heat transfer side, we apply temperature boundary conditions at both inle
             set id = 3
             set type              = temperature
     	    subsection value
-              set Function expression = 100
+              set Function expression = 0
             end
         end
     
