@@ -42,7 +42,7 @@ The default parameters for ``temperature`` and ``convection-radiation`` are show
 
 * ``number``: This is the number of boundary conditions of the problem.
 
-* ``time dependent`` specifies if a boundary condition is time dependent (``true``) or steady (``false``). By default, this parameter is set to ``false``. This is here to improve the computational efficiency for transient cases in which the boundary conditions do not change.
+* ``time dependent`` specifies if a boundary condition is time-dependent (``true``) or steady (``false``). By default, this parameter is set to ``false``. This is here to improve the computational efficiency for transient cases in which the boundary conditions do not change.
 
 .. warning::
     The ``number`` of boundary conditions must be specified explicitly. This is often a source of error.
