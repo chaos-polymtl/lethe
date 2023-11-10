@@ -960,7 +960,7 @@ CahnHilliard<dim>::update_boundary_conditions()
             mask);
         }
     }
-    
+
   nonzero_constraints.close();
   auto &nonzero_constraints = this->nonzero_constraints;
   nonzero_constraints.distribute(this->local_evaluation_point);
