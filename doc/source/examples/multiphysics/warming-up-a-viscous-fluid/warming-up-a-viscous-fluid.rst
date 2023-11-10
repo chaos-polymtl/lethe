@@ -184,13 +184,19 @@ The ``boundary conditions`` are set for:
       subsection bc 0
         set id   = 0
         set type = convection-radiation
-        set h    = 0
-        set Tinf = 0
+        subsection h
+          set Function expression = 0
+        end
+        subsection Tinf
+          set Function expression = 0
+        end
       end
       subsection bc 1
         set id    = 1
         set type  = temperature
-        set value = 80
+        subsection value
+          set Function expression = 80
+        end
       end
     end
 
@@ -351,13 +357,19 @@ Several adjustments have to be made in the `.prm` to turn the domain clockwise, 
       subsection bc 2
         set id   = 2
         set type = convection-radiation
-        set h    = 0
-        set Tinf = 0
+        subsection h
+          set Function expression = 0
+        end
+        subsection Tinf
+          set Function expression = 0
+        end
       end
       subsection bc 3
         set id    = 3
         set type  = temperature
-        set value = 80
+        subsection value
+          set Function expression = 80
+        end
       end
     end
 

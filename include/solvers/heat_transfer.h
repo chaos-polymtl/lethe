@@ -234,6 +234,12 @@ public:
   set_initial_conditions() override;
 
   /**
+   * @brief Update non zero constraints if the boundary is time-dependent
+   */
+  void
+  update_boundary_conditions() override;
+
+  /**
    * @brief Call for the solution of the linear system of equation using a strategy appropriate
    * to the auxiliary physics
    *

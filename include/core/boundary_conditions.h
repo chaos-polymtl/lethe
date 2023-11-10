@@ -440,11 +440,12 @@ namespace BoundaryConditions
   class HTBoundaryConditions : public BoundaryConditions<dim>
   {
   public:
-    std::vector<double> value;
-    std::vector<double> h;
-    std::vector<double> Tinf;
-    std::vector<double> emissivity;
-    double              Stefan_Boltzmann_constant;
+    std::vector<std::shared_ptr<Functions::ParsedFunction<dim>>>
+      dirichlet_value;
+    std::vector<std::shared_ptr<Functions::ParsedFunction<dim>>> h;
+    std::vector<std::shared_ptr<Functions::ParsedFunction<dim>>> Tinf;
+    std::vector<std::shared_ptr<Functions::ParsedFunction<dim>>> emissivity;
+    double Stefan_Boltzmann_constant;
 
     void
     declareDefaultEntry(ParameterHandler &prm, unsigned int i_bc);
@@ -480,27 +481,29 @@ namespace BoundaryConditions
                       Patterns::Integer(),
                       "Mesh id for boundary conditions");
 
-    prm.declare_entry("value",
-                      "0",
-                      Patterns::Double(),
-                      "Value (Double) for constant temperature at bc");
+    // Expression for the temperature for an imposed temperature at bc
+    prm.enter_subsection("value");
+    dirichlet_value[i_bc] = std::make_shared<Functions::ParsedFunction<dim>>();
+    dirichlet_value[i_bc]->declare_parameters(prm);
+    prm.leave_subsection();
 
-    prm.declare_entry(
-      "h",
-      "0",
-      Patterns::Double(),
-      "Value (Double) for the h coefficient of convection-radiation bc");
+    // Expression for the h coefficient of convection-radiation bc
+    prm.enter_subsection("h");
+    h[i_bc] = std::make_shared<Functions::ParsedFunction<dim>>();
+    h[i_bc]->declare_parameters(prm);
+    prm.leave_subsection();
 
-    prm.declare_entry(
-      "Tinf",
-      "0",
-      Patterns::Double(),
-      "Temperature (Double) of environment for convection-radiation bc");
+    // Temperature of environment for convection-radiation bc
+    prm.enter_subsection("Tinf");
+    Tinf[i_bc] = std::make_shared<Functions::ParsedFunction<dim>>();
+    Tinf[i_bc]->declare_parameters(prm);
+    prm.leave_subsection();
 
-    prm.declare_entry("emissivity",
-                      "0.0",
-                      Patterns::Double(),
-                      "Emissivity of the boundary for convection-radiation bc");
+    // Emissivity of the boundary for convection-radiation bc
+    prm.enter_subsection("emissivity");
+    emissivity[i_bc] = std::make_shared<Functions::ParsedFunction<dim>>();
+    emissivity[i_bc]->declare_parameters(prm);
+    prm.leave_subsection();
   }
 
   /**
@@ -521,8 +524,19 @@ namespace BoundaryConditions
                         "0",
                         Patterns::Integer(),
                         "Number of boundary conditions");
+
+      prm.declare_entry(
+        "time dependent",
+        "false",
+        Patterns::Bool(),
+        "Bool to define if the boundary condition is time-dependent");
+
       this->id.resize(this->max_size);
       this->type.resize(this->max_size);
+      dirichlet_value.resize(this->max_size);
+      h.resize(this->max_size);
+      Tinf.resize(this->max_size);
+      emissivity.resize(this->max_size);
 
       for (unsigned int n = 0; n < this->max_size; n++)
         {
@@ -560,19 +574,29 @@ namespace BoundaryConditions
       }
     if (op == "temperature")
       {
-        this->type[i_bc]  = BoundaryType::temperature;
-        this->value[i_bc] = prm.get_double("value");
+        this->type[i_bc] = BoundaryType::temperature;
       }
     else if (op == "convection-radiation")
       {
-        this->type[i_bc]       = BoundaryType::convection_radiation;
-        this->h[i_bc]          = prm.get_double("h");
-        this->Tinf[i_bc]       = prm.get_double("Tinf");
-        this->emissivity[i_bc] = prm.get_double("emissivity");
+        this->type[i_bc] = BoundaryType::convection_radiation;
 
-        Assert(this->emissivity[i_bc] <= 1.0 && this->emissivity[i_bc] >= 0.0,
-               EmissivityError(this->emissivity[i_bc]));
+        // Emissivity validity (0 <= emissivity <= 1) will be checked at
+        // evaluation.
       }
+
+    // All the functions are parsed since they might be used for post-processing
+    prm.enter_subsection("value");
+    this->dirichlet_value[i_bc]->parse_parameters(prm);
+    prm.leave_subsection();
+    prm.enter_subsection("h");
+    this->h[i_bc]->parse_parameters(prm);
+    prm.leave_subsection();
+    prm.enter_subsection("Tinf");
+    this->Tinf[i_bc]->parse_parameters(prm);
+    prm.leave_subsection();
+    prm.enter_subsection("emissivity");
+    this->emissivity[i_bc]->parse_parameters(prm);
+    prm.leave_subsection();
 
     this->id[i_bc] = prm.get_integer("id");
   }
@@ -590,11 +614,12 @@ namespace BoundaryConditions
   {
     prm.enter_subsection("boundary conditions heat transfer");
     {
-      this->size = prm.get_integer("number");
+      this->size           = prm.get_integer("number");
+      this->time_dependent = prm.get_bool("time dependent");
 
       this->type.resize(this->size);
       this->id.resize(this->size);
-      this->value.resize(this->size);
+      this->dirichlet_value.resize(this->size);
       this->h.resize(this->size);
 
       this->Tinf.resize(this->size);
@@ -689,6 +714,13 @@ namespace BoundaryConditions
                         "0",
                         Patterns::Integer(),
                         "Number of boundary conditions");
+
+      prm.declare_entry(
+        "time dependent",
+        "false",
+        Patterns::Bool(),
+        "Bool to define if the boundary condition is time-dependent");
+
       this->id.resize(this->max_size);
       this->type.resize(this->max_size);
       tracer.resize(this->max_size);
@@ -743,8 +775,8 @@ namespace BoundaryConditions
   {
     prm.enter_subsection("boundary conditions tracer");
     {
-      this->size = prm.get_integer("number");
-
+      this->size           = prm.get_integer("number");
+      this->time_dependent = prm.get_bool("time dependent");
       this->type.resize(this->size);
 
       for (unsigned int n = 0; n < this->size; n++)
@@ -1008,6 +1040,11 @@ namespace BoundaryConditions
                         "0",
                         Patterns::Integer(),
                         "Number of boundary conditions");
+      prm.declare_entry(
+        "time dependent",
+        "false",
+        Patterns::Bool(),
+        "Bool to define if the boundary condition is time-dependent");
       this->id.resize(this->max_size);
       this->type.resize(this->max_size);
       phase_fraction.resize(this->max_size);
@@ -1065,7 +1102,8 @@ namespace BoundaryConditions
   {
     prm.enter_subsection("boundary conditions VOF");
     {
-      this->size = prm.get_integer("number");
+      this->size           = prm.get_integer("number");
+      this->time_dependent = prm.get_bool("time dependent");
 
       this->type.resize(this->size);
       this->id.resize(this->size);

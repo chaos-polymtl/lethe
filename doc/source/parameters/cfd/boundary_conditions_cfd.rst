@@ -72,7 +72,7 @@ where `beta` is a constant and  :math:`(\mathbf{u}\cdot n)_{-}` is :math:`min (0
 
     Likewise, if ``number = 2`` and there is no ``subsection bc 0`` explicitly stated, the boundary is still created, with ``none`` by default.
 
-* ``time dependent`` specifies if a  boundary condition is time dependent (``true``) or steady (``false```). By default, this parameter is set to ``false``. This is there to improve the computational efficiency for transient cases in which the boundary conditions do not change. 
+* ``time dependent`` specifies if a boundary condition is time-dependent (``true``) or steady (``false``). By default, this parameter is set to ``false``. This is here to improve the computational efficiency for transient cases in which the boundary conditions do not change.
 
 * Each fluid dynamics boundary condition is stored in a ``bc #`` subsection :
     * ``id``  is the number associated with the boundary condition. By default, Lethe assumes that the id is equivalent to the number ``#`` of the bc. 

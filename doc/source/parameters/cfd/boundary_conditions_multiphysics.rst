@@ -15,23 +15,34 @@ The default parameters for ``temperature`` and ``convection-radiation`` are show
 .. code-block:: text
 
   subsection boundary conditions heat transfer
-    set number = 2
+    set number         = 2
+    set time dependent = false
     subsection bc 0
       set id    = 0
       set type  = temperature
-      set value = 0
+      subsection value
+        set Function expression = 0
+      end
     end
     subsection bc 1
       set id         = 1
       set type       = convection-radiation
-      set h          = 0
-      set Tinf       = 0
-      set emissivity = 0
+      subsection h
+        set Function expression = 0
+      end
+      subsection Tinf
+        set Function expression = 0
+      end
+      subsection emissivity
+        set Function expression = 0
+      end
     end
     set Stefan-Boltzmann constant = 0.000000056703
   end
 
-* ``number``: This is the number of boundary conditions of the problem. 
+* ``number``: This is the number of boundary conditions of the problem.
+
+* ``time dependent`` specifies if a boundary condition is time-dependent (``true``) or steady (``false``). By default, this parameter is set to ``false``. This is here to improve the computational efficiency for transient cases in which the boundary conditions do not change.
 
 .. warning::
     The ``number`` of boundary conditions must be specified explicitly. This is often a source of error.
@@ -46,7 +57,7 @@ The default parameters for ``temperature`` and ``convection-radiation`` are show
 * ``type``: type of boundary condition being imposed. At the moment, choices are:
     * ``noflux`` (default) so that there is no heat transfer boundary condition,
     * ``temperature`` (Dirichlet BC), to impose a given temperature ``value`` at the boundary,
-    * ``convection-radiation`` (Robin BC) for cooling/heating, depending on the environment temperature at the boundary ``Tinf``, with a given heat transfer coefficient ``h`` and emissivity of the boundary :math:`\mathbf{\epsilon}` following Newton's law of cooling (and heating) and Stefan-Boltzmann law of radiation.
+    * ``convection-radiation`` (Robin BC) for cooling/heating, depending on the environment temperature at the boundary ``Tinf``, with a given heat transfer coefficient ``h`` and emissivity of the boundary :math:`\mathbf{\epsilon}` following Newton's law of cooling (and heating) and Stefan-Boltzmann law of radiation. Note that the expressions for ``h``, ``Tinf`` and ``emissivity`` can be time-dependent, but the current implementation doesn't allow for space dependence (the expressions are evaluated at the origin).
 
 .. math::
     \frac{ \partial T}{\partial \mathbf{n}} = h (T - T_{inf}) + \epsilon \sigma (T^4 - T_{inf}^4)
@@ -67,7 +78,8 @@ For tracer boundary conditions, the defaults parameters are:
 .. code-block:: text
 
   subsection boundary conditions tracer
-    set number = 1
+    set number         = 1
+    set time dependent = false
     subsection bc 0
       set id   = 0
       set type = dirichlet
@@ -78,6 +90,8 @@ For tracer boundary conditions, the defaults parameters are:
   end
 
 * ``number``: This is the number of boundary conditions of the problem. 
+
+* ``time dependent`` specifies if a boundary condition is time-dependent (``true``) or steady (``false``). By default, this parameter is set to ``false``. This improves the computational efficiency for transient cases in which the boundary conditions do not change.
 
 * ``id`` is the number associated with the boundary condition. By default, Lethe assumes that the id is equivalent to the number of the bc.
 
@@ -92,7 +106,8 @@ For VOF boundary conditions (multiphase flow), the possible ``types`` are ``none
 .. code-block:: text
 
   subsection boundary conditions VOF
-    set number = 2
+    set number         = 2
+    set time dependent = false
     subsection bc 0
       set id   = 0
       set type = none
@@ -114,7 +129,9 @@ For VOF boundary conditions (multiphase flow), the possible ``types`` are ``none
 
     Likewise, if ``number = 2`` and there is no ``subsection bc 0`` explicitly stated, the boundary is still created, with ``none`` by default.
 
-* ``number``: This is the number of boundary conditions of the problem. 
+* ``number``: This is the number of boundary conditions of the problem.
+
+* ``time dependent`` specifies if a boundary condition is time-dependent (``true``) or steady (``false``). By default, this parameter is set to ``false``. This improves the computational efficiency for transient cases in which the boundary conditions do not change.
 
 * ``id`` is the number associated with the boundary condition. By default, Lethe assumes that the id is equivalent to the number of the bc.
 
@@ -133,31 +150,31 @@ For Cahn-Hilliard boundary conditions, the available ``types`` are ``noflux`` (d
 
 .. code-block:: text
 
-    subsection boundary conditions cahn hilliard
-    set number                  = 3
-    set time dependent          = false
-        subsection bc 0
-            set id 		= 0
-            set type            = dirichlet
-            subsection phi
-                set Function expression = 0
-            end
-         end
-         subsection bc 1 
-            set id              = 1
-            set type            = angle_of_contact
-            set angle value     = 90 # The angle is given in degrees (°) 
-         end
-         subsection bc 2 
-            set id              = 2
-            set type            = free_angle
-         end
+  subsection boundary conditions cahn hilliard
+    set number         = 3
+    set time dependent = false
+    subsection bc 0
+        set id            = 0
+        set type          = dirichlet
+        subsection phi
+            set Function expression = 0
+        end
+     end
+    subsection bc 1
+      set id              = 1
+      set type            = angle_of_contact
+      set angle value     = 90 # The angle is given in degrees (°)
     end
+    subsection bc 2
+      set id              = 2
+      set type            = free_angle
+    end
+  end
     
 
 * ``number``: This is the number of boundary conditions of the problem. 
 
-* ``time dependent`` specifies if a boundary condition is time dependent (``true``) or not (``false``). By default, this parameter is set to ``false``. It is used to improve the computational efficiency of transient cases in which the boundary conditions do not change. 
+* ``time dependent`` specifies if a boundary condition is time-dependent (``true``) or not (``false``). By default, this parameter is set to ``false``. It is used to improve the computational efficiency of transient cases in which the boundary conditions do not change.
 
 * ``id`` is the number associated with the boundary condition. By default, Lethe assumes that the id is equivalent to the number of the bc.
 

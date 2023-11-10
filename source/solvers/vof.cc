@@ -2094,6 +2094,29 @@ VolumeOfFluid<dim>::setup_dofs()
 
 template <int dim>
 void
+VolumeOfFluid<dim>::update_boundary_conditions()
+{
+  if (!this->simulation_parameters.boundary_conditions_vof.time_dependent)
+    return;
+
+  double time = this->simulation_control->get_current_time();
+  for (unsigned int i_bc = 0;
+       i_bc < this->simulation_parameters.boundary_conditions_vof.size;
+       ++i_bc)
+    {
+      if (this->simulation_parameters.boundary_conditions_vof.type[i_bc] ==
+          BoundaryConditions::BoundaryType::vof_dirichlet)
+        {
+          this->simulation_parameters.boundary_conditions_vof
+            .phase_fraction[i_bc]
+            ->set_time(time);
+        }
+    }
+  define_non_zero_constraints();
+}
+
+template <int dim>
+void
 VolumeOfFluid<dim>::define_zero_constraints()
 {
   // Zero constraints

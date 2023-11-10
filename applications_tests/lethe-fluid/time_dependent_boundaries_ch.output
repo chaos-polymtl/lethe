@@ -1,0 +1,34 @@
+Running on 1 MPI rank(s)...
+   Number of active cells:       64
+   Number of degrees of freedom: 243
+   Volume of triangulation:      4
+   Number of Cahn-Hilliard degrees of freedom: 578
+-----------------
+Phase statistics
+-----------------
+Min: -1.04526
+Max: 1.0873
+Average: 0.57437
+Integral: 2.29748
+
+*******************************************************************************
+Transient iteration: 1        Time: 0.5      Time step: 0.5      CFL: 0       
+*******************************************************************************
+-----------------
+Phase statistics
+-----------------
+Min: -1.04584
+Max: 1.08643
+Average: 0.575077
+Integral: 2.30031
+
+*******************************************************************************
+Transient iteration: 2        Time: 1        Time step: 0.5      CFL: 0.202437
+*******************************************************************************
+-----------------
+Phase statistics
+-----------------
+Min: -1.04096
+Max: 1.07875
+Average: 0.575916
+Integral: 2.30367

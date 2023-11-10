@@ -268,6 +268,22 @@ public:
   }
 
   /**
+   * @param Update the boundary conditions of the auxiliary physics if they are time-dependent
+   */
+  void
+  update_boundary_conditions()
+  {
+    for (auto &iphys : physics)
+      {
+        iphys.second->update_boundary_conditions();
+      }
+    for (auto &iphys : block_physics)
+      {
+        iphys.second->update_boundary_conditions();
+      }
+  }
+
+  /**
    * @brief Postprocess the auxiliary physics results. Post-processing this case implies
    * the calculation of all derived quantities using the solution vector
    * of the physics. It does not concern the output of the solution using

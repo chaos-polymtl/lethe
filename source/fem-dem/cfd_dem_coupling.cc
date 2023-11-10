@@ -1485,10 +1485,12 @@ CFDDEMSolver<dim>::solve()
              0 ||
            this->simulation_parameters.mesh_adaptation.type ==
              Parameters::MeshAdaptation::Type::none ||
-           this->simulation_control->is_at_start()) &&
-          this->simulation_parameters.boundary_conditions.time_dependent)
+           this->simulation_control->is_at_start()))
         {
+          // We allow the physics to update their boundary conditions
+          // according to their own parameters
           this->update_boundary_conditions();
+          this->multiphysics->update_boundary_conditions();
         }
 
       this->dynamic_flow_control();

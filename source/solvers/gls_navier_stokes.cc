@@ -191,6 +191,9 @@ template <int dim>
 void
 GLSNavierStokesSolver<dim>::update_boundary_conditions()
 {
+  if (!this->simulation_parameters.boundary_conditions.time_dependent)
+    return;
+
   double time = this->simulation_control->get_current_time();
   for (unsigned int i_bc = 0;
        i_bc < this->simulation_parameters.boundary_conditions.size;
@@ -1707,10 +1710,12 @@ GLSNavierStokesSolver<dim>::solve()
              0 ||
            this->simulation_parameters.mesh_adaptation.type ==
              Parameters::MeshAdaptation::Type::none ||
-           this->simulation_control->is_at_start()) &&
-          this->simulation_parameters.boundary_conditions.time_dependent)
+           this->simulation_control->is_at_start()))
         {
-          update_boundary_conditions();
+          // We allow the physics to update their boundary conditions
+          // according to their own parameters
+          this->update_boundary_conditions();
+          this->multiphysics->update_boundary_conditions();
         }
 
       this->simulation_control->print_progression(this->pcout);
