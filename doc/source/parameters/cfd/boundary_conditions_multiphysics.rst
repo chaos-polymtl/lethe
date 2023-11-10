@@ -20,7 +20,6 @@ The default parameters for ``temperature`` and ``convection-radiation`` are show
     subsection bc 0
       set id    = 0
       set type  = temperature
-      set value = 0
       subsection value
         set Function expression = 0
       end
@@ -175,7 +174,7 @@ For Cahn-Hilliard boundary conditions, the available ``types`` are ``noflux`` (d
 
 * ``number``: This is the number of boundary conditions of the problem. 
 
-* ``time dependent`` specifies if a boundary condition is time dependent (``true``) or not (``false``). By default, this parameter is set to ``false``. It is used to improve the computational efficiency of transient cases in which the boundary conditions do not change. 
+* ``time dependent`` specifies if a boundary condition is time-dependent (``true``) or not (``false``). By default, this parameter is set to ``false``. It is used to improve the computational efficiency of transient cases in which the boundary conditions do not change.
 
 * ``id`` is the number associated with the boundary condition. By default, Lethe assumes that the id is equivalent to the number of the bc.
 
