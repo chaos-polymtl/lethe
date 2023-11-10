@@ -1023,8 +1023,8 @@ HeatTransfer<dim>::setup_dofs()
             VectorTools::interpolate_boundary_values(
               this->dof_handler,
               this->simulation_parameters.boundary_conditions_ht.id[i_bc],
-              dealii::Functions::ConstantFunction<dim>(
-                this->simulation_parameters.boundary_conditions_ht.value[i_bc]),
+              *this->simulation_parameters.boundary_conditions_ht
+                 .dirichlet_value[i_bc],
               nonzero_constraints);
           }
       }
@@ -1080,6 +1080,64 @@ HeatTransfer<dim>::setup_dofs()
   multiphysics->set_solution(PhysicsID::heat_transfer, &this->present_solution);
   multiphysics->set_previous_solutions(PhysicsID::heat_transfer,
                                        &this->previous_solutions);
+}
+
+template <int dim>
+void
+HeatTransfer<dim>::update_boundary_conditions()
+{
+  if (!this->simulation_parameters.boundary_conditions_ht.time_dependent)
+    return;
+
+  double time = this->simulation_control->get_current_time();
+  // We begin by setting the new time for all expressions, although the change
+  // for the convection-radiation boundary conditions won't be applied in this
+  // function
+  for (unsigned int i_bc = 0;
+       i_bc < this->simulation_parameters.boundary_conditions_ht.size;
+       ++i_bc)
+    {
+      this->simulation_parameters.boundary_conditions_ht.dirichlet_value[i_bc]
+        ->set_time(time);
+      this->simulation_parameters.boundary_conditions_ht.h[i_bc]->set_time(
+        time);
+      this->simulation_parameters.boundary_conditions_ht.Tinf[i_bc]->set_time(
+        time);
+      this->simulation_parameters.boundary_conditions_ht.emissivity[i_bc]
+        ->set_time(time);
+
+      Assert(
+        this->simulation_parameters.boundary_conditions_ht.emissivity[i_bc]
+              ->value(Point<dim>()) <= 1.0 &&
+          this->simulation_parameters.boundary_conditions_ht.emissivity[i_bc]
+              ->value(Point<dim>()) >= 0.0,
+        EmissivityError(
+          this->simulation_parameters.boundary_conditions_ht.emissivity[i_bc]
+            ->value(Point<dim>())));
+    }
+
+  nonzero_constraints.clear();
+  nonzero_constraints.reinit(this->locally_relevant_dofs);
+  DoFTools::make_hanging_node_constraints(this->dof_handler,
+                                          nonzero_constraints);
+
+  for (unsigned int i_bc = 0;
+       i_bc < this->simulation_parameters.boundary_conditions_ht.size;
+       ++i_bc)
+    {
+      // Dirichlet condition : imposed temperature at i_bc
+      if (this->simulation_parameters.boundary_conditions_ht.type[i_bc] ==
+          BoundaryConditions::BoundaryType::temperature)
+        {
+          VectorTools::interpolate_boundary_values(
+            this->dof_handler,
+            this->simulation_parameters.boundary_conditions_ht.id[i_bc],
+            *this->simulation_parameters.boundary_conditions_ht
+               .dirichlet_value[i_bc],
+            nonzero_constraints);
+        }
+    }
+  nonzero_constraints.close();
 }
 
 template <int dim>
@@ -1499,10 +1557,12 @@ HeatTransfer<dim>::postprocess_heat_flux_on_bc(
                       // Gather h coefficient and T_inf
                       const double h_coefficient =
                         this->simulation_parameters.boundary_conditions_ht
-                          .h[vector_index];
+                          .h[vector_index]
+                          ->value(Point<dim>());
                       const double T_inf =
                         this->simulation_parameters.boundary_conditions_ht
-                          .Tinf[vector_index];
+                          .Tinf[vector_index]
+                          ->value(Point<dim>());
 
 
                       // Gather heat transfer information

@@ -1,0 +1,61 @@
+Running on 1 MPI rank(s)...
+   Number of active cells:       64
+   Number of degrees of freedom: 243
+   Volume of triangulation:      1
+   Number of thermal degrees of freedom: 81
+Temperature statistics on fluid : 
+	     Min : 0
+	     Max : 0
+	 Average : 0
+	 Std-Dev : 0
+Total heat flux at the heat transfer boundary conditions : 
+	 boundary 0 : 0
+	 boundary 1 : 0
+	 boundary 2 : 0
+	 boundary 3 : 0
+Convective heat flux at the heat transfer boundary conditions : 
+	 boundary 0 : 0
+	 boundary 1 : 0
+	 boundary 2 : 0
+	 boundary 3 : -1
+Thermal energy in fluid : 0
+
+*******************************************************************************
+Transient iteration: 1        Time: 0.5      Time step: 0.5      CFL: 2.79578 
+*******************************************************************************
+Temperature statistics on fluid : 
+	     Min : -0.317324
+	     Max : 0.702659
+	 Average : 0.311974
+	 Std-Dev : 0.227659
+Total heat flux at the heat transfer boundary conditions : 
+	 boundary 0 : 1.05781
+	 boundary 1 : 1.0386
+	 boundary 2 : -1.78135
+	 boundary 3 : 0.370854
+Convective heat flux at the heat transfer boundary conditions : 
+	 boundary 0 : 0
+	 boundary 1 : -1.23681
+	 boundary 2 : 2.30945
+	 boundary 3 : -0.432139
+Thermal energy in fluid : 0.311974
+
+*******************************************************************************
+Transient iteration: 2        Time: 1        Time step: 0.5      CFL: 3.0594  
+*******************************************************************************
+Temperature statistics on fluid : 
+	     Min : -0.740064
+	     Max : 0.981044
+	 Average : 0.459203
+	 Std-Dev : 0.415024
+Total heat flux at the heat transfer boundary conditions : 
+	 boundary 0 : 2.42404
+	 boundary 1 : 1.50599
+	 boundary 2 : -3.46652
+	 boundary 3 : 0.232445
+Convective heat flux at the heat transfer boundary conditions : 
+	 boundary 0 : 0
+	 boundary 1 : -1.81092
+	 boundary 2 : 4.5302
+	 boundary 3 : -0.172579
+Thermal energy in fluid : 0.459203

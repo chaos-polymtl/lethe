@@ -1,0 +1,126 @@
+set dimension = 2
+
+subsection simulation control
+  set method           = bdf1
+  set time end         = 1
+  set time step        = 0.5
+  set output name      = out
+  set output frequency = 0
+end
+
+subsection initial conditions
+  set type = L2projection
+  subsection cahn hilliard
+    set Function constants  = nbr_refs=5
+    set Function expression = -tanh(sqrt(2*0.25)*(0.5 - sqrt(x*x+y*y))/(2^(-nbr_refs+1))); 0
+  end
+end
+
+subsection boundary conditions
+  set number         = 4
+  set time dependent = false
+  subsection bc 0
+    set id   = 0
+    set type = slip
+  end
+  subsection bc 1
+    set id   = 1
+    set type = slip
+  end
+  subsection bc 2
+    set id   = 2
+    set type = slip
+  end
+  subsection bc 3
+    set id   = 3
+    set type = slip
+  end
+end
+
+subsection boundary conditions cahn hilliard
+  set number         = 1
+  set time dependent = true
+  subsection bc 0
+    set id   = 0
+    set type = dirichlet
+    subsection phi
+      set Function expression = 0.1*t
+    end
+  end
+end
+
+subsection multiphysics
+  set fluid dynamics = true
+  set cahn hilliard  = true
+end
+
+subsection cahn hilliard
+  set well height = 0.25
+  subsection epsilon
+    set method = automatic
+    set value  = 0.01
+  end
+end
+
+subsection physical properties
+  set number of fluids = 2
+  subsection fluid 0
+    set density             = 1000
+    set kinematic viscosity = 0.01
+  end
+  subsection fluid 1
+    set density             = 100
+    set kinematic viscosity = 0.01
+  end
+  set number of material interactions = 1
+  subsection material interaction 0
+    set type = fluid-fluid
+    subsection fluid-fluid interaction
+      set first fluid id              = 0
+      set second fluid id             = 1
+      set surface tension model       = constant
+      set surface tension coefficient = 24.5
+      # Mobility Cahn-Hilliard
+      set cahn hilliard mobility model    = constant
+      set cahn hilliard mobility constant = 1e-6
+    end
+  end
+end
+
+subsection mesh
+  set type               = dealii
+  set grid type          = hyper_cube
+  set grid arguments     = -1 : 1 : true
+  set initial refinement = 3
+end
+
+subsection post-processing
+  set verbosity                  = verbose
+  set calculate phase statistics = true
+  set phase statistics name      = phase_statistics
+end
+
+subsection FEM
+  set phase cahn hilliard order     = 2
+  set potential cahn hilliard order = 2
+  set velocity order                = 1
+  set pressure order                = 1
+end
+
+subsection non-linear solver
+  subsection fluid dynamics
+    set verbosity = quiet
+  end
+  subsection cahn hilliard
+    set verbosity = quiet
+  end
+end
+
+subsection linear solver
+  subsection fluid dynamics
+    set verbosity = quiet
+  end
+  subsection cahn hilliard
+    set verbosity = quiet
+  end
+end

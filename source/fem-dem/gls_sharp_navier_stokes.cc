@@ -4561,6 +4561,7 @@ GLSSharpNavierStokesSolver<dim>::solve()
   this->set_initial_condition(
     this->simulation_parameters.initial_condition->type,
     this->simulation_parameters.restart_parameters.restart);
+  this->update_multiphysics_time_average_solution();
 
   while (this->simulation_control->integrate())
     {
@@ -4573,10 +4574,12 @@ GLSSharpNavierStokesSolver<dim>::solve()
              0 ||
            this->simulation_parameters.mesh_adaptation.type ==
              Parameters::MeshAdaptation::Type::none ||
-           this->simulation_control->is_at_start()) &&
-          this->simulation_parameters.boundary_conditions.time_dependent)
+           this->simulation_control->is_at_start()))
         {
+          // We allow the physics to update their boundary conditions
+          // according to their own parameters
           this->update_boundary_conditions();
+          this->multiphysics->update_boundary_conditions();
         }
 
       if (some_particles_are_coupled == false)

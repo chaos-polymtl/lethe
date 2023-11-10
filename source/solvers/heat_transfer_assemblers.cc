@@ -396,9 +396,10 @@ HeatTransferAssemblerRobinBC<dim>::assemble_matrix(
       if (this->boundary_conditions_ht.type[i_bc] ==
           BoundaryConditions::BoundaryType::convection_radiation)
         {
-          const double h = this->boundary_conditions_ht.h[i_bc];
+          const double h =
+            this->boundary_conditions_ht.h[i_bc]->value(Point<dim>());
           const double emissivity =
-            this->boundary_conditions_ht.emissivity[i_bc];
+            this->boundary_conditions_ht.emissivity[i_bc]->value(Point<dim>());
           for (unsigned int f = 0; f < scratch_data.n_faces; ++f)
             {
               if (scratch_data.boundary_face_id[f] ==
@@ -458,10 +459,12 @@ HeatTransferAssemblerRobinBC<dim>::assemble_rhs(
       if (this->boundary_conditions_ht.type[i_bc] ==
           BoundaryConditions::BoundaryType::convection_radiation)
         {
-          const double h     = this->boundary_conditions_ht.h[i_bc];
-          const double T_inf = this->boundary_conditions_ht.Tinf[i_bc];
+          const double h =
+            this->boundary_conditions_ht.h[i_bc]->value(Point<dim>());
+          const double T_inf =
+            this->boundary_conditions_ht.Tinf[i_bc]->value(Point<dim>());
           const double emissivity =
-            this->boundary_conditions_ht.emissivity[i_bc];
+            this->boundary_conditions_ht.emissivity[i_bc]->value(Point<dim>());
 
           for (unsigned int f = 0; f < scratch_data.n_faces; ++f)
             {

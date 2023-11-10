@@ -125,12 +125,16 @@ subsection boundary conditions heat transfer
   subsection bc 0 #left wall
     set id    = 0
     set type  = temperature
-    set value = 5
+    subsection value
+      set Function expression = 5
+    end
   end
   subsection bc 1 #right wall
     set id    = 1
     set type  = temperature
-    set value = 1
+    subsection value
+      set Function expression = 1
+    end
   end
 end
 
