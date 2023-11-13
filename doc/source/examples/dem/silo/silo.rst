@@ -54,7 +54,7 @@ An insertion box is defined inside and on the top of the silo.
 .. code-block:: text
 
     subsection insertion info
-      set insertion method                               = non_uniform
+      set insertion method                               = volume
       set inserted number of particles at each time step = 20000
       set insertion frequency                            = 10000
       set insertion box minimum x                        = -0.37

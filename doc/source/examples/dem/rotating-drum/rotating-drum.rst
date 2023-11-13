@@ -53,7 +53,7 @@ An insertion box is defined inside the cylindrical domain. 38000 particles are i
 .. code-block:: text
 
   subsection insertion info
-    set insertion method                               = non_uniform
+    set insertion method                               = volume
     set inserted number of particles at each time step = 38000
     set insertion frequency                            = 25000
     set insertion box minimum x                        = -0.175
