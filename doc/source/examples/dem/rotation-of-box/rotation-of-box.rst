@@ -51,7 +51,7 @@ An insertion box is defined inside the cubic domain. 4000 particles are inserted
 .. code-block:: text
 
     subsection insertion info
-      set insertion method                               = non_uniform
+      set insertion method                               = volume
       set inserted number of particles at each time step = 4000
       set insertion frequency                            = 2000000
       set insertion box minimum x                        = -0.019

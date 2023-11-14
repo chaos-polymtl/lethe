@@ -148,8 +148,7 @@ namespace Parameters
       // Insertion method
       enum class InsertionMethod
       {
-        uniform,
-        non_uniform,
+        volume,
         list,
         plane
       } insertion_method;

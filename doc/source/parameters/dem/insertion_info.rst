@@ -2,7 +2,7 @@
 Insertion Info
 ==============
 
-In this subsection, insertion methods which are ``uniform``, ``non_unifom``, ``plane`` and ``list`` are defined.
+In this subsection, insertion methods which are ``volume``, ``plane`` and ``list`` are defined.
 
 .. note::
     Insertion in Lethe starts inserting particles from type 0 and proceeds to the next type when all the particles from the previous type are inserted.
@@ -11,13 +11,13 @@ In this subsection, insertion methods which are ``uniform``, ``non_unifom``, ``p
 .. code-block:: text
 
   subsection insertion info
-    # Choices are uniform|non_uniform|plane|list
-    set insertion method                               = non_uniform
+    # Choices are volume|plane|list
+    set insertion method                               = volume
 
     # Every method
     set insertion frequency                            = 20000
 
-    # If method = uniform or non_unifom
+    # If method = volume
     set inserted number of particles at each time step = 100
 
     set insertion box minimum x                        = -0.05
@@ -45,7 +45,7 @@ In this subsection, insertion methods which are ``uniform``, ``non_unifom``, ``p
     set insertion plane point                          = 0, 0, 0
     set insertion plane normal vector                  = 1, 0, 0
 
-    # If method = non_uniform or plane
+    # If method = volume or plane
     set insertion random number range                  = 0.75
     set insertion random number seed                   = 19
 
@@ -63,20 +63,16 @@ In this subsection, insertion methods which are ``uniform``, ``non_unifom``, ``p
 
   end
 
-The ``insertion method`` parameter chooses the type of insertion. Acceptable choices are ``uniform``, ``non_uniform``, ``plane`` and ``list``. Different insertion method can share the same parameter.
+The ``insertion method`` parameter chooses the type of insertion. Acceptable choices are ``volume``, ``plane`` and ``list``. Different insertion method can share the same parameter.
 
-* The ``insertion frequency`` parameter defines the frequency of insertion. For example, if the ``insertion frequency`` is set equal to 10000, the iterations 1, 10001, 20001, ... will be defined as insertion steps.  The ``insertion frequency`` should be selected adequately depending on the insertion method. For ``uniform`` and ``non_uniform`` it should be large, so that the inserted particles at the previous insertion step have enough time to leave the insertion box for the next time step, otherwise large overlap may occur which leads to a large velocity of particles. For the ``plane`` method, it should be small so that particles are being inserted as soon as a cell is empty.
+* The ``insertion frequency`` parameter defines the frequency of insertion. For example, if the ``insertion frequency`` is set equal to 10000, the iterations 1, 10001, 20001, ... will be defined as insertion steps.  The ``insertion frequency`` should be selected adequately depending on the insertion method. For ``volume`` it should be large, so that the inserted particles at the previous insertion step have enough time to leave the insertion box for the next insertion step, otherwise large overlap may occur which leads to a large velocity of particles. For the ``plane`` method, it should be small so that particles are being inserted as soon as a cell is empty.
 
-* The ``random number range`` and ``insertion random number seed`` parameters determine the random added values to the positions of particles during a ``non_uniform`` and ``plane`` insertion. ``random number range`` defines the maximum value for the random displacement. ``insertion random number seed`` is the seed for the random number generator.
+* The ``random number range`` and ``insertion random number seed`` parameters determine the random added values to the positions of particles during a ``volume`` and ``plane`` insertion. ``random number range`` defines the maximum value for the random displacement. ``insertion random number seed`` is the seed for the random number generator.
 
-.. note::
-    The ``random number range`` and ``insertion random number seed`` are only being use by ``non_uniform`` and ``plane`` insertion methods.
-
-------------------------
-Uniform and Non-uniform
-------------------------
-
-Uniform and Non-uniform insertion methods are really similar in their functioning. Both methods use an insertion box where particles will be insert. In ``uniform`` insertion, the insertion locations of the particles inside the insertion box are tidy. In ``non_uniform`` insertion however, the insertion locations of particles are randomly selected.
+-------
+Volume
+-------
+The volume insertion method uses an insertion box where particles will be inserted. The insertion locations of particles are randomly selected if the ``random number range`` is not equal to zero, otherwise, the particles will perfecly aligns with the x, y and z directions.
 
 * The ``inserted number of particles at each time step`` defines the desired number of particles to be inserted at each insertion step. If the insertion box is not adequately large to insert ``inserted number of particles at each time step`` particles with the defined arrangement (initial distance between the inserted particles), Lethe prints a warning and inserts the maximum number of particles that fit inside the insertion box at each insertion step.
 
@@ -85,7 +81,7 @@ Uniform and Non-uniform insertion methods are really similar in their functionin
 .. note::
     We recommend that the defined insertion box have at least a distance of :math:`{d^{max}_p}` (maximum diameter of particles) from the triangulation boundaries. Otherwise, particles may have an overlap with the triangulation walls in the insertion.
 
-* The ``insertion first direction``, ``insertion second direction``, and ``insertion third direction`` parameters define the directions of insertion. For example, if ``insertion first direction`` = 0, ``insertion second direction`` = 1, and ``insertion third direction`` = 2, the particles are inserted in priority in the x, in y, and then in z directions This is the default configuration. This is useful to specify the insertion directions to cover a specific area of the insertion box with the first and second direction parameters.
+* The ``insertion first direction``, ``insertion second direction``, and ``insertion third direction`` parameters define the directions of insertion. For example, if ``insertion first direction`` = 0, ``insertion second direction`` = 1, and ``insertion third direction`` = 2, the particles are inserted in priority in the x, in y, and then in z directions. This is the default configuration. This is useful to specify the insertion directions to cover a specific area of the insertion box with the first and second direction parameters.
 
 * The ``velocity x``, ``velocity y``, and ``velocity z`` determine the initial translational velocity (in :math:`\frac{m}{s}`) at which particles are inserted in the x, y, and z directions, respectively.
 
@@ -99,17 +95,12 @@ Uniform and Non-uniform insertion methods are really similar in their functionin
 The distance between the inserted particles is equal to:
 
 .. math::
-    D_i=\epsilon * d^{max}_p
-
-in an ``uniform`` insertion, and
-
-.. math::
     D_i=(\epsilon + \psi)  d^{max}_p
 
-in a ``non_uniform`` insertion. :math:`{\epsilon}`, :math:`{\psi}`, and :math:`{d^{max}_p}` denote ``insertion distance threshold``, a generated random number (in the range of 0-``random number range``, and from the seed of ``insertion random number seed``), and maximum particle diameter.
+Where, :math:`{\epsilon}`, :math:`{\psi}`, and :math:`{d^{max}_p}` denote ``insertion distance threshold``, a generated random number (in the range of 0-``random number range``, and from the seed of ``insertion random number seed``), and maximum particle diameter.
  
 .. note::
-     ``insertion distance threshold`` should also be compatible with the ``random number range``; especially if the ``random number range`` is large, a large value should be defined for ``insertion distance threshold``. Generally, we recommend users to use a value in the range of 1.3-2 (depending on the value of ``random number range``) for the ``insertion distance threshold``.
+    ``insertion distance threshold`` should also be compatible with the ``random number range``; especially if the ``random number range`` is large, a large value should be defined for ``insertion distance threshold``. Generally, we recommend users to use a value in the range of 1.3-2 (depending on the value of ``random number range``) for the ``insertion distance threshold``.
 
 --------------------
 Plane

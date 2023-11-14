@@ -17,7 +17,6 @@ add_library(lethe-dem
   integrator.cc
   lagrangian_post_processing.cc
   list_insertion.cc
-  non_uniform_insertion.cc
   output_force_torque_calculation.cc
   particle_particle_broad_search.cc
   particle_particle_contact_force.cc
@@ -38,11 +37,11 @@ add_library(lethe-dem
   read_mesh.cc
   set_particle_particle_contact_force_model.cc
   set_particle_wall_contact_force_model.cc
-  uniform_insertion.cc
   update_fine_search_candidates.cc
   update_local_particle_containers.cc
   velocity_verlet_integrator.cc
   visualization.cc
+  volume_insertion.cc
   write_checkpoint.cc
   # Headers
   ../../include/dem/boundary_cells_info_struct.h
@@ -63,7 +62,6 @@ add_library(lethe-dem
   ../../include/dem/integrator.h
   ../../include/dem/lagrangian_post_processing.h
   ../../include/dem/list_insertion.h
-  ../../include/dem/non_uniform_insertion.h
   ../../include/dem/output_force_torque_calculation.h
   ../../include/dem/particle_particle_broad_search.h
   ../../include/dem/particle_particle_contact_force.h
@@ -88,11 +86,11 @@ add_library(lethe-dem
   ../../include/dem/rolling_resistance_torque_models.h
   ../../include/dem/set_particle_particle_contact_force_model.h
   ../../include/dem/set_particle_wall_contact_force_model.h
-  ../../include/dem/uniform_insertion.h
   ../../include/dem/update_fine_search_candidates.h
   ../../include/dem/update_local_particle_containers.h
   ../../include/dem/velocity_verlet_integrator.h
   ../../include/dem/visualization.h
+  ../../include/dem/volume_insertion.h
   ../../include/dem/write_checkpoint.h)
 
 deal_ii_setup_target(lethe-dem)

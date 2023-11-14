@@ -111,7 +111,7 @@ An insertion box is defined inside the rectangular box. 60 000 particles are ins
 .. code-block:: text
 
   subsection insertion info
-    set insertion method                               = non_uniform
+    set insertion method                               = volume
     set inserted number of particles at each time step = 60000
     set insertion frequency                            = 10000
     set insertion box minimum x                        = 0.0025

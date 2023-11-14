@@ -57,7 +57,7 @@ An insertion box is defined inside the cylindrical domain, inserting 8000 partic
 
 
     subsection insertion info
-      set insertion method                               = non_uniform
+      set insertion method                               = volume
       set inserted number of particles at each time step = 8000
       set insertion frequency                            = 100000
       set insertion box minimum x                        = -0.05
