@@ -19,7 +19,7 @@ Sharp Immersed Boundary Solver
       rankdir="LR";
       size = "9,9";
       
-      sharp_immersed_boundary [label="Sharp Immersed \nBoundary", href="https://lethe-cfd.github.io/lethe/examples/sharp-immersed-boundary/sharp-immersed-boundary.html"];
+      sharp_immersed_boundary_solver [label="Sharp Immersed \nBoundary", href="https://lethe-cfd.github.io/lethe/examples/sharp-immersed-boundary/sharp-immersed-boundary.html"];
 
       sharp_1 [label="Resolved CFD-DEM", href="https://lethe-cfd.github.io/lethe/examples/sharp-immersed-boundary/resolved-cfd-dem.html"];
 
