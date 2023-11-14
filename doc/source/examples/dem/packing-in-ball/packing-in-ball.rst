@@ -61,7 +61,7 @@ In a three-dimensional simulation, we have to define the minimum and maximum dim
 .. code-block:: text
 
     subsection insertion info
-      set insertion method                               = non_uniform
+      set insertion method                               = volume
       set inserted number of particles at each time step = 1000
       set insertion frequency                            = 150000
       set insertion box minimum x                        = -0.05

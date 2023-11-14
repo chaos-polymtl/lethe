@@ -76,7 +76,7 @@ An insertion box is defined inside and the top part of the hopper. The inserted 
 .. code-block:: text
 
     subsection insertion info
-      set insertion method                               = non_uniform
+      set insertion method                               = volume
       set inserted number of particles at each time step = 2910
       set insertion frequency                            = 25000
       set insertion box minimum x                        = -0.1030

@@ -202,7 +202,7 @@ The volume of the insertion box should be large enough to fit all particles. Als
 .. code-block:: text
 
     subsection insertion info
-      set insertion method                               = non_uniform
+      set insertion method                               = volume
       set inserted number of particles at each time step = 48841 # for alginate, we recommend 79600
       set insertion frequency                            = 200000
       set insertion box minimum x                        = -0.15
