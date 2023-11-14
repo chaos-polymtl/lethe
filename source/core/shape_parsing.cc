@@ -177,8 +177,15 @@ ShapeGenerator::initialize_shape_from_file(const std::string   type,
           std::vector<double>      line_of_data;
           bool                     parsing_shapes     = false;
           bool                     parsing_operations = false;
+          // comment marker
+          std::string marker = "#";
           while (std::getline(myfile, line))
             {
+              // Ignore comments in the line
+              size_t markerPos = line.find(marker);
+              if (markerPos != std::string::npos) {
+                  line = line.substr(0, markerPos);
+                }
               if (line == "")
                 continue;
               if (line == "shapes")
