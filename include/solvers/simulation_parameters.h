@@ -91,10 +91,14 @@ public:
     Parameters::Restart::declare_parameters(prm);
     boundary_conditions.declare_parameters(
       prm, size_of_subsections.boundary_conditions);
-    boundary_conditions_ht.declare_parameters(prm);
-    boundary_conditions_tracer.declare_parameters(prm);
-    boundary_conditions_vof.declare_parameters(prm);
-    boundary_conditions_cahn_hilliard.declare_parameters(prm);
+    boundary_conditions_ht.declare_parameters(
+      prm, size_of_subsections.boundary_conditions);
+    boundary_conditions_tracer.declare_parameters(
+      prm, size_of_subsections.boundary_conditions);
+    boundary_conditions_vof.declare_parameters(
+      prm, size_of_subsections.boundary_conditions);
+    boundary_conditions_cahn_hilliard.declare_parameters(
+      prm, size_of_subsections.boundary_conditions);
 
     initial_condition = new Parameters::InitialConditions<dim>;
     initial_condition->declare_parameters(prm);

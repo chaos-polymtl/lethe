@@ -541,7 +541,7 @@ get_max_number_of_boundary_conditions(const std::string &file_name)
   AssertThrow(
     max_number_of_boundary_conditions >= 0,
     dealii::ExcMessage(
-      "Your parameter file does not contain any indication for the number of boundary conditions for any physics supported by Lethe"));
+      "Your parameter file does not contain any indication for the number of boundary conditions for any physics supported by Lethe. Since November 2023, Lethe requires that a \"boundary conditions\" subsection be present with at least \"number=0\" "));
 
   return std::max(max_number_of_boundary_conditions, 0);
 }
