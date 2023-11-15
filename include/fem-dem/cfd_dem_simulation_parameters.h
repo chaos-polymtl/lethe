@@ -41,9 +41,10 @@ public:
   Parameters::CFDDEM                             cfd_dem;
 
   void
-  declare(ParameterHandler &prm)
+  declare(ParameterHandler             &prm,
+          Parameters::SizeOfSubsections size_of_subsections)
   {
-    cfd_parameters.declare(prm);
+    cfd_parameters.declare(prm, size_of_subsections);
     dem_parameters.declare(prm);
 
     void_fraction = std::make_shared<Parameters::VoidFraction<dim>>();

@@ -9,10 +9,15 @@ main()
 {
   try
     {
+      // Declare dummy size of subsections to declare a single of each entity
+      Parameters::SizeOfSubsections size_of_subsections;
+      size_of_subsections.boundary_conditions = 1;
+
       {
         ParameterHandler        prm;
         SimulationParameters<2> nsparam;
-        nsparam.declare(prm);
+
+        nsparam.declare(prm, size_of_subsections);
         std::ofstream output_prm("template-2d.prm");
         prm.print_parameters(output_prm, prm.Text);
 
@@ -23,7 +28,7 @@ main()
       {
         ParameterHandler        prm;
         SimulationParameters<3> nsparam;
-        nsparam.declare(prm);
+        nsparam.declare(prm, size_of_subsections);
         std::ofstream output_prm("template-3d.prm");
         prm.print_parameters(output_prm, prm.Text);
 
