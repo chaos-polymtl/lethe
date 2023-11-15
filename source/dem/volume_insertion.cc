@@ -16,14 +16,31 @@ VolumeInsertion<dim>::VolumeInsertion(
 {
   // Initializing current inserting particle type
   current_inserting_particle_type = 0;
+  this->inserted_this_step        = 0;
+  this->maximum_diameter          = maximum_particle_diameter;
 
-  this->inserted_this_step = 0;
-
-  this->maximum_diameter = maximum_particle_diameter;
+  // Initializing the distribution object
+  if (dem_parameters.lagrangian_physical_properties.size_distribution_type ==
+      Parameters::Lagrangian::LagrangianPhysicalProperties::
+        size_distribution_type::uniform)
+    {
+      Insertion<dim>::distribution_object = NormalDistribution(
+        dem_parameters.lagrangian_physical_properties.particle_average_diameter,
+        0.);
+    }
+  else if (dem_parameters.lagrangian_physical_properties
+             .size_distribution_type ==
+           Parameters::Lagrangian::LagrangianPhysicalProperties::
+             size_distribution_type::normal)
+    {
+      distribution_object = NormalDistribution(
+        dem_parameters.lagrangian_physical_properties.particle_average_diameter,
+        dem_parameters.lagrangian_physical_properties.particle_size_std);
+    }
 }
 
-// The main insertion function. Insert_global_function is utilized to insert the
-// particles
+// The main insertion function. Insert_global_function is utilized to insert
+// the particles
 template <int dim>
 void
 VolumeInsertion<dim>::insert(

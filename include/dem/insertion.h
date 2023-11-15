@@ -12,14 +12,14 @@
  * the top level of the Lethe distribution.
  *
  * ---------------------------------------------------------------------
-
  *
- * Author: Shahab Golshan, Polytechnique Montreal, 2019
  */
 
 #include <core/dem_properties.h>
 
 #include <dem/dem_solver_parameters.h>
+#include <dem/distribution.h>
+#include <dem/normal_distribution.h>
 
 #include <deal.II/base/array_view.h>
 #include <deal.II/base/data_out_base.h>
@@ -59,7 +59,7 @@ class Insertion
 public:
   /**
    * Carries out the insertion of particles. This is the base class of
-   * uniform_insertion and non_uniform_insertion classes.
+   * volume_insertion and plane_insertion classes.
    *
    * @param particle_handler The particle handler of particles which are being
    * inserted
@@ -142,6 +142,7 @@ protected:
   // A vector of vectors, which contains all the properties of all inserted
   // particles at each insertion step
   std::vector<std::vector<double>> particle_properties;
+  Distribution                     distribution_object;
 
 private:
   /**
