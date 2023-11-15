@@ -183,7 +183,8 @@ ShapeGenerator::initialize_shape_from_file(const std::string   type,
             {
               // Ignore comments in the line
               size_t markerPos = line.find(marker);
-              if (markerPos != std::string::npos) {
+              if (markerPos != std::string::npos)
+                {
                   line = line.substr(0, markerPos);
                 }
               if (line == "")
