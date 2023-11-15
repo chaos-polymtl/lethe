@@ -413,7 +413,8 @@ MFNavierStokesSolver<dim>::assemble_system_rhs()
 
   this->system_rhs *= -1.0;
 
-  // Provide residual to simulation control for stopping criterion when using steady bdf
+  // Provide residual to simulation control for stopping criterion when using
+  // steady bdf
   if (this->simulation_control->is_first_assembly())
     this->simulation_control->provide_residual(this->system_rhs.l2_norm());
 }
