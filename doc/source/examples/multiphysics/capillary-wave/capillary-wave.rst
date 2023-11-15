@@ -35,7 +35,7 @@ Files Used in This Example
 Description of the Case
 -----------------------
 
-Have you ever tried skipping stones on a pond or at the beach? If so, you've likely observed the mesmerizing ripples that form when the stone makes contact with the water's surface. Ripples and waves are an integral part of our everyday lives. You can witness their presence at the beach, where surfers ride them, when swimming in a swimming pool, or even when you drop a cube of sugar into your morning coffee. Notably, these phenomena occur at different length scales and propagate at a velocity (:math:`c`), often referred to as the *phase velocity*. Under the assumption that viscous stresses are negligible, the phase velocity of a single wave can be expressed as follows `[2, <https://doi.org/10.1016/j.jcp.2015.01.021>`_ `3] <https://doi.org/10.1063/1.863522>`_:
+Have you ever tried skipping stones on a pond or at the beach? If so, you have likely observed the mesmerizing ripples that form when the stone makes contact with the water's surface. Ripples and waves are an integral part of our everyday lives. You can witness their presence at the beach, where surfers ride them, when swimming in a swimming pool, or even when you drop a cube of sugar into your morning coffee. Notably, these phenomena occur at different length scales and propagate at a velocity (:math:`c`), often referred to as the *phase velocity*. Under the assumption that viscous stresses are negligible, the phase velocity of a single wave can be expressed as follows `[2, <https://doi.org/10.1016/j.jcp.2015.01.021>`_ `3] <https://doi.org/10.1063/1.863522>`_:
 
 .. math::
   c = \frac{\omega}{k}=\frac{\omega\lambda}{2\pi}=\sqrt{\frac{(\rho_1-\rho_0)g\lambda}{\hat{\rho}2\pi} + \frac{2\pi\sigma}{\hat{\rho}\lambda}}
