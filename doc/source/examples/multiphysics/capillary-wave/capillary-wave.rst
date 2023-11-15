@@ -365,7 +365,7 @@ By increasing the mesh resolution by an additional refinement, the :math:`\mathr
 Acknowledgment
 ----------------
 
-We would like to thank Dr. Fabian Denner for sharing his time and knowledge throughout the process of developing this example.
+We would like to thank Prof. Fabian Denner for sharing his time and knowledge throughout the process of developing this example.
 
 
 ----------
