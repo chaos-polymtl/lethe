@@ -35,19 +35,19 @@ Files Used in This Example
 Description of the Case
 -----------------------
 
-Have you ever tried skipping stones on a pond or at the beach? If so, you have likely observed the mesmerizing ripples that form when the stone makes contact with the water's surface. Ripples and waves are an integral part of our everyday lives. You can witness their presence at the beach, where surfers ride them, when swimming in a swimming pool, or even when you drop a cube of sugar into your morning coffee. Notably, these phenomena occur at different length scales and propagate at a velocity (:math:`c`), often referred to as the *phase velocity*. Under the assumption that viscous stresses are negligible, the phase velocity of a single wave can be expressed as follows `[2, <https://doi.org/10.1016/j.jcp.2015.01.021>`_ `3] <https://doi.org/10.1063/1.863522>`_:
+Have you ever tried skipping stones on a pond or at the beach? If so, you have likely observed the mesmerizing ripples that form when the stone makes contact with the water's surface. Ripples and waves are an integral part of our everyday lives. You can witness their presence at the beach, where surfers ride them, when swimming in a swimming pool, or even when you drop a cube of sugar into your morning coffee. Notably, these phenomena occur at different length scales and propagate at a velocity (:math:`c`), often referred to as the *phase velocity*. Under the assumption that viscous stresses are negligible, the phase velocity of a single wave can be expressed as follows:
 
 .. math::
   c = \frac{\omega}{k}=\frac{\omega\lambda}{2\pi}=\sqrt{\frac{(\rho_1-\rho_0)g\lambda}{\hat{\rho}2\pi} + \frac{2\pi\sigma}{\hat{\rho}\lambda}}
 
-Where :math:`\omega=\sqrt{\frac{\rho_1-\rho_0}{\hat{\rho}}gk+\frac{\sigma k^3}{\hat{\rho}}}` is the angular frequency of the wave, :math:`k=\frac{2\pi}{\lambda}` is the wavenumber with, :math:`\lambda`, the wavelength, :math:`g` is the gravitational acceleration, and :math:`\hat{\rho} = \rho_0 + \rho_1` is the sum of the densities of the fluids.
+where :math:`\omega=\sqrt{\frac{\rho_1-\rho_0}{\hat{\rho}}gk+\frac{\sigma k^3}{\hat{\rho}}}` is the angular frequency of the wave with, :math:`\sigma`, the surface tension coefficient, :math:`k=\frac{2\pi}{\lambda}` is the wavenumber with, :math:`\lambda`, the wavelength, :math:`g` is the gravitational acceleration, and :math:`\hat{\rho} = \rho_0 + \rho_1` is the sum of the densities of the fluids `[2, <https://doi.org/10.1016/j.jcp.2015.01.021>`_ `3] <https://doi.org/10.1063/1.863522>`_.
 
 The first term beneath the square root accounts for the gravitational contribution, while the second term is a result of surface tension. Depending on the wavelength, either of these contributions may dominate the other. When:
 
 - :math:`\lambda \gg 2\pi l_\sigma`, gravity dominates surface tension and we get what we call a *gravity wave* (see :doc:`../sloshing-in-rectangular-tank/sloshing-in-rectangular-tank`).
 - :math:`\lambda \ll 2\pi l_\sigma`, surface tension dominates gravity and we get a *capillary wave*.
 
-:math:`l_\sigma=\sqrt{\frac{\sigma}{\rho g}}` is the capillary length with, :math:`\sigma`, the surface tension coefficient.
+:math:`l_\sigma=\sqrt{\frac{\sigma}{\rho g}}` is the capillary length.
 
 In this example, we simulate the damping of a small amplitude capillary wave in a rectangular domain of dimensions :math:`\lambda \times 3\lambda` with :math:`\lambda=10^{-4}`. The selected initial amplitude of the wave is :math:`a_0=0.01\lambda` giving us the following expression for the initial height of the wave:
 
@@ -77,12 +77,12 @@ and the angular frequency simply becomes:
 .. math::
  \omega_\sigma = \sqrt{\frac{\sigma}{\hat{\rho}} \left(\frac{2\pi}{\lambda_\sigma}\right)^3}
 
-Since, the phase fraction (:math:`\phi`) is treated explicitly, the temporal resolution of the capillary wave leads to a Courant-Friedrichs-Lewy (CFL) condition, also known as the *capillary time-step constraint* `[2] <https://doi.org/10.1016/j.jcp.2015.01.021>`_:
+Since, the phase fraction (:math:`\phi`) is treated explicitly, the temporal resolution of the capillary wave leads to a Courant-Friedrichs-Lewy (CFL) condition, also known as the *capillary time-step constraint*:
 
 .. math::
   \Delta t_\sigma = \frac{\Delta x}{\sqrt{2} c_\sigma} = \sqrt{\frac{\hat{\rho}}{2\pi\sigma}{{\Delta x}^3}}
 
-with the shortest unambiguously resolved capillary wave having a wavelength of :math:`\lambda_\sigma = 2 \Delta x`.
+with the shortest unambiguously resolved capillary wave having a wavelength of :math:`\lambda_\sigma = 2 \Delta x` `[2] <https://doi.org/10.1016/j.jcp.2015.01.021>`_.
 
 Therefore, in order to get stable simulation results, :math:`\Delta t < \Delta t_\sigma` should be respected. In this example, different time-steps will be used to explore the stability limit of Lethe's current implementation.
 
@@ -143,7 +143,7 @@ In the ``initial conditions``, we define the initial height of the wave, such th
 Mesh
 ~~~~
 
-In the ``mesh`` subsection, we define a subdivided hyper rectangle with appropriate dimensions. The mesh is initially refined :math:`5` times to ensure adequate definition of the interface.
+In the ``mesh`` subsection, we define a subdivided hyper rectangle with appropriate dimensions. The mesh is initially refined :math:`4` times to ensure adequate definition of the interface.
 
 .. code-block:: text
 
@@ -157,7 +157,7 @@ In the ``mesh`` subsection, we define a subdivided hyper rectangle with appropri
 Mesh Adaptation
 ~~~~~~~~~~~~~~~~
 
-In the ``mesh adaptation`` subsection, we dynamically adapt the mesh using the ``phase`` as refinement ``variable``. We choose :math:`4` as the ``min refinement level`` and :math:``6`` as the ``max refinement level``. We set ``initial refinement steps = 4`` to adapt the mesh to the initial value of the VOF field.
+In the ``mesh adaptation`` subsection, we dynamically adapt the mesh using the ``phase`` as refinement ``variable``. We choose :math:`3` as the ``min refinement level`` and :math:``5`` as the ``max refinement level``. We set ``initial refinement steps = 4`` to adapt the mesh to the initial value of the VOF field.
 
 .. code-block:: text
 
@@ -228,10 +228,10 @@ to run the simulation using four CPU cores. Feel free to use more CPU cores.
 
     python3 capillary-wave-calculation.py calculations.output
 
-  ``calculations.output`` is the file where the results will be saved. If you omit this argument, results will simply be displayed in the terminal window.
+  with ``calculations.output`` being the file where the results will be saved. If you omit this argument, results will simply be displayed in the terminal window.
 
   .. attention::
-    The number of refinement (``n_refinement``) that you enter on line :math:`67` of the script should correspond to the finest level of refinement of your mesh. In other words, it should correspond to the ``max refinement level`` of the ``mesh adaptation`` subsection of the parameter file.
+    The number of refinements (``n_refinement``) that you enter on line :math:`67` of the script should correspond to the finest level of refinement of the mesh. In other words, it should correspond to the ``max refinement level`` of the ``mesh adaptation`` subsection of the parameter file.
 
     .. code-block::
 
@@ -245,7 +245,7 @@ to run the simulation using four CPU cores. Feel free to use more CPU cores.
 
     ./capillary-wave-time-step-sensitivity.sh "{0.95,15,20}"
 
-  where ``"{0.95,15,20}"`` the sequence of time-step multipliers (:math:`\mathrm{TSM}`) of the different cases.
+  where ``"{0.95,15,20}"`` is the sequence of time-step multipliers (:math:`\mathrm{TSM}`) of the different cases.
 
   .. attention::
     This script runs the ``capillary-wave-calculation.py`` script before generating the different cases.
@@ -295,7 +295,6 @@ After generating the analytical solution file, the results can be postprocessed 
 with ``./capillaryWaveData_rho_1_nu_5e-6_prosperetti.csv`` being the path to the analytical solution csv file.
 
 .. important::
-
     You need to ensure that the ``lethe_pyvista_tools`` is working on your machine. Click `here <../../../tools/postprocessing/postprocessing.html>`_ for details.
 
 +-------------------------------------------------------------------------------------------------------------------+
@@ -336,29 +335,29 @@ with ``./capillaryWaveData_rho_1_nu_5e-6_prosperetti.csv`` being the path to the
 
 The following figure presents a comparison between the analytical results and the simulation results for :math:`\Delta t = \mathrm{TSM} \times \Delta t_\sigma` with :math:`\mathrm{TSM} \in \{0.95,15,20\}`.
 
-+-----------------------------------------------------------------------------------------------------------------------------+
-|  .. figure:: images/TSM_comparison_figure.png                                                                               |
-|     :align: center                                                                                                          |
-|     :width: 800                                                                                                             |
-|     :name: Comparison of wave amplitude evolution for different time-steps for :math:`\mathrm{Oh=0.057}`                    |
-|                                                                                                                             |
-|     Comparison of wave relative amplitude evolution for different time-steps for :math:`\mathrm{Oh=0.057}` at the interface |
-|                                                                                                                             |
-+-----------------------------------------------------------------------------------------------------------------------------+
++------------------------------------------------------------------------------------------------------------------------------+
+|  .. figure:: images/TSM_comparison_figure.png                                                                                |
+|     :align: center                                                                                                           |
+|     :width: 800                                                                                                              |
+|     :name: Comparison of wave amplitude evolutions for different time-steps for :math:`\mathrm{Oh=0.057}`                    |
+|                                                                                                                              |
+|     Comparison of wave relative amplitude evolutions for different time-steps for :math:`\mathrm{Oh=0.057}` at the interface |
+|                                                                                                                              |
++------------------------------------------------------------------------------------------------------------------------------+
 
-A pretty good agreement is obtained for the :math:`2` first simulations, demonstrating the accuracy and robustness of the VOF solver. The unexpected stability of the solution at :math:`\Delta t \approx 15\Delta t_\sigma` most probably the consequence of the implicit SUPG/PSPG stabilisations in the Navier-Stokes equations acting as an artificial viscosity term. This artificial viscosity increases locally the Ohnesorge number :math:`\left( \mathrm{Oh} = \frac{\mu_0+\mu_1}{\sqrt{2\hat{\rho}\sigma\Delta x}} \sim \frac{\text{viscous forces}}{\sqrt{\text{inertia} \times \text{surface tension}}}\right)` near the interface which can be correlated to the stability of the simulation. As :math:`\mathrm{Oh}` increases, it was found that the simulation results remain stable at higher multiples of the capillary time-step constraint `[1, <https://doi.org/10.1016/j.jcp.2022.111128>`_ `2] <https://doi.org/10.1016/j.jcp.2015.01.021>`_.
+A pretty good agreement is obtained for the :math:`2` first simulations, demonstrating the accuracy and robustness of the VOF solver. The unexpected stability of the solution at :math:`\Delta t \approx 15\Delta t_\sigma` is most probably the consequence of the implicit PSPG and SUPG stabilisations in the Navier-Stokes equations acting as artificial viscosity terms. These artificial viscosities increase locally the Ohnesorge number :math:`\left( \mathrm{Oh} = \frac{\mu_0+\mu_1}{\sqrt{2\hat{\rho}\sigma\Delta x}} \sim \frac{\text{viscous forces}}{\sqrt{\text{inertia} \times \text{surface tension}}}\right)` near the interface which can be correlated to the stability of the simulation. As :math:`\mathrm{Oh}` increases, it was found that the simulation results remain stable at higher multiples of the capillary time-step constraint `[1, <https://doi.org/10.1016/j.jcp.2022.111128>`_ `2] <https://doi.org/10.1016/j.jcp.2015.01.021>`_.
 
 By increasing the mesh resolution by an additional refinement, the :math:`\mathrm{Oh}` at the interface increases, therefore viscous effects increase and we get a more stable solution as seen below. However, we also see a slight negative phase shift.
 
-+----------------------------------------------------------------------------------------------------------------------------+
-|  .. figure:: images/TSM_comparison_figure_ref-6.png                                                                        |
-|     :align: center                                                                                                         |
-|     :width: 800                                                                                                            |
-|     :name: Comparison of wave amplitude evolution for different time-steps for :math:`\mathrm{Oh=0.08}`                    |
-|                                                                                                                            |
-|     Comparison of wave relative amplitude evolution for different time-steps for :math:`\mathrm{Oh=0.08}` at the interface |
-|                                                                                                                            |
-+----------------------------------------------------------------------------------------------------------------------------+
++-----------------------------------------------------------------------------------------------------------------------------+
+|  .. figure:: images/TSM_comparison_figure_ref-6.png                                                                         |
+|     :align: center                                                                                                          |
+|     :width: 800                                                                                                             |
+|     :name: Comparison of wave amplitude evolutions for different time-steps for :math:`\mathrm{Oh=0.08}`                    |
+|                                                                                                                             |
+|     Comparison of wave relative amplitude evolutions for different time-steps for :math:`\mathrm{Oh=0.08}` at the interface |
+|                                                                                                                             |
++-----------------------------------------------------------------------------------------------------------------------------+
 
 
 ----------------
