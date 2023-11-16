@@ -19,16 +19,17 @@ Features
 ---------------------------
 Files Used in This Example
 ---------------------------
+All files mentioned below are located in the example's folder (``examples/multiphysics/capillary-wave``).
 
-- Analytical data: ``examples/multiphysics/capillary-wave/capillaryWaveData_rho_1_nu_5e-6_prosperetti.csv``
-- Analytical solution computation Python script: ``examples/multiphysics/capillary-wave/capillary-wave-prosperetti-solution.py``
-- Parameter file for case generation: ``examples/multiphysics/capillary-wave/capillary-wave.prm``
-- Parameter file for the :math:`\Delta t = 0.95\Delta t_\sigma` case: ``examples/multiphysics/capillary-wave/capillary-wave-TSM-0_95.prm``
-- Case generation and simulation launching Bash script: ``examples/multiphysics/capillary-wave/capillary-wave-time-step-sensitivity.sh``
-- Postprocessing Python script for a simple case: ``examples/multiphysics/capillary-wave/capillary-wave-postprocess.py``
-- Postprocessing Python script for generating a comparison figure: ``examples/multiphysics/capillary-wave/capillary-wave-combined.py``
-- Postprocessing Bash script: ``examples/multiphysics/capillary-wave/capillary-wave-time-step-sensitivity-postprocess.sh``
-- Python script for computing quantities of interest: ``examples/multiphysics/capillary-wave/capillary-wave-calculation.py``
+- Analytical data: ``capillaryWaveData_rho_1_nu_5e-6_prosperetti.csv``
+- Analytical solution computation Python script: ``capillary-wave-prosperetti-solution.py``
+- Parameter file for case generation: ``capillary-wave.prm``
+- Parameter file for the :math:`\Delta t = 0.95\Delta t_\sigma` case: ``capillary-wave-TSM-0_95.prm``
+- Case generation and simulation launching Bash script: ``capillary-wave-time-step-sensitivity.sh``
+- Postprocessing Python script for a simple case: ``capillary-wave-postprocess.py``
+- Postprocessing Python script for generating a comparison figure: ``capillary-wave-combined.py``
+- Postprocessing Bash script: ``capillary-wave-time-step-sensitivity-postprocess.sh``
+- Python script for computing quantities of interest: ``capillary-wave-calculation.py``
 
 
 -----------------------
@@ -95,7 +96,7 @@ Simulation Control
 ~~~~~~~~~~~~~~~~~~
 Below, the ``simulation control`` subsection for the case of :math:`\Delta t \approx 0.95\Delta t_\sigma \approx 0.95(3.9 \times 10^{-9})\, \text{s}` is shown. For other cases, the ``time step`` value will change and accordingly the ``output frequency`` will also.
 
-The time integration is handled by a 2nd-order backward differentiation scheme (bdf2) with a constant time-step of :math:`\Delta t=3.7 \times 10^{-9} \, \text{s}`. To assess the stability of the simulation results, the wave is simulated for :math:`t_{\text{end}} = 50\omega_\sigma \approx 4.5 \times 10^{-5} \, \text{s}`.
+The time integration is handled by a 2nd-order backward differentiation scheme (bdf2) with a constant time-step of :math:`\Delta t=3.7 \times 10^{-9} \, \text{s}`. To assess the stability of the simulation results, the wave is simulated for :math:`t_{\text{end}} = \frac{50}{\omega_\sigma} \approx 4.5 \times 10^{-5} \, \text{s}`.
 
 .. code-block:: text
 
@@ -345,7 +346,7 @@ The following figure presents a comparison between the analytical results and th
 |                                                                                                                              |
 +------------------------------------------------------------------------------------------------------------------------------+
 
-A pretty good agreement is obtained for the :math:`2` first simulations, demonstrating the accuracy and robustness of the VOF solver. The unexpected stability of the solution at :math:`\Delta t \approx 15\Delta t_\sigma` is most probably the consequence of the implicit PSPG and SUPG stabilisations in the Navier-Stokes equations acting as artificial viscosity terms. These artificial viscosities increase locally the Ohnesorge number :math:`\left( \mathrm{Oh} = \frac{\mu_0+\mu_1}{\sqrt{2\hat{\rho}\sigma\Delta x}} \sim \frac{\text{viscous forces}}{\sqrt{\text{inertia} \times \text{surface tension}}}\right)` near the interface which can be correlated to the stability of the simulation. As :math:`\mathrm{Oh}` increases, it was found that the simulation results remain stable at higher multiples of the capillary time-step constraint `[1, <https://doi.org/10.1016/j.jcp.2022.111128>`_ `2] <https://doi.org/10.1016/j.jcp.2015.01.021>`_.
+A pretty good agreement is obtained for the :math:`2` first simulations, demonstrating the accuracy and robustness of the VOF solver. The unexpected stability of the solution at :math:`\Delta t \approx 15\Delta t_\sigma` is most probably the consequence of the implicit PSPG and SUPG stabilizations in the Navier-Stokes equations acting as artificial viscosity terms. These artificial viscosities locally increase the Ohnesorge number :math:`\left( \mathrm{Oh} = \frac{\mu_0+\mu_1}{\sqrt{2\hat{\rho}\sigma\Delta x}} \sim \frac{\text{viscous forces}}{\sqrt{\text{inertia} \times \text{surface tension}}}\right)` near the interface which can be correlated to the stability of the simulation. As :math:`\mathrm{Oh}` increases, it was found that the simulation results remain stable at higher multiples of the capillary time-step constraint `[1, <https://doi.org/10.1016/j.jcp.2022.111128>`_ `2] <https://doi.org/10.1016/j.jcp.2015.01.021>`_.
 
 By increasing the mesh resolution by an additional refinement, the :math:`\mathrm{Oh}` at the interface increases, therefore viscous effects increase and we get a more stable solution as seen below. However, we also see a slight negative phase shift.
 
