@@ -3,6 +3,12 @@ All notable changes to the Lethe project will be documented in this file.
  
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Master] - 2023-11-16
+  
+### Changed
+
+- MINOR The maximum number of boundary conditions for all physics was fixed to 14 since the boundary conditions had the be declared before being parsed. A new mechanism is now in place which parses the "number" parameter for each physics and keeps the maximal value. Then, this maximal value is used to pre-declare the boundary conditions. This enables much more robust sanity checking of the input parameter. The major drawback of this (and this is a major one) is that if we ever have another parameter with the name "number" then this parameter would also be parsed and used to establish the maximum number of boundary conditions. In this case, the best approach would be to replace "number" with "number of boundary conditions" in the parameter file. I (B-saurus-rex) did not want to do this at the time of this change to not have a massive PR which breaks every parameter files.
+
 ## [Master] - 2023-10-01
   
 ### Fixed
