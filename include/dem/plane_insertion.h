@@ -17,7 +17,9 @@
  */
 
 #include <dem/dem_solver_parameters.h>
+#include <dem/distribution.h>
 #include <dem/insertion.h>
+#include <dem/normal_distribution.h>
 
 #include <deal.II/distributed/tria.h>
 
@@ -32,7 +34,7 @@
  *
  * @note
  *
- * Paticle insertion using cells cut by a plane. Locally own cells that are
+ * Particle insertion using cells cut by a plane. Locally own cells that are
  * cut by the plane are flag. From those flag cells, we insert a particle at
  * their center's if they are individually empty (contain no particle). This
  * way, no significant overlap is occurring on the insertion of new particle

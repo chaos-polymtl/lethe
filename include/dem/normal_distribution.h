@@ -22,12 +22,13 @@
 
 class NormalDistribution : public Distribution
 {
+public:
   /**
    * The constructor store the parameters necessary to define the normal
    * distribution
    *
    * @param average Average of the normal distribution.
-   * @param standard_deviation Stabdard_deviation of the normal distribution.
+   * @param standard_deviation Standard_deviation of the normal distribution.
    * @param particle_number Number of particles to insert at the current
    * insertion time step.
    */
@@ -40,8 +41,9 @@ class NormalDistribution : public Distribution
    *
    */
   void
-  particle_size_sampling(double particle_number) override;
+  particle_size_sampling(const unsigned int particle_number) override;
 
+private:
   // Attributes
   double average;
   double standard_deviation;

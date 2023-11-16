@@ -21,7 +21,9 @@
 
 class Distribution
 {
-private:
+public:
+  std::vector<double> particle_sizes;
+
   /**
    * Carries out the size sampling of particles. This is the base class of
    * normal_distribution, log_normal_distribution and list_distribution
@@ -29,11 +31,9 @@ private:
    *
    */
   virtual void
-  particle_size_sampling(double particle_number) = 0;
+  particle_size_sampling(const unsigned int particle_number) = 0;
 
   // Attribute
-protected:
-  std::vector<double> particle_sizes;
 };
 
 #endif /* distribution_h */

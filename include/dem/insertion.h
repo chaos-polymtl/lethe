@@ -57,6 +57,9 @@ template <int dim>
 class Insertion
 {
 public:
+  Insertion();
+
+  // Destructor
   /**
    * Carries out the insertion of particles. This is the base class of
    * volume_insertion and plane_insertion classes.
@@ -120,9 +123,25 @@ protected:
     const DEMSolverParameters<dim> &dem_parameters,
     const ConditionalOStream       &pcout);
 
-  // Number of particles that is going to be inserted at each insetion step.This
-  // value can change in the last insertion step to reach the desired number of
-  // particles
+
+
+  /**
+   * Carries out sampling from specified distributions for particle size.
+   *
+   * @param particle_sizes A vector containing size of particles sampled from
+   * specified size distribution
+   * @param average Average diameter of particles
+   * @param standard_deviation Standard deviation of particle diameter
+   * @param particle_number Number of particles
+   */
+  void
+  particle_size_sampling(std::vector<double> &particle_sizes,
+                         const double         average,
+                         const double         standard_deviation,
+                         const double         particle_number);
+  // Number of particles that is going to be inserted at each insertion
+  // step.This value can change in the last insertion step to reach the desired
+  // number of particles
   unsigned int inserted_this_step;
 
   // Number of insertion points in the x, y and z directions
@@ -142,24 +161,10 @@ protected:
   // A vector of vectors, which contains all the properties of all inserted
   // particles at each insertion step
   std::vector<std::vector<double>> particle_properties;
-  Distribution                     distribution_object;
+
+  Distribution *distribution_object;
 
 private:
-  /**
-   * Carries out sampling from specified distributions for particle size.
-   *
-   * @param particle_sizes A vector containing size of particles sampled from
-   * specified size distribution
-   * @param average Average diameter of particles
-   * @param standard_deviation Standard deviation of particle diameter
-   * @param particle_number Number of particles
-   */
-  void
-  particle_size_sampling(std::vector<double> &particle_sizes,
-                         const double         average,
-                         const double         standard_deviation,
-                         const double         particle_number);
-
   std::vector<double> particle_sizes;
 };
 

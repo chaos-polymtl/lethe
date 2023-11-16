@@ -11,7 +11,8 @@ template <int dim>
 PlaneInsertion<dim>::PlaneInsertion(
   const DEMSolverParameters<dim>                  &dem_parameters,
   const parallel::distributed::Triangulation<dim> &triangulation)
-  : particles_of_each_type_remaining(
+  : Insertion<dim>()
+  , particles_of_each_type_remaining(
       dem_parameters.lagrangian_physical_properties.number.at(0))
 {
   // Initializing current inserting particle type
@@ -35,6 +36,27 @@ PlaneInsertion<dim>::PlaneInsertion(
   maximum_range_for_randomness =
     dem_parameters.insertion_info.random_number_range /
     static_cast<double>(RAND_MAX);
+
+
+  if (dem_parameters.lagrangian_physical_properties.size_distribution_type ==
+      Parameters::Lagrangian::LagrangianPhysicalProperties::
+        size_distribution_type::uniform)
+    {
+      distribution_object = new NormalDistribution(
+        dem_parameters.lagrangian_physical_properties.particle_average_diameter,
+        0.);
+    }
+  else if (dem_parameters.lagrangian_physical_properties
+             .size_distribution_type ==
+           Parameters::Lagrangian::LagrangianPhysicalProperties::
+             size_distribution_type::normal)
+    {
+      distribution_object = new NormalDistribution(
+        dem_parameters.lagrangian_physical_properties
+          .particle_average_diameter[current_inserting_particle_type],
+        dem_parameters.lagrangian_physical_properties
+          .particle_size_std[current_inserting_particle_type]);
+    }
 }
 
 template <int dim>
@@ -330,5 +352,4 @@ PlaneInsertion<dim>::insert(
 }
 
 template class PlaneInsertion<2>;
-
 template class PlaneInsertion<3>;

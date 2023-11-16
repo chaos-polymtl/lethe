@@ -9,7 +9,7 @@ NormalDistribution::NormalDistribution(
 }
 
 void
-NormalDistribution::particle_size_sampling(double particle_number)
+NormalDistribution::particle_size_sampling(const unsigned int particle_number)
 {
   this->particle_sizes.clear();
   this->particle_sizes.reserve(particle_number);

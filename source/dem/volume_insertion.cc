@@ -11,7 +11,8 @@ template <int dim>
 VolumeInsertion<dim>::VolumeInsertion(
   const DEMSolverParameters<dim> &dem_parameters,
   const double                    maximum_particle_diameter)
-  : particles_of_each_type_remaining(
+  : Insertion<dim>()
+  , particles_of_each_type_remaining(
       dem_parameters.lagrangian_physical_properties.number.at(0))
 {
   // Initializing current inserting particle type
@@ -24,7 +25,7 @@ VolumeInsertion<dim>::VolumeInsertion(
       Parameters::Lagrangian::LagrangianPhysicalProperties::
         size_distribution_type::uniform)
     {
-      Insertion<dim>::distribution_object = NormalDistribution(
+      distribution_object = new NormalDistribution(
         dem_parameters.lagrangian_physical_properties.particle_average_diameter,
         0.);
     }
@@ -33,9 +34,11 @@ VolumeInsertion<dim>::VolumeInsertion(
            Parameters::Lagrangian::LagrangianPhysicalProperties::
              size_distribution_type::normal)
     {
-      distribution_object = NormalDistribution(
-        dem_parameters.lagrangian_physical_properties.particle_average_diameter,
-        dem_parameters.lagrangian_physical_properties.particle_size_std);
+      distribution_object = new NormalDistribution(
+        dem_parameters.lagrangian_physical_properties
+          .particle_average_diameter[current_inserting_particle_type],
+        dem_parameters.lagrangian_physical_properties
+          .particle_size_std[current_inserting_particle_type]);
     }
 }
 

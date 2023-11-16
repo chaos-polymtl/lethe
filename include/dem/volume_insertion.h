@@ -17,6 +17,7 @@
 
 #include <dem/dem_solver_parameters.h>
 #include <dem/insertion.h>
+#include <dem/normal_distribution.h>
 
 #include <deal.II/distributed/tria.h>
 

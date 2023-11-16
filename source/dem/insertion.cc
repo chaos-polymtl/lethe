@@ -21,6 +21,9 @@
 
 #include <sstream>
 
+template <int dim>
+Insertion<dim>::Insertion() = default;
+
 // Prints the insertion information
 template <int dim>
 void
@@ -56,12 +59,7 @@ Insertion<dim>::assign_particle_properties(
   // TODO: MAYBE CHANGE THE INPUT TO PHYSICAL PROPERTIES DIRECTLY
   auto physical_properties = dem_parameters.lagrangian_physical_properties;
 
-  particle_size_sampling(
-    particle_sizes,
-    physical_properties
-      .particle_average_diameter[current_inserting_particle_type],
-    physical_properties.particle_size_std[current_inserting_particle_type],
-    inserted_this_step_this_proc);
+  distribution_object->particle_size_sampling(inserted_this_step_this_proc);
 
   // A loop is defined over the number of particles which are going to be
   // inserted at this step
@@ -71,9 +69,9 @@ Insertion<dim>::assign_particle_properties(
     {
       double type     = current_inserting_particle_type;
       double diameter = 0.;
-      (particle_sizes[particle_counter] >= 0) ?
-        diameter = particle_sizes[particle_counter] :
-        -particle_sizes[particle_counter];
+      (distribution_object->particle_sizes[particle_counter] >= 0) ?
+        diameter = distribution_object->particle_sizes[particle_counter] :
+        -distribution_object->particle_sizes[particle_counter];
       double density =
         physical_properties.density_particle[current_inserting_particle_type];
       double vel_x        = dem_parameters.insertion_info.vel_x;
