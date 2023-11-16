@@ -11,8 +11,7 @@ template <int dim>
 VolumeInsertion<dim>::VolumeInsertion(
   const DEMSolverParameters<dim> &dem_parameters,
   const double                    maximum_particle_diameter)
-  : Insertion<dim>()
-  , particles_of_each_type_remaining(
+  : particles_of_each_type_remaining(
       dem_parameters.lagrangian_physical_properties.number.at(0))
 {
   // Initializing current inserting particle type
@@ -25,7 +24,7 @@ VolumeInsertion<dim>::VolumeInsertion(
       Parameters::Lagrangian::LagrangianPhysicalProperties::
         size_distribution_type::uniform)
     {
-      distribution_object = new NormalDistribution(
+      distribution_object = NormalDistribution(
         dem_parameters.lagrangian_physical_properties.particle_average_diameter,
         0.);
     }
@@ -34,7 +33,7 @@ VolumeInsertion<dim>::VolumeInsertion(
            Parameters::Lagrangian::LagrangianPhysicalProperties::
              size_distribution_type::normal)
     {
-      distribution_object = new NormalDistribution(
+      distribution_object = NormalDistribution(
         dem_parameters.lagrangian_physical_properties
           .particle_average_diameter[current_inserting_particle_type],
         dem_parameters.lagrangian_physical_properties
@@ -60,7 +59,7 @@ VolumeInsertion<dim>::insert(
           ++current_inserting_particle_type);
     }
 
-  // Check to see if the remained uninserted particles is equal to zero or not
+  // Check to see if the remained un-inserted particles is equal to zero or not
   if (particles_of_each_type_remaining != 0)
     {
       MPI_Comm           communicator = triangulation.get_communicator();
@@ -73,7 +72,7 @@ VolumeInsertion<dim>::insert(
 
       this->calculate_insertion_domain_maximum_particle_number(dem_parameters,
                                                                pcout);
-      // The inserted_this_step value is the mimnum of
+      // The inserted_this_step value is the minimum of
       // particles_of_each_type_remaining and inserted_this_step
       this->inserted_this_step =
         std::min(particles_of_each_type_remaining, this->inserted_this_step);

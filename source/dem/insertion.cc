@@ -22,7 +22,8 @@
 #include <sstream>
 
 template <int dim>
-Insertion<dim>::Insertion() = default;
+Insertion<dim>::Insertion()
+{}
 
 // Prints the insertion information
 template <int dim>
@@ -69,9 +70,9 @@ Insertion<dim>::assign_particle_properties(
     {
       double type     = current_inserting_particle_type;
       double diameter = 0.;
-      (distribution_object->particle_sizes[particle_counter] >= 0) ?
-        diameter = distribution_object->particle_sizes[particle_counter] :
-        -distribution_object->particle_sizes[particle_counter];
+      (distribution_object.particle_sizes[particle_counter] >= 0) ?
+        diameter = distribution_object.particle_sizes[particle_counter] :
+        -distribution_object.particle_sizes[particle_counter];
       double density =
         physical_properties.density_particle[current_inserting_particle_type];
       double vel_x        = dem_parameters.insertion_info.vel_x;

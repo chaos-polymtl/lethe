@@ -42,7 +42,7 @@ PlaneInsertion<dim>::PlaneInsertion(
       Parameters::Lagrangian::LagrangianPhysicalProperties::
         size_distribution_type::uniform)
     {
-      distribution_object = new NormalDistribution(
+      distribution_object = NormalDistribution(
         dem_parameters.lagrangian_physical_properties.particle_average_diameter,
         0.);
     }
@@ -51,7 +51,7 @@ PlaneInsertion<dim>::PlaneInsertion(
            Parameters::Lagrangian::LagrangianPhysicalProperties::
              size_distribution_type::normal)
     {
-      distribution_object = new NormalDistribution(
+      distribution_object = NormalDistribution(
         dem_parameters.lagrangian_physical_properties
           .particle_average_diameter[current_inserting_particle_type],
         dem_parameters.lagrangian_physical_properties

@@ -123,22 +123,6 @@ protected:
     const DEMSolverParameters<dim> &dem_parameters,
     const ConditionalOStream       &pcout);
 
-
-
-  /**
-   * Carries out sampling from specified distributions for particle size.
-   *
-   * @param particle_sizes A vector containing size of particles sampled from
-   * specified size distribution
-   * @param average Average diameter of particles
-   * @param standard_deviation Standard deviation of particle diameter
-   * @param particle_number Number of particles
-   */
-  void
-  particle_size_sampling(std::vector<double> &particle_sizes,
-                         const double         average,
-                         const double         standard_deviation,
-                         const double         particle_number);
   // Number of particles that is going to be inserted at each insertion
   // step.This value can change in the last insertion step to reach the desired
   // number of particles
@@ -165,6 +149,21 @@ protected:
   Distribution *distribution_object;
 
 private:
+  /**
+   * Carries out sampling from specified distributions for particle size.
+   *
+   * @param particle_sizes A vector containing size of particles sampled from
+   * specified size distribution
+   * @param average Average diameter of particles
+   * @param standard_deviation Standard deviation of particle diameter
+   * @param particle_number Number of particles
+   */
+  void
+  particle_size_sampling(std::vector<double> &particle_sizes,
+                         const double         average,
+                         const double         standard_deviation,
+                         const double         particle_number);
+
   std::vector<double> particle_sizes;
 };
 
