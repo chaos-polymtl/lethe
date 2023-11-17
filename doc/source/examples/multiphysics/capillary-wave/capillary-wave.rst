@@ -12,8 +12,8 @@ Features
 - Solver: ``lethe-fluid`` 
 - Volume of fluid (VOF)
 - Unsteady problem handled by an adaptive BDF2 time-stepping scheme
-- Usage of Bash scripts to write, launch, and postprocess multiple cases
-- Usage of Python scripts for postprocessing data
+- Bash scripts to write, launch, and postprocess multiple cases
+- Python scripts for postprocessing data
 
 
 ---------------------------
