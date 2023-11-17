@@ -11,7 +11,8 @@ template <int dim>
 VolumeInsertion<dim>::VolumeInsertion(
   const DEMSolverParameters<dim> &dem_parameters,
   const double                    maximum_particle_diameter)
-  : particles_of_each_type_remaining(
+  : Insertion<dim>(dem_parameters)
+  , particles_of_each_type_remaining(
       dem_parameters.lagrangian_physical_properties.number.at(0))
 {
   // Initializing current inserting particle type
@@ -20,25 +21,6 @@ VolumeInsertion<dim>::VolumeInsertion(
   this->maximum_diameter          = maximum_particle_diameter;
 
   // Initializing the distribution object
-  if (dem_parameters.lagrangian_physical_properties.size_distribution_type ==
-      Parameters::Lagrangian::LagrangianPhysicalProperties::
-        size_distribution_type::uniform)
-    {
-      distribution_object = NormalDistribution(
-        dem_parameters.lagrangian_physical_properties.particle_average_diameter,
-        0.);
-    }
-  else if (dem_parameters.lagrangian_physical_properties
-             .size_distribution_type ==
-           Parameters::Lagrangian::LagrangianPhysicalProperties::
-             size_distribution_type::normal)
-    {
-      distribution_object = NormalDistribution(
-        dem_parameters.lagrangian_physical_properties
-          .particle_average_diameter[current_inserting_particle_type],
-        dem_parameters.lagrangian_physical_properties
-          .particle_size_std[current_inserting_particle_type]);
-    }
 }
 
 // The main insertion function. Insert_global_function is utilized to insert
@@ -258,6 +240,5 @@ VolumeInsertion<3>::find_insertion_location_volume(
                               random_number1) *
                                this->maximum_diameter;
 }
-
 template class VolumeInsertion<2>;
 template class VolumeInsertion<3>;

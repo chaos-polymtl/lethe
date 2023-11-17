@@ -14,7 +14,11 @@
  * ---------------------------------------------------------------------
  *
  */
+#include <cmath>
+#include <fstream>
+#include <iostream>
 #include <random>
+#include <string>
 
 #ifndef distribution_h
 #  define distribution_h

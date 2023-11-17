@@ -56,13 +56,20 @@ using namespace dealii;
 template <int dim>
 class Insertion
 {
+  /**
+   * Carries out the insertion of particles. This is the base class of
+   * volume_insertion, plane_insertion and list_insertion classes.
+   *
+   * @param dem_parameters DEM parameters declared in the .prm file
+   */
 public:
-  Insertion();
+  Insertion(const DEMSolverParameters<dim> &dem_parameters);
+
 
   // Destructor
   /**
-   * Carries out the insertion of particles. This is the base class of
-   * volume_insertion and plane_insertion classes.
+   * This function is override by volume_insertion, plane_insertion and
+   * list_insertion class to insert particles.
    *
    * @param particle_handler The particle handler of particles which are being
    * inserted
@@ -145,8 +152,7 @@ protected:
   // A vector of vectors, which contains all the properties of all inserted
   // particles at each insertion step
   std::vector<std::vector<double>> particle_properties;
-
-  Distribution *distribution_object;
+  std::shared_ptr<Distribution>    distribution_object;
 
 private:
   /**

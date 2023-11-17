@@ -22,8 +22,28 @@
 #include <sstream>
 
 template <int dim>
-Insertion<dim>::Insertion()
-{}
+Insertion<dim>::Insertion(const DEMSolverParameters<dim> &dem_parameters)
+{
+  if (dem_parameters.lagrangian_physical_properties.size_distribution_type ==
+      Parameters::Lagrangian::LagrangianPhysicalProperties::
+        size_distribution_type::uniform)
+    {
+      distribution_object = std::make_shared<NormalDistribution>(
+        dem_parameters.lagrangian_physical_properties.particle_average_diameter
+          .at(0),
+        0.);
+    }
+  else if (dem_parameters.lagrangian_physical_properties
+             .size_distribution_type ==
+           Parameters::Lagrangian::LagrangianPhysicalProperties::
+             size_distribution_type::normal)
+    {
+      distribution_object = std::make_shared<NormalDistribution>(
+        dem_parameters.lagrangian_physical_properties.particle_average_diameter
+          .at(0),
+        dem_parameters.lagrangian_physical_properties.particle_size_std.at(0));
+    }
+}
 
 // Prints the insertion information
 template <int dim>
@@ -60,7 +80,8 @@ Insertion<dim>::assign_particle_properties(
   // TODO: MAYBE CHANGE THE INPUT TO PHYSICAL PROPERTIES DIRECTLY
   auto physical_properties = dem_parameters.lagrangian_physical_properties;
 
-  distribution_object->particle_size_sampling(inserted_this_step_this_proc);
+  this->distribution_object->particle_size_sampling(
+    inserted_this_step_this_proc);
 
   // A loop is defined over the number of particles which are going to be
   // inserted at this step
@@ -70,9 +91,10 @@ Insertion<dim>::assign_particle_properties(
     {
       double type     = current_inserting_particle_type;
       double diameter = 0.;
-      (distribution_object.particle_sizes[particle_counter] >= 0) ?
-        diameter = distribution_object.particle_sizes[particle_counter] :
-        -distribution_object.particle_sizes[particle_counter];
+      // We make sure that the diameter is positive
+      (this->distribution_object->particle_sizes[particle_counter] >= 0) ?
+        diameter = this->distribution_object->particle_sizes[particle_counter] :
+        -this->distribution_object->particle_sizes[particle_counter];
       double density =
         physical_properties.density_particle[current_inserting_particle_type];
       double vel_x        = dem_parameters.insertion_info.vel_x;
@@ -227,6 +249,5 @@ Insertion<dim>::calculate_insertion_domain_maximum_particle_number(
       inserted_this_step = insertion_information.inserted_this_step;
     }
 }
-
 template class Insertion<2>;
 template class Insertion<3>;

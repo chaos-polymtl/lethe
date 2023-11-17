@@ -14,10 +14,11 @@ DeclException2(DiameterSizeCoherence,
 template <int dim>
 ListInsertion<dim>::ListInsertion(
   const DEMSolverParameters<dim> &dem_parameters)
-  : remaining_particles_of_each_type(
+  : Insertion<dim>(dem_parameters)
+  , remaining_particles_of_each_type(
       dem_parameters.lagrangian_physical_properties.number.at(0))
 {
-  // Inializing current inserting particle type
+  // Initializing current inserting particle type
   current_inserting_particle_type = 0;
 
   const auto &list_x  = dem_parameters.insertion_info.list_x;

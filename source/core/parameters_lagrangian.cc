@@ -65,15 +65,16 @@ namespace Parameters
       const unsigned int &particle_type,
       ParameterHandler   &prm)
     {
-      const std::string size_distribution_type =
-        prm.get("size distribution type");
-      if (size_distribution_type == "uniform")
+      const std::string size_distribution = prm.get("size distribution type");
+      if (size_distribution == "uniform")
         {
+          size_distribution_type = size_distribution_type::uniform;
           particle_average_diameter.at(particle_type) =
             prm.get_double("diameter");
         }
-      else if (size_distribution_type == "normal")
+      else if (size_distribution == "normal")
         {
+          size_distribution_type = size_distribution_type::normal;
           particle_average_diameter.at(particle_type) =
             prm.get_double("average diameter");
           particle_size_std.at(particle_type) =
