@@ -42,7 +42,7 @@ Surface Tension Force
 
 When including the surface tension force in the resolution of the Navier-Stokes equations, the numerical computation of the curvature can give rise to parasitic flows near the interface between the two fluids, as presented in :doc:`../../../theory/multiphysics/vof` theory guide.
 
-The static bubble case is a relevant case to study the parasitic currents, since the analytical solution is zero for the velocity. Therefore, non-zero velocities in the computed velocity field are considered as parasitic currents `[1] <https://doi.org/10.1002/fld.2643>`_. The analytical pressure drop between the interior (:math:`p_{int}`) and exterior (:math:`p_{ext}`) of the bubble is given by the Young-Laplace relation:
+The static bubble case is a relevant case to study the parasitic currents, since the analytical solution is zero for the velocity. Therefore, non-zero velocities in the computed velocity field are considered parasitic currents `[1] <https://doi.org/10.1002/fld.2643>`_. The analytical pressure drop between the interior (:math:`p_{int}`) and exterior (:math:`p_{ext}`) of the bubble is given by the Young-Laplace relation:
 
 .. math::
 

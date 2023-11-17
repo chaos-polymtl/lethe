@@ -2,7 +2,7 @@
 Capillary Wave
 ================================
 
-This example simulates the damping of a small amplitude capillary wave for different time-steps allowing to study the capillary time-step constraint. The problem is inspired by the test case of Denner *et al.* `[1] <https://doi.org/10.1016/j.jcp.2022.111128>`_
+This example simulates the damping of a small amplitude capillary wave for different time-steps allowing us to study the capillary time-step constraint. The problem is inspired by the test case of Denner *et al.* `[1] <https://doi.org/10.1016/j.jcp.2022.111128>`_
 
 
 --------
@@ -12,7 +12,7 @@ Features
 - Solver: ``lethe-fluid`` 
 - Volume of fluid (VOF)
 - Unsteady problem handled by an adaptive BDF2 time-stepping scheme
-- Usage of Bash scripts to write, launch and postprocess multiple cases
+- Usage of Bash scripts to write, launch, and postprocess multiple cases
 - Usage of Python scripts for postprocessing data
 
 
