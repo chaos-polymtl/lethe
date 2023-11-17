@@ -34,11 +34,13 @@ Multiphysics
 
       multiphysics_1_5 [label="Sloshing in a Rectangular Tank", href="https://lethe-cfd.github.io/lethe/examples/multiphysics/sloshing-in-rectangular-tank/sloshing-in-rectangular-tank.html"];
 
-      multiphysics_1_6 [label="3D Dam-Break with an Obstacle", href="https://lethe-cfd.github.io/lethe/examples/multiphysics/3d-dam-break/3d-dam-break.html"];
+      multiphysics_1_6 [label="Capillary Wave", href="https://lethe-cfd.github.io/lethe/examples/multiphysics/capillary-wave/capillary-wave.html"];
 
-      multiphysics_1_7 [label="Water Injection in a Closed Cell", href="https://lethe-cfd.github.io/lethe/examples/multiphysics/water-injection-in-a-closed-cell/water-injection-in-a-closed-cell.html"];
+      multiphysics_1_7 [label="3D Dam-Break with an Obstacle", href="https://lethe-cfd.github.io/lethe/examples/multiphysics/3d-dam-break/3d-dam-break.html"];
 
-      multiphysics_1_8 [label="Air Bubble Compression", href="https://lethe-cfd.github.io/lethe/examples/multiphysics/air-bubble-compression/air-bubble-compression.html"];
+      multiphysics_1_8 [label="Water Injection in a Closed Cell", href="https://lethe-cfd.github.io/lethe/examples/multiphysics/water-injection-in-a-closed-cell/water-injection-in-a-closed-cell.html"];
+
+      multiphysics_1_9 [label="Air Bubble Compression", href="https://lethe-cfd.github.io/lethe/examples/multiphysics/air-bubble-compression/air-bubble-compression.html"];
 
       multiphysics_2 [label="Heat Transfer", href="https://lethe-cfd.github.io/lethe/examples/multiphysics/heat-transfer.html"];
 
@@ -72,6 +74,7 @@ Multiphysics
       multiphysics_1 -> multiphysics_1_6:w;
       multiphysics_1 -> multiphysics_1_7:w;
       multiphysics_1 -> multiphysics_1_8:w;
+      multiphysics_1 -> multiphysics_1_9:w;
 
       multiphysics_2 -> multiphysics_2_1:w;
       multiphysics_2 -> multiphysics_2_2:w;

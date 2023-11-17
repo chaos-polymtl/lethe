@@ -42,7 +42,7 @@ Surface Tension Force
 
 When including the surface tension force in the resolution of the Navier-Stokes equations, the numerical computation of the curvature can give rise to parasitic flows near the interface between the two fluids, as presented in :doc:`../../../theory/multiphysics/vof` theory guide.
 
-The static bubble case is a relevant case to study the spurious currents, since the analytical solution is zero for the velocity. Therefore, non-zero velocities in the computed velocity field are considered as spurious currents `[1] <https://doi.org/10.1002/fld.2643>`_. The analytical pressure drop between the interior (:math:`p_{int}`) and exterior (:math:`p_{ext}`) of the bubble is given by the Young-Laplace relation:
+The static bubble case is a relevant case to study the parasitic currents, since the analytical solution is zero for the velocity. Therefore, non-zero velocities in the computed velocity field are considered parasitic currents `[1] <https://doi.org/10.1002/fld.2643>`_. The analytical pressure drop between the interior (:math:`p_{int}`) and exterior (:math:`p_{ext}`) of the bubble is given by the Young-Laplace relation:
 
 .. math::
 
@@ -237,9 +237,9 @@ where ``./postprocess.gnu`` is the path to the provided script and ``./output`` 
 Mesh Convergence Study
 ~~~~~~~~~~~~~~~~~~~~~~
 
-While the filters presented in section :ref:`Normal and curvature computations` allow to decrease the magnitude of the spurious currents, it can be seen from the previous results that they don't completely disappear. It is, therefore, interesting to see if they vanish with a mesh refinement by performing a space convergence study on their magnitude.
+While the filters presented in section :ref:`Normal and curvature computations` allow to decrease the magnitude of the parasitic currents, it can be seen from the previous results that they don't completely disappear. It is, therefore, interesting to see if they vanish with a mesh refinement by performing a space convergence study on their magnitude.
 
-Four levels of refinement are studied (6 to 9) by changing the parameter ``initial refinement`` in the ``mesh`` subsection. The :math:`\mathcal{L}^2` norm of the error on the velocity at 3 seconds is selected as the verification metric. The following figure shows that the scheme reaches an order of accuracy of 2 in space.
+Four levels of refinement are studied (6 to 9) by changing the parameter ``initial refinement`` in the ``mesh`` subsection. The :math:`\mathcal{L}^2` norm of the error on the velocity at 3 seconds is selected as the verification metric. The following figure shows that the scheme reaches nearly an order of accuracy of 2 in space.
 
 .. image:: images/mesh-convergence-study-order.png
 
