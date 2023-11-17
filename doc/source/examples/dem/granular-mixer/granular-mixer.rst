@@ -60,7 +60,7 @@ As mentioned earlier, there are two types of particles with the same size and pr
       subsection particle type 0
         set size distribution type              = uniform
         set diameter                            = 0.0015
-        set number                              = 23500
+        set number of particles                 = 23500
         set density particles                   = 1500
         set young modulus particles         	  = 1e6
         set poisson ratio particles             = 0.5
@@ -70,7 +70,7 @@ As mentioned earlier, there are two types of particles with the same size and pr
       subsection particle type 1
         set size distribution type              = uniform
         set diameter                            = 0.0015
-        set number                              = 23500
+        set number of particles                 = 23500
         set density particles                   = 1500
         set young modulus particles             = 1e6
         set poisson ratio particles             = 0.5

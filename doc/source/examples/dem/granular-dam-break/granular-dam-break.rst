@@ -64,7 +64,7 @@ The particles are mono dispersed with a radius of 0.005 m and a density of 2560 
     subsection particle type 0
       set size distribution type            = uniform
       set diameter                          = 0.01
-      set number                            = 60000
+      set number of particles               = 60000
       set density particles                 = 2560
       set young modulus particles           = 1e6
       set poisson ratio particles           = 0.2

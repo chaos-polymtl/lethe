@@ -126,7 +126,7 @@ The gravitational acceleration as well as the physical properties of particles a
       subsection particle type 0
         set size distribution type            = uniform
         set diameter                          = 0.005
-        set number                            = 150
+        set number of particles               = 150
         set density particles                 = 2000
         set young modulus particles           = 100000000
         set poisson ratio particles           = 0.3

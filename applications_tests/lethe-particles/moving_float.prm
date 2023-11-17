@@ -46,7 +46,7 @@ subsection lagrangian physical properties
   subsection particle type 0
     set size distribution type            = uniform
     set diameter                          = 0.02
-    set number                            = 5
+    set number of particles               = 5
     set density particles                 = 2560
     set young modulus particles           = 1e7
     set poisson ratio particles           = 0.2
