@@ -51,7 +51,7 @@ add_library(lethe-dem
   ../../include/dem/dem.h
   ../../include/dem/dem_solver_parameters.h
   ../../include/dem/disable_contacts.h
-  ../../include/dem/distribution.h
+  ../../include/dem/distribution_base.h
   ../../include/dem/explicit_euler_integrator.h
   ../../include/dem/find_boundary_cells_information.h
   ../../include/dem/find_cell_neighbors.h

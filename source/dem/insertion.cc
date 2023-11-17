@@ -29,9 +29,8 @@ Insertion<dim>::Insertion(const DEMSolverParameters<dim> &dem_parameters)
         size_distribution_type::uniform)
     {
       distribution_object = std::make_shared<NormalDistribution>(
-        dem_parameters.lagrangian_physical_properties.particle_average_diameter
-          .at(0),
-        0.);
+        dem_parameters.lagrangian_physical_properties.particle_average_diameter,
+        dem_parameters.lagrangian_physical_properties.particle_size_std);
     }
   else if (dem_parameters.lagrangian_physical_properties
              .size_distribution_type ==
@@ -39,9 +38,8 @@ Insertion<dim>::Insertion(const DEMSolverParameters<dim> &dem_parameters)
              size_distribution_type::normal)
     {
       distribution_object = std::make_shared<NormalDistribution>(
-        dem_parameters.lagrangian_physical_properties.particle_average_diameter
-          .at(0),
-        dem_parameters.lagrangian_physical_properties.particle_size_std.at(0));
+        dem_parameters.lagrangian_physical_properties.particle_average_diameter,
+        dem_parameters.lagrangian_physical_properties.particle_size_std);
     }
 }
 
@@ -81,7 +79,7 @@ Insertion<dim>::assign_particle_properties(
   auto physical_properties = dem_parameters.lagrangian_physical_properties;
 
   this->distribution_object->particle_size_sampling(
-    inserted_this_step_this_proc);
+    inserted_this_step_this_proc, current_inserting_particle_type);
 
   // A loop is defined over the number of particles which are going to be
   // inserted at this step
@@ -133,24 +131,6 @@ Insertion<dim>::assign_particle_properties(
       particle_properties.push_back(properties_of_one_particle);
       properties_of_one_particle.clear();
     }
-}
-
-template <int dim>
-void
-Insertion<dim>::particle_size_sampling(std::vector<double> &particle_sizes,
-                                       const double         average,
-                                       const double         standard_deviation,
-                                       const double         particle_number)
-{
-  particle_sizes.clear();
-  particle_sizes.reserve(particle_number);
-
-  std::random_device         rd{};
-  std::mt19937               gen{rd()};
-  std::normal_distribution<> distribution{average, standard_deviation};
-
-  for (unsigned int n = 0; n < particle_number; ++n)
-    particle_sizes.push_back(distribution(gen));
 }
 
 template <int dim>

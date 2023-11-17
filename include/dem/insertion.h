@@ -18,7 +18,7 @@
 #include <core/dem_properties.h>
 
 #include <dem/dem_solver_parameters.h>
-#include <dem/distribution.h>
+#include <dem/distribution_base.h>
 #include <dem/normal_distribution.h>
 
 #include <deal.II/base/array_view.h>
@@ -155,21 +155,6 @@ protected:
   std::shared_ptr<Distribution>    distribution_object;
 
 private:
-  /**
-   * Carries out sampling from specified distributions for particle size.
-   *
-   * @param particle_sizes A vector containing size of particles sampled from
-   * specified size distribution
-   * @param average Average diameter of particles
-   * @param standard_deviation Standard deviation of particle diameter
-   * @param particle_number Number of particles
-   */
-  void
-  particle_size_sampling(std::vector<double> &particle_sizes,
-                         const double         average,
-                         const double         standard_deviation,
-                         const double         particle_number);
-
   std::vector<double> particle_sizes;
 };
 

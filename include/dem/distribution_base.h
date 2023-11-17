@@ -35,7 +35,8 @@ public:
    *
    */
   virtual void
-  particle_size_sampling(const unsigned int particle_number) = 0;
+  particle_size_sampling(const unsigned int particle_number,
+                         const unsigned int particle_type) = 0;
 
   // Attribute
 };

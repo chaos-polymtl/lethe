@@ -15,7 +15,9 @@
  *
  */
 
-#include <dem/distribution.h>
+#include <dem/distribution_base.h>
+
+#include <unordered_map>
 
 #ifndef normal_distribution_h
 #  define normal_distribution_h
@@ -32,8 +34,10 @@ public:
    * @param particle_number Number of particles to insert at the current
    * insertion time step.
    */
-  NormalDistribution(const double normal_distribution_average,
-                     const double normal_distribution_standard_deviation);
+  NormalDistribution(
+    const std::unordered_map<unsigned int, double> normal_distribution_average,
+    const std::unordered_map<unsigned int, double>
+      normal_distribution_standard_deviation);
 
   /**
    * Carries out the size sampling of every particles inserted at a insertion
@@ -41,11 +45,12 @@ public:
    *
    */
   void
-  particle_size_sampling(const unsigned int particle_number) override;
+  particle_size_sampling(const unsigned int particle_number,
+                         const unsigned int particle_type) override;
 
 private:
   // Attributes
-  double average;
-  double standard_deviation;
+  std::unordered_map<unsigned int, double> diameter_averages;
+  std::unordered_map<unsigned int, double> standard_deviations;
 };
 #endif /* normal_distribution_h */

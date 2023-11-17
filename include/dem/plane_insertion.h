@@ -17,7 +17,7 @@
  */
 
 #include <dem/dem_solver_parameters.h>
-#include <dem/distribution.h>
+#include <dem/distribution_base.h>
 #include <dem/insertion.h>
 #include <dem/normal_distribution.h>
 
