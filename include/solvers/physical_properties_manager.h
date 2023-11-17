@@ -174,12 +174,14 @@ public:
     return surface_tension[material_interaction_id];
   }
 
+  /*
   std::shared_ptr<MobilityCahnHilliardModel>
   get_mobility_cahn_hilliard(
     const unsigned int material_interaction_id = 0) const
   {
     return mobility_cahn_hilliard[material_interaction_id];
   }
+   */
 
   // Vector Getters for the physical property models
   std::vector<std::shared_ptr<DensityModel>>
@@ -230,11 +232,13 @@ public:
     return surface_tension;
   }
 
+  /*
   std::vector<std::shared_ptr<MobilityCahnHilliardModel>>
   get_mobility_cahn_hilliard_vector() const
   {
     return mobility_cahn_hilliard;
   }
+   */
 
   double
   get_kinematic_viscosity_scale() const

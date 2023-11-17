@@ -91,13 +91,9 @@ class CahnHilliardAssemblerCore : public CahnHilliardAssemblerBase<dim>
 public:
   CahnHilliardAssemblerCore(
     std::shared_ptr<SimulationControl> simulation_control,
-    Parameters::CahnHilliard           cahn_hilliard_parameters,
-    MobilityModel                      mobility_model,
-    double                             mobility_constant)
+    Parameters::CahnHilliard           cahn_hilliard_parameters)
     : CahnHilliardAssemblerBase<dim>(simulation_control)
     , cahn_hilliard_parameters(cahn_hilliard_parameters)
-    , mobility_model(mobility_model)
-    , mobility_constant(mobility_constant)
   {}
 
   /**
@@ -120,8 +116,6 @@ public:
                StabilizedMethodsCopyData    &copy_data) override;
 
   Parameters::CahnHilliard cahn_hilliard_parameters;
-  MobilityModel            mobility_model;
-  double                   mobility_constant;
 };
 
 

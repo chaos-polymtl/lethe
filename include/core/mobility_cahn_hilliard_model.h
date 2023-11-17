@@ -19,7 +19,7 @@
 
 #include <core/interface_property_model.h>
 
-enum MobilityModel
+enum CahnHilliardMobilityModel
 {
   constant,
   quartic
@@ -44,9 +44,9 @@ public:
 
   /**
    * @brief Pure virtual method to get the model used for the mobility, must be overriden
-   * @return returns a MobilityModel object
+   * @return returns a CahnHilliardMobilityModel object
    */
-  virtual MobilityModel
+  virtual CahnHilliardMobilityModel
   get_model() = 0;
 
 
@@ -74,9 +74,9 @@ public:
 
   /**
    * @brief Method to get the model used for the mobility
-   * @return returns a MobilityModel object
+   * @return returns a CahnHilliardMobilityModel object
    */
-  MobilityModel
+  CahnHilliardMobilityModel
   get_model() override
   {
     return model;
@@ -149,8 +149,8 @@ public:
   }
 
 private:
-  const double        mobility_cahn_hilliard_constant;
-  const MobilityModel model = constant;
+  const double                    mobility_cahn_hilliard_constant;
+  const CahnHilliardMobilityModel model = constant;
 };
 
 /**
@@ -165,16 +165,16 @@ public:
   MobilityCahnHilliardModelQuartic(
     const double p_mobility_cahn_hilliard_constant)
     : mobility_cahn_hilliard_constant(p_mobility_cahn_hilliard_constant)
-    , model(MobilityModel::quartic)
+    , model(CahnHilliardMobilityModel::quartic)
   {
     this->model_depends_on[field::phase_order_cahn_hilliard] = true;
   }
 
   /**
    * @brief Method to get the model used for the mobility
-   * @return returns a MobilityModel object
+   * @return returns a CahnHilliardMobilityModel object
    */
-  MobilityModel
+  CahnHilliardMobilityModel
   get_model() override
   {
     return model;
@@ -275,8 +275,8 @@ public:
   }
 
 private:
-  const double        mobility_cahn_hilliard_constant;
-  const MobilityModel model = quartic;
+  const double                    mobility_cahn_hilliard_constant;
+  const CahnHilliardMobilityModel model = quartic;
 };
 
 #endif

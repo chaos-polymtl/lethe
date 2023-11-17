@@ -63,6 +63,12 @@ namespace Parameters
     manual
   };
 
+  enum class CahnHilliardMobilityModel
+  {
+    constant,
+    quartic
+  };
+
   /**
    * @brief Defines the sub-parameters for free surface mass conservation.
    * Has to be declared before member creation in VOF structure.
@@ -212,6 +218,12 @@ namespace Parameters
 
     // Epsilon value in the Cahn-Hilliard equations
     double epsilon;
+
+    // Mobility model (constant|quartic)
+    Parameters::CahnHilliardMobilityModel cahn_hilliard_mobility_model;
+
+    // Mobility constant
+    double cahn_hilliard_mobility_constant;
 
     void
     declare_parameters(ParameterHandler &prm);
