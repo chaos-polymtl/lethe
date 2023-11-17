@@ -70,6 +70,9 @@ test()
   dem_parameters.insertion_info.inserted_this_step                   = 10;
   dem_parameters.insertion_info.distance_threshold                   = 2;
   dem_parameters.lagrangian_physical_properties.particle_type_number = 1;
+  dem_parameters.lagrangian_physical_properties.size_distribution_type =
+    Parameters::Lagrangian::LagrangianPhysicalProperties::
+      size_distribution_type::uniform;
   dem_parameters.lagrangian_physical_properties.particle_average_diameter[0] =
     0.005;
   dem_parameters.lagrangian_physical_properties.particle_size_std[0] = 0;
