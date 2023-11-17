@@ -476,13 +476,14 @@ namespace Parameters
            PhaseChangeIntervalError(T_liquidus, T_solidus));
   }
 
+  /*
   void
   MobilityCahnHilliardParameters::declare_parameters(
     dealii::ParameterHandler &prm)
   {
     prm.declare_entry(
       "cahn hilliard mobility constant",
-      "1",
+      "1e-7",
       Patterns::Double(),
       "Cahn-Hilliard mobility constant for the corresponding pair of fluids");
   }
@@ -493,6 +494,7 @@ namespace Parameters
     mobility_cahn_hilliard_constant =
       prm.get_double("cahn hilliard mobility constant");
   }
+   */
 
   void
   Stabilization::declare_parameters(ParameterHandler &prm)
@@ -807,8 +809,8 @@ namespace Parameters
         "Tracer diffusivity for the fluid corresponding to Phase = " +
           Utilities::int_to_string(id, 1));
 
-      prm.declare_entry("mobility constant",
-                        "1",
+      prm.declare_entry("cahn hilliard mobility constant",
+                        "1e-6",
                         Patterns::Double(),
                         "Mobility constant for the Cahn-Hilliard equations");
 
@@ -861,6 +863,12 @@ namespace Parameters
                         "0",
                         Patterns::Double(),
                         "k_A1 parameter for linear conductivity model");
+
+      prm.declare_entry("cahn hilliard mobility model",
+                        "constant",
+                        Patterns::Selection("constant|quartic"),
+                        "Model used for the calculation of the mobility\"\n"
+                        "        \"Choices are <constant|quartic>.");
     }
     prm.leave_subsection();
   }
@@ -984,6 +992,23 @@ namespace Parameters
       // Phase change properties
       //--------------------------------
       phase_change_parameters.parse_parameters(prm, dimensions);
+
+      //-------------------
+      // Cahn-Hilliard mobility
+      //-------------------
+      op = prm.get("cahn hilliard mobility model");
+      if (op == "constant")
+        {
+          mobility_cahn_hilliard_model = MobilityCahnHilliardModel::constant;
+          mobility_cahn_hilliard =
+            prm.get_double("cahn hilliard mobility constant");
+        }
+      if (op == "quartic")
+        {
+          mobility_cahn_hilliard_model = MobilityCahnHilliardModel::quartic;
+          mobility_cahn_hilliard =
+            prm.get_double("cahn hilliard mobility constant");
+        }
     }
     prm.leave_subsection();
   }
@@ -1024,14 +1049,16 @@ namespace Parameters
           "The choices are <constant|linear|phase change>.");
         surface_tension_parameters.declare_parameters(prm);
 
+        /*
         // Cahn-Hilliard mobility
         prm.declare_entry(
           "cahn hilliard mobility model",
           "constant",
           Patterns::Selection("constant|quartic"),
-          "Model used for the calculation of the mobility in the Cahn-Hilliard equations\n"
-          "The choices are <constant|quartic>.");
+          "Model used for the calculation of the mobility in the Cahn-Hilliard
+        equations\n" "The choices are <constant|quartic>.");
         mobility_cahn_hilliard_parameters.declare_parameters(prm);
+         */
       }
       prm.leave_subsection();
 
@@ -1112,6 +1139,7 @@ namespace Parameters
             throw(std::runtime_error(
               "Invalid surface tension model. The choices are <constant|linear|phase change>."));
 
+          /*
           // Cahn-Hilliard mobility
           op = prm.get("cahn hilliard mobility model");
           if (op == "constant")
@@ -1119,16 +1147,20 @@ namespace Parameters
               mobility_cahn_hilliard_model =
                 MobilityCahnHilliardModel::constant;
               mobility_cahn_hilliard_parameters.parse_parameters(prm);
+                std::cout<<"mobility is constant and equal to "<<
+          mobility_cahn_hilliard_parameters.mobility_cahn_hilliard_constant<<std::endl;
             }
           else if (op == "quartic")
             {
               mobility_cahn_hilliard_model = MobilityCahnHilliardModel::quartic;
               mobility_cahn_hilliard_parameters.parse_parameters(prm);
+                std::cout<<"mobility is quartic and its constant equal to "<<
+          mobility_cahn_hilliard_parameters.mobility_cahn_hilliard_constant<<std::endl;
             }
           else
             throw(std::runtime_error(
               "Invalid mobility model. The choices are <constant|quartic>."));
-
+          */
           prm.leave_subsection();
         }
       else // Solid-fluid interactions

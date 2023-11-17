@@ -1470,7 +1470,6 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess_fd(bool firstIter)
               // Calculate error on pressure for Cahn-Hilliard simulations
               if (this->simulation_parameters.multiphysics.cahn_hilliard)
                 {
-                  std::cout << "printing pressure error" << std::endl;
                   this->error_table.add_value("error_pressure", error_pressure);
                 }
             }

@@ -334,16 +334,19 @@ namespace Parameters
    * @brief MobilityCahnHilliardParameters - Defines parameters for the mobility
    * models used in the Cahn-Hilliard equations.
    */
-  struct MobilityCahnHilliardParameters
-  {
-    // Mobility constant (M) in m^2/s
-    double mobility_cahn_hilliard_constant;
+  /*
+ struct MobilityCahnHilliardParameters
+ {
+   // Mobility constant (M) in m^2/s
 
-    void
-    declare_parameters(ParameterHandler &prm);
-    void
-    parse_parameters(ParameterHandler &prm);
-  };
+   double mobility_cahn_hilliard_constant;
+   mobility_cahn_hilliard_model_parameters model;
+
+   void
+   declare_parameters(ParameterHandler &prm);
+   void
+   parse_parameters(ParameterHandler &prm);
+ };*/
 
 
   /**
@@ -379,6 +382,8 @@ namespace Parameters
     double thermal_expansion;
     // tracer diffusivity in L^2/s
     double tracer_diffusivity;
+    // Cahn-Hilliard mobility in L^2/s
+    double mobility_cahn_hilliard;
 
     // Phase change parameters
     PhaseChange phase_change_parameters;
@@ -422,6 +427,13 @@ namespace Parameters
     // Linear thermal conductivity parameters: k = k_A0 + k_A1 * T
     double k_A0;
     double k_A1;
+
+    // Mobility CH models
+    enum class MobilityCahnHilliardModel
+    {
+      constant,
+      quartic
+    } mobility_cahn_hilliard_model;
   };
 
   /**
@@ -447,14 +459,6 @@ namespace Parameters
       phase_change
     } surface_tension_model;
     SurfaceTensionParameters surface_tension_parameters;
-
-    // Mobility CH models
-    enum class MobilityCahnHilliardModel
-    {
-      constant,
-      quartic
-    } mobility_cahn_hilliard_model;
-    MobilityCahnHilliardParameters mobility_cahn_hilliard_parameters;
 
     std::pair<std::pair<unsigned int, unsigned int>, unsigned int>
       fluid_fluid_interaction_with_material_interaction_id;

@@ -59,15 +59,15 @@ CahnHilliard<dim>::setup_assemblers()
   // material_interaction vector, since it should contain all the parameters
   // necessary for solving the equations
 
+  /*
   const auto mobility_model =
     this->simulation_parameters.physical_properties_manager
       .get_mobility_cahn_hilliard();
+      */
 
   this->assemblers.push_back(std::make_shared<CahnHilliardAssemblerCore<dim>>(
     this->simulation_control,
-    this->simulation_parameters.multiphysics.cahn_hilliard_parameters,
-    mobility_model->get_model(),
-    mobility_model->get_mobility_constant()));
+    this->simulation_parameters.multiphysics.cahn_hilliard_parameters));
 }
 
 template <int dim>
@@ -144,7 +144,6 @@ CahnHilliard<dim>::assemble_local_system_matrix(
                                    this->simulation_parameters.ale);
     }
 
-  scratch_data.calculate_physical_properties();
   copy_data.reset();
 
   for (auto &assembler : this->assemblers)
@@ -244,7 +243,6 @@ CahnHilliard<dim>::assemble_local_system_rhs(
                                    this->simulation_parameters.ale);
     }
 
-  scratch_data.calculate_physical_properties();
   copy_data.reset();
 
   for (auto &assembler : this->assemblers)
@@ -381,9 +379,9 @@ CahnHilliard<dim>::calculate_phase_statistics()
   const unsigned int  n_q_points = cell_quadrature->size();
   std::vector<double> local_phase_order_values(n_q_points);
 
-  double integral        = 0;
-  double max_phase_value = std::numeric_limits<double>::min();
-  double min_phase_value = std::numeric_limits<double>::max();
+  double integral(0.);
+  double max_phase_value(std::numeric_limits<double>::min());
+  double min_phase_value(std::numeric_limits<double>::max());
 
   for (const auto &cell : dof_handler.active_cell_iterators())
     {
@@ -403,6 +401,9 @@ CahnHilliard<dim>::calculate_phase_statistics()
             }
         }
     }
+
+  min_phase_value = Utilities::MPI::min(min_phase_value, mpi_communicator);
+  max_phase_value = Utilities::MPI::max(max_phase_value, mpi_communicator);
 
   integral             = Utilities::MPI::sum(integral, mpi_communicator);
   double global_volume = GridTools::volume(*triangulation, *mapping);

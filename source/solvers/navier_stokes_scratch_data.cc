@@ -198,7 +198,7 @@ NavierStokesScratchData<dim>::enable_cahn_hilliard(
   thermal_expansion_1      = std::vector<double>(n_q_points);
   surface_tension          = std::vector<double>(n_q_points);
   surface_tension_gradient = std::vector<double>(n_q_points);
-  mobility_cahn_hilliard   = std::vector<double>(n_q_points);
+  // mobility_cahn_hilliard   = std::vector<double>(n_q_points);
 }
 
 
@@ -476,38 +476,60 @@ NavierStokesScratchData<dim>::calculate_physical_properties()
             }
           else if (gather_cahn_hilliard && !gather_vof)
             {
-              // Blend the physical properties using the CahnHilliard field
+              // std::cout<< "Computing properties for Cahn-Hilliard" <<
+              // std::endl;
+              //  Blend the physical properties using the CahnHilliard field
               for (unsigned int q = 0; q < this->n_q_points; ++q)
                 {
-                  this->density_diff =
-                    0.5 * std::abs(density_0[q] - density_1[q]);
+                  // this->density_diff =
+                  //   0.5 * std::abs(density_0[q] - density_1[q]);
 
                   double phase_order_cahn_hilliard_value =
                     this->phase_order_cahn_hilliard_values[q];
 
+                  /*
+                  std::cout<<"phase value = "
+                  <<phase_order_cahn_hilliard_value<<std::endl;
+                  std::cout<<"density 0 = " <<density_0[q]<<std::endl;
+                  std::cout<<"density 1 = " <<density_1[q]<<std::endl;
+                  std::cout<<"expected density at point q = "<<
+                  0.5*density_0[q]*(phase_order_cahn_hilliard_value+1)
+                  -0.5*density_1[q]*(phase_order_cahn_hilliard_value-1)<<std::endl;
+*/
                   density[q] = calculate_point_property_cahn_hilliard(
                     phase_order_cahn_hilliard_value,
                     this->density_0[q],
                     this->density_1[q]);
 
-                  dynamic_viscosity[q] =
-                    calculate_point_property(phase_order_cahn_hilliard_value,
-                                             this->dynamic_viscosity_0[q],
-                                             this->dynamic_viscosity_1[q]);
+                  /*
+                  std::cout<<"computed density at point q = "<<
+                  density[q]<<std::endl;
 
-                  thermal_expansion[q] = calculate_point_property_cahn_hilliard(
+                  std::cout<<"mu 0 = " <<dynamic_viscosity_0[q]<<std::endl;
+                  std::cout<<"mu  1 = " <<dynamic_viscosity_1[q]<<std::endl;
+                  std::cout<<"expected mu at point q = "<<
+                  0.5*dynamic_viscosity_0[q]*(phase_order_cahn_hilliard_value+1)
+                  -0.5*dynamic_viscosity_1[q]*(phase_order_cahn_hilliard_value-1)<<std::endl;
+*/
+                  dynamic_viscosity[q] = calculate_point_property_cahn_hilliard(
                     phase_order_cahn_hilliard_value,
-                    this->thermal_expansion_0[q],
-                    this->thermal_expansion_1[q]);
+                    this->dynamic_viscosity_0[q],
+                    this->dynamic_viscosity_1[q]);
 
-                  const auto material_interaction_id =
-                    properties_manager.get_material_interaction_id(
-                      material_interactions_type::fluid_fluid, 0, 1);
-                  const auto mobility_cahn_hilliard_model =
-                    properties_manager.get_mobility_cahn_hilliard(
-                      material_interaction_id);
-                  mobility_cahn_hilliard_model->vector_value(
-                    fields, mobility_cahn_hilliard);
+                  // std::cout<<"computed mu at point q = "<<
+                  // dynamic_viscosity[q]<<std::endl;
+                  /*
+                const auto material_interaction_id =
+                  properties_manager.get_material_interaction_id(
+                    material_interactions_type::fluid_fluid, 0, 1);
+                const auto mobility_cahn_hilliard_model =
+                  properties_manager.get_mobility_cahn_hilliard(
+                    material_interaction_id);
+                mobility_cahn_hilliard_model->vector_value(
+                  fields, mobility_cahn_hilliard);
+                  std::cout<<"mobility = "
+                <<mobility_cahn_hilliard[q]<<std::endl;
+                   */
                 }
               break;
             }

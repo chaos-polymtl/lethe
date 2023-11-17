@@ -147,8 +147,8 @@ PhysicalPropertiesManager::initialize(
       establish_fields_required_by_model(*surface_tension[i]);
       if (!surface_tension.back()->is_constant_surface_tension_model())
         constant_surface_tension = false;
-      mobility_cahn_hilliard.push_back(MobilityCahnHilliardModel::model_cast(
-        physical_properties.material_interactions[i]));
-      establish_fields_required_by_model(*mobility_cahn_hilliard[i]);
+      // mobility_cahn_hilliard.push_back(MobilityCahnHilliardModel::model_cast(
+      //   physical_properties.material_interactions[i]));
+      // establish_fields_required_by_model(*mobility_cahn_hilliard[i]);
     }
 }
