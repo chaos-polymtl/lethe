@@ -83,7 +83,7 @@ The particles (226080 particles) are monodispersed, their diameter and density a
       subsection particle type 0
         set size distribution type            = uniform
         set diameter                          = 0.003
-        set number                            = 226080
+        set number of particles               = 226080
         set density particles                 = 2500
         set young modulus particles           = 1e7
         set poisson ratio particles           = 0.24

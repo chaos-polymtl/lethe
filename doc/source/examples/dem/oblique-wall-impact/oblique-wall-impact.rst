@@ -82,7 +82,7 @@ The particle is made of aluminium oxide and the wall is made of soda-lime glass.
     subsection particle type 0
       set size distribution type                 = uniform
       set diameter                               = 0.005
-      set number                                 = 1
+      set number of particles                    = 1
       set density particles                      = 4000
       set young modulus particles                = 380e9
       set poisson ratio particles                = 0.23

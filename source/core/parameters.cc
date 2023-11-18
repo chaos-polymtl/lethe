@@ -1,4 +1,5 @@
 #include <core/parameters.h>
+#include <core/utilities.h>
 
 #include <deal.II/base/exceptions.h>
 
@@ -50,6 +51,16 @@ DeclException3(MultipleAdaptationSizeError,
 
 namespace Parameters
 {
+  SizeOfSubsections
+  get_size_of_subsections(const std::string &file_name)
+  {
+    SizeOfSubsections sizes;
+    sizes.boundary_conditions =
+      get_max_number_of_boundary_conditions(file_name);
+    return sizes;
+  }
+
+
   void
   SimulationControl::declare_parameters(ParameterHandler &prm)
   {
