@@ -26,7 +26,7 @@ namespace Parameters
                         "0",
                         Patterns::Double(),
                         "Particle size standard deviation");
-      prm.declare_entry("number",
+      prm.declare_entry("number of particles",
                         "0",
                         Patterns::Integer(),
                         "Number of particles of this type");
@@ -83,7 +83,7 @@ namespace Parameters
         {
           throw(std::runtime_error("Invalid size distribution type "));
         }
-      number.at(particle_type)           = prm.get_integer("number");
+      number.at(particle_type) = prm.get_integer("number of particles");
       density_particle.at(particle_type) = prm.get_double("density particles");
       youngs_modulus_particle.at(particle_type) =
         prm.get_double("young modulus particles");

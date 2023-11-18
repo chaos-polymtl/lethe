@@ -84,7 +84,7 @@ The total number of particles in this simulation is 8000. All particles have a d
     subsection particle type 0
       set size distribution type            = uniform
       set diameter                          = 0.01
-      set number                            = 8000
+      set number of particles               = 8000
       set density particles                 = 2560
       set young modulus particles           = 1e7
       set poisson ratio particles           = 0.3

@@ -81,7 +81,7 @@ The ``number`` of particles (4000) is equal to the specified ``inserted number o
       subsection particle type 0
         set size distribution type            = uniform
         set diameter                          = 0.001
-        set number                            = 4000
+        set number of particles               = 4000
         set density particles                 = 1000
         set young modulus particles           = 1000000
         set poisson ratio particles           = 0.3

@@ -52,10 +52,12 @@ test()
         Triangulation<dim>::smoothing_on_refinement |
         Triangulation<dim>::smoothing_on_coarsening));
 
-  SimulationParameters<dim> solver_parameters;
-  ParameterHandler          dummy_handler;
+  SimulationParameters<dim>     solver_parameters;
+  ParameterHandler              dummy_handler;
+  Parameters::SizeOfSubsections size_of_subsections;
+  size_of_subsections.boundary_conditions = 0;
 
-  solver_parameters.declare(dummy_handler);
+  solver_parameters.declare(dummy_handler, size_of_subsections);
   solver_parameters.parse(dummy_handler);
 
   solver_parameters.multiphysics.fluid_dynamics = true;

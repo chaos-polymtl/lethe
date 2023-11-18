@@ -91,7 +91,7 @@ Gravitational acceleration has three components in three directions.
       subsection particle type 0
         set size distribution type            = uniform
         set diameter                          = 0.005
-        set number                            = 5000
+        set number of particles               = 5000
         set density particles                 = 2000
         set young modulus particles           = 10000000
         set poisson ratio particles           = 0.3

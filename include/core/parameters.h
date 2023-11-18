@@ -43,6 +43,20 @@ using namespace dealii;
 
 namespace Parameters
 {
+  struct SizeOfSubsections
+  {
+    int boundary_conditions;
+  };
+
+
+  /**
+   * @brief Extract the maximum number of all variable size sections within the parameter file
+   *
+   * @param file_name Name of the parameter file from which the size are parsed
+   */
+  SizeOfSubsections
+  get_size_of_subsections(const std::string &file_name);
+
   enum class Verbosity
   {
     quiet,

@@ -80,7 +80,7 @@ The following properties are defined in the ``bouncing_particle_original.prm``  
       subsection particle type 0
         set size distribution type            = uniform
         set diameter                          = 0.2
-        set number                            = 1
+        set number of particles               = 1
         set density particles                 = 2600
         set young modulus particles           = {{YP}}
         set poisson ratio particles           = 0.3

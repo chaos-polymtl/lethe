@@ -74,7 +74,8 @@ public:
   PhysicalPropertiesManager physical_properties_manager;
 
   void
-  declare(ParameterHandler &prm)
+  declare(ParameterHandler             &prm,
+          Parameters::SizeOfSubsections size_of_subsections)
   {
     prm.declare_entry("dimension",
                       "0",
@@ -88,11 +89,16 @@ public:
     nitsche = std::make_shared<Parameters::Nitsche<dim>>();
     nitsche->declare_parameters(prm);
     Parameters::Restart::declare_parameters(prm);
-    boundary_conditions.declare_parameters(prm);
-    boundary_conditions_ht.declare_parameters(prm);
-    boundary_conditions_tracer.declare_parameters(prm);
-    boundary_conditions_vof.declare_parameters(prm);
-    boundary_conditions_cahn_hilliard.declare_parameters(prm);
+    boundary_conditions.declare_parameters(
+      prm, size_of_subsections.boundary_conditions);
+    boundary_conditions_ht.declare_parameters(
+      prm, size_of_subsections.boundary_conditions);
+    boundary_conditions_tracer.declare_parameters(
+      prm, size_of_subsections.boundary_conditions);
+    boundary_conditions_vof.declare_parameters(
+      prm, size_of_subsections.boundary_conditions);
+    boundary_conditions_cahn_hilliard.declare_parameters(
+      prm, size_of_subsections.boundary_conditions);
 
     initial_condition = new Parameters::InitialConditions<dim>;
     initial_condition->declare_parameters(prm);

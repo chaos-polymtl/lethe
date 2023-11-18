@@ -115,7 +115,7 @@ The following properties are chosen according to the Anand et al. paper :
       subsection particle type 0
         set size distribution type            = uniform
         set diameter                          = 0.00224
-        set number                            = 40740
+        set number of particles               = 40740
         set density particles                 = 2500
         set young modulus particles           = 1e6
         set poisson ratio particles           = 0.3

@@ -28,7 +28,7 @@ In this subsection, gravitational acceleration, and the physical properties of t
       set diameter                          = 0.005
 
       # Number of particles in type 0
-      set number                            = 132300
+      set number of particles               = 132300
 
       # Particle density
       set density particles                 = 2000
@@ -89,7 +89,7 @@ In this subsection, gravitational acceleration, and the physical properties of t
 
 * For a ``normal`` distribution, we need to define ``average diameter`` and ``standard deviation`` parameters.
 
-* The ``number`` parameter defines the number of particles for each type.
+* The ``number of particles`` parameter defines the number of particles for each type.
 
 * The ``density particles`` defines the density of particles for each type.
 
