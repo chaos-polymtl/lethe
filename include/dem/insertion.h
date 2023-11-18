@@ -18,7 +18,6 @@
 #include <core/dem_properties.h>
 
 #include <dem/dem_solver_parameters.h>
-#include <dem/distribution_base.h>
 #include <dem/normal_distribution.h>
 
 #include <deal.II/base/array_view.h>
@@ -56,13 +55,13 @@ using namespace dealii;
 template <int dim>
 class Insertion
 {
+public:
   /**
    * Carries out the insertion of particles. This is the base class of
    * volume_insertion, plane_insertion and list_insertion classes.
    *
    * @param dem_parameters DEM parameters declared in the .prm file
    */
-public:
   Insertion(const DEMSolverParameters<dim> &dem_parameters);
 
 
@@ -152,9 +151,13 @@ protected:
   // A vector of vectors, which contains all the properties of all inserted
   // particles at each insertion step
   std::vector<std::vector<double>> particle_properties;
-  std::shared_ptr<Distribution>    distribution_object;
+
+  // A distribution object that carries out the attribution of diameter to every
+  // particle during an insertion time step
+  std::shared_ptr<Distribution> distribution_object;
 
 private:
+  // Stores particle diameter
   std::vector<double> particle_sizes;
 };
 

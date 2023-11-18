@@ -19,8 +19,6 @@ VolumeInsertion<dim>::VolumeInsertion(
   current_inserting_particle_type = 0;
   this->inserted_this_step        = 0;
   this->maximum_diameter          = maximum_particle_diameter;
-
-  // Initializing the distribution object
 }
 
 // The main insertion function. Insert_global_function is utilized to insert
