@@ -4,6 +4,7 @@ add_library(lethe-dem
   dem.cc
   dem_contact_manager.cc
   dem_solver_parameters.cc
+  distributions.cc
   explicit_euler_integrator.cc
   disable_contacts.cc
   find_boundary_cells_information.cc
@@ -17,7 +18,6 @@ add_library(lethe-dem
   integrator.cc
   lagrangian_post_processing.cc
   list_insertion.cc
-  normal_distribution.cc
   output_force_torque_calculation.cc
   particle_particle_broad_search.cc
   particle_particle_contact_force.cc
@@ -51,7 +51,7 @@ add_library(lethe-dem
   ../../include/dem/dem.h
   ../../include/dem/dem_solver_parameters.h
   ../../include/dem/disable_contacts.h
-  ../../include/dem/distribution_base.h
+  ../../include/dem/distributions.h
   ../../include/dem/explicit_euler_integrator.h
   ../../include/dem/find_boundary_cells_information.h
   ../../include/dem/find_cell_neighbors.h
@@ -64,7 +64,6 @@ add_library(lethe-dem
   ../../include/dem/integrator.h
   ../../include/dem/lagrangian_post_processing.h
   ../../include/dem/list_insertion.h
-  ../../include/dem/normal_distribution.h
   ../../include/dem/output_force_torque_calculation.h
   ../../include/dem/particle_particle_broad_search.h
   ../../include/dem/particle_particle_contact_force.h

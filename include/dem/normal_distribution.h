@@ -1,6 +1,6 @@
 /* ---------------------------------------------------------------------
  *
- * Copyright (C) 2019 - 2019 by the Lethe authors
+ * Copyright (C) 2019 - 2023 by the Lethe authors
  *
  * This file is part of the Lethe library
  *
@@ -15,7 +15,7 @@
  *
  */
 
-#include <dem/distribution_base.h>
+#include <dem/distributions.h>
 
 #include <unordered_map>
 
@@ -43,13 +43,14 @@ public:
    * Carries out the size sampling of every particles inserted at a insertion
    * time step.
    *
+   * @param particle_number Number of particle inserted at a given insertion time step.
+   * @param particle_type The type of particles getting inserted.
    */
   void
   particle_size_sampling(const unsigned int particle_number,
                          const unsigned int particle_type) override;
 
 private:
-  // Attributes
   std::unordered_map<unsigned int, double> diameter_averages;
   std::unordered_map<unsigned int, double> standard_deviations;
 };

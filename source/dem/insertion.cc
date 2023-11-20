@@ -19,6 +19,7 @@
 
 #include <dem/insertion.h>
 
+#include <cmath>
 #include <sstream>
 
 template <int dim>
@@ -28,9 +29,9 @@ Insertion<dim>::Insertion(const DEMSolverParameters<dim> &dem_parameters)
       Parameters::Lagrangian::LagrangianPhysicalProperties::
         size_distribution_type::uniform)
     {
-      distribution_object = std::make_shared<NormalDistribution>(
-        dem_parameters.lagrangian_physical_properties.particle_average_diameter,
-        dem_parameters.lagrangian_physical_properties.particle_size_std);
+      distribution_object = std::make_shared<UniformDistribution>(
+        dem_parameters.lagrangian_physical_properties
+          .particle_average_diameter);
     }
   else if (dem_parameters.lagrangian_physical_properties
              .size_distribution_type ==
@@ -87,12 +88,10 @@ Insertion<dim>::assign_particle_properties(
        particle_counter < inserted_this_step_this_proc;
        ++particle_counter)
     {
-      double type     = current_inserting_particle_type;
-      double diameter = 0.;
+      double type = current_inserting_particle_type;
       // We make sure that the diameter is positive
-      (this->distribution_object->particle_sizes[particle_counter] >= 0) ?
-        diameter = this->distribution_object->particle_sizes[particle_counter] :
-        -this->distribution_object->particle_sizes[particle_counter];
+      double diameter =
+        std::abs(this->distribution_object->particle_sizes[particle_counter]);
       double density =
         physical_properties.density_particle[current_inserting_particle_type];
       double vel_x        = dem_parameters.insertion_info.vel_x;

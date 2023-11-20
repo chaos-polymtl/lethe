@@ -71,7 +71,6 @@ namespace Parameters
           size_distribution_type = size_distribution_type::uniform;
           particle_average_diameter.at(particle_type) =
             prm.get_double("diameter");
-          particle_size_std.at(particle_type) = 0.;
         }
       else if (size_distribution == "normal")
         {

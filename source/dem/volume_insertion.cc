@@ -39,7 +39,8 @@ VolumeInsertion<dim>::insert(
           ++current_inserting_particle_type);
     }
 
-  // Check to see if the remained un-inserted particles is equal to zero or not
+  // Check to see if the remaining un-inserted particles are equal to zero or
+  // not
   if (particles_of_each_type_remaining != 0)
     {
       MPI_Comm           communicator = triangulation.get_communicator();

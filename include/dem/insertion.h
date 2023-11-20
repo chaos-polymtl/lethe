@@ -18,7 +18,7 @@
 #include <core/dem_properties.h>
 
 #include <dem/dem_solver_parameters.h>
-#include <dem/normal_distribution.h>
+#include <dem/distributions.h>
 
 #include <deal.II/base/array_view.h>
 #include <deal.II/base/data_out_base.h>
@@ -64,10 +64,8 @@ public:
    */
   Insertion(const DEMSolverParameters<dim> &dem_parameters);
 
-
-  // Destructor
   /**
-   * This function is override by volume_insertion, plane_insertion and
+   * This function is overridden by volume_insertion, plane_insertion and
    * list_insertion class to insert particles.
    *
    * @param particle_handler The particle handler of particles which are being
@@ -83,7 +81,8 @@ public:
 
 protected:
   /**
-   * Carries out assigning the properties of inserted particles.
+   * Print information about the particles that have been inserted during an
+   * insertion time step.
    *
    * @param inserted_this_step Number of particles that are inserted
    * at each insertion step.
@@ -129,9 +128,8 @@ protected:
     const DEMSolverParameters<dim> &dem_parameters,
     const ConditionalOStream       &pcout);
 
-  // Number of particles that is going to be inserted at each insertion
-  // step.This value can change in the last insertion step to reach the desired
-  // number of particles
+  // Number of particles inserted at each insertion time step. This value can
+  // change in the last insertion step to reach the desired number of particles
   unsigned int inserted_this_step;
 
   // Number of insertion points in the x, y and z directions
