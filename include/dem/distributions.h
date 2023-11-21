@@ -21,8 +21,8 @@
 #include <string>
 #include <unordered_map>
 
-#ifndef distribution_h
-#  define distribution_h
+#ifndef distributions_h
+#  define distributions_h
 
 class Distribution
 {
@@ -34,7 +34,7 @@ public:
    * normal_distribution, log_normal_distribution and list_distribution
    * classes.
    * @param particle_number Number of particle inserted at a given insertion time step.
-   * @param particle_type The type of particles getting inserted.
+   * @param particle_type The type of particle being inserted.
    */
   virtual void
   particle_size_sampling(const unsigned int particle_number,
@@ -48,8 +48,8 @@ public:
    * The constructor stores the parameters necessary to define the normal
    * distribution
    *
-   * @param d_averages Average diameters for each types of particles.
-   * @param d_standard_deviations Standard deviation of the diameter for each types of particle.
+   * @param d_averages Average diameters for each type of particle.
+   * @param d_standard_deviations Standard deviation of the diameter for each type of particle.
    */
   NormalDistribution(
     const std::unordered_map<unsigned int, double> d_averages,
@@ -60,16 +60,16 @@ public:
    * time step.
    *
    * @param particle_number Number of particle inserted at a given insertion time step.
-   * @param particle_type The type of particles getting inserted.
+   * @param particle_type The type of particle being inserted.
    */
   void
   particle_size_sampling(const unsigned int particle_number,
                          const unsigned int particle_type) override;
 
 private:
-  // Average diameters for each particle types.
+  // Average diameters for each particle type.
   std::unordered_map<unsigned int, double> diameter_averages;
-  // Standard deviation of the diameter for each particle types.
+  // Standard deviation of the diameter for each particle type.
   std::unordered_map<unsigned int, double> standard_deviations;
 };
 
@@ -77,10 +77,10 @@ class UniformDistribution : public Distribution
 {
 public:
   /**
-   * The constructor store the parameters necessary to define the normal
+   * The constructor store the parameters necessary to define the uniform
    * distribution
    *
-   * @param d_value Diameter values for each particle types.
+   * @param d_values Diameter values for each particle type.
    */
   UniformDistribution(const std::unordered_map<unsigned int, double> d_values);
 
@@ -89,15 +89,15 @@ public:
    * time step.
    *
    * @param particle_number Number of particle inserted at a given insertion time step.
-   * @param particle_type The type of particles getting inserted.
+   * @param particle_type The type of particle being inserted.
    */
   void
   particle_size_sampling(const unsigned int particle_number,
                          const unsigned int particle_type) override;
 
 private:
-  // Diameter values for each particle types.
+  // Diameter values for each particle type.
   std::unordered_map<unsigned int, double> diameter_values;
 };
 
-#endif /* distribution_h */
+#endif /* distributions_h */

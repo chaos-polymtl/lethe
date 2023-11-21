@@ -155,7 +155,7 @@ protected:
   std::shared_ptr<Distribution> distribution_object;
 
 private:
-  // Stores particle diameter
+  // Stores particles diameters
   std::vector<double> particle_sizes;
 };
 
