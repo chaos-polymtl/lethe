@@ -12,14 +12,13 @@
  * the top level of the Lethe distribution.
  *
  * ---------------------------------------------------------------------
-
  *
- * Author: Shahab Golshan, Polytechnique Montreal, 2019
  */
 
 #include <core/dem_properties.h>
 
 #include <dem/dem_solver_parameters.h>
+#include <dem/distributions.h>
 
 #include <deal.II/base/array_view.h>
 #include <deal.II/base/data_out_base.h>
@@ -59,7 +58,15 @@ class Insertion
 public:
   /**
    * Carries out the insertion of particles. This is the base class of
-   * uniform_insertion and non_uniform_insertion classes.
+   * volume_insertion, plane_insertion and list_insertion classes.
+   *
+   * @param dem_parameters DEM parameters declared in the .prm file
+   */
+  Insertion(const DEMSolverParameters<dim> &dem_parameters);
+
+  /**
+   * This function is overridden by volume_insertion, plane_insertion and
+   * list_insertion class to insert particles.
    *
    * @param particle_handler The particle handler of particles which are being
    * inserted
@@ -74,7 +81,8 @@ public:
 
 protected:
   /**
-   * Carries out assigning the properties of inserted particles.
+   * Print information about the particles that have been inserted during an
+   * insertion time step.
    *
    * @param inserted_this_step Number of particles that are inserted
    * at each insertion step.
@@ -120,9 +128,8 @@ protected:
     const DEMSolverParameters<dim> &dem_parameters,
     const ConditionalOStream       &pcout);
 
-  // Number of particles that is going to be inserted at each insetion step.This
-  // value can change in the last insertion step to reach the desired number of
-  // particles
+  // Number of particles inserted at each insertion time step. This value can
+  // change in the last insertion step to reach the desired number of particles
   unsigned int inserted_this_step;
 
   // Number of insertion points in the x, y and z directions
@@ -143,22 +150,12 @@ protected:
   // particles at each insertion step
   std::vector<std::vector<double>> particle_properties;
 
-private:
-  /**
-   * Carries out sampling from specified distributions for particle size.
-   *
-   * @param particle_sizes A vector containing size of particles sampled from
-   * specified size distribution
-   * @param average Average diameter of particles
-   * @param standard_deviation Standard deviation of particle diameter
-   * @param particle_number Number of particles
-   */
-  void
-  particle_size_sampling(std::vector<double> &particle_sizes,
-                         const double         average,
-                         const double         standard_deviation,
-                         const double         particle_number);
+  // A distribution object that carries out the attribution of diameter to every
+  // particle during an insertion time step
+  std::shared_ptr<Distribution> distribution_object;
 
+private:
+  // Stores particles diameters
   std::vector<double> particle_sizes;
 };
 

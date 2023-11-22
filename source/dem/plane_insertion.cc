@@ -11,7 +11,8 @@ template <int dim>
 PlaneInsertion<dim>::PlaneInsertion(
   const DEMSolverParameters<dim>                  &dem_parameters,
   const parallel::distributed::Triangulation<dim> &triangulation)
-  : particles_of_each_type_remaining(
+  : Insertion<dim>(dem_parameters)
+  , particles_of_each_type_remaining(
       dem_parameters.lagrangian_physical_properties.number.at(0))
 {
   // Initializing current inserting particle type
@@ -330,5 +331,4 @@ PlaneInsertion<dim>::insert(
 }
 
 template class PlaneInsertion<2>;
-
 template class PlaneInsertion<3>;

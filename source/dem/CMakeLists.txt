@@ -4,6 +4,7 @@ add_library(lethe-dem
   dem.cc
   dem_contact_manager.cc
   dem_solver_parameters.cc
+  distributions.cc
   explicit_euler_integrator.cc
   disable_contacts.cc
   find_boundary_cells_information.cc
@@ -50,6 +51,7 @@ add_library(lethe-dem
   ../../include/dem/dem.h
   ../../include/dem/dem_solver_parameters.h
   ../../include/dem/disable_contacts.h
+  ../../include/dem/distributions.h
   ../../include/dem/explicit_euler_integrator.h
   ../../include/dem/find_boundary_cells_information.h
   ../../include/dem/find_cell_neighbors.h
