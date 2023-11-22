@@ -12,9 +12,7 @@
  * the top level of the Lethe distribution.
  *
  * ---------------------------------------------------------------------
-
  *
- * Author: Shahab Golshan, Polytechnique Montreal, 2019
  */
 
 #include <dem/dem_solver_parameters.h>
@@ -26,14 +24,6 @@
 
 #ifndef volume_insertion_h
 #  define volume_insertion_h
-
-/**
- * Volume insertion of particles in a rectangular box
- *
- * @note
- *
- * @author Shahab Golshan, Bruno Blais, Polytechnique Montreal 2019-
- */
 
 template <int dim>
 class VolumeInsertion : public Insertion<dim>
@@ -108,5 +98,4 @@ private:
   // upcoming insertion steps
   unsigned int particles_of_each_type_remaining;
 };
-
 #endif /* volume_insertion_h */

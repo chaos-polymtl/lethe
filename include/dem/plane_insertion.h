@@ -32,9 +32,9 @@
  *
  * @note
  *
- * Paticle insertion using cells cut by a plane. Locally own cells that are
- * cut by the plane are flag. From those flag cells, we insert a particle at
- * their center's if they are individually empty (contain no particle). This
+ * Particle insertion using cells cut by a plane. Locally owned cells that are
+ * cut by the plane are flagged. From those flagged cells, we insert a particle
+ * at their centroids if they are individually empty (contain no particle). This
  * way, no significant overlap is occurring on the insertion of new particle
  * which can occur with other insertion method.
  */
