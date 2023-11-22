@@ -1063,10 +1063,10 @@ protected:
     const double root1 =
       0.25 * Utilities::fixed_power<2>(Q) + Utilities::fixed_power<3>(P) / 27.;
     const double U      = std::cbrt(-0.5 * Q + std::sqrt(root1));
-    double       s      = -c2 * (5. / 6.) + U - P / (3. * U);
-    const double w      = std::sqrt(c2 + 2. * s);
+    const double s      = -c2 * (5. / 6.) + U - P / (3. * U);
+    const double w      = std::sqrt(std::max(1e-16, c2 + 2. * s));
     const double lambda = 0.5 * c1 / w;
-    const double root2  = w * w - 4. * (c2 + s + lambda);
+    const double root2  = std::max(1e-16, w * w - 4. * (c2 + s + lambda));
     const double a      = 0.5 * (w + std::sqrt(root2));
 
     // Calculation of the normal damping constant.
