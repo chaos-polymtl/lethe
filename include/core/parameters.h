@@ -50,7 +50,6 @@ namespace Parameters
 
 
   /**
-
    * @brief Extract the maximum number of all variable size sections within the parameter file
    *
    * @param file_name Name of the parameter file from which the size are parsed
