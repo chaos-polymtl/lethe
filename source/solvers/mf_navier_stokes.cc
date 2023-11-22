@@ -305,6 +305,10 @@ MFNavierStokesSolver<dim>::set_initial_condition_fd(
       std::shared_ptr<RheologicalModel> viscosity_model =
         this->simulation_parameters.physical_properties_manager.get_rheology();
 
+      // Keep in memory the initial viscosity
+      const double viscosity_end = viscosity_model->get_kinematic_viscosity();
+
+      // Set it to the initial condition viscosity
       viscosity_model->set_kinematic_viscosity(
         this->simulation_parameters.initial_condition->kinematic_viscosity);
 
@@ -321,9 +325,11 @@ MFNavierStokesSolver<dim>::set_initial_condition_fd(
 
       // Set the kinematic viscosity in the system operator to be the original
       // viscosity
-      this->system_operator->set_kinematic_viscosity(
-        this->simulation_parameters.physical_properties_manager
-          .get_kinematic_viscosity_scale());
+      viscosity_model->set_kinematic_viscosity(viscosity_end);
+
+      // Reset kinematic viscosity to simulation parameters
+      viscosity_model->set_kinematic_viscosity(viscosity_end);
+      this->system_operator->set_kinematic_viscosity(viscosity_end);
     }
   else if (initial_condition_type == Parameters::InitialConditionType::ramp)
     {
