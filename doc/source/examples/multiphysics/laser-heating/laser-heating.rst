@@ -124,7 +124,7 @@ where :math:`\eta`, :math:`\alpha`, :math:`P`, :math:`R`, :math:`\mu`, :math:`r`
 
     subsection laser parameters
       set enable               = true
-      set porous media         = true
+      set volumetric source    = true
       set concentration factor = 50
       set power                = 3
       set absorptivity         = 0.6

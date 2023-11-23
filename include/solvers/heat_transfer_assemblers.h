@@ -272,21 +272,19 @@ protected:
 };
 
 /**
- * @brief Class that assembles the laser heat source for the heat
- * transfer solver. Exponentially decaying model is used to simulate the
- * laser heat source: "Liu, S., Zhu, H., Peng, G., Yin, J. and Zeng, X.,
- * 2018. Microstructure prediction of selective laser melting AlSi10Mg
- * using finite element analysis. Materials & Design, 142, pp.319-328."
+ * @brief Class that assembles the laser heat source as a surface flux for
+ * the heat transfer solver.
  *
  * @tparam dim An integer that denotes the number of spatial dimensions
  *
  * @ingroup assemblers
  */
 template <int dim>
-class HeatTransferAssemblerLaser : public HeatTransferAssemblerBase<dim>
+class HeatTransferAssemblerLaserSurfaceSource
+  : public HeatTransferAssemblerBase<dim>
 {
 public:
-  HeatTransferAssemblerLaser(
+  HeatTransferAssemblerLaserSurfaceSource(
     std::shared_ptr<SimulationControl>      simulation_control,
     std::shared_ptr<Parameters::Laser<dim>> p_laser_parameters)
     : HeatTransferAssemblerBase<dim>(simulation_control)
@@ -317,8 +315,98 @@ protected:
 };
 
 /**
- * @brief Class that assembles the laser heat source for the heat
- * transfer solver when VOF is enabled. Exponentially decaying model is
+ * @brief Class that assembles the laser heat source as a volumetric flux for
+ * the heat transfer solver. Exponentially decaying model is used to simulate
+ * the laser heat source: "Liu, S., Zhu, H., Peng, G., Yin, J. and Zeng, X.,
+ * 2018. Microstructure prediction of selective laser melting AlSi10Mg
+ * using finite element analysis. Materials & Design, 142, pp.319-328."
+ *
+ * @tparam dim An integer that denotes the number of spatial dimensions
+ *
+ * @ingroup assemblers
+ */
+template <int dim>
+class HeatTransferAssemblerLaserVolumetricSource
+  : public HeatTransferAssemblerBase<dim>
+{
+public:
+  HeatTransferAssemblerLaserVolumetricSource(
+    std::shared_ptr<SimulationControl>      simulation_control,
+    std::shared_ptr<Parameters::Laser<dim>> p_laser_parameters)
+    : HeatTransferAssemblerBase<dim>(simulation_control)
+    , laser_parameters(p_laser_parameters)
+  {}
+
+  /**
+   * @brief assemble_matrix Assembles the matrix
+   * @param scratch_data (see base class)
+   * @param copy_data (see base class)
+   */
+
+  virtual void
+  assemble_matrix(HeatTransferScratchData<dim> &scratch_data,
+                  StabilizedMethodsCopyData    &copy_data) override;
+
+  /**
+   * @brief assemble_rhs Assembles the rhs
+   * @param scratch_data (see base class)
+   * @param copy_data (see base class)
+   */
+  virtual void
+  assemble_rhs(HeatTransferScratchData<dim> &scratch_data,
+               StabilizedMethodsCopyData    &copy_data) override;
+
+protected:
+  std::shared_ptr<Parameters::Laser<dim>> laser_parameters;
+};
+
+/**
+ * @brief Class that assembles the laser heat source as a surface flux for the
+ * heat transfer solver when VOF is enabled. The laser heat source is only
+ * applied in the metal (when phase value is non-null) using the phase value
+ * alpha as a multiplying factor on the laser heat source.
+ *
+ * @tparam dim An integer that denotes the number of spatial dimensions
+ *
+ * @ingroup assemblers
+ */
+template <int dim>
+class HeatTransferAssemblerLaserSurfaceSourceVOF
+  : public HeatTransferAssemblerBase<dim>
+{
+public:
+  HeatTransferAssemblerLaserSurfaceSourceVOF(
+    std::shared_ptr<SimulationControl>      simulation_control,
+    std::shared_ptr<Parameters::Laser<dim>> p_laser_parameters)
+    : HeatTransferAssemblerBase<dim>(simulation_control)
+    , laser_parameters(p_laser_parameters)
+  {}
+
+  /**
+   * @brief assemble_matrix Assembles the matrix
+   * @param scratch_data (see base class)
+   * @param copy_data (see base class)
+   */
+  virtual void
+  assemble_matrix(HeatTransferScratchData<dim> &scratch_data,
+                  StabilizedMethodsCopyData    &copy_data) override;
+
+  /**
+   * @brief assemble_rhs Assembles the rhs
+   * @param scratch_data (see base class)
+   * @param copy_data (see base class)
+   */
+  virtual void
+  assemble_rhs(HeatTransferScratchData<dim> &scratch_data,
+               StabilizedMethodsCopyData    &copy_data) override;
+
+protected:
+  std::shared_ptr<Parameters::Laser<dim>> laser_parameters;
+};
+
+/**
+ * @brief Class that assembles the laser heat source as a volumetric flux for
+ * the heat transfer solver when VOF is enabled. Exponentially decaying model is
  * used to simulate the laser heat source: "Liu, S., Zhu, H., Peng, G.,
  * Yin, J. and Zeng, X., 2018. Microstructure prediction of selective
  * laser melting AlSi10Mg using finite element analysis. Materials &
@@ -331,10 +419,11 @@ protected:
  * @ingroup assemblers
  */
 template <int dim>
-class HeatTransferAssemblerLaserVOF : public HeatTransferAssemblerBase<dim>
+class HeatTransferAssemblerLaserVolumetricSourceVOF
+  : public HeatTransferAssemblerBase<dim>
 {
 public:
-  HeatTransferAssemblerLaserVOF(
+  HeatTransferAssemblerLaserVolumetricSourceVOF(
     std::shared_ptr<SimulationControl>      simulation_control,
     std::shared_ptr<Parameters::Laser<dim>> p_laser_parameters)
     : HeatTransferAssemblerBase<dim>(simulation_control)

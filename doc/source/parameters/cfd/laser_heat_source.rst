@@ -8,7 +8,7 @@ If a laser heat source is present in a simulation, it can be added in this secti
 
   subsection laser parameters
     set enable               = false
-    set porous media         = false
+    set volumetric source         = false
     set concentration factor = 2.0
     set power                = 100.0
     set absorptivity         = 0.5
@@ -33,7 +33,7 @@ If a laser heat source is present in a simulation, it can be added in this secti
 
 * The ``enable`` parameter is set to ``true`` if the problem has a laser heat source term and enables its calculation.
 
-* The ``porous media`` parameter is set to ``true`` if the media hit by the incident laser ray is porous. This enables the inclusion of the ``penetration depth`` parameter in the heat flux calculation.
+* The ``volumetric source`` parameter is set to ``true`` if the media hit by the incident laser ray has non-flat topography. This enables the inclusion of the ``penetration depth`` parameter in the heat flux calculation.
 
 * Laser ``concentration factor`` parameter indicates the definition of the beam radius. In almost all the articles, it is assumed equal to :math:`2.0`.
 
@@ -44,7 +44,7 @@ If a laser heat source is present in a simulation, it can be added in this secti
 * The ``penetration depth`` parameter determines the penetration depth of the laser in the simulation domain in the direction of emission. The value should be grater than :math:`0`.
 
   .. attention::
-    This parameter is only taken into account if the ``porous media`` parameter is enabled (set to ``true``).
+    This parameter is only taken into account if the ``volumetric source`` parameter is enabled (set to ``true``).
 
 * The ``beam radius`` parameter defines the radius of the laser beam.
 
@@ -67,18 +67,20 @@ If a laser heat source is present in a simulation, it can be added in this secti
 
   * ``emissivity``, ``Tinf``, and ``Stefan-Boltzmann constant`` are respectively the emissivity :math:`\epsilon` of the surface, the environment temperature :math:`T_{inf}`, and the Stefan-Boltzmann constant :math:`\sigma`.
 
-The exponential decaying model `[2] <https://doi.org/10.1016/j.matdes.2018.01.022>`_ is used to simulate the laser heat source. In the exponential decaying model, when ``porous media`` is disabled (by default), the laser heat flux is calculated using the following equation:
+When ``volumetric source`` is disabled (by default), the laser heat flux is calculated using the following equation:
 
 .. math::
     q(x,y,z) = \frac{\eta \alpha P}{\pi r^2} \exp{\left(-\eta \frac{r^2}{R^2}\right)}
 
-and when ``porous media`` is enabled:
+where :math:`\eta`, :math:`\alpha`, :math:`P`, :math:`R`, and :math:`r` denote the concentration factor, absorptivity, laser power, beam radius, and radial distance from the laser focal point, respectively.
+
+and when ``volumetric source`` is enabled the exponential decaying model `[2] <https://doi.org/10.1016/j.matdes.2018.01.022>`_ is used to simulate the laser heat source :
 
 .. math::
     q(x,y,z) = \frac{\eta \alpha P}{\pi r^2 \mu} \exp{\left(-\eta \frac{r^2}{R^2}\right)} \exp{\left(- \frac{|z|}{\mu}\right)}
 
 
-where :math:`\eta`, :math:`\alpha`, :math:`P`, :math:`R`, :math:`\mu`, :math:`r`, and :math:`z` denote the concentration factor, absorptivity, laser power, beam radius, penetration depth, radial distance from the laser focal point, and axial distance from the laser focal point, respectively.
+where  :math:`\mu` and :math:`z` denote the penetration depth and axial distance from the laser focal point, respectively.
 
 -----------
 References
