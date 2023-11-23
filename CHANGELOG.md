@@ -3,6 +3,13 @@ All notable changes to the Lethe project will be documented in this file.
  
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+
+## [Master] - 2023-11-23
+
+### Fixed
+
+- MINOR The plane insertion for the DEM was only supporting the uniform diameter distribution. Now it supports all types of distribution. 
+
 ## [Master] - 2023-11-16
   
 ### Changed
