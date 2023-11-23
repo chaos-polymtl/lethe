@@ -30,13 +30,13 @@ If a laser heat source is present in a simulation, it can be added in this secti
   end
 
 
-* The ``enable`` parameter is set to true if the problem has a laser heat source term and enables its calculation.
+* The ``enable`` parameter is set to ``true`` if the problem has a laser heat source term and enables its calculation.
 
-* Laser ``concentration factor`` parameter indicates the definition of the beam radius. In almost all the articles, it is assumed equal to 2.0.
+* Laser ``concentration factor`` parameter indicates the definition of the beam radius. In almost all the articles, it is assumed equal to :math:`2.0`.
 
-* The ``power`` parameter sets the power of the laser [:math:`ML^2T^{-3}`].
+* The ``power`` parameter sets the power of the laser :math:`[ML^2T^{-3}]`.
 
-* The ``absorptivity`` parameter is defined as the fraction of the amount of incident radiation that is absorbed by the surface, and it is measured using diffuse reﬂectance spectroscopy (DRS). Generally, a constant value in the range of 0.3-0.8 (for welding processes with titanium) ise used in the literature. However, recent studies show that it varies with powder particle size distribution and the angle of incidence that changes due to the dynamic melt pool surface `[1] <https://doi.org/10.1016/j.optlastec.2018.08.012>`_.
+* The ``absorptivity`` parameter is defined as the fraction of the amount of incident radiation that is absorbed by the surface, and it is measured using diffuse reﬂectance spectroscopy (DRS). Generally, a constant value in the range of :math:`0.3`-:math:`0.8` (for welding processes with titanium) ise used in the literature. However, recent studies show that it varies with powder particle size distribution and the angle of incidence that changes due to the dynamic melt pool surface `[1] <https://doi.org/10.1016/j.optlastec.2018.08.012>`_.
 
 * The ``penetration depth`` parameter determines the penetration depth of the laser in the simulation domain in the direction of emission.
 
@@ -44,9 +44,9 @@ If a laser heat source is present in a simulation, it can be added in this secti
 
 * The ``start time`` and ``end time`` parameters define the operation time window of the laser.
 
-* The ``beam orientation`` parameter shows the orientation and direction of the laser beam. For instance, if a laser beam is emitted perpendicular to a plane in x-y coordinates, the orientation of the laser beam will be in the z-direction. Negative (-) or positive (+) defines the direction of the laser beam. For instance if the laser beam is emitted in the negative z direction, the value of ``beam orientation`` will be ``z-``.
+* The ``beam orientation`` parameter shows the orientation and direction of the laser beam. For instance, if a laser beam is emitted perpendicular to a plane in :math:`x`-:math:`y` coordinates, the orientation of the laser beam will be in the z-direction. Negative (-) or positive (+) defines the direction of the laser beam. For instance if the laser beam is emitted in the negative :math:`z` direction, the value of ``beam orientation`` will be ``z-``.
 
-.. note::
+.. attention::
     In two-dimensional simulations, the laser beam orientation cannot be in the z-direction.
 
 
@@ -54,7 +54,7 @@ If a laser heat source is present in a simulation, it can be added in this secti
 
 * ``subsection free surface radiation``: In additive manufacturing simulations, radiation at the interface between the air and the metal is a significant cooling mechanism. When this interface (i.e., free surface) is resolved by the :doc:`volume_of_fluid` solver, the ``free surface radiation`` subsection defines the parameters to impose this radiation cooling following the Stefan-Boltzmann law of radiation: :math:`\epsilon \sigma (T^4 - T_{inf}^4)`.
 
-  * ``enable``: controls if the radiation cooling is enabled. The radiation sink is apply in the heat transfer solver in the cells where the phase fraction gradient norm :math:`|\nabla \alpha|` is non-null.
+  * ``enable``: controls if the radiation cooling is enabled. The radiation sink is applied in the heat transfer solver in the cells where the phase fraction gradient norm :math:`|\nabla \alpha|` is non-null.
 
     .. warning::
         To apply this radiation cooling, the ``VOF`` parameter must be set to ``true`` in the :doc:`multiphysics` subsection.
@@ -64,10 +64,10 @@ If a laser heat source is present in a simulation, it can be added in this secti
 The exponential decaying model `[2] <https://doi.org/10.1016/j.matdes.2018.01.022>`_ is used to simulate the laser heat source. In the exponential decaying model, the laser heat flux is calculated using the following equation:
 
     .. math::
-        q(x,y,z) = \frac{\eta \alpha P}{\pi r^2 \mu} \exp{(-\eta \frac{r^2}{R^2})} \exp{(- \frac{|z|}{\mu})}
+        q(x,y,z) = \frac{\eta \alpha P}{\pi r^2 \mu} \exp{\left(-\eta \frac{r^2}{R^2}\right)} \exp{\left(- \frac{|z|}{\mu}\right)}
 
 
-where :math:`\eta`, :math:`\alpha`, :math:`P`, :math:`R`, :math:`\mu`, :math:`r`, \:math:`z` denote concentration factor, absorptivity, laser power, beam radius, penetration depth, radial distance from the laser focal point, and axial distance from the laser focal point, respectively.
+where :math:`\eta`, :math:`\alpha`, :math:`P`, :math:`R`, :math:`\mu`, :math:`r`, and :math:`z` denote concentration factor, absorptivity, laser power, beam radius, penetration depth, radial distance from the laser focal point, and axial distance from the laser focal point, respectively.
 
 -----------
 References
