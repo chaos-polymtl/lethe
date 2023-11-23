@@ -8,6 +8,7 @@ If a laser heat source is present in a simulation, it can be added in this secti
 
   subsection laser parameters
     set enable               = false
+    set porous media         = false
     set concentration factor = 2.0
     set power                = 100.0
     set absorptivity         = 0.5
@@ -32,13 +33,18 @@ If a laser heat source is present in a simulation, it can be added in this secti
 
 * The ``enable`` parameter is set to ``true`` if the problem has a laser heat source term and enables its calculation.
 
+* The ``porous media`` parameter is set to ``true`` if the media hit by the incident laser ray is porous. This enables the inclusion of the ``penetration depth`` parameter in the heat flux calculation.
+
 * Laser ``concentration factor`` parameter indicates the definition of the beam radius. In almost all the articles, it is assumed equal to :math:`2.0`.
 
 * The ``power`` parameter sets the power of the laser :math:`[ML^2T^{-3}]`.
 
 * The ``absorptivity`` parameter is defined as the fraction of the amount of incident radiation that is absorbed by the surface, and it is measured using diffuse reﬂectance spectroscopy (DRS). Generally, a constant value in the range of :math:`0.3`-:math:`0.8` (for welding processes with titanium) ise used in the literature. However, recent studies show that it varies with powder particle size distribution and the angle of incidence that changes due to the dynamic melt pool surface `[1] <https://doi.org/10.1016/j.optlastec.2018.08.012>`_.
 
-* The ``penetration depth`` parameter determines the penetration depth of the laser in the simulation domain in the direction of emission.
+* The ``penetration depth`` parameter determines the penetration depth of the laser in the simulation domain in the direction of emission. The value should be grater than :math:`0`.
+
+  .. attention::
+    This parameter is only taken into account if the ``porous media`` parameter is enabled (set to ``true``).
 
 * The ``beam radius`` parameter defines the radius of the laser beam.
 
@@ -46,8 +52,8 @@ If a laser heat source is present in a simulation, it can be added in this secti
 
 * The ``beam orientation`` parameter shows the orientation and direction of the laser beam. For instance, if a laser beam is emitted perpendicular to a plane in :math:`x`-:math:`y` coordinates, the orientation of the laser beam will be in the z-direction. Negative (-) or positive (+) defines the direction of the laser beam. For instance if the laser beam is emitted in the negative :math:`z` direction, the value of ``beam orientation`` will be ``z-``.
 
-.. attention::
-    In two-dimensional simulations, the laser beam orientation cannot be in the z-direction.
+  .. attention::
+      In two-dimensional simulations, the laser beam orientation cannot be in the z-direction.
 
 
 * In the ``path`` subsection, the laser scanning path is defined using a ``Function expression``.
@@ -61,13 +67,18 @@ If a laser heat source is present in a simulation, it can be added in this secti
 
   * ``emissivity``, ``Tinf``, and ``Stefan-Boltzmann constant`` are respectively the emissivity :math:`\epsilon` of the surface, the environment temperature :math:`T_{inf}`, and the Stefan-Boltzmann constant :math:`\sigma`.
 
-The exponential decaying model `[2] <https://doi.org/10.1016/j.matdes.2018.01.022>`_ is used to simulate the laser heat source. In the exponential decaying model, the laser heat flux is calculated using the following equation:
+The exponential decaying model `[2] <https://doi.org/10.1016/j.matdes.2018.01.022>`_ is used to simulate the laser heat source. In the exponential decaying model, when ``porous media`` is disabled (by default), the laser heat flux is calculated using the following equation:
 
-    .. math::
-        q(x,y,z) = \frac{\eta \alpha P}{\pi r^2 \mu} \exp{\left(-\eta \frac{r^2}{R^2}\right)} \exp{\left(- \frac{|z|}{\mu}\right)}
+.. math::
+    q(x,y,z) = \frac{\eta \alpha P}{\pi r^2} \exp{\left(-\eta \frac{r^2}{R^2}\right)}
+
+and when ``porous media`` is enabled:
+
+.. math::
+    q(x,y,z) = \frac{\eta \alpha P}{\pi r^2 \mu} \exp{\left(-\eta \frac{r^2}{R^2}\right)} \exp{\left(- \frac{|z|}{\mu}\right)}
 
 
-where :math:`\eta`, :math:`\alpha`, :math:`P`, :math:`R`, :math:`\mu`, :math:`r`, and :math:`z` denote concentration factor, absorptivity, laser power, beam radius, penetration depth, radial distance from the laser focal point, and axial distance from the laser focal point, respectively.
+where :math:`\eta`, :math:`\alpha`, :math:`P`, :math:`R`, :math:`\mu`, :math:`r`, and :math:`z` denote the concentration factor, absorptivity, laser power, beam radius, penetration depth, radial distance from the laser focal point, and axial distance from the laser focal point, respectively.
 
 -----------
 References

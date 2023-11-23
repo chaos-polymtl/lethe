@@ -49,6 +49,19 @@ DeclException3(MultipleAdaptationSizeError,
                << arg2 << ") does not correspond to the number of 'variables' ("
                << arg3 << ")");
 
+DeclException1(PorousMediaDisabledError,
+               double,
+               << "You specified a penetration depth of " << arg1
+               << ". However, the 'porous media' parameter is set to 'false'.");
+
+DeclException3(ParameterStrictlyGreaterThanError,
+               std::string,
+               double,
+               double,
+               << "The parameter '" << arg1 << "' is set to: " << arg2
+               << ". However, it should be strictly greater than " << arg3
+               << ".");
+
 namespace Parameters
 {
   SizeOfSubsections
@@ -1339,6 +1352,11 @@ namespace Parameters
     prm.enter_subsection("laser parameters");
     {
       prm.declare_entry("enable", "false", Patterns::Bool(), "Activate laser");
+      prm.declare_entry(
+        "porous media",
+        "false",
+        Patterns::Bool(),
+        "Enable to include penetration depth in laser heat source calculations");
       prm.declare_entry("concentration factor",
                         "2.0",
                         Patterns::Double(),
@@ -1389,12 +1407,22 @@ namespace Parameters
     prm.enter_subsection("laser parameters");
     {
       activate_laser       = prm.get_bool("enable");
+      porous_media         = prm.get_bool("porous media");
       concentration_factor = prm.get_double("concentration factor");
       laser_power          = prm.get_double("power");
       laser_absorptivity   = prm.get_double("absorptivity");
       penetration_depth    = prm.get_double("penetration depth");
       beam_radius          = prm.get_double("beam radius");
       radiation.parse_parameters(prm);
+
+      if (porous_media)
+        AssertThrow(porous_media && penetration_depth > 0.0,
+                    ParameterStrictlyGreaterThanError("penetration depth",
+                                                      penetration_depth,
+                                                      0.0));
+      else
+        AssertThrow(!porous_media && penetration_depth == 0.0,
+                    PorousMediaDisabledError(penetration_depth));
 
       prm.enter_subsection("path");
       laser_scan_path->parse_parameters(prm);

@@ -624,6 +624,10 @@ namespace Parameters
     // A boolean parameter that enables the calculations of laser heat source
     bool activate_laser;
 
+    // A boolean parameter that indicates if the penetration depth should be
+    // taken into account in heat source calculations.
+    bool porous_media;
+
     // Laser concentration factor indicates the definition of the beam radius.
     // In almost all the articles, it is assumed equal to 2.0
     double concentration_factor;
