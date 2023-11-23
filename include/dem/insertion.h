@@ -105,12 +105,14 @@ protected:
    * at each insertion step on each processor. This value can change in the last
    * insertion step to reach the desired number of particles
    * @param current_inserting_particle_type Type of inserting particles
+   * @param particle_properties Properties of all inserted particles at each insertion step
    */
   void
   assign_particle_properties(
-    const DEMSolverParameters<dim> &dem_parameters,
-    const unsigned int             &inserted_this_step_this_proc,
-    const unsigned int             &current_inserting_particle_type);
+    const DEMSolverParameters<dim>   &dem_parameters,
+    const unsigned int               &inserted_this_step_this_proc,
+    const unsigned int               &current_inserting_particle_type,
+    std::vector<std::vector<double>> &particle_properties);
 
   /**
    * @brief Carries out finding the maximum number of inserted particles based on the
@@ -144,9 +146,6 @@ protected:
   // Inserted number of particles at this step on this processor
   unsigned int inserted_this_step_this_proc;
 
-  // A vector of vectors, which contains all the properties of all inserted
-  // particles at each insertion step
-  std::vector<std::vector<double>> particle_properties;
 
   // A distribution object that carries out the attribution of diameter to every
   // particle during an insertion time step

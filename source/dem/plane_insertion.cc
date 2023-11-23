@@ -259,10 +259,15 @@ PlaneInsertion<dim>::insert(
           empty_cells_on_proc.erase(it); // Erase the first element
         }
 
+      // A vector of vectors, which contains all the properties of all inserted
+      // particles at each insertion step
+      std::vector<std::vector<double>> particle_properties;
+
       this->assign_particle_properties(
         dem_parameters,
         number_of_particles_to_insert_on_this_core,
-        current_inserting_particle_type);
+        current_inserting_particle_type,
+        particle_properties);
 
       // This is to iterate over the particle_properties vector
       unsigned int i = 0;
@@ -293,7 +298,7 @@ PlaneInsertion<dim>::insert(
                                            ref_point,
                                            starting_ID_on_proc++,
                                            cell,
-                                           this->particle_properties.at(i++));
+                                           particle_properties.at(i++));
         }
     }
 }
