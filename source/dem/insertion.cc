@@ -66,10 +66,9 @@ Insertion<dim>::print_insertion_info(const unsigned int &inserted_this_step,
 template <int dim>
 void
 Insertion<dim>::assign_particle_properties(
-  const DEMSolverParameters<dim>   &dem_parameters,
-  const unsigned int               &inserted_this_step_this_proc,
-  const unsigned int               &current_inserting_particle_type,
-  std::vector<std::vector<double>> &particle_properties)
+  const DEMSolverParameters<dim> &dem_parameters,
+  const unsigned int             &inserted_this_step_this_proc,
+  const unsigned int             &current_inserting_particle_type)
 {
   // Clearing and resizing particle_properties
   particle_properties.clear();

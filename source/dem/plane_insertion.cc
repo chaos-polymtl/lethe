@@ -259,45 +259,13 @@ PlaneInsertion<dim>::insert(
           empty_cells_on_proc.erase(it); // Erase the first element
         }
 
-      // There's probably a better ways to define the properties of a particle,
-      // but for now it works...
-      double type     = this->current_inserting_particle_type;
-      double diameter = dem_parameters.lagrangian_physical_properties
-                          .particle_average_diameter.at(type);
-      double density =
-        dem_parameters.lagrangian_physical_properties.density_particle.at(type);
-      double vel_x        = dem_parameters.insertion_info.vel_x;
-      double vel_y        = dem_parameters.insertion_info.vel_y;
-      double vel_z        = dem_parameters.insertion_info.vel_z;
-      double omega_x      = dem_parameters.insertion_info.omega_x;
-      double omega_y      = dem_parameters.insertion_info.omega_y;
-      double omega_z      = dem_parameters.insertion_info.omega_z;
-      double fem_force_x  = 0.;
-      double fem_force_y  = 0.;
-      double fem_force_z  = 0.;
-      double fem_torque_x = 0.;
-      double fem_torque_y = 0.;
-      double fem_torque_z = 0.;
-      double mass         = density * 4. / 3. * M_PI *
-                    Utilities::fixed_power<3, double>(diameter * 0.5);
-      double volumetric_contribution = 0.;
+      this->assign_particle_properties(
+        dem_parameters,
+        number_of_particles_to_insert_on_this_core,
+        current_inserting_particle_type);
 
-      std::vector<double> properties_of_one_particle{type,
-                                                     diameter,
-                                                     vel_x,
-                                                     vel_y,
-                                                     vel_z,
-                                                     omega_x,
-                                                     omega_y,
-                                                     omega_z,
-                                                     fem_force_x,
-                                                     fem_force_y,
-                                                     fem_force_z,
-                                                     fem_torque_x,
-                                                     fem_torque_y,
-                                                     fem_torque_z,
-                                                     mass,
-                                                     volumetric_contribution};
+      // This is to iterate over the particle_properties vector
+      unsigned int i = 0;
 
       // Loop over the empty cells we have kept.
       for (const auto &cell : empty_cells_on_proc)
@@ -325,7 +293,7 @@ PlaneInsertion<dim>::insert(
                                            ref_point,
                                            starting_ID_on_proc++,
                                            cell,
-                                           properties_of_one_particle);
+                                           this->particle_properties.at(i++));
         }
     }
 }

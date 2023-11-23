@@ -121,8 +121,7 @@ VolumeInsertion<dim>::insert(
       // assign_particle_properties function
       this->assign_particle_properties(dem_parameters,
                                        this->inserted_this_step_this_proc,
-                                       current_inserting_particle_type,
-                                       this->particle_properties);
+                                       current_inserting_particle_type);
 
       // Insert the particles using the points and assigned properties
       particle_handler.insert_global_particles(insertion_points_on_proc,
