@@ -11,6 +11,13 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 - MAJOR The "number" parameter within "subsection lagrangian physical properties" and "particle type n" was changed to "number of particles" to prevent confusions with the "number" used for boundary conditions. The "number" for boundary conditions will be changed to "number of boundary conditions" in the near future.
 
+## [Master] - 2023-11-12
+  
+### Deprecated
+
+- MINOR The uniform insertion method had been removed. The non-uniform insertion method has been renamed to volume method to remain coherent with the plane method. If you want to use an insertion method equivalent to the uniform insertion method, use the volume method with a "insertion random number range " equal to zero. [#926](https://github.com/lethe-cfd/lethe/pull/926)
+
+
 ## [Master] - 2023-10-01
   
 ### Fixed
@@ -40,13 +47,6 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 ## [Master] - 2023-10-30
 
 - MINOR The rotational vector for the rotational boundary condition in the lethe-particles solver is now define with one line in the parameters file. [#920](https://github.com/lethe-cfd/lethe/pull/920)
-
-
-## [Master] - 2023-11-12
-  
-### Deprecated
-
-- MINOR The uniform insertion method had been removed. The non-uniform insertion method has been renamed to volume method to remain coherent with the plane method. If you want to use an insertion method equivalent to the uniform insertion method, use the volume method with a "insertion random number range " equal to zero. [#926](https://github.com/lethe-cfd/lethe/pull/926)
 
  
 
