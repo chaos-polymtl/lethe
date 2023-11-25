@@ -622,7 +622,7 @@ NavierStokesVOFAssemblerEvaporation<dim>::assemble_rhs(
           const auto phi_u_i     = scratch_data.phi_u[q][i];
           double     local_rhs_i = 0;
 
-          local_rhs_i -= recoil_pressure_force * phi_u_i;
+          local_rhs_i += recoil_pressure_force * phi_u_i;
           local_rhs(i) += local_rhs_i * JxW_value;
         }
     }

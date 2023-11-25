@@ -3287,9 +3287,9 @@ namespace Parameters
                         Patterns::Double(),
                         "Latent heat of evaporation in J/kg");
       prm.declare_entry("ambient pressure",
-                        "101.325",
+                        "101325",
                         Patterns::Double(),
-                        "Ambient pressure in kPa");
+                        "Ambient pressure in Pa");
       prm.declare_entry("ambient gas density",
                         "1.0",
                         Patterns::Double(),

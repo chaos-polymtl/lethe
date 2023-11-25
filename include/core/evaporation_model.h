@@ -569,17 +569,19 @@ public:
     const double saturation_pressure_value = saturation_pressure(fields_value);
     const double mass_flux_value           = mass_flux(fields_value);
     const double temperature_inv = 1.0 / fields_value.at(field::temperature);
-
-    const double vapor_saturation_density_value =
+    
+    const double vapor_saturation_density_value = molar_mass*
       saturation_pressure_value * R_inv * temperature_inv;
 
     // rho_vap = 0.31*rho_sat according to Anisimov and Khokhlov 1995
     const double vapor_density_inv =
       1.0 / (0.31 * vapor_saturation_density_value);
-
-    return -mass_flux_value * mass_flux_value *
+      
+    const double pressure = -mass_flux_value * mass_flux_value *
              (liquid_density_inv - vapor_density_inv) +
            recoil_pressure_coefficient * saturation_pressure_value;
+
+    return std::max(pressure - ambient_pressure, 0.0);
   }
 
   /**
@@ -607,7 +609,7 @@ public:
       {
         const double temperature_inv = 1.0 / temperature[i];
 
-        const double vapor_saturation_density_value =
+        const double vapor_saturation_density_value = molar_mass*
           saturation_pressure_vector[i] * R_inv * temperature_inv;
 
         // rho_vap = 0.31*rho_sat according to Anisimov and Khokhlov 1995
