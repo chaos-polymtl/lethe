@@ -315,16 +315,16 @@ HeatTransfer<dim>::setup_assemblers()
               this->simulation_parameters.laser_parameters));
         }
     }
-  
-  // Evaporation cooling 
+
+  // Evaporation cooling
   if (this->simulation_parameters.multiphysics.VOF)
     {
       if (this->simulation_parameters.evaporation.enable_evaporation_cooling)
         {
           this->assemblers.push_back(
-                std::make_shared<HeatTransferAssemblerVOFEvaporation<dim>>(
-                  this->simulation_control,
-                  this->simulation_parameters.evaporation));
+            std::make_shared<HeatTransferAssemblerVOFEvaporation<dim>>(
+              this->simulation_control,
+              this->simulation_parameters.evaporation));
         }
     }
   // Robin boundary condition

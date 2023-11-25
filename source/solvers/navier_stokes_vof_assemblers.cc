@@ -582,7 +582,6 @@ NavierStokesVOFAssemblerEvaporation<dim>::assemble_rhs(
   NavierStokesScratchData<dim>         &scratch_data,
   StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
-
   // Loop and quadrature information
   const auto        &JxW        = scratch_data.JxW;
   const unsigned int n_q_points = scratch_data.n_q_points;
@@ -595,16 +594,17 @@ NavierStokesVOFAssemblerEvaporation<dim>::assemble_rhs(
   // Loop over the quadrature points
   for (unsigned int q = 0; q < n_q_points; ++q)
     {
-      // Only temporary, should change if the evaporation also depends on the 
+      // Only temporary, should change if the evaporation also depends on the
       // species concentration
       std::map<field, double> field_value;
       if (this->evaporation_model->depends_on(field::temperature))
-      {
-        field_value[field::temperature] = scratch_data.temperature_values[q];
-      }
-      
+        {
+          field_value[field::temperature] = scratch_data.temperature_values[q];
+        }
+
       // Recoil pressure
-      const double recoil_pressure = this->evaporation_model->recoil_pressure(field_value);
+      const double recoil_pressure =
+        this->evaporation_model->momentum_flux(field_value);
 
       // Gather phase fraction gradient
       const Tensor<1, dim> &phase_gradient_value =

@@ -515,8 +515,8 @@ class HeatTransferAssemblerVOFEvaporation
 {
 public:
   HeatTransferAssemblerVOFEvaporation(
-    std::shared_ptr<SimulationControl>      simulation_control,
-    const Parameters::Evaporation &p_evaporation)
+    std::shared_ptr<SimulationControl> simulation_control,
+    const Parameters::Evaporation     &p_evaporation)
     : HeatTransferAssemblerBase<dim>(simulation_control)
   {
     this->evaporation_model = EvaporationModel::model_cast(p_evaporation);
@@ -543,7 +543,6 @@ public:
 private:
   // Evaporation model
   std::shared_ptr<EvaporationModel> evaporation_model;
-  
 };
 
 #endif

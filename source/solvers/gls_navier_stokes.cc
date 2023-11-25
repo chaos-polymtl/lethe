@@ -486,15 +486,15 @@ GLSNavierStokesSolver<dim>::setup_assemblers()
                   this->simulation_control, this->simulation_parameters));
             }
         }
-        
-      // Recoil pressure 
+
+      // Recoil pressure
       if (this->simulation_parameters.evaporation.enable_recoil_pressure)
-      {
-        this->assemblers.push_back(
-              std::make_shared<NavierStokesVOFAssemblerEvaporation<dim>>(
-                this->simulation_control,
-                this->simulation_parameters.evaporation));
-      }
+        {
+          this->assemblers.push_back(
+            std::make_shared<NavierStokesVOFAssemblerEvaporation<dim>>(
+              this->simulation_control,
+              this->simulation_parameters.evaporation));
+        }
 
       if (this->simulation_parameters.physical_properties_manager
             .is_non_newtonian())

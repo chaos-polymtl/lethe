@@ -3237,7 +3237,7 @@ namespace Parameters
 
     prm.leave_subsection();
   }
-  
+
   void
   Evaporation::declare_parameters(dealii::ParameterHandler &prm)
   {
@@ -3270,35 +3270,34 @@ namespace Parameters
         Patterns::Double(),
         "Evaporation coefficient corresponding to the ratio between the net mass flux (evaporation-condensation) and the mass flux of evaporation");
       prm.declare_entry(
-        "molar mass",
-        "1.0",
+        "recoil pressure coefficient",
+        "0.56",
         Patterns::Double(),
-        "Molar mass of the material in kg/mol");
-      prm.declare_entry(
-        "boiling temperature",
-        "1.0",
-        Patterns::Double(),
-        "Boiling temperature in K");
-      prm.declare_entry(
-        "evaporation latent heat",
-        "0.0",
-        Patterns::Double(),
-        "Latent heat of evaporation in J/kg");
-      prm.declare_entry(
-        "ambient pressure",
-        "101.325",
-        Patterns::Double(),
-        "Ambient pressure in kPa");
-      prm.declare_entry(
-        "ambient gas density",
-        "1.0",
-        Patterns::Double(),
-        "Ambient gas density in kg/m3");
-      prm.declare_entry(
-        "liquid density",
-        "10.0",
-        Patterns::Double(),
-        "Liquid density in kg/m3");
+        "Recoil pressure coefficient corresponding to the factor applied to the staturation pressure to compute the recoil pressure in an out of equilibrium evaportation");
+      prm.declare_entry("molar mass",
+                        "1.0",
+                        Patterns::Double(),
+                        "Molar mass of the material in kg/mol");
+      prm.declare_entry("boiling temperature",
+                        "1.0",
+                        Patterns::Double(),
+                        "Boiling temperature in K");
+      prm.declare_entry("evaporation latent heat",
+                        "0.0",
+                        Patterns::Double(),
+                        "Latent heat of evaporation in J/kg");
+      prm.declare_entry("ambient pressure",
+                        "101.325",
+                        Patterns::Double(),
+                        "Ambient pressure in kPa");
+      prm.declare_entry("ambient gas density",
+                        "1.0",
+                        Patterns::Double(),
+                        "Ambient gas density in kg/m3");
+      prm.declare_entry("liquid density",
+                        "10.0",
+                        Patterns::Double(),
+                        "Liquid density in kg/m3");
     }
     prm.leave_subsection();
   }
@@ -3312,28 +3311,31 @@ namespace Parameters
       op = prm.get("evaporation mass flux model");
       if (op == "constant")
         {
-          evaporative_mass_flux_model_type = EvaporativeMassFluxModelType::constant;
+          evaporative_mass_flux_model_type =
+            EvaporativeMassFluxModelType::constant;
         }
       else if (op == "temperature dependent")
         {
-          evaporative_mass_flux_model_type = EvaporativeMassFluxModelType::temperature_dependent;
+          evaporative_mass_flux_model_type =
+            EvaporativeMassFluxModelType::temperature_dependent;
         }
       else
         throw(std::runtime_error(
           "Invalid evaporative mass flux model. The choices are <constant>."));
 
       enable_evaporation_cooling = prm.get_bool("enable evaporative cooling");
-      enable_recoil_pressure = prm.get_bool("enable recoil pressure");
-      
-      n_evaporation =  prm.get_double("evaporation mass flux");
-      evaporation_coefficient =  prm.get_double("evaporation coefficient");
-      molar_mass = prm.get_double("molar mass");
-      boiling_temperature = prm.get_double("boiling temperature");
+      enable_recoil_pressure     = prm.get_bool("enable recoil pressure");
+
+      n_evaporation           = prm.get_double("evaporation mass flux");
+      evaporation_coefficient = prm.get_double("evaporation coefficient");
+      recoil_pressure_coefficient =
+        prm.get_double("recoil pressure coefficient");
+      molar_mass              = prm.get_double("molar mass");
+      boiling_temperature     = prm.get_double("boiling temperature");
       latent_heat_evaporation = prm.get_double("evaporation latent heat");
-      ambient_pressure = prm.get_double("ambient pressure");
-      ambient_gas_density = prm.get_double("ambient gas density");
-      liquid_density = prm.get_double("liquid density");
-      
+      ambient_pressure        = prm.get_double("ambient pressure");
+      ambient_gas_density     = prm.get_double("ambient gas density");
+      liquid_density          = prm.get_double("liquid density");
     }
     prm.leave_subsection();
   }

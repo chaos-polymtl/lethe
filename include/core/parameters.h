@@ -1356,10 +1356,10 @@ namespace Parameters
     void
     parse_parameters(ParameterHandler &prm);
   };
-  
+
   /**
    * @brief Evaporation - Defines the subparameters for
-   * the evaporation cooling and recoil pressure at the free surface 
+   * the evaporation cooling and recoil pressure at the free surface
    * (air/metal interface).
    */
   struct Evaporation
@@ -1369,13 +1369,14 @@ namespace Parameters
       constant,
       temperature_dependent
     } evaporative_mass_flux_model_type;
-    
+
     bool enable_evaporation_cooling;
     bool enable_recoil_pressure;
-    
+
     // Parameters for the evaporation terms at the melt pool free surface
     double n_evaporation;
     double evaporation_coefficient;
+    double recoil_pressure_coefficient;
     double molar_mass;
     double boiling_temperature;
     double latent_heat_evaporation;
@@ -1388,7 +1389,7 @@ namespace Parameters
     void
     parse_parameters(ParameterHandler &prm);
   };
-  
+
 
   /**
    * @brief Return the tensor of entry @p entry_string. If the entry is specified in the .prm file,

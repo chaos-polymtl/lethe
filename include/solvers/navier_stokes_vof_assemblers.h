@@ -223,8 +223,8 @@ class NavierStokesVOFAssemblerEvaporation
 {
 public:
   NavierStokesVOFAssemblerEvaporation(
-    std::shared_ptr<SimulationControl>  p_simulation_control,
-    const Parameters::Evaporation &p_evaporation)
+    std::shared_ptr<SimulationControl> p_simulation_control,
+    const Parameters::Evaporation     &p_evaporation)
     : simulation_control(p_simulation_control)
   {
     this->evaporation_model = EvaporationModel::model_cast(p_evaporation);
@@ -249,7 +249,7 @@ public:
                StabilizedMethodsTensorCopyData<dim> &copy_data) override;
 
   std::shared_ptr<SimulationControl> simulation_control;
-  
+
 private:
   // Evaporation model
   std::shared_ptr<EvaporationModel> evaporation_model;
