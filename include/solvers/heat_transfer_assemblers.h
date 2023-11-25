@@ -272,49 +272,6 @@ protected:
 };
 
 /**
- * @brief Class that assembles the laser heat source as a surface flux for
- * the heat transfer solver.
- *
- * @tparam dim An integer that denotes the number of spatial dimensions
- *
- * @ingroup assemblers
- */
-template <int dim>
-class HeatTransferAssemblerLaserSurfaceSource
-  : public HeatTransferAssemblerBase<dim>
-{
-public:
-  HeatTransferAssemblerLaserSurfaceSource(
-    std::shared_ptr<SimulationControl>      simulation_control,
-    std::shared_ptr<Parameters::Laser<dim>> p_laser_parameters)
-    : HeatTransferAssemblerBase<dim>(simulation_control)
-    , laser_parameters(p_laser_parameters)
-  {}
-
-  /**
-   * @brief assemble_matrix Assembles the matrix
-   * @param scratch_data (see base class)
-   * @param copy_data (see base class)
-   */
-
-  virtual void
-  assemble_matrix(HeatTransferScratchData<dim> &scratch_data,
-                  StabilizedMethodsCopyData    &copy_data) override;
-
-  /**
-   * @brief assemble_rhs Assembles the rhs
-   * @param scratch_data (see base class)
-   * @param copy_data (see base class)
-   */
-  virtual void
-  assemble_rhs(HeatTransferScratchData<dim> &scratch_data,
-               StabilizedMethodsCopyData    &copy_data) override;
-
-protected:
-  std::shared_ptr<Parameters::Laser<dim>> laser_parameters;
-};
-
-/**
  * @brief Class that assembles the laser heat source as a volumetric flux for
  * the heat transfer solver. Exponentially decaying model is used to simulate
  * the laser heat source: "Liu, S., Zhu, H., Peng, G., Yin, J. and Zeng, X.,
@@ -326,11 +283,11 @@ protected:
  * @ingroup assemblers
  */
 template <int dim>
-class HeatTransferAssemblerLaserVolumetricSource
+class HeatTransferAssemblerLaserExponentialDecay
   : public HeatTransferAssemblerBase<dim>
 {
 public:
-  HeatTransferAssemblerLaserVolumetricSource(
+  HeatTransferAssemblerLaserExponentialDecay(
     std::shared_ptr<SimulationControl>      simulation_control,
     std::shared_ptr<Parameters::Laser<dim>> p_laser_parameters)
     : HeatTransferAssemblerBase<dim>(simulation_control)
@@ -371,11 +328,11 @@ protected:
  * @ingroup assemblers
  */
 template <int dim>
-class HeatTransferAssemblerLaserSurfaceSourceVOF
+class HeatTransferAssemblerLaserMaterialInterfaceVOF
   : public HeatTransferAssemblerBase<dim>
 {
 public:
-  HeatTransferAssemblerLaserSurfaceSourceVOF(
+  HeatTransferAssemblerLaserMaterialInterfaceVOF(
     std::shared_ptr<SimulationControl>      simulation_control,
     std::shared_ptr<Parameters::Laser<dim>> p_laser_parameters)
     : HeatTransferAssemblerBase<dim>(simulation_control)
@@ -419,11 +376,11 @@ protected:
  * @ingroup assemblers
  */
 template <int dim>
-class HeatTransferAssemblerLaserVolumetricSourceVOF
+class HeatTransferAssemblerLaserExponentialDecayVOF
   : public HeatTransferAssemblerBase<dim>
 {
 public:
-  HeatTransferAssemblerLaserVolumetricSourceVOF(
+  HeatTransferAssemblerLaserExponentialDecayVOF(
     std::shared_ptr<SimulationControl>      simulation_control,
     std::shared_ptr<Parameters::Laser<dim>> p_laser_parameters)
     : HeatTransferAssemblerBase<dim>(simulation_control)

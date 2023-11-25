@@ -269,18 +269,30 @@ HeatTransfer<dim>::setup_assemblers()
 {
   this->assemblers.clear();
 
-  // Laser heat source (surface flux)
-  if (this->simulation_parameters.laser_parameters->activate_laser &&
-      !this->simulation_parameters.laser_parameters->volumetric_source)
+  // Laser heat source
+  if (this->simulation_parameters.laser_parameters->activate_laser)
     {
       if (this->simulation_parameters.multiphysics.VOF)
         {
-          // Call for the specific assembler of the laser source term applied
-          // only to the metal phase
-          this->assemblers.push_back(
-            std::make_shared<HeatTransferAssemblerLaserSurfaceSourceVOF<dim>>(
-              this->simulation_control,
-              this->simulation_parameters.laser_parameters));
+          // Call for the specific assembler of the laser source term
+          // Laser source is applied at the interface (surface flux)
+          if (this->simulation_parameters.laser_parameters->laser_type ==
+              Parameters::Laser<dim>::LaserType::material_interface_vof)
+            {
+              this->assemblers.push_back(
+                std::make_shared<
+                  HeatTransferAssemblerLaserMaterialInterfaceVOF<dim>>(
+                  this->simulation_control,
+                  this->simulation_parameters.laser_parameters));
+            }
+          else // Laser is applied only to the metal phase (volumetric flux)
+            {
+              this->assemblers.push_back(
+                std::make_shared<
+                  HeatTransferAssemblerLaserExponentialDecayVOF<dim>>(
+                  this->simulation_control,
+                  this->simulation_parameters.laser_parameters));
+            }
 
           // Assembler of the radiation sink term applied only at the air/metal
           // interface. The radiation term in that case is treated as a source
@@ -298,42 +310,7 @@ HeatTransfer<dim>::setup_assemblers()
       else
         {
           this->assemblers.push_back(
-            std::make_shared<HeatTransferAssemblerLaserSurfaceSource<dim>>(
-              this->simulation_control,
-              this->simulation_parameters.laser_parameters));
-        }
-    }
-  // Laser heat source (volumetric flux)
-  else if (this->simulation_parameters.laser_parameters->activate_laser &&
-           this->simulation_parameters.laser_parameters->volumetric_source)
-    {
-      if (this->simulation_parameters.multiphysics.VOF)
-        {
-          // Call for the specific assembler of the laser source term applied
-          // only to the metal phase
-          this->assemblers.push_back(
-            std::make_shared<
-              HeatTransferAssemblerLaserVolumetricSourceVOF<dim>>(
-              this->simulation_control,
-              this->simulation_parameters.laser_parameters));
-
-          // Assembler of the radiation sink term applied only at the air/metal
-          // interface. The radiation term in that case is treated as a source
-          // term instead of a boundary term.
-          if (this->simulation_parameters.laser_parameters->radiation
-                .enable_radiation)
-            {
-              this->assemblers.push_back(
-                std::make_shared<
-                  HeatTransferAssemblerFreeSurfaceRadiationVOF<dim>>(
-                  this->simulation_control,
-                  this->simulation_parameters.laser_parameters));
-            }
-        }
-      else
-        {
-          this->assemblers.push_back(
-            std::make_shared<HeatTransferAssemblerLaserVolumetricSource<dim>>(
+            std::make_shared<HeatTransferAssemblerLaserExponentialDecay<dim>>(
               this->simulation_control,
               this->simulation_parameters.laser_parameters));
         }

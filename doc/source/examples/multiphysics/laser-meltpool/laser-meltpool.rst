@@ -149,8 +149,7 @@ All the four boundary conditions are ``noslip``, and the heat transfer boundary 
 Multiphysics
 ~~~~~~~~~~~~
 
-The ``multiphysics`` subsection enables to turn on (``true``) 
-and off (``false``) the physics of interest. Here ``heat transfer``, ``buoyancy force``, and ``fluid dynamics`` are enabled.
+The ``multiphysics`` subsection enables to turn on (``true``) and off (``false``) the physics of interest. Here ``heat transfer``, ``buoyancy force``, and ``fluid dynamics`` are enabled.
 
 
 .. code-block:: text
@@ -182,7 +181,7 @@ where :math:`\eta`, :math:`\alpha`, :math:`P`, :math:`R`, :math:`\mu`, :math:`r`
 
     subsection laser parameters
       set enable               = true
-      set volumetric source    = true
+      set type                 = exponential decay
       set concentration factor = 2
       set power                = 100
       set absorptivity         = 0.6

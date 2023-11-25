@@ -626,7 +626,11 @@ namespace Parameters
 
     // A boolean parameter that indicates if the penetration depth should be
     // taken into account in heat source calculations.
-    bool volumetric_source;
+    enum class LaserType
+    {
+      exponential_decay,
+      material_interface_vof
+    } laser_type;
 
     // Laser concentration factor indicates the definition of the beam radius.
     // In almost all the articles, it is assumed equal to 2.0

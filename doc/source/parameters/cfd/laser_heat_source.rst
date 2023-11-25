@@ -8,11 +8,11 @@ If a laser heat source is present in a simulation, it can be added in this secti
 
   subsection laser parameters
     set enable               = false
-    set volumetric source         = false
+    set type                 = exponential decay
     set concentration factor = 2.0
     set power                = 100.0
     set absorptivity         = 0.5
-    set penetration depth    = 0.0
+    set penetration depth    = 1.0
     set beam radius          = 0.0
     set start time           = 0.0
     set end time             = 1.0
@@ -33,18 +33,18 @@ If a laser heat source is present in a simulation, it can be added in this secti
 
 * The ``enable`` parameter is set to ``true`` if the problem has a laser heat source term and enables its calculation.
 
-* The ``volumetric source`` parameter is set to ``true`` if the media hit by the incident laser ray has non-flat topography. This enables the inclusion of the ``penetration depth`` parameter in the heat flux calculation.
+* The ``type`` parameter is set to ``exponential decay`` (default) if the media hit by the incident laser ray has a non-flat topography (e.g. powder bed). This enables the inclusion of the ``penetration depth`` parameter in the heat flux calculation. If the surface is flat, the ``type`` could be set at ``material interface vof`` and used in conjunction with the :doc:`VOF auxiliary physic <./volume_of_fluid>`. The different models are detailed :ref:`below <LaserTypes>`.
 
 * Laser ``concentration factor`` parameter indicates the definition of the beam radius. In almost all the articles, it is assumed equal to :math:`2.0`.
 
 * The ``power`` parameter sets the power of the laser :math:`[ML^2T^{-3}]`.
 
-* The ``absorptivity`` parameter is defined as the fraction of the amount of incident radiation that is absorbed by the surface, and it is measured using diffuse reﬂectance spectroscopy (DRS). Generally, a constant value in the range of :math:`0.3`-:math:`0.8` (for welding processes with titanium) ise used in the literature. However, recent studies show that it varies with powder particle size distribution and the angle of incidence that changes due to the dynamic melt pool surface `[1] <https://doi.org/10.1016/j.optlastec.2018.08.012>`_.
+* The ``absorptivity`` parameter is defined as the fraction of the amount of incident radiation that is absorbed by the surface, and it is measured using diffuse reﬂectance spectroscopy (DRS). Generally, a constant value in the range of :math:`0.3`-:math:`0.8` (for welding processes with titanium) ise used in the literature. However, recent studies show that it varies with powder particle size distribution and the angle of incidence that changes due to the dynamic meltpool surface `[1] <https://doi.org/10.1016/j.optlastec.2018.08.012>`_.
 
 * The ``penetration depth`` parameter determines the penetration depth of the laser in the simulation domain in the direction of emission. The value should be grater than :math:`0`.
 
   .. attention::
-    This parameter is only taken into account if the ``volumetric source`` parameter is enabled (set to ``true``).
+    This parameter is only taken into account if the laser ``type`` is set to ``exponential decay``.
 
 * The ``beam radius`` parameter defines the radius of the laser beam.
 
@@ -58,29 +58,47 @@ If a laser heat source is present in a simulation, it can be added in this secti
 
 * In the ``path`` subsection, the laser scanning path is defined using a ``Function expression``.
 
-* ``subsection free surface radiation``: In additive manufacturing simulations, radiation at the interface between the air and the metal is a significant cooling mechanism. When this interface (i.e., free surface) is resolved by the :doc:`volume_of_fluid` solver, the ``free surface radiation`` subsection defines the parameters to impose this radiation cooling following the Stefan-Boltzmann law of radiation: :math:`\epsilon \sigma (T^4 - T_{inf}^4)`.
+* ``subsection free surface radiation``: In additive manufacturing simulations, radiation at the interface between the air and the metal is a significant cooling mechanism. When this interface (i.e., free surface) is resolved by the :doc:`volume_of_fluid` solver, the ``free surface radiation`` subsection defines the parameters to impose this radiation cooling following the Stefan-Boltzmann law of radiation:
 
-  * ``enable``: controls if the radiation cooling is enabled. The radiation sink is applied in the heat transfer solver in the cells where the phase fraction gradient norm :math:`|\nabla \alpha|` is non-null.
+  .. math::
+      q_\text{rad} = \epsilon \sigma (T^4 - T_\text{inf}^4)
+
+  * ``enable``: controls if the radiation cooling is enabled. The radiation sink is applied in the heat transfer solver in the cells where the filtered phase fraction gradient norm :math:`|\nabla \phi'|` is non-null.
 
     .. warning::
         To apply this radiation cooling, the ``VOF`` parameter must be set to ``true`` in the :doc:`multiphysics` subsection.
 
-  * ``emissivity``, ``Tinf``, and ``Stefan-Boltzmann constant`` are respectively the emissivity :math:`\epsilon` of the surface, the environment temperature :math:`T_{inf}`, and the Stefan-Boltzmann constant :math:`\sigma`.
+  * ``emissivity``, ``Tinf``, and ``Stefan-Boltzmann constant`` are respectively the emissivity :math:`\epsilon` of the surface, the environment temperature :math:`T_\text{inf}`, and the Stefan-Boltzmann constant :math:`\sigma`.
 
-When ``volumetric source`` is disabled (by default), the laser heat flux is calculated using the following equation:
+.. _LaserTypes:
 
-.. math::
-    q(x,y,z) = \frac{\eta \alpha P}{\pi r^2} \exp{\left(-\eta \frac{r^2}{R^2}\right)}
+Laser types
+^^^^^^^^^^^^^
 
-where :math:`\eta`, :math:`\alpha`, :math:`P`, :math:`R`, and :math:`r` denote the concentration factor, absorptivity, laser power, beam radius, and radial distance from the laser focal point, respectively.
+* When the ``type`` parameter is set to ``exponential decay``, the exponential model from Zhang *et al.* `[2] <https://doi.org/10.1016/j.matdes.2018.01.022>`_ is used to simulate the laser heat source:
 
-and when ``volumetric source`` is enabled the exponential decaying model `[2] <https://doi.org/10.1016/j.matdes.2018.01.022>`_ is used to simulate the laser heat source :
+  .. math::
+      q(x,y,z) = \frac{\eta \alpha P}{\pi r^2 \mu} \exp{\left(-\eta \frac{r^2}{R^2}\right)} \exp{\left(- \frac{|z|}{\mu}\right)}
 
-.. math::
-    q(x,y,z) = \frac{\eta \alpha P}{\pi r^2 \mu} \exp{\left(-\eta \frac{r^2}{R^2}\right)} \exp{\left(- \frac{|z|}{\mu}\right)}
+  where :math:`\eta`, :math:`\alpha`, :math:`P`, :math:`R`, :math:`mu`, :math:`r`, and :math:`z` denote the concentration factor, absorptivity, laser power, beam radius, penetration depth, radial distance from the laser focal point, and axial distance from the laser focal point, respectively.
 
+  When the ``exponential decay`` is used in conjunction with the :doc:`VOF auxiliary physic <./volume_of_fluid>` the equation takes the following form:
 
-where  :math:`\mu` and :math:`z` denote the penetration depth and axial distance from the laser focal point, respectively.
+  .. math::
+      q(x,y,z) = \frac{\phi' \eta \alpha P}{\pi r^2 \mu} \exp{\left(-\eta \frac{r^2}{R^2}\right)} \exp{\left(- \frac{|z|}{\mu}\right)}
+
+  where :math:`\phi'` is the filtered phase fraction.
+
+  .. attention::
+    In this case, the heat affect fluid must be initialized as ``fluid 1``.
+
+* When ``type`` is set to ``material interface vof``, it **must be used in conjunction with the** :doc:`VOF auxiliary physic <./volume_of_fluid>`. This model is used to apply the heat flux, given by the expression below, only at the interface.
+
+  .. math::
+      q(x,y,z) = \frac{|\nabla \phi'| \eta \alpha P}{\pi r^2} \exp{\left(-\eta \frac{r^2}{R^2}\right)}
+
+  where :math:`|\nabla \phi'|` is the :math:`L^2` norm of the filtered phase fraction gradient.
+
 
 -----------
 References

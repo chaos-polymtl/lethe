@@ -601,19 +601,20 @@ HeatTransferAssemblerViscousDissipationVOF<dim>::assemble_rhs(
         scratch_data.velocity_gradient_values[q];
 
       // Manage viscous dissipation application on specified fluid
-      const double phase_value_q = scratch_data.filtered_phase_values[q];
+      const double filtered_phase_value_q =
+        scratch_data.filtered_phase_values[q];
       if (this->viscous_dissipative_fluid == Parameters::FluidIndicator::fluid1)
         {
           // if phase = 0, no viscous dissipation
           // if phase = 1, maximum viscous dissipation
-          viscous_dissipation_coefficient = phase_value_q;
+          viscous_dissipation_coefficient = filtered_phase_value_q;
         }
       else if (this->viscous_dissipative_fluid ==
                Parameters::FluidIndicator::fluid0)
         {
           // if phase = 1, no viscous dissipation
           // if phase = 0, maximum viscous dissipation
-          viscous_dissipation_coefficient = 1. - phase_value_q;
+          viscous_dissipation_coefficient = 1. - filtered_phase_value_q;
         }
       else if (this->viscous_dissipative_fluid ==
                Parameters::FluidIndicator::both)
@@ -648,127 +649,14 @@ template class HeatTransferAssemblerViscousDissipationVOF<3>;
 
 template <int dim>
 void
-HeatTransferAssemblerLaserSurfaceSource<dim>::assemble_matrix(
+HeatTransferAssemblerLaserExponentialDecay<dim>::assemble_matrix(
   HeatTransferScratchData<dim> & /*scratch_data*/,
   StabilizedMethodsCopyData & /*copy_data*/)
 {}
 
 template <int dim>
 void
-HeatTransferAssemblerLaserSurfaceSource<dim>::assemble_rhs(
-  HeatTransferScratchData<dim> &scratch_data,
-  StabilizedMethodsCopyData    &copy_data)
-{
-  // Laser parameters
-  const double concentration_factor = laser_parameters->concentration_factor;
-  const double laser_power          = laser_parameters->laser_power;
-  const double absorptivity         = laser_parameters->laser_absorptivity;
-  const double laser_start_time     = laser_parameters->start_time;
-  const double laser_end_time       = laser_parameters->end_time;
-  const double beam_radius          = laser_parameters->beam_radius;
-  const double current_time = this->simulation_control->get_current_time();
-
-  if (current_time >= laser_start_time && current_time <= laser_end_time)
-    {
-      // Get laser path
-      Function<dim> &laser_scan_path = *(laser_parameters->laser_scan_path);
-      laser_scan_path.set_time(current_time);
-
-      // For the laser heat source calculations, we need the radial distance, r,
-      // (in a dim-1 dimensional plane perpendicular to the laser beam
-      // direction) between the laser focal point and the quadrature points.
-      // Hence, we get the laser location (laser_location) as a Point<dim>, in
-      // which the first and second components show the position of the laser
-      // focal point in a plane perpendicular to the emission direction, and the
-      // (dim-1)th component denotes the position of the laser focal point in
-      // the direction of emission. Then we use dim-1 auxiliary variables
-      // (Point<dim-1> laser_location_on_surface) to store the position of the
-      // laser focal point in the perpendicular plane to the emission direction.
-
-      // Get laser location
-      Point<dim> laser_location;
-      laser_location[0] = laser_scan_path.value(
-        laser_location, laser_parameters->perpendicular_plane_coordinate_one);
-      if constexpr (dim == 3)
-        {
-          laser_location[1] = laser_scan_path.value(
-            laser_location,
-            laser_parameters->perpendicular_plane_coordinate_two);
-        }
-      laser_location[dim - 1] =
-        laser_scan_path.value(laser_location,
-                              laser_parameters->beam_orientation_coordinate);
-
-      // Get laser location on the operation surface
-      Point<dim - 1> laser_location_on_surface;
-      for (unsigned int d = 0; d < dim - 1; d++)
-        laser_location_on_surface[d] = laser_location[d];
-
-      const unsigned int n_q_points = scratch_data.n_q_points;
-      const unsigned int n_dofs     = scratch_data.n_dofs;
-
-      // Copy data elements
-      auto &strong_residual = copy_data.strong_residual;
-      auto &local_rhs       = copy_data.local_rhs;
-
-      // assembling right hand side
-      for (unsigned int q = 0; q < n_q_points; ++q)
-        {
-          // Get quadrature point location on surface to calculate its distance
-          // from the laser focal point in a perpendicular plane to the
-          // direction of emission
-          Point<dim - 1> quadrature_point_on_surface;
-          quadrature_point_on_surface[0] =
-            scratch_data.quadrature_points
-              [q][laser_parameters->perpendicular_plane_coordinate_one];
-          if constexpr (dim == 3)
-            {
-              quadrature_point_on_surface[1] =
-                scratch_data.quadrature_points
-                  [q][laser_parameters->perpendicular_plane_coordinate_two];
-            }
-
-          // Store JxW in local variable for faster access
-          const double JxW = scratch_data.fe_values_T.JxW(q);
-
-          // Calculate the strong residual for GLS stabilization
-          const double laser_heat_source =
-            (concentration_factor * absorptivity * laser_power /
-             (M_PI * beam_radius * beam_radius)) *
-            exp(-1.0 * concentration_factor *
-                std::pow(laser_location_on_surface.distance(
-                           quadrature_point_on_surface),
-                         2.0) /
-                (beam_radius * beam_radius));
-          strong_residual[q] -= laser_heat_source;
-
-          for (unsigned int i = 0; i < n_dofs; ++i)
-            {
-              const auto phi_T_i = scratch_data.phi_T[q][i];
-
-              // rhs for: eta * alpha * P / (pi * R^2) * exp(-eta * r^2 /
-              // R^2) where eta, alpha, P, R, and r denote the concentration
-              // factor, absorptivity, laser power, beam radius, and radial
-              // distance from the laser focal point, respectively.
-              local_rhs(i) += laser_heat_source * phi_T_i * JxW;
-            }
-        } // end loop on quadrature points
-    }
-}
-
-template class HeatTransferAssemblerLaserSurfaceSource<2>;
-template class HeatTransferAssemblerLaserSurfaceSource<3>;
-
-template <int dim>
-void
-HeatTransferAssemblerLaserVolumetricSource<dim>::assemble_matrix(
-  HeatTransferScratchData<dim> & /*scratch_data*/,
-  StabilizedMethodsCopyData & /*copy_data*/)
-{}
-
-template <int dim>
-void
-HeatTransferAssemblerLaserVolumetricSource<dim>::assemble_rhs(
+HeatTransferAssemblerLaserExponentialDecay<dim>::assemble_rhs(
   HeatTransferScratchData<dim> &scratch_data,
   StabilizedMethodsCopyData    &copy_data)
 {
@@ -904,19 +792,19 @@ HeatTransferAssemblerLaserVolumetricSource<dim>::assemble_rhs(
     }
 }
 
-template class HeatTransferAssemblerLaserVolumetricSource<2>;
-template class HeatTransferAssemblerLaserVolumetricSource<3>;
+template class HeatTransferAssemblerLaserExponentialDecay<2>;
+template class HeatTransferAssemblerLaserExponentialDecay<3>;
 
 template <int dim>
 void
-HeatTransferAssemblerLaserSurfaceSourceVOF<dim>::assemble_matrix(
+HeatTransferAssemblerLaserMaterialInterfaceVOF<dim>::assemble_matrix(
   HeatTransferScratchData<dim> & /*scratch_data*/,
   StabilizedMethodsCopyData & /*copy_data*/)
 {}
 
 template <int dim>
 void
-HeatTransferAssemblerLaserSurfaceSourceVOF<dim>::assemble_rhs(
+HeatTransferAssemblerLaserMaterialInterfaceVOF<dim>::assemble_rhs(
   HeatTransferScratchData<dim> &scratch_data,
   StabilizedMethodsCopyData    &copy_data)
 {
@@ -992,7 +880,8 @@ HeatTransferAssemblerLaserSurfaceSourceVOF<dim>::assemble_rhs(
           // Store JxW in local variable for faster access
           const double JxW = scratch_data.fe_values_T.JxW(q);
 
-          const double phase_value_q = scratch_data.filtered_phase_values[q];
+          const double filtered_phase_gradient_value_q_norm =
+            scratch_data.filtered_phase_gradient_values[q].norm();
 
           // Calculate the strong residual for GLS stabilization
           const double laser_heat_source =
@@ -1003,35 +892,38 @@ HeatTransferAssemblerLaserSurfaceSourceVOF<dim>::assemble_rhs(
                            quadrature_point_on_surface),
                          2.0) /
                 (beam_radius * beam_radius));
-          strong_residual[q] -= phase_value_q * laser_heat_source;
+          strong_residual[q] -=
+            filtered_phase_gradient_value_q_norm * laser_heat_source;
 
           for (unsigned int i = 0; i < n_dofs; ++i)
             {
               const auto phi_T_i = scratch_data.phi_T[q][i];
 
               // rhs for: eta * alpha * P / (pi * R^2) * exp(-eta * r^2 /
-              // R^2) where eta, alpha, P, R, and r denote the concentration
-              // factor, absorptivity, laser power, beam radius, and radial
-              // distance from the laser focal point, respectively.
-              local_rhs(i) += phase_value_q * laser_heat_source * phi_T_i * JxW;
+              // R^2) * \grad_phi where eta, alpha, P, R, and r denote the
+              // concentration factor, absorptivity, laser power, beam radius,
+              // radial distance from the laser focal point, and filtered phase
+              // fraction gradient, respectively.
+              local_rhs(i) += filtered_phase_gradient_value_q_norm *
+                              laser_heat_source * phi_T_i * JxW;
             }
         } // end loop on quadrature points
     }
 }
 
-template class HeatTransferAssemblerLaserSurfaceSourceVOF<2>;
-template class HeatTransferAssemblerLaserSurfaceSourceVOF<3>;
+template class HeatTransferAssemblerLaserMaterialInterfaceVOF<2>;
+template class HeatTransferAssemblerLaserMaterialInterfaceVOF<3>;
 
 template <int dim>
 void
-HeatTransferAssemblerLaserVolumetricSourceVOF<dim>::assemble_matrix(
+HeatTransferAssemblerLaserExponentialDecayVOF<dim>::assemble_matrix(
   HeatTransferScratchData<dim> & /*scratch_data*/,
   StabilizedMethodsCopyData & /*copy_data*/)
 {}
 
 template <int dim>
 void
-HeatTransferAssemblerLaserVolumetricSourceVOF<dim>::assemble_rhs(
+HeatTransferAssemblerLaserExponentialDecayVOF<dim>::assemble_rhs(
   HeatTransferScratchData<dim> &scratch_data,
   StabilizedMethodsCopyData    &copy_data)
 {
@@ -1138,7 +1030,8 @@ HeatTransferAssemblerLaserVolumetricSourceVOF<dim>::assemble_rhs(
           // Store JxW in local variable for faster access
           const double JxW = scratch_data.fe_values_T.JxW(q);
 
-          const double phase_value_q = scratch_data.filtered_phase_values[q];
+          const double filtered_phase_value_q =
+            scratch_data.filtered_phase_values[q];
 
           // Calculate the strong residual for GLS stabilization
           const double laser_heat_source =
@@ -1151,7 +1044,7 @@ HeatTransferAssemblerLaserVolumetricSourceVOF<dim>::assemble_rhs(
                 (beam_radius * beam_radius)) *
             exp(-1.0 * laser_quadrature_point_distance_in_depth /
                 penetration_depth);
-          strong_residual[q] -= phase_value_q * laser_heat_source;
+          strong_residual[q] -= filtered_phase_value_q * laser_heat_source;
 
           for (unsigned int i = 0; i < n_dofs; ++i)
             {
@@ -1166,14 +1059,15 @@ HeatTransferAssemblerLaserVolumetricSourceVOF<dim>::assemble_rhs(
               // is used here so that the laser source is only applied in the
               // metal (when phase is non-null).
 
-              local_rhs(i) += phase_value_q * laser_heat_source * phi_T_i * JxW;
+              local_rhs(i) +=
+                filtered_phase_value_q * laser_heat_source * phi_T_i * JxW;
             }
         } // end loop on quadrature points
     }
 }
 
-template class HeatTransferAssemblerLaserVolumetricSourceVOF<2>;
-template class HeatTransferAssemblerLaserVolumetricSourceVOF<3>;
+template class HeatTransferAssemblerLaserExponentialDecayVOF<2>;
+template class HeatTransferAssemblerLaserExponentialDecayVOF<3>;
 
 template <int dim>
 void
@@ -1198,7 +1092,7 @@ HeatTransferAssemblerFreeSurfaceRadiationVOF<dim>::assemble_matrix(
     {
       const double temperature = scratch_data.present_temperature_values[q];
 
-      const Tensor<1, dim> phase_gradient_q =
+      const Tensor<1, dim> filtered_phase_gradient_q =
         scratch_data.filtered_phase_gradient_values[q];
       // Store JxW in local variable for faster access
       const double JxW = scratch_data.fe_values_T.JxW(q);
@@ -1220,7 +1114,7 @@ HeatTransferAssemblerFreeSurfaceRadiationVOF<dim>::assemble_matrix(
               // emissivity of the free surface and T is the current
               // temperature.
               local_matrix(i, j) +=
-                phase_gradient_q.norm() *
+                filtered_phase_gradient_q.norm() *
                 (4.0 * Stefan_Boltzmann_constant * emissivity * temperature *
                  temperature * temperature) *
                 phi_T_i * phi_T_j * JxW;
@@ -1253,7 +1147,7 @@ HeatTransferAssemblerFreeSurfaceRadiationVOF<dim>::assemble_rhs(
     {
       const double temperature = scratch_data.present_temperature_values[q];
 
-      const Tensor<1, dim> phase_gradient_q =
+      const Tensor<1, dim> filtered_phase_gradient_q =
         scratch_data.filtered_phase_gradient_values[q];
       // Store JxW in local variable for faster access
       const double JxW = scratch_data.fe_values_T.JxW(q);
@@ -1270,7 +1164,8 @@ HeatTransferAssemblerFreeSurfaceRadiationVOF<dim>::assemble_rhs(
           // surface, T is the current temperature and T_inf is the reference
           // (environment) temperature.
           local_rhs(i) -=
-            phase_gradient_q.norm() * Stefan_Boltzmann_constant * emissivity *
+            filtered_phase_gradient_q.norm() * Stefan_Boltzmann_constant *
+            emissivity *
             (temperature * temperature * temperature * temperature -
              T_inf * T_inf * T_inf * T_inf) *
             phi_T_i * JxW;

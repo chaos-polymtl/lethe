@@ -53,7 +53,7 @@ DeclException1(
   PorousMediaDisabledError,
   double,
   << "You specified a penetration depth of " << arg1
-  << ". However, the 'volumetric source' parameter is set to 'false'.");
+  << ". However, the 'type' parameter is not set to 'exponential decay'.");
 
 DeclException3(ParameterStrictlyGreaterThanError,
                std::string,
@@ -1353,11 +1353,12 @@ namespace Parameters
     prm.enter_subsection("laser parameters");
     {
       prm.declare_entry("enable", "false", Patterns::Bool(), "Activate laser");
-      prm.declare_entry(
-        "volumetric source",
-        "false",
-        Patterns::Bool(),
-        "Enable to include penetration depth in laser heat flux calculations");
+      prm.declare_entry("type",
+                        "exponential decay",
+                        Patterns::Selection(
+                          "exponential decay|material interface vof"),
+                        "Type of laser model used."
+                        "Choices are <exponential decay|surface vof>.");
       prm.declare_entry("concentration factor",
                         "2.0",
                         Patterns::Double(),
@@ -1368,7 +1369,7 @@ namespace Parameters
                         Patterns::Double(),
                         "Laser absorptivity");
       prm.declare_entry("penetration depth",
-                        "0.0",
+                        "1.0",
                         Patterns::Double(),
                         "Penetration depth");
       prm.declare_entry("beam radius",
@@ -1376,7 +1377,6 @@ namespace Parameters
                         Patterns::Double(),
                         "Laser beam radius");
       radiation.declare_parameters(prm);
-
 
       prm.enter_subsection("path");
       laser_scan_path = std::make_shared<Functions::ParsedFunction<dim>>(dim);
@@ -1407,23 +1407,39 @@ namespace Parameters
   {
     prm.enter_subsection("laser parameters");
     {
-      activate_laser       = prm.get_bool("enable");
-      volumetric_source    = prm.get_bool("volumetric source");
+      activate_laser                = prm.get_bool("enable");
+      const std::string type_string = prm.get("type");
+      if (type_string == "exponential decay")
+        laser_type = LaserType::exponential_decay;
+      if (type_string == "material interface vof")
+        laser_type = LaserType::material_interface_vof;
       concentration_factor = prm.get_double("concentration factor");
       laser_power          = prm.get_double("power");
       laser_absorptivity   = prm.get_double("absorptivity");
       penetration_depth    = prm.get_double("penetration depth");
-      beam_radius          = prm.get_double("beam radius");
-      radiation.parse_parameters(prm);
 
-      if (volumetric_source)
-        AssertThrow(volumetric_source && penetration_depth > 0.0,
-                    ParameterStrictlyGreaterThanError("penetration depth",
-                                                      penetration_depth,
-                                                      0.0));
-      else
-        AssertThrow(!volumetric_source && penetration_depth == 0.0,
-                    PorousMediaDisabledError(penetration_depth));
+      // Check if penetration depth is a strictly positive double and only
+      // defined when the laser is of exponential decay type
+      if (activate_laser)
+        {
+          if (laser_type == LaserType::exponential_decay)
+            {
+              AssertThrow(laser_type == LaserType::exponential_decay &&
+                            penetration_depth > 0.0,
+                          ParameterStrictlyGreaterThanError("penetration depth",
+                                                            penetration_depth,
+                                                            0.0));
+            }
+          else
+            {
+              AssertThrow(laser_type == LaserType::material_interface_vof &&
+                            penetration_depth == 0.0,
+                          PorousMediaDisabledError(penetration_depth));
+            }
+        }
+
+      beam_radius = prm.get_double("beam radius");
+      radiation.parse_parameters(prm);
 
       prm.enter_subsection("path");
       laser_scan_path->parse_parameters(prm);

@@ -380,6 +380,17 @@ public:
           "    end\n"
           "  end\n");
       }
+    if (laser_parameters->activate_laser &&
+        laser_parameters->laser_type ==
+          Parameters::Laser<dim>::LaserType::material_interface_vof &&
+        !multiphysics.VOF)
+      {
+        throw std::logic_error(
+          "At the moment, the laser surface heat flux is not implemented for 1 fluid simulations."
+          "Please enable the VOF auxiliary physic in the 'multiphysics' subsection, \n"
+          "specify a 2nd fluid in the 'physical properties' subsection,\n"
+          "and define appropriate initial conditions in the 'initial conditions' subsection.");
+      }
   }
 
   inline bool

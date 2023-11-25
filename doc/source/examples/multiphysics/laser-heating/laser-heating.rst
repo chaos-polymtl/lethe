@@ -93,8 +93,7 @@ All the boundary conditions are ``noslip``, and the heat transfer boundary condi
 Multiphysics
 ~~~~~~~~~~~~
 
-The ``multiphysics`` subsection enables to turn on (``true``) 
-and off (``false``) the physics of interest. Here only ``heat transfer`` is enabled.
+The ``multiphysics`` subsection enables to turn on (``true``) and off (``false``) the physics of interest. Here only ``heat transfer`` is enabled.
 
 
 .. code-block:: text
@@ -124,7 +123,7 @@ where :math:`\eta`, :math:`\alpha`, :math:`P`, :math:`R`, :math:`\mu`, :math:`r`
 
     subsection laser parameters
       set enable               = true
-      set volumetric source    = true
+      set type                 = exponential decay
       set concentration factor = 50
       set power                = 3
       set absorptivity         = 0.6
