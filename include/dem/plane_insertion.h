@@ -100,7 +100,6 @@ private:
   int                                          particles_of_each_type_remaining;
   unsigned int                                 current_inserting_particle_type;
   std::unordered_map<unsigned int, Point<dim>> cells_centers;
-  std::unordered_map<unsigned int, double>     number_particles_to_insert;
   std::unordered_map<unsigned int, double>     type_of_particle_left_to_insert;
   bool                                         mark_for_update;
   boost::signals2::connection                  change_to_triangulation;

@@ -72,7 +72,6 @@ Insertion<dim>::assign_particle_properties(
   std::vector<std::vector<double>> &particle_properties)
 {
   // Clearing and resizing particle_properties
-  particle_properties.clear();
   particle_properties.reserve(inserted_this_step_this_proc);
 
   // Getting properties as local parameters

@@ -146,9 +146,6 @@ protected:
   // Inserted number of particles at this step on this processor
   unsigned int inserted_this_step_this_proc;
 
-  // A vector of vectors, which contains all the properties of all inserted
-  // particles at each insertion step
-  std::vector<std::vector<double>> particle_properties;
 
   // A distribution object that carries out the attribution of diameter to every
   // particle during an insertion time step
