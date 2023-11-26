@@ -38,7 +38,7 @@ For every block of functions, Lethe reports the number of calls, the wall time s
 
 * ``output`` refers to the output of the ``.vtu``, ``.pvtu`` and ``.pvd`` files.
 
-* ``setup_ILU```or ``setup_AMG`` describe the time spent to set-up the preconditioner.
+* ``setup_ILU`` or ``setup_AMG`` describe the time spent to set-up the preconditioner.
 
 * ``solve_linear_system`` refers to the time spent solving the linear system of equations, without the time required to assemble the preconditioner.
 
