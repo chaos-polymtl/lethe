@@ -5,6 +5,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ## [Master] - 2023-11-27
 
+### Removed
+
+- MINOR The average diameter of the uniform size distribution with the DEM module was specified with a "average diameter" paramter. It is now specified directly from the diameter parameter. This is correctly documented. [#940](https://github.com/lethe-cfd/lethe/pull/940).
+
+## [Master] - 2023-11-27
+
 ### Fixed
 
 - MINOR The DEM time step verification was outputting the the most permissive time step (the biggest) and not the most restrive (the smallest). This bugfix doesn`t affect the uniform particle size simulation. [#939](https://github.com/lethe-cfd/lethe/pull/939).

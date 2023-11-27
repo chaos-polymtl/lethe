@@ -18,10 +18,6 @@ namespace Parameters
                         "0.001",
                         Patterns::Double(),
                         "Particle diameter");
-      prm.declare_entry("average diameter",
-                        "0.001",
-                        Patterns::Double(),
-                        "Average particle diameter");
       prm.declare_entry("standard deviation",
                         "0",
                         Patterns::Double(),
@@ -67,6 +63,7 @@ namespace Parameters
     {
       const std::string size_distribution_type_str =
         prm.get("size distribution type");
+
       if (size_distribution_type_str == "uniform")
         {
           size_distribution_type = size_distribution_type::uniform;
@@ -77,7 +74,7 @@ namespace Parameters
         {
           size_distribution_type = size_distribution_type::normal;
           particle_average_diameter.at(particle_type) =
-            prm.get_double("average diameter");
+            prm.get_double("diameter");
           particle_size_std.at(particle_type) =
             prm.get_double("standard deviation");
         }
