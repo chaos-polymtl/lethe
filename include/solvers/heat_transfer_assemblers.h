@@ -38,6 +38,9 @@
  *
  * @tparam dim An integer that denotes the number of spatial dimensions
  *
+ * @param simulation_control Shared pointer of the SimulationControl object
+ * controlling the current simulation
+ *
  * @ingroup assemblers
  */
 template <int dim>
@@ -55,7 +58,8 @@ public:
    * @param scratch_data Scratch data containing the heat transfer information.
    * It is important to note that the scratch data has to have been re-inited
    * before calling for matrix assembly.
-   * @param copy_data Destination where the element for the local_rhs and local_matrix are copied to
+   * @param copy_data Destination where the element for the local_rhs and
+   * local_matrix are copied to
    */
 
   virtual void
@@ -67,7 +71,8 @@ public:
    * @param scratch_data Scratch data containing the heat transfer information.
    * It is important to note that the scratch data has to have been re-inited
    * before calling for matrix assembly.
-   * @param copy_data Destination where the element for the local_rhs and local_matrix are copied to
+   * @param copy_data Destination where the element for the local_rhs and
+   * local_matrix are copied to
    */
 
   virtual void
@@ -85,6 +90,9 @@ protected:
  * \nabla \mathbf{u} =0 $$
  *
  * @tparam dim An integer that denotes the number of spatial dimensions
+ *
+ * @param simulation_control Shared pointer of the SimulationControl object
+ * controlling the current simulation
  *
  * @ingroup assemblers
  */
@@ -125,6 +133,9 @@ public:
  *
  * @tparam dim An integer that denotes the number of spatial dimensions
  *
+ * @param simulation_control Shared pointer of the SimulationControl object
+ * controlling the current simulation
+ *
  * @ingroup assemblers
  */
 template <int dim>
@@ -159,9 +170,15 @@ public:
 };
 
 /**
- * @brief Class that assembles the Robin boundary condition for the heat transfer solver.
+ * @brief Class that assembles the Robin boundary condition for the heat
+ * transfer solver.
  *
  * @tparam dim An integer that denotes the number of spatial dimensions
+ *
+ * @param simulation_control Shared pointer of the SimulationControl object
+ * controlling the current simulation
+ * @param p_boundary_conditions_ht HTBoundaryConditions object that hold
+ * boundary condition information for the Heat-Transfer solver
  *
  * @ingroup assemblers
  */
@@ -201,9 +218,13 @@ public:
 
 
 /**
- * @brief Class that assembles the viscous dissipation for the heat transfer solver.
+ * @brief Class that assembles the viscous dissipation for the heat transfer
+ * solver.
  *
  * @tparam dim An integer that denotes the number of spatial dimensions
+ *
+ * @param simulation_control Shared pointer of the SimulationControl object
+ * controlling the current simulation
  *
  * @ingroup assemblers
  */
@@ -232,12 +253,18 @@ public:
 };
 
 /**
- * @brief Class that assembles the viscous dissipation for the heat transfer solver,
- * for the specific case of VOF simulations. The only difference compared to the
- * regular one is that the viscous dissipation can be applied in one of the
- * fluids rather than both, through the viscous_dissipative_fluid parameter.
+ * @brief Class that assembles the viscous dissipation for the heat transfer
+ * solver, for the specific case of VOF simulations. The only difference
+ * compared to the regular one is that the viscous dissipation can be applied in
+ * one of the fluids rather than both, through the viscous_dissipative_fluid
+ * parameter.
  *
  * @tparam dim An integer that denotes the number of spatial dimensions
+ *
+ * @param simulation_control Shared pointer of the SimulationControl object
+ * controlling the current simulation
+ * @param p_viscous_dissipative_fluid A FluidIndicator enum element indicating
+ * the selected viscous dissipative fluid(s).
  *
  * @ingroup assemblers
  */
@@ -280,6 +307,10 @@ protected:
  *
  * @tparam dim An integer that denotes the number of spatial dimensions
  *
+ * @param simulation_control Shared pointer of the SimulationControl object
+ * controlling the current simulation
+ * @param p_laser_parameters Shared pointer of the laser parameters
+ *
  * @ingroup assemblers
  */
 template <int dim>
@@ -320,18 +351,22 @@ protected:
 /**
  * @brief Class that assembles the laser heating as a surface flux for the
  * heat transfer solver when VOF is enabled. The laser heat flux is
- * applied at the VOF interface (where the phase gradient is non-null) .
+ * applied at the VOF interface (where the phase gradient is non-null).
  *
  * @tparam dim An integer that denotes the number of spatial dimensions
+ *
+ * @param simulation_control Shared pointer of the SimulationControl object
+ * controlling the current simulation
+ * @param p_laser_parameters Shared pointer of the laser parameters
  *
  * @ingroup assemblers
  */
 template <int dim>
-class HeatTransferAssemblerLaserMaterialInterfaceVOF
+class HeatTransferAssemblerLaserHeatFluxVOFInterface
   : public HeatTransferAssemblerBase<dim>
 {
 public:
-  HeatTransferAssemblerLaserMaterialInterfaceVOF(
+  HeatTransferAssemblerLaserHeatFluxVOFInterface(
     std::shared_ptr<SimulationControl>      simulation_control,
     std::shared_ptr<Parameters::Laser<dim>> p_laser_parameters)
     : HeatTransferAssemblerBase<dim>(simulation_control)
@@ -371,6 +406,10 @@ protected:
  * factor on the laser heat source.
  *
  * @tparam dim An integer that denotes the number of spatial dimensions
+ *
+ * @param simulation_control Shared pointer of the SimulationControl object
+ * controlling the current simulation
+ * @param p_laser_parameters Shared pointer of the laser parameters
  *
  * @ingroup assemblers
  */
@@ -420,6 +459,10 @@ protected:
  * https://doi.org/10.1016/j.cma.2021.113707."
  *
  * @tparam dim An integer that denotes the number of spatial dimensions
+ *
+ * @param simulation_control Shared pointer of the SimulationControl object
+ * controlling the current simulation
+ * @param p_laser_parameters Shared pointer of the laser parameters
  *
  * @ingroup assemblers
  */

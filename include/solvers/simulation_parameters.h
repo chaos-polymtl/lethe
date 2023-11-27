@@ -382,7 +382,7 @@ public:
       }
     if (laser_parameters->activate_laser &&
         laser_parameters->laser_type ==
-          Parameters::Laser<dim>::LaserType::material_interface_vof &&
+          Parameters::Laser<dim>::LaserType::heat_flux_vof_interface &&
         !multiphysics.VOF)
       {
         throw std::logic_error(

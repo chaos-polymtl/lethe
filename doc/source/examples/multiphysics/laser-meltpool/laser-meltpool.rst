@@ -181,7 +181,7 @@ where :math:`\eta`, :math:`\alpha`, :math:`P`, :math:`R`, :math:`\mu`, :math:`r`
 
     subsection laser parameters
       set enable               = true
-      set type                 = exponential decay
+      set type                 = exponential_decay
       set concentration factor = 2
       set power                = 100
       set absorptivity         = 0.6

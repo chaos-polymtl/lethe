@@ -8,9 +8,9 @@ If a laser heat source is present in a simulation, it can be added in this secti
 
   subsection laser parameters
     set enable               = false
-    set type                 = exponential decay
+    set type                 = exponential_decay
     set concentration factor = 2.0
-    set power                = 100.0
+    set power                = 0.0
     set absorptivity         = 0.5
     set penetration depth    = 1.0
     set beam radius          = 0.0
@@ -33,7 +33,7 @@ If a laser heat source is present in a simulation, it can be added in this secti
 
 * The ``enable`` parameter is set to ``true`` if the problem has a laser heat source term and enables its calculation.
 
-* The ``type`` parameter is set to ``exponential decay`` (default) if we assume that the laser behaves as a volumetric source.  If the laser is assumed to be a surface flux, the ``type`` can be set at ``material interface vof`` and used in conjunction with the :doc:`VOF auxiliary physic <./volume_of_fluid>`. The different models are detailed :ref:`below <LaserTypes>`.
+* The ``type`` parameter is set to ``exponential_decay`` (default) if we assume that the laser behaves as a volumetric source.  If the laser is assumed to be a surface flux, the ``type`` can be set at ``heat_flux_vof_interface`` and used in conjunction with the :doc:`VOF auxiliary physic <./volume_of_fluid>`. The different models are detailed :ref:`below <LaserTypes>`.
 
 * Laser ``concentration factor`` parameter indicates the definition of the beam radius. In almost all the articles, it is assumed equal to :math:`2.0`.
 
@@ -44,7 +44,7 @@ If a laser heat source is present in a simulation, it can be added in this secti
 * The ``penetration depth`` parameter determines the penetration depth of the laser in the simulation domain in the direction of emission. The value should be greater than :math:`0`.
 
   .. attention::
-    This parameter is only taken into account if the laser ``type`` is set to ``exponential decay``.
+    This parameter is only taken into account if the laser ``type`` is set to ``exponential_decay``.
 
 * The ``beam radius`` parameter defines the radius of the laser beam.
 
@@ -75,14 +75,14 @@ If a laser heat source is present in a simulation, it can be added in this secti
 Laser types
 ^^^^^^^^^^^^^
 
-* When the ``type`` parameter is set to ``exponential decay``, the exponential model from Zhang *et al.* `[2] <https://doi.org/10.1016/j.matdes.2018.01.022>`_ is used to simulate the laser heat source:
+* When the ``type`` parameter is set to ``exponential_decay``, the exponential model from Zhang *et al.* `[2] <https://doi.org/10.1016/j.matdes.2018.01.022>`_ is used to simulate the laser heat source:
 
   .. math::
       q(x,y,z) = \frac{\eta \alpha P}{\pi r^2 \mu} \exp{\left(-\eta \frac{r^2}{R^2}\right)} \exp{\left(- \frac{|z|}{\mu}\right)}
 
-  where :math:`\eta`, :math:`\alpha`, :math:`P`, :math:`R`, :math:`mu`, :math:`r`, and :math:`z` denote the concentration factor, absorptivity, laser power, beam radius, penetration depth, radial distance from the laser focal point, and axial distance from the laser focal point, respectively.
+  where :math:`\eta`, :math:`\alpha`, :math:`P`, :math:`R`, :math:`\mu`, :math:`r`, and :math:`z` denote the concentration factor, absorptivity, laser power, beam radius, penetration depth, radial distance from the laser focal point, and axial distance from the laser focal point, respectively.
 
-  When the ``exponential decay`` is used in conjunction with the :doc:`VOF auxiliary physic <./volume_of_fluid>` the equation takes the following form:
+  When the ``exponential_decay`` is used in conjunction with the :doc:`VOF auxiliary physic <./volume_of_fluid>` the equation takes the following form:
 
   .. math::
       q(x,y,z) = \frac{\phi' \eta \alpha P}{\pi r^2 \mu} \exp{\left(-\eta \frac{r^2}{R^2}\right)} \exp{\left(- \frac{|z|}{\mu}\right)}
@@ -92,12 +92,12 @@ Laser types
   .. attention::
     In this case, the heat affect fluid must be initialized as ``fluid 1``.
 
-* When ``type`` is set to ``material interface vof``, it **must be used in conjunction with the** :doc:`VOF auxiliary physic <./volume_of_fluid>`. This model is used to apply the heat flux, given by the expression below, only at the interface.
+* When ``type`` is set to ``heat_flux_vof_interface``, it **must be used in conjunction with the** :doc:`VOF auxiliary physic <./volume_of_fluid>`. This model is used to apply the heat flux, given by the expression below, only at the interface.
 
   .. math::
       q(x,y,z) = \frac{|\nabla \phi'| \eta \alpha P}{\pi r^2} \exp{\left(-\eta \frac{r^2}{R^2}\right)}
 
-  where :math:`|\nabla \phi'|` is the :math:`L^2` norm of the filtered phase fraction gradient.
+  where :math:`r` is the radial distance from the laser's axis and :math:`|\nabla \phi'|` is the :math:`L^2` norm of the filtered phase fraction gradient.
 
 
 -----------

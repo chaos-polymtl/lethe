@@ -624,11 +624,15 @@ namespace Parameters
     // A boolean parameter that enables the calculations of laser heat source
     bool activate_laser;
 
-    // Type of laser model
+    // Type of laser model used in simulations. With "exponential_decay", the
+    // laser acts as a volumetric source, whereas, with
+    // "heat_flux_vof_interface", the laser behaves as a surface flux at the
+    // interface between fluids (VOF auxiliary physic must be enabled to use
+    // this model).
     enum class LaserType
     {
       exponential_decay,
-      material_interface_vof
+      heat_flux_vof_interface
     } laser_type;
 
     // Laser concentration factor indicates the definition of the beam radius.

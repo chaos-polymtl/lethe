@@ -797,14 +797,14 @@ template class HeatTransferAssemblerLaserExponentialDecay<3>;
 
 template <int dim>
 void
-HeatTransferAssemblerLaserMaterialInterfaceVOF<dim>::assemble_matrix(
+HeatTransferAssemblerLaserHeatFluxVOFInterface<dim>::assemble_matrix(
   HeatTransferScratchData<dim> & /*scratch_data*/,
   StabilizedMethodsCopyData & /*copy_data*/)
 {}
 
 template <int dim>
 void
-HeatTransferAssemblerLaserMaterialInterfaceVOF<dim>::assemble_rhs(
+HeatTransferAssemblerLaserHeatFluxVOFInterface<dim>::assemble_rhs(
   HeatTransferScratchData<dim> &scratch_data,
   StabilizedMethodsCopyData    &copy_data)
 {
@@ -826,13 +826,15 @@ HeatTransferAssemblerLaserMaterialInterfaceVOF<dim>::assemble_rhs(
       // For the laser heat source calculations, we need the radial distance, r,
       // (in a dim-1 dimensional plane perpendicular to the laser beam
       // direction) between the laser focal point and the quadrature points.
+      // Here, the focal point is any given point on the laser's axis.
       // Hence, we get the laser location (laser_location) as a Point<dim>, in
       // which the first and second components show the position of the laser
-      // focal point in a plane perpendicular to the emission direction, and the
-      // (dim-1)th component denotes the position of the laser focal point in
-      // the direction of emission. Then we use dim-1 auxiliary variables
+      // focal point in a plane perpendicular to the emission direction, and
+      // the (dim-1)th component denotes the position of the laser focal point
+      // in the direction of emission. Then we use dim-1 auxiliary variables
       // (Point<dim-1> laser_location_on_surface) to store the position of the
-      // laser focal point in the perpendicular plane to the emission direction.
+      // laser focal point in the perpendicular plane to the emission
+      // direction.
 
       // Get laser location
       Point<dim> laser_location;
@@ -900,10 +902,10 @@ HeatTransferAssemblerLaserMaterialInterfaceVOF<dim>::assemble_rhs(
               const auto phi_T_i = scratch_data.phi_T[q][i];
 
               // rhs for: eta * alpha * P / (pi * R^2) * exp(-eta * r^2 /
-              // R^2) * \grad_phi where eta, alpha, P, R, and r denote the
+              // R^2) * \grad_phi_norm where eta, alpha, P, R, and r denote the
               // concentration factor, absorptivity, laser power, beam radius,
               // radial distance from the laser focal point, and filtered phase
-              // fraction gradient, respectively.
+              // fraction gradient L2 norm, respectively.
               local_rhs(i) += filtered_phase_gradient_value_q_norm *
                               laser_heat_source * phi_T_i * JxW;
             }
@@ -911,8 +913,8 @@ HeatTransferAssemblerLaserMaterialInterfaceVOF<dim>::assemble_rhs(
     }
 }
 
-template class HeatTransferAssemblerLaserMaterialInterfaceVOF<2>;
-template class HeatTransferAssemblerLaserMaterialInterfaceVOF<3>;
+template class HeatTransferAssemblerLaserHeatFluxVOFInterface<2>;
+template class HeatTransferAssemblerLaserHeatFluxVOFInterface<3>;
 
 template <int dim>
 void
