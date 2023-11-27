@@ -3,6 +3,12 @@ All notable changes to the Lethe project will be documented in this file.
  
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Master] - 2023-11-27
+
+### Fixed
+
+- MINOR The DEM time step verification was outputting the the most permissive time step (the biggest) and not the most restrive (the smallest). This bugfix doesn`t affect the uniform particle size simulation. [#939](https://github.com/lethe-cfd/lethe/pull/939).
+
 
 ## [Master] - 2023-11-23
 
