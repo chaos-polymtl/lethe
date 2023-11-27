@@ -27,6 +27,9 @@ In this subsection, gravitational acceleration, and the physical properties of t
       # Particle diameter
       set diameter                          = 0.005
 
+      # Standard deviation
+      set standard deviation                = 0.0
+
       # Number of particles in type 0
       set number of particles               = 132300
 
@@ -85,9 +88,9 @@ In this subsection, gravitational acceleration, and the physical properties of t
 .. note::
     For each particle type, two ``size distribution type``s can be defined: ``uniform`` and ``normal``. In ``uniform`` size distribution, the diameter of the particles is constant, while in ``normal`` size distribution, the particle diameters are sampled from a normal distribution with an average of ``average diameter`` and standard deviation of ``standard deviation``.
 
-* The ``diameter`` parameter defines the diameter of the particles in a ``uniform`` distribution.
+* The ``diameter`` parameter defines the diameter of the particles in a ``uniform`` distribution. In the case of a ``normal`` distribution, this parameter indicates the average diameter.
 
-* For a ``normal`` distribution, we need to define ``average diameter`` and ``standard deviation`` parameters.
+* For a ``normal`` distribution, the ``standard deviation`` parameter should be defined to indicate the standard deviation on the particle size distribution.
 
 * The ``number of particles`` parameter defines the number of particles for each type.
 
