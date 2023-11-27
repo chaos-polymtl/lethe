@@ -1358,7 +1358,7 @@ namespace Parameters
                         Patterns::Selection(
                           "exponential decay|material interface vof"),
                         "Type of laser model used."
-                        "Choices are <exponential decay|surface vof>.");
+                        "Choices are <exponential decay|material interface vof>.");
       prm.declare_entry("concentration factor",
                         "2.0",
                         Patterns::Double(),

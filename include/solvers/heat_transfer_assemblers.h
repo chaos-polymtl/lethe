@@ -272,7 +272,7 @@ protected:
 };
 
 /**
- * @brief Class that assembles the laser heat source as a volumetric flux for
+ * @brief Class that assembles the laser heating as a volumetric source for
  * the heat transfer solver. Exponentially decaying model is used to simulate
  * the laser heat source: "Liu, S., Zhu, H., Peng, G., Yin, J. and Zeng, X.,
  * 2018. Microstructure prediction of selective laser melting AlSi10Mg
@@ -318,10 +318,9 @@ protected:
 };
 
 /**
- * @brief Class that assembles the laser heat source as a surface flux for the
- * heat transfer solver when VOF is enabled. The laser heat source is only
- * applied in the metal (when phase value is non-null) using the phase value
- * alpha as a multiplying factor on the laser heat source.
+ * @brief Class that assembles the laser heating as a surface flux for the
+ * heat transfer solver when VOF is enabled. The laser heat flux is
+ * applied at the VOF interface (where the phase gradient is non-null) .
  *
  * @tparam dim An integer that denotes the number of spatial dimensions
  *
@@ -362,7 +361,7 @@ protected:
 };
 
 /**
- * @brief Class that assembles the laser heat source as a volumetric flux for
+ * @brief Class that assembles the laser heating as a volumetric source for
  * the heat transfer solver when VOF is enabled. Exponentially decaying model is
  * used to simulate the laser heat source: "Liu, S., Zhu, H., Peng, G.,
  * Yin, J. and Zeng, X., 2018. Microstructure prediction of selective
