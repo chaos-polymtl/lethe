@@ -21,7 +21,6 @@
 #define lethe_utilities_h
 
 #include <deal.II/base/conditional_ostream.h>
-#include <deal.II/base/convergence_table.h>
 #include <deal.II/base/table_handler.h>
 #include <deal.II/base/tensor.h>
 
