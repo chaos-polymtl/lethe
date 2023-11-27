@@ -1314,17 +1314,45 @@ CFDDEMSolver<dim>::dem_setup_contact_parameters()
   dem_parameters.restart =
     this->cfd_dem_simulation_parameters.dem_parameters.restart;
 
+  for (unsigned int counter = 0;
+       counter <
+       dem_parameters.lagrangian_physical_properties.particle_type_number;
+       counter++)
+    {
+      if (*(dem_parameters.lagrangian_physical_properties
+              .diameter_distribution_type.at(counter)) ==
+          Parameters::Lagrangian::LagrangianPhysicalProperties::
+            SizeDistributionType::uniform)
+        {
+          distribution_object_container.insert(
+            {counter,
+             std::make_shared<UniformDistribution>(
+               dem_parameters.lagrangian_physical_properties
+                 .particle_average_diameter.at(counter))});
+        }
+      else if (*(dem_parameters.lagrangian_physical_properties
+                   .diameter_distribution_type.at(counter)) ==
+               Parameters::Lagrangian::LagrangianPhysicalProperties::
+                 SizeDistributionType::normal)
+        {
+          distribution_object_container.insert(
+            {counter,
+             std::make_shared<NormalDistribution>(
+               dem_parameters.lagrangian_physical_properties
+                 .particle_average_diameter.at(counter),
+               dem_parameters.lagrangian_physical_properties.particle_size_std
+                 .at(counter))});
+        }
+    }
 
   maximum_particle_diameter =
     find_maximum_particle_size(dem_parameters.lagrangian_physical_properties,
-                               standard_deviation_multiplier);
+                               distribution_object_container);
   neighborhood_threshold_squared =
     std::pow(dem_parameters.model_parameters.neighborhood_threshold *
                maximum_particle_diameter,
              2);
 
-
-  triangulation_cell_diameter = 0.5 * GridTools::diameter(*this->triangulation);
 
   //   Finding the smallest contact search frequency criterion between (smallest
   //   cell size - largest particle radius) and (security factor * (blab

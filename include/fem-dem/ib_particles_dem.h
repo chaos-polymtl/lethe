@@ -272,8 +272,6 @@ private:
   std::shared_ptr<ParticleWallContactForce<dim>>
     particle_wall_contact_force_object;
 
-  // Empty parameters to initilize particle_wall_contact_force_object
-  double triangulation_cell_diameter = 0.0;
 
   // Particles contact history
   std::map<unsigned int,

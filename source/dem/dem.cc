@@ -19,6 +19,7 @@
 
 #include <dem/data_containers.h>
 #include <dem/dem.h>
+#include <dem/distributions.h>
 #include <dem/explicit_euler_integrator.h>
 #include <dem/find_contact_detection_step.h>
 #include <dem/find_maximum_particle_size.h>
@@ -68,7 +69,6 @@ DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
   , contact_detection_frequency(
       parameters.model_parameters.contact_detection_frequency)
   , insertion_frequency(parameters.insertion_info.insertion_frequency)
-  , standard_deviation_multiplier(2.5)
   , has_periodic_boundaries(false)
   , background_dh(triangulation)
   , has_floating_mesh(false)
@@ -203,12 +203,43 @@ DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
         parameters.model_parameters.solid_fraction_threshold);
     }
 
+  for (unsigned int counter = 0;
+       counter <
+       dem_parameters.lagrangian_physical_properties.particle_type_number;
+       counter++)
+    {
+      if (*(dem_parameters.lagrangian_physical_properties
+              .diameter_distribution_type.at(counter)) ==
+          Parameters::Lagrangian::LagrangianPhysicalProperties::
+            SizeDistributionType::uniform)
+        {
+          distribution_object_container.insert(
+            {counter,
+             std::make_shared<UniformDistribution>(
+               dem_parameters.lagrangian_physical_properties
+                 .particle_average_diameter.at(counter))});
+        }
+      else if (*(dem_parameters.lagrangian_physical_properties
+                   .diameter_distribution_type.at(counter)) ==
+               Parameters::Lagrangian::LagrangianPhysicalProperties::
+                 SizeDistributionType::normal)
+        {
+          distribution_object_container.insert(
+            {counter,
+             std::make_shared<NormalDistribution>(
+               dem_parameters.lagrangian_physical_properties
+                 .particle_average_diameter.at(counter),
+               dem_parameters.lagrangian_physical_properties.particle_size_std
+                 .at(counter))});
+        }
+    }
+
   // Calling input_parameter_inspection to evaluate input parameters in the
   // parameter handler file, finding maximum particle diameter used in
   // polydisperse systems
   maximum_particle_diameter =
     find_maximum_particle_size(parameters.lagrangian_physical_properties,
-                               standard_deviation_multiplier);
+                               distribution_object_container);
   neighborhood_threshold_squared =
     std::pow(parameters.model_parameters.neighborhood_threshold *
                maximum_particle_diameter,
@@ -217,7 +248,7 @@ DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
   if (this_mpi_process == 0)
     input_parameter_inspection(parameters,
                                pcout,
-                               standard_deviation_multiplier);
+                               distribution_object_container);
 
   grid_motion_object =
     std::make_shared<GridMotion<dim, dim>>(parameters.grid_motion,
@@ -891,18 +922,23 @@ DEMSolver<dim>::set_insertion_type(const DEMSolverParameters<dim> &parameters)
     {
       insertion_object =
         std::make_shared<VolumeInsertion<dim>>(parameters,
-                                               maximum_particle_diameter);
+                                               maximum_particle_diameter,
+                                               distribution_object_container);
     }
   else if (parameters.insertion_info.insertion_method ==
            Parameters::Lagrangian::InsertionInfo::InsertionMethod::list)
     {
-      insertion_object = std::make_shared<ListInsertion<dim>>(parameters);
+      insertion_object =
+        std::make_shared<ListInsertion<dim>>(parameters,
+                                             distribution_object_container);
     }
   else if (parameters.insertion_info.insertion_method ==
            Parameters::Lagrangian::InsertionInfo::InsertionMethod::plane)
     {
       insertion_object =
-        std::make_shared<PlaneInsertion<dim>>(parameters, triangulation);
+        std::make_shared<PlaneInsertion<dim>>(parameters,
+                                              triangulation,
+                                              distribution_object_container);
     }
   else
     {

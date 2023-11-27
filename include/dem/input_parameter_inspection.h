@@ -18,6 +18,7 @@
  */
 
 #include <dem/dem_solver_parameters.h>
+#include <dem/distributions.h>
 
 using namespace std;
 
@@ -31,16 +32,16 @@ using namespace std;
  *
  * @param dem_parameters Input DEM parameters in the parameter handler file
  * @param pcout Printing in parallel
- * @param standard_deviation_multiplier Constant standard deviation multiplier.
- * It is defined in the dem constructor and it is equal to 2.5 to cover 99% of
- * the particle size distribution
+ * @param distribution_object_container Contain all the types of distribution being used for each type of particle.
  *
  */
 
 template <int dim>
 void
-input_parameter_inspection(const DEMSolverParameters<dim> &dem_parameters,
-                           const ConditionalOStream       &pcout,
-                           const double standard_deviation_multiplier);
+input_parameter_inspection(
+  const DEMSolverParameters<dim> &dem_parameters,
+  const ConditionalOStream       &pcout,
+  const std::unordered_map<unsigned int, shared_ptr<Distribution>>
+    &distribution_object_container);
 
 #endif /* input_parameter_inspection_h */

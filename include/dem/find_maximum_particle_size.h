@@ -18,31 +18,26 @@
  */
 
 #include <dem/dem_solver_parameters.h>
+#include <dem/distributions.h>
 
 #ifndef find_maximum_particle_size_h
 #  define find_maximum_particle_size_h
 
 /**
- * Find maximum particle size based on defined size values in the parameter
- * handler file. This value is extremely important in polydisperse systems. Note
- * that this value is calculated here using average value + 5 * standard
- * deviation of the diameter, since more than 99.999% of values in a normal
- * distribution lie within +-5 standard deviations. This value can be modified
- * using standard_deviation_multiplier variable.
+ * @brief Find maximum particle size based on defined size values in the parameter
+ * handler file. This value is extremely important in polydisperse systems. Loop
+ * over all the distribution and return the maximum diameter value.
  *
  * @param lagrangian_physical_properties DEM physical properties declared in the
  * .prm file
- * @param standard_deviation_multiplier Constant standard deviation multiplier.
- * It is defined in the dem constructor and it is equal to 2.5 to cover 99% of
- * the particle size distribution
- * @return Maximum particle size
+ * @param distribution_object_container Contains all of the distribution per particle type.
  *
  */
-
 double
 find_maximum_particle_size(
   const Parameters::Lagrangian::LagrangianPhysicalProperties
-              &lagrangian_physical_properties,
-  const double standard_deviation_multiplier);
+    &physical_properties,
+  const std::unordered_map<unsigned int, std::shared_ptr<Distribution>>
+    &distribution_object_container);
 
 #endif

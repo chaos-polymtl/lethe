@@ -5,9 +5,11 @@ using namespace dealii;
 
 template <int dim>
 void
-input_parameter_inspection(const DEMSolverParameters<dim> &dem_parameters,
-                           const ConditionalOStream       &pcout,
-                           const double standard_deviation_multiplier)
+input_parameter_inspection(
+  const DEMSolverParameters<dim> &dem_parameters,
+  const ConditionalOStream       &pcout,
+  const std::unordered_map<unsigned int, shared_ptr<Distribution>>
+    &distribution_object_container)
 {
   // Getting the input parameters as local variable
   auto   parameters          = dem_parameters;
@@ -19,8 +21,12 @@ input_parameter_inspection(const DEMSolverParameters<dim> &dem_parameters,
       double shear_modulus =
         physical_properties.youngs_modulus_particle[i] /
         (2.0 * (1.0 + physical_properties.poisson_ratio_particle[i]));
+
+      double min_diameter =
+        distribution_object_container.at(i)->find_min_diameter();
+
       rayleigh_time_step = std::min(
-        M_PI_2 * physical_properties.particle_average_diameter[i] *
+        M_PI_2 * min_diameter *
           sqrt(physical_properties.density_particle[i] / shear_modulus) /
           (0.1631 * physical_properties.poisson_ratio_particle[i] + 0.8766),
         rayleigh_time_step);
@@ -45,10 +51,7 @@ input_parameter_inspection(const DEMSolverParameters<dim> &dem_parameters,
   // Checking particle size range
   for (unsigned int i = 0; i < physical_properties.particle_type_number; ++i)
     {
-      if (physical_properties.particle_average_diameter.at(i) -
-            standard_deviation_multiplier *
-              physical_properties.particle_size_std.at(i) <
-          0)
+      if (distribution_object_container.at(i)->find_min_diameter() < 0.)
         {
           pcout
             << "Warning: Requested particle size distribution for type: " << i
@@ -100,11 +103,15 @@ input_parameter_inspection(const DEMSolverParameters<dim> &dem_parameters,
 }
 
 template void
-input_parameter_inspection(const DEMSolverParameters<2> &dem_parameters,
-                           const ConditionalOStream     &pcout,
-                           const double standard_deviation_multiplier);
+input_parameter_inspection(
+  const DEMSolverParameters<2> &dem_parameters,
+  const ConditionalOStream     &pcout,
+  const std::unordered_map<unsigned int, shared_ptr<Distribution>>
+    &distribution_object_container);
 
 template void
-input_parameter_inspection(const DEMSolverParameters<3> &dem_parameters,
-                           const ConditionalOStream     &pcout,
-                           const double standard_deviation_multiplier);
+input_parameter_inspection(
+  const DEMSolverParameters<3> &dem_parameters,
+  const ConditionalOStream     &pcout,
+  const std::unordered_map<unsigned int, shared_ptr<Distribution>>
+    &distribution_object_container);

@@ -259,7 +259,8 @@ private:
   double                    maximum_particle_diameter;
   double                    standard_deviation_multiplier;
   double                    smallest_contact_search_criterion;
-  double                    triangulation_cell_diameter;
+  std::unordered_map<unsigned int, std::shared_ptr<Distribution>>
+    distribution_object_container;
 
   DEMContactManager<dim>           contact_manager;
   ParticlePointLineForce<dim>      particle_point_line_contact_force_object;
@@ -271,6 +272,7 @@ private:
                                 particle_wall_contact_force_object;
   Visualization<dim>            visualization_object;
   BoundaryCellsInformation<dim> boundary_cell_object;
+
 
   // Mesh and boundary information
   typename dem_data_structures<dim>::floating_mesh_information

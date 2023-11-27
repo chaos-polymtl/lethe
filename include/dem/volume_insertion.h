@@ -41,8 +41,11 @@ public:
    * @param maximum_particle_diameter Maximum particle diameter based on values
    * defined in the parameter handler
    */
-  VolumeInsertion(const DEMSolverParameters<dim> &dem_parameters,
-                  const double                    maximum_particle_diameter);
+  VolumeInsertion(
+    const DEMSolverParameters<dim> &dem_parameters,
+    const double                    maximum_particle_diameter,
+    const std::unordered_map<unsigned int, std::shared_ptr<Distribution>>
+      &distribution_object_container);
 
   /**
    * Carries out the volume insertion of particles.

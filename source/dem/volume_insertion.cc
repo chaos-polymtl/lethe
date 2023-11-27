@@ -10,8 +10,10 @@ using namespace DEM;
 template <int dim>
 VolumeInsertion<dim>::VolumeInsertion(
   const DEMSolverParameters<dim> &dem_parameters,
-  const double                    maximum_particle_diameter)
-  : Insertion<dim>(dem_parameters)
+  const double                    maximum_particle_diameter,
+  const std::unordered_map<unsigned int, std::shared_ptr<Distribution>>
+    &distribution_object_container)
+  : Insertion<dim>(distribution_object_container)
   , particles_of_each_type_remaining(
       dem_parameters.lagrangian_physical_properties.number.at(0))
 {
@@ -65,7 +67,7 @@ VolumeInsertion<dim>::insert(
       const auto global_bounding_boxes =
         Utilities::MPI::all_gather(communicator, my_bounding_box);
 
-      // Distbuting particles between processors
+      // Distributing particles between processors
       this->inserted_this_step_this_proc =
         floor(this->inserted_this_step / n_mpi_process);
       if (this_mpi_process == (n_mpi_process - 1))

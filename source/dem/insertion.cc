@@ -23,25 +23,11 @@
 #include <sstream>
 
 template <int dim>
-Insertion<dim>::Insertion(const DEMSolverParameters<dim> &dem_parameters)
+Insertion<dim>::Insertion(
+  const std::unordered_map<unsigned int, std::shared_ptr<Distribution>>
+    &distribution_object_container)
 {
-  if (dem_parameters.lagrangian_physical_properties.size_distribution_type ==
-      Parameters::Lagrangian::LagrangianPhysicalProperties::
-        size_distribution_type::uniform)
-    {
-      distribution_object = std::make_shared<UniformDistribution>(
-        dem_parameters.lagrangian_physical_properties
-          .particle_average_diameter);
-    }
-  else if (dem_parameters.lagrangian_physical_properties
-             .size_distribution_type ==
-           Parameters::Lagrangian::LagrangianPhysicalProperties::
-             size_distribution_type::normal)
-    {
-      distribution_object = std::make_shared<NormalDistribution>(
-        dem_parameters.lagrangian_physical_properties.particle_average_diameter,
-        dem_parameters.lagrangian_physical_properties.particle_size_std);
-    }
+  distributions_objects = distribution_object_container;
 }
 
 // Prints the insertion information
@@ -78,8 +64,8 @@ Insertion<dim>::assign_particle_properties(
   // TODO: MAYBE CHANGE THE INPUT TO PHYSICAL PROPERTIES DIRECTLY
   auto physical_properties = dem_parameters.lagrangian_physical_properties;
 
-  this->distribution_object->particle_size_sampling(
-    inserted_this_step_this_proc, current_inserting_particle_type);
+  distributions_objects.at(current_inserting_particle_type)
+    ->particle_size_sampling(inserted_this_step_this_proc);
 
   // A loop is defined over the number of particles which are going to be
   // inserted at this step
@@ -90,7 +76,8 @@ Insertion<dim>::assign_particle_properties(
       double type = current_inserting_particle_type;
       // We make sure that the diameter is positive
       double diameter =
-        std::abs(this->distribution_object->particle_sizes[particle_counter]);
+        std::abs(distributions_objects.at(current_inserting_particle_type)
+                   ->particle_sizes[particle_counter]);
       double density =
         physical_properties.density_particle[current_inserting_particle_type];
       double vel_x        = dem_parameters.insertion_info.vel_x;
