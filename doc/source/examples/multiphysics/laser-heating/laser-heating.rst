@@ -161,9 +161,12 @@ In the ``mesh adaptation`` subsection, we choose a mesh refinement based on the 
 Running the Simulation
 ----------------------
 
-Call the lethe-fluid by invoking:  
+Call the lethe-fluid by invoking:
 
-``mpirun -np 8 lethe-fluid laser-heating.prm``
+.. code-block:: text
+  :class: copy-button
+
+  mpirun -np 8 lethe-fluid laser-heating.prm
 
 to run the simulation using eight CPU cores. Feel free to use more.
 

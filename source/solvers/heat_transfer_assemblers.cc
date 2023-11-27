@@ -1158,7 +1158,7 @@ HeatTransferAssemblerFreeSurfaceRadiationVOF<dim>::assemble_rhs(
         {
           const auto phi_T_i = scratch_data.phi_T[q][i];
 
-          // Rhs for the linearised radiation sink term at the meltpool free
+          // Rhs for the linearised radiation sink term at the melt pool free
           // surface: |grad alpha|* sigma * epsilon * (T^3 - T_inf^3),
           // where |grad alpha| is the phase gradient norm (which indicates an
           // interface between the metal and air if non-null), sigma is the

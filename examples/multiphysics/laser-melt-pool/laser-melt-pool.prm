@@ -11,7 +11,7 @@ subsection simulation control
   set method           = bdf2
   set time end         = 0.005
   set time step        = 0.000005
-  set output name      = laser-meltpool
+  set output name      = laser-melt-pool
   set output frequency = 1
   set output path      = ./output/
 end

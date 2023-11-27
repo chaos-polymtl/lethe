@@ -39,7 +39,7 @@ If a laser heat source is present in a simulation, it can be added in this secti
 
 * The ``power`` parameter sets the power of the laser :math:`[ML^2T^{-3}]`.
 
-* The ``absorptivity`` parameter is defined as the fraction of incident radiation that is absorbed by the surface, and it is measured using diffuse reﬂectance spectroscopy (DRS). Generally, a constant value in the range of :math:`0.3`-:math:`0.8` (for welding processes with titanium) is used in the literature. However, recent studies show that it varies with powder particle size distribution and the angle of incidence that changes due to the dynamic meltpool surface `[1] <https://doi.org/10.1016/j.optlastec.2018.08.012>`_.
+* The ``absorptivity`` parameter is defined as the fraction of incident radiation that is absorbed by the surface, and it is measured using diffuse reﬂectance spectroscopy (DRS). Generally, a constant value in the range of :math:`0.3`-:math:`0.8` (for welding processes with titanium) is used in the literature. However, recent studies show that it varies with powder particle size distribution and the angle of incidence that changes due to the dynamic melt pool surface `[1] <https://doi.org/10.1016/j.optlastec.2018.08.012>`_.
 
 * The ``penetration depth`` parameter determines the penetration depth of the laser in the simulation domain in the direction of emission. The value should be greater than :math:`0`.
 
