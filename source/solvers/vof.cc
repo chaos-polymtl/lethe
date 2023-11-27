@@ -1832,6 +1832,42 @@ VolumeOfFluid<dim>::write_checkpoint()
       sol_set_transfer.push_back(&this->previous_solutions[i]);
     }
   this->solution_transfer->prepare_for_serialization(sol_set_transfer);
+
+  // Serialize tables
+  std::string prefix =
+    this->simulation_parameters.simulation_control.output_folder;
+  std::string suffix = ".checkpoint";
+  if (this->simulation_parameters.analytical_solution->calculate_error())
+    serialize_table(
+      this->error_table,
+      prefix + this->simulation_parameters.analytical_solution->get_filename() +
+        "_VOF" + suffix);
+  if (this->simulation_parameters.multiphysics.vof_parameters.conservation
+        .monitoring)
+    {
+      std::string fluid_id("");
+      if (this->simulation_parameters.multiphysics.vof_parameters.conservation
+            .monitored_fluid == Parameters::FluidIndicator::fluid1)
+        {
+          fluid_id = "fluid_1";
+        }
+      else if (this->simulation_parameters.multiphysics.vof_parameters
+                 .conservation.monitored_fluid ==
+               Parameters::FluidIndicator::fluid0)
+        {
+          fluid_id = "fluid_0";
+        }
+      serialize_table(this->table_monitoring_vof,
+                      prefix + "VOF_monitoring_" + fluid_id + suffix);
+    }
+  if (this->simulation_parameters.post_processing.calculate_barycenter)
+    {
+      serialize_table(
+        this->table_barycenter,
+        prefix +
+          this->simulation_parameters.post_processing.barycenter_output_name +
+          suffix);
+    }
 }
 
 template <int dim>
@@ -1865,6 +1901,42 @@ VolumeOfFluid<dim>::read_checkpoint()
   for (unsigned int i = 0; i < previous_solutions_size; ++i)
     {
       this->previous_solutions[i] = distributed_previous_solutions[i];
+    }
+
+  // Deserialize tables
+  const std::string prefix =
+    this->simulation_parameters.simulation_control.output_folder;
+  const std::string suffix = ".checkpoint";
+  if (this->simulation_parameters.analytical_solution->calculate_error())
+    deserialize_table(
+      this->error_table,
+      prefix + this->simulation_parameters.analytical_solution->get_filename() +
+        "_VOF" + suffix);
+  if (this->simulation_parameters.multiphysics.vof_parameters.conservation
+        .monitoring)
+    {
+      std::string fluid_id("");
+      if (this->simulation_parameters.multiphysics.vof_parameters.conservation
+            .monitored_fluid == Parameters::FluidIndicator::fluid1)
+        {
+          fluid_id = "fluid_1";
+        }
+      else if (this->simulation_parameters.multiphysics.vof_parameters
+                 .conservation.monitored_fluid ==
+               Parameters::FluidIndicator::fluid0)
+        {
+          fluid_id = "fluid_0";
+        }
+      deserialize_table(this->table_monitoring_vof,
+                        prefix + "VOF_monitoring_" + fluid_id + suffix);
+    }
+  if (this->simulation_parameters.post_processing.calculate_barycenter)
+    {
+      deserialize_table(
+        this->table_barycenter,
+        prefix +
+          this->simulation_parameters.post_processing.barycenter_output_name +
+          suffix);
     }
 }
 

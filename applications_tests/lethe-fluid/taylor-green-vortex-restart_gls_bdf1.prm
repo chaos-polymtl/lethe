@@ -78,7 +78,7 @@ subsection restart
   set filename = restart
   # Frequency for checkpointing
   set frequency = 1
-  # Frequency for checkpointing
+  # Enable restart from checkpoint
   set restart = true
 end
 

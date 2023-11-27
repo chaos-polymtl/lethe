@@ -21,7 +21,7 @@ The default parameters are:
     # Output/input files
     set filename   = restart
 
-    # Restarting parameters
+    # Restarting parameter
     set restart    = false
   end
 

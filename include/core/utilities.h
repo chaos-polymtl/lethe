@@ -21,6 +21,7 @@
 #define lethe_utilities_h
 
 #include <deal.II/base/conditional_ostream.h>
+#include <deal.II/base/convergence_table.h>
 #include <deal.II/base/table_handler.h>
 #include <deal.II/base/tensor.h>
 
@@ -310,6 +311,20 @@ serialize_table(const TableHandler &table, const std::string filename)
   oa << table;
 }
 
+/**
+ * @brief Serializes a table using boost serialization feature
+ * the filename should contain the desired extension (2nd constructor)
+ *
+ * @param table The table to be serialized
+ * @param filename The file name (including the extension) to be used
+ */
+inline void
+serialize_table(const ConvergenceTable &table, const std::string filename)
+{
+  std::ofstream                 ofile(filename);
+  boost::archive::text_oarchive oa(ofile, boost::archive::no_header);
+  oa << table;
+}
 
 /**
  * @brief Loads a table using boost serialization feature
@@ -320,6 +335,22 @@ serialize_table(const TableHandler &table, const std::string filename)
  */
 inline void
 deserialize_table(TableHandler &table, const std::string filename)
+{
+  std::ifstream                 ifile(filename);
+  boost::archive::text_iarchive ia(ifile, boost::archive::no_header);
+  ia >> table;
+}
+
+
+/**
+ * @brief Loads a table using boost serialization feature
+ * the filename should contain the desired extension (2nd constructor)
+ *
+ * @param table The table to be deserialized
+ * @param filename The file name (including the extension) to be used
+ */
+inline void
+deserialize_table(ConvergenceTable &table, const std::string filename)
 {
   std::ifstream                 ifile(filename);
   boost::archive::text_iarchive ia(ifile, boost::archive::no_header);
