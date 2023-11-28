@@ -22,7 +22,6 @@
 #include <dem/distributions.h>
 #include <dem/explicit_euler_integrator.h>
 #include <dem/find_contact_detection_step.h>
-#include <dem/find_maximum_particle_size.h>
 #include <dem/gear3_integrator.h>
 #include <dem/input_parameter_inspection.h>
 #include <dem/list_insertion.h>
@@ -207,7 +206,7 @@ DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
 
   distribution_object_container.reserve(
     parameters.lagrangian_physical_properties.particle_type_number);
-
+  maximum_particle_diameter = 0;
   for (unsigned int counter = 0;
        counter < parameters.lagrangian_physical_properties.particle_type_number;
        counter++)
@@ -231,14 +230,16 @@ DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
               parameters.lagrangian_physical_properties.particle_size_std.at(
                 counter));
         }
+      maximum_particle_diameter =
+        std::max(maximum_particle_diameter,
+                 distribution_object_container[counter]->find_max_diameter());
     }
 
 
   // Calling input_parameter_inspection to evaluate input parameters in the
   // parameter handler file, finding maximum particle diameter used in
   // polydisperse systems
-  maximum_particle_diameter =
-    find_maximum_particle_size(distribution_object_container);
+
 
   neighborhood_threshold_squared =
     std::pow(parameters.model_parameters.neighborhood_threshold *

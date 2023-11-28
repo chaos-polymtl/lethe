@@ -2,7 +2,6 @@
 #include <core/solutions_output.h>
 
 #include <dem/explicit_euler_integrator.h>
-#include <dem/find_maximum_particle_size.h>
 #include <dem/gear3_integrator.h>
 #include <dem/post_processing.h>
 #include <dem/set_particle_particle_contact_force_model.h>
@@ -1317,6 +1316,7 @@ CFDDEMSolver<dim>::dem_setup_contact_parameters()
   distribution_object_container.reserve(
     dem_parameters.lagrangian_physical_properties.particle_type_number);
 
+  maximum_particle_diameter = 0.;
   for (unsigned int counter = 0;
        counter <
        dem_parameters.lagrangian_physical_properties.particle_type_number;
@@ -1341,10 +1341,11 @@ CFDDEMSolver<dim>::dem_setup_contact_parameters()
               dem_parameters.lagrangian_physical_properties.particle_size_std
                 .at(counter)));
         }
+      maximum_particle_diameter =
+        std::max(maximum_particle_diameter,
+                 distribution_object_container[counter]->find_max_diameter());
     }
 
-  maximum_particle_diameter =
-    find_maximum_particle_size(distribution_object_container);
   neighborhood_threshold_squared =
     std::pow(dem_parameters.model_parameters.neighborhood_threshold *
                maximum_particle_diameter,

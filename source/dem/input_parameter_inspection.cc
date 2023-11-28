@@ -1,4 +1,3 @@
-#include <dem/find_maximum_particle_size.h>
 #include <dem/input_parameter_inspection.h>
 
 using namespace dealii;
