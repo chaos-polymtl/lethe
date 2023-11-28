@@ -294,7 +294,6 @@ announce_string(const ConditionalOStream &pcout,
   pcout << std::string(expression.size() + 1, delimiter) << std::endl;
 }
 
-
 /**
  * @brief Serializes a table using boost serialization feature
  * the filename should contain the desired extension
@@ -309,7 +308,6 @@ serialize_table(const TableHandler &table, const std::string filename)
   boost::archive::text_oarchive oa(ofile, boost::archive::no_header);
   oa << table;
 }
-
 
 /**
  * @brief Loads a table using boost serialization feature

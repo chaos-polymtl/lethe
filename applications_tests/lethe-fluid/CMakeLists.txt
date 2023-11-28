@@ -14,12 +14,15 @@ file(COPY cavity_ht_average_velocity_restart_files/restart.simulationcontrol DES
 file(COPY cavity_ht_average_velocity_restart_files/restart.triangulation DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/cavity_ht_average_velocity_restart.${_build_type}")
 file(COPY cavity_ht_average_velocity_restart_files/restart.triangulation.info DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/cavity_ht_average_velocity_restart.${_build_type}")
 file(COPY cavity_ht_average_velocity_restart_files/restart.triangulation_fixed.data DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/cavity_ht_average_velocity_restart.${_build_type}")
+file(COPY cavity_ht_average_velocity_restart_files/temperature_statistics.checkpoint DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/cavity_ht_average_velocity_restart.${_build_type}")
 
 file(COPY mms-transient-conduction-restart_files/restart.pvdhandler DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/mms-transient-conduction-restart_gls.${_build_type}")
 file(COPY mms-transient-conduction-restart_files/restart.simulationcontrol DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/mms-transient-conduction-restart_gls.${_build_type}")
 file(COPY mms-transient-conduction-restart_files/restart.triangulation DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/mms-transient-conduction-restart_gls.${_build_type}")
 file(COPY mms-transient-conduction-restart_files/restart.triangulation_fixed.data DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/mms-transient-conduction-restart_gls.${_build_type}")
 file(COPY mms-transient-conduction-restart_files/restart.triangulation.info DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/mms-transient-conduction-restart_gls.${_build_type}")
+file(COPY mms-transient-conduction-restart_files/L2Error_FD.checkpoint DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/mms-transient-conduction-restart_gls.${_build_type}")
+file(COPY mms-transient-conduction-restart_files/L2Error_HT.checkpoint DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/mms-transient-conduction-restart_gls.${_build_type}")
 
 file(COPY taylor-green-vortex-restart_gls_bdf1/restart.pvdhandler DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/taylor-green-vortex-restart_gls_bdf1.${_build_type}")
 file(COPY taylor-green-vortex-restart_gls_bdf1/restart.simulationcontrol DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/taylor-green-vortex-restart_gls_bdf1.${_build_type}")
@@ -28,6 +31,7 @@ file(COPY taylor-green-vortex-restart_gls_bdf1/restart.triangulation_fixed.data 
 file(COPY taylor-green-vortex-restart_gls_bdf1/restart.triangulation.info DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/taylor-green-vortex-restart_gls_bdf1.${_build_type}")
 file(COPY taylor-green-vortex-restart_gls_bdf1/enstrophy.checkpoint DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/taylor-green-vortex-restart_gls_bdf1.${_build_type}")
 file(COPY taylor-green-vortex-restart_gls_bdf1/kinetic_energy.checkpoint DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/taylor-green-vortex-restart_gls_bdf1.${_build_type}")
+file(COPY taylor-green-vortex-restart_gls_bdf1/L2Error_FD.checkpoint DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/taylor-green-vortex-restart_gls_bdf1.${_build_type}")
 
 
 file(COPY cylinder_unstructured.msh DESTINATION "${CMAKE_CURRENT_BINARY_DIR}")

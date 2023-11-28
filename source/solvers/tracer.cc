@@ -572,6 +572,21 @@ Tracer<dim>::write_checkpoint()
       sol_set_transfer.push_back(&previous_solutions[i]);
     }
   solution_transfer->prepare_for_serialization(sol_set_transfer);
+
+  // Serialize tables
+  std::string prefix =
+    this->simulation_parameters.simulation_control.output_folder;
+  std::string suffix = ".checkpoint";
+  if (this->simulation_parameters.analytical_solution->calculate_error())
+    serialize_table(
+      this->error_table,
+      prefix + this->simulation_parameters.analytical_solution->get_filename() +
+        "_tracer" + suffix);
+  if (this->simulation_parameters.post_processing.calculate_tracer_statistics)
+    serialize_table(
+      this->statistics_table,
+      prefix + this->simulation_parameters.post_processing.tracer_output_name +
+        suffix);
 }
 
 template <int dim>
@@ -604,6 +619,21 @@ Tracer<dim>::read_checkpoint()
     {
       previous_solutions[i] = distributed_previous_solutions[i];
     }
+
+  // Deserialize tables
+  std::string prefix =
+    this->simulation_parameters.simulation_control.output_folder;
+  std::string suffix = ".checkpoint";
+  if (this->simulation_parameters.analytical_solution->calculate_error())
+    deserialize_table(
+      this->error_table,
+      prefix + this->simulation_parameters.analytical_solution->get_filename() +
+        "_tracer" + suffix);
+  if (this->simulation_parameters.post_processing.calculate_tracer_statistics)
+    deserialize_table(
+      this->statistics_table,
+      prefix + this->simulation_parameters.post_processing.tracer_output_name +
+        suffix);
 }
 
 
