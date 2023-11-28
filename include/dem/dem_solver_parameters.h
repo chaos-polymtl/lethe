@@ -49,8 +49,6 @@ public:
   Parameters::Lagrangian::LagrangianPostProcessing  post_processing;
   std::shared_ptr<Parameters::DEMSolidObjects<dim>> solid_objects;
 
-
-
   void
   declare(ParameterHandler &prm)
   {

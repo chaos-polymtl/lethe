@@ -735,9 +735,6 @@ CFDDEMSolver<dim>::initialize_dem_parameters()
 
   this->pcout << "Finished initializing DEM parameters " << std::endl
               << "DEM time-step is " << dem_time_step << " s " << std::endl;
-
-  distribution_object_container.resize(
-    dem_parameters.lagrangian_physical_properties.particle_type_number);
 }
 
 template <int dim>

@@ -63,7 +63,7 @@ Insertion<dim>::assign_particle_properties(
   // TODO: MAYBE CHANGE THE INPUT TO PHYSICAL PROPERTIES DIRECTLY
   auto physical_properties = dem_parameters.lagrangian_physical_properties;
 
-  distributions_objects.at(current_inserting_particle_type)
+  distributions_objects[current_inserting_particle_type]
     ->particle_size_sampling(inserted_this_step_this_proc);
 
   // A loop is defined over the number of particles which are going to be
@@ -75,7 +75,7 @@ Insertion<dim>::assign_particle_properties(
       double type = current_inserting_particle_type;
       // We make sure that the diameter is positive
       double diameter =
-        std::abs(distributions_objects.at(current_inserting_particle_type)
+        std::abs(distributions_objects[current_inserting_particle_type]
                    ->particle_sizes[particle_counter]);
       double density =
         physical_properties.density_particle[current_inserting_particle_type];
