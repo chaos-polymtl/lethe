@@ -34,10 +34,7 @@
  *
  */
 double
-find_maximum_particle_size(
-  const Parameters::Lagrangian::LagrangianPhysicalProperties
-    &physical_properties,
-  const std::unordered_map<unsigned int, std::shared_ptr<Distribution>>
-    &distribution_object_container);
+find_maximum_particle_size(const std::vector<std::shared_ptr<Distribution>>
+                             &distribution_object_container);
 
 #endif

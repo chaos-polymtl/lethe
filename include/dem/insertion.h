@@ -62,9 +62,8 @@ public:
    *
    * @param distribution_object_container Contains all distribution for each type of particle
    */
-  Insertion(
-    const std::unordered_map<unsigned int, std::shared_ptr<Distribution>>
-      &distribution_object_container);
+  Insertion(const std::vector<std::shared_ptr<Distribution>>
+              &distribution_object_container);
 
   /**
    * This function is overridden by volume_insertion, plane_insertion and
@@ -150,8 +149,7 @@ protected:
 
   // A distribution object that carries out the attribution of diameter to every
   // particle during an insertion time step
-  std::unordered_map<unsigned int, std::shared_ptr<Distribution>>
-    distributions_objects;
+  std::vector<std::shared_ptr<Distribution>> distributions_objects;
 
 private:
   // Stores particles diameters

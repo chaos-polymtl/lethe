@@ -23,9 +23,8 @@
 #include <sstream>
 
 template <int dim>
-Insertion<dim>::Insertion(
-  const std::unordered_map<unsigned int, std::shared_ptr<Distribution>>
-    &distribution_object_container)
+Insertion<dim>::Insertion(const std::vector<std::shared_ptr<Distribution>>
+                            &distribution_object_container)
 {
   distributions_objects = distribution_object_container;
 }

@@ -11,7 +11,7 @@ template <int dim>
 PlaneInsertion<dim>::PlaneInsertion(
   const DEMSolverParameters<dim>                  &dem_parameters,
   const parallel::distributed::Triangulation<dim> &triangulation,
-  const std::unordered_map<unsigned int, std::shared_ptr<Distribution>>
+  const std::vector<std::shared_ptr<Distribution>>
     &distribution_object_container)
   : Insertion<dim>(distribution_object_container)
   , particles_of_each_type_remaining(

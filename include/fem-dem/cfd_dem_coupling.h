@@ -246,21 +246,19 @@ private:
     return has_disabled_contacts && counter > 1;
   }
 
-  unsigned int              coupling_frequency;
-  bool                      contact_detection_step;
-  bool                      checkpoint_step;
-  bool                      load_balance_step;
-  Tensor<1, 3>              g;
-  std::vector<Tensor<1, 3>> torque;
-  std::vector<Tensor<1, 3>> force;
-  std::vector<double>       displacement;
-  std::vector<double>       MOI;
-  double                    neighborhood_threshold_squared;
-  double                    maximum_particle_diameter;
-  double                    standard_deviation_multiplier;
-  double                    smallest_contact_search_criterion;
-  std::unordered_map<unsigned int, std::shared_ptr<Distribution>>
-    distribution_object_container;
+  unsigned int                               coupling_frequency;
+  bool                                       contact_detection_step;
+  bool                                       checkpoint_step;
+  bool                                       load_balance_step;
+  Tensor<1, 3>                               g;
+  std::vector<Tensor<1, 3>>                  torque;
+  std::vector<Tensor<1, 3>>                  force;
+  std::vector<double>                        displacement;
+  std::vector<double>                        MOI;
+  double                                     neighborhood_threshold_squared;
+  std::vector<std::shared_ptr<Distribution>> distribution_object_container;
+  double                                     maximum_particle_diameter;
+  double                                     smallest_contact_search_criterion;
 
   DEMContactManager<dim>           contact_manager;
   ParticlePointLineForce<dim>      particle_point_line_contact_force_object;

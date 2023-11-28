@@ -6,16 +6,14 @@ using namespace dealii;
 template <int dim>
 void
 input_parameter_inspection(
-  const DEMSolverParameters<dim> &dem_parameters,
-  const ConditionalOStream       &pcout,
-  const std::unordered_map<unsigned int, shared_ptr<Distribution>>
-    &distribution_object_container)
+  const DEMSolverParameters<dim>              &dem_parameters,
+  const ConditionalOStream                    &pcout,
+  const std::vector<shared_ptr<Distribution>> &distribution_object_container)
 {
   // Getting the input parameters as local variable
   auto   parameters          = dem_parameters;
   auto   physical_properties = dem_parameters.lagrangian_physical_properties;
   double rayleigh_time_step  = 1. / DBL_MIN;
-
   for (unsigned int i = 0; i < physical_properties.particle_type_number; ++i)
     {
       double shear_modulus =
@@ -104,14 +102,12 @@ input_parameter_inspection(
 
 template void
 input_parameter_inspection(
-  const DEMSolverParameters<2> &dem_parameters,
-  const ConditionalOStream     &pcout,
-  const std::unordered_map<unsigned int, shared_ptr<Distribution>>
-    &distribution_object_container);
+  const DEMSolverParameters<2>                &dem_parameters,
+  const ConditionalOStream                    &pcout,
+  const std::vector<shared_ptr<Distribution>> &distribution_object_container);
 
 template void
 input_parameter_inspection(
-  const DEMSolverParameters<3> &dem_parameters,
-  const ConditionalOStream     &pcout,
-  const std::unordered_map<unsigned int, shared_ptr<Distribution>>
-    &distribution_object_container);
+  const DEMSolverParameters<3>                &dem_parameters,
+  const ConditionalOStream                    &pcout,
+  const std::vector<shared_ptr<Distribution>> &distribution_object_container);

@@ -11,7 +11,7 @@ template <int dim>
 VolumeInsertion<dim>::VolumeInsertion(
   const DEMSolverParameters<dim> &dem_parameters,
   const double                    maximum_particle_diameter,
-  const std::unordered_map<unsigned int, std::shared_ptr<Distribution>>
+  const std::vector<std::shared_ptr<Distribution>>
     &distribution_object_container)
   : Insertion<dim>(distribution_object_container)
   , particles_of_each_type_remaining(

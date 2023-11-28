@@ -736,6 +736,9 @@ CFDDEMSolver<dim>::initialize_dem_parameters()
 
   this->pcout << "Finished initializing DEM parameters " << std::endl
               << "DEM time-step is " << dem_time_step << " s " << std::endl;
+
+  distribution_object_container.resize(
+    dem_parameters.lagrangian_physical_properties.particle_type_number);
 }
 
 template <int dim>
@@ -1293,8 +1296,6 @@ CFDDEMSolver<dim>::dem_setup_contact_parameters()
   coupling_frequency =
     this->cfd_dem_simulation_parameters.cfd_dem.coupling_frequency;
 
-  standard_deviation_multiplier = 2.5;
-
   // Initialize DEM Parameters
   dem_parameters.lagrangian_physical_properties =
     this->cfd_dem_simulation_parameters.dem_parameters
@@ -1313,41 +1314,37 @@ CFDDEMSolver<dim>::dem_setup_contact_parameters()
   dem_parameters.mesh = this->cfd_dem_simulation_parameters.dem_parameters.mesh;
   dem_parameters.restart =
     this->cfd_dem_simulation_parameters.dem_parameters.restart;
+  distribution_object_container.reserve(
+    dem_parameters.lagrangian_physical_properties.particle_type_number);
 
   for (unsigned int counter = 0;
        counter <
        dem_parameters.lagrangian_physical_properties.particle_type_number;
        counter++)
     {
-      if (*(dem_parameters.lagrangian_physical_properties
-              .diameter_distribution_type.at(counter)) ==
-          Parameters::Lagrangian::LagrangianPhysicalProperties::
-            SizeDistributionType::uniform)
+      if (dem_parameters.lagrangian_physical_properties.distribution_type.at(
+            counter) == Parameters::Lagrangian::SizeDistributionType::uniform)
         {
-          distribution_object_container.insert(
-            {counter,
-             std::make_shared<UniformDistribution>(
-               dem_parameters.lagrangian_physical_properties
-                 .particle_average_diameter.at(counter))});
+          distribution_object_container.at(counter) =
+            std::make_shared<UniformDistribution>(
+              dem_parameters.lagrangian_physical_properties
+                .particle_average_diameter.at(counter));
         }
-      else if (*(dem_parameters.lagrangian_physical_properties
-                   .diameter_distribution_type.at(counter)) ==
-               Parameters::Lagrangian::LagrangianPhysicalProperties::
-                 SizeDistributionType::normal)
+      else if (dem_parameters.lagrangian_physical_properties.distribution_type
+                 .at(counter) ==
+               Parameters::Lagrangian::SizeDistributionType::normal)
         {
-          distribution_object_container.insert(
-            {counter,
-             std::make_shared<NormalDistribution>(
-               dem_parameters.lagrangian_physical_properties
-                 .particle_average_diameter.at(counter),
-               dem_parameters.lagrangian_physical_properties.particle_size_std
-                 .at(counter))});
+          distribution_object_container.at(counter) =
+            std::make_shared<NormalDistribution>(
+              dem_parameters.lagrangian_physical_properties
+                .particle_average_diameter.at(counter),
+              dem_parameters.lagrangian_physical_properties.particle_size_std
+                .at(counter));
         }
     }
 
   maximum_particle_diameter =
-    find_maximum_particle_size(dem_parameters.lagrangian_physical_properties,
-                               distribution_object_container);
+    find_maximum_particle_size(distribution_object_container);
   neighborhood_threshold_squared =
     std::pow(dem_parameters.model_parameters.neighborhood_threshold *
                maximum_particle_diameter,

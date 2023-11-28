@@ -48,18 +48,18 @@ namespace Parameters::Lagrangian
     viscous_resistance
   };
 
+  // Size distribution type
+  enum class SizeDistributionType
+  {
+    uniform,
+    normal
+  };
+
   struct LagrangianPhysicalProperties
   {
   public:
     // Gravitational acceleration
     Tensor<1, 3> g;
-
-    // Size distribution type
-    enum class SizeDistributionType
-    {
-      uniform,
-      normal
-    };
 
     // Number of particle types
     unsigned int particle_type_number;
@@ -69,6 +69,9 @@ namespace Parameters::Lagrangian
 
     // Size standard deviation of each particle type
     std::unordered_map<unsigned int, double> particle_size_std;
+
+    // Distribution type of each particle type
+    std::vector<SizeDistributionType> distribution_type;
 
     // Number of each particle type
     std::unordered_map<unsigned int, int> number;
@@ -84,12 +87,6 @@ namespace Parameters::Lagrangian
 
     // Surface energy of each particle type
     std::unordered_map<unsigned int, double> surface_energy_particle;
-
-    // Distribution type of each particle type
-    std::unordered_map<
-      unsigned int,
-      std::shared_ptr<LagrangianPhysicalProperties::SizeDistributionType>>
-      diameter_distribution_type;
 
     // Coefficients of restitution of each particle type
     std::unordered_map<unsigned int, double> restitution_coefficient_particle;
@@ -107,7 +104,7 @@ namespace Parameters::Lagrangian
     // Poisson's ratio of wall
     double poisson_ratio_wall;
 
-    // Coefficient of restituion of wall
+    // Coefficient of restitution of wall
     double restitution_coefficient_wall;
 
     // Friction coefficient of wall
@@ -136,6 +133,7 @@ namespace Parameters::Lagrangian
     initialize_containers(
       std::unordered_map<unsigned int, double> &particle_average_diameter,
       std::unordered_map<unsigned int, double> &particle_size_std,
+      std::vector<SizeDistributionType>        &distribution_type,
       std::unordered_map<unsigned int, int>    &number,
       std::unordered_map<unsigned int, double> &density_particle,
       std::unordered_map<unsigned int, double> &youngs_modulus_particle,
@@ -145,11 +143,7 @@ namespace Parameters::Lagrangian
       std::unordered_map<unsigned int, double> &friction_coefficient_particle,
       std::unordered_map<unsigned int, double>
         &rolling_friction_coefficient_particle,
-      std::unordered_map<unsigned int, double> &surface_energy_particle,
-      std::unordered_map<
-        unsigned int,
-        std::shared_ptr<LagrangianPhysicalProperties::SizeDistributionType>>
-        &diameter_distribution_type);
+      std::unordered_map<unsigned int, double> &surface_energy_particle);
   };
 
   struct InsertionInfo

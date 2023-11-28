@@ -14,7 +14,7 @@ DeclException2(DiameterSizeCoherence,
 template <int dim>
 ListInsertion<dim>::ListInsertion(
   const DEMSolverParameters<dim> &dem_parameters,
-  const std::unordered_map<unsigned int, std::shared_ptr<Distribution>>
+  const std::vector<std::shared_ptr<Distribution>>
     &distribution_object_container)
   : Insertion<dim>(distribution_object_container)
   , remaining_particles_of_each_type(

@@ -72,6 +72,8 @@ DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
   , has_periodic_boundaries(false)
   , background_dh(triangulation)
   , has_floating_mesh(false)
+  , distribution_object_container(
+      parameters.lagrangian_physical_properties.particle_type_number)
   , has_disabled_contacts(false)
 {
   // Print simulation starting information
@@ -203,47 +205,46 @@ DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
         parameters.model_parameters.solid_fraction_threshold);
     }
 
+  distribution_object_container.reserve(
+    parameters.lagrangian_physical_properties.particle_type_number);
+
   for (unsigned int counter = 0;
-       counter <
-       dem_parameters.lagrangian_physical_properties.particle_type_number;
+       counter < parameters.lagrangian_physical_properties.particle_type_number;
        counter++)
     {
-      if (*(dem_parameters.lagrangian_physical_properties
-              .diameter_distribution_type.at(counter)) ==
-          Parameters::Lagrangian::LagrangianPhysicalProperties::
-            SizeDistributionType::uniform)
+      if (parameters.lagrangian_physical_properties.distribution_type.at(
+            counter) == Parameters::Lagrangian::SizeDistributionType::uniform)
         {
-          distribution_object_container.insert(
-            {counter,
-             std::make_shared<UniformDistribution>(
-               dem_parameters.lagrangian_physical_properties
-                 .particle_average_diameter.at(counter))});
+          distribution_object_container[counter] =
+            std::make_shared<UniformDistribution>(
+              parameters.lagrangian_physical_properties
+                .particle_average_diameter.at(counter));
         }
-      else if (*(dem_parameters.lagrangian_physical_properties
-                   .diameter_distribution_type.at(counter)) ==
-               Parameters::Lagrangian::LagrangianPhysicalProperties::
-                 SizeDistributionType::normal)
+      else if (parameters.lagrangian_physical_properties.distribution_type.at(
+                 counter) ==
+               Parameters::Lagrangian::SizeDistributionType::normal)
         {
-          distribution_object_container.insert(
-            {counter,
-             std::make_shared<NormalDistribution>(
-               dem_parameters.lagrangian_physical_properties
-                 .particle_average_diameter.at(counter),
-               dem_parameters.lagrangian_physical_properties.particle_size_std
-                 .at(counter))});
+          distribution_object_container[counter] =
+            std::make_shared<NormalDistribution>(
+              parameters.lagrangian_physical_properties
+                .particle_average_diameter.at(counter),
+              parameters.lagrangian_physical_properties.particle_size_std.at(
+                counter));
         }
     }
+
 
   // Calling input_parameter_inspection to evaluate input parameters in the
   // parameter handler file, finding maximum particle diameter used in
   // polydisperse systems
   maximum_particle_diameter =
-    find_maximum_particle_size(parameters.lagrangian_physical_properties,
-                               distribution_object_container);
+    find_maximum_particle_size(distribution_object_container);
+
   neighborhood_threshold_squared =
     std::pow(parameters.model_parameters.neighborhood_threshold *
                maximum_particle_diameter,
              2);
+
 
   if (this_mpi_process == 0)
     input_parameter_inspection(parameters,
@@ -253,6 +254,7 @@ DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
   grid_motion_object =
     std::make_shared<GridMotion<dim, dim>>(parameters.grid_motion,
                                            simulation_control->get_time_step());
+
 
   for (unsigned int i_solid = 0;
        i_solid < parameters.solid_objects->number_solids;
@@ -1393,10 +1395,10 @@ DEMSolver<dim>::solve()
 
       // We have to update the positions of the points on boundary faces and
       // their normal vectors here. The update_contacts deletes the
-      // particle-wall contact candidate if it exists in the contact list. As a
-      // result, when we update the points on boundary faces and their normal
-      // vectors, update_contacts deletes it from the output of broad search
-      // and they are not updated in the contact force calculations.
+      // particle-wall contact candidate if it exists in the contact list. As
+      // a result, when we update the points on boundary faces and their
+      // normal vectors, update_contacts deletes it from the output of broad
+      // search and they are not updated in the contact force calculations.
       if (parameters.grid_motion.motion_type !=
           Parameters::Lagrangian::GridMotion<dim>::MotionType::none)
         grid_motion_object
@@ -1404,8 +1406,8 @@ DEMSolver<dim>::solve()
             contact_manager.particle_wall_in_contact,
             updated_boundary_points_and_normal_vectors);
 
-      // Move the solid triangulations, previous time must be used here instead
-      // of current time.
+      // Move the solid triangulations, previous time must be used here
+      // instead of current time.
       for (auto &solid_object : solids)
         solid_object->move_solid_triangulation(
           simulation_control->get_time_step(),
@@ -1415,8 +1417,8 @@ DEMSolver<dim>::solve()
       particle_wall_contact_force();
 
       // Integration correction step (after force calculation)
-      // In the first step, we have to obtain location of particles at half-step
-      // time
+      // In the first step, we have to obtain location of particles at
+      // half-step time
       if (simulation_control->get_step_number() == 0)
         {
           integrator_object->integrate_half_step_location(

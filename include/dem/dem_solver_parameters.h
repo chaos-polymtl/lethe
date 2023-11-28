@@ -50,6 +50,7 @@ public:
   std::shared_ptr<Parameters::DEMSolidObjects<dim>> solid_objects;
 
 
+
   void
   declare(ParameterHandler &prm)
   {

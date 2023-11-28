@@ -54,11 +54,10 @@ public:
    * @param dem_parameters DEM parameters declared in the .prm file
    * @param triangulation Triangulation object used in the simulation.
    */
-  PlaneInsertion(
-    const DEMSolverParameters<dim>                  &dem_parameters,
-    const parallel::distributed::Triangulation<dim> &triangulation,
-    const std::unordered_map<unsigned int, std::shared_ptr<Distribution>>
-      &distribution_object_container);
+  PlaneInsertion(const DEMSolverParameters<dim> &dem_parameters,
+                 const parallel::distributed::Triangulation<dim> &triangulation,
+                 const std::vector<std::shared_ptr<Distribution>>
+                   &distribution_object_container);
 
   /**
    * Carries out the insertion of particles.

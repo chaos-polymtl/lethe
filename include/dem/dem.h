@@ -387,8 +387,8 @@ private:
   // Solid DEM objects
   std::vector<std::shared_ptr<SerialSolid<dim - 1, dim>>> solids;
 
-  std::unordered_map<unsigned int, std::shared_ptr<Distribution>>
-    distribution_object_container;
+  // Distribution objects
+  std::vector<std::shared_ptr<Distribution>> distribution_object_container;
 
   // Dynamic disabling of particle contacts in cells object
   DisableContacts<dim> disable_contacts_object;

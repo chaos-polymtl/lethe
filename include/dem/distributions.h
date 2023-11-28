@@ -19,7 +19,6 @@
 #include <iostream>
 #include <random>
 #include <string>
-#include <unordered_map>
 
 #ifndef distributions_h
 #  define distributions_h
