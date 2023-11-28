@@ -4,55 +4,55 @@
 
 namespace Parameters::Lagrangian
 {
-      void
-    LagrangianPhysicalProperties::declareDefaultEntry(ParameterHandler &prm)
-    {
-      prm.declare_entry("size distribution type",
-                        "uniform",
-                        Patterns::Selection("uniform|normal"),
-                        "Particle size distribution"
-                        "Choices are <uniform|normal>.");
-      prm.declare_entry("diameter",
-                        "0.001",
-                        Patterns::Double(),
-                        "Particle diameter");
-      prm.declare_entry("standard deviation",
-                        "0",
-                        Patterns::Double(),
-                        "Particle size standard deviation");
-      prm.declare_entry("number of particles",
-                        "0",
-                        Patterns::Integer(),
-                        "Number of particles of this type");
-      prm.declare_entry("density particles",
-                        "1000",
-                        Patterns::Double(),
-                        "Particle density");
-      prm.declare_entry("young modulus particles",
-                        "1000000",
-                        Patterns::Double(),
-                        "Particle Young's modulus");
-      prm.declare_entry("poisson ratio particles",
-                        "0.1",
-                        Patterns::Double(),
-                        "Particle Poisson ratio");
-      prm.declare_entry("restitution coefficient particles",
-                        "0.1",
-                        Patterns::Double(),
-                        "Particle restitution coefficient");
-      prm.declare_entry("friction coefficient particles",
-                        "0.1",
-                        Patterns::Double(),
-                        "Particle friction coefficient");
-      prm.declare_entry("rolling friction particles",
-                        "0.1",
-                        Patterns::Double(),
-                        "Particle rolling friction");
-      prm.declare_entry("surface energy particles",
-                        "0.0",
-                        Patterns::Double(),
-                        "Particle surface energy");
-    }
+  void
+  LagrangianPhysicalProperties::declareDefaultEntry(ParameterHandler &prm)
+  {
+    prm.declare_entry("size distribution type",
+                      "uniform",
+                      Patterns::Selection("uniform|normal"),
+                      "Particle size distribution"
+                      "Choices are <uniform|normal>.");
+    prm.declare_entry("diameter",
+                      "0.001",
+                      Patterns::Double(),
+                      "Particle diameter");
+    prm.declare_entry("standard deviation",
+                      "0",
+                      Patterns::Double(),
+                      "Particle size standard deviation");
+    prm.declare_entry("number of particles",
+                      "0",
+                      Patterns::Integer(),
+                      "Number of particles of this type");
+    prm.declare_entry("density particles",
+                      "1000",
+                      Patterns::Double(),
+                      "Particle density");
+    prm.declare_entry("young modulus particles",
+                      "1000000",
+                      Patterns::Double(),
+                      "Particle Young's modulus");
+    prm.declare_entry("poisson ratio particles",
+                      "0.1",
+                      Patterns::Double(),
+                      "Particle Poisson ratio");
+    prm.declare_entry("restitution coefficient particles",
+                      "0.1",
+                      Patterns::Double(),
+                      "Particle restitution coefficient");
+    prm.declare_entry("friction coefficient particles",
+                      "0.1",
+                      Patterns::Double(),
+                      "Particle friction coefficient");
+    prm.declare_entry("rolling friction particles",
+                      "0.1",
+                      Patterns::Double(),
+                      "Particle rolling friction");
+    prm.declare_entry("surface energy particles",
+                      "0.0",
+                      Patterns::Double(),
+                      "Particle surface energy");
+  }
 
   void
   LagrangianPhysicalProperties::parse_particle_properties(
@@ -696,16 +696,16 @@ namespace Parameters::Lagrangian
         disable_particle_contacts =
           prm.get_bool("enable dynamic disabling contacts");
 
-          // Thresholds for disabling contacts
-          granular_temperature_threshold =
-            prm.get_double("granular temperature threshold");
-          solid_fraction_threshold = prm.get_double("solid fraction threshold");
-        }
-        prm.leave_subsection();
+        // Thresholds for disabling contacts
+        granular_temperature_threshold =
+          prm.get_double("granular temperature threshold");
+        solid_fraction_threshold = prm.get_double("solid fraction threshold");
+      }
+      prm.leave_subsection();
 
-        prm.enter_subsection("load balancing");
-        {
-          const std::string load_balance = prm.get("load balance method");
+      prm.enter_subsection("load balancing");
+      {
+        const std::string load_balance = prm.get("load balance method");
 
         if (load_balance == "once")
           {
@@ -760,9 +760,9 @@ namespace Parameters::Lagrangian
             throw(std::runtime_error("Invalid load-balance method "));
           }
 
-          load_balance_particle_weight = prm.get_integer("particle weight");
-        }
-        prm.leave_subsection();
+        load_balance_particle_weight = prm.get_integer("particle weight");
+      }
+      prm.leave_subsection();
 
       prm.enter_subsection("contact detection");
       {
@@ -1303,10 +1303,10 @@ namespace Parameters::Lagrangian
                         Patterns::Double(),
                         "grid translational velocity z");
 
-        prm.declare_entry("grid rotational speed",
-                          "0",
-                          Patterns::Double(),
-                          "grid rotational speed");
+      prm.declare_entry("grid rotational speed",
+                        "0",
+                        Patterns::Double(),
+                        "grid rotational speed");
 
       prm.declare_entry("grid rotational axis",
                         "0",
