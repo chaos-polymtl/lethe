@@ -1861,13 +1861,11 @@ VolumeOfFluid<dim>::write_checkpoint()
                       prefix + "VOF_monitoring_" + fluid_id + suffix);
     }
   if (this->simulation_parameters.post_processing.calculate_barycenter)
-    {
-      serialize_table(
-        this->table_barycenter,
-        prefix +
-          this->simulation_parameters.post_processing.barycenter_output_name +
-          suffix);
-    }
+    serialize_table(
+      this->table_barycenter,
+      prefix +
+        this->simulation_parameters.post_processing.barycenter_output_name +
+        suffix);
 }
 
 template <int dim>
@@ -1931,13 +1929,11 @@ VolumeOfFluid<dim>::read_checkpoint()
                         prefix + "VOF_monitoring_" + fluid_id + suffix);
     }
   if (this->simulation_parameters.post_processing.calculate_barycenter)
-    {
-      deserialize_table(
-        this->table_barycenter,
-        prefix +
-          this->simulation_parameters.post_processing.barycenter_output_name +
-          suffix);
-    }
+    deserialize_table(
+      this->table_barycenter,
+      prefix +
+        this->simulation_parameters.post_processing.barycenter_output_name +
+        suffix);
 }
 
 

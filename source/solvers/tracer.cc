@@ -583,13 +583,10 @@ Tracer<dim>::write_checkpoint()
       prefix + this->simulation_parameters.analytical_solution->get_filename() +
         "_tracer" + suffix);
   if (this->simulation_parameters.post_processing.calculate_tracer_statistics)
-    {
-      serialize_table(
-        this->statistics_table,
-        prefix +
-          this->simulation_parameters.post_processing.tracer_output_name +
-          suffix);
-    }
+    serialize_table(
+      this->statistics_table,
+      prefix + this->simulation_parameters.post_processing.tracer_output_name +
+        suffix);
 }
 
 template <int dim>
@@ -633,13 +630,10 @@ Tracer<dim>::read_checkpoint()
       prefix + this->simulation_parameters.analytical_solution->get_filename() +
         "_tracer" + suffix);
   if (this->simulation_parameters.post_processing.calculate_tracer_statistics)
-    {
-      deserialize_table(
-        this->statistics_table,
-        prefix +
-          this->simulation_parameters.post_processing.tracer_output_name +
-          suffix);
-    }
+    deserialize_table(
+      this->statistics_table,
+      prefix + this->simulation_parameters.post_processing.tracer_output_name +
+        suffix);
 }
 
 

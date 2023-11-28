@@ -951,22 +951,18 @@ HeatTransfer<dim>::write_checkpoint()
       prefix + this->simulation_parameters.analytical_solution->get_filename() +
         "_HT" + suffix);
   if (this->simulation_parameters.post_processing.calculate_heat_flux)
-    {
-      serialize_table(
-        this->heat_flux_table,
-        prefix +
-          this->simulation_parameters.post_processing.heat_flux_output_name +
-          suffix);
-    }
+    serialize_table(
+      this->heat_flux_table,
+      prefix +
+        this->simulation_parameters.post_processing.heat_flux_output_name +
+        suffix);
   if (this->simulation_parameters.post_processing
         .calculate_temperature_statistics)
-    {
-      serialize_table(
-        this->statistics_table,
-        prefix +
-          this->simulation_parameters.post_processing.temperature_output_name +
-          suffix);
-    }
+    serialize_table(
+      this->statistics_table,
+      prefix +
+        this->simulation_parameters.post_processing.temperature_output_name +
+        suffix);
 }
 
 template <int dim>
@@ -1010,22 +1006,18 @@ HeatTransfer<dim>::read_checkpoint()
       prefix + this->simulation_parameters.analytical_solution->get_filename() +
         "_HT" + suffix);
   if (this->simulation_parameters.post_processing.calculate_heat_flux)
-    {
-      deserialize_table(
-        this->heat_flux_table,
-        prefix +
-          this->simulation_parameters.post_processing.heat_flux_output_name +
-          suffix);
-    }
+    deserialize_table(
+      this->heat_flux_table,
+      prefix +
+        this->simulation_parameters.post_processing.heat_flux_output_name +
+        suffix);
   if (this->simulation_parameters.post_processing
         .calculate_temperature_statistics)
-    {
-      deserialize_table(
-        this->statistics_table,
-        prefix +
-          this->simulation_parameters.post_processing.temperature_output_name +
-          suffix);
-    }
+    deserialize_table(
+      this->statistics_table,
+      prefix +
+        this->simulation_parameters.post_processing.temperature_output_name +
+        suffix);
 }
 
 

@@ -1635,33 +1635,27 @@ NavierStokesBase<dim, VectorType, DofsType>::read_checkpoint()
                         prefix + post_processing.pressure_drop_output_name +
                           suffix);
     if (this->simulation_parameters.forces_parameters.calculate_force)
-      {
-        for (unsigned int boundary_id = 0;
-             boundary_id < this->simulation_parameters.boundary_conditions.size;
-             ++boundary_id)
-          {
-            deserialize_table(this->forces_tables[boundary_id],
-                              prefix +
-                                this->simulation_parameters.forces_parameters
-                                  .force_output_name +
-                                "_" + Utilities::int_to_string(boundary_id, 2) +
-                                suffix);
-          }
-      }
+      for (unsigned int boundary_id = 0;
+           boundary_id < this->simulation_parameters.boundary_conditions.size;
+           ++boundary_id)
+        {
+          deserialize_table(
+            this->forces_tables[boundary_id],
+            prefix +
+              this->simulation_parameters.forces_parameters.force_output_name +
+              "_" + Utilities::int_to_string(boundary_id, 2) + suffix);
+        }
     if (this->simulation_parameters.forces_parameters.calculate_torque)
-      {
-        for (unsigned int boundary_id = 0;
-             boundary_id < this->simulation_parameters.boundary_conditions.size;
-             ++boundary_id)
-          {
-            deserialize_table(this->torques_tables[boundary_id],
-                              prefix +
-                                this->simulation_parameters.forces_parameters
-                                  .torque_output_name +
-                                "_" + Utilities::int_to_string(boundary_id, 2) +
-                                suffix);
-          }
-      }
+      for (unsigned int boundary_id = 0;
+           boundary_id < this->simulation_parameters.boundary_conditions.size;
+           ++boundary_id)
+        {
+          deserialize_table(
+            this->torques_tables[boundary_id],
+            prefix +
+              this->simulation_parameters.forces_parameters.torque_output_name +
+              "_" + Utilities::int_to_string(boundary_id, 2) + suffix);
+        }
     if (this->simulation_parameters.analytical_solution->calculate_error())
       deserialize_table(
         this->error_table,
@@ -2243,33 +2237,27 @@ NavierStokesBase<dim, VectorType, DofsType>::write_checkpoint()
                       prefix + post_processing.pressure_drop_output_name +
                         suffix);
     if (this->simulation_parameters.forces_parameters.calculate_force)
-      {
-        for (unsigned int boundary_id = 0;
-             boundary_id < this->simulation_parameters.boundary_conditions.size;
-             ++boundary_id)
-          {
-            serialize_table(this->forces_tables[boundary_id],
-                            prefix +
-                              this->simulation_parameters.forces_parameters
-                                .force_output_name +
-                              "_" + Utilities::int_to_string(boundary_id, 2) +
-                              suffix);
-          }
-      }
+      for (unsigned int boundary_id = 0;
+           boundary_id < this->simulation_parameters.boundary_conditions.size;
+           ++boundary_id)
+        {
+          serialize_table(
+            this->forces_tables[boundary_id],
+            prefix +
+              this->simulation_parameters.forces_parameters.force_output_name +
+              "_" + Utilities::int_to_string(boundary_id, 2) + suffix);
+        }
     if (this->simulation_parameters.forces_parameters.calculate_torque)
-      {
-        for (unsigned int boundary_id = 0;
-             boundary_id < this->simulation_parameters.boundary_conditions.size;
-             ++boundary_id)
-          {
-            serialize_table(this->torques_tables[boundary_id],
-                            prefix +
-                              this->simulation_parameters.forces_parameters
-                                .torque_output_name +
-                              "_" + Utilities::int_to_string(boundary_id, 2) +
-                              suffix);
-          }
-      }
+      for (unsigned int boundary_id = 0;
+           boundary_id < this->simulation_parameters.boundary_conditions.size;
+           ++boundary_id)
+        {
+          serialize_table(
+            this->torques_tables[boundary_id],
+            prefix +
+              this->simulation_parameters.forces_parameters.torque_output_name +
+              "_" + Utilities::int_to_string(boundary_id, 2) + suffix);
+        }
     if (this->simulation_parameters.analytical_solution->calculate_error())
       serialize_table(
         this->error_table,
