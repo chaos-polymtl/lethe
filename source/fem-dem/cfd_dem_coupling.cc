@@ -1325,21 +1325,21 @@ CFDDEMSolver<dim>::dem_setup_contact_parameters()
       if (dem_parameters.lagrangian_physical_properties.distribution_type.at(
             counter) == Parameters::Lagrangian::SizeDistributionType::uniform)
         {
-          distribution_object_container.at(counter) =
+          distribution_object_container.push_back(
             std::make_shared<UniformDistribution>(
               dem_parameters.lagrangian_physical_properties
-                .particle_average_diameter.at(counter));
+                .particle_average_diameter.at(counter)));
         }
       else if (dem_parameters.lagrangian_physical_properties.distribution_type
                  .at(counter) ==
                Parameters::Lagrangian::SizeDistributionType::normal)
         {
-          distribution_object_container.at(counter) =
+          distribution_object_container.push_back(
             std::make_shared<NormalDistribution>(
               dem_parameters.lagrangian_physical_properties
                 .particle_average_diameter.at(counter),
               dem_parameters.lagrangian_physical_properties.particle_size_std
-                .at(counter));
+                .at(counter)));
         }
     }
 
