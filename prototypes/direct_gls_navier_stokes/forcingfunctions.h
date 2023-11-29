@@ -9,7 +9,7 @@ class MMSSineForcingFunction : public Function<dim>
 public:
     MMSSineForcingFunction() : Function<dim>(3) {};
     virtual void vector_value(const Point<dim> &p,
-                              Vector<double> &values) const;
+                              Vector<double> &values) const override;
 };
 template<int dim>
 void MMSSineForcingFunction<dim>::vector_value(const Point<dim> &p,

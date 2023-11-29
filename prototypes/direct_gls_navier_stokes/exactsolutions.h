@@ -10,7 +10,7 @@ class ExactSolutionMMS : public Function<dim>
 public:
     ExactSolutionMMS() : Function<dim>(3) {}
     virtual void vector_value(const Point<dim> &p,
-                              Vector<double> &values) const;
+                              Vector<double> &values) const override;
 };
 template<int dim>
 void ExactSolutionMMS<dim>::vector_value(const Point<dim> &p,
