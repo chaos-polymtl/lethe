@@ -545,21 +545,24 @@ Parameters::CahnHilliard::parse_parameters(ParameterHandler &prm)
 {
   prm.enter_subsection("cahn hilliard");
   {
-    well_height = prm.get_double("well height");
-    potential_smoothing_coefficient =
+    CahnHilliard::well_height = prm.get_double("well height");
+    CahnHilliard::potential_smoothing_coefficient =
       prm.get_double("potential smoothing coefficient");
-    spring_constant_correction = prm.get_double(("spring constant correction"));
+    CahnHilliard::spring_constant_correction =
+      prm.get_double(("spring constant correction"));
 
     prm.enter_subsection("epsilon");
     {
       const std::string op_epsilon = prm.get("method");
       if (op_epsilon == "automatic")
         {
-          epsilon_set_method = Parameters::EpsilonSetStrategy::automatic;
+          CahnHilliard::epsilon_set_method =
+            Parameters::EpsilonSetStrategy::automatic;
         }
       else if (op_epsilon == "manual")
         {
-          epsilon_set_method = Parameters::EpsilonSetStrategy::manual;
+          CahnHilliard::epsilon_set_method =
+            Parameters::EpsilonSetStrategy::manual;
         }
       else
         throw(std::runtime_error("Invalid epsilon setting strategy. "
@@ -575,15 +578,23 @@ Parameters::CahnHilliard::parse_parameters(ParameterHandler &prm)
       if (op_mobility == "constant")
         {
           cahn_hilliard_mobility_model = CahnHilliardMobilityModel::constant;
+          //          std::cout<<"mobility is constant"<<std::endl;
         }
-      if (op_mobility == "quartic")
+      else if (op_mobility == "quartic")
         {
           cahn_hilliard_mobility_model = CahnHilliardMobilityModel::quartic;
+          //            std::cout<<"mobility is constant"<<std::endl;
         }
+      else
+        throw(std::runtime_error("Invalid mobility model. "
+                                 "Options are 'constant' or 'quartic'."));
+
       cahn_hilliard_mobility_constant = prm.get_double("mobility constant");
-      std::cout << "mobility = " << cahn_hilliard_mobility_constant
-                << std::endl;
+
+      //      std::cout << "mobility = " << cahn_hilliard_mobility_constant
+      //                << std::endl;
     }
+
     prm.leave_subsection();
   }
   prm.leave_subsection();

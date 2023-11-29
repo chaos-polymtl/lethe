@@ -56,6 +56,11 @@ public:
    */
   virtual double
   get_mobility_constant() = 0;
+
+  /**
+   * @brief Definition of a virtual destructor
+   */
+  virtual ~MobilityCahnHilliardModel() = default;
 };
 
 /**
@@ -71,6 +76,12 @@ public:
     const double p_mobility_cahn_hilliard_constant)
     : mobility_cahn_hilliard_constant(p_mobility_cahn_hilliard_constant)
   {}
+
+  /**
+   * @brief Destructor of derived class
+   */
+  ~MobilityCahnHilliardModelConstant() = default;
+
 
   /**
    * @brief Method to get the model used for the mobility
@@ -169,6 +180,11 @@ public:
   {
     this->model_depends_on[field::phase_order_cahn_hilliard] = true;
   }
+
+  /**
+   * @brief Destructor of derived class
+   */
+  ~MobilityCahnHilliardModelQuartic() = default;
 
   /**
    * @brief Method to get the model used for the mobility

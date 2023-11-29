@@ -21,7 +21,7 @@ CahnHilliardAssemblerCore<dim>::assemble_matrix(
     this->cahn_hilliard_parameters.cahn_hilliard_mobility_constant;
   const auto mobility_model =
     this->cahn_hilliard_parameters.cahn_hilliard_mobility_model;
-  // std::cout<< "mobility = "<< mobility_constant<<std::endl;
+  // std::cout<< "mobility via ch assembler = "<< mobility_constant<<std::endl;
   const double epsilon   = scratch_data.epsilon;
   const double cell_size = scratch_data.cell_size;
   const double xi =

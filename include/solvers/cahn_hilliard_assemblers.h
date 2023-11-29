@@ -159,8 +159,6 @@ public:
   assemble_rhs(CahnHilliardScratchData<dim> &scratch_data,
                StabilizedMethodsCopyData    &copy_data) override;
 
-
-  Parameters::MaterialInteractions material_interaction_parameters;
   const BoundaryConditions::CahnHilliardBoundaryConditions<dim>
     &boundary_conditions_cahn_hilliard;
 };
