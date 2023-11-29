@@ -111,7 +111,7 @@ The boundary condition is similar to the other stirred tank cases except we let 
 Definition of the Impeller Motion
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The orientation of an object using the sharp interface immersed boundary method is defined using Euler angles and an XYZ rotation convention. As such, determining the orientation of an object as it rotates around an arbitrary cannot be directly defined by the direct integration of the angular velocity. To do so, we instead use Rodrigues' rotation matrix, and from this rotation matrix, we extract the XYZ rotation angle. This calculation can be symbolically performed by a simple Python code using the sympy library. The code is given in the example folder but is also presented here. One is to adjust the initial rotation of the object and the angular velocity of the object. Here, the initial rotation of the impeller is given by a :math:`\frac{\pi}{4}` rad rotation around the Y axis to align the impeller with the :math:`[1,0,1]` vector. Then the rotation speed is given by :math:`\mathbf{\omega}=2 \p 2 [-1,0,-1]`.
+The orientation of an object using the sharp interface immersed boundary method is defined using Euler angles and an XYZ rotation convention. As such, determining the orientation of an object as it rotates around an arbitrary cannot be directly defined by the direct integration of the angular velocity. To do so, we instead use Rodrigues' rotation matrix, and from this rotation matrix, we extract the XYZ rotation angle. This calculation can be symbolically performed by a simple Python code using the sympy library. The code is given in the example folder but is also presented here. One is to adjust the initial rotation of the object and the angular velocity of the object. Here, the initial rotation of the impeller is given by a :math:`\frac{\pi}{4}` rad rotation around the Y axis to align the impeller with the :math:`[1,0,1]` vector. Then the rotation speed is given by :math:`\mathbf{\omega}=2 \pi \frac{\sqrt{2}}{2} [-1,0,-1]`.
 
 
 .. code-block:: text
@@ -189,9 +189,9 @@ The orientation of an object using the sharp interface immersed boundary method 
     Initial_rotation=rot_axisx(initial_rot_x)*rot_axisy(initial_rot_y)*rot_axisz(initial_rot_z)
 
     # Angular velocity vector
-    ox=-1*np.pi*2
+    ox=-1*np.pi*2*np.sqrt(2)/2.0
     oy=0
-    oz=-1*np.pi*2
+    oz=-1*np.pi*2*np.sqrt(2)/2.0
 
     # Magnitude of the angular velocity vector
     omega_mag = sqrt(ox**2 + oy**2 + oz**2)
@@ -226,7 +226,7 @@ From this Python code, we obtained the following expression of the orientation u
 .. code-block:: text
 
     subsection orientation
-          set Function expression =atan2(0.707106781186547*sin(pi/4)*sin(8.88576587631673*t) - 0.707106781186547*sin(8.88576587631673*t)*cos(pi/4), (0.5 - 0.5*cos(8.88576587631673*t))*sin(pi/4) + (0.5*cos(8.88576587631673*t) + 0.5)*cos(pi/4));asin((0.5 - 0.5*cos(8.88576587631673*t))*cos(pi/4) + (0.5*cos(8.88576587631673*t) + 0.5)*sin(pi/4));atan2(-0.707106781186547*sin(8.88576587631673*t), -(0.5 - 0.5*cos(8.88576587631673*t))*sin(pi/4) + (0.5*cos(8.88576587631673*t) + 0.5)*cos(pi/4))
+        set Function expression =atan2(0.707106781186548*sin(pi/4)*sin(6.28318530717959*t) - 0.707106781186548*sin(6.28318530717959*t)*cos(pi/4), (0.5 - 0.5*cos(6.28318530717959*t))*sin(pi/4) + (0.5*cos(6.28318530717959*t) + 0.5)*cos(pi/4));asin((0.5 - 0.5*cos(6.28318530717959*t))*cos(pi/4) + (0.5*cos(6.28318530717959*t) + 0.5)*sin(pi/4));atan2(-0.707106781186548*sin(6.28318530717959*t), -(0.5 - 0.5*cos(6.28318530717959*t))*sin(pi/4) + (0.5*cos(6.28318530717959*t) + 0.5)*cos(pi/4))
     end
 
 The parameters used to define the impeller  is based on the example: :doc:`../3d-composite-mixer-with-pbt-impeller/3d-composite-mixer-with-pbt-impeller`, giving the following:
@@ -235,7 +235,7 @@ The parameters used to define the impeller  is based on the example: :doc:`../3d
 .. code-block:: text
 
     subsection particles
-       set number of particles                     = 1
+      set number of particles                     = 1
       set assemble Navier-Stokes inside particles = false
       subsection extrapolation function
         set stencil order = 2
@@ -257,10 +257,10 @@ The parameters used to define the impeller  is based on the example: :doc:`../3d
           set Function expression = 0;0;0
         end
         subsection orientation
-          set Function expression =atan2(0.707106781186547*sin(pi/4)*sin(8.88576587631673*t) - 0.707106781186547*sin(8.88576587631673*t)*cos(pi/4), (0.5 - 0.5*cos(8.88576587631673*t))*sin(pi/4) + (0.5*cos(8.88576587631673*t) + 0.5)*cos(pi/4));asin((0.5 - 0.5*cos(8.88576587631673*t))*cos(pi/4) + (0.5*cos(8.88576587631673*t) + 0.5)*sin(pi/4));atan2(-0.707106781186547*sin(8.88576587631673*t), -(0.5 - 0.5*cos(8.88576587631673*t))*sin(pi/4) + (0.5*cos(8.88576587631673*t) + 0.5)*cos(pi/4))
+          set Function expression =atan2(0.707106781186548*sin(pi/4)*sin(6.28318530717959*t) - 0.707106781186548*sin(6.28318530717959*t)*cos(pi/4), (0.5 - 0.5*cos(6.28318530717959*t))*sin(pi/4) + (0.5*cos(6.28318530717959*t) + 0.5)*cos(pi/4));asin((0.5 - 0.5*cos(6.28318530717959*t))*cos(pi/4) + (0.5*cos(6.28318530717959*t) + 0.5)*sin(pi/4));atan2(-0.707106781186548*sin(6.28318530717959*t), -(0.5 - 0.5*cos(6.28318530717959*t))*sin(pi/4) + (0.5*cos(6.28318530717959*t) + 0.5)*cos(pi/4))
         end
         subsection omega
-          set Function expression = -1*pi*2;0;-1*pi*2
+          set Function expression = -1*pi*2*sqrt(2)/2;0;-1*pi*2*sqrt(2)/2
         end
         set type            = composite
         set shape arguments = impeller.composite
