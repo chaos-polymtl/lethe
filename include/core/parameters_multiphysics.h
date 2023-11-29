@@ -26,9 +26,15 @@
 #ifndef lethe_parameters_multiphysics_h
 #define lethe_parameters_multiphysics_h
 
+#include <core/dimensionality.h>
+#include <core/ib_particle.h>
+#include <core/multiphysics.h>
 #include <core/parameters.h>
+#include <core/utilities.h>
 
+#include <deal.II/base/conditional_ostream.h>
 #include <deal.II/base/parameter_handler.h>
+#include <deal.II/base/parsed_function.h>
 
 using namespace dealii;
 
