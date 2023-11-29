@@ -1412,8 +1412,7 @@ namespace Parameters
       laser_absorptivity   = prm.get_double("absorptivity");
       penetration_depth    = prm.get_double("penetration depth");
 
-      // Check if penetration depth is a strictly positive double and only
-      // defined when the laser is of exponential_decay type
+      // Check if penetration depth is a strictly positive double.
       if (activate_laser && laser_type == LaserType::exponential_decay)
         {
           AssertThrow(laser_type == LaserType::exponential_decay &&
