@@ -829,12 +829,10 @@ HeatTransferAssemblerLaserHeatFluxVOFInterface<dim>::assemble_rhs(
       // Here, the focal point is any given point on the laser's axis.
       // Hence, we get the laser location (laser_location) as a Point<dim>, in
       // which the first and second components show the position of the laser
-      // focal point in a plane perpendicular to the emission direction, and
-      // the (dim-1)th component denotes the position of the laser focal point
-      // in the direction of emission. Then we use dim-1 auxiliary variables
-      // (Point<dim-1> laser_location_on_surface) to store the position of the
-      // laser focal point in the perpendicular plane to the emission
-      // direction.
+      // focal point in a plane perpendicular to the emission direction.
+      // Then we use dim-1 auxiliary variables (Point<dim-1>
+      // laser_location_on_surface) to store the position of the laser focal
+      // point in the perpendicular plane to the emission direction.
 
       // Get laser location
       Point<dim> laser_location;
@@ -846,9 +844,6 @@ HeatTransferAssemblerLaserHeatFluxVOFInterface<dim>::assemble_rhs(
             laser_location,
             laser_parameters->perpendicular_plane_coordinate_two);
         }
-      laser_location[dim - 1] =
-        laser_scan_path.value(laser_location,
-                              laser_parameters->beam_orientation_coordinate);
 
       // Get laser location on the operation surface
       Point<dim - 1> laser_location_on_surface;
