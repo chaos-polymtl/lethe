@@ -8,7 +8,7 @@ public:
   RotatingWall () : Function<dim>(dim+1) {}
 
   virtual double value (const Point<dim>   &p,
-                        const unsigned int  component ) const;
+                        const unsigned int  component ) const override;
 };
 
 
@@ -17,7 +17,7 @@ double RotatingWall<dim>::value (const Point<dim> &p,
                                    const unsigned int component) const
 {
     Assert (component < this->n_components,
-            ExcIndexRange (component, 0, this->n_components))
+            ExcIndexRange (component, 0, this->n_components));
 
     if (component==0)
         return -p[1];
