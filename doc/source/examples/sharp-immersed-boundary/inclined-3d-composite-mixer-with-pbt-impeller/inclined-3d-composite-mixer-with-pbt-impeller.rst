@@ -1,5 +1,5 @@
 ============================================================================================
-Incline 3D Mixer with Pitched-Blade Turbine Impeller Using Composite Sharp-Immersed Boundary
+Inclined 3D Mixer with Pitched-Blade Turbine Impeller Using Composite Sharp-Immersed Boundary
 ============================================================================================
 
 The mixing of stirred tanks is a common chemical engineering problem that can be tackled through immersed boundary simulation. This example presents an inclined impeller as a variation of :doc:`../3d-composite-mixer-with-pbt-impeller/3d-composite-mixer-with-pbt-impeller` to illustrate how to define the impeller motion with an arbitrary inclination angle properly.
@@ -17,8 +17,8 @@ Features
 Files Used in This Example
 ----------------------------
 
-* Parameter file: ``/examples/sharp-immersed-boundary/incline-3d-composite-mixer-with-pbt-impeller/mixer.prm``
-* Composite geometry file: ``/examples/sharp-immersed-boundary/incline-3d-composite-mixer-with-pbt-impeller/impeller.composite``
+* Parameter file: ``/examples/sharp-immersed-boundary/inclined-3d-composite-mixer-with-pbt-impeller/mixer.prm``
+* Composite geometry file: ``/examples/sharp-immersed-boundary/inclined-3d-composite-mixer-with-pbt-impeller/impeller.composite``
 
 
 -----------------------
@@ -28,10 +28,10 @@ Description of the Case
 In this example, we simulate a mixer using a PBT impeller through the usage of Sharp-Immersed boundaries. The shape of the impeller is defined by a composition of basic shapes in an identical manner as in example :doc:`../3d-composite-mixer-with-pbt-impeller/3d-composite-mixer-with-pbt-impeller`. The objective is to show how to define the rotating motion of the impeller properly when the object is rotating on an arbitrary axis. The tank used in this example is a sample cube. For this case we model an impeller that is rotating around the axis defined by the vector :math:`[1,0,1]`. The visualization of the geometries is presented in the following figure.
 
 
-.. image:: images/incline_impeller.png
-   :alt: incline_impeller
+.. image:: images/inclined_impeller.png
+   :alt: inclined_impeller
    :align: center
-   :name: incline_impeller
+   :name: inclined_impeller
 
 
 
@@ -275,7 +275,7 @@ Results
 
 The velocity field obtained with this example after 1 second:
 
-.. image:: images/incline-impeller_flow_1_sec.png
+.. image:: images/inclined-impeller_flow_1_sec.png
    :alt: flow_1sec
    :align: center
    :name: velocity_field_norm
