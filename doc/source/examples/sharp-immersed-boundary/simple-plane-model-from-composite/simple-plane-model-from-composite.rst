@@ -2,7 +2,7 @@
 Simple Plane Model From Composite
 =====================================================================================
 
-This example aims to showcase the vast possibilities of objects that can be defined using the composite shape in the sharp, immersed boundary solver. It also aims to give an example of the type of operation that can be made from this geometry.
+This example aims to showcase the vast possibilities of objects that can be defined using the composite shape in the sharp, immersed boundary solver. It also aims to give an example of the type of operations that can be made from this geometry.
 
 ----------------------------------
 Features
@@ -40,11 +40,11 @@ The shape is created in two steps inspired by the GMSH syntax.
 
 Shapes and boolean operations each have an ID, and boolean operations can reference previous operations to build upon them. The final shape obtained is the product of the operation with the largest ID. To facilitate shape creation, we start indexing the operations form ID 30. This index is much larger than the number of primitives used.
  
-All the shape is placed in the reference frame of the composite shape that can then be moved depending on the position and orientation of the shape prescribed in the parameter file of the case. Here, we only focus on the step-by-step operation required to generate this complex shape.
+All the shape are placed in the reference frame of the composite shape which can then be moved depending on the position and orientation of the shape prescribed in the parameter file of the case. Here, we only focus on the step-by-step operation required to generate this complex shape.
 
 
 .. Note:: 
-    This model uses multiple shapes that are referred to as superquadric ellipsoids. This superquadric shape has at least two axes defined using a 2-order power. Any slice of this type of superquadric, parallel to the plane defined by these two axes, is an ellipse. If the remaining axis as a higher power then the shape will tend toward an extrusion of an elipse with a rounded tip. 
+    This model uses multiple shapes that are referred to as superquadric ellipsoids. This superquadric shape has at least two axes defined using a 2-order power. Any slice of this type of superquadric, parallel to the plane defined by these two axes, is an ellipse. If the remaining axis has a higher power then the shape will tend toward an extrusion of an ellipse with a rounded tip. 
 
 The ``plane.composite`` file contains these instructions. The plane along the X-axis, and the positive Z-axis is in the above direction of the plane. The Y axis point in the left direction of the plane.
 
@@ -55,10 +55,10 @@ The ``plane.composite`` file contains these instructions. The plane along the X-
 
     shapes
     0; superquadric; 0.3:2.5:0.05:2:6:2; 0.1:0:0 ; 0:-0.05:0.25 # Full left wing 
-    1; hyper rectangle; 5:5:5;0:-5:0 ; 0:0:0 # Cube to trim of the right side of the left wing
+    1; hyper rectangle; 5:5:5;0:-5:0 ; 0:0:0 # Cube to trim off the right side of the left wing
     2; superquadric; 0.3:2.5:0.05:2:6:2; 0.1:0:0 ; 0:-0.05:-0.25 # Full right wing 
-    3; hyper rectangle; 5:5:5;0:5:0 ; 0:0:0 # Cube to trim of the left side of the right wing
-    4; superquadric; 1.5:0.3:0.3:3:2:2; -0.25:0:0 ; 0:0:0 # Fuselabe of the plane
+    3; hyper rectangle; 5:5:5;0:5:0 ; 0:0:0 # Cube to trim off the left side of the right wing
+    4; superquadric; 1.5:0.3:0.3:3:2:2; -0.25:0:0 ; 0:0:0 # Fuselage of the plane
     5; superquadric; 0.15:0.05:0.5:2:2:6; -1.75:0:0.4 ; 0:-0.5:0 # Tail wing vertical plan
     6; superquadric; 0.15:0.5:0.05:2:6:2; -1.85:0:0.6 ; 0:0:0 # Tail wing horizontal plan
     7; superquadric; 0.3:0.1:0.1:5:2:2; -1.25:0.3:0.3 ; 0:0:0 # Left engine shape
@@ -68,33 +68,33 @@ The ``plane.composite`` file contains these instructions. The plane along the X-
     11; superquadric; 0.1:0.03:0.25:6:2:2;  -1.25:0.15:0.15 ; -0.78539816:0:0 # Left engine link
     12; superquadric; 0.1:0.03:0.25:6:2:2;  -1.25:-0.15:0.15 ; 0.78539816:0:0 # Right engine link
     operations
-    30; difference  ; 1:0 # Trim of the left wing
-    31; difference  ; 3:2 # Trim of the right wing
-    32; union       ; 30:31 # Combined the two wings
-    33; union       ; 32:4 # Combined the wings with the plane fuselage
-    34; union       ; 33:5 # Combined vertical part of the tail wing with the fuselage
-    35; union       ; 34:6 # Combined horizontal part of the tail wing with the fuselage
+    30; difference  ; 1:0 # Trim off the left wing
+    31; difference  ; 3:2 # Trim off the right wing
+    32; union       ; 30:31 # Combine the two wings
+    33; union       ; 32:4 # Combine the wings with the plane fuselage
+    34; union       ; 33:5 # Combine vertical part of the tail wing with the fuselage
+    35; union       ; 34:6 # Combine horizontal part of the tail wing with the fuselage
     36; difference  ; 8:7 # Hole in the left engine
-    37; union       ; 35:36 # Combined left engine with the fuselage
+    37; union       ; 35:36 # Combine left engine with the fuselage
     38; difference  ; 10:9 # Hole in the right engine
-    39; union       ; 37:38 # Combined right engine with the fuselage and the other engine
+    39; union       ; 37:38 # Combine right engine with the fuselage and the other engine
     40; difference     ; 7:11 # Trim of the left engine link with the engine shape
-    41; difference     ; 9:12 # Trim of the right engine link with the engine shape
+    41; difference     ; 9:12 # Trim off the right engine link with the engine shape
     42; union     ; 39:40 # Combine the left engine link with the rest of the plane
     43; union     ; 42:41 # Combine the right engine link with the rest of the plane
   
-Lets right this file step-by-step Line-by-line:
+Let us read this file step-by-step Line-by-line:
 
 
-1. First, we create the left wing. This wing is created using a superquadric ellipsoids shape. Along the cord, we use an elongated ellipsoid with lengths 0.6 and 0.1 thickness. In the wingspane direction, the wing is defined by a 6-order power superquadric with a half wingspan of 2.5. We then tilt the wing backward by 0.25 rad and give a small angle of attack of 0.05 rad. Since the wing is now tilted backward, the right side of the superquadric shape is undesirable, so we remove it using a hypercube to trim the right side of the wing.
+1. First, we create the left wing. This wing is created using a superquadric ellipsoid shape. Along the cord, we use an elongated ellipsoid with length 0.6 and 0.1 thickness. In the wingspan direction, the wing is defined by a 6-order power superquadric with a half wingspan of 2.5. We then tilt the wing backward by 0.25 rad and give a small angle of attack of 0.05 rad. Since the wing is now tilted backward, the right side of the superquadric shape is undesirable, so we remove it using a hypercube to trim the right side of the wing.
 
 .. code-block:: text
 
     shapes
     0; superquadric; 0.3:2.5:0.05:2:6:2; 0.1:0:0 ; 0:-0.05:0.25 # Full left wing 
-    1; hyper rectangle; 5:5:5;0:-5:0 ; 0:0:0 # Cube to trim of the right side of the left wing
+    1; hyper rectangle; 5:5:5;0:-5:0 ; 0:0:0 # Cube to trim off the right side of the left wing
     operations
-    30; difference  ; 1:0 # Trim of the left wing
+    30; difference  ; 1:0 # Trim off the left wing
 
 This step gives us the first wing of the plane.
 
@@ -104,19 +104,19 @@ This step gives us the first wing of the plane.
    :name: left_wing
    
 
-2. We repeat the same operation for the right wing and add a union of the and right wing.
+2. We repeat the same operation for the right wing and add a union of the left and right wing.
 
 .. code-block:: text
 
     shapes
     0; superquadric; 0.3:2.5:0.05:2:6:2; 0.1:0:0 ; 0:-0.05:0.25 # Full left wing 
-    1; hyper rectangle; 5:5:5;0:-5:0 ; 0:0:0 # Cube to trim of the right side of the left wing
+    1; hyper rectangle; 5:5:5;0:-5:0 ; 0:0:0 # Cube to trim off the right side of the left wing
     2; superquadric; 0.3:2.5:0.05:2:6:2; 0.1:0:0 ; 0:-0.05:-0.25 # Full right wing 
-    3; hyper rectangle; 5:5:5;0:5:0 ; 0:0:0 # Cube to trim of the left side of the right wing
+    3; hyper rectangle; 5:5:5;0:5:0 ; 0:0:0 # Cube to trim off the left side of the right wing
     operations
-    30; difference  ; 1:0 # Trim of the left wing
-    31; difference  ; 3:2 # Trim of the right wing
-    32; union       ; 30:31 # Combined the two wings
+    30; difference  ; 1:0 # Trim off the left wing
+    31; difference  ; 3:2 # Trim off the right wing
+    32; union       ; 30:31 # Combine the two wings
 
 This step gives us the first wing of the plane.
 
@@ -125,20 +125,20 @@ This step gives us the first wing of the plane.
    :align: center
    :name: both_wing
 
-3. Next, we add the fuselage of the plane. We approximate the fuselage with a circular superquadric shape with a length of 3 and a radius of 0.3. On the length of the plane, the superquadric of power 3. We want the wings to be a bit more at the front of the fuselage, so we move the fuselage slightly backward by 0.25. We then add the combination of the wings and the fuselage.
+3. Next, we add the fuselage of the plane. We approximate the fuselage with a circular superquadric shape with a length of 3 and a radius of 0.3. On the length of the plane, the superquadric is of power 3. We want the wings to be a bit more at the front of the fuselage, so we move the fuselage slightly backward by 0.25. We then add the combination of the wings and the fuselage.
 .. code-block:: text
 
     shapes
     0; superquadric; 0.3:2.5:0.05:2:6:2; 0.1:0:0 ; 0:-0.05:0.25 # Full left wing 
-    1; hyper rectangle; 5:5:5;0:-5:0 ; 0:0:0 # Cube to trim of the right side of the left wing
+    1; hyper rectangle; 5:5:5;0:-5:0 ; 0:0:0 # Cube to trim off the right side of the left wing
     2; superquadric; 0.3:2.5:0.05:2:6:2; 0.1:0:0 ; 0:-0.05:-0.25 # Full right wing 
-    3; hyper rectangle; 5:5:5;0:5:0 ; 0:0:0 # Cube to trim of the left side of the right wing
-    4; superquadric; 1.5:0.3:0.3:3:2:2; -0.25:0:0 ; 0:0:0 # Fuselabe of the plane
+    3; hyper rectangle; 5:5:5;0:5:0 ; 0:0:0 # Cube to trim off the left side of the right wing
+    4; superquadric; 1.5:0.3:0.3:3:2:2; -0.25:0:0 ; 0:0:0 # Fuselage of the plane
     operations
-    30; difference  ; 1:0 # Trim of the left wing
-    31; difference  ; 3:2 # Trim of the right wing
-    32; union       ; 30:31 # Combined the two wings
-    33; union     ; 32:4 # Combined the wings with the plane fuselage
+    30; difference  ; 1:0 # Trim off the left wing
+    31; difference  ; 3:2 # Trim off the right wing
+    32; union       ; 30:31 # Combine the two wings
+    33; union     ; 32:4 # Combine the wings with the plane fuselage
 
 This step gives us the following wings an fuselage of the plane.
 
@@ -148,7 +148,7 @@ This step gives us the following wings an fuselage of the plane.
    :name: wings_and_fuselage
    
 
-4. We continue with the addition of the tailwind. The tail wing is made from a combination of two superquadric ellipsoid shapes, one for the vertical plane of the tail wing and one for the horizontal plane of the tailwind. Along the cord of these sections, the shapes are made from elongated ellipsoids with a minor axis of 0.1 and a main axis of 0.3. The span of both shapes is defined using a 6-order power of length 1. The position is adjusted to fit with the tail of the fuselage.
+4. We continue with the addition of the tail wing. The tail wing is made from a combination of two superquadric ellipsoid shapes, one for the vertical plane of the tail wing and one for the horizontal plane of the tailwind. Along the cord of these sections, the shapes are made from elongated ellipsoids with a minor axis of 0.1 and a main axis of 0.3. The span of both shapes is defined using a 6-order power of length 1. The position is adjusted to fit with the tail of the fuselage.
 
 .. code-block:: text
 

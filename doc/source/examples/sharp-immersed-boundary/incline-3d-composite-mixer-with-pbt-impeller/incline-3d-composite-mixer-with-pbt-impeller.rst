@@ -25,7 +25,7 @@ Files Used in This Example
 Description of the Case
 -----------------------
 
-In this example, we simulate a mixer using a PBT impeller through the usage of Sharp-Immersed boundaries. The shape of the impeller is defined by a composition of basic shapes in an identical maner as in exemple :doc:`../3d-composite-mixer-with-pbt-impeller/3d-composite-mixer-with-pbt-impeller`. The objective is to show how to define the rotating motion of the impeller properly when the object is rotating on an arbitrary axis. The tank use in this example is a sample cube. For this case we model an impeller that is rotating around the axis define by the vector :math:`[1,0,1]`. The visualisation of the geometries is presented in the following figure.
+In this example, we simulate a mixer using a PBT impeller through the usage of Sharp-Immersed boundaries. The shape of the impeller is defined by a composition of basic shapes in an identical manner as in example :doc:`../3d-composite-mixer-with-pbt-impeller/3d-composite-mixer-with-pbt-impeller`. The objective is to show how to define the rotating motion of the impeller properly when the object is rotating on an arbitrary axis. The tank used in this example is a sample cube. For this case we model an impeller that is rotating around the axis defined by the vector :math:`[1,0,1]`. The visualization of the geometries is presented in the following figure.
 
 
 .. image:: images/incline_impeller.png
@@ -44,7 +44,7 @@ Parameter File
 Mesh definition 
 ~~~~~~~~~~~~~~~
 
-The mesh is define using a simple cube with an initial mesh refinement of 4. 
+The mesh is defined using a simple cube with an initial mesh refinement of 4. 
 
 .. code-block:: text
 
@@ -229,7 +229,7 @@ From this Python code, we obtained the following expression of the orientation u
         set Function expression =atan2(0.707106781186548*sin(pi/4)*sin(6.28318530717959*t) - 0.707106781186548*sin(6.28318530717959*t)*cos(pi/4), (0.5 - 0.5*cos(6.28318530717959*t))*sin(pi/4) + (0.5*cos(6.28318530717959*t) + 0.5)*cos(pi/4));asin((0.5 - 0.5*cos(6.28318530717959*t))*cos(pi/4) + (0.5*cos(6.28318530717959*t) + 0.5)*sin(pi/4));atan2(-0.707106781186548*sin(6.28318530717959*t), -(0.5 - 0.5*cos(6.28318530717959*t))*sin(pi/4) + (0.5*cos(6.28318530717959*t) + 0.5)*cos(pi/4))
     end
 
-The parameters used to define the impeller  is based on the example: :doc:`../3d-composite-mixer-with-pbt-impeller/3d-composite-mixer-with-pbt-impeller`, giving the following:
+The parameters used to define the impeller are based on the example: :doc:`../3d-composite-mixer-with-pbt-impeller/3d-composite-mixer-with-pbt-impeller`, giving the following:
 
 
 .. code-block:: text
@@ -267,7 +267,7 @@ The parameters used to define the impeller  is based on the example: :doc:`../3d
       end
     end
 
-There are only noticeable differences with the parameter section of example :doc:`../3d-composite-mixer-with-pbt-impeller/3d-composite-mixer-with-pbt-impeller`. The initial refinement and the refinement zone are adjusted respectively to  6 and 0 to 1.25 reference length. These value to guarantee that the refinement zone is big enough to englobe the motion of the impeller and avoid interaction of the hanging nodes and the sharp immersed boundary constraints.
+There are only noticeable differences with the parameter section of example :doc:`../3d-composite-mixer-with-pbt-impeller/3d-composite-mixer-with-pbt-impeller`. The initial refinement and the refinement zone are adjusted respectively to 6 and 0 to 1.25 reference length. These value are chosen to guarantee that the refinement zone is big enough to cover the motion of the impeller and avoid interaction of the hanging nodes with the sharp immersed boundary constraints.
 
 --------
 Results
