@@ -78,7 +78,7 @@ The ``plane.composite`` file contains these instructions. The plane along the X-
     37; union       ; 35:36 # Combine left engine with the fuselage
     38; difference  ; 10:9 # Hole in the right engine
     39; union       ; 37:38 # Combine right engine with the fuselage and the other engine
-    40; difference     ; 7:11 # Trim of the left engine link with the engine shape
+    40; difference     ; 7:11 # Trim off  the left engine link with the engine shape
     41; difference     ; 9:12 # Trim off the right engine link with the engine shape
     42; union     ; 39:40 # Combine the left engine link with the rest of the plane
     43; union     ; 42:41 # Combine the right engine link with the rest of the plane
@@ -126,6 +126,7 @@ This step gives us the first wing of the plane.
    :name: both_wing
 
 3. Next, we add the fuselage of the plane. We approximate the fuselage with a circular superquadric shape with a length of 3 and a radius of 0.3. On the length of the plane, the superquadric is of power 3. We want the wings to be a bit more at the front of the fuselage, so we move the fuselage slightly backward by 0.25. We then add the combination of the wings and the fuselage.
+
 .. code-block:: text
 
     shapes
@@ -148,25 +149,25 @@ This step gives us the following wings an fuselage of the plane.
    :name: wings_and_fuselage
    
 
-4. We continue with the addition of the tail wing. The tail wing is made from a combination of two superquadric ellipsoid shapes, one for the vertical plane of the tail wing and one for the horizontal plane of the tailwind. Along the cord of these sections, the shapes are made from elongated ellipsoids with a minor axis of 0.1 and a main axis of 0.3. The span of both shapes is defined using a 6-order power of length 1. The position is adjusted to fit with the tail of the fuselage.
+4. We continue with the addition of the tail wing. The tail wing is made from a combination of two superquadric ellipsoid shapes, one for the vertical plane of the tail wing and one for the horizontal plane of the tail wing. Along the cord of these sections, the shapes are made from elongated ellipsoids with a minor axis of 0.1 and a main axis of 0.3. The span of both shapes is defined using a 6-order power of length 1. The position is adjusted to fit with the tail of the fuselage.
 
 .. code-block:: text
 
     shapes
     0; superquadric; 0.3:2.5:0.05:2:6:2; 0.1:0:0 ; 0:-0.05:0.25 # Full left wing 
-    1; hyper rectangle; 5:5:5;0:-5:0 ; 0:0:0 # Cube to trim of the right side of the left wing
+    1; hyper rectangle; 5:5:5;0:-5:0 ; 0:0:0 # Cube to trim off  the right side of the left wing
     2; superquadric; 0.3:2.5:0.05:2:6:2; 0.1:0:0 ; 0:-0.05:-0.25 # Full right wing 
-    3; hyper rectangle; 5:5:5;0:5:0 ; 0:0:0 # Cube to trim of the left side of the right wing
+    3; hyper rectangle; 5:5:5;0:5:0 ; 0:0:0 # Cube to trim off  the left side of the right wing
     4; superquadric; 1.5:0.3:0.3:3:2:2; -0.25:0:0 ; 0:0:0 # Fuselabe of the plane
     5; superquadric; 0.15:0.05:0.5:2:2:6; -1.75:0:0.4 ; 0:-0.5:0 # Tail wing vertical plan
     6; superquadric; 0.15:0.5:0.05:2:6:2; -1.85:0:0.6 ; 0:0:0 # Tail wing horizontal plan
     operations
-    30; difference  ; 1:0 # Trim of the left wing
-    31; difference  ; 3:2 # Trim of the right wing
-    32; union       ; 30:31 # Combined the two wings
-    33; union       ; 32:4 # Combined the wings with the plane fuselage
-    34; union       ; 33:5 # Combined vertical part of the tail wing with the fuselage
-    35; union       ; 34:6 # Combined horizontal part of the tail wing with the fuselage
+    30; difference  ; 1:0 # Trim off  the left wing
+    31; difference  ; 3:2 # Trim off  the right wing
+    32; union       ; 30:31 # Combine the two wings
+    33; union       ; 32:4 # Combine the wings with the plane fuselage
+    34; union       ; 33:5 # Combine vertical part of the tail wing with the fuselage
+    35; union       ; 34:6 # Combine horizontal part of the tail wing with the fuselage
 
 This step gives us the following plane without engines.
 
@@ -183,9 +184,9 @@ This step gives us the following plane without engines.
 
     shapes
     0; superquadric; 0.3:2.5:0.05:2:6:2; 0.1:0:0 ; 0:-0.05:0.25 # Full left wing 
-    1; hyper rectangle; 5:5:5;0:-5:0 ; 0:0:0 # Cube to trim of the right side of the left wing
+    1; hyper rectangle; 5:5:5;0:-5:0 ; 0:0:0 # Cube to trim off  the right side of the left wing
     2; superquadric; 0.3:2.5:0.05:2:6:2; 0.1:0:0 ; 0:-0.05:-0.25 # Full right wing 
-    3; hyper rectangle; 5:5:5;0:5:0 ; 0:0:0 # Cube to trim of the left side of the right wing
+    3; hyper rectangle; 5:5:5;0:5:0 ; 0:0:0 # Cube to trim off  the left side of the right wing
     4; superquadric; 1.5:0.3:0.3:3:2:2; -0.25:0:0 ; 0:0:0 # Fuselabe of the plane
     5; superquadric; 0.15:0.05:0.5:2:2:6; -1.75:0:0.4 ; 0:-0.5:0 # Tail wing vertical plan
     6; superquadric; 0.15:0.5:0.05:2:6:2; -1.85:0:0.6 ; 0:0:0 # Tail wing horizontal plan
@@ -194,16 +195,16 @@ This step gives us the following plane without engines.
     9; superquadric; 0.3:0.1:0.1:5:2:2; -1.25:-0.3:0.3 ; 0:0:0 # Right engine shape
     10; cylinder; 0.05:1; -1.25:-0.3:0.3 ; 0:1.57079632679:0 # Right engine hole
     operations
-    30; difference  ; 1:0 # Trim of the left wing
-    31; difference  ; 3:2 # Trim of the right wing
-    32; union       ; 30:31 # Combined the two wings
-    33; union       ; 32:4 # Combined the wings with the plane fuselage
-    34; union       ; 33:5 # Combined vertical part of the tail wing with the fuselage
-    35; union       ; 34:6 # Combined horizontal part of the tail wing with the fuselage
+    30; difference  ; 1:0 # Trim off  the left wing
+    31; difference  ; 3:2 # Trim off  the right wing
+    32; union       ; 30:31 # Combine the two wings
+    33; union       ; 32:4 # Combine the wings with the plane fuselage
+    34; union       ; 33:5 # Combine vertical part of the tail wing with the fuselage
+    35; union       ; 34:6 # Combine horizontal part of the tail wing with the fuselage
     36; difference  ; 8:7 # Hole in the left engine
-    37; union       ; 35:36 # Combined left engine with the fuselage
+    37; union       ; 35:36 # Combine left engine with the fuselage
     38; difference  ; 10:9 # Hole in the right engine
-    39; union       ; 37:38 # Combined right engine with the fuselage and the other engine
+    39; union       ; 37:38 # Combine right engine with the fuselage and the other engine
 
 This step gives us the following plane without engines.
 
@@ -218,9 +219,9 @@ This step gives us the following plane without engines.
 
     shapes
     0; superquadric; 0.3:2.5:0.05:2:6:2; 0.1:0:0 ; 0:-0.05:0.25 # Full left wing 
-    1; hyper rectangle; 5:5:5;0:-5:0 ; 0:0:0 # Cube to trim of the right side of the left wing
+    1; hyper rectangle; 5:5:5;0:-5:0 ; 0:0:0 # Cube to trim off  the right side of the left wing
     2; superquadric; 0.3:2.5:0.05:2:6:2; 0.1:0:0 ; 0:-0.05:-0.25 # Full right wing 
-    3; hyper rectangle; 5:5:5;0:5:0 ; 0:0:0 # Cube to trim of the left side of the right wing
+    3; hyper rectangle; 5:5:5;0:5:0 ; 0:0:0 # Cube to trim off  the left side of the right wing
     4; superquadric; 1.5:0.3:0.3:3:2:2; -0.25:0:0 ; 0:0:0 # Fuselabe of the plane
     5; superquadric; 0.15:0.05:0.5:2:2:6; -1.75:0:0.4 ; 0:-0.5:0 # Tail wing vertical plan
     6; superquadric; 0.15:0.5:0.05:2:6:2; -1.85:0:0.6 ; 0:0:0 # Tail wing horizontal plan
@@ -231,18 +232,18 @@ This step gives us the following plane without engines.
     11; superquadric; 0.1:0.03:0.25:6:2:2;  -1.25:0.15:0.15 ; -0.78539816:0:0 # Left engine link
     12; superquadric; 0.1:0.03:0.25:6:2:2;  -1.25:-0.15:0.15 ; 0.78539816:0:0 # Right engine link
     operations
-    30; difference  ; 1:0 # Trim of the left wing
-    31; difference  ; 3:2 # Trim of the right wing
+    30; difference  ; 1:0 # Trim off  the left wing
+    31; difference  ; 3:2 # Trim off  the right wing
     32; union       ; 30:31 # Combined the two wings
-    33; union       ; 32:4 # Combined the wings with the plane fuselage
-    34; union       ; 33:5 # Combined vertical part of the tail wing with the fuselage
-    35; union       ; 34:6 # Combined horizontal part of the tail wing with the fuselage
+    33; union       ; 32:4 # Combine the wings with the plane fuselage
+    34; union       ; 33:5 # Combine vertical part of the tail wing with the fuselage
+    35; union       ; 34:6 # Combine horizontal part of the tail wing with the fuselage
     36; difference  ; 8:7 # Hole in the left engine
-    37; union       ; 35:36 # Combined left engine with the fuselage
+    37; union       ; 35:36 # Combine left engine with the fuselage
     38; difference  ; 10:9 # Hole in the right engine
-    39; union       ; 37:38 # Combined right engine with the fuselage and the other engine
-    40; difference     ; 7:11 # Trim of the left engine link with the engine shape
-    41; difference     ; 9:12 # Trim of the right engine link with the engine shape
+    39; union       ; 37:38 # Combine right engine with the fuselage and the other engine
+    40; difference     ; 7:11 # Trim off  the left engine link with the engine shape
+    41; difference     ; 9:12 # Trim off  the right engine link with the engine shape
     42; union     ; 39:40 # Combine the left engine link with the rest of the plane
     43; union     ; 42:41 # Combine the right engine link with the rest of the plane
 
