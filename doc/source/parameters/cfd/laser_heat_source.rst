@@ -90,7 +90,7 @@ Laser types
   where :math:`\phi'` is the filtered phase fraction.
 
   .. attention::
-    In this case, the heat affect fluid must be initialized as ``fluid 1``.
+    In this case, the heat affect the fluid initialized as ``fluid 1``.
 
 * When ``type`` is set to ``heat_flux_vof_interface``, it **must be used in conjunction with the** :doc:`VOF auxiliary physic <./volume_of_fluid>`. This model is used to apply the heat flux, given by the expression below, only at the interface.
 
