@@ -1103,13 +1103,12 @@ HeatTransferAssemblerFreeSurfaceRadiationVOF<dim>::assemble_matrix(
               const auto phi_T_j = scratch_data.phi_T[q][j];
 
               // Matrix coefficients for the linearised radiation sink term at
-              // the free surface (air/metal interface): |grad alpha| * 4 *
-              // sigma
-              // * epsilon * T^3, where |grad alpha| is the phase gradient norm
-              // (which indicates an interface between the metal and air if non-
-              // null), sigma is the Stefan Boltzmann constant, epsilon is the
-              // emissivity of the free surface and T is the current
-              // temperature.
+              // the free surface (air/metal interface): |grad phi'| * 4 *
+              // sigma * epsilon * T^3, where |grad phi'| is the filtered
+              // phase gradient norm (which indicates an interface between the
+              // metal and air if non-null), sigma is the Stefan Boltzmann
+              // constant, epsilon is the emissivity of the free surface and T
+              // is the current temperature.
               local_matrix(i, j) +=
                 filtered_phase_gradient_q.norm() *
                 (4.0 * Stefan_Boltzmann_constant * emissivity * temperature *

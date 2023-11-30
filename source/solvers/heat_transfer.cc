@@ -285,7 +285,7 @@ HeatTransfer<dim>::setup_assemblers()
                   this->simulation_control,
                   this->simulation_parameters.laser_parameters));
             }
-          else // Laser is applied in the metal phase as a volumetric source
+          else // Laser is applied in fluid 1 as a volumetric source
             {
               this->assemblers.push_back(
                 std::make_shared<
