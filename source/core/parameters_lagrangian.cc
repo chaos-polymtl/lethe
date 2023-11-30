@@ -179,47 +179,13 @@ namespace Parameters
 
       particle_type_number = prm.get_integer("number of particle types");
 
-      if (particle_type_number >= 1)
+      for (unsigned int id = 0; id < particle_type_number; ++id)
         {
-          prm.enter_subsection("particle type 0");
-          {
-            parse_particle_properties(0, prm);
-          }
+          prm.enter_subsection("particle type " +
+                               Utilities::int_to_string(id, 1));
+          parse_particle_properties(id, prm);
           prm.leave_subsection();
         }
-      if (particle_type_number >= 2)
-        {
-          prm.enter_subsection("particle type 1");
-          {
-            parse_particle_properties(1, prm);
-          }
-          prm.leave_subsection();
-        }
-      if (particle_type_number >= 3)
-        {
-          prm.enter_subsection("particle type 2");
-          {
-            parse_particle_properties(2, prm);
-          }
-          prm.leave_subsection();
-        }
-      if (particle_type_number >= 4)
-        {
-          prm.enter_subsection("particle type 3");
-          {
-            parse_particle_properties(3, prm);
-          }
-          prm.leave_subsection();
-        }
-      if (particle_type_number >= 5)
-        {
-          prm.enter_subsection("particle type 4");
-          {
-            parse_particle_properties(4, prm);
-          }
-          prm.leave_subsection();
-        }
-
 
       youngs_modulus_wall = prm.get_double("young modulus wall");
       poisson_ratio_wall  = prm.get_double("poisson ratio wall");

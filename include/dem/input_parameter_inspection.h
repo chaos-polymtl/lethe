@@ -32,7 +32,8 @@ using namespace std;
  *
  * @param dem_parameters Input DEM parameters in the parameter handler file
  * @param pcout Printing in parallel
- * @param distribution_object_container Contain all the types of distribution being used for each type of particle.
+ * @param distribution_object_container Contain all the types of distribution
+ * being used for each type of particle.
  *
  */
 

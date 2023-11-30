@@ -271,7 +271,6 @@ private:
   Visualization<dim>            visualization_object;
   BoundaryCellsInformation<dim> boundary_cell_object;
 
-
   // Mesh and boundary information
   typename dem_data_structures<dim>::floating_mesh_information
     floating_mesh_info;

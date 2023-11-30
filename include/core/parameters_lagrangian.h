@@ -29,7 +29,6 @@
 #include <string>
 
 using namespace dealii;
-
 namespace Parameters
 {
   namespace Lagrangian

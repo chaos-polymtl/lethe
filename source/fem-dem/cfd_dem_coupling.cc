@@ -1314,33 +1314,33 @@ CFDDEMSolver<dim>::dem_setup_contact_parameters()
     dem_parameters.lagrangian_physical_properties.particle_type_number);
 
   maximum_particle_diameter = 0.;
-  for (unsigned int counter = 0;
-       counter <
+  for (unsigned int particle_type = 0;
+       particle_type <
        dem_parameters.lagrangian_physical_properties.particle_type_number;
-       counter++)
+       particle_type++)
     {
       if (dem_parameters.lagrangian_physical_properties.distribution_type.at(
-            counter) == Parameters::Lagrangian::SizeDistributionType::uniform)
+            particle_type) == Parameters::Lagrangian::SizeDistributionType::uniform)
         {
           distribution_object_container.push_back(
             std::make_shared<UniformDistribution>(
               dem_parameters.lagrangian_physical_properties
-                .particle_average_diameter.at(counter)));
+                .particle_average_diameter.at(particle_type)));
         }
       else if (dem_parameters.lagrangian_physical_properties.distribution_type
-                 .at(counter) ==
+                 .at(particle_type) ==
                Parameters::Lagrangian::SizeDistributionType::normal)
         {
           distribution_object_container.push_back(
             std::make_shared<NormalDistribution>(
               dem_parameters.lagrangian_physical_properties
-                .particle_average_diameter.at(counter),
+                .particle_average_diameter.at(particle_type),
               dem_parameters.lagrangian_physical_properties.particle_size_std
-                .at(counter)));
+                .at(particle_type)));
         }
       maximum_particle_diameter =
         std::max(maximum_particle_diameter,
-                 distribution_object_container[counter]->find_max_diameter());
+                 distribution_object_container[particle_type]->find_max_diameter());
     }
 
   neighborhood_threshold_squared =

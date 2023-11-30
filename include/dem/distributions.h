@@ -111,7 +111,6 @@ public:
   void
   particle_size_sampling(const unsigned int particle_number) override;
 
-
   /**
    * @brief Return @diameter_values.
    */

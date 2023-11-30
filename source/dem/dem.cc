@@ -204,48 +204,41 @@ DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
         parameters.model_parameters.solid_fraction_threshold);
     }
 
-  distribution_object_container.reserve(
-    parameters.lagrangian_physical_properties.particle_type_number);
   maximum_particle_diameter = 0;
-  for (unsigned int counter = 0;
-       counter < parameters.lagrangian_physical_properties.particle_type_number;
-       counter++)
+  for (unsigned int type_number = 0;
+       type_number <
+       parameters.lagrangian_physical_properties.particle_type_number;
+       type_number++)
     {
       if (parameters.lagrangian_physical_properties.distribution_type.at(
-            counter) == Parameters::Lagrangian::SizeDistributionType::uniform)
+            type_number) ==
+          Parameters::Lagrangian::SizeDistributionType::uniform)
         {
-          distribution_object_container[counter] =
+          distribution_object_container[type_number] =
             std::make_shared<UniformDistribution>(
               parameters.lagrangian_physical_properties
-                .particle_average_diameter.at(counter));
+                .particle_average_diameter.at(type_number));
         }
       else if (parameters.lagrangian_physical_properties.distribution_type.at(
-                 counter) ==
+                 type_number) ==
                Parameters::Lagrangian::SizeDistributionType::normal)
         {
-          distribution_object_container[counter] =
+          distribution_object_container[type_number] =
             std::make_shared<NormalDistribution>(
               parameters.lagrangian_physical_properties
-                .particle_average_diameter.at(counter),
+                .particle_average_diameter.at(type_number),
               parameters.lagrangian_physical_properties.particle_size_std.at(
-                counter));
+                type_number));
         }
-      maximum_particle_diameter =
-        std::max(maximum_particle_diameter,
-                 distribution_object_container[counter]->find_max_diameter());
+      maximum_particle_diameter = std::max(
+        maximum_particle_diameter,
+        distribution_object_container[type_number]->find_max_diameter());
     }
-
-
-  // Calling input_parameter_inspection to evaluate input parameters in the
-  // parameter handler file, finding maximum particle diameter used in
-  // polydisperse systems
-
 
   neighborhood_threshold_squared =
     std::pow(parameters.model_parameters.neighborhood_threshold *
                maximum_particle_diameter,
              2);
-
 
   if (this_mpi_process == 0)
     input_parameter_inspection(parameters,
@@ -255,7 +248,6 @@ DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
   grid_motion_object =
     std::make_shared<GridMotion<dim, dim>>(parameters.grid_motion,
                                            simulation_control->get_time_step());
-
 
   for (unsigned int i_solid = 0;
        i_solid < parameters.solid_objects->number_solids;
@@ -285,7 +277,6 @@ DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
   // Assign gravity/acceleration
   g = parameters.lagrangian_physical_properties.g;
 }
-
 
 #if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 6)
 template <int dim>

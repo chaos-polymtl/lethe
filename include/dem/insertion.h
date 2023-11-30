@@ -60,7 +60,8 @@ public:
    * Carries out the insertion of particles. This is the base class of
    * volume_insertion, plane_insertion and list_insertion classes.
    *
-   * @param distribution_object_container Contains all distribution for each type of particle
+   * @param distribution_object_container Contains all distribution for each
+   * type of particle
    */
   Insertion(const std::vector<std::shared_ptr<Distribution>>
               &distribution_object_container);
