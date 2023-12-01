@@ -32,7 +32,6 @@
 
 #include <deal.II/multigrid/mg_tools.h>
 
-
 using namespace dealii;
 
 /**
