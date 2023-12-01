@@ -30,6 +30,9 @@
 #include <deal.II/matrix_free/operators.h>
 #include <deal.II/matrix_free/tools.h>
 
+#include <deal.II/multigrid/mg_tools.h>
+
+
 using namespace dealii;
 
 /**
