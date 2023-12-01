@@ -25,29 +25,29 @@ using namespace dealii;
  * @brief EvaporationModel. Abstract class that allows to calculate the
  * evaporation mass, heat and momentum fluxes. This model computes all the terms
  * required for the assembly of the governing equations, i.e., Navier-Stokes
- * momentum and energy, when evaporation is considered. The former terms are 
- * the momentum flux (i.e., pressure) acting on the evaporative front in the 
+ * momentum and energy, when evaporation is considered. The former terms are
+ * the momentum flux (i.e., pressure) acting on the evaporative front in the
  * normal direction, the heat flux, acting at the same location as a cooling
  * term, and the fluxes' jacobian, if required.
  *
  * The EvaporativeModel is the parent class, and its childs are specific
- * types of evaporative models, e.g., constant, temperature dependent. The 
- * selected model is instanciated in the assemblers' constructor 
- * (NavierStokesVOFAssemblerEvaporation and/or HeatTransferAssemblerVOFEvaporation), 
- * using the model_cast method according to the evaporation model parameters. 
+ * types of evaporative models, e.g., constant, temperature dependent. The
+ * selected model is instanciated in the assemblers' constructor
+ * (NavierStokesVOFAssemblerEvaporation and/or
+ * HeatTransferAssemblerVOFEvaporation), using the model_cast method according
+ * to the evaporation model parameters.
  *
  * The assemblers call the required method of the EvaporationModel for either
- * the assembly of the rhs or matrix terms. Hence, no matter the selected 
+ * the assembly of the rhs or matrix terms. Hence, no matter the selected
  * evaporation model, the same assembler is called, avoiding repetitions of
  * the assembler classes.
- *  
+ *
  */
 class EvaporationModel
 {
 public:
   EvaporationModel()
-  {
-  }
+  {}
 
   /**
    * @brief Instantiates and returns a pointer to a EvaporationModel
@@ -370,8 +370,8 @@ private:
 
 /**
  * @brief EvaporationModelTemperature. Class that allows to calculate the
- * evaporation heat and momentum fluxes when a temperature dependent mass flux is
- * considered.
+ * evaporation heat and momentum fluxes when a temperature dependent mass flux
+ * is considered.
  *
  * @param p_evaporation evaporation model parameters.
  */
@@ -403,7 +403,8 @@ public:
   double
   saturation_pressure(const std::map<field, double> &fields_value)
   {
-    const double temperature_inv = 1.0 / (fields_value.at(field::temperature)+1e-16);
+    const double temperature_inv =
+      1.0 / (fields_value.at(field::temperature) + 1e-16);
 
     return ambient_pressure *
            std::exp(-L_vap_x_M_x_R_inv *
@@ -426,7 +427,7 @@ public:
 
     for (unsigned int i = 0; i < saturation_pressure_vector.size(); ++i)
       {
-        const double temperature_inv = 1.0 / (temperature[i]+1e-16);
+        const double temperature_inv = 1.0 / (temperature[i] + 1e-16);
 
         saturation_pressure_vector[i] =
           ambient_pressure *
@@ -445,7 +446,8 @@ public:
   mass_flux(const std::map<field, double> &fields_value) override
   {
     const double saturation_pressure_value = saturation_pressure(fields_value);
-    const double temperature_inv = 1.0 / (fields_value.at(field::temperature)+1e-16);
+    const double temperature_inv =
+      1.0 / (fields_value.at(field::temperature) + 1e-16);
 
     const double mass_flux_value =
       evaporation_coefficient * saturation_pressure_value *
@@ -474,7 +476,7 @@ public:
 
     for (unsigned int i = 0; i < mass_flux_vector.size(); ++i)
       {
-        const double temperature_inv = 1.0 / (temperature[i]+1e-16);
+        const double temperature_inv = 1.0 / (temperature[i] + 1e-16);
 
         mass_flux_vector[i] = evaporation_coefficient *
                               saturation_pressure_vector[i] *
@@ -528,7 +530,8 @@ public:
   heat_flux_jacobian(const std::map<field, double> &fields_value,
                      const field                    id) override
   {
-    const double temperature_inv = 1.0 / (fields_value.at(field::temperature)+1e-16);
+    const double temperature_inv =
+      1.0 / (fields_value.at(field::temperature) + 1e-16);
 
     if (id == field::temperature)
       return latent_heat_evaporation * ambient_pressure *
@@ -563,7 +566,7 @@ public:
           field_vectors.at(field::temperature);
         for (unsigned int i = 0; i < jacobian_vector.size(); ++i)
           {
-            const double temperature_inv = 1.0 / (temperature[i]+1e-16);
+            const double temperature_inv = 1.0 / (temperature[i] + 1e-16);
             jacobian_vector[i] =
               latent_heat_evaporation * ambient_pressure *
               evaporation_coefficient * temperature_inv *
@@ -587,18 +590,20 @@ public:
   {
     const double saturation_pressure_value = saturation_pressure(fields_value);
     const double mass_flux_value           = mass_flux(fields_value);
-    const double temperature_inv = 1.0 / (fields_value.at(field::temperature)+1e-16);
-    
-    const double vapor_saturation_density_value = molar_mass*
-      saturation_pressure_value * R_inv * temperature_inv;
+    const double temperature_inv =
+      1.0 / (fields_value.at(field::temperature) + 1e-16);
+
+    const double vapor_saturation_density_value =
+      molar_mass * saturation_pressure_value * R_inv * temperature_inv;
 
     // rho_vap = 0.31*rho_sat according to Anisimov and Khokhlov 1995
     const double vapor_density_inv =
       1.0 / (0.31 * vapor_saturation_density_value);
-      
-    const double pressure = -mass_flux_value * mass_flux_value *
-             (liquid_density_inv - vapor_density_inv) +
-           recoil_pressure_coefficient * saturation_pressure_value;
+
+    const double pressure =
+      -mass_flux_value * mass_flux_value *
+        (liquid_density_inv - vapor_density_inv) +
+      recoil_pressure_coefficient * saturation_pressure_value;
 
     return std::max(pressure - ambient_pressure, 0.0);
   }
@@ -626,10 +631,10 @@ public:
 
     for (unsigned int i = 0; i < momentum_flux_vector.size(); ++i)
       {
-        const double temperature_inv = 1.0 / (temperature[i]+1e-16);
+        const double temperature_inv = 1.0 / (temperature[i] + 1e-16);
 
-        const double vapor_saturation_density_value = molar_mass*
-          saturation_pressure_vector[i] * R_inv * temperature_inv;
+        const double vapor_saturation_density_value =
+          molar_mass * saturation_pressure_vector[i] * R_inv * temperature_inv;
 
         // rho_vap = 0.31*rho_sat according to Anisimov and Khokhlov 1995
         const double vapor_density_inv =
