@@ -274,12 +274,25 @@ HeatTransfer<dim>::setup_assemblers()
     {
       if (this->simulation_parameters.multiphysics.VOF)
         {
-          // Call for the specific assembler
-          // Assembler of the laser source term applied only to the metal phase
-          this->assemblers.push_back(
-            std::make_shared<HeatTransferAssemblerLaserVOF<dim>>(
-              this->simulation_control,
-              this->simulation_parameters.laser_parameters));
+          // Call for the specific assembler of the laser source term
+          // Laser source is applied at the interface (surface flux)
+          if (this->simulation_parameters.laser_parameters->laser_type ==
+              Parameters::Laser<dim>::LaserType::heat_flux_vof_interface)
+            {
+              this->assemblers.push_back(
+                std::make_shared<
+                  HeatTransferAssemblerLaserHeatFluxVOFInterface<dim>>(
+                  this->simulation_control,
+                  this->simulation_parameters.laser_parameters));
+            }
+          else // Laser is applied in fluid 1 as a volumetric source
+            {
+              this->assemblers.push_back(
+                std::make_shared<
+                  HeatTransferAssemblerLaserExponentialDecayVOF<dim>>(
+                  this->simulation_control,
+                  this->simulation_parameters.laser_parameters));
+            }
 
           // Assembler of the radiation sink term applied only at the air/metal
           // interface. The radiation term in that case is treated as a source
@@ -297,7 +310,7 @@ HeatTransfer<dim>::setup_assemblers()
       else
         {
           this->assemblers.push_back(
-            std::make_shared<HeatTransferAssemblerLaser<dim>>(
+            std::make_shared<HeatTransferAssemblerLaserExponentialDecay<dim>>(
               this->simulation_control,
               this->simulation_parameters.laser_parameters));
         }
@@ -1694,7 +1707,7 @@ HeatTransfer<dim>::postprocess_heat_flux_on_bc(
     }                     // end loop on cells
 
 
-  // Sum accross all cores
+  // Sum across all cores
   for (unsigned int i_bc = 0;
        i_bc < this->simulation_parameters.boundary_conditions_ht.size;
        ++i_bc)

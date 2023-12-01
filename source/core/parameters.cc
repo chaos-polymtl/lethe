@@ -49,6 +49,14 @@ DeclException3(MultipleAdaptationSizeError,
                << arg2 << ") does not correspond to the number of 'variables' ("
                << arg3 << ")");
 
+DeclException3(ParameterStrictlyGreaterThanError,
+               std::string,
+               double,
+               double,
+               << "The parameter '" << arg1 << "' is set to: " << arg2
+               << ". However, it should be strictly greater than " << arg3
+               << ".");
+
 namespace Parameters
 {
   SizeOfSubsections
@@ -1339,17 +1347,23 @@ namespace Parameters
     prm.enter_subsection("laser parameters");
     {
       prm.declare_entry("enable", "false", Patterns::Bool(), "Activate laser");
+      prm.declare_entry(
+        "type",
+        "exponential_decay",
+        Patterns::Selection("exponential_decay|heat_flux_vof_interface"),
+        "Type of laser model used."
+        "Choices are <exponential_decay|heat_flux_vof_interface>.");
       prm.declare_entry("concentration factor",
                         "2.0",
                         Patterns::Double(),
                         "Concentration factor");
-      prm.declare_entry("power", "100.0", Patterns::Double(), "Laser power");
+      prm.declare_entry("power", "0.0", Patterns::Double(), "Laser power");
       prm.declare_entry("absorptivity",
                         "0.5",
                         Patterns::Double(),
                         "Laser absorptivity");
       prm.declare_entry("penetration depth",
-                        "0.0",
+                        "1.0",
                         Patterns::Double(),
                         "Penetration depth");
       prm.declare_entry("beam radius",
@@ -1357,7 +1371,6 @@ namespace Parameters
                         Patterns::Double(),
                         "Laser beam radius");
       radiation.declare_parameters(prm);
-
 
       prm.enter_subsection("path");
       laser_scan_path = std::make_shared<Functions::ParsedFunction<dim>>(dim);
@@ -1388,12 +1401,28 @@ namespace Parameters
   {
     prm.enter_subsection("laser parameters");
     {
-      activate_laser       = prm.get_bool("enable");
+      activate_laser                = prm.get_bool("enable");
+      const std::string type_string = prm.get("type");
+      if (type_string == "exponential_decay")
+        laser_type = LaserType::exponential_decay;
+      if (type_string == "heat_flux_vof_interface")
+        laser_type = LaserType::heat_flux_vof_interface;
       concentration_factor = prm.get_double("concentration factor");
       laser_power          = prm.get_double("power");
       laser_absorptivity   = prm.get_double("absorptivity");
       penetration_depth    = prm.get_double("penetration depth");
-      beam_radius          = prm.get_double("beam radius");
+
+      // Check if penetration depth is a strictly positive double.
+      if (activate_laser && laser_type == LaserType::exponential_decay)
+        {
+          AssertThrow(laser_type == LaserType::exponential_decay &&
+                        penetration_depth > 0.0,
+                      ParameterStrictlyGreaterThanError("penetration depth",
+                                                        penetration_depth,
+                                                        0.0));
+        }
+
+      beam_radius = prm.get_double("beam radius");
       radiation.parse_parameters(prm);
 
       prm.enter_subsection("path");
