@@ -3246,7 +3246,7 @@ namespace Parameters
       prm.declare_entry(
         "evaporation mass flux model",
         "constant",
-        Patterns::Selection("constant|temperature dependent"),
+        Patterns::Selection("constant|temperature_dependent"),
         "Model used for the calculation of the evaporative mass flux"
         "Choices are <constant|temperature dependent>.");
       prm.declare_entry(
@@ -3314,7 +3314,7 @@ namespace Parameters
           evaporative_mass_flux_model_type =
             EvaporativeMassFluxModelType::constant;
         }
-      else if (op == "temperature dependent")
+      else if (op == "temperature_dependent")
         {
           evaporative_mass_flux_model_type =
             EvaporativeMassFluxModelType::temperature_dependent;
