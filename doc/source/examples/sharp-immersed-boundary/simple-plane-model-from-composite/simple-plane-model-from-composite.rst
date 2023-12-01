@@ -2,7 +2,7 @@
 Simple Plane Model From Composite
 =====================================================================================
 
-This example aims to showcase the vast possibilities of objects that can be defined using the composite shape in the sharp, immersed boundary solver. It also aims to give an example of the type of operations that can be made from this geometry.
+This example aims to showcase the vast possibilities of objects that can be defined using the composite shape in the sharp immersed boundary solver. It also aims to give an example of the type of operations that can be made from this geometry.
 
 ----------------------------------
 Features
@@ -22,7 +22,7 @@ Files Used in This Example
 Description of the Case
 -----------------------
 
-This example presents the creation of a simple plane model using a composite shape. This example does a step-by-step of the shape creation. This plane is not a real model. The parameter used only aims at showcasing the different operations of the composite shape creation. The final product will look similar to the following image.
+This example presents the creation of a simple plane model using a composite shape. This example does a step-by-step of the shape creation. This plane is not a real model. The parameter used only aims at showcasing the different operations of the composite shape creation. The final product will look as follows:
 
 .. image:: images/full_plane.png
    :alt: full_plane
@@ -40,16 +40,16 @@ The shape is created in two steps inspired by the GMSH syntax.
 
 Shapes and boolean operations each have an ID, and boolean operations can reference previous operations to build upon them. The final shape obtained is the product of the operation with the largest ID. To facilitate shape creation, we start indexing the operations form ID 30. This index is much larger than the number of primitives used.
  
-All the shape are placed in the reference frame of the composite shape which can then be moved depending on the position and orientation of the shape prescribed in the parameter file of the case. Here, we only focus on the step-by-step operation required to generate this complex shape.
+All the shapes are placed in the reference frame of the composite shape which can then be moved depending on the position and orientation of the shape prescribed in the parameter file of the case. Here, we only focus on the step-by-step operation required to generate this complex shape.
 
 
 .. Note:: 
-    This model uses multiple shapes that are referred to as superquadric ellipsoids. This superquadric shape has at least two axes defined using a 2-order power. Any slice of this type of superquadric, parallel to the plane defined by these two axes, is an ellipse. If the remaining axis has a higher power then the shape will tend toward an extrusion of an ellipse with a rounded tip. 
+    This model uses multiple shapes that are referred to as superquadric ellipsoids. This superquadric shape has at least two axes defined using a 2-order power. Any slice of this type of superquadric, parallel to the plane defined by these two axes, is an ellipse. If the remaining axis has a higher power, then the shape will tend toward an extrusion of an ellipse with a rounded tip. 
 
-The ``plane.composite`` file contains these instructions. The plane along the X-axis, and the positive Z-axis is in the above direction of the plane. The Y axis point in the left direction of the plane.
+The ``plane.composite`` file contains these instructions. The plane along the X-axis and the positive Z-axis is in the above direction of the plane. The Y-axis points in the left direction of the plane.
 
 .. warning:: 
-    The human interpretation of the composite files is cumbersome. For this reason we comments each lines.
+    The human interpretation of the composite files is cumbersome. For this reason we add comments to each line.
 
 .. code-block:: text
 
@@ -83,7 +83,7 @@ The ``plane.composite`` file contains these instructions. The plane along the X-
     42; union     ; 39:40 # Combine the left engine link with the rest of the plane
     43; union     ; 42:41 # Combine the right engine link with the rest of the plane
   
-Let us read this file step-by-step Line-by-line:
+Let us read this file step-by-step line-by-line:
 
 
 1. First, we create the left wing. This wing is created using a superquadric ellipsoid shape. Along the cord, we use an elongated ellipsoid with length 0.6 and 0.1 thickness. In the wingspan direction, the wing is defined by a 6-order power superquadric with a half wingspan of 2.5. We then tilt the wing backward by 0.25 rad and give a small angle of attack of 0.05 rad. Since the wing is now tilted backward, the right side of the superquadric shape is undesirable, so we remove it using a hypercube to trim the right side of the wing.
@@ -141,7 +141,7 @@ This step gives us the first wing of the plane.
     32; union       ; 30:31 # Combine the two wings
     33; union     ; 32:4 # Combine the wings with the plane fuselage
 
-This step gives us the following wings an fuselage of the plane.
+This step gives us the following wings and fuselage of the plane.
 
 .. image:: images/wings_and_fuselage.png
    :alt: wings_and_fuselage
@@ -259,7 +259,7 @@ This final step gives us the full plane model.
 Parameter File
 ---------------
 
-The parameter file, for this case, is simply a parameter that produces an output to visualize the shape created by this composite file. We recall that to visualize the shape, use the contour function of your post-processing tool on the level field and plot the contour of levelset=0
+The parameter file for this case simply produces an output to visualize the shape created by this composite file. We recall that to visualize the shape you must use the contour function of your post-processing tool on the level field and plot the contour of ``levelset=0``
 
 .. code-block:: text
 

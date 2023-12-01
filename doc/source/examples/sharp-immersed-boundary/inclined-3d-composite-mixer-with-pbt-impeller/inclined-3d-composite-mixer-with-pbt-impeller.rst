@@ -73,7 +73,7 @@ The mesh adaptation is identical to the mesh adaptation section used for the oth
 
 Boundary Conditions 
 ~~~~~~~~~~~~~~~~~~~   
-The boundary condition is similar to the other stirred tank cases except we let the top boundary of the problem with an open boundary.
+The boundary condition is similar to the other stirred tank cases, however, the top boundary of the problem is now an open boundary.
 
 .. code-block:: text
 
@@ -111,7 +111,7 @@ The boundary condition is similar to the other stirred tank cases except we let 
 Definition of the Impeller Motion
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The orientation of an object using the sharp interface immersed boundary method is defined using Euler angles and an XYZ rotation convention. As such, determining the orientation of an object as it rotates around an arbitrary cannot be directly defined by the direct integration of the angular velocity. To do so, we instead use Rodrigues' rotation matrix, and from this rotation matrix, we extract the XYZ rotation angle. This calculation can be symbolically performed by a simple Python code using the sympy library. The code is given in the example folder but is also presented here. Depending on the case, the user needs to study the initial rotation, and angular velocity must be modified in this code. Here, the initial rotation of the impeller is given by a :math:`\frac{\pi}{4}` rad rotation around the Y axis to align the impeller with the :math:`[1,0,1]` vector. Then the rotation speed is given by :math:`\mathbf{\omega}=2 \pi \frac{\sqrt{2}}{2} [-1,0,-1]`.
+The orientation of an object using the sharp interface immersed boundary method is defined using Euler angles and a XYZ rotation convention. As such, determining the orientation of an object as it rotates cannot be directly defined by the direct integration of the angular velocity. Therefore, we instead use Rodrigues' rotation matrix, and from this rotation matrix, we extract the XYZ rotation angle. This calculation can be performed symbolically by a simple Python code using the sympy library. The code is given in the example folder but is also presented here. Depending on the case, the user needs to study the initial rotation, and angular velocity must be modified. Here, the initial rotation of the impeller is given by a :math:`\frac{\pi}{4}` rad rotation around the Y axis to align the impeller with the :math:`[1,0,1]` vector. Then the rotation speed is given by :math:`\mathbf{\omega}=2 \pi \frac{\sqrt{2}}{2} [-1,0,-1]`.
 
 
 .. code-block:: text
@@ -229,7 +229,7 @@ From this Python code, we obtained the following expression of the orientation u
         set Function expression =atan2(0.707106781186548*sin(pi/4)*sin(6.28318530717959*t) - 0.707106781186548*sin(6.28318530717959*t)*cos(pi/4), (0.5 - 0.5*cos(6.28318530717959*t))*sin(pi/4) + (0.5*cos(6.28318530717959*t) + 0.5)*cos(pi/4));asin((0.5 - 0.5*cos(6.28318530717959*t))*cos(pi/4) + (0.5*cos(6.28318530717959*t) + 0.5)*sin(pi/4));atan2(-0.707106781186548*sin(6.28318530717959*t), -(0.5 - 0.5*cos(6.28318530717959*t))*sin(pi/4) + (0.5*cos(6.28318530717959*t) + 0.5)*cos(pi/4))
     end
 
-The parameters used to define the impeller are based on the example: :doc:`../3d-composite-mixer-with-pbt-impeller/3d-composite-mixer-with-pbt-impeller`, giving the following:
+The parameters used to define the impeller are based on the :doc:`../3d-composite-mixer-with-pbt-impeller/3d-composite-mixer-with-pbt-impeller` example and are given as follows:
 
 
 .. code-block:: text
@@ -267,13 +267,13 @@ The parameters used to define the impeller are based on the example: :doc:`../3d
       end
     end
 
-The only noticeable differences with the parameter section of example :doc:`../3d-composite-mixer-with-pbt-impeller/3d-composite-mixer-with-pbt-impeller`. The initial refinement and the refinement zone are adjusted respectively to 6 and 0 to 1.25 reference length. These value are chosen to guarantee that the refinement zone is big enough to cover the motion of the impeller and avoid interaction of the hanging nodes with the sharp immersed boundary constraints.
+The only noticeable differences are that the initial refinement and the refinement zone are adjusted respectively to 6 and 0 to 1.25 reference length. These values are chosen to guarantee that the refinement zone is big enough to cover the motion of the impeller and avoid interaction of the hanging nodes with the sharp immersed boundary constraints.
 
 --------
 Results
 --------
 
-The velocity field obtained with this example after 1 second:
+In the following image the velocity field obtained with this example after 1 second can be observed:
 
 .. image:: images/inclined-impeller_flow_1_sec.png
    :alt: flow_1sec
