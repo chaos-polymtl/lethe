@@ -38,6 +38,8 @@ Sharp Immersed Boundary Solver
 
       sharp_2_4 [label="3D Mixer with Pitched-Blade Turbine \nImpeller Using OpenCascade \nSharp-Immersed Boundary", href="https://lethe-cfd.github.io/lethe/examples/sharp-immersed-boundary/3d-opencascade-mixer-with-pbt-impeller/3d-opencascade-mixer-with-pbt-impeller.html", tooltip="3D Mixer with pitched-blade turbine impeller using OpenCascade Sharp-immersed boundary"];
       
+      sharp_2_5 [label="Inclined 3D Mixer with Pitched-Blade \nTurbine Impeller Using Composite \nSharp-Immersed Boundary", href="https://lethe-cfd.github.io/lethe/examples/sharp-immersed-boundary/inclined-3d-composite-mixer-with-pbt-impeller/inclined-3d-composite-mixer-with-pbt-impeller.html", tooltip="Inclined 3D mixer with pitched-blade turbine impeller using composite sharp-immersed boundary"];
+      
       sharp_3 [label="Geometry Definition", href="https://lethe-cfd.github.io/lethe/examples/sharp-immersed-boundary/geometry-definition.html"];
       
       sharp_3_1 [label="Simple Plane Model From Composite", href="https://lethe-cfd.github.io/lethe/examples/sharp-immersed-boundary/sharp-immersed-boundary/simple-plane-model-from-composite.html", tooltip="Simple Plane Model From Composite"];
@@ -52,5 +54,6 @@ Sharp Immersed Boundary Solver
       sharp_2 -> sharp_2_2:w;
       sharp_2 -> sharp_2_3:w;
       sharp_2 -> sharp_2_4:w;
+      sharp_2 -> sharp_2_5:w;
       sharp_3 -> sharp_3_1:w;
     }
