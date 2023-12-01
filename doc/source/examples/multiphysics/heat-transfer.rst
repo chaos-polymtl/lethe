@@ -12,5 +12,5 @@ Heat Transfer
     warming-up-a-viscous-fluid/warming-up-a-viscous-fluid
     melting-cavity/melting-cavity
     laser-heating/laser-heating
-    laser-meltpool/laser-meltpool
+    laser-melt-pool/laser-melt-pool
     concentric-heat-exchanger/concentric-heat-exchanger

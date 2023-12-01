@@ -54,7 +54,7 @@ Multiphysics
 
       multiphysics_2_5 [label="Laser Heating", href="https://lethe-cfd.github.io/lethe/examples/multiphysics/laser-heating/laser-heating.html"];
 
-      multiphysics_2_6 [label="Laser Meltpool", href="https://lethe-cfd.github.io/lethe/examples/multiphysics/laser-meltpool/laser-meltpool.html"];
+      multiphysics_2_6 [label="Laser Melt Pool", href="https://lethe-cfd.github.io/lethe/examples/multiphysics/laser-melt-pool/laser-melt-pool.html"];
 
       multiphysics_2_7 [label="Concentric Heat Exchanger", href="https://lethe-cfd.github.io/lethe/examples/multiphysics/concentric-heat-exchanger/concentric-heat-exchanger.html"];
 

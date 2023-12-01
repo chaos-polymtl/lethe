@@ -93,8 +93,7 @@ All the boundary conditions are ``noslip``, and the heat transfer boundary condi
 Multiphysics
 ~~~~~~~~~~~~
 
-The ``multiphysics`` subsection enables to turn on (``true``) 
-and off (``false``) the physics of interest. Here only ``heat transfer`` is enabled.
+The ``multiphysics`` subsection enables to turn on (``true``) and off (``false``) the physics of interest. Here only ``heat transfer`` is enabled.
 
 
 .. code-block:: text
@@ -124,6 +123,7 @@ where :math:`\eta`, :math:`\alpha`, :math:`P`, :math:`R`, :math:`\mu`, :math:`r`
 
     subsection laser parameters
       set enable               = true
+      set type                 = exponential_decay
       set concentration factor = 50
       set power                = 3
       set absorptivity         = 0.6
@@ -161,9 +161,12 @@ In the ``mesh adaptation`` subsection, we choose a mesh refinement based on the 
 Running the Simulation
 ----------------------
 
-Call the lethe-fluid by invoking:  
+Call the lethe-fluid by invoking:
 
-``mpirun -np 8 lethe-fluid laser-heating.prm``
+.. code-block:: text
+  :class: copy-button
+
+  mpirun -np 8 lethe-fluid laser-heating.prm
 
 to run the simulation using eight CPU cores. Feel free to use more.
 

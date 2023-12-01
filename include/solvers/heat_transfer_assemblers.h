@@ -38,6 +38,9 @@
  *
  * @tparam dim An integer that denotes the number of spatial dimensions
  *
+ * @param simulation_control Shared pointer of the SimulationControl object
+ * controlling the current simulation
+ *
  * @ingroup assemblers
  */
 template <int dim>
@@ -55,7 +58,8 @@ public:
    * @param scratch_data Scratch data containing the heat transfer information.
    * It is important to note that the scratch data has to have been re-inited
    * before calling for matrix assembly.
-   * @param copy_data Destination where the element for the local_rhs and local_matrix are copied to
+   * @param copy_data Destination where the element for the local_rhs and
+   * local_matrix are copied to
    */
 
   virtual void
@@ -67,7 +71,8 @@ public:
    * @param scratch_data Scratch data containing the heat transfer information.
    * It is important to note that the scratch data has to have been re-inited
    * before calling for matrix assembly.
-   * @param copy_data Destination where the element for the local_rhs and local_matrix are copied to
+   * @param copy_data Destination where the element for the local_rhs and
+   * local_matrix are copied to
    */
 
   virtual void
@@ -85,6 +90,9 @@ protected:
  * \nabla \mathbf{u} =0 $$
  *
  * @tparam dim An integer that denotes the number of spatial dimensions
+ *
+ * @param simulation_control Shared pointer of the SimulationControl object
+ * controlling the current simulation
  *
  * @ingroup assemblers
  */
@@ -125,6 +133,9 @@ public:
  *
  * @tparam dim An integer that denotes the number of spatial dimensions
  *
+ * @param simulation_control Shared pointer of the SimulationControl object
+ * controlling the current simulation
+ *
  * @ingroup assemblers
  */
 template <int dim>
@@ -159,9 +170,15 @@ public:
 };
 
 /**
- * @brief Class that assembles the Robin boundary condition for the heat transfer solver.
+ * @brief Class that assembles the Robin boundary condition for the heat
+ * transfer solver.
  *
  * @tparam dim An integer that denotes the number of spatial dimensions
+ *
+ * @param simulation_control Shared pointer of the SimulationControl object
+ * controlling the current simulation
+ * @param p_boundary_conditions_ht HTBoundaryConditions object that hold
+ * boundary condition information for the Heat-Transfer solver
  *
  * @ingroup assemblers
  */
@@ -201,9 +218,13 @@ public:
 
 
 /**
- * @brief Class that assembles the viscous dissipation for the heat transfer solver.
+ * @brief Class that assembles the viscous dissipation for the heat transfer
+ * solver.
  *
  * @tparam dim An integer that denotes the number of spatial dimensions
+ *
+ * @param simulation_control Shared pointer of the SimulationControl object
+ * controlling the current simulation
  *
  * @ingroup assemblers
  */
@@ -232,12 +253,18 @@ public:
 };
 
 /**
- * @brief Class that assembles the viscous dissipation for the heat transfer solver,
- * for the specific case of VOF simulations. The only difference compared to the
- * regular one is that the viscous dissipation can be applied in one of the
- * fluids rather than both, through the viscous_dissipative_fluid parameter.
+ * @brief Class that assembles the viscous dissipation for the heat transfer
+ * solver, for the specific case of VOF simulations. The only difference
+ * compared to the regular one is that the viscous dissipation can be applied in
+ * one of the fluids rather than both, through the viscous_dissipative_fluid
+ * parameter.
  *
  * @tparam dim An integer that denotes the number of spatial dimensions
+ *
+ * @param simulation_control Shared pointer of the SimulationControl object
+ * controlling the current simulation
+ * @param p_viscous_dissipative_fluid A FluidIndicator enum element indicating
+ * the selected viscous dissipative fluid(s).
  *
  * @ingroup assemblers
  */
@@ -272,21 +299,26 @@ protected:
 };
 
 /**
- * @brief Class that assembles the laser heat source for the heat
- * transfer solver. Exponentially decaying model is used to simulate the
- * laser heat source: "Liu, S., Zhu, H., Peng, G., Yin, J. and Zeng, X.,
+ * @brief Class that assembles the laser heating as a volumetric source for
+ * the heat transfer solver. Exponentially decaying model is used to simulate
+ * the laser heat source: "Liu, S., Zhu, H., Peng, G., Yin, J. and Zeng, X.,
  * 2018. Microstructure prediction of selective laser melting AlSi10Mg
  * using finite element analysis. Materials & Design, 142, pp.319-328."
  *
  * @tparam dim An integer that denotes the number of spatial dimensions
  *
+ * @param simulation_control Shared pointer of the SimulationControl object
+ * controlling the current simulation
+ * @param p_laser_parameters Shared pointer of the laser parameters
+ *
  * @ingroup assemblers
  */
 template <int dim>
-class HeatTransferAssemblerLaser : public HeatTransferAssemblerBase<dim>
+class HeatTransferAssemblerLaserExponentialDecay
+  : public HeatTransferAssemblerBase<dim>
 {
 public:
-  HeatTransferAssemblerLaser(
+  HeatTransferAssemblerLaserExponentialDecay(
     std::shared_ptr<SimulationControl>      simulation_control,
     std::shared_ptr<Parameters::Laser<dim>> p_laser_parameters)
     : HeatTransferAssemblerBase<dim>(simulation_control)
@@ -317,8 +349,55 @@ protected:
 };
 
 /**
- * @brief Class that assembles the laser heat source for the heat
- * transfer solver when VOF is enabled. Exponentially decaying model is
+ * @brief Class that assembles the laser heating as a surface flux for the
+ * heat transfer solver when VOF is enabled. The laser heat flux is
+ * applied at the VOF interface (where the phase gradient is non-null).
+ *
+ * @tparam dim An integer that denotes the number of spatial dimensions
+ *
+ * @param simulation_control Shared pointer of the SimulationControl object
+ * controlling the current simulation
+ * @param p_laser_parameters Shared pointer of the laser parameters
+ *
+ * @ingroup assemblers
+ */
+template <int dim>
+class HeatTransferAssemblerLaserHeatFluxVOFInterface
+  : public HeatTransferAssemblerBase<dim>
+{
+public:
+  HeatTransferAssemblerLaserHeatFluxVOFInterface(
+    std::shared_ptr<SimulationControl>      simulation_control,
+    std::shared_ptr<Parameters::Laser<dim>> p_laser_parameters)
+    : HeatTransferAssemblerBase<dim>(simulation_control)
+    , laser_parameters(p_laser_parameters)
+  {}
+
+  /**
+   * @brief assemble_matrix Assembles the matrix
+   * @param scratch_data (see base class)
+   * @param copy_data (see base class)
+   */
+  virtual void
+  assemble_matrix(HeatTransferScratchData<dim> &scratch_data,
+                  StabilizedMethodsCopyData    &copy_data) override;
+
+  /**
+   * @brief assemble_rhs Assembles the rhs
+   * @param scratch_data (see base class)
+   * @param copy_data (see base class)
+   */
+  virtual void
+  assemble_rhs(HeatTransferScratchData<dim> &scratch_data,
+               StabilizedMethodsCopyData    &copy_data) override;
+
+protected:
+  std::shared_ptr<Parameters::Laser<dim>> laser_parameters;
+};
+
+/**
+ * @brief Class that assembles the laser heating as a volumetric source for
+ * the heat transfer solver when VOF is enabled. Exponentially decaying model is
  * used to simulate the laser heat source: "Liu, S., Zhu, H., Peng, G.,
  * Yin, J. and Zeng, X., 2018. Microstructure prediction of selective
  * laser melting AlSi10Mg using finite element analysis. Materials &
@@ -328,13 +407,18 @@ protected:
  *
  * @tparam dim An integer that denotes the number of spatial dimensions
  *
+ * @param simulation_control Shared pointer of the SimulationControl object
+ * controlling the current simulation
+ * @param p_laser_parameters Shared pointer of the laser parameters
+ *
  * @ingroup assemblers
  */
 template <int dim>
-class HeatTransferAssemblerLaserVOF : public HeatTransferAssemblerBase<dim>
+class HeatTransferAssemblerLaserExponentialDecayVOF
+  : public HeatTransferAssemblerBase<dim>
 {
 public:
-  HeatTransferAssemblerLaserVOF(
+  HeatTransferAssemblerLaserExponentialDecayVOF(
     std::shared_ptr<SimulationControl>      simulation_control,
     std::shared_ptr<Parameters::Laser<dim>> p_laser_parameters)
     : HeatTransferAssemblerBase<dim>(simulation_control)
@@ -375,6 +459,10 @@ protected:
  * https://doi.org/10.1016/j.cma.2021.113707."
  *
  * @tparam dim An integer that denotes the number of spatial dimensions
+ *
+ * @param simulation_control Shared pointer of the SimulationControl object
+ * controlling the current simulation
+ * @param p_laser_parameters Shared pointer of the laser parameters
  *
  * @ingroup assemblers
  */
