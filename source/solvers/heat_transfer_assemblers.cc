@@ -1160,7 +1160,8 @@ HeatTransferAssemblerFreeSurfaceRadiationVOF<dim>::assemble_rhs(
           // surface, T is the current temperature and T_inf is the reference
           // (environment) temperature.
           local_rhs(i) -=
-            filtered_phase_gradient_q.norm() * Stefan_Boltzmann_constant * emissivity *
+            filtered_phase_gradient_q.norm() * Stefan_Boltzmann_constant *
+            emissivity *
             (temperature * temperature * temperature * temperature -
              T_inf * T_inf * T_inf * T_inf) *
             phi_T_i * JxW;
@@ -1252,8 +1253,8 @@ HeatTransferAssemblerVOFEvaporation<dim>::assemble_rhs(
         {
           const auto phi_T_i = scratch_data.phi_T[q][i];
 
-          local_rhs(i) -=
-            filtered_phase_gradient_q.norm() * evaporative_heat_flux * phi_T_i * JxW;
+          local_rhs(i) -= filtered_phase_gradient_q.norm() *
+                          evaporative_heat_flux * phi_T_i * JxW;
         }
 
     } // end loop on quadrature points

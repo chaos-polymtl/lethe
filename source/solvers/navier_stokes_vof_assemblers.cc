@@ -470,7 +470,8 @@ GLSNavierStokesVOFAssemblerSTF<dim>::assemble_rhs(
       const double JxW_value = JxW[q];
 
       const Tensor<1, dim> surface_tension_force =
-        -surface_tension_coef * curvature_value * filtered_phase_gradient_value_q;
+        -surface_tension_coef * curvature_value *
+        filtered_phase_gradient_value_q;
 
       strong_residual[q] += surface_tension_force;
 
@@ -531,10 +532,12 @@ GLSNavierStokesVOFAssemblerMarangoni<dim>::assemble_rhs(
       const Tensor<1, dim> &filtered_phase_gradient_value_q =
         scratch_data.filtered_phase_gradient_values[q];
 
-      const double filtered_phase_gradient_norm = filtered_phase_gradient_value_q.norm();
+      const double filtered_phase_gradient_norm =
+        filtered_phase_gradient_value_q.norm();
 
       const Tensor<1, dim> normalized_phase_fraction_gradient =
-        filtered_phase_gradient_value_q / (filtered_phase_gradient_norm + DBL_MIN);
+        filtered_phase_gradient_value_q /
+        (filtered_phase_gradient_norm + DBL_MIN);
 
       // Gather temperature gradient
       const Tensor<1, dim> temperature_gradient =

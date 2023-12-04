@@ -503,7 +503,8 @@ protected:
 
 /**
  * @brief Class that assembles the evaporation sink for the heat
- * transfer solver at the free surface (air/metal interface) when VOF is enabled.
+ * transfer solver at the free surface (air/metal interface) when VOF is
+ * enabled.
  *
  * @tparam dim An integer that denotes the number of spatial dimensions.
  *
