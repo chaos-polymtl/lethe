@@ -13,8 +13,10 @@ DeclException2(DiameterSizeCoherence,
 // create the insertion_points member
 template <int dim>
 ListInsertion<dim>::ListInsertion(
-  const DEMSolverParameters<dim> &dem_parameters)
-  : Insertion<dim>(dem_parameters)
+  const DEMSolverParameters<dim> &dem_parameters,
+  const std::vector<std::shared_ptr<Distribution>>
+    &distribution_object_container)
+  : Insertion<dim>(distribution_object_container)
   , remaining_particles_of_each_type(
       dem_parameters.lagrangian_physical_properties.number.at(0))
 {

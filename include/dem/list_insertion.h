@@ -39,7 +39,9 @@ template <int dim>
 class ListInsertion : public Insertion<dim>
 {
 public:
-  ListInsertion(const DEMSolverParameters<dim> &dem_parameters);
+  ListInsertion(const DEMSolverParameters<dim> &dem_parameters,
+                const std::vector<std::shared_ptr<Distribution>>
+                  &distribution_object_container);
 
   /**
    * @brief The ListInsertion class inserts particles using a list specific position.

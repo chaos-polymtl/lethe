@@ -13,7 +13,7 @@ namespace Parameters
                         "uniform",
                         Patterns::Selection("uniform|normal"),
                         "Particle size distribution"
-                        "Choices are <uniform|normall>.");
+                        "Choices are <uniform|normal>.");
       prm.declare_entry("diameter",
                         "0.001",
                         Patterns::Double(),
@@ -61,22 +61,18 @@ namespace Parameters
       const unsigned int &particle_type,
       ParameterHandler   &prm)
     {
+      particle_average_diameter.at(particle_type) = prm.get_double("diameter");
+      particle_size_std.at(particle_type) =
+        prm.get_double("standard deviation");
       const std::string size_distribution_type_str =
         prm.get("size distribution type");
-
       if (size_distribution_type_str == "uniform")
         {
-          size_distribution_type = size_distribution_type::uniform;
-          particle_average_diameter.at(particle_type) =
-            prm.get_double("diameter");
+          distribution_type.at(particle_type) = SizeDistributionType::uniform;
         }
       else if (size_distribution_type_str == "normal")
         {
-          size_distribution_type = size_distribution_type::normal;
-          particle_average_diameter.at(particle_type) =
-            prm.get_double("diameter");
-          particle_size_std.at(particle_type) =
-            prm.get_double("standard deviation");
+          distribution_type.at(particle_type) = SizeDistributionType::normal;
         }
       else
         {
@@ -167,6 +163,7 @@ namespace Parameters
       prm.enter_subsection("lagrangian physical properties");
       initialize_containers(particle_average_diameter,
                             particle_size_std,
+                            distribution_type,
                             number,
                             density_particle,
                             youngs_modulus_particle,
@@ -175,63 +172,29 @@ namespace Parameters
                             friction_coefficient_particle,
                             rolling_friction_coefficient_particle,
                             surface_energy_particle);
-      {
-        g[0] = prm.get_double("gx");
-        g[1] = prm.get_double("gy");
-        g[2] = prm.get_double("gz");
 
-        particle_type_number = prm.get_integer("number of particle types");
+      g[0] = prm.get_double("gx");
+      g[1] = prm.get_double("gy");
+      g[2] = prm.get_double("gz");
 
-        if (particle_type_number >= 1)
-          {
-            prm.enter_subsection("particle type 0");
-            {
-              parse_particle_properties(0, prm);
-            }
-            prm.leave_subsection();
-          }
-        if (particle_type_number >= 2)
-          {
-            prm.enter_subsection("particle type 1");
-            {
-              parse_particle_properties(1, prm);
-            }
-            prm.leave_subsection();
-          }
-        if (particle_type_number >= 3)
-          {
-            prm.enter_subsection("particle type 2");
-            {
-              parse_particle_properties(2, prm);
-            }
-            prm.leave_subsection();
-          }
-        if (particle_type_number >= 4)
-          {
-            prm.enter_subsection("particle type 3");
-            {
-              parse_particle_properties(3, prm);
-            }
-            prm.leave_subsection();
-          }
-        if (particle_type_number >= 5)
-          {
-            prm.enter_subsection("particle type 4");
-            {
-              parse_particle_properties(4, prm);
-            }
-            prm.leave_subsection();
-          }
+      particle_type_number = prm.get_integer("number of particle types");
 
+      for (unsigned int id = 0; id < particle_type_number; ++id)
+        {
+          prm.enter_subsection("particle type " +
+                               Utilities::int_to_string(id, 1));
+          parse_particle_properties(id, prm);
+          prm.leave_subsection();
+        }
 
-        youngs_modulus_wall = prm.get_double("young modulus wall");
-        poisson_ratio_wall  = prm.get_double("poisson ratio wall");
-        restitution_coefficient_wall =
-          prm.get_double("restitution coefficient wall");
-        friction_coefficient_wall = prm.get_double("friction coefficient wall");
-        rolling_friction_wall     = prm.get_double("rolling friction wall");
-        surface_energy_wall       = prm.get_double("surface energy wall");
-      }
+      youngs_modulus_wall = prm.get_double("young modulus wall");
+      poisson_ratio_wall  = prm.get_double("poisson ratio wall");
+      restitution_coefficient_wall =
+        prm.get_double("restitution coefficient wall");
+      friction_coefficient_wall = prm.get_double("friction coefficient wall");
+      rolling_friction_wall     = prm.get_double("rolling friction wall");
+      surface_energy_wall       = prm.get_double("surface energy wall");
+
       prm.leave_subsection();
     }
 
@@ -239,6 +202,7 @@ namespace Parameters
     LagrangianPhysicalProperties::initialize_containers(
       std::unordered_map<unsigned int, double> &particle_average_diameter,
       std::unordered_map<unsigned int, double> &particle_size_std,
+      std::vector<SizeDistributionType>        &distribution_type,
       std::unordered_map<unsigned int, int>    &number,
       std::unordered_map<unsigned int, double> &density_particle,
       std::unordered_map<unsigned int, double> &youngs_modulus_particle,
@@ -255,7 +219,8 @@ namespace Parameters
         {
           particle_average_diameter.insert({counter, 0.});
           particle_size_std.insert({counter, 0.});
-          number.insert({counter, 0.});
+          distribution_type.push_back(SizeDistributionType::uniform);
+          number.insert({counter, 0});
           density_particle.insert({counter, 0.});
           youngs_modulus_particle.insert({counter, 0.});
           poisson_ratio_particle.insert({counter, 0.});
@@ -736,9 +701,10 @@ namespace Parameters
             }
           else if (load_balance == "dynamic_with_disabling_contacts")
             {
-              // Check if dynamic disabling contacts is enabled, otherwise throw
-              // an error message indicating that the user should use dynamic
-              // load balancing instead or enable dynamic disabling contacts
+              // Check if dynamic disabling contacts is enabled, otherwise
+              // throw an error message indicating that the user should use
+              // dynamic load balancing instead or enable dynamic disabling
+              // contacts
               if (disable_particle_contacts)
                 {
                   load_balance_method =
@@ -1427,5 +1393,4 @@ namespace Parameters
     template class GridMotion<3>;
 
   } // namespace Lagrangian
-
 } // namespace Parameters

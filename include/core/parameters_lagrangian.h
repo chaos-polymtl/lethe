@@ -49,18 +49,18 @@ namespace Parameters
       viscous_resistance
     };
 
+    // Size distribution type
+    enum class SizeDistributionType
+    {
+      uniform,
+      normal
+    };
+
     struct LagrangianPhysicalProperties
     {
     public:
       // Gravitational acceleration
       Tensor<1, 3> g;
-
-      // Size distribution type
-      enum class size_distribution_type
-      {
-        uniform,
-        normal
-      } size_distribution_type;
 
       // Number of particle types
       unsigned int particle_type_number;
@@ -70,6 +70,9 @@ namespace Parameters
 
       // Size standard deviation of each particle type
       std::unordered_map<unsigned int, double> particle_size_std;
+
+      // Distribution type of each particle type
+      std::vector<SizeDistributionType> distribution_type;
 
       // Number of each particle type
       std::unordered_map<unsigned int, int> number;
@@ -102,7 +105,7 @@ namespace Parameters
       // Poisson's ratio of wall
       double poisson_ratio_wall;
 
-      // Coefficient of restituion of wall
+      // Coefficient of restitution of wall
       double restitution_coefficient_wall;
 
       // Friction coefficient of wall
@@ -131,6 +134,7 @@ namespace Parameters
       initialize_containers(
         std::unordered_map<unsigned int, double> &particle_average_diameter,
         std::unordered_map<unsigned int, double> &particle_size_std,
+        std::vector<SizeDistributionType>        &distribution_type,
         std::unordered_map<unsigned int, int>    &number,
         std::unordered_map<unsigned int, double> &density_particle,
         std::unordered_map<unsigned int, double> &youngs_modulus_particle,
@@ -466,5 +470,4 @@ namespace Parameters
 
   } // namespace Lagrangian
 } // namespace Parameters
-
 #endif /* PARAMETERS_H_ */

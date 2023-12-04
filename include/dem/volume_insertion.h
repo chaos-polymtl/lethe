@@ -42,7 +42,9 @@ public:
    * defined in the parameter handler
    */
   VolumeInsertion(const DEMSolverParameters<dim> &dem_parameters,
-                  const double                    maximum_particle_diameter);
+                  const double                    maximum_particle_diameter,
+                  const std::vector<std::shared_ptr<Distribution>>
+                    &distribution_object_container);
 
   /**
    * Carries out the volume insertion of particles.
