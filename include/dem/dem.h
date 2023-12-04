@@ -352,7 +352,6 @@ private:
   Visualization<dim>            visualization_object;
   LagrangianPostProcessing<dim> post_processing_object;
   PVDHandler                    particles_pvdhandler;
-  const double                  standard_deviation_multiplier;
 
   std::vector<Tensor<1, 3>> torque;
   std::vector<Tensor<1, 3>> force;
@@ -387,6 +386,9 @@ private:
 
   // Solid DEM objects
   std::vector<std::shared_ptr<SerialSolid<dim - 1, dim>>> solids;
+
+  // Distribution objects
+  std::vector<std::shared_ptr<Distribution>> distribution_object_container;
 
   // Dynamic disabling of particle contacts in cells object
   DisableContacts<dim> disable_contacts_object;

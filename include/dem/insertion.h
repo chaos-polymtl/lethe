@@ -60,9 +60,11 @@ public:
    * Carries out the insertion of particles. This is the base class of
    * volume_insertion, plane_insertion and list_insertion classes.
    *
-   * @param dem_parameters DEM parameters declared in the .prm file
+   * @param distribution_object_container Contains all distribution for each
+   * type of particle
    */
-  Insertion(const DEMSolverParameters<dim> &dem_parameters);
+  Insertion(const std::vector<std::shared_ptr<Distribution>>
+              &distribution_object_container);
 
   /**
    * This function is overridden by volume_insertion, plane_insertion and
@@ -146,10 +148,9 @@ protected:
   // Inserted number of particles at this step on this processor
   unsigned int inserted_this_step_this_proc;
 
-
   // A distribution object that carries out the attribution of diameter to every
   // particle during an insertion time step
-  std::shared_ptr<Distribution> distribution_object;
+  std::vector<std::shared_ptr<Distribution>> distributions_objects;
 
 private:
   // Stores particles diameters

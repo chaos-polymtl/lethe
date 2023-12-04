@@ -10,7 +10,6 @@ add_library(lethe-dem
   find_boundary_cells_information.cc
   find_cell_neighbors.cc
   find_contact_detection_step.cc
-  find_maximum_particle_size.cc
   gear3_integrator.cc
   grid_motion.cc
   input_parameter_inspection.cc
@@ -56,7 +55,6 @@ add_library(lethe-dem
   ../../include/dem/find_boundary_cells_information.h
   ../../include/dem/find_cell_neighbors.h
   ../../include/dem/find_contact_detection_step.h
-  ../../include/dem/find_maximum_particle_size.h
   ../../include/dem/gear3_integrator.h
   ../../include/dem/grid_motion.h
   ../../include/dem/input_parameter_inspection.h
