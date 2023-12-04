@@ -38,10 +38,6 @@ end
 
 subsection initial conditions
   set type = nodal
-  subsection uvwp
-    set Function expression = 0; 0; 0
-  end
-
   subsection temperature
     set Function expression = 700
   end
@@ -118,9 +114,6 @@ end
 subsection analytical solution
   set enable    = true
   set verbosity = verbose
-  subsection uvwp
-    set Function expression = 0 ; 0 ; 0
-  end
   subsection VOF
     set Function expression = if (y>0, 0, 1)
   end

@@ -215,6 +215,11 @@ public:
  *
  * @tparam dim An integer that denotes the number of spatial dimensions
  *
+ * @param simulation_control Shared pointer of the SimulationControl object
+ * controlling the current simulation
+ * @param p_evaporation A  struct that holds all evaporation model
+ * parameters
+ *
  * @ingroup assemblers
  */
 template <int dim>

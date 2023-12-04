@@ -503,11 +503,15 @@ protected:
 
 /**
  * @brief Class that assembles the evaporation sink for the heat
- * transfer solver at the free surface (air/metal interface) when VOF.
+ * transfer solver at the free surface (air/metal interface) when VOF is enabled.
  *
- * @tparam dim An integer that denotes the number of spatial dimensions
+ * @tparam dim An integer that denotes the number of spatial dimensions.
  *
- * @ingroup assemblers
+ * @param simulation_control Shared pointer of the SimulationControl object
+ * controlling the current simulation.
+ * @param p_evaporation Struct that holds all evaporation model
+ * parameters.
+ * @ingroup assemblers.
  */
 template <int dim>
 class HeatTransferAssemblerVOFEvaporation

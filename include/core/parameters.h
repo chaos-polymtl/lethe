@@ -1374,7 +1374,7 @@ namespace Parameters
     bool enable_recoil_pressure;
 
     // Parameters for the evaporation terms at the melt pool free surface
-    double n_evaporation;
+    double evaporation_mass_flux;
     double evaporation_coefficient;
     double recoil_pressure_coefficient;
     double molar_mass;

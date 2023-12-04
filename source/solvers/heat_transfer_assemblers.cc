@@ -1160,8 +1160,7 @@ HeatTransferAssemblerFreeSurfaceRadiationVOF<dim>::assemble_rhs(
           // surface, T is the current temperature and T_inf is the reference
           // (environment) temperature.
           local_rhs(i) -=
-            filtered_phase_gradient_q.norm() * Stefan_Boltzmann_constant *
-            emissivity *
+            filtered_phase_gradient_q.norm() * Stefan_Boltzmann_constant * emissivity *
             (temperature * temperature * temperature * temperature -
              T_inf * T_inf * T_inf * T_inf) *
             phi_T_i * JxW;
@@ -1198,7 +1197,7 @@ HeatTransferAssemblerVOFEvaporation<dim>::assemble_matrix(
         this->evaporation_model->heat_flux_jacobian(field_value,
                                                     field::temperature);
 
-      const Tensor<1, dim> phase_gradient_q =
+      const Tensor<1, dim> filtered_phase_gradient_q =
         scratch_data.filtered_phase_gradient_values[q];
 
       // Store JxW in local variable for faster access
@@ -1212,7 +1211,7 @@ HeatTransferAssemblerVOFEvaporation<dim>::assemble_matrix(
             {
               const auto phi_T_j = scratch_data.phi_T[q][j];
 
-              local_matrix(i, j) += phase_gradient_q.norm() *
+              local_matrix(i, j) += filtered_phase_gradient_q.norm() *
                                     evaporative_heat_flux_jacobian * phi_T_i *
                                     phi_T_j * JxW;
             }
@@ -1244,7 +1243,7 @@ HeatTransferAssemblerVOFEvaporation<dim>::assemble_rhs(
       const double evaporative_heat_flux =
         this->evaporation_model->heat_flux(field_value);
 
-      const Tensor<1, dim> phase_gradient_q =
+      const Tensor<1, dim> filtered_phase_gradient_q =
         scratch_data.filtered_phase_gradient_values[q];
       // Store JxW in local variable for faster access
       const double JxW = scratch_data.fe_values_T.JxW(q);
@@ -1254,7 +1253,7 @@ HeatTransferAssemblerVOFEvaporation<dim>::assemble_rhs(
           const auto phi_T_i = scratch_data.phi_T[q][i];
 
           local_rhs(i) -=
-            phase_gradient_q.norm() * evaporative_heat_flux * phi_T_i * JxW;
+            filtered_phase_gradient_q.norm() * evaporative_heat_flux * phi_T_i * JxW;
         }
 
     } // end loop on quadrature points

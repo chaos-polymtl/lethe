@@ -3248,7 +3248,7 @@ namespace Parameters
         "constant",
         Patterns::Selection("constant|temperature_dependent"),
         "Model used for the calculation of the evaporative mass flux"
-        "Choices are <constant|temperature dependent>.");
+        "Choices are <constant|temperature_dependent>.");
       prm.declare_entry(
         "enable evaporative cooling",
         "false",
@@ -3273,7 +3273,7 @@ namespace Parameters
         "recoil pressure coefficient",
         "0.56",
         Patterns::Double(),
-        "Recoil pressure coefficient corresponding to the factor applied to the staturation pressure to compute the recoil pressure in an out of equilibrium evaportation");
+        "Recoil pressure coefficient corresponding to the factor applied to the saturation pressure to compute the recoil pressure in an out of equilibrium evaportation");
       prm.declare_entry("molar mass",
                         "1.0",
                         Patterns::Double(),
@@ -3289,15 +3289,15 @@ namespace Parameters
       prm.declare_entry("ambient pressure",
                         "101325",
                         Patterns::Double(),
-                        "Ambient pressure in Pa");
+                        "Pressure of the ambient gas in Pa");
       prm.declare_entry("ambient gas density",
                         "1.0",
                         Patterns::Double(),
-                        "Ambient gas density in kg/m3");
+                        "Ambient gas density in kg/m^3");
       prm.declare_entry("liquid density",
                         "10.0",
                         Patterns::Double(),
-                        "Liquid density in kg/m3");
+                        "Liquid density in kg/m^3");
     }
     prm.leave_subsection();
   }
@@ -3321,12 +3321,12 @@ namespace Parameters
         }
       else
         throw(std::runtime_error(
-          "Invalid evaporative mass flux model. The choices are <constant>."));
+          "Invalid evaporative mass flux model. The choices are <constant|temperature_dependent>."));
 
       enable_evaporation_cooling = prm.get_bool("enable evaporative cooling");
       enable_recoil_pressure     = prm.get_bool("enable recoil pressure");
 
-      n_evaporation           = prm.get_double("evaporation mass flux");
+      evaporation_mass_flux   = prm.get_double("evaporation mass flux");
       evaporation_coefficient = prm.get_double("evaporation coefficient");
       recoil_pressure_coefficient =
         prm.get_double("recoil pressure coefficient");
