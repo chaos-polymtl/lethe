@@ -14,10 +14,11 @@ DeclException2(DiameterSizeCoherence,
 template <int dim>
 ListInsertion<dim>::ListInsertion(
   const DEMSolverParameters<dim> &dem_parameters)
-  : remaining_particles_of_each_type(
+  : Insertion<dim>(dem_parameters)
+  , remaining_particles_of_each_type(
       dem_parameters.lagrangian_physical_properties.number.at(0))
 {
-  // Inializing current inserting particle type
+  // Initializing current inserting particle type
   current_inserting_particle_type = 0;
 
   const auto &list_x  = dem_parameters.insertion_info.list_x;
@@ -109,19 +110,22 @@ ListInsertion<dim>::insert(
       const auto global_bounding_boxes =
         Utilities::MPI::all_gather(communicator, my_bounding_box);
 
+      // A vector of vectors, which contains all the properties of all inserted
+      // particles at each insertion step
+      std::vector<std::vector<double>> particle_properties;
 
       // Assign inserted particles properties
       this->assign_particle_properties_for_list_insertion(
         dem_parameters,
         n_particles_to_insert_this_proc,
         current_inserting_particle_type,
-        this->particle_properties);
+        particle_properties);
 
       // Insert the particles using the points and assigned properties
       particle_handler.insert_global_particles(
         insertion_points_on_proc_this_step,
         global_bounding_boxes,
-        this->particle_properties);
+        particle_properties);
 
       // Update number of particles remaining to be inserted
       remaining_particles_of_each_type -= n_total_particles_to_insert;
@@ -145,7 +149,6 @@ ListInsertion<dim>::assign_particle_properties_for_list_insertion(
   std::vector<std::vector<double>> &particle_properties)
 {
   // Clearing and resizing particle_properties
-  particle_properties.clear();
   particle_properties.reserve(inserted_this_step_this_proc);
 
   // Getting properties as local parameters

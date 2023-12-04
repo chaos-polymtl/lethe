@@ -3,6 +3,40 @@ All notable changes to the Lethe project will be documented in this file.
  
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Master] - 2023-11-27
+
+### Removed
+
+- MINOR The average diameter of the uniform size distribution with the DEM module was specified with a "average diameter" paramter. It is now specified directly from the diameter parameter. This is correctly documented. [#940](https://github.com/lethe-cfd/lethe/pull/940).
+
+## [Master] - 2023-11-27
+
+### Fixed
+
+- MINOR The DEM time step verification was outputting the the most permissive time step (the biggest) and not the most restrive (the smallest). This bugfix doesn`t affect the uniform particle size simulation. [#939](https://github.com/lethe-cfd/lethe/pull/939).
+
+
+## [Master] - 2023-11-23
+
+### Fixed
+
+- MINOR The plane insertion for the DEM was only supporting the uniform diameter distribution. Now it supports all types of distribution. 
+
+## [Master] - 2023-11-16
+  
+### Changed
+
+- MINOR The maximum number of boundary conditions for all physics was fixed to 14 since the boundary conditions had the be declared before being parsed. A new mechanism is now in place which parses the "number" parameter for each physics and keeps the maximal value. Then, this maximal value is used to pre-declare the boundary conditions. This enables much more robust sanity checking of the input parameter. The major drawback of this (and this is a major one) is that if we ever have another parameter with the name "number" then this parameter would also be parsed and used to establish the maximum number of boundary conditions. In this case, the best approach would be to replace "number" with "number of boundary conditions" in the parameter file. I (B-saurus-rex) did not want to do this at the time of this change to not have a massive PR which breaks every parameter files.
+
+- MAJOR The "number" parameter within "subsection lagrangian physical properties" and "particle type n" was changed to "number of particles" to prevent confusions with the "number" used for boundary conditions. The "number" for boundary conditions will be changed to "number of boundary conditions" in the near future.
+
+## [Master] - 2023-11-12
+  
+### Deprecated
+
+- MINOR The uniform insertion method had been removed. The non-uniform insertion method has been renamed to volume method to remain coherent with the plane method. If you want to use an insertion method equivalent to the uniform insertion method, use the volume method with a "insertion random number range " equal to zero. [#926](https://github.com/lethe-cfd/lethe/pull/926)
+
+
 ## [Master] - 2023-10-01
   
 ### Fixed
@@ -32,6 +66,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 ## [Master] - 2023-10-30
 
 - MINOR The rotational vector for the rotational boundary condition in the lethe-particles solver is now define with one line in the parameters file. [#920](https://github.com/lethe-cfd/lethe/pull/920)
+
+ 
 
 ## [Sample] - YYYY/MM/DD
 

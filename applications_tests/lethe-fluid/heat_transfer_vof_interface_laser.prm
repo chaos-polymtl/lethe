@@ -1,0 +1,199 @@
+# Listing of Parameters
+#----------------------
+
+set dimension = 2
+
+#---------------------------------------------------
+# Simulation Control
+#---------------------------------------------------
+
+subsection simulation control
+  set method           = bdf1
+  set time end         = 0.01
+  set time step        = 0.005
+  set output name      = laser-heat-flux-vof-interface
+  set output frequency = 0
+end
+
+#---------------------------------------------------
+# Multiphysics
+#---------------------------------------------------
+
+subsection multiphysics
+  set fluid dynamics = true
+  set heat transfer  = true
+  set VOF            = true
+end
+
+#---------------------------------------------------
+# Laser parameters
+#---------------------------------------------------
+
+subsection laser parameters
+  set enable               = true
+  set type                 = heat_flux_vof_interface
+  set concentration factor = 2
+  set power                = 150
+  set absorptivity         = 0.8
+  set penetration depth    = 0.0
+  set beam radius          = 0.025
+  set start time           = 0
+  set end time             = 0.01
+  set beam orientation     = y-
+  subsection path
+    set Function expression = 0; 0
+  end
+end
+
+#---------------------------------------------------
+# Initial condition
+#---------------------------------------------------
+
+subsection initial conditions
+  set type = nodal
+  subsection uvwp
+    set Function expression = 0; 0; 0
+  end
+
+  subsection temperature
+    set Function expression = 20
+  end
+
+  subsection VOF
+    set Function expression = if(y<=0, 1, 0)
+  end
+end
+
+#---------------------------------------------------
+# Physical Properties
+#---------------------------------------------------
+
+subsection physical properties
+  set number of fluids = 2
+  subsection fluid 0
+    set thermal conductivity = 1
+    set density              = 1
+    set kinematic viscosity  = 1
+    set specific heat        = 1
+  end
+  subsection fluid 1
+    set thermal conductivity = 50
+    set density              = 1
+    set kinematic viscosity  = 1
+    set specific heat        = 10
+  end
+end
+
+#---------------------------------------------------
+# Post-processing
+#---------------------------------------------------
+subsection post-processing
+  set verbosity                        = verbose
+  set calculate temperature statistics = true
+end
+
+#---------------------------------------------------
+# Mesh
+#---------------------------------------------------
+
+subsection mesh
+  set type               = dealii
+  set grid type          = subdivided_hyper_rectangle
+  set grid arguments     = 32, 32: -0.1, -0.1 : 0.1, 0.1 : false
+  set initial refinement = 0
+end
+
+#---------------------------------------------------
+# Boundary Conditions
+#---------------------------------------------------
+
+subsection boundary conditions
+  set number = 1
+  subsection bc 0
+    set type = noslip
+  end
+end
+
+subsection boundary conditions heat transfer
+  set number = 1
+  subsection bc 0
+    set type = convection-radiation
+    subsection h
+      set Function expression = 5
+    end
+    subsection Tinf
+      set Function expression = 20
+    end
+    subsection emissivity
+      set Function expression = 0.4
+    end
+  end
+end
+
+#---------------------------------------------------
+# FEM
+#---------------------------------------------------
+
+subsection FEM
+  set velocity order = 1
+  set pressure order = 1
+end
+
+#---------------------------------------------------
+# Non-Linear Solver Control
+#---------------------------------------------------
+
+subsection non-linear solver
+  subsection fluid dynamics
+    set tolerance      = 1e-8
+    set max iterations = 100
+    set verbosity      = quiet
+  end
+  subsection heat transfer
+    set tolerance      = 1e-3
+    set max iterations = 100
+    set verbosity      = quiet
+  end
+  subsection VOF
+    set tolerance      = 1e-7
+    set max iterations = 100
+    set verbosity      = quiet
+  end
+end
+
+#---------------------------------------------------
+# Linear Solver Control
+#---------------------------------------------------
+
+subsection linear solver
+  subsection fluid dynamics
+    set verbosity                             = quiet
+    set method                                = gmres
+    set relative residual                     = 1e-3
+    set minimum residual                      = 1e-8
+    set preconditioner                        = ilu
+    set ilu preconditioner fill               = 1
+    set ilu preconditioner absolute tolerance = 1e-12
+    set ilu preconditioner relative tolerance = 1.00
+  end
+  subsection heat transfer
+    set verbosity                             = quiet
+    set method                                = gmres
+    set relative residual                     = 1e-3
+    set minimum residual                      = 1e-4
+    set preconditioner                        = ilu
+    set ilu preconditioner fill               = 1
+    set ilu preconditioner absolute tolerance = 1e-12
+    set ilu preconditioner relative tolerance = 1.00
+  end
+  subsection VOF
+    set verbosity                             = quiet
+    set method                                = gmres
+    set relative residual                     = 1e-3
+    set minimum residual                      = 1e-8
+    set preconditioner                        = ilu
+    set ilu preconditioner fill               = 1
+    set ilu preconditioner absolute tolerance = 1e-12
+    set ilu preconditioner relative tolerance = 1.00
+  end
+end

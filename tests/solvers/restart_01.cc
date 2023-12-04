@@ -160,9 +160,11 @@ RestartNavierStokes<dim>::run()
 void
 test()
 {
-  ParameterHandler        prm;
-  SimulationParameters<2> NSparam;
-  NSparam.declare(prm);
+  ParameterHandler              prm;
+  SimulationParameters<2>       NSparam;
+  Parameters::SizeOfSubsections size_of_subsections;
+  size_of_subsections.boundary_conditions = 1;
+  NSparam.declare(prm, size_of_subsections);
   NSparam.parse(prm);
 
   // Manually alter some of the default parameters of the solver

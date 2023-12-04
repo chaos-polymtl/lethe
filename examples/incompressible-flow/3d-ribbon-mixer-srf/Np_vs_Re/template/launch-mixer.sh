@@ -7,4 +7,4 @@
 #SBATCH --output=%x-%j.out
 
 source $HOME/.dealii
-srun  gls_navier_stokes_3d ribbon-gls.prm
+srun  lethe-fluid ribbon-gls.prm

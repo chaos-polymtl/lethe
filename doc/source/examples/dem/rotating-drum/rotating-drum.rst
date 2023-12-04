@@ -53,7 +53,7 @@ An insertion box is defined inside the cylindrical domain. 38000 particles are i
 .. code-block:: text
 
   subsection insertion info
-    set insertion method                               = non_uniform
+    set insertion method                               = volume
     set inserted number of particles at each time step = 38000
     set insertion frequency                            = 25000
     set insertion box minimum x                        = -0.175
@@ -83,7 +83,7 @@ The particles (226080 particles) are monodispersed, their diameter and density a
       subsection particle type 0
         set size distribution type            = uniform
         set diameter                          = 0.003
-        set number                            = 226080
+        set number of particles               = 226080
         set density particles                 = 2500
         set young modulus particles           = 1e7
         set poisson ratio particles           = 0.24

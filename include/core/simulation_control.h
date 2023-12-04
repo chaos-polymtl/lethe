@@ -131,7 +131,7 @@ protected:
   // The method use to start high order bdf scheme
   Parameters::SimulationControl::BDFStartupMethods bdf_start_method;
 
-  // The time scaling used to do small time steps at the startup of the
+  // The time scaling used to do small time-steps at the startup of the
   // simulation
   double startup_timestep_scaling;
 
@@ -275,7 +275,7 @@ public:
   update_assembly_method();
 
   /**
-   * @brief Set the value of the CFL conditoin
+   * @brief Set the value of the CFL condition
    *
    * @param p_CFL Value of the CFL condition calculated by the solver.
    */

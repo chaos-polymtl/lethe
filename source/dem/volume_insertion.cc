@@ -1,32 +1,31 @@
-#include <dem/uniform_insertion.h>
+#include <dem/volume_insertion.h>
 
 using namespace DEM;
 
-// The constructor of non-uniform insertion class. In the constructor, we
+// The constructor of volume insertion class. In the constructor, we
 // investigate if the insertion box is adequately large to handle the desired
 // number of inserted particles. The number of insertion points in each
 // direction (number_of_particles_x_direction, number_of_particles_y_direction
 // and number_of_particles_z_direction) are also obtained
 template <int dim>
-UniformInsertion<dim>::UniformInsertion(
+VolumeInsertion<dim>::VolumeInsertion(
   const DEMSolverParameters<dim> &dem_parameters,
   const double                    maximum_particle_diameter)
-  : particles_of_each_type_remaining(
+  : Insertion<dim>(dem_parameters)
+  , particles_of_each_type_remaining(
       dem_parameters.lagrangian_physical_properties.number.at(0))
 {
-  // Inializing current inserting particle type
+  // Initializing current inserting particle type
   current_inserting_particle_type = 0;
-
-  this->inserted_this_step = 0;
-
-  this->maximum_diameter = maximum_particle_diameter;
+  this->inserted_this_step        = 0;
+  this->maximum_diameter          = maximum_particle_diameter;
 }
 
-// The main insertion function. Insert_global_function is used to insert the
-// particles
+// The main insertion function. Insert_global_function is utilized to insert
+// the particles
 template <int dim>
 void
-UniformInsertion<dim>::insert(
+VolumeInsertion<dim>::insert(
   Particles::ParticleHandler<dim>                 &particle_handler,
   const parallel::distributed::Triangulation<dim> &triangulation,
   const DEMSolverParameters<dim>                  &dem_parameters)
@@ -40,7 +39,8 @@ UniformInsertion<dim>::insert(
           ++current_inserting_particle_type);
     }
 
-  // Check to see if the remained uninserted particles is equal to zero or not
+  // Check to see if the remaining un-inserted particles are equal to zero or
+  // not
   if (particles_of_each_type_remaining != 0)
     {
       MPI_Comm           communicator = triangulation.get_communicator();
@@ -50,11 +50,11 @@ UniformInsertion<dim>::insert(
       auto this_mpi_process = Utilities::MPI::this_mpi_process(communicator);
       auto n_mpi_process    = Utilities::MPI::n_mpi_processes(communicator);
 
+
       this->calculate_insertion_domain_maximum_particle_number(dem_parameters,
                                                                pcout);
-
-      // The inserted_this_step value is the mimnum of remained_particles and
-      // inserted_this_step
+      // The inserted_this_step value is the minimum of
+      // particles_of_each_type_remaining and inserted_this_step
       this->inserted_this_step =
         std::min(particles_of_each_type_remaining, this->inserted_this_step);
 
@@ -72,6 +72,14 @@ UniformInsertion<dim>::insert(
         this->inserted_this_step_this_proc =
           this->inserted_this_step -
           (n_mpi_process - 1) * floor(this->inserted_this_step / n_mpi_process);
+
+      // Call random number generator
+      std::vector<double> random_number_vector;
+      random_number_vector.reserve(this->inserted_this_step_this_proc);
+      this->create_random_number_container(
+        random_number_vector,
+        dem_parameters.insertion_info.random_number_range,
+        dem_parameters.insertion_info.random_number_seed);
 
       Point<dim>              insertion_location;
       std::vector<Point<dim>> insertion_points_on_proc;
@@ -96,25 +104,32 @@ UniformInsertion<dim>::insert(
 
       // Looping through the particles on each process and finding their
       // insertion location
-      for (unsigned int id = first_id; id < last_id; ++id)
+      unsigned int particle_counter = 0;
+      for (unsigned int id = first_id; id < last_id; ++id, ++particle_counter)
         {
-          find_insertion_location_uniform(insertion_location,
-                                          id,
-                                          dem_parameters.insertion_info);
+          find_insertion_location_volume(
+            insertion_location,
+            id,
+            random_number_vector[particle_counter],
+            random_number_vector[this->inserted_this_step - particle_counter -
+                                 1],
+            dem_parameters.insertion_info);
           insertion_points_on_proc.push_back(insertion_location);
         }
+
+      std::vector<std::vector<double>> particle_properties;
 
       // Assigning inserted particles properties using
       // assign_particle_properties function
       this->assign_particle_properties(dem_parameters,
                                        this->inserted_this_step_this_proc,
                                        current_inserting_particle_type,
-                                       this->particle_properties);
+                                       particle_properties);
 
       // Insert the particles using the points and assigned properties
       particle_handler.insert_global_particles(insertion_points_on_proc,
                                                global_bounding_boxes,
-                                               this->particle_properties);
+                                               particle_properties);
 
       // Updating remaining particles
       particles_of_each_type_remaining -= this->inserted_this_step;
@@ -126,12 +141,31 @@ UniformInsertion<dim>::insert(
     }
 }
 
+// This function creates a vector of random doubles using the input paramteres
+// in the parameter handler
+template <int dim>
+void
+VolumeInsertion<dim>::create_random_number_container(
+  std::vector<double> &random_container,
+  const double         random_number_range,
+  const int            random_number_seed)
+{
+  for (unsigned int i = 0; i < this->inserted_this_step; ++i)
+    {
+      srand(random_number_seed * (i + 1));
+      random_container.push_back((((double)rand()) / ((double)RAND_MAX)) *
+                                 random_number_range);
+    }
+}
+
 // This function assigns the insertion points of the inserted particles
 template <>
 void
-UniformInsertion<2>::find_insertion_location_uniform(
+VolumeInsertion<2>::find_insertion_location_volume(
   Point<2>                                    &insertion_location,
-  const unsigned int                          &id,
+  const unsigned int                           id,
+  const double                                 random_number1,
+  const double                                 random_number2,
   const Parameters::Lagrangian::InsertionInfo &insertion_information)
 {
   std::vector<int> insertion_index;
@@ -146,23 +180,27 @@ UniformInsertion<2>::find_insertion_location_uniform(
   insertion_index[axis_0] = id % number_of_particles_0;
   insertion_location[axis_0] =
     this->axis_min[axis_0] + ((insertion_index[axis_0] + 0.5) *
-                              insertion_information.distance_threshold) *
+                                insertion_information.distance_threshold -
+                              random_number1) *
                                this->maximum_diameter;
 
   // Second direction (axis) to have particles inserted
   axis_1                  = insertion_information.axis_1;
-  insertion_index[axis_1] = static_cast<int>(id) / number_of_particles_0;
+  insertion_index[axis_1] = static_cast<int>(id / number_of_particles_0);
   insertion_location[axis_1] =
     this->axis_min[axis_1] + ((insertion_index[axis_1] + 0.5) *
-                              insertion_information.distance_threshold) *
+                                insertion_information.distance_threshold -
+                              random_number2) *
                                this->maximum_diameter;
 }
 
 template <>
 void
-UniformInsertion<3>::find_insertion_location_uniform(
+VolumeInsertion<3>::find_insertion_location_volume(
   Point<3>                                    &insertion_location,
-  const unsigned int                          &id,
+  const unsigned int                           id,
+  const double                                 random_number1,
+  const double                                 random_number2,
   const Parameters::Lagrangian::InsertionInfo &insertion_information)
 {
   std::vector<int> insertion_index;
@@ -177,7 +215,8 @@ UniformInsertion<3>::find_insertion_location_uniform(
   insertion_index[axis_0] = id % number_of_particles_0;
   insertion_location[axis_0] =
     this->axis_min[axis_0] + ((insertion_index[axis_0] + 0.5) *
-                              insertion_information.distance_threshold) *
+                                insertion_information.distance_threshold -
+                              random_number1) *
                                this->maximum_diameter;
 
   // Second direction (axis) to have particles inserted
@@ -188,26 +227,19 @@ UniformInsertion<3>::find_insertion_location_uniform(
     (number_of_particles_0);
   insertion_location[axis_1] =
     this->axis_min[axis_1] + ((insertion_index[axis_1] + 0.5) *
-                              insertion_information.distance_threshold) *
+                                insertion_information.distance_threshold -
+                              random_number2) *
                                this->maximum_diameter;
 
   // Third direction (axis) to have particles inserted
   axis_2 = insertion_information.axis_2;
   insertion_index[axis_2] =
-    static_cast<int>(id) / (number_of_particles_0 * number_of_particles_1);
-
-  // Adding an extra distance to even rows of insertion
-  if (insertion_index[2] % 2 == 0)
-    {
-      insertion_location[0] += this->maximum_diameter * 0.5;
-      insertion_location[1] += this->maximum_diameter * 0.5;
-    }
-
+    static_cast<int>(id / (number_of_particles_0 * number_of_particles_1));
   insertion_location[axis_2] =
     this->axis_min[axis_2] + ((insertion_index[axis_2] + 0.5) *
-                              insertion_information.distance_threshold) *
+                                insertion_information.distance_threshold -
+                              random_number1) *
                                this->maximum_diameter;
 }
-
-template class UniformInsertion<2>;
-template class UniformInsertion<3>;
+template class VolumeInsertion<2>;
+template class VolumeInsertion<3>;

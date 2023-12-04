@@ -1,5 +1,5 @@
 ==========================
-Laser Meltpool
+Laser Melt Pool
 ==========================
 
 This example simulates a two-dimensional melt pool with a laser `[1] <https://doi.org/10.1016/j.powtec.2022.117533>`_.
@@ -21,7 +21,7 @@ Features
 ---------------------------
 Files Used in This Example
 ---------------------------
-``examples/multiphysics/laser-meltpool/laser-meltpool.prm``
+``examples/multiphysics/laser-melt-pool/laser-melt-pool.prm``
 
 
 -----------------------------
@@ -29,7 +29,7 @@ Description of the Case
 -----------------------------
 
 A Ti-6Al-4 V powder bed (assumed as a solid block in this example) melts using a laser beam that is emitted perpendicular to the top surface of the block. The laser beam speed is 0.5 m/s. Due to the laser heat source, the solid block melts in the direction of the laser. The corresponding parameter file is 
-``laser-meltpool.prm``.
+``laser-melt-pool.prm``.
 
 The following schematic describes the geometry and dimensions of the simulation in the :math:`(x,y)` plane:
 
@@ -57,7 +57,7 @@ Simulation Control
       set method           = bdf2
       set time end         = 0.005
       set time step        = 0.000005
-      set output name      = laser-meltpool
+      set output name      = laser-melt-pool
       set output frequency = 1
       set output path      = ./output/
     end
@@ -149,8 +149,7 @@ All the four boundary conditions are ``noslip``, and the heat transfer boundary 
 Multiphysics
 ~~~~~~~~~~~~
 
-The ``multiphysics`` subsection enables to turn on (``true``) 
-and off (``false``) the physics of interest. Here ``heat transfer``, ``buoyancy force``, and ``fluid dynamics`` are enabled.
+The ``multiphysics`` subsection enables to turn on (``true``) and off (``false``) the physics of interest. Here ``heat transfer``, ``buoyancy force``, and ``fluid dynamics`` are enabled.
 
 
 .. code-block:: text
@@ -182,6 +181,7 @@ where :math:`\eta`, :math:`\alpha`, :math:`P`, :math:`R`, :math:`\mu`, :math:`r`
 
     subsection laser parameters
       set enable               = true
+      set type                 = exponential_decay
       set concentration factor = 2
       set power                = 100
       set absorptivity         = 0.6
@@ -275,7 +275,10 @@ Running the Simulation
 
 Call the lethe-fluid by invoking:  
 
-``mpirun -np 12 lethe-fluid laser-meltpool.prm``
+.. code-block:: text
+  :class: copy-button
+
+  mpirun -np 12 lethe-fluid laser-melt-pool.prm
 
 to run the simulation using twelve CPU cores. Feel free to use more.
 
@@ -292,7 +295,7 @@ Results
 
 The following animation shows the temperature distribution in the simulations domain, as well the melted zone (using white contour lines at the liquidus and solidus temperatures).
 
-.. image:: images/laser-meltpool.gif
+.. image:: images/laser-melt-pool.gif
     :alt: temperature
     :align: center
     :width: 600

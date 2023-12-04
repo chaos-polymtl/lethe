@@ -274,12 +274,25 @@ HeatTransfer<dim>::setup_assemblers()
     {
       if (this->simulation_parameters.multiphysics.VOF)
         {
-          // Call for the specific assembler
-          // Assembler of the laser source term applied only to the metal phase
-          this->assemblers.push_back(
-            std::make_shared<HeatTransferAssemblerLaserVOF<dim>>(
-              this->simulation_control,
-              this->simulation_parameters.laser_parameters));
+          // Call for the specific assembler of the laser source term
+          // Laser source is applied at the interface (surface flux)
+          if (this->simulation_parameters.laser_parameters->laser_type ==
+              Parameters::Laser<dim>::LaserType::heat_flux_vof_interface)
+            {
+              this->assemblers.push_back(
+                std::make_shared<
+                  HeatTransferAssemblerLaserHeatFluxVOFInterface<dim>>(
+                  this->simulation_control,
+                  this->simulation_parameters.laser_parameters));
+            }
+          else // Laser is applied in fluid 1 as a volumetric source
+            {
+              this->assemblers.push_back(
+                std::make_shared<
+                  HeatTransferAssemblerLaserExponentialDecayVOF<dim>>(
+                  this->simulation_control,
+                  this->simulation_parameters.laser_parameters));
+            }
 
           // Assembler of the radiation sink term applied only at the air/metal
           // interface. The radiation term in that case is treated as a source
@@ -297,7 +310,7 @@ HeatTransfer<dim>::setup_assemblers()
       else
         {
           this->assemblers.push_back(
-            std::make_shared<HeatTransferAssemblerLaser<dim>>(
+            std::make_shared<HeatTransferAssemblerLaserExponentialDecay<dim>>(
               this->simulation_control,
               this->simulation_parameters.laser_parameters));
         }
@@ -940,6 +953,29 @@ HeatTransfer<dim>::write_checkpoint()
       sol_set_transfer.push_back(&previous_solutions[i]);
     }
   solution_transfer->prepare_for_serialization(sol_set_transfer);
+
+  // Serialize error table
+  std::string prefix =
+    this->simulation_parameters.simulation_control.output_folder;
+  std::string suffix = ".checkpoint";
+  if (this->simulation_parameters.analytical_solution->calculate_error())
+    serialize_table(
+      this->error_table,
+      prefix + this->simulation_parameters.analytical_solution->get_filename() +
+        "_HT" + suffix);
+  if (this->simulation_parameters.post_processing.calculate_heat_flux)
+    serialize_table(
+      this->heat_flux_table,
+      prefix +
+        this->simulation_parameters.post_processing.heat_flux_output_name +
+        suffix);
+  if (this->simulation_parameters.post_processing
+        .calculate_temperature_statistics)
+    serialize_table(
+      this->statistics_table,
+      prefix +
+        this->simulation_parameters.post_processing.temperature_output_name +
+        suffix);
 }
 
 template <int dim>
@@ -972,6 +1008,29 @@ HeatTransfer<dim>::read_checkpoint()
     {
       previous_solutions[i] = distributed_previous_solutions[i];
     }
+
+  // Deserialize error table
+  std::string prefix =
+    this->simulation_parameters.simulation_control.output_folder;
+  std::string suffix = ".checkpoint";
+  if (this->simulation_parameters.analytical_solution->calculate_error())
+    deserialize_table(
+      this->error_table,
+      prefix + this->simulation_parameters.analytical_solution->get_filename() +
+        "_HT" + suffix);
+  if (this->simulation_parameters.post_processing.calculate_heat_flux)
+    deserialize_table(
+      this->heat_flux_table,
+      prefix +
+        this->simulation_parameters.post_processing.heat_flux_output_name +
+        suffix);
+  if (this->simulation_parameters.post_processing
+        .calculate_temperature_statistics)
+    deserialize_table(
+      this->statistics_table,
+      prefix +
+        this->simulation_parameters.post_processing.temperature_output_name +
+        suffix);
 }
 
 
@@ -1648,7 +1707,7 @@ HeatTransfer<dim>::postprocess_heat_flux_on_bc(
     }                     // end loop on cells
 
 
-  // Sum accross all cores
+  // Sum across all cores
   for (unsigned int i_bc = 0;
        i_bc < this->simulation_parameters.boundary_conditions_ht.size;
        ++i_bc)

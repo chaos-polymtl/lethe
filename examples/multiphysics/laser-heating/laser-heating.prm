@@ -31,6 +31,7 @@ end
 
 subsection laser parameters
   set enable               = true
+  set type                 = exponential_decay
   set concentration factor = 50
   set power                = 3
   set absorptivity         = 0.6
@@ -109,7 +110,7 @@ end
 subsection boundary conditions heat transfer
   set number = 1
   subsection bc 0
-    set type       = convection-radiation
+    set type = convection-radiation
     subsection h
       set Function expression = 5
     end

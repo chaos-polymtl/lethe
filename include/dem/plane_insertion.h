@@ -32,9 +32,9 @@
  *
  * @note
  *
- * Paticle insertion using cells cut by a plane. Locally own cells that are
- * cut by the plane are flag. From those flag cells, we insert a particle at
- * their center's if they are individually empty (contain no particle). This
+ * Particle insertion using cells cut by a plane. Locally owned cells that are
+ * cut by the plane are flagged. From those flagged cells, we insert a particle
+ * at their centroids if they are individually empty (contain no particle). This
  * way, no significant overlap is occurring on the insertion of new particle
  * which can occur with other insertion method.
  */
@@ -100,7 +100,6 @@ private:
   int                                          particles_of_each_type_remaining;
   unsigned int                                 current_inserting_particle_type;
   std::unordered_map<unsigned int, Point<dim>> cells_centers;
-  std::unordered_map<unsigned int, double>     number_particles_to_insert;
   std::unordered_map<unsigned int, double>     type_of_particle_left_to_insert;
   bool                                         mark_for_update;
   boost::signals2::connection                  change_to_triangulation;

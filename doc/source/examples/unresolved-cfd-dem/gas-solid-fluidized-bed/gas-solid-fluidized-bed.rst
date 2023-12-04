@@ -147,7 +147,7 @@ The ``insertion info`` subsection manages the insertion of particles. It allows 
 .. code-block:: text
 
     subsection insertion info
-      set insertion method                               = non_uniform
+      set insertion method                               = volume
       set inserted number of particles at each time step = 2000
       set insertion frequency                            = 2000
       set insertion box minimum x                        = -0.018

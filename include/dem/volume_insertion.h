@@ -12,9 +12,7 @@
  * the top level of the Lethe distribution.
  *
  * ---------------------------------------------------------------------
-
  *
- * Author: Shahab Golshan, Polytechnique Montreal, 2019
  */
 
 #include <dem/dem_solver_parameters.h>
@@ -24,19 +22,11 @@
 
 #include <deal.II/particles/particle_handler.h>
 
-#ifndef nonuniform_insertion_h
-#  define nonuniform_insertion_h
-
-/**
- * Non-uniform insertion of particles in a rectangular box
- *
- * @note
- *
- * @author Shahab Golshan, Bruno Blais, Polytechnique Montreal 2019-
- */
+#ifndef volume_insertion_h
+#  define volume_insertion_h
 
 template <int dim>
-class NonUniformInsertion : public Insertion<dim>
+class VolumeInsertion : public Insertion<dim>
 {
 public:
   /**
@@ -51,11 +41,11 @@ public:
    * @param maximum_particle_diameter Maximum particle diameter based on values
    * defined in the parameter handler
    */
-  NonUniformInsertion(const DEMSolverParameters<dim> &dem_parameters,
-                      const double maximum_particle_diameter);
+  VolumeInsertion(const DEMSolverParameters<dim> &dem_parameters,
+                  const double                    maximum_particle_diameter);
 
   /**
-   * Carries out the non-uniform insertion of particles.
+   * Carries out the volume insertion of particles.
    *
    * @param particle_handler The particle handler of particles which are being
    * inserted
@@ -85,17 +75,17 @@ private:
                                  const int            random_number_seed);
 
   /**
-   * Converts id of particles to non-uniform insertion location
+   * Converts id of particles to volume insertion location
    *
    * @param insertion_location Insertion location of the particle
    * @param id Particle_id
-   * @param random_number1 A random number to create randomness in non-uniform insertion
-   * @param random_number2 A random number to create randomness in non-uniform insertion
+   * @param random_number1 A random number to create randomness in volume insertion
+   * @param random_number2 A random number to create randomness in volume insertion
    * @param insertion_information DEM insertion parameters declared in the .prm
    * file
    */
   void
-  find_insertion_location_nonuniform(
+  find_insertion_location_volume(
     Point<dim>                                  &insertion_location,
     const unsigned int                           id,
     const double                                 random_number1,
@@ -108,5 +98,4 @@ private:
   // upcoming insertion steps
   unsigned int particles_of_each_type_remaining;
 };
-
-#endif /* nonuniform_insertion_h */
+#endif /* volume_insertion_h */

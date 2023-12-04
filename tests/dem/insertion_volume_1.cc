@@ -30,7 +30,7 @@
 
 // Lethe
 #include <dem/dem_solver_parameters.h>
-#include <dem/non_uniform_insertion.h>
+#include <dem/volume_insertion.h>
 
 // Tests (with common definitions)
 #include <../tests/tests.h>
@@ -67,6 +67,9 @@ test()
   dem_parameters.insertion_info.inserted_this_step                   = 10;
   dem_parameters.insertion_info.distance_threshold                   = 2;
   dem_parameters.lagrangian_physical_properties.particle_type_number = 1;
+  dem_parameters.lagrangian_physical_properties.size_distribution_type =
+    Parameters::Lagrangian::LagrangianPhysicalProperties::
+      size_distribution_type::uniform;
   dem_parameters.lagrangian_physical_properties.particle_average_diameter[0] =
     0.005;
   dem_parameters.lagrangian_physical_properties.particle_size_std[0] = 0;
@@ -79,8 +82,8 @@ test()
   Particles::ParticleHandler<dim> particle_handler(
     tr, mapping, DEM::get_number_properties());
 
-  // Calling non-uniform insertion
-  NonUniformInsertion<dim> insertion_object(
+  // Calling volume insertion
+  VolumeInsertion<dim> insertion_object(
     dem_parameters,
     dem_parameters.lagrangian_physical_properties.particle_average_diameter[0]);
   insertion_object.insert(particle_handler, tr, dem_parameters);

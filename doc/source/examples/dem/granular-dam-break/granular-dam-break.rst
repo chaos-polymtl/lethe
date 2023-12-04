@@ -64,7 +64,7 @@ The particles are mono dispersed with a radius of 0.005 m and a density of 2560 
     subsection particle type 0
       set size distribution type            = uniform
       set diameter                          = 0.01
-      set number                            = 60000
+      set number of particles               = 60000
       set density particles                 = 2560
       set young modulus particles           = 1e6
       set poisson ratio particles           = 0.2
@@ -111,7 +111,7 @@ An insertion box is defined inside the rectangular box. 60 000 particles are ins
 .. code-block:: text
 
   subsection insertion info
-    set insertion method                               = non_uniform
+    set insertion method                               = volume
     set inserted number of particles at each time step = 60000
     set insertion frequency                            = 10000
     set insertion box minimum x                        = 0.0025

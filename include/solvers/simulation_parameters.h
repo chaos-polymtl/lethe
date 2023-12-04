@@ -74,7 +74,8 @@ public:
   PhysicalPropertiesManager physical_properties_manager;
 
   void
-  declare(ParameterHandler &prm)
+  declare(ParameterHandler             &prm,
+          Parameters::SizeOfSubsections size_of_subsections)
   {
     prm.declare_entry("dimension",
                       "0",
@@ -88,11 +89,16 @@ public:
     nitsche = std::make_shared<Parameters::Nitsche<dim>>();
     nitsche->declare_parameters(prm);
     Parameters::Restart::declare_parameters(prm);
-    boundary_conditions.declare_parameters(prm);
-    boundary_conditions_ht.declare_parameters(prm);
-    boundary_conditions_tracer.declare_parameters(prm);
-    boundary_conditions_vof.declare_parameters(prm);
-    boundary_conditions_cahn_hilliard.declare_parameters(prm);
+    boundary_conditions.declare_parameters(
+      prm, size_of_subsections.boundary_conditions);
+    boundary_conditions_ht.declare_parameters(
+      prm, size_of_subsections.boundary_conditions);
+    boundary_conditions_tracer.declare_parameters(
+      prm, size_of_subsections.boundary_conditions);
+    boundary_conditions_vof.declare_parameters(
+      prm, size_of_subsections.boundary_conditions);
+    boundary_conditions_cahn_hilliard.declare_parameters(
+      prm, size_of_subsections.boundary_conditions);
 
     initial_condition = new Parameters::InitialConditions<dim>;
     initial_condition->declare_parameters(prm);
@@ -373,6 +379,17 @@ public:
           "      set cahn hilliard mobility coefficient = $value_of_coefficient\n"
           "    end\n"
           "  end\n");
+      }
+    if (laser_parameters->activate_laser &&
+        laser_parameters->laser_type ==
+          Parameters::Laser<dim>::LaserType::heat_flux_vof_interface &&
+        !multiphysics.VOF)
+      {
+        throw std::logic_error(
+          "At the moment, the laser surface heat flux is not implemented for 1 fluid simulations."
+          "Please enable the VOF auxiliary physic in the 'multiphysics' subsection, \n"
+          "specify a 2nd fluid in the 'physical properties' subsection,\n"
+          "and define appropriate initial conditions in the 'initial conditions' subsection.");
       }
   }
 

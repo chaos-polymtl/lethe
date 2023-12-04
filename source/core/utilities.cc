@@ -421,6 +421,51 @@ get_last_value_of_parameter(const std::string &file_name,
   return return_value;
 }
 
+
+int
+get_max_value_of_parameter(const std::string &file_name,
+                           const std::string &parameter_name)
+{
+  std::string return_string;
+  int         return_value = -100000;
+
+  std::ifstream x_file(file_name);
+  AssertThrow(x_file.fail() == false, ExcIO());
+
+  while (x_file)
+    {
+      // Get one line and then match a regex to it that matches the parameter
+      // we are looking for. Before we do that, strip spaces from the front
+      // and back of the line:
+      std::string line;
+      std::getline(x_file, line);
+
+      while ((line.size() > 0) && (line[0] == ' ' || line[0] == '\t'))
+        line.erase(0, 1);
+      while ((line.size() > 0) &&
+             (line[line.size() - 1] == ' ' || line[line.size() - 1] == '\t'))
+        line.erase(line.size() - 1, std::string::npos);
+
+      std::match_results<std::string::const_iterator> matches;
+      const std::string                               regex =
+        "set[ \t]+" + parameter_name + "[ \t]*=[ \t]*(.*)";
+      if (std::regex_match(line, matches, std::regex(regex)))
+        {
+          // Since the line as a whole matched, the 'matches' variable needs to
+          // contain two entries: [0] denotes the whole string, and [1] the
+          // one that was matched by the '(.*)' expression.
+          Assert(matches.size() == 2, dealii::ExcInternalError());
+          return_string = std::string(matches[1].first, matches[1].second);
+          return_value =
+            std::max(return_value, Utilities::string_to_int(return_string));
+        }
+    }
+
+  return return_value;
+}
+
+
+
 unsigned int
 get_dimension(const std::string &file_name)
 {
@@ -484,4 +529,19 @@ get_dimension(const std::string &file_name)
           "Lethe found a value that is neither 2 or 3. Since August 2023, "
           "Lethe requires that the user explicitly specify the dimension of the problem within the parameter file. This can be achieved by adding set dimension = 2 or set dimension = 3 within the parameter file"));
     }
+}
+
+
+int
+get_max_number_of_boundary_conditions(const std::string &file_name)
+{
+  int max_number_of_boundary_conditions =
+    get_max_value_of_parameter(file_name, "number");
+
+  AssertThrow(
+    max_number_of_boundary_conditions >= 0,
+    dealii::ExcMessage(
+      "Your parameter file does not contain any indication for the number of boundary conditions for any physics supported by Lethe. Since November 2023, Lethe requires that a \"boundary conditions\" subsection is present with at least \"number=0\" "));
+
+  return std::max(max_number_of_boundary_conditions, 0);
 }

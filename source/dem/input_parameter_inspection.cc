@@ -12,14 +12,14 @@ input_parameter_inspection(const DEMSolverParameters<dim> &dem_parameters,
   // Getting the input parameters as local variable
   auto   parameters          = dem_parameters;
   auto   physical_properties = dem_parameters.lagrangian_physical_properties;
-  double rayleigh_time_step  = 0;
+  double rayleigh_time_step  = 1. / DBL_MIN;
 
   for (unsigned int i = 0; i < physical_properties.particle_type_number; ++i)
     {
       double shear_modulus =
         physical_properties.youngs_modulus_particle[i] /
         (2.0 * (1.0 + physical_properties.poisson_ratio_particle[i]));
-      rayleigh_time_step = std::max(
+      rayleigh_time_step = std::min(
         M_PI_2 * physical_properties.particle_average_diameter[i] *
           sqrt(physical_properties.density_particle[i] / shear_modulus) /
           (0.1631 * physical_properties.poisson_ratio_particle[i] + 0.8766),
@@ -65,7 +65,7 @@ input_parameter_inspection(const DEMSolverParameters<dim> &dem_parameters,
     0.5 * (parameters.insertion_info.distance_threshold - 1);
 
   if (parameters.insertion_info.insertion_method ==
-        Parameters::Lagrangian::InsertionInfo::InsertionMethod::non_uniform &&
+        Parameters::Lagrangian::InsertionInfo::InsertionMethod::volume &&
       parameters.insertion_info.random_number_range >=
         insertion_distance_per_particle)
     pcout

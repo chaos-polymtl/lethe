@@ -16,13 +16,15 @@ main(int argc, char *argv[])
           std::exit(1);
         }
 
-      const unsigned int dim = get_dimension(argv[1]);
+      const unsigned int                  dim = get_dimension(argv[1]);
+      const Parameters::SizeOfSubsections size_of_subsections =
+        Parameters::get_size_of_subsections(argv[1]);
 
       if (dim == 2)
         {
           ParameterHandler        prm;
           SimulationParameters<2> NSparam;
-          NSparam.declare(prm);
+          NSparam.declare(prm, size_of_subsections);
           // Parsing of the file
           prm.parse_input(argv[1]);
           NSparam.parse(prm);
@@ -40,7 +42,7 @@ main(int argc, char *argv[])
         {
           ParameterHandler        prm;
           SimulationParameters<3> NSparam;
-          NSparam.declare(prm);
+          NSparam.declare(prm, size_of_subsections);
           // Parsing of the file
           prm.parse_input(argv[1]);
           NSparam.parse(prm);

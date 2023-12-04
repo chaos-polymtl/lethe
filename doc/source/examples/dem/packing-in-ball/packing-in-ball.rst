@@ -61,7 +61,7 @@ In a three-dimensional simulation, we have to define the minimum and maximum dim
 .. code-block:: text
 
     subsection insertion info
-      set insertion method                               = non_uniform
+      set insertion method                               = volume
       set inserted number of particles at each time step = 1000
       set insertion frequency                            = 150000
       set insertion box minimum x                        = -0.05
@@ -91,7 +91,7 @@ Gravitational acceleration has three components in three directions.
       subsection particle type 0
         set size distribution type            = uniform
         set diameter                          = 0.005
-        set number                            = 5000
+        set number of particles               = 5000
         set density particles                 = 2000
         set young modulus particles           = 10000000
         set poisson ratio particles           = 0.3

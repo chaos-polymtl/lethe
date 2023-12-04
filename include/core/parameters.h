@@ -43,6 +43,20 @@ using namespace dealii;
 
 namespace Parameters
 {
+  struct SizeOfSubsections
+  {
+    int boundary_conditions;
+  };
+
+
+  /**
+   * @brief Extract the maximum number of all variable size sections within the parameter file
+   *
+   * @param file_name Name of the parameter file from which the size are parsed
+   */
+  SizeOfSubsections
+  get_size_of_subsections(const std::string &file_name);
+
   enum class Verbosity
   {
     quiet,
@@ -609,6 +623,17 @@ namespace Parameters
   public:
     // A boolean parameter that enables the calculations of laser heat source
     bool activate_laser;
+
+    // Type of laser model used in simulations. With "exponential_decay", the
+    // laser acts as a volumetric source, whereas, with
+    // "heat_flux_vof_interface", the laser behaves as a surface flux at the
+    // interface between fluids (VOF auxiliary physic must be enabled to use
+    // this model).
+    enum class LaserType
+    {
+      exponential_decay,
+      heat_flux_vof_interface
+    } laser_type;
 
     // Laser concentration factor indicates the definition of the beam radius.
     // In almost all the articles, it is assumed equal to 2.0

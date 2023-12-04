@@ -294,7 +294,6 @@ announce_string(const ConditionalOStream &pcout,
   pcout << std::string(expression.size() + 1, delimiter) << std::endl;
 }
 
-
 /**
  * @brief Serializes a table using boost serialization feature
  * the filename should contain the desired extension
@@ -309,7 +308,6 @@ serialize_table(const TableHandler &table, const std::string filename)
   boost::archive::text_oarchive oa(ofile, boost::archive::no_header);
   oa << table;
 }
-
 
 /**
  * @brief Loads a table using boost serialization feature
@@ -353,5 +351,14 @@ get_last_value_of_parameter(const std::string &file_name,
 unsigned int
 get_dimension(const std::string &file_name);
 
+/**
+ * @brief Extract the maximum number of boundary conditions from the file.
+ * The number of boundary conditions is linked to the string "number" so
+ * this feature will need to be monitored extensively in the future.
+ * @param file_name The file name from which the number of boundary conditions
+ * is read
+ */
+int
+get_max_number_of_boundary_conditions(const std::string &file_name);
 
 #endif

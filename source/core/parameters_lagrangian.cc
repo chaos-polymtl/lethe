@@ -18,15 +18,11 @@ namespace Parameters
                         "0.001",
                         Patterns::Double(),
                         "Particle diameter");
-      prm.declare_entry("average diameter",
-                        "0.001",
-                        Patterns::Double(),
-                        "Average particle diameter");
       prm.declare_entry("standard deviation",
                         "0",
                         Patterns::Double(),
                         "Particle size standard deviation");
-      prm.declare_entry("number",
+      prm.declare_entry("number of particles",
                         "0",
                         Patterns::Integer(),
                         "Number of particles of this type");
@@ -65,17 +61,20 @@ namespace Parameters
       const unsigned int &particle_type,
       ParameterHandler   &prm)
     {
-      const std::string size_distribution_type =
+      const std::string size_distribution_type_str =
         prm.get("size distribution type");
-      if (size_distribution_type == "uniform")
+
+      if (size_distribution_type_str == "uniform")
         {
+          size_distribution_type = size_distribution_type::uniform;
           particle_average_diameter.at(particle_type) =
             prm.get_double("diameter");
         }
-      else if (size_distribution_type == "normal")
+      else if (size_distribution_type_str == "normal")
         {
+          size_distribution_type = size_distribution_type::normal;
           particle_average_diameter.at(particle_type) =
-            prm.get_double("average diameter");
+            prm.get_double("diameter");
           particle_size_std.at(particle_type) =
             prm.get_double("standard deviation");
         }
@@ -83,7 +82,7 @@ namespace Parameters
         {
           throw(std::runtime_error("Invalid size distribution type "));
         }
-      number.at(particle_type)           = prm.get_integer("number");
+      number.at(particle_type) = prm.get_integer("number of particles");
       density_particle.at(particle_type) = prm.get_double("density particles");
       youngs_modulus_particle.at(particle_type) =
         prm.get_double("young modulus particles");
@@ -273,10 +272,10 @@ namespace Parameters
       prm.enter_subsection("insertion info");
       {
         prm.declare_entry("insertion method",
-                          "non_uniform",
-                          Patterns::Selection("uniform|non_uniform|list|plane"),
+                          "volume",
+                          Patterns::Selection("volume|list|plane"),
                           "Choosing insertion method. "
-                          "Choices are <uniform|non_uniform|list|plane>.");
+                          "Choices are <volume|list|plane>.");
         prm.declare_entry("inserted number of particles at each time step",
                           "1",
                           Patterns::Integer(),
@@ -422,10 +421,8 @@ namespace Parameters
       prm.enter_subsection("insertion info");
       {
         const std::string insertion = prm.get("insertion method");
-        if (insertion == "uniform")
-          insertion_method = InsertionMethod::uniform;
-        else if (insertion == "non_uniform")
-          insertion_method = InsertionMethod::non_uniform;
+        if (insertion == "volume")
+          insertion_method = InsertionMethod::volume;
         else if (insertion == "list")
           insertion_method = InsertionMethod::list;
         else if (insertion == "plane")
