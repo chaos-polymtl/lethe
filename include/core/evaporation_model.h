@@ -58,7 +58,6 @@ public:
   static std::shared_ptr<EvaporationModel>
   model_cast(const Parameters::Evaporation &evaporation_parameters);
 
-
   /**
    * @brief Returns true if the EvaporationModel depends on a field, false if not.
    * @param id Identifier of the field for which the function is called.
@@ -207,7 +206,7 @@ class EvaporationModelConstant : public EvaporationModel
 {
 public:
   EvaporationModelConstant(const Parameters::Evaporation &p_evaporation)
-    : n_evaporation(p_evaporation.evaporation_mass_flux)
+    : evaporation_mass_flux(p_evaporation.evaporation_mass_flux)
     , latent_heat_evaporation(p_evaporation.latent_heat_evaporation)
     , ambient_gas_density_inv(1.0 / p_evaporation.ambient_gas_density)
     , liquid_density_inv(1.0 / p_evaporation.liquid_density)
@@ -225,7 +224,7 @@ public:
   double
   mass_flux(const std::map<field, double> & /*field_values*/) override
   {
-    return n_evaporation;
+    return evaporation_mass_flux;
   }
 
   /**
@@ -240,7 +239,9 @@ public:
   mass_flux(const std::map<field, std::vector<double>> & /*field_vectors*/,
             std::vector<double> &mass_flux_vector) override
   {
-    std::fill(mass_flux_vector.begin(), mass_flux_vector.end(), n_evaporation);
+    std::fill(mass_flux_vector.begin(),
+              mass_flux_vector.end(),
+              evaporation_mass_flux);
   }
 
   /**
@@ -252,7 +253,7 @@ public:
   double
   heat_flux(const std::map<field, double> & /*field_values*/) override
   {
-    return n_evaporation * latent_heat_evaporation;
+    return evaporation_mass_flux * latent_heat_evaporation;
   }
 
   /**
@@ -269,7 +270,7 @@ public:
   {
     std::fill(heat_flux_vector.begin(),
               heat_flux_vector.end(),
-              n_evaporation * latent_heat_evaporation);
+              evaporation_mass_flux * latent_heat_evaporation);
   }
 
   /**
@@ -316,7 +317,7 @@ public:
   double
   momentum_flux(const std::map<field, double> & /*field_values*/) override
   {
-    return -n_evaporation * n_evaporation *
+    return -evaporation_mass_flux * evaporation_mass_flux *
            (liquid_density_inv - ambient_gas_density_inv);
   }
 
@@ -333,7 +334,7 @@ public:
                 std::vector<double> &momentum_flux_vector) override
   {
     const double momentum_flux_value =
-      -n_evaporation * n_evaporation *
+      -evaporation_mass_flux * evaporation_mass_flux *
       (liquid_density_inv - ambient_gas_density_inv);
 
     std::fill(momentum_flux_vector.begin(),
@@ -379,7 +380,7 @@ public:
   }
 
 private:
-  const double n_evaporation;
+  const double evaporation_mass_flux;
   const double latent_heat_evaporation;
   const double ambient_gas_density_inv;
   const double liquid_density_inv;
@@ -450,7 +451,9 @@ public:
     const double L_vap_x_M_x_R_inv =
       latent_heat_evaporation * molar_mass * R_inv;
 
-    for (unsigned int i = 0; i < saturation_pressure_vector.size(); ++i)
+    const unsigned int n_pts = saturation_pressure_vector.size();
+
+    for (unsigned int i = 0; i < n_pts; ++i)
       {
         const double temperature_inv = 1.0 / (temperature[i] + 1e-16);
 
@@ -612,7 +615,10 @@ public:
       {
         const std::vector<double> &temperature =
           field_vectors.at(field::temperature);
-        for (unsigned int i = 0; i < jacobian_vector.size(); ++i)
+
+        const unsigned int n_pts = jacobian_vector.size();
+
+        for (unsigned int i = 0; i < n_pts; ++i)
           {
             const double temperature_inv = 1.0 / (temperature[i] + 1e-16);
             jacobian_vector[i] =

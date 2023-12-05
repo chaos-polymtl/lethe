@@ -3253,12 +3253,12 @@ namespace Parameters
         "enable evaporative cooling",
         "false",
         Patterns::Bool(),
-        "Enable the evaporative cooling at the free surface (air/metal interface) in the energy equation <true|false>");
+        "Enable the evaporative cooling at the free surface (gas/liquid interface) in the energy equation <true|false>");
       prm.declare_entry(
         "enable recoil pressure",
         "false",
         Patterns::Bool(),
-        "Enable the recoil pressure due to evaporation at the free surface (air/metal interface) in the momentum equation <true|false>");
+        "Enable the recoil pressure due to evaporation at the free surface (gas/liquid interface) in the momentum equation <true|false>");
       prm.declare_entry(
         "evaporation mass flux",
         "0.0",

@@ -1256,7 +1256,6 @@ HeatTransferAssemblerVOFEvaporation<dim>::assemble_rhs(
           local_rhs(i) -= filtered_phase_gradient_q.norm() *
                           evaporative_heat_flux * phi_T_i * JxW;
         }
-
     } // end loop on quadrature points
 }
 
