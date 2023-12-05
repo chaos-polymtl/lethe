@@ -88,7 +88,7 @@ public:
    */
   virtual void
   mass_flux(const std::map<field, std::vector<double>> &field_vectors,
-                   std::vector<double> &mass_flux_vector) = 0;
+            std::vector<double>                        &mass_flux_vector) = 0;
 
   /**
    * @brief heat_flux Calculates the value of the evaporation heat flux.
@@ -109,7 +109,7 @@ public:
    */
   virtual void
   heat_flux(const std::map<field, std::vector<double>> &field_vectors,
-                   std::vector<double> &heat_flux_vector) = 0;
+            std::vector<double>                        &heat_flux_vector) = 0;
 
   /**
    * @brief heat_flux_jacobian Calculates the jacobian (the partial derivative)
@@ -135,10 +135,9 @@ public:
    * flux with respect to the field.
    */
   virtual void
-  heat_flux_jacobian(
-    const std::map<field, std::vector<double>> &field_vectors,
-    const field                                 id,
-    std::vector<double>                        &jacobian_vector) = 0;
+  heat_flux_jacobian(const std::map<field, std::vector<double>> &field_vectors,
+                     const field                                 id,
+                     std::vector<double> &jacobian_vector) = 0;
 
   /**
    * @brief momentum_flux Calculates the value of the evaporation momentum flux.
@@ -158,9 +157,8 @@ public:
    * @param momentum_flux_vector Vector of momentum flux values.
    */
   virtual void
-  momentum_flux(
-    const std::map<field, std::vector<double>> &field_vectors,
-    std::vector<double>                        &momentum_flux_vector) = 0;
+  momentum_flux(const std::map<field, std::vector<double>> &field_vectors,
+                std::vector<double> &momentum_flux_vector) = 0;
 
   /**
    * @brief momentum_flux_jacobian Calculates the jacobian (the partial derivative)
@@ -239,9 +237,8 @@ public:
    * @param mass_flux_vector Vector of mass flux values.
    */
   void
-  mass_flux(
-    const std::map<field, std::vector<double>> & /*field_vectors*/,
-    std::vector<double> &mass_flux_vector) override
+  mass_flux(const std::map<field, std::vector<double>> & /*field_vectors*/,
+            std::vector<double> &mass_flux_vector) override
   {
     std::fill(mass_flux_vector.begin(), mass_flux_vector.end(), n_evaporation);
   }
@@ -267,9 +264,8 @@ public:
    * @param heat_flux_vector Vectors of the heat flux values.
    */
   void
-  heat_flux(
-    const std::map<field, std::vector<double>> & /*field_vectors*/,
-    std::vector<double> &heat_flux_vector) override
+  heat_flux(const std::map<field, std::vector<double>> & /*field_vectors*/,
+            std::vector<double> &heat_flux_vector) override
   {
     std::fill(heat_flux_vector.begin(),
               heat_flux_vector.end(),
@@ -333,9 +329,8 @@ public:
    * @param momentum_flux_vector Vector of momentum flux values.
    */
   void
-  momentum_flux(
-    const std::map<field, std::vector<double>> & /*field_vectors*/,
-    std::vector<double> &momentum_flux_vector) override
+  momentum_flux(const std::map<field, std::vector<double>> & /*field_vectors*/,
+                std::vector<double> &momentum_flux_vector) override
   {
     const double momentum_flux_value =
       -n_evaporation * n_evaporation *
@@ -444,9 +439,8 @@ public:
    * @param saturation_pressure_vector Vector of the saturation pressure values.
    */
   void
-  saturation_pressure(
-    const std::map<field, std::vector<double>> &field_vectors,
-    std::vector<double>                        &saturation_pressure_vector)
+  saturation_pressure(const std::map<field, std::vector<double>> &field_vectors,
+                      std::vector<double> &saturation_pressure_vector)
   {
     const std::vector<double> &temperature =
       field_vectors.at(field::temperature);
@@ -500,7 +494,7 @@ public:
    */
   void
   mass_flux(const std::map<field, std::vector<double>> &field_vectors,
-                   std::vector<double> &mass_flux_vector) override
+            std::vector<double> &mass_flux_vector) override
   {
     const std::vector<double> &temperature =
       field_vectors.at(field::temperature);
@@ -547,7 +541,7 @@ public:
    */
   void
   heat_flux(const std::map<field, std::vector<double>> &field_vectors,
-                   std::vector<double> &heat_flux_vector) override
+            std::vector<double> &heat_flux_vector) override
   {
     const unsigned int n_pts = heat_flux_vector.size();
 
@@ -605,10 +599,9 @@ public:
    * with respect to the field.
    */
   void
-  heat_flux_jacobian(
-    const std::map<field, std::vector<double>> &field_vectors,
-    const field                                 id,
-    std::vector<double>                        &jacobian_vector) override
+  heat_flux_jacobian(const std::map<field, std::vector<double>> &field_vectors,
+                     const field                                 id,
+                     std::vector<double> &jacobian_vector) override
   {
     const double R_inv = 1.0 / 8.3145;
     const double L_vap_x_M_x_R_inv =
@@ -675,9 +668,8 @@ public:
    * @param momentum_flux_vector Vectors of the momentum flux values.
    */
   void
-  momentum_flux(
-    const std::map<field, std::vector<double>> &field_vectors,
-    std::vector<double>                        &momentum_flux_vector) override
+  momentum_flux(const std::map<field, std::vector<double>> &field_vectors,
+                std::vector<double> &momentum_flux_vector) override
   {
     const unsigned int         n_pts = momentum_flux_vector.size();
     const std::vector<double> &temperature =
