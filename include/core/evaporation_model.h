@@ -71,17 +71,19 @@ public:
 
   /**
    * @brief mass_flux Calculates the value of the evaporation mass flux.
-   * @param fields_value Values of the various fields on which the mass flux may depend.
-   * @return Value of the flux calculated with the fields_value.
+   * @param field_values Map storing the values of the various fields on which the
+   * mass flux may depend.
+   * @return Value of the flux calculated with the field_values.
    */
   virtual double
-  mass_flux(const std::map<field, double> &fields_value) = 0;
+  mass_flux(const std::map<field, double> &field_values) = 0;
 
   /**
    * @brief vector_mass_flux Calculates the values of the evaporation mass flux
    * for multiple points.
-   * @param field_vectors Values of the various fields on which the mass flux
-   * evaluated at multiple points may depend.
+   * @param field_vectors Map storing the vectors of the values for each fields
+   * on which the mass flux may depend. Each vector contains the field values at
+   * the points of interest.
    * @param mass_flux_vector Vector of mass flux values.
    */
   virtual void
@@ -90,17 +92,19 @@ public:
 
   /**
    * @brief heat_flux Calculates the value of the evaporation heat flux.
-   * @param fields_value Values of the various fields on which the heat flux may depend.
-   * @return Value of the heat flux calculated with the fields_value
+   * @param field_values Map storing the values of the various fields on which
+   * the heat flux may depend.
+   * @return Value of the heat flux calculated with the field_values
    */
   virtual double
-  heat_flux(const std::map<field, double> &fields_value) = 0;
+  heat_flux(const std::map<field, double> &field_values) = 0;
 
   /**
    * @brief vector_heat_flux Calculates the values of the evaporation heat flux
    * for multiple points.
-   * @param field_vectors Values of the various fields on which the heat flux
-   * evaluated at multiple points may depend.
+   * @param field_vectors Map storing the vectors of the values for each fields
+   * on which the heat flux may depend. Each vector contains the field values at
+   * the points of interest.
    * @param heat_flux_vector Vector of heat flux values.
    */
   virtual void
@@ -110,9 +114,10 @@ public:
   /**
    * @brief heat_flux_jacobian Calculates the jacobian (the partial derivative)
    * of the evaporation heat flux with respect to a field.
-   * @param field_vectors Values of the various fields on which the heat flux
-   * evaluated at multiple points may depend.
-   * @param heat_flux_vector Vector of heat flux values.
+   * @param field_values Map storing the values of the various fields on which the
+   * heat flux evaluated at a point may depend.
+   * @param id Identifier of the field with respect to which the jacobian
+   * should be calculated.
    */
   virtual double
   heat_flux_jacobian(const std::map<field, double> &field_values,
@@ -120,9 +125,10 @@ public:
 
   /**
    * @brief vector_heat_flux_jacobian Calculates the derivative of the evaporation
-   * heat flux with respect to a field.
-   *  @param field_vectors Values of the various fields on which the heat flux
-   * evaluated at multiple points may depend.
+   * heat flux with respect to a field for multiple points.
+   * @param field_vectors Map storing the vectors of the values for each fields
+   * on which the heat flux may depend. Each vector contains the field values at
+   * the points of interest.
    * @param id Identifier of the field with respect to which a derivative should
    * be calculated.
    * @param jacobian_vector Vector of the values of the derivative of the heat
@@ -136,18 +142,19 @@ public:
 
   /**
    * @brief momentum_flux Calculates the value of the evaporation momentum flux.
-   * @param fields_value Value of the various field on which the momentum flux
-   * may depend.
-   * @return Value of the momentum flux calculated with the fields_value.
+   * @param field_values Map storing the values of the various fields on which the
+   * momentum flux may depend.
+   * @return Value of the momentum flux calculated with the field_values.
    */
   virtual double
-  momentum_flux(const std::map<field, double> &fields_value) = 0;
+  momentum_flux(const std::map<field, double> &field_values) = 0;
 
   /**
    * @brief vector_momentum_flux Calculates the values of the evaporation momentum
    * flux for multiple points.
-   * @param field_vectors Values of the various fields on which the evaporation
-   * momentum flux evaluated at multiple points may depend.
+   * @param field_vectors Map storing the vectors of the values for each fields
+   * on which the evaporation momentum flux may depend. Each vector contains the
+   * field values at the points of interest.
    * @param momentum_flux_vector Vector of momentum flux values.
    */
   virtual void
@@ -158,8 +165,8 @@ public:
   /**
    * @brief momentum_flux_jacobian Calculates the jacobian (the partial derivative)
    * of the evaporation momentum flux with respect to a field.
-   * @param field_values Values of the various fields on which the momentum flux
-   * may depend.
+   * @param field_values Map storing the values of the various fields on which the
+   * momentum flux may depend.
    * @param id Identifier of the field with respect to which the jacobian
    * should be calculated.
    * @return Value of the partial derivative of the momentum flux with respect
@@ -171,9 +178,10 @@ public:
 
   /**
    * @brief vector_momentum_flux_jacobian Calculates the derivative of the
-   * evaporation momentum flux with respect to a field.
-   * @param field_vectors Vector for the values of the fields on which the recoil
-   * pressure may depend.
+   * evaporation momentum flux with respect to a field for multiple points.
+   * @param field_vectors Map storing the vectors of the values for each fields
+   * on which the momentum flux may depend. Each vector contains the field
+   * values at the points of interest.
    * @param id Identifier of the field with respect to which a derivative should
    * be calculated.
    * @param jacobian_vector Vector of the value of the derivative of the momentum
@@ -192,7 +200,7 @@ protected:
 
 /**
  * @brief EvaporationModelConstant. Class that allows to calculate the
- * evaporation heat and momentum fluxes when a constant mass flux is
+ * evaporation mass, heat, and momentum fluxes when a constant mass flux is
  * considered.
  *
  * @param p_evaporation evaporation model parameters.
@@ -212,12 +220,12 @@ public:
 
   /**
    * @brief mass_flux Calculates the value of the evaporation mass flux.
-   * @param fields_value Values of the various fields on which the mass flux may
-   * depend.
-   * @return Value of the flux calculated with the fields_value.
+   * @param field_values Map storing the values of the various fields on which the
+   * mass flux may depend.
+   * @return Value of the flux calculated with the field_values.
    */
   double
-  mass_flux(const std::map<field, double> & /*fields_value*/) override
+  mass_flux(const std::map<field, double> & /*field_values*/) override
   {
     return n_evaporation;
   }
@@ -225,8 +233,9 @@ public:
   /**
    * @brief vector_mass_flux Calculates the values of the evaporation mass flux
    * for multiple points.
-   * @param field_vectors Values of the various fields on which the mass flux
-   * evaluated at multiple points may depend.
+   * @param field_vectors Map storing the vectors of the values for each fields
+   * on which the mass flux may depend. Each vector contains the field values at
+   * the points of interest.
    * @param mass_flux_vector Vector of mass flux values.
    */
   void
@@ -239,12 +248,12 @@ public:
 
   /**
    * @brief heat_flux Calculates the value of the evaporation heat flux.
-   * @param fields_value Values of the various fields on which the heat flux may
-   * depend.
-   * @return Value of the heat flux calculated with the fields_value.
+   * @param field_values Map storing the values of the various fields on which the
+   * heat flux may depend.
+   * @return Value of the heat flux calculated with the field_values.
    */
   double
-  heat_flux(const std::map<field, double> & /*fields_value*/) override
+  heat_flux(const std::map<field, double> & /*field_values*/) override
   {
     return n_evaporation * latent_heat_evaporation;
   }
@@ -252,8 +261,9 @@ public:
   /**
    * @brief vector_heat_flux Calculates the values of the evaporation heat flux
    * for multiple points.
-   * @param field_vectors Values of the various fields on which the heat flux may
-   * depend.
+   * @param field_vectors Map storing the vectors of the values for each fields
+   * on which the heat flux may depend. Each vector contains the field values at
+   * the points of interest.
    * @param heat_flux_vector Vectors of the heat flux values.
    */
   void
@@ -269,13 +279,13 @@ public:
   /**
    * @brief heat_flux_jacobian Calculates the jacobian (the partial derivative)
    * of the evaporation heat flux with respect to a field.
-   * @param field_values Values of the various fields on which the heat flux
-   * evaluated at a point may depend.
+   * @param field_values Map storing the values of the various fields on which the
+   * heat flux evaluated at a point may depend.
    * @param id Identifier of the field with respect to which the jacobian
    * should be calculated.
    */
   double
-  heat_flux_jacobian(const std::map<field, double> & /*fields_value*/,
+  heat_flux_jacobian(const std::map<field, double> & /*field_values*/,
                      const field /*id*/) override
   {
     return 0.0;
@@ -284,8 +294,9 @@ public:
   /**
    * @brief vector_heat_flux_jacobian Calculates the derivative of the evaporation
    * heat flux with respect to a field.
-   * @param field_vectors Values of the fields on which the heat flux
-   * evaluated at multiple points may depend.
+   * @param field_vectors Vector for the values of the fields on which the heat
+   * flux may depend. Each vector contains the field values at the points of
+   * interest.
    * @param id Identifier of the field with respect to which a derivative should
    * be calculated.
    * @param jacobian_vector Vector of the values of the derivative of the heat
@@ -302,12 +313,12 @@ public:
 
   /**
    * @brief momentum_flux Calculates the value of the evaporation momentum flux.
-   * @param fields_value Values of the various fields on which the momentum flux
-   * may depend.
-   * @return Value of the momentum flux calculated with the fields_value
+   * @param field_values Map storing the values of the various fields on which the
+   * momentum flux may depend.
+   * @return Value of the momentum flux calculated with the field_values
    */
   double
-  momentum_flux(const std::map<field, double> & /*fields_value*/) override
+  momentum_flux(const std::map<field, double> & /*field_values*/) override
   {
     return -n_evaporation * n_evaporation *
            (liquid_density_inv - ambient_gas_density_inv);
@@ -316,8 +327,9 @@ public:
   /**
    * @brief vector_momentum_flux Calculates the values of the evaporation momentum
    * flux for multiple points.
-   * @param field_vectors Values of the various fields on which the momentum flux
-   * evaluated at multiple points may depend.
+   * @param field_vectors Map storing the vectors of the values for each fields
+   * on which the momentum flux may depend. Each vector contains the field
+   * values at the points of interest.
    * @param momentum_flux_vector Vector of momentum flux values.
    */
   void
@@ -337,8 +349,8 @@ public:
   /**
    * @brief momentum_flux_jacobian Calculates the jacobian (the partial derivative)
    * of the evaporation momentum flux with respect to a field.
-   * @param field_values Values of the various fields on which the momentum flux
-   * may depend.
+   * @param field_values Map storing the values of the various fields on which the
+   * momentum flux may depend.
    * @param id Identifier of the field with respect to which the jacobian
    * should be calculated
    * @return Value of the partial derivative of the momentum flux with respect
@@ -354,12 +366,13 @@ public:
   /**
    * @brief vector_momentum_flux_jacobian Calculates the derivative of the
    * evaporation momentum flux with respect to a field
-   * @param field_vectors Vector for the values of the fields on which the momentum
-   * flux evaluated at multiple points may depend.
+   * @param field_vectors Map storing the vectors of the values for each fields
+   * on which the momentum flux may depend. Each vector contains the field
+   * values at the points of interest.
    * @param id Identifier of the field with respect to which a derivative should
    * be calculated.
-   * @param jacobian_vector Vector of the values of the derivative of the momentum flux
-   * with respect to the field.
+   * @param jacobian_vector Vector of the values of the derivative of the momentum
+   * flux with respect to the field.
    */
   void
   vector_momentum_flux_jacobian(
@@ -379,8 +392,8 @@ private:
 
 /**
  * @brief EvaporationModelTemperature. Class that allows to calculate the
- * evaporation heat and momentum fluxes when a temperature-dependent mass flux
- * is considered.
+ * evaporation mass, heat, and momentum fluxes  when a temperature-dependent
+ * mass flux is considered.
  *
  * @param p_evaporation evaporation model parameters.
  */
@@ -398,23 +411,24 @@ public:
     , liquid_density_inv(1.0 / p_evaporation.liquid_density)
   {
     model_depends_on[temperature] = true;
-    this->R_inv                   = 1.0 / 8.3145;
-    this->L_vap_x_M_x_R_inv =
-      latent_heat_evaporation * molar_mass * this->R_inv;
-    this->M_x_2PI_inv_x_R_inv = molar_mass / (2.0 * M_PI) * this->R_inv;
   }
 
   /**
    * @brief saturation_pressure Calculates the value of the saturation pressure.
-   * @param fields_value Values of the various field on which the saturated vapor
-   * pressure evaluated at a point may depend.
-   * @return Value of the saturation pressure calculated with the fields_value.
+   * @param field_values Map storing the values of the various field on which the
+   * saturated vapor pressure evaluated at a point may depend.
+   * @return Value of the saturation pressure calculated with the field_values.
    */
   double
-  saturation_pressure(const std::map<field, double> &fields_value)
+  saturation_pressure(const std::map<field, double> &field_values)
   {
     const double temperature_inv =
-      1.0 / (fields_value.at(field::temperature) + 1e-16);
+      1.0 / (field_values.at(field::temperature) + 1e-16);
+
+    const double R_inv = 1.0 / 8.3145;
+
+    const double L_vap_x_M_x_R_inv =
+      latent_heat_evaporation * molar_mass * R_inv;
 
     return ambient_pressure *
            std::exp(-L_vap_x_M_x_R_inv *
@@ -424,8 +438,9 @@ public:
   /**
    * @brief vector_mass_flux Calculates the values of the saturation pressure
    * for multiple points.
-   * @param field_vectors Values of the various fields on which the saturated vapor
-   * pressure evaluated at multiple points may depend.
+   * @param field_vectors Map storing the vectors of the values for each fields
+   * on which the saturated vapor pressure may depend. Each vector contains the
+   * field values at the points of interest.
    * @param saturation_pressure_vector Vector of the saturation pressure values.
    */
   void
@@ -435,6 +450,11 @@ public:
   {
     const std::vector<double> &temperature =
       field_vectors.at(field::temperature);
+
+    const double R_inv = 1.0 / 8.3145;
+
+    const double L_vap_x_M_x_R_inv =
+      latent_heat_evaporation * molar_mass * R_inv;
 
     for (unsigned int i = 0; i < saturation_pressure_vector.size(); ++i)
       {
@@ -449,16 +469,19 @@ public:
 
   /**
    * @brief mass_flux Calculates the value of the evaporation mass flux.
-   * @param fields_value Values of the various fields on which the evaporation
-   * mass flux may depend.
-   * @return Value of the evaporation mass flux calculated with the fields_value.
+   * @param field_values Map storing the values of the various fields on which the
+   * evaporation mass flux may depend.
+   * @return Value of the evaporation mass flux calculated with the field_values.
    */
   double
-  mass_flux(const std::map<field, double> &fields_value) override
+  mass_flux(const std::map<field, double> &field_values) override
   {
-    const double saturation_pressure_value = saturation_pressure(fields_value);
+    const double saturation_pressure_value = saturation_pressure(field_values);
     const double temperature_inv =
-      1.0 / (fields_value.at(field::temperature) + 1e-16);
+      1.0 / (field_values.at(field::temperature) + 1e-16);
+
+    const double R_inv               = 1.0 / 8.3145;
+    const double M_x_2PI_inv_x_R_inv = molar_mass / (2.0 * M_PI) * R_inv;
 
     const double mass_flux_value =
       evaporation_coefficient * saturation_pressure_value *
@@ -470,8 +493,9 @@ public:
   /**
    * @brief vector_mass_flux Calculates the values of the evaporation mass flux
    * for multiple points.
-   * @param field_vectors Values of the various fields on which the evaporation mass flux
-   * evaluated at multiple points may depend.
+   * @param field_vectors Map storing the vectors of the values for each fields
+   * on which the evaporation mass flux may depend. Each vector contains the
+   * field values at the points of interest.
    * @param mass_flux_vector Vector of mass flux values.
    */
   void
@@ -480,6 +504,9 @@ public:
   {
     const std::vector<double> &temperature =
       field_vectors.at(field::temperature);
+
+    const double R_inv               = 1.0 / 8.3145;
+    const double M_x_2PI_inv_x_R_inv = molar_mass / (2.0 * M_PI) * R_inv;
 
     const unsigned int n_pts = mass_flux_vector.size();
 
@@ -498,14 +525,14 @@ public:
 
   /**
    * @brief heat_flux Calculates the value of the evaporation heat flux.
-   * @param fields_value Values of the various fields on which the heat flux may
-   * depend.
-   * @return Value of the heat flux calculated with the fields_value.
+   * @param field_values Map storing the values of the various fields on which the
+   * heat flux may depend.
+   * @return Value of the heat flux calculated with the field_values.
    */
   double
-  heat_flux(const std::map<field, double> &fields_value) override
+  heat_flux(const std::map<field, double> &field_values) override
   {
-    const double mass_flux_value = mass_flux(fields_value);
+    const double mass_flux_value = mass_flux(field_values);
 
     return mass_flux_value * latent_heat_evaporation;
   }
@@ -513,8 +540,9 @@ public:
   /**
    * @brief vector_heat_flux Calculates the values of the evaporation heat flux
    * for multiple points.
-   * @param field_vectors Values of the various fields on which the heat flux
-   * evaluated at multiple points may depend.
+   * @param field_vectors Map storing the vectors of the values for each fields
+   * on which the heat flux may depend. Each vector contains the field values at
+   * the points of interest.
    * @param heat_flux_vector Vector of heat flux values.
    */
   void
@@ -535,19 +563,24 @@ public:
   /**
    * @brief heat_flux_jacobian Calculates the jacobian (the partial derivative)
    * of the evaporation heat flux with respect to a field.
-   * @param field_values Values of the various fields on which the heat flux
-   * evaluated at a point may depend.
+   * @param field_values Map storing the values of the various fields on which the
+   * heat flux evaluated at a point may depend.
    * @param id Identifier of the field with respect to which the jacobian
    * should be calculated.
    * @return Value of the partial derivative of the heat flux with respect to
    * the field.
    */
   double
-  heat_flux_jacobian(const std::map<field, double> &fields_value,
+  heat_flux_jacobian(const std::map<field, double> &field_values,
                      const field                    id) override
   {
     const double temperature_inv =
-      1.0 / (fields_value.at(field::temperature) + 1e-16);
+      1.0 / (field_values.at(field::temperature) + 1e-16);
+
+    const double R_inv = 1.0 / 8.3145;
+    const double L_vap_x_M_x_R_inv =
+      latent_heat_evaporation * molar_mass * R_inv;
+    const double M_x_2PI_inv_x_R_inv = molar_mass / (2.0 * M_PI) * R_inv;
 
     if (id == field::temperature)
       return latent_heat_evaporation * ambient_pressure *
@@ -563,8 +596,9 @@ public:
   /**
    * @brief vector_heat_flux_jacobian Calculates the derivative of the evaporation
    * heat flux with respect to a field.
-   * @param field_vectors Vector for the values of the fields on which the heat flux
-   * evaluated at a point may depend.
+   * @param field_vectors Map storing the vectors of the values for each fields
+   * on which heat flux evaluated at a point may depend. Each vector contains
+   * the field values at the points of interest.
    * @param id Identifier of the field with respect to which a derivative should
    * be calculated.
    * @param jacobian_vector Vector of the values of the derivative of the heat flux
@@ -576,6 +610,11 @@ public:
     const field                                 id,
     std::vector<double>                        &jacobian_vector) override
   {
+    const double R_inv = 1.0 / 8.3145;
+    const double L_vap_x_M_x_R_inv =
+      latent_heat_evaporation * molar_mass * R_inv;
+    const double M_x_2PI_inv_x_R_inv = molar_mass / (2.0 * M_PI) * R_inv;
+
     if (id == field::temperature)
       {
         const std::vector<double> &temperature =
@@ -598,17 +637,19 @@ public:
 
   /**
    * @brief momentum_flux Calculates the value of the evaporation momentum flux.
-   * @param fields_value Values of the various fields on which the momentum flux
-   * may depend.
-   * @return Value of the momentum flux calculated with the fields_value
+   * @param field_values Map storing the values of the various fields on which the
+   * momentum flux may depend.
+   * @return Value of the momentum flux calculated with the field_values
    */
   double
-  momentum_flux(const std::map<field, double> &fields_value) override
+  momentum_flux(const std::map<field, double> &field_values) override
   {
-    const double saturation_pressure_value = saturation_pressure(fields_value);
-    const double mass_flux_value           = mass_flux(fields_value);
+    const double saturation_pressure_value = saturation_pressure(field_values);
+    const double mass_flux_value           = mass_flux(field_values);
     const double temperature_inv =
-      1.0 / (fields_value.at(field::temperature) + 1e-16);
+      1.0 / (field_values.at(field::temperature) + 1e-16);
+
+    const double R_inv = 1.0 / 8.3145;
 
     const double vapor_saturation_density_value =
       molar_mass * saturation_pressure_value * R_inv * temperature_inv;
@@ -628,8 +669,9 @@ public:
   /**
    * @brief vector_momentum_flux Calculates the values of the evaporation momentum
    * flux for multiple points.
-   * @param field_vectors Values of the various fields on which the momentum flux
-   * may depend.
+   * @param field_vectors Map storing the vectors of the values for each fields
+   * on which the momentum flux may depend. Each vector contains the field
+   * values at the points of interest.
    * @param momentum_flux_vector Vectors of the momentum flux values.
    */
   void
@@ -640,6 +682,8 @@ public:
     const unsigned int         n_pts = momentum_flux_vector.size();
     const std::vector<double> &temperature =
       field_vectors.at(field::temperature);
+
+    const double R_inv = 1.0 / 8.3145;
 
     std::vector<double> saturation_pressure_vector(n_pts);
     vector_saturation_pressure(field_vectors, saturation_pressure_vector);
@@ -668,8 +712,8 @@ public:
   /**
    * @brief momentum_flux_jacobian Calculates the jacobian (the partial derivative)
    * of the evaporation momentum flux with respect to a field.
-   * @param field_values Values of the various fields on which the momentum flux
-   * may depend.
+   * @param field_values Map storing the values of the various fields on which the
+   * momentum flux may depend.
    * @param id Identifier of the field with respect to which the jacobian
    * should be calculated
    * @return Value of the partial derivative of the momentum flux with respect
@@ -685,12 +729,13 @@ public:
   /**
    * @brief vector_momentum_flux_jacobian Calculates the derivative of the
    * evaporation momentum flux with respect to a field.
-   * @param field_vectors Vector for the values of the fields on which the momentum
-   * flux evaluated at multiple points may depend.
+   * @param field_vectors Map storing the vectors of the values for each fields
+   * flux may depend. Each vector contains the field values at the points of
+   * interest.
    * @param id Identifier of the field with respect to which a derivative should
    * be calculated.
-   * @param jacobian_vector Vector of the values of the derivative of the momentum flux
-   * with respect to the field.
+   * @param jacobian_vector Vector of the values of the derivative of the momentum
+   * flux with respect to the field.
    */
   void
   vector_momentum_flux_jacobian(
@@ -711,15 +756,6 @@ private:
   const double ambient_pressure;
   const double ambient_gas_density_inv;
   const double liquid_density_inv;
-
-  // 1/R
-  double R_inv;
-
-  // L_vap*M/R
-  double L_vap_x_M_x_R_inv;
-
-  // M/(2*PI*R)
-  double M_x_2PI_inv_x_R_inv;
 };
 
 #endif

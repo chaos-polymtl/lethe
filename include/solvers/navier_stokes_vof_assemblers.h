@@ -217,7 +217,7 @@ public:
  *
  * @param simulation_control Shared pointer of the SimulationControl object
  * controlling the current simulation
- * @param p_evaporation A  struct that holds all evaporation model
+ * @param p_evaporation Struct that holds all evaporation model
  * parameters
  *
  * @ingroup assemblers
