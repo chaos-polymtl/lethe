@@ -1,4 +1,5 @@
-// check the read and write of simulationcontrol
+// Executable used to test the validity of parameter files
+
 
 #include "solvers/simulation_parameters.h"
 
