@@ -1,0 +1,59 @@
+name: CI-Parameter-files-examples
+
+on: 
+  # Runs on every push on master branch. If a push contains multiple commits, it will be ran on the latest one.
+  push:
+    paths-ignore:
+      - 'doc/**'
+  pull_request_target:
+    paths-ignore:
+      - 'doc/**'
+
+# Cancels running instances when a pull request is updated by a commit
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref || github.run_id }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Build (deal.ii:${{ matrix.dealii_version }})
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        dealii_version: ["master"]
+    
+    # Run steps in container of dealii's master branch
+    container:
+      image: dealii/dealii:${{ matrix.dealii_version }}-focal
+      options: --user root
+
+    steps:
+      - name: Setup
+        run: |
+          # Since dealii image doesn't include Node.js, we'll install it
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends nodejs
+
+
+
+          echo "Github actions is sane!"
+          echo "Running build with deal.ii version ${{ matrix.dealii_version }} on branch ${GITHUB_REF#refs/heads/}"
+
+      # Checks-out Lethe with branch of triggering commit
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      #
+      # Warnings
+      #
+      - name: Compile Lethe to check and check for parameter file validity (deal.ii:${{ matrix.dealii_version }})
+        run: |
+          mkdir build-parameter-files
+          cd build-parameter-files
+          cmake ../ -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=../inst/
+          make -j${{ env.COMPILE_JOBS }}
+          cd ..
+          export PATH=$PATH:"./inst/bin/"
+          bash contrib/utilities/check_parameters_files_in_examples.sh   
