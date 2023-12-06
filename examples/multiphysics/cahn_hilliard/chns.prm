@@ -50,6 +50,7 @@ subsection physical properties
       set cahn hilliard mobility model    = constant
       set cahn hilliard mobility constant = 1
     end
+  end
 end
 
 #---------------------------------------------------

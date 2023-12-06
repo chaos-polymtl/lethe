@@ -7,7 +7,7 @@ import os
 
 # Case generator
 PATH = os.getcwd()
-PRM_FILE = 'oblique_wall_impact_template.prm'
+PRM_FILE = 'oblique_wall_impact_template.tpl'
 
 # System characteristics
 theta = np.linspace(1,70,34)      # Restitution coefficient

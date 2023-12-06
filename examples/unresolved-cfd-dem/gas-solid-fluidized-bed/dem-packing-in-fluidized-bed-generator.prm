@@ -8,8 +8,8 @@ set dimension = 3
 #---------------------------------------------------
 
 subsection simulation control
-  set time step        = 0.00001
-  set time end         = 0.6
+  set time step        = 0.000005
+  set time end         = 0.5
   set log frequency    = 1000
   set output frequency = 1000
   set output path      = ./output_dem/
@@ -30,6 +30,7 @@ end
 subsection restart
   set checkpoint = true
   set frequency  = 10000
+  set restart    = false
   set filename   = dem
 end
 
@@ -42,6 +43,11 @@ subsection model parameters
     set contact detection method = dynamic
     set neighborhood threshold   = 1.3
   end
+  subsection load balancing
+    set load balance method     = dynamic
+    set threshold               = 0.5
+    set dynamic check frequency = 10000
+  end
   set particle particle contact force method = hertz_mindlin_limit_overlap
   set particle wall contact force method     = nonlinear
   set integration method                     = velocity_verlet
@@ -52,15 +58,15 @@ end
 #---------------------------------------------------
 
 subsection lagrangian physical properties
-  set gx                       = -9.8
-  set gy                       = 0.0
+  set gx                       = 0
+  set gy                       = -9.81
   set gz                       = 0
   set number of particle types = 1
   subsection particle type 0
     set size distribution type            = uniform
     set diameter                          = 0.001
-    set number                            = 10000
-    set density particles                 = 2500
+    set number of particles               = 30000
+    set density particles                 = 1500
     set young modulus particles           = 1e6
     set poisson ratio particles           = 0.3
     set restitution coefficient particles = 0.2
@@ -80,16 +86,16 @@ end
 
 subsection insertion info
   set insertion method                               = volume
-  set inserted number of particles at each time step = 500
-  set insertion frequency                            = 1000
-  set insertion box minimum x                        = 0
-  set insertion box minimum y                        = -0.01
-  set insertion box minimum z                        = 0
-  set insertion box maximum x                        = 0.1
-  set insertion box maximum y                        = 0.01
-  set insertion box maximum z                        = 0.01
-  set insertion distance threshold                   = 2.2
-  set insertion random number range                  = 0.5
+  set inserted number of particles at each time step = 30000
+  set insertion frequency                            = 100000
+  set insertion box minimum x                        = -0.018
+  set insertion box minimum y                        = -0.05
+  set insertion box minimum z                        = -0.018
+  set insertion box maximum x                        = 0.018
+  set insertion box maximum y                        = 0.05
+  set insertion box maximum z                        = 0.018
+  set insertion distance threshold                   = 1.5
+  set insertion random number range                  = 0.2
   set insertion random number seed                   = 19
 end
 
@@ -101,17 +107,17 @@ subsection floating walls
   set number of floating walls = 1
   subsection wall 0
     subsection point on wall
-      set x = -0.01
-      set y = 0
+      set x = 0
+      set y = -0.06
       set z = 0
     end
     subsection normal vector
-      set nx = 1
-      set ny = 0
+      set nx = 0
+      set ny = 1
       set nz = 0
     end
     set start time = 0
-    set end time   = 2
+    set end time   = 5
   end
 end
 
@@ -121,7 +127,7 @@ end
 
 subsection mesh
   set type               = dealii
-  set grid type          = subdivided_cylinder
-  set grid arguments     = 16:0.01:0.1
-  set initial refinement = 1
+  set grid type          = subdivided_hyper_rectangle
+  set grid arguments     = 1,5,1:-0.02,-0.1,-0.02:0.02,0.1,0.02:true
+  set initial refinement = 3
 end
