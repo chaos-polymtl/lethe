@@ -48,7 +48,7 @@ jobs:
       #
       # Warnings
       #
-      - name: Compile Lethe to check and check for parameter file validity (deal.ii:${{ matrix.dealii_version }})
+      - name: Compile Lethe and check for parameter file validity (deal.ii:${{ matrix.dealii_version }})
         run: |
           mkdir build-parameter-files
           cd build-parameter-files
