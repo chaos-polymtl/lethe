@@ -32,6 +32,7 @@
 #include <solvers/heat_transfer_assemblers.h>
 #include <solvers/heat_transfer_scratch_data.h>
 #include <solvers/multiphysics_interface.h>
+#include <solvers/postprocessors.h>
 
 #include <deal.II/base/convergence_table.h>
 #include <deal.II/base/quadrature_lib.h>
@@ -550,6 +551,11 @@ private:
   // - the convective heat flux on a boundary: h(T-T_inf)
   // - the total fluxes on the nitsche immersed boundaries (if active)
   TableHandler heat_flux_table;
+
+  // Heat flux postprocessing
+  std::vector<std::shared_ptr<ThermalConductivityModel>>
+                                          thermal_conductivity_models;
+  std::vector<HeatFluxPostprocessor<dim>> heat_flux_postprocessors;
 };
 
 
