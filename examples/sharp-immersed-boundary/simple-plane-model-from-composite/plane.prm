@@ -1,0 +1,69 @@
+# Listing of Parameters
+#----------------------
+
+set dimension = 3
+
+#---------------------------------------------------
+# Simulation Control
+#---------------------------------------------------
+
+subsection simulation control
+  set method            = steady
+  set output name       = composite_shape_build
+  set output frequency  = 1
+end
+
+#---------------------------------------------------
+# Mesh
+#---------------------------------------------------
+
+subsection mesh
+  set type               = dealii
+  set grid type          = subdivided_hyper_rectangle
+  set grid arguments     = 1,1,1:-5,-5,-5 : 5 , 5 , 5 : true
+  set initial refinement = 4
+end
+
+
+#---------------------------------------------------
+# Timer
+#---------------------------------------------------
+
+subsection timer
+  set type = iteration
+end
+
+#---------------------------------------------------
+# Mesh Adaptation Control
+#---------------------------------------------------
+
+subsection mesh adaptation
+  set type                 = kelly
+  set fraction type        = number
+end
+
+#---------------------------------------------------
+# IB particles
+#---------------------------------------------------
+
+subsection particles
+  set number of particles                     = 1
+  set assemble Navier-Stokes inside particles = false
+  
+  subsection local mesh refinement
+    set initial refinement                = 5
+    set refine mesh inside radius factor  = 1
+    set refine mesh outside radius factor = 1
+  end
+  
+  subsection particle info 0
+    subsection position
+      set Function expression = 0;0;0
+    end
+    subsection orientation
+      set Function expression = 0;0;0
+    end
+    set type            = composite
+    set shape arguments = plane.composite
+  end
+end
