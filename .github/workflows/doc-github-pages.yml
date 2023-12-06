@@ -28,7 +28,6 @@ jobs:
         with:
           doxyfile-path: "./doc/doxygen/doxygen-config-file"
           working-directory: "."
-       
 
       - name: Setup Sphinx
         run: |
@@ -37,18 +36,12 @@ jobs:
             pip install sphinx-copybutton
             pip install -r doc/requirements.txt
   
-      - name: Build Shinx HTML
+      - name: Build Sphinx HTML and aggregate files
         run: |
           cd doc
           make html
           cp -r build/html/ aggregate/html_documentation
           cp -r doxygen/html/ aggregate/html_doxygen/
-
-      #- name: Aggregate files
-      #  uses: mattnotmitt/doxygen-action@v1.1.0
-      #  with:
-      #    doxyfile-path: "./doc/doxygen/doxygen-config-file"
-      #    working-directory: ".
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v2
