@@ -1,0 +1,171 @@
+# Listing of Parameters
+#----------------------
+
+set dimension = 3
+
+#---------------------------------------------------
+# Simulation Control
+#---------------------------------------------------
+
+subsection simulation control
+  set method            = bdf2
+  set output name       = mixer
+  set output path       = ./output_composite/
+  set output frequency  = 1
+  set time end          = 5
+  set time step         = 0.02
+  set output boundaries = true
+end
+
+#---------------------------------------------------
+# Physical Properties
+#---------------------------------------------------
+
+subsection physical properties
+  subsection fluid 0
+    set kinematic viscosity = 0.001
+    set density             = 1000
+  end
+end
+
+#---------------------------------------------------
+# Mesh
+#---------------------------------------------------
+
+subsection mesh
+  set type               = dealii
+  set grid type          = subdivided_hyper_rectangle
+  set grid arguments     = 1,1,1:-0.5,-0.5,-0.5 : 0.5 , 0.5 , 0.5 : true
+  set initial refinement = 4
+end
+
+#---------------------------------------------------
+# Post-Processing
+#---------------------------------------------------
+
+subsection post-processing
+  set calculate average velocities = true
+  set initial time                 = 2
+  set smoothed output fields       = true
+end
+
+#---------------------------------------------------
+# Timer
+#---------------------------------------------------
+
+subsection timer
+  set type = iteration
+end
+
+#---------------------------------------------------
+# Mesh Adaptation Control
+#---------------------------------------------------
+
+subsection mesh adaptation
+  set type                 = kelly
+  set variable             = velocity
+  set fraction type        = fraction
+  set max number elements  = 1200000
+  set max refinement level = 8
+  set min refinement level = 3
+  set frequency            = 1
+  set fraction refinement  = 0.2
+end
+
+#---------------------------------------------------
+# Boundary Conditions
+#---------------------------------------------------
+
+subsection boundary conditions
+  set number = 5
+  subsection bc 0
+    set id   = 0
+    set type = noslip
+  end
+  subsection bc 1
+    set id   = 1
+    set type = noslip
+  end
+  subsection bc 2
+    set id   = 2
+    set type = noslip
+  end
+  subsection bc 3
+    set id   = 3
+    set type = noslip
+  end
+  subsection bc 4
+    set id   = 4
+    set type = noslip
+  end
+  subsection bc 5
+    set id   = 5
+    set type = noslip
+  end
+end
+
+#---------------------------------------------------
+# IB particles
+#---------------------------------------------------
+
+subsection particles
+  set number of particles                     = 1
+  set assemble Navier-Stokes inside particles = false
+  subsection extrapolation function
+    set stencil order = 2
+    set length ratio  = 3
+  end
+  subsection local mesh refinement
+    set initial refinement                = 6
+    set refine mesh inside radius factor  = 0
+    set refine mesh outside radius factor = 1.25
+  end
+  subsection output
+    set enable extra sharp interface vtu output field = true
+  end
+  subsection particle info 0
+    subsection position
+      set Function expression = 0;0;0
+    end
+    subsection velocity
+      set Function expression = 0;0;0
+    end
+    subsection orientation
+      set Function expression =atan2(0.707106781186548*sin(pi/4)*sin(6.28318530717959*t) - 0.707106781186548*sin(6.28318530717959*t)*cos(pi/4), (0.5 - 0.5*cos(6.28318530717959*t))*sin(pi/4) + (0.5*cos(6.28318530717959*t) + 0.5)*cos(pi/4));asin((0.5 - 0.5*cos(6.28318530717959*t))*cos(pi/4) + (0.5*cos(6.28318530717959*t) + 0.5)*sin(pi/4));atan2(-0.707106781186548*sin(6.28318530717959*t), -(0.5 - 0.5*cos(6.28318530717959*t))*sin(pi/4) + (0.5*cos(6.28318530717959*t) + 0.5)*cos(pi/4))
+    end
+    subsection omega
+      set Function expression = -1*pi*2*sqrt(2)/2;0;-1*pi*2*sqrt(2)/2
+    end
+    set type            = composite
+    set shape arguments = impeller.composite
+  end
+end
+
+#---------------------------------------------------
+# Non-Linear Solver Control
+#---------------------------------------------------
+
+subsection non-linear solver
+  subsection fluid dynamics
+    set tolerance      = 1e-4
+    set max iterations = 10
+    set verbosity      = verbose
+    set solver         = newton
+  end
+end
+
+#---------------------------------------------------
+# Linear Solver Control
+#---------------------------------------------------
+
+subsection linear solver
+  subsection fluid dynamics
+    set method             = gmres
+    set max iters          = 1000
+    set verbosity          = verbose
+    set relative residual  = 1e-3
+    set minimum residual   = 1e-8
+    set max krylov vectors = 500
+    set preconditioner     = ilu
+  end
+end
