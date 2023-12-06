@@ -23,7 +23,7 @@
 #include <core/non_linear_solver.h>
 
 /**
- * @brief NewtonNonlinearSolver. Non-linear solver for non-linear systems of equations which uses a Newton
+ * @brief Non-linear solver for non-linear systems of equations which uses a Newton
  * method with \alpha relaxation to ensure that the residual is monotonically
  * decreasing.
  */

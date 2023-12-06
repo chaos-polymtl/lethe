@@ -28,10 +28,10 @@
 /**
  * @brief Class that assembles the core of the Navier-Stokes equation with
  * free surface using Cahn-Hilliard modeling.
- * This class assembles the weak form of:
- * $$ \nabla \cdot \mathbf{u} + \rho \mathbf{u} \cdot \nabla
+ * According to the following weak form:
+ * \f$ \nabla \cdot \mathbf{u} + \rho \mathbf{u} \cdot \nabla
  * \mathbf{u} + \nabla p - \mu \nabla\cdot (\nabla \mathbf{u} +
- * (\nabla \mathbf{u})^T)=0 $$ with an SUPG and PSPG stabilization
+ * (\nabla \mathbf{u})^T)=0 \f$ with an SUPG and PSPG stabilization
  *
  * @tparam dim An integer that denotes the number of spatial dimensions
  *
@@ -77,7 +77,7 @@ public:
  * integration for the Navier-Stokes equation with
  * free surface using Cahn-Hilliard modeling. For example, if a BDF1 scheme is
  * chosen, the following is assembled
- * $$\frac{(\rho \mathbf{u})^{t+\Delta t}-(\rho \mathbf{u})^{t}{\Delta t}
+ * \f$\frac{(\rho \mathbf{u})^{t+\Delta t}-(\rho \mathbf{u})^{t}}{\Delta t} \f$
  *
  * @tparam dim An integer that denotes the number of spatial dimensions
  *

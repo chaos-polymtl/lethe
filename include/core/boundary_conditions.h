@@ -1236,7 +1236,7 @@ NavierStokesPressureFunctionDefined<dim>::value(
 }
 
 /**
- * @brief This class implements a boundary conditions for the Cahn-Hilliard equation
+ * @brief Class that implements a boundary conditions for the Cahn-Hilliard equation
  * where the phase and chemical potential are defined using individual functions
  */
 template <int dim>

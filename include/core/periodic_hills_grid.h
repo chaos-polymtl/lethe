@@ -33,8 +33,7 @@
 using namespace dealii;
 
 /**
- * @brief PeriodicHillsGrid. The PeriodicHillsGrid class creates an
- * hyper_rectangle and transforms it to obtain the hill geometry with
+ * @brief Class that creates a hyper_rectangle and transforms it to obtain the hill geometry with
  * the hill_geometry function. It also attaches a manifold to the geometry.
  */
 

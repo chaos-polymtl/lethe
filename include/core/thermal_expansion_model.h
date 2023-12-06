@@ -21,7 +21,7 @@
 #include <core/physical_property_model.h>
 
 /**
- * @brief ThermalExpansionModel. Abstract class that allows to calculate the
+ * @brief Abstract class that allows to calculate the
  * thermal expansion coefficient (with unit of inverse temperature)
  */
 class ThermalExpansionModel : public PhysicalPropertyModel
@@ -112,7 +112,7 @@ private:
 };
 
 /**
- * @brief ThermalExpansionPhaseChange Implements a phase-dependant thermal expansion coefficient
+ * @brief Implements a phase-dependant thermal expansion coefficient
  */
 class ThermalExpansionPhaseChange : public ThermalExpansionModel
 {

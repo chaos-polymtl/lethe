@@ -67,9 +67,9 @@ public:
 
 /**
  * @brief Class that assembles the core of the Navier-Stokes equation.
- * This class assembles the weak form of:
- * $$\mathbf{u} \cdot \nabla \mathbf{u} - \nabla p - \nu \nabla^2 \mathbf{u}
- * =0 $$ with an SUPG and PSPG stabilization
+ * According to the following weak form:
+ * \f$\mathbf{u} \cdot \nabla \mathbf{u} - \nabla p - \nu \nabla^2 \mathbf{u}
+ * =0 \f$ with an SUPG and PSPG stabilization
  *
  * @tparam dim An integer that denotes the number of spatial dimensions
  *
@@ -110,9 +110,9 @@ public:
 
 /**
  * @brief Class that assembles the core of the Navier-Stokes equation.
- * This class assembles the weak form of:
- * $$\mathbf{u} \cdot \nabla \mathbf{u} - \nabla p - \nu \nabla^2 \mathbf{u}
- * =0 $$ with a full GLS stabilization including the laplacian of the test
+ * According to the following weak form:
+ * \f$\mathbf{u} \cdot \nabla \mathbf{u} - \nabla p - \nu \nabla^2 \mathbf{u}
+ * =0 \f$ with a full GLS stabilization including the laplacian of the test
  * function.
  *
  * @tparam dim An integer that denotes the number of spatial dimensions
@@ -155,14 +155,14 @@ public:
 
 /**
  * @brief Class that assembles the coriolis and the centrifugal
- * if a simulation is carried out in a rotating frame of reference.
- * This class assembles the following term:
- * $$2\mathbf{\omega} \times \mathbf{u} + \mathbf{\omega}\times (\mathbf{\omega}
- * \times \mathbf{r})$$ Where $\mathbf{\omega}$ is the rotation vector of the
- * frame of reference and $\mathbf{r}$ is the position vector (e.g. a vector
- * between a point on the rotation axis and the gauss point) By default, it is
- * assumed that the rotation vector passes through the point (0,0) in 2D or
- * (0,0,0) in 3D
+ * if a simulation is carried out in a rotating frame of reference
+ * according to the following term:
+ * \f$2\mathbf{\omega} \times \mathbf{u} + \mathbf{\omega}\times
+ * (\mathbf{\omega} \times \mathbf{r})\f$ Where $\mathbf{\omega}$ is the
+ * rotation vector of the frame of reference and $\mathbf{r}$ is the position
+ * vector (e.g. a vector between a point on the rotation axis and the gauss
+ * point) By default, it is assumed that the rotation vector passes through the
+ * point (0,0) in 2D or (0,0,0) in 3D
  *
  *
  * @tparam dim An integer that denotes the number of spatial dimensions
@@ -202,7 +202,7 @@ public:
 
 /**
  * @brief Class that assembles the core of the Navier-Stokes equation
- * using a Rheological model to predict non Newtonian behaviors
+ * using a Rheological model to predict non-Newtonian behaviors
  *
  * @tparam dim An integer that denotes the number of spatial dimensions
  *
@@ -305,7 +305,7 @@ public:
  * @brief Class that assembles the transient time arising from BDF time
  * integration for the Navier Stokes equations. For example, if a BDF1 scheme is
  * chosen, the following is assembled
- * $$\frac{\mathbf{u}^{t+\Delta t}-\mathbf{u}^{t}{\Delta t}
+ * \f$\frac{\mathbf{u}^{t+\Delta t}-\mathbf{u}^{t}{\Delta t}
  *
  * @tparam dim An integer that denotes the number of spatial dimensions
  *
@@ -345,9 +345,9 @@ public:
 
 /**
  * @brief Class that assembles the core of the Navier-Stokes equation.
- * This class assembles the weak form of:
- * $$\mathbf{u} \cdot \nabla \mathbf{u} - \nabla p - \nu \nabla^2 \mathbf{u}
- * =0 $$ with a grad-div stabilization
+ * According to the following weak form:
+ * \f$\mathbf{u} \cdot \nabla \mathbf{u} - \nabla p - \nu \nabla^2 \mathbf{u}
+ * =0 \f$ with a grad-div stabilization
  *
  * @tparam dim An integer that denotes the number of spatial dimensions
  *
@@ -429,7 +429,7 @@ public:
 
 /**
  * @brief Class that assembles a Poisson problem for all velocity components and pressure variables.
- * This class assembles the weak form of: d^2 U/dx^2=0 and  d^2 P/dx^2=0
+ * According to the following weak form: d^2 U/dx^2=0 and  d^2 P/dx^2=0
  *
  * @tparam dim An integer that denotes the number of spatial dimensions
  *
@@ -469,7 +469,7 @@ public:
 
 /**
  * @brief Class that assembles a Neumann boundary condition.
- * This class assembles the weak form of: (p-mu*grad_u)*n at the boundary
+ * According to the following weak form: (p-mu*grad_u)*n at the boundary
  *
  * @tparam dim An integer that denotes the number of spatial dimensions
  * @param pressure_boundary_condition The boundary condition objects use to store the function.
@@ -515,7 +515,7 @@ public:
 
 /**
  * @brief Class that assembles the weak formulation of a Dirichlet boundary condition using the Nitsche method.
- * This class assembles the weak form of: (u_ib-u)-(u,grad v)
+ * According to the following weak form: (u_ib-u)-(u,grad v)
  *
  * @tparam dim An integer that denotes the number of spatial dimensions
  * @param boundary_condition The boundary condition objects us to store the function.
@@ -560,7 +560,7 @@ public:
 
 /**
  * @brief Class that assembles the special case of partial slip condition using the weak formulation of a Dirichlet boundary condition using the Nitsche method.
- * This class assembles the weak form of: beta n(nu-nv) +
+ * According to the following weak form: beta n(nu-nv) +
  * mu/boundary_layer_thickness t(tu-tv)
  *
  * @tparam dim An integer that denotes the number of spatial dimensions
@@ -606,9 +606,9 @@ public:
 };
 
 /**
- * @brief Class that assembles the weak formulation of an outlet boundary condition.
- * This class assembles the weak form of (nu grad(u) * grad(v) + pI - (beta *
- * u)_ * n See the paper by Arndt, Braack and Lube
+ * @brief Class that assembles the weak formulation of an outlet boundary condition
+ * according to the following equation: (nu grad(u) * grad(v) + pI - (beta *
+ * u)_ * n. See the paper by Arndt, Braack and Lube
  * https://www.mathsim.eu/~darndt/files/ENUMATH_2015.pdf
  *
  * @tparam dim An integer that denotes the number of spatial dimensions
@@ -682,7 +682,7 @@ public:
 
 
   /**
-   * @brief assemble_rhs Assembles the weak form of: $$-\mathbf{g} \times \alpha \times (T - T_0)$$
+   * @brief assemble_rhs Assembles the weak form of: \f$-\mathbf{g} \times \alpha \times (T - T_0)\f$
    * @param scratch_data (see base class)
    * @param copy_data (see base class)
    */
