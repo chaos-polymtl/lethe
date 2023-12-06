@@ -40,8 +40,7 @@ using namespace dealii;
 
 
 /**
- * @brief CahnHilliardScratchData class
- * stores the information required by the assembly procedure
+ * @brief Class that stores the information required by the assembly procedure
  * for the Cahn-Hilliard equations. Consequently, this class
  * calculates the phase field parameter Phi (values, gradients, laplacians),
  * the chemical potential eta (values, gradients, laplacians) and the shape

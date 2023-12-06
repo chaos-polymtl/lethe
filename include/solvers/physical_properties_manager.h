@@ -56,7 +56,7 @@ enum material_interactions_type
 };
 
 
-/** @class The PhysicalPropertiesManager class manages the physical properties
+/** @brief Class that manages the physical properties
  * model which are required to calculate the various physical properties
  * This centralizes the place where the models are created.
  * The class can be constructed empty and initialized from parameters

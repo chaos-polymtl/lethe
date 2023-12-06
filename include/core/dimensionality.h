@@ -21,18 +21,18 @@
 
 using namespace dealii;
 
-/**
- * @brief Dimensionality - This is used to rescale physical properties for cases where the main dimensions
- * of the problems (Length, Mass, Time and Temperature) are not expressed in SI,
- * but are expressed in another set of units. For example, this can be used to
- * carry out a simulation where the mesh is expressed in millimeters instead of
- * meters. This class is currently only used to rescale the
- * physical properties in the FEM-based physics (e.g. all of those that are
- * solvers). Support for DEM, CFD-DEM and rescaling of boundary conditions is
- * planned in the mid-term.
- */
 namespace Parameters
 {
+  /**
+   * @brief Class used to rescale physical properties for cases where the main dimensions
+   * of the problems (Length, Mass, Time and Temperature) are not expressed in
+   * SI, but are expressed in another set of units. For example, this can be
+   * used to carry out a simulation where the mesh is expressed in millimeters
+   * instead of meters. This class is currently only used to rescale the
+   * physical properties in the FEM-based physics (e.g. all of those that are
+   * solvers). Support for DEM, CFD-DEM and rescaling of boundary conditions is
+   * planned in the mid-term.
+   */
   class Dimensionality
   {
   public:

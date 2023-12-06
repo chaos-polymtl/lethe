@@ -21,7 +21,7 @@
 #include <core/phase_change.h>
 
 /**
- * @brief SurfaceTensionModel. Abstract class that allows to calculate the
+ * @brief Abstract class that allows to calculate the
  * surface tension coefficient.
  */
 class SurfaceTensionModel : public InterfacePropertyModel

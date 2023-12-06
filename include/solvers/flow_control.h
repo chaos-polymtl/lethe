@@ -35,8 +35,7 @@
 using namespace dealii;
 
 /**
- * @brief FlowControl. The FlowControl class allows to dynamically
- * control the flow with a beta coefficient calculated at each step time.
+ * @brief Class allows to dynamically control the flow with a beta coefficient calculated at each step time.
  */
 
 template <int dim>

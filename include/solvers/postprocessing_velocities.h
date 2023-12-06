@@ -38,10 +38,12 @@
 using namespace dealii;
 
 /**
- * @brief AverageVelocities. The AverageVelocities class calculates the
- * time-averaged velocities and pressure (<u>, <v>, <w>, <p>) and the
- * independent components of the Reynolds stresses tensor (<u'u'>, <v'v'>,
- * <w'w'>, <u'v'>, <v'w'>, <w'u'>). The generated vectors are displayable of
+ * @brief Class that calculates the
+ * time-averaged velocities and pressure \f$(\langle u \rangle, \langle v
+ * \rangle, \langle w \rangle, \langle p \rangle)\f$ and the independent
+ * components of the Reynolds stresses tensor \f$(\langle u'u' \rangle, \langle
+ * v'v' \rangle, \langle w'w' \rangle, \langle u'v' \rangle, \langle v'w'
+ * \rangle, \langle w'u' \rangle)\f$. The generated vectors are displayable of
  * visualization software.
  */
 template <int dim, typename VectorType, typename DofsType>

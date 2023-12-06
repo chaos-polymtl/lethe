@@ -49,8 +49,7 @@ using namespace dealii;
 
 
 /**
- * @brief HeatTransferScratchData class
- * stores the information required by the assembly procedure
+ * @brief Class that stores the information required by the assembly procedure
  * for a heat transfer advection-diffusion equation. Consequently, this class
  * calculates the heat transfer (values, gradients, laplacians) and the shape
  * function (values, gradients, laplacians) at all the gauss points for all

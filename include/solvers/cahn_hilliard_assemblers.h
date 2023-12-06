@@ -74,8 +74,8 @@ protected:
 
 
 /**
- * @brief Class that assembles the core of the Cahn-Hilliard equation.
- * This class assembles the weak form of:
+ * @brief Class that assembles the core of the Cahn-Hilliard equation
+ * with the following weak form:
  * dPhi/dt +  u * gradPhi =  div(M(Phi)*grad eta)
  * eta - f(Phi) + epsilon^2 * div(grad Phi) = 0
  *
@@ -219,7 +219,7 @@ public:
  * @brief Class that assembles the transient time arising from BDF time
  * integration for the Cahn-Hilliard equations. For example, if a BDF1 scheme is
  * chosen, the following is assembled
- * $$\frac{\mathbf{T}^{t+\Delta t}-\mathbf{T}^{t}{\Delta t}
+ * \f$\frac{\mathbf{T}^{t+\Delta t}-\mathbf{T}^{t}}{\Delta t}\f$
  *
  * @tparam dim An integer that denotes the number of spatial dimensions
  *

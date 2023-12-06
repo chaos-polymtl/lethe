@@ -38,8 +38,7 @@ using namespace dealii;
 
 
 /**
- * @brief VOFScratchData class
- * stores the information required by the assembly procedure
+ * @brief Class that stores the information required by the assembly procedure
  * for a VOF free surface equation. Consequently, this class
  * calculates the phase values (values, gradients, laplacians) and the shape
  * method (values, gradients, laplacians) at all the gauss points for all

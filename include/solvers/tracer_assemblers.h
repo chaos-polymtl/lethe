@@ -65,8 +65,8 @@ public:
 /**
  * @brief Class that assembles the core of the Tracer equation.
  * This class assembles the weak form of:
- * $$\mathbf{u} \cdot \nabla T - D \nabla^2 =0 $$ with an SUPG
- * stabilziation
+ * \f$\mathbf{u} \cdot \nabla T - D \nabla^2 =0 \f$ with an SUPG
+ * stabilization
  *
  * @tparam dim An integer that denotes the number of spatial dimensions
  *
@@ -110,7 +110,7 @@ public:
  * @brief Class that assembles the transient time arising from BDF time
  * integration for the Tracer equations. For example, if a BDF1 scheme is
  * chosen, the following is assembled
- * $$\frac{\mathbf{T}^{t+\Delta t}-\mathbf{T}^{t}{\Delta t}
+ * \f$\frac{\mathbf{T}^{t+\Delta t}-\mathbf{T}^{t}}{\Delta t}\f$
  *
  * @tparam dim An integer that denotes the number of spatial dimensions
  *

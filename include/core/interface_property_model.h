@@ -23,7 +23,7 @@
 using namespace dealii;
 
 /**
- * @brief InterfacePropertyModel. Abstract class that defines the interface for a interface property model
+ * @brief Abstract class that defines the interface for a interface property model.
  * Interface property model provides an abstract interface to calculate the
  * value of an interface property or a vector of interface property value for
  * given field value. By default, the interface does not require that all (or
