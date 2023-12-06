@@ -235,9 +235,19 @@ The following parameter and subsection are all inside the subsection ``particle 
 
     * Composite: *file name*.
    
-    A composite shape is made from the composition, with boolean operations, of multiple primitive shapes (e.g., Sphere, Hyper Rectangle, Ellipsoid, Torus, Cone, Cylinder, etc). The composite shape has its own frame of reference that is used to place different primitives relative to each other. The position and orientation of the primitive objects are defined following the translation and then rotation in XYZ convention. The position and orientation of this object then define the position and orientation of the composite frame of reference in the global frame of reference. Note that the default position and orientation of a shape in a composite reference frame follow the same rule as it usually does in the global reference frame (for example, the cylinder is by default aligned in the Z-axis, and its center corresponds to the 0 of the reference frame). Composite shapes are defined by a text file that contains two sections that begin with their names: ``shapes`` and ``operations``. All instructions are given on the lines following the section title in a similar syntax as the one from GMSH. For shapes, the syntax is: ``<shape_id>;<args separated by :>;<position components separated by :>;<orientation components separated by :>``.For operations, the syntax is: ``<resulting_shape_id>;<union|difference|intersection>;<first shape id>:<second shape id>``. In the case of difference, the first shape is the negative and the second shape is the positive. At this point in time, only these boolean operations have been implemented. Here is the content of a file that defines a cylinder topped with a sphere:
+    A composite shape is made from the composition, with boolean operations, of multiple primitive shapes (e.g., Sphere, Hyper Rectangle, Ellipsoid, Torus, Cone, Cylinder, etc). The composite shape has its own frame of reference that is used to place different primitives relative to each other. The position and orientation of the primitive objects are defined following the translation and then rotation in XYZ convention. The position and orientation of this object then define the position and orientation of the composite frame of reference in the global frame of reference. Note that the default position and orientation of a shape in a composite reference frame follow the same rule as it usually does in the global reference frame (for example, the cylinder is by default aligned in the Z-axis, and its center corresponds to the 0 of the reference frame). Composite shapes are defined by a text file that contains two sections that begin with their names: ``shapes`` and ``operations``. All instructions are given on the lines following the section title in a similar syntax as the one from GMSH. For shapes, the syntax is: ``<shape_id>;<args separated by :>;<position components separated by :>;<orientation components separated by :>``.For operations, the syntax is: ``<resulting_shape_id>;<union|difference|intersection>;<first shape id>:<second shape id>``. In the case of difference, the first shape is the negative and the second shape is the positive. At this point in time, only these boolean operations have been implemented.  Here is a general organization of a composite shape file.
     
-    .. code-block:: text
+.. code-block:: text
+
+        shapes
+        <shape_id>;   <shape type>;    <shape arguments separated by:>; <position components separated by :> ; <orientation components separated by :>
+        operations
+        <resulting_shape_id>;  <operation: union|difference|intersection>; <first shape id> : <second shape id>
+  
+  
+Here is the content of a file that defines a cylinder topped with a sphere:
+    
+.. code-block:: text
 
         shapes
         0;   sphere;     0.5; 0:0:0.5 ; 0:0:0
