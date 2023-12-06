@@ -90,7 +90,6 @@ The ``source term`` subsection defines the gravitational acceleration:
 .. code-block:: text
     
     subsection source term
-      set enable = true
       subsection xyz
         set Function expression = 0; -0.98; 0
       end
