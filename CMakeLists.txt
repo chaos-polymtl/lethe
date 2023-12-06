@@ -146,3 +146,5 @@ if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
     endif()
   endif()
 endif()
+
+ADD_SUBDIRECTORY(doc/doxygen)
