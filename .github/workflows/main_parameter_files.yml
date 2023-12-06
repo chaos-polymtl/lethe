@@ -58,4 +58,4 @@ jobs:
           make -j${{ env.COMPILE_JOBS }}
           cd ..
           export PATH=$PATH:"./inst/bin/"
-          bash contrib/utilities/check_parameters_files_in_examples.sh   
+          bash ./contrib/utilities/check_parameters_files_in_examples.sh   
