@@ -13,6 +13,10 @@ on:
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref || github.run_id }}
   cancel-in-progress: true
+  
+env:
+  COMPILE_JOBS: 2
+  MULTI_CORE_TESTS_REGEX: "mpirun=2"
 
 jobs:
   build:
@@ -35,8 +39,6 @@ jobs:
           # Since dealii image doesn't include Node.js, we'll install it
           sudo apt-get update
           sudo apt-get install -y --no-install-recommends nodejs
-
-
 
           echo "Github actions is sane!"
           echo "Running build with deal.ii version ${{ matrix.dealii_version }} on branch ${GITHUB_REF#refs/heads/}"
