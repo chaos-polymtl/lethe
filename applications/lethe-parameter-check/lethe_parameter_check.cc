@@ -1,6 +1,7 @@
 // check the read and write of simulationcontrol
 
 #include "solvers/simulation_parameters.h"
+
 #include "dem/dem_solver_parameters.h"
 #include "fem-dem/cfd_dem_simulation_parameters.h"
 
@@ -47,9 +48,9 @@ main(int argc, char *argv[])
               NSparam.declare(prm, size_of_subsections);
               prm.parse_input(argv[1]);
             }
-       }
+        }
       else if (solver_family == "lethe-particles")
-       {
+        {
           if (dim == 2)
             {
               ParameterHandler       prm;
@@ -64,9 +65,9 @@ main(int argc, char *argv[])
               parameters.declare(prm);
               prm.parse_input(argv[1]);
             }
-       }
+        }
       else if (solver_family == "lethe-fluid-particles")
-       {
+        {
           const Parameters::SizeOfSubsections size_of_subsections =
             Parameters::get_size_of_subsections(argv[1]);
           if (dim == 2)
@@ -84,7 +85,7 @@ main(int argc, char *argv[])
               param.declare(prm, size_of_subsections);
               prm.parse_input(argv[1]);
             }
-       }
+        }
       else
         {
           return 1;
