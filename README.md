@@ -42,7 +42,7 @@ dedicated solvers like Lethe could not exist.
 ## Documentation
 
 Documentation, tutorials, and more can be found 
-[here](https://lethe-cfd.github.io/lethe/).
+[here](https://lethe-cfd.github.io/lethe/html_documentation/index.html).
 
 Developer documentation based on Doxygen can be found 
 [here](https://lethe-cfd.github.io/lethe/html_doxygen/index.html)
