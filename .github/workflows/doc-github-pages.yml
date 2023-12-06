@@ -1,6 +1,6 @@
 name: Publish doc to GitHub Pages
 
-on: [push, pull_request]
+on: push
 
 # Cancels running instances when a pull request is updated by a commit
 concurrency:
@@ -22,12 +22,6 @@ jobs:
 
       - name: Checkout code
         uses: actions/checkout@v2
-
-      #- name: Build doxygen
-      #  uses: mattnotmitt/doxygen-action@v1.1.0
-      #  with:
-      #    doxyfile-path: "./doc/doxygen/doxygen-config-file"
-      #    working-directory: "."
 
       - name: Setup Sphinx and doxygen
         run: |
@@ -58,6 +52,7 @@ jobs:
 
       - name: Deploy to GitHub Pages
         uses: JamesIves/github-pages-deploy-action@4.1.7
+        if: github.ref == 'refs/heads/master'
         with:
           branch: gh-pages
           folder: doc/aggregate
