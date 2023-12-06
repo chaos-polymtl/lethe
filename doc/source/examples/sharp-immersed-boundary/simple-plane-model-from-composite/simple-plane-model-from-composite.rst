@@ -2,7 +2,7 @@
 Simple Plane Model From Composite
 =====================================================================================
 
-This example aims to showcase the vast possibilities of objects that can be defined using the composite shape in the sharp immersed boundary solver. It also aims to give an example of the type of operations that can be made from this geometry.
+This example aims to showcase the vast possibilities of objects that can be defined using the composite shape in the sharp immersed boundary solver. It also aims to give an example of the type of operations that can be made on these geometries.
 
 ----------------------------------
 Features
@@ -22,7 +22,7 @@ Files Used in This Example
 Description of the Case
 -----------------------
 
-This example presents the creation of a simple plane model using a composite shape. This example does a step-by-step of the shape creation. This plane is not a real model. The parameter used only aims at showcasing the different operations of the composite shape creation. The final product will look as follows:
+This example presents the creation of a simple plane model using a composite shape. This example does a step-by-step creation of the shape. This plane is not a real model. The parameter used only aims at showcasing the different operations of the composite shape creation. The final product will look as follows:
 
 .. image:: images/full_plane.png
    :alt: full_plane
@@ -38,7 +38,7 @@ The shape is created in two steps inspired by the GMSH syntax.
 1. Basic shape definitions. Shapes are defined with different parameters: shape ID, shape type, arguments, position, and orientation.
 2. Boolean operations definitions. Operations are defined by: operation ID, operation type, shape 1 ID, shape 2 ID. 
 
-Shapes and boolean operations each have an ID, and boolean operations can reference previous operations to build upon them. The final shape obtained is the product of the operation with the largest ID. To facilitate shape creation, we start indexing the operations form ID 30. This index is much larger than the number of primitives used.
+Shapes and boolean operations each have an ID, and boolean operations can reference previous operations to build upon them. The final shape obtained is the product of the operation with the largest ID. To facilitate shape creation, we start indexing the operations from ID 30. This index is much larger than the number of primitives used.
  
 All the shapes are placed in the reference frame of the composite shape which can then be moved depending on the position and orientation of the shape prescribed in the parameter file of the case. Here, we only focus on the step-by-step operation required to generate this complex shape.
 

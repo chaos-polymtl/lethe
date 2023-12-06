@@ -2,7 +2,7 @@
 Inclined 3D Mixer with Pitched-Blade Turbine Impeller Using Composite Sharp-Immersed Boundary
 =============================================================================================
 
-The mixing of stirred tanks is a common chemical engineering problem that can be tackled through immersed boundary simulation. This example presents an inclined impeller as a variation of :doc:`../3d-composite-mixer-with-pbt-impeller/3d-composite-mixer-with-pbt-impeller` to illustrate how to define the impeller motion with an arbitrary inclination angle properly.
+The mixing in stirred tanks is a common chemical engineering problem that can be tackled through immersed boundary simulation. This example presents an inclined impeller as a variation of :doc:`../3d-composite-mixer-with-pbt-impeller/3d-composite-mixer-with-pbt-impeller` to illustrate how to properly define the impeller motion with an arbitrary inclination angle.
 
 
 ----------------------------------
@@ -221,7 +221,7 @@ The orientation of an object using the sharp interface immersed boundary method 
 
 
 
-From this Python code, we obtained the following expression of the orientation using the XYZ rotation convention of the impeller as it rotates.
+From this Python code, we obtained the following expression of the orientation using the XYZ rotation convention of the impeller as it rotates:
 
 .. code-block:: text
 
