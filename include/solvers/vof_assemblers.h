@@ -65,8 +65,8 @@ public:
 
 /**
  * @brief Class that assembles the core of the VOF solver.
- * This class assembles the weak form of:
- * $$\mathbf{u} \cdot T \cdot \nabla T =0 $$ with an SUPG
+ * According to the following weak form:
+ * \f$\mathbf{u} \cdot T \cdot \nabla T =0 \f$ with an SUPG
  * stabilization
  *
  * @tparam dim An integer that denotes the number of spatial dimensions
@@ -122,7 +122,7 @@ public:
  * @brief Class that assembles the transient time arising from BDF time
  * integration for the VOF equations. For example, if a BDF1 scheme is
  * chosen, the following is assembled
- * $$\frac{\mathbf{T}^{t+\Delta t}-\mathbf{T}^{t}{\Delta t}
+ * \f$\frac{\mathbf{T}^{t+\Delta t}-\mathbf{T}^{t}}{\Delta t}\f$
  *
  * @tparam dim An integer that denotes the number of spatial dimensions
  *

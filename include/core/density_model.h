@@ -20,7 +20,7 @@
 #include <core/physical_property_model.h>
 
 /**
- * @brief DensityModel. Abstract class that allows to calculate the
+ * @brief Abstract class that allows to calculate the
  * density.
  */
 class DensityModel : public PhysicalPropertyModel

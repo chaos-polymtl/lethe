@@ -28,10 +28,10 @@
 /**
  * @brief Class that assembles the core of the Navier-Stokes equation with
  * free surface using VOF modeling.
- * This class assembles the weak form of:
- * $$\nabla \cdot (\rho \mathbf{u}) + \rho \mathbf{u} \cdot \nabla
+ * According to the following weak form:
+ * \f$\nabla \cdot (\rho \mathbf{u}) + \rho \mathbf{u} \cdot \nabla
  * \mathbf{u} - \nabla p - \mu \nabla\cdot (\nabla \mathbf{u} +
- * (\nabla \mathbf{u})^T) = 0 $$ with a full GLS stabilization
+ * (\nabla \mathbf{u})^T) = 0 \f$ with a full GLS stabilization
  *
  * @tparam dim An integer that denotes the number of spatial dimensions
  *

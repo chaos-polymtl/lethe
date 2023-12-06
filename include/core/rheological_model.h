@@ -23,7 +23,7 @@
 using namespace dealii;
 
 /**
- * @brief RheologicalModel. Abstract class that allows to calculate the
+ * @brief Abstract class that allows to calculate the
  * non-newtonian viscosity on each quadrature point and the shear rate
  * magnitude.
  */

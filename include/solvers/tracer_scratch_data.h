@@ -40,8 +40,7 @@ using namespace dealii;
 
 
 /**
- * @brief TracerScratchData class
- * stores the information required by the assembly procedure
+ * @brief Class that stores the information required by the assembly procedure
  * for a Tracer advection-diffusion equation. Consequently, this class
  *calculates the tracer (values, gradients, laplacians) and the shape function
  * (values, gradients, laplacians) at all the gauss points for all degrees

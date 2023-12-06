@@ -22,7 +22,7 @@
 #include <core/physical_property_model.h>
 
 /**
- * @brief ThermalConductivityModel. Abstract class that allows to calculate the
+ * @brief Abstract class that allows to calculate the
  * thermal conductivity on each quadrature point using the temperature of the
  * fluid.
  */
@@ -113,7 +113,7 @@ private:
 
 
 /**
- * @brief ThermalConductivityLinear Implements a linear temperature-dependant thermal conductivity of the form k = A + BT
+ * @brief Implements a linear temperature-dependant thermal conductivity of the form k = A + BT
  */
 class ThermalConductivityLinear : public ThermalConductivityModel
 {
@@ -190,7 +190,7 @@ private:
 };
 
 /**
- * @brief ThermalConductivityPhaseChange Implements a phase-dependant thermal conductivity
+ * @brief Implements a phase-dependant thermal conductivity
  */
 class ThermalConductivityPhaseChange : public ThermalConductivityModel
 {

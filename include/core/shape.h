@@ -417,10 +417,10 @@ private:
 };
 
 /**
- * @class This class defines superquadric shapes. Their signed distance function
+ * @brief Class that defines superquadric shapes. Their signed distance function
  * is:
- * \left|\frac{x}{a}\right|^r + \left|\frac{y}{b}\right|^s +
- * \left|\frac{z}{c}\right|^t - 1 = 0
+ * \f$ \left|\frac{x}{a}\right|^r + \left|\frac{y}{b}\right|^s +
+ * \left|\frac{z}{c}\right|^t - 1 = 0 \f$
  * @tparam dim Dimension of the shape
  */
 template <int dim>
@@ -904,7 +904,7 @@ private:
 };
 
 /**
- * @class This class was designed so that specific composite shapes could be
+ * @brief This class was designed so that specific composite shapes could be
  * defined through the parameter file. Boolean operations such as union,
  * difference, and intersection are allowed.
  * @tparam dim Dimension of the shape
@@ -1303,7 +1303,7 @@ private:
 
 /**
  * @tparam dim Dimension of the shape
- * @class RBF Shapes express the signed distance function as a linear
+ * @brief RBF Shapes express the signed distance function as a linear
  * combination of Radial Basis Functions (RBF), which have a defined support
  * radius and basis function. A collection of nodes and weights compose the
  * object. Outside of the domain covered by the nodes, the distance is computed

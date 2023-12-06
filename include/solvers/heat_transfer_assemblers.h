@@ -86,8 +86,8 @@ protected:
 /**
  * @brief Class that assembles the core of the heat transfer equation.
  * This class assembles the weak form of:
- * $$ - k * \nabla^2 T + \rho * cp * \mathbf{u} * \nabla T - f - \tau :
- * \nabla \mathbf{u} =0 $$
+ * \f$ - k * \nabla^2 T + \rho * cp * \mathbf{u} * \nabla T - f - \tau :
+ * \nabla \mathbf{u} =0 \f$
  *
  * @tparam dim An integer that denotes the number of spatial dimensions
  *

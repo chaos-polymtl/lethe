@@ -46,8 +46,7 @@ using namespace dealii;
 
 
 /**
- * @brief NavierStokesScratchData class
- * stores the information required by the assembly procedure
+ * @brief Class that stores the information required by the assembly procedure
  * for a Navier-Stokes equation. Consequently, this class calculates
  * the velocity (values, gradients, laplacians) and the shape function
  * (values, gradients, laplacians) at all the gauss points for all degrees

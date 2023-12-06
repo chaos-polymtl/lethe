@@ -20,8 +20,8 @@
 #include <core/physical_property_model.h>
 
 /**
- * @brief DensityModel. Abstract class that allows to calculate the
- * density.
+ * @brief Abstract class that allows to calculates the
+ * tracer diffusivity.
  */
 class TracerDiffusivityModel : public PhysicalPropertyModel
 {

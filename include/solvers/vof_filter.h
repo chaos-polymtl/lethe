@@ -21,7 +21,7 @@
 #include <core/parameters_multiphysics.h>
 
 /**
- * @brief VolumeOfFluidFilterBase class allows phase fraction filtering
+ * @brief Class that allows phase fraction filtering
  */
 class VolumeOfFluidFilterBase
 {
@@ -48,7 +48,7 @@ public:
 };
 
 /**
- * @brief VolumeOfFluidNoFilter class is used as a default when no
+ * @brief Class that is used as a default when no
  * filter is applied to the phase fraction
  */
 class VolumeOfFluidNoFilter : public VolumeOfFluidFilterBase
@@ -70,9 +70,9 @@ public:
 };
 
 /**
- * @brief VolumeOfFluidTanhFilter class is used to calculate
- * a filtered phase for VOF simulations. The filtered phase is defined as
- * $$\phi_f = 0.5 \tanh(\beta(\phi-0.5)) + 0.5$$.
+ * @brief Class used to calculate a filtered phase for VOF simulations.
+ * The filtered phase is defined as
+ * \f$\phi_f = 0.5 \tanh(\beta(\phi-0.5)) + 0.5\f$.
  */
 class VolumeOfFluidTanhFilter : public VolumeOfFluidFilterBase
 {

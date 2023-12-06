@@ -26,7 +26,7 @@ enum MobilityModel
 };
 
 /**
- * @brief MobilityCahnHilliardModel. Abstract class that allows to calculate the
+ * @brief Abstract class that allows to calculate the
  * mobility for the Cahn-Hilliard-Navier-Stokes equations.
  */
 class MobilityCahnHilliardModel : public InterfacePropertyModel

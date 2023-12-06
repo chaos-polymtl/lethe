@@ -24,7 +24,7 @@
 using namespace dealii;
 
 /**
- * @brief SpecificHeatModel. Abstract class that allows to calculate the
+ * @brief Abstract class that allows to calculate the
  * specific heat on each quadrature point using the temperature of the fluid.
  * magnitude. SpecficiHeat::get_specific_heat() is a pure virtual method,
  * since it can only be calculated knowing the model for the specific
@@ -116,7 +116,7 @@ private:
 
 
 /**
- * @brief PhaseChangeSpecificHeat. This models takes into account the phase change of a material
+ * @brief This model takes into account the phase change of a material
  * by considering the latent heat into the specific heat over a phase change
  * interval determined by [T_solidus,T_liquidus].
  */

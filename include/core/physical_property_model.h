@@ -52,7 +52,7 @@ set_field_vector(const field                          &id,
 }
 
 /**
- * @brief PhysicalPropertyModel. Abstract class that defines the interface for a physical property model
+ * @brief Abstract class that defines the interface for a physical property model
  * Physical property model provides an abstract interface to calculate the
  * value of a physical property or a vector of physical property value for
  * given field value. By default, the interface does not require that all (or
