@@ -44,6 +44,9 @@ dedicated solvers like Lethe could not exist.
 Documentation, tutorials, and more can be found 
 [here](https://lethe-cfd.github.io/lethe/).
 
+Developer documentation based on Doxygen can be found 
+[here](https://lethe-cfd.github.io/lethe/html_doxygen/index.html)
+
 ## Installation
 
 Follow the instructions in the
