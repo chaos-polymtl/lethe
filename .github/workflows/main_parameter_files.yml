@@ -62,4 +62,4 @@ jobs:
           export PATH=$PATH:"./inst/bin/"
           ls
           echo $PATH
-          bash ./contrib/utilities/check_parameters_files_in_examples.sh   
+          bash ./contrib/utilities/check_parameter_files_in_examples.sh   
