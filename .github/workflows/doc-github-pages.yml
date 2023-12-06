@@ -1,6 +1,6 @@
 name: Publish doc to GitHub Pages
 
-on: push
+on: [push, pull_request]
 
 # Cancels running instances when a pull request is updated by a commit
 concurrency:
