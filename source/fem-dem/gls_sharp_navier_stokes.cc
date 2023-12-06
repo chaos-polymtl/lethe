@@ -113,6 +113,7 @@ GLSSharpNavierStokesSolver<dim>::generate_cut_cells_map()
   cut_cells_map.clear();
   cells_inside_map.clear();
   overconstrained_fluid_cell_map.clear();
+
   if (mapping_overconstrained_cells)
     {
       local_dof_overconstrained.reinit(this->locally_owned_dofs,
@@ -131,11 +132,27 @@ GLSSharpNavierStokesSolver<dim>::generate_cut_cells_map()
 
   auto              &v_x_fe                  = this->fe->get_sub_fe(0, 1);
   const unsigned int dofs_per_cell_local_v_x = v_x_fe.dofs_per_cell;
+
+
+
+  bool check_cell_min=true;
   // // Loop on all the cells and check if they are cut.
   for (const auto &cell : cell_iterator)
     {
       if (cell->is_locally_owned() || cell->is_ghost())
         {
+          if (check_cell_min==true){
+              TimerOutput::Scope t(this->computing_timer, "shape distance 1000 time");
+              check_cell_min=false;
+              Point<dim> p(0,0,0);
+
+              std::vector<Point<dim>> candidate;
+              //p=(particles[0].position+particles[1].position)/2;
+              candidate.push_back(p);
+              for (unsigned int i=0; i<1000;++i)
+                auto distance=particles[0].shape->distance_to_shape(*particles[1].shape,cell,candidate);
+            }
+
           bool         cell_is_cut                                = false;
           bool         cell_is_inside                             = false;
           unsigned int particle_id_which_cuts_this_cell           = 0;
