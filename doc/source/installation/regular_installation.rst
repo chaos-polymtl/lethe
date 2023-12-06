@@ -6,70 +6,31 @@ Regular Installation on Linux
    :height: 100px
 
 .. important::
-  Distributions compatibility: Ubuntu 18.04 LTS, Ubuntu 20.04 LTS, Ubuntu 22.04 LTS, Centos 7 and Manjaro
+  Distributions on which compatibility was tested are: Ubuntu 20.04 LTS, Ubuntu 22.04 LTS, Centos 7 and Manjaro 
 
 * Dependencies: deal.II library (`deal.II website <https://www.dealii.org/>`_) and its dependencies (MPI, numdiff, p4est, trilinos and METIS)
-  * Lethe requires a modern version of the deal.II library. At the time of this writing, only the ``deal.II 9.6pre`` (the ``master`` branch version) is supported.
-  * The compatibility with this branch is ensured by Continuous Integration (CI) using Github Actions.
+  * Lethe requires a modern version of the deal.II library. At the time of this writing, ``deal.II 9.5`` (the last major release) and ``deal.II 9.6pre`` (the ``master`` branch version) is supported.
+  * The compatibility with both deal.II versions is ensured by Continuous Integration (CI) using Github Actions.
   * A `dealii fork <https://github.com/lethe-cfd/dealii>`_ is maintained by Lethe team. This fork does not include any modification to deal.II library, but it is the latest version with which Lethe was tested. We work hard to ensure compatibility with the latest deal.II version and we do not modify the library except through pull requests on the official deal.II repository.
+
+* There are two ways to install deal.II and its dependency:
+  1. Through candi (recommended way for developers)
+  2. Through the system package manager.
 
 .. warning:: 
   Lethe cannot be installed if deal.II has not been configured with p4est, trilinos and METIS. Although Lethe can be run in serial and parallel mode (through MPI), it uses p4est, METIS and trilinos for mesh decomposition and the linear solvers respectively.
 
 * Lethe installation steps:
-  1. Installation of deal.II dependencies (MPI, numdiff, p4est, trilinos and METIS)
-  2. Installation of the deal.II library
+  1. Installation of deal.II through candi
+  2. (Alternative) Installation of deal.II through package manager
   3. Installation of Lethe
-
-* Methods to install deal.II and its dependencies:
-  1. Through Advanced Packaging Tool (apt): **this is by far the easiest way to proceed**, since it requires much less manual intervention.
-
-  2. through candi shell script (`candi github page <https://github.com/dealii/candi>`_). Even if you do not want to use candi to install deal.II, you can use it for the dependencies.
-
-  3. manually
-
-.. warning::
-  On a single core computer with 8GB of RAM, count up to 8 hours for a first installation, and 3 hours for a deal.II update. On a machine with 16 cores and 32GB of RAM, this process will take less than an hour or so. The installation of deal.II and its dependencies (especially trilinos), can be extremely RAM consuming. Installation on a machine with less than 8GB of RAM is difficult at best, impossible at worst.
-
-Installing deal.II using apt (Step #1)
------------------------------------------
-
-This is done following `this procedure <https://www.dealii.org/download.html#:~:text=page%20for%20details.-,Linux%20distributions,-Arch%20Linux>`_.
-
-In case you are using Ubuntu, you will need to `update the backports <https://launchpad.net/~ginggs/+archive/ubuntu/deal.ii-9.5.1-backports>`_:
-
-.. code-block:: text
-  :class: copy-button
-
-  sudo add-apt-repository ppa:ginggs/deal.ii-9.5.1-backports
-  sudo apt update
-
-To install deal.II, run:
-
-.. code-block:: text
-  :class: copy-button
-
-  sudo apt-get install libdeal.ii-dev
-
-To verify if the correct version of deal.II is installed, run:
-
-.. code-block:: text
-  :class: copy-button
-
-  apt show libdeal.ii-dev
-
-This should output several information about the installed version. Everything worked as expected if ``deal.ii-9.5.1`` is output
-
-.. note::
-
-  If the installed version is other than ``deal.ii-9.5.1``, follow `this link <https://github.com/dealii/dealii/wiki/Getting-deal.II>`_.
 
 Installing deal.II using Candi (Step #1)
 -----------------------------------------
 
 To install the dependencies (MPI, p4est, trilinos and METIS) all together using candi, the `procedure <https://github.com/dealii/candi.git>`_ on the candi repository can be followed.
 
-Clone the candi git repository in a folder of your choice  (e.g. ``/home/username/software``). You can edit the ``candi.cfg`` file if you want to alter which dependencies are compiled. This can notably be used to force the installation of the deal.II master version instead of the current stable version by setting the ``STABLE_BUILD=false``
+Clone the candi git repository in a folder of your choice  (e.g. ``/home/username/software``). You can edit the ``candi.cfg`` file if you want to alter which dependencies are compiled. This can notably be used to force the installation of the deal.II master version directly instead of the current stable version by setting the ``STABLE_BUILD=false``
 
 From the candi folder, the installation of candi can be launched using:
 
@@ -202,6 +163,42 @@ It is generally recommended to add the variable to your bashrc so it is always l
   echo "export DEAL_II_DIR=/path/to/dealii/installation" >> ~/.bashrc
 
 .. _install-lethe:
+
+
+Installing deal.II using apt (Step #1)
+-----------------------------------------
+
+This is done following `this procedure <https://www.dealii.org/download.html#:~:text=page%20for%20details.-,Linux%20distributions,-Arch%20Linux>`_.
+
+In case you are using Ubuntu, you will need to `update the backports <https://launchpad.net/~ginggs/+archive/ubuntu/deal.ii-9.5.1-backports>`_:
+
+.. code-block:: text
+  :class: copy-button
+
+  sudo add-apt-repository ppa:ginggs/deal.ii-9.5.1-backports
+  sudo apt update
+
+To install deal.II, run:
+
+.. code-block:: text
+  :class: copy-button
+
+  sudo apt-get install libdeal.ii-dev
+
+To verify if the correct version of deal.II is installed, run:
+
+.. code-block:: text
+  :class: copy-button
+
+  apt show libdeal.ii-dev
+
+This should output several information about the installed version. Everything worked as expected if ``deal.ii-9.5.1`` is output
+
+.. note::
+
+  If the installed version is other than ``deal.ii-9.5.1``, follow `this link <https://github.com/dealii/dealii/wiki/Getting-deal.II>`_.
+
+
 
 Installing Lethe (Step #2)
 -------------------------------
