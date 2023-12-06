@@ -41,6 +41,8 @@ jobs:
           cd doc
           make html
           cp -r build/html/ aggregate/html_documentation
+          ls -lh
+          ls -lh doxygen
           cp -r doxygen/html/ aggregate/html_doxygen/
 
       - name: Upload artifacts
