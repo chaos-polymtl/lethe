@@ -1404,5 +1404,17 @@ namespace Parameters
   entry_string_to_tensor3(ParameterHandler  &prm,
                           const std::string &entry_string);
 
+  /**
+   * @brief Return the vector of size N of entry @entry_string. If the entry is specified in the .prm file,
+   * then the changed value is returned, otherwise the default value is
+   * returned. If the entry is not equivalent to a vector, an error will be
+   * thrown.
+   *
+   * @param prm A parameter handler which is currently used to parse the simulation information
+   * @param entry_string A declare string in the parameter file.
+   */
+  std::vector<double>
+  entry_string_to_vector(ParameterHandler  &prm,
+                         const std::string &entry_string);
 } // namespace Parameters
 #endif

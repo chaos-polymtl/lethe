@@ -3362,6 +3362,20 @@ namespace Parameters
     return output_tensor;
   }
 
+  std::vector<double>
+  entry_string_to_vector(ParameterHandler &prm, const std::string &entry_string)
+  {
+    std::string              full_str = prm.get(entry_string);
+    std::vector<std::string> vector_of_string(
+      Utilities::split_string_list(full_str));
+
+    std::vector<double> vector_of_double =
+      Utilities::string_to_double(vector_of_string); // The error is thrown here
+
+
+    return vector_of_double;
+  }
+
   template class Laser<2>;
   template class Laser<3>;
   template class IBParticles<2>;

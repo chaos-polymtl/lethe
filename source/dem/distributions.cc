@@ -1,14 +1,14 @@
 #include <dem/distributions.h>
 
-NormalDistribution::NormalDistribution(const double d_averages,
-                                       const double d_standard_deviations)
+NormalDistribution::NormalDistribution(const double &d_averages,
+                                       const double &d_standard_deviations)
 {
   diameter_averages   = d_averages;
   standard_deviations = d_standard_deviations;
 }
 
 void
-NormalDistribution::particle_size_sampling(const unsigned int particle_number)
+NormalDistribution::particle_size_sampling(const unsigned int &particle_number)
 {
   this->particle_sizes.clear();
   this->particle_sizes.reserve(particle_number);
@@ -42,13 +42,13 @@ NormalDistribution::find_max_diameter()
   return max_particle_size;
 }
 
-UniformDistribution::UniformDistribution(const double d_values)
+UniformDistribution::UniformDistribution(const double &d_values)
 {
   diameter_values = d_values;
 }
 
 void
-UniformDistribution::particle_size_sampling(const unsigned int particle_number)
+UniformDistribution::particle_size_sampling(const unsigned int &particle_number)
 {
   this->particle_sizes.clear();
   this->particle_sizes.reserve(particle_number);
@@ -67,4 +67,60 @@ double
 UniformDistribution::find_max_diameter()
 {
   return this->diameter_values;
+}
+
+HistogramDistribution::HistogramDistribution(
+  const std::vector<double> &d_list,
+  const std::vector<double> &d_probabilities)
+{
+  diameter_hist_values = d_list;
+  std::vector<double> cumulative_probability_vector;
+  cumulative_probability_vector.reserve(d_probabilities.size());
+
+  double cumulative_value;
+  for (double i_probability : d_probabilities)
+    {
+      cumulative_value += i_probability;
+      cumulative_probability_vector.push_back(cumulative_value);
+    }
+
+  diameter_hist_cumm_prob = cumulative_probability_vector;
+}
+
+void
+HistogramDistribution::particle_size_sampling(
+  const unsigned int &particle_number)
+{
+  this->particle_sizes.clear();
+  this->particle_sizes.reserve(particle_number);
+
+  std::random_device               rd{};
+  std::mt19937                     gen{rd()};
+  std::uniform_real_distribution<> dis(0.0, 1.0);
+
+  for (unsigned int i = 0; i < particle_number; ++i)
+    {
+      // Search to find the appropriate diameter index
+      auto it = std::upper_bound(diameter_hist_cumm_prob.begin(),
+                                 diameter_hist_cumm_prob.end(),
+                                 dis(gen));
+
+      unsigned int index = std::distance(diameter_hist_cumm_prob.begin(), it);
+
+      this->particle_sizes.push_back(diameter_hist_values[index]);
+    }
+}
+
+double
+HistogramDistribution::find_min_diameter()
+{
+  return *std::min_element(diameter_hist_values.begin(),
+                           diameter_hist_values.end());
+}
+
+double
+HistogramDistribution::find_max_diameter()
+{
+  return *std::max_element(diameter_hist_values.begin(),
+                           diameter_hist_values.end());
 }

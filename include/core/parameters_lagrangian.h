@@ -53,7 +53,8 @@ namespace Parameters
     enum class SizeDistributionType
     {
       uniform,
-      normal
+      normal,
+      histogram
     };
 
     struct LagrangianPhysicalProperties
@@ -70,6 +71,16 @@ namespace Parameters
 
       // Size standard deviation of each particle type
       std::unordered_map<unsigned int, double> particle_size_std;
+
+      // List of diameters for the histogram distribution for each particle
+      // types
+      std::unordered_map<unsigned int, std::vector<double>>
+        particle_histogram_diameter;
+
+      // Probability of each diameter value for the histogram distribution for
+      // each particle types for histogram
+      std::unordered_map<unsigned int, std::vector<double>>
+        particle_histogram_probability;
 
       // Distribution type of each particle type
       std::vector<SizeDistributionType> distribution_type;
@@ -135,7 +146,11 @@ namespace Parameters
         std::unordered_map<unsigned int, double> &particle_average_diameter,
         std::unordered_map<unsigned int, double> &particle_size_std,
         std::vector<SizeDistributionType>        &distribution_type,
-        std::unordered_map<unsigned int, int>    &number,
+        std::unordered_map<unsigned int, std::vector<double>>
+          &particle_histogram_diameter,
+        std::unordered_map<unsigned int, std::vector<double>>
+                                              &particle_histogram_probability,
+        std::unordered_map<unsigned int, int> &number,
         std::unordered_map<unsigned int, double> &density_particle,
         std::unordered_map<unsigned int, double> &youngs_modulus_particle,
         std::unordered_map<unsigned int, double> &poisson_ratio_particle,
@@ -470,4 +485,4 @@ namespace Parameters
 
   } // namespace Lagrangian
 } // namespace Parameters
-#endif /* PARAMETERS_H_ */
+#endif /* lethe_parameters_lagrangian_h */

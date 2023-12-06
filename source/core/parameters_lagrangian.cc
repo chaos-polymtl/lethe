@@ -11,12 +11,20 @@ namespace Parameters
     {
       prm.declare_entry("size distribution type",
                         "uniform",
-                        Patterns::Selection("uniform|normal"),
+                        Patterns::Selection("uniform|normal|histogram"),
                         "Particle size distribution"
-                        "Choices are <uniform|normal>.");
+                        "Choices are <uniform|normal|histogram>.");
       prm.declare_entry("diameter",
                         "0.001",
                         Patterns::Double(),
+                        "Particle diameter");
+      prm.declare_entry("histogram diameter list",
+                        "0.001",
+                        Patterns::List(Patterns::Double()),
+                        "Particle diameter");
+      prm.declare_entry("histogram diameter probabilities",
+                        "1.",
+                        Patterns::List(Patterns::Double()),
                         "Particle diameter");
       prm.declare_entry("standard deviation",
                         "0",
@@ -64,6 +72,23 @@ namespace Parameters
       particle_average_diameter.at(particle_type) = prm.get_double("diameter");
       particle_size_std.at(particle_type) =
         prm.get_double("standard deviation");
+      particle_histogram_diameter.at(particle_type) =
+        entry_string_to_vector(prm, "histogram diameter list");
+      particle_histogram_probability.at(particle_type) =
+        entry_string_to_vector(prm, "histogram diameter probabilities");
+
+      double probability_sum =
+        std::reduce(particle_histogram_probability.at(particle_type).begin(),
+                    particle_histogram_probability.at(particle_type).end());
+
+      // We make sure that the cummulative probability is equal to 1.
+      if (probability_sum != 1.0)
+        {
+          for (double &i : particle_histogram_probability.at(particle_type))
+            {
+              i = i / probability_sum;
+            }
+        }
       const std::string size_distribution_type_str =
         prm.get("size distribution type");
       if (size_distribution_type_str == "uniform")
@@ -73,6 +98,10 @@ namespace Parameters
       else if (size_distribution_type_str == "normal")
         {
           distribution_type.at(particle_type) = SizeDistributionType::normal;
+        }
+      else if (size_distribution_type_str == "histogram")
+        {
+          distribution_type.at(particle_type) = SizeDistributionType::histogram;
         }
       else
         {
@@ -164,6 +193,8 @@ namespace Parameters
       initialize_containers(particle_average_diameter,
                             particle_size_std,
                             distribution_type,
+                            particle_histogram_diameter,
+                            particle_histogram_probability,
                             number,
                             density_particle,
                             youngs_modulus_particle,
@@ -203,6 +234,10 @@ namespace Parameters
       std::unordered_map<unsigned int, double> &particle_average_diameter,
       std::unordered_map<unsigned int, double> &particle_size_std,
       std::vector<SizeDistributionType>        &distribution_type,
+      std::unordered_map<unsigned int, std::vector<double>>
+        &particle_histogram_diameter,
+      std::unordered_map<unsigned int, std::vector<double>>
+                                               &particle_histogram_probability,
       std::unordered_map<unsigned int, int>    &number,
       std::unordered_map<unsigned int, double> &density_particle,
       std::unordered_map<unsigned int, double> &youngs_modulus_particle,
@@ -220,6 +255,8 @@ namespace Parameters
           particle_average_diameter.insert({counter, 0.});
           particle_size_std.insert({counter, 0.});
           distribution_type.push_back(SizeDistributionType::uniform);
+          particle_histogram_diameter.insert({counter, {0.}});
+          particle_histogram_probability.insert({counter, {1.}});
           number.insert({counter, 0});
           density_particle.insert({counter, 0.});
           youngs_modulus_particle.insert({counter, 0.});
