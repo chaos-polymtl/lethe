@@ -19,7 +19,7 @@ main(int argc, char *argv[])
       if (argc != 3)
         {
           std::cout << "Usage:" << argv[0] << " input_file"
-                    << "solver_familiy" << std::endl;
+                    << "solver_family" << std::endl;
           std::cout
             << "Solver family include: lethe-fluid, lethe-particles, lethe-fluid-particles"
             << std::endl;
