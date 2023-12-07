@@ -295,6 +295,7 @@ IBParticle<dim>::set_orientation(const Tensor<1, 3> new_orientation)
 {
   this->orientation = new_orientation;
   this->shape->set_orientation(new_orientation);
+  this->rotation_matrix=this->shape->get_rotation_matrix();
 }
 
 template <int dim>

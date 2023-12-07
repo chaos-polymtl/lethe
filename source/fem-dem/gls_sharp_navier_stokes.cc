@@ -787,9 +787,9 @@ GLSSharpNavierStokesSolver<dim>::define_particles()
             this->simulation_parameters.particlesParameters->particles[i];
           if (particles[i].integrate_motion == true)
             {
-              if (typeid(*particles[i].shape) != typeid(Sphere<dim>))
+              /*if (typeid(*particles[i].shape) != typeid(Sphere<dim>))
                 throw std::runtime_error(
-                  "Shapes other than sphere cannot have their motion integrated through fluid-structure interaction");
+                  "Shapes other than sphere cannot have their motion integrated through fluid-structure interaction");*/
               some_particles_are_coupled = true;
             }
         }
@@ -2278,6 +2278,18 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
 
               // For the rotation velocity : same logic as the velocity.
               auto         inv_inertia = invert(particles[p].inertia);
+
+
+              Tensor<1,3> total_torque= (particles[p].omega_impulsion) / dt;
+
+              // Calculate angular acceleration in particle frame
+              Tensor<1,3> angular_velocity_in_particle_frame=particles[p].rotation_matrix*particles[p].omega;
+              Tensor<1,3> angular_acceleration_in_particle_frame;
+              angular_acceleration_in_particle_frame[0]=(total_torque[0]-(particles[p].inertia[2][2]-particles[p].inertia[1][1])*angular_velocity_in_particle_frame[2]*angular_velocity_in_particle_frame[1])/particles[p].inertia[0][0];
+              angular_acceleration_in_particle_frame[1]=(total_torque[1]-(particles[p].inertia[0][0]-particles[p].inertia[2][2])*angular_velocity_in_particle_frame[2]*angular_velocity_in_particle_frame[0])/particles[p].inertia[1][1];
+              angular_acceleration_in_particle_frame[2]=(total_torque[2]-(particles[p].inertia[1][1]-particles[p].inertia[0][0])*angular_velocity_in_particle_frame[0]*angular_velocity_in_particle_frame[1])/particles[p].inertia[2][2];
+
+              // Rotate angular acceleration in world frame
               Tensor<1, 3> residual_omega =
                 -(bdf_coefs[0] * particles[p].omega);
               for (unsigned int i = 1;
@@ -2287,8 +2299,8 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
                   residual_omega +=
                     -(bdf_coefs[i] * particles[p].previous_omega[i - 1]);
                 }
-              residual_omega +=
-                inv_inertia * (particles[p].omega_impulsion) / dt;
+              residual_omega +=// omega_accel
+                invert(particles[p].rotation_matrix)*angular_acceleration_in_particle_frame;
 
               double inverse_of_relaxation_coefficient_omega =
                 -bdf_coefs[0] - 0.5 * 2. / 5 * volume * fluid_density *
@@ -2330,6 +2342,20 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
               particles[p].omega_impulsion_iter = particles[p].omega_impulsion;
               particles[p].previous_d_omega     = omega_correction_vector;
               particles[p].previous_local_alpha_omega = local_alpha_omega;
+
+
+              // If the particles have impacted a wall or another particle, we
+              // want to use the sub-time step position. Otherwise, we solve the
+              // new position directly with the new velocity found.
+              if (particles[p].omega_contact_impulsion.norm() < 1e-12)
+                {
+                  Tensor<2,3> new_rotation_matrix= Physics::Transformations::Rotations::rotation_matrix_3d(particles[p].omega/particles[p].omega.norm(),particles[p].omega.norm()*dt)*particles[p].rotation_matrix;
+                  particles[p].orientation=particles[p].shape->rotation_matrix_to_xyz_angles(new_rotation_matrix);
+                }
+              else
+                {
+                  particles[p].set_orientation(ib_dem.dem_particles[p].orientation);
+                }
 
 
               // If something went wrong during the update, the particle state

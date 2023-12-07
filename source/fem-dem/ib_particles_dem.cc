@@ -762,7 +762,7 @@ IBParticlesDEM<dim>::calculate_pw_lubrication_force(
         }
     }
 }
-
+/*
 template <int dim>
 void
 IBParticlesDEM<dim>::integrate_particles_motion(const double dt,
@@ -1122,6 +1122,363 @@ IBParticlesDEM<dim>::integrate_particles_motion(const double dt,
       t += dt_dem;
     }
 }
+*/
+
+template <int dim>
+void
+IBParticlesDEM<dim>::integrate_particles_motion(const double dt,
+                                                const double h_max,
+                                                const double h_min,
+                                                const double rho,
+                                                const double mu)
+{
+  // Initialize local containers and physical variables
+  using dealii::numbers::PI;
+  double dt_dem = dt / parameters->coupling_frequency;
+
+  std::vector<Tensor<1, 3>> contact_force(dem_particles.size());
+  std::vector<Tensor<1, 3>> contact_wall_force(dem_particles.size());
+  std::vector<Tensor<1, 3>> contact_torque(dem_particles.size());
+  std::vector<Tensor<1, 3>> contact_wall_torque(dem_particles.size());
+  std::vector<Tensor<1, 3>> current_fluid_force(dem_particles.size());
+  std::vector<Tensor<1, 3>> current_fluid_torque(dem_particles.size());
+  std::vector<Tensor<1, 3>> lubrication_force(dem_particles.size());
+  std::vector<Tensor<1, 3>> lubrication_torque(dem_particles.size());
+  std::vector<Tensor<1, 3>> lubrication_wall_force(dem_particles.size());
+  std::vector<Tensor<1, 3>> lubrication_wall_torque(dem_particles.size());
+
+  std::vector<Tensor<1, 3>> velocity(dem_particles.size());
+  std::vector<Point<dim>>   position(dem_particles.size());
+
+  // Local time for the dem step.
+  double t = 0;
+  // The gravitational acceleration.
+  Tensor<1, 3> g;
+  this->parameters->f_gravity->set_time(cfd_time + dt);
+  // The gravitational force on the particle.
+  Tensor<1, 3> gravity;
+
+  // Initialize the particles
+  for (unsigned int p_i = 0; p_i < dem_particles.size(); ++p_i)
+    {
+      dem_particles[p_i].position  = dem_particles[p_i].previous_positions[0];
+      dem_particles[p_i].velocity  = dem_particles[p_i].previous_velocity[0];
+      dem_particles[p_i].omega     = dem_particles[p_i].previous_omega[0];
+      dem_particles[p_i].impulsion = 0;
+      dem_particles[p_i].omega_impulsion         = 0;
+      dem_particles[p_i].contact_impulsion       = 0;
+      dem_particles[p_i].omega_contact_impulsion = 0;
+      // Initialized the gravity at the particle position.
+      g[0] = this->parameters->f_gravity->value(dem_particles[p_i].position, 0);
+      g[1] = this->parameters->f_gravity->value(dem_particles[p_i].position, 1);
+      if (dim == 3)
+        g[2] =
+          this->parameters->f_gravity->value(dem_particles[p_i].position, 2);
+      dem_particles[p_i].set_position(dem_particles[p_i].position);
+      dem_particles[p_i].set_orientation(dem_particles[p_i].orientation);
+    }
+
+
+  // Integrate with the sub_time_step
+  while (t + 0.5 * dt_dem < dt)
+    {
+      // Initialize vector to contain the RK 4 step
+      std::vector<Tensor<1, 3>> last_velocity;
+      std::vector<Point<dim>>   last_position;
+      std::vector<Tensor<1, 3>> last_omega;
+      last_velocity = std::vector<Tensor<1, 3>>(dem_particles.size());
+      last_position = std::vector<Point<dim>>(dem_particles.size());
+      last_omega    = std::vector<Tensor<1, 3>>(dem_particles.size());
+
+      std::vector<std::vector<Tensor<1, 3>>> k_velocity =
+        std::vector<std::vector<Tensor<1, 3>>>(dem_particles.size(),
+                                               std::vector<Tensor<1, 3>>(4));
+      std::vector<std::vector<Tensor<1, dim>>> k_position =
+        std::vector<std::vector<Tensor<1, dim>>>(
+          dem_particles.size(), std::vector<Tensor<1, dim>>(4));
+      std::vector<std::vector<Tensor<1, 3>>> k_omega =
+        std::vector<std::vector<Tensor<1, 3>>>(dem_particles.size(),
+                                               std::vector<Tensor<1, 3>>(4));
+      std::vector<std::vector<Tensor<1, 3>>> k_impulsion =
+        std::vector<std::vector<Tensor<1, 3>>>(dem_particles.size(),
+                                               std::vector<Tensor<1, 3>>(4));
+      std::vector<std::vector<Tensor<1, 3>>> k_omega_impulsion =
+        std::vector<std::vector<Tensor<1, 3>>>(dem_particles.size(),
+                                               std::vector<Tensor<1, 3>>(4));
+      std::vector<std::vector<Tensor<1, 3>>> k_contact_impulsion =
+        std::vector<std::vector<Tensor<1, 3>>>(dem_particles.size(),
+                                               std::vector<Tensor<1, 3>>(4));
+      std::vector<std::vector<Tensor<1, 3>>> k_omega_contact_impulsion =
+        std::vector<std::vector<Tensor<1, 3>>>(dem_particles.size(),
+                                               std::vector<Tensor<1, 3>>(4));
+
+      // Solve each of the 1 step of the RK1 method
+      for (unsigned int step = 0; step < 1; ++step)
+        {
+          std::fill(current_fluid_force.begin(), current_fluid_force.end(), 0);
+          std::fill(current_fluid_torque.begin(),
+                    current_fluid_torque.end(),
+                    0);
+          std::fill(contact_torque.begin(), contact_torque.end(), 0);
+          std::fill(contact_force.begin(), contact_force.end(), 0);
+          std::fill(contact_wall_force.begin(), contact_wall_force.end(), 0);
+          std::fill(contact_wall_torque.begin(), contact_wall_torque.end(), 0);
+          std::fill(lubrication_force.begin(), lubrication_force.end(), 0);
+          std::fill(lubrication_torque.begin(), lubrication_torque.end(), 0);
+          std::fill(lubrication_wall_force.begin(),
+                    lubrication_wall_force.end(),
+                    0);
+          std::fill(lubrication_wall_torque.begin(),
+                    lubrication_wall_torque.end(),
+                    0);
+          // Calculate particle-particle and particle-wall contact force
+          calculate_pp_contact_force(dt_dem, contact_force, contact_torque);
+          calculate_pw_contact_force(dt_dem,
+                                     contact_wall_force,
+                                     contact_wall_torque);
+          calculate_pp_lubrication_force(
+            dt_dem, h_max, h_min, mu, lubrication_force, lubrication_torque);
+          calculate_pw_lubrication_force(dt_dem,
+                                         h_max,
+                                         h_min,
+                                         mu,
+                                         lubrication_wall_force,
+                                         lubrication_wall_torque);
+
+          // define local time of the rk step
+          double local_dt = dt_dem ;
+
+          for (unsigned int p_i = 0; p_i < dem_particles.size(); ++p_i)
+            {
+              if (dem_particles[p_i].integrate_motion)
+                {
+                  if (step == 0)
+                    {
+                      last_velocity[p_i] = dem_particles[p_i].velocity;
+                      last_position[p_i] = dem_particles[p_i].position;
+                      last_omega[p_i]    = dem_particles[p_i].omega;
+                    }
+                  auto inv_inertia = invert(dem_particles[p_i].inertia);
+                  if (dim == 2)
+                    {
+                      gravity = g * (dem_particles[p_i].mass -
+                                     dem_particles[p_i].radius *
+                                       dem_particles[p_i].radius * PI * rho);
+                    }
+                  else
+                    {
+                      gravity = g * (dem_particles[p_i].mass -
+                                     4.0 / 3.0 * dem_particles[p_i].radius *
+                                       dem_particles[p_i].radius *
+                                       dem_particles[p_i].radius * PI * rho);
+                    }
+
+                  // We consider only the force at t+dt so the scheme is
+                  // consistent to a BDFn scheme on the fluid side. If there is
+                  // no contact.
+
+                  current_fluid_force[p_i]  = dem_particles[p_i].fluid_forces;
+                  current_fluid_torque[p_i] = dem_particles[p_i].fluid_torque;
+
+                  // Store each rk step of the variable we integrate in its
+                  // respective vector.
+
+                  k_velocity[p_i][step] =
+                    (current_fluid_force[p_i] + contact_force[p_i] +
+                     contact_wall_force[p_i] + gravity +
+                     lubrication_force[p_i] + lubrication_wall_force[p_i]) /
+                    dem_particles[p_i].mass;
+
+                  for (unsigned int d = 0; d < dim; ++d)
+                    {
+                      k_position[p_i][step][d] = dem_particles[p_i].velocity[d];
+                    }
+                  k_impulsion[p_i][step] =
+                    current_fluid_force[p_i] + gravity +
+                    contact_wall_force[p_i] + contact_force[p_i] +
+                    lubrication_force[p_i] + lubrication_wall_force[p_i];
+
+                  k_contact_impulsion[p_i][step] =
+                    contact_wall_force[p_i] + contact_force[p_i];
+
+                  dem_particles[p_i].velocity =
+                    last_velocity[p_i] + k_velocity[p_i][step] * local_dt;
+
+                  for (unsigned int d = 0; d < dim; ++d)
+                    {
+                      dem_particles[p_i].position[d] =
+                        last_position[p_i][d] +
+                        k_position[p_i][step][d] * local_dt;
+                    }
+                  dem_particles[p_i].set_position(dem_particles[p_i].position);
+
+
+                  Tensor<1,3> total_torque=(current_fluid_torque[p_i] + contact_torque[p_i] +
+                                                 contact_wall_torque[p_i]);
+
+                  // Calculate angular acceleration in particle frame
+                  Tensor<1,3> angular_velocity_in_particle_frame=dem_particles[p_i].rotation_matrix*dem_particles[p_i].omega;
+                  Tensor<1,3> angular_acceleration_in_particle_frame;
+                  angular_acceleration_in_particle_frame[0]=(total_torque[0]-(dem_particles[p_i].inertia[2][2]-dem_particles[p_i].inertia[1][1])*angular_velocity_in_particle_frame[2]*angular_velocity_in_particle_frame[1])/dem_particles[p_i].inertia[0][0];
+                  angular_acceleration_in_particle_frame[1]=(total_torque[1]-(dem_particles[p_i].inertia[0][0]-dem_particles[p_i].inertia[2][2])*angular_velocity_in_particle_frame[2]*angular_velocity_in_particle_frame[0])/dem_particles[p_i].inertia[1][1];
+                  angular_acceleration_in_particle_frame[2]=(total_torque[2]-(dem_particles[p_i].inertia[1][1]-dem_particles[p_i].inertia[0][0])*angular_velocity_in_particle_frame[0]*angular_velocity_in_particle_frame[1])/dem_particles[p_i].inertia[2][2];
+
+                  // Rotate angular acceleration in world frame
+                  k_omega[p_i][step] = invert(dem_particles[p_i].rotation_matrix)*angular_acceleration_in_particle_frame;
+
+
+                  k_omega_impulsion[p_i][step] = current_fluid_torque[p_i] +
+                                                 contact_torque[p_i] +
+                                                 contact_wall_torque[p_i];
+
+                  k_omega_contact_impulsion[p_i][step] =
+                    contact_torque[p_i] + contact_wall_torque[p_i];
+
+
+                  // Integrate the relevant state Variable for the next RK step.
+
+                  dem_particles[p_i].omega =
+                    last_omega[p_i] + k_omega[p_i][step] * local_dt;
+
+
+                }
+              else
+                {
+                  if (parameters->load_particles_from_file == false)
+                    {
+                      dem_particles[p_i].f_position->set_time(cfd_time + t +
+                                                              local_dt);
+                      dem_particles[p_i].f_velocity->set_time(cfd_time + t +
+                                                              local_dt);
+                      dem_particles[p_i].f_omega->set_time(cfd_time + t +
+                                                           local_dt);
+                      dem_particles[p_i].f_orientation->set_time(cfd_time + t +
+                                                                 local_dt);
+
+                      dem_particles[p_i].position[0] =
+                        dem_particles[p_i].f_position->value(
+                          dem_particles[p_i].position, 0);
+                      dem_particles[p_i].position[1] =
+                        dem_particles[p_i].f_position->value(
+                          dem_particles[p_i].position, 1);
+                      dem_particles[p_i].velocity[0] =
+                        dem_particles[p_i].f_velocity->value(
+                          dem_particles[p_i].position, 0);
+                      dem_particles[p_i].velocity[1] =
+                        dem_particles[p_i].f_velocity->value(
+                          dem_particles[p_i].position, 1);
+                      dem_particles[p_i].omega[0] =
+                        dem_particles[p_i].f_omega->value(
+                          dem_particles[p_i].position, 0);
+                      dem_particles[p_i].omega[1] =
+                        dem_particles[p_i].f_omega->value(
+                          dem_particles[p_i].position, 1);
+                      dem_particles[p_i].omega[2] =
+                        dem_particles[p_i].f_omega->value(
+                          dem_particles[p_i].position, 2);
+                      dem_particles[p_i].orientation[0] =
+                        dem_particles[p_i].f_orientation->value(
+                          dem_particles[p_i].position, 0);
+                      dem_particles[p_i].orientation[1] =
+                        dem_particles[p_i].f_orientation->value(
+                          dem_particles[p_i].position, 1);
+                      dem_particles[p_i].orientation[2] =
+                        dem_particles[p_i].f_orientation->value(
+                          dem_particles[p_i].position, 2);
+                      if (dim == 3)
+                        {
+                          dem_particles[p_i].position[2] =
+                            dem_particles[p_i].f_position->value(
+                              dem_particles[p_i].position, 2);
+                          dem_particles[p_i].velocity[2] =
+                            dem_particles[p_i].f_velocity->value(
+                              dem_particles[p_i].position, 2);
+                        }
+                    }
+                  else
+                    {
+                      dem_particles[p_i].position[0] +=
+                        dem_particles[p_i].velocity[0] * dt;
+                      dem_particles[p_i].position[1] +=
+                        dem_particles[p_i].velocity[1] * dt;
+                      dem_particles[p_i].orientation[0] =
+                        dem_particles[p_i].omega[0] * dt;
+                      dem_particles[p_i].orientation[1] =
+                        dem_particles[p_i].omega[1] * dt;
+                      dem_particles[p_i].orientation[2] =
+                        dem_particles[p_i].omega[2] * dt;
+
+                      if (dim == 3)
+                        {
+                          dem_particles[p_i].position[2] +=
+                            dem_particles[p_i].velocity[2] * dt;
+                        }
+                    }
+                  dem_particles[p_i].set_position(dem_particles[p_i].position);
+                  dem_particles[p_i].set_orientation(
+                    dem_particles[p_i].orientation);
+                }
+            }
+        }
+
+
+      for (unsigned int p_i = 0; p_i < dem_particles.size(); ++p_i)
+        {
+          // Define the integral by combining each of the RK step.
+          dem_particles[p_i].velocity =
+            last_velocity[p_i] +
+            dt_dem *
+              (k_velocity[p_i][0] + 2 * k_velocity[p_i][1] +
+               2 * k_velocity[p_i][2] + k_velocity[p_i][3]) /
+              6;
+
+          for (unsigned int d = 0; d < dim; ++d)
+            {
+              dem_particles[p_i].position[d] =
+                last_position[p_i][d] +
+                dt_dem *
+                  (k_position[p_i][0][d] + 2 * k_position[p_i][1][d] +
+                   2 * k_position[p_i][2][d] + k_position[p_i][3][d]) /
+                  6;
+            }
+
+          dem_particles[p_i].omega =
+            last_omega[p_i] + dt_dem *
+                                (k_omega[p_i][0]);
+
+          // Update orientation matrix
+          Tensor<2,3> new_rotation_matrix= Physics::Transformations::Rotations::rotation_matrix_3d(dem_particles[p_i].omega/dem_particles[p_i].omega.norm(),dem_particles[p_i].omega.norm()*dt_dem)*dem_particles[p_i].rotation_matrix;
+          dem_particles[p_i].orientation=dem_particles[p_i].shape->rotation_matrix_to_xyz_angles(new_rotation_matrix);
+
+          // Integration of the impulsion applied to the particle.
+          // This is what will be transferred to the CFD to integrate the
+          // particle.
+          dem_particles[p_i].impulsion +=
+            dt_dem *
+            (k_impulsion[p_i][0] );
+
+          dem_particles[p_i].contact_impulsion +=
+            dt_dem *
+            (k_contact_impulsion[p_i][0] );
+
+          dem_particles[p_i].omega_impulsion +=
+            dt_dem *
+            (k_omega_impulsion[p_i][0]);
+
+          dem_particles[p_i].omega_contact_impulsion +=
+            dt_dem *
+            (k_omega_contact_impulsion[p_i][0] );
+
+          dem_particles[p_i].set_position(dem_particles[p_i].position);
+          dem_particles[p_i].set_orientation(dem_particles[p_i].orientation);
+        }
+
+      t += dt_dem;
+    }
+}
+
+
+
 
 
 template class IBParticlesDEM<2>;
