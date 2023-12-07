@@ -57,9 +57,10 @@ jobs:
           cd build-parameter-files
           cmake ../ -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=../inst/
           make install -j${{ env.COMPILE_JOBS }}
-          cd ..
-          ls
-          export PATH=$PATH:"./inst/bin/"
+          cd ../inst/bin
+          install_dir=$(pwd)
+          cd ../../
+          export PATH=$PATH:$install_dir
           ls
           echo $PATH
           bash ./contrib/utilities/check_parameter_files_in_examples.sh   
