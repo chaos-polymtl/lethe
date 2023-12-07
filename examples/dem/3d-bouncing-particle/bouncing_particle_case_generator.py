@@ -68,7 +68,7 @@ plt.show()
 # Case generator
 PATH = os.getcwd()
 CASE_PREFIX = 'bouncing_particle_restitution-coef_'
-PRM_FILE = 'bouncing_particle_original.prm'
+PRM_FILE = 'bouncing_particle_original.tpl'
 TEMPLATE_FOLDER = 'template'
 
 # System characteristics

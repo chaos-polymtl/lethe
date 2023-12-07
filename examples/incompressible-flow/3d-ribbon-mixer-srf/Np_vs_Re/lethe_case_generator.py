@@ -21,6 +21,7 @@ PATH = os.getcwd()
 
 # User input
 CASE_PREFIX = 'mixer_nu_'
+TEMPLATE_FILE = 'ribbon-gls.tpl'
 PRM_FILE = 'ribbon-gls.prm'
 TEMPLATE_FOLDER = 'template'
 
@@ -34,7 +35,7 @@ values=nu
 
 templateLoader = jinja2.FileSystemLoader(searchpath=PATH)
 templateEnv = jinja2.Environment(loader=templateLoader)
-template = templateEnv.get_template(PRM_FILE)
+template = templateEnv.get_template(TEMPLATE_FILE)
 
 case_index = open('case_index.txt', 'w')
 

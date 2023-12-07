@@ -98,10 +98,6 @@ subsection boundary conditions
     set id   = 4
     set type = noslip
   end
-  subsection bc 5
-    set id   = 5
-    set type = noslip
-  end
 end
 
 #---------------------------------------------------

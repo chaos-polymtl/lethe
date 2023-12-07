@@ -52,7 +52,7 @@ do
 
   # Generate prm file for every case
   time_step_multiplier_without_period=$(echo $time_step_multiplier | sed "s/\./_/g") # If you wish to use decimal multipliers, this will avoid problems when postprocessing
-  sed "s/TIMESTEPMULTIPLIER/$time_step_multiplier_without_period/g" capillary-wave.prm > capillary-wave-TSM-$time_step_multiplier_without_period.prm
+  sed "s/TIMESTEPMULTIPLIER/$time_step_multiplier_without_period/g" capillary-wave.tpl > capillary-wave-TSM-$time_step_multiplier_without_period.prm
   sed -i "s/TIMESTEP/$time_step/g" capillary-wave-TSM-$time_step_multiplier_without_period.prm
   sed -i "s/ENDTIME/$end_time/g" capillary-wave-TSM-$time_step_multiplier_without_period.prm
   sed -i "s/OUTPUTFREQUENCY/$output_frequency/g" capillary-wave-TSM-$time_step_multiplier_without_period.prm
