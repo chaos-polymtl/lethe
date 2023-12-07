@@ -62,6 +62,7 @@ IBParticlesDEM<dim>::initialize(
   particle_wall_contact_force_object =
     std::make_shared<ParticleWallNonLinearForce<dim>>(dem_parameters,
                                                       boundary_index);
+
 }
 template <int dim>
 void
@@ -1083,7 +1084,7 @@ IBParticlesDEM<dim>::integrate_particles_motion(const double dt,
           // nouvelle valeur de omega calculee avec euler explicite
 
           //Tensor<2,dim> rodrigues_rotation = I + sin(omega_mag*Deltat) * K + (1 - cos(omega_mag*Deltat)) * K**2
-          dem_particles[p_i].rotation_matrix=rodrigues_rotation*dem_particles[p_i].rotation_matrix;
+          //dem_particles[p_i].rotation_matrix=rodrigues_rotation*dem_particles[p_i].rotation_matrix;
 
           // Integration of the impulsion applied to the particle.
           // This is what will be transferred to the CFD to integrate the

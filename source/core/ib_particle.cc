@@ -14,21 +14,31 @@ IBParticle<dim>::initialize_all()
   radius      = 1.;
   particle_id = 0.;
 
-  inertia[0][0] = 1.;
-  inertia[0][1] = 1.;
-  inertia[0][1] = 1.;
-  inertia[1][0] = 1.;
-  inertia[1][1] = 1.;
-  inertia[1][2] = 1.;
-  inertia[2][0] = 1.;
-  inertia[2][1] = 1.;
-  inertia[2][2] = 1.;
+//  inertia[0][0] = 1.;
+//  inertia[0][1] = 1.;
+//  inertia[0][2] = 1.;
+//  inertia[1][0] = 1.;
+//  inertia[1][1] = 1.;
+//  inertia[1][2] = 1.;
+//  inertia[2][0] = 1.;
+//  inertia[2][1] = 1.;
+//  inertia[2][2] = 1.;
+
+    inertia[0][0] = 1.;
+    inertia[0][1] = 0.;
+    inertia[0][2] = 0.;
+    inertia[1][0] = 0.;
+    inertia[1][1] = 2.;
+    inertia[1][2] = 0.;
+    inertia[2][0] = 0.;
+    inertia[2][1] = 0.;
+    inertia[2][2] = 3.;
 
   inertia = 1.;
 
   local_inertia[0][0] = 1.;
   local_inertia[0][1] = 1.;
-  local_inertia[0][1] = 1.;
+  local_inertia[0][2] = 1.;
   local_inertia[1][0] = 1.;
   local_inertia[1][1] = 1.;
   local_inertia[1][2] = 1.;
@@ -107,6 +117,8 @@ IBParticle<dim>::initialize_all()
   rotation_matrix[2][0] = 0.;
   rotation_matrix[2][1] = 0.;
   rotation_matrix[2][2] = 0.;
+
+  compute_local_inertia(inertia);
 }
 
 template <int dim>
