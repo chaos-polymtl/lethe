@@ -58,16 +58,6 @@ attach_grid_to_triangulation(
           grid_in.attach_triangulation(triangulation);
           std::ifstream input_file(mesh_parameters.file_name);
           grid_in.read_msh(input_file);
-
-          // Give a manifold id to the faces
-          // that corresponds to their boundary id. Otherwise all manifold IDs
-          // will be set to zero.
-          triangulation.reset_all_manifolds();
-          for (const auto &face : triangulation.active_face_iterators())
-            {
-              if (face->at_boundary())
-                face->set_all_manifold_ids(face->boundary_id());
-            }
         }
     }
   // Dealii grids
@@ -252,6 +242,11 @@ attach_grid_to_triangulation(
               Tensor<1, spacedim> shift_vector({-half_height, 0.0, 0.0});
               GridTools::shift(shift_vector, triangulation);
 
+              // Force the manifold id to be zero in the case of the balanced
+              // cylinder
+              if (mesh_parameters.grid_type == "balanced")
+                triangulation.reset_manifold(1);
+
               // Add a cylindrical manifold on the final unrefined mesh
               const CylindricalManifold<3, spacedim> m1(0);
               triangulation.set_manifold(0, m1);
@@ -321,6 +316,42 @@ read_mesh_and_manifolds(
 
   setup_periodic_boundary_conditions(triangulation, boundary_conditions);
 
+  // If the mesh is a GMSH mesh, we need to manually set the manifold id
+  // of the face to be that of the boundary
+  // ID, otherwise, we will be unable to use external manifold.
+  // This is done manually by looping through all faces and giving them a
+  // manifold id if there is a manifold associated with this number.
+  if (mesh_parameters.type == Parameters::Mesh::Type::gmsh)
+    {
+      // Gather all the manifold ids within a set
+      std::set<int> manifold_ids;
+      for (unsigned int i = 0; i < manifolds_parameters.size; ++i)
+        manifold_ids.insert(manifolds_parameters.id[i]);
+
+      // Reset all the manifolds manually and force them to zero
+      triangulation.reset_all_manifolds();
+
+      // If the parameter file forces the occurrence of manifold,
+      // loop over the faces of the triangulation. If the face of the
+      // triangulation has a boundary id which corresponds to a manifold id
+      // identified within the parameter file, then fix the manifold id of this
+      // face manually to be that of the boundary id. In the past, this was done
+      // by default for every face, but since 2023-12 this throws (rightfully)
+      // an error in deal.II
+      if (manifolds_parameters.size > 0)
+        {
+          for (const auto &face : triangulation.active_face_iterators())
+            {
+              if (face->at_boundary() &&
+                  manifold_ids.find(face->boundary_id()) != manifold_ids.end())
+                face->set_all_manifold_ids(face->boundary_id());
+            }
+        }
+    }
+
+  // Finally attach the manifolds to the triangulation
+  // Right now this should only occur for GMSH mesh, but the function is generic
+  // enough.
   attach_manifolds_to_triangulation(triangulation, manifolds_parameters);
 
   if (mesh_parameters.simplex)
