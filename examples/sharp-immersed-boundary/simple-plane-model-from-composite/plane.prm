@@ -42,6 +42,15 @@ subsection mesh adaptation
   set fraction type        = number
 end
 
+
+#---------------------------------------------------
+# Boundary Conditions
+#---------------------------------------------------
+
+subsection boundary conditions
+  set number = 0
+end
+
 #---------------------------------------------------
 # IB particles
 #---------------------------------------------------
