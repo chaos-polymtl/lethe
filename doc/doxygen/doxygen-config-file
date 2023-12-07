@@ -17,7 +17,7 @@
 DOXYFILE_ENCODING      = UTF-8
 PROJECT_NAME           = "Developer documentation for the Lethe open-source library"
 PROJECT_NUMBER         =
-PROJECT_BRIEF          =
+PROJECT_BRIEF          = 
 PROJECT_LOGO           = ./logo.png
 OUTPUT_DIRECTORY       =
 CREATE_SUBDIRS         = NO
@@ -131,7 +131,7 @@ WARN_LOGFILE           = DoxygenWarningLog.txt
 #---------------------------------------------------------------------------
 # Configuration options related to the input files
 #---------------------------------------------------------------------------
-INPUT = ../../include 
+INPUT = ../../include ./main.h  ../../source
 INPUT_ENCODING         = UTF-8
 FILE_PATTERNS          = *.c \
                          *.cc \
@@ -198,11 +198,11 @@ USE_MDFILE_AS_MAINPAGE =
 #---------------------------------------------------------------------------
 # Configuration options related to source browsing
 #---------------------------------------------------------------------------
-SOURCE_BROWSER         = NO
+SOURCE_BROWSER         = YES
 INLINE_SOURCES         = NO
-STRIP_CODE_COMMENTS    = YES
+STRIP_CODE_COMMENTS    = NO
 REFERENCED_BY_RELATION = NO
-REFERENCES_RELATION    = NO
+REFERENCES_RELATION    = YES
 REFERENCES_LINK_SOURCE = YES
 SOURCE_TOOLTIPS        = YES
 USE_HTAGS              = NO
@@ -264,7 +264,7 @@ HTML_FORMULA_FORMAT    = png
 FORMULA_FONTSIZE       = 10
 FORMULA_TRANSPARENT    = YES
 FORMULA_MACROFILE      =
-USE_MATHJAX            = NO
+USE_MATHJAX            = YES
 MATHJAX_FORMAT         = HTML-CSS
 MATHJAX_RELPATH        = https://cdn.jsdelivr.net/npm/mathjax@2
 MATHJAX_EXTENSIONS     =
@@ -287,7 +287,7 @@ MAKEINDEX_CMD_NAME     = makeindex
 LATEX_MAKEINDEX_CMD    = makeindex
 COMPACT_LATEX          = NO
 PAPER_TYPE             = a4
-EXTRA_PACKAGES         = amsmath amsfonts mathtools @_extra_packages@
+EXTRA_PACKAGES         = amsmath amsfonts mathtools
 LATEX_HEADER           =
 LATEX_FOOTER           =
 LATEX_EXTRA_STYLESHEET =
