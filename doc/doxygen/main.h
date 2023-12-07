@@ -1,7 +1,7 @@
 /**
  * @mainpage
- * 
- * An outline of the main classes in Lethe and how they interact is given by the following 
+ *
+ * An outline of the main classes in Lethe and how they interact is given by the following
  * clickable graph:
  *
  * @dot
@@ -13,9 +13,9 @@
       edge [color="royalblue", weight=10];
       rankdir="LR";
       size = "16,10";
-      
+
       physics_solver [label="PhysicsSolver", href="https://lethe-cfd.github.io/lethe/html_doxygen/classPhysicsSolver.html"];
-    
+
       navier_stokes_base [label="NavierStokesBase",href="https://lethe-cfd.github.io/lethe/html_doxygen/classNavierStokesBase.html"];
 
       auxiliary_physics [label="AuxiliaryPhysics",href="https://lethe-cfd.github.io/lethe/html_doxygen/classAuxiliaryPhysics.html"];
@@ -47,8 +47,8 @@
 
       navier_stokes_base_1:e -> navier_stokes_base_1_1:w [dir=back];
       navier_stokes_base_1:e -> navier_stokes_base_1_2:w [dir=back];
-      navier_stokes_base_1:e -> navier_stokes_base_1_3:w [dir=back];      
-      
+      navier_stokes_base_1:e -> navier_stokes_base_1_3:w [dir=back];
+
       navier_stokes_base_1_1_1 [label=<<B>CFDDEMSolver</B> <br/>(lethe-fluid-particles)>,href="https://lethe-cfd.github.io/lethe/html_doxygen/classNavierStokesBase.html", tooltip="CFDDEMSolver"];
 
       navier_stokes_base_1_1:e -> navier_stokes_base_1_1_1:w [dir=back];
