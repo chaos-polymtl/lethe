@@ -56,7 +56,7 @@ jobs:
           mkdir build-parameter-files
           cd build-parameter-files
           cmake ../ -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=../inst/
-          make -j${{ env.COMPILE_JOBS }}
+          make install -j${{ env.COMPILE_JOBS }}
           cd ..
           ls
           export PATH=$PATH:"./inst/bin/"
