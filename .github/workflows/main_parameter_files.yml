@@ -1,0 +1,66 @@
+name: CI-Parameter-files-examples
+
+on: 
+  # Runs on every push on master branch. If a push contains multiple commits, it will be ran on the latest one.
+  push:
+    paths-ignore:
+      - 'doc/**'
+  pull_request_target:
+    paths-ignore:
+      - 'doc/**'
+
+# Cancels running instances when a pull request is updated by a commit
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref || github.run_id }}
+  cancel-in-progress: true
+  
+env:
+  COMPILE_JOBS: 2
+  MULTI_CORE_TESTS_REGEX: "mpirun=2"
+
+jobs:
+  build:
+    name: Build (deal.ii:${{ matrix.dealii_version }})
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        dealii_version: ["master"]
+    
+    # Run steps in container of dealii's master branch
+    container:
+      image: dealii/dealii:${{ matrix.dealii_version }}-focal
+      options: --user root
+
+    steps:
+      - name: Setup
+        run: |
+          # Since dealii image doesn't include Node.js, we'll install it
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends nodejs
+
+          echo "Github actions is sane!"
+          echo "Running build with deal.ii version ${{ matrix.dealii_version }} on branch ${GITHUB_REF#refs/heads/}"
+
+      # Checks-out Lethe with branch of triggering commit
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      #
+      # Warnings
+      #
+      - name: Compile Lethe and check for parameter file validity (deal.ii:${{ matrix.dealii_version }})
+        run: |
+          ls
+          mkdir build-parameter-files
+          cd build-parameter-files
+          cmake ../ -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=../inst/
+          make install -j${{ env.COMPILE_JOBS }}
+          cd ../inst/bin
+          install_dir=$(pwd)
+          cd ../../
+          export PATH=$PATH:$install_dir
+          ls
+          echo $PATH
+          bash ./contrib/utilities/check_parameter_files_in_examples.sh   
