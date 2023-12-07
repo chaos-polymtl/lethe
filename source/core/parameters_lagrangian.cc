@@ -18,14 +18,14 @@ namespace Parameters
                         "0.001",
                         Patterns::Double(),
                         "Particle diameter");
-      prm.declare_entry("histogram diameter list",
+      prm.declare_entry("histogram diameters list",
                         "0.001",
                         Patterns::List(Patterns::Double()),
-                        "Particle diameter");
-      prm.declare_entry("histogram diameter probabilities",
+                        "Diameter values for a histogram distribution");
+      prm.declare_entry("histogram probabilities list",
                         "1.",
                         Patterns::List(Patterns::Double()),
-                        "Particle diameter");
+                        "Probabilities of each diameter");
       prm.declare_entry("standard deviation",
                         "0",
                         Patterns::Double(),
@@ -43,7 +43,7 @@ namespace Parameters
                         Patterns::Double(),
                         "Particle Young's modulus");
       prm.declare_entry("poisson ratio particles",
-                        "0.1",
+                        "0.3",
                         Patterns::Double(),
                         "Particle Poisson ratio");
       prm.declare_entry("restitution coefficient particles",
@@ -73,9 +73,9 @@ namespace Parameters
       particle_size_std.at(particle_type) =
         prm.get_double("standard deviation");
       particle_histogram_diameter.at(particle_type) =
-        entry_string_to_vector(prm, "histogram diameter list");
+        entry_string_to_vector(prm, "histogram diameters list");
       particle_histogram_probability.at(particle_type) =
-        entry_string_to_vector(prm, "histogram diameter probabilities");
+        entry_string_to_vector(prm, "histogram probabilities list");
 
       double probability_sum =
         std::reduce(particle_histogram_probability.at(particle_type).begin(),
@@ -163,7 +163,7 @@ namespace Parameters
                           Patterns::Double(),
                           "Young's modulus of wall");
         prm.declare_entry("poisson ratio wall",
-                          "1000000.",
+                          "0.3",
                           Patterns::Double(),
                           "Poisson's ratio of wall");
         prm.declare_entry("restitution coefficient wall",

@@ -21,56 +21,38 @@ In this subsection, gravitational acceleration, and the physical properties of t
 
     # Entering particle type 0
     subsection particle type 0
-      # Size distribution of particle type 0
+
+      # Choices are uniform, normal or histogram
       set size distribution type            = uniform
 
-      # Particle diameter
-      set diameter                          = 0.005
+      # If distribution type = uniform or normal
+      set diameter                          = 0.001
 
-      # Standard deviation
+      # If distribution type = histogram
+      set histogram diameters list           = 0.001
+      set histogram probabilities list      = 1.
+
+      # If distribution type = normal
       set standard deviation                = 0.0
 
-      # Number of particles in type 0
-      set number of particles               = 132300
-
-      # Particle density
-      set density particles                 = 2000
-
-      # Young's modulus of particle
+      # For every distribution types
+      set number of particles               = 0
+      set density particles                 = 1000
       set young modulus particles           = 1000000
-
-      # Poisson ratio of particle
       set poisson ratio particles           = 0.3
-
-      # Coefficient of restitution of particle
-      set restitution coefficient particles = 0.95
-
-      # Coefficient of friction of particle
-      set friction coefficient particles    = 0.05
-
-      # Coefficient of rolling friction of particle
+      set restitution coefficient particles = 0.1
+      set friction coefficient particles    = 0.1
       set rolling friction particles        = 0.1
-
-      # Surface energy of particle
       set surface energy particles          = 0.0
+
     end
 
-    # Young's modulus of wall
+    # Wall properties
     set young modulus wall           = 1000000
-
-    # Poisson ratio of wall
     set poisson ratio wall           = 0.3
-
-    # Coefficient of restitution of wall
-    set restitution coefficient wall = 0.95
-
-    # Coefficient of friction of wall
-    set friction coefficient wall    = 0.05
-
-    # Coefficient of rolling friction of wall
+    set restitution coefficient wall = 0.1
+    set friction coefficient wall    = 0.1
     set rolling friction wall        = 0.1
-
-    # Surface energy of wall
     set surface energy wall          = 0.0
   end
 
@@ -86,11 +68,13 @@ In this subsection, gravitational acceleration, and the physical properties of t
 * The ``size distribution type`` parameter specifies the size distribution for each particle type. The acceptable choices are ``uniform`` and ``normal`` distributions.
 
 .. note::
-    For each particle type, two ``size distribution type``s can be defined: ``uniform`` and ``normal``. In ``uniform`` size distribution, the diameter of the particles is constant, while in ``normal`` size distribution, the particle diameters are sampled from a normal distribution with an average of ``average diameter`` and standard deviation of ``standard deviation``.
+    For each particle type, three ``size distribution type``s can be defined: ``uniform``, ``normal`` and ``histogram``. In ``uniform`` size distribution, the diameter of the particles is constant. In ``normal`` size distribution, the particle diameters are sampled from a normal distribution with an average diameter and a standard deviation of ``standard deviation``.  In the "histogram" size distribution, particle diameters are sampled from a list of diameters and a probability for each diameter value.
 
 * The ``diameter`` parameter defines the diameter of the particles in a ``uniform`` distribution. In the case of a ``normal`` distribution, this parameter indicates the average diameter.
 
 * For a ``normal`` distribution, the ``standard deviation`` parameter should be defined to indicate the standard deviation on the particle size distribution.
+
+* For a ``histogram`` distribution, the ``histogram diameters list`` defines each diameter to choose from when generating the diameter values. The ``histogram probabilities list`` defines the probability that a diameter value will be chosen for one particles.
 
 * The ``number of particles`` parameter defines the number of particles for each type.
 
