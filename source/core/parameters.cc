@@ -2778,16 +2778,23 @@ namespace Parameters
       Patterns::Anything(),
       "position relative to the center of the particle for the location of the point where the pressure is imposed inside the particle");
 
+    prm.declare_entry(
+      "center of mass location",
+      "0; 0; 0",
+      Patterns::Anything(),
+      "position of the center of mass relative to the frame of reference of the particule");
+
     prm.enter_subsection("physical properties");
     {
       prm.declare_entry("density",
                         "1",
                         Patterns::Double(),
                         "density of the particle ");
-      prm.declare_entry("inertia",
-                        "1",
-                        Patterns::Double(),
-                        "uniform rotational moment of inertia");
+      prm.declare_entry(
+        "inertia",
+        "1 ;0 ;0 ;0 ;1 ;0 ;0 ;0 ;1",
+        Patterns::Anything(),
+        "Moments of inertia of the particle in the reference frame of the fluid. The entry sequence corresponds to : I_xx ;I_xy ;I_xz ;I_yx ;I_yy ;I_yz ;I_zx ;I_zy ;I_zz");
       prm.declare_entry("youngs modulus",
                         "100000000",
                         Patterns::Double(),
@@ -3161,14 +3168,25 @@ namespace Parameters
             Utilities::string_to_double(pressure_location_str_list);
           particles[i].pressure_location[0] = pressure_list[0];
           particles[i].pressure_location[1] = pressure_list[1];
+
+          std::string center_of_mass_location_str =
+            prm.get("center of mass location");
+          std::vector<std::string> center_of_mass_location_str_list(
+            Utilities::split_string_list(center_of_mass_location_str, ";"));
+          std::vector<double> center_of_mass_list =
+            Utilities::string_to_double(center_of_mass_location_str_list);
+          particles[i].center_of_mass_location[0] = center_of_mass_list[0];
+          particles[i].center_of_mass_location[1] = center_of_mass_list[1];
           if (dim == 3)
             {
               particles[i].position[2] =
                 particles[i].f_position->value(particles[i].position, 2);
               particles[i].velocity[2] =
                 particles[i].f_velocity->value(particles[i].position, 2);
-              particles[i].pressure_location[2] = pressure_list[2];
+              particles[i].pressure_location[2]       = pressure_list[2];
+              particles[i].center_of_mass_location[2] = center_of_mass_list[2];
             }
+
           std::string shape_type          = prm.get("type");
           std::string shape_arguments_str = prm.get("shape arguments");
           particles[i].initialize_shape(shape_type, shape_arguments_str);
@@ -3178,9 +3196,20 @@ namespace Parameters
           particles[i].radius = particles[i].shape->effective_radius;
           prm.enter_subsection("physical properties");
           {
-            particles[i].inertia[0][0] = prm.get_double("inertia");
-            particles[i].inertia[1][1] = prm.get_double("inertia");
-            particles[i].inertia[2][2] = prm.get_double("inertia");
+            std::string              inertia_str = prm.get("inertia");
+            std::vector<std::string> inertia_str_list(
+              Utilities::split_string_list(inertia_str, ";"));
+            std::vector<double> inertia_list =
+              Utilities::string_to_double(inertia_str_list);
+            particles[i].inertia[0][0] = inertia_list[0];
+            particles[i].inertia[0][1] = inertia_list[1];
+            particles[i].inertia[0][2] = inertia_list[2];
+            particles[i].inertia[1][0] = inertia_list[3];
+            particles[i].inertia[1][1] = inertia_list[4];
+            particles[i].inertia[1][2] = inertia_list[5];
+            particles[i].inertia[2][0] = inertia_list[6];
+            particles[i].inertia[2][1] = inertia_list[7];
+            particles[i].inertia[2][2] = inertia_list[8];
 
             particles[i].youngs_modulus = prm.get_double("youngs modulus");
             particles[i].restitution_coefficient =

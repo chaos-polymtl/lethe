@@ -135,22 +135,25 @@ GLSSharpNavierStokesSolver<dim>::generate_cut_cells_map()
 
 
 
-  bool check_cell_min=true;
+  bool check_cell_min = true;
   // // Loop on all the cells and check if they are cut.
   for (const auto &cell : cell_iterator)
     {
       if (cell->is_locally_owned() || cell->is_ghost())
         {
-          if (check_cell_min==true){
-              TimerOutput::Scope t(this->computing_timer, "shape distance 1000 time");
-              check_cell_min=false;
-              Point<dim> p(0,0,0);
+          if (check_cell_min == true)
+            {
+              TimerOutput::Scope t(this->computing_timer,
+                                   "shape distance 1000 time");
+              check_cell_min = false;
+              Point<dim> p(0, 0, 0);
 
               std::vector<Point<dim>> candidate;
-              //p=(particles[0].position+particles[1].position)/2;
+              // p=(particles[0].position+particles[1].position)/2;
               candidate.push_back(p);
-              for (unsigned int i=0; i<1000;++i)
-                auto distance=particles[0].shape->distance_to_shape(*particles[1].shape,cell,candidate);
+              //              for (unsigned int i=0; i<1000;++i)
+              //                auto
+              //                distance=particles[0].shape->distance_to_shape(*particles[1].shape,cell,candidate);
             }
 
           bool         cell_is_cut                                = false;

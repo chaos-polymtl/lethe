@@ -260,6 +260,19 @@ public:
   void
   load_data_from_file();
 
+  void
+  set_initial_rotation_matrix(Tensor<1,3> orientation);
+
+  void
+  update_rotation_matrix(Tensor<2,3> rotation);
+
+  void
+  compute_local_inertia(Tensor<2,3> global_inertia);
+
+  Tensor<2,3>
+  compute_rodrigues_rotation_matrix(Tensor<1,3> rotation_vector, double timestep);
+
+
 
   // This class defines values related to a particle used in the sharp interface
   // IB. Each particle defined will have these value used in the solver.
@@ -286,7 +299,7 @@ public:
   double mass;
   // The surface energy of the particle
   double surface_energy;
-  // The particle rotational inertia. It is uniform in all directions.
+  // The particle tensor of inertia in the global reference frame
   Tensor<2, 3> inertia;
   // The particle position.
   Point<dim> position;
@@ -386,6 +399,20 @@ public:
   // Location of the pressure reference point relative to the center of the
   // particle. This point is used to define a constant on the pressure.
   Point<dim> pressure_location;
+
+  // Location of the center of mass relative to the frame of reference of the
+  // particule.
+  Point<dim> center_of_mass_location;
+
+  // Rotation matrix of the particle in the global space
+  Tensor<2, 3> rotation_matrix;
+
+  // Rotation matrix from the particle reference frame to the proper reference frame of the particle
+  Tensor<2,3> local_to_proper_frame_rotation_matrix;
+
+  // Local inertia tensor of the particle
+  Tensor<2, 3> local_inertia;
+  Tensor<2, 3> principal_axis_of_rotation;
 };
 
 #endif

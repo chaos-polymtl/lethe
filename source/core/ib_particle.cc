@@ -1,8 +1,10 @@
 #include <core/ib_particle.h>
 #include <core/shape_parsing.h>
 
-#include <cfloat>
+// Deal.II includes
+#include <deal.II/lac/lapack_full_matrix.h>
 
+#include <cfloat>
 
 template <int dim>
 void
@@ -13,8 +15,28 @@ IBParticle<dim>::initialize_all()
   particle_id = 0.;
 
   inertia[0][0] = 1.;
+  inertia[0][1] = 1.;
+  inertia[0][1] = 1.;
+  inertia[1][0] = 1.;
   inertia[1][1] = 1.;
+  inertia[1][2] = 1.;
+  inertia[2][0] = 1.;
+  inertia[2][1] = 1.;
   inertia[2][2] = 1.;
+
+  inertia = 1.;
+
+  local_inertia[0][0] = 1.;
+  local_inertia[0][1] = 1.;
+  local_inertia[0][1] = 1.;
+  local_inertia[1][0] = 1.;
+  local_inertia[1][1] = 1.;
+  local_inertia[1][2] = 1.;
+  local_inertia[2][0] = 1.;
+  local_inertia[2][1] = 1.;
+  local_inertia[2][2] = 1.;
+
+  local_inertia = 1.;
 
   fluid_forces[0] = 0.;
   fluid_forces[1] = 0.;
@@ -75,6 +97,16 @@ IBParticle<dim>::initialize_all()
   f_velocity    = std::make_shared<Functions::ParsedFunction<dim>>(dim);
   f_omega       = std::make_shared<Functions::ParsedFunction<dim>>(3);
   f_orientation = std::make_shared<Functions::ParsedFunction<dim>>(3);
+
+  rotation_matrix[0][0] = 0.;
+  rotation_matrix[0][1] = 0.;
+  rotation_matrix[0][2] = 0.;
+  rotation_matrix[1][0] = 0.;
+  rotation_matrix[1][1] = 0.;
+  rotation_matrix[1][2] = 0.;
+  rotation_matrix[2][0] = 0.;
+  rotation_matrix[2][1] = 0.;
+  rotation_matrix[2][2] = 0.;
 }
 
 template <int dim>
@@ -298,6 +330,95 @@ IBParticle<dim>::load_data_from_file()
   else if (typeid(*shape) == typeid(CompositeShape<dim>))
     std::static_pointer_cast<CompositeShape<dim>>(shape)->load_data_from_file();
 }
+
+template <int dim>
+void
+IBParticle<dim>::set_initial_rotation_matrix(Tensor<1,3> orientation)
+{
+    //Calcul de la matrice initiale de rotation avec l'orientation initiale
+
+}
+
+template <int dim>
+void
+IBParticle<dim>::update_rotation_matrix(Tensor<2, 3> rotation)
+{
+
+
+}
+
+
+
+template <int dim>
+void
+IBParticle<dim>::compute_local_inertia(Tensor<2,3> global_inertia)
+{
+    //Calcul des valeurs propres de la matrice d'inertie globale et update les vecteurs propres de la particule
+
+    LAPACKFullMatrix<double>  global_inertia_matrix;
+    Vector<double> eigenvalues(3);
+    FullMatrix<double> eigenvectors(3,3);
+
+    global_inertia_matrix.reinit(3);
+    global_inertia_matrix.set(0,0,global_inertia[0][0]);
+    global_inertia_matrix.set(0,1,global_inertia[0][1]);
+    global_inertia_matrix.set(0,2,global_inertia[0][2]);
+    global_inertia_matrix.set(1,0,global_inertia[1][0]);
+    global_inertia_matrix.set(1,1,global_inertia[1][1]);
+    global_inertia_matrix.set(1,2,global_inertia[1][2]);
+    global_inertia_matrix.set(2,0,global_inertia[2][0]);
+    global_inertia_matrix.set(2,1,global_inertia[2][1]);
+    global_inertia_matrix.set(2,2,global_inertia[2][2]);
+
+
+
+    global_inertia_matrix.compute_eigenvalues_symmetric(-DBL_MAX,DBL_MAX,1e-10,eigenvalues,eigenvectors);
+
+    std::cout<<"First eigenvalue = "<<eigenvalues[0]<<std::endl;
+    std::cout<<"Second eigenvalue = "<<eigenvalues[1]<<std::endl;
+    std::cout<<"Third eigenvalue = "<<eigenvalues[2]<<std::endl;
+
+    std::cout<<"First eigenvector : "<<std::endl;
+    std::cout<<eigenvectors[0][0]<<std::endl;
+    std::cout<<eigenvectors[1][0]<<std::endl;
+    std::cout<<eigenvectors[2][0]<<std::endl;
+
+    std::cout<<"Second eigenvector : "<<std::endl;
+    std::cout<<eigenvectors[0][1]<<std::endl;
+    std::cout<<eigenvectors[1][1]<<std::endl;
+    std::cout<<eigenvectors[2][1]<<std::endl;
+
+    std::cout<<"Third eigenvector : "<<std::endl;
+    std::cout<<eigenvectors[0][2]<<std::endl;
+    std::cout<<eigenvectors[1][2]<<std::endl;
+    std::cout<<eigenvectors[2][2]<<std::endl;
+
+}
+
+template <int dim>
+Tensor<2,3>
+IBParticle<dim>::compute_rodrigues_rotation_matrix(Tensor<1, 3> rotation_vector, double timestep)
+{
+    double omega_mag = std::sqrt(rotation_vector[0]*rotation_vector[0]+rotation_vector[1]*rotation_vector[1]+rotation_vector[2]*rotation_vector[2]);
+    Tensor<1,3> rotation_axis({rotation_vector[0]/omega_mag,
+                               rotation_vector[1]/omega_mag,
+                               rotation_vector[2]/omega_mag});
+
+    Tensor<2,3> K_rodrigues({{0,-rotation_axis[2],rotation_axis[1]},
+                   {rotation_axis[2],0,-rotation_axis[0]},
+                   {-rotation_axis[1],rotation_axis[0],0}});
+
+    Tensor<2,3> identity({{1,0,0},
+                          {0,1,0},
+                          {0,0,1}});
+
+    Tensor<2,3> rodrigues_rotation_matrix = identity + std::sin(omega_mag*timestep)*K_rodrigues
+            +(1-std::cos(omega_mag*timestep))*K_rodrigues*K_rodrigues;
+
+    return rodrigues_rotation_matrix;
+
+}
+
 
 template class IBParticle<2>;
 template class IBParticle<3>;

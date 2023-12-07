@@ -142,239 +142,264 @@ public:
    * @param cell The cell that is likely to contain the evaluation point
    * @param candidate_points This is the initial point used in the calculation.
    */
-  std::pair<double,Tensor<1,dim>>
+  std::pair<double, Tensor<1, dim>>
   distance_to_shape(
-    Shape<dim>                                    &shape,
+    Shape<dim>                                           &shape,
     const typename DoFHandler<dim>::active_cell_iterator &cell,
-    std::vector<Point<dim>>                             &candidate_points,
-    double precision=1e-6)/*{
-    // The initial guess is chosen as the centered point (i.e. evaluation
-    // point, in the superquadric referential). It should already be somewhat
-    // close to the closest point, and it is already in the right octant.
+    std::vector<Point<dim>>                              &candidate_points,
+    double                                                precision =
+      1e-6) /*{
+// The initial guess is chosen as the centered point (i.e. evaluation
+// point, in the superquadric referential). It should already be somewhat
+// close to the closest point, and it is already in the right octant.
 
-    double distance=DBL_MAX;
-    Tensor<1,dim> normal;
+double distance=DBL_MAX;
+Tensor<1,dim> normal;
 
-    for (unsigned int i = 0; i <candidate_points.size(); ++i){
-        Point<dim>         current_point = candidate_points[i];
-        double             epsilon       = precision;
-        unsigned int       iteration     = 0;
-        const unsigned int iteration_max = 1e2;
+for (unsigned int i = 0; i <candidate_points.size(); ++i){
+Point<dim>         current_point = candidate_points[i];
+double             epsilon       = precision;
+unsigned int       iteration     = 0;
+const unsigned int iteration_max = 1e2;
 
-        Point<dim> dx{}, distance_gradient{}, previous_position{},
-          previous_gradient{};
-        double a = 1;
-        double value_first_component=this->value_with_cell_guess(current_point, cell);
-        double value_second_component=shape.value_with_cell_guess(current_point, cell);
-        double current_distance = (value_first_component * std::exp(value_first_component * a) +
-                                   value_second_component *
-                                     std::exp(value_second_component * a)) /
-                                    std::pow(std::exp(value_first_component * a) +
-                                               std::exp(value_second_component * a),1)+1*abs(value_first_component-value_second_component )*abs(value_first_component-value_second_component );
-
-
-
-        previous_position = current_point;
-        previous_position[1] += epsilon;
-
-        for (unsigned int d = 0; d < dim; ++d)
-          {
-            Tensor<1, dim> perturbation;
-            perturbation[d] = epsilon;
-            value_first_component=this->value_with_cell_guess(previous_position + perturbation, cell);
-            value_second_component=shape.value_with_cell_guess(previous_position + perturbation, cell);
-            double exp_max_plus=(value_first_component * std::exp(value_first_component * a) +
-                                   value_second_component *
-                                     std::exp(value_second_component * a)) /
-                                    std::pow(std::exp(value_first_component * a) +
-                                               std::exp(value_second_component * a),1)+1*abs(value_first_component-value_second_component )*abs(value_first_component-value_second_component );
-
-            value_first_component=this->value_with_cell_guess(previous_position - perturbation, cell);
-            value_second_component=shape.value_with_cell_guess(previous_position - perturbation, cell);
-            double exp_max_minus=(value_first_component * std::exp(value_first_component * a) +
-                                    value_second_component *
-                                      std::exp(value_second_component * a)) /
-                                     std::pow(std::exp(value_first_component * a) +
-                                                std::exp(value_second_component * a),1)+1*abs(value_first_component-value_second_component )*abs(value_first_component-value_second_component );
-            previous_gradient[d] =
-              (exp_max_plus -
-               exp_max_minus) /
-              perturbation.norm() / 2.0;
-          }
-
-        std::cout << "iteration " << iteration
-                  << " point value = " << current_distance << " dx " << dx
-                  << " point " << current_point
-                  << std::endl;
-
-        dx[0]                   = 1;
-        const double relaxation = 1;
-        double previous_value=DBL_MAX;
-
-        while (iteration < iteration_max && abs(current_distance-previous_value) > precision*precision)
-          {
-            for (unsigned int d = 0; d < dim; ++d)
-              {
-                Tensor<1, dim> perturbation;
-                perturbation[d] = epsilon;
-                value_first_component=this->value_with_cell_guess(current_point + perturbation, cell);
-                value_second_component=shape.value_with_cell_guess(current_point + perturbation, cell);
-                double exp_max_plus=(value_first_component * std::exp(value_first_component * a) +
-                                       value_second_component *
-                                         std::exp(value_second_component * a)) /
-                                        std::pow(std::exp(value_first_component * a) +
-                                                   std::exp(value_second_component * a),1)+1*abs(value_first_component-value_second_component )*abs(value_first_component-value_second_component );
-
-                value_first_component=this->value_with_cell_guess(current_point - perturbation, cell);
-                value_second_component=shape.value_with_cell_guess(current_point - perturbation, cell);
-                double exp_max_minus=(value_first_component * std::exp(value_first_component * a) +
-                                        value_second_component *
-                                          std::exp(value_second_component * a)) /
-                                         std::pow(std::exp(value_first_component * a) +
-                                                    std::exp(value_second_component * a),1)+1*abs(value_first_component-value_second_component )*abs(value_first_component-value_second_component );
-                distance_gradient[d] =
-                  (exp_max_plus -
-                   exp_max_minus) /
-                  perturbation.norm() / 2.0;
-              }
-
-            dx = -distance_gradient * relaxation *
-                 abs(scalar_product((current_point - previous_position),
-                                    (distance_gradient - previous_gradient))) /
-                 (distance_gradient - previous_gradient).norm_square();
+Point<dim> dx{}, distance_gradient{}, previous_position{},
+previous_gradient{};
+double a = 1;
+double value_first_component=this->value_with_cell_guess(current_point, cell);
+double value_second_component=shape.value_with_cell_guess(current_point, cell);
+double current_distance = (value_first_component *
+std::exp(value_first_component * a) + value_second_component *
+                       std::exp(value_second_component * a)) /
+                      std::pow(std::exp(value_first_component * a) +
+                                 std::exp(value_second_component *
+a),1)+1*abs(value_first_component-value_second_component
+)*abs(value_first_component-value_second_component );
 
 
 
-            previous_gradient = distance_gradient;
-            previous_position = current_point;
-            current_point     = current_point + dx;
-            previous_value=current_distance;
-            value_first_component=this->value_with_cell_guess(current_point, cell);
-            value_second_component=shape.value_with_cell_guess(current_point, cell);
-            double new_distance=(value_first_component * std::exp(value_first_component * a) +
-                                   value_second_component *
-                                     std::exp(value_second_component * a)) /
-                                    std::pow(std::exp(value_first_component * a) +
-                                               std::exp(value_second_component * a),1)+1*abs(value_first_component-value_second_component )*abs(value_first_component-value_second_component );
+previous_position = current_point;
+previous_position[1] += epsilon;
 
-            double alpha=0.5;
-            unsigned int j=0;
-            std::cout << "Alpha iteration " << j
-                      << " point value = " << new_distance
-                      << " previous point value = " << previous_value<< " alpha " << 1<< " dx " << dx
+for (unsigned int d = 0; d < dim; ++d)
+{
+Tensor<1, dim> perturbation;
+perturbation[d] = epsilon;
+value_first_component=this->value_with_cell_guess(previous_position +
+perturbation, cell);
+value_second_component=shape.value_with_cell_guess(previous_position +
+perturbation, cell); double exp_max_plus=(value_first_component *
+std::exp(value_first_component * a) + value_second_component *
+                       std::exp(value_second_component * a)) /
+                      std::pow(std::exp(value_first_component * a) +
+                                 std::exp(value_second_component *
+a),1)+1*abs(value_first_component-value_second_component
+)*abs(value_first_component-value_second_component );
 
-                      << " point " << current_point
-                      << std::endl;
-            while(previous_value<new_distance and j<6 and iteration!=0)
-              {
-                current_point     = previous_position + dx*alpha;
-                value_first_component=this->value_with_cell_guess(current_point, cell);
-                value_second_component=shape.value_with_cell_guess(current_point, cell);
-                new_distance=(value_first_component * std::exp(value_first_component * a) +
-                                value_second_component *
-                                  std::exp(value_second_component * a)) /
-                                 std::pow(std::exp(value_first_component * a) +
-                                            std::exp(value_second_component * a),1)+1*abs(value_first_component-value_second_component )*abs(value_first_component-value_second_component );
-                ++j;
-                std::cout << "Alpha iteration " << j
-                          << " point value = " << new_distance
-                          << " previous point value = " << previous_value<< " alpha " << alpha
-                          << " point " << current_point
-                          << std::endl;
-                alpha*=0.5;
-              }
-            current_distance=new_distance;
+value_first_component=this->value_with_cell_guess(previous_position -
+perturbation, cell);
+value_second_component=shape.value_with_cell_guess(previous_position -
+perturbation, cell); double exp_max_minus=(value_first_component *
+std::exp(value_first_component * a) + value_second_component *
+                        std::exp(value_second_component * a)) /
+                       std::pow(std::exp(value_first_component * a) +
+                                  std::exp(value_second_component *
+a),1)+1*abs(value_first_component-value_second_component
+)*abs(value_first_component-value_second_component ); previous_gradient[d] =
+(exp_max_plus -
+ exp_max_minus) /
+perturbation.norm() / 2.0;
+}
+
+std::cout << "iteration " << iteration
+    << " point value = " << current_distance << " dx " << dx
+    << " point " << current_point
+    << std::endl;
+
+dx[0]                   = 1;
+const double relaxation = 1;
+double previous_value=DBL_MAX;
+
+while (iteration < iteration_max && abs(current_distance-previous_value) >
+precision*precision)
+{
+for (unsigned int d = 0; d < dim; ++d)
+{
+  Tensor<1, dim> perturbation;
+  perturbation[d] = epsilon;
+  value_first_component=this->value_with_cell_guess(current_point +
+perturbation, cell);
+  value_second_component=shape.value_with_cell_guess(current_point +
+perturbation, cell); double exp_max_plus=(value_first_component *
+std::exp(value_first_component * a) + value_second_component *
+                           std::exp(value_second_component * a)) /
+                          std::pow(std::exp(value_first_component * a) +
+                                     std::exp(value_second_component *
+a),1)+1*abs(value_first_component-value_second_component
+)*abs(value_first_component-value_second_component );
+
+  value_first_component=this->value_with_cell_guess(current_point -
+perturbation, cell);
+  value_second_component=shape.value_with_cell_guess(current_point -
+perturbation, cell); double exp_max_minus=(value_first_component *
+std::exp(value_first_component * a) + value_second_component *
+                            std::exp(value_second_component * a)) /
+                           std::pow(std::exp(value_first_component * a) +
+                                      std::exp(value_second_component *
+a),1)+1*abs(value_first_component-value_second_component
+)*abs(value_first_component-value_second_component ); distance_gradient[d] =
+    (exp_max_plus -
+     exp_max_minus) /
+    perturbation.norm() / 2.0;
+}
+
+dx = -distance_gradient * relaxation *
+   abs(scalar_product((current_point - previous_position),
+                      (distance_gradient - previous_gradient))) /
+   (distance_gradient - previous_gradient).norm_square();
 
 
-            iteration++;
-            std::cout << "Iteration " << iteration
-                      << " point value = " << current_distance << " dx " << previous_gradient
-                      << " point " << current_point
-                      << std::endl;
-          }
 
-        if(distance>current_distance){
-            distance=this->value_with_cell_guess(current_point, cell);
-            normal=this->gradient_with_cell_guess(current_point, cell);
-            std::cout << "iteration " << iteration
-                      << " distance = " << distance << " normal " << normal
-                      << " point " << current_point
-                      << std::endl;
-          }
-      }
+previous_gradient = distance_gradient;
+previous_position = current_point;
+current_point     = current_point + dx;
+previous_value=current_distance;
+value_first_component=this->value_with_cell_guess(current_point, cell);
+value_second_component=shape.value_with_cell_guess(current_point, cell);
+double new_distance=(value_first_component * std::exp(value_first_component * a)
++ value_second_component * std::exp(value_second_component * a)) /
+                      std::pow(std::exp(value_first_component * a) +
+                                 std::exp(value_second_component *
+a),1)+1*abs(value_first_component-value_second_component
+)*abs(value_first_component-value_second_component );
+
+double alpha=0.5;
+unsigned int j=0;
+std::cout << "Alpha iteration " << j
+        << " point value = " << new_distance
+        << " previous point value = " << previous_value<< " alpha " << 1<< " dx
+" << dx
+
+        << " point " << current_point
+        << std::endl;
+while(previous_value<new_distance and j<6 and iteration!=0)
+{
+  current_point     = previous_position + dx*alpha;
+  value_first_component=this->value_with_cell_guess(current_point, cell);
+  value_second_component=shape.value_with_cell_guess(current_point, cell);
+  new_distance=(value_first_component * std::exp(value_first_component * a) +
+                  value_second_component *
+                    std::exp(value_second_component * a)) /
+                   std::pow(std::exp(value_first_component * a) +
+                              std::exp(value_second_component *
+a),1)+1*abs(value_first_component-value_second_component
+)*abs(value_first_component-value_second_component );
+  ++j;
+  std::cout << "Alpha iteration " << j
+            << " point value = " << new_distance
+            << " previous point value = " << previous_value<< " alpha " << alpha
+            << " point " << current_point
+            << std::endl;
+  alpha*=0.5;
+}
+current_distance=new_distance;
 
 
-    return std::make_pair(distance,normal);
-  }*/
+iteration++;
+std::cout << "Iteration " << iteration
+        << " point value = " << current_distance << " dx " << previous_gradient
+        << " point " << current_point
+        << std::endl;
+}
+
+if(distance>current_distance){
+distance=this->value_with_cell_guess(current_point, cell);
+normal=this->gradient_with_cell_guess(current_point, cell);
+std::cout << "iteration " << iteration
+        << " distance = " << distance << " normal " << normal
+        << " point " << current_point
+        << std::endl;
+}
+}
+
+
+return std::make_pair(distance,normal);
+}*/
   {
     // The initial guess is chosen as the centered point (i.e. evaluation
     // point, in the superquadric referential). It should already be somewhat
     // close to the closest point, and it is already in the right octant.
 
-    double distance=DBL_MAX;
-    Tensor<1,dim> normal;
+    double         distance = DBL_MAX;
+    Tensor<1, dim> normal;
 
-    for (unsigned int i = 0; i <candidate_points.size(); ++i){
+    for (unsigned int i = 0; i < candidate_points.size(); ++i)
+      {
         Point<dim>         current_point = candidate_points[i];
         unsigned int       iteration     = 0;
         const unsigned int iteration_max = 1e2;
 
         Point<dim> dx{}, distance_gradient{}, previous_position{},
           previous_gradient{};
-        double max_step=shape.effective_radius;
-        double previous_step_size=max_step;
+        double max_step           = shape.effective_radius;
+        double previous_step_size = max_step;
 
         double current_distance;
-        double value_first_component=this->value_with_cell_guess(current_point, cell);
-        double value_second_component=shape.value_with_cell_guess(current_point, cell);
+        double value_first_component =
+          this->value_with_cell_guess(current_point, cell);
+        double value_second_component =
+          shape.value_with_cell_guess(current_point, cell);
         if (value_first_component > value_second_component)
           {
-            current_distance =value_first_component;
+            current_distance = value_first_component;
           }
         else
           {
-            current_distance =value_second_component;
+            current_distance = value_second_component;
           }
 
         previous_position = current_point;
 
         std::cout << "iteration " << iteration
                   << " point value = " << current_distance << " dx " << dx
-                  << " point " << current_point
-                  << std::endl;
+                  << " point " << current_point << std::endl;
 
-        dx[0]                   = 1;
-        double previous_value=DBL_MAX;
-        unsigned int consecutive_center=0;
+        dx[0]                           = 1;
+        double       previous_value     = DBL_MAX;
+        unsigned int consecutive_center = 0;
 
         while (iteration < iteration_max && (previous_step_size) > precision)
           {
-            value_first_component=this->value_with_cell_guess(current_point, cell);
-            value_second_component=shape.value_with_cell_guess(current_point, cell);
+            value_first_component =
+              this->value_with_cell_guess(current_point, cell);
+            value_second_component =
+              shape.value_with_cell_guess(current_point, cell);
             if (value_first_component > value_second_component)
               {
-                distance_gradient =this->gradient_with_cell_guess(current_point, cell);
+                distance_gradient =
+                  this->gradient_with_cell_guess(current_point, cell);
               }
             else
               {
-                distance_gradient =shape.gradient_with_cell_guess(current_point, cell);
+                distance_gradient =
+                  shape.gradient_with_cell_guess(current_point, cell);
               }
 
-            Tensor<1,dim> direction=distance_gradient;
-            dx=-max_step*direction/direction.norm();
-            if(distance_gradient.norm()==0){
-                dx=-max_step*direction;
+            Tensor<1, dim> direction = distance_gradient;
+            dx                       = -max_step * direction / direction.norm();
+            if (distance_gradient.norm() == 0)
+              {
+                dx = -max_step * direction;
               }
 
-            Point<dim> best_point=current_point+ dx;
+            Point<dim> best_point = current_point + dx;
             value_first_component =
               this->value_with_cell_guess(best_point, cell);
             value_second_component =
               shape.value_with_cell_guess(best_point, cell);
             double new_distance =
               std::max(value_first_component, value_second_component);
-            double     best_dist =new_distance;
-            if(best_dist>previous_value-precision)
+            double best_dist = new_distance;
+            if (best_dist > previous_value - precision)
               {
                 for (unsigned int d = 0; d < dim; ++d)
                   {
@@ -402,45 +427,45 @@ public:
                           }
                       }
                   }
-                if(best_dist>previous_value-precision){
-                    consecutive_center+=1;
-                    previous_step_size=max_step;
-                    max_step*=1.0/std::pow(2.0,consecutive_center);
-                    best_point=previous_position;
-                    best_dist=previous_value;
+                if (best_dist > previous_value - precision)
+                  {
+                    consecutive_center += 1;
+                    previous_step_size = max_step;
+                    max_step *= 1.0 / std::pow(2.0, consecutive_center);
+                    best_point = previous_position;
+                    best_dist  = previous_value;
                   }
-                else{
-                    consecutive_center=0;
+                else
+                  {
+                    consecutive_center = 0;
                   }
               }
-            else{
-                consecutive_center=0;
+            else
+              {
+                consecutive_center = 0;
               }
-            current_distance=best_dist;
-            previous_value=best_dist;
+            current_distance  = best_dist;
+            previous_value    = best_dist;
             current_point     = best_point;
             previous_position = current_point;
             std::cout << "iteration " << iteration
-                      << " distance = " << current_distance
-                      << " max step "<<max_step
-                      << " point " << current_point
-                      << std::endl;
+                      << " distance = " << current_distance << " max step "
+                      << max_step << " point " << current_point << std::endl;
             iteration++;
-
           }
 
-        if(distance>current_distance){
-            distance=current_distance;
-            normal=this->gradient_with_cell_guess(current_point, cell);
-            std::cout << "iteration " << iteration
-                      << " distance = " << distance << " normal " << normal
-                      << " point " << current_point
+        if (distance > current_distance)
+          {
+            distance = current_distance;
+            normal   = this->gradient_with_cell_guess(current_point, cell);
+            std::cout << "iteration " << iteration << " distance = " << distance
+                      << " normal " << normal << " point " << current_point
                       << std::endl;
           }
       }
 
 
-    return std::make_pair(distance,normal);
+    return std::make_pair(distance, normal);
   }
   /**
    * @brief Return the analytical gradient of the distance
