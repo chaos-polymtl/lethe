@@ -49,7 +49,7 @@
       navier_stokes_base_1:e -> navier_stokes_base_1_2:w [dir=back];
       navier_stokes_base_1:e -> navier_stokes_base_1_3:w [dir=back];
 
-      navier_stokes_base_1_1_1 [label=<<B>CFDDEMSolver</B> <br/>(lethe-fluid-particles)>,href="https://lethe-cfd.github.io/lethe/html_doxygen/classNavierStokesBase.html", tooltip="CFDDEMSolver"];
+      navier_stokes_base_1_1_1 [label=<<B>CFDDEMSolver</B> <br/>(lethe-fluid-particles)>,href="https://lethe-cfd.github.io/lethe/html_doxygen/classCFDDEMSolver.html", tooltip="CFDDEMSolver"];
 
       navier_stokes_base_1_1:e -> navier_stokes_base_1_1_1:w [dir=back];
 
