@@ -1,0 +1,135 @@
+set dimension = 3
+
+subsection simulation control
+  set method      = bdf1
+  set time end    = 40e-4
+  set time step   = 1e-4
+  set output path = ./output/
+  set output name = output
+end
+
+subsection FEM
+  set velocity order = 1
+  set pressure order = 1
+end
+
+# The problem is set in cm and seconds
+
+subsection physical properties
+  subsection fluid 0
+    set kinematic viscosity = 0.01
+  end
+end
+
+subsection initial conditions
+  set type = nodal
+  subsection uvwp
+    set Function expression = 1;0;0;0
+  end
+end
+
+subsection mesh
+  set type      = dealii
+  set grid type = subdivided_hyper_rectangle
+
+  # Grid to use when solving the flow in the long version of the mixer
+  set grid arguments = 6,1,1: -150,-25,-25: 150,25,25: true
+
+  set initial refinement = 3
+end
+
+subsection mesh adaptation
+  set type                 = kelly
+  set fraction type        = number
+  set max number elements  = 2000000
+  set max refinement level = 5
+  set min refinement level = 0
+  set frequency            = 100000
+end
+
+subsection particles
+  set assemble Navier-Stokes inside particles = false
+  set number of particles                     = 1
+
+  subsection extrapolation function
+    set length ratio  = 4
+    set stencil order = 1
+  end
+
+  subsection local mesh refinement
+    set initial refinement                = 4
+    set refine mesh inside radius factor  = 1
+    set refine mesh outside radius factor = 1
+    set refinement zone extrapolation     = false
+  end
+  subsection particle info 0
+    set type            = composite
+    set shape arguments = mixer_long.composite
+  end
+end
+
+subsection boundary conditions
+  set number = 6
+  subsection bc 0
+    set id   = 0
+    set type = function
+    subsection u
+      set Function expression = 1
+    end
+  end
+  subsection bc 1
+    set id   = 1
+    set type = outlet
+  end
+  subsection bc 2
+    set id   = 2
+    set type = noslip
+  end
+  subsection bc 3
+    set id   = 3
+    set type = noslip
+  end
+  subsection bc 4
+    set id   = 4
+    set type = noslip
+  end
+  subsection bc 5
+    set id   = 5
+    set type = noslip
+  end
+end
+
+subsection post-processing
+  set verbosity               = verbose
+  set calculate pressure drop = true
+  set calculate flow rate     = true
+  set inlet boundary id       = 0
+  set outlet boundary id      = 1
+end
+
+subsection timer
+  set type = iteration
+end
+
+subsection non-linear solver
+  subsection fluid dynamics
+    set verbosity      = verbose
+    set tolerance      = 1e-3
+    set max iterations = 20
+  end
+end
+
+subsection linear solver
+  subsection fluid dynamics
+    set verbosity                             = verbose
+    set method                                = gmres
+    set max iters                             = 1000
+    set max krylov vectors                    = 1000
+    set relative residual                     = 1e-2
+    set minimum residual                      = 1e-6
+    set ilu preconditioner fill               = 0
+    set ilu preconditioner absolute tolerance = 1e-6
+    set force linear solver continuation      = false
+  end
+end
+
