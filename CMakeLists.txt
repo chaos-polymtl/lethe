@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.8...3.21)
 if(CMAKE_VERSION VERSION_LESS 3.12) # To support the version range
   cmake_policy(VERSION ${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION})
 endif()
-
+add_compile_options(-g)
 # TARGET_SUPPORTS_SHARED_LIBS is set by PROJECT, but we have to call
 # FIND_PACKAGE before that, and deal.II's configuration calls
 # ADD_LIBRARY with the SHARED keyword, so setting

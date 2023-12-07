@@ -331,9 +331,28 @@ return std::make_pair(distance,normal);
 
     double         distance = DBL_MAX;
     Tensor<1, dim> normal;
+    std::vector<Tensor<1, dim>> search_direction;
 
+    if constexpr (dim == 2)
+      {
+        search_direction.push_back(Tensor<1, dim>({1.0, 0.0}));
+        search_direction.push_back(Tensor<1, dim>({-1.0, 0.0}));
+        search_direction.push_back(Tensor<1, dim>({0.0, 1.0}));
+        search_direction.push_back(Tensor<1, dim>({0.0, -1.0}));
+      }
+    else
+      {
+        search_direction.push_back(Tensor<1, dim>({1.0, 0.0, 0.0}));
+        search_direction.push_back(Tensor<1, dim>({-1.0, 0.0, 0.0}));
+        search_direction.push_back(Tensor<1, dim>({0.0, 1.0, 0.0}));
+        search_direction.push_back(Tensor<1, dim>({0.0, -1.0, 0.0}));
+        search_direction.push_back(Tensor<1, dim>({0.0, 0.0, 1.0}));
+        search_direction.push_back(Tensor<1, dim>({0.0, 0.0, -1.0}));
+      }
     for (unsigned int i = 0; i < candidate_points.size(); ++i)
       {
+        Tensor<1, dim>     current_normal;
+        Tensor<1, dim>     previous_normal;
         Point<dim>         current_point = candidate_points[i];
         unsigned int       iteration     = 0;
         const unsigned int iteration_max = 1e2;
@@ -359,11 +378,6 @@ return std::make_pair(distance,normal);
 
         previous_position = current_point;
 
-        std::cout << "iteration " << iteration
-                  << " point value = " << current_distance << " dx " << dx
-                  << " point " << current_point << std::endl;
-
-        dx[0]                           = 1;
         double       previous_value     = DBL_MAX;
         unsigned int consecutive_center = 0;
 
@@ -383,6 +397,7 @@ return std::make_pair(distance,normal);
                 distance_gradient =
                   shape.gradient_with_cell_guess(current_point, cell);
               }
+            current_normal=distance_gradient/distance_gradient.norm();
 
             Tensor<1, dim> direction = distance_gradient;
             dx                       = -max_step * direction / direction.norm();
@@ -401,32 +416,85 @@ return std::make_pair(distance,normal);
             double best_dist = new_distance;
             if (best_dist > previous_value - precision)
               {
-                for (unsigned int d = 0; d < dim; ++d)
+                std::vector<double> diff_results;
+                diff_results.resize(search_direction.size());
+                for (unsigned int d = 0; d < search_direction.size(); ++d)
                   {
-                    for (unsigned int j = 0; j < 2; ++j)
+                    Tensor<1, dim> perturbation = search_direction[d]*max_step;
+                    value_first_component =
+                      this->value_with_cell_guess(current_point + perturbation,
+                                                  cell);
+                    value_second_component =
+                      shape.value_with_cell_guess(current_point + perturbation,
+                                                  cell);
+                    new_distance =
+                      std::max(value_first_component, value_second_component);
+                    diff_results[d]=(new_distance-previous_value)/max_step;
+                    if (new_distance < previous_value - precision)
                       {
-                        Tensor<1, dim> perturbation;
-                        if (j == 0)
-                          {
-                            perturbation[d] = max_step;
-                          }
-                        else
-                          {
-                            perturbation[d] = -max_step;
-                          }
-                        value_first_component = this->value_with_cell_guess(
-                          current_point + perturbation, cell);
-                        value_second_component = shape.value_with_cell_guess(
-                          current_point + perturbation, cell);
-                        new_distance = std::max(value_first_component,
-                                                value_second_component);
-                        if (new_distance < best_dist)
-                          {
-                            best_dist  = new_distance;
-                            best_point = current_point + perturbation;
-                          }
+                        best_dist  = new_distance;
+                        best_point = current_point + perturbation;
+                        break;
                       }
                   }
+
+                if constexpr (dim == 2)
+                  {
+                    current_normal[0]=((diff_results[0] - diff_results[1]) / 2);
+                    current_normal[1]=((diff_results[2] - diff_results[3]) / 2);
+                  }
+                else
+                  {
+                    current_normal[0]=((diff_results[0] - diff_results[1]) / 2);
+                    current_normal[1]=((diff_results[2] - diff_results[3]) / 2);
+                    current_normal[2]=((diff_results[4] - diff_results[5]) / 2);
+                  }
+                current_normal=current_normal/current_normal.norm();
+                Point<dim> extra_guess;
+                if(best_dist > previous_value - precision)
+                  {
+                    Point<dim> extra_guess;
+                    if constexpr (dim == 2)
+                      {
+                        extra_guess[0] =
+                          previous_position[0] -
+                          ((diff_results[0] - diff_results[1]) / 2) /
+                            ((diff_results[0] + diff_results[1]) / max_step);
+                        extra_guess[1] =
+                          previous_position[1] -
+                          ((diff_results[2] - diff_results[3]) / 2) /
+                            ((diff_results[2] + diff_results[3]) / max_step);
+                      }
+                    else
+                      {
+                        extra_guess[0] =
+                          previous_position[0] -
+                          ((diff_results[0] - diff_results[1]) / 2) /
+                            ((diff_results[0] + diff_results[1]) / max_step);
+                        extra_guess[1] =
+                          previous_position[1] -
+                          ((diff_results[2] - diff_results[3]) / 2) /
+                            ((diff_results[2] + diff_results[3]) / max_step);
+                        extra_guess[2] =
+                          previous_position[2] -
+                          ((diff_results[4] - diff_results[5]) / 2) /
+                            ((diff_results[4] + diff_results[5]) / max_step);
+                      }
+                    value_first_component =
+                      this->value_with_cell_guess(extra_guess,
+                                                  cell);
+                    value_second_component =
+                      shape.value_with_cell_guess(extra_guess,
+                                                  cell);
+                    new_distance =
+                      std::max(value_first_component, value_second_component);
+                    if (new_distance < previous_value - precision)
+                      {
+                        best_dist  = new_distance;
+                        best_point = extra_guess;
+                      }
+                  }
+
                 if (best_dist > previous_value - precision)
                   {
                     consecutive_center += 1;
@@ -434,31 +502,31 @@ return std::make_pair(distance,normal);
                     max_step *= 1.0 / std::pow(2.0, consecutive_center);
                     best_point = previous_position;
                     best_dist  = previous_value;
+                    current_normal=previous_normal;
                   }
                 else
                   {
+                    max_step*=1;
                     consecutive_center = 0;
                   }
               }
             else
               {
+                max_step*=1;
                 consecutive_center = 0;
               }
             current_distance  = best_dist;
             previous_value    = best_dist;
             current_point     = best_point;
             previous_position = current_point;
-            std::cout << "iteration " << iteration
-                      << " distance = " << current_distance << " max step "
-                      << max_step << " point " << current_point << std::endl;
+            previous_normal   = current_normal;
             iteration++;
           }
-
         if (distance > current_distance)
           {
             distance = current_distance;
-            normal   = this->gradient_with_cell_guess(current_point, cell);
-            std::cout << "iteration " << iteration << " distance = " << distance
+            normal   =current_normal;
+           std::cout << "iteration " << iteration << " distance = " << distance
                       << " normal " << normal << " point " << current_point
                       << std::endl;
           }
