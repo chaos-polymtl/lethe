@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# This is a script that is used by the continuous integration actios
+# This is a script that is used by the continuous integration actions
 # to ensure that the parameter files used in the examples are all
 # valid parameter files. This file requires a valid installation
 # of lethe and the presence of the lethe-parameter-check
