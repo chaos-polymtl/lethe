@@ -1358,6 +1358,40 @@ namespace Parameters
   };
 
   /**
+   * @brief Evaporation - Defines the subparameters for
+   * the evaporation cooling and recoil pressure at the free surface
+   * (air/metal interface).
+   */
+  struct Evaporation
+  {
+    enum class EvaporativeMassFluxModelType
+    {
+      constant,
+      temperature_dependent
+    } evaporative_mass_flux_model_type;
+
+    bool enable_evaporation_cooling;
+    bool enable_recoil_pressure;
+
+    // Parameters for the evaporation terms at the melt pool free surface
+    double evaporation_mass_flux;
+    double evaporation_coefficient;
+    double recoil_pressure_coefficient;
+    double molar_mass;
+    double boiling_temperature;
+    double latent_heat_evaporation;
+    double ambient_pressure;
+    double ambient_gas_density;
+    double liquid_density;
+
+    static void
+    declare_parameters(ParameterHandler &prm);
+    void
+    parse_parameters(ParameterHandler &prm);
+  };
+
+
+  /**
    * @brief Return the tensor of entry @p entry_string. If the entry is specified in the .prm file,
    * then the changed value is returned, otherwise the default value is
    * returned. If the entry is not equivalent to a Tensor<1,3>, an error will be

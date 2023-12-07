@@ -5,6 +5,7 @@ add_library(lethe-core
   dem_properties.cc
   density_model.cc
   dimensionality.cc
+  evaporation_model.cc
   grids.cc
   ib_particle.cc
   ib_stencil.cc
@@ -38,6 +39,7 @@ add_library(lethe-core
   ../../include/core/dem_properties.h
   ../../include/core/density_model.h
   ../../include/core/dimensionality.h
+  ../../include/core/evaporation_model.h
   ../../include/core/exceptions.h
   ../../include/core/grids.h
   ../../include/core/ib_particle.h
