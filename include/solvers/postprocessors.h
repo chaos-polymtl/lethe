@@ -511,22 +511,26 @@ private:
 
 
 /**
- * @class Calculates heat flux of a material at every quadrature point.
- * @param p_thermal_conductivity_model Thermal conductivity model of the material
+ * @class Calculates heat flux (q = -k * grad T) of a material at every
+ * quadrature point.
+ * @param p_thermal_conductivity_model Thermal conductivity model of the
+ * material
  * @param p_material_string Type of material: "f" (fluid) or "s" (solid)
- * @param p_material_id ID corresponding to the material (by convention, fluids
- * come before solids)
- * @param p_id Either fluid ID or solid ID (as initialized in the physical properties)
+ * @param p_id Either fluid ID or solid ID (as initialized in the physical
+ * properties) used to name the postprocessed variable vector.
+ * @param p_material_id ID corresponding to the material. Material IDs the
+ * cumulative IDs of fluids and solids by convention, fluids are counted before
+ * solids. This is used to identify which cell lies in which material.
  */
 template <int dim>
 class HeatFluxPostprocessor : public DataPostprocessorVector<dim>
 {
 public:
-  HeatFluxPostprocessor(
-    std::shared_ptr<ThermalConductivityModel> p_thermal_conductivity_model,
-    const std::string                         p_material_string = "f",
-    const unsigned int                        p_material_id     = 0,
-    const unsigned int                        p_id              = 0)
+  HeatFluxPostprocessor(const std::shared_ptr<ThermalConductivityModel>
+                                           &p_thermal_conductivity_model,
+                        const std::string  &p_material_string = "f",
+                        const unsigned int &p_id              = 0,
+                        const unsigned int &p_material_id     = 0)
     : DataPostprocessorVector<dim>("heat_flux_" + p_material_string +
                                      Utilities::to_string(p_id, 2),
                                    update_values | update_gradients)
@@ -542,29 +546,34 @@ public:
     const unsigned int n_quadrature_points = computed_quantities.size();
     AssertDimension(inputs.solution_gradients.size(), n_quadrature_points);
 
-    std::map<field, double>     field_values;
-    Vector<double>              null_vector(dim);
-    std::vector<Vector<double>> null_computed_quantities(n_quadrature_points,
-                                                         null_vector);
-
+    // Get Cell
     const auto cell = inputs.template get_cell<dim>();
 
+    // Check if the cell lies in the material of interest
     if (cell->material_id() == material_id)
-      for (unsigned int q = 0; q < n_quadrature_points; ++q)
-        {
-          AssertDimension(computed_quantities[q].size(), dim);
-          field_values[field::temperature] = inputs.solution_values[q];
+      {
+        std::map<field, double> field_values;
+        for (unsigned int q = 0; q < n_quadrature_points; ++q)
+          {
+            AssertDimension(computed_quantities[q].size(), dim);
+            field_values[field::temperature] = inputs.solution_values[q];
 
-          for (unsigned int i = 0; i < dim; ++i)
-            {
-              computed_quantities[q][i] =
-                -thermal_conductivity_model->value(field_values) *
-                inputs.solution_gradients[q][i];
-            }
-        }
+            for (unsigned int i = 0; i < dim; ++i)
+              {
+                computed_quantities[q][i] =
+                  -thermal_conductivity_model->value(field_values) *
+                  inputs.solution_gradients[q][i];
+              }
+          }
+      }
     // Apply null values to irrelevant subdomain
     else
-      computed_quantities = null_computed_quantities;
+      {
+        Vector<double>              null_vector(dim);
+        std::vector<Vector<double>> null_computed_quantities(
+          n_quadrature_points, null_vector);
+        computed_quantities = null_computed_quantities;
+      }
   }
 
 private:

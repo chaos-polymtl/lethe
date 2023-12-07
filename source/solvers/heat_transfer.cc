@@ -685,11 +685,7 @@ HeatTransfer<dim>::attach_solution_to_output(DataOut<dim> &data_out)
 {
   data_out.add_data_vector(dof_handler, present_solution, "temperature");
 
-  // Get thermal conductivity models
-  thermal_conductivity_models =
-    this->simulation_parameters.physical_properties_manager
-      .get_thermal_conductivity_vector();
-
+  // Get number of fluids and solids
   const unsigned int n_fluids =
     this->simulation_parameters.physical_properties_manager
       .get_number_of_fluids();
@@ -713,7 +709,7 @@ HeatTransfer<dim>::attach_solution_to_output(DataOut<dim> &data_out)
   for (unsigned int m_id = n_fluids; m_id < n_fluids + n_solids; ++m_id)
     {
       heat_flux_postprocessors.push_back(HeatFluxPostprocessor<dim>(
-        thermal_conductivity_models[m_id], "s", m_id, m_id - n_fluids));
+        thermal_conductivity_models[m_id], "s", m_id - n_fluids, m_id));
       data_out.add_data_vector(this->dof_handler,
                                this->present_solution,
                                heat_flux_postprocessors[m_id]);

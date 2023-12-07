@@ -71,6 +71,9 @@ public:
     , triangulation(p_triangulation)
     , simulation_control(p_simulation_control)
     , dof_handler(*triangulation)
+    , thermal_conductivity_models(
+        p_simulation_parameters.physical_properties_manager
+          .get_thermal_conductivity_vector())
 
   {
     if (simulation_parameters.mesh.simplex)
