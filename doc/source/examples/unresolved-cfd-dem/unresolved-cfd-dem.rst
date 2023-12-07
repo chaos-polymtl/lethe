@@ -24,17 +24,17 @@ This section includes examples related to multiphase fluid-solid flows. We organ
       rankdir="LR";
       size = "9,9";
 
-      unresolved_cfd_dem [label="Unresolved \nCFD-DEM", href="https://lethe-cfd.github.io/lethe/examples/unresolved-cfd-dem/unresolved-cfd-dem.html"];
+      unresolved_cfd_dem [label="Unresolved \nCFD-DEM", href="https://lethe-cfd.github.io/lethe/documentation/examples/unresolved-cfd-dem/unresolved-cfd-dem.html"];
 
-      cfd_dem_1 [label="Cylindrical Packed Bed", href="https://lethe-cfd.github.io/lethe/examples/unresolved-cfd-dem/cylindrical-packed-bed/cylindrical-packed-bed.html"];
+      cfd_dem_1 [label="Cylindrical Packed Bed", href="https://lethe-cfd.github.io/lethe/documentation/examples/unresolved-cfd-dem/cylindrical-packed-bed/cylindrical-packed-bed.html"];
 
-      cfd_dem_2 [label="Gas-Solid Fluidized Bed", href="https://lethe-cfd.github.io/lethe/examples/unresolved-cfd-dem/gas-solid-fluidized-bed/gas-solid-fluidized-bed.html"];
+      cfd_dem_2 [label="Gas-Solid Fluidized Bed", href="https://lethe-cfd.github.io/lethe/documentation/examples/unresolved-cfd-dem/gas-solid-fluidized-bed/gas-solid-fluidized-bed.html"];
 
-      cfd_dem_3 [label="Gas-Solid Spouted Bed", href="https://lethe-cfd.github.io/lethe/examples/unresolved-cfd-dem/gas-solid-spouted-bed/gas-solid-spouted-bed.html"];
+      cfd_dem_3 [label="Gas-Solid Spouted Bed", href="https://lethe-cfd.github.io/lethe/documentation/examples/unresolved-cfd-dem/gas-solid-spouted-bed/gas-solid-spouted-bed.html"];
 
-      cfd_dem_4 [label="Liquid-Solid Fluidized Bed", href="https://lethe-cfd.github.io/lethe/examples/unresolved-cfd-dem/liquid-solid-fluidized-bed/liquid-solid-fluidized-bed.html"];
+      cfd_dem_4 [label="Liquid-Solid Fluidized Bed", href="https://lethe-cfd.github.io/lethe/documentation/examples/unresolved-cfd-dem/liquid-solid-fluidized-bed/liquid-solid-fluidized-bed.html"];
 
-      cfd_dem_5 [label="Boycott Effect", href="https://lethe-cfd.github.io/lethe/examples/unresolved-cfd-dem/boycott-effect/boycott-effect.html"];
+      cfd_dem_5 [label="Boycott Effect", href="https://lethe-cfd.github.io/lethe/documentation/examples/unresolved-cfd-dem/boycott-effect/boycott-effect.html"];
       
       unresolved_cfd_dem -> cfd_dem_1:w;
       unresolved_cfd_dem -> cfd_dem_2:w;

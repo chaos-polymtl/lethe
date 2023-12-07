@@ -55,7 +55,7 @@ where:
 .. note::
     Since pressure in Lethe does not account for the hydrostatic pressure, i.e., the gravity term is not taken into account in the Navier-Stokes equations (see :doc:`../fluid_dynamics/navier-stokes`), we explicitly insert :math:`\mathbf{f}_{Ar,i}` in :math:`\mathbf{f}_{pf,i}`.
 
-In unresolved CFD-DEM, the drag force is calculated using correlations (frequently called drag models). The drag models implemented in Lethe are described in the `unresolved CFD-DEM parameters guide <https://lethe-cfd.github.io/lethe/parameters/unresolved_cfd-dem/cfd_dem.html>`_.
+In unresolved CFD-DEM, the drag force is calculated using correlations (frequently called drag models). The drag models implemented in Lethe are described in the `unresolved CFD-DEM parameters guide <https://lethe-cfd.github.io/lethe/documentation/parameters/unresolved_cfd-dem/cfd_dem.html>`_.
 
 Volume Average Navier-Stokes
 -----------------------------

@@ -35,14 +35,14 @@ jobs:
         run: |
           cd doc
           make html
-          cp -r build/html/ aggregate/html_documentation
+          cp -r build/html/ aggregate/documentation
 
           cd doxygen
           doxygen doxygen-config-file
           cd ..
           ls -lh
           ls -lh doxygen
-          cp -r doxygen/html/ aggregate/html_doxygen/
+          cp -r doxygen/html/ aggregate/doxygen/
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v2

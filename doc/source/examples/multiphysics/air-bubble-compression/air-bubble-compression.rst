@@ -206,7 +206,7 @@ Physical Properties
 ~~~~~~~~~~~~~~~~~~~~
 
 In the ``physical properties`` subsection, we define the properties of the fluids. For air, represented by ``fluid 0``, the ``isothermal_ideal_gas`` density model is used to account for the fluid's compressibility.
-We refer the reader to the `Physical Properties - Density Models <https://lethe-cfd.github.io/lethe/parameters/cfd/physical_properties.html#density-models>`_ documentation for further explanation on the isothermal compressible density model.
+We refer the reader to the `Physical Properties - Density Models <https://lethe-cfd.github.io/lethe/documentation/parameters/cfd/physical_properties.html#density-models>`_ documentation for further explanation on the isothermal compressible density model.
 The properties of air and water at :math:`25 \, \text{°C}` are used in this example.
 
 .. code-block:: text
