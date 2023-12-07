@@ -7,7 +7,7 @@
 # This script should run from the root of the lethe directory
 #
 
-# Force exit as soon as an error is encoutered
+# Force exit as soon as an error is encountered
 set -e
 
 # We check the syntax of all examples by family of solver. 
