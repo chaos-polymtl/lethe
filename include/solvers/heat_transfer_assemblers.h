@@ -26,6 +26,7 @@
 #define lethe_heat_transfer_assemblers_h
 
 #include <core/ale.h>
+#include <core/evaporation_model.h>
 #include <core/simulation_control.h>
 
 #include <solvers/copy_data.h>
@@ -498,6 +499,55 @@ public:
 
 protected:
   std::shared_ptr<Parameters::Laser<dim>> laser_parameters;
+};
+
+/**
+ * @brief Class that assembles the evaporation sink for the heat
+ * transfer solver at the free surface (air/metal interface) when VOF is
+ * enabled.
+ *
+ * @tparam dim An integer that denotes the number of spatial dimensions.
+ *
+ * @param simulation_control Shared pointer of the SimulationControl object
+ * controlling the current simulation.
+ * @param p_evaporation Struct that holds all evaporation model
+ * parameters.
+ * @ingroup assemblers.
+ */
+template <int dim>
+class HeatTransferAssemblerVOFEvaporation
+  : public HeatTransferAssemblerBase<dim>
+{
+public:
+  HeatTransferAssemblerVOFEvaporation(
+    std::shared_ptr<SimulationControl> simulation_control,
+    const Parameters::Evaporation     &p_evaporation)
+    : HeatTransferAssemblerBase<dim>(simulation_control)
+  {
+    this->evaporation_model = EvaporationModel::model_cast(p_evaporation);
+  }
+
+  /**
+   * @brief assemble_matrix Assembles the matrix
+   * @param scratch_data (see base class)
+   * @param copy_data (see base class)
+   */
+  virtual void
+  assemble_matrix(HeatTransferScratchData<dim> &scratch_data,
+                  StabilizedMethodsCopyData    &copy_data) override;
+
+  /**
+   * @brief assemble_rhs Assembles the rhs
+   * @param scratch_data (see base class)
+   * @param copy_data (see base class)
+   */
+  virtual void
+  assemble_rhs(HeatTransferScratchData<dim> &scratch_data,
+               StabilizedMethodsCopyData    &copy_data) override;
+
+private:
+  // Evaporation model
+  std::shared_ptr<EvaporationModel> evaporation_model;
 };
 
 #endif

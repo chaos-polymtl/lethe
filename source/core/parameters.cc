@@ -3238,6 +3238,108 @@ namespace Parameters
     prm.leave_subsection();
   }
 
+  void
+  Evaporation::declare_parameters(dealii::ParameterHandler &prm)
+  {
+    prm.enter_subsection("evaporation");
+    {
+      prm.declare_entry(
+        "evaporation mass flux model",
+        "constant",
+        Patterns::Selection("constant|temperature_dependent"),
+        "Model used for the calculation of the evaporative mass flux"
+        "Choices are <constant|temperature_dependent>.");
+      prm.declare_entry(
+        "enable evaporative cooling",
+        "false",
+        Patterns::Bool(),
+        "Enable the evaporative cooling at the free surface (gas/liquid interface) in the energy equation <true|false>");
+      prm.declare_entry(
+        "enable recoil pressure",
+        "false",
+        Patterns::Bool(),
+        "Enable the recoil pressure due to evaporation at the free surface (gas/liquid interface) in the momentum equation <true|false>");
+      prm.declare_entry(
+        "evaporation mass flux",
+        "0.0",
+        Patterns::Double(),
+        "Evaporation mass flux used if the constant evaporation model is selected");
+      prm.declare_entry(
+        "evaporation coefficient",
+        "0.82",
+        Patterns::Double(),
+        "Evaporation coefficient corresponding to the ratio between the net mass flux (evaporation-condensation) and the mass flux of evaporation");
+      prm.declare_entry(
+        "recoil pressure coefficient",
+        "0.56",
+        Patterns::Double(),
+        "Recoil pressure coefficient corresponding to the factor applied to the saturation pressure to compute the recoil pressure in an out of equilibrium evaportation");
+      prm.declare_entry("molar mass",
+                        "1.0",
+                        Patterns::Double(),
+                        "Molar mass of the material in kg/mol");
+      prm.declare_entry("boiling temperature",
+                        "1.0",
+                        Patterns::Double(),
+                        "Boiling temperature in K");
+      prm.declare_entry("evaporation latent heat",
+                        "0.0",
+                        Patterns::Double(),
+                        "Latent heat of evaporation in J/kg");
+      prm.declare_entry("ambient pressure",
+                        "101325",
+                        Patterns::Double(),
+                        "Pressure of the ambient gas in Pa");
+      prm.declare_entry("ambient gas density",
+                        "1.0",
+                        Patterns::Double(),
+                        "Ambient gas density in kg/m^3");
+      prm.declare_entry("liquid density",
+                        "10.0",
+                        Patterns::Double(),
+                        "Liquid density in kg/m^3");
+    }
+    prm.leave_subsection();
+  }
+
+  void
+  Evaporation::parse_parameters(ParameterHandler &prm)
+  {
+    prm.enter_subsection("evaporation");
+    {
+      std::string op;
+      op = prm.get("evaporation mass flux model");
+      if (op == "constant")
+        {
+          evaporative_mass_flux_model_type =
+            EvaporativeMassFluxModelType::constant;
+        }
+      else if (op == "temperature_dependent")
+        {
+          evaporative_mass_flux_model_type =
+            EvaporativeMassFluxModelType::temperature_dependent;
+        }
+      else
+        throw(std::runtime_error(
+          "Invalid evaporative mass flux model. The choices are <constant|temperature_dependent>."));
+
+      enable_evaporation_cooling = prm.get_bool("enable evaporative cooling");
+      enable_recoil_pressure     = prm.get_bool("enable recoil pressure");
+
+      evaporation_mass_flux   = prm.get_double("evaporation mass flux");
+      evaporation_coefficient = prm.get_double("evaporation coefficient");
+      recoil_pressure_coefficient =
+        prm.get_double("recoil pressure coefficient");
+      molar_mass              = prm.get_double("molar mass");
+      boiling_temperature     = prm.get_double("boiling temperature");
+      latent_heat_evaporation = prm.get_double("evaporation latent heat");
+      ambient_pressure        = prm.get_double("ambient pressure");
+      ambient_gas_density     = prm.get_double("ambient gas density");
+      liquid_density          = prm.get_double("liquid density");
+    }
+    prm.leave_subsection();
+  }
+
   Tensor<1, 3>
   entry_string_to_tensor3(ParameterHandler  &prm,
                           const std::string &entry_string)

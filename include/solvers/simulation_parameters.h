@@ -68,6 +68,7 @@ public:
   Parameters::Multiphysics                      multiphysics;
   Parameters::Stabilization                     stabilization;
   Parameters::ALE<dim>                          ale;
+  Parameters::Evaporation                       evaporation;
 
 
 
@@ -134,6 +135,8 @@ public:
 
     ale.declare_parameters(prm);
 
+    Parameters::Evaporation::declare_parameters(prm);
+
     multiphysics.declare_parameters(prm);
   }
 
@@ -178,6 +181,7 @@ public:
     multiphysics.parse_parameters(prm);
     stabilization.parse_parameters(prm);
     ale.parse_parameters(prm);
+    evaporation.parse_parameters(prm);
 
     physical_properties_manager.initialize(physical_properties);
 
