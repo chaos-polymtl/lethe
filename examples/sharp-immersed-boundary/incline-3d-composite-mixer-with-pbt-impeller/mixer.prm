@@ -77,7 +77,7 @@ end
 #---------------------------------------------------
 
 subsection boundary conditions
-  set number = 6
+  set number = 5
   subsection bc 0
     set id   = 0
     set type = noslip
@@ -96,10 +96,6 @@ subsection boundary conditions
   end
   subsection bc 4
     set id   = 4
-    set type = noslip
-  end
-  subsection bc 5
-    set id   = 5
     set type = noslip
   end
 end
