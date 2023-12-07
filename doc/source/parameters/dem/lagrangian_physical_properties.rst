@@ -29,8 +29,8 @@ In this subsection, gravitational acceleration, and the physical properties of t
       set diameter                          = 0.001
 
       # If distribution type = histogram
-      set histogram diameters list           = 0.001
-      set histogram probabilities list      = 1.
+      set histogram diameters list          = 0.001 , 0.0005
+      set histogram probabilities list      = 0.6   , 0.4
 
       # If distribution type = normal
       set standard deviation                = 0.0
@@ -74,7 +74,7 @@ In this subsection, gravitational acceleration, and the physical properties of t
 
 * For a ``normal`` distribution, the ``standard deviation`` parameter should be defined to indicate the standard deviation on the particle size distribution.
 
-* For a ``histogram`` distribution, the ``histogram diameters list`` defines each diameter to choose from when generating the diameter values. The ``histogram probabilities list`` defines the probability that a diameter value will be chosen for one particles.
+* For a ``histogram`` distribution, the ``histogram diameters list`` defines each diameter to choose from when generating the diameter values. The ``histogram probabilities list`` defines the probability that a diameter value will be chosen for one particles. Both list must have the same length.
 
 * The ``number of particles`` parameter defines the number of particles for each type.
 

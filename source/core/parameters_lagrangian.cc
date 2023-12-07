@@ -19,11 +19,11 @@ namespace Parameters
                         Patterns::Double(),
                         "Particle diameter");
       prm.declare_entry("histogram diameters list",
-                        "0.001",
+                        "0.001 , 0.0005",
                         Patterns::List(Patterns::Double()),
                         "Diameter values for a histogram distribution");
       prm.declare_entry("histogram probabilities list",
-                        "1.",
+                        "0.6 , 0.4",
                         Patterns::List(Patterns::Double()),
                         "Probabilities of each diameter");
       prm.declare_entry("standard deviation",
