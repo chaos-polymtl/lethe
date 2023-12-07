@@ -533,7 +533,7 @@ public:
     , thermal_conductivity_model(p_thermal_conductivity_model)
     , material_id(p_material_id)
   {}
-  
+
   virtual void
   evaluate_scalar_field(
     const DataPostprocessorInputs::Scalar<dim> &inputs,

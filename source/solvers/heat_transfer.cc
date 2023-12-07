@@ -690,10 +690,12 @@ HeatTransfer<dim>::attach_solution_to_output(DataOut<dim> &data_out)
     this->simulation_parameters.physical_properties_manager
       .get_thermal_conductivity_vector();
 
-  const unsigned int n_fluids = this->simulation_parameters
-                            .physical_properties_manager.get_number_of_fluids();
-  const unsigned int n_solids = this->simulation_parameters
-                            .physical_properties_manager.get_number_of_solids();
+  const unsigned int n_fluids =
+    this->simulation_parameters.physical_properties_manager
+      .get_number_of_fluids();
+  const unsigned int n_solids =
+    this->simulation_parameters.physical_properties_manager
+      .get_number_of_solids();
 
   // Postprocess heat fluxes
   heat_flux_postprocessors.clear();
