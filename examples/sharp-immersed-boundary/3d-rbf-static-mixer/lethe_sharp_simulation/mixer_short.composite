@@ -1,9 +1,0 @@
-shapes
-0; rbf             ;              RBF_helix.output;        -76.201:-20.0098:+15.6051; 0.00:+1.57079632679:0.00
-1; hyper rectangle ;                      25:25:25;                    0.00:0:0; 0:0:0
-2; cylinder        ;                      15:10000;                    0.00:0:0; 0:1.57079632679:0
-3; hyper rectangle ;                      25:25:25;                    0.00:0:0; 0:0:0
-operations
-15; difference   ; 2:1
-16; union        ; 0:15
-17; intersection ; 3:16
