@@ -12,13 +12,7 @@
  * the top level of the Lethe distribution.
  *
  * ---------------------------------------------------------------------
-
- *
- * Author: Bruno Blais, Polytechnique Montreal, 2019 -
  */
-
-// TODO : Refactor so the class itself is not a pointer, but contains a pointer
-//        to a function. This would be a lot more coherent...
 
 #ifndef lethe_analytical_solutions_h
 #define lethe_analytical_solutions_h
@@ -29,25 +23,50 @@
 #include <deal.II/base/parsed_function.h>
 
 using namespace dealii;
+
+
 /**
- * The analytical solution class provides an interface for all common
- * element required for the calculation of analytical solution
- * All equation-specific analytical solution should derive
- * from the base class but also call it's declare_parameters and
- *parse_parameters routine. This allows specialize class to focus on their
- *specificity and forget about other non-specific elements that are generic to
- *the calculation of analytical solutions
+ * @brief Contains all the classes related to the calculation of the analytical solutions
+ * for the various physics.
  **/
 
 namespace AnalyticalSolutions
 {
+
+  /**
+  * @brief Implements analytical solutions for the Navier-Stokes equations
+  * and the other physics supported by lethe
+  *
+  * @tparam dim An integer that denotes the dimension of the space in which
+  * the flow is solved.
+
+  * The analytical solution class provides an all common
+  * element required for the calculation of analytical solution for all the
+  * physics supported by Lethe.
+  **/
   template <int dim>
   class AnalyticalSolution
   {
-  protected:
-    bool        enable;
+  private:
+    /**
+     * Establishes if the calculation of the analytical solution is enabled or
+     * not
+     */
+    bool enable;
+
+    /**
+     * Filename used to store the L2 norm of the error
+     */
     std::string filename;
 
+
+    /**
+     * @brief Construct a new AnalyticalSolution object.
+     *
+     * The constructor automatically sets the number of components
+     * of each equation manually since all equations currently supported have
+     * a set number of equations.
+     */
   public:
     AnalyticalSolution()
       : enable(false)
@@ -57,40 +76,92 @@ namespace AnalyticalSolutions
       , cahn_hilliard(2)
     {}
 
+    /**
+     * @brief Declares the parameters required by the analytical solution
+     * within a parameter file
+     *
+     * @param prm ParameterHandler used to declare the parameters.
+     *
+     */
     virtual void
     declare_parameters(ParameterHandler &prm);
+
+    /**
+     * @brief Declares the parameters required by the analytical solution
+     * within a parameter file
+     *
+     * @param prm ParameterHandler used to parse the parameters.
+     *
+     */
     virtual void
     parse_parameters(ParameterHandler &prm);
 
+    /**
+     * @brief Checks if the calculation of the error using the analytical
+     * solution is enabled. This option is there to prevent unnecessary
+     * calculations when no analytical solutions are required.
+     */
     bool
     calculate_error()
     {
       return enable;
     }
 
+
+    /**
+     * @brief Enables the usage of the analytical solution
+     */
     void
     set_enable(bool is_enable)
     {
       enable = is_enable;
     }
 
+    /**
+     * @brief Get the file name associated with the output of the
+     * L2 norm of the error calculated using the analytical solution.
+     *
+     * @return filename A string that contains the filename used to output
+     * the L2 norm of the error.
+     */
     std::string
     get_filename()
     {
       return filename;
     }
 
+
+    /**
+     * Controls if the L2 norm of the error is printed to the terminal
+     * during the simulation.
+     */
     Parameters::Verbosity verbosity;
-    // Velocity components + pressure value
+
+    /**
+     * ParsedFunction that contains  the analytical solution for the velocity
+     * components and the pressure.
+     */
     Functions::ParsedFunction<dim> uvwp;
 
-    // Auxiliary physics
+    /**
+     * ParsedFunction that contains the analytical solution for the temperature.
+     */
     Functions::ParsedFunction<dim> temperature;
 
+    /**
+     * ParsedFunction that contains the analytical solution for the tracer.
+     */
     Functions::ParsedFunction<dim> tracer;
 
+    /**
+     * ParsedFunction that contains the analytical solution for the phase.
+     */
     Functions::ParsedFunction<dim> phase;
 
+    /**
+     * ParsedFunction that contains the analytical solution for the phase order
+     * and the chemical potential.
+     */
     Functions::ParsedFunction<dim> cahn_hilliard;
   };
 } // namespace AnalyticalSolutions
