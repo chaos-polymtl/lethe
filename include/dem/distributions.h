@@ -31,7 +31,7 @@ public:
   /**
    * @brief Carries out the size sampling of particles. This is the base class of
    * NormalDistribution, UniformDistribution, LogNormalDistribution and
-   * HistogramDistribution classes.
+   * CustomDistribution classes.
    * @param particle_number Number of particle inserted at a given insertion time step.
    */
   virtual void
@@ -96,12 +96,12 @@ private:
   /**
    * Average diameter of the normal distribution.
    */
-  double diameter_average;
+  const double diameter_average;
 
   /**
    * Standard deviation of distribution of the normal distribution.
    */
-  double standard_deviation;
+  const double standard_deviation;
 };
 
 class UniformDistribution : public Distribution
@@ -116,7 +116,7 @@ public:
   UniformDistribution(const double &d_values);
 
   /**
-   * @brief Carries out the size sampling of every particles inserted at a insertion
+   * @brief Carries out the size sampling of every particles inserted at an insertion
    * time step for the uniform distribution.
    *
    * @param particle_number Number of particle inserted at a given insertion time step.
@@ -144,26 +144,26 @@ private:
   /**
    *  The diameter value of the distribution.
    */
-  double diameter_value;
+  const double diameter_value;
 };
 
-class HistogramDistribution : public Distribution
+class CustomDistribution : public Distribution
 {
 public:
   /**
    * @brief The constructor stores the parameters necessary to define the histogram
    * distribution.
-   * @param d_list
-   * @param d_probabilities
+   * @param d_list Vector of diameter values
+   * @param d_probabilities Vector of probability values based on volume with respect to each diameter value
    */
-  HistogramDistribution(const std::vector<double> &d_list,
-                        const std::vector<double> &d_probabilities);
+  CustomDistribution(const std::vector<double> &d_list,
+                     const std::vector<double> &d_probabilities);
 
   /**
-   * @brief Carries out the size sampling of each particle inserted at a insertion
-   * time step for a custom distribution.
+   * @brief Carries out the size sampling of each particle inserted at an insertion
+   * time step for the histogram distribution.
    *
-   * @param particle_number Number of particle inserted at a given insertion time step.
+   * @param particle_number Number of particles inserted at a given insertion time step.
    */
   void
   particle_size_sampling(const unsigned int &particle_number) override;
@@ -186,10 +186,15 @@ public:
 
 private:
   /**
-   *
+   * Vector containing all the diameters values.
    */
-  std::vector<double> diameter_custom_values;
-  // Cumulative probability of each diameter value.
+  const std::vector<double> diameter_custom_values;
+
+  /**
+   * Vector containing cummulative probabilities associated with de
+   * diameter_custom_values vector. The probabilities are based on the volume,
+   * not the number of particles.
+   */
   std::vector<double> diameter_custom_cumm_prob;
 };
 

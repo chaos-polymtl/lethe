@@ -29,8 +29,8 @@ In this subsection, gravitational acceleration, and the physical properties of t
       set diameter                          = 0.001
 
       # If distribution type = custom
-      set custom diameters list          = 0.001 , 0.0005
-      set custom probabilities list      = 0.6   , 0.4
+      set custom diameters                  = 0.001 , 0.0005
+      set custom probabilities              = 0.6   , 0.4
 
       # If distribution type = normal
       set standard deviation                = 0.0

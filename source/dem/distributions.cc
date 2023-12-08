@@ -4,10 +4,9 @@
 
 NormalDistribution::NormalDistribution(const double &d_average,
                                        const double &d_standard_deviation)
-{
-  diameter_average   = d_average;
-  standard_deviation = d_standard_deviation;
-}
+  : diameter_average(d_average)
+  , standard_deviation(d_standard_deviation)
+{}
 
 void
 NormalDistribution::particle_size_sampling(const unsigned int &particle_number)
@@ -44,9 +43,8 @@ NormalDistribution::find_max_diameter()
 }
 
 UniformDistribution::UniformDistribution(const double &d_values)
-{
-  diameter_value = d_values;
-}
+  : diameter_value(d_values)
+{}
 
 void
 UniformDistribution::particle_size_sampling(const unsigned int &particle_number)
@@ -61,20 +59,20 @@ UniformDistribution::particle_size_sampling(const unsigned int &particle_number)
 double
 UniformDistribution::find_min_diameter()
 {
-  return this->diameter_values;
+  return this->diameter_value;
 }
 
 double
 UniformDistribution::find_max_diameter()
 {
-  return this->diameter_values;
+  return this->diameter_value;
 }
 
-HistogramDistribution::HistogramDistribution(
+CustomDistribution::CustomDistribution(
   const std::vector<double> &d_list,
   const std::vector<double> &d_probabilities)
+  : diameter_custom_cumm_prob(d_list)
 {
-  diameter_cust_values = d_list;
   std::vector<double> cumulative_probability_vector;
   cumulative_probability_vector.reserve(d_probabilities.size());
 
@@ -85,12 +83,11 @@ HistogramDistribution::HistogramDistribution(
       cumulative_probability_vector.push_back(cumulative_value);
     }
 
-  diameter_cust_cumm_prob = cumulative_probability_vector;
+  diameter_custom_cumm_prob = cumulative_probability_vector;
 }
 
 void
-HistogramDistribution::particle_size_sampling(
-  const unsigned int &particle_number)
+CustomDistribution::particle_size_sampling(const unsigned int &particle_number)
 {
   this->particle_sizes.clear();
   this->particle_sizes.reserve(particle_number);
@@ -102,26 +99,26 @@ HistogramDistribution::particle_size_sampling(
   for (unsigned int i = 0; i < particle_number; ++i)
     {
       // Search to find the appropriate diameter index
-      auto it = std::upper_bound(diameter_cust_cumm_prob.begin(),
-                                 diameter_cust_cumm_prob.end(),
+      auto it = std::upper_bound(diameter_custom_cumm_prob.begin(),
+                                 diameter_custom_cumm_prob.end(),
                                  dis(gen));
 
-      unsigned int index = std::distance(diameter_cust_cumm_prob.begin(), it);
+      unsigned int index = std::distance(diameter_custom_cumm_prob.begin(), it);
 
-      this->particle_sizes.push_back(diameter_cust_values[index]);
+      this->particle_sizes.push_back(diameter_custom_values[index]);
     }
 }
 
 double
-HistogramDistribution::find_min_diameter()
+CustomDistribution::find_min_diameter()
 {
-  return *std::min_element(diameter_cust_values.begin(),
-                           diameter_cust_values.end());
+  return *std::min_element(diameter_custom_values.begin(),
+                           diameter_custom_values.end());
 }
 
 double
-HistogramDistribution::find_max_diameter()
+CustomDistribution::find_max_diameter()
 {
-  return *std::max_element(diameter_cust_values.begin(),
-                           diameter_cust_values.end());
+  return *std::max_element(diameter_custom_values.begin(),
+                           diameter_custom_values.end());
 }

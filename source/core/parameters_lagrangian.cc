@@ -11,21 +11,22 @@ namespace Parameters
     {
       prm.declare_entry("size distribution type",
                         "uniform",
-                        Patterns::Selection("uniform|normal|histogram"),
+                        Patterns::Selection("uniform|normal|custom"),
                         "Particle size distribution"
-                        "Choices are <uniform|normal|histogram>.");
+                        "Choices are <uniform|normal|custom>.");
       prm.declare_entry("diameter",
                         "0.001",
                         Patterns::Double(),
                         "Particle diameter");
-      prm.declare_entry("histogram diameters list",
+      prm.declare_entry("custom diameters",
                         "0.001 , 0.0005",
                         Patterns::List(Patterns::Double()),
-                        "Diameter values for a histogram distribution");
-      prm.declare_entry("histogram probabilities list",
-                        "0.6 , 0.4",
-                        Patterns::List(Patterns::Double()),
-                        "Probabilities of each diameter");
+                        "Diameter values for a custom distribution");
+      prm.declare_entry(
+        "custom probabilities",
+        "0.6 , 0.4",
+        Patterns::List(Patterns::Double()),
+        "Probabilities of each diameter of the custom distribution based on the volume fraction");
       prm.declare_entry("standard deviation",
                         "0",
                         Patterns::Double(),
@@ -72,19 +73,19 @@ namespace Parameters
       particle_average_diameter.at(particle_type) = prm.get_double("diameter");
       particle_size_std.at(particle_type) =
         prm.get_double("standard deviation");
-      particle_histogram_diameter.at(particle_type) =
-        entry_string_to_vector(prm, "histogram diameters list");
-      particle_histogram_probability.at(particle_type) =
-        entry_string_to_vector(prm, "histogram probabilities list");
+      particle_custom_diameter.at(particle_type) =
+        entry_string_to_vector(prm, "custom diameters");
+      particle_custom_probability.at(particle_type) =
+        entry_string_to_vector(prm, "custom probabilities");
 
       double probability_sum =
-        std::reduce(particle_histogram_probability.at(particle_type).begin(),
-                    particle_histogram_probability.at(particle_type).end());
+        std::reduce(particle_custom_probability.at(particle_type).begin(),
+                    particle_custom_probability.at(particle_type).end());
 
-      // We make sure that the cummulative probability is equal to 1.
+      // We make sure that the cumulative probability is equal to 1.
       if (probability_sum != 1.0)
         {
-          for (double &i : particle_histogram_probability.at(particle_type))
+          for (double &i : particle_custom_probability.at(particle_type))
             {
               i = i / probability_sum;
             }
@@ -99,13 +100,14 @@ namespace Parameters
         {
           distribution_type.at(particle_type) = SizeDistributionType::normal;
         }
-      else if (size_distribution_type_str == "histogram")
+      else if (size_distribution_type_str == "custom")
         {
-          distribution_type.at(particle_type) = SizeDistributionType::histogram;
+          distribution_type.at(particle_type) = SizeDistributionType::custom;
         }
       else
         {
-          throw(std::runtime_error("Invalid size distribution type "));
+          throw(std::runtime_error(
+            "Invalid size distribution type. Choices are <uniform|normal|custom>."));
         }
       number.at(particle_type) = prm.get_integer("number of particles");
       density_particle.at(particle_type) = prm.get_double("density particles");
@@ -193,8 +195,8 @@ namespace Parameters
       initialize_containers(particle_average_diameter,
                             particle_size_std,
                             distribution_type,
-                            particle_histogram_diameter,
-                            particle_histogram_probability,
+                            particle_custom_diameter,
+                            particle_custom_probability,
                             number,
                             density_particle,
                             youngs_modulus_particle,
@@ -235,9 +237,9 @@ namespace Parameters
       std::unordered_map<unsigned int, double> &particle_size_std,
       std::vector<SizeDistributionType>        &distribution_type,
       std::unordered_map<unsigned int, std::vector<double>>
-        &particle_histogram_diameter,
+        &particle_custom_diameter,
       std::unordered_map<unsigned int, std::vector<double>>
-                                               &particle_histogram_probability,
+                                               &particle_custom_probability,
       std::unordered_map<unsigned int, int>    &number,
       std::unordered_map<unsigned int, double> &density_particle,
       std::unordered_map<unsigned int, double> &youngs_modulus_particle,
@@ -255,8 +257,8 @@ namespace Parameters
           particle_average_diameter.insert({counter, 0.});
           particle_size_std.insert({counter, 0.});
           distribution_type.push_back(SizeDistributionType::uniform);
-          particle_histogram_diameter.insert({counter, {0.}});
-          particle_histogram_probability.insert({counter, {1.}});
+          particle_custom_diameter.insert({counter, {0.}});
+          particle_custom_probability.insert({counter, {1.}});
           number.insert({counter, 0});
           density_particle.insert({counter, 0.});
           youngs_modulus_particle.insert({counter, 0.});

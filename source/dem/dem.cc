@@ -232,14 +232,14 @@ DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
         }
       else if (parameters.lagrangian_physical_properties.distribution_type.at(
                  type_number) ==
-               Parameters::Lagrangian::SizeDistributionType::histogram)
+               Parameters::Lagrangian::SizeDistributionType::custom)
         {
           distribution_object_container[type_number] =
-            std::make_shared<HistogramDistribution>(
+            std::make_shared<CustomDistribution>(
+              parameters.lagrangian_physical_properties.particle_custom_diameter
+                .at(type_number),
               parameters.lagrangian_physical_properties
-                .particle_histogram_diameter.at(type_number),
-              parameters.lagrangian_physical_properties
-                .particle_histogram_probability.at(type_number));
+                .particle_custom_probability.at(type_number));
         }
       maximum_particle_diameter = std::max(
         maximum_particle_diameter,
