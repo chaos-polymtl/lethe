@@ -498,7 +498,7 @@ SerialSolid<dim, spacedim>::write_output_results(
 
   const std::string folder        = simulation_control->get_output_path();
   const std::string solution_name = simulation_control->get_output_name() +
-                                    "_solid_object_" +
+                                    ".solid_object." +
                                     Utilities::int_to_string(id, 2);
   const unsigned int iter        = simulation_control->get_step_number();
   const double       time        = simulation_control->get_current_time();
@@ -563,7 +563,7 @@ SerialSolid<dim, spacedim>::read_checkpoint(std::string prefix)
   }
 
   // Re-read pvd handler from output files
-  pvdhandler.read(prefix + "_solid_object_" + Utilities::int_to_string(id, 2));
+  pvdhandler.read(prefix + ".solid_object." + Utilities::int_to_string(id, 2));
 
   // Reset triangulation position using displacement vector
   move_solid_triangulation_with_displacement();
