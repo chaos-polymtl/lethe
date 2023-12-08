@@ -10,6 +10,7 @@ USER root
 # Copy required files and directories for compilation
 COPY CMakeLists.txt lethe/
 COPY applications_tests lethe/applications_tests
+COPY doc lethe/doc
 COPY tests lethe/tests
 COPY applications lethe/applications
 COPY include lethe/include

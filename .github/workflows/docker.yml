@@ -3,6 +3,7 @@ name: Docker Image Build & Push
 
 on:
   push:
+    
     # Runs on every push on master branch
     branches:
       - master

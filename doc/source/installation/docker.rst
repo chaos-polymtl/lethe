@@ -6,6 +6,34 @@ Docker
 
     You will need to install `Docker <https://www.docker.com/get-started>`_ and have 5 GB of free disk space.
 
+
+
+##############################################################
+No Compilation Required: Using the Provided Lethe Docker Image
+##############################################################
+
+If you don't want to build Lethe and its dependencies, you can use the provided `Docker image <https://github.com/lethe-cfd/lethe/pkgs/container/lethe>`_.
+
+For example, to launch the 2D Lid-Driven Cavity Flow simulation, run the following lines inside the root Lethe folder:
+
+.. code-block:: shell
+  :class: copy-button
+
+  docker run --rm \
+    -v $(pwd):/home/dealii \
+    ghcr.io/lethe-cfd/lethe:master \
+    lethe-fluid examples/incompressible_flow/2d_lid_driven_cavity/cavity.prm
+
+In general, to run a lethe simulation you will just need to run the following command:
+
+.. code-block:: shell
+  :class: copy-button
+
+  docker run --rm \
+    -v $(pwd):/home/dealii \
+    ghcr.io/lethe-cfd/lethe:master \
+    lethe-executable parameter-file.prm
+
 #################################
 Using a deal.II  Docker Container
 #################################
@@ -179,18 +207,3 @@ You can now download, run and manage Docker containers pre-configured with deal.
 
 You can now clone ``lethe``, compile it, and run large-scale, efficient multi-physics simulations!
 
-##############################################################
-No Compilation Required: Using the Provided Lethe Docker Image
-##############################################################
-
-If you don't want to build Lethe and its dependencies, you can use the provided `Docker image <https://github.com/lethe-cfd/lethe/pkgs/container/lethe>`_.
-
-For example, to launch the 2D Lid-Driven Cavity Flow simulation, run the following lines inside the root Lethe folder:
-
-.. code-block:: shell
-  :class: copy-button
-
-  docker run --rm \
-    -v $(pwd):/home/dealii \
-    ghcr.io/lethe-cfd/lethe:master \
-    lethe-fluid examples/incompressible_flow/2d_lid_driven_cavity/cavity.prm
