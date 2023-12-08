@@ -679,12 +679,41 @@ HeatTransfer<dim>::copy_local_rhs_to_global_rhs(
                                               system_rhs);
 }
 
-
 template <int dim>
 void
 HeatTransfer<dim>::attach_solution_to_output(DataOut<dim> &data_out)
 {
   data_out.add_data_vector(dof_handler, present_solution, "temperature");
+
+  // Get number of fluids and solids
+  const unsigned int n_fluids =
+    this->simulation_parameters.physical_properties_manager
+      .get_number_of_fluids();
+  const unsigned int n_solids =
+    this->simulation_parameters.physical_properties_manager
+      .get_number_of_solids();
+
+  // Postprocess heat fluxes
+  heat_flux_postprocessors.clear();
+  heat_flux_postprocessors.reserve(n_fluids + n_solids);
+  // Heat fluxes in fluids
+  for (unsigned int f_id = 0; f_id < n_fluids; ++f_id)
+    {
+      heat_flux_postprocessors.push_back(HeatFluxPostprocessor<dim>(
+        thermal_conductivity_models[f_id], "f", f_id, f_id));
+      data_out.add_data_vector(this->dof_handler,
+                               this->present_solution,
+                               heat_flux_postprocessors[f_id]);
+    }
+  // Heat fluxes in solids
+  for (unsigned int m_id = n_fluids; m_id < n_fluids + n_solids; ++m_id)
+    {
+      heat_flux_postprocessors.push_back(HeatFluxPostprocessor<dim>(
+        thermal_conductivity_models[m_id], "s", m_id - n_fluids, m_id));
+      data_out.add_data_vector(this->dof_handler,
+                               this->present_solution,
+                               heat_flux_postprocessors[m_id]);
+    }
 }
 
 template <int dim>
