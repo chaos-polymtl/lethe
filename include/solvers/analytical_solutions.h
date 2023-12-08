@@ -27,7 +27,7 @@ using namespace dealii;
 
 /**
  * @brief Contains all the classes related to the calculation of the analytical solutions
- * for the various physics
+ * for the various physics.
  **/
 
 namespace AnalyticalSolutions
@@ -133,34 +133,34 @@ namespace AnalyticalSolutions
 
     /**
      * Controls if the L2 norm of the error is printed to the terminal
-     * during the simulation
+     * during the simulation.
      */
     Parameters::Verbosity verbosity;
 
     /**
      * ParsedFunction that contains  the analytical solution for the velocity
-     * components and the pressure
+     * components and the pressure.
      */
     Functions::ParsedFunction<dim> uvwp;
 
     /**
-     * ParsedFunction that contains the analytical solution for the temperature
+     * ParsedFunction that contains the analytical solution for the temperature.
      */
     Functions::ParsedFunction<dim> temperature;
 
     /**
-     * ParsedFunction that contains the analytical solution for the tracer
+     * ParsedFunction that contains the analytical solution for the tracer.
      */
     Functions::ParsedFunction<dim> tracer;
 
     /**
-     * ParsedFunction that contains the analytical solution for the phase
+     * ParsedFunction that contains the analytical solution for the phase.
      */
     Functions::ParsedFunction<dim> phase;
 
     /**
      * ParsedFunction that contains the analytical solution for the phase order
-     * and the chemical potential
+     * and the chemical potential.
      */
     Functions::ParsedFunction<dim> cahn_hilliard;
   };
