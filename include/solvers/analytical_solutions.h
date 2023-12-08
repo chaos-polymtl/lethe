@@ -26,24 +26,37 @@ using namespace dealii;
 
 
 /**
- * @brief Implements analytical solutions for the Navier-Stokes equations
- * and the other physics supported by lethe
- *
- * @tparam dim An integer that denotes the dimension of the space in which
- * the flow is solved.
-
- * The analytical solution class provides an all common
- * element required for the calculation of analytical solution for all the
- * physics supported by Lethe.
+ * @brief Contains all the classes related to the calculation of the analytical solutions
+ * for the various physics
  **/
 
 namespace AnalyticalSolutions
 {
+
+  /**
+  * @brief Implements analytical solutions for the Navier-Stokes equations
+  * and the other physics supported by lethe
+  *
+  * @tparam dim An integer that denotes the dimension of the space in which
+  * the flow is solved.
+
+  * The analytical solution class provides an all common
+  * element required for the calculation of analytical solution for all the
+  * physics supported by Lethe.
+  **/
   template <int dim>
   class AnalyticalSolution
   {
-  protected:
-    bool        enable;
+  private:
+    /**
+     * Establishes if the calculation of the analytical solution is enabled or
+     * not
+     */
+    bool enable;
+
+    /**
+     * Filename used to store the L2 norm of the error
+     */
     std::string filename;
 
 
