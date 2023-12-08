@@ -4,11 +4,11 @@ name: Docker Image Build & Push
 on:
   push:
     # Runs on every push on master branch
-    branches:
-      - master
+    #branches:
+    #  - master
     # Except when its just doc changes
-    paths-ignore:
-      - 'doc/**'
+    #paths-ignore:
+    #  - 'doc/**'
     # Runs when a tag following semantic versioning is pushed
     tags:
       - v*
