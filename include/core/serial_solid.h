@@ -195,13 +195,7 @@ public:
   void
   move_solid_triangulation(double time_step, double initial_time);
 
-  /**
-   * @brief Moves the vertices of the solid triangulation using the displacement
-   * vector. This is mostly used when restarting simulations which contain
-   * a serial solid in order to replace it at the position
-   */
-  void
-  move_solid_triangulation_with_displacement();
+
 
   /**
    * @brief Write the output file of the solid object triangulation
@@ -212,11 +206,11 @@ public:
   write_output_results(std::shared_ptr<SimulationControl> simulation_control);
 
   /**
-   * @brief read solid base triangulation checkpoint
+   * @brief read solid base triangulation checkpoint and replaces the
+   * triangulation at the location where it was when it was checkpointed
    *
    * @param prefix_name The prefix of the checkpoint of the simulation
    *
-   * @warning This is currently not implemented
    */
   void
   read_checkpoint(std::string prefix_name);
@@ -225,8 +219,6 @@ public:
    * @brief write solid base triangulation checkpoint
    *
    * @param prefix_name The prefix of the checkpoint of the simulation
-   *
-   * @warning This is currently not implemented
    */
   void
   write_checkpoint(std::string prefix_name);
@@ -249,6 +241,15 @@ private:
   {
     displacement_since_mapped = 0;
   }
+
+  /**
+   * @brief Moves the vertices of the solid triangulation using the displacement
+   * vector. This is mostly used when restarting simulations which contain
+   * a serial solid in order to replace it at the position it was when the
+   * simulation finished.
+   */
+  void
+  move_solid_triangulation_with_displacement();
 
   /**
    * @brief Rotates the grid by a given angle around an axis

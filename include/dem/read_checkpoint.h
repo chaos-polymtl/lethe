@@ -47,6 +47,7 @@ using namespace std;
  * @param grid_pvdhandler PVD handler for post-processing
  * @param triangulation Triangulation
  * @param particle_handler Particle handler
+ * @param solid_objects Vector of solids objects used in DEM simulations
  */
 template <int dim>
 void
