@@ -433,11 +433,11 @@ template <int dim, int spacedim>
 void
 SerialSolid<dim, spacedim>::move_solid_triangulation_with_displacement()
 {
-  const unsigned int     dofs_per_cell = displacement_fe->dofs_per_cell;
+  const unsigned int dofs_per_cell = displacement_fe->dofs_per_cell;
 
   // Set of vertices which were displaced already. A set is used
   // for efficiency when searching over it.
-  std::set<unsigned int> dof_vertex_displaced;
+  std::set<unsigned int>               dof_vertex_displaced;
   std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
 
   // Loop over all cells
