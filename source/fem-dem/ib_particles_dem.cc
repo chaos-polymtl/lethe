@@ -1174,8 +1174,10 @@ IBParticlesDEM<dim>::integrate_particles_motion(const double dt,
       if (dim == 3)
         g[2] =
           this->parameters->f_gravity->value(dem_particles[p_i].position, 2);
+      //std::cout<<"hi orientation  start "<<dem_particles[p_i].orientation<<std::endl;
       dem_particles[p_i].set_position(dem_particles[p_i].position);
       dem_particles[p_i].set_orientation(dem_particles[p_i].orientation);
+
     }
 
 
@@ -1313,7 +1315,7 @@ IBParticlesDEM<dim>::integrate_particles_motion(const double dt,
                   dem_particles[p_i].set_position(dem_particles[p_i].position);
 
 
-                  Tensor<1,3> total_torque=(current_fluid_torque[p_i] + contact_torque[p_i] +
+                  Tensor<1,3> total_torque= dem_particles[p_i].rotation_matrix*(current_fluid_torque[p_i] + contact_torque[p_i] +
                                                  contact_wall_torque[p_i]);
 
                   // Calculate angular acceleration in particle frame
@@ -1447,8 +1449,17 @@ IBParticlesDEM<dim>::integrate_particles_motion(const double dt,
                                 (k_omega[p_i][0]);
 
           // Update orientation matrix
-          Tensor<2,3> new_rotation_matrix= Physics::Transformations::Rotations::rotation_matrix_3d(dem_particles[p_i].omega/dem_particles[p_i].omega.norm(),dem_particles[p_i].omega.norm()*dt_dem)*dem_particles[p_i].rotation_matrix;
-          dem_particles[p_i].orientation=dem_particles[p_i].shape->rotation_matrix_to_xyz_angles(new_rotation_matrix);
+          if(dem_particles[p_i].omega.norm()>0)
+            {
+              Tensor<2, 3> new_rotation_matrix =
+                Physics::Transformations::Rotations::rotation_matrix_3d(
+                  dem_particles[p_i].omega / dem_particles[p_i].omega.norm(),
+                  dem_particles[p_i].omega.norm() * dt_dem) *
+                dem_particles[p_i].rotation_matrix;
+              dem_particles[p_i].orientation =
+                dem_particles[p_i].shape->rotation_matrix_to_xyz_angles(
+                  new_rotation_matrix);
+            }
 
           // Integration of the impulsion applied to the particle.
           // This is what will be transferred to the CFD to integrate the
@@ -1469,6 +1480,7 @@ IBParticlesDEM<dim>::integrate_particles_motion(const double dt,
             dt_dem *
             (k_omega_contact_impulsion[p_i][0] );
 
+          //std::cout<<"hi orientation iteration "<<dem_particles[p_i].orientation<<std::endl;
           dem_particles[p_i].set_position(dem_particles[p_i].position);
           dem_particles[p_i].set_orientation(dem_particles[p_i].orientation);
         }

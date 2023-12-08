@@ -326,7 +326,7 @@ public:
   // The last non-linear iteration of the velocity vector.
   Tensor<1, 3> velocity_iter;
   // The last correction vector of the velocity value without any relaxation.
-  Tensor<1, 3> previous_d_velocity;
+  Tensor<1, 3> previous_velocity_residual;
 
   // Angular velocity
   // By default, the angular position is always 0 on every axis.
@@ -340,7 +340,7 @@ public:
   // The last iteration of the omega vector.
   Tensor<1, 3> omega_iter;
   // The last correction vector of the velocity value without any relaxation.
-  Tensor<1, 3> previous_d_omega;
+  Tensor<1, 3> previous_omega_residual;
 
   // The total impulsion that the particle feels during the current time step.
   Tensor<1, 3> impulsion;

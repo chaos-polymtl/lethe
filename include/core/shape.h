@@ -104,7 +104,8 @@ public:
     , orientation(orientation)
     , part_of_a_composite(false)
     , layer_thickening(0.)
-  {}
+  {
+  }
 
   /**
    * @brief Return the evaluation of the signed distance function of this solid
@@ -417,6 +418,7 @@ public:
   inline virtual void
   set_position(const Point<dim> &new_position)
   {
+    clear_cache();
     position = new_position;
   }
 
@@ -429,6 +431,11 @@ public:
   inline virtual void
   set_orientation(const Tensor<1, 3> &new_orientation)
   {
+    clear_cache();
+    this->rotation_matrix=0;
+    this->rotation_matrix[0][0]=1.0;
+    this->rotation_matrix[1][1]=1.0;
+    this->rotation_matrix[2][2]=1.0;
     if constexpr (dim == 2)
       {
         Tensor<1, 3> axis;
@@ -443,12 +450,12 @@ public:
           {
             Tensor<1, 3> axis;
             axis[2 - i] = 1.0;
-            this->rotation_matrix =
-              this->rotation_matrix *
+            this->rotation_matrix =this->rotation_matrix*
               Physics::Transformations::Rotations::rotation_matrix_3d(
                 axis, new_orientation[2 - i]);
           }
       }
+    //std::cout<<"set orientation in shape "<<this->rotation_matrix<<std::endl;
     orientation = new_orientation;
   }
     /**
