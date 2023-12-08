@@ -789,7 +789,8 @@ GLSSharpNavierStokesSolver<dim>::define_particles()
             {
               /*if (typeid(*particles[i].shape) != typeid(Sphere<dim>))
                 throw std::runtime_error(
-                  "Shapes other than sphere cannot have their motion integrated through fluid-structure interaction");*/
+                  "Shapes other than sphere cannot have their motion integrated
+                through fluid-structure interaction");*/
               some_particles_are_coupled = true;
             }
         }
@@ -2166,7 +2167,6 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
                 }
               residual_velocity +=
                 (particles[p].impulsion) / particles[p].mass / dt;
-              // Approximate a diagonal Jacobian with a secant method.
 
               double inverse_of_relaxation_coefficient_velocity =
                 -bdf_coefs[0] -
@@ -2174,17 +2174,12 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
 
               // Evaluate the relaxation parameter using a generalization of the
               // secant method.
-              if (particles[p].previous_velocity_residual.norm() !=
-                  0)
+              if (particles[p].previous_velocity_residual.norm() != 0)
                 {
                   auto vector_of_velocity_variation =
                     (particles[p].velocity - particles[p].velocity_iter);
-                  /*auto vector_of_residual_variation =
-                    (bdf_coefs[0] *
-                       (-particles[p].velocity + particles[p].velocity_iter) +
-                     (particles[p].impulsion - particles[p].impulsion_iter) /
-                       particles[p].mass / dt);*/
-                  auto vector_of_residual_variation =residual_velocity-particles[p].previous_velocity_residual;
+                  auto vector_of_residual_variation =
+                    residual_velocity - particles[p].previous_velocity_residual;
                   double dot_product_of_the_variation_vectors =
                     scalar_product(vector_of_velocity_variation,
                                    vector_of_residual_variation);
@@ -2212,7 +2207,7 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
               particles[p].velocity =
                 particles[p].velocity_iter -
                 velocity_correction_vector * alpha * local_alpha;
-              particles[p].impulsion_iter      = particles[p].impulsion;
+              particles[p].impulsion_iter             = particles[p].impulsion;
               particles[p].previous_velocity_residual = residual_velocity;
               particles[p].previous_local_alpha_velocity = local_alpha;
 
@@ -2275,19 +2270,36 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
                 }
 
               // For the rotation velocity : same logic as the velocity.
-              auto         inv_inertia = invert(particles[p].inertia);
+              auto inv_inertia = invert(particles[p].inertia);
 
-              //std::cout<<"inertia "<<particles[p].inertia<<std::endl;
-              Tensor<1,3> total_torque= particles[p].rotation_matrix*(particles[p].omega_impulsion) / dt;
+              // Calculate the torque in the particle frame of reference.
+              Tensor<1, 3> total_torque = particles[p].rotation_matrix *
+                                          (particles[p].omega_impulsion) / dt;
 
               // Calculate angular acceleration in particle frame
-              Tensor<1,3> angular_velocity_in_particle_frame=particles[p].rotation_matrix*particles[p].omega;
-              Tensor<1,3> angular_acceleration_in_particle_frame;
-              angular_acceleration_in_particle_frame[0]=(total_torque[0]-(particles[p].inertia[2][2]-particles[p].inertia[1][1])*angular_velocity_in_particle_frame[2]*angular_velocity_in_particle_frame[1])/particles[p].inertia[0][0];
-              angular_acceleration_in_particle_frame[1]=(total_torque[1]-(particles[p].inertia[0][0]-particles[p].inertia[2][2])*angular_velocity_in_particle_frame[2]*angular_velocity_in_particle_frame[0])/particles[p].inertia[1][1];
-              angular_acceleration_in_particle_frame[2]=(total_torque[2]-(particles[p].inertia[1][1]-particles[p].inertia[0][0])*angular_velocity_in_particle_frame[0]*angular_velocity_in_particle_frame[1])/particles[p].inertia[2][2];
+              Tensor<1, 3> angular_velocity_in_particle_frame =
+                particles[p].rotation_matrix * particles[p].omega;
+              Tensor<1, 3> angular_acceleration_in_particle_frame;
+              angular_acceleration_in_particle_frame[0] =
+                (total_torque[0] -
+                 (particles[p].inertia[2][2] - particles[p].inertia[1][1]) *
+                   angular_velocity_in_particle_frame[2] *
+                   angular_velocity_in_particle_frame[1]) /
+                particles[p].inertia[0][0];
+              angular_acceleration_in_particle_frame[1] =
+                (total_torque[1] -
+                 (particles[p].inertia[0][0] - particles[p].inertia[2][2]) *
+                   angular_velocity_in_particle_frame[2] *
+                   angular_velocity_in_particle_frame[0]) /
+                particles[p].inertia[1][1];
+              angular_acceleration_in_particle_frame[2] =
+                (total_torque[2] -
+                 (particles[p].inertia[1][1] - particles[p].inertia[0][0]) *
+                   angular_velocity_in_particle_frame[0] *
+                   angular_velocity_in_particle_frame[1]) /
+                particles[p].inertia[2][2];
 
-              // Rotate angular acceleration in world frame
+              // Evaluate the residual
               Tensor<1, 3> residual_omega =
                 -(bdf_coefs[0] * particles[p].omega);
               for (unsigned int i = 1;
@@ -2297,8 +2309,10 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
                   residual_omega +=
                     -(bdf_coefs[i] * particles[p].previous_omega[i - 1]);
                 }
-              residual_omega +=// omega_accel
-                invert(particles[p].rotation_matrix)*angular_acceleration_in_particle_frame;
+              // Rotate angular acceleration in world frame
+              residual_omega += // omega_accel
+                invert(particles[p].rotation_matrix) *
+                angular_acceleration_in_particle_frame;
 
 
               double inverse_of_relaxation_coefficient_omega =
@@ -2307,11 +2321,12 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
                                   inv_inertia.norm() / dt;
               // Evaluate the relaxation parameter using a generalization of the
               // secant method.
-              if (particles[p].previous_omega_residual.norm()!=0)
+              if (particles[p].previous_omega_residual.norm() != 0)
                 {
                   auto vector_of_omega_variation =
                     (particles[p].omega - particles[p].omega_iter);
-                  auto vector_of_residual_variation =residual_omega-particles[p].previous_omega_residual;
+                  auto vector_of_residual_variation =
+                    residual_omega - particles[p].previous_omega_residual;
 
                   double dot_product_of_the_variation_vectors =
                     scalar_product(vector_of_omega_variation,
@@ -2341,22 +2356,19 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
               // new position directly with the new velocity found.
               if (particles[p].omega_contact_impulsion.norm() < 1e-12)
                 {
-                  if(particles[p].omega.norm()>0)
+                  if (particles[p].omega.norm() > 0)
                     {
-                      /*std::cout<<"particle rotaiton matrix"<<particles[p].rotation_matrix<<std::endl;
-                      std::cout<<"rotation matrix of dealii"<<Physics::Transformations::Rotations::rotation_matrix_3d(
-                                                                    particles[p].omega / particles[p].omega.norm(),
-                                                                    particles[p].omega.norm() * dt)<<std::endl;*/
-                      particles[p].rotation_matrix=0;
-                      particles[p].rotation_matrix[0][0]=1.0;
-                      particles[p].rotation_matrix[1][1]=1.0;
-                      particles[p].rotation_matrix[2][2]=1.0;
+                      // Impose a new orientation of the particle based on the integration and previous orientation.
+                      particles[p].rotation_matrix       = 0;
+                      particles[p].rotation_matrix[0][0] = 1.0;
+                      particles[p].rotation_matrix[1][1] = 1.0;
+                      particles[p].rotation_matrix[2][2] = 1.0;
                       if constexpr (dim == 2)
                         {
                           Tensor<1, 3> axis;
-                          axis[2] = 1.0;
-                          particles[p].rotation_matrix =
-                            Physics::Transformations::Rotations::rotation_matrix_3d(
+                          axis[2]                      = 1.0;
+                          particles[p].rotation_matrix = Physics::
+                            Transformations::Rotations::rotation_matrix_3d(
                               axis, particles[p].previous_orientation[0][2]);
                         }
                       if constexpr (dim == 3)
@@ -2365,61 +2377,34 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
                             {
                               Tensor<1, 3> axis;
                               axis[2 - i] = 1.0;
-                              particles[p].rotation_matrix =particles[p].rotation_matrix*
-                                                      Physics::Transformations::Rotations::rotation_matrix_3d(
-                                                        axis, particles[p].previous_orientation[0][2 - i]);
+                              particles[p].rotation_matrix =
+                                particles[p].rotation_matrix *
+                                Physics::Transformations::Rotations::
+                                  rotation_matrix_3d(
+                                    axis,
+                                    particles[p]
+                                      .previous_orientation[0][2 - i]);
                             }
                         }
                       particles[p].rotation_matrix =
                         Physics::Transformations::Rotations::rotation_matrix_3d(
                           particles[p].omega / particles[p].omega.norm(),
-                          particles[p].omega.norm() * dt)*particles[p].rotation_matrix;
-
-
+                          particles[p].omega.norm() * dt) *
+                        particles[p].rotation_matrix;
                       particles[p].orientation =
                         particles[p].shape->rotation_matrix_to_xyz_angles(
                           particles[p].rotation_matrix);
-                      /*std::cout<<"hi dt ="<<dt<<std::endl;
-                      std::cout<<"hi rotation matrix dt = "<<Physics::Transformations::Rotations::rotation_matrix_3d(
-                                                               particles[p].omega / particles[p].omega.norm(),
-                                                               particles[p].omega.norm() * dt)<<std::endl;*/
-                     // particles[p].orientation = particles[p].previous_orientation[0]+particles[p].omega*dt;
                     }
                 }
               else
                 {
-                  particles[p].set_orientation(ib_dem.dem_particles[p].orientation);
-                }
-
-              if (particles[p].contact_impulsion.norm() < 1e-12)
-                {
-                  particles[p].position.clear();
-                  for (unsigned int d = 0; d < dim; ++d)
-                    {
-                      for (unsigned int i = 1;
-                           i < number_of_previous_solutions(method) + 1;
-                           ++i)
-                        {
-                          double position_update =
-                            -bdf_coefs[i] *
-                            particles[p].previous_positions[i - 1][d] /
-                            bdf_coefs[0];
-
-                          particles[p].set_position(particles[p].position[d] +
-                                                      position_update,
-                                                    d);
-                        }
-
-                      double position_update =
-                        particles[p].velocity[d] / bdf_coefs[0];
-                      particles[p].set_position(particles[p].position[d] +
-                                                  position_update,
-                                                d);
-                    }
+                  // We have contact so we impose the DEM orientation as the new orientation.
+                  particles[p].set_orientation(
+                    ib_dem.dem_particles[p].orientation);
                 }
 
 
-              // If something went wrong during the update, the particle state
+              // If something went wrong during the update, the particle's state
               // would be reversed to its original state here.
               if (save_particle_state_is_used)
                 particles[p] = save_particle_state;
@@ -2427,21 +2412,13 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
               // Evaluate global residual of the particle dynamics.
               double this_particle_residual =
                 sqrt(std::pow(residual_velocity.norm(), 2) +
-                     std::pow(residual_omega.norm()*particles[p].radius, 2)) *
+                     std::pow(residual_omega.norm() * particles[p].radius, 2)) *
                 dt;
-
-
-              if (Utilities::MPI::this_mpi_process(this->mpi_communicator) == 0)
-                {
-                  std::cout<<"orientation "<<particles[p].orientation <<std::endl;
-                  std::cout<<"angular velocity "<<particles[p].omega <<std::endl;
-                  std::cout<<"angular residual scale "<<residual_omega.norm()*particles[p].radius *dt<<std::endl;
-                  std::cout<<"velocity residual scale "<<residual_velocity.norm() *dt<<std::endl;
-                }
 
               // Keep in memory the residual.
               particles[p].residual_velocity = residual_velocity.norm();
-              particles[p].residual_omega = residual_omega.norm()*particles[p].radius;
+              particles[p].residual_omega =
+                residual_omega.norm() * particles[p].radius;
               particles_residual_vect[p] = this_particle_residual;
               // L_inf of all the particles' residual.
               if (this_particle_residual > particle_residual)
@@ -2512,7 +2489,8 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
                   particles[p].clear_shape_cache();
                 }
               if (particles[p].position != particles[p].previous_positions[0] ||
-                  particles[p].orientation != particles[p].previous_orientation[0])
+                  particles[p].orientation !=
+                    particles[p].previous_orientation[0])
                 {
                   particles[p].clear_shape_cache();
                 }
@@ -2757,13 +2735,12 @@ GLSSharpNavierStokesSolver<dim>::finish_time_step_particles()
           particles[p].previous_orientation[i] =
             particles[p].previous_orientation[i - 1];
           particles[p].previous_omega[i] = particles[p].previous_omega[i - 1];
-
         }
 
-      particles[p].previous_positions[0] = particles[p].position;
-      particles[p].previous_velocity[0]  = particles[p].velocity;
-      particles[p].previous_omega[0]     = particles[p].omega;
-      particles[p].previous_orientation[0]= particles[p].orientation;
+      particles[p].previous_positions[0]   = particles[p].position;
+      particles[p].previous_velocity[0]    = particles[p].velocity;
+      particles[p].previous_omega[0]       = particles[p].omega;
+      particles[p].previous_orientation[0] = particles[p].orientation;
 
       particles[p].previous_fluid_forces = particles[p].fluid_forces;
       particles[p].previous_fluid_viscous_forces =
@@ -2772,14 +2749,14 @@ GLSSharpNavierStokesSolver<dim>::finish_time_step_particles()
         particles[p].fluid_pressure_forces;
       particles[p].previous_fluid_torque = particles[p].fluid_torque;
 
-      particles[p].velocity_iter        = particles[p].velocity;
-      particles[p].impulsion_iter       = particles[p].impulsion;
-      particles[p].omega_iter           = particles[p].omega;
-      particles[p].omega_impulsion_iter = particles[p].omega_impulsion;
-      particles[p].residual_velocity    = DBL_MAX;
-      particles[p].residual_omega       = DBL_MAX;
-      particles[p].previous_velocity_residual=0;
-      particles[p].previous_omega_residual=0;
+      particles[p].velocity_iter              = particles[p].velocity;
+      particles[p].impulsion_iter             = particles[p].impulsion;
+      particles[p].omega_iter                 = particles[p].omega;
+      particles[p].omega_impulsion_iter       = particles[p].omega_impulsion;
+      particles[p].residual_velocity          = DBL_MAX;
+      particles[p].residual_omega             = DBL_MAX;
+      particles[p].previous_velocity_residual = 0;
+      particles[p].previous_omega_residual    = 0;
 
 
 
@@ -4221,10 +4198,12 @@ GLSSharpNavierStokesSolver<dim>::write_checkpoint()
                     "omega_y", particles[i_particle].previous_omega[j][1]);
                   particles_information_table.set_precision("omega_y", 16);
                   particles_information_table.add_value(
-                    "theta_x", particles[i_particle].previous_orientation[j][0]);
+                    "theta_x",
+                    particles[i_particle].previous_orientation[j][0]);
                   particles_information_table.set_precision("theta_x", 16);
                   particles_information_table.add_value(
-                    "theta_y", particles[i_particle].previous_orientation[j][1]);
+                    "theta_y",
+                    particles[i_particle].previous_orientation[j][1]);
                   particles_information_table.set_precision("theta_y", 16);
                 }
               particles_information_table.add_value(
@@ -4310,8 +4289,7 @@ GLSSharpNavierStokesSolver<dim>::read_checkpoint()
                   particles[p_i].fluid_pressure_forces[1] =
                     restart_data["f_yp"][row];
                   particles[p_i].omega[2]        = restart_data["omega_z"][row];
-                  particles[p_i].orientation[2] =
-                    restart_data["theta_z"][row];
+                  particles[p_i].orientation[2]  = restart_data["theta_z"][row];
                   particles[p_i].fluid_torque[2] = restart_data["T_z"][row];
 
                   // fill previous time step
@@ -4384,12 +4362,9 @@ GLSSharpNavierStokesSolver<dim>::read_checkpoint()
                     restart_data["f_yp"][row];
                   particles[p_i].fluid_pressure_forces[2] =
                     restart_data["f_zp"][row];
-                  particles[p_i].orientation[0] =
-                    restart_data["theta_x"][row];
-                  particles[p_i].orientation[1] =
-                    restart_data["theta_y"][row];
-                  particles[p_i].orientation[2] =
-                    restart_data["theta_z"][row];
+                  particles[p_i].orientation[0]  = restart_data["theta_x"][row];
+                  particles[p_i].orientation[1]  = restart_data["theta_y"][row];
+                  particles[p_i].orientation[2]  = restart_data["theta_z"][row];
                   particles[p_i].omega[0]        = restart_data["omega_x"][row];
                   particles[p_i].omega[1]        = restart_data["omega_y"][row];
                   particles[p_i].omega[2]        = restart_data["omega_z"][row];

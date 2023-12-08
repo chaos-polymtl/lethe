@@ -62,7 +62,6 @@ IBParticlesDEM<dim>::initialize(
   particle_wall_contact_force_object =
     std::make_shared<ParticleWallNonLinearForce<dim>>(dem_parameters,
                                                       boundary_index);
-
 }
 template <int dim>
 void
@@ -1083,7 +1082,8 @@ IBParticlesDEM<dim>::integrate_particles_motion(const double dt,
 
           // nouvelle valeur de omega calculee avec euler explicite
 
-          //Tensor<2,dim> rodrigues_rotation = I + sin(omega_mag*Deltat) * K + (1 - cos(omega_mag*Deltat)) * K**2
+          //Tensor<2,dim> rodrigues_rotation = I + sin(omega_mag*Deltat) * K +
+(1 - cos(omega_mag*Deltat)) * K**2
           //dem_particles[p_i].rotation_matrix=rodrigues_rotation*dem_particles[p_i].rotation_matrix;
 
           // Integration of the impulsion applied to the particle.
@@ -1174,10 +1174,10 @@ IBParticlesDEM<dim>::integrate_particles_motion(const double dt,
       if (dim == 3)
         g[2] =
           this->parameters->f_gravity->value(dem_particles[p_i].position, 2);
-      //std::cout<<"hi orientation  start "<<dem_particles[p_i].orientation<<std::endl;
+      // std::cout<<"hi orientation  start
+      // "<<dem_particles[p_i].orientation<<std::endl;
       dem_particles[p_i].set_position(dem_particles[p_i].position);
       dem_particles[p_i].set_orientation(dem_particles[p_i].orientation);
-
     }
 
 
@@ -1248,7 +1248,7 @@ IBParticlesDEM<dim>::integrate_particles_motion(const double dt,
                                          lubrication_wall_torque);
 
           // define local time of the rk step
-          double local_dt = dt_dem ;
+          double local_dt = dt_dem;
 
           for (unsigned int p_i = 0; p_i < dem_particles.size(); ++p_i)
             {
@@ -1315,18 +1315,42 @@ IBParticlesDEM<dim>::integrate_particles_motion(const double dt,
                   dem_particles[p_i].set_position(dem_particles[p_i].position);
 
 
-                  Tensor<1,3> total_torque= dem_particles[p_i].rotation_matrix*(current_fluid_torque[p_i] + contact_torque[p_i] +
-                                                 contact_wall_torque[p_i]);
+                  Tensor<1, 3> total_torque =
+                    dem_particles[p_i].rotation_matrix *
+                    (current_fluid_torque[p_i] + contact_torque[p_i] +
+                     contact_wall_torque[p_i]);
 
                   // Calculate angular acceleration in particle frame
-                  Tensor<1,3> angular_velocity_in_particle_frame=dem_particles[p_i].rotation_matrix*dem_particles[p_i].omega;
-                  Tensor<1,3> angular_acceleration_in_particle_frame;
-                  angular_acceleration_in_particle_frame[0]=(total_torque[0]-(dem_particles[p_i].inertia[2][2]-dem_particles[p_i].inertia[1][1])*angular_velocity_in_particle_frame[2]*angular_velocity_in_particle_frame[1])/dem_particles[p_i].inertia[0][0];
-                  angular_acceleration_in_particle_frame[1]=(total_torque[1]-(dem_particles[p_i].inertia[0][0]-dem_particles[p_i].inertia[2][2])*angular_velocity_in_particle_frame[2]*angular_velocity_in_particle_frame[0])/dem_particles[p_i].inertia[1][1];
-                  angular_acceleration_in_particle_frame[2]=(total_torque[2]-(dem_particles[p_i].inertia[1][1]-dem_particles[p_i].inertia[0][0])*angular_velocity_in_particle_frame[0]*angular_velocity_in_particle_frame[1])/dem_particles[p_i].inertia[2][2];
+                  Tensor<1, 3> angular_velocity_in_particle_frame =
+                    dem_particles[p_i].rotation_matrix *
+                    dem_particles[p_i].omega;
+                  Tensor<1, 3> angular_acceleration_in_particle_frame;
+                  angular_acceleration_in_particle_frame[0] =
+                    (total_torque[0] -
+                     (dem_particles[p_i].inertia[2][2] -
+                      dem_particles[p_i].inertia[1][1]) *
+                       angular_velocity_in_particle_frame[2] *
+                       angular_velocity_in_particle_frame[1]) /
+                    dem_particles[p_i].inertia[0][0];
+                  angular_acceleration_in_particle_frame[1] =
+                    (total_torque[1] -
+                     (dem_particles[p_i].inertia[0][0] -
+                      dem_particles[p_i].inertia[2][2]) *
+                       angular_velocity_in_particle_frame[2] *
+                       angular_velocity_in_particle_frame[0]) /
+                    dem_particles[p_i].inertia[1][1];
+                  angular_acceleration_in_particle_frame[2] =
+                    (total_torque[2] -
+                     (dem_particles[p_i].inertia[1][1] -
+                      dem_particles[p_i].inertia[0][0]) *
+                       angular_velocity_in_particle_frame[0] *
+                       angular_velocity_in_particle_frame[1]) /
+                    dem_particles[p_i].inertia[2][2];
 
                   // Rotate angular acceleration in world frame
-                  k_omega[p_i][step] = invert(dem_particles[p_i].rotation_matrix)*angular_acceleration_in_particle_frame;
+                  k_omega[p_i][step] =
+                    invert(dem_particles[p_i].rotation_matrix) *
+                    angular_acceleration_in_particle_frame;
 
 
                   k_omega_impulsion[p_i][step] = current_fluid_torque[p_i] +
@@ -1341,8 +1365,6 @@ IBParticlesDEM<dim>::integrate_particles_motion(const double dt,
 
                   dem_particles[p_i].omega =
                     last_omega[p_i] + k_omega[p_i][step] * local_dt;
-
-
                 }
               else
                 {
@@ -1445,11 +1467,10 @@ IBParticlesDEM<dim>::integrate_particles_motion(const double dt,
             }
 
           dem_particles[p_i].omega =
-            last_omega[p_i] + dt_dem *
-                                (k_omega[p_i][0]);
+            last_omega[p_i] + dt_dem * (k_omega[p_i][0]);
 
           // Update orientation matrix
-          if(dem_particles[p_i].omega.norm()>0)
+          if (dem_particles[p_i].omega.norm() > 0)
             {
               Tensor<2, 3> new_rotation_matrix =
                 Physics::Transformations::Rotations::rotation_matrix_3d(
@@ -1464,23 +1485,19 @@ IBParticlesDEM<dim>::integrate_particles_motion(const double dt,
           // Integration of the impulsion applied to the particle.
           // This is what will be transferred to the CFD to integrate the
           // particle.
-          dem_particles[p_i].impulsion +=
-            dt_dem *
-            (k_impulsion[p_i][0] );
+          dem_particles[p_i].impulsion += dt_dem * (k_impulsion[p_i][0]);
 
           dem_particles[p_i].contact_impulsion +=
-            dt_dem *
-            (k_contact_impulsion[p_i][0] );
+            dt_dem * (k_contact_impulsion[p_i][0]);
 
           dem_particles[p_i].omega_impulsion +=
-            dt_dem *
-            (k_omega_impulsion[p_i][0]);
+            dt_dem * (k_omega_impulsion[p_i][0]);
 
           dem_particles[p_i].omega_contact_impulsion +=
-            dt_dem *
-            (k_omega_contact_impulsion[p_i][0] );
+            dt_dem * (k_omega_contact_impulsion[p_i][0]);
 
-          //std::cout<<"hi orientation iteration "<<dem_particles[p_i].orientation<<std::endl;
+          // std::cout<<"hi orientation iteration
+          // "<<dem_particles[p_i].orientation<<std::endl;
           dem_particles[p_i].set_position(dem_particles[p_i].position);
           dem_particles[p_i].set_orientation(dem_particles[p_i].orientation);
         }
@@ -1488,8 +1505,6 @@ IBParticlesDEM<dim>::integrate_particles_motion(const double dt,
       t += dt_dem;
     }
 }
-
-
 
 
 

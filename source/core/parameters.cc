@@ -3236,8 +3236,9 @@ namespace Parameters
             particles[i].initialize_previous_solution();
             particles[i].set_position(particles[i].position);
             particles[i].set_orientation(particles[i].orientation);
-            //std::cout<<"orientation"<< particles[i].orientation<<std::endl;
-           //std::cout<<"rotation matrix in parameters"<< particles[i].rotation_matrix<<std::endl;
+            // std::cout<<"orientation"<< particles[i].orientation<<std::endl;
+            // std::cout<<"rotation matrix in parameters"<<
+            // particles[i].rotation_matrix<<std::endl;
             prm.leave_subsection();
           }
           prm.leave_subsection();

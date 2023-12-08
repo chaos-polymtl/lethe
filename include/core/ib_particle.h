@@ -261,16 +261,17 @@ public:
   load_data_from_file();
 
   void
-  set_initial_rotation_matrix(Tensor<1,3> orientation);
+  set_initial_rotation_matrix(Tensor<1, 3> orientation);
 
   void
-  update_rotation_matrix(Tensor<2,3> rotation);
+  update_rotation_matrix(Tensor<2, 3> rotation);
 
   void
-  compute_local_inertia(Tensor<2,3> global_inertia);
+  compute_local_inertia(Tensor<2, 3> global_inertia);
 
-  Tensor<2,3>
-  compute_rodrigues_rotation_matrix(Tensor<1,3> rotation_vector, double timestep);
+  Tensor<2, 3>
+  compute_rodrigues_rotation_matrix(Tensor<1, 3> rotation_vector,
+                                    double       timestep);
 
 
 
@@ -407,8 +408,9 @@ public:
   // Rotation matrix of the particle in the global space
   Tensor<2, 3> rotation_matrix;
 
-  // Rotation matrix from the particle reference frame to the proper reference frame of the particle
-  Tensor<2,3> local_to_proper_frame_rotation_matrix;
+  // Rotation matrix from the particle reference frame to the proper reference
+  // frame of the particle
+  Tensor<2, 3> local_to_proper_frame_rotation_matrix;
 
   // Local inertia tensor of the particle
   Tensor<2, 3> local_inertia;

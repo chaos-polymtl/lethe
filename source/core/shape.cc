@@ -49,8 +49,8 @@ Shape<dim>::clear_cache()
 /*
 template <int dim>
 Tensor<1,3>
-Shape<dim>::rotation_matrix_to_xyz_angles(Tensor<2,3>& rotation_matrix_representation) const{
-  Tensor<1,3> xyz_rotation;
+Shape<dim>::rotation_matrix_to_xyz_angles(Tensor<2,3>&
+rotation_matrix_representation) const{ Tensor<1,3> xyz_rotation;
   xyz_rotation[0]=std::atan2(-rotation_matrix_representation[1][2],rotation_matrix_representation[2][2]);
   xyz_rotation[1]=std::asin(rotation_matrix_representation[0][2]);
   xyz_rotation[2]=std::atan2(-rotation_matrix_representation[0][1],rotation_matrix_representation[0][0]);
