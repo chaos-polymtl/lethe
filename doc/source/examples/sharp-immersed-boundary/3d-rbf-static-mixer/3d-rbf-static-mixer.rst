@@ -1,10 +1,10 @@
 =====================================================================================
-3D Static Mixer Using RBF Sharp-Immersed Boundary
+3D Static Mixer Using RBF Sharp Immersed Boundary
 =====================================================================================
 
 The usage of `static mixers <https://en.wikipedia.org/wiki/Static_mixer>`_ is common for the blending of multi-component products in polymerization, as well as water treatment and chemical processing. They involve no moving part, but obtain mixing effects by converting pressure to radial mixing and flow division as the flow progresses through obstacles. Their advantages include low maintenance, no external energy input, continuous operation, compact design (pipe insertion), and easy installation.
 
-Because it is not possible to modulate the rotation speed or change the impeller, as is the case in stirred tanks, their design must be done precisely and take into account the desired level of mixing and the properties of fluids involved.
+Because it is not possible to modulate the rotation speed or change the impeller, as in the case of stirred tanks, their design must be done precisely, and must take into account the desired level of mixing and the properties of fluids involved.
 
 +-----------------------------------------------------------------------------------------------------------------------------+
 |  .. figure:: images/static_mixer_stl_casing_arrows.png                                                                      |
@@ -30,17 +30,16 @@ Files Used in This Example
 ----------------------------
 All files mentioned below are located in the example's folder (``/examples/sharp-immersed-boundary/3d-rbf-static-mixer/``).
 
-RBF preparation files:
+**RBF preparation files:**
 
-* Parameter file: ``/rbf_generation/RBF.param``
-* Composite geometry file: ``/rbf_generation/helix.stl``. This surface grid was taken from `[1] <https://www.thingiverse.com/thing:3915237>`_ under Creative Commons.
+* Parameter file: ``/rbf_generation/RBF.param``;
+* Composite geometry file: ``/rbf_generation/helix.stl``. This surface grid was taken from `[1] <https://www.thingiverse.com/thing:3915237>`_ under CC BY 4.0.
 
-Lethe fluid simulation files:
+**Lethe's fluid simulation files:**
 
-* RBF geometry file: ``/lethe_sharp_simulation/RBF_helix.output``. The extension is ``.output``, because it was named from the `bitpit <https://github.com/optimad/bitpit>`_ perspective;
-* Composite geometry file: ``/lethe_sharp_simulation/mixer_long.composite``
-* Parameter file: ``/lethe_sharp_simulation/flow_in_long_mixer.prm``
-
+* RBF geometry file: ``/lethe_sharp_simulation/RBF_helix.output``. The extension is ``.output`` because it was named from a `bitpit <https://github.com/optimad/bitpit>`_ perspective;
+* Composite geometry file: ``/lethe_sharp_simulation/mixer_long.composite``;
+* Parameter file: ``/lethe_sharp_simulation/flow_in_long_mixer.prm``.
 
 
 -----------------------
@@ -66,7 +65,7 @@ The parameter file (``RBF.param``) contains:
 #. The number of subdivisions in each of the three spatial dimensions: ``16``;
 #. The number of adaption cycles. Using ``4`` adaptation cycles over a initial number of ``16`` subdivisions results in a level of detail equivalent to a number of ``256`` subdivisions;
 #. The radius ratio means that each node `sees` up to ``3`` neighbors in each direction, which results in a smooth approximation.
-#. The base function of ``1`` means that the basis function is of Wendland type. This is the best functions to represent geometries, from our experiments.
+#. The base function of ``1`` means that the basis function is of Wendland type. These are the best functions to represent geometries from our experiments.
 #. The mesh range of ``0.1`` means that there is at least 10% of margin on each side of the object, so the collection of RBF nodes are sure to encompass the whole object.
 
 .. code-block:: text
@@ -86,7 +85,7 @@ After a few minutes this executable will output ``RBF_helix.output``, which is t
 Creation of the Composite Shape File
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The complete geometry through which the flow happens contains the helix static mixer as well as the casing around it. We use composite shapes to build the complex geometry; this type of shape is introduced in this example: :doc:`../geometry-definition`. The main particularities of this composite shape are:
+The complete geometry through which the fluid flows contains the helix static mixer as well as the casing around it. We use composite shapes to build the complex geometry; this type of shape is introduced in this example: :doc:`../simple-plane-model-from-composite/simple-plane-model-from-composite`. The main particularities of this composite shape are:
 
 #. The translation parameter for the ``rbf`` shape is ``-76.201:-20.0098:+15.6051``. It is selected to ensure that the center of the static mixer is located at the origin. The coordinates are taken from ``rbf_generation/bitpit.log``.
 #. The ``hyper rectangle`` is long enough to cover the length of the helix, and just large enough to fit in the background grid.
@@ -110,7 +109,7 @@ Parameter File
 Simulation Control
 ~~~~~~~~~~~~~~~~~~
 
-Although we are interested in the steady state solution of the flow, we use ``bdf1`` time integration. The required time to reach steady state in our case is low, but resolving it with low time steps enables the non-linear solver to converge; complex flow patterns are difficult to capture.
+Although we are interested in the steady-state solution of the flow, we use ``bdf1`` time integration. The required time to reach steady state in our case is low, but resolving it with low time steps enables the non-linear solver to converge as complex flow patterns are difficult to capture otherwise.
 
 .. code-block:: text
 
@@ -139,7 +138,7 @@ We assume that the used fluid is water, and that the static mixer is of the mete
 Mesh and Mesh Adaptation
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
-The mesh is a simple hyper rectangle, large enough to encompass the mixer and its casing and long enough to establish the flow profile upstream and downstream.
+The mesh is a simple hyper rectangle, large enough to encompass the mixer with its casing and long enough to establish the flow profile upstream and downstream.
 
 
 .. code-block:: text
@@ -176,7 +175,7 @@ The section defining each parameter for the particles has certain requirements:
 
 #. ``length ratio`` defines the length used to apply the immersed boundaries through interpolation. We choose ``4`` as a compromise between a low value, better for the linear solver, and a high value, better for mass preservation. Mass preservation can also be increased using a finer grid.
 #. ``refine mesh inside radius factor`` and ``refine mesh outside radius factor`` are both set to ``1``, which activates minimal crown refinement mode.
-#. ``type = composite`` and ``shape arguments = mixer_long.composite`` allow to refer the defined complex shape. It also requires that the ``RBF_helix.output`` is located in the same directory as the parameter file.
+#. ``type = composite`` and ``shape arguments = mixer_long.composite`` allow to refer the defined complex shape. This requires that the ``RBF_helix.output`` is located in the same directory as the parameter file.
 
 .. code-block:: text
 
@@ -206,9 +205,9 @@ The section defining each parameter for the particles has certain requirements:
 Boundary Conditions
 ~~~~~~~~~~~~~~~~~~~
 
-Each of the boundary are assigned a condition:
+A condition is assigned to each boundary:
 
-#. The inlet is set to a Dirichlet boundary condition, with unit velocity in `X` direction.
+#. The inlet is set to a Dirichlet boundary condition with unit velocity in the `x` direction.
 #. The outlet is defined as such, and is the weakly imposed condition required when using ``lethe-fluid-sharp``.
 #. The remaining boundaries are set as ``noslip`` to emulate the flow in a channel.
 
@@ -261,11 +260,12 @@ Pressure drop and flow rate post-processing are enabled to track when steady sta
     set outlet boundary id      = 1
   end
 
---------
-Results
---------
 
-The simulation can be launched with multiple cores:
+-----------------------
+Running the Simulation
+-----------------------
+
+The simulation can be launched on multiple cores using ``mpirun`` and the ``lethe-fluid-sharp`` executable. Using 6 CPU cores, the simulation can be launched with:
 
 .. code-block:: text
   :class: copy-button
@@ -273,7 +273,11 @@ The simulation can be launched with multiple cores:
   mpirun -np 6 lethe-fluid-sharp flow_in_long_mixer.prm
 
 
-After the simulation has run, streamlines can be use to visualise the pressure and velocity fields through the static mixer, as well as show the mixing effects that can be obtained.
+--------
+Results
+--------
+
+After the simulation has run, streamlines can be used to visualize the pressure and velocity fields through the static mixer, as well as show the mixing effects that can be obtained.
 
 +-----------------------------------------------------------------------------------------------------------------------------+
 |  .. figure:: images/long_static_mixer_medium_thick_p_v.png                                                                  |
