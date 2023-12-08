@@ -38,9 +38,7 @@ RBF preparation files:
 Lethe fluid simulation files:
 
 * RBF geometry file: ``/lethe_sharp_simulation/RBF_helix.output``. The extension is ``.output``, because it was named from the `bitpit <https://github.com/optimad/bitpit>`_ perspective;
-* Composite geometry file: ``/lethe_sharp_simulation/mixer_short.composite``
 * Composite geometry file: ``/lethe_sharp_simulation/mixer_long.composite``
-* Parameter file: ``/lethe_sharp_simulation/flow_in_short_mixer.prm``
 * Parameter file: ``/lethe_sharp_simulation/flow_in_long_mixer.prm``
 
 
