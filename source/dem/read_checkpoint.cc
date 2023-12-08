@@ -61,7 +61,7 @@ read_checkpoint(
   // Unpack the information in the particle handler
   particle_handler.deserialize();
 
-  // Load the solid objects
+  // Load solid objects
   for (unsigned int i = 0; i < solid_objects.size(); ++i)
     {
       solid_objects[i]->read_checkpoint(prefix);
