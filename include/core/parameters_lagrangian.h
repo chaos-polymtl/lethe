@@ -49,12 +49,11 @@ namespace Parameters
       viscous_resistance
     };
 
-    // Size distribution type
     enum class SizeDistributionType
     {
       uniform,
       normal,
-      histogram
+      custom
     };
 
     struct LagrangianPhysicalProperties
@@ -72,15 +71,14 @@ namespace Parameters
       // Size standard deviation of each particle type
       std::unordered_map<unsigned int, double> particle_size_std;
 
-      // List of diameters for the histogram distribution for each particle
-      // types
+      // List of diameters for the custom distribution for each particle type
       std::unordered_map<unsigned int, std::vector<double>>
-        particle_histogram_diameter;
+        particle_custom_diameter;
 
-      // Probability of each diameter value for the histogram distribution for
-      // each particle types for histogram
+      // Probability of each diameter value based on volume for the custom
+      // distribution for each particle type
       std::unordered_map<unsigned int, std::vector<double>>
-        particle_histogram_probability;
+        particle_custom_probability;
 
       // Distribution type of each particle type
       std::vector<SizeDistributionType> distribution_type;
@@ -147,10 +145,10 @@ namespace Parameters
         std::unordered_map<unsigned int, double> &particle_size_std,
         std::vector<SizeDistributionType>        &distribution_type,
         std::unordered_map<unsigned int, std::vector<double>>
-          &particle_histogram_diameter,
+          &particle_custom_diameter,
         std::unordered_map<unsigned int, std::vector<double>>
-                                              &particle_histogram_probability,
-        std::unordered_map<unsigned int, int> &number,
+                                                 &particle_custom_probability,
+        std::unordered_map<unsigned int, int>    &number,
         std::unordered_map<unsigned int, double> &density_particle,
         std::unordered_map<unsigned int, double> &youngs_modulus_particle,
         std::unordered_map<unsigned int, double> &poisson_ratio_particle,

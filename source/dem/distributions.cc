@@ -1,10 +1,12 @@
 #include <dem/distributions.h>
 
-NormalDistribution::NormalDistribution(const double &d_averages,
-                                       const double &d_standard_deviations)
+#include <algorithm>
+
+NormalDistribution::NormalDistribution(const double &d_average,
+                                       const double &d_standard_deviation)
 {
-  diameter_averages   = d_averages;
-  standard_deviations = d_standard_deviations;
+  diameter_average   = d_average;
+  standard_deviation = d_standard_deviation;
 }
 
 void
@@ -15,8 +17,7 @@ NormalDistribution::particle_size_sampling(const unsigned int &particle_number)
 
   std::random_device         rd{};
   std::mt19937               gen{rd()};
-  std::normal_distribution<> distribution{diameter_averages,
-                                          standard_deviations};
+  std::normal_distribution<> distribution{diameter_average, standard_deviation};
 
   for (unsigned int n = 0; n < particle_number; ++n)
     this->particle_sizes.push_back(distribution(gen));
@@ -26,8 +27,8 @@ double
 NormalDistribution::find_min_diameter()
 {
   double min_particle_size =
-    diameter_averages -
-    2.5 * standard_deviations; // 2.5 -> approx 99% of all diameters are smaller
+    diameter_average -
+    2.5 * standard_deviation; // 2.5 -> approx 99% of all diameters are smaller
 
   return min_particle_size;
 }
@@ -36,15 +37,15 @@ double
 NormalDistribution::find_max_diameter()
 {
   double max_particle_size =
-    diameter_averages +
-    2.5 * standard_deviations; // 2.5 -> approx 99% of all diameters are bigger
+    diameter_average +
+    2.5 * standard_deviation; // 2.5 -> approx 99% of all diameters are bigger
 
   return max_particle_size;
 }
 
 UniformDistribution::UniformDistribution(const double &d_values)
 {
-  diameter_values = d_values;
+  diameter_value = d_values;
 }
 
 void
@@ -54,7 +55,7 @@ UniformDistribution::particle_size_sampling(const unsigned int &particle_number)
   this->particle_sizes.reserve(particle_number);
 
   for (unsigned int n = 0; n < particle_number; ++n)
-    this->particle_sizes.push_back(this->diameter_values);
+    this->particle_sizes.push_back(this->diameter_value);
 }
 
 double
@@ -73,7 +74,7 @@ HistogramDistribution::HistogramDistribution(
   const std::vector<double> &d_list,
   const std::vector<double> &d_probabilities)
 {
-  diameter_hist_values = d_list;
+  diameter_cust_values = d_list;
   std::vector<double> cumulative_probability_vector;
   cumulative_probability_vector.reserve(d_probabilities.size());
 
@@ -84,7 +85,7 @@ HistogramDistribution::HistogramDistribution(
       cumulative_probability_vector.push_back(cumulative_value);
     }
 
-  diameter_hist_cumm_prob = cumulative_probability_vector;
+  diameter_cust_cumm_prob = cumulative_probability_vector;
 }
 
 void
@@ -101,26 +102,26 @@ HistogramDistribution::particle_size_sampling(
   for (unsigned int i = 0; i < particle_number; ++i)
     {
       // Search to find the appropriate diameter index
-      auto it = std::upper_bound(diameter_hist_cumm_prob.begin(),
-                                 diameter_hist_cumm_prob.end(),
+      auto it = std::upper_bound(diameter_cust_cumm_prob.begin(),
+                                 diameter_cust_cumm_prob.end(),
                                  dis(gen));
 
-      unsigned int index = std::distance(diameter_hist_cumm_prob.begin(), it);
+      unsigned int index = std::distance(diameter_cust_cumm_prob.begin(), it);
 
-      this->particle_sizes.push_back(diameter_hist_values[index]);
+      this->particle_sizes.push_back(diameter_cust_values[index]);
     }
 }
 
 double
 HistogramDistribution::find_min_diameter()
 {
-  return *std::min_element(diameter_hist_values.begin(),
-                           diameter_hist_values.end());
+  return *std::min_element(diameter_cust_values.begin(),
+                           diameter_cust_values.end());
 }
 
 double
 HistogramDistribution::find_max_diameter()
 {
-  return *std::max_element(diameter_hist_values.begin(),
-                           diameter_hist_values.end());
+  return *std::max_element(diameter_cust_values.begin(),
+                           diameter_cust_values.end());
 }

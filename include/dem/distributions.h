@@ -14,7 +14,6 @@
  * ---------------------------------------------------------------------
  *
  */
-#include <algorithm>
 #include <cmath>
 #include <fstream>
 #include <iostream>
@@ -40,12 +39,16 @@ public:
 
   /**
    * @brief Return the minimum diameter for a certain distribution.
+   *
+   * @return The minimum diameter of a certain distribution.
    */
   virtual double
   find_min_diameter() = 0;
 
   /**
    * @brief Return the maximum diameter for a certain distribution.
+   *
+   * @return The maximum diameter of a certain distribution.
    */
   virtual double
   find_max_diameter() = 0;
@@ -56,16 +59,16 @@ class NormalDistribution : public Distribution
 public:
   /**
    * @brief The constructor stores the parameters necessary to define the normal
-   * distribution
+   * distribution.
    *
-   * @param d_averages Average diameters for each type of particle.
-   * @param d_standard_deviations Standard deviation of the diameter for each type of particle.
+   * @param d_average Average diameters for each type of particle.
+   * @param d_standard_deviation Standard deviation of the diameter for each type of particle.
    */
-  NormalDistribution(const double &d_averages,
-                     const double &d_standard_deviations);
+  NormalDistribution(const double &d_average,
+                     const double &d_standard_deviation);
 
   /**
-   * @brief Carries out the size sampling of each particle inserted at a insertion
+   * @brief Carries out the size sampling of each particle inserted at an insertion
    * time step for the normal distribution.
    *
    * @param particle_number Number of particle inserted at a given insertion time step.
@@ -74,22 +77,31 @@ public:
   particle_size_sampling(const unsigned int &particle_number) override;
 
   /**
-   * @brief Return @diameter_values.
+   * @brief Find the minimum diameter a normal distribution.
+   *
+   * @return The minimum diameter of a normal distribution.
    */
   double
   find_min_diameter() override;
 
   /**
-   * @brief Return @diameter_values.
+   * @brief Find the maximum diameter of the normal distribution.
+   *
+   * @return The maximum diameter of the normal distribution.
    */
   double
   find_max_diameter() override;
 
 private:
-  // Average diameters.
-  double diameter_averages;
-  // Standard deviation of the diameter.
-  double standard_deviations;
+  /**
+   * Average diameter of the normal distribution.
+   */
+  double diameter_average;
+
+  /**
+   * Standard deviation of distribution of the normal distribution.
+   */
+  double standard_deviation;
 };
 
 class UniformDistribution : public Distribution
@@ -97,7 +109,7 @@ class UniformDistribution : public Distribution
 public:
   /**
    * @brief The constructor store the parameters necessary to define the uniform
-   * distribution
+   * distribution.
    *
    * @param d_values Diameter values for each particle type.
    */
@@ -113,20 +125,26 @@ public:
   particle_size_sampling(const unsigned int &particle_number) override;
 
   /**
-   * @brief Return @diameter_values.
+   * @brief Find the minimum diameter of the uniform distribution.
+   *
+   * @return The diameter of the distribution.
    */
   double
   find_min_diameter() override;
 
   /**
-   * @brief Return @diameter_values.
+   * @brief Find the maximum diameter of the uniform distribution.
+   *
+   * @return The diameter of the distribution.
    */
   double
   find_max_diameter() override;
 
 private:
-  // Diameter values.
-  double diameter_values;
+  /**
+   *  The diameter value of the distribution.
+   */
+  double diameter_value;
 };
 
 class HistogramDistribution : public Distribution
@@ -137,38 +155,42 @@ public:
    * distribution.
    * @param d_list
    * @param d_probabilities
-   * @param number_of_particle_types
    */
   HistogramDistribution(const std::vector<double> &d_list,
                         const std::vector<double> &d_probabilities);
 
   /**
    * @brief Carries out the size sampling of each particle inserted at a insertion
-   * time step for the histogram distribution.
+   * time step for a custom distribution.
    *
    * @param particle_number Number of particle inserted at a given insertion time step.
-   * @param particle_type The type of particle being inserted.
    */
   void
   particle_size_sampling(const unsigned int &particle_number) override;
 
   /**
-   * @brief Return the minimal diameter value from the @diameter_hist_value vector.
+   * @brief Find the minimum diameter of the custom distribution.
+   *
+   * @return The minimum diameter of the distribution.
    */
   double
   find_min_diameter() override;
 
   /**
-   * @brief Return the maximal diameter value from the @diameter_hist_value vector.
+   * @brief Find the maximum diameter of the custom distribution.
+   *
+   * @return The minimum diameter of the distribution.
    */
   double
   find_max_diameter() override;
 
 private:
-  // List of diameters values.
-  std::vector<double> diameter_hist_values;
+  /**
+   *
+   */
+  std::vector<double> diameter_custom_values;
   // Cumulative probability of each diameter value.
-  std::vector<double> diameter_hist_cumm_prob;
+  std::vector<double> diameter_custom_cumm_prob;
 };
 
 #endif /* distributions_h */

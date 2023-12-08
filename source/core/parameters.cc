@@ -3370,8 +3370,7 @@ namespace Parameters
       Utilities::split_string_list(full_str));
 
     std::vector<double> vector_of_double =
-      Utilities::string_to_double(vector_of_string); // The error is thrown here
-
+      Utilities::string_to_double(vector_of_string);
 
     return vector_of_double;
   }
