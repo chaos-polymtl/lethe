@@ -429,6 +429,37 @@ SerialSolid<dim, spacedim>::displace_solid_triangulation()
     }
 }
 
+template <int dim, int spacedim>
+void
+SerialSolid<dim, spacedim>::move_solid_triangulation_with_displacement()
+{
+  const unsigned int     dofs_per_cell = displacement_fe->dofs_per_cell;
+  std::set<unsigned int> dof_vertex_displaced;
+  std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
+
+  for (const auto &cell : displacement_dh.active_cell_iterators())
+    {
+      for (unsigned int vertex = 0;
+           vertex < cell->reference_cell().n_vertices();
+           ++vertex)
+        {
+          if (!dof_vertex_displaced.count(cell->vertex_index(vertex)))
+            {
+              const auto       dof_index = cell->vertex_dof_index(vertex, 0);
+              Point<spacedim> &vertex_position = cell->vertex(vertex);
+
+              for (unsigned d = 0; d < spacedim; ++d)
+                {
+                  vertex_position[d] =
+                    vertex_position[d] + displacement[dof_index + d];
+                }
+
+              dof_vertex_displaced.insert(cell->vertex_index(vertex));
+            }
+        }
+    }
+}
+
 
 template <int dim, int spacedim>
 void
@@ -467,7 +498,8 @@ SerialSolid<dim, spacedim>::write_output_results(
 
   const std::string folder        = simulation_control->get_output_path();
   const std::string solution_name = simulation_control->get_output_name() +
-                                    "_solid_" + Utilities::int_to_string(id, 2);
+                                    "_solid_object_" +
+                                    Utilities::int_to_string(id, 2);
   const unsigned int iter        = simulation_control->get_step_number();
   const double       time        = simulation_control->get_current_time();
   const unsigned int group_files = simulation_control->get_group_files();
@@ -484,77 +516,57 @@ SerialSolid<dim, spacedim>::write_output_results(
 
 template <int dim, int spacedim>
 void
-SerialSolid<dim, spacedim>::write_checkpoint(std::string /*prefix*/)
+SerialSolid<dim, spacedim>::write_checkpoint(std::string prefix)
 {
-  // SolutionTransfer<dim, Vector<double>, spacedim> system_trans_vectors(
-  //   this->displacement_dh);
+  // Checkpoint the DOF Handler
+  {
+    std::string file_name =
+      prefix + ".solid_object." + Utilities::int_to_string(id, 2) + ".dof";
+    std::ofstream                 ofs(file_name);
+    boost::archive::text_oarchive oa(ofs);
+    displacement_dh.save(oa, 0);
+  }
+  // Checkpoint the displacement vector which we will use to shift the
+  // triangulation
+  {
+    std::string file_name = prefix + ".solid_object." +
+                            Utilities::int_to_string(id, 2) + ".displacement";
+    std::ofstream                 ofs(file_name);
+    boost::archive::text_oarchive oa(ofs);
+    displacement.save(oa, 0);
+  }
 
-  // std::vector<const Vector<double> *> sol_set_transfer;
-  // sol_set_transfer.push_back(&displacement);
-
-  // system_trans_vectors.prepare_for_serialization(sol_set_transfer);
-
-  // if (auto tria = dynamic_cast<parallel::distributed::Triangulation<dim> *>(
-  //       this->solid_tria.get()))
-  //   {
-  //     std::string triangulationName = prefix + ".triangulation";
-  //     tria->save(prefix + ".triangulation");
-  //   }
+  // Re-read pvd handler from output files
+  pvdhandler.save(prefix + "_solid_object_" + Utilities::int_to_string(id, 2));
 }
 
 template <int dim, int spacedim>
 void
-SerialSolid<dim, spacedim>::read_checkpoint(std::string /*prefix*/)
+SerialSolid<dim, spacedim>::read_checkpoint(std::string prefix)
 {
-  throw(std::runtime_error(
-    "Restarting DEM simulations with floating meshes is currently not possible."));
-  // Setup an un-refined triangulation before loading
-  // setup_triangulation(true);
+  // Import dof handler
+  {
+    // displacement_dh.distribute_dofs(fe);
+    std::string file_name =
+      prefix + ".solid_object." + Utilities::int_to_string(id, 2) + ".dof";
+    std::ifstream                 ifs(file_name);
+    boost::archive::text_iarchive ia(ifs);
+    displacement_dh.load(ia, 0);
+  }
+  // Import nodal counts
+  {
+    std::string file_name = prefix + ".solid_object." +
+                            Utilities::int_to_string(id, 2) + ".displacement";
+    std::ifstream                 ifs(file_name);
+    boost::archive::text_iarchive ia(ifs);
+    displacement.load(ia, 0);
+  }
 
-  // Read the triangulation from the checkpoint
-  // const std::string filename = prefix + ".triangulation";
-  // std::ifstream     in(filename.c_str());
-  // if (!in)
-  //  AssertThrow(false,
-  //              ExcMessage(
-  //                std::string("You are trying to read a solid triangulation, "
-  //                            "but the restart file <") +
-  //                filename + "> does not appear to exist!"));
+  // Re-read pvd handler from output files
+  pvdhandler.read(prefix + "_solid_object_" + Utilities::int_to_string(id, 2));
 
-  // try
-  //   {
-  //     if (auto tria = dynamic_cast<parallel::distributed::Triangulation<dim>
-  //     *>(
-  //           this->solid_tria.get()))
-  //       tria->load(filename.c_str());
-  //   }
-  // catch (...)
-  //   {
-  //     AssertThrow(false,
-  //                 ExcMessage("Cannot open snapshot mesh file or read the "
-  //                            "triangulation stored there."));
-  //   }
-
-  // Setup dof-handler for solid and displacement
-  // solid_dh.distribute_dofs(*fe);
-  // setup_displacement();
-
-
-  //// Read displacement vector
-  // std::vector<Vector<double> *> x_system(1);
-  // x_system[0] = &(displacement);
-
-  // SolutionTransfer<dim, Vector<double>, spacedim> system_trans_vectors(
-  //   this->displacement_dh);
-
-  // system_trans_vectors.deserialize(x_system);
-  // displacement;
-
-  //// Reset triangulation position using displacement vector
-  // move_solid_triangulation_with_displacement();
-
-
-  // We did not checkpoint particles, we re-create them from scratch
+  // Reset triangulation position using displacement vector
+  move_solid_triangulation_with_displacement();
 }
 
 

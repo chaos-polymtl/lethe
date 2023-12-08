@@ -4,13 +4,15 @@ using namespace dealii;
 
 template <int dim>
 void
-read_checkpoint(TimerOutput                               &computing_timer,
-                const DEMSolverParameters<dim>            &parameters,
-                std::shared_ptr<SimulationControl>        &simulation_control,
-                PVDHandler                                &particles_pvdhandler,
-                PVDHandler                                &grid_pvdhandler,
-                parallel::distributed::Triangulation<dim> &triangulation,
-                Particles::ParticleHandler<dim>           &particle_handler)
+read_checkpoint(
+  TimerOutput                                             &computing_timer,
+  const DEMSolverParameters<dim>                          &parameters,
+  std::shared_ptr<SimulationControl>                      &simulation_control,
+  PVDHandler                                              &particles_pvdhandler,
+  PVDHandler                                              &grid_pvdhandler,
+  parallel::distributed::Triangulation<dim>               &triangulation,
+  Particles::ParticleHandler<dim>                         &particle_handler,
+  std::vector<std::shared_ptr<SerialSolid<dim - 1, dim>>> &solid_objects)
 {
   TimerOutput::Scope timer(computing_timer, "read_checkpoint");
   std::string        prefix = parameters.restart.filename;
@@ -58,6 +60,12 @@ read_checkpoint(TimerOutput                               &computing_timer,
 
   // Unpack the information in the particle handler
   particle_handler.deserialize();
+
+  // Load the solid objects
+  for (unsigned int i = 0; i < solid_objects.size(); ++i)
+    {
+      solid_objects[i]->read_checkpoint(prefix);
+    }
 }
 
 template void
@@ -67,7 +75,8 @@ read_checkpoint(TimerOutput                             &computing_timer,
                 PVDHandler                              &particles_pvdhandler,
                 PVDHandler                              &grid_pvdhandler,
                 parallel::distributed::Triangulation<2> &triangulation,
-                Particles::ParticleHandler<2>           &particle_handler);
+                Particles::ParticleHandler<2>           &particle_handler,
+                std::vector<std::shared_ptr<SerialSolid<1, 2>>> &solid_objects);
 
 template void
 read_checkpoint(TimerOutput                             &computing_timer,
@@ -76,4 +85,5 @@ read_checkpoint(TimerOutput                             &computing_timer,
                 PVDHandler                              &particles_pvdhandler,
                 PVDHandler                              &grid_pvdhandler,
                 parallel::distributed::Triangulation<3> &triangulation,
-                Particles::ParticleHandler<3>           &particle_handler);
+                Particles::ParticleHandler<3>           &particle_handler,
+                std::vector<std::shared_ptr<SerialSolid<2, 3>>> &solid_objects);

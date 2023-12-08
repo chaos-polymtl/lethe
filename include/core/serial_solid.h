@@ -147,7 +147,7 @@ public:
    *
    * @return The angular velocity of the solid object
    */
-  Tensor<1, 3>
+  inline Tensor<1, 3>
   get_angular_velocity() const
   {
     return this->current_angular_velocity;
@@ -158,7 +158,7 @@ public:
    *
    * @return The center of rotation of the solid object
    */
-  Point<3>
+  inline Point<3>
   get_center_of_rotation() const
   {
     if constexpr (spacedim == 3)
@@ -175,7 +175,7 @@ public:
    *
    * @return id of the solid
    */
-  unsigned int
+  inline unsigned int
   get_solid_id() const
   {
     return id;
@@ -194,6 +194,14 @@ public:
    */
   void
   move_solid_triangulation(double time_step, double initial_time);
+
+  /**
+   * @brief Moves the vertices of the solid triangulation using the displacement
+   * vector. This is mostly used when restarting simulations which contain
+   * a serial solid in order to replace it at the position
+   */
+  void
+  move_solid_triangulation_with_displacement();
 
   /**
    * @brief Write the output file of the solid object triangulation
