@@ -83,12 +83,10 @@ namespace Parameters
                     particle_custom_probability.at(particle_type).end());
 
       // We make sure that the cumulative probability is equal to 1.
-      if (probability_sum != 1.0)
+      if (std::abs(probability_sum - 1.0) < 1.e-14)
         {
-          for (double &i : particle_custom_probability.at(particle_type))
-            {
-              i = i / probability_sum;
-            }
+          throw(std::runtime_error(
+            "Invalid custom probabilities. The sum of probabilities should be equal to 1.0 "));
         }
       const std::string size_distribution_type_str =
         prm.get("size distribution type");
