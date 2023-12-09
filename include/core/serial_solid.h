@@ -195,8 +195,6 @@ public:
   void
   move_solid_triangulation(double time_step, double initial_time);
 
-
-
   /**
    * @brief Write the output file of the solid object triangulation
    *
