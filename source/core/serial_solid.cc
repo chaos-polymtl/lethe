@@ -454,8 +454,7 @@ SerialSolid<dim, spacedim>::move_solid_triangulation_with_displacement()
 
               for (unsigned d = 0; d < spacedim; ++d)
                 {
-                  vertex_position[d] =
-                    vertex_position[d] + displacement[dof_index + d];
+                  vertex_position[d] += displacement[dof_index + d];
                 }
 
               dof_vertex_displaced.insert(cell->vertex_index(vertex));
