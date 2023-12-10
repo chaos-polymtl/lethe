@@ -2100,7 +2100,7 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
     dr * this->simulation_parameters.particlesParameters->lubrication_range_min;
   double h_max =
     dr * this->simulation_parameters.particlesParameters->lubrication_range_max;
-  // Deactivated the lubrication force if the flui is Non-newtonian.
+  // Deactivated the lubrication force if the fluid is Non-newtonian.
   if (this->simulation_parameters.particlesParameters
         ->enable_lubrication_force == false)
     {
@@ -2209,7 +2209,6 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
                 velocity_correction_vector * alpha * local_alpha;
               particles[p].impulsion_iter             = particles[p].impulsion;
               particles[p].previous_velocity_residual = residual_velocity;
-              particles[p].previous_local_alpha_velocity = local_alpha;
 
 
               // If the particles have impacted a wall or another particle, we
@@ -2246,8 +2245,8 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
                   Tensor<1, dim> position_update =
                     local_alpha *
                     (ib_dem.dem_particles[p].position - particles[p].position);
-                  particles[p].set_position(particles[p].position +
-                                            position_update);
+                  particles[p].position=ib_dem.dem_particles[p].position;
+                  particles[p].set_position(particles[p].position);
                 }
               // Check if the particle is in the domain. Throw an error if it's
               // the case.
@@ -2348,7 +2347,6 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
                 omega_correction_vector * alpha * local_alpha_omega;
               particles[p].omega_impulsion_iter = particles[p].omega_impulsion;
               particles[p].previous_omega_residual    = residual_omega;
-              particles[p].previous_local_alpha_omega = local_alpha_omega;
 
 
               // If the particles have impacted a wall or another particle, we
@@ -2414,11 +2412,15 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
                 sqrt(std::pow(residual_velocity.norm(), 2) +
                      std::pow(residual_omega.norm() * particles[p].radius, 2)) *
                 dt;
+              if (Utilities::MPI::this_mpi_process(this->mpi_communicator) == 0){
+                  std::cout<<" omega impulsion "<<particles[p].omega_impulsion<<std::endl;
+                  std::cout<<" omega_accel "<< invert(particles[p].rotation_matrix) *
+                                                     angular_acceleration_in_particle_frame<<std::endl;
+                  std::cout<<" dem position "<< ib_dem.dem_particles[0].position<<std::endl;
+                  std::cout<<" position "<< particles[p].position<<std::endl;
+                }
 
               // Keep in memory the residual.
-              particles[p].residual_velocity = residual_velocity.norm();
-              particles[p].residual_omega =
-                residual_omega.norm() * particles[p].radius;
               particles_residual_vect[p] = this_particle_residual;
               // L_inf of all the particles' residual.
               if (this_particle_residual > particle_residual)
@@ -2753,8 +2755,6 @@ GLSSharpNavierStokesSolver<dim>::finish_time_step_particles()
       particles[p].impulsion_iter             = particles[p].impulsion;
       particles[p].omega_iter                 = particles[p].omega;
       particles[p].omega_impulsion_iter       = particles[p].omega_impulsion;
-      particles[p].residual_velocity          = DBL_MAX;
-      particles[p].residual_omega             = DBL_MAX;
       particles[p].previous_velocity_residual = 0;
       particles[p].previous_omega_residual    = 0;
 
@@ -4448,8 +4448,6 @@ GLSSharpNavierStokesSolver<dim>::read_checkpoint()
       particles[p_i].impulsion_iter       = particles[p_i].impulsion;
       particles[p_i].omega_iter           = particles[p_i].omega;
       particles[p_i].omega_impulsion_iter = particles[p_i].omega_impulsion;
-      particles[p_i].residual_velocity    = DBL_MAX;
-      particles[p_i].residual_omega       = DBL_MAX;
     }
   // Finish the time step of the particle.
 

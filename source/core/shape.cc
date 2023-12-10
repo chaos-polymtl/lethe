@@ -1460,8 +1460,6 @@ CompositeShape<dim>::apply_boolean_operations(
               }
             break;
           default: // BooleanOperation::Intersection
-            double a = 1;
-
             if (value_first_component > value_second_component)
               {
                 constituent_shapes_values[operation_id] = value_first_component;

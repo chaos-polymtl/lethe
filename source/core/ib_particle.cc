@@ -36,18 +36,6 @@ IBParticle<dim>::initialize_all()
 
   inertia = 1.;
 
-  local_inertia[0][0] = 1.;
-  local_inertia[0][1] = 1.;
-  local_inertia[0][2] = 1.;
-  local_inertia[1][0] = 1.;
-  local_inertia[1][1] = 1.;
-  local_inertia[1][2] = 1.;
-  local_inertia[2][0] = 1.;
-  local_inertia[2][1] = 1.;
-  local_inertia[2][2] = 1.;
-
-  local_inertia = 1.;
-
   fluid_forces[0] = 0.;
   fluid_forces[1] = 0.;
 
@@ -100,8 +88,6 @@ IBParticle<dim>::initialize_all()
       previous_orientation[i] = orientation;
       previous_omega[i]       = omega;
     }
-  residual_velocity = DBL_MAX;
-  residual_omega    = DBL_MAX;
 
   f_position    = std::make_shared<Functions::ParsedFunction<dim>>(dim);
   f_velocity    = std::make_shared<Functions::ParsedFunction<dim>>(dim);
@@ -296,8 +282,6 @@ IBParticle<dim>::set_orientation(const Tensor<1, 3> new_orientation)
   this->orientation = new_orientation;
   this->shape->set_orientation(new_orientation);
   this->rotation_matrix = this->shape->get_rotation_matrix();
-  // std::cout<<"set orientation in particle
-  // "<<this->rotation_matrix<<std::endl;
 }
 
 template <int dim>
@@ -346,17 +330,6 @@ IBParticle<dim>::load_data_from_file()
     std::static_pointer_cast<CompositeShape<dim>>(shape)->load_data_from_file();
 }
 
-template <int dim>
-void
-IBParticle<dim>::set_initial_rotation_matrix(Tensor<1, 3> orientation)
-{
-  // Calcul de la matrice initiale de rotation avec l'orientation initiale
-}
-
-template <int dim>
-void
-IBParticle<dim>::update_rotation_matrix(Tensor<2, 3> rotation)
-{}
 
 
 
@@ -405,31 +378,6 @@ IBParticle<dim>::compute_local_inertia(Tensor<2, 3> global_inertia)
   std::cout << eigenvectors[0][2] << std::endl;
   std::cout << eigenvectors[1][2] << std::endl;
   std::cout << eigenvectors[2][2] << std::endl;
-}
-
-template <int dim>
-Tensor<2, 3>
-IBParticle<dim>::compute_rodrigues_rotation_matrix(Tensor<1, 3> rotation_vector,
-                                                   double       timestep)
-{
-  double       omega_mag = std::sqrt(rotation_vector[0] * rotation_vector[0] +
-                               rotation_vector[1] * rotation_vector[1] +
-                               rotation_vector[2] * rotation_vector[2]);
-  Tensor<1, 3> rotation_axis({rotation_vector[0] / omega_mag,
-                              rotation_vector[1] / omega_mag,
-                              rotation_vector[2] / omega_mag});
-
-  Tensor<2, 3> K_rodrigues({{0, -rotation_axis[2], rotation_axis[1]},
-                            {rotation_axis[2], 0, -rotation_axis[0]},
-                            {-rotation_axis[1], rotation_axis[0], 0}});
-
-  Tensor<2, 3> identity({{1, 0, 0}, {0, 1, 0}, {0, 0, 1}});
-
-  Tensor<2, 3> rodrigues_rotation_matrix =
-    identity + std::sin(omega_mag * timestep) * K_rodrigues +
-    (1 - std::cos(omega_mag * timestep)) * K_rodrigues * K_rodrigues;
-
-  return rodrigues_rotation_matrix;
 }
 
 

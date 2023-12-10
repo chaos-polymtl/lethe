@@ -17,6 +17,7 @@
 #define lethe_shape_h
 
 #include <core/utilities.h>
+#include <core/tensors_and_points_dimension_manipulation.h>
 
 #include <deal.II/base/auto_derivative_function.h>
 #include <deal.II/base/function.h>
@@ -148,8 +149,6 @@ public:
                     std::vector<Point<dim>> &candidate_points,
                     double                   precision = 1e-6)
   {
-    // blabl
-
     double                      distance = DBL_MAX;
     Tensor<1, dim>              normal;
     std::vector<Tensor<1, dim>> search_direction;
@@ -455,7 +454,6 @@ public:
                 axis, new_orientation[2 - i]);
           }
       }
-    // std::cout<<"set orientation in shape "<<this->rotation_matrix<<std::endl;
     orientation = new_orientation;
   }
   /**
