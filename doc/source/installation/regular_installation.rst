@@ -6,16 +6,16 @@ Regular Installation on Linux
    :height: 100px
 
 .. important::
-  Distributions on which compatibility was tested are: Ubuntu 20.04 LTS, Ubuntu 22.04 LTS, Centos 7 and Manjaro 
+  Distributions on which compatibility was tested are: Ubuntu 20.04 LTS, Ubuntu 22.04 LTS, Centos 7 and Manjaro.
 
-Lethe requires a modern version of the `deal.II library <https://www.dealii.org/>`_ and its dependencies (MPI, numdiff, p4est, trilinos and METIS). At the time of this writing, ``deal.II 9.5`` and ``deal.II 9.6pre`` (the ``master`` branch version) are supported. A `dealii fork <https://github.com/lethe-cfd/dealii>`_ is maintained by Lethe team. This fork does not include any modification to deal.II library, but it is the latest version with which Lethe was tested. 
+Lethe requires a modern version of the `deal.II library <https://www.dealii.org/>`_ and its dependencies (MPI, numdiff, p4est, trilinos and METIS). At the time of this writing, ``deal.II 9.5`` and ``deal.II 9.6pre`` (the ``master`` branch version) are supported. A `dealii fork <https://github.com/lethe-cfd/dealii>`_ is maintained by the Lethe team. This fork does not include any modification to deal.II library, but it is the latest version with which Lethe was tested. 
 
 **Lethe installation steps:**
   
-1. Installating deal.II  
+1. Installing deal.II  
 2. :ref:`install-lethe`
 
-**Installing deal.II and its dependency:**
+**Installing deal.II and its dependencies:**
   
 1. :ref:`install-deal.II-apt` (recommended for users)
 2. :ref:`install-deal.II-candi` (recommended for developers) 
@@ -81,7 +81,7 @@ The following packages (which are specified after line 57) should be installed:
 
 Other packages can be disabled by simply commenting out the lines (adding an ``#`` at the beggining of the lines)
 
-To ensure that the the lethe test suite works, deal.II must be configured with p4est version 2.2.1. In the subfolder ``deal.II-toolchain/packages/``, open the ``p4est.package`` file with a text editor and change the following lines:
+To ensure that the the Lethe test suite works, deal.II must be configured with p4est version 2.2.1. In the subfolder ``deal.II-toolchain/packages/``, open the ``p4est.package`` file with a text editor and change the following lines:
 
   .. tip::
     We are simply uncommenting line 7, and commenting lines 9 to 12, to change the p4est version.
@@ -131,7 +131,7 @@ After installation, add the following lines variable to your ``.bashrc`` :
 Installing Lethe 
 -------------------------------
 
-Clone lethe from the `Lethe official repository <https://github.com/lethe-cfd/lethe>`_.
+Clone Lethe from the `Lethe official repository <https://github.com/lethe-cfd/lethe>`_.
 
 .. code-block:: text
   :class: copy-button
@@ -185,7 +185,7 @@ where $numprocs can be the number of physical cores on your machine.
 
 .. _install-deal.II-manually:
 
-Installating deal.II manually 
+Installing deal.II manually 
 -----------------------------------------
 
 Clone deal.II from the `deal.ii official repository <https://github.com/dealii/dealii>`_

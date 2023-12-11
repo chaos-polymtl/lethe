@@ -28,7 +28,7 @@ Lethe is named after the river of forgetfulness, which, according to
    in order to forget their earthly life.
 
 Lethe is described `here <https://doi.org/10.1016/j.softx.2020.100579>`_.
-It originally began as a weekend project, but slowly grew into a robust and performative CFD, DEM and CFD-DEM
+It originally began as a weekend project, but slowly grew into robust and efficient CFD, DEM and CFD-DEM
 software. Lethe is under active development.
 
 .. note::
