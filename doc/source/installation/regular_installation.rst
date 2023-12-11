@@ -12,15 +12,21 @@ Lethe requires a modern version of the `deal.II library <https://www.dealii.org/
 
 **Lethe installation steps:**
   
-1. Installation of deal.II 
-2. Installation of Lethe
+1. Installating deal.II  
+2. :ref:`install-lethe`
 
 **Installing deal.II and its dependency:**
   
-1. Through candi (recommended for developers)
-2. Through the system package manager (recommended for users)
+1. :ref:`install-deal.II-apt` (recommended for users)
+2. :ref:`install-deal.II-candi` (recommended for developers) 
+3. :ref:`install-deal.II-manually` (recommended for exerimented developers) 
 
-Installing deal.II using apt (Step #1)
+
+
+
+.. _install-deal.II-apt:
+
+Installing deal.II using apt 
 -----------------------------------------
 
 This is done following `this procedure <https://www.dealii.org/download.html#:~:text=page%20for%20details.-,Linux%20distributions,-Arch%20Linux>`_.
@@ -54,7 +60,9 @@ This should output several information about the installed version. Everything w
   If the installed version is other than ``deal.ii-9.5.1``, follow `this link <https://github.com/dealii/dealii/wiki/Getting-deal.II>`_.
 
 
-Installing deal.II using Candi (Step #1)
+.. _install-deal.II-candi:
+
+Installing deal.II using Candi 
 -----------------------------------------
 
 To install the dependencies (MPI, p4est, trilinos and METIS) all together using candi, the `procedure <https://github.com/dealii/candi.git>`_ on the candi repository can be followed.
@@ -119,7 +127,10 @@ After installation, add the following lines variable to your ``.bashrc`` :
     source cand/install/prefix/configuration/enable.sh
     export DEAL_II_DIR=cand/install/prefix/deal.II-<version> >> ~/.bashrc
 
-Installing Lethe (Step #2)
+
+.. _install-lethe:
+
+Installing Lethe 
 -------------------------------
 
 Clone lethe from the `Lethe official repository <https://github.com/lethe-cfd/lethe>`_.
@@ -158,7 +169,7 @@ Then you can compile:
 
   make -j<numprocs>
 
-Testing Your Installation (Step #3)
+Testing Your Installation 
 -------------------------------------
 
 Lethe comes pre-packaged with an extensive test suit for all of its modules. It can be used to test the validity of your installation. Within the build folder, the test suite can be launched with the following command:
@@ -172,6 +183,55 @@ where $numprocs can be the number of physical cores on your machine.
 
 .. warning:: 
   The lethe test suites requires that deal.II be configured with p4est 2.2.1, otherwise the test which include restart files will fail.
+
+
+.. _instal-deal.II-manually:
+
+Installating deal.II manually 
+-----------------------------------------
+
+Clone deal.II from the `deal.ii official repository <https://github.com/dealii/dealii>`_
+
+.. code-block:: text
+  :class: copy-button
+
+  git clone https://github.com/dealii/dealii 
+
+Configure deal.II in a build folder at the same level as the source code
+
+.. code-block:: text
+  :class: copy-button
+
+  mkdir build
+  cd build
+
+Depending on how you have installed p4est, Trilinos and METIS, you may need to specify the installation folder of the three libraries
+
+.. code-block:: text
+  :class: copy-button
+
+  cmake ../dealii -DDEAL_II_WITH_MPI=ON -DDEAL_II_WITH_TRILINOS=ON -DTRILINOS_DIR=path/to/your/trilinos/installation -DDEAL_II_WITH_P4EST=ON -DP4EST_DIR=path/to/your/p4est/installation  -DDEAL_II_WITH_METIS=ON -DMETIS_DIR=path/to/your/metis/installation -DCMAKE_INSTALL_PREFIX=/path/to/desired/installation`
+
+Compile deal.II
+
+.. code-block:: text
+  :class: copy-button
+
+  make -j<nprocessor> install
+
+Create an environment variable for the deal.II directory
+
+.. code-block:: text
+  :class: copy-button
+
+  export DEAL_II_DIR=/path/to/dealii/installation
+
+It is generally recommended to add the variable to your bashrc so it is always loaded:
+
+.. code-block:: text
+  :class: copy-button
+
+  echo "export DEAL_II_DIR=/path/to/dealii/installation" >> ~/.bashrc
 
 
 .. _update-dealii:
