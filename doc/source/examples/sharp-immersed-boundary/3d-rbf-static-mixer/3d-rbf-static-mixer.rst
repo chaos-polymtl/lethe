@@ -104,6 +104,15 @@ The complete geometry through which the fluid flows contains the helix static mi
     15; difference     ; 2:1
     16; union          ; 0:15
 
+
++-----------------------------------------------------------------------------------------------------------------------------+
+|  .. figure:: images/geometry_long_mixer.png                                                                                 |
+|     :align: center                                                                                                          |
+|     :width: 400                                                                                                             |
+|     :name: Resulting composite geometry.                                                                                    |
+|                                                                                                                             |
++-----------------------------------------------------------------------------------------------------------------------------+
+
 ---------------
 Parameter File
 ---------------
