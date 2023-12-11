@@ -22,8 +22,6 @@ Lethe requires a modern version of the `deal.II library <https://www.dealii.org/
 3. :ref:`install-deal.II-manually` (recommended for exerimented developers) 
 
 
-
-
 .. _install-deal.II-apt:
 
 Installing deal.II using apt 
@@ -185,7 +183,7 @@ where $numprocs can be the number of physical cores on your machine.
   The lethe test suites requires that deal.II be configured with p4est 2.2.1, otherwise the test which include restart files will fail.
 
 
-.. _instal-deal.II-manually:
+.. _install-deal.II-manually:
 
 Installating deal.II manually 
 -----------------------------------------
