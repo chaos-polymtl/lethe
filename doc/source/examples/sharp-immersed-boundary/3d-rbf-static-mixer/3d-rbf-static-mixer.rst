@@ -46,7 +46,7 @@ All files mentioned below are located in the example's folder (``/examples/sharp
 Description of the Case
 -----------------------
 
-In this example, we showcase the Radial Basis Functions (RBF) type of objects used in Lethe's resolved immersed-boundary Navier-Stokes solver.
+In this example, we showcase the RBF type of objects used in Lethe's resolved immersed-boundary Navier-Stokes solver.
 
 
 ------------------------
