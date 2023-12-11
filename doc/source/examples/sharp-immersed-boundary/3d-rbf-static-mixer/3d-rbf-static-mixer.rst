@@ -6,6 +6,8 @@ The usage of `static mixers <https://en.wikipedia.org/wiki/Static_mixer>`_ is co
 
 Because it is not possible to modulate the rotation speed or change the impeller, as in the case of stirred tanks, their design must be done precisely, and must take into account the desired level of mixing and the properties of fluids involved.
 
+As opposed to stirred tanks, it is not possible to modulate rotation speed or change the impeller. Hence, the design of these systems must be approached with precision due to these limitations. Factors such as the desired level of mixing and the properties of the fluids involved must be carefully considered.
+
 +-----------------------------------------------------------------------------------------------------------------------------+
 |  .. figure:: images/static_mixer_stl_casing_arrows.png                                                                      |
 |     :align: center                                                                                                          |
@@ -20,7 +22,7 @@ Features
 
 - Solvers: ``lethe-fluid-sharp``
 - Transient problem
-- Complex static solid defined by a surface grid (STL) and modeled with the sharp immersed boundary method
+- Complex static solid defined by a surface grid (STL) and modeled with the Radial Basis Function (RBF) sharp immersed boundary method
 
 
 ----------------------------
@@ -69,7 +71,7 @@ The parameter file (``RBF.param``) contains:
 #. The number of subdivisions in each of the three spatial dimensions: ``16``;
 #. The number of adaption cycles. Using ``4`` adaptation cycles over a initial number of ``16`` subdivisions results in a level of detail equivalent to a number of ``256`` subdivisions;
 #. The radius ratio means that each node `sees` up to ``3`` neighbors in each direction, which results in a smooth approximation.
-#. The base function of ``1`` means that the basis function is of Wendland type. These are the best functions to represent geometries from our experiments.
+#. The base function of ``1`` means that the basis function is of Wendland type. This is the best function to represent geometries from our experience.
 #. The mesh range of ``0.1`` means that there is at least 10% of margin on each side of the object, so the collection of RBF nodes are encompassing the whole object.
 
 
@@ -124,7 +126,7 @@ Although we are interested in the steady-state solution of the flow, we use ``bd
 Physical Properties
 ~~~~~~~~~~~~~~~~~~~
 
-We assume that the used fluid is water, and that the length scale of the static mixer is the order of :math:`150 \, \text{cm}`. Hence,  the length units are centimeters and the time units are seconds.
+We assume that the fluid is water, and that the length scale of the static mixer is the order of :math:`150 \, \text{cm}`. Hence,  the length units are centimeters and the time units are seconds. The ``kinematic viscosity`` of water is :math:`0.01 \, \text{cm²}/\text{s}`.
 
 .. code-block:: text
 
