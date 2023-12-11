@@ -42,7 +42,6 @@ Sharp Immersed Boundary Solver
       
       sharp_2_6 [label="3D Static Mixer \nImpeller Using RBF", href="https://lethe-cfd.github.io/lethe/documentation/examples/sharp-immersed-boundary/3d-rbf-static-mixer/3d-rbf-static-mixer.html", tooltip="3D Static Mixer \nImpeller Using RBF Sharp-immersed boundary"];
 
-      sharp_3 [label="Geometry Definition", href="https://lethe-cfd.github.io/lethe/examples/sharp-immersed-boundary/geometry-definition.html"];
       sharp_3 [label="Geometry Definition", href="https://lethe-cfd.github.io/lethe/documentation/examples/sharp-immersed-boundary/geometry-definition.html"];
 
       sharp_3_1 [label="Simple Plane Model From Composite", href="https://lethe-cfd.github.io/lethe/documentation/examples/sharp-immersed-boundary/sharp-immersed-boundary/simple-plane-model-from-composite.html", tooltip="Simple Plane Model From Composite"];
@@ -58,5 +57,6 @@ Sharp Immersed Boundary Solver
       sharp_2 -> sharp_2_3:w;
       sharp_2 -> sharp_2_4:w;
       sharp_2 -> sharp_2_5:w;
+      sharp_2 -> sharp_2_6:w;
       sharp_3 -> sharp_3_1:w;
     }
