@@ -69,6 +69,7 @@ This example shows how using the tuned parameters of each detector we generate t
 ----------------
 Parameter File
 ----------------
+
 RPT Parameters
 ^^^^^^^^^^^^^^^^
 
@@ -152,6 +153,7 @@ With the figure shown below we assess the validity of the reconstruction algorit
     :width: 600
 
 
+-----------
 References
 -----------
 
