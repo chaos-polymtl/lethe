@@ -2,7 +2,7 @@
 3D Static Mixer Using RBF Sharp Immersed Boundary
 =====================================================================================
 
-The usage of `static mixers <https://en.wikipedia.org/wiki/Static_mixer>`_ is common for the blending of multi-component products in polymerization, as well as water treatment and chemical processing. They involve no moving part, but obtain mixing effects by converting pressure to radial mixing and flow division as the flow progresses through obstacles. Their advantages include low maintenance, no external energy input, continuous operation, compact design (pipe insertion), and easy installation.
+The usage of `static mixers <https://en.wikipedia.org/wiki/Static_mixer>`_ is common for the blending of multi-component products in polymerization, as well as water treatment and chemical processing. They involve no moving part, but obtain mixing effects by converting the pressure gradient to radial mixing and flow division as the flow progresses through obstacles. Their advantages include low maintenance, no external energy input, continuous operation, compact design (pipe insertion), and easy installation.
 
 Because it is not possible to modulate the rotation speed or change the impeller, as in the case of stirred tanks, their design must be done precisely, and must take into account the desired level of mixing and the properties of fluids involved.
 
@@ -11,8 +11,6 @@ Because it is not possible to modulate the rotation speed or change the impeller
 |     :align: center                                                                                                          |
 |     :width: 800                                                                                                             |
 |     :name: Surface grid representation of a helix static mixer with its casing.                                             |
-|                                                                                                                             |
-|     Surface grid representation of a helix static mixer.                                                                    |
 |                                                                                                                             |
 +-----------------------------------------------------------------------------------------------------------------------------+
 
@@ -56,11 +54,17 @@ Preparation of the Solid
 Generation of the RBF file from the STL
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-`bitpit <https://github.com/optimad/bitpit>`_ is an open-source modular library for scientific computing. The current section presents an example using its RBF capabilities to train RBF-networks that approximate the geometry from surface grid objects (`.STL`).
+`bitpit <https://github.com/optimad/bitpit>`_ is an open-source modular library for scientific computing. The current section presents an example using its RBF capabilities to train RBF-networks that approximate the geometry from surface grid objects (`.stl`).
 
-After compiling the library, we can use executable ``/examples/RBF_example_00001``, along with a parameter file and the ``helix.stl`` in the ``rbf_generation`` directory.
+After compiling the library, we can use an executable ``/examples/RBF_example_00001``, along with a parameter file and the ``helix.stl`` in the ``rbf_generation`` directory.
 
 The parameter file (``RBF.param``) contains:
+
+.. code-block:: text
+
+    nb_subdivision nb_adaptions radius_ratio base_function mesh_range
+    16             4            3            1             0.1
+
 
 #. The number of subdivisions in each of the three spatial dimensions: ``16``;
 #. The number of adaption cycles. Using ``4`` adaptation cycles over a initial number of ``16`` subdivisions results in a level of detail equivalent to a number of ``256`` subdivisions;
@@ -68,10 +72,6 @@ The parameter file (``RBF.param``) contains:
 #. The base function of ``1`` means that the basis function is of Wendland type. These are the best functions to represent geometries from our experiments.
 #. The mesh range of ``0.1`` means that there is at least 10% of margin on each side of the object, so the collection of RBF nodes are encompassing the whole object.
 
-.. code-block:: text
-
-    nb_subdivision nb_adaptions radius_ratio base_function mesh_range
-    16             4            3            1             0.1
 
 From the ``/rbf_generation/`` directory, we can launch the RBF generation using the command line:
 
@@ -284,8 +284,6 @@ After the simulation has run, streamlines can be used to visualize the pressure 
 |     :align: center                                                                                                          |
 |     :width: 800                                                                                                             |
 |     :name: Streamlines in the static mixer colored by velocity magnitude and pressure                                       |
-|                                                                                                                             |
-|     Streamlines in the static mixer colored by velocity magnitude and pressure                                              |
 |                                                                                                                             |
 +-----------------------------------------------------------------------------------------------------------------------------+
 
