@@ -18,7 +18,7 @@ Features
 Files Used in This Example
 ----------------------------
 
-``/examples/dem/3d-packing-in-ball/packing-in-ball.prm``
+- Parameter file: ``examples/dem/3d-packing-in-ball/packing-in-ball.prm``
 
 
 -----------------------
@@ -142,12 +142,14 @@ Running the Simulation
 This simulation can be launched by:
 
 .. code-block:: text
+  :class: copy-button
 
   lethe-particles packing-in-ball.prm
 
 We can also launch this simulation in parallel mode. For example, to launch the simulation on 8 processes:
 
 .. code-block:: text
+  :class: copy-button
 
   mpirun -np 8 lethe-particles packing-in-ball.prm
 

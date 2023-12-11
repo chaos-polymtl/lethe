@@ -17,10 +17,13 @@ Features
 Files Used in This Example
 ---------------------------
 
-- Parameter file: ``examples/multiphysics/concentric-heat-exchanger/concentric-heat-exchanger.prm``
-- GMSH file: ``examples/multiphysics/concentric-heat-exchanger/concentric-cylinders.geo``
-- Correlation calculation: ``examples/multiphysics/concentric-heat-exchanger/correlation_calculation.py``
-- Plot generator: ``examples/multiphysics/concentric-heat-exchanger/plot_temperature_over_line.py.``
+All files mentioned below are located in the example's folder (``examples/multiphysics/concentric-heat-exchanger``).
+
+- Correlation calculation: ``correlation_calculation.py``
+- Geometry file: ``concentric-cylinders.geo``
+- Mesh file: ``concentric-cylinders.msh``
+- Parameter file: ``concentric-heat-exchanger.prm``
+- Postprocessing Python script: ``plot_temperature_over_line.py.``
 
 
 -------------------------
@@ -213,7 +216,10 @@ Running the Simulation
 
 Call the lethe-fluid by invoking:
 
-``mpirun -np 8 lethe-fluid concentric-heat-exchanger.prm``
+.. code-block:: text
+  :class: copy-button
+
+  mpirun -np 8 lethe-fluid concentric-heat-exchanger.prm
 
 to run the simulation using eight CPU cores. Feel free to use more.
 

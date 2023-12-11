@@ -17,14 +17,17 @@ Features
 Files Used in This Example
 ----------------------------
 
-- Geometry file: ``/examples/incompressible-flow/2d-ahmed-body/Ahmed-Body-20-2D.geo``
-- Mesh file: ``/examples/incompressible-flow/2d-ahmed-body/Ahmed-Body-20-2D.msh``
-- Parameter file: ``/examples/incompressible-flow/2d-ahmed-body/ahmed.prm``
+All files mentioned below are located in the example's folder (``examples/incompressible-flow/2d-ahmed-body``).
+
+- Geometry file: ``Ahmed-Body-20-2D.geo``
+- Mesh file: ``Ahmed-Body-20-2D.msh``
+- Parameter file: ``ahmed.prm``
 
 
 --------------------------
 Description of the Case
 --------------------------
+
 In this example, a flow is passing across a fixed Ahmed body (simplified version of a car, classical benchmark for aerodynamic simulation tools). The velocity profile of the flow is simulated. The parameter file used is ``ahmed.prm``.
 
 The following schematic describes the simulation.
@@ -158,21 +161,28 @@ Ahmed bodies are typically studied considering a 60 m/s flow of air. Here, the f
       end
     end
 
+
+----------------------
+Running the Simulation
+----------------------
+
 The simulation is launched in the same folder as the ``.prm`` and ``.msh`` file, using the ``lethe-fluid`` solver. To decrease simulation time, it is advised to run on multiple cpu, using ``mpirun``:
 
 To do so, copy and paste the ``lethe-fluid`` executable to the same folder as your ``.prm`` file and launch it running the following line:
 
 .. code-block:: text
+  :class: copy-button
 
-      mpirun -np 6 lethe-fluid ahmed.prm
+  mpirun -np 6 lethe-fluid ahmed.prm
 
 where 6 is the number of CPUs used. The estimated execution time for a 4 seconds simulation with 6 CPUs is 6 minutes and 53 seconds. For 1 CPU, the estimated time is 30 minutes and 37 seconds.
 
 Alternatively, specify the path to the ``lethe-fluid`` in your ``build/applications`` folder, as follows:
 
 .. code-block:: text
+  :class: copy-button
 
-      mpirun -np 6 ../build/applications/lethe-fluid/lethe-fluid ahmed.prm
+  mpirun -np 6 ../build/applications/lethe-fluid/lethe-fluid ahmed.prm
 
 Guidelines for parameters other than the previous mentioned are found at the `Parameters guide <https://lethe-cfd.github.io/lethe/documentation/parameters/parameters.html>`_.
 

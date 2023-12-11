@@ -16,7 +16,8 @@ Features
 ----------------------------
 Files Used in This Example
 ----------------------------
-``/examples/dem/2d-packing-in-circle/packing-in-circle.prm``
+
+- Parameter file: ``examples/dem/2d-packing-in-circle/packing-in-circle.prm``
 
 
 -----------------------
@@ -200,6 +201,7 @@ Running the Simulation
 Launching the simulation is as simple as specifying the executable name and the parameter file. Assuming that the ``lethe-particles`` executable is within your path, the simulation can be launched by typing:
 
 .. code-block:: text
+  :class: copy-button
 
   lethe-particles packing-in-circle.prm
 

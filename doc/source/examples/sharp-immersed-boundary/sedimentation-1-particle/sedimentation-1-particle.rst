@@ -23,7 +23,7 @@ Features
 Files Used in This Example
 ---------------------------
 
-- ``/examples/sharp-immersed-boundary/sedimentation-1-particle/sedimentation-1-particle.prm``
+- Parameter file: ``/examples/sharp-immersed-boundary/sedimentation-1-particle/sedimentation-1-particle.prm``
 
 
 -----------------------

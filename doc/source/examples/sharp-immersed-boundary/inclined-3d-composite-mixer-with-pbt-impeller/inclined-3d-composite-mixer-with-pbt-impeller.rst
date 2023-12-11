@@ -17,8 +17,11 @@ Features
 Files Used in This Example
 ----------------------------
 
-* Parameter file: ``/examples/sharp-immersed-boundary/inclined-3d-composite-mixer-with-pbt-impeller/mixer.prm``
-* Composite geometry file: ``/examples/sharp-immersed-boundary/inclined-3d-composite-mixer-with-pbt-impeller/impeller.composite``
+All files mentioned below are located in the example's folder (``examples/sharp-immersed-boundary/inclined-3d-composite-mixer-with-pbt-impeller``).
+
+- Composite geometry file: ``impeller.composite``
+- Parameter file: ``mixer.prm``
+- Python script for an object rotation angle calculation: ``angle_calculator.py``
 
 
 -----------------------
@@ -34,12 +37,9 @@ In this example, we simulate a mixer using a PBT impeller through the usage of S
    :name: inclined_impeller
 
 
-
 ---------------
 Parameter File
 ---------------
-
-
 
 Mesh definition 
 ~~~~~~~~~~~~~~~

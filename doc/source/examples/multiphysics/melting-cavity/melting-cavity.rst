@@ -22,8 +22,10 @@ Features
 Files Used in This Example
 ---------------------------
 
-``examples/multiphysics/melting-cavity/melting-cavity.prm``
+Both files mentioned below are located in the example's folder (``examples/multiphysics/melting-cavity``).
 
+- Parameter file: ``melting-cavity.prm``
+- Postprocessing Python script: ``melting_cavity.py``
 
 -----------------------------
 Description of the Case
@@ -193,9 +195,12 @@ The solid block melts into liquid in this example, hence in the ``physical prope
 Running the Simulation
 ---------------------------
 
-Call the lethe-fluid by invoking:  
+Launching the simulation is as simple as specifying the executable name and the parameter file. Assuming that the ``lethe-fluid`` executable is within your path, the simulation can be launched by typing:
 
-``mpirun -np 12 lethe-fluid melting-cavity.prm``
+.. code-block:: text
+  :class: copy-button
+
+  mpirun -np 12 lethe-fluid melting-cavity.prm
 
 to run the simulation using twelve CPU cores. Feel free to use more.
 

@@ -18,12 +18,14 @@ Features
 Files Used in This Example
 ----------------------------
 
-- Base case parameter file (:math:`Re=400`): ``/examples/incompressible-flow/2d-lid-driven-cavity/cavity.prm``
-- Experimental data file from Ghia `et al.` (1982) `[1] <https://doi.org/10.1016/0021-9991(82)90058-4>`_: ``examples/incompressible-flow/2d-lid-driven-cavity/ref-2d-ghia-u.txt``
-- Experimental data file from Erturk `et al.` (2005) `[2] <https://doi.org/10.1002/fld.953>`_: ``examples/incompressible-flow/2d-lid-driven-cavity/ref-2d-erturk-u.txt``
-- Higher-Reynolds case parameter file (:math:`Re=7500`): ``/examples/incompressible-flow/2d-lid-driven-cavity/Reynolds_7500/cavity.prm``
-- Python script for postprocessing the :math:`Re=400` case: ``examples/incompressible-flow/2d-lid-driven-cavity/post_process_Reynolds_400.py``
-- Python script for postprocessing the :math:`Re=7500` case: ``examples/incompressible-flow/2d-lid-driven-cavity/Reynolds_7500/post_process_Reynolds_7500.py``
+All files mentioned below are located in the example's folder (``examples/incompressible-flow/2d-lid-driven-cavity``).
+
+- Base case parameter file (:math:`Re=400`): ``cavity.prm``
+- Experimental data file from Ghia `et al.` (1982) `[1] <https://doi.org/10.1016/0021-9991(82)90058-4>`_: ``ref-2d-ghia-u.txt``
+- Experimental data file from Erturk `et al.` (2005) `[2] <https://doi.org/10.1002/fld.953>`_: ``ref-2d-erturk-u.txt``
+- Higher-Reynolds case parameter file (:math:`Re=7500`): ``Reynolds_7500/cavity.prm``
+- Postprocessing Python script for the :math:`Re=400` case: ``post_process_Reynolds_400.py``
+- Postprocessing Python script for the :math:`Re=7500` case: ``Reynolds_7500/post_process_Reynolds_7500.py``
 
 
 -----------------------
@@ -203,6 +205,7 @@ Running the Simulations
 Launching the simulation is as simple as specifying the executable name and the parameter file. Assuming that the ``lethe-fluid`` executable is within your path, the simulation can be launched by typing:
 
 .. code-block:: text
+  :class: copy-button
 
   lethe-fluid cavity.prm
 

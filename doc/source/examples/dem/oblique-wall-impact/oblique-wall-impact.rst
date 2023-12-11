@@ -10,15 +10,17 @@ Features
 --------
 
 - Solvers: ``lethe-particles``
-- Post-processing using `Python <https://www.python.org/>`_, `PyVista <https://docs.pyvista.org/>`_, `lethe_pyvista_tools <https://github.com/lethe-cfd/lethe/tree/master/contrib/postprocessing>`_
+- Postprocessing using `Python <https://www.python.org/>`_, `PyVista <https://docs.pyvista.org/>`_, `lethe_pyvista_tools <https://github.com/lethe-cfd/lethe/tree/master/contrib/postprocessing>`_
 
 ----------------------------
 Files Used in This Example
 ----------------------------
 
-- ``/examples/dem/3d-bouncing-particle/oblique_wall_impact_template.prm``
-- ``/examples/dem/3d-bouncing-particle/ooblique_wall_impact_case_generator.py``
-- ``/examples/dem/3d-bouncing-particle/oblique_wall_impact_post-processing.py``
+All files mentioned below are located in the example's folder (``examples/dem/3d-oblique-wall-impact``).
+
+- Case generation Python script: ``oblique_wall_impact_case_generator.py``
+- Parameter file for case generation: ``oblique_wall_impact_template.tpl``
+- Postprocessing Python script: ``oblique_wall_impact_postprocessing.py``
 
 
 -------------------------
@@ -116,7 +118,8 @@ Generating the parameter files
 -------------------------------
 Using the following command:
 
-.. code-block:: 
+.. code-block::
+  :class: copy-button
 
   python3 oblique_wall_impact_case_generator.py
 
@@ -128,19 +131,21 @@ Running the Simulation
 Once all files are created, the simulation can be launched in parallel using the following command:
 
 .. code-block:: text
+  :class: copy-button
 
   for i in $(ls run_oblique_impact*); do lethe-particles $i & sleep 2; done
 
 Depending on the speed of your computer, all 34 simulation should be completed in less than two minutes. A folder named according to the angle of every simulation used will be generated (``/xx``).
 
 ---------------
-Post-processing
+Postprocessing
 ---------------
-A Python post-processing code called ``oblique_wall_impact_post-processing.py`` is provided with this example. It is used to compare the rebound angle, the angular velocity and the tangential coefficient of restituion of the particles. Use the following line in your command line to run the post-processing code :
+A Python post-processing code called ``oblique_wall_impact_postprocessing.py`` is provided with this example. It is used to compare the rebound angle, the angular velocity and the tangential coefficient of restitution of the particles. Use the following line in your command line to run the post-processing code :
 
 .. code-block:: text
+  :class: copy-button
 
-  python3 oblique_wall_impact_post-processing.py
+  python3 oblique_wall_impact_postprocessing.py
 
 .. important::
 

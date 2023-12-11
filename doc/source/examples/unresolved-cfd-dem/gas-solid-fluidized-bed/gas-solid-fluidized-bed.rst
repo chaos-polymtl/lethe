@@ -8,6 +8,7 @@ It is strongly recommended to visit `DEM parameters <../../../parameters/dem/dem
 ----------------------------------
 Features
 ----------------------------------
+
 - Solvers: ``lethe-particles`` and ``lethe-fluid-particles``
 - Three-dimensional problem
 - Displays the selection of models and physical properties.
@@ -18,9 +19,10 @@ Features
 Files Used in This Example
 ---------------------------
 
-- Parameter file for particle generation and packing: ``/examples/unresolved-cfd-dem/gas-solid-fluidized-bed/dem-packing-in-fluidized-bed.prm``
-- Parameter file for CFD-DEM simulation of the gas-solid fluidized bed: ``/examples/unresolved-cfd-dem/gas-solid-fluidized-bed/gas-solid-fluidized-bed.prm``
+Both files mentioned below are located in the example's folder (``examples/unresolved-cfd-dem/gas-solid-fluidized-bed``).
 
+- Parameter file for CFD-DEM simulation of the gas-solid fluidized bed: ``gas-solid-fluidized-bed.prm``
+- Parameter file for particle generation and packing: ``dem-packing-in-fluidized-bed.prm``
 
 
 -----------------------
@@ -194,12 +196,14 @@ Running the DEM Simulation
 Launching the simulation is as simple as specifying the executable name and the parameter file. Assuming that the ``lethe-particles`` executable is within your path, the simulation can be launched on a single processor by typing:
 
 .. code-block:: text
+  :class: copy-button
 
   lethe-particles dem-packing-in-fluidized-bed.prm
 
 or in parallel (where 8 represents the number of processors)
 
 .. code-block:: text
+  :class: copy-button
 
   mpirun -np 8 lethe-particles dem-packing-in-fluidized-bed.prm
 
@@ -391,11 +395,12 @@ Linear Solver
 Running the CFD-DEM Simulation
 ------------------------------
 
-The simulation is run using the lethe-fluid-particles application as per the following command:
+The simulation is run using the ``lethe-fluid-particles`` application. Assuming that the ``lethe-fluid-particles`` executable is within your path, the simulation can be launched as per the following command:
 
 .. code-block:: text
+  :class: copy-button
 
-    path_to_cfd_dem_application/lethe-fluid-particles fluidized-bed.prm 
+  lethe-fluid-particles fluidized-bed.prm
 
 --------
 Results

@@ -8,6 +8,7 @@ This example simulates the dam-break flow of a dry granular material using the d
 ----------------------------------
 Features
 ----------------------------------
+
 - Solvers: ``lethe-particles``
 - Three-dimensional problem
 - Moving floating mesh
@@ -18,10 +19,12 @@ Features
 Files Used in This Example
 ----------------------------
 
-- Parameters file for the problem (H=20cm): ``examples/dem/3d-dam-break/granular-dam-break.prm``
-- Parameters file for the H=40cm bed: ``examples/dem/3d-dam-break/granular-dam-break-H-40cm.prm``
-- GMSH geo file: ``examples/dem/3d-dam-break/square.geo``
-- GMSH mesh file: ``examples/dem/3d-dam-break/square.msh``
+All files mentioned below are located in the example's folder (``examples/dem/3d-dam-break``).
+
+- Geometry file: ``square.geo``
+- Mesh file: ``square.msh``
+- Parameters file for the problem (:math:`H=20 \, \text{cm}`): ``granular-dam-break.prm``
+- Parameters file for the :math:`H=40 \, \text{cm}` bed: ``granular-dam-break-H-40cm.prm``
 
 
 -----------------------
@@ -178,6 +181,7 @@ Running the Simulation
 The simulation is launched using a single input file for the insertion of the particles, the opening of the sluice gate and the granular motion of the particles.
 
 .. code-block:: text
+  :class: copy-button
 
    mpirun -np 8 lethe-particles granular-dam-break.prm
 

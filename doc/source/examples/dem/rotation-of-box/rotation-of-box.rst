@@ -14,7 +14,8 @@ Features
 ----------------------------
 Files Used in This Example
 ----------------------------
-``/examples/dem/3d-grid-rotation-in-box/grid-rotation-box.prm``
+
+- Parameter file: ``examples/dem/3d-grid-rotation-in-box/grid-rotation-box.prm``
 
 
 -----------------------
@@ -134,6 +135,7 @@ Running the Simulation
 This simulation can be launched by:
 
 .. code-block:: text
+  :class: copy-button
 
   lethe-particles grid-rotation-box.prm
 

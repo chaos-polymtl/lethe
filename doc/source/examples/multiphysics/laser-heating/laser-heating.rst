@@ -20,7 +20,8 @@ Features
 ---------------------------
 Files Used in This Example
 ---------------------------
-``examples/multiphysics/laser-heating/laser-heating.prm``
+
+- Parameter file: ``examples/multiphysics/laser-heating/laser-heating.prm``
 
 
 -----------------------------

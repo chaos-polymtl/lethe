@@ -15,9 +15,12 @@ Features
 ----------------------------
 Files Used in This Example
 ----------------------------
-- Parameter file used to load the particles: ``examples/dem/3d-bunny-drill/bunny-drill-loading.prm``
-- Parameter file used to simulate the bunny drill: ``examples/dem/3d-bunny-drill/bunny-drill.prm``
-- GMSH mesh of the bunny: ``examples/dem/3d-bunny-drill/bunny-low-poly.msh`` generated using the corresponding STL file ``examples/dem/3d-bunny-drill/bunny-low-poly.stl``
+
+All files mentioned below are located in the example's folder (``examples/dem/3d-bunny-drill``).
+
+- GMSH mesh of the bunny: ``bunny-low-poly.msh`` generated using the corresponding STL file ``bunny-low-poly.stl``
+- Parameter file used to load the particles: ``bunny-drill-loading.prm``
+- Parameter file used to simulate the bunny drill: ``bunny-drill.prm``
 
 -----------------------
 Description of the Case
@@ -169,12 +172,14 @@ Running the Simulation
 The loading can be simulated using the following command:
 
 .. code-block:: text
+  :class: copy-button
 
   mpirun -np 8 lethe-particles bunny-drill-loading.prm
 
 Whereas the drilling is launched after the loading using:
 
 .. code-block:: text
+  :class: copy-button
 
   mpirun -np 8 lethe-particles bunny-drill.prm
 

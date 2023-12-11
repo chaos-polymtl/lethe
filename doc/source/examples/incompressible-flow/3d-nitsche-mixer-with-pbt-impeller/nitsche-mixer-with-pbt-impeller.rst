@@ -24,9 +24,11 @@ Features
 Files Used in This Example
 --------------------------
 
-- Geometry file: ``/examples/incompressible-flow/3d-nitsche-mixer-with-pbt-impeller/pbt.geo``
-- Mesh file: ``/examples/incompressible-flow/3d-nitsche-mixer-with-pbt-impeller/pbt.msh``
-- Parameter file: ``/examples/incompressible-flow/3d-nitsche-mixer-with-pbt-impeller/mixer.prm``
+All files mentioned below are located in the example's folder (``examples/incompressible-flow/3d-nitsche-mixer-with-pbt-impeller``).
+
+- Geometry file: ``pbt.geo``
+- Mesh file: ``pbt.msh``
+- Parameter file: ``mixer.prm``
 
 
 -----------------------
@@ -316,11 +318,12 @@ Relatively standard parameters are used for the :doc:`../../../parameters/cfd/li
 Running the Simulation
 ----------------------
 
-Launching the simulation is as simple as specifying the executable name and the parameter file. For this more complex example, it is highly advised to use ``mpirun`` to parallelize the computation, with ``<np>`` the number of processes, defined accordingly with your machine's number of cpu. The simulation can be launched by typing, in a terminal opened in the example folder:
+Launching the simulation is as simple as specifying the executable name and the parameter file. For this more complex example, it is highly advised to use ``mpirun`` to parallelize the computation, with ``<np>`` the number of processes, defined accordingly with your machine's number of cpu.  Assuming that the ``lethe-fluid-nitsche`` executable is within your path, the simulation can be launched by typing, in a terminal opened in the example folder:
 
 .. code-block:: text
+  :class: copy-button
 
-  mpirun -np <np> </path/to/the/build/applications/lethe-fluid-nitsche/lethe-fluid-nitsche mixer.prm>
+  mpirun -np <np> lethe-fluid-nitsche mixer.prm
 
 Lethe generates a larger number of files when the Nitsche immersed boundary is used:
 

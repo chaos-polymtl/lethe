@@ -18,8 +18,10 @@ Features
 Files Used in This Example
 ----------------------------
 
-* Parameter file: ``/examples/sharp-immersed-boundary/3d-opencascade-mixer-with-pbt-impeller/mixer.prm``
-* Step file: ``/examples/sharp-immersed-boundary/3d-opencascade-mixer-with-pbt-impeller/impeller.step``
+Both files mentioned below are located in the example's folder (``examples/sharp-immersed-boundary/3d-opencascade-mixer-with-pbt-impeller``).
+
+- Parameter file: ``mixer.prm``
+- Step file: ``impeller.step``
 
 
 -----------------------

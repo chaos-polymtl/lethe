@@ -7,6 +7,7 @@ In this example, using a Monte Carlo technique, we perform the calculation of ph
 --------
 Features
 --------
+
 - Solver: ``lethe-rpt-3d``
 - Displays the use of the Monte Carlo method in the calculation of photon count
 
@@ -14,13 +15,16 @@ Features
 ---------------------------
 Files Used in This Example
 ---------------------------
-- File containing detector positions: ``examples/rpt/count-calculation/positions.detector``
-- File containing particle positions for the first scenario:  ``examples/rpt/count-calculation/positions-horizontalx.particle``
-- File containing particle positions for the second scenario  ``examples/rpt/count-calculation/positions-horizontaly.particle``
-- File containing particle positions for the third scenario:  ``examples/rpt/count-calculation/positions-vertical.particle``
-- File containing particle positions for the fourth scenario:  ``examples/rpt/count-calculation/positions-diagonal.particle``
-- Parameter file: ``examples/rpt/count-calculation/rpt-count-calculation.prm``
-- Python script for post-processing the data: ``examples/rpt/count-calculation/rpt_count-calculation_plot.py``
+
+All files mentioned below are located in the example's folder (``examples/rpt/count-calculation``).
+
+- File containing detector positions: ``positions.detector``
+- File containing particle positions for the first scenario:  ``positions-horizontalx.particle``
+- File containing particle positions for the second scenario  ``positions-horizontaly.particle``
+- File containing particle positions for the third scenario:  ``positions-vertical.particle``
+- File containing particle positions for the fourth scenario:  ``positions-diagonal.particle``
+- Parameter file: ``rpt-count-calculation.prm``
+- Postprocessing Python script: ``rpt_count-calculation_plot.py``
 
 
 -------------------------
@@ -160,11 +164,13 @@ In the subsection ``detector parameters``, we specify the file that contains two
 ----------------------------------
 Running the Simulation
 ----------------------------------
+
 Launching the simulation is as simple as specifying the executable name and the parameter file. Assuming that the ``lethe-rpt-3d`` executable is within your path, the simulation can be launched by typing:
 
 .. code-block:: text
+  :class: copy-button
 
-    lethe-rpt-3d rpt-count-calculation.prm
+  lethe-rpt-3d rpt-count-calculation.prm
   
 Lethe will generate a ``.csv`` file with the name specified next to the ``counts file`` parameter in ``rpt-count-calculation.prm``. The generated ``.csv`` file will contain the :math:`(x,y,z)` coordinates of the particle with its respective photon count measured by a given detector. Each detector is identified by its id number (``detector_id``). In this example, as we have only one detector, all values in the ``detector_id`` column should be :math:`0`.
 

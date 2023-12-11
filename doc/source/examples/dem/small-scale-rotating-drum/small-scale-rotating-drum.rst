@@ -18,8 +18,10 @@ Features
 Files Used in This Example
 ----------------------------
 
-- Parameters file for particle insertion: ``/examples/dem/3d-small-scale-rotating-drum/packing-rotating-drum.prm``
-- Parameters file for drum rotation: ``/examples/dem/3d-small-scale-rotating-drum/small-rotating-drum-dem.prm``
+Both files mentioned below are located in the example's folder (``examples/dem/3d-small-scale-rotating-drum``).
+
+- Parameters file for particle insertion: ``packing-rotating-drum.prm``
+- Parameters file for drum rotation: ``small-rotating-drum-dem.prm``
 
 
 -----------------------
@@ -182,8 +184,9 @@ Running the Simulation
 The simulation is launched in two steps: the first step packs the particle in the cylinder, while the second step rotates the drum and simulates the movement of the particles. 
 
 .. code-block:: text
+  :class: copy-button
 
-   mpirun -np 8 lethe-particles packing-rotating-drum.prm
+   mpirun -np 8 lethe-particles packing-rotating-drum.prm;
    mpirun -np 8 lethe-particles small-rotating-drum-dem.prm
 
 

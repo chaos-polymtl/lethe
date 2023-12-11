@@ -8,6 +8,7 @@ The mixing of stirred tanks is a common chemical engineering problem that can be
 ----------------------------------
 Features
 ----------------------------------
+
 - Solvers: ``lethe-fluid-sharp``
 - Transient problem
 - Rotating complex solid modeled with the sharp immersed boundary method
@@ -17,8 +18,10 @@ Features
 Files Used in This Example
 ----------------------------
 
-* Parameter file: ``/examples/sharp-immersed-boundary/3d-composite-mixer-with-pbt-impeller/mixer.prm``
-* Composite geometry file: ``/examples/sharp-immersed-boundary/3d-composite-mixer-with-pbt-impeller/impeller.composite``
+Both files mentioned below are located in the example's folder (``examples/sharp-immersed-boundary/3d-composite-mixer-with-pbt-impeller``).
+
+- Composite geometry file: ``impeller.composite``
+- Parameter file: ``mixer.prm``
 
 
 -----------------------

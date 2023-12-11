@@ -22,8 +22,10 @@ Features
 Files Used in This Example
 ---------------------------
 
-- ``/examples/sharp-immersed-boundary-solver/sedimentation-64-particle/sedimentation-64-particle.prm``
-- ``/examples/sharp-immersed-boundary-solver/sedimentation-64-particle/particles.input``
+Both files mentioned below are located in the example's folder (``examples/sharp-immersed-boundary-solver/sedimentation-64-particle``).
+
+- Parameter file: ``sedimentation-64-particle.prm``
+- Particles file: ``particles.input``
 
 
 -----------------------

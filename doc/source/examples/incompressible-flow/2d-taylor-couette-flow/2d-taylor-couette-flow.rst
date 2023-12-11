@@ -19,8 +19,10 @@ Features
 Files Used in This Example
 ----------------------------
 
-- Parameter file: ``examples/incompressible-flow/2d-taylor-couette/taylor-couette.prm``
-- Python script for postprocessing: ``examples/incompressible-flow/2d-taylor-couette/post_process_taylor_couette.py``
+All files mentioned below are located in the example's folder (``examples/incompressible-flow/2d-taylor-couette``).
+
+- Parameter file: ``taylor-couette.prm``
+- Postprocessing Python script: ``postprocess_taylor_couette.py``
 
 
 -----------------------
@@ -207,6 +209,7 @@ Running the Simulation
 Launching the simulation is as simple as specifying the executable name and the parameter file. Assuming that the ``lethe-fluid`` executable is within your path, the simulation can be launched by typing:
 
 .. code-block:: text
+  :class: copy-button
 
   lethe-fluid taylor-couette.prm
 

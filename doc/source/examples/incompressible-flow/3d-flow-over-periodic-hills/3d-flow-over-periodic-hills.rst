@@ -220,6 +220,7 @@ Running the Simulation
 Launching the simulation is as simple as specifying the executable name and the parameter file. Assuming that the ``lethe-fluid`` executable is within your path, the simulation can be launched by typing:
 
 .. code-block:: text
+  :class: copy-button
 
   lethe-fluid periodic-hills.prm
 

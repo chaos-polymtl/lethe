@@ -8,6 +8,7 @@ It is strongly recommended to visit `DEM parameters <../../../parameters/dem/dem
 ----------------------------------
 Features
 ----------------------------------
+
 - Solvers: ``lethe-particles`` and ``lethe-fluid-vans``
 - Three-dimensional problem
 - Displays the selection of models and physical properties
@@ -17,8 +18,11 @@ Features
 Files Used in This Example
 ---------------------------
 
-- Parameter file for particle generation and packing: ``/examples/unresolved-cfd-dem/cylindrical-packed-bed/packing-in-cylinder.prm``
-- Parameter file for CFD-DEM simulation of the packed bed: ``/examples/unresolved-cfd-dem/cylindrical-packed-bed/flow-in-bed.prm``
+Both files mentioned below are located in the example's folder (``examples/unresolved-cfd-dem/cylindrical-packed-bed``).
+
+- Parameter file for CFD-DEM simulation of the packed bed: ``cylindrical-packed-bed/flow-in-bed.prm``
+- Parameter file for particle generation and packing: ``packing-in-cylinder.prm``
+
 
 -----------------------
 Description of the Case
@@ -181,12 +185,14 @@ Running the DEM Simulation
 Launching the simulation is as simple as specifying the executable name and the parameter file. Assuming that the ``lethe-particles`` executable is within your path, the simulation can be launched on a single processor by typing:
 
 .. code-block:: text
+  :class: copy-button
 
   lethe-particles packing-in-circle.prm
 
 or in parallel (where 8 represents the number of processors)
 
 .. code-block:: text
+  :class: copy-button
 
   mpirun -np 8 lethe-particles packing-in-circle.prm
 
@@ -365,11 +371,12 @@ Linear Solver
 Running the VANS Simulation
 ------------------------------
  
-The simulation is run using the ``lethe-fluid-vans`` application as per the following command:
+The simulation is run using the ``lethe-fluid-vans`` application. Assuming that the ``lethe-fluid-vans`` executable is within your path, the simulation can be launched as per the following command:
 
 .. code-block:: text
+  :class: copy-button
 
-    path_to_vans_application/lethe-fluid-vans parameter_file.prm 
+  lethe-fluid-vans parameter_file.prm
 
 
 -------------

@@ -3,7 +3,7 @@
 Flow around a Sphere
 ==================================
 
-In this example, a fluid flows past a sphere
+In this example, a fluid flows past a sphere.
 
 
 ----------------------------------
@@ -20,9 +20,11 @@ Features
 Files Used in This Example
 ----------------------------
 
-- Parameter file for :math:`Re=0.1`: ``/examples/incompressible-flow/3d-flow-around-sphere/sphere-0.1.prm``
-- Parameter file For :math:`Re=150`: ``/examples/incompressible-flow/3d-flow-around-sphere/sphere-150.prm``
-- Parameter file for :math:`Re=150` using adaptative mesh refinement: ``/examples/incompressible-flow/3d-flow-around-sphere/sphere-adapt.prm``
+All files mentioned below are located in the example's folder (``examples/incompressible-flow/3d-flow-around-sphere``).
+
+- Parameter file for :math:`Re=0.1`: ``sphere-0.1.prm``
+- Parameter file for :math:`Re=150`: ``sphere-150.prm``
+- Parameter file for :math:`Re=150` using adaptative mesh refinement: ``sphere-adapt.prm``
 
 
 -----------------------
@@ -246,18 +248,21 @@ Running the Simulation
 Launching the simulation is as simple as specifying the executable name and the parameter file. Assuming that the ``lethe-fluid`` executable is within your path, the simulation can be launched by typing:
 
 .. code-block:: text
+  :class: copy-button
 
   lethe-fluid sphere-0.1.prm
 
 or 
 
 .. code-block:: text
+  :class: copy-button
 
   lethe-fluid sphere-150.prm
 
 or
 
 .. code-block:: text
+  :class: copy-button
 
   lethe-fluid sphere-adapt.prm
 

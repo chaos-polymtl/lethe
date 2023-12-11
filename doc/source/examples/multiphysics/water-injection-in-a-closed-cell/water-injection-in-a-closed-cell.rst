@@ -20,9 +20,10 @@ Features
 ---------------------------
 Files Used in This Example
 ---------------------------
+Both files mentioned below are located in the example's folder (``examples/multiphysics/water-injection-in-a-closed-cell``).
 
-- Parameter file: ``examples/multiphysics/water-injection-in-a-closed-cell/water-injection-in-a-closed-cell.prm``
-- Postprocessing python script: ``examples/multiphysics/air-bubble-compression/air-bubble-compression-postprocessing.py``
+- Parameter file: ``water-injection-in-a-closed-cell.prm``
+- Postprocessing python script: ``water-injection-in-a-closed-cell-postprocessing.py``
 
 
 -----------------------
