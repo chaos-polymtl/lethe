@@ -8,21 +8,17 @@ Regular Installation on Linux
 .. important::
   Distributions on which compatibility was tested are: Ubuntu 20.04 LTS, Ubuntu 22.04 LTS, Centos 7 and Manjaro 
 
-* Dependencies: deal.II library (`deal.II website <https://www.dealii.org/>`_) and its dependencies (MPI, numdiff, p4est, trilinos and METIS)
-  * Lethe requires a modern version of the deal.II library. At the time of this writing, ``deal.II 9.5`` (the last major release) and ``deal.II 9.6pre`` (the ``master`` branch version) is supported.
-  * The compatibility with both deal.II versions is ensured by Continuous Integration (CI) using Github Actions.
-  * A `dealii fork <https://github.com/lethe-cfd/dealii>`_ is maintained by Lethe team. This fork does not include any modification to deal.II library, but it is the latest version with which Lethe was tested. We work hard to ensure compatibility with the latest deal.II version and we do not modify the library except through pull requests on the official deal.II repository.
+Lethe requires a modern version of the `deal.II library <https://www.dealii.org/>`_ and its dependencies (MPI, numdiff, p4est, trilinos and METIS). At the time of this writing, ``deal.II 9.5`` and ``deal.II 9.6pre`` (the ``master`` branch version) are supported. A `dealii fork <https://github.com/lethe-cfd/dealii>`_ is maintained by Lethe team. This fork does not include any modification to deal.II library, but it is the latest version with which Lethe was tested. 
 
-* There are two ways to install deal.II and its dependency:
-  1. Through candi (recommended way for developers)
-  2. Through the system package manager (recommended way for users)
+**Lethe installation steps:**
+  
+1. Installation of deal.II 
+2. Installation of Lethe
 
-.. warning:: 
-  Lethe cannot be installed if deal.II has not been configured with p4est, trilinos and METIS. Although Lethe can be run in serial and parallel mode (through MPI), it uses p4est, METIS and trilinos for mesh decomposition and the linear solvers respectively.
-
-* Lethe installation steps:
-  1. Installation of deal.II through package manager or through candi
-  2. Installation of Lethe
+**Installing deal.II and its dependency:**
+  
+1. Through candi (recommended for developers)
+2. Through the system package manager (recommended for users)
 
 Installing deal.II using apt (Step #1)
 -----------------------------------------
@@ -65,7 +61,7 @@ To install the dependencies (MPI, p4est, trilinos and METIS) all together using 
 
 Clone the candi git repository in a folder of your choice  (e.g. ``/home/username/software``). Edit the ``candi.cfg`` file to alter which dependencies are compiled. This should notably be used to force the installation of the deal.II master version directly instead of the current stable version by setting the ``STABLE_BUILD=false``.
 
-We recommend installing the following packages (which are specified after line 57):
+The following packages (which are specified after line 57) should be installed:
   
   .. code-block:: text
     
