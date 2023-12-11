@@ -1115,13 +1115,6 @@ DEMSolver<dim>::solve()
             triangulation,
             parameters.boundary_conditions);
 
-  // Store information about floating mesh/background mesh intersection
-  for (unsigned int i_solid = 0; i_solid < solids.size(); ++i_solid)
-    {
-      floating_mesh_info[i_solid] =
-        solids[i_solid]->map_solid_in_background_triangulation(triangulation);
-    }
-
   if (parameters.restart.restart == true)
     {
       read_checkpoint(computing_timer,
@@ -1130,7 +1123,8 @@ DEMSolver<dim>::solve()
                       particles_pvdhandler,
                       grid_pvdhandler,
                       triangulation,
-                      particle_handler);
+                      particle_handler,
+                      solids);
 
       displacement.resize(particle_handler.get_max_local_particle_index());
       force.resize(displacement.size());
@@ -1139,6 +1133,13 @@ DEMSolver<dim>::solve()
       update_moment_of_inertia(particle_handler, MOI);
 
       checkpoint_step = true;
+    }
+
+  // Store information about floating mesh/background mesh intersection
+  for (unsigned int i_solid = 0; i_solid < solids.size(); ++i_solid)
+    {
+      floating_mesh_info[i_solid] =
+        solids[i_solid]->map_solid_in_background_triangulation(triangulation);
     }
 
   // Find the smallest contact search frequency criterion between (smallest
@@ -1482,6 +1483,7 @@ DEMSolver<dim>::solve()
                            grid_pvdhandler,
                            triangulation,
                            particle_handler,
+                           solids,
                            pcout,
                            mpi_communicator);
         }

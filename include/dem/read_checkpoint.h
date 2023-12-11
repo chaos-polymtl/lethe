@@ -12,12 +12,10 @@
  * the top level of the Lethe distribution.
  *
  * ---------------------------------------------------------------------
-
- *
- * Author: Shahab Golshan, Polytechnique Montreal, 2019
  */
 
 #include <core/pvd_handler.h>
+#include <core/serial_solid.h>
 
 #include <dem/dem_solver_parameters.h>
 
@@ -49,15 +47,18 @@ using namespace std;
  * @param grid_pvdhandler PVD handler for post-processing
  * @param triangulation Triangulation
  * @param particle_handler Particle handler
+ * @param solid_objects Vector of solids objects used in DEM simulations
  */
 template <int dim>
 void
-read_checkpoint(TimerOutput                               &computing_timer,
-                const DEMSolverParameters<dim>            &dem_parameters,
-                std::shared_ptr<SimulationControl>        &simulation_control,
-                PVDHandler                                &particles_pvdhandler,
-                PVDHandler                                &grid_pvdhandler,
-                parallel::distributed::Triangulation<dim> &triangulation,
-                Particles::ParticleHandler<dim>           &particle_handler);
+read_checkpoint(
+  TimerOutput                                             &computing_timer,
+  const DEMSolverParameters<dim>                          &dem_parameters,
+  std::shared_ptr<SimulationControl>                      &simulation_control,
+  PVDHandler                                              &particles_pvdhandler,
+  PVDHandler                                              &grid_pvdhandler,
+  parallel::distributed::Triangulation<dim>               &triangulation,
+  Particles::ParticleHandler<dim>                         &particle_handler,
+  std::vector<std::shared_ptr<SerialSolid<dim - 1, dim>>> &solid_objects);
 
 #endif /* read_checkpoint_h */

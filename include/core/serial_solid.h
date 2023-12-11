@@ -147,7 +147,7 @@ public:
    *
    * @return The angular velocity of the solid object
    */
-  Tensor<1, 3>
+  inline Tensor<1, 3>
   get_angular_velocity() const
   {
     return this->current_angular_velocity;
@@ -158,7 +158,7 @@ public:
    *
    * @return The center of rotation of the solid object
    */
-  Point<3>
+  inline Point<3>
   get_center_of_rotation() const
   {
     if constexpr (spacedim == 3)
@@ -175,7 +175,7 @@ public:
    *
    * @return id of the solid
    */
-  unsigned int
+  inline unsigned int
   get_solid_id() const
   {
     return id;
@@ -204,11 +204,11 @@ public:
   write_output_results(std::shared_ptr<SimulationControl> simulation_control);
 
   /**
-   * @brief read solid base triangulation checkpoint
+   * @brief read solid base triangulation checkpoint and replaces the
+   * triangulation at the location where it was when it was checkpointed
    *
    * @param prefix_name The prefix of the checkpoint of the simulation
    *
-   * @warning This is currently not implemented
    */
   void
   read_checkpoint(std::string prefix_name);
@@ -217,8 +217,6 @@ public:
    * @brief write solid base triangulation checkpoint
    *
    * @param prefix_name The prefix of the checkpoint of the simulation
-   *
-   * @warning This is currently not implemented
    */
   void
   write_checkpoint(std::string prefix_name);
@@ -241,6 +239,15 @@ private:
   {
     displacement_since_mapped = 0;
   }
+
+  /**
+   * @brief Moves the vertices of the solid triangulation using the displacement
+   * vector. This is mostly used when restarting simulations which contain
+   * a serial solid in order to replace it at the position it was when the
+   * simulation finished.
+   */
+  void
+  move_solid_triangulation_with_displacement();
 
   /**
    * @brief Rotates the grid by a given angle around an axis

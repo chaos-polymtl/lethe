@@ -3,6 +3,12 @@ All notable changes to the Lethe project will be documented in this file.
  
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Master] - 2023-12-11
+
+### Fixed
+
+- MINOR Solid objects can now be restarted adequately in DEM. They will resume at the position they had at the end of the simulation [#959](https://github.com/lethe-cfd/lethe/pull/959) 
+
 ## [Master] - 2023-11-27
 
 ### Removed
