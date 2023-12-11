@@ -61,6 +61,20 @@ public:
          const parallel::distributed::Triangulation<dim> &triangulation,
          const DEMSolverParameters<dim> &dem_parameters) override;
 
+
+  virtual void
+  serialize(boost::archive::text_oarchive &ar, const unsigned int) override
+  {
+    // ar &current_inserting_particle_type;
+    ar &particles_of_each_type_remaining &current_inserting_particle_type;
+  }
+
+  virtual void
+  deserialize(boost::archive::text_iarchive &ar, const unsigned int) override
+  {
+    ar &particles_of_each_type_remaining &current_inserting_particle_type;
+  }
+
 private:
   /**
    * Creates a vector of random numbers with size of particles which are going

@@ -67,7 +67,7 @@ end
 
 subsection insertion info
   set insertion method                               = volume
-  set inserted number of particles at each time step = 0
+  set inserted number of particles at each time step = 100
   set insertion frequency                            = 10000
   set insertion box minimum x                        = 0.0025
   set insertion box minimum y                        = 0.0025

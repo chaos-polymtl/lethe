@@ -36,6 +36,9 @@
 #include <deal.II/particles/particle_iterator.h>
 #include <deal.II/particles/property_pool.h>
 
+#include <boost/archive/text_iarchive.hpp>
+#include <boost/archive/text_oarchive.hpp>
+
 #include <cmath>
 #include <fstream>
 #include <iostream>
@@ -80,6 +83,12 @@ public:
   insert(Particles::ParticleHandler<dim>                 &particle_handler,
          const parallel::distributed::Triangulation<dim> &triangulation,
          const DEMSolverParameters<dim>                  &dem_parameters) = 0;
+
+  virtual void
+  serialize(boost::archive::text_oarchive &ar, const unsigned int) = 0;
+
+  virtual void
+  deserialize(boost::archive::text_iarchive &ar, const unsigned int) = 0;
 
 protected:
   /**

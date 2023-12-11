@@ -1115,6 +1115,15 @@ DEMSolver<dim>::solve()
             triangulation,
             parameters.boundary_conditions);
 
+  // Store information about floating mesh/background mesh intersection
+  for (unsigned int i_solid = 0; i_solid < solids.size(); ++i_solid)
+    {
+      floating_mesh_info[i_solid] =
+        solids[i_solid]->map_solid_in_background_triangulation(triangulation);
+    }
+
+  insertion_object = set_insertion_type(parameters);
+
   if (parameters.restart.restart == true)
     {
       read_checkpoint(computing_timer,
@@ -1124,6 +1133,7 @@ DEMSolver<dim>::solve()
                       grid_pvdhandler,
                       triangulation,
                       particle_handler,
+                      insertion_object,
                       solids);
 
       displacement.resize(particle_handler.get_max_local_particle_index());
@@ -1206,7 +1216,6 @@ DEMSolver<dim>::solve()
     pcout);
 
   // Setting chosen contact force, insertion and integration methods
-  insertion_object  = set_insertion_type(parameters);
   integrator_object = set_integrator_type(parameters);
   particle_particle_contact_force_object =
     set_particle_particle_contact_force_model(parameters);
@@ -1483,6 +1492,7 @@ DEMSolver<dim>::solve()
                            grid_pvdhandler,
                            triangulation,
                            particle_handler,
+                           insertion_object,
                            solids,
                            pcout,
                            mpi_communicator);
