@@ -67,7 +67,8 @@ Clone the candi git repository in a folder of your choice  (e.g. ``/home/usernam
 
 We recommend installing the following packages (which are specified after line 57):
   
-  .. code-block:: test
+  .. code-block:: text
+    
     PACKAGES="load:dealii-prepare"
     PACKAGES="${PACKAGES} once:numdiff"
     PACKAGES="${PACKAGES} once:opencascade"
@@ -118,6 +119,7 @@ After installation, add the following lines variable to your ``.bashrc`` :
 
 .. code-block:: text
   :class: copy-button
+    
     source cand/install/prefix/configuration/enable.sh
     export DEAL_II_DIR=cand/install/prefix/deal.II-<version> >> ~/.bashrc
 
