@@ -22,7 +22,7 @@ Features
 
 - Solvers: ``lethe-fluid-sharp``
 - Transient problem
-- Complex surface-grid-defined static solid modeled with the sharp immersed boundary method
+- Complex static solid defined by a surface grid (STL) and modeled with the sharp immersed boundary method
 
 
 ----------------------------
@@ -56,7 +56,7 @@ Preparation of the Solid
 Generation of the RBF file from the STL
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-`bitpit <https://github.com/optimad/bitpit>`_ is an open-source modular library for scientific computing. We have implemented an example using its RBF capabilities to train RBF-networks that approximate the geometry from surface grid objects (`.STL`).
+`bitpit <https://github.com/optimad/bitpit>`_ is an open-source modular library for scientific computing. The current section presents an example using its RBF capabilities to train RBF-networks that approximate the geometry from surface grid objects (`.STL`).
 
 After compiling the library, we can use executable ``/examples/RBF_example_00001``, along with a parameter file and the ``helix.stl`` in the ``rbf_generation`` directory.
 
@@ -66,14 +66,14 @@ The parameter file (``RBF.param``) contains:
 #. The number of adaption cycles. Using ``4`` adaptation cycles over a initial number of ``16`` subdivisions results in a level of detail equivalent to a number of ``256`` subdivisions;
 #. The radius ratio means that each node `sees` up to ``3`` neighbors in each direction, which results in a smooth approximation.
 #. The base function of ``1`` means that the basis function is of Wendland type. These are the best functions to represent geometries from our experiments.
-#. The mesh range of ``0.1`` means that there is at least 10% of margin on each side of the object, so the collection of RBF nodes are sure to encompass the whole object.
+#. The mesh range of ``0.1`` means that there is at least 10% of margin on each side of the object, so the collection of RBF nodes are encompassing the whole object.
 
 .. code-block:: text
 
     nb_subdivision nb_adaptions radius_ratio base_function mesh_range
     16             4            3            1             0.1
 
-From the ``/rbf_generation/`` directory, we can launch RBF generation using the command line:
+From the ``/rbf_generation/`` directory, we can launch the RBF generation using the command line:
 
 .. code-block:: text
   :class: copy-button
@@ -85,7 +85,7 @@ After a few minutes this executable will output ``RBF_helix.output``, which is t
 Creation of the Composite Shape File
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The complete geometry through which the fluid flows contains the helix static mixer as well as the casing around it. We use composite shapes to build the complex geometry; this type of shape is introduced in this example: :doc:`../simple-plane-model-from-composite/simple-plane-model-from-composite`. The main particularities of this composite shape are:
+The complete geometry through which the fluid flows contains the helix static mixer as well as the casing around it. We use composite shapes to build the complex geometry; this type of shape is introduced in this example: :doc:`../simple-plane-model-from-composite/simple-plane-model-from-composite`. The main particularities of the current composite shape are:
 
 #. The translation parameter for the ``rbf`` shape is ``-76.201:-20.0098:+15.6051``. It is selected to ensure that the center of the static mixer is located at the origin. The coordinates are taken from ``rbf_generation/bitpit.log``.
 #. The ``hyper rectangle`` is long enough to cover the length of the helix, and just large enough to fit in the background grid.
@@ -109,7 +109,7 @@ Parameter File
 Simulation Control
 ~~~~~~~~~~~~~~~~~~
 
-Although we are interested in the steady-state solution of the flow, we use ``bdf1`` time integration. The required time to reach steady state in our case is low, but resolving it with low time steps enables the non-linear solver to converge as complex flow patterns are difficult to capture otherwise.
+Although we are interested in the steady-state solution of the flow, we use ``bdf1`` time integration. The required time to reach steady state in our case is low, but solving it with a small value of the time step enables the non-linear solver to converge as complex flow patterns are difficult to capture otherwise.
 
 .. code-block:: text
 
@@ -124,7 +124,7 @@ Although we are interested in the steady-state solution of the flow, we use ``bd
 Physical Properties
 ~~~~~~~~~~~~~~~~~~~
 
-We assume that the used fluid is water, and that the static mixer is of the meter length scale (150 centimeters). The time unit is seconds and the length unit is centimeter.
+We assume that the used fluid is water, and that the length scale of the static mixer is the order of :math:`150 \, \text{cm}`. Hence,  the length units are centimeters and the time units are seconds.
 
 .. code-block:: text
 
@@ -171,9 +171,9 @@ Mesh adaptation ``type`` is set to ``kelly``, to allow adaptive refinement at th
 Definition of the Shape
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-The section defining each parameter for the particles has certain requirements:
+This section defines each parameter for the particles and has certain requirements:
 
-#. ``length ratio`` defines the length used to apply the immersed boundaries through interpolation. We choose ``4`` as a compromise between a low value, better for the linear solver, and a high value, better for mass preservation. Mass preservation can also be increased using a finer grid.
+#. ``length ratio`` defines the length used to apply the immersed boundaries through interpolation. We choose ``4`` as a compromise between a low value, which is better for the linear solver, and a high value, which is better for mass preservation. The latter can also be increased using a finer grid.
 #. ``refine mesh inside radius factor`` and ``refine mesh outside radius factor`` are both set to ``1``, which activates minimal crown refinement mode.
 #. ``type = composite`` and ``shape arguments = mixer_long.composite`` allow to refer the defined complex shape. This requires that the ``RBF_helix.output`` is located in the same directory as the parameter file.
 
