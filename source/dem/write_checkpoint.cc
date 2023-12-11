@@ -4,15 +4,17 @@ using namespace dealii;
 
 template <int dim>
 void
-write_checkpoint(TimerOutput                        &computing_timer,
-                 const DEMSolverParameters<dim>     &parameters,
-                 std::shared_ptr<SimulationControl> &simulation_control,
-                 PVDHandler                         &particles_pvdhandler,
-                 PVDHandler                         &grid_pvdhandler,
-                 parallel::distributed::Triangulation<dim> &triangulation,
-                 Particles::ParticleHandler<dim>           &particle_handler,
-                 const ConditionalOStream                  &pcout,
-                 MPI_Comm                                  &mpi_communicator)
+write_checkpoint(
+  TimerOutput                                             &computing_timer,
+  const DEMSolverParameters<dim>                          &parameters,
+  std::shared_ptr<SimulationControl>                      &simulation_control,
+  PVDHandler                                              &particles_pvdhandler,
+  PVDHandler                                              &grid_pvdhandler,
+  parallel::distributed::Triangulation<dim>               &triangulation,
+  Particles::ParticleHandler<dim>                         &particle_handler,
+  std::vector<std::shared_ptr<SerialSolid<dim - 1, dim>>> &solid_objects,
+  const ConditionalOStream                                &pcout,
+  MPI_Comm                                                &mpi_communicator)
 {
   TimerOutput::Scope timer(computing_timer, "write_checkpoint");
 
@@ -43,6 +45,12 @@ write_checkpoint(TimerOutput                        &computing_timer,
   std::string   particle_filename = prefix + ".particles";
   std::ofstream output(particle_filename.c_str());
   output << oss.str() << std::endl;
+
+  // Checkpoint the serial solid objects one by one
+  for (unsigned int i = 0; i < solid_objects.size(); ++i)
+    {
+      solid_objects[i]->write_checkpoint(prefix);
+    }
 }
 
 template void
@@ -53,8 +61,9 @@ write_checkpoint(TimerOutput                             &computing_timer,
                  PVDHandler                              &grid_pvdhandler,
                  parallel::distributed::Triangulation<2> &triangulation,
                  Particles::ParticleHandler<2>           &particle_handler,
-                 const ConditionalOStream                &pcout,
-                 MPI_Comm                                &mpi_communicator);
+                 std::vector<std::shared_ptr<SerialSolid<1, 2>>> &solid_objects,
+                 const ConditionalOStream                        &pcout,
+                 MPI_Comm &mpi_communicator);
 
 template void
 write_checkpoint(TimerOutput                             &computing_timer,
@@ -64,5 +73,6 @@ write_checkpoint(TimerOutput                             &computing_timer,
                  PVDHandler                              &grid_pvdhandler,
                  parallel::distributed::Triangulation<3> &triangulation,
                  Particles::ParticleHandler<3>           &particle_handler,
-                 const ConditionalOStream                &pcout,
-                 MPI_Comm                                &mpi_communicator);
+                 std::vector<std::shared_ptr<SerialSolid<2, 3>>> &solid_objects,
+                 const ConditionalOStream                        &pcout,
+                 MPI_Comm &mpi_communicator);

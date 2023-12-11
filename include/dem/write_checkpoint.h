@@ -18,6 +18,7 @@
  */
 
 #include <core/pvd_handler.h>
+#include <core/serial_solid.h>
 
 #include <dem/dem_solver_parameters.h>
 
@@ -49,20 +50,23 @@ using namespace std;
  * @param grid_pvdhandler PVD handler for post-processing
  * @param triangulation Triangulation
  * @param particle_handler Particle handler
+ * @param solid_objects Vector of solids objects used in DEM simulations
  * @param pcout Printing in parallel
  * @param mpi_communicator
  */
 
 template <int dim>
 void
-write_checkpoint(TimerOutput                        &computing_timer,
-                 const DEMSolverParameters<dim>     &dem_parameters,
-                 std::shared_ptr<SimulationControl> &simulation_control,
-                 PVDHandler                         &particles_pvdhandler,
-                 PVDHandler                         &grid_pvdhandler,
-                 parallel::distributed::Triangulation<dim> &triangulation,
-                 Particles::ParticleHandler<dim>           &particle_handler,
-                 const ConditionalOStream                  &pcout,
-                 MPI_Comm                                  &mpi_communicator);
+write_checkpoint(
+  TimerOutput                                             &computing_timer,
+  const DEMSolverParameters<dim>                          &dem_parameters,
+  std::shared_ptr<SimulationControl>                      &simulation_control,
+  PVDHandler                                              &particles_pvdhandler,
+  PVDHandler                                              &grid_pvdhandler,
+  parallel::distributed::Triangulation<dim>               &triangulation,
+  Particles::ParticleHandler<dim>                         &particle_handler,
+  std::vector<std::shared_ptr<SerialSolid<dim - 1, dim>>> &solid_objects,
+  const ConditionalOStream                                &pcout,
+  MPI_Comm                                                &mpi_communicator);
 
 #endif /* write_checkpoint_h */
