@@ -76,7 +76,7 @@ namespace Parameters
       particle_custom_diameter.at(particle_type) =
         convert_string_to_vector(prm, "custom diameters");
       particle_custom_probability.at(particle_type) =
-        convert_string_to_vector(prm, "custom probabilities");
+        convert_string_to_vector(prm, "custom volume fractions");
 
       double probability_sum =
         std::reduce(particle_custom_probability.at(particle_type).begin(),
@@ -86,7 +86,7 @@ namespace Parameters
       if (std::abs(probability_sum - 1.0) > 1.e-12)
         {
           throw(std::runtime_error(
-            "Invalid custom probabilities. The sum of probabilities should be equal to 1.0 "));
+            "Invalid custom volume fraction. The sum of volume fractions should be equal to 1.0 "));
         }
       const std::string size_distribution_type_str =
         prm.get("size distribution type");
