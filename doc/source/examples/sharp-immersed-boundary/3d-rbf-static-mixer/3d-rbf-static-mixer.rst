@@ -162,7 +162,7 @@ The mesh is a simple hyper rectangle, large enough to encompass the mixer with i
       set initial refinement = 3
     end
 
-Mesh adaptation ``type`` is set to ``kelly``, to allow adaptive refinement at the solid surface. This is necessary for simulations of this type because of the prohibitive mesh size required when only uniform refinement is used. Setting ``max refinement level = 5`` allows for two levels of adaptive refinement from the uniform ``initial refinement = 3`` defined in the ``mesh`` section. The ``frequency = 10000`` to ensure that no refinement occurs between time steps, as they are not necessary here.
+Mesh adaptation ``type`` is set to ``kelly``, to allow adaptive refinement at the solid surface. This is necessary for simulations of this type because of the prohibitive mesh size required when only uniform refinement is used. Setting ``max refinement level = 5`` allows for two levels of adaptive refinement from the uniform ``initial refinement = 3`` defined in the ``mesh`` section. The ``frequency = 0`` to ensure that no refinement occurs between time steps, as it is not necessary here.
 
 .. code-block:: text
 
@@ -172,7 +172,7 @@ Mesh adaptation ``type`` is set to ``kelly``, to allow adaptive refinement at th
       set max number elements  = 2000000
       set max refinement level = 5
       set min refinement level = 0
-      set frequency            = 100000
+      set frequency            = 0
     end
 
 

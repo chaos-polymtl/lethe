@@ -44,7 +44,7 @@ subsection mesh adaptation
   set max number elements  = 2000000
   set max refinement level = 5
   set min refinement level = 0
-  set frequency            = 100000
+  set frequency            = 0
 end
 
 subsection particles
