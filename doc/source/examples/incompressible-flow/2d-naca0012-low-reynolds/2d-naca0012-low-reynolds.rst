@@ -97,7 +97,7 @@ Mesh
 
 A C-Type mesh was created around the NACA. It is one of the usual types of mesh chosen for airfoils because it allows for the curvature of the grid to match the leading edge of the airfoil. Also, it allows the user to place more cells in areas which require higher resolution, typically near the upper and lower surfaces of the airfoil and in the wake. These properties are also true for O-type meshes, the difference being that the exterior boundary is a full circle, instead of a semi-circle in entry. In order to obtain such a mesh, the Transfinite functions of ``gmsh`` were used. To get a good understanding of how it was done, the reader is advised to read through the ``c_type_mesh.geo`` file included in the example, which is thoroughly commented on. To generate a mesh with a different angle of attack, the only thing required is to change the ``angle`` parameter in the ``c_type_mesh.geo`` file.
 
-.. tip::
+.. note::
   Assuming that the ``gmsh`` executable is within your path, you can generate the mesh with:
 
   .. code-block:: text
