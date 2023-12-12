@@ -300,6 +300,26 @@ After the simulation has run, streamlines can be used to visualize the pressure 
 +-----------------------------------------------------------------------------------------------------------------------------+
 
 
+The mass conservation and pressure drop can both be monitored by plotting their values in time, extracted from ``/output/flow_rate.dat`` and ``/output/pressure_drop.dat``. The Python script ``postprocess_flow_and_pressure.py`` generates the following plot:
+
+.. code-block:: text
+  :class: copy-button
+
+    python3 postprocess_flow_and_pressure.py
+
+
++-----------------------------------------------------------------------------------------------------------------------------+
+|  .. figure:: images/mass_and_pressure_drop.svg                                                                              |
+|     :align: center                                                                                                          |
+|     :width: 800                                                                                                             |
+|     :name: Mass conservation and pressure drop                                                                              |
+|                                                                                                                             |
++-----------------------------------------------------------------------------------------------------------------------------+
+
+As the plot shows, the mass preservation is constant after only a few time steps; it depends mostly on the length ratio, residual and grid refinement. The pressure drop, on the other hand, decreases steadily. We stopped the simulation after 40 time steps because the decrease is then low enough, but increasing the total duration would be interesting to get a better idea of the steady-state pressure drop.
+
+
+
 ----------
 References
 ----------
