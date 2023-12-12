@@ -4,8 +4,6 @@
 
 The usage of `static mixers <https://en.wikipedia.org/wiki/Static_mixer>`_ is common for the blending of multi-component products in polymerization, as well as water treatment and chemical processing. They involve no moving part, but obtain mixing effects by converting the pressure gradient to radial mixing and flow division as the flow progresses through obstacles. Their advantages include low maintenance, no external energy input, continuous operation, compact design (pipe insertion), and easy installation.
 
-Because it is not possible to modulate the rotation speed or change the impeller, as in the case of stirred tanks, their design must be done precisely, and must take into account the desired level of mixing and the properties of fluids involved.
-
 As opposed to stirred tanks, it is not possible to modulate rotation speed or change the impeller. Hence, the design of these systems must be approached with precision due to these limitations. Factors such as the desired level of mixing and the properties of the fluids involved must be carefully considered.
 
 +-----------------------------------------------------------------------------------------------------------------------------+
@@ -184,10 +182,6 @@ Definition of the Shape
 
 This section defines each parameter for the particles and has certain requirements:
 
-#. ``length ratio`` defines the length used to apply the immersed boundaries through interpolation. We choose ``4`` as a compromise between a low value, which is better for the linear solver, and a high value, which is better for mass preservation. The latter can also be increased using a finer grid.
-#. ``refine mesh inside radius factor`` and ``refine mesh outside radius factor`` are both set to ``1``, which activates minimal crown refinement mode.
-#. ``type = composite`` and ``shape arguments = mixer_long.composite`` allow to refer the defined complex shape. This requires that the ``RBF_helix.output`` is located in the same directory as the parameter file.
-
 .. code-block:: text
 
     subsection particles
@@ -211,6 +205,12 @@ This section defines each parameter for the particles and has certain requiremen
         set shape arguments = mixer_long.composite
       end
     end
+
+
+#. In ``subsection extrapolation function``, ``length ratio`` defines the length used to apply the immersed boundaries through interpolation. We choose ``4`` as a compromise between a low value, which is better for the linear solver, and a high value, which is better for mass preservation. The latter can also be increased using a finer grid.
+#. In ``subsection local mesh refinement``, ``refine mesh inside radius factor`` and ``refine mesh outside radius factor`` are both set to ``1``, which activates minimal crown refinement mode.
+#. In ``subsection particle info 0``, ``type = composite`` and ``shape arguments = mixer_long.composite`` define the shape itself. This requires that the ``RBF_helix.output`` is located in the same directory as the parameter file.
+
 
 
 Boundary Conditions
@@ -276,12 +276,13 @@ Pressure drop and flow rate post-processing are enabled to track when steady sta
 Running the Simulation
 -----------------------
 
-The simulation can be launched on multiple cores using ``mpirun`` and the ``lethe-fluid-sharp`` executable. Using 6 CPU cores, the simulation can be launched with:
+The simulation can be launched on multiple cores using ``mpirun`` and the ``lethe-fluid-sharp`` executable. Using 6 CPU cores (for an approximate runtime of 50 minutes), the simulation can be launched with:
 
 .. code-block:: text
   :class: copy-button
 
   mpirun -np 6 lethe-fluid-sharp flow_in_long_mixer.prm
+
 
 
 --------
