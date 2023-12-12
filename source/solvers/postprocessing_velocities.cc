@@ -164,6 +164,74 @@ AverageVelocities<dim, VectorType, DofsType>::calculate_reynolds_stresses(
             }
         }
     }
+
+  if constexpr (std::is_same_v<VectorType,
+                               LinearAlgebra::distributed::Vector<double>>)
+    {
+      unsigned int begin_index, end_index;
+      unsigned int (*k_index)(unsigned int) = [](unsigned int i) {
+        return i + dim;
+      };
+      const LinearAlgebra::distributed::Vector<double> *local_solution,
+        *local_average;
+      LinearAlgebra::distributed::Vector<double> *rns_dt, *rss_dt, *k_dt;
+
+      local_evaluation_point.update_ghost_values();
+      begin_index =
+        local_evaluation_point.get_partitioner()->local_range().first;
+      end_index =
+        local_evaluation_point.get_partitioner()->local_range().second;
+      local_solution = &local_evaluation_point;
+      local_average  = &average_velocities;
+      rns_dt         = &reynolds_normal_stress_dt;
+      rss_dt         = &reynolds_shear_stress_dt;
+      k_dt           = &reynolds_normal_stress_dt;
+
+      for (unsigned int i = begin_index; i < end_index; i += n_dofs_per_vertex)
+        {
+          // u'u'*dt
+          (*rns_dt)[i] = ((*local_solution)[i] - (*local_average)[i]) *
+                         ((*local_solution)[i] - (*local_average)[i]) * dt;
+
+          // v'v'*dt
+          (*rns_dt)[i + 1] =
+            ((*local_solution)[i + 1] - (*local_average)[i + 1]) *
+            ((*local_solution)[i + 1] - (*local_average)[i + 1]) * dt;
+
+          // u'v'*dt
+          (*rss_dt)[i] = ((*local_solution)[i] - (*local_average)[i]) *
+                         ((*local_solution)[i + 1] - (*local_average)[i + 1]) *
+                         dt;
+
+          // // k*dt = 1/2(u'u'+v'v')*dt (turbulence kinetic energy)
+          // // Note : k_dt and rns_dt are both pointers of
+          // // reynolds_normal_stress_dt for Trilinos vector (not block
+          // vectors)
+          (*k_dt)[k_index(i)] = ((*rns_dt)[i] + (*rns_dt)[i + 1]) / 2;
+
+          if (dim == 3)
+            {
+              // w'w'*dt
+              (*rns_dt)[i + 2] =
+                ((*local_solution)[i + 2] - (*local_average)[i + 2]) *
+                ((*local_solution)[i + 2] - (*local_average)[i + 2]) * dt;
+
+              // v'w'*dt
+              (*rss_dt)[i + 1] =
+                ((*local_solution)[i + 1] - (*local_average)[i + 1]) *
+                ((*local_solution)[i + 2] - (*local_average)[i + 2]) * dt;
+
+              // w'u'*dt
+              (*rss_dt)[i + 2] =
+                ((*local_solution)[i + 2] - (*local_average)[i + 2]) *
+                ((*local_solution)[i] - (*local_average)[i]) * dt;
+
+              // k*dt = 1/2(u'u'+v'v'+w'w')*dt
+              (*k_dt)[k_index(i)] = (*k_dt)[k_index(i)] + (*rns_dt)[i + 2] / 2;
+            }
+        }
+    }
+
   // Sum of all reynolds stresses during simulation.
   sum_reynolds_normal_stress_dt += reynolds_normal_stress_dt;
   sum_reynolds_shear_stress_dt += reynolds_shear_stress_dt;
