@@ -1122,7 +1122,8 @@ DEMSolver<dim>::solve()
         solids[i_solid]->map_solid_in_background_triangulation(triangulation);
     }
 
-  // Set insertion object type before the restart because the restart only rebuilds the member of the insertion object
+  // Set insertion object type before the restart because the restart only
+  // rebuilds the member of the insertion object
   insertion_object = set_insertion_type(parameters);
 
   if (parameters.restart.restart == true)
