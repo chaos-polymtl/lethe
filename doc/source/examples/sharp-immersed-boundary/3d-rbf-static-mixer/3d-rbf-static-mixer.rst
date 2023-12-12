@@ -56,6 +56,26 @@ Generation of the RBF file from the STL
 
 `bitpit <https://github.com/optimad/bitpit>`_ is an open-source modular library for scientific computing. The current section presents an example using its RBF capabilities to train RBF-networks that approximate the geometry from surface grid objects (`.stl`).
 
+.. tip::
+  In order to install bitpit, you need to have the github version of `PETSc <https://petsc.org/release/install/install_tutorial/>`_, which itself requires `BLAS/LAPACK <https://www.netlib.org/lapack/lug/node11.html>`_ . BLAS/LAPACK can be installed from command line with ``sudo apt-get install libblas-dev liblapack-dev``. In order, BLAS/LAPACK must be installed, then PETSc, then bitpit.
+
+  For the bitpit installation, you must first create a directory for the installation, then clone the project and build it (ideally in a separate directory). The dependencies' paths must be specified. Here are a few lines to help compile ``bitpit`` with 6 processes:
+
+  .. code-block:: text
+      :class: copy-button
+
+      cd /home/
+      mkdir software
+      cd software
+      mkdir bitpit
+      cd bitpit
+      git clone https://github.com/optimad/bitpit
+      mkdir build
+      cd build
+      cmake ../bitpit/ -DBITPIT_BUILD_EXAMPLES=ON -DPETSC_DIR=/path/to/petsc/installation/ -DPETSC_ARCH=arch-linux-c-debug
+      make -j6
+
+
 After compiling the library, we can use an executable ``/examples/RBF_example_00001``, along with a parameter file and the ``helix.stl`` in the ``rbf_generation`` directory.
 
 The parameter file (``RBF.param``) contains:
