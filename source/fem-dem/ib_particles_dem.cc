@@ -62,6 +62,7 @@ IBParticlesDEM<dim>::initialize(
   particle_wall_contact_force_object =
     std::make_shared<ParticleWallNonLinearForce<dim>>(dem_parameters,
                                                       boundary_index);
+  previous_wall_contact_point.resize(dem_particles.size());
 }
 template <int dim>
 void
@@ -386,12 +387,13 @@ IBParticlesDEM<dim>::calculate_pp_lubrication_force(
 template <int dim>
 void
 IBParticlesDEM<dim>::update_particles_boundary_contact(
-  const std::vector<IBParticle<dim>> &particles,
+   std::vector<IBParticle<dim>> &particles,
   const DoFHandler<dim>              &dof_handler,
   const Quadrature<dim - 1>          &face_quadrature_formula,
   const Mapping<dim>                 &mapping)
 {
   const FESystem<dim, dim> fe = dof_handler.get_fe();
+  std::vector<std::map<unsigned int,double>> best_contact_candidate(particles.size());
   for (unsigned int p_i = 0; p_i < particles.size(); ++p_i)
     {
       // Clear the last boundary cell candidates.
@@ -403,6 +405,7 @@ IBParticlesDEM<dim>::update_particles_boundary_contact(
         dof_handler,
         particles[p_i].position,
         particles[p_i].radius * parameters->contact_search_radius_factor);
+
 
       // Loop over the cells at the boundary.
       for (unsigned int i = 0; i < cells_at_boundary.size(); ++i)
@@ -437,7 +440,25 @@ IBParticlesDEM<dim>::update_particles_boundary_contact(
                         fe_face_values.quadrature_point(f_q_point);
                       boundary_information.boundary_index =
                         cells_at_boundary[i]->face(face_id)->boundary_id();
-                      boundary_cells[p_i].push_back(boundary_information);
+                      auto iterator        =  best_contact_candidate[p_i].find(boundary_information.boundary_index);
+
+                      double level_set=particles[p_i].get_levelset(
+                        boundary_information.point_on_boundary);
+                      if (iterator != best_contact_candidate[p_i].end())
+                        {
+
+                          if (level_set<best_contact_candidate[p_i][boundary_information.boundary_index])
+                            {
+                              boundary_cells[p_i][boundary_information
+                                                    .boundary_index] =
+                                boundary_information;
+                              best_contact_candidate[p_i][boundary_information.boundary_index]=level_set;
+                            }
+                        }
+                      else{
+                          boundary_cells[p_i][boundary_information.boundary_index]=boundary_information;
+                          best_contact_candidate[p_i][boundary_information.boundary_index]=level_set;
+                        }
                     }
                 }
             }
@@ -449,8 +470,7 @@ IBParticlesDEM<dim>::update_particles_boundary_contact(
       boundary_cells[p_i].clear();
       for (unsigned int i = 0; i < global_boundary_cell.size(); ++i)
         {
-          boundary_cells[p_i].insert(boundary_cells[p_i].end(),
-                                     global_boundary_cell[i].begin(),
+          boundary_cells[p_i].insert(global_boundary_cell[i].begin(),
                                      global_boundary_cell[i].end());
         }
     }
@@ -483,25 +503,26 @@ IBParticlesDEM<dim>::calculate_pw_contact_force(
       std::map<unsigned int, BoundaryCellsInfo> best_cells;
       // Loop over the point and normal identified as
       // potential contact candidate.
-      for (auto &boundary_cell_iter : boundary_cells[particle.particle_id])
+      for (auto boundary_cell_iter=boundary_cells[particle.particle_id].begin() ; boundary_cell_iter!=boundary_cells[particle.particle_id].end();boundary_cell_iter++)
         {
+
           // Find the best candidate (the closest point) for each different
           // wall.
 
           // Find a way to use cell guess correctly!!!!!!!!!!!!!!!!!!!!!!!!!!!!! Do not merge without final check on this
 
-          double dist =particle.get_levelset(boundary_cell_iter.point_on_boundary);
+          double dist =particle.get_levelset(boundary_cell_iter->second.point_on_boundary);
 
           // Check if the distance is smaller than the best distance.
           // If it is the first time this boundary is encountered, the distance
           // is compared to the default value of the map, which is DBL_MAX
-          if (dist < best_dist[boundary_cell_iter.boundary_index].value)
+          if (dist < best_dist[boundary_cell_iter->second.boundary_index].value)
             {
-              best_dist[boundary_cell_iter.boundary_index].value = dist;
-              best_indices[boundary_cell_iter.boundary_index].value =
+              best_dist[boundary_cell_iter->second.boundary_index].value = dist;
+              best_indices[boundary_cell_iter->second.boundary_index].value =
                 boundary_index;
-              best_cells[boundary_cell_iter.boundary_index] =
-                boundary_cell_iter;
+              best_cells[boundary_cell_iter->second.boundary_index] =
+                boundary_cell_iter->second;
             }
           boundary_index += 1;
         }
@@ -581,16 +602,55 @@ IBParticlesDEM<dim>::calculate_pw_contact_force(
           // boundary. Here we have used the private function find_projection.
           // Using this projected vector, the particle-wall distance is
           // calculated
-          /*Tensor<1, 3> projected_vector =
-            particle_wall_contact_force_object->find_projection(
-              point_to_particle_vector, normal);*/
 
+
+
+
+          //Create a Rotation matrix from normal to z axis to initialize the plane for contact with the right orientation;
+          Tensor<1,3> rotation_axis;
+          double angle= std::acos(scalar_product(Tensor<1,3>({0,0,1}),normal)/normal.norm());
+          if constexpr (dim==2){
+              rotation_axis[2]=1;
+            }
+          else{
+              if(abs(scalar_product(Tensor<1,3>({0,0,1}),normal))!=normal.norm())
+                {
+                  rotation_axis =
+                    cross_product_3d(Tensor<1, 3>({0, 0, 1}), normal);
+                  rotation_axis=rotation_axis/rotation_axis.norm();
+                }
+              else{
+                  rotation_axis=scalar_product(Tensor<1,3>({0,0,1}),normal)*normal;
+                  rotation_axis=rotation_axis/rotation_axis.norm();
+                }
+            }
+          Tensor<2,3>rotation_matrix= Physics::Transformations::Rotations::rotation_matrix_3d(
+            rotation_axis,angle);
+          Tensor<1,3> orientation=particle.shape->rotation_matrix_to_xyz_angles(rotation_matrix);
+
+          std::shared_ptr<Shape<dim>> contact_plane=std::make_shared<Plane<dim>>(point_on_boundary,
+                                                                                    orientation);
+
+          std::vector<Point<dim>> contact_point_candidate;
+          contact_point_candidate.push_back(previous_wall_contact_point[particle.particle_id]);
+          // Use the last contact point as an initial guess if the level set is smaller than the wall initial guess.
+          /*if(particle.get_levelset(previous_wall_contact_point[particle.particle_id])<particle.get_levelset(point_on_boundary)){
+              contact_point_candidate.push_back(previous_wall_contact_point[particle.particle_id]);
+            }
+          else
+            {
+              contact_point_candidate.push_back(point_on_boundary);
+            }*/
           // Find the normal overlap
-          //double normal_overlap = particle.radius - (projected_vector.norm());
+          auto contact_state=particle.shape->distance_to_shape(*contact_plane,contact_point_candidate);
+          double normal_overlap = -2*std::get<double>(contact_state);
+          Point<3> contact_point= point_nd_to_3d(std::get<Point<dim>>(contact_state));
+
+          // Keep the last contact point as a initial guess for the next contact point.
+          previous_wall_contact_point[particle.particle_id]=std::get<Point<dim>>(contact_state);
 
 
-
-          // Find the closest point on the surface of the particle from our initial guess on the boundary.
+         /* // Find the closest point on the surface of the particle from our initial guess on the boundary.
           Point<dim> closest_point_on_the_particle;
           particle.closest_surface_point(point_on_boundary, closest_point_on_the_particle);
           Point<3>  closest_point_on_the_particle_3d=point_nd_to_3d(closest_point_on_the_particle);
@@ -606,12 +666,17 @@ IBParticlesDEM<dim>::calculate_pw_contact_force(
               closest_point_on_the_boundary=closest_point_on_the_boundary_3d;
             }
 
-          double normal_overlap = -particle.get_levelset(closest_point_on_the_boundary);
-          if (Utilities::MPI::this_mpi_process(this->mpi_communicator) == 0  and false )
+          normal_overlap = -particle.get_levelset(closest_point_on_the_boundary);*/
+
+
+
+          /*if (Utilities::MPI::this_mpi_process(this->mpi_communicator) == 0  )
             {
-              //std::cout << "normal_overlap " << normal_overlap << std::endl;
-              std::cout<<"(closest_point_on_the_boundary_3d-particle_position_3d) "<<(closest_point_on_the_boundary_3d-particle_position_3d)<<std::endl;
-            }
+              std::cout << "normal_overlap " << normal_overlap << std::endl;
+              std::cout<<  "point_on_boundary "<<point_on_boundary<<std::endl;
+              std::cout << "contact point "
+                        << contact_point << std::endl;
+            }*/
 
           if (normal_overlap > 0)
             {
@@ -652,7 +717,7 @@ IBParticlesDEM<dim>::calculate_pw_contact_force(
                 (normal_force + tangential_force);
               // Updating the torque acting on particles
               contact_torque[particle.particle_id] +=
-                tangential_torque + rolling_resistance_torque+ cross_product_3d((closest_point_on_the_boundary_3d-particle_position_3d),-(normal_force+tangential_force));
+                tangential_torque + rolling_resistance_torque+ cross_product_3d((contact_point-particle_position_3d),-(normal_force+tangential_force));
 
             }
           else
@@ -691,24 +756,26 @@ IBParticlesDEM<dim>::calculate_pw_lubrication_force(
       std::map<unsigned int, BoundaryCellsInfo> best_cells;
       // For each particle loop over the point and normal identified as
       // potential contact candidate.
-      for (auto &boundary_cell_iter : boundary_cells[particle.particle_id])
+      for (auto boundary_cell_iter=boundary_cells[particle.particle_id].begin() ; boundary_cell_iter!=boundary_cells[particle.particle_id].end();boundary_cell_iter++)
         {
+
           // Find the best candidate (the closest point) for each different
           // wall.
 
           // Find a way to use cell guess correctly!!!!!!!!!!!!!!!!!!!!!!!!!!!!! Do not merge without final check on this
-          double dist =particle.get_levelset(boundary_cell_iter.point_on_boundary);
+
+          double dist =particle.get_levelset(boundary_cell_iter->second.point_on_boundary);
 
           // Check if the distance is smaller than the best distance.
           // If it is the first time this boundary is encountered, the distance
           // is compared to the default value of the map, which is DBL_MAX
-          if (dist < best_dist[boundary_cell_iter.boundary_index].value)
+          if (dist < best_dist[boundary_cell_iter->second.boundary_index].value)
             {
-              best_dist[boundary_cell_iter.boundary_index].value = dist;
-              best_indices[boundary_cell_iter.boundary_index].value =
+              best_dist[boundary_cell_iter->second.boundary_index].value = dist;
+              best_indices[boundary_cell_iter->second.boundary_index].value =
                 boundary_index;
-              best_cells[boundary_cell_iter.boundary_index] =
-                boundary_cell_iter;
+              best_cells[boundary_cell_iter->second.boundary_index] =
+                boundary_cell_iter->second;
             }
           boundary_index += 1;
         }
@@ -1269,15 +1336,15 @@ IBParticlesDEM<dim>::integrate_particles_motion(const double dt,
           calculate_pw_contact_force(dt_dem,
                                      contact_wall_force,
                                      contact_wall_torque);
-          calculate_pp_lubrication_force(
-            dt_dem, h_max, h_min, mu, lubrication_force, lubrication_torque);
+          //calculate_pp_lubrication_force(
+           // dt_dem, h_max, h_min, mu, lubrication_force, lubrication_torque);
           calculate_pw_lubrication_force(dt_dem,
                                          h_max,
                                          h_min,
                                          mu,
                                          lubrication_wall_force,
                                          lubrication_wall_torque);
-          if (Utilities::MPI::this_mpi_process(this->mpi_communicator) == 0 and false)
+          if (Utilities::MPI::this_mpi_process(this->mpi_communicator) == 0 and false )
             {
               std::cout << "contact_wall_force[0] " << contact_wall_force[0]
                         << std::endl;
@@ -1505,9 +1572,10 @@ IBParticlesDEM<dim>::integrate_particles_motion(const double dt,
             last_omega[p_i] + dt_dem * (k_omega[p_i][0]);
 
           // Update orientation matrix explicitly
+          Tensor<2, 3> new_rotation_matrix;
           if (dem_particles[p_i].omega.norm() > 0)
             {
-              Tensor<2, 3> new_rotation_matrix =
+              new_rotation_matrix =
                 Physics::Transformations::Rotations::rotation_matrix_3d(
                   dem_particles[p_i].omega / dem_particles[p_i].omega.norm(),
                   dem_particles[p_i].omega.norm() * dt_dem) *
@@ -1533,11 +1601,27 @@ IBParticlesDEM<dim>::integrate_particles_motion(const double dt,
 
           if (Utilities::MPI::this_mpi_process(this->mpi_communicator) == 0 and false)
             {
+              std::cout << "dem_particles[p_i].position "
+                        << dem_particles[p_i].position << std::endl;
+              std::cout << "dem_particles[p_i].velocity"
+                        << dem_particles[p_i].velocity << std::endl;
               std::cout << "dem_particles[p_i].omega_contact_impulsion"
                         << dem_particles[p_i].omega_contact_impulsion
                         << std::endl;
               std::cout << "dem_particles[p_i].omega_impulsion "
                         << dem_particles[p_i].omega_impulsion << std::endl;
+              std::cout << "omega accel "
+                << k_omega[p_i][0]<< std::endl;
+              std::cout << "dem_particles[p_i].omega "
+                        << dem_particles[p_i].omega<< std::endl;
+              /*std::cout << "dem_particles[p_i].position "
+                        << dem_particles[p_i].position << std::endl;*/
+              std::cout << "new orientation_matrix "
+                        << new_rotation_matrix<< std::endl;
+              std::cout << "rotation_matrix "
+                        << dem_particles[p_i].rotation_matrix<< std::endl;
+              std::cout << "dem_particles[p_i].orientation "
+                        << dem_particles[p_i].orientation<< std::endl;
             }
 
           // update particle position and orientation

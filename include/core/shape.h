@@ -16,8 +16,8 @@
 #ifndef lethe_shape_h
 #define lethe_shape_h
 
-#include <core/utilities.h>
 #include <core/tensors_and_points_dimension_manipulation.h>
+#include <core/utilities.h>
 
 #include <deal.II/base/auto_derivative_function.h>
 #include <deal.II/base/function.h>
@@ -143,15 +143,18 @@ public:
    * @param cell The cell that is likely to contain the evaluation point
    * @param candidate_points This is the initial point used in the calculation.
    */
-  std::pair<double, Tensor<1, dim>>
-  distance_to_shape(Shape<dim>                                           &shape,
-                    const typename DoFHandler<dim>::active_cell_iterator &cell,
-                    std::vector<Point<dim>> &candidate_points,
-                    double                   precision = 1e-6)
+  virtual std::tuple<double, Tensor<1, dim>, Point<dim>>
+  distance_to_shape_with_cell_guess(
+    Shape<dim>                                           &shape,
+    const typename DoFHandler<dim>::active_cell_iterator &cell,
+    std::vector<Point<dim>>                              &candidate_points,
+    double                                                precision = 1e-6)
   {
     double                      distance = DBL_MAX;
     Tensor<1, dim>              normal;
+    Point<dim>                  contact_point;
     std::vector<Tensor<1, dim>> search_direction;
+
 
     if constexpr (dim == 2)
       {
@@ -175,18 +178,16 @@ public:
         Tensor<1, dim>     previous_normal;
         Point<dim>         current_point = candidate_points[i];
         unsigned int       iteration     = 0;
-        const unsigned int iteration_max = 1e2;
+        const unsigned int iteration_max = 2e2;
 
         Point<dim> dx{}, distance_gradient{}, previous_position{},
           previous_gradient{};
-        double max_step           = shape.effective_radius;
+        double max_step           = shape.effective_radius * 0.25;
         double previous_step_size = max_step;
 
         double current_distance;
-        double value_first_component =
-          this->value_with_cell_guess(current_point, cell);
-        double value_second_component =
-          shape.value_with_cell_guess(current_point, cell);
+        double value_first_component  = this->value_with_cell_guess(current_point,cell);
+        double value_second_component = shape.value_with_cell_guess(current_point,cell);
         if (value_first_component > value_second_component)
           {
             current_distance = value_first_component;
@@ -203,19 +204,15 @@ public:
 
         while (iteration < iteration_max && (previous_step_size) > precision)
           {
-            value_first_component =
-              this->value_with_cell_guess(current_point, cell);
-            value_second_component =
-              shape.value_with_cell_guess(current_point, cell);
+            value_first_component  = this->value_with_cell_guess(current_point,cell);
+            value_second_component = shape.value_with_cell_guess(current_point,cell);
             if (value_first_component > value_second_component)
               {
-                distance_gradient =
-                  this->gradient_with_cell_guess(current_point, cell);
+                distance_gradient = this->gradient_with_cell_guess(current_point,cell);
               }
             else
               {
-                distance_gradient =
-                  shape.gradient_with_cell_guess(current_point, cell);
+                distance_gradient = shape.gradient_with_cell_guess(current_point,cell);
               }
             current_normal = distance_gradient / distance_gradient.norm();
 
@@ -226,38 +223,40 @@ public:
                 dx = -max_step * direction;
               }
 
-            Point<dim> best_point = current_point + dx;
-            value_first_component =
-              this->value_with_cell_guess(best_point, cell);
-            value_second_component =
-              shape.value_with_cell_guess(best_point, cell);
+
+            Point<dim> new_point   = current_point + dx;
+            value_first_component  = this->value_with_cell_guess(new_point,cell);
+            value_second_component = shape.value_with_cell_guess(new_point,cell);
             double new_distance =
-              std::max(value_first_component, value_second_component);
-            double best_dist = new_distance;
-            if (best_dist > previous_value - precision)
+              smooth_max(value_first_component, value_second_component);
+            if (new_distance > current_distance - precision*precision)
               {
                 std::vector<double> diff_results;
                 diff_results.resize(search_direction.size());
+                Point<dim> best_point;
+                double     best_dist = current_distance;
                 for (unsigned int d = 0; d < search_direction.size(); ++d)
                   {
                     Tensor<1, dim> perturbation =
                       search_direction[d] * max_step;
                     value_first_component =
-                      this->value_with_cell_guess(current_point + perturbation,
-                                                  cell);
+                      this->value_with_cell_guess(current_point + perturbation,cell);
                     value_second_component =
-                      shape.value_with_cell_guess(current_point + perturbation,
-                                                  cell);
+                      shape.value_with_cell_guess(current_point + perturbation,cell);
                     new_distance =
-                      std::max(value_first_component, value_second_component);
+                      smooth_max(value_first_component, value_second_component);
                     diff_results[d] =
-                      (new_distance - previous_value) / max_step;
-                    if (new_distance < previous_value - precision)
+                      (new_distance - current_distance) / max_step;
+                    if (new_distance < best_dist - precision*precision)
                       {
                         best_dist  = new_distance;
                         best_point = current_point + perturbation;
-                        break;
                       }
+                  }
+                if (best_dist < current_distance - precision*precision)
+                  {
+                    current_distance = best_dist;
+                    current_point    = best_point;
                   }
 
                 if constexpr (dim == 2)
@@ -278,56 +277,69 @@ public:
                   }
                 current_normal = current_normal / current_normal.norm();
                 Point<dim> extra_guess;
-                if (best_dist > previous_value - precision)
+                if (current_distance > previous_value - precision*precision)
                   {
-                    Point<dim> extra_guess;
                     if constexpr (dim == 2)
                       {
-                        extra_guess[0] =
+                        new_point[0] =
                           previous_position[0] -
                           ((diff_results[0] - diff_results[1]) / 2) /
                             ((diff_results[0] + diff_results[1]) / max_step);
-                        extra_guess[1] =
+                        new_point[1] =
                           previous_position[1] -
                           ((diff_results[2] - diff_results[3]) / 2) /
                             ((diff_results[2] + diff_results[3]) / max_step);
                       }
                     else
                       {
-                        extra_guess[0] =
+                        new_point[0] =
                           previous_position[0] -
                           ((diff_results[0] - diff_results[1]) / 2) /
                             ((diff_results[0] + diff_results[1]) / max_step);
-                        extra_guess[1] =
+                        new_point[1] =
                           previous_position[1] -
                           ((diff_results[2] - diff_results[3]) / 2) /
                             ((diff_results[2] + diff_results[3]) / max_step);
-                        extra_guess[2] =
+                        new_point[2] =
                           previous_position[2] -
                           ((diff_results[4] - diff_results[5]) / 2) /
                             ((diff_results[4] + diff_results[5]) / max_step);
                       }
-                    value_first_component =
-                      this->value_with_cell_guess(extra_guess, cell);
-                    value_second_component =
-                      shape.value_with_cell_guess(extra_guess, cell);
+                    value_first_component  = this->value_with_cell_guess(new_point,cell);
+                    value_second_component = shape.value_with_cell_guess(new_point,cell);
                     new_distance =
-                      std::max(value_first_component, value_second_component);
-                    if (new_distance < previous_value - precision)
+                      smooth_max(value_first_component, value_second_component);
+                    if (new_distance < current_distance - precision*precision)
                       {
-                        best_dist  = new_distance;
-                        best_point = extra_guess;
+                        current_distance = new_distance;
+                        current_point    = new_point;
+                      }
+                    else
+                      {
+                        new_point = current_point +
+                                    (new_point - previous_position) /
+                                      (new_point - previous_position).norm() *
+                                      max_step;
+                        value_first_component  = this->value_with_cell_guess(new_point,cell);
+                        value_second_component = shape.value_with_cell_guess(new_point,cell);
+                        new_distance = smooth_max(value_first_component,
+                                                  value_second_component);
+                        if (new_distance < current_distance - precision*precision)
+                          {
+                            current_distance = new_distance;
+                            current_point    = new_point;
+                          }
                       }
                   }
 
-                if (best_dist > previous_value - precision)
+                if (current_distance > previous_value - precision*precision)
                   {
                     consecutive_center += 1;
                     previous_step_size = max_step;
                     max_step *= 1.0 / std::pow(2.0, consecutive_center);
-                    best_point     = previous_position;
-                    best_dist      = previous_value;
-                    current_normal = previous_normal;
+                    current_point    = previous_position;
+                    current_distance = previous_value;
+                    current_normal   = previous_normal;
                   }
                 else
                   {
@@ -337,29 +349,278 @@ public:
               }
             else
               {
+                current_point    = new_point;
+                current_distance = new_distance;
                 max_step *= 1;
                 consecutive_center = 0;
               }
-            current_distance  = best_dist;
-            previous_value    = best_dist;
-            current_point     = best_point;
+
+            previous_value    = current_distance;
             previous_position = current_point;
             previous_normal   = current_normal;
             iteration++;
+
           }
+
         if (distance > current_distance)
           {
-            distance = current_distance;
-            normal   = current_normal;
-            std::cout << "iteration " << iteration << " distance = " << distance
-                      << " normal " << normal << " point " << current_point
-                      << std::endl;
+            distance      = current_distance;
+            normal        = current_normal;
+            contact_point = current_point;
           }
       }
-
-
-    return std::make_pair(distance, normal);
+    return std::make_tuple(distance, normal, contact_point);
   }
+
+
+  /**
+   * @brief Return the smoothed maximum of two variables used for shape contact.
+   * @param a first variable
+   * @param b second variable
+   */
+  double
+  smooth_max(double a, double b)
+  {
+    double smooth_factor = 10;
+    return (a * std::exp(a * smooth_factor) + b * std::exp(b * smooth_factor)) /
+           ((std::exp(a * smooth_factor) + std::exp(b * smooth_factor)));
+  }
+
+  /**
+   * @brief Return the distance and normal between the current shape with the shape given in argument.
+   * at the given point evaluation point with a guess for the cell containing
+   * the evaluation point
+   * @param shape The shape with which the distance is evaluated
+   * @param cell The cell that is likely to contain the evaluation point
+   * @param candidate_points This is the initial point used in the calculation.
+   */
+  virtual std::tuple<double, Tensor<1, dim>, Point<dim>>
+  distance_to_shape(Shape<dim>              &shape,
+                    std::vector<Point<dim>> &candidate_points,
+                    double                   precision = 1e-6)
+  {
+    double                      distance = DBL_MAX;
+    Tensor<1, dim>              normal;
+    Point<dim>                  contact_point;
+    std::vector<Tensor<1, dim>> search_direction;
+
+
+    if constexpr (dim == 2)
+      {
+        search_direction.push_back(Tensor<1, dim>({1.0, 0.0}));
+        search_direction.push_back(Tensor<1, dim>({-1.0, 0.0}));
+        search_direction.push_back(Tensor<1, dim>({0.0, 1.0}));
+        search_direction.push_back(Tensor<1, dim>({0.0, -1.0}));
+      }
+    else
+      {
+        search_direction.push_back(Tensor<1, dim>({1.0, 0.0, 0.0}));
+        search_direction.push_back(Tensor<1, dim>({-1.0, 0.0, 0.0}));
+        search_direction.push_back(Tensor<1, dim>({0.0, 1.0, 0.0}));
+        search_direction.push_back(Tensor<1, dim>({0.0, -1.0, 0.0}));
+        search_direction.push_back(Tensor<1, dim>({0.0, 0.0, 1.0}));
+        search_direction.push_back(Tensor<1, dim>({0.0, 0.0, -1.0}));
+      }
+    for (unsigned int i = 0; i < candidate_points.size(); ++i)
+      {
+        Tensor<1, dim>     current_normal;
+        Tensor<1, dim>     previous_normal;
+        Point<dim>         current_point = candidate_points[i];
+        unsigned int       iteration     = 0;
+        const unsigned int iteration_max = 2e2;
+
+        Point<dim> dx{}, distance_gradient{}, previous_position{},
+          previous_gradient{};
+        double max_step           = shape.effective_radius * 0.25;
+        double previous_step_size = max_step;
+
+        double current_distance;
+        double value_first_component  = this->value(current_point);
+        double value_second_component = shape.value(current_point);
+        if (value_first_component > value_second_component)
+          {
+            current_distance = value_first_component;
+          }
+        else
+          {
+            current_distance = value_second_component;
+          }
+
+        previous_position = current_point;
+
+        double       previous_value     = DBL_MAX;
+        unsigned int consecutive_center = 0;
+
+        while (iteration < iteration_max && (previous_step_size) > precision)
+          {
+            value_first_component  = this->value(current_point);
+            value_second_component = shape.value(current_point);
+            if (value_first_component > value_second_component)
+              {
+                distance_gradient = this->gradient(current_point);
+              }
+            else
+              {
+                distance_gradient = shape.gradient(current_point);
+              }
+            current_normal = distance_gradient / distance_gradient.norm();
+
+            Tensor<1, dim> direction = distance_gradient;
+            dx                       = -max_step * direction / direction.norm();
+            if (distance_gradient.norm() == 0)
+              {
+                dx = -max_step * direction;
+              }
+
+
+            Point<dim> new_point   = current_point + dx;
+            value_first_component  = this->value(new_point);
+            value_second_component = shape.value(new_point);
+            double new_distance =
+              smooth_max(value_first_component, value_second_component);
+            if (new_distance > current_distance - precision*precision)
+              {
+                std::vector<double> diff_results;
+                diff_results.resize(search_direction.size());
+                Point<dim> best_point;
+                double     best_dist = current_distance;
+                for (unsigned int d = 0; d < search_direction.size(); ++d)
+                  {
+                    Tensor<1, dim> perturbation =
+                      search_direction[d] * max_step;
+                    value_first_component =
+                      this->value(current_point + perturbation);
+                    value_second_component =
+                      shape.value(current_point + perturbation);
+                    new_distance =
+                      smooth_max(value_first_component, value_second_component);
+                    diff_results[d] =
+                      (new_distance - current_distance) / max_step;
+                    if (new_distance < best_dist - precision*precision)
+                      {
+                        best_dist  = new_distance;
+                        best_point = current_point + perturbation;
+                      }
+                  }
+                if (best_dist < current_distance - precision*precision)
+                  {
+                    current_distance = best_dist;
+                    current_point    = best_point;
+                  }
+
+                if constexpr (dim == 2)
+                  {
+                    current_normal[0] =
+                      ((diff_results[0] - diff_results[1]) / 2);
+                    current_normal[1] =
+                      ((diff_results[2] - diff_results[3]) / 2);
+                  }
+                else
+                  {
+                    current_normal[0] =
+                      ((diff_results[0] - diff_results[1]) / 2);
+                    current_normal[1] =
+                      ((diff_results[2] - diff_results[3]) / 2);
+                    current_normal[2] =
+                      ((diff_results[4] - diff_results[5]) / 2);
+                  }
+                current_normal = current_normal / current_normal.norm();
+                Point<dim> extra_guess;
+                if (current_distance > previous_value - precision*precision)
+                  {
+                    if constexpr (dim == 2)
+                      {
+                        new_point[0] =
+                          previous_position[0] -
+                          ((diff_results[0] - diff_results[1]) / 2) /
+                            ((diff_results[0] + diff_results[1]) / max_step);
+                        new_point[1] =
+                          previous_position[1] -
+                          ((diff_results[2] - diff_results[3]) / 2) /
+                            ((diff_results[2] + diff_results[3]) / max_step);
+                      }
+                    else
+                      {
+                        new_point[0] =
+                          previous_position[0] -
+                          ((diff_results[0] - diff_results[1]) / 2) /
+                            ((diff_results[0] + diff_results[1]) / max_step);
+                        new_point[1] =
+                          previous_position[1] -
+                          ((diff_results[2] - diff_results[3]) / 2) /
+                            ((diff_results[2] + diff_results[3]) / max_step);
+                        new_point[2] =
+                          previous_position[2] -
+                          ((diff_results[4] - diff_results[5]) / 2) /
+                            ((diff_results[4] + diff_results[5]) / max_step);
+                      }
+                    value_first_component  = this->value(new_point);
+                    value_second_component = shape.value(new_point);
+                    new_distance =
+                      smooth_max(value_first_component, value_second_component);
+                    if (new_distance < current_distance - precision*precision)
+                      {
+                        current_distance = new_distance;
+                        current_point    = new_point;
+                      }
+                    else
+                      {
+                        new_point = current_point +
+                                    (new_point - previous_position) /
+                                      (new_point - previous_position).norm() *
+                                      max_step;
+                        value_first_component  = this->value(new_point);
+                        value_second_component = shape.value(new_point);
+                        new_distance = smooth_max(value_first_component,
+                                                  value_second_component);
+                        if (new_distance < current_distance - precision*precision)
+                          {
+                            current_distance = new_distance;
+                            current_point    = new_point;
+                          }
+                      }
+                  }
+
+                if (current_distance > previous_value - precision*precision)
+                  {
+                    consecutive_center += 1;
+                    previous_step_size = max_step;
+                    max_step *= 1.0 / std::pow(2.0, consecutive_center);
+                    current_point    = previous_position;
+                    current_distance = previous_value;
+                    current_normal   = previous_normal;
+                  }
+                else
+                  {
+                    max_step *= 1;
+                    consecutive_center = 0;
+                  }
+              }
+            else
+              {
+                current_point    = new_point;
+                current_distance = new_distance;
+                max_step *= 1;
+                consecutive_center = 0;
+              }
+
+            previous_value    = current_distance;
+            previous_position = current_point;
+            previous_normal   = current_normal;
+            iteration++;
+
+          }
+
+        if (distance > current_distance)
+          {
+            distance      = current_distance;
+            normal        = current_normal;
+            contact_point = current_point;
+          }
+      }
+    return std::make_tuple(distance, normal, contact_point);
+  }
+
   /**
    * @brief Return the analytical gradient of the distance
    * @param evaluation_point The point at which the function will be evaluated
@@ -449,9 +710,9 @@ public:
             Tensor<1, 3> axis;
             axis[2 - i] = 1.0;
             this->rotation_matrix =
-              this->rotation_matrix *
               Physics::Transformations::Rotations::rotation_matrix_3d(
-                axis, new_orientation[2 - i]);
+                axis, new_orientation[2 - i]) *
+              this->rotation_matrix;
           }
       }
     orientation = new_orientation;
@@ -721,6 +982,74 @@ private:
   std::shared_ptr<Functions::SignedDistance::Sphere<dim>> sphere_function;
 #endif
 };
+
+
+
+template <int dim>
+class Plane : public Shape<dim>
+{
+public:
+  /**
+   * @brief Constructor for a infinite plane. The plane is normal to the Z axis in 3 D and Y axis in 2D in the reference frame of the particle.
+   * @param position The sphere center
+   * @param normal The sphere center
+   * @param orientation The sphere orientation
+   */
+  Plane(const Point<dim> &position, const Tensor<1, 3> &orientation)
+    : Shape<dim>(1.0, position, orientation)
+  {
+    if constexpr (dim == 3)
+      {
+        normal = Tensor<1, dim>({0, 0, 1});
+      }
+    else
+      {
+        normal = Tensor<1, dim>({0, 1});
+      }
+  }
+
+  /**
+   * @brief Return the evaluation of the signed distance function of this solid
+   * at the given point evaluation point.
+   *
+   * @param evaluation_point The point at which the function will be evaluated
+   * @param component This parameter is not used, but it is necessary because Shapes inherit from the Function class of deal.II.
+   */
+  double
+  value(const Point<dim>  &evaluation_point,
+        const unsigned int component = 0) const override;
+
+
+  /**
+   * @brief Return a pointer to a copy of the Shape
+   */
+  std::shared_ptr<Shape<dim>>
+  static_copy() const override;
+
+  /**
+   * @brief Return the analytical gradient of the distance
+   * @param evaluation_point The point at which the function will be evaluated
+   * @param component This parameter is not used, but it is necessary because Shapes inherit from the Function class of deal.II.
+   */
+  Tensor<1, dim>
+  gradient(const Point<dim>  &evaluation_point,
+           const unsigned int component = 0) const override;
+
+  /**
+   * @brief
+   * Return the volume displaced by the solid
+   *
+   * @param fluid_density The density of the fluid that is displaced
+   */
+  double
+  displaced_volume(const double fluid_density) override;
+
+
+
+private:
+  Tensor<1, dim> normal;
+};
+
 
 /**
  * @class This class defines superquadric shapes. Their signed distance

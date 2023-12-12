@@ -2196,10 +2196,18 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
               IBParticle<dim> save_particle_state         = particles[p];
               bool            save_particle_state_is_used = false;
               // Define the correction vector.
-              Tensor<1, 3> velocity_correction_vector =
-                residual_velocity * 1. /
-                inverse_of_relaxation_coefficient_velocity;
-
+              Tensor<1, 3> velocity_correction_vector ;
+              // Define the correction vector. And check if it is not NAN. NAN happen when the residual tends to zero in cases where the fluid density is 0.
+              if(inverse_of_relaxation_coefficient_velocity== inverse_of_relaxation_coefficient_velocity)
+                {
+                  velocity_correction_vector =
+                    residual_velocity * 1. /
+                    inverse_of_relaxation_coefficient_velocity;
+                }
+              else{
+                  velocity_correction_vector =
+                    residual_velocity;
+                }
               // Update the particle state and keep in memory the last iteration
               // information.
 
@@ -2335,9 +2343,18 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
                            (vector_of_residual_variation.norm_square()) +
                          DBL_MIN);
                 }
-              // Define the correction vector.
-              Tensor<1, 3> omega_correction_vector =
-                residual_omega * 1 / inverse_of_relaxation_coefficient_omega;
+              // Define the correction vector. And check if it is not NAN. NAN happen when the residual tends to zero in cases where the fluid density is 0.
+              Tensor<1, 3> omega_correction_vector ;
+              if( inverse_of_relaxation_coefficient_omega== inverse_of_relaxation_coefficient_omega)
+                {
+                  omega_correction_vector =
+                    residual_omega * 1 /
+                    inverse_of_relaxation_coefficient_omega;
+                }
+              else{
+                  omega_correction_vector =
+                    residual_omega;
+                }
 
               double local_alpha_omega = 1;
 
@@ -2347,7 +2364,6 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
                 omega_correction_vector * alpha * local_alpha_omega;
               particles[p].omega_impulsion_iter = particles[p].omega_impulsion;
               particles[p].previous_omega_residual    = residual_omega;
-
 
               // If the particles have impacted a wall or another particle, we
               // want to use the sub-time step position. Otherwise, we solve the
@@ -2376,12 +2392,11 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
                               Tensor<1, 3> axis;
                               axis[2 - i] = 1.0;
                               particles[p].rotation_matrix =
-                                particles[p].rotation_matrix *
                                 Physics::Transformations::Rotations::
                                   rotation_matrix_3d(
                                     axis,
                                     particles[p]
-                                      .previous_orientation[0][2 - i]);
+                                      .previous_orientation[0][2 - i])*particles[p].rotation_matrix;
                             }
                         }
                       particles[p].rotation_matrix =
@@ -2401,7 +2416,8 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
                     ib_dem.dem_particles[p].orientation);
                 }
 
-
+             /* particles[p].set_orientation(
+                ib_dem.dem_particles[p].orientation);*/
               // If something went wrong during the update, the particle's state
               // would be reversed to its original state here.
               if (save_particle_state_is_used)
@@ -2416,7 +2432,9 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
                   std::cout<<" omega impulsion "<<particles[p].omega_impulsion<<std::endl;
                   std::cout<<" omega_accel "<< invert(particles[p].rotation_matrix) *
                                                      angular_acceleration_in_particle_frame<<std::endl;
-                  std::cout<<" dem position "<< ib_dem.dem_particles[0].position<<std::endl;
+                  std::cout<<" position "<< particles[0].position<<std::endl;
+                  std::cout<<" velocity "<<particles[0].velocity<<std::endl;
+                  std::cout<<" omega "<< particles[0].omega<<std::endl;
                   std::cout<<" position "<< particles[p].position<<std::endl;
                 }
 

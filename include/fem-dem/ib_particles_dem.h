@@ -210,7 +210,7 @@ public:
 
   void
   update_particles_boundary_contact(
-    const std::vector<IBParticle<dim>> &particles,
+    std::vector<IBParticle<dim>> &particles,
     const DoFHandler<dim>              &dof_handler,
     const Quadrature<dim - 1>          &face_quadrature_formula,
     const Mapping<dim>                 &mapping);
@@ -272,6 +272,8 @@ private:
   std::shared_ptr<ParticleWallContactForce<dim>>
     particle_wall_contact_force_object;
 
+  std::vector<Point<dim>> previous_wall_contact_point;
+
 
   // Particles contact history
   std::map<unsigned int,
@@ -282,7 +284,7 @@ private:
     pw_contact_map;
 
   // A vector of vectors of candidate cells for each of the particle.
-  std::vector<std::vector<BoundaryCellsInfo>> boundary_cells;
+  std::vector<std::map<unsigned int,BoundaryCellsInfo>> boundary_cells;
 
 private:
   double cfd_time;

@@ -138,6 +138,10 @@ ShapeGenerator::initialize_shape_from_vector(
                                                  position,
                                                  orientation);
     }
+  else if (type == "plane")
+    {
+      shape = std::make_shared<Plane<dim>>(position,orientation);
+    }
   else
     StandardExceptions::ExcNotImplemented();
   return shape;

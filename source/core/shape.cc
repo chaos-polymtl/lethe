@@ -46,16 +46,7 @@ Shape<dim>::clear_cache()
   gradient_cache.clear();
   closest_point_cache.clear();
 }
-/*
-template <int dim>
-Tensor<1,3>
-Shape<dim>::rotation_matrix_to_xyz_angles(Tensor<2,3>&
-rotation_matrix_representation) const{ Tensor<1,3> xyz_rotation;
-  xyz_rotation[0]=std::atan2(-rotation_matrix_representation[1][2],rotation_matrix_representation[2][2]);
-  xyz_rotation[1]=std::asin(rotation_matrix_representation[0][2]);
-  xyz_rotation[2]=std::atan2(-rotation_matrix_representation[0][1],rotation_matrix_representation[0][0]);
-  return xyz_rotation;
-}*/
+
 
 template <int dim>
 Point<dim>
@@ -377,6 +368,74 @@ Sphere<dim>::set_position(const Point<dim> &position)
     position, this->effective_radius);
 #endif
 }
+
+
+template <int dim>
+double
+Plane<dim>::value(const Point<dim> &evaluation_point,
+                  const unsigned int /*component*/) const
+{
+  Point<dim> current_point = this->align_and_center(evaluation_point);
+  double     dot_product   = scalar_product((current_point), normal);
+  Point<dim> projected_point =
+    current_point - dot_product / normal.norm_square() * normal;
+
+  auto rotate_in_globalpoint = this->reverse_align_and_center(projected_point);
+  if (dot_product > 0)
+    return (rotate_in_globalpoint - evaluation_point).norm();
+  else
+    return -(rotate_in_globalpoint - evaluation_point).norm();
+}
+
+
+template <int dim>
+std::shared_ptr<Shape<dim>>
+Plane<dim>::static_copy() const
+{
+  std::shared_ptr<Shape<dim>> copy =
+    std::make_shared<Plane<dim>>(this->position, this->orientation);
+  return copy;
+}
+
+template <int dim>
+Tensor<1, dim>
+Plane<dim>::gradient(const Point<dim> &evaluation_point,
+                     const unsigned int /*component*/) const
+{
+  // We make sure that the evaluation point and the sphere center are different,
+  // because if they are the same the analytical gradient is not defined: the
+  // function returns a NaN. We use the numerical gradient if the points are the
+  // same.
+  Point<dim> current_point = this->align_and_center(evaluation_point);
+  double     dot_product   = scalar_product((current_point), normal);
+  Point<dim> projected_point =
+    current_point - dot_product / normal.norm_square() * normal;
+
+  auto rotate_in_globalpoint = this->reverse_align_and_center(projected_point);
+  if (dot_product > 0)
+    return (rotate_in_globalpoint - projected_point) /
+           (rotate_in_globalpoint - projected_point).norm();
+  else
+    return -(rotate_in_globalpoint - projected_point) /
+           (rotate_in_globalpoint - projected_point).norm();
+}
+
+template <int dim>
+double
+Plane<dim>::displaced_volume(const double fluid_density)
+{
+  double solid_volume;
+  using numbers::PI;
+  if (dim == 2)
+    solid_volume =
+      this->effective_radius * this->effective_radius * PI * fluid_density;
+
+  else if (dim == 3)
+    solid_volume = 4.0 / 3.0 * this->effective_radius * this->effective_radius *
+                   this->effective_radius * PI;
+  return solid_volume;
+}
+
 
 template <int dim>
 void
@@ -2593,5 +2652,7 @@ template class RBFShape<2>;
 template class RBFShape<3>;
 template class OpenCascadeShape<2>;
 template class OpenCascadeShape<3>;
+template class Plane<2>;
+template class Plane<3>;
 // template class Shape<2>;
 // template class Shape<3>;
