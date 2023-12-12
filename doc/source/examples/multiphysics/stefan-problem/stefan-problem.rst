@@ -19,7 +19,10 @@ Features
 Files Used in This Example
 ---------------------------
 
-``examples/multiphysics/stefan-problem/stefan.prm``
+Both files mentioned below are located in the example's folder (``examples/multiphysics/stefan-problem``).
+
+- Parameter file: ``stefan.prm``
+- Postprocessing Python script: ``stefan-problem-postprocessing.py``
 
 
 -------------------------
@@ -164,9 +167,28 @@ Finally, the only remaining section is the ``simulation control``, which control
     end
 
 
+----------------------
+Running the Simulation
+----------------------
+
+Launching the simulation is as simple as specifying the executable name and the parameter file. Assuming that the ``lethe-fluid`` executable is within your path, the simulation can be launched by typing:
+
+.. code-block:: text
+  :class: copy-button
+
+  lethe-fluid stefan.prm
+
+
 -------
 Results
 -------
+
+Once the simulation is done, the results can be postprocessed using:
+
+.. code-block:: text
+  :class: copy-button
+
+  python3 stefan-problem-postprocessing.py
 
 The following image compares the results obtained with Lethe with the analytical solution for the Stefan problem at :math:`t=5`. This data is extracted through the use of a python script available in the folder of the example. We see that a quasi perfect agreement can be obtained with the analytical solution of the Stefan problem. 
 

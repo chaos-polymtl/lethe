@@ -21,8 +21,13 @@ Features
 Files Used in This Example
 ---------------------------
 
-``examples/multiphysics/tracer-through-cad-junction/tracer-through-cad-junction.prm``
+All files mentioned below are located in the example's folder (``examples/multiphysics/tracer-through-cad-junction``).
 
+- Hierarchical Data Format file for SALOME mesh generation: ``tracer-through-cad-junction.hdf``
+- GMSH geometry file: ``tracer-through-cad-junction.geo``
+- GMSH mesh file: ``tracer-through-cad-junction.msh``
+- Parameter file: ``tracer-through-cad-junction.prm``
+- SALOME mesh file: ``Mesh-1.mesh``
 
 
 -----------------------
@@ -103,7 +108,7 @@ In the ``subsection mesh``, the simplex mode can be enabled with ``set simplex =
 
     subsection mesh
       set type               = gmsh
-      set file name          = vessels.msh
+      set file name          = tracer-through-cad-junction.msh
       set initial refinement = 0
       set simplex            = true
     end
@@ -233,14 +238,12 @@ must be applied to the outlet flow.
 Running the Simulation
 ----------------------
 
-The case must be run with the solver and the parameter file. 
-The simulation is launched in the same folder as the ``.prm`` file,
-using the ``lethe-fluid`` solver. It takes a long time since problem is 
-transient and the time steps are short:
+The case must be run with the solver and the parameter file. The simulation is launched in the same folder as the ``.prm`` file, using the ``lethe-fluid`` solver. It takes a long time since problem is transient and the time steps are short. Assuming that the ``lethe-fluid`` executable is within your path, the simulation can be launched by typing:
 
-.. code-block:: sh
+.. code-block:: text
+  :class: copy-button
     
-    ../../exe/bin/lethe-fluid tracer-through-cad-junction.prm
+  lethe-fluid tracer-through-cad-junction.prm
 
 
 -------

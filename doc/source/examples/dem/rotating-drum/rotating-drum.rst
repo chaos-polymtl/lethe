@@ -15,8 +15,11 @@ Features
 ----------------------------
 Files Used in This Example
 ----------------------------
-- Parameter file to load particles: ``/examples/dem/3d-rotating-drum/load-rotating-drum.prm``
-- Parameter file for the simulation: ``/examples/dem/3d-rotating-drum/rotating-drum.prm``
+
+Both files mentioned below are located in the example's folder (``examples/dem/3d-rotating-drum``).
+
+- Parameter file to load particles: ``load-rotating-drum.prm``
+- Parameter file for the simulation: ``rotating-drum.prm``
 
 -----------------------
 Description of the Case
@@ -181,12 +184,14 @@ Running the Simulation
 This simulation can be launched in two steps. First the particles need to be loaded (here we use 8 cores):
 
 .. code-block:: text
+  :class: copy-button
 
   mpirun -np 8 lethe-particles load-rotating-drum.prm
 
 Then we run the simulation with the rotating walls:
 
 .. code-block:: text
+  :class: copy-button
 
   mpirun -np 8 lethe-particles rotating-drum.prm
 

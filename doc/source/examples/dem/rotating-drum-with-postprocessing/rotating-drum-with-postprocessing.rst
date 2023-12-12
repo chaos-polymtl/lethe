@@ -1,5 +1,5 @@
 ==================================
-Rotating Drum with Post-processing
+Rotating Drum with Postprocessing
 ==================================
 
 This is a mini-example that only adds Lagrangian post-processing features to the rotating drum example (example 3). Hence, we only explain the post-processing subsection in this example.
@@ -16,7 +16,8 @@ Features
 ----------------------------
 Files Used in This Example
 ----------------------------
-``/examples/dem/3d-rotating-drum-with-post-processing/rotating-drum-with-post-processing.prm``
+
+- Parameter file: ``examples/dem/3d-rotating-drum-with-postprocessing/rotating-drum-with-postprocessing.prm``
 
 
 -----------------------

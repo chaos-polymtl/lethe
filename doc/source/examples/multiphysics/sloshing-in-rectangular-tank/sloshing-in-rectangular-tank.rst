@@ -18,15 +18,16 @@ Features
 ---------------------------
 Files Used in This Example
 ---------------------------
+All files mentioned below are located in the example's folder (``examples/multiphysics/sloshing-in-rectangular-tank``).
 
-- Analytical data for :math:`Re=2`: ``examples/multiphysics/sloshing-in-rectangular-tank/sloshing_0002/analytical_solution_Re2.csv``
-- Analytical data for :math:`Re=20`: ``examples/multiphysics/sloshing-in-rectangular-tank/sloshing_0020/analytical_solution_Re20.csv``
-- Analytical data for :math:`Re=200`: ``examples/multiphysics/sloshing-in-rectangular-tank/sloshing_0200/analytical_solution_Re200.csv``
-- Parameter file for :math:`Re=2`: ``examples/multiphysics/sloshing-in-rectangular-tank/sloshing_0002/sloshing-in-rectangular-tank_Re0002.prm``
-- Parameter file for :math:`Re=20`: ``examples/multiphysics/sloshing-in-rectangular-tank/sloshing_0020/sloshing-in-rectangular-tank_Re0020.prm``
-- Parameter file for :math:`Re=200`: ``examples/multiphysics/sloshing-in-rectangular-tank/sloshing_0200/sloshing-in-rectangular-tank_Re0200.prm``
-- Parameter file for :math:`Re=2000`: ``examples/multiphysics/sloshing-in-rectangular-tank/sloshing_2000/sloshing-in-rectangular-tank_Re2000.prm``
-- Postprocessing python script: ``examples/multiphysics/sloshing-in-rectangular-tank/sloshing_postprocessing.py``
+- Analytical data for :math:`Re=2`: ``sloshing_0002/analytical_solution_Re2.csv``
+- Analytical data for :math:`Re=20`: ``sloshing_0020/analytical_solution_Re20.csv``
+- Analytical data for :math:`Re=200`: ``sloshing_0200/analytical_solution_Re200.csv``
+- Parameter file for :math:`Re=2`: ``sloshing_0002/sloshing-in-rectangular-tank_Re0002.prm``
+- Parameter file for :math:`Re=20`: ``sloshing_0020/sloshing-in-rectangular-tank_Re0020.prm``
+- Parameter file for :math:`Re=200`: ``sloshing_0200/sloshing-in-rectangular-tank_Re0200.prm``
+- Parameter file for :math:`Re=2000`: ``sloshing_2000/sloshing-in-rectangular-tank_Re2000.prm``
+- Postprocessing Python script: ``sloshing_postprocessing.py``
 
 
 -----------------------

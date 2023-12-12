@@ -20,7 +20,7 @@ Features
 Files Used in This Example
 ---------------------------
 
-``examples/multiphysics/warming-up-viscous-fluid``
+- Parameter file: ``examples/multiphysics/warming-up-viscous-fluid.prm``
 
 
 ------------------------
@@ -205,11 +205,12 @@ The ``boundary conditions`` are set for:
 Running the Simulation
 -----------------------
 
-The simulation is launched in the same folder as the ``.prm`` file, using the ``lethe-fluid`` solver. It takes only about 5 seconds with one cpu:
+The simulation is launched in the same folder as the ``.prm`` file, using the ``lethe-fluid`` solver. It takes only about 5 seconds with one cpu. Assuming that the ``lethe-fluid`` executable is within your path, the simulation can be launched by typing:
 
-.. code-block:: sh
-    
-    ../../exe/bin/lethe-fluid warming-up-viscous-fluid.prm
+.. code-block:: text
+  :class: copy-button
+
+  lethe-fluid warming-up-viscous-fluid.prm
 
 
 --------------

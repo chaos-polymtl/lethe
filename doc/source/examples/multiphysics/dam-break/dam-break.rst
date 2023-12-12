@@ -18,9 +18,10 @@ Features
 ---------------------------
 Files Used in This Example
 ---------------------------
+Both files mentioned below are located in the example's folder (``examples/multiphysics/dam-break``).
 
-- Parameter file: ``examples/multiphysics/dam-break/``
-- Postprocessing python script: ``examples/multiphysics/dam-break/dam-break-2d.py``
+- Parameter file: ``dam-break-Martin-and-Moyce.prm``
+- Postprocessing Python script: ``dam-break-2d.py``
 
 
 ---------------------------

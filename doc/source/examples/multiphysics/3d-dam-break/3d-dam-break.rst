@@ -22,10 +22,13 @@ Features
 Files Used in This Example
 --------------------------
 
-- Experimental data file: ``examples/multiphysics/3d-dam-break/experimental_data.txt``
-- Geometry file: ``examples/multiphysics/3d-dam-break/tank_with_obstacle.geo``
-- Parameter file: ``examples/multiphysics/3d-dam-break/3d-dam-break.prm``
-- Python script for post-processing data: ``examples/multiphysics/3d-dam-break/3d-dam-break_postprocess.py``
+All files mentioned below are located in the example's folder (``examples/multiphysics/3d-dam-break``).
+
+- Experimental data file: ``experimental_data.txt``
+- Geometry file: ``tank_with_obstacle.geo``
+- Mesh file: ``tank_with_obstacle.msh``
+- Parameter file: ``3d-dam-break.prm``
+- Postprocessing Python script: ``3d-dam-break_postprocess.py``
 
 
 .. _Description of the case:

@@ -14,8 +14,10 @@ Features
 Files Used in This Example
 ----------------------------
 
-* Parameter file: ``/examples/sharp-immersed-boundary/simple-plane-model-from-composite/plane.prm``
-* Composite geometry file: ``/examples/sharp-immersed-boundary/simple-plane-model-from-composite/plane.composite``
+Both files mentioned below are located in the example's folder (``examples/sharp-immersed-boundary/simple-plane-model-from-composite``).
+
+- Composite geometry file: ``plane.composite``
+- Parameter file: ``plane.prm``
 
 
 -----------------------

@@ -20,10 +20,11 @@ Features
 --------------------------
 Files Used in This Example
 --------------------------
+All files mentioned below are located in the example's folder (``examples/multiphysics/rayleigh-taylor-instability``).
 
-- Parameter file for adaptive sharpening: ``examples/multiphysics/rayleigh-taylor-instability/rayleigh-taylor-instability-adaptive-sharpening.prm``
-- Parameter file for constant sharpening: ``examples/multiphysics/rayleigh-taylor-instability/rayleigh-taylor-instability-constant-sharpening.prm``
-- Postprocessing python script: ``examples/multiphysics/rayleigh-taylor-instability/rayleigh-taylor_postprocess.py``
+- Parameter file for adaptive sharpening: ``rayleigh-taylor-instability-adaptive-sharpening.prm``
+- Parameter file for constant sharpening: ``rayleigh-taylor-instability-constant-sharpening.prm``
+- Postprocessing Python script: ``rayleigh-taylor_postprocess.py``
 
 
 -----------------------

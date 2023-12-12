@@ -18,8 +18,10 @@ Features
 Files Used in This Example
 ---------------------------
 
-``examples/multiphysics/rayleigh-benard-convection/rayleigh-benard-convection-Ra10k.prm``
-``examples/multiphysics/rayleigh-benard-convection/rayleigh-benard-convection-Ra25k.prm``
+Both files mentioned below are located in the example's folder (``examples/multiphysics/rayleigh-benard-convection``).
+
+- Parameter file for :math:`Ra=10\, 000`: ``rayleigh-benard-convection-Ra10k.prm``
+- Parameter file for :math:`Ra=25\, 000`: ``rayleigh-benard-convection-Ra25k.prm``
 
 
 -----------------------------
@@ -145,13 +147,19 @@ The ``physical properties`` subsection defines the physical properties of the fl
 Running the Simulation
 ---------------------------
 
-Call the lethe-fluid by invoking:  
+Call the ``lethe-fluid`` by invoking:
 
-``mpirun -np 8 lethe-fluid rayleigh-benard-convection-Ra10k.prm``
+.. code-block:: text
+  :class: copy-button
+
+  mpirun -np 8 lethe-fluid rayleigh-benard-convection-Ra10k.prm
 
 and
 
-``mpirun -np 8 lethe-fluid rayleigh-benard-convection-Ra25k.prm``
+.. code-block:: text
+  :class: copy-button
+
+  mpirun -np 8 lethe-fluid rayleigh-benard-convection-Ra25k.prm
 
 to run the simulations using eight CPU cores. Feel free to use more. Note that the first and second commands belong to the simulations at :math:`Ra=10^4` and :math:`Ra=2.5 \times 10^4`, repectively.
 

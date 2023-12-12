@@ -8,20 +8,23 @@ It is strongly recommended to visit `DEM parameters <../../../parameters/dem/dem
 ----------------------------------
 Features
 ----------------------------------
+
 - Solvers: ``lethe-particles`` and ``lethe-fluid-particles``
 - Three-dimensional problem
 - Displays the selection of models and physical properties
 - Simulates a solid-liquid fluidized bed
-- Post-processing code available
+- Postprocessing code available
 
 
 ---------------------------
 Files Used in This Example
 ---------------------------
 
-- Parameter file of particles generation and packing: ``/examples/unresolved-cfd-dem/gas-solid-fluidized-bed/dem-packing-in-lsfb.prm``
-- Parameter file for the liquid-solid fluidized bed unresolved CFD-DEM simulation: ``/examples/unresolved-cfd-dem/gas-solid-fluidized-bed/liquid-solid-fluidized-bed.prm``
-- Post-processing Python script: ``/examples/unresolved-cfd-dem/gas-solid-fluidized-bed/lsfb_postprocessing.py``
+All files mentioned below are located in the example's folder (``examples/unresolved-cfd-dem/liquid-solid-fluidized-bed``).
+
+- Parameter file for CFD-DEM simulation of the liquid-solid fluidized bed: ``liquid-solid-fluidized-bed.prm``
+- Parameter file of particles generation and packing: ``dem-packing-in-lsfb.prm``
+- Postprocessing Python script: ``lsfb_postprocessing.py``
 
 
 -----------------------
@@ -415,7 +418,7 @@ The simulation is run (on :math:`8 \: \text{cores}`) using the ``lethe-fluid-par
 .. code-block:: text
   :class: copy-button
 
-    mpirun -np 8 lethe-fluid-particles liquid-solid-fluidized-bed.prm
+  mpirun -np 8 lethe-fluid-particles liquid-solid-fluidized-bed.prm
 
 
 The :math:`20`-second simulations with alumina took approximately :math:`24 \: \text{hours}` and :math:`30 \: \text{minutes}` on :math:`16 \: \text{cores}` and :math:`8 \: \text{hours}` and :math:`44 \: \text{minutes}` on :math:`32 \: \text{cores}`.
@@ -431,7 +434,7 @@ We briefly comment on some results that can be extracted from this example.
 
 .. important::
 
-    This example includes a post-processing file written in Python that uses the `lethe_pyvista_tools <../../../tools/postprocessing/postprocessing.html>`_. module.
+    This example includes a postprocessing file written in Python that uses the `lethe_pyvista_tools <../../../tools/postprocessing/postprocessing.html>`_. module.
 
 .. important::
 

@@ -17,7 +17,7 @@ Features
 Files Used in This Example
 ---------------------------
 
-- Parameter file: ``/examples/sharp-immersed-boundary/cylinder-with-sharp-interface/cylinder-with-sharp-interface.prm``
+- Parameter file: ``examples/sharp-immersed-boundary/cylinder-with-sharp-interface/cylinder-with-sharp-interface.prm``
 
 
 -----------------------

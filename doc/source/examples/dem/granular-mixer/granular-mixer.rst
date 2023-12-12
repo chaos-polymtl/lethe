@@ -8,16 +8,18 @@ This example simulates the packing and mixing of particles in a mixer with a pit
 ----------------------------------
 Features
 ----------------------------------
+
 - Solvers: ``lethe-particles``
 - Floating mesh
-- Gmsh grids
+- `GMSH <https://gmsh.info/>`_ grids
 - Bidispersed particles (same size and properties, but different types)
 
 
 ----------------------------
 Files Used in This Example
 ----------------------------
-``/examples/dem/3d-granular-mixer/granular-mixer.prm``
+
+- Parameter file: ``/examples/dem/3d-granular-mixer/granular-mixer.prm``
 
 
 -----------------------
@@ -126,6 +128,7 @@ Running the Simulation
 This simulation can be launched by (in parallel mode on 8 processes):
 
 .. code-block:: text
+  :class: copy-button
 
   mpirun -np 8 lethe-particles granular-mixer.prm
 

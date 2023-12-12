@@ -1,12 +1,14 @@
 ==================================================
 Particle FEM Reconstruction
 ==================================================
+
 In this example, we use the inverse of Finite Element Method (FEM) to reconstruct positions from a radioactive particle tracking experiment.
 The calculation is performed for a given set of positions inside a square.
 
 ----------------------------------
 Features
 ----------------------------------
+
 - Solver: ``lethe-rpt-l2-projection-3d``
 - Solver: ``lethe-rpt-fem-reconstruction-3d``
 - Displays the use of the inverse FEM in reconstruction of the radioactive particle positions
@@ -14,14 +16,18 @@ Features
 ---------------------------
 Files Used in This Example
 ---------------------------
-- Parameter file: ``examples/rpt/particle-fem-reconstruction/rpt-fem-reconstruction.prm``
-- File containing detectors positions: ``examples/rpt/particle-fem-reconstruction/positions.detector``
-- File containing the experimental counts: ``examples/rpt/particle-fem-reconstruction/experimental-counts.txt``
-- File containing the real particle positions: ``examples/rpt/particle-fem-reconstruction/real-positions.txt``
+
+All files mentioned below are located in the example's folder (``examples/rpt/particle-fem-reconstruction``).
+
+- File containing detectors positions: ``positions.detector``
+- File containing the experimental counts: ``experimental-counts.txt``
+- File containing the real particle positions: ``real-positions.txt``
+- Parameter file: ``rpt-fem-reconstruction.prm``
 
 -------------------------
 Description of the Case
 -------------------------
+
 The purpose of the Finite Element Method based Position Reconstruction (FEM-PR) is to filter the noise resulting from the Monte Carlo model by using an
 orthogonal projection of the Monte Carlo model onto the domain. Then, the algorithm searches through the cells and it
 minimizes the least-squares error between the photon count obtained from the FEM interpolation and the experimental count for all the detectors in each cell.
@@ -63,6 +69,7 @@ This example shows how using the tuned parameters of each detector we generate t
 ----------------
 Parameter File
 ----------------
+
 RPT Parameters
 ^^^^^^^^^^^^^^^^
 
@@ -116,22 +123,25 @@ In the subsection ``FEM reconstruction parameters``, we specify the file that co
       set nodal counts file        = temp_nodal_counts_detector00.counts, temp_nodal_counts_detector01.counts, temp_nodal_counts_detector02.counts, temp_nodal_counts_detector03.counts
     end
 
-
+----------------------------------
 Running the Simulation
 ----------------------------------
+
 Assuming that ``lethe-rpt-l2-projection-3d`` and ``lethe-rpt-fem-reconstruction-3d`` executables are within your path, you can start launching FEM-PR by typing :
 
 .. code-block:: text
+  :class: copy-button
 
-    lethe-rpt-l2-projection-3d rpt-fem-reconstruction.prm
+  lethe-rpt-l2-projection-3d rpt-fem-reconstruction.prm
 
 This step uses the L2 projection technique to smooth the noise of the Monte Carlo method and calculates the photon counts at the nodes. After this part is done, the program generates the file of nodal counts from each detector as such : ``temp_nodal_counts_detector00.counts``. The next step is to launch the position reconstruction as follows:
 
 .. code-block:: text
+  :class: copy-button
 
-	lethe-rpt-fem-reconstruction-3d rpt-fem-reconstruction.prm
+  lethe-rpt-fem-reconstruction-3d rpt-fem-reconstruction.prm
 
-
+--------
 Results
 --------
 With the figure shown below we assess the validity of the reconstruction algorithm with a reconstruction of a set of experimental points. It shows the real positions of the particle and the reconstructed positions.
@@ -143,6 +153,7 @@ With the figure shown below we assess the validity of the reconstruction algorit
     :width: 600
 
 
+-----------
 References
 -----------
 
