@@ -2483,6 +2483,7 @@ namespace Parameters
       maximum_refinement_level   = prm.get_integer("max refinement level");
       minimum_refinement_level   = prm.get_integer("min refinement level");
       frequency                  = prm.get_integer("frequency");
+      refinement_at_frequency    = frequency != 0;
       mesh_controller_is_enabled = prm.get_bool("mesh refinement controller");
     }
     prm.leave_subsection();
