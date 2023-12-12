@@ -23,7 +23,7 @@ namespace Parameters
                         Patterns::List(Patterns::Double()),
                         "Diameter values for a custom distribution");
       prm.declare_entry(
-        "custom probabilities",
+        "custom volume fractions",
         "0.6 , 0.4",
         Patterns::List(Patterns::Double()),
         "Probabilities of each diameter of the custom distribution based on the volume fraction");
@@ -74,9 +74,9 @@ namespace Parameters
       particle_size_std.at(particle_type) =
         prm.get_double("standard deviation");
       particle_custom_diameter.at(particle_type) =
-        entry_string_to_vector(prm, "custom diameters");
+        convert_string_to_vector(prm, "custom diameters");
       particle_custom_probability.at(particle_type) =
-        entry_string_to_vector(prm, "custom probabilities");
+        convert_string_to_vector(prm, "custom probabilities");
 
       double probability_sum =
         std::reduce(particle_custom_probability.at(particle_type).begin(),

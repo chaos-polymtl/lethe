@@ -98,7 +98,7 @@ CustomDistribution::CustomDistribution(
       cumulative_probability_vector.push_back(cumulative_value);
     }
 
-  diameter_custom_cumm_prob = cumulative_probability_vector;
+  diameter_custom_cumu_prob = cumulative_probability_vector;
 }
 
 void
@@ -114,11 +114,11 @@ CustomDistribution::particle_size_sampling(const unsigned int &particle_number)
   for (unsigned int i = 0; i < particle_number; ++i)
     {
       // Search to find the appropriate diameter index
-      auto it = std::upper_bound(diameter_custom_cumm_prob.begin(),
-                                 diameter_custom_cumm_prob.end(),
+      auto it = std::upper_bound(diameter_custom_cumu_prob.begin(),
+                                 diameter_custom_cumu_prob.end(),
                                  dis(gen));
 
-      unsigned int index = std::distance(diameter_custom_cumm_prob.begin(), it);
+      unsigned int index = std::distance(diameter_custom_cumu_prob.begin(), it);
 
       this->particle_sizes.push_back(diameter_custom_values[index]);
     }

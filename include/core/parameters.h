@@ -1393,9 +1393,9 @@ namespace Parameters
 
   /**
    * @brief Return the tensor of entry @p entry_string. If the entry is specified
-   * in the .prm file, then the changed value is returned, otherwise the default
-   * value is returned. If the entry is not equivalent to a Tensor<1,3>, an
-   * error will be thrown. This function can be use for Point<3> variables.
+   * in the parameter file, then the changed value is returned, otherwise the
+   * default value is returned. If the entry is not equivalent to a Tensor<1,3>,
+   * an error will be thrown. This function can be use for Point<3> variables.
    *
    * @param prm A parameter handler which is currently used to parse the simulation information
    * @param entry_string A declare string in the parameter file.
@@ -1419,7 +1419,7 @@ namespace Parameters
    * @return A std::vector<double> corresponding to the entry_string in the prm file.
    */
   std::vector<double>
-  entry_string_to_vector(ParameterHandler  &prm,
-                         const std::string &entry_string);
+  convert_string_to_vector(ParameterHandler  &prm,
+                           const std::string &entry_string);
 } // namespace Parameters
 #endif

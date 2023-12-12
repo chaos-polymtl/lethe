@@ -30,8 +30,7 @@ public:
 
   /**
    * @brief Carries out the size sampling of particles. This is the base class of
-   * NormalDistribution, UniformDistribution, LogNormalDistribution and
-   * CustomDistribution classes.
+   * NormalDistribution, UniformDistribution and CustomDistribution classes.
    * @param particle_number Number of particle inserted at a given insertion time step.
    */
   virtual void
@@ -61,8 +60,9 @@ public:
    * @brief The constructor stores the parameters necessary to define the normal
    * distribution.
    *
-   * @param d_average Average diameters for each type of particle.
-   * @param d_standard_deviation Standard deviation of the diameter for each type of particle.
+   * @param d_average Average diameters for a certain normal distribution.
+   * @param d_standard_deviation Standard deviation of the diameter for a certain
+   * normal distribution.
    */
   NormalDistribution(const double &d_average,
                      const double &d_standard_deviation);
@@ -153,8 +153,9 @@ public:
   /**
    * @brief The constructor stores the parameters necessary to define the histogram
    * distribution.
-   * @param d_list Vector of diameter values
-   * @param d_probabilities Vector of probability values based on volume with respect to each diameter value
+   * @param d_list Vector of diameter values.
+   * @param d_probabilities Vector of probability values based on volume fraction
+   * with respect to each diameter value.
    */
   CustomDistribution(const std::vector<double> &d_list,
                      const std::vector<double> &d_probabilities);
@@ -163,7 +164,8 @@ public:
    * @brief Carries out the size sampling of each particle inserted at an insertion
    * time step for the histogram distribution.
    *
-   * @param particle_number Number of particles inserted at a given insertion time step.
+   * @param particle_number Number of particles inserted at a given insertion time
+   * step.
    */
   void
   particle_size_sampling(const unsigned int &particle_number) override;
@@ -191,11 +193,11 @@ private:
   const std::vector<double> diameter_custom_values;
 
   /**
-   * Vector containing cummulative probabilities associated with de
-   * diameter_custom_values vector. The probabilities are based on the volume,
-   * not the number of particles.
+   * Vector containing cumulative probabilities associated with de
+   * diameter_custom_values vector. The probabilities are based on the volume
+   * fraction, not the number of particles.
    */
-  std::vector<double> diameter_custom_cumm_prob;
+  std::vector<double> diameter_custom_cumu_prob;
 };
 
 #endif /* distributions_h */

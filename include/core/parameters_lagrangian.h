@@ -75,8 +75,8 @@ namespace Parameters
       std::unordered_map<unsigned int, std::vector<double>>
         particle_custom_diameter;
 
-      // Probability of each diameter value based on volume for the custom
-      // distribution for each particle type
+      // Probability of each diameter value based on volume fraction for the
+      // custom distribution for each particle type
       std::unordered_map<unsigned int, std::vector<double>>
         particle_custom_probability;
 

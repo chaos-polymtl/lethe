@@ -66,18 +66,19 @@ In this subsection, gravitational acceleration, and the physical properties of t
     If the particles in a simulation are monodispersed and have the same physical properties, the ``number of particle types`` should be equal to zero. For polydispersed systems, the ``number of particle types`` is selected equal to the number of particles types in the simulation. For each particle type, a separate subsection ``particle type n`` should be defined (n starts from zero to ``number of particle types`` - 1) which contains all the physical properties related to that particle type.
 
 * The ``size distribution type`` parameter specifies the size distribution for each particle type. For each particle type, three ``size distribution type`` can be defined: ``uniform``, ``normal`` and ``custom``.
+
   - For the ``uniform`` size distribution, the diameter of the particles is constant.
   - For the ``normal`` size distribution, the particle diameters are sampled from a normal distribution with an average diameter and a standard deviation.
   - For the ``custom`` size distribution, particle diameters are sampled from a list of diameters with a corresponding list of probabilities.
 
 .. note::
-    In the ``custom`` size distribution, the probability values are based on the volume taken by all the particles of the associated diameter, not to the total number of particles. For example, if a probability is equal to ``0.5`` , this means that haft of the total volume of inserted particles will be occupied by particle with the associated diameter value.
+    In the ``custom`` size distribution, the probability values are based on the volume fraction taken by all the particles of the associated diameter, not to the total number of particles. For example, if a probability is equal to ``0.5`` , this means that half of the total volume of inserted particles will be occupied by particle with the associated diameter value.
 
 * The ``diameter`` parameter defines the diameter of the particles in a ``uniform`` distribution. In the case of a ``normal`` distribution, this parameter indicates the average diameter.
 
 * For a ``normal`` distribution, the ``standard deviation`` parameter should be defined to indicate the standard deviation on the particle size distribution.
 
-* For a ``custom`` distribution, the ``custom diameters`` defines the different diameter values used when generating particles. The ``custom probabilities`` defines the probabilities corresponding to each diameter value previously declared based on volume, not on the number of particles. Both list must have the same length.
+* For a ``custom`` distribution, the ``custom diameters`` parameter defines the different diameter values used when generating particles. The ``custom probabilities`` parameter defines the probabilities corresponding to each diameter value previously declared based on volume fraction, not on the number of particles. Both list must have the same length.
 
 * The ``number of particles`` parameter defines the number of particles for each type.
 

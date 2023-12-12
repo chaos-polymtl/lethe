@@ -3363,7 +3363,8 @@ namespace Parameters
   }
 
   std::vector<double>
-  entry_string_to_vector(ParameterHandler &prm, const std::string &entry_string)
+  convert_string_to_vector(ParameterHandler  &prm,
+                           const std::string &entry_string)
   {
     std::string              full_str = prm.get(entry_string);
     std::vector<std::string> vector_of_string(
