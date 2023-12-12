@@ -48,8 +48,6 @@ write_checkpoint(
   output << oss.str() << std::endl;
 
   // Prepare the insertion object for checkpointing
-  // insertion_object.prepare_for_serialization();
-
   std::string   insertion_object_filename = prefix + ".insertion_object";
   std::ofstream oss_insertion_obj(insertion_object_filename);
   boost::archive::text_oarchive oa_insertion_obj(oss_insertion_obj,

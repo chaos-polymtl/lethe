@@ -62,13 +62,24 @@ public:
          const DEMSolverParameters<dim> &dem_parameters) override;
 
 
+
+  /**
+   * @brief Serialize the volume insertion object to an output archive.
+   *
+   * @param ar Output archive where the attributes are stored.
+   */
   virtual void
   serialize(boost::archive::text_oarchive &ar, const unsigned int) override
   {
-    // ar &current_inserting_particle_type;
     ar &particles_of_each_type_remaining &current_inserting_particle_type;
   }
 
+  /**
+   * @brief Deserialize an input archive to the plane insertion object.
+   *
+   * @param ar Input archive where the attributes are stored.
+   *
+   */
   virtual void
   deserialize(boost::archive::text_iarchive &ar, const unsigned int) override
   {

@@ -86,12 +86,24 @@ public:
     std::vector<std::vector<double>> &particle_properties);
 
 
+
+  /**
+   * @brief Serialize the list insertion object to an output archive.
+   *
+   * @param ar Output archive where the attributes are stored.
+   */
   virtual void
   serialize(boost::archive::text_oarchive &ar, const unsigned int) override
   {
     ar &remaining_particles_of_each_type &current_inserting_particle_type;
   }
 
+  /**
+   * @brief Deserialize an input archive to the list insertion object.
+   *
+   * @param ar Input archive where the attributes are stored.
+   *
+   */
   virtual void
   deserialize(boost::archive::text_iarchive &ar, const unsigned int) override
   {

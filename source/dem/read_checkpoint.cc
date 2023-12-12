@@ -63,12 +63,11 @@ read_checkpoint(
   particle_handler.deserialize();
 
 
-  //
+  // Load insertion object
   std::string   insertion_object_filename = prefix + ".insertion_object";
   std::ifstream iss_insertion_obj(insertion_object_filename);
   boost::archive::text_iarchive ia_insertion_obj(iss_insertion_obj,
                                                  boost::archive::no_header);
-
   insertion_object->deserialize(ia_insertion_obj, 0);
 
   // Load solid objects

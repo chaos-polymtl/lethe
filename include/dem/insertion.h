@@ -60,7 +60,7 @@ class Insertion
 {
 public:
   /**
-   * Carries out the insertion of particles. This is the base class of
+   * @brief Carries out the insertion of particles. This is the base class of
    * volume_insertion, plane_insertion and list_insertion classes.
    *
    * @param distribution_object_container Contains all distribution for each
@@ -70,8 +70,8 @@ public:
               &distribution_object_container);
 
   /**
-   * This function is overridden by volume_insertion, plane_insertion and
-   * list_insertion class to insert particles.
+   * @brief This function is overridden by the volume_insertion, plane_insertion and
+   * list_insertion classes to insert particles.
    *
    * @param particle_handler The particle handler of particles which are being
    * inserted
@@ -84,15 +84,32 @@ public:
          const parallel::distributed::Triangulation<dim> &triangulation,
          const DEMSolverParameters<dim>                  &dem_parameters) = 0;
 
+  /**
+   * @brief Serialize the insertion object to an output archive. Is being used
+   * when checkpointing a simulation. This function is overridden by
+   * volume_insertion, plane_insertion and list_insertion classes.
+   *
+   * @param ar Output archive where the attributes are stored.
+   *
+   */
   virtual void
   serialize(boost::archive::text_oarchive &ar, const unsigned int) = 0;
 
+
+  /**
+   * @brief Deserialize an input archive to the insertion object. Is being used
+   * when restarting a simulation. This function is overridden by
+   * volume_insertion, plane_insertion and list_insertion classes.
+   *
+   * @param ar Input archive where the attributes are stored.
+   *
+   */
   virtual void
   deserialize(boost::archive::text_iarchive &ar, const unsigned int) = 0;
 
 protected:
   /**
-   * Print information about the particles that have been inserted during an
+   * @brief Print information about the particles that have been inserted during an
    * insertion time step.
    *
    * @param inserted_this_step Number of particles that are inserted
@@ -109,7 +126,7 @@ protected:
                        const ConditionalOStream &pcout);
 
   /**
-   * Carries out assigning the properties of inserted particles.
+   * @brief Carries out assigning the properties of inserted particles.
    *
    * @param dem_parameters DEM parameters declared in the .prm file
    * @param inserted_this_step_this_proc Number of particles that are inserted
