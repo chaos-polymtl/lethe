@@ -3263,7 +3263,7 @@ namespace Parameters
         "evaporation mass flux",
         "0.0",
         Patterns::Double(),
-        "Evaporation mass flux used if the constant evaporation model is selected");
+        "Evaporation mass flux used if the constant evaporation model is selected in M*L^-2*T^-1");
       prm.declare_entry(
         "evaporation coefficient",
         "0.82",
@@ -3277,27 +3277,31 @@ namespace Parameters
       prm.declare_entry("molar mass",
                         "1.0",
                         Patterns::Double(),
-                        "Molar mass of the material in kg/mol");
+                        "Molar mass of the material in M*N^-1");
       prm.declare_entry("boiling temperature",
                         "1.0",
                         Patterns::Double(),
-                        "Boiling temperature in K");
+                        "Boiling temperature in Theta");
       prm.declare_entry("evaporation latent heat",
                         "0.0",
                         Patterns::Double(),
-                        "Latent heat of evaporation in J/kg");
+                        "Latent heat of evaporation in L^2*T^-2");
       prm.declare_entry("ambient pressure",
                         "101325",
                         Patterns::Double(),
-                        "Pressure of the ambient gas in Pa");
+                        "Pressure of the ambient gas in M*L^-1*T^-2");
       prm.declare_entry("ambient gas density",
                         "1.0",
                         Patterns::Double(),
-                        "Ambient gas density in kg/m^3");
+                        "Ambient gas density in M*L^-3");
       prm.declare_entry("liquid density",
                         "10.0",
                         Patterns::Double(),
-                        "Liquid density in kg/m^3");
+                        "Liquid density in M*L^-3");
+      prm.declare_entry("universal gas constant",
+                        "8.314",
+                        Patterns::Double(),
+                        "Universal gas constant in M*L^2*T^-2*Theta^-1*N^-1");
     }
     prm.leave_subsection();
   }
@@ -3336,6 +3340,7 @@ namespace Parameters
       ambient_pressure        = prm.get_double("ambient pressure");
       ambient_gas_density     = prm.get_double("ambient gas density");
       liquid_density          = prm.get_double("liquid density");
+      universal_gas_constant          = prm.get_double("universal gas constant");
     }
     prm.leave_subsection();
   }

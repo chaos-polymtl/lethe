@@ -411,6 +411,7 @@ public:
     , ambient_pressure(p_evaporation.ambient_pressure)
     , ambient_gas_density_inv(1.0 / p_evaporation.ambient_gas_density)
     , liquid_density_inv(1.0 / p_evaporation.liquid_density)
+    , universal_gas_constant(p_evaporation.universal_gas_constant)
   {
     model_depends_on[temperature] = true;
   }
@@ -427,7 +428,7 @@ public:
     const double temperature_inv =
       1.0 / (field_values.at(field::temperature) + 1e-16);
 
-    const double R_inv = 1.0 / 8.3145;
+    const double R_inv = 1.0 / universal_gas_constant;
 
     const double L_vap_x_M_x_R_inv =
       latent_heat_evaporation * molar_mass * R_inv;
@@ -452,7 +453,7 @@ public:
     const std::vector<double> &temperature =
       field_vectors.at(field::temperature);
 
-    const double R_inv = 1.0 / 8.3145;
+    const double R_inv = 1.0 / universal_gas_constant;
 
     const double L_vap_x_M_x_R_inv =
       latent_heat_evaporation * molar_mass * R_inv;
@@ -483,7 +484,7 @@ public:
     const double temperature_inv =
       1.0 / (field_values.at(field::temperature) + 1e-16);
 
-    const double R_inv               = 1.0 / 8.3145;
+    const double R_inv               = 1.0 / universal_gas_constant;
     const double M_x_2PI_inv_x_R_inv = molar_mass / (2.0 * M_PI) * R_inv;
 
     const double mass_flux_value =
@@ -508,7 +509,7 @@ public:
     const std::vector<double> &temperature =
       field_vectors.at(field::temperature);
 
-    const double R_inv               = 1.0 / 8.3145;
+    const double R_inv               = 1.0 / universal_gas_constant;
     const double M_x_2PI_inv_x_R_inv = molar_mass / (2.0 * M_PI) * R_inv;
 
     const unsigned int n_pts = mass_flux_vector.size();
@@ -580,7 +581,7 @@ public:
     const double temperature_inv =
       1.0 / (field_values.at(field::temperature) + 1e-16);
 
-    const double R_inv = 1.0 / 8.3145;
+    const double R_inv = 1.0 / universal_gas_constant;
     const double L_vap_x_M_x_R_inv =
       latent_heat_evaporation * molar_mass * R_inv;
     const double M_x_2PI_inv_x_R_inv = molar_mass / (2.0 * M_PI) * R_inv;
@@ -612,7 +613,7 @@ public:
                      const field                                 id,
                      std::vector<double> &jacobian_vector) override
   {
-    const double R_inv = 1.0 / 8.3145;
+    const double R_inv = 1.0 / universal_gas_constant;
     const double L_vap_x_M_x_R_inv =
       latent_heat_evaporation * molar_mass * R_inv;
     const double M_x_2PI_inv_x_R_inv = molar_mass / (2.0 * M_PI) * R_inv;
@@ -654,7 +655,7 @@ public:
     const double temperature_inv =
       1.0 / (field_values.at(field::temperature) + 1e-16);
 
-    const double R_inv = 1.0 / 8.3145;
+    const double R_inv = 1.0 / universal_gas_constant;
 
     const double vapor_saturation_density_value =
       molar_mass * saturation_pressure_value * R_inv * temperature_inv;
@@ -662,11 +663,22 @@ public:
     // rho_vap = 0.31*rho_sat according to Anisimov and Khokhlov 1995
     const double vapor_density_inv =
       1.0 / (0.31 * vapor_saturation_density_value);
-
-    const double pressure =
-      -mass_flux_value * mass_flux_value *
-        (liquid_density_inv - vapor_density_inv) +
+    
+    double expansion_pressure = (std::abs(saturation_pressure_value) < 1e-16) ? 0.0 : -mass_flux_value * mass_flux_value *
+      (liquid_density_inv - vapor_density_inv);
+    double pressure = expansion_pressure
+       +
       recoil_pressure_coefficient * saturation_pressure_value;
+      
+    // std::cout<< "mass_flux_value = " << mass_flux_value << std::endl;
+    // std::cout<< "saturation_pressure_value = " << saturation_pressure_value << std::endl;
+    // std::cout<< "vapor_saturation_density_value = " << vapor_saturation_density_value << std::endl;
+    // std::cout<< "expansion = " << expansion_pressure << std::endl;
+    // std::cout<< "recoil_pressure = " << recoil_pressure_coefficient * saturation_pressure_value << std::endl;
+    // 
+    // std::cout<< "pressure = " << pressure << std::endl;
+    
+    
 
     return std::max(pressure - ambient_pressure, 0.0);
   }
@@ -687,7 +699,7 @@ public:
     const std::vector<double> &temperature =
       field_vectors.at(field::temperature);
 
-    const double R_inv = 1.0 / 8.3145;
+    const double R_inv = 1.0 / universal_gas_constant;
 
     std::vector<double> saturation_pressure_vector(n_pts);
     saturation_pressure(field_vectors, saturation_pressure_vector);
@@ -760,6 +772,8 @@ private:
   const double ambient_pressure;
   const double ambient_gas_density_inv;
   const double liquid_density_inv;
+  
+  const double universal_gas_constant;
 };
 
 #endif
