@@ -20,7 +20,7 @@ Features
 Files Used in This Example
 ---------------------------
 
-- Parameter file: ``examples/multiphysics/warming-up-viscous-fluid``
+- Parameter file: ``examples/multiphysics/warming-up-viscous-fluid.prm``
 
 
 ------------------------
