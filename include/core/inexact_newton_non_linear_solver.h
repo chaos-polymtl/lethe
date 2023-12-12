@@ -134,10 +134,15 @@ InexactNewtonNonLinearSolver<VectorType>::solve(const bool is_initial_step)
 
           if (this->params.verbosity != Parameters::Verbosity::quiet)
             {
-              solver->pcout << "\t\talpha = " << std::setw(6) << alpha
+              solver->pcout << "\talpha = " << std::setw(6) << alpha
                             << std::setw(0) << " res = "
                             << std::setprecision(this->params.display_precision)
-                            << current_res << std::endl;
+                            << std::setw(6) << current_res << std::setw(6)
+                            << "\tL^2(dx) = " << std::setw(6)
+                            << newton_update.l2_norm() << std::setw(6)
+                            << "\tL^infty(dx) = "
+                            << std::setprecision(this->params.display_precision)
+                            << newton_update.linfty_norm() << std::endl;
             }
 
           // If it's not the first iteration of alpha check if the residual is
