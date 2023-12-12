@@ -2778,11 +2778,7 @@ namespace Parameters
       Patterns::Anything(),
       "position relative to the center of the particle for the location of the point where the pressure is imposed inside the particle");
 
-    prm.declare_entry(
-      "center of mass location",
-      "0; 0; 0",
-      Patterns::Anything(),
-      "position of the center of mass relative to the frame of reference of the particule");
+
 
     prm.enter_subsection("physical properties");
     {
@@ -2790,6 +2786,16 @@ namespace Parameters
                         "1",
                         Patterns::Double(),
                         "density of the particle ");
+      prm.declare_entry(
+        "center of mass location",
+        "0; 0; 0",
+        Patterns::Anything(),
+        "position of the center of mass relative to the frame of reference of the particule");
+      prm.declare_entry(
+        "volume",
+        "0",
+        Patterns::Double(),
+        "The volume occupied by the particle. If it is left empty, the volume is automatically calculated if possible otherwise the volume of a sphere is used instead");
       prm.declare_entry(
         "inertia",
         "1 ;0 ;0 ;0 ;1 ;0 ;0 ;0 ;1",
@@ -3169,14 +3175,7 @@ namespace Parameters
           particles[i].pressure_location[0] = pressure_list[0];
           particles[i].pressure_location[1] = pressure_list[1];
 
-          std::string center_of_mass_location_str =
-            prm.get("center of mass location");
-          std::vector<std::string> center_of_mass_location_str_list(
-            Utilities::split_string_list(center_of_mass_location_str, ";"));
-          std::vector<double> center_of_mass_list =
-            Utilities::string_to_double(center_of_mass_location_str_list);
-          particles[i].center_of_mass_location[0] = center_of_mass_list[0];
-          particles[i].center_of_mass_location[1] = center_of_mass_list[1];
+
           if (dim == 3)
             {
               particles[i].position[2] =
@@ -3184,7 +3183,6 @@ namespace Parameters
               particles[i].velocity[2] =
                 particles[i].f_velocity->value(particles[i].position, 2);
               particles[i].pressure_location[2]       = pressure_list[2];
-              particles[i].center_of_mass_location[2] = center_of_mass_list[2];
             }
 
           std::string shape_type          = prm.get("type");
@@ -3220,25 +3218,44 @@ namespace Parameters
             particles[i].rolling_friction_coefficient =
               prm.get_double("rolling friction coefficient");
 
+            double volume= prm.get_double("volume");
+            if(volume==0){
+                //value is automatically define.
+                //volume=particles[i].shape->displaced_volume(1.0);
+                if(volume==0){
+                    if (dim == 2)
+                      {
+                        volume = PI * particles[i].radius *
+                                            particles[i].radius;
+                      }
+                    else if (dim == 3)
+                      {
+                        volume = 4.0 / 3.0 * PI * particles[i].radius *
+                                            particles[i].radius * particles[i].radius;
+                      }
+                  }
+              }
+            particles[i].volume=volume;
+            particles[i].mass =particles[i].volume*
+                                    prm.get_double("density");
 
-            if (dim == 2)
-              {
-                particles[i].mass = PI * particles[i].radius *
-                                    particles[i].radius *
-                                    prm.get_double("density");
-              }
-            else if (dim == 3)
-              {
-                particles[i].mass = 4.0 / 3.0 * PI * particles[i].radius *
-                                    particles[i].radius * particles[i].radius *
-                                    prm.get_double("density");
-              }
             particles[i].initialize_previous_solution();
             particles[i].set_position(particles[i].position);
             particles[i].set_orientation(particles[i].orientation);
-            // std::cout<<"orientation"<< particles[i].orientation<<std::endl;
-            // std::cout<<"rotation matrix in parameters"<<
-            // particles[i].rotation_matrix<<std::endl;
+
+            std::string center_of_mass_location_str =
+              prm.get("center of mass location");
+            std::vector<std::string> center_of_mass_location_str_list(
+              Utilities::split_string_list(center_of_mass_location_str, ";"));
+            std::vector<double> center_of_mass_list =
+              Utilities::string_to_double(center_of_mass_location_str_list);
+            particles[i].center_of_mass_location[0] = center_of_mass_list[0];
+            particles[i].center_of_mass_location[1] = center_of_mass_list[1];
+            if (dim == 3)
+              {
+                particles[i].center_of_mass_location[2] = center_of_mass_list[2];
+              }
+
             prm.leave_subsection();
           }
           prm.leave_subsection();

@@ -289,6 +289,8 @@ public:
   double rolling_friction_coefficient;
   // The particle mass.
   double mass;
+  // The particle volume.
+  double volume;
   // The surface energy of the particle
   double surface_energy;
   // The particle tensor of inertia in the global reference frame

@@ -34,7 +34,7 @@ double
 Shape<dim>::displaced_volume(const double /*fluid_density*/)
 {
   StandardExceptions::ExcNotImplemented();
-  return 1.0;
+  return 0;
 }
 
 
@@ -424,16 +424,7 @@ template <int dim>
 double
 Plane<dim>::displaced_volume(const double fluid_density)
 {
-  double solid_volume;
-  using numbers::PI;
-  if (dim == 2)
-    solid_volume =
-      this->effective_radius * this->effective_radius * PI * fluid_density;
-
-  else if (dim == 3)
-    solid_volume = 4.0 / 3.0 * this->effective_radius * this->effective_radius *
-                   this->effective_radius * PI;
-  return solid_volume;
+  return 0;
 }
 
 
@@ -944,7 +935,7 @@ template <int dim>
 double
 OpenCascadeShape<dim>::displaced_volume(const double /*fluid_density*/)
 {
-  return 1;
+  return 0;
 }
 
 template <int dim>
@@ -2627,7 +2618,7 @@ double
 CylindricalHelix<dim>::displaced_volume(const double /*fluid_density*/)
 {
   using numbers::PI;
-  double solid_volume = 1;
+  double solid_volume = 0;
 
   return solid_volume;
 }

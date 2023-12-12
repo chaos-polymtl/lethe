@@ -603,9 +603,6 @@ IBParticlesDEM<dim>::calculate_pw_contact_force(
           // Using this projected vector, the particle-wall distance is
           // calculated
 
-
-
-
           //Create a Rotation matrix from normal to z axis to initialize the plane for contact with the right orientation;
           Tensor<1,3> rotation_axis;
           double angle= std::acos(scalar_product(Tensor<1,3>({0,0,1}),normal)/normal.norm());
@@ -1370,15 +1367,12 @@ IBParticlesDEM<dim>::integrate_particles_motion(const double dt,
                   if (dim == 2)
                     {
                       gravity = g * (dem_particles[p_i].mass -
-                                     dem_particles[p_i].radius *
-                                       dem_particles[p_i].radius * PI * rho);
+                                     dem_particles[p_i].volume* rho);
                     }
                   else
                     {
                       gravity = g * (dem_particles[p_i].mass -
-                                     4.0 / 3.0 * dem_particles[p_i].radius *
-                                       dem_particles[p_i].radius *
-                                       dem_particles[p_i].radius * PI * rho);
+                                       dem_particles[p_i].volume * rho);
                     }
 
                   // We consider only the force at t+dt so the scheme is
