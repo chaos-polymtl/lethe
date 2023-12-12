@@ -10,14 +10,15 @@ Features
 ----------------------------------
 - Solvers: ``lethe-particles``
 - Floating walls
-- Gmsh grids
+- `GMSH <https://gmsh.info/>`_ grids
 - Checkpointing (restart)
 
 
 ----------------------------
 Files Used in This Example
 ----------------------------
-``/examples/dem/3d-silo/silo-Golshan.prm``
+
+- Parameter file: ``examples/dem/3d-silo/silo-Golshan.prm``
 
 
 -----------------------
@@ -181,11 +182,12 @@ Running the Simulation
 This simulation can be launched in parallel (e.g. using 8 processes) by running:
 
 .. code-block:: text
+  :class: copy-button
 
   mpirun -np 8 lethe-particles silo-Golshan.prm
 
 .. warning::
-	This example takes approximately 14 hours on 8 cores. This high computational time is due to the long simulation time (30 s of real-time).
+  This example takes approximately 14 hours on 8 cores. This high computational time is due to the long simulation time (30 s of real-time).
 
 ---------
 Results

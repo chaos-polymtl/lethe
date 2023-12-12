@@ -26,8 +26,10 @@ Features
 Files Used in This Example
 ----------------------------
 
-- Parameter file with uniform mesh refinement: ``examples/incompressible-flow/2d-nitsche-taylor-couette/uniform-nitsche-taylor-couette.prm``
-- Parameter file with adaptative mesh refinement: ``examples/incompressible-flow/2d-nitsche-taylor-couette/adaptative-nitsche-taylor-couette.prm``
+Both files mentioned below are located in the example's folder (``examples/incompressible-flow/2d-nitsche-taylor-couette``).
+
+- Parameter file with uniform mesh refinement: ``uniform-nitsche-taylor-couette.prm``
+- Parameter file with adaptative mesh refinement: ``adaptative-nitsche-taylor-couette.prm``
 
 
 
@@ -269,12 +271,14 @@ Running the Simulation
 Launching the simulation is as simple as specifying the executable name and the parameter file. Assuming that the ``lethe-fluid-nitsche`` executable is within your path, the simulation can be launched by typing:
 
 .. code-block:: text
+  :class: copy-button
 
   lethe-fluid-nitsche uniform-nitsche-taylor-couette.prm
 
 or 
 
 .. code-block:: text
+  :class: copy-button
 
   lethe-fluid-nitsche adaptative-nitsche-taylor-couette.prm
 

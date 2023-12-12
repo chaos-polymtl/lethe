@@ -19,13 +19,14 @@ Features
 ---------------------------
 Files Used in This Example
 ---------------------------
+
 All files mentioned below are located in the example's folder (``examples/multiphysics/capillary-wave``).
 
 - Analytical data: ``capillaryWaveData_rho_1_nu_5e-6_prosperetti.csv``
 - Analytical solution computation Python script: ``capillary-wave-prosperetti-solution.py``
-- Parameter file for case generation: ``capillary-wave.prm``
-- Parameter file for the :math:`\Delta t = 0.95\Delta t_\sigma` case: ``capillary-wave-TSM-0_95.prm``
 - Case generation and simulation launching Bash script: ``capillary-wave-time-step-sensitivity.sh``
+- Parameter file for case generation: ``capillary-wave.tpl``
+- Parameter file for the :math:`\Delta t = 0.95\Delta t_\sigma` case: ``capillary-wave-TSM-0_95.prm``
 - Postprocessing Python script for a simple case: ``capillary-wave-postprocess.py``
 - Postprocessing Python script for generating a comparison figure: ``capillary-wave-combined.py``
 - Postprocessing Bash script: ``capillary-wave-time-step-sensitivity-postprocess.sh``
@@ -372,8 +373,8 @@ We would like to thank Prof. Fabian Denner for sharing his time and knowledge th
 References
 ----------
 
-`[1] <https://doi.org/10.1016/j.jcp.2022.111128>`_ F. Denner, F. Evrard, et B. van Wachem, « Breaching the capillary time-step constraint using a coupled VOF method with implicit surface tension », *J. Comput. Phys.*, vol. 459, p. 111128, juin 2022, doi: 10.1016/j.jcp.2022.111128.
+`[1] <https://doi.org/10.1016/j.jcp.2022.111128>`_ F. Denner, F. Evrard, and B. van Wachem, “Breaching the capillary time-step constraint using a coupled VOF method with implicit surface tension,” *J. Comput. Phys.*, vol. 459, p. 111128, Jun. 2022, doi: 10.1016/j.jcp.2022.111128.
 
-`[2] <https://doi.org/10.1016/j.jcp.2015.01.021>`_ F. Denner and B. G. M. van Wachem, “Numerical time-step restrictions as a result of capillary waves,” J. Comput. Phys., vol. 285, pp. 24–40, Mar. 2015, doi: 10.1016/j.jcp.2015.01.021.
+`[2] <https://doi.org/10.1016/j.jcp.2015.01.021>`_ F. Denner and B. G. M. van Wachem, “Numerical time-step restrictions as a result of capillary waves,” *J. Comput. Phys.*, vol. 285, pp. 24–40, Mar. 2015, doi: 10.1016/j.jcp.2015.01.021.
 
 `[3] <https://doi.org/10.1063/1.863522>`_ A. Prosperetti, “Motion of two superposed viscous fluids,” *Phys. Fluids*, vol. 24, no. 7, pp. 1217–1223, Jul. 1981, doi: 10.1063/1.863522.

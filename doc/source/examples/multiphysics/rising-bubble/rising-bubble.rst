@@ -20,8 +20,10 @@ Features
 Files Used in This Example
 --------------------------
 
-- Parameter file: ``examples/multiphysics/rising-bubble/rising_bubble.prm``
-- Postprocessing python script: ``examples/multiphysics/rising-bubble/rising_bubble.py``
+Both files mentioned below are located in the example's folder (``examples/multiphysics/rising-bubble``).
+
+- Parameter file: ``rising_bubble.prm``
+- Postprocessing Python script: ``rising_bubble.py``
 
 
 -----------------------

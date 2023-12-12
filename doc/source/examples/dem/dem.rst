@@ -14,9 +14,9 @@ We organize the DEM examples from the simplest to the most complicated example:
     packing-in-circle/packing-in-circle
     packing-in-ball/packing-in-ball
     small-scale-rotating-drum/small-scale-rotating-drum
-    small-scale-rotating-drum-post-processing/small-scale-rotating-drum-post-processing
+    small-scale-rotating-drum-postprocessing/small-scale-rotating-drum-postprocessing
     rotating-drum/rotating-drum
-    rotating-drum-with-post-processing/rotating-drum-with-post-processing
+    rotating-drum-with-postprocessing/rotating-drum-with-postprocessing
     rotation-of-box/rotation-of-box
     silo/silo
     rectangular-hopper/rectangular-hopper
@@ -45,11 +45,11 @@ We organize the DEM examples from the simplest to the most complicated example:
 
       dem_5 [label="Small Scale Rotating Drum", href="https://lethe-cfd.github.io/lethe/documentation/examples/dem/small-scale-rotating-drum/small-scale-rotating-drum.html"];
     
-      dem_6 [label="Small Scale Rotating Drum Post-processing", href="https://lethe-cfd.github.io/lethe/documentation/examples/dem/small-scale-rotating-drum-post-processing/small-scale-rotating-drum-post-processing.html"];
+      dem_6 [label="Small Scale Rotating Drum Postprocessing", href="https://lethe-cfd.github.io/lethe/documentation/examples/dem/small-scale-rotating-drum-postprocessing/small-scale-rotating-drum-postprocessing.html"];
 
       dem_7 [label="Rotating Drum", href="https://lethe-cfd.github.io/lethe/documentation/examples/dem/rotating-drum/rotating-drum.html"];
 
-      dem_8 [label="Rotating Drum with Post-processing", href="https://lethe-cfd.github.io/lethe/documentation/examples/dem/rotating-drum-with-post-processing/rotating-drum-with-post-processing.html"];
+      dem_8 [label="Rotating Drum with Postprocessing", href="https://lethe-cfd.github.io/lethe/documentation/examples/dem/rotating-drum-with-postprocessing/rotating-drum-with-postprocessing.html"];
 
       dem_9 [label="Rotation of Box", href="https://lethe-cfd.github.io/lethe/documentation/examples/dem/rotation-of-box/rotation-of-box.html"];
 

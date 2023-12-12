@@ -1,5 +1,5 @@
 ==========================================
-Small Scale Rotating Drum Post-processing
+Small Scale Rotating Drum Postprocessing
 ==========================================
 
 This is an example of how to post-process results obtained in the `Small scale rotating drum example`_ using `lethe_pyvista_tools <https://github.com/lethe-cfd/lethe/tree/master/contrib/postprocessing>`_, a Python module based on `PyVista <https://docs.pyvista.org/>`_, built to facilitate the reading of Lethe results using `Python <https://www.python.org/>`_.
@@ -27,10 +27,10 @@ Features
 Files Used in This Example
 ----------------------------
 
-- Parameters file for particle insertion: ``/examples/dem/3d-small-scale-rotating-drum/packing-rotating-drum.prm``
-- Parameters file for drum rotation: ``/examples/dem/3d-small-scale-rotating-drum/small-rotating-drum-dem.prm``
-- Python module for Lethe data post-processing: ``/contrib/postprocessing/lethe_pyvista_tools``
-- Python script using module for rotating drum post-processing: ``/examples/postprocessing/small-scale-rotating-drum-postprocessing/example_small_rotating_drum.py``
+- Parameters file for particle insertion: ``examples/dem/3d-small-scale-rotating-drum/packing-rotating-drum.prm``
+- Parameters file for drum rotation: ``examples/dem/3d-small-scale-rotating-drum/small-rotating-drum-dem.prm``
+- Python module for Lethe data post-processing: ``contrib/postprocessing/lethe_pyvista_tools``
+- Python script using module for rotating drum post-processing: ``examples/postprocessing/small-scale-rotating-drum-postprocessing/example_small_rotating_drum.py``
 
 
 -----------------------

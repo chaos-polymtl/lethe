@@ -7,6 +7,7 @@ It is strongly recommended to visit `DEM parameters <../../../parameters/dem/dem
 ----------------------------------
 Features
 ----------------------------------
+
 - Solvers: ``lethe-particles`` and ``lethe-fluid-particles``
 - Three-dimensional problem
 - Displays the selection of models and physical properties
@@ -17,8 +18,11 @@ Features
 Files Used in This Example
 ---------------------------
 
-- Parameter file for particle generation and packing: ``/examples/unresolved-cfd-dem/boycott-effect/particle_generator.prm``
-- Parameter file for CFD-DEM simulation of the Boycot effect: ``/examples/unresolved-cfd-dem/boycott-effect/boycott-effect.prm``
+Both files mentioned below are located in the example's folder (``examples/unresolved-cfd-dem/boycott-effect``).
+
+- Parameter file for CFD-DEM simulation of the Boycott effect: ``boycott-effect.prm``
+- Parameter file for particle generation and packing: ``particle_generator.prm``
+
 
 -----------------------
 Description of the Case
@@ -159,12 +163,14 @@ Running the DEM Simulation
 Launching the simulation is as simple as specifying the executable name and the parameter file. Assuming that the ``lethe-particles`` executable is within your path, the simulation can be launched on a single processor by typing:
 
 .. code-block:: text
+  :class: copy-button
 
   lethe-particles particle-generator.prm
 
 or in parallel (where 8 represents the number of processors)
 
 .. code-block:: text
+  :class: copy-button
 
   mpirun -np 8 lethe-particles particle-generator.prm
 
@@ -357,11 +363,12 @@ For more information about the linear solver, please refer to the `Linear Solver
 Running the CFD-DEM Simulation
 ------------------------------
 
-The simulation is run using the ``lethe-fluid-particles`` application as per the following command:
+The simulation is run using the ``lethe-fluid-particles`` application.  Assuming that the executable is within your path, the simulation can be launched as per the following command:
 
 .. code-block:: text
+  :class: copy-button
 
-    path_to_cfd_dem_application/lethe-fluid-particles boycott-effect.prm
+  lethe-fluid-particles boycott-effect.prm
 
 
 --------

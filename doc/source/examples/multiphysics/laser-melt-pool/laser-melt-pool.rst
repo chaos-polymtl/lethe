@@ -21,7 +21,8 @@ Features
 ---------------------------
 Files Used in This Example
 ---------------------------
-``examples/multiphysics/laser-melt-pool/laser-melt-pool.prm``
+
+- Parameter file: ``examples/multiphysics/laser-melt-pool/laser-melt-pool.prm``
 
 
 -----------------------------

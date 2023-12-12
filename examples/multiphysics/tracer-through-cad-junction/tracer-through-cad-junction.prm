@@ -51,7 +51,7 @@ end
 
 subsection mesh
   set type               = gmsh
-  set file name          = vessels.msh
+  set file name          = tracer-through-cad-junction.msh
   set initial refinement = 0
   set simplex            = true
 end

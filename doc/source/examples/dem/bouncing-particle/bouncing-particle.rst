@@ -10,16 +10,18 @@ Features
 --------
 
 - Solvers: ``lethe-particles``
-- Post-processing using `Python <https://www.python.org/>`_, `PyVista <https://docs.pyvista.org/>`_, `lethe_pyvista_tools <https://github.com/lethe-cfd/lethe/tree/master/contrib/postprocessing>`_, and `ParaView <https://www.paraview.org/>`_.
+- Postprocessing using `Python <https://www.python.org/>`_, `PyVista <https://docs.pyvista.org/>`_, `lethe_pyvista_tools <https://github.com/lethe-cfd/lethe/tree/master/contrib/postprocessing>`_, and `ParaView <https://www.paraview.org/>`_.
 
 
 ----------------------------
 Files Used in This Example
 ----------------------------
 
-- ``/examples/dem/3d-bouncing-particle/bouncing_particle_original.prm``
-- ``/examples/dem/3d-bouncing-particle/bouncing_particle_case_generator.py``
-- ``/examples/dem/3d-bouncing-particle/bouncing_particle_post-processing.py``
+All files mentioned below are located in the example's folder (``examples/dem/3d-bouncing-particle``).
+
+- Case generation Python script: ``bouncing_particle_case_generator.py``
+- Parameter file for case generation: ``bouncing_particle_original.tpl``
+- Postprocessing Python script: ``bouncing_particle_postprocessing.py``
 
 
 -------------------------
@@ -68,7 +70,7 @@ Different spring constant and restitution coefficient are used in this example. 
 
 The ``poisson ratio`` of both the wall and the particle are being set to 0.3 arbitrarily. The Young's modulus of the wall is also being set arbitrarily to the high value of 1E12 Pa.
 
-The following properties are defined in the ``bouncing_particle_original.prm``  according to MFIX DEM02 verification test.
+The following properties are defined in the ``bouncing_particle_original.tpl``  according to MFIX DEM02 verification test.
 
 .. code-block:: text
 
@@ -93,11 +95,12 @@ The following properties are defined in the ``bouncing_particle_original.prm``  
       set friction coefficient wall    = 0.
     end
 
-As you can see, the ``young modulus particles`` and the ``restitution coefficient`` of both the wall and particle are not yet defined in the ``bouncing_particle_original.prm`` file. A Python code called ``bouncing_particle_case_generator.py`` is provided with this example. This code allows the generation 6 parameter files each using a different restitution coefficient values (from 0.5 to 1.0) for one specific normal spring constant. The ``young modulus particles`` parameter will be determined using a bisection algorithm to satisfy the desired normal spring constant. Assuming you have Python3 installed on your machine, this code can be launched using this next line:
+As you can see, the ``young modulus particles`` and the ``restitution coefficient`` of both the wall and particle are not yet defined in the ``bouncing_particle_original.tpl`` file. A Python code called ``bouncing_particle_case_generator.py`` is provided with this example. This code allows the generation 6 parameter files each using a different restitution coefficient values (from 0.5 to 1.0) for one specific normal spring constant. The ``young modulus particles`` parameter will be determined using a bisection algorithm to satisfy the desired normal spring constant. Assuming you have Python3 installed on your machine, this code can be launched using this next line:
 
 .. code-block:: text
+    :class: copy-button
 
-    python3 Lethe_case_generator.py 5000000
+    python3 bouncing_particle_case_generator.py 5000000
 
 Where ``5000000`` represent the normal spring constant that is wish to be used for the simulations. This code will generate 6 files named ``bouncing_particle_XX.prm``, where ``XX`` represent the value of the restitution coefficient used in it.
 
@@ -107,13 +110,14 @@ Running the Simulation
 Once all 6 parameter file are created, the simulation can be launched one after the other using the following line (parallel mode is not recommend since there is only one particle):
 
 .. code-block:: text
+  :class: copy-button
 
   for i in $(seq -w 5 10); do lethe-particles bouncing_particle_${i}.prm ; done
 
 All 6 simulations takes less than 2 minutes to run. A folder named according to the restitution coefficient of every simulation used will be generated (``/out_xx``).
 
 ---------------
-Post-processing
+Postprocessing
 ---------------
 A Python post-processing code called ``bouncing_particle_post_processing.py`` is provided with this example. It is used to compare the height reached by the particle after each rebound with the analytical solution of a hard sphere bouncing on a flat plane. This analytical solution considers instantaneous collision between the particle and the wall, thus the maximum height of each bounce can be express by the following expression:
 
@@ -125,8 +129,9 @@ with :math:`k` represent the :math:`k^{th}` bounce, :math:`h_0` the starting hei
 Once the 6 simulations have been run, use the following line in your command line to run the post-processing code :
 
 .. code-block:: text
+  :class: copy-button
 
-  python3 bouncing_particle_post_processing.py
+  python3 bouncing_particle_postprocessing.py
 
 .. important::
 

@@ -17,9 +17,11 @@ Features
 Files Used in This Example
 ----------------------------
 
-- Geometry file: ``/examples/incompressible-flow/2d-transient-flow-around-cylinder/cylinder-structured.geo``
-- Mesh file: ``/examples/incompressible-flow/2d-transient-flow-around-cylinder/cylinder-structured.msh``
-- Parameter file: ``/examples/incompressible-flow/2d-transient-flow-around-cylinder/cylinder.prm``
+All files mentioned below are located in the example's folder (``examples/incompressible-flow/2d-transient-flow-around-cylinder``).
+
+- Geometry file: ``cylinder-structured.geo``
+- Mesh file: ``cylinder-structured.msh``
+- Parameter file: ``cylinder.prm``
 
 
 -----------------------
@@ -217,6 +219,7 @@ Running the Simulation
 The simulation is launched in parallel using 10 CPUs, as explained in `2D Transient flow around an Ahmed body <https://lethe-cfd.github.io/lethe/documentation/examples/incompressible-flow/2d-transient-around-ahmed-body/2d-transient-around-ahmed-body.html>`_ :
 
 .. code-block:: text
+  :class: copy-button
 
   mpirun -np 10 lethe-fluid cylinder.prm
 
@@ -232,6 +235,7 @@ Results
 The time evolution of the drag and lift coefficients is obtained from a Gnuplot script available in the example folder by launching in the same directory the following command:
 
 .. code-block:: text
+  :class: copy-button
 
   gnuplot -c "./postprocess.gnu" "./Re200"
 
@@ -256,6 +260,7 @@ Using the fast Fourier transform (FFT) of the CL for the last 100 seconds, we ca
 This corresponds to the frequency at which the peak of amplitude appears in the FFT : :math:`f_v = 0.2`. From this result, we can obtain the Strouhal number, :math:`S_t = 0.2`, using the equation presented above. The python script used to obtain the FFT is available in the example folder and is launched in the same directory using the following command:
 
 .. code-block:: text
+  :class: copy-button
 
   python ./postprocess.py ./Re200
 

@@ -21,8 +21,10 @@ Features
 Files Used in This Example
 ---------------------------
 
-- Parameter file: ``examples/multiphysics/air-bubble-compression/air-bubble-compression.prm``
-- Postprocessing python script: ``examples/multiphysics/air-bubble-compression/air-bubble-compression-postprocessing.py``
+Both files mentioned below are located in the example's folder (``examples/multiphysics/air-bubble-compression``).
+
+- Parameter file: ``air-bubble-compression.prm``
+- Postprocessing python script: ``air-bubble-compression-postprocessing.py``
 
 
 -----------------------

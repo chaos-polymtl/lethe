@@ -18,9 +18,10 @@ Features
 ---------------------------
 Files Used in This Example
 ---------------------------
+Both files mentioned below are located in the example's folder (``examples/multiphysics/static-bubble``).
 
-- Parameter file: ``examples/multiphysics/static-bubble/static_bubble.prm``
-- Python file to generate plots: ``examples/multiphysics/static-bubble/static_bubble.py``
+- Parameter file: ``static_bubble.prm``
+- Postprocessing Python script: ``static_bubble.py``
 
 
 -----------------------------
@@ -203,7 +204,10 @@ Running the Simulation
 
 Call the ``lethe-fluid`` by invoking:
 
-``mpirun -np 8 lethe-fluid static-bubble.prm``
+.. code-block:: text
+  :class: copy-button
+
+  mpirun -np 8 lethe-fluid static-bubble.prm
 
 to run the simulation using eight CPU cores. Feel free to use more.
 
@@ -227,6 +231,7 @@ Using Paraview, we can visualize the evolution of the velocity field over the ti
 The time evolution of the :math:`\mathcal{L}^2` norm of the error on the velocity magnitude is obtained from a Gnuplot script available in the example folder by launching in the same directory the following command:
 
 .. code-block:: text
+  :class: copy-button
 
   gnuplot -c "./postprocess.gnu" "./output"
 
