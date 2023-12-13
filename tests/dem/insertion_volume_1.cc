@@ -13,12 +13,10 @@
  *
  * ---------------------------------------------------------------------
 
- *
- * Author: Shahab Golshan, Polytechnique Montreal, 2019-
  */
 
 /**
- * @brief Inserting one particle using volume insertion class.
+ * @brief Inserting particles using volume insertion.
  */
 
 // Deal.II includes
@@ -89,7 +87,7 @@ test()
   // Calling volume insertion
   VolumeInsertion<dim> insertion_object(
     dem_parameters,
-    dem_parameters.lagrangian_physical_properties.particle_average_diameter[0],
+    distribution_object_container[0]->find_max_diameter(),
     distribution_object_container);
 
   insertion_object.insert(particle_handler, tr, dem_parameters);

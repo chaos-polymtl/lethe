@@ -32,7 +32,7 @@ namespace Parameters
         Patterns::List(Patterns::Double()),
         "Probabilities of each diameter of the custom distribution based on the volume fraction");
       prm.declare_entry(
-        "random seed distribution ",
+        "random seed distribution",
         "1",
         Patterns::Integer(),
         "Seed for generation of random numbers for the size distribution");
