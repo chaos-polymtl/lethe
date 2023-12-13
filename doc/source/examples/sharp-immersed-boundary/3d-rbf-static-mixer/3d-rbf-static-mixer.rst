@@ -31,7 +31,7 @@ All files mentioned below are located in the example's folder (``/examples/sharp
 **RBF preparation files:**
 
 * Parameter file: ``/rbf_generation/RBF.param``;
-* Composite geometry file: ``/rbf_generation/helix.stl``. This surface grid was taken from `[1] <https://www.thingiverse.com/thing:3915237>`_ under CC BY 4.0.
+* Surface grid file: ``/rbf_generation/helix.stl``. This surface grid was taken from `[1] <https://www.thingiverse.com/thing:3915237>`_ under CC BY 4.0.
 
 **Lethe's fluid simulation files:**
 
@@ -57,9 +57,33 @@ Generation of the RBF file from the STL
 `bitpit <https://github.com/optimad/bitpit>`_ is an open-source modular library for scientific computing. The current section presents an example using its RBF capabilities to train RBF-networks that approximate the geometry from surface grid objects (`.stl`).
 
 .. tip::
-  In order to install bitpit, you need to have the github version of `PETSc <https://petsc.org/release/install/install_tutorial/>`_, which itself requires `BLAS/LAPACK <https://www.netlib.org/lapack/lug/node11.html>`_ . BLAS/LAPACK can be installed from command line with ``sudo apt-get install libblas-dev liblapack-dev``. In order, BLAS/LAPACK must be installed, then PETSc, then bitpit.
+  In order to install bitpit, you need to have the github version of `PETSc <https://petsc.org/release/install/install_tutorial/>`_, which itself requires `BLAS/LAPACK <https://www.netlib.org/lapack/lug/node11.html>`_ and `LibXML2 <https://github.com/GNOME/libxml2>`_. In order, BLAS/LAPACK and LibXML2 must be installed, then PETSc, then bitpit.
 
-  For the bitpit installation, you must first create a directory for the installation, then clone the project and build it (ideally in a separate directory). The dependencies' paths must be specified. Here are a few lines to help compile ``bitpit`` with 6 processes:
+  For the dependencies installation, you can use:
+
+
+  .. code-block:: text
+      :class: copy-button
+
+      sudo apt-get install libblas-dev liblapack-dev liblapacke-dev libxml2-dev
+
+
+  For the PETSc installation, you must first create a directory for the installation, then clone the project and configure it. Here are a few lines to help set it up:
+
+  .. code-block:: text
+      :class: copy-button
+
+      cd /home/
+      mkdir software
+      cd software
+      git clone -b release https://gitlab.com/petsc/petsc.git petsc
+      cd petsc
+      git pull
+      ./configure
+      make all check
+
+
+  For the bitpit installation, you must first create a directory for the installation, then clone the project and build it (ideally in a separate directory). The dependencies' paths must be specified. Here are a few lines to help compile bitpit with 6 processes:
 
   .. code-block:: text
       :class: copy-button
@@ -153,7 +177,7 @@ Although we are interested in the steady-state solution of the flow, we use ``bd
 Physical Properties
 ~~~~~~~~~~~~~~~~~~~
 
-We assume that the fluid is water, and that the length scale of the static mixer is the order of :math:`150 \, \text{cm}`. Hence,  the length units are centimeters and the time units are seconds. The ``kinematic viscosity`` of water is :math:`0.01 \, \text{cm²}/\text{s}`.
+We assume that the fluid is water, and that the length of the static mixer is in the order of :math:`150 \, \text{cm}`. Hence,  the length units are centimeters and the time units are seconds. The ``kinematic viscosity`` of water is :math:`0.01 \, \text{cm²}/\text{s}`.
 
 .. code-block:: text
 
