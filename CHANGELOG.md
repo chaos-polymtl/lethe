@@ -3,7 +3,12 @@ All notable changes to the Lethe project will be documented in this file.
  
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+
 ## [Master] - 2023-12-11
+
+### Fixed
+
+- MINOR  The number of remaining particle to insert of each type is being checkpointed adequately. This means that no modification are required to the "number of particle" parameter after restarting a simulation. [#964](https://github.com/lethe-cfd/lethe/pull/964) 
 
 ### Fixed
 
@@ -14,8 +19,6 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 ### Removed
 
 - MINOR The average diameter of the uniform size distribution with the DEM module was specified with a "average diameter" paramter. It is now specified directly from the diameter parameter. This is correctly documented. [#940](https://github.com/lethe-cfd/lethe/pull/940).
-
-## [Master] - 2023-11-27
 
 ### Fixed
 

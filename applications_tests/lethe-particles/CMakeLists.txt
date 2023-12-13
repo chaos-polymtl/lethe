@@ -2,6 +2,7 @@ set(TEST_TARGET lethe-particles)
 
 string(TOLOWER ${CMAKE_BUILD_TYPE} _build_type)
 
+file(COPY circle_restart_files/circle_restart.insertion_object DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/circle_restart.${_build_type}")
 file(COPY circle_restart_files/circle_restart.particles DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/circle_restart.${_build_type}")
 file(COPY circle_restart_files/circle_restart.pvdhandler DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/circle_restart.${_build_type}")
 file(COPY circle_restart_files/circle_restart.simulationcontrol DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/circle_restart.${_build_type}")
@@ -10,6 +11,7 @@ file(COPY circle_restart_files/circle_restart.triangulation.info DESTINATION "${
 file(COPY circle_restart_files/circle_restart.triangulation_fixed.data DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/circle_restart.${_build_type}")
 file(COPY circle_restart_files/circle_restart.triangulation_variable.data DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/circle_restart.${_build_type}")
 
+file(COPY sliding_restart_files/sliding_restart.insertion_object DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/sliding_restart.${_build_type}")
 file(COPY sliding_restart_files/sliding_restart.particles DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/sliding_restart.${_build_type}")
 file(COPY sliding_restart_files/sliding_restart.pvdhandler DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/sliding_restart.${_build_type}")
 file(COPY sliding_restart_files/sliding_restart.simulationcontrol DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/sliding_restart.${_build_type}")
@@ -22,6 +24,7 @@ file(COPY periodic_gmsh_files/pipe.msh DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/
 file(COPY load_balancing_solid_object_files/square.msh DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/load_balancing_solid_object.${_build_type}")
 file(COPY moving_float_files/square.msh DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/moving_float.${_build_type}")
 
+file(COPY moving_receptacle_files/restart.insertion_object DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/restart_moving_receptacle.${_build_type}")
 file(COPY moving_receptacle_files/restart.particles DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/restart_moving_receptacle.${_build_type}")
 file(COPY moving_receptacle_files/restart.pvdhandler DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/restart_moving_receptacle.${_build_type}")
 file(COPY moving_receptacle_files/restart.simulationcontrol DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/restart_moving_receptacle.${_build_type}")

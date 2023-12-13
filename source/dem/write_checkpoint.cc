@@ -12,6 +12,7 @@ write_checkpoint(
   PVDHandler                                              &grid_pvdhandler,
   parallel::distributed::Triangulation<dim>               &triangulation,
   Particles::ParticleHandler<dim>                         &particle_handler,
+  std::shared_ptr<Insertion<dim>>                         &insertion_object,
   std::vector<std::shared_ptr<SerialSolid<dim - 1, dim>>> &solid_objects,
   const ConditionalOStream                                &pcout,
   MPI_Comm                                                &mpi_communicator)
@@ -46,6 +47,13 @@ write_checkpoint(
   std::ofstream output(particle_filename.c_str());
   output << oss.str() << std::endl;
 
+  // Prepare the insertion object for checkpointing
+  std::string   insertion_object_filename = prefix + ".insertion_object";
+  std::ofstream oss_insertion_obj(insertion_object_filename);
+  boost::archive::text_oarchive oa_insertion_obj(oss_insertion_obj,
+                                                 boost::archive::no_header);
+  insertion_object->serialize(oa_insertion_obj, 0);
+
   // Checkpoint the serial solid objects one by one
   for (unsigned int i = 0; i < solid_objects.size(); ++i)
     {
@@ -61,6 +69,7 @@ write_checkpoint(TimerOutput                             &computing_timer,
                  PVDHandler                              &grid_pvdhandler,
                  parallel::distributed::Triangulation<2> &triangulation,
                  Particles::ParticleHandler<2>           &particle_handler,
+                 std::shared_ptr<Insertion<2>>           &insertion_object,
                  std::vector<std::shared_ptr<SerialSolid<1, 2>>> &solid_objects,
                  const ConditionalOStream                        &pcout,
                  MPI_Comm &mpi_communicator);
@@ -73,6 +82,7 @@ write_checkpoint(TimerOutput                             &computing_timer,
                  PVDHandler                              &grid_pvdhandler,
                  parallel::distributed::Triangulation<3> &triangulation,
                  Particles::ParticleHandler<3>           &particle_handler,
+                 std::shared_ptr<Insertion<3>>           &insertion_object,
                  std::vector<std::shared_ptr<SerialSolid<2, 3>>> &solid_objects,
                  const ConditionalOStream                        &pcout,
                  MPI_Comm &mpi_communicator);
