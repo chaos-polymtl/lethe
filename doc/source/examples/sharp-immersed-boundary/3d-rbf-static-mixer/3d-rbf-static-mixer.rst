@@ -206,7 +206,7 @@ The mesh is a simple hyper rectangle, large enough to encompass the mixer with i
       set initial refinement = 3
     end
 
-Mesh adaptation ``type`` is set to ``kelly``, to allow adaptive refinement at the solid surface. This is necessary for simulations of this type because of the prohibitive mesh size required when only uniform refinement is used. Setting ``max refinement level = 5`` allows for two levels of adaptive refinement from the uniform ``initial refinement = 3`` defined in the ``mesh`` section. The ``frequency = 0`` to ensure that no refinement occurs between time steps, as it is not necessary here.
+Mesh adaptation ``type`` is set to ``kelly``, to allow adaptive refinement at the solid surface. This is necessary for simulations of this type because of the prohibitive mesh size required when only uniform refinement is used. Setting ``max refinement level = 5`` allows for two levels of adaptive refinement from the uniform ``initial refinement = 3`` defined in the ``mesh`` section. The ``frequency = 0`` ensures that no refinement occurs between time steps, as it is not necessary here.
 
 .. code-block:: text
 
@@ -360,7 +360,7 @@ The mass conservation and pressure drop can both be monitored by plotting their 
 |                                                                                                                             |
 +-----------------------------------------------------------------------------------------------------------------------------+
 
-As the plot shows, the mass preservation is constant after only a few time steps; it depends mostly on the length ratio, residual and grid refinement. The pressure drop, on the other hand, decreases steadily. We stopped the simulation after 40 time steps because the decrease is then low enough, but increasing the total duration would be interesting to get a better idea of the steady-state pressure drop.
+As the plot shows, the mass conservation is constant after only a few time steps; it depends mostly on the length ratio, residual and grid refinement. The pressure drop, on the other hand, decreases steadily. We stopped the simulation after 40 time steps because the decrease is then low enough, but increasing the total duration would be interesting to get a better idea of the steady-state pressure drop.
 
 
 

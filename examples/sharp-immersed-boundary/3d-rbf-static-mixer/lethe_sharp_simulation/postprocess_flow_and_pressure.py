@@ -36,7 +36,7 @@ fig,  ax  = plt.subplots()
 
 ax.plot(time_steps,\
     np.abs(mass_conservation/np.max(mass_conservation)),\
-    label="Mass preservation [%]",\
+    label="Mass conservation [%]",\
     linestyle="-",\
     marker="3",\
     c = "blue")
