@@ -364,8 +364,8 @@ As the plot shows, the mass conservation is constant after only a few time steps
 
 
 
-----------
-References
-----------
+---------
+Reference
+---------
 
 `[1] <https://www.thingiverse.com/thing:3915237>`_ Group 9., «Helix Static Mixer» on Thingiverse.

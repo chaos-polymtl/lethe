@@ -46,9 +46,9 @@ Sharp Immersed Boundary Solver
 
       sharp_3_1 [label="Simple Plane Model From Composite", href="https://lethe-cfd.github.io/lethe/documentation/examples/sharp-immersed-boundary/sharp-immersed-boundary/simple-plane-model-from-composite.html", tooltip="Simple Plane Model From Composite"];
 
-      sharp_immersed_boundary -> sharp_1:w;
-      sharp_immersed_boundary -> sharp_2:w;
-      sharp_immersed_boundary -> sharp_3:w;
+      sharp_immersed_boundary_solver -> sharp_1:w;
+      sharp_immersed_boundary_solver -> sharp_2:w;
+      sharp_immersed_boundary_solver -> sharp_3:w;
 
       sharp_1 -> sharp_1_1:w;
       sharp_1 -> sharp_1_2:w;
