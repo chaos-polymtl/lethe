@@ -49,11 +49,11 @@ namespace Parameters
       viscous_resistance
     };
 
-    // Size distribution type
     enum class SizeDistributionType
     {
       uniform,
-      normal
+      normal,
+      custom
     };
 
     struct LagrangianPhysicalProperties
@@ -70,6 +70,15 @@ namespace Parameters
 
       // Size standard deviation of each particle type
       std::unordered_map<unsigned int, double> particle_size_std;
+
+      // List of diameters for the custom distribution for each particle type
+      std::unordered_map<unsigned int, std::vector<double>>
+        particle_custom_diameter;
+
+      // Probability of each diameter value based on volume fraction for the
+      // custom distribution for each particle type
+      std::unordered_map<unsigned int, std::vector<double>>
+        particle_custom_probability;
 
       // Distribution type of each particle type
       std::vector<SizeDistributionType> distribution_type;
@@ -135,6 +144,10 @@ namespace Parameters
         std::unordered_map<unsigned int, double> &particle_average_diameter,
         std::unordered_map<unsigned int, double> &particle_size_std,
         std::vector<SizeDistributionType>        &distribution_type,
+        std::unordered_map<unsigned int, std::vector<double>>
+          &particle_custom_diameter,
+        std::unordered_map<unsigned int, std::vector<double>>
+                                                 &particle_custom_probability,
         std::unordered_map<unsigned int, int>    &number,
         std::unordered_map<unsigned int, double> &density_particle,
         std::unordered_map<unsigned int, double> &youngs_modulus_particle,
@@ -470,4 +483,4 @@ namespace Parameters
 
   } // namespace Lagrangian
 } // namespace Parameters
-#endif /* PARAMETERS_H_ */
+#endif /* lethe_parameters_lagrangian_h */
