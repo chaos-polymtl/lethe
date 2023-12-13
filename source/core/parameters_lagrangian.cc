@@ -18,6 +18,10 @@ namespace Parameters
                         "0.001",
                         Patterns::Double(),
                         "Particle diameter");
+      prm.declare_entry("standard deviation",
+                        "0",
+                        Patterns::Double(),
+                        "Particle size standard deviation");
       prm.declare_entry("custom diameters",
                         "0.001 , 0.0005",
                         Patterns::List(Patterns::Double()),
@@ -27,10 +31,11 @@ namespace Parameters
         "0.6 , 0.4",
         Patterns::List(Patterns::Double()),
         "Probabilities of each diameter of the custom distribution based on the volume fraction");
-      prm.declare_entry("standard deviation",
-                        "0",
-                        Patterns::Double(),
-                        "Particle size standard deviation");
+      prm.declare_entry(
+        "distribution random seed",
+        "1",
+        Patterns::Integer(),
+        "Seed for generation of random numbers for the size distribution");
       prm.declare_entry("number of particles",
                         "0",
                         Patterns::Integer(),
@@ -77,6 +82,8 @@ namespace Parameters
         convert_string_to_vector(prm, "custom diameters");
       particle_custom_probability.at(particle_type) =
         convert_string_to_vector(prm, "custom volume fractions");
+      random_seed_for_distributions.push_back(
+        prm.get_integer("distribution random seed"));
 
       double probability_sum =
         std::reduce(particle_custom_probability.at(particle_type).begin(),
@@ -195,6 +202,7 @@ namespace Parameters
                             distribution_type,
                             particle_custom_diameter,
                             particle_custom_probability,
+                            random_seed_for_distributions,
                             number,
                             density_particle,
                             youngs_modulus_particle,
@@ -238,6 +246,7 @@ namespace Parameters
         &particle_custom_diameter,
       std::unordered_map<unsigned int, std::vector<double>>
                                                &particle_custom_probability,
+      std::vector<unsigned int>                &random_seed_for_distributions,
       std::unordered_map<unsigned int, int>    &number,
       std::unordered_map<unsigned int, double> &density_particle,
       std::unordered_map<unsigned int, double> &youngs_modulus_particle,
@@ -247,7 +256,7 @@ namespace Parameters
       std::unordered_map<unsigned int, double> &friction_coefficient_particle,
       std::unordered_map<unsigned int, double>
         &rolling_friction_coefficient_particle,
-      std::unordered_map<unsigned int, double> &surface_energy)
+      std::unordered_map<unsigned int, double> &surface_energy_particle)
     {
       for (unsigned int counter = 0; counter < particle_type_maximum_number;
            ++counter)
@@ -264,8 +273,9 @@ namespace Parameters
           restitution_coefficient_particle.insert({counter, 0.});
           friction_coefficient_particle.insert({counter, 0.});
           rolling_friction_coefficient_particle.insert({counter, 0.});
-          surface_energy.insert({counter, 0.});
+          surface_energy_particle.insert({counter, 0.});
         }
+      random_seed_for_distributions.reserve(particle_type_maximum_number);
     }
 
     void

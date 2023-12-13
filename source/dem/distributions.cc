@@ -2,12 +2,12 @@
 
 #include <dem/distributions.h>
 
-#include <algorithm>
-
-NormalDistribution::NormalDistribution(const double &d_average,
-                                       const double &d_standard_deviation)
+NormalDistribution::NormalDistribution(const double       &d_average,
+                                       const double       &d_standard_deviation,
+                                       const unsigned int &random_seed)
   : diameter_average(d_average)
   , standard_deviation(d_standard_deviation)
+  , gen(random_seed)
 {}
 
 void
@@ -16,8 +16,6 @@ NormalDistribution::particle_size_sampling(const unsigned int &particle_number)
   this->particle_sizes.clear();
   this->particle_sizes.reserve(particle_number);
 
-  std::random_device         rd{};
-  std::mt19937               gen{rd()};
   std::normal_distribution<> distribution{diameter_average, standard_deviation};
 
   for (unsigned int n = 0; n < particle_number; ++n)
@@ -72,8 +70,10 @@ UniformDistribution::find_max_diameter()
 
 CustomDistribution::CustomDistribution(
   const std::vector<double> &d_list,
-  const std::vector<double> &d_probabilities)
+  const std::vector<double> &d_probabilities,
+  const unsigned int        &random_seed)
   : diameter_custom_values(d_list)
+  , gen(random_seed)
 {
   std::vector<double> cumulative_probability_vector, n_i_vector;
   double              n_tot = 0.;
@@ -107,8 +107,6 @@ CustomDistribution::particle_size_sampling(const unsigned int &particle_number)
   this->particle_sizes.clear();
   this->particle_sizes.reserve(particle_number);
 
-  std::random_device               rd{};
-  std::mt19937                     gen{rd()};
   std::uniform_real_distribution<> dis(0.0, 1.0);
 
   for (unsigned int i = 0; i < particle_number; ++i)

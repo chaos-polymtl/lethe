@@ -205,45 +205,49 @@ DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
     }
 
   maximum_particle_diameter = 0;
-  for (unsigned int type_number = 0;
-       type_number <
+  for (unsigned int particle_type = 0;
+       particle_type <
        parameters.lagrangian_physical_properties.particle_type_number;
-       type_number++)
+       particle_type++)
     {
       if (parameters.lagrangian_physical_properties.distribution_type.at(
-            type_number) ==
+            particle_type) ==
           Parameters::Lagrangian::SizeDistributionType::uniform)
         {
-          distribution_object_container[type_number] =
+          distribution_object_container[particle_type] =
             std::make_shared<UniformDistribution>(
               parameters.lagrangian_physical_properties
-                .particle_average_diameter.at(type_number));
+                .particle_average_diameter.at(particle_type));
         }
       else if (parameters.lagrangian_physical_properties.distribution_type.at(
-                 type_number) ==
+                 particle_type) ==
                Parameters::Lagrangian::SizeDistributionType::normal)
         {
-          distribution_object_container[type_number] =
+          distribution_object_container[particle_type] =
             std::make_shared<NormalDistribution>(
               parameters.lagrangian_physical_properties
-                .particle_average_diameter.at(type_number),
+                .particle_average_diameter.at(particle_type),
               parameters.lagrangian_physical_properties.particle_size_std.at(
-                type_number));
+                particle_type),
+              parameters.lagrangian_physical_properties
+                .random_seed_for_distributions[particle_type]);
         }
       else if (parameters.lagrangian_physical_properties.distribution_type.at(
-                 type_number) ==
+                 particle_type) ==
                Parameters::Lagrangian::SizeDistributionType::custom)
         {
-          distribution_object_container[type_number] =
+          distribution_object_container[particle_type] =
             std::make_shared<CustomDistribution>(
               parameters.lagrangian_physical_properties.particle_custom_diameter
-                .at(type_number),
+                .at(particle_type),
               parameters.lagrangian_physical_properties
-                .particle_custom_probability.at(type_number));
+                .particle_custom_probability.at(particle_type),
+              parameters.lagrangian_physical_properties
+                .random_seed_for_distributions[particle_type]);
         }
       maximum_particle_diameter = std::max(
         maximum_particle_diameter,
-        distribution_object_container[type_number]->find_max_diameter());
+        distribution_object_container[particle_type]->find_max_diameter());
     }
 
   neighborhood_threshold_squared =
