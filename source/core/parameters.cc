@@ -3299,7 +3299,7 @@ namespace Parameters
                         Patterns::Double(),
                         "Liquid density in M*L^-3");
       prm.declare_entry("universal gas constant",
-                        "8.314",
+                        "8.3145",
                         Patterns::Double(),
                         "Universal gas constant in M*L^2*T^-2*Theta^-1*N^-1");
     }
