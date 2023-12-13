@@ -11,13 +11,22 @@ namespace Parameters
     {
       prm.declare_entry("size distribution type",
                         "uniform",
-                        Patterns::Selection("uniform|normal"),
+                        Patterns::Selection("uniform|normal|custom"),
                         "Particle size distribution"
-                        "Choices are <uniform|normal>.");
+                        "Choices are <uniform|normal|custom>.");
       prm.declare_entry("diameter",
                         "0.001",
                         Patterns::Double(),
                         "Particle diameter");
+      prm.declare_entry("custom diameters",
+                        "0.001 , 0.0005",
+                        Patterns::List(Patterns::Double()),
+                        "Diameter values for a custom distribution");
+      prm.declare_entry(
+        "custom volume fractions",
+        "0.6 , 0.4",
+        Patterns::List(Patterns::Double()),
+        "Probabilities of each diameter of the custom distribution based on the volume fraction");
       prm.declare_entry("standard deviation",
                         "0",
                         Patterns::Double(),
@@ -35,7 +44,7 @@ namespace Parameters
                         Patterns::Double(),
                         "Particle Young's modulus");
       prm.declare_entry("poisson ratio particles",
-                        "0.1",
+                        "0.3",
                         Patterns::Double(),
                         "Particle Poisson ratio");
       prm.declare_entry("restitution coefficient particles",
@@ -64,6 +73,21 @@ namespace Parameters
       particle_average_diameter.at(particle_type) = prm.get_double("diameter");
       particle_size_std.at(particle_type) =
         prm.get_double("standard deviation");
+      particle_custom_diameter.at(particle_type) =
+        convert_string_to_vector(prm, "custom diameters");
+      particle_custom_probability.at(particle_type) =
+        convert_string_to_vector(prm, "custom volume fractions");
+
+      double probability_sum =
+        std::reduce(particle_custom_probability.at(particle_type).begin(),
+                    particle_custom_probability.at(particle_type).end());
+
+      // We make sure that the cumulative probability is equal to 1.
+      if (std::abs(probability_sum - 1.0) > 1.e-12)
+        {
+          throw(std::runtime_error(
+            "Invalid custom volume fraction. The sum of volume fractions should be equal to 1.0 "));
+        }
       const std::string size_distribution_type_str =
         prm.get("size distribution type");
       if (size_distribution_type_str == "uniform")
@@ -74,9 +98,14 @@ namespace Parameters
         {
           distribution_type.at(particle_type) = SizeDistributionType::normal;
         }
+      else if (size_distribution_type_str == "custom")
+        {
+          distribution_type.at(particle_type) = SizeDistributionType::custom;
+        }
       else
         {
-          throw(std::runtime_error("Invalid size distribution type "));
+          throw(std::runtime_error(
+            "Invalid size distribution type. Choices are <uniform|normal|custom>."));
         }
       number.at(particle_type) = prm.get_integer("number of particles");
       density_particle.at(particle_type) = prm.get_double("density particles");
@@ -134,7 +163,7 @@ namespace Parameters
                           Patterns::Double(),
                           "Young's modulus of wall");
         prm.declare_entry("poisson ratio wall",
-                          "1000000.",
+                          "0.3",
                           Patterns::Double(),
                           "Poisson's ratio of wall");
         prm.declare_entry("restitution coefficient wall",
@@ -164,6 +193,8 @@ namespace Parameters
       initialize_containers(particle_average_diameter,
                             particle_size_std,
                             distribution_type,
+                            particle_custom_diameter,
+                            particle_custom_probability,
                             number,
                             density_particle,
                             youngs_modulus_particle,
@@ -203,6 +234,10 @@ namespace Parameters
       std::unordered_map<unsigned int, double> &particle_average_diameter,
       std::unordered_map<unsigned int, double> &particle_size_std,
       std::vector<SizeDistributionType>        &distribution_type,
+      std::unordered_map<unsigned int, std::vector<double>>
+        &particle_custom_diameter,
+      std::unordered_map<unsigned int, std::vector<double>>
+                                               &particle_custom_probability,
       std::unordered_map<unsigned int, int>    &number,
       std::unordered_map<unsigned int, double> &density_particle,
       std::unordered_map<unsigned int, double> &youngs_modulus_particle,
@@ -220,6 +255,8 @@ namespace Parameters
           particle_average_diameter.insert({counter, 0.});
           particle_size_std.insert({counter, 0.});
           distribution_type.push_back(SizeDistributionType::uniform);
+          particle_custom_diameter.insert({counter, {0.}});
+          particle_custom_probability.insert({counter, {1.}});
           number.insert({counter, 0});
           density_particle.insert({counter, 0.});
           youngs_modulus_particle.insert({counter, 0.});

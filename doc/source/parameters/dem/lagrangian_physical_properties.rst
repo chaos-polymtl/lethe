@@ -21,56 +21,38 @@ In this subsection, gravitational acceleration, and the physical properties of t
 
     # Entering particle type 0
     subsection particle type 0
-      # Size distribution of particle type 0
+
+      # Choices are uniform, normal or custom
       set size distribution type            = uniform
 
-      # Particle diameter
-      set diameter                          = 0.005
+      # If distribution type = uniform or normal
+      set diameter                          = 0.001
 
-      # Standard deviation
+      # If distribution type = custom
+      set custom diameters                  = 0.001 , 0.0005
+      set custom probabilities              = 0.6   , 0.4
+
+      # If distribution type = normal
       set standard deviation                = 0.0
 
-      # Number of particles in type 0
-      set number of particles               = 132300
-
-      # Particle density
-      set density particles                 = 2000
-
-      # Young's modulus of particle
+      # For every distribution types
+      set number of particles               = 0
+      set density particles                 = 1000
       set young modulus particles           = 1000000
-
-      # Poisson ratio of particle
       set poisson ratio particles           = 0.3
-
-      # Coefficient of restitution of particle
-      set restitution coefficient particles = 0.95
-
-      # Coefficient of friction of particle
-      set friction coefficient particles    = 0.05
-
-      # Coefficient of rolling friction of particle
+      set restitution coefficient particles = 0.1
+      set friction coefficient particles    = 0.1
       set rolling friction particles        = 0.1
-
-      # Surface energy of particle
       set surface energy particles          = 0.0
+
     end
 
-    # Young's modulus of wall
+    # Wall properties
     set young modulus wall           = 1000000
-
-    # Poisson ratio of wall
     set poisson ratio wall           = 0.3
-
-    # Coefficient of restitution of wall
-    set restitution coefficient wall = 0.95
-
-    # Coefficient of friction of wall
-    set friction coefficient wall    = 0.05
-
-    # Coefficient of rolling friction of wall
+    set restitution coefficient wall = 0.1
+    set friction coefficient wall    = 0.1
     set rolling friction wall        = 0.1
-
-    # Surface energy of wall
     set surface energy wall          = 0.0
   end
 
@@ -83,14 +65,20 @@ In this subsection, gravitational acceleration, and the physical properties of t
 .. note::
     If the particles in a simulation are monodispersed and have the same physical properties, the ``number of particle types`` should be equal to zero. For polydispersed systems, the ``number of particle types`` is selected equal to the number of particles types in the simulation. For each particle type, a separate subsection ``particle type n`` should be defined (n starts from zero to ``number of particle types`` - 1) which contains all the physical properties related to that particle type.
 
-* The ``size distribution type`` parameter specifies the size distribution for each particle type. The acceptable choices are ``uniform`` and ``normal`` distributions.
+* The ``size distribution type`` parameter specifies the size distribution for each particle type. For each particle type, three ``size distribution type`` can be defined: ``uniform``, ``normal`` and ``custom``.
+
+  - For the ``uniform`` size distribution, the diameter of the particles is constant.
+  - For the ``normal`` size distribution, the particle diameters are sampled from a normal distribution with an average diameter and a standard deviation.
+  - For the ``custom`` size distribution, particle diameters are sampled from a list of diameters with a corresponding list of probabilities.
 
 .. note::
-    For each particle type, two ``size distribution type``s can be defined: ``uniform`` and ``normal``. In ``uniform`` size distribution, the diameter of the particles is constant, while in ``normal`` size distribution, the particle diameters are sampled from a normal distribution with an average of ``average diameter`` and standard deviation of ``standard deviation``.
+    In the ``custom`` size distribution, the probability values are based on the volume fraction taken by all the particles of the associated diameter, not to the total number of particles. For example, if a probability is equal to ``0.5`` , this means that half of the total volume of inserted particles will be occupied by particle with the associated diameter value.
 
 * The ``diameter`` parameter defines the diameter of the particles in a ``uniform`` distribution. In the case of a ``normal`` distribution, this parameter indicates the average diameter.
 
 * For a ``normal`` distribution, the ``standard deviation`` parameter should be defined to indicate the standard deviation on the particle size distribution.
+
+* For a ``custom`` distribution, the ``custom diameters`` parameter defines the different diameter values used when generating particles. The ``custom probabilities`` parameter defines the probabilities corresponding to each diameter value previously declared based on volume fraction, not on the number of particles. Both list must have the same length.
 
 * The ``number of particles`` parameter defines the number of particles for each type.
 
