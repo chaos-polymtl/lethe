@@ -339,21 +339,21 @@ protected:
   IndexSet locally_relevant_dofs_voidfraction;
 
   // Solution of the void fraction at previous time steps
-  std::vector<TrilinosWrappers::MPI::Vector> previous_void_fraction;
+  std::vector<GlobalVectorType> previous_void_fraction;
 
-  TrilinosWrappers::MPI::Vector nodal_void_fraction_relevant;
-  TrilinosWrappers::MPI::Vector nodal_void_fraction_owned;
+  GlobalVectorType nodal_void_fraction_relevant;
+  GlobalVectorType nodal_void_fraction_owned;
 
   // Assemblers for the particle_fluid interactions
   std::vector<std::shared_ptr<ParticleFluidAssemblerBase<dim>>>
     particle_fluid_assemblers;
 
   TrilinosWrappers::SparseMatrix system_matrix_void_fraction;
-  TrilinosWrappers::MPI::Vector  system_rhs_void_fraction;
+  GlobalVectorType               system_rhs_void_fraction;
   TrilinosWrappers::SparseMatrix complete_system_matrix_void_fraction;
-  TrilinosWrappers::MPI::Vector  complete_system_rhs_void_fraction;
+  GlobalVectorType               complete_system_rhs_void_fraction;
   TrilinosWrappers::SparseMatrix mass_matrix;
-  TrilinosWrappers::MPI::Vector  diagonal_of_mass_matrix;
+  GlobalVectorType               diagonal_of_mass_matrix;
   IndexSet                       active_set;
 
   std::shared_ptr<TrilinosWrappers::PreconditionILU> ilu_preconditioner;

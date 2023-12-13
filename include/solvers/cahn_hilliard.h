@@ -31,6 +31,7 @@
 
 #include <core/bdf.h>
 #include <core/simulation_control.h>
+#include <core/vector.h>
 
 #include <solvers/auxiliary_physics.h>
 #include <solvers/cahn_hilliard_assemblers.h>
@@ -55,7 +56,7 @@
 
 
 template <int dim>
-class CahnHilliard : public AuxiliaryPhysics<dim, TrilinosWrappers::MPI::Vector>
+class CahnHilliard : public AuxiliaryPhysics<dim, GlobalVectorType>
 {
 public:
   CahnHilliard(MultiphysicsInterface<dim>      *multiphysics_interface,
@@ -63,7 +64,7 @@ public:
                std::shared_ptr<parallel::DistributedTriangulationBase<dim>>
                                                   p_triangulation,
                std::shared_ptr<SimulationControl> p_simulation_control)
-    : AuxiliaryPhysics<dim, TrilinosWrappers::MPI::Vector>(
+    : AuxiliaryPhysics<dim, GlobalVectorType>(
         p_simulation_parameters.non_linear_solver.at(PhysicsID::cahn_hilliard))
     , multiphysics(multiphysics_interface)
     , computing_timer(p_triangulation->get_communicator(),
@@ -130,10 +131,9 @@ public:
       }
 
     // Allocate solution transfer
-    solution_transfer =
-      std::make_shared<parallel::distributed::
-                         SolutionTransfer<dim, TrilinosWrappers::MPI::Vector>>(
-        dof_handler);
+    solution_transfer = std::make_shared<
+      parallel::distributed::SolutionTransfer<dim, GlobalVectorType>>(
+      dof_handler);
 
     // Set size of previous solutions using BDF schemes information
     previous_solutions.resize(maximum_number_of_previous_solutions());
@@ -143,9 +143,8 @@ public:
     for (unsigned int i = 0; i < previous_solutions.size(); ++i)
       {
         previous_solutions_transfer.emplace_back(
-          parallel::distributed::
-            SolutionTransfer<dim, TrilinosWrappers::MPI::Vector>(
-              this->dof_handler));
+          parallel::distributed::SolutionTransfer<dim, GlobalVectorType>(
+            this->dof_handler));
       }
 
     // Change the behavior of the timer for situations when you don't want
@@ -274,27 +273,27 @@ public:
    * NB : dof_handler and present_solution are passed to the multiphysics
    * interface at the end of the setup_dofs method
    */
-  TrilinosWrappers::MPI::Vector &
+  GlobalVectorType &
   get_evaluation_point() override
   {
     return evaluation_point;
   }
-  TrilinosWrappers::MPI::Vector &
+  GlobalVectorType &
   get_local_evaluation_point() override
   {
     return local_evaluation_point;
   }
-  TrilinosWrappers::MPI::Vector &
+  GlobalVectorType &
   get_newton_update() override
   {
     return newton_update;
   }
-  TrilinosWrappers::MPI::Vector &
+  GlobalVectorType &
   get_present_solution() override
   {
     return present_solution;
   }
-  TrilinosWrappers::MPI::Vector &
+  GlobalVectorType &
   get_system_rhs() override
   {
     return system_rhs;
@@ -405,8 +404,8 @@ private:
    */
   template <typename VectorType>
   std::pair<Tensor<1, dim>, Tensor<1, dim>>
-  calculate_barycenter(const TrilinosWrappers::MPI::Vector &solution,
-                       const VectorType &current_solution_fd);
+  calculate_barycenter(const GlobalVectorType &solution,
+                       const VectorType       &current_solution_fd);
 
 
   MultiphysicsInterface<dim> *multiphysics;
@@ -435,25 +434,24 @@ private:
   IndexSet locally_owned_dofs;
   IndexSet locally_relevant_dofs;
 
-  TrilinosWrappers::MPI::Vector  evaluation_point;
-  TrilinosWrappers::MPI::Vector  local_evaluation_point;
-  TrilinosWrappers::MPI::Vector  newton_update;
-  TrilinosWrappers::MPI::Vector  present_solution;
-  TrilinosWrappers::MPI::Vector  system_rhs;
+  GlobalVectorType               evaluation_point;
+  GlobalVectorType               local_evaluation_point;
+  GlobalVectorType               newton_update;
+  GlobalVectorType               present_solution;
+  GlobalVectorType               system_rhs;
   AffineConstraints<double>      nonzero_constraints;
   AffineConstraints<double>      zero_constraints;
   TrilinosWrappers::SparseMatrix system_matrix;
 
 
   // Previous solutions vectors
-  std::vector<TrilinosWrappers::MPI::Vector> previous_solutions;
+  std::vector<GlobalVectorType> previous_solutions;
 
   // Solution transfer classes
   std::shared_ptr<
-    parallel::distributed::SolutionTransfer<dim, TrilinosWrappers::MPI::Vector>>
+    parallel::distributed::SolutionTransfer<dim, GlobalVectorType>>
     solution_transfer;
-  std::vector<
-    parallel::distributed::SolutionTransfer<dim, TrilinosWrappers::MPI::Vector>>
+  std::vector<parallel::distributed::SolutionTransfer<dim, GlobalVectorType>>
     previous_solutions_transfer;
 
   // Assemblers for the matrix and rhs

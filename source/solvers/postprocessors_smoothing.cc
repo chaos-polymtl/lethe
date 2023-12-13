@@ -101,15 +101,14 @@ PostProcessorSmoothing<dim, VectorType>::generate_mass_matrix()
 }
 
 template <int dim, typename VectorType>
-const TrilinosWrappers::MPI::Vector &
+const GlobalVectorType &
 PostProcessorSmoothing<dim, VectorType>::solve_L2_projection()
 {
   // Solve the L2 projection system
   const double linear_solver_tolerance = 1e-12;
 
   completely_distributed_solution =
-    TrilinosWrappers::MPI::Vector(this->locally_owned_dofs,
-                                  this->mpi_communicator);
+    GlobalVectorType(this->locally_owned_dofs, this->mpi_communicator);
 
   SolverControl solver_control(this->simulation_parameters.linear_solver
                                  .at(PhysicsID::fluid_dynamics)
@@ -147,7 +146,7 @@ PostProcessorSmoothing<dim, VectorType>::solve_L2_projection()
 }
 
 template <int dim, typename VectorType>
-const TrilinosWrappers::MPI::Vector &
+const GlobalVectorType &
 PostProcessorSmoothing<dim, VectorType>::calculate_smoothed_field(
   const VectorType             &solution,
   const DoFHandler<dim>        &dof_handler_velocity,
@@ -165,8 +164,8 @@ PostProcessorSmoothing<dim, VectorType>::get_dof_handler() const
   return dof_handler;
 }
 
-template class PostProcessorSmoothing<2, TrilinosWrappers::MPI::Vector>;
-template class PostProcessorSmoothing<3, TrilinosWrappers::MPI::Vector>;
+template class PostProcessorSmoothing<2, GlobalVectorType>;
+template class PostProcessorSmoothing<3, GlobalVectorType>;
 template class PostProcessorSmoothing<2, TrilinosWrappers::MPI::BlockVector>;
 template class PostProcessorSmoothing<3, TrilinosWrappers::MPI::BlockVector>;
 template class PostProcessorSmoothing<
@@ -291,10 +290,8 @@ QcriterionPostProcessorSmoothing<dim, VectorType>::generate_rhs(
   this->system_rhs.compress(VectorOperation::add);
 }
 
-template class QcriterionPostProcessorSmoothing<2,
-                                                TrilinosWrappers::MPI::Vector>;
-template class QcriterionPostProcessorSmoothing<3,
-                                                TrilinosWrappers::MPI::Vector>;
+template class QcriterionPostProcessorSmoothing<2, GlobalVectorType>;
+template class QcriterionPostProcessorSmoothing<3, GlobalVectorType>;
 template class QcriterionPostProcessorSmoothing<
   2,
   TrilinosWrappers::MPI::BlockVector>;
@@ -398,10 +395,8 @@ ContinuityPostProcessorSmoothing<dim, VectorType>::generate_rhs(
   this->system_rhs.compress(VectorOperation::add);
 }
 
-template class ContinuityPostProcessorSmoothing<2,
-                                                TrilinosWrappers::MPI::Vector>;
-template class ContinuityPostProcessorSmoothing<3,
-                                                TrilinosWrappers::MPI::Vector>;
+template class ContinuityPostProcessorSmoothing<2, GlobalVectorType>;
+template class ContinuityPostProcessorSmoothing<3, GlobalVectorType>;
 template class ContinuityPostProcessorSmoothing<
   2,
   TrilinosWrappers::MPI::BlockVector>;

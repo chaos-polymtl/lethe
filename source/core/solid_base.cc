@@ -446,7 +446,7 @@ SolidBase<dim, spacedim>::get_displacement_dof_handler()
 
 
 template <int dim, int spacedim>
-TrilinosWrappers::MPI::Vector &
+GlobalVectorType &
 SolidBase<dim, spacedim>::get_displacement_vector()
 {
   displacement_relevant = displacement;
@@ -738,17 +738,15 @@ void
 SolidBase<dim, spacedim>::write_checkpoint(std::string prefix)
 {
 #if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 4)
-  parallel::distributed::SolutionTransfer<dim,
-                                          TrilinosWrappers::MPI::Vector,
-                                          DoFHandler<dim, spacedim>>
-    system_trans_vectors(this->displacement_dh);
-#else
   parallel::distributed::
-    SolutionTransfer<dim, TrilinosWrappers::MPI::Vector, spacedim>
+    SolutionTransfer<dim, GlobalVectorType, DoFHandler<dim, spacedim>>
       system_trans_vectors(this->displacement_dh);
+#else
+  parallel::distributed::SolutionTransfer<dim, GlobalVectorType, spacedim>
+    system_trans_vectors(this->displacement_dh);
 #endif
 
-  std::vector<const TrilinosWrappers::MPI::Vector *> sol_set_transfer;
+  std::vector<const GlobalVectorType *> sol_set_transfer;
   displacement_relevant = displacement;
   sol_set_transfer.push_back(&displacement_relevant);
 
@@ -798,18 +796,16 @@ SolidBase<dim, spacedim>::read_checkpoint(std::string prefix)
 
 
   // Read displacement vector
-  std::vector<TrilinosWrappers::MPI::Vector *> x_system(1);
+  std::vector<GlobalVectorType *> x_system(1);
   x_system[0] = &(displacement);
 
 #if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 4)
-  parallel::distributed::SolutionTransfer<dim,
-                                          TrilinosWrappers::MPI::Vector,
-                                          DoFHandler<dim, spacedim>>
-    system_trans_vectors(this->displacement_dh);
-#else
   parallel::distributed::
-    SolutionTransfer<dim, TrilinosWrappers::MPI::Vector, spacedim>
+    SolutionTransfer<dim, GlobalVectorType, DoFHandler<dim, spacedim>>
       system_trans_vectors(this->displacement_dh);
+#else
+  parallel::distributed::SolutionTransfer<dim, GlobalVectorType, spacedim>
+    system_trans_vectors(this->displacement_dh);
 #endif
 
   system_trans_vectors.deserialize(x_system);

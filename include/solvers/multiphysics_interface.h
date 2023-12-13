@@ -27,6 +27,7 @@
 #include <core/parameters_multiphysics.h>
 #include <core/simulation_control.h>
 #include <core/solid_base.h>
+#include <core/vector.h>
 
 #include <solvers/auxiliary_physics.h>
 #include <solvers/simulation_parameters.h>
@@ -433,7 +434,7 @@ public:
    *
    * @param physics_id The physics of the solution being requested
    */
-  TrilinosWrappers::MPI::Vector *
+  GlobalVectorType *
   get_solution(const PhysicsID physics_id)
   {
     AssertThrow((std::find(active_physics.begin(),
@@ -448,7 +449,7 @@ public:
    *
    * @param physics_id The physics of the solution being requested
    */
-  TrilinosWrappers::MPI::Vector *
+  GlobalVectorType *
   get_filtered_solution(const PhysicsID physics_id)
   {
     AssertThrow((std::find(active_physics.begin(),
@@ -479,7 +480,7 @@ public:
    *
    * @param physics_id The physics of the solution being requested
    */
-  TrilinosWrappers::MPI::Vector *
+  GlobalVectorType *
   get_time_average_solution(const PhysicsID physics_id)
   {
     AssertThrow((std::find(active_physics.begin(),
@@ -510,7 +511,7 @@ public:
    *
    * @param physics_id The physics of the solution being requested
    */
-  TrilinosWrappers::MPI::Vector *
+  GlobalVectorType *
   get_reynolds_stress_solution(const PhysicsID physics_id)
   {
     AssertThrow((std::find(active_physics.begin(),
@@ -542,13 +543,13 @@ public:
   /**
    * @brief Request the present solution of the projected phase fraction gradient (PFG)
    */
-  TrilinosWrappers::MPI::Vector *
+  GlobalVectorType *
   get_projected_phase_fraction_gradient_solution();
 
   /**
    * @brief Request the present solution of the curvature
    */
-  TrilinosWrappers::MPI::Vector *
+  GlobalVectorType *
   get_curvature_solution();
 
   /**
@@ -569,7 +570,7 @@ public:
    *
    * @param physics_id The physics of the solution being requested
    */
-  std::vector<TrilinosWrappers::MPI::Vector> *
+  std::vector<GlobalVectorType> *
   get_previous_solutions(const PhysicsID physics_id)
   {
     AssertThrow((std::find(active_physics.begin(),
@@ -631,8 +632,7 @@ public:
    * @param solution_vector The reference to the solution vector of the physics
    */
   void
-  set_solution(const PhysicsID                physics_id,
-               TrilinosWrappers::MPI::Vector *solution_vector)
+  set_solution(const PhysicsID physics_id, GlobalVectorType *solution_vector)
   {
     AssertThrow((std::find(active_physics.begin(),
                            active_physics.end(),
@@ -650,8 +650,8 @@ public:
    * specifically implemented for VOF
    */
   void
-  set_filtered_solution(const PhysicsID                physics_id,
-                        TrilinosWrappers::MPI::Vector *filtered_solution_vector)
+  set_filtered_solution(const PhysicsID   physics_id,
+                        GlobalVectorType *filtered_solution_vector)
   {
     AssertThrow((std::find(active_physics.begin(),
                            active_physics.end(),
@@ -669,8 +669,8 @@ public:
    * @param solution_vector The reference to the solution vector of the physics
    */
   void
-  set_time_average_solution(const PhysicsID                physics_id,
-                            TrilinosWrappers::MPI::Vector *solution_vector)
+  set_time_average_solution(const PhysicsID   physics_id,
+                            GlobalVectorType *solution_vector)
   {
     AssertThrow((std::find(active_physics.begin(),
                            active_physics.end(),
@@ -689,8 +689,8 @@ public:
    * @param solution_vector The reference to the solution vector of the physics
    */
   void
-  set_reynolds_stress_solutions(const PhysicsID                physics_id,
-                                TrilinosWrappers::MPI::Vector *solution_vector)
+  set_reynolds_stress_solutions(const PhysicsID   physics_id,
+                                GlobalVectorType *solution_vector)
   {
     AssertThrow((std::find(active_physics.begin(),
                            active_physics.end(),
@@ -746,8 +746,8 @@ public:
    */
   void
   set_previous_solutions(
-    const PhysicsID                             physics_id,
-    std::vector<TrilinosWrappers::MPI::Vector> *previous_solutions_vector)
+    const PhysicsID                physics_id,
+    std::vector<GlobalVectorType> *previous_solutions_vector)
   {
     AssertThrow((std::find(active_physics.begin(),
                            active_physics.end(),
@@ -868,9 +868,7 @@ private:
 
   // Auxiliary physics are stored within a map of shared pointer to ensure
   // proper memory management.
-  std::map<
-    PhysicsID,
-    std::shared_ptr<AuxiliaryPhysics<dim, TrilinosWrappers::MPI::Vector>>>
+  std::map<PhysicsID, std::shared_ptr<AuxiliaryPhysics<dim, GlobalVectorType>>>
     physics;
 
   std::map<
@@ -885,26 +883,24 @@ private:
 
 
   // present filtered solution (VOF->STF)
-  std::map<PhysicsID, TrilinosWrappers::MPI::Vector *>
-    physics_filtered_solutions;
+  std::map<PhysicsID, GlobalVectorType *> physics_filtered_solutions;
   std::map<PhysicsID, TrilinosWrappers::MPI::BlockVector *>
     block_physics_filtered_solutions;
 
   // present solution
-  std::map<PhysicsID, TrilinosWrappers::MPI::Vector *> physics_solutions;
+  std::map<PhysicsID, GlobalVectorType *> physics_solutions;
   std::map<PhysicsID, TrilinosWrappers::MPI::BlockVector *>
     block_physics_solutions;
 
   // previous solutions
-  std::map<PhysicsID, std::vector<TrilinosWrappers::MPI::Vector> *>
+  std::map<PhysicsID, std::vector<GlobalVectorType> *>
     physics_previous_solutions;
   std::map<PhysicsID, std::vector<TrilinosWrappers::MPI::BlockVector> *>
     block_physics_previous_solutions;
 
 
   // average solution
-  std::map<PhysicsID, TrilinosWrappers::MPI::Vector *>
-    physics_time_average_solutions;
+  std::map<PhysicsID, GlobalVectorType *> physics_time_average_solutions;
 
   // average solution
   std::map<PhysicsID, TrilinosWrappers::MPI::BlockVector *>
@@ -912,12 +908,12 @@ private:
 
   // reynolds stress solution. This is WIP and is not yet implemented in the
   // solver.
-  TrilinosWrappers::MPI::Vector *reynolds_stress_solutions;
+  GlobalVectorType *reynolds_stress_solutions;
 
 
 
   // past (minus 1) solution
-  std::map<PhysicsID, TrilinosWrappers::MPI::Vector *> physics_solutions_m1;
+  std::map<PhysicsID, GlobalVectorType *> physics_solutions_m1;
   std::map<PhysicsID, TrilinosWrappers::MPI::BlockVector *>
     block_physics_solutions_m1;
 

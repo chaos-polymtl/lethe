@@ -236,7 +236,7 @@ CFDDEMSolver<dim>::write_checkpoint()
   std::ofstream output(particle_filename.c_str());
   output << oss.str() << std::endl;
 
-  std::vector<const TrilinosWrappers::MPI::Vector *> sol_set_transfer;
+  std::vector<const GlobalVectorType *> sol_set_transfer;
   sol_set_transfer.push_back(&this->present_solution);
   for (unsigned int i = 0; i < this->previous_solutions.size(); ++i)
     {
@@ -245,7 +245,7 @@ CFDDEMSolver<dim>::write_checkpoint()
 
   if (this->simulation_parameters.post_processing.calculate_average_velocities)
     {
-      std::vector<const TrilinosWrappers::MPI::Vector *> av_set_transfer =
+      std::vector<const GlobalVectorType *> av_set_transfer =
         this->average_velocities->save(prefix);
 
       // Insert average velocities vectors into the set transfer vector
@@ -255,7 +255,7 @@ CFDDEMSolver<dim>::write_checkpoint()
     }
 
   // Prepare for Serialization
-  parallel::distributed::SolutionTransfer<dim, TrilinosWrappers::MPI::Vector>
+  parallel::distributed::SolutionTransfer<dim, GlobalVectorType>
     system_trans_vectors(this->dof_handler);
   system_trans_vectors.prepare_for_serialization(sol_set_transfer);
 
@@ -263,7 +263,7 @@ CFDDEMSolver<dim>::write_checkpoint()
   this->particle_handler.prepare_for_serialization();
 
   // Void Fraction
-  std::vector<const TrilinosWrappers::MPI::Vector *> vf_set_transfer;
+  std::vector<const GlobalVectorType *> vf_set_transfer;
   vf_set_transfer.push_back(&this->nodal_void_fraction_relevant);
   for (unsigned int i = 0; i < this->previous_void_fraction.size(); ++i)
     {
@@ -271,7 +271,7 @@ CFDDEMSolver<dim>::write_checkpoint()
     }
 
   // Prepare for Serialization
-  parallel::distributed::SolutionTransfer<dim, TrilinosWrappers::MPI::Vector>
+  parallel::distributed::SolutionTransfer<dim, GlobalVectorType>
     vf_system_trans_vectors(this->void_fraction_dof_handler);
   vf_system_trans_vectors.prepare_for_serialization(vf_set_transfer);
 
@@ -343,33 +343,31 @@ CFDDEMSolver<dim>::read_checkpoint()
   this->setup_dofs();
 
   // Velocity Vectors
-  std::vector<TrilinosWrappers::MPI::Vector *> x_system(
-    1 + this->previous_solutions.size());
+  std::vector<GlobalVectorType *> x_system(1 + this->previous_solutions.size());
 
-  TrilinosWrappers::MPI::Vector distributed_system(this->locally_owned_dofs,
-                                                   this->mpi_communicator);
+  GlobalVectorType distributed_system(this->locally_owned_dofs,
+                                      this->mpi_communicator);
 
   x_system[0] = &(distributed_system);
 
-  std::vector<TrilinosWrappers::MPI::Vector> distributed_previous_solutions;
+  std::vector<GlobalVectorType> distributed_previous_solutions;
 
   distributed_previous_solutions.reserve(this->previous_solutions.size());
 
   for (unsigned int i = 0; i < this->previous_solutions.size(); ++i)
     {
       distributed_previous_solutions.emplace_back(
-        TrilinosWrappers::MPI::Vector(this->locally_owned_dofs,
-                                      this->mpi_communicator));
+        GlobalVectorType(this->locally_owned_dofs, this->mpi_communicator));
       x_system[i + 1] = &distributed_previous_solutions[i];
     }
 
 
-  parallel::distributed::SolutionTransfer<dim, TrilinosWrappers::MPI::Vector>
+  parallel::distributed::SolutionTransfer<dim, GlobalVectorType>
     system_trans_vectors(this->dof_handler);
 
   if (this->simulation_parameters.post_processing.calculate_average_velocities)
     {
-      std::vector<TrilinosWrappers::MPI::Vector *> sum_vectors =
+      std::vector<GlobalVectorType *> sum_vectors =
         this->average_velocities->read(prefix);
 
       x_system.insert(x_system.end(), sum_vectors.begin(), sum_vectors.end());
@@ -386,15 +384,15 @@ CFDDEMSolver<dim>::read_checkpoint()
   x_system.clear();
 
   // Void Fraction Vectors
-  std::vector<TrilinosWrappers::MPI::Vector *> vf_system(
+  std::vector<GlobalVectorType *> vf_system(
     1 + this->previous_void_fraction.size());
 
-  TrilinosWrappers::MPI::Vector vf_distributed_system(
-    this->locally_owned_dofs_voidfraction, this->mpi_communicator);
+  GlobalVectorType vf_distributed_system(this->locally_owned_dofs_voidfraction,
+                                         this->mpi_communicator);
 
   vf_system[0] = &(vf_distributed_system);
 
-  std::vector<TrilinosWrappers::MPI::Vector> vf_distributed_previous_solutions;
+  std::vector<GlobalVectorType> vf_distributed_previous_solutions;
 
   vf_distributed_previous_solutions.reserve(
     this->previous_void_fraction.size());
@@ -402,12 +400,12 @@ CFDDEMSolver<dim>::read_checkpoint()
   for (unsigned int i = 0; i < this->previous_void_fraction.size(); ++i)
     {
       vf_distributed_previous_solutions.emplace_back(
-        TrilinosWrappers::MPI::Vector(this->locally_owned_dofs_voidfraction,
-                                      this->mpi_communicator));
+        GlobalVectorType(this->locally_owned_dofs_voidfraction,
+                         this->mpi_communicator));
       vf_system[i + 1] = &vf_distributed_previous_solutions[i];
     }
 
-  parallel::distributed::SolutionTransfer<dim, TrilinosWrappers::MPI::Vector>
+  parallel::distributed::SolutionTransfer<dim, GlobalVectorType>
     vf_system_trans_vectors(this->void_fraction_dof_handler);
 
   vf_system_trans_vectors.deserialize(vf_system);
@@ -507,7 +505,7 @@ template <int dim>
 void
 CFDDEMSolver<dim>::load_balance()
 {
-  std::vector<const TrilinosWrappers::MPI::Vector *> sol_set_transfer;
+  std::vector<const GlobalVectorType *> sol_set_transfer;
   sol_set_transfer.push_back(&this->present_solution);
   for (unsigned int i = 0; i < this->previous_solutions.size(); ++i)
     {
@@ -515,13 +513,13 @@ CFDDEMSolver<dim>::load_balance()
     }
 
   // Prepare for Serialization
-  parallel::distributed::SolutionTransfer<dim, TrilinosWrappers::MPI::Vector>
+  parallel::distributed::SolutionTransfer<dim, GlobalVectorType>
     system_trans_vectors(this->dof_handler);
   system_trans_vectors.prepare_for_coarsening_and_refinement(sol_set_transfer);
 
 
   // Void Fraction
-  std::vector<const TrilinosWrappers::MPI::Vector *> vf_set_transfer;
+  std::vector<const GlobalVectorType *> vf_set_transfer;
   vf_set_transfer.push_back(&this->nodal_void_fraction_relevant);
   for (unsigned int i = 0; i < this->previous_void_fraction.size(); ++i)
     {
@@ -529,7 +527,7 @@ CFDDEMSolver<dim>::load_balance()
     }
 
   // Prepare for Serialization
-  parallel::distributed::SolutionTransfer<dim, TrilinosWrappers::MPI::Vector>
+  parallel::distributed::SolutionTransfer<dim, GlobalVectorType>
     vf_system_trans_vectors(this->void_fraction_dof_handler);
   vf_system_trans_vectors.prepare_for_coarsening_and_refinement(
     vf_set_transfer);
@@ -592,23 +590,21 @@ CFDDEMSolver<dim>::load_balance()
   this->setup_dofs();
 
   // Velocity Vectors
-  std::vector<TrilinosWrappers::MPI::Vector *> x_system(
-    1 + this->previous_solutions.size());
+  std::vector<GlobalVectorType *> x_system(1 + this->previous_solutions.size());
 
-  TrilinosWrappers::MPI::Vector distributed_system(this->locally_owned_dofs,
-                                                   this->mpi_communicator);
+  GlobalVectorType distributed_system(this->locally_owned_dofs,
+                                      this->mpi_communicator);
 
   x_system[0] = &(distributed_system);
 
-  std::vector<TrilinosWrappers::MPI::Vector> distributed_previous_solutions;
+  std::vector<GlobalVectorType> distributed_previous_solutions;
 
   distributed_previous_solutions.reserve(this->previous_solutions.size());
 
   for (unsigned int i = 0; i < this->previous_solutions.size(); ++i)
     {
       distributed_previous_solutions.emplace_back(
-        TrilinosWrappers::MPI::Vector(this->locally_owned_dofs,
-                                      this->mpi_communicator));
+        GlobalVectorType(this->locally_owned_dofs, this->mpi_communicator));
       x_system[i + 1] = &distributed_previous_solutions[i];
     }
 
@@ -623,15 +619,15 @@ CFDDEMSolver<dim>::load_balance()
   x_system.clear();
 
   // Void Fraction Vectors
-  std::vector<TrilinosWrappers::MPI::Vector *> vf_system(
+  std::vector<GlobalVectorType *> vf_system(
     1 + this->previous_void_fraction.size());
 
-  TrilinosWrappers::MPI::Vector vf_distributed_system(
-    this->locally_owned_dofs_voidfraction, this->mpi_communicator);
+  GlobalVectorType vf_distributed_system(this->locally_owned_dofs_voidfraction,
+                                         this->mpi_communicator);
 
   vf_system[0] = &(vf_distributed_system);
 
-  std::vector<TrilinosWrappers::MPI::Vector> vf_distributed_previous_solutions;
+  std::vector<GlobalVectorType> vf_distributed_previous_solutions;
 
   vf_distributed_previous_solutions.reserve(
     this->previous_void_fraction.size());
@@ -639,8 +635,8 @@ CFDDEMSolver<dim>::load_balance()
   for (unsigned int i = 0; i < this->previous_void_fraction.size(); ++i)
     {
       vf_distributed_previous_solutions.emplace_back(
-        TrilinosWrappers::MPI::Vector(this->locally_owned_dofs_voidfraction,
-                                      this->mpi_communicator));
+        GlobalVectorType(this->locally_owned_dofs_voidfraction,
+                         this->mpi_communicator));
       vf_system[i + 1] = &vf_distributed_previous_solutions[i];
     }
 
@@ -1543,8 +1539,7 @@ CFDDEMSolver<dim>::solve()
 
       if (!this->simulation_control->is_at_start())
         {
-          NavierStokesBase<dim, TrilinosWrappers::MPI::Vector, IndexSet>::
-            refine_mesh();
+          NavierStokesBase<dim, GlobalVectorType, IndexSet>::refine_mesh();
           this->vertices_cell_mapping();
         }
 

@@ -951,7 +951,7 @@ HeatTransfer<dim>::post_mesh_adaptation()
 
 
   // Set up the vectors for the transfer
-  TrilinosWrappers::MPI::Vector tmp(locally_owned_dofs, mpi_communicator);
+  GlobalVectorType tmp(locally_owned_dofs, mpi_communicator);
 
   // Interpolate the solution at time and previous time
   solution_transfer->interpolate(tmp);
@@ -965,8 +965,8 @@ HeatTransfer<dim>::post_mesh_adaptation()
   // Transfer previous solutions
   for (unsigned int i = 0; i < previous_solutions.size(); ++i)
     {
-      TrilinosWrappers::MPI::Vector tmp_previous_solution(locally_owned_dofs,
-                                                          mpi_communicator);
+      GlobalVectorType tmp_previous_solution(locally_owned_dofs,
+                                             mpi_communicator);
       previous_solutions_transfer[i].interpolate(tmp_previous_solution);
       nonzero_constraints.distribute(tmp_previous_solution);
       previous_solutions[i] = tmp_previous_solution;
@@ -999,12 +999,11 @@ template <int dim>
 void
 HeatTransfer<dim>::write_checkpoint()
 {
-  std::vector<const TrilinosWrappers::MPI::Vector *> sol_set_transfer;
+  std::vector<const GlobalVectorType *> sol_set_transfer;
 
-  solution_transfer =
-    std::make_shared<parallel::distributed::
-                       SolutionTransfer<dim, TrilinosWrappers::MPI::Vector>>(
-      dof_handler);
+  solution_transfer = std::make_shared<
+    parallel::distributed::SolutionTransfer<dim, GlobalVectorType>>(
+    dof_handler);
 
   sol_set_transfer.push_back(&present_solution);
   for (unsigned int i = 0; i < previous_solutions.size(); ++i)
@@ -1051,19 +1050,17 @@ HeatTransfer<dim>::read_checkpoint()
   auto mpi_communicator = triangulation->get_communicator();
   this->pcout << "Reading heat transfer checkpoint" << std::endl;
 
-  std::vector<TrilinosWrappers::MPI::Vector *> input_vectors(
-    1 + previous_solutions.size());
-  TrilinosWrappers::MPI::Vector distributed_system(locally_owned_dofs,
-                                                   mpi_communicator);
+  std::vector<GlobalVectorType *> input_vectors(1 + previous_solutions.size());
+  GlobalVectorType distributed_system(locally_owned_dofs, mpi_communicator);
   input_vectors[0] = &distributed_system;
 
 
-  std::vector<TrilinosWrappers::MPI::Vector> distributed_previous_solutions;
+  std::vector<GlobalVectorType> distributed_previous_solutions;
   distributed_previous_solutions.reserve(previous_solutions.size());
   for (unsigned int i = 0; i < previous_solutions.size(); ++i)
     {
       distributed_previous_solutions.emplace_back(
-        TrilinosWrappers::MPI::Vector(locally_owned_dofs, mpi_communicator));
+        GlobalVectorType(locally_owned_dofs, mpi_communicator));
       input_vectors[i + 1] = &distributed_previous_solutions[i];
     }
 
@@ -1329,8 +1326,8 @@ HeatTransfer<dim>::solve_linear_system(const bool initial_step,
 
   ilu_preconditioner.initialize(system_matrix, preconditionerOptions);
 
-  TrilinosWrappers::MPI::Vector completely_distributed_solution(
-    locally_owned_dofs, mpi_communicator);
+  GlobalVectorType completely_distributed_solution(locally_owned_dofs,
+                                                   mpi_communicator);
 
   SolverControl solver_control(simulation_parameters.linear_solver
                                  .at(PhysicsID::heat_transfer)
@@ -1988,14 +1985,14 @@ HeatTransfer<dim>::postprocess_heat_flux_on_bc(
 }
 
 template void
-HeatTransfer<2>::postprocess_heat_flux_on_bc<TrilinosWrappers::MPI::Vector>(
-  const bool                           gather_vof,
-  const TrilinosWrappers::MPI::Vector &current_solution_fd);
+HeatTransfer<2>::postprocess_heat_flux_on_bc<GlobalVectorType>(
+  const bool              gather_vof,
+  const GlobalVectorType &current_solution_fd);
 
 template void
-HeatTransfer<3>::postprocess_heat_flux_on_bc<TrilinosWrappers::MPI::Vector>(
-  const bool                           gather_vof,
-  const TrilinosWrappers::MPI::Vector &current_solution_fd);
+HeatTransfer<3>::postprocess_heat_flux_on_bc<GlobalVectorType>(
+  const bool              gather_vof,
+  const GlobalVectorType &current_solution_fd);
 
 template void
 HeatTransfer<2>::postprocess_heat_flux_on_bc<
@@ -2191,20 +2188,18 @@ HeatTransfer<dim>::postprocess_thermal_energy_in_fluid(
 }
 
 template void
-HeatTransfer<2>::postprocess_thermal_energy_in_fluid<
-  TrilinosWrappers::MPI::Vector>(
-  const bool                           gather_vof,
-  const Parameters::FluidIndicator     monitored_fluid,
-  const std::string                    domain_name,
-  const TrilinosWrappers::MPI::Vector &current_solution_fd);
+HeatTransfer<2>::postprocess_thermal_energy_in_fluid<GlobalVectorType>(
+  const bool                       gather_vof,
+  const Parameters::FluidIndicator monitored_fluid,
+  const std::string                domain_name,
+  const GlobalVectorType          &current_solution_fd);
 
 template void
-HeatTransfer<3>::postprocess_thermal_energy_in_fluid<
-  TrilinosWrappers::MPI::Vector>(
-  const bool                           gather_vof,
-  const Parameters::FluidIndicator     monitored_fluid,
-  const std::string                    domain_name,
-  const TrilinosWrappers::MPI::Vector &current_solution_fd);
+HeatTransfer<3>::postprocess_thermal_energy_in_fluid<GlobalVectorType>(
+  const bool                       gather_vof,
+  const Parameters::FluidIndicator monitored_fluid,
+  const std::string                domain_name,
+  const GlobalVectorType          &current_solution_fd);
 
 template void
 HeatTransfer<2>::postprocess_thermal_energy_in_fluid<

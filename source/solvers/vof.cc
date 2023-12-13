@@ -395,9 +395,8 @@ VolumeOfFluid<dim>::calculate_L2_error()
 template <int dim>
 template <typename VectorType>
 std::pair<Tensor<1, dim>, Tensor<1, dim>>
-VolumeOfFluid<dim>::calculate_barycenter(
-  const TrilinosWrappers::MPI::Vector &solution,
-  const VectorType                    &solution_fd)
+VolumeOfFluid<dim>::calculate_barycenter(const GlobalVectorType &solution,
+                                         const VectorType       &solution_fd)
 {
   const MPI_Comm mpi_communicator = this->triangulation->get_communicator();
 
@@ -478,25 +477,25 @@ VolumeOfFluid<dim>::calculate_barycenter(
 }
 
 template std::pair<Tensor<1, 2>, Tensor<1, 2>>
-VolumeOfFluid<2>::calculate_barycenter<TrilinosWrappers::MPI::Vector>(
-  const TrilinosWrappers::MPI::Vector &solution,
-  const TrilinosWrappers::MPI::Vector &current_solution_fd);
+VolumeOfFluid<2>::calculate_barycenter<GlobalVectorType>(
+  const GlobalVectorType &solution,
+  const GlobalVectorType &current_solution_fd);
 
 
 template std::pair<Tensor<1, 3>, Tensor<1, 3>>
-VolumeOfFluid<3>::calculate_barycenter<TrilinosWrappers::MPI::Vector>(
-  const TrilinosWrappers::MPI::Vector &solution,
-  const TrilinosWrappers::MPI::Vector &current_solution_fd);
+VolumeOfFluid<3>::calculate_barycenter<GlobalVectorType>(
+  const GlobalVectorType &solution,
+  const GlobalVectorType &current_solution_fd);
 
 template std::pair<Tensor<1, 2>, Tensor<1, 2>>
 VolumeOfFluid<2>::calculate_barycenter<TrilinosWrappers::MPI::BlockVector>(
-  const TrilinosWrappers::MPI::Vector      &solution,
+  const GlobalVectorType                   &solution,
   const TrilinosWrappers::MPI::BlockVector &current_solution_fd);
 
 
 template std::pair<Tensor<1, 3>, Tensor<1, 3>>
 VolumeOfFluid<3>::calculate_barycenter<TrilinosWrappers::MPI::BlockVector>(
-  const TrilinosWrappers::MPI::Vector      &solution,
+  const GlobalVectorType                   &solution,
   const TrilinosWrappers::MPI::BlockVector &current_solution_fd);
 
 
@@ -504,9 +503,9 @@ template <int dim>
 template <typename VectorType>
 void
 VolumeOfFluid<dim>::calculate_volume_and_mass(
-  const TrilinosWrappers::MPI::Vector &solution,
-  const VectorType                    &current_solution_fd,
-  const Parameters::FluidIndicator     monitored_fluid)
+  const GlobalVectorType          &solution,
+  const VectorType                &current_solution_fd,
+  const Parameters::FluidIndicator monitored_fluid)
 {
   const MPI_Comm mpi_communicator = this->triangulation->get_communicator();
 
@@ -1123,9 +1122,9 @@ VolumeOfFluid<dim>::calculate_mass_deviation(
 
 template <int dim>
 void
-VolumeOfFluid<dim>::sharpen_interface(TrilinosWrappers::MPI::Vector &solution,
-                                      const double sharpening_threshold,
-                                      const bool   sharpen_previous_solutions)
+VolumeOfFluid<dim>::sharpen_interface(GlobalVectorType &solution,
+                                      const double      sharpening_threshold,
+                                      const bool sharpen_previous_solutions)
 {
   // Limit the phase fractions between 0 and 1
   update_solution_and_constraints(solution);
@@ -1187,7 +1186,7 @@ VolumeOfFluid<dim>::find_projected_interface_curvature()
 template <int dim>
 void
 VolumeOfFluid<dim>::assemble_projection_phase_fraction(
-  TrilinosWrappers::MPI::Vector &solution)
+  GlobalVectorType &solution)
 {
   // Get fe values of VOF phase fraction
   FEValues<dim> fe_values_phase_fraction(*this->mapping,
@@ -1292,13 +1291,12 @@ VolumeOfFluid<dim>::assemble_projection_phase_fraction(
 
 template <int dim>
 void
-VolumeOfFluid<dim>::solve_projection_phase_fraction(
-  TrilinosWrappers::MPI::Vector &solution)
+VolumeOfFluid<dim>::solve_projection_phase_fraction(GlobalVectorType &solution)
 {
   // Solve the L2 projection system
   const double linear_solver_tolerance = 1e-13;
 
-  TrilinosWrappers::MPI::Vector completely_distributed_phase_fraction_solution(
+  GlobalVectorType completely_distributed_phase_fraction_solution(
     this->locally_owned_dofs, triangulation->get_communicator());
 
   SolverControl solver_control(
@@ -1346,7 +1344,7 @@ VolumeOfFluid<dim>::solve_projection_phase_fraction(
 template <int dim>
 void
 VolumeOfFluid<dim>::assemble_projected_phase_fraction_gradient_matrix_and_rhs(
-  TrilinosWrappers::MPI::Vector &solution)
+  GlobalVectorType &solution)
 {
   // Get fe values of VOF phase fraction and phase fraction gradient (pfg)
   FEValues<dim> fe_values_phase_fraction(*this->mapping,
@@ -1502,7 +1500,7 @@ VolumeOfFluid<dim>::solve_projected_phase_fraction_gradient()
   // Solve the L2 projection system
   const double linear_solver_tolerance = 1e-13;
 
-  TrilinosWrappers::MPI::Vector
+  GlobalVectorType
     completely_distributed_projected_phase_fraction_gradient_solution(
       this->locally_owned_dofs_projected_phase_fraction_gradient,
       triangulation->get_communicator());
@@ -1557,8 +1555,7 @@ VolumeOfFluid<dim>::solve_projected_phase_fraction_gradient()
 template <int dim>
 void
 VolumeOfFluid<dim>::assemble_curvature_matrix_and_rhs(
-  TrilinosWrappers::MPI::Vector
-    &present_projected_phase_fraction_gradient_solution)
+  GlobalVectorType &present_projected_phase_fraction_gradient_solution)
 {
   // Get fe values of phase fraction gradient (pfg) and curvature
   FEValues<dim> fe_values_curvature(*this->curvature_mapping,
@@ -1695,7 +1692,7 @@ VolumeOfFluid<dim>::solve_curvature()
 {
   const double linear_solver_tolerance = 1e-13;
 
-  TrilinosWrappers::MPI::Vector completely_distributed_curvature_solution(
+  GlobalVectorType completely_distributed_curvature_solution(
     this->locally_owned_dofs_curvature, triangulation->get_communicator());
 
   completely_distributed_curvature_solution = present_curvature_solution;
@@ -1763,7 +1760,7 @@ VolumeOfFluid<dim>::post_mesh_adaptation()
   auto mpi_communicator = this->triangulation->get_communicator();
 
   // Set up the vectors for the transfer
-  TrilinosWrappers::MPI::Vector tmp(this->locally_owned_dofs, mpi_communicator);
+  GlobalVectorType tmp(this->locally_owned_dofs, mpi_communicator);
 
   // Interpolate the solution at time and previous time
   this->solution_transfer->interpolate(tmp);
@@ -1777,8 +1774,8 @@ VolumeOfFluid<dim>::post_mesh_adaptation()
   // Transfer previous solutions
   for (unsigned int i = 0; i < this->previous_solutions.size(); ++i)
     {
-      TrilinosWrappers::MPI::Vector tmp_previous_solution(
-        this->locally_owned_dofs, mpi_communicator);
+      GlobalVectorType tmp_previous_solution(this->locally_owned_dofs,
+                                             mpi_communicator);
       this->previous_solutions_transfer[i].interpolate(tmp_previous_solution);
       this->nonzero_constraints.distribute(tmp_previous_solution);
       this->previous_solutions[i] = tmp_previous_solution;
@@ -1819,12 +1816,11 @@ template <int dim>
 void
 VolumeOfFluid<dim>::write_checkpoint()
 {
-  std::vector<const TrilinosWrappers::MPI::Vector *> sol_set_transfer;
+  std::vector<const GlobalVectorType *> sol_set_transfer;
 
-  solution_transfer =
-    std::make_shared<parallel::distributed::
-                       SolutionTransfer<dim, TrilinosWrappers::MPI::Vector>>(
-      dof_handler);
+  solution_transfer = std::make_shared<
+    parallel::distributed::SolutionTransfer<dim, GlobalVectorType>>(
+    dof_handler);
 
   sol_set_transfer.push_back(&this->present_solution);
   for (unsigned int i = 0; i < this->previous_solutions.size(); ++i)
@@ -1876,20 +1872,18 @@ VolumeOfFluid<dim>::read_checkpoint()
   auto previous_solutions_size = this->previous_solutions.size();
   this->pcout << "Reading VOF checkpoint" << std::endl;
 
-  std::vector<TrilinosWrappers::MPI::Vector *> input_vectors(
-    1 + previous_solutions_size);
-  TrilinosWrappers::MPI::Vector distributed_system(this->locally_owned_dofs,
-                                                   mpi_communicator);
+  std::vector<GlobalVectorType *> input_vectors(1 + previous_solutions_size);
+  GlobalVectorType                distributed_system(this->locally_owned_dofs,
+                                      mpi_communicator);
   input_vectors[0] = &distributed_system;
 
 
-  std::vector<TrilinosWrappers::MPI::Vector> distributed_previous_solutions;
+  std::vector<GlobalVectorType> distributed_previous_solutions;
   distributed_previous_solutions.reserve(previous_solutions_size);
   for (unsigned int i = 0; i < previous_solutions_size; ++i)
     {
       distributed_previous_solutions.emplace_back(
-        TrilinosWrappers::MPI::Vector(this->locally_owned_dofs,
-                                      mpi_communicator));
+        GlobalVectorType(this->locally_owned_dofs, mpi_communicator));
       input_vectors[i + 1] = &distributed_previous_solutions[i];
     }
 
@@ -2331,8 +2325,8 @@ VolumeOfFluid<dim>::solve_linear_system(const bool initial_step,
 
   ilu_preconditioner.initialize(this->system_matrix, preconditionerOptions);
 
-  TrilinosWrappers::MPI::Vector completely_distributed_solution(
-    this->locally_owned_dofs, mpi_communicator);
+  GlobalVectorType completely_distributed_solution(this->locally_owned_dofs,
+                                                   mpi_communicator);
 
   SolverControl solver_control(
     simulation_parameters.linear_solver.at(PhysicsID::VOF).max_iterations,
@@ -2368,8 +2362,7 @@ VolumeOfFluid<dim>::solve_linear_system(const bool initial_step,
 // This function is explained in detail in step-41 of deal.II tutorials
 template <int dim>
 void
-VolumeOfFluid<dim>::update_solution_and_constraints(
-  TrilinosWrappers::MPI::Vector &solution)
+VolumeOfFluid<dim>::update_solution_and_constraints(GlobalVectorType &solution)
 {
   // This is a penalty parameter for limiting the phase fraction
   // in the range of [0,1]. According to step 41, this parameter depends
@@ -2377,7 +2370,7 @@ VolumeOfFluid<dim>::update_solution_and_constraints(
   // there is no convergence using the penalty_parameter = 1)
   const double penalty_parameter = 100;
 
-  TrilinosWrappers::MPI::Vector lambda(this->locally_owned_dofs);
+  GlobalVectorType lambda(this->locally_owned_dofs);
 
   nodal_phase_fraction_owned = solution;
 
@@ -2442,8 +2435,8 @@ VolumeOfFluid<dim>::update_solution_and_constraints(
 template <int dim>
 void
 VolumeOfFluid<dim>::assemble_L2_projection_interface_sharpening(
-  TrilinosWrappers::MPI::Vector &solution,
-  const double                   sharpening_threshold)
+  GlobalVectorType &solution,
+  const double      sharpening_threshold)
 {
   const double interface_sharpness =
     this->simulation_parameters.multiphysics.vof_parameters.sharpening
@@ -2534,8 +2527,7 @@ VolumeOfFluid<dim>::assemble_L2_projection_interface_sharpening(
 
 template <int dim>
 void
-VolumeOfFluid<dim>::solve_interface_sharpening(
-  TrilinosWrappers::MPI::Vector &solution)
+VolumeOfFluid<dim>::solve_interface_sharpening(GlobalVectorType &solution)
 {
   // Solve the L2 projection system
   const double linear_solver_tolerance = 1e-15;
@@ -2547,7 +2539,7 @@ VolumeOfFluid<dim>::solve_interface_sharpening(
                   << linear_solver_tolerance << std::endl;
     }
 
-  TrilinosWrappers::MPI::Vector completely_distributed_phase_fraction_solution(
+  GlobalVectorType completely_distributed_phase_fraction_solution(
     this->locally_owned_dofs, triangulation->get_communicator());
 
 
@@ -2637,9 +2629,9 @@ void
 VolumeOfFluid<dim>::apply_phase_filter()
 {
   // Initializations
-  auto mpi_communicator = this->triangulation->get_communicator();
-  TrilinosWrappers::MPI::Vector filtered_solution_owned(
-    this->locally_owned_dofs, mpi_communicator);
+  auto             mpi_communicator = this->triangulation->get_communicator();
+  GlobalVectorType filtered_solution_owned(this->locally_owned_dofs,
+                                           mpi_communicator);
   filtered_solution_owned = this->present_solution;
   filtered_solution.reinit(this->present_solution);
 

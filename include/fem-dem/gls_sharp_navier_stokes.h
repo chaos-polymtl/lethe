@@ -20,6 +20,7 @@
 #include <core/ib_particle.h>
 #include <core/ib_stencil.h>
 #include <core/shape.h>
+#include <core/vector.h>
 
 #include <solvers/gls_navier_stokes.h>
 
@@ -603,8 +604,8 @@ private:
   /*
    * These vectors are used to keep track of the DOFs that are overconstrained
    */
-  TrilinosWrappers::MPI::Vector local_dof_overconstrained;
-  TrilinosWrappers::MPI::Vector dof_overconstrained;
+  GlobalVectorType local_dof_overconstrained;
+  GlobalVectorType dof_overconstrained;
 
   std::map<typename DoFHandler<dim>::active_cell_iterator,
            std::tuple<bool, unsigned int>>

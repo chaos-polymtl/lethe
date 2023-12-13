@@ -52,7 +52,7 @@
 template <int dim>
 GLSNavierStokesSolver<dim>::GLSNavierStokesSolver(
   SimulationParameters<dim> &p_nsparam)
-  : NavierStokesBase<dim, TrilinosWrappers::MPI::Vector, IndexSet>(p_nsparam)
+  : NavierStokesBase<dim, GlobalVectorType, IndexSet>(p_nsparam)
 {
   initial_preconditioner_fill_level =
     ((this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
@@ -1089,8 +1089,7 @@ GLSNavierStokesSolver<dim>::set_initial_condition_fd(
 
       this->simulation_control->set_assembly_method(
         Parameters::SimulationControl::TimeSteppingMethod::steady);
-      PhysicsSolver<TrilinosWrappers::MPI::Vector>::solve_non_linear_system(
-        false);
+      PhysicsSolver<GlobalVectorType>::solve_non_linear_system(false);
       this->finish_time_step();
 
       this->simulation_parameters.physical_properties_manager.set_rheology(
@@ -1148,8 +1147,7 @@ GLSNavierStokesSolver<dim>::set_initial_condition_fd(
 
           this->simulation_control->set_assembly_method(
             Parameters::SimulationControl::TimeSteppingMethod::steady);
-          PhysicsSolver<TrilinosWrappers::MPI::Vector>::solve_non_linear_system(
-            false);
+          PhysicsSolver<GlobalVectorType>::solve_non_linear_system(false);
           this->finish_time_step();
 
           n += alpha_n * (n_end - n);
@@ -1171,8 +1169,7 @@ GLSNavierStokesSolver<dim>::set_initial_condition_fd(
 
           this->simulation_control->set_assembly_method(
             Parameters::SimulationControl::TimeSteppingMethod::steady);
-          PhysicsSolver<TrilinosWrappers::MPI::Vector>::solve_non_linear_system(
-            false);
+          PhysicsSolver<GlobalVectorType>::solve_non_linear_system(false);
           this->finish_time_step();
 
           kinematic_viscosity +=
@@ -1452,8 +1449,8 @@ GLSNavierStokesSolver<dim>::solve_system_GMRES(const bool   initial_step,
       this->pcout << "  -Tolerance of iterative solver is : "
                   << linear_solver_tolerance << std::endl;
     }
-  TrilinosWrappers::MPI::Vector completely_distributed_solution(
-    this->locally_owned_dofs, this->mpi_communicator);
+  GlobalVectorType completely_distributed_solution(this->locally_owned_dofs,
+                                                   this->mpi_communicator);
 
   SolverControl solver_control(this->simulation_parameters.linear_solver
                                  .at(PhysicsID::fluid_dynamics)
@@ -1582,8 +1579,8 @@ GLSNavierStokesSolver<dim>::solve_system_BiCGStab(
       this->pcout << "  -Tolerance of iterative solver is : "
                   << linear_solver_tolerance << std::endl;
     }
-  TrilinosWrappers::MPI::Vector completely_distributed_solution(
-    this->locally_owned_dofs, this->mpi_communicator);
+  GlobalVectorType completely_distributed_solution(this->locally_owned_dofs,
+                                                   this->mpi_communicator);
 
   bool extra_verbose = false;
   if (this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
@@ -1671,8 +1668,8 @@ GLSNavierStokesSolver<dim>::solve_system_direct(const bool   initial_step,
   const double linear_solver_tolerance =
     std::max(relative_residual * system_rhs.l2_norm(), absolute_residual);
 
-  TrilinosWrappers::MPI::Vector completely_distributed_solution(
-    this->locally_owned_dofs, this->mpi_communicator);
+  GlobalVectorType completely_distributed_solution(this->locally_owned_dofs,
+                                                   this->mpi_communicator);
 
   SolverControl solver_control(this->simulation_parameters.linear_solver
                                  .at(PhysicsID::fluid_dynamics)
@@ -1744,8 +1741,7 @@ GLSNavierStokesSolver<dim>::solve()
         }
       else
         {
-          NavierStokesBase<dim, TrilinosWrappers::MPI::Vector, IndexSet>::
-            refine_mesh();
+          NavierStokesBase<dim, GlobalVectorType, IndexSet>::refine_mesh();
           this->iterate();
         }
       this->postprocess(false);

@@ -316,7 +316,7 @@ GLSVANSSolver<dim>::update_solution_and_constraints()
 {
   const double penalty_parameter = 100;
 
-  TrilinosWrappers::MPI::Vector lambda(locally_owned_dofs_voidfraction);
+  GlobalVectorType lambda(locally_owned_dofs_voidfraction);
 
   nodal_void_fraction_owned = nodal_void_fraction_relevant;
 
@@ -1301,7 +1301,7 @@ GLSVANSSolver<dim>::solve_L2_system_void_fraction()
   const IndexSet locally_owned_dofs_voidfraction =
     void_fraction_dof_handler.locally_owned_dofs();
 
-  TrilinosWrappers::MPI::Vector completely_distributed_solution(
+  GlobalVectorType completely_distributed_solution(
     locally_owned_dofs_voidfraction, this->mpi_communicator);
 
   SolverControl solver_control(
@@ -1369,7 +1369,7 @@ GLSVANSSolver<dim>::iterate()
   this->simulation_control->set_assembly_method(
     this->cfd_dem_simulation_parameters.cfd_parameters.simulation_control
       .method);
-  PhysicsSolver<TrilinosWrappers::MPI::Vector>::solve_non_linear_system(false);
+  PhysicsSolver<GlobalVectorType>::solve_non_linear_system(false);
 }
 
 template <int dim>
@@ -2004,8 +2004,7 @@ GLSVANSSolver<dim>::solve()
         }
       else
         {
-          NavierStokesBase<dim, TrilinosWrappers::MPI::Vector, IndexSet>::
-            refine_mesh();
+          NavierStokesBase<dim, GlobalVectorType, IndexSet>::refine_mesh();
           vertices_cell_mapping();
           calculate_void_fraction(this->simulation_control->get_current_time(),
                                   false);

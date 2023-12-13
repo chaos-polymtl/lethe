@@ -21,6 +21,7 @@
 #define lethe_gd_navier_stokes_h
 
 #include <core/exceptions.h>
+#include <core/vector.h>
 
 #include <solvers/navier_stokes_base.h>
 
@@ -291,7 +292,7 @@ BlockSchurPreconditioner<BSPreconditioner>::vmult(
   //                                TimerOutput::summary,
   //                                TimerOutput::wall_times);
 
-  TrilinosWrappers::MPI::Vector utmp(src.block(0));
+  GlobalVectorType utmp(src.block(0));
   {
     //        computing_timer.enter_section("Pressure");
     SolverControl solver_control(
@@ -355,11 +356,11 @@ public:
         const TrilinosWrappers::MPI::BlockVector &src) const;
 
 private:
-  const TrilinosWrappers::BlockSparseMatrix  &stokes_matrix;
-  TrilinosWrappers::PreconditionILU           amat_preconditioner;
-  TrilinosWrappers::PreconditionILU           pmat_preconditioner;
-  const PreconditionerMp                     &mp_preconditioner;
-  SolverFGMRES<TrilinosWrappers::MPI::Vector> A_inverse;
+  const TrilinosWrappers::BlockSparseMatrix &stokes_matrix;
+  TrilinosWrappers::PreconditionILU          amat_preconditioner;
+  TrilinosWrappers::PreconditionILU          pmat_preconditioner;
+  const PreconditionerMp                    &mp_preconditioner;
+  SolverFGMRES<GlobalVectorType>             A_inverse;
 };
 
 template <class PreconditionerMp>

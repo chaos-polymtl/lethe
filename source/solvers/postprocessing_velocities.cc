@@ -1,3 +1,5 @@
+#include <core/vector.h>
+
 #include <solvers/postprocessing_velocities.h>
 
 #include <fstream>
@@ -80,7 +82,7 @@ AverageVelocities<dim, VectorType, DofsType>::calculate_reynolds_stresses(
 {
   // TODO: generalize this for the use of
   // LinearAlegra::distributed::Vector<double>
-  if constexpr (std::is_same_v<VectorType, TrilinosWrappers::MPI::Vector> ||
+  if constexpr (std::is_same_v<VectorType, GlobalVectorType> ||
                 std::is_same_v<VectorType, TrilinosWrappers::MPI::BlockVector>)
     {
       unsigned int begin_index, end_index;
@@ -95,10 +97,10 @@ AverageVelocities<dim, VectorType, DofsType>::calculate_reynolds_stresses(
         return i + dim;
       };
 
-      const TrilinosWrappers::MPI::Vector *local_solution, *local_average;
-      TrilinosWrappers::MPI::Vector       *rns_dt, *rss_dt, *k_dt;
+      const GlobalVectorType *local_solution, *local_average;
+      GlobalVectorType       *rns_dt, *rss_dt, *k_dt;
 
-      if constexpr (std::is_same_v<VectorType, TrilinosWrappers::MPI::Vector>)
+      if constexpr (std::is_same_v<VectorType, GlobalVectorType>)
         {
           begin_index    = local_evaluation_point.local_range().first;
           end_index      = local_evaluation_point.local_range().second;
@@ -308,9 +310,9 @@ AverageVelocities<dim, VectorType, DofsType>::read(std::string prefix)
 }
 
 
-template class AverageVelocities<2, TrilinosWrappers::MPI::Vector, IndexSet>;
+template class AverageVelocities<2, GlobalVectorType, IndexSet>;
 
-template class AverageVelocities<3, TrilinosWrappers::MPI::Vector, IndexSet>;
+template class AverageVelocities<3, GlobalVectorType, IndexSet>;
 
 template class AverageVelocities<2,
                                  TrilinosWrappers::MPI::BlockVector,

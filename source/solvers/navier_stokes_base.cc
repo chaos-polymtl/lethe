@@ -2027,8 +2027,8 @@ NavierStokesBase<dim, VectorType, DofsType>::write_output_results(
     number_quadrature_points);
 
   // TODO: generalize this to VectorType
-  TrilinosWrappers::MPI::Vector qcriterion_field;
-  TrilinosWrappers::MPI::Vector continuity_field;
+  GlobalVectorType qcriterion_field;
+  GlobalVectorType continuity_field;
 
   if (this->simulation_parameters.post_processing.smoothed_output_fields)
     {
@@ -2330,7 +2330,7 @@ NavierStokesBase<dim, VectorType, DofsType>::init_temporary_vector()
 {
   VectorType tmp;
 
-  if constexpr (std::is_same_v<VectorType, TrilinosWrappers::MPI::Vector> ||
+  if constexpr (std::is_same_v<VectorType, GlobalVectorType> ||
                 std::is_same_v<VectorType, TrilinosWrappers::MPI::BlockVector>)
     tmp.reinit(locally_owned_dofs, this->mpi_communicator);
 
@@ -2343,8 +2343,8 @@ NavierStokesBase<dim, VectorType, DofsType>::init_temporary_vector()
 }
 
 // Pre-compile the 2D and 3D version with the types that can occur
-template class NavierStokesBase<2, TrilinosWrappers::MPI::Vector, IndexSet>;
-template class NavierStokesBase<3, TrilinosWrappers::MPI::Vector, IndexSet>;
+template class NavierStokesBase<2, GlobalVectorType, IndexSet>;
+template class NavierStokesBase<3, GlobalVectorType, IndexSet>;
 template class NavierStokesBase<2,
                                 TrilinosWrappers::MPI::BlockVector,
                                 std::vector<IndexSet>>;
