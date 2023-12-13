@@ -1995,16 +1995,14 @@ HeatTransfer<3>::postprocess_heat_flux_on_bc<GlobalVectorType>(
   const GlobalVectorType &current_solution_fd);
 
 template void
-HeatTransfer<2>::postprocess_heat_flux_on_bc<
-  TrilinosWrappers::MPI::BlockVector>(
-  const bool                                gather_vof,
-  const TrilinosWrappers::MPI::BlockVector &current_solution_fd);
+HeatTransfer<2>::postprocess_heat_flux_on_bc<GlobalBlockVectorType>(
+  const bool                   gather_vof,
+  const GlobalBlockVectorType &current_solution_fd);
 
 template void
-HeatTransfer<3>::postprocess_heat_flux_on_bc<
-  TrilinosWrappers::MPI::BlockVector>(
-  const bool                                gather_vof,
-  const TrilinosWrappers::MPI::BlockVector &current_solution_fd);
+HeatTransfer<3>::postprocess_heat_flux_on_bc<GlobalBlockVectorType>(
+  const bool                   gather_vof,
+  const GlobalBlockVectorType &current_solution_fd);
 
 template <int dim>
 template <typename VectorType>
@@ -2202,20 +2200,18 @@ HeatTransfer<3>::postprocess_thermal_energy_in_fluid<GlobalVectorType>(
   const GlobalVectorType          &current_solution_fd);
 
 template void
-HeatTransfer<2>::postprocess_thermal_energy_in_fluid<
-  TrilinosWrappers::MPI::BlockVector>(
-  const bool                                gather_vof,
-  const Parameters::FluidIndicator          monitored_fluid,
-  const std::string                         domain_name,
-  const TrilinosWrappers::MPI::BlockVector &current_solution_fd);
+HeatTransfer<2>::postprocess_thermal_energy_in_fluid<GlobalBlockVectorType>(
+  const bool                       gather_vof,
+  const Parameters::FluidIndicator monitored_fluid,
+  const std::string                domain_name,
+  const GlobalBlockVectorType     &current_solution_fd);
 
 template void
-HeatTransfer<3>::postprocess_thermal_energy_in_fluid<
-  TrilinosWrappers::MPI::BlockVector>(
-  const bool                                gather_vof,
-  const Parameters::FluidIndicator          monitored_fluid,
-  const std::string                         domain_name,
-  const TrilinosWrappers::MPI::BlockVector &current_solution_fd);
+HeatTransfer<3>::postprocess_thermal_energy_in_fluid<GlobalBlockVectorType>(
+  const bool                       gather_vof,
+  const Parameters::FluidIndicator monitored_fluid,
+  const std::string                domain_name,
+  const GlobalBlockVectorType     &current_solution_fd);
 
 template <int dim>
 void

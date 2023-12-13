@@ -1196,15 +1196,15 @@ CahnHilliard<3>::calculate_barycenter<GlobalVectorType>(
   const GlobalVectorType &current_solution_fd);
 
 template std::pair<Tensor<1, 2>, Tensor<1, 2>>
-CahnHilliard<2>::calculate_barycenter<TrilinosWrappers::MPI::BlockVector>(
-  const GlobalVectorType                   &solution,
-  const TrilinosWrappers::MPI::BlockVector &current_solution_fd);
+CahnHilliard<2>::calculate_barycenter<GlobalBlockVectorType>(
+  const GlobalVectorType      &solution,
+  const GlobalBlockVectorType &current_solution_fd);
 
 
 template std::pair<Tensor<1, 3>, Tensor<1, 3>>
-CahnHilliard<3>::calculate_barycenter<TrilinosWrappers::MPI::BlockVector>(
-  const GlobalVectorType                   &solution,
-  const TrilinosWrappers::MPI::BlockVector &current_solution_fd);
+CahnHilliard<3>::calculate_barycenter<GlobalBlockVectorType>(
+  const GlobalVectorType      &solution,
+  const GlobalBlockVectorType &current_solution_fd);
 
 
 template class CahnHilliard<2>;

@@ -20,8 +20,18 @@
 #ifndef lethe_vector_h
 #define lethe_vector_h
 
+#include <deal.II/lac/la_parallel_block_vector.h>
+#include <deal.II/lac/la_parallel_vector.h>
+#include <deal.II/lac/trilinos_parallel_block_vector.h>
 #include <deal.II/lac/trilinos_vector.h>
 
-using GlobalVectorType = TrilinosWrappers::MPI::Vector;
+#if false
+using GlobalVectorType = dealii::TrilinosWrappers::MPI::Vector;
+using GlobalBlockVectorType = dealii::TrilinosWrappers::MPI::BlockVector;
+#else
+using GlobalVectorType = dealii::LinearAlgebra::distributed::Vector<double>;
+using GlobalBlockVectorType =
+  dealii::LinearAlgebra::distributed::BlockVector<double>;
+#endif
 
 #endif

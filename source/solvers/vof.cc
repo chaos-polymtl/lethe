@@ -488,15 +488,15 @@ VolumeOfFluid<3>::calculate_barycenter<GlobalVectorType>(
   const GlobalVectorType &current_solution_fd);
 
 template std::pair<Tensor<1, 2>, Tensor<1, 2>>
-VolumeOfFluid<2>::calculate_barycenter<TrilinosWrappers::MPI::BlockVector>(
-  const GlobalVectorType                   &solution,
-  const TrilinosWrappers::MPI::BlockVector &current_solution_fd);
+VolumeOfFluid<2>::calculate_barycenter<GlobalBlockVectorType>(
+  const GlobalVectorType      &solution,
+  const GlobalBlockVectorType &current_solution_fd);
 
 
 template std::pair<Tensor<1, 3>, Tensor<1, 3>>
-VolumeOfFluid<3>::calculate_barycenter<TrilinosWrappers::MPI::BlockVector>(
-  const GlobalVectorType                   &solution,
-  const TrilinosWrappers::MPI::BlockVector &current_solution_fd);
+VolumeOfFluid<3>::calculate_barycenter<GlobalBlockVectorType>(
+  const GlobalVectorType      &solution,
+  const GlobalBlockVectorType &current_solution_fd);
 
 
 template <int dim>
@@ -2370,13 +2370,13 @@ VolumeOfFluid<dim>::update_solution_and_constraints(GlobalVectorType &solution)
   // there is no convergence using the penalty_parameter = 1)
   const double penalty_parameter = 100;
 
-  GlobalVectorType lambda(this->locally_owned_dofs);
+  GlobalVectorType lambda; //(this->locally_owned_dofs);
 
   nodal_phase_fraction_owned = solution;
 
-  complete_system_matrix_phase_fraction.residual(lambda,
-                                                 nodal_phase_fraction_owned,
-                                                 system_rhs_phase_fraction);
+  // complete_system_matrix_phase_fraction.residual(lambda,
+  //                                                nodal_phase_fraction_owned,
+  //                                                system_rhs_phase_fraction);
 
   this->bounding_constraints.clear();
 

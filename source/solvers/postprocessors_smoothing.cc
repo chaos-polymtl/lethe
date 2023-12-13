@@ -166,14 +166,8 @@ PostProcessorSmoothing<dim, VectorType>::get_dof_handler() const
 
 template class PostProcessorSmoothing<2, GlobalVectorType>;
 template class PostProcessorSmoothing<3, GlobalVectorType>;
-template class PostProcessorSmoothing<2, TrilinosWrappers::MPI::BlockVector>;
-template class PostProcessorSmoothing<3, TrilinosWrappers::MPI::BlockVector>;
-template class PostProcessorSmoothing<
-  2,
-  LinearAlgebra::distributed::Vector<double>>;
-template class PostProcessorSmoothing<
-  3,
-  LinearAlgebra::distributed::Vector<double>>;
+template class PostProcessorSmoothing<2, GlobalBlockVectorType>;
+template class PostProcessorSmoothing<3, GlobalBlockVectorType>;
 
 
 template <int dim, typename VectorType>
@@ -292,18 +286,9 @@ QcriterionPostProcessorSmoothing<dim, VectorType>::generate_rhs(
 
 template class QcriterionPostProcessorSmoothing<2, GlobalVectorType>;
 template class QcriterionPostProcessorSmoothing<3, GlobalVectorType>;
-template class QcriterionPostProcessorSmoothing<
-  2,
-  TrilinosWrappers::MPI::BlockVector>;
-template class QcriterionPostProcessorSmoothing<
-  3,
-  TrilinosWrappers::MPI::BlockVector>;
-template class QcriterionPostProcessorSmoothing<
-  2,
-  LinearAlgebra::distributed::Vector<double>>;
-template class QcriterionPostProcessorSmoothing<
-  3,
-  LinearAlgebra::distributed::Vector<double>>;
+template class QcriterionPostProcessorSmoothing<2, GlobalBlockVectorType>;
+template class QcriterionPostProcessorSmoothing<3, GlobalBlockVectorType>;
+
 template <int dim, typename VectorType>
 ContinuityPostProcessorSmoothing<dim, VectorType>::
   ContinuityPostProcessorSmoothing(
@@ -397,15 +382,5 @@ ContinuityPostProcessorSmoothing<dim, VectorType>::generate_rhs(
 
 template class ContinuityPostProcessorSmoothing<2, GlobalVectorType>;
 template class ContinuityPostProcessorSmoothing<3, GlobalVectorType>;
-template class ContinuityPostProcessorSmoothing<
-  2,
-  TrilinosWrappers::MPI::BlockVector>;
-template class ContinuityPostProcessorSmoothing<
-  3,
-  TrilinosWrappers::MPI::BlockVector>;
-template class ContinuityPostProcessorSmoothing<
-  2,
-  LinearAlgebra::distributed::Vector<double>>;
-template class ContinuityPostProcessorSmoothing<
-  3,
-  LinearAlgebra::distributed::Vector<double>>;
+template class ContinuityPostProcessorSmoothing<2, GlobalBlockVectorType>;
+template class ContinuityPostProcessorSmoothing<3, GlobalBlockVectorType>;

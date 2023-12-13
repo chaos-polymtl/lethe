@@ -83,13 +83,10 @@ test()
   DoFHandler<2> dof_handler(tria);
 
 
-  AverageVelocities<2,
-                    TrilinosWrappers::MPI::BlockVector,
-                    std::vector<IndexSet>>
+  AverageVelocities<2, GlobalBlockVectorType, std::vector<IndexSet>>
     postprocessing_velocities(dof_handler);
 
-  TrilinosWrappers::MPI::BlockVector solution(locally_owned_dofs,
-                                              mpi_communicator);
+  GlobalBlockVectorType solution(locally_owned_dofs, mpi_communicator);
   solution.block(0)[0] = 2.0;
   solution.block(0)[1] = 0.1;
   solution.block(0)[2] = 2.5;
@@ -103,8 +100,8 @@ test()
   solution.block(1)[2] = 26;
   solution.block(1)[2] = 15;
 
-  TrilinosWrappers::MPI::BlockVector reynolds_normal_stresses;
-  TrilinosWrappers::MPI::BlockVector reynolds_shear_stresses;
+  GlobalBlockVectorType reynolds_normal_stresses;
+  GlobalBlockVectorType reynolds_shear_stresses;
 
   // Time info
   const double time_end     = simulation_control_parameters.timeEnd;

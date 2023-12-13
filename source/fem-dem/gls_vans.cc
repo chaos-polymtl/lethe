@@ -316,13 +316,13 @@ GLSVANSSolver<dim>::update_solution_and_constraints()
 {
   const double penalty_parameter = 100;
 
-  GlobalVectorType lambda(locally_owned_dofs_voidfraction);
+  GlobalVectorType lambda; //(locally_owned_dofs_voidfraction);
 
   nodal_void_fraction_owned = nodal_void_fraction_relevant;
 
-  complete_system_matrix_void_fraction.residual(lambda,
-                                                nodal_void_fraction_owned,
-                                                system_rhs_void_fraction);
+  // complete_system_matrix_void_fraction.residual(lambda,
+  //                                               nodal_void_fraction_owned,
+  //                                               system_rhs_void_fraction);
 
   void_fraction_constraints.clear();
 

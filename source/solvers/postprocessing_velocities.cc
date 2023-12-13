@@ -83,7 +83,7 @@ AverageVelocities<dim, VectorType, DofsType>::calculate_reynolds_stresses(
   // TODO: generalize this for the use of
   // LinearAlegra::distributed::Vector<double>
   if constexpr (std::is_same_v<VectorType, GlobalVectorType> ||
-                std::is_same_v<VectorType, TrilinosWrappers::MPI::BlockVector>)
+                std::is_same_v<VectorType, GlobalBlockVectorType>)
     {
       unsigned int begin_index, end_index;
 
@@ -102,19 +102,57 @@ AverageVelocities<dim, VectorType, DofsType>::calculate_reynolds_stresses(
 
       if constexpr (std::is_same_v<VectorType, GlobalVectorType>)
         {
-          begin_index    = local_evaluation_point.local_range().first;
-          end_index      = local_evaluation_point.local_range().second;
+          if constexpr (std::is_same_v<VectorType,
+                                       dealii::TrilinosWrappers::MPI::Vector>)
+            {
+              begin_index = local_evaluation_point.local_range().first;
+              end_index   = local_evaluation_point.local_range().second;
+            }
+          else if constexpr (std::is_same_v<VectorType,
+                                            dealii::LinearAlgebra::distributed::
+                                              Vector<double>>)
+            {
+              begin_index =
+                local_evaluation_point.get_partitioner()->local_range().first;
+              end_index =
+                local_evaluation_point.get_partitioner()->local_range().second;
+            }
+
+          else
+            {
+              AssertThrow(false, ExcNotImplemented());
+            }
           local_solution = &local_evaluation_point;
           local_average  = &average_velocities;
           rns_dt         = &reynolds_normal_stress_dt;
           rss_dt         = &reynolds_shear_stress_dt;
           k_dt           = &reynolds_normal_stress_dt;
         }
-      else if constexpr (std::is_same_v<VectorType,
-                                        TrilinosWrappers::MPI::BlockVector>)
+      else if constexpr (std::is_same_v<VectorType, GlobalBlockVectorType>)
         {
-          begin_index    = local_evaluation_point.block(0).local_range().first;
-          end_index      = local_evaluation_point.block(0).local_range().second;
+          if constexpr (std::is_same_v<
+                          VectorType,
+                          dealii::TrilinosWrappers::MPI::BlockVector>)
+            {
+              begin_index = local_evaluation_point.block(0).local_range().first;
+              end_index = local_evaluation_point.block(0).local_range().second;
+            }
+          else if constexpr (std::is_same_v<VectorType,
+                                            dealii::LinearAlgebra::distributed::
+                                              BlockVector<double>>)
+            {
+              begin_index = local_evaluation_point.block(0)
+                              .get_partitioner()
+                              ->local_range()
+                              .first;
+              end_index = local_evaluation_point.block(0)
+                            .get_partitioner()
+                            ->local_range()
+                            .second;
+            }
+          else
+            {
+            }
           local_solution = &local_evaluation_point.block(0);
           local_average  = &average_velocities.block(0);
           rns_dt         = &reynolds_normal_stress_dt.block(0);
@@ -315,17 +353,9 @@ template class AverageVelocities<2, GlobalVectorType, IndexSet>;
 template class AverageVelocities<3, GlobalVectorType, IndexSet>;
 
 template class AverageVelocities<2,
-                                 TrilinosWrappers::MPI::BlockVector,
+                                 GlobalBlockVectorType,
                                  std::vector<IndexSet>>;
 
 template class AverageVelocities<3,
-                                 TrilinosWrappers::MPI::BlockVector,
+                                 GlobalBlockVectorType,
                                  std::vector<IndexSet>>;
-
-template class AverageVelocities<2,
-                                 LinearAlgebra::distributed::Vector<double>,
-                                 IndexSet>;
-
-template class AverageVelocities<3,
-                                 LinearAlgebra::distributed::Vector<double>,
-                                 IndexSet>;

@@ -2331,7 +2331,7 @@ NavierStokesBase<dim, VectorType, DofsType>::init_temporary_vector()
   VectorType tmp;
 
   if constexpr (std::is_same_v<VectorType, GlobalVectorType> ||
-                std::is_same_v<VectorType, TrilinosWrappers::MPI::BlockVector>)
+                std::is_same_v<VectorType, GlobalBlockVectorType>)
     tmp.reinit(locally_owned_dofs, this->mpi_communicator);
 
   else if constexpr (std::is_same_v<VectorType,
@@ -2346,14 +2346,8 @@ NavierStokesBase<dim, VectorType, DofsType>::init_temporary_vector()
 template class NavierStokesBase<2, GlobalVectorType, IndexSet>;
 template class NavierStokesBase<3, GlobalVectorType, IndexSet>;
 template class NavierStokesBase<2,
-                                TrilinosWrappers::MPI::BlockVector,
+                                GlobalBlockVectorType,
                                 std::vector<IndexSet>>;
 template class NavierStokesBase<3,
-                                TrilinosWrappers::MPI::BlockVector,
+                                GlobalBlockVectorType,
                                 std::vector<IndexSet>>;
-template class NavierStokesBase<2,
-                                LinearAlgebra::distributed::Vector<double>,
-                                IndexSet>;
-template class NavierStokesBase<3,
-                                LinearAlgebra::distributed::Vector<double>,
-                                IndexSet>;

@@ -51,8 +51,7 @@ public:
                            Parameters::LinearSolver solver_parameters);
 
   void
-  vmult(TrilinosWrappers::MPI::BlockVector       &dst,
-        const TrilinosWrappers::MPI::BlockVector &src) const;
+  vmult(GlobalBlockVectorType &dst, const GlobalBlockVectorType &src) const;
 
 private:
   const double                               gamma;
@@ -77,9 +76,7 @@ private:
 
 template <int dim>
 class GDNavierStokesSolver
-  : public NavierStokesBase<dim,
-                            TrilinosWrappers::MPI::BlockVector,
-                            std::vector<IndexSet>>
+  : public NavierStokesBase<dim, GlobalBlockVectorType, std::vector<IndexSet>>
 {
 public:
   GDNavierStokesSolver(SimulationParameters<dim> &nsparam);
@@ -285,8 +282,8 @@ BlockSchurPreconditioner<BSPreconditioner>::BlockSchurPreconditioner(
 template <class BSPreconditioner>
 void
 BlockSchurPreconditioner<BSPreconditioner>::vmult(
-  TrilinosWrappers::MPI::BlockVector       &dst,
-  const TrilinosWrappers::MPI::BlockVector &src) const
+  GlobalBlockVectorType       &dst,
+  const GlobalBlockVectorType &src) const
 {
   //    TimerOutput computing_timer(std::cout,
   //                                TimerOutput::summary,
@@ -301,7 +298,7 @@ BlockSchurPreconditioner<BSPreconditioner>::vmult(
         1e-3 * src.block(1).l2_norm(),
         // linear_solver_parameters.relative_residual*src.block(0).l2_norm(),
         linear_solver_parameters.minimum_residual));
-    TrilinosWrappers::SolverCG cg(solver_control);
+    SolverCG<GlobalVectorType> cg(solver_control);
 
     dst.block(1) = 0.0;
     cg.solve(pressure_mass_matrix,
@@ -329,7 +326,7 @@ BlockSchurPreconditioner<BSPreconditioner>::vmult(
 
 
     // TrilinosWrappers::SolverBicgstab solver(solver_control);
-    TrilinosWrappers::SolverGMRES solver(solver_control);
+    SolverGMRES<GlobalVectorType> solver(solver_control);
 
     // A_inverse.solve(stokes_matrix.block(0, 0),dst.block(0), utmp,
     // mp_preconditioner);
@@ -352,8 +349,7 @@ public:
                           SolverControl          &A_parameters);
 
   void
-  vmult(TrilinosWrappers::MPI::BlockVector       &dst,
-        const TrilinosWrappers::MPI::BlockVector &src) const;
+  vmult(GlobalBlockVectorType &dst, const GlobalBlockVectorType &src) const;
 
 private:
   const TrilinosWrappers::BlockSparseMatrix &stokes_matrix;
@@ -389,8 +385,8 @@ BlockDiagPreconditioner<PreconditionerMp>::BlockDiagPreconditioner(
 template <class PreconditionerMp>
 void
 BlockDiagPreconditioner<PreconditionerMp>::vmult(
-  TrilinosWrappers::MPI::BlockVector       &dst,
-  const TrilinosWrappers::MPI::BlockVector &src) const
+  GlobalBlockVectorType       &dst,
+  const GlobalBlockVectorType &src) const
 {
   {
     SolverControl              solver_control(100000, 1e-12);

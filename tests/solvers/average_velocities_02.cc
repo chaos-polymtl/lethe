@@ -83,20 +83,16 @@ test()
   GridGenerator::hyper_cube(tria, -1, 1);
   DoFHandler<3> dof_handler(tria);
 
-  AverageVelocities<3,
-                    TrilinosWrappers::MPI::BlockVector,
-                    std::vector<IndexSet>>
-    average(dof_handler);
+  AverageVelocities<3, GlobalBlockVectorType, std::vector<IndexSet>> average(
+    dof_handler);
 
-  TrilinosWrappers::MPI::BlockVector solution(locally_owned_dofs,
-                                              mpi_communicator);
+  GlobalBlockVectorType solution(locally_owned_dofs, mpi_communicator);
   solution.block(0)[0] = 0.0;
   solution.block(0)[1] = 2.5;
   solution.block(0)[2] = 10;
   solution.block(1)[0] = 154.2;
 
-  TrilinosWrappers::MPI::BlockVector average_solution(locally_owned_dofs,
-                                                      mpi_communicator);
+  GlobalBlockVectorType average_solution(locally_owned_dofs, mpi_communicator);
 
   // Time and output info
   const double time_end     = simulation_control_parameters.timeEnd;
