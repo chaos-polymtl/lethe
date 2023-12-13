@@ -30,6 +30,7 @@
 #include <core/physical_property_model.h>
 #include <core/specific_heat_model.h>
 #include <core/thermal_conductivity_model.h>
+#include <core/vector.h>
 
 #include <solvers/multiphysics_interface.h>
 #include <solvers/vof_filter.h>
@@ -182,8 +183,8 @@ public:
   void
   reinit(const typename DoFHandler<dim>::active_cell_iterator &cell,
          const VectorType                                     &current_solution,
-         const std::vector<TrilinosWrappers::MPI::Vector> &previous_solutions,
-         Function<dim>                                    *source_function)
+         const std::vector<GlobalVectorType> &previous_solutions,
+         Function<dim>                       *source_function)
   {
     material_id = cell->material_id();
     this->fe_values_T.reinit(cell);
