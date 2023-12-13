@@ -32,7 +32,7 @@ namespace Parameters
         Patterns::List(Patterns::Double()),
         "Probabilities of each diameter of the custom distribution based on the volume fraction");
       prm.declare_entry(
-        "distribution random seed",
+        "random seed distribution ",
         "1",
         Patterns::Integer(),
         "Seed for generation of random numbers for the size distribution");
@@ -83,7 +83,7 @@ namespace Parameters
       particle_custom_probability.at(particle_type) =
         convert_string_to_vector(prm, "custom volume fractions");
       random_seed_for_distributions.push_back(
-        prm.get_integer("distribution random seed"));
+        prm.get_integer("random seed distribution"));
 
       double probability_sum =
         std::reduce(particle_custom_probability.at(particle_type).begin(),

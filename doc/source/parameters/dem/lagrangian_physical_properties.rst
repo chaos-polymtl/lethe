@@ -34,6 +34,8 @@ In this subsection, gravitational acceleration, and the physical properties of t
 
       # If distribution type = normal
       set standard deviation                = 0.0
+      # If distribution type = normal or custom
+      set random seed distribution          = 1
 
       # For every distribution types
       set number of particles               = 0
@@ -79,6 +81,8 @@ In this subsection, gravitational acceleration, and the physical properties of t
 * For a ``normal`` distribution, the ``standard deviation`` parameter should be defined to indicate the standard deviation on the particle size distribution.
 
 * For a ``custom`` distribution, the ``custom diameters`` parameter defines the different diameter values used when generating particles. The ``custom probabilities`` parameter defines the probabilities corresponding to each diameter value previously declared based on volume fraction, not on the number of particles. Both list must have the same length.
+
+* For a ``normal`` or a ``custom`` distribution, the ``random seed distribution`` parameter defines the random seed at which the random numbers will be generated . These random numbers are being used when generating the diameter values for these two distributions.
 
 * The ``number of particles`` parameter defines the number of particles for each type.
 
