@@ -72,6 +72,30 @@ public:
          const parallel::distributed::Triangulation<dim> &triangulation,
          const DEMSolverParameters<dim> &dem_parameters) override;
 
+
+  /**
+   * @brief Serialize the plane insertion object to an output archive.
+   *
+   * @param ar Output archive where the attributes are stored.
+   */
+  virtual void
+  serialize(boost::archive::text_oarchive &ar, const unsigned int) override
+  {
+    ar &particles_of_each_type_remaining &current_inserting_particle_type;
+  }
+
+  /**
+   * @brief Deserialize an input archive to the plane insertion object.
+   *
+   * @param ar Input archive where the attributes are stored.
+   *
+   */
+  virtual void
+  deserialize(boost::archive::text_iarchive &ar, const unsigned int) override
+  {
+    ar &particles_of_each_type_remaining &current_inserting_particle_type;
+  }
+
 private:
   /**
    * @brief Store the cells that are cut by the plane.
@@ -101,7 +125,6 @@ private:
   int                                          particles_of_each_type_remaining;
   unsigned int                                 current_inserting_particle_type;
   std::unordered_map<unsigned int, Point<dim>> cells_centers;
-  std::unordered_map<unsigned int, double>     type_of_particle_left_to_insert;
   bool                                         mark_for_update;
   boost::signals2::connection                  change_to_triangulation;
 };
