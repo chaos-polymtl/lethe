@@ -3340,7 +3340,7 @@ namespace Parameters
       ambient_pressure        = prm.get_double("ambient pressure");
       ambient_gas_density     = prm.get_double("ambient gas density");
       liquid_density          = prm.get_double("liquid density");
-      universal_gas_constant          = prm.get_double("universal gas constant");
+      universal_gas_constant  = prm.get_double("universal gas constant");
     }
     prm.leave_subsection();
   }

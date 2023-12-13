@@ -663,22 +663,13 @@ public:
     // rho_vap = 0.31*rho_sat according to Anisimov and Khokhlov 1995
     const double vapor_density_inv =
       1.0 / (0.31 * vapor_saturation_density_value);
-    
-    double expansion_pressure = (std::abs(saturation_pressure_value) < 1e-16) ? 0.0 : -mass_flux_value * mass_flux_value *
-      (liquid_density_inv - vapor_density_inv);
-    double pressure = expansion_pressure
-       +
-      recoil_pressure_coefficient * saturation_pressure_value;
-      
-    // std::cout<< "mass_flux_value = " << mass_flux_value << std::endl;
-    // std::cout<< "saturation_pressure_value = " << saturation_pressure_value << std::endl;
-    // std::cout<< "vapor_saturation_density_value = " << vapor_saturation_density_value << std::endl;
-    // std::cout<< "expansion = " << expansion_pressure << std::endl;
-    // std::cout<< "recoil_pressure = " << recoil_pressure_coefficient * saturation_pressure_value << std::endl;
-    // 
-    // std::cout<< "pressure = " << pressure << std::endl;
-    
-    
+
+    double expansion_pressure = (std::abs(saturation_pressure_value) < 1e-16) ?
+                                  0.0 :
+                                  -mass_flux_value * mass_flux_value *
+                                    (liquid_density_inv - vapor_density_inv);
+    double pressure           = expansion_pressure +
+                      recoil_pressure_coefficient * saturation_pressure_value;
 
     return std::max(pressure - ambient_pressure, 0.0);
   }
@@ -772,7 +763,7 @@ private:
   const double ambient_pressure;
   const double ambient_gas_density_inv;
   const double liquid_density_inv;
-  
+
   const double universal_gas_constant;
 };
 
