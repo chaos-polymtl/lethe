@@ -1383,6 +1383,7 @@ namespace Parameters
     double ambient_pressure;
     double ambient_gas_density;
     double liquid_density;
+    double universal_gas_constant;
 
     static void
     declare_parameters(ParameterHandler &prm);
