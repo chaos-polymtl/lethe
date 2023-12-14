@@ -1277,7 +1277,7 @@ IBParticlesDEM<dim>::integrate_particles_motion(const double dt,
                       angle_update_vector /
                         angle_update_vector.norm(),
                       angle_update_vector.norm()* dt_dem) *
-                    dem_particles[p_i].rotation_matrix;
+                    last_orientation_matrix[p_i];
                   dem_particles[p_i].orientation =
                     dem_particles[p_i].shape->rotation_matrix_to_xyz_angles(
                       new_rotation_matrix);
