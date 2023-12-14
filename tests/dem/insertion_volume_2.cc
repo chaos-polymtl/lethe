@@ -15,7 +15,7 @@
  */
 
 /**
- * @brief Inserting particles using volume insertion.
+ * @brief Inserting particles using volume insertion class.
  */
 
 // Deal.II includes

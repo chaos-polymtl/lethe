@@ -14,7 +14,6 @@
  * ---------------------------------------------------------------------
  *
  */
-#include <algorithm>
 #include <cmath>
 #include <fstream>
 #include <iostream>
@@ -65,7 +64,6 @@ public:
    * @param d_standard_deviation Standard deviation of the diameter for a certain
    * normal distribution.
    * @param random_seed Random number seed for the diameter generation.
-   *
    */
   NormalDistribution(const double       &d_average,
                      const double       &d_standard_deviation,
@@ -162,6 +160,7 @@ public:
   /**
    * @brief The constructor stores the parameters necessary to define the histogram
    * distribution.
+   *
    * @param d_list Vector of diameter values.
    * @param d_probabilities Vector of probability values based on volume fraction
    * with respect to each diameter value.

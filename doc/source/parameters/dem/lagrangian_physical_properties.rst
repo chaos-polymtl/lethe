@@ -82,7 +82,7 @@ In this subsection, gravitational acceleration, and the physical properties of t
 
 * For a ``custom`` distribution, the ``custom diameters`` parameter defines the different diameter values used when generating particles. The ``custom probabilities`` parameter defines the probabilities corresponding to each diameter value previously declared based on volume fraction, not on the number of particles. Both list must have the same length.
 
-* For a ``normal`` or a ``custom`` distribution, the ``random seed distribution`` parameter defines the random seed at which the random numbers will be generated . These random numbers are being used when generating the diameter values for these two distributions.
+* For a ``normal`` or a ``custom`` distribution, the ``random seed distribution`` parameter defines the random seed at which the random numbers will be generated . These random numbers are being used when generating the diameter values.
 
 * The ``number of particles`` parameter defines the number of particles for each type.
 
