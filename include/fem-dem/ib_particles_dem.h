@@ -146,6 +146,33 @@ public:
 
 
   /**
+   * @brief Calculates non-linear (Hertzian) force between two object
+   *
+   * @param dt_dem The sub time stepping time step.
+   *
+   * @param contact_force a vector containing the contact force between particles
+   *
+   * @param contact_force a vector containing the contact torques between particles
+   */
+  void
+  calculate_contact_force(const double                         normal_overlap,
+                          particle_particle_contact_info<dim> &contact_info,
+                          Tensor<1, 3>                        &normal_force,
+                          Tensor<1, 3>                        &tangential_force,
+                          Tensor<1, 3>                        &particle_one_tangential_torque,
+                          Tensor<1, 3>                        &particle_two_tangential_torque,
+                          Tensor<1, 3>                        &rolling_resistance_torque,
+                          IBParticle<dim>                     &particle_one,
+                          IBParticle<dim>                     &particle_two,
+                          const Point<dim>                    &particle_one_location,
+                          const Point<dim>                    &particle_two_location,
+                          const double                         dt,
+                          const double                         particle_one_radius,
+                          const double                         particle_two_radius,
+                          const double                         particle_one_mass,
+                          const double                         particle_two_mass);
+
+  /**
    *  @brief Calculates particle-particle lubrication force. The force is based on the formula from
    *  Microhydrodynamics: Principles and Selected Applications by Kim, Sangtae;
    * Karrila, Seppo J. ISBN 13: 9780750691734

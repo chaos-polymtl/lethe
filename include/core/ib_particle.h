@@ -213,7 +213,7 @@ public:
 
   /**
    * @brief
-   * Sets the orientation of the particle and dependent members to the argument
+   * Sets the orientation of the particle and dependent members to the argument. This include the shape and the rotation matrix that describes the orientation.
    *
    * @param orientation The new orientation to set the particle at
    */

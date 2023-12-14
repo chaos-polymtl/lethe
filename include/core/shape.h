@@ -134,6 +134,18 @@ public:
     const typename DoFHandler<dim>::active_cell_iterator cell,
     const unsigned int                                   component = 0);
 
+  /**
+   * @brief Return the smoothed maximum of two variables used for shape contact.
+   * @param a first variable
+   * @param b second variable
+   */
+  double
+  smooth_max(double a, double b)
+  {
+    double smooth_factor = 10;
+    return (a * std::exp(a * smooth_factor) + b * std::exp(b * smooth_factor)) /
+           ((std::exp(a * smooth_factor) + std::exp(b * smooth_factor)));
+  }
 
   /**
    * @brief Return the distance and normal between the current shape with the shape given in argument.
@@ -155,7 +167,6 @@ public:
     Point<dim>                  contact_point;
     std::vector<Tensor<1, dim>> search_direction;
 
-
     if constexpr (dim == 2)
       {
         search_direction.push_back(Tensor<1, dim>({1.0, 0.0}));
@@ -172,6 +183,7 @@ public:
         search_direction.push_back(Tensor<1, dim>({0.0, 0.0, 1.0}));
         search_direction.push_back(Tensor<1, dim>({0.0, 0.0, -1.0}));
       }
+
     for (unsigned int i = 0; i < candidate_points.size(); ++i)
       {
         Tensor<1, dim>     current_normal;
@@ -373,18 +385,6 @@ public:
   }
 
 
-  /**
-   * @brief Return the smoothed maximum of two variables used for shape contact.
-   * @param a first variable
-   * @param b second variable
-   */
-  double
-  smooth_max(double a, double b)
-  {
-    double smooth_factor = 10;
-    return (a * std::exp(a * smooth_factor) + b * std::exp(b * smooth_factor)) /
-           ((std::exp(a * smooth_factor) + std::exp(b * smooth_factor)));
-  }
 
   /**
    * @brief Return the distance and normal between the current shape with the shape given in argument.
@@ -392,7 +392,7 @@ public:
    * the evaluation point
    * @param shape The shape with which the distance is evaluated
    * @param cell The cell that is likely to contain the evaluation point
-   * @param candidate_points This is the initial point used in the calculation.
+   * @param candidate_points This is the initial points used in the calculation.
    */
   virtual std::tuple<double, Tensor<1, dim>, Point<dim>>
   distance_to_shape(Shape<dim>              &shape,
@@ -403,7 +403,6 @@ public:
     Tensor<1, dim>              normal;
     Point<dim>                  contact_point;
     std::vector<Tensor<1, dim>> search_direction;
-
 
     if constexpr (dim == 2)
       {
@@ -426,6 +425,7 @@ public:
         Tensor<1, dim>     current_normal;
         Tensor<1, dim>     previous_normal;
         Point<dim>         current_point = candidate_points[i];
+
         unsigned int       iteration     = 0;
         const unsigned int iteration_max = 2e2;
 
@@ -560,24 +560,9 @@ public:
                       smooth_max(value_first_component, value_second_component);
                     if (new_distance < current_distance - precision*precision)
                       {
+                        max_step = (new_point-previous_position).norm();
                         current_distance = new_distance;
                         current_point    = new_point;
-                      }
-                    else
-                      {
-                        new_point = current_point +
-                                    (new_point - previous_position) /
-                                      (new_point - previous_position).norm() *
-                                      max_step;
-                        value_first_component  = this->value(new_point);
-                        value_second_component = shape.value(new_point);
-                        new_distance = smooth_max(value_first_component,
-                                                  value_second_component);
-                        if (new_distance < current_distance - precision*precision)
-                          {
-                            current_distance = new_distance;
-                            current_point    = new_point;
-                          }
                       }
                   }
 
@@ -608,7 +593,7 @@ public:
             previous_position = current_point;
             previous_normal   = current_normal;
             iteration++;
-
+            //std::cout<<"iteration "<< iteration <<" current_distance "<<current_distance<<" step_size "<< max_step<<" current_point "<<current_point <<std::endl;
           }
 
         if (distance > current_distance)
@@ -975,6 +960,19 @@ public:
   get_shape_manifold() override;
 
 
+  std::tuple<double, Tensor<1, dim>, Point<dim>>
+  distance_to_shape_with_cell_guess(
+    Shape<dim>                                           &shape,
+    const typename DoFHandler<dim>::active_cell_iterator &cell,
+    std::vector<Point<dim>>                              &candidate_points,
+    double                                                precision = 1e-6) override;
+
+  std::tuple<double, Tensor<1, dim>, Point<dim>>
+  distance_to_shape(
+    Shape<dim>                                           &shape,
+    std::vector<Point<dim>>                              &candidate_points,
+    double                                                precision = 1e-6) override;
+
 
 private:
 #if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 4)
@@ -1199,9 +1197,9 @@ public:
                         pow(abs(centered_point[d]), exponents[d]) /
                         (centered_point[d] + DBL_MIN);
         else
-          gradient[d] = exponents[d] *
+          gradient[d] = 1*exponents[d] *
                         pow(abs(half_lengths[d]), -exponents[d]) *
-                        pow(abs(epsilon), exponents[d]) / (epsilon + DBL_MIN);
+                        pow(abs(epsilon), exponents[d]) / (epsilon + epsilon*epsilon+ DBL_MIN);
       }
     return gradient;
   }
