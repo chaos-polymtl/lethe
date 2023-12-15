@@ -30,14 +30,14 @@ All files mentioned below are located in the example's folder (``/examples/sharp
 
 **RBF preparation files:**
 
-* Parameter file: ``/rbf_generation/RBF.param``;
-* Surface grid file: ``/rbf_generation/helix.stl``. This surface grid was taken from `[1] <https://www.thingiverse.com/thing:3915237>`_ under CC BY 4.0.
+* Parameter file: ``rbf_generation/RBF.param``;
+* Surface grid file: ``rbf_generation/helix.stl``. This surface grid was taken from `[1] <https://www.thingiverse.com/thing:3915237>`_ under CC BY 4.0.
 
 **Lethe's fluid simulation files:**
 
-* Composite geometry file: ``/lethe_sharp_simulation/mixer_long.composite``;
-* Parameter file: ``/lethe_sharp_simulation/flow_in_long_mixer.prm``;
-* RBF geometry file: ``/lethe_sharp_simulation/RBF_helix.output``. The extension is ``.output`` because it was named from a `bitpit <https://github.com/optimad/bitpit>`_ perspective.
+* Composite geometry file: ``lethe_sharp_simulation/mixer_long.composite``;
+* Parameter file: ``lethe_sharp_simulation/flow_in_long_mixer.prm``;
+* RBF geometry file: ``lethe_sharp_simulation/RBF_helix.output``. The extension is ``.output`` because it was named from a `bitpit <https://github.com/optimad/bitpit>`_ perspective.
 
 
 -----------------------
@@ -206,17 +206,18 @@ The mesh is a simple hyper rectangle, large enough to encompass the mixer with i
       set initial refinement = 3
     end
 
-Mesh adaptation ``type`` is set to ``kelly``, to allow adaptive refinement at the solid surface. This is necessary for simulations of this type because of the prohibitive mesh size required when only uniform refinement is used. Setting ``max refinement level = 5`` allows for two levels of adaptive refinement from the uniform ``initial refinement = 3`` defined in the ``mesh`` section. The ``frequency = 0`` ensures that no refinement occurs between time steps, as it is not necessary here.
+Mesh adaptation ``type`` is set to ``kelly``, to allow adaptive refinement at the solid surface. This is necessary for simulations of this type because of the prohibitive mesh size required when only uniform refinement is used. Setting ``max refinement level = 5`` allows for two levels of adaptive refinement from the uniform ``initial refinement = 3`` defined in the ``mesh`` section. The ``frequency = 0`` ensures that no refinement occurs between time steps, as it is not necessary here. The ``initial refinement steps = 0`` to highlight that no initial refinement is requested here; the initial refinements are requested from ``subsection particles`` because they are base on the solid geometry.
 
 .. code-block:: text
 
     subsection mesh adaptation
-      set type                 = kelly
-      set fraction type        = number
-      set max number elements  = 2000000
-      set max refinement level = 5
-      set min refinement level = 0
-      set frequency            = 0
+      set type                     = kelly
+      set fraction type            = number
+      set max number elements      = 2000000
+      set max refinement level     = 5
+      set min refinement level     = 0
+      set frequency                = 0
+      set initial refinement steps = 0
     end
 
 
