@@ -117,7 +117,7 @@ The parameter file (``RBF.param``) contains:
 #. The mesh range of ``0.1`` means that there is at least 10% of margin on each side of the object, so the collection of RBF nodes are encompassing the whole object.
 
 
-Assuming that the ``RBF_example_00001`` executable is within your `$PATH`, from the ``/rbf_generation/`` directory, we can launch the RBF generation using the command line:
+Assuming that the ``RBF_example_00001`` executable is within your `$PATH` or copied to ``/rbf_generation/`` directory, we can launch the RBF generation from ``/rbf_generation/`` using the command line:
 
 .. code-block:: text
   :class: copy-button
