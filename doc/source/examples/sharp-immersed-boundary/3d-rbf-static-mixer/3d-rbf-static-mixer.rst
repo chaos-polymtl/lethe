@@ -35,9 +35,9 @@ All files mentioned below are located in the example's folder (``/examples/sharp
 
 **Lethe's fluid simulation files:**
 
-* RBF geometry file: ``/lethe_sharp_simulation/RBF_helix.output``. The extension is ``.output`` because it was named from a `bitpit <https://github.com/optimad/bitpit>`_ perspective;
 * Composite geometry file: ``/lethe_sharp_simulation/mixer_long.composite``;
-* Parameter file: ``/lethe_sharp_simulation/flow_in_long_mixer.prm``.
+* Parameter file: ``/lethe_sharp_simulation/flow_in_long_mixer.prm``;
+* RBF geometry file: ``/lethe_sharp_simulation/RBF_helix.output``. The extension is ``.output`` because it was named from a `bitpit <https://github.com/optimad/bitpit>`_ perspective.
 
 
 -----------------------
