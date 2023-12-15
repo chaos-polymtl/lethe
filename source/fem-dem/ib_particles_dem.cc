@@ -147,7 +147,7 @@ IBParticlesDEM<dim>::calculate_pp_contact_force(
             {
               const Point<dim> particle_one_location = particle_one.position;
               const Point<dim> particle_two_location = particle_two.position;
-              particle_particle_contact_info<dim> contact_info;
+              ContactInfo contact_info;
 
               // Check if there is already information on the contact of these
               // to particles. If not initialize it in the contact map with 0
@@ -208,6 +208,10 @@ IBParticlesDEM<dim>::calculate_pp_contact_force(
                   contact_point=std::get<Point<dim>>(contact_state);
                   normal=particle_one.shape->gradient(contact_point);
                 }
+              Point<3> contact_point_3d= point_nd_to_3d(contact_point);
+              Tensor<1,3> contact_normal= tensor_nd_to_3d(normal);
+              double contact_radius_particle_one=particle_one.radius;
+              double contact_radius_particle_two=particle_two.radius;
               if (normal_overlap > 0)
                 // This means that the adjacent particles are in contact
                 {
@@ -216,26 +220,37 @@ IBParticlesDEM<dim>::calculate_pp_contact_force(
                   Tensor<1, 3> particle_one_tangential_torque;
                   Tensor<1, 3> particle_two_tangential_torque;
                   Tensor<1, 3> rolling_resistance_torque;
+                  Tensor<1, 3> particle_one_velocity_3d = tensor_nd_to_3d(particle_one.velocity);
+                  Tensor<1, 3> particle_two_velocity_3d = tensor_nd_to_3d(particle_two.velocity);
+                  calculate_force_model(normal_overlap,
+                                        contact_info,
+                                        contact_point_3d,
+                                        contact_normal,
+                                        normal_force,
+                                        tangential_force,
+                                        rolling_resistance_torque,
+                                        particle_one.position,
+                                        particle_one_velocity_3d,
+                                        particle_one.omega,
+                                        particle_one.mass,
+                                        contact_radius_particle_one,
+                                        particle_one.youngs_modulus,
+                                        particle_one.poisson_ratio,
+                                        particle_one.restitution_coefficient,
+                                        particle_one.friction_coefficient,
+                                        particle_one.rolling_friction_coefficient,
+                                        particle_two.position,
+                                        particle_two_velocity_3d,
+                                        particle_two.omega,
+                                        particle_two.mass,
+                                        contact_radius_particle_two,
+                                        particle_two.youngs_modulus,
+                                        particle_two.poisson_ratio,
+                                        particle_two.restitution_coefficient,
+                                        particle_two.friction_coefficient,
+                                        particle_two.rolling_friction_coefficient,
+                                        dt_dem);
 
-                  particle_particle_contact_force_object
-                    ->calculate_IB_particle_particle_contact_force(
-                      normal_overlap,
-                      pp_contact_map[particle_one.particle_id]
-                                    [particle_two.particle_id],
-                      normal_force,
-                      tangential_force,
-                      particle_one_tangential_torque,
-                      particle_two_tangential_torque,
-                      rolling_resistance_torque,
-                      particle_one,
-                      particle_two,
-                      particle_one_location,
-                      particle_two_location,
-                      dt_dem,
-                      particle_one.radius,
-                      particle_two.radius,
-                      particle_one.mass,
-                      particle_two.mass);
 
                   if (typeid(*particle_one.shape) == typeid(Sphere<dim>) &&
                       typeid(*particle_two.shape) != typeid(Sphere<dim>))
@@ -306,7 +321,7 @@ IBParticlesDEM<dim>::calculate_pp_contact_force(
                     particle_one_tangential_torque + rolling_resistance_torque+cross_product_3d((point_nd_to_3d(contact_point)- point_nd_to_3d(particle_one.position)),-(normal_force+tangential_force));
                   contact_torque[particle_two.particle_id] =
                     contact_torque[particle_two.particle_id] -
-                    particle_two_tangential_torque - rolling_resistance_torque+cross_product_3d((point_nd_to_3d(contact_point)- point_nd_to_3d(particle_one.position)),(normal_force+tangential_force));;
+                    particle_two_tangential_torque - rolling_resistance_torque+cross_product_3d((point_nd_to_3d(contact_point)- point_nd_to_3d(particle_two.position)),(normal_force+tangential_force));;
                 }
 
               else
@@ -575,7 +590,7 @@ IBParticlesDEM<dim>::calculate_pw_contact_force(
               auto &boundary_cell = best_index_of_face->second;
 
               auto boundary_cell_information = boundary_cell;
-              particle_wall_contact_info<dim> contact_info;
+              ContactInfo contact_info;
 
               // Check if there is already information on the contact between this particle and this boundary contact point. If not initialize the contact history with 0 values.
               try
@@ -591,7 +606,6 @@ IBParticlesDEM<dim>::calculate_pw_contact_force(
                       contact_info.tangential_relative_velocity[d] = 0;
                     }
 
-                  contact_info.boundary_id              = 0;
                   contact_info.normal_overlap           = 0;
                   contact_info.normal_relative_velocity = 0;
 
@@ -609,6 +623,7 @@ IBParticlesDEM<dim>::calculate_pw_contact_force(
 
               Point<3> particle_position_3d = point_nd_to_3d(particle.position);
               Point<3> point_on_boundary_3d = point_nd_to_3d(point_on_boundary);
+              Tensor<1, 3> particle_velocity_3d = tensor_nd_to_3d(particle.velocity);
 
               Tensor<1, 3> point_to_particle_vector =
                 particle_position_3d - point_on_boundary_3d;
@@ -656,13 +671,7 @@ IBParticlesDEM<dim>::calculate_pw_contact_force(
 
               contact_point_candidate.push_back(point_on_boundary);
               // Use the last contact point as an initial guess if the level set is smaller than the wall initial guess.
-              /*if(particle.get_levelset(previous_wall_contact_point[particle.particle_id])<particle.get_levelset(point_on_boundary)){
-                  contact_point_candidate.push_back(previous_wall_contact_point[particle.particle_id]);
-                }
-              else
-                {
-                  contact_point_candidate.push_back(point_on_boundary);
-                }*/
+
               // Find the normal overlap
               auto contact_state =
                 particle.shape->distance_to_shape(*contact_plane,
@@ -670,45 +679,15 @@ IBParticlesDEM<dim>::calculate_pw_contact_force(
               double   normal_overlap = -2 * std::get<double>(contact_state);
               Point<3> contact_point =
                 point_nd_to_3d(std::get<Point<dim>>(contact_state));
+              Tensor<1,3> contact_normal=-normal;
+
+              //Overide with a function that return the curvature radius at the contact point.
+              double contact_radius_particle_one=particle.radius;
 
               // Keep the last contact point as a initial guess for the next contact point.
               previous_wall_contact_point[particle.particle_id] =
                 std::get<Point<dim>>(contact_state);
 
-
-              /* // Find the closest point on the surface of the particle from
-               our initial guess on the boundary. Point<dim>
-               closest_point_on_the_particle;
-               particle.closest_surface_point(point_on_boundary,
-               closest_point_on_the_particle); Point<3>
-               closest_point_on_the_particle_3d=point_nd_to_3d(closest_point_on_the_particle);
-               //Project that point on the plane of contact.
-               Tensor<1, 3> projected_vector =
-               scalar_product((closest_point_on_the_particle_3d-point_on_boundary_3d),normal)/normal.norm_square()*normal;
-
-               Point<3>
-               closest_point_on_the_boundary_3d=closest_point_on_the_particle_3d-
-               projected_vector; Point<dim> closest_point_on_the_boundary; if
-               constexpr (dim==2){
-                   closest_point_on_the_boundary=point_nd_to_2d(closest_point_on_the_boundary_3d);
-                 }
-               else{
-                   closest_point_on_the_boundary=closest_point_on_the_boundary_3d;
-                 }
-
-               normal_overlap =
-               -particle.get_levelset(closest_point_on_the_boundary);*/
-
-
-
-              /*if (Utilities::MPI::this_mpi_process(this->mpi_communicator) ==
-                0  )
-                {
-                  std::cout << "normal_overlap " << normal_overlap << std::endl;
-                  std::cout<<  "point_on_boundary
-                "<<point_on_boundary<<std::endl; std::cout << "contact point "
-                            << contact_point << std::endl;
-                }*/
 
               if (normal_overlap > 0)
                 {
@@ -720,30 +699,47 @@ IBParticlesDEM<dim>::calculate_pw_contact_force(
                   Tensor<1, 3> tangential_force;
                   Tensor<1, 3> tangential_torque;
                   Tensor<1, 3> rolling_resistance_torque;
+                  Tensor<1,3> wall_velocity;
+                  Tensor<1,3> wall_angular_velocity;
+                  Point<dim> wall_center_of_rotation;
 
                   pw_contact_map[particle.particle_id][boundary_index]
                     .normal_overlap = normal_overlap;
                   pw_contact_map[particle.particle_id][boundary_index]
                     .normal_vector = normal;
-                  pw_contact_map[particle.particle_id][boundary_index]
-                    .boundary_id = 0;
 
-                  particle_wall_contact_force_object
-                    ->calculate_IB_particle_wall_contact_force(
-                      pw_contact_map[particle.particle_id][boundary_index],
-                      normal_force,
-                      tangential_force,
-                      tangential_torque,
-                      rolling_resistance_torque,
-                      particle,
-                      wall_youngs_modulus,
-                      wall_poisson_ratio,
-                      wall_restitution_coefficient,
-                      wall_friction_coefficient,
-                      wall_rolling_friction_coefficient,
-                      dt_dem,
-                      particle.mass,
-                      particle.radius);
+                  calculate_force_model(normal_overlap,
+                                        contact_info,
+                                        contact_point,
+                                        contact_normal,
+                                        normal_force,
+                                        tangential_force,
+                                        rolling_resistance_torque,
+                                        particle.position,
+                                        particle_velocity_3d,
+                                        particle.omega,
+                                        particle.mass,
+                                        contact_radius_particle_one,
+                                        particle.youngs_modulus,
+                                        particle.poisson_ratio,
+                                        particle.restitution_coefficient,
+                                        particle.friction_coefficient,
+                                        particle.rolling_friction_coefficient,
+                                        wall_center_of_rotation,
+                                        wall_velocity,
+                                        wall_angular_velocity,
+                                        1,//wall mass
+                                        1,//wall curvature radius,
+                                        wall_youngs_modulus,
+                                        wall_poisson_ratio,
+                                        wall_restitution_coefficient,
+                                        wall_friction_coefficient,
+                                        wall_rolling_friction_coefficient,
+                                        dt_dem);
+
+
+
+
                   // Updating the force of particles in the particle handler
                   contact_force[particle.particle_id] -=
                     (normal_force + tangential_force);
@@ -752,6 +748,7 @@ IBParticlesDEM<dim>::calculate_pw_contact_force(
                     tangential_torque + rolling_resistance_torque +
                     cross_product_3d((contact_point - particle_position_3d),
                                      -(normal_force + tangential_force));
+                  //std::cout<<"contact_force normal "<<normal_force<<"  tangential force "<< tangential_force << "contact point "<<contact_point << " particle_position_3d " << particle_position_3d  <<std::endl;
                 }
               else
                 {
@@ -897,6 +894,236 @@ IBParticlesDEM<dim>::calculate_pw_lubrication_force(
     }
 }
 
+
+template <int dim>
+void
+IBParticlesDEM<dim>::calculate_force_model(const double                         normal_overlap,
+                                           ContactInfo                         &contact_info,
+                                           Point<3>                            &contact_point,
+                                           Tensor<1, 3>                        &contact_normal,
+                                           Tensor<1, 3>                        &normal_force,
+                                           Tensor<1, 3>                        &tangential_force,
+                                           Tensor<1, 3>                        &rolling_resistance_torque,
+                                           Point<dim>                          &particle_one_position,
+                                           Tensor<1,3  >                       &particle_one_velocity,
+                                           Tensor<1,3>                         &particle_one_omega,
+                                           const double                         particle_one_mass,
+                                           const double                         particle_one_radius,
+                                           const double                         particle_one_youngs_modulus,
+                                           const double                         particle_one_poisson_ratio,
+                                           const double                         particle_one_restitution_coefficient,
+                                           const double                         particle_one_friction_coefficient,
+                                           const double                         particle_one_rolling_friction_coefficient,
+                                           Point<dim>                          &particle_two_position,
+                                           Tensor<1,3>                         &particle_two_velocity,
+                                           Tensor<1,3>                         &particle_two_omega,
+                                           const double                         particle_two_mass,
+                                           const double                         particle_two_radius,
+                                           const double                         particle_two_youngs_modulus,
+                                           const double                         particle_two_poisson_ratio,
+                                           const double                         particle_two_restitution_coefficient,
+                                           const double                         particle_two_friction_coefficient,
+                                           const double                         particle_two_rolling_friction_coefficient,
+                                           const double                         dt)
+{
+
+
+
+
+
+  double effective_youngs_modulus;
+  double effective_shear_modulus;
+  double effective_coefficient_of_restitution;
+  double effective_coefficient_of_friction;
+  double effective_coefficient_of_rolling_friction;
+  double model_parameter_beta;
+
+
+  // Define local variables which will be used within the contact calculation
+  //  Namely: normal and tangential contact forces, tangential and rolling
+  //  torques, normal unit vector of the contact and contact relative velocity
+  //  in the normal direction
+  Tensor<1, 3> normal_unit_vector;
+  double       normal_relative_velocity_value;
+  Tensor<1, 3> tangential_relative_velocity;
+
+  // DEM::PropertiesIndex::type is the first (0) property of particles in the
+  // DEM solver. For the IB particles, the first property is ID. For force and
+  // torque calculations, we need pairwise properties (such as effective
+  // Young's modulus, effective coefficient of restitution, etc.) We rewrite
+  // these pairwise properties by using the ID of IB particles (using
+  // DEM::PropertiesIndex::type) and use them in force calculations.
+
+  effective_youngs_modulus=
+    (particle_one_youngs_modulus * particle_two_youngs_modulus) /
+    ((particle_two_youngs_modulus *
+      (1.0 - particle_one_poisson_ratio * particle_one_poisson_ratio)) +
+     (particle_one_youngs_modulus *
+      (1.0 - particle_two_poisson_ratio * particle_two_poisson_ratio)) +
+     DBL_MIN);
+
+  effective_shear_modulus=
+    (particle_one_youngs_modulus * particle_two_youngs_modulus) /
+    (2.0 *
+       ((particle_two_youngs_modulus * (2.0 - particle_one_poisson_ratio) *
+         (1.0 + particle_one_poisson_ratio)) +
+        (particle_one_youngs_modulus * (2.0 - particle_two_poisson_ratio) *
+         (1.0 + particle_two_poisson_ratio))) +
+     DBL_MIN);
+
+  effective_coefficient_of_restitution=
+    harmonic_mean(particle_one_restitution_coefficient,
+                  particle_two_restitution_coefficient);
+  effective_coefficient_of_friction =
+    harmonic_mean(particle_one_friction_coefficient,
+                  particle_two_friction_coefficient);
+  effective_coefficient_of_rolling_friction =
+    harmonic_mean(particle_one_rolling_friction_coefficient,
+                  particle_two_rolling_friction_coefficient);
+
+  const double restitution_coefficient_particle_log = std::log(
+    effective_coefficient_of_restitution);
+
+  model_parameter_beta =
+    restitution_coefficient_particle_log /
+    sqrt(restitution_coefficient_particle_log *
+           restitution_coefficient_particle_log +
+         9.8696);
+
+  // Since the normal overlap is already calculated we update
+  // this element of the container here. The rest of information
+  // are updated using the following function
+
+  ////////////// Contact info ////////////////
+
+  // Calculation of the normal unit contact vector
+  normal_unit_vector = contact_normal;
+
+  // Defining relative contact velocity
+  Tensor<1, 3> contact_relative_velocity;
+
+  // Assigning velocities and angular velocities of particles
+  Tensor<1,3> velocity_of_particle_one_at_contact_point=particle_one_velocity+cross_product_3d(particle_one_omega,(contact_point-point_nd_to_3d(particle_one_position)));
+  Tensor<1,3> velocity_of_particle_two_at_contact_point=particle_two_velocity+cross_product_3d(particle_two_omega,(contact_point-point_nd_to_3d(particle_two_position)));
+  contact_relative_velocity=(velocity_of_particle_one_at_contact_point-velocity_of_particle_two_at_contact_point);
+
+
+  // Calculation of normal relative velocity. Note that in the
+  // following line the product acts as inner product since both
+  // sides are vectors, while in the second line the product is
+  // scalar and vector product
+  normal_relative_velocity_value =
+    contact_relative_velocity * normal_unit_vector;
+
+  // Calculation of tangential relative velocity
+  // v_rt = v_ij - (v_ij⋅n_ij)*n_ij
+  tangential_relative_velocity =
+    contact_relative_velocity -
+    (normal_relative_velocity_value * normal_unit_vector);
+
+  // Calculation of new tangential_overlap, since this value is
+  // history-dependent it needs the value at previous time-step
+  // This variable is the main reason that we have iteration over
+  // two different vectors : tangential_overlap of the particles
+  // which were already in contact needs to
+  // modified using its history, while the tangential_overlaps of
+  // new particles are equal to zero
+  // delta_t_new = delta_t_old + v_rt*dt
+  contact_info.tangential_relative_velocity.push_back(tangential_relative_velocity);
+  contact_info.tangential_overlap += tangential_relative_velocity * dt;
+  ///////////// Hertz contact force model /////////////////
+
+
+  // Calculation of effective radius and mass
+  double effective_mass = (particle_one_mass *
+                           particle_two_mass) /
+                   (particle_one_mass +
+                           particle_two_mass);
+  double effective_radius =
+    (particle_one_radius *
+     particle_two_radius) /
+    ( (particle_one_radius +
+          particle_two_radius));
+
+  const double radius_times_overlap_sqrt =
+    sqrt(effective_radius * normal_overlap);
+  const double model_parameter_sn =
+    2 *
+    effective_youngs_modulus*
+    radius_times_overlap_sqrt;
+
+  // Calculation of normal and tangential spring and dashpot constants
+  // using particle properties
+  double normal_spring_constant = 0.66665 * model_parameter_sn;
+  double normal_damping_constant =
+    -1.8257 *
+    model_parameter_beta *
+    sqrt(model_parameter_sn *effective_mass);
+  double tangential_spring_constant =
+    8.0 *
+      effective_shear_modulus *
+      radius_times_overlap_sqrt +
+    DBL_MIN;
+
+
+  // Calculation of normal force using spring and dashpot normal forces
+  normal_force =
+    ((normal_spring_constant * normal_overlap) * normal_unit_vector) +
+    ((normal_damping_constant * normal_relative_velocity_value) *
+     normal_unit_vector);
+
+  // Calculation of tangential force using spring and dashpot tangential
+  // forces. Since we need dashpot tangential force in the gross sliding
+  // again, we define it as a separate variable
+  tangential_force =
+    tangential_spring_constant * contact_info.tangential_overlap;
+
+  double coulomb_threshold =
+    effective_coefficient_of_friction *
+    normal_force.norm();
+
+  // Check for gross sliding
+  if (tangential_force.norm() > coulomb_threshold)
+    {
+      // Gross sliding occurs and the tangential overlap and tangential
+      // force are limited to Coulumb's criterion
+      tangential_force =
+        coulomb_threshold *
+        (tangential_force / (tangential_force.norm() + DBL_MIN));
+    }
+
+
+
+  // Rolling resistance torque
+    rolling_resistance_torque = 0*effective_coefficient_of_rolling_friction;
+
+  /*if constexpr (rolling_friction_model ==
+                Parameters::Lagrangian::RollingResistanceMethod::
+                  constant_resistance)
+    rolling_resistance_torque = constant_rolling_resistance_torque(
+      this->effective_radius,
+      particle_one_properties,
+      particle_two_properties,
+      this->effective_coefficient_of_rolling_friction[vec_particle_type_index(
+        particle_one_type, particle_two_type)],
+      normal_force.norm(),
+      normal_unit_vector);
+  if constexpr (rolling_friction_model ==
+                Parameters::Lagrangian::viscous_resistance)
+    rolling_resistance_torque = viscous_rolling_resistance_torque(
+      this->effective_radius,
+      particle_one_properties,
+      particle_two_properties,
+      this->effective_coefficient_of_rolling_friction[vec_particle_type_index(
+        particle_one_type, particle_two_type)],
+      normal_force.norm(),
+      normal_unit_vector);*/
+
+}
+
+
+
+
 template <int dim>
 void
 IBParticlesDEM<dim>::integrate_particles_motion(const double dt,
@@ -961,6 +1188,9 @@ IBParticlesDEM<dim>::integrate_particles_motion(const double dt,
       std::vector<Point<dim>>   last_position;
       std::vector<Tensor<1, 3>> last_omega;
       std::vector<Tensor<2,3>> last_orientation_matrix;
+      auto last_pp_contact_info=pp_contact_map;
+      auto last_pw_contact_info=pw_contact_map;
+
       last_velocity = std::vector<Tensor<1, 3>>(dem_particles.size());
       last_position = std::vector<Point<dim>>(dem_particles.size());
       last_omega    = std::vector<Tensor<1, 3>>(dem_particles.size());
@@ -1010,19 +1240,6 @@ IBParticlesDEM<dim>::integrate_particles_motion(const double dt,
           std::fill(lubrication_wall_torque.begin(),
                     lubrication_wall_torque.end(),
                     0);
-          // Calculate particle-particle and particle-wall contact force
-          calculate_pp_contact_force(dt_dem, contact_force, contact_torque);
-          calculate_pw_contact_force(dt_dem,
-                                     contact_wall_force,
-                                     contact_wall_torque);
-          //calculate_pp_lubrication_force(
-           // dt_dem, h_max, h_min, mu, lubrication_force, lubrication_torque);
-          calculate_pw_lubrication_force(dt_dem,
-                                         h_max,
-                                         h_min,
-                                         mu,
-                                         lubrication_wall_force,
-                                         lubrication_wall_torque);
 
           // define local time of the rk step
           double local_dt = dt_dem * 0.5;
@@ -1030,6 +1247,30 @@ IBParticlesDEM<dim>::integrate_particles_motion(const double dt,
             {
               local_dt = local_dt * 2;
             }
+
+
+          // Calculate particle-particle and particle-wall contact force
+          calculate_pp_contact_force(local_dt , contact_force, contact_torque);
+          calculate_pw_contact_force(local_dt ,
+                                     contact_wall_force,
+                                     contact_wall_torque);
+
+          if(parameters->enable_lubrication_force)
+            {
+              calculate_pp_lubrication_force(local_dt,
+                                             h_max,
+                                             h_min,
+                                             mu,
+                                             lubrication_force,
+                                             lubrication_torque);
+              calculate_pw_lubrication_force(local_dt,
+                                             h_max,
+                                             h_min,
+                                             mu,
+                                             lubrication_wall_force,
+                                             lubrication_wall_torque);
+            }
+
 
           for (unsigned int p_i = 0; p_i < dem_particles.size(); ++p_i)
             {
@@ -1240,6 +1481,42 @@ IBParticlesDEM<dim>::integrate_particles_motion(const double dt,
                     dem_particles[p_i].orientation);
                 }
             }
+
+          // reset the contact overlap for the next RK step.
+          for (auto it = pw_contact_map.begin(); it != pw_contact_map.end(); it++)
+            {
+              unsigned int particle_id=it->first;
+              for (auto it2 = it->second.begin(); it2 != it->second.end(); it2++){
+                  unsigned int wall_id=it2->first;
+                  auto contact_info= it2->second;
+                  //Check if all 4 of the RK steps are in the contact info. If it is not the case, this means this is a new contact, or the contact ended. In this case, we simply take the last RK step register as the derivative for the integration.
+                  auto previous_contact_info_iterator=last_pw_contact_info.find(particle_id)->second.find(wall_id);
+                  if(previous_contact_info_iterator!=last_pw_contact_info.find(particle_id)->second.end())
+                    {
+                      contact_info.tangential_overlap=previous_contact_info_iterator->second.tangential_overlap;
+                    }
+                  else{
+                      contact_info.tangential_overlap =0;
+                    }
+                }
+            }
+          for (auto it = pp_contact_map.begin(); it != pp_contact_map.end(); it++)
+            {
+              unsigned int particle_one_id=it->first;
+              for (auto it2 = it->second.begin(); it2 != it->second.end(); it2++){
+                  unsigned int particle_two_id=it2->first;
+                  auto contact_info= it2->second;
+                  //Check if all 4 of the RK steps are in the contact info. If it is not the case, this means this is a new contact, or the contact ended. In this case, we simply take the last RK step register as the derivative for the integration.
+                  auto previous_contact_info_iterator=last_pp_contact_info.find(particle_one_id)->second.find(particle_two_id);
+                  if(previous_contact_info_iterator!=last_pp_contact_info.find(particle_one_id)->second.end())
+                    {
+                      contact_info.tangential_overlap=previous_contact_info_iterator->second.tangential_overlap;
+                    }
+                  else{
+                      contact_info.tangential_overlap =0;
+                    }
+                }
+            }
         }
 
 
@@ -1286,16 +1563,18 @@ IBParticlesDEM<dim>::integrate_particles_motion(const double dt,
               // Integration of the impulsion applied to the particle.
               // This is what will be transferred to the CFD to integrate the
               // particle.
-              dem_particles[p_i].impulsion += dt_dem * (k_impulsion[p_i][0]);
+              dem_particles[p_i].impulsion += dt_dem * (k_impulsion[p_i][0]+2*k_impulsion[p_i][1]+2*k_impulsion[p_i][2]+k_impulsion[p_i][3])/6;
 
               dem_particles[p_i].contact_impulsion +=
-                dt_dem * (k_contact_impulsion[p_i][0]);
+                dt_dem * (k_contact_impulsion[p_i][0]+2*k_contact_impulsion[p_i][1]+2*k_contact_impulsion[p_i][2]+k_contact_impulsion[p_i][3])/6;
 
               dem_particles[p_i].omega_impulsion +=
-                dt_dem * (k_omega_impulsion[p_i][0]);
+                dt_dem * (k_omega_impulsion[p_i][0]+2*k_omega_impulsion[p_i][1]+2*k_omega_impulsion[p_i][2]+k_omega_impulsion[p_i][3])/6;
 
               dem_particles[p_i].omega_contact_impulsion +=
-                dt_dem * (k_omega_contact_impulsion[p_i][0]);
+                dt_dem * (k_omega_contact_impulsion[p_i][0]+2*k_omega_impulsion[p_i][1]+2*k_omega_impulsion[p_i][2]+2*k_omega_impulsion[p_i][3])/6;
+
+
 
               if (Utilities::MPI::this_mpi_process(this->mpi_communicator) ==
                     0 and
@@ -1329,6 +1608,78 @@ IBParticlesDEM<dim>::integrate_particles_motion(const double dt,
           dem_particles[p_i].set_orientation(dem_particles[p_i].orientation);
         }
 
+      // RK4 for the particle wall tangential overlap
+      for (auto it = pw_contact_map.begin(); it != pw_contact_map.end(); it++)
+        {
+          unsigned int particle_id=it->first;
+          for (auto it2 = it->second.begin(); it2 != it->second.end(); it2++){
+              unsigned int wall_id=it2->first;
+              auto contact_info= it2->second;
+              //Check if all 4 of the RK steps are in the contact info. If it is not the case, this means this is a new contact, or the contact ended. In this case, we simply take the last RK step register as the derivative for the integration.
+              Tensor<1,3> previous_tangential_overlap;
+              auto previous_contact_info_iterator=last_pw_contact_info.find(particle_id)->second.find(wall_id);
+              if(previous_contact_info_iterator!=last_pw_contact_info.find(particle_id)->second.end())
+                {
+                  previous_tangential_overlap=previous_contact_info_iterator->second.tangential_overlap;
+                }
+              if (contact_info.tangential_relative_velocity.size() == 4)
+                {
+                  contact_info.tangential_overlap =
+                    previous_tangential_overlap +
+                    dt_dem / 6.0 *
+                      (contact_info.tangential_relative_velocity[0] +
+                       2 * contact_info.tangential_relative_velocity[1] +
+                       2 * contact_info.tangential_relative_velocity[2] +
+                       contact_info.tangential_relative_velocity[3]);
+                }
+              else if(contact_info.tangential_relative_velocity.size()>0){
+                  contact_info.tangential_overlap =
+                    previous_tangential_overlap +
+                    dt_dem*contact_info.tangential_relative_velocity[contact_info.tangential_relative_velocity.size()];
+                }
+              else{
+                  contact_info.tangential_overlap =0;
+                }
+              //clear the vector for the next set of 4 Rk steps
+              contact_info.tangential_relative_velocity.clear();
+            }
+        }
+      // Same for particle-particle tangential overlap
+      for (auto it = pp_contact_map.begin(); it != pp_contact_map.end(); it++)
+        {
+          unsigned int particle_one_id=it->first;
+          for (auto it2 = it->second.begin(); it2 != it->second.end(); it2++){
+              unsigned int particle_two_id=it2->first;
+              auto contact_info= it2->second;
+              //Check if all 4 of the RK steps are in the contact info. If it is not the case, this means this is a new contact, or the contact ended. In this case, we simply take the last RK step register as the derivative for the integration.
+              Tensor<1,3> previous_tangential_overlap;
+              auto previous_contact_info_iterator=last_pp_contact_info.find(particle_one_id)->second.find(particle_two_id);
+              if(previous_contact_info_iterator!=last_pp_contact_info.find(particle_one_id)->second.end())
+                {
+                  previous_tangential_overlap=previous_contact_info_iterator->second.tangential_overlap;
+                }
+              if (contact_info.tangential_relative_velocity.size() == 4)
+                {
+                  contact_info.tangential_overlap =
+                    previous_tangential_overlap +
+                    dt_dem / 6.0 *
+                      (contact_info.tangential_relative_velocity[0] +
+                       2 * contact_info.tangential_relative_velocity[1] +
+                       2 * contact_info.tangential_relative_velocity[2] +
+                       contact_info.tangential_relative_velocity[3]);
+                }
+              else if(contact_info.tangential_relative_velocity.size()>0){
+                  contact_info.tangential_overlap =
+                    previous_tangential_overlap +
+                    dt_dem*contact_info.tangential_relative_velocity[contact_info.tangential_relative_velocity.size()];
+                }
+              else{
+                  contact_info.tangential_overlap =0;
+                }
+              //clear the vector for the next set of 4 Rk steps
+              contact_info.tangential_relative_velocity.clear();
+            }
+        }
       t += dt_dem;
     }
 }
