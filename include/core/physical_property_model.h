@@ -38,7 +38,6 @@ enum field : int
   temperature,
   temperature_p1,
   temperature_p2,
-  temperature_p3,
   pressure,
   phase_order_cahn_hilliard
 };
@@ -77,7 +76,8 @@ public:
   {
     model_depends_on[shear_rate]                = false;
     model_depends_on[temperature]               = false;
-    model_depends_on[temperature_p1]      = false;
+    model_depends_on[temperature_p1]           = false;
+    model_depends_on[temperature_p2]           = false;
     model_depends_on[pressure]                  = false;
     model_depends_on[phase_order_cahn_hilliard] = false;
   }

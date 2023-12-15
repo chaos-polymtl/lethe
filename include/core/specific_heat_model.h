@@ -229,6 +229,8 @@ public:
 
     const unsigned int n_values = temperature_vec.size();
 
+    Assert(n_values == p2_temperature_vec.size(),
+           SizeOfFields(n_values, p2_temperature_vec.size()));
     Assert(n_values == p1_temperature_vec.size(),
            SizeOfFields(n_values, p1_temperature_vec.size()));
     Assert(n_values == property_vector.size(),
@@ -241,6 +243,10 @@ public:
       simulation_control->get_time_steps_vector();
     Vector<double> bdf_coefs = bdf_coefficients(method, time_steps_vector);
 
+    // Issue here is that the bdf coefs does not have the right size which is kinda very weird...
+    // TOFIX
+    std::cout << "BDF coefficients are " << bdf_coefs << std::endl;
+
     for (unsigned int i = 0; i < n_values; ++i)
       {
         const double temperature    = temperature_vec[i];
@@ -250,6 +256,7 @@ public:
         // If change between the temperature is insufficient, backtrack to the first order implementation
         unsigned int number_of_previous_solutions =
           simulation_control->get_number_of_previous_solution_in_assembly();
+        std::cout << " Number of prvious solution is " << number_of_previous_solutions << std::endl;
         if (std::abs(temperature - temperature_p2) < 1e-6)
           number_of_previous_solutions = 1;
 
