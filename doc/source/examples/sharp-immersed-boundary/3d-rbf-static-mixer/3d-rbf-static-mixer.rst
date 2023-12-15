@@ -124,7 +124,7 @@ Assuming that the ``RBF_example_00001`` executable is within your `$PATH` or cop
 
   RBF_example_00001 ./ helix RBF.param
 
-After a few minutes this executable will output ``RBF_helix.output``, which is the encoding of the shape, and ``RBF_helix.vtu``, which can be used to see the resulting approximation.
+After about 40 minutes this executable will output ``RBF_helix.output``, which is the encoding of the shape, and ``RBF_helix.vtu``, which can be used to see the resulting approximation.
 
 Creation of the Composite Shape File
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
