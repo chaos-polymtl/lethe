@@ -30,7 +30,6 @@
 
 using namespace dealii;
 
-
 DeclException1(
   RequiresConstantDensity,
   std::string,

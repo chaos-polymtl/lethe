@@ -36,7 +36,9 @@ enum field : int
 {
   shear_rate,
   temperature,
-  previous_temperature,
+  temperature_p1,
+  temperature_p2,
+  temperature_p3,
   pressure,
   phase_order_cahn_hilliard
 };
@@ -75,7 +77,7 @@ public:
   {
     model_depends_on[shear_rate]                = false;
     model_depends_on[temperature]               = false;
-    model_depends_on[previous_temperature]      = false;
+    model_depends_on[temperature_p1]      = false;
     model_depends_on[pressure]                  = false;
     model_depends_on[phase_order_cahn_hilliard] = false;
   }
@@ -144,8 +146,6 @@ public:
     simulation_control=p_simulation_control;
   }
 
-
-protected:
   /**
    * @brief numerical_jacobian Calculates the jacobian through a forward finite difference (Euler) approximation.
    * This approach, although not preferable, is meant as a fall-back when
@@ -209,6 +209,7 @@ protected:
       jacobian_vector[i] = (f_xdx[i] - f_x[i]) / dx[i];
   }
 
+protected:
   std::shared_ptr<SimulationControl> &
   get_simulation_control()
   {

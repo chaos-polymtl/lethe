@@ -69,7 +69,7 @@ test()
     {
       std::map<field, double> field_values;
       field_values[field::temperature]          = T_1;
-      field_values[field::previous_temperature] = T_0;
+      field_values[field::temperature_p1] = T_0;
 
       deallog << " T_0 = " << T_0 << " T_1 = " << T_1
               << " Cp = " << specific_heat_model.value(field_values)

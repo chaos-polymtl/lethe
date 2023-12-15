@@ -62,7 +62,7 @@ HeatTransferScratchData<dim>::allocate()
   fields.insert(
     std::pair<field, std::vector<double>>(field::temperature, n_q_points));
   fields.insert(
-    std::pair<field, std::vector<double>>(field::previous_temperature,
+    std::pair<field, std::vector<double>>(field::temperature_p1,
                                           n_q_points));
   fields.insert(
     std::pair<field, std::vector<double>>(field::shear_rate, n_q_points));
@@ -144,9 +144,14 @@ HeatTransferScratchData<dim>::calculate_physical_properties()
                    this->present_temperature_values,
                    this->fields);
 
-  if (properties_manager.field_is_required(field::previous_temperature))
-    set_field_vector(field::previous_temperature,
+  if (properties_manager.field_is_required(field::temperature_p1))
+    set_field_vector(field::temperature_p1,
                      this->previous_temperature_values[0],
+                     this->fields);
+
+  if (properties_manager.field_is_required(field::temperature_p2))
+    set_field_vector(field::temperature_p2,
+                     this->previous_temperature_values[1],
                      this->fields);
 
   if (properties_manager.field_is_required(field::shear_rate))
