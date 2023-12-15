@@ -2079,10 +2079,13 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
 
   const auto rheological_model =
     this->simulation_parameters.physical_properties_manager.get_rheology();
+
+
   ib_dem.update_particles(particles, time - dt);
-  std::map<field, double> field_values;
-  field_values[field::shear_rate]  = 1;
-  field_values[field::temperature] = 1;
+
+    std::map<field, double> field_values;
+    field_values[field::shear_rate]  = 1;
+    field_values[field::temperature] = 1;
 
   // Check if the parameters' combination is compatible. This is temporary and
   // will be moved to a new class that tests the parameter combination in the
@@ -2123,8 +2126,16 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
 
       Vector<double> particles_residual_vect;
       particles_residual_vect.reinit(particles.size());
-      ib_dem.integrate_particles_motion(
-        dt, h_max, h_min, fluid_density, kinematic_viscosity);
+      Tensor<1, 3> g;
+      this->simulation_parameters.particlesParameters->f_gravity->set_time(time);
+
+
+      if(current_newton_iteration==0 || this->simulation_parameters.particlesParameters->explicit_contact_impulsion_calculation==false)
+        {
+          ib_dem.integrate_particles_motion(
+            dt, h_max, h_min, fluid_density, kinematic_viscosity);
+        }
+
       unsigned int worst_residual_particle_id = UINT_MAX;
 
       for (unsigned int p = 0; p < particles.size(); ++p)
@@ -2134,6 +2145,12 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
               // calculate the volume of fluid displaced by the particle.
               double volume =
                 particles[p].volume;
+
+              g[0] = this->simulation_parameters.particlesParameters->f_gravity->value(particles[p].position, 0);
+              g[1] = this->simulation_parameters.particlesParameters->f_gravity->value(particles[p].position, 1);
+              if constexpr (dim == 3)
+                g[2] =
+                  this->simulation_parameters.particlesParameters->f_gravity->value(particles[p].position, 2);
 
               // Transfers the impulsion evaluated in the sub-time-stepping
               // scheme to the particle at the CFD time scale.
@@ -2166,7 +2183,7 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
                     -(bdf_coefs[i] * particles[p].previous_velocity[i - 1]);
                 }
               residual_velocity +=
-                (particles[p].impulsion) / particles[p].mass / dt;
+                (particles[p].contact_impulsion / dt+particles[p].fluid_forces) / particles[p].mass+g;
 
               double inverse_of_relaxation_coefficient_velocity =
                 -bdf_coefs[0] -
@@ -2281,7 +2298,7 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
 
               // Calculate the torque in the particle frame of reference.
               Tensor<1, 3> total_torque = particles[p].rotation_matrix *
-                                          (particles[p].omega_impulsion) / dt;
+                                          (particles[p].omega_contact_impulsion/ dt+particles[p].fluid_torque) ;
 
               // Calculate angular acceleration in particle frame
               Tensor<1, 3> angular_velocity_in_particle_frame =
@@ -2428,15 +2445,16 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
                 sqrt(std::pow(residual_velocity.norm(), 2) +
                      std::pow(residual_omega.norm() * particles[p].radius, 2)) *
                 dt;
-              if (Utilities::MPI::this_mpi_process(this->mpi_communicator) == 0){
-                  std::cout<<" omega impulsion "<<particles[p].omega_impulsion<<std::endl;
+              /*if (Utilities::MPI::this_mpi_process(this->mpi_communicator) == 0){
+                  std::cout<<" omega contact impulsion "<<particles[p].omega_contact_impulsion<<std::endl;
                   std::cout<<" omega_accel "<< invert(particles[p].rotation_matrix) *
                                                      angular_acceleration_in_particle_frame<<std::endl;
+                  std::cout<<" omega "<< particles[0].omega<<std::endl;
+                  std::cout<<" contact impulsion "<<particles[p].contact_impulsion<<std::endl;
                   std::cout<<" position "<< particles[0].position<<std::endl;
                   std::cout<<" velocity "<<particles[0].velocity<<std::endl;
-                  std::cout<<" omega "<< particles[0].omega<<std::endl;
-                  std::cout<<" position "<< particles[p].position<<std::endl;
-                }
+
+                }*/
 
               // Keep in memory the residual.
               particles_residual_vect[p] = this_particle_residual;
@@ -4568,6 +4586,8 @@ GLSSharpNavierStokesSolver<dim>::load_particles_from_file()
             {
               particles[p_i].integrate_motion = true;
             }
+          particles[p_i].set_position(particles[p_i].position);
+          particles[p_i].set_orientation(particles[p_i].orientation);
         }
     }
   if (dim == 3)
@@ -4691,6 +4711,9 @@ GLSSharpNavierStokesSolver<dim>::load_particles_from_file()
             {
               particles[p_i].integrate_motion = true;
             }
+          particles[p_i].set_position(particles[p_i].position);
+          particles[p_i].set_orientation(particles[p_i].orientation);
+
         }
     }
 }
@@ -4746,6 +4769,7 @@ GLSSharpNavierStokesSolver<dim>::solve()
       this->forcing_function->set_time(
         this->simulation_control->get_current_time());
 
+      current_newton_iteration=0;
       bool refinement_step;
       if (this->simulation_parameters.mesh_adaptation.refinement_at_frequency)
         refinement_step =
@@ -4757,7 +4781,6 @@ GLSSharpNavierStokesSolver<dim>::solve()
       if (refinement_step ||
           this->simulation_parameters.mesh_adaptation.type ==
             Parameters::MeshAdaptation::Type::none ||
-          this->simulation_control->is_at_start())
         {
           // We allow the physics to update their boundary conditions
           // according to their own parameters
@@ -4806,6 +4829,7 @@ GLSSharpNavierStokesSolver<dim>::solve()
                     ->contact_search_frequency ==
                 0)
             ib_dem.update_contact_candidates();
+
 
           // add initialization
           this->iterate();

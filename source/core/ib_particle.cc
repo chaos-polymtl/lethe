@@ -103,8 +103,6 @@ IBParticle<dim>::initialize_all()
   rotation_matrix[2][0] = 0.;
   rotation_matrix[2][1] = 0.;
   rotation_matrix[2][2] = 0.;
-
-  compute_local_inertia(inertia);
 }
 
 template <int dim>
@@ -335,10 +333,26 @@ IBParticle<dim>::load_data_from_file()
 
 template <int dim>
 void
-IBParticle<dim>::compute_local_inertia(Tensor<2, 3> global_inertia)
+IBParticle<dim>::compute_local_inertia()
 {
+  // WIP This is implemented but not use since its application make the evaluation of the levelset more complicated.
+  /*
   // Calcul des valeurs propres de la matrice d'inertie globale et update les
   // vecteurs propres de la particule
+
+  Tensor<2,3> global_inertia=inertia;
+  global_inertia[0][0]-=(center_of_mass_location[1]*center_of_mass_location[1]+center_of_mass_location[2]+center_of_mass_location[2])*mass;
+  global_inertia[1][1]-=(center_of_mass_location[0]*center_of_mass_location[0]+center_of_mass_location[2]+center_of_mass_location[2])*mass;
+  global_inertia[2][2]-=(center_of_mass_location[0]*center_of_mass_location[0]+center_of_mass_location[1]+center_of_mass_location[1])*mass;
+
+  Point<dim> new_position;
+  new_position[0]=position[0]+center_of_mass_location[0];
+  new_position[1]=position[1]+center_of_mass_location[1];
+  if constexpr (dim==3){
+      new_position[2]=position[2]+center_of_mass_location[2];
+    }
+
+  set_position(new_position);
 
   LAPACKFullMatrix<double> global_inertia_matrix;
   Vector<double>           eigenvalues(3);
@@ -354,8 +368,6 @@ IBParticle<dim>::compute_local_inertia(Tensor<2, 3> global_inertia)
   global_inertia_matrix.set(2, 0, global_inertia[2][0]);
   global_inertia_matrix.set(2, 1, global_inertia[2][1]);
   global_inertia_matrix.set(2, 2, global_inertia[2][2]);
-
-
 
   global_inertia_matrix.compute_eigenvalues_symmetric(
     -DBL_MAX, DBL_MAX, 1e-10, eigenvalues, eigenvectors);
@@ -378,6 +390,19 @@ IBParticle<dim>::compute_local_inertia(Tensor<2, 3> global_inertia)
   std::cout << eigenvectors[0][2] << std::endl;
   std::cout << eigenvectors[1][2] << std::endl;
   std::cout << eigenvectors[2][2] << std::endl;
+
+  Tensor<2,3> matrix_of_rotation_to_align_the_object_with_its_main_axis;
+  for(unsigned int i=0;i<3;++i){
+      for(unsigned int j=0;j<3;++j)
+        {
+          matrix_of_rotation_to_align_the_object_with_its_main_axis[i][j]=eigenvectors[j][i]/std::sqrt(eigenvectors[0][i]*eigenvectors[0][i]+eigenvectors[1][i]*eigenvectors[1][i]+eigenvectors[2][i]*eigenvectors[2][i]);
+        }
+    }
+
+  Tensor<1,3>orientation=shape->rotation_matrix_to_xyz_angles(matrix_of_rotation_to_align_the_object_with_its_main_axis);
+
+  set_orientation(orientation)
+*/
 }
 
 

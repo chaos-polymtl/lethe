@@ -62,7 +62,7 @@ IBParticlesDEM<dim>::initialize(
   particle_wall_contact_force_object =
     std::make_shared<ParticleWallNonLinearForce<dim>>(dem_parameters,
                                                       boundary_index);
-  previous_wall_contact_point.resize(dem_particles.size());
+
 }
 template <int dim>
 void
@@ -172,10 +172,18 @@ IBParticlesDEM<dim>::calculate_pp_contact_force(
               Point<dim> contact_point;
               Tensor<1,dim> normal;
               std::vector<Point<dim>> contact_points_candidate;
+
+              auto iterator=previous_wall_contact_point[particle_one.particle_id].find(particle_two.particle_id);
+              if( iterator!=previous_wall_contact_point[particle_one.particle_id].end()){
+                  contact_points_candidate.push_back(iterator->second);
+                }
+              else{
+                  contact_points_candidate.push_back(particle_one.position+(particle_two.position-particle_one.position)*(particle_one.radius/(particle_one.radius+particle_two.radius)));
+                }
+
               if (typeid(*particle_one.shape) == typeid(Sphere<dim>) &&
                   typeid(*particle_two.shape) == typeid(Sphere<dim>))
                 {
-                  contact_points_candidate.push_back(particle_one.position+(particle_two.position-particle_one.position)*(particle_one.radius/(particle_one.radius+particle_two.radius)));
                   auto contact_state=particle_one.shape->distance_to_shape(*particle_two.shape,contact_points_candidate);
                   normal_overlap =-std::get<double>(contact_state);
                   contact_point=std::get<Point<dim>>(contact_state);
@@ -185,7 +193,6 @@ IBParticlesDEM<dim>::calculate_pp_contact_force(
               else if (typeid(*particle_one.shape) == typeid(Sphere<dim>) &&
                        typeid(*particle_two.shape) != typeid(Sphere<dim>))
                 {
-                  contact_points_candidate.push_back(particle_one.position+(particle_two.position-particle_one.position)*(particle_one.radius/(particle_one.radius+particle_two.radius)));
                   auto contact_state=particle_one.shape->distance_to_shape(*particle_two.shape,contact_points_candidate);
                   normal_overlap =-std::get<double>(contact_state);
                   contact_point=std::get<Point<dim>>(contact_state);
@@ -194,7 +201,6 @@ IBParticlesDEM<dim>::calculate_pp_contact_force(
               else if (typeid(*particle_one.shape) != typeid(Sphere<dim>) &&
                        typeid(*particle_two.shape) == typeid(Sphere<dim>))
                 {
-                  contact_points_candidate.push_back(particle_one.position+(particle_two.position-particle_one.position)*(particle_one.radius/(particle_one.radius+particle_two.radius)));
                   auto contact_state=particle_two.shape->distance_to_shape(*particle_one.shape,contact_points_candidate);
                   normal_overlap =-std::get<double>(contact_state);
                   contact_point=std::get<Point<dim>>(contact_state);
@@ -202,12 +208,12 @@ IBParticlesDEM<dim>::calculate_pp_contact_force(
                 }
               else
                 {
-                  contact_points_candidate.push_back(particle_one.position+(particle_two.position-particle_one.position)*(0.5));
                   auto contact_state=particle_one.shape->distance_to_shape(*particle_two.shape,contact_points_candidate);
                   normal_overlap =-std::get<double>(contact_state);
                   contact_point=std::get<Point<dim>>(contact_state);
                   normal=particle_one.shape->gradient(contact_point);
                 }
+              previous_wall_contact_point[particle_one.particle_id][particle_two.particle_id]=contact_point;
               Point<3> contact_point_3d= point_nd_to_3d(contact_point);
               Tensor<1,3> contact_normal= tensor_nd_to_3d(normal);
               double contact_radius_particle_one=particle_one.radius;
@@ -669,7 +675,13 @@ IBParticlesDEM<dim>::calculate_pw_contact_force(
               std::vector<Point<dim>> contact_point_candidate;
               // contact_point_candidate.push_back(previous_wall_contact_point[particle.particle_id]);
 
-              contact_point_candidate.push_back(point_on_boundary);
+              auto iterator=previous_wall_contact_point[particle.particle_id].find(boundary_cell.boundary_index);
+              if( iterator!=previous_wall_contact_point[particle.particle_id].end()){
+                  contact_point_candidate.push_back(iterator->second);
+                }
+              else{
+                  contact_point_candidate.push_back(point_on_boundary);
+                }
               // Use the last contact point as an initial guess if the level set is smaller than the wall initial guess.
 
               // Find the normal overlap
@@ -685,7 +697,7 @@ IBParticlesDEM<dim>::calculate_pw_contact_force(
               double contact_radius_particle_one=particle.radius;
 
               // Keep the last contact point as a initial guess for the next contact point.
-              previous_wall_contact_point[particle.particle_id] =
+              previous_wall_contact_point[particle.particle_id][boundary_cell.boundary_index] =
                 std::get<Point<dim>>(contact_state);
 
 
@@ -1158,6 +1170,10 @@ IBParticlesDEM<dim>::integrate_particles_motion(const double dt,
   // The gravitational force on the particle.
   Tensor<1, 3> gravity;
 
+  // Reset the previous particle contact point list
+  previous_wall_contact_point.clear();
+  previous_particle_particle_contact_point.clear();
+
   // Initialize the particles
   for (unsigned int p_i = 0; p_i < dem_particles.size(); ++p_i)
     {
@@ -1284,16 +1300,9 @@ IBParticlesDEM<dim>::integrate_particles_motion(const double dt,
                       last_orientation_matrix[p_i]=dem_particles[p_i].rotation_matrix;
                     }
 
-                  if (dim == 2)
-                    {
-                      gravity = g * (dem_particles[p_i].mass -
-                                     dem_particles[p_i].volume* rho);
-                    }
-                  else
-                    {
-                      gravity = g * (dem_particles[p_i].mass -
+                  gravity = g * (dem_particles[p_i].mass -
                                        dem_particles[p_i].volume * rho);
-                    }
+
 
                   // We consider only the force at t+dt so the scheme is
                   // consistent to a BDFn scheme on the fluid side. If there is
@@ -1321,7 +1330,7 @@ IBParticlesDEM<dim>::integrate_particles_motion(const double dt,
                     lubrication_force[p_i] + lubrication_wall_force[p_i];
 
                   k_contact_impulsion[p_i][step] =
-                    contact_wall_force[p_i] + contact_force[p_i];
+                    contact_wall_force[p_i] + contact_force[p_i]+lubrication_force[p_i] + lubrication_wall_force[p_i];
 
                   dem_particles[p_i].velocity =
                     last_velocity[p_i] + k_velocity[p_i][step] * local_dt;
@@ -1572,7 +1581,7 @@ IBParticlesDEM<dim>::integrate_particles_motion(const double dt,
                 dt_dem * (k_omega_impulsion[p_i][0]+2*k_omega_impulsion[p_i][1]+2*k_omega_impulsion[p_i][2]+k_omega_impulsion[p_i][3])/6;
 
               dem_particles[p_i].omega_contact_impulsion +=
-                dt_dem * (k_omega_contact_impulsion[p_i][0]+2*k_omega_impulsion[p_i][1]+2*k_omega_impulsion[p_i][2]+2*k_omega_impulsion[p_i][3])/6;
+                dt_dem * (k_omega_contact_impulsion[p_i][0]+2*k_omega_contact_impulsion[p_i][1]+2*k_omega_contact_impulsion[p_i][2]+k_omega_contact_impulsion[p_i][3])/6;
 
 
 

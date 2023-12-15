@@ -328,7 +328,13 @@ private:
   std::shared_ptr<ParticleWallContactForce<dim>>
     particle_wall_contact_force_object;
 
-  std::vector<Point<dim>> previous_wall_contact_point;
+
+  // Store the previous contact point as initial guess for the next search
+  std::map<unsigned int,
+           std::map<unsigned int, Point<dim>>>previous_wall_contact_point;
+  std::map<unsigned int,
+           std::map<unsigned int, Point<dim>>>previous_particle_particle_contact_point;
+
 
 
   // Particles contact history

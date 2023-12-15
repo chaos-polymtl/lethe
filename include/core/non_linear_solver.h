@@ -57,9 +57,16 @@ public:
   virtual void
   solve(const bool is_initial_step) = 0;
 
+  virtual unsigned int
+  get_current_iteration{
+      return outer_iteration;
+    };
+
+
 protected:
   PhysicsSolver<VectorType>  *physics_solver;
   Parameters::NonLinearSolver params;
+  unsigned int outer_iteration;
 };
 
 template <typename VectorType>

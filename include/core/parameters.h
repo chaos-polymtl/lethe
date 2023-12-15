@@ -1332,6 +1332,7 @@ namespace Parameters
     double                       wall_restitution_coefficient;
     unsigned int                 coupling_frequency;
     bool                         enable_lubrication_force;
+    bool                         explicit_contact_impulsion_calculation;
     double                       lubrication_range_max;
     double                       lubrication_range_min;
     double                       contact_search_radius_factor;

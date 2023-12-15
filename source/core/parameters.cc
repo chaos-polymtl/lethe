@@ -2786,11 +2786,12 @@ namespace Parameters
                         "1",
                         Patterns::Double(),
                         "density of the particle ");
-      prm.declare_entry(
+      // The implementation is postponed since it makes the evaluation of the levelset more complex.
+      /*prm.declare_entry(
         "center of mass location",
         "0; 0; 0",
         Patterns::Anything(),
-        "position of the center of mass relative to the frame of reference of the particule");
+        "position of the center of mass relative to the frame of reference of the particule");*/
       prm.declare_entry(
         "volume",
         "0",
@@ -2979,6 +2980,12 @@ namespace Parameters
           Patterns::Double(),
           "Smallest gap considered for the lubrification force calculation. This value is multiplied by the smallest cell size");
 
+        prm.declare_entry(
+          "use explicit contact impulsion",
+          "true",
+          Patterns::Bool(),
+          "Bool to enable or disable the explicit evaluation of the contact impulsion. This means that if that parameter is set to true, the DEM is only run once, and the contact impulsion obtained is used for all Newton's iterations.");
+
         prm.enter_subsection("wall physical properties");
         {
           prm.declare_entry(
@@ -3080,6 +3087,7 @@ namespace Parameters
       prm.enter_subsection("DEM");
       {
         alpha = prm.get_double("alpha");
+
         contact_search_radius_factor =
           prm.get_double("contact search radius factor");
         if (contact_search_radius_factor < 1.)
@@ -3092,6 +3100,9 @@ namespace Parameters
         enable_lubrication_force = prm.get_bool("enable lubrication force");
         lubrication_range_max    = prm.get_double("lubrication range max");
         lubrication_range_min    = prm.get_double("lubrication range min");
+        explicit_contact_impulsion_calculation =
+          prm.get_bool("use explicit contact impulsion");
+
         prm.enter_subsection("wall physical properties");
         {
           wall_youngs_modulus = prm.get_double("wall youngs modulus");
@@ -3182,7 +3193,7 @@ namespace Parameters
                 particles[i].f_position->value(particles[i].position, 2);
               particles[i].velocity[2] =
                 particles[i].f_velocity->value(particles[i].position, 2);
-              particles[i].pressure_location[2]       = pressure_list[2];
+              particles[i].pressure_location[2] = pressure_list[2];
             }
 
           std::string shape_type          = prm.get("type");
@@ -3218,26 +3229,28 @@ namespace Parameters
             particles[i].rolling_friction_coefficient =
               prm.get_double("rolling friction coefficient");
 
-            double volume= prm.get_double("volume");
-            if(volume==0){
-                //value is automatically define.
-                //volume=particles[i].shape->displaced_volume(1.0);
-                if(volume==0){
+            double volume = prm.get_double("volume");
+            if (volume == 0)
+              {
+                // value is automatically define.
+                // volume=particles[i].shape->displaced_volume(1.0);
+                if (volume == 0)
+                  {
                     if (dim == 2)
                       {
-                        volume = PI * particles[i].radius *
-                                            particles[i].radius;
+                        volume = PI * particles[i].radius * particles[i].radius;
                       }
                     else if (dim == 3)
                       {
                         volume = 4.0 / 3.0 * PI * particles[i].radius *
-                                            particles[i].radius * particles[i].radius;
+                                 particles[i].radius * particles[i].radius;
                       }
                   }
               }
-            particles[i].volume=volume;
-            particles[i].mass =particles[i].volume*
-                                    prm.get_double("density");
+            particles[i].volume = volume;
+            particles[i].mass = particles[i].volume * prm.get_double("density");
+
+
 
             particles[i].initialize_previous_solution();
             particles[i].set_position(particles[i].position);
@@ -3249,13 +3262,23 @@ namespace Parameters
               Utilities::split_string_list(center_of_mass_location_str, ";"));
             std::vector<double> center_of_mass_list =
               Utilities::string_to_double(center_of_mass_location_str_list);
+
+            // This parameters aims at allowing the change of frame of reference
+            // of the particle automatically to align and position the center of
+            // mass of the particle with its main axis base on the position of
+            // the center of mass and inertia matrix. This is mostly implemented
+            // but make the evaluation of the levelset more difficult as such we
+            // postponed the implementation to another PR.
+            /*
             particles[i].center_of_mass_location[0] = center_of_mass_list[0];
             particles[i].center_of_mass_location[1] = center_of_mass_list[1];
             if (dim == 3)
               {
-                particles[i].center_of_mass_location[2] = center_of_mass_list[2];
+                particles[i].center_of_mass_location[2] =
+                  center_of_mass_list[2];
               }
-
+            particles[i].compute_local_inertia;
+             */
             prm.leave_subsection();
           }
           prm.leave_subsection();

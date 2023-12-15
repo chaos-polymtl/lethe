@@ -261,7 +261,7 @@ public:
   load_data_from_file();
 
   void
-  compute_local_inertia(Tensor<2, 3> global_inertia);
+  compute_local_inertia();
 
 
 
@@ -384,9 +384,9 @@ public:
   // particle. This point is used to define a constant on the pressure.
   Point<dim> pressure_location;
 
-  // Location of the center of mass relative to the frame of reference of the
+  // WIP implemented but not use: Location of the center of mass relative to the frame of reference of the
   // particule.
-  Point<dim> center_of_mass_location;
+  // Point<3> center_of_mass_location
 
   // Rotation matrix of the particle in the global space
   Tensor<2, 3> rotation_matrix;

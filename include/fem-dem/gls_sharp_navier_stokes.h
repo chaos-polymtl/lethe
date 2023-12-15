@@ -163,6 +163,7 @@ private:
   virtual void
   assemble_matrix_and_rhs()
   {
+
     if (some_particles_are_coupled)
       {
         force_on_ib();
@@ -183,6 +184,7 @@ private:
 
     // Assemble the preconditioner
     this->setup_preconditioner();
+    current_newton_iteration+=1;
   }
 
 
@@ -624,6 +626,7 @@ private:
 
   PVDHandler ib_particles_pvdhandler;
 
+  unsigned int                 current_newton_iteration;
 
   std::vector<IBParticle<dim>> particles;
   double                       particle_residual;
