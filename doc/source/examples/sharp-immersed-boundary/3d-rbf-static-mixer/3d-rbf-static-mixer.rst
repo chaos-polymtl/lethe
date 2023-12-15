@@ -117,12 +117,12 @@ The parameter file (``RBF.param``) contains:
 #. The mesh range of ``0.1`` means that there is at least 10% of margin on each side of the object, so the collection of RBF nodes are encompassing the whole object.
 
 
-From the ``/rbf_generation/`` directory, we can launch the RBF generation using the command line:
+Assuming that the ``RBF_example_00001`` executable is within your `$PATH`, from the ``/rbf_generation/`` directory, we can launch the RBF generation using the command line:
 
 .. code-block:: text
   :class: copy-button
 
-  ./RBF_example_00001 ./ helix RBF.param
+  RBF_example_00001 ./ helix RBF.param
 
 After a few minutes this executable will output ``RBF_helix.output``, which is the encoding of the shape, and ``RBF_helix.vtu``, which can be used to see the resulting approximation.
 
