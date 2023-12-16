@@ -444,7 +444,7 @@ public:
   }
 
   /**
-   * @brief Request the present filtered solution of a given physics (used in VOF physics for STF calculation)
+   * @brief Request the present filtered solution of a given physics (used in VOF or CahnHilliard physics for STF calculation)
    *
    * @param physics_id The physics of the solution being requested
    */
@@ -455,6 +455,11 @@ public:
                            active_physics.end(),
                            physics_id) != active_physics.end()),
                 ExcInternalError());
+/*      for (const double filtered_phase : *physics_filtered_solutions[physics_id])
+      {
+          this->pcout << "filtered phase sent by multiphysics interface" << std::endl;
+          this->pcout << filtered_phase << std::endl;
+      }*/
     return physics_filtered_solutions[physics_id];
   }
 
@@ -642,12 +647,12 @@ public:
   }
 
   /**
-   * @brief Sets the reference to the filtered solution of the physics in the multiphysics interface (used in VOF physics for STF calculation)
+   * @brief Sets the reference to the filtered solution of the physics in the multiphysics interface (used in VOF or CahnHilliard physics for STF calculation)
    *
    * @param physics_id The physics of the DOF handler being requested
    *
    * @param filtered_solution_vector The reference to the filtered solution vector of the physics; this was
-   * specifically implemented for VOF
+   *  implemented for VOF and CahnHilliard physics
    */
   void
   set_filtered_solution(const PhysicsID                physics_id,

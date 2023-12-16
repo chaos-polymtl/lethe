@@ -35,7 +35,8 @@ enum field : int
   temperature,
   previous_temperature,
   pressure,
-  phase_order_cahn_hilliard
+  phase_order_cahn_hilliard,
+  phase_order_cahn_hilliard_filtered
 };
 
 inline void

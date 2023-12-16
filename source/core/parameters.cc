@@ -491,8 +491,9 @@ namespace Parameters
   void
   MobilityCahnHilliardParameters::parse_parameters(ParameterHandler &prm)
   {
-    mobility_cahn_hilliard_constant =
-      prm.get_double("cahn hilliard mobility constant");
+      std::cout<<"parsing mobility constant"<<std::endl;
+    mobility_cahn_hilliard_constant = prm.get_double("cahn hilliard mobility constant");
+    std::cout<< "mobility constant for mobility model (chns) = " << mobility_cahn_hilliard_constant<<std::endl;
   }
 
 
@@ -1151,20 +1152,19 @@ namespace Parameters
               mobility_cahn_hilliard_model =
                 MobilityCahnHilliardModel::constant;
               mobility_cahn_hilliard_parameters.parse_parameters(prm);
-              //              std::cout << "mobility is constant and equal to "
-              //                        << mobility_cahn_hilliard_parameters
-              //                             .mobility_cahn_hilliard_constant
-              //                        << std::endl;
+                            std::cout << "mobility is constant and equal to "
+                                      << mobility_cahn_hilliard_parameters
+                                           .mobility_cahn_hilliard_constant
+                                      << std::endl;
             }
           else if (op == "quartic")
             {
               mobility_cahn_hilliard_model = MobilityCahnHilliardModel::quartic;
               mobility_cahn_hilliard_parameters.parse_parameters(prm);
-              //              std::cout << "mobility is quartic and its constant
-              //              equal to "
-              //                        << mobility_cahn_hilliard_parameters
-              //                             .mobility_cahn_hilliard_constant
-              //                        << std::endl;
+                            std::cout << "mobility is quartic and its constant equal to "
+                                      << mobility_cahn_hilliard_parameters
+                                           .mobility_cahn_hilliard_constant
+                                      << std::endl;
             }
           else
             throw(std::runtime_error(

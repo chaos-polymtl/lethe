@@ -46,6 +46,7 @@ public:
     model_depends_on[previous_temperature]      = false;
     model_depends_on[pressure]                  = false;
     model_depends_on[phase_order_cahn_hilliard] = false;
+      model_depends_on[phase_order_cahn_hilliard_filtered] = false;
   }
 
   /**

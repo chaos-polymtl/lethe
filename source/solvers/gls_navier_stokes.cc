@@ -669,9 +669,11 @@ GLSNavierStokesSolver<dim>::assemble_system_matrix_without_preconditioner()
     {
       const DoFHandler<dim> *dof_handler_cahn_hilliard =
         this->multiphysics->get_dof_handler(PhysicsID::cahn_hilliard);
-      scratch_data.enable_cahn_hilliard(dof_handler_cahn_hilliard->get_fe(),
-                                        *this->cell_quadrature,
-                                        *this->mapping);
+      scratch_data.enable_cahn_hilliard(
+        dof_handler_cahn_hilliard->get_fe(),
+        *this->cell_quadrature,
+        *this->mapping,
+        this->simulation_parameters.multiphysics.cahn_hilliard_parameters);
     }
 
   if (this->simulation_parameters.multiphysics.heat_transfer)
@@ -775,6 +777,7 @@ GLSNavierStokesSolver<dim>::assemble_local_system_matrix(
       scratch_data.reinit_cahn_hilliard(
         phase_cell,
         *this->multiphysics->get_solution(PhysicsID::cahn_hilliard),
+        *this->multiphysics->get_filtered_solution(PhysicsID::cahn_hilliard),
         this->simulation_parameters.multiphysics.cahn_hilliard_parameters);
     }
 
@@ -875,9 +878,11 @@ GLSNavierStokesSolver<dim>::assemble_system_rhs()
     {
       const DoFHandler<dim> *dof_handler_cahn_hilliard =
         this->multiphysics->get_dof_handler(PhysicsID::cahn_hilliard);
-      scratch_data.enable_cahn_hilliard(dof_handler_cahn_hilliard->get_fe(),
-                                        *this->cell_quadrature,
-                                        *this->mapping);
+      scratch_data.enable_cahn_hilliard(
+        dof_handler_cahn_hilliard->get_fe(),
+        *this->cell_quadrature,
+        *this->mapping,
+        this->simulation_parameters.multiphysics.cahn_hilliard_parameters);
     }
 
   if (this->simulation_parameters.multiphysics.heat_transfer)
@@ -982,6 +987,7 @@ GLSNavierStokesSolver<dim>::assemble_local_system_rhs(
       scratch_data.reinit_cahn_hilliard(
         phase_cell,
         *this->multiphysics->get_solution(PhysicsID::cahn_hilliard),
+        *this->multiphysics->get_filtered_solution(PhysicsID::cahn_hilliard),
         this->simulation_parameters.multiphysics.cahn_hilliard_parameters);
     }
 

@@ -34,6 +34,7 @@
 
 #include <solvers/auxiliary_physics.h>
 #include <solvers/cahn_hilliard_assemblers.h>
+#include <solvers/cahn_hilliard_filter.h>
 #include <solvers/cahn_hilliard_scratch_data.h>
 #include <solvers/multiphysics_interface.h>
 
@@ -178,6 +179,12 @@ public:
    */
   void
   percolate_time_vectors() override;
+
+  /**
+   * @brief Carry out modifications on the auxiliary physic solution.
+   */
+  void
+  modify_solution() override;
 
   /**
    * @brief Postprocess the auxiliary physics results. Post-processing this case implies
@@ -408,6 +415,12 @@ private:
   calculate_barycenter(const TrilinosWrappers::MPI::Vector &solution,
                        const VectorType &current_solution_fd);
 
+  /**
+   * @brief Applies filter on phase fraction values.
+   */
+  void
+  apply_phase_filter();
+
 
   MultiphysicsInterface<dim> *multiphysics;
 
@@ -443,6 +456,7 @@ private:
   AffineConstraints<double>      nonzero_constraints;
   AffineConstraints<double>      zero_constraints;
   TrilinosWrappers::SparseMatrix system_matrix;
+  TrilinosWrappers::MPI::Vector  filtered_solution;
 
 
   // Previous solutions vectors
@@ -464,6 +478,9 @@ private:
 
   // Phase statistics table
   TableHandler statistics_table;
+
+  // Phase fraction filter
+  std::shared_ptr<CahnHilliardFilterBase> filter;
 };
 
 

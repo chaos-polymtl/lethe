@@ -21,6 +21,7 @@
 #include <core/physical_property_model.h>
 #include <core/rheological_model.h>
 
+#include <solvers/cahn_hilliard_filter.h>
 #include <solvers/physical_properties_manager.h>
 #include <solvers/vof_filter.h>
 
@@ -185,7 +186,8 @@ public:
     if (sd.gather_cahn_hilliard)
       enable_cahn_hilliard(sd.fe_values_cahn_hilliard->get_fe(),
                            sd.fe_values_cahn_hilliard->get_quadrature(),
-                           sd.fe_values_cahn_hilliard->get_mapping());
+                           sd.fe_values_cahn_hilliard->get_mapping(),
+                           sd.cahn_hilliard_filter);
 
     gather_hessian = sd.gather_hessian;
   }
@@ -918,9 +920,28 @@ public:
    * @param mapping Mapping used for the Navier-Stokes problem assembly
    */
   void
-  enable_cahn_hilliard(const FiniteElement<dim> &fe,
-                       const Quadrature<dim>    &quadrature,
-                       const Mapping<dim>       &mapping);
+  enable_cahn_hilliard(
+    const FiniteElement<dim>       &fe,
+    const Quadrature<dim>          &quadrature,
+    const Mapping<dim>             &mapping,
+    const Parameters::CahnHilliard &cahn_hilliard_parameters);
+
+  /**
+   * @brief enable_cahn_hilliard Enables the collection of the CahnHilliard data
+   * by the scratch
+   *
+   * @param fe FiniteElement associated with the CahnHilliard physics
+   *
+   * @param quadrature Quadrature rule of the Navier-Stokes problem assembly
+   *
+   * @param mapping Mapping used for the Navier-Stokes problem assembly
+   */
+  void
+  enable_cahn_hilliard(
+    const FiniteElement<dim>                      &fe,
+    const Quadrature<dim>                         &quadrature,
+    const Mapping<dim>                            &mapping,
+    const std::shared_ptr<CahnHilliardFilterBase> &cahn_hilliard_filter);
 
 
   /** @brief Reinitialize the content of the scratch for CH
@@ -937,6 +958,7 @@ public:
   reinit_cahn_hilliard(
     const typename DoFHandler<dim>::active_cell_iterator &cell,
     const VectorType                                     &current_solution,
+    const VectorType        &current_filtered_solution,
     Parameters::CahnHilliard cahn_hilliard_parameters)
   {
     this->fe_values_cahn_hilliard->reinit(cell);
@@ -956,6 +978,31 @@ public:
     this->fe_values_cahn_hilliard->operator[](chemical_potential)
       .get_function_gradients(current_solution,
                               this->chemical_potential_cahn_hilliard_gradients);
+
+/*      for (const double filtered_phase : current_filtered_solution)
+      {
+          std::cout << "filtered phase in cahn hilliard reinit before fe_values extraction  "<< std::endl;
+          std::cout << filtered_phase << std::endl;
+      }*/
+
+      // Gather filtered phase fraction (values, gradient)
+    this->fe_values_cahn_hilliard->operator[](phase_order).get_function_values(
+      current_filtered_solution,
+      this->filtered_phase_order_cahn_hilliard_values);
+    this->fe_values_cahn_hilliard->operator[](phase_order)
+            .get_function_gradients(
+      current_filtered_solution,
+      this->filtered_phase_order_cahn_hilliard_gradients);
+
+/*      for (unsigned int q = 0; q < this->n_q_points; ++q)
+      {
+          double phase_order_cahn_hilliard_value =
+                  this->filtered_phase_order_cahn_hilliard_values[q];
+
+          std::cout<<"phase value filtered in reinit = "
+                   <<phase_order_cahn_hilliard_value<<std::endl;
+      }*/
+
 
     auto &fe_cahn_hilliard = this->fe_values_cahn_hilliard->get_fe();
 
@@ -1143,9 +1190,18 @@ public:
   bool                        gather_cahn_hilliard;
   unsigned int                n_dofs_cahn_hilliard;
   std::vector<double>         phase_order_cahn_hilliard_values;
+  std::vector<double>         filtered_phase_order_cahn_hilliard_values;
   std::vector<Tensor<1, dim>> phase_order_cahn_hilliard_gradients;
+  std::vector<Tensor<1, dim>>
+    filtered_phase_order_cahn_hilliard_gradients; // PAS INITIALISE ATTENTION
   std::vector<double>         chemical_potential_cahn_hilliard_values;
   std::vector<Tensor<1, dim>> chemical_potential_cahn_hilliard_gradients;
+
+  std::shared_ptr<CahnHilliardFilterBase>
+    cahn_hilliard_filter; // Phase order fraction filter
+
+
+
   // This is stored as a shared_ptr because it is only instantiated when needed
   std::shared_ptr<FEValues<dim>> fe_values_cahn_hilliard;
   FEValuesExtractors::Scalar     phase_order;

@@ -179,6 +179,7 @@ public:
     , model(CahnHilliardMobilityModel::quartic)
   {
     this->model_depends_on[field::phase_order_cahn_hilliard] = true;
+    this->model_depends_on[field::phase_order_cahn_hilliard_filtered] = true;
   }
 
   /**
@@ -214,14 +215,22 @@ public:
   double
   value(const std::map<field, double> &fields_value) override
   {
-    const double &phase_order_cahn_hilliard =
-      fields_value.at(field::phase_order_cahn_hilliard);
-    if (std::abs(phase_order_cahn_hilliard) > 1)
-      return 0.0;
-    else
-      return mobility_cahn_hilliard_constant *
-             (1 - phase_order_cahn_hilliard * phase_order_cahn_hilliard) *
-             (1 - phase_order_cahn_hilliard * phase_order_cahn_hilliard);
+//    const double &phase_order_cahn_hilliard =
+//      fields_value.at(field::phase_order_cahn_hilliard);
+      const double &phase_order_cahn_hilliard_filtered =
+              fields_value.at(field::phase_order_cahn_hilliard_filtered);
+//    if (std::abs(phase_order_cahn_hilliard) > 1)
+//      return 0.0;
+//    else
+//      return mobility_cahn_hilliard_constant *
+//             (1 - phase_order_cahn_hilliard * phase_order_cahn_hilliard) *
+//             (1 - phase_order_cahn_hilliard * phase_order_cahn_hilliard);
+      if (std::abs(phase_order_cahn_hilliard_filtered) > 1)
+          return 0.0;
+      else
+          return mobility_cahn_hilliard_constant *
+                 (1 - phase_order_cahn_hilliard_filtered * phase_order_cahn_hilliard_filtered) *
+                 (1 - phase_order_cahn_hilliard_filtered * phase_order_cahn_hilliard_filtered);
   }
 
   /**
@@ -233,17 +242,30 @@ public:
   vector_value(const std::map<field, std::vector<double>> &field_vectors,
                std::vector<double> &property_vector) override
   {
-    const std::vector<double> &phase_order_cahn_hilliard =
-      field_vectors.at(field::phase_order_cahn_hilliard);
-    for (unsigned int i = 0; i < property_vector.size(); ++i)
+//    const std::vector<double> &phase_order_cahn_hilliard =
+//      field_vectors.at(field::phase_order_cahn_hilliard);
+//    for (unsigned int i = 0; i < property_vector.size(); ++i)
+//      {
+//        if (std::abs(phase_order_cahn_hilliard[i]) > 1)
+//          property_vector[i] = 0.0;
+//        else
+//          property_vector[i] =
+//            mobility_cahn_hilliard_constant *
+//            (1 - phase_order_cahn_hilliard[i] * phase_order_cahn_hilliard[i]) *
+//            (1 - phase_order_cahn_hilliard[i] * phase_order_cahn_hilliard[i]);
+//      }
+
+      const std::vector<double> &phase_order_cahn_hilliard_filtered =
+              field_vectors.at(field::phase_order_cahn_hilliard_filtered);
+      for (unsigned int i = 0; i < property_vector.size(); ++i)
       {
-        if (std::abs(phase_order_cahn_hilliard[i]) > 1)
-          property_vector[i] = 0.0;
-        else
-          property_vector[i] =
-            mobility_cahn_hilliard_constant *
-            (1 - phase_order_cahn_hilliard[i] * phase_order_cahn_hilliard[i]) *
-            (1 - phase_order_cahn_hilliard[i] * phase_order_cahn_hilliard[i]);
+          if (std::abs(phase_order_cahn_hilliard_filtered[i]) > 1)
+              property_vector[i] = 0.0;
+          else
+              property_vector[i] =
+                      mobility_cahn_hilliard_constant *
+                      (1 - phase_order_cahn_hilliard_filtered[i] * phase_order_cahn_hilliard_filtered[i]) *
+                      (1 - phase_order_cahn_hilliard_filtered[i] * phase_order_cahn_hilliard_filtered[i]);
       }
   }
 
@@ -258,13 +280,21 @@ public:
   double
   jacobian(const std::map<field, double> &fields_value, field /*id*/) override
   {
-    const double &phase_order_cahn_hilliard =
-      fields_value.at(field::phase_order_cahn_hilliard);
-    if (std::abs(phase_order_cahn_hilliard) > 1)
-      return 0.0;
-    else
-      return -4 * phase_order_cahn_hilliard * mobility_cahn_hilliard_constant *
-             (1 - phase_order_cahn_hilliard * phase_order_cahn_hilliard);
+//    const double &phase_order_cahn_hilliard =
+//      fields_value.at(field::phase_order_cahn_hilliard);
+//    if (std::abs(phase_order_cahn_hilliard) > 1)
+//      return 0.0;
+//    else
+//      return -4 * phase_order_cahn_hilliard * mobility_cahn_hilliard_constant *
+//             (1 - phase_order_cahn_hilliard * phase_order_cahn_hilliard);
+
+      const double &phase_order_cahn_hilliard_filtered =
+              fields_value.at(field::phase_order_cahn_hilliard_filtered);
+      if (std::abs(phase_order_cahn_hilliard_filtered) > 1)
+          return 0.0;
+      else
+          return -4 * phase_order_cahn_hilliard_filtered * mobility_cahn_hilliard_constant *
+                 (1 - phase_order_cahn_hilliard_filtered * phase_order_cahn_hilliard_filtered);
   }
 
   /**
@@ -279,15 +309,25 @@ public:
                   const field /*id*/,
                   std::vector<double> &jacobian_vector) override
   {
-    const std::vector<double> &phase_order_cahn_hilliard =
-      field_vectors.at(field::phase_order_cahn_hilliard);
-    for (unsigned int i = 0; i < jacobian_vector.size(); ++i)
-      if (std::abs(phase_order_cahn_hilliard[i]) > 1)
-        jacobian_vector[i] = 0.0;
-      else
-        jacobian_vector[i] =
-          -mobility_cahn_hilliard_constant * 4 * phase_order_cahn_hilliard[i] *
-          (1 - phase_order_cahn_hilliard[i] * phase_order_cahn_hilliard[i]);
+//    const std::vector<double> &phase_order_cahn_hilliard =
+//      field_vectors.at(field::phase_order_cahn_hilliard);
+//    for (unsigned int i = 0; i < jacobian_vector.size(); ++i)
+//      if (std::abs(phase_order_cahn_hilliard[i]) > 1)
+//        jacobian_vector[i] = 0.0;
+//      else
+//        jacobian_vector[i] =
+//          -mobility_cahn_hilliard_constant * 4 * phase_order_cahn_hilliard[i] *
+//          (1 - phase_order_cahn_hilliard[i] * phase_order_cahn_hilliard[i]);
+
+      const std::vector<double> &phase_order_cahn_hilliard_filtered =
+              field_vectors.at(field::phase_order_cahn_hilliard_filtered);
+      for (unsigned int i = 0; i < jacobian_vector.size(); ++i)
+          if (std::abs(phase_order_cahn_hilliard_filtered[i]) > 1)
+              jacobian_vector[i] = 0.0;
+          else
+              jacobian_vector[i] =
+                      -mobility_cahn_hilliard_constant * 4 * phase_order_cahn_hilliard_filtered[i] *
+                      (1 - phase_order_cahn_hilliard_filtered[i] * phase_order_cahn_hilliard_filtered[i]);
   }
 
 private:
