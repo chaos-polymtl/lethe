@@ -76,6 +76,26 @@ namespace Parameters
   };
 
   /**
+   * @brief CahnHilliard_PhaseFilter - Defines the parameters for the phase filtration of CahnHilliard physics
+   */
+  struct CahnHilliard_PhaseFilter
+  {
+    // Type of filter
+    Parameters::FilterType type;
+
+    // $$\beta$$ value for the tanh filter
+    double beta;
+
+    // Type of verbosity for the phase filter
+    Parameters::Verbosity verbosity;
+
+    void
+    declare_parameters(ParameterHandler &prm);
+    void
+    parse_parameters(ParameterHandler &prm);
+  };
+
+  /**
    * @brief Defines the sub-parameters for free surface mass conservation.
    * Has to be declared before member creation in VOF structure.
    */
@@ -230,6 +250,9 @@ namespace Parameters
 
     // Mobility constant
     double cahn_hilliard_mobility_constant;
+
+    // Phase filtration parameters
+    Parameters::CahnHilliard_PhaseFilter cahn_hilliard_phase_filter;
 
     void
     declare_parameters(ParameterHandler &prm);

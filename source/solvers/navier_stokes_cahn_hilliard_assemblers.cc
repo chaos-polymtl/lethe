@@ -68,8 +68,10 @@ GLSNavierStokesCahnHilliardAssemblerCore<dim>::assemble_matrix(
 
       const double potential_value =
         scratch_data.chemical_potential_cahn_hilliard_values[q];
+      //      const Tensor<1, dim> phase_order_gradient =
+      //        scratch_data.phase_order_cahn_hilliard_gradients[q];
       const Tensor<1, dim> phase_order_gradient =
-        scratch_data.phase_order_cahn_hilliard_gradients[q];
+        scratch_data.filtered_phase_order_cahn_hilliard_gradients[q];
 
       double mobility = scratch_data.mobility_cahn_hilliard[q];
       // std::cout<<"mobility via chns assembler = "<<mobility<<std::endl;
@@ -113,11 +115,12 @@ GLSNavierStokesCahnHilliardAssemblerCore<dim>::assemble_matrix(
       // Calculate the strong residual for GLS stabilization
       auto strong_residual =
         density_eq * velocity_gradient * velocity + pressure_gradient -
-        dynamic_viscosity_eq * velocity_laplacian
-        //- dynamic_viscosity_eq * grad_div_velocity
-        - density_eq * force -
-        velocity_gradient * relative_diffusive_flux  - // Multiplier par la gauche le velocity gradient car le gradient
-                                                       // en deal.ii correspond au gradient mathematique
+        dynamic_viscosity_eq * velocity_laplacian -
+        dynamic_viscosity_eq * grad_div_velocity - density_eq * force -
+        velocity_gradient *
+          relative_diffusive_flux - // Multiplier par la gauche le velocity
+                                    // gradient car le gradient en deal.ii
+                                    // correspond au gradient mathematique
         curvature_cahn_hilliard * potential_value * phase_order_gradient +
         strong_residual_vec[q];
 
@@ -184,7 +187,7 @@ GLSNavierStokesCahnHilliardAssemblerCore<dim>::assemble_matrix(
                 // Continuity terms
                 phi_p_i * div_phi_u_j
                 // Relative diffusive flux term
-                -  grad_phi_u_j * relative_diffusive_flux  * phi_u_i;
+                - grad_phi_u_j * relative_diffusive_flux * phi_u_i;
 
               // PSPG GLS Term
               local_matrix_ij += tau / density_eq * (strong_jac * grad_phi_p_i);
@@ -246,8 +249,10 @@ GLSNavierStokesCahnHilliardAssemblerCore<dim>::assemble_rhs(
         scratch_data.chemical_potential_cahn_hilliard_gradients[q];
       const double potential_value =
         scratch_data.chemical_potential_cahn_hilliard_values[q];
+      //      const Tensor<1, dim> phase_order_gradient =
+      //        scratch_data.phase_order_cahn_hilliard_gradients[q];
       const Tensor<1, dim> phase_order_gradient =
-        scratch_data.phase_order_cahn_hilliard_gradients[q];
+        scratch_data.filtered_phase_order_cahn_hilliard_gradients[q];
 
       // Gather into local variables the relevant fields for velocity
       const Tensor<1, dim> velocity    = scratch_data.velocity_values[q];
@@ -313,10 +318,9 @@ GLSNavierStokesCahnHilliardAssemblerCore<dim>::assemble_rhs(
 
       auto strong_residual =
         density_eq * velocity_gradient * velocity + pressure_gradient -
-        dynamic_viscosity_eq * velocity_laplacian
-        //- dynamic_viscosity_eq * grad_div_velocity
-        - density_eq * force -
-         velocity_gradient * relative_diffusive_flux  -
+        dynamic_viscosity_eq * velocity_laplacian -
+        dynamic_viscosity_eq * grad_div_velocity - density_eq * force -
+        velocity_gradient * relative_diffusive_flux -
         curvature_cahn_hilliard * potential_value * phase_order_gradient +
         strong_residual_vec[q];
 
@@ -341,7 +345,7 @@ GLSNavierStokesCahnHilliardAssemblerCore<dim>::assemble_rhs(
              // Continuity equation
              - velocity_divergence * phi_p_i
              // Relative diffusive flux term (Cahn-Hilliard)
-             + velocity_gradient * relative_diffusive_flux  * phi_u_i
+             + velocity_gradient * relative_diffusive_flux * phi_u_i
              // Surface tension term (Cahn-Hilliard)
              + curvature_cahn_hilliard * potential_value *
                  phase_order_gradient * phi_u_i) *
