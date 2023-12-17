@@ -919,9 +919,14 @@ template <int dim, int spacedim>
 void
 GLSNitscheNavierStokesSolver<dim, spacedim>::refine_mesh()
 {
-  if (this->simulation_control->get_step_number() %
-        this->simulation_parameters.mesh_adaptation.frequency ==
-      0)
+  bool refinement_step;
+  if (this->simulation_parameters.mesh_adaptation.refinement_at_frequency)
+    refinement_step = this->simulation_control->get_step_number() %
+                        this->simulation_parameters.mesh_adaptation.frequency ==
+                      0;
+  else
+    refinement_step = this->simulation_control->get_step_number() == 0;
+  if (refinement_step)
     {
       // If no adaptation is to be carried out, get out of the function
       if (this->simulation_parameters.mesh_adaptation.type ==

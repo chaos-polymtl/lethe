@@ -1176,6 +1176,7 @@ namespace Parameters
 
     // Refinement after frequency iter
     unsigned int frequency;
+    bool         refinement_at_frequency;
 
     // Enable the control of the mesh refinement to target a specific number of
     // elements equal to the maximum number of elements.
