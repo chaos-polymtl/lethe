@@ -62,11 +62,9 @@ HeatTransferScratchData<dim>::allocate()
   fields.insert(
     std::pair<field, std::vector<double>>(field::temperature, n_q_points));
   fields.insert(
-    std::pair<field, std::vector<double>>(field::temperature_p1,
-                                          n_q_points));
+    std::pair<field, std::vector<double>>(field::temperature_p1, n_q_points));
   fields.insert(
-    std::pair<field, std::vector<double>>(field::temperature_p2,
-                                          n_q_points));
+    std::pair<field, std::vector<double>>(field::temperature_p2, n_q_points));
   fields.insert(
     std::pair<field, std::vector<double>>(field::shear_rate, n_q_points));
 }

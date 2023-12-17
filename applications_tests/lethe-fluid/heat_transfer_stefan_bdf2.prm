@@ -9,9 +9,8 @@ set dimension = 2
 
 subsection simulation control
   set method           = bdf2
-  set output frequency = 1
+  set output frequency = 0
   set output name      = stefan
-  set output path      = ./output/
   set time end         = 5
   set time step        = 0.5
 end
@@ -24,6 +23,25 @@ subsection FEM
   set velocity order    = 1
   set pressure order    = 1
   set temperature order = 1
+end
+
+#---------------------------------------------------
+# Timer
+#---------------------------------------------------
+
+subsection timer
+  set type = none
+end
+
+#---------------------------------------------------
+# Initial condition
+#---------------------------------------------------
+
+subsection initial conditions
+  set type = nodal
+  subsection uvwp
+    set Function expression = 0; 0; 0
+  end
 end
 
 #---------------------------------------------------
@@ -77,6 +95,24 @@ subsection multiphysics
 end
 
 #---------------------------------------------------
+# Analytical Solution
+#---------------------------------------------------
+
+subsection analytical solution
+  set enable    = true
+  set verbosity = verbose
+  subsection uvwp
+    set Function expression = 0 ; 0 ; 0
+  end
+  # This is not exactly the analytical solution, but until we have
+  # erf support in deal.II, this is as close as it gets
+  subsection temperature
+    set Function constants  = beta=0.07059328
+    set Function expression = if (x<(2*beta*sqrt(t)), ((2*beta*sqrt(t))-x)/(2*beta*sqrt(t)),0)
+  end
+end
+
+#---------------------------------------------------
 # Mesh Adaptation Control
 #---------------------------------------------------
 
@@ -87,6 +123,10 @@ end
 #---------------------------------------------------
 # Boundary Conditions
 #---------------------------------------------------
+
+subsection boundary conditions
+  set number = 4
+end
 
 subsection boundary conditions heat transfer
   set number = 1
@@ -100,21 +140,17 @@ subsection boundary conditions heat transfer
 end
 
 #---------------------------------------------------
-# Source term
-
-subsection source term
-  subsection heat transfer
-    set Function expression = 0
-  end
-end
-
-#---------------------------------------------------
 # Non-Linear Solver Control
 #---------------------------------------------------
 
 subsection non-linear solver
   subsection heat transfer
-    set verbosity      = verbose
+    set verbosity      = quiet
+    set tolerance      = 1e-12
+    set max iterations = 10
+  end
+  subsection fluid dynamics
+    set verbosity      = quiet
     set tolerance      = 1e-12
     set max iterations = 10
   end
@@ -126,9 +162,8 @@ end
 
 subsection linear solver
   subsection heat transfer
-    set verbosity                             = verbose
+    set verbosity                             = quiet
     set method                                = gmres
-    set max iters                             = 5000
     set relative residual                     = 1e-13
     set minimum residual                      = 1e-13
     set preconditioner                        = ilu

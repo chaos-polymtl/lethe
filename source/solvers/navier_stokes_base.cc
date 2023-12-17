@@ -162,7 +162,8 @@ NavierStokesBase<dim, VectorType, DofsType>::NavierStokesBase(
     }
 
   // Provide the simulation control object to the physical property manager
-  simulation_parameters.physical_properties_manager.provide_simulation_control(simulation_control);
+  simulation_parameters.physical_properties_manager.provide_simulation_control(
+    simulation_control);
 
   multiphysics = std::make_shared<MultiphysicsInterface<dim>>(
     simulation_parameters, triangulation, simulation_control, this->pcout);

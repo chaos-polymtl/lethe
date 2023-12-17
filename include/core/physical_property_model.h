@@ -22,8 +22,9 @@
 
 using namespace dealii;
 
-DeclExceptionMsg(SimulationControlUsageByProperty,
-                "The usage of the simulation control object is currently only supported by the SpecificHeat models" );
+DeclExceptionMsg(
+  SimulationControlUsageByProperty,
+  "The usage of the simulation control object is currently only supported by the SpecificHeat models");
 
 DeclException2(SizeOfFields,
                unsigned int,
@@ -76,8 +77,8 @@ public:
   {
     model_depends_on[shear_rate]                = false;
     model_depends_on[temperature]               = false;
-    model_depends_on[temperature_p1]           = false;
-    model_depends_on[temperature_p2]           = false;
+    model_depends_on[temperature_p1]            = false;
+    model_depends_on[temperature_p2]            = false;
     model_depends_on[pressure]                  = false;
     model_depends_on[phase_order_cahn_hilliard] = false;
   }
@@ -135,15 +136,17 @@ public:
 
   /**
    * @brief Provides the physical property with the simulation control object ensuring
-   * that it can calculate physical properties that depend on time or time-history
+   * that it can calculate physical properties that depend on time or
+   * time-history
    *
    * @param p_simulation_control shared pointed to a SimulationControl object. A copy of this shared pointer is stored in the physical property.
    */
 
   void
-  provide_simulation_control(std::shared_ptr<SimulationControl> &p_simulation_control)
+  provide_simulation_control(
+    std::shared_ptr<SimulationControl> &p_simulation_control)
   {
-    simulation_control=p_simulation_control;
+    simulation_control = p_simulation_control;
   }
 
   /**
@@ -213,8 +216,7 @@ protected:
   std::shared_ptr<SimulationControl> &
   get_simulation_control()
   {
-    AssertThrow(simulation_control,
-    SimulationControlUsageByProperty());
+    AssertThrow(simulation_control, SimulationControlUsageByProperty());
     return simulation_control;
   }
 

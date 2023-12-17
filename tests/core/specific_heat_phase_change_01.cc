@@ -33,6 +33,26 @@ test()
   PhaseChangeSpecificHeat specific_heat_model(phase_change_param);
 
 
+  // Create dummy simulation control since specific heat model requires a
+  // simulation control
+  Parameters::SimulationControl simulationControlParameters;
+  simulationControlParameters.dt     = 0.01;
+  simulationControlParameters.adapt  = false;
+  simulationControlParameters.maxCFL = 99;
+  simulationControlParameters.method =
+    Parameters::SimulationControl::TimeSteppingMethod::bdf1;
+  simulationControlParameters.timeEnd                = 999;
+  simulationControlParameters.number_mesh_adaptation = 9;
+  simulationControlParameters.output_name            = "test";
+  simulationControlParameters.subdivision            = 7;
+  simulationControlParameters.output_folder          = "canard";
+  simulationControlParameters.output_frequency       = 8;
+
+  std::shared_ptr<SimulationControl> simulation_control;
+  simulation_control =
+    std::make_shared<SimulationControlTransient>(simulationControlParameters);
+  specific_heat_model.provide_simulation_control(simulation_control);
+
   deallog << "Testing solid fraction xi" << std::endl;
 
   deallog << " T = 0.5  , xi = "
@@ -68,8 +88,9 @@ test()
   for (int i = 0; i < 20; ++i)
     {
       std::map<field, double> field_values;
-      field_values[field::temperature]          = T_1;
+      field_values[field::temperature]    = T_1;
       field_values[field::temperature_p1] = T_0;
+      field_values[field::temperature_p2] = T_0;
 
       deallog << " T_0 = " << T_0 << " T_1 = " << T_1
               << " Cp = " << specific_heat_model.value(field_values)
