@@ -124,8 +124,8 @@ An insertion box is defined inside the rectangular box. 60 000 particles are ins
     set insertion box maximum y                        = 0.340
     set insertion box maximum z                        = 0.397
     set insertion distance threshold                   = 1.075
-    set insertion random number range                  = 0.025
-    set insertion random number seed                   = 19
+    set insertion maximum offset                       = 0.025
+    set insertion prn seed                             = 19
   end
 
 

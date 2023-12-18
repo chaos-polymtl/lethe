@@ -66,8 +66,8 @@ An insertion box is defined inside the cylindrical domain. 38000 particles are i
     set insertion box maximum y                        = 0.07
     set insertion box maximum z                        = 0.09
     set insertion distance threshold                   = 1.575
-    set insertion random number range                  = 0.025
-    set insertion random number seed                   = 19
+    set insertion maximum offset                       = 0.025
+    set insertion prn seed                             = 19
   end
 
 

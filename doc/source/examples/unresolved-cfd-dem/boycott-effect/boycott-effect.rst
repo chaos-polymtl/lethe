@@ -152,8 +152,8 @@ We insert the particles uniformly in the specified insertion box at the top of t
       set insertion box maximum y                        = 0.396
       set insertion box maximum z                        = 0.026
       set insertion distance threshold                   = 1.2
-      set insertion random number range                  = 0.
-      set insertion random number seed                   = 19
+      set insertion maximum offset                       = 0.
+      set insertion prn seed                             = 19
     end
 
 

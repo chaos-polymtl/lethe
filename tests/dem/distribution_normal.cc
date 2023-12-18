@@ -15,7 +15,7 @@
  */
 
 /**
- * @brief Inserting particles using volume insertion class.
+ * @brief Inserting particles following a normal distribution.
  */
 
 // Deal.II includes
@@ -52,25 +52,28 @@ test()
   DEMSolverParameters<dim> dem_parameters;
 
   // Defining simulation general parameters
-  dem_parameters.insertion_info.x_min                                = -0.05;
-  dem_parameters.insertion_info.y_min                                = -0.05;
+  dem_parameters.insertion_info.x_min                                = -0.5;
+  dem_parameters.insertion_info.y_min                                = -0.5;
   dem_parameters.insertion_info.z_min                                = -0.05;
-  dem_parameters.insertion_info.x_max                                = 0.05;
-  dem_parameters.insertion_info.y_max                                = 0.05;
+  dem_parameters.insertion_info.x_max                                = 0.5;
+  dem_parameters.insertion_info.y_max                                = 0.5;
   dem_parameters.insertion_info.z_max                                = 0.05;
   dem_parameters.insertion_info.axis_0                               = 0;
   dem_parameters.insertion_info.axis_1                               = 1;
   dem_parameters.insertion_info.axis_2                               = 2;
-  dem_parameters.insertion_info.inserted_this_step                   = 10;
+  dem_parameters.insertion_info.inserted_this_step                   = 100;
   dem_parameters.insertion_info.distance_threshold                   = 2;
   dem_parameters.lagrangian_physical_properties.particle_type_number = 1;
   dem_parameters.lagrangian_physical_properties.distribution_type.push_back(
-    Parameters::Lagrangian::SizeDistributionType::uniform);
+    Parameters::Lagrangian::SizeDistributionType::normal);
   dem_parameters.lagrangian_physical_properties.particle_average_diameter[0] =
     0.005;
+  dem_parameters.lagrangian_physical_properties.particle_size_std[0] = 0.0005;
+  dem_parameters.lagrangian_physical_properties.seed_for_distributions
+    .push_back(10);
   dem_parameters.lagrangian_physical_properties.density_particle[0] = 2500;
-  dem_parameters.lagrangian_physical_properties.number[0]           = 10;
-  dem_parameters.insertion_info.random_number_range                 = 0;
+  dem_parameters.lagrangian_physical_properties.number[0]           = 1000;
+  dem_parameters.insertion_info.random_number_range                 = 0.75;
   dem_parameters.insertion_info.random_number_seed                  = 19;
 
   // Defining particle handler
@@ -79,9 +82,10 @@ test()
 
   // Calling uniform insertion
   std::vector<std::shared_ptr<Distribution>> distribution_object_container;
-  distribution_object_container.push_back(std::make_shared<UniformDistribution>(
-    dem_parameters.lagrangian_physical_properties
-      .particle_average_diameter[0]));
+  distribution_object_container.push_back(std::make_shared<NormalDistribution>(
+    dem_parameters.lagrangian_physical_properties.particle_average_diameter[0],
+    dem_parameters.lagrangian_physical_properties.particle_size_std[0],
+    dem_parameters.lagrangian_physical_properties.seed_for_distributions[0]));
 
   // Calling volume insertion
   VolumeInsertion<dim> insertion_object(
@@ -92,15 +96,17 @@ test()
   insertion_object.insert(particle_handler, tr, dem_parameters);
 
   // Output
-  int particle_number = 1;
+  int particle_number = 0;
   for (auto particle = particle_handler.begin();
        particle != particle_handler.end();
        ++particle, ++particle_number)
     {
-      deallog << "Particle " << particle_number
-              << " is inserted at: " << particle->get_location()[0] << " "
-              << particle->get_location()[1] << " "
-              << particle->get_location()[2] << " " << std::endl;
+      auto particle_properties = particle->get_properties();
+
+      double dp = particle_properties[DEM::PropertiesIndex::dp];
+
+      deallog << "Particle " << particle_number << " diameter is: " << dp
+              << std::endl;
     }
 }
 

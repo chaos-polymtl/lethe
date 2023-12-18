@@ -149,8 +149,8 @@ The ``insertion info`` subsection manages the insertion of particles. It allows 
     set insertion box maximum y                        = 0.01
     set insertion box maximum z                        = 0.01
     set insertion distance threshold                   = 2.2
-    set insertion random number range                  = 0.5
-    set insertion random number seed                   = 19
+    set insertion maximum offset                       = 0.5
+    set insertion prn seed                             = 19
   end
 
 Floating Walls

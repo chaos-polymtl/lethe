@@ -164,8 +164,8 @@ The ``insertion info`` subsection manages the insertion of particles. It allows 
       set insertion box maximum y                        = 0.3
       set insertion box maximum z                        = 0.015
       set insertion distance threshold                   = 1.05
-      set insertion random number range                  = 0.3
-      set insertion random number seed                   = 19
+      set insertion maximum offset                       = 0.3
+      set insertion prn seed                             = 19
     end
 
 

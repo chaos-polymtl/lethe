@@ -69,8 +69,8 @@ An insertion box is defined inside the cylindrical domain, inserting 8000 partic
       set insertion box maximum y                        = 0.04
       set insertion box maximum z                        = 0.04
       set insertion distance threshold                   = 1.1
-      set insertion random number range                  = 0.05
-      set insertion random number seed                   = 19
+      set insertion maximum offset                       = 0.05
+      set insertion prn seed                             = 19
     end
 
 Restart files are written once the packing ends. The restart files are used to start the DEM simulation with the imposed rotating boundary condition.

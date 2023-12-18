@@ -92,8 +92,8 @@ subsection insertion info
   set insertion second direction                     = 0
   set insertion third direction                      = 1
   set insertion distance threshold                   = 1.5
-  set insertion random number range                  = 0.1
-  set insertion random number seed                   = 19
+  set insertion maximum offset                       = 0.1
+  set insertion prn seed                             = 19
 end
 
 #---------------------------------------------------

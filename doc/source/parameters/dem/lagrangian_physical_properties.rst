@@ -30,10 +30,12 @@ In this subsection, gravitational acceleration, and the physical properties of t
 
       # If distribution type = custom
       set custom diameters                  = 0.001 , 0.0005
-      set custom probabilities              = 0.6   , 0.4
+      set custom volume fractions           = 0.6   , 0.4
 
       # If distribution type = normal
       set standard deviation                = 0.0
+      # If distribution type = normal or custom
+      set distribution prn seed          = 1
 
       # For every distribution types
       set number of particles               = 0
@@ -78,7 +80,9 @@ In this subsection, gravitational acceleration, and the physical properties of t
 
 * For a ``normal`` distribution, the ``standard deviation`` parameter should be defined to indicate the standard deviation on the particle size distribution.
 
-* For a ``custom`` distribution, the ``custom diameters`` parameter defines the different diameter values used when generating particles. The ``custom probabilities`` parameter defines the probabilities corresponding to each diameter value previously declared based on volume fraction, not on the number of particles. Both list must have the same length.
+* For a ``custom`` distribution, the ``custom diameters`` parameter defines the different diameter values used when generating particles. The ``custom volume fractions`` parameter defines the probabilities corresponding to each diameter value previously declared based on volume fraction. Both list must have the same length.
+
+* For a ``normal`` or a ``custom`` distribution, the ``distribution prn seed`` parameter defines the pseudo-random number (PRN) generator with which the diameters values are getting generated.
 
 * The ``number of particles`` parameter defines the number of particles for each type.
 

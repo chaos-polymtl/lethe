@@ -215,8 +215,8 @@ The volume of the insertion box should be large enough to fit all particles. Als
       set insertion box maximum y                        = 0.035
       set insertion box maximum z                        = 0.035
       set insertion distance threshold                   = 1.3
-      set insertion random number range                  = 0.3
-      set insertion random number seed                   = 19
+      set insertion maximum offset                       = 0.3
+      set insertion prn seed                             = 19
     end
 
 .. note::
