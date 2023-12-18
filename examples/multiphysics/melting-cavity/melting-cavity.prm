@@ -8,15 +8,15 @@ set dimension = 2
 #---------------------------------------------------
 
 subsection simulation control
-  set method                       = bdf2
-  set time end                     = 40000
-  set time step                    = 0.1
+  set method                       = bdf1
+  set time end                     = 60.1977
+  set time step                    = 0.001
+  set adapt                        = true 
   set max cfl                      = 0.5
-  set stop tolerance               = 1e-5
-  set adaptative time step scaling = 1.3
+  set adaptative time step scaling = 1.1
   set output name                  = melting
-  set output control               = time
-  set output time                  = 100
+  set output control               = iteration
+  set output frequency             = 10
   set output path                  = ./output/
 end
 
@@ -40,7 +40,7 @@ subsection initial conditions
     set Function expression = 0; 0; 0
   end
   subsection temperature
-    set Function expression = 104.9
+    set Function expression = 28
   end
 end
 
@@ -50,7 +50,7 @@ end
 
 subsection source term
   subsection xyz
-    set Function expression = 0 ; -0.00516 ; 0
+    set Function expression = 0 ; -1 ; 0
   end
 end
 
@@ -62,37 +62,41 @@ subsection physical properties
   set number of fluids = 1
   subsection fluid 0
     set thermal conductivity model = constant
-    set thermal conductivity       = 60
+    set thermal conductivity       = 0.040516842071415184
 
-    set thermal expansion model = constant
-    set thermal expansion       = 0.0002
+    set thermal expansion model = phase_change
+    set thermal expansion       = 1
 
     set rheological model   = phase_change
     set specific heat model = phase_change
 
-    set density = 7500
+    set density = 1
 
     subsection phase change
       # Enthalpy of the phase change
-      set latent enthalpy = 14634.1463
+      set latent enthalpy = 200
 
       # Temperature of the liquidus
-      set liquidus temperature = 105.1
+      set liquidus temperature = 29.8
 
       # Temperature of the solidus
-      set solidus temperature = 105
+      set solidus temperature = 29.6
 
       # Specific heat of the liquid phase
-      set specific heat liquid = 200
+      set specific heat liquid = 1
 
       # Specific heat of the solid phase
-      set specific heat solid = 200
+      set specific heat solid = 1
 
       # Kinematic viscosity of the liquid phase
-      set viscosity liquid = 0.00000075
+      set viscosity liquid = 0.0007366698558439125
 
       # Kinematic viscosity of the solid phase
-      set viscosity solid = 0.008
+      set viscosity solid = 10
+
+      set thermal expansion liquid       = 1
+      set thermal expansion solid       = 0
+
     end
   end
 end
@@ -104,8 +108,8 @@ end
 subsection mesh
   set type               = dealii
   set grid type          = subdivided_hyper_rectangle
-  set grid arguments     = 30, 20 : 0, 0 : 1, 0.714 : true
-  set initial refinement = 4
+  set grid arguments     = 2, 1 : 0, 0 : 1, 0.714 : true
+  set initial refinement = 7
 end
 
 #---------------------------------------------------
@@ -138,14 +142,14 @@ subsection boundary conditions heat transfer
     set id    = 0
     set type  = temperature
     subsection value
-      set Function expression = 108
+      set Function expression = 38
     end
   end
   subsection bc 1
     set id    = 1
     set type  = temperature
     subsection value
-      set Function expression = 104.9
+      set Function expression = 28
     end
   end
 end
@@ -165,13 +169,13 @@ end
 
 subsection non-linear solver
   subsection heat transfer
-    set tolerance      = 1e-6
-    set max iterations = 100
+    set tolerance      = 1e-3
+    set max iterations = 20
     set verbosity      = verbose
   end
   subsection fluid dynamics
     set tolerance      = 1e-6
-    set max iterations = 100
+    set max iterations = 5
     set verbosity      = verbose
   end
 end
@@ -184,23 +188,23 @@ subsection linear solver
   subsection fluid dynamics
     set verbosity                             = verbose
     set method                                = gmres
-    set max iters                             = 10000
+    set max iters                             = 1000
     set relative residual                     = 1e-3
-    set minimum residual                      = 1e-8
+    set minimum residual                      = 1e-11
     set preconditioner                        = ilu
-    set ilu preconditioner fill               = 1
-    set ilu preconditioner absolute tolerance = 1e-10
+    set ilu preconditioner fill               = 0
+    set ilu preconditioner absolute tolerance = 1e-12
     set ilu preconditioner relative tolerance = 1.00
   end
   subsection heat transfer
     set verbosity                             = verbose
     set method                                = gmres
-    set max iters                             = 10000
+    set max iters                             = 1000
     set relative residual                     = 1e-3
-    set minimum residual                      = 1e-8
+    set minimum residual                      = 1e-6
     set preconditioner                        = ilu
-    set ilu preconditioner fill               = 1
-    set ilu preconditioner absolute tolerance = 1e-10
+    set ilu preconditioner fill               = 0
+    set ilu preconditioner absolute tolerance = 1e-12
     set ilu preconditioner relative tolerance = 1.00
   end
 end
