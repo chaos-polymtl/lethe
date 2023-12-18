@@ -1631,6 +1631,10 @@ IBParticlesDEM<dim>::integrate_particles_motion(const double dt,
             }
         }
       t += dt_dem;
+      if (Utilities::MPI::this_mpi_process(this->mpi_communicator) == 0)
+        {
+      std::cout<<"hi dem time "<<t <<std::endl;
+        }
     }
 }
 

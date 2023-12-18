@@ -160,227 +160,247 @@ public:
     Shape<dim>                                           &shape,
     const typename DoFHandler<dim>::active_cell_iterator &cell,
     std::vector<Point<dim>>                              &candidate_points,
-    double                                                precision = 1e-6)
+    double                                                precision = 1e-6,
+    bool exact_distance_outside_of_contact                          = false)
   {
-    double                      distance = DBL_MAX;
-    Tensor<1, dim>              normal;
-    Point<dim>                  contact_point;
-    std::vector<Tensor<1, dim>> search_direction;
+    // Initialized the default values.
+    double         distance = DBL_MAX;
+    Tensor<1, dim> normal;
+    Point<dim>     contact_point;
+    bool           bounding_box_contact = true;
 
-    if constexpr (dim == 2)
+    // Check the bounding box
+    /*if (exact_distance_outside_of_contact == false)
       {
-        search_direction.push_back(Tensor<1, dim>({1.0, 0.0}));
-        search_direction.push_back(Tensor<1, dim>({-1.0, 0.0}));
-        search_direction.push_back(Tensor<1, dim>({0.0, 1.0}));
-        search_direction.push_back(Tensor<1, dim>({0.0, -1.0}));
-      }
-    else
+        bounding_box_contact = this->bounding_box_contact(shape);
+        //std::cout<<"bounding box are in contact = "<<  bounding_box_contact
+      <<std::endl;
+      }*/
+
+    // The following algorithm does a minimization of the level_set obtained by
+    // the intersection of two shapes. A usual gradient descent does not work as
+    // such. This algorithm uses a cartesian search combined with an additional
+    // guess based on the gradient of the level set and a numerical gradient
+    // descent.
+    if (bounding_box_contact)
       {
-        search_direction.push_back(Tensor<1, dim>({1.0, 0.0, 0.0}));
-        search_direction.push_back(Tensor<1, dim>({-1.0, 0.0, 0.0}));
-        search_direction.push_back(Tensor<1, dim>({0.0, 1.0, 0.0}));
-        search_direction.push_back(Tensor<1, dim>({0.0, -1.0, 0.0}));
-        search_direction.push_back(Tensor<1, dim>({0.0, 0.0, 1.0}));
-        search_direction.push_back(Tensor<1, dim>({0.0, 0.0, -1.0}));
-      }
-
-    for (unsigned int i = 0; i < candidate_points.size(); ++i)
-      {
-        Tensor<1, dim>     current_normal;
-        Tensor<1, dim>     previous_normal;
-        Point<dim>         current_point = candidate_points[i];
-        unsigned int       iteration     = 0;
-        const unsigned int iteration_max = 2e2;
-
-        Point<dim> dx{}, distance_gradient{}, previous_position{},
-          previous_gradient{};
-        double max_step           = shape.effective_radius * 0.25;
-        double previous_step_size = max_step;
-
-        double current_distance;
-        double value_first_component  = this->value_with_cell_guess(current_point,cell);
-        double value_second_component = shape.value_with_cell_guess(current_point,cell);
-        if (value_first_component > value_second_component)
+        std::vector<Tensor<1, dim>> search_direction;
+        // Define the cartesian direction search directions.
+        if constexpr (dim == 2)
           {
-            current_distance = value_first_component;
+            search_direction.push_back(Tensor<1, dim>({1.0, 0.0}));
+            search_direction.push_back(Tensor<1, dim>({-1.0, 0.0}));
+            search_direction.push_back(Tensor<1, dim>({0.0, 1.0}));
+            search_direction.push_back(Tensor<1, dim>({0.0, -1.0}));
           }
         else
           {
-            current_distance = value_second_component;
+            search_direction.push_back(Tensor<1, dim>({1.0, 0.0, 0.0}));
+            search_direction.push_back(Tensor<1, dim>({-1.0, 0.0, 0.0}));
+            search_direction.push_back(Tensor<1, dim>({0.0, 1.0, 0.0}));
+            search_direction.push_back(Tensor<1, dim>({0.0, -1.0, 0.0}));
+            search_direction.push_back(Tensor<1, dim>({0.0, 0.0, 1.0}));
+            search_direction.push_back(Tensor<1, dim>({0.0, 0.0, -1.0}));
           }
-
-        previous_position = current_point;
-
-        double       previous_value     = DBL_MAX;
-        unsigned int consecutive_center = 0;
-
-        while (iteration < iteration_max && (previous_step_size) > precision)
+        // Loop over all the initial candidate points.
+        for (unsigned int i = 0; i < candidate_points.size(); ++i)
           {
-            value_first_component  = this->value_with_cell_guess(current_point,cell);
-            value_second_component = shape.value_with_cell_guess(current_point,cell);
-            if (value_first_component > value_second_component)
-              {
-                distance_gradient = this->gradient_with_cell_guess(current_point,cell);
-              }
-            else
-              {
-                distance_gradient = shape.gradient_with_cell_guess(current_point,cell);
-              }
-            current_normal = distance_gradient / distance_gradient.norm();
+            // Initialize variable use in the calculation.
+            Tensor<1, dim> current_normal;
+            Tensor<1, dim> previous_normal;
+            Point<dim>     current_point = candidate_points[i];
+            Point<dim> dx{}, distance_gradient{}, previous_position{},
+              previous_gradient{};
+            // Initialize the iteration counter. We limit the number of iterations to 200.
+            unsigned int       iteration     = 0;
+            const unsigned int iteration_max = 2e2;
 
-            Tensor<1, dim> direction = distance_gradient;
-            dx                       = -max_step * direction / direction.norm();
-            if (distance_gradient.norm() == 0)
-              {
-                dx = -max_step * direction;
-              }
+            //The initial step size is set to 25% of the effective radius of the shape. Tests showed that this initial step size is generally adequate.
+            double max_step           = shape.effective_radius * 0.25;
+            double previous_step_size = max_step;
 
-
-            Point<dim> new_point   = current_point + dx;
-            value_first_component  = this->value_with_cell_guess(new_point,cell);
-            value_second_component = shape.value_with_cell_guess(new_point,cell);
-            double new_distance =
+            // Initialize the value. In this minimisation of the intersection of two level set we use the smooth max function for the union as it significantly smooths the minimization problem as we get close to the local minimum of the intersection.
+            double value_first_component  = this->value_with_cell_guess(current_point);
+            double value_second_component = shape.value_with_cell_guess(current_point);
+            double current_distance =
               smooth_max(value_first_component, value_second_component);
-            if (new_distance > current_distance - precision*precision)
-              {
-                std::vector<double> diff_results;
-                diff_results.resize(search_direction.size());
-                Point<dim> best_point;
-                double     best_dist = current_distance;
-                for (unsigned int d = 0; d < search_direction.size(); ++d)
-                  {
-                    Tensor<1, dim> perturbation =
-                      search_direction[d] * max_step;
-                    value_first_component =
-                      this->value_with_cell_guess(current_point + perturbation,cell);
-                    value_second_component =
-                      shape.value_with_cell_guess(current_point + perturbation,cell);
-                    new_distance =
-                      smooth_max(value_first_component, value_second_component);
-                    diff_results[d] =
-                      (new_distance - current_distance) / max_step;
-                    if (new_distance < best_dist - precision*precision)
-                      {
-                        best_dist  = new_distance;
-                        best_point = current_point + perturbation;
-                      }
-                  }
-                if (best_dist < current_distance - precision*precision)
-                  {
-                    current_distance = best_dist;
-                    current_point    = best_point;
-                  }
 
-                if constexpr (dim == 2)
+            previous_position = current_point;
+            // The initial previous value and position
+            double       previous_value     = DBL_MAX;
+            unsigned int consecutive_center = 0;
+
+            // Iterate to find the minimum of the intersection.
+            while (iteration < iteration_max &&
+                   (previous_step_size) > precision)
+              {
+                // Check the local gradient direction.
+                value_first_component  = this->value_with_cell_guess(current_point);
+                value_second_component = shape.value_with_cell_guess(current_point);
+                if (value_first_component > value_second_component)
                   {
-                    current_normal[0] =
-                      ((diff_results[0] - diff_results[1]) / 2);
-                    current_normal[1] =
-                      ((diff_results[2] - diff_results[3]) / 2);
+                    distance_gradient = this->gradient_with_cell_guess(current_point);
                   }
                 else
                   {
-                    current_normal[0] =
-                      ((diff_results[0] - diff_results[1]) / 2);
-                    current_normal[1] =
-                      ((diff_results[2] - diff_results[3]) / 2);
-                    current_normal[2] =
-                      ((diff_results[4] - diff_results[5]) / 2);
+                    distance_gradient = shape.gradient_with_cell_guess(current_point);
                   }
-                current_normal = current_normal / current_normal.norm();
-                Point<dim> extra_guess;
-                if (current_distance > previous_value - precision*precision)
+                current_normal = distance_gradient / distance_gradient.norm();
+                Tensor<1, dim> direction = distance_gradient;
+                dx = -max_step * direction / direction.norm();
+                if (distance_gradient.norm() == 0)
                   {
-                    if constexpr (dim == 2)
+                    dx = -max_step * direction;
+                  }
+                // Check the first candidate point in the direction of the gradient.
+                Point<dim> new_point   = current_point + dx;
+                value_first_component  = this->value_with_cell_guess(new_point);
+                value_second_component = shape.value_with_cell_guess(new_point);
+                double new_distance =
+                  smooth_max(value_first_component, value_second_component);
+                // Check if the guess is better than the previous guess. If it is not better, we do the cartesian directional search.
+                if (new_distance > current_distance - precision * precision)
+                  {
+                    // Initialize the container for the value.
+                    std::vector<double> diff_results;
+                    diff_results.resize(search_direction.size());
+                    Point<dim> best_point;
+                    double     best_dist = current_distance;
+                    for (unsigned int d = 0; d < search_direction.size(); ++d)
                       {
-                        new_point[0] =
-                          previous_position[0] -
-                          ((diff_results[0] - diff_results[1]) / 2) /
-                            ((diff_results[0] + diff_results[1]) / max_step);
-                        new_point[1] =
-                          previous_position[1] -
-                          ((diff_results[2] - diff_results[3]) / 2) /
-                            ((diff_results[2] + diff_results[3]) / max_step);
-                      }
-                    else
-                      {
-                        new_point[0] =
-                          previous_position[0] -
-                          ((diff_results[0] - diff_results[1]) / 2) /
-                            ((diff_results[0] + diff_results[1]) / max_step);
-                        new_point[1] =
-                          previous_position[1] -
-                          ((diff_results[2] - diff_results[3]) / 2) /
-                            ((diff_results[2] + diff_results[3]) / max_step);
-                        new_point[2] =
-                          previous_position[2] -
-                          ((diff_results[4] - diff_results[5]) / 2) /
-                            ((diff_results[4] + diff_results[5]) / max_step);
-                      }
-                    value_first_component  = this->value_with_cell_guess(new_point,cell);
-                    value_second_component = shape.value_with_cell_guess(new_point,cell);
-                    new_distance =
-                      smooth_max(value_first_component, value_second_component);
-                    if (new_distance < current_distance - precision*precision)
-                      {
-                        current_distance = new_distance;
-                        current_point    = new_point;
-                      }
-                    else
-                      {
-                        new_point = current_point +
-                                    (new_point - previous_position) /
-                                      (new_point - previous_position).norm() *
-                                      max_step;
-                        value_first_component  = this->value_with_cell_guess(new_point,cell);
-                        value_second_component = shape.value_with_cell_guess(new_point,cell);
+                        Tensor<1, dim> perturbation =
+                          search_direction[d] * max_step;
+                        value_first_component =
+                          this->value_with_cell_guess(current_point + perturbation);
+                        value_second_component =
+                          shape.value_with_cell_guess(current_point + perturbation);
                         new_distance = smooth_max(value_first_component,
                                                   value_second_component);
-                        if (new_distance < current_distance - precision*precision)
+                        diff_results[d] =
+                          (new_distance - current_distance) / max_step;
+                        // Check if the Cartesian search is better than the last candidate.
+                        if (new_distance < best_dist - precision * precision)
                           {
+                            best_dist  = new_distance;
+                            best_point = current_point + perturbation;
+                          }
+                      }
+                    // Store the current results.
+                    if (best_dist < current_distance - precision * precision)
+                      {
+                        current_distance = best_dist;
+                        current_point    = best_point;
+                      }
+                    // reevaluate the normal numerically.
+                    if constexpr (dim == 2)
+                      {
+                        current_normal[0] =
+                          ((diff_results[0] - diff_results[1]) / 2);
+                        current_normal[1] =
+                          ((diff_results[2] - diff_results[3]) / 2);
+                      }
+                    else
+                      {
+                        current_normal[0] =
+                          ((diff_results[0] - diff_results[1]) / 2);
+                        current_normal[1] =
+                          ((diff_results[2] - diff_results[3]) / 2);
+                        current_normal[2] =
+                          ((diff_results[4] - diff_results[5]) / 2);
+                      }
+                    current_normal = current_normal / current_normal.norm();
+                    Point<dim> extra_guess;
+                    // If none of the cartesian candidates are better, we use the value to find the point that minimizes the numerical gradient we evaluated with the cartesian guess.
+                    if (current_distance >
+                        previous_value - precision * precision)
+                      {
+                        // Define the guess point.
+                        if constexpr (dim == 2)
+                          {
+                            new_point[0] =
+                              previous_position[0] -
+                              ((diff_results[0] - diff_results[1]) / 2) /
+                                ((diff_results[0] + diff_results[1]) /
+                                 max_step);
+                            new_point[1] =
+                              previous_position[1] -
+                              ((diff_results[2] - diff_results[3]) / 2) /
+                                ((diff_results[2] + diff_results[3]) /
+                                 max_step);
+                          }
+                        else
+                          {
+                            new_point[0] =
+                              previous_position[0] -
+                              ((diff_results[0] - diff_results[1]) / 2) /
+                                ((diff_results[0] + diff_results[1]) /
+                                 max_step);
+                            new_point[1] =
+                              previous_position[1] -
+                              ((diff_results[2] - diff_results[3]) / 2) /
+                                ((diff_results[2] + diff_results[3]) /
+                                 max_step);
+                            new_point[2] =
+                              previous_position[2] -
+                              ((diff_results[4] - diff_results[5]) / 2) /
+                                ((diff_results[4] + diff_results[5]) /
+                                 max_step);
+                          }
+                        value_first_component  = this->value_with_cell_guess(new_point);
+                        value_second_component = shape.value_with_cell_guess(new_point);
+                        new_distance = smooth_max(value_first_component,
+                                                  value_second_component);
+                        // Check if it is better.
+                        if (new_distance <
+                            previous_value - precision * precision)
+                          {
+                            // If it is, we reduce the step size to the size of the step made by this guess.
+                            max_step = (new_point - previous_position).norm();
                             current_distance = new_distance;
                             current_point    = new_point;
                           }
                       }
-                  }
-
-                if (current_distance > previous_value - precision*precision)
-                  {
-                    consecutive_center += 1;
-                    previous_step_size = max_step;
-                    max_step *= 1.0 / std::pow(2.0, consecutive_center);
-                    current_point    = previous_position;
-                    current_distance = previous_value;
-                    current_normal   = previous_normal;
+                    // If the guess is not better, we reduce the search size and store the value. If one of the points is better, we reset the consecutive_center counter. This variable helps to converge faster when one of the guesses is very close to the optimal point.
+                    if (current_distance >
+                        previous_value - precision * precision)
+                      {
+                        consecutive_center += 1;
+                        previous_step_size = max_step;
+                        max_step *= 1.0 / std::pow(2.0, consecutive_center);
+                        current_point    = previous_position;
+                        current_distance = previous_value;
+                        current_normal   = previous_normal;
+                      }
+                    else
+                      {
+                        max_step *= 1;
+                        consecutive_center = 0;
+                      }
                   }
                 else
                   {
+                    current_point    = new_point;
+                    current_distance = new_distance;
                     max_step *= 1;
                     consecutive_center = 0;
                   }
+
+                // Store the previous values.
+                previous_value    = current_distance;
+                previous_position = current_point;
+                previous_normal   = current_normal;
+                iteration++;
               }
-            else
+            // Store the minimum obtained with this initial guess and compare it with the results for other initial points.
+            if (distance > current_distance)
               {
-                current_point    = new_point;
-                current_distance = new_distance;
-                max_step *= 1;
-                consecutive_center = 0;
+                distance      = current_distance;
+                normal        = current_normal;
+                contact_point = current_point;
               }
-
-            previous_value    = current_distance;
-            previous_position = current_point;
-            previous_normal   = current_normal;
-            iteration++;
-
-          }
-
-        if (distance > current_distance)
-          {
-            distance      = current_distance;
-            normal        = current_normal;
-            contact_point = current_point;
           }
       }
+    // output
     return std::make_tuple(distance, normal, contact_point);
   }
 
@@ -393,217 +413,398 @@ public:
    * @param shape The shape with which the distance is evaluated
    * @param cell The cell that is likely to contain the evaluation point
    * @param candidate_points This is the initial points used in the calculation.
+   * @param exact_distance_outside_of_contactThis parameter enables the check of the bounding box contact. If the bounding box does not contact, the distance evaluation is not performed, and the default value is returned
    */
   virtual std::tuple<double, Tensor<1, dim>, Point<dim>>
   distance_to_shape(Shape<dim>              &shape,
                     std::vector<Point<dim>> &candidate_points,
-                    double                   precision = 1e-6)
+                    double                   precision     = 1e-6,
+                    bool exact_distance_outside_of_contact = false)
   {
-    double                      distance = DBL_MAX;
-    Tensor<1, dim>              normal;
-    Point<dim>                  contact_point;
-    std::vector<Tensor<1, dim>> search_direction;
+    // Initialized the default values.
+    double         distance = DBL_MAX;
+    Tensor<1, dim> normal;
+    Point<dim>     contact_point;
+    bool           bounding_box_contact = true;
 
-    if constexpr (dim == 2)
+    // Check the bounding box
+    /*if (exact_distance_outside_of_contact == false)
       {
-        search_direction.push_back(Tensor<1, dim>({1.0, 0.0}));
-        search_direction.push_back(Tensor<1, dim>({-1.0, 0.0}));
-        search_direction.push_back(Tensor<1, dim>({0.0, 1.0}));
-        search_direction.push_back(Tensor<1, dim>({0.0, -1.0}));
-      }
-    else
+        bounding_box_contact = this->bounding_box_contact(shape);
+        //std::cout<<"bounding box are in contact = "<<  bounding_box_contact
+      <<std::endl;
+      }*/
+
+    // The following algorithm does a minimization of the level_set obtained by
+    // the intersection of two shapes. A usual gradient descent does not work as
+    // such. This algorithm uses a cartesian search combined with an additional
+    // guess based on the gradient of the level set and a numerical gradient
+    // descent.
+    if (bounding_box_contact)
       {
-        search_direction.push_back(Tensor<1, dim>({1.0, 0.0, 0.0}));
-        search_direction.push_back(Tensor<1, dim>({-1.0, 0.0, 0.0}));
-        search_direction.push_back(Tensor<1, dim>({0.0, 1.0, 0.0}));
-        search_direction.push_back(Tensor<1, dim>({0.0, -1.0, 0.0}));
-        search_direction.push_back(Tensor<1, dim>({0.0, 0.0, 1.0}));
-        search_direction.push_back(Tensor<1, dim>({0.0, 0.0, -1.0}));
-      }
-    for (unsigned int i = 0; i < candidate_points.size(); ++i)
-      {
-        Tensor<1, dim>     current_normal;
-        Tensor<1, dim>     previous_normal;
-        Point<dim>         current_point = candidate_points[i];
-
-        unsigned int       iteration     = 0;
-        const unsigned int iteration_max = 2e2;
-
-        Point<dim> dx{}, distance_gradient{}, previous_position{},
-          previous_gradient{};
-        double max_step           = shape.effective_radius * 0.25;
-        double previous_step_size = max_step;
-
-        double current_distance;
-        double value_first_component  = this->value(current_point);
-        double value_second_component = shape.value(current_point);
-        if (value_first_component > value_second_component)
+        std::vector<Tensor<1, dim>> search_direction;
+        // Define the cartesian direction search directions.
+        if constexpr (dim == 2)
           {
-            current_distance = value_first_component;
+            search_direction.push_back(Tensor<1, dim>({1.0, 0.0}));
+            search_direction.push_back(Tensor<1, dim>({-1.0, 0.0}));
+            search_direction.push_back(Tensor<1, dim>({0.0, 1.0}));
+            search_direction.push_back(Tensor<1, dim>({0.0, -1.0}));
           }
         else
           {
-            current_distance = value_second_component;
+            search_direction.push_back(Tensor<1, dim>({1.0, 0.0, 0.0}));
+            search_direction.push_back(Tensor<1, dim>({-1.0, 0.0, 0.0}));
+            search_direction.push_back(Tensor<1, dim>({0.0, 1.0, 0.0}));
+            search_direction.push_back(Tensor<1, dim>({0.0, -1.0, 0.0}));
+            search_direction.push_back(Tensor<1, dim>({0.0, 0.0, 1.0}));
+            search_direction.push_back(Tensor<1, dim>({0.0, 0.0, -1.0}));
           }
-
-        previous_position = current_point;
-
-        double       previous_value     = DBL_MAX;
-        unsigned int consecutive_center = 0;
-
-        while (iteration < iteration_max && (previous_step_size) > precision)
+        // Loop over all the initial candidate points.
+        for (unsigned int i = 0; i < candidate_points.size(); ++i)
           {
-            value_first_component  = this->value(current_point);
-            value_second_component = shape.value(current_point);
-            if (value_first_component > value_second_component)
-              {
-                distance_gradient = this->gradient(current_point);
-              }
-            else
-              {
-                distance_gradient = shape.gradient(current_point);
-              }
-            current_normal = distance_gradient / distance_gradient.norm();
+            // Initialize variable use in the calculation.
+            Tensor<1, dim> current_normal;
+            Tensor<1, dim> previous_normal;
+            Point<dim>     current_point = candidate_points[i];
+            Point<dim> dx{}, distance_gradient{}, previous_position{},
+              previous_gradient{};
+            // Initialize the iteration counter. We limit the number of iterations to 200.
+            unsigned int       iteration     = 0;
+            const unsigned int iteration_max = 2e2;
 
-            Tensor<1, dim> direction = distance_gradient;
-            dx                       = -max_step * direction / direction.norm();
-            if (distance_gradient.norm() == 0)
-              {
-                dx = -max_step * direction;
-              }
+            //The initial step size is set to 25% of the effective radius of the shape. Tests showed that this initial step size is generally adequate.
+            double max_step           = shape.effective_radius * 0.25;
+            double previous_step_size = max_step;
 
-
-            Point<dim> new_point   = current_point + dx;
-            value_first_component  = this->value(new_point);
-            value_second_component = shape.value(new_point);
-            double new_distance =
+            // Initialize the value. In this minimisation of the intersection of two level set we use the smooth max function for the union as it significantly smooths the minimization problem as we get close to the local minimum of the intersection.
+            double value_first_component  = this->value(current_point);
+            double value_second_component = shape.value(current_point);
+            double current_distance =
               smooth_max(value_first_component, value_second_component);
-            if (new_distance > current_distance - precision*precision)
-              {
-                std::vector<double> diff_results;
-                diff_results.resize(search_direction.size());
-                Point<dim> best_point;
-                double     best_dist = current_distance;
-                for (unsigned int d = 0; d < search_direction.size(); ++d)
-                  {
-                    Tensor<1, dim> perturbation =
-                      search_direction[d] * max_step;
-                    value_first_component =
-                      this->value(current_point + perturbation);
-                    value_second_component =
-                      shape.value(current_point + perturbation);
-                    new_distance =
-                      smooth_max(value_first_component, value_second_component);
-                    diff_results[d] =
-                      (new_distance - current_distance) / max_step;
-                    if (new_distance < best_dist - precision*precision)
-                      {
-                        best_dist  = new_distance;
-                        best_point = current_point + perturbation;
-                      }
-                  }
-                if (best_dist < current_distance - precision*precision)
-                  {
-                    current_distance = best_dist;
-                    current_point    = best_point;
-                  }
 
-                if constexpr (dim == 2)
+            previous_position = current_point;
+            // The initial previous value and position
+            double       previous_value     = DBL_MAX;
+            unsigned int consecutive_center = 0;
+
+            // Iterate to find the minimum of the intersection.
+            while (iteration < iteration_max &&
+                   (previous_step_size) > precision)
+              {
+                // Check the local gradient direction.
+                value_first_component  = this->value(current_point);
+                value_second_component = shape.value(current_point);
+                if (value_first_component > value_second_component)
                   {
-                    current_normal[0] =
-                      ((diff_results[0] - diff_results[1]) / 2);
-                    current_normal[1] =
-                      ((diff_results[2] - diff_results[3]) / 2);
+                    distance_gradient = this->gradient(current_point);
                   }
                 else
                   {
-                    current_normal[0] =
-                      ((diff_results[0] - diff_results[1]) / 2);
-                    current_normal[1] =
-                      ((diff_results[2] - diff_results[3]) / 2);
-                    current_normal[2] =
-                      ((diff_results[4] - diff_results[5]) / 2);
+                    distance_gradient = shape.gradient(current_point);
                   }
-                current_normal = current_normal / current_normal.norm();
-                Point<dim> extra_guess;
-                if (current_distance > previous_value - precision*precision)
+                current_normal = distance_gradient / distance_gradient.norm();
+                Tensor<1, dim> direction = distance_gradient;
+                dx = -max_step * direction / direction.norm();
+                if (distance_gradient.norm() == 0)
                   {
+                    dx = -max_step * direction;
+                  }
+                // Check the first candidate point in the direction of the gradient.
+                Point<dim> new_point   = current_point + dx;
+                value_first_component  = this->value(new_point);
+                value_second_component = shape.value(new_point);
+                double new_distance =
+                  smooth_max(value_first_component, value_second_component);
+                // Check if the guess is better than the previous guess. If it is not better, we do the cartesian directional search.
+                if (new_distance > current_distance - precision * precision)
+                  {
+                    // Initialize the container for the value.
+                    std::vector<double> diff_results;
+                    diff_results.resize(search_direction.size());
+                    Point<dim> best_point;
+                    double     best_dist = current_distance;
+                    for (unsigned int d = 0; d < search_direction.size(); ++d)
+                      {
+                        Tensor<1, dim> perturbation =
+                          search_direction[d] * max_step;
+                        value_first_component =
+                          this->value(current_point + perturbation);
+                        value_second_component =
+                          shape.value(current_point + perturbation);
+                        new_distance = smooth_max(value_first_component,
+                                                  value_second_component);
+                        diff_results[d] =
+                          (new_distance - current_distance) / max_step;
+                        // Check if the Cartesian search is better than the last candidate.
+                        if (new_distance < best_dist - precision * precision)
+                          {
+                            best_dist  = new_distance;
+                            best_point = current_point + perturbation;
+                          }
+                      }
+                    // Store the current results.
+                    if (best_dist < current_distance - precision * precision)
+                      {
+                        current_distance = best_dist;
+                        current_point    = best_point;
+                      }
+                    // reevaluate the normal numerically.
                     if constexpr (dim == 2)
                       {
-                        new_point[0] =
-                          previous_position[0] -
-                          ((diff_results[0] - diff_results[1]) / 2) /
-                            ((diff_results[0] + diff_results[1]) / max_step);
-                        new_point[1] =
-                          previous_position[1] -
-                          ((diff_results[2] - diff_results[3]) / 2) /
-                            ((diff_results[2] + diff_results[3]) / max_step);
+                        current_normal[0] =
+                          ((diff_results[0] - diff_results[1]) / 2);
+                        current_normal[1] =
+                          ((diff_results[2] - diff_results[3]) / 2);
                       }
                     else
                       {
-                        new_point[0] =
-                          previous_position[0] -
-                          ((diff_results[0] - diff_results[1]) / 2) /
-                            ((diff_results[0] + diff_results[1]) / max_step);
-                        new_point[1] =
-                          previous_position[1] -
-                          ((diff_results[2] - diff_results[3]) / 2) /
-                            ((diff_results[2] + diff_results[3]) / max_step);
-                        new_point[2] =
-                          previous_position[2] -
-                          ((diff_results[4] - diff_results[5]) / 2) /
-                            ((diff_results[4] + diff_results[5]) / max_step);
+                        current_normal[0] =
+                          ((diff_results[0] - diff_results[1]) / 2);
+                        current_normal[1] =
+                          ((diff_results[2] - diff_results[3]) / 2);
+                        current_normal[2] =
+                          ((diff_results[4] - diff_results[5]) / 2);
                       }
-                    value_first_component  = this->value(new_point);
-                    value_second_component = shape.value(new_point);
-                    new_distance =
-                      smooth_max(value_first_component, value_second_component);
-                    if (new_distance < current_distance - precision*precision)
+                    current_normal = current_normal / current_normal.norm();
+                    Point<dim> extra_guess;
+                    // If none of the cartesian candidates are better, we use the value to find the point that minimizes the numerical gradient we evaluated with the cartesian guess.
+                    if (current_distance >
+                        previous_value - precision * precision)
                       {
-                        max_step = (new_point-previous_position).norm();
-                        current_distance = new_distance;
-                        current_point    = new_point;
+                        // Define the guess point.
+                        if constexpr (dim == 2)
+                          {
+                            new_point[0] =
+                              previous_position[0] -
+                              ((diff_results[0] - diff_results[1]) / 2) /
+                                ((diff_results[0] + diff_results[1]) /
+                                 max_step);
+                            new_point[1] =
+                              previous_position[1] -
+                              ((diff_results[2] - diff_results[3]) / 2) /
+                                ((diff_results[2] + diff_results[3]) /
+                                 max_step);
+                          }
+                        else
+                          {
+                            new_point[0] =
+                              previous_position[0] -
+                              ((diff_results[0] - diff_results[1]) / 2) /
+                                ((diff_results[0] + diff_results[1]) /
+                                 max_step);
+                            new_point[1] =
+                              previous_position[1] -
+                              ((diff_results[2] - diff_results[3]) / 2) /
+                                ((diff_results[2] + diff_results[3]) /
+                                 max_step);
+                            new_point[2] =
+                              previous_position[2] -
+                              ((diff_results[4] - diff_results[5]) / 2) /
+                                ((diff_results[4] + diff_results[5]) /
+                                 max_step);
+                          }
+                        value_first_component  = this->value(new_point);
+                        value_second_component = shape.value(new_point);
+                        new_distance = smooth_max(value_first_component,
+                                                  value_second_component);
+                        // Check if it is better.
+                        if (new_distance <
+                            previous_value - precision * precision)
+                          {
+                            // If it is, we reduce the step size to the size of the step made by this guess.
+                            max_step = (new_point - previous_position).norm();
+                            current_distance = new_distance;
+                            current_point    = new_point;
+                          }
                       }
-                  }
-
-                if (current_distance > previous_value - precision*precision)
-                  {
-                    consecutive_center += 1;
-                    previous_step_size = max_step;
-                    max_step *= 1.0 / std::pow(2.0, consecutive_center);
-                    current_point    = previous_position;
-                    current_distance = previous_value;
-                    current_normal   = previous_normal;
+                    // If the guess is not better, we reduce the search size and store the value. If one of the points is better, we reset the consecutive_center counter. This variable helps to converge faster when one of the guesses is very close to the optimal point.
+                    if (current_distance >
+                        previous_value - precision * precision)
+                      {
+                        consecutive_center += 1;
+                        previous_step_size = max_step;
+                        max_step *= 1.0 / std::pow(2.0, consecutive_center);
+                        current_point    = previous_position;
+                        current_distance = previous_value;
+                        current_normal   = previous_normal;
+                      }
+                    else
+                      {
+                        max_step *= 1;
+                        consecutive_center = 0;
+                      }
                   }
                 else
                   {
+                    current_point    = new_point;
+                    current_distance = new_distance;
                     max_step *= 1;
                     consecutive_center = 0;
                   }
+
+                // Store the previous values.
+                previous_value    = current_distance;
+                previous_position = current_point;
+                previous_normal   = current_normal;
+                iteration++;
               }
-            else
+            // Store the minimum obtained with this initial guess and compare it with the results for other initial points.
+            if (distance > current_distance)
               {
-                current_point    = new_point;
-                current_distance = new_distance;
-                max_step *= 1;
-                consecutive_center = 0;
+                distance      = current_distance;
+                normal        = current_normal;
+                contact_point = current_point;
               }
-
-            previous_value    = current_distance;
-            previous_position = current_point;
-            previous_normal   = current_normal;
-            iteration++;
-            //std::cout<<"iteration "<< iteration <<" current_distance "<<current_distance<<" step_size "<< max_step<<" current_point "<<current_point <<std::endl;
-          }
-
-        if (distance > current_distance)
-          {
-            distance      = current_distance;
-            normal        = current_normal;
-            contact_point = current_point;
           }
       }
+    // output
     return std::make_tuple(distance, normal, contact_point);
+  }
+
+
+  /**
+   * @brief Check if the bounding box of this shape and another one are overlapping. This function returns false if the shape is not overlapping.
+   * This function is base use the Separating Axis Theorem (SAT) to perform the bounding box check.
+   * @param shape The shape with which the distance is evaluated
+   */
+  bool
+  bounding_box_contact(Shape<dim> &shape)
+  {
+    if constexpr (dim == 3)
+      {
+        double         ra, rb;
+        Tensor<2, dim> R, AbsR;
+
+        // Compute rotation matrix expressing each box in the other's coordinate
+        // frame
+        for (int i = 0; i < 3; i++)
+          {
+            for (int j = 0; j < 3; j++)
+              {
+                R[i][j] = scalar_product(this->rotation_matrix[i],
+                                         shape.rotation_matrix[j]);
+              }
+          }
+
+        // Compute translation vector t in this shape frame
+        Tensor<1, dim> t = shape.position - this->position;
+        t            = this->rotation_matrix*t ;
+
+               // Compute common subexpressions. Add in an epsilon term to counteract
+        // arithmetic errors
+        for (int i = 0; i < 3; i++)
+          {
+            for (int j = 0; j < 3; j++)
+              {
+                AbsR[i][j] =
+                  std::abs(R[i][j]) + std::numeric_limits<double>::epsilon();
+              }
+          }
+
+        // Test axes L = A0, L = A1, L = A2
+        for (int i = 0; i < 3; i++)
+          {
+            ra = this->bounding_box_half_length[i];
+            rb = shape.bounding_box_half_length[0] * AbsR[i][0] +
+                 shape.bounding_box_half_length[1] * AbsR[i][1] +
+                 shape.bounding_box_half_length[2] * AbsR[i][2];
+            if (std::abs(t[i]) > ra + rb)
+              return false;
+          }
+
+        // Test axes L = B0, L = B1, L = B2
+        for (int i = 0; i < 3; i++)
+          {
+            ra = this->bounding_box_half_length[0] * AbsR[0][i] +
+                 this->bounding_box_half_length[1] * AbsR[1][i] +
+                 this->bounding_box_half_length[2] * AbsR[2][i];
+            rb = shape.bounding_box_half_length[i];
+            if (std::abs(t[0] * R[0][i] + t[1] * R[1][i] + t[2] * R[2][i]) >
+                ra + rb)
+              return false;
+          }
+
+        // Check the axis obtained from the cross product of all the bases axis.
+        Tensor<1, dim> L;
+        for (int i = 0; i < 3; i++)
+          {
+            for (int j = 0; j < 3; j++)
+              {
+                L  = cross_product_3d(this->rotation_matrix[i],
+                                     shape.rotation_matrix[j]);
+                ra = this->bounding_box_half_length[(i + 1) % 3] *
+                       AbsR[(i + 2) % 3][j] +
+                     this->bounding_box_half_length[(i + 2) % 3] *
+                       AbsR[(i + 1) % 3][j];
+                rb = shape.bounding_box_half_length[(j + 1) % 3] *
+                       AbsR[i][(j + 2) % 3] +
+                     shape.bounding_box_half_length[(j + 2) % 3] *
+                       AbsR[i][(j + 1) % 3];
+                if (std::abs(scalar_product(t, L)) > ra + rb)
+                  return false;
+              }
+          }
+
+        // No separating axis found, the boxes must be intersecting
+        return true;
+      }
+    else
+      {
+        double       ra, rb;
+        Tensor<2, 3> R, AbsR;
+
+        // Compute rotation matrix expressing each box in the other's coordinate
+        // frame
+        for (int i = 0; i < 3; i++)
+          {
+            for (int j = 0; j < 3; j++)
+              {
+                R[i][j] = scalar_product(this->rotation_matrix[i],
+                                         shape.rotation_matrix[j]);
+              }
+          }
+
+        // Compute translation vector t in this shape frame
+        Tensor<1, 3> t = tensor_nd_to_3d(shape.position - this->position);
+        t[0]           = scalar_product(t, this->rotation_matrix[0]);
+        t[1]           = scalar_product(t, this->rotation_matrix[1]);
+        t[2]           = scalar_product(t, this->rotation_matrix[2]);
+
+        // Compute common subexpressions. Add in an epsilon term to counteract
+        // arithmetic errors
+        for (int i = 0; i < 3; i++)
+          {
+            for (int j = 0; j < 3; j++)
+              {
+                AbsR[i][j] =
+                  std::abs(R[i][j]) + std::numeric_limits<double>::epsilon();
+              }
+          }
+
+        // Test axes L = A0, L = A1, L = A2
+        for (int i = 0; i < 2; i++)
+          {
+            ra = this->bounding_box_half_length[i];
+            rb = shape.bounding_box_half_length[0] * AbsR[i][0] +
+                 shape.bounding_box_half_length[1] * AbsR[i][1];
+            if (std::abs(t[i]) > ra + rb)
+              return false;
+          }
+
+        // Test axes L = B0, L = B1, L = B2
+        for (int i = 0; i < 2; i++)
+          {
+            ra = this->bounding_box_half_length[0] * AbsR[0][i] +
+                 this->bounding_box_half_length[1] * AbsR[1][i];
+            rb = shape.bounding_box_half_length[i];
+            if (std::abs(t[0] * R[0][i] + t[1] * R[1][i]) > ra + rb)
+              return false;
+          }
+
+        // No separating axis found, the boxes must be intersecting
+        return true;
+      }
   }
 
   /**
@@ -733,6 +934,28 @@ public:
   get_rotation_matrix()
   {
     return rotation_matrix;
+  }
+
+  /**
+   * @brief
+   * Returns the bounding box half length
+   *
+   */
+  inline virtual Tensor<1, dim>
+  get_bounding_box_half_length()
+  {
+    return bounding_box_half_length;
+  }
+
+  /**
+   * @brief
+   * Returns the bounding box position
+   *
+   */
+  inline virtual Point<dim>
+  get_bounding_box_center()
+  {
+    return bounding_box_center;
   }
 
   /**
@@ -867,6 +1090,7 @@ public:
   // relative to how the shape was defined.
   std::string additional_info_on_shape;
 
+
 protected:
   // Position of the center of the Shape. It doesn't always correspond to the
   // center of mass
@@ -874,8 +1098,7 @@ protected:
   // The solid orientation, which is defined as the sequential rotation around
   // the axes x->y->z by each of the tensor components, in radian
   Tensor<1, 3> orientation;
-  // The rotation matrix that describes the solid orientation.
-  Tensor<2, 3> rotation_matrix;
+
 
   // The cache of the evaluation of the shape. This is used to avoid costly
   // reevaluation of the shape.
@@ -884,11 +1107,16 @@ protected:
   std::unordered_map<std::string, Point<dim>>     closest_point_cache;
   bool                                            part_of_a_composite;
 
-
-
+  // The half lengths of bounding box of the shape
+  Tensor<1, dim> bounding_box_half_length;
+  // The center of the bounding box of the shape in the shape reference frame
+  Point<dim> bounding_box_center;
+  // The rotation matrix that describes the solid orientation.
+  Tensor<2, 3> rotation_matrix;
   // Layer thickening: used to artificially inflate/deflate the shape
   double layer_thickening;
 };
+
 
 
 template <int dim>
@@ -912,6 +1140,11 @@ public:
       std::make_shared<Functions::SignedDistance::Sphere<dim>>(position,
                                                                radius);
 #endif
+    for (unsigned int d = 0; d < dim; ++d)
+      {
+        this->bounding_box_half_length[d] = radius;
+        this->bounding_box_center[d]      = 0;
+      }
   }
 
   /**
@@ -965,13 +1198,14 @@ public:
     Shape<dim>                                           &shape,
     const typename DoFHandler<dim>::active_cell_iterator &cell,
     std::vector<Point<dim>>                              &candidate_points,
-    double                                                precision = 1e-6) override;
+    double                                                precision = 1e-6,
+    bool exact_distance_outside_of_contact = false) override;
 
   std::tuple<double, Tensor<1, dim>, Point<dim>>
-  distance_to_shape(
-    Shape<dim>                                           &shape,
-    std::vector<Point<dim>>                              &candidate_points,
-    double                                                precision = 1e-6) override;
+  distance_to_shape(Shape<dim>              &shape,
+                    std::vector<Point<dim>> &candidate_points,
+                    double                   precision     = 1e-6,
+                    bool exact_distance_outside_of_contact = false) override;
 
 
 private:
@@ -1003,6 +1237,13 @@ public:
     else
       {
         normal = Tensor<1, dim>({0, 1});
+      }
+    // This is a special case since the plane as no bounding box so here we fill
+    // it with one.
+    for (unsigned int d = 0; d < dim; ++d)
+      {
+        this->bounding_box_half_length[d] = 1;
+        this->bounding_box_center[d]      = 0;
       }
   }
 
@@ -1076,7 +1317,14 @@ public:
     , half_lengths(half_lengths)
     , exponents(exponents)
     , epsilon(epsilon)
-  {}
+  {
+    // Initialize the bounding box.
+    this->bounding_box_half_length = half_lengths;
+    for (unsigned int d = 0; d < dim; ++d)
+      {
+        this->bounding_box_center[d] = 0;
+      }
+  }
 
   /**
    * @brief Return the evaluation of the signed distance function of this solid
@@ -1197,9 +1445,10 @@ public:
                         pow(abs(centered_point[d]), exponents[d]) /
                         (centered_point[d] + DBL_MIN);
         else
-          gradient[d] = 1*exponents[d] *
+          gradient[d] = 1 * exponents[d] *
                         pow(abs(half_lengths[d]), -exponents[d]) *
-                        pow(abs(epsilon), exponents[d]) / (epsilon + epsilon*epsilon+ DBL_MIN);
+                        pow(abs(epsilon), exponents[d]) /
+                        (epsilon + epsilon * epsilon + DBL_MIN);
       }
     return gradient;
   }
@@ -1225,7 +1474,14 @@ public:
                  const Tensor<1, 3>   &orientation)
     : Shape<dim>(half_lengths.norm(), position, orientation)
     , half_lengths(half_lengths)
-  {}
+  {
+    this->bounding_box_half_length = half_lengths;
+    for (unsigned int d = 0; d < dim; ++d)
+      {
+        this->bounding_box_center[d] = 0;
+      }
+  }
+
 
   /**
    * @brief Return the evaluation of the signed distance function of this solid
@@ -1272,7 +1528,13 @@ public:
             const Tensor<1, 3>   &orientation)
     : Shape<dim>(radii.norm(), position, orientation)
     , radii(radii)
-  {}
+  {
+    this->bounding_box_half_length = radii;
+    for (unsigned int d = 0; d < dim; ++d)
+      {
+        this->bounding_box_center[d] = 0;
+      }
+  }
 
   /**
    * @brief Return the evaluation of the signed distance function of this solid
@@ -1323,7 +1585,18 @@ public:
     : Shape<dim>(ring_thickness, position, orientation)
     , ring_radius(ring_radius)
     , ring_thickness(ring_thickness)
-  {}
+  {
+    if constexpr (dim == 3)
+      {
+        this->bounding_box_half_length[0] = ring_radius + ring_thickness;
+        this->bounding_box_half_length[1] = ring_thickness;
+        this->bounding_box_half_length[2] = ring_radius + ring_thickness;
+      };
+    for (unsigned int d = 0; d < dim; ++d)
+      {
+        this->bounding_box_center[d] = 0;
+      }
+  }
 
   /**
    * @brief Return the evaluation of the signed distance function of this solid
@@ -1376,7 +1649,17 @@ public:
     , height(height)
     , base_radius(height / tan_base_angle)
     , intermediate_q({height * tan_base_angle, -height})
-  {}
+  {
+    if constexpr (dim == 3)
+      {
+        this->bounding_box_half_length[0] = base_radius;
+        this->bounding_box_half_length[1] = height / 2;
+        this->bounding_box_half_length[2] = base_radius;
+        this->bounding_box_center[0]      = 0;
+        this->bounding_box_center[1]      = -height / 2;
+        this->bounding_box_center[2]      = 0;
+      }
+  }
 
   /**
    * @brief Return the evaluation of the signed distance function of this solid
@@ -1435,7 +1718,17 @@ public:
     , cut_depth(cut_depth)
     , shell_thickness(shell_thickness)
     , intermediate_w(sqrt(radius * radius - cut_depth * cut_depth))
-  {}
+  {
+    this->bounding_box_half_length[0] = radius;
+    this->bounding_box_half_length[1] = radius / 2 + cut_depth / 2;
+    this->bounding_box_center[0]      = 0;
+    this->bounding_box_center[1]      = -radius / 2 + cut_depth / 2;
+    if constexpr (dim == 3)
+      {
+        this->bounding_box_half_length[2] = radius;
+        this->bounding_box_center[2]      = 0;
+      }
+  }
 
   /**
    * @brief Return the evaluation of the signed distance function of this solid
@@ -1498,7 +1791,17 @@ public:
                      (2. * spheres_distance))
     , intermediate_b(
         sqrt(std::max(radius * radius - intermediate_a * intermediate_a, 0.)))
-  {}
+  {
+    this->bounding_box_half_length[0] = radius;
+    this->bounding_box_half_length[0] = 0;
+    this->bounding_box_half_length[1] = radius;
+    this->bounding_box_half_length[1] = 0;
+    if constexpr (dim == 3)
+      {
+        this->bounding_box_half_length[2] = radius;
+        this->bounding_box_half_length[2] = 0;
+      }
+  }
 
   /**
    * @brief Return the evaluation of the signed distance function of this solid
@@ -1568,12 +1871,185 @@ public:
     , constituents(constituents)
     , operations(operations)
   {
+    double x_max                      = 0;
+    double y_max                      = 0;
+    double z_max                      = 0;
+    double x_min                      = 0;
+    double y_min                      = 0;
+    double z_min                      = 0;
+    bool   xyz_min_max_is_initialized = false;
+
     // Calculation of the effective radius and setting of constituents' status
     for (auto const &constituent : constituents | boost::adaptors::map_values)
       {
         this->effective_radius =
           std::max(this->effective_radius, constituent->effective_radius);
         constituent->set_part_of_a_composite(true);
+
+        if constexpr (dim == 2)
+          {
+            std::vector<Point<3>> component_bounding_box_vertex(4);
+
+            component_bounding_box_vertex[0][0] =
+              constituent->get_bounding_box_center()[0] +
+              constituent->get_bounding_box_half_length()[0];
+            component_bounding_box_vertex[0][1] =
+              constituent->get_bounding_box_center()[1] +
+              constituent->get_bounding_box_half_length()[1];
+            component_bounding_box_vertex[1][0] =
+              constituent->get_bounding_box_center()[0] -
+              constituent->get_bounding_box_half_length()[0];
+            component_bounding_box_vertex[1][1] =
+              constituent->get_bounding_box_center()[1] +
+              constituent->get_bounding_box_half_length()[1];
+            component_bounding_box_vertex[2][0] =
+              constituent->get_bounding_box_center()[0] -
+              constituent->get_bounding_box_half_length()[0];
+            component_bounding_box_vertex[2][1] =
+              constituent->get_bounding_box_center()[1] -
+              constituent->get_bounding_box_half_length()[1];
+            component_bounding_box_vertex[3][0] =
+              constituent->get_bounding_box_center()[0] +
+              constituent->get_bounding_box_half_length()[0];
+            component_bounding_box_vertex[3][1] =
+              constituent->get_bounding_box_center()[1] -
+              constituent->get_bounding_box_half_length()[1];
+            for (unsigned int i = 0; i < 4; ++i)
+              {
+                // position the vextex point in the reference frame of the
+                // composite
+                auto new_point = constituent->get_rotation_matrix() *
+                                   component_bounding_box_vertex[0] +
+                                 point_nd_to_3d(constituent->get_position());
+                if (xyz_min_max_is_initialized == false)
+                  {
+                    x_max                      = new_point[0];
+                    x_min                      = new_point[0];
+                    y_max                      = new_point[1];
+                    y_min                      = new_point[1];
+                    xyz_min_max_is_initialized = true;
+                  }
+                else
+                  {
+                    x_max = std::max(x_max, new_point[0]);
+                    x_min = std::min(x_min, new_point[0]);
+                    y_max = std::max(y_max, new_point[1]);
+                    y_min = std::min(y_min, new_point[1]);
+                  }
+              }
+          }
+        else
+          {
+            std::vector<Point<3>> component_bounding_box_vertex(8);
+            component_bounding_box_vertex[0][0] =
+              constituent->get_bounding_box_center()[0] +
+              constituent->get_bounding_box_half_length()[0];
+            component_bounding_box_vertex[0][1] =
+              constituent->get_bounding_box_center()[1] +
+              constituent->get_bounding_box_half_length()[1];
+            component_bounding_box_vertex[0][2] =
+              constituent->get_bounding_box_center()[2] +
+              constituent->get_bounding_box_half_length()[2];
+            component_bounding_box_vertex[1][0] =
+              constituent->get_bounding_box_center()[0] -
+              constituent->get_bounding_box_half_length()[0];
+            component_bounding_box_vertex[1][1] =
+              constituent->get_bounding_box_center()[1] +
+              constituent->get_bounding_box_half_length()[1];
+            component_bounding_box_vertex[1][2] =
+              constituent->get_bounding_box_center()[2] +
+              constituent->get_bounding_box_half_length()[2];
+            component_bounding_box_vertex[2][0] =
+              constituent->get_bounding_box_center()[0] -
+              constituent->get_bounding_box_half_length()[0];
+            component_bounding_box_vertex[2][1] =
+              constituent->get_bounding_box_center()[1] -
+              constituent->get_bounding_box_half_length()[1];
+            component_bounding_box_vertex[2][2] =
+              constituent->get_bounding_box_center()[2] +
+              constituent->get_bounding_box_half_length()[2];
+            component_bounding_box_vertex[3][0] =
+              constituent->get_bounding_box_center()[0] +
+              constituent->get_bounding_box_half_length()[0];
+            component_bounding_box_vertex[3][1] =
+              constituent->get_bounding_box_center()[1] -
+              constituent->get_bounding_box_half_length()[1];
+            component_bounding_box_vertex[3][2] =
+              constituent->get_bounding_box_center()[2] +
+              constituent->get_bounding_box_half_length()[2];
+            component_bounding_box_vertex[4][0] =
+              constituent->get_bounding_box_center()[0] +
+              constituent->get_bounding_box_half_length()[0];
+            component_bounding_box_vertex[4][1] =
+              constituent->get_bounding_box_center()[1] +
+              constituent->get_bounding_box_half_length()[1];
+            component_bounding_box_vertex[4][2] =
+              constituent->get_bounding_box_center()[2] -
+              constituent->get_bounding_box_half_length()[2];
+            component_bounding_box_vertex[5][0] =
+              constituent->get_bounding_box_center()[0] -
+              constituent->get_bounding_box_half_length()[0];
+            component_bounding_box_vertex[5][1] =
+              constituent->get_bounding_box_center()[1] +
+              constituent->get_bounding_box_half_length()[1];
+            component_bounding_box_vertex[5][2] =
+              constituent->get_bounding_box_center()[2] -
+              constituent->get_bounding_box_half_length()[2];
+            component_bounding_box_vertex[6][0] =
+              constituent->get_bounding_box_center()[0] -
+              constituent->get_bounding_box_half_length()[0];
+            component_bounding_box_vertex[6][1] =
+              constituent->get_bounding_box_center()[1] -
+              constituent->get_bounding_box_half_length()[1];
+            component_bounding_box_vertex[6][2] =
+              constituent->get_bounding_box_center()[2] +
+              constituent->get_bounding_box_half_length()[2];
+            component_bounding_box_vertex[7][0] =
+              constituent->get_bounding_box_center()[0] -
+              constituent->get_bounding_box_half_length()[0];
+            component_bounding_box_vertex[7][1] =
+              constituent->get_bounding_box_center()[1] -
+              constituent->get_bounding_box_half_length()[1];
+            component_bounding_box_vertex[7][2] =
+              constituent->get_bounding_box_center()[2] -
+              constituent->get_bounding_box_half_length()[2];
+            for (unsigned int i = 0; i < 8; ++i)
+              {
+                // position the vextex point in the reference frame of the
+                // composite
+                auto new_point = constituent->get_rotation_matrix() *
+                                   component_bounding_box_vertex[0] +
+                                 point_nd_to_3d(constituent->get_position());
+                if (xyz_min_max_is_initialized == false)
+                  {
+                    x_max                      = new_point[0];
+                    x_min                      = new_point[0];
+                    y_max                      = new_point[1];
+                    y_min                      = new_point[1];
+                    z_max                      = new_point[2];
+                    z_min                      = new_point[2];
+                    xyz_min_max_is_initialized = true;
+                  }
+                else
+                  {
+                    x_max = std::max(x_max, new_point[0]);
+                    x_min = std::min(x_min, new_point[0]);
+                    y_max = std::max(y_max, new_point[1]);
+                    y_min = std::min(y_min, new_point[1]);
+                    z_max = std::max(z_max, new_point[2]);
+                    z_min = std::min(z_min, new_point[2]);
+                  }
+              }
+          }
+      }
+    this->bounding_box_half_length[0] = (x_max - x_min) / 2;
+    this->bounding_box_half_length[1] = (y_max - y_min) / 2;
+    this->bounding_box_center[0]      = (x_max + x_min) / 2;
+    this->bounding_box_center[1]      = (y_max + y_min) / 2;
+    if (dim == 3)
+      {
+        this->bounding_box_half_length[2] = (z_max - z_min) / 2;
+        this->bounding_box_center[2]      = (z_max + z_min) / 2;
       }
   }
 
@@ -1831,6 +2307,17 @@ public:
     BRepGProp::VolumeProperties(shape, system);
     this->effective_radius =
       std::pow(system.Mass() * 3.0 / (4 * numbers::PI), 1.0 / dim);
+
+    // Define an "infinite" bounding box size
+    this->bounding_box_half_length[0] = 1e16;
+    this->bounding_box_half_length[1] = 1e16;
+    this->bounding_box_center[0]      = 0;
+    this->bounding_box_center[1]      = 0;
+    if constexpr (dim == 3)
+      {
+        this->bounding_box_half_length[2] = 1e16;
+        this->bounding_box_center[2]      = 0;
+      }
 
 #endif
   }
@@ -2541,7 +3028,14 @@ public:
     : Shape<dim>(radius, position, orientation)
     , radius(radius)
     , half_length(half_length)
-  {}
+  {
+    this->bounding_box_half_length[0] = radius;
+    this->bounding_box_half_length[1] = radius;
+    this->bounding_box_half_length[2] = half_length;
+    this->bounding_box_center[0]      = 0;
+    this->bounding_box_center[1]      = 0;
+    this->bounding_box_center[2]      = 0;
+  }
 
   /**
    * @brief Return the evaluation of the signed distance function of this solid
@@ -2596,7 +3090,17 @@ public:
     , radius((radius_outside + radius_inside) / 2.)
     , height(half_length * 2.)
     , rectangular_base(radius_outside - radius_inside)
-  {}
+  {
+    this->bounding_box_half_length[0] = radius_outside;
+    this->bounding_box_half_length[1] = radius_outside;
+    this->bounding_box_center[0]      = 0;
+    this->bounding_box_center[1]      = 0;
+    if constexpr (dim == 3)
+      {
+        this->bounding_box_half_length[2] = half_length;
+        this->bounding_box_center[2]      = 0;
+      }
+  }
 
   /**
    * @brief Return the evaluation of the signed distance function of this solid
@@ -2656,7 +3160,17 @@ public:
     , height(height)
     , pitch(pitch)
     , radius_disk(radius_disk)
-  {}
+  {
+    this->bounding_box_half_length[0] = radius_helix + radius_disk;
+    this->bounding_box_half_length[1] = radius_helix + radius_disk;
+    this->bounding_box_center[0]      = 0;
+    this->bounding_box_center[1]      = 0;
+    if constexpr (dim == 3)
+      {
+        this->bounding_box_half_length[2] = height / 2 + radius_disk;
+        this->bounding_box_center[2]      = height / 2;
+      }
+  }
 
   /**
    * @brief Return the evaluation of the signed distance function of this solid

@@ -375,7 +375,8 @@ Sphere<dim>::distance_to_shape_with_cell_guess(
   Shape<dim>                                           &shape,
   const typename DoFHandler<dim>::active_cell_iterator &cell,
   std::vector<Point<dim>>                              &candidate_points,
-  double                                                precision) {
+  double                                                precision,
+  bool exact_distance_outside_of_contact) {
   (void) candidate_points;
   (void) precision;
   double                      distance = DBL_MAX;
@@ -404,7 +405,8 @@ std::tuple<double, Tensor<1, dim>, Point<dim>>
 Sphere<dim>::distance_to_shape(
   Shape<dim>                                           &shape,
   std::vector<Point<dim>>                              &candidate_points,
-  double                                                precision ) {
+  double                                                precision,
+  bool exact_distance_outside_of_contact ) {
 
   (void) candidate_points;
   (void) precision;
@@ -1855,6 +1857,9 @@ RBFShape<dim>::initialize_bounding_box()
                                           this->reverse_align_and_center(
                                             bounding_box_center),
                                           this->orientation);
+  this->bounding_box_half_length=half_lengths;
+  this->bounding_box_center=this->reverse_align_and_center(
+    bounding_box_center);
 }
 
 template <int dim>
