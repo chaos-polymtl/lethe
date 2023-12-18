@@ -390,7 +390,6 @@ Sphere<dim>::distance_to_shape_with_cell_guess(
     }
   else
     {
-      Tensor<1,dim> center_to_center_vector=shape.get_position()-this->position;
       distance=(shape.value_with_cell_guess(this->position,cell)-this->effective_radius)/2;
       normal=-shape.gradient_with_cell_guess(this->position,cell);
       contact_point=this->position+normal*(this->effective_radius+distance);
@@ -421,7 +420,6 @@ Sphere<dim>::distance_to_shape(
     }
   else
     {
-      Tensor<1,dim> center_to_center_vector=shape.get_position()-this->position;
       distance=(shape.value(this->position)-this->effective_radius)/2;
       normal=-shape.gradient(this->position);
       contact_point=this->position+normal*(this->effective_radius+distance);
@@ -483,7 +481,7 @@ Plane<dim>::gradient(const Point<dim> &evaluation_point,
 
 template <int dim>
 double
-Plane<dim>::displaced_volume(const double fluid_density)
+Plane<dim>::displaced_volume(const double /*fluid_density*/)
 {
   return 0;
 }

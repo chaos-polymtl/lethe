@@ -320,14 +320,7 @@ private:
   DEMSolverParameters<dim> dem_parameters{};
   MPI_Comm                 mpi_communicator;
 
-  std::shared_ptr<ParticleParticleContactForceBase<dim>>
-    particle_particle_contact_force_object;
-
   std::vector<std::set<unsigned int>> particles_contact_candidates;
-
-  std::shared_ptr<ParticleWallContactForce<dim>>
-    particle_wall_contact_force_object;
-
 
   // Store the previous contact point as initial guess for the next search
   std::map<unsigned int,

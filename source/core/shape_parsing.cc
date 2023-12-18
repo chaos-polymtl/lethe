@@ -21,11 +21,6 @@ ShapeGenerator::initialize_shape(const std::string   type,
       std::vector<std::string> shape_arguments_str_list(
         Utilities::split_string_list(shape_arguments_str, ";"));
       shape_arguments = Utilities::string_to_double(shape_arguments_str_list);
-      std::cout<< shape_arguments_str<<std::endl;
-      for (unsigned int i=0; i<shape_arguments.size();++i){
-          std::cout<<" " << shape_arguments[i];
-        }
-      std::cout<<std::endl;
       shape           = initialize_shape_from_vector(type,
                                            shape_arguments,
                                            position,

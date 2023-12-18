@@ -244,6 +244,66 @@ fill_vectors_from_file(std::map<std::string, std::vector<double>> &map,
 }
 
 void
+fill_string_vectors_from_file(std::map<std::string, std::vector<std::string>> &map,
+                       std::string                                 file,
+                       const std::string                           delimiter)
+{
+  // fill a pair, first being a vector of vector name and the second being the
+  // vector of vector associated with the vector name.
+
+
+  std::ifstream myfile(file);
+  // open the file.
+  if (myfile.is_open())
+    {
+      std::string              line;
+      std::vector<std::string> column_names;
+      std::vector<std::string>      line_of_data;
+      unsigned int             line_count = 0;
+
+      while (std::getline(myfile, line))
+        {
+          // remove spaces
+          //line.erase(std::remove(line.begin(), line.end(), ' '), line.end());
+          // read the line and clean the resulting vector.
+          std::vector<std::string> list_of_words_base =
+            Utilities::split_string_list(line, delimiter);
+          std::vector<std::string> list_of_words_clean;
+          for (unsigned int i = 0; i < list_of_words_base.size(); ++i)
+            {
+              if (list_of_words_base[i] != "")
+                {
+                  list_of_words_clean.push_back(list_of_words_base[i]);
+                }
+            }
+          // check if the line is contained words or numbers.
+          if (line_count != 0)
+            {
+              line_of_data = list_of_words_clean;
+              for (unsigned int i = 0; i < line_of_data.size(); ++i)
+                {
+                  map[column_names[i]].push_back(line_of_data[i]);
+                }
+            }
+          else
+            {
+              // the line contains words, we assume these are the columns names.
+              column_names = list_of_words_clean;
+              for (unsigned int i = 0; i < list_of_words_clean.size(); ++i)
+                {
+                  std::vector<std::string> base_vector;
+                  map[column_names[i]] = base_vector;
+                }
+            }
+          ++line_count;
+        }
+      myfile.close();
+    }
+  else
+    std::cout << "Unable to open file";
+}
+
+void
 create_output_folder(const std::string &dirname)
 {
 #if __GNUC__ > 7

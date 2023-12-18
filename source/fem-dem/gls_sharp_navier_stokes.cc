@@ -804,9 +804,10 @@ GLSSharpNavierStokesSolver<dim>::define_particles()
         {
           if (particles[i].integrate_motion == true)
             {
-              if (typeid(*particles[i].shape) != typeid(Sphere<dim>))
+             /* if (typeid(*particles[i].shape) != typeid(Sphere<dim>))
                 throw std::runtime_error(
                   "Shapes other than sphere cannot have their motion integrated through fluid-structure interaction");
+                  */
               some_particles_are_coupled = true;
             }
         }
@@ -2083,9 +2084,9 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
 
   ib_dem.update_particles(particles, time - dt);
 
-    std::map<field, double> field_values;
-    field_values[field::shear_rate]  = 1;
-    field_values[field::temperature] = 1;
+  std::map<field, double> field_values;
+  field_values[field::shear_rate]  = 1;
+  field_values[field::temperature] = 1;
 
   // Check if the parameters' combination is compatible. This is temporary and
   // will be moved to a new class that tests the parameter combination in the
@@ -2127,10 +2128,13 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
       Vector<double> particles_residual_vect;
       particles_residual_vect.reinit(particles.size());
       Tensor<1, 3> g;
-      this->simulation_parameters.particlesParameters->f_gravity->set_time(time);
+      this->simulation_parameters.particlesParameters->f_gravity->set_time(
+        time);
 
 
-      if(current_newton_iteration==0 || this->simulation_parameters.particlesParameters->explicit_contact_impulsion_calculation==false)
+      if (current_newton_iteration == 0 ||
+          this->simulation_parameters.particlesParameters
+              ->explicit_contact_impulsion_calculation == false)
         {
           ib_dem.integrate_particles_motion(
             dt, h_max, h_min, fluid_density, kinematic_viscosity);
@@ -2143,14 +2147,17 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
           if (particles[p].integrate_motion)
             {
               // calculate the volume of fluid displaced by the particle.
-              double volume =
-                particles[p].volume;
+              double volume = particles[p].volume;
 
-              g[0] = this->simulation_parameters.particlesParameters->f_gravity->value(particles[p].position, 0);
-              g[1] = this->simulation_parameters.particlesParameters->f_gravity->value(particles[p].position, 1);
+              g[0] = this->simulation_parameters.particlesParameters->f_gravity
+                       ->value(particles[p].position, 0);
+              g[1] = this->simulation_parameters.particlesParameters->f_gravity
+                       ->value(particles[p].position, 1);
               if constexpr (dim == 3)
-                g[2] =
-                  this->simulation_parameters.particlesParameters->f_gravity->value(particles[p].position, 2);
+                g[2] = this->simulation_parameters.particlesParameters
+                         ->f_gravity->value(particles[p].position, 2);
+
+              Tensor<1,3> gravity_buoyancy_force=g*(particles[p].mass/volume-fluid_density)* volume;
 
               // Transfers the impulsion evaluated in the sub-time-stepping
               // scheme to the particle at the CFD time scale.
@@ -2182,8 +2189,9 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
                   residual_velocity +=
                     -(bdf_coefs[i] * particles[p].previous_velocity[i - 1]);
                 }
-              residual_velocity +=
-                (particles[p].contact_impulsion / dt+particles[p].fluid_forces) / particles[p].mass+g;
+              residual_velocity += (particles[p].contact_impulsion / dt +
+                                    particles[p].fluid_forces+gravity_buoyancy_force) /
+                                     particles[p].mass;
 
               double inverse_of_relaxation_coefficient_velocity =
                 -bdf_coefs[0] -
@@ -2213,17 +2221,20 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
               IBParticle<dim> save_particle_state         = particles[p];
               bool            save_particle_state_is_used = false;
               // Define the correction vector.
-              Tensor<1, 3> velocity_correction_vector ;
-              // Define the correction vector. And check if it is not NAN. NAN happen when the residual tends to zero in cases where the fluid density is 0.
-              if(inverse_of_relaxation_coefficient_velocity== inverse_of_relaxation_coefficient_velocity)
+              Tensor<1, 3> velocity_correction_vector;
+              // Define the correction vector. And check if it is not NAN. NAN
+              // happen when the residual tends to zero in cases where the fluid
+              // density is 0.
+              if (inverse_of_relaxation_coefficient_velocity ==
+                  inverse_of_relaxation_coefficient_velocity)
                 {
                   velocity_correction_vector =
                     residual_velocity * 1. /
                     inverse_of_relaxation_coefficient_velocity;
                 }
-              else{
-                  velocity_correction_vector =
-                    residual_velocity;
+              else
+                {
+                  velocity_correction_vector = residual_velocity;
                 }
               // Update the particle state and keep in memory the last iteration
               // information.
@@ -2267,10 +2278,7 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
                 }
               else
                 {
-                  Tensor<1, dim> position_update =
-                    local_alpha *
-                    (ib_dem.dem_particles[p].position - particles[p].position);
-                  particles[p].position=ib_dem.dem_particles[p].position;
+                  particles[p].position = ib_dem.dem_particles[p].position;
                   particles[p].set_position(particles[p].position);
                 }
               // Check if the particle is in the domain. Throw an error if it's
@@ -2297,8 +2305,10 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
               auto inv_inertia = invert(particles[p].inertia);
 
               // Calculate the torque in the particle frame of reference.
-              Tensor<1, 3> total_torque = particles[p].rotation_matrix *
-                                          (particles[p].omega_contact_impulsion/ dt+particles[p].fluid_torque) ;
+              Tensor<1, 3> total_torque =
+                particles[p].rotation_matrix *
+                (particles[p].omega_contact_impulsion / dt +
+                 particles[p].fluid_torque);
 
               // Calculate angular acceleration in particle frame
               Tensor<1, 3> angular_velocity_in_particle_frame =
@@ -2360,17 +2370,20 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
                            (vector_of_residual_variation.norm_square()) +
                          DBL_MIN);
                 }
-              // Define the correction vector. And check if it is not NAN. NAN happen when the residual tends to zero in cases where the fluid density is 0.
-              Tensor<1, 3> omega_correction_vector ;
-              if( inverse_of_relaxation_coefficient_omega== inverse_of_relaxation_coefficient_omega)
+              // Define the correction vector. And check if it is not NAN. NAN
+              // happen when the residual tends to zero in cases where the fluid
+              // density is 0.
+              Tensor<1, 3> omega_correction_vector;
+              if (inverse_of_relaxation_coefficient_omega ==
+                  inverse_of_relaxation_coefficient_omega)
                 {
                   omega_correction_vector =
                     residual_omega * 1 /
                     inverse_of_relaxation_coefficient_omega;
                 }
-              else{
-                  omega_correction_vector =
-                    residual_omega;
+              else
+                {
+                  omega_correction_vector = residual_omega;
                 }
 
               double local_alpha_omega = 1;
@@ -2380,7 +2393,7 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
                 particles[p].omega_iter -
                 omega_correction_vector * alpha * local_alpha_omega;
               particles[p].omega_impulsion_iter = particles[p].omega_impulsion;
-              particles[p].previous_omega_residual    = residual_omega;
+              particles[p].previous_omega_residual = residual_omega;
 
               // If the particles have impacted a wall or another particle, we
               // want to use the sub-time step position. Otherwise, we solve the
@@ -2389,7 +2402,8 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
                 {
                   if (particles[p].omega.norm() > 0)
                     {
-                      // Impose a new orientation of the particle based on the integration and previous orientation.
+                      // Impose a new orientation of the particle based on the
+                      // integration and previous orientation.
                       particles[p].rotation_matrix       = 0;
                       particles[p].rotation_matrix[0][0] = 1.0;
                       particles[p].rotation_matrix[1][1] = 1.0;
@@ -2413,7 +2427,8 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
                                   rotation_matrix_3d(
                                     axis,
                                     particles[p]
-                                      .previous_orientation[0][2 - i])*particles[p].rotation_matrix;
+                                      .previous_orientation[0][2 - i]) *
+                                particles[p].rotation_matrix;
                             }
                         }
                       particles[p].rotation_matrix =
@@ -2428,13 +2443,14 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
                 }
               else
                 {
-                  // We have contact so we impose the DEM orientation as the new orientation.
+                  // We have contact so we impose the DEM orientation as the new
+                  // orientation.
                   particles[p].set_orientation(
                     ib_dem.dem_particles[p].orientation);
                 }
 
-             /* particles[p].set_orientation(
-                ib_dem.dem_particles[p].orientation);*/
+              /* particles[p].set_orientation(
+                 ib_dem.dem_particles[p].orientation);*/
               // If something went wrong during the update, the particle's state
               // would be reversed to its original state here.
               if (save_particle_state_is_used)
@@ -2445,16 +2461,6 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
                 sqrt(std::pow(residual_velocity.norm(), 2) +
                      std::pow(residual_omega.norm() * particles[p].radius, 2)) *
                 dt;
-              /*if (Utilities::MPI::this_mpi_process(this->mpi_communicator) == 0){
-                  std::cout<<" omega contact impulsion "<<particles[p].omega_contact_impulsion<<std::endl;
-                  std::cout<<" omega_accel "<< invert(particles[p].rotation_matrix) *
-                                                     angular_acceleration_in_particle_frame<<std::endl;
-                  std::cout<<" omega "<< particles[0].omega<<std::endl;
-                  std::cout<<" contact impulsion "<<particles[p].contact_impulsion<<std::endl;
-                  std::cout<<" position "<< particles[0].position<<std::endl;
-                  std::cout<<" velocity "<<particles[0].velocity<<std::endl;
-
-                }*/
 
               // Keep in memory the residual.
               particles_residual_vect[p] = this_particle_residual;
@@ -4509,9 +4515,9 @@ GLSSharpNavierStokesSolver<dim>::load_particles_from_file()
 
   // Read the data of each particle and put the relevant information in a
   // vector.
-  std::map<std::string, std::vector<double>> restart_data;
-  fill_vectors_from_file(restart_data, filename);
-  particles.resize(restart_data["type"].size());
+  std::map<std::string, std::vector<std::string>> particles_data;
+  fill_string_vectors_from_file(particles_data, filename, ";");
+  particles.resize(particles_data["type"].size());
 
   this->pcout << "Particles found: " << particles.size() << std::endl;
   // Implement the data  in the particles.
@@ -4524,67 +4530,81 @@ GLSSharpNavierStokesSolver<dim>::load_particles_from_file()
 
           particles[p_i].particle_id = p_i;
 
-          particles[p_i].position[0]    = restart_data["p_x"][p_i];
-          particles[p_i].position[1]    = restart_data["p_y"][p_i];
-          particles[p_i].velocity[0]    = restart_data["v_x"][p_i];
-          particles[p_i].velocity[1]    = restart_data["v_y"][p_i];
-          particles[p_i].orientation[2] = restart_data["orientation_z"][p_i];
+          particles[p_i].position[0] =
+            Utilities::string_to_double(particles_data["p_x"][p_i]);
+          particles[p_i].position[1]    = Utilities::string_to_double(particles_data["p_y"][p_i]);
+          particles[p_i].velocity[0]    = Utilities::string_to_double(particles_data["v_x"][p_i]);
+          particles[p_i].velocity[1]    = Utilities::string_to_double(particles_data["v_y"][p_i]);
+          particles[p_i].orientation[2] = Utilities::string_to_double(particles_data["orientation_z"][p_i]);
           // Initialize shape of particles according to the type parameter in
           // the file
-          if (restart_data["type"][p_i] == Shape<dim>::ShapeType::sphere)
-            {
-              std::vector<double> shape_argument(1);
-              shape_argument[0] = restart_data["shape_argument_0"][p_i];
-              particles[p_i].initialize_shape("sphere", shape_argument);
+
+          std::string shape_type = particles_data["type"][p_i];
+          std::string shape_arguments_str =
+            particles_data["shape_argument"][p_i];
+          // Here shape is supposed to be separated by : but the initializer take ; as separator so we replace : by ;.
+          std::string toReplace = ":";
+          std::string replacement = ";";
+
+          // Find the position of the substring to replace
+          size_t pos = shape_arguments_str.find(toReplace);
+
+          // Check if the substring is found
+          if (pos != std::string::npos) {
+              // Replace the substring
+              shape_arguments_str.replace(pos, toReplace.length(), replacement);
             }
-          else if (restart_data["type"][p_i] ==
-                   Shape<dim>::ShapeType::hyper_rectangle)
-            {
-              std::vector<double> shape_argument(2);
-              shape_argument[0] = restart_data["shape_argument_0"][p_i];
-              shape_argument[1] = restart_data["shape_argument_1"][p_i];
-              particles[p_i].initialize_shape("hyper rectangle",
-                                              shape_argument);
-            }
-          else if (restart_data["type"][p_i] ==
-                   Shape<dim>::ShapeType::ellipsoid)
-            {
-              std::vector<double> shape_argument(2);
-              shape_argument[0] = restart_data["shape_argument_0"][p_i];
-              shape_argument[1] = restart_data["shape_argument_1"][p_i];
-              particles[p_i].initialize_shape("ellipsoid", shape_argument);
-            }
+          particles[p_i].initialize_shape(shape_type, shape_arguments_str);
 
 
           particles[p_i].radius = particles[p_i].shape->effective_radius;
-          particles[p_i].mass   = PI * particles[p_i].radius *
-                                particles[p_i].radius *
-                                restart_data["density"][p_i];
 
-          particles[p_i].omega[2]      = restart_data["omega_z"][p_i];
-          particles[p_i].inertia[0][0] = restart_data["inertia"][p_i];
-          particles[p_i].inertia[1][1] = restart_data["inertia"][p_i];
-          particles[p_i].inertia[2][2] = restart_data["inertia"][p_i];
 
-          particles[p_i].pressure_location[0] = restart_data["pressure_x"][p_i];
-          particles[p_i].pressure_location[1] = restart_data["pressure_y"][p_i];
-
-          particles[p_i].youngs_modulus = restart_data["youngs_modulus"][p_i];
-          particles[p_i].restitution_coefficient =
-            restart_data["restitution_coefficient"][p_i];
-          particles[p_i].friction_coefficient =
-            restart_data["friction_coefficient"][p_i];
-          particles[p_i].poisson_ratio = restart_data["poisson_ratio"][p_i];
-          particles[p_i].rolling_friction_coefficient =
-            restart_data["rolling_friction_coefficient"][p_i];
-          particles[p_i].initialize_previous_solution();
-          if (restart_data["integrate_motion"][p_i] == 0.0)
+          double volume =Utilities::string_to_double( particles_data["volume"][p_i]);
+          if (volume == 0)
             {
-              particles[p_i].integrate_motion = false;
+              // value is automatically define.
+              // volume=particles[i].shape->displaced_volume(1.0);
+              if (volume == 0)
+                {
+                  if (dim == 2)
+                    {
+                      volume = PI * particles[p_i].radius * particles[p_i].radius;
+                    }
+                  else if (dim == 3)
+                    {
+                      volume = 4.0 / 3.0 * PI * particles[p_i].radius *
+                               particles[p_i].radius * particles[p_i].radius;
+                    }
+                }
+            }
+          particles[p_i].volume = volume;
+          particles[p_i].mass = particles[p_i].volume *Utilities::string_to_double(particles_data["density"][p_i]);
+
+          particles[p_i].omega[2]      = Utilities::string_to_double(particles_data["omega_z"][p_i]);
+          particles[p_i].inertia[0][0] = Utilities::string_to_double(particles_data["inertia"][p_i]);
+          particles[p_i].inertia[1][1] = Utilities::string_to_double(particles_data["inertia"][p_i]);
+          particles[p_i].inertia[2][2] = Utilities::string_to_double(particles_data["inertia"][p_i]);
+
+          particles[p_i].pressure_location[0] = Utilities::string_to_double(particles_data["pressure_x"][p_i]);
+          particles[p_i].pressure_location[1] = Utilities::string_to_double(particles_data["pressure_y"][p_i]);
+
+          particles[p_i].youngs_modulus = Utilities::string_to_double(particles_data["youngs_modulus"][p_i]);
+          particles[p_i].restitution_coefficient =
+            Utilities::string_to_double(particles_data["restitution_coefficient"][p_i]);
+          particles[p_i].friction_coefficient =
+            Utilities::string_to_double(particles_data["friction_coefficient"][p_i]);
+          particles[p_i].poisson_ratio = Utilities::string_to_double(particles_data["poisson_ratio"][p_i]);
+          particles[p_i].rolling_friction_coefficient =
+            Utilities::string_to_double(particles_data["rolling_friction_coefficient"][p_i]);
+          particles[p_i].initialize_previous_solution();
+          if (particles_data["integrate_motion"][p_i] == "false")
+            {
+            particles[p_i].integrate_motion = false;
             }
           else
             {
-              particles[p_i].integrate_motion = true;
+            particles[p_i].integrate_motion = true;
             }
           particles[p_i].set_position(particles[p_i].position);
           particles[p_i].set_orientation(particles[p_i].orientation);
@@ -4598,112 +4618,82 @@ GLSSharpNavierStokesSolver<dim>::load_particles_from_file()
           particles[p_i].initialize_all();
 
           particles[p_i].particle_id    = p_i;
-          particles[p_i].position[0]    = restart_data["p_x"][p_i];
-          particles[p_i].position[1]    = restart_data["p_y"][p_i];
-          particles[p_i].position[2]    = restart_data["p_z"][p_i];
-          particles[p_i].velocity[0]    = restart_data["v_x"][p_i];
-          particles[p_i].velocity[1]    = restart_data["v_y"][p_i];
-          particles[p_i].velocity[2]    = restart_data["v_z"][p_i];
-          particles[p_i].orientation[0] = restart_data["orientation_x"][p_i];
-          particles[p_i].orientation[1] = restart_data["orientation_y"][p_i];
-          particles[p_i].orientation[2] = restart_data["orientation_z"][p_i];
+          particles[p_i].position[0]    = Utilities::string_to_double(particles_data["p_x"][p_i]);
+          particles[p_i].position[1]    = Utilities::string_to_double(particles_data["p_y"][p_i]);
+          particles[p_i].position[2]    = Utilities::string_to_double(particles_data["p_z"][p_i]);
+          particles[p_i].velocity[0]    = Utilities::string_to_double(particles_data["v_x"][p_i]);
+          particles[p_i].velocity[1]    = Utilities::string_to_double(particles_data["v_y"][p_i]);
+          particles[p_i].velocity[2]    = Utilities::string_to_double(particles_data["v_z"][p_i]);
+          particles[p_i].orientation[0] = Utilities::string_to_double(particles_data["orientation_x"][p_i]);
+          particles[p_i].orientation[1] = Utilities::string_to_double(particles_data["orientation_y"][p_i]);
+          particles[p_i].orientation[2] = Utilities::string_to_double(particles_data["orientation_z"][p_i]);
 
-          if (restart_data["type"][p_i] == Shape<dim>::ShapeType::sphere)
-            {
-              std::vector<double> shape_argument(1);
-              shape_argument[0] = restart_data["shape_argument_0"][p_i];
-              particles[p_i].initialize_shape("sphere", shape_argument);
+
+          std::string shape_type = particles_data["type"][p_i];
+          std::string shape_arguments_str =
+            particles_data["shape_argument"][p_i];
+          // Here shape is supposed to be separated by : but the initializer take ; as separator so we replace : by ;.
+          std::string toReplace = ":";
+          std::string replacement = ";";
+
+          // Check if the substring is found
+          size_t pos = shape_arguments_str.find(toReplace);
+          while (pos != std::string::npos) {
+              // Replace the substring
+              shape_arguments_str.replace(pos, toReplace.length(), replacement);
+
+              // Find next occurrence of the substring
+              pos = shape_arguments_str.find(toReplace, pos + replacement.length());
             }
-          else if (restart_data["type"][p_i] ==
-                   Shape<dim>::ShapeType::hyper_rectangle)
-            {
-              std::vector<double> shape_argument(3);
-              shape_argument[0] = restart_data["shape_argument_0"][p_i];
-              shape_argument[1] = restart_data["shape_argument_1"][p_i];
-              shape_argument[2] = restart_data["shape_argument_2"][p_i];
-              particles[p_i].initialize_shape("hyper rectangle",
-                                              shape_argument);
-            }
-          else if (restart_data["type"][p_i] ==
-                   Shape<dim>::ShapeType::ellipsoid)
-            {
-              std::vector<double> shape_argument(3);
-              shape_argument[0] = restart_data["shape_argument_0"][p_i];
-              shape_argument[1] = restart_data["shape_argument_1"][p_i];
-              shape_argument[2] = restart_data["shape_argument_2"][p_i];
-              particles[p_i].initialize_shape("ellipsoid", shape_argument);
-            }
-          else if (restart_data["type"][p_i] == Shape<dim>::ShapeType::torus)
-            {
-              std::vector<double> shape_argument(2);
-              shape_argument[0] = restart_data["shape_argument_0"][p_i];
-              shape_argument[1] = restart_data["shape_argument_1"][p_i];
-              particles[p_i].initialize_shape("torus", shape_argument);
-            }
-          else if (restart_data["type"][p_i] == Shape<dim>::ShapeType::cone)
-            {
-              std::vector<double> shape_argument(2);
-              shape_argument[0] = restart_data["shape_argument_0"][p_i];
-              shape_argument[1] = restart_data["shape_argument_1"][p_i];
-              particles[p_i].initialize_shape("cone", shape_argument);
-            }
-          else if (restart_data["type"][p_i] ==
-                   Shape<dim>::ShapeType::cut_hollow_sphere)
-            {
-              std::vector<double> shape_argument(3);
-              shape_argument[0] = restart_data["shape_argument_0"][p_i];
-              shape_argument[1] = restart_data["shape_argument_1"][p_i];
-              shape_argument[2] = restart_data["shape_argument_2"][p_i];
-              particles[p_i].initialize_shape("cut hollow sphere",
-                                              shape_argument);
-            }
-          else if (restart_data["type"][p_i] ==
-                   Shape<dim>::ShapeType::death_star)
-            {
-              std::vector<double> shape_argument(3);
-              shape_argument[0] = restart_data["shape_argument_0"][p_i];
-              shape_argument[1] = restart_data["shape_argument_1"][p_i];
-              shape_argument[2] = restart_data["shape_argument_2"][p_i];
-              particles[p_i].initialize_shape("death star", shape_argument);
-            }
-          else if (restart_data["type"][p_i] ==
-                   Shape<dim>::ShapeType::rbf_shape)
-            {
-              particles[p_i].shape =
-                std::dynamic_pointer_cast<RBFShape<dim>>(
-                  this->simulation_parameters.particlesParameters
-                    ->particles[p_i]
-                    .shape)
-                  ->static_copy();
-            }
+          particles[p_i].initialize_shape(shape_type, shape_arguments_str);
 
           particles[p_i].radius = particles[p_i].shape->effective_radius;
-          particles[p_i].mass   = 4.0 / 3.0 * PI * particles[p_i].radius *
-                                particles[p_i].radius * particles[p_i].radius *
-                                restart_data["density"][p_i];
+          double volume =Utilities::string_to_double( particles_data["volume"][p_i]);
+          if (volume == 0)
+            {
+              // value is automatically define.
+              // volume=particles[i].shape->displaced_volume(1.0);
+              if (volume == 0)
+                {
+                  if (dim == 2)
+                    {
+                      volume = PI * particles[p_i].radius * particles[p_i].radius;
+                    }
+                  else if (dim == 3)
+                    {
+                      volume = 4.0 / 3.0 * PI * particles[p_i].radius *
+                               particles[p_i].radius * particles[p_i].radius;
+                    }
+                }
+            }
+          particles[p_i].volume = volume;
+          particles[p_i].mass = particles[p_i].volume *Utilities::string_to_double(particles_data["density"][p_i]);
 
-          particles[p_i].omega[0] = restart_data["omega_x"][p_i];
-          particles[p_i].omega[1] = restart_data["omega_y"][p_i];
-          particles[p_i].omega[2] = restart_data["omega_z"][p_i];
+          particles[p_i].omega[0] = Utilities::string_to_double(particles_data["omega_x"][p_i]);
+          particles[p_i].omega[1] = Utilities::string_to_double(particles_data["omega_y"][p_i]);
+          particles[p_i].omega[2] = Utilities::string_to_double(particles_data["omega_z"][p_i]);
 
-          particles[p_i].inertia[0][0] = restart_data["inertia"][p_i];
-          particles[p_i].inertia[1][1] = restart_data["inertia"][p_i];
-          particles[p_i].inertia[2][2] = restart_data["inertia"][p_i];
+          particles[p_i].inertia[0][0] = Utilities::string_to_double(particles_data["inertia"][p_i]);
+          particles[p_i].inertia[1][1] = Utilities::string_to_double(particles_data["inertia"][p_i]);
+          particles[p_i].inertia[2][2] = Utilities::string_to_double(particles_data["inertia"][p_i]);
 
-          particles[p_i].pressure_location[0] = restart_data["pressure_x"][p_i];
-          particles[p_i].pressure_location[1] = restart_data["pressure_y"][p_i];
-          particles[p_i].pressure_location[2] = restart_data["pressure_z"][p_i];
+          particles[p_i].pressure_location[0] =
+            Utilities::string_to_double(particles_data["pressure_x"][p_i]);
+          particles[p_i].pressure_location[1] =
+            Utilities::string_to_double(particles_data["pressure_y"][p_i]);
+          particles[p_i].pressure_location[2] =
+            Utilities::string_to_double(particles_data["pressure_z"][p_i]);
 
-          particles[p_i].youngs_modulus = restart_data["youngs_modulus"][p_i];
+          particles[p_i].youngs_modulus = Utilities::string_to_double(particles_data["youngs_modulus"][p_i]);
           particles[p_i].restitution_coefficient =
-            restart_data["restitution_coefficient"][p_i];
+            Utilities::string_to_double(particles_data["restitution_coefficient"][p_i]);
           particles[p_i].friction_coefficient =
-            restart_data["friction_coefficient"][p_i];
-          particles[p_i].poisson_ratio = restart_data["poisson_ratio"][p_i];
+            Utilities::string_to_double(particles_data["friction_coefficient"][p_i]);
+          particles[p_i].poisson_ratio = Utilities::string_to_double(particles_data["poisson_ratio"][p_i]);
           particles[p_i].rolling_friction_coefficient =
-            restart_data["rolling_friction_coefficient"][p_i];
+            Utilities::string_to_double(particles_data["rolling_friction_coefficient"][p_i]);
           particles[p_i].initialize_previous_solution();
-          if (restart_data["integrate_motion"][p_i] == 0.0)
+          if (particles_data["integrate_motion"][p_i] == "false")
             {
               particles[p_i].integrate_motion = false;
             }
@@ -4713,7 +4703,6 @@ GLSSharpNavierStokesSolver<dim>::load_particles_from_file()
             }
           particles[p_i].set_position(particles[p_i].position);
           particles[p_i].set_orientation(particles[p_i].orientation);
-
         }
     }
 }

@@ -47,21 +47,7 @@ IBParticlesDEM<dim>::initialize(
   dem_particles             = particles;
   boundary_cells.resize(dem_particles.size());
 
-  dem_parameters.model_parameters.particle_particle_contact_force_model =
-    Parameters::Lagrangian::ParticleParticleContactForceModel::hertz;
-  dem_parameters.model_parameters.particle_wall_contact_force_method =
-    Parameters::Lagrangian::ModelParameters::ParticleWallContactForceModel::
-      nonlinear;
-  particle_particle_contact_force_object =
-    std::make_shared<ParticleParticleContactForce<
-      dim,
-      Parameters::Lagrangian::ParticleParticleContactForceModel::hertz,
-      Parameters::Lagrangian::RollingResistanceMethod::no_resistance>>(
-      dem_parameters);
   std::vector<types::boundary_id> boundary_index(0);
-  particle_wall_contact_force_object =
-    std::make_shared<ParticleWallNonLinearForce<dim>>(dem_parameters,
-                                                      boundary_index);
 
 }
 template <int dim>
@@ -624,15 +610,8 @@ IBParticlesDEM<dim>::calculate_pw_contact_force(
               auto point_on_boundary =
                 boundary_cell_information.point_on_boundary;
 
-
-              // A vector (point_to_particle_vector) is defined which connects the center of particle to the point_on_boundary. This vector will then be projected on the normal vector of the boundary to obtain the particle-wall distance
-
               Point<3> particle_position_3d = point_nd_to_3d(particle.position);
-              Point<3> point_on_boundary_3d = point_nd_to_3d(point_on_boundary);
               Tensor<1, 3> particle_velocity_3d = tensor_nd_to_3d(particle.velocity);
-
-              Tensor<1, 3> point_to_particle_vector =
-                particle_position_3d - point_on_boundary_3d;
 
               // Finding the projected vector on the normal vector of the
               // boundary. Here we have used the private function find_projection. Using this projected vector, the particle-wall distance is calculated
@@ -869,17 +848,13 @@ IBParticlesDEM<dim>::calculate_pw_lubrication_force(
                 particle_position_3d - point_on_boundary_3d;
 
               // Finding the projected vector on the normal vector of the boundary. Here we have used the private function find_projection. Using this projected vector, the particle-wall distance is calculated
-              Tensor<1, 3> projected_vector =
-                particle_wall_contact_force_object->find_projection(
-                  point_to_particle_vector, normal);
-
+              Tensor<1, 3> projected_vector = ((point_to_particle_vector* normal) / (normal.norm_square())) * normal;
 
               double gap = (projected_vector.norm()) - particle.radius;
 
               Tensor<1, 3> radial_vector;
               double       radial_velocity;
               Tensor<1, 3> f_lub;
-
 
               radial_vector = projected_vector;
               if (gap > 0 and gap < h_max)
@@ -938,11 +913,6 @@ IBParticlesDEM<dim>::calculate_force_model(const double                         
                                            const double                         particle_two_rolling_friction_coefficient,
                                            const double                         dt)
 {
-
-
-
-
-
   double effective_youngs_modulus;
   double effective_shear_modulus;
   double effective_coefficient_of_restitution;
@@ -1019,7 +989,6 @@ IBParticlesDEM<dim>::calculate_force_model(const double                         
   Tensor<1,3> velocity_of_particle_two_at_contact_point=particle_two_velocity+cross_product_3d(particle_two_omega,(contact_point-point_nd_to_3d(particle_two_position)));
   contact_relative_velocity=(velocity_of_particle_one_at_contact_point-velocity_of_particle_two_at_contact_point);
 
-
   // Calculation of normal relative velocity. Note that in the
   // following line the product acts as inner product since both
   // sides are vectors, while in the second line the product is
@@ -1043,9 +1012,8 @@ IBParticlesDEM<dim>::calculate_force_model(const double                         
   // delta_t_new = delta_t_old + v_rt*dt
   contact_info.tangential_relative_velocity.push_back(tangential_relative_velocity);
   contact_info.tangential_overlap += tangential_relative_velocity * dt;
-  ///////////// Hertz contact force model /////////////////
 
-
+  ///////////// Hertz contact force model ////////////////
   // Calculation of effective radius and mass
   double effective_mass = (particle_one_mass *
                            particle_two_mass) /
@@ -1077,7 +1045,6 @@ IBParticlesDEM<dim>::calculate_force_model(const double                         
       radius_times_overlap_sqrt +
     DBL_MIN;
 
-
   // Calculation of normal force using spring and dashpot normal forces
   normal_force =
     ((normal_spring_constant * normal_overlap) * normal_unit_vector) +
@@ -1104,33 +1071,14 @@ IBParticlesDEM<dim>::calculate_force_model(const double                         
         (tangential_force / (tangential_force.norm() + DBL_MIN));
     }
 
+  // For calculation of rolling resistance torque, we need to obtain
+  // omega_ij using rotational velocities of particles one and two
+  Tensor<1,3> omega_ij= particle_one_omega -  particle_two_omega ;
+  Tensor<1,3> omega_ij_direction = omega_ij / (omega_ij.norm() + DBL_MIN);
 
-
-  // Rolling resistance torque
-    rolling_resistance_torque = 0*effective_coefficient_of_rolling_friction;
-
-  /*if constexpr (rolling_friction_model ==
-                Parameters::Lagrangian::RollingResistanceMethod::
-                  constant_resistance)
-    rolling_resistance_torque = constant_rolling_resistance_torque(
-      this->effective_radius,
-      particle_one_properties,
-      particle_two_properties,
-      this->effective_coefficient_of_rolling_friction[vec_particle_type_index(
-        particle_one_type, particle_two_type)],
-      normal_force.norm(),
-      normal_unit_vector);
-  if constexpr (rolling_friction_model ==
-                Parameters::Lagrangian::viscous_resistance)
-    rolling_resistance_torque = viscous_rolling_resistance_torque(
-      this->effective_radius,
-      particle_one_properties,
-      particle_two_properties,
-      this->effective_coefficient_of_rolling_friction[vec_particle_type_index(
-        particle_one_type, particle_two_type)],
-      normal_force.norm(),
-      normal_unit_vector);*/
-
+  // Calculation of the linear rolling resistance torque
+  rolling_resistance_torque=(-effective_coefficient_of_rolling_friction  * effective_radius *
+          normal_force.norm() * omega_ij_direction);
 }
 
 
@@ -1303,7 +1251,6 @@ IBParticlesDEM<dim>::integrate_particles_motion(const double dt,
                   gravity = g * (dem_particles[p_i].mass -
                                        dem_particles[p_i].volume * rho);
 
-
                   // We consider only the force at t+dt so the scheme is
                   // consistent to a BDFn scheme on the fluid side. If there is
                   // no contact.
@@ -1381,7 +1328,7 @@ IBParticlesDEM<dim>::integrate_particles_motion(const double dt,
                     invert(dem_particles[p_i].rotation_matrix) *
                     angular_acceleration_in_particle_frame;
 
-
+                  // Store est rk4 step of the angular contact impulsion
                   k_omega_impulsion[p_i][step] = current_fluid_torque[p_i] +
                                                  contact_torque[p_i] +
                                                  contact_wall_torque[p_i];
@@ -1552,17 +1499,22 @@ IBParticlesDEM<dim>::integrate_particles_motion(const double dt,
                 }
 
               dem_particles[p_i].omega =
-                last_omega[p_i] + dt_dem * (k_omega[p_i][0]+2*k_omega[p_i][1]+2*k_omega[p_i][2]+k_omega[p_i][3])/6;
-              Tensor<1,3> angle_update_vector=(k_orientation[p_i][0]+2*k_orientation[p_i][1]+2*k_orientation[p_i][2]+k_orientation[p_i][3])/6;
+                last_omega[p_i] + dt_dem *
+                                    (k_omega[p_i][0] + 2 * k_omega[p_i][1] +
+                                     2 * k_omega[p_i][2] + k_omega[p_i][3]) /
+                                    6;
+              Tensor<1, 3> angle_update_vector =
+                (k_orientation[p_i][0] + 2 * k_orientation[p_i][1] +
+                 2 * k_orientation[p_i][2] + k_orientation[p_i][3]) /
+                6;
               // Update orientation matrix explicitly
               Tensor<2, 3> new_rotation_matrix;
-              if (angle_update_vector.norm()> 0)
+              if (angle_update_vector.norm() > 0)
                 {
                   new_rotation_matrix =
                     Physics::Transformations::Rotations::rotation_matrix_3d(
-                      angle_update_vector /
-                        angle_update_vector.norm(),
-                      angle_update_vector.norm()* dt_dem) *
+                      angle_update_vector / angle_update_vector.norm(),
+                      angle_update_vector.norm() * dt_dem) *
                     last_orientation_matrix[p_i];
                   dem_particles[p_i].orientation =
                     dem_particles[p_i].shape->rotation_matrix_to_xyz_angles(
@@ -1572,49 +1524,38 @@ IBParticlesDEM<dim>::integrate_particles_motion(const double dt,
               // Integration of the impulsion applied to the particle.
               // This is what will be transferred to the CFD to integrate the
               // particle.
-              dem_particles[p_i].impulsion += dt_dem * (k_impulsion[p_i][0]+2*k_impulsion[p_i][1]+2*k_impulsion[p_i][2]+k_impulsion[p_i][3])/6;
+              dem_particles[p_i].impulsion +=
+                dt_dem *
+                (k_impulsion[p_i][0] + 2 * k_impulsion[p_i][1] +
+                 2 * k_impulsion[p_i][2] + k_impulsion[p_i][3]) /
+                6;
 
               dem_particles[p_i].contact_impulsion +=
-                dt_dem * (k_contact_impulsion[p_i][0]+2*k_contact_impulsion[p_i][1]+2*k_contact_impulsion[p_i][2]+k_contact_impulsion[p_i][3])/6;
+                dt_dem *
+                (k_contact_impulsion[p_i][0] + 2 * k_contact_impulsion[p_i][1] +
+                 2 * k_contact_impulsion[p_i][2] +
+                 k_contact_impulsion[p_i][3]) /
+                6;
 
               dem_particles[p_i].omega_impulsion +=
-                dt_dem * (k_omega_impulsion[p_i][0]+2*k_omega_impulsion[p_i][1]+2*k_omega_impulsion[p_i][2]+k_omega_impulsion[p_i][3])/6;
+                dt_dem *
+                (k_omega_impulsion[p_i][0] + 2 * k_omega_impulsion[p_i][1] +
+                 2 * k_omega_impulsion[p_i][2] + k_omega_impulsion[p_i][3]) /
+                6;
 
               dem_particles[p_i].omega_contact_impulsion +=
-                dt_dem * (k_omega_contact_impulsion[p_i][0]+2*k_omega_contact_impulsion[p_i][1]+2*k_omega_contact_impulsion[p_i][2]+k_omega_contact_impulsion[p_i][3])/6;
+                dt_dem *
+                (k_omega_contact_impulsion[p_i][0] +
+                 2 * k_omega_contact_impulsion[p_i][1] +
+                 2 * k_omega_contact_impulsion[p_i][2] +
+                 k_omega_contact_impulsion[p_i][3]) /
+                6;
 
-
-
-              if (Utilities::MPI::this_mpi_process(this->mpi_communicator) ==
-                    0 and
-                  false)
-                {
-                  std::cout << "dem_particles[p_i].position "
-                            << dem_particles[p_i].position << std::endl;
-                  std::cout << "dem_particles[p_i].velocity"
-                            << dem_particles[p_i].velocity << std::endl;
-                  std::cout << "dem_particles[p_i].omega_contact_impulsion"
-                            << dem_particles[p_i].omega_contact_impulsion
-                            << std::endl;
-                  std::cout << "dem_particles[p_i].omega_impulsion "
-                            << dem_particles[p_i].omega_impulsion << std::endl;
-                  std::cout << "omega accel " << k_omega[p_i][0] << std::endl;
-                  std::cout << "dem_particles[p_i].omega "
-                            << dem_particles[p_i].omega << std::endl;
-                  /*std::cout << "dem_particles[p_i].position "
-                            << dem_particles[p_i].position << std::endl;*/
-                  std::cout << "new orientation_matrix " << new_rotation_matrix
-                            << std::endl;
-                  std::cout << "rotation_matrix "
-                            << dem_particles[p_i].rotation_matrix << std::endl;
-                  std::cout << "dem_particles[p_i].orientation "
-                            << dem_particles[p_i].orientation << std::endl;
-                }
+              // update particle position and orientation
+              dem_particles[p_i].set_position(dem_particles[p_i].position);
+              dem_particles[p_i].set_orientation(
+                dem_particles[p_i].orientation);
             }
-
-          // update particle position and orientation
-          dem_particles[p_i].set_position(dem_particles[p_i].position);
-          dem_particles[p_i].set_orientation(dem_particles[p_i].orientation);
         }
 
       // RK4 for the particle wall tangential overlap

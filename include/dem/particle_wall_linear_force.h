@@ -96,44 +96,6 @@ public:
     const std::vector<std::shared_ptr<SerialSolid<dim - 1, dim>>> &solids)
     override;
 
-  /**
-   * Carries out the calculation of the contact force for IB particles. This
-   * function is used in fem-dem/ib_particles_dem.
-   *
-   * TODO : At this point in time this function is not implemented and the
-   * function used for particle wall contact force is hardcoded. This will be
-   * modified in futur update
-   *
-   * @param contact_info Contact history including tangential overlap and relative
-   * velocity.
-   * @param normal_force Contact normal force.
-   * @param tangential_force Contact tangential force.
-   * @param tangential_torque
-   * @param rolling_resistance_torque Contact rolling resistance torque.
-   * @param particle
-   * @param wall_youngs_modulus
-   * @param wall_poisson_ratio
-   * @param wall_restitution_coefficient
-   * @param wall_friction_coefficient
-   * @param wall_rolling_friction_coefficient
-   * @param dt Time-step.
-   */
-  virtual void
-  calculate_IB_particle_wall_contact_force(
-    particle_wall_contact_info<dim> &contact_info,
-    Tensor<1, 3>                    &normal_force,
-    Tensor<1, 3>                    &tangential_force,
-    Tensor<1, 3>                    &tangential_torque,
-    Tensor<1, 3>                    &rolling_resistance_torque,
-    IBParticle<dim>                 &particle,
-    const double                     wall_youngs_modulus,
-    const double                     wall_poisson_ratio,
-    const double                     wall_restitution_coefficient,
-    const double                     wall_friction_coefficient,
-    const double                     wall_rolling_friction_coefficient,
-    const double                     dt,
-    const double                     mass,
-    const double                     radius) override;
 
 private:
   /**
