@@ -65,8 +65,8 @@ An insertion box is defined inside and on the top of the silo.
       set insertion box maximum y                        = 0.007
       set insertion box maximum z                        = 1.09
       set insertion distance threshold                   = 1.5
-      set insertion random number range                  = 0.1
-      set insertion random number seed                   = 19
+      set insertion maximum offset                       = 0.1
+      set insertion prn seed                             = 19
     end
 
 

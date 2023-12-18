@@ -63,9 +63,11 @@ public:
    * @param d_average Average diameters for a certain normal distribution.
    * @param d_standard_deviation Standard deviation of the diameter for a certain
    * normal distribution.
+   * @param prn_seed Pseudo-random number seed for the diameter generation.
    */
-  NormalDistribution(const double &d_average,
-                     const double &d_standard_deviation);
+  NormalDistribution(const double       &d_average,
+                     const double       &d_standard_deviation,
+                     const unsigned int &prn_seed);
 
   /**
    * @brief Carries out the size sampling of each particle inserted at an insertion
@@ -102,6 +104,11 @@ private:
    * Standard deviation of distribution of the normal distribution.
    */
   const double standard_deviation;
+
+  /**
+   * Random number generator for the diameter selection.
+   */
+  std::mt19937 gen;
 };
 
 class UniformDistribution : public Distribution
@@ -153,12 +160,15 @@ public:
   /**
    * @brief The constructor stores the parameters necessary to define the histogram
    * distribution.
+   *
    * @param d_list Vector of diameter values.
    * @param d_probabilities Vector of probability values based on volume fraction
    * with respect to each diameter value.
+   * @param prn_seed Pseudo-random number seed for the diameter generation.
    */
   CustomDistribution(const std::vector<double> &d_list,
-                     const std::vector<double> &d_probabilities);
+                     const std::vector<double> &d_probabilities,
+                     const unsigned int        &prn_seed);
 
   /**
    * @brief Carries out the size sampling of each particle inserted at an insertion
@@ -198,6 +208,11 @@ private:
    * fraction, not the number of particles.
    */
   std::vector<double> diameter_custom_cumu_prob;
+
+  /**
+   * Random number generator for the diameter selection.
+   */
+  std::mt19937 gen;
 };
 
 #endif /* distributions_h */

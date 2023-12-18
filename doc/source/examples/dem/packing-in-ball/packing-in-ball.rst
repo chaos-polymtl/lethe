@@ -71,8 +71,8 @@ In a three-dimensional simulation, we have to define the minimum and maximum dim
       set insertion box maximum y                        = 0.05
       set insertion box maximum z                        = 0.07
       set insertion distance threshold                   = 2
-      set insertion random number range                  = 0.75
-      set insertion random number seed                   = 19
+      set insertion maximum offset                       = 0.75
+      set insertion prn seed                             = 19
     end
 
 

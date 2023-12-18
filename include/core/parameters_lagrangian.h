@@ -80,6 +80,9 @@ namespace Parameters
       std::unordered_map<unsigned int, std::vector<double>>
         particle_custom_probability;
 
+      // Random seed for the size distribution
+      std::vector<unsigned int> seed_for_distributions;
+
       // Distribution type of each particle type
       std::vector<SizeDistributionType> distribution_type;
 
@@ -148,6 +151,7 @@ namespace Parameters
           &particle_custom_diameter,
         std::unordered_map<unsigned int, std::vector<double>>
                                                  &particle_custom_probability,
+        std::vector<unsigned int>                &seed_for_distributions,
         std::unordered_map<unsigned int, int>    &number,
         std::unordered_map<unsigned int, double> &density_particle,
         std::unordered_map<unsigned int, double> &youngs_modulus_particle,
@@ -189,10 +193,10 @@ namespace Parameters
       double distance_threshold;
 
       // Insertion random number range
-      double random_number_range;
+      double insertion_maximum_offset;
 
       // Insertion random number seed
-      int random_number_seed;
+      int seed_for_insertion;
 
       std::vector<double> list_x, list_y, list_z, list_vx, list_vy, list_vz,
         list_wx, list_wy, list_wz, list_d;

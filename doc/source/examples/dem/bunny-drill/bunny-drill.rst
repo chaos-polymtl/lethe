@@ -64,8 +64,8 @@ An insertion box is defined inside at the top part of the cylinder. The insertio
     set insertion box maximum y                        = 0.07
     set insertion box maximum z                        = 0.07
     set insertion distance threshold                   = 1.10
-    set insertion random number range                  = 0.10
-    set insertion random number seed                   = 19
+    set insertion maximum offset                       = 0.10
+    set insertion prn seed                             = 19
     set insertion first direction                      = 0
     set insertion second direction                     = 2
     set insertion third direction                      = 1

@@ -92,14 +92,14 @@ private:
    * to be inserted at each insertion step
    *
    * @param random_container A vector of random numbers
-   * @param random_number_range The range in which the random numbers will be
+   * @param maximum_range The range in which the random numbers will be
    * generated
-   * @param random_number_seed random number seed
+   * @param seed_for_insertion Prn seed for initial offset
    */
   void
   create_random_number_container(std::vector<double> &random_container,
-                                 const double         random_number_range,
-                                 const int            random_number_seed);
+                                 const double         maximum_range,
+                                 const int            seed_for_insertion);
 
   /**
    * Converts id of particles to volume insertion location
