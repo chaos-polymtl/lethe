@@ -652,7 +652,7 @@ Parameters::CahnHilliard::parse_parameters(ParameterHandler &prm)
       else if (op_mobility == "quartic")
         {
           cahn_hilliard_mobility_model = CahnHilliardMobilityModel::quartic;
-                     std::cout<<"mobility is constant(ch)"<<std::endl;
+                     std::cout<<"mobility is quartic (ch)"<<std::endl;
         }
       else
         throw(std::runtime_error("Invalid mobility model. "

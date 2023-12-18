@@ -68,10 +68,10 @@ GLSNavierStokesCahnHilliardAssemblerCore<dim>::assemble_matrix(
 
       const double potential_value =
         scratch_data.chemical_potential_cahn_hilliard_values[q];
-      //      const Tensor<1, dim> phase_order_gradient =
-      //        scratch_data.phase_order_cahn_hilliard_gradients[q];
-      const Tensor<1, dim> phase_order_gradient =
-        scratch_data.filtered_phase_order_cahn_hilliard_gradients[q];
+            const Tensor<1, dim> phase_order_gradient =
+              scratch_data.phase_order_cahn_hilliard_gradients[q];
+//      const Tensor<1, dim> phase_order_gradient =
+//        scratch_data.filtered_phase_order_cahn_hilliard_gradients[q];
 
       double mobility = scratch_data.mobility_cahn_hilliard[q];
       // std::cout<<"mobility via chns assembler = "<<mobility<<std::endl;
@@ -249,10 +249,10 @@ GLSNavierStokesCahnHilliardAssemblerCore<dim>::assemble_rhs(
         scratch_data.chemical_potential_cahn_hilliard_gradients[q];
       const double potential_value =
         scratch_data.chemical_potential_cahn_hilliard_values[q];
-      //      const Tensor<1, dim> phase_order_gradient =
-      //        scratch_data.phase_order_cahn_hilliard_gradients[q];
-      const Tensor<1, dim> phase_order_gradient =
-        scratch_data.filtered_phase_order_cahn_hilliard_gradients[q];
+            const Tensor<1, dim> phase_order_gradient =
+              scratch_data.phase_order_cahn_hilliard_gradients[q];
+//      const Tensor<1, dim> phase_order_gradient =
+//        scratch_data.filtered_phase_order_cahn_hilliard_gradients[q];
 
       // Gather into local variables the relevant fields for velocity
       const Tensor<1, dim> velocity    = scratch_data.velocity_values[q];

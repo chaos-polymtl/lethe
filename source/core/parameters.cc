@@ -1147,6 +1147,7 @@ namespace Parameters
 
           // Surface tension
           op = prm.get("surface tension model");
+          std::cout<<op<<std::endl;
           if (op == "constant")
             {
               surface_tension_model = SurfaceTensionModel::constant;
@@ -1169,6 +1170,7 @@ namespace Parameters
 
           // Cahn-Hilliard mobility
           op = prm.get("cahn hilliard mobility model");
+          std::cout<<op<<std::endl;
           if (op == "constant")
             {
               mobility_cahn_hilliard_model =
