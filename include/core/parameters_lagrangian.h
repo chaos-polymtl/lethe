@@ -81,7 +81,7 @@ namespace Parameters
         particle_custom_probability;
 
       // Random seed for the size distribution
-      std::vector<unsigned int> random_seed_for_distributions;
+      std::vector<unsigned int> seed_for_distributions;
 
       // Distribution type of each particle type
       std::vector<SizeDistributionType> distribution_type;
@@ -151,7 +151,7 @@ namespace Parameters
           &particle_custom_diameter,
         std::unordered_map<unsigned int, std::vector<double>>
                                                  &particle_custom_probability,
-        std::vector<unsigned int>                &random_seed_for_distributions,
+        std::vector<unsigned int>                &seed_for_distributions,
         std::unordered_map<unsigned int, int>    &number,
         std::unordered_map<unsigned int, double> &density_particle,
         std::unordered_map<unsigned int, double> &youngs_modulus_particle,

@@ -61,7 +61,7 @@ test()
   dem_parameters.insertion_info.axis_0                               = 0;
   dem_parameters.insertion_info.axis_1                               = 1;
   dem_parameters.insertion_info.axis_2                               = 2;
-  dem_parameters.insertion_info.inserted_this_step                   = 1000;
+  dem_parameters.insertion_info.inserted_this_step                   = 100;
   dem_parameters.insertion_info.distance_threshold                   = 2;
   dem_parameters.lagrangian_physical_properties.particle_type_number = 1;
   dem_parameters.lagrangian_physical_properties.distribution_type.push_back(
@@ -69,7 +69,7 @@ test()
   dem_parameters.lagrangian_physical_properties.particle_average_diameter[0] =
     0.005;
   dem_parameters.lagrangian_physical_properties.particle_size_std[0] = 0.0005;
-  dem_parameters.lagrangian_physical_properties.random_seed_for_distributions
+  dem_parameters.lagrangian_physical_properties.seed_for_distributions
     .push_back(10);
   dem_parameters.lagrangian_physical_properties.density_particle[0] = 2500;
   dem_parameters.lagrangian_physical_properties.number[0]           = 1000;
@@ -85,8 +85,7 @@ test()
   distribution_object_container.push_back(std::make_shared<NormalDistribution>(
     dem_parameters.lagrangian_physical_properties.particle_average_diameter[0],
     dem_parameters.lagrangian_physical_properties.particle_size_std[0],
-    dem_parameters.lagrangian_physical_properties
-      .random_seed_for_distributions[0]));
+    dem_parameters.lagrangian_physical_properties.seed_for_distributions[0]));
 
   // Calling volume insertion
   VolumeInsertion<dim> insertion_object(

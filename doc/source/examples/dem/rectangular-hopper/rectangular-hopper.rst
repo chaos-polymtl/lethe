@@ -87,8 +87,8 @@ An insertion box is defined inside and the top part of the hopper. The inserted 
       set insertion box maximum y                        = 0.16020
       set insertion box maximum z                        = 0.03136
       set insertion distance threshold                   = 1.5
-      set insertion random number range                  = 0.1
-      set insertion random number seed                   = 20
+      set insertion maximum offset                       = 0.1
+      set insertion prn seed                             = 20
     end
 
 
@@ -355,8 +355,8 @@ Since the geometry of the mesh and the number of the particles are not the same,
         set insertion box maximum y                        = 0.16020
         set insertion box maximum z                        = 0.03136
         set insertion distance threshold                   = 1.5
-        set insertion random number range                  = 0.1
-        set insertion random number seed                   = 20
+        set insertion maximum offset                       = 0.1
+        set insertion prn seed                             = 20
     end
 
 Results Comparison

@@ -63,11 +63,11 @@ public:
    * @param d_average Average diameters for a certain normal distribution.
    * @param d_standard_deviation Standard deviation of the diameter for a certain
    * normal distribution.
-   * @param random_seed Random number seed for the diameter generation.
+   * @param prn_seed Pseudo-random number seed for the diameter generation.
    */
   NormalDistribution(const double       &d_average,
                      const double       &d_standard_deviation,
-                     const unsigned int &random_seed);
+                     const unsigned int &prn_seed);
 
   /**
    * @brief Carries out the size sampling of each particle inserted at an insertion
@@ -164,11 +164,11 @@ public:
    * @param d_list Vector of diameter values.
    * @param d_probabilities Vector of probability values based on volume fraction
    * with respect to each diameter value.
-   * @param random_seed Random number seed for the diameter generation.
+   * @param prn_seed Pseudo-random number seed for the diameter generation.
    */
   CustomDistribution(const std::vector<double> &d_list,
                      const std::vector<double> &d_probabilities,
-                     const unsigned int        &random_seed);
+                     const unsigned int        &prn_seed);
 
   /**
    * @brief Carries out the size sampling of each particle inserted at an insertion

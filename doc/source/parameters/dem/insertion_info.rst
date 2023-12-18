@@ -46,8 +46,8 @@ In this subsection, insertion methods which are ``volume``, ``plane`` and ``list
     set insertion plane normal vector                  = 1, 0, 0
 
     # If method = volume or plane
-    set insertion random number range                  = 0.75
-    set insertion random number seed                   = 19
+    set insertion maximum offset                       = 0.75
+    set insertion prn seed                             = 19
 
     # If method = list
     set list x                                         = 0.
@@ -67,7 +67,7 @@ The ``insertion method`` parameter chooses the type of insertion. Acceptable cho
 
 * The ``insertion frequency`` parameter defines the frequency of insertion. For example, if the ``insertion frequency`` is set equal to 10000, the iterations 1, 10001, 20001, ... will be defined as insertion steps.  The ``insertion frequency`` should be selected adequately depending on the insertion method. For ``volume`` it should be large, so that the inserted particles at the previous insertion step have enough time to leave the insertion box for the next insertion step, otherwise large overlap may occur which leads to a large velocity of particles. For the ``plane`` method, it should be small so that particles are being inserted as soon as a cell is empty.
 
-* The ``random number range`` and ``insertion random number seed`` parameters determine the random added values to the positions of particles during a ``volume`` and ``plane`` insertion. ``random number range`` defines the maximum value for the random displacement. ``insertion random number seed`` is the seed for the random number generator.
+* The ``insertion maximum offset`` and ``insertion prn seed`` parameters defines the random offset values to the initial positions of particles during a ``volume`` and ``plane`` insertion. The ``insertion maximum offset`` parameter defines the maximum value for an offset. The ``insertion prn seed`` parameter defines the pseudo-random number (PRN) with which offset values are getting generated.
 
 -------
 Volume

@@ -62,8 +62,8 @@ An insertion box is defined inside the cubic domain. 4000 particles are inserted
       set insertion box maximum y                        = 0.019
       set insertion box maximum z                        = 0.019
       set insertion distance threshold                   = 1.5
-      set insertion random number range                  = 0.2
-      set insertion random number seed                   = 19
+      set insertion maximum offset                       = 0.2
+      set insertion prn seed                             = 19
     end
 
 

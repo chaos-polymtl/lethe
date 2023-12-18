@@ -66,7 +66,7 @@ test()
   dem_parameters.lagrangian_physical_properties.particle_type_number = 1;
   dem_parameters.lagrangian_physical_properties.distribution_type.push_back(
     Parameters::Lagrangian::SizeDistributionType::custom);
-  dem_parameters.lagrangian_physical_properties.random_seed_for_distributions
+  dem_parameters.lagrangian_physical_properties.seed_for_distributions
     .push_back(10);
   dem_parameters.lagrangian_physical_properties.particle_custom_diameter[0] = {
     0.005, 0.0025};
@@ -87,8 +87,7 @@ test()
     dem_parameters.lagrangian_physical_properties.particle_custom_diameter[0],
     dem_parameters.lagrangian_physical_properties
       .particle_custom_probability[0],
-    dem_parameters.lagrangian_physical_properties
-      .random_seed_for_distributions[0]));
+    dem_parameters.lagrangian_physical_properties.seed_for_distributions[0]));
 
   // Calling volume insertion
   VolumeInsertion<dim> insertion_object(

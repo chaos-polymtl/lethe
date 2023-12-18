@@ -4,10 +4,10 @@
 
 NormalDistribution::NormalDistribution(const double       &d_average,
                                        const double       &d_standard_deviation,
-                                       const unsigned int &random_seed)
+                                       const unsigned int &prn_seed)
   : diameter_average(d_average)
   , standard_deviation(d_standard_deviation)
-  , gen(random_seed)
+  , gen(prn_seed)
 {}
 
 void
@@ -71,9 +71,9 @@ UniformDistribution::find_max_diameter()
 CustomDistribution::CustomDistribution(
   const std::vector<double> &d_list,
   const std::vector<double> &d_probabilities,
-  const unsigned int        &random_seed)
+  const unsigned int        &prn_seed)
   : diameter_custom_values(d_list)
-  , gen(random_seed)
+  , gen(prn_seed)
 {
   std::vector<double> cumulative_probability_vector, n_i_vector;
   double              n_tot = 0.;

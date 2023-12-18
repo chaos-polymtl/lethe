@@ -1339,7 +1339,7 @@ CFDDEMSolver<dim>::dem_setup_contact_parameters()
               dem_parameters.lagrangian_physical_properties.particle_size_std
                 .at(particle_type),
               dem_parameters.lagrangian_physical_properties
-                .random_seed_for_distributions[particle_type]));
+                .seed_for_distributions[particle_type]));
         }
       else if (dem_parameters.lagrangian_physical_properties.distribution_type
                  .at(particle_type) ==
@@ -1352,7 +1352,7 @@ CFDDEMSolver<dim>::dem_setup_contact_parameters()
               dem_parameters.lagrangian_physical_properties
                 .particle_custom_probability.at(particle_type),
               dem_parameters.lagrangian_physical_properties
-                .random_seed_for_distributions[particle_type]));
+                .seed_for_distributions[particle_type]));
         }
 
       maximum_particle_diameter = std::max(

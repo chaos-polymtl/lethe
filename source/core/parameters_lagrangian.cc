@@ -82,7 +82,7 @@ namespace Parameters
         convert_string_to_vector(prm, "custom diameters");
       particle_custom_probability.at(particle_type) =
         convert_string_to_vector(prm, "custom volume fractions");
-      random_seed_for_distributions.push_back(
+      seed_for_distributions.push_back(
         prm.get_integer("random seed distribution"));
 
       double probability_sum =
@@ -202,7 +202,7 @@ namespace Parameters
                             distribution_type,
                             particle_custom_diameter,
                             particle_custom_probability,
-                            random_seed_for_distributions,
+                            seed_for_distributions,
                             number,
                             density_particle,
                             youngs_modulus_particle,
@@ -246,7 +246,7 @@ namespace Parameters
         &particle_custom_diameter,
       std::unordered_map<unsigned int, std::vector<double>>
                                                &particle_custom_probability,
-      std::vector<unsigned int>                &random_seed_for_distributions,
+      std::vector<unsigned int>                &seed_for_distributions,
       std::unordered_map<unsigned int, int>    &number,
       std::unordered_map<unsigned int, double> &density_particle,
       std::unordered_map<unsigned int, double> &youngs_modulus_particle,
@@ -275,7 +275,7 @@ namespace Parameters
           rolling_friction_coefficient_particle.insert({counter, 0.});
           surface_energy_particle.insert({counter, 0.});
         }
-      random_seed_for_distributions.reserve(particle_type_maximum_number);
+      seed_for_distributions.reserve(particle_type_maximum_number);
     }
 
     void
@@ -338,14 +338,14 @@ namespace Parameters
                           "1",
                           Patterns::Double(),
                           "Distance threshold");
-        prm.declare_entry("insertion random number range",
+        prm.declare_entry("insertion maximum offset",
                           "1",
                           Patterns::Double(),
-                          "Random number range");
-        prm.declare_entry("insertion random number seed",
+                          "Maximum position offset went insertion particles");
+        prm.declare_entry("insertion prn seed",
                           "1",
                           Patterns::Integer(),
-                          "Random number seed");
+                          "Prn seed used to generate the position offsets");
         prm.declare_entry("list x",
                           "0",
                           Patterns::List(Patterns::Double()),
@@ -456,8 +456,8 @@ namespace Parameters
         y_max               = prm.get_double("insertion box maximum y");
         z_max               = prm.get_double("insertion box maximum z");
         distance_threshold  = prm.get_double("insertion distance threshold");
-        random_number_range = prm.get_double("insertion random number range");
-        random_number_seed  = prm.get_double("insertion random number seed");
+        random_number_range = prm.get_double("insertion maximum offset");
+        random_number_seed  = prm.get_double("insertion prn seed");
 
         vel_x   = prm.get_double("velocity x");
         vel_y   = prm.get_double("velocity y");
