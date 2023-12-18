@@ -380,7 +380,7 @@ namespace Parameters
     // tracer diffusivity in L^2/s
     double tracer_diffusivity;
     // Cahn-Hilliard mobility in L^2/s
-    // double mobility_cahn_hilliard;
+    double mobility_cahn_hilliard;
 
     // Phase change parameters
     PhaseChange phase_change_parameters;

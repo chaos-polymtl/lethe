@@ -556,10 +556,10 @@ NavierStokesScratchData<dim>::calculate_physical_properties()
 /*                   std::cout << "density_diff = " << density_diff <<
                    std::endl;*/
 
-                  //double phase_order_cahn_hilliard_value_old =
-                  //  this->phase_order_cahn_hilliard_values[q];
-                  double phase_order_cahn_hilliard_value =
-                    this->filtered_phase_order_cahn_hilliard_values[q];
+                  double phase_order_cahn_hilliard_value=
+                    this->phase_order_cahn_hilliard_values[q];
+                  //double phase_order_cahn_hilliard_value =
+                  //  this->filtered_phase_order_cahn_hilliard_values[q];
 
 
 
