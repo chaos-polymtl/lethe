@@ -456,8 +456,8 @@ namespace Parameters
         y_max               = prm.get_double("insertion box maximum y");
         z_max               = prm.get_double("insertion box maximum z");
         distance_threshold  = prm.get_double("insertion distance threshold");
-        random_number_range = prm.get_double("insertion maximum offset");
-        seed_for_insertion  = prm.get_integer("insertion prn seed");
+        insertion_maximum_offset = prm.get_double("insertion maximum offset");
+        seed_for_insertion       = prm.get_integer("insertion prn seed");
 
         vel_x   = prm.get_double("velocity x");
         vel_y   = prm.get_double("velocity y");

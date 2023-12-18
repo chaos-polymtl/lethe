@@ -72,7 +72,7 @@ The ``insertion method`` parameter chooses the type of insertion. Acceptable cho
 -------
 Volume
 -------
-The volume insertion method uses an insertion box where particles will be inserted. The insertion locations of particles are randomly selected if the ``random number range`` is not equal to zero, otherwise, the particles will perfecly aligns with the x, y and z directions.
+The volume insertion method uses an insertion box where particles will be inserted. The insertion locations of particles are randomly selected if the ``random number range`` is not equal to zero, otherwise, the particles will perfectly aligns with the x, y and z directions.
 
 * The ``inserted number of particles at each time step`` defines the desired number of particles to be inserted at each insertion step. If the insertion box is not adequately large to insert ``inserted number of particles at each time step`` particles with the defined arrangement (initial distance between the inserted particles), Lethe prints a warning and inserts the maximum number of particles that fit inside the insertion box at each insertion step.
 
