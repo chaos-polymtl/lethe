@@ -80,8 +80,8 @@ VolumeInsertion<dim>::insert(
       random_number_vector.reserve(this->inserted_this_step_this_proc);
       this->create_random_number_container(
         random_number_vector,
-        dem_parameters.insertion_info.random_number_range,
-        dem_parameters.insertion_info.random_number_seed);
+        dem_parameters.insertion_info.insertion_maximum_offset,
+        dem_parameters.insertion_info.seed_for_insertion);
 
       Point<dim>              insertion_location;
       std::vector<Point<dim>> insertion_points_on_proc;
@@ -149,14 +149,14 @@ template <int dim>
 void
 VolumeInsertion<dim>::create_random_number_container(
   std::vector<double> &random_container,
-  const double         random_number_range,
-  const int            random_number_seed)
+  const double         maximum_range,
+  const int            seed_for_insertion)
 {
   for (unsigned int i = 0; i < this->inserted_this_step; ++i)
     {
-      srand(random_number_seed * (i + 1));
+      srand(seed_for_insertion * (i + 1));
       random_container.push_back((((double)rand()) / ((double)RAND_MAX)) *
-                                 random_number_range);
+                                 maximum_range);
     }
 }
 

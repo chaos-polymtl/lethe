@@ -193,10 +193,10 @@ namespace Parameters
       double distance_threshold;
 
       // Insertion random number range
-      double random_number_range;
+      double insertion_maximum_offset;
 
       // Insertion random number seed
-      int random_number_seed;
+      int seed_for_insertion;
 
       std::vector<double> list_x, list_y, list_z, list_vx, list_vy, list_vz,
         list_wx, list_wy, list_wz, list_d;

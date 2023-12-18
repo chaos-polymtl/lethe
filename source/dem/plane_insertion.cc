@@ -36,7 +36,7 @@ PlaneInsertion<dim>::PlaneInsertion(
 
   // Initializing the variable for the random position of particle
   maximum_range_for_randomness =
-    dem_parameters.insertion_info.random_number_range /
+    dem_parameters.insertion_info.insertion_maximum_offset /
     static_cast<double>(RAND_MAX);
 }
 

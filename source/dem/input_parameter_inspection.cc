@@ -66,7 +66,7 @@ input_parameter_inspection(
 
   if (parameters.insertion_info.insertion_method ==
         Parameters::Lagrangian::InsertionInfo::InsertionMethod::volume &&
-      parameters.insertion_info.random_number_range >=
+      parameters.insertion_info.insertion_maximum_offset >=
         insertion_distance_per_particle)
     pcout
       << "Warning: Particles may have collision at the insertion step. This can lead"
