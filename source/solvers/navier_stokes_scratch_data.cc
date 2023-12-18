@@ -542,8 +542,8 @@ NavierStokesScratchData<dim>::calculate_physical_properties()
             }
           else if (gather_cahn_hilliard && !gather_vof)
             {
-              /* std::cout<< "Computing properties for Cahn-Hilliard"
-               <<std::endl;*/
+               //std::cout<< "Computing properties for Cahn-Hilliard"
+               //<<std::endl;
               //  Blend the physical properties using the CahnHilliard field
               for (unsigned int q = 0; q < this->n_q_points; ++q)
                 {
@@ -556,49 +556,49 @@ NavierStokesScratchData<dim>::calculate_physical_properties()
 /*                   std::cout << "density_diff = " << density_diff <<
                    std::endl;*/
 
-                  double phase_order_cahn_hilliard_value=
-                    this->phase_order_cahn_hilliard_values[q];
-                  //double phase_order_cahn_hilliard_value =
-                  //  this->filtered_phase_order_cahn_hilliard_values[q];
+//                  double phase_order_cahn_hilliard_value=
+//                    this->phase_order_cahn_hilliard_values[q];
+                  double phase_order_cahn_hilliard_value =
+                    this->filtered_phase_order_cahn_hilliard_values[q];
 
 
 
-                        /*            std::cout<<"phase value  = "
-                                    <<phase_order_cahn_hilliard_value_old<<std::endl;
-                                    std::cout<<"phase value filtered = "
-                                    <<phase_order_cahn_hilliard_value<<std::endl;
-                                    std::cout<<"density 0 = "
-                                    <<density_0[q]<<std::endl;
-                                    std::cout<<"density 1 = "
-                                    <<density_1[q]<<std::endl;
-                                    std::cout<<"expected density at point q ="<<
+//                                  std::cout<<"phase value  = "
+//                                    <<phase_order_cahn_hilliard_value_old<<std::endl;
+//                                    std::cout<<"phase value filtered = "
+//                                    <<phase_order_cahn_hilliard_value<<std::endl;
+//                                    std::cout<<"density 0 = "
+//                                    <<density_0[q]<<std::endl;
+//                                    std::cout<<"density 1 = "
+//                                    <<density_1[q]<<std::endl;
+//                                    std::cout<<"expected density at point q ="<<
+//
+//                                    0.5*density_0[q]*(phase_order_cahn_hilliard_value+1)
+//                                    -0.5*density_1[q]*(phase_order_cahn_hilliard_value-1)<<std::endl;
 
-                                    0.5*density_0[q]*(phase_order_cahn_hilliard_value+1)
-                                    -0.5*density_1[q]*(phase_order_cahn_hilliard_value-1)<<std::endl;
-*/
                   density[q] = calculate_point_property_cahn_hilliard(
                     phase_order_cahn_hilliard_value,
                     this->density_0[q],
                     this->density_1[q]);
 
 
-                          /*          std::cout<<"computed density at point q ="<< density[q]<<std::endl;
+//                                    std::cout<<"computed density at point q ="<< density[q]<<std::endl;
+//
+//
+//                                    std::cout<<"mu 0 = "
+//                                    <<dynamic_viscosity_0[q]<<std::endl;
+//                                    std::cout<<"mu  1 = "
+//                                    <<dynamic_viscosity_1[q]<<std::endl;
+//                                    std::cout<<"expected mu at point q = "<<
+//                                    0.5*dynamic_viscosity_0[q]*(phase_order_cahn_hilliard_value+1)
+//                                    -0.5*dynamic_viscosity_1[q]*(phase_order_cahn_hilliard_value-1)<<std::endl;
 
-
-                                    std::cout<<"mu 0 = "
-                                    <<dynamic_viscosity_0[q]<<std::endl;
-                                    std::cout<<"mu  1 = "
-                                    <<dynamic_viscosity_1[q]<<std::endl;
-                                    std::cout<<"expected mu at point q = "<<
-                                    0.5*dynamic_viscosity_0[q]*(phase_order_cahn_hilliard_value+1)
-                                    -0.5*dynamic_viscosity_1[q]*(phase_order_cahn_hilliard_value-1)<<std::endl;
-*/
                   dynamic_viscosity[q] = calculate_point_property_cahn_hilliard(
                     phase_order_cahn_hilliard_value,
                     this->dynamic_viscosity_0[q],
                     this->dynamic_viscosity_1[q]);
 
-                   //::cout<<"computed mu at point q = "<<dynamic_viscosity[q]<<std::endl;
+                  // std::cout<<"computed mu at point q = "<<dynamic_viscosity[q]<<std::endl;
 
                   // Gather surface tension
                   const auto material_interaction_id =
@@ -609,18 +609,20 @@ NavierStokesScratchData<dim>::calculate_physical_properties()
                   const auto mobility_cahn_hilliard_model =
                     properties_manager.get_mobility_cahn_hilliard(
                       material_interaction_id);
-/*                                      std::cout << "get mobility is ok "<<
-                                      std::endl;*/
+//                                      std::cout << "get mobility is ok "<<
+//                                      std::endl;
                   mobility_cahn_hilliard_model->vector_value(
                     fields, mobility_cahn_hilliard);
-       /*                               std::cout << "vector_value is ok "<<
-                                      std::endl;
-
-                                      std::cout << "material interaction for mobility is ok "<< std::endl;
-
-                                    std::cout << "mobility_via_ns_scratch_data = "
-                                              << mobility_cahn_hilliard[q] <<
-                                              std::endl;*/
+                  //std::cout<<"phase order cahn hilliard field"<<fields[field::phase_order_cahn_hilliard][q]<<std::endl;
+                  //std::cout<<" filtered phase order cahn hilliard field"<<fields[field::phase_order_cahn_hilliard_filtered][q]<<std::endl;
+//                                      std::cout << "vector_value is ok "<<
+//                                      std::endl;
+//
+//                                      std::cout << "material interaction for mobility is ok "<< std::endl;
+//
+//                                    std::cout << "mobility_via_ns_scratch_data = "
+//                                              << mobility_cahn_hilliard[q] <<
+//                                              std::endl;
                 }
               break;
             }

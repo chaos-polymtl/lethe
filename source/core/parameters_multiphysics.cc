@@ -647,12 +647,12 @@ Parameters::CahnHilliard::parse_parameters(ParameterHandler &prm)
       if (op_mobility == "constant")
         {
           cahn_hilliard_mobility_model = CahnHilliardMobilityModel::constant;
-                    std::cout<<"mobility is constant (ch)"<<std::endl;
+                    //std::cout<<"mobility is constant (ch)"<<std::endl;
         }
       else if (op_mobility == "quartic")
         {
           cahn_hilliard_mobility_model = CahnHilliardMobilityModel::quartic;
-                     std::cout<<"mobility is quartic (ch)"<<std::endl;
+                     //std::cout<<"mobility is quartic (ch)"<<std::endl;
         }
       else
         throw(std::runtime_error("Invalid mobility model. "
@@ -660,8 +660,8 @@ Parameters::CahnHilliard::parse_parameters(ParameterHandler &prm)
 
       cahn_hilliard_mobility_constant = prm.get_double("mobility constant");
 
-            std::cout << "mobility = " << cahn_hilliard_mobility_constant
-                      << std::endl;
+//            std::cout << "mobility = " << cahn_hilliard_mobility_constant
+//                      << std::endl;
     }
 
     prm.leave_subsection();
