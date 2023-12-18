@@ -24,16 +24,16 @@ MobilityCahnHilliardModel::model_cast(
   if (material_interaction_parameters.mobility_cahn_hilliard_model ==
       Parameters::MaterialInteractions::MobilityCahnHilliardModel::quartic)
     {
-        std::cout<<"Mobility sent to mobility quartic model = "<<material_interaction_parameters.mobility_cahn_hilliard_parameters
-                .mobility_cahn_hilliard_constant<<std::endl;
+//        std::cout<<"Mobility sent to mobility quartic model = "<<material_interaction_parameters.mobility_cahn_hilliard_parameters
+//                .mobility_cahn_hilliard_constant<<std::endl;
       return std::make_shared<MobilityCahnHilliardModelQuartic>(
         material_interaction_parameters.mobility_cahn_hilliard_parameters
           .mobility_cahn_hilliard_constant);
     }
   else
     {
-      std::cout<<"Mobility sent to mobility constant model = "<<material_interaction_parameters.mobility_cahn_hilliard_parameters
-              .mobility_cahn_hilliard_constant<<std::endl;
+//      std::cout<<"Mobility sent to mobility constant model = "<<material_interaction_parameters.mobility_cahn_hilliard_parameters
+//              .mobility_cahn_hilliard_constant<<std::endl;
       return std::make_shared<MobilityCahnHilliardModelConstant>(
         material_interaction_parameters.mobility_cahn_hilliard_parameters
           .mobility_cahn_hilliard_constant);

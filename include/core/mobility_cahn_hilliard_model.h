@@ -57,10 +57,10 @@ public:
   virtual double
   get_mobility_constant() = 0;
 
-//  /**
-//   * @brief Definition of a virtual destructor
-//   */
-//  virtual ~MobilityCahnHilliardModel() = default;
+  /**
+   * @brief Definition of a virtual destructor
+   */
+  virtual ~MobilityCahnHilliardModel() = default;
 };
 
 /**
@@ -77,10 +77,10 @@ public:
     : mobility_cahn_hilliard_constant(p_mobility_cahn_hilliard_constant)
   {}
 
-//  /**
-//   * @brief Destructor of derived class
-//   */
-//  ~MobilityCahnHilliardModelConstant() = default;
+  /**
+   * @brief Destructor of derived class
+   */
+  ~MobilityCahnHilliardModelConstant() = default;
 
 
   /**
@@ -182,10 +182,10 @@ public:
     this->model_depends_on[field::phase_order_cahn_hilliard_filtered] = true;
   }
 
-//  /**
-//   * @brief Destructor of derived class
-//   */
-//  ~MobilityCahnHilliardModelQuartic() = default;
+  /**
+   * @brief Destructor of derived class
+   */
+  ~MobilityCahnHilliardModelQuartic() = default;
 
   /**
    * @brief Method to get the model used for the mobility
@@ -225,7 +225,7 @@ public:
 //      return mobility_cahn_hilliard_constant *
 //             (1 - phase_order_cahn_hilliard * phase_order_cahn_hilliard) *
 //             (1 - phase_order_cahn_hilliard * phase_order_cahn_hilliard);
-      std::cout<<"phase order value in filter = "<<phase_order_cahn_hilliard_filtered<<std::endl;
+      //std::cout<<"phase order value in filter = "<<phase_order_cahn_hilliard_filtered<<std::endl;
       if (std::abs(phase_order_cahn_hilliard_filtered) > 1)
           return 0.0;
       else
@@ -260,7 +260,7 @@ public:
               field_vectors.at(field::phase_order_cahn_hilliard_filtered);
       for (unsigned int i = 0; i < property_vector.size(); ++i)
       {
-          std::cout<<"phase order value in filter = "<<phase_order_cahn_hilliard_filtered[i]<<std::endl;
+          //std::cout<<"phase order value in filter = "<<phase_order_cahn_hilliard_filtered[i]<<std::endl;
           if (std::abs(phase_order_cahn_hilliard_filtered[i]) > 1)
               property_vector[i] = 0.0;
           else
@@ -292,7 +292,7 @@ public:
 
       const double &phase_order_cahn_hilliard_filtered =
               fields_value.at(field::phase_order_cahn_hilliard_filtered);
-      std::cout<<"phase order value in filter = "<<phase_order_cahn_hilliard_filtered<<std::endl;
+      //std::cout<<"phase order value in filter = "<<phase_order_cahn_hilliard_filtered<<std::endl;
       if (std::abs(phase_order_cahn_hilliard_filtered) > 1)
           return 0.0;
       else
