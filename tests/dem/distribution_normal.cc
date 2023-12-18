@@ -73,8 +73,8 @@ test()
     .push_back(10);
   dem_parameters.lagrangian_physical_properties.density_particle[0] = 2500;
   dem_parameters.lagrangian_physical_properties.number[0]           = 1000;
-  dem_parameters.insertion_info.random_number_range                 = 0.75;
-  dem_parameters.insertion_info.random_number_seed                  = 19;
+  dem_parameters.insertion_info.insertion_maximum_offset            = 0.75;
+  dem_parameters.insertion_info.seed_for_insertion                  = 19;
 
   // Defining particle handler
   Particles::ParticleHandler<dim> particle_handler(
