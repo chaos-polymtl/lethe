@@ -539,6 +539,16 @@ public:
     return solids;
   }
 
+  /**
+  @brief Return the current newton iteration of the physic with a given id.
+  @ param id the id of the physic we want to know the current iteration of the physics solver.
+   */
+  unsigned int
+  get_current_newton_iteration_of_physicsolids(const PhysicsID id)
+  {
+    return physics[id]->get_current_newton_iteration();
+  }
+
 
   /**
    * @brief Request the present solution of the projected phase fraction gradient (PFG)

@@ -183,7 +183,6 @@ private:
 
     // Assemble the preconditioner
     this->setup_preconditioner();
-    current_newton_iteration += 1;
   }
 
 
@@ -624,8 +623,6 @@ private:
     assemblers_inside_ib;
 
   PVDHandler ib_particles_pvdhandler;
-
-  unsigned int current_newton_iteration;
 
   std::vector<IBParticle<dim>> particles;
   double                       particle_residual;

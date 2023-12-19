@@ -116,6 +116,11 @@ public:
     auto &system_rhs = get_system_rhs();
     return system_rhs.l2_norm();
   }
+  virtual unsigned int
+  get_current_newton_iteration()
+  {
+    return non_linear_solver->get_current_newton_iteration();
+  }
 
   ConditionalOStream                                pcout;
   Parameters::SimulationControl::TimeSteppingMethod time_stepping_method;

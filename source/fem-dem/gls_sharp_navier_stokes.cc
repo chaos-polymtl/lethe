@@ -2120,7 +2120,7 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
       Tensor<1, 3> g;
       this->simulation_parameters.particlesParameters->f_gravity->set_time(
         time);
-
+      unsigned  int current_newton_iteration=this->multiphysics->get_current_newton_iteration_of_physicsolids(PhysicsID::fluid_dynamics);
 
       if (current_newton_iteration == 0 ||
           this->simulation_parameters.particlesParameters
@@ -4832,7 +4832,6 @@ GLSSharpNavierStokesSolver<dim>::solve()
       this->forcing_function->set_time(
         this->simulation_control->get_current_time());
 
-      current_newton_iteration=0;
       bool refinement_step;
       if (this->simulation_parameters.mesh_adaptation.refinement_at_frequency)
         refinement_step =
@@ -4843,7 +4842,8 @@ GLSSharpNavierStokesSolver<dim>::solve()
         refinement_step = this->simulation_control->get_step_number() == 0;
       if (refinement_step ||
           this->simulation_parameters.mesh_adaptation.type ==
-            Parameters::MeshAdaptation::Type::none ||
+            Parameters::MeshAdaptation::Type::none||
+          this->simulation_control->is_at_start())
         {
           // We allow the physics to update their boundary conditions
           // according to their own parameters
