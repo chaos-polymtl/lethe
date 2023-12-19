@@ -217,24 +217,25 @@ IBParticlesDEM<dim>::calculate_pp_contact_force(
                                            contact_point;
               Point<3>     contact_point_3d = point_nd_to_3d(contact_point);
               Tensor<1, 3> contact_normal   = tensor_nd_to_3d(normal);
-              double       contact_radius_particle_one;
-              double       contact_radius_particle_two;
-              if (parameters->use_approximate_radius_for_contact)
-                {
-                  contact_radius_particle_one = particle_one.radius;
-                  contact_radius_particle_two = particle_two.radius;
-                }
-              else
-                {
-                  contact_radius_particle_one =
-                    particle_one.shape->local_curvature_radius(contact_point);
-                  contact_radius_particle_two =
-                    particle_two.shape->local_curvature_radius(contact_point);
-                }
+
 
               if (normal_overlap > 0)
                 // This means that the adjacent particles are in contact
                 {
+                  double       contact_radius_particle_one;
+                  double       contact_radius_particle_two;
+                  if (parameters->use_approximate_radius_for_contact)
+                    {
+                      contact_radius_particle_one = particle_one.radius;
+                      contact_radius_particle_two = particle_two.radius;
+                    }
+                  else
+                    {
+                      contact_radius_particle_one =
+                        particle_one.shape->local_curvature_radius(contact_point);
+                      contact_radius_particle_two =
+                        particle_two.shape->local_curvature_radius(contact_point);
+                    }
                   Tensor<1, 3> normal_force;
                   Tensor<1, 3> tangential_force;
                   Tensor<1, 3> particle_one_tangential_torque;
@@ -733,18 +734,6 @@ IBParticlesDEM<dim>::calculate_pw_contact_force(
                 point_nd_to_3d(std::get<Point<dim>>(contact_state));
               Tensor<1, 3> contact_normal = -normal;
 
-              // Evaluates the curvature radius at the
-              // contact point.
-              double contact_radius_particle_one ;
-
-              if (parameters->use_approximate_radius_for_contact)
-                {
-                  contact_radius_particle_one = particle.radius;
-                }
-              else
-                {
-                  contact_radius_particle_one =particle.shape->local_curvature_radius(std::get<Point<dim>>(contact_state));
-                }
 
               // Keep the last contact point as an initial guess for the next
               // contact point.
@@ -755,6 +744,18 @@ IBParticlesDEM<dim>::calculate_pw_contact_force(
 
               if (normal_overlap > 0)
                 {
+                  // Evaluates the curvature radius at the
+                  // contact point.
+                  double contact_radius_particle_one ;
+
+                  if (parameters->use_approximate_radius_for_contact)
+                    {
+                      contact_radius_particle_one = particle.radius;
+                    }
+                  else
+                    {
+                      contact_radius_particle_one =particle.shape->local_curvature_radius(std::get<Point<dim>>(contact_state));
+                    }
                   // Do the calculation to evaluate the particle wall contact
                   // force.
                   contact_info.normal_overlap = normal_overlap;
