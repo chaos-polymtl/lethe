@@ -40,7 +40,7 @@ subsection initial conditions
     set Function expression = 0; 0; 0
   end
   subsection temperature
-    set Function expression = 28
+    set Function expression = 0
   end
 end
 
@@ -77,10 +77,10 @@ subsection physical properties
       set latent enthalpy = 200
 
       # Temperature of the liquidus
-      set liquidus temperature = 29.8
+      set liquidus temperature = 1.8
 
       # Temperature of the solidus
-      set solidus temperature = 29.6
+      set solidus temperature = 1.6
 
       # Specific heat of the liquid phase
       set specific heat liquid = 1
@@ -109,7 +109,7 @@ subsection mesh
   set type               = dealii
   set grid type          = subdivided_hyper_rectangle
   set grid arguments     = 2, 1 : 0, 0 : 1, 0.714 : true
-  set initial refinement = 8
+  set initial refinement = 7
 end
 
 #---------------------------------------------------
@@ -142,14 +142,14 @@ subsection boundary conditions heat transfer
     set id    = 0
     set type  = temperature
     subsection value
-      set Function expression = 38
+      set Function expression = 10
     end
   end
   subsection bc 1
     set id    = 1
     set type  = temperature
     subsection value
-      set Function expression = 28
+      set Function expression = 0
     end
   end
 end

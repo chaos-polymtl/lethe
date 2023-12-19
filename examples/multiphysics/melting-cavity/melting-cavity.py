@@ -34,12 +34,12 @@ H=0.714
 alpha = 0.040516842071415184 # Used for the time scaling
 St = 0.041 # Used for the time scaling
 time_scaling = St * alpha /H**2
-y_top		= 0.85 * H
-y_mid	= 0.6 * H
-y_bot	= 0.18 * H
+y_top		= 1 * H
+y_mid	= 0.5 * H
+y_bot	= 0. * H
 
 #Set temperature to search for maximum x
-temperature_limit = 29.79
+temperature_limit = 1.7
 
 #Take case path as argument and store it
 output_path = sys.argv[1]
