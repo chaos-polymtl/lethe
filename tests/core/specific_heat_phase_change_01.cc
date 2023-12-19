@@ -33,8 +33,8 @@ test()
   PhaseChangeSpecificHeat specific_heat_model(phase_change_param);
 
 
-  // Create dummy simulation control since phase change specific heat model requires a
-  // simulation control
+  // Create dummy simulation control since phase change specific heat model
+  // requires a simulation control
   Parameters::SimulationControl simulationControlParameters;
   simulationControlParameters.dt     = 0.01;
   simulationControlParameters.adapt  = false;

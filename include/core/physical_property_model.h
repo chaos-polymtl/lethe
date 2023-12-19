@@ -136,8 +136,8 @@ public:
 
   /**
    * @brief Provides the physical property with the simulation control object ensuring
-   * that the PhysicalPropertyModel can calculate physical properties that depend on time or
-   * time-history
+   * that the PhysicalPropertyModel can calculate physical properties that
+   * depend on time or time-history
    *
    * @param p_simulation_control shared pointed to a SimulationControl object. A copy of this shared pointer is stored in the physical property.
    */
