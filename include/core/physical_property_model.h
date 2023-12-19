@@ -136,7 +136,7 @@ public:
 
   /**
    * @brief Provides the physical property with the simulation control object ensuring
-   * that it can calculate physical properties that depend on time or
+   * that the PhysicalPropertyModel can calculate physical properties that depend on time or
    * time-history
    *
    * @param p_simulation_control shared pointed to a SimulationControl object. A copy of this shared pointer is stored in the physical property.
@@ -225,7 +225,7 @@ protected:
 
 private:
   // SimulationControl object. This can be used to set time-dependent
-  // physical properties or properties which depend on time derivatives
+  // physical properties or properties which depend on time derivatives.
   // The SimulationControl must be provided to the physical property
   // through the solver itself.
   std::shared_ptr<SimulationControl> simulation_control;

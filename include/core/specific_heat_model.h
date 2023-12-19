@@ -148,8 +148,6 @@ public:
 
     const double temperature_p2 = fields_value.at(field::temperature_p2);
 
-    // const double temperature_p3 =
-    //   fields_value.at(field::temperature_p3);
 
     // Gather information required from the simulation control to have the time
     // histort
