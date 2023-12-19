@@ -109,7 +109,7 @@ subsection mesh
   set type               = dealii
   set grid type          = subdivided_hyper_rectangle
   set grid arguments     = 2, 1 : 0, 0 : 1, 0.714 : true
-  set initial refinement = 7
+  set initial refinement = 8
 end
 
 #---------------------------------------------------
