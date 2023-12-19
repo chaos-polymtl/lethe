@@ -222,8 +222,8 @@ IBParticlesDEM<dim>::calculate_pp_contact_force(
               if (normal_overlap > 0)
                 // This means that the adjacent particles are in contact
                 {
-                  double       contact_radius_particle_one;
-                  double       contact_radius_particle_two;
+                  double contact_radius_particle_one;
+                  double contact_radius_particle_two;
                   if (parameters->use_approximate_radius_for_contact)
                     {
                       contact_radius_particle_one = particle_one.radius;
@@ -232,9 +232,11 @@ IBParticlesDEM<dim>::calculate_pp_contact_force(
                   else
                     {
                       contact_radius_particle_one =
-                        particle_one.shape->local_curvature_radius(contact_point);
+                        particle_one.shape->local_curvature_radius(
+                          contact_point);
                       contact_radius_particle_two =
-                        particle_two.shape->local_curvature_radius(contact_point);
+                        particle_two.shape->local_curvature_radius(
+                          contact_point);
                     }
                   Tensor<1, 3> normal_force;
                   Tensor<1, 3> tangential_force;
@@ -746,7 +748,7 @@ IBParticlesDEM<dim>::calculate_pw_contact_force(
                 {
                   // Evaluates the curvature radius at the
                   // contact point.
-                  double contact_radius_particle_one ;
+                  double contact_radius_particle_one;
 
                   if (parameters->use_approximate_radius_for_contact)
                     {
@@ -754,7 +756,9 @@ IBParticlesDEM<dim>::calculate_pw_contact_force(
                     }
                   else
                     {
-                      contact_radius_particle_one =particle.shape->local_curvature_radius(std::get<Point<dim>>(contact_state));
+                      contact_radius_particle_one =
+                        particle.shape->local_curvature_radius(
+                          std::get<Point<dim>>(contact_state));
                     }
                   // Do the calculation to evaluate the particle wall contact
                   // force.

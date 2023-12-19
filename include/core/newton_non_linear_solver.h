@@ -64,14 +64,14 @@ template <typename VectorType>
 void
 NewtonNonLinearSolver<VectorType>::solve(const bool is_initial_step)
 {
-  double       global_res;
-  double       current_res;
-  double       last_res;
-  bool         first_step      = is_initial_step;
+  double global_res;
+  double current_res;
+  double last_res;
+  bool   first_step     = is_initial_step;
   this->outer_iteration = 0;
-  last_res                     = 1e6;
-  current_res                  = 1e6;
-  global_res                   = 1e6;
+  last_res              = 1e6;
+  current_res           = 1e6;
+  global_res            = 1e6;
 
   // current_res and global_res are different as one is defined based on the l2
   // norm of the residual vector (current_res) and the other (global_res) is
