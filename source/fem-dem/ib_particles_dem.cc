@@ -217,8 +217,10 @@ IBParticlesDEM<dim>::calculate_pp_contact_force(
                                            contact_point;
               Point<3>     contact_point_3d = point_nd_to_3d(contact_point);
               Tensor<1, 3> contact_normal   = tensor_nd_to_3d(normal);
-              double       contact_radius_particle_one = particle_one.radius;
-              double       contact_radius_particle_two = particle_two.radius;
+              double       contact_radius_particle_one =
+                particle_one.shape->local_curvature_radius(contact_point);
+              double contact_radius_particle_two =
+                particle_two.shape->local_curvature_radius(contact_point);
               if (normal_overlap > 0)
                 // This means that the adjacent particles are in contact
                 {
@@ -571,11 +573,6 @@ IBParticlesDEM<dim>::calculate_pw_contact_force(
             {
               // Find the best candidate (the closest point) for each different
               // wall.
-
-              // Find a way to use cell guess
-              // correctly!!!!!!!!!!!!!!!!!!!!!!!!!!!!! Do not merge without
-              // final check on this
-
               double dist = particle.get_levelset(
                 boundary_cell_iter->second.point_on_boundary);
 
@@ -702,9 +699,7 @@ IBParticlesDEM<dim>::calculate_pw_contact_force(
                 std::make_shared<Plane<dim>>(point_on_boundary, orientation);
 
               std::vector<Point<dim>> contact_point_candidate;
-              // contact_point_candidate.push_back(previous_wall_contact_point[particle.particle_id]);
-
-              auto iterator =
+              auto                    iterator =
                 previous_wall_contact_point[particle.particle_id].find(
                   boundary_cell.boundary_index);
               if (iterator !=
@@ -718,7 +713,6 @@ IBParticlesDEM<dim>::calculate_pw_contact_force(
                 }
               // Use the last contact point as an initial guess if the level set
               // is smaller than the wall initial guess.
-
               // Find the normal overlap
               auto contact_state =
                 particle.shape->distance_to_shape(*contact_plane,
@@ -728,11 +722,13 @@ IBParticlesDEM<dim>::calculate_pw_contact_force(
                 point_nd_to_3d(std::get<Point<dim>>(contact_state));
               Tensor<1, 3> contact_normal = -normal;
 
-              // Overide with a function that return the curvature radius at the
+              // Evaluates the curvature radius at the
               // contact point.
-              double contact_radius_particle_one = particle.radius;
+              double contact_radius_particle_one =
+                particle.shape->local_curvature_radius(
+                  std::get<Point<dim>>(contact_state));
 
-              // Keep the last contact point as a initial guess for the next
+              // Keep the last contact point as an initial guess for the next
               // contact point.
               previous_wall_contact_point[particle.particle_id]
                                          [boundary_cell.boundary_index] =
@@ -758,36 +754,38 @@ IBParticlesDEM<dim>::calculate_pw_contact_force(
                   pw_contact_map[particle.particle_id][boundary_index]
                     .normal_vector = normal;
 
-                  calculate_force_model(normal_overlap,
-                                        contact_info,
-                                        contact_point,
-                                        contact_normal,
-                                        normal_force,
-                                        tangential_force,
-                                        rolling_resistance_torque,
-                                        particle.position,
-                                        particle_velocity_3d,
-                                        particle.omega,
-                                        particle.mass,
-                                        contact_radius_particle_one,
-                                        particle.youngs_modulus,
-                                        particle.poisson_ratio,
-                                        particle.restitution_coefficient,
-                                        particle.friction_coefficient,
-                                        particle.rolling_friction_coefficient,
-                                        wall_center_of_rotation,
-                                        wall_velocity,
-                                        wall_angular_velocity,
-                                        1, // wall mass
-                                        1, // wall curvature radius,
-                                        wall_youngs_modulus,
-                                        wall_poisson_ratio,
-                                        wall_restitution_coefficient,
-                                        wall_friction_coefficient,
-                                        wall_rolling_friction_coefficient,
-                                        dt_dem);
-
-
+                  calculate_force_model(
+                    normal_overlap,
+                    contact_info,
+                    contact_point,
+                    contact_normal,
+                    normal_force,
+                    tangential_force,
+                    rolling_resistance_torque,
+                    particle.position,
+                    particle_velocity_3d,
+                    particle.omega,
+                    particle.mass,
+                    contact_radius_particle_one,
+                    particle.youngs_modulus,
+                    particle.poisson_ratio,
+                    particle.restitution_coefficient,
+                    particle.friction_coefficient,
+                    particle.rolling_friction_coefficient,
+                    wall_center_of_rotation,
+                    wall_velocity,
+                    wall_angular_velocity,
+                    particle.mass * 100, // Wall mass is 100 times higher than
+                                         // the particles that contact it.
+                    contact_radius_particle_one *
+                      100, // Wall curvature radius is 100 times higher than the
+                           // particle that contacts it.
+                    wall_youngs_modulus,
+                    wall_poisson_ratio,
+                    wall_restitution_coefficient,
+                    wall_friction_coefficient,
+                    wall_rolling_friction_coefficient,
+                    dt_dem);
 
                   // Updating the force of particles in the particle handler
                   contact_force[particle.particle_id] -=
@@ -797,10 +795,6 @@ IBParticlesDEM<dim>::calculate_pw_contact_force(
                     tangential_torque + rolling_resistance_torque +
                     cross_product_3d((contact_point - particle_position_3d),
                                      -(normal_force + tangential_force));
-                  // std::cout<<"contact_force normal "<<normal_force<<"
-                  // tangential force "<< tangential_force << "contact point
-                  // "<<contact_point << " particle_position_3d " <<
-                  // particle_position_3d  <<std::endl;
                 }
               else
                 {

@@ -448,6 +448,24 @@ Sphere<dim>::distance_to_shape(Shape<dim>              &shape,
   return std::make_tuple(distance, normal, contact_point);
 }
 
+template <int dim>
+double
+Sphere<dim>::local_curvature_radius(Point<dim> p)
+{
+  return (this->position - p).norm();
+}
+
+template <int dim>
+double
+Sphere<dim>::local_curvature_radius_with_cell_guess(
+  const Point<dim>                                     p,
+  const typename DoFHandler<dim>::active_cell_iterator cell)
+{
+  (void)cell;
+  return (this->position - p).norm();
+}
+
+
 
 template <int dim>
 double

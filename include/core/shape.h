@@ -471,8 +471,6 @@ public:
     return std::make_tuple(distance, normal, contact_point);
   }
 
-
-
   /**
    * @brief Return the distance and normal between the current shape with the shape given in argument.
    * at the given point evaluation point with a guess for the cell containing
@@ -532,16 +530,9 @@ public:
               tensor_nd_to_2d(shape.rotation_matrix *
                               point_nd_to_3d(shape.bounding_box_center));
           }
-        // std::cout<<"hi radius one= "<< bounding_box_center_one <<"  radius
-        // two "<<radius_two << " gap "<<(bounding_box_center_one -
-        // bounding_box_center_two).norm() <<std::endl;
         if (((bounding_box_center_one - bounding_box_center_two).norm() -
              radius_one - radius_two) <= 0)
           {
-            // std::cout<<"hi radius  checking the bounding box one= "<<
-            // bounding_box_center_one <<"  radius two "<<radius_two << " gap
-            // "<<(bounding_box_center_one - bounding_box_center_two).norm()
-            // <<std::endl;
             bounding_box_contact = this->bounding_box_contact(shape);
           }
         else
@@ -834,12 +825,12 @@ public:
                                            vertex_position);
                         if (this->value(vertex) <= 0)
                           {
-                            return false;
+                            return true;
                           }
                       }
                   }
               }
-            return true;
+            return false;
           }
         else if (shape.bounding_box_half_length.norm() == 0)
           {
@@ -862,12 +853,12 @@ public:
                                            vertex_position);
                         if (shape.value(vertex) <= 0)
                           {
-                            return false;
+                            return true;
                           }
                       }
                   }
               }
-            return true;
+            return false;
           }
 
         double         ra, rb;
@@ -1106,6 +1097,69 @@ public:
    */
   virtual double
   displaced_volume(const double fluid_density);
+
+
+  /**
+   * @brief
+   * Return the curvature of the levelset at a given point
+   *
+   * @param p The point where the curvature is evaluated.
+   */
+  virtual double
+  local_curvature_radius(Point<dim> p)
+  {
+    double curvature = 0;
+    double epsilone  = 1e-6 * this->effective_radius;
+    for (unsigned int d = 0; d < dim; ++d)
+      {
+        Tensor<1, dim> perturbation;
+        perturbation[d]           = epsilone;
+        Tensor<1, dim> gradient_p = this->gradient(p + perturbation);
+        gradient_p                = gradient_p / (gradient_p.norm() + DBL_MIN);
+        Tensor<1, dim> gradient_m = this->gradient(p - perturbation);
+        gradient_m                = gradient_m / (gradient_m.norm() + DBL_MIN);
+        curvature += (gradient_p - gradient_m)[d] / (2 * epsilone);
+      }
+    // Here we bound the curvature radius obtained
+    double radius_of_curvature = 1.0 / abs(curvature);
+    return std::min(std::max(radius_of_curvature,
+                             this->effective_radius * 1e-2),
+                    this->effective_radius * 1e2);
+  }
+  /**
+   * @brief
+   * Return the curvature of the levelset at a given point using the
+   * @param cell The cell that is likely to contain the evaluation point
+   * @param p The point where the curvature is evaluated.
+   */
+  virtual double
+  local_curvature_radius_with_cell_guess(
+    const Point<dim>                                     p,
+    const typename DoFHandler<dim>::active_cell_iterator cell)
+  {
+    double curvature = 0;
+    double epsilone  = 1e-6 * this->effective_radius;
+    // Calculate the curvature using the divergence of the normal and define the
+    // local curvature radius as the absolute value of the inverse of the
+    // curvature.
+    for (unsigned int d = 0; d < dim; ++d)
+      {
+        Tensor<1, dim> perturbation;
+        perturbation[d] = epsilone;
+        Tensor<1, dim> gradient_p =
+          this->gradient_with_cell_guess(p + perturbation, cell);
+        gradient_p = gradient_p / (gradient_p.norm() + DBL_MIN);
+        Tensor<1, dim> gradient_m =
+          this->gradient_with_cell_guess(p - perturbation, cell);
+        gradient_m = gradient_m / (gradient_m.norm() + DBL_MIN);
+        curvature += (gradient_p - gradient_m)[d] / (2 * epsilone);
+      }
+    // Here we bound the curvature radius obtained
+    double radius_of_curvature = 1.0 / abs(curvature);
+    return std::min(std::max(radius_of_curvature,
+                             this->effective_radius * 1e-2),
+                    this->effective_radius * 1e2);
+  }
 
   /**
    * @brief
@@ -1459,6 +1513,26 @@ public:
                     std::vector<Point<dim>> &candidate_points,
                     double                   precision     = 1e-6,
                     bool exact_distance_outside_of_contact = false) override;
+
+  /**
+   * @brief
+   * Return the curvature of the levelset at a given point
+   *
+   * @param p The point where the curvature is evaluated.
+   */
+  virtual double
+  local_curvature_radius(Point<dim> p) override;
+
+  /**
+   * @brief
+   * Return the curvature of the levelset at a given point using the
+   * @param cell The cell that is likely to contain the evaluation point
+   * @param p The point where the curvature is evaluated.
+   */
+  virtual double
+  local_curvature_radius_with_cell_guess(
+    const Point<dim>                                     p,
+    const typename DoFHandler<dim>::active_cell_iterator cell) override;
 
 
 private:
