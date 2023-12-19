@@ -2120,7 +2120,7 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
       Tensor<1, 3> g;
       this->simulation_parameters.particlesParameters->f_gravity->set_time(
         time);
-      unsigned  int current_newton_iteration=this->multiphysics->get_current_newton_iteration_of_physicsolids(PhysicsID::fluid_dynamics);
+      unsigned  int current_newton_iteration=this->get_current_newton_iteration();
 
       if (current_newton_iteration == 0 ||
           this->simulation_parameters.particlesParameters

@@ -2988,6 +2988,14 @@ namespace Parameters
           Patterns::Bool(),
           "Bool to enable or disable the explicit evaluation of the contact impulsion. This means that if that parameter is set to true, the DEM is only run once, and the contact impulsion obtained is used for all Newton's iterations.");
 
+        prm.declare_entry(
+          "use approximate radius for contact",
+          "false",
+          Patterns::Bool(),
+          "Bool to turn on or off using the approximative radius of the particles during contact. If activated, the radius used in the contact calculation is constant and fixed to the effective radius of the shape. If not, the radius of curvature of the shape at the contact point is evaluated. For some shapes, this can be numerically expensive to evaluate.");
+
+
+
         prm.enter_subsection("wall physical properties");
         {
           prm.declare_entry(
@@ -3104,6 +3112,8 @@ namespace Parameters
         lubrication_range_min    = prm.get_double("lubrication range min");
         explicit_contact_impulsion_calculation =
           prm.get_bool("use explicit contact impulsion");
+        use_approximate_radius_for_contact =
+          prm.get_bool("use approximate radius for contact");
 
         prm.enter_subsection("wall physical properties");
         {

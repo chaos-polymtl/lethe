@@ -217,10 +217,21 @@ IBParticlesDEM<dim>::calculate_pp_contact_force(
                                            contact_point;
               Point<3>     contact_point_3d = point_nd_to_3d(contact_point);
               Tensor<1, 3> contact_normal   = tensor_nd_to_3d(normal);
-              double       contact_radius_particle_one =
-                particle_one.shape->local_curvature_radius(contact_point);
-              double contact_radius_particle_two =
-                particle_two.shape->local_curvature_radius(contact_point);
+              double       contact_radius_particle_one;
+              double       contact_radius_particle_two;
+              if (parameters->use_approximate_radius_for_contact)
+                {
+                  contact_radius_particle_one = particle_one.radius;
+                  contact_radius_particle_two = particle_two.radius;
+                }
+              else
+                {
+                  contact_radius_particle_one =
+                    particle_one.shape->local_curvature_radius(contact_point);
+                  contact_radius_particle_two =
+                    particle_two.shape->local_curvature_radius(contact_point);
+                }
+
               if (normal_overlap > 0)
                 // This means that the adjacent particles are in contact
                 {
@@ -724,9 +735,16 @@ IBParticlesDEM<dim>::calculate_pw_contact_force(
 
               // Evaluates the curvature radius at the
               // contact point.
-              double contact_radius_particle_one =
-                particle.shape->local_curvature_radius(
-                  std::get<Point<dim>>(contact_state));
+              double contact_radius_particle_one ;
+
+              if (parameters->use_approximate_radius_for_contact)
+                {
+                  contact_radius_particle_one = particle.radius;
+                }
+              else
+                {
+                  contact_radius_particle_one =particle.shape->local_curvature_radius(std::get<Point<dim>>(contact_state));
+                }
 
               // Keep the last contact point as an initial guess for the next
               // contact point.
