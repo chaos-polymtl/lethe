@@ -3210,17 +3210,41 @@ namespace Parameters
             std::string              inertia_str = prm.get("inertia");
             std::vector<std::string> inertia_str_list(
               Utilities::split_string_list(inertia_str, ";"));
-            std::vector<double> inertia_list =
-              Utilities::string_to_double(inertia_str_list);
-            particles[i].inertia[0][0] = inertia_list[0];
-            particles[i].inertia[0][1] = inertia_list[1];
-            particles[i].inertia[0][2] = inertia_list[2];
-            particles[i].inertia[1][0] = inertia_list[3];
-            particles[i].inertia[1][1] = inertia_list[4];
-            particles[i].inertia[1][2] = inertia_list[5];
-            particles[i].inertia[2][0] = inertia_list[6];
-            particles[i].inertia[2][1] = inertia_list[7];
-            particles[i].inertia[2][2] = inertia_list[8];
+            if (inertia_str_list.size() == 9)
+              {
+                std::vector<double> inertia_list =
+                  Utilities::string_to_double(inertia_str_list);
+                particles[i].inertia[0][0] = inertia_list[0];
+                particles[i].inertia[0][1] = inertia_list[1];
+                particles[i].inertia[0][2] = inertia_list[2];
+                particles[i].inertia[1][0] = inertia_list[3];
+                particles[i].inertia[1][1] = inertia_list[4];
+                particles[i].inertia[1][2] = inertia_list[5];
+                particles[i].inertia[2][0] = inertia_list[6];
+                particles[i].inertia[2][1] = inertia_list[7];
+                particles[i].inertia[2][2] = inertia_list[8];
+              }
+            else if (inertia_str_list.size() == 1)
+              {
+                // If only one inertia value is given, we assume that the
+                // inertia is uniform in all axes.
+                std::vector<double> inertia_list =
+                  Utilities::string_to_double(inertia_str_list);
+                particles[i].inertia[0][0] = inertia_list[0];
+                particles[i].inertia[0][1] = 0;
+                particles[i].inertia[0][2] = 0;
+                particles[i].inertia[1][0] = 0;
+                particles[i].inertia[1][1] = inertia_list[0];
+                particles[i].inertia[1][2] = 0;
+                particles[i].inertia[2][0] = 0;
+                particles[i].inertia[2][1] = 0;
+                particles[i].inertia[2][2] = inertia_list[0];
+              }
+            else
+              {
+                throw(std::runtime_error(
+                  " Invalid inertia matrix. The inertia is given as a 3 by 3 matrices or a single value if the inertia is uniform around each axis."));
+              }
 
             particles[i].youngs_modulus = prm.get_double("youngs modulus");
             particles[i].restitution_coefficient =
@@ -3265,12 +3289,12 @@ namespace Parameters
             std::vector<double> center_of_mass_list =
               Utilities::string_to_double(center_of_mass_location_str_list);
 
-            // This parameters aims at allowing the change of frame of reference
-            // of the particle automatically to align and position the center of
-            // mass of the particle with its main axis base on the position of
-            // the center of mass and inertia matrix. This is mostly implemented
-            // but make the evaluation of the levelset more difficult as such we
-            // postponed the implementation to another PR.
+            // The following parameters aims at allowing the change of frame of
+            // reference of the particle automatically to align and position the
+            // center of mass of the particle with its main axis base on the
+            // position of the center of mass and inertia matrix. This is mostly
+            // implemented but make the evaluation of the levelset more
+            // difficult as such we postponed the implementation to another PR.
             /*
             particles[i].center_of_mass_location[0] = center_of_mass_list[0];
             particles[i].center_of_mass_location[1] = center_of_mass_list[1];
