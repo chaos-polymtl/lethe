@@ -140,29 +140,11 @@ GLSSharpNavierStokesSolver<dim>::generate_cut_cells_map()
   auto              &v_x_fe                  = this->fe->get_sub_fe(0, 1);
   const unsigned int dofs_per_cell_local_v_x = v_x_fe.dofs_per_cell;
 
-
-
-  bool check_cell_min = true;
   // // Loop on all the cells and check if they are cut.
   for (const auto &cell : cell_iterator)
     {
       if (cell->is_locally_owned() || cell->is_ghost())
         {
-          if (check_cell_min == true)
-            {
-              TimerOutput::Scope t(this->computing_timer,
-                                   "shape distance 1000 time");
-              check_cell_min = false;
-              Point<dim> p(0, 0, 0);
-
-              std::vector<Point<dim>> candidate;
-              // p=(particles[0].position+particles[1].position)/2;
-              candidate.push_back(p);
-              //              for (unsigned int i=0; i<1000;++i)
-              //                auto
-              //                distance=particles[0].shape->distance_to_shape(*particles[1].shape,cell,candidate);
-            }
-
           bool         cell_is_cut                                = false;
           bool         cell_is_inside                             = false;
           unsigned int particle_id_which_cuts_this_cell           = 0;
@@ -4603,6 +4585,44 @@ GLSSharpNavierStokesSolver<dim>::load_particles_from_file()
 
           particles[p_i].omega[2] =
             Utilities::string_to_double(particles_data["omega_z"][p_i]);
+
+          std::vector<std::string> inertia_str_list =
+            Utilities::split_string_list(particles_data["inertia"][p_i], ":");
+          if (inertia_str_list.size() == 9)
+            {
+              std::vector<double> inertia_list =
+                Utilities::string_to_double(inertia_str_list);
+              particles[p_i].inertia[0][0] = inertia_list[0];
+              particles[p_i].inertia[0][1] = inertia_list[1];
+              particles[p_i].inertia[0][2] = inertia_list[2];
+              particles[p_i].inertia[1][0] = inertia_list[3];
+              particles[p_i].inertia[1][1] = inertia_list[4];
+              particles[p_i].inertia[1][2] = inertia_list[5];
+              particles[p_i].inertia[2][0] = inertia_list[6];
+              particles[p_i].inertia[2][1] = inertia_list[7];
+              particles[p_i].inertia[2][2] = inertia_list[8];
+            }
+          else if (inertia_str_list.size() == 1)
+            {
+              // If only one inertia value is given, we assume that the
+              // inertia is uniform in all axes.
+              std::vector<double> inertia_list =
+                Utilities::string_to_double(inertia_str_list);
+              particles[p_i].inertia[0][0] = inertia_list[0];
+              particles[p_i].inertia[0][1] = 0;
+              particles[p_i].inertia[0][2] = 0;
+              particles[p_i].inertia[1][0] = 0;
+              particles[p_i].inertia[1][1] = inertia_list[0];
+              particles[p_i].inertia[1][2] = 0;
+              particles[p_i].inertia[2][0] = 0;
+              particles[p_i].inertia[2][1] = 0;
+              particles[p_i].inertia[2][2] = inertia_list[0];
+            }
+          else
+            {
+              throw(std::runtime_error(
+                " Invalid inertia matrix. The inertia is given as a 3 by 3 matrices or a single value if the inertia is uniform around each axis."));
+            }
           particles[p_i].inertia[0][0] =
             Utilities::string_to_double(particles_data["inertia"][p_i]);
           particles[p_i].inertia[1][1] =
