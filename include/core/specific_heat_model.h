@@ -202,8 +202,7 @@ public:
 
         default:
           throw(std::runtime_error(
-            "Other time integration scheme are not supported by phase change model"));
-          // code block
+            "Other time integration schemes are not supported by the phase change model"));
       }
   }
 
@@ -234,7 +233,7 @@ public:
            SizeOfFields(n_values, property_vector.size()));
 
     // Gather information required from the simulation control to have the time
-    // histort
+    // history
     std::shared_ptr<SimulationControl> simulation_control =
       get_simulation_control();
     std::vector<double> time_steps_vector =
@@ -292,8 +291,7 @@ public:
 
             default:
               throw(std::runtime_error(
-                "BDF above 2 is not supported by phase change model"));
-              // code block
+                "Other time integration schemes are not supported by the phase change model"));
           }
       }
   }

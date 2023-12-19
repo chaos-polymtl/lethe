@@ -100,7 +100,7 @@ public:
   {
     // At the present moment, only SpecificHeatModel can be time-dependent
     // Consequently we only pass the SimulationControl object to the
-    // SpecificHeat physical properties.
+    // SpecificHeatModel.
     for (unsigned int f = 0; f < number_of_fluids; ++f)
       specific_heat[f]->provide_simulation_control(simulation_control);
     for (unsigned int s = 0; s < number_of_solids; ++s)
