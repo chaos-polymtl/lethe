@@ -42,9 +42,14 @@ template <int dim>
 void
 Shape<dim>::clear_cache()
 {
-  value_cache.clear();
-  gradient_cache.clear();
-  closest_point_cache.clear();
+  // Here we check if the cache size is not zero. As calling the clear cache
+  // function can be expensive if done frequently.
+  if (value_cache.size() > 0)
+    {
+      value_cache.clear();
+      gradient_cache.clear();
+      closest_point_cache.clear();
+    }
 }
 
 
@@ -376,55 +381,68 @@ Sphere<dim>::distance_to_shape_with_cell_guess(
   const typename DoFHandler<dim>::active_cell_iterator &cell,
   std::vector<Point<dim>>                              &candidate_points,
   double                                                precision,
-  bool exact_distance_outside_of_contact) {
-  (void) candidate_points;
-  (void) precision;
-  double                      distance = DBL_MAX;
-  Tensor<1, dim>              normal;
-  Point<dim>                  contact_point;
+  bool exact_distance_outside_of_contact)
+{
+  (void)candidate_points;
+  (void)precision;
+  (void)exact_distance_outside_of_contact;
+  double         distance = DBL_MAX;
+  Tensor<1, dim> normal;
+  Point<dim>     contact_point;
   if (typeid(shape) == typeid(Sphere<dim>))
     {
-      Tensor<1,dim> center_to_center_vector=shape.get_position()-this->position;
-      distance=(center_to_center_vector.norm()-this->effective_radius-shape.effective_radius)/2;
-      normal=center_to_center_vector/center_to_center_vector.norm();
-      contact_point=this->position+normal*(this->effective_radius+distance);
+      Tensor<1, dim> center_to_center_vector =
+        shape.get_position() - this->position;
+      distance = (center_to_center_vector.norm() - this->effective_radius -
+                  shape.effective_radius) /
+                 2;
+      normal = center_to_center_vector / center_to_center_vector.norm();
+      contact_point =
+        this->position + normal * (this->effective_radius + distance);
     }
   else
     {
-      distance=(shape.value_with_cell_guess(this->position,cell)-this->effective_radius)/2;
-      normal=-shape.gradient_with_cell_guess(this->position,cell);
-      contact_point=this->position+normal*(this->effective_radius+distance);
+      distance = (shape.value_with_cell_guess(this->position, cell) -
+                  this->effective_radius) /
+                 2;
+      normal = -shape.gradient_with_cell_guess(this->position, cell);
+      contact_point =
+        this->position + normal * (this->effective_radius + distance);
     }
 
   return std::make_tuple(distance, normal, contact_point);
-
 }
 
 template <int dim>
 std::tuple<double, Tensor<1, dim>, Point<dim>>
-Sphere<dim>::distance_to_shape(
-  Shape<dim>                                           &shape,
-  std::vector<Point<dim>>                              &candidate_points,
-  double                                                precision,
-  bool exact_distance_outside_of_contact ) {
-
-  (void) candidate_points;
-  (void) precision;
-  double                      distance = DBL_MAX;
-  Tensor<1, dim>              normal;
-  Point<dim>                  contact_point;
+Sphere<dim>::distance_to_shape(Shape<dim>              &shape,
+                               std::vector<Point<dim>> &candidate_points,
+                               double                   precision,
+                               bool exact_distance_outside_of_contact)
+{
+  (void)candidate_points;
+  (void)precision;
+  (void)exact_distance_outside_of_contact;
+  double         distance = DBL_MAX;
+  Tensor<1, dim> normal;
+  Point<dim>     contact_point;
   if (typeid(shape) == typeid(Sphere<dim>))
     {
-      Tensor<1,dim> center_to_center_vector=shape.get_position()-this->position;
-      distance=(center_to_center_vector.norm()-this->effective_radius-shape.effective_radius)/2;
-      normal=center_to_center_vector/center_to_center_vector.norm();
-      contact_point=this->position+normal*(this->effective_radius+distance);
+      Tensor<1, dim> center_to_center_vector =
+        shape.get_position() - this->position;
+      distance = (center_to_center_vector.norm() - this->effective_radius -
+                  shape.effective_radius) /
+                 2;
+      normal = center_to_center_vector / center_to_center_vector.norm();
+      contact_point =
+        this->position + normal * (this->effective_radius + distance);
     }
   else
     {
-      distance=(shape.value(this->position)-this->effective_radius)/2;
-      normal=-shape.gradient(this->position);
-      contact_point=this->position+normal*(this->effective_radius+distance);
+      distance = (shape.value(this->position) - this->effective_radius) / 2;
+      normal   = -shape.gradient(this->position);
+      contact_point =
+        this->position + normal * (this->effective_radius + distance);
     }
 
   return std::make_tuple(distance, normal, contact_point);
@@ -478,7 +496,7 @@ Plane<dim>::gradient(const Point<dim> &evaluation_point,
            (rotate_in_globalpoint - evaluation_point).norm();
   else
     return -(rotate_in_globalpoint - evaluation_point) /
-           ((rotate_in_globalpoint - evaluation_point).norm()+DBL_MIN);
+           ((rotate_in_globalpoint - evaluation_point).norm() + DBL_MIN);
 }
 
 template <int dim>
@@ -546,18 +564,24 @@ Superquadric<dim>::closest_surface_point(const Point<dim> &p,
             // Gradient can be null if the evaluation point is exactly on the
             // centroid of the shape. In this case it is also the closest point.
             break;
-          // This is a modify newton method that limit the step size when the gradient norm is smaller then 1.
+          // This is a modify newton method that limit the step size when the
+          // gradient norm is smaller then 1.
           dx = -relaxation * (current_distance * distance_gradient) /
-               distance_gradient.norm()/std::max(1.0,distance_gradient.norm());
+               distance_gradient.norm() /
+               std::max(1.0, distance_gradient.norm());
 
           current_point    = current_point + dx;
           current_distance = superquadric(current_point);
-          //std::cout<<"iteration i "<< iteration <<" current distance "<< current_distance<<std::endl;
+          // std::cout<<"iteration i "<< iteration <<" current distance "<<
+          // current_distance<<std::endl;
 
           iteration++;
         }
-      if(iteration==iteration_max){
-          std::cout<<"hi superquadric did not converge after 100 iteration  point"<< p <<std::endl;
+      if (iteration == iteration_max)
+        {
+          std::cout
+            << "hi superquadric did not converge after 100 iteration  point"
+            << p << std::endl;
         }
 
       closest_point = this->reverse_align_and_center(current_point);
@@ -1857,9 +1881,9 @@ RBFShape<dim>::initialize_bounding_box()
                                           this->reverse_align_and_center(
                                             bounding_box_center),
                                           this->orientation);
-  this->bounding_box_half_length=half_lengths;
-  this->bounding_box_center=this->reverse_align_and_center(
-    bounding_box_center);
+  this->bounding_box_half_length = half_lengths;
+  this->bounding_box_center =
+    this->reverse_align_and_center(bounding_box_center);
 }
 
 template <int dim>

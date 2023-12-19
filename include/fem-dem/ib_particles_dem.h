@@ -54,19 +54,19 @@ template <int dim>
 class IBParticlesDEM
 {
 public:
-
   /** @brief Struct that contains history of the contact between two objects. This is the commonly used
-    * constructor since it houses all the information required to perform the
-    * contact calculation.
+   * constructor since it houses all the information required to perform the
+   * contact calculation.
    * */
   struct ContactInfo
   {
-    Tensor<1, 3>                     normal_vector;
-    Point<3>                         contact_point;
-    double                           normal_overlap;
-    double                           normal_relative_velocity;
-    Tensor<1, 3>                     tangential_overlap;
-    std::vector<Tensor<1, 3>>        tangential_relative_velocity; // keep each step of RK4 in memory
+    Tensor<1, 3> normal_vector;
+    Point<3>     contact_point;
+    double       normal_overlap;
+    double       normal_relative_velocity;
+    Tensor<1, 3> tangential_overlap;
+    std::vector<Tensor<1, 3>>
+      tangential_relative_velocity; // keep each step of RK4 in memory
   };
 
   /**
@@ -170,34 +170,34 @@ public:
    * @param contact_force a vector containing the contact torques between particles
    */
   void
-  calculate_force_model(const double                         normal_overlap,
-                        ContactInfo                         &contact_info,
-                        Point<3>                            &contact_point,
-                        Tensor<1, 3>                        &contact_normal,
-                        Tensor<1, 3>                        &normal_force,
-                        Tensor<1, 3>                        &tangential_force,
-                        Tensor<1, 3>                        &rolling_resistance_torque,
-                        Point<dim>                          &particle_one_position,
-                        Tensor<1,3>                         &particle_one_velocity,
-                        Tensor<1,3>                         &particle_one_omega,
-                        const double                         particle_one_mass,
-                        const double                         particle_one_radius,
-                        const double                         particle_one_youngs_modulus,
-                        const double                         particle_one_poisson_ratio,
-                        const double                         particle_one_restitution_coefficient,
-                        const double                         particle_one_friction_coefficient,
-                        const double                         particle_one_rolling_friction_coefficient,
-                        Point<dim>                          &particle_two_position,
-                        Tensor<1,3>                         &particle_two_velocity,
-                        Tensor<1,3>                         &particle_two_omega,
-                        const double                         particle_two_mass,
-                        const double                         particle_two_radius,
-                        const double                         particle_two_youngs_modulus,
-                        const double                         particle_two_poisson_ratio,
-                        const double                         particle_two_restitution_coefficient,
-                        const double                         particle_two_friction_coefficient,
-                        const double                         particle_two_rolling_friction_coefficient,
-                        const double                         dt);
+  calculate_force_model(const double  normal_overlap,
+                        ContactInfo  &contact_info,
+                        Point<3>     &contact_point,
+                        Tensor<1, 3> &contact_normal,
+                        Tensor<1, 3> &normal_force,
+                        Tensor<1, 3> &tangential_force,
+                        Tensor<1, 3> &rolling_resistance_torque,
+                        Point<dim>   &particle_one_position,
+                        Tensor<1, 3> &particle_one_velocity,
+                        Tensor<1, 3> &particle_one_omega,
+                        const double  particle_one_mass,
+                        const double  particle_one_radius,
+                        const double  particle_one_youngs_modulus,
+                        const double  particle_one_poisson_ratio,
+                        const double  particle_one_restitution_coefficient,
+                        const double  particle_one_friction_coefficient,
+                        const double  particle_one_rolling_friction_coefficient,
+                        Point<dim>   &particle_two_position,
+                        Tensor<1, 3> &particle_two_velocity,
+                        Tensor<1, 3> &particle_two_omega,
+                        const double  particle_two_mass,
+                        const double  particle_two_radius,
+                        const double  particle_two_youngs_modulus,
+                        const double  particle_two_poisson_ratio,
+                        const double  particle_two_restitution_coefficient,
+                        const double  particle_two_friction_coefficient,
+                        const double  particle_two_rolling_friction_coefficient,
+                        const double  dt);
 
 
   /**
@@ -266,9 +266,9 @@ public:
   void
   update_particles_boundary_contact(
     std::vector<IBParticle<dim>> &particles,
-    const DoFHandler<dim>              &dof_handler,
-    const Quadrature<dim - 1>          &face_quadrature_formula,
-    const Mapping<dim>                 &mapping);
+    const DoFHandler<dim>        &dof_handler,
+    const Quadrature<dim - 1>    &face_quadrature_formula,
+    const Mapping<dim>           &mapping);
 
 
   std::vector<IBParticle<dim>> dem_particles;
@@ -323,23 +323,19 @@ private:
   std::vector<std::set<unsigned int>> particles_contact_candidates;
 
   // Store the previous contact point as initial guess for the next search
-  std::map<unsigned int,
-           std::map<unsigned int, Point<dim>>>previous_wall_contact_point;
-  std::map<unsigned int,
-           std::map<unsigned int, Point<dim>>>previous_particle_particle_contact_point;
+  std::map<unsigned int, std::map<unsigned int, Point<dim>>>
+    previous_wall_contact_point;
+  std::map<unsigned int, std::map<unsigned int, Point<dim>>>
+    previous_particle_particle_contact_point;
 
 
 
   // Particles contact history
-  std::map<unsigned int,
-           std::map<unsigned int,ContactInfo>>
-    pp_contact_map;
-  std::map<unsigned int,
-           std::map<unsigned int, ContactInfo>>
-    pw_contact_map;
+  std::map<unsigned int, std::map<unsigned int, ContactInfo>> pp_contact_map;
+  std::map<unsigned int, std::map<unsigned int, ContactInfo>> pw_contact_map;
 
   // A vector of vectors of candidate cells for each of the particle.
-  std::vector<std::map<unsigned int,BoundaryCellsInfo>> boundary_cells;
+  std::vector<std::map<unsigned int, BoundaryCellsInfo>> boundary_cells;
 
 private:
   double cfd_time;

@@ -213,7 +213,9 @@ public:
 
   /**
    * @brief
-   * Sets the orientation of the particle and dependent members to the argument. This include the shape and the rotation matrix that describes the orientation.
+   * Sets the orientation of the particle and dependent members to the argument.
+   * This include the shape and the rotation matrix that describes the
+   * orientation.
    *
    * @param orientation The new orientation to set the particle at
    */
@@ -262,7 +264,6 @@ public:
 
   void
   compute_local_inertia();
-
 
 
 
@@ -384,9 +385,8 @@ public:
   // particle. This point is used to define a constant on the pressure.
   Point<dim> pressure_location;
 
-  // WIP implemented but not use: Location of the center of mass relative to the frame of reference of the
-  // particule.
-  // Point<3> center_of_mass_location
+  // WIP implemented but not use: Location of the center of mass relative to the
+  // frame of reference of the particule. Point<3> center_of_mass_location
 
   // Rotation matrix of the particle in the global space
   Tensor<2, 3> rotation_matrix;

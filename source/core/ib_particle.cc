@@ -330,12 +330,12 @@ IBParticle<dim>::load_data_from_file()
 
 
 
-
 template <int dim>
 void
 IBParticle<dim>::compute_local_inertia()
 {
-  // WIP This is implemented but not use since its application make the evaluation of the levelset more complicated.
+  // WIP This is implemented but not use since its application make the
+  // evaluation of the levelset more complicated.
   /*
   // Calcul des valeurs propres de la matrice d'inertie globale et update les
   // vecteurs propres de la particule

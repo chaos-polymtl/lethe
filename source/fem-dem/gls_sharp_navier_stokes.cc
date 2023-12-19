@@ -90,6 +90,13 @@ template <int dim>
 void
 GLSSharpNavierStokesSolver<dim>::generate_cut_cells_map()
 {
+  // Potential amelioration of this function. This function could try to use the
+  // information of the previous cut cell mapping as an initial guess of the new
+  // cell mapping by looking at the parent level of the cells to look for new
+  // cells cut.
+
+
+
   // check all the cells if they are cut or not. Put the information in a map
   // with the key being the cell.
   TimerOutput::Scope t(this->computing_timer, "cut_cells_mapping");
@@ -804,10 +811,11 @@ GLSSharpNavierStokesSolver<dim>::define_particles()
         {
           if (particles[i].integrate_motion == true)
             {
-             /* if (typeid(*particles[i].shape) != typeid(Sphere<dim>))
-                throw std::runtime_error(
-                  "Shapes other than sphere cannot have their motion integrated through fluid-structure interaction");
-                  */
+              /* if (typeid(*particles[i].shape) != typeid(Sphere<dim>))
+                 throw std::runtime_error(
+                   "Shapes other than sphere cannot have their motion integrated
+                 through fluid-structure interaction");
+                   */
               some_particles_are_coupled = true;
             }
         }
@@ -2157,7 +2165,8 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
                 g[2] = this->simulation_parameters.particlesParameters
                          ->f_gravity->value(particles[p].position, 2);
 
-              Tensor<1,3> gravity_buoyancy_force=g*(particles[p].mass/volume-fluid_density)* volume;
+              Tensor<1, 3> gravity_buoyancy_force =
+                g * (particles[p].mass / volume - fluid_density) * volume;
 
               // Transfers the impulsion evaluated in the sub-time-stepping
               // scheme to the particle at the CFD time scale.
@@ -2189,9 +2198,10 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
                   residual_velocity +=
                     -(bdf_coefs[i] * particles[p].previous_velocity[i - 1]);
                 }
-              residual_velocity += (particles[p].contact_impulsion / dt +
-                                    particles[p].fluid_forces+gravity_buoyancy_force) /
-                                     particles[p].mass;
+              residual_velocity +=
+                (particles[p].contact_impulsion / dt +
+                 particles[p].fluid_forces + gravity_buoyancy_force) /
+                particles[p].mass;
 
               double inverse_of_relaxation_coefficient_velocity =
                 -bdf_coefs[0] -
@@ -4532,25 +4542,31 @@ GLSSharpNavierStokesSolver<dim>::load_particles_from_file()
 
           particles[p_i].position[0] =
             Utilities::string_to_double(particles_data["p_x"][p_i]);
-          particles[p_i].position[1]    = Utilities::string_to_double(particles_data["p_y"][p_i]);
-          particles[p_i].velocity[0]    = Utilities::string_to_double(particles_data["v_x"][p_i]);
-          particles[p_i].velocity[1]    = Utilities::string_to_double(particles_data["v_y"][p_i]);
-          particles[p_i].orientation[2] = Utilities::string_to_double(particles_data["orientation_z"][p_i]);
+          particles[p_i].position[1] =
+            Utilities::string_to_double(particles_data["p_y"][p_i]);
+          particles[p_i].velocity[0] =
+            Utilities::string_to_double(particles_data["v_x"][p_i]);
+          particles[p_i].velocity[1] =
+            Utilities::string_to_double(particles_data["v_y"][p_i]);
+          particles[p_i].orientation[2] =
+            Utilities::string_to_double(particles_data["orientation_z"][p_i]);
           // Initialize shape of particles according to the type parameter in
           // the file
 
           std::string shape_type = particles_data["type"][p_i];
           std::string shape_arguments_str =
             particles_data["shape_argument"][p_i];
-          // Here shape is supposed to be separated by : but the initializer take ; as separator so we replace : by ;.
-          std::string toReplace = ":";
+          // Here shape is supposed to be separated by : but the initializer
+          // take ; as separator so we replace : by ;.
+          std::string toReplace   = ":";
           std::string replacement = ";";
 
           // Find the position of the substring to replace
           size_t pos = shape_arguments_str.find(toReplace);
 
           // Check if the substring is found
-          if (pos != std::string::npos) {
+          if (pos != std::string::npos)
+            {
               // Replace the substring
               shape_arguments_str.replace(pos, toReplace.length(), replacement);
             }
@@ -4560,7 +4576,8 @@ GLSSharpNavierStokesSolver<dim>::load_particles_from_file()
           particles[p_i].radius = particles[p_i].shape->effective_radius;
 
 
-          double volume =Utilities::string_to_double( particles_data["volume"][p_i]);
+          double volume =
+            Utilities::string_to_double(particles_data["volume"][p_i]);
           if (volume == 0)
             {
               // value is automatically define.
@@ -4569,7 +4586,8 @@ GLSSharpNavierStokesSolver<dim>::load_particles_from_file()
                 {
                   if (dim == 2)
                     {
-                      volume = PI * particles[p_i].radius * particles[p_i].radius;
+                      volume =
+                        PI * particles[p_i].radius * particles[p_i].radius;
                     }
                   else if (dim == 3)
                     {
@@ -4579,32 +4597,43 @@ GLSSharpNavierStokesSolver<dim>::load_particles_from_file()
                 }
             }
           particles[p_i].volume = volume;
-          particles[p_i].mass = particles[p_i].volume *Utilities::string_to_double(particles_data["density"][p_i]);
+          particles[p_i].mass =
+            particles[p_i].volume *
+            Utilities::string_to_double(particles_data["density"][p_i]);
 
-          particles[p_i].omega[2]      = Utilities::string_to_double(particles_data["omega_z"][p_i]);
-          particles[p_i].inertia[0][0] = Utilities::string_to_double(particles_data["inertia"][p_i]);
-          particles[p_i].inertia[1][1] = Utilities::string_to_double(particles_data["inertia"][p_i]);
-          particles[p_i].inertia[2][2] = Utilities::string_to_double(particles_data["inertia"][p_i]);
+          particles[p_i].omega[2] =
+            Utilities::string_to_double(particles_data["omega_z"][p_i]);
+          particles[p_i].inertia[0][0] =
+            Utilities::string_to_double(particles_data["inertia"][p_i]);
+          particles[p_i].inertia[1][1] =
+            Utilities::string_to_double(particles_data["inertia"][p_i]);
+          particles[p_i].inertia[2][2] =
+            Utilities::string_to_double(particles_data["inertia"][p_i]);
 
-          particles[p_i].pressure_location[0] = Utilities::string_to_double(particles_data["pressure_x"][p_i]);
-          particles[p_i].pressure_location[1] = Utilities::string_to_double(particles_data["pressure_y"][p_i]);
+          particles[p_i].pressure_location[0] =
+            Utilities::string_to_double(particles_data["pressure_x"][p_i]);
+          particles[p_i].pressure_location[1] =
+            Utilities::string_to_double(particles_data["pressure_y"][p_i]);
 
-          particles[p_i].youngs_modulus = Utilities::string_to_double(particles_data["youngs_modulus"][p_i]);
-          particles[p_i].restitution_coefficient =
-            Utilities::string_to_double(particles_data["restitution_coefficient"][p_i]);
-          particles[p_i].friction_coefficient =
-            Utilities::string_to_double(particles_data["friction_coefficient"][p_i]);
-          particles[p_i].poisson_ratio = Utilities::string_to_double(particles_data["poisson_ratio"][p_i]);
+          particles[p_i].youngs_modulus =
+            Utilities::string_to_double(particles_data["youngs_modulus"][p_i]);
+          particles[p_i].restitution_coefficient = Utilities::string_to_double(
+            particles_data["restitution_coefficient"][p_i]);
+          particles[p_i].friction_coefficient = Utilities::string_to_double(
+            particles_data["friction_coefficient"][p_i]);
+          particles[p_i].poisson_ratio =
+            Utilities::string_to_double(particles_data["poisson_ratio"][p_i]);
           particles[p_i].rolling_friction_coefficient =
-            Utilities::string_to_double(particles_data["rolling_friction_coefficient"][p_i]);
+            Utilities::string_to_double(
+              particles_data["rolling_friction_coefficient"][p_i]);
           particles[p_i].initialize_previous_solution();
           if (particles_data["integrate_motion"][p_i] == "false")
             {
-            particles[p_i].integrate_motion = false;
+              particles[p_i].integrate_motion = false;
             }
           else
             {
-            particles[p_i].integrate_motion = true;
+              particles[p_i].integrate_motion = true;
             }
           particles[p_i].set_position(particles[p_i].position);
           particles[p_i].set_orientation(particles[p_i].orientation);
@@ -4617,38 +4646,51 @@ GLSSharpNavierStokesSolver<dim>::load_particles_from_file()
         {
           particles[p_i].initialize_all();
 
-          particles[p_i].particle_id    = p_i;
-          particles[p_i].position[0]    = Utilities::string_to_double(particles_data["p_x"][p_i]);
-          particles[p_i].position[1]    = Utilities::string_to_double(particles_data["p_y"][p_i]);
-          particles[p_i].position[2]    = Utilities::string_to_double(particles_data["p_z"][p_i]);
-          particles[p_i].velocity[0]    = Utilities::string_to_double(particles_data["v_x"][p_i]);
-          particles[p_i].velocity[1]    = Utilities::string_to_double(particles_data["v_y"][p_i]);
-          particles[p_i].velocity[2]    = Utilities::string_to_double(particles_data["v_z"][p_i]);
-          particles[p_i].orientation[0] = Utilities::string_to_double(particles_data["orientation_x"][p_i]);
-          particles[p_i].orientation[1] = Utilities::string_to_double(particles_data["orientation_y"][p_i]);
-          particles[p_i].orientation[2] = Utilities::string_to_double(particles_data["orientation_z"][p_i]);
+          particles[p_i].particle_id = p_i;
+          particles[p_i].position[0] =
+            Utilities::string_to_double(particles_data["p_x"][p_i]);
+          particles[p_i].position[1] =
+            Utilities::string_to_double(particles_data["p_y"][p_i]);
+          particles[p_i].position[2] =
+            Utilities::string_to_double(particles_data["p_z"][p_i]);
+          particles[p_i].velocity[0] =
+            Utilities::string_to_double(particles_data["v_x"][p_i]);
+          particles[p_i].velocity[1] =
+            Utilities::string_to_double(particles_data["v_y"][p_i]);
+          particles[p_i].velocity[2] =
+            Utilities::string_to_double(particles_data["v_z"][p_i]);
+          particles[p_i].orientation[0] =
+            Utilities::string_to_double(particles_data["orientation_x"][p_i]);
+          particles[p_i].orientation[1] =
+            Utilities::string_to_double(particles_data["orientation_y"][p_i]);
+          particles[p_i].orientation[2] =
+            Utilities::string_to_double(particles_data["orientation_z"][p_i]);
 
 
           std::string shape_type = particles_data["type"][p_i];
           std::string shape_arguments_str =
             particles_data["shape_argument"][p_i];
-          // Here shape is supposed to be separated by : but the initializer take ; as separator so we replace : by ;.
-          std::string toReplace = ":";
+          // Here shape is supposed to be separated by : but the initializer
+          // take ; as separator so we replace : by ;.
+          std::string toReplace   = ":";
           std::string replacement = ";";
 
           // Check if the substring is found
           size_t pos = shape_arguments_str.find(toReplace);
-          while (pos != std::string::npos) {
+          while (pos != std::string::npos)
+            {
               // Replace the substring
               shape_arguments_str.replace(pos, toReplace.length(), replacement);
 
               // Find next occurrence of the substring
-              pos = shape_arguments_str.find(toReplace, pos + replacement.length());
+              pos =
+                shape_arguments_str.find(toReplace, pos + replacement.length());
             }
           particles[p_i].initialize_shape(shape_type, shape_arguments_str);
 
           particles[p_i].radius = particles[p_i].shape->effective_radius;
-          double volume =Utilities::string_to_double( particles_data["volume"][p_i]);
+          double volume =
+            Utilities::string_to_double(particles_data["volume"][p_i]);
           if (volume == 0)
             {
               // value is automatically define.
@@ -4657,7 +4699,8 @@ GLSSharpNavierStokesSolver<dim>::load_particles_from_file()
                 {
                   if (dim == 2)
                     {
-                      volume = PI * particles[p_i].radius * particles[p_i].radius;
+                      volume =
+                        PI * particles[p_i].radius * particles[p_i].radius;
                     }
                   else if (dim == 3)
                     {
@@ -4667,15 +4710,23 @@ GLSSharpNavierStokesSolver<dim>::load_particles_from_file()
                 }
             }
           particles[p_i].volume = volume;
-          particles[p_i].mass = particles[p_i].volume *Utilities::string_to_double(particles_data["density"][p_i]);
+          particles[p_i].mass =
+            particles[p_i].volume *
+            Utilities::string_to_double(particles_data["density"][p_i]);
 
-          particles[p_i].omega[0] = Utilities::string_to_double(particles_data["omega_x"][p_i]);
-          particles[p_i].omega[1] = Utilities::string_to_double(particles_data["omega_y"][p_i]);
-          particles[p_i].omega[2] = Utilities::string_to_double(particles_data["omega_z"][p_i]);
+          particles[p_i].omega[0] =
+            Utilities::string_to_double(particles_data["omega_x"][p_i]);
+          particles[p_i].omega[1] =
+            Utilities::string_to_double(particles_data["omega_y"][p_i]);
+          particles[p_i].omega[2] =
+            Utilities::string_to_double(particles_data["omega_z"][p_i]);
 
-          particles[p_i].inertia[0][0] = Utilities::string_to_double(particles_data["inertia"][p_i]);
-          particles[p_i].inertia[1][1] = Utilities::string_to_double(particles_data["inertia"][p_i]);
-          particles[p_i].inertia[2][2] = Utilities::string_to_double(particles_data["inertia"][p_i]);
+          particles[p_i].inertia[0][0] =
+            Utilities::string_to_double(particles_data["inertia"][p_i]);
+          particles[p_i].inertia[1][1] =
+            Utilities::string_to_double(particles_data["inertia"][p_i]);
+          particles[p_i].inertia[2][2] =
+            Utilities::string_to_double(particles_data["inertia"][p_i]);
 
           particles[p_i].pressure_location[0] =
             Utilities::string_to_double(particles_data["pressure_x"][p_i]);
@@ -4684,14 +4735,17 @@ GLSSharpNavierStokesSolver<dim>::load_particles_from_file()
           particles[p_i].pressure_location[2] =
             Utilities::string_to_double(particles_data["pressure_z"][p_i]);
 
-          particles[p_i].youngs_modulus = Utilities::string_to_double(particles_data["youngs_modulus"][p_i]);
-          particles[p_i].restitution_coefficient =
-            Utilities::string_to_double(particles_data["restitution_coefficient"][p_i]);
-          particles[p_i].friction_coefficient =
-            Utilities::string_to_double(particles_data["friction_coefficient"][p_i]);
-          particles[p_i].poisson_ratio = Utilities::string_to_double(particles_data["poisson_ratio"][p_i]);
+          particles[p_i].youngs_modulus =
+            Utilities::string_to_double(particles_data["youngs_modulus"][p_i]);
+          particles[p_i].restitution_coefficient = Utilities::string_to_double(
+            particles_data["restitution_coefficient"][p_i]);
+          particles[p_i].friction_coefficient = Utilities::string_to_double(
+            particles_data["friction_coefficient"][p_i]);
+          particles[p_i].poisson_ratio =
+            Utilities::string_to_double(particles_data["poisson_ratio"][p_i]);
           particles[p_i].rolling_friction_coefficient =
-            Utilities::string_to_double(particles_data["rolling_friction_coefficient"][p_i]);
+            Utilities::string_to_double(
+              particles_data["rolling_friction_coefficient"][p_i]);
           particles[p_i].initialize_previous_solution();
           if (particles_data["integrate_motion"][p_i] == "false")
             {

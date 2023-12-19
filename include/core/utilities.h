@@ -274,9 +274,10 @@ fill_vectors_from_file(std::map<std::string, std::vector<double>> &map,
  *   @param delimiter The delimiter used to read the table.
  */
 void
-fill_string_vectors_from_file(std::map<std::string, std::vector<std::string>> &map,
-                       const std::string                           file_name,
-                       const std::string delimiter = " ");
+fill_string_vectors_from_file(
+  std::map<std::string, std::vector<std::string>> &map,
+  const std::string                                file_name,
+  const std::string                                delimiter = " ");
 
 /**
  * @brief Creates the simulation output folder

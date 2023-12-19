@@ -244,9 +244,10 @@ fill_vectors_from_file(std::map<std::string, std::vector<double>> &map,
 }
 
 void
-fill_string_vectors_from_file(std::map<std::string, std::vector<std::string>> &map,
-                       std::string                                 file,
-                       const std::string                           delimiter)
+fill_string_vectors_from_file(
+  std::map<std::string, std::vector<std::string>> &map,
+  std::string                                      file,
+  const std::string                                delimiter)
 {
   // fill a pair, first being a vector of vector name and the second being the
   // vector of vector associated with the vector name.
@@ -258,13 +259,13 @@ fill_string_vectors_from_file(std::map<std::string, std::vector<std::string>> &m
     {
       std::string              line;
       std::vector<std::string> column_names;
-      std::vector<std::string>      line_of_data;
+      std::vector<std::string> line_of_data;
       unsigned int             line_count = 0;
 
       while (std::getline(myfile, line))
         {
           // remove spaces
-          //line.erase(std::remove(line.begin(), line.end(), ' '), line.end());
+          // line.erase(std::remove(line.begin(), line.end(), ' '), line.end());
           // read the line and clean the resulting vector.
           std::vector<std::string> list_of_words_base =
             Utilities::split_string_list(line, delimiter);
