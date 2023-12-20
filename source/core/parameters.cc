@@ -2984,7 +2984,7 @@ namespace Parameters
 
         prm.declare_entry(
           "use explicit contact impulsion",
-          "true",
+          "false",
           Patterns::Bool(),
           "Bool to enable or disable the explicit evaluation of the contact impulsion. This means that if that parameter is set to true, the DEM is only run once, and the contact impulsion obtained is used for all Newton's iterations.");
 

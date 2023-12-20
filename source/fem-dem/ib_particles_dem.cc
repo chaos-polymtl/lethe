@@ -679,15 +679,19 @@ IBParticlesDEM<dim>::calculate_pw_contact_force(
               // Create a Rotation matrix from normal to z axis to initialize
               // the plane for contact with the right orientation;
               Tensor<1, 3> rotation_axis;
-              double       angle =
-                std::acos(scalar_product(Tensor<1, 3>({0, 0, 1}), normal) /
-                          normal.norm());
+              double       angle=0;
               if constexpr (dim == 2)
                 {
                   rotation_axis[2] = 1;
+                  angle =
+                    std::acos(scalar_product(Tensor<1, 3>({0, 1, 0}), normal) /
+                              normal.norm());
                 }
               else
                 {
+                  angle =
+                    std::acos(scalar_product(Tensor<1, 3>({0, 0, 1}), normal) /
+                              normal.norm());
                   if (abs(scalar_product(Tensor<1, 3>({0, 0, 1}), normal)) !=
                       normal.norm())
                     {
@@ -697,10 +701,7 @@ IBParticlesDEM<dim>::calculate_pw_contact_force(
                     }
                   else
                     {
-                      rotation_axis =
-                        scalar_product(Tensor<1, 3>({0, 0, 1}), normal) *
-                        normal;
-                      rotation_axis = rotation_axis / rotation_axis.norm();
+                      rotation_axis = Tensor<1, 3>({0, 1,0});
                     }
                 }
               Tensor<2, 3> rotation_matrix =
@@ -742,7 +743,6 @@ IBParticlesDEM<dim>::calculate_pw_contact_force(
               previous_wall_contact_point[particle.particle_id]
                                          [boundary_cell.boundary_index] =
                                            std::get<Point<dim>>(contact_state);
-
 
               if (normal_overlap > 0)
                 {
