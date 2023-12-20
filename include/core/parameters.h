@@ -1332,7 +1332,6 @@ namespace Parameters
     double                       wall_restitution_coefficient;
     unsigned int                 coupling_frequency;
     bool                         enable_lubrication_force;
-    bool                         explicit_contact_impulsion_calculation;
     double                       lubrication_range_max;
     double                       lubrication_range_min;
     double                       contact_search_radius_factor;
@@ -1340,6 +1339,8 @@ namespace Parameters
     bool                         load_particles_from_file;
     std::string                  particles_file;
     bool                         enable_extra_sharp_interface_vtu_output_field;
+    bool                         explicit_contact_impulsion_calculation;
+    bool                         explicit_position_integration_calculation;
     bool                         use_approximate_radius_for_contact;
 
     std::shared_ptr<Functions::ParsedFunction<dim>> f_gravity;

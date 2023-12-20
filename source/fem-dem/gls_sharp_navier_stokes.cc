@@ -2123,9 +2123,14 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
       unsigned int current_newton_iteration =
         this->get_current_newton_iteration();
 
+
+      // Do the DEM if only if it’s the first newton iteration or both the
+      // explicit calculation of the impulsion and position are false.
       if (current_newton_iteration == 0 ||
-          this->simulation_parameters.particlesParameters
-              ->explicit_contact_impulsion_calculation == false)
+          (this->simulation_parameters.particlesParameters
+             ->explicit_contact_impulsion_calculation and
+           this->simulation_parameters.particlesParameters
+             ->explicit_position_integration_calculation) == false)
         {
           ib_dem.integrate_particles_motion(
             dt, h_max, h_min, fluid_density, kinematic_viscosity);
@@ -2243,7 +2248,9 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
               // If the particles have impacted a wall or another particle, we
               // want to use the sub-time step position. Otherwise, we solve the
               // new position directly with the new velocity found.
-              if (particles[p].contact_impulsion.norm() < 1e-12)
+              if (particles[p].contact_impulsion.norm() < 1e-12 and
+                  (this->simulation_parameters.particlesParameters
+                     ->explicit_position_integration_calculation == false))
                 {
                   particles[p].position.clear();
                   for (unsigned int d = 0; d < dim; ++d)
@@ -2391,7 +2398,9 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
               // If the particles have impacted a wall or another particle, we
               // want to use the sub-time step position. Otherwise, we solve the
               // new position directly with the new velocity found.
-              if (particles[p].omega_contact_impulsion.norm() < 1e-12)
+              if (particles[p].omega_contact_impulsion.norm() < 1e-12 and
+                  (this->simulation_parameters.particlesParameters
+                     ->explicit_position_integration_calculation == false))
                 {
                   if (particles[p].omega.norm() > 0)
                     {
@@ -4860,10 +4869,6 @@ GLSSharpNavierStokesSolver<dim>::solve()
         {
           vertices_cell_mapping();
           update_precalculations_for_ib();
-          if (all_spheres)
-            optimized_generate_cut_cells_map();
-          else
-            generate_cut_cells_map();
 
           ib_dem.update_particles_boundary_contact(this->particles,
                                                    this->dof_handler,
@@ -4877,11 +4882,6 @@ GLSSharpNavierStokesSolver<dim>::solve()
           ib_done.clear();
           refinement_control(false);
           vertices_cell_mapping();
-
-          if (all_spheres)
-            optimized_generate_cut_cells_map();
-          else
-            generate_cut_cells_map();
 
           ib_dem.update_particles_boundary_contact(this->particles,
                                                    this->dof_handler,

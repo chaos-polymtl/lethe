@@ -679,7 +679,7 @@ IBParticlesDEM<dim>::calculate_pw_contact_force(
               // Create a Rotation matrix from normal to z axis to initialize
               // the plane for contact with the right orientation;
               Tensor<1, 3> rotation_axis;
-              double       angle=0;
+              double       angle = 0;
               if constexpr (dim == 2)
                 {
                   rotation_axis[2] = 1;
@@ -701,7 +701,7 @@ IBParticlesDEM<dim>::calculate_pw_contact_force(
                     }
                   else
                     {
-                      rotation_axis = Tensor<1, 3>({0, 1,0});
+                      rotation_axis = Tensor<1, 3>({0, 1, 0});
                     }
                 }
               Tensor<2, 3> rotation_matrix =
