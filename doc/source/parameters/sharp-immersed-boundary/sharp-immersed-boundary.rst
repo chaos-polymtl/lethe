@@ -164,8 +164,14 @@ This subsection contains the parameters related to the sharp immersed boundary s
 
     .. warning::
 	    If ``contact search radius factor`` :math:`\leq 1`, an error is thrown.
+	    
+	* The ``enable lubrication force`` parameter enables or disables the use of lubrication forces. This parameter must be set to ``false`` when using non-newtonian fluid.
     
-    * The ``enable lubrication force`` parameter enables or disables the use of lubrication forces. This parameter must be set to ``false`` when using non-newtonian fluid.
+    * The ``use explicit contact impulsion`` parameter that enables or disables the use of explicit contact impulsion evaluation in the resolution of the coupling of the particle. When it is set to true, this parameter results in the code only performing the DEM calculation once per CFD time step.
+    
+    * The ``use explicit position integration`` parameter that enables or disables the use of explicit position integration in the resolution of the coupling of the particle. When it is set to true, this parameter results in the code only performing the DEM calculation once and using the resulting position and orientation for the evaluation of all the other Newton's iterations. This reduces the number of times the cut cell mapping must be performed. However, this can affect the stability of the scheme.
+    
+    * The ``use approximate radius for contact`` parameter enables or disables the use of the approximaive contact radius for contact calculation. This means that when this parameter is set to true, the contact radius used in the contact force calculation is obtained through the effective contact radius. Otherwise, the curvature radius of the shape is evaluated at the contact point. In the case of a flat surface contact point, the contact radius is limited to 100 times the effective radius of the particle.
     
     .. note::
 	When using a non-Newtonian fluid, the lubrication force will be automatically deactivated.
@@ -202,7 +208,11 @@ This subsection contains the parameters related to the sharp immersed boundary s
     .. warning::
         Currently, this feature works only for shapes defined by less than three parameters. 
 
-    * The ``particles file`` is the file from which the particles are defined. Each line corresponds to a particle and all the relevant variables. The file must contain the following information for each particle (the header must be defined accordingly): type shape_argument_0 shape_argument_1 shape_argument_2 p_x p_y p_z v_x v_y v_z omega_x omega_y omega_z orientation_x orientation_y orientation_z density inertia pressure_x pressure_y pressure_z youngs_modulus restitution_coefficient friction_coefficient poisson_ratio rolling_friction_coefficient integrate_motion. The particle type is defined by the shape index. The shape indices are as follows: sphere=0, hyper rectangle=1, ellipsoid=2, torus=3, cone=4, cylinder=5, cylindrical tube=6, cylindrical helix=7, cut hollow sphere=8, death star=9. Currently, the composite, the RBF, and the OpenCascade shapes cannot be loaded from a file. If integrate motion is not equal to 0 the particle dynamics is integrated.
+    * The ``particles file`` is the file from which the particles are defined. Each line corresponds to a particle and all the relevant variables. The file must contain the following information for each particle (the header must be defined accordingly): type; shape_argument; p_x; p_y; p_z; v_x; v_y; v_z; omega_x; omega_y; omega_z; orientation_x; orientation_y; orientation_z; volume; density; inertia; pressure_x; pressure_y; pressure_z; youngs_modulus; restitution_coefficient; friction_coefficient; poisson_ratio; rolling_friction_coefficient; integrate_motion. Each column is sepated by a semicolon (";"). When a shape as multiple shape arguments, each argument is separated by a colon (":"). If integrate motion is set to false then the particle dynamic is not integrated, otherwise it is integrated. Here is a quick exemple a particle definition.
+        .. code-block:: text
+        
+            type; shape_argument; p_x; p_y; p_z; v_x; v_y; v_z; omega_x; omega_y; omega_z; orientation_x; orientation_y; orientation_z; volume ;density; inertia; pressure_x; pressure_y; pressure_z; youngs_modulus; restitution_coefficient; friction_coefficient; poisson_ratio; rolling_friction_coefficient; integrate_motion;
+            superquadric; 1: 1: 1: 3: 3: 3; 0.25; 0.25; 20.25; 0.0; 0.0; 0.0; 0.0; 0.0; 0.0; 0.0; 0.0; 0.0; 0.001953125; 0.0015; 7.6698974609375e-08; 0.0; 0.0; 0.0; 1000000.0; 0.9; 0.0; 0.3; 0.0; true
 
 The following parameter and subsection are all inside the subsection ``particle info 0`` and have to be redefined for all particles separately.
 
@@ -236,27 +246,27 @@ The following parameter and subsection are all inside the subsection ``particle 
     * Composite: *file name*.
    
     A composite shape is made from the composition, with boolean operations, of multiple primitive shapes (e.g., Sphere, Hyper Rectangle, Ellipsoid, Torus, Cone, Cylinder, etc). The composite shape has its own frame of reference that is used to place different primitives relative to each other. The position and orientation of the primitive objects are defined following the translation and then rotation in XYZ convention. The position and orientation of this object then define the position and orientation of the composite frame of reference in the global frame of reference. Note that the default position and orientation of a shape in a composite reference frame follow the same rule as it usually does in the global reference frame (for example, the cylinder is by default aligned in the Z-axis, and its center corresponds to the 0 of the reference frame). Composite shapes are defined by a text file that contains two sections that begin with their names: ``shapes`` and ``operations``. All instructions are given on the lines following the section title in a similar syntax as the one from GMSH. For shapes, the syntax is: ``<shape_id>;<args separated by :>;<position components separated by :>;<orientation components separated by :>``.For operations, the syntax is: ``<resulting_shape_id>;<union|difference|intersection>;<first shape id>:<second shape id>``. In the case of difference, the first shape is the negative and the second shape is the positive. At this point in time, only these boolean operations have been implemented.  Here is a general organization of a composite shape file.
-    
-.. code-block:: text
+        
+    .. code-block:: text
 
-        shapes
-        <shape_id>;   <shape type>;    <shape arguments separated by:>; <position components separated by :> ; <orientation components separated by :>
-        operations
-        <resulting_shape_id>;  <operation: union|difference|intersection>; <first shape id> : <second shape id>
+            shapes
+            <shape_id>;   <shape type>;    <shape arguments separated by:>; <position components separated by :> ; <orientation components separated by :>
+            operations
+            <resulting_shape_id>;  <operation: union|difference|intersection>; <first shape id> : <second shape id>
   
   
-Here is the content of a file that defines a cylinder topped with a sphere:
-    
-.. code-block:: text
+    Here is the content of a file that defines a cylinder topped with a sphere:
+        
+    .. code-block:: text
 
-        shapes
-        0;   sphere;     0.5; 0:0:0.5 ; 0:0:0
-        1; cylinder; 0.5:0.5; 0:0:0.0 ; 0:0:0
-        operations
-        2;    union;     0:1
+            shapes
+            0;   sphere;     0.5; 0:0:0.5 ; 0:0:0
+            1; cylinder; 0.5:0.5; 0:0:0.0 ; 0:0:0
+            operations
+            2;    union;     0:1
 
     .. warning::
-	    Some limitations exist for composite shapes. The composition of shapes with union and difference are not always exact (see [this link](https://iquilezles.org/articles/interiordistance/) for a relatively simple explanation of why this is the case). In general boolean operation only guarantee to preserve the surface of the object. The union operation also preserves the properties of the sign distance function outside of the shapes, which is helpful for external flow around the shapes. But the difference operator does not guarantee to yield an exact sign distance function. This means that shapes defined by using the difference operator may not converge to the expected convergence order of the FEM scheme with the currently implemented scheme.
+	        Some limitations exist for composite shapes. The composition of shapes with union and difference are not always exact (see [this link](https://iquilezles.org/articles/interiordistance/) for a relatively simple explanation of why this is the case). In general boolean operation only guarantee to preserve the surface of the object. The union operation also preserves the properties of the sign distance function outside of the shapes, which is helpful for external flow around the shapes. But the difference operator does not guarantee to yield an exact sign distance function. This means that shapes defined by using the difference operator may not converge to the expected convergence order of the FEM scheme with the currently implemented scheme.
 
     * RBF: *file name*; the effective radius is the ``support_radius`` of the first node. The file must be constructed with 6 columns of numbers containing: ``weight``, ``support_radius``, ``basis_function``, ``node_x``, ``node_y``, ``node_z``. The ``weight`` is the weight associated to each node, the ``support_radius`` relates to the influence radius of each node, the ``basis_function`` can be one of thirteen functions, described in an upcoming example, and the ``node_*`` describe the center of each node.
     
