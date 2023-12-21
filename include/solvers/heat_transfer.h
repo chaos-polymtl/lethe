@@ -120,6 +120,7 @@ public:
     // outputs
     if (simulation_parameters.timer.type == Parameters::Timer::Type::none)
       this->computing_timer.disable_output();
+
   }
 
   /**
@@ -396,6 +397,18 @@ private:
     const std::string                domain_name);
 
   /**
+   * @brief Post-processing.
+   * Calculate liquid fraction on the domain.
+   *
+   * @param gather_vof boolean true when VOF=true (multiphase flow), used to gather
+   * VOF information
+   */
+
+  void
+  postprocess_liquid_fraction(
+    const bool                       gather_vof);
+
+  /**
    * @brief Post-processing. Write the temperature statistics to an output file.
    *
    * @param domain_name string indicating the postprocessed_fluid in the
@@ -559,6 +572,17 @@ private:
   std::vector<std::shared_ptr<ThermalConductivityModel>>
                                           thermal_conductivity_models;
   std::vector<HeatFluxPostprocessor<dim>> heat_flux_postprocessors;
+
+
+  /*
+   * Phase change post-processing. These parameters track the presence of a phase change physical property and the associated post-processing information
+  */
+
+  /*
+   * Liquid fraction in the domain
+   */
+  TableHandler liquid_fraction;
+
 };
 
 

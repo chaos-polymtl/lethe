@@ -779,6 +779,12 @@ namespace Parameters
     // Prefix for the temperature output
     std::string temperature_output_name;
 
+    // Enable calculation of liquid fraction in phase change problems
+    bool calculate_liquid_fraction;
+
+    // Prefix for the temperature output
+    std::string liquid_fraction_output_name;
+
     // Enable heat flux calculation
     bool calculate_heat_flux;
 

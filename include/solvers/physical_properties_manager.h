@@ -267,6 +267,15 @@ public:
     return constant_density;
   }
 
+  Parameters::PhysicalProperties get_physical_properties_parameters() const
+  {return physical_properties_parameters;}
+
+  bool
+  has_phase_change() const
+  {
+    return phase_change;
+  }
+
   bool
   surface_tension_is_constant() const
   {
@@ -347,6 +356,10 @@ private:
   bool non_newtonian_flow;
   bool constant_density;
   bool constant_surface_tension;
+  bool phase_change;
+
+  // Internal copy of the parameters used to build the manager
+  Parameters::PhysicalProperties physical_properties_parameters;
 
   unsigned int number_of_fluids;
   unsigned int number_of_solids;

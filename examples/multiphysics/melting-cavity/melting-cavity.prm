@@ -12,11 +12,11 @@ subsection simulation control
   set time end                     = 60.1977
   set time step                    = 0.001
   set adapt                        = true 
-  set max cfl                      = 0.5
+  set max cfl                      = 0.8
   set adaptative time step scaling = 1.1
   set output name                  = melting
   set output control               = iteration
-  set output frequency             = 10
+  set output frequency             = 100
   set output path                  = ./output/
 end
 
@@ -40,7 +40,7 @@ subsection initial conditions
     set Function expression = 0; 0; 0
   end
   subsection temperature
-    set Function expression = 0
+    set Function expression = -1.8
   end
 end
 
@@ -77,10 +77,10 @@ subsection physical properties
       set latent enthalpy = 200
 
       # Temperature of the liquidus
-      set liquidus temperature = 1.8
+      set liquidus temperature = 0
 
       # Temperature of the solidus
-      set solidus temperature = 1.6
+      set solidus temperature = -0.3
 
       # Specific heat of the liquid phase
       set specific heat liquid = 1
@@ -92,7 +92,7 @@ subsection physical properties
       set viscosity liquid = 0.0007366698558439125
 
       # Kinematic viscosity of the solid phase
-      set viscosity solid = 10
+      set viscosity solid = 100
 
       set thermal expansion liquid       = 1
       set thermal expansion solid       = 0
@@ -109,7 +109,16 @@ subsection mesh
   set type               = dealii
   set grid type          = subdivided_hyper_rectangle
   set grid arguments     = 2, 1 : 0, 0 : 1, 0.714 : true
-  set initial refinement = 7
+  set initial refinement = 5
+end
+
+#---------------------------------------------------
+# Postprocessing
+#---------------------------------------------------
+
+subsection post-processing
+  set calculate liquid fraction = true
+  set verbosity                        = verbose
 end
 
 #---------------------------------------------------
@@ -142,14 +151,14 @@ subsection boundary conditions heat transfer
     set id    = 0
     set type  = temperature
     subsection value
-      set Function expression = 10
+      set Function expression = 8.2
     end
   end
   subsection bc 1
     set id    = 1
     set type  = temperature
     subsection value
-      set Function expression = 0
+      set Function expression = -1.8
     end
   end
 end

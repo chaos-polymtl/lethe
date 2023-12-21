@@ -44,6 +44,10 @@ void
 PhysicalPropertiesManager::initialize(
   Parameters::PhysicalProperties physical_properties)
 {
+  // Keep a copy of the physical properties used to build the physical property
+  // manager
+  physical_properties_parameters=physical_properties;
+
   is_initialized = true;
 
   number_of_fluids = physical_properties.number_of_fluids;
@@ -56,6 +60,7 @@ PhysicalPropertiesManager::initialize(
     physical_properties.fluid_solid_interactions_with_material_interaction_ids;
 
   non_newtonian_flow       = false;
+  phase_change             = false;
   constant_density         = true;
   constant_surface_tension = true;
 
@@ -82,6 +87,9 @@ PhysicalPropertiesManager::initialize(
       specific_heat.push_back(
         SpecificHeatModel::model_cast(physical_properties.fluids[f]));
       establish_fields_required_by_model(*specific_heat[f]);
+
+      // Store an indicator that a phase change model is present
+      phase_change=phase_change || physical_properties.fluids[f].specific_heat_model==Parameters::Material::SpecificHeatModel::phase_change;
 
       thermal_conductivity.push_back(
         ThermalConductivityModel::model_cast(physical_properties.fluids[f]));
@@ -120,6 +128,7 @@ PhysicalPropertiesManager::initialize(
       specific_heat.push_back(
         SpecificHeatModel::model_cast(physical_properties.solids[s]));
       establish_fields_required_by_model(*specific_heat[s]);
+
 
       thermal_conductivity.push_back(
         ThermalConductivityModel::model_cast(physical_properties.solids[s]));

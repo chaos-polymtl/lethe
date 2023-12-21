@@ -1625,6 +1625,18 @@ namespace Parameters
                         Patterns::FileName(),
                         "File name output temperature statistics");
 
+      prm.declare_entry(
+        "calculate liquid fraction",
+        "false",
+        Patterns::Bool(),
+        "Enable calculation of the liquid fraction. The liquid fraction "
+        "is calculated from the volume integral of the liquid fraction divided by the volume of the domain.");
+
+      prm.declare_entry("liquid fraction name",
+                        "liquid_fraction",
+                        Patterns::FileName(),
+                        "File name output liquid fraction");
+
       prm.declare_entry("calculate heat flux",
                         "false",
                         Patterns::Bool(),
@@ -1705,6 +1717,8 @@ namespace Parameters
       phase_output_name           = prm.get("phase statistics name");
       calculate_temperature_statistics =
         prm.get_bool("calculate temperature statistics");
+      calculate_liquid_fraction = prm.get_bool("calculate liquid fraction");
+      liquid_fraction_output_name = prm.get("liquid fraction name");
       temperature_output_name = prm.get("temperature statistics name");
       calculate_heat_flux     = prm.get_bool("calculate heat flux");
       heat_flux_output_name   = prm.get("heat flux name");
