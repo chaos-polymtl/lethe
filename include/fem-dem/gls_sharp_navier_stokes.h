@@ -592,7 +592,7 @@ private:
    * particle index.
    */
   std::map<typename DoFHandler<dim>::active_cell_iterator,
-           std::tuple<bool, unsigned int, unsigned int>>
+           std::tuple<bool, unsigned int, std::vector<unsigned int>>>
     cut_cells_map;
 
   /*
@@ -611,6 +611,8 @@ private:
    */
   GlobalVectorType local_dof_overconstrained;
   GlobalVectorType dof_overconstrained;
+  std::map<unsigned int,bool> dof_with_more_then_one_particle;
+
 
   std::map<typename DoFHandler<dim>::active_cell_iterator,
            std::tuple<bool, unsigned int>>

@@ -298,6 +298,8 @@ The following parameter and subsection are all inside the subsection ``particle 
 * The ``physical properties`` subsection contains all the parameters associated with the particle physical properties.
     * The ``density`` parameter is used to define the density of the particle.
     
+    * The ``volume`` parameter is used to define the volume of the particle. If the value is left to 0, then the volume is automatically calculated based on the shape. Suppose the shape does not have a direct definition of the volume of the shape ( for example, in the case of a superquadric shape). In that case, the volume is, by default, defined by the volume of a sphere with a radius equivalent to the effective radius of the shape.
+    
     * The ``inertia`` parameter is used to define one of the diagonal elements of the rotational inertia matrix. Since we are defining spherical particles, we assume a uniform distribution of mass, and as such, all the diagonal elements of the rotational inertia matrix are the same.
 
     The following properties are used if the particle collides with one of the boundaries of the domain or another particle. The effective properties used to calculate the impact force are the harmonic mean between the properties of the colliding entities.
