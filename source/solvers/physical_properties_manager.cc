@@ -46,7 +46,7 @@ PhysicalPropertiesManager::initialize(
 {
   // Keep a copy of the physical properties used to build the physical property
   // manager
-  physical_properties_parameters=physical_properties;
+  physical_properties_parameters = physical_properties;
 
   is_initialized = true;
 
@@ -89,7 +89,9 @@ PhysicalPropertiesManager::initialize(
       establish_fields_required_by_model(*specific_heat[f]);
 
       // Store an indicator that a phase change model is present
-      phase_change=phase_change || physical_properties.fluids[f].specific_heat_model==Parameters::Material::SpecificHeatModel::phase_change;
+      phase_change =
+        phase_change || physical_properties.fluids[f].specific_heat_model ==
+                          Parameters::Material::SpecificHeatModel::phase_change;
 
       thermal_conductivity.push_back(
         ThermalConductivityModel::model_cast(physical_properties.fluids[f]));

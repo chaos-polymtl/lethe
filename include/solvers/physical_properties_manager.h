@@ -267,8 +267,11 @@ public:
     return constant_density;
   }
 
-  Parameters::PhysicalProperties get_physical_properties_parameters() const
-  {return physical_properties_parameters;}
+  Parameters::PhysicalProperties
+  get_physical_properties_parameters() const
+  {
+    return physical_properties_parameters;
+  }
 
   bool
   has_phase_change() const

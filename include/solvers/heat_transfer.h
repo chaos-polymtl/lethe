@@ -120,7 +120,6 @@ public:
     // outputs
     if (simulation_parameters.timer.type == Parameters::Timer::Type::none)
       this->computing_timer.disable_output();
-
   }
 
   /**
@@ -405,8 +404,7 @@ private:
    */
 
   void
-  postprocess_liquid_fraction(
-    const bool                       gather_vof);
+  postprocess_liquid_fraction(const bool gather_vof);
 
   /**
    * @brief Post-processing. Write the temperature statistics to an output file.
@@ -575,14 +573,15 @@ private:
 
 
   /*
-   * Phase change post-processing. These parameters track the presence of a phase change physical property and the associated post-processing information
-  */
+   * Phase change post-processing. These parameters track the presence of a
+   * phase change physical property and the associated post-processing
+   * information
+   */
 
   /*
    * Liquid fraction in the domain
    */
   TableHandler liquid_fraction;
-
 };
 
 
