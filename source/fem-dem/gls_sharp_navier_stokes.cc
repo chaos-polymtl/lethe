@@ -357,7 +357,7 @@ GLSSharpNavierStokesSolver<dim>::generate_cut_cells_map()
                                 particle_candidate_distance;
                             }
                         }
-                      
+
                           for (unsigned int j = 0;
                                j < local_dof_indices.size();
                                ++j)

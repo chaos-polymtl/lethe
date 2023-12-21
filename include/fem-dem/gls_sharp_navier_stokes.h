@@ -165,7 +165,10 @@ private:
   {
     if (some_particles_are_coupled)
       {
-        force_on_ib();
+        if (this->get_current_newton_iteration() != 0 )
+          {
+            force_on_ib();
+          }
         integrate_particles();
         update_precalculations_for_ib();
       }
