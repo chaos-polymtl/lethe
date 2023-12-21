@@ -288,7 +288,7 @@ subsection evaporation
   set enable evaporative cooling = true
   set enable recoil pressure = true
   set evaporation latent heat = 6e12 # L^2*T^-2
-  set molar mass = 4.46e-1
+  set molar mass = 4.58e-2
   set boiling temperature = 3133
   
   set evaporation coefficient = 0.82

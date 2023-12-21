@@ -675,15 +675,15 @@ GLSNavierStokesVOFAssemblerMarangoni<dim>::assemble_rhs(
       const double &curvature_value = scratch_data.curvature_values[q];
 
       // Gather phase fraction gradient
-      const Tensor<1, dim> &filtered_phase_gradient_value_q =
+      const Tensor<1, dim> &phase_gradient_value_q =
         scratch_data.filtered_phase_gradient_values[q];
 
-      const double filtered_phase_gradient_norm =
-        filtered_phase_gradient_value_q.norm();
+      const double phase_gradient_norm =
+        phase_gradient_value_q.norm();
 
       const Tensor<1, dim> normalized_phase_fraction_gradient =
-        filtered_phase_gradient_value_q /
-        (filtered_phase_gradient_norm + DBL_MIN);
+        phase_gradient_value_q /
+        (phase_gradient_norm + DBL_MIN);
 
       // Gather temperature gradient
       const Tensor<1, dim> temperature_gradient =
@@ -693,14 +693,14 @@ GLSNavierStokesVOFAssemblerMarangoni<dim>::assemble_rhs(
 
 
       const Tensor<1, dim> surface_tension_force =
-        -surface_tension * curvature_value * filtered_phase_gradient_value_q;
+        -surface_tension * curvature_value * phase_gradient_value_q;
 
       const Tensor<1, dim> marangoni_effect =
         -surface_tension_gradient *
         (temperature_gradient -
          normalized_phase_fraction_gradient *
            (normalized_phase_fraction_gradient * temperature_gradient)) *
-        filtered_phase_gradient_norm;
+        phase_gradient_norm;
 
       strong_residual[q] += marangoni_effect + surface_tension_force;
 
