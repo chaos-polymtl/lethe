@@ -1,9 +1,16 @@
+
 # Change Log
 All notable changes to the Lethe project will be documented in this file.
  
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
-### Changed - 2023-12-17
+## [Master] - 2023-12-22
+
+### Fixed
+
+- MINOR  PVD handles for solid DEM objects were written with the wrong text format ("_" seperarators instead of ".")
+
+### [Master] - Changed - 2023-12-17
 
 - MINOR The "insertion random number range" and "insertion random number seed" parameters got renamed to "insertion maximum offset" and "insertion prn seed" respectively. The old names didn't make sense, as they're not random because they're defined in the parameter file. [#970](https://github.com/lethe-cfd/lethe/pull/896)
 

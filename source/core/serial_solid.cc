@@ -539,8 +539,8 @@ SerialSolid<dim, spacedim>::write_checkpoint(std::string prefix)
     displacement.save(oa, 0);
   }
 
-  // Re-read pvd handler from output files
-  pvdhandler.save(prefix + "_solid_object_" + Utilities::int_to_string(id, 2));
+  // Write pvd handler
+  pvdhandler.save(prefix + ".solid_object." + Utilities::int_to_string(id, 2));
 }
 
 template <int dim, int spacedim>
