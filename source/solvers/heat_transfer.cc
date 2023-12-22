@@ -915,10 +915,10 @@ HeatTransfer<dim>::postprocess(bool first_iteration)
         LiquidFractionRequiresPhaseChange());
       postprocess_liquid_fraction(gather_vof);
 
-      // if (simulation_control->get_step_number() %
-      //       this->simulation_parameters.post_processing.output_frequency ==
-      //     0)
-      //   this->write_temperature_statistics(domain_name);
+      if (simulation_control->get_step_number() %
+            this->simulation_parameters.post_processing.output_frequency ==
+          0)
+        this->write_liquid_fraction();
     }
 
   if (this->simulation_parameters.timer.type ==
@@ -1035,6 +1035,13 @@ HeatTransfer<dim>::write_checkpoint()
       prefix +
         this->simulation_parameters.post_processing.temperature_output_name +
         suffix);
+
+  if (this->simulation_parameters.post_processing.calculate_liquid_fraction)
+    serialize_table(this->liquid_fraction_table,
+                    prefix +
+                      this->simulation_parameters.post_processing
+                        .liquid_fraction_output_name +
+                      suffix);
 }
 
 template <int dim>
@@ -1090,6 +1097,12 @@ HeatTransfer<dim>::read_checkpoint()
       prefix +
         this->simulation_parameters.post_processing.temperature_output_name +
         suffix);
+  if (this->simulation_parameters.post_processing.calculate_liquid_fraction)
+    deserialize_table(this->liquid_fraction_table,
+                      prefix +
+                        this->simulation_parameters.post_processing
+                          .liquid_fraction_output_name +
+                        suffix);
 }
 
 
@@ -1511,13 +1524,31 @@ HeatTransfer<dim>::postprocess_temperature_statistics(
       this->pcout << "\t Std-Dev : " << temperature_std_deviation << std::endl;
     }
 
-  // Filling table
+  // Fill table
   this->statistics_table.add_value(
     "time", this->simulation_control->get_current_time());
   this->statistics_table.add_value("min", minimum_temperature);
   this->statistics_table.add_value("max", maximum_temperature);
   this->statistics_table.add_value("average", temperature_average);
   this->statistics_table.add_value("std-dev", temperature_std_deviation);
+}
+
+template <int dim>
+void
+HeatTransfer<dim>::write_temperature_statistics(const std::string domain_name)
+{
+  auto mpi_communicator = triangulation->get_communicator();
+
+  if (Utilities::MPI::this_mpi_process(mpi_communicator) == 0)
+    {
+      std::string filename =
+        simulation_parameters.simulation_control.output_folder +
+        simulation_parameters.post_processing.temperature_output_name + "_" +
+        domain_name + ".dat";
+      std::ofstream output(filename.c_str());
+
+      this->statistics_table.write_text(output);
+    }
 }
 
 template <int dim>
@@ -1650,15 +1681,15 @@ HeatTransfer<dim>::postprocess_liquid_fraction(const bool gather_vof)
                   << ": " << liquid_fraction << std::endl;
     }
 
-  // Filling table
-  this->statistics_table.add_value(
+  // Fill table
+  this->liquid_fraction_table.add_value(
     "time", this->simulation_control->get_current_time());
-  this->statistics_table.add_value("liquid fraction", liquid_fraction);
+  this->liquid_fraction_table.add_value("liquid fraction", liquid_fraction);
 }
 
 template <int dim>
 void
-HeatTransfer<dim>::write_temperature_statistics(const std::string domain_name)
+HeatTransfer<dim>::write_liquid_fraction()
 {
   auto mpi_communicator = triangulation->get_communicator();
 
@@ -1666,13 +1697,15 @@ HeatTransfer<dim>::write_temperature_statistics(const std::string domain_name)
     {
       std::string filename =
         simulation_parameters.simulation_control.output_folder +
-        simulation_parameters.post_processing.temperature_output_name + "_" +
-        domain_name + ".dat";
+        simulation_parameters.post_processing.liquid_fraction_output_name +
+        ".dat";
       std::ofstream output(filename.c_str());
 
-      this->statistics_table.write_text(output);
+      this->liquid_fraction_table.write_text(output);
     }
 }
+
+
 
 template <int dim>
 template <typename VectorType>

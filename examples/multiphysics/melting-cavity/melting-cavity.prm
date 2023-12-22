@@ -9,7 +9,7 @@ set dimension = 2
 
 subsection simulation control
   set method                       = bdf1
-  set time end                     = 60.1977
+  set time end                     = 41
   set time step                    = 0.001
   set adapt                        = true 
   set max cfl                      = 0.8
@@ -109,7 +109,7 @@ subsection mesh
   set type               = dealii
   set grid type          = subdivided_hyper_rectangle
   set grid arguments     = 2, 1 : 0, 0 : 1, 0.714 : true
-  set initial refinement = 5
+  set initial refinement = 6
 end
 
 #---------------------------------------------------
@@ -183,7 +183,7 @@ subsection non-linear solver
     set verbosity      = verbose
   end
   subsection fluid dynamics
-    set tolerance      = 1e-6
+    set tolerance      = 1e-5
     set max iterations = 5
     set verbosity      = verbose
   end

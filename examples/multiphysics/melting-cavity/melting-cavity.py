@@ -131,9 +131,9 @@ melted_x_exp = [0.00946, 0.01433, 0.02113, 0.02877, 0.03774, 0.04739, 0.05956, 0
 melted_y_exp = [0.11972, 0.16112, 0.20476, 0.22713, 0.2786, 0.34014, 0.43077, 0.5035, 0.56392, 0.61664]
 
 #Make the time_list and x_list dimensionless
-time_list = [t * time_scaling for t in time_list]
+time_list = np.array(time_list) * time_scaling
 
-#Plot outputs
+#Plot outputs for solid front position
 fig0 = plt.figure()
 ax0 = fig0.add_subplot(111)
 ax0.plot(time_list, x_list_top, 'g-.', label="Simulation (top)")
@@ -147,5 +147,21 @@ ax0.set_xlabel(r'$\tau$')
 ax0.set_xlim([0, 0.07])
 ax0.legend(loc="upper left")
 fig0.savefig(f'./xmax-t.png')
+plt.show()
+plt.close()
+
+#Load melted volume
+t_list,melt_frac=np.loadtxt(output_path+"/liquid_fraction.dat",unpack=True,skiprows=1)
+
+#Plot melted volume
+fig1 = plt.figure()
+ax1 = fig1.add_subplot(111)
+ax1.plot(t_list * time_scaling , melt_frac, '-k', label="Simulation")
+ax1.plot(melted_x_exp, melted_y_exp, 'ro', label="Experiment - G&V (1986)")
+ax1.set_ylabel(r'melted volume fraction')
+ax1.set_xlabel(r'$\tau$')
+ax1.set_xlim([0, 0.07])
+ax1.legend(loc="upper left")
+fig1.savefig(f'./melted-volume-fraction.png')
 plt.show()
 plt.close()
