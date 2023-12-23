@@ -683,9 +683,7 @@ IBParticlesDEM<dim>::calculate_pw_contact_force(
               if constexpr (dim == 2)
                 {
                   rotation_axis[2] = 1;
-                  angle =
-                    std::acos(scalar_product(Tensor<1, 3>({0, 1, 0}), normal) /
-                              normal.norm());
+                  angle = std::atan2(-normal[0],normal[1]);
                 }
               else
                 {
@@ -712,6 +710,9 @@ IBParticlesDEM<dim>::calculate_pw_contact_force(
 
               std::shared_ptr<Shape<dim>> contact_plane =
                 std::make_shared<Plane<dim>>(point_on_boundary, orientation);
+              contact_plane->set_position(point_on_boundary);
+              contact_plane->set_orientation(orientation);
+
 
               std::vector<Point<dim>> contact_point_candidate;
               auto                    iterator =
@@ -1080,6 +1081,7 @@ IBParticlesDEM<dim>::calculate_force_model(
     particle_one_velocity +
     cross_product_3d(particle_one_omega,
                      (contact_point - point_nd_to_3d(particle_one_position)));
+
   Tensor<1, 3> velocity_of_particle_two_at_contact_point =
     particle_two_velocity +
     cross_product_3d(particle_two_omega,
@@ -1272,7 +1274,7 @@ IBParticlesDEM<dim>::integrate_particles_motion(const double dt,
         std::vector<std::vector<Tensor<1, 3>>>(dem_particles.size(),
                                                std::vector<Tensor<1, 3>>(4));
 
-      // Solve each of the 1 step of the RK4 method
+      // Solve each of the 4 step of the RK4 method
       for (unsigned int step = 0; step < 4; ++step)
         {
           std::fill(current_fluid_force.begin(), current_fluid_force.end(), 0);
@@ -1323,7 +1325,13 @@ IBParticlesDEM<dim>::integrate_particles_motion(const double dt,
                                              lubrication_wall_torque);
             }
 
-
+          /*if (Utilities::MPI::this_mpi_process(this->mpi_communicator) == 0)
+            {
+              std::cout<<"time "<< t <<std::endl;
+              std::cout<<"particle velocity "<< dem_particles[0].velocity<<std::endl;
+              std::cout<<"particle force"<< contact_wall_force[0]<<std::endl;
+              std::cout<<"particle torque"<< contact_wall_torque[0]<<std::endl;
+            }*/
           for (unsigned int p_i = 0; p_i < dem_particles.size(); ++p_i)
             {
               if (dem_particles[p_i].integrate_motion)
@@ -1673,6 +1681,8 @@ IBParticlesDEM<dim>::integrate_particles_motion(const double dt,
                 dem_particles[p_i].orientation);
             }
         }
+
+
 
       // RK4 for the particle wall tangential overlap
       for (auto it = pw_contact_map.begin(); it != pw_contact_map.end(); it++)

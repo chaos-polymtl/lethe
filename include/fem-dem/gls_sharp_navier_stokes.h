@@ -165,7 +165,7 @@ private:
   {
     if (some_particles_are_coupled)
       {
-        if (this->get_current_newton_iteration() != 0 )
+        if (this->get_current_newton_iteration() != 0)
           {
             force_on_ib();
           }
@@ -610,7 +610,8 @@ private:
     overconstrained_fluid_cell_map;
 
   /*
-   * These vectors are used to keep track of the DOFs that are overconstrained
+   * These vectors and map are used to keep track of the DOFs that are
+   * overconstrained
    */
   GlobalVectorType local_dof_overconstrained;
   GlobalVectorType dof_overconstrained;

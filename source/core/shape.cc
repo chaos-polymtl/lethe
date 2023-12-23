@@ -73,6 +73,7 @@ Shape<dim>::align_and_center(const Point<dim> &evaluation_point) const
   Point<dim> centralized_point;
   centralized_point              = evaluation_point - center_of_rotation;
   Point<dim> centralized_rotated = centralized_point;
+  Point<dim> centralized_rotated_initial=centralized_point;
 
   // Selection of the first axis around which to rotate:
   // x -> 0, y -> 1, z -> 2
@@ -123,6 +124,7 @@ Shape<dim>::align_and_center(const Point<dim> &evaluation_point) const
             }
         }
     }
+
   rotated_point = centralized_rotated + center_of_rotation;
 
   // Translation from the solid position
@@ -476,7 +478,6 @@ Plane<dim>::value(const Point<dim> &evaluation_point,
   double     dot_product   = scalar_product((current_point), normal);
   Point<dim> projected_point =
     current_point - dot_product / normal.norm_square() * normal;
-
   auto rotate_in_globalpoint = this->reverse_align_and_center(projected_point);
   if (dot_product > 0)
     return (rotate_in_globalpoint - evaluation_point).norm();
@@ -499,22 +500,16 @@ Tensor<1, dim>
 Plane<dim>::gradient(const Point<dim> &evaluation_point,
                      const unsigned int /*component*/) const
 {
-  // We make sure that the evaluation point and the sphere center are different,
-  // because if they are the same the analytical gradient is not defined: the
-  // function returns a NaN. We use the numerical gradient if the points are the
-  // same.
-  Point<dim> current_point = this->align_and_center(evaluation_point);
-  double     dot_product   = scalar_product((current_point), normal);
-  Point<dim> projected_point =
-    current_point - dot_product / normal.norm_square() * normal;
+  //  We take the vector in z of the plane and rotate it in the world frame.
+  if constexpr (dim == 2)
+    {
+      return tensor_nd_to_2d(this->rotation_matrix* tensor_nd_to_3d(normal));
+    }
 
-  auto rotate_in_globalpoint = this->reverse_align_and_center(projected_point);
-  if (dot_product > 0)
-    return (rotate_in_globalpoint - evaluation_point) /
-           (rotate_in_globalpoint - evaluation_point).norm();
   else
-    return -(rotate_in_globalpoint - evaluation_point) /
-           ((rotate_in_globalpoint - evaluation_point).norm() + DBL_MIN);
+    {
+      return this->rotation_matrix * normal;
+    }
 }
 
 template <int dim>
@@ -2114,7 +2109,7 @@ RBFShape<dim>::determine_likely_nodes_for_one_cell(
   double     temp_cell_diameter;
 
   likely_nodes_map[cell]          = std::make_shared<std::vector<
-    std::tuple<Point<dim>, double, std::shared_ptr<std::vector<size_t>>>>>();
+             std::tuple<Point<dim>, double, std::shared_ptr<std::vector<size_t>>>>>();
   const size_t number_of_portions = iterable_nodes.size();
   for (size_t portion_id = 0; portion_id < number_of_portions; portion_id++)
     {

@@ -233,13 +233,14 @@ GLSSharpNavierStokesSolver<dim>::generate_cut_cells_map()
                               particle_id_in_which_this_cell_is_embedded = 0;
                             }
                           particles_cutting_this_cell.push_back(p);
-                          if(particles_cutting_this_cell.size()>1)
+                          if (particles_cutting_this_cell.size() > 1)
                             {
                               for (unsigned int j = 0;
                                    j < local_dof_indices.size();
                                    ++j)
                                 {
-                                  dof_with_more_then_one_particle[local_dof_indices[j]] = true;
+                                  dof_with_more_then_one_particle
+                                    [local_dof_indices[j]] = true;
                                 }
                             }
                         }
@@ -358,12 +359,12 @@ GLSSharpNavierStokesSolver<dim>::generate_cut_cells_map()
                             }
                         }
 
-                          for (unsigned int j = 0;
-                               j < local_dof_indices.size();
-                               ++j)
-                            {
-                              dof_with_more_then_one_particle[local_dof_indices[j]] = true;
-                            }
+                      for (unsigned int j = 0; j < local_dof_indices.size();
+                           ++j)
+                        {
+                          dof_with_more_then_one_particle
+                            [local_dof_indices[j]] = true;
+                        }
 
                       overconstrained_fluid_cell_map[cell] = {
                         true, particle_current_id, particle_current_distance};
@@ -1219,8 +1220,8 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                               // surface.
                               if (force_eval.find(local_face_dof_indices[i]) ==
                                     force_eval.end() or
-                                  dof_with_more_then_one_particle[
-                                    local_face_dof_indices[i]] ==true)
+                                  dof_with_more_then_one_particle
+                                      [local_face_dof_indices[i]] == true)
                                 {
                                   if (component_i == 0)
                                     {
@@ -1248,8 +1249,9 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                                       // except if the dof is not owned.
                                       if (ib_done[local_face_dof_indices[i]]
                                               .first == false or
-                                          dof_with_more_then_one_particle[
-                                            local_face_dof_indices[i]] ==true )
+                                          dof_with_more_then_one_particle
+                                              [local_face_dof_indices[i]] ==
+                                            true)
                                         {
                                           // Get the cell use for the
                                           // extrapolation
@@ -1371,12 +1373,10 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                                         fluid_pressure_stress_at_ib;
 
 
-                                          force_eval
-                                            [local_face_dof_indices[i]] =
-                                              std::make_pair(
-                                                fluid_viscous_stress_at_ib,
-                                                fluid_pressure_stress_at_ib);
-
+                                      force_eval[local_face_dof_indices[i]] =
+                                        std::make_pair(
+                                          fluid_viscous_stress_at_ib,
+                                          fluid_pressure_stress_at_ib);
                                     }
                                 }
                               else
@@ -1643,25 +1643,15 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
         Utilities::MPI::sum(particles[i].fluid_pressure_forces,
                             this->mpi_communicator) *
         fluid_density;
-
       particles[i].fluid_forces =
         particles[i].fluid_viscous_forces + particles[i].fluid_pressure_forces;
-
       particles[i].fluid_torque =
         Utilities::MPI::sum(particles[i].fluid_torque, this->mpi_communicator) *
         fluid_density;
-      this->pcout << "particles[i].integrate motion"
-                  << particles[i].integrate_motion << std::endl;
-      this->pcout << "particles[i].fluid_forces" << particles[i].fluid_forces
-                  << std::endl;
-      this->pcout << "particles[i].fluid_torque" << particles[i].fluid_torque
-                  << std::endl;
       total_area[i] =
         Utilities::MPI::sum(total_area[i], this->mpi_communicator);
-      this->pcout << " hi total area " << total_area[i] << std::endl;
       nb_evaluation[i] =
         Utilities::MPI::sum(nb_evaluation[i], this->mpi_communicator);
-      this->pcout << " hi  nb_evaluation " << nb_evaluation[i] << std::endl;
     }
 }
 
