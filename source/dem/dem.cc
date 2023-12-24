@@ -230,7 +230,8 @@ DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
               parameters.lagrangian_physical_properties.particle_size_std.at(
                 particle_type),
               parameters.lagrangian_physical_properties
-                .seed_for_distributions[particle_type]);
+                  .seed_for_distributions[particle_type] +
+                this_mpi_process);
         }
       else if (parameters.lagrangian_physical_properties.distribution_type.at(
                  particle_type) ==
@@ -243,7 +244,8 @@ DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
               parameters.lagrangian_physical_properties
                 .particle_custom_probability.at(particle_type),
               parameters.lagrangian_physical_properties
-                .seed_for_distributions[particle_type]);
+                  .seed_for_distributions[particle_type] +
+                this_mpi_process);
         }
       maximum_particle_diameter = std::max(
         maximum_particle_diameter,
