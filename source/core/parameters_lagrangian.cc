@@ -90,7 +90,7 @@ namespace Parameters
                     particle_custom_probability.at(particle_type).end());
 
       // We make sure that the cumulative probability is equal to 1.
-      if (std::abs(probability_sum - 1.0) > 1.e-12)
+      if (std::abs(probability_sum - 1.0) > 1.e-5)
         {
           throw(std::runtime_error(
             "Invalid custom volume fraction. The sum of volume fractions should be equal to 1.0 "));
