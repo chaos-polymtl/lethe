@@ -33,12 +33,19 @@ DeclException2(SizeOfFields,
                << " is not equal to the number of values for another field "
                << arg2);
 
+/*
+ * Fields on which physical property can depend. All fields are assumed
+ * to be at time t+dt other than those for which a _p suffix is explicitely
+ * given. The suffix _p1 implies that the field is at time t (previous one step)
+ * and the suffix _p2 implies that the field is at time t_dt (previous two
+ * steps).
+ */
 enum field : int
 {
   shear_rate,
   temperature,
-  temperature_p1,
-  temperature_p2,
+  temperature_p1, // temperature at time t
+  temperature_p2, // temperature at time t-dt
   pressure,
   phase_order_cahn_hilliard
 };

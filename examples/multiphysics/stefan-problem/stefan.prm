@@ -8,12 +8,12 @@ set dimension = 2
 #---------------------------------------------------
 
 subsection simulation control
-  set method           = bdf2
+  set method           = bdf1
   set output frequency = 1
   set output name      = stefan
   set output path      = ./output/
   set time end         = 5
-  set time step        = 0.5
+  set time step        = 0.02
 end
 
 #---------------------------------------------------

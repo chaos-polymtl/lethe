@@ -150,7 +150,7 @@ public:
 
 
     // Gather information required from the simulation control to have the time
-    // histort
+    // history
     std::shared_ptr<SimulationControl> simulation_control =
       get_simulation_control();
 
