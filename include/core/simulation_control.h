@@ -20,6 +20,7 @@
 #ifndef lethe_simulation_control_h
 #define lethe_simulation_control_h
 
+#include <core/bdf.h>
 #include <core/parameters.h>
 
 /**
@@ -412,6 +413,12 @@ public:
   set_assembly_method(Parameters::SimulationControl::TimeSteppingMethod method)
   {
     assembly_method = method;
+  }
+
+  unsigned int
+  get_number_of_previous_solution_in_assembly() const
+  {
+    return number_of_previous_solutions(method);
   }
 
   std::vector<double>

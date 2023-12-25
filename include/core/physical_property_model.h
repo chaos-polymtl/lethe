@@ -18,9 +18,13 @@
 #define lethe_physical_property_model_h
 
 #include <core/parameters.h>
+#include <core/simulation_control.h>
 
 using namespace dealii;
 
+DeclExceptionMsg(
+  SimulationControlUsageByProperty,
+  "The usage of the simulation control object is currently only supported by the SpecificHeat models");
 
 DeclException2(SizeOfFields,
                unsigned int,
@@ -29,11 +33,19 @@ DeclException2(SizeOfFields,
                << " is not equal to the number of values for another field "
                << arg2);
 
+/*
+ * Fields on which physical property can depend. All fields are assumed
+ * to be at time t+dt other than those for which a _p suffix is explicitely
+ * given. The suffix _p1 implies that the field is at time t (previous one step)
+ * and the suffix _p2 implies that the field is at time t_dt (previous two
+ * steps).
+ */
 enum field : int
 {
   shear_rate,
   temperature,
-  previous_temperature,
+  temperature_p1, // temperature at time t
+  temperature_p2, // temperature at time t-dt
   pressure,
   phase_order_cahn_hilliard
 };
@@ -72,7 +84,8 @@ public:
   {
     model_depends_on[shear_rate]                = false;
     model_depends_on[temperature]               = false;
-    model_depends_on[previous_temperature]      = false;
+    model_depends_on[temperature_p1]            = false;
+    model_depends_on[temperature_p2]            = false;
     model_depends_on[pressure]                  = false;
     model_depends_on[phase_order_cahn_hilliard] = false;
   }
@@ -128,6 +141,20 @@ public:
                   const field                                 id,
                   std::vector<double> &jacobian_vector) = 0;
 
+  /**
+   * @brief Provides the physical property with the simulation control object ensuring
+   * that the PhysicalPropertyModel can calculate physical properties that
+   * depend on time or time-history
+   *
+   * @param p_simulation_control shared pointed to a SimulationControl object. A copy of this shared pointer is stored in the physical property.
+   */
+
+  void
+  provide_simulation_control(
+    std::shared_ptr<SimulationControl> &p_simulation_control)
+  {
+    simulation_control = p_simulation_control;
+  }
 
   /**
    * @brief numerical_jacobian Calculates the jacobian through a forward finite difference (Euler) approximation.
@@ -193,8 +220,22 @@ public:
   }
 
 protected:
+  std::shared_ptr<SimulationControl> &
+  get_simulation_control()
+  {
+    AssertThrow(simulation_control, SimulationControlUsageByProperty());
+    return simulation_control;
+  }
+
   // Map to indicate on which variables the model depends on
   std::map<field, bool> model_depends_on;
+
+private:
+  // SimulationControl object. This can be used to set time-dependent
+  // physical properties or properties which depend on time derivatives.
+  // The SimulationControl must be provided to the physical property
+  // through the solver itself.
+  std::shared_ptr<SimulationControl> simulation_control;
 };
 
 
