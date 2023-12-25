@@ -18,6 +18,7 @@
 #define lethe_specific_heat_model_h
 
 
+#include <core/parameters.h>
 #include <core/phase_change.h>
 #include <core/physical_property_model.h>
 
@@ -130,8 +131,9 @@ public:
     const Parameters::PhaseChange p_phase_change_parameters)
     : param(p_phase_change_parameters)
   {
-    this->model_depends_on[field::temperature]          = true;
-    this->model_depends_on[field::previous_temperature] = true;
+    this->model_depends_on[field::temperature]    = true;
+    this->model_depends_on[field::temperature_p1] = true;
+    this->model_depends_on[field::temperature_p2] = true;
   }
 
   /**
@@ -141,18 +143,64 @@ public:
   double
   value(const std::map<field, double> &fields_value) override
   {
-    const double temperature = fields_value.at(field::temperature);
-    const double previous_temperature =
-      fields_value.at(field::previous_temperature);
-    if (temperature > previous_temperature)
+    const double temperature    = fields_value.at(field::temperature);
+    const double temperature_p1 = fields_value.at(field::temperature_p1);
+
+    const double temperature_p2 = fields_value.at(field::temperature_p2);
+
+
+    // Gather information required from the simulation control to have the time
+    // history
+    std::shared_ptr<SimulationControl> simulation_control =
+      get_simulation_control();
+
+    auto method = simulation_control->get_assembly_method();
+
+    std::vector<double> time_steps_vector =
+      simulation_control->get_time_steps_vector();
+
+    Vector<double> bdf_coefs = bdf_coefficients(method, time_steps_vector);
+
+
+    // If change between the temperature is insufficient, backtrack to the first
+    // order implementation
+    if (method != Parameters::SimulationControl::TimeSteppingMethod::bdf1 &&
+        std::abs(temperature - temperature_p2) < 1e-6)
+      method = Parameters::SimulationControl::TimeSteppingMethod::bdf1;
+
+    switch (method)
       {
-        const double dT = std::max(temperature - previous_temperature, 1e-6);
-        return (enthalpy(temperature) - enthalpy(temperature - dT)) / dT;
-      }
-    else
-      {
-        const double dT = std::max(previous_temperature - temperature, 1e-6);
-        return (enthalpy(temperature + dT) - enthalpy(temperature)) / dT;
+        case Parameters::SimulationControl::TimeSteppingMethod::bdf1:
+          if (temperature > temperature_p1)
+            {
+              const double dT = std::max(temperature - temperature_p1, 1e-6);
+              return (enthalpy(temperature) - enthalpy(temperature - dT)) / dT;
+            }
+          else
+            {
+              const double dT = std::max(temperature_p1 - temperature, 1e-6);
+              return (enthalpy(temperature + dT) - enthalpy(temperature)) / dT;
+            }
+          break;
+
+        case Parameters::SimulationControl::TimeSteppingMethod::bdf2:
+          {
+            const double enthalpy_current = enthalpy(temperature);
+            const double enthalpy_p1      = enthalpy(temperature_p1);
+            const double enthalpy_p2      = enthalpy(temperature_p2);
+            const double dH               = bdf_coefs[0] * enthalpy_current +
+                              bdf_coefs[1] * enthalpy_p1 +
+                              bdf_coefs[2] * enthalpy_p2;
+            const double dT = bdf_coefs[0] * temperature +
+                              bdf_coefs[1] * temperature_p1 +
+                              bdf_coefs[2] * temperature_p2;
+            return dH / dT;
+            break;
+          }
+
+        default:
+          throw(std::runtime_error(
+            "Other time integration schemes are not supported by the phase change model"));
       }
   }
 
@@ -168,33 +216,80 @@ public:
   {
     const std::vector<double> &temperature_vec =
       field_vectors.at(field::temperature);
-    const std::vector<double> &previous_temperature_vec =
-      field_vectors.at(field::previous_temperature);
+    const std::vector<double> &p1_temperature_vec =
+      field_vectors.at(field::temperature_p1);
+    const std::vector<double> &p2_temperature_vec =
+      field_vectors.at(field::temperature_p2);
 
     const unsigned int n_values = temperature_vec.size();
 
-    Assert(n_values == previous_temperature_vec.size(),
-           SizeOfFields(n_values, previous_temperature_vec.size()));
+    Assert(n_values == p2_temperature_vec.size(),
+           SizeOfFields(n_values, p2_temperature_vec.size()));
+    Assert(n_values == p1_temperature_vec.size(),
+           SizeOfFields(n_values, p1_temperature_vec.size()));
     Assert(n_values == property_vector.size(),
            SizeOfFields(n_values, property_vector.size()));
 
+    // Gather information required from the simulation control to have the time
+    // history
+    std::shared_ptr<SimulationControl> simulation_control =
+      get_simulation_control();
+    std::vector<double> time_steps_vector =
+      simulation_control->get_time_steps_vector();
+
     for (unsigned int i = 0; i < n_values; ++i)
       {
-        const double temperature          = temperature_vec[i];
-        const double previous_temperature = previous_temperature_vec[i];
-        if (temperature > previous_temperature)
+        const double temperature    = temperature_vec[i];
+        const double temperature_p1 = p1_temperature_vec[i];
+        const double temperature_p2 = p2_temperature_vec[i];
+
+        // If change between the temperature is insufficient, backtrack to the
+        // first order implementation
+        auto method = simulation_control->get_assembly_method();
+
+        if (method != Parameters::SimulationControl::TimeSteppingMethod::bdf1 &&
+            std::abs(temperature - temperature_p2) < 1e-6)
+          method = Parameters::SimulationControl::TimeSteppingMethod::bdf1;
+
+        Vector<double> bdf_coefs = bdf_coefficients(method, time_steps_vector);
+
+        switch (method)
           {
-            const double dT =
-              std::max(temperature - previous_temperature, 1e-6);
-            property_vector[i] =
-              (enthalpy(temperature) - enthalpy(temperature - dT)) / dT;
-          }
-        else
-          {
-            const double dT =
-              std::max(previous_temperature - temperature, 1e-6);
-            property_vector[i] =
-              (enthalpy(temperature + dT) - enthalpy(temperature)) / dT;
+            case Parameters::SimulationControl::TimeSteppingMethod::bdf1:
+              if (temperature > temperature_p1)
+                {
+                  const double dT =
+                    std::max(temperature - temperature_p1, 1e-6);
+                  property_vector[i] =
+                    (enthalpy(temperature) - enthalpy(temperature - dT)) / dT;
+                }
+              else
+                {
+                  const double dT =
+                    std::max(temperature_p1 - temperature, 1e-6);
+                  property_vector[i] =
+                    (enthalpy(temperature + dT) - enthalpy(temperature)) / dT;
+                }
+              break;
+
+            case Parameters::SimulationControl::TimeSteppingMethod::bdf2:
+              {
+                const double enthalpy_current = enthalpy(temperature);
+                const double enthalpy_p1      = enthalpy(temperature_p1);
+                const double enthalpy_p2      = enthalpy(temperature_p2);
+                const double dH = bdf_coefs[0] * enthalpy_current +
+                                  bdf_coefs[1] * enthalpy_p1 +
+                                  bdf_coefs[2] * enthalpy_p2;
+                const double dT = bdf_coefs[0] * temperature +
+                                  bdf_coefs[1] * temperature_p1 +
+                                  bdf_coefs[2] * temperature_p2;
+                property_vector[i] = dH / dT;
+                break;
+              }
+
+            default:
+              throw(std::runtime_error(
+                "Other time integration schemes are not supported by the phase change model"));
           }
       }
   }

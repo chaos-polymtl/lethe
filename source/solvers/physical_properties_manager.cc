@@ -60,7 +60,8 @@ PhysicalPropertiesManager::initialize(
   constant_surface_tension = true;
 
   required_fields[field::temperature]               = false;
-  required_fields[field::previous_temperature]      = false;
+  required_fields[field::temperature_p1]            = false;
+  required_fields[field::temperature_p2]            = false;
   required_fields[field::shear_rate]                = false;
   required_fields[field::pressure]                  = false;
   required_fields[field::phase_order_cahn_hilliard] = false;
