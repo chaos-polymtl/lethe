@@ -10,13 +10,13 @@ set dimension = 2
 subsection simulation control
   set method                       = bdf1
   set time end                     = 41
-  set time step                    = 0.001
+  set time step                    = 0.01
   set adapt                        = true 
   set max cfl                      = 0.8
   set adaptative time step scaling = 1.1
   set output name                  = melting
   set output control               = iteration
-  set output frequency             = 100
+  set output frequency             = 10
   set output path                  = ./output/
 end
 
@@ -40,7 +40,7 @@ subsection initial conditions
     set Function expression = 0; 0; 0
   end
   subsection temperature
-    set Function expression = -1.8
+    set Function expression = 28
   end
 end
 
@@ -60,6 +60,7 @@ end
 
 subsection physical properties
   set number of fluids = 1
+  set reference temperature = 29.8
   subsection fluid 0
     set thermal conductivity model = constant
     set thermal conductivity       = 0.040516842071415184
@@ -77,10 +78,10 @@ subsection physical properties
       set latent enthalpy = 200
 
       # Temperature of the liquidus
-      set liquidus temperature = 0
+      set liquidus temperature = 29.8
 
       # Temperature of the solidus
-      set solidus temperature = -0.3
+      set solidus temperature = 29.6
 
       # Specific heat of the liquid phase
       set specific heat liquid = 1
@@ -92,7 +93,7 @@ subsection physical properties
       set viscosity liquid = 0.0007366698558439125
 
       # Kinematic viscosity of the solid phase
-      set viscosity solid = 100
+      set viscosity solid = 10
 
       set thermal expansion liquid       = 1
       set thermal expansion solid       = 0
@@ -108,7 +109,7 @@ end
 subsection mesh
   set type               = dealii
   set grid type          = subdivided_hyper_rectangle
-  set grid arguments     = 2, 1 : 0, 0 : 1, 0.714 : true
+  set grid arguments     = 3, 2 : 0, 0 : 1, 0.714 : true
   set initial refinement = 6
 end
 
@@ -151,14 +152,14 @@ subsection boundary conditions heat transfer
     set id    = 0
     set type  = temperature
     subsection value
-      set Function expression = 8.2
+      set Function expression = 38
     end
   end
   subsection bc 1
     set id    = 1
     set type  = temperature
     subsection value
-      set Function expression = -1.8
+      set Function expression =  28
     end
   end
 end
@@ -179,11 +180,11 @@ end
 subsection non-linear solver
   subsection heat transfer
     set tolerance      = 1e-3
-    set max iterations = 20
+    set max iterations = 30
     set verbosity      = verbose
   end
   subsection fluid dynamics
-    set tolerance      = 1e-5
+    set tolerance      = 1e-4
     set max iterations = 5
     set verbosity      = verbose
   end
@@ -199,18 +200,19 @@ subsection linear solver
     set method                                = gmres
     set max iters                             = 1000
     set relative residual                     = 1e-3
-    set minimum residual                      = 1e-11
+    set minimum residual                      = 1e-5
     set preconditioner                        = ilu
     set ilu preconditioner fill               = 0
     set ilu preconditioner absolute tolerance = 1e-12
     set ilu preconditioner relative tolerance = 1.00
+    set max krylov vectors                    = 1000
   end
   subsection heat transfer
     set verbosity                             = verbose
     set method                                = gmres
     set max iters                             = 1000
     set relative residual                     = 1e-3
-    set minimum residual                      = 1e-6
+    set minimum residual                      = 1e-5
     set preconditioner                        = ilu
     set ilu preconditioner fill               = 0
     set ilu preconditioner absolute tolerance = 1e-12

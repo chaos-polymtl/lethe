@@ -5,6 +5,7 @@ Ra=1e5 #Rayleigh Number
 Gr=5.5e6
 St=0.041
 
+L=1
 H=0.714
 rho=1
 Tw=38

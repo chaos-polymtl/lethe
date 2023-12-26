@@ -313,6 +313,12 @@ public:
         "Invalid type of material interaction. The choices are <fluid-fluid|fluid-solid>"));
   }
 
+  double
+  get_reference_temperature() const
+  {
+    return reference_temperature;
+  }
+
 private:
   void
   establish_fields_required_by_model(PhysicalPropertyModel &model);
@@ -360,6 +366,12 @@ private:
   bool constant_density;
   bool constant_surface_tension;
   bool phase_change;
+  /*
+   * Reference temperature used for the calculation of all physical properties
+   * of all materials. Currently, this is only used for the thermal expansion
+   * model.
+   */
+  double reference_temperature;
 
   // Internal copy of the parameters used to build the manager
   Parameters::PhysicalProperties physical_properties_parameters;

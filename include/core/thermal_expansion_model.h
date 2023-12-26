@@ -134,28 +134,10 @@ public:
   double
   value(const std::map<field, double> &fields_value) override
   {
-    double thermal_expansion;
-    // Thermal expansion of solid phase
-    if (fields_value.at(field::temperature) < p_phase_change_params.T_solidus)
-      thermal_expansion = p_phase_change_params.thermal_expansion_s;
-    // Thermal expansion coefficient of liquid phase
-    else if (fields_value.at(field::temperature) >
-             p_phase_change_params.T_liquidus)
-      thermal_expansion = p_phase_change_params.thermal_expansion_l;
-    // Mean value of the thermal expansion coefficients of the solid and liquid
-    // phases
+    if (fields_value.at(field::temperature) > p_phase_change_params.T_liquidus)
+      return p_phase_change_params.thermal_expansion_l;
     else
-      {
-        const double l_frac =
-          calculate_liquid_fraction(fields_value.at(field::temperature),
-                                    p_phase_change_params);
-
-        thermal_expansion =
-          p_phase_change_params.thermal_expansion_l * l_frac +
-          p_phase_change_params.thermal_expansion_s * (1. - l_frac);
-      }
-
-    return thermal_expansion;
+      return p_phase_change_params.thermal_expansion_s;
   };
 
   /**
@@ -171,20 +153,11 @@ public:
     for (unsigned int i = 0; i < property_vector.size(); ++i)
       {
         // Thermal expansion of solid phase
-        if (T[i] < p_phase_change_params.T_solidus)
-          property_vector[i] = p_phase_change_params.thermal_expansion_s;
-        // Thermal expansion of liquid phase
-        else if (T[i] > p_phase_change_params.T_liquidus)
+        if (T[i] > p_phase_change_params.T_liquidus)
           property_vector[i] = p_phase_change_params.thermal_expansion_l;
         else
-          {
-            const double l_frac =
-              calculate_liquid_fraction(T[i], p_phase_change_params);
-
-            property_vector[i] =
-              p_phase_change_params.thermal_expansion_l * l_frac +
-              p_phase_change_params.thermal_expansion_s * (1. - l_frac);
-          }
+          property_vector[i] = p_phase_change_params.thermal_expansion_s;
+        // Thermal expansion of liquid phase
       }
   };
 

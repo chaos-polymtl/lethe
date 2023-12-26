@@ -690,6 +690,12 @@ namespace Parameters
         {
           solids[i_solid].declare_parameters(prm, "solid", i_solid);
         }
+
+      prm.declare_entry(
+        "reference temperature",
+        "0",
+        Patterns::Double(),
+        "Reference temperature used for the calculation of physical properties and thermal expansion");
     }
 
     // Definition of interactions between materials
@@ -759,6 +765,8 @@ namespace Parameters
               material_interactions[i_material_interaction]
                 .fluid_solid_interaction_with_material_interaction_id);
         }
+
+      reference_temperature = prm.get_double("reference temperature");
     }
     prm.leave_subsection();
   }
