@@ -226,9 +226,10 @@ Results
 The following animation shows the results of this simulation:
 
 .. raw:: html
-
-    <iframe width="560" height="315" src="https://www.youtube.com/embed/tivAPjdCJeA" frameborder="0" allowfullscreen></iframe>
-
+  
+    <center>
+    <iframe width="492" height="566" src="https://www.youtube.com/embed/kftZ3lj6uTg?si=UYPbLhWx7uqx4cdw" frameborder="0" allowfullscreen ></iframe>
+    </center>
 
 A python post-processing code `(melting-cavity.py)` 
 is added to the example folder to post-process the results.
