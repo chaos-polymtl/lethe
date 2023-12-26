@@ -34,12 +34,9 @@ H=0.714
 alpha =  0.040516842071415184 # Used for the time scaling
 St = 0.041 # Used for the time scaling
 time_scaling = St * alpha 
-y_top		= 0.999 * H
+y_top	= 0.999 * H
 y_mid	= 0.5 * H
 y_bot	= 0.001 * H
-#y_top		= 0.85 * H
-#y_mid	= 0.6 * H
-#y_bot	= 0.18 * H
 
 #Set temperature to search for maximum x
 temperature_limit = 29.75
