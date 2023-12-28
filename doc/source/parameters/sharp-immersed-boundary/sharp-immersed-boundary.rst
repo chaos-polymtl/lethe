@@ -35,14 +35,17 @@ This subsection contains the parameters related to the sharp immersed boundary s
       end
 
       subsection DEM
-        set DEM coupling frequency       = 1000
-        set alpha                        = 1
-        set contact search frequency     = 1
-        set contact search radius factor = 3
-        set enable lubrication force     = true
-        set lubrication range max        = 2
-        set lubrication range min        = 0.1
-        set particle nonlinear tolerance = 1e-6
+        set DEM coupling frequency             = 1000
+        set alpha                              = 1
+        set contact search frequency           = 1
+        set contact search radius factor       = 3
+        set enable lubrication force           = true
+        set lubrication range max              = 2
+        set lubrication range min              = 0.1
+        set particle nonlinear tolerance       = 1e-6
+        set use explicit contact impulsion     = false
+        set use explicit position integration  = false
+        set use approximate radius for contact = fasle
         subsection gravity
           set Function expression = 0; 0; 0
         end
