@@ -267,6 +267,18 @@ public:
     return constant_density;
   }
 
+  Parameters::PhysicalProperties
+  get_physical_properties_parameters() const
+  {
+    return physical_properties_parameters;
+  }
+
+  bool
+  has_phase_change() const
+  {
+    return phase_change;
+  }
+
   bool
   surface_tension_is_constant() const
   {
@@ -299,6 +311,12 @@ public:
     else
       throw(std::runtime_error(
         "Invalid type of material interaction. The choices are <fluid-fluid|fluid-solid>"));
+  }
+
+  double
+  get_reference_temperature() const
+  {
+    return reference_temperature;
   }
 
 private:
@@ -347,6 +365,16 @@ private:
   bool non_newtonian_flow;
   bool constant_density;
   bool constant_surface_tension;
+  bool phase_change;
+  /*
+   * Reference temperature used for the calculation of all physical properties
+   * of all materials. Currently, this is only used for the thermal expansion
+   * model.
+   */
+  double reference_temperature;
+
+  // Internal copy of the parameters used to build the manager
+  Parameters::PhysicalProperties physical_properties_parameters;
 
   unsigned int number_of_fluids;
   unsigned int number_of_solids;

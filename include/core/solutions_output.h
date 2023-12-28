@@ -64,7 +64,7 @@ write_vtu_and_pvd(PVDHandler                            &pvd_handler,
                   const unsigned int                     iter,
                   const unsigned int                     group_files,
                   const MPI_Comm                        &mpi_communicator,
-                  const unsigned int                     digits = 4);
+                  const unsigned int                     digits = 5);
 
 /**
  * @brief Output the Data Out Faces to a single vtu file
@@ -88,5 +88,5 @@ write_boundaries_vtu(const DataOutFaces<dim> &data_out,
                      const unsigned int       iter,
                      const MPI_Comm          &mpi_communicator,
                      const std::string  file_prefix = std::string("boundaries"),
-                     const unsigned int digits      = 4);
+                     const unsigned int digits      = 5);
 #endif

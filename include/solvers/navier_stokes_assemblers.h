@@ -667,8 +667,10 @@ template <int dim>
 class BuoyancyAssembly : public NavierStokesAssemblerBase<dim>
 {
 public:
-  BuoyancyAssembly(std::shared_ptr<SimulationControl> simulation_control)
+  BuoyancyAssembly(std::shared_ptr<SimulationControl> simulation_control,
+                   const double                       reference_temperature)
     : simulation_control(simulation_control)
+    , reference_temperature(reference_temperature)
   {}
 
   /**
@@ -691,7 +693,9 @@ public:
                StabilizedMethodsTensorCopyData<dim> &copy_data) override;
 
 
+private:
   std::shared_ptr<SimulationControl> simulation_control;
+  const double                       reference_temperature;
 };
 
 
