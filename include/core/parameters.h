@@ -500,6 +500,12 @@ namespace Parameters
     std::map<std::pair<unsigned int, unsigned int>, unsigned int>
       fluid_solid_interactions_with_material_interaction_ids;
 
+    /*
+     * Reference Temperature for all physical properties of fluids and solids.
+     * Currently this is only used by the thermal expansion models
+     */
+    double reference_temperature;
+
     void
     declare_parameters(ParameterHandler &prm);
     void
@@ -778,6 +784,12 @@ namespace Parameters
 
     // Prefix for the temperature output
     std::string temperature_output_name;
+
+    // Enable calculation of liquid fraction in phase change problems
+    bool calculate_liquid_fraction;
+
+    // Prefix for the temperature output
+    std::string liquid_fraction_output_name;
 
     // Enable heat flux calculation
     bool calculate_heat_flux;

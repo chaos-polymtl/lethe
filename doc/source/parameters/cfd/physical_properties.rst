@@ -8,7 +8,8 @@ Physical Properties
 .. code-block:: text
 
   subsection physical properties
-    set number of fluids = 1
+    set number of fluids      = 1
+    set reference temperature = 0
     subsection fluid 0
       # Rheology
       set rheological model          = newtonian
@@ -75,6 +76,8 @@ Physical Properties
  
 * The ``number of fluids`` parameter controls the number of fluids in the simulation. This parameter is set to ``1`` except in `Two Phase Simulations`_ .
 
+* The ``reference temperature`` parameter specifies the reference temperature used in the calculation of some physical properties or the thermal expansion force.
+
   * The ``rheological model`` parameter sets the choice of rheological model. The choices are between ``newtonian``, ``power-law``, ``carreau`` and ``phase_change``. For more details on the rheological models, see  `Rheological Models`_ .
 
   * The ``kinematic viscosity`` parameter is the kinematic viscosity of the newtonian fluid in units of :math:`\text{Length}^{2} \cdot \text{Time}^{-1}`. In SI, this is :math:`\text{m}^{2} \cdot \text{s}^{-1}`. This viscosity is only used when ``rheological model = newtonian``.
@@ -91,15 +94,15 @@ Physical Properties
 
   * The ``thermal conductivity`` parameter is the thermal conductivity coefficient of the fluid with units of :math:`\text{Power} \cdot \text{Temperature}^{-1} \cdot \text{Length}^{-1}`.
 
-  * The ``thermal expansion model`` specifies the model used to calculate the thermal expansion coefficient. At the moment, only a constant thermal expansion is supported.
+  * The ``thermal expansion model`` specifies the model used to calculate the thermal expansion coefficient. At the moment, ``constant`` and ``phase change`` thermal expansion are supported. For more details on the thermal expansion models, see `Thermal Expansion Models`_.
 
   * The ``thermal expansion`` parameter is the thermal expansion coefficient of the fluid with dimension of :math:`\text{Temperature}^{-1}`. It is used to define the buoyancy-driven flow (natural convection) using the Boussinesq approximation, which leads to the definition of the following source term that is added to the Navier-Stokes equation:
 
     .. math::
 
-      {\bf{F_{B}}} = -\beta {\bf{g}} (T-T_0)
+      {\bf{F_{B}}} = -\beta {\bf{g}} (T-T_{ref})
 
-    where :math:`F_B` denotes the buoyant force source term, :math:`\beta` is the thermal expansion coefficient, :math:`T` is temperature, and :math:`T_0` is the base temperature.
+    where :math:`F_B` denotes the buoyant force source term, :math:`\beta` is the thermal expansion coefficient, :math:`T` is temperature, and :math:`T_{ref}` is the reference temperature. This is only used when a constant thermal expansion model is used.
 
   * The ``tracer diffusivity model`` specifies the model used to calculate the tracer diffusivity. At the moment, only a constant tracer diffusivity is supported.
 
@@ -461,9 +464,9 @@ where :math:`T` is the temperature, :math:`T_0` is the temperature at the previo
 where :math:`H_0` is a reference enthalpy, taken to be 0, and :math:`c^{*}_p` is:
 
 .. math::
-  c^{*}_p  = \begin{cases} C_{p,s}\\
-              \frac{C_{p,s}+C_{p,l}}{2}+\frac{h_l}{T_l-T_s}\\
-              C_{p,l}
+  c^{*}_p  = \begin{cases} C_{p,s} \text{if}\;T<T_s\\
+              \frac{C_{p,s}+C_{p,l}}{2}+\frac{h_l}{T_l-T_s} \text{if}\;T\in[T_s,T_l]\\
+              C_{p,l} \text{if} T>T_l
               \end{cases}
 
 where :math:`C_{p,s}` and :math:`C_{p,l}` are the solid and liquid specific heat, respectively. :math:`h_l` is the latent enthalpy (enthalpy related to the phase change), :math:`T_l` and :math:`T_s` are the liquidus and solidus temperature. The underlying hypothesis of this model is that the melting and the solidification occurs over a phase change interval. Melting will occur between :math:`T_s` and :math:`T_l` and solidification will occur between :math:`T_l` and :math:`T_s`.
@@ -499,6 +502,42 @@ This model is parameterized using the following section:
 
 * The ``specific heat solid`` is :math:`C_{p,s}`
 
+
+Thermal Expansion Models
+~~~~~~~~~~~~~~~~~~~~~~~~~
+Lethe supports two types of thermal expansion heat models. Setting ``thermal expansion model=constant`` sets a constant thermal expansion. Lethe also supports a ``phase_change`` thermal expansion model. This model can simulate the melting and solidification of a material with natural convection. It works by defining a different value of the thermal expansion coefficient depending on the value of the temperature:
+
+.. math::
+  \beta =   c^{*}_p  = \begin{cases} \beta_s, \text{if}\;T \leq T_l\\
+              \beta_l, \text{if}\;T > T_l
+              \end{cases}
+
+
+This model is parameterized using the following section:
+
+.. code-block:: text
+
+  subsection phase change
+    # Temperature of the liquidus
+    set liquidus temperature = 1
+  
+    # Temperature of the solidus
+    set solidus temperature  = 0
+  
+    # Thermal expansion of the liquid phase
+    set thermal expansion liquid = 0
+  
+    # Thermal expansion of the solid phase
+    set thermal expansion solid  = 1
+  end
+
+* The ``liquidus temperature`` is :math:`T_l`
+
+* The ``solidus temperature`` is :math:`T_s`
+
+* The ``thermal expansion liquid`` is :math:`\beta_{l}`
+
+* The ``thermal expansion solid`` is :math:`\beta_{s}`
 
 Interface Physical Property Models
 ***********************************

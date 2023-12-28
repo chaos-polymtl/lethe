@@ -19,6 +19,10 @@
 #include <deal.II/numerics/error_estimator.h>
 #include <deal.II/numerics/vector_tools.h>
 
+DeclExceptionMsg(
+  LiquidFractionRequiresPhaseChange,
+  "Calculation of the liquid fraction requires that a fluid has a phase_change specific heat model");
+
 template <int dim>
 void
 HeatTransfer<dim>::assemble_matrix_and_rhs()
@@ -903,6 +907,20 @@ HeatTransfer<dim>::postprocess(bool first_iteration)
         this->write_heat_flux(domain_name);
     }
 
+  // Liquid fraction
+  if (simulation_parameters.post_processing.calculate_liquid_fraction)
+    {
+      AssertThrow(
+        simulation_parameters.physical_properties_manager.has_phase_change(),
+        LiquidFractionRequiresPhaseChange());
+      postprocess_liquid_fraction(gather_vof);
+
+      if (simulation_control->get_step_number() %
+            this->simulation_parameters.post_processing.output_frequency ==
+          0)
+        this->write_liquid_fraction();
+    }
+
   if (this->simulation_parameters.timer.type ==
       Parameters::Timer::Type::iteration)
     {
@@ -1017,6 +1035,13 @@ HeatTransfer<dim>::write_checkpoint()
       prefix +
         this->simulation_parameters.post_processing.temperature_output_name +
         suffix);
+
+  if (this->simulation_parameters.post_processing.calculate_liquid_fraction)
+    serialize_table(this->liquid_fraction_table,
+                    prefix +
+                      this->simulation_parameters.post_processing
+                        .liquid_fraction_output_name +
+                      suffix);
 }
 
 template <int dim>
@@ -1072,6 +1097,12 @@ HeatTransfer<dim>::read_checkpoint()
       prefix +
         this->simulation_parameters.post_processing.temperature_output_name +
         suffix);
+  if (this->simulation_parameters.post_processing.calculate_liquid_fraction)
+    deserialize_table(this->liquid_fraction_table,
+                      prefix +
+                        this->simulation_parameters.post_processing
+                          .liquid_fraction_output_name +
+                        suffix);
 }
 
 
@@ -1493,7 +1524,7 @@ HeatTransfer<dim>::postprocess_temperature_statistics(
       this->pcout << "\t Std-Dev : " << temperature_std_deviation << std::endl;
     }
 
-  // Filling table
+  // Fill table
   this->statistics_table.add_value(
     "time", this->simulation_control->get_current_time());
   this->statistics_table.add_value("min", minimum_temperature);
@@ -1519,6 +1550,162 @@ HeatTransfer<dim>::write_temperature_statistics(const std::string domain_name)
       this->statistics_table.write_text(output);
     }
 }
+
+template <int dim>
+void
+HeatTransfer<dim>::postprocess_liquid_fraction(const bool gather_vof)
+{
+  const unsigned int n_q_points       = this->cell_quadrature->size();
+  const MPI_Comm     mpi_communicator = this->dof_handler.get_communicator();
+
+  // Initialize heat transfer information
+  std::vector<double> local_temperature_values(n_q_points);
+  FEValues<dim>       fe_values_ht(*this->temperature_mapping,
+                             *this->fe,
+                             *this->cell_quadrature,
+                             update_values | update_JxW_values);
+
+  // Initialize VOF information
+  const DoFHandler<dim>         *dof_handler_vof = NULL;
+  std::shared_ptr<FEValues<dim>> fe_values_vof;
+  std::vector<double>            filtered_phase_values(n_q_points);
+
+  // Get the raw physical properties parameters to calculate the liquid fraction
+  // in-situ
+  const auto &physical_properties_parameters =
+    this->simulation_parameters.physical_properties_manager
+      .get_physical_properties_parameters();
+
+  if (gather_vof)
+    {
+      dof_handler_vof = this->multiphysics->get_dof_handler(PhysicsID::VOF);
+      fe_values_vof =
+        std::make_shared<FEValues<dim>>(*this->temperature_mapping,
+                                        dof_handler_vof->get_fe(),
+                                        *this->cell_quadrature,
+                                        update_values);
+    }
+
+  // Variables for the integration
+  double volume_integral(0.);
+  double liquid_volume_integral(0.);
+
+  // Calculate min, max and average
+  for (const auto &cell : this->dof_handler.active_cell_iterators())
+    {
+      if (cell->is_locally_owned())
+        {
+          // Gather heat transfer information
+          fe_values_ht.reinit(cell);
+          fe_values_ht.get_function_values(this->present_solution,
+                                           local_temperature_values);
+
+          if (gather_vof)
+            {
+              // Get VOF active cell iterator
+              typename DoFHandler<dim>::active_cell_iterator cell_vof(
+                &(*(this->triangulation)),
+                cell->level(),
+                cell->index(),
+                dof_handler_vof);
+
+              // Gather VOF information
+              fe_values_vof->reinit(cell_vof);
+              fe_values_vof->get_function_values(
+                *this->multiphysics->get_filtered_solution(PhysicsID::VOF),
+                filtered_phase_values);
+            }
+
+          for (unsigned int q = 0; q < n_q_points; q++)
+            {
+              // If VOF is enabled, gather the liquid fraction if the fluid has
+              // a phase fraction
+              if (!gather_vof)
+                {
+                  liquid_volume_integral +=
+                    calculate_liquid_fraction(local_temperature_values[q],
+                                              physical_properties_parameters
+                                                .fluids[0]
+                                                .phase_change_parameters) *
+                    fe_values_ht.JxW(q);
+                  volume_integral += fe_values_ht.JxW(q);
+                }
+              else
+                {
+                  // Case of fluid 0 being a phase change
+                  if (physical_properties_parameters.fluids[0]
+                        .specific_heat_model ==
+                      Parameters::Material::SpecificHeatModel::phase_change)
+                    {
+                      liquid_volume_integral +=
+                        (1. - filtered_phase_values[q]) *
+                        calculate_liquid_fraction(local_temperature_values[q],
+                                                  physical_properties_parameters
+                                                    .fluids[0]
+                                                    .phase_change_parameters) *
+                        fe_values_ht.JxW(q);
+                      volume_integral +=
+                        (1. - filtered_phase_values[q]) * fe_values_ht.JxW(q);
+                    }
+
+                  // Case of fluid 1 being a phase change
+                  if (physical_properties_parameters.fluids[1]
+                        .specific_heat_model ==
+                      Parameters::Material::SpecificHeatModel::phase_change)
+                    {
+                      liquid_volume_integral +=
+                        (filtered_phase_values[q]) *
+                        calculate_liquid_fraction(local_temperature_values[q],
+                                                  physical_properties_parameters
+                                                    .fluids[1]
+                                                    .phase_change_parameters) *
+                        fe_values_ht.JxW(q);
+                      volume_integral +=
+                        (filtered_phase_values[q]) * fe_values_ht.JxW(q);
+                    }
+                }
+            } // end loop on quadrature points
+        }
+    } // end loop on cell
+
+  volume_integral = Utilities::MPI::sum(volume_integral, mpi_communicator);
+  liquid_volume_integral =
+    Utilities::MPI::sum(liquid_volume_integral, mpi_communicator);
+  const double liquid_fraction = liquid_volume_integral / volume_integral;
+
+  // Console output
+  if (simulation_parameters.post_processing.verbosity ==
+      Parameters::Verbosity::verbose)
+    {
+      this->pcout << "Liquid fraction"
+                  << ": " << liquid_fraction << std::endl;
+    }
+
+  // Fill table
+  this->liquid_fraction_table.add_value(
+    "time", this->simulation_control->get_current_time());
+  this->liquid_fraction_table.add_value("liquid fraction", liquid_fraction);
+}
+
+template <int dim>
+void
+HeatTransfer<dim>::write_liquid_fraction()
+{
+  auto mpi_communicator = triangulation->get_communicator();
+
+  if (Utilities::MPI::this_mpi_process(mpi_communicator) == 0)
+    {
+      std::string filename =
+        simulation_parameters.simulation_control.output_folder +
+        simulation_parameters.post_processing.liquid_fraction_output_name +
+        ".dat";
+      std::ofstream output(filename.c_str());
+
+      this->liquid_fraction_table.write_text(output);
+    }
+}
+
+
 
 template <int dim>
 template <typename VectorType>
