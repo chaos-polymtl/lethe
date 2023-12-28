@@ -2605,10 +2605,10 @@ namespace Parameters
     prm.enter_subsection("velocity source");
     {
       prm.declare_entry(
-        "type",
+        "rotating frame type",
         "none",
         Patterns::Selection("none|srf"),
-        "Velocity-dependent source terms"
+        "Rotating frame velocity-dependent source terms"
         "Choices are <none|srf>. The srf stands"
         "for single rotating frame and adds"
         "the coriolis and the centrifugal force to the Navier-Stokes equations");
@@ -2639,11 +2639,11 @@ namespace Parameters
   {
     prm.enter_subsection("velocity source");
     {
-      const std::string op = prm.get("type");
+      const std::string op = prm.get("rotating frame type");
       if (op == "none")
-        type = VelocitySourceType::none;
+        rotating_frame_type = RotatingFrameType::none;
       else if (op == "srf")
-        type = VelocitySourceType::srf;
+        rotating_frame_type = RotatingFrameType::srf;
       else
         throw std::logic_error("Error, invalid velocity source type");
 

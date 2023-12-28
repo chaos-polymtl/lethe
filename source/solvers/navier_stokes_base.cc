@@ -2083,8 +2083,8 @@ NavierStokesBase<dim, VectorType, DofsType>::write_output_results(
                             simulation_parameters.velocity_sources.omega_y,
                             simulation_parameters.velocity_sources.omega_z);
 
-  if (simulation_parameters.velocity_sources.type ==
-      Parameters::VelocitySource::VelocitySourceType::srf)
+  if (simulation_parameters.velocity_sources.rotating_frame_type ==
+      Parameters::VelocitySource::RotatingFrameType::srf)
     data_out.add_data_vector(solution, srf);
 
   output_field_hook(data_out);

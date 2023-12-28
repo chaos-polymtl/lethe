@@ -190,11 +190,11 @@ Velocity Source
 .. code-block:: text
 
     subsection velocity source
-        set type    = srf
-        set omega_z = -10
+        set rotating frame type    = srf
+        set omega_z                = -10
     end
 
-In the ``velocity source`` subsection, we specify with ``type = srf`` that we are in a single rotating reference frame. Since a centrifugal and a Coriolis force are induced by the rotating movement of the system, we are in a non-Galilean reference frame. These two additional force contributions must be taken into account in the Navier-Stokes equations and by setting the ``type`` parameter to ``srf`` we do so. The ``omega_z`` parameter represents the angular velocity of the reference frame.
+In the ``velocity source`` subsection, we specify with ``rotating frame type = srf`` that we are in a single rotating reference frame. Since a centrifugal and a Coriolis force are induced by the rotating movement of the system, we are in a non-Galilean reference frame. These two additional force contributions must be taken into account in the Navier-Stokes equations and by setting the ``rotating frame type`` parameter to ``srf`` we do so. The ``omega_z`` parameter represents the angular velocity of the reference frame.
 
 Forces
 ~~~~~~
