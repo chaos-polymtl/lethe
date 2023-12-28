@@ -10,9 +10,9 @@ The default values are:
 
   subsection velocity source
     set rotating frame type    = none
-    set omega_x = 0
-    set omega_y = 0
-    set omega_z = 0
+    set omega_x                = 0
+    set omega_y                = 0
+    set omega_z                = 0
   end
 
 * The ``rotating frame type`` parameter specifies the type of reference frame that is selected. The options are ``none`` for an Eulerian reference frame or ``srf`` for a single rotating frame. By selecting ``srf`` the additional contributions of the centrifugal force and Coriolis force induced by the rotating movement are taken into account in the Navier-Stokes equations.
