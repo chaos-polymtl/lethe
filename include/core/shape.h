@@ -1763,19 +1763,18 @@ public:
     Point<dim> gradient{};
     for (unsigned int d = 0; d < dim; d++)
       {
-        // For cases where the coordinate is of value 0, we avoid computing
-        // the gradient. That is an issue when the exponent is lower than or
-        // equal to 1
+        // For cases where the coordinate is of value 0, we avoid computing the
+        // gradient. That is an issue when the exponent is lower than or equal
+        // to 1
         if (abs(centered_point[d]) > epsilon)
           gradient[d] = exponents[d] *
                         pow(abs(half_lengths[d]), -exponents[d]) *
                         pow(abs(centered_point[d]), exponents[d]) /
                         (centered_point[d] + DBL_MIN);
         else
-          gradient[d] = 1 * exponents[d] *
+          gradient[d] = exponents[d] *
                         pow(abs(half_lengths[d]), -exponents[d]) *
-                        pow(abs(epsilon), exponents[d]) /
-                        (epsilon + epsilon * epsilon + DBL_MIN);
+                        pow(abs(epsilon), exponents[d]) / (epsilon + DBL_MIN);
       }
     return gradient;
   }

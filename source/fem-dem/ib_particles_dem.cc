@@ -130,10 +130,7 @@ IBParticlesDEM<dim>::calculate_pp_contact_force(
           if (particle_one.particle_id != particle_two.particle_id and
               particle_one.particle_id < particle_two.particle_id)
             {
-              const Point<dim> particle_one_location = particle_one.position;
-              const Point<dim> particle_two_location = particle_two.position;
               ContactInfo      contact_info;
-
               // Check if there is already information on the contact of these
               // to particles. If not initialize it in the contact map with 0
               // values.
@@ -277,66 +274,6 @@ IBParticlesDEM<dim>::calculate_pp_contact_force(
                     particle_two.rolling_friction_coefficient,
                     dt_dem);
 
-
-                  if (typeid(*particle_one.shape) == typeid(Sphere<dim>) &&
-                      typeid(*particle_two.shape) != typeid(Sphere<dim>))
-                    {
-                      // No tangential contact force between sphere and
-                      // non-spherical object at the moment.
-                      tangential_force = 0;
-                      // Re-orientate the normal force with the normal to the
-                      // non-spherical particle.
-                      normal_force[0] =
-                        -normal_force.norm() *
-                        particle_two.shape->gradient(particle_one_location)[0] /
-                        particle_two.shape->gradient(particle_one_location)
-                          .norm();
-                      normal_force[1] =
-                        -normal_force.norm() *
-                        particle_two.shape->gradient(particle_one_location)[1] /
-                        particle_two.shape->gradient(particle_one_location)
-                          .norm();
-                      if constexpr (dim == 3)
-                        normal_force[2] =
-                          -normal_force.norm() *
-                          particle_two.shape->gradient(
-                            particle_one_location)[2] /
-                          particle_two.shape->gradient(particle_one_location)
-                            .norm();
-                    }
-                  else if (typeid(*particle_one.shape) != typeid(Sphere<dim>) &&
-                           typeid(*particle_two.shape) == typeid(Sphere<dim>))
-                    {
-                      // No tangential contact force between sphere and
-                      // non-spherical object at the moment.
-                      tangential_force = 0;
-                      // Re-orientate the normal force with the normal to the
-                      // non-spherical particle.
-                      normal_force[0] =
-                        normal_force.norm() *
-                        particle_one.shape->gradient(particle_two_location)[0] /
-                        particle_one.shape->gradient(particle_two_location)
-                          .norm();
-                      normal_force[1] =
-                        normal_force.norm() *
-                        particle_one.shape->gradient(particle_two_location)[1] /
-                        particle_one.shape->gradient(particle_two_location)
-                          .norm();
-                      if constexpr (dim == 3)
-                        normal_force[2] =
-                          normal_force.norm() *
-                          particle_one.shape->gradient(
-                            particle_two_location)[2] /
-                          particle_one.shape->gradient(particle_two_location)
-                            .norm();
-                    }
-                  if (typeid(*particle_one.shape) == typeid(Sphere<dim>) &&
-                      typeid(*particle_two.shape) != typeid(Sphere<dim>))
-                    {
-                      tangential_force = 0;
-                      normal_force =
-                        tensor_nd_to_3d(normal * normal_force.norm());
-                    }
 
                   contact_force[particle_one.particle_id] -=
                     (normal_force + tangential_force);

@@ -585,18 +585,9 @@ Superquadric<dim>::closest_surface_point(const Point<dim> &p,
 
           current_point    = current_point + dx;
           current_distance = superquadric(current_point);
-          // std::cout<<"iteration i "<< iteration <<" current distance "<<
-          // current_distance<<std::endl;
 
           iteration++;
         }
-      if (iteration == iteration_max)
-        {
-          std::cout
-            << "hi superquadric did not converge after 100 iteration  point"
-            << p << std::endl;
-        }
-
       closest_point = this->reverse_align_and_center(current_point);
     }
   else
@@ -690,15 +681,15 @@ Superquadric<dim>::gradient(const Point<dim> &evaluation_point,
       this->closest_surface_point(evaluation_point, closest_point);
 
       Tensor<1, dim> gradient;
-      if (superquadric(evaluation_point) > 0)
-        gradient = -(evaluation_point - closest_point) /
-                   ((evaluation_point - closest_point).norm() +
-                    1e-16 * this->effective_radius);
-      else
+      Point<dim> centered_point = this->align_and_center(evaluation_point);
+      if (superquadric(centered_point) > 0)
         gradient = (evaluation_point - closest_point) /
                    ((evaluation_point - closest_point).norm() +
                     1e-16 * this->effective_radius);
-      ;
+      else
+        gradient = -(evaluation_point - closest_point) /
+                   ((evaluation_point - closest_point).norm() +
+                    1e-16 * this->effective_radius);
       return gradient;
     }
   else
