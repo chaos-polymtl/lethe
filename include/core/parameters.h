@@ -218,6 +218,12 @@ namespace Parameters
     // kinematic viscosity solid - Units in in m^2/(s)
     double kinematic_viscosity_s;
 
+    // Darcy permeability liquid - Units in 1/(s)
+    double permeability_l;
+
+    // Darcy permeabilitysolid - Units in 1/(s)
+    double permeability_s;
+
     static void
     declare_parameters(ParameterHandler &prm);
     void
@@ -1265,15 +1271,30 @@ namespace Parameters
 
   struct VelocitySource
   {
-    enum class RotatingFrameType
+  
+    enum class DarcySourceType
+    {
+      none,        // No Darcy source term
+      phase_change // Phase change darcy source term which applies a
+                   // penalization depending on the phase change model
+    };
+
+  enum class RotatingFrameType
     {
       none,
       srf
     };
+    
     RotatingFrameType rotating_frame_type;
     double            omega_x;
     double            omega_y;
     double            omega_z;
+
+    /*
+     * Type of darcy velocity source term applied to the Navier-Stokes equations
+     */
+    DarcySourceType darcy_type;
+
 
     static void
     declare_parameters(ParameterHandler &prm);

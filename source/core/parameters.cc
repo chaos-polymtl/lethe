@@ -585,6 +585,10 @@ namespace Parameters
       thermal_expansion_s = prm.get_double("thermal expansion solid");
       // thermal_expansion_l is in theta^-1
       thermal_expansion_s *= dimensions.thermal_expansion_scaling;
+
+      // Darcy permeability terms
+      permeability_l = prm.get_double("permeability liquid");
+      permeability_s = prm.get_double("permeability solid");
     }
 
     Assert(T_liquidus > T_solidus,
@@ -651,6 +655,16 @@ namespace Parameters
                         "1",
                         Patterns::Double(),
                         "Kinematic viscosity of the solid phase");
+
+      prm.declare_entry("permeability liquid",
+                        "0",
+                        Patterns::Double(),
+                        "Permeability of the liquid phase");
+
+      prm.declare_entry("permeability solid",
+                        "0",
+                        Patterns::Double(),
+                        "Permeability of the  solid phase");
     }
     prm.leave_subsection();
   }
@@ -2630,6 +2644,12 @@ namespace Parameters
         "0 ",
         Patterns::Double(),
         "Z component of the angular velocity vector of the frame of reference");
+
+      prm.declare_entry("Darcy type",
+                        "none",
+                        Patterns::Selection("none|phase_change"),
+                        "Darcy-like pearmeability term"
+                        "Choices are <none|phase_change>.");
     }
     prm.leave_subsection();
   }
@@ -2646,6 +2666,14 @@ namespace Parameters
         rotating_frame_type = RotatingFrameType::srf;
       else
         throw std::logic_error("Error, invalid velocity source type");
+
+      const std::string darcy = prm.get("Darcy type");
+      if (darcy == "none")
+        darcy_type = DarcySourceType::none;
+      else if (darcy == "phase_change")
+        darcy_type = DarcySourceType::phase_change;
+      else
+        throw std::logic_error("Error, invalid Darcy source type");
 
       omega_x = prm.get_double("omega_x");
       omega_y = prm.get_double("omega_y");
