@@ -40,8 +40,8 @@ end
 #--------------------------------------------------
 
 subsection velocity source
-  set type    = srf
-  set omega_z = -6.28318
+  set rotating rame type    = srf
+  set omega_z               = -6.28318
 end
 
 #---------------------------------------------------
