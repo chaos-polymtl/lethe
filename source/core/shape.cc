@@ -73,7 +73,7 @@ Shape<dim>::align_and_center(const Point<dim> &evaluation_point) const
   Point<dim> centralized_point;
   centralized_point              = evaluation_point - center_of_rotation;
   Point<dim> centralized_rotated = centralized_point;
-  Point<dim> centralized_rotated_initial=centralized_point;
+  Point<dim> centralized_rotated_initial = centralized_point;
 
   // Selection of the first axis around which to rotate:
   // x -> 0, y -> 1, z -> 2
@@ -503,7 +503,7 @@ Plane<dim>::gradient(const Point<dim> &evaluation_point,
   //  We take the vector in z of the plane and rotate it in the world frame.
   if constexpr (dim == 2)
     {
-      return tensor_nd_to_2d(this->rotation_matrix* tensor_nd_to_3d(normal));
+      return tensor_nd_to_2d(this->rotation_matrix * tensor_nd_to_3d(normal));
     }
 
   else
@@ -681,7 +681,7 @@ Superquadric<dim>::gradient(const Point<dim> &evaluation_point,
       this->closest_surface_point(evaluation_point, closest_point);
 
       Tensor<1, dim> gradient;
-      Point<dim> centered_point = this->align_and_center(evaluation_point);
+      Point<dim>     centered_point = this->align_and_center(evaluation_point);
       if (superquadric(centered_point) > 0)
         gradient = (evaluation_point - closest_point) /
                    ((evaluation_point - closest_point).norm() +
@@ -2100,7 +2100,7 @@ RBFShape<dim>::determine_likely_nodes_for_one_cell(
   double     temp_cell_diameter;
 
   likely_nodes_map[cell]          = std::make_shared<std::vector<
-             std::tuple<Point<dim>, double, std::shared_ptr<std::vector<size_t>>>>>();
+    std::tuple<Point<dim>, double, std::shared_ptr<std::vector<size_t>>>>>();
   const size_t number_of_portions = iterable_nodes.size();
   for (size_t portion_id = 0; portion_id < number_of_portions; portion_id++)
     {

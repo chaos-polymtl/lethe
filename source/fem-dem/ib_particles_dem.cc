@@ -130,7 +130,7 @@ IBParticlesDEM<dim>::calculate_pp_contact_force(
           if (particle_one.particle_id != particle_two.particle_id and
               particle_one.particle_id < particle_two.particle_id)
             {
-              ContactInfo      contact_info;
+              ContactInfo contact_info;
               // Check if there is already information on the contact of these
               // to particles. If not initialize it in the contact map with 0
               // values.
@@ -620,7 +620,7 @@ IBParticlesDEM<dim>::calculate_pw_contact_force(
               if constexpr (dim == 2)
                 {
                   rotation_axis[2] = 1;
-                  angle = std::atan2(-normal[0],normal[1]);
+                  angle            = std::atan2(-normal[0], normal[1]);
                 }
               else
                 {
@@ -1265,9 +1265,10 @@ IBParticlesDEM<dim>::integrate_particles_motion(const double dt,
           /*if (Utilities::MPI::this_mpi_process(this->mpi_communicator) == 0)
             {
               std::cout<<"time "<< t <<std::endl;
-              std::cout<<"particle velocity "<< dem_particles[0].velocity<<std::endl;
-              std::cout<<"particle force"<< contact_wall_force[0]<<std::endl;
-              std::cout<<"particle torque"<< contact_wall_torque[0]<<std::endl;
+              std::cout<<"particle velocity "<<
+            dem_particles[0].velocity<<std::endl; std::cout<<"particle force"<<
+            contact_wall_force[0]<<std::endl; std::cout<<"particle torque"<<
+            contact_wall_torque[0]<<std::endl;
             }*/
           for (unsigned int p_i = 0; p_i < dem_particles.size(); ++p_i)
             {
