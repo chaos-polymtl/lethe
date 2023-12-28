@@ -126,8 +126,8 @@ GDNavierStokesSolver<dim>::setup_assemblers()
         }
 
       // Velocity sources term
-      if (this->simulation_parameters.velocity_sources.type ==
-          Parameters::VelocitySource::VelocitySourceType::srf)
+      if (this->simulation_parameters.velocity_sources.rotating_frame_type ==
+          Parameters::VelocitySource::RotatingFrameType::srf)
         {
           this->assemblers.push_back(
             std::make_shared<GLSNavierStokesAssemblerSRF<dim>>(
