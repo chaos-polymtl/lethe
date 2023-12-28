@@ -1265,15 +1265,15 @@ namespace Parameters
 
   struct VelocitySource
   {
-    enum class VelocitySourceType
+    enum class RotatingFrameType
     {
       none,
       srf
     };
-    VelocitySourceType type;
-    double             omega_x;
-    double             omega_y;
-    double             omega_z;
+    RotatingFrameType rotating_frame_type;
+    double            omega_x;
+    double            omega_y;
+    double            omega_z;
 
     static void
     declare_parameters(ParameterHandler &prm);
