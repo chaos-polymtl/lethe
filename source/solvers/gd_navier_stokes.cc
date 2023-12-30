@@ -134,6 +134,14 @@ GDNavierStokesSolver<dim>::setup_assemblers()
               this->simulation_parameters.velocity_sources));
         }
 
+      // Darcy force for phase change simulations in single phase
+      if (this->simulation_parameters.velocity_sources.darcy_type==Parameters::VelocitySource::DarcySourceType::phase_change)
+        {
+          AssertThrow(this->simulation_parameters.multiphysics.heat_transfer,PhaseChangeDarcyModelRequiresTemperature());
+          this->assemblers.push_back(std::make_shared<PhaseChangeDarcyAssembly<dim>>(
+            this->simulation_parameters.physical_properties_manager.get_physical_properties_parameters().fluids[0].phase_change_parameters));
+        }
+
       if (this->simulation_parameters.physical_properties_manager
             .is_non_newtonian())
         {

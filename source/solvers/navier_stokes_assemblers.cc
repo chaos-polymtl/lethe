@@ -1675,7 +1675,12 @@ void
 BuoyancyAssembly<dim>::assemble_matrix(
   NavierStokesScratchData<dim> & /*scratch_data*/,
   StabilizedMethodsTensorCopyData<dim> & /*copy_data*/)
-{}
+{
+
+}
+
+
+
 
 template <int dim>
 void
@@ -1725,6 +1730,118 @@ BuoyancyAssembly<dim>::assemble_rhs(
 
 template class BuoyancyAssembly<2>;
 template class BuoyancyAssembly<3>;
+
+template <int dim>
+void
+PhaseChangeDarcyAssembly<dim>::assemble_matrix(
+  NavierStokesScratchData<dim> & scratch_data,
+  StabilizedMethodsTensorCopyData<dim> & copy_data)
+{
+  // Loop and quadrature information
+  const auto        &JxW_vec       = scratch_data.JxW;
+  const unsigned int n_q_points    = scratch_data.n_q_points;
+  const unsigned int n_dofs        = scratch_data.n_dofs;
+  const auto              &velocities    = scratch_data.velocity_values;
+  const auto              &temperatures = scratch_data.temperature_values;
+
+  auto &local_matrix    = copy_data.local_matrix;
+  auto &strong_residual = copy_data.strong_residual;
+  auto &strong_jacobian = copy_data.strong_jacobian;
+
+
+  // Loop over the quadrature points
+  for (unsigned int q = 0; q < n_q_points; ++q)
+    {
+      // Store JxW in local variable for faster access;
+      const double JxW = JxW_vec[q];
+      // Current temperature values
+      double current_temperature = temperatures[q];
+      // Depending on the value of the temperature, calculate the Darcy permeability
+      // This min(max) approach is used to calculate the liquid fraction without requiring if conditions
+      const double liquid_fraction =
+        std::min(1.,
+                 std::max((current_temperature -
+                           phase_change_parameters.T_solidus) /
+                            (phase_change_parameters.T_liquidus -
+                             phase_change_parameters.T_solidus),
+                          0.));
+      double darcy_permeability =
+        phase_change_parameters.permeability_l * liquid_fraction +
+        (1. - liquid_fraction) * phase_change_parameters.permeability_s;
+
+      strong_residual[q] += darcy_permeability * velocities[q];
+
+      for (unsigned int j = 0 ; j < n_dofs ; ++j)
+        {
+            strong_jacobian[q][j] += darcy_permeability * scratch_data.phi_u[q][j];
+        }
+
+      for (unsigned int i = 0; i < n_dofs; ++i)
+        {
+          const auto &phi_u_i      = scratch_data.phi_u[q][i];
+          for (unsigned int j = 0; j < n_dofs; ++j)
+            {
+              const auto &phi_u_j     = scratch_data.phi_u[q][j];
+              local_matrix(i, j) += darcy_permeability * phi_u_i*phi_u_j*JxW;
+            }
+        }
+    }
+}
+
+template <int dim>
+void
+PhaseChangeDarcyAssembly<dim>::assemble_rhs(
+  NavierStokesScratchData<dim>         &scratch_data,
+  StabilizedMethodsTensorCopyData<dim> &copy_data)
+{
+  // Loop and quadrature information
+  const auto        &JxW_vec       = scratch_data.JxW;
+  const unsigned int n_q_points    = scratch_data.n_q_points;
+  const unsigned int n_dofs        = scratch_data.n_dofs;
+  const auto              &velocities    = scratch_data.velocity_values;
+  const auto              &temperatures = scratch_data.temperature_values;
+
+
+  auto &local_rhs       = copy_data.local_rhs;
+  auto &strong_residual = copy_data.strong_residual;
+
+  // Loop over the quadrature points
+  for (unsigned int q = 0; q < n_q_points; ++q)
+    {
+      // Store JxW in local variable for faster access;
+      const double JxW = JxW_vec[q];
+      // Current temperature values
+      double current_temperature = temperatures[q];
+      // Depending on the value of the temperature, calculate the Darcy permeability
+      // This min(max) approach is used to calculate the liquid fraction without requiring if conditions
+      const double liquid_fraction =
+        std::min(1.,
+                 std::max((current_temperature -
+                           phase_change_parameters.T_solidus) /
+                            (phase_change_parameters.T_liquidus -
+                             phase_change_parameters.T_solidus),
+                          0.));
+      double darcy_permeability =
+        phase_change_parameters.permeability_l * liquid_fraction +
+        (1. - liquid_fraction) * phase_change_parameters.permeability_s;
+
+      strong_residual[q] += darcy_permeability * velocities[q];
+
+      // Assembly of the right-hand side
+      for (unsigned int i = 0; i < n_dofs; ++i)
+        {
+          const auto phi_u_i = scratch_data.phi_u[q][i];
+
+          // Laplacian on the velocity terms
+          local_rhs(i) -= darcy_permeability * velocities[q] *
+                          phi_u_i * JxW;
+        }
+    }
+}
+
+template class PhaseChangeDarcyAssembly<2>;
+template class PhaseChangeDarcyAssembly<3>;
+
 
 template <int dim>
 void

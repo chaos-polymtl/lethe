@@ -25,6 +25,16 @@
 #ifndef lethe_navier_stokes_assemblers_h
 #  define lethe_navier_stokes_assemblers_h
 
+
+/*
+ * Exceptions used to capture incoherent setup of assemblers
+ */
+
+DeclExceptionMsg(
+  PhaseChangeDarcyModelRequiresTemperature,
+  "Using the Phase Change darcy model requires that a multiphysics simulation with the temperature enabled be running.");
+
+
 /**
  * @brief A pure virtual class that serves as an interface for all
  * of the assemblers for the Navier-Stokes Equations
@@ -696,6 +706,46 @@ public:
 private:
   std::shared_ptr<SimulationControl> simulation_control;
   const double                       reference_temperature;
+};
+
+/**
+ * @brief Class that assembles a Darcy forcing term
+ *
+ * @tparam dim An integer that denotes the number of spatial dimensions
+ *
+ * @ingroup assemblers
+ */
+
+template <int dim>
+class PhaseChangeDarcyAssembly : public NavierStokesAssemblerBase<dim>
+{
+public:
+  PhaseChangeDarcyAssembly(const Parameters::PhaseChange phase_change_parameters)
+    :phase_change_parameters(phase_change_parameters)
+  {}
+
+  /**
+   * @brief assemble_matrix Assembles the matrix
+   * @param scratch_data (see base class)
+   * @param copy_data (see base class)
+   */
+  virtual void
+  assemble_matrix(NavierStokesScratchData<dim>         &scratch_data,
+                  StabilizedMethodsTensorCopyData<dim> &copy_data) override;
+
+
+  /**
+   * @brief assemble_rhs Assembles the weak form of: \f$-\mathbf{g} \times \alpha \times (T - T_0)\f$
+   * @param scratch_data (see base class)
+   * @param copy_data (see base class)
+   */
+  virtual void
+  assemble_rhs(NavierStokesScratchData<dim>         &scratch_data,
+               StabilizedMethodsTensorCopyData<dim> &copy_data) override;
+
+
+private:
+  const Parameters::PhaseChange phase_change_parameters ;
 };
 
 
