@@ -720,8 +720,9 @@ template <int dim>
 class PhaseChangeDarcyAssembly : public NavierStokesAssemblerBase<dim>
 {
 public:
-  PhaseChangeDarcyAssembly(const Parameters::PhaseChange phase_change_parameters)
-    :phase_change_parameters(phase_change_parameters)
+  PhaseChangeDarcyAssembly(
+    const Parameters::PhaseChange phase_change_parameters)
+    : phase_change_parameters(phase_change_parameters)
   {}
 
   /**
@@ -745,7 +746,7 @@ public:
 
 
 private:
-  const Parameters::PhaseChange phase_change_parameters ;
+  const Parameters::PhaseChange phase_change_parameters;
 };
 
 

@@ -587,8 +587,8 @@ namespace Parameters
       thermal_expansion_s *= dimensions.thermal_expansion_scaling;
 
       // Darcy permeability terms
-      permeability_l = prm.get_double("permeability liquid");
-      permeability_s = prm.get_double("permeability solid");
+      penality_l = prm.get_double("Darcy penality liquid");
+      penality_s = prm.get_double("Darcy penality solid");
     }
 
     Assert(T_liquidus > T_solidus,
@@ -656,15 +656,15 @@ namespace Parameters
                         Patterns::Double(),
                         "Kinematic viscosity of the solid phase");
 
-      prm.declare_entry("permeability liquid",
+      prm.declare_entry("Darcy penality liquid",
                         "0",
                         Patterns::Double(),
-                        "Permeability of the liquid phase");
+                        "Darcy penality of the liquid phase");
 
-      prm.declare_entry("permeability solid",
+      prm.declare_entry("Darcy penality solid",
                         "0",
                         Patterns::Double(),
-                        "Permeability of the  solid phase");
+                        "Darcy penality of the  solid phase");
     }
     prm.leave_subsection();
   }

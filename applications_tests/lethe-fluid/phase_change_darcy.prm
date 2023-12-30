@@ -64,10 +64,10 @@ subsection physical properties
       set specific heat solid = 1
 
       # viscosity of the liquid phase
-      set permeability liquid = 0
+      set Darcy penality liquid = 0
 
       # Specific heat of the solid phase
-      set permeability solid = 1e5
+      set Darcy penality solid = 1e5
     end
   end
 end
