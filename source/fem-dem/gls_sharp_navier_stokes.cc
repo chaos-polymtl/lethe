@@ -4638,7 +4638,7 @@ GLSSharpNavierStokesSolver<dim>::load_particles_from_file()
           if (volume == 0)
             {
               // value is automatically define.
-              volume = particles[p_i].shape->displaced_volume(1.0);
+              volume = particles[p_i].shape->displaced_volume();
               if (volume == 0)
                 {
                   if (dim == 2)

@@ -782,10 +782,6 @@ public:
               }
           }
       }
-    // output
-
-    // std::cout<<"hi output distance "<< distance<<" normal "<< normal<<"
-    // contact point "<<contact_point  <<std::endl;
     return std::make_tuple(distance, normal, contact_point);
   }
 
@@ -802,7 +798,7 @@ public:
     if constexpr (dim == 3)
       {
         // First, if one of the bounding boxes is a plane, then the size of the
-        // bounding box is zero. As such, we test the other box vertices
+        // bounding box is set to zero. As such, we test the other box vertices
         // directly.
         if (this->bounding_box_half_length.norm() == 0)
           {
@@ -815,9 +811,15 @@ public:
                       {
                         // create the vertex to test and check the value
                         Tensor<1, dim> vertex_position(
-                          {shape.bounding_box_half_length[0] * i,
-                           shape.bounding_box_half_length[1] * j,
-                           shape.bounding_box_half_length[2] * k});
+                          {(shape.bounding_box_half_length[0] +
+                            shape.layer_thickening) *
+                             i,
+                           (shape.bounding_box_half_length[1] +
+                            shape.layer_thickening) *
+                             j,
+                           (shape.bounding_box_half_length[2] +
+                            shape.layer_thickening) *
+                             k});
                         Point<3> vertex =
                           point_nd_to_3d(shape.position) +
                           shape.rotation_matrix *
@@ -843,9 +845,15 @@ public:
                       {
                         // create the vertex to test and check the value
                         Tensor<1, dim> vertex_position(
-                          {this->bounding_box_half_length[0] * i,
-                           this->bounding_box_half_length[1] * j,
-                           this->bounding_box_half_length[2] * k});
+                          {(this->bounding_box_half_length[0] +
+                            this->layer_thickening) *
+                             i,
+                           (this->bounding_box_half_length[1] +
+                            this->layer_thickening) *
+                             j,
+                           (this->bounding_box_half_length[2] +
+                            this->layer_thickening) *
+                             k});
                         Point<3> vertex =
                           point_nd_to_3d(this->position) +
                           this->rotation_matrix *
@@ -863,7 +871,6 @@ public:
 
         double         ra, rb;
         Tensor<2, dim> R, AbsR;
-
         // Compute rotation matrix expressing each box in the other's coordinate
         // frame
         for (int i = 0; i < 3; i++)
@@ -874,13 +881,11 @@ public:
                                          shape.rotation_matrix[j]);
               }
           }
-
         // Compute translation vector t in this shape frame
         Tensor<1, dim> t =
           shape.position + shape.rotation_matrix * shape.bounding_box_center -
           (this->position + this->rotation_matrix * this->bounding_box_center);
         t = this->rotation_matrix * t;
-
         // Compute common subexpressions. Add in an epsilon term to counteract
         // arithmetic errors
         for (int i = 0; i < 3; i++)
@@ -891,30 +896,33 @@ public:
                   std::abs(R[i][j]) + std::numeric_limits<double>::epsilon();
               }
           }
-
         // Test axes L = A0, L = A1, L = A2
         for (int i = 0; i < 3; i++)
           {
-            ra = this->bounding_box_half_length[i];
-            rb = shape.bounding_box_half_length[0] * AbsR[i][0] +
-                 shape.bounding_box_half_length[1] * AbsR[i][1] +
-                 shape.bounding_box_half_length[2] * AbsR[i][2];
+            ra = (this->bounding_box_half_length[i] + this->layer_thickening);
+            rb = (shape.bounding_box_half_length[0] + shape.layer_thickening) *
+                   AbsR[i][0] +
+                 (shape.bounding_box_half_length[1] + shape.layer_thickening) *
+                   AbsR[i][1] +
+                 (shape.bounding_box_half_length[2] + shape.layer_thickening) *
+                   AbsR[i][2];
             if (std::abs(t[i]) > ra + rb)
               return false;
           }
-
         // Test axes L = B0, L = B1, L = B2
         for (int i = 0; i < 3; i++)
           {
-            ra = this->bounding_box_half_length[0] * AbsR[0][i] +
-                 this->bounding_box_half_length[1] * AbsR[1][i] +
-                 this->bounding_box_half_length[2] * AbsR[2][i];
-            rb = shape.bounding_box_half_length[i];
+            ra = (this->bounding_box_half_length[0] + this->layer_thickening) *
+                   AbsR[0][i] +
+                 (this->bounding_box_half_length[1] + this->layer_thickening) *
+                   AbsR[1][i] +
+                 (this->bounding_box_half_length[2] + this->layer_thickening) *
+                   AbsR[2][i];
+            rb = shape.bounding_box_half_length[i] + shape.layer_thickening;
             if (std::abs(t[0] * R[0][i] + t[1] * R[1][i] + t[2] * R[2][i]) >
                 ra + rb)
               return false;
           }
-
         // Check the axis obtained from the cross product of all the bases axis.
         Tensor<1, dim> L;
         for (int i = 0; i < 3; i++)
@@ -923,19 +931,22 @@ public:
               {
                 L  = cross_product_3d(this->rotation_matrix[i],
                                      shape.rotation_matrix[j]);
-                ra = this->bounding_box_half_length[(i + 1) % 3] *
+                ra = (this->bounding_box_half_length[(i + 1) % 3] +
+                      this->layer_thickening) *
                        AbsR[(i + 2) % 3][j] +
-                     this->bounding_box_half_length[(i + 2) % 3] *
+                     (this->bounding_box_half_length[(i + 2) % 3] +
+                      this->layer_thickening) *
                        AbsR[(i + 1) % 3][j];
-                rb = shape.bounding_box_half_length[(j + 1) % 3] *
+                rb = (shape.bounding_box_half_length[(j + 1) % 3] +
+                      shape.layer_thickening) *
                        AbsR[i][(j + 2) % 3] +
-                     shape.bounding_box_half_length[(j + 2) % 3] *
+                     (shape.bounding_box_half_length[(j + 2) % 3] +
+                      shape.layer_thickening) *
                        AbsR[i][(j + 1) % 3];
                 if (std::abs(scalar_product(t, L)) > ra + rb)
                   return false;
               }
           }
-
         // No separating axis found, the boxes must be intersecting
         return true;
       }
@@ -953,8 +964,12 @@ public:
                   {
                     // create the vertex to test and check the value
                     Tensor<1, dim> vertex_position(
-                      {shape.bounding_box_half_length[0] * i,
-                       shape.bounding_box_half_length[1] * j});
+                      {(shape.bounding_box_half_length[0] +
+                        shape.layer_thickening) *
+                         i,
+                       (shape.bounding_box_half_length[1] +
+                        shape.layer_thickening) *
+                         j});
                     Point<3> vertex =
                       point_nd_to_3d(shape.position) +
                       shape.rotation_matrix *
@@ -977,8 +992,12 @@ public:
                   {
                     // create the vertex to test and check the value
                     Tensor<1, 3> vertex_position(
-                      {this->bounding_box_half_length[0] * i,
-                       this->bounding_box_half_length[1] * j,
+                      {(this->bounding_box_half_length[0] +
+                        this->layer_thickening) *
+                         i,
+                       (this->bounding_box_half_length[1] +
+                        this->layer_thickening) *
+                         j,
                        0});
                     Point<3> vertex =
                       point_nd_to_3d(this->position) +
@@ -1029,9 +1048,11 @@ public:
         // Test axes L = A0, L = A1, L = A2
         for (int i = 0; i < 2; i++)
           {
-            ra = this->bounding_box_half_length[i];
-            rb = shape.bounding_box_half_length[0] * AbsR[i][0] +
-                 shape.bounding_box_half_length[1] * AbsR[i][1];
+            ra = this->bounding_box_half_length[i] + this->layer_thickening;
+            rb = (shape.bounding_box_half_length[0] + shape.layer_thickening) *
+                   AbsR[i][0] +
+                 (shape.bounding_box_half_length[1] + shape.layer_thickening) *
+                   AbsR[i][1];
             if (std::abs(t[i]) > ra + rb)
               return false;
           }
@@ -1039,9 +1060,11 @@ public:
         // Test axes L = B0, L = B1, L = B2
         for (int i = 0; i < 2; i++)
           {
-            ra = this->bounding_box_half_length[0] * AbsR[0][i] +
-                 this->bounding_box_half_length[1] * AbsR[1][i];
-            rb = shape.bounding_box_half_length[i];
+            ra = (this->bounding_box_half_length[0] + this->layer_thickening) *
+                   AbsR[0][i] +
+                 (this->bounding_box_half_length[1] + this->layer_thickening) *
+                   AbsR[1][i];
+            rb = shape.bounding_box_half_length[i] + shape.layer_thickening;
             if (std::abs(t[0] * R[0][i] + t[1] * R[1][i]) > ra + rb)
               return false;
           }
@@ -1096,7 +1119,7 @@ public:
    * @param fluid_density The density of the fluid that is displaced
    */
   virtual double
-  displaced_volume(const double fluid_density);
+  displaced_volume();
 
 
   /**
@@ -1488,7 +1511,7 @@ public:
    * @param fluid_density The density of the fluid that is displaced
    */
   double
-  displaced_volume(const double fluid_density) override;
+  displaced_volume() override;
 
   void
   set_position(const Point<dim> &position) override;
@@ -1608,7 +1631,7 @@ public:
    * @param fluid_density The density of the fluid that is displaced
    */
   double
-  displaced_volume(const double fluid_density) override;
+  displaced_volume() override;
 
 
 
@@ -1833,7 +1856,7 @@ public:
    * @param fluid_density The density of the fluid that is displaced
    */
   double
-  displaced_volume(const double fluid_density) override;
+  displaced_volume() override;
 
   // Half-lengths of every side of the box
   Tensor<1, dim> half_lengths;
@@ -1886,7 +1909,7 @@ public:
    * @param fluid_density The density of the fluid that is displaced
    */
   double
-  displaced_volume(const double fluid_density) override;
+  displaced_volume() override;
 
 private:
   // The radii of all directions in which the ellipsoid is defined
@@ -1948,7 +1971,7 @@ public:
    * @param fluid_density The density of the fluid that is displaced
    */
   double
-  displaced_volume(const double fluid_density) override;
+  displaced_volume() override;
 
 private:
   double ring_radius;
@@ -2011,7 +2034,7 @@ public:
    * @param fluid_density The density of the fluid that is displaced
    */
   double
-  displaced_volume(const double fluid_density) override;
+  displaced_volume() override;
 
 private:
   double tan_base_angle;
@@ -2080,7 +2103,7 @@ public:
    * @param fluid_density The density of the fluid that is displaced
    */
   double
-  displaced_volume(const double fluid_density) override;
+  displaced_volume() override;
 
 private:
   double radius;
@@ -2153,7 +2176,7 @@ public:
    * @param fluid_density The density of the fluid that is displaced
    */
   double
-  displaced_volume(const double fluid_density) override;
+  displaced_volume() override;
 
 private:
   double radius;
@@ -2707,7 +2730,7 @@ public:
    * @param fluid_density The density of the fluid that is displaced
    */
   double
-  displaced_volume(const double fluid_density) override;
+  displaced_volume() override;
 
   /**
    * @brief
@@ -2879,7 +2902,7 @@ public:
    * @param fluid_density The density of the fluid that is displaced
    */
   double
-  displaced_volume(const double fluid_density) override;
+  displaced_volume() override;
 
   /**
    * A bounding box is constructed around the collection of nodes defining the
@@ -3387,7 +3410,7 @@ public:
    * @param fluid_density The density of the fluid that is displaced
    */
   double
-  displaced_volume(const double fluid_density) override;
+  displaced_volume() override;
 
 private:
   double radius;
@@ -3452,7 +3475,7 @@ public:
    * @param fluid_density The density of the fluid that is displaced
    */
   double
-  displaced_volume(const double fluid_density) override;
+  displaced_volume() override;
 
 private:
   double radius;
@@ -3522,7 +3545,7 @@ public:
    * @param fluid_density The density of the fluid that is displaced
    */
   double
-  displaced_volume(const double fluid_density) override;
+  displaced_volume() override;
 
 private:
   double radius;

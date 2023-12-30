@@ -28,13 +28,12 @@ IBParticle<dim>::initialize_all()
   inertia[0][1] = 0.;
   inertia[0][2] = 0.;
   inertia[1][0] = 0.;
-  inertia[1][1] = 2.;
+  inertia[1][1] = 1.;
   inertia[1][2] = 0.;
   inertia[2][0] = 0.;
   inertia[2][1] = 0.;
-  inertia[2][2] = 3.;
+  inertia[2][2] = 1.;
 
-  inertia = 1.;
 
   fluid_forces[0] = 0.;
   fluid_forces[1] = 0.;

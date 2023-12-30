@@ -31,7 +31,7 @@
 
 template <int dim>
 double
-Shape<dim>::displaced_volume(const double /*fluid_density*/)
+Shape<dim>::displaced_volume()
 {
   StandardExceptions::ExcNotImplemented();
   return 0;
@@ -73,7 +73,6 @@ Shape<dim>::align_and_center(const Point<dim> &evaluation_point) const
   Point<dim> centralized_point;
   centralized_point              = evaluation_point - center_of_rotation;
   Point<dim> centralized_rotated = centralized_point;
-  Point<dim> centralized_rotated_initial = centralized_point;
 
   // Selection of the first axis around which to rotate:
   // x -> 0, y -> 1, z -> 2
@@ -350,13 +349,12 @@ Sphere<dim>::get_shape_manifold()
 
 template <int dim>
 double
-Sphere<dim>::displaced_volume(const double fluid_density)
+Sphere<dim>::displaced_volume()
 {
   double solid_volume;
   using numbers::PI;
   if (dim == 2)
-    solid_volume =
-      this->effective_radius * this->effective_radius * PI * fluid_density;
+    solid_volume = this->effective_radius * this->effective_radius * PI;
 
   else if (dim == 3)
     solid_volume = 4.0 / 3.0 * this->effective_radius * this->effective_radius *
@@ -500,6 +498,7 @@ Tensor<1, dim>
 Plane<dim>::gradient(const Point<dim> &evaluation_point,
                      const unsigned int /*component*/) const
 {
+  (void)evaluation_point;
   //  We take the vector in z of the plane and rotate it in the world frame.
   if constexpr (dim == 2)
     {
@@ -514,7 +513,7 @@ Plane<dim>::gradient(const Point<dim> &evaluation_point,
 
 template <int dim>
 double
-Plane<dim>::displaced_volume(const double /*fluid_density*/)
+Plane<dim>::displaced_volume()
 {
   return 0;
 }
@@ -1029,7 +1028,7 @@ OpenCascadeShape<dim>::gradient_with_cell_guess(
 
 template <int dim>
 double
-OpenCascadeShape<dim>::displaced_volume(const double /*fluid_density*/)
+OpenCascadeShape<dim>::displaced_volume()
 {
   return 0;
 }
@@ -1080,12 +1079,12 @@ HyperRectangle<dim>::static_copy() const
 
 template <int dim>
 double
-HyperRectangle<dim>::displaced_volume(const double /*fluid_density*/)
+HyperRectangle<dim>::displaced_volume()
 {
   double solid_volume = 1.0;
-  for (unsigned int i = 0; i < dim; i++)
+  for (unsigned int i = 0; i < dim; ++i)
     {
-      solid_volume = solid_volume * 2.0 * half_lengths[dim];
+      solid_volume = solid_volume * 2.0 * half_lengths[i];
     }
   return solid_volume;
 }
@@ -1123,13 +1122,13 @@ Ellipsoid<dim>::static_copy() const
 
 template <int dim>
 double
-Ellipsoid<dim>::displaced_volume(const double /*fluid_density*/)
+Ellipsoid<dim>::displaced_volume()
 {
   using numbers::PI;
   double solid_volume = PI * 4.0 / 3.0;
   for (unsigned int i = 0; i < dim; i++)
     {
-      solid_volume = solid_volume * radii[dim];
+      solid_volume = solid_volume * radii[i];
     }
   return solid_volume;
 }
@@ -1159,7 +1158,7 @@ Torus<dim>::static_copy() const
 
 template <int dim>
 double
-Torus<dim>::displaced_volume(const double /*fluid_density*/)
+Torus<dim>::displaced_volume()
 {
   using numbers::PI;
   return 2.0 * PI * PI * ring_radius * ring_thickness * ring_thickness;
@@ -1206,7 +1205,7 @@ Cone<dim>::static_copy() const
 
 template <int dim>
 double
-Cone<dim>::displaced_volume(const double /*fluid_density*/)
+Cone<dim>::displaced_volume()
 {
   using numbers::PI;
   return PI / 3.0 * base_radius * base_radius * height;
@@ -1251,7 +1250,7 @@ CutHollowSphere<dim>::static_copy() const
 
 template <int dim>
 double
-CutHollowSphere<dim>::displaced_volume(const double /*fluid_density*/)
+CutHollowSphere<dim>::displaced_volume()
 {
   using numbers::PI;
   double small_radius = radius - shell_thickness;
@@ -1301,7 +1300,7 @@ DeathStar<dim>::static_copy() const
 
 template <int dim>
 double
-DeathStar<dim>::displaced_volume(const double /*fluid_density*/)
+DeathStar<dim>::displaced_volume()
 {
   using numbers::PI;
   return 4. * PI / 3. * radius * radius * radius;
@@ -1852,9 +1851,9 @@ RBFShape<dim>::static_copy() const
 
 template <int dim>
 double
-RBFShape<dim>::displaced_volume(const double fluid_density)
+RBFShape<dim>::displaced_volume()
 {
-  return bounding_box->displaced_volume(fluid_density);
+  return bounding_box->displaced_volume();
 }
 
 template <int dim>
@@ -2415,7 +2414,7 @@ Cylinder<dim>::static_copy() const
 
 template <int dim>
 double
-Cylinder<dim>::displaced_volume(const double /*fluid_density*/)
+Cylinder<dim>::displaced_volume()
 {
   using numbers::PI;
   double solid_volume = PI * radius * radius * half_length * 2;
@@ -2474,7 +2473,7 @@ CylindricalTube<dim>::static_copy() const
 
 template <int dim>
 double
-CylindricalTube<dim>::displaced_volume(const double /*fluid_density*/)
+CylindricalTube<dim>::displaced_volume()
 {
   using numbers::PI;
   double solid_volume = height * PI *
@@ -2714,7 +2713,7 @@ CylindricalHelix<dim>::static_copy() const
 
 template <int dim>
 double
-CylindricalHelix<dim>::displaced_volume(const double /*fluid_density*/)
+CylindricalHelix<dim>::displaced_volume()
 {
   using numbers::PI;
   double solid_volume = 0;

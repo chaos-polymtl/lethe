@@ -3277,7 +3277,7 @@ namespace Parameters
             if (volume == 0)
               {
                 // value is automatically define.
-                volume = particles[i].shape->displaced_volume(1.0);
+                volume = particles[i].shape->displaced_volume();
                 if (volume == 0)
                   {
                     if (dim == 2)
@@ -3299,14 +3299,6 @@ namespace Parameters
             particles[i].initialize_previous_solution();
             particles[i].set_position(particles[i].position);
             particles[i].set_orientation(particles[i].orientation);
-
-            std::string center_of_mass_location_str =
-              prm.get("center of mass location");
-            std::vector<std::string> center_of_mass_location_str_list(
-              Utilities::split_string_list(center_of_mass_location_str, ";"));
-            std::vector<double> center_of_mass_list =
-              Utilities::string_to_double(center_of_mass_location_str_list);
-
             // The following parameters aims at allowing the change of frame of
             // reference of the particle automatically to align and position the
             // center of mass of the particle with its main axis base on the
@@ -3314,6 +3306,13 @@ namespace Parameters
             // implemented but make the evaluation of the levelset more
             // difficult as such we postponed the implementation to another PR.
             /*
+            std::string center_of_mass_location_str =
+              prm.get("center of mass location");
+            std::vector<std::string> center_of_mass_location_str_list(
+              Utilities::split_string_list(center_of_mass_location_str, ";"));
+            std::vector<double> center_of_mass_list =
+              Utilities::string_to_double(center_of_mass_location_str_list);
+
             particles[i].center_of_mass_location[0] = center_of_mass_list[0];
             particles[i].center_of_mass_location[1] = center_of_mass_list[1];
             if (dim == 3)
