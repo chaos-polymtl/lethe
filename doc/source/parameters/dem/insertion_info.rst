@@ -72,7 +72,7 @@ The ``insertion method`` parameter chooses the type of insertion. Acceptable cho
 -------
 Volume
 -------
-The volume insertion method uses an insertion box where particles will be inserted. The insertion locations of particles are randomly selected if the ``random number range`` is not equal to zero, otherwise, the particles will perfectly aligns with the x, y and z directions.
+The volume insertion method uses an insertion box where particles will be inserted. The insertion locations of particles are randomly selected if the ``insertion maximum offset`` is not equal to zero, otherwise, the particles will perfectly aligns with the x, y and z directions.
 
 * The ``inserted number of particles at each time step`` defines the desired number of particles to be inserted at each insertion step. If the insertion box is not adequately large to insert ``inserted number of particles at each time step`` particles with the defined arrangement (initial distance between the inserted particles), Lethe prints a warning and inserts the maximum number of particles that fit inside the insertion box at each insertion step.
 
@@ -97,10 +97,10 @@ The distance between the inserted particles is equal to:
 .. math::
     D_i=(\epsilon + \psi)  d^{max}_p
 
-Where, :math:`{\epsilon}`, :math:`{\psi}`, and :math:`{d^{max}_p}` denote ``insertion distance threshold``, a generated random number (in the range of 0-``random number range``, and from the seed of ``insertion random number seed``), and maximum particle diameter.
+Where, :math:`{\epsilon}`, :math:`{\psi}`, and :math:`{d^{max}_p}` denote ``insertion distance threshold``, a generated random number (in the range of 0-``insertion maximum offset``, and from the seed of ``insertion prn seed``), and maximum particle diameter.
  
 .. note::
-    ``insertion distance threshold`` should also be compatible with the ``random number range``; especially if the ``random number range`` is large, a large value should be defined for ``insertion distance threshold``. Generally, we recommend users to use a value in the range of 1.3-2 (depending on the value of ``random number range``) for the ``insertion distance threshold``.
+    ``insertion distance threshold`` should also be compatible with the ``insertion maximum offset``; especially if the ``insertion maximum offset`` is large, a large value should be defined for ``insertion distance threshold``. Generally, we recommend users to use a value in the range of 1.3-2 (depending on the value of ``insertion maximum offset``) for the ``insertion distance threshold``.
 
 --------------------
 Plane
