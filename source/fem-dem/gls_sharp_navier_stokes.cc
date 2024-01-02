@@ -140,6 +140,7 @@ GLSSharpNavierStokesSolver<dim>::generate_cut_cells_map()
   auto              &v_x_fe                  = this->fe->get_sub_fe(0, 1);
   const unsigned int dofs_per_cell_local_v_x = v_x_fe.dofs_per_cell;
 
+
   // // Loop on all the cells and check if they are cut.
   for (const auto &cell : cell_iterator)
     {
