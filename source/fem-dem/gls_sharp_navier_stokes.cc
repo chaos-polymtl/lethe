@@ -285,8 +285,9 @@ GLSSharpNavierStokesSolver<dim>::generate_cut_cells_map()
 
   if (mapping_overconstrained_cells)
     {
+      local_dof_overconstrained.compress(VectorOperation::insert);
       dof_overconstrained = local_dof_overconstrained;
-      dof_overconstrained.compress(VectorOperation::insert);
+
 
       for (const auto &cell : cell_iterator)
         {
