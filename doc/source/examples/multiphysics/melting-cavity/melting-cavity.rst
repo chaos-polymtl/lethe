@@ -323,7 +323,7 @@ Furthermore, the phase change subsection within the physical properties but also
   
 Note that the viscosity of the liquid and the solid phase are now identical and that a very strong Darcy penality coefficient is applied on the solid phase to restrict its motion. A third approach would be to combine this Darcy term with the viscosity model used above, resulting in an hybrid approach.
 
-The following graph shows the evolution of the liquid fraction as a function of time using the viscous penalization, Darcy penalization and hybrid penalization strategy. We see that the viscous penalization tends to increase the amount of molten material. Whether this is physical or not cannot be assessed here.
+The following graph shows the evolution of the liquid fraction as a function of time using the viscous penalitu, Darcy penality and hybrid penality strategy. We see that the viscous penality tends to increase the amount of molten material. Whether this is physical or not cannot be assessed here.
 
 
 .. image:: images/comparison-melted-volume-fraction.png
