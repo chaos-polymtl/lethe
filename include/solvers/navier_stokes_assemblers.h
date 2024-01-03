@@ -32,7 +32,15 @@
 
 DeclExceptionMsg(
   PhaseChangeDarcyModelRequiresTemperature,
-  "Using the Phase Change darcy model requires that a multiphysics simulation with the temperature enabled be running.");
+  "Using the phase change Darcy model requires that a multiphysics simulation with the temperature enabled be running.");
+
+DeclExceptionMsg(
+  PhaseChangeDarcyModelDoesNotSupportVOF,
+  "The phase change Darcy model does not currently have a VOF implementation.");
+
+DeclExceptionMsg(
+  PhaseChangeDarcyModelDoesNotSupportCHN,
+  "The phase change Darcy model does not currently have a Cahn-Hilliard implementation.");
 
 
 /**
@@ -709,7 +717,11 @@ private:
 };
 
 /**
- * @brief Class that assembles a Darcy forcing term
+ * @brief Class that assembles a phase change Darcy forcing term. This term adds \f$-\beta_D  \mathbf{u} \f$ to the
+ * right hand-side of the Navier-Stokes equations to prohibit the motion of a material. In the pahse change model, the value of the \f$ \beta_D \f$ coefficient depends
+ * on the temperature field. Generally, this is used to prohibit fluid motion in the solid phase within phase change problem. This generally leads to a better conditioning of the linear system
+ * than increasing the viscosity.
+ *
  *
  * @tparam dim An integer that denotes the number of spatial dimensions
  *
@@ -726,7 +738,7 @@ public:
   {}
 
   /**
-   * @brief assemble_matrix Assembles the matrix
+   * @brief assemble_matrix Assembles the matrix of: \f$-\beta_D  \mathbf{u} \f$
    * @param scratch_data (see base class)
    * @param copy_data (see base class)
    */
@@ -736,7 +748,7 @@ public:
 
 
   /**
-   * @brief assemble_rhs Assembles the weak form of: \f$-\mathbf{g} \times \alpha \times (T - T_0)\f$
+   * @brief assemble_rhs Assembles the weak form of: \f$-\beta_D  \mathbf{u} \f$
    * @param scratch_data (see base class)
    * @param copy_data (see base class)
    */
@@ -746,6 +758,9 @@ public:
 
 
 private:
+  /*
+   * Phase change parameters are kept within the assembler and are used to calculate, on the fly, the inverse permeability (\f$ \beta_D \f$).
+   */
   const Parameters::PhaseChange phase_change_parameters;
 };
 

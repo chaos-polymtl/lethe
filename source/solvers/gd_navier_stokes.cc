@@ -99,6 +99,11 @@ GDNavierStokesSolver<dim>::setup_assemblers()
               GLSIsothermalCompressibleNavierStokesVOFAssemblerBDF<dim>>(
               this->simulation_control));
         }
+
+      AssertThrow(this->simulation_parameters.velocity_sources.darcy_type !=
+                    Parameters::VelocitySource::DarcySourceType::phase_change,
+                  PhaseChangeDarcyModelDoesNotSupportVOF());
+
       if (!this->simulation_parameters.physical_properties_manager
              .density_is_constant())
         {

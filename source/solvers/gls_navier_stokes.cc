@@ -446,6 +446,10 @@ GLSNavierStokesSolver<dim>::setup_assemblers()
               this->simulation_control));
         }
 
+      AssertThrow(this->simulation_parameters.velocity_sources.darcy_type !=
+                    Parameters::VelocitySource::DarcySourceType::phase_change,
+                  PhaseChangeDarcyModelDoesNotSupportCHN());
+
       this->assemblers.push_back(
         std::make_shared<GLSNavierStokesCahnHilliardAssemblerCore<dim>>(
           this->simulation_control, this->simulation_parameters));
@@ -498,6 +502,10 @@ GLSNavierStokesSolver<dim>::setup_assemblers()
               this->simulation_parameters.evaporation));
         }
 
+      AssertThrow(this->simulation_parameters.velocity_sources.darcy_type !=
+                    Parameters::VelocitySource::DarcySourceType::phase_change,
+                  PhaseChangeDarcyModelDoesNotSupportVOF());
+
       if (this->simulation_parameters.physical_properties_manager
             .is_non_newtonian())
         {
@@ -545,7 +553,7 @@ GLSNavierStokesSolver<dim>::setup_assemblers()
             }
         }
 
-      // Velocity sources term
+      // Rotating frame sources term
       if (this->simulation_parameters.velocity_sources.rotating_frame_type ==
           Parameters::VelocitySource::RotatingFrameType::srf)
         {

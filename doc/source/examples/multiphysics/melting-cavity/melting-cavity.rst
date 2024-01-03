@@ -191,8 +191,11 @@ The solid block melts into liquid in this example, hence in the ``physical prope
           # Kinematic viscosity of the solid phase
           set viscosity solid = 10
     
+          # Thermal expansion of the liquid phase
           set thermal expansion liquid       = 1
-          set thermal expansion solid       = 0
+    
+          # Thermal expansion of the solid phase
+          set thermal expansion solid        = 0
     
         end
       end
@@ -247,6 +250,86 @@ contains the simulation results. In post-processing, the position of the solid-l
     :alt: ymean_t
     :align: center
     :width: 500
+
+
+
+--------------------------------------------
+Darcy Penalization: An Alternative Approach
+--------------------------------------------
+
+Lethe supports an alternative strategy to impose statis (no motion) within the solidified material using a Darcy-like penalization. This penalization adds a forcing term to the momentum equation to prohibit the motion of the solid instead of increasing its viscosity. This has the advantage of leading to a better matrix conditioning, at the expensive of potentially increased motion within the solid phase. To enable this forcing term, a velocity source term must be specified:
+
+.. code-block:: text
+
+  subsection velocity source
+  set Darcy type          = phase_change
+  end
+
+Furthermore, the phase change subsection within the physical properties but also be modified to specify the Darcy penalty of the solid and liquid phase:
+
+.. code-block:: text
+
+    subsection physical properties
+      set number of fluids = 1
+      set reference temperature = 29.8
+      subsection fluid 0
+        set thermal conductivity model = constant
+        set thermal conductivity       = 0.040516842071415184
+    
+        set thermal expansion model = phase_change
+        set thermal expansion       = 1
+    
+        set rheological model   = phase_change
+        set specific heat model = phase_change
+    
+        set density = 1
+    
+        subsection phase change
+          # Enthalpy of the phase change
+          set latent enthalpy = 200
+    
+          # Temperature of the liquidus
+          set liquidus temperature = 29.8
+    
+          # Temperature of the solidus
+          set solidus temperature = 29.6
+    
+          # Specific heat of the liquid phase
+          set specific heat liquid = 1
+    
+          # Specific heat of the solid phase
+          set specific heat solid = 1
+    
+          # Kinematic viscosity of the liquid phase
+          set viscosity liquid = 0.0007366698558439125
+    
+          # Kinematic viscosity of the solid phase
+          set viscosity solid = 0.0007366698558439125
+    
+          # Thermal expansion of the liquid phase
+          set thermal expansion liquid       = 1
+    
+          # Thermal expansion of the solid phase
+          set thermal expansion solid        = 0
+    
+          # Permeability of the liquid phase
+          set Darcy penality liquid         = 0
+    
+          # Permeability of the  solid phase
+          set Darcy penality solid          = 1e4
+        end
+      end
+    end
+  
+Note that the viscosity of the liquid and the solid phase are now identical and that a very strong Darcy penality coefficient is applied on the solid phase to restrict its motion. A third approach would be to combine this Darcy term with the viscosity model used above, resulting in an hybrid approach.
+
+The following graph shows the evolution of the liquid fraction as a function of time using the viscous penalization, Darcy penalization and hybrid penalization strategy. We see that the viscous penalization tends to increase the amount of molten material. Whether this is physical or not cannot be assessed here.
+
+
+.. image:: images/comparison-melted-volume-fraction.png
+    :alt: ymean_t
+    :align: center
+    :width: 500    
 
 
 -----------
