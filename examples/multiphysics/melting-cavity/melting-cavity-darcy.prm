@@ -11,7 +11,7 @@ subsection simulation control
   set method                       = bdf1
   set time end                     = 41
   set time step                    = 0.01
-  set adapt                        = true 
+  set adapt                        = true
   set max cfl                      = 0.8
   set adaptative time step scaling = 1.1
   set output name                  = melting
@@ -38,8 +38,8 @@ subsection initial conditions
   set type = nodal
   subsection uvwp
     set Function expression = 0; 0; 0
-  end-
   end
+end
 end
 
 #---------------------------------------------------
@@ -56,55 +56,54 @@ end
 # Physical Properties
 #---------------------------------------------------
 -
-  subsection fluid 0
-    set thermal conductivity model = constant
-    set thermal conductivity       = 0.040516842071415184
 
-    set thermal expansion model = phase_change
-    set thermal expansion       = 1
+subsection fluid 0
+  set thermal conductivity model = constant
+  set thermal conductivity       = 0.040516842071415184
 
-    set rheological model   = phase_change
-    set specific heat model = phase_change
+  set thermal expansion model = phase_change
+  set thermal expansion       = 1
 
-    set density = 1
+  set rheological model   = phase_change
+  set specific heat model = phase_change
 
-    subsection phase change
-      # Enthalpy of the phase change
-      set latent enthalpy = 200
+  set density = 1
 
-      # Temperature of the liquidus
-      set liquidus temperature = 29.8
+  subsection phase change
+    # Enthalpy of the phase change
+    set latent enthalpy = 200
 
-      # Temperature of the solidus
-      set solidus temperature = 29.6
+    # Temperature of the liquidus
+    set liquidus temperature = 29.8
 
-      # Specific heat of the liquid phase
-      set specific heat liquid = 1
+    # Temperature of the solidus
+    set solidus temperature = 29.6
 
-      # Specific heat of the solid phase
-      set specific heat solid = 1
+    # Specific heat of the liquid phase
+    set specific heat liquid = 1
 
-      # Kinematic viscosity of the liquid phase
-      set viscosity liquid = 0.0007366698558439125
+    # Specific heat of the solid phase
+    set specific heat solid = 1
 
-      # Kinematic viscosity of the solid phase
-      set viscosity solid = 0.0007366698558439125
+    # Kinematic viscosity of the liquid phase
+    set viscosity liquid = 0.0007366698558439125
 
-      # Thermal expansion of the liquid phase
-      set thermal expansion liquid       = 1
+    # Kinematic viscosity of the solid phase
+    set viscosity solid = 0.0007366698558439125
 
-      # Thermal expansion of the solid phase
-      set thermal expansion solid        = 0
+    # Thermal expansion of the liquid phase
+    set thermal expansion liquid = 1
 
+    # Thermal expansion of the solid phase
+    set thermal expansion solid = 0
 
-      # Permeability of the liquid phase
-      set Darcy penality liquid         = 0
+    # Permeability of the liquid phase
+    set Darcy penality liquid = 0
 
-      # Permeability of the  solid phase
-      set Darcy penality solid          = 1e4
-
-    end
+    # Permeability of the  solid phase
+    set Darcy penality solid = 1e4
   end
+end
 end
 
 #---------------------------------------------------
@@ -124,7 +123,7 @@ end
 
 subsection post-processing
   set calculate liquid fraction = true
-  set verbosity                        = verbose
+  set verbosity                 = verbose
 end
 
 #---------------------------------------------------
@@ -154,17 +153,17 @@ end
 subsection boundary conditions heat transfer
   set number = 2
   subsection bc 0
-    set id    = 0
-    set type  = temperature
+    set id   = 0
+    set type = temperature
     subsection value
       set Function expression = 38
     end
   end
   subsection bc 1
-    set id    = 1
-    set type  = temperature
+    set id   = 1
+    set type = temperature
     subsection value
-      set Function expression =  28
+      set Function expression = 28
     end
   end
 end
@@ -184,7 +183,7 @@ end
 
 subsection velocity source
   # Darcy-like pearmeability termChoices are <none|phase_change>.
-  set Darcy type          = phase_change
+  set Darcy type = phase_change
 end
 
 #---------------------------------------------------

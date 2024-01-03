@@ -11,7 +11,7 @@ subsection simulation control
   set method                       = bdf1
   set time end                     = 41
   set time step                    = 0.01
-  set adapt                        = true 
+  set adapt                        = true
   set max cfl                      = 0.8
   set adaptative time step scaling = 1.1
   set output name                  = melting
@@ -59,7 +59,7 @@ end
 #---------------------------------------------------
 
 subsection physical properties
-  set number of fluids = 1
+  set number of fluids      = 1
   set reference temperature = 29.8
   subsection fluid 0
     set thermal conductivity model = constant
@@ -95,9 +95,8 @@ subsection physical properties
       # Kinematic viscosity of the solid phase
       set viscosity solid = 10
 
-      set thermal expansion liquid       = 1
-      set thermal expansion solid       = 0
-
+      set thermal expansion liquid = 1
+      set thermal expansion solid  = 0
     end
   end
 end
@@ -119,7 +118,7 @@ end
 
 subsection post-processing
   set calculate liquid fraction = true
-  set verbosity                        = verbose
+  set verbosity                 = verbose
 end
 
 #---------------------------------------------------
@@ -149,17 +148,17 @@ end
 subsection boundary conditions heat transfer
   set number = 2
   subsection bc 0
-    set id    = 0
-    set type  = temperature
+    set id   = 0
+    set type = temperature
     subsection value
       set Function expression = 38
     end
   end
   subsection bc 1
-    set id    = 1
-    set type  = temperature
+    set id   = 1
+    set type = temperature
     subsection value
-      set Function expression =  28
+      set Function expression = 28
     end
   end
 end
