@@ -104,7 +104,6 @@ subsection fluid 0
     set Darcy penality solid = 1e4
   end
 end
-end
 
 #---------------------------------------------------
 # Mesh
