@@ -173,7 +173,7 @@ This subsection contains the parameters related to the sharp immersed boundary s
     
     * The ``use explicit contact impulsion`` parameter enables or disables the use of explicit contact impulsion evaluation in the resolution of the coupling of the particle. When it is set to true, this parameter results in the code only performing the DEM calculation once per CFD time step.
 
-    * The ``use explicit position integration`` parameter enables or disables the use of explicit position integration in the resolution of the coupling of the particle. When it is set to true, this parameter results in the code only performing the DEM calculation once and using the resulting position and orientation to evaluate all the other Newton's iterations. This reduces the number of times the cut cell mapping must be performed. However, this can affect the stability of the scheme.
+    * The ``use explicit position integration`` parameter enables or disables the use of explicit position integration in the resolution of the coupling of the particle. When it is set to true, this parameter results in the code only performing the DEM calculation once and using the resulting position and orientation to evaluate all the other Newton's iterations. This reduces the number of times the cut cell mapping must be performed and the number of call to the DEM calculations. However, this can affect the stability of the scheme.
 
     * The ``use approximate radius for contact`` parameter enables or disables the use of the approximate contact radius for contact calculation. When this parameter is true, the contact radius used in the contact force calculation is obtained through the effective contact radius. Otherwise, the curvature radius of the shape is evaluated at the contact point. In the case of a flat surface contact point, the contact radius is limited to 100 times the effective radius of the particle.
     
@@ -307,7 +307,10 @@ The following parameter and subsection are all inside the subsection ``particle 
     
     * The ``volume`` parameter is used to define the volume of the particle. If the value is left to 0, then the volume is automatically calculated based on the shape. If the shape does not have a direct definition of its volume (for example, in the case of a superquadric shape), the volume is defined by the volume of a sphere with a radius equivalent to the effective radius of the shape.
     
-    * The ``inertia`` parameter is used to define one of the diagonal elements of the rotational inertia matrix. Since we are defining spherical particles, we assume a uniform distribution of mass, and as such, all the diagonal elements of the rotational inertia matrix are the same.
+    * The ``inertia`` parameter is used to define one of the diagonal elements of the rotational inertia matrix. This parameter expects either a single value or a three-by-three matrix for the moments of inertia of the particle in the reference frame of the particle. The entry sequence corresponds to : I_xx ;I_xy ;I_xz ;I_yx ;I_yy ;I_yz ;I_zx ;I_zy ;I_zz. If a single value is given, the inertia is assumed to be uniform for all the axes. 
+    
+        .. tip::
+            The current implementation does not support inertia matrices that are not diagonal and shape where the center of mass does not fall on the origin of the particle's reference frame. To avoid such a problem, we recommend using the composite shape to align and center the principal axis of the inertia matrix and the center of mass with the origin of the particle.
 
     The following properties are used if the particle collides with one of the boundaries of the domain or another particle. The effective properties used to calculate the impact force are the harmonic mean between the properties of the colliding entities.
     
