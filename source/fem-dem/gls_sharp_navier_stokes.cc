@@ -2513,12 +2513,10 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
                 {
                   // We have contact so we impose the DEM orientation as the new
                   // orientation.
-                  particles[p].set_orientation(
-                    ib_dem.dem_particles[p].orientation);
+                  particles[p].orientation =
+                    ib_dem.dem_particles[p].orientation;
+                  particles[p].set_orientation(particles[p].orientation);
                 }
-
-              /* particles[p].set_orientation(
-                 ib_dem.dem_particles[p].orientation);*/
               // If something went wrong during the update, the particle's state
               // would be reversed to its original state here.
               if (save_particle_state_is_used)

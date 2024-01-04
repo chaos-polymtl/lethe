@@ -266,7 +266,7 @@ fill_vectors_from_file(std::map<std::string, std::vector<double>> &map,
                        const std::string delimiter = " ");
 
 /**
- * @brief function that read a file that was build from a dealii table and create a map of the with the key being the column name and the variable the vectors of data.
+ * @brief Function that read a file that was build from a dealii table and create a map of the with the key being the column name and the variable the vectors of data.
  * * @param map A map used to contain the data based on the columns name.
  *
  *   @param file The path the file that will be use to fill up the table.

@@ -148,12 +148,12 @@ public:
   }
 
   /**
-   * @brief Return the distance and normal between the current shape with the shape given in argument.
-   * at the given point evaluation point with a guess for the cell containing
-   * the evaluation point
+   * @brief Return the distance, the center point, and the normal between the current shape and the shape given in the argument. The center point is the point where both shapes are at the same distance from each other. The normal is defined using the closest surface point on the two shapes. By default, the function does not calculate the distance between the two shapes if their bounding boxes are not in contact. This behavior can be modified using the appropriate parameter.
    * @param shape The shape with which the distance is evaluated
    * @param cell The cell that is likely to contain the evaluation point
-   * @param candidate_points This is the initial point used in the calculation.
+   * @param candidate_points This is the initial guess points used in the calculation.
+   * @param precision This is the precision of the distance between the two shapes.
+   * @param exact_distance_outside_of_contact This is a boolean to force the exact distance evaluation if the shapes are not in contact.
    */
   virtual std::tuple<double, Tensor<1, dim>, Point<dim>>
   distance_to_shape_with_cell_guess(
@@ -169,7 +169,8 @@ public:
     Point<dim>     contact_point;
     bool           bounding_box_contact = true;
 
-    // Check the bounding box sphere firs then rectangular
+    // Check the bounding boxes. First we check the spherical bounding boxes
+    // then the rectangular boxes.
     if (exact_distance_outside_of_contact == false)
       {
         Point<dim> bounding_box_center_one;
@@ -246,10 +247,8 @@ public:
         for (unsigned int i = 0; i < candidate_points.size(); ++i)
           {
             // Initialize variable use in the calculation.
-            Tensor<1, dim> current_normal;
-            Tensor<1, dim> previous_normal;
-            Point<dim>     current_point = candidate_points[i];
-            Point<dim>     dx{}, distance_gradient{}, previous_position{},
+            Point<dim> current_point = candidate_points[i];
+            Point<dim> dx{}, distance_gradient{}, previous_position{},
               previous_gradient{};
             // Initialize the iteration counter. We limit the number of
             // iterations to 200.
@@ -297,7 +296,6 @@ public:
                     distance_gradient =
                       shape.gradient_with_cell_guess(current_point, cell);
                   }
-                current_normal = distance_gradient / distance_gradient.norm();
                 Tensor<1, dim> direction = distance_gradient;
                 dx = -max_step * direction / direction.norm();
                 if (distance_gradient.norm() == 0)
@@ -348,24 +346,6 @@ public:
                         current_distance = best_dist;
                         current_point    = best_point;
                       }
-                    // reevaluate the normal numerically.
-                    if constexpr (dim == 2)
-                      {
-                        current_normal[0] =
-                          ((diff_results[0] - diff_results[1]) / 2);
-                        current_normal[1] =
-                          ((diff_results[2] - diff_results[3]) / 2);
-                      }
-                    else
-                      {
-                        current_normal[0] =
-                          ((diff_results[0] - diff_results[1]) / 2);
-                        current_normal[1] =
-                          ((diff_results[2] - diff_results[3]) / 2);
-                        current_normal[2] =
-                          ((diff_results[4] - diff_results[5]) / 2);
-                      }
-                    current_normal = current_normal / current_normal.norm();
                     Point<dim> extra_guess;
                     // If none of the cartesian candidates are better, we use
                     // the value to find the point that minimizes the numerical
@@ -435,7 +415,6 @@ public:
                         max_step *= 1.0 / std::pow(2.0, consecutive_center);
                         current_point    = previous_position;
                         current_distance = previous_value;
-                        current_normal   = previous_normal;
                       }
                     else
                       {
@@ -454,7 +433,6 @@ public:
                 // Store the previous values.
                 previous_value    = current_distance;
                 previous_position = current_point;
-                previous_normal   = current_normal;
                 iteration++;
               }
             // Store the minimum obtained with this initial guess and compare it
@@ -462,8 +440,36 @@ public:
             if (distance > current_distance)
               {
                 distance      = current_distance;
-                normal        = current_normal;
                 contact_point = current_point;
+                // The normal is defined using the closest surface point on the
+                // two shapes.
+                Point<dim> closest_surface_point_on_this_shape;
+                Point<dim> closest_surface_point_on_the_input_shape;
+                this->closest_surface_point(current_point,
+                                            closest_surface_point_on_this_shape,
+                                            cell);
+                shape.closest_surface_point(
+                  current_point,
+                  closest_surface_point_on_the_input_shape,
+                  cell);
+                if (distance > 0)
+                  {
+                    normal = (closest_surface_point_on_the_input_shape -
+                              closest_surface_point_on_this_shape) /
+                             ((closest_surface_point_on_the_input_shape -
+                               closest_surface_point_on_this_shape)
+                                .norm() +
+                              DBL_MIN);
+                  }
+                else
+                  {
+                    normal = (closest_surface_point_on_this_shape -
+                              closest_surface_point_on_the_input_shape) /
+                             ((closest_surface_point_on_this_shape -
+                               closest_surface_point_on_the_input_shape)
+                                .norm() +
+                              DBL_MIN);
+                  }
               }
           }
       }
@@ -472,13 +478,12 @@ public:
   }
 
   /**
-   * @brief Return the distance and normal between the current shape with the shape given in argument.
-   * at the given point evaluation point with a guess for the cell containing
-   * the evaluation point
+   * @brief Return the distance, the center point, and the normal between the current shape and the shape given in the argument. The center point is the point where both shapes are at the same distance from each other. The normal is defined using the closest surface point on the two shapes. By default, the function does not calculate the distance between the two shapes if their bounding boxes are not in contact. This behavior can be modified using the appropriate parameter.
    * @param shape The shape with which the distance is evaluated
    * @param cell The cell that is likely to contain the evaluation point
-   * @param candidate_points This is the initial points used in the calculation.
-   * @param exact_distance_outside_of_contactThis parameter enables the check of the bounding box contact. If the bounding box does not contact, the distance evaluation is not performed, and the default value is returned
+   * @param candidate_points This is the initial guess points used in the calculation.
+   * @param precision This is the precision of the distance between the two shapes.
+   * @param exact_distance_outside_of_contact This is a boolean to force the exact distance evaluation if the shapes are not in contact.
    */
   virtual std::tuple<double, Tensor<1, dim>, Point<dim>>
   distance_to_shape(Shape<dim>              &shape,
@@ -492,8 +497,8 @@ public:
     Point<dim>     contact_point;
     bool           bounding_box_contact = true;
 
-    // Check the bounding box
-    // Check the bounding box sphere firs then rectangular
+    // Check the bounding boxes. First we check the spherical bounding boxes
+    // then the rectangular boxes.
     if (exact_distance_outside_of_contact == false)
       {
         Point<dim> bounding_box_center_one;
@@ -548,7 +553,6 @@ public:
     // descent.
     if (bounding_box_contact)
       {
-        // std::cout<<"hi we are doing the full calculation" <<std::endl;
         std::vector<Tensor<1, dim>> search_direction;
         // Define the cartesian direction search directions.
         if constexpr (dim == 2)
@@ -571,10 +575,8 @@ public:
         for (unsigned int i = 0; i < candidate_points.size(); ++i)
           {
             // Initialize variable use in the calculation.
-            Tensor<1, dim> current_normal;
-            Tensor<1, dim> previous_normal;
-            Point<dim>     current_point = candidate_points[i];
-            Point<dim>     dx{}, distance_gradient{}, previous_position{},
+            Point<dim> current_point = candidate_points[i];
+            Point<dim> dx{}, distance_gradient{}, previous_position{},
               previous_gradient{};
             // Initialize the iteration counter. We limit the number of
             // iterations to 200.
@@ -616,7 +618,6 @@ public:
                   {
                     distance_gradient = shape.gradient(current_point);
                   }
-                current_normal = distance_gradient / distance_gradient.norm();
                 Tensor<1, dim> direction = distance_gradient;
                 dx = -max_step * direction / direction.norm();
                 if (distance_gradient.norm() == 0)
@@ -665,24 +666,6 @@ public:
                         current_distance = best_dist;
                         current_point    = best_point;
                       }
-                    // reevaluate the normal numerically.
-                    if constexpr (dim == 2)
-                      {
-                        current_normal[0] =
-                          ((diff_results[0] - diff_results[1]) / 2);
-                        current_normal[1] =
-                          ((diff_results[2] - diff_results[3]) / 2);
-                      }
-                    else
-                      {
-                        current_normal[0] =
-                          ((diff_results[0] - diff_results[1]) / 2);
-                        current_normal[1] =
-                          ((diff_results[2] - diff_results[3]) / 2);
-                        current_normal[2] =
-                          ((diff_results[4] - diff_results[5]) / 2);
-                      }
-                    current_normal = current_normal / current_normal.norm();
                     Point<dim> extra_guess;
                     // If none of the cartesian candidates are better, we use
                     // the value to find the point that minimizes the numerical
@@ -750,7 +733,6 @@ public:
                         max_step *= 1.0 / std::pow(2.0, consecutive_center);
                         current_point    = previous_position;
                         current_distance = previous_value;
-                        current_normal   = previous_normal;
                       }
                     else
                       {
@@ -769,7 +751,6 @@ public:
                 // Store the previous values.
                 previous_value    = current_distance;
                 previous_position = current_point;
-                previous_normal   = current_normal;
                 iteration++;
               }
             // Store the minimum obtained with this initial guess and compare it
@@ -777,8 +758,33 @@ public:
             if (distance > current_distance)
               {
                 distance      = current_distance;
-                normal        = current_normal;
                 contact_point = current_point;
+                Point<dim> closest_surface_point_on_this_shape;
+                Point<dim> closest_surface_point_on_the_input_shape;
+                // The normal is defined using the closest surface point on the
+                // two shapes.
+                this->closest_surface_point(
+                  current_point, closest_surface_point_on_this_shape);
+                shape.closest_surface_point(
+                  current_point, closest_surface_point_on_the_input_shape);
+                if (distance > 0)
+                  {
+                    normal = (closest_surface_point_on_the_input_shape -
+                              closest_surface_point_on_this_shape) /
+                             ((closest_surface_point_on_the_input_shape -
+                               closest_surface_point_on_this_shape)
+                                .norm() +
+                              DBL_MIN);
+                  }
+                else
+                  {
+                    normal = (closest_surface_point_on_this_shape -
+                              closest_surface_point_on_the_input_shape) /
+                             ((closest_surface_point_on_this_shape -
+                               closest_surface_point_on_the_input_shape)
+                                .norm() +
+                              DBL_MIN);
+                  }
               }
           }
       }
@@ -787,7 +793,7 @@ public:
 
 
   /**
-   * @brief Check if the bounding box of this shape and another one are overlapping. This function returns false if the shape is not overlapping.
+   * @brief Check if the bounding box of this shape and another one are overlapping. This function returns false if the shapes are not overlapping.
    * This function is base use the Separating Axis Theorem (SAT) to perform the
    * bounding box check.
    * @param shape The shape with which the distance is evaluated
@@ -1114,9 +1120,7 @@ public:
 
   /**
    * @brief
-   * Return the volume displaced by the solid
-   *
-   * @param fluid_density The density of the fluid that is displaced
+   * Return the volume displaced by the solid.
    */
   virtual double
   displaced_volume();
@@ -1124,9 +1128,7 @@ public:
 
   /**
    * @brief
-   * Return the curvature of the levelset at a given point
-   *
-   * @param p The point where the curvature is evaluated.
+   * Return the curvature of the levelset at a given point.
    */
   virtual double
   local_curvature_radius(Point<dim> p)
@@ -1151,7 +1153,8 @@ public:
   }
   /**
    * @brief
-   * Return the curvature of the levelset at a given point using the
+   * Return the curvature of the level at a given point using the cell guess
+   * functions.
    * @param cell The cell that is likely to contain the evaluation point
    * @param p The point where the curvature is evaluated.
    */
@@ -1324,25 +1327,6 @@ public:
 
   /**
    * @brief
-   * Most value functions assume that the particle's position is at the origin
-   * and that the shape is aligned with one of the main axes. This function
-   * returns a point that is rotated and translated, in accordance with the
-   * current shape position and orientation, so that subsequent calculations
-   * for the value function are made more easily; it abstracts a step that is
-   * required in the value function for most shapes.
-   *
-   * Returns the centered and aligned point used on the levelset evaluation.
-   *
-   * @param evaluation_point The point that will be recentered and realigned
-   * @return The aligned and centered point
-   */
-  void
-  update_ration_matrix(const Point<dim> &evaluation_point) const;
-
-
-
-  /**
-   * @brief
    * This function applies the inverse operation of align_and_center
    *
    * Returns the centered and aligned point used on the levelset evaluation in
@@ -1393,11 +1377,9 @@ public:
 
   /**
    * @brief
-   * Function that return the XYZ rotation angle from a rotation matrix
+   * Function that return the XYZ rotation angles from a rotation matrix
    *
-   * @param layer_thickening Thickness to be artificially added to the particle.
-   * A negative value will decrease the particle's thickness by subtracting a
-   * layer of specified width.
+   * @param rotation_matrix_representation The rotation matrix.
    */
   Tensor<1, 3>
   rotation_matrix_to_xyz_angles(
@@ -1506,9 +1488,7 @@ public:
 
   /**
    * @brief
-   * Return the volume displaced by the solid
-   *
-   * @param fluid_density The density of the fluid that is displaced
+   * Return the volume displaced by the solid.
    */
   double
   displaced_volume() override;
@@ -1573,9 +1553,8 @@ class Plane : public Shape<dim>
 public:
   /**
    * @brief Constructor for a infinite plane. The plane is normal to the Z axis in 3 D and Y axis in 2D in the reference frame of the particle.
-   * @param position The sphere center
-   * @param normal The sphere center
-   * @param orientation The sphere orientation
+   * @param position The point on the plane.
+   * @param orientation The orientation.
    */
   Plane(const Point<dim> &position, const Tensor<1, 3> &orientation)
     : Shape<dim>(1.0, position, orientation)
@@ -1626,9 +1605,7 @@ public:
 
   /**
    * @brief
-   * Return the volume displaced by the solid
-   *
-   * @param fluid_density The density of the fluid that is displaced
+   * Return the volume displaced by the solid.
    */
   double
   displaced_volume() override;
@@ -1851,9 +1828,7 @@ public:
 
   /**
    * @brief
-   * Return the volume displaced by the solid
-   *
-   * @param fluid_density The density of the fluid that is displaced
+   * Return the volume displaced by the solid.
    */
   double
   displaced_volume() override;
@@ -1904,9 +1879,7 @@ public:
 
   /**
    * @brief
-   * Return the volume displaced by the solid
-   *
-   * @param fluid_density The density of the fluid that is displaced
+   * Return the volume displaced by the solid.
    */
   double
   displaced_volume() override;
@@ -1966,9 +1939,7 @@ public:
 
   /**
    * @brief
-   * Return the volume displaced by the solid
-   *
-   * @param fluid_density The density of the fluid that is displaced
+   * Return the volume displaced by the solid.
    */
   double
   displaced_volume() override;
@@ -2029,9 +2000,7 @@ public:
 
   /**
    * @brief
-   * Return the volume displaced by the solid
-   *
-   * @param fluid_density The density of the fluid that is displaced
+   * Return the volume displaced by the solid.
    */
   double
   displaced_volume() override;
@@ -2098,9 +2067,7 @@ public:
 
   /**
    * @brief
-   * Return the volume displaced by the solid
-   *
-   * @param fluid_density The density of the fluid that is displaced
+   * Return the volume displaced by the solid.
    */
   double
   displaced_volume() override;
@@ -2171,9 +2138,7 @@ public:
 
   /**
    * @brief
-   * Return the volume displaced by the solid
-   *
-   * @param fluid_density The density of the fluid that is displaced
+   * Return the volume displaced by the solid.
    */
   double
   displaced_volume() override;
@@ -2234,7 +2199,7 @@ public:
         this->effective_radius =
           std::max(this->effective_radius, constituent->effective_radius);
         constituent->set_part_of_a_composite(true);
-
+        // For each of the components update the bounding box.
         if constexpr (dim == 2)
           {
             std::vector<Point<3>> component_bounding_box_vertex(4);
@@ -2265,10 +2230,10 @@ public:
               constituent->get_bounding_box_half_length()[1];
             for (unsigned int i = 0; i < 4; ++i)
               {
-                // position the vextex point in the reference frame of the
+                // Position the vertex point in the reference frame of the
                 // composite
                 auto new_point = constituent->get_rotation_matrix() *
-                                   component_bounding_box_vertex[0] +
+                                   component_bounding_box_vertex[i] +
                                  point_nd_to_3d(constituent->get_position());
                 if (xyz_min_max_is_initialized == false)
                   {
@@ -2367,7 +2332,7 @@ public:
                 // position the vextex point in the reference frame of the
                 // composite
                 auto new_point = constituent->get_rotation_matrix() *
-                                   component_bounding_box_vertex[0] +
+                                   component_bounding_box_vertex[i] +
                                  point_nd_to_3d(constituent->get_position());
                 if (xyz_min_max_is_initialized == false)
                   {
@@ -2658,13 +2623,13 @@ public:
       std::pow(system.Mass() * 3.0 / (4 * numbers::PI), 1.0 / dim);
 
     // Define an "infinite" bounding box size
-    this->bounding_box_half_length[0] = 1e16;
-    this->bounding_box_half_length[1] = 1e16;
+    this->bounding_box_half_length[0] = 0;
+    this->bounding_box_half_length[1] = 0;
     this->bounding_box_center[0]      = 0;
     this->bounding_box_center[1]      = 0;
     if constexpr (dim == 3)
       {
-        this->bounding_box_half_length[2] = 1e16;
+        this->bounding_box_half_length[2] = 0;
         this->bounding_box_center[2]      = 0;
       }
 
@@ -2725,9 +2690,7 @@ public:
 
   /**
    * @brief
-   * Return the volume displaced by the solid
-   *
-   * @param fluid_density The density of the fluid that is displaced
+   * Return the volume displaced by the solid.
    */
   double
   displaced_volume() override;
@@ -2897,9 +2860,7 @@ public:
 
   /**
    * @brief
-   * Return the volume displaced by the solid
-   *
-   * @param fluid_density The density of the fluid that is displaced
+   * Return the volume displaced by the solid.
    */
   double
   displaced_volume() override;
@@ -3405,9 +3366,7 @@ public:
 
   /**
    * @brief
-   * Return the volume displaced by the solid
-   *
-   * @param fluid_density The density of the fluid that is displaced
+   * Return the volume displaced by the solid.
    */
   double
   displaced_volume() override;
@@ -3470,9 +3429,7 @@ public:
 
   /**
    * @brief
-   * Return the volume displaced by the solid
-   *
-   * @param fluid_density The density of the fluid that is displaced
+   * Return the volume displaced by the solid.
    */
   double
   displaced_volume() override;
@@ -3540,9 +3497,7 @@ public:
 
   /**
    * @brief
-   * Return the volume displaced by the solid
-   *
-   * @param fluid_density The density of the fluid that is displaced
+   * Return the volume displaced by the solid.
    */
   double
   displaced_volume() override;

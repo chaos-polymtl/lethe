@@ -14,16 +14,6 @@ IBParticle<dim>::initialize_all()
   radius      = 1.;
   particle_id = 0.;
 
-  //  inertia[0][0] = 1.;
-  //  inertia[0][1] = 1.;
-  //  inertia[0][2] = 1.;
-  //  inertia[1][0] = 1.;
-  //  inertia[1][1] = 1.;
-  //  inertia[1][2] = 1.;
-  //  inertia[2][0] = 1.;
-  //  inertia[2][1] = 1.;
-  //  inertia[2][2] = 1.;
-
   inertia[0][0] = 1.;
   inertia[0][1] = 0.;
   inertia[0][2] = 0.;
@@ -93,15 +83,15 @@ IBParticle<dim>::initialize_all()
   f_omega       = std::make_shared<Functions::ParsedFunction<dim>>(3);
   f_orientation = std::make_shared<Functions::ParsedFunction<dim>>(3);
 
-  rotation_matrix[0][0] = 0.;
+  rotation_matrix[0][0] = 1.;
   rotation_matrix[0][1] = 0.;
   rotation_matrix[0][2] = 0.;
   rotation_matrix[1][0] = 0.;
-  rotation_matrix[1][1] = 0.;
+  rotation_matrix[1][1] = 1.;
   rotation_matrix[1][2] = 0.;
   rotation_matrix[2][0] = 0.;
   rotation_matrix[2][1] = 0.;
-  rotation_matrix[2][2] = 0.;
+  rotation_matrix[2][2] = 1.;
 }
 
 template <int dim>
@@ -336,9 +326,6 @@ IBParticle<dim>::compute_local_inertia()
   // WIP This is implemented but not use since its application make the
   // evaluation of the levelset more complicated.
   /*
-  // Calcul des valeurs propres de la matrice d'inertie globale et update les
-  // vecteurs propres de la particule
-
   Tensor<2,3> global_inertia=inertia;
   global_inertia[0][0]-=(center_of_mass_location[1]*center_of_mass_location[1]+center_of_mass_location[2]+center_of_mass_location[2])*mass;
   global_inertia[1][1]-=(center_of_mass_location[0]*center_of_mass_location[0]+center_of_mass_location[2]+center_of_mass_location[2])*mass;

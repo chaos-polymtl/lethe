@@ -249,10 +249,6 @@ fill_string_vectors_from_file(
   std::string                                      file,
   const std::string                                delimiter)
 {
-  // fill a pair, first being a vector of vector name and the second being the
-  // vector of vector associated with the vector name.
-
-
   std::ifstream myfile(file);
   // open the file.
   if (myfile.is_open())
@@ -264,8 +260,6 @@ fill_string_vectors_from_file(
 
       while (std::getline(myfile, line))
         {
-          // remove spaces
-          // line.erase(std::remove(line.begin(), line.end(), ' '), line.end());
           // read the line and clean the resulting vector.
           std::vector<std::string> list_of_words_base =
             Utilities::split_string_list(line, delimiter);
@@ -277,7 +271,8 @@ fill_string_vectors_from_file(
                   list_of_words_clean.push_back(list_of_words_base[i]);
                 }
             }
-          // check if the line is contained words or numbers.
+          // Check if it is the first line. If it is we assume it is the column
+          // name.
           if (line_count != 0)
             {
               line_of_data = list_of_words_clean;
@@ -288,7 +283,6 @@ fill_string_vectors_from_file(
             }
           else
             {
-              // the line contains words, we assume these are the columns names.
               column_names = list_of_words_clean;
               for (unsigned int i = 0; i < list_of_words_clean.size(); ++i)
                 {

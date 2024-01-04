@@ -87,6 +87,7 @@ This subsection contains the parameters related to the sharp immersed boundary s
         
         subsection physical properties
           set density                      = 1
+          set volume                       = 0
           set inertia                      = 1
           set friction coefficient         = 0
           set poisson ratio                = 0.3
@@ -170,11 +171,11 @@ This subsection contains the parameters related to the sharp immersed boundary s
 	    
 	* The ``enable lubrication force`` parameter enables or disables the use of lubrication forces. This parameter must be set to ``false`` when using non-newtonian fluid.
     
-    * The ``use explicit contact impulsion`` parameter that enables or disables the use of explicit contact impulsion evaluation in the resolution of the coupling of the particle. When it is set to true, this parameter results in the code only performing the DEM calculation once per CFD time step.
-    
-    * The ``use explicit position integration`` parameter that enables or disables the use of explicit position integration in the resolution of the coupling of the particle. When it is set to true, this parameter results in the code only performing the DEM calculation once and using the resulting position and orientation for the evaluation of all the other Newton's iterations. This reduces the number of times the cut cell mapping must be performed. However, this can affect the stability of the scheme.
-    
-    * The ``use approximate radius for contact`` parameter enables or disables the use of the approximaive contact radius for contact calculation. This means that when this parameter is set to true, the contact radius used in the contact force calculation is obtained through the effective contact radius. Otherwise, the curvature radius of the shape is evaluated at the contact point. In the case of a flat surface contact point, the contact radius is limited to 100 times the effective radius of the particle.
+    * The ``use explicit contact impulsion`` parameter enables or disables the use of explicit contact impulsion evaluation in the resolution of the coupling of the particle. When it is set to true, this parameter results in the code only performing the DEM calculation once per CFD time step.
+
+    * The ``use explicit position integration`` parameter enables or disables the use of explicit position integration in the resolution of the coupling of the particle. When it is set to true, this parameter results in the code only performing the DEM calculation once and using the resulting position and orientation to evaluate all the other Newton's iterations. This reduces the number of times the cut cell mapping must be performed. However, this can affect the stability of the scheme.
+
+    * The ``use approximate radius for contact`` parameter enables or disables the use of the approximate contact radius for contact calculation. When this parameter is true, the contact radius used in the contact force calculation is obtained through the effective contact radius. Otherwise, the curvature radius of the shape is evaluated at the contact point. In the case of a flat surface contact point, the contact radius is limited to 100 times the effective radius of the particle.
     
     .. note::
 	When using a non-Newtonian fluid, the lubrication force will be automatically deactivated.
@@ -211,7 +212,7 @@ This subsection contains the parameters related to the sharp immersed boundary s
     .. warning::
         Currently, this feature works only for shapes defined by less than three parameters. 
 
-    * The ``particles file`` is the file from which the particles are defined. Each line corresponds to a particle and all the relevant variables. The file must contain the following information for each particle (the header must be defined accordingly): type; shape_argument; p_x; p_y; p_z; v_x; v_y; v_z; omega_x; omega_y; omega_z; orientation_x; orientation_y; orientation_z; volume; density; inertia; pressure_x; pressure_y; pressure_z; youngs_modulus; restitution_coefficient; friction_coefficient; poisson_ratio; rolling_friction_coefficient; integrate_motion. Each column is sepated by a semicolon (";"). When a shape as multiple shape arguments, each argument is separated by a colon (":"). If integrate motion is set to false then the particle dynamic is not integrated, otherwise it is integrated. Here is a quick exemple a particle definition.
+    * The ``particles file`` is the file from which the particles are defined. Each line corresponds to a particle and all the relevant variables. The file must contain the following information for each particle (the header must be defined accordingly): type; shape_argument; p_x; p_y; p_z; v_x; v_y; v_z; omega_x; omega_y; omega_z; orientation_x; orientation_y; orientation_z; volume; density; inertia; pressure_x; pressure_y; pressure_z; youngs_modulus; restitution_coefficient; friction_coefficient; poisson_ratio; rolling_friction_coefficient; integrate_motion. Each column is separated by a semicolon (";"). When a shape has multiple shape arguments, each argument is separated by a colon (":"). If "integrate motion" is set to false, then the particle dynamic is not integrated. Otherwise, it is integrated. Here is a quick example of a particle definition.
         .. code-block:: text
         
             type; shape_argument; p_x; p_y; p_z; v_x; v_y; v_z; omega_x; omega_y; omega_z; orientation_x; orientation_y; orientation_z; volume ;density; inertia; pressure_x; pressure_y; pressure_z; youngs_modulus; restitution_coefficient; friction_coefficient; poisson_ratio; rolling_friction_coefficient; integrate_motion;
@@ -280,6 +281,9 @@ The following parameter and subsection are all inside the subsection ``particle 
 
 * The ``integrate motion`` parameter controls if the dynamics equations of the particles are calculated. If this parameter is set to false, the particles position, velocity, and angular velocity are defined directly by the functions. If ``integrate motion=true`` the position and the velocity will be defined by the integration of the particle dynamic.
 
+    .. warning::
+        Even though non-spherical particles can now have their dynamic coupled with the fluid, this feature is not yet fully validated and remains experimental at this point. We note the following limitation: Particles can only have one point of contact between them (this means nonconvex shape contact may be wrong at this point since these shapes can have more than 1 point of contact), Fluid entrapment between particles can happen more frequently for non-spherical shapes in 3D (Fluid entrapment occurs when a portion of the fluid domain become completely isolated from the rest of the fluid domain due to the imposition of the immersed boundary by multiple particles. A simple example of a case that causes fluid entrapment would be three circles in contact in 2D. Fluid entrapment leads to a zone without reference pressure, which is not a well-posed problem.).
+
 * The ``mesh-based precalculations`` parameter controls if the mesh-based precalculations are applied. These precalculations are critical for good performance in medium to high detailed RBFs (and its composites), but can introduce deformations. These deformations appear when some RBF nodes are located outside of the background mesh.
 
 * The ``layer thickening`` is used to artificially inflate (positive value) or deflate (negative value) a particle. It can be used, for example, to evaluate the impact of uniform coating on a particle.
@@ -301,7 +305,7 @@ The following parameter and subsection are all inside the subsection ``particle 
 * The ``physical properties`` subsection contains all the parameters associated with the particle physical properties.
     * The ``density`` parameter is used to define the density of the particle.
     
-    * The ``volume`` parameter is used to define the volume of the particle. If the value is left to 0, then the volume is automatically calculated based on the shape. Suppose the shape does not have a direct definition of the volume of the shape ( for example, in the case of a superquadric shape). In that case, the volume is, by default, defined by the volume of a sphere with a radius equivalent to the effective radius of the shape.
+    * The ``volume`` parameter is used to define the volume of the particle. If the value is left to 0, then the volume is automatically calculated based on the shape. If the shape does not have a direct definition of its volume (for example, in the case of a superquadric shape), the volume is defined by the volume of a sphere with a radius equivalent to the effective radius of the shape.
     
     * The ``inertia`` parameter is used to define one of the diagonal elements of the rotational inertia matrix. Since we are defining spherical particles, we assume a uniform distribution of mass, and as such, all the diagonal elements of the rotational inertia matrix are the same.
 

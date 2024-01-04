@@ -207,7 +207,7 @@ IBParticlesDEM<dim>::calculate_pp_contact_force(
                     *particle_two.shape, contact_points_candidate);
                   normal_overlap = -std::get<double>(contact_state);
                   contact_point  = std::get<Point<dim>>(contact_state);
-                  normal         = particle_one.shape->gradient(contact_point);
+                  normal         = std::get<Tensor<1, dim>>(contact_state);
                 }
               previous_wall_contact_point[particle_one.particle_id]
                                          [particle_two.particle_id] =
