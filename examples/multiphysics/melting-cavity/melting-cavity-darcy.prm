@@ -40,7 +40,6 @@ subsection initial conditions
     set Function expression = 0; 0; 0
   end
 end
-end
 
 #---------------------------------------------------
 # Source term
@@ -55,53 +54,54 @@ end
 #---------------------------------------------------
 # Physical Properties
 #---------------------------------------------------
--
 
-subsection fluid 0
-  set thermal conductivity model = constant
-  set thermal conductivity       = 0.040516842071415184
+subsection physical properties
+  subsection fluid 0
+    set thermal conductivity model = constant
+    set thermal conductivity       = 0.040516842071415184
 
-  set thermal expansion model = phase_change
-  set thermal expansion       = 1
+    set thermal expansion model = phase_change
+    set thermal expansion       = 1
 
-  set rheological model   = phase_change
-  set specific heat model = phase_change
+    set rheological model   = phase_change
+    set specific heat model = phase_change
 
-  set density = 1
+    set density = 1
 
-  subsection phase change
-    # Enthalpy of the phase change
-    set latent enthalpy = 200
+    subsection phase change
+      # Enthalpy of the phase change
+      set latent enthalpy = 200
 
-    # Temperature of the liquidus
-    set liquidus temperature = 29.8
+      # Temperature of the liquidus
+      set liquidus temperature = 29.8
 
-    # Temperature of the solidus
-    set solidus temperature = 29.6
+      # Temperature of the solidus
+      set solidus temperature = 29.6
 
-    # Specific heat of the liquid phase
-    set specific heat liquid = 1
+      # Specific heat of the liquid phase
+      set specific heat liquid = 1
 
-    # Specific heat of the solid phase
-    set specific heat solid = 1
+      # Specific heat of the solid phase
+      set specific heat solid = 1
 
-    # Kinematic viscosity of the liquid phase
-    set viscosity liquid = 0.0007366698558439125
+      # Kinematic viscosity of the liquid phase
+      set viscosity liquid = 0.0007366698558439125
 
-    # Kinematic viscosity of the solid phase
-    set viscosity solid = 0.0007366698558439125
+      # Kinematic viscosity of the solid phase
+      set viscosity solid = 0.0007366698558439125
 
-    # Thermal expansion of the liquid phase
-    set thermal expansion liquid = 1
+      # Thermal expansion of the liquid phase
+      set thermal expansion liquid = 1
 
-    # Thermal expansion of the solid phase
-    set thermal expansion solid = 0
+      # Thermal expansion of the solid phase
+      set thermal expansion solid = 0
 
-    # Permeability of the liquid phase
-    set Darcy penality liquid = 0
+      # Permeability of the liquid phase
+      set Darcy penality liquid = 0
 
-    # Permeability of the  solid phase
-    set Darcy penality solid = 1e4
+      # Permeability of the  solid phase
+      set Darcy penality solid = 1e4
+    end
   end
 end
 
