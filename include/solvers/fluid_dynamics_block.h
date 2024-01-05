@@ -492,7 +492,6 @@ BlockRawSchurPreconditioner<BSPreconditioner>::vmult(
 
 
 
-
   // Solve for u*
   {
     computing_timer.enter_subsection("U*");
@@ -504,11 +503,11 @@ BlockRawSchurPreconditioner<BSPreconditioner>::vmult(
                linear_solver_parameters.minimum_residual));
     TrilinosWrappers::SolverGMRES gmres(solver_control);
 
-    //dst.block(0) = 0.0;
+    // dst.block(0) = 0.0;
     gmres.solve(stokes_matrix.block(0, 0),
-             utmp,
-             src.block(0),
-             *amat_preconditioner);
+                utmp,
+                src.block(0),
+                *amat_preconditioner);
     computing_timer.leave_subsection("U*");
   }
 
@@ -521,49 +520,40 @@ BlockRawSchurPreconditioner<BSPreconditioner>::vmult(
 
     SolverControl solver_control(
       linear_solver_parameters.max_iterations,
-      std::max(1e-3*linear_solver_parameters.relative_residual *
-                 fp.l2_norm(),
+      std::max(1e-3 * linear_solver_parameters.relative_residual * fp.l2_norm(),
                linear_solver_parameters.minimum_residual));
     TrilinosWrappers::SolverGMRES gmres(solver_control);
 
-    gmres.solve(stokes_matrix.block(1, 1),
-                 ptmp,
-                 fp,
-                 *pmass_preconditioner);
+    gmres.solve(stokes_matrix.block(1, 1), ptmp, fp, *pmass_preconditioner);
     // Relaxation
-    ptmp*=alpha;
+    ptmp *= alpha;
     computing_timer.leave_subsection("Pressure");
-
   }
 
   // Solve for final u
   {
-     stokes_matrix.block(0, 1).vmult(fu,ptmp);
+    stokes_matrix.block(0, 1).vmult(fu, ptmp);
 
-     fu *=-1;
+    fu *= -1;
 
 
 
     computing_timer.enter_subsection("DU");
     SolverControl solver_control(
       linear_solver_parameters.max_iterations,
-      std::max(linear_solver_parameters.relative_residual *
-                 fu.l2_norm(),
+      std::max(linear_solver_parameters.relative_residual * fu.l2_norm(),
                linear_solver_parameters.minimum_residual));
     TrilinosWrappers::SolverGMRES gmres(solver_control);
-    gmres.solve(stokes_matrix.block(0, 0),
-                 dutmp,
-                 fu,
-                 *amat_preconditioner);
+    gmres.solve(stokes_matrix.block(0, 0), dutmp, fu, *amat_preconditioner);
 
 
     dst.block(1) = ptmp;
     dst.block(0) = dutmp;
     dst.block(0) += utmp;
 
-    std::cout << "U correction : " << dutmp.l2_norm() << std::endl ;
-    std::cout << "U            : " << utmp.l2_norm() << std::endl ;
-    std::cout << "P            : " << ptmp.l2_norm() << std::endl ;
+    std::cout << "U correction : " << dutmp.l2_norm() << std::endl;
+    std::cout << "U            : " << utmp.l2_norm() << std::endl;
+    std::cout << "P            : " << ptmp.l2_norm() << std::endl;
 
 
     computing_timer.leave_subsection("DU");
