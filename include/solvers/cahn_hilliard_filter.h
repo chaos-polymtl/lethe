@@ -44,7 +44,8 @@ public:
    * @return Value of the phase fraction after applying the filter
    */
   virtual double
-  filter_phase(const double &unfiltered_phase) = 0;
+  filter_phase(const double &unfiltered_phase,
+               const double &unfiltered_phase_gradient_norm) = 0;
 };
 
 /**
@@ -63,7 +64,8 @@ public:
    * @return unfiltered_phase
    */
   virtual double
-  filter_phase(const double &unfiltered_phase) override
+  filter_phase(const double &unfiltered_phase,
+               const double &unfiltered_phase_gradient_norm) override
   {
     return unfiltered_phase;
   }
@@ -92,13 +94,19 @@ public:
    * @return Value of the phase fraction after applying the tanh filter
    */
   virtual double
-  filter_phase(const double &unfiltered_phase) override
+  filter_phase(const double &unfiltered_phase,
+               const double &unfiltered_phase_gradient_norm) override
   {
     // return tanh((std::sqrt(2*well_height)/(epsilon)) * unfiltered_phase);
-    // return tanh(beta * sgn(unfiltered_phase)*std::sqrt(std::abs(unfiltered_phase)));
-    //std::cout<<"Filtered value computed = " << tanh(beta*unfiltered_phase)<< std::endl;
-     return tanh(beta * unfiltered_phase);
-    //return tanh(beta * sgn(unfiltered_phase)*unfiltered_phase*unfiltered_phase);
+    // return tanh(beta *
+    // sgn(unfiltered_phase)*std::sqrt(std::abs(unfiltered_phase)));
+    // std::cout<<"Filtered value computed = " << tanh(beta*unfiltered_phase)<<
+    // std::endl;
+    return tanh((beta + 1 / (unfiltered_phase_gradient_norm +
+                             std::numeric_limits<double>::min())) *
+                unfiltered_phase);
+    // return tanh(beta *
+    // sgn(unfiltered_phase)*unfiltered_phase*unfiltered_phase);
   }
 
 private:

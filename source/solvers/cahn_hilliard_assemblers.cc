@@ -17,6 +17,7 @@ CahnHilliardAssemblerCore<dim>::assemble_matrix(
 
   // Gather physical properties
   const double well_height = this->cahn_hilliard_parameters.well_height;
+  // std::cout<<"well height = "<<well_height<<std::endl;
   const double mobility_constant =
     this->cahn_hilliard_parameters.cahn_hilliard_mobility_constant;
   const auto mobility_model =

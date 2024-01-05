@@ -1021,29 +1021,30 @@ public:
       .get_function_gradients(current_solution,
                               this->chemical_potential_cahn_hilliard_gradients);
 
-/*      for (const double filtered_phase : current_filtered_solution)
-      {
-          std::cout << "filtered phase in cahn hilliard reinit before fe_values extraction  "<< std::endl;
-          std::cout << filtered_phase << std::endl;
-      }*/
+    /*      for (const double filtered_phase : current_filtered_solution)
+          {
+              std::cout << "filtered phase in cahn hilliard reinit before
+       fe_values extraction  "<< std::endl; std::cout << filtered_phase <<
+       std::endl;
+          }*/
 
-      // Gather filtered phase fraction (values, gradient)
-    this->fe_values_cahn_hilliard->operator[](phase_order).get_function_values(
-      current_filtered_solution,
-      this->filtered_phase_order_cahn_hilliard_values);
+    // Gather filtered phase fraction (values, gradient)
     this->fe_values_cahn_hilliard->operator[](phase_order)
-            .get_function_gradients(
-      current_filtered_solution,
-      this->filtered_phase_order_cahn_hilliard_gradients);
+      .get_function_values(current_filtered_solution,
+                           this->filtered_phase_order_cahn_hilliard_values);
+    this->fe_values_cahn_hilliard->operator[](phase_order)
+      .get_function_gradients(
+        current_filtered_solution,
+        this->filtered_phase_order_cahn_hilliard_gradients);
 
-/*      for (unsigned int q = 0; q < this->n_q_points; ++q)
-      {
-          double phase_order_cahn_hilliard_value =
-                  this->filtered_phase_order_cahn_hilliard_values[q];
+    /*      for (unsigned int q = 0; q < this->n_q_points; ++q)
+          {
+              double phase_order_cahn_hilliard_value =
+                      this->filtered_phase_order_cahn_hilliard_values[q];
 
-          std::cout<<"phase value filtered in reinit = "
-                   <<phase_order_cahn_hilliard_value<<std::endl;
-      }*/
+              std::cout<<"phase value filtered in reinit = "
+                       <<phase_order_cahn_hilliard_value<<std::endl;
+          }*/
 
 
     auto &fe_cahn_hilliard = this->fe_values_cahn_hilliard->get_fe();
