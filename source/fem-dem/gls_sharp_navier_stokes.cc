@@ -4548,6 +4548,12 @@ GLSSharpNavierStokesSolver<dim>::read_checkpoint()
   check_whether_all_particles_are_sphere();
 
   // Create the list of contact candidates
+  ib_dem.initialize(
+    this->simulation_parameters.particlesParameters,
+    std::make_shared<Parameters::Lagrangian::FloatingWalls<dim>>(
+      cfd_dem_parameters.dem_parameters.floating_walls),
+    this->mpi_communicator,
+    particles);
   ib_dem.update_contact_candidates();
   // Finish the time step of the particles.
   for (unsigned int p_i = 0; p_i < particles.size(); ++p_i)

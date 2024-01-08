@@ -1402,6 +1402,10 @@ public:
   // relative to how the shape was defined.
   std::string additional_info_on_shape;
 
+  // The half lengths of bounding box of the shape
+  Tensor<1, dim> bounding_box_half_length;
+  // The center of the bounding box of the shape in the shape reference frame
+  Point<dim> bounding_box_center;
 
 protected:
   // Position of the center of the Shape. It doesn't always correspond to the
@@ -1419,10 +1423,7 @@ protected:
   std::unordered_map<std::string, Point<dim>>     closest_point_cache;
   bool                                            part_of_a_composite;
 
-  // The half lengths of bounding box of the shape
-  Tensor<1, dim> bounding_box_half_length;
-  // The center of the bounding box of the shape in the shape reference frame
-  Point<dim> bounding_box_center;
+
   // The rotation matrix that describes the solid orientation.
   Tensor<2, 3> rotation_matrix;
   // Layer thickening: used to artificially inflate/deflate the shape

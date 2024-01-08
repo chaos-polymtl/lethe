@@ -93,9 +93,23 @@ IBParticlesDEM<dim>::update_contact_candidates()
                 {
                   distance = particle_one.shape->value(particle_two_location);
                 }
+              else
+                {
+                  distance = ((particle_one.shape->get_rotation_matrix() *
+                                 point_nd_to_3d(
+                                   particle_one.shape->bounding_box_center) +
+                               point_nd_to_3d(particle_one.position)) -
+                              (particle_two.shape->get_rotation_matrix() *
+                                 point_nd_to_3d(
+                                   particle_two.shape->bounding_box_center) +
+                               point_nd_to_3d(particle_two.position)))
+                               .norm();
+                }
 
               if (distance <
-                  (particle_one.radius + particle_two.radius) * radius_factor)
+                  (particle_one.shape->bounding_box_half_length.norm() +
+                   particle_two.shape->bounding_box_half_length.norm()) *
+                    radius_factor)
                 {
                   (particles_contact_candidates[particle_one.particle_id])
                     .insert(particle_two.particle_id);
