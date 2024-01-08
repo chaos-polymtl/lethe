@@ -148,7 +148,7 @@ main(int argc, char **argv)
     {
       initlog();
       Utilities::MPI::MPI_InitFinalize mpi_initialization(
-        argc, argv, numbers::invalid_unsigned_int);
+        argc, argv, dealii::numbers::invalid_unsigned_int);
       test<3>();
     }
   catch (std::exception &exc)
