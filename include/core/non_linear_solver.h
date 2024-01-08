@@ -1,21 +1,18 @@
 /* ---------------------------------------------------------------------
-*
-* Copyright (C) 2019 - 2019 by the Lethe authors
-*
-* This file is part of the Lethe library
-*
-* The Lethe library is free software; you can use it, redistribute
-* it, and/or modify it under the terms of the GNU Lesser General
-* Public License as published by the Free Software Foundation; either
-* version 2.1 of the License, or (at your option) any later version.
-* The full text of the license can be found in the file LICENSE at
-* the top level of the Lethe distribution.
-*
-* ---------------------------------------------------------------------
-
-*
- * Author: Simon Gauvin, Polytechnique Montreal, 2019
-                           */
+ *
+ * Copyright (C) 2019 - 2019 by the Lethe authors
+ *
+ * This file is part of the Lethe library
+ *
+ * The Lethe library is free software; you can use it, redistribute
+ * it, and/or modify it under the terms of the GNU Lesser General
+ * Public License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ * The full text of the license can be found in the file LICENSE at
+ * the top level of the Lethe distribution.
+ *
+ * ---------------------------------------------------------------------
+ */
 
 #ifndef lethe_non_linear_solver_h
 #define lethe_non_linear_solver_h
@@ -46,7 +43,9 @@ public:
                   const Parameters::NonLinearSolver &params);
 
   virtual ~NonLinearSolver()
-  {}
+  { // Initialized the outer_iteration_counter by default to 0.
+    outer_iteration = 0;
+  }
 
   /**
    * @brief Solve the non-linear system of equation.
@@ -62,7 +61,7 @@ public:
    * @brief Return the current newton iteration.
    *
    */
-  virtual unsigned int
+  inline unsigned int
   get_current_newton_iteration()
   {
     return outer_iteration;

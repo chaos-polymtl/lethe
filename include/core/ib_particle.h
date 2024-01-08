@@ -32,14 +32,13 @@
 
 using namespace dealii;
 
+
 template <int dim>
 class IBParticle
 {
 public:
   /**
-   * @brief
-   * initialised the particle
-   *
+   * @brief This class defines values related to a particle used in the sharp interface IB. Each particle defined will have these value used in the solver.
    */
   void
   initialize_all();
@@ -262,13 +261,12 @@ public:
   void
   load_data_from_file();
 
+  /**
+   * @brief Calculate the rotation matrix that diagonalizes the inertia matrix.
+   */
   void
   compute_local_inertia();
 
-
-
-  // This class defines values related to a particle used in the sharp interface
-  // IB. Each particle defined will have these value used in the solver.
 
   // The unique identification number of the particle.
   unsigned int particle_id;

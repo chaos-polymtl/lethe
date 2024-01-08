@@ -116,7 +116,11 @@ public:
     auto &system_rhs = get_system_rhs();
     return system_rhs.l2_norm();
   }
-  virtual unsigned int
+
+  /**
+   * @brief Return the current newton iteration of this physics solver.
+   */
+  inline unsigned int
   get_current_newton_iteration()
   {
     return non_linear_solver->get_current_newton_iteration();

@@ -13,7 +13,7 @@ subsection simulation control
   set time step          = 0.01 # Time step
   set time end           = 0.04   # End time of simulation
   set output name        = out2    # Prefix for VTU outputs
-  set output frequency   = 1      # Frequency of simulation output
+  set output frequency   = 0      # Frequency of simulation output
   set subdivision        = 1      # Mesh subdivision when output end
   set log precision      = 3
 end

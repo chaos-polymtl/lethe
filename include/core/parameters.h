@@ -1312,44 +1312,87 @@ namespace Parameters
     declare_default_entry(ParameterHandler &prm, unsigned int index);
     void
     parse_parameters(ParameterHandler &prm);
-
-    unsigned int                 nb;
-    unsigned int                 order;
-    unsigned int                 initial_refinement;
-    double                       inside_radius;
-    double                       outside_radius;
-    bool                         time_extrapolation_of_refinement_zone;
+    // Number of ib particles declared
+    unsigned int nb;
+    // Polynomial order of the IB stencil used.
+    unsigned int order;
+    // Number of initial refinement around each of the particles.
+    unsigned int initial_refinement;
+    // The inner radius factor of the refinement zone.
+    double inside_radius;
+    // The outer radius factor of the refinement zone.
+    double outside_radius;
+    // Boolean that turns on or off the particle's position in time to determine
+    // the refinement zone.
+    bool time_extrapolation_of_refinement_zone;
+    // The vector of particles
     std::vector<IBParticle<dim>> particles;
-    bool                         calculate_force_ib;
-    bool                         assemble_navier_stokes_inside;
-    std::string                  ib_force_output_file;
-    Tensor<1, dim>               gravity;
-    double                       particle_nonlinear_tol;
-    double                       wall_youngs_modulus;
-    double                       wall_poisson_ratio;
-    double                       wall_rolling_friction_coefficient;
-    double                       wall_friction_coefficient;
-    double                       wall_restitution_coefficient;
-    unsigned int                 coupling_frequency;
-    bool                         enable_lubrication_force;
-    double                       lubrication_range_max;
-    double                       lubrication_range_min;
-    double                       contact_search_radius_factor;
-    int                          contact_search_frequency;
-    bool                         load_particles_from_file;
-    std::string                  particles_file;
-    bool                         enable_extra_sharp_interface_vtu_output_field;
-    bool                         explicit_contact_impulsion_calculation;
-    bool                         explicit_position_integration_calculation;
-    bool                         use_approximate_radius_for_contact;
-
+    // Boolean that turns on or off the calculation of the force on the IB.
+    bool calculate_force_ib;
+    // Boolean that turns on or off the resolution of the Navier-Stokes
+    // equations inside the particles.
+    bool assemble_navier_stokes_inside;
+    // The name of the output file for the forces on the IB.
+    std::string ib_force_output_file;
+    // The wall young's modulus.
+    double wall_youngs_modulus;
+    // The wall poisson ratio.
+    double wall_poisson_ratio;
+    // The wall rolling friction coefficient.
+    double wall_rolling_friction_coefficient;
+    // The wall friction coefficient.
+    double wall_friction_coefficient;
+    // The wall restitution coefficient
+    double wall_restitution_coefficient;
+    // The number of DEM time step per CFD time step.
+    unsigned int coupling_frequency;
+    // Boolean that turn on or of the calculation of the lubrication force.
+    bool enable_lubrication_force;
+    // The maximal range for which the lubrication force is evaluated. This
+    // variable multiply the smallest cell diameter to obtain the actual range.
+    double lubrication_range_max;
+    // The minimal range for which the lubrication force is evaluated. This
+    // variable multiply the smallest cell diameter to obtain the actual range.
+    double lubrication_range_min;
+    // The multiple of the particle effective radius used in contact candidate
+    // search.
+    double contact_search_radius_factor;
+    // The frequency at which the contact search is performed at the CFD time
+    // scale (the contact search is performed once every X cfd time step.)
+    int contact_search_frequency;
+    // Boolean that dictates if the particle has been defining in a file instead
+    // of the particle subsection.
+    bool load_particles_from_file;
+    // The file name used if the particles are loaded from a file.
+    std::string particles_file;
+    // Boolean that turn on or off the extra vtu field output.
+    bool enable_extra_sharp_interface_vtu_output_field;
+    // Boolean that turn on or off the explicit evaluation of the contact
+    // impulsion in the CFD-DEM coupling.
+    bool explicit_contact_impulsion_calculation;
+    // Boolean that turn on or off the explicit evaluation of the position of
+    // the particle in the CFD-DEM coupling.
+    bool explicit_position_integration_calculation;
+    // Boolean that turns on or off the evaluation of contact radius. If it is
+    // true, the exact calculations are turned off, and the approximate radius
+    // based on the particle effective radius is used.
+    bool use_approximate_radius_for_contact;
+    // The function that is used to define the gravitational acceleration in the
+    // CFD-DEM calculation.
     std::shared_ptr<Functions::ParsedFunction<dim>> f_gravity;
-
-    double      particle_nonlinear_tolerance;
-    double      length_ratio;
-    bool        enable_extrapolation;
-    double      alpha;
-    bool        print_dem;
+    // The nonlinear tolerance for the particle dynamics.
+    double particle_nonlinear_tolerance;
+    // The length ratio used for the stencil calculation of the IB condition.
+    double length_ratio;
+    // The boolean parameter controls whether extrapolation is used to impose
+    // the immersed boundary condition or not. If it is set to false, all cut
+    // cells are fully imposed on the IB.
+    bool enable_extrapolation;
+    // Relaxation parameter for the CFD-DEM coupling.
+    double alpha;
+    // Boolean that turn on or off the print of the DEM information.
+    bool print_dem;
+    // The pvd output file name for the particles.
     std::string ib_particles_pvd_file;
   };
 
