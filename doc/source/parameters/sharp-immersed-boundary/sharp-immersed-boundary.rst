@@ -169,7 +169,7 @@ This subsection contains the parameters related to the sharp immersed boundary s
     .. warning::
 	    If ``contact search radius factor`` :math:`\leq 1`, an error is thrown.
 	    
-	* The ``enable lubrication force`` parameter enables or disables the use of lubrication forces. This parameter must be set to ``false`` when using non-newtonian fluid.
+	* The ``enable lubrication force`` parameter enables or disables the use of lubrication forces. This parameter must be set to ``false`` when using a non-newtonian fluid rheology.
     
     * The ``use explicit contact impulsion`` parameter enables or disables the use of explicit contact impulsion evaluation in the resolution of the coupling of the particle. When it is set to true, this parameter results in the code only performing the DEM calculation once per CFD time step.
 
@@ -282,7 +282,7 @@ The following parameter and subsection are all inside the subsection ``particle 
 * The ``integrate motion`` parameter controls if the dynamics equations of the particles are calculated. If this parameter is set to false, the particles position, velocity, and angular velocity are defined directly by the functions. If ``integrate motion=true`` the position and the velocity will be defined by the integration of the particle dynamic.
 
     .. warning::
-        Even though non-spherical particles can now have their dynamic coupled with the fluid, this feature is not yet fully validated and remains experimental at this point. We note the following limitation: Particles can only have one point of contact between them (this means nonconvex shape contact may be wrong at this point since these shapes can have more than 1 point of contact), Fluid entrapment between particles can happen more frequently for non-spherical shapes in 3D (Fluid entrapment occurs when a portion of the fluid domain become completely isolated from the rest of the fluid domain due to the imposition of the immersed boundary by multiple particles. A simple example of a case that causes fluid entrapment would be three circles in contact in 2D. Fluid entrapment leads to a zone without reference pressure, which is not a well-posed problem.).
+        Even though non-spherical particles can now have their dynamic coupled with the fluid, this feature is not yet fully validated and remains experimental at this point. We note the following limitation: Particles can only have one point of contact between them (this means nonconvex shape contact may be wrong at this point since these shapes can have more than 1 point of contact), Fluid entrapment between particles can happen more frequently for non-spherical shapes in 3D (Fluid entrapment occurs when a portion of the fluid domain become completely isolated from the rest of the fluid domain due to the imposition of the immersed boundary by multiple particles. A simple example of a case that causes fluid entrapment would be three circles in contact in 2D. Fluid entrapment leads to a zone without reference pressure, which is not a well-posed problem). In this case, the linear solver may fail to converge for a given Newton iteration.
 
 * The ``mesh-based precalculations`` parameter controls if the mesh-based precalculations are applied. These precalculations are critical for good performance in medium to high detailed RBFs (and its composites), but can introduce deformations. These deformations appear when some RBF nodes are located outside of the background mesh.
 
