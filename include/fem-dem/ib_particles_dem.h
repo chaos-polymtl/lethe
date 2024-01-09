@@ -161,13 +161,7 @@ public:
 
 
   /**
-   * @brief Calculates non-linear (Hertzian) force between two objects
-   *
-   * @param dt_dem The sub time stepping time step.
-   *
-   * @param contact_force a vector containing the contact forces between particles
-   *
-   * @param contact_force a vector containing the contact torques between particles
+   * @brief Calculates non-linear (Hertzian) force between two objects. Take into input the physical properties and contact state of the two objects.
    */
   void
   calculate_force_model(const double  normal_overlap,
