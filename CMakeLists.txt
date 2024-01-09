@@ -29,7 +29,6 @@ project(lethe VERSION 0.1 LANGUAGES CXX)
 if(NOT _had_deal_ii)
   set(_missing_deal_ii_features)
   foreach(_feat IN ITEMS
-      DEAL_II_WITH_METIS
       # MPI is required for p4est and Trilinos, but leave it here as
       # additional documentation.
       DEAL_II_WITH_MPI
@@ -42,6 +41,7 @@ if(NOT _had_deal_ii)
   endforeach()
 
   foreach(_feat IN ITEMS
+      DEAL_II_WITH_METIS
       DEAL_II_WITH_OPENCASCADE
       DEAL_II_WITH_SUNDIALS)
     message(STATUS "Checking optional ${_feat}: " ${${_feat}})
