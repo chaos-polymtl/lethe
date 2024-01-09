@@ -791,7 +791,7 @@ public:
 
 
   /**
-   * @brief Check if the bounding box of this shape and another one are overlapping. 
+   * @brief Check if the bounding box of this shape and another one are overlapping.
    * This function uses the Separating Axis Theorem (SAT) to perform the
    * bounding box check.
    * @param shape The shape with which the distance is evaluated
@@ -1565,8 +1565,8 @@ public:
       {
         normal = Tensor<1, dim>({0, 1});
       }
-    // This is a special case since the plane has no bounding box so here we fill
-    // it with zeros.
+    // This is a special case since the plane has no bounding box so here we
+    // fill it with zeros.
     for (unsigned int d = 0; d < dim; ++d)
       {
         this->bounding_box_half_length[d] = 0;
@@ -2621,13 +2621,13 @@ public:
       std::pow(system.Mass() * 3.0 / (4 * numbers::PI), 1.0 / dim);
 
     // Define an "infinite" bounding box size
-    this->bounding_box_half_length[0] = 0;
-    this->bounding_box_half_length[1] = 0;
+    this->bounding_box_half_length[0] = DBL_MAX;
+    this->bounding_box_half_length[1] = DBL_MAX;
     this->bounding_box_center[0]      = 0;
     this->bounding_box_center[1]      = 0;
     if constexpr (dim == 3)
       {
-        this->bounding_box_half_length[2] = 0;
+        this->bounding_box_half_length[2] = DBL_MAX;
         this->bounding_box_center[2]      = 0;
       }
 

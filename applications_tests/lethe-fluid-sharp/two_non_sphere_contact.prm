@@ -11,10 +11,10 @@ subsection simulation control
   set method             = bdf1
   set bdf startup method = multiple step bdf
   set time step          = 0.01 # Time step
-  set time end           = 0.04   # End time of simulation
-  set output name        = out2    # Prefix for VTU outputs
-  set output frequency   = 0      # Frequency of simulation output
-  set subdivision        = 1      # Mesh subdivision when output end
+  set time end           = 0.04 # End time of simulation
+  set output name        = out2 # Prefix for VTU outputs
+  set output frequency   = 0    # Frequency of simulation output
+  set subdivision        = 1    # Mesh subdivision when output end
   set log precision      = 3
 end
 
@@ -84,7 +84,6 @@ subsection boundary conditions
     subsection w
       set Function expression = 0
     end
-    
   end
   subsection bc 3
     set id   = 4
@@ -115,23 +114,23 @@ subsection particles
   end
 
   subsection DEM
-    set particle nonlinear tolerance = 1e-3
-    set DEM coupling frequency       = 1000
-    set enable lubrication force     = false
-    set use explicit contact impulsion  = true
-    set use explicit position integration  = true
-    set contact search radius factor = 1.5
+    set particle nonlinear tolerance      = 1e-3
+    set DEM coupling frequency            = 1000
+    set enable lubrication force          = false
+    set use explicit contact impulsion    = true
+    set use explicit position integration = true
+    set contact search radius factor      = 1.5
     subsection gravity
       set Function expression = 0;-981;0
     end
   end
 
   subsection particle info 0
-    set type = superquadric
+    set type             = superquadric
     set shape arguments  = 2;1;0.5;2;2;2
-    set layer thickening           = 0
+    set layer thickening = 0
     set integrate motion = true
-    
+
     subsection position
       set Function expression = 20;1;20
     end
@@ -139,26 +138,26 @@ subsection particles
       set Function expression = 0;0;0
     end
     subsection orientation
-      set Function expression =0;0;0
+      set Function expression = 0;0;0
     end
     subsection omega
       set Function expression = 0;0;0
     end
 
     subsection physical properties
-      set density = 0.001120
-      set volume =4.18879
-      set inertia = 0.00117286125734019;0;0;0;0.00398772827495664;0;0;0;0.00469144502936076
-      set restitution coefficient      = 0.2
-      set youngs modulus               = 10000000
+      set density                 = 0.001120
+      set volume                  = 4.18879
+      set inertia                 = 0.00117286125734019;0;0;0;0.00398772827495664;0;0;0;0.00469144502936076
+      set restitution coefficient = 0.2
+      set youngs modulus          = 10000000
     end
   end
   subsection particle info 1
-    set type = superquadric
+    set type             = superquadric
     set shape arguments  = 2;1;0.5;2;2;2
     set layer thickening = 0
     set integrate motion = true
-    
+
     subsection position
       set Function expression = 19;2.88;20
     end
@@ -173,11 +172,11 @@ subsection particles
     end
 
     subsection physical properties
-      set density = 0.001120
-      set volume =4.18879
-      set inertia = 0.00117286125734019;0;0;0;0.00398772827495664;0;0;0;0.00469144502936076
-      set restitution coefficient      = 0.2
-      set youngs modulus               = 10000000
+      set density                 = 0.001120
+      set volume                  = 4.18879
+      set inertia                 = 0.00117286125734019;0;0;0;0.00398772827495664;0;0;0;0.00469144502936076
+      set restitution coefficient = 0.2
+      set youngs modulus          = 10000000
     end
   end
 end

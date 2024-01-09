@@ -1349,10 +1349,12 @@ namespace Parameters
     // Boolean that turn on or of the calculation of the lubrication force.
     bool enable_lubrication_force;
     // The maximal range for which the lubrication force is evaluated. This
-    // variable multiplies the smallest cell diameter to obtain the actual range.
+    // variable multiplies the smallest cell diameter to obtain the actual
+    // range.
     double lubrication_range_max;
     // The minimal range for which the lubrication force is evaluated. This
-    // variable multiplies the smallest cell diameter to obtain the actual range.
+    // variable multiplies the smallest cell diameter to obtain the actual
+    // range.
     double lubrication_range_min;
     // The multiple of the particle effective radius used in contact candidate
     // search.
