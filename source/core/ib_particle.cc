@@ -323,7 +323,7 @@ template <int dim>
 void
 IBParticle<dim>::compute_local_inertia()
 {
-  // WIP This is implemented but not use since its application make the
+  // WIP This is implemented but not used since its application makes the
   // evaluation of the levelset more complicated.
   /*
   Tensor<2,3> global_inertia=inertia;

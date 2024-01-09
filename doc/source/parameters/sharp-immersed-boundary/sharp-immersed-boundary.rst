@@ -45,7 +45,7 @@ This subsection contains the parameters related to the sharp immersed boundary s
         set particle nonlinear tolerance       = 1e-6
         set use explicit contact impulsion     = false
         set use explicit position integration  = false
-        set use approximate radius for contact = fasle
+        set use approximate radius for contact = false
         subsection gravity
           set Function expression = 0; 0; 0
         end
@@ -173,7 +173,7 @@ This subsection contains the parameters related to the sharp immersed boundary s
     
     * The ``use explicit contact impulsion`` parameter enables or disables the use of explicit contact impulsion evaluation in the resolution of the coupling of the particle. When it is set to true, this parameter results in the code only performing the DEM calculation once per CFD time step and using the resulting contact impulsion to evaluate all the other Newton's iterations. This reduces the number of times the DEM calculation is made. However, since the position is still implicitly evaluated in the absence of contact, the cut cell mapping must be performed at each Newton iteration.
 
-    * The ``use explicit position integration`` parameter enables or disables the use of explicit position integration in the resolution of the coupling of the particle. When it is set to true, this parameter results in the code only performing the DEM calculation once and using the resulting position and orientation to evaluate all the other Newton's iterations. This reduces the number of times the cut cell mapping must be performed and the number of call to the DEM calculations. However, this can affect the stability of the scheme.
+    * The ``use explicit position integration`` parameter enables or disables the use of explicit position integration in the resolution of the coupling of the particles. When it is set to true, this parameter results in the code only performing the DEM calculation once and using the resulting position and orientation to evaluate all the other Newton's iterations. This reduces the number of times the cut cell mapping must be performed and the number of call to the DEM calculations. However, this can affect the stability of the scheme.
 
     * The ``use approximate radius for contact`` parameter enables or disables the use of the approximate contact radius for contact calculation. When this parameter is true, the contact radius used in the contact force calculation is obtained through the effective contact radius. Otherwise, the curvature radius of the shape is evaluated at the contact point. In the case of a flat surface contact point, the contact radius is limited to 100 times the effective radius of the particle.
     
@@ -270,7 +270,7 @@ The following parameter and subsection are all inside the subsection ``particle 
             2;    union;     0:1
 
     .. warning::
-	        Some limitations exist for composite shapes. The composition of shapes with union and difference are not always exact (see [this link](https://iquilezles.org/articles/interiordistance/) for a relatively simple explanation of why this is the case). In general boolean operation only guarantee to preserve the surface of the object. The union operation also preserves the properties of the sign distance function outside of the shapes, which is helpful for external flow around the shapes. But the difference operator does not guarantee to yield an exact sign distance function. This means that shapes defined by using the difference operator may not converge to the expected convergence order of the FEM scheme with the currently implemented scheme.
+	        Some limitations exist for composite shapes. The composition of shapes with union and difference are not always exact (see [this link](https://iquilezles.org/articles/interiordistance/) for a relatively simple explanation of why this is the case). In general boolean operation only guarantee to preserve the surface of the object. The union operation also preserves the properties of the signed distance function outside of the shapes, which is helpful for external flow around the shapes. But the difference operator does not guarantee to yield an exact signed distance function. This means that shapes defined by using the difference operator may not converge to the expected convergence order of the FEM scheme with the currently implemented scheme.
 
     * RBF: *file name*; the effective radius is the ``support_radius`` of the first node. The file must be constructed with 6 columns of numbers containing: ``weight``, ``support_radius``, ``basis_function``, ``node_x``, ``node_y``, ``node_z``. The ``weight`` is the weight associated to each node, the ``support_radius`` relates to the influence radius of each node, the ``basis_function`` can be one of thirteen functions, described in an upcoming example, and the ``node_*`` describe the center of each node.
     
@@ -310,7 +310,7 @@ The following parameter and subsection are all inside the subsection ``particle 
     * The ``inertia`` parameter is used to define one of the diagonal elements of the rotational inertia matrix. This parameter expects either a single value or a three-by-three matrix for the moments of inertia of the particle in the reference frame of the particle. The entry sequence corresponds to : I_xx ;I_xy ;I_xz ;I_yx ;I_yy ;I_yz ;I_zx ;I_zy ;I_zz. If a single value is given, the inertia is assumed to be uniform for all the axes. 
     
         .. tip::
-            The current implementation does not support inertia matrices that are not diagonal and shape where the center of mass does not fall on the origin of the particle's reference frame. To avoid such a problem, we recommend using the composite shape to align and center the principal axis of the inertia matrix and the center of mass with the origin of the particle.
+            The current implementation does not support inertia matrices that are not diagonal and shapes where the center of mass does not fall on the origin of the particle's reference frame. To avoid such a problem, we recommend using the composite shape to align and center the principal axis of the inertia matrix and the center of mass with the origin of the particle.
 
     The following properties are used if the particle collides with one of the boundaries of the domain or another particle. The effective properties used to calculate the impact force are the harmonic mean between the properties of the colliding entities.
     

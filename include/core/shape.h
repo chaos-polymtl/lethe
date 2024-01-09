@@ -176,7 +176,7 @@ public:
         Point<dim> bounding_box_center_one;
         Point<dim> bounding_box_center_two;
         double     radius_one = this->bounding_box_half_length.norm();
-        double     radius_two = this->bounding_box_half_length.norm();
+        double     radius_two = shape.bounding_box_half_length.norm();
         // In the case of the plane, the radius of the bounding box is zero, so
         // we replace it with the radius of the other object.
         if (radius_one == 0)
@@ -218,7 +218,7 @@ public:
           }
       }
 
-    // The following algorithm does a minimization of the level_set obtained by
+    // The following algorithm does a minimization of the level set obtained by
     // the intersection of two shapes. A usual gradient descent does not work as
     // such. This algorithm uses a cartesian search combined with an additional
     // guess based on the gradient of the level set and a numerical gradient
@@ -246,12 +246,11 @@ public:
         // Loop over all the initial candidate points.
         for (unsigned int i = 0; i < candidate_points.size(); ++i)
           {
-            // Initialize variable use in the calculation.
+            // Initialize variables used in the calculation.
             Point<dim> current_point = candidate_points[i];
             Point<dim> dx{}, distance_gradient{}, previous_position{},
               previous_gradient{};
-            // Initialize the iteration counter. We limit the number of
-            // iterations to 200.
+            // Initialize the iteration counter.
             unsigned int       iteration     = 0;
             const unsigned int iteration_max = 2e2;
 
@@ -261,7 +260,7 @@ public:
             double max_step           = shape.effective_radius * 0.25;
             double previous_step_size = max_step;
 
-            // Initialize the value. In this minimisation of the intersection of
+            // Initialize the value. In this minimization of the intersection of
             // two level set we use the smooth max function for the union as it
             // significantly smooths the minimization problem as we get close to
             // the local minimum of the intersection.
@@ -473,7 +472,6 @@ public:
               }
           }
       }
-    // output
     return std::make_tuple(distance, normal, contact_point);
   }
 
@@ -793,10 +791,11 @@ public:
 
 
   /**
-   * @brief Check if the bounding box of this shape and another one are overlapping. This function returns false if the shapes are not overlapping.
-   * This function is base use the Separating Axis Theorem (SAT) to perform the
+   * @brief Check if the bounding box of this shape and another one are overlapping. 
+   * This function uses the Separating Axis Theorem (SAT) to perform the
    * bounding box check.
    * @param shape The shape with which the distance is evaluated
+   * @return This function returns false if the shapes are not overlapping.
    */
   bool
   bounding_box_contact(Shape<dim> &shape)
@@ -1415,7 +1414,6 @@ protected:
   // the axes x->y->z by each of the tensor components, in radian
   Tensor<1, 3> orientation;
 
-
   // The cache of the evaluation of the shape. This is used to avoid costly
   // reevaluation of the shape.
   std::unordered_map<std::string, double>         value_cache;
@@ -1429,7 +1427,6 @@ protected:
   // Layer thickening: used to artificially inflate/deflate the shape
   double layer_thickening;
 };
-
 
 
 template <int dim>
@@ -1553,7 +1550,7 @@ class Plane : public Shape<dim>
 {
 public:
   /**
-   * @brief Constructor for a infinite plane. The plane is normal to the Z axis in 3 D and Y axis in 2D in the reference frame of the particle.
+   * @brief Constructor for a infinite plane. The plane is normal to the Z axis in 3D and Y axis in 2D in the reference frame of the particle.
    * @param position The point on the plane.
    * @param orientation The orientation.
    */
@@ -1568,7 +1565,7 @@ public:
       {
         normal = Tensor<1, dim>({0, 1});
       }
-    // This is a special case since the plane as no bounding box so here we fill
+    // This is a special case since the plane has no bounding box so here we fill
     // it with zeros.
     for (unsigned int d = 0; d < dim; ++d)
       {

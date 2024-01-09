@@ -1349,10 +1349,10 @@ namespace Parameters
     // Boolean that turn on or of the calculation of the lubrication force.
     bool enable_lubrication_force;
     // The maximal range for which the lubrication force is evaluated. This
-    // variable multiply the smallest cell diameter to obtain the actual range.
+    // variable multiplies the smallest cell diameter to obtain the actual range.
     double lubrication_range_max;
     // The minimal range for which the lubrication force is evaluated. This
-    // variable multiply the smallest cell diameter to obtain the actual range.
+    // variable multiplies the smallest cell diameter to obtain the actual range.
     double lubrication_range_min;
     // The multiple of the particle effective radius used in contact candidate
     // search.
@@ -1360,7 +1360,7 @@ namespace Parameters
     // The frequency at which the contact search is performed at the CFD time
     // scale (the contact search is performed once every X cfd time step.)
     int contact_search_frequency;
-    // Boolean that dictates if the particle has been defining in a file instead
+    // Boolean that dictates if the particle has been defined in a file instead
     // of the particle subsection.
     bool load_particles_from_file;
     // The file name used if the particles are loaded from a file.

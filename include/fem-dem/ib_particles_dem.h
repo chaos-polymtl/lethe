@@ -161,11 +161,11 @@ public:
 
 
   /**
-   * @brief Calculates non-linear (Hertzian) force between two object
+   * @brief Calculates non-linear (Hertzian) force between two objects
    *
    * @param dt_dem The sub time stepping time step.
    *
-   * @param contact_force a vector containing the contact force between particles
+   * @param contact_force a vector containing the contact forces between particles
    *
    * @param contact_force a vector containing the contact torques between particles
    */
@@ -327,8 +327,6 @@ private:
     previous_wall_contact_point;
   std::map<unsigned int, std::map<unsigned int, Point<dim>>>
     previous_particle_particle_contact_point;
-
-
 
   // Particles contact history
   std::map<unsigned int, std::map<unsigned int, ContactInfo>> pp_contact_map;

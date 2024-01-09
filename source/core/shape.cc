@@ -37,7 +37,6 @@ Shape<dim>::displaced_volume()
   return 0;
 }
 
-
 template <int dim>
 void
 Shape<dim>::clear_cache()
@@ -51,7 +50,6 @@ Shape<dim>::clear_cache()
       closest_point_cache.clear();
     }
 }
-
 
 template <int dim>
 Point<dim>
@@ -131,7 +129,6 @@ Shape<dim>::align_and_center(const Point<dim> &evaluation_point) const
 
   return translated_point;
 }
-
 
 template <int dim>
 Point<dim>
@@ -466,7 +463,6 @@ Sphere<dim>::local_curvature_radius_with_cell_guess(
 }
 
 
-
 template <int dim>
 double
 Plane<dim>::value(const Point<dim> &evaluation_point,
@@ -482,7 +478,6 @@ Plane<dim>::value(const Point<dim> &evaluation_point,
   else
     return -(rotate_in_globalpoint - evaluation_point).norm();
 }
-
 
 template <int dim>
 std::shared_ptr<Shape<dim>>
@@ -504,7 +499,6 @@ Plane<dim>::gradient(const Point<dim> &evaluation_point,
     {
       return tensor_nd_to_2d(this->rotation_matrix * tensor_nd_to_3d(normal));
     }
-
   else
     {
       return this->rotation_matrix * normal;
@@ -576,7 +570,7 @@ Superquadric<dim>::closest_surface_point(const Point<dim> &p,
             // Gradient can be null if the evaluation point is exactly on the
             // centroid of the shape. In this case it is also the closest point.
             break;
-          // This is a modify newton method that limit the step size when the
+          // This is a modified Newton method that limits the step size when the
           // gradient norm is smaller then 1.
           dx = -relaxation * (current_distance * distance_gradient) /
                distance_gradient.norm() /
@@ -2743,5 +2737,3 @@ template class OpenCascadeShape<2>;
 template class OpenCascadeShape<3>;
 template class Plane<2>;
 template class Plane<3>;
-// template class Shape<2>;
-// template class Shape<3>;

@@ -3301,9 +3301,9 @@ namespace Parameters
             particles[i].set_orientation(particles[i].orientation);
             // The following parameters aims at allowing the change of frame of
             // reference of the particle automatically to align and position the
-            // center of mass of the particle with its main axis base on the
+            // center of mass of the particle with its main axis based on the
             // position of the center of mass and inertia matrix. This is mostly
-            // implemented but make the evaluation of the levelset more
+            // implemented but makes the evaluation of the levelset more
             // difficult as such we postponed the implementation to another PR.
             /*
             std::string center_of_mass_location_str =
