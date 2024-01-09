@@ -661,7 +661,7 @@ NavierStokesBase<dim, VectorType, DofsType>::box_refine_mesh()
           grid_in.read_msh(input_file);
 
           // By default uses the METIS partitioner.
-          // A user parameter option could be made to chose a partitionner.
+          // A user parameter option could be made to choose a partitionner.
           GridTools::partition_triangulation(0, basetria);
 
 
