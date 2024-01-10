@@ -558,8 +558,8 @@ IBParticlesDEM<dim>::calculate_pw_contact_force(
               boundary_index += 1;
             }
 
-          // Add all the floating wall has contact candidate. Their indices
-          // start from 1M (define in the definition of:
+          // Add all the floating walls as contact candidates. Their indices
+          // start from 1M (defined in the definition of:
           // lowest_floating_wall_indices). This prevents a floating wall from
           // sharing the same indices as a normal boundary of the domain in the
           // contact candidates list.
@@ -1276,14 +1276,6 @@ IBParticlesDEM<dim>::integrate_particles_motion(const double dt,
                                              lubrication_wall_torque);
             }
 
-          /*if (Utilities::MPI::this_mpi_process(this->mpi_communicator) == 0)
-            {
-              std::cout<<"time "<< t <<std::endl;
-              std::cout<<"particle velocity "<<
-            dem_particles[0].velocity<<std::endl; std::cout<<"particle force"<<
-            contact_wall_force[0]<<std::endl; std::cout<<"particle torque"<<
-            contact_wall_torque[0]<<std::endl;
-            }*/
           for (unsigned int p_i = 0; p_i < dem_particles.size(); ++p_i)
             {
               if (dem_particles[p_i].integrate_motion)
@@ -1503,7 +1495,7 @@ IBParticlesDEM<dim>::integrate_particles_motion(const double dt,
                   // Check if all 4 of the RK steps are in the contact info. If
                   // it is not the case, this means this is a new contact, or
                   // the contact ended. In this case, we simply take the last RK
-                  // step register as the derivative for the integration.
+                  // step registered as the derivative for the integration.
                   auto previous_contact_info_iterator =
                     last_pw_contact_info.find(particle_id)
                       ->second.find(wall_id);
@@ -1532,7 +1524,7 @@ IBParticlesDEM<dim>::integrate_particles_motion(const double dt,
                   // Check if all 4 of the RK steps are in the contact info. If
                   // it is not the case, this means this is a new contact, or
                   // the contact ended. In this case, we simply take the last RK
-                  // step register as the derivative for the integration.
+                  // step registered as the derivative for the integration.
                   auto previous_contact_info_iterator =
                     last_pp_contact_info.find(particle_one_id)
                       ->second.find(particle_two_id);
@@ -1647,7 +1639,7 @@ IBParticlesDEM<dim>::integrate_particles_motion(const double dt,
               // Check if all 4 of the RK steps are in the contact info. If it
               // is not the case, this means this is a new contact, or the
               // contact ended. In this case, we simply take the last RK step
-              // register as the derivative for the integration.
+              // registered as the derivative for the integration.
               Tensor<1, 3> previous_tangential_overlap;
               auto         previous_contact_info_iterator =
                 last_pw_contact_info.find(particle_id)->second.find(wall_id);
@@ -1694,7 +1686,7 @@ IBParticlesDEM<dim>::integrate_particles_motion(const double dt,
               // Check if all 4 of the RK steps are in the contact info. If it
               // is not the case, this means this is a new contact, or the
               // contact ended. In this case, we simply take the last RK step
-              // register as the derivative for the integration.
+              // registered as the derivative for the integration.
               Tensor<1, 3> previous_tangential_overlap;
               auto         previous_contact_info_iterator =
                 last_pp_contact_info.find(particle_one_id)

@@ -1107,7 +1107,7 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
       if (cell->is_locally_owned())
         {
           // Particle id that cut the cell.
-          unsigned int p_main; // The index of the particle use in the
+          unsigned int p_main; // The index of the particle used in the
                                // imposition of this cell
           std::vector<unsigned int> p_count;
           bool                      cell_is_cut;
@@ -2194,9 +2194,9 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
       // explicit calculation of the impulsion and position are false.
       if (current_newton_iteration == 0 ||
           (this->simulation_parameters.particlesParameters
-             ->explicit_contact_impulsion_calculation and
+             ->explicit_contact_impulsion_calculation== false and
            this->simulation_parameters.particlesParameters
-             ->explicit_position_integration_calculation) == false)
+             ->explicit_position_integration_calculation== false))
         {
           ib_dem.integrate_particles_motion(
             dt, h_max, h_min, fluid_density, kinematic_viscosity);
@@ -4642,7 +4642,7 @@ GLSSharpNavierStokesSolver<dim>::load_particles_from_file()
             Utilities::string_to_double(particles_data["volume"][p_i]);
           if (volume == 0)
             {
-              // value is automatically define.
+              // value is automatically defined.
               volume = particles[p_i].shape->displaced_volume();
               if (volume == 0)
                 {
@@ -4793,7 +4793,7 @@ GLSSharpNavierStokesSolver<dim>::load_particles_from_file()
             Utilities::string_to_double(particles_data["volume"][p_i]);
           if (volume == 0)
             {
-              // value is automatically define.
+              // value is automatically defined.
               // volume=particles[i].shape->displaced_volume(1.0);
               if (volume == 0)
                 {
