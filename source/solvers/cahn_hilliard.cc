@@ -1264,7 +1264,7 @@ CahnHilliard<dim>::apply_phase_filter()
 
   Vector<float> approximate_gradient_vector(n_cells);
  //std::cout<<"hi 2 "<<std::endl;
-  DerivativeApproximation::approximate_gradient(*mapping,dof_handler,this->present_solution,approximate_gradient_vector,0);
+  //DerivativeApproximation::approximate_gradient(*mapping,dof_handler,this->present_solution,approximate_gradient_vector,0);
 
   // Create filter object
    //std::cout<<"hi 3 "<<std::endl;
@@ -1282,7 +1282,7 @@ CahnHilliard<dim>::apply_phase_filter()
           cell->get_dof_indices(local_dof_indices);
 //          fe_values[phase_order].get_function_gradients(
 //            present_solution, phase_cahn_hilliard_gradients);
-          double cell_gradient_estimation = approximate_gradient_vector[cell_index];
+          //double cell_gradient_estimation = approximate_gradient_vector[cell_index];
           //std::cout<<"cell_gradient_estimation ="<<approximate_gradient_vector[cell_index]<<std::endl;
           // std::cout << "hi 5 " << std::endl;
           //std::cout << "local_dof_indices.size() = " << local_dof_indices.size()<< std::endl;
@@ -1310,7 +1310,7 @@ CahnHilliard<dim>::apply_phase_filter()
                           filtered_cell_list[local_dof_indices[p]] = true;
                           filtered_solution_owned[local_dof_indices[p]] =
                             filter->filter_phase(
-                              filtered_solution_owned[local_dof_indices[p/2]],cell_gradient_estimation);
+                              filtered_solution_owned[local_dof_indices[p]],0.0);
                         }
                     }
                 }

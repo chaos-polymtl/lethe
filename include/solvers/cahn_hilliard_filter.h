@@ -102,9 +102,11 @@ public:
     // sgn(unfiltered_phase)*std::sqrt(std::abs(unfiltered_phase)));
     // std::cout<<"Filtered value computed = " << tanh(beta*unfiltered_phase)<<
     // std::endl;
-    return tanh((beta + 1 / (unfiltered_phase_gradient_norm +
-                             std::numeric_limits<double>::min())) *
-                unfiltered_phase);
+//    return tanh((beta + 1 / (unfiltered_phase_gradient_norm +
+//                             std::numeric_limits<double>::min())) *
+//                unfiltered_phase);
+    //const double filtered_phase = (std::abs(unfiltered_phase)<1) ? unfiltered_phase : sgn(unfiltered_phase);
+    return (std::abs(unfiltered_phase)<1) ? unfiltered_phase : sgn(unfiltered_phase);
     // return tanh(beta *
     // sgn(unfiltered_phase)*unfiltered_phase*unfiltered_phase);
   }

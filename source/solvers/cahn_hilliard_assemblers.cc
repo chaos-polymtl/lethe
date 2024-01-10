@@ -28,6 +28,9 @@ CahnHilliardAssemblerCore<dim>::assemble_matrix(
   const double xi =
     this->cahn_hilliard_parameters.potential_smoothing_coefficient;
 
+  const double surface_tension_coefficient = 24.5; //HARD CODED FOR PURELY DEBUGGING PURPOSE
+  const double lambda = 3*epsilon*surface_tension_coefficient/(2*sqrt(2));
+
   // Loop and quadrature information
   const auto        &JxW_vec    = scratch_data.JxW;
   const unsigned int n_q_points = scratch_data.n_q_points;
@@ -44,7 +47,7 @@ CahnHilliardAssemblerCore<dim>::assemble_matrix(
   auto &local_matrix        = copy_data.local_matrix;
 
   // Constant mobility model
-  if (mobility_model == Parameters::CahnHilliardMobilityModel::constant)
+  if (mobility_model == Parameters::CahnHilliardMobilityModel::constant) //current modifications applied only for the constant mobility case
     {
       for (unsigned int q = 0; q < n_q_points; ++q)
         {
@@ -123,11 +126,11 @@ CahnHilliardAssemblerCore<dim>::assemble_matrix(
                      mobility_constant * grad_phi_phase_i *
                        grad_phi_potential_j +
                      phi_potential_i * phi_potential_j -
-                     // Second equation (Lovric et al.)
-                     4 * well_height * phi_potential_i *
+                     // Second equation (Lovric et al.) //modified by Jamshidi
+                     (lambda/(epsilon*epsilon)) * phi_potential_i*
                        (3 * phase_order_value * phase_order_value - 1.0) *
                        phi_phase_j -
-                     epsilon * epsilon * grad_phi_potential_i * grad_phi_phase_j
+                     lambda * grad_phi_potential_i * grad_phi_phase_j
                      // Chemical potential smoothing
                      + xi * cell_size * cell_size * grad_phi_potential_i *
                          grad_phi_potential_j) *
@@ -294,6 +297,11 @@ CahnHilliardAssemblerCore<dim>::assemble_rhs(
   const double xi =
     this->cahn_hilliard_parameters.potential_smoothing_coefficient;
 
+
+  const double surface_tension_coefficient = 24.5; //HARD CODED FOR PURELY DEBUGGING PURPOSE
+  const double lambda = 3*epsilon*surface_tension_coefficient/(2*sqrt(2));
+
+
   // Loop and quadrature information
   const auto        &JxW_vec    = scratch_data.JxW;
   const unsigned int n_q_points = scratch_data.n_q_points;
@@ -374,10 +382,10 @@ CahnHilliardAssemblerCore<dim>::assemble_rhs(
                  // Second equation (2nd article)
                  - phi_potential_i * potential_value +
                  // Second equation (Lovric et al.)
-                 4 * well_height * phi_potential_i *
+                 (lambda/(epsilon*epsilon)) * phi_potential_i *
                    (phase_order_value * phase_order_value - 1) *
                    phase_order_value +
-                 epsilon * epsilon * grad_phi_potential_i * phase_order_gradient
+                 lambda * grad_phi_potential_i * phase_order_gradient
                  // Chemical potential smoothing
                  - xi * cell_size * cell_size * grad_phi_potential_i *
                      potential_gradient
