@@ -818,10 +818,6 @@ IBParticlesDEM<dim>::calculate_pw_lubrication_force(
               // Find the best candidate (the closest point) for each different
               // wall.
 
-              // Find a way to use cell guess
-              // correctly!!!!!!!!!!!!!!!!!!!!!!!!!!!!! Do not merge without
-              // final check on this
-
               double dist = particle.get_levelset(
                 boundary_cell_iter->second.point_on_boundary);
 
@@ -1370,7 +1366,7 @@ IBParticlesDEM<dim>::integrate_particles_motion(const double dt,
                     invert(dem_particles[p_i].rotation_matrix) *
                     angular_acceleration_in_particle_frame;
 
-                  // Store est rk4 step of the angular contact impulsion
+                  // Store the rk4 step of the angular contact impulsion
                   k_omega_impulsion[p_i][step] = current_fluid_torque[p_i] +
                                                  contact_torque[p_i] +
                                                  contact_wall_torque[p_i];

@@ -2194,9 +2194,9 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
       // explicit calculation of the impulsion and position are false.
       if (current_newton_iteration == 0 ||
           (this->simulation_parameters.particlesParameters
-             ->explicit_contact_impulsion_calculation== false and
+               ->explicit_contact_impulsion_calculation == false and
            this->simulation_parameters.particlesParameters
-             ->explicit_position_integration_calculation== false))
+               ->explicit_position_integration_calculation == false))
         {
           ib_dem.integrate_particles_motion(
             dt, h_max, h_min, fluid_density, kinematic_viscosity);
