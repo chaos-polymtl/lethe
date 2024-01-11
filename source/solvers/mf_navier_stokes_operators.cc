@@ -377,18 +377,16 @@ NavierStokesOperatorBase<dim, number>::get_system_matrix() const
 
       if (this->matrix_free.get_mg_level() != numbers::invalid_unsigned_int)
         {
-          DoFTools::extract_locally_relevant_level_dofs(
-            dof_handler,
-            this->matrix_free.get_mg_level(),
-            locally_relevant_dofs);
+          locally_relevant_dofs = DoFTools::extract_locally_relevant_level_dofs(
+            dof_handler, this->matrix_free.get_mg_level());
           locally_owned_dofs =
             dof_handler.locally_owned_mg_dofs(this->matrix_free.get_mg_level());
         }
       else
         {
-          DoFTools::extract_locally_relevant_dofs(dof_handler,
-                                                  locally_relevant_dofs);
           locally_owned_dofs = dof_handler.locally_owned_dofs();
+          locally_relevant_dofs =
+            DoFTools::extract_locally_relevant_dofs(dof_handler);
         }
 
       DynamicSparsityPattern dsp(locally_relevant_dofs);

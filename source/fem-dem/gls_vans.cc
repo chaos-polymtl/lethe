@@ -62,8 +62,8 @@ GLSVANSSolver<dim>::setup_dofs()
   locally_owned_dofs_voidfraction =
     void_fraction_dof_handler.locally_owned_dofs();
 
-  DoFTools::extract_locally_relevant_dofs(void_fraction_dof_handler,
-                                          locally_relevant_dofs_voidfraction);
+  locally_relevant_dofs_voidfraction =
+    DoFTools::extract_locally_relevant_dofs(void_fraction_dof_handler);
 
   void_fraction_constraints.clear();
   void_fraction_constraints.reinit(locally_relevant_dofs_voidfraction);
