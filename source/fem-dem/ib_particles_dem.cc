@@ -192,7 +192,7 @@ IBParticlesDEM<dim>::calculate_pp_contact_force(
                           (particle_one.radius /
                            (particle_one.radius + particle_two.radius)));
                     }
-
+                  // The normal vector goes from particle one to particle two.
                   if (typeid(*particle_one.shape) == typeid(Sphere<dim>) &&
                       typeid(*particle_two.shape) == typeid(Sphere<dim>))
                     {
@@ -328,7 +328,7 @@ IBParticlesDEM<dim>::calculate_pp_contact_force(
                         contact_torque[particle_one.particle_id] -
                         particle_one_tangential_torque +
                         rolling_resistance_torque +
-                        cross_product_3d((point_nd_to_3d(contact_point) -
+                        cross_product_3d((contact_point_3d -
                                           point_nd_to_3d(
                                             particle_one.position)),
                                          -(normal_force + tangential_force));
@@ -336,7 +336,7 @@ IBParticlesDEM<dim>::calculate_pp_contact_force(
                         contact_torque[particle_two.particle_id] -
                         particle_two_tangential_torque -
                         rolling_resistance_torque +
-                        cross_product_3d((point_nd_to_3d(contact_point) -
+                        cross_product_3d((contact_point_3d -
                                           point_nd_to_3d(
                                             particle_two.position)),
                                          (normal_force + tangential_force));
@@ -752,6 +752,10 @@ IBParticlesDEM<dim>::calculate_pw_contact_force(
                   double normal_overlap = -2 * std::get<double>(contact_state);
                   Point<3> contact_point =
                     point_nd_to_3d(std::get<Point<dim>>(contact_state));
+                  // The normal vector goes from particle one to particle two.
+                  // Here, particle two is the wall. As such, we flip the
+                  // normal. Here, particle two is the wall. As such, we flip
+                  // the normal.
                   Tensor<1, 3> contact_normal = -normal;
 
 

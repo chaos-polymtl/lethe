@@ -285,7 +285,7 @@ public:
   double volume;
   // The surface energy of the particle
   double surface_energy;
-  // The particle tensor of inertia in the global reference frame
+  // The particle moment of inertia in its reference frame
   Tensor<2, 3> inertia;
   // The particle position.
   Point<dim> position;
