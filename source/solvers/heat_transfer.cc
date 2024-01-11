@@ -400,6 +400,15 @@ HeatTransfer<dim>::assemble_system_matrix()
         this->simulation_parameters.multiphysics.vof_parameters.phase_filter);
     }
 
+  const bool has_ghost_elements = this->evaluation_point.has_ghost_elements();
+
+  if (!has_ghost_elements)
+    {
+      this->evaluation_point.update_ghost_values();
+      for (const auto &vector : this->previous_solutions)
+        vector.update_ghost_values();
+    }
+
   WorkStream::run(this->dof_handler.begin_active(),
                   this->dof_handler.end(),
                   *this,
@@ -408,6 +417,13 @@ HeatTransfer<dim>::assemble_system_matrix()
                   scratch_data,
                   StabilizedMethodsCopyData(this->fe->n_dofs_per_cell(),
                                             this->cell_quadrature->size()));
+
+  if (!has_ghost_elements)
+    {
+      this->evaluation_point.zero_out_ghost_values();
+      for (const auto &vector : this->previous_solutions)
+        vector.zero_out_ghost_values();
+    }
 
   system_matrix.compress(VectorOperation::add);
 
@@ -556,6 +572,15 @@ HeatTransfer<dim>::assemble_system_rhs()
         this->simulation_parameters.multiphysics.vof_parameters.phase_filter);
     }
 
+  const bool has_ghost_elements = this->evaluation_point.has_ghost_elements();
+
+  if (!has_ghost_elements)
+    {
+      this->evaluation_point.update_ghost_values();
+      for (const auto &vector : this->previous_solutions)
+        vector.update_ghost_values();
+    }
+
   WorkStream::run(this->dof_handler.begin_active(),
                   this->dof_handler.end(),
                   *this,
@@ -564,6 +589,13 @@ HeatTransfer<dim>::assemble_system_rhs()
                   scratch_data,
                   StabilizedMethodsCopyData(this->fe->n_dofs_per_cell(),
                                             this->cell_quadrature->size()));
+
+  if (!has_ghost_elements)
+    {
+      this->evaluation_point.zero_out_ghost_values();
+      for (const auto &vector : this->previous_solutions)
+        vector.zero_out_ghost_values();
+    }
 
   this->system_rhs.compress(VectorOperation::add);
 
@@ -1114,6 +1146,7 @@ HeatTransfer<dim>::setup_dofs()
 
 
   locally_owned_dofs    = dof_handler.locally_owned_dofs();
+  locally_active_dofs   = DoFTools::extract_locally_active_dofs(dof_handler);
   locally_relevant_dofs = DoFTools::extract_locally_relevant_dofs(dof_handler);
 
   present_solution.reinit(locally_owned_dofs,
@@ -1128,11 +1161,15 @@ HeatTransfer<dim>::setup_dofs()
                       mpi_communicator);
     }
 
-  system_rhs.reinit(locally_owned_dofs, mpi_communicator);
+  system_rhs.reinit(locally_owned_dofs, locally_active_dofs, mpi_communicator);
 
-  newton_update.reinit(locally_owned_dofs, mpi_communicator);
+  newton_update.reinit(locally_owned_dofs,
+                       locally_active_dofs,
+                       mpi_communicator);
 
-  local_evaluation_point.reinit(this->locally_owned_dofs, mpi_communicator);
+  local_evaluation_point.reinit(this->locally_owned_dofs,
+                                locally_active_dofs,
+                                mpi_communicator);
 
   {
     nonzero_constraints.clear();

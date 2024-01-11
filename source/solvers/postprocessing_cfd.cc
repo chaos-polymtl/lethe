@@ -234,6 +234,11 @@ calculate_CFL(const DoFHandler<dim> &dof_handler,
   // CFL
   double CFL = 0;
 
+  const bool has_ghost_elements = evaluation_point.has_ghost_elements();
+
+  if (!has_ghost_elements)
+    evaluation_point.update_ghost_values();
+
   for (const auto &cell : dof_handler.active_cell_iterators())
     {
       if (cell->is_locally_owned())
@@ -253,6 +258,10 @@ calculate_CFL(const DoFHandler<dim> &dof_handler,
             }
         }
     }
+
+  if (!has_ghost_elements)
+    evaluation_point.zero_out_ghost_values();
+
   const MPI_Comm mpi_communicator = dof_handler.get_communicator();
   CFL                             = Utilities::MPI::max(CFL, mpi_communicator);
   return (CFL);
@@ -312,6 +321,13 @@ calculate_enstrophy(const DoFHandler<dim> &dof_handler,
   double                      domain_volume =
     GridTools::volume(dof_handler.get_triangulation(), mapping);
 
+  const bool has_ghost_elements = evaluation_point.has_ghost_elements();
+
+  if (!has_ghost_elements)
+    {
+      evaluation_point.update_ghost_values();
+    }
+
   for (const auto &cell : dof_handler.active_cell_iterators())
     {
       if (cell->is_locally_owned())
@@ -349,6 +365,12 @@ calculate_enstrophy(const DoFHandler<dim> &dof_handler,
             }
         }
     }
+
+  if (!has_ghost_elements)
+    {
+      evaluation_point.zero_out_ghost_values();
+    }
+
   const MPI_Comm mpi_communicator = dof_handler.get_communicator();
   en                              = Utilities::MPI::sum(en, mpi_communicator);
   return (en);
@@ -407,6 +429,13 @@ calculate_kinetic_energy(const DoFHandler<dim> &dof_handler,
 
   double KEU = 0.0;
 
+  const bool has_ghost_elements = evaluation_point.has_ghost_elements();
+
+  if (!has_ghost_elements)
+    {
+      evaluation_point.update_ghost_values();
+    }
+
   for (const auto &cell : dof_handler.active_cell_iterators())
     {
       if (cell->is_locally_owned())
@@ -430,6 +459,12 @@ calculate_kinetic_energy(const DoFHandler<dim> &dof_handler,
             }
         }
     }
+
+  if (!has_ghost_elements)
+    {
+      evaluation_point.zero_out_ghost_values();
+    }
+
   const MPI_Comm mpi_communicator = dof_handler.get_communicator();
   KEU = Utilities::MPI::sum(KEU / domain_volume, mpi_communicator);
   return (KEU);
