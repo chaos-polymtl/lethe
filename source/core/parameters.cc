@@ -3117,11 +3117,11 @@ namespace Parameters
         lubrication_range_max    = prm.get_double("lubrication range max");
         lubrication_range_min    = prm.get_double("lubrication range min");
         explicit_contact_impulsion_calculation =
-          prm.get_bool("use explicit contact impulsion");
+          prm.get_bool("explicit contact impulsion");
         explicit_position_integration_calculation =
-          prm.get_bool("use explicit position integration");
+          prm.get_bool("explicit position integration");
         approximate_radius_for_contact =
-          prm.get_bool("use approximate radius for contact");
+          prm.get_bool("approximate radius for contact");
 
         prm.enter_subsection("wall physical properties");
         {

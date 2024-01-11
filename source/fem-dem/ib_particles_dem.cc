@@ -765,7 +765,8 @@ IBParticlesDEM<dim>::calculate_pw_contact_force(
                   particle_properties.object_mass = particle.mass;
                   particle_properties.object_poisson_ratio =
                     particle.poisson_ratio;
-                  particle_properties.object_radius = particle.radius;
+                  particle_properties.object_radius =
+                    contact_radius_particle_one;
                   particle_properties.object_restitution_coefficient =
                     particle.restitution_coefficient;
                   particle_properties.object_rolling_friction_coefficient =
