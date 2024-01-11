@@ -59,10 +59,9 @@ public:
 
   /**
    * @brief Return the current newton iteration.
-   *
    */
   inline unsigned int
-  get_current_newton_iteration()
+  get_current_newton_iteration() const
   {
     return outer_iteration;
   }

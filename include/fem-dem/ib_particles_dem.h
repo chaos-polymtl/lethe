@@ -267,7 +267,6 @@ public:
 
   std::vector<IBParticle<dim>> dem_particles;
 
-
 private:
   // A struct to store boundary cells' information
   struct BoundaryCellsInfo
@@ -329,7 +328,6 @@ private:
   // A vector of vectors of candidate cells for each of the particle.
   std::vector<std::map<unsigned int, BoundaryCellsInfo>> boundary_cells;
 
-private:
   double cfd_time;
 };
 

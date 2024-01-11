@@ -32,7 +32,11 @@
 
 using namespace dealii;
 
-
+/**
+  * @brief This class defines values related to a particle used in the sharp interface IB. These values are used in the solver
+  * 
+  * @tparam dim  An integer that denotes the number of spatial dimensions
+  */
 template <int dim>
 class IBParticle
 {
@@ -212,7 +216,7 @@ public:
 
   /**
    * @brief
-   * Sets the orientation of the particle and dependent members to the argument.
+   * @brief Sets the orientation of the particle and dependent members to the argument
    * This include the shape and the rotation matrix that describes the
    * orientation.
    *
