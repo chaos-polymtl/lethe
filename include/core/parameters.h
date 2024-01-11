@@ -1377,8 +1377,7 @@ namespace Parameters
     // Boolean for the explicit calculation of the contact impulse in the
     // CFD-DEM coupling impulsion in the CFD-DEM coupling.
     bool explicit_contact_impulsion_calculation;
-    // Boolean that turn on or off the explicit evaluation of the position of
-    // the particle in the CFD-DEM coupling.
+    // Boolean for explicit evaluation of the particle's position in the CFD-DEM coupling
     bool explicit_position_integration_calculation;
     // Boolean for approximation of the contact radius. If true, the effective
     // radius replaces the actual particle's local curvature radius in the

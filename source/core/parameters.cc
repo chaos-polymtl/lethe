@@ -3294,8 +3294,6 @@ namespace Parameters
             particles[i].volume = volume;
             particles[i].mass = particles[i].volume * prm.get_double("density");
 
-
-
             particles[i].initialize_previous_solution();
             particles[i].set_position(particles[i].position);
             particles[i].set_orientation(particles[i].orientation);
