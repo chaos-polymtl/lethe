@@ -353,10 +353,7 @@ IBParticlesDEM<dim>::calculate_pp_lubrication_force(
   std::vector<Tensor<1, 3>> & /*lubrication_torque*/)
 {
   using dealii::numbers::PI;
-  auto mpi_index = Utilities::MPI::this_mpi_process(this->mpi_communicator);
-  // Get the number of processes
-  int world_size;
-  MPI_Comm_size(MPI_COMM_WORLD, &world_size);
+
   // loop over all particles to find pair of close particles
   for (auto &particle_one : dem_particles)
     {
