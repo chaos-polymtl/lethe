@@ -1113,8 +1113,8 @@ HeatTransfer<dim>::setup_dofs()
   auto mpi_communicator = triangulation->get_communicator();
 
 
-  locally_owned_dofs = dof_handler.locally_owned_dofs();
-  DoFTools::extract_locally_relevant_dofs(dof_handler, locally_relevant_dofs);
+  locally_owned_dofs    = dof_handler.locally_owned_dofs();
+  locally_relevant_dofs = DoFTools::extract_locally_relevant_dofs(dof_handler);
 
   present_solution.reinit(locally_owned_dofs,
                           locally_relevant_dofs,

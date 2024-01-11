@@ -182,8 +182,8 @@ MFNavierStokesSolver<dim>::setup_dofs_fd()
     }
 
   this->locally_owned_dofs = this->dof_handler.locally_owned_dofs();
-  DoFTools::extract_locally_relevant_dofs(this->dof_handler,
-                                          this->locally_relevant_dofs);
+  this->locally_relevant_dofs =
+    DoFTools::extract_locally_relevant_dofs(this->dof_handler);
 
   // Non Zero constraints
   define_non_zero_constraints();
@@ -1590,8 +1590,8 @@ MFNavierStokesSolver<dim>::define_zero_constraints()
   FEValuesExtractors::Vector velocities(0);
   FEValuesExtractors::Scalar pressure(dim);
   this->zero_constraints.clear();
-  DoFTools::extract_locally_relevant_dofs(this->dof_handler,
-                                          this->locally_relevant_dofs);
+  this->locally_relevant_dofs =
+    DoFTools::extract_locally_relevant_dofs(this->dof_handler);
   this->zero_constraints.reinit(this->locally_relevant_dofs);
 
   DoFTools::make_hanging_node_constraints(this->dof_handler,

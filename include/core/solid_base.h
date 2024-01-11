@@ -235,6 +235,7 @@ public:
 
 private:
   IndexSet locally_owned_dofs;
+  IndexSet locally_active_dofs;
   IndexSet locally_relevant_dofs;
   // Member variables
   MPI_Comm           mpi_communicator;

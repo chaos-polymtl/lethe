@@ -554,8 +554,8 @@ GDNavierStokesSolver<dim>::setup_dofs_fd()
     this->dof_handler.locally_owned_dofs().get_view(dof_u, dof_u + dof_p);
 
   IndexSet locally_relevant_dofs_acquisition;
-  DoFTools::extract_locally_relevant_dofs(this->dof_handler,
-                                          locally_relevant_dofs_acquisition);
+  locally_relevant_dofs_acquisition =
+    DoFTools::extract_locally_relevant_dofs(this->dof_handler);
   this->locally_relevant_dofs.resize(2);
   this->locally_relevant_dofs[0] =
     locally_relevant_dofs_acquisition.get_view(0, dof_u);

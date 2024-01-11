@@ -408,6 +408,7 @@ protected:
   // Member variables
 protected:
   DofsType locally_owned_dofs;
+  IndexSet locally_active_dofs;
   DofsType locally_relevant_dofs;
 
   MPI_Comm           mpi_communicator;

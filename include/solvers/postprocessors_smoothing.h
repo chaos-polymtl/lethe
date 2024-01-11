@@ -98,8 +98,9 @@ protected:
   GlobalVectorType                                system_rhs;
   MPI_Comm                                        mpi_communicator;
   AffineConstraints<double>                       constraints;
-  IndexSet                                        locally_relevant_dofs;
   IndexSet                                        locally_owned_dofs;
+  IndexSet                                        locally_active_dofs;
+  IndexSet                                        locally_relevant_dofs;
   GlobalVectorType completely_distributed_solution;
 
 private:

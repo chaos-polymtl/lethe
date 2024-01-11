@@ -386,9 +386,9 @@ NavierStokesOperatorBase<dim, number>::get_system_matrix() const
         }
       else
         {
-          DoFTools::extract_locally_relevant_dofs(dof_handler,
-                                                  locally_relevant_dofs);
           locally_owned_dofs = dof_handler.locally_owned_dofs();
+          locally_relevant_dofs =
+            DoFTools::extract_locally_relevant_dofs(dof_handler);
         }
 
       DynamicSparsityPattern dsp(locally_relevant_dofs);

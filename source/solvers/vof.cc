@@ -1946,9 +1946,9 @@ VolumeOfFluid<dim>::setup_dofs()
       locally_owned_dofs_projected_phase_fraction_gradient =
         projected_phase_fraction_gradient_dof_handler.locally_owned_dofs();
 
-      DoFTools::extract_locally_relevant_dofs(
-        projected_phase_fraction_gradient_dof_handler,
-        locally_relevant_dofs_projected_phase_fraction_gradient);
+      locally_relevant_dofs_projected_phase_fraction_gradient =
+        DoFTools::extract_locally_relevant_dofs(
+          projected_phase_fraction_gradient_dof_handler);
 
       projected_phase_fraction_gradient_constraints.clear();
       projected_phase_fraction_gradient_constraints.reinit(
@@ -2004,8 +2004,8 @@ VolumeOfFluid<dim>::setup_dofs()
 
       locally_owned_dofs_curvature = curvature_dof_handler.locally_owned_dofs();
 
-      DoFTools::extract_locally_relevant_dofs(curvature_dof_handler,
-                                              locally_relevant_dofs_curvature);
+      locally_relevant_dofs_curvature =
+        DoFTools::extract_locally_relevant_dofs(curvature_dof_handler);
 
       curvature_constraints.clear();
       curvature_constraints.reinit(locally_relevant_dofs_curvature);
@@ -2055,8 +2055,9 @@ VolumeOfFluid<dim>::setup_dofs()
   DoFRenumbering::Cuthill_McKee(this->dof_handler);
 
   this->locally_owned_dofs = this->dof_handler.locally_owned_dofs();
-  DoFTools::extract_locally_relevant_dofs(this->dof_handler,
-                                          this->locally_relevant_dofs);
+
+  this->locally_relevant_dofs =
+    DoFTools::extract_locally_relevant_dofs(this->dof_handler);
 
   this->present_solution.reinit(this->locally_owned_dofs,
                                 this->locally_relevant_dofs,

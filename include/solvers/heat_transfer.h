@@ -527,6 +527,7 @@ private:
 
   // Solution storage:
   IndexSet locally_owned_dofs;
+  IndexSet locally_active_dofs;
   IndexSet locally_relevant_dofs;
 
   GlobalVectorType               evaluation_point;
