@@ -117,8 +117,8 @@ subsection particles
     set particle nonlinear tolerance      = 1e-3
     set DEM coupling frequency            = 1000
     set enable lubrication force          = false
-    set explicit contact impulsion    = true
-    set explicit position integration = true
+    set explicit contact impulsion        = true
+    set explicit position integration     = true
     set contact search radius factor      = 1.5
     subsection gravity
       set Function expression = 0;-981;0
