@@ -148,8 +148,7 @@ IBParticlesDEM<dim>::calculate_pp_contact_force(
                 *particle_contact_candidates_id;
 
               auto &particle_two = dem_particles[particle_contact_id];
-              if (particle_one.particle_id != particle_two.particle_id and
-                  particle_one.particle_id < particle_two.particle_id)
+              if (particle_one.particle_id < particle_two.particle_id)
                 {
                   ContactInfo contact_info;
                   // Check if there is already information on the contact of
@@ -247,7 +246,7 @@ IBParticlesDEM<dim>::calculate_pp_contact_force(
                     {
                       double contact_radius_particle_one;
                       double contact_radius_particle_two;
-                      if (parameters->use_approximate_radius_for_contact)
+                      if (parameters->approximate_radius_for_contact)
                         {
                           contact_radius_particle_one = particle_one.radius;
                           contact_radius_particle_two = particle_two.radius;
@@ -270,35 +269,54 @@ IBParticlesDEM<dim>::calculate_pp_contact_force(
                         tensor_nd_to_3d(particle_one.velocity);
                       Tensor<1, 3> particle_two_velocity_3d =
                         tensor_nd_to_3d(particle_two.velocity);
-                      calculate_force_model(
-                        normal_overlap,
-                        contact_info,
-                        contact_point_3d,
-                        contact_normal,
-                        normal_force,
-                        tangential_force,
-                        rolling_resistance_torque,
-                        particle_one.position,
-                        particle_one_velocity_3d,
-                        particle_one.omega,
-                        particle_one.mass,
-                        contact_radius_particle_one,
-                        particle_one.youngs_modulus,
-                        particle_one.poisson_ratio,
-                        particle_one.restitution_coefficient,
-                        particle_one.friction_coefficient,
-                        particle_one.rolling_friction_coefficient,
-                        particle_two.position,
-                        particle_two_velocity_3d,
-                        particle_two.omega,
-                        particle_two.mass,
-                        contact_radius_particle_two,
-                        particle_two.youngs_modulus,
-                        particle_two.poisson_ratio,
-                        particle_two.restitution_coefficient,
-                        particle_two.friction_coefficient,
-                        particle_two.rolling_friction_coefficient,
-                        dt_dem);
+
+                      ObjectProperties particle_one_properties;
+                      particle_one_properties.object_friction_coefficient =
+                        particle_one.friction_coefficient;
+                      particle_one_properties.object_mass = particle_one.mass;
+                      particle_one_properties.object_poisson_ratio =
+                        particle_one.poisson_ratio;
+                      particle_one_properties.object_radius =
+                        contact_radius_particle_one;
+                      particle_one_properties.object_restitution_coefficient =
+                        particle_one.restitution_coefficient;
+                      particle_one_properties
+                        .object_rolling_friction_coefficient =
+                        particle_one.rolling_friction_coefficient;
+                      particle_one_properties.object_youngs_modulus =
+                        particle_one.youngs_modulus;
+                      ObjectProperties particle_two_properties;
+                      particle_two_properties.object_friction_coefficient =
+                        particle_two.friction_coefficient;
+                      particle_two_properties.object_mass = particle_two.mass;
+                      particle_two_properties.object_poisson_ratio =
+                        particle_two.poisson_ratio;
+                      particle_two_properties.object_radius =
+                        contact_radius_particle_two;
+                      particle_two_properties.object_restitution_coefficient =
+                        particle_two.restitution_coefficient;
+                      particle_two_properties
+                        .object_rolling_friction_coefficient =
+                        particle_two.rolling_friction_coefficient;
+                      particle_two_properties.object_youngs_modulus =
+                        particle_two.youngs_modulus;
+
+                      calculate_force_model(normal_overlap,
+                                            contact_info,
+                                            contact_point_3d,
+                                            contact_normal,
+                                            normal_force,
+                                            tangential_force,
+                                            rolling_resistance_torque,
+                                            particle_one.position,
+                                            particle_one_velocity_3d,
+                                            particle_one.omega,
+                                            particle_one_properties,
+                                            particle_two.position,
+                                            particle_two_velocity_3d,
+                                            particle_two.omega,
+                                            particle_two_properties,
+                                            dt_dem);
 
 
                       contact_force[particle_one.particle_id] -=
@@ -369,8 +387,7 @@ IBParticlesDEM<dim>::calculate_pp_lubrication_force(
             {
               const auto &particle_contact_id = *particle_contact_candidates_id;
               auto       &particle_two = dem_particles[particle_contact_id];
-              if (particle_one.particle_id != particle_two.particle_id and
-                  particle_one.particle_id < particle_two.particle_id)
+              if (particle_one.particle_id < particle_two.particle_id)
                 {
                   const Point<dim> particle_one_location =
                     particle_one.position;
@@ -540,13 +557,15 @@ IBParticlesDEM<dim>::calculate_pw_contact_force(
   std::vector<Tensor<1, 3>> &contact_force,
   std::vector<Tensor<1, 3>> &contact_torque)
 {
-  double wall_youngs_modulus = parameters->wall_youngs_modulus;
-  double wall_poisson_ratio  = parameters->wall_poisson_ratio;
-  double wall_rolling_friction_coefficient =
-    parameters->wall_rolling_friction_coefficient;
-  double wall_friction_coefficient = parameters->wall_friction_coefficient;
-  double wall_restitution_coefficient =
+  ObjectProperties wall_properties;
+  wall_properties.object_friction_coefficient =
+    parameters->wall_friction_coefficient;
+  wall_properties.object_poisson_ratio = parameters->wall_poisson_ratio;
+  wall_properties.object_restitution_coefficient =
     parameters->wall_restitution_coefficient;
+  wall_properties.object_rolling_friction_coefficient =
+    parameters->wall_rolling_friction_coefficient;
+  wall_properties.object_youngs_modulus = parameters->wall_youngs_modulus;
 
   using dealii::numbers::PI;
   auto mpi_index = Utilities::MPI::this_mpi_process(this->mpi_communicator);
@@ -749,7 +768,7 @@ IBParticlesDEM<dim>::calculate_pw_contact_force(
                       // contact point.
                       double contact_radius_particle_one;
 
-                      if (parameters->use_approximate_radius_for_contact)
+                      if (parameters->approximate_radius_for_contact)
                         {
                           contact_radius_particle_one = particle.radius;
                         }
@@ -776,39 +795,44 @@ IBParticlesDEM<dim>::calculate_pw_contact_force(
                       pw_contact_map[particle.particle_id][boundary_index]
                         .normal_vector = normal;
 
-                      calculate_force_model(
-                        normal_overlap,
-                        contact_info,
-                        contact_point,
-                        contact_normal,
-                        normal_force,
-                        tangential_force,
-                        rolling_resistance_torque,
-                        particle.position,
-                        particle_velocity_3d,
-                        particle.omega,
-                        particle.mass,
-                        contact_radius_particle_one,
-                        particle.youngs_modulus,
-                        particle.poisson_ratio,
-                        particle.restitution_coefficient,
-                        particle.friction_coefficient,
-                        particle.rolling_friction_coefficient,
-                        wall_center_of_rotation,
-                        wall_velocity,
-                        wall_angular_velocity,
-                        particle.mass *
-                          100, // Wall mass is 100 times higher than
-                               // the particles that contact it.
-                        contact_radius_particle_one *
-                          100, // Wall curvature radius is 100 times higher than
-                               // the particle that contacts it.
-                        wall_youngs_modulus,
-                        wall_poisson_ratio,
-                        wall_restitution_coefficient,
-                        wall_friction_coefficient,
-                        wall_rolling_friction_coefficient,
-                        dt_dem);
+                      ObjectProperties particle_properties;
+                      particle_properties.object_friction_coefficient =
+                        particle.friction_coefficient;
+                      particle_properties.object_mass = particle.mass;
+                      particle_properties.object_poisson_ratio =
+                        particle.poisson_ratio;
+                      particle_properties.object_radius = particle.radius;
+                      particle_properties.object_restitution_coefficient =
+                        particle.restitution_coefficient;
+                      particle_properties.object_rolling_friction_coefficient =
+                        particle.rolling_friction_coefficient;
+                      particle_properties.object_youngs_modulus =
+                        particle.youngs_modulus;
+
+                      // Wall mass is 100 times higher than
+                      // the particles that contact it.
+                      wall_properties.object_mass = particle.mass * 100;
+                      // Wall curvature radius is 100 times higher than
+                      // the particle that contacts it.
+                      wall_properties.object_radius = particle.radius * 100;
+
+
+                      calculate_force_model(normal_overlap,
+                                            contact_info,
+                                            contact_point,
+                                            contact_normal,
+                                            normal_force,
+                                            tangential_force,
+                                            rolling_resistance_torque,
+                                            particle.position,
+                                            particle_velocity_3d,
+                                            particle.omega,
+                                            particle_properties,
+                                            wall_center_of_rotation,
+                                            wall_velocity,
+                                            wall_angular_velocity,
+                                            wall_properties,
+                                            dt_dem);
 
                       // Updating the force of particles in the particle handler
                       contact_force[particle.particle_id] -=
@@ -988,34 +1012,22 @@ IBParticlesDEM<dim>::calculate_pw_lubrication_force(
 template <int dim>
 void
 IBParticlesDEM<dim>::calculate_force_model(
-  const double  normal_overlap,
-  ContactInfo  &contact_info,
-  Point<3>     &contact_point,
-  Tensor<1, 3> &contact_normal,
-  Tensor<1, 3> &normal_force,
-  Tensor<1, 3> &tangential_force,
-  Tensor<1, 3> &rolling_resistance_torque,
-  Point<dim>   &particle_one_position,
-  Tensor<1, 3> &particle_one_velocity,
-  Tensor<1, 3> &particle_one_omega,
-  const double  particle_one_mass,
-  const double  particle_one_radius,
-  const double  particle_one_youngs_modulus,
-  const double  particle_one_poisson_ratio,
-  const double  particle_one_restitution_coefficient,
-  const double  particle_one_friction_coefficient,
-  const double  particle_one_rolling_friction_coefficient,
-  Point<dim>   &particle_two_position,
-  Tensor<1, 3> &particle_two_velocity,
-  Tensor<1, 3> &particle_two_omega,
-  const double  particle_two_mass,
-  const double  particle_two_radius,
-  const double  particle_two_youngs_modulus,
-  const double  particle_two_poisson_ratio,
-  const double  particle_two_restitution_coefficient,
-  const double  particle_two_friction_coefficient,
-  const double  particle_two_rolling_friction_coefficient,
-  const double  dt)
+  const double           normal_overlap,
+  ContactInfo           &contact_info,
+  Point<3>              &contact_point,
+  Tensor<1, 3>          &contact_normal,
+  Tensor<1, 3>          &normal_force,
+  Tensor<1, 3>          &tangential_force,
+  Tensor<1, 3>          &rolling_resistance_torque,
+  Point<dim>            &particle_one_position,
+  Tensor<1, 3>          &particle_one_velocity,
+  Tensor<1, 3>          &particle_one_omega,
+  const ObjectProperties particle_one_properties,
+  Point<dim>            &particle_two_position,
+  Tensor<1, 3>          &particle_two_velocity,
+  Tensor<1, 3>          &particle_two_omega,
+  const ObjectProperties particle_two_properties,
+  const double           dt)
 {
   double effective_youngs_modulus;
   double effective_shear_modulus;
@@ -1041,30 +1053,36 @@ IBParticlesDEM<dim>::calculate_force_model(
   // DEM::PropertiesIndex::type) and use them in force calculations.
 
   effective_youngs_modulus =
-    (particle_one_youngs_modulus * particle_two_youngs_modulus) /
-    ((particle_two_youngs_modulus *
-      (1.0 - particle_one_poisson_ratio * particle_one_poisson_ratio)) +
-     (particle_one_youngs_modulus *
-      (1.0 - particle_two_poisson_ratio * particle_two_poisson_ratio)) +
+    (particle_one_properties.object_youngs_modulus *
+     particle_two_properties.object_youngs_modulus) /
+    ((particle_two_properties.object_youngs_modulus *
+      (1.0 - particle_one_properties.object_poisson_ratio *
+               particle_one_properties.object_poisson_ratio)) +
+     (particle_one_properties.object_youngs_modulus *
+      (1.0 - particle_two_properties.object_poisson_ratio *
+               particle_two_properties.object_poisson_ratio)) +
      DBL_MIN);
 
   effective_shear_modulus =
-    (particle_one_youngs_modulus * particle_two_youngs_modulus) /
-    (2.0 * ((particle_two_youngs_modulus * (2.0 - particle_one_poisson_ratio) *
-             (1.0 + particle_one_poisson_ratio)) +
-            (particle_one_youngs_modulus * (2.0 - particle_two_poisson_ratio) *
-             (1.0 + particle_two_poisson_ratio))) +
+    (particle_one_properties.object_youngs_modulus *
+     particle_one_properties.object_youngs_modulus) /
+    (2.0 * ((particle_two_properties.object_youngs_modulus *
+             (2.0 - particle_one_properties.object_poisson_ratio) *
+             (1.0 + particle_two_properties.object_poisson_ratio)) +
+            (particle_one_properties.object_youngs_modulus *
+             (2.0 - particle_two_properties.object_poisson_ratio) *
+             (1.0 + particle_two_properties.object_poisson_ratio))) +
      DBL_MIN);
 
   effective_coefficient_of_restitution =
-    harmonic_mean(particle_one_restitution_coefficient,
-                  particle_two_restitution_coefficient);
+    harmonic_mean(particle_one_properties.object_restitution_coefficient,
+                  particle_two_properties.object_restitution_coefficient);
   effective_coefficient_of_friction =
-    harmonic_mean(particle_one_friction_coefficient,
-                  particle_two_friction_coefficient);
+    harmonic_mean(particle_one_properties.object_friction_coefficient,
+                  particle_two_properties.object_friction_coefficient);
   effective_coefficient_of_rolling_friction =
-    harmonic_mean(particle_one_rolling_friction_coefficient,
-                  particle_two_rolling_friction_coefficient);
+    harmonic_mean(particle_one_properties.object_rolling_friction_coefficient,
+                  particle_two_properties.object_rolling_friction_coefficient);
 
   const double restitution_coefficient_particle_log =
     std::log(effective_coefficient_of_restitution);
@@ -1126,10 +1144,14 @@ IBParticlesDEM<dim>::calculate_force_model(
 
   ///////////// Hertz contact force model ////////////////
   // Calculation of effective radius and mass
-  double effective_mass = (particle_one_mass * particle_two_mass) /
-                          (particle_one_mass + particle_two_mass);
-  double effective_radius = (particle_one_radius * particle_two_radius) /
-                            ((particle_one_radius + particle_two_radius));
+  double effective_mass =
+    (particle_one_properties.object_mass *
+     particle_two_properties.object_mass) /
+    (particle_one_properties.object_mass + particle_two_properties.object_mass);
+  double effective_radius = (particle_one_properties.object_radius *
+                             particle_two_properties.object_radius) /
+                            ((particle_one_properties.object_radius +
+                              particle_two_properties.object_radius));
 
   const double radius_times_overlap_sqrt =
     sqrt(effective_radius * normal_overlap);

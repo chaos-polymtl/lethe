@@ -69,6 +69,19 @@ public:
       tangential_relative_velocity; // keep each step of RK4 in memory
   };
 
+  /** @brief Struct is used to reduce the number of parameters passed in the function calculate_force_model.
+   * */
+  struct ObjectProperties
+  {
+    double object_mass;
+    double object_radius;
+    double object_youngs_modulus;
+    double object_poisson_ratio;
+    double object_restitution_coefficient;
+    double object_friction_coefficient;
+    double object_rolling_friction_coefficient;
+  };
+
   /**
    * @brief
    * Initialize the IBParticlesDEM object with the parameters, the mpi
@@ -164,34 +177,22 @@ public:
    * @brief Calculates non-linear (Hertzian) force between two objects. Take into input the physical properties and contact state of the two objects.
    */
   void
-  calculate_force_model(const double  normal_overlap,
-                        ContactInfo  &contact_info,
-                        Point<3>     &contact_point,
-                        Tensor<1, 3> &contact_normal,
-                        Tensor<1, 3> &normal_force,
-                        Tensor<1, 3> &tangential_force,
-                        Tensor<1, 3> &rolling_resistance_torque,
-                        Point<dim>   &particle_one_position,
-                        Tensor<1, 3> &particle_one_velocity,
-                        Tensor<1, 3> &particle_one_omega,
-                        const double  particle_one_mass,
-                        const double  particle_one_radius,
-                        const double  particle_one_youngs_modulus,
-                        const double  particle_one_poisson_ratio,
-                        const double  particle_one_restitution_coefficient,
-                        const double  particle_one_friction_coefficient,
-                        const double  particle_one_rolling_friction_coefficient,
-                        Point<dim>   &particle_two_position,
-                        Tensor<1, 3> &particle_two_velocity,
-                        Tensor<1, 3> &particle_two_omega,
-                        const double  particle_two_mass,
-                        const double  particle_two_radius,
-                        const double  particle_two_youngs_modulus,
-                        const double  particle_two_poisson_ratio,
-                        const double  particle_two_restitution_coefficient,
-                        const double  particle_two_friction_coefficient,
-                        const double  particle_two_rolling_friction_coefficient,
-                        const double  dt);
+  calculate_force_model(const double           normal_overlap,
+                        ContactInfo           &contact_info,
+                        Point<3>              &contact_point,
+                        Tensor<1, 3>          &contact_normal,
+                        Tensor<1, 3>          &normal_force,
+                        Tensor<1, 3>          &tangential_force,
+                        Tensor<1, 3>          &rolling_resistance_torque,
+                        Point<dim>            &particle_one_position,
+                        Tensor<1, 3>          &particle_one_velocity,
+                        Tensor<1, 3>          &particle_one_omega,
+                        const ObjectProperties particle_one_properties,
+                        Point<dim>            &particle_two_position,
+                        Tensor<1, 3>          &particle_two_velocity,
+                        Tensor<1, 3>          &particle_two_omega,
+                        const ObjectProperties particle_two_properties,
+                        const double           dt);
 
 
   /**

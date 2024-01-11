@@ -2983,19 +2983,19 @@ namespace Parameters
           "Smallest gap considered for the lubrification force calculation. This value is multiplied by the smallest cell size");
 
         prm.declare_entry(
-          "use explicit contact impulsion",
+          "explicit contact impulsion",
           "false",
           Patterns::Bool(),
           "Bool to enable or disable the explicit evaluation of the contact impulsion. This means that if that parameter is set to true, the DEM is only run once, and the contact impulsion obtained is used for all Newton's iterations.");
 
         prm.declare_entry(
-          "use explicit position integration",
+          "explicit position integration",
           "false",
           Patterns::Bool(),
           "Bool to enable or disable the explicit position integration. This means that the particle position is obtained directly by the integration of the previous velocities only. This avoid multiple cut cell mapping for each newton iteration. Not that this limit the order of convergence in time to one.");
 
         prm.declare_entry(
-          "use approximate radius for contact",
+          "approximate radius for contact",
           "false",
           Patterns::Bool(),
           "Bool to turn on or off using the approximate radius of the particles during contact. If activated, the radius used in the contact calculation is constant and fixed to the effective radius of the shape. If not, the radius of curvature of the shape at the contact point is evaluated. For some shapes, this can be numerically expensive to evaluate.");
@@ -3120,7 +3120,7 @@ namespace Parameters
           prm.get_bool("use explicit contact impulsion");
         explicit_position_integration_calculation =
           prm.get_bool("use explicit position integration");
-        use_approximate_radius_for_contact =
+        approximate_radius_for_contact =
           prm.get_bool("use approximate radius for contact");
 
         prm.enter_subsection("wall physical properties");
@@ -3228,6 +3228,8 @@ namespace Parameters
             std::string              inertia_str = prm.get("inertia");
             std::vector<std::string> inertia_str_list(
               Utilities::split_string_list(inertia_str, ";"));
+            std::vector<double> inertia_list =
+              Utilities::string_to_double(inertia_str_list);
             if (inertia_str_list.size() == 9)
               {
                 std::vector<double> inertia_list =
@@ -3297,29 +3299,7 @@ namespace Parameters
             particles[i].initialize_previous_solution();
             particles[i].set_position(particles[i].position);
             particles[i].set_orientation(particles[i].orientation);
-            // The following parameters aims at allowing the change of frame of
-            // reference of the particle automatically to align and position the
-            // center of mass of the particle with its main axis based on the
-            // position of the center of mass and inertia matrix. This is mostly
-            // implemented but makes the evaluation of the levelset more
-            // difficult as such we postponed the implementation to another PR.
-            /*
-            std::string center_of_mass_location_str =
-              prm.get("center of mass location");
-            std::vector<std::string> center_of_mass_location_str_list(
-              Utilities::split_string_list(center_of_mass_location_str, ";"));
-            std::vector<double> center_of_mass_list =
-              Utilities::string_to_double(center_of_mass_location_str_list);
 
-            particles[i].center_of_mass_location[0] = center_of_mass_list[0];
-            particles[i].center_of_mass_location[1] = center_of_mass_list[1];
-            if (dim == 3)
-              {
-                particles[i].center_of_mass_location[2] =
-                  center_of_mass_list[2];
-              }
-            particles[i].compute_local_inertia;
-             */
             prm.leave_subsection();
           }
           prm.leave_subsection();

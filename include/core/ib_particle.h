@@ -260,12 +260,6 @@ public:
   void
   load_data_from_file();
 
-  /**
-   * @brief Calculate the rotation matrix that diagonalizes the inertia matrix.
-   */
-  void
-  compute_local_inertia();
-
 
   // The unique identification number of the particle.
   unsigned int particle_id;
@@ -381,9 +375,6 @@ public:
   // Location of the pressure reference point relative to the center of the
   // particle. This point is used to define a constant on the pressure.
   Point<dim> pressure_location;
-
-  // WIP implemented but not use: Location of the center of mass relative to the
-  // frame of reference of the particule. Point<3> center_of_mass_location
 
   // Rotation matrix of the particle in the global space
   Tensor<2, 3> rotation_matrix;

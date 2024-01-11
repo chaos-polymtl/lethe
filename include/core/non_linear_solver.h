@@ -40,9 +40,7 @@ public:
    *
    */
   NonLinearSolver(PhysicsSolver<VectorType>         *physics_solver,
-                  const Parameters::NonLinearSolver &params)
-    : outer_iteration(0)
-  {}
+                  const Parameters::NonLinearSolver &params);
 
   virtual ~NonLinearSolver()
   {}
@@ -78,6 +76,7 @@ NonLinearSolver<VectorType>::NonLinearSolver(
   const Parameters::NonLinearSolver &params)
   : physics_solver(physics_solver)
   , params(params)
+  , outer_iteration(0)
 {}
 
 #endif

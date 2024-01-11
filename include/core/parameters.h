@@ -1377,12 +1377,13 @@ namespace Parameters
     // Boolean for the explicit calculation of the contact impulse in the
     // CFD-DEM coupling impulsion in the CFD-DEM coupling.
     bool explicit_contact_impulsion_calculation;
-    // Boolean for explicit evaluation of the particle's position in the CFD-DEM coupling
+    // Boolean for explicit evaluation of the particle's position in the CFD-DEM
+    // coupling
     bool explicit_position_integration_calculation;
     // Boolean for approximation of the contact radius. If true, the effective
     // radius replaces the actual particle's local curvature radius in the
     // calculation.
-    bool use_approximate_radius_for_contact;
+    bool approximate_radius_for_contact;
     // Function defining the gravitational acceleration vector used by the
     // CFD-DEM CFD-DEM calculation.
     std::shared_ptr<Functions::ParsedFunction<dim>> f_gravity;
