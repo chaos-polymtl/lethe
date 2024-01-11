@@ -40,12 +40,12 @@ public:
    *
    */
   NonLinearSolver(PhysicsSolver<VectorType>         *physics_solver,
-                  const Parameters::NonLinearSolver &params);
+                  const Parameters::NonLinearSolver &params)
+    : outer_iteration(0)
+  {}
 
   virtual ~NonLinearSolver()
-  { // Initialized the outer_iteration_counter by default to 0.
-    outer_iteration = 0;
-  }
+  {}
 
   /**
    * @brief Solve the non-linear system of equation.

@@ -33,10 +33,10 @@
 using namespace dealii;
 
 /**
-  * @brief This class defines values related to a particle used in the sharp interface IB. These values are used in the solver
-  * 
-  * @tparam dim  An integer that denotes the number of spatial dimensions
-  */
+ * @brief This class defines values related to a particle used in the sharp interface IB. These values are used in the solver
+ *
+ * @tparam dim  An integer that denotes the number of spatial dimensions
+ */
 template <int dim>
 class IBParticle
 {
@@ -48,29 +48,25 @@ public:
   initialize_all();
 
   /**
-   * @brief
-   * initialize the value of the last state of the particle
+   * @brief initialize the value of the last state of the particle
    */
   void
   initialize_previous_solution();
 
   /**
-   * @brief
-   * Return the names of properties of the IB_particle for visualisation.
+   * @brief Return the names of properties of the IB_particle for visualisation.
    */
   std::vector<std::pair<std::string, int>>
   get_properties_name();
 
   /**
-   * @brief
-   * Return the value of the properties of the particle for visualisation.
+   * @brief Return the value of the properties of the particle for visualisation.
    */
   std::vector<double>
   get_properties();
 
   /**
-   * @brief
-   * Return the number of properties of the particle for visualisation.
+   * @brief Return the number of properties of the particle for visualisation.
    */
   inline unsigned int
   get_number_properties()
@@ -78,9 +74,8 @@ public:
     return DEM::PropertiesIndex::n_properties;
   }
 
-  /**
-   * @brief
-   * Returns the evaluation of the signed distance function of this shape
+  /*
+   * @brief Returns the evaluation of the signed distance function of this shape
    * Most levelset functions come from Inigo Quilez:
    * iquilezles.org/articles/distfunctions
    *

@@ -1317,16 +1317,18 @@ namespace Parameters
 
     // Number of declared IB particles
     unsigned int nb;
-    // Boolean to determine whether or not the Navier-Stokes equations are solved inside the particles.
+    // Boolean to determine whether or not the Navier-Stokes equations are
+    // solved inside the particles.
     bool assemble_navier_stokes_inside;
 
     // Polynomial order of the IB stencil
     unsigned int order;
     // The length ratio used for the stencil calculation of the IB condition.
     double length_ratio;
-    // Boolean controlling whether or not extrapolation is used to impose the immersed boundary condition. If false, the IB condition is directly imposed using nearest neighbors.
-    // the immersed boundary condition or not. If it is set to false, all cut
-    // cells are fully imposed on the IB.
+    // Boolean controlling whether or not extrapolation is used to impose the
+    // immersed boundary condition. If false, the IB condition is directly
+    // imposed using nearest neighbors. the immersed boundary condition or not.
+    // If it is set to false, all cut cells are fully imposed on the IB.
     bool enable_extrapolation;
 
     // Boolean for the calculation of the force at the IB
@@ -1346,8 +1348,8 @@ namespace Parameters
     double inside_radius;
     // Outer radius factor of the refinement zone
     double outside_radius;
-    // Boolean for time-dependent mesh refinement according to the particle's current position
-    // the refinement zone.
+    // Boolean for time-dependent mesh refinement according to the particle's
+    // current position the refinement zone.
     bool time_extrapolation_of_refinement_zone;
 
     // Number of DEM time steps per CFD time step.
@@ -1357,8 +1359,8 @@ namespace Parameters
     // Frequency at which the contact search is performed at the CFD time
     // scale (once every X CFD time steps)
     int contact_search_frequency;
-    // Particles' radius multiplier used to calculate the effective radius of contact search
-    // search.
+    // Particles' radius multiplier used to calculate the effective radius of
+    // contact search search.
     double contact_search_radius_factor;
     // Boolean for lubrication force
     bool enable_lubrication_force;
@@ -1372,16 +1374,18 @@ namespace Parameters
     double lubrication_range_min;
     // Tolerance for the particle dynamics nonlinear solver.
     double particle_nonlinear_tolerance;
-    // Boolean for the explicit calculation of the contact impulse in the CFD-DEM coupling
-    // impulsion in the CFD-DEM coupling.
+    // Boolean for the explicit calculation of the contact impulse in the
+    // CFD-DEM coupling impulsion in the CFD-DEM coupling.
     bool explicit_contact_impulsion_calculation;
     // Boolean that turn on or off the explicit evaluation of the position of
     // the particle in the CFD-DEM coupling.
     bool explicit_position_integration_calculation;
-    // Boolean for approximation of the contact radius. If true, the effective radius replaces the actual particle's local curvature radius in the calculation.
+    // Boolean for approximation of the contact radius. If true, the effective
+    // radius replaces the actual particle's local curvature radius in the
+    // calculation.
     bool use_approximate_radius_for_contact;
-    // Function defining the gravitational acceleration vector used by the CFD-DEM
-    // CFD-DEM calculation.
+    // Function defining the gravitational acceleration vector used by the
+    // CFD-DEM CFD-DEM calculation.
     std::shared_ptr<Functions::ParsedFunction<dim>> f_gravity;
     // Young's modulus of the wall
     double wall_youngs_modulus;
@@ -1394,10 +1398,12 @@ namespace Parameters
     // Coefficient of restitution of the wall
     double wall_restitution_coefficient;
 
-    // Boolean for loading particles from an independent file. If true, the definition of the particles in the Particle subsection in the .prm file is ignored.
-    // of the particle subsection.
+    // Boolean for loading particles from an independent file. If true, the
+    // definition of the particles in the Particle subsection in the .prm file
+    // is ignored. of the particle subsection.
     bool load_particles_from_file;
-    // Name of the independent file containing particles' information at insertion. Only used if load_particles_from_file is true
+    // Name of the independent file containing particles' information at
+    // insertion. Only used if load_particles_from_file is true
     std::string particles_file;
   };
 
