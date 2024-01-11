@@ -135,7 +135,7 @@ public:
     const unsigned int                                   component = 0);
 
   /**
-   * @brief Return the smoothed maximum of two variables used for shape contact.
+   * @brief Return the smoothed maximum of two variables used for shape contact calculation.
    * @param a first variable
    * @param b second variable
    */
@@ -148,7 +148,7 @@ public:
   }
 
   /**
-   * @brief Return the distance, the center point, and the normal between the current shape and the shape given in the argument. The center point is the point where both shapes are at the same distance from each other. The normal is defined using the closest surface point on the two shapes. By default, the function does not calculate the distance between the two shapes if their bounding boxes are not in contact. This behavior can be modified using the appropriate parameter.
+   * @brief Return the distance, the center point, and the unit normal vector between the current shape and the shape given in the argument. The center point is the point where both shapes are at the same distance from each other. The unit normal vector is defined using the closest surface point of the two shapes. By default, the function does not calculate the distance between the two shapes if their bounding boxes are not in contact. This behavior can be modified by setting exact_distance_outside_of_contact to true.
    * @param shape The shape with which the distance is evaluated
    * @param cell The cell that is likely to contain the evaluation point
    * @param candidate_points This is the initial guess points used in the calculation.
