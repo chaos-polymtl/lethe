@@ -129,230 +129,213 @@ IBParticlesDEM<dim>::calculate_pp_contact_force(
   std::vector<Tensor<1, 3>> &contact_torque)
 {
   using dealii::numbers::PI;
-  auto mpi_index = Utilities::MPI::this_mpi_process(this->mpi_communicator);
-  // Get the number of processes
-  int world_size;
-  MPI_Comm_size(MPI_COMM_WORLD, &world_size);
+
   for (auto &particle_one : dem_particles)
     {
-      if (particle_one.particle_id % world_size - mpi_index == 0)
+      std::set<unsigned int>::iterator particle_contact_candidates_id;
+      for (particle_contact_candidates_id =
+             particles_contact_candidates[particle_one.particle_id].begin();
+           particle_contact_candidates_id !=
+           particles_contact_candidates[particle_one.particle_id].end();
+           ++particle_contact_candidates_id)
         {
-          std::set<unsigned int>::iterator particle_contact_candidates_id;
-          for (particle_contact_candidates_id =
-                 particles_contact_candidates[particle_one.particle_id].begin();
-               particle_contact_candidates_id !=
-               particles_contact_candidates[particle_one.particle_id].end();
-               ++particle_contact_candidates_id)
+          const unsigned int particle_contact_id =
+            *particle_contact_candidates_id;
+
+          auto &particle_two = dem_particles[particle_contact_id];
+          if (particle_one.particle_id < particle_two.particle_id)
             {
-              const unsigned int particle_contact_id =
-                *particle_contact_candidates_id;
-
-              auto &particle_two = dem_particles[particle_contact_id];
-              if (particle_one.particle_id < particle_two.particle_id)
+              ContactInfo contact_info;
+              // Check if there is already information on the contact of
+              // these to particles. If not initialize it in the contact map
+              // with 0 values.
+              try
                 {
-                  ContactInfo contact_info;
-                  // Check if there is already information on the contact of
-                  // these to particles. If not initialize it in the contact map
-                  // with 0 values.
-                  try
+                  contact_info = pp_contact_map[particle_one.particle_id]
+                                               [particle_two.particle_id];
+                }
+              catch (...)
+                {
+                  for (int d = 0; d < dim; ++d)
                     {
-                      contact_info = pp_contact_map[particle_one.particle_id]
-                                                   [particle_two.particle_id];
+                      contact_info.tangential_overlap[d] = 0;
                     }
-                  catch (...)
-                    {
-                      for (int d = 0; d < dim; ++d)
-                        {
-                          contact_info.tangential_overlap[d] = 0;
-                        }
-                      pp_contact_map[particle_one.particle_id]
-                                    [particle_two.particle_id] = contact_info;
-                    }
+                  pp_contact_map[particle_one.particle_id]
+                                [particle_two.particle_id] = contact_info;
+                }
 
-                  // Calculation of normal overlap
-                  double                  normal_overlap;
-                  Point<dim>              contact_point;
-                  Tensor<1, dim>          normal;
-                  std::vector<Point<dim>> contact_points_candidate;
+              // Calculation of normal overlap
+              double                  normal_overlap;
+              Point<dim>              contact_point;
+              Tensor<1, dim>          normal;
+              std::vector<Point<dim>> contact_points_candidate;
 
-                  auto iterator =
-                    previous_wall_contact_point[particle_one.particle_id].find(
-                      particle_two.particle_id);
-                  if (iterator !=
-                      previous_wall_contact_point[particle_one.particle_id]
-                        .end())
+              auto iterator =
+                previous_wall_contact_point[particle_one.particle_id].find(
+                  particle_two.particle_id);
+              if (iterator !=
+                  previous_wall_contact_point[particle_one.particle_id].end())
+                {
+                  contact_points_candidate.push_back(iterator->second);
+                }
+              else
+                {
+                  contact_points_candidate.push_back(
+                    particle_one.position +
+                    (particle_two.position - particle_one.position) *
+                      (particle_one.radius /
+                       (particle_one.radius + particle_two.radius)));
+                }
+              // The normal vector goes from particle one to particle two.
+              if (typeid(*particle_one.shape) == typeid(Sphere<dim>) &&
+                  typeid(*particle_two.shape) == typeid(Sphere<dim>))
+                {
+                  auto contact_state = particle_one.shape->distance_to_shape(
+                    *particle_two.shape, contact_points_candidate);
+                  normal_overlap = -std::get<double>(contact_state);
+                  contact_point  = std::get<Point<dim>>(contact_state);
+                  normal         = std::get<Tensor<1, dim>>(contact_state);
+                }
+              else if (typeid(*particle_one.shape) == typeid(Sphere<dim>) &&
+                       typeid(*particle_two.shape) != typeid(Sphere<dim>))
+                {
+                  auto contact_state = particle_one.shape->distance_to_shape(
+                    *particle_two.shape, contact_points_candidate);
+                  normal_overlap = -std::get<double>(contact_state);
+                  contact_point  = std::get<Point<dim>>(contact_state);
+                  normal         = std::get<Tensor<1, dim>>(contact_state);
+                }
+              else if (typeid(*particle_one.shape) != typeid(Sphere<dim>) &&
+                       typeid(*particle_two.shape) == typeid(Sphere<dim>))
+                {
+                  auto contact_state = particle_two.shape->distance_to_shape(
+                    *particle_one.shape, contact_points_candidate);
+                  normal_overlap = -std::get<double>(contact_state);
+                  contact_point  = std::get<Point<dim>>(contact_state);
+                  normal         = -std::get<Tensor<1, dim>>(
+                    contact_state); // Flip the normal since it returns the
+                                            // normal using the second particle;
+                }
+              else
+                {
+                  auto contact_state = particle_one.shape->distance_to_shape(
+                    *particle_two.shape, contact_points_candidate);
+                  normal_overlap = -std::get<double>(contact_state);
+                  contact_point  = std::get<Point<dim>>(contact_state);
+                  normal         = std::get<Tensor<1, dim>>(contact_state);
+                }
+              previous_wall_contact_point[particle_one.particle_id]
+                                         [particle_two.particle_id] =
+                                           contact_point;
+              Point<3>     contact_point_3d = point_nd_to_3d(contact_point);
+              Tensor<1, 3> contact_normal   = tensor_nd_to_3d(normal);
+
+
+              if (normal_overlap > 0)
+                // This means that the adjacent particles are in contact
+                {
+                  double contact_radius_particle_one;
+                  double contact_radius_particle_two;
+                  if (parameters->approximate_radius_for_contact)
                     {
-                      contact_points_candidate.push_back(iterator->second);
+                      contact_radius_particle_one = particle_one.radius;
+                      contact_radius_particle_two = particle_two.radius;
                     }
                   else
                     {
-                      contact_points_candidate.push_back(
-                        particle_one.position +
-                        (particle_two.position - particle_one.position) *
-                          (particle_one.radius /
-                           (particle_one.radius + particle_two.radius)));
+                      contact_radius_particle_one =
+                        particle_one.shape->local_curvature_radius(
+                          contact_point);
+                      contact_radius_particle_two =
+                        particle_two.shape->local_curvature_radius(
+                          contact_point);
                     }
-                  // The normal vector goes from particle one to particle two.
-                  if (typeid(*particle_one.shape) == typeid(Sphere<dim>) &&
-                      typeid(*particle_two.shape) == typeid(Sphere<dim>))
+                  Tensor<1, 3> normal_force;
+                  Tensor<1, 3> tangential_force;
+                  Tensor<1, 3> particle_one_tangential_torque;
+                  Tensor<1, 3> particle_two_tangential_torque;
+                  Tensor<1, 3> rolling_resistance_torque;
+                  Tensor<1, 3> particle_one_velocity_3d =
+                    tensor_nd_to_3d(particle_one.velocity);
+                  Tensor<1, 3> particle_two_velocity_3d =
+                    tensor_nd_to_3d(particle_two.velocity);
+
+                  ObjectProperties particle_one_properties;
+                  particle_one_properties.object_friction_coefficient =
+                    particle_one.friction_coefficient;
+                  particle_one_properties.object_mass = particle_one.mass;
+                  particle_one_properties.object_poisson_ratio =
+                    particle_one.poisson_ratio;
+                  particle_one_properties.object_radius =
+                    contact_radius_particle_one;
+                  particle_one_properties.object_restitution_coefficient =
+                    particle_one.restitution_coefficient;
+                  particle_one_properties.object_rolling_friction_coefficient =
+                    particle_one.rolling_friction_coefficient;
+                  particle_one_properties.object_youngs_modulus =
+                    particle_one.youngs_modulus;
+                  ObjectProperties particle_two_properties;
+                  particle_two_properties.object_friction_coefficient =
+                    particle_two.friction_coefficient;
+                  particle_two_properties.object_mass = particle_two.mass;
+                  particle_two_properties.object_poisson_ratio =
+                    particle_two.poisson_ratio;
+                  particle_two_properties.object_radius =
+                    contact_radius_particle_two;
+                  particle_two_properties.object_restitution_coefficient =
+                    particle_two.restitution_coefficient;
+                  particle_two_properties.object_rolling_friction_coefficient =
+                    particle_two.rolling_friction_coefficient;
+                  particle_two_properties.object_youngs_modulus =
+                    particle_two.youngs_modulus;
+
+                  calculate_force_model(normal_overlap,
+                                        contact_info,
+                                        contact_point_3d,
+                                        contact_normal,
+                                        normal_force,
+                                        tangential_force,
+                                        rolling_resistance_torque,
+                                        particle_one.position,
+                                        particle_one_velocity_3d,
+                                        particle_one.omega,
+                                        particle_one_properties,
+                                        particle_two.position,
+                                        particle_two_velocity_3d,
+                                        particle_two.omega,
+                                        particle_two_properties,
+                                        dt_dem);
+
+
+                  contact_force[particle_one.particle_id] -=
+                    (normal_force + tangential_force);
+                  contact_force[particle_two.particle_id] +=
+                    (normal_force + tangential_force);
+
+                  contact_torque[particle_one.particle_id] =
+                    contact_torque[particle_one.particle_id] -
+                    particle_one_tangential_torque + rolling_resistance_torque +
+                    cross_product_3d((contact_point_3d -
+                                      point_nd_to_3d(particle_one.position)),
+                                     -(normal_force + tangential_force));
+                  contact_torque[particle_two.particle_id] =
+                    contact_torque[particle_two.particle_id] -
+                    particle_two_tangential_torque - rolling_resistance_torque +
+                    cross_product_3d((contact_point_3d -
+                                      point_nd_to_3d(particle_two.position)),
+                                     (normal_force + tangential_force));
+                  ;
+                }
+
+              else
+                {
+                  // if the adjacent pair is not in contact anymore
+                  for (int d = 0; d < dim; ++d)
                     {
-                      auto contact_state =
-                        particle_one.shape->distance_to_shape(
-                          *particle_two.shape, contact_points_candidate);
-                      normal_overlap = -std::get<double>(contact_state);
-                      contact_point  = std::get<Point<dim>>(contact_state);
-                      normal         = std::get<Tensor<1, dim>>(contact_state);
+                      contact_info.tangential_overlap[d] = 0;
                     }
-                  else if (typeid(*particle_one.shape) == typeid(Sphere<dim>) &&
-                           typeid(*particle_two.shape) != typeid(Sphere<dim>))
-                    {
-                      auto contact_state =
-                        particle_one.shape->distance_to_shape(
-                          *particle_two.shape, contact_points_candidate);
-                      normal_overlap = -std::get<double>(contact_state);
-                      contact_point  = std::get<Point<dim>>(contact_state);
-                      normal         = std::get<Tensor<1, dim>>(contact_state);
-                    }
-                  else if (typeid(*particle_one.shape) != typeid(Sphere<dim>) &&
-                           typeid(*particle_two.shape) == typeid(Sphere<dim>))
-                    {
-                      auto contact_state =
-                        particle_two.shape->distance_to_shape(
-                          *particle_one.shape, contact_points_candidate);
-                      normal_overlap = -std::get<double>(contact_state);
-                      contact_point  = std::get<Point<dim>>(contact_state);
-                      normal         = -std::get<Tensor<1, dim>>(
-                        contact_state); // Flip the normal since it returns the
-                                        // normal using the second particle;
-                    }
-                  else
-                    {
-                      auto contact_state =
-                        particle_one.shape->distance_to_shape(
-                          *particle_two.shape, contact_points_candidate);
-                      normal_overlap = -std::get<double>(contact_state);
-                      contact_point  = std::get<Point<dim>>(contact_state);
-                      normal         = std::get<Tensor<1, dim>>(contact_state);
-                    }
-                  previous_wall_contact_point[particle_one.particle_id]
-                                             [particle_two.particle_id] =
-                                               contact_point;
-                  Point<3>     contact_point_3d = point_nd_to_3d(contact_point);
-                  Tensor<1, 3> contact_normal   = tensor_nd_to_3d(normal);
-
-
-                  if (normal_overlap > 0)
-                    // This means that the adjacent particles are in contact
-                    {
-                      double contact_radius_particle_one;
-                      double contact_radius_particle_two;
-                      if (parameters->approximate_radius_for_contact)
-                        {
-                          contact_radius_particle_one = particle_one.radius;
-                          contact_radius_particle_two = particle_two.radius;
-                        }
-                      else
-                        {
-                          contact_radius_particle_one =
-                            particle_one.shape->local_curvature_radius(
-                              contact_point);
-                          contact_radius_particle_two =
-                            particle_two.shape->local_curvature_radius(
-                              contact_point);
-                        }
-                      Tensor<1, 3> normal_force;
-                      Tensor<1, 3> tangential_force;
-                      Tensor<1, 3> particle_one_tangential_torque;
-                      Tensor<1, 3> particle_two_tangential_torque;
-                      Tensor<1, 3> rolling_resistance_torque;
-                      Tensor<1, 3> particle_one_velocity_3d =
-                        tensor_nd_to_3d(particle_one.velocity);
-                      Tensor<1, 3> particle_two_velocity_3d =
-                        tensor_nd_to_3d(particle_two.velocity);
-
-                      ObjectProperties particle_one_properties;
-                      particle_one_properties.object_friction_coefficient =
-                        particle_one.friction_coefficient;
-                      particle_one_properties.object_mass = particle_one.mass;
-                      particle_one_properties.object_poisson_ratio =
-                        particle_one.poisson_ratio;
-                      particle_one_properties.object_radius =
-                        contact_radius_particle_one;
-                      particle_one_properties.object_restitution_coefficient =
-                        particle_one.restitution_coefficient;
-                      particle_one_properties
-                        .object_rolling_friction_coefficient =
-                        particle_one.rolling_friction_coefficient;
-                      particle_one_properties.object_youngs_modulus =
-                        particle_one.youngs_modulus;
-                      ObjectProperties particle_two_properties;
-                      particle_two_properties.object_friction_coefficient =
-                        particle_two.friction_coefficient;
-                      particle_two_properties.object_mass = particle_two.mass;
-                      particle_two_properties.object_poisson_ratio =
-                        particle_two.poisson_ratio;
-                      particle_two_properties.object_radius =
-                        contact_radius_particle_two;
-                      particle_two_properties.object_restitution_coefficient =
-                        particle_two.restitution_coefficient;
-                      particle_two_properties
-                        .object_rolling_friction_coefficient =
-                        particle_two.rolling_friction_coefficient;
-                      particle_two_properties.object_youngs_modulus =
-                        particle_two.youngs_modulus;
-
-                      calculate_force_model(normal_overlap,
-                                            contact_info,
-                                            contact_point_3d,
-                                            contact_normal,
-                                            normal_force,
-                                            tangential_force,
-                                            rolling_resistance_torque,
-                                            particle_one.position,
-                                            particle_one_velocity_3d,
-                                            particle_one.omega,
-                                            particle_one_properties,
-                                            particle_two.position,
-                                            particle_two_velocity_3d,
-                                            particle_two.omega,
-                                            particle_two_properties,
-                                            dt_dem);
-
-
-                      contact_force[particle_one.particle_id] -=
-                        (normal_force + tangential_force);
-                      contact_force[particle_two.particle_id] +=
-                        (normal_force + tangential_force);
-
-                      contact_torque[particle_one.particle_id] =
-                        contact_torque[particle_one.particle_id] -
-                        particle_one_tangential_torque +
-                        rolling_resistance_torque +
-                        cross_product_3d((contact_point_3d -
-                                          point_nd_to_3d(
-                                            particle_one.position)),
-                                         -(normal_force + tangential_force));
-                      contact_torque[particle_two.particle_id] =
-                        contact_torque[particle_two.particle_id] -
-                        particle_two_tangential_torque -
-                        rolling_resistance_torque +
-                        cross_product_3d((contact_point_3d -
-                                          point_nd_to_3d(
-                                            particle_two.position)),
-                                         (normal_force + tangential_force));
-                      ;
-                    }
-
-                  else
-                    {
-                      // if the adjacent pair is not in contact anymore
-                      for (int d = 0; d < dim; ++d)
-                        {
-                          contact_info.tangential_overlap[d] = 0;
-                        }
-                      pp_contact_map[particle_one.particle_id].erase(
-                        particle_two.particle_id);
-                    }
+                  pp_contact_map[particle_one.particle_id].erase(
+                    particle_two.particle_id);
                 }
             }
         }
@@ -377,71 +360,62 @@ IBParticlesDEM<dim>::calculate_pp_lubrication_force(
   // loop over all particles to find pair of close particles
   for (auto &particle_one : dem_particles)
     {
-      if (particle_one.particle_id % world_size - mpi_index == 0)
+      for (auto particle_contact_candidates_id =
+             particles_contact_candidates[particle_one.particle_id].begin();
+           particle_contact_candidates_id !=
+           particles_contact_candidates[particle_one.particle_id].end();
+           ++particle_contact_candidates_id)
         {
-          for (auto particle_contact_candidates_id =
-                 particles_contact_candidates[particle_one.particle_id].begin();
-               particle_contact_candidates_id !=
-               particles_contact_candidates[particle_one.particle_id].end();
-               ++particle_contact_candidates_id)
+          const auto &particle_contact_id = *particle_contact_candidates_id;
+          auto       &particle_two        = dem_particles[particle_contact_id];
+          if (particle_one.particle_id < particle_two.particle_id)
             {
-              const auto &particle_contact_id = *particle_contact_candidates_id;
-              auto       &particle_two = dem_particles[particle_contact_id];
-              if (particle_one.particle_id < particle_two.particle_id)
+              const Point<dim> particle_one_location = particle_one.position;
+              const Point<dim> particle_two_location = particle_two.position;
+              Tensor<1, 3>     radial_vector;
+              double           radial_velocity;
+              Tensor<1, 3>     f_lub;
+
+              // Calculation of normal overlap
+              double gap =
+                particle_one_location.distance(particle_two_location) -
+                (particle_one.radius + particle_two.radius);
+              radial_vector =
+                tensor_nd_to_3d(particle_one.position - particle_two.position);
+              if (gap > 0 and gap < h_max)
+                // This means that the adjacent particles are very close but
+                // not in contact
                 {
-                  const Point<dim> particle_one_location =
-                    particle_one.position;
-                  const Point<dim> particle_two_location =
-                    particle_two.position;
-                  Tensor<1, 3> radial_vector;
-                  double       radial_velocity;
-                  Tensor<1, 3> f_lub;
-
-                  // Calculation of normal overlap
-                  double gap =
-                    particle_one_location.distance(particle_two_location) -
-                    (particle_one.radius + particle_two.radius);
-                  radial_vector = tensor_nd_to_3d(particle_one.position -
-                                                  particle_two.position);
-                  if (gap > 0 and gap < h_max)
-                    // This means that the adjacent particles are very close but
-                    // not in contact
+                  // Limit the smallest gap calculated
+                  if (gap < h_min)
                     {
-                      // Limit the smallest gap calculated
-                      if (gap < h_min)
-                        {
-                          gap = h_min;
-                        }
-
-                      // Evaluate the force
-                      radial_velocity =
-                        scalar_product(-radial_vector, particle_one.velocity) +
-                        scalar_product(radial_vector, particle_two.velocity);
-                      f_lub =
-                        3 / 2 * PI * mu *
-                          (particle_one.radius * 2 * particle_two.radius * 2 /
-                           (particle_one.radius * 2 +
-                            particle_two.radius * 2)) *
-                          (particle_one.radius * 2 * particle_two.radius * 2 /
-                           (particle_one.radius * 2 +
-                            particle_two.radius * 2)) /
-                          gap * radial_velocity * radial_vector /
-                          radial_vector.norm() -
-                        3 / 2 * PI * mu *
-                          (particle_one.radius * 2 * particle_two.radius * 2 /
-                           (particle_one.radius * 2 +
-                            particle_two.radius * 2)) *
-                          (particle_one.radius * 2 * particle_two.radius * 2 /
-                           (particle_one.radius * 2 +
-                            particle_two.radius * 2)) /
-                          h_max * radial_velocity * radial_vector /
-                          radial_vector.norm();
-                      ;
+                      gap = h_min;
                     }
 
-                  lubrication_force[particle_one.particle_id] = f_lub;
-                  lubrication_force[particle_two.particle_id] = -f_lub;
+                  // Evaluate the force
+                  radial_velocity =
+                    scalar_product(-radial_vector, particle_one.velocity) +
+                    scalar_product(radial_vector, particle_two.velocity);
+                  f_lub =
+                    3 / 2 * PI * mu *
+                      (particle_one.radius * 2 * particle_two.radius * 2 /
+                       (particle_one.radius * 2 + particle_two.radius * 2)) *
+                      (particle_one.radius * 2 * particle_two.radius * 2 /
+                       (particle_one.radius * 2 + particle_two.radius * 2)) /
+                      gap * radial_velocity * radial_vector /
+                      radial_vector.norm() -
+                    3 / 2 * PI * mu *
+                      (particle_one.radius * 2 * particle_two.radius * 2 /
+                       (particle_one.radius * 2 + particle_two.radius * 2)) *
+                      (particle_one.radius * 2 * particle_two.radius * 2 /
+                       (particle_one.radius * 2 + particle_two.radius * 2)) /
+                      h_max * radial_velocity * radial_vector /
+                      radial_vector.norm();
+                  ;
                 }
+
+              lubrication_force[particle_one.particle_id] = f_lub;
+              lubrication_force[particle_two.particle_id] = -f_lub;
             }
         }
     }
@@ -568,293 +542,278 @@ IBParticlesDEM<dim>::calculate_pw_contact_force(
   wall_properties.object_youngs_modulus = parameters->wall_youngs_modulus;
 
   using dealii::numbers::PI;
-  auto mpi_index = Utilities::MPI::this_mpi_process(this->mpi_communicator);
-  // Get the number of processes
-  int world_size;
-  MPI_Comm_size(MPI_COMM_WORLD, &world_size);
+
   // Loop over the particles
   for (auto &particle : dem_particles)
     {
-      if (particle.particle_id % world_size - mpi_index == 0)
+      if (particle.integrate_motion)
         {
-          if (particle.integrate_motion)
+          // Defines map with default values.
+          unsigned int                              boundary_index = 0;
+          std::map<unsigned int, DefaultDBL_MAX>    best_dist;
+          std::map<unsigned int, DefaultUINT_MAX>   best_indices;
+          std::map<unsigned int, BoundaryCellsInfo> best_cells;
+          // Loop over the point and normal identified as
+          // potential contact candidate.
+          for (auto boundary_cell_iter =
+                 boundary_cells[particle.particle_id].begin();
+               boundary_cell_iter != boundary_cells[particle.particle_id].end();
+               boundary_cell_iter++)
             {
-              // Defines map with default values.
-              unsigned int                              boundary_index = 0;
-              std::map<unsigned int, DefaultDBL_MAX>    best_dist;
-              std::map<unsigned int, DefaultUINT_MAX>   best_indices;
-              std::map<unsigned int, BoundaryCellsInfo> best_cells;
-              // Loop over the point and normal identified as
-              // potential contact candidate.
-              for (auto boundary_cell_iter =
-                     boundary_cells[particle.particle_id].begin();
-                   boundary_cell_iter !=
-                   boundary_cells[particle.particle_id].end();
-                   boundary_cell_iter++)
-                {
-                  // Find the best candidate (the closest point) for each
-                  // different wall.
-                  double dist = particle.get_levelset(
-                    boundary_cell_iter->second.point_on_boundary);
+              // Find the best candidate (the closest point) for each
+              // different wall.
+              double dist = particle.get_levelset(
+                boundary_cell_iter->second.point_on_boundary);
 
-                  // Check if the distance is smaller than the best distance.
-                  // If it is the first time this boundary is encountered, the
-                  // distance is compared to the default value of the map, which
-                  // is DBL_MAX
-                  if (dist <
-                      best_dist[boundary_cell_iter->second.boundary_index]
-                        .value)
+              // Check if the distance is smaller than the best distance.
+              // If it is the first time this boundary is encountered, the
+              // distance is compared to the default value of the map, which
+              // is DBL_MAX
+              if (dist <
+                  best_dist[boundary_cell_iter->second.boundary_index].value)
+                {
+                  best_dist[boundary_cell_iter->second.boundary_index].value =
+                    dist;
+                  best_indices[boundary_cell_iter->second.boundary_index]
+                    .value = boundary_index;
+                  best_cells[boundary_cell_iter->second.boundary_index] =
+                    boundary_cell_iter->second;
+                }
+              boundary_index += 1;
+            }
+
+          // Add all the floating walls as contact candidates. Their indices
+          // start from 1M (defined in the definition of:
+          // lowest_floating_wall_indices). This prevents a floating wall
+          // from sharing the same indices as a normal boundary of the
+          // domain in the contact candidates list.
+          for (unsigned int i = 0;
+               i < floating_walls_parameters->points_on_walls.size();
+               ++i)
+            {
+              if (floating_walls_parameters->time_start[i] < cfd_time &&
+                  floating_walls_parameters->time_end[i] > cfd_time)
+                {
+                  BoundaryCellsInfo floating_wall_cell_info;
+                  floating_wall_cell_info.point_on_boundary =
+                    floating_walls_parameters->points_on_walls[i];
+                  floating_wall_cell_info.normal_vector =
+                    floating_walls_parameters->floating_walls_normal_vectors[i];
+                  best_cells[lowest_floating_wall_indices + i + 1] =
+                    floating_wall_cell_info;
+                }
+            }
+
+          // Do the particle wall contact calculation with the best
+          // candidate.
+          for (auto best_index_of_face = best_cells.begin();
+               best_index_of_face != best_cells.end();
+               ++best_index_of_face)
+            {
+              auto &boundary_cell = best_index_of_face->second;
+
+              auto        boundary_cell_information = boundary_cell;
+              ContactInfo contact_info;
+
+              // Check if there is already information on the contact
+              // between this particle and this boundary contact point. If
+              // not initialize the contact history with 0 values.
+              try
+                {
+                  contact_info = pw_contact_map[particle.particle_id]
+                                               [boundary_cell.boundary_index];
+                }
+              catch (...)
+                {
+                  for (int d = 0; d < dim; ++d)
                     {
-                      best_dist[boundary_cell_iter->second.boundary_index]
-                        .value = dist;
-                      best_indices[boundary_cell_iter->second.boundary_index]
-                        .value = boundary_index;
-                      best_cells[boundary_cell_iter->second.boundary_index] =
-                        boundary_cell_iter->second;
+                      contact_info.tangential_overlap[d]           = 0;
+                      contact_info.tangential_relative_velocity[d] = 0;
                     }
-                  boundary_index += 1;
+
+                  contact_info.normal_overlap           = 0;
+                  contact_info.normal_relative_velocity = 0;
+
+                  pw_contact_map[particle.particle_id]
+                                [boundary_cell.boundary_index] = contact_info;
                 }
 
-              // Add all the floating walls as contact candidates. Their indices
-              // start from 1M (defined in the definition of:
-              // lowest_floating_wall_indices). This prevents a floating wall
-              // from sharing the same indices as a normal boundary of the
-              // domain in the contact candidates list.
-              for (unsigned int i = 0;
-                   i < floating_walls_parameters->points_on_walls.size();
-                   ++i)
+              Tensor<1, 3> normal =
+                tensor_nd_to_3d(boundary_cell_information.normal_vector);
+              auto point_on_boundary =
+                boundary_cell_information.point_on_boundary;
+
+              Point<3> particle_position_3d = point_nd_to_3d(particle.position);
+              Tensor<1, 3> particle_velocity_3d =
+                tensor_nd_to_3d(particle.velocity);
+
+              // Finding the projected vector on the normal vector of the
+              // boundary. Here we have used the private function
+              // find_projection. Using this projected vector, the
+              // particle-wall distance is calculated
+
+              // Create a Rotation matrix from normal to z axis to
+              // initialize the plane for contact with the right
+              // orientation;
+              Tensor<1, 3> rotation_axis;
+              double       angle = 0;
+              if constexpr (dim == 2)
                 {
-                  if (floating_walls_parameters->time_start[i] < cfd_time &&
-                      floating_walls_parameters->time_end[i] > cfd_time)
+                  rotation_axis[2] = 1;
+                  angle            = std::atan2(-normal[0], normal[1]);
+                }
+              else
+                {
+                  angle =
+                    std::acos(scalar_product(Tensor<1, 3>({0, 0, 1}), normal) /
+                              normal.norm());
+                  if (abs(scalar_product(Tensor<1, 3>({0, 0, 1}), normal)) !=
+                      normal.norm())
                     {
-                      BoundaryCellsInfo floating_wall_cell_info;
-                      floating_wall_cell_info.point_on_boundary =
-                        floating_walls_parameters->points_on_walls[i];
-                      floating_wall_cell_info.normal_vector =
-                        floating_walls_parameters
-                          ->floating_walls_normal_vectors[i];
-                      best_cells[lowest_floating_wall_indices + i + 1] =
-                        floating_wall_cell_info;
+                      rotation_axis =
+                        cross_product_3d(Tensor<1, 3>({0, 0, 1}), normal);
+                      rotation_axis = rotation_axis / rotation_axis.norm();
+                    }
+                  else
+                    {
+                      rotation_axis = Tensor<1, 3>({0, 1, 0});
                     }
                 }
+              Tensor<2, 3> rotation_matrix =
+                Physics::Transformations::Rotations::rotation_matrix_3d(
+                  rotation_axis, angle);
+              Tensor<1, 3> orientation =
+                particle.shape->rotation_matrix_to_xyz_angles(rotation_matrix);
 
-              // Do the particle wall contact calculation with the best
-              // candidate.
-              for (auto best_index_of_face = best_cells.begin();
-                   best_index_of_face != best_cells.end();
-                   ++best_index_of_face)
+              std::shared_ptr<Shape<dim>> contact_plane =
+                std::make_shared<Plane<dim>>(point_on_boundary, orientation);
+              contact_plane->set_position(point_on_boundary);
+              contact_plane->set_orientation(orientation);
+
+
+              std::vector<Point<dim>> contact_point_candidate;
+              auto                    iterator =
+                previous_wall_contact_point[particle.particle_id].find(
+                  boundary_cell.boundary_index);
+              if (iterator !=
+                  previous_wall_contact_point[particle.particle_id].end())
                 {
-                  auto &boundary_cell = best_index_of_face->second;
+                  contact_point_candidate.push_back(iterator->second);
+                }
+              else
+                {
+                  contact_point_candidate.push_back(point_on_boundary);
+                }
+              // Use the last contact point as an initial guess if the level
+              // set is smaller than the wall initial guess. Find the normal
+              // overlap
+              auto contact_state =
+                particle.shape->distance_to_shape(*contact_plane,
+                                                  contact_point_candidate);
+              double   normal_overlap = -2 * std::get<double>(contact_state);
+              Point<3> contact_point =
+                point_nd_to_3d(std::get<Point<dim>>(contact_state));
+              // The normal vector goes from particle one to particle two.
+              // Here, particle two is the wall. As such, we flip the
+              // normal. Here, particle two is the wall. As such, we flip
+              // the normal.
+              Tensor<1, 3> contact_normal = -normal;
 
-                  auto        boundary_cell_information = boundary_cell;
-                  ContactInfo contact_info;
 
-                  // Check if there is already information on the contact
-                  // between this particle and this boundary contact point. If
-                  // not initialize the contact history with 0 values.
-                  try
+              // Keep the last contact point as an initial guess for the
+              // next contact point.
+              previous_wall_contact_point[particle.particle_id]
+                                         [boundary_cell.boundary_index] =
+                                           std::get<Point<dim>>(contact_state);
+
+              if (normal_overlap > 0)
+                {
+                  // Evaluates the curvature radius at the
+                  // contact point.
+                  double contact_radius_particle_one;
+
+                  if (parameters->approximate_radius_for_contact)
                     {
-                      contact_info =
-                        pw_contact_map[particle.particle_id]
-                                      [boundary_cell.boundary_index];
-                    }
-                  catch (...)
-                    {
-                      for (int d = 0; d < dim; ++d)
-                        {
-                          contact_info.tangential_overlap[d]           = 0;
-                          contact_info.tangential_relative_velocity[d] = 0;
-                        }
-
-                      contact_info.normal_overlap           = 0;
-                      contact_info.normal_relative_velocity = 0;
-
-                      pw_contact_map[particle.particle_id]
-                                    [boundary_cell.boundary_index] =
-                                      contact_info;
-                    }
-
-                  Tensor<1, 3> normal =
-                    tensor_nd_to_3d(boundary_cell_information.normal_vector);
-                  auto point_on_boundary =
-                    boundary_cell_information.point_on_boundary;
-
-                  Point<3> particle_position_3d =
-                    point_nd_to_3d(particle.position);
-                  Tensor<1, 3> particle_velocity_3d =
-                    tensor_nd_to_3d(particle.velocity);
-
-                  // Finding the projected vector on the normal vector of the
-                  // boundary. Here we have used the private function
-                  // find_projection. Using this projected vector, the
-                  // particle-wall distance is calculated
-
-                  // Create a Rotation matrix from normal to z axis to
-                  // initialize the plane for contact with the right
-                  // orientation;
-                  Tensor<1, 3> rotation_axis;
-                  double       angle = 0;
-                  if constexpr (dim == 2)
-                    {
-                      rotation_axis[2] = 1;
-                      angle            = std::atan2(-normal[0], normal[1]);
+                      contact_radius_particle_one = particle.radius;
                     }
                   else
                     {
-                      angle = std::acos(
-                        scalar_product(Tensor<1, 3>({0, 0, 1}), normal) /
-                        normal.norm());
-                      if (abs(scalar_product(Tensor<1, 3>({0, 0, 1}),
-                                             normal)) != normal.norm())
-                        {
-                          rotation_axis =
-                            cross_product_3d(Tensor<1, 3>({0, 0, 1}), normal);
-                          rotation_axis = rotation_axis / rotation_axis.norm();
-                        }
-                      else
-                        {
-                          rotation_axis = Tensor<1, 3>({0, 1, 0});
-                        }
+                      contact_radius_particle_one =
+                        particle.shape->local_curvature_radius(
+                          std::get<Point<dim>>(contact_state));
                     }
-                  Tensor<2, 3> rotation_matrix =
-                    Physics::Transformations::Rotations::rotation_matrix_3d(
-                      rotation_axis, angle);
-                  Tensor<1, 3> orientation =
-                    particle.shape->rotation_matrix_to_xyz_angles(
-                      rotation_matrix);
+                  // Do the calculation to evaluate the particle wall
+                  // contact force.
+                  contact_info.normal_overlap = normal_overlap;
 
-                  std::shared_ptr<Shape<dim>> contact_plane =
-                    std::make_shared<Plane<dim>>(point_on_boundary,
-                                                 orientation);
-                  contact_plane->set_position(point_on_boundary);
-                  contact_plane->set_orientation(orientation);
+                  Tensor<1, 3> normal_force;
+                  Tensor<1, 3> tangential_force;
+                  Tensor<1, 3> tangential_torque;
+                  Tensor<1, 3> rolling_resistance_torque;
+                  Tensor<1, 3> wall_velocity;
+                  Tensor<1, 3> wall_angular_velocity;
+                  Point<dim>   wall_center_of_rotation;
+
+                  pw_contact_map[particle.particle_id][boundary_index]
+                    .normal_overlap = normal_overlap;
+                  pw_contact_map[particle.particle_id][boundary_index]
+                    .normal_vector = normal;
+
+                  ObjectProperties particle_properties;
+                  particle_properties.object_friction_coefficient =
+                    particle.friction_coefficient;
+                  particle_properties.object_mass = particle.mass;
+                  particle_properties.object_poisson_ratio =
+                    particle.poisson_ratio;
+                  particle_properties.object_radius = particle.radius;
+                  particle_properties.object_restitution_coefficient =
+                    particle.restitution_coefficient;
+                  particle_properties.object_rolling_friction_coefficient =
+                    particle.rolling_friction_coefficient;
+                  particle_properties.object_youngs_modulus =
+                    particle.youngs_modulus;
+
+                  // Wall mass is 100 times higher than
+                  // the particles that contact it.
+                  wall_properties.object_mass = particle.mass * 100;
+                  // Wall curvature radius is 100 times higher than
+                  // the particle that contacts it.
+                  wall_properties.object_radius = particle.radius * 100;
 
 
-                  std::vector<Point<dim>> contact_point_candidate;
-                  auto                    iterator =
-                    previous_wall_contact_point[particle.particle_id].find(
-                      boundary_cell.boundary_index);
-                  if (iterator !=
-                      previous_wall_contact_point[particle.particle_id].end())
+                  calculate_force_model(normal_overlap,
+                                        contact_info,
+                                        contact_point,
+                                        contact_normal,
+                                        normal_force,
+                                        tangential_force,
+                                        rolling_resistance_torque,
+                                        particle.position,
+                                        particle_velocity_3d,
+                                        particle.omega,
+                                        particle_properties,
+                                        wall_center_of_rotation,
+                                        wall_velocity,
+                                        wall_angular_velocity,
+                                        wall_properties,
+                                        dt_dem);
+
+                  // Updating the force of particles in the particle handler
+                  contact_force[particle.particle_id] -=
+                    (normal_force + tangential_force);
+                  // Updating the torque acting on particles
+                  contact_torque[particle.particle_id] +=
+                    tangential_torque + rolling_resistance_torque +
+                    cross_product_3d((contact_point - particle_position_3d),
+                                     -(normal_force + tangential_force));
+                }
+              else
+                {
+                  // Set to 0 the tangential overlap if the particle is not
+                  // in contact with the wall anymore.
+                  for (int d = 0; d < dim; ++d)
                     {
-                      contact_point_candidate.push_back(iterator->second);
-                    }
-                  else
-                    {
-                      contact_point_candidate.push_back(point_on_boundary);
-                    }
-                  // Use the last contact point as an initial guess if the level
-                  // set is smaller than the wall initial guess. Find the normal
-                  // overlap
-                  auto contact_state =
-                    particle.shape->distance_to_shape(*contact_plane,
-                                                      contact_point_candidate);
-                  double normal_overlap = -2 * std::get<double>(contact_state);
-                  Point<3> contact_point =
-                    point_nd_to_3d(std::get<Point<dim>>(contact_state));
-                  // The normal vector goes from particle one to particle two.
-                  // Here, particle two is the wall. As such, we flip the
-                  // normal. Here, particle two is the wall. As such, we flip
-                  // the normal.
-                  Tensor<1, 3> contact_normal = -normal;
-
-
-                  // Keep the last contact point as an initial guess for the
-                  // next contact point.
-                  previous_wall_contact_point[particle.particle_id]
-                                             [boundary_cell.boundary_index] =
-                                               std::get<Point<dim>>(
-                                                 contact_state);
-
-                  if (normal_overlap > 0)
-                    {
-                      // Evaluates the curvature radius at the
-                      // contact point.
-                      double contact_radius_particle_one;
-
-                      if (parameters->approximate_radius_for_contact)
-                        {
-                          contact_radius_particle_one = particle.radius;
-                        }
-                      else
-                        {
-                          contact_radius_particle_one =
-                            particle.shape->local_curvature_radius(
-                              std::get<Point<dim>>(contact_state));
-                        }
-                      // Do the calculation to evaluate the particle wall
-                      // contact force.
-                      contact_info.normal_overlap = normal_overlap;
-
-                      Tensor<1, 3> normal_force;
-                      Tensor<1, 3> tangential_force;
-                      Tensor<1, 3> tangential_torque;
-                      Tensor<1, 3> rolling_resistance_torque;
-                      Tensor<1, 3> wall_velocity;
-                      Tensor<1, 3> wall_angular_velocity;
-                      Point<dim>   wall_center_of_rotation;
-
-                      pw_contact_map[particle.particle_id][boundary_index]
-                        .normal_overlap = normal_overlap;
-                      pw_contact_map[particle.particle_id][boundary_index]
-                        .normal_vector = normal;
-
-                      ObjectProperties particle_properties;
-                      particle_properties.object_friction_coefficient =
-                        particle.friction_coefficient;
-                      particle_properties.object_mass = particle.mass;
-                      particle_properties.object_poisson_ratio =
-                        particle.poisson_ratio;
-                      particle_properties.object_radius = particle.radius;
-                      particle_properties.object_restitution_coefficient =
-                        particle.restitution_coefficient;
-                      particle_properties.object_rolling_friction_coefficient =
-                        particle.rolling_friction_coefficient;
-                      particle_properties.object_youngs_modulus =
-                        particle.youngs_modulus;
-
-                      // Wall mass is 100 times higher than
-                      // the particles that contact it.
-                      wall_properties.object_mass = particle.mass * 100;
-                      // Wall curvature radius is 100 times higher than
-                      // the particle that contacts it.
-                      wall_properties.object_radius = particle.radius * 100;
-
-
-                      calculate_force_model(normal_overlap,
-                                            contact_info,
-                                            contact_point,
-                                            contact_normal,
-                                            normal_force,
-                                            tangential_force,
-                                            rolling_resistance_torque,
-                                            particle.position,
-                                            particle_velocity_3d,
-                                            particle.omega,
-                                            particle_properties,
-                                            wall_center_of_rotation,
-                                            wall_velocity,
-                                            wall_angular_velocity,
-                                            wall_properties,
-                                            dt_dem);
-
-                      // Updating the force of particles in the particle handler
-                      contact_force[particle.particle_id] -=
-                        (normal_force + tangential_force);
-                      // Updating the torque acting on particles
-                      contact_torque[particle.particle_id] +=
-                        tangential_torque + rolling_resistance_torque +
-                        cross_product_3d((contact_point - particle_position_3d),
-                                         -(normal_force + tangential_force));
-                    }
-                  else
-                    {
-                      // Set to 0 the tangential overlap if the particle is not
-                      // in contact with the wall anymore.
-                      for (int d = 0; d < dim; ++d)
-                        {
-                          contact_info.tangential_overlap[d] = 0;
-                        }
+                      contact_info.tangential_overlap[d] = 0;
                     }
                 }
             }
@@ -874,139 +833,126 @@ IBParticlesDEM<dim>::calculate_pw_lubrication_force(
   std::vector<Tensor<1, 3>> & /*lubrication_torque*/)
 {
   using dealii::numbers::PI;
-  auto mpi_index = Utilities::MPI::this_mpi_process(this->mpi_communicator);
-  // Get the number of processes
-  int world_size;
-  MPI_Comm_size(MPI_COMM_WORLD, &world_size);
 
   // Loop over the particles
   for (auto &particle : dem_particles)
     {
-      if (particle.particle_id % world_size - mpi_index == 0)
+      if (particle.integrate_motion)
         {
-          if (particle.integrate_motion)
+          // Defines map with default values.
+          unsigned int                              boundary_index = 0;
+          std::map<unsigned int, DefaultDBL_MAX>    best_dist;
+          std::map<unsigned int, DefaultUINT_MAX>   best_indices;
+          std::map<unsigned int, BoundaryCellsInfo> best_cells;
+          // For each particle loop over the point and normal identified as
+          // potential contact candidate.
+          for (auto boundary_cell_iter =
+                 boundary_cells[particle.particle_id].begin();
+               boundary_cell_iter != boundary_cells[particle.particle_id].end();
+               boundary_cell_iter++)
             {
-              // Defines map with default values.
-              unsigned int                              boundary_index = 0;
-              std::map<unsigned int, DefaultDBL_MAX>    best_dist;
-              std::map<unsigned int, DefaultUINT_MAX>   best_indices;
-              std::map<unsigned int, BoundaryCellsInfo> best_cells;
-              // For each particle loop over the point and normal identified as
-              // potential contact candidate.
-              for (auto boundary_cell_iter =
-                     boundary_cells[particle.particle_id].begin();
-                   boundary_cell_iter !=
-                   boundary_cells[particle.particle_id].end();
-                   boundary_cell_iter++)
+              // Find the best candidate (the closest point) for each
+              // different wall.
+
+              double dist = particle.get_levelset(
+                boundary_cell_iter->second.point_on_boundary);
+
+              // Check if the distance is smaller than the best distance.
+              // If it is the first time this boundary is encountered, the
+              // distance is compared to the default value of the map, which
+              // is DBL_MAX
+              if (dist <
+                  best_dist[boundary_cell_iter->second.boundary_index].value)
                 {
-                  // Find the best candidate (the closest point) for each
-                  // different wall.
-
-                  double dist = particle.get_levelset(
-                    boundary_cell_iter->second.point_on_boundary);
-
-                  // Check if the distance is smaller than the best distance.
-                  // If it is the first time this boundary is encountered, the
-                  // distance is compared to the default value of the map, which
-                  // is DBL_MAX
-                  if (dist <
-                      best_dist[boundary_cell_iter->second.boundary_index]
-                        .value)
-                    {
-                      best_dist[boundary_cell_iter->second.boundary_index]
-                        .value = dist;
-                      best_indices[boundary_cell_iter->second.boundary_index]
-                        .value = boundary_index;
-                      best_cells[boundary_cell_iter->second.boundary_index] =
-                        boundary_cell_iter->second;
-                    }
-                  boundary_index += 1;
+                  best_dist[boundary_cell_iter->second.boundary_index].value =
+                    dist;
+                  best_indices[boundary_cell_iter->second.boundary_index]
+                    .value = boundary_index;
+                  best_cells[boundary_cell_iter->second.boundary_index] =
+                    boundary_cell_iter->second;
                 }
+              boundary_index += 1;
+            }
 
 
-              // Add all the floating wall has contact candidate. Their indices
-              // start from 1M (define in the definition of:
-              // lowest_floating_wall_indices). This prevents a floating wall
-              // from sharing the same indices as a normal boundary of the
-              // domain in the contact candidates list.
-              for (unsigned int i = 0;
-                   i < floating_walls_parameters->points_on_walls.size();
-                   ++i)
+          // Add all the floating wall has contact candidate. Their indices
+          // start from 1M (define in the definition of:
+          // lowest_floating_wall_indices). This prevents a floating wall
+          // from sharing the same indices as a normal boundary of the
+          // domain in the contact candidates list.
+          for (unsigned int i = 0;
+               i < floating_walls_parameters->points_on_walls.size();
+               ++i)
+            {
+              if (floating_walls_parameters->time_start[i] < cfd_time &&
+                  floating_walls_parameters->time_end[i] > cfd_time)
                 {
-                  if (floating_walls_parameters->time_start[i] < cfd_time &&
-                      floating_walls_parameters->time_end[i] > cfd_time)
-                    {
-                      BoundaryCellsInfo floating_wall_cell_info;
-                      floating_wall_cell_info.point_on_boundary =
-                        floating_walls_parameters->points_on_walls[i];
-                      floating_wall_cell_info.normal_vector =
-                        floating_walls_parameters
-                          ->floating_walls_normal_vectors[i];
-                      best_cells[lowest_floating_wall_indices + i + 1] =
-                        floating_wall_cell_info;
-                    }
+                  BoundaryCellsInfo floating_wall_cell_info;
+                  floating_wall_cell_info.point_on_boundary =
+                    floating_walls_parameters->points_on_walls[i];
+                  floating_wall_cell_info.normal_vector =
+                    floating_walls_parameters->floating_walls_normal_vectors[i];
+                  best_cells[lowest_floating_wall_indices + i + 1] =
+                    floating_wall_cell_info;
                 }
+            }
 
-              // Do the particle wall contact calculation with the best
-              // candidate.
-              for (auto best_index_of_face = best_cells.begin();
-                   best_index_of_face != best_cells.end();
-                   ++best_index_of_face)
+          // Do the particle wall contact calculation with the best
+          // candidate.
+          for (auto best_index_of_face = best_cells.begin();
+               best_index_of_face != best_cells.end();
+               ++best_index_of_face)
+            {
+              auto &boundary_cell = best_index_of_face->second;
+
+              auto         boundary_cell_information = boundary_cell;
+              Tensor<1, 3> normal =
+                tensor_nd_to_3d(boundary_cell_information.normal_vector);
+              auto point_on_boundary =
+                boundary_cell_information.point_on_boundary;
+
+              // Calculation of gap
+              Point<3> particle_position_3d = point_nd_to_3d(particle.position);
+              Point<3> point_on_boundary_3d = point_nd_to_3d(point_on_boundary);
+
+              Tensor<1, 3> point_to_particle_vector =
+                particle_position_3d - point_on_boundary_3d;
+
+              // Finding the projected vector on the normal vector of the
+              // boundary. Here we have used the private function
+              // find_projection. Using this projected vector, the
+              // particle-wall distance is calculated
+              Tensor<1, 3> projected_vector =
+                ((point_to_particle_vector * normal) / (normal.norm_square())) *
+                normal;
+
+              double gap = (projected_vector.norm()) - particle.radius;
+
+              Tensor<1, 3> radial_vector;
+              double       radial_velocity;
+              Tensor<1, 3> f_lub;
+
+              radial_vector = projected_vector;
+              if (gap > 0 and gap < h_max)
+                // This means that the particles is very close to the wall
+                // but not in contact
                 {
-                  auto &boundary_cell = best_index_of_face->second;
-
-                  auto         boundary_cell_information = boundary_cell;
-                  Tensor<1, 3> normal =
-                    tensor_nd_to_3d(boundary_cell_information.normal_vector);
-                  auto point_on_boundary =
-                    boundary_cell_information.point_on_boundary;
-
-                  // Calculation of gap
-                  Point<3> particle_position_3d =
-                    point_nd_to_3d(particle.position);
-                  Point<3> point_on_boundary_3d =
-                    point_nd_to_3d(point_on_boundary);
-
-                  Tensor<1, 3> point_to_particle_vector =
-                    particle_position_3d - point_on_boundary_3d;
-
-                  // Finding the projected vector on the normal vector of the
-                  // boundary. Here we have used the private function
-                  // find_projection. Using this projected vector, the
-                  // particle-wall distance is calculated
-                  Tensor<1, 3> projected_vector =
-                    ((point_to_particle_vector * normal) /
-                     (normal.norm_square())) *
-                    normal;
-
-                  double gap = (projected_vector.norm()) - particle.radius;
-
-                  Tensor<1, 3> radial_vector;
-                  double       radial_velocity;
-                  Tensor<1, 3> f_lub;
-
-                  radial_vector = projected_vector;
-                  if (gap > 0 and gap < h_max)
-                    // This means that the particles is very close to the wall
-                    // but not in contact
+                  // Limit the smallest gap calculated
+                  if (gap < h_min)
                     {
-                      // Limit the smallest gap calculated
-                      if (gap < h_min)
-                        {
-                          gap = h_min;
-                        }
-                      // Evaluate the force
-                      radial_velocity =
-                        scalar_product(-radial_vector, particle.velocity);
-                      f_lub = 3 / 2 * PI * mu * (particle.radius) *
-                                (particle.radius) / gap * radial_velocity *
-                                radial_vector / radial_vector.norm() -
-                              3 / 2 * PI * mu * (particle.radius) *
-                                (particle.radius) / h_max * radial_velocity *
-                                radial_vector / radial_vector.norm();
+                      gap = h_min;
                     }
-                  lubrication_force[particle.particle_id] = f_lub;
+                  // Evaluate the force
+                  radial_velocity =
+                    scalar_product(-radial_vector, particle.velocity);
+                  f_lub = 3 / 2 * PI * mu * (particle.radius) *
+                            (particle.radius) / gap * radial_velocity *
+                            radial_vector / radial_vector.norm() -
+                          3 / 2 * PI * mu * (particle.radius) *
+                            (particle.radius) / h_max * radial_velocity *
+                            radial_vector / radial_vector.norm();
                 }
+              lubrication_force[particle.particle_id] = f_lub;
             }
         }
     }
@@ -1360,31 +1306,7 @@ IBParticlesDEM<dim>::integrate_particles_motion(const double dt,
                                              lubrication_wall_force,
                                              lubrication_wall_torque);
             }
-          for (unsigned int p_i = 0; p_i < dem_particles.size(); ++p_i)
-            {
-              contact_force[p_i] =
-                Utilities::MPI::sum(contact_force[p_i], this->mpi_communicator);
-              contact_torque[p_i] = Utilities::MPI::sum(contact_torque[p_i],
-                                                        this->mpi_communicator);
-              contact_wall_force[p_i] =
-                Utilities::MPI::sum(contact_wall_force[p_i],
-                                    this->mpi_communicator);
-              contact_wall_torque[p_i] =
-                Utilities::MPI::sum(contact_wall_torque[p_i],
-                                    this->mpi_communicator);
-              lubrication_force[p_i] =
-                Utilities::MPI::sum(lubrication_force[p_i],
-                                    this->mpi_communicator);
-              lubrication_torque[p_i] =
-                Utilities::MPI::sum(lubrication_torque[p_i],
-                                    this->mpi_communicator);
-              lubrication_wall_force[p_i] =
-                Utilities::MPI::sum(contact_wall_force[p_i],
-                                    this->mpi_communicator);
-              contact_wall_torque[p_i] =
-                Utilities::MPI::sum(lubrication_wall_torque[p_i],
-                                    this->mpi_communicator);
-            }
+
           for (unsigned int p_i = 0; p_i < dem_particles.size(); ++p_i)
             {
               if (dem_particles[p_i].integrate_motion)
