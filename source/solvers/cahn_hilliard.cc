@@ -1280,12 +1280,10 @@ CahnHilliard<dim>::apply_phase_filter()
                         filtered_cell_list.find(local_dof_indices[p]);
                       if (iterator == filtered_cell_list.end())
                         {
-
                           filtered_cell_list[local_dof_indices[p]] = true;
                           filtered_solution_owned[local_dof_indices[p]] =
                             filter->filter_phase(
                               filtered_solution_owned[local_dof_indices[p]]);
-
                         }
                     }
                 }

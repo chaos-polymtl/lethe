@@ -38,12 +38,6 @@ CahnHilliardAssemblerCore<dim>::assemble_matrix(
   const unsigned int n_q_points = scratch_data.n_q_points;
   const unsigned int n_dofs     = scratch_data.n_dofs;
 
-  // Time steps and inverse time steps which is used for stabilization constant
-  std::vector<double> time_steps_vector =
-    this->simulation_control->get_time_steps_vector();
-  const double dt  = time_steps_vector[0];
-  const double sdt = 1. / dt;
-
   // Copy data elements
   auto &strong_jacobian_vec = copy_data.strong_jacobian;
   auto &local_matrix        = copy_data.local_matrix;
@@ -66,45 +60,6 @@ CahnHilliardAssemblerCore<dim>::assemble_matrix(
           const double JxW = JxW_vec[q];
 
           const double phase_order_value = scratch_data.phase_order_values[q];
-
-          // Calculation of the magnitude of the velocity for the
-          // stabilization parameter and the compression term for the phase
-          // indicator
-          const double u_mag = std::max(velocity_field.norm(), 1e-12);
-
-          // Calculation of the GLS stabilization parameter. The
-          // stabilization parameter used is different if the simulation is
-          // steady or unsteady. In the unsteady case it includes the value
-          // of the time-step. Hypothesis : advection dominated problem
-          // (Pe>3) [Bochev et al., Stability of the SUPG finite element
-          // method for transient advection-diffusion problems, CMAME 2004]
-          const double tau =
-            is_steady(method) ?
-              1. / std::sqrt(std::pow(2. * u_mag / cell_size, 2) +
-                             9 * std::pow(4 * mobility_constant /
-                                            (cell_size * cell_size),
-                                          2)) :
-              1. /
-                std::sqrt(
-                  std::pow(sdt, 2) + std::pow(2. * u_mag / cell_size, 2) +
-                  9 * std::pow(4 * mobility_constant / (cell_size * cell_size),
-                               2));
-
-          // Compute the strong jacobian vector
-          for (unsigned int j = 0; j < n_dofs; ++j)
-            {
-              const Tensor<1, dim> grad_phi_phase_j =
-                scratch_data.grad_phi_potential[q][j];
-
-              const double laplacian_phi_potential_j =
-                scratch_data.laplacian_phi_potential[q][j];
-
-              // Strong Jacobian associated with the GLS
-              // stabilization
-              strong_jacobian_vec[q][j] +=
-                velocity_field * grad_phi_phase_j -
-                mobility_constant * laplacian_phi_potential_j;
-            }
 
           for (unsigned int i = 0; i < n_dofs; ++i)
             {
@@ -134,7 +89,7 @@ CahnHilliardAssemblerCore<dim>::assemble_matrix(
                      mobility_constant * grad_phi_phase_i *
                        grad_phi_potential_j +
                      phi_potential_i * phi_potential_j -
-                     // Second equation (Lovric et al.) //modified by Jamshidi
+                     // Second equation (Jamshidi et al.)
                      (lambda / (epsilon * epsilon)) * phi_potential_i *
                        (3 * phase_order_value * phase_order_value - 1.0) *
                        phi_phase_j -
@@ -143,13 +98,6 @@ CahnHilliardAssemblerCore<dim>::assemble_matrix(
                      + xi * cell_size * cell_size * grad_phi_potential_i *
                          grad_phi_potential_j) *
                     JxW;
-
-                  // Addition to the cell matrix for GLS stabilization
-                  //                  local_matrix(i, j) += tau *
-                  //                  strong_jacobian_vec[q][j] *
-                  //                                        (grad_phi_phase_i *
-                  //                                        velocity_field) *
-                  //                                        JxW;
                 }
             }
         }
@@ -171,66 +119,6 @@ CahnHilliardAssemblerCore<dim>::assemble_matrix(
           const double phase_order_value = scratch_data.phase_order_values[q];
           const Tensor<1, dim> phase_gradient =
             scratch_data.phase_order_gradients[q];
-
-          // Calculation of the magnitude of the velocity for the
-          // stabilization parameter and the compression term for the phase
-          // indicator
-          const double u_mag = std::max(velocity_field.norm(), 1e-12);
-
-          // Calculation of the GLS stabilization parameter. The
-          // stabilization parameter used is different if the simulation is
-          // steady or unsteady. In the unsteady case it includes the value
-          // of the time-step. Hypothesis : advection dominated problem
-          // (Pe>3) [Bochev et al., Stability of the SUPG finite element
-          // method for transient advection-diffusion problems, CMAME 2004]
-          const double tau =
-            is_steady(method) ?
-              1. / std::sqrt(std::pow(2. * u_mag / cell_size, 2) +
-                             9 * std::pow(4 * mobility_constant /
-                                            (cell_size * cell_size),
-                                          2)) :
-              1. /
-                std::sqrt(
-                  std::pow(sdt, 2) + std::pow(2. * u_mag / cell_size, 2) +
-                  9 * std::pow(4 * mobility_constant / (cell_size * cell_size),
-                               2));
-
-          // Compute the strong jacobian vector
-          for (unsigned int j = 0; j < n_dofs; ++j)
-            {
-              const double         phi_phase_j = scratch_data.phi_phase[q][j];
-              const Tensor<1, dim> grad_phi_phase_j =
-                scratch_data.grad_phi_potential[q][j];
-              const Tensor<1, dim> grad_phi_potential_j =
-                scratch_data.grad_phi_potential[q][j];
-              const double laplacian_phi_potential_j =
-                scratch_data.laplacian_phi_potential[q][j];
-
-
-              // Strong Jacobian associated with the GLS
-              // stabilization
-              strong_jacobian_vec[q][j] +=
-                velocity_field * grad_phi_phase_j +
-                4 * mobility_constant * phi_phase_j *
-                  ((1 - phase_order_value * phase_order_value) *
-                     phase_gradient * potential_gradient -
-                   2 * phase_order_value * phase_order_value * phase_gradient *
-                     potential_gradient +
-                   phase_order_value *
-                     (1 - phase_order_value * phase_order_value) *
-                     potential_laplacian) +
-                4 * mobility_constant * phase_order_value *
-                  (1 - phase_order_value * phase_order_value) *
-                  grad_phi_phase_j * potential_gradient +
-                4 * mobility_constant * phase_order_value *
-                  (1 - phase_order_value * phase_order_value) * phase_gradient *
-                  grad_phi_potential_j -
-                mobility_constant *
-                  (1 - phase_order_value * phase_order_value) *
-                  (1 - phase_order_value * phase_order_value) *
-                  laplacian_phi_potential_j;
-            }
-
 
           for (unsigned int i = 0; i < n_dofs; ++i)
             {
@@ -265,7 +153,7 @@ CahnHilliardAssemblerCore<dim>::assemble_matrix(
                        (1 - phase_order_value * phase_order_value) *
                        (1 - phase_order_value * phase_order_value) +
                      phi_potential_i * phi_potential_j -
-                     // Second equation (Lovric et al.)
+                     // Second equation (Lovric et al.) //NOT UPDATED YET
                      4 * well_height * phi_potential_i *
                        (3 * phase_order_value * phase_order_value - 1.0) *
                        phi_phase_j -
@@ -274,13 +162,6 @@ CahnHilliardAssemblerCore<dim>::assemble_matrix(
                      + xi * cell_size * cell_size * grad_phi_potential_i *
                          grad_phi_potential_j) *
                     JxW;
-
-                  // Addition to the cell matrix for GLS stabilization
-                  //                  local_matrix(i, j) += tau *
-                  //                  strong_jacobian_vec[q][j] *
-                  //                                        (grad_phi_phase_i *
-                  //                                        velocity_field) *
-                  //                                        JxW;
                 }
             }
         }
@@ -320,15 +201,8 @@ CahnHilliardAssemblerCore<dim>::assemble_rhs(
   const unsigned int n_q_points = scratch_data.n_q_points;
   const unsigned int n_dofs     = scratch_data.n_dofs;
 
-  // Time steps and inverse time steps which is used for stabilization constant
-  std::vector<double> time_steps_vector =
-    this->simulation_control->get_time_steps_vector();
-  const double dt  = time_steps_vector[0];
-  const double sdt = 1. / dt;
-
   // Copy data elements
-  auto &strong_residual_vec = copy_data.strong_residual;
-  auto &local_rhs           = copy_data.local_rhs;
+  auto &local_rhs = copy_data.local_rhs;
 
   // Constant mobility model
   if (mobility_model == Parameters::CahnHilliardMobilityModel::constant)
@@ -356,31 +230,6 @@ CahnHilliardAssemblerCore<dim>::assemble_rhs(
           const double source_chemical_potential =
             scratch_data.source_chemical_potential[q];
 
-          // Calculation of the magnitude of the velocity for the
-          // stabilization parameter
-          const double u_mag = std::max(velocity_field.norm(), 1e-12);
-
-          // Calculation of the GLS stabilization parameter. The
-          // stabilization parameter used is different if the simulation is
-          // steady or unsteady. In the unsteady case it includes the value
-          // of the time-step. Hypothesis : advection dominated problem
-          // (Pe>3) [Bochev et al., Stability of the SUPG finite element
-          // method for transient advection-diffusion problems, CMAME 2004]
-          const double tau =
-            is_steady(method) ?
-              1. / std::sqrt(std::pow(2. * u_mag / cell_size, 2) +
-                             9 * std::pow(4 * mobility_constant /
-                                            (cell_size * cell_size),
-                                          2)) :
-              1. /
-                std::sqrt(
-                  std::pow(sdt, 2) + std::pow(2. * u_mag / cell_size, 2) +
-                  9 * std::pow(4 * mobility_constant / (cell_size * cell_size),
-                               2));
-
-          // Calculate the strong residual for GLS stabilization
-          strong_residual_vec[q] += velocity_field * phase_order_gradient -
-                                    mobility_constant * potential_laplacian;
 
           for (unsigned int i = 0; i < n_dofs; ++i)
             {
@@ -409,12 +258,6 @@ CahnHilliardAssemblerCore<dim>::assemble_rhs(
                  + source_phase_order * phi_phase_i +
                  source_chemical_potential * phi_potential_i) *
                 JxW;
-
-              // Addition to the RHS for GLS stabilization
-              //              local_rhs(i) +=
-              //                -tau *
-              //                (strong_residual_vec[q] * (grad_phi_phase_i *
-              //                velocity_field)) * JxW;
             }
         }
     } // end loop on quadrature points
@@ -442,37 +285,6 @@ CahnHilliardAssemblerCore<dim>::assemble_rhs(
           const double source_chemical_potential =
             scratch_data.source_chemical_potential[q];
 
-          // Calculation of the magnitude of the velocity for the
-          // stabilization parameter
-          const double u_mag = std::max(velocity_field.norm(), 1e-12);
-
-          // Calculation of the GLS stabilization parameter. The
-          // stabilization parameter used is different if the simulation is
-          // steady or unsteady. In the unsteady case it includes the value
-          // of the time-step. Hypothesis : advection dominated problem
-          // (Pe>3) [Bochev et al., Stability of the SUPG finite element
-          // method for transient advection-diffusion problems, CMAME 2004]
-          const double tau =
-            is_steady(method) ?
-              1. / std::sqrt(std::pow(2. * u_mag / cell_size, 2) +
-                             9 * std::pow(4 * mobility_constant /
-                                            (cell_size * cell_size),
-                                          2)) :
-              1. /
-                std::sqrt(
-                  std::pow(sdt, 2) + std::pow(2. * u_mag / cell_size, 2) +
-                  9 * std::pow(4 * mobility_constant / (cell_size * cell_size),
-                               2));
-
-          // Calculate the strong residual for GLS stabilization
-          strong_residual_vec[q] +=
-            velocity_field * phase_order_gradient +
-            4 * mobility_constant * phase_order_value *
-              (1 - phase_order_value * phase_order_value) *
-              phase_order_gradient * potential_gradient -
-            mobility_constant * (1 - phase_order_value * phase_order_value) *
-              (1 - phase_order_value * phase_order_value) * potential_laplacian;
-
           for (unsigned int i = 0; i < n_dofs; ++i)
             {
               const double         phi_phase_i = scratch_data.phi_phase[q][i];
@@ -490,7 +302,7 @@ CahnHilliardAssemblerCore<dim>::assemble_rhs(
                    (1 - phase_order_value * phase_order_value)
                  // Second equation (2nd article)
                  - phi_potential_i * potential_value +
-                 // Second equation (Lovric et al.)
+                 // Second equation (Lovric et al.) //NOT UPDATED YET
                  4 * well_height * phi_potential_i *
                    (phase_order_value * phase_order_value - 1) *
                    phase_order_value +
@@ -502,12 +314,6 @@ CahnHilliardAssemblerCore<dim>::assemble_rhs(
                  + source_phase_order * phi_phase_i +
                  source_chemical_potential * phi_potential_i) *
                 JxW;
-
-              // Addition to the RHS for GLS stabilization
-              //              local_rhs(i) +=
-              //                -tau *
-              //                (strong_residual_vec[q] * (grad_phi_phase_i *
-              //                velocity_field)) * JxW;
             }
         }
     } // end loop on quadrature points
@@ -772,9 +578,7 @@ CahnHilliardAssemblerBDF<dim>::assemble_matrix(
   const unsigned int n_dofs     = scratch_data.n_dofs;
 
   // Copy data elements
-  auto &strong_jacobian = copy_data.strong_jacobian;
-  auto &strong_residual = copy_data.strong_residual;
-  auto &local_matrix    = copy_data.local_matrix;
+  auto &local_matrix = copy_data.local_matrix;
 
   // Time stepping information
   const auto          method = this->simulation_control->get_assembly_method();
@@ -791,17 +595,6 @@ CahnHilliardAssemblerBDF<dim>::assemble_matrix(
       phase_order[0] = scratch_data.phase_order_values[q];
       for (unsigned int p = 0; p < number_of_previous_solutions(method); ++p)
         phase_order[p + 1] = scratch_data.previous_phase_order_values[p][q];
-
-      for (unsigned int p = 0; p < number_of_previous_solutions(method) + 1;
-           ++p)
-        {
-          strong_residual[q] += (bdf_coefs[p] * phase_order[p]);
-        }
-      for (unsigned int j = 0; j < n_dofs; ++j)
-        {
-          strong_jacobian[q][j] += bdf_coefs[0] * scratch_data.phi_phase[q][j];
-        }
-
 
       for (unsigned int i = 0; i < n_dofs; ++i)
         {
@@ -829,8 +622,7 @@ CahnHilliardAssemblerBDF<dim>::assemble_rhs(
   const unsigned int n_dofs     = scratch_data.n_dofs;
 
   // Copy data elements
-  auto &strong_residual = copy_data.strong_residual;
-  auto &local_rhs       = copy_data.local_rhs;
+  auto &local_rhs = copy_data.local_rhs;
 
   // Time stepping information
   const auto          method = this->simulation_control->get_assembly_method();
@@ -847,12 +639,6 @@ CahnHilliardAssemblerBDF<dim>::assemble_rhs(
       phase_order[0] = scratch_data.phase_order_values[q];
       for (unsigned int p = 0; p < number_of_previous_solutions(method); ++p)
         phase_order[p + 1] = scratch_data.previous_phase_order_values[p][q];
-
-      for (unsigned int p = 0; p < number_of_previous_solutions(method) + 1;
-           ++p)
-        {
-          strong_residual[q] += (bdf_coefs[p] * phase_order[p]);
-        }
 
       for (unsigned int i = 0; i < n_dofs; ++i)
         {
