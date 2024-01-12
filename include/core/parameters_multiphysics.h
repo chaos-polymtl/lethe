@@ -228,16 +228,9 @@ namespace Parameters
 
   struct CahnHilliard
   {
-    // Well height value (W) in the Cahn-Hilliard equations
-    double well_height;
-
     // Smoothing parameter Xi in the Cahn-Hilliard equations (potential
     // equation)
     double potential_smoothing_coefficient;
-
-    // Spring constant correction in front of the surface tension coefficient in
-    // CHNS
-    double spring_constant_correction;
 
     // Epsilon set strategy (automatic|manual)
     Parameters::EpsilonSetStrategy epsilon_set_method;

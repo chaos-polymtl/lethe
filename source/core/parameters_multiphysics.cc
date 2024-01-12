@@ -556,22 +556,12 @@ Parameters::CahnHilliard::declare_parameters(ParameterHandler &prm)
   {
     cahn_hilliard_phase_filter.declare_parameters(prm);
 
-    prm.declare_entry("well height",
-                      "1",
-                      Patterns::Double(),
-                      "Potential height well for the Cahn-Hilliard equations.");
 
     prm.declare_entry(
       "potential smoothing coefficient",
       "1",
       Patterns::Double(),
       "Smoothing coefficient for the chemical potential in the Cahn-Hilliard equations.");
-
-    prm.declare_entry(
-      "spring constant correction",
-      "1",
-      Patterns::Double(),
-      "Spring constant correction in the CHNS coupled system of equations.");
 
     prm.enter_subsection("cahn hilliard mobility");
     {
@@ -614,11 +604,8 @@ Parameters::CahnHilliard::parse_parameters(ParameterHandler &prm)
   {
     cahn_hilliard_phase_filter.parse_parameters(prm);
 
-    CahnHilliard::well_height = prm.get_double("well height");
     CahnHilliard::potential_smoothing_coefficient =
       prm.get_double("potential smoothing coefficient");
-    CahnHilliard::spring_constant_correction =
-      prm.get_double(("spring constant correction"));
 
     prm.enter_subsection("epsilon");
     {

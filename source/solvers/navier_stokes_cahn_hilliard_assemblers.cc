@@ -12,11 +12,7 @@ GLSNavierStokesCahnHilliardAssemblerCore<dim>::assemble_matrix(
   NavierStokesScratchData<dim>         &scratch_data,
   StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
-  const double well_height  = scratch_data.well_height;
-  const double epsilon      = scratch_data.epsilon;
   const double density_diff = scratch_data.density_diff;
-  const double spring_constant_correction =
-    scratch_data.spring_constant_correction;
 
   // Loop and quadrature information
   const auto        &JxW_vec    = scratch_data.JxW;
@@ -66,21 +62,12 @@ GLSNavierStokesCahnHilliardAssemblerCore<dim>::assemble_matrix(
             }
         }
 
-      //      const double phase_order_value =
-      //        scratch_data.phase_order_cahn_hilliard_values[q];
       const double phase_order_value =
         scratch_data.filtered_phase_order_cahn_hilliard_values[q];
-      //      const double potential_value =
-      //        scratch_data.chemical_potential_cahn_hilliard_values[q];
       const Tensor<1, dim> potential_gradient =
         scratch_data.chemical_potential_cahn_hilliard_gradients[q];
-      //      const Tensor<1, dim> phase_order_gradient =
-      //        scratch_data.phase_order_cahn_hilliard_gradients[q];
-      //      const Tensor<1, dim> phase_order_gradient =
-      //       scratch_data.filtered_phase_order_cahn_hilliard_gradients[q];
 
       double mobility = scratch_data.mobility_cahn_hilliard[q];
-      // std::cout<<"mobility via chns assembler = "<<mobility<<std::endl;
 
       const Tensor<1, dim> relative_diffusive_flux =
         -density_diff * mobility *
@@ -102,9 +89,6 @@ GLSNavierStokesCahnHilliardAssemblerCore<dim>::assemble_matrix(
       // Calculation of the equivalent properties at the quadrature point
       double       density_eq           = scratch_data.density[q];
       const double dynamic_viscosity_eq = scratch_data.dynamic_viscosity[q];
-      double       curvature_cahn_hilliard =
-        3 * scratch_data.surface_tension[q] /
-        (4 * std::sqrt(2 * well_height) * epsilon) * spring_constant_correction;
 
       // Calculation of the GLS stabilization parameter. The
       // stabilization parameter used is different if the simulation
@@ -128,7 +112,6 @@ GLSNavierStokesCahnHilliardAssemblerCore<dim>::assemble_matrix(
         //  relative_diffusive_flux // Multiplier par la gauche le velocity
         // gradient car le gradient en deal.ii
         // correspond au gradient mathematique
-        //- curvature_cahn_hilliard * potential_value * phase_order_gradient
         + phase_order_value * potential_gradient + strong_residual_vec[q];
 
       std::vector<Tensor<1, dim>> grad_phi_u_j_x_velocity(n_dofs);
@@ -219,12 +202,8 @@ GLSNavierStokesCahnHilliardAssemblerCore<dim>::assemble_rhs(
   NavierStokesScratchData<dim>         &scratch_data,
   StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
-  const double well_height  = scratch_data.well_height;
-  const double epsilon      = scratch_data.epsilon;
   const double density_diff = scratch_data.density_diff;
   const double h            = scratch_data.cell_size;
-  const double spring_constant_correction =
-    scratch_data.spring_constant_correction;
 
   // Loop and quadrature information
   const auto        &JxW_vec    = scratch_data.JxW;
@@ -254,18 +233,10 @@ GLSNavierStokesCahnHilliardAssemblerCore<dim>::assemble_rhs(
       const Tensor<1, dim> relative_diffusive_flux =
         -density_diff * mobility *
         scratch_data.chemical_potential_cahn_hilliard_gradients[q];
-      //      const double potential_value =
-      //        scratch_data.chemical_potential_cahn_hilliard_values[q];
-      //      const double phase_order_value =
-      //        scratch_data.phase_order_cahn_hilliard_values[q];
       const double phase_order_value =
         scratch_data.filtered_phase_order_cahn_hilliard_values[q];
-      //      const Tensor<1, dim> phase_order_gradient =
-      //        scratch_data.phase_order_cahn_hilliard_gradients[q];
       const Tensor<1, dim> potential_gradient =
         scratch_data.chemical_potential_cahn_hilliard_gradients[q];
-      //     const Tensor<1, dim> phase_order_gradient =
-      //        scratch_data.filtered_phase_order_cahn_hilliard_gradients[q];
 
       // Gather into local variables the relevant fields for velocity
       const Tensor<1, dim> velocity    = scratch_data.velocity_values[q];
@@ -311,9 +282,6 @@ GLSNavierStokesCahnHilliardAssemblerCore<dim>::assemble_rhs(
       // Calculation of the equivalent properties at the quadrature point
       double       density_eq           = scratch_data.density[q];
       const double dynamic_viscosity_eq = scratch_data.dynamic_viscosity[q];
-      double       curvature_cahn_hilliard =
-        3 * scratch_data.surface_tension[q] /
-        (4 * std::sqrt(2 * well_height) * epsilon) * spring_constant_correction;
 
       // Calculation of the GLS stabilization parameter. The
       // stabilization parameter used is different if the simulation
@@ -335,7 +303,6 @@ GLSNavierStokesCahnHilliardAssemblerCore<dim>::assemble_rhs(
         dynamic_viscosity_eq * grad_div_velocity -
         density_eq * force
         //- velocity_gradient * relative_diffusive_flux
-        //-curvature_cahn_hilliard * potential_value * phase_order_gradient
         + phase_order_value * potential_gradient + strong_residual_vec[q];
 
       // Assembly of the right-hand side
@@ -360,9 +327,6 @@ GLSNavierStokesCahnHilliardAssemblerCore<dim>::assemble_rhs(
              - velocity_divergence * phi_p_i
              // Relative diffusive flux term (Cahn-Hilliard)
              //+ velocity_gradient * relative_diffusive_flux * phi_u_i
-             // Surface tension term (Cahn-Hilliard)
-             //             + curvature_cahn_hilliard * potential_value *
-             //                 phase_order_gradient * phi_u_i
              - phase_order_value * potential_gradient * phi_u_i
 
              ) *

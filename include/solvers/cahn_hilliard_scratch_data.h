@@ -309,12 +309,6 @@ public:
               }
           }
       }
-
-    // CH epsilon parameter
-    this->epsilon = (cahn_hilliard_parameters.epsilon_set_method ==
-                     Parameters::EpsilonSetStrategy::manual) ?
-                      cahn_hilliard_parameters.epsilon :
-                      2 * this->cell_size;
   }
 
 
@@ -364,7 +358,6 @@ public:
   PhysicalPropertiesManager            properties_manager;
   std::map<field, std::vector<double>> fields;
   dealii::types::material_id           material_id;
-  double                               epsilon;
   std::vector<double>                  density;
   std::vector<double>                  kinematic_viscosity;
   std::vector<double>                  surface_tension;
