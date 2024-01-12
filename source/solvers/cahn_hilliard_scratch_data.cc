@@ -65,6 +65,79 @@ CahnHilliardScratchData<dim>::allocate()
     std::vector<Tensor<1, dim>>(this->n_q_points));
   this->velocity_gradient_values =
     std::vector<Tensor<2, dim>>(this->n_q_points);
+
+  // Allocate physical properties
+  this->surface_tension        = std::vector<double>(n_q_points);
+  this->mobility_cahn_hilliard = std::vector<double>(n_q_points);
+}
+
+template <int dim>
+void
+CahnHilliardScratchData<dim>::calculate_physical_properties()
+{
+  switch (properties_manager.get_number_of_fluids())
+    {
+      case 1:
+        {
+          throw std::runtime_error("Unsupported number of fluids (<2)");
+        }
+      case 2:
+        {
+          // Gather properties from material interactions if necessary
+          if (properties_manager.get_number_of_material_interactions() > 0)
+            {
+              const auto material_interaction_id =
+                properties_manager.get_material_interaction_id(
+                  material_interactions_type::fluid_fluid, 0, 1);
+              // Gather surface tension
+              const auto surface_tension_model =
+                properties_manager.get_surface_tension(material_interaction_id);
+              surface_tension_model->vector_value(fields, surface_tension);
+            }
+
+          // Gather surface tension
+          const auto material_interaction_id =
+            properties_manager.get_material_interaction_id(
+              material_interactions_type::fluid_fluid, 0, 1);
+
+
+          const auto mobility_cahn_hilliard_model =
+            properties_manager.get_mobility_cahn_hilliard(
+              material_interaction_id);
+          //                                      std::cout << "get
+          //                                      mobility is ok "<<
+          //                                      std::endl;
+          mobility_cahn_hilliard_model->vector_value(fields,
+                                                     mobility_cahn_hilliard);
+
+          // Keep the comments below as long as the mobility fields will not
+          // have been tested
+
+          // std::cout<<"phase order cahn hilliard
+          // field"<<fields[field::phase_order_cahn_hilliard][q]<<std::endl;
+          // std::cout<<" filtered phase order cahn hilliard
+          // field"<<fields[field::phase_order_cahn_hilliard_filtered][q]<<std::endl;
+          //                                      std::cout <<
+          //                                      "vector_value is ok
+          //                                      "<< std::endl;
+          //
+          //                                      std::cout << "material
+          //                                      interaction for
+          //                                      mobility is ok "<<
+          //                                      std::endl;
+          //
+          //                                    std::cout <<
+          //                                    "mobility_via_ns_scratch_data
+          //                                    = "
+          //                                              <<
+          //                                              mobility_cahn_hilliard[q]
+          //                                              << std::endl;
+
+          break;
+        }
+      default:
+        throw std::runtime_error("Unsupported number of fluids (>2)");
+    }
 }
 
 template class CahnHilliardScratchData<2>;

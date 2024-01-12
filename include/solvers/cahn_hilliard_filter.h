@@ -44,8 +44,7 @@ public:
    * @return Value of the phase fraction after applying the filter
    */
   virtual double
-  filter_phase(const double &unfiltered_phase,
-               const double &unfiltered_phase_gradient_norm) = 0;
+  filter_phase(const double &unfiltered_phase) = 0;
 };
 
 /**
@@ -59,15 +58,16 @@ public:
   {}
 
   /**
-   * @brief filter_phase calculates the value of the filtered phase fraction
-   * @param unfiltered_phase Value of the phase fraction before applying the filter
-   * @return unfiltered_phase
+   * @brief CahnHilliardNoFilter class is used as a default when no
+   * filter is applied to the phase fraction. In this case, a simple clamping is
+   * performed on the phase fraction parameter for it to remain in the [-1,1]
+   * interval.
    */
   virtual double
-  filter_phase(const double &unfiltered_phase,
-               const double &unfiltered_phase_gradient_norm) override
+  filter_phase(const double &unfiltered_phase) override
   {
-    return unfiltered_phase;
+    return (std::abs(unfiltered_phase) < 1) ? unfiltered_phase :
+                                              sgn(unfiltered_phase);
   }
 };
 
@@ -80,12 +80,8 @@ public:
 class CahnHilliardTanhFilter : public CahnHilliardFilterBase
 {
 public:
-  CahnHilliardTanhFilter(const double beta,
-                         const double well_height,
-                         const double epsilon)
+  CahnHilliardTanhFilter(const double beta)
     : beta(beta)
-    , well_height(well_height)
-    , epsilon(epsilon)
   {}
 
   /**
@@ -94,28 +90,14 @@ public:
    * @return Value of the phase fraction after applying the tanh filter
    */
   virtual double
-  filter_phase(const double &unfiltered_phase,
-               const double &unfiltered_phase_gradient_norm) override
+  filter_phase(const double &unfiltered_phase) override
   {
-    // return tanh((std::sqrt(2*well_height)/(epsilon)) * unfiltered_phase);
-    // return tanh(beta *
-    // sgn(unfiltered_phase)*std::sqrt(std::abs(unfiltered_phase)));
-    // std::cout<<"Filtered value computed = " << tanh(beta*unfiltered_phase)<<
-    // std::endl;
-//    return tanh((beta + 1 / (unfiltered_phase_gradient_norm +
-//                             std::numeric_limits<double>::min())) *
-//                unfiltered_phase);
-    //const double filtered_phase = (std::abs(unfiltered_phase)<1) ? unfiltered_phase : sgn(unfiltered_phase);
-    return (std::abs(unfiltered_phase)<1) ? unfiltered_phase : sgn(unfiltered_phase);
-    // return tanh(beta *
-    // sgn(unfiltered_phase)*unfiltered_phase*unfiltered_phase);
+    return tanh(beta * unfiltered_phase);
   }
 
 private:
-  // User-defined parameter that influences the definition of the interface
+  // User-defined parameter that influences how sharp the filtering is.
   const double beta;
-  const double well_height;
-  const double epsilon;
 };
 
 #endif

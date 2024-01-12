@@ -23,9 +23,7 @@ CahnHilliardFilterBase::model_cast(
   if (cahn_hilliard_parameters.cahn_hilliard_phase_filter.type ==
       Parameters::FilterType::tanh)
     return std::make_shared<CahnHilliardTanhFilter>(
-      cahn_hilliard_parameters.cahn_hilliard_phase_filter.beta,
-      cahn_hilliard_parameters.well_height,
-      cahn_hilliard_parameters.epsilon);
+      cahn_hilliard_parameters.cahn_hilliard_phase_filter.beta);
   else
     return std::make_shared<CahnHilliardNoFilter>();
 }

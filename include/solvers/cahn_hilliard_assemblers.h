@@ -91,9 +91,11 @@ class CahnHilliardAssemblerCore : public CahnHilliardAssemblerBase<dim>
 public:
   CahnHilliardAssemblerCore(
     std::shared_ptr<SimulationControl> simulation_control,
-    Parameters::CahnHilliard           cahn_hilliard_parameters)
+    Parameters::CahnHilliard           cahn_hilliard_parameters,
+    const double                       maximum_refinement_number)
     : CahnHilliardAssemblerBase<dim>(simulation_control)
     , cahn_hilliard_parameters(cahn_hilliard_parameters)
+    , maximum_refinement_number(maximum_refinement_number)
   {}
 
   /**
@@ -116,6 +118,7 @@ public:
                StabilizedMethodsCopyData    &copy_data) override;
 
   Parameters::CahnHilliard cahn_hilliard_parameters;
+  const int                maximum_refinement_number;
 };
 
 

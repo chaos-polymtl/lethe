@@ -352,6 +352,13 @@ public:
       }
   }
 
+  /** @brief Calculates the physical properties. This function calculates the
+   * physical properties that may be required by the Cahn-Hilliard problem.
+   * Namely the surface tension
+   */
+  void
+  calculate_physical_properties();
+
 
   // Physical properties
   PhysicalPropertiesManager            properties_manager;
@@ -360,6 +367,8 @@ public:
   double                               epsilon;
   std::vector<double>                  density;
   std::vector<double>                  kinematic_viscosity;
+  std::vector<double>                  surface_tension;
+  std::vector<double>                  mobility_cahn_hilliard;
 
 
   FEValuesExtractors::Scalar phase_order;

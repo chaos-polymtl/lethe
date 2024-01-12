@@ -1058,10 +1058,13 @@ public:
 
 
     // Initialize parameters
+    // epsilon must be proportional to the smallest cell size in the mesh and
+    // must be the same in all the cells, unless it will cause unphysical
+    // gradients of chemical potential to appear
     this->epsilon = (cahn_hilliard_parameters.epsilon_set_method ==
                      Parameters::EpsilonSetStrategy::manual) ?
                       cahn_hilliard_parameters.epsilon :
-                      2 * this->cell_size_cahn_hilliard;
+                      2 * this->cell_size;
 
     this->well_height = cahn_hilliard_parameters.well_height;
     this->potential_smoothing_coefficient =

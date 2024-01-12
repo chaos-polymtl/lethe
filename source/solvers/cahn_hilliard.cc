@@ -24,9 +24,9 @@
 #include <deal.II/lac/trilinos_precondition.h>
 #include <deal.II/lac/trilinos_solver.h>
 
+#include <deal.II/numerics/derivative_approximation.h>
 #include <deal.II/numerics/error_estimator.h>
 #include <deal.II/numerics/vector_tools.h>
-#include <deal.II/numerics/derivative_approximation.h>
 
 template <int dim>
 void
@@ -69,7 +69,8 @@ CahnHilliard<dim>::setup_assemblers()
 
   this->assemblers.push_back(std::make_shared<CahnHilliardAssemblerCore<dim>>(
     this->simulation_control,
-    this->simulation_parameters.multiphysics.cahn_hilliard_parameters));
+    this->simulation_parameters.multiphysics.cahn_hilliard_parameters,
+    this->simulation_parameters.mesh_adaptation.maximum_refinement_level));
 }
 
 template <int dim>
@@ -146,6 +147,7 @@ CahnHilliard<dim>::assemble_local_system_matrix(
                                    this->simulation_parameters.ale);
     }
 
+  scratch_data.calculate_physical_properties();
   copy_data.reset();
 
   for (auto &assembler : this->assemblers)
@@ -179,6 +181,8 @@ CahnHilliard<dim>::assemble_system_rhs()
 
   this->system_rhs = 0;
   setup_assemblers();
+
+
 
   const DoFHandler<dim> *dof_handler_fluid =
     multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
@@ -245,6 +249,7 @@ CahnHilliard<dim>::assemble_local_system_rhs(
                                    this->simulation_parameters.ale);
     }
 
+  scratch_data.calculate_physical_properties();
   copy_data.reset();
 
   for (auto &assembler : this->assemblers)
@@ -1204,18 +1209,16 @@ CahnHilliard<dim>::calculate_barycenter(const GlobalVectorType &solution,
 
           for (unsigned int q = 0; q < n_q_points; q++)
             {
-              const double JxW = fe_values_cahn_hilliard.JxW(q);
-              const double filtered_phase_cahn_hilliard_values =
-                filter->filter_phase(phase_cahn_hilliard_values[q],
-                                     phase_cahn_hilliard_gradients[q].norm());
+              const double JxW          = fe_values_cahn_hilliard.JxW(q);
+              const double phase_values = phase_cahn_hilliard_values[q];
 
 
 
-              volume += (1 - filtered_phase_cahn_hilliard_values) * 0.25 * JxW;
-              barycenter_location += (1 - filtered_phase_cahn_hilliard_values) *
-                                     0.25 * quadrature_locations[q] * JxW;
-              barycenter_velocity += (1 - filtered_phase_cahn_hilliard_values) *
-                                     0.25 * velocity_values[q] * JxW;
+              volume += (1 - phase_values) * 0.25 * JxW;
+              barycenter_location +=
+                (1 - phase_values) * 0.25 * quadrature_locations[q] * JxW;
+              barycenter_velocity +=
+                (1 - phase_values) * 0.25 * velocity_values[q] * JxW;
             }
         }
     }
@@ -1255,7 +1258,7 @@ CahnHilliard<dim>::apply_phase_filter()
   const unsigned int n_cells = triangulation->n_active_cells();
   std::unordered_map<unsigned int, bool> filtered_cell_list;
 
-  //std::vector<Tensor<1, dim>> phase_cahn_hilliard_gradients(n_q_points);
+  // std::vector<Tensor<1, dim>> phase_cahn_hilliard_gradients(n_q_points);
 
   // int count(0);
 
@@ -1263,29 +1266,32 @@ CahnHilliard<dim>::apply_phase_filter()
   std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
 
   Vector<float> approximate_gradient_vector(n_cells);
- //std::cout<<"hi 2 "<<std::endl;
-  //DerivativeApproximation::approximate_gradient(*mapping,dof_handler,this->present_solution,approximate_gradient_vector,0);
+  // std::cout<<"hi 2 "<<std::endl;
+  // DerivativeApproximation::approximate_gradient(*mapping,dof_handler,this->present_solution,approximate_gradient_vector,0);
 
   // Create filter object
-   //std::cout<<"hi 3 "<<std::endl;
+  // std::cout<<"hi 3 "<<std::endl;
   filter = CahnHilliardFilterBase::model_cast(
     this->simulation_parameters.multiphysics.cahn_hilliard_parameters);
   // std::cout<<"hi 4 "<<std::endl;
   // Apply filter to solution
-  //int count(0);
+  // int count(0);
   for (const auto &cell : this->dof_handler.active_cell_iterators())
     {
       if (cell->is_locally_owned())
         {
           const unsigned int cell_index = cell->active_cell_index();
-          //fe_values.reinit(cell);
+          // fe_values.reinit(cell);
           cell->get_dof_indices(local_dof_indices);
-//          fe_values[phase_order].get_function_gradients(
-//            present_solution, phase_cahn_hilliard_gradients);
-          //double cell_gradient_estimation = approximate_gradient_vector[cell_index];
-          //std::cout<<"cell_gradient_estimation ="<<approximate_gradient_vector[cell_index]<<std::endl;
+          //          fe_values[phase_order].get_function_gradients(
+          //            present_solution, phase_cahn_hilliard_gradients);
+          // double cell_gradient_estimation =
+          // approximate_gradient_vector[cell_index];
+          // std::cout<<"cell_gradient_estimation
+          // ="<<approximate_gradient_vector[cell_index]<<std::endl;
           // std::cout << "hi 5 " << std::endl;
-          //std::cout << "local_dof_indices.size() = " << local_dof_indices.size()<< std::endl;
+          // std::cout << "local_dof_indices.size() = " <<
+          // local_dof_indices.size()<< std::endl;
           //  std::cout << "n_q_points = " << n_q_points << std::endl;
           for (unsigned int p = 0; p < local_dof_indices.size(); ++p)
             {
@@ -1304,13 +1310,14 @@ CahnHilliard<dim>::apply_phase_filter()
                         filtered_cell_list.find(local_dof_indices[p]);
                       if (iterator == filtered_cell_list.end())
                         {
-                          //std::cout<<"p ="<<p<<std::endl;
-                          //std::cout<<"phase cahn hilliard gradient norm ="<<phase_cahn_hilliard_gradients[p].norm()<<std::endl;
+                          // std::cout<<"p ="<<p<<std::endl;
+                          // std::cout<<"phase cahn hilliard gradient norm
+                          // ="<<phase_cahn_hilliard_gradients[p].norm()<<std::endl;
 
                           filtered_cell_list[local_dof_indices[p]] = true;
                           filtered_solution_owned[local_dof_indices[p]] =
                             filter->filter_phase(
-                              filtered_solution_owned[local_dof_indices[p]],0.0);
+                              filtered_solution_owned[local_dof_indices[p]]);
                         }
                     }
                 }
