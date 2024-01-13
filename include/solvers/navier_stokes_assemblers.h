@@ -719,11 +719,11 @@ private:
 /**
  * @brief Class that assembles a phase change Darcy forcing term. This term adds \f$-\beta_D  \mathbf{u} \f$ to the
  * right hand-side of the Navier-Stokes equations to prohibit the motion of a
- * material. In the pahse change model, the value of the \f$ \beta_D \f$
+ * material. In the phase change model, the value of the \f$ \beta_D \f$
  * coefficient depends on the temperature field. Generally, this is used to
  * prohibit fluid motion in the solid phase within phase change problem. This
  * generally leads to a better conditioning of the linear system than increasing
- * the viscosity.
+ * the viscosity of the solid phase.
  *
  *
  * @tparam dim An integer that denotes the number of spatial dimensions

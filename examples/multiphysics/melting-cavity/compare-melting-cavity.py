@@ -45,10 +45,6 @@ temperature_limit = 29.75
 case_list=["Lethe - Viscous penality", "Lethe - Darcy penality", "Lethe - Hybrid penality"]
 
 
-
-
-
-
 #Experimental data from Gau and Viskanta 1986
 melted_x_exp = [0.00946, 0.01433, 0.02113, 0.02877, 0.03774, 0.04739, 0.05956, 0.07164, 0.08104, 0.09069]
 melted_y_exp = [0.11972, 0.16112, 0.20476, 0.22713, 0.2786, 0.34014, 0.43077, 0.5035, 0.56392, 0.61664]

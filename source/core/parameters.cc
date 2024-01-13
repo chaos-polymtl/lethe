@@ -664,7 +664,7 @@ namespace Parameters
       prm.declare_entry("Darcy penality solid",
                         "0",
                         Patterns::Double(),
-                        "Darcy penality of the  solid phase");
+                        "Darcy penality of the solid phase");
     }
     prm.leave_subsection();
   }
@@ -2648,7 +2648,7 @@ namespace Parameters
       prm.declare_entry("Darcy type",
                         "none",
                         Patterns::Selection("none|phase_change"),
-                        "Darcy-like pearmeability term"
+                        "Darcy-like permeability term"
                         "Choices are <none|phase_change>.");
     }
     prm.leave_subsection();

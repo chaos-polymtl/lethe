@@ -2,10 +2,10 @@
 Velocity Source
 ===============
 
-This subsection allows you to defined velocity-dependant source term. Two families of velocity source terms are supported. They enable the simulation of  problems in a Lagrangian reference frame for which the Coriolis and centrifugal forces must be added or of problems including porous media.
+This subsection allows you to define velocity-dependant source terms. Two families of velocity source terms are supported. They enable the simulation of  problems in a Lagrangian reference frame for which the Coriolis and centrifugal forces must be added or of problems including porous media.
 
 
-Rotating frame
+Rotating Frame
 ~~~~~~~~~~~~~~
 
 Rotating frame simulations use the following parameters:
@@ -36,7 +36,7 @@ A Darcy-like source term can be added to the simulation using the following parm
 .. code-block:: text
 
   subsection velocity source
-    set Darcy type          = none
+    set Darcy type = none
   end
 
 * The ``Darcy type`` parameter specifies the type of Darcy penalization term to be applied to the Navier-Stokes equations. The options are ``none`` or ``phase_change``. The ``phase_change`` model uses the values of the ``Darcy penality liquid``  and ``Darcy penality solid`` set-up within the ``phase change`` subsection of the :doc:`physical_properties`.

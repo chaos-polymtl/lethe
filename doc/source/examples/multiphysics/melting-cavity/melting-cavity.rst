@@ -25,7 +25,7 @@ Files Used in This Example
 All files mentioned below are located in the example's folder (``examples/multiphysics/melting-cavity``).
 
 - Parameter files: ``melting-cavity.prm``, ``melting-cavity-darcy.prm``
-- Postprocessing Python script: ``melting-cavity.py``, ``compare-melting-cavity.py``
+- Postprocessing Python scripts: ``melting-cavity.py``, ``compare-melting-cavity.py``
 - Python script to calculate the dimensionless numbers: ``dimensionless_number_calculator.py``
 
 
@@ -257,7 +257,7 @@ contains the simulation results. In post-processing, the position of the solid-l
 Darcy Penalization: An Alternative Approach
 --------------------------------------------
 
-Lethe supports an alternative strategy to impose statis (no motion) within the solidified material using a Darcy-like penalization. This penalization adds a forcing term to the momentum equation to prohibit the motion of the solid instead of increasing its viscosity. This has the advantage of leading to a better matrix conditioning, at the expensive of potentially increased motion within the solid phase. To enable this forcing term, a velocity source term must be specified:
+Lethe supports an alternative strategy to impose statis (no motion) within the solidified material using a Darcy-like penalization. This penalization adds a forcing term to the momentum equation to prohibit the motion of the solid instead of increasing its viscosity. This has the advantage of leading to a better matrix conditioning, at the expense of potentially increased motion within the solid phase. To enable this forcing term, a velocity source term must be specified:
 
 .. code-block:: text
 
@@ -265,7 +265,7 @@ Lethe supports an alternative strategy to impose statis (no motion) within the s
   set Darcy type          = phase_change
   end
 
-Furthermore, the phase change subsection within the physical properties but also be modified to specify the Darcy penalty of the solid and liquid phase:
+Furthermore, the ``phase change`` subsection within the physical properties but also be modified to specify the Darcy penalty of the solid and liquid phase:
 
 .. code-block:: text
 
@@ -323,7 +323,7 @@ Furthermore, the phase change subsection within the physical properties but also
   
 Note that the viscosity of the liquid and the solid phase are now identical and that a very strong Darcy penality coefficient is applied on the solid phase to restrict its motion. A third approach would be to combine this Darcy term with the viscosity model used above, resulting in an hybrid approach.
 
-The following graph shows the evolution of the liquid fraction as a function of time using the viscous penalitu, Darcy penality and hybrid penality strategy. We see that the viscous penality tends to increase the amount of molten material. Whether this is physical or not cannot be assessed here.
+The following graph shows the evolution of the liquid fraction as a function of time using the viscous penality, Darcy penality and hybrid penality strategy. We see that the viscous penality tends to increase the amount of molten material. Whether or not this is a physical phenomenon cannot be assessed here.
 
 
 .. image:: images/comparison-melted-volume-fraction.png

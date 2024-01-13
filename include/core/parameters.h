@@ -215,7 +215,7 @@ namespace Parameters
     // kinematic viscosity liquid - Units in m^2/(s)
     double kinematic_viscosity_l;
 
-    // kinematic viscosity solid - Units in in m^2/(s)
+    // kinematic viscosity solid - Units in m^2/(s)
     double kinematic_viscosity_s;
 
     // Darcy permeability liquid - Units in 1/(s)
