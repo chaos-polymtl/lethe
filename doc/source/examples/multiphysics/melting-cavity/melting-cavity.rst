@@ -22,9 +22,9 @@ Features
 Files Used in This Example
 ---------------------------
 
-Both files mentioned below are located in the example's folder (``examples/multiphysics/melting-cavity``).
+All files mentioned below are located in the example's folder (``examples/multiphysics/melting-cavity``).
 
-- Parameter file: ``melting-cavity.prm``, ``melting-cavity-darcy.prm``
+- Parameter files: ``melting-cavity.prm``, ``melting-cavity-darcy.prm``
 - Postprocessing Python script: ``melting-cavity.py``, ``compare-melting-cavity.py``
 - Python script to calculate the dimensionless numbers: ``dimensionless_number_calculator.py``
 

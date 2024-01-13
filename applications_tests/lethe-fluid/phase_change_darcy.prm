@@ -63,10 +63,10 @@ subsection physical properties
       # Specific heat of the solid phase
       set specific heat solid = 1
 
-      # viscosity of the liquid phase
+      # Permeability of the liquid phase
       set Darcy penality liquid = 0
 
-      # Specific heat of the solid phase
+      # Permeability of the solid phase
       set Darcy penality solid = 1e5
     end
   end
@@ -90,7 +90,7 @@ end
 #---------------------------------------------------
 
 subsection velocity source
-  # Darcy-like pearmeability termChoices are <none|phase_change>.
+  # Darcy-like permeability term. Choices are <none|phase_change>.
   set Darcy type          = phase_change
 end
 
