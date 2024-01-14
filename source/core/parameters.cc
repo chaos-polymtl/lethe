@@ -3278,7 +3278,7 @@ namespace Parameters
             double volume = prm.get_double("volume");
             if (volume == 0)
               {
-                // value is automatically define.
+                // value is automatically defined.
                 volume = particles[i].shape->displaced_volume();
                 if (volume == 0)
                   {

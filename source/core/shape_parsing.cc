@@ -72,14 +72,10 @@ ShapeGenerator::initialize_shape_from_vector(
               half_lengths[d] = shape_arguments[d];
               exponents[d]    = shape_arguments[d + dim];
             }
-          double epsilon;
+          double epsilon = 1e-8;
           if (shape_arguments.size() == 7)
             {
               epsilon = shape_arguments[3 + dim];
-            }
-          else
-            {
-              epsilon = 1e-8;
             }
           shape = std::make_shared<Superquadric<dim>>(
             half_lengths, exponents, epsilon, position, orientation);

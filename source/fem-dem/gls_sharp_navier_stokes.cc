@@ -1152,7 +1152,7 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                           // Create a vector to approximate the normal of the
                           // cell to orient the projection of the face.
                           Tensor<1, dim> approximate_surface_cell_normal;
-                          // Projects the face on the surface of the IB. This
+                          // Project the face on the surface of the IB. This
                           // creates a surface cell where we can evaluate the
                           // solution. Define the triangulation of the surface
                           // cell.
@@ -1201,7 +1201,7 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                             local_face_projection_triangulation);
                           local_face_dof_handler.distribute_dofs(local_face_fe);
 
-                          // Defined the solution on  IB surface cell by using
+                          // Define the solution on IB surface cell by using
                           // the IB stencil to extrapolate the fluid stress
                           // tensor.
 
@@ -4771,7 +4771,7 @@ GLSSharpNavierStokesSolver<dim>::load_particles_from_file()
           std::string shape_arguments_str =
             particles_data["shape_argument"][p_i];
           // Here shape is supposed to be separated by : but the initializer
-          // take ; as separator so we replace : by ;.
+          // takes ; as separator so we replace : by ;.
           std::string toReplace   = ":";
           std::string replacement = ";";
 

@@ -34,15 +34,14 @@ double
 Shape<dim>::displaced_volume()
 {
   StandardExceptions::ExcNotImplemented();
-  return 0;
+  return 0.;
 }
 
 template <int dim>
 void
 Shape<dim>::clear_cache()
 {
-  // Here we check if the cache size is not zero. As calling the clear cache
-  // function can be expensive if done frequently.
+  // Prevent expensive cache clearing if the cache is empty.
   if (value_cache.size() > 0)
     {
       value_cache.clear();
