@@ -2986,7 +2986,7 @@ namespace Parameters
           "explicit contact impulsion",
           "false",
           Patterns::Bool(),
-          "Bool to enable or disable the explicit evaluation of the contact impulsion. This means that if that parameter is set to true, the DEM is only run once, and the contact impulsion obtained is used for all Newton's iterations.");
+          "Bool to enable or disable the use of explicit contact impulsion evaluation in the resolution of the coupling of the particle. When it is set to true, this parameter results in the code only performing the DEM calculation once per CFD time step and using the resulting contact impulsion to evaluate all the other Newton's iterations. This reduces the number of times the DEM calculation is made.");
 
         prm.declare_entry(
           "explicit position integration",

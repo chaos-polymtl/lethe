@@ -277,8 +277,7 @@ public:
             unsigned int consecutive_center = 0;
 
             // Iterate to find the minimum of the intersection.
-            while (iteration < iteration_max &&
-                   previous_step_size > precision)
+            while (iteration < iteration_max && previous_step_size > precision)
               {
                 // Check the local gradient direction.
                 value_first_component =
