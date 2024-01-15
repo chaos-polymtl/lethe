@@ -175,6 +175,24 @@ public:
 
   /**
    * @brief Calculates non-linear (Hertzian) force between two objects. Take into input the physical properties and contact state of the two objects.
+   *
+   * @param normal_overlap Contact normal overlap
+   * @param contact_info A container that contains the required information for
+   * calculation of the contact force for a particle pair in contact
+   * @param contact_point The contact point between the two objects
+   * @param contact_normal Contact normal unit vector
+   * @param normal_force Contact normal force
+   * @param tangential_force Contact tangential force
+   * @param rolling_resistance_torque Contact rolling resistance torque
+   * @param particle_one_position the position of particle one
+   * @param particle_one_velocity the velocity of particle one
+   * @param particle_one_omega the angular velocity of particle one
+   * @param particle_one_properties the physical properties of particle one
+   * @param particle_two_position the position of particle two
+   * @param particle_two_velocity the velocity of particle two
+   * @param particle_two_omega the angular velocity of particle two
+   * @param particle_two_properties the physical properties of particle two
+   * @param dt the dem time step.
    */
   void
   calculate_force_model(const double           normal_overlap,

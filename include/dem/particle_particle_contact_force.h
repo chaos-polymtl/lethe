@@ -228,7 +228,7 @@ protected:
    * @param normal_force Contact normal force
    * @param tangential_force Contact tangential force
    * @param tangential_torque Contact tangential torque
-   * @param rolling_friction_torque Contact rolling resistance torque
+   * @param rolling_resistance_torque Contact rolling resistance torque
    * @param particle_one_torque
    * @param particle_two_torque
    * @param particle_one_force Force acting on particle one
@@ -266,7 +266,7 @@ protected:
    * @param normal_force normal_force Contact normal force
    * @param tangential_force Contact tangential force
    * @param tangential_torque Contact tangential torque
-   * @param rolling_friction_torque Contact rolling resistance torque
+   * @param rolling_resistance_torque Contact rolling resistance torque
    * @param particle_one_torque Torque acting on particle one (local)
    * @param particle_one_force Force acting on particle one
    */
@@ -326,7 +326,7 @@ protected:
    * @param tangential_force Contact tangential force
    * @param particle_one_tangential_torque Contact tangential torque on particle one
    * @param particle_two_tangential_torque Contact tangential torque on particle two
-   * @param rolling_friction_torque Contact rolling resistance torque
+   * @param rolling_resistance_torque Contact rolling resistance torque
    */
   inline void
   calculate_linear_contact(
@@ -481,7 +481,7 @@ protected:
    * @param tangential_force Contact tangential force
    * @param particle_one_tangential_torque Contact tangential torque on particle one
    * @param particle_two_tangential_torque Contact tangential torque on particle two
-   * @param rolling_friction_torque Contact rolling resistance torque
+   * @param rolling_resistance_torque Contact rolling resistance torque
    */
   inline void
   calculate_hertz_mindlin_limit_overlap_contact(
@@ -635,7 +635,7 @@ protected:
    * @param normal_force Contact normal force
    * @param tangential_force Contact tangential force
    * @param tangential_torque Contact tangential torque
-   * @param rolling_friction_torque Contact rolling resistance torque
+   * @param rolling_resistance_torque Contact rolling resistance torque
    */
   inline void
   calculate_hertz_mindlin_limit_force_contact(
@@ -781,7 +781,7 @@ protected:
    * @param normal_force Contact normal force
    * @param tangential_force Contact tangential force
    * @param tangential_torque Contact tangential torque
-   * @param rolling_friction_torque Contact rolling resistance torque
+   * @param rolling_resistance_torque Contact rolling resistance torque
    */
   inline void
   calculate_hertz_contact(
@@ -923,7 +923,7 @@ protected:
    * @param tangential_force Contact tangential force
    * @param particle_one_tangential_torque Contact tangential torque on particle one
    * @param particle_two_tangential_torque Contact tangential torque on particle two
-   * @param rolling_friction_torque Contact rolling resistance torque
+   * @param rolling_resistance_torque Contact rolling resistance torque
    */
   inline void
   calculate_hertz_JKR_contact(

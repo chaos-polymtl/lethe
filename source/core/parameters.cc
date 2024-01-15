@@ -3142,13 +3142,13 @@ namespace Parameters
         prm.leave_subsection();
       }
 
-      nb = prm.get_integer("number of particles");
+      nb_particles = prm.get_integer("number of particles");
 
       assemble_navier_stokes_inside =
         prm.get_bool("assemble Navier-Stokes inside particles");
 
-      particles.resize(nb);
-      for (unsigned int i = 0; i < nb; ++i)
+      particles.resize(nb_particles);
+      for (unsigned int i = 0; i < nb_particles; ++i)
         {
           particles[i].initialize_all();
           std::string section = "particle info " + std::to_string(i);

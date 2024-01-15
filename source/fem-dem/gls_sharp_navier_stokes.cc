@@ -788,9 +788,10 @@ GLSSharpNavierStokesSolver<dim>::define_particles()
   if (this->simulation_parameters.particlesParameters
         ->load_particles_from_file == false)
     {
-      particles.resize(this->simulation_parameters.particlesParameters->nb);
+      particles.resize(
+        this->simulation_parameters.particlesParameters->nb_particles);
       for (unsigned int i = 0;
-           i < this->simulation_parameters.particlesParameters->nb;
+           i < this->simulation_parameters.particlesParameters->nb_particles;
            ++i)
         {
           particles[i] =
@@ -805,7 +806,7 @@ GLSSharpNavierStokesSolver<dim>::define_particles()
     {
       load_particles_from_file();
       for (unsigned int i = 0;
-           i < this->simulation_parameters.particlesParameters->nb;
+           i < this->simulation_parameters.particlesParameters->nb_particles;
            ++i)
         {
           if (particles[i].integrate_motion == true)

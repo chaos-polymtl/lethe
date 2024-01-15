@@ -140,9 +140,8 @@ public:
    * @param b second variable
    */
   double
-  smooth_max(double a, double b)
+  smooth_max(double a, double b, double smooth_factor = 10)
   {
-    double smooth_factor = 10;
     return (a * std::exp(a * smooth_factor) + b * std::exp(b * smooth_factor)) /
            ((std::exp(a * smooth_factor) + std::exp(b * smooth_factor)));
   }
@@ -225,23 +224,16 @@ public:
     // descent.
     if (bounding_box_contact)
       {
-        std::vector<Tensor<1, dim>> search_direction;
+        std::vector<Tensor<1, dim>> search_direction(2 * dim);
         // Define the cartesian direction search directions.
-        if constexpr (dim == 2)
+        search_direction[0][0] = 1.;
+        search_direction[1][0] = -1.;
+        search_direction[2][1] = 1.;
+        search_direction[3][1] = -1.;
+        if constexpr (dim == 3)
           {
-            search_direction.push_back(Tensor<1, dim>({1.0, 0.0}));
-            search_direction.push_back(Tensor<1, dim>({-1.0, 0.0}));
-            search_direction.push_back(Tensor<1, dim>({0.0, 1.0}));
-            search_direction.push_back(Tensor<1, dim>({0.0, -1.0}));
-          }
-        else
-          {
-            search_direction.push_back(Tensor<1, dim>({1.0, 0.0, 0.0}));
-            search_direction.push_back(Tensor<1, dim>({-1.0, 0.0, 0.0}));
-            search_direction.push_back(Tensor<1, dim>({0.0, 1.0, 0.0}));
-            search_direction.push_back(Tensor<1, dim>({0.0, -1.0, 0.0}));
-            search_direction.push_back(Tensor<1, dim>({0.0, 0.0, 1.0}));
-            search_direction.push_back(Tensor<1, dim>({0.0, 0.0, -1.0}));
+            search_direction[4][2] = 1.;
+            search_direction[5][2] = -1.;
           }
         // Loop over all the initial candidate points.
         for (unsigned int i = 0; i < candidate_points.size(); ++i)
@@ -352,31 +344,16 @@ public:
                         previous_value - precision * precision)
                       {
                         // Define the guess point.
-                        if constexpr (dim == 2)
+                        new_point[0] =
+                          previous_position[0] -
+                          ((diff_results[0] - diff_results[1]) / 2) /
+                            ((diff_results[0] + diff_results[1]) / max_step);
+                        new_point[1] =
+                          previous_position[1] -
+                          ((diff_results[2] - diff_results[3]) / 2) /
+                            ((diff_results[2] + diff_results[3]) / max_step);
+                        if constexpr (dim == 3)
                           {
-                            new_point[0] =
-                              previous_position[0] -
-                              ((diff_results[0] - diff_results[1]) / 2) /
-                                ((diff_results[0] + diff_results[1]) /
-                                 max_step);
-                            new_point[1] =
-                              previous_position[1] -
-                              ((diff_results[2] - diff_results[3]) / 2) /
-                                ((diff_results[2] + diff_results[3]) /
-                                 max_step);
-                          }
-                        else
-                          {
-                            new_point[0] =
-                              previous_position[0] -
-                              ((diff_results[0] - diff_results[1]) / 2) /
-                                ((diff_results[0] + diff_results[1]) /
-                                 max_step);
-                            new_point[1] =
-                              previous_position[1] -
-                              ((diff_results[2] - diff_results[3]) / 2) /
-                                ((diff_results[2] + diff_results[3]) /
-                                 max_step);
                             new_point[2] =
                               previous_position[2] -
                               ((diff_results[4] - diff_results[5]) / 2) /
@@ -550,23 +527,16 @@ public:
     // descent.
     if (bounding_box_contact)
       {
-        std::vector<Tensor<1, dim>> search_direction;
+        std::vector<Tensor<1, dim>> search_direction(2 * dim);
         // Define the cartesian direction search directions.
-        if constexpr (dim == 2)
+        search_direction[0][0] = 1.;
+        search_direction[1][0] = -1.;
+        search_direction[2][1] = 1.;
+        search_direction[3][1] = -1.;
+        if constexpr (dim == 3)
           {
-            search_direction.push_back(Tensor<1, dim>({1.0, 0.0}));
-            search_direction.push_back(Tensor<1, dim>({-1.0, 0.0}));
-            search_direction.push_back(Tensor<1, dim>({0.0, 1.0}));
-            search_direction.push_back(Tensor<1, dim>({0.0, -1.0}));
-          }
-        else
-          {
-            search_direction.push_back(Tensor<1, dim>({1.0, 0.0, 0.0}));
-            search_direction.push_back(Tensor<1, dim>({-1.0, 0.0, 0.0}));
-            search_direction.push_back(Tensor<1, dim>({0.0, 1.0, 0.0}));
-            search_direction.push_back(Tensor<1, dim>({0.0, -1.0, 0.0}));
-            search_direction.push_back(Tensor<1, dim>({0.0, 0.0, 1.0}));
-            search_direction.push_back(Tensor<1, dim>({0.0, 0.0, -1.0}));
+            search_direction[4][2] = 1.;
+            search_direction[5][2] = -1.;
           }
         // Loop over all the initial candidate points.
         for (unsigned int i = 0; i < candidate_points.size(); ++i)
@@ -671,31 +641,16 @@ public:
                         previous_value - precision * precision)
                       {
                         // Define the guess point.
-                        if constexpr (dim == 2)
+                        new_point[0] =
+                          previous_position[0] -
+                          ((diff_results[0] - diff_results[1]) / 2) /
+                            ((diff_results[0] + diff_results[1]) / max_step);
+                        new_point[1] =
+                          previous_position[1] -
+                          ((diff_results[2] - diff_results[3]) / 2) /
+                            ((diff_results[2] + diff_results[3]) / max_step);
+                        if constexpr (dim == 3)
                           {
-                            new_point[0] =
-                              previous_position[0] -
-                              ((diff_results[0] - diff_results[1]) / 2) /
-                                ((diff_results[0] + diff_results[1]) /
-                                 max_step);
-                            new_point[1] =
-                              previous_position[1] -
-                              ((diff_results[2] - diff_results[3]) / 2) /
-                                ((diff_results[2] + diff_results[3]) /
-                                 max_step);
-                          }
-                        else
-                          {
-                            new_point[0] =
-                              previous_position[0] -
-                              ((diff_results[0] - diff_results[1]) / 2) /
-                                ((diff_results[0] + diff_results[1]) /
-                                 max_step);
-                            new_point[1] =
-                              previous_position[1] -
-                              ((diff_results[2] - diff_results[3]) / 2) /
-                                ((diff_results[2] + diff_results[3]) /
-                                 max_step);
                             new_point[2] =
                               previous_position[2] -
                               ((diff_results[4] - diff_results[5]) / 2) /
@@ -1500,6 +1455,14 @@ public:
   get_shape_manifold() override;
 
 
+  /**
+   * @brief Return the distance, the center point, and the normal between the current shape and the shape given in the argument. The center point is the point that minimized the level set obtained from the intersection of the two shapes. The normal is defined using the closest surface point on the two shapes. This function is an optimized version of the general shape distance calculation for the case of a sphere.
+   * @param shape The shape with which the distance is evaluated
+   * @param cell The cell that is likely to contain the evaluation point
+   * @param candidate_points This is the initial guess points used in the calculation. (In this implementation this parameter is void)
+   * @param precision This is the precision of the distance between the two shapes. (In this implementation this parameter is void)
+   * @param exact_distance_outside_of_contact This is a boolean to force the exact distance evaluation if the shapes are not in contact. (In this implementation this parameter is void)
+   */
   std::tuple<double, Tensor<1, dim>, Point<dim>>
   distance_to_shape_with_cell_guess(
     Shape<dim>                                           &shape,
@@ -1508,6 +1471,14 @@ public:
     double                                                precision = 1e-6,
     bool exact_distance_outside_of_contact = false) override;
 
+  /**
+   * @brief Return the distance, the center point, and the normal between the current shape and the shape given in the argument. The center point is the point that minimized the level set obtained from the intersection of the two shapes. The normal is defined using the closest surface point on the two shapes. This function is an optimized version of the general shape distance calculation for the case of a sphere.
+   * @param shape The shape with which the distance is evaluated
+   * @param cell The cell that is likely to contain the evaluation point
+   * @param candidate_points This is the initial guess points used in the calculation. (In this implementation, this parameter is void)
+   * @param precision This is the precision of the distance between the two shapes. (In this implementation, this parameter is void)
+   * @param exact_distance_outside_of_contact This is a boolean to force the exact distance evaluation if the shapes are not in contact. (In this implementation, this parameter is void)
+   */
   std::tuple<double, Tensor<1, dim>, Point<dim>>
   distance_to_shape(Shape<dim>              &shape,
                     std::vector<Point<dim>> &candidate_points,
@@ -2182,13 +2153,9 @@ public:
     , constituents(constituents)
     , operations(operations)
   {
-    double x_max                      = 0;
-    double y_max                      = 0;
-    double z_max                      = 0;
-    double x_min                      = 0;
-    double y_min                      = 0;
-    double z_min                      = 0;
-    bool   xyz_min_max_is_initialized = false;
+    Point<dim> point_max;
+    Point<dim> point_min;
+    bool       xyz_min_max_is_initialized = false;
 
     // Calculation of the effective radius and setting of constituents' status
     for (auto const &constituent : constituents | boost::adaptors::map_values)
@@ -2196,35 +2163,25 @@ public:
         this->effective_radius =
           std::max(this->effective_radius, constituent->effective_radius);
         constituent->set_part_of_a_composite(true);
+        std::vector<Point<3>> component_bounding_box_vertex(std::pow(2, dim));
         // For each of the components update the bounding box.
         if constexpr (dim == 2)
           {
             std::vector<Point<3>> component_bounding_box_vertex(4);
-
-            component_bounding_box_vertex[0][0] =
-              constituent->get_bounding_box_center()[0] +
-              constituent->get_bounding_box_half_length()[0];
-            component_bounding_box_vertex[0][1] =
-              constituent->get_bounding_box_center()[1] +
-              constituent->get_bounding_box_half_length()[1];
-            component_bounding_box_vertex[1][0] =
-              constituent->get_bounding_box_center()[0] -
-              constituent->get_bounding_box_half_length()[0];
-            component_bounding_box_vertex[1][1] =
-              constituent->get_bounding_box_center()[1] +
-              constituent->get_bounding_box_half_length()[1];
-            component_bounding_box_vertex[2][0] =
-              constituent->get_bounding_box_center()[0] -
-              constituent->get_bounding_box_half_length()[0];
-            component_bounding_box_vertex[2][1] =
-              constituent->get_bounding_box_center()[1] -
-              constituent->get_bounding_box_half_length()[1];
-            component_bounding_box_vertex[3][0] =
-              constituent->get_bounding_box_center()[0] +
-              constituent->get_bounding_box_half_length()[0];
-            component_bounding_box_vertex[3][1] =
-              constituent->get_bounding_box_center()[1] -
-              constituent->get_bounding_box_half_length()[1];
+            unsigned int          index = 0;
+            for (int i = -1; i < 2; i += 2)
+              {
+                for (int j = -1; j < 2; j += 2)
+                  {
+                    component_bounding_box_vertex[index][0] =
+                      constituent->get_bounding_box_center()[0] +
+                      constituent->get_bounding_box_half_length()[0] * i;
+                    component_bounding_box_vertex[index][1] =
+                      constituent->get_bounding_box_center()[1] +
+                      constituent->get_bounding_box_half_length()[1] * j;
+                    index += 1;
+                  }
+              }
             for (unsigned int i = 0; i < 4; ++i)
               {
                 // Position the vertex point in the reference frame of the
@@ -2234,134 +2191,75 @@ public:
                                  point_nd_to_3d(constituent->get_position());
                 if (xyz_min_max_is_initialized == false)
                   {
-                    x_max                      = new_point[0];
-                    x_min                      = new_point[0];
-                    y_max                      = new_point[1];
-                    y_min                      = new_point[1];
+                    for (unsigned int d = 0; d < dim; ++d)
+                      {
+                        point_min[d] = new_point[d];
+                        point_max[d] = new_point[d];
+                      }
                     xyz_min_max_is_initialized = true;
                   }
                 else
                   {
-                    x_max = std::max(x_max, new_point[0]);
-                    x_min = std::min(x_min, new_point[0]);
-                    y_max = std::max(y_max, new_point[1]);
-                    y_min = std::min(y_min, new_point[1]);
+                    for (unsigned int d = 0; d < dim; ++d)
+                      {
+                        point_min[d] = std::min(point_min[d], new_point[d]);
+                        point_max[d] = std::max(point_max[d], new_point[d]);
+                      }
                   }
               }
           }
         else
           {
             std::vector<Point<3>> component_bounding_box_vertex(8);
-            component_bounding_box_vertex[0][0] =
-              constituent->get_bounding_box_center()[0] +
-              constituent->get_bounding_box_half_length()[0];
-            component_bounding_box_vertex[0][1] =
-              constituent->get_bounding_box_center()[1] +
-              constituent->get_bounding_box_half_length()[1];
-            component_bounding_box_vertex[0][2] =
-              constituent->get_bounding_box_center()[2] +
-              constituent->get_bounding_box_half_length()[2];
-            component_bounding_box_vertex[1][0] =
-              constituent->get_bounding_box_center()[0] -
-              constituent->get_bounding_box_half_length()[0];
-            component_bounding_box_vertex[1][1] =
-              constituent->get_bounding_box_center()[1] +
-              constituent->get_bounding_box_half_length()[1];
-            component_bounding_box_vertex[1][2] =
-              constituent->get_bounding_box_center()[2] +
-              constituent->get_bounding_box_half_length()[2];
-            component_bounding_box_vertex[2][0] =
-              constituent->get_bounding_box_center()[0] -
-              constituent->get_bounding_box_half_length()[0];
-            component_bounding_box_vertex[2][1] =
-              constituent->get_bounding_box_center()[1] -
-              constituent->get_bounding_box_half_length()[1];
-            component_bounding_box_vertex[2][2] =
-              constituent->get_bounding_box_center()[2] +
-              constituent->get_bounding_box_half_length()[2];
-            component_bounding_box_vertex[3][0] =
-              constituent->get_bounding_box_center()[0] +
-              constituent->get_bounding_box_half_length()[0];
-            component_bounding_box_vertex[3][1] =
-              constituent->get_bounding_box_center()[1] -
-              constituent->get_bounding_box_half_length()[1];
-            component_bounding_box_vertex[3][2] =
-              constituent->get_bounding_box_center()[2] +
-              constituent->get_bounding_box_half_length()[2];
-            component_bounding_box_vertex[4][0] =
-              constituent->get_bounding_box_center()[0] +
-              constituent->get_bounding_box_half_length()[0];
-            component_bounding_box_vertex[4][1] =
-              constituent->get_bounding_box_center()[1] +
-              constituent->get_bounding_box_half_length()[1];
-            component_bounding_box_vertex[4][2] =
-              constituent->get_bounding_box_center()[2] -
-              constituent->get_bounding_box_half_length()[2];
-            component_bounding_box_vertex[5][0] =
-              constituent->get_bounding_box_center()[0] -
-              constituent->get_bounding_box_half_length()[0];
-            component_bounding_box_vertex[5][1] =
-              constituent->get_bounding_box_center()[1] +
-              constituent->get_bounding_box_half_length()[1];
-            component_bounding_box_vertex[5][2] =
-              constituent->get_bounding_box_center()[2] -
-              constituent->get_bounding_box_half_length()[2];
-            component_bounding_box_vertex[6][0] =
-              constituent->get_bounding_box_center()[0] -
-              constituent->get_bounding_box_half_length()[0];
-            component_bounding_box_vertex[6][1] =
-              constituent->get_bounding_box_center()[1] -
-              constituent->get_bounding_box_half_length()[1];
-            component_bounding_box_vertex[6][2] =
-              constituent->get_bounding_box_center()[2] +
-              constituent->get_bounding_box_half_length()[2];
-            component_bounding_box_vertex[7][0] =
-              constituent->get_bounding_box_center()[0] -
-              constituent->get_bounding_box_half_length()[0];
-            component_bounding_box_vertex[7][1] =
-              constituent->get_bounding_box_center()[1] -
-              constituent->get_bounding_box_half_length()[1];
-            component_bounding_box_vertex[7][2] =
-              constituent->get_bounding_box_center()[2] -
-              constituent->get_bounding_box_half_length()[2];
+            unsigned int          index = 0;
+            for (int i = -1; i < 2; i += 2)
+              {
+                for (int j = -1; j < 2; j += 2)
+                  {
+                    for (int k = -1; k < 2; k += 2)
+                      {
+                        component_bounding_box_vertex[index][0] =
+                          constituent->get_bounding_box_center()[0] +
+                          constituent->get_bounding_box_half_length()[0] * i;
+                        component_bounding_box_vertex[index][1] =
+                          constituent->get_bounding_box_center()[1] +
+                          constituent->get_bounding_box_half_length()[1] * j;
+                        component_bounding_box_vertex[index][2] =
+                          constituent->get_bounding_box_center()[2] +
+                          constituent->get_bounding_box_half_length()[2] * k;
+                        index += 1;
+                      }
+                  }
+              }
             for (unsigned int i = 0; i < 8; ++i)
               {
-                // position the vextex point in the reference frame of the
+                // Position the vertex point in the reference frame of the
                 // composite
                 auto new_point = constituent->get_rotation_matrix() *
                                    component_bounding_box_vertex[i] +
                                  point_nd_to_3d(constituent->get_position());
                 if (xyz_min_max_is_initialized == false)
                   {
-                    x_max                      = new_point[0];
-                    x_min                      = new_point[0];
-                    y_max                      = new_point[1];
-                    y_min                      = new_point[1];
-                    z_max                      = new_point[2];
-                    z_min                      = new_point[2];
+                    for (unsigned int d = 0; d < dim; ++d)
+                      {
+                        point_min[d] = new_point[d];
+                        point_max[d] = new_point[d];
+                      }
                     xyz_min_max_is_initialized = true;
                   }
                 else
                   {
-                    x_max = std::max(x_max, new_point[0]);
-                    x_min = std::min(x_min, new_point[0]);
-                    y_max = std::max(y_max, new_point[1]);
-                    y_min = std::min(y_min, new_point[1]);
-                    z_max = std::max(z_max, new_point[2]);
-                    z_min = std::min(z_min, new_point[2]);
+                    for (unsigned int d = 0; d < dim; ++d)
+                      {
+                        point_min[d] = std::min(point_min[d], new_point[d]);
+                        point_max[d] = std::max(point_max[d], new_point[d]);
+                      }
                   }
               }
           }
       }
-    this->bounding_box_half_length[0] = (x_max - x_min) / 2;
-    this->bounding_box_half_length[1] = (y_max - y_min) / 2;
-    this->bounding_box_center[0]      = (x_max + x_min) / 2;
-    this->bounding_box_center[1]      = (y_max + y_min) / 2;
-    if (dim == 3)
-      {
-        this->bounding_box_half_length[2] = (z_max - z_min) / 2;
-        this->bounding_box_center[2]      = (z_max + z_min) / 2;
-      }
+    this->bounding_box_half_length = (point_max - point_min) / 2;
+    this->bounding_box_center      = (point_max + point_min) / 2;
   }
 
   /**

@@ -1316,7 +1316,7 @@ namespace Parameters
     std::vector<IBParticle<dim>> particles;
 
     // Number of declared IB particles
-    unsigned int nb;
+    unsigned int nb_particles;
     // Boolean to determine whether or not the Navier-Stokes equations are
     // solved inside the particles.
     bool assemble_navier_stokes_inside;
