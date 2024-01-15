@@ -2,7 +2,7 @@
 Velocity Source
 ===============
 
-This subsection allows you to define velocity-dependant source terms. Two families of velocity source terms are supported. They enable the simulation of  problems in a Lagrangian reference frame for which the Coriolis and centrifugal forces must be added or of problems including porous media.
+This subsection allows you to define velocity-dependent source terms. Two families of velocity source terms are supported. They enable the simulation of  problems in a Lagrangian reference frame for which the Coriolis and centrifugal forces must be added or of problems including porous media.
 
 
 Rotating Frame
