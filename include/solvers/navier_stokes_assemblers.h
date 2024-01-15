@@ -32,7 +32,7 @@
 
 DeclExceptionMsg(
   PhaseChangeDarcyModelRequiresTemperature,
-  "Using the phase change Darcy model requires that a multiphysics simulation with the temperature enabled be running.");
+  "Using the phase change Darcy model requires to run a multiphysics simulation with the heat transfer solver enabled.");
 
 DeclExceptionMsg(
   PhaseChangeDarcyModelDoesNotSupportVOF,
