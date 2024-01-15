@@ -1811,8 +1811,8 @@ PhaseChangeDarcyAssembly<dim>::assemble_rhs(
       // Current temperature values
       double current_temperature = temperatures[q];
       // Depending on the value of the temperature, calculate the Darcy
-      // permeability This min(max) approach is used to calculate the liquid
-      // fraction without requiring if conditions
+      // permeability. This min(max) approach is used to calculate the liquid
+      // fraction without requiring if conditions.
       const double liquid_fraction =
         std::min(1.,
                  std::max((current_temperature -
