@@ -61,7 +61,7 @@ To install Sphinx globally:
 .. code-block:: shell
   :class: copy-button
 
-  pip install 'sphinx==4.*'
+  pip install 'sphinx==7.*'
 
 To install additional packages:
 

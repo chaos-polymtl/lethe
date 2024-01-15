@@ -8,7 +8,7 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  SPHINX_VERSION: 4.3.1
+  SPHINX_VERSION: 7.2.6
 
 jobs:
   doc:
