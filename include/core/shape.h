@@ -571,7 +571,7 @@ public:
         // Loop over all the initial candidate points.
         for (unsigned int i = 0; i < candidate_points.size(); ++i)
           {
-            // Initialize variable use in the calculation.
+            // Initialize variable used in the calculation.
             Point<dim> current_point = candidate_points[i];
             Point<dim> dx{}, distance_gradient{}, previous_position{},
               previous_gradient{};

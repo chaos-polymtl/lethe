@@ -43,9 +43,9 @@ This subsection contains the parameters related to the sharp immersed boundary s
         set lubrication range max              = 2
         set lubrication range min              = 0.1
         set particle nonlinear tolerance       = 1e-6
-        set use explicit contact impulsion     = false
-        set use explicit position integration  = false
-        set use approximate radius for contact = false
+        set explicit contact impulsion     = false
+        set explicit position integration  = false
+        set approximate radius for contact = false
         subsection gravity
           set Function expression = 0; 0; 0
         end
@@ -171,11 +171,11 @@ This subsection contains the parameters related to the sharp immersed boundary s
 	    
 	* The ``enable lubrication force`` parameter enables or disables the use of lubrication forces. This parameter must be set to ``false`` when using a non-newtonian fluid rheology.
     
-    * The ``use explicit contact impulsion`` parameter enables or disables the use of explicit contact impulsion evaluation in the resolution of the coupling of the particle. When it is set to true, this parameter results in the code only performing the DEM calculation once per CFD time step and using the resulting contact impulsion to evaluate all the other Newton's iterations. This reduces the number of times the DEM calculation is made. However, since the position is still implicitly evaluated in the absence of contact, the cut cell mapping must be performed at each Newton iteration.
+    * The ``explicit contact impulsion`` parameter enables or disables the use of explicit contact impulsion evaluation in the resolution of the coupling of the particle. When it is set to true, this parameter results in the code only performing the DEM calculation once per CFD time step and using the resulting contact impulsion to evaluate all the other Newton's iterations. This reduces the number of times the DEM calculation is made. However, since the position is still implicitly evaluated in the absence of contact, the cut cell mapping must be performed at each Newton iteration.
 
-    * The ``use explicit position integration`` parameter enables or disables the use of explicit position integration in the resolution of the coupling of the particles. When it is set to true, this parameter results in the code only performing the DEM calculation once and using the resulting position and orientation to evaluate all the other Newton's iterations. This reduces the number of times the cut cell mapping must be performed and the number of call to the DEM calculations. However, this can affect the stability of the scheme.
+    * The ``explicit position integration`` parameter enables or disables the use of explicit position integration in the resolution of the coupling of the particles. When it is set to true, this parameter results in the code only performing the DEM calculation once and using the resulting position and orientation to evaluate all the other Newton's iterations. This reduces the number of times the cut cell mapping must be performed and the number of call to the DEM calculations. However, this can affect the stability of the scheme.
 
-    * The ``use approximate radius for contact`` parameter enables or disables the use of the approximate contact radius for contact calculation. When this parameter is true, the contact radius used in the contact force calculation is obtained through the effective contact radius. Otherwise, the curvature radius of the shape is evaluated at the contact point. In the case of a flat surface contact point, the contact radius is limited to 100 times the effective radius of the particle.
+    * The ``approximate radius for contact`` parameter enables or disables the use of the approximate contact radius for contact calculation. When this parameter is true, the contact radius used in the contact force calculation is obtained through the effective contact radius. Otherwise, the curvature radius of the shape is evaluated at the contact point. In the case of a flat surface contact point, the contact radius is limited to 100 times the effective radius of the particle.
     
     .. note::
 	When using a non-Newtonian fluid, the lubrication force will be automatically deactivated.
