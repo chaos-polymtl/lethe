@@ -42,7 +42,7 @@ y_bot	= 0.001 * H
 temperature_limit = 29.75
 
 # List of name for the cases used in the comparison
-case_list=["Lethe - Viscous penality", "Lethe - Darcy penality", "Lethe - Hybrid penality"]
+case_list=["Lethe - Viscous penalization", "Lethe - Darcy penalization", "Lethe - Hybrid penalization"]
 
 
 #Experimental data from Gau and Viskanta 1986
