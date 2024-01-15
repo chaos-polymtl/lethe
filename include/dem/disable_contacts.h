@@ -519,9 +519,6 @@ private:
   // Particle advection flag
   bool advect_particles_enabled;
 
-  // Option for smoothing the granular temperature with cell neighbors
-  bool smooth_granular_temperature = true;
-
   // Threshold values for granular temperature and solid fraction
   double granular_temperature_threshold;
   double solid_fraction_threshold;
