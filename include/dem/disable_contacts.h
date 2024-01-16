@@ -304,7 +304,7 @@ public:
   void
   update_average_velocities_acceleration(
     Particles::ParticleHandler<dim> &particle_handler,
-    const Tensor<1, 3> &             g,
+    const Tensor<1, 3>              &g,
     const std::vector<Tensor<1, 3>> &force,
     const double                     dt)
   {
@@ -328,7 +328,7 @@ public:
         for (auto &particle : particles_in_cell)
           {
             // Get particle properties
-            auto &particle_properties         = particle.get_properties();
+            auto particle_properties          = particle.get_properties();
             types::particle_index particle_id = particle.get_local_index();
 
             for (int d = 0; d < dim; ++d)

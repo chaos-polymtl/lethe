@@ -141,7 +141,7 @@ VelocityVerletIntegrator<dim>::integrate(
   std::vector<Tensor<1, 3>>                       &force,
   const std::vector<double>                       &MOI,
   const parallel::distributed::Triangulation<dim> &triangulation,
-  DisableContacts<dim> &                           disable_contacts_object)
+  DisableContacts<dim>                            &disable_contacts_object)
 {
   // If there are advected particles, we use another function since the average
   // velocity and acceleration of cells are computed for mobile cells
@@ -264,14 +264,14 @@ VelocityVerletIntegrator<dim>::integrate(
 template <int dim>
 void
 VelocityVerletIntegrator<dim>::integrate_with_advected_particles(
-  Particles::ParticleHandler<dim> &                particle_handler,
-  const Tensor<1, 3> &                             g,
+  Particles::ParticleHandler<dim>                 &particle_handler,
+  const Tensor<1, 3>                              &g,
   const double                                     dt,
-  std::vector<Tensor<1, 3>> &                      torque,
-  std::vector<Tensor<1, 3>> &                      force,
-  const std::vector<double> &                      MOI,
+  std::vector<Tensor<1, 3>>                       &torque,
+  std::vector<Tensor<1, 3>>                       &force,
+  const std::vector<double>                       &MOI,
   const parallel::distributed::Triangulation<dim> &triangulation,
-  DisableContacts<dim> &                           disable_contacts_object)
+  DisableContacts<dim>                            &disable_contacts_object)
 {
   Point<3>           particle_position;
   const Tensor<1, 3> dt_g = g * dt;

@@ -884,15 +884,14 @@ CFDDEMSolver<dim>::dem_iterator(unsigned int counter)
           const auto parallel_triangulation =
             dynamic_cast<parallel::distributed::Triangulation<dim> *>(
               &*this->triangulation);
-          integrator_object->integrate(
-            this->particle_handler,
-            g,
-            dem_time_step,
-            torque,
-            force,
-            MOI,
-            *parallel_triangulation,
-            disable_contacts_object.get_mobility_status());
+          integrator_object->integrate(this->particle_handler,
+                                       g,
+                                       dem_time_step,
+                                       torque,
+                                       force,
+                                       MOI,
+                                       *parallel_triangulation,
+                                       disable_contacts_object);
         }
     }
 }
@@ -940,7 +939,7 @@ CFDDEMSolver<dim>::dem_contact_build(unsigned int counter)
 
       this->particle_handler.exchange_ghost_particles(true);
 
-     if (has_disabled_contacts)
+      if (has_disabled_contacts)
         {
           // Update the active and ghost cells set (this should be done after a
           // load balance or a checkpoint, but since the fem-dem code do not
