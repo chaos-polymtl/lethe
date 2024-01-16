@@ -2186,6 +2186,8 @@ public:
               {
                 // Position the vertex point in the reference frame of the
                 // composite
+                constituent->set_position(constituent->get_position());
+                constituent->set_orientation(constituent->get_orientation());
                 auto new_point = constituent->get_rotation_matrix() *
                                    component_bounding_box_vertex[i] +
                                  point_nd_to_3d(constituent->get_position());
@@ -2235,9 +2237,12 @@ public:
               {
                 // Position the vertex point in the reference frame of the
                 // composite
+                constituent->set_position(constituent->get_position());
+                constituent->set_orientation(constituent->get_orientation());
                 auto new_point = constituent->get_rotation_matrix() *
                                    component_bounding_box_vertex[i] +
                                  point_nd_to_3d(constituent->get_position());
+
                 if (xyz_min_max_is_initialized == false)
                   {
                     for (unsigned int d = 0; d < dim; ++d)
