@@ -289,6 +289,16 @@ HeatTransfer<dim>::setup_assemblers()
                   this->simulation_control,
                   this->simulation_parameters.laser_parameters));
             }
+          else if (this->simulation_parameters.laser_parameters->laser_type ==
+                   Parameters::Laser<
+                     dim>::LaserType::uniform_heat_flux_vof_interface)
+            {
+              this->assemblers.push_back(
+                std::make_shared<
+                  HeatTransferAssemblerLaserUniformHeatFluxVOFInterface<dim>>(
+                  this->simulation_control,
+                  this->simulation_parameters.laser_parameters));
+            }
           else // Laser is applied in fluid 1 as a volumetric source
             {
               this->assemblers.push_back(

@@ -1068,6 +1068,125 @@ template class HeatTransferAssemblerLaserExponentialDecayVOF<3>;
 
 template <int dim>
 void
+HeatTransferAssemblerLaserUniformHeatFluxVOFInterface<dim>::assemble_matrix(
+  HeatTransferScratchData<dim> & /*scratch_data*/,
+  StabilizedMethodsCopyData & /*copy_data*/)
+{}
+
+template <int dim>
+void
+HeatTransferAssemblerLaserUniformHeatFluxVOFInterface<dim>::assemble_rhs(
+  HeatTransferScratchData<dim> &scratch_data,
+  StabilizedMethodsCopyData    &copy_data)
+{
+  // Laser parameters
+  const double laser_power      = laser_parameters->laser_power;
+  const double absorptivity     = laser_parameters->laser_absorptivity;
+  const double laser_start_time = laser_parameters->start_time;
+  const double laser_end_time   = laser_parameters->end_time;
+  const double beam_radius      = laser_parameters->beam_radius;
+  const double current_time     = this->simulation_control->get_current_time();
+
+  if (current_time >= laser_start_time && current_time <= laser_end_time)
+    {
+      // Get laser path
+      Function<dim> &laser_scan_path = *(laser_parameters->laser_scan_path);
+      laser_scan_path.set_time(current_time);
+
+      // For the laser heat source calculations, we need the radial distance, r,
+      // (in a dim-1 dimensional plane perpendicular to the laser beam
+      // direction) between the laser focal point and the quadrature points.
+      // Here, the focal point is any given point on the laser's axis.
+      // Hence, we get the laser location (laser_location) as a Point<dim>, in
+      // which the first and second components show the position of the laser
+      // focal point in a plane perpendicular to the emission direction.
+      // Then we use dim-1 auxiliary variables (Point<dim-1>
+      // laser_location_on_surface) to store the position of the laser focal
+      // point in the perpendicular plane to the emission direction.
+
+      // Get laser location
+      Point<dim> laser_location;
+      laser_location[0] = laser_scan_path.value(
+        laser_location, laser_parameters->perpendicular_plane_coordinate_one);
+      if constexpr (dim == 3)
+        {
+          laser_location[1] = laser_scan_path.value(
+            laser_location,
+            laser_parameters->perpendicular_plane_coordinate_two);
+        }
+
+      // Get laser location on the operation surface
+      Point<dim - 1> laser_location_on_surface;
+      for (unsigned int d = 0; d < dim - 1; d++)
+        laser_location_on_surface[d] = laser_location[d];
+
+      const unsigned int n_q_points = scratch_data.n_q_points;
+      const unsigned int n_dofs     = scratch_data.n_dofs;
+
+      // Copy data elements
+      auto &strong_residual = copy_data.strong_residual;
+      auto &local_rhs       = copy_data.local_rhs;
+
+      // assembling right hand side
+      for (unsigned int q = 0; q < n_q_points; ++q)
+        {
+          // Get quadrature point location on surface to calculate its distance
+          // from the laser focal point in a perpendicular plane to the
+          // direction of emission
+          Point<dim - 1> quadrature_point_on_surface;
+          quadrature_point_on_surface[0] =
+            scratch_data.quadrature_points
+              [q][laser_parameters->perpendicular_plane_coordinate_one];
+          if constexpr (dim == 3)
+            {
+              quadrature_point_on_surface[1] =
+                scratch_data.quadrature_points
+                  [q][laser_parameters->perpendicular_plane_coordinate_two];
+            }
+
+          // Store JxW in local variable for faster access
+          const double JxW = scratch_data.fe_values_T.JxW(q);
+
+          const double filtered_phase_gradient_value_q_norm =
+            scratch_data.filtered_phase_gradient_values[q].norm();
+
+          // Calculate the strong residual for GLS stabilization
+
+          // In 2D, the heat flux is delivered to a surface of area 2R*1
+          double laser_heat_source = 0.0;
+
+          if (laser_location_on_surface.distance(quadrature_point_on_surface) <
+              beam_radius)
+            {
+              laser_heat_source =
+                absorptivity * laser_power / (2.0 * beam_radius);
+
+              // In 3D, the heat flux is delivered to a surface of pi*R^2
+              if constexpr (dim == 3)
+                {
+                  laser_heat_source = absorptivity * laser_power /
+                                      (M_PI * beam_radius * beam_radius);
+                }
+            }
+          strong_residual[q] -=
+            filtered_phase_gradient_value_q_norm * laser_heat_source;
+
+          for (unsigned int i = 0; i < n_dofs; ++i)
+            {
+              const auto phi_T_i = scratch_data.phi_T[q][i];
+
+              local_rhs(i) += filtered_phase_gradient_value_q_norm *
+                              laser_heat_source * phi_T_i * JxW;
+            }
+        } // end loop on quadrature points
+    }
+}
+
+template class HeatTransferAssemblerLaserUniformHeatFluxVOFInterface<2>;
+template class HeatTransferAssemblerLaserUniformHeatFluxVOFInterface<3>;
+
+template <int dim>
+void
 HeatTransferAssemblerFreeSurfaceRadiationVOF<dim>::assemble_matrix(
   HeatTransferScratchData<dim> &scratch_data,
   StabilizedMethodsCopyData    &copy_data)
