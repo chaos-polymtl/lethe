@@ -403,7 +403,7 @@ iframe {
 
 
 /* DESKTOP VIEW */
-@media (min-width : 1145px ){
+@media (min-width : 1140px ){
 	body {
 		max-width: 1200px;
 	}
