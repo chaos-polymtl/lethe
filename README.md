@@ -9,7 +9,7 @@
 [![Documentation](https://github.com/lethe-cfd/lethe/actions/workflows/doc-github-pages.yml/badge.svg)](https://github.com/lethe-cfd/lethe/actions/workflows/doc-github-pages.yml)
 [![Docker Image](https://github.com/lethe-cfd/lethe/actions/workflows/docker.yml/badge.svg)](https://github.com/lethe-cfd/lethe/actions/workflows/docker.yml)
 
-Lethe (pronounced /ˈliːθiː/) is open-source computational fluid dynamics
+Lethe (pronounced /ˈliːθiː/) is an open-source computational fluid dynamics
 (CFD), discrete element method (DEM) and coupled CFD-DEM
 software which uses high-order continuous Galerkin formulations to
 simulate single and multiphase flows.
