@@ -642,7 +642,7 @@ namespace Parameters
                         "Thermal expansion coefficient of the liquid phase");
 
       prm.declare_entry("thermal expansion solid",
-                        "1",
+                        "0",
                         Patterns::Double(),
                         "Thermal expansion coefficient of the solid phase");
 
