@@ -219,10 +219,10 @@ namespace Parameters
     double kinematic_viscosity_s;
 
     // Darcy permeability liquid - Units in 1/(s)
-    double penality_l;
+    double penalty_l;
 
     // Darcy permeabilitysolid - Units in 1/(s)
-    double penality_s;
+    double penalty_s;
 
     static void
     declare_parameters(ParameterHandler &prm);

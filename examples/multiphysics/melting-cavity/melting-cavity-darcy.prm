@@ -97,10 +97,10 @@ subsection physical properties
       set thermal expansion solid = 0
 
       # Permeability of the liquid phase
-      set Darcy penality liquid = 0
+      set Darcy penalty liquid = 0
 
       # Permeability of the solid phase
-      set Darcy penality solid = 1e4
+      set Darcy penalty solid = 1e4
     end
   end
 end

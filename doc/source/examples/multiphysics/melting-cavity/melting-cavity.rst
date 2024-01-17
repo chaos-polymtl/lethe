@@ -313,17 +313,17 @@ Furthermore, the ``phase change`` subsection within the physical properties but 
           set thermal expansion solid        = 0
     
           # Permeability of the liquid phase
-          set Darcy penality liquid         = 0
+          set Darcy penalty liquid         = 0
     
           # Permeability of the  solid phase
-          set Darcy penality solid          = 1e4
+          set Darcy penalty solid          = 1e4
         end
       end
     end
   
-Note that the viscosity of the liquid and the solid phase are now identical and that a very strong Darcy penality coefficient is applied on the solid phase to restrict its motion. A third approach would be to combine this Darcy term with the viscosity model used above, resulting in an hybrid approach.
+Note that the viscosity of the liquid and the solid phase are now identical and that a very strong Darcy penalty coefficient is applied on the solid phase to restrict its motion. A third approach would be to combine this Darcy term with the viscosity model used above, resulting in an hybrid approach.
 
-The following graph shows the evolution of the liquid fraction as a function of time using the viscous penality, Darcy penality and hybrid penality strategy. We see that the viscous penality tends to increase the amount of molten material. Whether or not this is a physical phenomenon cannot be assessed here.
+The following graph shows the evolution of the liquid fraction as a function of time using the viscous penalty, Darcy penalty and hybrid penalty strategy. We see that the viscous penalty tends to increase the amount of molten material. Whether or not this is a physical phenomenon cannot be assessed here.
 
 
 .. image:: images/comparison-melted-volume-fraction.png

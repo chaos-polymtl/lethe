@@ -1763,15 +1763,15 @@ PhaseChangeDarcyAssembly<dim>::assemble_matrix(
                             (phase_change_parameters.T_liquidus -
                              phase_change_parameters.T_solidus),
                           0.));
-      double darcy_penality =
-        phase_change_parameters.penality_l * liquid_fraction +
-        (1. - liquid_fraction) * phase_change_parameters.penality_s;
+      double darcy_penalty=
+        phase_change_parameters.penalty_l * liquid_fraction +
+        (1. - liquid_fraction) * phase_change_parameters.penalty_s;
 
-      strong_residual[q] += darcy_penality * velocities[q];
+      strong_residual[q] += darcy_penalty * velocities[q];
 
       for (unsigned int j = 0; j < n_dofs; ++j)
         {
-          strong_jacobian[q][j] += darcy_penality * scratch_data.phi_u[q][j];
+          strong_jacobian[q][j] += darcy_penalty * scratch_data.phi_u[q][j];
         }
 
       for (unsigned int i = 0; i < n_dofs; ++i)
@@ -1780,7 +1780,7 @@ PhaseChangeDarcyAssembly<dim>::assemble_matrix(
           for (unsigned int j = 0; j < n_dofs; ++j)
             {
               const auto &phi_u_j = scratch_data.phi_u[q][j];
-              local_matrix(i, j) += darcy_penality * phi_u_i * phi_u_j * JxW;
+              local_matrix(i, j) += darcy_penalty * phi_u_i * phi_u_j * JxW;
             }
         }
     }
@@ -1820,11 +1820,11 @@ PhaseChangeDarcyAssembly<dim>::assemble_rhs(
                             (phase_change_parameters.T_liquidus -
                              phase_change_parameters.T_solidus),
                           0.));
-      double darcy_penality =
-        phase_change_parameters.penality_l * liquid_fraction +
-        (1. - liquid_fraction) * phase_change_parameters.penality_s;
+      double darcy_penalty =
+        phase_change_parameters.penalty_l * liquid_fraction +
+        (1. - liquid_fraction) * phase_change_parameters.penalty_s;
 
-      strong_residual[q] += darcy_penality * velocities[q];
+      strong_residual[q] += darcy_penalty * velocities[q];
 
       // Assembly of the right-hand side
       for (unsigned int i = 0; i < n_dofs; ++i)
@@ -1832,7 +1832,7 @@ PhaseChangeDarcyAssembly<dim>::assemble_rhs(
           const auto phi_u_i = scratch_data.phi_u[q][i];
 
           // Laplacian on the velocity terms
-          local_rhs(i) -= darcy_penality * velocities[q] * phi_u_i * JxW;
+          local_rhs(i) -= darcy_penalty * velocities[q] * phi_u_i * JxW;
         }
     }
 }
