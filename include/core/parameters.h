@@ -194,29 +194,35 @@ namespace Parameters
     // Latent enthalpy for the phase change - Units in J/kg
     double latent_enthalpy;
 
-    // Specific heat liquid - Units in J/(kg*K)
+    // Specific heat of liquid - Units in J/(kg*K)
     double cp_l;
 
-    // Specific heat solid - Units in J/(kg*K)
+    // Specific heat of solid - Units in J/(kg*K)
     double cp_s;
 
-    // Thermal conductivity liquid - Units in W/(m*K)
+    // Thermal conductivity of liquid - Units in W/(m*K)
     double thermal_conductivity_l;
 
-    // Thermal conductivity solid - Units in W/(m*K)
+    // Thermal conductivity of solid - Units in W/(m*K)
     double thermal_conductivity_s;
 
-    // Thermal expansion coefficient liquid - Units in 1/K
+    // Thermal expansion coefficient of liquid - Units in 1/K
     double thermal_expansion_l;
 
-    // Thermal expansion coefficient solid - Units in 1/K
+    // Thermal expansion coefficient of solid - Units in 1/K
     double thermal_expansion_s;
 
-    // kinematic viscosity liquid - Units in m^2/(s)
+    // kinematic viscosity of liquid - Units in m^2/(s)
     double kinematic_viscosity_l;
 
-    // kinematic viscosity solid - Units in in m^2/(s)
+    // kinematic viscosity of solid - Units in m^2/(s)
     double kinematic_viscosity_s;
+
+    // Darcy penalty of liquid - Units in 1/(s)
+    double penalty_l;
+
+    // Darcy penalty of solid - Units in 1/(s)
+    double penalty_s;
 
     static void
     declare_parameters(ParameterHandler &prm);
@@ -1265,15 +1271,29 @@ namespace Parameters
 
   struct VelocitySource
   {
+    enum class DarcySourceType
+    {
+      none,        // No Darcy source term
+      phase_change // Phase change darcy source term which applies a
+                   // penalization depending on the phase change model
+    };
+
     enum class RotatingFrameType
     {
       none,
       srf
     };
+
     RotatingFrameType rotating_frame_type;
     double            omega_x;
     double            omega_y;
     double            omega_z;
+
+    /*
+     * Type of darcy velocity source term applied to the Navier-Stokes equations
+     */
+    DarcySourceType darcy_type;
+
 
     static void
     declare_parameters(ParameterHandler &prm);

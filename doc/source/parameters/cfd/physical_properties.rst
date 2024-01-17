@@ -376,9 +376,9 @@ This model is parameterized using the ``phase change`` subsection
 
 * The ``solidus temperature`` is :math:`T_s`
 
-* The ``specific heat liquid`` is :math:`\nu_{l}`
+* The ``viscosity liquid`` is :math:`\nu_{l}`
 
-* The ``specific heat solid`` is :math:`\nu_{s}`
+* The ``viscosity solid`` is :math:`\nu_{s}`
 
 .. note::
   The phase change subsection is used to parametrize *both* ``rheological model = phase_change`` *and* ``specific heat model = phase_change``. This prevents parameter duplication.
@@ -525,10 +525,10 @@ This model is parameterized using the following section:
     set solidus temperature  = 0
   
     # Thermal expansion of the liquid phase
-    set thermal expansion liquid = 0
+    set thermal expansion liquid = 1
   
     # Thermal expansion of the solid phase
-    set thermal expansion solid  = 1
+    set thermal expansion solid  = 0
   end
 
 * The ``liquidus temperature`` is :math:`T_l`

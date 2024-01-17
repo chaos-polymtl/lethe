@@ -8,159 +8,11 @@ set dimension = 2
 #---------------------------------------------------
 
 subsection simulation control
-  set method                       = bdf1
-  set time end                     = 41
-  set time step                    = 0.01
-  set adapt                        = true
-  set max cfl                      = 0.8
-  set adaptative time step scaling = 1.1
-  set output name                  = melting
-  set output control               = iteration
-  set output frequency             = 10
-  set output path                  = ./output/
-end
-
-#---------------------------------------------------
-# Multiphysics
-#---------------------------------------------------
-
-subsection multiphysics
-  set heat transfer  = true
-  set buoyancy force = true
-  set fluid dynamics = true
-end
-
-#---------------------------------------------------
-# Initial condition
-#---------------------------------------------------
-
-subsection initial conditions
-  set type = nodal
-  subsection uvwp
-    set Function expression = 0; 0; 0
-  end
-  subsection temperature
-    set Function expression = 28
-  end
-end
-
-#---------------------------------------------------
-# Source term
-#---------------------------------------------------
-
-subsection source term
-  subsection xyz
-    set Function expression = 0 ; -1 ; 0
-  end
-end
-
-#---------------------------------------------------
-# Physical Properties
-#---------------------------------------------------
-
-subsection physical properties
-  set number of fluids      = 1
-  set reference temperature = 29.8
-  subsection fluid 0
-    set thermal conductivity model = constant
-    set thermal conductivity       = 0.040516842071415184
-
-    set thermal expansion model = phase_change
-    set thermal expansion       = 1
-
-    set rheological model   = phase_change
-    set specific heat model = phase_change
-
-    set density = 1
-
-    subsection phase change
-      # Enthalpy of the phase change
-      set latent enthalpy = 200
-
-      # Temperature of the liquidus
-      set liquidus temperature = 29.8
-
-      # Temperature of the solidus
-      set solidus temperature = 29.6
-
-      # Specific heat of the liquid phase
-      set specific heat liquid = 1
-
-      # Specific heat of the solid phase
-      set specific heat solid = 1
-
-      # Kinematic viscosity of the liquid phase
-      set viscosity liquid = 0.0007366698558439125
-
-      # Kinematic viscosity of the solid phase
-      set viscosity solid = 10
-
-      set thermal expansion liquid = 1
-      set thermal expansion solid  = 0
-    end
-  end
-end
-
-#---------------------------------------------------
-# Mesh
-#---------------------------------------------------
-
-subsection mesh
-  set type               = dealii
-  set grid type          = subdivided_hyper_rectangle
-  set grid arguments     = 3, 2 : 0, 0 : 1, 0.714 : true
-  set initial refinement = 6
-end
-
-#---------------------------------------------------
-# Postprocessing
-#---------------------------------------------------
-
-subsection post-processing
-  set calculate liquid fraction = true
-  set verbosity                 = verbose
-end
-
-#---------------------------------------------------
-# Boundary Conditions
-#---------------------------------------------------
-
-subsection boundary conditions
-  set number = 4
-  subsection bc 0
-    set id   = 0
-    set type = noslip
-  end
-  subsection bc 1
-    set id   = 1
-    set type = noslip
-  end
-  subsection bc 2
-    set id   = 2
-    set type = noslip
-  end
-  subsection bc 3
-    set id   = 3
-    set type = noslip
-  end
-end
-
-subsection boundary conditions heat transfer
-  set number = 2
-  subsection bc 0
-    set id   = 0
-    set type = temperature
-    subsection value
-      set Function expression = 38
-    end
-  end
-  subsection bc 1
-    set id   = 1
-    set type = temperature
-    subsection value
-      set Function expression = 28
-    end
-  end
+  set method            = bdf1
+  set number mesh adapt = 0
+  set output frequency  = 0
+  set time end          = 10
+  set time step         = 2
 end
 
 #---------------------------------------------------
@@ -173,19 +25,171 @@ subsection FEM
 end
 
 #---------------------------------------------------
+# Initial condition
+#---------------------------------------------------
+
+subsection initial conditions
+  set type = nodal
+  subsection uvwp
+    set Function expression = 0; 0; 0;
+  end
+end
+
+#---------------------------------------------------
+# Physical Properties
+#---------------------------------------------------
+
+subsection physical properties
+  set number of fluids = 1
+  subsection fluid 0
+    set thermal conductivity model = constant
+    set thermal conductivity       = 1
+    set rheological model          = phase_change
+
+    set specific heat model = phase_change
+    subsection phase change
+      # Enthalpy of the phase change
+      set latent enthalpy = 0
+
+      # Temperature of the liquidus
+      set liquidus temperature = 0.51
+
+      # Temperature of the solidus
+      set solidus temperature = 0.49
+
+      # Specific heat of the liquid phase
+      set specific heat liquid = 1
+
+      # Specific heat of the solid phase
+      set specific heat solid = 1
+
+      # Permeability of the liquid phase
+      set Darcy penalty liquid = 0
+
+      # Permeability of the solid phase
+      set Darcy penalty solid = 1e5
+    end
+  end
+end
+
+#---------------------------------------------------
+# Analytical Solution
+#---------------------------------------------------
+
+subsection analytical solution
+  set enable = true
+  subsection uvwp
+    set Function constants  = H=1, G=1, mu=1
+    set Function expression = if(y>=0.5,0,2*(0.5-y)) ; 0 ; 0
+  end
+end
+
+
+#---------------------------------------------------
+# Velocity Source
+#---------------------------------------------------
+
+subsection velocity source
+  # Darcy-like permeability term. Choices are <none|phase_change>.
+  set Darcy type          = phase_change
+end
+
+#---------------------------------------------------
+# Mesh
+#---------------------------------------------------
+
+subsection mesh
+  set type               = dealii
+  set grid type          = subdivided_hyper_rectangle
+  set grid arguments     = 4, 50 : 0, 0 : 0.1, 1 : true
+  set initial refinement = 0
+end
+
+#---------------------------------------------------
+# Mesh Adaptation Control
+#---------------------------------------------------
+
+subsection mesh adaptation
+  set type                 = none
+  set max number elements  = 20000
+  set max refinement level = 3
+  set min refinement level = 0
+  set frequency            = 1
+  set fraction refinement  = 0.1
+  set fraction coarsening  = 0.1
+end
+
+#---------------------------------------------------
+# Boundary Conditions
+#---------------------------------------------------
+
+subsection boundary conditions
+  set number = 3
+  subsection bc 0
+    set type               = periodic
+    set id                 = 0
+    set periodic_id        = 1
+    set periodic_direction = 0
+  end
+  subsection bc 2
+    set type = noslip
+    set id   = 3
+  end
+  subsection bc 1
+    set id   = 2
+    set type = function
+    subsection u
+      set Function expression = 1
+    end
+    subsection v
+      set Function expression = 0
+    end
+    subsection w
+      set Function expression = 0
+    end
+  end
+end
+
+subsection boundary conditions heat transfer
+  set number = 2
+  subsection bc 0
+    set type = temperature
+    set id   = 2
+    subsection value
+      set Function expression = 1
+    end
+  end
+  subsection bc 1
+    set type = temperature
+    set id   = 3
+    subsection value
+      set Function expression = 0
+    end
+  end
+end
+
+#---------------------------------------------------
+# Multiphysics
+#---------------------------------------------------
+
+subsection multiphysics
+  set heat transfer = true
+end
+
+#---------------------------------------------------
 # Non-Linear Solver Control
 #---------------------------------------------------
 
 subsection non-linear solver
   subsection heat transfer
-    set tolerance      = 1e-3
-    set max iterations = 30
-    set verbosity      = verbose
+    set verbosity      = quiet
+    set tolerance      = 1e-8
+    set max iterations = 5
   end
   subsection fluid dynamics
-    set tolerance      = 1e-4
+    set verbosity      = quiet
+    set tolerance      = 1e-8
     set max iterations = 5
-    set verbosity      = verbose
   end
 end
 
@@ -195,23 +199,22 @@ end
 
 subsection linear solver
   subsection fluid dynamics
-    set verbosity                             = verbose
+    set verbosity                             = quiet
     set method                                = gmres
-    set max iters                             = 1000
-    set relative residual                     = 1e-3
-    set minimum residual                      = 1e-5
+    set max iters                             = 5000
+    set relative residual                     = 1e-6
+    set minimum residual                      = 1e-11
     set preconditioner                        = ilu
     set ilu preconditioner fill               = 0
     set ilu preconditioner absolute tolerance = 1e-12
     set ilu preconditioner relative tolerance = 1.00
-    set max krylov vectors                    = 1000
   end
   subsection heat transfer
-    set verbosity                             = verbose
+    set verbosity                             = quiet
     set method                                = gmres
-    set max iters                             = 1000
-    set relative residual                     = 1e-3
-    set minimum residual                      = 1e-5
+    set max iters                             = 5000
+    set relative residual                     = 1e-6
+    set minimum residual                      = 1e-11
     set preconditioner                        = ilu
     set ilu preconditioner fill               = 0
     set ilu preconditioner absolute tolerance = 1e-12
