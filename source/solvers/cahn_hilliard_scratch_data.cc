@@ -67,8 +67,16 @@ CahnHilliardScratchData<dim>::allocate()
     std::vector<Tensor<2, dim>>(this->n_q_points);
 
   // Allocate physical properties
-  this->surface_tension        = std::vector<double>(n_q_points);
-  this->mobility_cahn_hilliard = std::vector<double>(n_q_points);
+  this->surface_tension                 = std::vector<double>(n_q_points);
+  this->mobility_cahn_hilliard          = std::vector<double>(n_q_points);
+  this->mobility_cahn_hilliard_gradient = std::vector<double>(n_q_points);
+
+  // Physical properties
+  fields.insert(
+    std::pair<field, std::vector<double>>(field::phase_order_cahn_hilliard,
+                                          n_q_points));
+  fields.insert(std::pair<field, std::vector<double>>(
+    field::phase_order_cahn_hilliard_filtered, n_q_points));
 }
 
 template <int dim>
@@ -83,6 +91,10 @@ CahnHilliardScratchData<dim>::calculate_physical_properties()
         }
       case 2:
         {
+          set_field_vector(field::phase_order_cahn_hilliard,
+                           this->phase_order_values,
+                           this->fields);
+
           // Gather properties from material interactions if necessary
           if (properties_manager.get_number_of_material_interactions() > 0)
             {
@@ -100,7 +112,6 @@ CahnHilliardScratchData<dim>::calculate_physical_properties()
             properties_manager.get_material_interaction_id(
               material_interactions_type::fluid_fluid, 0, 1);
 
-
           const auto mobility_cahn_hilliard_model =
             properties_manager.get_mobility_cahn_hilliard(
               material_interaction_id);
@@ -109,6 +120,8 @@ CahnHilliardScratchData<dim>::calculate_physical_properties()
           //                                      std::endl;
           mobility_cahn_hilliard_model->vector_value(fields,
                                                      mobility_cahn_hilliard);
+          mobility_cahn_hilliard_model->vector_jacobian(
+            fields, phase_order_cahn_hilliard, mobility_cahn_hilliard_gradient);
 
           // Keep the comments below as long as the mobility fields will not
           // have been tested

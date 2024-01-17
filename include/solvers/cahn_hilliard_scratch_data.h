@@ -362,6 +362,7 @@ public:
   std::vector<double>                  kinematic_viscosity;
   std::vector<double>                  surface_tension;
   std::vector<double>                  mobility_cahn_hilliard;
+  std::vector<double>                  mobility_cahn_hilliard_gradient;
 
 
   FEValuesExtractors::Scalar phase_order;
