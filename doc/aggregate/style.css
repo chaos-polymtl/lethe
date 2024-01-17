@@ -13,7 +13,7 @@ html * {
 /* DEFAULT/GLOBAL/MOBILE VIEW */
 header {
 	padding: 24px;
-	background-color: #31587A ;
+	background-color: #31587A;
 }
 
 body {
@@ -63,6 +63,7 @@ iframe {
 
 .style-nav ul li a {
 	text-decoration: none;
+	font-size: 18px;
 	color: #F9F9FB;
 	text-align: center;
 	display: block;
@@ -128,6 +129,10 @@ iframe {
 	background-size: cover;
 	padding: 20px 20px 20px 20px;
 	color: #F9F9FB;
+}
+
+.getting-started a {
+	font-size: 18px;
 }
 
 .button {
@@ -348,7 +353,11 @@ iframe {
 
 /* On smaller screens */
 @media (max-width: 500px) {
-	.prev, .next,.slide-button {
+	.slide-button {
+		font-size: 14px;
+	}
+
+	.prev, .next {
 		font-size: 13px}
 	
 	.prev, .next {
