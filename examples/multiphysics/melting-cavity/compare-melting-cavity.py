@@ -9,17 +9,10 @@ Postprocessing code to compare cases in the melting cavity example
 
 #############################################################################
 '''Importing Libraries'''
-from math import pi
 import numpy as np
-import pandas as pd
 import matplotlib.pyplot as plt
-import matplotlib.tri as tri
-from matplotlib import cm
 import pyvista as pv
 
-import glob
-
-import os
 import sys
 
 #############################################################################
