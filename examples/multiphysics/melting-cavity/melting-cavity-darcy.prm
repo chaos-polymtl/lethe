@@ -16,8 +16,8 @@ subsection simulation control
   set adaptative time step scaling = 1.1
   set output name                  = melting
   set output control               = iteration
-  set output frequency             = 10
-  set output path                  = ./output/
+  set output frequency             = 100
+  set output path                  = ./output-darcy/
 end
 
 #---------------------------------------------------
@@ -39,9 +39,6 @@ subsection initial conditions
   subsection uvwp
     set Function expression = 0; 0; 0
   end
-  subsection temperature
-    set Function expression = 28
-  end
 end
 
 #---------------------------------------------------
@@ -59,8 +56,6 @@ end
 #---------------------------------------------------
 
 subsection physical properties
-  set number of fluids      = 1
-  set reference temperature = 29.8
   subsection fluid 0
     set thermal conductivity model = constant
     set thermal conductivity       = 0.040516842071415184
@@ -93,10 +88,19 @@ subsection physical properties
       set viscosity liquid = 0.0007366698558439125
 
       # Kinematic viscosity of the solid phase
-      set viscosity solid = 10
+      set viscosity solid = 0.0007366698558439125
 
+      # Thermal expansion of the liquid phase
       set thermal expansion liquid = 1
-      set thermal expansion solid  = 0
+
+      # Thermal expansion of the solid phase
+      set thermal expansion solid = 0
+
+      # Permeability of the liquid phase
+      set Darcy penalty liquid = 0
+
+      # Permeability of the solid phase
+      set Darcy penalty solid = 1e4
     end
   end
 end
@@ -170,6 +174,14 @@ end
 subsection FEM
   set velocity order = 1
   set pressure order = 1
+end
+
+#---------------------------------------------------
+# Velocity Source
+#---------------------------------------------------
+
+subsection velocity source
+  set Darcy type = phase_change
 end
 
 #---------------------------------------------------
