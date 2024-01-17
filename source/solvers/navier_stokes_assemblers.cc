@@ -1763,7 +1763,7 @@ PhaseChangeDarcyAssembly<dim>::assemble_matrix(
                             (phase_change_parameters.T_liquidus -
                              phase_change_parameters.T_solidus),
                           0.));
-      double darcy_penalty=
+      double darcy_penalty =
         phase_change_parameters.penalty_l * liquid_fraction +
         (1. - liquid_fraction) * phase_change_parameters.penalty_s;
 
