@@ -1,7 +1,7 @@
 <!doctype html>
 <html>
 <head>
-	<meta charset="UTF-8">
+	<meta charset="UTF-8" name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Lethe</title>
 	<link rel="stylesheet" href="style.css">
 </head>
@@ -106,9 +106,6 @@
 					<a class="prev" onclick="plusSlides(-1,0)">&#10094;</a>
 					<a class="next" onclick="plusSlides(1,0)">&#10095;</a>
 
-					<br>
-					<br>
-
 					<!-- Navigation dots on the bottom of slides -->
 					<div style="text-align:center">
 						<span class="dot" onclick="currentSlide(1,0)"></span>
@@ -161,9 +158,6 @@
 					<a class="prev" onclick="plusSlides(-1,1)">&#10094;</a>
 					<a class="next" onclick="plusSlides(1,1)">&#10095;</a>
 
-					<br>
-					<br>
-
 					<!-- Navigation dots on the bottom of slides -->
 					<div style="text-align:center">
 						<span class="dot" onclick="currentSlide(1,1)"></span>
@@ -173,7 +167,6 @@
 						<span class="dot" onclick="currentSlide(5,1)"></span>
 					</div>
 				</div>
-				<br>
 			</div>
 
 			<script>
@@ -218,8 +211,8 @@
   					dots[(slideIndex[no]-1)+(no*dots.length/2)].className += " active";
 				}
 			</script>
-
 		</div>
+		<br>
 	</main>
 
 	<footer>
