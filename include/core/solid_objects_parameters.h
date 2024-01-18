@@ -71,8 +71,7 @@ namespace Parameters
     std::string force_output_name;
     std::string torque_output_name;
   };
-
-
+  
   template <int dim>
   void
   NitscheObject<dim>::declare_parameters(ParameterHandler &prm, unsigned int id)
@@ -267,6 +266,7 @@ namespace Parameters
     prm.leave_subsection();
   }
 
+
   template <int dim>
   class RigidSolidObject
   {
@@ -283,6 +283,9 @@ namespace Parameters
 
     // Solid mesh
     Parameters::Mesh solid_mesh;
+
+    // Output management
+    bool output_bool;
 
     // Solid velocity
     Functions::ParsedFunction<dim> translational_velocity;
@@ -316,6 +319,13 @@ namespace Parameters
       prm.declare_entry("y", "0", Patterns::Double(), "Y COR");
       prm.declare_entry("z", "0", Patterns::Double(), "Z COR");
       prm.leave_subsection();
+
+      prm.enter_subsection("output");
+      prm.declare_entry("output solid object",
+                        "true",
+                        Patterns::Bool(),
+                        "Controls the generation of output files");
+      prm.leave_subsection();
     }
     prm.leave_subsection();
   }
@@ -341,6 +351,10 @@ namespace Parameters
       center_of_rotation[1] = prm.get_double("y");
       if (dim == 3)
         center_of_rotation[2] = prm.get_double("z");
+      prm.leave_subsection();
+
+      prm.enter_subsection("output");
+      output_bool = prm.get_bool("output solid object");
       prm.leave_subsection();
     }
     prm.leave_subsection();

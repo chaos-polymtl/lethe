@@ -291,7 +291,8 @@ private:
   Vector<double>                                displacement_since_mapped;
 
   // Output management
-  PVDHandler pvdhandler;
+  PVDHandler  pvdhandler;
+  const bool *output_bool;
 
   // Elements used to store the velocity of the solid object
   Function<spacedim> *translational_velocity;
