@@ -14,10 +14,10 @@ This subsection explains the solid objects (floating meshes) information. First 
 
 .. code-block:: text
 
- subsection floating walls
+ subsection solid objects
   # Total number of floating walls
     set number of solids  = 1
-      subsection  solid object 0
+      subsection solid object 0
         subsection mesh
             set type                   = gmsh
             set file name              = none
@@ -45,6 +45,10 @@ This subsection explains the solid objects (floating meshes) information. First 
             # Z COR
             set z = 0
         end
+
+        subsection output
+            set output solid object = true
+        end
     end
  end
 
@@ -57,4 +61,6 @@ This subsection explains the solid objects (floating meshes) information. First 
 * In the subsection ``angular velocity``, we define the angular velocity of the floating mesh.
 
 * In the subsection ``center of rotation``, we define the center of rotation of the solid object (in the case of rotational motion).
+
+* In the subsection ``output``, we define if we want an output file to be generated for the solid object at every output time step.
 

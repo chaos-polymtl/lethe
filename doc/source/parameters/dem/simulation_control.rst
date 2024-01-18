@@ -27,19 +27,22 @@ where :math:`{d_p}`, :math:`{\rho_p}`, :math:`{G}`, :math:`{\nu}` denote particl
 
     subsection simulation control
       # DEM time-step
-      set time step        = 1e-5
+      set time step         = 1e-5
 
       # Simulation end time
-      set time end         = 0.2
+      set time end          = 0.2
 
       # File output prefix
-      set output path      = ./
+      set output path       = ./
 
       # Log frequency
-      set log frequency    = 1000
+      set log frequency     = 1000
 
       # Output frequency
-      set output frequency = 10000
+      set output frequency  = 10000
+
+      # Output boundary
+      set output boundaries = true
     end
 
 

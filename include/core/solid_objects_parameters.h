@@ -71,7 +71,7 @@ namespace Parameters
     std::string force_output_name;
     std::string torque_output_name;
   };
-  
+
   template <int dim>
   void
   NitscheObject<dim>::declare_parameters(ParameterHandler &prm, unsigned int id)
@@ -419,7 +419,6 @@ namespace Parameters
     }
     prm.leave_subsection();
   }
-
 } // namespace Parameters
 
 #endif
