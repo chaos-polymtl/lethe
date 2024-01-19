@@ -281,8 +281,7 @@ VelocityVerletIntegrator<dim>::integrate_with_advected_particles(
     disable_contacts_object.get_velocities_accelerations();
 
   // Get the map of mobility status of cells
-  auto &cell_mobility_status_map =
-    disable_contacts_object.get_mobility_status();
+  auto cell_mobility_status_map = disable_contacts_object.get_mobility_status();
 
   for (auto &cell : triangulation.active_cell_iterators())
     {

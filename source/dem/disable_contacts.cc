@@ -131,6 +131,45 @@ DisableContacts<dim>::calculate_granular_temperature_and_solid_fraction(
         granular_temperature_cell;
       solid_fractions[cell->active_cell_index()] = solid_fraction;
     }
+
+
+  // Smooth the granular temperature of the cell with the granular temperature of the neighbor cells
+  // By default, the value of the granular temperature itself weight 50% and the
+
+  Vector<double> smoothed_granular_temperature_average = granular_temperature_average;
+
+  if (smooth_granular_temperature)
+    {
+      for (const auto &cell : local_and_ghost_cells_with_particles)
+        {
+          // Get the neighbor cells of the current cell
+          auto neighbor_cells =
+            total_neighbor_list[cell->global_active_cell_index()];
+
+          unsigned int n_neighbor_cells = 0;
+          double granular_temperature_neighbor_cells = 0.0;
+
+          // Sum the granular temperature of the neighbor cells
+          for (auto neighbor_cell : neighbor_cells)
+            {
+              // Since neighbor cells containt
+              if (neighbor_cell->is_locally_owned() ||
+                  neighbor_cell->is_ghost())
+                {
+
+                  granular_temperature_neighbor_cells +=
+                    granular_temperature_average[neighbor_cell->active_cell_index()];
+                  n_neighbor_cells++;
+                }
+            }
+
+          granular_temperature_neighbor_cells / n_neighbor_cells;
+
+          granular_temperature_cell *= 0.5;
+          granular_temperature_cell +=
+            0.5 * granular_temperature_neighbor_cells;
+        }
+    }
 }
 
 template <int dim>

@@ -267,6 +267,20 @@ public:
   }
 
   /**
+   * @brief Sets the total neighbor list
+   *
+   * @param total_neighbor_list The total neighbor list
+   */
+  // TODO: pass the variable to another function, not as a setter
+  void
+  set_total_neighbor_list(
+    const typename DEM::dem_data_structures<dim>::cells_total_neighbor_list
+      &total_cell_neighbor_list)
+  {
+    total_neighbor_list = total_cell_neighbor_list;
+  }
+
+  /**
    * @brief Converts the map of mobility status to a vector of mobility status
    * because map can't be used as is in the pvd post-processing or any data out,
    * it needs to be converted to a vector of mobility status by active cell
@@ -505,11 +519,16 @@ private:
   // Particle advection flag
   bool advect_particles_enabled;
 
+  // Option for smoothing the granular temperature with cell neighbors
+  bool smooth_granular_temperature = true;
+
   // Threshold values for granular temperature and solid fraction
   double granular_temperature_threshold;
   double solid_fraction_threshold;
 
-  int trigger_flag = 1;
+  typename DEM::dem_data_structures<dim>::cells_total_neighbor_list
+    total_neighbor_list;
+
 
   // Map of cell velocities and accelerations, the key is the active cell
   // iterator and the value is a pair of the cell velocity and acceleration
