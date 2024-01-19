@@ -710,7 +710,11 @@ CFDDEMSolver<dim>::initialize_dem_parameters()
   contact_manager.execute_cell_neighbors_search(
     *parallel_triangulation,
     periodic_boundaries_cells_information,
-    has_periodic_boundaries);
+    has_periodic_boundaries,
+    true);
+
+  disable_contacts_object.set_total_neighbor_list(
+    contact_manager.total_neighbor_list);
 
   // Finding boundary cells with faces
   boundary_cell_object.build(
