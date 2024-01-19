@@ -78,8 +78,6 @@ void
 AverageVelocities<dim, VectorType, DofsType>::calculate_reynolds_stresses(
   const VectorType &local_evaluation_point)
 {
-  // TODO: generalize this for the use of
-  // LinearAlegra::distributed::Vector<double>
   if constexpr (std::is_same_v<VectorType, TrilinosWrappers::MPI::Vector> ||
                 std::is_same_v<VectorType, TrilinosWrappers::MPI::BlockVector>)
     {
@@ -205,8 +203,7 @@ AverageVelocities<dim, VectorType, DofsType>::calculate_reynolds_stresses(
 
           // // k*dt = 1/2(u'u'+v'v')*dt (turbulence kinetic energy)
           // // Note : k_dt and rns_dt are both pointers of
-          // // reynolds_normal_stress_dt for Trilinos vector (not block
-          // vectors)
+          // // reynolds_normal_stress_dt
           (*k_dt)[k_index(i)] = ((*rns_dt)[i] + (*rns_dt)[i + 1]) / 2;
 
           if (dim == 3)
