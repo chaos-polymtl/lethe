@@ -333,6 +333,35 @@ GLSVANSSolver<dim>::update_solution_and_constraints()
   // Remake hanging node constraints
   DoFTools::make_hanging_node_constraints(void_fraction_dof_handler,
                                           void_fraction_constraints);
+
+  // Define constraints for periodic boundary conditions
+  auto &boundary_conditions =
+    this->cfd_dem_simulation_parameters.cfd_parameters.boundary_conditions;
+  for (unsigned int i_bc = 0; i_bc < boundary_conditions.size; ++i_bc)
+    {
+      if (this->simulation_parameters.boundary_conditions.type[i_bc] ==
+          BoundaryConditions::BoundaryType::periodic)
+        {
+          periodic_direction = boundary_conditions.periodic_direction[i_bc];
+          DoFTools::make_periodicity_constraints(
+            void_fraction_dof_handler,
+            boundary_conditions.id[i_bc],
+            boundary_conditions.periodic_id[i_bc],
+            periodic_direction,
+            void_fraction_constraints);
+
+          // Get periodic offset if void fraction method is qcm or spm
+          if (this->cfd_dem_simulation_parameters.void_fraction->mode ==
+                Parameters::VoidFractionMode::qcm ||
+              this->cfd_dem_simulation_parameters.void_fraction->mode ==
+                Parameters::VoidFractionMode::spm)
+            {
+              periodic_offset =
+                get_periodic_offset_distance(boundary_conditions.id[i_bc]);
+            }
+        }
+    }
+
   active_set.clear();
 
   for (const auto &cell : void_fraction_dof_handler.active_cell_iterators())

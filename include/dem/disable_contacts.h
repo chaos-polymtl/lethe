@@ -325,31 +325,34 @@ public:
         velocity_cell_average.clear();
         acceleration_dt.clear();
 
-        for (auto &particle : particles_in_cell)
+        if (n_particles_in_cell > 0)
           {
-            // Get particle properties
-            auto particle_properties          = particle.get_properties();
-            types::particle_index particle_id = particle.get_local_index();
-
-            for (int d = 0; d < dim; ++d)
+            for (auto &particle : particles_in_cell)
               {
-                // Get the particle velocity components
-                int v_axis = DEM::PropertiesIndex::v_x + d;
-                velocity_cell_average[d] += particle_properties[v_axis];
+                // Get particle properties
+                auto particle_properties          = particle.get_properties();
+                types::particle_index particle_id = particle.get_local_index();
+
+                for (int d = 0; d < dim; ++d)
+                  {
+                    // Get the particle velocity components
+                    int v_axis = DEM::PropertiesIndex::v_x + d;
+                    velocity_cell_average[d] += particle_properties[v_axis];
+                  }
+
+                // a = F/m + g
+                acceleration_dt +=
+                  force[particle_id] /
+                    particle_properties[DEM::PropertiesIndex::mass] +
+                  g;
               }
 
-            // a = F/m + g
-            acceleration_dt +=
-              force[particle_id] /
-                particle_properties[DEM::PropertiesIndex::mass] +
-              g;
+            // Compute the average velocity and acceleration, the time step is
+            // multiplied here for the hole vector instead of each time a value
+            // is used
+            velocity_cell_average /= n_particles_in_cell;
+            acceleration_dt *= dt / n_particles_in_cell;
           }
-
-        // Compute the average velocity and acceleration, the time step is
-        // multiplied here for the hole vector instead of each time a value is
-        // used
-        velocity_cell_average /= n_particles_in_cell;
-        acceleration_dt /= n_particles_in_cell * dt;
 
         // Update acceleration for the mobile cell only
         cell_velocities_accelerations[cell] = {velocity_cell_average,

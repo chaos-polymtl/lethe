@@ -900,6 +900,11 @@ template <int dim>
 void
 CFDDEMSolver<dim>::dem_contact_build(unsigned int counter)
 {
+  // TODO: check again for the right place for this execution
+  if (has_periodic_boundaries)
+    periodic_boundaries_object.execute_particles_displacement(
+      this->particle_handler, periodic_boundaries_cells_information);
+
   // Check to see if it is contact search step
   contact_detection_step =
     check_contact_detection_method(counter,

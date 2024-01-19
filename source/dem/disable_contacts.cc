@@ -175,9 +175,9 @@ DisableContacts<dim>::identify_mobility_status(
   mobility_status inactive_status = (!advect_particles_enabled) ?
                                       mobility_status::inactive :
                                       mobility_status::advected;
-  mobility_status active_status = (!advect_particles_enabled) ?
-                                    mobility_status::static_active :
-                                    mobility_status::advected_active;
+  mobility_status active_status   = (!advect_particles_enabled) ?
+                                      mobility_status::static_active :
+                                      mobility_status::advected_active;
 
   // Check if the cell is empty (n_particle = 0), if so, nodes and cells are
   // flagged as empty mobility status (5)
