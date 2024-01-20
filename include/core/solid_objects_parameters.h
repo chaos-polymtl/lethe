@@ -320,12 +320,10 @@ namespace Parameters
       prm.declare_entry("z", "0", Patterns::Double(), "Z COR");
       prm.leave_subsection();
 
-      prm.enter_subsection("output");
       prm.declare_entry("output solid object",
                         "true",
                         Patterns::Bool(),
                         "Controls the generation of output files");
-      prm.leave_subsection();
     }
     prm.leave_subsection();
   }
@@ -353,9 +351,7 @@ namespace Parameters
         center_of_rotation[2] = prm.get_double("z");
       prm.leave_subsection();
 
-      prm.enter_subsection("output");
       output_bool = prm.get_bool("output solid object");
-      prm.leave_subsection();
     }
     prm.leave_subsection();
   }

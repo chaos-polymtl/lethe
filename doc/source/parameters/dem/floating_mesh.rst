@@ -46,9 +46,8 @@ This subsection explains the solid objects (floating meshes) information. First 
             set z = 0
         end
 
-        subsection output
-            set output solid object = true
-        end
+        set output solid object = true
+
     end
  end
 
@@ -62,5 +61,5 @@ This subsection explains the solid objects (floating meshes) information. First 
 
 * In the subsection ``center of rotation``, we define the center of rotation of the solid object (in the case of rotational motion).
 
-* In the subsection ``output``, we define if we want an output file to be generated for the solid object at every output time step.
+* The ``output solid object`` defines if we want an output file to be generated for the solid object at every output time step.
 

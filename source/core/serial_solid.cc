@@ -15,7 +15,6 @@
  */
 
 #include <core/lethe_grid_tools.h>
-#include <core/serial_solid.h>
 #include <core/solutions_output.h>
 
 #include <deal.II/base/point.h>
@@ -24,7 +23,6 @@
 
 #include <deal.II/fe/fe.h>
 #include <deal.II/fe/fe_system.h>
-#include <deal.II/fe/mapping.h>
 
 #include <deal.II/grid/filtered_iterator.h>
 #include <deal.II/grid/grid_generator.h>
@@ -45,7 +43,7 @@ SerialSolid<dim, spacedim>::SerialSolid(
   , this_mpi_process(Utilities::MPI::this_mpi_process(mpi_communicator))
   , param(param)
   , id(id)
-  , output_bool(&param->output_bool)
+  , output_bool(param->output_bool)
   , translational_velocity(&param->translational_velocity)
   , angular_velocity(&param->angular_velocity)
   , center_of_rotation(param->center_of_rotation)
@@ -467,55 +465,55 @@ void
 SerialSolid<dim, spacedim>::write_output_results(
   std::shared_ptr<SimulationControl> simulation_control)
 {
-  if (*output_bool)
-    {
-      DataOut<dim, spacedim> data_out;
-      data_out.attach_dof_handler(displacement_dh);
+  if (!output_bool)
+    return;
 
-      {
-        std::vector<std::string> displacement_names(spacedim, "displacement");
-        std::vector<DataComponentInterpretation::DataComponentInterpretation>
-          data_component_interpretation(
-            spacedim, DataComponentInterpretation::component_is_part_of_vector);
+  DataOut<dim, spacedim> data_out;
+  data_out.attach_dof_handler(displacement_dh);
 
-        data_out.add_data_vector(displacement,
-                                 displacement_names,
-                                 DataOut<dim, spacedim>::type_dof_data,
-                                 data_component_interpretation);
-      }
+  {
+    std::vector<std::string> displacement_names(spacedim, "displacement");
+    std::vector<DataComponentInterpretation::DataComponentInterpretation>
+      data_component_interpretation(
+        spacedim, DataComponentInterpretation::component_is_part_of_vector);
 
-      {
-        std::vector<std::string> displacement_names(
-          spacedim, "displacement_since_mapped");
-        std::vector<DataComponentInterpretation::DataComponentInterpretation>
-          data_component_interpretation(
-            spacedim, DataComponentInterpretation::component_is_part_of_vector);
+    data_out.add_data_vector(displacement,
+                             displacement_names,
+                             DataOut<dim, spacedim>::type_dof_data,
+                             data_component_interpretation);
+  }
 
-        data_out.add_data_vector(displacement_since_mapped,
-                                 displacement_names,
-                                 DataOut<dim, spacedim>::type_dof_data,
-                                 data_component_interpretation);
-      }
+  {
+    std::vector<std::string> displacement_names(spacedim,
+                                                "displacement_since_mapped");
+    std::vector<DataComponentInterpretation::DataComponentInterpretation>
+      data_component_interpretation(
+        spacedim, DataComponentInterpretation::component_is_part_of_vector);
 
-      data_out.build_patches();
+    data_out.add_data_vector(displacement_since_mapped,
+                             displacement_names,
+                             DataOut<dim, spacedim>::type_dof_data,
+                             data_component_interpretation);
+  }
 
-      const std::string folder        = simulation_control->get_output_path();
-      const std::string solution_name = simulation_control->get_output_name() +
-                                        ".solid_object." +
-                                        Utilities::int_to_string(id, 2);
-      const unsigned int iter        = simulation_control->get_step_number();
-      const double       time        = simulation_control->get_current_time();
-      const unsigned int group_files = simulation_control->get_group_files();
+  data_out.build_patches();
 
-      write_vtu_and_pvd<dim, spacedim>(pvdhandler,
-                                       data_out,
-                                       folder,
-                                       solution_name,
-                                       time,
-                                       iter,
-                                       group_files,
-                                       this->mpi_communicator);
-    }
+  const std::string folder        = simulation_control->get_output_path();
+  const std::string solution_name = simulation_control->get_output_name() +
+                                    ".solid_object." +
+                                    Utilities::int_to_string(id, 2);
+  const unsigned int iter        = simulation_control->get_step_number();
+  const double       time        = simulation_control->get_current_time();
+  const unsigned int group_files = simulation_control->get_group_files();
+
+  write_vtu_and_pvd<dim, spacedim>(pvdhandler,
+                                   data_out,
+                                   folder,
+                                   solution_name,
+                                   time,
+                                   iter,
+                                   group_files,
+                                   this->mpi_communicator);
 }
 
 template <int dim, int spacedim>
