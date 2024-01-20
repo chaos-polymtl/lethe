@@ -178,8 +178,8 @@ public:
   read(std::string prefix);
 
 private:
-  TrilinosScalar inv_range_time;
-  TrilinosScalar dt_0;
+  double inv_range_time;
+  double dt_0;
 
   VectorType velocity_dt;
   VectorType sum_velocity_dt;
