@@ -212,6 +212,12 @@ public:
     return thermal_expansion;
   }
 
+  std::vector<Parameters::PhaseChange>
+  get_phase_change_parameters_vector() const
+  {
+    return phase_change_parameters;
+  }
+
   std::vector<std::shared_ptr<TracerDiffusivityModel>>
   get_tracer_diffusivity_vector() const
   {
@@ -358,7 +364,8 @@ private:
   std::vector<std::shared_ptr<TracerDiffusivityModel>>   tracer_diffusivity;
   std::vector<std::shared_ptr<SurfaceTensionModel>>      surface_tension;
   std::vector<std::shared_ptr<MobilityCahnHilliardModel>>
-    mobility_cahn_hilliard;
+                                       mobility_cahn_hilliard;
+  std::vector<Parameters::PhaseChange> phase_change_parameters;
 
   std::map<field, bool> required_fields;
 

@@ -63,7 +63,7 @@ If a laser heat source is present in a simulation, it can be added in this secti
   .. math::
       q_\text{rad} = \epsilon \sigma (T^4 - T_\text{inf}^4)
 
-  * ``enable``: controls if the radiation cooling is enabled. The radiation sink is modulated by the filtered phase fraction gradient norm, :math:`|\nabla \phi'|`, in such way that the flux is applied at the interface between the fluids.
+  * ``enable``: controls if the radiation cooling is enabled. The radiation sink is modulated by the filtered phase fraction gradient norm, :math:`|\nabla \psi|`, in such way that the flux is applied at the interface between the fluids.
 
     .. warning::
         To apply this radiation cooling, the ``VOF`` parameter must be set to ``true`` in the :doc:`multiphysics` subsection.
@@ -85,9 +85,9 @@ Laser types
   When the ``exponential_decay`` is used in conjunction with the :doc:`VOF auxiliary physic <./volume_of_fluid>` the equation takes the following form:
 
   .. math::
-      q(x,y,z) = \frac{\phi' \eta \alpha P}{\pi r^2 \mu} \exp{\left(-\eta \frac{r^2}{R^2}\right)} \exp{\left(- \frac{|z|}{\mu}\right)}
+      q(x,y,z) = \frac{\psi \eta \alpha P}{\pi r^2 \mu} \exp{\left(-\eta \frac{r^2}{R^2}\right)} \exp{\left(- \frac{|z|}{\mu}\right)}
 
-  where :math:`\phi'` is the filtered phase fraction.
+  where :math:`\psi` is the filtered phase fraction.
 
   .. attention::
     In this case, the heat affects the fluid initialized as ``fluid 1``.
@@ -95,9 +95,9 @@ Laser types
 * When ``type`` is set to ``heat_flux_vof_interface``, it **must be used in conjunction with the** :doc:`VOF auxiliary physic <./volume_of_fluid>`. This model is used to apply the heat flux, given by the expression below, only at the interface.
 
   .. math::
-      q(x,y,z) = \frac{|\nabla \phi'| \eta \alpha P}{\pi r^2} \exp{\left(-\eta \frac{r^2}{R^2}\right)}
+      q(x,y,z) = \frac{|\nabla \psi| \eta \alpha P}{\pi r^2} \exp{\left(-\eta \frac{r^2}{R^2}\right)}
 
-  where :math:`r` is the radial distance from the laser's axis and :math:`|\nabla \phi'|` is the :math:`L^2` norm of the filtered phase fraction gradient.
+  where :math:`r` is the radial distance from the laser's axis and :math:`|\nabla \psi|` is the :math:`L^2` norm of the filtered phase fraction gradient.
 
 
 -----------

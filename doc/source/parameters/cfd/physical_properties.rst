@@ -100,9 +100,9 @@ Physical Properties
 
     .. math::
 
-      {\bf{F_{B}}} = -\beta {\bf{g}} (T-T_{ref})
+      {\bf{F_{B}}} = -\beta {\bf{g}} (T-T_\text{ref})
 
-    where :math:`F_B` denotes the buoyant force source term, :math:`\beta` is the thermal expansion coefficient, :math:`T` is temperature, and :math:`T_{ref}` is the reference temperature. This is only used when a constant thermal expansion model is used.
+    where :math:`F_B` denotes the buoyant force source term, :math:`\beta` is the thermal expansion coefficient, :math:`T` is temperature, and :math:`T_\text{ref}` is the reference temperature. This is only used when a constant thermal expansion model is used.
 
   * The ``tracer diffusivity model`` specifies the model used to calculate the tracer diffusivity. At the moment, only a constant tracer diffusivity is supported.
 
@@ -346,12 +346,12 @@ The phase change model is a simple rheological model in which the viscosity depe
 
 .. math::
 
-  \nu =   c^{*}_p  = \begin{cases} \nu_s \; \text{if} \; T<T_{s} \\
-              \frac{T-T_s}{T_l-T_s} \nu_l + (1-\frac{T-T_s}{T_l-T_s}) \nu_s \; \text{if} \; T_{l}>T>T_{s}\\
-              \nu_l \; \text{if} \; T>T_{l}
+  \nu =   c^{*}_\text{p}  = \begin{cases} \nu_\text{s} & \text{if} \; T<T_\text{s} \\
+              \frac{T-T_\text{s}}{T_\text{l}-T_\text{s}} \nu_\text{l} + \left(1-\frac{T-T_\text{s}}{T_\text{l}-T_\text{s}}\right) \nu_\text{s} & \text{if} \; T_\text{l}>T>T_\text{s}\\
+              \nu_\text{l} & \text{if} \; T>T_\text{l}
               \end{cases}
 
-where :math:`T_l` and :math:`T_s` are the liquidus and solidus temperature. The underlying hypothesis of this model is that the melting and the solidification occurs over a phase change interval. Melting will occur between :math:`T_s` and :math:`T_l` and solidification will occur between :math:`T_l` and :math:`T_s`.
+where :math:`T_\text{l}` and :math:`T_\text{s}` are the liquidus and solidus temperature. The underlying hypothesis of this model is that the melting and the solidification occurs over a phase change interval. Melting will occur between :math:`T_\text{s}` and :math:`T_\text{l}` and solidification will occur between :math:`T_\text{l}` and :math:`T_\text{s}`.
 
 This model is parameterized using the ``phase change`` subsection
 
@@ -372,13 +372,13 @@ This model is parameterized using the ``phase change`` subsection
   end
 
 
-* The ``liquidus temperature`` is :math:`T_l`
+* The ``liquidus temperature`` is :math:`T_\text{l}`
 
-* The ``solidus temperature`` is :math:`T_s`
+* The ``solidus temperature`` is :math:`T_\text{s}`
 
-* The ``viscosity liquid`` is :math:`\nu_{l}`
+* The ``viscosity liquid`` is :math:`\nu_\text{l}`
 
-* The ``viscosity solid`` is :math:`\nu_{s}`
+* The ``viscosity solid`` is :math:`\nu_\text{s}`
 
 .. note::
   The phase change subsection is used to parametrize *both* ``rheological model = phase_change`` *and* ``specific heat model = phase_change``. This prevents parameter duplication.
@@ -391,9 +391,9 @@ Density Models
 Lethe supports both ``constant`` and ``isothermal_ideal_gas`` density models. Constant density assumes a constant density value. Isothermal ideal gas density assumes that the fluid's density varies according the following state equation:
 
 .. math::
-  \rho = \rho_{ref} + \psi p = \rho_{ref} + \frac{1}{R T} \ p
+  \rho = \rho_\text{ref} + \psi p = \rho_\text{ref} + \frac{1}{R T} \ p
 
-where :math:`\rho_{ref}` is the density of the fluid at the reference state, :math:`\psi = \frac{1}{R T}` is the compressibility factor derived from the ideal gas law with :math:`R= \frac{R_u}{M}` the specific gas constant (universal gas constant (:math:`R_u`) divided by the molar mass of the gas (:math:`M`)) and :math:`T` the temperature of the gas, finally, :math:`p` is the differential pressure between the reference state and the current state. This model is used for weakly compressible flows when temperature fluctuations' influence on density can be neglected.
+where :math:`\rho_\text{ref}` is the density of the fluid at the reference state, :math:`\psi = \frac{1}{R T}` is the compressibility factor derived from the ideal gas law with :math:`R= \frac{R_u}{M}` the specific gas constant (universal gas constant (:math:`R_u`) divided by the molar mass of the gas (:math:`M`)) and :math:`T` the temperature of the gas, finally, :math:`p` is the differential pressure between the reference state and the current state. This model is used for weakly compressible flows when temperature fluctuations' influence on density can be neglected.
 
 This model is parametrized using the ``isothermal_ideal_gas`` subsection:
 
@@ -413,7 +413,7 @@ This model is parametrized using the ``isothermal_ideal_gas`` subsection:
 
 where:
 
-* ``density_ref`` corresponds to :math:`\rho_{ref}`
+* ``density_ref`` corresponds to :math:`\rho_\text{ref}`
 
 * ``R`` corresponds to :math:`R`
 
@@ -436,40 +436,40 @@ Constant, linear and phase_change thermal conductivities are supported in Lethe.
 
 where :math:`k_{A,0}` and :math:`k_{A,1}` are constants and :math:`T` is the temperature. This enables a linear variation of the thermal conductivity as a function of the temperature.
 
-In the ``phase_change`` thermal conductivity model, two different values (``thermal conductivity liquid``, and ``thermal conductivity solid``) are required for calculating the thermal conductivities of the liquid and solid phases, respectively. For the liquid phase (T>T_liquidus), the ``thermal conductivity liquid`` is applied, while for the solid phase (T<T_solidus), the model uses the ``thermal conductivity solid``. In the mushy zone between T_solidus and T_liquidus, the thermal conductivity is equal to:
+In the ``phase_change`` thermal conductivity model, two different values (``thermal conductivity liquid``, and ``thermal conductivity solid``) are required for calculating the thermal conductivities of the liquid and solid phases, respectively. For the liquid phase (:math:`T>T_\text{liquidus}`), the ``thermal conductivity liquid`` is applied, while for the solid phase (:math:`T<T_\text{solidus}`), the model uses the ``thermal conductivity solid``. In the mushy zone between :math:`T_\text{solidus}` and :math:`T_\text{liquidus}`, the thermal conductivity is equal to:
 
 .. math::
 
-  k = \alpha_l k_l + (1 - \alpha_l) k_s
+  k = \alpha_\text{l} k_\text{l} + (1 - \alpha_\text{l}) k_\text{s}
 
 
-where :math:`k_l`, :math:`k_s` and  :math:`\alpha_l` denote thermal conductivities of the liquid and solid phases and the liquid fraction.
+where :math:`k_\text{l}`, :math:`k_\text{s}` and  :math:`\alpha_\text{l}` denote thermal conductivities of the liquid and solid phases and the liquid fraction.
 
 Specific Heat Models
 ~~~~~~~~~~~~~~~~~~~~~
 
-Lethe supports two types of specific heat models. Setting ``specific heat=constant`` sets a constant specific heat. Lethe also supports a ``phase_change`` specific heat model. This model can simulate the melting and solidification of a material. The model follows the work of Blais & Ilinca `[1] <https://doi.org/10.1016/j.compfluid.2018.03.037>`_. This approach defines the specific heat :math:`C_p` as:
+Lethe supports two types of specific heat models. Setting ``specific heat=constant`` sets a constant specific heat. Lethe also supports a ``phase_change`` specific heat model. This model can simulate the melting and solidification of a material. The model follows the work of Blais & Ilinca `[1] <https://doi.org/10.1016/j.compfluid.2018.03.037>`_. This approach defines the specific heat :math:`C_\text{p}` as:
 
 .. math::
 
-  C_p = \frac{H(T)-H(T_0)}{T-T_0}
+  C_\text{p} = \frac{H(T)-H(T_0)}{T-T_0}
 
 
 where :math:`T` is the temperature, :math:`T_0` is the temperature at the previous time and :math:`H(T)` is the enthalpy, as a function of the temperature, to be:
 
 .. math::
-  H(T) = H_0 + \int_{T_0}^{T} c^{*}_p (T^*) dT
+  H(T) = H_0 + \int_{T_0}^{T} c^{*}_\text{p} (T^*) dT
 
 
-where :math:`H_0` is a reference enthalpy, taken to be 0, and :math:`c^{*}_p` is:
+where :math:`H_0` is a reference enthalpy, taken to be 0, and :math:`c^{*}_\text{p}` is:
 
 .. math::
-  c^{*}_p  = \begin{cases} C_{p,s} \text{if}\;T<T_s\\
-              \frac{C_{p,s}+C_{p,l}}{2}+\frac{h_l}{T_l-T_s} \text{if}\;T\in[T_s,T_l]\\
-              C_{p,l} \text{if} T>T_l
+  c^{*}_\text{p}  = \begin{cases} C_\text{p,s} & \text{if} \; T<T_\text{s}\\
+              \frac{C_\text{p,s}+C_\text{p,l}}{2}+\frac{h_\text{l}}{T_\text{l}-T_\text{s}} & \text{if} \; T\in[T_\text{s},T_\text{l}]\\
+              C_\text{p,l} & \text{if} \; T>T_\text{l}
               \end{cases}
 
-where :math:`C_{p,s}` and :math:`C_{p,l}` are the solid and liquid specific heat, respectively. :math:`h_l` is the latent enthalpy (enthalpy related to the phase change), :math:`T_l` and :math:`T_s` are the liquidus and solidus temperature. The underlying hypothesis of this model is that the melting and the solidification occurs over a phase change interval. Melting will occur between :math:`T_s` and :math:`T_l` and solidification will occur between :math:`T_l` and :math:`T_s`.
+where :math:`C_\text{p,s}` and :math:`C_\text{p,l}` are the solid and liquid specific heat, respectively. :math:`h_\text{l}` is the latent enthalpy (enthalpy related to the phase change), :math:`T_\text{l}` and :math:`T_\text{s}` are the liquidus and solidus temperature. The underlying hypothesis of this model is that the melting and the solidification occurs over a phase change interval. Melting will occur between :math:`T_\text{s}` and :math:`T_\text{l}` and solidification will occur between :math:`T_\text{l}` and :math:`T_\text{s}`.
 
 This model is parameterized using the following section:
 
@@ -492,15 +492,15 @@ This model is parameterized using the following section:
     set specific heat solid  = 1
   end
 
-* The ``latent enthalpy`` is the latent enthalpy of the phase change: :math:`h_l`
+* The ``latent enthalpy`` is the latent enthalpy of the phase change: :math:`h_\text{l}`
 
-* The ``liquidus temperature`` is :math:`T_l`
+* The ``liquidus temperature`` is :math:`T_\text{l}`
 
-* The ``solidus temperature`` is :math:`T_s`
+* The ``solidus temperature`` is :math:`T_\text{s}`
 
-* The ``specific heat liquid`` is :math:`C_{p,l}`
+* The ``specific heat liquid`` is :math:`C_\text{p,l}`
 
-* The ``specific heat solid`` is :math:`C_{p,s}`
+* The ``specific heat solid`` is :math:`C_\text{p,s}`
 
 
 Thermal Expansion Models
@@ -508,8 +508,8 @@ Thermal Expansion Models
 Lethe supports two types of thermal expansion heat models. Setting ``thermal expansion model=constant`` sets a constant thermal expansion. Lethe also supports a ``phase_change`` thermal expansion model. This model can simulate the melting and solidification of a material with natural convection. It works by defining a different value of the thermal expansion coefficient depending on the value of the temperature:
 
 .. math::
-  \beta =   c^{*}_p  = \begin{cases} \beta_s, \text{if}\;T \leq T_l\\
-              \beta_l, \text{if}\;T > T_l
+  \beta =   c^{*}_\text{p}  = \begin{cases} \beta_\text{s} & \text{if}\;T \leq T_\text{l}\\
+              \beta_\text{l} & \text{if}\;T > T_\text{l}
               \end{cases}
 
 
@@ -531,13 +531,13 @@ This model is parameterized using the following section:
     set thermal expansion solid  = 0
   end
 
-* The ``liquidus temperature`` is :math:`T_l`
+* The ``liquidus temperature`` is :math:`T_\text{l}`
 
-* The ``solidus temperature`` is :math:`T_s`
+* The ``solidus temperature`` is :math:`T_\text{s}`
 
-* The ``thermal expansion liquid`` is :math:`\beta_{l}`
+* The ``thermal expansion liquid`` is :math:`\beta_\text{l}`
 
-* The ``thermal expansion solid`` is :math:`\beta_{s}`
+* The ``thermal expansion solid`` is :math:`\beta_\text{s}`
 
 Interface Physical Property Models
 ***********************************
@@ -570,7 +570,7 @@ where :math:`T_\mathrm{s}` and :math:`T_\mathrm{l}` correspond to the ``solidus 
   \alpha_{\mathrm{l}} = 
     \begin{cases}
         0 &\quad\text{if}\; T<T_\mathrm{s}\\
-        \dfrac{T-T_\mathrm{s}}{T_\mathrm{L}-T_\mathrm{s}} &\quad\text{if}\; T_\mathrm{l}\le T \le T_\mathrm{s}\\
+        \dfrac{T-T_\mathrm{s}}{T_\mathrm{l}-T_\mathrm{s}} &\quad\text{if}\; T_\mathrm{l}\le T \le T_\mathrm{s}\\
         1 &\quad\text{if}\; T_\mathrm{l} <T
     \end{cases}
 
