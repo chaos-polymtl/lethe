@@ -292,6 +292,7 @@ private:
 
   // Output management
   PVDHandler pvdhandler;
+  const bool output_bool;
 
   // Elements used to store the velocity of the solid object
   Function<spacedim> *translational_velocity;
