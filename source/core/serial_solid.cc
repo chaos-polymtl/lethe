@@ -14,7 +14,6 @@
  * ---------------------------------------------------------------------
  */
 
-
 #include <core/lethe_grid_tools.h>
 #include <core/serial_solid.h>
 #include <core/solutions_output.h>
@@ -25,7 +24,6 @@
 
 #include <deal.II/fe/fe.h>
 #include <deal.II/fe/fe_system.h>
-#include <deal.II/fe/mapping.h>
 
 #include <deal.II/grid/filtered_iterator.h>
 #include <deal.II/grid/grid_generator.h>
@@ -37,8 +35,6 @@
 
 #include <fstream>
 
-
-
 template <int dim, int spacedim>
 SerialSolid<dim, spacedim>::SerialSolid(
   std::shared_ptr<Parameters::RigidSolidObject<spacedim>> &param,
@@ -48,6 +44,7 @@ SerialSolid<dim, spacedim>::SerialSolid(
   , this_mpi_process(Utilities::MPI::this_mpi_process(mpi_communicator))
   , param(param)
   , id(id)
+  , output_bool(param->output_bool)
   , translational_velocity(&param->translational_velocity)
   , angular_velocity(&param->angular_velocity)
   , center_of_rotation(param->center_of_rotation)
@@ -469,6 +466,9 @@ void
 SerialSolid<dim, spacedim>::write_output_results(
   std::shared_ptr<SimulationControl> simulation_control)
 {
+  if (!output_bool)
+    return;
+
   DataOut<dim, spacedim> data_out;
   data_out.attach_dof_handler(displacement_dh);
 
