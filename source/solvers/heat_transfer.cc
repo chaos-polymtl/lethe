@@ -696,6 +696,10 @@ HeatTransfer<dim>::attach_solution_to_output(DataOut<dim> &data_out)
   const unsigned int n_solids =
     this->simulation_parameters.physical_properties_manager
       .get_number_of_solids();
+  unsigned int mesh_m_id = 0;
+
+  // Check if there are solids
+  const bool solid_phase_present = (n_solids > 0);
 
   // Postprocess heat fluxes
   heat_flux_postprocessors.clear();
@@ -703,8 +707,12 @@ HeatTransfer<dim>::attach_solution_to_output(DataOut<dim> &data_out)
   // Heat fluxes in fluids
   for (unsigned int f_id = 0; f_id < n_fluids; ++f_id)
     {
-      heat_flux_postprocessors.push_back(HeatFluxPostprocessor<dim>(
-        thermal_conductivity_models[f_id], "f", f_id, f_id));
+      heat_flux_postprocessors.push_back(
+        HeatFluxPostprocessor<dim>(thermal_conductivity_models[f_id],
+                                   "f",
+                                   f_id,
+                                   mesh_m_id,
+                                   solid_phase_present));
       data_out.add_data_vector(this->dof_handler,
                                this->present_solution,
                                heat_flux_postprocessors[f_id]);
@@ -712,8 +720,13 @@ HeatTransfer<dim>::attach_solution_to_output(DataOut<dim> &data_out)
   // Heat fluxes in solids
   for (unsigned int m_id = n_fluids; m_id < n_fluids + n_solids; ++m_id)
     {
-      heat_flux_postprocessors.push_back(HeatFluxPostprocessor<dim>(
-        thermal_conductivity_models[m_id], "s", m_id - n_fluids, m_id));
+      mesh_m_id += 1;
+      heat_flux_postprocessors.push_back(
+        HeatFluxPostprocessor<dim>(thermal_conductivity_models[m_id],
+                                   "s",
+                                   m_id - n_fluids,
+                                   mesh_m_id,
+                                   solid_phase_present));
       data_out.add_data_vector(this->dof_handler,
                                this->present_solution,
                                heat_flux_postprocessors[m_id]);

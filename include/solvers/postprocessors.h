@@ -511,16 +511,20 @@ private:
 
 
 /**
- * @class Calculates heat flux (q = -k * grad T) of a material at every
- * quadrature point.
+ * @class Postprocessor that calculates local heat fluxes \f$(q = -k * \nabla
+ * T)\f$ of a material at every evaluation point of the domain.
+ *
  * @param p_thermal_conductivity_model Thermal conductivity model of the
  * material
  * @param p_material_string Type of material: "f" (fluid) or "s" (solid)
  * @param p_id Either fluid ID or solid ID (as initialized in the physical
  * properties) used to name the postprocessed variable vector.
- * @param p_material_id ID corresponding to the material. Material IDs the
- * cumulative IDs of fluids and solids by convention, fluids are counted before
- * solids. This is used to identify which cell lies in which material.
+ * @param p_mesh_material_id ID corresponding to the material as identified in
+ * the mesh. By convention, fluids are given the material_id 0 and solids follow
+ * with ids 1, 2, etc. This is used to identify which cell lies in which
+ * material.
+ * @param p_solid_phase_present Boolean indicating if the simulation has solids.
+ * If there is no solid, the @p material_id of cells is not checked.
  */
 template <int dim>
 class HeatFluxPostprocessor : public DataPostprocessorVector<dim>
@@ -528,56 +532,94 @@ class HeatFluxPostprocessor : public DataPostprocessorVector<dim>
 public:
   HeatFluxPostprocessor(const std::shared_ptr<ThermalConductivityModel>
                                            &p_thermal_conductivity_model,
-                        const std::string  &p_material_string = "f",
-                        const unsigned int &p_id              = 0,
-                        const unsigned int &p_material_id     = 0)
+                        const std::string  &p_material_string     = "f",
+                        const unsigned int &p_id                  = 0,
+                        const unsigned int &p_mesh_material_id    = 0,
+                        const bool         &p_solid_phase_present = false)
     : DataPostprocessorVector<dim>("heat_flux_" + p_material_string +
                                      Utilities::to_string(p_id, 2),
                                    update_values | update_gradients)
     , thermal_conductivity_model(p_thermal_conductivity_model)
-    , material_id(p_material_id)
+    , mesh_material_id(p_mesh_material_id)
+    , solid_phase_present(p_solid_phase_present)
   {}
 
+  /**
+   * @brief Computes local heat flux quantities from temperature field and
+   * material properties.
+   *
+   * @param inputs Structure that contains all temperature information needed to
+   * evaluate local heat fluxes.
+   * @param computed_quantities Vector field containing local heat flux vectors
+   * evaluated at evaluation points.
+   */
   virtual void
   evaluate_scalar_field(
     const DataPostprocessorInputs::Scalar<dim> &inputs,
     std::vector<Vector<double>> &computed_quantities) const override
   {
-    const unsigned int n_quadrature_points = computed_quantities.size();
-    AssertDimension(inputs.solution_gradients.size(), n_quadrature_points);
+    const unsigned int n_evaluation_points = computed_quantities.size();
+    AssertDimension(inputs.solution_gradients.size(), n_evaluation_points);
 
-    // Get Cell
-    const auto cell = inputs.template get_cell<dim>();
-
-    // Check if the cell lies in the material of interest
-    if (cell->material_id() == material_id)
+    //  If solid materials are present, identify each material's subdomain.
+    if (solid_phase_present)
       {
-        std::map<field, double> field_values;
-        for (unsigned int q = 0; q < n_quadrature_points; ++q)
-          {
-            AssertDimension(computed_quantities[q].size(), dim);
-            field_values[field::temperature] = inputs.solution_values[q];
+        // Get Cell
+        const auto cell = inputs.template get_cell<dim>();
 
-            for (unsigned int i = 0; i < dim; ++i)
-              {
-                computed_quantities[q][i] =
-                  -thermal_conductivity_model->value(field_values) *
-                  inputs.solution_gradients[q][i];
-              }
+        // Check if the cell lies in the material of interest
+        if (cell->material_id() == mesh_material_id)
+          {
+            compute_quantities(inputs, computed_quantities);
+          }
+        // Apply null values to irrelevant subdomain
+        else
+          {
+            Vector<double>              null_vector(dim);
+            std::vector<Vector<double>> null_computed_quantities(
+              n_evaluation_points, null_vector);
+            computed_quantities = null_computed_quantities;
           }
       }
-    // Apply null values to irrelevant subdomain
+    // Only fluids are present
     else
       {
-        Vector<double>              null_vector(dim);
-        std::vector<Vector<double>> null_computed_quantities(
-          n_quadrature_points, null_vector);
-        computed_quantities = null_computed_quantities;
+        compute_quantities(inputs, computed_quantities);
       }
   }
 
 private:
+  /**
+   * @brief Computes local heat flux quantities. This function is used to
+   * improve readability of the HeatFluxPostprocessor::evaluate_scalar_field
+   * function and avoid repeated lines.
+   *
+   * @param inputs Structure that contains all temperature information needed to
+   * evaluate local heat fluxes.
+   * @param computed_quantities Vector field containing local heat flux vectors
+   * evaluated at evaluation points.
+   */
+  void
+  compute_quantities(const DataPostprocessorInputs::Scalar<dim> &inputs,
+                     std::vector<Vector<double>> &computed_quantities) const
+  {
+    std::map<field, double> field_values;
+    for (unsigned int p = 0; p < computed_quantities.size(); ++p)
+      {
+        AssertDimension(computed_quantities[p].size(), dim);
+        field_values[field::temperature] = inputs.solution_values[p];
+
+        for (unsigned int i = 0; i < dim; ++i)
+          {
+            computed_quantities[p][i] =
+              -thermal_conductivity_model->value(field_values) *
+              inputs.solution_gradients[p][i];
+          }
+      }
+  }
+
   std::shared_ptr<ThermalConductivityModel> thermal_conductivity_model;
-  unsigned int                              material_id;
+  const unsigned int                        mesh_material_id;
+  const bool                                solid_phase_present;
 };
 #endif
