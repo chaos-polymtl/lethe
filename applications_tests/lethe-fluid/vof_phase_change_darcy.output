@@ -1,0 +1,83 @@
+Running on 1 MPI rank(s)...
+   Number of active cells:       200
+   Number of degrees of freedom: 765
+   Volume of triangulation:      0.1
+   Number of thermal degrees of freedom: 255
+   Number of VOF degrees of freedom: 255
+
+*******************************************************************************
+Transient iteration: 1        Time: 2        Time step: 2        CFL: 62.5156 
+*******************************************************************************
+----
+VOF
+----
+Newton iteration: 0  - Residual:  0.00954761
+  -Tolerance of iterative solver is : 9.54761e-06
+  -Iterative solver took : 1 steps 
+	alpha =      1 res = 1.465e-06	L^2(dx) =  1.937	L^infty(dx) = 1.858
+Newton iteration: 1  - Residual:  1.465e-06
+  -Tolerance of iterative solver is : 1.465e-09
+  -Iterative solver took : 2 steps 
+	alpha =      1 res = 4.739e-10	L^2(dx) = 0.0105	L^infty(dx) = 0.008732
+
+*******************************************************************************
+Transient iteration: 2        Time: 4        Time step: 2        CFL: 63.6716 
+*******************************************************************************
+----
+VOF
+----
+Newton iteration: 0  - Residual:  0.02127
+  -Tolerance of iterative solver is : 2.127e-05
+  -Iterative solver took : 2 steps 
+	alpha =      1 res = 7.169e-07	L^2(dx) =  2.119	L^infty(dx) = 1.465
+
+*******************************************************************************
+Transient iteration: 3        Time: 6        Time step: 2        CFL: 78.5226 
+*******************************************************************************
+----
+VOF
+----
+Newton iteration: 0  - Residual:  0.1358
+  -Tolerance of iterative solver is : 0.0001358
+  -Iterative solver took : 2 steps 
+	alpha =      1 res = 2.107e-05	L^2(dx) =  4.648	L^infty(dx) = 1.182
+Newton iteration: 1  - Residual:  2.107e-05
+  -Tolerance of iterative solver is : 2.107e-08
+  -Iterative solver took : 2 steps 
+	alpha =      1 res = 2.693e-09	L^2(dx) = 0.0005704	L^infty(dx) = 0.0003765
+
+*******************************************************************************
+Transient iteration: 4        Time: 8        Time step: 2        CFL: 78.606  
+*******************************************************************************
+----
+VOF
+----
+Newton iteration: 0  - Residual:  0.01584
+  -Tolerance of iterative solver is : 1.584e-05
+  -Iterative solver took : 2 steps 
+	alpha =      1 res = 2.71e-06	L^2(dx) =  1.488	L^infty(dx) = 0.8036
+Newton iteration: 1  - Residual:  2.71e-06
+  -Tolerance of iterative solver is : 2.71e-09
+  -Iterative solver took : 2 steps 
+	alpha =      1 res = 1.382e-10	L^2(dx) = 0.0002117	L^infty(dx) = 0.0001389
+
+*******************************************************************************
+Transient iteration: 5        Time: 10       Time step: 2        CFL: 78.5993 
+*******************************************************************************
+----
+VOF
+----
+Newton iteration: 0  - Residual:  0.0193
+  -Tolerance of iterative solver is : 1.93e-05
+  -Iterative solver took : 2 steps 
+	alpha =      1 res = 3.695e-06	L^2(dx) = 0.7697	L^infty(dx) = 0.5295
+Newton iteration: 1  - Residual:  3.695e-06
+  -Tolerance of iterative solver is : 3.695e-09
+  -Iterative solver took : 2 steps 
+	alpha =      1 res = 1.122e-09	L^2(dx) = 0.0002465	L^infty(dx) = 0.00018
+ time   error_velocity error_pressure 
+ 2.0000   1.232504e-01         0.0000 
+ 4.0000   9.762791e-03         0.0000 
+ 6.0000   1.287210e-03         0.0000 
+ 8.0000   5.294252e-04         0.0000 
+10.0000   5.288528e-04         0.0000 
