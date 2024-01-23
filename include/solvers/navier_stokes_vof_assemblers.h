@@ -121,7 +121,7 @@ public:
  * material. In the phase change model, the value of the \f$ \beta_D \f$
  * coefficient depends on the temperature field and the material (fluid)
  * properties. Generally, this is used to prohibit fluid motion in the solid
- * phase within phase change problem. This generally leads to a better
+ * phase within phase change problems. This generally leads to a better
  * conditioning of the linear system than increasing the viscosity of the solid
  * phase.
  *
