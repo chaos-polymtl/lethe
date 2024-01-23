@@ -28,7 +28,14 @@ Throughout this tutorial:
 Installing WSL and Ubuntu (Step #0)
 ------------------------------------
 
-1. |win_shell| Install WSL (Windows Subsystem for Linux), and Ubuntu 22.04 LTS from the microsoft store, following the steps indicated `in this tutorial <https://linuxconfig.org/ubuntu-22-04-on-wsl-windows-subsystem-for-linux>`_
+1. |win_shell| Install WSL (Windows Subsystem for Linux). Open PowerShell or Windows Command Prompt in administrator mode by right-clicking and selecting "Run as administrator", enter the wsl --install command, then restart your machine.
+
+.. code-block:: text
+  :class: copy-button
+
+  wsl --install
+
+2. |win_shell| Enable WSL and Ubuntu 22.04 LTS from the microsoft store, following the steps indicated `in this tutorial <https://linuxconfig.org/ubuntu-22-04-on-wsl-windows-subsystem-for-linux>`_
 
 .. admonition:: Verify the installed version of WSL
 
@@ -41,7 +48,7 @@ Installing WSL and Ubuntu (Step #0)
 
   should indicate ``version 2``. If not, follow this to update WSL: https://docs.microsoft.com/fr-fr/windows/wsl/install#upgrade-version-from-wsl-1-to-wsl-2
 
-2. |win_shell| Launch Ubuntu (from the start menu) and |linux_shell| update Ubuntu: 
+3. |win_shell| Launch Ubuntu (from the start menu) and |linux_shell| update Ubuntu: 
 
 .. code-block:: text
   :class: copy-button
@@ -54,13 +61,13 @@ Installing WSL and Ubuntu (Step #0)
 
 When prompted "do you want to continue?", proceed by typing ``y`` and hitting ``Enter``.
 
-3. |win_shell| (optional) To activate copy/paste in the Linux sub-terminal (`tutorial with screenshots <https://defragged.org/2020/10/29/how-to-copy-paste-in-windows-subsystem-for-linux-wsl/>`_):
+4. |win_shell| (optional) To activate copy/paste in the Linux sub-terminal (`tutorial with screenshots <https://defragged.org/2020/10/29/how-to-copy-paste-in-windows-subsystem-for-linux-wsl/>`_):
 
   * right-click on the Ubuntu Window pane header
   * in ``Properties``, select ``Use Ctrl+Shift+C/V as Copy/Paste``
   * you can then use ``Ctrl+Shift+V`` to paste text or commands in the Linux sub-terminal
 
-4. |win_shell| (optional) For better ease in the Linux terminal (better coloring, multiple tabs), change the default terminal:
+5. |win_shell| (optional) For better ease in the Linux terminal (better coloring, multiple tabs), change the default terminal:
 
   * in the microsoft store, download ``Windows Terminal``
   * in the ``parameters`` of ``Windows Terminal``, select on the left pannel "start": change default profile with ``Ubuntu-22.04``
@@ -152,7 +159,7 @@ Installing deal.II using Candi (Step #1)
 
     gcc --version
 
-  should return ``gcc (Ubuntu 10.X.X...) 10.X.X``. If not, go to :ref:`change compiler default version`.
+  should return ``gcc (Ubuntu 10.X.X...) 10.X.X`` or higher. If not, go to :ref:`change compiler default version`.
 
 3. |linux_shell| Create folders (suggested structure):
 
@@ -279,7 +286,14 @@ Where ``$numprocs`` corresponds to the number of processors used for the compila
 Installing Lethe (Step #2)
 -------------------------------------
 
-1. |linux_shell| Set-up the folder structure: in the ``Software`` folder created at the beginning of Step #1 (if you are in the candi folder, type ``cd ..``), type:
+1. |linux_shell| Set-up the folder structure. Create the ``Software`` folder (if you are doing the candi installation, this folder should alredy exist from Step #1).
+
+.. code-block:: text
+  :class: copy-button
+
+  mkdir Software; cd Software 
+
+In the ``Software`` folder created (if you are in the candi folder, type ``cd ..``), type:
 
 .. code-block:: text
   :class: copy-button
@@ -292,7 +306,7 @@ After installation is complete, the folder structure will be:
 * ``lethe/build`` for compilation files (``cmake`` command),
 * ``lethe/inst`` for installation files (``make install`` command).
 
-2. |linux_shell| Download lethe:
+1. |linux_shell| Download lethe:
 
 .. code-block:: text
   :class: copy-button
@@ -327,6 +341,13 @@ Where ``$numprocs`` corresponds to the number of processors used for the compila
     :class: copy-button
     
     apt-get numdiff
+
+  or
+
+  .. code-block:: text
+    :class: copy-button
+    
+    sudo apt install numdiff
 
   * Run the tests in the build folder:
 
