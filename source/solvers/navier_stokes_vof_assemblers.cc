@@ -482,7 +482,7 @@ PhaseChangeDarcyVOFAssembler<dim>::assemble_matrix(
               phase_change_parameters_vector[p].penalty_s);
         }
 
-      // For a VOF two-fluid system, the global Darcy permeability coefficient
+      // For a VOF two-fluid system, the global Darcy penalty coefficient
       // takes into account the phase change parameters in both fluids
       const double darcy_penalty =
         ((1 - filtered_phase[q]) * darcy_penalties[0] +
@@ -540,7 +540,7 @@ PhaseChangeDarcyVOFAssembler<dim>::assemble_rhs(
       // Current temperature values
       double current_temperature = temperatures[q];
       // Loop to calculate the liquid fraction and Darcy permeability of each
-      // fluid. Calculated Darcy permeability coefficients depend on the
+      // fluid. Calculated Darcy penalty coefficients depend on the
       // temperature and material (fluid) properties. A min(max) approach is
       // used to calculate the liquid fractions avoiding if conditions.
       for (unsigned int p = 0; p < number_of_fluids; p++)
