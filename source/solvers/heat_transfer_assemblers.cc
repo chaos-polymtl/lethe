@@ -1152,21 +1152,13 @@ HeatTransferAssemblerLaserUniformHeatFluxVOFInterface<dim>::assemble_rhs(
 
           // Calculate the strong residual for GLS stabilization
 
-          // In 2D, the heat flux is delivered to a surface of area 2R*1
           double laser_heat_source = 0.0;
 
           if (laser_location_on_surface.distance(quadrature_point_on_surface) <
               beam_radius)
             {
-              laser_heat_source =
-                absorptivity * laser_power / (2.0 * beam_radius);
-
-              // In 3D, the heat flux is delivered to a surface of pi*R^2
-              if constexpr (dim == 3)
-                {
                   laser_heat_source = absorptivity * laser_power /
                                       (M_PI * beam_radius * beam_radius);
-                }
             }
           strong_residual[q] -=
             filtered_phase_gradient_value_q_norm * laser_heat_source;
