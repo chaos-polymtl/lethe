@@ -77,6 +77,14 @@ public:
    * necessary memory for all member variables. However, it does not do any
    * evaluation, since this needs to be done at the cell level.
    *
+   * @param simulation_control The SimulationControl object that holds
+   * information related to the control of the steady-state or transient
+   * simulation. This is used to extrapolate auxiliary physics solutions in time
+   * for transient simulation.
+   *
+   * @param properties_manager The PhysicalPropertiesManager object that stores
+   * physical property models.
+   *
    * @param fe The FESystem used to solve the Navier-Stokes equations
    *
    * @param quadrature The quadrature to use for the assembly
@@ -127,12 +135,7 @@ public:
    * definition of the WorkStream mechanism it is assumed that the content of
    * the scratch will be reset on a cell basis.
    *
-   * @param fe The FESystem used to solve the Navier-Stokes equations
-   *
-   * @param quadrature The quadrature to use for the assembly
-   *
-   * @param mapping The mapping of the domain in which the Navier-Stokes
-   * equations are solved
+   * @param sd The scratch data to be copied
    */
   NavierStokesScratchData(const NavierStokesScratchData<dim> &sd)
     : simulation_control(sd.simulation_control)
@@ -818,7 +821,7 @@ public:
     // If particles are in the cell, gather the rest of the
     // information
 
-    // Create local vector that will be use to spawn an in-situ quadrature to
+    // Create local vector that will be used to spawn an in-situ quadrature to
     // interpolate at the location of the particles
     std::vector<Point<dim>> particle_reference_location(number_of_particles);
     std::vector<double>     particle_weights(number_of_particles, 1);
@@ -888,6 +891,7 @@ public:
 
 
   /** @brief Reinitialize the content of the scratch for the heat transfer
+   * auxiliary physic
    *
    * @param cell The cell over which the assembly is being carried.
    * This cell must be compatible with the heat transfer FE and not the
@@ -895,8 +899,9 @@ public:
    *
    * @param current_solution The present value of the solution for temperature
    *
-   * @param previous_solutions The solutions at the previous time steps for
-   * temperature
+   * @param previous_solutions Vector of \f$n\f$ @p VectorType containers of
+   * previous temperature solutions. \f$n\f$ depends on the BDF scheme selected
+   * for time-stepping.
    *
    */
 
@@ -918,7 +923,7 @@ public:
       current_solution, this->temperature_gradients);
 
     // Extrapolate temperature and temperature gradient to t+dt using the BDF
-    // if a BDF method is selected
+    // if the simulation is transient
     const auto method = this->simulation_control->get_assembly_method();
     if (is_bdf(method))
       {
@@ -1180,7 +1185,7 @@ public:
    */
   bool is_boundary_cell;
 
-  // If a rheological model is being used for a non Newtonian flow
+  // If a rheological model is being used for a non-Newtonian flow
   bool gather_hessian;
 
   FEFaceValues<dim> fe_face_values;
