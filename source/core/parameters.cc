@@ -586,7 +586,7 @@ namespace Parameters
       // thermal_expansion_l is in theta^-1
       thermal_expansion_s *= dimensions.thermal_expansion_scaling;
 
-      // Darcy permeability terms
+      // Darcy penalty terms
       penalty_l = prm.get_double("Darcy penalty liquid");
       penalty_s = prm.get_double("Darcy penalty solid");
     }

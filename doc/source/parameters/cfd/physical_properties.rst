@@ -339,6 +339,8 @@ The parameters for the Carreau model are defined by the ``carreau`` subsection. 
 .. note::
     The Carreau model is only suitable for Newtonian and shear-thinning flows.
 
+.. _rheological phase change model:
+
 Phase-Change Model
 ^^^^^^^^^^^^^^^^^^^ 
 
@@ -351,7 +353,7 @@ The phase change model is a simple rheological model in which the viscosity depe
               \nu_\text{l} & \text{if} \; T>T_\text{l}
               \end{cases}
 
-where :math:`T_\text{l}` and :math:`T_\text{s}` are the liquidus and solidus temperature. The underlying hypothesis of this model is that the melting and the solidification occurs over a phase change interval. Melting will occur between :math:`T_\text{s}` and :math:`T_\text{l}` and solidification will occur between :math:`T_\text{l}` and :math:`T_\text{s}`.
+where :math:`T_\text{l}` and :math:`T_\text{s}` are the liquidus and solidus temperature. The underlying hypothesis of this model is that the melting and the solidification occur over a phase change interval. Melting will occur between :math:`T_\text{s}` and :math:`T_\text{l}` and solidification will occur between :math:`T_\text{l}` and :math:`T_\text{s}`.
 
 This model is parameterized using the ``phase change`` subsection
 
@@ -364,10 +366,10 @@ This model is parameterized using the ``phase change`` subsection
     # Temperature of the solidus
     set solidus temperature  = 0
 
-    # Specific heat of the liquid phase
+    # Viscosity of the liquid phase
     set viscosity liquid     = 1
   
-    # viscosity of the solid phase
+    # Viscosity of the solid phase
     set viscosity solid      = 1
   end
 
@@ -436,6 +438,8 @@ Constant, linear and phase_change thermal conductivities are supported in Lethe.
 
 where :math:`k_{A,0}` and :math:`k_{A,1}` are constants and :math:`T` is the temperature. This enables a linear variation of the thermal conductivity as a function of the temperature.
 
+.. _thermal conductivity phase change model:
+
 In the ``phase_change`` thermal conductivity model, two different values (``thermal conductivity liquid``, and ``thermal conductivity solid``) are required for calculating the thermal conductivities of the liquid and solid phases, respectively. For the liquid phase (:math:`T>T_\text{liquidus}`), the ``thermal conductivity liquid`` is applied, while for the solid phase (:math:`T<T_\text{solidus}`), the model uses the ``thermal conductivity solid``. In the mushy zone between :math:`T_\text{solidus}` and :math:`T_\text{liquidus}`, the thermal conductivity is equal to:
 
 .. math::
@@ -444,6 +448,35 @@ In the ``phase_change`` thermal conductivity model, two different values (``ther
 
 
 where :math:`k_\text{l}`, :math:`k_\text{s}` and  :math:`\alpha_\text{l}` denote thermal conductivities of the liquid and solid phases and the liquid fraction.
+
+This model is parameterized using the following section:
+
+.. code-block:: text
+
+  subsection phase change
+    # Temperature of the liquidus
+    set liquidus temperature = 1
+
+    # Temperature of the solidus
+    set solidus temperature  = 0
+
+    # Thermal conductivity of the liquid phase
+    set thermal conductivity liquid = 1
+
+    # Thermal conductivity of the solid phase
+    set thermal conductivity solid  = 1
+  end
+
+* The ``liquidus temperature`` is :math:`T_\text{l}`
+
+* The ``solidus temperature`` is :math:`T_\text{s}`
+
+* The ``thermal conductivity liquid`` is :math:`k_\text{l}`
+
+* The ``thermal conductivity solid`` is :math:`k_\text{s}`
+
+
+.. _specific heat phase change model:
 
 Specific Heat Models
 ~~~~~~~~~~~~~~~~~~~~~
@@ -502,6 +535,7 @@ This model is parameterized using the following section:
 
 * The ``specific heat solid`` is :math:`C_\text{p,s}`
 
+.. _thermal expansion phase change model:
 
 Thermal Expansion Models
 ~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -538,6 +572,69 @@ This model is parameterized using the following section:
 * The ``thermal expansion liquid`` is :math:`\beta_\text{l}`
 
 * The ``thermal expansion solid`` is :math:`\beta_\text{s}`
+
+Phase Change
+~~~~~~~~~~~~~
+
+The current section recapitulates the `phase change` subsection.
+Snippets of this subsection can be found across the different physical property models' descriptions.
+
+.. code-block:: text
+
+  subsection phase change
+    set liquidus temperature = 1
+    set solidus temperature  = 0
+
+    # Rheology
+    set viscosity liquid = 1
+    set viscosity solid  = 1
+
+    # Specific heat
+    set latent enthalpy      = 1
+    set specific heat liquid = 1
+    set specific heat solid  = 1
+
+    # Thermal conductivity
+    set thermal conductivity liquid = 1
+    set thermal conductivity solid  = 1
+
+    # Thermal expansion
+    set thermal expansion liquid = 1
+    set thermal expansion solid  = 0
+
+    # Darcy penalization
+    set Darcy penalty liquid = 0
+    set Darcy penalty solid  = 0
+  end
+
+The phase change is modelled with the underlying hypothesis that melting and solidification occur over a phase change interval. Melting occurs between :math:`T_\text{s}` and :math:`T_\text{l}`, respectively the ``solidus temperature`` and the ``liquidus temperature``. Analogously, solidification occurs between :math:`T_\text{l}` and :math:`T_\text{s}`.
+
+* Rheology (see `rheological phase change model`_):
+
+  * ``viscosity liquid``: kinematic viscosity of the liquid phase :math:`(\nu_\text{l})`
+  * ``viscosity solid``: kinematic viscosity of the solid phase :math:`(\nu_\text{s})`
+
+* Specific heat (see `specific heat phase change model`_):
+
+  * ``latent enthalpy``: latent enthalpy of the phase change :math:`(h_\text{l})`
+  * ``specific heat liquid``: specific heat of the liquid phase :math:`(C_\text{p,l})`
+  * ``specific heat solid``: specific heat of the solid phase :math:`(C_\text{p,s})`
+
+* Thermal conductivity (see `thermal conductivity phase change model`_):
+
+  * ``thermal conductivity liquid``: thermal conductivity of the liquid phase :math:`(k_\text{l})`
+  * ``thermal conductivity solid``: thermal conductivity of the solid phase :math:`(k_\text{s})`
+
+
+* Thermal expansion (see `thermal expansion phase change model`_):
+
+  * ``thermal expansion liquid``: thermal expansion of the liquid phase :math:`(\beta_\text{l})`
+  * ``thermal expansion solid``: thermal expansion of the solid phase :math:`(\beta_\text{s})`
+
+* Darcy penalization (see `Darcy penalization <https://lethe-cfd.github.io/lethe/documentation/parameters/cfd/velocity_source.html#darcy-penalization>`_):
+
+  * ``Darcy penalty liquid``: Darcy penalty coefficient for the liquid phase
+  * ``Darcy penalty solid``: Darcy penalty coefficient for the solid phase
 
 Interface Physical Property Models
 ***********************************
