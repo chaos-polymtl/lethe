@@ -29,7 +29,7 @@ def write_df_to_vtu(self, prefix = "mod_"):
 
                         # If line matches one of the files
                         if path in line:
-                            line = line.replace('.pvtu', '.0000.vtu')
+                            line = line.replace('.pvtu', '.00000.vtu')
                             
                             # If vtu is in list_vtu
                             if line.split('file="')[1].split('"/>')[0] in self.list_vtu:

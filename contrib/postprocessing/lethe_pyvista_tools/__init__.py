@@ -211,7 +211,7 @@ class lethe_pyvista_tools():
 
                             # If line matches one of the files
                             if path in line:
-                                line = line.replace('.pvtu', '.0000.vtu')
+                                line = line.replace('.pvtu', '.00000.vtu')
                                 
                                 # If vtu is in list_vtu
                                 if line.split('file="')[1].split('"/>')[0] in list_vtu:
