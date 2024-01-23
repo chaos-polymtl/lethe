@@ -1157,8 +1157,8 @@ HeatTransferAssemblerLaserUniformHeatFluxVOFInterface<dim>::assemble_rhs(
           if (laser_location_on_surface.distance(quadrature_point_on_surface) <
               beam_radius)
             {
-                  laser_heat_source = absorptivity * laser_power /
-                                      (M_PI * beam_radius * beam_radius);
+              laser_heat_source =
+                absorptivity * laser_power / (M_PI * beam_radius * beam_radius);
             }
           strong_residual[q] -=
             filtered_phase_gradient_value_q_norm * laser_heat_source;
