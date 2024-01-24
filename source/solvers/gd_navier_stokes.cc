@@ -164,7 +164,7 @@ GDNavierStokesSolver<dim>::setup_assemblers()
       if (this->simulation_parameters.physical_properties_manager
             .is_non_newtonian())
         {
-          // Core assembler with Non newtonian viscosity
+          // Core assembler with non-Newtonian viscosity
           this->assemblers.push_back(
             std::make_shared<GDNavierStokesAssemblerNonNewtonianCore<dim>>(
               this->simulation_control, gamma));
@@ -211,6 +211,7 @@ GDNavierStokesSolver<dim>::assemble_system_matrix()
   setup_assemblers();
 
   auto scratch_data = NavierStokesScratchData<dim>(
+    this->simulation_control,
     this->simulation_parameters.physical_properties_manager,
     *this->fe,
     *this->cell_quadrature,
@@ -340,6 +341,7 @@ GDNavierStokesSolver<dim>::assemble_system_rhs()
   setup_assemblers();
 
   auto scratch_data = NavierStokesScratchData<dim>(
+    this->simulation_control,
     this->simulation_parameters.physical_properties_manager,
     *this->fe,
     *this->cell_quadrature,
@@ -431,9 +433,10 @@ GDNavierStokesSolver<dim>::assemble_local_system_rhs(
         cell->index(),
         dof_handler_ht);
 
-      scratch_data.reinit_heat_transfer(temperature_cell,
-                                        *this->multiphysics->get_solution(
-                                          PhysicsID::heat_transfer));
+      scratch_data.reinit_heat_transfer(
+        temperature_cell,
+        *this->multiphysics->get_solution(PhysicsID::heat_transfer),
+        *this->multiphysics->get_previous_solutions(PhysicsID::heat_transfer));
     }
 
   scratch_data.calculate_physical_properties();

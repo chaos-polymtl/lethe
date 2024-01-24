@@ -20,6 +20,7 @@
 #include <core/parameters.h>
 #include <core/physical_property_model.h>
 #include <core/rheological_model.h>
+#include <core/time_integration_utilities.h>
 
 #include <solvers/physical_properties_manager.h>
 #include <solvers/vof_filter.h>
@@ -76,19 +77,31 @@ public:
    * necessary memory for all member variables. However, it does not do any
    * evaluation, since this needs to be done at the cell level.
    *
+   * @param simulation_control The SimulationControl object that holds
+   * information related to the control of the steady-state or transient
+   * simulation. This is used to extrapolate auxiliary physics solutions in time
+   * for transient simulation.
+   *
+   * @param properties_manager The PhysicalPropertiesManager object that stores
+   * physical property models.
+   *
    * @param fe The FESystem used to solve the Navier-Stokes equations
    *
    * @param quadrature The quadrature to use for the assembly
    *
-   * @param mapping The mapping of the domain in which the Navier-Stokes equations are solved
+   * @param mapping The mapping of the domain in which the Navier-Stokes
+   * equations are solved
    *
    */
-  NavierStokesScratchData(PhysicalPropertiesManager &properties_manager,
-                          const FESystem<dim>       &fe,
-                          const Quadrature<dim>     &quadrature,
-                          const Mapping<dim>        &mapping,
-                          const Quadrature<dim - 1> &face_quadrature)
-    : properties_manager(properties_manager)
+  NavierStokesScratchData(
+    const std::shared_ptr<SimulationControl> &simulation_control,
+    const PhysicalPropertiesManager          &properties_manager,
+    const FESystem<dim>                      &fe,
+    const Quadrature<dim>                    &quadrature,
+    const Mapping<dim>                       &mapping,
+    const Quadrature<dim - 1>                &face_quadrature)
+    : simulation_control(simulation_control)
+    , properties_manager(properties_manager)
     , fe_values(mapping,
                 fe,
                 quadrature,
@@ -117,19 +130,16 @@ public:
 
   /**
    * @brief Copy Constructor. Same as the main constructor.
-   *  This constructor only uses the other scratch to build the FeValues, it
+   * This constructor only uses the other scratch to build the FeValues, it
    * does not copy the content of the other scratch into itself since, by
    * definition of the WorkStream mechanism it is assumed that the content of
    * the scratch will be reset on a cell basis.
    *
-   * @param fe The FESystem used to solve the Navier-Stokes equations
-   *
-   * @param quadrature The quadrature to use for the assembly
-   *
-   * @param mapping The mapping of the domain in which the Navier-Stokes equations are solved
+   * @param sd The scratch data to be copied
    */
   NavierStokesScratchData(const NavierStokesScratchData<dim> &sd)
-    : properties_manager(sd.properties_manager)
+    : simulation_control(sd.simulation_control)
+    , properties_manager(sd.properties_manager)
     , fe_values(sd.fe_values.get_mapping(),
                 sd.fe_values.get_fe(),
                 sd.fe_values.get_quadrature(),
@@ -578,7 +588,8 @@ public:
   }
 
   /**
-   * @brief enable_void_fraction Enables the collection of the void fraction data by the scratch
+   * @brief enable_void_fraction Enables the collection of the void fraction
+   * data by the scratch
    *
    * @param fe FiniteElement associated with the void fraction
    *
@@ -642,7 +653,8 @@ public:
     const unsigned int n_global_max_particles_per_cell,
     const bool         enable_void_fraction_interpolation);
 
-  /** @brief Calculate the content of the scratch for the particle fluid interactions
+  /** @brief Calculates the content of the scratch for the particle fluid
+   * interactions
    *
    * @param cell The cell over which the assembly is being carried.
    * This cell must be compatible with the void fraction FE and not the
@@ -650,7 +662,8 @@ public:
    *
    * @param current_solution The present value of the solution for [epsilon]
    *
-   * @param previous_solutions The solutions at the previous time steps for [epsilon]
+   * @param previous_solutions The solutions at the previous time steps for
+   * [epsilon]
    *
    */
 
@@ -808,7 +821,7 @@ public:
     // If particles are in the cell, gather the rest of the
     // information
 
-    // Create local vector that will be use to spawn an in-situ quadrature to
+    // Create local vector that will be used to spawn an in-situ quadrature to
     // interpolate at the location of the particles
     std::vector<Point<dim>> particle_reference_location(number_of_particles);
     std::vector<double>     particle_weights(number_of_particles, 1);
@@ -878,6 +891,7 @@ public:
 
 
   /** @brief Reinitialize the content of the scratch for the heat transfer
+   * auxiliary physic
    *
    * @param cell The cell over which the assembly is being carried.
    * This cell must be compatible with the heat transfer FE and not the
@@ -885,8 +899,9 @@ public:
    *
    * @param current_solution The present value of the solution for temperature
    *
-   * @param previous_solutions The solutions at the previous time steps for
-   * temperature
+   * @param previous_solutions Vector of \f$n\f$ @p VectorType containers of
+   * previous temperature solutions. \f$n\f$ depends on the BDF scheme selected
+   * for time-stepping.
    *
    */
 
@@ -894,7 +909,8 @@ public:
   void
   reinit_heat_transfer(
     const typename DoFHandler<dim>::active_cell_iterator &cell,
-    const VectorType                                     &current_solution)
+    const VectorType                                     &current_solution,
+    const std::vector<VectorType>                        &previous_solutions)
   {
     this->fe_values_temperature->reinit(cell);
 
@@ -905,6 +921,32 @@ public:
     // Gather temperature gradient
     this->fe_values_temperature->get_function_gradients(
       current_solution, this->temperature_gradients);
+
+    // Extrapolate temperature and temperature gradient to t+dt using the BDF
+    // if the simulation is transient
+    const auto method = this->simulation_control->get_assembly_method();
+    if (is_bdf(method))
+      {
+        // Gather previous temperature and temperature gradient values
+        for (unsigned int p = 0; p < previous_solutions.size(); ++p)
+          {
+            fe_values_temperature->get_function_values(
+              previous_solutions[p], this->previous_temperature_values[p]);
+            fe_values_temperature->get_function_gradients(
+              previous_solutions[p], this->previous_temperature_gradients[p]);
+          }
+        // Extrapolate temperature and temperature gradient
+        std::vector<double> time_vector =
+          this->simulation_control->get_simulation_times();
+        bdf_extrapolate(time_vector,
+                        previous_temperature_values,
+                        number_of_previous_solutions(method),
+                        temperature_values);
+        bdf_extrapolate(time_vector,
+                        previous_temperature_gradients,
+                        number_of_previous_solutions(method),
+                        temperature_gradients);
+      }
   }
 
   /**
@@ -973,8 +1015,11 @@ public:
   void
   calculate_physical_properties();
 
+  // For auxiliary physics solution extrapolation
+  const std::shared_ptr<SimulationControl> simulation_control;
+
   // Physical properties
-  PhysicalPropertiesManager            properties_manager;
+  const PhysicalPropertiesManager      properties_manager;
   std::map<field, std::vector<double>> fields;
   std::vector<double>                  density;
   double                               density_ref;
@@ -1049,7 +1094,6 @@ public:
   std::vector<std::vector<double>>         phi_p;
   std::vector<std::vector<Tensor<1, dim>>> grad_phi_p;
 
-
   /**
    * Scratch component for the VOF auxiliary physics
    */
@@ -1110,10 +1154,12 @@ public:
   /**
    * Scratch component for the heat transfer
    */
-  bool                        gather_temperature;
-  unsigned int                n_dofs_heat_transfer;
-  std::vector<double>         temperature_values;
-  std::vector<Tensor<1, dim>> temperature_gradients;
+  bool                                     gather_temperature;
+  unsigned int                             n_dofs_heat_transfer;
+  std::vector<double>                      temperature_values;
+  std::vector<std::vector<double>>         previous_temperature_values;
+  std::vector<Tensor<1, dim>>              temperature_gradients;
+  std::vector<std::vector<Tensor<1, dim>>> previous_temperature_gradients;
   // This is stored as a shared_ptr because it is only instantiated when needed
   std::shared_ptr<FEValues<dim>> fe_values_temperature;
 
@@ -1139,7 +1185,7 @@ public:
    */
   bool is_boundary_cell;
 
-  // If a rheological model is being used for a non Newtonian flow
+  // If a rheological model is being used for a non-Newtonian flow
   bool gather_hessian;
 
   FEFaceValues<dim> fe_face_values;

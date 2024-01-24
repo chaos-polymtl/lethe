@@ -291,8 +291,14 @@ NavierStokesScratchData<dim>::enable_heat_transfer(
   fe_values_temperature = std::make_shared<FEValues<dim>>(
     mapping, fe, quadrature, update_values | update_gradients);
 
-  temperature_values    = std::vector<double>(this->n_q_points);
+  temperature_values = std::vector<double>(this->n_q_points);
+  previous_temperature_values =
+    std::vector<std::vector<double>>(maximum_number_of_previous_solutions(),
+                                     std::vector<double>(this->n_q_points));
   temperature_gradients = std::vector<Tensor<1, dim>>(this->n_q_points);
+  previous_temperature_gradients = std::vector<std::vector<Tensor<1, dim>>>(
+    maximum_number_of_previous_solutions(),
+    std::vector<Tensor<1, dim>>(this->n_q_points));
   fields.insert(
     std::pair<field, std::vector<double>>(field::temperature, n_q_points));
 }

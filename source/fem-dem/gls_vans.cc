@@ -1552,6 +1552,7 @@ GLSVANSSolver<dim>::assemble_system_matrix()
     setup_assemblers();
 
     auto scratch_data = NavierStokesScratchData<dim>(
+      this->simulation_control,
       this->simulation_parameters.physical_properties_manager,
       *this->fe,
       *this->cell_quadrature,
@@ -1657,6 +1658,7 @@ GLSVANSSolver<dim>::assemble_system_rhs()
   setup_assemblers();
 
   auto scratch_data = NavierStokesScratchData<dim>(
+    this->simulation_control,
     this->simulation_parameters.physical_properties_manager,
     *this->fe,
     *this->cell_quadrature,

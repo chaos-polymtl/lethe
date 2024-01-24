@@ -17,6 +17,7 @@
  */
 
 #include <core/multiphysics.h>
+#include <core/time_integration_utilities.h>
 
 #include <solvers/multiphysics_interface.h>
 
@@ -63,23 +64,29 @@ public:
    * necessary memory for all member variables. However, it does not do any
    * evaluation, since this needs to be done at the cell level.
    *
-   * @param properties_manager The physical properties Manager (see physical_properties_manager.h)
+   * @param simulation_control The SimulationControl object that holds
+   * information related to the control of the steady-state or transient
+   * simulation. This is used to extrapolate velocity solutions in time
+   * for transient simulation.
    *
    * @param fe_vof The FESystem used to solve the VOF equations
    *
    * @param quadrature The quadrature to use for the assembly
    *
-   * @param mapping The mapping of the domain in which the Navier-Stokes equations are solved
+   * @param mapping The mapping of the domain in which the Navier-Stokes
+   * equations are solved
    *
    * @param fe_fd The FESystem used to solve the Fluid Dynamics equations
    *
    */
-  VOFScratchData(const PhysicalPropertiesManager properties_manager,
-                 const FiniteElement<dim>       &fe_vof,
-                 const Quadrature<dim>          &quadrature,
-                 const Mapping<dim>             &mapping,
-                 const FiniteElement<dim>       &fe_fd)
-    : properties_manager(properties_manager)
+  VOFScratchData(const std::shared_ptr<SimulationControl> &simulation_control,
+                 const PhysicalPropertiesManager          &properties_manager,
+                 const FiniteElement<dim>                 &fe_vof,
+                 const Quadrature<dim>                    &quadrature,
+                 const Mapping<dim>                       &mapping,
+                 const FiniteElement<dim>                 &fe_fd)
+    : simulation_control(simulation_control)
+    , properties_manager(properties_manager)
     , fe_values_vof(mapping,
                     fe_vof,
                     quadrature,
@@ -98,10 +105,12 @@ public:
    * definition of the WorkStream mechanism it is assumed that the content of
    * the scratch will be reset on a cell basis.
    *
-   * @param sd The scratch data
+   * @param sd The scratch data to be copied
    */
   VOFScratchData(const VOFScratchData<dim> &sd)
-    : fe_values_vof(sd.fe_values_vof.get_mapping(),
+    : simulation_control(sd.simulation_control)
+    , properties_manager(sd.properties_manager)
+    , fe_values_vof(sd.fe_values_vof.get_mapping(),
                     sd.fe_values_vof.get_fe(),
                     sd.fe_values_vof.get_quadrature(),
                     update_values | update_gradients |
@@ -196,7 +205,13 @@ public:
    * @param cell The cell for which the velocity is reinitialized
    * This cell must be compatible with the Fluid Dynamics FE
    *
-   * @param current_solution The present value of the solution for [u,p]
+   * @param current_solution The present value of the solution for \f$[u,p]\f$
+   *
+   * @param previous_solutions Vector of \f$n\f$ @p VectorType containers of
+   * previous fluid dynamic solutions (\f$[u,p]\f$). \f$n\f$ depends on the BDF
+   * scheme selected for time-stepping.
+   *
+   * @param ale ALE parameters
    *
    */
 
@@ -220,6 +235,7 @@ public:
           trace(this->velocity_gradient_values[q]);
       }
 
+    // Gather previous velocity values
     for (unsigned int p = 0; p < previous_solutions.size(); ++p)
       {
         fe_values_fd[velocities_fd].get_function_values(
@@ -250,10 +266,27 @@ public:
             this->previous_velocity_values[p][q] -= velocity_ale;
           }
       }
+
+    // Extrapolate velocity to t+dt using the BDF scheme if the simulation is
+    // transient
+    const auto method = this->simulation_control->get_assembly_method();
+    if (is_bdf(method))
+      {
+        // Extrapolate velocity
+        std::vector<double> time_vector =
+          this->simulation_control->get_simulation_times();
+        bdf_extrapolate(time_vector,
+                        previous_velocity_values,
+                        number_of_previous_solutions(method),
+                        velocity_values);
+      }
   }
 
+  // For velocity solution extrapolation
+  const std::shared_ptr<SimulationControl> simulation_control;
+
   // Physical properties
-  PhysicalPropertiesManager            properties_manager;
+  const PhysicalPropertiesManager      properties_manager;
   std::map<field, std::vector<double>> fields;
 
   // FEValues for the VOF problem
