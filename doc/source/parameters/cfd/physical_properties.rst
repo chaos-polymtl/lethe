@@ -542,7 +542,7 @@ Thermal Expansion Models
 Lethe supports two types of thermal expansion heat models. Setting ``thermal expansion model=constant`` sets a constant thermal expansion. Lethe also supports a ``phase_change`` thermal expansion model. This model can simulate the melting and solidification of a material with natural convection. It works by defining a different value of the thermal expansion coefficient depending on the value of the temperature:
 
 .. math::
-  \beta =   c^{*}_\text{p}  = \begin{cases} \beta_\text{s} & \text{if}\;T \leq T_\text{l}\\
+  \beta = \begin{cases} \beta_\text{s} & \text{if}\;T \leq T_\text{l}\\
               \beta_\text{l} & \text{if}\;T > T_\text{l}
               \end{cases}
 

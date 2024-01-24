@@ -116,14 +116,13 @@ public:
 
 /**
  * @brief Assembles a phase change Darcy forcing term for a VOF two-fluid
- * simulation. This term adds \f$-\phi \beta_D  \mathbf{u} \f$ to the right
+ * simulation. The term  \f$-\phi \beta_D  \mathbf{u} \f$ is added to the right
  * hand-side of the Navier-Stokes equations to prohibit the motion of a
  * material. In the phase change model, the value of the \f$ \beta_D \f$
  * coefficient depends on the temperature field and the material (fluid)
- * properties. Generally, this is used to prohibit fluid motion in the solid
- * phase within phase change problems. This generally leads to a better
- * conditioning of the linear system than increasing the viscosity of the solid
- * phase.
+ * properties. Generally, this is used to impose the stasis in the solid
+ * phase. This generally leads to a better conditioning of the linear 
+ * system than increasing the viscosity of the solid phase.
  *
  *
  * @tparam dim An integer that denotes the number of spatial dimensions
