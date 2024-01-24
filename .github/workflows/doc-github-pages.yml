@@ -1,7 +1,14 @@
 name: Publish doc to GitHub Pages
 
-on: [pull_request]
-
+on:
+  push:
+    # Runs on every push on master branch
+    branches:
+      - master
+  pull_request:
+    paths-ignore:
+      - 'doc/**'
+      
 # Cancels running instances when a pull request is updated by a commit
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref || github.run_id }}

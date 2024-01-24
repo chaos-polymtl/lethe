@@ -1,6 +1,13 @@
 name: Check_indent
 
-on: [pull_request]
+on:
+  push:
+    # Runs on every push on master branch
+    branches:
+      - master
+  pull_request:
+    paths-ignore:
+      - 'doc/**'
 
 concurrency:
   group: ${ {github.event_name }}-${{ github.workflow }}-${{ github.ref }}
