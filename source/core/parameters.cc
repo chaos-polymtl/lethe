@@ -1373,9 +1373,9 @@ namespace Parameters
         "type",
         "exponential_decay",
         Patterns::Selection(
-          "exponential_decay|heat_flux_vof_interface|uniform_heat_flux_vof_interface"),
+          "exponential_decay|gaussian_heat_flux_vof_interface|uniform_heat_flux_vof_interface"),
         "Type of laser model used."
-        "Choices are <exponential_decay|heat_flux_vof_interface|uniform_heat_flux_vof_interface>.");
+        "Choices are <exponential_decay|gaussian_heat_flux_vof_interface|uniform_heat_flux_vof_interface>.");
       prm.declare_entry("concentration factor",
                         "2.0",
                         Patterns::Double(),
@@ -1428,8 +1428,8 @@ namespace Parameters
       const std::string type_string = prm.get("type");
       if (type_string == "exponential_decay")
         laser_type = LaserType::exponential_decay;
-      else if (type_string == "heat_flux_vof_interface")
-        laser_type = LaserType::heat_flux_vof_interface;
+      else if (type_string == "gaussian_heat_flux_vof_interface")
+        laser_type = LaserType::gaussian_heat_flux_vof_interface;
       else
         laser_type = LaserType::uniform_heat_flux_vof_interface;
       concentration_factor = prm.get_double("concentration factor");

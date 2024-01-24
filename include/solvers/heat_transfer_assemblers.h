@@ -363,11 +363,11 @@ protected:
  * @ingroup assemblers
  */
 template <int dim>
-class HeatTransferAssemblerLaserHeatFluxVOFInterface
+class HeatTransferAssemblerLaserGaussianHeatFluxVOFInterface
   : public HeatTransferAssemblerBase<dim>
 {
 public:
-  HeatTransferAssemblerLaserHeatFluxVOFInterface(
+  HeatTransferAssemblerLaserGaussianHeatFluxVOFInterface(
     std::shared_ptr<SimulationControl>      simulation_control,
     std::shared_ptr<Parameters::Laser<dim>> p_laser_parameters)
     : HeatTransferAssemblerBase<dim>(simulation_control)
@@ -397,7 +397,7 @@ protected:
 };
 
 /**
- * @brief Class that assembles the laser heating as a unifrom surface flux for
+ * @brief Class that assembles the laser heating as a uniform surface flux for
  * the heat transfer solver when VOF is enabled. The laser heat flux is
  * applied at the VOF interface (where the phase gradient is non-null).
  *

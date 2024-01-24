@@ -385,8 +385,9 @@ public:
           "  end\n");
       }
     if (laser_parameters->activate_laser &&
-        laser_parameters->laser_type ==
-          Parameters::Laser<dim>::LaserType::heat_flux_vof_interface &&
+        (laser_parameters->laser_type ==
+          Parameters::Laser<dim>::LaserType::gaussian_heat_flux_vof_interface || laser_parameters->laser_type ==
+          Parameters::Laser<dim>::LaserType::uniform_heat_flux_vof_interface ) &&
         !multiphysics.VOF)
       {
         throw std::logic_error(

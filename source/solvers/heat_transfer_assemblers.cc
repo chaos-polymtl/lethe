@@ -797,14 +797,14 @@ template class HeatTransferAssemblerLaserExponentialDecay<3>;
 
 template <int dim>
 void
-HeatTransferAssemblerLaserHeatFluxVOFInterface<dim>::assemble_matrix(
+HeatTransferAssemblerLaserGaussianHeatFluxVOFInterface<dim>::assemble_matrix(
   HeatTransferScratchData<dim> & /*scratch_data*/,
   StabilizedMethodsCopyData & /*copy_data*/)
 {}
 
 template <int dim>
 void
-HeatTransferAssemblerLaserHeatFluxVOFInterface<dim>::assemble_rhs(
+HeatTransferAssemblerLaserGaussianHeatFluxVOFInterface<dim>::assemble_rhs(
   HeatTransferScratchData<dim> &scratch_data,
   StabilizedMethodsCopyData    &copy_data)
 {
@@ -908,8 +908,8 @@ HeatTransferAssemblerLaserHeatFluxVOFInterface<dim>::assemble_rhs(
     }
 }
 
-template class HeatTransferAssemblerLaserHeatFluxVOFInterface<2>;
-template class HeatTransferAssemblerLaserHeatFluxVOFInterface<3>;
+template class HeatTransferAssemblerLaserGaussianHeatFluxVOFInterface<2>;
+template class HeatTransferAssemblerLaserGaussianHeatFluxVOFInterface<3>;
 
 template <int dim>
 void
