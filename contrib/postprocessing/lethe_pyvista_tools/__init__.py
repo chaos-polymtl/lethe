@@ -69,6 +69,8 @@ class lethe_pyvista_tools():
 
         self.list_vtu           -> Returns the list of names of .vtu files.
 
+        self.padding            -> Returns the padding of vtu file numbering.
+
         """
 
         self.path_case = case_path
@@ -77,6 +79,7 @@ class lethe_pyvista_tools():
         self.sorted = False
         self.has_neighbors = False
         self.has_cylindrical_coords = False
+        self.padding = '0'
 
         if n_procs is None:
             from os import cpu_count
@@ -175,7 +178,11 @@ class lethe_pyvista_tools():
 
         # Create a list of all files' names
         list_vtu = [pvd_datasets[x].path for x in range(len(pvd_datasets))]
-        list_vtu = [x.replace(".pvtu", ".0000.vtu") for x in list_vtu]
+        substr1_index = list_vtu[0].find(".")
+        substr2_index = list_vtu[0].find(".pvtu")
+        padding_length = len(list_vtu[0][substr1_index + 1 : substr2_index])
+        self.padding = '0'.zfill(padding_length)
+        list_vtu = [x.replace(".pvtu", "."+self.padding+".vtu") for x in list_vtu]
 
         # Remove duplicates
         list_vtu = list(dict.fromkeys(list_vtu))
@@ -211,7 +218,7 @@ class lethe_pyvista_tools():
 
                             # If line matches one of the files
                             if path in line:
-                                line = line.replace('.pvtu', '.00000.vtu')
+                                line = line.replace(".pvtu", "."+self.padding+".vtu")
                                 
                                 # If vtu is in list_vtu
                                 if line.split('file="')[1].split('"/>')[0] in list_vtu:
