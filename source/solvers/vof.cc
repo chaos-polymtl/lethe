@@ -75,7 +75,8 @@ VolumeOfFluid<dim>::assemble_system_matrix()
     multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
 
   auto scratch_data =
-    VOFScratchData<dim>(this->simulation_parameters.physical_properties_manager,
+    VOFScratchData<dim>(this->simulation_control,
+                        this->simulation_parameters.physical_properties_manager,
                         *this->fe,
                         *this->cell_quadrature,
                         *this->mapping,
@@ -199,7 +200,8 @@ VolumeOfFluid<dim>::assemble_system_rhs()
     multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
 
   auto scratch_data =
-    VOFScratchData<dim>(this->simulation_parameters.physical_properties_manager,
+    VOFScratchData<dim>(this->simulation_control,
+                        this->simulation_parameters.physical_properties_manager,
                         *this->fe,
                         *this->cell_quadrature,
                         *this->mapping,

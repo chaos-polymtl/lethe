@@ -664,6 +664,7 @@ GLSNavierStokesSolver<dim>::assemble_system_matrix_without_preconditioner()
   setup_assemblers();
 
   auto scratch_data = NavierStokesScratchData<dim>(
+    this->simulation_control,
     this->simulation_parameters.physical_properties_manager,
     *this->fe,
     *this->cell_quadrature,
@@ -821,9 +822,10 @@ GLSNavierStokesSolver<dim>::assemble_local_system_matrix(
         cell->index(),
         dof_handler_ht);
 
-      scratch_data.reinit_heat_transfer(temperature_cell,
-                                        *this->multiphysics->get_solution(
-                                          PhysicsID::heat_transfer));
+      scratch_data.reinit_heat_transfer(
+        temperature_cell,
+        *this->multiphysics->get_solution(PhysicsID::heat_transfer),
+        *this->multiphysics->get_previous_solutions(PhysicsID::heat_transfer));
     }
 
   scratch_data.calculate_physical_properties();
@@ -868,6 +870,7 @@ GLSNavierStokesSolver<dim>::assemble_system_rhs()
   setup_assemblers();
 
   auto scratch_data = NavierStokesScratchData<dim>(
+    this->simulation_control,
     this->simulation_parameters.physical_properties_manager,
     *this->fe,
     *this->cell_quadrature,
@@ -1028,9 +1031,10 @@ GLSNavierStokesSolver<dim>::assemble_local_system_rhs(
         cell->index(),
         dof_handler_ht);
 
-      scratch_data.reinit_heat_transfer(temperature_cell,
-                                        *this->multiphysics->get_solution(
-                                          PhysicsID::heat_transfer));
+      scratch_data.reinit_heat_transfer(
+        temperature_cell,
+        *this->multiphysics->get_solution(PhysicsID::heat_transfer),
+        *this->multiphysics->get_previous_solutions(PhysicsID::heat_transfer));
     }
 
   scratch_data.calculate_physical_properties();
@@ -1581,11 +1585,11 @@ GLSNavierStokesSolver<dim>::solve_system_GMRES(const bool   initial_step,
   current_preconditioner_fill_level = initial_preconditioner_fill_level;
 }
 
-// The solver starts from the initial fill levle provided in the parameter file.
+// The solver starts from the initial fill level provided in the parameter file.
 // If for any reason the linear solver crashes, it will restart with a fill
 // level increased by 1. This restart happens up to a maximum of 20 times, after
-// which it will let the solver cras. If a change happened on the fill level, it
-// will go back to its original value at the end of the restart process.
+// which it will let the solver crash. If a change happened on the fill level,
+// it will go back to its original value at the end of the restart process.
 template <int dim>
 void
 GLSNavierStokesSolver<dim>::solve_system_BiCGStab(
