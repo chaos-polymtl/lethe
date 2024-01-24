@@ -502,9 +502,17 @@ GLSNavierStokesSolver<dim>::setup_assemblers()
               this->simulation_parameters.evaporation));
         }
 
-      AssertThrow(this->simulation_parameters.velocity_sources.darcy_type !=
-                    Parameters::VelocitySource::DarcySourceType::phase_change,
-                  PhaseChangeDarcyModelDoesNotSupportVOF());
+      // Darcy force for phase change simulations
+      if (this->simulation_parameters.velocity_sources.darcy_type ==
+          Parameters::VelocitySource::DarcySourceType::phase_change)
+        {
+          AssertThrow(this->simulation_parameters.multiphysics.heat_transfer,
+                      PhaseChangeDarcyModelRequiresTemperature());
+          this->assemblers.push_back(
+            std::make_shared<PhaseChangeDarcyVOFAssembler<dim>>(
+              this->simulation_parameters.physical_properties_manager
+                .get_phase_change_parameters_vector()));
+        }
 
       if (this->simulation_parameters.physical_properties_manager
             .is_non_newtonian())

@@ -111,6 +111,9 @@ PhysicalPropertiesManager::initialize(
         ThermalExpansionModel::model_cast(physical_properties.fluids[f]));
       establish_fields_required_by_model(*thermal_expansion[f]);
 
+      phase_change_parameters.push_back(
+        physical_properties.fluids[f].phase_change_parameters);
+
       if (rheology.back()->is_non_newtonian_rheological_model())
         non_newtonian_flow = true;
     }
@@ -131,7 +134,6 @@ PhysicalPropertiesManager::initialize(
       specific_heat.push_back(
         SpecificHeatModel::model_cast(physical_properties.solids[s]));
       establish_fields_required_by_model(*specific_heat[s]);
-
 
       thermal_conductivity.push_back(
         ThermalConductivityModel::model_cast(physical_properties.solids[s]));
@@ -160,6 +162,7 @@ PhysicalPropertiesManager::initialize(
       establish_fields_required_by_model(*surface_tension[i]);
       if (!surface_tension.back()->is_constant_surface_tension_model())
         constant_surface_tension = false;
+
       mobility_cahn_hilliard.push_back(MobilityCahnHilliardModel::model_cast(
         physical_properties.material_interactions[i]));
       establish_fields_required_by_model(*mobility_cahn_hilliard[i]);
