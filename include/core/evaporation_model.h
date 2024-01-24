@@ -668,9 +668,16 @@ public:
                                   0.0 :
                                   -mass_flux_value * mass_flux_value *
                                     (liquid_density_inv - vapor_density_inv);
+                               
     double pressure           = expansion_pressure +
                       recoil_pressure_coefficient * saturation_pressure_value;
-
+    // if (field_values.at(field::temperature)>3550)
+    // {
+    //   std::cout << "expansion_pressure = " << expansion_pressure << std::endl;
+    //   std::cout << "recoil_pressure = " << recoil_pressure_coefficient * saturation_pressure_value << std::endl;
+    //   std::cout << "std::max(pressure - ambient_pressure, 0.0) = " << std::max(pressure - ambient_pressure, 0.0) << std::endl;
+    // } 
+    
     return std::max(pressure - ambient_pressure, 0.0);
   }
 
