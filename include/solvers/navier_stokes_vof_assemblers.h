@@ -121,7 +121,7 @@ public:
  * material. In the phase change model, the value of the \f$ \beta_D \f$
  * coefficient depends on the temperature field and the material (fluid)
  * properties. Generally, this is used to impose the stasis in the solid
- * phase. This generally leads to a better conditioning of the linear 
+ * phase. This generally leads to a better conditioning of the linear
  * system than increasing the viscosity of the solid phase.
  *
  *
