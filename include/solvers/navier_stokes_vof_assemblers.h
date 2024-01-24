@@ -26,7 +26,7 @@
 
 
 /**
- * @brief Class that assembles the core of the Navier-Stokes equation with
+ * @brief Assembles the core of the Navier-Stokes equation with
  * free surface using VOF modeling.
  * According to the following weak form:
  * \f$ \nabla \cdot \mathbf{u} + \rho \mathbf{u} \cdot \nabla
@@ -73,7 +73,7 @@ public:
 };
 
 /**
- * @brief Class that assembles the transient time arising from BDF time
+ * @brief Assembles the transient time arising from BDF time
  * integration for the Navier-Stokes equation with
  * free surface using VOF modeling. For example, if a BDF1 scheme is
  * chosen, the following is assembled
@@ -115,7 +115,60 @@ public:
 };
 
 /**
- * @brief Class that assembles the Surface Tension Force (STF) for the
+ * @brief Assembles a phase change Darcy forcing term for a VOF two-fluid
+ * simulation. The term  \f$-\phi \beta_D  \mathbf{u} \f$ is added to the right
+ * hand-side of the Navier-Stokes equations to prohibit the motion of a
+ * material. In the phase change model, the value of the \f$ \beta_D \f$
+ * coefficient depends on the temperature field and the material (fluid)
+ * properties. Generally, this is used to impose the stasis in the solid
+ * phase. This generally leads to a better conditioning of the linear
+ * system than increasing the viscosity of the solid phase.
+ *
+ *
+ * @tparam dim An integer that denotes the number of spatial dimensions
+ *
+ * @ingroup assemblers
+ */
+
+template <int dim>
+class PhaseChangeDarcyVOFAssembler : public NavierStokesAssemblerBase<dim>
+{
+public:
+  PhaseChangeDarcyVOFAssembler(
+    const std::vector<Parameters::PhaseChange> &phase_change_parameters_vector)
+    : phase_change_parameters_vector(phase_change_parameters_vector)
+  {}
+
+  /**
+   * @brief assemble_matrix Assembles the matrix of: \f$-\beta_D  \mathbf{u}\f$.
+   * @param scratch_data (see base class)
+   * @param copy_data (see base class)
+   */
+  virtual void
+  assemble_matrix(NavierStokesScratchData<dim>         &scratch_data,
+                  StabilizedMethodsTensorCopyData<dim> &copy_data) override;
+
+
+  /**
+   * @brief assemble_rhs Assembles the weak form of: \f$-\beta_D  \mathbf{u} \f$
+   * @param scratch_data (see base class)
+   * @param copy_data (see base class)
+   */
+  virtual void
+  assemble_rhs(NavierStokesScratchData<dim>         &scratch_data,
+               StabilizedMethodsTensorCopyData<dim> &copy_data) override;
+
+private:
+  /*
+   * Phase change parameters are kept within the assembler and are used to
+   * calculate, on the fly, the inverse permeability (\f$ \beta_D \f$).
+   */
+  const std::vector<Parameters::PhaseChange> phase_change_parameters_vector;
+};
+
+
+/**
+ * @brief Assembles the Surface Tension Force (STF) for the
  * Navier-Stokes equations according to the following equation:
  *
  * \f$\mathbf{F_{CSV}}=\sigma k \nabla \phi \frac{2 \rho}{\rho_0 + \rho_1} \f$
@@ -161,7 +214,7 @@ public:
 
 
 /**
- * @brief Class that assembles the marangoni effect for the
+ * @brief Assembles the Marangoni effect for the
  * Navier-Stokes equations according to the following equation:
  *
  * \f$\mathbf{F_{Ma}}= \frac{\partial \sigma}{\partial T} \left[ \nabla T
@@ -210,7 +263,7 @@ public:
 };
 
 /**
- * @brief Class that assembles the momentum source due to evaporation for the
+ * @brief Assembles the momentum source due to evaporation for the
  * Navier-Stokes equations.
  *
  * @tparam dim An integer that denotes the number of spatial dimensions
@@ -261,7 +314,7 @@ private:
 };
 
 /**
- * @brief Class that assembles the core of the Navier-Stokes equation
+ * @brief Assembles the core of the Navier-Stokes equation
  * using a Rheological model to predict non-Newtonian behaviors
  *
  * @tparam dim An integer that denotes the number of spatial dimensions

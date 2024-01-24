@@ -122,8 +122,6 @@ GLSNavierStokesVOFAssemblerCore<dim>::assemble_matrix(
           velocity_gradient_x_phi_u_j[j] = velocity_gradient * phi_u_j;
         }
 
-
-
       for (unsigned int i = 0; i < n_dofs; ++i)
         {
           const auto &phi_u_i      = scratch_data.phi_u[q][i];
@@ -309,10 +307,9 @@ GLSNavierStokesVOFAssemblerCore<dim>::assemble_rhs(
     }
 }
 
-
-
 template class GLSNavierStokesVOFAssemblerCore<2>;
 template class GLSNavierStokesVOFAssemblerCore<3>;
+
 
 template <int dim>
 void
@@ -433,6 +430,155 @@ GLSNavierStokesVOFAssemblerBDF<dim>::assemble_rhs(
 
 template class GLSNavierStokesVOFAssemblerBDF<2>;
 template class GLSNavierStokesVOFAssemblerBDF<3>;
+
+
+template <int dim>
+void
+PhaseChangeDarcyVOFAssembler<dim>::assemble_matrix(
+  NavierStokesScratchData<dim>         &scratch_data,
+  StabilizedMethodsTensorCopyData<dim> &copy_data)
+{
+  // Loop and quadrature information
+  const auto        &JxW_vec        = scratch_data.JxW;
+  const unsigned int n_q_points     = scratch_data.n_q_points;
+  const unsigned int n_dofs         = scratch_data.n_dofs;
+  const auto        &velocities     = scratch_data.velocity_values;
+  const auto        &temperatures   = scratch_data.temperature_values;
+  const auto        &filtered_phase = scratch_data.filtered_phase_values;
+
+  auto &local_matrix    = copy_data.local_matrix;
+  auto &strong_residual = copy_data.strong_residual;
+  auto &strong_jacobian = copy_data.strong_jacobian;
+
+  const unsigned int  number_of_fluids = phase_change_parameters_vector.size();
+  std::vector<double> liquid_fractions;
+  std::vector<double> darcy_penalties;
+  liquid_fractions.reserve(number_of_fluids);
+  darcy_penalties.reserve(number_of_fluids);
+
+  // Loop over the quadrature points
+  for (unsigned int q = 0; q < n_q_points; ++q)
+    {
+      // Store JxW in local variable for faster access;
+      const double JxW = JxW_vec[q];
+      // Current temperature values
+      double current_temperature = temperatures[q];
+      // Loop to calculate the liquid fraction and Darcy permeability of each
+      // fluid. Calculated Darcy permeability coefficients depend on the
+      // temperature and material (fluid) properties. A min(max) approach is
+      // used to calculate the liquid fractions avoiding if conditions.
+      for (unsigned int p = 0; p < number_of_fluids; p++)
+        {
+          liquid_fractions.emplace_back(
+            (std::min(1.,
+                      std::max((current_temperature -
+                                phase_change_parameters_vector[p].T_solidus) /
+                                 (phase_change_parameters_vector[p].T_liquidus -
+                                  phase_change_parameters_vector[p].T_solidus),
+                               0.))));
+          darcy_penalties.emplace_back(
+            phase_change_parameters_vector[p].penalty_l * liquid_fractions[p] +
+            (1. - liquid_fractions[p]) *
+              phase_change_parameters_vector[p].penalty_s);
+        }
+
+      // For a VOF two-fluid system, the global Darcy penalty coefficient
+      // takes into account the phase change parameters in both fluids
+      const double darcy_penalty =
+        ((1 - filtered_phase[q]) * darcy_penalties[0] +
+         filtered_phase[q] * darcy_penalties[1]);
+
+      strong_residual[q] += darcy_penalty * velocities[q];
+
+      for (unsigned int j = 0; j < n_dofs; ++j)
+        {
+          strong_jacobian[q][j] += darcy_penalty * scratch_data.phi_u[q][j];
+        }
+
+      for (unsigned int i = 0; i < n_dofs; ++i)
+        {
+          const auto &phi_u_i = scratch_data.phi_u[q][i];
+          for (unsigned int j = 0; j < n_dofs; ++j)
+            {
+              const auto &phi_u_j = scratch_data.phi_u[q][j];
+              local_matrix(i, j) += darcy_penalty * phi_u_i * phi_u_j * JxW;
+            }
+        }
+      liquid_fractions.clear();
+      darcy_penalties.clear();
+    }
+}
+
+template <int dim>
+void
+PhaseChangeDarcyVOFAssembler<dim>::assemble_rhs(
+  NavierStokesScratchData<dim>         &scratch_data,
+  StabilizedMethodsTensorCopyData<dim> &copy_data)
+{
+  // Loop and quadrature information
+  const auto        &JxW_vec        = scratch_data.JxW;
+  const unsigned int n_q_points     = scratch_data.n_q_points;
+  const unsigned int n_dofs         = scratch_data.n_dofs;
+  const auto        &velocities     = scratch_data.velocity_values;
+  const auto        &temperatures   = scratch_data.temperature_values;
+  const auto        &filtered_phase = scratch_data.filtered_phase_values;
+
+  auto &local_rhs       = copy_data.local_rhs;
+  auto &strong_residual = copy_data.strong_residual;
+
+  const double        number_of_fluids = phase_change_parameters_vector.size();
+  std::vector<double> liquid_fractions;
+  std::vector<double> darcy_penalties;
+  liquid_fractions.reserve(number_of_fluids);
+  darcy_penalties.reserve(number_of_fluids);
+
+  // Loop over the quadrature points
+  for (unsigned int q = 0; q < n_q_points; ++q)
+    {
+      // Store JxW in local variable for faster access;
+      const double JxW = JxW_vec[q];
+      // Current temperature values
+      double current_temperature = temperatures[q];
+      // Loop to calculate the liquid fraction and Darcy permeability of each
+      // fluid. Calculated Darcy penalty coefficients depend on the
+      // temperature and material (fluid) properties. A min(max) approach is
+      // used to calculate the liquid fractions avoiding if conditions.
+      for (unsigned int p = 0; p < number_of_fluids; p++)
+        {
+          liquid_fractions.emplace_back(
+            (std::min(1.,
+                      std::max((current_temperature -
+                                phase_change_parameters_vector[p].T_solidus) /
+                                 (phase_change_parameters_vector[p].T_liquidus -
+                                  phase_change_parameters_vector[p].T_solidus),
+                               0.))));
+          darcy_penalties.emplace_back(
+            phase_change_parameters_vector[p].penalty_l * liquid_fractions[p] +
+            (1. - liquid_fractions[p]) *
+              phase_change_parameters_vector[p].penalty_s);
+        }
+
+      // For a VOF two-fluid system, the global Darcy permeability coefficient
+      // takes into account the phase change parameters in both fluids
+      const double darcy_penalty =
+        ((1 - filtered_phase[q]) * darcy_penalties[0] +
+         filtered_phase[q] * darcy_penalties[1]);
+
+      strong_residual[q] += darcy_penalty * velocities[q];
+
+      // Assembly of the right-hand side
+      for (unsigned int i = 0; i < n_dofs; ++i)
+        {
+          const auto phi_u_i = scratch_data.phi_u[q][i];
+
+          // Laplacian on the velocity terms
+          local_rhs(i) -= darcy_penalty * velocities[q] * phi_u_i * JxW;
+        }
+    }
+}
+
+template class PhaseChangeDarcyVOFAssembler<2>;
+template class PhaseChangeDarcyVOFAssembler<3>;
 
 
 template <int dim>
@@ -572,6 +718,7 @@ GLSNavierStokesVOFAssemblerMarangoni<dim>::assemble_rhs(
 template class GLSNavierStokesVOFAssemblerMarangoni<2>;
 template class GLSNavierStokesVOFAssemblerMarangoni<3>;
 
+
 template <int dim>
 void
 NavierStokesVOFAssemblerEvaporation<dim>::assemble_matrix(
@@ -633,6 +780,7 @@ NavierStokesVOFAssemblerEvaporation<dim>::assemble_rhs(
 
 template class NavierStokesVOFAssemblerEvaporation<2>;
 template class NavierStokesVOFAssemblerEvaporation<3>;
+
 
 template <int dim>
 void

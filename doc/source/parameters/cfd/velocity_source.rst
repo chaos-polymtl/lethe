@@ -31,7 +31,7 @@ Rotating frame simulations use the following parameters:
 Darcy Penalization
 ~~~~~~~~~~~~~~~~~~
 
-A Darcy-like source term can be added to the simulation using the following parmeters:
+A Darcy-like source term can be added to the simulation using the following parameters:
 
 .. code-block:: text
 
@@ -40,3 +40,6 @@ A Darcy-like source term can be added to the simulation using the following parm
   end
 
 * The ``Darcy type`` parameter specifies the type of Darcy penalization term to be applied to the Navier-Stokes equations. The options are ``none`` or ``phase_change``. The ``phase_change`` model uses the values of the ``Darcy penalty liquid``  and ``Darcy penalty solid`` set-up within the ``phase change`` subsection of the :doc:`physical_properties`.
+
+.. caution::
+  The phase change Darcy model does not currently have a Cahn-Hilliard implementation.
