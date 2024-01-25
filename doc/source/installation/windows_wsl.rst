@@ -28,7 +28,14 @@ Throughout this tutorial:
 Installing WSL and Ubuntu (Step #0)
 ------------------------------------
 
-1. |win_shell| Install WSL (Windows Subsystem for Linux), and Ubuntu 22.04 LTS from the microsoft store, following the steps indicated `in this tutorial <https://linuxconfig.org/ubuntu-22-04-on-wsl-windows-subsystem-for-linux>`_
+1. |win_shell| Install WSL (Windows Subsystem for Linux). Open PowerShell or Windows Command Prompt in administrator mode by right-clicking and selecting "Run as administrator", enter the wsl --install command, then restart your machine.
+
+.. code-block:: text
+  :class: copy-button
+
+  wsl --install
+
+2. |win_shell| Enable WSL and Ubuntu 22.04 LTS from the microsoft store, following the steps indicated `in this tutorial <https://linuxconfig.org/ubuntu-22-04-on-wsl-windows-subsystem-for-linux>`_
 
 .. admonition:: Verify the installed version of WSL
 
@@ -41,7 +48,7 @@ Installing WSL and Ubuntu (Step #0)
 
   should indicate ``version 2``. If not, follow this to update WSL: https://docs.microsoft.com/fr-fr/windows/wsl/install#upgrade-version-from-wsl-1-to-wsl-2
 
-2. |win_shell| Launch Ubuntu (from the start menu) and |linux_shell| update Ubuntu: 
+3. |win_shell| Launch Ubuntu (from the start menu) and |linux_shell| update Ubuntu: 
 
 .. code-block:: text
   :class: copy-button
@@ -54,13 +61,13 @@ Installing WSL and Ubuntu (Step #0)
 
 When prompted "do you want to continue?", proceed by typing ``y`` and hitting ``Enter``.
 
-3. |win_shell| (optional) To activate copy/paste in the Linux sub-terminal (`tutorial with screenshots <https://defragged.org/2020/10/29/how-to-copy-paste-in-windows-subsystem-for-linux-wsl/>`_):
+4. |win_shell| (optional) To activate copy/paste in the Linux sub-terminal (`tutorial with screenshots <https://defragged.org/2020/10/29/how-to-copy-paste-in-windows-subsystem-for-linux-wsl/>`_):
 
   * right-click on the Ubuntu Window pane header
   * in ``Properties``, select ``Use Ctrl+Shift+C/V as Copy/Paste``
   * you can then use ``Ctrl+Shift+V`` to paste text or commands in the Linux sub-terminal
 
-4. |win_shell| (optional) For better ease in the Linux terminal (better coloring, multiple tabs), change the default terminal:
+5. |win_shell| (optional) For better ease in the Linux terminal (better coloring, multiple tabs), change the default terminal:
 
   * in the microsoft store, download ``Windows Terminal``
   * in the ``parameters`` of ``Windows Terminal``, select on the left pannel "start": change default profile with ``Ubuntu-22.04``
@@ -79,16 +86,18 @@ When prompted "do you want to continue?", proceed by typing ``y`` and hitting ``
 
 The following step is to install deal.II. This can be done through
 
-  1. Advanced Packaging Tool (apt): **this is by far the easiest way to proceed**
+  1. Advanced Packaging Tool (apt) (**this is by far the easiest way to proceed**) : :ref:`install-deal.II apt` (recommended for users)
 
-  2. Candi shell script (`candi github page <https://github.com/dealii/candi>`_).
+  2. Candi shell script (`candi github page <https://github.com/dealii/candi>`_): :ref:`install-deal.II candi` (recommended for developers)
+
+.. _install-deal.II apt:
 
 Installing deal.II using apt (Step #1)
 -----------------------------------------
 
 This is done following `this procedure <https://www.dealii.org/download.html#:~:text=page%20for%20details.-,Linux%20distributions,-Arch%20Linux>`_.
 
-In case you are using Ubuntu, you will need to `update the backports <https://launchpad.net/~ginggs/+archive/ubuntu/deal.ii-9.5.1-backports>`_:
+1. |linux_shell| In case you are using Ubuntu, you will need to `update the backports <https://launchpad.net/~ginggs/+archive/ubuntu/deal.ii-9.5.1-backports>`_:
 
 .. code-block:: text
   :class: copy-button
@@ -96,7 +105,7 @@ In case you are using Ubuntu, you will need to `update the backports <https://la
   sudo add-apt-repository ppa:ginggs/deal.ii-9.5.1-backports
   sudo apt update
 
-To install deal.II, run:
+2. |linux_shell| To install deal.II, run:
 
 .. code-block:: text
   :class: copy-button
@@ -116,6 +125,7 @@ This should output several information about the installed version. Everything w
 
   If the installed version is other than ``deal.ii-9.5.1``, follow `this link <https://github.com/dealii/dealii/wiki/Getting-deal.II>`_.
 
+.. _install-deal.II candi:
 
 Installing deal.II using Candi (Step #1)
 -----------------------------------------
@@ -152,7 +162,7 @@ Installing deal.II using Candi (Step #1)
 
     gcc --version
 
-  should return ``gcc (Ubuntu 10.X.X...) 10.X.X``. If not, go to :ref:`change compiler default version`.
+  should return ``gcc (Ubuntu 10.X.X...) 10.X.X`` or higher. If not, go to :ref:`change compiler default version`.
 
 3. |linux_shell| Create folders (suggested structure):
 
@@ -279,7 +289,14 @@ Where ``$numprocs`` corresponds to the number of processors used for the compila
 Installing Lethe (Step #2)
 -------------------------------------
 
-1. |linux_shell| Set-up the folder structure: in the ``Software`` folder created at the beginning of Step #1 (if you are in the candi folder, type ``cd ..``), type:
+1. |linux_shell| Set-up the folder structure. Create the ``Software`` folder (if you are doing the candi installation, this folder should alredy exist from Step #1).
+
+.. code-block:: text
+  :class: copy-button
+
+  mkdir Software; cd Software 
+
+In the ``Software`` folder created (if you are in the candi folder, type ``cd ..``), type:
 
 .. code-block:: text
   :class: copy-button
@@ -321,25 +338,36 @@ Where ``$numprocs`` corresponds to the number of processors used for the compila
 
 5. |linux_shell| (optional) Finally, it is recommended to test your installation:
 
-  * If you are running these tests for the first time, install ``numdiff``:
 
-  .. code-block:: text
-    :class: copy-button
-    
-    apt-get numdiff
-
-  * Run the tests in the build folder:
+Run the tests in the build folder:
 
 .. code-block:: text
   :class: copy-button
 
   ctest -j$numprocs
 
-  This will take from a few minutes to an hour, depending on your hardware. At the end, you should have this message on the console:
+This will take from a few minutes to an hour, depending on your hardware. At the end, you should have this message on the console:
 
   .. code-block:: text
 
     100% tests passed
+
+.. note:: If you are running these tests for the first time, install ``numdiff`` (if you need superuser privilege, use sudo):
+
+  .. code-block:: text
+    :class: copy-button
+    
+    apt-get numdiff
+
+  or
+
+  .. code-block:: text
+    :class: copy-button
+    
+    apt install numdiff
+
+.. warning:: 
+  The lethe test suites requires that deal.II be configured with p4est 2.2.1, otherwise the test which include restart files will fail.
 
 Congratulations, you are now ready to use lethe! For instance, proceed to :doc:`../first_simulation`.
 
@@ -348,6 +376,30 @@ Updating deal.II and Lethe
 
 If you have already installed deal.II and lethe, you can update them without doing the entire installation from scratch:
 
+Through apt
++++++++++++++++++++++++++++++++++
+
+1. |linux_shell| As all other ``apt`` packages, run:
+
+.. code-block:: text
+  :class: copy-button
+
+  sudo apt update
+  sudo apt upgrade -y
+
+2. |linux_shell| Then, update lethe:
+
+.. code-block:: text
+  :class: copy-button
+
+  cd ../lethe/git
+  git pull
+  cd ../build
+  cmake ../git -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=../inst/
+  make -j$numprocs
+
+With Candi
++++++++++++++++++++++++++++++++++
 1. |linux_shell| Update deal.ii by typing, from your home directory:
 
 .. code-block:: text
