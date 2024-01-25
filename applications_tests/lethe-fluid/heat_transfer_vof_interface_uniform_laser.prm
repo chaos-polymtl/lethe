@@ -1,0 +1,246 @@
+# Listing of Parameters
+#----------------------
+
+set dimension = 2
+
+#---------------------------------------------------
+# Simulation Control
+#---------------------------------------------------
+
+subsection simulation control
+  set method           = bdf2
+  set output frequency = 0
+  set time end         = 1
+  set time step        = 0.2
+end
+
+#---------------------------------------------------
+# Multiphysics
+#---------------------------------------------------
+
+subsection multiphysics
+  set VOF           = true
+  set heat transfer = true
+end
+
+#---------------------------------------------------
+# Mesh
+#---------------------------------------------------
+
+subsection mesh
+  set type               = dealii
+  set grid type          = subdivided_hyper_rectangle
+  set grid arguments     = 1,512 : 0,0: 1,1: true
+  set initial refinement = 0
+end
+
+#---------------------------------------------------
+# Boundary Conditions
+#---------------------------------------------------
+
+subsection boundary conditions
+  set number = 4
+  subsection bc 0
+    set id   = 2
+    set type = noslip
+  end
+  subsection bc 1
+    set id   = 0
+    set type = none
+  end
+  subsection bc 2
+    set id   = 1
+    set type = none
+  end
+  subsection bc 3
+    set id   = 3
+    set type = slip
+  end
+end
+
+subsection boundary conditions heat transfer
+  set number = 4
+  subsection bc 0
+    set id   = 2
+    set type = temperature
+    subsection value
+      set Function expression = 298
+    end
+  end
+  subsection bc 1
+    set id   = 0
+    set type = noflux
+  end
+  subsection bc 2
+    set id   = 1
+    set type = noflux
+  end
+  subsection bc 3
+    set id   = 3
+    set type = noflux
+  end
+end
+
+#---------------------------------------------------
+# Initial condition
+#---------------------------------------------------
+
+subsection initial conditions
+  set type = nodal
+  subsection uvwp
+    set Function expression = 0; 0; 0
+  end
+  subsection VOF
+    set Function expression = if (y<0.43, 1, 0)
+    subsection projection step
+      set enable           = false
+      set diffusion factor = 1
+    end
+  end
+  subsection temperature
+    set Function expression = 298
+  end
+end
+
+#---------------------------------------------------
+# Physical Properties
+#---------------------------------------------------
+
+subsection physical properties
+  set number of fluids = 2
+  subsection fluid 1
+    set density              = 4420e-9
+    set kinematic viscosity  = 0.905
+    set thermal conductivity = 28.8e3
+    set specific heat        = 1126e6
+  end
+
+  subsection fluid 0
+    set density              = 4420e-9
+    set kinematic viscosity  = 0.905
+    set thermal conductivity = 28.8e3
+    set specific heat        = 1126e6
+  end
+
+  set number of material interactions = 1
+  subsection material interaction 0
+    set type = fluid-fluid
+    subsection fluid-fluid interaction
+      set first fluid id              = 0
+      set second fluid id             = 1
+      set surface tension model       = constant
+      set surface tension coefficient = 0
+    end
+  end
+end
+
+#---------------------------------------------------
+# Laser parameters
+#---------------------------------------------------
+
+subsection laser parameters
+  set enable           = true
+  set type             = uniform_heat_flux_vof_interface
+  set power            = 156e6
+  set absorptivity     = 0.35
+  set beam radius      = 0.5
+  set start time       = 0
+  set end time         = 1
+  set beam orientation = y-
+  subsection path
+    set Function expression = 0.5; 0.43
+  end
+end
+
+#---------------------------------------------------
+# VOF
+#---------------------------------------------------
+
+subsection VOF
+  subsection phase filtration
+    set type      = tanh
+    set verbosity = quiet
+    set beta      = 30
+  end
+  subsection surface tension force
+    set enable                                   = true
+    set phase fraction gradient diffusion factor = 1
+    set curvature diffusion factor               = 1
+    set output auxiliary fields                  = true
+    set enable marangoni effect                  = false
+  end
+end
+
+#---------------------------------------------------
+# Analytical Solution
+#---------------------------------------------------
+
+subsection analytical solution
+  set enable    = true
+  set verbosity = verbose
+  subsection VOF
+    set Function expression = if (y>0.43, 0, 1)
+  end
+  subsection temperature
+    set Function expression = if (y>0.43, 1335.96,  (0.35*156e6*y)/(3.1416*0.5*0.5*28.8e3)+298)
+  end
+end
+
+#---------------------------------------------------
+# Non-Linear Solver Control
+#---------------------------------------------------
+
+subsection non-linear solver
+  subsection fluid dynamics
+    set tolerance      = 1e-4
+    set max iterations = 20
+    set verbosity      = quiet
+  end
+  subsection heat transfer
+    set tolerance      = 1e-2
+    set max iterations = 20
+    set verbosity      = quiet
+  end
+  subsection VOF
+    set tolerance      = 1e-4
+    set max iterations = 20
+    set verbosity      = quiet
+  end
+end
+
+#---------------------------------------------------
+# Linear Solver Control
+#---------------------------------------------------
+
+subsection linear solver
+  subsection fluid dynamics
+    set verbosity                             = quiet
+    set method                                = gmres
+    set relative residual                     = 1e-3
+    set minimum residual                      = 1e-5
+    set preconditioner                        = ilu
+    set ilu preconditioner fill               = 1
+    set ilu preconditioner absolute tolerance = 1e-12
+    set ilu preconditioner relative tolerance = 1.00
+  end
+  subsection heat transfer
+    set verbosity                             = quiet
+    set method                                = gmres
+    set relative residual                     = 1e-1
+    set minimum residual                      = 1e-3
+    set preconditioner                        = ilu
+    set ilu preconditioner fill               = 1
+    set ilu preconditioner absolute tolerance = 1e-12
+    set ilu preconditioner relative tolerance = 1.00
+  end
+  subsection VOF
+    set verbosity                             = quiet
+    set method                                = gmres
+    set relative residual                     = 1e-3
+    set minimum residual                      = 1e-5
+    set preconditioner                        = ilu
+    set ilu preconditioner fill               = 1
+    set ilu preconditioner absolute tolerance = 1e-12
+    set ilu preconditioner relative tolerance = 1.00
+  end
+end

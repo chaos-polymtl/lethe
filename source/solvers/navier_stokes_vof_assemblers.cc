@@ -759,7 +759,7 @@ NavierStokesVOFAssemblerEvaporation<dim>::assemble_rhs(
       // Gather phase fraction gradient
       const Tensor<1, dim> &filtered_phase_gradient_value_q =
         scratch_data.filtered_phase_gradient_values[q];
-        
+
       const double filtered_phase_gradient_norm =
         filtered_phase_gradient_value_q.norm();
 
@@ -770,7 +770,8 @@ NavierStokesVOFAssemblerEvaporation<dim>::assemble_rhs(
       const double JxW_value = JxW[q];
 
       const Tensor<1, dim> recoil_pressure_force =
-        recoil_pressure * normalized_phase_fraction_gradient * filtered_phase_gradient_norm;
+        recoil_pressure * normalized_phase_fraction_gradient *
+        filtered_phase_gradient_norm;
 
       strong_residual[q] += recoil_pressure_force;
 
