@@ -92,17 +92,21 @@ Laser types
   .. attention::
     In this case, the heat affects the fluid initialized as ``fluid 1``.
 
-* When ``type`` is set to ``gaussian_heat_flux_vof_interface`` or ``uniform_heat_flux_vof_interface``, it **must be used in conjunction with the** :doc:`VOF auxiliary physic <./volume_of_fluid>`. The ``gaussian_heat_flux_vof_interface`` model is used to apply a gaussian heat flux, given by the expression below, only at the interface.
+* When ``type`` is set to ``gaussian_heat_flux_vof_interface`` or ``uniform_heat_flux_vof_interface``, it **must be used in conjunction with the** :doc:`VOF auxiliary physic <./volume_of_fluid>`.
 
-  .. math::
-      q(x,y,z) = \frac{|\nabla \psi| \eta \alpha P}{\pi R^2} \exp{\left(-\eta \frac{r^2}{R^2}\right)}
-
-  where :math:`r` is the radial distance from the laser's axis and :math:`|\nabla \psi|` is the :math:`L^2` norm of the filtered phase fraction gradient.
-
-The ``uniform_heat_flux_vof_interface`` model is used to apply a uniform heat flux, given by the expression below, only at the interface.
+  * The ``gaussian_heat_flux_vof_interface`` model is used to apply a gaussian heat flux, given by the expression below, only at the interface.
   
-  .. math::
-    q(x,y,z) = \frac{|\nabla \psi| \alpha P}{\pi R^2}
+    .. math::
+      
+        q(x,y,z) = \frac{|\nabla \psi| \eta \alpha P}{\pi R^2} \exp{\left(-\eta \frac{r^2}{R^2}\right)}
+        
+    where :math:`r` is the radial distance from the laser's axis and :math:`|\nabla \psi|` is the :math:`L^2` norm of the filtered phase fraction gradient.
+    
+  * The ``uniform_heat_flux_vof_interface`` model is used to apply a uniform heat flux, given by the expression below, only at the interface.
+  
+    .. math::
+      
+        q(x,y,z) = \frac{|\nabla \psi| \alpha P}{\pi R^2}
 
 -----------
 References

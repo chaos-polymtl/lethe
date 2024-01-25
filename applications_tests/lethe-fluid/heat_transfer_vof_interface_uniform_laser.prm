@@ -92,10 +92,6 @@ subsection initial conditions
   end
   subsection VOF
     set Function expression = if (y<0.43, 1, 0)
-    subsection projection step
-      set enable           = false
-      set diffusion factor = 1
-    end
   end
   subsection temperature
     set Function expression = 298
@@ -120,17 +116,6 @@ subsection physical properties
     set kinematic viscosity  = 0.905
     set thermal conductivity = 28.8e3
     set specific heat        = 1126e6
-  end
-
-  set number of material interactions = 1
-  subsection material interaction 0
-    set type = fluid-fluid
-    subsection fluid-fluid interaction
-      set first fluid id              = 0
-      set second fluid id             = 1
-      set surface tension model       = constant
-      set surface tension coefficient = 0
-    end
   end
 end
 
@@ -161,13 +146,6 @@ subsection VOF
     set type      = tanh
     set verbosity = quiet
     set beta      = 30
-  end
-  subsection surface tension force
-    set enable                                   = true
-    set phase fraction gradient diffusion factor = 1
-    set curvature diffusion factor               = 1
-    set output auxiliary fields                  = true
-    set enable marangoni effect                  = false
   end
 end
 

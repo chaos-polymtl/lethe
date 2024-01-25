@@ -1127,7 +1127,7 @@ HeatTransferAssemblerLaserUniformHeatFluxVOFInterface<dim>::assemble_rhs(
       auto &strong_residual = copy_data.strong_residual;
       auto &local_rhs       = copy_data.local_rhs;
 
-      // assembling right hand side
+      // assembling right-hand side
       for (unsigned int q = 0; q < n_q_points; ++q)
         {
           // Get quadrature point location on surface to calculate its distance
