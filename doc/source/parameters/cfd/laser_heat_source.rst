@@ -102,7 +102,7 @@ Laser types
 The ``uniform_heat_flux_vof_interface`` model is used to apply a uniform heat flux, given by the expression below, only at the interface.
   
   .. math::
-    q(x,y,z) = \frac{|\nabla \psi| \eta \alpha P}{\pi R^2}
+    q(x,y,z) = \frac{|\nabla \psi| \alpha P}{\pi R^2}
 
 -----------
 References
