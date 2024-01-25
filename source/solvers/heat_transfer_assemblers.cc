@@ -465,6 +465,7 @@ HeatTransferAssemblerRobinBC<dim>::assemble_rhs(
             this->boundary_conditions_ht.Tinf[i_bc]->value(Point<dim>());
           const double emissivity =
             this->boundary_conditions_ht.emissivity[i_bc]->value(Point<dim>());
+          const double heat_source = this->boundary_conditions_ht.heat_source[i_bc]->value(Point<dim>());
 
           for (unsigned int f = 0; f < scratch_data.n_faces; ++f)
             {
@@ -486,7 +487,7 @@ HeatTransferAssemblerRobinBC<dim>::assemble_rhs(
                             (h * (T_face - T_inf) +
                              Stefan_Boltzmann_constant * emissivity *
                                (T_face * T_face * T_face * T_face -
-                                T_inf * T_inf * T_inf * T_inf)) *
+                                T_inf * T_inf * T_inf * T_inf) + heat_source) *
                             JxW;
                         }
                     }

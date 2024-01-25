@@ -455,6 +455,7 @@ namespace BoundaryConditions
     std::vector<std::shared_ptr<Functions::ParsedFunction<dim>>> h;
     std::vector<std::shared_ptr<Functions::ParsedFunction<dim>>> Tinf;
     std::vector<std::shared_ptr<Functions::ParsedFunction<dim>>> emissivity;
+    std::vector<std::shared_ptr<Functions::ParsedFunction<dim>>> heat_source;
     double Stefan_Boltzmann_constant;
 
     void
@@ -515,6 +516,11 @@ namespace BoundaryConditions
     emissivity[i_bc] = std::make_shared<Functions::ParsedFunction<dim>>();
     emissivity[i_bc]->declare_parameters(prm);
     prm.leave_subsection();
+
+    prm.enter_subsection("heat source");
+    heat_source[i_bc] = std::make_shared<Functions::ParsedFunction<dim>>();
+    heat_source[i_bc]->declare_parameters(prm);
+    prm.leave_subsection();
   }
 
   /**
@@ -548,6 +554,7 @@ namespace BoundaryConditions
       h.resize(number_of_boundary_conditions);
       Tinf.resize(number_of_boundary_conditions);
       emissivity.resize(number_of_boundary_conditions);
+      heat_source.resize(number_of_boundary_conditions);
 
       for (unsigned int n = 0; n < number_of_boundary_conditions; n++)
         {

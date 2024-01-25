@@ -1345,6 +1345,11 @@ namespace Parameters
         "0.0",
         Patterns::Double(),
         "Temperature (Double) of environment for radiation term at the free surface (air/metal interface)");
+      prm.declare_entry(
+        "heat source",
+        "0.0",
+        Patterns::Double(),
+        "Heat flux (Double) Neumann boundary condition)");
     }
     prm.leave_subsection();
   }
@@ -1358,6 +1363,7 @@ namespace Parameters
       Stefan_Boltzmann_constant = prm.get_double("Stefan-Boltzmann constant");
       emissivity                = prm.get_double("emissivity");
       Tinf                      = prm.get_double("Tinf");
+      heat_source               = prm.get_double("heat source");
     }
     prm.leave_subsection();
   }
