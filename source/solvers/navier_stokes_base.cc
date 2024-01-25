@@ -870,6 +870,12 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_kelly()
   const FEValuesExtractors::Vector velocity(0);
   const FEValuesExtractors::Scalar pressure(dim);
   auto                            &present_solution = this->present_solution;
+  VectorType                       locally_relevant_solution;
+  locally_relevant_solution.reinit(this->locally_owned_dofs,
+                                   this->locally_relevant_dofs,
+                                   this->mpi_communicator);
+  locally_relevant_solution = this->present_solution;
+  locally_relevant_solution.update_ghost_values();
 
   // Global flags
   // Their dimension is consistent with the dimension returned by
@@ -900,83 +906,27 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_kelly()
 
       if (ivar.first == Parameters::MeshAdaptation::Variable::pressure)
         {
-          if constexpr (std::is_same_v<VectorType,
-                                       TrilinosWrappers::MPI::Vector> ||
-                        std::is_same_v<VectorType,
-                                       TrilinosWrappers::MPI::BlockVector>)
-            {
-              KellyErrorEstimator<dim>::estimate(
-                *this->mapping,
-                this->dof_handler,
-                *this->face_quadrature,
-                typename std::map<types::boundary_id,
-                                  const Function<dim, double> *>(),
-                present_solution,
-                estimated_error_per_cell,
-                this->fe->component_mask(pressure));
-            }
-          if constexpr (std::is_same_v<
-                          VectorType,
-                          LinearAlgebra::distributed::Vector<double>>)
-            {
-              VectorType locally_relevant_solution;
-              locally_relevant_solution.reinit(this->locally_owned_dofs,
-                                               this->locally_relevant_dofs,
-                                               this->mpi_communicator);
-              locally_relevant_solution.copy_locally_owned_data_from(
-                this->present_solution);
-              locally_relevant_solution.update_ghost_values();
-
-              KellyErrorEstimator<dim>::estimate(
-                *this->mapping,
-                this->dof_handler,
-                *this->face_quadrature,
-                typename std::map<types::boundary_id,
-                                  const Function<dim, double> *>(),
-                locally_relevant_solution,
-                estimated_error_per_cell,
-                this->fe->component_mask(pressure));
-            }
+          KellyErrorEstimator<dim>::estimate(
+            *this->mapping,
+            this->dof_handler,
+            *this->face_quadrature,
+            typename std::map<types::boundary_id,
+                              const Function<dim, double> *>(),
+            locally_relevant_solution,
+            estimated_error_per_cell,
+            this->fe->component_mask(pressure));
         }
       else if (ivar.first == Parameters::MeshAdaptation::Variable::velocity)
         {
-          if constexpr (std::is_same_v<VectorType,
-                                       TrilinosWrappers::MPI::Vector> ||
-                        std::is_same_v<VectorType,
-                                       TrilinosWrappers::MPI::BlockVector>)
-            {
-              KellyErrorEstimator<dim>::estimate(
-                *this->mapping,
-                this->dof_handler,
-                *this->face_quadrature,
-                typename std::map<types::boundary_id,
-                                  const Function<dim, double> *>(),
-                present_solution,
-                estimated_error_per_cell,
-                this->fe->component_mask(velocity));
-            }
-          if constexpr (std::is_same_v<
-                          VectorType,
-                          LinearAlgebra::distributed::Vector<double>>)
-            {
-              VectorType locally_relevant_solution;
-              locally_relevant_solution.reinit(this->locally_owned_dofs,
-                                               this->locally_relevant_dofs,
-                                               this->mpi_communicator);
-              locally_relevant_solution.copy_locally_owned_data_from(
-                this->present_solution);
-              locally_relevant_solution.update_ghost_values();
-
-              KellyErrorEstimator<dim>::estimate(
-                *this->mapping,
-                this->dof_handler,
-                *this->face_quadrature,
-                typename std::map<types::boundary_id,
-                                  const Function<dim, double> *>(),
-                locally_relevant_solution,
-                estimated_error_per_cell,
-                this->fe->component_mask(velocity));
-            }
+          KellyErrorEstimator<dim>::estimate(
+            *this->mapping,
+            this->dof_handler,
+            *this->face_quadrature,
+            typename std::map<types::boundary_id,
+                              const Function<dim, double> *>(),
+            locally_relevant_solution,
+            estimated_error_per_cell,
+            this->fe->component_mask(velocity));
         }
       else
         {
