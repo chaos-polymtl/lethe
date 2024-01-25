@@ -86,11 +86,11 @@ When prompted "do you want to continue?", proceed by typing ``y`` and hitting ``
 
 The following step is to install deal.II. This can be done through
 
-  1. Advanced Packaging Tool (apt) (**this is by far the easiest way to proceed**) : :ref:`install-deal.II-apt` (recommended for users)
+  1. Advanced Packaging Tool (apt) (**this is by far the easiest way to proceed**) : :ref:`install-deal.II apt` (recommended for users)
 
-  2. Candi shell script (`candi github page <https://github.com/dealii/candi>`_): :ref:`install-deal.II-candi` (recommended for developers)
+  2. Candi shell script (`candi github page <https://github.com/dealii/candi>`_): :ref:`install-deal.II candi` (recommended for developers)
 
-.. _install-deal.II-apt:
+.. _install-deal.II apt:
 
 Installing deal.II using apt (Step #1)
 -----------------------------------------
@@ -125,7 +125,7 @@ This should output several information about the installed version. Everything w
 
   If the installed version is other than ``deal.ii-9.5.1``, follow `this link <https://github.com/dealii/dealii/wiki/Getting-deal.II>`_.
 
-.. _install-deal.II-candi:
+.. _install-deal.II candi:
 
 Installing deal.II using Candi (Step #1)
 -----------------------------------------
