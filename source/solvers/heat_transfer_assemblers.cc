@@ -423,8 +423,10 @@ HeatTransferAssemblerRobinBC<dim>::assemble_matrix(
                               const double phi_face_T_j =
                                 scratch_data.phi_face_T[f][q][j];
                               local_matrix(i, j) +=
-                                (h + 4.0 * Stefan_Boltzmann_constant *
-                                       emissivity * T_face * T_face * T_face + heat_source / T_face) *
+                                (h +
+                                 4.0 * Stefan_Boltzmann_constant * emissivity *
+                                   T_face * T_face * T_face +
+                                 heat_source / T_face) *
                                 phi_face_T_i * phi_face_T_j * JxW;
                             }
                         }
@@ -467,7 +469,8 @@ HeatTransferAssemblerRobinBC<dim>::assemble_rhs(
             this->boundary_conditions_ht.Tinf[i_bc]->value(Point<dim>());
           const double emissivity =
             this->boundary_conditions_ht.emissivity[i_bc]->value(Point<dim>());
-          const double heat_source = this->boundary_conditions_ht.heat_source[i_bc]->value(Point<dim>());
+          const double heat_source =
+            this->boundary_conditions_ht.heat_source[i_bc]->value(Point<dim>());
 
           for (unsigned int f = 0; f < scratch_data.n_faces; ++f)
             {
@@ -489,7 +492,8 @@ HeatTransferAssemblerRobinBC<dim>::assemble_rhs(
                             (h * (T_face - T_inf) +
                              Stefan_Boltzmann_constant * emissivity *
                                (T_face * T_face * T_face * T_face -
-                                T_inf * T_inf * T_inf * T_inf) + heat_source) *
+                                T_inf * T_inf * T_inf * T_inf) +
+                             heat_source) *
                             JxW;
                         }
                     }

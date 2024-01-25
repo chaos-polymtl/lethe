@@ -1345,11 +1345,10 @@ namespace Parameters
         "0.0",
         Patterns::Double(),
         "Temperature (Double) of environment for radiation term at the free surface (air/metal interface)");
-      prm.declare_entry(
-        "heat source",
-        "0.0",
-        Patterns::Double(),
-        "Heat flux (Double) Neumann boundary condition)");
+      prm.declare_entry("heat source",
+                        "0.0",
+                        Patterns::Double(),
+                        "Heat flux (Double) Neumann boundary condition)");
     }
     prm.leave_subsection();
   }
