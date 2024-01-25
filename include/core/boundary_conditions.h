@@ -615,6 +615,9 @@ namespace BoundaryConditions
     prm.enter_subsection("emissivity");
     this->emissivity[i_bc]->parse_parameters(prm);
     prm.leave_subsection();
+    prm.enter_subsection("heat source");
+    this->heat_source[i_bc]->parse_parameters(prm);
+    prm.leave_subsection();
 
     this->id[i_bc] = prm.get_integer("id");
   }
@@ -642,6 +645,7 @@ namespace BoundaryConditions
 
       this->Tinf.resize(this->size);
       this->emissivity.resize(this->size);
+      this->heat_source.resize(this->size);
 
       for (unsigned int n = 0; n < this->size; n++)
         {

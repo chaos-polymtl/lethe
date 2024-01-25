@@ -1249,6 +1249,8 @@ HeatTransfer<dim>::update_boundary_conditions()
         time);
       this->simulation_parameters.boundary_conditions_ht.emissivity[i_bc]
         ->set_time(time);
+      this->simulation_parameters.boundary_conditions_ht.heat_source[i_bc]
+        ->set_time(time);
 
       Assert(
         this->simulation_parameters.boundary_conditions_ht.emissivity[i_bc]
