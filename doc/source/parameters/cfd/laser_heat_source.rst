@@ -85,7 +85,7 @@ Laser types
   When the ``exponential_decay`` is used in conjunction with the :doc:`VOF auxiliary physic <./volume_of_fluid>` the equation takes the following form:
 
   .. math::
-      q(x,y,z) = \frac{\phi' \eta \alpha P}{\pi R^2 \mu} \exp{\left(-\eta \frac{r^2}{R^2}\right)} \exp{\left(- \frac{|z|}{\mu}\right)}
+      q(x,y,z) = \frac{\psi \eta \alpha P}{\pi R^2 \mu} \exp{\left(-\eta \frac{r^2}{R^2}\right)} \exp{\left(- \frac{|z|}{\mu}\right)}
 
   where :math:`\psi` is the filtered phase fraction.
 
@@ -95,14 +95,14 @@ Laser types
 * When ``type`` is set to ``gaussian_heat_flux_vof_interface`` or ``uniform_heat_flux_vof_interface``, it **must be used in conjunction with the** :doc:`VOF auxiliary physic <./volume_of_fluid>`. The ``gaussian_heat_flux_vof_interface`` model is used to apply a gaussian heat flux, given by the expression below, only at the interface.
 
   .. math::
-      q(x,y,z) = \frac{|\nabla \phi'| \eta \alpha P}{\pi R^2} \exp{\left(-\eta \frac{r^2}{R^2}\right)}
+      q(x,y,z) = \frac{|\nabla \psi| \eta \alpha P}{\pi R^2} \exp{\left(-\eta \frac{r^2}{R^2}\right)}
 
   where :math:`r` is the radial distance from the laser's axis and :math:`|\nabla \psi|` is the :math:`L^2` norm of the filtered phase fraction gradient.
 
 The ``uniform_heat_flux_vof_interface`` model is used to apply a uniform heat flux, given by the expression below, only at the interface.
   
   .. math::
-    q(x,y,z) = \frac{|\nabla \phi'| \eta \alpha P}{\pi R^2}
+    q(x,y,z) = \frac{|\nabla \psi| \eta \alpha P}{\pi R^2}
 
 -----------
 References
