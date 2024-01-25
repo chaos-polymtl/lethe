@@ -86,16 +86,18 @@ When prompted "do you want to continue?", proceed by typing ``y`` and hitting ``
 
 The following step is to install deal.II. This can be done through
 
-  1. Advanced Packaging Tool (apt): **this is by far the easiest way to proceed**
+  1. Advanced Packaging Tool (apt) (**this is by far the easiest way to proceed**) : :ref:`install-deal.II-apt` (recommended for users)
 
-  2. Candi shell script (`candi github page <https://github.com/dealii/candi>`_).
+  2. Candi shell script (`candi github page <https://github.com/dealii/candi>`_): :ref:`install-deal.II-candi` (recommended for developers)
+
+.. _install-deal.II-apt:
 
 Installing deal.II using apt (Step #1)
 -----------------------------------------
 
 This is done following `this procedure <https://www.dealii.org/download.html#:~:text=page%20for%20details.-,Linux%20distributions,-Arch%20Linux>`_.
 
-In case you are using Ubuntu, you will need to `update the backports <https://launchpad.net/~ginggs/+archive/ubuntu/deal.ii-9.5.1-backports>`_:
+1. |linux_shell| In case you are using Ubuntu, you will need to `update the backports <https://launchpad.net/~ginggs/+archive/ubuntu/deal.ii-9.5.1-backports>`_:
 
 .. code-block:: text
   :class: copy-button
@@ -103,7 +105,7 @@ In case you are using Ubuntu, you will need to `update the backports <https://la
   sudo add-apt-repository ppa:ginggs/deal.ii-9.5.1-backports
   sudo apt update
 
-To install deal.II, run:
+2. |linux_shell| To install deal.II, run:
 
 .. code-block:: text
   :class: copy-button
@@ -123,6 +125,7 @@ This should output several information about the installed version. Everything w
 
   If the installed version is other than ``deal.ii-9.5.1``, follow `this link <https://github.com/dealii/dealii/wiki/Getting-deal.II>`_.
 
+.. _install-deal.II-candi:
 
 Installing deal.II using Candi (Step #1)
 -----------------------------------------
@@ -306,7 +309,7 @@ After installation is complete, the folder structure will be:
 * ``lethe/build`` for compilation files (``cmake`` command),
 * ``lethe/inst`` for installation files (``make install`` command).
 
-1. |linux_shell| Download lethe:
+2. |linux_shell| Download lethe:
 
 .. code-block:: text
   :class: copy-button
@@ -335,7 +338,21 @@ Where ``$numprocs`` corresponds to the number of processors used for the compila
 
 5. |linux_shell| (optional) Finally, it is recommended to test your installation:
 
-  * If you are running these tests for the first time, install ``numdiff``:
+
+Run the tests in the build folder:
+
+.. code-block:: text
+  :class: copy-button
+
+  ctest -j$numprocs
+
+This will take from a few minutes to an hour, depending on your hardware. At the end, you should have this message on the console:
+
+  .. code-block:: text
+
+    100% tests passed
+
+.. note:: If you are running these tests for the first time, install ``numdiff`` (if you need superuser privilege, use sudo):
 
   .. code-block:: text
     :class: copy-button
@@ -347,20 +364,10 @@ Where ``$numprocs`` corresponds to the number of processors used for the compila
   .. code-block:: text
     :class: copy-button
     
-    sudo apt install numdiff
+    apt install numdiff
 
-  * Run the tests in the build folder:
-
-.. code-block:: text
-  :class: copy-button
-
-  ctest -j$numprocs
-
-  This will take from a few minutes to an hour, depending on your hardware. At the end, you should have this message on the console:
-
-  .. code-block:: text
-
-    100% tests passed
+.. warning:: 
+  The lethe test suites requires that deal.II be configured with p4est 2.2.1, otherwise the test which include restart files will fail.
 
 Congratulations, you are now ready to use lethe! For instance, proceed to :doc:`../first_simulation`.
 
@@ -369,6 +376,30 @@ Updating deal.II and Lethe
 
 If you have already installed deal.II and lethe, you can update them without doing the entire installation from scratch:
 
+Through apt
++++++++++++++++++++++++++++++++++
+
+1. |linux_shell| As all other ``apt`` packages, run:
+
+.. code-block:: text
+  :class: copy-button
+
+  sudo apt update
+  sudo apt upgrade -y
+
+2. |linux_shell| Then, update lethe:
+
+.. code-block:: text
+  :class: copy-button
+
+  cd ../lethe/git
+  git pull
+  cd ../build
+  cmake ../git -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=../inst/
+  make -j$numprocs
+
+With Candi
++++++++++++++++++++++++++++++++++
 1. |linux_shell| Update deal.ii by typing, from your home directory:
 
 .. code-block:: text
