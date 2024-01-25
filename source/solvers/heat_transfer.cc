@@ -281,11 +281,22 @@ HeatTransfer<dim>::setup_assemblers()
           // Call for the specific assembler of the laser source term
           // Laser source is applied at the interface (surface flux)
           if (this->simulation_parameters.laser_parameters->laser_type ==
-              Parameters::Laser<dim>::LaserType::heat_flux_vof_interface)
+              Parameters::Laser<
+                dim>::LaserType::gaussian_heat_flux_vof_interface)
             {
               this->assemblers.push_back(
                 std::make_shared<
-                  HeatTransferAssemblerLaserHeatFluxVOFInterface<dim>>(
+                  HeatTransferAssemblerLaserGaussianHeatFluxVOFInterface<dim>>(
+                  this->simulation_control,
+                  this->simulation_parameters.laser_parameters));
+            }
+          else if (this->simulation_parameters.laser_parameters->laser_type ==
+                   Parameters::Laser<
+                     dim>::LaserType::uniform_heat_flux_vof_interface)
+            {
+              this->assemblers.push_back(
+                std::make_shared<
+                  HeatTransferAssemblerLaserUniformHeatFluxVOFInterface<dim>>(
                   this->simulation_control,
                   this->simulation_parameters.laser_parameters));
             }

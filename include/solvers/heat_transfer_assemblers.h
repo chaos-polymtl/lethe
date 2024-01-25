@@ -363,11 +363,58 @@ protected:
  * @ingroup assemblers
  */
 template <int dim>
-class HeatTransferAssemblerLaserHeatFluxVOFInterface
+class HeatTransferAssemblerLaserGaussianHeatFluxVOFInterface
   : public HeatTransferAssemblerBase<dim>
 {
 public:
-  HeatTransferAssemblerLaserHeatFluxVOFInterface(
+  HeatTransferAssemblerLaserGaussianHeatFluxVOFInterface(
+    std::shared_ptr<SimulationControl>      simulation_control,
+    std::shared_ptr<Parameters::Laser<dim>> p_laser_parameters)
+    : HeatTransferAssemblerBase<dim>(simulation_control)
+    , laser_parameters(p_laser_parameters)
+  {}
+
+  /**
+   * @brief assemble_matrix Assembles the matrix
+   * @param scratch_data (see base class)
+   * @param copy_data (see base class)
+   */
+  virtual void
+  assemble_matrix(HeatTransferScratchData<dim> &scratch_data,
+                  StabilizedMethodsCopyData    &copy_data) override;
+
+  /**
+   * @brief assemble_rhs Assembles the rhs
+   * @param scratch_data (see base class)
+   * @param copy_data (see base class)
+   */
+  virtual void
+  assemble_rhs(HeatTransferScratchData<dim> &scratch_data,
+               StabilizedMethodsCopyData    &copy_data) override;
+
+protected:
+  std::shared_ptr<Parameters::Laser<dim>> laser_parameters;
+};
+
+/**
+ * @brief Class that assembles the laser heating as a uniform surface flux for
+ * the heat transfer solver when VOF is enabled. The laser heat flux is
+ * applied at the VOF interface (where the phase gradient is non-null).
+ *
+ * @tparam dim An integer that denotes the number of spatial dimensions
+ *
+ * @param simulation_control Shared pointer of the SimulationControl object
+ * controlling the current simulation
+ * @param p_laser_parameters Shared pointer of the laser parameters
+ *
+ * @ingroup assemblers
+ */
+template <int dim>
+class HeatTransferAssemblerLaserUniformHeatFluxVOFInterface
+  : public HeatTransferAssemblerBase<dim>
+{
+public:
+  HeatTransferAssemblerLaserUniformHeatFluxVOFInterface(
     std::shared_ptr<SimulationControl>      simulation_control,
     std::shared_ptr<Parameters::Laser<dim>> p_laser_parameters)
     : HeatTransferAssemblerBase<dim>(simulation_control)

@@ -765,7 +765,7 @@ NavierStokesVOFAssemblerEvaporation<dim>::assemble_rhs(
       const Tensor<1, dim> recoil_pressure_force =
         recoil_pressure * filtered_phase_gradient_value_q;
 
-      strong_residual[q] += recoil_pressure_force;
+      strong_residual[q] -= recoil_pressure_force;
 
       for (unsigned int i = 0; i < n_dofs; ++i)
         {

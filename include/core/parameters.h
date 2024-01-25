@@ -644,7 +644,8 @@ namespace Parameters
     enum class LaserType
     {
       exponential_decay,
-      heat_flux_vof_interface
+      gaussian_heat_flux_vof_interface,
+      uniform_heat_flux_vof_interface
     } laser_type;
 
     // Laser concentration factor indicates the definition of the beam radius.

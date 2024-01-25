@@ -33,7 +33,7 @@ If a laser heat source is present in a simulation, it can be added in this secti
 
 * The ``enable`` parameter is set to ``true`` if the problem has a laser heat source term and enables its calculation.
 
-* The ``type`` parameter is set to ``exponential_decay`` (default) if we assume that the laser behaves as a volumetric source.  If the laser is assumed to be a surface flux, the ``type`` can be set at ``heat_flux_vof_interface`` and used in conjunction with the :doc:`VOF auxiliary physic <./volume_of_fluid>`. The different models are detailed :ref:`below <LaserTypes>`.
+* The ``type`` parameter is set to ``exponential_decay`` (default) if we assume that the laser behaves as a volumetric source.  If the laser is assumed to be a surface flux, the ``type`` can be set at ``gaussian_heat_flux_vof_interface`` or ``uniform_heat_flux_vof_interface`` and used in conjunction with the :doc:`VOF auxiliary physic <./volume_of_fluid>`. The different models are detailed :ref:`below <LaserTypes>`.
 
 * Laser ``concentration factor`` parameter indicates the definition of the beam radius. In almost all the articles, it is assumed equal to :math:`2.0`.
 
@@ -78,27 +78,35 @@ Laser types
 * When the ``type`` parameter is set to ``exponential_decay``, the exponential model from Zhang *et al.* `[2] <https://doi.org/10.1016/j.matdes.2018.01.022>`_ is used to simulate the laser heat source:
 
   .. math::
-      q(x,y,z) = \frac{\eta \alpha P}{\pi r^2 \mu} \exp{\left(-\eta \frac{r^2}{R^2}\right)} \exp{\left(- \frac{|z|}{\mu}\right)}
+      q(x,y,z) = \frac{\eta \alpha P}{\pi R^2 \mu} \exp{\left(-\eta \frac{r^2}{R^2}\right)} \exp{\left(- \frac{|z|}{\mu}\right)}
 
   where :math:`\eta`, :math:`\alpha`, :math:`P`, :math:`R`, :math:`\mu`, :math:`r`, and :math:`z` denote the concentration factor, absorptivity, laser power, beam radius, penetration depth, radial distance from the laser focal point, and axial distance from the laser focal point, respectively.
 
   When the ``exponential_decay`` is used in conjunction with the :doc:`VOF auxiliary physic <./volume_of_fluid>` the equation takes the following form:
 
   .. math::
-      q(x,y,z) = \frac{\psi \eta \alpha P}{\pi r^2 \mu} \exp{\left(-\eta \frac{r^2}{R^2}\right)} \exp{\left(- \frac{|z|}{\mu}\right)}
+      q(x,y,z) = \frac{\psi \eta \alpha P}{\pi R^2 \mu} \exp{\left(-\eta \frac{r^2}{R^2}\right)} \exp{\left(- \frac{|z|}{\mu}\right)}
 
   where :math:`\psi` is the filtered phase fraction.
 
   .. attention::
     In this case, the heat affects the fluid initialized as ``fluid 1``.
 
-* When ``type`` is set to ``heat_flux_vof_interface``, it **must be used in conjunction with the** :doc:`VOF auxiliary physic <./volume_of_fluid>`. This model is used to apply the heat flux, given by the expression below, only at the interface.
+* When ``type`` is set to ``gaussian_heat_flux_vof_interface`` or ``uniform_heat_flux_vof_interface``, it **must be used in conjunction with the** :doc:`VOF auxiliary physic <./volume_of_fluid>`.
 
-  .. math::
-      q(x,y,z) = \frac{|\nabla \psi| \eta \alpha P}{\pi r^2} \exp{\left(-\eta \frac{r^2}{R^2}\right)}
-
-  where :math:`r` is the radial distance from the laser's axis and :math:`|\nabla \psi|` is the :math:`L^2` norm of the filtered phase fraction gradient.
-
+  * The ``gaussian_heat_flux_vof_interface`` model is used to apply a gaussian heat flux, given by the expression below, only at the interface.
+  
+    .. math::
+      
+        q(x,y,z) = \frac{|\nabla \psi| \eta \alpha P}{\pi R^2} \exp{\left(-\eta \frac{r^2}{R^2}\right)}
+        
+    where :math:`r` is the radial distance from the laser's axis and :math:`|\nabla \psi|` is the :math:`L^2` norm of the filtered phase fraction gradient.
+    
+  * The ``uniform_heat_flux_vof_interface`` model is used to apply a uniform heat flux, given by the expression below, only at the interface.
+  
+    .. math::
+      
+        q(x,y,z) = \frac{|\nabla \psi| \alpha P}{\pi R^2}
 
 -----------
 References
