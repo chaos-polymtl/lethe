@@ -668,7 +668,8 @@ public:
                                   0.0 :
                                   -mass_flux_value * mass_flux_value *
                                     (liquid_density_inv - vapor_density_inv);
-    double pressure           = expansion_pressure +
+
+    double pressure = expansion_pressure +
                       recoil_pressure_coefficient * saturation_pressure_value;
 
     return std::max(pressure - ambient_pressure, 0.0);
