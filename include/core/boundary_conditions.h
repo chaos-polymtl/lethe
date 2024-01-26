@@ -517,6 +517,7 @@ namespace BoundaryConditions
     emissivity[i_bc]->declare_parameters(prm);
     prm.leave_subsection();
 
+    // Heat flux (Neumann) at the boundary for convection-radiation bc
     prm.enter_subsection("heat source");
     heat_source[i_bc] = std::make_shared<Functions::ParsedFunction<dim>>();
     heat_source[i_bc]->declare_parameters(prm);
