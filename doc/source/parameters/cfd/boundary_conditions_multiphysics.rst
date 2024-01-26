@@ -15,7 +15,7 @@ The default parameters for ``temperature`` and ``convection-radiation`` are show
 .. code-block:: text
 
   subsection boundary conditions heat transfer
-    set number         = 2
+    set number         = 3
     set time dependent = false
     subsection bc 0
       set id    = 0
@@ -25,8 +25,8 @@ The default parameters for ``temperature`` and ``convection-radiation`` are show
       end
     end
     subsection bc 1
-      set id         = 1
-      set type       = convection-radiation
+      set id    = 1
+      set type  = convection-radiation
       subsection h
         set Function expression = 0
       end
@@ -36,7 +36,11 @@ The default parameters for ``temperature`` and ``convection-radiation`` are show
       subsection emissivity
         set Function expression = 0
       end
-      subsection heat flux
+    end
+    subsection bc 2
+      set id     = 2
+      set type   = heat-flux
+      subsection q0
         set Function expression = 0
       end
     end
@@ -60,7 +64,12 @@ The default parameters for ``temperature`` and ``convection-radiation`` are show
 * ``type``: type of boundary condition being imposed. At the moment, choices are:
     * ``noflux`` (default) so that there is no heat transfer boundary condition,
     * ``temperature`` (Dirichlet BC), to impose a given temperature ``value`` at the boundary,
-    * ``convection-radiation`` (Robin BC) for cooling/heating, depending on the environment temperature at the boundary ``Tinf``, with a given heat transfer coefficient ``h`` and ``emissivity``` of the boundary :math:`\mathbf{\epsilon}` following Newton's law of cooling (and heating) and Stefan-Boltzmann law of radiation. It is also possible to apply a temperature-independent heat flux using ``heat flux`` (:math:`q_0`, Neumann boundary condition). Note that the expressions for ``h``, ``Tinf``, ``emissivity``, and ``heat flux`` can be time-dependent, but the current implementation does not allow for space dependence (the expressions are evaluated at the origin).
+    * ``convection-radiation`` (Robin BC) for cooling/heating, depending on the environment temperature at the boundary ``Tinf``, with a given heat transfer coefficient ``h`` and ``emissivity``` of the boundary :math:`\mathbf{\epsilon}` following Newton's law of cooling (and heating) and Stefan-Boltzmann law of radiation.
+    * ``heat-flux`` (:math:`q_0`, Neumann boundary condition) to impose a heat flux ``q0`` at the boundary.
+
+.. note::
+
+  Note that the expressions for ``h``, ``Tinf``, ``emissivity``, and ``q0`` can be time-dependent, but the current implementation does not allow for space dependence (the expressions are evaluated at the origin).
 
 .. math::
     \frac{ \partial T}{\partial \mathbf{n}} = h (T - T_{inf}) + \epsilon \sigma (T^4 - T_{inf}^4) + q_0
