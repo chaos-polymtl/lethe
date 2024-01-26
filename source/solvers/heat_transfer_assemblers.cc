@@ -529,7 +529,7 @@ HeatTransferAssemblerHeatFluxBC<dim>::assemble_rhs(
   for (unsigned int i_bc = 0; i_bc < this->boundary_conditions_ht.size; ++i_bc)
     {
       if (this->boundary_conditions_ht.type[i_bc] ==
-          BoundaryConditions::BoundaryType::convection_radiation)
+          BoundaryConditions::BoundaryType::heat_flux_bc)
         {
           const double heat_flux_bc =
             this->boundary_conditions_ht.heat_flux_bc[i_bc]->value(
