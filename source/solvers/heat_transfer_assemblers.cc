@@ -548,7 +548,7 @@ HeatTransferAssemblerHeatFluxBC<dim>::assemble_rhs(
                         {
                           const double phi_face_T_i =
                             scratch_data.phi_face_T[f][q][i];
-                          local_rhs(i) -= phi_face_T_i * heat_flux_bc * JxW;
+                          local_rhs(i) += phi_face_T_i * heat_flux_bc * JxW;
                         }
                     }
                 }
