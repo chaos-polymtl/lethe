@@ -523,7 +523,7 @@ HeatTransferAssemblerHeatFluxBC<dim>::assemble_rhs(
   if (!scratch_data.is_boundary_cell)
     return;
 
-  auto        &local_rhs = copy_data.local_rhs;
+  auto &local_rhs = copy_data.local_rhs;
 
   //  Heat flux Neumann boundary condition, loop on faces
   for (unsigned int i_bc = 0; i_bc < this->boundary_conditions_ht.size; ++i_bc)
@@ -531,7 +531,6 @@ HeatTransferAssemblerHeatFluxBC<dim>::assemble_rhs(
       if (this->boundary_conditions_ht.type[i_bc] ==
           BoundaryConditions::BoundaryType::convection_radiation)
         {
-
           const double heat_flux_bc =
             this->boundary_conditions_ht.heat_flux_bc[i_bc]->value(
               Point<dim>());
@@ -549,9 +548,7 @@ HeatTransferAssemblerHeatFluxBC<dim>::assemble_rhs(
                         {
                           const double phi_face_T_i =
                             scratch_data.phi_face_T[f][q][i];
-                          local_rhs(i) -=
-                            phi_face_T_i * heat_flux_bc *
-                            JxW;
+                          local_rhs(i) -= phi_face_T_i * heat_flux_bc * JxW;
                         }
                     }
                 }

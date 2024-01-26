@@ -446,7 +446,8 @@ namespace BoundaryConditions
    * coefficient, and "Stefan-Boltzmann constant" is the Stefan-Boltzmann
    * constant = 5.6703*10-8 (W.m-2.K-4)
    *
-   *  - if bc type is "heat-flux", q0 is a prescribed flux applied to the surface
+   *  - if bc type is "heat-flux", q0 is a prescribed flux applied to the
+   * surface
    */
 
   template <int dim>
@@ -484,12 +485,12 @@ namespace BoundaryConditions
   HTBoundaryConditions<dim>::declareDefaultEntry(ParameterHandler  &prm,
                                                  const unsigned int i_bc)
   {
-    prm.declare_entry("type",
-                      "noflux",
-                      Patterns::Selection(
-                        "noflux|temperature|convection-radiation|heat-flux"),
-                      "Type of boundary condition for heat transfer"
-                      "Choices are <noflux|temperature|convection-radiation|heat-flux>.");
+    prm.declare_entry(
+      "type",
+      "noflux",
+      Patterns::Selection("noflux|temperature|convection-radiation|heat-flux"),
+      "Type of boundary condition for heat transfer"
+      "Choices are <noflux|temperature|convection-radiation|heat-flux>.");
 
     prm.declare_entry("id",
                       Utilities::int_to_string(i_bc, 2),
