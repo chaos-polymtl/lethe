@@ -36,6 +36,9 @@ The default parameters for ``temperature`` and ``convection-radiation`` are show
       subsection emissivity
         set Function expression = 0
       end
+      subsection heat source
+        set Function expression = 0
+      end
     end
     set Stefan-Boltzmann constant = 0.000000056703
   end
@@ -57,10 +60,10 @@ The default parameters for ``temperature`` and ``convection-radiation`` are show
 * ``type``: type of boundary condition being imposed. At the moment, choices are:
     * ``noflux`` (default) so that there is no heat transfer boundary condition,
     * ``temperature`` (Dirichlet BC), to impose a given temperature ``value`` at the boundary,
-    * ``convection-radiation`` (Robin BC) for cooling/heating, depending on the environment temperature at the boundary ``Tinf``, with a given heat transfer coefficient ``h`` and emissivity of the boundary :math:`\mathbf{\epsilon}` following Newton's law of cooling (and heating) and Stefan-Boltzmann law of radiation. Note that the expressions for ``h``, ``Tinf`` and ``emissivity`` can be time-dependent, but the current implementation doesn't allow for space dependence (the expressions are evaluated at the origin).
+    * ``convection-radiation`` (Robin BC) for cooling/heating, depending on the environment temperature at the boundary ``Tinf``, with a given heat transfer coefficient ``h`` and ``emissivity``` of the boundary :math:`\mathbf{\epsilon}` following Newton's law of cooling (and heating) and Stefan-Boltzmann law of radiation. It is also possible to apply a heat flux using ``heat source`` (:math:`q_0`, Neumann boundary condition). Note that the expressions for ``h``, ``Tinf``, ``emissivity``, and ``heat source`` can be time-dependent, but the current implementation does not allow for space dependence (the expressions are evaluated at the origin).
 
 .. math::
-    \frac{ \partial T}{\partial \mathbf{n}} = h (T - T_{inf}) + \epsilon \sigma (T^4 - T_{inf}^4)
+    \frac{ \partial T}{\partial \mathbf{n}} = h (T - T_{inf}) + \epsilon \sigma (T^4 - T_{inf}^4) + q_0
 
 
 where :math:`\mathbf{\sigma}` is the Stefan-Boltzmann constant.
