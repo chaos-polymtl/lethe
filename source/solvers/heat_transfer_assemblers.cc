@@ -895,7 +895,7 @@ HeatTransferAssemblerLaserGaussianHeatFluxVOFInterface<dim>::assemble_rhs(
                 2 * sqrt(concentration_factor) /
                 (sqrt(std::pow(M_PI, 3)) * beam_radius * beam_radius);
             }
-          else
+          if constexpr (dim == 3)
             {
               laser_heat_source *=
                 concentration_factor / (M_PI * beam_radius * beam_radius);
