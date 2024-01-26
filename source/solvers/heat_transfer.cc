@@ -348,6 +348,11 @@ HeatTransfer<dim>::setup_assemblers()
     std::make_shared<HeatTransferAssemblerRobinBC<dim>>(
       this->simulation_control, simulation_parameters.boundary_conditions_ht));
 
+  // Neumann boundary condition
+  this->assemblers.push_back(
+    std::make_shared<HeatTransferAssemblerHeatFluxBC<dim>>(
+      this->simulation_control, simulation_parameters.boundary_conditions_ht));
+
   if (this->simulation_parameters.multiphysics.viscous_dissipation)
     {
       if (this->simulation_parameters.multiphysics.VOF)

@@ -53,6 +53,7 @@ namespace BoundaryConditions
     noflux,
     temperature,
     convection_radiation,
+    heat_flux_bc,
     // for tracer
     tracer_dirichlet,
     // for vof
@@ -444,6 +445,8 @@ namespace BoundaryConditions
    * environment temperature at the boundary, "emissivity" is the emissivity
    * coefficient, and "Stefan-Boltzmann constant" is the Stefan-Boltzmann
    * constant = 5.6703*10-8 (W.m-2.K-4)
+   *
+   *  - if bc type is "heat-flux", q0 is a prescribed flux applied to the surface
    */
 
   template <int dim>
@@ -484,9 +487,9 @@ namespace BoundaryConditions
     prm.declare_entry("type",
                       "noflux",
                       Patterns::Selection(
-                        "noflux|temperature|convection-radiation"),
+                        "noflux|temperature|convection-radiation|heat-flux"),
                       "Type of boundary condition for heat transfer"
-                      "Choices are <noflux|temperature|convection-radiation>.");
+                      "Choices are <noflux|temperature|convection-radiation|heat-flux>.");
 
     prm.declare_entry("id",
                       Utilities::int_to_string(i_bc, 2),
@@ -517,8 +520,8 @@ namespace BoundaryConditions
     emissivity[i_bc]->declare_parameters(prm);
     prm.leave_subsection();
 
-    // Heat flux (Neumann) at the boundary for convection-radiation bc
-    prm.enter_subsection("heat flux");
+    // Heat flux (Neumann) at the boundary for heat flux bc
+    prm.enter_subsection("q0");
     heat_flux_bc[i_bc] = std::make_shared<Functions::ParsedFunction<dim>>();
     heat_flux_bc[i_bc]->declare_parameters(prm);
     prm.leave_subsection();
@@ -602,6 +605,10 @@ namespace BoundaryConditions
         // Emissivity validity (0 <= emissivity <= 1) will be checked at
         // evaluation.
       }
+    else if (op == "heat-flux")
+      {
+        this->type[i_bc] = BoundaryType::heat_flux_bc;
+      }
 
     // All the functions are parsed since they might be used for post-processing
     prm.enter_subsection("value");
@@ -616,7 +623,7 @@ namespace BoundaryConditions
     prm.enter_subsection("emissivity");
     this->emissivity[i_bc]->parse_parameters(prm);
     prm.leave_subsection();
-    prm.enter_subsection("heat flux");
+    prm.enter_subsection("q0");
     this->heat_flux_bc[i_bc]->parse_parameters(prm);
     prm.leave_subsection();
 
