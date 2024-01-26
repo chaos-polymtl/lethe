@@ -36,7 +36,7 @@ The default parameters for ``temperature`` and ``convection-radiation`` are show
       subsection emissivity
         set Function expression = 0
       end
-      subsection heat source
+      subsection heat flux
         set Function expression = 0
       end
     end
