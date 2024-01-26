@@ -455,7 +455,7 @@ namespace BoundaryConditions
     std::vector<std::shared_ptr<Functions::ParsedFunction<dim>>> h;
     std::vector<std::shared_ptr<Functions::ParsedFunction<dim>>> Tinf;
     std::vector<std::shared_ptr<Functions::ParsedFunction<dim>>> emissivity;
-    std::vector<std::shared_ptr<Functions::ParsedFunction<dim>>> heat_source;
+    std::vector<std::shared_ptr<Functions::ParsedFunction<dim>>> heat_flux_bc;
     double Stefan_Boltzmann_constant;
 
     void
@@ -518,9 +518,9 @@ namespace BoundaryConditions
     prm.leave_subsection();
 
     // Heat flux (Neumann) at the boundary for convection-radiation bc
-    prm.enter_subsection("heat source");
-    heat_source[i_bc] = std::make_shared<Functions::ParsedFunction<dim>>();
-    heat_source[i_bc]->declare_parameters(prm);
+    prm.enter_subsection("heat flux");
+    heat_flux_bc[i_bc] = std::make_shared<Functions::ParsedFunction<dim>>();
+    heat_flux_bc[i_bc]->declare_parameters(prm);
     prm.leave_subsection();
   }
 
@@ -555,7 +555,7 @@ namespace BoundaryConditions
       h.resize(number_of_boundary_conditions);
       Tinf.resize(number_of_boundary_conditions);
       emissivity.resize(number_of_boundary_conditions);
-      heat_source.resize(number_of_boundary_conditions);
+      heat_flux_bc.resize(number_of_boundary_conditions);
 
       for (unsigned int n = 0; n < number_of_boundary_conditions; n++)
         {
@@ -616,8 +616,8 @@ namespace BoundaryConditions
     prm.enter_subsection("emissivity");
     this->emissivity[i_bc]->parse_parameters(prm);
     prm.leave_subsection();
-    prm.enter_subsection("heat source");
-    this->heat_source[i_bc]->parse_parameters(prm);
+    prm.enter_subsection("heat flux");
+    this->heat_flux_bc[i_bc]->parse_parameters(prm);
     prm.leave_subsection();
 
     this->id[i_bc] = prm.get_integer("id");
@@ -646,7 +646,7 @@ namespace BoundaryConditions
 
       this->Tinf.resize(this->size);
       this->emissivity.resize(this->size);
-      this->heat_source.resize(this->size);
+      this->heat_flux_bc.resize(this->size);
 
       for (unsigned int n = 0; n < this->size; n++)
         {

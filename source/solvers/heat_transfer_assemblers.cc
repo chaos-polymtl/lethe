@@ -400,8 +400,6 @@ HeatTransferAssemblerRobinBC<dim>::assemble_matrix(
             this->boundary_conditions_ht.h[i_bc]->value(Point<dim>());
           const double emissivity =
             this->boundary_conditions_ht.emissivity[i_bc]->value(Point<dim>());
-          const double heat_source =
-            this->boundary_conditions_ht.heat_source[i_bc]->value(Point<dim>());
           for (unsigned int f = 0; f < scratch_data.n_faces; ++f)
             {
               if (scratch_data.boundary_face_id[f] ==
@@ -425,8 +423,7 @@ HeatTransferAssemblerRobinBC<dim>::assemble_matrix(
                               local_matrix(i, j) +=
                                 (h +
                                  4.0 * Stefan_Boltzmann_constant * emissivity *
-                                   T_face * T_face * T_face +
-                                 heat_source / T_face) *
+                                   T_face * T_face * T_face) *
                                 phi_face_T_i * phi_face_T_j * JxW;
                             }
                         }
@@ -469,8 +466,8 @@ HeatTransferAssemblerRobinBC<dim>::assemble_rhs(
             this->boundary_conditions_ht.Tinf[i_bc]->value(Point<dim>());
           const double emissivity =
             this->boundary_conditions_ht.emissivity[i_bc]->value(Point<dim>());
-          const double heat_source =
-            this->boundary_conditions_ht.heat_source[i_bc]->value(Point<dim>());
+          const double heat_flux_bc =
+            this->boundary_conditions_ht.heat_flux_bc[i_bc]->value(Point<dim>());
 
           for (unsigned int f = 0; f < scratch_data.n_faces; ++f)
             {
@@ -493,7 +490,7 @@ HeatTransferAssemblerRobinBC<dim>::assemble_rhs(
                              Stefan_Boltzmann_constant * emissivity *
                                (T_face * T_face * T_face * T_face -
                                 T_inf * T_inf * T_inf * T_inf) +
-                             heat_source) *
+                             heat_flux_bc) *
                             JxW;
                         }
                     }

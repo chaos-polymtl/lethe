@@ -618,7 +618,6 @@ namespace Parameters
     double Stefan_Boltzmann_constant;
     double emissivity;
     double Tinf;
-    double heat_source;
 
     static void
     declare_parameters(ParameterHandler &prm);
