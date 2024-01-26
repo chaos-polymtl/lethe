@@ -8,7 +8,7 @@ If a laser heat source is present in a simulation, it can be added in this secti
 
   subsection laser parameters
     set enable               = false
-    set type                 = exponential_decay
+    set type                 = gaussian_heat_flux_vof_interface
     set concentration factor = 2.0
     set power                = 0.0
     set absorptivity         = 0.5
@@ -33,7 +33,7 @@ If a laser heat source is present in a simulation, it can be added in this secti
 
 * The ``enable`` parameter is set to ``true`` if the problem has a laser heat source term and enables its calculation.
 
-* The ``type`` parameter is set to ``exponential_decay`` (default) if we assume that the laser behaves as a volumetric source.  If the laser is assumed to be a surface flux, the ``type`` can be set at ``gaussian_heat_flux_vof_interface`` or ``uniform_heat_flux_vof_interface`` and used in conjunction with the :doc:`VOF auxiliary physic <./volume_of_fluid>`. The different models are detailed :ref:`below <LaserTypes>`.
+* The ``type`` parameter is set to ``gaussian_heat_flux_vof_interface`` (default) if we assume that the laser behaves as a surface heat flux with a normal irradiation distribution.  If the laser is assumed to have a uniform surface heat flux, the ``type`` can be set at ``uniform_heat_flux_vof_interface``. In both cases, the laser model must be used in conjunction with the :doc:`VOF auxiliary physic <./volume_of_fluid>`. The third available laser model is the  ``exponential_decay`` and considers that the laser behaves as a volumetric source. The different models are detailed :ref:`below <LaserTypes>`.
 
 * Laser ``concentration factor`` parameter indicates the definition of the beam radius. In almost all the articles, it is assumed equal to :math:`2.0`.
 
@@ -75,6 +75,28 @@ If a laser heat source is present in a simulation, it can be added in this secti
 Laser types
 ^^^^^^^^^^^^^
 
+* When the ``type`` is set to ``gaussian_heat_flux_vof_interface`` or ``uniform_heat_flux_vof_interface``, it **must be used in conjunction with the** :doc:`VOF auxiliary physic <./volume_of_fluid>`.
+
+  * The ``gaussian_heat_flux_vof_interface`` model is used to apply a gaussian heat flux only at the interface. In 3D, this heat flux is given by:
+  
+    .. math::
+      
+        q(x,y,z) = \frac{|\nabla \psi| \eta \alpha P}{\pi R^2} \exp{\left(-\eta \frac{r^2}{R^2}\right)}
+        
+    where :math:`r` is the radial distance from the laser's axis and :math:`|\nabla \psi|` is the :math:`L^2` norm of the filtered phase fraction gradient. In 2D, the pre-exponential factor accounts for the change in the receiving area (going from a disk of radius :math:`R` in 3D to a line segment of length :math:`2R` in 2D): 
+    
+    .. math::
+
+        q(x,y,z) = \frac{2|\nabla \psi| \sqrt{\eta\;} \alpha P}{\sqrt{\pi^3} R^2} \exp{\left(-\eta \frac{r^2}{R^2}\right)}
+        
+    
+  * The ``uniform_heat_flux_vof_interface`` model is used to apply a uniform heat flux, given by the expression below, only at the interface.
+  
+    .. math::
+      
+        q(x,y,z) = \frac{|\nabla \psi| \alpha P}{\pi R^2}
+
+
 * When the ``type`` parameter is set to ``exponential_decay``, the exponential model from Zhang *et al.* `[2] <https://doi.org/10.1016/j.matdes.2018.01.022>`_ is used to simulate the laser heat source:
 
   .. math::
@@ -91,23 +113,7 @@ Laser types
 
   .. attention::
     In this case, the heat affects the fluid initialized as ``fluid 1``.
-
-* When ``type`` is set to ``gaussian_heat_flux_vof_interface`` or ``uniform_heat_flux_vof_interface``, it **must be used in conjunction with the** :doc:`VOF auxiliary physic <./volume_of_fluid>`.
-
-  * The ``gaussian_heat_flux_vof_interface`` model is used to apply a gaussian heat flux, given by the expression below, only at the interface.
-  
-    .. math::
-      
-        q(x,y,z) = \frac{|\nabla \psi| \eta \alpha P}{\pi R^2} \exp{\left(-\eta \frac{r^2}{R^2}\right)}
-        
-    where :math:`r` is the radial distance from the laser's axis and :math:`|\nabla \psi|` is the :math:`L^2` norm of the filtered phase fraction gradient.
     
-  * The ``uniform_heat_flux_vof_interface`` model is used to apply a uniform heat flux, given by the expression below, only at the interface.
-  
-    .. math::
-      
-        q(x,y,z) = \frac{|\nabla \psi| \alpha P}{\pi R^2}
-
 -----------
 References
 -----------
