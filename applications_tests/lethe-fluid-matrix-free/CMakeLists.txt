@@ -4,8 +4,6 @@ string(TOLOWER ${CMAKE_BUILD_TYPE} _build_type)
 
 file(COPY cylinder_structured.msh DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/cylinder_kelly_estimator.${_build_type}")
 
-file(COPY cylinder_structured.msh DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/cylinder_kelly_estimator.${_build_type}/mpirun=2")
-
 deal_ii_pickup_tests()
 
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
