@@ -22,6 +22,9 @@
 
 #include <core/non_linear_solver.h>
 
+#include <deal.II/lac/la_parallel_block_vector.h>
+#include <deal.II/lac/la_parallel_vector.h>
+
 /**
  * @brief Non-linear solver for non-linear systems of equations which uses a Newton
  * method with \alpha relaxation to ensure that the residual is monotonically
@@ -170,7 +173,13 @@ NewtonNonLinearSolver<VectorType>::solve(const bool is_initial_step)
 
       global_res       = solver->get_current_residual();
       present_solution = evaluation_point;
-      last_res         = current_res;
+      if constexpr (std::is_same_v<
+                      VectorType,
+                      LinearAlgebra::distributed::Vector<double>> ||
+                    std::is_same_v<VectorType,
+                                   LinearAlgebra::distributed::Vector<double>>)
+        present_solution.update_ghost_values();
+      last_res = current_res;
       ++outer_iteration;
     }
 

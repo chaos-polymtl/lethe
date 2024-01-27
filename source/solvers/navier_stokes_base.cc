@@ -1149,9 +1149,6 @@ template <int dim, typename VectorType, typename DofsType>
 void
 NavierStokesBase<dim, VectorType, DofsType>::postprocess_fd(bool firstIter)
 {
-  auto &present_solution = this->present_solution;
-
-
   if (this->simulation_parameters.post_processing.calculate_enstrophy)
     {
       double enstrophy = calculate_enstrophy(this->dof_handler,
@@ -2335,7 +2332,9 @@ NavierStokesBase<dim, VectorType, DofsType>::init_temporary_vector()
 
   if constexpr (std::is_same_v<VectorType, GlobalVectorType> ||
                 std::is_same_v<VectorType, GlobalBlockVectorType>)
-    tmp.reinit(locally_owned_dofs, this->mpi_communicator);
+    tmp.reinit(locally_owned_dofs,
+               locally_relevant_dofs,
+               this->mpi_communicator);
 
   else if constexpr (std::is_same_v<VectorType,
                                     LinearAlgebra::distributed::Vector<double>>)
