@@ -358,3 +358,12 @@ template class AverageVelocities<2,
 template class AverageVelocities<3,
                                  GlobalBlockVectorType,
                                  std::vector<IndexSet>>;
+#ifndef LETHE_USE_LDV
+template class AverageVelocities<2,
+                                 LinearAlgebra::distributed::Vector<double>,
+                                 IndexSet>;
+
+template class AverageVelocities<3,
+                                 LinearAlgebra::distributed::Vector<double>,
+                                 IndexSet>;
+#endif

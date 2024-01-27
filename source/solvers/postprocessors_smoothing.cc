@@ -168,7 +168,14 @@ template class PostProcessorSmoothing<2, GlobalVectorType>;
 template class PostProcessorSmoothing<3, GlobalVectorType>;
 template class PostProcessorSmoothing<2, GlobalBlockVectorType>;
 template class PostProcessorSmoothing<3, GlobalBlockVectorType>;
-
+#ifndef LETHE_USE_LDV
+template class PostProcessorSmoothing<
+  2,
+  LinearAlgebra::distributed::Vector<double>>;
+template class PostProcessorSmoothing<
+  3,
+  LinearAlgebra::distributed::Vector<double>>;
+#endif
 
 template <int dim, typename VectorType>
 QcriterionPostProcessorSmoothing<dim, VectorType>::
@@ -288,6 +295,14 @@ template class QcriterionPostProcessorSmoothing<2, GlobalVectorType>;
 template class QcriterionPostProcessorSmoothing<3, GlobalVectorType>;
 template class QcriterionPostProcessorSmoothing<2, GlobalBlockVectorType>;
 template class QcriterionPostProcessorSmoothing<3, GlobalBlockVectorType>;
+#ifndef LETHE_USE_LDV
+template class QcriterionPostProcessorSmoothing<
+  2,
+  LinearAlgebra::distributed::Vector<double>>;
+template class QcriterionPostProcessorSmoothing<
+  3,
+  LinearAlgebra::distributed::Vector<double>>;
+#endif
 
 template <int dim, typename VectorType>
 ContinuityPostProcessorSmoothing<dim, VectorType>::
@@ -384,3 +399,11 @@ template class ContinuityPostProcessorSmoothing<2, GlobalVectorType>;
 template class ContinuityPostProcessorSmoothing<3, GlobalVectorType>;
 template class ContinuityPostProcessorSmoothing<2, GlobalBlockVectorType>;
 template class ContinuityPostProcessorSmoothing<3, GlobalBlockVectorType>;
+#ifndef LETHE_USE_LDV
+template class ContinuityPostProcessorSmoothing<
+  2,
+  LinearAlgebra::distributed::Vector<double>>;
+template class ContinuityPostProcessorSmoothing<
+  3,
+  LinearAlgebra::distributed::Vector<double>>;
+#endif
