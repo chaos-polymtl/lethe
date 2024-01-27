@@ -571,6 +571,9 @@ NavierStokesBase<dim, VectorType, DofsType>::iterate()
         announce_string(this->pcout, "Fluid Dynamics");
       PhysicsSolver<VectorType>::solve_non_linear_system(false);
 
+      // Update ghost values of present solution
+      present_solution.update_ghost_values();
+
       // Solve and percolate the auxiliary physics that should be treated AFTER
       // the fluid dynamics
       multiphysics->solve(true,
@@ -1148,6 +1151,7 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess_fd(bool firstIter)
 {
   auto &present_solution = this->present_solution;
 
+
   if (this->simulation_parameters.post_processing.calculate_enstrophy)
     {
       double enstrophy = calculate_enstrophy(this->dof_handler,
@@ -1422,7 +1426,6 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess_fd(bool firstIter)
           this->exact_solution->set_time(
             simulation_control->get_current_time());
 
-          present_solution.update_ghost_values();
 
           const std::pair<double, double> errors =
             calculate_L2_error(dof_handler,
