@@ -870,6 +870,12 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_kelly()
   const FEValuesExtractors::Vector velocity(0);
   const FEValuesExtractors::Scalar pressure(dim);
   auto                            &present_solution = this->present_solution;
+  VectorType                       locally_relevant_solution;
+  locally_relevant_solution.reinit(this->locally_owned_dofs,
+                                   this->locally_relevant_dofs,
+                                   this->mpi_communicator);
+  locally_relevant_solution = this->present_solution;
+  locally_relevant_solution.update_ghost_values();
 
   // Global flags
   // Their dimension is consistent with the dimension returned by
@@ -906,7 +912,7 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_kelly()
             *this->face_quadrature,
             typename std::map<types::boundary_id,
                               const Function<dim, double> *>(),
-            present_solution,
+            locally_relevant_solution,
             estimated_error_per_cell,
             this->fe->component_mask(pressure));
         }
@@ -918,7 +924,7 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_kelly()
             *this->face_quadrature,
             typename std::map<types::boundary_id,
                               const Function<dim, double> *>(),
-            present_solution,
+            locally_relevant_solution,
             estimated_error_per_cell,
             this->fe->component_mask(velocity));
         }
