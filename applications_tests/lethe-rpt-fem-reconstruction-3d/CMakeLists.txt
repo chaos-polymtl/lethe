@@ -10,5 +10,5 @@ DEAL_II_PICKUP_TESTS()
 
 
 if (CMAKE_BUILD_TYPE STREQUAL "Debug" )
-       	set_tests_properties(lethe-rpt-fem-reconstruction-3d/rpt_fem_reconstruction.debug PROPERTIES TIMEOUT 1800)
+       	set_tests_properties(lethe-rpt-fem-reconstruction-3d/rpt_fem_reconstruction.mpirun=1.debug PROPERTIES TIMEOUT 1800)
 ENDIF()

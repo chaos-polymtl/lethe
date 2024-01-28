@@ -24,7 +24,7 @@ deal_ii_pickup_tests()
 
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
   set_tests_properties(lethe-fluid-sharp/steady_couette_sphere.debug PROPERTIES TIMEOUT 2000)
-  set_tests_properties(lethe-fluid-sharp/check_point.debug PROPERTIES TIMEOUT 2000)
+  set_tests_properties(lethe-fluid-sharp/check_point.mpirun=1.debug PROPERTIES TIMEOUT 2000)
   set_tests_properties(lethe-fluid-sharp/pp_contact_test.debug PROPERTIES TIMEOUT 2000)
   set_tests_properties(lethe-fluid-sharp/pp_lubrication_test.debug PROPERTIES TIMEOUT 2000)
   set_tests_properties(lethe-fluid-sharp/coupled_moving_stokes.mpirun=2.debug PROPERTIES TIMEOUT 2000)
