@@ -53,7 +53,7 @@ end
 
 subsection mesh
   set type      = gmsh
-  set file name = ../square.msh
+  set file name = ../../square.msh
 end
 
 #---------------------------------------------------
