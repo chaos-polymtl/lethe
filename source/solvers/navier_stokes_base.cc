@@ -1576,16 +1576,28 @@ NavierStokesBase<dim, VectorType, DofsType>::read_checkpoint()
   setup_dofs();
   std::vector<VectorType *> x_system(1 + previous_solutions.size());
 
-  VectorType distributed_system(locally_owned_dofs, this->mpi_communicator);
+  VectorType distributed_system(locally_owned_dofs,
+                                this->locally_relevant_dofs,
+                                this->mpi_communicator);
   x_system[0] = &(distributed_system);
+  if constexpr (std::is_same_v<VectorType, TrilinosWrappers::MPI::Vector>)
+    {
+      x_system[0]->update_ghost_values();
+    }
 
   std::vector<VectorType> distributed_previous_solutions;
   distributed_previous_solutions.reserve(previous_solutions.size());
   for (unsigned int i = 0; i < previous_solutions.size(); ++i)
     {
       distributed_previous_solutions.emplace_back(
-        VectorType(locally_owned_dofs, this->mpi_communicator));
+        VectorType(locally_owned_dofs,
+                   this->locally_relevant_dofs,
+                   this->mpi_communicator));
       x_system[i + 1] = &distributed_previous_solutions[i];
+      if constexpr (std::is_same_v<VectorType, TrilinosWrappers::MPI::Vector>)
+        {
+          x_system[i + 1]->update_ghost_values();
+        }
     }
   parallel::distributed::SolutionTransfer<dim, VectorType> system_trans_vectors(
     this->dof_handler);
@@ -1598,6 +1610,11 @@ NavierStokesBase<dim, VectorType, DofsType>::read_checkpoint()
       x_system.insert(x_system.end(), sum_vectors.begin(), sum_vectors.end());
     }
 
+
+  // if constexpr (std::is_same_v<VectorType, TrilinosWrappers::MPI::Vector>)
+  // {
+  //    x_system[0]->update_ghost_values();
+  // }
   system_trans_vectors.deserialize(x_system);
   this->present_solution = distributed_system;
   for (unsigned int i = 0; i < previous_solutions.size(); ++i)
