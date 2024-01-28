@@ -218,7 +218,7 @@ public:
 };
 
 /**
- * @brief Class that assembles prescribed heat flux Neumann boundary condition for the heat transfer solver.
+ * @brief Assembles prescribed heat flux Neumann boundary condition for the heat transfer solver.
  *
  * @tparam dim An integer that denotes the number of spatial dimensions
  *
