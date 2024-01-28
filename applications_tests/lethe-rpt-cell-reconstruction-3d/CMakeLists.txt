@@ -2,8 +2,8 @@ set(TEST_TARGET lethe-rpt-cell-reconstruction-3d)
 
 string(TOLOWER ${CMAKE_BUILD_TYPE} _build_type)
 
-file(COPY unknown_positions_files/counts.reconstruction DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/unknown_positions.${_build_type}")
-file(COPY unknown_positions_files/positions.detector DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/unknown_positions.${_build_type}")
+file(COPY unknown_positions_files/counts.reconstruction DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/unknown_positions.${_build_type}/mpirun=1/")
+file(COPY unknown_positions_files/positions.detector DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/unknown_positions.${_build_type}/mpirun=1/")
 
 deal_ii_pickup_tests()
 
