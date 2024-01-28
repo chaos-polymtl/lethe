@@ -77,9 +77,7 @@ The default parameters for ``temperature`` and ``convection-radiation`` are show
 
 .. note::
 
-  Note that the expressions for ``h``, ``Tinf``, ``emissivity``, and ``heat-flux`` can be time-dependent, but the
-current
-implementation does not allow for space dependence (the expressions are evaluated at the origin).
+  Note that the expressions for ``h``, ``Tinf``, ``emissivity``, and ``heat-flux`` can be time-dependent, but the current implementation does not allow for space dependence (the expressions are evaluated at the origin).
 
 
 where :math:`\mathbf{\sigma}` is the Stefan-Boltzmann constant.
