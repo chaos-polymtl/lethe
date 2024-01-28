@@ -8,10 +8,7 @@ set dimension = 2
 #---------------------------------------------------
 
 subsection simulation control
-  set method           = bdf1
-  set time end         = 0.01
-  set time step        = 0.01
-  set adapt            = false
+  set method           = steady
   set output name      = heat_flux
   set output frequency = 1
 end
@@ -22,15 +19,6 @@ end
 
 subsection multiphysics
   set heat transfer = true
-end
-
-#---------------------------------------------------
-# Post-Processing
-#---------------------------------------------------
-
-subsection post-processing
-  set verbosity                        = verbose
-  set calculate temperature statistics = true
 end
 
 #---------------------------------------------------
@@ -82,14 +70,17 @@ subsection boundary conditions heat transfer
   set number = 4
   subsection bc 0
     set id         = 0
-    set type       = heat-flux
-    subsection q0
-      set Function expression = 100
+    set type       = temperature
+    subsection value
+      set Function expression = 1000
     end
   end
   subsection bc 1
     set id         = 1
-    set type       = noflux
+    set type       = heat-flux
+    subsection q0
+      set Function expression = -100000
+    end
   end
   subsection bc 2
     set id         = 2
@@ -112,7 +103,7 @@ subsection analytical solution
     set Function expression = 0 ; 0 ; 0
   end
   subsection temperature
-    set Function expression = 1000.01
+    set Function expression = 1000 - 100*x
   end
 end
 

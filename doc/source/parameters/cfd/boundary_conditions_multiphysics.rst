@@ -40,7 +40,7 @@ The default parameters for ``temperature`` and ``convection-radiation`` are show
     subsection bc 2
       set id     = 2
       set type   = heat-flux
-      subsection q0
+      subsection value
         set Function expression = 0
       end
     end
@@ -69,7 +69,7 @@ The default parameters for ``temperature`` and ``convection-radiation`` are show
 .. math::
     \frac{ \partial T}{\partial \mathbf{n}} = h (T - T_{inf}) + \epsilon \sigma (T^4 - T_{inf}^4)
 
-    * ``heat-flux`` (:math:`q_0`, Neumann BC) to impose a heat flux ``q0`` at the boundary.
+    * ``heat-flux`` (:math:`q_0`, Neumann BC) to impose a heat flux of a given ``value`` at the boundary.
 
 .. math::
     \frac{ \partial T}{\partial \mathbf{n}} = q_0
@@ -77,7 +77,9 @@ The default parameters for ``temperature`` and ``convection-radiation`` are show
 
 .. note::
 
-  Note that the expressions for ``h``, ``Tinf``, ``emissivity``, and ``q0`` can be time-dependent, but the current implementation does not allow for space dependence (the expressions are evaluated at the origin).
+  Note that the expressions for ``h``, ``Tinf``, ``emissivity``, and ``heat-flux`` can be time-dependent, but the
+current
+implementation does not allow for space dependence (the expressions are evaluated at the origin).
 
 
 where :math:`\mathbf{\sigma}` is the Stefan-Boltzmann constant.

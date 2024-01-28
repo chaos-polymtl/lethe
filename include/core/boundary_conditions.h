@@ -446,7 +446,7 @@ namespace BoundaryConditions
    * coefficient, and "Stefan-Boltzmann constant" is the Stefan-Boltzmann
    * constant = 5.6703*10-8 (W.m-2.K-4)
    *
-   *  - if bc type is "heat-flux", q0 is a prescribed flux applied to the
+   *  - if bc type is "heat-flux", "value" is a prescribed flux applied to the
    * surface
    */
 
@@ -522,7 +522,7 @@ namespace BoundaryConditions
     prm.leave_subsection();
 
     // Heat flux (Neumann) at the boundary for heat flux bc
-    prm.enter_subsection("q0");
+    prm.enter_subsection("value");
     heat_flux_bc[i_bc] = std::make_shared<Functions::ParsedFunction<dim>>();
     heat_flux_bc[i_bc]->declare_parameters(prm);
     prm.leave_subsection();
@@ -624,7 +624,7 @@ namespace BoundaryConditions
     prm.enter_subsection("emissivity");
     this->emissivity[i_bc]->parse_parameters(prm);
     prm.leave_subsection();
-    prm.enter_subsection("q0");
+    prm.enter_subsection("value");
     this->heat_flux_bc[i_bc]->parse_parameters(prm);
     prm.leave_subsection();
 
