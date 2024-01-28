@@ -326,7 +326,11 @@ BlockSchurPreconditioner<BSPreconditioner>::vmult(
 
 
     // TrilinosWrappers::SolverBicgstab solver(solver_control);
+#ifndef LETHE_USE_LDV
+    TrilinosWrappers::SolverGMRES solver(solver_control);
+#else
     SolverGMRES<GlobalVectorType> solver(solver_control);
+#endif
 
     // A_inverse.solve(stokes_matrix.block(0, 0),dst.block(0), utmp,
     // mp_preconditioner);
