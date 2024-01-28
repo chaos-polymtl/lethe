@@ -138,8 +138,6 @@ if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
     add_subdirectory(prototypes)
   endif()
 
-
-
   if(BUILD_TESTING)
     set(DEAL_II_WITH_DEALII ON)
     set(DEAL_II_DEALII_VERSION ${DEAL_II_VERSION})
