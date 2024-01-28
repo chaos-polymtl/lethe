@@ -560,6 +560,7 @@ HeatTransferAssemblerHeatFluxBC<dim>::assemble_rhs(
 template class HeatTransferAssemblerHeatFluxBC<2>;
 template class HeatTransferAssemblerHeatFluxBC<3>;
 
+
 template <int dim>
 void
 HeatTransferAssemblerViscousDissipation<dim>::assemble_matrix(
