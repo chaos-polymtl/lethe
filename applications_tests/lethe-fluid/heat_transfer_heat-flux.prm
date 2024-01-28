@@ -78,7 +78,7 @@ subsection boundary conditions heat transfer
   subsection bc 1
     set id         = 1
     set type       = heat-flux
-    subsection q0
+    subsection value
       set Function expression = -100000
     end
   end

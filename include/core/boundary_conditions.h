@@ -471,6 +471,9 @@ namespace BoundaryConditions
     parse_boundary(ParameterHandler &prm, const unsigned int i_bc);
     void
     parse_parameters(ParameterHandler &prm);
+
+    bool has_convection_radiation_bc = false;
+    bool has_heat_flux_bc            = false;
   };
 
   /**
@@ -601,14 +604,16 @@ namespace BoundaryConditions
       }
     else if (op == "convection-radiation")
       {
-        this->type[i_bc] = BoundaryType::convection_radiation;
+        this->type[i_bc]                  = BoundaryType::convection_radiation;
+        this->has_convection_radiation_bc = true;
 
         // Emissivity validity (0 <= emissivity <= 1) will be checked at
         // evaluation.
       }
     else if (op == "heat-flux")
       {
-        this->type[i_bc] = BoundaryType::heat_flux_bc;
+        this->type[i_bc]       = BoundaryType::heat_flux_bc;
+        this->has_heat_flux_bc = true;
       }
 
     // All the functions are parsed since they might be used for post-processing
