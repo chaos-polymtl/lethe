@@ -25,7 +25,7 @@
 #include <deal.II/lac/trilinos_parallel_block_vector.h>
 #include <deal.II/lac/trilinos_vector.h>
 
-// #define LETHE_USE_LDV
+// #define LETHE_USE_LDV is defined using the CMAKE flag -DLETHE_USE_LDV=TRUE
 
 #ifndef LETHE_USE_LDV
 using GlobalVectorType      = dealii::TrilinosWrappers::MPI::Vector;
