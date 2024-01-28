@@ -92,7 +92,7 @@ end
 
 subsection mesh
   set type               = gmsh
-  set file name          = ../cylinder_unstructured.msh
+  set file name          = ../../cylinder_unstructured.msh
   set initial refinement = 0
 end
 
