@@ -45,7 +45,7 @@
 void
 test()
 {
-  std::string table_file_name = "table_read_input.dat";
+  std::string table_file_name = "../table_read_input.dat";
 
   TableHandler table;
   fill_table_from_file(table, table_file_name);
