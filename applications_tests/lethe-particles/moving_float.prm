@@ -117,7 +117,7 @@ subsection solid objects
   subsection solid object 0
     subsection mesh
       set type               = gmsh
-      set file name          = ./square.msh
+      set file name          = ../square.msh
       set simplex            = true
       set initial refinement = 0
     end
