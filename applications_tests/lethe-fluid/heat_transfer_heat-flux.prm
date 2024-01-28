@@ -1,0 +1,172 @@
+# Listing of Parameters
+#----------------------
+
+set dimension = 2
+
+#---------------------------------------------------
+# Simulation Control
+#---------------------------------------------------
+
+subsection simulation control
+  set method           = bdf1
+  set time end         = 0.01
+  set time step        = 0.01
+  set adapt            = false
+  set output name      = heat_flux
+  set output frequency = 1
+end
+
+#---------------------------------------------------
+# Multiphysics
+#---------------------------------------------------
+
+subsection multiphysics
+  set heat transfer = true
+end
+
+#---------------------------------------------------
+# Post-Processing
+#---------------------------------------------------
+
+subsection post-processing
+  set verbosity                        = verbose
+  set calculate temperature statistics = true
+end
+
+#---------------------------------------------------
+# Initial condition
+#---------------------------------------------------
+
+subsection initial conditions
+  set type = nodal
+  subsection uvwp
+    set Function expression = 0; 0; 0
+  end
+  subsection temperature
+    set Function expression = 1000
+  end
+end
+
+#---------------------------------------------------
+# Physical Properties
+#---------------------------------------------------
+
+subsection physical properties
+  set number of fluids = 1
+  subsection fluid 0
+    set density                    = 1000
+    set kinematic viscosity        = 1
+    set thermal conductivity model = constant
+    set thermal conductivity       = 1000
+    set specific heat model        = constant
+    set specific heat              = 10
+  end
+end
+
+#---------------------------------------------------
+# Mesh
+#---------------------------------------------------
+
+subsection mesh
+  set type               = dealii
+  set grid type          = subdivided_hyper_rectangle
+  set grid arguments     = 1, 1: 0, 0 : 0.01, 0.01 : true
+  set initial refinement = 1
+end
+
+#---------------------------------------------------
+# Boundary Conditions
+#---------------------------------------------------
+
+subsection boundary conditions heat transfer
+  set number = 4
+  subsection bc 0
+    set id         = 0
+    set type       = heat-flux
+    subsection q0
+      set Function expression = 100
+    end
+  end
+  subsection bc 1
+    set id         = 1
+    set type       = noflux
+  end
+  subsection bc 2
+    set id         = 2
+    set type       = noflux
+  end
+  subsection bc 3
+    set id         = 3
+    set type       = noflux
+  end
+end
+
+#---------------------------------------------------
+# Analytical Solution
+#---------------------------------------------------
+
+subsection analytical solution
+  set enable    = true
+  set verbosity = verbose
+  subsection uvwp
+    set Function expression = 0 ; 0 ; 0
+  end
+  subsection temperature
+    set Function expression = 1000.01
+  end
+end
+
+#---------------------------------------------------
+# FEM
+#---------------------------------------------------
+
+subsection FEM
+  set velocity order = 1
+  set pressure order = 1
+end
+
+#---------------------------------------------------
+# Non-Linear Solver Control
+#---------------------------------------------------
+
+subsection non-linear solver
+  subsection heat transfer
+    set tolerance      = 1e-8
+    set max iterations = 100
+    set verbosity      = quiet
+  end
+  subsection fluid dynamics
+    set tolerance      = 1e-8
+    set max iterations = 100
+    set verbosity      = quiet
+  end
+end
+
+#---------------------------------------------------
+# Linear Solver Control
+#---------------------------------------------------
+
+subsection linear solver
+  subsection fluid dynamics
+    set verbosity                             = quiet
+    set method                                = gmres
+    set relative residual                     = 1e-3
+    set minimum residual                      = 1e-8
+    set preconditioner                        = ilu
+    set ilu preconditioner fill               = 0
+    set ilu preconditioner absolute tolerance = 1e-12
+    set ilu preconditioner relative tolerance = 1.00
+    set max krylov vectors                    = 200
+  end
+  subsection heat transfer
+    set verbosity                             = quiet
+    set method                                = gmres
+    set relative residual                     = 1e-3
+    set minimum residual                      = 1e-8
+    set preconditioner                        = ilu
+    set ilu preconditioner fill               = 0
+    set ilu preconditioner absolute tolerance = 1e-12
+    set ilu preconditioner relative tolerance = 1.00
+    set max krylov vectors                    = 200
+  end
+end
