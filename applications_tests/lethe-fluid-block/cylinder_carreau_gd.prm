@@ -83,7 +83,7 @@ end
 
 subsection mesh
   set type      = gmsh
-  set file name = ../cylinder_structured.msh
+  set file name = ../../cylinder_structured.msh
 end
 
 #---------------------------------------------------
