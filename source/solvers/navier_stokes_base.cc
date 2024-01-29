@@ -2340,7 +2340,15 @@ NavierStokesBase<dim, VectorType, DofsType>::init_temporary_vector()
 {
   VectorType tmp;
 
-  tmp.reinit(locally_owned_dofs, locally_relevant_dofs, this->mpi_communicator);
+  if constexpr (std::is_same_v<VectorType, GlobalVectorType> ||
+                std::is_same_v<VectorType, GlobalBlockVectorType>)
+    tmp.reinit(locally_owned_dofs, this->mpi_communicator);
+
+  else if constexpr (std::is_same_v<VectorType,
+                                    LinearAlgebra::distributed::Vector<double>>)
+    tmp.reinit(locally_owned_dofs,
+               locally_relevant_dofs,
+               this->mpi_communicator);
 
   return tmp;
 }
