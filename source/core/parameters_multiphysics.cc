@@ -492,9 +492,10 @@ Parameters::CahnHilliard_PhaseFilter::declare_parameters(ParameterHandler &prm)
     prm.declare_entry(
       "type",
       "none",
-      Patterns::Selection("none|tanh"),
+      Patterns::Selection("none|clip|tanh"),
       "CahnHilliard phase filtration type, "
       "if <none> is selected, the phase won't be filtered"
+      "if <clip> is selected, the phase order values above 1 (respectively below -1) will be brought back to 1 (respectively -1)"
       "if <tanh> is selected, the filtered phase will be a result of the "
       "following function: \\alpha_f = \\tanh(\\beta\\alpha); "
       "where \\beta is a parameter influencing the interface thickness that "
@@ -526,13 +527,17 @@ Parameters::CahnHilliard_PhaseFilter::parse_parameters(ParameterHandler &prm)
       {
         type = Parameters::FilterType::none;
       }
+    else if (t == "clip")
+    {
+        type = Parameters::FilterType::clip;
+    }
     else if (t == "tanh")
       {
         type = Parameters::FilterType::tanh;
       }
     else
       throw(std::logic_error(
-        "Error, invalid filter type. Choices are 'none' or 'tanh'"));
+        "Error, invalid filter type. Choices are 'none', 'clip' or 'tanh'"));
 
     // beta
     beta = prm.get_double("beta");

@@ -175,11 +175,7 @@ CahnHilliardAssemblerAngleOfContact<dim>::assemble_matrix(
   if (!scratch_data.is_boundary_cell)
     return;
 
-  const double epsilon =
-    (this->cahn_hilliard_parameters.epsilon_set_method ==
-     Parameters::EpsilonSetStrategy::manual) ?
-      this->cahn_hilliard_parameters.epsilon :
-      2 * std::pow(2, (-1) * this->maximum_refinement_number);
+    const double epsilon   =   this->minimum_cell_diameter/sqrt(2);
 
   auto &local_matrix = copy_data.local_matrix;
 
@@ -241,11 +237,7 @@ CahnHilliardAssemblerAngleOfContact<dim>::assemble_rhs(
   if (!scratch_data.is_boundary_cell)
     return;
 
-  const double epsilon =
-    (this->cahn_hilliard_parameters.epsilon_set_method ==
-     Parameters::EpsilonSetStrategy::manual) ?
-      this->cahn_hilliard_parameters.epsilon :
-      2 * std::pow(2, (-1) * this->maximum_refinement_number);
+    const double epsilon   =   this->minimum_cell_diameter/sqrt(2);
 
   auto &local_rhs = copy_data.local_rhs;
 
@@ -299,11 +291,7 @@ CahnHilliardAssemblerFreeAngle<dim>::assemble_matrix(
 {
   if (!scratch_data.is_boundary_cell)
     return;
-  const double epsilon =
-    (this->cahn_hilliard_parameters.epsilon_set_method ==
-     Parameters::EpsilonSetStrategy::manual) ?
-      this->cahn_hilliard_parameters.epsilon :
-      2 * std::pow(2, (-1) * this->maximum_refinement_number);
+    const double epsilon   =   this->minimum_cell_diameter/sqrt(2);
 
   auto &local_matrix = copy_data.local_matrix;
 
@@ -357,11 +345,7 @@ CahnHilliardAssemblerFreeAngle<dim>::assemble_rhs(
   if (!scratch_data.is_boundary_cell)
     return;
 
-  const double epsilon =
-    (this->cahn_hilliard_parameters.epsilon_set_method ==
-     Parameters::EpsilonSetStrategy::manual) ?
-      this->cahn_hilliard_parameters.epsilon :
-      2 * std::pow(2, (-1) * this->maximum_refinement_number);
+    const double epsilon   =   this->minimum_cell_diameter/sqrt(2);
 
   auto &local_rhs = copy_data.local_rhs;
 

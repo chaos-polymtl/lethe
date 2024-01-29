@@ -68,10 +68,10 @@ public:
   }
 };
 
-class CahnHilliardPhaseOrderLimiter : public CahnHilliardFilterBase
+class CahnHilliardClipFilter : public CahnHilliardFilterBase
 {
 public:
-    CahnHilliardPhaseOrderLimiter()
+    CahnHilliardClipFilter()
     {}
 
     /**

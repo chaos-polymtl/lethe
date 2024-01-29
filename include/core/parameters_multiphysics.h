@@ -60,6 +60,7 @@ namespace Parameters
   enum class FilterType
   {
     none,
+    clip,
     tanh
   };
 

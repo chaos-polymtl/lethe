@@ -43,43 +43,23 @@ CahnHilliard<dim>::setup_assemblers()
     }
 
   // Angle of contact boundary condition
-  //  this->assemblers.push_back(
-  //    std::make_shared<CahnHilliardAssemblerAngleOfContact<dim>>(
-  //      this->simulation_control,
-  //      this->simulation_parameters.multiphysics.cahn_hilliard_parameters,
-  //      this->simulation_parameters.mesh_adaptation.maximum_refinement_level,
-  //      this->simulation_parameters.boundary_conditions_cahn_hilliard));
-
   this->assemblers.push_back(
     std::make_shared<CahnHilliardAssemblerAngleOfContact<dim>>(
       this->simulation_control,
       this->simulation_parameters.multiphysics.cahn_hilliard_parameters,
-      (this->simulation_parameters.mesh_adaptation.type ==
-       Parameters::MeshAdaptation::Type::none) ?
-        this->simulation_parameters.mesh.initial_refinement :
-        this->simulation_parameters.mesh_adaptation.maximum_refinement_level,
+      GridTools::minimal_cell_diameter(*triangulation),
       this->simulation_parameters.boundary_conditions_cahn_hilliard));
-
-  double test = GridTools::minimal_cell_diameter(*triangulation);
 
   // Free angle of contact boundary condition
   this->assemblers.push_back(
     std::make_shared<CahnHilliardAssemblerFreeAngle<dim>>(
       this->simulation_control,
       this->simulation_parameters.multiphysics.cahn_hilliard_parameters,
-      (this->simulation_parameters.mesh_adaptation.type ==
-       Parameters::MeshAdaptation::Type::none) ?
-        this->simulation_parameters.mesh.initial_refinement :
-        this->simulation_parameters.mesh_adaptation.maximum_refinement_level,
+      GridTools::minimal_cell_diameter(*triangulation),
       this->simulation_parameters.boundary_conditions_cahn_hilliard));
 
 
   // Core assembler
-  // For the time being, only a two-fluid system is considered for the
-  // Cahn-Hilliard equations, hence we'll always take the first element of the
-  // material_interaction vector, since it should contain all the parameters
-  // necessary for solving the equations
-
   this->assemblers.push_back(std::make_shared<CahnHilliardAssemblerCore<dim>>(
     this->simulation_control,
     this->simulation_parameters.multiphysics.cahn_hilliard_parameters,

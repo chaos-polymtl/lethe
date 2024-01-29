@@ -92,11 +92,9 @@ public:
   CahnHilliardAssemblerCore(
     std::shared_ptr<SimulationControl> simulation_control,
     Parameters::CahnHilliard           cahn_hilliard_parameters,
-    // const double                       maximum_refinement_number
     const double minimum_cell_diameter)
     : CahnHilliardAssemblerBase<dim>(simulation_control)
     , cahn_hilliard_parameters(cahn_hilliard_parameters)
-    //, maximum_refinement_number(maximum_refinement_number)
     , minimum_cell_diameter(minimum_cell_diameter)
   {}
 
@@ -120,7 +118,6 @@ public:
                StabilizedMethodsCopyData    &copy_data) override;
 
   Parameters::CahnHilliard cahn_hilliard_parameters;
-  // const int                maximum_refinement_number;
   const double minimum_cell_diameter;
 };
 
@@ -141,12 +138,12 @@ public:
   CahnHilliardAssemblerAngleOfContact(
     std::shared_ptr<SimulationControl> simulation_control,
     Parameters::CahnHilliard           cahn_hilliard_parameters,
-    const double                       maximum_refinement_number,
+    const double                       minimum_cell_diameter,
     const BoundaryConditions::CahnHilliardBoundaryConditions<dim>
       &p_boundary_conditions_cahn_hilliard)
     : CahnHilliardAssemblerBase<dim>(simulation_control)
     , cahn_hilliard_parameters(cahn_hilliard_parameters)
-    , maximum_refinement_number(maximum_refinement_number)
+          , minimum_cell_diameter(minimum_cell_diameter)
     , boundary_conditions_cahn_hilliard(p_boundary_conditions_cahn_hilliard)
   {}
 
@@ -170,7 +167,7 @@ public:
                StabilizedMethodsCopyData    &copy_data) override;
 
   Parameters::CahnHilliard cahn_hilliard_parameters;
-  const int                maximum_refinement_number;
+  const double               minimum_cell_diameter;
   const BoundaryConditions::CahnHilliardBoundaryConditions<dim>
     &boundary_conditions_cahn_hilliard;
 };
@@ -190,12 +187,12 @@ public:
   CahnHilliardAssemblerFreeAngle(
     std::shared_ptr<SimulationControl> simulation_control,
     Parameters::CahnHilliard           cahn_hilliard_parameters,
-    const double                       maximum_refinement_number,
+    const double                       minimum_cell_diameter,
     const BoundaryConditions::CahnHilliardBoundaryConditions<dim>
       &p_boundary_conditions_cahn_hilliard)
     : CahnHilliardAssemblerBase<dim>(simulation_control)
     , cahn_hilliard_parameters(cahn_hilliard_parameters)
-    , maximum_refinement_number(maximum_refinement_number)
+    , minimum_cell_diameter(minimum_cell_diameter)
     , boundary_conditions_cahn_hilliard(p_boundary_conditions_cahn_hilliard)
   {}
 
@@ -220,7 +217,7 @@ public:
 
 
   Parameters::CahnHilliard cahn_hilliard_parameters;
-  const int                maximum_refinement_number;
+  const double                minimum_cell_diameter;
   const BoundaryConditions::CahnHilliardBoundaryConditions<dim>
     &boundary_conditions_cahn_hilliard;
 };

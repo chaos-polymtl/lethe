@@ -24,6 +24,8 @@ CahnHilliardFilterBase::model_cast(
       Parameters::FilterType::tanh)
     return std::make_shared<CahnHilliardTanhFilter>(
       cahn_hilliard_parameters.cahn_hilliard_phase_filter.beta);
+  else if (cahn_hilliard_parameters.cahn_hilliard_phase_filter.type == Parameters::FilterType::clip)
+      return std::make_shared<CahnHilliardClipFilter>();
   else
     return std::make_shared<CahnHilliardNoFilter>();
 }
