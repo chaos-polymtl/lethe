@@ -656,8 +656,7 @@ MFNavierStokesSolver<dim>::solve_with_LSMG(SolverGMRES<VectorType> &solver)
         DoFTools::extract_locally_relevant_level_dofs(this->dof_handler, level);
 
       level_constraints[level].reinit(relevant_dofs);
-      DoFTools::make_hanging_node_constraints(this->dof_handler,
-                                              level_constraints[level]);
+
 #if DEAL_II_VERSION_GTE(9, 6, 0)
       mg_constrained_dofs.merge_constraints(
         level_constraints[level], level, true, false, true, true);
