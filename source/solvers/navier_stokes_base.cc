@@ -1602,11 +1602,6 @@ NavierStokesBase<dim, VectorType, DofsType>::read_checkpoint()
       x_system.insert(x_system.end(), sum_vectors.begin(), sum_vectors.end());
     }
 
-
-  // if constexpr (std::is_same_v<VectorType, TrilinosWrappers::MPI::Vector>)
-  // {
-  //    x_system[0]->update_ghost_values();
-  // }
   system_trans_vectors.deserialize(x_system);
   this->present_solution = distributed_system;
   for (unsigned int i = 0; i < previous_solutions.size(); ++i)
