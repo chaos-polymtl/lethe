@@ -25,6 +25,7 @@
 
 #include <deal.II/dofs/dof_handler.h>
 
+#include <deal.II/lac/affine_constraints.h>
 #include <deal.II/lac/la_parallel_vector.h>
 #include <deal.II/lac/la_parallel_vector.templates.h>
 
@@ -169,6 +170,8 @@ public:
    *
    * @param particle_handler The particle handler that contains all the particles
    *
+   * @param n_active_cells The number of active cells in triangulation
+   *
    * @param mpi_communicator The MPI communicator
    */
   void
@@ -177,6 +180,30 @@ public:
     const Particles::ParticleHandler<dim> &particle_handler,
     const unsigned int                     n_active_cells,
     MPI_Comm                               mpi_communicator);
+
+  /**
+   * @brief Map the periodic nodes pairs of the triangulation using the constraints
+   *
+   * @param constraints The background constraints of triangulation
+   */
+  inline void
+  map_periodic_nodes(const AffineConstraints<double> &constraints)
+  {
+    periodic_node_ids.clear();
+
+    IndexSet local_lines = constraints.get_local_lines();
+    for (auto i : local_lines)
+      {
+        for (auto j : local_lines)
+          {
+            // Map the values of the periodic nodes (with repetition)
+            if (constraints.are_identity_constrained(i, j))
+              {
+                periodic_node_ids.insert(std::make_pair(i, j));
+              }
+          }
+      }
+  }
 
   /**
    * @brief Find the mobility status of a cell
@@ -248,7 +275,7 @@ private:
    *
    * @param particle_handler The particle handler that contains all the particles
    *
-   * @param current_local_and_ghost_cells The set of locally owned and ghost
+   * @param local_and_ghost_cells_with_particles The set of locally owned and ghost
    * cells that empty cells are removed from
    *
    * @param cell_granular_temperature The empty vector of granular temperature
@@ -262,6 +289,76 @@ private:
                    &local_and_ghost_cells_with_particles,
     Vector<double> &cell_granular_temperature,
     Vector<double> &cell_solid_fraction);
+
+
+  /**
+   * @brief Assigns the mobility status to node and the periodic coinciding node from the
+   * periodic nodes map. If required, this will prevent overwriting a node
+   * status prevailing over the initial one. For instance, empty status must not
+   * be overwritten by mobile status because all cells with this node will be
+   * part of the additional mobile layer and will propagate wrong mobility
+   * status to the next cells.
+   *
+   * @param node_id The current node index (periodic or not)
+   *
+   * @param mobility_status The mobility status to assign to the periodic node
+   *
+   */
+  inline void
+  assign_node_status(const unsigned int node_id, const int mobility_status)
+  {
+    // Prevailing mobility status of the node and assignation
+    int mobility_status_assigned =
+      std::max(mobility_status, mobility_at_nodes(node_id));
+    mobility_at_nodes(node_id) = mobility_status_assigned;
+
+    // Check if node has a periodic node and assign the same mobility status if
+    // prevailing on the one on the periodic node
+    auto it = periodic_node_ids.find(node_id);
+    if (it != periodic_node_ids.end())
+      {
+        mobility_at_nodes(it->second) =
+          std::max(mobility_status_assigned, mobility_at_nodes(it->second));
+      }
+  }
+
+  // Assign active status to nodes except mobile because
+  // this will cause to propagate the mobile status to the
+  // neighbors in this loop since the mobility check at node
+  // is executed in the same container that we are assigning new
+  // mobility status
+  inline void
+  assign_mobility_status(unsigned int                         cell_id,
+                         std::vector<types::global_dof_index> dof_indices,
+                         const int                            cell_status,
+                         const int                            node_status)
+  {
+    cell_mobility_status.insert({cell_id, cell_status});
+
+    // Assign mobility status to nodes but don't overwrite empty or mobile nodes
+    // in regards of the case.
+    for (auto node_id : dof_indices)
+      {
+        // Prevailing mobility status of the node and assignation
+        int status_assigned = std::max(node_status, mobility_at_nodes(node_id));
+        mobility_at_nodes(node_id) = status_assigned;
+
+        // Check if node has a periodic node and assign the same mobility status
+        // if prevailing on the one on the periodic node
+        auto it = periodic_node_ids.find(node_id);
+        if (it != periodic_node_ids.end())
+          {
+            mobility_at_nodes(it->second) =
+              std::max(status_assigned, mobility_at_nodes(it->second));
+          }
+      }
+  }
+
+  inline void
+  assign_mobility_status(unsigned int cell_id, const int cell_status)
+  {
+    cell_mobility_status.insert({cell_id, cell_status});
+  }
 
   // Map of cell mobility status, the key is the active cell index and the value
   // is the mobility status
@@ -278,6 +375,10 @@ private:
   // determine the mobility status of the cell, this type of vector is used
   // to allow update values in parallel
   LinearAlgebra::distributed::Vector<int> mobility_at_nodes;
+
+  // Map of periodic nodes, the key is the periodic node index and the value is
+  // the coinciding node index
+  std::unordered_map<unsigned int, unsigned int> periodic_node_ids;
 
   // Threshold values for granular temperature and solid fraction
   double granular_temperature_threshold;
