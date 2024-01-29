@@ -870,6 +870,12 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_kelly()
   const FEValuesExtractors::Vector velocity(0);
   const FEValuesExtractors::Scalar pressure(dim);
   auto                            &present_solution = this->present_solution;
+  VectorType                       locally_relevant_solution;
+  locally_relevant_solution.reinit(this->locally_owned_dofs,
+                                   this->locally_relevant_dofs,
+                                   this->mpi_communicator);
+  locally_relevant_solution = this->present_solution;
+  locally_relevant_solution.update_ghost_values();
 
   // Global flags
   // Their dimension is consistent with the dimension returned by
@@ -906,7 +912,7 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_kelly()
             *this->face_quadrature,
             typename std::map<types::boundary_id,
                               const Function<dim, double> *>(),
-            present_solution,
+            locally_relevant_solution,
             estimated_error_per_cell,
             this->fe->component_mask(pressure));
         }
@@ -918,7 +924,7 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_kelly()
             *this->face_quadrature,
             typename std::map<types::boundary_id,
                               const Function<dim, double> *>(),
-            present_solution,
+            locally_relevant_solution,
             estimated_error_per_cell,
             this->fe->component_mask(velocity));
         }
@@ -2027,8 +2033,8 @@ NavierStokesBase<dim, VectorType, DofsType>::write_output_results(
     number_quadrature_points);
 
   // TODO: generalize this to VectorType
-  TrilinosWrappers::MPI::Vector qcriterion_field;
-  TrilinosWrappers::MPI::Vector continuity_field;
+  GlobalVectorType qcriterion_field;
+  GlobalVectorType continuity_field;
 
   if (this->simulation_parameters.post_processing.smoothed_output_fields)
     {
@@ -2330,8 +2336,8 @@ NavierStokesBase<dim, VectorType, DofsType>::init_temporary_vector()
 {
   VectorType tmp;
 
-  if constexpr (std::is_same_v<VectorType, TrilinosWrappers::MPI::Vector> ||
-                std::is_same_v<VectorType, TrilinosWrappers::MPI::BlockVector>)
+  if constexpr (std::is_same_v<VectorType, GlobalVectorType> ||
+                std::is_same_v<VectorType, GlobalBlockVectorType>)
     tmp.reinit(locally_owned_dofs, this->mpi_communicator);
 
   else if constexpr (std::is_same_v<VectorType,
@@ -2343,17 +2349,20 @@ NavierStokesBase<dim, VectorType, DofsType>::init_temporary_vector()
 }
 
 // Pre-compile the 2D and 3D version with the types that can occur
-template class NavierStokesBase<2, TrilinosWrappers::MPI::Vector, IndexSet>;
-template class NavierStokesBase<3, TrilinosWrappers::MPI::Vector, IndexSet>;
+template class NavierStokesBase<2, GlobalVectorType, IndexSet>;
+template class NavierStokesBase<3, GlobalVectorType, IndexSet>;
 template class NavierStokesBase<2,
-                                TrilinosWrappers::MPI::BlockVector,
+                                GlobalBlockVectorType,
                                 std::vector<IndexSet>>;
 template class NavierStokesBase<3,
-                                TrilinosWrappers::MPI::BlockVector,
+                                GlobalBlockVectorType,
                                 std::vector<IndexSet>>;
+
+#ifndef LETHE_USE_LDV
 template class NavierStokesBase<2,
                                 LinearAlgebra::distributed::Vector<double>,
                                 IndexSet>;
 template class NavierStokesBase<3,
                                 LinearAlgebra::distributed::Vector<double>,
                                 IndexSet>;
+#endif

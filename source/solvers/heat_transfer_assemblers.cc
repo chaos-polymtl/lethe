@@ -942,14 +942,26 @@ HeatTransferAssemblerLaserGaussianHeatFluxVOFInterface<dim>::assemble_rhs(
             scratch_data.filtered_phase_gradient_values[q].norm();
 
           // Calculate the strong residual for GLS stabilization
-          const double laser_heat_source =
-            (concentration_factor * absorptivity * laser_power /
-             (M_PI * beam_radius * beam_radius)) *
+          double laser_heat_source =
+            absorptivity * laser_power *
             exp(-1.0 * concentration_factor *
                 std::pow(laser_location_on_surface.distance(
                            quadrature_point_on_surface),
                          2.0) /
                 (beam_radius * beam_radius));
+
+          if constexpr (dim == 2)
+            {
+              laser_heat_source *=
+                2 * sqrt(concentration_factor) /
+                (sqrt(std::pow(M_PI, 3)) * beam_radius * beam_radius);
+            }
+          if constexpr (dim == 3)
+            {
+              laser_heat_source *=
+                concentration_factor / (M_PI * beam_radius * beam_radius);
+            }
+
           strong_residual[q] -=
             filtered_phase_gradient_value_q_norm * laser_heat_source;
 

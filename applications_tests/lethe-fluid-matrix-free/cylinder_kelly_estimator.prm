@@ -9,9 +9,17 @@ set dimension = 2
 
 subsection simulation control
   set method            = steady
-  set number mesh adapt = 0
+  set number mesh adapt = 1
   set output name       = output
   set output frequency  = 0
+end
+
+#---------------------------------------------------
+# TESTING
+#---------------------------------------------------
+
+subsection test
+  set enable = true
 end
 
 #---------------------------------------------------
@@ -19,7 +27,7 @@ end
 #---------------------------------------------------
 
 subsection FEM
-  set velocity order = 2
+  set velocity order = 1
   set pressure order = 1
 end
 
@@ -32,15 +40,13 @@ subsection timer
 end
 
 #---------------------------------------------------
-# Forces
+# Force
 #---------------------------------------------------
 
 subsection forces
   set verbosity             = verbose
   set calculate force       = true
   set calculate torque      = false
-  set force name            = force
-  set torque name           = torque
   set output precision      = 10
   set calculation frequency = 1
   set output frequency      = 1
@@ -64,16 +70,7 @@ end
 subsection physical properties
   set number of fluids = 1
   subsection fluid 0
-    set rheological model = carreau
-    subsection non newtonian
-      subsection carreau
-        set viscosity_0   = 2.0
-        set viscosity_inf = 1.0
-        set a             = 2
-        set lambda        = 1
-        set n             = 0.25
-      end
-    end
+    set kinematic viscosity = 1.0000
   end
 end
 
@@ -83,7 +80,7 @@ end
 
 subsection mesh
   set type      = gmsh
-  set file name = ../../cylinder_structured.msh
+  set file name = ../cylinder_structured.msh
 end
 
 #---------------------------------------------------
@@ -91,7 +88,7 @@ end
 #---------------------------------------------------
 
 subsection boundary conditions
-  set number = 3
+  set number = 4
   subsection bc 0
     set type = noslip
   end
@@ -109,6 +106,10 @@ subsection boundary conditions
   end
   subsection bc 2
     set type = slip
+  end
+  subsection bc 3
+    set beta = 1
+    set type = outlet
   end
 end
 
@@ -135,8 +136,8 @@ end
 subsection non-linear solver
   subsection fluid dynamics
     set verbosity      = quiet
-    set tolerance      = 1e-4
-    set max iterations = 10
+    set tolerance      = 1e-8
+    set max iterations = 3
   end
 end
 
@@ -146,14 +147,40 @@ end
 
 subsection linear solver
   subsection fluid dynamics
-    set verbosity                             = quiet
-    set method                                = gmres
-    set max iters                             = 5000
-    set relative residual                     = 1e-4
-    set minimum residual                      = 1e-9
-    set preconditioner                        = ilu
+    set method             = gmres
+    set max iters          = 400
+    set relative residual  = 1e-4
+    set minimum residual   = 1e-9
+    set preconditioner     = gcmg
+    set verbosity          = quiet
+    set max krylov vectors = 200
+
+    #MG parameters
+    set mg verbosity       =  quiet
+    set mg min level       = -1
+    set mg level min cells = -1
+
+    #smoother
+    set mg smoother iterations     = 10
+    set mg smoother relaxation     = 0.15
+    set mg smoother eig estimation = true #if set to true, previous parameter is not used
+
+    # Eigenvalue estimation parameters
+    set eig estimation degree          = 3
+    set eig estimation smoothing range = 5
+    set eig estimation cg n iterations = 20
+    set eig estimation verbosity       = quiet
+
+    #coarse-grid solver
+    set mg coarse grid preconditioner     = ilu
+    set mg coarse grid max iterations     = 500
+    set mg coarse grid tolerance          = 1e-5
+    set mg coarse grid reduce             = 1e-4
+    set mg coarse grid max krylov vectors = 500
+
+    #coarse-grid ILU preconditioner
     set ilu preconditioner fill               = 1
-    set ilu preconditioner absolute tolerance = 1e-10
-    set ilu preconditioner relative tolerance = 1.00
+    set ilu preconditioner absolute tolerance = 1e-5
+    set ilu preconditioner relative tolerance = 1
   end
 end

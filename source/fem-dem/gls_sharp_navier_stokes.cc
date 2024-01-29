@@ -399,8 +399,7 @@ GLSSharpNavierStokesSolver<dim>::refinement_control(
                            ->initial_refinement
                       << std::endl;
           refine_ib();
-          NavierStokesBase<dim, TrilinosWrappers::MPI::Vector, IndexSet>::
-            refine_mesh();
+          NavierStokesBase<dim, GlobalVectorType, IndexSet>::refine_mesh();
           if (update_precalculations_flag)
             {
               remove_superfluous_data_flag = true;
@@ -416,8 +415,7 @@ GLSSharpNavierStokesSolver<dim>::refinement_control(
     {
       update_precalculations_flag = false;
       refine_ib();
-      NavierStokesBase<dim, TrilinosWrappers::MPI::Vector, IndexSet>::
-        refine_mesh();
+      NavierStokesBase<dim, GlobalVectorType, IndexSet>::refine_mesh();
       if (update_precalculations_flag)
         {
           remove_superfluous_data_flag = true;
@@ -1689,8 +1687,7 @@ GLSSharpNavierStokesSolver<dim>::postprocess_fd(bool firstIter)
   bool enable =
     this->simulation_parameters.analytical_solution->calculate_error();
   this->simulation_parameters.analytical_solution->set_enable(false);
-  NavierStokesBase<dim, TrilinosWrappers::MPI::Vector, IndexSet>::
-    postprocess_fd(firstIter);
+  NavierStokesBase<dim, GlobalVectorType, IndexSet>::postprocess_fd(firstIter);
   this->simulation_parameters.analytical_solution->set_enable(enable);
   // Calculate the error with respect to the analytical solution
   if (!firstIter &&

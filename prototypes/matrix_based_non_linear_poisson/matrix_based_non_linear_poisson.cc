@@ -59,6 +59,8 @@
 #include <deal.II/numerics/solution_transfer.h>
 #include <deal.II/numerics/vector_tools.h>
 
+#include <core/vector.h>
+
 #include <fstream>
 #include <iostream>
 
@@ -348,7 +350,7 @@ private:
   void
   output_results(const unsigned int cycle) const;
 
-  using VectorType = TrilinosWrappers::MPI::Vector;
+  using VectorType = GlobalVectorType;
   using MatrixType = TrilinosWrappers::SparseMatrix;
 
   parallel::distributed::Triangulation<dim> triangulation;
@@ -994,7 +996,7 @@ MatrixBasedPoissonProblem<dim, fe_degree>::compute_update()
 {
   TimerOutput::Scope t(computing_timer, "compute update");
 
-  TrilinosWrappers::MPI::Vector completely_distributed_solution(
+  GlobalVectorType completely_distributed_solution(
     locally_owned_dofs, mpi_communicator);
 
   SolverControl              solver_control(100, 1.e-12);

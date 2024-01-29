@@ -1371,7 +1371,7 @@ namespace Parameters
       prm.declare_entry("enable", "false", Patterns::Bool(), "Activate laser");
       prm.declare_entry(
         "type",
-        "exponential_decay",
+        "gaussian_heat_flux_vof_interface",
         Patterns::Selection(
           "exponential_decay|gaussian_heat_flux_vof_interface|uniform_heat_flux_vof_interface"),
         "Type of laser model used."
