@@ -465,9 +465,6 @@ HeatTransferAssemblerRobinBC<dim>::assemble_rhs(
             this->boundary_conditions_ht.Tinf[i_bc]->value(Point<dim>());
           const double emissivity =
             this->boundary_conditions_ht.emissivity[i_bc]->value(Point<dim>());
-          const double heat_flux_bc =
-            this->boundary_conditions_ht.heat_flux_bc[i_bc]->value(
-              Point<dim>());
 
           for (unsigned int f = 0; f < scratch_data.n_faces; ++f)
             {
