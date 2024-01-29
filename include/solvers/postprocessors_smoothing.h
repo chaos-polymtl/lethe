@@ -2,6 +2,8 @@
 #ifndef lethe_post_processors_smoothing_h
 #define lethe_post_processors_smoothing_h
 
+#include <core/vector.h>
+
 #include <solvers/simulation_parameters.h>
 
 #include <deal.II/dofs/dof_handler.h>
@@ -69,13 +71,13 @@ public:
   /**
    * @brief Solves the matrix system and outputs the smoothed field solution
    */
-  const TrilinosWrappers::MPI::Vector &
+  const GlobalVectorType &
   solve_L2_projection();
 
   /**
    * @brief Returns the smoothed field solution.
    */
-  const TrilinosWrappers::MPI::Vector &
+  const GlobalVectorType &
   calculate_smoothed_field(const VectorType             &solution,
                            const DoFHandler<dim>        &dof_handler_velocity,
                            std::shared_ptr<Mapping<dim>> mapping_velocity);
@@ -93,12 +95,12 @@ protected:
   unsigned int                                    number_quadrature_points;
   std::shared_ptr<Mapping<dim>>                   mapping;
   std::shared_ptr<TrilinosWrappers::SparseMatrix> system_matrix;
-  TrilinosWrappers::MPI::Vector                   system_rhs;
+  GlobalVectorType                                system_rhs;
   MPI_Comm                                        mpi_communicator;
   AffineConstraints<double>                       constraints;
   IndexSet                                        locally_relevant_dofs;
   IndexSet                                        locally_owned_dofs;
-  TrilinosWrappers::MPI::Vector completely_distributed_solution;
+  GlobalVectorType completely_distributed_solution;
 
 private:
 };

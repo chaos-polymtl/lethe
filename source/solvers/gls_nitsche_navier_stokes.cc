@@ -295,11 +295,10 @@ GLSNitscheNavierStokesSolver<2, 3>::calculate_forces_on_solid(
       auto &evaluation_point = this->evaluation_point;
 
 #if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 4)
-      Functions::
-        FEFieldFunction<3, DoFHandler<3, 3>, TrilinosWrappers::MPI::Vector>
-          fe_field(this->dof_handler, evaluation_point);
+      Functions::FEFieldFunction<3, DoFHandler<3, 3>, GlobalVectorType>
+        fe_field(this->dof_handler, evaluation_point);
 #else
-      Functions::FEFieldFunction<3, TrilinosWrappers::MPI::Vector> fe_field(
+      Functions::FEFieldFunction<3, GlobalVectorType> fe_field(
         this->dof_handler, evaluation_point);
 #endif
 
@@ -877,7 +876,7 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::output_solid_triangulation(
   std::vector<DataComponentInterpretation::DataComponentInterpretation>
     data_component_interpretation(
       spacedim, DataComponentInterpretation::component_is_part_of_vector);
-  TrilinosWrappers::MPI::Vector &displacement_vector =
+  GlobalVectorType &displacement_vector =
     solids[i_solid]->get_displacement_vector();
 
 #if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 4)

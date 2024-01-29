@@ -19,6 +19,7 @@
 
 #include <core/bdf.h>
 #include <core/simulation_control.h>
+#include <core/vector.h>
 
 #include <solvers/auxiliary_physics.h>
 #include <solvers/multiphysics_interface.h>
@@ -53,8 +54,7 @@ DeclException1(
 
 
 template <int dim>
-class VolumeOfFluid
-  : public AuxiliaryPhysics<dim, TrilinosWrappers::MPI::Vector>
+class VolumeOfFluid : public AuxiliaryPhysics<dim, GlobalVectorType>
 {
 public:
   /**
@@ -65,7 +65,7 @@ public:
                 std::shared_ptr<parallel::DistributedTriangulationBase<dim>>
                                                    p_triangulation,
                 std::shared_ptr<SimulationControl> p_simulation_control)
-    : AuxiliaryPhysics<dim, TrilinosWrappers::MPI::Vector>(
+    : AuxiliaryPhysics<dim, GlobalVectorType>(
         p_simulation_parameters.non_linear_solver.at(PhysicsID::VOF))
     , multiphysics(multiphysics_interface)
     , computing_timer(p_triangulation->get_communicator(),
@@ -120,10 +120,9 @@ public:
       }
 
     // Allocate solution transfer
-    solution_transfer =
-      std::make_shared<parallel::distributed::
-                         SolutionTransfer<dim, TrilinosWrappers::MPI::Vector>>(
-        dof_handler);
+    solution_transfer = std::make_shared<
+      parallel::distributed::SolutionTransfer<dim, GlobalVectorType>>(
+      dof_handler);
 
     // Set size of previous solutions using BDF schemes information
     previous_solutions.resize(maximum_number_of_previous_solutions());
@@ -133,9 +132,8 @@ public:
     for (unsigned int i = 0; i < previous_solutions.size(); ++i)
       {
         previous_solutions_transfer.emplace_back(
-          parallel::distributed::
-            SolutionTransfer<dim, TrilinosWrappers::MPI::Vector>(
-              this->dof_handler));
+          parallel::distributed::SolutionTransfer<dim, GlobalVectorType>(
+            this->dof_handler));
       }
 
     // Check the value of interface sharpness
@@ -206,8 +204,8 @@ public:
    */
   template <typename VectorType>
   void
-  calculate_volume_and_mass(const TrilinosWrappers::MPI::Vector &solution,
-                            const VectorType &current_solution_fd,
+  calculate_volume_and_mass(const GlobalVectorType &solution,
+                            const VectorType       &current_solution_fd,
                             const Parameters::FluidIndicator monitored_fluid);
 
   /**
@@ -220,8 +218,8 @@ public:
    */
   template <typename VectorType>
   std::pair<Tensor<1, dim>, Tensor<1, dim>>
-  calculate_barycenter(const TrilinosWrappers::MPI::Vector &solution,
-                       const VectorType &current_solution_fd);
+  calculate_barycenter(const GlobalVectorType &solution,
+                       const VectorType       &current_solution_fd);
 
 
   /**
@@ -350,27 +348,27 @@ public:
   {
     return dof_handler;
   }
-  TrilinosWrappers::MPI::Vector &
+  GlobalVectorType &
   get_evaluation_point() override
   {
     return evaluation_point;
   }
-  TrilinosWrappers::MPI::Vector &
+  GlobalVectorType &
   get_local_evaluation_point() override
   {
     return local_evaluation_point;
   }
-  TrilinosWrappers::MPI::Vector &
+  GlobalVectorType &
   get_newton_update() override
   {
     return newton_update;
   }
-  TrilinosWrappers::MPI::Vector &
+  GlobalVectorType &
   get_present_solution() override
   {
     return present_solution;
   }
-  TrilinosWrappers::MPI::Vector &
+  GlobalVectorType &
   get_system_rhs() override
   {
     return system_rhs;
@@ -390,12 +388,12 @@ public:
   {
     return &curvature_dof_handler;
   }
-  TrilinosWrappers::MPI::Vector *
+  GlobalVectorType *
   get_projected_phase_fraction_gradient_solution()
   {
     return &present_projected_phase_fraction_gradient_solution;
   }
-  TrilinosWrappers::MPI::Vector *
+  GlobalVectorType *
   get_curvature_solution()
   {
     return &present_curvature_solution;
@@ -484,7 +482,7 @@ private:
    * https://www.dealii.org/current/doxygen/deal.II/step_41.html
    */
   void
-  update_solution_and_constraints(TrilinosWrappers::MPI::Vector &solution);
+  update_solution_and_constraints(GlobalVectorType &solution);
 
   /**
    * @brief Assemble the system for interface sharpening
@@ -504,8 +502,8 @@ private:
    */
   void
   assemble_L2_projection_interface_sharpening(
-    TrilinosWrappers::MPI::Vector &solution,
-    const double                   sharpening_threshold);
+    GlobalVectorType &solution,
+    const double      sharpening_threshold);
 
   /**
    * @brief Solves the assembled system to sharpen the interface. The linear_solver_tolerance
@@ -515,7 +513,7 @@ private:
    * @param solution VOF solution (phase fraction)
    */
   void
-  solve_interface_sharpening(TrilinosWrappers::MPI::Vector &solution);
+  solve_interface_sharpening(GlobalVectorType &solution);
 
   /**
    * @brief Assembles a mass_matrix which is used in update_solution_and_constraints function
@@ -574,9 +572,9 @@ private:
    * search.
    */
   void
-  sharpen_interface(TrilinosWrappers::MPI::Vector &solution,
-                    const double                   sharpening_threshold,
-                    const bool                     sharpen_previous_solutions);
+  sharpen_interface(GlobalVectorType &solution,
+                    const double      sharpening_threshold,
+                    const bool        sharpen_previous_solutions);
 
   /**
    * @brief Carries out the smoothing phase fraction with a projection step (to avoid a staircase interface).
@@ -604,14 +602,14 @@ private:
    * @param solution VOF solution (phase fraction)
    */
   void
-  assemble_projection_phase_fraction(TrilinosWrappers::MPI::Vector &solution);
+  assemble_projection_phase_fraction(GlobalVectorType &solution);
 
   /**
    * @brief Solves smooth phase fraction system.
    * @param solution VOF solution (phase fraction)
    */
   void
-  solve_projection_phase_fraction(TrilinosWrappers::MPI::Vector &solution);
+  solve_projection_phase_fraction(GlobalVectorType &solution);
 
   /**
    * @brief Assembles the matrix and rhs for calculation of projected phase fraction gradient (pfg).
@@ -625,7 +623,7 @@ private:
    */
   void
   assemble_projected_phase_fraction_gradient_matrix_and_rhs(
-    TrilinosWrappers::MPI::Vector &solution);
+    GlobalVectorType &solution);
 
   /**
    * @brief Solves phase fraction gradient system.
@@ -645,8 +643,7 @@ private:
    */
   void
   assemble_curvature_matrix_and_rhs(
-    TrilinosWrappers::MPI::Vector
-      &present_projected_phase_fraction_gradient_solution);
+    GlobalVectorType &present_projected_phase_fraction_gradient_solution);
 
   /**
    * @brief Solves curvature system.
@@ -661,7 +658,7 @@ private:
   apply_phase_filter();
 
 
-  TrilinosWrappers::MPI::Vector nodal_phase_fraction_owned;
+  GlobalVectorType nodal_phase_fraction_owned;
 
   MultiphysicsInterface<dim> *multiphysics;
 
@@ -691,63 +688,60 @@ private:
   IndexSet locally_owned_dofs;
   IndexSet locally_relevant_dofs;
 
-  TrilinosWrappers::MPI::Vector  evaluation_point;
-  TrilinosWrappers::MPI::Vector  local_evaluation_point;
-  TrilinosWrappers::MPI::Vector  newton_update;
-  TrilinosWrappers::MPI::Vector  present_solution;
-  TrilinosWrappers::MPI::Vector  system_rhs;
+  GlobalVectorType               evaluation_point;
+  GlobalVectorType               local_evaluation_point;
+  GlobalVectorType               newton_update;
+  GlobalVectorType               present_solution;
+  GlobalVectorType               system_rhs;
   AffineConstraints<double>      nonzero_constraints;
   AffineConstraints<double>      bounding_constraints;
   AffineConstraints<double>      zero_constraints;
   TrilinosWrappers::SparseMatrix system_matrix;
-  TrilinosWrappers::MPI::Vector  solution_pw;
-  TrilinosWrappers::MPI::Vector  filtered_solution;
+  GlobalVectorType               solution_pw;
+  GlobalVectorType               filtered_solution;
 
   // Previous solutions vectors
-  std::vector<TrilinosWrappers::MPI::Vector> previous_solutions;
+  std::vector<GlobalVectorType> previous_solutions;
 
   // Solution transfer classes
   std::shared_ptr<
-    parallel::distributed::SolutionTransfer<dim, TrilinosWrappers::MPI::Vector>>
+    parallel::distributed::SolutionTransfer<dim, GlobalVectorType>>
     solution_transfer;
-  std::vector<
-    parallel::distributed::SolutionTransfer<dim, TrilinosWrappers::MPI::Vector>>
+  std::vector<parallel::distributed::SolutionTransfer<dim, GlobalVectorType>>
     previous_solutions_transfer;
 
   // Phase fraction matrices for interface sharpening
   TrilinosWrappers::SparseMatrix system_matrix_phase_fraction;
   TrilinosWrappers::SparseMatrix complete_system_matrix_phase_fraction;
-  TrilinosWrappers::MPI::Vector  system_rhs_phase_fraction;
-  TrilinosWrappers::MPI::Vector  complete_system_rhs_phase_fraction;
+  GlobalVectorType               system_rhs_phase_fraction;
+  GlobalVectorType               complete_system_rhs_phase_fraction;
   TrilinosWrappers::SparseMatrix mass_matrix_phase_fraction;
 
   // Projected phase fraction gradient (pfg) solution
-  TrilinosWrappers::MPI::Vector
-           present_projected_phase_fraction_gradient_solution;
-  IndexSet locally_owned_dofs_projected_phase_fraction_gradient;
-  IndexSet locally_relevant_dofs_projected_phase_fraction_gradient;
+  GlobalVectorType present_projected_phase_fraction_gradient_solution;
+  IndexSet         locally_owned_dofs_projected_phase_fraction_gradient;
+  IndexSet         locally_relevant_dofs_projected_phase_fraction_gradient;
   AffineConstraints<double> projected_phase_fraction_gradient_constraints;
-  TrilinosWrappers::MPI::Vector
-    nodal_projected_phase_fraction_gradient_relevant;
-  TrilinosWrappers::MPI::Vector nodal_projected_phase_fraction_gradient_owned;
+  GlobalVectorType          nodal_projected_phase_fraction_gradient_relevant;
+  GlobalVectorType          nodal_projected_phase_fraction_gradient_owned;
 
   TrilinosWrappers::SparseMatrix
-                                system_matrix_projected_phase_fraction_gradient;
-  TrilinosWrappers::MPI::Vector system_rhs_projected_phase_fraction_gradient;
+                   system_matrix_projected_phase_fraction_gradient;
+  GlobalVectorType system_rhs_projected_phase_fraction_gradient;
 
   // Projected curvature solution
-  TrilinosWrappers::MPI::Vector present_curvature_solution;
-  IndexSet                      locally_owned_dofs_curvature;
-  IndexSet                      locally_relevant_dofs_curvature;
-  AffineConstraints<double>     curvature_constraints;
-  TrilinosWrappers::MPI::Vector nodal_curvature_relevant;
-  TrilinosWrappers::MPI::Vector nodal_curvature_owned;
+  GlobalVectorType          present_curvature_solution;
+  IndexSet                  locally_owned_dofs_curvature;
+  IndexSet                  locally_relevant_dofs_curvature;
+  AffineConstraints<double> curvature_constraints;
+  GlobalVectorType          nodal_curvature_relevant;
+  GlobalVectorType          nodal_curvature_owned;
 
   std::vector<Tensor<1, dim>> projected_phase_fraction_gradient_values;
   std::vector<double>         curvature_values;
 
   TrilinosWrappers::SparseMatrix                     system_matrix_curvature;
-  TrilinosWrappers::MPI::Vector                      system_rhs_curvature;
+  GlobalVectorType                                   system_rhs_curvature;
   std::shared_ptr<TrilinosWrappers::PreconditionILU> ilu_preconditioner;
 
   // Lower and upper bounds of phase fraction

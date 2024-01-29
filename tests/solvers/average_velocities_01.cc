@@ -36,6 +36,7 @@
 // Lethe
 #include <core/parameters.h>
 #include <core/simulation_control.h>
+#include <core/vector.h>
 
 #include <solvers/postprocessing_velocities.h>
 
@@ -77,16 +78,15 @@ test()
   GridGenerator::hyper_cube(tria, -1, 1);
   DoFHandler<3> dof_handler(tria);
 
-  AverageVelocities<3, TrilinosWrappers::MPI::Vector, IndexSet> average(
-    dof_handler);
+  AverageVelocities<3, GlobalVectorType, IndexSet> average(dof_handler);
 
-  TrilinosWrappers::MPI::Vector solution(locally_owned_dofs, mpi_communicator);
+  GlobalVectorType solution(locally_owned_dofs, mpi_communicator);
   solution(0) = 0.0;
   solution(1) = 2.5;
   solution(2) = 10;
   solution(3) = 154.2;
 
-  TrilinosWrappers::MPI::Vector average_solution;
+  GlobalVectorType average_solution;
 
   // Time info
   const double time_end     = simulation_control_parameters.timeEnd;
