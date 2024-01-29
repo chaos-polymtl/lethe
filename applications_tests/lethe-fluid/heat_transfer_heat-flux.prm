@@ -63,7 +63,7 @@ subsection boundary conditions heat transfer
     set id   = 1
     set type = heat-flux
     subsection value
-      set Function expression = -100000
+      set Function expression = 100000
     end
   end
   subsection bc 2
@@ -84,7 +84,7 @@ subsection analytical solution
   set enable    = true
   set verbosity = verbose
   subsection temperature
-    set Function expression = 1000 - 100*x
+    set Function expression = 1000 + 100*x
   end
 end
 
