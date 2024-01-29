@@ -368,9 +368,9 @@ public:
             acceleration_dt *= dt / n_particles_in_cell;
           }
 
-        // Update acceleration for the mobile cell only
-        cell_velocities_accelerations[cell] = {velocity_cell_average,
-                                               acceleration_dt};
+        // Update acceleration for particles in cell
+        cell_velocities_accelerations.insert(std::make_pair(
+          cell, std::make_pair(velocity_cell_average, acceleration_dt)));
       }
   }
 
