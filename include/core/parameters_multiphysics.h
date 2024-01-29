@@ -69,11 +69,6 @@ namespace Parameters
     manual
   };
 
-  enum class CahnHilliardMobilityModel
-  {
-    constant,
-    quartic
-  };
 
   /**
    * @brief CahnHilliard_PhaseFilter - Defines the parameters for the phase filtration of CahnHilliard physics
@@ -237,12 +232,6 @@ namespace Parameters
 
     // Epsilon value in the Cahn-Hilliard equations
     double epsilon;
-
-    // Mobility model (constant|quartic)
-    Parameters::CahnHilliardMobilityModel cahn_hilliard_mobility_model;
-
-    // Mobility constant
-    double cahn_hilliard_mobility_constant;
 
     // Phase filtration parameters
     Parameters::CahnHilliard_PhaseFilter cahn_hilliard_phase_filter;

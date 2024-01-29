@@ -1077,7 +1077,6 @@ public:
   std::vector<double> thermal_expansion_1;
   std::vector<double> surface_tension;
   std::vector<double> surface_tension_gradient;
-  std::vector<double> mobility_cahn_hilliard;
 
   // FEValues for the Navier-Stokes problem
   FEValues<dim>              fe_values;
@@ -1192,7 +1191,6 @@ public:
   /**
    * Scratch component for the CahnHilliard auxiliary physics
    */
-  double                      density_diff;
   bool                        gather_cahn_hilliard;
   unsigned int                n_dofs_cahn_hilliard;
   std::vector<double>         phase_order_cahn_hilliard_values;

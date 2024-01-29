@@ -491,11 +491,8 @@ namespace Parameters
   void
   MobilityCahnHilliardParameters::parse_parameters(ParameterHandler &prm)
   {
-    //  std::cout<<"parsing mobility constant"<<std::endl;
     mobility_cahn_hilliard_constant =
       prm.get_double("cahn hilliard mobility constant");
-    // std::cout<< "mobility constant for mobility model (chns) = " <<
-    // mobility_cahn_hilliard_constant<<std::endl;
   }
 
 
@@ -834,12 +831,6 @@ namespace Parameters
         "Tracer diffusivity for the fluid corresponding to Phase = " +
           Utilities::int_to_string(id, 1));
 
-      //      prm.declare_entry("cahn hilliard mobility constant",
-      //                        "1e-6",
-      //                        Patterns::Double(),
-      //                        "Mobility constant for the Cahn-Hilliard
-      //                        equations");
-
       prm.declare_entry(
         "rheological model",
         "newtonian",
@@ -889,13 +880,6 @@ namespace Parameters
                         "0",
                         Patterns::Double(),
                         "k_A1 parameter for linear conductivity model");
-
-      //      prm.declare_entry("cahn hilliard mobility model",
-      //                        "constant",
-      //                        Patterns::Selection("constant|quartic"),
-      //                        "Model used for the calculation of the
-      //                        mobility\"\n" "        \"Choices are
-      //                        <constant|quartic>.");
     }
     prm.leave_subsection();
   }
@@ -1019,25 +1003,6 @@ namespace Parameters
       // Phase change properties
       //--------------------------------
       phase_change_parameters.parse_parameters(prm, dimensions);
-
-      //-------------------
-      // Cahn-Hilliard mobility
-      //-------------------
-      //            op = prm.get("cahn hilliard mobility model");
-      //            if (op == "constant")
-      //              {
-      //                mobility_cahn_hilliard_model =
-      //                MobilityCahnHilliardModel::constant;
-      //                mobility_cahn_hilliard =
-      //                  prm.get_double("cahn hilliard mobility constant");
-      //              }
-      //            if (op == "quartic")
-      //              {
-      //                mobility_cahn_hilliard_model =
-      //                MobilityCahnHilliardModel::quartic;
-      //                mobility_cahn_hilliard =
-      //                  prm.get_double("cahn hilliard mobility constant");
-      //              }
     }
     prm.leave_subsection();
   }
@@ -1189,24 +1154,12 @@ namespace Parameters
                 mobility_cahn_hilliard_model =
                   MobilityCahnHilliardModel::constant;
                 mobility_cahn_hilliard_parameters.parse_parameters(prm);
-                //                    std::cout << "mobility is constant and
-                //                    equal to "
-                //                              <<
-                //                              mobility_cahn_hilliard_parameters
-                //                                      .mobility_cahn_hilliard_constant
-                //                              << std::endl;
               }
             else if (op == "quartic")
               {
                 mobility_cahn_hilliard_model =
                   MobilityCahnHilliardModel::quartic;
                 mobility_cahn_hilliard_parameters.parse_parameters(prm);
-                //                    std::cout << "mobility is quartic and its
-                //                    constant equal to "
-                //                              <<
-                //                              mobility_cahn_hilliard_parameters
-                //                                      .mobility_cahn_hilliard_constant
-                //                              << std::endl;
               }
             else
               throw(std::runtime_error(

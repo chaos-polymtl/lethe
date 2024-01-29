@@ -115,36 +115,10 @@ CahnHilliardScratchData<dim>::calculate_physical_properties()
           const auto mobility_cahn_hilliard_model =
             properties_manager.get_mobility_cahn_hilliard(
               material_interaction_id);
-          //                                      std::cout << "get
-          //                                      mobility is ok "<<
-          //                                      std::endl;
           mobility_cahn_hilliard_model->vector_value(fields,
                                                      mobility_cahn_hilliard);
           mobility_cahn_hilliard_model->vector_jacobian(
             fields, phase_order_cahn_hilliard, mobility_cahn_hilliard_gradient);
-
-          // Keep the comments below as long as the mobility fields will not
-          // have been tested
-
-          // std::cout<<"phase order cahn hilliard
-          // field"<<fields[field::phase_order_cahn_hilliard][q]<<std::endl;
-          // std::cout<<" filtered phase order cahn hilliard
-          // field"<<fields[field::phase_order_cahn_hilliard_filtered][q]<<std::endl;
-          //                                      std::cout <<
-          //                                      "vector_value is ok
-          //                                      "<< std::endl;
-          //
-          //                                      std::cout << "material
-          //                                      interaction for
-          //                                      mobility is ok "<<
-          //                                      std::endl;
-          //
-          //                                    std::cout <<
-          //                                    "mobility_via_ns_scratch_data
-          //                                    = "
-          //                                              <<
-          //                                              mobility_cahn_hilliard[q]
-          //                                              << std::endl;
 
           break;
         }

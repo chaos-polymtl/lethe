@@ -563,21 +563,6 @@ Parameters::CahnHilliard::declare_parameters(ParameterHandler &prm)
       Patterns::Double(),
       "Smoothing coefficient for the chemical potential in the Cahn-Hilliard equations.");
 
-    prm.enter_subsection("cahn hilliard mobility");
-    {
-      prm.declare_entry("model",
-                        "constant",
-                        Patterns::Selection("constant|quartic"),
-                        "Model used for the calculation of the mobility\"\n"
-                        "        \"Choices are <constant|quartic>.");
-
-      prm.declare_entry("mobility constant",
-                        "1e-7",
-                        Patterns::Double(),
-                        "Mobility constant for the Cahn-Hilliard equations");
-    }
-    prm.leave_subsection();
-
     prm.enter_subsection("epsilon");
     {
       prm.declare_entry(
@@ -626,32 +611,6 @@ Parameters::CahnHilliard::parse_parameters(ParameterHandler &prm)
 
       epsilon = prm.get_double("value");
     }
-    prm.leave_subsection();
-
-    prm.enter_subsection("cahn hilliard mobility");
-    {
-      const std::string op_mobility = prm.get("model");
-      if (op_mobility == "constant")
-        {
-          cahn_hilliard_mobility_model = CahnHilliardMobilityModel::constant;
-          // std::cout<<"mobility is constant (ch)"<<std::endl;
-        }
-      else if (op_mobility == "quartic")
-        {
-          cahn_hilliard_mobility_model = CahnHilliardMobilityModel::quartic;
-          // std::cout<<"mobility is quartic (ch)"<<std::endl;
-        }
-      else
-        throw(std::runtime_error("Invalid mobility model. "
-                                 "Options are 'constant' or 'quartic'."));
-
-      cahn_hilliard_mobility_constant = prm.get_double("mobility constant");
-
-      //            std::cout << "mobility = " <<
-      //            cahn_hilliard_mobility_constant
-      //                      << std::endl;
-    }
-
     prm.leave_subsection();
   }
   prm.leave_subsection();

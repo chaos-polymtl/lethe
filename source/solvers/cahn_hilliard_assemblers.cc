@@ -12,23 +12,8 @@ CahnHilliardAssemblerCore<dim>::assemble_matrix(
   CahnHilliardScratchData<dim> &scratch_data,
   StabilizedMethodsCopyData    &copy_data)
 {
-  // Scheme and physical properties
-  const auto method = this->simulation_control->get_assembly_method();
-
   // Gather physical properties
-  const double mobility_constant =
-    this->cahn_hilliard_parameters.cahn_hilliard_mobility_constant;
-  const auto mobility_model =
-    this->cahn_hilliard_parameters.cahn_hilliard_mobility_model;
-  // std::cout<< "mobility via ch assembler = "<< mobility_constant<<std::endl;
-  //  const double epsilon =
-  //    (this->cahn_hilliard_parameters.epsilon_set_method ==
-  //     Parameters::EpsilonSetStrategy::manual) ?
-  //      this->cahn_hilliard_parameters.epsilon :
-  //      2 * std::pow(2, (-1) * this->maximum_refinement_number);
-
   const double epsilon   =   this->minimum_cell_diameter/sqrt(2);
-
   const double cell_size = scratch_data.cell_size;
   const double xi =
     this->cahn_hilliard_parameters.potential_smoothing_coefficient;
@@ -39,7 +24,6 @@ CahnHilliardAssemblerCore<dim>::assemble_matrix(
   const unsigned int n_dofs     = scratch_data.n_dofs;
 
   // Copy data elements
-  auto &strong_jacobian_vec = copy_data.strong_jacobian;
   auto &local_matrix        = copy_data.local_matrix;
 
   for (unsigned int q = 0; q < n_q_points; ++q)
@@ -47,7 +31,6 @@ CahnHilliardAssemblerCore<dim>::assemble_matrix(
       const double lambda =
         3 * epsilon * scratch_data.surface_tension[q] / (2 * sqrt(2));
 
-      // std::cout<<"gather mobility values"<<std::endl;
       const double mobility = scratch_data.mobility_cahn_hilliard[q];
       const double mobility_gradient =
         scratch_data.mobility_cahn_hilliard_gradient[q];
@@ -83,17 +66,6 @@ CahnHilliardAssemblerCore<dim>::assemble_matrix(
               const Tensor<1, dim> grad_phi_potential_j =
                 scratch_data.grad_phi_potential[q][j];
 
-              // phi_phase_i * (velocity_field * grad_phi_phase_j) -
-              //                      4 * mobility_constant * grad_phi_phase_i *
-              //                        potential_gradient * phase_order_value *
-              //                        (1 - phase_order_value *
-              //                        phase_order_value) * phi_phase_j +
-              //                      mobility_constant * grad_phi_phase_i *
-              //                        grad_phi_potential_j *
-              //                        (1 - phase_order_value *
-              //                        phase_order_value) * (1 -
-              //                        phase_order_value * phase_order_value) +
-
               local_matrix(i, j) +=
                 // First equation
                 (phi_phase_i * (velocity_field * grad_phi_phase_j) +
@@ -113,76 +85,6 @@ CahnHilliardAssemblerCore<dim>::assemble_matrix(
             }
         }
     }
-  // } // end loop on quadrature points
-  // Quartic mobility model
-  //  else
-  //    {
-  //      for (unsigned int q = 0; q < n_q_points; ++q)
-  //        {
-  //          // Gather into local variables the relevant fields
-  //          const Tensor<1, dim> velocity_field =
-  //          scratch_data.velocity_values[q];
-  //
-  //          // Store JxW in local variable for faster access;
-  //          const double         JxW = JxW_vec[q];
-  //          const Tensor<1, dim> potential_gradient =
-  //            scratch_data.chemical_potential_gradients[q];
-  //          const double potential_laplacian =
-  //            scratch_data.chemical_potential_laplacians[q];
-  //          const double phase_order_value =
-  //          scratch_data.phase_order_values[q]; const Tensor<1, dim>
-  //          phase_gradient =
-  //            scratch_data.phase_order_gradients[q];
-  //
-  //          for (unsigned int i = 0; i < n_dofs; ++i)
-  //            {
-  //              const double         phi_phase_i =
-  //              scratch_data.phi_phase[q][i]; const Tensor<1, dim>
-  //              grad_phi_phase_i =
-  //                scratch_data.grad_phi_phase[q][i];
-  //
-  //              const double phi_potential_i =
-  //              scratch_data.phi_potential[q][i]; const Tensor<1, dim>
-  //              grad_phi_potential_i =
-  //                scratch_data.grad_phi_potential[q][i];
-  //
-  //              for (unsigned int j = 0; j < n_dofs; ++j)
-  //                {
-  //                  const double phi_phase_j = scratch_data.phi_phase[q][j];
-  //                  const Tensor<1, dim> grad_phi_phase_j =
-  //                    scratch_data.grad_phi_phase[q][j];
-  //
-  //                  const double phi_potential_j =
-  //                    scratch_data.phi_potential[q][j];
-  //                  const Tensor<1, dim> grad_phi_potential_j =
-  //                    scratch_data.grad_phi_potential[q][j];
-  //
-  //                  local_matrix(i, j) +=
-  //                    // First equation
-  //                    (phi_phase_i * (velocity_field * grad_phi_phase_j) -
-  //                     4 * mobility_constant * grad_phi_phase_i *
-  //                       potential_gradient * phase_order_value *
-  //                       (1 - phase_order_value * phase_order_value) *
-  //                       phi_phase_j +
-  //                     mobility_constant * grad_phi_phase_i *
-  //                       grad_phi_potential_j *
-  //                       (1 - phase_order_value * phase_order_value) *
-  //                       (1 - phase_order_value * phase_order_value) +
-  //                     phi_potential_i * phi_potential_j -
-  //                     // Second equation (Lovric et al.) //NOT UPDATED YET
-  //                     4 * well_height * phi_potential_i *
-  //                       (3 * phase_order_value * phase_order_value - 1.0) *
-  //                       phi_phase_j -
-  //                     epsilon * epsilon * grad_phi_potential_i *
-  //                     grad_phi_phase_j
-  //                     // Chemical potential smoothing
-  //                     + xi * cell_size * cell_size * grad_phi_potential_i *
-  //                         grad_phi_potential_j) *
-  //                    JxW;
-  //                }
-  //            }
-  //        }
-  //    } // end loop on quadrature points
 }
 
 
@@ -193,19 +95,7 @@ CahnHilliardAssemblerCore<dim>::assemble_rhs(
   CahnHilliardScratchData<dim> &scratch_data,
   StabilizedMethodsCopyData    &copy_data)
 {
-  // Scheme and physical properties
-  const auto method = this->simulation_control->get_assembly_method();
-
   // Gather physical properties
-  const double mobility_constant =
-    this->cahn_hilliard_parameters.cahn_hilliard_mobility_constant;
-  const auto mobility_model =
-    this->cahn_hilliard_parameters.cahn_hilliard_mobility_model;
-  //  const double epsilon =
-  //    (this->cahn_hilliard_parameters.epsilon_set_method ==
-  //     Parameters::EpsilonSetStrategy::manual) ?
-  //      this->cahn_hilliard_parameters.epsilon :
-  //      2 * std::pow(2, (-1) * this->maximum_refinement_number);
   const double epsilon   =   this->minimum_cell_diameter/sqrt(2);
   const double cell_size = scratch_data.cell_size;
   const double xi =
@@ -220,9 +110,6 @@ CahnHilliardAssemblerCore<dim>::assemble_rhs(
   // Copy data elements
   auto &local_rhs = copy_data.local_rhs;
 
-  // Constant mobility model
-  //  if (mobility_model == Parameters::CahnHilliardMobilityModel::constant)
-  //    {
   for (unsigned int q = 0; q < n_q_points; ++q)
     {
       const double lambda =
@@ -241,8 +128,6 @@ CahnHilliardAssemblerCore<dim>::assemble_rhs(
       const double potential_value = scratch_data.chemical_potential_values[q];
       const Tensor<1, dim> potential_gradient =
         scratch_data.chemical_potential_gradients[q];
-      const double potential_laplacian =
-        scratch_data.chemical_potential_laplacians[q];
       const double source_phase_order = scratch_data.source_phase_order[q];
       const double source_chemical_potential =
         scratch_data.source_chemical_potential[q];
@@ -276,69 +161,6 @@ CahnHilliardAssemblerCore<dim>::assemble_rhs(
             JxW;
         }
     }
-  // } // end loop on quadrature points
-  // Quartic mobility model
-  //  else
-  //    {
-  //      for (unsigned int q = 0; q < n_q_points; ++q)
-  //        {
-  //          // Gather into local variables the relevant fields
-  //          const Tensor<1, dim> velocity_field =
-  //          scratch_data.velocity_values[q];
-  //
-  //          // Store JxW in local variable for faster access;
-  //          const double JxW               = JxW_vec[q];
-  //          const double phase_order_value =
-  //          scratch_data.phase_order_values[q]; const Tensor<1, dim>
-  //          phase_order_gradient =
-  //            scratch_data.phase_order_gradients[q];
-  //          const double potential_value =
-  //            scratch_data.chemical_potential_values[q];
-  //          const Tensor<1, dim> potential_gradient =
-  //            scratch_data.chemical_potential_gradients[q];
-  //          const double potential_laplacian =
-  //            scratch_data.chemical_potential_laplacians[q];
-  //
-  //          const double source_phase_order =
-  //          scratch_data.source_phase_order[q]; const double
-  //          source_chemical_potential =
-  //            scratch_data.source_chemical_potential[q];
-  //
-  //          for (unsigned int i = 0; i < n_dofs; ++i)
-  //            {
-  //              const double         phi_phase_i =
-  //              scratch_data.phi_phase[q][i]; const Tensor<1, dim>
-  //              grad_phi_phase_i =
-  //                scratch_data.grad_phi_phase[q][i];
-  //              const double phi_potential_i =
-  //              scratch_data.phi_potential[q][i]; const Tensor<1, dim>
-  //              grad_phi_potential_i =
-  //                scratch_data.grad_phi_potential[q][i];
-  //
-  //              local_rhs(i) +=
-  //                // First equation
-  //                (-phi_phase_i * (velocity_field * phase_order_gradient) -
-  //                 grad_phi_phase_i * potential_gradient * mobility_constant *
-  //                   (1 - phase_order_value * phase_order_value) *
-  //                   (1 - phase_order_value * phase_order_value)
-  //                 // Second equation (2nd article)
-  //                 - phi_potential_i * potential_value +
-  //                 // Second equation (Lovric et al.) //NOT UPDATED YET
-  //                 4 * well_height * phi_potential_i *
-  //                   (phase_order_value * phase_order_value - 1) *
-  //                   phase_order_value +
-  //                 epsilon * epsilon * grad_phi_potential_i *
-  //                 phase_order_gradient
-  //                 // Chemical potential smoothing
-  //                 - xi * cell_size * cell_size * grad_phi_potential_i *
-  //                     potential_gradient
-  //                 // Source term
-  //                 + source_phase_order * phi_phase_i +
-  //                 source_chemical_potential * phi_potential_i) *
-  //                JxW;
-  //            }
-  //        }
-  //    } // end loop on quadrature points
 }
 
 template class CahnHilliardAssemblerCore<2>;

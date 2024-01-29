@@ -207,7 +207,6 @@ NavierStokesScratchData<dim>::enable_cahn_hilliard(
   thermal_expansion_1      = std::vector<double>(n_q_points);
   surface_tension          = std::vector<double>(n_q_points);
   surface_tension_gradient = std::vector<double>(n_q_points);
-  mobility_cahn_hilliard   = std::vector<double>(n_q_points);
 
   // Create filter
   cahn_hilliard_filter =
@@ -259,7 +258,6 @@ NavierStokesScratchData<dim>::enable_cahn_hilliard(
   thermal_expansion_1      = std::vector<double>(n_q_points);
   surface_tension          = std::vector<double>(n_q_points);
   surface_tension_gradient = std::vector<double>(n_q_points);
-  mobility_cahn_hilliard   = std::vector<double>(n_q_points);
 
   // Create filter
   this->cahn_hilliard_filter = cahn_hilliard_filter;
@@ -549,14 +547,6 @@ NavierStokesScratchData<dim>::calculate_physical_properties()
               //  Blend the physical properties using the CahnHilliard field
               for (unsigned int q = 0; q < this->n_q_points; ++q)
                 {
-                  //                   this->density_diff =
-                  //                     0.5 * std::abs(density_0[q] -
-                  //                     density_1[q]);
-
-                  this->density_diff = 0.5 * (density_0[q] - density_1[q]);
-
-                  /*                   std::cout << "density_diff = " <<
-                     density_diff << std::endl;*/
 
                   double phase_order_cahn_hilliard_value =
                     this->filtered_phase_order_cahn_hilliard_values[q];
@@ -571,18 +561,6 @@ NavierStokesScratchData<dim>::calculate_physical_properties()
                     this->dynamic_viscosity_0[q],
                     this->dynamic_viscosity_1[q]);
 
-
-                  // Gather surface tension
-                  const auto material_interaction_id =
-                    properties_manager.get_material_interaction_id(
-                      material_interactions_type::fluid_fluid, 0, 1);
-
-                  const auto mobility_cahn_hilliard_model =
-                    properties_manager.get_mobility_cahn_hilliard(
-                      material_interaction_id);
-
-                  mobility_cahn_hilliard_model->vector_value(
-                    fields, mobility_cahn_hilliard);
                 }
               break;
             }
