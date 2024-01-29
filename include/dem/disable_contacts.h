@@ -332,7 +332,6 @@ public:
     // and torque value
     for (auto &cell : this->local_and_ghost_cells)
       {
-        auto particles_in_cell = particle_handler.particles_in_cell(cell);
         const unsigned int n_particles_in_cell =
           particle_handler.n_particles_in_cell(cell);
 
@@ -341,6 +340,7 @@ public:
 
         if (n_particles_in_cell > 0)
           {
+            auto particles_in_cell = particle_handler.particles_in_cell(cell);
             for (auto &particle : particles_in_cell)
               {
                 // Get particle properties

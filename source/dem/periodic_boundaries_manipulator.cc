@@ -123,8 +123,9 @@ void
 PeriodicBoundariesManipulator<dim>::check_and_move_particles(
   const periodic_boundaries_cells_info_struct<dim> &boundaries_cells_content,
   typename Particles::ParticleHandler<dim>::particle_iterator_range
-            &particles_in_cell,
-  const bool particles_in_pb0_cell)
+       &particles_in_cell,
+  bool &particles_in_pb0_cell,
+  bool &particle_has_been_moved)
 {
   for (auto particle = particles_in_cell.begin();
        particle != particles_in_cell.end();
@@ -163,17 +164,22 @@ PeriodicBoundariesManipulator<dim>::check_and_move_particles(
           // Move particle outside the current cell to the periodic cell.
           particle_position += distance_between_faces;
           particle->set_location(particle_position);
+
+          // Update flag to indicate that particle has been moved
+          particle_has_been_moved = true;
         }
     }
 }
 
 template <int dim>
-void
+bool
 PeriodicBoundariesManipulator<dim>::execute_particles_displacement(
   const Particles::ParticleHandler<dim> &particle_handler,
   typename DEM::dem_data_structures<dim>::periodic_boundaries_cells_info
     &periodic_boundaries_cells_information)
 {
+  bool particle_has_been_moved = false;
+
   if (!periodic_boundaries_cells_information.empty())
     {
       for (auto boundaries_cells_information_iterator =
@@ -203,7 +209,8 @@ PeriodicBoundariesManipulator<dim>::execute_particles_displacement(
                   bool particles_in_pb0_cell = true;
                   check_and_move_particles(boundaries_cells_content,
                                            particles_in_cell,
-                                           particles_in_pb0_cell);
+                                           particles_in_pb0_cell,
+                                           particle_has_been_moved);
                 }
             }
 
@@ -221,11 +228,14 @@ PeriodicBoundariesManipulator<dim>::execute_particles_displacement(
                   bool particles_in_pb0_cell = false;
                   check_and_move_particles(boundaries_cells_content,
                                            particles_in_periodic_cell,
-                                           particles_in_pb0_cell);
+                                           particles_in_pb0_cell,
+                                           particle_has_been_moved);
                 }
             }
         }
     }
+
+  return particle_has_been_moved;
 }
 
 template class PeriodicBoundariesManipulator<2>;

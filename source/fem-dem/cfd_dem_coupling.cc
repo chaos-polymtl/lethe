@@ -710,8 +710,7 @@ CFDDEMSolver<dim>::initialize_dem_parameters()
   contact_manager.execute_cell_neighbors_search(
     *parallel_triangulation,
     periodic_boundaries_cells_information,
-    has_periodic_boundaries,
-    true);
+    has_periodic_boundaries);
 
   disable_contacts_object.set_total_neighbor_list(
     contact_manager.total_neighbor_list);
@@ -898,17 +897,39 @@ CFDDEMSolver<dim>::dem_iterator(unsigned int counter)
                                        disable_contacts_object);
         }
     }
+
+  // If simulation has periodic boundaries, the particles are sorted into
+  // subdomains and cells at the last DEM coupled time step otherwise the
+  // particles will not match the cells that they are in when void fraction is
+  // calculated with the qcm method
+  if (counter == (coupling_frequency - 1))
+    {
+      if (has_periodic_boundaries &&
+          this->cfd_dem_simulation_parameters.void_fraction->mode ==
+            Parameters::VoidFractionMode::qcm)
+        {
+          bool particle_has_been_moved =
+            periodic_boundaries_object.execute_particles_displacement(
+              this->particle_handler, periodic_boundaries_cells_information);
+
+          // Exchange information between processors
+          particle_has_been_moved =
+            Utilities::MPI::logical_or(particle_has_been_moved,
+                                       this->mpi_communicator);
+
+          if (particle_has_been_moved)
+            {
+              this->particle_handler.sort_particles_into_subdomains_and_cells();
+              this->particle_handler.exchange_ghost_particles(true);
+            }
+        }
+    }
 }
 
 template <int dim>
 void
 CFDDEMSolver<dim>::dem_contact_build(unsigned int counter)
 {
-  // TODO: check again for the right place for this execution
-  if (has_periodic_boundaries)
-    periodic_boundaries_object.execute_particles_displacement(
-      this->particle_handler, periodic_boundaries_cells_information);
-
   // Check to see if it is contact search step
   contact_detection_step =
     check_contact_detection_method(counter,
@@ -972,7 +993,7 @@ CFDDEMSolver<dim>::dem_contact_build(unsigned int counter)
     }
 
   // Modify particles contact containers by search sequence
-  if (load_balance_step || checkpoint_step || contact_detection_step ||
+  if (contact_detection_step || checkpoint_step || load_balance_step ||
       (this->simulation_control->is_at_start() && (counter == 0)) ||
       (has_periodic_boundaries && (counter == 0)))
     {
