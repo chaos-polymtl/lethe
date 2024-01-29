@@ -826,8 +826,8 @@ SolidBase<dim, spacedim>::setup_displacement()
 {
   displacement_dh.distribute_dofs(*this->displacement_fe);
   locally_owned_dofs = displacement_dh.locally_owned_dofs();
-  DoFTools::extract_locally_relevant_dofs(displacement_dh,
-                                          locally_relevant_dofs);
+  locally_relevant_dofs =
+    DoFTools::extract_locally_relevant_dofs(displacement_dh);
 
   displacement.reinit(locally_owned_dofs, mpi_communicator);
   displacement_relevant.reinit(locally_owned_dofs,
