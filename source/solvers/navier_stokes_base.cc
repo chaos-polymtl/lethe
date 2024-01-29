@@ -1580,10 +1580,6 @@ NavierStokesBase<dim, VectorType, DofsType>::read_checkpoint()
                                 this->locally_relevant_dofs,
                                 this->mpi_communicator);
   x_system[0] = &(distributed_system);
-  if constexpr (std::is_same_v<VectorType, TrilinosWrappers::MPI::Vector>)
-    {
-      x_system[0]->update_ghost_values();
-    }
 
   std::vector<VectorType> distributed_previous_solutions;
   distributed_previous_solutions.reserve(previous_solutions.size());
@@ -1594,10 +1590,6 @@ NavierStokesBase<dim, VectorType, DofsType>::read_checkpoint()
                    this->locally_relevant_dofs,
                    this->mpi_communicator));
       x_system[i + 1] = &distributed_previous_solutions[i];
-      if constexpr (std::is_same_v<VectorType, TrilinosWrappers::MPI::Vector>)
-        {
-          x_system[i + 1]->update_ghost_values();
-        }
     }
   parallel::distributed::SolutionTransfer<dim, VectorType> system_trans_vectors(
     this->dof_handler);
@@ -2353,15 +2345,8 @@ NavierStokesBase<dim, VectorType, DofsType>::init_temporary_vector()
 {
   VectorType tmp;
 
-  if constexpr (std::is_same_v<VectorType, GlobalVectorType> ||
-                std::is_same_v<VectorType, GlobalBlockVectorType>)
-    tmp.reinit(locally_owned_dofs, this->mpi_communicator);
+  tmp.reinit(locally_owned_dofs, locally_relevant_dofs, this->mpi_communicator);
 
-  else if constexpr (std::is_same_v<VectorType,
-                                    LinearAlgebra::distributed::Vector<double>>)
-    tmp.reinit(locally_owned_dofs,
-               locally_relevant_dofs,
-               this->mpi_communicator);
   return tmp;
 }
 
