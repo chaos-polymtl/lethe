@@ -460,7 +460,7 @@ NavierStokesOperatorBase<dim, number>::evaluate_non_linear_term(
       phi.evaluate(EvaluationFlags::values | EvaluationFlags::gradients |
                    EvaluationFlags::hessians);
 
-      for (unsigned int q = 0; q < phi.n_q_points; ++q)
+      for (const auto q : phi.quadrature_point_indices())
         {
           nonlinear_previous_values(cell, q)   = phi.get_value(q);
           nonlinear_previous_gradient(cell, q) = phi.get_gradient(q);
@@ -486,7 +486,7 @@ NavierStokesOperatorBase<dim, number>::
       phi.reinit(cell);
       phi.read_dof_values_plain(time_derivative_previous_solutions);
       phi.evaluate(EvaluationFlags::values);
-      for (unsigned int q = 0; q < phi.n_q_points; ++q)
+      for (const auto q : phi.quadrature_point_indices())
         time_derivatives_previous_solutions(cell, q) += phi.get_value(q);
     }
 }
@@ -591,7 +591,7 @@ NavierStokesSUPGPSPGOperator<dim, number>::do_cell_integral_local(
 
   const auto h = integrator.read_cell_data(this->get_element_size());
 
-  for (unsigned int q = 0; q < integrator.n_q_points; ++q)
+  for (const auto q : integrator.quadrature_point_indices())
     {
       // Evaluate source term function
       Tensor<1, dim + 1, VectorizedArray<number>> source_value;
@@ -731,7 +731,7 @@ NavierStokesSUPGPSPGOperator<dim, number>::local_evaluate_residual(
 
       const auto h = integrator.read_cell_data(this->get_element_size());
 
-      for (unsigned int q = 0; q < integrator.n_q_points; ++q)
+      for (const auto q : integrator.quadrature_point_indices())
         {
           // Evaluate source term function
           Tensor<1, dim + 1, VectorizedArray<number>> source_value;
@@ -864,7 +864,7 @@ NavierStokesTransientSUPGPSPGOperator<dim, number>::do_cell_integral_local(
   const double   sdt       = 1. / dt;
   Vector<double> bdf_coefs = bdf_coefficients(method, time_steps_vector);
 
-  for (unsigned int q = 0; q < integrator.n_q_points; ++q)
+  for (const auto q : integrator.quadrature_point_indices())
     {
       // Evaluate source term function
       Tensor<1, dim + 1, VectorizedArray<number>> source_value;
@@ -1023,7 +1023,7 @@ NavierStokesTransientSUPGPSPGOperator<dim, number>::local_evaluate_residual(
       const double   sdt       = 1. / dt;
       Vector<double> bdf_coefs = bdf_coefficients(method, time_steps_vector);
 
-      for (unsigned int q = 0; q < integrator.n_q_points; ++q)
+      for (const auto q : integrator.quadrature_point_indices())
         {
           // Evaluate source term function
           Tensor<1, dim + 1, VectorizedArray<number>> source_value;
