@@ -55,7 +55,7 @@ end
 
 subsection mesh
   set type               = gmsh
-  set file name          = ../taylorCouette.msh
+  set file name          = ../../taylorCouette.msh
   set initial refinement = 0
 end
 

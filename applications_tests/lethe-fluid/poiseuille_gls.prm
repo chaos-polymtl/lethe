@@ -73,7 +73,7 @@ end
 
 subsection mesh
   set type      = gmsh
-  set file name = ../2d_channel.msh
+  set file name = ../../2d_channel.msh
 end
 
 #---------------------------------------------------

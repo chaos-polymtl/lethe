@@ -88,7 +88,7 @@ end
 subsection mesh
   set expand particle-wall contact search = false
   set type                                = gmsh
-  set file name                           = ./pipe.msh
+  set file name                           = ../pipe.msh
 end
 
 #---------------------------------------------------
