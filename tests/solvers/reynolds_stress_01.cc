@@ -38,6 +38,7 @@
 // Lethe
 #include <core/parameters.h>
 #include <core/simulation_control.h>
+#include <core/vector.h>
 
 #include <solvers/postprocessing_velocities.h>
 
@@ -80,10 +81,10 @@ test()
   DoFHandler<3> dof_handler(tria);
 
 
-  AverageVelocities<3, TrilinosWrappers::MPI::Vector, IndexSet>
-    postprocessing_velocities(dof_handler);
+  AverageVelocities<3, GlobalVectorType, IndexSet> postprocessing_velocities(
+    dof_handler);
 
-  TrilinosWrappers::MPI::Vector solution(locally_owned_dofs, mpi_communicator);
+  GlobalVectorType solution(locally_owned_dofs, mpi_communicator);
   solution(0) = 2.0;
   solution(1) = 0.1;
   solution(2) = 0.0;
@@ -93,8 +94,8 @@ test()
   solution(6) = 0.1;
   solution(7) = 20;
 
-  TrilinosWrappers::MPI::Vector reynolds_normal_stresses;
-  TrilinosWrappers::MPI::Vector reynolds_shear_stresses;
+  GlobalVectorType reynolds_normal_stresses;
+  GlobalVectorType reynolds_shear_stresses;
 
   // Time info
   const double time_end     = simulation_control_parameters.timeEnd;

@@ -17,6 +17,7 @@
 #define lethe_gls_navier_stokes_h
 
 #include <core/exceptions.h>
+#include <core/vector.h>
 
 #include <solvers/copy_data.h>
 #include <solvers/navier_stokes_base.h>
@@ -41,7 +42,7 @@ using namespace dealii;
 
 template <int dim>
 class GLSNavierStokesSolver
-  : public NavierStokesBase<dim, TrilinosWrappers::MPI::Vector, IndexSet>
+  : public NavierStokesBase<dim, GlobalVectorType, IndexSet>
 {
 public:
   GLSNavierStokesSolver(SimulationParameters<dim> &nsparam);

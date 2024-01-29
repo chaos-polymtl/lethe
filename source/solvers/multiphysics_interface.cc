@@ -145,7 +145,7 @@ MultiphysicsInterface<dim>::MultiphysicsInterface(
 }
 
 template <int dim>
-TrilinosWrappers::MPI::Vector *
+GlobalVectorType *
 MultiphysicsInterface<dim>::get_projected_phase_fraction_gradient_solution()
 {
   // Throw error if VOF is not enabled
@@ -163,7 +163,7 @@ MultiphysicsInterface<dim>::get_projected_phase_fraction_gradient_solution()
 }
 
 template <int dim>
-TrilinosWrappers::MPI::Vector *
+GlobalVectorType *
 MultiphysicsInterface<dim>::get_curvature_solution()
 {
   // Throw error if VOF is not enabled
