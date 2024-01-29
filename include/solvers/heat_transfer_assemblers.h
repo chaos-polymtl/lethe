@@ -224,7 +224,7 @@ public:
  *
  * @param simulation_control Shared pointer of the SimulationControl object
  * controlling the current simulation
- * @param p_boundary_conditions_ht HTBoundaryConditions object that hold
+ * @param p_boundary_conditions_ht HTBoundaryConditions object that holds
  * boundary condition information for the Heat-Transfer solver
  *
  * @ingroup assemblers

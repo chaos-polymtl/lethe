@@ -64,23 +64,22 @@ The default parameters for ``temperature`` and ``convection-radiation`` are show
 * ``type``: type of boundary condition being imposed. At the moment, choices are:
     * ``noflux`` (default) so that there is no heat transfer boundary condition,
     * ``temperature`` (Dirichlet BC), to impose a given temperature ``value`` at the boundary,
-    * ``convection-radiation`` (Robin BC) for cooling/heating, depending on the environment temperature at the boundary ``Tinf``, with a given heat transfer coefficient ``h`` and ``emissivity``` of the boundary :math:`\mathbf{\epsilon}` following Newton's law of cooling (and heating) and Stefan-Boltzmann law of radiation.
+    * ``convection-radiation`` (Robin BC) for cooling/heating, depending on the environment temperature at the boundary ``Tinf``, with a given heat transfer coefficient ``h`` and ``emissivity`` of the boundary :math:`\mathbf{\epsilon}` following Newton's law of cooling (and heating) and Stefan-Boltzmann law of radiation.
 
-.. math::
-    \frac{ \partial T}{\partial \mathbf{n}} = h (T - T_{inf}) + \epsilon \sigma (T^4 - T_{inf}^4)
+    .. math::
+        \frac{ \partial T}{\partial \mathbf{n}} = h (T - T_{inf}) + \epsilon \sigma (T^4 - T_{inf}^4)
+
+    where :math:`\mathbf{\sigma}` is the Stefan-Boltzmann constant.
 
     * ``heat-flux`` (:math:`q_0`, Neumann BC) to impose a heat flux of a given ``value`` at the boundary.
 
-.. math::
-    \frac{ \partial T}{\partial \mathbf{n}} = q_0
+    .. math::
+        \frac{ \partial T}{\partial \mathbf{n}} = q_0
 
 
-.. note::
+    .. note::
 
-  Note that the expressions for ``h``, ``Tinf``, ``emissivity``, and ``heat-flux`` can be time-dependent, but the current implementation does not allow for space dependence (the expressions are evaluated at the origin).
-
-
-where :math:`\mathbf{\sigma}` is the Stefan-Boltzmann constant.
+      Note that the expressions for ``h``, ``Tinf``, ``emissivity``, and ``heat-flux`` can be time-dependent, but the current implementation does not allow for space dependence (the expressions are evaluated at the origin).
 
 .. seealso::
 
