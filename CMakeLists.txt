@@ -88,7 +88,7 @@ if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
   option(BUILD_PROTOTYPES "Build the prototype applications")
   mark_as_advanced(BUILD_PROTOTYPES)
 
-  option(LETHE_USE_LDV "Use dealii::LinearAlgebra::distributed:: vectors")
+  option(LETHE_USE_LDV "Use dealii::LinearAlgebra::distributed::Vector")
   mark_as_advanced(LETHE_USE_LDV)
   if(LETHE_USE_LDV)
     add_compile_definitions(LETHE_USE_LDV)
