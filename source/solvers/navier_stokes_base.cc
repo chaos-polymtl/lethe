@@ -1576,7 +1576,9 @@ NavierStokesBase<dim, VectorType, DofsType>::read_checkpoint()
   setup_dofs();
   std::vector<VectorType *> x_system(1 + previous_solutions.size());
 
-  VectorType distributed_system(locally_owned_dofs, this->mpi_communicator);
+  VectorType distributed_system(locally_owned_dofs,
+                                this->locally_relevant_dofs,
+                                this->mpi_communicator);
   x_system[0] = &(distributed_system);
 
   std::vector<VectorType> distributed_previous_solutions;
@@ -1584,7 +1586,9 @@ NavierStokesBase<dim, VectorType, DofsType>::read_checkpoint()
   for (unsigned int i = 0; i < previous_solutions.size(); ++i)
     {
       distributed_previous_solutions.emplace_back(
-        VectorType(locally_owned_dofs, this->mpi_communicator));
+        VectorType(locally_owned_dofs,
+                   this->locally_relevant_dofs,
+                   this->mpi_communicator));
       x_system[i + 1] = &distributed_previous_solutions[i];
     }
   parallel::distributed::SolutionTransfer<dim, VectorType> system_trans_vectors(
@@ -2336,15 +2340,8 @@ NavierStokesBase<dim, VectorType, DofsType>::init_temporary_vector()
 {
   VectorType tmp;
 
-  if constexpr (std::is_same_v<VectorType, GlobalVectorType> ||
-                std::is_same_v<VectorType, GlobalBlockVectorType>)
-    tmp.reinit(locally_owned_dofs, this->mpi_communicator);
+  tmp.reinit(locally_owned_dofs, locally_relevant_dofs, this->mpi_communicator);
 
-  else if constexpr (std::is_same_v<VectorType,
-                                    LinearAlgebra::distributed::Vector<double>>)
-    tmp.reinit(locally_owned_dofs,
-               locally_relevant_dofs,
-               this->mpi_communicator);
   return tmp;
 }
 

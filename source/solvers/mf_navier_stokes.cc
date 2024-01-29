@@ -182,8 +182,8 @@ MFNavierStokesSolver<dim>::setup_dofs_fd()
     }
 
   this->locally_owned_dofs = this->dof_handler.locally_owned_dofs();
-  DoFTools::extract_locally_relevant_dofs(this->dof_handler,
-                                          this->locally_relevant_dofs);
+  this->locally_relevant_dofs =
+    DoFTools::extract_locally_relevant_dofs(this->dof_handler);
 
   // Non Zero constraints
   define_non_zero_constraints();
@@ -592,9 +592,9 @@ MFNavierStokesSolver<dim>::solve_with_LSMG(SolverGMRES<VectorType> &solver)
             {
               AffineConstraints<double> temp_constraints;
               temp_constraints.clear();
-              IndexSet locally_relevant_level_dofs;
-              DoFTools::extract_locally_relevant_level_dofs(
-                this->dof_handler, level, locally_relevant_level_dofs);
+              const IndexSet locally_relevant_level_dofs =
+                DoFTools::extract_locally_relevant_level_dofs(this->dof_handler,
+                                                              level);
               temp_constraints.reinit(locally_relevant_level_dofs);
               VectorTools::compute_no_normal_flux_constraints_on_level(
                 this->dof_handler,
@@ -656,8 +656,7 @@ MFNavierStokesSolver<dim>::solve_with_LSMG(SolverGMRES<VectorType> &solver)
         DoFTools::extract_locally_relevant_level_dofs(this->dof_handler, level);
 
       level_constraints[level].reinit(relevant_dofs);
-      DoFTools::make_hanging_node_constraints(this->dof_handler,
-                                              level_constraints[level]);
+
 #if DEAL_II_VERSION_GTE(9, 6, 0)
       mg_constrained_dofs.merge_constraints(
         level_constraints[level], level, true, false, true, true);
@@ -1590,8 +1589,8 @@ MFNavierStokesSolver<dim>::define_zero_constraints()
   FEValuesExtractors::Vector velocities(0);
   FEValuesExtractors::Scalar pressure(dim);
   this->zero_constraints.clear();
-  DoFTools::extract_locally_relevant_dofs(this->dof_handler,
-                                          this->locally_relevant_dofs);
+  this->locally_relevant_dofs =
+    DoFTools::extract_locally_relevant_dofs(this->dof_handler);
   this->zero_constraints.reinit(this->locally_relevant_dofs);
 
   DoFTools::make_hanging_node_constraints(this->dof_handler,
