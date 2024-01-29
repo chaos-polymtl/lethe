@@ -18,15 +18,15 @@ The default parameters for ``temperature`` and ``convection-radiation`` are show
     set number         = 3
     set time dependent = false
     subsection bc 0
-      set id    = 0
-      set type  = temperature
+      set id   = 0
+      set type = temperature
       subsection value
         set Function expression = 0
       end
     end
     subsection bc 1
-      set id    = 1
-      set type  = convection-radiation
+      set id   = 1
+      set type = convection-radiation
       subsection h
         set Function expression = 0
       end
@@ -38,8 +38,8 @@ The default parameters for ``temperature`` and ``convection-radiation`` are show
       end
     end
     subsection bc 2
-      set id     = 2
-      set type   = heat-flux
+      set id   = 2
+      set type = heat-flux
       subsection value
         set Function expression = 0
       end
