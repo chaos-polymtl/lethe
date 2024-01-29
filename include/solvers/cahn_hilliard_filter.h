@@ -59,16 +59,33 @@ public:
 
   /**
    * @brief CahnHilliardNoFilter class is used as a default when no
-   * filter is applied to the phase fraction. In this case, a simple clamping is
-   * performed on the phase fraction parameter for it to remain in the [-1,1]
-   * interval.
+   * filter is applied to the phase fraction.
    */
   virtual double
   filter_phase(const double &unfiltered_phase) override
   {
-    return (std::abs(unfiltered_phase) < 1) ? unfiltered_phase :
-                                              sgn(unfiltered_phase);
+    return unfiltered_phase;
   }
+};
+
+class CahnHilliardPhaseOrderLimiter : public CahnHilliardFilterBase
+{
+public:
+    CahnHilliardPhaseOrderLimiter()
+    {}
+
+    /**
+     * @brief CahnHilliardPhaseOrderLimiter class is used as a default when no
+     * filter is applied to the phase fraction. In this case, a simple clamping is
+     * performed on the phase fraction parameter for it to remain in the [-1,1]
+     * interval.
+     */
+    virtual double
+    filter_phase(const double &unfiltered_phase) override
+    {
+        return (std::abs(unfiltered_phase) < 1) ? unfiltered_phase :
+               sgn(unfiltered_phase);
+    }
 };
 
 /**

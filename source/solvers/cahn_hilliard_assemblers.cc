@@ -21,11 +21,14 @@ CahnHilliardAssemblerCore<dim>::assemble_matrix(
   const auto mobility_model =
     this->cahn_hilliard_parameters.cahn_hilliard_mobility_model;
   // std::cout<< "mobility via ch assembler = "<< mobility_constant<<std::endl;
-  const double epsilon =
-    (this->cahn_hilliard_parameters.epsilon_set_method ==
-     Parameters::EpsilonSetStrategy::manual) ?
-      this->cahn_hilliard_parameters.epsilon :
-      2 * std::pow(2, (-1) * this->maximum_refinement_number);
+  //  const double epsilon =
+  //    (this->cahn_hilliard_parameters.epsilon_set_method ==
+  //     Parameters::EpsilonSetStrategy::manual) ?
+  //      this->cahn_hilliard_parameters.epsilon :
+  //      2 * std::pow(2, (-1) * this->maximum_refinement_number);
+
+  const double epsilon   =   this->minimum_cell_diameter/sqrt(2);
+
   const double cell_size = scratch_data.cell_size;
   const double xi =
     this->cahn_hilliard_parameters.potential_smoothing_coefficient;
@@ -39,15 +42,6 @@ CahnHilliardAssemblerCore<dim>::assemble_matrix(
   auto &strong_jacobian_vec = copy_data.strong_jacobian;
   auto &local_matrix        = copy_data.local_matrix;
 
-  // Constant mobility model
-  //  if (mobility_model ==
-  //      Parameters::CahnHilliardMobilityModel::constant) // current
-  //      modifications
-  //                                                       // applied only for
-  //                                                       the
-  //                                                       // constant mobility
-  //                                                       case
-  //    {
   for (unsigned int q = 0; q < n_q_points; ++q)
     {
       const double lambda =
@@ -57,6 +51,7 @@ CahnHilliardAssemblerCore<dim>::assemble_matrix(
       const double mobility = scratch_data.mobility_cahn_hilliard[q];
       const double mobility_gradient =
         scratch_data.mobility_cahn_hilliard_gradient[q];
+
       // Gather into local variables the relevant fields
       const Tensor<1, dim> velocity_field = scratch_data.velocity_values[q];
 
@@ -206,11 +201,12 @@ CahnHilliardAssemblerCore<dim>::assemble_rhs(
     this->cahn_hilliard_parameters.cahn_hilliard_mobility_constant;
   const auto mobility_model =
     this->cahn_hilliard_parameters.cahn_hilliard_mobility_model;
-  const double epsilon =
-    (this->cahn_hilliard_parameters.epsilon_set_method ==
-     Parameters::EpsilonSetStrategy::manual) ?
-      this->cahn_hilliard_parameters.epsilon :
-      2 * std::pow(2, (-1) * this->maximum_refinement_number);
+  //  const double epsilon =
+  //    (this->cahn_hilliard_parameters.epsilon_set_method ==
+  //     Parameters::EpsilonSetStrategy::manual) ?
+  //      this->cahn_hilliard_parameters.epsilon :
+  //      2 * std::pow(2, (-1) * this->maximum_refinement_number);
+  const double epsilon   =   this->minimum_cell_diameter/sqrt(2);
   const double cell_size = scratch_data.cell_size;
   const double xi =
     this->cahn_hilliard_parameters.potential_smoothing_coefficient;

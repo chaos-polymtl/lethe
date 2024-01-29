@@ -43,19 +43,34 @@ CahnHilliard<dim>::setup_assemblers()
     }
 
   // Angle of contact boundary condition
+  //  this->assemblers.push_back(
+  //    std::make_shared<CahnHilliardAssemblerAngleOfContact<dim>>(
+  //      this->simulation_control,
+  //      this->simulation_parameters.multiphysics.cahn_hilliard_parameters,
+  //      this->simulation_parameters.mesh_adaptation.maximum_refinement_level,
+  //      this->simulation_parameters.boundary_conditions_cahn_hilliard));
+
   this->assemblers.push_back(
     std::make_shared<CahnHilliardAssemblerAngleOfContact<dim>>(
       this->simulation_control,
       this->simulation_parameters.multiphysics.cahn_hilliard_parameters,
-      this->simulation_parameters.mesh_adaptation.maximum_refinement_level,
+      (this->simulation_parameters.mesh_adaptation.type ==
+       Parameters::MeshAdaptation::Type::none) ?
+        this->simulation_parameters.mesh.initial_refinement :
+        this->simulation_parameters.mesh_adaptation.maximum_refinement_level,
       this->simulation_parameters.boundary_conditions_cahn_hilliard));
+
+  double test = GridTools::minimal_cell_diameter(*triangulation);
 
   // Free angle of contact boundary condition
   this->assemblers.push_back(
     std::make_shared<CahnHilliardAssemblerFreeAngle<dim>>(
       this->simulation_control,
       this->simulation_parameters.multiphysics.cahn_hilliard_parameters,
-      this->simulation_parameters.mesh_adaptation.maximum_refinement_level,
+      (this->simulation_parameters.mesh_adaptation.type ==
+       Parameters::MeshAdaptation::Type::none) ?
+        this->simulation_parameters.mesh.initial_refinement :
+        this->simulation_parameters.mesh_adaptation.maximum_refinement_level,
       this->simulation_parameters.boundary_conditions_cahn_hilliard));
 
 
@@ -68,7 +83,7 @@ CahnHilliard<dim>::setup_assemblers()
   this->assemblers.push_back(std::make_shared<CahnHilliardAssemblerCore<dim>>(
     this->simulation_control,
     this->simulation_parameters.multiphysics.cahn_hilliard_parameters,
-    this->simulation_parameters.mesh_adaptation.maximum_refinement_level));
+    GridTools::minimal_cell_diameter(*triangulation)));
 }
 
 template <int dim>
@@ -283,9 +298,9 @@ CahnHilliard<dim>::attach_solution_to_output(DataOut<dim> &data_out)
   solution_names.push_back("phase_order");
   solution_names.push_back("chemical_potential");
 
-  std::vector<std::string> solution_names_filtered;
-  solution_names_filtered.push_back("phase_order_filtered");
-  solution_names_filtered.push_back("chemical_potential_filtered");
+  //  std::vector<std::string> solution_names_filtered;
+  //  solution_names_filtered.push_back("phase_order_filtered");
+  //  solution_names_filtered.push_back("chemical_potential_filtered");
 
 
   std::vector<DataComponentInterpretation::DataComponentInterpretation>
@@ -298,10 +313,10 @@ CahnHilliard<dim>::attach_solution_to_output(DataOut<dim> &data_out)
                            data_component_interpretation);
 
   // Filter phase fraction
-  data_out.add_data_vector(dof_handler,
-                           filtered_solution,
-                           solution_names_filtered,
-                           data_component_interpretation);
+  //  data_out.add_data_vector(dof_handler,
+  //                           filtered_solution,
+  //                           solution_names_filtered,
+  //                           data_component_interpretation);
 }
 
 template <int dim>
