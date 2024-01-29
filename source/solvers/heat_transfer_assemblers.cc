@@ -487,7 +487,7 @@ HeatTransferAssemblerRobinBC<dim>::assemble_rhs(
                              Stefan_Boltzmann_constant * emissivity *
                                (T_face * T_face * T_face * T_face -
                                 T_inf * T_inf * T_inf * T_inf) +
-                             heat_flux_bc) *
+                             ) *
                             JxW;
                         }
                     }
