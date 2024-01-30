@@ -613,9 +613,9 @@ private:
    * These vectors and map are used to keep track of the DOFs that are
    * overconstrained
    */
-  GlobalVectorType local_dof_overconstrained;
-  GlobalVectorType dof_overconstrained;
-  std::map<unsigned int,bool> dof_with_more_then_one_particle;
+  GlobalVectorType             local_dof_overconstrained;
+  GlobalVectorType             dof_overconstrained;
+  std::map<unsigned int, bool> dof_with_more_then_one_particle;
 
 
   std::map<typename DoFHandler<dim>::active_cell_iterator,
