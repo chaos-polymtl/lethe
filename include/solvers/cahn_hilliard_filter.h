@@ -71,21 +71,21 @@ public:
 class CahnHilliardClipFilter : public CahnHilliardFilterBase
 {
 public:
-    CahnHilliardClipFilter()
-    {}
+  CahnHilliardClipFilter()
+  {}
 
-    /**
-     * @brief CahnHilliardPhaseOrderLimiter class is used as a default when no
-     * filter is applied to the phase fraction. In this case, a simple clamping is
-     * performed on the phase fraction parameter for it to remain in the [-1,1]
-     * interval.
-     */
-    virtual double
-    filter_phase(const double &unfiltered_phase) override
-    {
-        return (std::abs(unfiltered_phase) < 1) ? unfiltered_phase :
-               sgn(unfiltered_phase);
-    }
+  /**
+   * @brief CahnHilliardPhaseOrderLimiter class is used as a default when no
+   * filter is applied to the phase fraction. In this case, a simple clamping is
+   * performed on the phase fraction parameter for it to remain in the [-1,1]
+   * interval.
+   */
+  virtual double
+  filter_phase(const double &unfiltered_phase) override
+  {
+    return (std::abs(unfiltered_phase) < 1) ? unfiltered_phase :
+                                              sgn(unfiltered_phase);
+  }
 };
 
 /**

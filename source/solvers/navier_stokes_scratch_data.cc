@@ -547,7 +547,6 @@ NavierStokesScratchData<dim>::calculate_physical_properties()
               //  Blend the physical properties using the CahnHilliard field
               for (unsigned int q = 0; q < this->n_q_points; ++q)
                 {
-
                   double phase_order_cahn_hilliard_value =
                     this->filtered_phase_order_cahn_hilliard_values[q];
 
@@ -560,7 +559,6 @@ NavierStokesScratchData<dim>::calculate_physical_properties()
                     phase_order_cahn_hilliard_value,
                     this->dynamic_viscosity_0[q],
                     this->dynamic_viscosity_1[q]);
-
                 }
               break;
             }

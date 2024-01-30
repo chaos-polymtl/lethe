@@ -98,9 +98,8 @@ GLSNavierStokesCahnHilliardAssemblerCore<dim>::assemble_matrix(
       auto strong_residual =
         density_eq * velocity_gradient * velocity + pressure_gradient -
         dynamic_viscosity_eq * velocity_laplacian -
-        dynamic_viscosity_eq * grad_div_velocity -
-        density_eq * force
-        - potential_value * phase_order_gradient + strong_residual_vec[q];
+        dynamic_viscosity_eq * grad_div_velocity - density_eq * force -
+        potential_value * phase_order_gradient + strong_residual_vec[q];
 
       std::vector<Tensor<1, dim>> grad_phi_u_j_x_velocity(n_dofs);
       std::vector<Tensor<1, dim>> velocity_gradient_x_phi_u_j(n_dofs);
@@ -188,7 +187,7 @@ GLSNavierStokesCahnHilliardAssemblerCore<dim>::assemble_rhs(
   NavierStokesScratchData<dim>         &scratch_data,
   StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
-  const double h            = scratch_data.cell_size;
+  const double h = scratch_data.cell_size;
 
   // Loop and quadrature information
   const auto        &JxW_vec    = scratch_data.JxW;
@@ -281,9 +280,8 @@ GLSNavierStokesCahnHilliardAssemblerCore<dim>::assemble_rhs(
       auto strong_residual =
         density_eq * velocity_gradient * velocity + pressure_gradient -
         dynamic_viscosity_eq * velocity_laplacian -
-        dynamic_viscosity_eq * grad_div_velocity -
-        density_eq * force
-        - potential_value * phase_order_gradient + strong_residual_vec[q];
+        dynamic_viscosity_eq * grad_div_velocity - density_eq * force -
+        potential_value * phase_order_gradient + strong_residual_vec[q];
 
       // Assembly of the right-hand side
       for (unsigned int i = 0; i < n_dofs; ++i)

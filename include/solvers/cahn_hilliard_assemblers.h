@@ -92,7 +92,7 @@ public:
   CahnHilliardAssemblerCore(
     std::shared_ptr<SimulationControl> simulation_control,
     Parameters::CahnHilliard           cahn_hilliard_parameters,
-    const double minimum_cell_diameter)
+    const double                       minimum_cell_diameter)
     : CahnHilliardAssemblerBase<dim>(simulation_control)
     , cahn_hilliard_parameters(cahn_hilliard_parameters)
     , minimum_cell_diameter(minimum_cell_diameter)
@@ -118,7 +118,7 @@ public:
                StabilizedMethodsCopyData    &copy_data) override;
 
   Parameters::CahnHilliard cahn_hilliard_parameters;
-  const double minimum_cell_diameter;
+  const double             minimum_cell_diameter;
 };
 
 
@@ -143,7 +143,7 @@ public:
       &p_boundary_conditions_cahn_hilliard)
     : CahnHilliardAssemblerBase<dim>(simulation_control)
     , cahn_hilliard_parameters(cahn_hilliard_parameters)
-          , minimum_cell_diameter(minimum_cell_diameter)
+    , minimum_cell_diameter(minimum_cell_diameter)
     , boundary_conditions_cahn_hilliard(p_boundary_conditions_cahn_hilliard)
   {}
 
@@ -167,7 +167,7 @@ public:
                StabilizedMethodsCopyData    &copy_data) override;
 
   Parameters::CahnHilliard cahn_hilliard_parameters;
-  const double               minimum_cell_diameter;
+  const double             minimum_cell_diameter;
   const BoundaryConditions::CahnHilliardBoundaryConditions<dim>
     &boundary_conditions_cahn_hilliard;
 };
@@ -217,7 +217,7 @@ public:
 
 
   Parameters::CahnHilliard cahn_hilliard_parameters;
-  const double                minimum_cell_diameter;
+  const double             minimum_cell_diameter;
   const BoundaryConditions::CahnHilliardBoundaryConditions<dim>
     &boundary_conditions_cahn_hilliard;
 };

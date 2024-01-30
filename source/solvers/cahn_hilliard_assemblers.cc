@@ -13,7 +13,7 @@ CahnHilliardAssemblerCore<dim>::assemble_matrix(
   StabilizedMethodsCopyData    &copy_data)
 {
   // Gather physical properties
-  const double epsilon   =   this->minimum_cell_diameter/sqrt(2);
+  const double epsilon   = this->minimum_cell_diameter / sqrt(2);
   const double cell_size = scratch_data.cell_size;
   const double xi =
     this->cahn_hilliard_parameters.potential_smoothing_coefficient;
@@ -24,7 +24,7 @@ CahnHilliardAssemblerCore<dim>::assemble_matrix(
   const unsigned int n_dofs     = scratch_data.n_dofs;
 
   // Copy data elements
-  auto &local_matrix        = copy_data.local_matrix;
+  auto &local_matrix = copy_data.local_matrix;
 
   for (unsigned int q = 0; q < n_q_points; ++q)
     {
@@ -67,12 +67,12 @@ CahnHilliardAssemblerCore<dim>::assemble_matrix(
                 scratch_data.grad_phi_potential[q][j];
 
               local_matrix(i, j) +=
-                // First equation
+                // Phase order equation
                 (phi_phase_i * (velocity_field * grad_phi_phase_j) +
                  mobility * grad_phi_phase_i * grad_phi_potential_j +
                  mobility_gradient * grad_phi_phase_i * potential_gradient *
                    phi_phase_j
-                 // Second equation (Jamshidi et al.)
+                 // Chemical potential equation
                  + phi_potential_i * phi_potential_j -
                  (lambda / (epsilon * epsilon)) * phi_potential_i *
                    (3 * phase_order_value * phase_order_value - 1.0) *
@@ -96,7 +96,7 @@ CahnHilliardAssemblerCore<dim>::assemble_rhs(
   StabilizedMethodsCopyData    &copy_data)
 {
   // Gather physical properties
-  const double epsilon   =   this->minimum_cell_diameter/sqrt(2);
+  const double epsilon   = this->minimum_cell_diameter / sqrt(2);
   const double cell_size = scratch_data.cell_size;
   const double xi =
     this->cahn_hilliard_parameters.potential_smoothing_coefficient;
@@ -143,12 +143,11 @@ CahnHilliardAssemblerCore<dim>::assemble_rhs(
             scratch_data.grad_phi_potential[q][i];
 
           local_rhs(i) +=
-            // First equation
+            // Phase order equation
             (-phi_phase_i * (velocity_field * phase_order_gradient) -
              mobility * grad_phi_phase_i * potential_gradient
-             // Second equation (2nd article)
+             // Chemical potential equation
              - phi_potential_i * potential_value +
-             // Second equation (Lovric et al.)
              (lambda / (epsilon * epsilon)) * phi_potential_i *
                (phase_order_value * phase_order_value - 1) * phase_order_value +
              lambda * grad_phi_potential_i * phase_order_gradient
@@ -173,10 +172,10 @@ CahnHilliardAssemblerAngleOfContact<dim>::assemble_matrix(
   StabilizedMethodsCopyData    &copy_data)
 {
   if (!scratch_data.is_boundary_cell)
-  {
+    {
       return;
-  }
-  const double epsilon   =   this->minimum_cell_diameter/sqrt(2);
+    }
+  const double epsilon = this->minimum_cell_diameter / sqrt(2);
 
   auto &local_matrix = copy_data.local_matrix;
 
@@ -199,8 +198,9 @@ CahnHilliardAssemblerAngleOfContact<dim>::assemble_matrix(
                     {
                       const Tensor<1, dim> face_phase_grad_value =
                         scratch_data.face_phase_grad_values[f][q];
-                        const double lambda =
-                                3 * epsilon * scratch_data.surface_tension[q] / (2 * sqrt(2));
+                      const double lambda = 3 * epsilon *
+                                            scratch_data.surface_tension[q] /
+                                            (2 * sqrt(2));
 
                       const double JxW_face = scratch_data.face_JxW[f][q];
 
@@ -214,7 +214,6 @@ CahnHilliardAssemblerAngleOfContact<dim>::assemble_matrix(
                               const Tensor<1, dim> grad_phi_face_phase_j =
                                 scratch_data.grad_phi_face_phase[f][q][j];
 
-                              // 1st article : Lovric et al.
                               local_matrix(i, j) +=
                                 -lambda * phi_potential_i *
                                 grad_phi_face_phase_j * face_phase_grad_value *
@@ -240,7 +239,7 @@ CahnHilliardAssemblerAngleOfContact<dim>::assemble_rhs(
   if (!scratch_data.is_boundary_cell)
     return;
 
-  const double epsilon   =   this->minimum_cell_diameter/sqrt(2);
+  const double epsilon = this->minimum_cell_diameter / sqrt(2);
 
   auto &local_rhs = copy_data.local_rhs;
 
@@ -264,8 +263,9 @@ CahnHilliardAssemblerAngleOfContact<dim>::assemble_rhs(
                       const Tensor<1, dim> face_phase_grad_value =
                         scratch_data.face_phase_grad_values[f][q];
 
-                        const double lambda =
-                                3 * epsilon * scratch_data.surface_tension[q] / (2 * sqrt(2));
+                      const double lambda = 3 * epsilon *
+                                            scratch_data.surface_tension[q] /
+                                            (2 * sqrt(2));
 
                       const double JxW_face = scratch_data.face_JxW[f][q];
 
@@ -298,7 +298,7 @@ CahnHilliardAssemblerFreeAngle<dim>::assemble_matrix(
   if (!scratch_data.is_boundary_cell)
     return;
 
-  const double epsilon   =   this->minimum_cell_diameter/sqrt(2);
+  const double epsilon = this->minimum_cell_diameter / sqrt(2);
 
 
   auto &local_matrix = copy_data.local_matrix;
@@ -322,8 +322,9 @@ CahnHilliardAssemblerFreeAngle<dim>::assemble_matrix(
                         scratch_data.face_normal[f][q];
                       const double JxW_face = scratch_data.face_JxW[f][q];
 
-                        const double lambda =
-                                3 * epsilon * scratch_data.surface_tension[q] / (2 * sqrt(2));
+                      const double lambda = 3 * epsilon *
+                                            scratch_data.surface_tension[q] /
+                                            (2 * sqrt(2));
 
                       for (unsigned int i = 0; i < scratch_data.n_dofs; ++i)
                         {
@@ -334,10 +335,10 @@ CahnHilliardAssemblerFreeAngle<dim>::assemble_matrix(
                             {
                               const Tensor<1, dim> grad_phi_face_phase_j =
                                 scratch_data.grad_phi_face_phase[f][q][j];
-                              // 2nd article : Lovric et al.
-                              local_matrix(i, j) -=
-                                lambda* phi_potential_i *
-                                grad_phi_face_phase_j * face_normal * JxW_face;
+
+                              local_matrix(i, j) -= lambda * phi_potential_i *
+                                                    grad_phi_face_phase_j *
+                                                    face_normal * JxW_face;
                             }
                         }
                     }
@@ -356,7 +357,7 @@ CahnHilliardAssemblerFreeAngle<dim>::assemble_rhs(
   if (!scratch_data.is_boundary_cell)
     return;
 
-  const double epsilon   =   this->minimum_cell_diameter/sqrt(2);
+  const double epsilon = this->minimum_cell_diameter / sqrt(2);
 
   auto &local_rhs = copy_data.local_rhs;
 
@@ -381,8 +382,9 @@ CahnHilliardAssemblerFreeAngle<dim>::assemble_rhs(
                         scratch_data.face_normal[f][q];
                       const double JxW_face = scratch_data.face_JxW[f][q];
 
-                        const double lambda =
-                                3 * epsilon * scratch_data.surface_tension[q] / (2 * sqrt(2));
+                      const double lambda = 3 * epsilon *
+                                            scratch_data.surface_tension[q] /
+                                            (2 * sqrt(2));
 
                       for (unsigned int i = 0; i < scratch_data.n_dofs; ++i)
                         {

@@ -50,13 +50,13 @@ CahnHilliard<dim>::setup_assemblers()
       GridTools::minimal_cell_diameter(*triangulation),
       this->simulation_parameters.boundary_conditions_cahn_hilliard));
 
-//  // Free angle of contact boundary condition
-//  this->assemblers.push_back(
-//    std::make_shared<CahnHilliardAssemblerFreeAngle<dim>>(
-//      this->simulation_control,
-//      this->simulation_parameters.multiphysics.cahn_hilliard_parameters,
-//      GridTools::minimal_cell_diameter(*triangulation),
-//      this->simulation_parameters.boundary_conditions_cahn_hilliard));
+  //  // Free angle of contact boundary condition
+  //  this->assemblers.push_back(
+  //    std::make_shared<CahnHilliardAssemblerFreeAngle<dim>>(
+  //      this->simulation_control,
+  //      this->simulation_parameters.multiphysics.cahn_hilliard_parameters,
+  //      GridTools::minimal_cell_diameter(*triangulation),
+  //      this->simulation_parameters.boundary_conditions_cahn_hilliard));
 
 
   // Core assembler
@@ -278,9 +278,9 @@ CahnHilliard<dim>::attach_solution_to_output(DataOut<dim> &data_out)
   solution_names.push_back("phase_order");
   solution_names.push_back("chemical_potential");
 
-    std::vector<std::string> solution_names_filtered;
-    solution_names_filtered.push_back("phase_order_filtered");
-    solution_names_filtered.push_back("chemical_potential_filtered");
+  std::vector<std::string> solution_names_filtered;
+  solution_names_filtered.push_back("phase_order_filtered");
+  solution_names_filtered.push_back("chemical_potential_filtered");
 
 
   std::vector<DataComponentInterpretation::DataComponentInterpretation>
@@ -293,10 +293,10 @@ CahnHilliard<dim>::attach_solution_to_output(DataOut<dim> &data_out)
                            data_component_interpretation);
 
   // Filter phase fraction
-    data_out.add_data_vector(dof_handler,
-                             filtered_solution,
-                             solution_names_filtered,
-                             data_component_interpretation);
+  data_out.add_data_vector(dof_handler,
+                           filtered_solution,
+                           solution_names_filtered,
+                           data_component_interpretation);
 }
 
 template <int dim>

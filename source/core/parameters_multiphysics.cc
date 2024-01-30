@@ -528,9 +528,9 @@ Parameters::CahnHilliard_PhaseFilter::parse_parameters(ParameterHandler &prm)
         type = Parameters::FilterType::none;
       }
     else if (t == "clip")
-    {
+      {
         type = Parameters::FilterType::clip;
-    }
+      }
     else if (t == "tanh")
       {
         type = Parameters::FilterType::tanh;
