@@ -13,7 +13,7 @@ file(COPY check_point.triangulation DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/che
 file(COPY check_point.triangulation.info DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/check_point.${_build_type}/mpirun=1/")
 file(COPY check_point.triangulation_fixed.data DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/check_point.${_build_type}/mpirun=1/")
 file(COPY ib_force.00.dat DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/check_point.${_build_type}/mpirun=1/")
-file(COPY particles DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/load_particles_from_file_test.${_build_type}/mpirun=1/")
+file(COPY particles.input DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/load_particles_from_file_test.${_build_type}/mpirun=1/")
 file(COPY rbf_test_shape.input DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/flow_around_rbf.${_build_type}/mpirun=1/")
 file(COPY helix_composite_shape DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/cavatappi_composite_test.${_build_type}/mpirun=1/")
 file(COPY spooky_composite_shape DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/spooky_composite_test.${_build_type}/mpirun=1/")

@@ -120,7 +120,7 @@ GLSSharpNavierStokesSolver<dim>::generate_cut_cells_map()
   cut_cells_map.clear();
   cells_inside_map.clear();
   overconstrained_fluid_cell_map.clear();
-  dof_with_more_than_one_particle.clear();
+  dof_with_more_then_one_particle.clear();
   if (mapping_overconstrained_cells)
     {
       local_dof_overconstrained.reinit(this->locally_owned_dofs,
@@ -240,7 +240,7 @@ GLSSharpNavierStokesSolver<dim>::generate_cut_cells_map()
                                    j < local_dof_indices.size();
                                    ++j)
                                 {
-                                  dof_with_more_than_one_particle
+                                  dof_with_more_then_one_particle
                                     [local_dof_indices[j]] = true;
                                 }
                             }
@@ -363,7 +363,7 @@ GLSSharpNavierStokesSolver<dim>::generate_cut_cells_map()
                       for (unsigned int j = 0; j < local_dof_indices.size();
                            ++j)
                         {
-                          dof_with_more_than_one_particle
+                          dof_with_more_then_one_particle
                             [local_dof_indices[j]] = true;
                         }
 
@@ -1211,7 +1211,7 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                               // surface.
                               if (force_eval.find(local_face_dof_indices[i]) ==
                                     force_eval.end() or
-                                  dof_with_more_than_one_particle
+                                  dof_with_more_then_one_particle
                                       [local_face_dof_indices[i]] == true)
                                 {
                                   if (component_i == 0)
@@ -1240,7 +1240,7 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                                       // except if the dof is not owned.
                                       if (ib_done[local_face_dof_indices[i]]
                                               .first == false or
-                                          dof_with_more_than_one_particle
+                                          dof_with_more_then_one_particle
                                               [local_face_dof_indices[i]] ==
                                             true)
                                         {
