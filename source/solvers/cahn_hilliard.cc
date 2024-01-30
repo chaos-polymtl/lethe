@@ -50,13 +50,13 @@ CahnHilliard<dim>::setup_assemblers()
       GridTools::minimal_cell_diameter(*triangulation),
       this->simulation_parameters.boundary_conditions_cahn_hilliard));
 
-  // Free angle of contact boundary condition
-  this->assemblers.push_back(
-    std::make_shared<CahnHilliardAssemblerFreeAngle<dim>>(
-      this->simulation_control,
-      this->simulation_parameters.multiphysics.cahn_hilliard_parameters,
-      GridTools::minimal_cell_diameter(*triangulation),
-      this->simulation_parameters.boundary_conditions_cahn_hilliard));
+//  // Free angle of contact boundary condition
+//  this->assemblers.push_back(
+//    std::make_shared<CahnHilliardAssemblerFreeAngle<dim>>(
+//      this->simulation_control,
+//      this->simulation_parameters.multiphysics.cahn_hilliard_parameters,
+//      GridTools::minimal_cell_diameter(*triangulation),
+//      this->simulation_parameters.boundary_conditions_cahn_hilliard));
 
 
   // Core assembler
