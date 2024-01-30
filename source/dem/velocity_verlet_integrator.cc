@@ -292,7 +292,7 @@ VelocityVerletIntegrator<dim>::integrate_with_advected_particles(
             cell_mobility_status_map.at(cell->active_cell_index());
 
           // Get the average velocity and acceleration * dt of the cell
-          auto &[average_velocities, average_a_dt] =
+          auto &[average_velocities, average_acc_dt] =
             cell_velocities_accelerations_map[cell];
 
           // We loop over the particles, even if cell is not mobile, to reset
@@ -309,7 +309,7 @@ VelocityVerletIntegrator<dim>::integrate_with_advected_particles(
                   // acceleration is updated at the same step that the particles
                   // are integrated of performance reasons
                   average_velocities.clear();
-                  average_a_dt.clear();
+                  average_acc_dt.clear();
 
                   for (auto &particle : particles_in_cell)
                     {
@@ -337,15 +337,15 @@ VelocityVerletIntegrator<dim>::integrate_with_advected_particles(
 
                       // Calculate acceleration * dt and add velocity value for
                       // average acceleration computation
-                      Tensor<1, 3> a_dt =
+                      Tensor<1, 3> acc_dt =
                         dt_g + particle_force * dt_mass_inverse;
-                      average_a_dt += a_dt;
+                      average_acc_dt += acc_dt;
 
                       for (unsigned int d = 0; d < 3; ++d)
                         {
                           // Particle velocity integration
                           particle_properties[PropertiesIndex::v_x + d] +=
-                            a_dt[d];
+                            acc_dt[d];
 
                           // Add velocity value for average velocity computation
                           average_velocities[d] +=
@@ -379,13 +379,13 @@ VelocityVerletIntegrator<dim>::integrate_with_advected_particles(
 
                   // Compute average velocity and acceleration
                   average_velocities /= n_particles_in_cell;
-                  average_a_dt /= n_particles_in_cell;
+                  average_acc_dt /= n_particles_in_cell;
                 }
               else if (mobility_status == DisableContacts<dim>::advected ||
                        mobility_status == DisableContacts<dim>::advected_active)
                 {
                   // Update the new average velocity of the cell : v + a*dt
-                  average_velocities += average_a_dt;
+                  average_velocities += average_acc_dt;
 
                   for (auto &particle : particles_in_cell)
                     {

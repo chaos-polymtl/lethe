@@ -50,11 +50,15 @@ template class LinearAlgebra::distributed::Vector<int>;
  * granular temperature under a value (default is 1e-4) will have an inactive
  * or advected status which makes them rejected in the broad search step.
  * While the inactive status make the particles static, the advected status will
- * lead to some special handling. This status means that the particles have to
- * be advected by the last computed cell average velocity and acceleration. This
- * status is critical for CFD-DEM since many other forces contribute to the
- * particle motion. This results in no contact forces or velocity integration in
- * future steps for those particles, which make less computation cost for the
+ * lead to some special handling. Instead of having all p-p and p-f forces
+ * calculated at present, the resulting locations of particles come from forces
+ * computed at the time step prior to assigning the advected status. Those
+ * forces are reapplied after being converted into cell-averaged velocity and
+ * acceleration forms. By skipping the fine contact search and p-p & p-w forces
+ * calculation, the computational cost is significantly diminished. This status
+ * is critical for CFD-DEM since many other forces contribute to the particle
+ * motion. This results in no contact forces or velocity integration in future
+ * steps for those particles, which reduces the computational cost of the
  * simulation.
  *
  * Cells may be flagged as that called mobility status:
@@ -116,10 +120,9 @@ public:
    * force calculation, but none of the particles in the cell are integrated.
    *
    * advected (2)
-   * The variance of the velocity of the particles in cell is low, meaning that
-   * the particles are not moving much in respect to each other, suggesting that
-   * contact forces are negligible but particles are advected by other forces.
-   * Note that there are currently no mechanisms that distinct active vs
+   * The variance of the velocity of the particles in cell is low, suggesting
+   * that contact forces are negligible but particles are advected by other
+   * forces. Note that there are currently no mechanisms that distinct active vs
    * advected status: advection of particles is a user-defined feature. Advected
    * and active status are detected in the same way, but are not processed the
    * same at the velocity integration step. For advected particles, the last
