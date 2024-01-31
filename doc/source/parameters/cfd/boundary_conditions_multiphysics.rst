@@ -33,15 +33,16 @@ The default parameters for ``temperature`` and ``convection-radiation`` are show
       subsection Tinf
         set Function expression = 0
       end
-      subsection heat_flux
+      subsection emissivity
         set Function expression = 0
       end
-      subsection emissivity
+      subsection heat_flux
         set Function expression = 0
       end
     end
     set Stefan-Boltzmann constant = 0.000000056703
   end
+
 
 * ``number``: This is the number of boundary conditions of the problem.
 
