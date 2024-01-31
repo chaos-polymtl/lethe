@@ -62,9 +62,9 @@ subsection boundary conditions heat transfer
   subsection bc 1
     set id   = 1
     set type = convection-radiation
-    #subsection heat_flux
-    #  set Function expression = 100000
-    #end
+    subsection heat_flux
+      set Function expression = 100000
+    end
   end
   subsection bc 2
     set id   = 2
@@ -84,7 +84,7 @@ subsection analytical solution
   set enable    = true
   set verbosity = verbose
   subsection temperature
-    set Function expression = 1000 + 100*x
+    set Function expression = 1000 - 100*x
   end
 end
 
