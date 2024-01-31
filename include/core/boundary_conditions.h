@@ -443,8 +443,8 @@ namespace BoundaryConditions
    * convective heat transfer coefficient and "Tinf" is the
    * environment temperature at the boundary, "emissivity" is the emissivity
    * coefficient, and "Stefan-Boltzmann constant" is the Stefan-Boltzmann
-   * constant = 5.6703*10-8 \f$(W.m^{-2}.K^{-4})\f$. It is also possible to impose a heat flux
-   * using "heat_flux"
+   * constant = 5.6703*10-8 \f$(W.m^{-2}.K^{-4})\f$. It is also possible to
+   * impose a heat flux using "heat_flux"
    *
    */
 
