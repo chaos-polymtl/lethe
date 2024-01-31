@@ -874,27 +874,44 @@ CFDDEMSolver<dim>::dem_iterator(unsigned int counter)
     }
   else
     {
-      if (!contacts_are_disabled(counter))
+      if (!has_disabled_contacts)
         {
           integrator_object->integrate(
             this->particle_handler, g, dem_time_step, torque, force, MOI);
-
-          disable_contacts_object.update_average_velocities_acceleration(
-            this->particle_handler, g, force, dem_time_step);
         }
-      else // contacts are disabled
+      else
         {
-          const auto parallel_triangulation =
-            dynamic_cast<parallel::distributed::Triangulation<dim> *>(
-              &*this->triangulation);
-          integrator_object->integrate(this->particle_handler,
-                                       g,
-                                       dem_time_step,
-                                       torque,
-                                       force,
-                                       MOI,
-                                       *parallel_triangulation,
-                                       disable_contacts_object);
+          if (counter > 0)
+            {
+              const auto parallel_triangulation =
+                dynamic_cast<parallel::distributed::Triangulation<dim> *>(
+                  &*this->triangulation);
+              integrator_object->integrate(this->particle_handler,
+                                           g,
+                                           dem_time_step,
+                                           torque,
+                                           force,
+                                           MOI,
+                                           *parallel_triangulation,
+                                           disable_contacts_object);
+            }
+          else // counter == 0
+            {
+              // The cell average velocities and accelerations are updated
+              // from the fully computed forces, but we do not use the mobility
+              // status to disabled contacts at this step.
+              // The reason is that the current mobility status are computed for
+              // the last DEM time step (from the last CFD time step) are the
+              // force of the fluid may have significantly changed the
+              // particulate agitation.
+
+              // Update the cell average velocities and accelerations
+              disable_contacts_object.update_average_velocities_acceleration(
+                this->particle_handler, g, force, dem_time_step);
+
+              integrator_object->integrate(
+                this->particle_handler, g, dem_time_step, torque, force, MOI);
+            }
         }
     }
 
@@ -947,10 +964,8 @@ CFDDEMSolver<dim>::dem_contact_build(unsigned int counter)
   // The last statement in the if condition allows the calling of
   // dem_contact_build for the first DEM iteration in the first CFD time step
   // directly after reading the dem initial checkpoint files
-
   if (contact_detection_step || checkpoint_step || load_balance_step ||
-      (this->simulation_control->is_at_start() && (counter == 0)) ||
-      (has_periodic_boundaries && (counter == 0)))
+      triggering_step(counter))
     {
       this->pcout << "DEM contact search at dem step " << counter << std::endl;
       contact_build_number++;
@@ -971,17 +986,20 @@ CFDDEMSolver<dim>::dem_contact_build(unsigned int counter)
 
       if (has_disabled_contacts)
         {
-          // Update the active and ghost cells set (this should be done after a
-          // load balance or a checkpoint, but since the fem-dem code do not
-          // have a specific step for that we do it also when the contact search
-          // is done)
-          disable_contacts_object.update_local_and_ghost_cell_set(
-            this->void_fraction_dof_handler);
+          // Update the active and ghost cells set after a load balance or a
+          // checkpoint
+          if (load_balance_step || checkpoint_step)
+            {
+              disable_contacts_object.update_local_and_ghost_cell_set(
+                this->void_fraction_dof_handler);
+            }
+
           disable_contacts_object.identify_mobility_status(
             this->void_fraction_dof_handler,
             this->particle_handler,
             (*this->triangulation).n_active_cells(),
-            this->mpi_communicator);
+            this->mpi_communicator,
+            counter);
         }
 
       // Updating moment of inertia container
@@ -994,8 +1012,7 @@ CFDDEMSolver<dim>::dem_contact_build(unsigned int counter)
 
   // Modify particles contact containers by search sequence
   if (contact_detection_step || checkpoint_step || load_balance_step ||
-      (this->simulation_control->is_at_start() && (counter == 0)) ||
-      (has_periodic_boundaries && (counter == 0)))
+      triggering_step(counter))
     {
       // Execute broad search by filling containers of particle-particle
       // contact pair candidates and containers of particle-wall
@@ -1012,7 +1029,7 @@ CFDDEMSolver<dim>::dem_contact_build(unsigned int counter)
             dem_parameters.floating_walls,
             this->simulation_control->get_current_time());
         }
-      else // disabling particle contacts are enabled & counter > 1
+      else // disabling particle contacts are enabled & counter > 0
         {
           contact_manager.execute_particle_particle_broad_search(
             this->particle_handler,

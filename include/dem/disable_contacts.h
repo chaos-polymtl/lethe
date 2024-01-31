@@ -212,6 +212,33 @@ public:
     const unsigned int                     n_active_cells,
     MPI_Comm                               mpi_communicator);
 
+  void
+  identify_mobility_status(
+    const DoFHandler<dim>                 &background_dh,
+    const Particles::ParticleHandler<dim> &particle_handler,
+    const unsigned int                     n_active_cells,
+    MPI_Comm                               mpi_communicator,
+    const unsigned int                     counter)
+  {
+    if (counter > 0)
+      {
+        identify_mobility_status(background_dh,
+                                 particle_handler,
+                                 n_active_cells,
+                                 mpi_communicator);
+      }
+    else
+      {
+        cell_mobility_status.clear();
+
+        for (auto &cell : local_and_ghost_cells)
+          {
+            assign_mobility_status(cell->active_cell_index(),
+                                   mobility_status::mobile);
+          }
+      }
+  }
+
   /**
    * @brief Maps the periodic nodes pairs of the triangulation using the constraints
    *
@@ -329,7 +356,9 @@ public:
 
     // Tensor for velocity and acceleration * dt computation
     Tensor<1, 3> velocity_cell_average;
-    Tensor<1, 3> acceleration_dt;
+    Tensor<1, 3> acc_dt_cell_average;
+
+    const Tensor<1, 3> dt_g = g * dt;
 
     // Loop over all the cells even if they are not mobile to reset the force
     // and torque value
@@ -339,7 +368,7 @@ public:
           particle_handler.n_particles_in_cell(cell);
 
         velocity_cell_average.clear();
-        acceleration_dt.clear();
+        acc_dt_cell_average.clear();
 
         if (n_particles_in_cell > 0)
           {
@@ -350,30 +379,34 @@ public:
                 auto particle_properties          = particle.get_properties();
                 types::particle_index particle_id = particle.get_local_index();
 
+                double dt_mass_inverse =
+                  dt / particle_properties[DEM::PropertiesIndex::mass];
+
+                // Calculate the acceleration of the particle times the time
+                // step
+                Tensor<1, 3> acc_dt_particle =
+                  dt_g + force[particle_id] * dt_mass_inverse;
+                acc_dt_cell_average += acc_dt_particle;
+
                 for (int d = 0; d < dim; ++d)
                   {
-                    // Get the particle velocity components
-                    int v_axis = DEM::PropertiesIndex::v_x + d;
-                    velocity_cell_average[d] += particle_properties[v_axis];
+                    // Add up the current velocity for the average velocity
+                    velocity_cell_average[d] +=
+                      particle_properties[DEM::PropertiesIndex::v_x + d] +
+                      acc_dt_particle[d];
                   }
-
-                // a = F/m + g
-                acceleration_dt +=
-                  force[particle_id] /
-                    particle_properties[DEM::PropertiesIndex::mass] +
-                  g;
               }
 
             // Compute the average velocity and acceleration, the time step is
             // multiplied here for the hole vector instead of each time a value
             // is used
             velocity_cell_average /= n_particles_in_cell;
-            acceleration_dt *= dt / n_particles_in_cell;
+            acc_dt_cell_average /= n_particles_in_cell;
           }
 
         // Update acceleration for particles in cell
         cell_velocities_accelerations.insert(std::make_pair(
-          cell, std::make_pair(velocity_cell_average, acceleration_dt)));
+          cell, std::make_pair(velocity_cell_average, acc_dt_cell_average)));
       }
   }
 
@@ -429,7 +462,11 @@ private:
     Vector<double> &cell_granular_temperature,
     Vector<double> &cell_solid_fraction);
 
-
+  inline void
+  assign_mobility_status(unsigned int cell_id, const int cell_status)
+  {
+    cell_mobility_status.insert({cell_id, cell_status});
+  }
   /**
    * @brief Assigns the mobility status to node and the periodic coinciding node from the
    * periodic nodes map. If required, this will prevent overwriting a node
@@ -443,29 +480,6 @@ private:
    * @param mobility_status The mobility status to assign to the periodic node
    *
    */
-  inline void
-  assign_node_status(const unsigned int node_id, const int mobility_status)
-  {
-    // Prevailing mobility status of the node and assignation
-    int mobility_status_assigned =
-      std::max(mobility_status, mobility_at_nodes(node_id));
-    mobility_at_nodes(node_id) = mobility_status_assigned;
-
-    // Check if node has a periodic node and assign the same mobility status if
-    // prevailing on the one on the periodic node
-    auto it = periodic_node_ids.find(node_id);
-    if (it != periodic_node_ids.end())
-      {
-        mobility_at_nodes(it->second) = // mobility_status;
-          std::max(mobility_status_assigned, mobility_at_nodes(it->second));
-      }
-  }
-
-  // Assign active status to nodes except mobile because
-  // this will cause to propagate the mobile status to the
-  // neighbors in this loop since the mobility check at node
-  // is executed in the same container that we are assigning new
-  // mobility status
   inline void
   assign_mobility_status(unsigned int                         cell_id,
                          std::vector<types::global_dof_index> dof_indices,
@@ -493,16 +507,22 @@ private:
       }
   }
 
-  inline void
-  assign_mobility_status(unsigned int cell_id, const int cell_status)
+
+  typename DEM::dem_data_structures<dim>::cell_index_int_map
+  get_all_mobile_mobility_status()
   {
-    cell_mobility_status.insert({cell_id, cell_status});
+    return all_mobile_mobility_status;
   }
+
 
   // Map of cell mobility status, the key is the active cell index and the value
   // is the mobility status
   typename DEM::dem_data_structures<dim>::cell_index_int_map
     cell_mobility_status;
+
+  typename DEM::dem_data_structures<dim>::cell_index_int_map
+    all_mobile_mobility_status;
+
 
   // Set of locally owned and ghost cells, used to loop over only the locally
   // owned and ghost cells without looping over all the cells in the

@@ -237,14 +237,48 @@ private:
   dynamic_flow_control() override;
 
   /**
-   * @brief Check if the disabling contacts is enabled and that
+   * @brief Check if the disabling contacts is enabled and that the counter is
+   * for the first (counter = 0)
    *
    */
   inline bool
   contacts_are_disabled(unsigned int counter) const
   {
-    return has_disabled_contacts && counter > 1;
+    return has_disabled_contacts && counter > 0;
   }
+
+  /**
+   * @brief triggering_step
+   * The first DEM step of the simulation needs obliously a DEM contact search.
+   * Also some features of the solver, such as the periodic boundaries or the
+   * disabled of contacts. The reasons are:
+   * PBC: The particles need to be displaced to the other side of the domain if
+   * they cross the periodic boundaries because of the fluid force.
+   * Disabled contacts: The
+   */
+
+  inline bool
+  triggering_step(const unsigned int counter) const
+  {
+    if (counter > 0)
+      {
+        return false;
+      }
+    else
+      {
+        if (this->simulation_control->is_at_start() ||
+            has_periodic_boundaries || has_disabled_contacts)
+          {
+            return true;
+          }
+        else
+          {
+            return false;
+          }
+      }
+  }
+
+
 
   unsigned int                               coupling_frequency;
   bool                                       contact_detection_step;
