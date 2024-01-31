@@ -67,7 +67,7 @@ Simulation Control
 Boundary Conditions
 ~~~~~~~~~~~~~~~~~~~
 
-All the four boundary conditions are ``noslip``, and the heat transfer boundary conditions are ``convection-radiation`` with a convective heat transfer coefficient of 80 :math:`\text{W}\text{m}^{-2}\text{K}^{-1}`, ambient temperature is 20 :math:`^{\circ}\text{C}`, and emissivity is 0.6.
+All the four boundary conditions are ``noslip``, and the heat transfer boundary conditions are ``convection-radiation-flux`` with a convective heat transfer coefficient of 80 :math:`\text{W}\text{m}^{-2}\text{K}^{-1}`, ambient temperature is 20 :math:`^{\circ}\text{C}`, and emissivity is 0.6.
 
 .. code-block:: text
 
@@ -94,7 +94,7 @@ All the four boundary conditions are ``noslip``, and the heat transfer boundary 
       set number = 4
       subsection bc 0
         set id         = 0
-        set type       = convection-radiation
+        set type       = convection-radiation-flux
         subsection h
           set Function expression = 80
         end
@@ -107,7 +107,7 @@ All the four boundary conditions are ``noslip``, and the heat transfer boundary 
       end
       subsection bc 1
         set id         = 1
-        set type       = convection-radiation
+        set type       = convection-radiation-flux
         subsection h
           set Function expression = 80
         end
@@ -120,7 +120,7 @@ All the four boundary conditions are ``noslip``, and the heat transfer boundary 
       end
       subsection bc 2
         set id         = 2
-        set type       = convection-radiation
+        set type       = convection-radiation-flux
         subsection h
           set Function expression = 80
         end
@@ -133,7 +133,7 @@ All the four boundary conditions are ``noslip``, and the heat transfer boundary 
       end
       subsection bc 3
         set id         = 3
-        set type       = convection-radiation
+        set type       = convection-radiation-flux
         subsection h
           set Function expression = 80
         end

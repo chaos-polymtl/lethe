@@ -439,7 +439,7 @@ namespace BoundaryConditions
    *  - if bc type is "temperature" (Dirichlet condition), "value" is the
    * double passed to the deal.ii ConstantFunction
    *
-   *  - if bc type is "convection-radiation" (Robin condition), "h" is the
+   *  - if bc type is "convection-radiation-flux" (Robin condition), "h" is the
    * convective heat transfer coefficient and "Tinf" is the
    * environment temperature at the boundary, "emissivity" is the emissivity
    * coefficient, and "Stefan-Boltzmann constant" is the Stefan-Boltzmann
@@ -485,12 +485,12 @@ namespace BoundaryConditions
   HTBoundaryConditions<dim>::declareDefaultEntry(ParameterHandler  &prm,
                                                  const unsigned int i_bc)
   {
-    prm.declare_entry("type",
-                      "noflux",
-                      Patterns::Selection(
-                        "noflux|temperature|convection-radiation"),
-                      "Type of boundary condition for heat transfer"
-                      "Choices are <noflux|temperature|convection-radiation>.");
+    prm.declare_entry(
+      "type",
+      "noflux",
+      Patterns::Selection("noflux|temperature|convection-radiation-flux"),
+      "Type of boundary condition for heat transfer"
+      "Choices are <noflux|temperature|convection-radiation-flux>.");
 
     prm.declare_entry("id",
                       Utilities::int_to_string(i_bc, 2),
@@ -503,25 +503,25 @@ namespace BoundaryConditions
     dirichlet_value[i_bc]->declare_parameters(prm);
     prm.leave_subsection();
 
-    // Expression for the h coefficient of convection-radiation bc
+    // Expression for the h coefficient of convection-radiation-flux bc
     prm.enter_subsection("h");
     h[i_bc] = std::make_shared<Functions::ParsedFunction<dim>>();
     h[i_bc]->declare_parameters(prm);
     prm.leave_subsection();
 
-    // Temperature of environment for convection-radiation bc
+    // Temperature of environment for convection-radiation-flux bc
     prm.enter_subsection("Tinf");
     Tinf[i_bc] = std::make_shared<Functions::ParsedFunction<dim>>();
     Tinf[i_bc]->declare_parameters(prm);
     prm.leave_subsection();
 
-    // Emissivity of the boundary for convection-radiation bc
+    // Emissivity of the boundary for convection-radiation-flux bc
     prm.enter_subsection("emissivity");
     emissivity[i_bc] = std::make_shared<Functions::ParsedFunction<dim>>();
     emissivity[i_bc]->declare_parameters(prm);
     prm.leave_subsection();
 
-    // Heat flux (Neumann) at the boundary for convection-radiation bc
+    // Heat flux (Neumann) at the boundary for convection-radiation-flux bc
     prm.enter_subsection("heat_flux");
     heat_flux_bc[i_bc] = std::make_shared<Functions::ParsedFunction<dim>>();
     heat_flux_bc[i_bc]->declare_parameters(prm);
@@ -599,7 +599,7 @@ namespace BoundaryConditions
       {
         this->type[i_bc] = BoundaryType::temperature;
       }
-    else if (op == "convection-radiation")
+    else if (op == "convection-radiation-flux")
       {
         this->type[i_bc]                  = BoundaryType::convection_radiation;
         this->has_convection_radiation_bc = true;

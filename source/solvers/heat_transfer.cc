@@ -1249,8 +1249,8 @@ HeatTransfer<dim>::update_boundary_conditions()
 
   double time = this->simulation_control->get_current_time();
   // We begin by setting the new time for all expressions, although the change
-  // for the convection-radiation boundary conditions won't be applied in this
-  // function
+  // for the convection-radiation-flux boundary conditions won't be applied in
+  // this function
   for (unsigned int i_bc = 0;
        i_bc < this->simulation_parameters.boundary_conditions_ht.size;
        ++i_bc)

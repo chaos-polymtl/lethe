@@ -183,7 +183,7 @@ The ``boundary conditions`` are set for:
       set number = 2
       subsection bc 0
         set id   = 0
-        set type = convection-radiation
+        set type = convection-radiation-flux
         subsection h
           set Function expression = 0
         end
@@ -357,7 +357,7 @@ Several adjustments have to be made in the `.prm` to turn the domain clockwise, 
       set number = 4
       subsection bc 2
         set id   = 2
-        set type = convection-radiation
+        set type = convection-radiation-flux
         subsection h
           set Function expression = 0
         end
