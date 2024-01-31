@@ -465,6 +465,9 @@ HeatTransferAssemblerRobinBC<dim>::assemble_rhs(
             this->boundary_conditions_ht.Tinf[i_bc]->value(Point<dim>());
           const double emissivity =
             this->boundary_conditions_ht.emissivity[i_bc]->value(Point<dim>());
+          const double heat_flux_bc =
+            this->boundary_conditions_ht.heat_flux_bc[i_bc]->value(
+              Point<dim>());
 
           for (unsigned int f = 0; f < scratch_data.n_faces; ++f)
             {
@@ -486,7 +489,8 @@ HeatTransferAssemblerRobinBC<dim>::assemble_rhs(
                             (h * (T_face - T_inf) +
                              Stefan_Boltzmann_constant * emissivity *
                                (T_face * T_face * T_face * T_face -
-                                T_inf * T_inf * T_inf * T_inf)) *
+                                T_inf * T_inf * T_inf * T_inf) +
+                             heat_flux_bc) *
                             JxW;
                         }
                     }
@@ -498,63 +502,6 @@ HeatTransferAssemblerRobinBC<dim>::assemble_rhs(
 
 template class HeatTransferAssemblerRobinBC<2>;
 template class HeatTransferAssemblerRobinBC<3>;
-
-
-template <int dim>
-void
-HeatTransferAssemblerHeatFluxBC<dim>::assemble_matrix(
-  HeatTransferScratchData<dim> &scratch_data,
-  StabilizedMethodsCopyData    &copy_data)
-{
-  (void)scratch_data.is_boundary_cell;
-  (void)copy_data.local_matrix;
-}
-
-template <int dim>
-void
-HeatTransferAssemblerHeatFluxBC<dim>::assemble_rhs(
-  HeatTransferScratchData<dim> &scratch_data,
-  StabilizedMethodsCopyData    &copy_data)
-{
-  if (!scratch_data.is_boundary_cell)
-    return;
-
-  auto &local_rhs = copy_data.local_rhs;
-
-  //  Heat flux Neumann boundary condition, loop on faces
-  for (unsigned int i_bc = 0; i_bc < this->boundary_conditions_ht.size; ++i_bc)
-    {
-      if (this->boundary_conditions_ht.type[i_bc] ==
-          BoundaryConditions::BoundaryType::heat_flux_bc)
-        {
-          const double heat_flux_bc =
-            this->boundary_conditions_ht.heat_flux_bc[i_bc]->value(
-              Point<dim>());
-
-          for (unsigned int f = 0; f < scratch_data.n_faces; ++f)
-            {
-              if (scratch_data.boundary_face_id[f] ==
-                  this->boundary_conditions_ht.id[i_bc])
-                {
-                  for (unsigned int q = 0; q < scratch_data.n_faces_q_points;
-                       ++q)
-                    {
-                      const double JxW = scratch_data.face_JxW[f][q];
-                      for (unsigned int i = 0; i < scratch_data.n_dofs; ++i)
-                        {
-                          const double phi_face_T_i =
-                            scratch_data.phi_face_T[f][q][i];
-                          local_rhs(i) -= phi_face_T_i * heat_flux_bc * JxW;
-                        }
-                    }
-                }
-            }
-        }
-    }
-}
-
-template class HeatTransferAssemblerHeatFluxBC<2>;
-template class HeatTransferAssemblerHeatFluxBC<3>;
 
 
 template <int dim>

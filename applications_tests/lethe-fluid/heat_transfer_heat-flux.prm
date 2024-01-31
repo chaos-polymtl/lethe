@@ -61,10 +61,10 @@ subsection boundary conditions heat transfer
   end
   subsection bc 1
     set id   = 1
-    set type = heat-flux
-    subsection value
-      set Function expression = 100000
-    end
+    set type = convection-radiation
+    #subsection heat_flux
+    #  set Function expression = 100000
+    #end
   end
   subsection bc 2
     set id   = 2

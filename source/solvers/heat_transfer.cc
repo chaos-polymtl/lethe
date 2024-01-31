@@ -354,16 +354,6 @@ HeatTransfer<dim>::setup_assemblers()
     }
 
 
-  // Neumann boundary condition
-  if (this->simulation_parameters.boundary_conditions_ht.has_heat_flux_bc)
-    {
-      this->assemblers.push_back(
-        std::make_shared<HeatTransferAssemblerHeatFluxBC<dim>>(
-          this->simulation_control,
-          simulation_parameters.boundary_conditions_ht));
-    }
-
-
   if (this->simulation_parameters.multiphysics.viscous_dissipation)
     {
       if (this->simulation_parameters.multiphysics.VOF)

@@ -217,52 +217,6 @@ public:
   const BoundaryConditions::HTBoundaryConditions<dim> &boundary_conditions_ht;
 };
 
-/**
- * @brief Assembles prescribed heat flux Neumann boundary condition for the heat transfer solver.
- *
- * @tparam dim An integer that denotes the number of spatial dimensions
- *
- * @param simulation_control Shared pointer of the SimulationControl object
- * controlling the current simulation
- * @param p_boundary_conditions_ht HTBoundaryConditions object that holds
- * boundary condition information for the Heat-Transfer solver
- *
- * @ingroup assemblers
- */
-template <int dim>
-class HeatTransferAssemblerHeatFluxBC : public HeatTransferAssemblerBase<dim>
-{
-public:
-  HeatTransferAssemblerHeatFluxBC(
-    std::shared_ptr<SimulationControl> simulation_control,
-    const BoundaryConditions::HTBoundaryConditions<dim>
-      &p_boundary_conditions_ht)
-    : HeatTransferAssemblerBase<dim>(simulation_control)
-    , boundary_conditions_ht(p_boundary_conditions_ht)
-  {}
-
-  /**
-   * @brief assemble_matrix Assembles the matrix
-   * @param scratch_data (see base class)
-   * @param copy_data (see base class)
-   */
-
-  virtual void
-  assemble_matrix(HeatTransferScratchData<dim> &scratch_data,
-                  StabilizedMethodsCopyData    &copy_data) override;
-
-  /**
-   * @brief assemble_rhs Assembles the rhs
-   * @param scratch_data (see base class)
-   * @param copy_data (see base class)
-   */
-  virtual void
-  assemble_rhs(HeatTransferScratchData<dim> &scratch_data,
-               StabilizedMethodsCopyData    &copy_data) override;
-
-  const BoundaryConditions::HTBoundaryConditions<dim> &boundary_conditions_ht;
-};
-
 
 /**
  * @brief Class that assembles the viscous dissipation for the heat transfer
