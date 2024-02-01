@@ -173,8 +173,7 @@ public:
   reinit(const typename DoFHandler<dim>::active_cell_iterator &cell,
          const VectorType                                     &current_solution,
          const std::vector<VectorType> &previous_solutions,
-         Function<dim>                 *source_function,
-         Parameters::CahnHilliard       cahn_hilliard_parameters)
+         Function<dim>                 *source_function)
   {
     this->phase_order.component        = 0;
     this->chemical_potential.component = 1;

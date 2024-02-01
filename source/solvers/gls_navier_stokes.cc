@@ -810,8 +810,7 @@ GLSNavierStokesSolver<dim>::assemble_local_system_matrix(
       scratch_data.reinit_cahn_hilliard(
         phase_cell,
         *this->multiphysics->get_solution(PhysicsID::cahn_hilliard),
-        *this->multiphysics->get_filtered_solution(PhysicsID::cahn_hilliard),
-        this->simulation_parameters.multiphysics.cahn_hilliard_parameters);
+        *this->multiphysics->get_filtered_solution(PhysicsID::cahn_hilliard));
     }
 
   if (this->simulation_parameters.multiphysics.heat_transfer)
@@ -1022,8 +1021,7 @@ GLSNavierStokesSolver<dim>::assemble_local_system_rhs(
       scratch_data.reinit_cahn_hilliard(
         phase_cell,
         *this->multiphysics->get_solution(PhysicsID::cahn_hilliard),
-        *this->multiphysics->get_filtered_solution(PhysicsID::cahn_hilliard),
-        this->simulation_parameters.multiphysics.cahn_hilliard_parameters);
+        *this->multiphysics->get_filtered_solution(PhysicsID::cahn_hilliard));
     }
 
   if (this->simulation_parameters.multiphysics.heat_transfer)

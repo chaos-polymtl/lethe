@@ -123,12 +123,10 @@ CahnHilliard<dim>::assemble_local_system_matrix(
   auto source_term = simulation_parameters.source_term.cahn_hilliard_source;
   source_term->set_time(simulation_control->get_current_time());
 
-  scratch_data.reinit(
-    cell,
-    this->evaluation_point,
-    this->previous_solutions,
-    &(*source_term),
-    this->simulation_parameters.multiphysics.cahn_hilliard_parameters);
+  scratch_data.reinit(cell,
+                      this->evaluation_point,
+                      this->previous_solutions,
+                      &(*source_term));
 
   const DoFHandler<dim> *dof_handler_fluid =
     multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
@@ -225,12 +223,10 @@ CahnHilliard<dim>::assemble_local_system_rhs(
   auto source_term = simulation_parameters.source_term.cahn_hilliard_source;
   source_term->set_time(simulation_control->get_current_time());
 
-  scratch_data.reinit(
-    cell,
-    this->evaluation_point,
-    this->previous_solutions,
-    &(*source_term),
-    this->simulation_parameters.multiphysics.cahn_hilliard_parameters);
+  scratch_data.reinit(cell,
+                      this->evaluation_point,
+                      this->previous_solutions,
+                      &(*source_term));
 
   const DoFHandler<dim> *dof_handler_fluid =
     multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
@@ -1247,7 +1243,6 @@ CahnHilliard<dim>::apply_phase_filter()
                             update_quadrature_points | update_JxW_values);
 
   const FEValuesExtractors::Scalar phase_order(0);
-  const unsigned int               n_q_points = this->cell_quadrature->size();
 
   TrilinosWrappers::MPI::Vector filtered_solution_owned(
     this->locally_owned_dofs, mpi_communicator);
@@ -1255,13 +1250,10 @@ CahnHilliard<dim>::apply_phase_filter()
 
   filtered_solution.reinit(this->present_solution);
 
-  const unsigned int n_cells = triangulation->n_active_cells();
   std::unordered_map<unsigned int, bool> filtered_cell_list;
 
   const unsigned int                   dofs_per_cell = this->fe->dofs_per_cell;
   std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
-
-  Vector<float> approximate_gradient_vector(n_cells);
 
   // Create filter object
   filter = CahnHilliardFilterBase::model_cast(
@@ -1272,7 +1264,6 @@ CahnHilliard<dim>::apply_phase_filter()
     {
       if (cell->is_locally_owned())
         {
-          const unsigned int cell_index = cell->active_cell_index();
           cell->get_dof_indices(local_dof_indices);
 
           for (unsigned int p = 0; p < local_dof_indices.size(); ++p)

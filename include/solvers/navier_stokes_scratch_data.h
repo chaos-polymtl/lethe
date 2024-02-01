@@ -1000,8 +1000,7 @@ public:
   reinit_cahn_hilliard(
     const typename DoFHandler<dim>::active_cell_iterator &cell,
     const VectorType                                     &current_solution,
-    const VectorType        &current_filtered_solution,
-    Parameters::CahnHilliard cahn_hilliard_parameters)
+    const VectorType &current_filtered_solution)
   {
     this->fe_values_cahn_hilliard->reinit(cell);
     this->phase_order.component        = 0;
@@ -1029,8 +1028,6 @@ public:
       .get_function_gradients(
         current_filtered_solution,
         this->filtered_phase_order_cahn_hilliard_gradients);
-
-    auto &fe_cahn_hilliard = this->fe_values_cahn_hilliard->get_fe();
   }
 
 
