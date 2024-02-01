@@ -106,13 +106,13 @@ From the candi folder, the installation of candi can be launched using:
 .. code-block:: text
   :class: copy-button
 
-  ./candi.sh -j $num_proc --prefix=$path
+  ./candi.sh -j$numproc --prefix=$path
 
 
-where ``$num_proc`` is the number of threads you want to use to compile deal.II and ``$path`` the installation prefix that is desired (e.g. ``/home/username/software/candi``). 
+where ``$numproc`` is the number of threads you want to use to compile deal.II and ``$path`` the installation prefix that is desired (e.g. ``/home/username/software/candi``).
 
 .. tip:: 
-  For a computer with 8Gb of RAM, 1 thread (``num_proc=1``) should be used. For 16 Gb, 4 threads is reasonable. For 32 Gb, 16 threads or more can be used.
+  For a computer with 8Gb of RAM, 1 thread (``numproc=1``) should be used. For 16 Gb, 4 threads is reasonable. For 32 Gb, 16 threads or more can be used.
 
 
 After installation, you should have a ``deal.II-candi`` folder in the installation prefix directory, with the dealii folder of the desired version (see section :ref:`update-dealii`), as well as the required dependencies (p4est, trilinos, etc.).
@@ -123,7 +123,7 @@ After installation, add the following lines variable to your ``.bashrc`` :
   :class: copy-button
     
     source cand/install/prefix/configuration/enable.sh
-    export DEAL_II_DIR=cand/install/prefix/deal.II-<version> >> ~/.bashrc
+    export DEAL_II_DIR=cand/install/prefix/deal.II-v.<version>
 
 
 .. _install-lethe:
@@ -165,7 +165,7 @@ Then you can compile:
 .. code-block:: text
   :class: copy-button
 
-  make -j<numprocs>
+  make -j$numprocs
 
 Testing Your Installation 
 -------------------------------------
@@ -175,7 +175,7 @@ Lethe comes pre-packaged with an extensive test suit for all of its modules. It 
 .. code-block:: text
   :class: copy-button
 
-  ctest -j $numprocs
+  ctest -j$numprocs
 
 where $numprocs can be the number of physical cores on your machine.
 
@@ -215,7 +215,7 @@ Compile deal.II
 .. code-block:: text
   :class: copy-button
 
-  make -j<nprocessor> install
+  make -j$numprocs install
 
 Create an environment variable for the deal.II directory
 
