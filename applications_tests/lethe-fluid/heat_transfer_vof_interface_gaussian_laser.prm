@@ -117,7 +117,7 @@ end
 subsection boundary conditions heat transfer
   set number = 1
   subsection bc 0
-    set type = convection-radiation
+    set type = convection-radiation-flux
     subsection h
       set Function expression = 5
     end
