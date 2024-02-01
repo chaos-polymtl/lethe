@@ -70,9 +70,9 @@ public:
 
 /**
  * @brief CahnHilliardClipFIlter class is used to calculate
- * a filtered phase for Cahn-Hilliard simulations. In this case, a simple clamping is
- * performed on the phase fraction parameter for it to remain in the [-1,1]
- * interval.
+ * a filtered phase for Cahn-Hilliard simulations. In this case, a simple
+ * clamping is performed on the phase fraction parameter for it to remain in the
+ * [-1,1] interval.
  */
 class CahnHilliardClipFilter : public CahnHilliardFilterBase
 {
@@ -80,11 +80,11 @@ public:
   CahnHilliardClipFilter()
   {}
 
-    /**
-     * @brief filter_phase calculates the value of the filtered phase fraction
-     * @param unfiltered_phase Value of the phase fraction before applying the filter
-     * @return Value of the phase fraction after applying the filter
-     */
+  /**
+   * @brief filter_phase calculates the value of the filtered phase fraction
+   * @param unfiltered_phase Value of the phase fraction before applying the filter
+   * @return Value of the phase fraction after applying the filter
+   */
   virtual double
   filter_phase(const double &unfiltered_phase) override
   {

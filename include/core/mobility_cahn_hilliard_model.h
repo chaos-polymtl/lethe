@@ -135,7 +135,7 @@ public:
   }
 
 private:
-  const double                    mobility_cahn_hilliard_constant;
+  const double mobility_cahn_hilliard_constant;
 };
 
 /**
@@ -151,7 +151,7 @@ public:
     const double p_mobility_cahn_hilliard_constant)
     : mobility_cahn_hilliard_constant(p_mobility_cahn_hilliard_constant)
   {
-    this->model_depends_on[field::phase_order_cahn_hilliard]          = true;
+    this->model_depends_on[field::phase_order_cahn_hilliard] = true;
   }
 
   /**
@@ -255,7 +255,7 @@ public:
   }
 
 private:
-  const double                    mobility_cahn_hilliard_constant;
+  const double mobility_cahn_hilliard_constant;
 };
 
 #endif
