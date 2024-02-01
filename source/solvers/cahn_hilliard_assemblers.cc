@@ -13,7 +13,7 @@ CahnHilliardAssemblerCore<dim>::assemble_matrix(
   StabilizedMethodsCopyData    &copy_data)
 {
   // Gather physical properties
-  const double epsilon   = this->minimum_cell_diameter / sqrt(2);
+  const double epsilon   = this->epsilon;
   const double cell_size = scratch_data.cell_size;
   const double xi =
     this->cahn_hilliard_parameters.potential_smoothing_coefficient;
@@ -96,7 +96,7 @@ CahnHilliardAssemblerCore<dim>::assemble_rhs(
   StabilizedMethodsCopyData    &copy_data)
 {
   // Gather physical properties
-  const double epsilon   = this->minimum_cell_diameter / sqrt(2);
+  const double epsilon   = this->epsilon;
   const double cell_size = scratch_data.cell_size;
   const double xi =
     this->cahn_hilliard_parameters.potential_smoothing_coefficient;
@@ -175,7 +175,8 @@ CahnHilliardAssemblerAngleOfContact<dim>::assemble_matrix(
     {
       return;
     }
-  const double epsilon = this->minimum_cell_diameter / sqrt(2);
+  const double epsilon = this->epsilon;
+  // std::cout<<"in angle of contact assembly"<<std::endl;
 
   auto &local_matrix = copy_data.local_matrix;
 
@@ -215,7 +216,7 @@ CahnHilliardAssemblerAngleOfContact<dim>::assemble_matrix(
                                 scratch_data.grad_phi_face_phase[f][q][j];
 
                               local_matrix(i, j) +=
-                                -lambda * phi_potential_i *
+                                -lambda * -phi_potential_i *
                                 grad_phi_face_phase_j * face_phase_grad_value *
                                 std::cos(angle_of_contact * M_PI / 180.0) *
                                 (1.0 / (face_phase_grad_value.norm() +
@@ -239,7 +240,7 @@ CahnHilliardAssemblerAngleOfContact<dim>::assemble_rhs(
   if (!scratch_data.is_boundary_cell)
     return;
 
-  const double epsilon = this->minimum_cell_diameter / sqrt(2);
+  const double epsilon = this->epsilon;
 
   auto &local_rhs = copy_data.local_rhs;
 
@@ -298,7 +299,7 @@ CahnHilliardAssemblerFreeAngle<dim>::assemble_matrix(
   if (!scratch_data.is_boundary_cell)
     return;
 
-  const double epsilon = this->minimum_cell_diameter / sqrt(2);
+  const double epsilon = this->epsilon;
 
 
   auto &local_matrix = copy_data.local_matrix;
@@ -357,7 +358,7 @@ CahnHilliardAssemblerFreeAngle<dim>::assemble_rhs(
   if (!scratch_data.is_boundary_cell)
     return;
 
-  const double epsilon = this->minimum_cell_diameter / sqrt(2);
+  const double epsilon = this->epsilon;
 
   auto &local_rhs = copy_data.local_rhs;
 

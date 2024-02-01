@@ -1,7 +1,7 @@
 # Listing of Parameters
 #----------------------
 
-set dimension = 2
+set dimension = 3
 
 #---------------------------------------------------
 # Simulation Control
@@ -40,7 +40,7 @@ subsection analytical solution
   set verbosity = verbose
 
   subsection cahn hilliard
-    set Function expression = -sin(pi*x)*sin(pi*y); 1/0.0 #This is to make the test more robust on every configuration. Only the phase (first component) is being tested, the potential is not tested, the numerical solution converges to zero extremely fast.
+    set Function expression = -sin(pi*x)*sin(pi*y)*sin(pi*z); 1/0.0 #This is to make the test more robust on every configuration. Only the phase (first component) is being tested, the potential is not tested, the numerical solution converges to zero extremely fast.
   end
 end
 
@@ -52,7 +52,7 @@ subsection mesh
   set type               = dealii
   set grid type          = hyper_cube
   set grid arguments     = -1 : 1 : true
-  set initial refinement = 4
+  set initial refinement = 2
 end
 
 #---------------------------------------------------
@@ -87,12 +87,10 @@ subsection physical properties
   subsection material interaction 0
     set type = fluid-fluid
     subsection fluid-fluid interaction
-      set first fluid id                  = 0
-      set second fluid id                 = 1
-      set surface tension model           = constant
-      set surface tension coefficient     = 1
-      set cahn hilliard mobility model    = constant
-      set cahn hilliard mobility constant = 1e-7
+      set first fluid id              = 0
+      set second fluid id             = 1
+      set surface tension model       = constant
+      set surface tension coefficient = 1
     end
   end
 end
@@ -103,7 +101,7 @@ end
 
 subsection source term
   subsection cahn hilliard
-    set Function expression = 0;3/(2.0*sqrt(2.0)) *(sin(pi*x)^3*sin(pi*y)^3 - sin(pi*x)*sin(pi*y)) + 3/(2.0*sqrt(2.0)) *2*pi*pi*sin(pi*x)*sin(pi*y)
+    set Function expression = 0;3/(2.0*sqrt(2.0)) *(sin(pi*x)^3*sin(pi*y)^3*sin(pi*z)^3 - sin(pi*x)*sin(pi*y)*sin(pi*z)) + 3/(2.0*sqrt(2.0))*3*pi*pi*sin(pi*x)*sin(pi*y)*sin(pi*z)
   end
 end
 
@@ -112,7 +110,7 @@ end
 #---------------------------------------------------
 
 subsection boundary conditions cahn hilliard
-  set number = 4
+  set number = 6
   subsection bc 0
     set id   = 0
     set type = dirichlet
@@ -141,6 +139,20 @@ subsection boundary conditions cahn hilliard
       set Function expression = 0
     end
   end
+  subsection bc 4
+    set id   = 4
+    set type = dirichlet
+    subsection phi
+      set Function expression = 0
+    end
+  end
+  subsection bc 5
+    set id   = 5
+    set type = dirichlet
+    subsection phi
+      set Function expression = 0
+    end
+  end
 end
 
 #---------------------------------------------------
@@ -149,11 +161,9 @@ end
 
 subsection non-linear solver
   subsection cahn hilliard
-    set tolerance = 1e-7
     set verbosity = quiet
   end
   subsection fluid dynamics
-    set tolerance = 1e-7
     set verbosity = quiet
   end
 end
@@ -164,9 +174,6 @@ end
 
 subsection linear solver
   subsection cahn hilliard
-    set verbosity = quiet
-  end
-  subsection fluid dynamics
     set verbosity = quiet
   end
 end
