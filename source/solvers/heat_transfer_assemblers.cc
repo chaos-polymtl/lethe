@@ -447,7 +447,7 @@ HeatTransferAssemblerRobinBC<dim>::assemble_rhs(
     this->boundary_conditions_ht.Stefan_Boltzmann_constant;
 
   // Robin boundary condition, loop on faces (Newton's cooling law +
-  // Stefan-Boltzmann law) Convection-radiation BC is a combination of
+  // Stefan-Boltzmann law) Convection-radiation-flux BC is a combination of
   // convection and radiation. If the Stefan-Boltzmann constant (with default
   // value = 0) is set to 0, only the convection component is considered,
   // whereas if the convection coefficient, h (with default value = 0), is set
@@ -465,6 +465,9 @@ HeatTransferAssemblerRobinBC<dim>::assemble_rhs(
             this->boundary_conditions_ht.Tinf[i_bc]->value(Point<dim>());
           const double emissivity =
             this->boundary_conditions_ht.emissivity[i_bc]->value(Point<dim>());
+          const double heat_flux_bc =
+            this->boundary_conditions_ht.heat_flux_bc[i_bc]->value(
+              Point<dim>());
 
           for (unsigned int f = 0; f < scratch_data.n_faces; ++f)
             {
@@ -486,7 +489,8 @@ HeatTransferAssemblerRobinBC<dim>::assemble_rhs(
                             (h * (T_face - T_inf) +
                              Stefan_Boltzmann_constant * emissivity *
                                (T_face * T_face * T_face * T_face -
-                                T_inf * T_inf * T_inf * T_inf)) *
+                                T_inf * T_inf * T_inf * T_inf) +
+                             heat_flux_bc) *
                             JxW;
                         }
                     }

@@ -9,8 +9,8 @@ This subsection's purpose is defining the boundary conditions associated to mult
 Heat Transfer
 ^^^^^^^^^^^^^
 
-For heat transfer boundary conditions, the possible ``types`` are ``noflux`` (default), ``temperature`` and ``convection-radiation``.
-The default parameters for ``temperature`` and ``convection-radiation`` are shown: 
+For heat transfer boundary conditions, the possible ``types`` are ``noflux`` (default), ``temperature`` and ``convection-radiation-flux``.
+The default parameters for ``temperature`` and ``convection-radiation-flux`` are shown:
 
 .. code-block:: text
 
@@ -18,15 +18,15 @@ The default parameters for ``temperature`` and ``convection-radiation`` are show
     set number         = 2
     set time dependent = false
     subsection bc 0
-      set id    = 0
-      set type  = temperature
+      set id   = 0
+      set type = temperature
       subsection value
         set Function expression = 0
       end
     end
     subsection bc 1
-      set id         = 1
-      set type       = convection-radiation
+      set id   = 1
+      set type = convection-radiation-flux
       subsection h
         set Function expression = 0
       end
@@ -36,9 +36,13 @@ The default parameters for ``temperature`` and ``convection-radiation`` are show
       subsection emissivity
         set Function expression = 0
       end
+      subsection heat_flux
+        set Function expression = 0
+      end
     end
     set Stefan-Boltzmann constant = 0.000000056703
   end
+
 
 * ``number``: This is the number of boundary conditions of the problem.
 
@@ -57,13 +61,20 @@ The default parameters for ``temperature`` and ``convection-radiation`` are show
 * ``type``: type of boundary condition being imposed. At the moment, choices are:
     * ``noflux`` (default) so that there is no heat transfer boundary condition,
     * ``temperature`` (Dirichlet BC), to impose a given temperature ``value`` at the boundary,
-    * ``convection-radiation`` (Robin BC) for cooling/heating, depending on the environment temperature at the boundary ``Tinf``, with a given heat transfer coefficient ``h`` and emissivity of the boundary :math:`\mathbf{\epsilon}` following Newton's law of cooling (and heating) and Stefan-Boltzmann law of radiation. Note that the expressions for ``h``, ``Tinf`` and ``emissivity`` can be time-dependent, but the current implementation doesn't allow for space dependence (the expressions are evaluated at the origin).
+    * ``convection-radiation-flux`` (Robin BC) for cooling/heating, depending on the environment temperature at the boundary ``Tinf``, with a given heat transfer coefficient ``h`` and ``emissivity`` of the boundary :math:`\mathbf{\epsilon}` following Newton's law of cooling (and heating) and Stefan-Boltzmann law of radiation. It is also possible to impose a given heat flux (:math:`q_0`) by using the parameter ``heat_flux``. This BC can be represented by:
 
-.. math::
-    \frac{ \partial T}{\partial \mathbf{n}} = h (T - T_{inf}) + \epsilon \sigma (T^4 - T_{inf}^4)
+    .. math::
+        \frac{ \partial T}{\partial \mathbf{n}} = h (T - T_{inf}) + \epsilon \sigma (T^4 - T_{inf}^4) + q_0
 
+    where :math:`\mathbf{\sigma}` is the Stefan-Boltzmann constant.
 
-where :math:`\mathbf{\sigma}` is the Stefan-Boltzmann constant.
+    .. note::
+
+      Note that the expressions for ``h``, ``Tinf``, ``emissivity``, and ``heat_flux`` can be time-dependent, but the current implementation does not allow for space dependence (the expressions are evaluated at the origin).
+
+    .. important::
+
+      The flux represented by the ``convection-radiation-flux`` BC follow the direction of the normal vector to the boundary, i.e., pointing outwards the boundary. As consequence, a positive value for ``heat_flux``, for example, will result on heat being extracted from the boundary.
 
 .. seealso::
 

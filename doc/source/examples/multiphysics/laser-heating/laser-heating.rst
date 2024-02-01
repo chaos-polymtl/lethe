@@ -35,7 +35,7 @@ A laser beam heats a three-dimensional solid block. The laser beam is emitted pe
     :align: center
     :width: 400
 
-The laser path changes with time. The laser beam radius and penetration depth are both set to :math:`0.00005` m. Because of this small radius and penetration depth, we use adaptive mesh refinement based on the temperature. Thermal boundary conditions are ``convection-radiation`` with a convective heat transfer coefficient of 5 and an emissivity of 0.4. The corresponding parameter file is: 
+The laser path changes with time. The laser beam radius and penetration depth are both set to :math:`0.00005` m. Because of this small radius and penetration depth, we use adaptive mesh refinement based on the temperature. Thermal boundary conditions are ``convection-radiation-flux`` with a convective heat transfer coefficient of 5 and an emissivity of 0.4. The corresponding parameter file is:
 ``laser-heating.prm``.
 
 
@@ -65,7 +65,7 @@ Simulation Control
 Boundary Conditions
 ~~~~~~~~~~~~~~~~~~~
 
-All the boundary conditions are ``noslip``, and the heat transfer boundary conditions are ``convection-radiation``.
+All the boundary conditions are ``noslip``, and the heat transfer boundary conditions are ``convection-radiation-flux``.
 
 .. code-block:: text
 
@@ -78,7 +78,7 @@ All the boundary conditions are ``noslip``, and the heat transfer boundary condi
     subsection boundary conditions heat transfer
       set number = 1
       subsection bc 0
-        set type       = convection-radiation
+        set type       = convection-radiation-flux
         subsection h
           set Function expression = 5
         end

@@ -344,9 +344,15 @@ HeatTransfer<dim>::setup_assemblers()
     }
 
   // Robin boundary condition
-  this->assemblers.push_back(
-    std::make_shared<HeatTransferAssemblerRobinBC<dim>>(
-      this->simulation_control, simulation_parameters.boundary_conditions_ht));
+  if (this->simulation_parameters.boundary_conditions_ht
+        .has_convection_radiation_bc)
+    {
+      this->assemblers.push_back(
+        std::make_shared<HeatTransferAssemblerRobinBC<dim>>(
+          this->simulation_control,
+          simulation_parameters.boundary_conditions_ht));
+    }
+
 
   if (this->simulation_parameters.multiphysics.viscous_dissipation)
     {
@@ -1243,8 +1249,8 @@ HeatTransfer<dim>::update_boundary_conditions()
 
   double time = this->simulation_control->get_current_time();
   // We begin by setting the new time for all expressions, although the change
-  // for the convection-radiation boundary conditions won't be applied in this
-  // function
+  // for the convection-radiation-flux boundary conditions won't be applied in
+  // this function
   for (unsigned int i_bc = 0;
        i_bc < this->simulation_parameters.boundary_conditions_ht.size;
        ++i_bc)
@@ -1256,6 +1262,8 @@ HeatTransfer<dim>::update_boundary_conditions()
       this->simulation_parameters.boundary_conditions_ht.Tinf[i_bc]->set_time(
         time);
       this->simulation_parameters.boundary_conditions_ht.emissivity[i_bc]
+        ->set_time(time);
+      this->simulation_parameters.boundary_conditions_ht.heat_flux_bc[i_bc]
         ->set_time(time);
 
       Assert(
