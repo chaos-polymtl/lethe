@@ -1,0 +1,276 @@
+# Listing of Parameters
+#----------------------
+
+set dimension = 3
+
+#---------------------------------------------------
+# Simulation Control
+#---------------------------------------------------
+
+subsection simulation control
+  set method             = bdf1
+  set bdf startup method = multiple step bdf
+  set time step          = 0.01 # Time step
+  set time end           = 0.04 # End time of simulation
+  set output name        = out2 # Prefix for VTU outputs
+  set output frequency   = 0    # Frequency of simulation output
+  set subdivision        = 1    # Mesh subdivision when output end
+  set log precision      = 3
+end
+
+#---------------------------------------------------
+# Physical Properties
+#---------------------------------------------------
+
+subsection physical properties
+  subsection fluid 0
+    set kinematic viscosity = 0.6041666666666
+    set density             = 0.001
+  end
+end
+
+#---------------------------------------------------
+# Timer
+#---------------------------------------------------
+
+subsection timer
+  set type = iteration
+end
+
+#---------------------------------------------------
+# FEM
+#---------------------------------------------------
+
+subsection FEM
+  set velocity order = 1
+  set pressure order = 1
+end
+
+#---------------------------------------------------
+# Mesh
+#---------------------------------------------------
+
+subsection mesh
+  set type               = dealii
+  set grid type          = subdivided_hyper_rectangle
+  set grid arguments     = 5,5,5: 0,0,0 : 40 , 40 ,40 : true
+  set initial refinement = 1
+end
+
+#---------------------------------------------------
+# Boundary Conditions
+#---------------------------------------------------
+
+subsection boundary conditions
+  set number = 5
+  subsection bc 0
+    set id   = 0
+    set type = slip
+  end
+  subsection bc 1
+    set id   = 1
+    set type = slip
+  end
+
+  subsection bc 2
+    set id   = 2
+    set type = function
+    subsection u
+      set Function expression = 0
+    end
+    subsection v
+      set Function expression = 0
+    end
+    subsection w
+      set Function expression = 0
+    end
+  end
+  subsection bc 3
+    set id   = 4
+    set type = slip
+  end
+  subsection bc 4
+    set id   = 5
+    set type = slip
+  end
+end
+
+#---------------------------------------------------
+# IB particles
+#---------------------------------------------------
+
+subsection particles
+  set assemble Navier-Stokes inside particles = false
+  set number of particles                     = 2
+  subsection extrapolation function
+    set length ratio  = 2
+    set stencil order = 2
+  end
+
+  subsection local mesh refinement
+    set initial refinement                = 5
+    set refine mesh inside radius factor  = 0.8
+    set refine mesh outside radius factor = 1.2
+  end
+
+  subsection DEM
+    set particle nonlinear tolerance      = 1e-3
+    set DEM coupling frequency            = 1000
+    set enable lubrication force          = false
+    set explicit contact impulsion        = true
+    set explicit position integration     = true
+    set contact search radius factor      = 1.5
+    subsection gravity
+      set Function expression = 0;-981;0
+    end
+  end
+
+  subsection particle info 0
+    set type             = superquadric
+    set shape arguments  = 2;1;0.5;2;2;2
+    set layer thickening = 0
+    set integrate motion = true
+
+    subsection position
+      set Function expression = 20;1;20
+    end
+    subsection velocity
+      set Function expression = 0;0;0
+    end
+    subsection orientation
+      set Function expression = 0;0;0
+    end
+    subsection omega
+      set Function expression = 0;0;0
+    end
+
+    subsection physical properties
+      set density                 = 0.001120
+      set volume                  = 4.18879
+      set inertia                 = 0.00117286125734019;0;0;0;0.00398772827495664;0;0;0;0.00469144502936076
+      set restitution coefficient = 0.2
+      set youngs modulus          = 10000000
+    end
+  end
+  subsection particle info 1
+    set type             = superquadric
+    set shape arguments  = 2;1;0.5;2;2;2
+    set layer thickening = 0
+    set integrate motion = true
+
+    subsection position
+      set Function expression = 19;2.88;20
+    end
+    subsection velocity
+      set Function expression = 0;0;0
+    end
+    subsection orientation
+      set Function expression = 0;pi/2;0
+    end
+    subsection omega
+      set Function expression = 0;0;0
+    end
+
+    subsection physical properties
+      set density                 = 0.001120
+      set volume                  = 4.18879
+      set inertia                 = 0.00117286125734019;0;0;0;0.00398772827495664;0;0;0;0.00469144502936076
+      set restitution coefficient = 0.2
+      set youngs modulus          = 10000000
+    end
+  end
+end
+
+#---------------------------------------------------
+# Mesh Adaptation Control
+#---------------------------------------------------
+
+subsection mesh adaptation
+  # Fraction of coarsened elements
+  set fraction coarsening = 0.3
+
+  # Fraction of refined elements
+  set fraction refinement = 0.05
+
+  # How the fraction of refinement/coarsening are interpreted. Choices are
+  # <number|fraction>.
+  set fraction type = number
+
+  # Frequency of the mesh refinement
+  set frequency = 1
+
+  # Maximum number of elements
+  set max number elements = 750000
+
+  # Maximum refinement level
+  set max refinement level = 5
+  # minimum refinement level
+  set min refinement level = 0
+
+  # Type of mesh adaptationChoices are <none|uniform|kelly>.
+  set type = kelly
+
+  # Variable for kelly estimationChoices are <velocity|pressure>.
+  set variable = velocity
+end
+
+#---------------------------------------------------
+# Initial condition
+#---------------------------------------------------
+
+subsection initial conditions
+  # Type of initial conditionChoices are <L2projection|viscous|nodal>.
+  set type = nodal
+  subsection uvwp
+    set Function expression = 0; 0; 0;0
+  end
+end
+
+#---------------------------------------------------
+# Non-Linear Solver Control
+#---------------------------------------------------
+
+subsection non-linear solver
+  subsection fluid dynamics
+    set verbosity             = quiet
+    set tolerance             = 1e-6
+    set max iterations        = 5
+    set residual precision    = 5
+    set force rhs calculation = true
+  end
+end
+
+#---------------------------------------------------
+# Forces
+#---------------------------------------------------
+
+subsection forces
+  set verbosity = verbose
+end
+
+#---------------------------------------------------
+# Timer
+#---------------------------------------------------
+
+subsection timer
+  set type = none
+end
+
+#---------------------------------------------------
+# Linear Solver Control
+#---------------------------------------------------
+
+subsection linear solver
+  subsection fluid dynamics
+    set method                                = gmres
+    set max iters                             = 1000
+    set relative residual                     = 1e-6
+    set minimum residual                      = 1e-11
+    set preconditioner                        = ilu
+    set ilu preconditioner fill               = 0
+    set ilu preconditioner absolute tolerance = 1e-20
+    set ilu preconditioner relative tolerance = 1.00
+    set verbosity                             = quiet
+    set max krylov vectors                    = 100
+  end
+end
