@@ -2992,7 +2992,7 @@ namespace Parameters
           "explicit position integration",
           "false",
           Patterns::Bool(),
-          "Bool to enable or disable the explicit position integration. This means that the particle position is obtained directly by the integration of the previous velocities only. This avoid multiple cut cell mapping for each newton iteration. Not that this limit the order of convergence in time to one.");
+          "Bool to enable or disable the explicit position integration. This means that the particle position is obtained directly by the integration of the previous velocities only. This avoids multiple cut cell mapping for each newton iteration. Note that this limits the order of convergence in time to one.");
 
         prm.declare_entry(
           "approximate radius for contact",
@@ -3263,7 +3263,7 @@ namespace Parameters
             else
               {
                 throw(std::runtime_error(
-                  " Invalid inertia matrix. The inertia is given as a 3 by 3 matrices or a single value if the inertia is uniform around each axis."));
+                  " Invalid inertia matrix. The inertia is given as a 3 by 3 matrix or a single value if the inertia is uniform around each axis."));
               }
 
             particles[i].youngs_modulus = prm.get_double("youngs modulus");

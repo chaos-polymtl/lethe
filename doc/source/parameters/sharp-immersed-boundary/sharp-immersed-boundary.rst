@@ -270,7 +270,7 @@ The following parameter and subsection are all inside the subsection ``particle 
             2;    union;     0:1
 
     .. warning::
-	        Some limitations exist for composite shapes. The composition of shapes with union and difference are not always exact (see [this link](https://iquilezles.org/articles/interiordistance/) for a relatively simple explanation of why this is the case). In general boolean operation only guarantee to preserve the surface of the object. The union operation also preserves the properties of the signed distance function outside of the shapes, which is helpful for external flow around the shapes. But the difference operator does not guarantee to yield an exact signed distance function. This means that shapes defined by using the difference operator may not converge to the expected convergence order of the FEM scheme with the currently implemented scheme.
+	        Some limitations exist for composite shapes. The composition of shapes with union and difference are not always exact (see [this link](https://iquilezles.org/articles/interiordistance/) for a relatively simple explanation of why this is the case). In general boolean operations only guarantee to preserve the surface of the object. The union operation also preserves the properties of the signed distance function outside of the shapes, which is helpful for external flow around the shapes. But the difference operator does not guarantee to yield an exact signed distance function. This means that shapes defined by using the difference operator may not converge to the expected convergence order of the FEM scheme with the currently implemented scheme.
 
     * RBF: *file name*; the effective radius is the ``support_radius`` of the first node. The file must be constructed with 6 columns of numbers containing: ``weight``, ``support_radius``, ``basis_function``, ``node_x``, ``node_y``, ``node_z``. The ``weight`` is the weight associated to each node, the ``support_radius`` relates to the influence radius of each node, the ``basis_function`` can be one of thirteen functions, described in an upcoming example, and the ``node_*`` describe the center of each node.
     
@@ -279,14 +279,14 @@ The following parameter and subsection are all inside the subsection ``particle 
     .. note::
         As could be expected, using this type of shape requires that ``dealii`` be compiled with OpenCascade. This module can be installed with candi, by uncommenting the appropriate line in ``candi.cfg``.
 
-* The ``integrate motion`` parameter controls if the dynamics equations of the particles are calculated. If this parameter is set to false, the particles position, velocity, and angular velocity are defined directly by the functions. If ``integrate motion=true`` the position and the velocity will be defined by the integration of the particle dynamic.
+* The ``integrate motion`` parameter controls if the dynamics equations of the particles are calculated. If this parameter is set to false, the particles' position, velocity, and angular velocity are defined directly by the functions. If ``integrate motion=true`` the position and the velocity will be defined by the integration of the particle dynamic.
 
     .. warning::
-        Even though non-spherical particles can now have their dynamic coupled with the fluid, this feature is not yet fully validated and remains experimental at this point. We note the following limitation: 
+        Even though non-spherical particles can now have their dynamic coupled with the fluid, this feature is not yet fully validated and remains experimental at this point. We note the following limitations: 
         
         Particles can only have one point of contact between each other and with each wall. (this means contact detection for concave shapes may be wrong since these shapes can have more than 1 point of contact)
         
-        Fluid entrapment between particles can happen more frequently for non-spherical shapes in 3D (fluid entrapment occurs when a portion of the fluid domain become completely isolated from the rest of the fluid domain due to the imposition of the immersed boundary by multiple particles. A simple example of a case that causes fluid entrapment would be three circles in contact in 2D. Fluid entrapment leads to a zone without reference pressure, which is not a well-posed problem). In this case, the linear solver may fail to converge for a given Newton iteration.
+        Fluid entrapment between particles can happen more frequently for non-spherical shapes in 3D (fluid entrapment occurs when a portion of the fluid domain becomes completely isolated from the rest of the fluid domain due to the imposition of the immersed boundary by multiple particles. A simple example of a case that causes fluid entrapment would be three circles in contact in 2D. Fluid entrapment leads to a zone without reference pressure, which is not a well-posed problem). In this case, the linear solver may fail to converge for a given Newton iteration.
 
 * The ``mesh-based precalculations`` parameter controls if the mesh-based precalculations are applied. These precalculations are critical for good performance in medium to high detailed RBFs (and its composites), but can introduce deformations. These deformations appear when some RBF nodes are located outside of the background mesh.
 

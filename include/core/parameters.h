@@ -1317,7 +1317,7 @@ namespace Parameters
 
     // Number of declared IB particles
     unsigned int nb_particles;
-    // Boolean to determine whether or not the Navier-Stokes equations are
+    // Boolean to determine whether the Navier-Stokes equations are
     // solved inside the particles.
     bool assemble_navier_stokes_inside;
 
@@ -1325,7 +1325,7 @@ namespace Parameters
     unsigned int order;
     // The length ratio used for the stencil calculation of the IB condition.
     double length_ratio;
-    // Boolean controlling whether or not extrapolation is used to impose the
+    // Boolean controlling whether extrapolation is used to impose the
     // immersed boundary condition. If false, the IB condition is directly
     // imposed using nearest neighbors. the immersed boundary condition or not.
     // If it is set to false, all cut cells are fully imposed on the IB.
@@ -1360,7 +1360,7 @@ namespace Parameters
     // scale (once every X CFD time steps)
     int contact_search_frequency;
     // Particles' radius multiplier used to calculate the effective radius of
-    // contact search search.
+    // contact search
     double contact_search_radius_factor;
     // Boolean for lubrication force
     bool enable_lubrication_force;
@@ -1385,7 +1385,7 @@ namespace Parameters
     // calculation.
     bool approximate_radius_for_contact;
     // Function defining the gravitational acceleration vector used by the
-    // CFD-DEM CFD-DEM calculation.
+    // CFD-DEM calculation.
     std::shared_ptr<Functions::ParsedFunction<dim>> f_gravity;
     // Young's modulus of the wall
     double wall_youngs_modulus;
@@ -1403,7 +1403,7 @@ namespace Parameters
     // is ignored. of the particle subsection.
     bool load_particles_from_file;
     // Name of the independent file containing particles' information at
-    // insertion. Only used if load_particles_from_file is true
+    // insertion. Only used if load_particles_from_file is true.
     std::string particles_file;
   };
 

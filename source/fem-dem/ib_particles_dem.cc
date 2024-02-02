@@ -919,7 +919,7 @@ IBParticlesDEM<dim>::calculate_pw_lubrication_force(
               // Finding the projected vector on the normal vector of the
               // boundary. Here we have used the private function
               // find_projection. Using this projected vector, the
-              // particle-wall distance is calculated
+              // particle-wall distance is calculated.
               Tensor<1, 3> projected_vector =
                 ((point_to_particle_vector * normal) / (normal.norm_square())) *
                 normal;
@@ -1080,9 +1080,9 @@ IBParticlesDEM<dim>::calculate_force_model(
 
   // Calculation of new tangential_overlap, since this value is
   // history-dependent it needs the value at previous time-step
-  // This variable is the main reason that we have iteration over
+  // This variable is the main reason that we have iterations over
   // two different vectors : tangential_overlap of the particles
-  // which were already in contact needs to
+  // which were already in contact needs to be
   // modified using its history, while the tangential_overlaps of
   // new particles are equal to zero
   // delta_t_new = delta_t_old + v_rt*dt
@@ -1133,7 +1133,7 @@ IBParticlesDEM<dim>::calculate_force_model(
   if (tangential_force.norm() > coulomb_threshold)
     {
       // Gross sliding occurs and the tangential overlap and tangential
-      // force are limited to Coulumb's criterion
+      // force are limited to Coulomb's criterion
       tangential_force =
         coulomb_threshold *
         (tangential_force / (tangential_force.norm() + DBL_MIN));
