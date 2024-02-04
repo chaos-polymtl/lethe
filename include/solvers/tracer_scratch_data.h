@@ -214,12 +214,27 @@ public:
   void
   reinit_velocity(const typename DoFHandler<dim>::active_cell_iterator &cell,
                   const VectorType           &current_solution,
-                  const Parameters::ALE<dim> &ale)
+                  const Parameters::ALE<dim> &ale,
+                  std::shared_ptr<Functions::ParsedFunction<dim>>                 drift_velocity)
   {
     this->fe_values_fd.reinit(cell);
 
     this->fe_values_fd[velocities].get_function_values(current_solution,
                                                        velocity_values);
+
+    // Add the drift velocity to the velocity to account for tracer drift flux modeling
+    Tensor<1, dim>                          drift_velocity_tensor;
+    Vector<double> drift_velocity_vector(dim);
+
+    for (unsigned int q = 0; q < n_q_points; ++q)
+      {
+        drift_velocity->vector_value(quadrature_points[q],
+                                            drift_velocity_vector);
+        for (unsigned int d = 0; d < dim; ++d)
+          drift_velocity_tensor[d] = drift_velocity_vector[d];
+
+        velocity_values[q] +=  drift_velocity_tensor;
+      }
 
     if (!ale.enabled())
       return;
