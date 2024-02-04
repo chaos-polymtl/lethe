@@ -31,6 +31,7 @@ add_library(lethe-solvers
   source_terms.cc
   tracer.cc
   tracer_assemblers.cc
+  tracer_drift_velocity.cc
   tracer_scratch_data.cc
   vof.cc
   vof_assemblers.cc
@@ -71,6 +72,7 @@ add_library(lethe-solvers
   ../../include/solvers/stabilization.h
   ../../include/solvers/tracer.h
   ../../include/solvers/tracer_assemblers.h
+  ../../include/solvers/tracer_drift_velocity.h
   ../../include/solvers/tracer_scratch_data.h
   ../../include/solvers/vof.h
   ../../include/solvers/vof_assemblers.h
