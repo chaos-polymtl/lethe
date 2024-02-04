@@ -31,5 +31,6 @@ General, CFD and Multiphysics
    source_term
    stabilization
    timer
-   velocity_source.rst
+   tracer_drift_velocity
+   velocity_source
    volume_of_fluid
