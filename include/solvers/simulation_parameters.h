@@ -32,6 +32,7 @@
 #include <solvers/initial_conditions.h>
 #include <solvers/physical_properties_manager.h>
 #include <solvers/source_terms.h>
+#include <solvers/tracer_drift_velocity.h>
 
 template <int dim>
 class SimulationParameters
@@ -69,6 +70,7 @@ public:
   Parameters::Stabilization                     stabilization;
   Parameters::ALE<dim>                          ale;
   Parameters::Evaporation                       evaporation;
+  Parameters::TracerDriftVelocity<dim>          tracer_drift_velocity;
 
 
 
@@ -138,6 +140,8 @@ public:
     Parameters::Evaporation::declare_parameters(prm);
 
     multiphysics.declare_parameters(prm);
+
+    tracer_drift_velocity.declare_parameters(prm);
   }
 
   void
@@ -182,6 +186,7 @@ public:
     stabilization.parse_parameters(prm);
     ale.parse_parameters(prm);
     evaporation.parse_parameters(prm);
+    tracer_drift_velocity.parse_parameters(prm);
 
     physical_properties_manager.initialize(physical_properties);
 

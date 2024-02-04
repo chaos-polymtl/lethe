@@ -109,14 +109,16 @@ Tracer<dim>::assemble_local_system_matrix(
             velocity_cell,
             *multiphysics->get_block_time_average_solution(
               PhysicsID::fluid_dynamics),
-            this->simulation_parameters.ale);
+            this->simulation_parameters.ale,
+            this->simulation_parameters.tracer_drift_velocity.drift_velocity);
         }
       else
         {
-          scratch_data.reinit_velocity(velocity_cell,
-                                       *multiphysics->get_block_solution(
-                                         PhysicsID::fluid_dynamics),
-                                       this->simulation_parameters.ale);
+          scratch_data.reinit_velocity(
+            velocity_cell,
+            *multiphysics->get_block_solution(PhysicsID::fluid_dynamics),
+            this->simulation_parameters.ale,
+            this->simulation_parameters.tracer_drift_velocity.drift_velocity);
         }
     }
   else
@@ -126,17 +128,19 @@ Tracer<dim>::assemble_local_system_matrix(
           simulation_control->get_current_time() >
             this->simulation_parameters.post_processing.initial_time)
         {
-          scratch_data.reinit_velocity(velocity_cell,
-                                       *multiphysics->get_time_average_solution(
-                                         PhysicsID::fluid_dynamics),
-                                       this->simulation_parameters.ale);
+          scratch_data.reinit_velocity(
+            velocity_cell,
+            *multiphysics->get_time_average_solution(PhysicsID::fluid_dynamics),
+            this->simulation_parameters.ale,
+            this->simulation_parameters.tracer_drift_velocity.drift_velocity);
         }
       else
         {
-          scratch_data.reinit_velocity(velocity_cell,
-                                       *multiphysics->get_solution(
-                                         PhysicsID::fluid_dynamics),
-                                       this->simulation_parameters.ale);
+          scratch_data.reinit_velocity(
+            velocity_cell,
+            *multiphysics->get_solution(PhysicsID::fluid_dynamics),
+            this->simulation_parameters.ale,
+            this->simulation_parameters.tracer_drift_velocity.drift_velocity);
         }
     }
 
@@ -235,14 +239,16 @@ Tracer<dim>::assemble_local_system_rhs(
             velocity_cell,
             *multiphysics->get_block_time_average_solution(
               PhysicsID::fluid_dynamics),
-            this->simulation_parameters.ale);
+            this->simulation_parameters.ale,
+            this->simulation_parameters.tracer_drift_velocity.drift_velocity);
         }
       else
         {
-          scratch_data.reinit_velocity(velocity_cell,
-                                       *multiphysics->get_block_solution(
-                                         PhysicsID::fluid_dynamics),
-                                       this->simulation_parameters.ale);
+          scratch_data.reinit_velocity(
+            velocity_cell,
+            *multiphysics->get_block_solution(PhysicsID::fluid_dynamics),
+            this->simulation_parameters.ale,
+            this->simulation_parameters.tracer_drift_velocity.drift_velocity);
         }
     }
   else
@@ -252,17 +258,19 @@ Tracer<dim>::assemble_local_system_rhs(
           simulation_control->get_current_time() >
             this->simulation_parameters.post_processing.initial_time)
         {
-          scratch_data.reinit_velocity(velocity_cell,
-                                       *multiphysics->get_time_average_solution(
-                                         PhysicsID::fluid_dynamics),
-                                       this->simulation_parameters.ale);
+          scratch_data.reinit_velocity(
+            velocity_cell,
+            *multiphysics->get_time_average_solution(PhysicsID::fluid_dynamics),
+            this->simulation_parameters.ale,
+            this->simulation_parameters.tracer_drift_velocity.drift_velocity);
         }
       else
         {
-          scratch_data.reinit_velocity(velocity_cell,
-                                       *multiphysics->get_solution(
-                                         PhysicsID::fluid_dynamics),
-                                       this->simulation_parameters.ale);
+          scratch_data.reinit_velocity(
+            velocity_cell,
+            *multiphysics->get_solution(PhysicsID::fluid_dynamics),
+            this->simulation_parameters.ale,
+            this->simulation_parameters.tracer_drift_velocity.drift_velocity);
         }
     }
 

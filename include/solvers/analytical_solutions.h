@@ -87,7 +87,7 @@ namespace AnalyticalSolutions
     declare_parameters(ParameterHandler &prm);
 
     /**
-     * @brief Declares the parameters required by the analytical solution
+     * @brief Parses the parameters required by the analytical solution
      * within a parameter file
      *
      * @param prm ParameterHandler used to parse the parameters.
