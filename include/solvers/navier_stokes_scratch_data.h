@@ -1016,18 +1016,11 @@ public:
     this->fe_values_cahn_hilliard->operator[](phase_order)
       .get_function_gradients(current_solution,
                               this->phase_order_cahn_hilliard_gradients);
-    this->fe_values_cahn_hilliard->operator[](chemical_potential)
-      .get_function_gradients(current_solution,
-                              this->chemical_potential_cahn_hilliard_gradients);
 
     // Gather filtered phase fraction (values, gradient)
     this->fe_values_cahn_hilliard->operator[](phase_order)
       .get_function_values(current_filtered_solution,
                            this->filtered_phase_order_cahn_hilliard_values);
-    this->fe_values_cahn_hilliard->operator[](phase_order)
-      .get_function_gradients(
-        current_filtered_solution,
-        this->filtered_phase_order_cahn_hilliard_gradients);
   }
 
 
@@ -1193,15 +1186,10 @@ public:
   std::vector<double>         phase_order_cahn_hilliard_values;
   std::vector<double>         filtered_phase_order_cahn_hilliard_values;
   std::vector<Tensor<1, dim>> phase_order_cahn_hilliard_gradients;
-  std::vector<Tensor<1, dim>>
-    filtered_phase_order_cahn_hilliard_gradients; // PAS INITIALISE ATTENTION
   std::vector<double>         chemical_potential_cahn_hilliard_values;
-  std::vector<Tensor<1, dim>> chemical_potential_cahn_hilliard_gradients;
 
   std::shared_ptr<CahnHilliardFilterBase>
     cahn_hilliard_filter; // Phase order fraction filter
-
-
 
   // This is stored as a shared_ptr because it is only instantiated when needed
   std::shared_ptr<FEValues<dim>> fe_values_cahn_hilliard;

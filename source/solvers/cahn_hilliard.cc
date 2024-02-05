@@ -42,6 +42,11 @@ CahnHilliard<dim>::setup_assemblers()
           this->simulation_control));
     }
 
+  // For all the assemblers below, the parameter epsilon is passed to the
+  // constructor explicitly because the triangulation object is required by the
+  // minimum_cell_diameter function of the GridTools class. The assemblers do
+  // not (and should not) store the triangulation in their attribute.
+
   // Angle of contact boundary condition
   this->assemblers.push_back(
     std::make_shared<CahnHilliardAssemblerAngleOfContact<dim>>(
@@ -51,7 +56,7 @@ CahnHilliard<dim>::setup_assemblers()
          .epsilon_set_method == Parameters::EpsilonSetStrategy::manual) ?
         this->simulation_parameters.multiphysics.cahn_hilliard_parameters
           .epsilon :
-        GridTools::minimal_cell_diameter(*triangulation),
+        GridTools::minimal_cell_diameter(*triangulation) * 0.5,
       this->simulation_parameters.boundary_conditions_cahn_hilliard));
 
   // Free angle of contact boundary condition
@@ -63,7 +68,7 @@ CahnHilliard<dim>::setup_assemblers()
          .epsilon_set_method == Parameters::EpsilonSetStrategy::manual) ?
         this->simulation_parameters.multiphysics.cahn_hilliard_parameters
           .epsilon :
-        GridTools::minimal_cell_diameter(*triangulation),
+        GridTools::minimal_cell_diameter(*triangulation) * 0.5,
       this->simulation_parameters.boundary_conditions_cahn_hilliard));
 
   // Core assembler
@@ -74,7 +79,7 @@ CahnHilliard<dim>::setup_assemblers()
        .epsilon_set_method == Parameters::EpsilonSetStrategy::manual) ?
       this->simulation_parameters.multiphysics.cahn_hilliard_parameters
         .epsilon :
-      GridTools::minimal_cell_diameter(*triangulation)));
+      GridTools::minimal_cell_diameter(*triangulation) * 0.5));
 }
 
 template <int dim>
@@ -1211,11 +1216,11 @@ CahnHilliard<dim>::calculate_barycenter(const GlobalVectorType &solution,
 
 
 
-              volume += (1 - phase_values) * 0.25 * JxW;
+              volume += (1 - phase_values) * 0.5 * JxW;
               barycenter_location +=
-                (1 - phase_values) * 0.25 * quadrature_locations[q] * JxW;
+                (1 - phase_values) * 0.5 * quadrature_locations[q] * JxW;
               barycenter_velocity +=
-                (1 - phase_values) * 0.25 * velocity_values[q] * JxW;
+                (1 - phase_values) * 0.5 * velocity_values[q] * JxW;
             }
         }
     }
@@ -1250,7 +1255,8 @@ CahnHilliard<dim>::apply_phase_filter()
 
   filtered_solution.reinit(this->present_solution);
 
-  std::unordered_map<unsigned int, bool> filtered_cell_list;
+  // std::unordered_map<unsigned int, bool> filtered_cell_list;
+  std::unordered_set<unsigned int> filtered_cell_list;
 
   const unsigned int                   dofs_per_cell = this->fe->dofs_per_cell;
   std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
@@ -1281,7 +1287,7 @@ CahnHilliard<dim>::apply_phase_filter()
                         filtered_cell_list.find(local_dof_indices[p]);
                       if (iterator == filtered_cell_list.end())
                         {
-                          filtered_cell_list[local_dof_indices[p]] = true;
+                          filtered_cell_list.insert(local_dof_indices[p]);
                           filtered_solution_owned[local_dof_indices[p]] =
                             filter->filter_phase(
                               filtered_solution_owned[local_dof_indices[p]]);

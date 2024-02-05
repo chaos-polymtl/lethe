@@ -176,7 +176,6 @@ CahnHilliardAssemblerAngleOfContact<dim>::assemble_matrix(
       return;
     }
   const double epsilon = this->epsilon;
-  // std::cout<<"in angle of contact assembly"<<std::endl;
 
   auto &local_matrix = copy_data.local_matrix;
 

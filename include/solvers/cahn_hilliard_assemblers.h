@@ -74,10 +74,10 @@ protected:
 
 
 /**
- * @brief Class that assembles the core of the Cahn-Hilliard equation
- * with the following weak form:
- * dPhi/dt +  u * gradPhi =  div(M(Phi)*grad eta)
- * eta - f(Phi) + epsilon^2 * div(grad Phi) = 0
+ * @brief Class that assembles the core of the Cahn-Hilliard equation :
+ * $$ \frac{d \Phi}{dt} +  (u \cdot \nabla) \Phi =   \nabla \cdot (M(\Phi)\nabla
+ * \eta) \eta -  \frac{\lambda}{\epsilon^2}(\Phi^3 - \Phi) + \epsilon^2 \nabla
+ * \cdot (\nabla \Phi) = 0
  *
  * @tparam dim An integer that denotes the number of spatial dimensions
  *
@@ -118,7 +118,9 @@ public:
                StabilizedMethodsCopyData    &copy_data) override;
 
   Parameters::CahnHilliard cahn_hilliard_parameters;
-  const double             epsilon;
+  // Epsilon is a coefficient which depends on the mesh size. The thickness of
+  // the interface between the two phases is proportionnal to espilon
+  const double epsilon;
 };
 
 
@@ -167,7 +169,9 @@ public:
                StabilizedMethodsCopyData    &copy_data) override;
 
   Parameters::CahnHilliard cahn_hilliard_parameters;
-  const double             epsilon;
+  // Epsilon is a coefficient which depends on the mesh size. The thickness of
+  // the interface between the two phases is proportionnal to espilon
+  const double epsilon;
   const BoundaryConditions::CahnHilliardBoundaryConditions<dim>
     &boundary_conditions_cahn_hilliard;
 };
@@ -217,7 +221,9 @@ public:
 
 
   Parameters::CahnHilliard cahn_hilliard_parameters;
-  const double             epsilon;
+  // Epsilon is a coefficient which depends on the mesh size. The thickness of
+  // the interface between the two phases is proportionnal to espilon
+  const double epsilon;
   const BoundaryConditions::CahnHilliardBoundaryConditions<dim>
     &boundary_conditions_cahn_hilliard;
 };

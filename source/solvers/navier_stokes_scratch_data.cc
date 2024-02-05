@@ -183,14 +183,10 @@ NavierStokesScratchData<dim>::enable_cahn_hilliard(
   // Allocate CahnHilliard gradients
   phase_order_cahn_hilliard_gradients =
     std::vector<Tensor<1, dim>>(this->n_q_points);
-  chemical_potential_cahn_hilliard_gradients =
-    std::vector<Tensor<1, dim>>(this->n_q_points);
 
   // For STF calculation
   filtered_phase_order_cahn_hilliard_values =
     std::vector<double>(this->n_q_points);
-  filtered_phase_order_cahn_hilliard_gradients =
-    std::vector<Tensor<1, dim>>(this->n_q_points);
 
   fields.insert(
     std::pair<field, std::vector<double>>(field::phase_order_cahn_hilliard,
@@ -233,14 +229,10 @@ NavierStokesScratchData<dim>::enable_cahn_hilliard(
   // Allocate CahnHilliard gradients
   phase_order_cahn_hilliard_gradients =
     std::vector<Tensor<1, dim>>(this->n_q_points);
-  chemical_potential_cahn_hilliard_gradients =
-    std::vector<Tensor<1, dim>>(this->n_q_points);
 
   // For STF calculation
   filtered_phase_order_cahn_hilliard_values =
     std::vector<double>(this->n_q_points);
-  filtered_phase_order_cahn_hilliard_gradients =
-    std::vector<Tensor<1, dim>>(this->n_q_points);
 
   fields.insert(
     std::pair<field, std::vector<double>>(field::phase_order_cahn_hilliard,

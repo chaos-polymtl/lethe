@@ -16,7 +16,6 @@
 
 #include <core/mobility_cahn_hilliard_model.h>
 
-
 std::shared_ptr<MobilityCahnHilliardModel>
 MobilityCahnHilliardModel::model_cast(
   const Parameters::MaterialInteractions &material_interaction_parameters)

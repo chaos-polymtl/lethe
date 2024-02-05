@@ -617,7 +617,6 @@ private:
    * Solves:
    * $$ v . \psi + \eta * \nabla v . \nabla \psi = v . \nabla \phi $$
    * where $$v$$, $$\psi$$, $$\eta$$, and $$\phi$$ are test function, fpg,
-   *
    * value, and phase fraction.
    *
    * @param solution VOF solution (phase fraction)

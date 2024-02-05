@@ -476,7 +476,6 @@ namespace Parameters
            PhaseChangeIntervalError(T_liquidus, T_solidus));
   }
 
-
   void
   MobilityCahnHilliardParameters::declare_parameters(
     dealii::ParameterHandler &prm)
@@ -1112,8 +1111,6 @@ namespace Parameters
         {
           prm.enter_subsection("fluid-fluid interaction");
           {
-            // std::cout<<"entering fluid-fluid interaction
-            // subsection"<<std::endl;
             std::pair<unsigned int, unsigned int> fluid_fluid_interaction;
             fluid_fluid_interaction.first  = prm.get_integer("first fluid id");
             fluid_fluid_interaction.second = prm.get_integer("second fluid id");
