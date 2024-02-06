@@ -1160,7 +1160,6 @@ IBParticlesDEM<dim>::integrate_particles_motion(const double dt,
                                                 const double rho,
                                                 const double mu)
 {
-  std::cout << "start dem" << std::endl;
   // Initialize local containers and physical variables
   using dealii::numbers::PI;
   double dt_dem = dt / parameters->coupling_frequency;
@@ -1186,9 +1185,6 @@ IBParticlesDEM<dim>::integrate_particles_motion(const double dt,
   this->parameters->f_gravity->set_time(cfd_time + dt);
   // The gravitational force on the particle.
   Tensor<1, 3> gravity;
-  std::cout << "finish vector initialization start particle initialization"
-            << std::endl;
-
   // Reset the previous particle contact point list
   previous_wall_contact_point.clear();
   previous_particle_particle_contact_point.clear();
@@ -1211,13 +1207,9 @@ IBParticlesDEM<dim>::integrate_particles_motion(const double dt,
       if (dim == 3)
         g[2] =
           this->parameters->f_gravity->value(dem_particles[p_i].position, 2);
-      std::cout << "finish state copy" << std::endl;
       dem_particles[p_i].set_position(dem_particles[p_i].position);
       dem_particles[p_i].set_orientation(dem_particles[p_i].orientation);
-      std::cout << "finish setting state" << std::endl;
     }
-  std::cout << "finish particle initialization start the integration"
-            << std::endl;
 
   // Integrate with the sub_time_step
   while (t + 0.5 * dt_dem < dt)
@@ -1261,8 +1253,6 @@ IBParticlesDEM<dim>::integrate_particles_motion(const double dt,
                                                std::vector<Tensor<1, 3>>(4));
 
       // Solve each of the 4 step of the RK4 method
-      std::cout << "finish local vector initialization start rk stepping"
-                << std::endl;
       for (unsigned int step = 0; step < 4; ++step)
         {
           std::fill(current_fluid_force.begin(), current_fluid_force.end(), 0);
@@ -1282,25 +1272,18 @@ IBParticlesDEM<dim>::integrate_particles_motion(const double dt,
                     lubrication_wall_torque.end(),
                     0);
 
-          std::cout << "finish initializing local vector" << std::endl;
-
           // define local time of the rk step
           double local_dt = dt_dem * 0.5;
           if (step == 3)
             {
               local_dt = local_dt * 2;
             }
-
-
-
           // Calculate particle-particle and particle-wall contact force
 
           calculate_pp_contact_force(local_dt, contact_force, contact_torque);
-          std::cout << "pp contact force done" << std::endl;
           calculate_pw_contact_force(local_dt,
                                      contact_wall_force,
                                      contact_wall_torque);
-          std::cout << "pw contact force done" << std::endl;
 
           if (parameters->enable_lubrication_force)
             {
@@ -1310,14 +1293,12 @@ IBParticlesDEM<dim>::integrate_particles_motion(const double dt,
                                              mu,
                                              lubrication_force,
                                              lubrication_torque);
-              std::cout << "pp lubrication done" << std::endl;
               calculate_pw_lubrication_force(local_dt,
                                              h_max,
                                              h_min,
                                              mu,
                                              lubrication_wall_force,
                                              lubrication_wall_torque);
-              std::cout << "pp lubrication done" << std::endl;
             }
 
           for (unsigned int p_i = 0; p_i < dem_particles.size(); ++p_i)
@@ -1335,8 +1316,6 @@ IBParticlesDEM<dim>::integrate_particles_motion(const double dt,
 
                   gravity = g * (dem_particles[p_i].mass -
                                  dem_particles[p_i].volume * rho);
-
-                  std::cout << "save last particle state" << std::endl;
 
                   // We consider only the force at t+dt so the scheme is
                   // consistent to a BDFn scheme on the fluid side. If there is
@@ -1367,7 +1346,6 @@ IBParticlesDEM<dim>::integrate_particles_motion(const double dt,
                     contact_wall_force[p_i] + contact_force[p_i] +
                     lubrication_force[p_i] + lubrication_wall_force[p_i];
 
-                  std::cout << "k rk step saved for velocity" << std::endl;
                   dem_particles[p_i].velocity =
                     last_velocity[p_i] + k_velocity[p_i][step] * local_dt;
 
@@ -1411,7 +1389,6 @@ IBParticlesDEM<dim>::integrate_particles_motion(const double dt,
                        angular_velocity_in_particle_frame[0] *
                        angular_velocity_in_particle_frame[1]) /
                     dem_particles[p_i].inertia[2][2];
-                  std::cout << "angular accel calculated" << std::endl;
                   // Rotate angular acceleration in world frame
                   k_omega[p_i][step] =
                     invert(dem_particles[p_i].rotation_matrix) *
@@ -1424,18 +1401,10 @@ IBParticlesDEM<dim>::integrate_particles_motion(const double dt,
 
                   k_omega_contact_impulsion[p_i][step] =
                     contact_torque[p_i] + contact_wall_torque[p_i];
-                  std::cout << "k rk step saved for angular velocity"
-                            << std::endl;
-
                   // Integrate the relevant state Variable for the next RK step.
-
                   dem_particles[p_i].omega =
                     last_omega[p_i] + k_omega[p_i][step] * local_dt;
-
-
                   k_orientation[p_i][step] = dem_particles[p_i].omega;
-                  std::cout << "k rk step saved for angular position"
-                            << std::endl;
                   Tensor<2, 3> new_rotation_matrix;
                   if (dem_particles[p_i].omega.norm() > 0)
                     {
@@ -1449,12 +1418,10 @@ IBParticlesDEM<dim>::integrate_particles_motion(const double dt,
                         dem_particles[p_i].shape->rotation_matrix_to_xyz_angles(
                           new_rotation_matrix);
                     }
-                  std::cout << "define new orientation " << std::endl;
                   // set the orientation which also update the orientation and
                   // rotation matrix of the shape.
                   dem_particles[p_i].set_orientation(
                     dem_particles[p_i].orientation);
-                  std::cout << "finish setting new orientation " << std::endl;
                 }
               else
                 {
@@ -1533,22 +1500,16 @@ IBParticlesDEM<dim>::integrate_particles_motion(const double dt,
                     dem_particles[p_i].orientation);
                 }
             }
-          std::cout << "finish this rk step start contact state integration "
-                    << std::endl;
           // reset the contact overlap for the next RK step.
           for (auto it = pw_contact_map.begin(); it != pw_contact_map.end();
                it++)
             {
-              std::cout << "start looping " << std::endl;
               unsigned int particle_id = it->first;
               for (auto it2 = it->second.begin(); it2 != it->second.end();
                    it2++)
                 {
-                  std::cout << "start looping over second iterator"
-                            << std::endl;
                   unsigned int wall_id      = it2->first;
                   auto         contact_info = it2->second;
-                  std::cout << "identify iterator" << std::endl;
                   // Check if all 4 of the RK steps are in the contact info. If
                   // it is not the case, this means this is a new contact, or
                   // the contact ended. In this case, we simply take the last RK
@@ -1559,33 +1520,26 @@ IBParticlesDEM<dim>::integrate_particles_motion(const double dt,
                       auto previous_contact_info_iterator =
                         last_pw_contact_info.find(particle_id)
                           ->second.find(wall_id);
-                      std::cout << "find the previous contact info"
-                                << std::endl;
                       if (previous_contact_info_iterator !=
                           last_pw_contact_info.find(particle_id)->second.end())
                         {
                           contact_info.tangential_overlap =
                             previous_contact_info_iterator->second
                               .tangential_overlap;
-                          std::cout << "reinitialize the contact info"
-                                    << std::endl;
                         }
                       else
                         {
                           contact_info.tangential_overlap = 0;
-                          std::cout << "initialize the contact info"
-                                    << std::endl;
                         }
                     }
                   else
                     {
                       // one of the map is empty and we try to acces it.
                       contact_info.tangential_overlap = 0;
-                      std::cout << "catch error" << std::endl;
                     }
                 }
             }
-          std::cout << "finish pw contact state integration " << std::endl;
+
           for (auto it = pp_contact_map.begin(); it != pp_contact_map.end();
                it++)
             {
@@ -1621,11 +1575,9 @@ IBParticlesDEM<dim>::integrate_particles_motion(const double dt,
                   else
                     {
                       contact_info.tangential_overlap = 0;
-                      std::cout << "catch error" << std::endl;
                     }
                 }
             }
-          std::cout << "finish pp contact state integration " << std::endl;
         }
 
 
@@ -1711,8 +1663,6 @@ IBParticlesDEM<dim>::integrate_particles_motion(const double dt,
             }
         }
 
-
-      std::cout << "finish all rk step start pw contact update" << std::endl;
       // RK4 for the particle wall tangential overlap
       for (auto it = pw_contact_map.begin(); it != pw_contact_map.end(); it++)
         {
@@ -1772,7 +1722,6 @@ IBParticlesDEM<dim>::integrate_particles_motion(const double dt,
               contact_info.tangential_relative_velocity.clear();
             }
         }
-      std::cout << "finish all rk step start pp contact update" << std::endl;
       // Same for particle-particle tangential overlap
       for (auto it = pp_contact_map.begin(); it != pp_contact_map.end(); it++)
         {
@@ -1830,7 +1779,6 @@ IBParticlesDEM<dim>::integrate_particles_motion(const double dt,
               contact_info.tangential_relative_velocity.clear();
             }
         }
-      std::cout << "finish time step" << std::endl;
       t += dt_dem;
     }
 }
