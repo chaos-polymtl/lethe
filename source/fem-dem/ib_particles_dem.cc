@@ -1523,8 +1523,7 @@ IBParticlesDEM<dim>::integrate_particles_motion(const double dt,
                   // it is not the case, this means this is a new contact, or
                   // the contact ended. In this case, we simply take the last RK
                   // step registered as the derivative for the integration.
-                  if (last_pw_contact_info.find(particle_id) !=
-                      last_pw_contact_info.end())
+                  try
                     {
                       auto previous_contact_info_iterator =
                         last_pw_contact_info.find(particle_id)
@@ -1541,7 +1540,7 @@ IBParticlesDEM<dim>::integrate_particles_motion(const double dt,
                           contact_info.tangential_overlap = 0;
                         }
                     }
-                  else
+                  catch (...)
                     {
                       // one of the map is empty and we try to acces it.
                       contact_info.tangential_overlap = 0;
@@ -1561,8 +1560,7 @@ IBParticlesDEM<dim>::integrate_particles_motion(const double dt,
                   // it is not the case, this means this is a new contact, or
                   // the contact ended. In this case, we simply take the last RK
                   // step registered as the derivative for the integration.
-                  if (last_pp_contact_info.find(particle_one_id) !=
-                      last_pp_contact_info.end())
+                  try
                     {
                       auto previous_contact_info_iterator =
                         last_pp_contact_info.find(particle_one_id)
@@ -1580,7 +1578,7 @@ IBParticlesDEM<dim>::integrate_particles_motion(const double dt,
                           contact_info.tangential_overlap = 0;
                         }
                     }
-                  else
+                  catch (...)
                     {
                       // one of the map is empty and we try to acces it.
                       contact_info.tangential_overlap = 0;
