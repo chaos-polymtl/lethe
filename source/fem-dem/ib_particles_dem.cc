@@ -1535,12 +1535,15 @@ IBParticlesDEM<dim>::integrate_particles_motion(const double dt,
           for (auto it = pw_contact_map.begin(); it != pw_contact_map.end();
                it++)
             {
+              std::cout<<"start looping "<<std::endl;
               unsigned int particle_id = it->first;
               for (auto it2 = it->second.begin(); it2 != it->second.end();
                    it2++)
                 {
+                  std::cout<<"start looping over second iterator"<<std::endl;
                   unsigned int wall_id      = it2->first;
                   auto         contact_info = it2->second;
+                  std::cout<<"identify iterator"<<std::endl;
                   // Check if all 4 of the RK steps are in the contact info. If
                   // it is not the case, this means this is a new contact, or
                   // the contact ended. In this case, we simply take the last RK
@@ -1548,16 +1551,19 @@ IBParticlesDEM<dim>::integrate_particles_motion(const double dt,
                   auto previous_contact_info_iterator =
                     last_pw_contact_info.find(particle_id)
                       ->second.find(wall_id);
+                  std::cout<<"find the previous contact info"<<std::endl;
                   if (previous_contact_info_iterator !=
                       last_pw_contact_info.find(particle_id)->second.end())
                     {
                       contact_info.tangential_overlap =
                         previous_contact_info_iterator->second
                           .tangential_overlap;
+                      std::cout<<"reinitialize the contact info"<<std::endl;
                     }
                   else
                     {
                       contact_info.tangential_overlap = 0;
+                      std::cout<<"initialize the contact info"<<std::endl;
                     }
                 }
             }
