@@ -1577,7 +1577,7 @@ IBParticlesDEM<dim>::integrate_particles_motion(const double dt,
                                     << std::endl;
                         }
                     }
-                  catch (...)
+                  else
                     {
                       // one of the map is empty and we try to acces it.
                       contact_info.tangential_overlap = 0;
@@ -1618,10 +1618,10 @@ IBParticlesDEM<dim>::integrate_particles_motion(const double dt,
                           contact_info.tangential_overlap = 0;
                         }
                     }
-                  catch (...)
+                  else
                     {
-                      std::cout << "catch error" << std::endl;
                       contact_info.tangential_overlap = 0;
+                      std::cout << "catch error" << std::endl;
                     }
                 }
             }
