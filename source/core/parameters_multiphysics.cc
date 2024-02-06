@@ -561,7 +561,6 @@ Parameters::CahnHilliard::declare_parameters(ParameterHandler &prm)
   {
     cahn_hilliard_phase_filter.declare_parameters(prm);
 
-
     prm.declare_entry(
       "potential smoothing coefficient",
       "1",
@@ -603,12 +602,12 @@ Parameters::CahnHilliard::parse_parameters(ParameterHandler &prm)
       if (op_epsilon == "automatic")
         {
           CahnHilliard::epsilon_set_method =
-            Parameters::EpsilonSetStrategy::automatic;
+            Parameters::EpsilonSetMethod::automatic;
         }
       else if (op_epsilon == "manual")
         {
           CahnHilliard::epsilon_set_method =
-            Parameters::EpsilonSetStrategy::manual;
+            Parameters::EpsilonSetMethod::manual;
         }
       else
         throw(std::runtime_error("Invalid epsilon setting strategy. "

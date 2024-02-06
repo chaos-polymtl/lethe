@@ -1042,7 +1042,6 @@ namespace Parameters
           "The choices are <constant|linear|phase change>.");
         surface_tension_parameters.declare_parameters(prm);
 
-
         // Cahn-Hilliard mobility
         prm.declare_entry(
           "cahn hilliard mobility model",
@@ -1142,7 +1141,6 @@ namespace Parameters
             else
               throw(std::runtime_error(
                 "Invalid surface tension model. The choices are <constant|linear|phase change>."));
-
 
             // Cahn-Hilliard mobility
             op = prm.get("cahn hilliard mobility model");

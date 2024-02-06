@@ -536,7 +536,7 @@ NavierStokesScratchData<dim>::calculate_physical_properties()
             }
           else if (gather_cahn_hilliard && !gather_vof)
             {
-              //  Blend the physical properties using the CahnHilliard field
+              // Blend the physical properties using the CahnHilliard field
               for (unsigned int q = 0; q < this->n_q_points; ++q)
                 {
                   double phase_order_cahn_hilliard_value =

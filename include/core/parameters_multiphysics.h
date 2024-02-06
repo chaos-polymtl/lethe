@@ -26,15 +26,10 @@
 #ifndef lethe_parameters_multiphysics_h
 #define lethe_parameters_multiphysics_h
 
-#include <core/dimensionality.h>
-#include <core/ib_particle.h>
-#include <core/multiphysics.h>
 #include <core/parameters.h>
 #include <core/utilities.h>
 
-#include <deal.II/base/conditional_ostream.h>
 #include <deal.II/base/parameter_handler.h>
-#include <deal.II/base/parsed_function.h>
 
 using namespace dealii;
 
@@ -64,7 +59,7 @@ namespace Parameters
     tanh
   };
 
-  enum class EpsilonSetStrategy
+  enum class EpsilonSetMethod
   {
     automatic,
     manual
@@ -79,7 +74,7 @@ namespace Parameters
     // Type of filter
     Parameters::FilterType type;
 
-    // $$\beta$$ value for the tanh filter
+    // \f$beta\f$ value for the tanh filter
     double beta;
 
     // Type of verbosity for the phase filter
@@ -224,12 +219,12 @@ namespace Parameters
 
   struct CahnHilliard
   {
-    // Smoothing parameter Xi in the Cahn-Hilliard equations (potential
+    // Smoothing parameter \f$\xi\f$ in the Cahn-Hilliard equations (potential
     // equation)
     double potential_smoothing_coefficient;
 
     // Epsilon set strategy (automatic|manual)
-    Parameters::EpsilonSetStrategy epsilon_set_method;
+    Parameters::EpsilonSetMethod epsilon_set_method;
 
     // Epsilon value in the Cahn-Hilliard equations
     double epsilon;

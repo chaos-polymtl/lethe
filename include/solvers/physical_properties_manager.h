@@ -186,7 +186,6 @@ public:
     return mobility_cahn_hilliard[material_interaction_id];
   }
 
-
   // Vector Getters for the physical property models
   std::vector<std::shared_ptr<DensityModel>>
   get_density_vector() const
@@ -245,7 +244,6 @@ public:
   {
     return mobility_cahn_hilliard;
   }
-
 
   double
   get_kinematic_viscosity_scale() const

@@ -969,8 +969,7 @@ public:
     const Parameters::CahnHilliard &cahn_hilliard_parameters);
 
   /**
-   * @brief enable_cahn_hilliard Enables the collection of the CahnHilliard data
-   * by the scratch
+   * @brief Enables the collection of the CahnHilliard data by the scratch
    *
    * @param fe FiniteElement associated with the CahnHilliard physics
    *
@@ -1006,7 +1005,7 @@ public:
     this->phase_order.component        = 0;
     this->chemical_potential.component = 1;
 
-    // Gather phase fraction (values, gradient)
+    // Gather phase fraction (values, gradients)
     this->fe_values_cahn_hilliard->operator[](phase_order)
       .get_function_values(current_solution,
                            this->phase_order_cahn_hilliard_values);
@@ -1017,7 +1016,7 @@ public:
       .get_function_gradients(current_solution,
                               this->phase_order_cahn_hilliard_gradients);
 
-    // Gather filtered phase fraction (values, gradient)
+    // Gather filtered phase fraction (values, gradients)
     this->fe_values_cahn_hilliard->operator[](phase_order)
       .get_function_values(current_filtered_solution,
                            this->filtered_phase_order_cahn_hilliard_values);
@@ -1214,7 +1213,6 @@ public:
   std::vector<bool>         is_boundary_face;
   std::vector<unsigned int> boundary_face_id;
 
-
   // Quadrature
   std::vector<std::vector<double>>         face_JxW;
   std::vector<std::vector<Point<dim>>>     face_quadrature_points;
@@ -1228,7 +1226,6 @@ public:
   std::vector<std::vector<Tensor<1, dim>>> face_velocity_laplacians;
   std::vector<std::vector<double>>         face_pressure_values;
   std::vector<std::vector<Tensor<1, dim>>> face_pressure_gradients;
-
 
   // Shape functions
   // First vector is face number, second quadrature point, third DOF

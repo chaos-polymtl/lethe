@@ -345,9 +345,10 @@ public:
       }
   }
 
-  /** @brief Calculates the physical properties. This function calculates the
-   * physical properties that may be required by the Cahn-Hilliard problem.
-   * Namely the surface tension
+  /**
+   * @brief Calculates the physical properties that may be required by the
+   * Cahn-Hilliard problem. Namely the surface tension and the Cahn-Hilliard
+   * mobility.
    */
   void
   calculate_physical_properties();

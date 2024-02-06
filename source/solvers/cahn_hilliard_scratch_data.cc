@@ -1,3 +1,19 @@
+/*---------------------------------------------------------------------
+ *
+ * Copyright (C) 2019 - by the Lethe authors
+ *
+ * This file is part of the Lethe library
+ *
+ * The Lethe library is free software; you can use it, redistribute
+ * it, and/or modify it under the terms of the GNU Lesser General
+ * Public License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ * The full text of the license can be found in the file LICENSE at
+ * the top level of the Lethe distribution.
+ *
+ * ---------------------------------------------------------------------
+ */
+
 #include <core/bdf.h>
 
 #include <solvers/cahn_hilliard_scratch_data.h>
@@ -95,23 +111,17 @@ CahnHilliardScratchData<dim>::calculate_physical_properties()
                            this->phase_order_values,
                            this->fields);
 
-          // Gather properties from material interactions if necessary
-          if (properties_manager.get_number_of_material_interactions() > 0)
-            {
-              const auto material_interaction_id =
-                properties_manager.get_material_interaction_id(
-                  material_interactions_type::fluid_fluid, 0, 1);
-              // Gather surface tension
-              const auto surface_tension_model =
-                properties_manager.get_surface_tension(material_interaction_id);
-              surface_tension_model->vector_value(fields, surface_tension);
-            }
-
-          // Gather surface tension
+          // Gather properties from material interactions
           const auto material_interaction_id =
             properties_manager.get_material_interaction_id(
               material_interactions_type::fluid_fluid, 0, 1);
 
+          // Gather surface tension
+          const auto surface_tension_model =
+            properties_manager.get_surface_tension(material_interaction_id);
+          surface_tension_model->vector_value(fields, surface_tension);
+
+          // Gather mobility
           const auto mobility_cahn_hilliard_model =
             properties_manager.get_mobility_cahn_hilliard(
               material_interaction_id);

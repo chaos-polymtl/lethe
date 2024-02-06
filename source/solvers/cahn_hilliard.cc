@@ -1,10 +1,25 @@
+/*---------------------------------------------------------------------
+ *
+ * Copyright (C) 2019 - by the Lethe authors
+ *
+ * This file is part of the Lethe library
+ *
+ * The Lethe library is free software; you can use it, redistribute
+ * it, and/or modify it under the terms of the GNU Lesser General
+ * Public License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ * The full text of the license can be found in the file LICENSE at
+ * the top level of the Lethe distribution.
+ *
+ * ---------------------------------------------------------------------
+ */
+
 #include <core/bdf.h>
 #include <core/time_integration_utilities.h>
 #include <core/utilities.h>
 
 #include <solvers/cahn_hilliard.h>
 #include <solvers/cahn_hilliard_assemblers.h>
-#include <solvers/cahn_hilliard_filter.h>
 #include <solvers/cahn_hilliard_scratch_data.h>
 
 #include <deal.II/base/work_stream.h>
@@ -24,7 +39,6 @@
 #include <deal.II/lac/trilinos_precondition.h>
 #include <deal.II/lac/trilinos_solver.h>
 
-#include <deal.II/numerics/derivative_approximation.h>
 #include <deal.II/numerics/error_estimator.h>
 #include <deal.II/numerics/vector_tools.h>
 
@@ -53,7 +67,7 @@ CahnHilliard<dim>::setup_assemblers()
       this->simulation_control,
       this->simulation_parameters.multiphysics.cahn_hilliard_parameters,
       (this->simulation_parameters.multiphysics.cahn_hilliard_parameters
-         .epsilon_set_method == Parameters::EpsilonSetStrategy::manual) ?
+         .epsilon_set_method == Parameters::EpsilonSetMethod::manual) ?
         this->simulation_parameters.multiphysics.cahn_hilliard_parameters
           .epsilon :
         GridTools::minimal_cell_diameter(*triangulation) * 0.5,
@@ -65,7 +79,7 @@ CahnHilliard<dim>::setup_assemblers()
       this->simulation_control,
       this->simulation_parameters.multiphysics.cahn_hilliard_parameters,
       (this->simulation_parameters.multiphysics.cahn_hilliard_parameters
-         .epsilon_set_method == Parameters::EpsilonSetStrategy::manual) ?
+         .epsilon_set_method == Parameters::EpsilonSetMethod::manual) ?
         this->simulation_parameters.multiphysics.cahn_hilliard_parameters
           .epsilon :
         GridTools::minimal_cell_diameter(*triangulation) * 0.5,
@@ -76,7 +90,7 @@ CahnHilliard<dim>::setup_assemblers()
     this->simulation_control,
     this->simulation_parameters.multiphysics.cahn_hilliard_parameters,
     (this->simulation_parameters.multiphysics.cahn_hilliard_parameters
-       .epsilon_set_method == Parameters::EpsilonSetStrategy::manual) ?
+       .epsilon_set_method == Parameters::EpsilonSetMethod::manual) ?
       this->simulation_parameters.multiphysics.cahn_hilliard_parameters
         .epsilon :
       GridTools::minimal_cell_diameter(*triangulation) * 0.5));
@@ -179,7 +193,6 @@ CahnHilliard<dim>::copy_local_matrix_to_global_matrix(
                                               system_matrix);
 }
 
-
 template <int dim>
 void
 CahnHilliard<dim>::assemble_system_rhs()
@@ -188,8 +201,6 @@ CahnHilliard<dim>::assemble_system_rhs()
 
   this->system_rhs = 0;
   setup_assemblers();
-
-
 
   const DoFHandler<dim> *dof_handler_fluid =
     multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
@@ -293,7 +304,6 @@ CahnHilliard<dim>::attach_solution_to_output(DataOut<dim> &data_out)
   std::vector<std::string> solution_names_filtered;
   solution_names_filtered.push_back("phase_order_filtered");
   solution_names_filtered.push_back("chemical_potential_filtered");
-
 
   std::vector<DataComponentInterpretation::DataComponentInterpretation>
     data_component_interpretation(

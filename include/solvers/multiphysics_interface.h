@@ -445,8 +445,8 @@ public:
   }
 
   /**
-   * @brief Request the present filtered solution of a given physics (used in VOF or CahnHilliard physics for STF calculation)
-   *
+   * @brief Request the present filtered solution of a given physics (used in
+   * VOF or CahnHilliard physics for STF calculation)
    * @param physics_id The physics of the solution being requested
    */
   GlobalVectorType *
@@ -641,8 +641,9 @@ public:
   }
 
   /**
-   * @brief Sets the reference to the filtered solution of the physics in the multiphysics interface (used in VOF or CahnHilliard physics for STF calculation)
-   *
+   * @brief Sets the reference to the filtered solution of the physics in the
+   * multiphysics interface (used in VOF or CahnHilliard physics for STF
+   * calculation)
    * @param physics_id The physics of the DOF handler being requested
    *
    * @param filtered_solution_vector The reference to the filtered solution vector of the physics; this was

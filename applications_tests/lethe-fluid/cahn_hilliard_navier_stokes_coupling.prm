@@ -20,18 +20,7 @@ end
 #---------------------------------------------------
 
 subsection multiphysics
-  set cahn hilliard  = true
-end
-
-#---------------------------------------------------
-# Cahn-Hilliard order
-#---------------------------------------------------
-
-subsection FEM
-  set phase cahn hilliard order     = 1
-  set potential cahn hilliard order = 1
-  set velocity order                = 1
-  set pressure order                = 1
+  set cahn hilliard = true
 end
 
 #---------------------------------------------------
@@ -51,10 +40,6 @@ end
 
 subsection cahn hilliard
   set potential smoothing coefficient = 0.5
-
-  subsection epsilon
-    set method = automatic
-  end
 end
 
 #---------------------------------------------------
@@ -103,8 +88,6 @@ end
 #---------------------------------------------------
 
 subsection initial conditions
-  set type = nodal
-
   subsection cahn hilliard
     set Function expression = if( x*x + y*y <0.3*0.3,-1,1);0
   end
@@ -118,17 +101,8 @@ subsection physical properties
   set number of fluids                = 2
   set number of material interactions = 1
   subsection material interaction 0
-    set type = fluid-fluid
     subsection fluid-fluid interaction
-      set first fluid id  = 0
-      set second fluid id = 1
-
-      # Surface tension
-      set surface tension model       = constant
       set surface tension coefficient = 1
-
-      # Mobility Cahn-Hilliard
-      set cahn hilliard mobility model    = constant
       set cahn hilliard mobility constant = 1e-2
     end
   end
