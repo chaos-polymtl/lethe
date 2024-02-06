@@ -498,7 +498,7 @@ Parameters::CahnHilliard_PhaseFilter::declare_parameters(ParameterHandler &prm)
       "if <clip> is selected, the phase order values above 1 (respectively below -1) will be brought back to 1 (respectively -1)"
       "if <tanh> is selected, the filtered phase will be a result of the "
       "following function: \\alpha_f = \\tanh(\\beta\\alpha); "
-      "where \\beta is a parameter influencing the interface thickness that "
+      "where beta is a parameter influencing the interface thickness that "
       "must be defined");
     prm.declare_entry(
       "beta",

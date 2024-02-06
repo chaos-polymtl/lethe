@@ -54,10 +54,6 @@ end
 #---------------------------------------------------
 
 subsection initial conditions
-  set type = nodal
-  subsection uvwp
-    set Function expression = 0; 0; 0
-  end
   subsection cahn hilliard
     set Function expression = -tanh((0.5 - sqrt((x) * (x) + (y) * (y)))/(sqrt(2)*2^(-6))); 0
   end
@@ -79,14 +75,8 @@ subsection physical properties
   end
   set number of material interactions = 1
   subsection material interaction 0
-    set type = fluid-fluid
     subsection fluid-fluid interaction
-      set first fluid id              = 0
-      set second fluid id             = 1
-      set surface tension model       = constant
       set surface tension coefficient = 1
-      # Mobility Cahn-Hilliard
-      set cahn hilliard mobility model    = constant
       set cahn hilliard mobility constant = 1e-4
     end
   end
@@ -122,8 +112,6 @@ end
 
 subsection analytical solution
   set enable    = true
-  set verbosity = quiet
-  set filename  = L2Error
   subsection uvwp
     set Function expression = 0; 0; if (x^2 + y^2 < 0.5^2 , 2, 0)
   end
@@ -135,9 +123,6 @@ end
 
 subsection FEM
   set velocity order                = 2
-  set pressure order                = 1
-  set phase cahn hilliard order     = 1
-  set potential cahn hilliard order = 1
 end
 
 #---------------------------------------------------
@@ -147,13 +132,9 @@ end
 subsection non-linear solver
   subsection cahn hilliard
     set tolerance      = 1e-9
-    set max iterations = 20
-    set verbosity      = verbose
   end
   subsection fluid dynamics
     set tolerance      = 1e-9
-    set max iterations = 20
-    set verbosity      = verbose
   end
 end
 
@@ -163,20 +144,12 @@ end
 
 subsection linear solver
   subsection fluid dynamics
-    set verbosity         = verbose
-    set method            = gmres
     set relative residual = 1e-3
     set minimum residual  = 1e-10
-    set preconditioner    = ilu
-    set max iters         = 4000
   end
   subsection cahn hilliard
-    set verbosity         = verbose
-    set method            = gmres
     set relative residual = 1e-3
     set minimum residual  = 1e-10
-    set preconditioner    = ilu
-    set max iters         = 4000
   end
 end
 

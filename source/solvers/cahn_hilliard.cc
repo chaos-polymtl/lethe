@@ -57,9 +57,10 @@ CahnHilliard<dim>::setup_assemblers()
     }
 
   // For all the assemblers below, the parameter epsilon is passed to the
-  // constructor explicitly because the triangulation object is required by the
-  // minimum_cell_diameter function of the GridTools class. The assemblers do
-  // not (and should not) store the triangulation in their attribute.
+  // constructor explicitly because it might be calculated directly using
+  // properties from the triangulation (e.g. minimal cell-size). Consequently,
+  // it cannot be used directly from the simulation parameters and it is passed
+  // to the constructor separately.
 
   // Angle of contact boundary condition
   this->assemblers.push_back(
@@ -70,7 +71,7 @@ CahnHilliard<dim>::setup_assemblers()
          .epsilon_set_method == Parameters::EpsilonSetMethod::manual) ?
         this->simulation_parameters.multiphysics.cahn_hilliard_parameters
           .epsilon :
-        GridTools::minimal_cell_diameter(*triangulation) * 0.5,
+        GridTools::minimal_cell_diameter(*triangulation) ,
       this->simulation_parameters.boundary_conditions_cahn_hilliard));
 
   // Free angle of contact boundary condition
@@ -82,7 +83,7 @@ CahnHilliard<dim>::setup_assemblers()
          .epsilon_set_method == Parameters::EpsilonSetMethod::manual) ?
         this->simulation_parameters.multiphysics.cahn_hilliard_parameters
           .epsilon :
-        GridTools::minimal_cell_diameter(*triangulation) * 0.5,
+        GridTools::minimal_cell_diameter(*triangulation),
       this->simulation_parameters.boundary_conditions_cahn_hilliard));
 
   // Core assembler
@@ -93,7 +94,7 @@ CahnHilliard<dim>::setup_assemblers()
        .epsilon_set_method == Parameters::EpsilonSetMethod::manual) ?
       this->simulation_parameters.multiphysics.cahn_hilliard_parameters
         .epsilon :
-      GridTools::minimal_cell_diameter(*triangulation) * 0.5));
+      GridTools::minimal_cell_diameter(*triangulation)));
 }
 
 template <int dim>
