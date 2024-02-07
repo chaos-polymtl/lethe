@@ -39,7 +39,7 @@ using namespace dealii;
 
 
 /**
- * A solver class for the DEM used in conjunction with IB particles and
+ * @brief A solver class for the DEM used in conjunction with IB particles and
  * gls_sharp_navier_stokes. This class defines and uses some functions of the
  * DEM class that have been modified and simplified to be compatible with
  * IB_particles.
@@ -54,6 +54,34 @@ template <int dim>
 class IBParticlesDEM
 {
 public:
+  /** @brief Struct that contains history of the contact between two objects. This is the commonly used
+   * constructor since it houses all the information required to perform the
+   * contact calculation.
+   * */
+  struct ContactInfo
+  {
+    Tensor<1, 3> normal_vector;
+    Point<3>     contact_point;
+    double       normal_overlap;
+    double       normal_relative_velocity;
+    Tensor<1, 3> tangential_overlap;
+    std::vector<Tensor<1, 3>>
+      tangential_relative_velocity; // keep each step of RK4 in memory
+  };
+
+  /** @brief Struct is used to reduce the number of parameters passed in the function calculate_force_model.
+   * */
+  struct ObjectProperties
+  {
+    double object_mass;
+    double object_radius;
+    double object_youngs_modulus;
+    double object_poisson_ratio;
+    double object_restitution_coefficient;
+    double object_friction_coefficient;
+    double object_rolling_friction_coefficient;
+  };
+
   /**
    * @brief
    * Initialize the IBParticlesDEM object with the parameters, the mpi
@@ -146,6 +174,46 @@ public:
 
 
   /**
+   * @brief Calculates non-linear (Hertzian) force between two objects. Take into input the physical properties and contact state of the two objects.
+   *
+   * @param normal_overlap Contact normal overlap
+   * @param contact_info A container that contains the required information for
+   * calculation of the contact force for a particle pair in contact
+   * @param contact_point The contact point between the two objects
+   * @param contact_normal Contact normal unit vector
+   * @param normal_force Contact normal force
+   * @param tangential_force Contact tangential force
+   * @param rolling_resistance_torque Contact rolling resistance torque
+   * @param particle_one_position the position of particle one
+   * @param particle_one_velocity the velocity of particle one
+   * @param particle_one_omega the angular velocity of particle one
+   * @param particle_one_properties the physical properties of particle one
+   * @param particle_two_position the position of particle two
+   * @param particle_two_velocity the velocity of particle two
+   * @param particle_two_omega the angular velocity of particle two
+   * @param particle_two_properties the physical properties of particle two
+   * @param dt the dem time step.
+   */
+  void
+  calculate_force_model(const double           normal_overlap,
+                        ContactInfo           &contact_info,
+                        Point<3>              &contact_point,
+                        Tensor<1, 3>          &contact_normal,
+                        Tensor<1, 3>          &normal_force,
+                        Tensor<1, 3>          &tangential_force,
+                        Tensor<1, 3>          &rolling_resistance_torque,
+                        Point<dim>            &particle_one_position,
+                        Tensor<1, 3>          &particle_one_velocity,
+                        Tensor<1, 3>          &particle_one_omega,
+                        const ObjectProperties particle_one_properties,
+                        Point<dim>            &particle_two_position,
+                        Tensor<1, 3>          &particle_two_velocity,
+                        Tensor<1, 3>          &particle_two_omega,
+                        const ObjectProperties particle_two_properties,
+                        const double           dt);
+
+
+  /**
    *  @brief Calculates particle-particle lubrication force. The force is based on the formula from
    *  Microhydrodynamics: Principles and Selected Applications by Kim, Sangtae;
    * Karrila, Seppo J. ISBN 13: 9780750691734
@@ -210,10 +278,10 @@ public:
 
   void
   update_particles_boundary_contact(
-    const std::vector<IBParticle<dim>> &particles,
-    const DoFHandler<dim>              &dof_handler,
-    const Quadrature<dim - 1>          &face_quadrature_formula,
-    const Mapping<dim>                 &mapping);
+    std::vector<IBParticle<dim>> &particles,
+    const DoFHandler<dim>        &dof_handler,
+    const Quadrature<dim - 1>    &face_quadrature_formula,
+    const Mapping<dim>           &mapping);
 
 
   std::vector<IBParticle<dim>> dem_particles;
@@ -264,27 +332,21 @@ private:
   DEMSolverParameters<dim> dem_parameters{};
   MPI_Comm                 mpi_communicator;
 
-  std::shared_ptr<ParticleParticleContactForceBase<dim>>
-    particle_particle_contact_force_object;
-
   std::vector<std::set<unsigned int>> particles_contact_candidates;
 
-  std::shared_ptr<ParticleWallContactForce<dim>>
-    particle_wall_contact_force_object;
-
+  // Store the previous contact point as initial guess for the next search
+  std::map<unsigned int, std::map<unsigned int, Point<dim>>>
+    previous_wall_contact_point;
+  std::map<unsigned int, std::map<unsigned int, Point<dim>>>
+    previous_particle_particle_contact_point;
 
   // Particles contact history
-  std::map<unsigned int,
-           std::map<unsigned int, particle_particle_contact_info<dim>>>
-    pp_contact_map;
-  std::map<unsigned int,
-           std::map<unsigned int, particle_wall_contact_info<dim>>>
-    pw_contact_map;
+  std::map<unsigned int, std::map<unsigned int, ContactInfo>> pp_contact_map;
+  std::map<unsigned int, std::map<unsigned int, ContactInfo>> pw_contact_map;
 
   // A vector of vectors of candidate cells for each of the particle.
-  std::vector<std::vector<BoundaryCellsInfo>> boundary_cells;
+  std::vector<std::map<unsigned int, BoundaryCellsInfo>> boundary_cells;
 
-private:
   double cfd_time;
 };
 

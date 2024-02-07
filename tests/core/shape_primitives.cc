@@ -52,7 +52,7 @@ test()
   deallog << "Testing value" << std::endl;
   // Testing value of all shape, to confirm proper implementation
   Point<3> p({1., 0.8, 0.75});
-  Point<3> p_superquadric_1({0, 0, 3});
+  Point<3> p_superquadric_1({0, 0, 1});
   Point<3> p_superquadric_2({0, 0, -3});
   Point<3> p_superquadric_3({1, 1, 3});
   deallog << " Sphere , SD = " << sphere->value(p) << std::endl;

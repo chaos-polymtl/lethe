@@ -12,9 +12,6 @@
  * the top level of the Lethe distribution.
  *
  * ---------------------------------------------------------------------
-
- *
- * Author: Simon Gauvin, Polytechnique Montreal, 2019
  */
 
 #ifndef lethe_non_linear_solver_h
@@ -57,9 +54,20 @@ public:
   virtual void
   solve(const bool is_initial_step) = 0;
 
+
+  /**
+   * @brief Return the current newton iteration.
+   */
+  inline unsigned int
+  get_current_newton_iteration() const
+  {
+    return outer_iteration;
+  }
+
 protected:
   PhysicsSolver<VectorType>  *physics_solver;
   Parameters::NonLinearSolver params;
+  unsigned int                outer_iteration;
 };
 
 template <typename VectorType>
@@ -68,6 +76,7 @@ NonLinearSolver<VectorType>::NonLinearSolver(
   const Parameters::NonLinearSolver &params)
   : physics_solver(physics_solver)
   , params(params)
+  , outer_iteration(0)
 {}
 
 #endif

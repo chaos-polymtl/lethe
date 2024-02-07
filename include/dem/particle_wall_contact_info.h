@@ -79,17 +79,6 @@ public:
     , tangential_relative_velocity({0, 0, 0})
   {}
 
-  /** @brief Construct the particle_wall_contact_info which is empty. This is only used in the IB model and should be deprecated.
-   */
-  particle_wall_contact_info()
-    : normal_vector({0, 0, 0})
-    , point_on_boundary({0, 0, 0})
-    , boundary_id(0)
-    , normal_overlap(0)
-    , normal_relative_velocity(0)
-    , tangential_overlap({0, 0, 0})
-    , tangential_relative_velocity({0, 0, 0})
-  {}
 
 
   Particles::ParticleIterator<dim> particle;

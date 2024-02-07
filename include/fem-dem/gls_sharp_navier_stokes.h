@@ -165,19 +165,27 @@ private:
   {
     if (some_particles_are_coupled)
       {
-        force_on_ib();
+        if (this->get_current_newton_iteration() != 0)
+          {
+            force_on_ib();
+          }
         integrate_particles();
         update_precalculations_for_ib();
+      }
+    // Do the cut cell mapping only if it is the first Newton iteration or
+    // if the explicit position integration is false.
+    if (this->get_current_newton_iteration() == 0 ||
+        this->simulation_parameters.particlesParameters
+            ->explicit_position_integration_calculation == false)
+      {
         if (all_spheres)
           optimized_generate_cut_cells_map();
         else
           generate_cut_cells_map();
       }
-    // this->simulation_control->set_assembly_method(this->time_stepping_method);
-    {
-      this->GLSNavierStokesSolver<
-        dim>::assemble_system_matrix_without_preconditioner();
-    }
+    this->GLSNavierStokesSolver<
+      dim>::assemble_system_matrix_without_preconditioner();
+
 
     sharp_edge();
 
@@ -587,7 +595,7 @@ private:
    * particle index.
    */
   std::map<typename DoFHandler<dim>::active_cell_iterator,
-           std::tuple<bool, unsigned int, unsigned int>>
+           std::tuple<bool, unsigned int, std::vector<unsigned int>>>
     cut_cells_map;
 
   /*
@@ -602,10 +610,13 @@ private:
     overconstrained_fluid_cell_map;
 
   /*
-   * These vectors are used to keep track of the DOFs that are overconstrained
+   * These vectors and map are used to keep track of the DOFs that are
+   * overconstrained
    */
-  GlobalVectorType local_dof_overconstrained;
-  GlobalVectorType dof_overconstrained;
+  GlobalVectorType             local_dof_overconstrained;
+  GlobalVectorType             dof_overconstrained;
+  std::map<unsigned int, bool> dof_with_more_then_one_particle;
+
 
   std::map<typename DoFHandler<dim>::active_cell_iterator,
            std::tuple<bool, unsigned int>>
@@ -623,7 +634,6 @@ private:
     assemblers_inside_ib;
 
   PVDHandler ib_particles_pvdhandler;
-
 
   std::vector<IBParticle<dim>> particles;
   double                       particle_residual;

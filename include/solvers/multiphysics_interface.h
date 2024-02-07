@@ -539,7 +539,6 @@ public:
     return solids;
   }
 
-
   /**
    * @brief Request the present solution of the projected phase fraction gradient (PFG)
    */

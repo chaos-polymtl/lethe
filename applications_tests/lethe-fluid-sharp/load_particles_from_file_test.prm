@@ -104,7 +104,7 @@ subsection particles
 
   subsection input file
     set load particles from file = true
-    set particles file           = particles
+    set particles file           = particles.input
   end
 
   subsection local mesh refinement

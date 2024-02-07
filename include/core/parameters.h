@@ -1312,42 +1312,99 @@ namespace Parameters
     declare_default_entry(ParameterHandler &prm, unsigned int index);
     void
     parse_parameters(ParameterHandler &prm);
-
-    unsigned int                 nb;
-    unsigned int                 order;
-    unsigned int                 initial_refinement;
-    double                       inside_radius;
-    double                       outside_radius;
-    bool                         time_extrapolation_of_refinement_zone;
+    // Vector of particles
     std::vector<IBParticle<dim>> particles;
-    bool                         calculate_force_ib;
-    bool                         assemble_navier_stokes_inside;
-    std::string                  ib_force_output_file;
-    Tensor<1, dim>               gravity;
-    double                       particle_nonlinear_tol;
-    double                       wall_youngs_modulus;
-    double                       wall_poisson_ratio;
-    double                       wall_rolling_friction_coefficient;
-    double                       wall_friction_coefficient;
-    double                       wall_restitution_coefficient;
-    unsigned int                 coupling_frequency;
-    bool                         enable_lubrication_force;
-    double                       lubrication_range_max;
-    double                       lubrication_range_min;
-    double                       contact_search_radius_factor;
-    int                          contact_search_frequency;
-    bool                         load_particles_from_file;
-    std::string                  particles_file;
-    bool                         enable_extra_sharp_interface_vtu_output_field;
 
-    std::shared_ptr<Functions::ParsedFunction<dim>> f_gravity;
+    // Number of declared IB particles
+    unsigned int nb_particles;
+    // Boolean to determine whether the Navier-Stokes equations are
+    // solved inside the particles.
+    bool assemble_navier_stokes_inside;
 
-    double      particle_nonlinear_tolerance;
-    double      length_ratio;
-    bool        enable_extrapolation;
-    double      alpha;
-    bool        print_dem;
+    // Polynomial order of the IB stencil
+    unsigned int order;
+    // The length ratio used for the stencil calculation of the IB condition.
+    double length_ratio;
+    // Boolean controlling whether extrapolation is used to impose the
+    // immersed boundary condition. If false, the IB condition is directly
+    // imposed using nearest neighbors. the immersed boundary condition or not.
+    // If it is set to false, all cut cells are fully imposed on the IB.
+    bool enable_extrapolation;
+
+    // Boolean for the calculation of the force at the IB
+    bool calculate_force_ib;
+    // Boolean for extra vtu field output
+    bool enable_extra_sharp_interface_vtu_output_field;
+    // The name of the output file for the forces on the IB.
+    std::string ib_force_output_file;
+    // Particles pvd file name
     std::string ib_particles_pvd_file;
+    // Boolean for printing DEM information
+    bool print_dem;
+
+    // Number of initial refinements around each particle
+    unsigned int initial_refinement;
+    // Inner radius factor of the refinement zone
+    double inside_radius;
+    // Outer radius factor of the refinement zone
+    double outside_radius;
+    // Boolean for time-dependent mesh refinement according to the particle's
+    // current position the refinement zone.
+    bool time_extrapolation_of_refinement_zone;
+
+    // Number of DEM time steps per CFD time step.
+    unsigned int coupling_frequency;
+    // Relaxation parameter for the CFD-DEM coupling.
+    double alpha;
+    // Frequency at which the contact search is performed at the CFD time
+    // scale (once every X CFD time steps)
+    int contact_search_frequency;
+    // Particles' radius multiplier used to calculate the effective radius of
+    // contact search
+    double contact_search_radius_factor;
+    // Boolean for lubrication force
+    bool enable_lubrication_force;
+    // The maximal range for which the lubrication force is evaluated. This
+    // variable multiplies the smallest cell diameter to obtain the actual
+    // range.
+    double lubrication_range_max;
+    // The minimal range for which the lubrication force is evaluated. This
+    // variable multiplies the smallest cell diameter to obtain the actual
+    // range.
+    double lubrication_range_min;
+    // Tolerance for the particle dynamics nonlinear solver.
+    double particle_nonlinear_tolerance;
+    // Boolean for the explicit calculation of the contact impulse in the
+    // CFD-DEM coupling impulsion in the CFD-DEM coupling.
+    bool explicit_contact_impulsion_calculation;
+    // Boolean for explicit evaluation of the particle's position in the CFD-DEM
+    // coupling
+    bool explicit_position_integration_calculation;
+    // Boolean for approximation of the contact radius. If true, the effective
+    // radius replaces the actual particle's local curvature radius in the
+    // calculation.
+    bool approximate_radius_for_contact;
+    // Function defining the gravitational acceleration vector used by the
+    // CFD-DEM calculation.
+    std::shared_ptr<Functions::ParsedFunction<dim>> f_gravity;
+    // Young's modulus of the wall
+    double wall_youngs_modulus;
+    // Poisson ratio of the wall
+    double wall_poisson_ratio;
+    // Rolling friction coefficient of the wall
+    double wall_rolling_friction_coefficient;
+    // Sliding friction coefficient of the wall
+    double wall_friction_coefficient;
+    // Coefficient of restitution of the wall
+    double wall_restitution_coefficient;
+
+    // Boolean for loading particles from an independent file. If true, the
+    // definition of the particles in the Particle subsection in the .prm file
+    // is ignored. of the particle subsection.
+    bool load_particles_from_file;
+    // Name of the independent file containing particles' information at
+    // insertion. Only used if load_particles_from_file is true.
+    std::string particles_file;
   };
 
   /**

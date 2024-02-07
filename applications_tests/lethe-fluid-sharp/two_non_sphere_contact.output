@@ -1,0 +1,89 @@
+Running on 1 MPI rank(s)...
+   Number of active cells:       1000
+   Number of degrees of freedom: 5324
+   Volume of triangulation:      6.4e+04
+Initial refinement around IB particles - Step : 1 of 5
+   Number of active cells:       1028
+   Number of degrees of freedom: 5552
+   Volume of triangulation:      6.4e+04
+Initial refinement around IB particles - Step : 2 of 5
+   Number of active cells:       1140
+   Number of degrees of freedom: 6300
+   Volume of triangulation:      6.4e+04
+Initial refinement around IB particles - Step : 3 of 5
+   Number of active cells:       1784
+   Number of degrees of freedom: 9928
+   Volume of triangulation:      6.4e+04
+Initial refinement around IB particles - Step : 4 of 5
+   Number of active cells:       4612
+   Number of degrees of freedom: 23892
+   Volume of triangulation:      6.4e+04
+Initial refinement around IB particles - Step : 5 of 5
+   Number of active cells:       5060
+   Number of degrees of freedom: 26132
+   Volume of triangulation:      6.4e+04
+
+*******************************************************************************
+Transient iteration: 1        Time: 0.01     Time step: 0.01     CFL: 0       
+*******************************************************************************
+particle 0 position 20 1 20
+particle 0 velocity 0.137 0.00878 -9.72e-05
+particle 1 position 19 2.87 20
+particle 1 velocity -0.064 -0.326 -7.56e-05
++------------------------------------------+
+|  Force  summary particles                |
++------------------------------------------+
+particle_ID  time   T_x   omega_x theta_x  T_y   omega_y theta_y  T_z   omega_z theta_z  f_x    v_x    p_x    f_y    v_y    p_y   f_z    v_z    p_z    f_xv   f_yv  f_zv   f_xp   f_yp   f_zp  
+          0 0.0100 0.000  -0.001  0.000 0.000  0.000  0.000 -0.027   0.367   0.000 -0.011  0.137 20.000 -0.006  0.009 1.000 0.000 0.000 20.000 -0.005 -0.001 0.000 -0.006 -0.005 0.000 
+          1 0.0100 0.000  0.000   1.571  0.000  0.000   1.571  0.020  -0.306  -1.571  0.045 -0.064 19.000  0.055 -0.326 2.875 0.000 0.000 20.000  0.001  0.011 0.000  0.044  0.044 0.000 
+
+********************************************************************************
+Transient iteration: 2        Time: 0.02     Time step: 0.01     CFL: 0.0230022
+********************************************************************************
+   Number of active cells:       4395
+   Number of degrees of freedom: 22952
+   Volume of triangulation:      6.4e+04
+particle 0 position 20 1 20
+particle 0 velocity 0.26 0.00679 -5.69e-06
+particle 1 position 19 2.87 20
+particle 1 velocity -0.119 -0.649 -3.77e-05
++------------------------------------------+
+|  Force  summary particles                |
++------------------------------------------+
+particle_ID  time   T_x   omega_x theta_x  T_y   omega_y theta_y  T_z   omega_z theta_z  f_x    v_x    p_x    f_y    v_y    p_y   f_z   v_z    p_z    f_xv   f_yv  f_zv   f_xp   f_yp  f_zp  
+          0 0.0200 0.000  -0.003  0.000 0.000  -0.001  0.000 -0.044   0.657   0.005 -0.013  0.260 20.002 -0.007  0.007 1.000 0.000 0.000 20.000 -0.009 -0.001 0.000 -0.004 -0.006 0.000 
+          1 0.0200  0.000  0.000   1.570  0.000  -0.001   1.566  0.024  -0.556  -1.570  0.045 -0.119 18.999  0.078 -0.649 2.870 0.000 0.000 20.000  0.002  0.021 0.000  0.043  0.057 0.000 
+
+********************************************************************************
+Transient iteration: 3        Time: 0.03     Time step: 0.01     CFL: 0.0409979
+********************************************************************************
+   Number of active cells:       4395
+   Number of degrees of freedom: 22952
+   Volume of triangulation:      6.4e+04
+particle 0 position 20 1 20
+particle 0 velocity 0.384 0.03 0.000862
+particle 1 position 19 2.86 20
+particle 1 velocity -0.18 -0.939 -3.7e-05
++------------------------------------------+
+|  Force  summary particles                |
++------------------------------------------+
+particle_ID  time   T_x  omega_x theta_x  T_y  omega_y theta_y  T_z   omega_z theta_z  f_x    v_x    p_x    f_y    v_y    p_y   f_z   v_z    p_z    f_xv   f_yv   f_zv   f_xp   f_yp  f_zp  
+          0 0.0300 0.000  -0.003  0.000 0.001   0.000  0.000 -0.054   0.903   0.013 -0.016  0.384 20.005 -0.009  0.030 1.000 0.000  0.001 20.000 -0.014 -0.003  0.000 -0.002 -0.007 0.000 
+          1 0.0300 0.000   0.000   1.570 0.000  -0.002   1.559  0.028  -0.800  -1.570  0.046 -0.180 18.998  0.087 -0.939 2.862 0.000 0.000 20.000  0.002  0.029 0.000  0.043  0.058 0.000 
+
+********************************************************************************
+Transient iteration: 4        Time: 0.04     Time step: 0.01     CFL: 0.0571297
+********************************************************************************
+   Number of active cells:       4437
+   Number of degrees of freedom: 23184
+   Volume of triangulation:      6.4e+04
+particle 0 position 20 1 20
+particle 0 velocity 0.509 0.0662 0.00169
+particle 1 position 19 2.85 20
+particle 1 velocity -0.249 -1.19 -2.78e-05
++------------------------------------------+
+|  Force  summary particles                |
++------------------------------------------+
+particle_ID  time   T_x  omega_x theta_x  T_y  omega_y theta_y  T_z   omega_z theta_z  f_x    v_x    p_x    f_y    v_y    p_y   f_z   v_z    p_z    f_xv   f_yv   f_zv   f_xp   f_yp  f_zp  
+          0 0.0400 0.000  -0.003  0.000 0.001   0.003  0.000 -0.061   1.107   0.024 -0.022  0.509 20.010 -0.015  0.066 1.001 0.000  0.002 20.000 -0.017 -0.005  0.000 -0.004 -0.010 0.000 
+          1 0.0400 0.000   0.001   1.569 0.001  -0.004   1.550  0.032  -1.064  -1.569  0.049 -0.249 18.995  0.093 -1.189 2.851 0.000 0.000 20.000  0.003  0.036 0.000  0.046  0.057 0.000 

@@ -117,6 +117,15 @@ public:
     return system_rhs.l2_norm();
   }
 
+  /**
+   * @brief Return the current newton iteration of this physics solver.
+   */
+  inline unsigned int
+  get_current_newton_iteration() const
+  {
+    return non_linear_solver->get_current_newton_iteration();
+  }
+
   ConditionalOStream                                pcout;
   Parameters::SimulationControl::TimeSteppingMethod time_stepping_method;
 

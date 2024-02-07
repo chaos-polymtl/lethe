@@ -329,15 +329,15 @@ The file from which the particles are defined has a header line that goes as fol
 
 .. code-block:: text
 
-   type shape_argument_0 shape_argument_1 shape_argument_2 p_x p_y p_z v_x v_y v_z omega_x omega_y omega_z orientation_x orientation_y orientation_z density inertia pressure_x pressure_y pressure_z youngs_modulus restitution_coefficient friction_coefficient poisson_ratio rolling_friction_coefficient.
+   type; shape_argument; p_x; p_y; p_z; v_x; v_y; v_z; omega_x; omega_y; omega_z; orientation_x; orientation_y; orientation_z; volume ;density; inertia; pressure_x; pressure_y; pressure_z; youngs_modulus; restitution_coefficient; friction_coefficient; poisson_ratio; rolling_friction_coefficient; integrate_motion;
 
 
 Each line corresponds to a particle and its properties. A space separates each property. For the details on the properties, see the section :doc:`../../../parameters/sharp-immersed-boundary/sharp-immersed-boundary`. Here the particles' Young's moduli are set to 100MPa, the restitution coefficients to 0.9, the Poisson ratios to 0.30, and the friction coefficients to zero.
 
 .. code-block:: text
 
-   type shape_argument_0 shape_argument_1 shape_argument_2 p_x p_y p_z v_x v_y v_z omega_x omega_y omega_z orientation_x orientation_y orientation_z density inertia pressure_x pressure_y pressure_z youngs_modulus restitution_coefficient friction_coefficient poisson_ratio rolling_friction_coefficient integrate_motion
-   0.0 0.125 0.125 0.125 0.25 0.25 20.25 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0015 7.6698974609375e-08 0.0 0.0 0.0 1000000.0 0.9 0.0 0.3 0.0 1.0
+    type; shape_argument; p_x; p_y; p_z; v_x; v_y; v_z; omega_x; omega_y; omega_z; orientation_x; orientation_y; orientation_z; volume ;density; inertia; pressure_x; pressure_y; pressure_z; youngs_modulus; restitution_coefficient; friction_coefficient; poisson_ratio; rolling_friction_coefficient; integrate_motion;
+    sphere; 0.125; 0.25; 0.25; 20.25; 0.0; 0.0; 0.0; 0.0; 0.0; 0.0; 0.0; 0.0; 0.0; 0.001953125; 0.0015; 7.6698974609375e-08; 0.0; 0.0; 0.0; 1000000.0; 0.9; 0.0; 0.3; 0.0; 1.0
 
 
 ---------------

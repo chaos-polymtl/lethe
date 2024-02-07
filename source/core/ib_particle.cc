@@ -1,8 +1,10 @@
 #include <core/ib_particle.h>
 #include <core/shape_parsing.h>
 
-#include <cfloat>
+// Deal.II includes
+#include <deal.II/lac/lapack_full_matrix.h>
 
+#include <cfloat>
 
 template <int dim>
 void
@@ -13,8 +15,15 @@ IBParticle<dim>::initialize_all()
   particle_id = 0.;
 
   inertia[0][0] = 1.;
+  inertia[0][1] = 0.;
+  inertia[0][2] = 0.;
+  inertia[1][0] = 0.;
   inertia[1][1] = 1.;
+  inertia[1][2] = 0.;
+  inertia[2][0] = 0.;
+  inertia[2][1] = 0.;
   inertia[2][2] = 1.;
+
 
   fluid_forces[0] = 0.;
   fluid_forces[1] = 0.;
@@ -68,13 +77,21 @@ IBParticle<dim>::initialize_all()
       previous_orientation[i] = orientation;
       previous_omega[i]       = omega;
     }
-  residual_velocity = DBL_MAX;
-  residual_omega    = DBL_MAX;
 
   f_position    = std::make_shared<Functions::ParsedFunction<dim>>(dim);
   f_velocity    = std::make_shared<Functions::ParsedFunction<dim>>(dim);
   f_omega       = std::make_shared<Functions::ParsedFunction<dim>>(3);
   f_orientation = std::make_shared<Functions::ParsedFunction<dim>>(3);
+
+  rotation_matrix[0][0] = 1.;
+  rotation_matrix[0][1] = 0.;
+  rotation_matrix[0][2] = 0.;
+  rotation_matrix[1][0] = 0.;
+  rotation_matrix[1][1] = 1.;
+  rotation_matrix[1][2] = 0.;
+  rotation_matrix[2][0] = 0.;
+  rotation_matrix[2][1] = 0.;
+  rotation_matrix[2][2] = 1.;
 }
 
 template <int dim>
@@ -251,6 +268,7 @@ IBParticle<dim>::set_orientation(const Tensor<1, 3> new_orientation)
 {
   this->orientation = new_orientation;
   this->shape->set_orientation(new_orientation);
+  this->rotation_matrix = this->shape->get_rotation_matrix();
 }
 
 template <int dim>
