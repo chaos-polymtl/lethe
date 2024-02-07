@@ -74,49 +74,6 @@ public:
     std::vector<Tensor<1, 3>> &torque,
     std::vector<Tensor<1, 3>> &force,
     const Tensor<1, dim>       periodic_offset = Tensor<1, dim>()) = 0;
-
-
-  /**
-   * Carries out the calculation of the contact force for IB particles. This
-   * function is used in fem-dem/ib_particles_dem.
-   *
-   * @param normal_overlap Contact normal overlap. This is already calculated and
-   * will be used here to calculate contact force.
-   * @param contact_info Contact history including tangential overlap and relative
-   * velocity.
-   * @param normal_force Contact normal force.
-   * @param tangential_force Contact tangential force.
-   * @param particle_one_tangential_torque
-   * @param particle_two_tangential_torque
-   * @param rolling_resistance_torque Contact rolling resistance torque.
-   * @param particle_one
-   * @param particle_two
-   * @param particle_one_location Location of particle one.
-   * @param particle_two_location Location of particle two.
-   * @param dt Time-step.
-   * @param particle_one_radius radius of particle one.
-   * @param particle_two_radius radius of particle two.
-   * @param particle_one_mass mass of particle two.
-   * @param particle_two_mass mass of particle two.
-   */
-  virtual void
-  calculate_IB_particle_particle_contact_force(
-    const double                         normal_overlap,
-    particle_particle_contact_info<dim> &contact_info,
-    Tensor<1, 3>                        &normal_force,
-    Tensor<1, 3>                        &tangential_force,
-    Tensor<1, 3>                        &particle_one_tangential_torque,
-    Tensor<1, 3>                        &particle_two_tangential_torque,
-    Tensor<1, 3>                        &rolling_resistance_torque,
-    IBParticle<dim>                     &particle_one,
-    IBParticle<dim>                     &particle_two,
-    const Point<dim>                    &particle_one_location,
-    const Point<dim>                    &particle_two_location,
-    const double                         dt,
-    const double                         particle_one_radius,
-    const double                         particle_two_radius,
-    const double                         particle_one_mass,
-    const double                         particle_two_mass) = 0;
 };
 
 /**
@@ -170,47 +127,6 @@ public:
     std::vector<Tensor<1, 3>> &force,
     const Tensor<1, dim>       periodic_offset = Tensor<1, dim>()) override;
 
-  /**
-   * Carries out the calculation of the contact force for IB particles. This
-   * function is used in fem-dem/ib_particles_dem.
-   *
-   * @param normal_overlap Contact normal overlap. This is already calculated and
-   * will be used here to calculate contact force.
-   * @param contact_info Contact history including tangential overlap and relative
-   * velocity.
-   * @param normal_force Contact normal force.
-   * @param tangential_force Contact tangential force.
-   * @param particle_one_tangential_torque
-   * @param particle_two_tangential_torque
-   * @param rolling_resistance_torque Contact rolling resistance torque.
-   * @param particle_one
-   * @param particle_two
-   * @param particle_one_location Location of particle one.
-   * @param particle_two_location Location of particle two.
-   * @param dt Time-step.
-   * @param particle_one_radius radius of particle one.
-   * @param particle_two_radius radius of particle two.
-   * @param particle_one_mass mass of particle two.
-   * @param particle_two_mass mass of particle two.
-   */
-  virtual void
-  calculate_IB_particle_particle_contact_force(
-    const double                         normal_overlap,
-    particle_particle_contact_info<dim> &contact_info,
-    Tensor<1, 3>                        &normal_force,
-    Tensor<1, 3>                        &tangential_force,
-    Tensor<1, 3>                        &particle_one_tangential_torque,
-    Tensor<1, 3>                        &particle_two_tangential_torque,
-    Tensor<1, 3>                        &rolling_resistance_torque,
-    IBParticle<dim>                     &particle_one,
-    IBParticle<dim>                     &particle_two,
-    const Point<dim>                    &particle_one_location,
-    const Point<dim>                    &particle_two_location,
-    const double                         dt,
-    const double                         particle_one_radius,
-    const double                         particle_two_radius,
-    const double                         particle_one_mass,
-    const double                         particle_two_mass) override;
 
 protected:
   /**
@@ -312,7 +228,7 @@ protected:
    * @param normal_force Contact normal force
    * @param tangential_force Contact tangential force
    * @param tangential_torque Contact tangential torque
-   * @param rolling_friction_torque Contact rolling resistance torque
+   * @param rolling_resistance_torque Contact rolling resistance torque
    * @param particle_one_torque
    * @param particle_two_torque
    * @param particle_one_force Force acting on particle one
@@ -350,7 +266,7 @@ protected:
    * @param normal_force normal_force Contact normal force
    * @param tangential_force Contact tangential force
    * @param tangential_torque Contact tangential torque
-   * @param rolling_friction_torque Contact rolling resistance torque
+   * @param rolling_resistance_torque Contact rolling resistance torque
    * @param particle_one_torque Torque acting on particle one (local)
    * @param particle_one_force Force acting on particle one
    */
@@ -410,7 +326,7 @@ protected:
    * @param tangential_force Contact tangential force
    * @param particle_one_tangential_torque Contact tangential torque on particle one
    * @param particle_two_tangential_torque Contact tangential torque on particle two
-   * @param rolling_friction_torque Contact rolling resistance torque
+   * @param rolling_resistance_torque Contact rolling resistance torque
    */
   inline void
   calculate_linear_contact(
@@ -565,7 +481,7 @@ protected:
    * @param tangential_force Contact tangential force
    * @param particle_one_tangential_torque Contact tangential torque on particle one
    * @param particle_two_tangential_torque Contact tangential torque on particle two
-   * @param rolling_friction_torque Contact rolling resistance torque
+   * @param rolling_resistance_torque Contact rolling resistance torque
    */
   inline void
   calculate_hertz_mindlin_limit_overlap_contact(
@@ -719,7 +635,7 @@ protected:
    * @param normal_force Contact normal force
    * @param tangential_force Contact tangential force
    * @param tangential_torque Contact tangential torque
-   * @param rolling_friction_torque Contact rolling resistance torque
+   * @param rolling_resistance_torque Contact rolling resistance torque
    */
   inline void
   calculate_hertz_mindlin_limit_force_contact(
@@ -865,7 +781,7 @@ protected:
    * @param normal_force Contact normal force
    * @param tangential_force Contact tangential force
    * @param tangential_torque Contact tangential torque
-   * @param rolling_friction_torque Contact rolling resistance torque
+   * @param rolling_resistance_torque Contact rolling resistance torque
    */
   inline void
   calculate_hertz_contact(
@@ -1007,7 +923,7 @@ protected:
    * @param tangential_force Contact tangential force
    * @param particle_one_tangential_torque Contact tangential torque on particle one
    * @param particle_two_tangential_torque Contact tangential torque on particle two
-   * @param rolling_friction_torque Contact rolling resistance torque
+   * @param rolling_resistance_torque Contact rolling resistance torque
    */
   inline void
   calculate_hertz_JKR_contact(

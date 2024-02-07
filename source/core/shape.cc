@@ -31,19 +31,23 @@
 
 template <int dim>
 double
-Shape<dim>::displaced_volume(const double /*fluid_density*/)
+Shape<dim>::displaced_volume()
 {
   StandardExceptions::ExcNotImplemented();
-  return 1.0;
+  return 0.;
 }
 
 template <int dim>
 void
 Shape<dim>::clear_cache()
 {
-  value_cache.clear();
-  gradient_cache.clear();
-  closest_point_cache.clear();
+  // Prevent expensive cache clearing if the cache is empty.
+  if (value_cache.size() > 0)
+    {
+      value_cache.clear();
+      gradient_cache.clear();
+      closest_point_cache.clear();
+    }
 }
 
 template <int dim>
@@ -116,6 +120,7 @@ Shape<dim>::align_and_center(const Point<dim> &evaluation_point) const
             }
         }
     }
+
   rotated_point = centralized_rotated + center_of_rotation;
 
   // Translation from the solid position
@@ -340,13 +345,12 @@ Sphere<dim>::get_shape_manifold()
 
 template <int dim>
 double
-Sphere<dim>::displaced_volume(const double fluid_density)
+Sphere<dim>::displaced_volume()
 {
   double solid_volume;
   using numbers::PI;
   if (dim == 2)
-    solid_volume =
-      this->effective_radius * this->effective_radius * PI * fluid_density;
+    solid_volume = this->effective_radius * this->effective_radius * PI;
 
   else if (dim == 3)
     solid_volume = 4.0 / 3.0 * this->effective_radius * this->effective_radius *
@@ -365,6 +369,148 @@ Sphere<dim>::set_position(const Point<dim> &position)
     position, this->effective_radius);
 #endif
 }
+
+template <int dim>
+std::tuple<double, Tensor<1, dim>, Point<dim>>
+Sphere<dim>::distance_to_shape_with_cell_guess(
+  Shape<dim>                                           &shape,
+  const typename DoFHandler<dim>::active_cell_iterator &cell,
+  std::vector<Point<dim>>                              &candidate_points,
+  double                                                precision,
+  bool exact_distance_outside_of_contact)
+{
+  (void)candidate_points;
+  (void)precision;
+  (void)exact_distance_outside_of_contact;
+  double         distance = DBL_MAX;
+  Tensor<1, dim> normal;
+  Point<dim>     contact_point;
+  if (typeid(shape) == typeid(Sphere<dim>))
+    {
+      Tensor<1, dim> center_to_center_vector =
+        shape.get_position() - this->position;
+      distance = (center_to_center_vector.norm() - this->effective_radius -
+                  shape.effective_radius) /
+                 2;
+      normal = center_to_center_vector / center_to_center_vector.norm();
+      contact_point =
+        this->position + normal * (this->effective_radius + distance);
+    }
+  else
+    {
+      distance = (shape.value_with_cell_guess(this->position, cell) -
+                  this->effective_radius) /
+                 2;
+      normal = -shape.gradient_with_cell_guess(this->position, cell);
+      contact_point =
+        this->position + normal * (this->effective_radius + distance);
+    }
+
+  return std::make_tuple(distance, normal, contact_point);
+}
+
+template <int dim>
+std::tuple<double, Tensor<1, dim>, Point<dim>>
+Sphere<dim>::distance_to_shape(Shape<dim>              &shape,
+                               std::vector<Point<dim>> &candidate_points,
+                               double                   precision,
+                               bool exact_distance_outside_of_contact)
+{
+  (void)candidate_points;
+  (void)precision;
+  (void)exact_distance_outside_of_contact;
+  double         distance = DBL_MAX;
+  Tensor<1, dim> normal;
+  Point<dim>     contact_point;
+  if (typeid(shape) == typeid(Sphere<dim>))
+    {
+      Tensor<1, dim> center_to_center_vector =
+        shape.get_position() - this->position;
+      distance = (center_to_center_vector.norm() - this->effective_radius -
+                  shape.effective_radius) /
+                 2;
+      normal = center_to_center_vector / center_to_center_vector.norm();
+      contact_point =
+        this->position + normal * (this->effective_radius + distance);
+    }
+  else
+    {
+      distance = (shape.value(this->position) - this->effective_radius) / 2;
+      normal   = -shape.gradient(this->position);
+      contact_point =
+        this->position + normal * (this->effective_radius + distance);
+    }
+
+  return std::make_tuple(distance, normal, contact_point);
+}
+
+template <int dim>
+double
+Sphere<dim>::local_curvature_radius(Point<dim> p)
+{
+  return (this->position - p).norm();
+}
+
+template <int dim>
+double
+Sphere<dim>::local_curvature_radius_with_cell_guess(
+  const Point<dim>                                     p,
+  const typename DoFHandler<dim>::active_cell_iterator cell)
+{
+  (void)cell;
+  return (this->position - p).norm();
+}
+
+
+template <int dim>
+double
+Plane<dim>::value(const Point<dim> &evaluation_point,
+                  const unsigned int /*component*/) const
+{
+  Point<dim> current_point = this->align_and_center(evaluation_point);
+  double     dot_product   = scalar_product((current_point), normal);
+  Point<dim> projected_point =
+    current_point - dot_product / normal.norm_square() * normal;
+  auto rotate_in_globalpoint = this->reverse_align_and_center(projected_point);
+  if (dot_product > 0)
+    return (rotate_in_globalpoint - evaluation_point).norm();
+  else
+    return -(rotate_in_globalpoint - evaluation_point).norm();
+}
+
+template <int dim>
+std::shared_ptr<Shape<dim>>
+Plane<dim>::static_copy() const
+{
+  std::shared_ptr<Shape<dim>> copy =
+    std::make_shared<Plane<dim>>(this->position, this->orientation);
+  return copy;
+}
+
+template <int dim>
+Tensor<1, dim>
+Plane<dim>::gradient(const Point<dim> &evaluation_point,
+                     const unsigned int /*component*/) const
+{
+  (void)evaluation_point;
+  //  We take the vector in z of the plane and rotate it in the world frame.
+  if constexpr (dim == 2)
+    {
+      return tensor_nd_to_2d(this->rotation_matrix * tensor_nd_to_3d(normal));
+    }
+  else
+    {
+      return this->rotation_matrix * normal;
+    }
+}
+
+template <int dim>
+double
+Plane<dim>::displaced_volume()
+{
+  return 0;
+}
+
 
 template <int dim>
 void
@@ -413,23 +559,27 @@ Superquadric<dim>::closest_surface_point(const Point<dim> &p,
       Point<dim> dx{}, distance_gradient{};
       double     current_distance = superquadric(current_point);
 
-      const double relaxation = 0.5;
+      double relaxation = 1;
       while (iteration < iteration_max && abs(current_distance) > epsilon)
         {
           distance_gradient = superquadric_gradient(current_point);
+          // limit the step size
+
           if (distance_gradient.norm() < epsilon)
             // Gradient can be null if the evaluation point is exactly on the
             // centroid of the shape. In this case it is also the closest point.
             break;
+          // This is a modified Newton method that limits the step size when the
+          // gradient norm is smaller then 1.
           dx = -relaxation * (current_distance * distance_gradient) /
-               distance_gradient.norm_square();
+               distance_gradient.norm() /
+               std::max(1.0, distance_gradient.norm());
 
           current_point    = current_point + dx;
           current_distance = superquadric(current_point);
 
           iteration++;
         }
-
       closest_point = this->reverse_align_and_center(current_point);
     }
   else
@@ -522,9 +672,16 @@ Superquadric<dim>::gradient(const Point<dim> &evaluation_point,
       Point<dim> closest_point{};
       this->closest_surface_point(evaluation_point, closest_point);
 
-      Tensor<1, dim> gradient = (evaluation_point - closest_point) /
-                                ((evaluation_point - closest_point).norm() +
-                                 1e-16 * this->effective_radius);
+      Tensor<1, dim> gradient;
+      Point<dim>     centered_point = this->align_and_center(evaluation_point);
+      if (superquadric(centered_point) > 0)
+        gradient = (evaluation_point - closest_point) /
+                   ((evaluation_point - closest_point).norm() +
+                    1e-16 * this->effective_radius);
+      else
+        gradient = -(evaluation_point - closest_point) /
+                   ((evaluation_point - closest_point).norm() +
+                    1e-16 * this->effective_radius);
       return gradient;
     }
   else
@@ -864,9 +1021,9 @@ OpenCascadeShape<dim>::gradient_with_cell_guess(
 
 template <int dim>
 double
-OpenCascadeShape<dim>::displaced_volume(const double /*fluid_density*/)
+OpenCascadeShape<dim>::displaced_volume()
 {
-  return 1;
+  return 0;
 }
 
 template <int dim>
@@ -915,12 +1072,12 @@ HyperRectangle<dim>::static_copy() const
 
 template <int dim>
 double
-HyperRectangle<dim>::displaced_volume(const double /*fluid_density*/)
+HyperRectangle<dim>::displaced_volume()
 {
   double solid_volume = 1.0;
-  for (unsigned int i = 0; i < dim; i++)
+  for (unsigned int i = 0; i < dim; ++i)
     {
-      solid_volume = solid_volume * 2.0 * half_lengths[dim];
+      solid_volume = solid_volume * 2.0 * half_lengths[i];
     }
   return solid_volume;
 }
@@ -958,13 +1115,13 @@ Ellipsoid<dim>::static_copy() const
 
 template <int dim>
 double
-Ellipsoid<dim>::displaced_volume(const double /*fluid_density*/)
+Ellipsoid<dim>::displaced_volume()
 {
   using numbers::PI;
   double solid_volume = PI * 4.0 / 3.0;
   for (unsigned int i = 0; i < dim; i++)
     {
-      solid_volume = solid_volume * radii[dim];
+      solid_volume = solid_volume * radii[i];
     }
   return solid_volume;
 }
@@ -994,7 +1151,7 @@ Torus<dim>::static_copy() const
 
 template <int dim>
 double
-Torus<dim>::displaced_volume(const double /*fluid_density*/)
+Torus<dim>::displaced_volume()
 {
   using numbers::PI;
   return 2.0 * PI * PI * ring_radius * ring_thickness * ring_thickness;
@@ -1041,7 +1198,7 @@ Cone<dim>::static_copy() const
 
 template <int dim>
 double
-Cone<dim>::displaced_volume(const double /*fluid_density*/)
+Cone<dim>::displaced_volume()
 {
   using numbers::PI;
   return PI / 3.0 * base_radius * base_radius * height;
@@ -1086,7 +1243,7 @@ CutHollowSphere<dim>::static_copy() const
 
 template <int dim>
 double
-CutHollowSphere<dim>::displaced_volume(const double /*fluid_density*/)
+CutHollowSphere<dim>::displaced_volume()
 {
   using numbers::PI;
   double small_radius = radius - shell_thickness;
@@ -1136,7 +1293,7 @@ DeathStar<dim>::static_copy() const
 
 template <int dim>
 double
-DeathStar<dim>::displaced_volume(const double /*fluid_density*/)
+DeathStar<dim>::displaced_volume()
 {
   using numbers::PI;
   return 4. * PI / 3. * radius * radius * radius;
@@ -1687,9 +1844,9 @@ RBFShape<dim>::static_copy() const
 
 template <int dim>
 double
-RBFShape<dim>::displaced_volume(const double fluid_density)
+RBFShape<dim>::displaced_volume()
 {
-  return bounding_box->displaced_volume(fluid_density);
+  return bounding_box->displaced_volume();
 }
 
 template <int dim>
@@ -1720,6 +1877,9 @@ RBFShape<dim>::initialize_bounding_box()
                                           this->reverse_align_and_center(
                                             bounding_box_center),
                                           this->orientation);
+  this->bounding_box_half_length = half_lengths;
+  this->bounding_box_center =
+    this->reverse_align_and_center(bounding_box_center);
 }
 
 template <int dim>
@@ -2247,7 +2407,7 @@ Cylinder<dim>::static_copy() const
 
 template <int dim>
 double
-Cylinder<dim>::displaced_volume(const double /*fluid_density*/)
+Cylinder<dim>::displaced_volume()
 {
   using numbers::PI;
   double solid_volume = PI * radius * radius * half_length * 2;
@@ -2306,7 +2466,7 @@ CylindricalTube<dim>::static_copy() const
 
 template <int dim>
 double
-CylindricalTube<dim>::displaced_volume(const double /*fluid_density*/)
+CylindricalTube<dim>::displaced_volume()
 {
   using numbers::PI;
   double solid_volume = height * PI *
@@ -2546,10 +2706,10 @@ CylindricalHelix<dim>::static_copy() const
 
 template <int dim>
 double
-CylindricalHelix<dim>::displaced_volume(const double /*fluid_density*/)
+CylindricalHelix<dim>::displaced_volume()
 {
   using numbers::PI;
-  double solid_volume = 1;
+  double solid_volume = 0;
 
   return solid_volume;
 }
@@ -2574,3 +2734,5 @@ template class RBFShape<2>;
 template class RBFShape<3>;
 template class OpenCascadeShape<2>;
 template class OpenCascadeShape<3>;
+template class Plane<2>;
+template class Plane<3>;

@@ -72,8 +72,12 @@ ShapeGenerator::initialize_shape_from_vector(
               half_lengths[d] = shape_arguments[d];
               exponents[d]    = shape_arguments[d + dim];
             }
-          const double epsilon = shape_arguments[3 + dim];
-          shape                = std::make_shared<Superquadric<dim>>(
+          double epsilon = 1e-8;
+          if (shape_arguments.size() == 7)
+            {
+              epsilon = shape_arguments[3 + dim];
+            }
+          shape = std::make_shared<Superquadric<dim>>(
             half_lengths, exponents, epsilon, position, orientation);
         }
     }
@@ -137,6 +141,10 @@ ShapeGenerator::initialize_shape_from_vector(
                                                  shape_arguments[2],
                                                  position,
                                                  orientation);
+    }
+  else if (type == "plane")
+    {
+      shape = std::make_shared<Plane<dim>>(position, orientation);
     }
   else
     StandardExceptions::ExcNotImplemented();

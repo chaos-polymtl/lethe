@@ -32,42 +32,41 @@
 
 using namespace dealii;
 
+/**
+ * @brief This class defines values related to a particle used in the sharp interface IB. These values are used in the solver
+ *
+ * @tparam dim  An integer that denotes the number of spatial dimensions
+ */
 template <int dim>
 class IBParticle
 {
 public:
   /**
-   * @brief
-   * initialised the particle
-   *
+   * @brief This class defines values related to a particle used in the sharp interface IB. Each particle defined will have these value used in the solver.
    */
   void
   initialize_all();
 
   /**
-   * @brief
-   * initialize the value of the last state of the particle
+   * @brief initialize the value of the last state of the particle
    */
   void
   initialize_previous_solution();
 
   /**
-   * @brief
-   * Return the names of properties of the IB_particle for visualisation.
+   * @brief Return the names of properties of the IB_particle for visualisation.
    */
   std::vector<std::pair<std::string, int>>
   get_properties_name();
 
   /**
-   * @brief
-   * Return the value of the properties of the particle for visualisation.
+   * @brief Return the value of the properties of the particle for visualisation.
    */
   std::vector<double>
   get_properties();
 
   /**
-   * @brief
-   * Return the number of properties of the particle for visualisation.
+   * @brief Return the number of properties of the particle for visualisation.
    */
   inline unsigned int
   get_number_properties()
@@ -75,9 +74,8 @@ public:
     return DEM::PropertiesIndex::n_properties;
   }
 
-  /**
-   * @brief
-   * Returns the evaluation of the signed distance function of this shape
+  /*
+   * @brief Returns the evaluation of the signed distance function of this shape
    * Most levelset functions come from Inigo Quilez:
    * iquilezles.org/articles/distfunctions
    *
@@ -213,7 +211,9 @@ public:
 
   /**
    * @brief
-   * Sets the orientation of the particle and dependent members to the argument
+   * @brief Sets the orientation of the particle and dependent members to the argument
+   * This include the shape and the rotation matrix that describes the
+   * orientation.
    *
    * @param orientation The new orientation to set the particle at
    */
@@ -261,9 +261,6 @@ public:
   load_data_from_file();
 
 
-  // This class defines values related to a particle used in the sharp interface
-  // IB. Each particle defined will have these value used in the solver.
-
   // The unique identification number of the particle.
   unsigned int particle_id;
 
@@ -284,9 +281,11 @@ public:
   double rolling_friction_coefficient;
   // The particle mass.
   double mass;
+  // The particle volume.
+  double volume;
   // The surface energy of the particle
   double surface_energy;
-  // The particle rotational inertia. It is uniform in all directions.
+  // The inertia matrix in the particle frame of reference
   Tensor<2, 3> inertia;
   // The particle position.
   Point<dim> position;
@@ -313,7 +312,7 @@ public:
   // The last non-linear iteration of the velocity vector.
   Tensor<1, 3> velocity_iter;
   // The last correction vector of the velocity value without any relaxation.
-  Tensor<1, 3> previous_d_velocity;
+  Tensor<1, 3> previous_velocity_residual;
 
   // Angular velocity
   // By default, the angular position is always 0 on every axis.
@@ -327,7 +326,7 @@ public:
   // The last iteration of the omega vector.
   Tensor<1, 3> omega_iter;
   // The last correction vector of the velocity value without any relaxation.
-  Tensor<1, 3> previous_d_omega;
+  Tensor<1, 3> previous_omega_residual;
 
   // The total impulsion that the particle feels during the current time step.
   Tensor<1, 3> impulsion;
@@ -372,20 +371,13 @@ public:
   // can happen near the boundary when mesh-based precalculations is used (due
   // to the RBF nodes partitioning algorithm).
   bool mesh_based_precalculations;
-  // Current residual of the particle velocity.
-  double residual_velocity;
-  // Current residual of the particle angular velocity.
-  double residual_omega;
-  // Last relaxation parameter used for this particle translational velocity
-  // iteration.
-  double previous_local_alpha_velocity;
-  // Last relaxation parameter used for this particle angular velocity
-  // iteration.
-  double previous_local_alpha_omega;
 
   // Location of the pressure reference point relative to the center of the
   // particle. This point is used to define a constant on the pressure.
   Point<dim> pressure_location;
+
+  // Rotation matrix of the particle in the global space
+  Tensor<2, 3> rotation_matrix;
 };
 
 #endif
