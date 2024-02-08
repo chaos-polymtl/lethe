@@ -114,7 +114,7 @@ namespace Parameters
 
     // Max CFL
     double maxCFL;
-    
+
     // Max dt
     double max_dt;
 

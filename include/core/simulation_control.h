@@ -452,7 +452,7 @@ protected:
 
   // Time step scaling for adaptative time stepping
   double adaptative_time_step_scaling;
-  
+
   // Max time step
   double max_dt;
 
