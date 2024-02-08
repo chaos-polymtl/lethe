@@ -1,5 +1,5 @@
 # Listing of Parameters
-# ---------------------
+#----------------------
 
 set dimension = 2
 
@@ -26,7 +26,7 @@ subsection multiphysics
 end
 
 #---------------------------------------------------
-# Initial condition
+# Initial conditions
 #---------------------------------------------------
 
 subsection initial conditions

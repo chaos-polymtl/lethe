@@ -175,9 +175,11 @@ public:
   }
 
   /**
-   * @brief Returns the mobility model for a given material_interaction_id (integer)
+   * @brief Returns the mobility model for a given material_interaction_id
+   * (integer)
    * @param material_interaction_id
-   * @return A shared pointer to a MobilityCahnHilliardModel which inherits from the InterfacePropertyModel class.
+   * @return A shared pointer to a MobilityCahnHilliardModel which inherits from
+   * the InterfacePropertyModel class.
    */
   std::shared_ptr<MobilityCahnHilliardModel>
   get_mobility_cahn_hilliard(
@@ -237,7 +239,8 @@ public:
 
   /**
    * @brief Returns the vector of all mobility models defined in the problem.
-   * @return A vector of shared pointer, each one them pointing to a MobilityCahnHilliardModel.
+   * @return A vector of shared pointer, each one them pointing to a
+   * MobilityCahnHilliardModel.
    */
   std::vector<std::shared_ptr<MobilityCahnHilliardModel>>
   get_mobility_cahn_hilliard_vector() const

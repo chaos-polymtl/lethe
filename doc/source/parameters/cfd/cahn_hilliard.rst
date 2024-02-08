@@ -14,13 +14,14 @@ The equations solved are as follows:
 .. math::
         \partial_t\phi + (\mathbf{a} \cdot \nabla) \phi - \nabla \cdot (M(\phi)\nabla \eta) = 0 \\
         
-         \eta -  \frac{\lambda}{\epsilon^2}(\phi^3 - \phi) + \lambda \nabla^2 \phi + \xi \nabla^2 \eta  = 0
+         \eta -  \frac{\lambda}{\epsilon^2}(\phi^3 - \phi) + \lambda \nabla^2 \phi + \xi h^2 \nabla^2 \eta  = 0
 
 where:
 
 * :math:`\mathbf{a}` corresponds to the velocity field; this vector field is used when the problem is driven by convection.
 * :math:`M(\phi)` is the mobility function; two cases are considered: a constant mobility model, i.e, :math:`M = D` with :math:`D` the mobility constant, or a quartic mobility model with :math:`M(\phi) = D(1-\phi^2)^2`.
 * :math:`\xi` is a smoothing coefficient for the chemical potential.
+* :math:`h` is a local measure of the cell size. There may be different h in an adapted mesh.
 * :math:`\epsilon` is a parameter linked to the thickness of the interface.
 
 .. note::
@@ -42,9 +43,9 @@ The default values of the Cahn-Hilliard parameters are given in the text box bel
     end
   end
   
-* ``potential smoothing coefficient``: defines the :math:`\xi` parameter in the equations above. Its value should be increased if the potential presents excessive oscillations (for advective problems for instance).
+* ``potential smoothing coefficient``: defines the :math:`\xi` parameter in the equations above. Its value should be increased if the potential presents excessive oscillations (in advective problems for instance).
 
-* ``epsilon``: defines the :math:`\epsilon` parameter. It can either be user-defined or determined automatically for each cell. For the latter, epsilon is equal to two times the characteristic length of the cell. The choices are ``automatic`` (default) or ``manual``.
+* ``epsilon``: defines the :math:`\epsilon` parameter. It can either be user-defined or determined automatically for each cell. For the latter, epsilon is equal to two times the characteristic length of the cell (:math:`h`). The choices are ``automatic`` (default) or ``manual``.
 
 .. attention::
      The ``mobility model`` and ``mobility constant`` must be set in the :doc:`physical_properties` section.

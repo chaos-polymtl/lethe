@@ -50,7 +50,7 @@ subsection mesh
 end
 
 #---------------------------------------------------
-# Initial condition
+# Initial conditions
 #---------------------------------------------------
 
 subsection initial conditions

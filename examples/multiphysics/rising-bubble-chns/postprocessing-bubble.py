@@ -2,6 +2,17 @@
 """
 Postprocessing code for rising-bubble example
 
+Quick user guide :
+
+This python script allows you to plot the vertical position, vertical speed and contour of the bubble in the rising bubble test case (for VOF or Cahn-Hilliard simulations) and to compare it with results from the literature. If you want to plot the results for different simulations, it does it automatically.
+
+How to use this script?
+
+1- Create a first directory (we will call it outputs but feel free to name it as you like).
+2- For each simulation, create a new directory in outputs : output1, output2, output3,...
+3- Run the simulations and store the results in their correct directories
+4- Execute the script with the path of outputs as argument
+5- Enjoy your plots. Each curve will be given the name of the directory containing the data required to plot it. In this example, I will get 3 curves. with names output1, output2 and output3.
 """
 #############################################################################
 
@@ -65,7 +76,6 @@ ax0 = fig0.add_subplot(111)
 for i in range(len(filename_list)):
    label_loop = dirs[i]
    ax0.plot(t_list[i], y_list[i], lw=2, label=label_loop)
-#ax0.plot(t_chns, y_chns, '-k', lw=2, label="CHNS")
 ax0.plot(x_ref_ZKR, y_ref_ZKR, 'o',label="Reference - Zahedi, Kronbichler and Kreiss (2012)")
 ax0.plot(x_ref_H, y_ref_H, 's',alpha=0.8,label="Reference - Hysing et al. (2009)")
 
@@ -73,14 +83,12 @@ ax0.set_ylabel(r'Bubble barycenter height')
 ax0.set_xlabel(r'$t$')
 ax0.legend(loc="upper left")
 fig0.savefig(f'./ymean-t.png',dpi=300)
-#plt.show()
 
 fig1 = plt.figure()
 ax1 = fig1.add_subplot(111)
 for i in range(len(filename_list)):
    label_loop = dirs[i]
    ax1.plot(t_list[i], vy_list[i], lw=2, label=label_loop)
-#ax1.plot(t_chns, vel_chns , '-k', lw=2, label="Lethe")
 ax1.plot(x_vel_ZKR, y_vel_ZKR, 'o',label="Reference - Zahedi, Kronbichler and Kreiss (2012)")
 ax1.plot(x_vel_H, y_vel_H, 's',alpha=0.8,label="Reference - Hysing et al. (2009)")
 
@@ -89,16 +97,13 @@ ax1.set_xlabel(r'$t$')
 ax1.legend(loc="upper left")
 ax1.legend(loc=4)
 fig1.savefig(f'./bubble-rise-velocity.png',dpi=300)
-#plt.show()
 
 
 # Make the plot of the contour of the bubble
 list_latest_files=[]
 for dir in dirs:
     list_vtu = os.listdir(root + "/" + dir + "/")
-    #list_vtu = [dir+x for x in list_vtu if  ("vtu" in x and "pvtu" not in x) ]
     list_vtu = [root + "/" + dir + "/" + x for x in list_vtu if(x.endswith('.vtu')) ]
-    #list_time_vtu = [os.stat(list_vtu[i]).st_mtime_ns for i in range(0, len(list_vtu))]
     list_vtu = np.sort(list_vtu)
     list_latest_files.append(list_vtu[-1])
 print("Opening file: ", list_latest_files)
@@ -118,17 +123,14 @@ for i in range(len(dirs)):
 
 
    else:
-       #sim.set_active_scalars("phase_order_filtered")
        sim.set_active_scalars("phase_order")
        contour_val = np.array([0.0])
        contours = sim.contour(contour_val)
        x, y = contours.points[:, 0], contours.points[:, 1]
        label_loop = dirs[i]
        ax3.scatter(x, y, s=5, marker="o",label=label_loop)
-   #ax3.plot(x, y, marker=".")
 
 ax3.scatter(x_contour_ref, y_contour_ref, s=100, marker="*",label="Reference bubble")
-#ax3.plot(x_contour_ref, y_contour_ref, marker="*")
 ax3.grid( which='major', color='black', linestyle='--')
 ax3.set_xlim([0.1,0.9])
 ax3.set_ylim([0.775,1.3])

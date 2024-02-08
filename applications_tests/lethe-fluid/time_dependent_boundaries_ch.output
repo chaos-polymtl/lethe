@@ -17,18 +17,18 @@ Transient iteration: 1        Time: 0.5      Time step: 0.5      CFL: 0
 -----------------
 Phase statistics
 -----------------
-Min: -0.776664
-Max: 0.778405
-Average: 0.42384
-Integral: 1.69536
+Min: -0.786164
+Max: 0.781734
+Average: 0.423636
+Integral: 1.69454
 
 *******************************************************************************
-Transient iteration: 2        Time: 1        Time step: 0.5      CFL: 0.201878
+Transient iteration: 2        Time: 1        Time step: 0.5      CFL: 0.533525
 *******************************************************************************
 -----------------
 Phase statistics
 -----------------
-Min: -0.786521
-Max: 0.78514
-Average: 0.425256
-Integral: 1.70103
+Min: -0.780241
+Max: 0.794182
+Average: 0.427977
+Integral: 1.71191
