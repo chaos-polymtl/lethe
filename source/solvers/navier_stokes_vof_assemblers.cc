@@ -716,14 +716,14 @@ GLSNavierStokesVOFAssemblerMarangoni<dim>::assemble_rhs(
 
 
       const Tensor<1, dim> surface_tension_force =
-        -surface_tension * curvature_value * normalized_phase_fraction_gradient * phase_gradient_norm;
+        -surface_tension * curvature_value * normalized_phase_fraction_gradient * filtered_phase_gradient_norm;
 
       const Tensor<1, dim> marangoni_effect =
         -surface_tension_gradient *
         (temperature_gradient -
          normalized_phase_fraction_gradient *
            (normalized_phase_fraction_gradient * temperature_gradient)) *
-        phase_gradient_norm;
+        filtered_phase_gradient_norm;
 
       strong_residual[q] += marangoni_effect + surface_tension_force;
 
