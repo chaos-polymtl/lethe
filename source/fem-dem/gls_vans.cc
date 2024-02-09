@@ -207,6 +207,9 @@ GLSVANSSolver<dim>::read_dem()
       try
         {
           parallel_triangulation->load(filename.c_str());
+
+          // Deserialize particles have the triangulation has been read
+          particle_handler.deserialize();
         }
       catch (...)
         {
@@ -221,9 +224,6 @@ GLSVANSSolver<dim>::read_dem()
         "VANS equations currently do not support "
         "triangulations other than parallel::distributed");
     }
-
-  // Deserialize particles have the triangulation has been read
-  particle_handler.deserialize();
 }
 
 template <int dim>
@@ -1490,7 +1490,7 @@ GLSVANSSolver<dim>::setup_assemblers()
 
   if (this->cfd_dem_simulation_parameters.cfd_dem.vortical_viscous_torque ==
       true)
-    // Viscous Torque Assembler
+    // Vortical Torque Assembler
     particle_fluid_assemblers.push_back(
       std::make_shared<GLSVansAssemblerVorticalTorque<dim>>(
         this->cfd_dem_simulation_parameters.dem_parameters

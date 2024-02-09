@@ -219,9 +219,7 @@ CFDDEMSolver<dim>::write_checkpoint()
       particles_pvdhandler.save(prefix_particles);
 
       if (this->dem_parameters.post_processing.Lagrangian_post_processing)
-        {
-          grid_pvdhandler.save(prefix_grid);
-        }
+        grid_pvdhandler.save(prefix_grid);
 
       if (this->simulation_parameters.flow_control.enable_flow_control)
         this->flow_control.save(prefix);
@@ -270,6 +268,8 @@ CFDDEMSolver<dim>::write_checkpoint()
       vf_set_transfer.push_back(&this->previous_void_fraction[i]);
     }
 
+  this->multiphysics->write_checkpoint();
+
   // Prepare for Serialization
   parallel::distributed::SolutionTransfer<dim, GlobalVectorType>
     vf_system_trans_vectors(this->void_fraction_dof_handler);
@@ -282,8 +282,6 @@ CFDDEMSolver<dim>::write_checkpoint()
       std::string triangulationName = prefix + ".triangulation";
       parallel_triangulation->save(prefix + ".triangulation");
     }
-
-  this->multiphysics->write_checkpoint();
 }
 
 template <int dim>
