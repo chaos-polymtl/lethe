@@ -98,8 +98,8 @@ protected:
    * @param[in] initial_condition_type The type of initial condition to be set.
    *
    * @param[in] restart A boolean that indicates if the simulation is being
-   *restarted. If set to true, the initial conditions are never set, but are
-   *instead overriden by the read_checkpoint functionality.
+   * restarted. If set to true, the initial conditions are never set, but are
+   * instead overriden by the read_checkpoint functionality.
    *
    **/
   virtual void
