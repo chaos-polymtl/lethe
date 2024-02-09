@@ -133,8 +133,8 @@ public:
 
   /**
    * @brief Calculates the derivative of the mobility with respect to a field.
-   * @param[in] field_vectors Vector for the values of the fields used to evaluate
-   * the mobility.
+   * @param[in] field_vectors Vector for the values of the fields used to
+   * evaluate the mobility.
    * @param[in] id Identifier of the field with respect to which a derivative
    * should be calculated.
    * @param[out] jacobian_vector Vector of the value of the derivative of the
