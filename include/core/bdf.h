@@ -29,36 +29,57 @@
 using namespace dealii;
 
 /**
- * @brief Calculate the coefficients required for BDF integration of order n.
+ * @brief Calculate the coefficients required for backward differentiation
+ * formula (BDF) integration of @p order \f$n\f$.
+ *
  * The coefficients are determined through a recursion algorithm.
- * The algorithm is taken from : Hay, Alexander, et al. "hp-Adaptive time
+ * The algorithm is taken from: Hay, Alexander, et al. "hp-Adaptive time
  * integration based on the BDF for viscous flows." Journal of Computational
  * Physics 291 (2015): 151-176.
  *
- * @param order The order of the BDF method. The BDF method of order n requires n+1 arrays
+ * @param[in] order Order of the BDF method. The BDF method of @p order
+ * \f$n\f$ requires \f$n+1\f$ coefficients.
  *
- * @param time_steps a vector containing all the time steps. The time steps should be in reverse order.
- * For example, if the method is a BDF2, it uses three values for the time : (t)
- * (t-dt_1) and (t-dt_2). Thus the time step vector should contain dt_1 and
- * dt_2.
+ * @param[in] time_steps Vector containing all the time steps. The time steps
+ * should be in decreasing order.
+ *
+ * For example, if the method is a BDF2 (\f$n=2\f$), it uses three values for
+ * the time: \f$t\f$, \f$t-\Delta t_1\f$ and \f$t-\Delta t_2\f$. Thus the @p
+ * time_steps vector should contain \f$\Delta t_1\f$ and \f$\Delta t_2\f$.
+ *
+ * @return Vector containing BDF integration coefficient values.
+ *
+ * @note At the moment, the highest implemented scheme is @p bdf3 (@p order=3).
  */
 Vector<double>
 bdf_coefficients(unsigned int order, const std::vector<double> time_steps);
 
 
 /**
- * @brief Calculate the coefficients required for BDF integration of order n.
+ * @brief Calculate the coefficients required for backward differentiation
+ * formula (BDF) integration of @p order \f$n\f$.
+ *
  * The coefficients are determined through a recursion algorithm.
- * The algorithm is taken from : Hay, Alexander, et al. "hp-Adaptive time
+ * The algorithm is taken from: Hay, Alexander, et al. "hp-Adaptive time
  * integration based on the BDF for viscous flows." Journal of Computational
  * Physics 291 (2015): 151-176.
  *
- * @param method The time stepping method
+ * For example, if the method is a BDF2, it uses three values for the time :
+ * \f$t\f$, \f$t-\Delta t_1\f$ and \f$t-\Delta t_2\f$. Thus the @p time_steps
+ * vector should contain \f$\Delta t_1\f$ and \f$\Delta t_2\f$.
  *
- * @param time_steps a vector containing all the time steps. The time steps should be in reverse order.
- * For example, if the method is a BDF2, it uses three values for the time : (t)
- * (t-dt_1) and (t-dt_2). Thus the time step vector should contain dt_1 and
- * dt_2.
+ * @param[in] method Time stepping method.
+ *
+ * @param[in] time_steps Vector containing all the time steps. The time steps
+ * should be in decreasing order.
+ *
+ * For example, if the method is a BDF2 (\f$n=2\f$), it uses three values for
+ * the time: \f$t\f$, \f$t-\Delta t_1\f$ and \f$t-\Delta t_2\f$. Thus the @p
+ * time_steps vector should contain \f$\Delta t_1\f$ and \f$\Delta t_2\f$.
+ *
+ * @return Vector containing BDF integration coefficient values.
+ *
+ * @note At the moment, the highest implemented scheme is @p bdf3 (@p order=3).
  */
 Vector<double>
 bdf_coefficients(const Parameters::SimulationControl::TimeSteppingMethod method,
@@ -66,17 +87,28 @@ bdf_coefficients(const Parameters::SimulationControl::TimeSteppingMethod method,
 
 
 /**
- * @brief Recursion function to calculate the bdf coefficient
+ * @brief Recursive function for calculating the \f$j^{th}\f$ order divided
+ * differences (\f$\delta^j\f$) that is used for calculating backward
+ * differentiation formula (BDF) coefficients.
  *
- * @param order Order of the bdf method
+ * The algorithm is taken from: Hay, Alexander, et al. "hp-Adaptive time
+ * integration based on the BDF for viscous flows." Journal of Computational
+ * Physics 291 (2015): 151-176.
  *
- * @param n Integer required for the recursive function calculation
+ * @param[in] order Order of the BDF method.
  *
- * @param j Integer required for the recursive function calculation
+ * @param[in] n Integer required for the recursive function calculation.
  *
- * @param times Vector of the times corresponding to the various iteration in reverse order.
- * For example in a BDF2 method, three values of the time must be in the array :
- * t, t-dt_1 and t-dt_2.
+ * @param[in] j Order of the divided difference of the value of interest.
+ *
+ * @param[in] times Vector of times values corresponding to the various
+ * iteration in decreasing order.
+ *
+ * For example, if the method is a BDF2 (\f$n=2\f$), three values of the time
+ * must be in the array: \f$t\f$, \f$t-\Delta t_1\f$ and \f$t-\Delta t_2\f$.
+ *
+ * @return Vector of \f$n\f$ divided differences (\f$\delta^j\f$) used in the
+ * calculation of BDF coefficients.
  */
 Vector<double>
 delta(const unsigned int   order,
@@ -87,10 +119,14 @@ delta(const unsigned int   order,
 
 
 /**
- * @brief Returns the maximum number of previous time steps supposed by the BDF schemes implemented in Lethe.
- *  At the moment this is hardcoded to 3, but eventually this could be made
- * larger or smaller depending on the methods used.
+ * @brief Get the maximum number of previous time steps supposed by the BDF
+ * schemes implemented in Lethe.
  *
+ * @return Value of the maximum number of previous time steps used in BDF
+ * schemes implemented in Lethe.
+ *
+ * @note At the moment, this is hardcoded to 3, but eventually this could be
+ * made larger or smaller depending on the methods used.
  */
 inline unsigned int
 maximum_number_of_previous_solutions()
@@ -99,8 +135,11 @@ maximum_number_of_previous_solutions()
 }
 
 /**
- * @brief Returns the number of previous time steps for a BDF Scheme
+ * @brief Get the number of previous time steps for a specific BDF scheme.
  *
+ * @param[in] method Time stepping method of the simulation.
+ *
+ * @return Number of previous time steps used in a given BDF scheme.
  */
 inline unsigned int
 number_of_previous_solutions(
@@ -118,13 +157,23 @@ number_of_previous_solutions(
 }
 
 /**
- * @brief Extrapolates vector of solution to time_vector[0] using previous solution times and previous solution
+ * @brief Extrapolate vector of solution to time_vector[0] using previous
+ * solution times and previous solution.
  *
- * @tparam The type of the variable being extrapolated (e.g. double, Tensor<1,dim>)
- * @param time_vector The vector of times. The solution will be extrapolated to time 0. It should be of size number_of_previous_solutions+1
- * @param solution_vector The vector of solutions. The solution will be extrapolated to index 0. It should be at least of size number_of_previous_solutions
- * @param number_of_previous_solutions The number of previous solutions to use to extrapolate
- * @param extrapolated_solution The vector of extrapolated solutions
+ * @tparam DataType Type of the variable being extrapolated (e.g. double,
+ * Tensor<1,dim>)
+ *
+ * @param[in] time_vector Vector of times. The solution will be extrapolated to
+ * time 0. It should be of size @p number_of_previous_solutions+1.
+ *
+ * @param[in] solution_vector Vector of solutions. The solution will be
+ * extrapolated to index 0. It should be at least of size @p
+ * number_of_previous_solutions.
+ *
+ * @param[in] number_of_previous_solutions Number of previous solutions used
+ * to extrapolate.
+ *
+ * @param[out]  extrapolated_solution Vector of extrapolated solutions.
  */
 
 template <typename DataType>
