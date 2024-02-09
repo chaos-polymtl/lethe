@@ -452,7 +452,7 @@ protected:
 
 /**
  * @brief Implements the matrix-free operator to solve the Navier-Stokes equations
- * using SUPG/PSPG stabilization,
+ * using SUPG/PSPG stabilization.
  *
  * @tparam dim An integer that denotes the number of spatial dimensions.
  * @tparam number Abstract type for number across the class (i.e., double).
@@ -474,8 +474,8 @@ public:
 protected:
   /**
    * @brief Perform cell integral on a cell batch without gathering and scattering
-   * the values, and according to the Jacobian of the Navier-Stokes equations
-   * with SUPG/PSPG stabilization.
+   * the values, and according to the Jacobian of the discretized Navier-Stokes
+   * equations with SUPG/PSPG stabilization.
    *
    * @param[in] integrator FEEvaluation object that allows to evaluate functions
    * at quadrature points and perform cell integrations.
@@ -485,8 +485,8 @@ protected:
 
   /**
    * @brief Perform cell integral on a cell batch with gathering and scattering
-   * the values, and according to the residual of the Navier-Stokes equations
-   * with SUPG/PSPG stabilization.
+   * the values, and according to the residual of the discretized Navier-Stokes
+   * equations with SUPG/PSPG stabilization.
    *
    * @param[in] matrix_free Object that contains all data.
    * @param[in,out] dst Global vector where the final result is added.
@@ -521,8 +521,8 @@ public:
 protected:
   /**
    * @brief Perform cell integral on a cell batch without gathering and scattering
-   * the values, and according to the Jacobian of the transient Navier-Stokes
-   * equations with SUPG/PSPG stabilization.
+   * the values, and according to the Jacobian of the discretized transient
+   * Navier-Stokes equations with SUPG/PSPG stabilization.
    *
    * @param[in] integrator FEEvaluation object that allows to evaluate functions
    * at quadrature points and perform cell integrations.
@@ -532,8 +532,8 @@ protected:
 
   /**
    * @brief Perform cell integral on a cell batch with gathering and scattering
-   * the values, and according to the residual of the Navier-Stokes equations
-   * with SUPG/PSPG stabilization.
+   * the values, and according to the residual of the discretized transient
+   * Navier-Stokes equations with SUPG/PSPG stabilization.
    *
    * @param[in] matrix_free Object that contains all data.
    * @param[in,out] dst Global vector where the final result is added.
