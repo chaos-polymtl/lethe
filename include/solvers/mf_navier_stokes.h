@@ -34,11 +34,12 @@ using namespace dealii;
 /**
  * @brief A solver for the incompressible Navier-Stokes equations implemented
  * in a matrix-free fashion.
- * 
- * A matrix-free stabilized solver for the incompressible Navier-Stokes equations
- * implemented in a matrix-free fashion with a sum-factorization approach. It uses
- * a continuous Galerkin discretization and solves the fully-coupled discretized 
- * problem in a monolithic way using multigrid preconditioners. 
+ *
+ * A matrix-free stabilized solver for the incompressible Navier-Stokes
+ * equations implemented in a matrix-free fashion with a sum-factorization
+ * approach. It uses a continuous Galerkin discretization and solves the
+ * fully-coupled discretized problem in a monolithic way using multigrid
+ * preconditioners.
  *
  * @tparam dim An integer that denotes the dimension of the space in which
  * the flow is solved.
@@ -69,7 +70,7 @@ public:
   ~MFNavierStokesSolver();
 
   /**
-   * @brief Solve the problem defined by simulation parameters by iterating 
+   * @brief Solve the problem defined by simulation parameters by iterating
    * through time or through the mesh refinements.
    */
   virtual void
@@ -90,15 +91,15 @@ protected:
   update_boundary_conditions();
 
   /**
-   * @brief Set the initial conditions for the solver. If the simulation is 
-   * restarted from a checkpoint, the initial solution setting is bypassed 
+   * @brief Set the initial conditions for the solver. If the simulation is
+   * restarted from a checkpoint, the initial solution setting is bypassed
    * and the checkpoint is instead read.
    *
    * @param[in] initial_condition_type The type of initial condition to be set.
    *
-   * @param[in] restart A boolean that indicates if the simulation is being restarted.
-   * If set to true, the initial conditions are never set, but are instead
-   * overriden by the read_checkpoint functionality.
+   * @param[in] restart A boolean that indicates if the simulation is being
+   *restarted. If set to true, the initial conditions are never set, but are
+   *instead overriden by the read_checkpoint functionality.
    *
    **/
   virtual void
@@ -107,7 +108,7 @@ protected:
     bool                             restart = false) override;
 
   /**
-   * @brief Assemble the matrix associated with the solver. Only required for 
+   * @brief Assemble the matrix associated with the solver. Only required for
    * compilation and it is not used for the matrix free solver.
    */
   virtual void
@@ -149,12 +150,12 @@ protected:
    * @brief Solve the linear system of equations using the method specified in
    * the simulation parameters.
    *
-   * @param[in] initial_step Indicates if this is the first solution of the linear system.
-   * If this is the case, the non_zero version of the constraints are used for
-   * the Dirichlet boundary conditions.
+   * @param[in] initial_step Indicates if this is the first solution of the
+   * linear system. If this is the case, the non_zero version of the constraints
+   * are used for the Dirichlet boundary conditions.
    *
-   * @param[in] renewed_matrix Indicates if the matrix has been reassembled, and thus
-   * the preconditioner needs to be reassembled.
+   * @param[in] renewed_matrix Indicates if the matrix has been reassembled, and
+   * thus the preconditioner needs to be reassembled.
    */
   void
   solve_linear_system(const bool initial_step,
@@ -162,22 +163,22 @@ protected:
 
 private:
   /**
-   * @brief Assemble a L2 projection matrix for the velocity and the pressure, 
-   * which can be used to set the initial condition for the Navier-Stokes problem.
-   * Currently not implemented for this solver.
+   * @brief Assemble a L2 projection matrix for the velocity and the pressure,
+   * which can be used to set the initial condition for the Navier-Stokes
+   * problem. Currently not implemented for this solver.
    */
   void
   assemble_L2_projection();
 
   /**
    * @brief GMRES solver with preconditioning.
-   * 
-   * @param[in] initial_step Indicates if this is the first solution of the linear system.
-   * If this is the case, the non_zero version of the constraints are used for
-   * the Dirichlet boundary conditions
-   * 
+   *
+   * @param[in] initial_step Indicates if this is the first solution of the
+   * linear system. If this is the case, the non_zero version of the constraints
+   * are used for the Dirichlet boundary conditions
+   *
    * @param[in] absolute_residual Used to define the linear solver tolerance.
-   * 
+   *
    * @param[in] relative_residual Used to define the linear solver tolerance.
    */
   void
@@ -186,10 +187,11 @@ private:
                      const double relative_residual);
 
   /**
-   * @brief  Setup the local smoothing multigrid preconditioner and call the solve 
+   * @brief  Setup the local smoothing multigrid preconditioner and call the solve
    * function of the linear solver.
-   * 
-   * @param[in] solver Linear solver object that needs the multigrid preconditioner.
+   *
+   * @param[in] solver Linear solver object that needs the multigrid
+   * preconditioner.
    */
   void
   solve_with_LSMG(SolverGMRES<VectorType> &solver);
@@ -197,16 +199,17 @@ private:
   /**
    * @brief Setup the global coarsening multigrid preconditioner and call the solve
    * function of the linear solver.
-   * 
-   * @param[in] solver Linear solver object that needs the multigrid preconditioner.
+   *
+   * @param[in] solver Linear solver object that needs the multigrid
+   * preconditioner.
    */
   void
   solve_with_GCMG(SolverGMRES<VectorType> &solver);
 
   /**
    * @brief Setup the implicit LU preconditioner and call the solve function of the
-   * linear solver. Attention: an actual matrix needs to be constructed using the
-   * matrix-free operator.
+   * linear solver. Attention: an actual matrix needs to be constructed using
+   * the matrix-free operator.
    */
   void
   solve_with_ILU(SolverGMRES<VectorType> &solver);
@@ -232,40 +235,40 @@ private:
 protected:
   /**
    * @brief Matrix-free operator in used for all the matrix-vector multiplications calls (vmult).
-   * 
+   *
    */
   std::shared_ptr<NavierStokesOperatorBase<dim, double>> system_operator;
 
   /**
    * @brief Geometric local smoothing multigrid preconditioner.
-   * 
+   *
    */
   std::shared_ptr<PreconditionMG<dim, VectorType, LSTransferType>>
     ls_multigrid_preconditioner;
 
   /**
    * @brief Geometric global coarsening multigrid preconditioner.
-   * 
+   *
    */
   std::shared_ptr<PreconditionMG<dim, VectorType, GCTransferType>>
     gc_multigrid_preconditioner;
 
   /**
    * @brief Implicit LU preconditioner.
-   * 
+   *
    */
   std::shared_ptr<TrilinosWrappers::PreconditionILU> ilu_preconditioner;
 
   /**
    * @brief Vector to store the time derivatives of the previous solutions at the end
    * of each time step for time-dependent simulations.
-   * 
+   *
    */
   VectorType time_derivative_previous_solutions;
 
   /**
    * @brief Timer for specific geometric multigrid components.
-   * 
+   *
    */
   TimerOutput mg_computing_timer;
 };
