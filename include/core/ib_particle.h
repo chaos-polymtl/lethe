@@ -33,9 +33,9 @@
 using namespace dealii;
 
 /**
- * @brief Define behavior of a specific particle for the sharp interface IB solver.
+ * @brief Define the behavior of a specific particle for the sharp interface IB solver.
  *
- * Each particle defined will have these value used in the solver.
+ * Each particle defined will have these values used in the solver.
  *
  * @tparam dim An integer that denotes the dimension of the space in which
  * the flow is solved.
@@ -45,31 +45,31 @@ class IBParticle
 {
 public:
   /**
-   * @brief Initialize all particles
+   * @brief Initialize all particles.
    */
   void
   initialize_all();
 
   /**
-   * @brief Initialize the value of the last state of the particle
+   * @brief Initialize the value of the last state of the particle.
    */
   void
   initialize_previous_solution();
 
   /**
-   * @brief Return the names of properties of the IB_particle for visualisation.
+   * @brief Return the names of the DEM properties, for visualization.
    */
   std::vector<std::pair<std::string, int>>
   get_properties_name();
 
   /**
-   * @brief Return the value of the properties of the particle for visualisation.
+   * @brief Return the value of the DEM properties, for visualization.
    */
   std::vector<double>
   get_properties();
 
   /**
-   * @brief Return the number of properties of the particle for visualisation.
+   * @brief Return the number of DEM properties, for visualization.
    */
   inline unsigned int
   get_number_properties()
@@ -78,14 +78,17 @@ public:
   }
 
   /**
-   * @brief
-   * Returns the evaluation of the signed distance function of this shape
-   * Most levelset functions come from Inigo Quilez:
+   * @brief Compute the evaluation of the signed distance function of this shape.
+   *
+   * Most levelset functions used here come from Inigo Quilez:
    * iquilezles.org/articles/distfunctions
    *
-   * @param p The point at which the evaluation is performed
-   * @param cell_guess A guess of the cell containing the evaluation point, which
-   * is useful to reduce computation time
+   * @param[in] p Point at which the evaluation is performed.
+   *
+   * @param[in] cell_guess Guess of the cell containing the evaluation point,
+   * which is useful to reduce computation time.
+   *
+   * @return Signed distance function at evaluation point.
    */
   inline double
   get_levelset(const Point<dim>                                     &p,
@@ -95,7 +98,7 @@ public:
   }
 
   /**
-   * See overloaded function
+   * @brief See overloaded function.
    */
   inline double
   get_levelset(const Point<dim> &p)
@@ -104,14 +107,17 @@ public:
   }
 
   /**
-   * @brief
-   * Sets the closest_point parameter to be the point on the surface of the
-   * shape which has the minimal distance from the given point p
+   * @brief Find the closest surface point on the shape.
    *
-   * @param p The point at which the evaluation is performed
-   * @param closest_point The reference to the closest point. This point will be modified by the function.
-   * @param cell_guess A guess of the cell containing the evaluation point, which
-   * is useful to reduce computation time
+   * This point has the minimal absolute distance from the given point p.
+   *
+   * @param[in] p Point at which the evaluation is performed.
+   *
+   * @param[out] closest_point Reference to the closest point. This point
+   * will be modified by the function.
+   *
+   * @param[in] cell_guess A guess of the cell containing the evaluation point,
+   * which is useful to reduce computation time.
    */
   void
   closest_surface_point(
@@ -120,23 +126,33 @@ public:
     const typename DoFHandler<dim>::active_cell_iterator &cell_guess);
 
   /**
-   * See overloaded function
+   * @brief See overloaded function.
    */
   void
   closest_surface_point(const Point<dim> &p, Point<dim> &closest_point);
 
   /**
-   * @brief
-   * Returns true if the given point is inside the crown for which the limits
+   * @brief Determine if the given point is inside the crown for which the limits
    * are defined by inner and outer radius factors. An effective radius is used
    * for non spherical shapes.
    *
-   *  @param evaluation_point The point at which the evaluation is performed
-   *  @param outer_radius The factor to be multiplied by the effective radius to check if the evaluation point is inside the outer limits
-   *  @param inside_radius The factor to be multiplied by the effective radius to check if the evaluation point is outside the inner limits
-   *  @param absolute_distance Whether the distance is defined as absolute or relative to radius
-   *  @param cell_guess A guess of the cell containing the evaluation point, which
-   *  is useful to reduce computation time
+   *  @param[in] evaluation_point Point at which the evaluation is performed.
+   *
+   *  @param[in] outer_radius Relative or absolute distance to check if the
+   *  evaluation point is inside the outer limits.
+   *
+   *  @param[in] inside_radius Relative or absolute distance to check if the
+   *  evaluation point is outside the inner limits.
+   *
+   *  @param[in] absolute_distance Boolean for whether the radii are defined as
+   * absolute or relative to radius. If the value is false, the outer and inner
+   * radii are multiplied by the effective radius to construct the absolute
+   * distances to be used.
+   *
+   *  @param[in] cell_guess Guess of the cell containing the evaluation point,
+   * which is useful to reduce computation time.
+   *
+   *  @return true if the evaluation point is inside the crown.
    */
   bool
   is_inside_crown(
@@ -147,7 +163,7 @@ public:
     const typename DoFHandler<dim>::active_cell_iterator &cell_guess);
 
   /**
-   * See overloaded function
+   * @brief See overloaded function.
    */
   bool
   is_inside_crown(const Point<dim> &evaluation_point,
@@ -156,10 +172,9 @@ public:
                   const bool        absolute_distance);
 
   /**
-   * @brief
-   * Sets the position of the particle and dependent members to the argument
+   * @brief Set the position and dependent members to the argument.
    *
-   * @param position The new position to set the particle at
+   * @param[in] position New position to use.
    */
   inline void
   set_position(const Point<dim> position)
@@ -170,40 +185,44 @@ public:
 
 
   /**
-   * @brief Clear the cache used to evaluate the value and vector defining the sign distance function of the shape
+   * @brief Clear the cache used to evaluate the value and vector defining
+   * the signed distance function.
    */
   void
   clear_shape_cache();
 
   /**
-   * @brief
-   * Sets up a shape in accordance with the given type and arguments
+   * @brief Set up a shape in accordance with the given type and arguments.
    *
-   * @param type The type of shape to be initialized: sphere, cone, ellipsoid,
-   * rectangle, death star, cut hollow sphere, torus, or rbf
-   * @param shape_arguments The dimensions to be used for shape initialization
+   * @param[in] type Type of the shape to be initialized.
+   *
+   * @param[in] shape_arguments Arguments to be used for shape initialization.
    */
   void
   initialize_shape(const std::string         type,
                    const std::vector<double> shape_arguments);
+
   /**
-   * @brief
-   * Sets up a shape in accordance with the given type and file name
+   * @brief Set up a shape in accordance with the given type and raw text argument.
    *
-   * @param type The type of shape to be initialized: sphere, cone, ellipsoid,
-   * rectangle, death star, cut hollow sphere, torus, or rbf
-   * @param raw_arguments The untreated arguments of the shape
+   * The raw text argument is typically a file name.
+   *
+   * @param[in] type Type of shape to be initialized.
+   *
+   * @param[in] raw_arguments Untreated arguments of the shape.
    */
   void
   initialize_shape(const std::string type, const std::string raw_arguments);
 
   /**
-   * @brief
-   * Sets the position of the particle and dependent members to the argument for
-   * one component
+   * @brief Set the position and dependent members to the position for
+   * one component only.
    *
-   * @param position_component The component of the new position to set the particle at
-   * @param component The component index for which the position will be updated
+   * @param[in] position_component Component of the new position to set the
+   * particle at.
+   *
+   * @param[in] component Component index for which the position will be
+   * updated.
    */
   inline void
   set_position(const double       position_component,
@@ -214,22 +233,19 @@ public:
   }
 
   /**
-   * @brief
-   * Sets the orientation of the particle and dependent members to the argument
+   * @brief Set the orientation and dependent members to the given orientation.
    *
-   * @param orientation The new orientation to set the particle at
+   * @param[in] orientation New orientation to set the particle at.
    */
   void
   set_orientation(const Tensor<1, 3> orientation);
 
   /**
-   * @brief
-   * Sets the layer thickening value (positive or negative) of the particle's
-   * shape
+   * @brief Set the layer thickening value (positive or negative) of the shape.
    *
-   * @param layer_thickening Thickness to be artificially added to the particle.
-   * A negative value will decrease the particle's thickness by subtracting a
-   * layer of specified width.
+   * @param[in] layer_thickening Thickness to be artificially added to the
+   * particle. A negative value will decrease the particle's thickness by
+   * subtracting a layer of specified width.
    */
   void
   set_layer_thickening(const double layer_thickening)
@@ -238,26 +254,32 @@ public:
   }
 
   /**
-   * @brief Sets the proper dof handler, then computes/updates the map of cells
-   * and their likely non-null nodes
-   * @param updated_dof_handler the reference to the new dof_handler
-   * @param mesh_based_precalculations mesh-based precalculations that can lead to slight shape misrepresentation (if type=RBF)
+   * @brief Set the proper DOF handler, then compute/update the map of cells
+   * and their likely non-null nodes.
+   *
+   * @param[in,out] updated_dof_handler Reference to the new dof_handler.
+   *
+   * @param[in] mesh_based_precalculations Define if mesh-based precalculations
+   * are used (if type=RBF).
    */
   void
   update_precalculations(DoFHandler<dim> &updated_dof_handler,
                          const bool       mesh_based_precalculations);
 
   /**
-   * @brief Updates precalculations if needed, then computes and removes superfluous data
-   * @param updated_dof_handler the reference to the new dof_handler
-   * @param mesh_based_precalculations mesh-based precalculations that can lead to slight shape misrepresentation (if type=RBF)
+   * @brief Update precalculations if needed, then compute and remove superfluous data.
+   *
+   * @param[in,out] updated_dof_handler Reference to the new dof_handler.
+   *
+   * @param[in] mesh_based_precalculations Define if mesh-based precalculations
+   * are used (if type=RBF).
    */
   void
   remove_superfluous_data(DoFHandler<dim> &updated_dof_handler,
                           const bool       mesh_based_precalculations);
 
   /**
-   * @brief Loads data from the files for file-based Shapes (RBF at the moment)
+   * @brief Load data from the files (for file-based Shapes).
    */
   void
   load_data_from_file();
@@ -316,10 +338,9 @@ public:
    * @brief Surface energy
    */
   double surface_energy;
-  // The inertia matrix in the particle frame of reference
 
   /**
-   * @brief Inertia tensor
+   * @brief Inertia matrix in the particle frame of reference.
    */
   Tensor<2, 3> inertia;
 
@@ -332,7 +353,7 @@ public:
    * @brief Positions at the last n time steps. n depends on the time integration scheme.
    */
   std::vector<Point<dim>> previous_positions;
-  // The fluid force applied on the particle.
+
   /**
    * @brief Total fluid force applied on the particle.
    */
@@ -404,7 +425,7 @@ public:
   std::vector<Tensor<1, 3>> previous_orientation;
 
   /**
-   * @brief Angular velocity
+   * @brief Angular velocity.
    */
   Tensor<1, 3> omega;
 
@@ -489,7 +510,7 @@ public:
    * @brief Indicate if the particle dynamics are solved.
    *
    * If not, functions are used to define position, velocity, orientation and
-   * angular velocity
+   * angular velocity.
    */
   bool integrate_motion;
 
@@ -531,7 +552,7 @@ public:
   Point<dim> pressure_location;
 
   /**
-   * @brief Rotation matrix in the global space
+   * @brief Rotation matrix in the global space.
    */
   Tensor<2, 3> rotation_matrix;
 };
