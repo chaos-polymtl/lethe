@@ -39,21 +39,36 @@ using namespace DEM;
 #ifndef lethe_dem_contact_manager_h
 #  define lethe_dem_contact_manager_h
 
+/**
+ * @brief Manage the numerous of contact detection search operations in the DEM.
+ *
+ * This class mostly calls proper functions in regards the type of contacts for
+ * the contact detection and updates of data containers.
+ */
 template <int dim>
 class DEMContactManager
 {
 public:
   /**
-   * Finds the neighbors lists of all the active cells in the input
-   * triangulation.
+   * @brief Execute functions to find the lists of cell neighbors of the active
+   * cells in the triangulation.
    *
-   * @param triangulation The triangulation to access the information of the cells
-   * @param periodic_boundaries_cells_information Information of periodic cells used if periodic boundaries are used
-   * @param has_periodic_boundaries A boolean to allow periodic container manipulations
-   * @param has_floating_mesh A boolean to allow dealing with floating mesh neighbors
+   * For contacts of particles, the neighbor search excludes the repetitions of
+   * neighbors: B is neighbor of A but A will not be neighbor of B. For contacts
+   * of particles with floating meshes, the neighbor search includes all
+   * neighbors. These floating mesh contacts searches need all the particles
+   * located in all the neighbor cells of the main cell to detect
+   * collisions with the floating mesh.
    *
+   * @param[in] triangulation The triangulation to access the information of the
+   * cells.
+   * @param[in] periodic_boundaries_cells_information Information of periodic
+   * cells used if periodic boundaries are enabled (next parameter).
+   * @param[in] has_periodic_boundaries Allow manipulations of periodic
+   * containers if required.
+   * @param[in] has_floating_mesh Allow the computation of full neighbor lists
+   * of active cells computation if required.
    */
-
   void
   execute_cell_neighbors_search(
     const parallel::distributed::Triangulation<dim> &triangulation,
@@ -63,16 +78,18 @@ public:
     const bool has_floating_mesh       = false);
 
   /**
-   * Update the neighbors lists of all the active cells in the input
-   * triangulation while clearing containers before the update.
+   * @brief Execute functions to clear and update the neighbor lists of all the
+   * active cells in the triangulation.
    *
-   * @param triangulation The triangulation to access the information of the cells
-   * @param periodic_boundaries_cells_information Information of periodic cells used if periodic boundaries are used
-   * @param has_periodic_boundaries A boolean to allow periodic container manipulations
-   * @param has_floating_mesh A boolean to allow dealing with floating mesh neighbors
-   *
+   * @param[in] triangulation The triangulation to access the information of the
+   * cells.
+   * @param[in] periodic_boundaries_cells_information Information of periodic
+   * cells used if periodic boundaries are enabled (next parameter).
+   * @param[in] has_periodic_boundaries Allow manipulations of periodic
+   * containers if required.
+   * @param[in] has_floating_mesh Allow the computation of full neighbor lists
+   * of active cells computation if required.
    */
-
   void
   update_cell_neighbors(
     const parallel::distributed::Triangulation<dim> &triangulation,
@@ -95,32 +112,36 @@ public:
   }
 
   /**
-   * Manages to call update_fine_search_candidates() with contact data
-   * containers to remove contact repetitions and to add new contact pairs to
-   * the contact containers when particles are exchanged between processors.
-   * Repeats the update for local particle-particle contacts, ghost
-   * particle-particle, particle-wall contacts, particle-floating wall contacts
-   * and particle-floating mesh contacts.
+   * @brief Execute functions to update the contact data containers with the new
+   * contact pairs.
    *
-   * @param has_periodic_boundaries A boolean to allow periodic container manipulations
+   * Call proper functions to remove contact repetitions and to add new contact
+   * pairs to the contact containers when particles are exchanged between
+   * processors after the fine search.
+   * Contact pairs are local particle-particle, ghost particle-particle,
+   * particle-wall, particle-floating wall contacts and particle-floating mesh
+   * contacts.
+   *
+   * @param[in] has_periodic_boundaries Allow manipulations of periodic
+   * containers if required.
    */
-
   void
   update_contacts(const bool has_periodic_boundaries = false);
 
   /**
-   * Updates the iterators to particles in local-local contact containers. This
-   * is essential since sort_particles_into_subdomains_and_cells() and
-   * exchange_ghost_particles() functions change the iterator to particles
+   * @breif Execute functions to update the particle iterators in local-local
+   * contact containers.
+   *
+   * This is essential since sort_particles_into_subdomains_and_cells() and
+   * exchange_ghost_particles() functions change the particle iterators
    * everytime they are called.
    *
-   * @tparam dim Dimensionality of the geometry which contains the particles
-   * @param particle_handler The particle handler of particles
-   * @param clear_contact_structures A boolean to clear contact structures
-   * @param has_periodic_boundaries A boolean to allow periodic container manipulations
-   *
+   * @param[in] particle_handler Storage of particles and their accessor
+   * functions.
+   * @param[in] clear_contact_structures Allow clearing the contact structures.
+   * @param[in] has_periodic_boundaries Allow manipulations of periodic
+   * containers if required.
    */
-
   void
   update_local_particles_in_cells(
     const Particles::ParticleHandler<dim> &particle_handler,
@@ -128,34 +149,40 @@ public:
     const bool                             has_periodic_boundaries = false);
 
   /**
-   * Execute the particle-particle broad search which finds the local and ghost
-   * particle-particle contact pairs candidates. These contact pairs will be
-   * used in the fine search to investigate if they are in contact or not.
-   * to investigate if they are in contact or not.
+   * @brief Execute the particle-particle broad searches.
    *
-   * @param particle_handler The particle handler of particles in the broad
-   * search
-   * @param has_periodic_boundaries A boolean to allow periodic container manipulations
+   * Calls proper functions to find the candidates of local and ghost
+   * particle-particle contact pairs and the periodic particle-particle contacts
+   * if required. These contact pairs will be used in the fine search step to
+   * investigate if they are in contact.
+   *
+   * @param[in] particle_handler Storage of particles and their accessor
+   * functions. search[in]
+   * @param has_periodic_boundaries Allow manipulations of periodic containers
+   * if required.
    */
-
   void
   execute_particle_particle_broad_search(
     dealii::Particles::ParticleHandler<dim> &particle_handler,
     const bool                               has_periodic_boundaries = false);
 
   /**
-   * Execute the particle-particle broad search which finds the local and ghost
-   * particle-particle contact pairs candidates. These contact pairs will be
-   * used in the fine search to investigate if they are in contact or not.
-   * This version of the function is used when disabling particle contacts
-   * regards mobility is enable.
+   * @brief Execute the particle-particle broad searches with disabling of
+   * contacts.
    *
-   * @param particle_handler The particle handler of particles in the broad
-   * search
-   * @param disable_particle_contact_object An object that handle all
-   * @param has_periodic_boundaries A boolean to allow periodic container manipulations
+   * Calls proper functions to find the candidates of local and ghost
+   * particle-particle contact pairs and the periodic particle-particle contacts
+   * if required. These contact pairs will be used in the fine search step to
+   * investigate if they are in contact. This version of the function is used
+   * when disabling particle contacts regards mobility is enabled.
+   *
+   * @param[in,out] particle_handler Storage of particles and their accessor
+   * functions.
+   * @param[in] disable_particle_contact_object Allow to check the mobility
+   * status of cells
+   * @param[in] has_periodic_boundaries Allow manipulations of periodic
+   * containers if required.
    */
-
   void
   execute_particle_particle_broad_search(
     dealii::Particles::ParticleHandler<dim> &particle_handler,
@@ -163,19 +190,22 @@ public:
     const bool                               has_periodic_boundaries = false);
 
   /**
-   * Carries out the broad contact detection search using the
-   * background triangulation for particle-walls contact.
+   * @brief Execute the particle-wall broad searches.
    *
-   * @param particle_handler Particle handler of particles located in boundary
-   * cells
-   * @param boundary_cells_object Information of the boundary cells and
-   * faces. This is the output of the BoundaryCellsInformation class
-   *    * @param floating_mesh_info Container of all of floating meshes
-   * @param floating_wall Properties of the floating walls specified in the parameter handler file
-   * @param simulation_time Simulation time
-   * @param has_floating_mesh A boolean to allow dealing with floating mesh neighbors
+   * Calls proper functions to find the candidates of particle-wall contact
+   * pairs and the particle-floating wall or particle-floating mesh if required.
+   * These contact pairs will be used in the fine search step to investigate if
+   * they are in contact.
+   *
+   * @param[in] particle_handler Storage of particles and their accessor
+   * functions.
+   * @param[in] boundary_cells_object Information of the boundary cells and
+   * faces.
+   * @param[in] floating_mesh_info Mapping of floating meshes.
+   * @param[in] floating_wall Properties of the floating walls.
+   * @param[in] simulation_time Current simulation time.
+   * @param[in] has_floating_mesh Allow dealing with floating mesh neighbors.
    */
-
   void
   execute_particle_wall_broad_search(
     const Particles::ParticleHandler<dim> &particle_handler,
@@ -187,19 +217,25 @@ public:
     const bool has_floating_mesh = false);
 
   /**
-   * Carries out the broad contact detection search using the
-   * background triangulation for particle-walls contact.
+   * @brief Execute the particle-wall broad searches with disabling of contacts.
    *
-   * @param particle_handler Particle handler of particles located in boundary
-   * cells
-   * @param boundary_cells_information Information of the boundary cells and
-   * faces. This is the output of the FindBoundaryCellsInformation class
-   * @param floating_mesh_info Container of all of floating meshes
-   * @param floating_wall Properties of the floating walls specified in the parameter handler file
-   * @param simulation_time Simulation time
-   * @param has_floating_mesh A boolean to allow dealing with floating mesh neighbors
+   * Calls proper functions to find the candidates of particle-wall contact
+   * pairs and the particle-floating wall or particle-floating mesh if required.
+   * These contact pairs will be used in the fine search step to investigate if
+   * they are in contact. This version of the function is used when disabling
+   * particle contacts regards mobility is enabled.
+   *
+   * @param[in] particle_handler Storage of particles and their accessor
+   * functions.
+   * @param[in] boundary_cells_object Information of the boundary cells and
+   * faces.
+   * @param[in] floating_mesh_info Mapping of floating meshes.
+   * @param[in] floating_wall Properties of the floating walls.
+   * @param[in] simulation_time Current simulation time.
+   * @param[in] disable_particle_contact_object Allow to check the mobility
+   * status of cells
+   * @param[in] has_floating_mesh Allow dealing with floating mesh neighbors.
    */
-
   void
   execute_particle_wall_broad_search(
     const Particles::ParticleHandler<dim> &particle_handler,
@@ -212,14 +248,17 @@ public:
     const bool                  has_floating_mesh = false);
 
   /**
-   * Iterates over a vector of maps to see if the particles
-   * which were in contact in the last time step, are still in contact or not.
+   * @brief Execute the particle-particles fine searches.
    *
-   * @param neighborhood_threshold A value which defines the neighbor particles
-   * @param has_periodic_boundaries A boolean to allow periodic container manipulations
-   * @param periodic_offset An offset used for tuning particle locations in periodic boundaries
+   * Executes functions that update the particle contacts pairs containers and
+   * compute the contact information of the collision pairs.
+   *
+   * @param[in] neighborhood_threshold Threshold value of contact detection.
+   * @param[in] has_periodic_boundaries Allow manipulations of periodic
+   * containers if required.
+   * @param[in] periodic_offset Offset used for tuning particle locations in
+   * periodic boundaries.
    */
-
   void
   execute_particle_particle_fine_search(
     const double         neighborhood_threshold,
@@ -227,14 +266,16 @@ public:
     const Tensor<1, dim> periodic_offset         = Tensor<1, dim>());
 
   /**
-   * Carries out the fine particle-wall contact detection
+   * @brief Execute the particle-wall fine searches.
    *
-   * @param floating_wall Properties of the floating walls specified in the parameter handler file
-   * @param simulation_time Simulation time
-   * @param neighborhood_threshold A value which defines the neighbor particles
-   * @param has_floating_mesh A boolean to allow dealing with floating mesh neighbors
+   * Executes functions that update the particle-wall contacts pairs containers
+   * and compute the contact information of the collision particle-wall.
+   *
+   * @param[in] floating_wall Properties of the floating walls.
+   * @param[in] simulation_time Current simulation time.
+   * @param[in] neighborhood_threshold Threshold value of contact detection.
+   * @param[in] has_floating_mesh Allow the fine search with floating meshes.
    */
-
   void
   execute_particle_wall_fine_search(
     const Parameters::Lagrangian::FloatingWalls<dim> &floating_walls,
