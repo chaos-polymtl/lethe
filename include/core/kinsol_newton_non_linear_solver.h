@@ -23,21 +23,23 @@
 #include <deal.II/sundials/kinsol.h>
 
 /**
- * @brief KinsolNonlinearSolver. Interface to the non-linear newton solver for non-linear systems
- * of equations implemented in the SUNDIALS suite, specifically the KINSOL
- * package. This solver has internal algorithms to determine the time step and
- * decide whether to reassemble the Jacobian matrix or not.
+ * @brief Non-linear Newton solver for non-linear systems of equations implemented
+ * in the SUNDIALS suite, specifically the KINSOL package. This solver has
+ * internal algorithms to determine the time step and decide whether to
+ * reassemble the Jacobian matrix or not.
  */
 template <typename VectorType>
 class KinsolNewtonNonLinearSolver : public NonLinearSolver<VectorType>
 {
 public:
   /**
-   * @brief Constructor for the KinsolNewtonNonLinearSolver.
+   * @brief Constructor.
    *
-   * @param physics_solver A pointer to the physics solver to which the non-linear solver is attached
+   * @param[in] physics_solver A pointer to the physics solver to which the
+   * non-linear solver is attached.
    *
-   * @param param Non-linear solver parameters
+   * @param[in] param Non-linear solver parameters as specified in the
+   * simulation parameter file.
    *
    */
   KinsolNewtonNonLinearSolver(PhysicsSolver<VectorType>         *physics_solver,
@@ -45,9 +47,11 @@ public:
 
 
   /**
-   * @brief Solve the non-linear system of equation.
-   * @param is_initial_step Boolean variable that controls which constraints are
-   * going to be applied to the equations
+   * @brief Solve the non-linear system of equations.
+   *
+   * @param[in] is_initial_step Boolean variable that controls which constraints
+   * are going to be applied to the equations depending on the time step.
+   *
    */
   void
   solve(const bool is_initial_step) override;
