@@ -1495,7 +1495,6 @@ CFDDEMSolver<dim>::solve()
     this->cfd_dem_simulation_parameters.cfd_parameters.restart_parameters
       .restart);
 
-
   // In the case the simulation is being restarted from a checkpoint file, the
   // checkpoint_step parameter is set to true. This allows to perform all
   // operations related to restarting a simulation. Once all operations have
@@ -1511,7 +1510,8 @@ CFDDEMSolver<dim>::solve()
 
   // Calculate first instance of void fraction once particles are set-up
   this->vertices_cell_mapping();
-  this->initialize_void_fraction();
+  if (!checkpoint_step)
+    this->initialize_void_fraction();
 
   while (this->simulation_control->integrate())
     {
