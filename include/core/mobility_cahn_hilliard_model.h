@@ -19,12 +19,6 @@
 
 #include <core/interface_property_model.h>
 
-enum MobilityModel
-{
-  constant,
-  quartic
-};
-
 /**
  * @brief Abstract class that allows to calculate the
  * mobility for the Cahn-Hilliard-Navier-Stokes equations.
@@ -43,19 +37,16 @@ public:
     const Parameters::MaterialInteractions &material_interaction_parameters);
 
   /**
-   * @brief Pure virtual method to get the model used for the mobility, must be overriden
-   * @return returns a MobilityModel object
-   */
-  virtual MobilityModel
-  get_model() = 0;
-
-
-  /**
    * @brief Pure virtual method to access the mobility constant
    * @return value of the mobility constant
    */
   virtual double
   get_mobility_constant() = 0;
+
+  /**
+   * @brief Definition of a virtual destructor
+   */
+  virtual ~MobilityCahnHilliardModel() = default;
 };
 
 /**
@@ -73,14 +64,9 @@ public:
   {}
 
   /**
-   * @brief Method to get the model used for the mobility
-   * @return returns a MobilityModel object
+   * @brief Destructor of derived class
    */
-  MobilityModel
-  get_model() override
-  {
-    return model;
-  }
+  ~MobilityCahnHilliardModelConstant() = default;
 
   /**
    * @brief Method to access the mobility constant, though it returns the same value as the value function, it is implemented here for generality.
@@ -149,8 +135,7 @@ public:
   }
 
 private:
-  const double        mobility_cahn_hilliard_constant;
-  const MobilityModel model = constant;
+  const double mobility_cahn_hilliard_constant;
 };
 
 /**
@@ -165,20 +150,14 @@ public:
   MobilityCahnHilliardModelQuartic(
     const double p_mobility_cahn_hilliard_constant)
     : mobility_cahn_hilliard_constant(p_mobility_cahn_hilliard_constant)
-    , model(MobilityModel::quartic)
   {
     this->model_depends_on[field::phase_order_cahn_hilliard] = true;
   }
 
   /**
-   * @brief Method to get the model used for the mobility
-   * @return returns a MobilityModel object
+   * @brief Destructor of derived class
    */
-  MobilityModel
-  get_model() override
-  {
-    return model;
-  }
+  ~MobilityCahnHilliardModelQuartic() = default;
 
   /**
    * @brief Method to access the mobility constant, though it returns the same value as the value function, it is implemented here for generality
@@ -200,9 +179,14 @@ public:
   {
     const double &phase_order_cahn_hilliard =
       fields_value.at(field::phase_order_cahn_hilliard);
+
+    // The phase order values are clamped to avoid unphysical mobilities in the
+    // bulk phases.
     return mobility_cahn_hilliard_constant *
-           (1 - phase_order_cahn_hilliard * phase_order_cahn_hilliard) *
-           (1 - phase_order_cahn_hilliard * phase_order_cahn_hilliard);
+           std::pow((1 - std::min(1.0,
+                                  phase_order_cahn_hilliard *
+                                    phase_order_cahn_hilliard)),
+                    2);
   }
 
   /**
@@ -217,10 +201,14 @@ public:
     const std::vector<double> &phase_order_cahn_hilliard =
       field_vectors.at(field::phase_order_cahn_hilliard);
     for (unsigned int i = 0; i < property_vector.size(); ++i)
-      property_vector[i] =
-        mobility_cahn_hilliard_constant *
-        (1 - phase_order_cahn_hilliard[i] * phase_order_cahn_hilliard[i]) *
-        (1 - phase_order_cahn_hilliard[i] * phase_order_cahn_hilliard[i]);
+      {
+        property_vector[i] =
+          mobility_cahn_hilliard_constant *
+          std::pow((1 - std::min(1.0,
+                                 phase_order_cahn_hilliard[i] *
+                                   phase_order_cahn_hilliard[i])),
+                   2);
+      }
   }
 
   /**
@@ -236,8 +224,14 @@ public:
   {
     const double &phase_order_cahn_hilliard =
       fields_value.at(field::phase_order_cahn_hilliard);
-    return -4 * phase_order_cahn_hilliard * mobility_cahn_hilliard_constant *
-           (1 - phase_order_cahn_hilliard * phase_order_cahn_hilliard);
+
+    return -4 *
+           (std::max(-1.0, std::min(phase_order_cahn_hilliard, 0.0)) +
+            std::min(1.0, std::max(phase_order_cahn_hilliard, 0.0))) *
+           mobility_cahn_hilliard_constant *
+           (1 -
+            std::min(1.0,
+                     phase_order_cahn_hilliard * phase_order_cahn_hilliard));
   }
 
   /**
@@ -256,13 +250,17 @@ public:
       field_vectors.at(field::phase_order_cahn_hilliard);
     for (unsigned int i = 0; i < jacobian_vector.size(); ++i)
       jacobian_vector[i] =
-        -mobility_cahn_hilliard_constant * 4 * phase_order_cahn_hilliard[i] *
-        (1 - phase_order_cahn_hilliard[i] * phase_order_cahn_hilliard[i]);
+        -4 *
+        (std::max(-1.0, std::min(phase_order_cahn_hilliard[i], 0.0)) +
+         std::min(1.0, std::max(phase_order_cahn_hilliard[i], 0.0))) *
+        mobility_cahn_hilliard_constant *
+        (1 -
+         std::min(1.0,
+                  phase_order_cahn_hilliard[i] * phase_order_cahn_hilliard[i]));
   }
 
 private:
-  const double        mobility_cahn_hilliard_constant;
-  const MobilityModel model = quartic;
+  const double mobility_cahn_hilliard_constant;
 };
 
 #endif

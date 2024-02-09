@@ -173,8 +173,7 @@ public:
   reinit(const typename DoFHandler<dim>::active_cell_iterator &cell,
          const VectorType                                     &current_solution,
          const std::vector<VectorType> &previous_solutions,
-         Function<dim>                 *source_function,
-         Parameters::CahnHilliard       cahn_hilliard_parameters)
+         Function<dim>                 *source_function)
   {
     this->phase_order.component        = 0;
     this->chemical_potential.component = 1;
@@ -309,13 +308,8 @@ public:
               }
           }
       }
-
-    // CH epsilon parameter
-    this->epsilon = (cahn_hilliard_parameters.epsilon_set_method ==
-                     Parameters::EpsilonSetStrategy::manual) ?
-                      cahn_hilliard_parameters.epsilon :
-                      2 * this->cell_size;
   }
+
 
   template <typename VectorType>
   void
@@ -351,21 +345,25 @@ public:
       }
   }
 
+  /**
+   * @brief Calculates the physical properties that may be required by the
+   * Cahn-Hilliard problem. Namely the surface tension and the Cahn-Hilliard
+   * mobility.
+   */
+  void
+  calculate_physical_properties();
+
 
   // Physical properties
   PhysicalPropertiesManager            properties_manager;
   std::map<field, std::vector<double>> fields;
   dealii::types::material_id           material_id;
-  double                               epsilon;
   std::vector<double>                  density;
   std::vector<double>                  kinematic_viscosity;
+  std::vector<double>                  surface_tension;
+  std::vector<double>                  mobility_cahn_hilliard;
+  std::vector<double>                  mobility_cahn_hilliard_gradient;
 
-  // Auxiliary property vector for CH simulations
-  std::vector<double> density_0;
-  std::vector<double> kinematic_viscosity_0;
-
-  std::vector<double> density_1;
-  std::vector<double> kinematic_viscosity_1;
 
   FEValuesExtractors::Scalar phase_order;
   FEValuesExtractors::Scalar chemical_potential;

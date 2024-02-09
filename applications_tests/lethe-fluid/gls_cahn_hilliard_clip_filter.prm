@@ -1,0 +1,108 @@
+# Listing of Parameters
+# ---------------------
+
+set dimension = 2
+
+# --------------------------------------------------
+# Simulation Control
+#---------------------------------------------------
+
+subsection simulation control
+  set method           = bdf1
+  set time end         = 1
+  set time step        = 0.5
+  set output frequency = 0
+end
+
+#---------------------------------------------------
+# Cahn Hilliard
+#---------------------------------------------------
+
+subsection cahn hilliard
+  subsection phase filtration
+    set type      = clip
+    set verbosity = verbose
+  end
+end
+
+#---------------------------------------------------
+# Initial Condition
+#---------------------------------------------------
+
+subsection initial conditions
+  subsection cahn hilliard
+    set Function expression = if (x<0, -5, 5);0
+  end
+end
+
+#---------------------------------------------------
+# Physical Properties
+#---------------------------------------------------
+
+subsection physical properties
+  set number of fluids                = 2
+  set number of material interactions = 1
+  subsection material interaction 0
+    subsection fluid-fluid interaction
+      set first fluid id  = 0
+      set cahn hilliard mobility constant = 0
+    end
+  end
+end
+
+#---------------------------------------------------
+# Boundary Conditions
+#---------------------------------------------------
+
+subsection boundary conditions
+  set number = 1
+  subsection bc 0
+    set id   = 0
+    set type = slip
+  end
+end
+
+#---------------------------------------------------
+# Mesh
+#---------------------------------------------------
+
+subsection mesh
+  set type               = dealii
+  set grid type          = hyper_cube
+  set grid arguments     = -0.5 : 0.5 : true
+  set initial refinement = 3
+end
+
+#---------------------------------------------------
+# Multiphysics
+#---------------------------------------------------
+
+subsection multiphysics
+  set cahn hilliard = true
+end
+
+# --------------------------------------------------
+# Non-Linear Solver Control
+#---------------------------------------------------
+
+subsection non-linear solver
+  subsection fluid dynamics
+    set verbosity = quiet
+  end
+  subsection cahn hilliard
+    set verbosity = quiet
+  end
+end
+
+# --------------------------------------------------
+# Linear Solver Control
+#---------------------------------------------------
+
+subsection linear solver
+  subsection fluid dynamics
+    set verbosity = quiet
+  end
+  subsection cahn hilliard
+    set verbosity = quiet
+  end
+end

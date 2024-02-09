@@ -482,7 +482,7 @@ namespace Parameters
   {
     prm.declare_entry(
       "cahn hilliard mobility constant",
-      "1",
+      "1e-7",
       Patterns::Double(),
       "Cahn-Hilliard mobility constant for the corresponding pair of fluids");
   }
@@ -493,6 +493,7 @@ namespace Parameters
     mobility_cahn_hilliard_constant =
       prm.get_double("cahn hilliard mobility constant");
   }
+
 
   void
   Stabilization::declare_parameters(ParameterHandler &prm)
@@ -829,11 +830,6 @@ namespace Parameters
         "Tracer diffusivity for the fluid corresponding to Phase = " +
           Utilities::int_to_string(id, 1));
 
-      prm.declare_entry("mobility constant",
-                        "1",
-                        Patterns::Double(),
-                        "Mobility constant for the Cahn-Hilliard equations");
-
       prm.declare_entry(
         "rheological model",
         "newtonian",
@@ -1051,7 +1047,8 @@ namespace Parameters
           "cahn hilliard mobility model",
           "constant",
           Patterns::Selection("constant|quartic"),
-          "Model used for the calculation of the mobility in the Cahn-Hilliard equations\n"
+          "Model used for the calculation of the mobility in the Cahn-Hilliard equations"
+          "\n"
           "The choices are <constant|quartic>.");
         mobility_cahn_hilliard_parameters.declare_parameters(prm);
       }
@@ -1077,6 +1074,16 @@ namespace Parameters
           "Model used for the calculation of the surface tension coefficient\n"
           "The choices are <constant|linear|phase change>.");
         surface_tension_parameters.declare_parameters(prm);
+
+        // Cahn-Hilliard mobility
+        prm.declare_entry(
+          "cahn hilliard mobility model",
+          "constant",
+          Patterns::Selection("constant|quartic"),
+          "Model used for the calculation of the mobility in the Cahn-Hilliard equations"
+          "\n"
+          "The choices are <constant|quartic>.");
+        mobility_cahn_hilliard_parameters.declare_parameters(prm);
       }
       prm.leave_subsection();
     }
@@ -1102,55 +1109,57 @@ namespace Parameters
       if (material_interaction_type == MaterialInteractionsType::fluid_fluid)
         {
           prm.enter_subsection("fluid-fluid interaction");
-          std::pair<unsigned int, unsigned int> fluid_fluid_interaction;
-          fluid_fluid_interaction.first  = prm.get_integer("first fluid id");
-          fluid_fluid_interaction.second = prm.get_integer("second fluid id");
-          AssertThrow(fluid_fluid_interaction.first <=
-                        fluid_fluid_interaction.second,
-                      OrderOfFluidIDsError(fluid_fluid_interaction.first,
-                                           fluid_fluid_interaction.second));
-          fluid_fluid_interaction_with_material_interaction_id.first =
-            fluid_fluid_interaction;
-          fluid_fluid_interaction_with_material_interaction_id.second = id;
+          {
+            std::pair<unsigned int, unsigned int> fluid_fluid_interaction;
+            fluid_fluid_interaction.first  = prm.get_integer("first fluid id");
+            fluid_fluid_interaction.second = prm.get_integer("second fluid id");
+            AssertThrow(fluid_fluid_interaction.first <=
+                          fluid_fluid_interaction.second,
+                        OrderOfFluidIDsError(fluid_fluid_interaction.first,
+                                             fluid_fluid_interaction.second));
+            fluid_fluid_interaction_with_material_interaction_id.first =
+              fluid_fluid_interaction;
+            fluid_fluid_interaction_with_material_interaction_id.second = id;
 
-          // Surface tension
-          op = prm.get("surface tension model");
-          if (op == "constant")
-            {
-              surface_tension_model = SurfaceTensionModel::constant;
-              surface_tension_parameters.parse_parameters(prm);
-            }
-          else if (op == "linear")
-            {
-              surface_tension_model = SurfaceTensionModel::linear;
-              surface_tension_parameters.parse_parameters(prm);
-            }
-          else if (op == "phase change")
-            {
-              surface_tension_model = SurfaceTensionModel::phase_change;
-              surface_tension_parameters.parse_parameters(prm);
-            }
-          else
-            throw(std::runtime_error(
-              "Invalid surface tension model. The choices are <constant|linear|phase change>."));
+            // Surface tension
+            op = prm.get("surface tension model");
+            if (op == "constant")
+              {
+                surface_tension_model = SurfaceTensionModel::constant;
+                surface_tension_parameters.parse_parameters(prm);
+              }
+            else if (op == "linear")
+              {
+                surface_tension_model = SurfaceTensionModel::linear;
+                surface_tension_parameters.parse_parameters(prm);
+              }
+            else if (op == "phase change")
+              {
+                surface_tension_model = SurfaceTensionModel::phase_change;
+                surface_tension_parameters.parse_parameters(prm);
+              }
+            else
+              throw(std::runtime_error(
+                "Invalid surface tension model. The choices are <constant|linear|phase change>."));
 
-          // Cahn-Hilliard mobility
-          op = prm.get("cahn hilliard mobility model");
-          if (op == "constant")
-            {
-              mobility_cahn_hilliard_model =
-                MobilityCahnHilliardModel::constant;
-              mobility_cahn_hilliard_parameters.parse_parameters(prm);
-            }
-          else if (op == "quartic")
-            {
-              mobility_cahn_hilliard_model = MobilityCahnHilliardModel::quartic;
-              mobility_cahn_hilliard_parameters.parse_parameters(prm);
-            }
-          else
-            throw(std::runtime_error(
-              "Invalid mobility model. The choices are <constant|quartic>."));
-
+            // Cahn-Hilliard mobility
+            op = prm.get("cahn hilliard mobility model");
+            if (op == "constant")
+              {
+                mobility_cahn_hilliard_model =
+                  MobilityCahnHilliardModel::constant;
+                mobility_cahn_hilliard_parameters.parse_parameters(prm);
+              }
+            else if (op == "quartic")
+              {
+                mobility_cahn_hilliard_model =
+                  MobilityCahnHilliardModel::quartic;
+                mobility_cahn_hilliard_parameters.parse_parameters(prm);
+              }
+            else
+              throw(std::runtime_error(
+                "Invalid mobility model. The choices are <constant|quartic>."));
+          }
           prm.leave_subsection();
         }
       else // Solid-fluid interactions

@@ -55,7 +55,7 @@ Physical Properties
         
         # Mobility Cahn-Hilliard
         set cahn hilliard mobility model    = constant
-        set cahn hilliard mobility constant = 1
+        set cahn hilliard mobility constant = 1e-7
       end
 
       # if fluid-solid interaction
@@ -682,7 +682,7 @@ Lethe supports two types of mobility models for the Cahn-Hilliard equations. Set
 .. math::
   M(\phi) = D(1-\phi^2)^2
 
-with :math:`D` the value set for ``cahn hilliard mobility constant``. A quartic mobility is required to recover a correct velocity according to Bretin *et al.* `[2] <https://doi.org/10.48550/arXiv.2105.09627>`_ Therefore, it is preferable to use it when solving the coupled Cahn-Hilliard and Navier-Stokes equations.
+with :math:`D` the value set for ``cahn hilliard mobility constant``. A quartic mobility is required to recover a correct velocity according to Bretin *et al.* `[2] <https://doi.org/10.48550/arXiv.2105.09627>`_ Therefore, it is preferable to use it when solving the coupled Cahn-Hilliard and Navier-Stokes equations. A good rule of thumb for setting the mobility constant is to have it proportionnal to the square of the minimum cell size. This rule may depend on the duration of the simulation, so a finer tuning may be necessary.
 
 References
 ***********

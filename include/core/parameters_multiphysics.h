@@ -27,6 +27,7 @@
 #define lethe_parameters_multiphysics_h
 
 #include <core/parameters.h>
+#include <core/utilities.h>
 
 #include <deal.II/base/parameter_handler.h>
 
@@ -54,13 +55,35 @@ namespace Parameters
   enum class FilterType
   {
     none,
+    clip,
     tanh
   };
 
-  enum class EpsilonSetStrategy
+  enum class EpsilonSetMethod
   {
     automatic,
     manual
+  };
+
+
+  /**
+   * @brief CahnHilliard_PhaseFilter - Defines the parameters for the phase filtration of CahnHilliard physics
+   */
+  struct CahnHilliard_PhaseFilter
+  {
+    // Type of filter
+    Parameters::FilterType type;
+
+    // \f$beta\f$ value for the tanh filter
+    double beta;
+
+    // Type of verbosity for the phase filter
+    Parameters::Verbosity verbosity;
+
+    void
+    declare_parameters(ParameterHandler &prm);
+    void
+    parse_parameters(ParameterHandler &prm);
   };
 
   /**
@@ -196,14 +219,18 @@ namespace Parameters
 
   struct CahnHilliard
   {
-    // Well height value (W) in the Cahn-Hilliard equations
-    double well_height;
+    // Smoothing parameter \f$\xi\f$ in the Cahn-Hilliard equations (potential
+    // equation)
+    double potential_smoothing_coefficient;
 
     // Epsilon set strategy (automatic|manual)
-    Parameters::EpsilonSetStrategy epsilon_set_method;
+    Parameters::EpsilonSetMethod epsilon_set_method;
 
     // Epsilon value in the Cahn-Hilliard equations
     double epsilon;
+
+    // Phase filtration parameters
+    Parameters::CahnHilliard_PhaseFilter cahn_hilliard_phase_filter;
 
     void
     declare_parameters(ParameterHandler &prm);

@@ -485,14 +485,87 @@ Parameters::VOF_PhaseFilter::parse_parameters(ParameterHandler &prm)
 }
 
 void
+Parameters::CahnHilliard_PhaseFilter::declare_parameters(ParameterHandler &prm)
+{
+  prm.enter_subsection("phase filtration");
+  {
+    prm.declare_entry(
+      "type",
+      "none",
+      Patterns::Selection("none|clip|tanh"),
+      "CahnHilliard phase filtration type, "
+      "if <none> is selected, the phase won't be filtered"
+      "if <clip> is selected, the phase order values above 1 (respectively below -1) will be brought back to 1 (respectively -1)"
+      "if <tanh> is selected, the filtered phase will be a result of the "
+      "following function: \\alpha_f = \\tanh(\\beta\\alpha); "
+      "where beta is a parameter influencing the interface thickness that "
+      "must be defined");
+    prm.declare_entry(
+      "beta",
+      "20",
+      Patterns::Double(),
+      "This parameter appears in the tanh filter function. It influence "
+      "the thickness and the shape of the interface. For higher values of "
+      "beta, a thinner and 'sharper/pixelated' interface will be seen.");
+    prm.declare_entry("verbosity",
+                      "quiet",
+                      Patterns::Selection("quiet|verbose|extra verbose"),
+                      "States whether the filtered data should be printed "
+                      "Choices are <quiet|verbose>.");
+  }
+  prm.leave_subsection();
+}
+
+void
+Parameters::CahnHilliard_PhaseFilter::parse_parameters(ParameterHandler &prm)
+{
+  prm.enter_subsection("phase filtration");
+  {
+    // filter type
+    const std::string t = prm.get("type");
+    if (t == "none")
+      {
+        type = Parameters::FilterType::none;
+      }
+    else if (t == "clip")
+      {
+        type = Parameters::FilterType::clip;
+      }
+    else if (t == "tanh")
+      {
+        type = Parameters::FilterType::tanh;
+      }
+    else
+      throw(std::logic_error(
+        "Error, invalid filter type. Choices are 'none', 'clip' or 'tanh'"));
+
+    // beta
+    beta = prm.get_double("beta");
+
+    // Verbosity
+    const std::string filter_v = prm.get("verbosity");
+    if (filter_v == "verbose")
+      verbosity = Parameters::Verbosity::verbose;
+    else if (filter_v == "quiet")
+      verbosity = Parameters::Verbosity::quiet;
+    else
+      throw(std::logic_error("Invalid verbosity level"));
+  }
+  prm.leave_subsection();
+}
+
+void
 Parameters::CahnHilliard::declare_parameters(ParameterHandler &prm)
 {
   prm.enter_subsection("cahn hilliard");
   {
-    prm.declare_entry("well height",
-                      "1",
-                      Patterns::Double(),
-                      "Potential height well for the Cahn-Hilliard equations.");
+    cahn_hilliard_phase_filter.declare_parameters(prm);
+
+    prm.declare_entry(
+      "potential smoothing coefficient",
+      "1",
+      Patterns::Double(),
+      "Smoothing coefficient for the chemical potential in the Cahn-Hilliard equations.");
 
     prm.enter_subsection("epsilon");
     {
@@ -518,18 +591,23 @@ Parameters::CahnHilliard::parse_parameters(ParameterHandler &prm)
 {
   prm.enter_subsection("cahn hilliard");
   {
-    well_height = prm.get_double("well height");
+    cahn_hilliard_phase_filter.parse_parameters(prm);
+
+    CahnHilliard::potential_smoothing_coefficient =
+      prm.get_double("potential smoothing coefficient");
 
     prm.enter_subsection("epsilon");
     {
       const std::string op_epsilon = prm.get("method");
       if (op_epsilon == "automatic")
         {
-          epsilon_set_method = Parameters::EpsilonSetStrategy::automatic;
+          CahnHilliard::epsilon_set_method =
+            Parameters::EpsilonSetMethod::automatic;
         }
       else if (op_epsilon == "manual")
         {
-          epsilon_set_method = Parameters::EpsilonSetStrategy::manual;
+          CahnHilliard::epsilon_set_method =
+            Parameters::EpsilonSetMethod::manual;
         }
       else
         throw(std::runtime_error("Invalid epsilon setting strategy. "

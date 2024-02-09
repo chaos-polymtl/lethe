@@ -37,8 +37,8 @@ class CahnHilliardAssemblerBase
 {
 public:
   CahnHilliardAssemblerBase(
-    std::shared_ptr<SimulationControl> p_simulation_control)
-    : simulation_control(p_simulation_control)
+    const std::shared_ptr<SimulationControl> simulation_control)
+    : simulation_control(simulation_control)
   {}
 
   /**
@@ -69,15 +69,15 @@ public:
                StabilizedMethodsCopyData    &copy_data) = 0;
 
 protected:
-  std::shared_ptr<SimulationControl> simulation_control;
+  const std::shared_ptr<SimulationControl> simulation_control;
 };
 
 
 /**
- * @brief Class that assembles the core of the Cahn-Hilliard equation
- * with the following weak form:
- * dPhi/dt +  u * gradPhi =  div(M(Phi)*grad eta)
- * eta - f(Phi) + epsilon^2 * div(grad Phi) = 0
+ * @brief Class that assembles the core of the Cahn-Hilliard equation :
+ * \f$ \frac{d \phi}{dt} +  (u \cdot \nabla) \phi - \nabla \cdot (M(\phi)\nabla
+ * \eta) = 0 \\ \eta -  \frac{\lambda}{\epsilon^2}(\phi^3 - \phi) + \lambda
+ * \nabla^2 \phi + \xi \nabla^2 \eta  = 0 \f$
  *
  * @tparam dim An integer that denotes the number of spatial dimensions
  *
@@ -90,14 +90,12 @@ class CahnHilliardAssemblerCore : public CahnHilliardAssemblerBase<dim>
 {
 public:
   CahnHilliardAssemblerCore(
-    std::shared_ptr<SimulationControl> simulation_control,
-    Parameters::CahnHilliard           cahn_hilliard_parameters,
-    MobilityModel                      mobility_model,
-    double                             mobility_constant)
+    const std::shared_ptr<SimulationControl> simulation_control,
+    const Parameters::CahnHilliard           cahn_hilliard_parameters,
+    const double                             epsilon)
     : CahnHilliardAssemblerBase<dim>(simulation_control)
     , cahn_hilliard_parameters(cahn_hilliard_parameters)
-    , mobility_model(mobility_model)
-    , mobility_constant(mobility_constant)
+    , epsilon(epsilon)
   {}
 
   /**
@@ -119,9 +117,10 @@ public:
   assemble_rhs(CahnHilliardScratchData<dim> &scratch_data,
                StabilizedMethodsCopyData    &copy_data) override;
 
-  Parameters::CahnHilliard cahn_hilliard_parameters;
-  MobilityModel            mobility_model;
-  double                   mobility_constant;
+  const Parameters::CahnHilliard cahn_hilliard_parameters;
+  // Epsilon is a coefficient which depends on the mesh size. The thickness of
+  // the interface between the two phases is proportionnal to espilon
+  const double epsilon;
 };
 
 
@@ -139,10 +138,14 @@ class CahnHilliardAssemblerAngleOfContact
 {
 public:
   CahnHilliardAssemblerAngleOfContact(
-    std::shared_ptr<SimulationControl> simulation_control,
+    const std::shared_ptr<SimulationControl> simulation_control,
+    const Parameters::CahnHilliard           cahn_hilliard_parameters,
+    const double                             epsilon,
     const BoundaryConditions::CahnHilliardBoundaryConditions<dim>
       &p_boundary_conditions_cahn_hilliard)
     : CahnHilliardAssemblerBase<dim>(simulation_control)
+    , cahn_hilliard_parameters(cahn_hilliard_parameters)
+    , epsilon(epsilon)
     , boundary_conditions_cahn_hilliard(p_boundary_conditions_cahn_hilliard)
   {}
 
@@ -165,8 +168,10 @@ public:
   assemble_rhs(CahnHilliardScratchData<dim> &scratch_data,
                StabilizedMethodsCopyData    &copy_data) override;
 
-
-  Parameters::MaterialInteractions material_interaction_parameters;
+  const Parameters::CahnHilliard cahn_hilliard_parameters;
+  // Epsilon is a coefficient which depends on the mesh size. The thickness of
+  // the interface between the two phases is proportionnal to espilon
+  const double epsilon;
   const BoundaryConditions::CahnHilliardBoundaryConditions<dim>
     &boundary_conditions_cahn_hilliard;
 };
@@ -184,10 +189,14 @@ class CahnHilliardAssemblerFreeAngle : public CahnHilliardAssemblerBase<dim>
 {
 public:
   CahnHilliardAssemblerFreeAngle(
-    std::shared_ptr<SimulationControl> simulation_control,
+    const std::shared_ptr<SimulationControl> simulation_control,
+    const Parameters::CahnHilliard           cahn_hilliard_parameters,
+    const double                             epsilon,
     const BoundaryConditions::CahnHilliardBoundaryConditions<dim>
       &p_boundary_conditions_cahn_hilliard)
     : CahnHilliardAssemblerBase<dim>(simulation_control)
+    , cahn_hilliard_parameters(cahn_hilliard_parameters)
+    , epsilon(epsilon)
     , boundary_conditions_cahn_hilliard(p_boundary_conditions_cahn_hilliard)
   {}
 
@@ -211,6 +220,10 @@ public:
                StabilizedMethodsCopyData    &copy_data) override;
 
 
+  const Parameters::CahnHilliard cahn_hilliard_parameters;
+  // Epsilon is a coefficient which depends on the mesh size. The thickness of
+  // the interface between the two phases is proportionnal to espilon
+  const double epsilon;
   const BoundaryConditions::CahnHilliardBoundaryConditions<dim>
     &boundary_conditions_cahn_hilliard;
 };
@@ -230,7 +243,7 @@ class CahnHilliardAssemblerBDF : public CahnHilliardAssemblerBase<dim>
 {
 public:
   CahnHilliardAssemblerBDF(
-    std::shared_ptr<SimulationControl> simulation_control)
+    const std::shared_ptr<SimulationControl> simulation_control)
     : CahnHilliardAssemblerBase<dim>(simulation_control)
   {}
 

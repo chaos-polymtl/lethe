@@ -8,11 +8,11 @@ set dimension = 2
 #---------------------------------------------------
 
 subsection simulation control
-  set method           = bdf2
+  set method           = bdf1
   set output name      = cahn_hilliard_navier_stokes
   set output frequency = 0
-  set time end         = 0.05
-  set time step        = 0.01
+  set time end         = 0.005
+  set time step        = 0.001
 end
 
 #---------------------------------------------------
@@ -21,28 +21,6 @@ end
 
 subsection multiphysics
   set cahn hilliard = true
-end
-
-#---------------------------------------------------
-# Cahn-Hilliard order
-#---------------------------------------------------
-
-subsection FEM
-  set phase cahn hilliard order     = 1
-  set potential cahn hilliard order = 1
-  set velocity order                = 1
-  set pressure order                = 1
-end
-
-#---------------------------------------------------
-# Post-processing
-#---------------------------------------------------
-
-subsection post-processing
-  set verbosity                  = verbose
-  # Cahn-Hilliard statistics
-  set calculate phase statistics = true
-  set phase statistics name      = phase_statistics
 end
 
 #---------------------------------------------------
@@ -61,12 +39,7 @@ end
 #---------------------------------------------------
 
 subsection cahn hilliard
-  set well height = 0.5
-
-  subsection epsilon
-    set method = automatic
-    set value  = 1
-  end
+  set potential smoothing coefficient = 0.5
 end
 
 #---------------------------------------------------
@@ -76,12 +49,12 @@ end
 subsection boundary conditions cahn hilliard
   set number = 2
   subsection bc 0
-    set id          = 2
+    set id          = 0
     set type        = angle_of_contact
-    set angle value = 135
+    set angle value = 110
   end
   subsection bc 1
-    set id   = 1
+    set id   = 2
     set type = free_angle
   end
 end
@@ -115,10 +88,8 @@ end
 #---------------------------------------------------
 
 subsection initial conditions
-  set type = nodal
-
   subsection cahn hilliard
-    set Function expression = -tanh((0.25 - ((x-0.5)^2 + y^2)^(1/2))/(sqrt(2)*0.02)) ; 0
+    set Function expression = if( x*x + y*y <0.3*0.3,-1,1);0
   end
 end
 
@@ -130,18 +101,9 @@ subsection physical properties
   set number of fluids                = 2
   set number of material interactions = 1
   subsection material interaction 0
-    set type = fluid-fluid
     subsection fluid-fluid interaction
-      set first fluid id  = 0
-      set second fluid id = 1
-
-      # Surface tension
-      set surface tension model       = constant
       set surface tension coefficient = 1
-
-      # Mobility Cahn-Hilliard
-      set cahn hilliard mobility model    = quartic
-      set cahn hilliard mobility constant = 1
+      set cahn hilliard mobility constant = 1e-2
     end
   end
 end
@@ -152,14 +114,10 @@ end
 
 subsection non-linear solver
   subsection fluid dynamics
-    set tolerance      = 1e-8
-    set max iterations = 20
-    set verbosity      = quiet
+    set verbosity = quiet
   end
   subsection cahn hilliard
-    set tolerance      = 1e-8
-    set max iterations = 20
-    set verbosity      = quiet
+    set verbosity = quiet
   end
 end
 
@@ -169,27 +127,9 @@ end
 
 subsection linear solver
   subsection fluid dynamics
-    set verbosity                             = quiet
-    set method                                = gmres
-    set max iters                             = 2000
-    set relative residual                     = 1e-3
-    set minimum residual                      = 1e-10
-    set preconditioner                        = ilu
-    set ilu preconditioner fill               = 3
-    set ilu preconditioner absolute tolerance = 1e-12
-    set ilu preconditioner relative tolerance = 1.00
-    set max krylov vectors                    = 2000
+    set verbosity = quiet
   end
   subsection cahn hilliard
-    set verbosity                             = quiet
-    set method                                = gmres
-    set max iters                             = 2000
-    set relative residual                     = 1e-3
-    set minimum residual                      = 1e-10
-    set preconditioner                        = ilu
-    set ilu preconditioner fill               = 3
-    set ilu preconditioner absolute tolerance = 1e-12
-    set ilu preconditioner relative tolerance = 1.00
-    set max krylov vectors                    = 2000
+    set verbosity = quiet
   end
 end
