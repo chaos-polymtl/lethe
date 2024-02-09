@@ -15,9 +15,9 @@
 # Project related configuration options
 #---------------------------------------------------------------------------
 DOXYFILE_ENCODING      = UTF-8
-PROJECT_NAME           = "Developer documentation for the Lethe open-source library"
+PROJECT_NAME           = "Lethe Open-Source Library"
 PROJECT_NUMBER         =
-PROJECT_BRIEF          = 
+PROJECT_BRIEF          = "Developer Guide"
 PROJECT_LOGO           = ./logo.png
 OUTPUT_DIRECTORY       =
 CREATE_SUBDIRS         = NO
