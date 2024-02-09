@@ -65,6 +65,8 @@ cmake-build-release/*
 
 # Doc
 doc/build/*
+doc/doxygen/html/
+doc/doxygen/DoxygenWarningLog.txt
 contrib/utilities/programs/*
 contrib/postprocessing/build
 contrib/postprocessing/dist
