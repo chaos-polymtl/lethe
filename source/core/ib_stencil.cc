@@ -12,7 +12,8 @@ IBStencil<dim>::number_of_interpolation_support_points(const unsigned int order)
   // The number of points used in the stencil excluding the DOF is equal to the
   // order.
   unsigned int nb_points = order;
-  // In the case where the cell is used directly to to find the solution at
+
+  // In the case where the cell is used directly to find the solution at
   // the IB only one point is needed.
   if (order > 4)
     nb_points = 1;
@@ -24,8 +25,8 @@ void
 IBStencil<dim>::p_base(const unsigned int order)
 {
   using numbers::PI;
-  // define the sampling point position of the stencil on the reference 1D
-  // stencil 0 to 1. 1 being the position of the dof
+  // Define the sampling point position of the stencil on the reference 1D
+  // stencil 0 to 1, 1 being the position of the DOF.
   reference_points.resize(order + 1);
   for (unsigned int i = 0; i < order + 1; ++i)
     {
@@ -56,7 +57,7 @@ IBStencil<dim>::coefficients(const unsigned int order,
         }
       rhs[i] = std::pow(1 + length_ratio, i);
     }
-  // Inverte the vandermond matrix
+  // Invert the Vandermonde matrix
   inv_vandermonde.invert(vandermonde);
 
   // Multiply each line of the inverted matrix by (1+length_ratio)^i
@@ -67,7 +68,7 @@ IBStencil<dim>::coefficients(const unsigned int order,
           stencil[i][j] = inv_vandermonde[i][j] * rhs[i];
         }
     }
-  // Sum the colones to get the coefficient
+  // Sum the columns to get the coefficients.
   for (unsigned int i = 0; i < order + 1; ++i)
     {
       for (unsigned int j = 0; j < order + 1; ++j)
@@ -77,7 +78,6 @@ IBStencil<dim>::coefficients(const unsigned int order,
     }
 
   // Fill the coefficient vector based on the order.
-
   if (order > 4)
     {
       // In this case the cell is directly used to find the solution at the IB
@@ -101,7 +101,7 @@ IBStencil<dim>::support_points_for_interpolation(
 {
   // Create the vector of points used for the stencil based on the order of the
   // stencil. Also return the DOF position or the position of the point on the
-  // IB depending if the cell is used directly
+  // IB depending if the cell is used directly.
   p_base(order);
   Point<dim> point;
   Point<dim> surface_point;
@@ -146,7 +146,7 @@ IBStencil<dim>::support_points_for_interpolation(const unsigned int order,
 {
   // Create the vector of points used for the stencil based on the order of the
   // stencil. Also return the DOF position or the position of the point on the
-  // IB depending if the cell is used directly
+  // IB depending if the cell is used directly.
   p_base(order);
   Point<dim> point;
   Point<dim> surface_point;
@@ -189,9 +189,8 @@ IBStencil<dim>::point_for_cell_detection(
   const Point<dim>                                     &dof_point,
   const typename DoFHandler<dim>::active_cell_iterator &cell_guess)
 {
-  // Create the vector of points used for the stencil based on the order of the
-  // stencil. Also return the DOF position or the position of the point on the
-  // IB depending if the cell is used directly
+  // Return the DOF position or the position of the point on the
+  // IB depending if the cell is used directly.
 
   Point<dim> surface_point;
   p.closest_surface_point(dof_point, surface_point, cell_guess);
