@@ -269,9 +269,8 @@ FindCellNeighbors<dim>::find_cell_periodic_neighbors(
 }
 
 // This function finds the full neighbor list (with repetition) of all the
-// active cells in the triangulation. We need this function for the particle-
-// floating mesh contact force calculations. In particle-floating mesh
-// contacts , we need all the particles located in ALL the neighbor cells of
+// active cells in the triangulation. Because particle-floating mesh
+// contacts need all the particles located in ALL the neighbor cells of
 // the main cell to search for possible collisions with the floating mesh.
 template <int dim>
 void
