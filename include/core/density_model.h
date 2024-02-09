@@ -20,43 +20,47 @@
 #include <core/physical_property_model.h>
 
 /**
- * @brief Abstract class that allows to calculate the
- * density.
+ * @brief Abstract class for calculating the density of materials.
  */
 class DensityModel : public PhysicalPropertyModel
 {
 public:
   /**
-   * @brief Instantiates and returns a pointer to a DensityModel object by
-   * casting it to the proper child class
+   * @brief Instantiate and return a pointer to a DensityModel object by
+   * casting it to the proper child class.
    *
-   * @param material_properties Parameters for a single fluid
+   * @param[in] material_properties Property parameters of a material (fluid or
+   * solid).
+   *
+   * @return Casted DensityModel object.
    */
   static std::shared_ptr<DensityModel>
   model_cast(const Parameters::Material &material_properties);
 
 
   /**
-   * @brief get_psi Returns the value of the compressibility factor used in the
+   * @brief Get the value of the compressibility factor used in the
    * density model.
-   * @return Compressibility factor
+   *
+   * @return Value of the compressibility factor.
    */
   virtual double
   get_psi() const = 0;
 
   /**
-   * @brief get_density_ref Returns the value of the reference state density
+   * @brief Get the value of the reference state density
    * used in the density model.
-   * @return Reference state density
+   *
+   * @return Value of the reference state density.
    */
   virtual double
   get_density_ref() const = 0;
 
   /**
-   * @brief is_constant_density_model Returns a boolean indicating if the model
-   * is a constant density model.
-   * @return Boolean value of if the model corresponds to a constant density
-   * model.
+   * @brief Check if the model is a constant density model.
+   *
+   * @return Boolean indicating if the model corresponds to a constant
+   * density model.
    */
   bool
   is_constant_density_model() const
@@ -65,18 +69,21 @@ public:
   }
 
 protected:
+  /// Boolean indicating if the model corresponds to a constant density model
   bool constant_density_model = false;
 };
 
 
 /**
- * @brief Constant density.
+ * @brief Constant density model.
  */
 class DensityConstant : public DensityModel
 {
 public:
   /**
-   * @brief Default constructor
+   * @brief Constructor of the constant density model.
+   *
+   * @param[in] p_density Constant density value.
    */
   DensityConstant(const double p_density)
     : density(p_density)
@@ -85,81 +92,113 @@ public:
   }
 
   /**
-   * @brief value Calculates the density
-   * @param fields_value Value of the various field on which the property may
-   * depend.
-   * @return value of the physical property calculated with the fields_value
+   * @brief Compute density value.
+   *
+   * @param[in] fields_value Value of the various fields on which the property
+   * may depend.
+   *
+   * @note Here, the @p fields_value parameter is ignored since the density
+   * remains constant.
+   *
+   * @return Density value.
    */
   double
-  value(const std::map<field, double> & /*fields_value*/) override
+  value(const std::map<field, double> &fields_value) override
   {
+    (void)fields_value;
     return density;
   }
 
   /**
-   * @brief vector_value Calculates the vector of density.
-   * @param field_vectors Vectors of the fields on which the density may depend.
-   * @param property_vector Vectors of the density values
+   * @brief Compute a vector of density values.
+   *
+   * @param[in] field_vectors Vectors of the fields on which the density may
+   * depend.
+   *
+   * @param[out] property_vector Vector of computed density values.
+   *
+   * @note Here, the @p field_vectors parameter is ignored since the density
+   * remains constant.
    */
   void
-  vector_value(const std::map<field, std::vector<double>> & /*field_vectors*/,
+  vector_value(const std::map<field, std::vector<double>> &field_vectors,
                std::vector<double> &property_vector) override
   {
+    (void)field_vectors;
     std::fill(property_vector.begin(), property_vector.end(), density);
   }
 
   /**
-   * @brief jacobian Calculates the jacobian (the partial derivative) of the
-   * density with respect to a field.
-   * @param field_values Value of the various fields on which the property may
-   * depend.
-   * @param id Indicator of the field with respect to which the jacobian
-   * should be calculated.
-   * @return value of the partial derivative of the density with respect to the
-   * field.
+   * @brief Compute the jacobian (the partial derivative) of the density with
+   * respect to a specified field.
+   *
+   * @param[in] field_values Values of the various fields on which the density
+   * may depend.
+   *
+   * @param[in] id Indicator of the field with respect to which the jacobian
+   * should be computed.
+   *
+   * @note Here, the @p field_values and @p id parameters are ignored since the
+   * density remains constant.
+   *
+   * @return Value of the derivative of the density with respect to the
+   * specified field. Since the density remains constant, this function returns
+   * zero.
    */
   double
-  jacobian(const std::map<field, double> & /*field_values*/,
-           field /*id*/) override
+  jacobian(const std::map<field, double> &field_values, field id) override
   {
-    return 0;
+    (void)field_values;
+    (void)id;
+    return 0.0;
   }
 
   /**
-   * @brief vector_jacobian Calculates the derivative of the density with
-   * respect to a field.
-   * @param field_vectors Vector for the values of the fields used to evaluate
-   * the property.
-   * @param id Identifier of the field with respect to which a derivative should
-   * be calculated.
-   * @param jacobian vector of the value of the derivative of the density with
-   * respect to the field id.
+   * @brief Computes the derivative of the density with respect to specified
+   * fields.
+   *
+   * @param[in] field_vectors Vector of values of the fields used to evaluate
+   * the density.
+   *
+   * @param[in] id Identifier of the field with respect to which a derivative
+   * should be computed.
+   *
+   * @param[out] jacobian Vector of computed derivative values of the density
+   * with respect to the field of the specified @p id. In this case, it returns
+   * a vector of zeros since the density remains constant.
+   *
+   * @note Here, the @p field_values and @p id parameters are ignored since the
+   * density remains constant.
+   *
    */
   void
-  vector_jacobian(
-    const std::map<field, std::vector<double>> & /*field_vectors*/,
-    const field /*id*/,
-    std::vector<double> &jacobian_vector) override
+  vector_jacobian(const std::map<field, std::vector<double>> &field_vectors,
+                  const field                                 id,
+                  std::vector<double> &jacobian_vector) override
   {
-    std::fill(jacobian_vector.begin(), jacobian_vector.end(), 0);
+    (void)field_vectors;
+    (void)id;
+    std::fill(jacobian_vector.begin(), jacobian_vector.end(), 0.0);
   }
 
   /**
-   * @brief get_psi Returns the value of the compressibility factor used in the
-   * density model
-   * @return compressibility factor which in this case is null
+   * @brief Get the value of the compressibility factor used in the density
+   * model.
+   *
+   * @return Value of the compressibility factor which in this case is null.
    */
   double
   get_psi() const override
   {
-    return 0;
+    return 0.0;
   }
 
   /**
-   * @brief get_density_ref Returns the value of the reference state density
-   * used in the density model. In the case of a constant density, like here,
-   * this remains the constant value of density.
-   * @return reference state density, here the constant density value
+   * @brief Get the value of the reference state density used in the density
+   * model.
+   *
+   * @return Value of the reference state density, here the constant density
+   * value.
    */
   double
   get_density_ref() const override
@@ -168,18 +207,42 @@ public:
   }
 
 private:
+  /// Density of the material.
   const double density;
 };
 
 
 /**
  * @brief Isothermal ideal gas density.
+ *
+ * Isothermal ideal gas density assumes that the fluid's density varies
+ * according the following state equation:
+ *
+ * \f$\rho = \rho_\text{ref} + \psi p = \rho_\text{ref} + \frac{1}{R T} \ p\f$
+ *
+ * where \f$\rho_\text{ref}\f$ is the density of the fluid at the reference
+ * state, \f$\psi = \frac{1}{R T}\f$ is the compressibility factor derived from
+ * the ideal gas law with \f$R= \frac{R_u}{M}\f$ the specific gas constant
+ * (universal gas constant (\f$R_u\f$) divided by the molar mass of the gas
+ * (\f$M\f$)) and \f$T\f$ the temperature of the gas, finally, \f$p\f$ is the
+ * differential pressure between the reference state and the current state.
+ * The model is used for weakly compressible flows when temperature
+ * fluctuations' influence on density can be neglected.
  */
 class DensityIsothermalIdealGas : public DensityModel
 {
 public:
   /**
-   * @brief Default constructor
+   * @brief Constructor of the isothermal ideal gas density model.
+   *
+   * @param[in] p_density_ref Value of the density of the gas at reference
+   * state.
+   *
+   * @param[in] p_R Value of the specific gas constant \f$\left(R=\frac{R_u}{M}
+   * \right)\f$ with \f$R_u\f$ the universal gas constant and \f$M\f$ the molar
+   * mass of the gas.
+   *
+   * @param[in] p_T Value of the temperature of the gas at reference state.
    */
   DensityIsothermalIdealGas(const double p_density_ref,
                             const double p_R,
@@ -191,10 +254,12 @@ public:
   }
 
   /**
-   * @brief value Calculates the density
-   * @param fields_value Value of the various field on which the property may
-   * depend.
-   * @return value of the physical property calculated with the fields_value
+   * @brief Compute the density of the isothermal ideal gas.
+   *
+   * @param[in] fields_value Value of the various fields on which the property
+   * may depend. In this case, the density depends on pressure.
+   *
+   * @return Value of the density computed with the @p fields_value.
    */
   double
   value(const std::map<field, double> &fields_value) override
@@ -204,9 +269,12 @@ public:
   }
 
   /**
-   * @brief vector_value Calculates the vector of density.
-   * @param field_vectors Vectors of the fields on which the density may depend.
-   * @param property_vector Vectors of the density values
+   * @brief Compute a vector of density values for an isothermal ideal gas.
+   *
+   * @param[in] field_vectors Vectors of the fields on which the density may
+   * depend. In this case, the density depends on pressure.
+   *
+   * @param[out] property_vector Vectors of computed density values.
    */
   void
   vector_value(const std::map<field, std::vector<double>> &field_vectors,
@@ -218,18 +286,22 @@ public:
   }
 
   /**
-   * @brief jacobian Calculates the jacobian (the partial derivative) of the
-   * density with respect to a field
-   * @param field_values Value of the various fields on which the property may
-   * depend.
-   * @param id Indicator of the field with respect to which the jacobian
-   * should be calculated.
-   * @return value of the partial derivative of the density with respect to the
-   * field.
+   * @brief Compute the jacobian (the partial derivative) of the density with
+   * respect to a specified field.
+   *
+   * @param[in] field_values Values of the various fields on which the density
+   * may depend.
+   *
+   * @param[in] id Indicator of the field with respect to which the jacobian
+   * should be computed.
+   *
+   * @return Value of the derivative of the density with respect to the
+   * specified field.
    */
   double
-  jacobian(const std::map<field, double> & /*field_values*/, field id) override
+  jacobian(const std::map<field, double> &field_values, field id) override
   {
+    (void)field_values;
     if (id == field::pressure)
       return psi;
     else
@@ -237,21 +309,24 @@ public:
   }
 
   /**
-   * @brief vector_jacobian Calculates the derivative of the density with
-   * respect to a field.
-   * @param field_vectors Vector for the values of the fields used to evaluate
-   * the property.
-   * @param id Identifier of the field with respect to which a derivative should
-   * be calculated.
-   * @param jacobian vector of the value of the derivative of the density with
-   * respect to the field id.
+   * @brief Compute the derivative of the density with respect to a field for
+   * an isothermal ideal gas.
+   *
+   * @param[in] field_vectors Vector of values of the fields used to evaluate
+   * the density.
+   *
+   * @param[in] id Identifier of the field with respect to which a derivative
+   * should be computed.
+   *
+   * @param[out] jacobian Vector of computed derivative values of the density
+   * with respect to the field of the specified @p id.
    */
   void
-  vector_jacobian(
-    const std::map<field, std::vector<double>> & /*field_vectors*/,
-    const field          id,
-    std::vector<double> &jacobian_vector) override
+  vector_jacobian(const std::map<field, std::vector<double>> &field_vectors,
+                  const field                                 id,
+                  std::vector<double> &jacobian_vector) override
   {
+    (void)field_vectors;
     if (id == field::pressure)
       std::fill(jacobian_vector.begin(), jacobian_vector.end(), psi);
     else
@@ -259,9 +334,10 @@ public:
   }
 
   /**
-   * @brief get_psi Returns the value of the compressibility factor used in the
-   * density model.
-   * @return isothermal ideal gas compressibility factor
+   * @brief Get the value of the compressibility factor used in the density
+   * model.
+   *
+   * @return Value of the isothermal ideal gas compressibility factor.
    */
   double
   get_psi() const override
@@ -270,9 +346,10 @@ public:
   }
 
   /**
-   * @brief get_density_ref Returns the value of the reference state density
-   * used in the density model.
-   * @return isothermal ideal gas reference state density
+   * @brief Get the value of the reference state density used in the density
+   * model.
+   *
+   * @return Value of the density of the isothermal ideal gas at reference state
    */
   double
   get_density_ref() const override
@@ -281,7 +358,9 @@ public:
   }
 
 private:
+  /// Density of the isothermal ideal gas at reference state
   const double density_ref;
+  /// Compressibility factor of the isothermal ideal gas at reference state
   const double psi;
 };
 
