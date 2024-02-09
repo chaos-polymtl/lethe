@@ -566,14 +566,12 @@ NavierStokesSUPGPSPGOperator<dim, number>::NavierStokesSUPGPSPGOperator() =
   default;
 
 /**
- * @brief This function performs a cell integral, i.e., the jacobian of the discretization
- * of the Navier-Stokes equations with SUPG PSPG stabilization in a cell batch.
- * The equations are given as follows:
+ * The expressions calculated in this cell integral are:
  * (q,∇δu) + (v,(u·∇)δu) + (v,(δu·∇)u) - (∇·v,δp) + ν(∇v,∇δu) (Weak form
  * Jacobian)
- * + ((u·∇)δu + (δu·∇)u + ∇δp - ν∆δu)τ·∇q (PSPG Jacobian)
- * + ((u·∇)δu + (δu·∇)u + ∇δp - ν∆δu)τu·∇v (SUPG Jacobian Part 1)
- * + ((u·∇)u + ∇p - ν∆u - f )τδu·∇v (SUPG Jacobian Part 2)
+ * \+ ((u·∇)δu + (δu·∇)u + ∇δp - ν∆δu)τ·∇q (PSPG Jacobian)
+ * \+ ((u·∇)δu + (δu·∇)u + ∇δp - ν∆δu)τu·∇v (SUPG Jacobian Part 1)
+ * \+ ((u·∇)u + ∇p - ν∆u - f )τδu·∇v (SUPG Jacobian Part 2).
  */
 template <int dim, typename number>
 void
@@ -701,12 +699,10 @@ NavierStokesSUPGPSPGOperator<dim, number>::do_cell_integral_local(
 }
 
 /**
- * @brief This function computes the residual of the weak form of the Navier-Stokes
- * equations with SUPG PSPG discretization performing a cell integral in a cell
- * batch. The equations are given as follows:
+ * The expressions calculated in this cell integral are:
  * (q, ∇·u) + (v,(u·∇)u) - (∇·v,p) + ν(∇v,∇u) - (v,f) (Weak form)
- * + ((u·∇)u + ∇p - ν∆u - f)τ∇·q (PSPG term)
- * + ((u·∇)u + ∇p - ν∆u - f)τu·∇v (SUPG term)
+ * \+ ((u·∇)u + ∇p - ν∆u - f)τ∇·q (PSPG term)
+ * \+ ((u·∇)u + ∇p - ν∆u - f)τu·∇v (SUPG term).
  */
 template <int dim, typename number>
 void
@@ -831,14 +827,12 @@ NavierStokesTransientSUPGPSPGOperator<dim, number>::
   NavierStokesTransientSUPGPSPGOperator() = default;
 
 /**
- * @brief This function performs a cell integral, i.e., the Jacobian of the discretization
- * of the transient Navier-Stokes equations with SUPG PSPG stabilization in a
- * cell batch. The equations are given as follows:
+ * The expressions calculated in this cell integral are:
  * (q,∇δu) + (v,∂t δu) + (v,(u·∇)δu) + (v,(δu·∇)u) - (∇·v,δp) + ν(∇v,∇δu) (Weak
  * form Jacobian)
- * + (∂t δu +(u·∇)δu + (δu·∇)u + ∇δp - ν∆δu)τ·∇q (PSPG Jacobian)
- * + (∂t δu +(u·∇)δu + (δu·∇)u + ∇δp - ν∆δu)τu·∇v (SUPG Jacobian Part 1)
- * + (∂t u +(u·∇)u + ∇p - ν∆u - f )τδu·∇v (SUPG Jacobian Part 2)
+ * \+ (∂t δu +(u·∇)δu + (δu·∇)u + ∇δp - ν∆δu)τ·∇q (PSPG Jacobian)
+ * \+ (∂t δu +(u·∇)δu + (δu·∇)u + ∇δp - ν∆δu)τu·∇v (SUPG Jacobian Part 1)
+ * \+ (∂t u +(u·∇)u + ∇p - ν∆u - f )τδu·∇v (SUPG Jacobian Part 2).
  */
 template <int dim, typename number>
 void
@@ -985,12 +979,10 @@ NavierStokesTransientSUPGPSPGOperator<dim, number>::do_cell_integral_local(
 }
 
 /**
- * @brief This function computes the residual of the weak form of the transient Navier-Stokes
- * equations with SUPG PSPG discretization performing a cell integral in a cell
- * batch. The equations are given as follows:
+ * The expressions calculated in this cell integral are:
  *  (q, ∇·u) + (v,∂t u) + (v,(u·∇)u) - (∇·v,p) + ν(∇v,∇u) - (v,f) (Weak form)
- * + (∂t u +(u·∇)u + ∇p - ν∆u - f)τ∇·q (PSPG term)
- * + (∂t u +(u·∇)u + ∇p - ν∆u - f)τu·∇v (SUPG term)
+ * \+ (∂t u +(u·∇)u + ∇p - ν∆u - f)τ∇·q (PSPG term)
+ * \+ (∂t u +(u·∇)u + ∇p - ν∆u - f)τu·∇v (SUPG term).
  */
 template <int dim, typename number>
 void
