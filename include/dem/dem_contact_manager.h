@@ -50,8 +50,8 @@ class DEMContactManager
 {
 public:
   /**
-   * @brief Execute functions to find the lists of cell neighbors of the active cells in the
-   * triangulation.
+   * @brief Execute functions to find the lists of cell neighbors of the active
+   * cells in the triangulation.
    *
    * For contacts of particles, the neighbor search excludes the repetitions of
    * neighbors: B is neighbor of A but A will not be neighbor of B. For contacts
@@ -78,8 +78,8 @@ public:
     const bool has_floating_mesh       = false);
 
   /**
-   * @brief Execute functions to clear and update the neighbor lists of all the active cells in the
-   * triangulation.
+   * @brief Execute functions to clear and update the neighbor lists of all the
+   * active cells in the triangulation.
    *
    * @param[in] triangulation The triangulation to access the information of the
    * cells
@@ -112,7 +112,8 @@ public:
   }
 
   /**
-   * @brief Execute functions to update the contact data containers with the new contact pairs.
+   * @brief Execute functions to update the contact data containers with the new
+   * contact pairs.
    *
    * Call proper functions to remove contact repetitions and to add new contact
    * pairs to the contact containers when particles are exchanged between
