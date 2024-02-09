@@ -119,7 +119,7 @@ public:
   m() const;
 
   /**
-   * @brief Access a particular element in the matrix. This function is only required
+   * @brief Access a particular element in the matrix. Only required
    * for compilation and it is not used.
    *
    * @param int
