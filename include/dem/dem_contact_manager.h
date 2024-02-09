@@ -82,7 +82,7 @@ public:
    * active cells in the triangulation.
    *
    * @param[in] triangulation The triangulation to access the information of the
-   * cells
+   * cells.
    * @param[in] periodic_boundaries_cells_information Information of periodic
    * cells used if periodic boundaries are enabled (next parameter).
    * @param[in] has_periodic_boundaries Allow manipulations of periodic
