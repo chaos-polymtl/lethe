@@ -76,7 +76,7 @@ public:
   ~MobilityCahnHilliardModelConstant() = default;
 
   /**
-   * @brief Returns the mobility constant, though it returns the same
+   * @brief Return the mobility constant, though it returns the same
    * value as the value method, it is implemented here for generality.
    *
    * @return Value of the mobility constant.
@@ -88,7 +88,7 @@ public:
   }
 
   /**
-   * @brief Computes the mobility.
+   * @brief Compute the mobility.
    * @param[in] fields_value Value of the various field on which the mobility
    * may depend.
    * @return Value of the mobility.
@@ -100,7 +100,7 @@ public:
   }
 
   /**
-   * @brief Calculates the vector of mobility_cahn_hilliard.
+   * @brief Calculate the vector of mobility_cahn_hilliard.
    * @param[in] field_vectors Vectors of the fields on which the mobility
    * may depend.
    * @param[out] property_vector Vectors of the mobilityvalues
@@ -115,7 +115,7 @@ public:
   }
 
   /**
-   * @brief Calculates the jacobian (the partial derivative) of the
+   * @brief Calculate the jacobian (the partial derivative) of the
    * mobility with respect to a field.
    * @param[in] field_values Value of the various fields on which the mobility
    * may depend.
@@ -132,7 +132,7 @@ public:
   }
 
   /**
-   * @brief Calculates the derivative of the mobility with respect to a field.
+   * @brief Calculate the derivative of the mobility with respect to a field.
    * @param[in] field_vectors Vector for the values of the fields used to
    * evaluate the mobility.
    * @param[in] id Identifier of the field with respect to which a derivative
@@ -181,7 +181,7 @@ public:
   ~MobilityCahnHilliardModelQuartic() = default;
 
   /**
-   * @brief Returns the mobility constant.
+   * @brief Return the mobility constant.
    * @return Value of the mobility constant.
    */
   double
@@ -191,7 +191,7 @@ public:
   }
 
   /**
-   * @brief Calculates the mobility.
+   * @brief Calculate the mobility.
    * @param[in] fields_value Value of the various field on which the mobility
    * may depend.
    * @return Value of the mobility calculated with the fields_value.
@@ -212,7 +212,7 @@ public:
   }
 
   /**
-   * @brief Calculates the vector of mobility.
+   * @brief Calculate the vector of mobility.
    * @param[in] field_vectors Vectors of the fields on which the mobility
    * may depend.
    * @param[out] property_vector Vector of the mobility values.
@@ -235,7 +235,7 @@ public:
   }
 
   /**
-   * @brief Calculates the jacobian (the partial derivative) of the
+   * @brief Calculate the jacobian (the partial derivative) of the
    * mobility with respect to a field.
    * @param[in] field_values Value of the various fields on which the mobility
    * may depend.
@@ -261,7 +261,7 @@ public:
   }
 
   /**
-   * @brief Calculates the derivative of the mobility with respect to a field.
+   * @brief Calculate the derivative of the mobility with respect to a field.
    * @param[in] field_vectors Vector for the values of the fields used to
    * evaluate the mobility.
    * @param[in] id Identifier of the field with respect to which a derivative
