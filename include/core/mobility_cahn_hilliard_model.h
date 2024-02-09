@@ -20,7 +20,7 @@
 #include <core/interface_property_model.h>
 
 /**
- * @brief Implementation of a general case computation of the mobility
+ * @brief Implementation of the computation of the mobility
  * for Cahn-Hilliard equations.
  */
 class MobilityCahnHilliardModel : public InterfacePropertyModel
@@ -62,7 +62,7 @@ public:
   /**
    * @brief Default constructor
    *
-   * @param[in] p_mobility_cahn_hilliard_constant the user chosen mobility
+   * @param[in] p_mobility_cahn_hilliard_constant the user defined mobility
    * constant.
    */
   MobilityCahnHilliardModelConstant(
@@ -103,7 +103,7 @@ public:
    * @brief Calculate the vector of mobility_cahn_hilliard.
    * @param[in] field_vectors Vectors of the fields on which the mobility
    * may depend.
-   * @param[out] property_vector Vectors of the mobilityvalues
+   * @param[out] property_vector Vectors of the mobility values
    */
   void
   vector_value(const std::map<field, std::vector<double>> & /*field_vectors*/,
@@ -165,7 +165,7 @@ public:
   /**
    * @brief Default constructor.
    *
-   * @param[in] p_mobility_cahn_hilliard_constant the user chosen mobility
+   * @param[in] p_mobility_cahn_hilliard_constant the user defined mobility
    * constant.
    */
   MobilityCahnHilliardModelQuartic(
@@ -192,7 +192,7 @@ public:
 
   /**
    * @brief Calculate the mobility.
-   * @param[in] fields_value Value of the various field on which the mobility
+   * @param[in] fields_value Value of the various fields on which the mobility
    * may depend.
    * @return Value of the mobility calculated with the fields_value.
    */
@@ -239,7 +239,7 @@ public:
    * mobility with respect to a field.
    * @param[in] field_values Value of the various fields on which the mobility
    * may depend.
-   * @param[in] id Indicator of the field with respect to which the jacobian
+   * @param[in] id Indicator of the field with respect to which the Jacobian
    * should be calculated.
    * @return Value of the partial derivative of the mobility with respect to
    * the field.
