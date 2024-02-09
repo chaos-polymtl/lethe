@@ -379,24 +379,24 @@ protected:
   std::shared_ptr<SimulationControl> simulation_control;
 
   /**
-   * @brief Table with correct alignment for vectorization to store the nonlinear
-   * previous values.
+   * @brief Table with correct alignment for vectorization to store the values
+   * of the previous newton step.
    *
    */
   Table<2, Tensor<1, dim + 1, VectorizedArray<number>>>
     nonlinear_previous_values;
 
   /**
-   * @brief Table with correct alignment for vectorization to store the nonlinear
-   * previous gradient.
+   * @brief Table with correct alignment for vectorization to store the gradients
+   * of the previous newton step.
    *
    */
   Table<2, Tensor<1, dim + 1, Tensor<1, dim, VectorizedArray<number>>>>
     nonlinear_previous_gradient;
 
   /**
-   * @brief Table with correct alignment for vectorization to store the nonlinear
-   * previous hessian diagonal values.
+   * @brief Table with correct alignment for vectorization to store the hessian
+   * diagonal of the previous newton step.
    *
    */
   Table<2, Tensor<1, dim + 1, Tensor<1, dim, VectorizedArray<number>>>>
@@ -451,9 +451,8 @@ protected:
 };
 
 /**
- * @brief Class in charge of implementing the main function required to
- * solve the Navier-Stokes equations using SUPG/PSPG stabilization and the
- * matrix-free approach.
+ * @brief Implements the matrix-free operator to solve the Navier-Stokes equations
+ * using SUPG/PSPG stabilization,
  *
  * @tparam dim An integer that denotes the number of spatial dimensions.
  * @tparam number Abstract type for number across the class (i.e., double).
@@ -466,6 +465,10 @@ public:
   using FECellIntegrator = FEEvaluation<dim, -1, 0, dim + 1, number>;
   using VectorType       = LinearAlgebra::distributed::Vector<number>;
 
+  /**
+   * @brief Default constructor.
+   *
+   */
   NavierStokesSUPGPSPGOperator();
 
 protected:
@@ -474,8 +477,8 @@ protected:
    * the values, and according to the Jacobian of the Navier-Stokes equations
    * with SUPG/PSPG stabilization.
    *
-   * @param integrator FEEvaluation object that allows to evaluate functions at
-   * quadrature points and perform cell integrations.
+   * @param[in] integrator FEEvaluation object that allows to evaluate functions
+   * at quadrature points and perform cell integrations.
    */
   void
   do_cell_integral_local(FECellIntegrator &integrator) const override;
@@ -485,10 +488,10 @@ protected:
    * the values, and according to the residual of the Navier-Stokes equations
    * with SUPG/PSPG stabilization.
    *
-   * @param matrix_free Object that contains all data.
-   * @param dst Global vector where the final result is added.
-   * @param src Input vector with all values in all cells.
-   * @param range Range of the cell batch.
+   * @param[in] matrix_free Object that contains all data.
+   * @param[in,out] dst Global vector where the final result is added.
+   * @param[in] src Input vector with all values in all cells.
+   * @param[out] range Range of the cell batch.
    */
   void
   local_evaluate_residual(
@@ -499,9 +502,8 @@ protected:
 };
 
 /**
- * @brief Class in charge of implementing the main function required to
- * solve the transient Navier-Stokes equations using SUPG/PSPG stabilization
- * and the matrix-free approach.
+ * @brief Implements the matrix-free operator to solve transient Navier-Stokes equations
+ * using SUPG/PSPG stabilization.
  *
  * @tparam dim An integer that denotes the number of spatial dimensions.
  * @tparam number Abstract type for number across the class (i.e., double).
@@ -519,11 +521,11 @@ public:
 protected:
   /**
    * @brief Perform cell integral on a cell batch without gathering and scattering
-   * the values, and according to the Jacobian of the Navier-Stokes equations
-   * with SUPG/PSPG stabilization.
+   * the values, and according to the Jacobian of the transient Navier-Stokes
+   * equations with SUPG/PSPG stabilization.
    *
-   * @param integrator FEEvaluation object that allows to evaluate functions at
-   * quadrature points and perform cell integrations.
+   * @param[in] integrator FEEvaluation object that allows to evaluate functions
+   * at quadrature points and perform cell integrations.
    */
   void
   do_cell_integral_local(FECellIntegrator &integrator) const override;
@@ -533,10 +535,10 @@ protected:
    * the values, and according to the residual of the Navier-Stokes equations
    * with SUPG/PSPG stabilization.
    *
-   * @param matrix_free Object that contains all data.
-   * @param dst Global vector where the final result is added.
-   * @param src Input vector with all values in all cells.
-   * @param range Range of the cell batch.
+   * @param[in] matrix_free Object that contains all data.
+   * @param[in,out] dst Global vector where the final result is added.
+   * @param[in] src Input vector with all values in all cells.
+   * @param[in] range Range of the cell batch.
    */
   void
   local_evaluate_residual(
