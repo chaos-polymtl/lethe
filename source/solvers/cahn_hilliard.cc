@@ -1,3 +1,19 @@
+/*---------------------------------------------------------------------
+ *
+ * Copyright (C) 2019 - by the Lethe authors
+ *
+ * This file is part of the Lethe library
+ *
+ * The Lethe library is free software; you can use it, redistribute
+ * it, and/or modify it under the terms of the GNU Lesser General
+ * Public License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ * The full text of the license can be found in the file LICENSE at
+ * the top level of the Lethe distribution.
+ *
+ * ---------------------------------------------------------------------
+ */
+
 #include <core/bdf.h>
 #include <core/time_integration_utilities.h>
 #include <core/utilities.h>
@@ -40,34 +56,45 @@ CahnHilliard<dim>::setup_assemblers()
           this->simulation_control));
     }
 
+  // For all the assemblers below, the parameter epsilon is passed to the
+  // constructor explicitly because it might be calculated directly using
+  // properties from the triangulation (e.g. minimal cell-size). Consequently,
+  // it cannot be used directly from the simulation parameters and it is passed
+  // to the constructor separately.
+
   // Angle of contact boundary condition
   this->assemblers.push_back(
     std::make_shared<CahnHilliardAssemblerAngleOfContact<dim>>(
       this->simulation_control,
+      this->simulation_parameters.multiphysics.cahn_hilliard_parameters,
+      (this->simulation_parameters.multiphysics.cahn_hilliard_parameters
+         .epsilon_set_method == Parameters::EpsilonSetMethod::manual) ?
+        this->simulation_parameters.multiphysics.cahn_hilliard_parameters
+          .epsilon :
+        GridTools::minimal_cell_diameter(*triangulation),
       this->simulation_parameters.boundary_conditions_cahn_hilliard));
 
   // Free angle of contact boundary condition
   this->assemblers.push_back(
     std::make_shared<CahnHilliardAssemblerFreeAngle<dim>>(
       this->simulation_control,
+      this->simulation_parameters.multiphysics.cahn_hilliard_parameters,
+      (this->simulation_parameters.multiphysics.cahn_hilliard_parameters
+         .epsilon_set_method == Parameters::EpsilonSetMethod::manual) ?
+        this->simulation_parameters.multiphysics.cahn_hilliard_parameters
+          .epsilon :
+        GridTools::minimal_cell_diameter(*triangulation),
       this->simulation_parameters.boundary_conditions_cahn_hilliard));
 
-
   // Core assembler
-  // For the time being, only a two-fluid system is considered for the
-  // Cahn-Hilliard equations, hence we'll always take the first element of the
-  // material_interaction vector, since it should contain all the parameters
-  // necessary for solving the equations
-
-  const auto mobility_model =
-    this->simulation_parameters.physical_properties_manager
-      .get_mobility_cahn_hilliard();
-
   this->assemblers.push_back(std::make_shared<CahnHilliardAssemblerCore<dim>>(
     this->simulation_control,
     this->simulation_parameters.multiphysics.cahn_hilliard_parameters,
-    mobility_model->get_model(),
-    mobility_model->get_mobility_constant()));
+    (this->simulation_parameters.multiphysics.cahn_hilliard_parameters
+       .epsilon_set_method == Parameters::EpsilonSetMethod::manual) ?
+      this->simulation_parameters.multiphysics.cahn_hilliard_parameters
+        .epsilon :
+      GridTools::minimal_cell_diameter(*triangulation)));
 }
 
 template <int dim>
@@ -116,12 +143,10 @@ CahnHilliard<dim>::assemble_local_system_matrix(
   auto source_term = simulation_parameters.source_term.cahn_hilliard_source;
   source_term->set_time(simulation_control->get_current_time());
 
-  scratch_data.reinit(
-    cell,
-    this->evaluation_point,
-    this->previous_solutions,
-    &(*source_term),
-    this->simulation_parameters.multiphysics.cahn_hilliard_parameters);
+  scratch_data.reinit(cell,
+                      this->evaluation_point,
+                      this->previous_solutions,
+                      &(*source_term));
 
   const DoFHandler<dim> *dof_handler_fluid =
     multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
@@ -144,6 +169,7 @@ CahnHilliard<dim>::assemble_local_system_matrix(
                                    this->simulation_parameters.ale);
     }
 
+  scratch_data.calculate_physical_properties();
   copy_data.reset();
 
   for (auto &assembler : this->assemblers)
@@ -167,7 +193,6 @@ CahnHilliard<dim>::copy_local_matrix_to_global_matrix(
                                               copy_data.local_dof_indices,
                                               system_matrix);
 }
-
 
 template <int dim>
 void
@@ -215,12 +240,10 @@ CahnHilliard<dim>::assemble_local_system_rhs(
   auto source_term = simulation_parameters.source_term.cahn_hilliard_source;
   source_term->set_time(simulation_control->get_current_time());
 
-  scratch_data.reinit(
-    cell,
-    this->evaluation_point,
-    this->previous_solutions,
-    &(*source_term),
-    this->simulation_parameters.multiphysics.cahn_hilliard_parameters);
+  scratch_data.reinit(cell,
+                      this->evaluation_point,
+                      this->previous_solutions,
+                      &(*source_term));
 
   const DoFHandler<dim> *dof_handler_fluid =
     multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
@@ -243,6 +266,7 @@ CahnHilliard<dim>::assemble_local_system_rhs(
                                    this->simulation_parameters.ale);
     }
 
+  scratch_data.calculate_physical_properties();
   copy_data.reset();
 
   for (auto &assembler : this->assemblers)
@@ -278,6 +302,10 @@ CahnHilliard<dim>::attach_solution_to_output(DataOut<dim> &data_out)
   solution_names.push_back("phase_order");
   solution_names.push_back("chemical_potential");
 
+  std::vector<std::string> solution_names_filtered;
+  solution_names_filtered.push_back("phase_order_filtered");
+  solution_names_filtered.push_back("chemical_potential_filtered");
+
   std::vector<DataComponentInterpretation::DataComponentInterpretation>
     data_component_interpretation(
       2, DataComponentInterpretation::component_is_scalar);
@@ -285,6 +313,12 @@ CahnHilliard<dim>::attach_solution_to_output(DataOut<dim> &data_out)
   data_out.add_data_vector(dof_handler,
                            present_solution,
                            solution_names,
+                           data_component_interpretation);
+
+  // Filter phase fraction
+  data_out.add_data_vector(dof_handler,
+                           filtered_solution,
+                           solution_names_filtered,
                            data_component_interpretation);
 }
 
@@ -379,9 +413,9 @@ CahnHilliard<dim>::calculate_phase_statistics()
   const unsigned int  n_q_points = cell_quadrature->size();
   std::vector<double> local_phase_order_values(n_q_points);
 
-  double integral        = 0;
-  double max_phase_value = std::numeric_limits<double>::min();
-  double min_phase_value = std::numeric_limits<double>::max();
+  double integral(0.);
+  double max_phase_value(std::numeric_limits<double>::min());
+  double min_phase_value(std::numeric_limits<double>::max());
 
   for (const auto &cell : dof_handler.active_cell_iterators())
     {
@@ -401,6 +435,9 @@ CahnHilliard<dim>::calculate_phase_statistics()
             }
         }
     }
+
+  min_phase_value = Utilities::MPI::min(min_phase_value, mpi_communicator);
+  max_phase_value = Utilities::MPI::max(max_phase_value, mpi_communicator);
 
   integral             = Utilities::MPI::sum(integral, mpi_communicator);
   double global_volume = GridTools::volume(*triangulation, *mapping);
@@ -481,6 +518,14 @@ CahnHilliard<dim>::percolate_time_vectors()
       previous_solutions[i] = previous_solutions[i - 1];
     }
   previous_solutions[0] = this->present_solution;
+}
+
+template <int dim>
+void
+CahnHilliard<dim>::modify_solution()
+{
+  // Apply filter to phase order parameter
+  apply_phase_filter();
 }
 
 template <int dim>
@@ -841,6 +886,10 @@ CahnHilliard<dim>::setup_dofs()
                           locally_relevant_dofs,
                           mpi_communicator);
 
+  filtered_solution.reinit(this->locally_owned_dofs,
+                           this->locally_relevant_dofs,
+                           mpi_communicator);
+
   // Previous solutions for transient schemes
   for (auto &solution : this->previous_solutions)
     {
@@ -940,6 +989,8 @@ CahnHilliard<dim>::setup_dofs()
   // multiphysics interface
   multiphysics->set_dof_handler(PhysicsID::cahn_hilliard, &this->dof_handler);
   multiphysics->set_solution(PhysicsID::cahn_hilliard, &this->present_solution);
+  multiphysics->set_filtered_solution(PhysicsID::cahn_hilliard,
+                                      &this->filtered_solution);
   multiphysics->set_previous_solutions(PhysicsID::cahn_hilliard,
                                        &this->previous_solutions);
 }
@@ -1019,6 +1070,7 @@ CahnHilliard<dim>::set_initial_conditions()
 
   nonzero_constraints.distribute(newton_update);
   present_solution = newton_update;
+  apply_phase_filter();
   percolate_time_vectors();
 }
 
@@ -1113,9 +1165,13 @@ CahnHilliard<dim>::calculate_barycenter(const GlobalVectorType &solution,
   FEValues<dim> fe_values_cahn_hilliard(*this->mapping,
                                         *this->fe,
                                         *this->cell_quadrature,
-                                        update_values |
+                                        update_values | update_gradients |
                                           update_quadrature_points |
                                           update_JxW_values);
+  std::shared_ptr<CahnHilliardFilterBase> filter =
+    CahnHilliardFilterBase::model_cast(
+      this->simulation_parameters.multiphysics.cahn_hilliard_parameters);
+
 
   const DoFHandler<dim> *dof_handler_fd =
     multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
@@ -1127,6 +1183,7 @@ CahnHilliard<dim>::calculate_barycenter(const GlobalVectorType &solution,
 
   const unsigned int          n_q_points = this->cell_quadrature->size();
   std::vector<double>         phase_cahn_hilliard_values(n_q_points);
+  std::vector<Tensor<1, dim>> phase_cahn_hilliard_gradients(n_q_points);
   std::vector<Tensor<1, dim>> velocity_values(n_q_points);
   std::vector<Point<dim>>     quadrature_locations(n_q_points);
 
@@ -1149,6 +1206,8 @@ CahnHilliard<dim>::calculate_barycenter(const GlobalVectorType &solution,
             fe_values_cahn_hilliard.get_quadrature_points();
           fe_values_cahn_hilliard[phase_order].get_function_values(
             solution, phase_cahn_hilliard_values);
+          fe_values_cahn_hilliard[phase_order].get_function_gradients(
+            solution, phase_cahn_hilliard_gradients);
 
           // Get fluid dynamics active cell iterator
           typename DoFHandler<dim>::active_cell_iterator cell_fd(
@@ -1163,14 +1222,16 @@ CahnHilliard<dim>::calculate_barycenter(const GlobalVectorType &solution,
 
           for (unsigned int q = 0; q < n_q_points; q++)
             {
-              const double JxW = fe_values_cahn_hilliard.JxW(q);
+              const double JxW          = fe_values_cahn_hilliard.JxW(q);
+              const double phase_values = phase_cahn_hilliard_values[q];
 
 
-              volume += (1 - phase_cahn_hilliard_values[q]) * 0.5 * JxW;
-              barycenter_location += (1 - phase_cahn_hilliard_values[q]) * 0.5 *
-                                     quadrature_locations[q] * JxW;
-              barycenter_velocity += (1 - phase_cahn_hilliard_values[q]) * 0.5 *
-                                     velocity_values[q] * JxW;
+
+              volume += (1 - phase_values) * 0.5 * JxW;
+              barycenter_location +=
+                (1 - phase_values) * 0.5 * quadrature_locations[q] * JxW;
+              barycenter_velocity +=
+                (1 - phase_values) * 0.5 * velocity_values[q] * JxW;
             }
         }
     }
@@ -1183,6 +1244,82 @@ CahnHilliard<dim>::calculate_barycenter(const GlobalVectorType &solution,
 
   return std::pair<Tensor<1, dim>, Tensor<1, dim>>(barycenter_location,
                                                    barycenter_velocity);
+}
+
+template <int dim>
+void
+CahnHilliard<dim>::apply_phase_filter()
+{
+  auto mpi_communicator = this->triangulation->get_communicator();
+
+  FEValues<dim> fe_values(*mapping,
+                          *fe,
+                          *cell_quadrature,
+                          update_values | update_gradients |
+                            update_quadrature_points | update_JxW_values);
+
+  const FEValuesExtractors::Scalar phase_order(0);
+
+  TrilinosWrappers::MPI::Vector filtered_solution_owned(
+    this->locally_owned_dofs, mpi_communicator);
+  filtered_solution_owned = this->present_solution;
+
+  filtered_solution.reinit(this->present_solution);
+
+  // std::unordered_map<unsigned int, bool> filtered_cell_list;
+  std::unordered_set<unsigned int> filtered_cell_list;
+
+  const unsigned int                   dofs_per_cell = this->fe->dofs_per_cell;
+  std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
+
+  // Create filter object
+  filter = CahnHilliardFilterBase::model_cast(
+    this->simulation_parameters.multiphysics.cahn_hilliard_parameters);
+
+  // Apply filter to solution
+  for (const auto &cell : this->dof_handler.active_cell_iterators())
+    {
+      if (cell->is_locally_owned())
+        {
+          cell->get_dof_indices(local_dof_indices);
+
+          for (unsigned int p = 0; p < local_dof_indices.size(); ++p)
+            {
+              if (this->locally_owned_dofs.is_element(local_dof_indices[p]))
+                {
+                  //  Allows to obtain the component corresponding to the degree
+                  //  of freedom
+                  auto component_index = fe->system_to_component_index(p).first;
+
+                  // Filter only the phase field
+                  if (component_index == 0)
+                    {
+                      auto iterator =
+                        filtered_cell_list.find(local_dof_indices[p]);
+                      if (iterator == filtered_cell_list.end())
+                        {
+                          filtered_cell_list.insert(local_dof_indices[p]);
+                          filtered_solution_owned[local_dof_indices[p]] =
+                            filter->filter_phase(
+                              filtered_solution_owned[local_dof_indices[p]]);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+  filtered_solution = filtered_solution_owned;
+
+  if (this->simulation_parameters.multiphysics.cahn_hilliard_parameters
+        .cahn_hilliard_phase_filter.verbosity == Parameters::Verbosity::verbose)
+    {
+      this->pcout << "Filtered phase values: " << std::endl;
+      for (const double filtered_phase : filtered_solution)
+        {
+          this->pcout << filtered_phase << std::endl;
+        }
+    }
 }
 
 template std::pair<Tensor<1, 2>, Tensor<1, 2>>

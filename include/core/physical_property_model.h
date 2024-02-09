@@ -47,7 +47,8 @@ enum field : int
   temperature_p1, // temperature at time t
   temperature_p2, // temperature at time t-dt
   pressure,
-  phase_order_cahn_hilliard
+  phase_order_cahn_hilliard,
+  phase_order_cahn_hilliard_filtered
 };
 
 inline void

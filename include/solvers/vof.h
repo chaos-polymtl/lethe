@@ -615,9 +615,9 @@ private:
    * @brief Assembles the matrix and rhs for calculation of projected phase fraction gradient (pfg).
    *
    * Solves:
-   * $$ v . \psi + \eta * \nabla v . \nabla \psi = v . \nabla \phi $$
-   * where $$v$$, $$\psi$$, $$\eta$$, and $$\phi$$ are test function, fpg,
-   * filter value, and phase fraction.
+   * \f$ v . \psi + \eta * \nabla v . \nabla \psi = v . \nabla \phi \f$
+   * where \f$v$\f$ \f$\psi\f$, \f$\eta\f$, and \f$\phi\f$ are the test
+   * function, filtered pfg, pfg value, and phase fraction.
    *
    * @param solution VOF solution (phase fraction)
    */

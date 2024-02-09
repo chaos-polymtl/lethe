@@ -454,7 +454,7 @@ namespace Parameters
     } surface_tension_model;
     SurfaceTensionParameters surface_tension_parameters;
 
-    // Mobility CH models
+    // Cahn-Hilliard mobility models
     enum class MobilityCahnHilliardModel
     {
       constant,

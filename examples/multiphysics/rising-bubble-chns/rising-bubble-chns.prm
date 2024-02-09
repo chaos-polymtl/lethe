@@ -1,0 +1,175 @@
+# Listing of Parameters
+#----------------------
+
+set dimension = 2
+
+# Simulation and IO Control
+#---------------------------------------------------
+
+subsection simulation control
+  set method           = bdf1
+  set time end         = 3
+  set time step        = 0.001
+  set adapt            = true
+  set max cfl          = 0.1
+  set output name      = rising-bubble-chns
+  set output frequency = 15
+  set output path      = ./outputs/output/
+end
+
+#---------------------------------------------------
+# Multiphysics
+#---------------------------------------------------
+
+subsection multiphysics
+  set cahn hilliard = true
+end
+
+#---------------------------------------------------
+# Initial conditions
+#---------------------------------------------------
+
+subsection initial conditions
+  set type = L2projection
+  subsection cahn hilliard
+    set Function expression = -tanh((0.25 - sqrt((x-0.5) * (x-0.5) + (y-0.5) * (y-0.5)))/(sqrt(2)*2^(-8))); 0
+  end
+end
+
+#---------------------------------------------------
+# Source term
+#---------------------------------------------------
+
+subsection source term
+  subsection xyz
+    set Function expression = 0; -0.98; 0
+  end
+end
+
+#---------------------------------------------------
+# Cahn Hilliard
+#---------------------------------------------------
+
+subsection cahn hilliard
+  set potential smoothing coefficient = 0.0
+end
+
+#---------------------------------------------------
+# Physical Properties
+#---------------------------------------------------
+
+subsection physical properties
+  set number of fluids = 2
+  subsection fluid 0
+    set density             = 1000
+    set kinematic viscosity = 0.01
+  end
+  subsection fluid 1
+    set density             = 100
+    set kinematic viscosity = 0.01
+  end
+  set number of material interactions = 1
+  subsection material interaction 0
+    subsection fluid-fluid interaction
+      set surface tension coefficient     = 24.5
+      set cahn hilliard mobility constant = 7.629394531e-6 #Proportionnal to the minimum cell size squared
+    end
+  end
+end
+
+#---------------------------------------------------
+# Mesh
+#---------------------------------------------------
+
+subsection mesh
+  set type               = dealii
+  set grid type          = subdivided_hyper_rectangle
+  set grid arguments     = 1, 2 : 0, 0 : 1, 2 : true
+  set initial refinement = 6
+end
+
+#---------------------------------------------------
+# Mesh Adaptation
+#---------------------------------------------------
+
+subsection mesh adaptation
+  set type                     = kelly
+  set variable                 = phase_cahn_hilliard
+  set fraction type            = fraction
+  set max refinement level     = 8
+  set min refinement level     = 6
+  set frequency                = 1
+  set fraction refinement      = 0.99
+  set fraction coarsening      = 0.01
+  set initial refinement steps = 4
+end
+
+#---------------------------------------------------
+# Post-processing
+#---------------------------------------------------
+
+subsection post-processing
+  set verbosity        = verbose
+  set output frequency = 1
+  
+  set calculate barycenter = true
+  set calculate phase statistics = true
+end
+
+# --------------------------------------------------
+# Boundary Conditions
+#---------------------------------------------------
+
+subsection boundary conditions
+  set number = 4
+  subsection bc 0
+    set id   = 0
+    set type = slip
+  end
+  subsection bc 1
+    set id   = 1
+    set type = slip
+  end
+  subsection bc 2
+    set id   = 2
+    set type = slip
+  end
+  subsection bc 3
+    set id   = 3
+    set type = noslip
+  end
+end
+
+
+# --------------------------------------------------
+# Non-Linear Solver Control
+#---------------------------------------------------
+
+subsection non-linear solver
+  subsection fluid dynamics
+    set tolerance      = 1e-5
+  end
+  subsection cahn hilliard
+    set tolerance      = 1e-5
+  end
+end
+
+# --------------------------------------------------
+# Linear Solver Control
+#---------------------------------------------------
+
+subsection linear solver
+  subsection fluid dynamics
+    set relative residual                     = 1e-4
+    set minimum residual                      = 1e-7
+    set ilu preconditioner fill               = 1
+    set max krylov vectors                    = 200
+  end
+  subsection cahn hilliard
+    set relative residual                     = 1e-3
+    set minimum residual                      = 1e-7
+    set ilu preconditioner fill               = 1
+    set max krylov vectors                    = 200
+  end
+end
+

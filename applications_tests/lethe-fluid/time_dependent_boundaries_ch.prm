@@ -55,10 +55,10 @@ subsection multiphysics
 end
 
 subsection cahn hilliard
-  set well height = 0.25
+  set potential smoothing coefficient = 0.0
+
   subsection epsilon
     set method = automatic
-    set value  = 0.01
   end
 end
 
@@ -101,8 +101,8 @@ subsection post-processing
 end
 
 subsection FEM
-  set phase cahn hilliard order     = 2
-  set potential cahn hilliard order = 2
+  set phase cahn hilliard order     = 1
+  set potential cahn hilliard order = 1
   set velocity order                = 1
   set pressure order                = 1
 end
