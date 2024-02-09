@@ -46,16 +46,16 @@ namespace Parameters
       velocity = std::make_shared<Functions::ParsedFunction<dim>>(dim);
     }
 
-    
-    /** 
+
+    /**
      * @brief Declare the parameters.
      *
      * @param[in,out] prm The ParameterHandler.
      */
     virtual void
     declare_parameters(ParameterHandler &prm);
-    
-    /** 
+
+    /**
      * @brief Parse the parameters.
      *
      * @param[in,out] prm The ParameterHandler.
@@ -66,9 +66,9 @@ namespace Parameters
 
     /**
      * @brief ALE velocity function
-     */ 
+     */
     std::shared_ptr<Functions::ParsedFunction<dim>> velocity;
-    
+
     /**
      * @brief Return if the ALE module is enabled.
      *
