@@ -38,36 +38,49 @@
 using namespace dealii;
 
 /**
- * @brief Class that calculates the
- * time-averaged velocities and pressure \f$(\langle u \rangle, \langle v
- * \rangle, \langle w \rangle, \langle p \rangle)\f$ and the independent
- * components of the Reynolds stresses tensor \f$(\langle u'u' \rangle, \langle
- * v'v' \rangle, \langle w'w' \rangle, \langle u'v' \rangle, \langle v'w'
- * \rangle, \langle w'u' \rangle)\f$. The generated vectors are displayable of
- * visualization software.
+ * @brief Calculates the time-averaged velocities and pressure \f$(\langle u
+ * \rangle, \langle v \rangle, \langle w \rangle, \langle p \rangle)\f$ and the
+ * independent components of the Reynolds stresses tensor \f$(\langle u'u'
+ * \rangle, \langle v'v' \rangle, \langle w'w' \rangle, \langle u'v' \rangle,
+ * \langle v'w' \rangle, \langle w'u' \rangle)\f$. The generated vectors can be
+ * displayed using common visualization software.
+ *
+ * @tparam dim An integer that denotes the dimension of the space in which
+ * the flow is solved.
+ *
+ * @tparam VectorType The vector type used for the solvers (Trilinos (normal or block)
+ * or deal.II vectors).
+ *
+ * @tparam DofsType The type of storage of indices which differs according to vector.
+ *
  */
 template <int dim, typename VectorType, typename DofsType>
 class AverageVelocities
 {
 public:
-  AverageVelocities(DoFHandler<dim> &dof_handler);
   /**
-   * @brief calculate_average_velocities. This function calculates time-averaged
-   * velocities and pressure with dof vector with no ghost cell.
+   * @brief Constructor that initializes the solution transfer objects for the velocity
+   * and the Reynolds stresses, the total time for average and average
+   * calculation variables.
    *
-   * @param local_evaluation_point. The vector solutions with no ghost cells
+   * @param[in] dof_handler Used to initialize the solution transfer objects.
    *
-   * @param post_processing. The parameters to start the processing
+   */
+  AverageVelocities(DoFHandler<dim> &dof_handler);
+
+  /**
+   * @brief Calculate time-averaged velocities and pressure using vector with no ghost
+   * cells.
    *
-   * @param current_time. The current time in the simulation
+   * @param[in] local_evaluation_point The solution vector with no ghost cells.
    *
-   * @param time_step. The current time step
+   * @param[in] post_processing The postprocessing parameters to definie initial
+   * time of averaging.
    *
-   * @param locally_owned_dofs. The owned dofs
+   * @param[in] current_time The current time in the simulation.
    *
-   * @param locally_owned_rs_components. The owned Reynolds stress components
+   * @param[in] time_step The current time step.
    *
-   * @param mpi_communicator. The mpi communicator information
    */
   void
   calculate_average_velocities(
@@ -81,18 +94,21 @@ public:
   update_average_velocities();
 
   /**
-   * @brief calculate_reynolds_stress. This function calculates normal and
-   * other resolved time-averaged Reynold stresses (<u'u'>, <v'v'>, <w'w'>
-   * and <u'v'>, <v'w'>, <w'u'>).
+   * @brief Calculate normal and other resolved time-averaged Reynold stresses
+   * \f$(\langle u'u' \rangle, \langle v'v' \rangle, \langle w'w' \rangle)\f$
+   * and \f$(\langle u'v' \rangle, \langle v'w' \rangle, \langle w'u'
+   * \rangle)\f$.
    *
-   * @param local_evaluation_point. The vector solutions with no ghost cells
+   * @param[in] local_evaluation_point The solution vector with no ghost cells.
    */
   void
   calculate_reynolds_stresses(const VectorType &local_evaluation_point);
 
   /**
-   * @brief get_average_velocities. Gives the average of solutions with ghost
-   * cells.
+   * @brief Gives the average of solutions with ghost cells.
+   *
+   * @return The vector of average solutions.
+   *
    */
   VectorType &
   get_average_velocities()
@@ -101,8 +117,10 @@ public:
   }
 
   /**
-   * @brief get_reynolds_normal_stresses. Gives the time-averaged Reynolds
-   * normal stresses with ghost cells.
+   * @brief Give the time-averaged Reynolds normal stresses with ghost cells.
+   *
+   * @return Vector with average normal Reynolds stresses.
+   *
    */
   const VectorType &
   get_reynolds_normal_stresses()
@@ -111,8 +129,10 @@ public:
   }
 
   /**
-   * @brief get_reynolds_shear_stress. Gives the time-averaged Reynolds
-   * shear stresses with ghost cells.
+   * @brief Give the time-averaged Reynolds shear stresses with ghost cells.
+   *
+   * @return Vector with average shear Reynolds stresses.
+   *
    */
   const VectorType &
   get_reynolds_shear_stresses()
@@ -121,17 +141,19 @@ public:
   }
 
   /**
-   * @brief initialize_vectors. This function initializes all the important
-   * vectors for the average velocities and reynolds stresses calculation.
+   * @brief Initialize all the important vectors for the average velocities and
+   * reynolds stresses calculation.
    *
-   * @param locally_owned_dofs. The owned dofs
+   * @param[in] locally_owned_dofs The owned dofs.
    *
-   * @param locally_owned_rs_components. The owned Reynolds stress components
+   * @param[in] locally_owned_rs_components The owned Reynolds stress
+   * components.
    *
-   * @param dofs_per_vertex. The number of dofs per vortex (dim for block
-   *                         vectors)
+   * @param[in] dofs_per_vertex The number of dofs per vortex (dim for block
+   * vectors).
    *
-   * @param mpi_communicator. The mpi communicator information
+   * @param[in] mpi_communicator The communicator information.
+   *
    */
   void
   initialize_vectors(const DofsType     &locally_owned_dofs,
@@ -140,14 +162,15 @@ public:
                      const MPI_Comm     &mpi_communicator);
 
   /**
-   * @brief initialize_checkpoint_vectors. This function initializes all the
-   * sum vectors for the average velocities and reynolds stresses storage.
+   * @brief Initialize all the sum vectors for the average velocities and reynolds
+   *  stresses storage.
    *
-   * @param locally_owned_dofs. The owned dofs
+   * @param[in] locally_owned_dofs The owned dofs.
    *
-   * @param locally_owned_rs_components. The owned Reynolds stress components
+   * @param[in] locally_owned_rs_components The owned Reynolds stress
+   * components.
    *
-   * @param mpi_communicator. The mpi communicator information
+   * @param[in] mpi_communicator The communicator information.
    */
   void
   initialize_checkpoint_vectors(const DofsType &locally_owned_dofs,
@@ -156,62 +179,198 @@ public:
 
 
   /**
-   * @brief Prepares average velocity object for dynamic mesh adaptation
+   * @brief Prepares average velocity object for dynamic mesh adaptation.
    */
   void
   prepare_for_mesh_adaptation();
 
   /**
-   * @brief Re-establish solution vectors after dynamic mesh adaptation
+   * @brief Reestablish solution vectors after dynamic mesh adaptation.
    */
   void
   post_mesh_adaptation();
 
   /**
-   * @brief save & read. Save or read checkpoints to continuing averaging after
-   * restart.
+   * @brief Save checkpoints to continuing averaging after restart.
+   *
+   * @param[in] prefix Name for checkpointing files.
+   *
+   * @return Vector with average values.
    */
   std::vector<const VectorType *>
   save(std::string prefix);
 
+  /**
+   * @brief Read checkpoints to continuing averaging after restart.
+   *
+   * @param[in] prefix Name for checkpoint files.
+   *
+   * @return Vector with average values.
+   */
   std::vector<VectorType *>
   read(std::string prefix);
 
 private:
+  /**
+   * @brief Inverse for total time for averaging.
+   *
+   */
   double inv_range_time;
+
+  /**
+   * @brief Store the first time step in case it varies.
+   *
+   */
   double dt_0;
 
+  /**
+   * @brief Vector to store the velocity multiplied by time step.
+   *
+   */
   VectorType velocity_dt;
+
+  /**
+   * @brief Vector to store the sum of all the velocities multiplied by time step.
+   *
+   */
   VectorType sum_velocity_dt;
+
+  /**
+   * @brief Vector to store average velocities.
+   *
+   */
   VectorType average_velocities;
+
+  /**
+   * @brief Getter vector for the average velocities.
+   *
+   */
   VectorType get_av;
 
+  /**
+   * @brief Vector to store the velocities multiplied by the time step to
+   * calculate the normal stresses.
+   *
+   */
   VectorType reynolds_normal_stress_dt;
+
+  /**
+   * @brief Vector to store sum of the velocities multiplied by the time step to
+   * calculate the normal stresses.
+   *
+   */
   VectorType sum_reynolds_normal_stress_dt;
+
+  /**
+   * @brief Vector with average Reynolds normal stresses.
+   *
+   */
   VectorType reynolds_normal_stresses;
+
+  /**
+   * @brief Getter vector for the average Reynolds normal stresses.
+   *
+   */
   VectorType get_rns;
 
+  /**
+   * @brief Vector to store the velocities multiplied by the time step to
+   * calculate the shear stresses.
+   *
+   */
   VectorType reynolds_shear_stress_dt;
+
+  /**
+   * @brief Vector to store the sum the velocities multiplied by the time step to
+   * calculate the shear stresses.
+   *
+   */
   VectorType sum_reynolds_shear_stress_dt;
+
+  /**
+   * @brief Vector with average average Reynolds shear stresses.
+   *
+   */
   VectorType reynolds_shear_stresses;
+
+  /**
+   * @brief Getter vector for the average Reynolds shear stresses.
+   *
+   */
   VectorType get_rss;
 
+  /**
+   * @brief Ghosted vector to store the sum of all the velocities multiplied by time step.
+   *
+   */
   VectorType sum_velocity_dt_with_ghost_cells;
+
+  /**
+   * @brief Ghosted vector to store sum of the velocities multiplied by the time step to
+   * calculate the normal stresses.
+   *
+   */
   VectorType sum_rns_dt_with_ghost_cells;
+
+  /**
+   * @brief Ghosted vector to store the sum the velocities multiplied by the time step to
+   * calculate the shear stresses.
+   *
+   */
   VectorType sum_rss_dt_with_ghost_cells;
 
-  // Solution transfer for the three permanent velocity storage
+  /**
+   * @brief Object used to transfer the average velocities in case of mesh adaptation.
+   *
+   */
   parallel::distributed::SolutionTransfer<dim, VectorType>
     solution_transfer_sum_velocity_dt;
+
+  /**
+   * @brief Object used to transfer the average Reynolds normal stresses in case of
+   * mesh adaptation.
+   *
+   */
   parallel::distributed::SolutionTransfer<dim, VectorType>
     solution_transfer_sum_reynolds_normal_stress_dt;
+
+  /**
+   * @brief Object used to transfer the average Reynolds shear stresses in case of
+   * mesh adaptation.
+   *
+   */
   parallel::distributed::SolutionTransfer<dim, VectorType>
     solution_transfer_sum_reynolds_shear_stress_dt;
 
-  double       dt;
-  double       real_initial_time;
-  double       total_time_for_average;
-  bool         average_calculation;
+  /**
+   * @brief Time step.
+   *
+   */
+  double dt;
+
+  /**
+   * @brief Initial time of the simulation.
+   *
+   */
+  double real_initial_time;
+
+  /**
+   * @brief Total period of time for averaging.
+   *
+   */
+  double total_time_for_average;
+
+  /**
+   * @brief Track whether we are within the averaging time period.
+   *
+   */
+  bool average_calculation;
+
+  /**
+   * @brief Number of degrees of freedom per vertex needed to calculate correctly
+   * Reynolds stresses.
+   *
+   */
   unsigned int n_dofs_per_vertex;
 };
 
