@@ -33,22 +33,25 @@
 using namespace dealii;
 
 /**
- * @brief This class defines values related to a particle used in the sharp interface IB. These values are used in the solver
+ * @brief Define behavior of a specific particle for the sharp interface IB solver.
  *
- * @tparam dim  An integer that denotes the number of spatial dimensions
+ * Each particle defined will have these value used in the solver.
+ *
+ * @tparam dim An integer that denotes the dimension of the space in which
+ * the flow is solved.
  */
 template <int dim>
 class IBParticle
 {
 public:
   /**
-   * @brief This class defines values related to a particle used in the sharp interface IB. Each particle defined will have these value used in the solver.
+   * @brief Initialize all particles
    */
   void
   initialize_all();
 
   /**
-   * @brief initialize the value of the last state of the particle
+   * @brief Initialize the value of the last state of the particle
    */
   void
   initialize_previous_solution();
@@ -74,8 +77,9 @@ public:
     return DEM::PropertiesIndex::n_properties;
   }
 
-  /*
-   * @brief Returns the evaluation of the signed distance function of this shape
+  /**
+   * @brief
+   * Returns the evaluation of the signed distance function of this shape
    * Most levelset functions come from Inigo Quilez:
    * iquilezles.org/articles/distfunctions
    *
@@ -211,9 +215,7 @@ public:
 
   /**
    * @brief
-   * @brief Sets the orientation of the particle and dependent members to the argument
-   * This include the shape and the rotation matrix that describes the
-   * orientation.
+   * Sets the orientation of the particle and dependent members to the argument
    *
    * @param orientation The new orientation to set the particle at
    */
@@ -260,123 +262,277 @@ public:
   void
   load_data_from_file();
 
-
-  // The unique identification number of the particle.
+  /**
+   * @brief Unique identification number.
+   */
   unsigned int particle_id;
 
-  // The geometrical information regarding the particle
+  /**
+   * @brief Geometrical information for IB application.
+   */
   std::shared_ptr<Shape<dim>> shape;
 
-  // The particle effective radius. It is the actual radius for spheres.
+  /**
+   * @brief Effective radius, which is the actual radius for spheres.
+   */
   double radius;
-  // The particle Young's modulus. Used in case of contact.
+
+  /**
+   * @brief Young's modulus used for contact force calculations.
+   */
   double youngs_modulus;
-  // The particle restitution coefficient. Used in case of contact.
+
+  /**
+   * @brief Restitution coefficient used for contact force calculations.
+   */
   double restitution_coefficient;
-  // The particle Poisson's ratio. Used in case of contact.
+
+  /**
+   * @brief Poisson's ratio used for contact force calculations.
+   */
   double poisson_ratio;
-  // The particle friction coefficient. Used in case of contact.
+
+  /**
+   * @brief Friction coefficient used for contact force calculations.
+   */
   double friction_coefficient;
-  // The particle rolling friction coefficient. Used in case of contact.
+
+  /**
+   * @brief Rolling friction coefficient used for contact force calculations.
+   */
   double rolling_friction_coefficient;
-  // The particle mass.
+
+  /**
+   * @brief Particle's mass.
+   */
   double mass;
-  // The particle volume.
+
+  /**
+   * @brief Particle's volume
+   */
   double volume;
-  // The surface energy of the particle
+
+  /**
+   * @brief Surface energy
+   */
   double surface_energy;
   // The inertia matrix in the particle frame of reference
+
+  /**
+   * @brief Inertia tensor
+   */
   Tensor<2, 3> inertia;
-  // The particle position.
+
+  /**
+   * @brief Position, which corresponds to the centroid for most implemented shapes.
+   */
   Point<dim> position;
-  // The vector of particle positions at the end of the last n time steps.
+
+  /**
+   * @brief Positions at the last n time steps. n depends on the time integration scheme.
+   */
   std::vector<Point<dim>> previous_positions;
   // The fluid force applied on the particle.
+  /**
+   * @brief Total fluid force applied on the particle.
+   */
   Tensor<1, 3> fluid_forces;
+
+  /**
+   * @brief Viscous contribution to the fluid force applied on the particle.
+   */
   Tensor<1, 3> fluid_viscous_forces;
+
+  /**
+   * @brief Pressure contribution to the fluid force applied on the particle.
+   */
   Tensor<1, 3> fluid_pressure_forces;
-  // The fluid force applied on the particle at the end of the last time step.
+
+  /**
+   * @brief Previous time step's total fluid force applied on the particle.
+   */
   Tensor<1, 3> previous_fluid_forces;
+
+  /**
+   * @brief Previous time step's viscous contribution to the fluid force
+   * applied on the particle.
+   */
   Tensor<1, 3> previous_fluid_viscous_forces;
+
+  /**
+   * @brief Previous time step's pressure contribution to the fluid force.
+   */
   Tensor<1, 3> previous_fluid_pressure_forces;
-  // The fluid torque applied on the particle.
+
+  /**
+   * @brief Fluid torque applied on the particle.
+   */
   Tensor<1, 3> fluid_torque;
-  // The fluid torque is applied on the particle at the end of the last time
-  // step.
+
+  /**
+   * @brief Previous time step's fluid torque applied on the particle.
+   */
   Tensor<1, 3> previous_fluid_torque;
-  // The translational velocity
+  /**
+   * @brief Translational velocity.
+   */
   Tensor<1, 3> velocity;
-  // The vector of particle translational velocity at the end of the last n time
-  // steps.
+
+  /**
+   * @brief Previous time step's translational velocity.
+   */
   std::vector<Tensor<1, 3>> previous_velocity;
-  // The last non-linear iteration of the velocity vector.
+
+  /**
+   * @brief Last non-linear iteration's velocity for CFD-DEM coupling.
+   */
   Tensor<1, 3> velocity_iter;
-  // The last correction vector of the velocity value without any relaxation.
+
+  /**
+   * @brief Last non-linear correction (without relaxation) to the velocity.
+   */
   Tensor<1, 3> previous_velocity_residual;
 
-  // Angular velocity
-  // By default, the angular position is always 0 on every axis.
+  /**
+   * @brief Orientation, with 0 angular position by default on every axis.
+   */
   Tensor<1, 3> orientation;
-  //  The vector of the particle angular position of the last n time steps.
+
+  /**
+   * @brief Previous time step's orientation.
+   */
   std::vector<Tensor<1, 3>> previous_orientation;
-  // Angular velocity
+
+  /**
+   * @brief Angular velocity
+   */
   Tensor<1, 3> omega;
-  // The angular velocity at the end of the last time step.
+
+  /**
+   * @brief Previous time step's angular velocity.
+   */
   std::vector<Tensor<1, 3>> previous_omega;
-  // The last iteration of the omega vector.
+
+  /**
+   * @brief Last non-linear iteration's angular velocity for CFD-DEM coupling.
+   */
   Tensor<1, 3> omega_iter;
-  // The last correction vector of the velocity value without any relaxation.
+
+  /**
+   * @brief Last non-linear correction (without relaxation) to the angular velocity.
+   */
   Tensor<1, 3> previous_omega_residual;
 
-  // The total impulsion that the particle feels during the current time step.
+  /**
+   * @brief Total impulsion felt by the particle during the current time step.
+   */
   Tensor<1, 3> impulsion;
-  // The impulsion from contact that the particle feels.
+
+  /**
+   * @brief Contact-generated impulsion felt by the particle.
+   */
   Tensor<1, 3> contact_impulsion;
-  // The last non-linear iteration of the total impulsion felt by the particle
+
+  /**
+   * @brief Last non-linear iteration's total impulsion on the particle.
+   */
   Tensor<1, 3> impulsion_iter;
-  // The total angular impulsion that the particle as felt during the current
-  // time step.
+
+  /**
+   * @brief Total angular impulsion felt by the particle during the current time step.
+   */
   Tensor<1, 3> omega_impulsion;
-  // The angular impulsion from contact that the particle feels.
+
+  /**
+   * @brief Contact-generated angular impulsion felt by the particle.
+   */
   Tensor<1, 3> omega_contact_impulsion;
-  // The last non-linear iteration of the total angular impulsion felt by the
-  // particle.
+
+  /**
+   * @brief Last non-linear iteration's total angular impulsion on the particle.
+   */
   Tensor<1, 3> omega_impulsion_iter;
 
-  // The function from which the initial particle velocity is determined.
-  // If the dynamic is not resolved, this function determines the velocity at
-  // every time step.
+  /**
+   * @brief Function that determines the velocity.
+   *
+   * If the particle dynamics is solved, this function determines the
+   * value only at the initial state.
+   */
   std::shared_ptr<Functions::ParsedFunction<dim>> f_velocity;
-  // The function from which the initial particle position is determined.
-  // If the dynamic is not resolved, this function determines the position at
-  // every time step.
+
+  /**
+   * @brief Function that determines the position.
+   *
+   * If the particle dynamics is solved, this function determines the
+   * value only at the initial state.
+   */
   std::shared_ptr<Functions::ParsedFunction<dim>> f_position;
-  // The function from which the particle initial angular velocity is
-  // determined. If the dynamic is not resolved, this function determines the
-  // angular velocity at every time step.
+
+  /**
+   * @brief Function that determines the angular velocity.
+   *
+   * If the particle dynamics is solved, this function determines the
+   * value only at the initial state.
+   */
   std::shared_ptr<Functions::ParsedFunction<dim>> f_omega;
-  // The function from which the initial particle angular position is
-  // determined. If the dynamic is not resolved, this function determines the
-  // angular position at every time step.
+
+  /**
+   * @brief Function that determines the orientation.
+   *
+   * If the particle dynamics is solved, this function determines the
+   * value only at the initial state.
+   */
   std::shared_ptr<Functions::ParsedFunction<dim>> f_orientation;
 
-  // Allow the definition of a local relaxation parameter for each particle in
-  // the integration process.
-
-  // Bool that indicates if the motion of this particle must be integrated. If
-  // it is false, the position and velocity are defined by the function.
+  /**
+   * @brief Indicate if the particle dynamics are solved.
+   *
+   * If not, functions are used to define position, velocity, orientation and
+   * angular velocity
+   */
   bool integrate_motion;
-  // Bool that indicates if mesh-based precalculations should be performed.
-  // For RBF shapes with nodes outside the background mesh, slight deformations
-  // can happen near the boundary when mesh-based precalculations is used (due
-  // to the RBF nodes partitioning algorithm).
+
+  /**
+   * @brief Indicate if mesh-based precalculations are performed.
+   *
+   * For RBF shapes with nodes outside the background mesh, slight deformations
+   * can happen near the boundary when mesh-based precalculations are enabled
+   * (due to the RBF nodes partitioning algorithm).
+   */
   bool mesh_based_precalculations;
 
-  // Location of the pressure reference point relative to the center of the
-  // particle. This point is used to define a constant on the pressure.
+  /**
+   * @brief Current residual of the particle velocity.
+   */
+  double residual_velocity;
+
+  /**
+   * @brief Current residual of the particle angular velocity.
+   */
+  double residual_omega;
+
+  /**
+   * @brief Previous iteration's relaxation parameter used for the translational velocity
+   * iteration.
+   */
+  double previous_local_alpha_velocity;
+
+  /**
+   * @brief Previous iteration's relaxation parameter used for the angular velocity
+   * iteration.
+   */
+  double previous_local_alpha_omega;
+
+  /**
+   * @brief Position of the pressure reference point in the particle's
+   * referential. This point is used to define a constant on the pressure.
+   */
   Point<dim> pressure_location;
 
-  // Rotation matrix of the particle in the global space
+  /**
+   * @brief Rotation matrix in the global space
+   */
   Tensor<2, 3> rotation_matrix;
 };
 
