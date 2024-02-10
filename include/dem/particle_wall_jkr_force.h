@@ -208,7 +208,7 @@ private:
   }
 
   /**
-   * Carries out the calculation of the particle-particle non-linear contact
+   * Carries out the calculation of the particle-wall JKR contact
    * force and torques based on the updated values in contact_info
    *
    * @param contact_info A container that contains the required information for
