@@ -24,39 +24,49 @@ class PhysicsSolver;
 
 
 /**
- * @brief NonlinearSolver. Base class for all non-linear solver for non-linear systems of equations.
- * This class is an interface.
+ * @brief Base class that works as an interface for all non-linear solvers for all non-linear systems of equations.
+ *
  */
 template <typename VectorType>
 class NonLinearSolver
 {
 public:
   /**
-   * @brief Constructor for the NonLinearSolver.
+   * @brief Constructor.
    *
-   * @param physics_solver A pointer to the physics solver to which the non-linear solver is attached
+   * @param[in] physics_solver A pointer to the physics solver to which the
+   * non-linear solver is attached.
    *
-   * @param param Non-linear solver parameters
+   * @param[in] param Non-linear solver parameters as specified in the
+   * simulation parameter file.
    *
    */
   NonLinearSolver(PhysicsSolver<VectorType>         *physics_solver,
                   const Parameters::NonLinearSolver &params);
 
+  /**
+   * @brief Destructor.
+   *
+   */
   virtual ~NonLinearSolver()
   {}
 
   /**
-   * @brief Solve the non-linear system of equation.
+   * @brief Solve the non-linear system of equations.
    *
-   * @param is_initial_step Boolean variable that controls which constraints are
-   * going to be applied to the equations
+   * @param[in] is_initial_step Boolean variable that controls which constraints
+   * are going to be applied to the equations depending on the time step.
+   *
    */
   virtual void
   solve(const bool is_initial_step) = 0;
 
 
   /**
-   * @brief Return the current newton iteration.
+   * @brief Get the current newton iteration.
+   *
+   * @return Iteration number.
+   *
    */
   inline unsigned int
   get_current_newton_iteration() const
@@ -65,9 +75,23 @@ public:
   }
 
 protected:
-  PhysicsSolver<VectorType>  *physics_solver;
+  /**
+   * @brief Physics solver for which we need a non-linear solver.
+   *
+   */
+  PhysicsSolver<VectorType> *physics_solver;
+
+  /**
+   * @brief Non linear solver parameters.
+   *
+   */
   Parameters::NonLinearSolver params;
-  unsigned int                outer_iteration;
+
+  /**
+   * @brief Number of current Newton iteration.
+   *
+   */
+  unsigned int outer_iteration;
 };
 
 template <typename VectorType>
