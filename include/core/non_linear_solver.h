@@ -88,7 +88,7 @@ protected:
   Parameters::NonLinearSolver params;
 
   /**
-   * @brief Number of current newton iteration.
+   * @brief Number of current Newton iteration.
    *
    */
   unsigned int outer_iteration;
