@@ -42,7 +42,7 @@ using namespace dealii;
  * \rangle, \langle v \rangle, \langle w \rangle, \langle p \rangle)\f$ and the
  * independent components of the Reynolds stresses tensor \f$(\langle u'u'
  * \rangle, \langle v'v' \rangle, \langle w'w' \rangle, \langle u'v' \rangle,
- * \langle v'w' \rangle, \langle w'u' \rangle)\f$. 
+ * \langle v'w' \rangle, \langle w'u' \rangle)\f$.
  *
  * @tparam dim An integer that denotes the dimension of the space in which
  * the flow is solved.
