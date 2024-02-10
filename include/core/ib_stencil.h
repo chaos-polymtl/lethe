@@ -30,7 +30,7 @@
 using namespace dealii;
 
 /**
- * @brief Defines where the sharp immersed-boundaries are imposed on Eulerian grid.
+ * @brief Define where the sharp immersed-boundaries are imposed on Eulerian grid.
  *
  * @tparam dim An integer that denotes the dimension of the space in which
  * the flow is solved.
