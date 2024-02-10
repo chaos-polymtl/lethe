@@ -206,8 +206,7 @@ template <int dim>
 void
 CFDDEMSolver<dim>::write_checkpoint()
 {
-  TimerOutput::Scope timer(this->computing_timer, "Write_Checkpoint");
-  this->pcout << "Writing restart file" << std::endl;
+  TimerOutput::Scope timer(this->computing_timer, "write_Checkpoint");
 
   std::string prefix = this->simulation_parameters.restart_parameters.filename;
   std::string prefix_particles = prefix + "_particles";
