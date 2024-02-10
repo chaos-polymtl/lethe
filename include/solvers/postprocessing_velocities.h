@@ -42,8 +42,7 @@ using namespace dealii;
  * \rangle, \langle v \rangle, \langle w \rangle, \langle p \rangle)\f$ and the
  * independent components of the Reynolds stresses tensor \f$(\langle u'u'
  * \rangle, \langle v'v' \rangle, \langle w'w' \rangle, \langle u'v' \rangle,
- * \langle v'w' \rangle, \langle w'u' \rangle)\f$. The generated vectors can be
- * displayed using common visualization software.
+ * \langle v'w' \rangle, \langle w'u' \rangle)\f$. 
  *
  * @tparam dim An integer that denotes the dimension of the space in which
  * the flow is solved.
@@ -105,7 +104,7 @@ public:
   calculate_reynolds_stresses(const VectorType &local_evaluation_point);
 
   /**
-   * @brief Gives the average of solutions with ghost cells.
+   * @brief Give the average of solutions with ghost cells.
    *
    * @return The vector of average solutions.
    *
@@ -179,7 +178,7 @@ public:
 
 
   /**
-   * @brief Prepares average velocity object for dynamic mesh adaptation.
+   * @brief Prepare average velocity object for dynamic mesh adaptation.
    */
   void
   prepare_for_mesh_adaptation();
