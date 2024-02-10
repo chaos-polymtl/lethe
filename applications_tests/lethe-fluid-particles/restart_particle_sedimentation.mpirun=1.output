@@ -14,9 +14,6 @@ Warning: expansion of particle-wall contact list is disabled.
 This feature is useful in geometries with concave boundaries. 
 Finished initializing DEM parameters 
 DEM time-step is 5e-05 s 
---------------
-Void Fraction
---------------
 
 **********************************************************************************
 Transient iteration: 51       Time: 0.255    Time step: 0.005    CFL: 0.000114045
@@ -44,8 +41,8 @@ DEM contact search at dem step 80
 DEM contact search at dem step 90
 Finished 100 DEM iterations 
 ---------------------------------------------------------------
-Global continuity equation error: 2.102603355e-14 s^-1
-Max local continuity error: 5.779583296e-09 s^-1
+Global continuity equation error: 2.102603358e-14 s^-1
+Max local continuity error: 5.779583297e-09 s^-1
 
 *********************************************************************************
 Transient iteration: 52       Time: 0.26     Time step: 0.005    CFL: 0.00011428
@@ -73,7 +70,7 @@ DEM contact search at dem step 80
 DEM contact search at dem step 90
 Finished 100 DEM iterations 
 ---------------------------------------------------------------
-Global continuity equation error: 2.113172288e-14 s^-1
+Global continuity equation error: 2.113172293e-14 s^-1
 Max local continuity error: 5.935990369e-09 s^-1
 
 **********************************************************************************
@@ -102,7 +99,7 @@ DEM contact search at dem step 80
 DEM contact search at dem step 90
 Finished 100 DEM iterations 
 ---------------------------------------------------------------
-Global continuity equation error: 2.128002014e-14 s^-1
+Global continuity equation error: 2.128002026e-14 s^-1
 Max local continuity error: 6.094668952e-09 s^-1
 
 **********************************************************************************
@@ -131,7 +128,7 @@ DEM contact search at dem step 80
 DEM contact search at dem step 90
 Finished 100 DEM iterations 
 ---------------------------------------------------------------
-Global continuity equation error: 2.146300113e-14 s^-1
+Global continuity equation error: 2.146300115e-14 s^-1
 Max local continuity error: 6.251812607e-09 s^-1
 
 **********************************************************************************
@@ -160,7 +157,7 @@ DEM contact search at dem step 80
 DEM contact search at dem step 90
 Finished 100 DEM iterations 
 ---------------------------------------------------------------
-Global continuity equation error: 2.167421561e-14 s^-1
+Global continuity equation error: 2.167421574e-14 s^-1
 Max local continuity error: 6.405022803e-09 s^-1
 
 **********************************************************************************
@@ -189,7 +186,7 @@ DEM contact search at dem step 80
 DEM contact search at dem step 90
 Finished 100 DEM iterations 
 ---------------------------------------------------------------
-Global continuity equation error: 2.190851617e-14 s^-1
+Global continuity equation error: 2.190851632e-14 s^-1
 Max local continuity error: 6.552751465e-09 s^-1
 
 **********************************************************************************
@@ -218,7 +215,7 @@ DEM contact search at dem step 80
 DEM contact search at dem step 90
 Finished 100 DEM iterations 
 ---------------------------------------------------------------
-Global continuity equation error: 2.216183438e-14 s^-1
+Global continuity equation error: 2.216183443e-14 s^-1
 Max local continuity error: 6.693977077e-09 s^-1
 
 **********************************************************************************
@@ -247,7 +244,7 @@ DEM contact search at dem step 80
 DEM contact search at dem step 90
 Finished 100 DEM iterations 
 ---------------------------------------------------------------
-Global continuity equation error: 2.243095978e-14 s^-1
+Global continuity equation error: 2.243095986e-14 s^-1
 Max local continuity error: 6.828008949e-09 s^-1
 
 **********************************************************************************
@@ -276,7 +273,7 @@ DEM contact search at dem step 80
 DEM contact search at dem step 90
 Finished 100 DEM iterations 
 ---------------------------------------------------------------
-Global continuity equation error: 2.271334267e-14 s^-1
+Global continuity equation error: 2.271334275e-14 s^-1
 Max local continuity error: 6.954370889e-09 s^-1
 
 **********************************************************************************
@@ -305,7 +302,7 @@ DEM contact search at dem step 80
 DEM contact search at dem step 90
 Finished 100 DEM iterations 
 ---------------------------------------------------------------
-Global continuity equation error: 2.30069354e-14 s^-1
+Global continuity equation error: 2.300693542e-14 s^-1
 Max local continuity error: 7.072735069e-09 s^-1
 
 **********************************************************************************
@@ -334,7 +331,7 @@ DEM contact search at dem step 80
 DEM contact search at dem step 90
 Finished 100 DEM iterations 
 ---------------------------------------------------------------
-Global continuity equation error: 1.512963371e-14 s^-1
+Global continuity equation error: 1.51296336e-14 s^-1
 Max local continuity error: 2.129122947e-08 s^-1
 
 **********************************************************************************
@@ -363,7 +360,7 @@ DEM contact search at dem step 80
 DEM contact search at dem step 90
 Finished 100 DEM iterations 
 ---------------------------------------------------------------
-Global continuity equation error: 2.454700246e-14 s^-1
+Global continuity equation error: 2.454700255e-14 s^-1
 Max local continuity error: 9.217689261e-09 s^-1
 
 **********************************************************************************
@@ -392,7 +389,7 @@ DEM contact search at dem step 80
 DEM contact search at dem step 90
 Finished 100 DEM iterations 
 ---------------------------------------------------------------
-Global continuity equation error: 2.551189516e-14 s^-1
+Global continuity equation error: 2.551189531e-14 s^-1
 Max local continuity error: 6.211132091e-09 s^-1
 
 **********************************************************************************
@@ -421,7 +418,7 @@ DEM contact search at dem step 80
 DEM contact search at dem step 90
 Finished 100 DEM iterations 
 ---------------------------------------------------------------
-Global continuity equation error: 2.563841118e-14 s^-1
+Global continuity equation error: 2.56384113e-14 s^-1
 Max local continuity error: 4.974498097e-09 s^-1
 
 **********************************************************************************
@@ -450,7 +447,7 @@ DEM contact search at dem step 80
 DEM contact search at dem step 90
 Finished 100 DEM iterations 
 ---------------------------------------------------------------
-Global continuity equation error: 2.5902149e-14 s^-1
+Global continuity equation error: 2.590214906e-14 s^-1
 Max local continuity error: 4.331404122e-09 s^-1
 
 **********************************************************************************
@@ -479,7 +476,7 @@ DEM contact search at dem step 80
 DEM contact search at dem step 90
 Finished 100 DEM iterations 
 ---------------------------------------------------------------
-Global continuity equation error: 2.638657922e-14 s^-1
+Global continuity equation error: 2.638657925e-14 s^-1
 Max local continuity error: 4.187176877e-09 s^-1
 
 **********************************************************************************
@@ -508,7 +505,7 @@ DEM contact search at dem step 80
 DEM contact search at dem step 90
 Finished 100 DEM iterations 
 ---------------------------------------------------------------
-Global continuity equation error: 2.708303629e-14 s^-1
+Global continuity equation error: 2.708303638e-14 s^-1
 Max local continuity error: 4.060287497e-09 s^-1
 
 **********************************************************************************
@@ -537,7 +534,7 @@ DEM contact search at dem step 80
 DEM contact search at dem step 90
 Finished 100 DEM iterations 
 ---------------------------------------------------------------
-Global continuity equation error: 2.795528133e-14 s^-1
+Global continuity equation error: 2.795528139e-14 s^-1
 Max local continuity error: 4.213503071e-09 s^-1
 
 **********************************************************************************
@@ -566,7 +563,7 @@ DEM contact search at dem step 80
 DEM contact search at dem step 90
 Finished 100 DEM iterations 
 ---------------------------------------------------------------
-Global continuity equation error: 2.89675675e-14 s^-1
+Global continuity equation error: 2.896756757e-14 s^-1
 Max local continuity error: 4.433658412e-09 s^-1
 
 **********************************************************************************
@@ -595,7 +592,7 @@ DEM contact search at dem step 80
 DEM contact search at dem step 90
 Finished 100 DEM iterations 
 ---------------------------------------------------------------
-Global continuity equation error: 3.009108322e-14 s^-1
+Global continuity equation error: 3.009108333e-14 s^-1
 Max local continuity error: 4.650710799e-09 s^-1
 
 **********************************************************************************
@@ -624,7 +621,7 @@ DEM contact search at dem step 80
 DEM contact search at dem step 90
 Finished 100 DEM iterations 
 ---------------------------------------------------------------
-Global continuity equation error: 3.130394788e-14 s^-1
+Global continuity equation error: 3.130394797e-14 s^-1
 Max local continuity error: 4.864359105e-09 s^-1
 
 **********************************************************************************
@@ -653,7 +650,7 @@ DEM contact search at dem step 80
 DEM contact search at dem step 90
 Finished 100 DEM iterations 
 ---------------------------------------------------------------
-Global continuity equation error: 3.258985657e-14 s^-1
+Global continuity equation error: 3.258985663e-14 s^-1
 Max local continuity error: 5.074584275e-09 s^-1
 
 **********************************************************************************
@@ -682,7 +679,7 @@ DEM contact search at dem step 80
 DEM contact search at dem step 90
 Finished 100 DEM iterations 
 ---------------------------------------------------------------
-Global continuity equation error: 3.39367227e-14 s^-1
+Global continuity equation error: 3.393672273e-14 s^-1
 Max local continuity error: 5.281461782e-09 s^-1
 
 **********************************************************************************
@@ -711,7 +708,7 @@ DEM contact search at dem step 80
 DEM contact search at dem step 90
 Finished 100 DEM iterations 
 ---------------------------------------------------------------
-Global continuity equation error: 3.533560754e-14 s^-1
+Global continuity equation error: 3.533560752e-14 s^-1
 Max local continuity error: 5.485085351e-09 s^-1
 
 **********************************************************************************
@@ -740,7 +737,7 @@ DEM contact search at dem step 80
 DEM contact search at dem step 90
 Finished 100 DEM iterations 
 ---------------------------------------------------------------
-Global continuity equation error: 3.677990789e-14 s^-1
+Global continuity equation error: 3.677990793e-14 s^-1
 Max local continuity error: 5.685537169e-09 s^-1
 
 **********************************************************************************
@@ -769,7 +766,7 @@ DEM contact search at dem step 80
 DEM contact search at dem step 90
 Finished 100 DEM iterations 
 ---------------------------------------------------------------
-Global continuity equation error: 3.826474263e-14 s^-1
+Global continuity equation error: 3.826474269e-14 s^-1
 Max local continuity error: 5.882879307e-09 s^-1
 
 **********************************************************************************
@@ -798,7 +795,7 @@ DEM contact search at dem step 80
 DEM contact search at dem step 90
 Finished 100 DEM iterations 
 ---------------------------------------------------------------
-Global continuity equation error: 3.959128846e-14 s^-1
+Global continuity equation error: 3.959128853e-14 s^-1
 Max local continuity error: 5.77938708e-09 s^-1
 
 **********************************************************************************
@@ -827,7 +824,7 @@ DEM contact search at dem step 80
 DEM contact search at dem step 90
 Finished 100 DEM iterations 
 ---------------------------------------------------------------
-Global continuity equation error: 4.078956487e-14 s^-1
+Global continuity equation error: 4.078956494e-14 s^-1
 Max local continuity error: 5.706451552e-09 s^-1
 
 **********************************************************************************
@@ -856,7 +853,7 @@ DEM contact search at dem step 80
 DEM contact search at dem step 90
 Finished 100 DEM iterations 
 ---------------------------------------------------------------
-Global continuity equation error: 4.1892934e-14 s^-1
+Global continuity equation error: 4.189293404e-14 s^-1
 Max local continuity error: 5.648901675e-09 s^-1
 
 **********************************************************************************
@@ -885,7 +882,7 @@ DEM contact search at dem step 80
 DEM contact search at dem step 90
 Finished 100 DEM iterations 
 ---------------------------------------------------------------
-Global continuity equation error: 4.293538763e-14 s^-1
+Global continuity equation error: 4.293538768e-14 s^-1
 Max local continuity error: 5.61125142e-09 s^-1
 
 **********************************************************************************
@@ -914,7 +911,7 @@ DEM contact search at dem step 80
 DEM contact search at dem step 90
 Finished 100 DEM iterations 
 ---------------------------------------------------------------
-Global continuity equation error: 4.392310527e-14 s^-1
+Global continuity equation error: 4.392310536e-14 s^-1
 Max local continuity error: 5.561428555e-09 s^-1
 
 **********************************************************************************
@@ -943,7 +940,7 @@ DEM contact search at dem step 80
 DEM contact search at dem step 90
 Finished 100 DEM iterations 
 ---------------------------------------------------------------
-Global continuity equation error: 4.48499868e-14 s^-1
+Global continuity equation error: 4.484998688e-14 s^-1
 Max local continuity error: 5.514808737e-09 s^-1
 
 **********************************************************************************
@@ -972,7 +969,7 @@ DEM contact search at dem step 80
 DEM contact search at dem step 90
 Finished 100 DEM iterations 
 ---------------------------------------------------------------
-Global continuity equation error: 4.574545717e-14 s^-1
+Global continuity equation error: 4.574545721e-14 s^-1
 Max local continuity error: 5.469960896e-09 s^-1
 
 **********************************************************************************
@@ -1001,7 +998,7 @@ DEM contact search at dem step 80
 DEM contact search at dem step 90
 Finished 100 DEM iterations 
 ---------------------------------------------------------------
-Global continuity equation error: 4.661417677e-14 s^-1
+Global continuity equation error: 4.66141768e-14 s^-1
 Max local continuity error: 5.426759647e-09 s^-1
 
 **********************************************************************************
@@ -1030,7 +1027,7 @@ DEM contact search at dem step 80
 DEM contact search at dem step 90
 Finished 100 DEM iterations 
 ---------------------------------------------------------------
-Global continuity equation error: 4.746273363e-14 s^-1
+Global continuity equation error: 4.746273368e-14 s^-1
 Max local continuity error: 5.384808764e-09 s^-1
 
 **********************************************************************************
@@ -1059,7 +1056,7 @@ DEM contact search at dem step 80
 DEM contact search at dem step 90
 Finished 100 DEM iterations 
 ---------------------------------------------------------------
-Global continuity equation error: 4.829503878e-14 s^-1
+Global continuity equation error: 4.829503887e-14 s^-1
 Max local continuity error: 5.343849377e-09 s^-1
 
 **********************************************************************************
@@ -1088,7 +1085,7 @@ DEM contact search at dem step 80
 DEM contact search at dem step 90
 Finished 100 DEM iterations 
 ---------------------------------------------------------------
-Global continuity equation error: 4.91137544e-14 s^-1
+Global continuity equation error: 4.911375448e-14 s^-1
 Max local continuity error: 5.303919422e-09 s^-1
 
 **********************************************************************************
@@ -1117,7 +1114,7 @@ DEM contact search at dem step 80
 DEM contact search at dem step 90
 Finished 100 DEM iterations 
 ---------------------------------------------------------------
-Global continuity equation error: 4.992059669e-14 s^-1
+Global continuity equation error: 4.992059675e-14 s^-1
 Max local continuity error: 5.264743716e-09 s^-1
 
 **********************************************************************************
@@ -1146,7 +1143,7 @@ DEM contact search at dem step 80
 DEM contact search at dem step 90
 Finished 100 DEM iterations 
 ---------------------------------------------------------------
-Global continuity equation error: 5.071672421e-14 s^-1
+Global continuity equation error: 5.071672423e-14 s^-1
 Max local continuity error: 5.226090926e-09 s^-1
 
 *********************************************************************************
@@ -1175,7 +1172,7 @@ DEM contact search at dem step 80
 DEM contact search at dem step 90
 Finished 100 DEM iterations 
 ---------------------------------------------------------------
-Global continuity equation error: 5.150292555e-14 s^-1
+Global continuity equation error: 5.150292567e-14 s^-1
 Max local continuity error: 5.187887773e-09 s^-1
 
 **********************************************************************************
@@ -1204,7 +1201,7 @@ DEM contact search at dem step 80
 DEM contact search at dem step 90
 Finished 100 DEM iterations 
 ---------------------------------------------------------------
-Global continuity equation error: 5.227975242e-14 s^-1
+Global continuity equation error: 5.227975249e-14 s^-1
 Max local continuity error: 5.150087303e-09 s^-1
 
 **********************************************************************************
@@ -1233,7 +1230,7 @@ DEM contact search at dem step 80
 DEM contact search at dem step 90
 Finished 100 DEM iterations 
 ---------------------------------------------------------------
-Global continuity equation error: 5.304760019e-14 s^-1
+Global continuity equation error: 5.304760028e-14 s^-1
 Max local continuity error: 5.112661109e-09 s^-1
 
 **********************************************************************************
@@ -1262,7 +1259,7 @@ DEM contact search at dem step 80
 DEM contact search at dem step 90
 Finished 100 DEM iterations 
 ---------------------------------------------------------------
-Global continuity equation error: 5.380676707e-14 s^-1
+Global continuity equation error: 5.380676714e-14 s^-1
 Max local continuity error: 5.075592648e-09 s^-1
 
 **********************************************************************************
@@ -1291,7 +1288,7 @@ DEM contact search at dem step 80
 DEM contact search at dem step 90
 Finished 100 DEM iterations 
 ---------------------------------------------------------------
-Global continuity equation error: 5.455749543e-14 s^-1
+Global continuity equation error: 5.455749557e-14 s^-1
 Max local continuity error: 5.038871814e-09 s^-1
 
 **********************************************************************************
@@ -1320,7 +1317,7 @@ DEM contact search at dem step 80
 DEM contact search at dem step 90
 Finished 100 DEM iterations 
 ---------------------------------------------------------------
-Global continuity equation error: 5.529999817e-14 s^-1
+Global continuity equation error: 5.529999827e-14 s^-1
 Max local continuity error: 5.002490955e-09 s^-1
 
 **********************************************************************************
@@ -1349,7 +1346,7 @@ DEM contact search at dem step 80
 DEM contact search at dem step 90
 Finished 100 DEM iterations 
 ---------------------------------------------------------------
-Global continuity equation error: 5.603447255e-14 s^-1
+Global continuity equation error: 5.60344726e-14 s^-1
 Max local continuity error: 4.966442461e-09 s^-1
 
 **********************************************************************************
@@ -1378,7 +1375,7 @@ DEM contact search at dem step 80
 DEM contact search at dem step 90
 Finished 100 DEM iterations 
 ---------------------------------------------------------------
-Global continuity equation error: 5.676110336e-14 s^-1
+Global continuity equation error: 5.676110344e-14 s^-1
 Max local continuity error: 4.930717739e-09 s^-1
 
 *********************************************************************************
@@ -1407,7 +1404,7 @@ DEM contact search at dem step 80
 DEM contact search at dem step 90
 Finished 100 DEM iterations 
 ---------------------------------------------------------------
-Global continuity equation error: 5.748006003e-14 s^-1
+Global continuity equation error: 5.748006011e-14 s^-1
 Max local continuity error: 4.899667809e-09 s^-1
 
 **********************************************************************************
@@ -1436,7 +1433,7 @@ DEM contact search at dem step 80
 DEM contact search at dem step 90
 Finished 100 DEM iterations 
 ---------------------------------------------------------------
-Global continuity equation error: 5.819149169e-14 s^-1
+Global continuity equation error: 5.819149179e-14 s^-1
 Max local continuity error: 4.877701141e-09 s^-1
 
 **********************************************************************************
@@ -1465,5 +1462,5 @@ DEM contact search at dem step 80
 DEM contact search at dem step 90
 Finished 100 DEM iterations 
 ---------------------------------------------------------------
-Global continuity equation error: 5.889552378e-14 s^-1
+Global continuity equation error: 5.889552387e-14 s^-1
 Max local continuity error: 4.856099419e-09 s^-1

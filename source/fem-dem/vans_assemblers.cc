@@ -832,6 +832,7 @@ GLSVansAssemblerBDF<dim>::assemble_rhs(
           const auto phi_u_i     = scratch_data.phi_u[q][i];
           const auto div_phi_u_i = scratch_data.div_phi_u[q][i];
           double     local_rhs_i = 0;
+
           for (unsigned int p = 0; p < number_of_previous_solutions(method) + 1;
                ++p)
             {
