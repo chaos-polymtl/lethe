@@ -24,19 +24,21 @@
 
 /**
  * @brief Non-linear solver for non-linear systems of equations which uses a Newton
- * method with \alpha relaxation to ensure that the residual is monotonically
- * decreasing.
+ * method with \f$\alpha\f$ relaxation to ensure that the residual is
+ * monotonically decreasing.
  */
 template <typename VectorType>
 class NewtonNonLinearSolver : public NonLinearSolver<VectorType>
 {
 public:
   /**
-   * @brief Constructor for the NewtonNonLinearSolver.
+   * @brief Constructor.
    *
-   * @param physics_solver A pointer to the physics solver to which the non-linear solver is attached
+   * @param[in] physics_solver A pointer to the physics solver to which the
+   * non-linear solver is attached.
    *
-   * @param param Non-linear solver parameters
+   * @param[in] param Non-linear solver parameters as specified in the
+   * simulation parameter file.
    *
    */
   NewtonNonLinearSolver(PhysicsSolver<VectorType>         *physics_solver,
@@ -44,10 +46,11 @@ public:
 
 
   /**
-   * @brief Solve the non-linear system of equation.
+   * @brief Solve the non-linear system of equations.
    *
-   * @param is_initial_step Boolean variable that controls which constraints are
-   * going to be applied to the equations
+   * @param[in] is_initial_step Boolean variable that controls which constraints
+   * are going to be applied to the equations depending on the time step.
+   *
    */
   void
   solve(const bool is_initial_step) override;
