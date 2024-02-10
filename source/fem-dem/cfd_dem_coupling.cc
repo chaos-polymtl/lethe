@@ -206,9 +206,11 @@ template <int dim>
 void
 CFDDEMSolver<dim>::write_checkpoint()
 {
-  TimerOutput::Scope timer(this->computing_timer, "write_Checkpoint");
+  TimerOutput::Scope timer(this->computing_timer, "write_checkpoint");
 
-  std::string prefix = this->simulation_parameters.restart_parameters.filename;
+  std::string prefix =
+    this->simulation_parameters.simulation_control.output_folder +
+    this->simulation_parameters.restart_parameters.filename;
   std::string prefix_particles = prefix + "_particles";
   std::string prefix_grid      = prefix + "_postprocess_data";
   if (Utilities::MPI::this_mpi_process(this->mpi_communicator) == 0)
@@ -288,7 +290,9 @@ void
 CFDDEMSolver<dim>::read_checkpoint()
 {
   TimerOutput::Scope timer(this->computing_timer, "read_checkpoint");
-  std::string prefix = this->simulation_parameters.restart_parameters.filename;
+  std::string        prefix =
+    this->simulation_parameters.simulation_control.output_folder +
+    this->simulation_parameters.restart_parameters.filename;
   std::string prefix_particles = prefix + "_particles";
   std::string prefix_grid      = prefix + "_postprocess_data";
 
