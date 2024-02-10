@@ -120,8 +120,7 @@ private:
   /**
    * @brief Carries out calculation of the rolling resistance torque using the constant model
    *
-   * @param particle_one_properties Particle one properties
-   * @param particle_two_properties Particle two properties
+   * @param particle_properties Particle properties
    * @param effective_rolling_friction_coefficient Effective rolling friction coefficient
    * @param normal_force_norm Normal force norm
    *
