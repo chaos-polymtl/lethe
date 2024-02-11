@@ -37,8 +37,7 @@ using namespace dealii;
  *
  * Each particle defined will have these values used in the solver.
  *
- * @tparam dim An integer that denotes the dimension of the space in which
- * the flow is solved.
+ * @tparam dim An integer that denotes the number of spatial dimensions.
  */
 template <int dim>
 class IBParticle
