@@ -6,13 +6,13 @@ This subsection provides information of the simulation geometry and its mesh. Th
 .. code-block:: text
 
   subsection mesh
-    # Type of mesh. Choices are <gmsh|dealii|cylinder|periodic_hills>
+    # Type of mesh. Choices are <gmsh|dealii|cylinder|colorized_cylinder_shell|periodic_hills>
     set type               = dealii
 
     # GMSH file name
     set file name          = none
 
-    # Grid arguments for dealii, cylinder and periodic_hills
+    # Grid arguments for dealii, cylinder, colorized_cylinder_shell and periodic_hills
     set grid type          = hyper_cube
     set grid arguments     = -1 : 1 : false
 
