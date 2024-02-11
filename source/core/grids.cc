@@ -253,6 +253,83 @@ attach_grid_to_triangulation(
             }
         }
     }
+
+  // Colorized cylinder shell
+  else if (mesh_parameters.type ==
+           Parameters::Mesh::Type::colorized_cylinder_shell)
+    {
+      if (mesh_parameters.simplex)
+        {
+          throw std::runtime_error(
+            "Unsupported mesh type - olorized cylinder shell with simplex is not supported.");
+        }
+      else if (dim != 3)
+        {
+          throw std::runtime_error(
+            "Unsupported mesh type - colorized cylinder shell is only supported in 3d.");
+        }
+
+      // First generate the regular deal.II cylinder_shell using the
+      // mesh_parametr arguments
+      GridGenerator::generate_from_name_and_arguments(
+        triangulation, "cylinder_shell", mesh_parameters.grid_arguments);
+
+      // Now that we have our grid, colorize the boundary conditions.
+      // Inner cylinder has boundary id 0
+      // Outer cylinder has boundary id 1
+      // Bottom (Z-) part of the cylinder has boundary id 2
+      // Top (Z+) part of the cylinder has boundary id 3
+
+      // Split the argument to extract the radius
+      std::vector<std::string> split_arguments =
+        Utilities::split_string_list(mesh_parameters.grid_arguments, ":");
+      // Length if argument 0
+      const double length = Utilities::string_to_double(split_arguments[0]);
+      const double inner_radius =
+        Utilities::string_to_double(split_arguments[1]);
+      const double outer_radius =
+        Utilities::string_to_double(split_arguments[2]);
+
+      double eps_z               = 1e-3 * (outer_radius - inner_radius);
+      double mid_radial_distance = 0.5 * (outer_radius - inner_radius);
+      Triangulation<3>::cell_iterator cell = triangulation.begin();
+
+      for (; cell != triangulation.end(); ++cell)
+        for (const unsigned int f : GeometryInfo<3>::face_indices())
+          {
+            if (!cell->face(f)->at_boundary())
+              continue;
+
+            const auto face_center = cell->face(f)->center();
+
+            const double radius = std::sqrt(face_center[0] * face_center[0] +
+                                            face_center[1] * face_center[1]);
+
+            const double z = face_center[2];
+
+            if (std::fabs(z) < eps_z) // z = 0 set boundary 2
+              {
+                cell->face(f)->set_boundary_id(2);
+              }
+            else if (std::fabs(z - length) < eps_z) // z = length set boundary 3
+              {
+                cell->face(f)->set_boundary_id(3);
+              }
+            else if (std::fabs(radius - inner_radius) >
+                     mid_radial_distance) // r =  outer_radius set boundary 1
+              {
+                cell->face(f)->set_boundary_id(1);
+              }
+            else if (std::fabs(radius - inner_radius) <
+                     mid_radial_distance) // r =  inner_radius set boundary 0
+              {
+                cell->face(f)->set_boundary_id(0);
+              }
+            else
+              DEAL_II_ASSERT_UNREACHABLE();
+          }
+    }
+
   // Periodic Hills grid
   else if (mesh_parameters.type == Parameters::Mesh::Type::periodic_hills &&
            !mesh_parameters.simplex)

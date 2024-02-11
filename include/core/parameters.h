@@ -1082,7 +1082,8 @@ namespace Parameters
       gmsh,
       dealii,
       periodic_hills,
-      cylinder
+      cylinder,
+      colorized_cylinder_shell
     };
     Type type;
 
