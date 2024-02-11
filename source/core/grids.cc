@@ -326,7 +326,8 @@ attach_grid_to_triangulation(
                 cell->face(f)->set_boundary_id(0);
               }
             else
-              DEAL_II_ASSERT_UNREACHABLE();
+              throw std::runtime_error(
+                "There was an error while setting up this mesh");
           }
     }
 
