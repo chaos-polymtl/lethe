@@ -34,10 +34,9 @@ using namespace dealii;
 #  define particle_wall_jkr_force_h
 
 /**
- * Calculation of the JKR particle-wall contact force using the
+ * @brief Calculation of the JKR particle-wall contact force using the
  * information obtained from the fine search and physical properties of
  * particles and walls
- *
  */
 
 template <int dim>
@@ -56,8 +55,8 @@ public:
     const std::vector<types::boundary_id> boundary_index = {});
 
   /**
-   * Carries out the calculation of the particle-wall contact force using
-   * non-linear (Hertzian) model
+   * @brief Carries out the calculation of the particle-wall contact force using
+   * JKR model
    *
    * @param particle_wall_pairs_in_contact Required information for the calculation of
    * the particle-wall contact force. These information were obtained in
@@ -75,7 +74,7 @@ public:
     std::vector<Tensor<1, 3>> &force) override;
 
   /**
-   * Carries out the calculation of particle-floating mesh contact force using
+   * @brief Carries out the calculation of particle-floating mesh contact force using
    * JKR model
    *
    * @param particle_floating_mesh_in_contact A container that stores the information of
@@ -105,7 +104,7 @@ private:
    * @param effective_rolling_friction_coefficient Effective rolling friction coefficient
    * @param normal_force_norm Normal force norm
    *
-   * @return rolling resistance torque
+   * @return Rolling resistance torque
    */
   inline Tensor<1, 3>
   no_resistance(const ArrayView<const double> & /*particle_properties*/,
@@ -124,7 +123,7 @@ private:
    * @param effective_rolling_friction_coefficient Effective rolling friction coefficient
    * @param normal_force_norm Normal force norm
    *
-   * @return rolling resistance torque
+   * @return Rolling resistance torque
    */
   inline Tensor<1, 3>
   constant_resistance(const ArrayView<const double> &particle_properties,
@@ -162,8 +161,7 @@ private:
   /**
    * @brief Carries out calculation of the rolling resistance torque using the viscous model
    *
-   * @param particle_one_properties Particle one properties
-   * @param particle_two_properties Particle two properties
+   * @param particle_properties Particle properties
    * @param effective_rolling_friction_coefficient Effective rolling friction coefficient
    * @param normal_force_norm Normal force norm
    *
@@ -208,7 +206,7 @@ private:
   }
 
   /**
-   * Carries out the calculation of the particle-wall JKR contact
+   * @brief Carries out the calculation of the particle-wall JKR contact
    * force and torques based on the updated values in contact_info
    *
    * @param contact_info A container that contains the required information for

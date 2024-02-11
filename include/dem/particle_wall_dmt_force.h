@@ -31,7 +31,7 @@ using namespace dealii;
 #  define particle_wall_dmt_force_h
 
 /**
- * Calculation of the DMT particle-wall contact force using the
+ * @brief Calculation of the DMT particle-wall contact force using the
  * information obtained from the fine search and physical properties of
  * particles and walls
  */
@@ -51,12 +51,12 @@ public:
     const std::vector<types::boundary_id> boundary_index = {});
 
   /**
-   * Carries out the calculation of the particle-wall contact force using
+   * @brief Carries out the calculation of the particle-wall contact force using
    * DMT model
    *
-   * @param particle_wall_pairs_in_contact Required information for the calculation of
-   * the particle-wall contact force. These information were obtained in
-   * the fine search
+   * @param particle_wall_pairs_in_contact Required information for the calculation
+   * of the particle-wall contact force. These information were obtained in the
+   * fine search
    * @param dt DEM time step
    * @param torque Torque acting on particles
    * @param force Force acting on particles
@@ -70,11 +70,11 @@ public:
     std::vector<Tensor<1, 3>> &force) override;
 
   /**
-   * Carries out the calculation of particle-floating mesh contact force using
-   * DMT model
+   * @brief Carries out the calculation of particle-floating mesh contact force
+   * using DMT model
    *
-   * @param particle_floating_mesh_in_contact A container that stores the information of
-   * particle-floating mesh contact
+   * @param particle_floating_mesh_in_contact A container that stores the information
+   * of particle-floating mesh contact
    * @param dt DEM time step
    * @param torque Torque acting on particles
    * @param force Force acting on particles
@@ -92,9 +92,10 @@ public:
 
 private:
   /**
-   * @brief No rolling resistance torque model
+   * @brief Carries out calculation of the rolling resistance torque using the no
+   * resistance model
    *
-   * @param particle_properties Particle one properties
+   * @param particle_properties Particle properties
    * @param effective_rolling_friction_coefficient Effective rolling friction coefficient
    * @param normal_force_norm Normal force norm
    * @return rolling resistance torque
@@ -110,10 +111,12 @@ private:
   }
 
   /**
-   * @brief Carries out calculation of the rolling resistance torque using the constant model
+   * @brief Carries out calculation of the rolling resistance torque using the
+   * constant model
    *
    * @param particle_properties Particle properties
-   * @param effective_rolling_friction_coefficient Effective rolling friction coefficient
+   * @param effective_rolling_friction_coefficient Effective rolling friction
+   * coefficient
    * @param normal_force_norm Normal force norm
    * @return rolling resistance torque
    */
@@ -151,9 +154,10 @@ private:
   }
 
   /**
-   * @brief Carries out calculation of the rolling resistance torque using the viscous model
+   * @brief Carries out calculation of the rolling resistance torque using the
+   * viscous model
    *
-   * @param particle_properties Particle one properties
+   * @param particle_properties Particle properties
    * @param effective_rolling_friction_coefficient Effective rolling friction coefficient
    * @param normal_force_norm Normal force norm
    * @return rolling resistance torque
@@ -197,12 +201,12 @@ private:
   }
 
   /**
-   * Carries out the calculation of the particle-wall DMT contact
-   * force and torques based on the updated values in contact_info
+   * Carries out the calculation of the particle-wall DMT contact force and torques
+   * based on the updated values in contact_info
    *
    * @param contact_info A container that contains the required information for
    * calculation of the contact force for a particle pair in contact
-   * @param particle_properties Properties of particle one in contact
+   * @param particle_properties Properties of particle in contact
    * @return A tuple which contains: 1, normal force, 2,
    * tangential force, 3, tangential torque and 4, rolling resistance torque of
    * a contact pair
