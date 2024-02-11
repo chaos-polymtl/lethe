@@ -662,9 +662,9 @@ namespace Parameters
 
         prm.declare_entry("particle wall contact force method",
                           "nonlinear",
-                          Patterns::Selection("linear|nonlinear|JKR"),
+                          Patterns::Selection("linear|nonlinear|JKR|DMT"),
                           "Choosing particle-wall contact force model"
-                          "Choices are <linear|nonlinear|JKR>.");
+                          "Choices are <linear|nonlinear|JKR|DMT>.");
 
         prm.declare_entry(
           "rolling resistance torque method",
@@ -836,10 +836,11 @@ namespace Parameters
           particle_wall_contact_force_method =
             ParticleWallContactForceModel::nonlinear;
         else if (pwcf == "JKR")
-          {
             particle_wall_contact_force_method =
               ParticleWallContactForceModel::JKR;
-          }
+        else if (pwcf == "DMT")
+            particle_wall_contact_force_method =
+              ParticleWallContactForceModel::DMT;
         else
           {
             throw(

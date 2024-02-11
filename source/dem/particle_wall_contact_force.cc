@@ -12,9 +12,6 @@
  * the top level of the Lethe distribution.
  *
  * ---------------------------------------------------------------------
-
- *
- * Author: Shahab Golshan, Polytechnique Montreal, 2019
  */
 
 #include <dem/particle_wall_contact_force.h>

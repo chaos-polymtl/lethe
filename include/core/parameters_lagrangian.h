@@ -269,7 +269,8 @@ namespace Parameters
       {
         linear,
         nonlinear,
-        JKR
+        JKR,
+        DMT
       } particle_wall_contact_force_method;
 
       // Rolling resistance torque method
