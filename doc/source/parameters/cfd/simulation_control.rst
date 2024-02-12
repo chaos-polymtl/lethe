@@ -49,7 +49,7 @@ This subsection contains the general information of the simulation, including th
     # Maximum CFL value
     set max cfl                      = 1
 		
-		# Maximum time step value
+    # Maximum time step value
     set max time step                = 1e6
 
     # Adaptative time step scaling
