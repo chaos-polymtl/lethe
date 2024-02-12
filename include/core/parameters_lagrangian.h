@@ -39,7 +39,8 @@ namespace Parameters
       hertz_mindlin_limit_force,
       hertz_mindlin_limit_overlap,
       hertz,
-      hertz_JKR
+      hertz_JKR,
+      DMT
     };
 
     enum RollingResistanceMethod

@@ -461,7 +461,7 @@ ParticleWallJKRForce<dim>::calculate_jkr_contact_force_and_torque(
     sqrt(model_parameter_st / (model_parameter_sn + DBL_MIN));
 
   // Calculation of the normal force coefficient (F_n_JKR)
-  const double normal_force_coefficient =
+  const double normal_force_norm =
     4. * this->effective_youngs_modulus[particle_type] *
       Utilities::fixed_power<3>(a) / (3. * effective_radius) -
     std::sqrt(8 * M_PI * this->effective_surface_energy[particle_type] *
@@ -469,9 +469,9 @@ ParticleWallJKRForce<dim>::calculate_jkr_contact_force_and_torque(
               Utilities::fixed_power<3>(a)) +
     normal_damping_constant * contact_info.normal_relative_velocity;
 
-  // Calculation of normal force using the normal_force_coefficient and the
+  // Calculation of normal force using the normal_force_norm and the
   // normal vector.
-  Tensor<1, 3> normal_force = normal_force_coefficient * normal_vector;
+  Tensor<1, 3> normal_force = normal_force_norm * normal_vector;
 
   // Calculation of tangential forces.
   Tensor<1, 3> tangential_force =
@@ -480,11 +480,10 @@ ParticleWallJKRForce<dim>::calculate_jkr_contact_force_and_torque(
 
   // JKR theory says that the coulomb threshold must be modified with the
   // pull-out force. (Thornton 1991)
-  const double pull_off_force = 3. * M_PI *
-                                this->effective_surface_energy[particle_type] *
-                                effective_radius;
   const double modified_coulomb_threshold =
-    (normal_force_coefficient + 2. * pull_off_force) *
+    (normal_force_norm + 6. * M_PI *
+                           this->effective_surface_energy[particle_type] *
+                           effective_radius) *
     this->effective_coefficient_of_friction[particle_type];
 
   // Check for gross sliding

@@ -656,9 +656,9 @@ namespace Parameters
           "particle particle contact force method",
           "hertz_mindlin_limit_overlap",
           Patterns::Selection(
-            "linear|hertz_mindlin_limit_force|hertz_mindlin_limit_overlap|hertz|hertz_JKR"),
+            "linear|hertz_mindlin_limit_force|hertz_mindlin_limit_overlap|hertz|hertz_JKR|DMT"),
           "Choosing particle-particle contact force model"
-          "Choices are <linear|hertz_mindlin_limit_force|hertz_mindlin_limit_overlap|hertz|hertz_JKR>.");
+          "Choices are <linear|hertz_mindlin_limit_force|hertz_mindlin_limit_overlap|hertz|hertz_JKR|DMT>.");
 
         prm.declare_entry("particle wall contact force method",
                           "nonlinear",
@@ -822,6 +822,9 @@ namespace Parameters
         else if (ppcf == "hertz_JKR")
           particle_particle_contact_force_model =
             ParticleParticleContactForceModel::hertz_JKR;
+        else if (ppcf == "DMT")
+          particle_particle_contact_force_model =
+            ParticleParticleContactForceModel::DMT;
         else
           {
             throw(std::runtime_error(
