@@ -172,6 +172,7 @@ SimulationControlTransient::SimulationControlTransient(
   : SimulationControl(param)
   , adapt(param.adapt)
   , adaptative_time_step_scaling(param.adaptative_time_step_scaling)
+  , max_dt(param.max_dt)
 {}
 
 void
