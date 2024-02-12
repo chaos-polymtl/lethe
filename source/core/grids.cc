@@ -261,7 +261,7 @@ attach_grid_to_triangulation(
       if (mesh_parameters.simplex)
         {
           throw std::runtime_error(
-            "Unsupported mesh type - olorized cylinder shell with simplex is not supported.");
+            "Unsupported mesh type - colorized cylinder shell with simplex is not supported.");
         }
       else if (dim != 3)
         {
@@ -270,7 +270,7 @@ attach_grid_to_triangulation(
         }
 
       // First generate the regular deal.II cylinder_shell using the
-      // mesh_parametr arguments
+      // mesh_parameters arguments
       GridGenerator::generate_from_name_and_arguments(
         triangulation, "cylinder_shell", mesh_parameters.grid_arguments);
 

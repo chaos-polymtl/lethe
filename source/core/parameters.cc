@@ -1928,7 +1928,7 @@ namespace Parameters
         Patterns::Selection(
           "gmsh|dealii|periodic_hills|cylinder|colorized_cylinder_shell"),
         "Type of mesh "
-        "Choices are <gmsh|dealii|periodic_hills|cylinder>.");
+        "Choices are <gmsh|dealii|periodic_hills|cylinder|colorized_cylinder_shell>.");
 
       prm.declare_entry("file name",
                         "none",
