@@ -13,6 +13,14 @@
  *
  * ---------------------------------------------------------------------
 
+
+ *
+ * Implementation of heat transfer as an auxiliary physics.
+ * This heat equation is weakly coupled to the velocity field.
+ * Equation solved:
+ * rho * Cp * (dT/dt + u.gradT) = k div(gradT) + nu/rho * (gradu : gradu)
+ *
+
  *
  * Implementation of heat transfer as an auxiliary physics.
  * This heat equation is weakly coupled to the velocity field.
@@ -51,11 +59,37 @@
 #include <deal.II/lac/trilinos_vector.h>
 
 
+/**
+ * @brief Implementation of heat transfer as an auxiliary physics. The heat
+ * equation is weakly coupled to the velocity field. Equation solved:
+ * \f$ \rho C_p \cdot \left( \frac{dT}{dt} + u \cdot \nabla T \right) =
+ * k \cdot \nabla^2 T + \frac{\nu}{\rho} \cdot (\nabla u : \nabla u) \f$
+ *
+ */
 
 template <int dim>
 class HeatTransfer : public AuxiliaryPhysics<dim, GlobalVectorType>
 {
 public:
+  /**
+   * @brief Constructor of the HeatTransfer object
+   *
+   * @param multiphysics_interface Map of the auxiliary physics that will be
+   * solved on top of a computational fluid dynamic simulation. The keys are
+   * the Parameters::PhysicsID int enum.
+   *
+   * @param p_simulation_parameters Contain the simulation parameter file
+   * information.
+   *
+   * @param p_triangulation Contain the mesh information. In a
+   * parallel::DistributedTriangulationBase<dim> not every detail may be known
+   * on each processor. The mesh is distributed between the processors.
+   *
+   * @param p_simulation_control Object responsible for the control of
+   * steady-state and transient simulations. Contains all the information
+   * related to time stepping and the stopping criterions.
+   *
+   */
   HeatTransfer(MultiphysicsInterface<dim>      *multiphysics_interface,
                const SimulationParameters<dim> &p_simulation_parameters,
                std::shared_ptr<parallel::DistributedTriangulationBase<dim>>
@@ -125,16 +159,16 @@ public:
    * @brief Call for the assembly of the matrix and the right-hand side.
    *
    * @deprecated This function is to be deprecated when the new assembly mechanism
-   * is integrated to this solver
+   * is integrated to this solver.
    */
   void
   assemble_matrix_and_rhs();
 
   /**
-   * @brief Call for the assembly of the right-hand side
+   * @brief Call for the assembly of the right-hand side.
    *
    * @deprecated This function is to be deprecated when the new assembly mechanism
-   * is integrated to this solver
+   * is integrated to this solver.
    */
   void
   assemble_rhs();
@@ -142,7 +176,7 @@ public:
   /**
    * @brief Call for the assembly of the matrix and the right-hand side of the Nitsche restriction for the heat transfert equation.
    *
-   * @param assemble_matrix boolean that is true for matrix assembly, and false for rhs assembly
+   * @param assemble_matrix boolean that is true for matrix assembly, and false for rhs assembly.
    */
   void
   assemble_nitsche_heat_restriction(bool assemble_matrix);
@@ -150,13 +184,16 @@ public:
   /**
    * @brief Attach the solution vector to the DataOut provided. This function
    * enable the auxiliary physics to output their solution via the core solver.
+   *
+   * @param data_out Provide output of data described by finite element fields
+   * defined on a collection of cells.
    */
   void
   attach_solution_to_output(DataOut<dim> &data_out) override;
 
 
   /**
-   * @brief Calculates the L2 error of the solution
+   * @brief Calculate the L2 error of the solution.
    */
   double
   calculate_L2_error();
@@ -169,7 +206,7 @@ public:
   finish_simulation() override;
 
   /**
-   * @brief Rearrange vector solution correctly for transient simulations
+   * @brief Rearrange vector solution correctly for transient simulations.
    */
   void
   percolate_time_vectors() override;
@@ -186,14 +223,14 @@ public:
 
 
   /**
-   * @brief pre_mesh_adaption Prepares the auxiliary physics variables for a
-   * mesh refinement/coarsening
+   * @brief Prepare the auxiliary physics variables for a
+   * mesh refinement/coarsening.
    */
   void
   pre_mesh_adaptation() override;
 
   /**
-   * @brief post_mesh_adaption Interpolates the auxiliary physics variables to the new mesh
+   * @brief Interpolate the auxiliary physics variables to the new mesh.
    */
   void
   post_mesh_adaptation() override;
@@ -201,9 +238,9 @@ public:
   /**
    * @brief Compute the Kelly error estimator for mesh refinement.
    *
-   * @param ivar The current element of the map simulation_parameters.mesh_adaptation.variables
+   * @param ivar The current element of the map simulation_parameters.mesh_adaptation.variables.
    *
-   * @param estimated_error_per_cell The deal.II vector of estimated_error_per_cell
+   * @param estimated_error_per_cell The deal.II vector of estimated_error_per_cell.
    */
   void
   compute_kelly(const std::pair<const Parameters::MeshAdaptation::Variable,
@@ -211,85 +248,137 @@ public:
                 dealii::Vector<float> &estimated_error_per_cell) override;
 
   /**
-   * @brief Prepares Heat Transfer to write checkpoint
+   * @brief Prepare Heat Transfer to write checkpoint
    */
   void
   write_checkpoint() override;
 
   /**
-   * @brief Allows Heat Transfer to set-up solution vector from checkpoint file;
+   * @brief Allow Heat Transfer to set-up solution vector from checkpoint file.
    */
   void
   read_checkpoint() override;
 
   /**
-   * @brief Sets-up the DofHandler and the degree of freedom associated with the physics.
+   * @brief Set-up the DofHandler and the degree of freedom associated with the physics.
    */
   void
   setup_dofs() override;
 
   /**
-   * @brief Sets-up the initial conditions associated with the physics. Generally, physics
-   * only support imposing nodal values, but some physics additionnaly support
-   * the use of L2 projection or steady-state solutions.
+   * @brief Set-up the initial conditions associated with the physics.
+   * Generally, physics only support imposing nodal values, but some physics
+   * additionnaly support the use of L2 projection or steady-state solutions.
    */
   void
   set_initial_conditions() override;
 
   /**
-   * @brief Update non zero constraints if the boundary is time-dependent
+   * @brief Update non zero constraints if the boundary is time-dependent.
    */
   void
   update_boundary_conditions() override;
 
   /**
-   * @brief Call for the solution of the linear system of equation using a strategy appropriate
-   * to the auxiliary physics
+   * @brief Call for the solution of the linear system of equation using a
+   * strategy appropriate to the auxiliary physics.
    *
-   * @param initial_step Provides the linear solver with indication if this solution is the first
-   * one for the system of equation or not
+   * @param initial_step Provide the linear solver with indication if this
+   * solution is the first one for the system of equation or not.
    *
-   * @param renewed_matrix Indicates to the linear solve if the system matrix has been recalculated or not
+   * @param renewed_matrix Indicate to the linear solve if the system matrix
+   * has been recalculated or not.
    */
   void
   solve_linear_system(const bool initial_step,
                       const bool renewed_matrix = true) override;
 
   /**
-   * @brief Getter methods to get the private attributes for the physic currently solved
-   * NB : dof_handler and present_solution are passed to the multiphysics
-   * interface at the end of the setup_dofs method
+   * @brief Getter method to access the private attribute dof_handler for the
+   * physic currently solved. NB : dof_handler is now passed to the
+   * multiphysics interface at the end of the setup_dofs method.
+   *
+   * @return A list of the indices of the degrees of freedom.
    */
   const DoFHandler<dim> &
   get_dof_handler() override
   {
     return dof_handler;
   }
+
+  /**
+   * @brief Getter method to access the private attribute evaluation_point for
+   * the physic currently solved.
+   *
+   * @return The point at which the evaluation is performed.
+   */
   GlobalVectorType &
   get_evaluation_point() override
   {
     return evaluation_point;
   }
+
+  /**
+   * @brief Getter method to access the private attribute
+   * local_evaluation_point for the physic currently solved.
+   *
+   * @return The local evaluation point. Ghosts cells are not considered in
+   * this evaluation.
+   */
   GlobalVectorType &
   get_local_evaluation_point() override
   {
     return local_evaluation_point;
   }
+
+  /**
+   * @brief Getter method to access the private attribute
+   * newton_update for the physic currently solved.
+   *
+   * @return The direction \f$ \delta u^n \f$ used to perform the newton iteration
+   * in \f$ u^{n+1} = u^n + \alpha ^n \delta u ^n \f$. Where \f$ \alpha ^n \f$
+   * is the size of the step.
+   */
   GlobalVectorType &
   get_newton_update() override
   {
     return newton_update;
   }
+
+  /**
+   * @brief Getter method to access the private attribute
+   * present_solution for the physic currently solved. NB : present_solution is
+   * now passed to the multiphysics interface at the end of the setup_dofs
+   * method.
+   *
+   * @return A vector containing all the values of the solution.
+   */
   GlobalVectorType &
   get_present_solution() override
   {
     return present_solution;
   }
+
+  /**
+   * @brief Getter method to access the private attribute
+   * system_rhs for the physic currently solved.
+   *
+   * @return Right hand side vector
+   */
   GlobalVectorType &
   get_system_rhs() override
   {
     return system_rhs;
   }
+
+  /**
+   * @brief Getter method to access the private attribute
+   * nonzero_constraints for the physic currently solved.
+   *
+   * @return Store the nonzero constraints that arise from several sources such
+   * as boundary conditions and hanging nodes in the mesh. See the deal.II
+   * documentation on constraints on degrees of freedom for more information.
+   */
   AffineConstraints<double> &
   get_nonzero_constraints() override
   {
@@ -299,7 +388,7 @@ public:
 
 private:
   /**
-   *  @brief Assembles the matrix associated with the solver
+   *  @brief Assemble the matrix associated with the solver
    */
   void
   assemble_system_matrix() override;
@@ -314,8 +403,8 @@ private:
   /**
    * @brief Assemble the local matrix for a given cell.
    *
-   * This function is used by the WorkStream class to assemble
-   * the system matrix. It is a thread safe function.
+   * Use the WorkStream class to assemble the system matrix. It is
+   * a thread safe function.
    *
    * @param cell The cell for which the local matrix is assembled.
    *
@@ -353,7 +442,7 @@ private:
     StabilizedMethodsCopyData                            &copy_data);
 
   /**
-   * @brief sets up the vector of assembler functions
+   * @brief Set-up the vector of assembler functions
    */
   virtual void
   setup_assemblers();
@@ -379,13 +468,13 @@ private:
    * Calculate temperature statistics on the domain : Max, min, average and
    * standard-deviation.
    *
-   * @param gather_vof boolean true when VOF=true (multiphase flow), used to gather
-   * VOF information
+   * @param gather_vof Boolean true when VOF=true (multiphase flow), used to gather
+   * VOF information.
    *
    * @param monitored_fluid Fluid indicator (fluid0 or fluid1 or both) corresponding
    * to the phase of interest.
    *
-   * @param domain_name string indicating the monitored_fluid in the output filename
+   * @param domain_name String indicating the monitored_fluid in the output filename.
    */
 
   void
@@ -416,7 +505,7 @@ private:
   postprocess_liquid_fraction(const bool gather_vof);
 
   /**
-   * @brief Post-processing. Write the liquid fraction to a file
+   * @brief Post-processing. Write the liquid fraction to an output file
    */
 
   void
@@ -446,19 +535,20 @@ private:
   postprocess_heat_flux_on_nitsche_ib();
 
   /**
-   * Post-processing. Calculate the thermal energy (rho*Cp*T) in a fluid domain.
+   * Post-processing. Calculate the thermal energy \f$ (\rho \cdot C_p \cdot T)
+   * \f$ in a fluid domain.
    *
-   * @param gather_vof boolean true when VOF=true (multiphase flow), used to gather
-   * VOF information
+   * @param gather_vof Boolean true when VOF=true (multiphase flow), used to gather
+   * VOF information.
    *
    * @param monitored_fluid Fluid indicator (fluid0 or fluid1 or both) corresponding
    * to the phase of interest.
    *
-   * @param domain_name string indicating the monitored_fluid in the console output,
+   * @param domain_name Btring indicating the monitored_fluid in the console output,
    * table and filename.
    *
-   * @param current_solution_fd current solution for the fluid dynamics, parsed
-   * by postprocess
+   * @param current_solution_fd Current solution for the fluid dynamics, parsed
+   * by postprocess.
    */
 
   template <typename VectorType>
@@ -506,74 +596,191 @@ private:
 
   MultiphysicsInterface<dim> *multiphysics;
 
+  /**
+   * @brief Store information related to the the computing time such as CPU times or
+   * wall time.
+   */
   TimerOutput computing_timer;
 
+  /**
+   * @brief Contain the simulation parameter file information.
+   */
   const SimulationParameters<dim> &simulation_parameters;
 
 
   // Core elements for the heat transfer simulation
-  std::shared_ptr<parallel::DistributedTriangulationBase<dim>> triangulation;
-  std::shared_ptr<SimulationControl> simulation_control;
-  DoFHandler<dim>                    dof_handler;
 
+  /**
+   * @brief Collection of cells that cover the domain on which one wants to
+   * solve a partial differential equation.
+   */
+  std::shared_ptr<parallel::DistributedTriangulationBase<dim>> triangulation;
+  /**
+   * @brief Responsible for the control of steady-state and transient
+   * simulations. Contains all the information related to time stepping and the
+   * stopping criterion. See simulation_control abstract class for more
+   * information.
+   */
+  std::shared_ptr<SimulationControl> simulation_control;
+  /**
+   * @brief Given a triangulation and a description of a finite element, this
+   * class enumerates degrees of freedom on all vertices, edges, faces, and
+   * cells of the triangulation.
+   */
+  DoFHandler<dim> dof_handler;
+  /**
+   * @brief The base class for finite element.
+   */
   std::shared_ptr<FiniteElement<dim>> fe;
-  ConvergenceTable                    error_table;
+
+  /**
+   * @brief Store some convergence data, such as residuals of the cg-method,
+   * or some evaluated <i>L<sup>2</sup></i>-errors of discrete solutions.
+   * Evaluate convergence rates or orders.
+   */
+  ConvergenceTable error_table;
 
   // Mapping and Quadrature
-  std::shared_ptr<Mapping<dim>>        temperature_mapping;
-  std::shared_ptr<Quadrature<dim>>     cell_quadrature;
+
+  /**
+   * @brief Is a transformation which maps point in the reference cell to
+   * points in the actual grid cell.
+   */
+  std::shared_ptr<Mapping<dim>> temperature_mapping;
+  /**
+   * @brief Approximate an integral by evaluating the integrand at specific
+   * points and summing the point values with specific weights
+   */
+  std::shared_ptr<Quadrature<dim>> cell_quadrature;
+  /**
+   * @brief Approximate an integral by evaluating the integrand at specific
+   * points and summing the point values with specific weights
+   */
   std::shared_ptr<Quadrature<dim - 1>> face_quadrature;
 
 
   // Solution storage:
+
+  /**
+   * @brief Store a subset of the DoF indices that are stored on a
+   * particular processor on a distributed architecture.
+   */
   IndexSet locally_owned_dofs;
+  /**
+   * @brief Store a subset of the DoF indices that contains both the
+   * locally_owned_dofs and the DoF indices on all ghost cells.
+   */
   IndexSet locally_relevant_dofs;
 
-  GlobalVectorType               evaluation_point;
-  GlobalVectorType               local_evaluation_point;
-  GlobalVectorType               newton_update;
-  GlobalVectorType               present_solution;
-  GlobalVectorType               system_rhs;
-  AffineConstraints<double>      nonzero_constraints;
-  AffineConstraints<double>      zero_constraints;
+  /**
+   * @brief The point at which the evaluation is performed.
+   */
+  GlobalVectorType evaluation_point;
+  /**
+   * @brief The local evaluation point. Ghosts cells are not considered in
+   * this evaluation.
+   */
+  GlobalVectorType local_evaluation_point;
+  /**
+   * @brief The direction \f$ \delta u^n \f$ used to perform the newton iteration
+   * in \f$ u^{n+1} = u^n + \alpha ^n \delta u ^n \f$. Where \f$ \alpha ^n \f$
+   * is the size of the step.
+   */
+  GlobalVectorType newton_update;
+  /**
+   * @brief A vector containing all the values of the solution.
+   */
+  GlobalVectorType present_solution;
+  /**
+   * @brief The right hand side vector.
+   */
+  GlobalVectorType system_rhs;
+  /**
+   * @brief Store the nonzero constraints that arise from several sources such
+   * as boundary conditions and hanging nodes in the mesh. See the deal.II
+   * documentation on constraints on degrees of freedom for more information.
+   */
+  AffineConstraints<double> nonzero_constraints;
+  AffineConstraints<double> zero_constraints;
+  /**
+   * @brief The system matrix.
+   */
   TrilinosWrappers::SparseMatrix system_matrix;
 
 
-  // Previous solutions vectors
+  /**
+   * @brief Previous solution vector.
+   */
   std::vector<GlobalVectorType> previous_solutions;
 
-  // Solution transfer classes
+  /**
+   * @brief A parallel::distributed::SolutionTransfer object implements the
+   * transfer of a discrete FE function (e.g. a solution vector) from one mesh
+   * to another that is obtained from the first by a single refinement and/or
+   * coarsening step. During interpolation the vector is reinitialized to the
+   * new size and filled with the interpolated values. This Deal.ii class is
+   * used for mesh_refinement and simulation restarts.
+   */
   std::shared_ptr<
     parallel::distributed::SolutionTransfer<dim, GlobalVectorType>>
     solution_transfer;
+
+  /**
+   * @brief A parallel::distributed::SolutionTransfer object implements the
+   * transfer of a discrete FE function (e.g. a solution vector) from one mesh
+   * to another that is obtained from the first by a single refinement and/or
+   * coarsening step. During interpolation the vector is reinitialized to the
+   * new size and filled with the interpolated values. This Deal.ii class is
+   * used for mesh_refinement and simulation restarts.
+   * previous_solutions_transfer occupies the same role as solution_transfer
+   * but for solutions at previous time steps.
+   */
   std::vector<parallel::distributed::SolutionTransfer<dim, GlobalVectorType>>
     previous_solutions_transfer;
 
-  // Reference for GGLS https://onlinelibrary.wiley.com/doi/abs/10.1002/nme.2324
-  // Warning, this GGLS implementation is valid only for Linear elements
-  // Quad elements will be lacking the third derivative of the diffusion
-  // operator Whether this affects or not the final result is unclear to me at
-  // the moment. Additionnaly, this formulation does not use the gradient of the
-  // source term. The same applies, I have no clue if this is detrimental or not
-  // to the solution since anyway the GGLS term scales as h^(order+1)
+  /**
+   * @brief Reference for GGLS https://onlinelibrary.wiley.com/doi/abs/10.1002/nme.2324
+   * Warning, this GGLS implementation is valid only for Linear elements
+   * Quad elements will be lacking the third derivative of the diffusion
+   * operator Whether this affects or not the final result is unclear to me at
+   * the moment. Additionnaly, this formulation does not use the gradient of the
+   * source term. The same applies, I have no clue if this is detrimental or not
+   * to the solution since anyway the GGLS term scales as h^(order+1).
+   */
   const bool GGLS = true;
 
-  // Assemblers for the matrix and rhs
+  /**
+   * @brief Assemblers for the matrix and the right hand side (RHS).
+   */
   std::vector<std::shared_ptr<HeatTransferAssemblerBase<dim>>> assemblers;
 
-  // Temperature statistics table (post-process)
+  /**
+   * @brief Temperature statistics table used for post-processing. It contains
+   * the minimum , maximum, average and standard deviation of the temperature.
+   */
   TableHandler statistics_table;
 
-  // Post-processing table
-  // The heat flux table contains :
-  // - the total fluxes on a boundary: (-k grad T + u * rho * Cp) * n
-  // - the convective heat flux on a boundary: h(T-T_inf)
-  // - the total fluxes on the nitsche immersed boundaries (if active)
+  /**
+   * @brief Contain heat flux information used for post-processing:
+   * - the total fluxes on a boundary: \f$(-k \nabla T + u \rho C_p) \cdot n \f$
+   * - the convective heat flux on a boundary: \f$ h(T-T_{inf}) \f$
+   * - the total fluxes on the nitsche immersed boundaries (if active)
+   */
   TableHandler heat_flux_table;
 
   // Heat flux postprocessing
+
+  /**
+   * @brief Abstract class that allows to calculate the thermal conductivity on
+   * each quadrature point using the temperature of the fluid.
+   */
   std::vector<std::shared_ptr<ThermalConductivityModel>>
-                                          thermal_conductivity_models;
+    thermal_conductivity_models;
+
+  /**
+   * @brief Compute local heat flux quantities from temperature field and
+   * material properties.
+   */
   std::vector<HeatFluxPostprocessor<dim>> heat_flux_postprocessors;
 
 
@@ -583,8 +790,8 @@ private:
    * information
    */
 
-  /*
-   * Liquid fraction in the domain
+  /**
+   * @brief Liquid fraction in the domain.
    */
   TableHandler liquid_fraction_table;
 };
