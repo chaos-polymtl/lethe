@@ -288,6 +288,8 @@ SimulationControlTransientDynamicOutput::calculate_time_step()
       new_time_step = time_step * adaptative_time_step_scaling;
       if (CFL > 0 && max_CFL / CFL < adaptative_time_step_scaling)
         new_time_step = time_step * max_CFL / CFL;
+        
+      new_time_step = std::min(new_time_step, max_dt);
     }
 
   if (current_time + new_time_step > end_time)
@@ -401,6 +403,8 @@ SimulationControlAdjointSteady::calculate_time_step()
       new_time_step = time_step * adaptative_time_step_scaling;
       if (CFL > 0 && max_CFL / CFL < adaptative_time_step_scaling)
         new_time_step = time_step * max_CFL / CFL;
+      
+      new_time_step = std::min(new_time_step, max_dt);
     }
 
   return new_time_step;
