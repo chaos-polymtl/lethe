@@ -84,7 +84,7 @@ test()
     simulation_control_parameters.dt                           = 1;
     simulation_control_parameters.adaptative_time_step_scaling = 1.2;
     simulation_control_parameters.maxCFL                       = 2;
-
+    simulation_control_parameters.max_dt                       = 1e6;
 
 
     SimulationControlTransient simulation_control(
@@ -126,7 +126,7 @@ test()
     simulation_control_parameters.output_time                  = 7.5;
     simulation_control_parameters.output_control =
       Parameters::SimulationControl::OutputControl::time;
-
+    simulation_control_parameters.max_dt                       = 1e6;
 
 
     SimulationControlTransientDynamicOutput simulation_control(
