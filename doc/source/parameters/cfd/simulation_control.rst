@@ -48,6 +48,9 @@ This subsection contains the general information of the simulation, including th
 
     # Maximum CFL value
     set max cfl                      = 1
+		
+		# Maximum time step value
+    set max time step                = 1e6
 
     # Adaptative time step scaling
     set adaptative time step scaling = 1.1
@@ -117,6 +120,8 @@ This subsection contains the general information of the simulation, including th
 
 * ``max cfl``: maximal value of the :math:`\text{CFL}` condition that can be reached during the simulation. This parameter is only used when ``set adapt = true``.
 
+* ``max time step``: maximal value of the time step that can be reached during the simulation. This parameter is only used when ``set adapt = true``. It is useful when the problem of interest has an additional time step constraint such as the capillary time step limit described in :doc:`../../examples/multiphysics/capillary-wave/capillary-wave`.
+
 * ``adaptative time step scaling``: rate of increase of the time step value. The new time step value is fixed by ``adaptative time step scaling`` * ``previous value of the time step``
 
 * ``log frequency``: frequency at which information is written in terminal
@@ -166,4 +171,3 @@ This subsection contains the general information of the simulation, including th
 
 .. tip::
 	Generally, we advise to use a subdivision level of :math:`(n)` for interpolation order of :math:`n`. For example, a Q2-Q1 interpolation could be visualized with ``set subdivision = 2``.
-
