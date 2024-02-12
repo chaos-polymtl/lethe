@@ -126,7 +126,7 @@ test()
     simulation_control_parameters.output_time                  = 7.5;
     simulation_control_parameters.output_control =
       Parameters::SimulationControl::OutputControl::time;
-    simulation_control_parameters.max_dt                       = 1e6;
+    simulation_control_parameters.max_dt = 1e6;
 
 
     SimulationControlTransientDynamicOutput simulation_control(
