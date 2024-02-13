@@ -334,9 +334,7 @@ public:
    * @brief Getter method to access the private attribute
    * newton_update for the physic currently solved.
    *
-   * @return The direction \f$ \delta u^n \f$ used to perform the newton iteration
-   * in \f$ u^{n+1} = u^n + \alpha ^n \delta u ^n \f$. Where \f$ \alpha ^n \f$
-   * is the size of the step.
+   * @return The direction used to perform the newton iteration.
    */
   GlobalVectorType &
   get_newton_update() override
@@ -713,11 +711,9 @@ private:
   std::vector<GlobalVectorType> previous_solutions;
 
   /**
-   * @brief A parallel::distributed::SolutionTransfer object implements the
-   * transfer of a discrete FE function (e.g. a solution vector) from one mesh
-   * to another that is obtained from the first by a single refinement and/or
-   * coarsening step. During interpolation the vector is reinitialized to the
-   * new size and filled with the interpolated values. This Deal.ii class is
+   * @brief parallel::distributed::SolutionTransfer<dim, GlobalVectorType>> is
+   * used to implement the transfer of a discrete FE function
+   * (e.g. a solution vector) from one mesh to another. This Deal.ii class is
    * used for mesh_refinement and simulation restarts.
    */
   std::shared_ptr<
@@ -725,14 +721,8 @@ private:
     solution_transfer;
 
   /**
-   * @brief A parallel::distributed::SolutionTransfer object implements the
-   * transfer of a discrete FE function (e.g. a solution vector) from one mesh
-   * to another that is obtained from the first by a single refinement and/or
-   * coarsening step. During interpolation the vector is reinitialized to the
-   * new size and filled with the interpolated values. This Deal.ii class is
-   * used for mesh_refinement and simulation restarts.
-   * previous_solutions_transfer occupies the same role as solution_transfer
-   * but for solutions at previous time steps.
+   * @brief previous_solutions_transfer occupies the same role as
+   * solution_transfer but for solutions at previous time steps.
    */
   std::vector<parallel::distributed::SolutionTransfer<dim, GlobalVectorType>>
     previous_solutions_transfer;
