@@ -78,8 +78,8 @@ public:
  * @brief Compute the Q-criterion scalar field within a domain.
  *
  * The Q-criterion is defined as \f$Q = 0.5 (||\mathbf{\omega}||^2 -
- * ||\mathbf{S}||^2)\f$ where \f$\mathbf{S}\f$ is the symmetric deformation
- * tensor.
+ * ||\mathbf{S}||^2)\f$ where \f$\mathbf{\omega}\f$ is the vorticity vector and
+ * \f$\mathbf{S}\f$ is the symmetric deformation tensor.
  */
 template <int dim>
 class QCriterionPostprocessor : public DataPostprocessorScalar<dim>
@@ -672,9 +672,6 @@ private:
  * See <a href="https://lethe-cfd.github.io/lethe/documentation/parameters/cfd/
  * physical_properties.html#density-models" target="_blank">documentation on
  * density models</a>.
- *
- * @param[in] p_density_model Density model of the material
- * @param[]in material_id ID corresponding to the material (fluid or solid)
  */
 template <int dim>
 class DensityPostprocessor : public DataPostprocessorScalar<dim>
@@ -722,7 +719,7 @@ public:
   }
 
 private:
-  // Model describing the material's density.
+  /// Model describing the material's density.
   std::shared_ptr<DensityModel> density_model;
 };
 
