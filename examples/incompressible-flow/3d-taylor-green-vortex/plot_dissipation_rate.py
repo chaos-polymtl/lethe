@@ -45,7 +45,7 @@ ens=ens*viscosity*2
 fig = plt.figure(facecolor='white')
 
 ax = fig.add_subplot(111)
-plt.plot(t_ike,ike,label="Kinetic energy dissipation",color=colors[1],lw=2.)
+plt.plot(t_ike[5:],ike[5:],label="Kinetic energy dissipation",color=colors[1],lw=2.)
 plt.plot(t_ens,ens,label="Enstrophy energy dissipation",color=colors[0],lw=2.)
 plt.plot(t_ref,ref,'--',label="Reference",color="black",lw=2.)
 plt.xlabel('Time [s]')

@@ -23,7 +23,7 @@ t=arr1[:,0]
 
 r=len(arr1)
 
-h=arr1[1][0]-arr1[0][0];
+h=arr1[-1][0]-arr1[-2][0];
 
 kerate=0.0
 l2=[]
