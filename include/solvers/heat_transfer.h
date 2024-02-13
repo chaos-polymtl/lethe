@@ -18,7 +18,7 @@
  * Implementation of heat transfer as an auxiliary physics.
  * This heat equation is weakly coupled to the velocity field.
  * Equation solved:
- * rho * Cp * (dT/dt + u.gradT) = k div(gradT) + nu/rho * (gradu : gradu)
+ * \f$ \rho * C_p * (\frac{dT}{dt} + u \cdot \nabla T) = k \nabla^2T + \tau : \nabla u \f$
  *
 
  *
@@ -63,7 +63,7 @@
  * @brief Implementation of heat transfer as an auxiliary physics. The heat
  * equation is weakly coupled to the velocity field. Equation solved:
  * \f$ \rho C_p \cdot \left( \frac{dT}{dt} + u \cdot \nabla T \right) =
- * k \cdot \nabla^2 T + \frac{\nu}{\rho} \cdot (\nabla u : \nabla u) \f$
+ * k \cdot \nabla^2 T + \tau : \nabla u \f$
  *
  */
 
@@ -75,8 +75,7 @@ public:
    * @brief Constructor of the HeatTransfer object
    *
    * @param multiphysics_interface Map of the auxiliary physics that will be
-   * solved on top of a computational fluid dynamic simulation. The keys are
-   * the Parameters::PhysicsID int enum.
+   * solved on top of a computational fluid dynamic simulation. 
    *
    * @param p_simulation_parameters Contain the simulation parameter file
    * information.
@@ -179,7 +178,7 @@ public:
    * @param assemble_matrix boolean that is true for matrix assembly, and false for rhs assembly.
    */
   void
-  assemble_nitsche_heat_restriction(bool assemble_matrix);
+  assemble_nitsche_heat_restriction(const bool assemble_matrix);
 
   /**
    * @brief Attach the solution vector to the DataOut provided. This function
@@ -310,7 +309,7 @@ public:
    * @brief Getter method to access the private attribute evaluation_point for
    * the physic currently solved.
    *
-   * @return The point at which the evaluation is performed.
+   * @return The vector at which the evaluation is performed.
    */
   GlobalVectorType &
   get_evaluation_point() override
@@ -544,7 +543,7 @@ private:
    * @param monitored_fluid Fluid indicator (fluid0 or fluid1 or both) corresponding
    * to the phase of interest.
    *
-   * @param domain_name Btring indicating the monitored_fluid in the console output,
+   * @param domain_name String indicating the monitored_fluid in the console output,
    * table and filename.
    *
    * @param current_solution_fd Current solution for the fluid dynamics, parsed
