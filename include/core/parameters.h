@@ -115,7 +115,7 @@ namespace Parameters
     // Max CFL
     double maxCFL;
 
-    // Max dt
+    // Max time step
     double max_dt;
 
     // Aimed tolerance at which simulation is stopped

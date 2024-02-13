@@ -82,7 +82,7 @@ This subsection contains the general information of the simulation, including th
     # Output time
     set output time                  = 1
 
-    # Maximal number of vtu output files
+    # Maximum number of vtu output files
     set group files                  = 1
 
     # Output the boundaries of the domain along with their ID
@@ -118,9 +118,9 @@ This subsection contains the general information of the simulation, including th
 
 * ``adapt``: controls if adaptive time-stepping is enabled. If set to ``true``, the time-step will evolve to ensure that the ``max cfl`` value is reached.
 
-* ``max cfl``: maximal value of the :math:`\text{CFL}` condition that can be reached during the simulation. This parameter is only used when ``set adapt = true``.
+* ``max cfl``: maximum value of the :math:`\text{CFL}` condition that can be reached during the simulation. This parameter is only used when ``set adapt = true``.
 
-* ``max time step``: maximal value of the time step that can be reached during the simulation. This parameter is only used when ``set adapt = true``. It is useful when the problem of interest has an additional time step constraint such as the capillary time step limit described in :doc:`../../examples/multiphysics/capillary-wave/capillary-wave`.
+* ``max time step``: maximum time step value that can be reached during the simulation. This parameter is only used when ``set adapt = true``. It is useful when the problem of interest has an additional time step constraint such as the capillary time step limit described in :doc:`../../examples/multiphysics/capillary-wave/capillary-wave`.
 
 * ``adaptative time step scaling``: rate of increase of the time step value. The new time step value is fixed by ``adaptative time step scaling`` * ``previous value of the time step``
 
