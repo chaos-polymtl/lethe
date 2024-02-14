@@ -2,7 +2,7 @@
 Taylor-Green Vortex
 ====================
 
-This example showcases another canonicall fluid mechanics problem, the Taylor-Green vortex.  This examples features both the traditional matrix-based solver within Lethe ( ``lethe-fluid``) and the matrix-free solver  (``lethe-fluid-matrix-free``) which is more computationnaly efficient, especially for high-order elements (Q2 and above). Post-processing capabilities for enstrophy and kinetic energy are also demonstrated.
+This example showcases another canonical fluid mechanics problem: the Taylor-Green vortex.  This example features both the traditional matrix-based solver within Lethe ( ``lethe-fluid``) and the matrix-free solver  (``lethe-fluid-matrix-free``) which is more computationally efficient, especially for high-order elements (Q2 and above). Post-processing capabilities for enstrophy and kinetic energy are also demonstrated.
 
 
 ---------
@@ -42,7 +42,6 @@ The three velocity components :math:`[u_x,u_y,u_z]^T` and the pressure :math:`p`
 In this case, the vortex, which is initially 2D, will decay by generating smaller 3D turbulent structures (vortex tubes, rings and sheets). This decay can be monitored through the total kinetic energy of the system. Since the simulation domain is periodic, it can be demontrated that the time derative of the total kinetic energy :math:`E_k` is directly related to the enstrophy :math:`\mathcal{E}` such that:
 
 
-with
 
 .. math::
 
