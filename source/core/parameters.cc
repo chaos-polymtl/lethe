@@ -109,6 +109,10 @@ namespace Parameters
                         "1",
                         Patterns::Double(),
                         "Maximum CFL value");
+      prm.declare_entry("max time step",
+                        "1e6",
+                        Patterns::Double(),
+                        "Maximum time step value");
       prm.declare_entry("stop tolerance",
                         "1e-10",
                         Patterns::Double(),
@@ -216,6 +220,7 @@ namespace Parameters
       timeEnd        = prm.get_double("time end");
       adapt          = prm.get_bool("adapt");
       maxCFL         = prm.get_double("max cfl");
+      max_dt         = prm.get_double("max time step");
       stop_tolerance = prm.get_double("stop tolerance");
       adaptative_time_step_scaling =
         prm.get_double("adaptative time step scaling");

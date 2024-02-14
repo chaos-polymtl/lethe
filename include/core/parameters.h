@@ -115,10 +115,13 @@ namespace Parameters
     // Max CFL
     double maxCFL;
 
+    // Max time step
+    double max_dt;
+
     // Aimed tolerance at which simulation is stopped
     double stop_tolerance;
 
-    // Max CFL
+    // Rate of increase of the time step value
     double adaptative_time_step_scaling;
 
     // BDF startup time scaling
