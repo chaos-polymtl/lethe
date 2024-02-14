@@ -453,6 +453,9 @@ protected:
   // Time step scaling for adaptative time stepping
   double adaptative_time_step_scaling;
 
+  // Max time step
+  double max_dt;
+
   /**
    * @brief Calculates the next value of the time step. If adaptation
    * is enabled, the time step is calculated in order to ensure
