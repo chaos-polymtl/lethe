@@ -49,7 +49,7 @@ In this case, the vortex, which is initially 2D, will decay by generating smalle
   E_k &= \frac{1}{\Omega} \int_{\Omega} \frac{\mathbf{u}\cdot \mathbf{u}}{2} \mathrm{d}\Omega \\
   \mathcal{E} &= \frac{1}{\Omega} \int_{\Omega} \frac{\mathbf{\omega}\cdot \mathbf{\omega}}{2} \mathrm{d}\Omega
 
-where :math:`\mathbf{\omega}=\nabla \times \mathbf{u}` is the vorticity. The results we obtain are compared to reference spectral results extracted **Wang et al 2013**. `[2] <https://doi.org/10.1002/fld.3767>`_
+where :math:`\mathbf{\omega}=\nabla \times \mathbf{u}` is the vorticity. The results we obtain are compared to reference spectral results extracted from **Wang et al 2013** `[2] <https://doi.org/10.1002/fld.3767>`_.
 
 
 --------------
@@ -65,8 +65,8 @@ The ``mesh`` subsection specifies the computational grid:
 
   subsection mesh
     set type               = dealii
-    set grid type          = subdivided_hyper_rectangle
-    set grid arguments     = 1, 1, 1: -3.14159265359, -3.14159265359, -3.14159265359 : 3.14159265359, 3.14159265359, 3.14159265359 : true
+    set grid type          = hyper_rectangle
+    set grid arguments     = 1 : -3.14159265359 : 3.14159265359 : true
     set initial refinement = 5 
   end
 
@@ -104,12 +104,12 @@ The ``boundary conditions`` subsection establishes the constraints on different 
     end
   end
 
-First, the ``number`` of boundary conditions to be applied must be specified. For each boundary condition, the ``id`` of the boundary as well as its ``type`` must be specified. All boundaries are periodic. The ``x-`` (id=0) is periodic with the ``x+``boundary (id=1), the ``y-`` (id=2) is periodic with the ``y+`` boundary (id=3) and so on and so forth. For each periodic boundary condition, the periodic direction must be specified. A periodic direction of ``0`` implies that the normal direction of the wall is the :math:`\mathbf{e}_x` vector, ``1`` implies that it's the :math:`\mathbf{e}_y`.
+First, the ``number`` of boundary conditions to be applied must be specified. For each boundary condition, the ``id`` of the boundary as well as its ``type`` must be specified. All boundaries are periodic. The ``x-`` (id=0) is periodic with the ``x+`` boundary (id=1), the ``y-`` (id=2) is periodic with the ``y+`` boundary (id=3) and so on and so forth. For each periodic boundary condition, the periodic direction must be specified. A periodic direction of ``0`` implies that the normal direction of the wall is the :math:`\mathbf{e}_x` vector, ``1`` implies that it's the :math:`\mathbf{e}_y`.
 
 Physical Properties
 ~~~~~~~~~~~~~~~~~~~
 
-The Reynolds number of 1600 is set solely using the kinematic viscosity since the reference velocity is one.
+The Reynolds number of 1600 is set solely using the kinematic viscosity since the reference velocity is one:
 
 .. code-block:: text
 
@@ -149,7 +149,7 @@ To monitor the kinetic energy and the enstrophy, we set both calculation to ``tr
 Simulation Control
 ~~~~~~~~~~~~~~~~~~
 
-The ``simulation control`` subsection controls the flow of the simulation. To maximise the temporal accuracy of the simulation, we use a third order ``bdf3`` scheme. Results are written every 2 time-step. To ensure a more adequate visualization of the high-order elements, we set ``subdivision=3``. This will allow Paraview to render the high-order solutions with more fidelity.
+The ``simulation control`` subsection controls the flow of the simulation. To maximise the temporal accuracy of the simulation, we use a third order ``bdf3`` scheme. Results are written every 2 time-steps. To ensure a more adequate visualization of the high-order elements, we set ``subdivision=3``. This will allow Paraview to render the high-order solutions with more fidelity.
 
 .. code-block:: text
 
@@ -205,7 +205,7 @@ Since this is a transient problem, the linear solver can be relatively simple. W
 Matrix-free  - Non-linear Solver 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The non-linear solver used in the matrix-free solver is straightforward. We use Newton's method with a tolerance of :math:`10^{-3}`
+The non-linear solver used in the matrix-free solver is straightforward. We use Newton's method with a tolerance of :math:`10^{-3}`.
 
 .. code-block:: text
 
@@ -259,7 +259,7 @@ The ``lethe-fluid-matrix-free`` has significantly more parameters for its linear
     end
   end
 
-We set ``mg verbosity = quiet`` to prevent logging of the multigrid parameters during the simulation. Setting ``mg min level = -1`` ensures that the ``mg level min cells=16`` parameter is used to determine the coarsest level. It is important to ensure that the Taylor-Green vortex has sufficient cell on the coarsest level since periodic boundary conditions are used. Indeed, using a coarsest level with a single cell can lead to a problematic situation where too few degrees of freedom are available on the coarsest level.
+We set ``mg verbosity = quiet`` to prevent logging of the multigrid parameters during the simulation. Setting ``mg min level = -1`` ensures that the ``mg level min cells=16`` parameter is used to determine the coarsest level. It is important to ensure that the Taylor-Green vortex has sufficient cells on the coarsest level since periodic boundary conditions are used. Indeed, using a coarsest level with a single cell can lead to a problematic situation where too few degrees of freedom are available on the coarsest level.
 
 The ``smoother``, ``Eigenvalue estimation parameters`` and ``coarse-grid solver`` subsections are explained in the **Theory Guide** (under construction).
 
@@ -282,14 +282,14 @@ and the matrix-free simulations can be launched by typing
 
   mpirun -np n_proc lethe-fluid-matrix-free tgv-matrix-free.prm 
 
-For a 5 initial refinement (:math:`32^3` Q2 cells), the matrix-based solver takes around 1 hour and 20 minutes on 16 cores while the matrix-free solver takes less than 20 minutes. Running the same problem, but in Q3 (:math:`32^3` Q3 cells), the matri-free solver takes less than 2 hours while the matrix-based solver takes close to a day and consumes a tremendous amount of ram (approx. 80 GB). If you have 64 GB of ram, you can run an even finer mesh (:math:`64^3` Q3 cells) using the matrix-free solver in approximatively 16 hours.
+For a 5 initial refinement (:math:`32^3` Q2 cells), the matrix-based solver takes around 1 hour and 20 minutes on 16 cores while the matrix-free solver takes less than 20 minutes. Running the same problem, but in Q3 (:math:`32^3` Q3 cells), the matrix-free solver takes less than 2 hours while the matrix-based solver takes close to a day and consumes a tremendous amount of ram (approx. 80 GB). If you have 64 GB of ram, you can run an even finer mesh (:math:`64^3` Q3 cells) using the matrix-free solver in approximately 16 hours.
 
 
 ----------------------
 Results and Discussion
 ----------------------
 
-The flow patterns generated by the Taylor-Green vortex are quite complex. The following animation displays the evolution of velcoity iso-contours as the vortex break downs and generate smaller structures.
+The flow patterns generated by the Taylor-Green vortex are quite complex. The following animation displays the evolution of velocity iso-contours as the vortex break downs and generates smaller structures.
 
 +----------------------------------------------------------------------------------------------------------------------------------------------------+
 | .. raw:: html                                                                                                                                      |
@@ -299,23 +299,23 @@ The flow patterns generated by the Taylor-Green vortex are quite complex. The fo
 +----------------------------------------------------------------------------------------------------------------------------------------------------+
 
 
-Using the ``enstrophy.dat`` and ``kinetic_energy.dat`` files generated by Lethe, the temporal decay of the kinetic energy can be monitor. First, we calculate the time-derivative of the kinetic energy by invoking the script present in the example folder:
+Using the ``enstrophy.dat`` and ``kinetic_energy.dat`` files generated by Lethe, the temporal decay of the kinetic energy can be monitored. First, we calculate the time-derivative of the kinetic energy by invoking the first script present in the example folder:
 
 .. code-block:: text
   :class: copy-button
 
   python3 calculate_dissipation_rate.py -i kinetic_energy.dat -o output.dat
 
-Then, by invoking the script present in the example, a plot compairing the kinetic energy decay with the enstrophy is generated:
+Then, by invoking the second script present in the example, a plot comparing the kinetic energy decay with the enstrophy is generated:
 
 .. code-block:: text
   :class: copy-button
 
   python3 plot_dissipation_rate.py -ke kinetic_energy_decay.dat -ens enstrophy.dat -v 0.000625
 
-.. note:
+.. note::
  
-  A nice plot with a zoomed in section can be generated by adding the argument `-z True` to the command above.
+  A nice plot with a zoomed in section can be generated by adding the argument ``-z True`` to the command above.
 
 The following plot shows the decay of kinetic energy as measured
 
