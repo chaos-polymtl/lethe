@@ -1,6 +1,6 @@
-==================================
-Taylor-Couette Flow
-==================================
+====================
+Taylor-Green Vortex
+====================
 
 This example showcases another canonicall fluid mechanics problem, the Taylor-Green vortex.  This examples features both the traditional matrix-based solver within Lethe ( ``lethe-fluid``) and the matrix-free solver  (``lethe-fluid-matrix-free``) which is more computationnaly efficient, especially for high-order elements (Q2 and above). Post-processing capabilities for enstrophy and kinetic energy are also demonstrated.
 
@@ -9,8 +9,8 @@ This example showcases another canonicall fluid mechanics problem, the Taylor-Gr
 Features
 ---------
 
-- Solvers: ``lethe-fluid`` (with Q3-Q3) or  ``lethe-fluid-matrix-free`` (with Q3-Q3)
-- Transient problem using ``bdf3``time integrator
+- Solvers: ``lethe-fluid`` (with Q2-Q2) or  ``lethe-fluid-matrix-free`` (with Q2-Q2 or Q3-Q3)
+- Transient problem using ``bdf3`` time integrator
 - Displays the calculation of enstrophy and total kinetic energy
 
 
@@ -23,32 +23,33 @@ All files mentioned below are located in the example's folder (``examples/incomp
 - Parameter file: ``tgv-m.prm``
 - Postprocessing Python script: ``postprocess_taylor_couette.py``
 
-
+-----------------------
 Description of the Case
 -----------------------
 
-The Taylor–Green vortex is an unsteady flow of a decaying vortex, which has an exact closed form solution of the incompressible Navier–Stokes equations in Cartesian coordinates. It is named after the British physicist and mathematician Geoffrey Ingram Taylor and his collaborator A. E. Green [1]. In the present case, we simulate one Taylor-Green vortex at a Reynolds number of 1600 in a domain :math:`\Omega = [-\pi,\pi]\times[-\pi,\pi]\times[-\pi,\pi] ` using periodic boundary conditions.
+The Taylor–Green vortex is an unsteady flow of a decaying vortex, which has an exact closed form solution of the incompressible Navier–Stokes equations in Cartesian coordinates. It is named after the British physicist and mathematician Geoffrey Ingram Taylor and his collaborator A. E. Green [1]. In the present case, we simulate one Taylor-Green vortex at a Reynolds number of 1600 in a domain :math:`\Omega = [-\pi,\pi]\times[-\pi,\pi]\times[-\pi,\pi]` using periodic boundary conditions.
 
 The three velocity components :math:`[u_x,u_y,u_z]^T` and the pressure :math:`p` are specified at time :math:`t=0` by:
 
 .. math::
 
-  u_{x} = sin(x)*cos(y)*cos(z) \\
-  u_{y} = -cos(x)*sin(y)*cos(z)\\
-  u_{z} = 0 \\
-  p =  \frac{1}{16}*(cos(2x)+cos(2y))*(cos(2z)+2)
+  u_{x} &= sin(x)*cos(y)*cos(z) \\
+  u_{y} &= -cos(x)*sin(y)*cos(z)\\
+  u_{z} &= 0 \\
+  p &=  \frac{1}{16}*(cos(2x)+cos(2y))*(cos(2z)+2)
 
 In this case, the vortex, which is initially 2D, will decay by generating smaller 3D turbulent structures (vortex tubes, rings and sheets). This decay can be monitored through the total kinetic energy of the system. Since the simulation domain is periodic, it can be demontrated that the time derative of the total kinetic energy :math:`E_k` is directly related to the enstrophy :math:`\mathcal{E}` such that:
 
 
 with
+
 .. math::
 
-  \frac{\mathrm{d}E_K}{\mathrm{d}t} =  \mathcal{E} \\
-  E_k = \frac{1}{\Omega} \int_{\Omega} \frac{\mathbf{u}\cdot \mathbf{u}}{2} \mathrm{d}\Omega \\
-  \mathcal{E} = \frac{1}{\Omega} \int_{\Omega} \frac{\mathbf{\omega}\cdot \mathbf{\omega}}{2} \mathrm{d}\Omega
+  \frac{\mathrm{d}E_K}{\mathrm{d}t} &=  \mathcal{E} \\
+  E_k &= \frac{1}{\Omega} \int_{\Omega} \frac{\mathbf{u}\cdot \mathbf{u}}{2} \mathrm{d}\Omega \\
+  \mathcal{E} &= \frac{1}{\Omega} \int_{\Omega} \frac{\mathbf{\omega}\cdot \mathbf{\omega}}{2} \mathrm{d}\Omega
 
-where :math:`\mathbf{\omega}=\nabla \times \mathbf{u}` is the vorticity.
+where :math:`\mathbf{\omega}=\nabla \times \mathbf{u}` is the vorticity. The results we obtain are compared to reference spectral results extracted **Wang et al 2013**. `[2] <https://doi.org/10.1002/fld.3767>`_
 
 
 --------------
@@ -56,7 +57,7 @@ Parameter File
 --------------
 
 Mesh
-~~~~~
+~~~~
 
 The ``mesh`` subsection specifies the computational grid:
 
@@ -66,10 +67,10 @@ The ``mesh`` subsection specifies the computational grid:
     set type               = dealii
     set grid type          = subdivided_hyper_rectangle
     set grid arguments     = 1, 1, 1: -3.14159265359, -3.14159265359, -3.14159265359 : 3.14159265359, 3.14159265359, 3.14159265359 : true
-    set initial refinement = 5 # initial mesh refinement
+    set initial refinement = 5 
   end
 
-The ``type`` specifies the mesh format used. We use the ``subdivided_hyper_rectangle`` mesh generated from the deal.II `GridGenerator <https://www.dealii.org/current/doxygen/deal.II/namespaceGridGenerator.html>`_ . We set ``colorize=true``to be able to adequately set-up the periodic bondary conditions.
+The ``type`` specifies the mesh format used. We use the ``subdivided_hyper_rectangle`` mesh generated from the deal.II `GridGenerator <https://www.dealii.org/current/doxygen/deal.II/namespaceGridGenerator.html>`_ . We set ``colorize=true`` to be able to adequately set-up the periodic bondary conditions.
 
 
 The last parameter specifies the ``initial refinement`` of the grid. Indicating an ``initial refinement=5`` implies that the initial mesh is refined 5 times. In 3D, each cell is divided by 8 per refinement. Consequently, the final grid is made of 32768 cells.
@@ -103,12 +104,13 @@ The ``boundary conditions`` subsection establishes the constraints on different 
     end
   end
 
-First, the ``number`` of boundary conditions to be applied must be specified. For each boundary condition, the ``id`` of the boundary as well as its ``type`` must be specified. All boundaries are periodic. The ``x-`` (id=0) is periodic with the ``x+``boundary (id=1), the ``y-`` (id=2) is periodic with the ``y+``boundary (id=3) and so on and so forth. For each periodic boundary condition, the periodic direction must be specified. A periodic direction of ``0``implies that the normal direction of the wall is the :math:`\mathbf{e}_x` vector, ``1``implies that it's the :math:`\mathbf{e}_y`.
+First, the ``number`` of boundary conditions to be applied must be specified. For each boundary condition, the ``id`` of the boundary as well as its ``type`` must be specified. All boundaries are periodic. The ``x-`` (id=0) is periodic with the ``x+``boundary (id=1), the ``y-`` (id=2) is periodic with the ``y+`` boundary (id=3) and so on and so forth. For each periodic boundary condition, the periodic direction must be specified. A periodic direction of ``0`` implies that the normal direction of the wall is the :math:`\mathbf{e}_x` vector, ``1`` implies that it's the :math:`\mathbf{e}_y`.
 
 Physical Properties
 ~~~~~~~~~~~~~~~~~~~
 
 The Reynolds number of 1600 is set solely using the kinematic viscosity since the reference velocity is one.
+
 .. code-block:: text
 
   subsection physical properties
@@ -131,10 +133,8 @@ The results obtained for the Taylor-Green vortex are highly dependent on the num
         set pressure order = 2 #3 for Q3
     end
 
-.. note::
-
 Post-processing
-~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~
 
 .. code-block:: text
 
@@ -147,9 +147,9 @@ Post-processing
 To monitor the kinetic energy and the enstrophy, we set both calculation to ``true`` in the post-processing section.
 
 Simulation Control
-~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~
 
-The ``simulation control`` subsection controls the flow of the simulation. To maximise the temporal accuracy of the simulation, we use a third order ``bdf3`` scheme. Results are written every 2 time-step. To ensure a more adequate visualization of the high-order elements, we set ``subdivision=3``. This will allow paraview to render the high-order solutions with more fidelity.
+The ``simulation control`` subsection controls the flow of the simulation. To maximise the temporal accuracy of the simulation, we use a third order ``bdf3`` scheme. Results are written every 2 time-step. To ensure a more adequate visualization of the high-order elements, we set ``subdivision=3``. This will allow Paraview to render the high-order solutions with more fidelity.
 
 .. code-block:: text
 
@@ -163,14 +163,60 @@ The ``simulation control`` subsection controls the flow of the simulation. To ma
   end
 
 
-Non-Linear Solver - Matrix-based
+
+Matrix-based - Non-linear Solver 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+The calculation of the Jacobian matrix is expensive when using high-order elements. In transient simulations such as this one, it can be desirable to minimize the amount of time this matrix is calculated. To achieve this, we use the ``inexact_newton`` non-linear solver which reuses the Jacobian matrix as long as it is sufficiently valid.
 
-Linear Solver - Matrix-based
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.. code-block:: text
 
-Linear Solver - Matrix-free
+  subsection non-linear solver
+    subsection fluid dynamics
+      set solver                  = inexact_newton
+      set verbosity               = verbose
+      set tolerance               = 1e-3
+      set reuse matrix            = true
+      set matrix tolerance        = 0.01
+    end
+  end
+
+Matrix-based - Linear Solver 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Since this is a transient problem, the linear solver can be relatively simple. We use the GMRES iterative solver with ILU preconditioning and a low fill level of 0.
+
+.. code-block:: text
+
+  subsection linear solver
+    subsection fluid dynamics
+      set verbosity               = verbose
+      set method                  = gmres
+      set max iters               = 200
+      set max krylov vectors      = 200
+      set relative residual       = 1e-4
+      set minimum residual        = 1e-12
+      set ilu preconditioner fill               = 0
+      set ilu preconditioner absolute tolerance = 1e-12
+      set ilu preconditioner relative tolerance = 1.00
+    end
+  end
+
+Matrix-free  - Non-linear Solver 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The non-linear solver used in the matrix-free solver is straightforward. We use Newton's method with a tolerance of :math:`10^{-3}`
+
+.. code-block:: text
+
+  subsection non-linear solver
+    subsection fluid dynamics
+      set tolerance      = 1e-3
+      set verbosity      = verbose
+    end
+  end
+
+Matrix-free - Linear Solver
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The ``lethe-fluid-matrix-free`` has significantly more parameters for its linear solver. The new parameters are all related to the geometric multigrid preconditioner that is used by the matrix free algorithm.
@@ -213,45 +259,102 @@ The ``lethe-fluid-matrix-free`` has significantly more parameters for its linear
     end
   end
 
-We set ``mg verbosity = quiet`` to prevent logging of the multigrid parameters during the simulation. Setting ``mg min level = -1`` ensures that the ``mg level min cells=16``parameter is used to determine the coarsest level. It is important to ensure that the Taylor-Green vortex has sufficient cell on the coarsest level since periodic boundary conditions are used. Indeed, using a coarsest level with a single cell can lead to a problematic situation where too few degrees of freedom are available on the coarsest level.
+We set ``mg verbosity = quiet`` to prevent logging of the multigrid parameters during the simulation. Setting ``mg min level = -1`` ensures that the ``mg level min cells=16`` parameter is used to determine the coarsest level. It is important to ensure that the Taylor-Green vortex has sufficient cell on the coarsest level since periodic boundary conditions are used. Indeed, using a coarsest level with a single cell can lead to a problematic situation where too few degrees of freedom are available on the coarsest level.
 
 The ``smoother``, ``Eigenvalue estimation parameters`` and ``coarse-grid solver`` subsections are explained in the **Theory Guide** (under construction).
 
-Rest of the Subsections
-~~~~~~~~~~~~~~~~~~~~~~~~
-
-The ``non-linear solver`` and ``linear solver`` subsections do not contain any new information in this example.
 
 
 ----------------------
 Running the Simulation
 ----------------------
-Launching the simulation is as simple as specifying the executable name and the parameter file. Assuming that the ``lethe-fluid`` executable is within your path, the simulation can be launched by typing:
+Launching the simulation is as simple as specifying the executable name and the parameter file. Assuming that the ``lethe-fluid`` or ``lethe-fluid-matrix-free`` executables are within your path, the matrix-based simulation scan be launched by typing:
 
 .. code-block:: text
   :class: copy-button
 
-  lethe-fluid taylor-couette.prm
+  mpirun -np n_proc lethe-fluid tgv-matrix-based.prm
 
-Lethe will generate a number of files. The most important one bears the extension ``.pvd``. It can be read by visualization programs such as `Paraview <https://www.paraview.org/>`_.
+and the matrix-free simulations can be launched by typing
+
+.. code-block:: text
+  :class: copy-button
+
+  mpirun -np n_proc lethe-fluid-matrix-free tgv-matrix-free.prm 
+
+For a 5 initial refinement (:math:`32^3` Q2 cells), the matrix-based solver takes around 1 hour and 20 minutes on 16 cores while the matrix-free solver takes less than 20 minutes. Running the same problem, but in Q3 (:math:`32^3` Q3 cells), the matri-free solver takes less than 2 hours while the matrix-based solver takes close to a day and consumes a tremendous amount of ram (approx. 80 GB). If you have 64 GB of ram, you can run an even finer mesh (:math:`64^3` Q3 cells) using the matrix-free solver in approximatively 16 hours.
 
 
 ----------------------
 Results and Discussion
 ----------------------
 
+The flow patterns generated by the Taylor-Green vortex are quite complex. The following animation displays the evolution of velcoity iso-contours as the vortex break downs and generate smaller structures.
+
++----------------------------------------------------------------------------------------------------------------------------------------------------+
+| .. raw:: html                                                                                                                                      |
+|                                                                                                                                                    |
+|    <iframe width="520" height="400" src="https://www.youtube.com/embed/GGij2g_yz5g?si=Q81lcHyPd9ONxqT4"  frameborder="0" allowfullscreen></iframe> |
+|                                                                                                                                                    |
++----------------------------------------------------------------------------------------------------------------------------------------------------+
+
+
+Using the ``enstrophy.dat`` and ``kinetic_energy.dat`` files generated by Lethe, the temporal decay of the kinetic energy can be monitor. First, we calculate the time-derivative of the kinetic energy by invoking the script present in the example folder:
+
+
+Then, by invoking the script present in the example, a plot compairing the kinetic energy decay with the enstrophy is generated:
+
+The following plot shows the decay of kinetic energy as measured
+
++-------------------------------------------------------------------------------------------------------------------+
+|  .. figure:: images/dissipation_comparison_Q2_32.png                                                              |
+|     :width: 500                                                                                                   |
+|     :alt: In this figure, the kinetic energy decay is compared to the enstrophy for a 32^3 Q2Q2 mesh.             |
+|           The two curves should be identical in the absence of numerical dissipation                              |                         
+|                                                                                                                   |
++-------------------------------------------------------------------------------------------------------------------+
+
+We note that the kinetic energy decay does not match that of the reference, but also that there is significant numerical dissipation since the enstrophy does not match the kinetic energy decay. Increase the order from Q2 to Q3 yield the following results which are better:
+
++-------------------------------------------------------------------------------------------------------------------+
+|  .. figure:: images/dissipation_comparison_Q3_32.png                                                              |
+|     :width: 500                                                                                                   |
+|     :alt: In this figure, the kinetic energy decay is compared to the enstrophy for a 32^3 Q3Q3 mesh.             |
+|           The two curves should be identical in the absence of numerical dissipation                              |                         
+|                                                                                                                   |
++-------------------------------------------------------------------------------------------------------------------+
+
+By refining the mesh once more (:math:`64^3` Q3Q3), we recover the right kinetic energy decay, but we still observe significant numerical dissipation. These results are thus implicit LES where the SUPG/PSPG stabilization is acting as the subgrid scale model and mimics the kinetic energy decay that is not captured by the mesh.
+
++-------------------------------------------------------------------------------------------------------------------+
+|  .. figure:: images/dissipation_comparison_Q3_64.png                                                              |
+|     :width: 500                                                                                                   |
+|     :alt: In this figure, the kinetic energy decay is compared to the enstrophy for a 64^3 Q3Q3 mesh.             |
+|           The two curves should be identical in the absence of numerical dissipation                              |                         
+|                                                                                                                   |
++-------------------------------------------------------------------------------------------------------------------+
+
+Increasing the refinement once more (:math:`128^3` Q3Q3), we note the perfect agreement between the kinetic energy decay, the enstrophy and the reference results. These results constitute Direct Numerical Simulation (DNS)
+
++-------------------------------------------------------------------------------------------------------------------+
+|  .. figure:: images/dissipation_comparison_Q3_128.png                                                             |
+|     :width: 500                                                                                                   |
+|     :alt: In this figure, the kinetic energy decay is compared to the enstrophy for a 128^3 Q3Q3 mesh.            |
+|           The two curves should be identical in the absence of numerical dissipation                              |                         
+|                                                                                                                   |
++-------------------------------------------------------------------------------------------------------------------+
 
 
 ----------------------------
 Possibilities for Extension
 ----------------------------
 
-- Calculate the order of convergence for the torque :math:`T_z`.
-- It could be very interesting to investigate this flow in 3D at a higher Reynolds number to see the apparition of the Taylor-Couette instability. This, however, would be a major undertaking. 
+- This case is very interesting to post-process. Try to post-process this case using other quantities (vorticity, q-criterion) and use the results to generate interesting animations. Feel free to share them with us!
 
 
 ------------
 References
 ------------
 
-[1] https://en.wikipedia.org/wiki/Main_Page
+[1] https://en.wikipedia.org/wiki/Taylor%E2%80%93Green_vortex
+[2] `Z. J. Wang et al., “High-order CFD methods: current status and perspective,” International Journal for Numerical Methods in Fluids, vol. 72, no. 8, pp. 811–845, Jan. 2013, doi: <https://doi.org/10.1002/fld.3767>`_. 
