@@ -1,19 +1,19 @@
 /* ---------------------------------------------------------------------
-  *
-  * Copyright (C) 2019 - 2020 by the Lethe authors
-  *
-  * This file is part of the Lethe library
-  *
-  * The Lethe library is free software; you can use it, redistribute
-  * it, and/or modify it under the terms of the GNU Lesser General
-  * Public License as published by the Free Software Foundation; either
-  * version 2.1 of the License, or (at your option) any later version.
-  * The full text of the license can be found in the file LICENSE at
-  * the top level of the Lethe distribution.
-  *
-  * ---------------------------------------------------------------------
-  *
-  */
+ *
+ * Copyright (C) 2019 - 2020 by the Lethe authors
+ *
+ * This file is part of the Lethe library
+ *
+ * The Lethe library is free software; you can use it, redistribute
+ * it, and/or modify it under the terms of the GNU Lesser General
+ * Public License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ * The full text of the license can be found in the file LICENSE at
+ * the top level of the Lethe distribution.
+ *
+ * ---------------------------------------------------------------------
+ *
+ */
 
 #include <core/parameters_lagrangian.h>
 #include <core/tensors_and_points_dimension_manipulation.h>
@@ -1217,13 +1217,11 @@ ParticleParticleContactForce<dim, contact_model, rolling_friction_model>::
 // No resistance
 template class ParticleParticleContactForce<
   2,
-  Parameters::Lagrangian::ParticleParticleContactForceModel::
-    DMT,
+  Parameters::Lagrangian::ParticleParticleContactForceModel::DMT,
   Parameters::Lagrangian::RollingResistanceMethod::no_resistance>;
 template class ParticleParticleContactForce<
   3,
-  Parameters::Lagrangian::ParticleParticleContactForceModel::
-    DMT,
+  Parameters::Lagrangian::ParticleParticleContactForceModel::DMT,
   Parameters::Lagrangian::RollingResistanceMethod::no_resistance>;
 template class ParticleParticleContactForce<
   2,
@@ -1273,13 +1271,11 @@ template class ParticleParticleContactForce<
 // Constant resistance
 template class ParticleParticleContactForce<
   2,
-  Parameters::Lagrangian::ParticleParticleContactForceModel::
-    DMT,
+  Parameters::Lagrangian::ParticleParticleContactForceModel::DMT,
   Parameters::Lagrangian::RollingResistanceMethod::constant_resistance>;
 template class ParticleParticleContactForce<
   3,
-  Parameters::Lagrangian::ParticleParticleContactForceModel::
-    DMT,
+  Parameters::Lagrangian::ParticleParticleContactForceModel::DMT,
   Parameters::Lagrangian::RollingResistanceMethod::constant_resistance>;
 template class ParticleParticleContactForce<
   2,
@@ -1329,13 +1325,11 @@ template class ParticleParticleContactForce<
 // Viscous resistance
 template class ParticleParticleContactForce<
   2,
-  Parameters::Lagrangian::ParticleParticleContactForceModel::
-    DMT,
+  Parameters::Lagrangian::ParticleParticleContactForceModel::DMT,
   Parameters::Lagrangian::RollingResistanceMethod::viscous_resistance>;
 template class ParticleParticleContactForce<
   3,
-  Parameters::Lagrangian::ParticleParticleContactForceModel::
-    DMT,
+  Parameters::Lagrangian::ParticleParticleContactForceModel::DMT,
   Parameters::Lagrangian::RollingResistanceMethod::viscous_resistance>;
 template class ParticleParticleContactForce<
   2,

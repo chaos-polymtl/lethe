@@ -60,10 +60,10 @@ volume = 4./3. * np.pi * (particle.prm_dict['diameter']/2.)**3
 # periodic boundaries unlike simulations in the paper.
 # The correction factor is corresponding to the multiplication of the width/the number of particle
 n_part_paper = 6790
-correction_factor = particle.prm_dict['number']/n_part_paper
+correction_factor = particle.prm_dict['number of particles']/n_part_paper
 
 # Total mass = nρV/factor
-n_particle = particle.prm_dict["number"]
+n_particle = particle.prm_dict["number of particles"]
 density = particle.prm_dict["density particles"]
 print(f'Total mass in hopper : {n_particle * density * volume / correction_factor * 1000:.2f} g.')
 
@@ -109,9 +109,12 @@ p = np.polyfit([value - particle.time_list[p0] for value in particle.time_list[p
 print(f'Mass flow rate is : {p[0]:.2f} g/s.')
 
 # Plot results
-plt.plot(data['time'][start:] - data['time'][start], data['mass_discharge'][start:] * 1000 / correction_factor,
+print(data['time'][start:])
+
+
+plt.plot(data['time'].values[start:] - data['time'].values[start], data['mass_discharge'].values[start:] * 1000. / correction_factor,
          label="Lethe DEM")
-plt.plot(paper_data['time'], paper_data['discharge'], '.k', label="Anand et al.")
+plt.plot(paper_data['time'].values, paper_data['discharge'].values, '.k', label="Anand et al.")
 plt.xlabel('Time (s)')
 plt.ylabel('Mass discharged from the hopper (g)')
 plt.legend()

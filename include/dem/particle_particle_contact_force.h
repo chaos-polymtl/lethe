@@ -852,7 +852,7 @@ protected:
     if (tangential_force.norm() > coulomb_threshold)
       {
         // Gross sliding occurs and the tangential overlap and tangential
-        // force are limited to Coulumb's criterion
+        // force are limited to Coulomb's criterion
         tangential_force =
           coulomb_threshold *
           (tangential_force / (tangential_force.norm() + DBL_MIN));
@@ -1017,9 +1017,12 @@ protected:
                     normal_damping_constant * normal_relative_velocity_value) *
                    normal_unit_vector;
 
+    Tensor<1, 3> damping_tangential_force =
+      tangential_damping_constant * tangential_relative_velocity;
     tangential_force =
       tangential_spring_constant * contact_info.tangential_overlap +
-      tangential_damping_constant * tangential_relative_velocity;
+      damping_tangential_force;
+    double tangential_force_norm = tangential_force.norm();
 
     // JKR theory says that the coulomb threshold must be modified with the
     // pull-out force.
@@ -1033,13 +1036,18 @@ protected:
       this->effective_coefficient_of_friction[vec_particle_type_index(
         particle_one_type, particle_two_type)];
 
-    if (tangential_force.norm() > modified_coulomb_threshold)
+    if (tangential_force_norm > modified_coulomb_threshold)
       {
         // Gross sliding occurs and the tangential overlap and tangential
-        // force are limited to Coulumb's criterion
+        // force are limited to Coulomb's criterion
+        contact_info.tangential_overlap =
+          (modified_coulomb_threshold *
+             (tangential_force / (tangential_force_norm + DBL_MIN)) -
+           damping_tangential_force) /
+          (tangential_spring_constant + DBL_MIN);
         tangential_force =
-          modified_coulomb_threshold *
-          (tangential_force / (tangential_force.norm() + DBL_MIN));
+          (tangential_spring_constant * contact_info.tangential_overlap) *
+          damping_tangential_force;
       }
 
     // Calculation of torque caused by tangential force (tangential_torque)
@@ -1106,19 +1114,18 @@ protected:
    * @param rolling_resistance_torque Contact rolling resistance torque
    */
   inline void
-  calculate_DMT_contact(
-    particle_particle_contact_info<dim> &contact_info,
-    const Tensor<1, 3>                  &tangential_relative_velocity,
-    const double                         normal_relative_velocity_value,
-    const Tensor<1, 3>                  &normal_unit_vector,
-    const double                         normal_overlap,
-    const ArrayView<const double>       &particle_one_properties,
-    const ArrayView<const double>       &particle_two_properties,
-    Tensor<1, 3>                        &normal_force,
-    Tensor<1, 3>                        &tangential_force,
-    Tensor<1, 3>                        &particle_one_tangential_torque,
-    Tensor<1, 3>                        &particle_two_tangential_torque,
-    Tensor<1, 3>                        &rolling_resistance_torque)
+  calculate_DMT_contact(particle_particle_contact_info<dim> &contact_info,
+                        const Tensor<1, 3> &tangential_relative_velocity,
+                        const double        normal_relative_velocity_value,
+                        const Tensor<1, 3> &normal_unit_vector,
+                        const double        normal_overlap,
+                        const ArrayView<const double> &particle_one_properties,
+                        const ArrayView<const double> &particle_two_properties,
+                        Tensor<1, 3>                  &normal_force,
+                        Tensor<1, 3>                  &tangential_force,
+                        Tensor<1, 3> &particle_one_tangential_torque,
+                        Tensor<1, 3> &particle_two_tangential_torque,
+                        Tensor<1, 3> &rolling_resistance_torque)
   {
     // Calculation of effective radius and mass
     this->find_effective_radius_and_mass(particle_one_properties,

@@ -401,6 +401,9 @@ ParticleWallNonLinearForce<dim>::calculate_nonlinear_contact_force_and_torque(
   double model_parameter_sn = 2 *
                               this->effective_youngs_modulus[particle_type] *
                               radius_times_overlap_sqrt;
+  const double model_parameter_st =
+    8 * this->effective_shear_modulus[particle_type] *
+    radius_times_overlap_sqrt;
 
   // Calculation of normal and tangential spring and dashpot constants
   // using particle and wall properties
@@ -420,7 +423,10 @@ ParticleWallNonLinearForce<dim>::calculate_nonlinear_contact_force_and_torque(
     -8. * this->effective_shear_modulus[particle_type] *
       radius_times_overlap_sqrt +
     DBL_MIN;
-  // TODO add the tangential damping
+
+  const double tangential_damping_constant =
+    normal_damping_constant *
+    sqrt(model_parameter_st / (model_parameter_sn + DBL_MIN));
 
   // Calculation of normal force using spring and dashpot normal forces
   Tensor<1, 3> normal_force =
@@ -429,23 +435,31 @@ ParticleWallNonLinearForce<dim>::calculate_nonlinear_contact_force_and_torque(
     normal_vector;
 
   // Calculation of tangential force
+  Tensor<1, 3> damping_tangential_force =
+    tangential_damping_constant * contact_info.tangential_relative_velocity;
   Tensor<1, 3> tangential_force =
-    tangential_spring_constant * contact_info.tangential_overlap;
+    tangential_spring_constant * contact_info.tangential_overlap +
+    damping_tangential_force;
+  double tangential_force_norm = tangential_force.norm();
 
   double coulomb_threshold =
     this->effective_coefficient_of_friction[particle_type] *
     normal_force.norm();
 
   // Check for gross sliding
-  if (tangential_force.norm() > coulomb_threshold)
+  if (tangential_force_norm > coulomb_threshold)
     {
       // Gross sliding occurs and the tangential overlap and tangential
       // force are limited to Coulomb's criterion
-      tangential_force =
-        coulomb_threshold * (tangential_force / tangential_force.norm());
-
       contact_info.tangential_overlap =
-        tangential_force / (tangential_spring_constant + DBL_MIN);
+        (coulomb_threshold *
+           (tangential_force / (tangential_force_norm + DBL_MIN)) -
+         damping_tangential_force) /
+        (tangential_spring_constant + DBL_MIN);
+
+      tangential_force =
+        (tangential_spring_constant * contact_info.tangential_overlap) +
+        damping_tangential_force;
     }
 
   // Calculation torque caused by tangential force

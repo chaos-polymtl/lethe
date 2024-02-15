@@ -201,8 +201,8 @@ private:
   }
 
   /**
-   * Carries out the calculation of the particle-wall DMT contact force and torques
-   * based on the updated values in contact_info
+   * Carries out the calculation of the particle-wall DMT contact force and
+   * torques based on the updated values in contact_info
    *
    * @param contact_info A container that contains the required information for
    * calculation of the contact force for a particle pair in contact
