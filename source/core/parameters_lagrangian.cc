@@ -839,11 +839,11 @@ namespace Parameters
           particle_wall_contact_force_method =
             ParticleWallContactForceModel::nonlinear;
         else if (pwcf == "JKR")
-            particle_wall_contact_force_method =
-              ParticleWallContactForceModel::JKR;
+          particle_wall_contact_force_method =
+            ParticleWallContactForceModel::JKR;
         else if (pwcf == "DMT")
-            particle_wall_contact_force_method =
-              ParticleWallContactForceModel::DMT;
+          particle_wall_contact_force_method =
+            ParticleWallContactForceModel::DMT;
         else
           {
             throw(
