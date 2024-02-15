@@ -45,7 +45,7 @@ In this case, the vortex, which is initially 2D, will decay by generating smalle
 
 .. math::
 
-  \frac{\mathrm{d}E_K}{\mathrm{d}t} &=  \mathcal{E} \\
+  \frac{\mathrm{d}E_K}{\mathrm{d}t} &=  -\mathcal{E} \\
   E_k &= \frac{1}{\Omega} \int_{\Omega} \frac{\mathbf{u}\cdot \mathbf{u}}{2} \mathrm{d}\Omega \\
   \mathcal{E} &= \frac{1}{\Omega} \int_{\Omega} \frac{\mathbf{\omega}\cdot \mathbf{\omega}}{2} \mathrm{d}\Omega
 
