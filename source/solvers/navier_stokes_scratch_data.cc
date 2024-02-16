@@ -106,6 +106,7 @@ NavierStokesScratchData<dim>::enable_vof(
     std::vector<std::vector<double>>(maximum_number_of_previous_solutions(),
                                      std::vector<double>(this->n_q_points));
   // For STF calculation
+  phase_gradient_values = std::vector<Tensor<1, dim>>(this->n_q_points);
   filtered_phase_gradient_values =
     std::vector<Tensor<1, dim>>(this->n_q_points);
 
@@ -144,6 +145,7 @@ NavierStokesScratchData<dim>::enable_vof(
     std::vector<std::vector<double>>(maximum_number_of_previous_solutions(),
                                      std::vector<double>(this->n_q_points));
   // For STF calculation
+  phase_gradient_values = std::vector<Tensor<1, dim>>(this->n_q_points);
   filtered_phase_gradient_values =
     std::vector<Tensor<1, dim>>(this->n_q_points);
 

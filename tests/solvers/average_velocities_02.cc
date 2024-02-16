@@ -59,6 +59,7 @@ test()
   simulation_control_parameters.output_frequency             = 1;
   simulation_control_parameters.adapt                        = true;
   simulation_control_parameters.adaptative_time_step_scaling = 0.95;
+  simulation_control_parameters.max_dt                       = 1e6;
 
   Parameters::PostProcessing postprocessing_parameters;
   postprocessing_parameters.calculate_average_velocities = true;

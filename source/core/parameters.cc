@@ -109,6 +109,10 @@ namespace Parameters
                         "1",
                         Patterns::Double(),
                         "Maximum CFL value");
+      prm.declare_entry("max time step",
+                        "1e6",
+                        Patterns::Double(),
+                        "Maximum time step value");
       prm.declare_entry("stop tolerance",
                         "1e-10",
                         Patterns::Double(),
@@ -216,6 +220,7 @@ namespace Parameters
       timeEnd        = prm.get_double("time end");
       adapt          = prm.get_bool("adapt");
       maxCFL         = prm.get_double("max cfl");
+      max_dt         = prm.get_double("max time step");
       stop_tolerance = prm.get_double("stop tolerance");
       adaptative_time_step_scaling =
         prm.get_double("adaptative time step scaling");
@@ -1922,12 +1927,13 @@ namespace Parameters
   {
     prm.enter_subsection("mesh");
     {
-      prm.declare_entry("type",
-                        "dealii",
-                        Patterns::Selection(
-                          "gmsh|dealii|periodic_hills|cylinder"),
-                        "Type of mesh "
-                        "Choices are <gmsh|dealii|periodic_hills|cylinder>.");
+      prm.declare_entry(
+        "type",
+        "dealii",
+        Patterns::Selection(
+          "gmsh|dealii|periodic_hills|cylinder|colorized_cylinder_shell"),
+        "Type of mesh "
+        "Choices are <gmsh|dealii|periodic_hills|cylinder|colorized_cylinder_shell>.");
 
       prm.declare_entry("file name",
                         "none",
@@ -2021,6 +2027,8 @@ namespace Parameters
           type = Type::periodic_hills;
         else if (op == "cylinder")
           type = Type::cylinder;
+        else if (op == "colorized_cylinder_shell")
+          type = Type::colorized_cylinder_shell;
         else
           throw std::logic_error(
             "Error, invalid mesh type. Choices are gmsh and dealii");
