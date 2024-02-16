@@ -18,7 +18,8 @@
  * Implementation of heat transfer as an auxiliary physics.
  * This heat equation is weakly coupled to the velocity field.
  * Equation solved:
- * \f$ \rho * C_p * (\frac{dT}{dt} + u \cdot \nabla T) = k \nabla^2T + \tau : \nabla u \f$
+ * \f$ \rho * C_p * (\frac{dT}{dt} + u \cdot \nabla T) = k \nabla^2T + \tau :
+ \nabla u \f$
  *
 
  *
@@ -75,7 +76,7 @@ public:
    * @brief Constructor of the HeatTransfer object
    *
    * @param multiphysics_interface Map of the auxiliary physics that will be
-   * solved on top of a computational fluid dynamic simulation. 
+   * solved on top of a computational fluid dynamic simulation.
    *
    * @param p_simulation_parameters Contain the simulation parameter file
    * information.
@@ -266,8 +267,8 @@ public:
 
   /**
    * @brief Set up the initial conditions associated with the physics.
-   * Generally, physics only support imposing nodal values, but some physics
-   * additionnaly support the use of L2 projection or steady-state solutions.
+   * heat_transfer allows a temperature function initial condition over the
+   * the domain.
    */
   void
   set_initial_conditions() override;
@@ -279,8 +280,8 @@ public:
   update_boundary_conditions() override;
 
   /**
-   * @brief Call for the solution of the linear system of equation using a
-   * strategy appropriate to the auxiliary physics.
+   * @brief Call for the solution of the linear system of equation using ILU
+   * or GMRES.
    *
    * @param initial_step Provide the linear solver with indication if this
    * solution is the first one for the system of equation or not.
