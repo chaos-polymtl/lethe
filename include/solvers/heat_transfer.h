@@ -86,7 +86,7 @@ public:
    *
    * @param p_simulation_control Object responsible for the control of
    * steady-state and transient simulations. Contains all the information
-   * related to time stepping and the stopping criterions.
+   * related to time stepping and the stopping criteria.
    *
    */
   HeatTransfer(MultiphysicsInterface<dim>      *multiphysics_interface,
@@ -175,7 +175,7 @@ public:
   /**
    * @brief Call for the assembly of the matrix and the right-hand side of the Nitsche restriction for the heat transfert equation.
    *
-   * @param assemble_matrix boolean that is true for matrix assembly, and false for rhs assembly.
+   * @param assemble_matrix Boolean that is true for matrix assembly, and false for rhs assembly.
    */
   void
   assemble_nitsche_heat_restriction(const bool assemble_matrix);
@@ -247,25 +247,25 @@ public:
                 dealii::Vector<float> &estimated_error_per_cell) override;
 
   /**
-   * @brief Prepare Heat Transfer to write checkpoint
+   * @brief Prepare Heat Transfer to write checkpoint.
    */
   void
   write_checkpoint() override;
 
   /**
-   * @brief Allow Heat Transfer to set-up solution vector from checkpoint file.
+   * @brief Allow Heat Transfer to set up solution vector from checkpoint file.
    */
   void
   read_checkpoint() override;
 
   /**
-   * @brief Set-up the DofHandler and the degree of freedom associated with the physics.
+   * @brief Set up the DofHandler and the degrees of freedom associated with the physics.
    */
   void
   setup_dofs() override;
 
   /**
-   * @brief Set-up the initial conditions associated with the physics.
+   * @brief Set up the initial conditions associated with the physics.
    * Generally, physics only support imposing nodal values, but some physics
    * additionnaly support the use of L2 projection or steady-state solutions.
    */
@@ -360,7 +360,7 @@ public:
    * @brief Getter method to access the private attribute
    * system_rhs for the physic currently solved.
    *
-   * @return Right hand side vector
+   * @return Right hand side vector.
    */
   GlobalVectorType &
   get_system_rhs() override
@@ -439,7 +439,7 @@ private:
     StabilizedMethodsCopyData                            &copy_data);
 
   /**
-   * @brief Set-up the vector of assembler functions
+   * @brief Set up the vector of assembler functions
    */
   virtual void
   setup_assemblers();
@@ -502,7 +502,7 @@ private:
   postprocess_liquid_fraction(const bool gather_vof);
 
   /**
-   * @brief Post-processing. Write the liquid fraction to an output file
+   * @brief Post-processing. Write the liquid fraction to an output file.
    */
 
   void
@@ -615,7 +615,7 @@ private:
   /**
    * @brief Responsible for the control of steady-state and transient
    * simulations. Contains all the information related to time stepping and the
-   * stopping criterion. See simulation_control abstract class for more
+   * stopping criteria. See simulation_control abstract class for more
    * information.
    */
   std::shared_ptr<SimulationControl> simulation_control;
@@ -640,18 +640,18 @@ private:
   // Mapping and Quadrature
 
   /**
-   * @brief Is a transformation which maps point in the reference cell to
+   * @brief Transformation which maps point in the reference cell to
    * points in the actual grid cell.
    */
   std::shared_ptr<Mapping<dim>> temperature_mapping;
   /**
    * @brief Approximate an integral by evaluating the integrand at specific
-   * points and summing the point values with specific weights
+   * points and summing the point values with specific weights.
    */
   std::shared_ptr<Quadrature<dim>> cell_quadrature;
   /**
    * @brief Approximate an integral by evaluating the integrand at specific
-   * points and summing the point values with specific weights
+   * points and summing the point values with specific weights.
    */
   std::shared_ptr<Quadrature<dim - 1>> face_quadrature;
 
@@ -665,7 +665,7 @@ private:
   IndexSet locally_owned_dofs;
   /**
    * @brief Store a subset of the DoF indices that contains both the
-   * locally_owned_dofs and the DoF indices on all ghost cells.
+   * locally_owned_dofs and the DoF indices on ghost cells.
    */
   IndexSet locally_relevant_dofs;
 
