@@ -1,5 +1,5 @@
 ###########################################################
-# File : plot_dissipation_rate.py
+# File : plot_reference.py
 #---------------------------------------------------------
 # Plots the dissipation rate from the kinetic energy
 # and from the enstrophy and compares them with a
