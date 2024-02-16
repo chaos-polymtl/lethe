@@ -70,7 +70,7 @@ Incompressible Flow
 
       incompressible_2_4 [label="Ribbon Mixer Using a Single \n Rotating Reference Frame", href="https://lethe-cfd.github.io/lethe/documentation/examples/incompressible-flow/3d-mixer-using-single-rotating-frame/3d-mixer-using-single-rotating-frame.html", tooltip="Ribbon mixer using a single rotating reference frame"];
 
-      incompressible_2_4 [label="Mixer with Pitched-Blade Turbine Impeller \nUsing Nitsche Immersed Boundary", href="https://lethe-cfd.github.io/lethe/documentation/examples/incompressible-flow/3d-nitsche-mixer-with-pbt-impeller/nitsche-mixer-with-pbt-impeller.html", tooltip="Mixer with pitched-blade turbine impeller using Nitsche immersed boundary"];
+      incompressible_2_5 [label="Mixer with Pitched-Blade Turbine Impeller \nUsing Nitsche Immersed Boundary", href="https://lethe-cfd.github.io/lethe/documentation/examples/incompressible-flow/3d-nitsche-mixer-with-pbt-impeller/nitsche-mixer-with-pbt-impeller.html", tooltip="Mixer with pitched-blade turbine impeller using Nitsche immersed boundary"];
 
       incompressible_flow:e -> incompressible_1:w;
       incompressible_flow:e -> incompressible_2:w;
