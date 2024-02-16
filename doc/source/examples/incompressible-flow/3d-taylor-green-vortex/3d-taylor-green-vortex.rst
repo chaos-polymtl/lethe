@@ -2,7 +2,7 @@
 Taylor-Green Vortex
 ====================
 
-This example showcases another canonical fluid mechanics problem: the Taylor-Green vortex.  This example features both the traditional matrix-based solver within Lethe ( ``lethe-fluid``) and the matrix-free solver  (``lethe-fluid-matrix-free``) which is more computationally efficient, especially for high-order elements (Q2 and above). Post-processing capabilities for enstrophy and kinetic energy are also demonstrated.
+This example showcases another canonical fluid mechanics problem: the Taylor-Green vortex.  This example features both the traditional matrix-based solver within Lethe (``lethe-fluid``) and the matrix-free solver  (``lethe-fluid-matrix-free``) which is more computationally efficient, especially for high-order elements (Q2 and above). Postprocessing capabilities for enstrophy and kinetic energy are also demonstrated.
 
 
 ---------
@@ -20,7 +20,7 @@ Files Used in This Example
 
 All files mentioned below are located in the example's folder (``examples/incompressible-flow/3d-taylor-green-vortex``).
 
-- Parameter file: ``tgv-matrix-based.prm`` and ``tgv-matrix-free.prm``
+- Parameter files: ``tgv-matrix-based.prm`` and ``tgv-matrix-free.prm``
 - Postprocessing Python scripts: ``plot_dissipation_rate.py`` and ``calculate_dissipation_rate.py``
 
 
@@ -28,28 +28,28 @@ All files mentioned below are located in the example's folder (``examples/incomp
 Description of the Case
 -----------------------
 
-The Taylor–Green vortex is an unsteady flow of a decaying vortex, which has an exact closed form solution of the incompressible Navier–Stokes equations in Cartesian coordinates. It is named after the British physicist and mathematician Geoffrey Ingram Taylor and his collaborator A. E. Green [1]. In the present case, we simulate one Taylor-Green vortex at a Reynolds number of 1600 in a domain :math:`\Omega = [-\pi,\pi]\times[-\pi,\pi]\times[-\pi,\pi]` using periodic boundary conditions.
+The Taylor–Green vortex is an unsteady flow of a decaying vortex, which has an exact closed form solution of the incompressible Navier–Stokes equations in Cartesian coordinates. It is named after the British physicist and mathematician Geoffrey Ingram Taylor and his collaborator A. E. Green `[1] <https://en.wikipedia.org/wiki/Taylor%E2%80%93Green_vortex>`_. In the present case, we simulate one Taylor-Green vortex at a Reynolds number of 1600 in a domain :math:`\Omega = [-\pi,\pi]\times[-\pi,\pi]\times[-\pi,\pi]` using periodic boundary conditions.
 
 The three velocity components :math:`[u_x,u_y,u_z]^T` and the pressure :math:`p` are specified at time :math:`t=0` by:
 
 .. math::
 
-  u_{x} &= sin(x)*cos(y)*cos(z) \\
-  u_{y} &= -cos(x)*sin(y)*cos(z)\\
+  u_{x} &= \sin(x)*\cos(y)*\cos(z) \\
+  u_{y} &= -\cos(x)*\sin(y)*\cos(z)\\
   u_{z} &= 0 \\
-  p &=  \frac{1}{16}*(cos(2x)+cos(2y))*(cos(2z)+2)
+  p &=  \frac{1}{16}*\left[\cos(2x)+\cos(2y)\right]\left[\cos(2z)+2\right]
 
-In this case, the vortex, which is initially 2D, will decay by generating smaller 3D turbulent structures (vortex tubes, rings and sheets). This decay can be monitored through the total kinetic energy of the system. Since the simulation domain is periodic, it can be demontrated that the time derative of the total kinetic energy :math:`E_k` is directly related to the enstrophy :math:`\mathcal{E}` such that:
+In this case, the vortex, which is initially 2D, will decay by generating smaller 3D turbulent structures (vortex tubes, rings and sheets). This decay can be monitored through the total kinetic energy of the system. Since the simulation domain is periodic, it can be demontrated that the time derative of the total kinetic energy :math:`E_\mathrm{k}` is directly related to the enstrophy :math:`\mathcal{E}` such that:
 
 
 
 .. math::
 
-  \frac{\mathrm{d}E_K}{\mathrm{d}t} &=  -\mathcal{E} \\
+  \frac{\mathrm{d}E_\mathrm{k}}{\mathrm{d}t} &=  -\mathcal{E} \\
   E_k &= \frac{1}{\Omega} \int_{\Omega} \frac{\mathbf{u}\cdot \mathbf{u}}{2} \mathrm{d}\Omega \\
   \mathcal{E} &= \frac{1}{\Omega} \int_{\Omega} \frac{\mathbf{\omega}\cdot \mathbf{\omega}}{2} \mathrm{d}\Omega
 
-where :math:`\mathbf{\omega}=\nabla \times \mathbf{u}` is the vorticity. The results we obtain are compared to reference spectral results extracted from **Wang et al 2013** `[2] <https://doi.org/10.1002/fld.3767>`_.
+where :math:`\mathbf{\omega}=\nabla \times \mathbf{u}` is the vorticity. The results we obtain are compared to reference spectral results extracted from Wang *et al.* `[2] <https://doi.org/10.1002/fld.3767>`_
 
 
 --------------
@@ -65,15 +65,15 @@ The ``mesh`` subsection specifies the computational grid:
 
   subsection mesh
     set type               = dealii
-    set grid type          = hyper_rectangle
-    set grid arguments     = 1 : -3.14159265359 : 3.14159265359 : true
+    set grid type          = hyper_cube
+    set grid arguments     = -3.14159265359 : 3.14159265359 : true
     set initial refinement = 5 
   end
 
-The ``type`` specifies the mesh format used. We use the ``subdivided_hyper_rectangle`` mesh generated from the deal.II `GridGenerator <https://www.dealii.org/current/doxygen/deal.II/namespaceGridGenerator.html>`_ . We set ``colorize=true`` to be able to adequately set-up the periodic bondary conditions.
+The ``type`` specifies the mesh format used. We use the ``hyper_cube`` mesh generated from the deal.II `GridGenerator <https://www.dealii.org/current/doxygen/deal.II/namespaceGridGenerator.html>`_ . We set ``colorize = true`` to be able to adequately set-up the periodic boundary conditions.
 
 
-The last parameter specifies the ``initial refinement`` of the grid. Indicating an ``initial refinement=5`` implies that the initial mesh is refined 5 times. In 3D, each cell is divided by 8 per refinement. Consequently, the final grid is made of 32768 cells.
+The last parameter specifies the ``initial refinement`` of the grid. Indicating an ``initial refinement = 5`` implies that the initial mesh is refined 5 times. In 3D, each cell is divided by 8 per refinement. Consequently, the final grid is made of 32768 cells.
 
 Boundary Conditions
 ~~~~~~~~~~~~~~~~~~~
@@ -104,7 +104,7 @@ The ``boundary conditions`` subsection establishes the constraints on different 
     end
   end
 
-First, the ``number`` of boundary conditions to be applied must be specified. For each boundary condition, the ``id`` of the boundary as well as its ``type`` must be specified. All boundaries are periodic. The ``x-`` (id=0) is periodic with the ``x+`` boundary (id=1), the ``y-`` (id=2) is periodic with the ``y+`` boundary (id=3) and so on and so forth. For each periodic boundary condition, the periodic direction must be specified. A periodic direction of ``0`` implies that the normal direction of the wall is the :math:`\mathbf{e}_x` vector, ``1`` implies that it's the :math:`\mathbf{e}_y`.
+First, the ``number`` of boundary conditions to be applied must be specified. For each boundary condition, the ``id`` of the boundary as well as its ``type`` must be specified. All boundaries are ``periodic``. The ``x-`` (id=0) is periodic with the ``x+`` boundary (id=1), the ``y-`` (id=2) is periodic with the ``y+`` boundary (id=3) and so on and so forth. For each periodic boundary condition, the periodic direction must be specified. A periodic direction of ``0`` implies that the normal direction of the wall is the :math:`\mathbf{e}_x` vector, ``1`` implies that it's the :math:`\mathbf{e}_y`.
 
 Physical Properties
 ~~~~~~~~~~~~~~~~~~~
@@ -149,7 +149,7 @@ To monitor the kinetic energy and the enstrophy, we set both calculation to ``tr
 Simulation Control
 ~~~~~~~~~~~~~~~~~~
 
-The ``simulation control`` subsection controls the flow of the simulation. To maximise the temporal accuracy of the simulation, we use a third order ``bdf3`` scheme. Results are written every 2 time-steps. To ensure a more adequate visualization of the high-order elements, we set ``subdivision=3``. This will allow Paraview to render the high-order solutions with more fidelity.
+The ``simulation control`` subsection controls the flow of the simulation. To maximize the temporal accuracy of the simulation, we use a third order ``bdf3`` scheme. Results are written every 2 time-steps. To ensure a more adequate visualization of the high-order elements, we set ``subdivision = 3``. This will allow Paraview to render the high-order solutions with more fidelity.
 
 .. code-block:: text
 
@@ -219,7 +219,7 @@ The non-linear solver used in the matrix-free solver is straightforward. We use 
 Matrix-free - Linear Solver
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The ``lethe-fluid-matrix-free`` has significantly more parameters for its linear solver. The new parameters are all related to the geometric multigrid preconditioner that is used by the matrix free algorithm.
+The ``lethe-fluid-matrix-free`` has significantly more parameters for its linear solver. The new parameters are all related to the geometric multigrid preconditioner that is used by the matrix-free algorithm.
 
 .. code-block:: text
 
@@ -232,12 +232,12 @@ The ``lethe-fluid-matrix-free`` has significantly more parameters for its linear
       set preconditioner    = gcmg
       set verbosity         = verbos
       
-      #MG parameters
+      # MG parameters
       set mg verbosity       = quiet
       set mg min level       = -1
       set mg level min cells = 16
 
-      #smoother
+      # Smoother
       set mg smoother iterations = 10
       set mg smoother eig estimation = true
       
@@ -247,7 +247,7 @@ The ``lethe-fluid-matrix-free`` has significantly more parameters for its linear
       set eig estimation cg n iterations = 20
       set eig estimation verbosity       = verbose
 
-      #coarse-grid solver
+      # Coarse-grid solver
       set mg coarse grid max iterations     = 2000
       set mg coarse grid tolerance          = 1e-7
       set mg coarse grid reduce             = 1e-4
@@ -259,7 +259,7 @@ The ``lethe-fluid-matrix-free`` has significantly more parameters for its linear
     end
   end
 
-We set ``mg verbosity = quiet`` to prevent logging of the multigrid parameters during the simulation. Setting ``mg min level = -1`` ensures that the ``mg level min cells=16`` parameter is used to determine the coarsest level. It is important to ensure that the Taylor-Green vortex has sufficient cells on the coarsest level since periodic boundary conditions are used. Indeed, using a coarsest level with a single cell can lead to a problematic situation where too few degrees of freedom are available on the coarsest level.
+We set ``mg verbosity = quiet`` to prevent logging of the multigrid parameters during the simulation. Setting ``mg min level = -1`` ensures that the ``mg level min cells = 16`` parameter is used to determine the coarsest level. It is important to ensure that the Taylor-Green vortex has sufficient cells on the coarsest level since periodic boundary conditions are used. Indeed, using a coarsest level with a single cell can lead to a problematic situation where too few degrees of freedom are available on the coarsest level.
 
 The ``smoother``, ``Eigenvalue estimation parameters`` and ``coarse-grid solver`` subsections are explained in the **Theory Guide** (under construction).
 
@@ -282,7 +282,7 @@ and the matrix-free simulations can be launched by typing
 
   mpirun -np n_proc lethe-fluid-matrix-free tgv-matrix-free.prm 
 
-For a 5 initial refinement (:math:`32^3` Q2 cells), the matrix-based solver takes around 1 hour and 20 minutes on 16 cores while the matrix-free solver takes less than 20 minutes. Running the same problem, but in Q3 (:math:`32^3` Q3 cells), the matrix-free solver takes less than 2 hours while the matrix-based solver takes close to a day and consumes a tremendous amount of ram (approx. 80 GB). If you have 64 GB of ram, you can run an even finer mesh (:math:`64^3` Q3 cells) using the matrix-free solver in approximately 16 hours.
+For a 5 initial refinements (:math:`32^3` Q2 cells), the matrix-based solver takes around 1 hour and 20 minutes on 16 cores while the matrix-free solver takes less than 20 minutes. Running the same problem, but in Q3 (:math:`32^3` Q3 cells), the matrix-free solver takes less than 2 hours while the matrix-based solver takes close to a day and consumes a tremendous amount of ram (approx. 80 GB). If you have 64 GB of ram, you can run an even finer mesh (:math:`64^3` Q3 cells) using the matrix-free solver in approximately 16 hours.
 
 
 ----------------------
@@ -313,11 +313,11 @@ Then, by invoking the second script present in the example, a plot comparing the
 
   python3 plot_dissipation_rate.py -ke kinetic_energy_decay.dat -ens enstrophy.dat -v 0.000625
 
-.. note::
+.. tip::
  
   A nice plot with a zoomed in section can be generated by adding the argument ``-z True`` to the command above.
 
-The following plot shows the decay of kinetic energy as measured
+The following plot shows the decay of kinetic energy as measured.
 
 +-------------------------------------------------------------------------------------------------------------------+
 |  .. figure:: images/dissipation_comparison_Q2_32.png                                                              |
@@ -327,7 +327,7 @@ The following plot shows the decay of kinetic energy as measured
 |                                                                                                                   |
 +-------------------------------------------------------------------------------------------------------------------+
 
-We note that the kinetic energy decay does not match that of the reference, but also that there is significant numerical dissipation since the enstrophy does not match the kinetic energy decay. Increase the order from Q2 to Q3 yield the following results which are better:
+We note that the kinetic energy decay does not match that of the reference, but also that there is significant numerical dissipation since the enstrophy does not match the kinetic energy decay. Increasing the order from Q2 to Q3 yield the following results which are better:
 
 +-------------------------------------------------------------------------------------------------------------------+
 |  .. figure:: images/dissipation_comparison_Q3_32.png                                                              |
@@ -347,7 +347,7 @@ By refining the mesh once more (:math:`64^3` Q3Q3), we recover the right kinetic
 |                                                                                                                   |
 +-------------------------------------------------------------------------------------------------------------------+
 
-Increasing the refinement once more (:math:`128^3` Q3Q3), we note the perfect agreement between the kinetic energy decay, the enstrophy and the reference results. These results constitute Direct Numerical Simulation (DNS)
+Increasing the refinement once more (:math:`128^3` Q3Q3), allows us to obtain perfect agreement between the kinetic energy decay, the enstrophy and the reference results. These results constitute a Direct Numerical Simulation (DNS):
 
 +-------------------------------------------------------------------------------------------------------------------+
 |  .. figure:: images/dissipation_comparison_Q3_128.png                                                             |
@@ -362,12 +362,13 @@ Increasing the refinement once more (:math:`128^3` Q3Q3), we note the perfect ag
 Possibilities for Extension
 ----------------------------
 
-- This case is very interesting to post-process. Try to post-process this case using other quantities (vorticity, q-criterion) and use the results to generate interesting animations. Feel free to share them with us!
+- This case is very interesting to postprocess. Try to postprocess this case using other quantities (vorticity, q-criterion) and use the results to generate interesting animations. Feel free to share them with us!
 
 
 ------------
 References
 ------------
 
-[1] https://en.wikipedia.org/wiki/Taylor%E2%80%93Green_vortex
-[2] `Z. J. Wang et al., “High-order CFD methods: current status and perspective,” International Journal for Numerical Methods in Fluids, vol. 72, no. 8, pp. 811–845, Jan. 2013, doi: <https://doi.org/10.1002/fld.3767>`_. 
+`[1] <https://en.wikipedia.org/wiki/Taylor%E2%80%93Green_vortex>`_ “Taylor–Green vortex,” *Wikipedia*. Dec. 01, 2023. Available: https://en.wikipedia.org/wiki/Taylor%E2%80%93Green_vortex
+
+`[2] <https://doi.org/10.1002/fld.3767>`_ Z. J. Wang *et al.*, “High-order CFD methods: current status and perspective,” *Int. J. Numer. Meth. Fluids*, vol. 72, no. 8, pp. 811–845, 2013, doi: 10.1002/fld.3767.
