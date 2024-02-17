@@ -9,11 +9,11 @@ set dimension = 3
 
 subsection simulation control
   set method            = bdf3
-  set time step         = 0.025 # Time step
-  set number mesh adapt = 0     # If steady, nb mesh adaptation
-  set time end          = 20    # End time of simulation
-  set output name       = tgv   # Prefix for VTU outputs
-  set output frequency  = 2   # Frequency of simulation output
+  set time step         = 0.05  
+  set number mesh adapt = 0     
+  set time end          = 20    
+  set output name       = tgv   
+  set output frequency  = 2      
   set output path       = ./output/
   set subdivision       = 3
 end
@@ -23,8 +23,8 @@ end
 #---------------------------------------------------
 
 subsection FEM
-  set velocity order = 3
-  set pressure order = 3
+  set velocity order = 2
+  set pressure order = 2
 end
 
 #---------------------------------------------------
@@ -32,7 +32,7 @@ end
 #---------------------------------------------------
 
 subsection timer
-  set type = iteration # <none|iteration|end>
+  set type = iteration 
 end
 
 #---------------------------------------------------
@@ -74,8 +74,8 @@ end
 subsection mesh
   set type               = dealii
   set grid type          = hyper_cube
-  set grid arguments       = -3.14159265359 : 3.14159265359 : true
-  set initial refinement = 6 # initial mesh refinement
+  set grid arguments     = -3.14159265359 : 3.14159265359 : true
+  set initial refinement = 5 
 end
 
 #---------------------------------------------------
