@@ -333,7 +333,7 @@ We note that the kinetic energy decay does not match that of the reference, but 
 |                                                                                                                   |
 +-------------------------------------------------------------------------------------------------------------------+
 
-By refining the mesh once more (:math:`64^3` Q3Q3), we recover the right kinetic energy decay, but we still observe significant numerical dissipation. These results are thus implicit LES where the SUPG/PSPG stabilization is acting as the subgrid scale model and mimics the kinetic energy decay that is not captured by the mesh.
+By refining the mesh once more (:math:`64^3` Q3Q3) and decreasing the time step by a factor two (:math:`\Delta t=0.025`), we recover the right kinetic energy decay, but we still observe significant numerical dissipation. These results are thus implicit LES where the SUPG/PSPG stabilization is acting as the subgrid scale model and mimics the kinetic energy decay that is not captured by the mesh.
 
 +-------------------------------------------------------------------------------------------------------------------+
 |  .. figure:: images/dissipation_comparison_Q3_64.png                                                              |
