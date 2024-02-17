@@ -173,11 +173,11 @@ The calculation of the Jacobian matrix is expensive when using high-order elemen
 
   subsection non-linear solver
     subsection fluid dynamics
-      set solver                  = inexact_newton
-      set verbosity               = verbose
-      set tolerance               = 1e-3
-      set reuse matrix            = true
-      set matrix tolerance        = 0.01
+      set solver            = inexact_newton
+      set verbosity         = verbose
+      set tolerance         = 1e-3
+      set reuse matrix      = true
+      set matrix tolerance  = 0.01
     end
   end
 
@@ -190,12 +190,12 @@ Since this is a transient problem, the linear solver can be relatively simple. W
 
   subsection linear solver
     subsection fluid dynamics
-      set verbosity               = verbose
-      set method                  = gmres
-      set max iters               = 200
-      set max krylov vectors      = 200
-      set relative residual       = 1e-4
-      set minimum residual        = 1e-12
+      set verbosity                             = verbose
+      set method                                = gmres
+      set max iters                             = 200
+      set max krylov vectors                    = 200
+      set relative residual                     = 1e-4
+      set minimum residual                      = 1e-12
       set ilu preconditioner fill               = 0
       set ilu preconditioner absolute tolerance = 1e-12
       set ilu preconditioner relative tolerance = 1.00
@@ -211,8 +211,8 @@ The non-linear solver used in the matrix-free solver is straightforward. We use 
 
   subsection non-linear solver
     subsection fluid dynamics
-      set tolerance      = 1e-3
-      set verbosity      = verbose
+      set tolerance = 1e-3
+      set verbosity = verbose
     end
   end
 
@@ -238,7 +238,7 @@ The ``lethe-fluid-matrix-free`` has significantly more parameters for its linear
       set mg level min cells = 16
 
       # Smoother
-      set mg smoother iterations = 10
+      set mg smoother iterations     = 10
       set mg smoother eig estimation = true
       
       # Eigenvalue estimation parameters
@@ -248,11 +248,11 @@ The ``lethe-fluid-matrix-free`` has significantly more parameters for its linear
       set eig estimation verbosity       = verbose
 
       # Coarse-grid solver
-      set mg coarse grid max iterations     = 2000
-      set mg coarse grid tolerance          = 1e-7
-      set mg coarse grid reduce             = 1e-4
-      set mg coarse grid max krylov vectors = 30
-      set mg coarse grid preconditioner     = ilu
+      set mg coarse grid max iterations         = 2000
+      set mg coarse grid tolerance              = 1e-7
+      set mg coarse grid reduce                 = 1e-4
+      set mg coarse grid max krylov vectors     = 30
+      set mg coarse grid preconditioner         = ilu
       set ilu preconditioner fill               = 1
       set ilu preconditioner absolute tolerance = 1e-10
       set ilu preconditioner relative tolerance = 1.00
@@ -322,8 +322,6 @@ The following plot shows the decay of kinetic energy as measured.
 +-------------------------------------------------------------------------------------------------------------------+
 |  .. figure:: images/dissipation_comparison_Q2_32.png                                                              |
 |     :width: 500                                                                                                   |
-|     :alt: In this figure, the kinetic energy decay is compared to the enstrophy for a 32^3 Q2Q2 mesh.             |
-|           The two curves should be identical in the absence of numerical dissipation                              |                         
 |                                                                                                                   |
 +-------------------------------------------------------------------------------------------------------------------+
 
@@ -332,8 +330,6 @@ We note that the kinetic energy decay does not match that of the reference, but 
 +-------------------------------------------------------------------------------------------------------------------+
 |  .. figure:: images/dissipation_comparison_Q3_32.png                                                              |
 |     :width: 500                                                                                                   |
-|     :alt: In this figure, the kinetic energy decay is compared to the enstrophy for a 32^3 Q3Q3 mesh.             |
-|           The two curves should be identical in the absence of numerical dissipation                              |                         
 |                                                                                                                   |
 +-------------------------------------------------------------------------------------------------------------------+
 
@@ -342,8 +338,6 @@ By refining the mesh once more (:math:`64^3` Q3Q3), we recover the right kinetic
 +-------------------------------------------------------------------------------------------------------------------+
 |  .. figure:: images/dissipation_comparison_Q3_64.png                                                              |
 |     :width: 500                                                                                                   |
-|     :alt: In this figure, the kinetic energy decay is compared to the enstrophy for a 64^3 Q3Q3 mesh.             |
-|           The two curves should be identical in the absence of numerical dissipation                              |                         
 |                                                                                                                   |
 +-------------------------------------------------------------------------------------------------------------------+
 
@@ -352,8 +346,6 @@ Increasing the refinement once more (:math:`128^3` Q3Q3), allows us to obtain pe
 +-------------------------------------------------------------------------------------------------------------------+
 |  .. figure:: images/dissipation_comparison_Q3_128.png                                                             |
 |     :width: 500                                                                                                   |
-|     :alt: In this figure, the kinetic energy decay is compared to the enstrophy for a 128^3 Q3Q3 mesh.            |
-|           The two curves should be identical in the absence of numerical dissipation                              |                         
 |                                                                                                                   |
 +-------------------------------------------------------------------------------------------------------------------+
 
