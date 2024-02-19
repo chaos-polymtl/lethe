@@ -25,7 +25,7 @@ print("Beta value is : ", beta)
 delta = 2 * beta * np.sqrt(t)
 
 # Load VTU file
-vtu_file="./output/stefan.0250.0000.vtu"
+vtu_file="./output/stefan.00250.00000.vtu"
 sim = pv.read(vtu_file)
 sim.set_active_scalars("temperature")
 

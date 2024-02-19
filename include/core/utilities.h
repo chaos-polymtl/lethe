@@ -207,6 +207,20 @@ sgn(T val)
   return (static_cast<T>(0) < val) - (val < static_cast<T>(0));
 }
 
+
+/**
+ * @brief Used to clip a properties between a lower and a higher value
+ * @tparam T val argument's type
+ * @param lower lower admissible value
+ * @param upper upper admissible value
+ * @return clipped variable that is not below lower and not above upper
+ *
+ */
+template <typename T>
+T clip(const T& n, const T& lower, const T& upper) {
+  return std::max(lower, std::min(n, upper));
+}
+
 /**
  * @brief Used in multiphasic simulations to calculates the equivalent properties for a given phase given by the Cahn-Hilliard equations. Method called in quadrature points loop
  *

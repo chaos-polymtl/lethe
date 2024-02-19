@@ -237,9 +237,9 @@ public:
 
     for (unsigned int i = 0; i < n_values; ++i)
       {
-        const double temperature    = temperature_vec[i];
-        const double temperature_p1 = p1_temperature_vec[i];
-        const double temperature_p2 = p2_temperature_vec[i];
+        double temperature    = temperature_vec[i];
+        double temperature_p1 = p1_temperature_vec[i];
+        double temperature_p2 = p2_temperature_vec[i];
 
         // If change between the temperature is insufficient, backtrack to the
         // first order implementation
@@ -257,24 +257,33 @@ public:
         switch (method)
           {
             case Parameters::SimulationControl::TimeSteppingMethod::bdf1:
-              if (temperature > temperature_p1)
-                {
-                  const double dT =
-                    std::max(temperature - temperature_p1, 1e-6);
-                  property_vector[i] =
-                    (enthalpy(temperature) - enthalpy(temperature - dT)) / dT;
-                }
-              else
-                {
-                  const double dT =
-                    std::max(temperature_p1 - temperature, 1e-6);
-                  property_vector[i] =
-                    (enthalpy(temperature + dT) - enthalpy(temperature)) / dT;
-                }
+              {
+                // Clipping to ensure a minimal temperature difference
+                if (temperature>temperature_p1)
+                  temperature = std::max(temperature,temperature_p1+1e-6);
+                else
+                  temperature_p1 = std::max(temperature_p1,temperature+1e-6);
+
+                const double enthalpy_current = enthalpy(temperature);
+                const double enthalpy_p1      = enthalpy(temperature_p1);
+                const double dH = bdf_coefs[0] * enthalpy_current +
+                                  bdf_coefs[1] * enthalpy_p1;
+                const double dT = bdf_coefs[0] * temperature +
+                                  bdf_coefs[1] * temperature_p1;
+                property_vector[i] =
+                  dH / dT;
+
               break;
+              }
 
             case Parameters::SimulationControl::TimeSteppingMethod::bdf2:
               {
+                // Clipping to ensure a minimal temperature difference
+                if (temperature>temperature_p2)
+                  temperature = std::max(temperature,temperature_p2+1e-6);
+                else
+                  temperature_p2 = std::max(temperature_p2,temperature+1e-6);
+
                 const double enthalpy_current = enthalpy(temperature);
                 const double enthalpy_p1      = enthalpy(temperature_p1);
                 const double enthalpy_p2      = enthalpy(temperature_p2);
