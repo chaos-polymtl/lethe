@@ -846,14 +846,14 @@ NavierStokesTransientSUPGPSPGOperator<dim, number>::do_cell_integral_local(
 
   const auto h = integrator.read_cell_data(this->get_element_size());
 
-  // Time stepping information
-  const auto method = this->simulation_control->get_assembly_method();
+  // Vector for the BDF coefficients
+  const Vector<double> &bdf_coefs =
+    this->simulation_control->get_bdf_coefficients();
   const auto time_steps_vector =
     this->simulation_control->get_time_steps_vector();
   const double   dt  = time_steps_vector[0];
   const double   sdt = 1. / dt;
-  Vector<double> bdf_coefs =
-    calculate_bdf_coefficients(method, time_steps_vector);
+
 
   for (const auto q : integrator.quadrature_point_indices())
     {
@@ -1005,13 +1005,13 @@ NavierStokesTransientSUPGPSPGOperator<dim, number>::local_evaluate_residual(
       const auto h = integrator.read_cell_data(this->get_element_size());
 
       // Time stepping information
-      const auto method = this->simulation_control->get_assembly_method();
+      // Vector for the BDF coefficients
+      const Vector<double> &bdf_coefs =
+        this->simulation_control->get_bdf_coefficients();
       const auto time_steps_vector =
         this->simulation_control->get_time_steps_vector();
       const double   dt  = time_steps_vector[0];
       const double   sdt = 1. / dt;
-      Vector<double> bdf_coefs =
-        calculate_bdf_coefficients(method, time_steps_vector);
 
       for (const auto q : integrator.quadrature_point_indices())
         {

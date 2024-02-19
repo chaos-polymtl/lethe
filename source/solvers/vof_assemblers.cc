@@ -303,13 +303,10 @@ VOFAssemblerBDF<dim>::assemble_matrix(VOFScratchData<dim>       &scratch_data,
   auto &local_matrix    = copy_data.local_matrix;
 
   // Time stepping information
-  const auto          method = this->simulation_control->get_assembly_method();
-  std::vector<double> time_steps_vector =
-    this->simulation_control->get_time_steps_vector();
-
+  const auto method = this->simulation_control->get_assembly_method();
   // Vector for the BDF coefficients
-  Vector<double> bdf_coefs =
-    calculate_bdf_coefficients(method, time_steps_vector);
+  const Vector<double> &bdf_coefs =
+    this->simulation_control->get_bdf_coefficients();
   std::vector<double> phase_value(1 + number_of_previous_solutions(method));
 
   // Loop over the quadrature points
@@ -362,13 +359,10 @@ VOFAssemblerBDF<dim>::assemble_rhs(VOFScratchData<dim>       &scratch_data,
   auto &local_rhs       = copy_data.local_rhs;
 
   // Time stepping information
-  const auto          method = this->simulation_control->get_assembly_method();
-  std::vector<double> time_steps_vector =
-    this->simulation_control->get_time_steps_vector();
-
+  const auto method = this->simulation_control->get_assembly_method();
   // Vector for the BDF coefficients
-  Vector<double> bdf_coefs =
-    calculate_bdf_coefficients(method, time_steps_vector);
+  const Vector<double> &bdf_coefs =
+    this->simulation_control->get_bdf_coefficients();
   std::vector<double> phase_value(1 + number_of_previous_solutions(method));
 
   // Loop over the quadrature points
