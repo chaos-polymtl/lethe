@@ -1813,7 +1813,8 @@ GLSVANSSolver<dim>::monitor_mass_conservation()
     this->simulation_control->get_time_steps_vector();
 
   const auto scheme = this->simulation_control->get_assembly_method();
-  const Vector<double> &bdf_coefs = this->simulation_control->get_bdf_coefficients();
+  const Vector<double> &bdf_coefs =
+    this->simulation_control->get_bdf_coefficients();
 
   for (const auto &cell : this->dof_handler.active_cell_iterators())
     {

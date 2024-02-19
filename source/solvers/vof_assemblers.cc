@@ -308,7 +308,7 @@ VOFAssemblerBDF<dim>::assemble_matrix(VOFScratchData<dim>       &scratch_data,
     this->simulation_control->get_time_steps_vector();
 
   // Vector for the BDF coefficients
-  Vector<double>      bdf_coefs =
+  Vector<double> bdf_coefs =
     calculate_bdf_coefficients(method, time_steps_vector);
   std::vector<double> phase_value(1 + number_of_previous_solutions(method));
 
@@ -367,7 +367,7 @@ VOFAssemblerBDF<dim>::assemble_rhs(VOFScratchData<dim>       &scratch_data,
     this->simulation_control->get_time_steps_vector();
 
   // Vector for the BDF coefficients
-  Vector<double>      bdf_coefs =
+  Vector<double> bdf_coefs =
     calculate_bdf_coefficients(method, time_steps_vector);
   std::vector<double> phase_value(1 + number_of_previous_solutions(method));
 

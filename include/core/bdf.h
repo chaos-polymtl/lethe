@@ -55,8 +55,9 @@ using namespace dealii;
  * @note At the moment, the highest implemented scheme is @p bdf3 (@p order=3).
  */
 Vector<double>
-calculate_bdf_coefficients(const Parameters::SimulationControl::TimeSteppingMethod method,
-                 const std::vector<double> time_steps);
+calculate_bdf_coefficients(
+  const Parameters::SimulationControl::TimeSteppingMethod method,
+  const std::vector<double>                               time_steps);
 
 
 /**

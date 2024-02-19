@@ -52,8 +52,9 @@ bdf_coefficients(const unsigned int p, const std::vector<double> dt)
 }
 
 Vector<double>
-calculate_bdf_coefficients(const Parameters::SimulationControl::TimeSteppingMethod method,
-                 const std::vector<double>                               time_steps)
+calculate_bdf_coefficients(
+  const Parameters::SimulationControl::TimeSteppingMethod method,
+  const std::vector<double>                               time_steps)
 {
   switch (method)
     {

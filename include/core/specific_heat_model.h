@@ -155,9 +155,10 @@ public:
       get_simulation_control();
 
     // Time stepping information
-    auto          method = simulation_control->get_assembly_method();
+    auto method = simulation_control->get_assembly_method();
     // Vector for the BDF coefficients
-    const Vector<double> &bdf_coefs = simulation_control->get_bdf_coefficients();
+    const Vector<double> &bdf_coefs =
+      simulation_control->get_bdf_coefficients();
 
     // If change between the temperature is insufficient, backtrack to the first
     // order implementation

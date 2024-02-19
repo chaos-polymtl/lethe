@@ -328,9 +328,10 @@ GLSNavierStokesVOFAssemblerBDF<dim>::assemble_matrix(
   auto &local_matrix    = copy_data.local_matrix;
 
   // Time stepping information
-  const auto          method = this->simulation_control->get_assembly_method();
+  const auto method = this->simulation_control->get_assembly_method();
   // Vector for the BDF coefficients
-  const Vector<double> &bdf_coefs =this->simulation_control->get_bdf_coefficients();
+  const Vector<double> &bdf_coefs =
+    this->simulation_control->get_bdf_coefficients();
   std::vector<Tensor<1, dim>> velocity(1 +
                                        number_of_previous_solutions(method));
 
@@ -386,9 +387,10 @@ GLSNavierStokesVOFAssemblerBDF<dim>::assemble_rhs(
   auto &local_rhs       = copy_data.local_rhs;
 
   // Time stepping information
-  const auto          method = this->simulation_control->get_assembly_method();
+  const auto method = this->simulation_control->get_assembly_method();
   // Vector for the BDF coefficients
-  const Vector<double> &bdf_coefs =this->simulation_control->get_bdf_coefficients();
+  const Vector<double> &bdf_coefs =
+    this->simulation_control->get_bdf_coefficients();
   std::vector<Tensor<1, dim>> velocity(1 +
                                        number_of_previous_solutions(method));
 

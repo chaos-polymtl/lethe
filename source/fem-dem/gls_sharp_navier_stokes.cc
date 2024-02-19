@@ -2228,7 +2228,8 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
                 this->simulation_control->get_time_steps_vector();
 
               // Vector for the BDF coefficients
-              const Vector<double> & bdf_coefs = this->simulation_control->get_bdf_coefficients();
+              const Vector<double> &bdf_coefs =
+                this->simulation_control->get_bdf_coefficients();
 
               // Define the residual of the particle dynamics.
               Tensor<1, 3> residual_velocity =
