@@ -143,10 +143,9 @@ public:
   double
   value(const std::map<field, double> &fields_value) override
   {
-    const double temperature    = fields_value.at(field::temperature);
-    const double temperature_p1 = fields_value.at(field::temperature_p1);
-
-    const double temperature_p2 = fields_value.at(field::temperature_p2);
+    double temperature    = fields_value.at(field::temperature);
+    double temperature_p1 = fields_value.at(field::temperature_p1);
+    double temperature_p2 = fields_value.at(field::temperature_p2);
 
 
     // Gather information required from the simulation control to have the time
@@ -160,33 +159,40 @@ public:
     const Vector<double> &bdf_coefs =
       simulation_control->get_bdf_coefficients();
 
-    // If change between the temperature is insufficient, backtrack to the first
-    // order implementation
-    if (method != Parameters::SimulationControl::TimeSteppingMethod::bdf1 &&
-        std::abs(temperature - temperature_p2) < 1e-6)
-      method = Parameters::SimulationControl::TimeSteppingMethod::bdf1;
-
     switch (method)
       {
         case Parameters::SimulationControl::TimeSteppingMethod::bdf1:
-          if (temperature > temperature_p1)
-            {
-              const double dT = std::max(temperature - temperature_p1, 1e-6);
-              return (enthalpy(temperature) - enthalpy(temperature - dT)) / dT;
-            }
-          else
-            {
-              const double dT = std::max(temperature_p1 - temperature, 1e-6);
-              return (enthalpy(temperature + dT) - enthalpy(temperature)) / dT;
-            }
-          break;
+          {
+            // Clipping to ensure a minimal temperature difference
+            if (temperature>temperature_p1)
+              temperature = std::max(temperature,temperature_p1+1e-6);
+            else
+              temperature_p1 = std::max(temperature_p1,temperature+1e-6);
+
+            const double enthalpy_current = enthalpy(temperature);
+            const double enthalpy_p1      = enthalpy(temperature_p1);
+            const double dH = bdf_coefs[0] * enthalpy_current +
+                              bdf_coefs[1] * enthalpy_p1;
+            const double dT = bdf_coefs[0] * temperature +
+                              bdf_coefs[1] * temperature_p1;
+            return
+              dH / dT;
+
+            break;
+          }
 
         case Parameters::SimulationControl::TimeSteppingMethod::bdf2:
           {
+            // Clipping to ensure a minimal temperature difference
+            if (temperature>temperature_p2)
+              temperature = std::max(temperature,temperature_p2+1e-6);
+            else
+              temperature_p2 = std::max(temperature_p2,temperature+1e-6);
+
             const double enthalpy_current = enthalpy(temperature);
             const double enthalpy_p1      = enthalpy(temperature_p1);
             const double enthalpy_p2      = enthalpy(temperature_p2);
-            const double dH               = bdf_coefs[0] * enthalpy_current +
+            const double dH = bdf_coefs[0] * enthalpy_current +
                               bdf_coefs[1] * enthalpy_p1 +
                               bdf_coefs[2] * enthalpy_p2;
             const double dT = bdf_coefs[0] * temperature +
@@ -244,15 +250,7 @@ public:
         // If change between the temperature is insufficient, backtrack to the
         // first order implementation
         auto method = simulation_control->get_assembly_method();
-
-        if (method != Parameters::SimulationControl::TimeSteppingMethod::bdf1 &&
-            std::abs(temperature - temperature_p2) < 1e-6)
-          {
-            method = Parameters::SimulationControl::TimeSteppingMethod::bdf1;
-          }
-
-        Vector<double> bdf_coefs =
-          calculate_bdf_coefficients(method, time_steps_vector);
+        const Vector<double>& bdf_coefs = simulation_control->get_bdf_coefficients();
 
         switch (method)
           {
