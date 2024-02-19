@@ -447,7 +447,8 @@ MFNavierStokesSolver<dim>::calculate_time_derivative_previous_solutions()
   const auto          method = this->simulation_control->get_assembly_method();
   std::vector<double> time_steps_vector =
     this->simulation_control->get_time_steps_vector();
-  Vector<double> bdf_coefs = bdf_coefficients(method, time_steps_vector);
+  Vector<double> bdf_coefs =
+    calculate_bdf_coefficients(method, time_steps_vector);
 
   for (unsigned int p = 0; p < number_of_previous_solutions(method); ++p)
     {

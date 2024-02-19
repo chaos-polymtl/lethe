@@ -154,13 +154,10 @@ public:
     std::shared_ptr<SimulationControl> simulation_control =
       get_simulation_control();
 
-    auto method = simulation_control->get_assembly_method();
-
-    std::vector<double> time_steps_vector =
-      simulation_control->get_time_steps_vector();
-
-    Vector<double> bdf_coefs = bdf_coefficients(method, time_steps_vector);
-
+    // Time stepping information
+    auto          method = simulation_control->get_assembly_method();
+    // Vector for the BDF coefficients
+    const Vector<double> &bdf_coefs = simulation_control->get_bdf_coefficients();
 
     // If change between the temperature is insufficient, backtrack to the first
     // order implementation
@@ -249,9 +246,12 @@ public:
 
         if (method != Parameters::SimulationControl::TimeSteppingMethod::bdf1 &&
             std::abs(temperature - temperature_p2) < 1e-6)
-          method = Parameters::SimulationControl::TimeSteppingMethod::bdf1;
+          {
+            method = Parameters::SimulationControl::TimeSteppingMethod::bdf1;
+          }
 
-        Vector<double> bdf_coefs = bdf_coefficients(method, time_steps_vector);
+        Vector<double> bdf_coefs =
+          calculate_bdf_coefficients(method, time_steps_vector);
 
         switch (method)
           {

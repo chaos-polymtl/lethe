@@ -717,11 +717,8 @@ GLSVansAssemblerBDF<dim>::assemble_matrix(
 
   // Time stepping information
   const auto          method = this->simulation_control->get_assembly_method();
-  std::vector<double> time_steps_vector =
-    this->simulation_control->get_time_steps_vector();
-
   // Vector for the BDF coefficients
-  Vector<double> bdf_coefs = bdf_coefficients(method, time_steps_vector);
+  const Vector<double> &bdf_coefs =this->simulation_control->get_bdf_coefficients();
   std::vector<Tensor<1, dim>> velocity(1 +
                                        number_of_previous_solutions(method));
 
@@ -783,11 +780,8 @@ GLSVansAssemblerBDF<dim>::assemble_rhs(
 
   // Time stepping information
   const auto          method = this->simulation_control->get_assembly_method();
-  std::vector<double> time_steps_vector =
-    this->simulation_control->get_time_steps_vector();
-
   // Vector for the BDF coefficients
-  Vector<double> bdf_coefs = bdf_coefficients(method, time_steps_vector);
+  const Vector<double> &bdf_coefs =this->simulation_control->get_bdf_coefficients();
   std::vector<Tensor<1, dim>> velocity(1 +
                                        number_of_previous_solutions(method));
   std::vector<double> void_fraction(1 + number_of_previous_solutions(method));

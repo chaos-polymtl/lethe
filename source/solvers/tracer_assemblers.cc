@@ -249,7 +249,8 @@ TracerAssemblerBDF<dim>::assemble_matrix(TracerScratchData<dim> &scratch_data,
     this->simulation_control->get_time_steps_vector();
 
   // Vector for the BDF coefficients
-  Vector<double>      bdf_coefs = bdf_coefficients(method, time_steps_vector);
+  Vector<double>      bdf_coefs =
+    calculate_bdf_coefficients(method, time_steps_vector);
   std::vector<double> tracer(1 + number_of_previous_solutions(method));
 
   // Loop over the quadrature points
@@ -304,7 +305,8 @@ TracerAssemblerBDF<dim>::assemble_rhs(TracerScratchData<dim>    &scratch_data,
     this->simulation_control->get_time_steps_vector();
 
   // Vector for the BDF coefficients
-  Vector<double>      bdf_coefs = bdf_coefficients(method, time_steps_vector);
+  Vector<double>      bdf_coefs =
+    calculate_bdf_coefficients(method, time_steps_vector);
   std::vector<double> tracer(1 + number_of_previous_solutions(method));
 
   // Loop over the quadrature points

@@ -52,19 +52,19 @@ bdf_coefficients(const unsigned int p, const std::vector<double> dt)
 }
 
 Vector<double>
-bdf_coefficients(const Parameters::SimulationControl::TimeSteppingMethod method,
-                 const std::vector<double>                               dt)
+calculate_bdf_coefficients(const Parameters::SimulationControl::TimeSteppingMethod method,
+                 const std::vector<double>                               time_steps)
 {
   switch (method)
     {
       case (Parameters::SimulationControl::TimeSteppingMethod::bdf1):
-        return bdf_coefficients(1, dt);
+        return bdf_coefficients(1, time_steps);
       case (Parameters::SimulationControl::TimeSteppingMethod::steady_bdf):
-        return bdf_coefficients(1, dt);
+        return bdf_coefficients(1, time_steps);
       case (Parameters::SimulationControl::TimeSteppingMethod::bdf2):
-        return bdf_coefficients(2, dt);
+        return bdf_coefficients(2, time_steps);
       case (Parameters::SimulationControl::TimeSteppingMethod::bdf3):
-        return bdf_coefficients(3, dt);
+        return bdf_coefficients(3, time_steps);
       default:
         throw(std::runtime_error(
           "BDF coefficients were requested without a BDF method"));

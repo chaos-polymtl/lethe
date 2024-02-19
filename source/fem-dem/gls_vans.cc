@@ -1809,20 +1809,11 @@ GLSVANSSolver<dim>::monitor_mass_conservation()
   double max_local_continuity = 0;
   double local_mass_source    = 0;
 
-  Vector<double>      bdf_coefs;
   std::vector<double> time_steps_vector =
     this->simulation_control->get_time_steps_vector();
 
   const auto scheme = this->simulation_control->get_assembly_method();
-
-  if (scheme == Parameters::SimulationControl::TimeSteppingMethod::bdf1)
-    bdf_coefs = bdf_coefficients(1, time_steps_vector);
-
-  if (scheme == Parameters::SimulationControl::TimeSteppingMethod::bdf2)
-    bdf_coefs = bdf_coefficients(2, time_steps_vector);
-
-  if (scheme == Parameters::SimulationControl::TimeSteppingMethod::bdf3)
-    bdf_coefs = bdf_coefficients(3, time_steps_vector);
+  const Vector<double> &bdf_coefs = this->simulation_control->get_bdf_coefficients();
 
   for (const auto &cell : this->dof_handler.active_cell_iterators())
     {

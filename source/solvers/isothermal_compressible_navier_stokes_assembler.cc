@@ -341,7 +341,8 @@ GLSIsothermalCompressibleNavierStokesAssemblerBDF<dim>::assemble_matrix(
     this->simulation_control->get_time_steps_vector();
 
   // Vector for the BDF coefficients
-  Vector<double>      bdf_coefs = bdf_coefficients(method, time_steps_vector);
+  Vector<double>      bdf_coefs =
+    calculate_bdf_coefficients(method, time_steps_vector);
   std::vector<double> pressure(1 + number_of_previous_solutions(method));
   std::vector<Tensor<1, dim>> velocity(1 +
                                        number_of_previous_solutions(method));
@@ -407,7 +408,8 @@ GLSIsothermalCompressibleNavierStokesAssemblerBDF<dim>::assemble_rhs(
     this->simulation_control->get_time_steps_vector();
 
   // Vector for the BDF coefficients
-  Vector<double>      bdf_coefs = bdf_coefficients(method, time_steps_vector);
+  Vector<double>      bdf_coefs =
+    calculate_bdf_coefficients(method, time_steps_vector);
   std::vector<double> pressure(1 + number_of_previous_solutions(method));
   std::vector<Tensor<1, dim>> velocity(1 +
                                        number_of_previous_solutions(method));
