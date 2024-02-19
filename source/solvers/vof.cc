@@ -706,6 +706,7 @@ VolumeOfFluid<dim>::postprocess(bool first_iteration)
             {
               this->table_monitoring_vof.add_value(
                 "time", this->simulation_control->get_current_time());
+              this->table_monitoring_vof.set_scientific("time", true);
             }
 
           std::string fluid_id("");
@@ -864,22 +865,34 @@ VolumeOfFluid<dim>::postprocess(bool first_iteration)
 
           this->table_barycenter.add_value(
             "time", simulation_control->get_current_time());
+          this->table_barycenter.set_scientific("time", true);
 
           this->table_barycenter.add_value("x_vof",
                                            position_and_velocity.first[0]);
+          this->table_barycenter.set_scientific("x_vof", true);
+                                           
           this->table_barycenter.add_value("y_vof",
                                            position_and_velocity.first[1]);
+          this->table_barycenter.set_scientific("y_vof", true);
+                                           
           if constexpr (dim == 3)
             this->table_barycenter.add_value("z_vof",
                                              position_and_velocity.first[2]);
+            this->table_barycenter.set_scientific("z_vof", true);
+           
 
           this->table_barycenter.add_value("vx_vof",
                                            position_and_velocity.second[0]);
+          this->table_barycenter.set_scientific("vx_vof", true);
+          
           this->table_barycenter.add_value("vy_vof",
                                            position_and_velocity.second[1]);
+          this->table_barycenter.set_scientific("vy_vof", true);
+          
           if constexpr (dim == 3)
             this->table_barycenter.add_value("vz_vof",
                                              position_and_velocity.second[2]);
+            this->table_barycenter.set_scientific("vz_vof", true);
 
 
           if (this->simulation_control->get_step_number() %
