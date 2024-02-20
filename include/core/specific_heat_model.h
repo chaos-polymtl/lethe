@@ -240,8 +240,6 @@ public:
     std::vector<double> time_steps_vector =
       simulation_control->get_time_steps_vector();
 
-    // If change between the temperature is insufficient, backtrack to the
-    // first order implementation
     auto                  method = simulation_control->get_assembly_method();
     const Vector<double> &bdf_coefs =
       simulation_control->get_bdf_coefficients();
