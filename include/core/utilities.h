@@ -217,7 +217,9 @@ sgn(T val)
  *
  */
 template <typename T>
-T clip(const T& n, const T& lower, const T& upper) {
+T
+clip(const T &n, const T &lower, const T &upper)
+{
   return std::max(lower, std::min(n, upper));
 }
 
