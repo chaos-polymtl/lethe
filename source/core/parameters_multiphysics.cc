@@ -285,6 +285,24 @@ Parameters::VOF_InterfaceSharpening::declare_parameters(ParameterHandler &prm)
       "20",
       Patterns::Integer(),
       "Maximum number of iteration in the bissection algorithm that ensures mass conservation");
+      
+    prm.declare_entry(
+      "monitoring",
+      "false",
+      Patterns::Bool(),
+      "Enable conservation monitoring in free surface calculation <true|false>");
+
+    prm.declare_entry(
+      "tolerance",
+      "1e-6",
+      Patterns::Double(),
+      "Tolerance on the mass conservation of the monitored fluid, used with adaptive sharpening");
+
+    prm.declare_entry(
+      "monitored fluid",
+      "fluid 1",
+      Patterns::Selection("fluid 0|fluid 1"),
+      "Fluid for which conservation is monitored <fluid 0|fluid 1>.");
 
     // This parameter must be larger than 1 for interface sharpening. Choosing
     // values less than 1 leads to interface smoothing instead of sharpening.
@@ -331,6 +349,20 @@ Parameters::VOF_InterfaceSharpening::parse_parameters(ParameterHandler &prm)
     // Parameters for adaptive sharpening
     threshold_max_deviation = prm.get_double("threshold max deviation");
     max_iterations          = prm.get_double("max iterations");
+    monitoring = prm.get_bool("monitoring");
+    tolerance               = prm.get_double("tolerance");
+
+    // Monitored fluid
+    const std::string op_mf = prm.get("monitored fluid");
+    if (op_mf == "fluid 1")
+      monitored_fluid = Parameters::FluidIndicator::fluid1;
+    else if (op_mf == "fluid 0")
+      monitored_fluid = Parameters::FluidIndicator::fluid0;
+    else if (op_mf == "both")
+      monitored_fluid = Parameters::FluidIndicator::both;
+    else
+      throw(std::runtime_error("Invalid monitored fluid. "
+                               "Options are 'fluid 0', 'fluid 1' or 'both'."));
 
     // Error definitions
     Assert(threshold > 0.0 && threshold < 1.0,

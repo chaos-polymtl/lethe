@@ -28,12 +28,13 @@ end
 #---------------------------------------------------
 
 subsection VOF
-  subsection mass conservation
-    set monitoring      = true
+  subsection interface sharpening
+    set monitoring = true
     set monitored fluid = fluid 1
     set verbosity       = extra verbose
   end
 end
+
 
 #---------------------------------------------------
 # Initial Conditions

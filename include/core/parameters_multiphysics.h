@@ -137,6 +137,14 @@ namespace Parameters
     // Type of verbosity for the interface sharpening calculation
     Parameters::Verbosity verbosity;
 
+    bool monitoring;
+    
+    // Conservation tolerance on the fluid monitored,
+    // used with adaptive Sharpening
+    double tolerance;
+
+    Parameters::FluidIndicator monitored_fluid;
+
     void
     declare_parameters(ParameterHandler &prm);
     void

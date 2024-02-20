@@ -629,8 +629,8 @@ VolumeOfFluid<dim>::finish_simulation()
       this->error_table.write_text(std::cout);
     }
   if (this_mpi_process == 0 &&
-      this->simulation_parameters.multiphysics.vof_parameters.conservation
-          .verbosity == Parameters::Verbosity::extra_verbose)
+      this->simulation_parameters.multiphysics.vof_parameters.sharpening
+          .verbosity == Parameters::Verbosity::extra_verbose && this->simulation_parameters.multiphysics.vof_parameters.sharpening.monitoring)
     {
       this->table_monitoring_vof.write_text(std::cout);
     }
@@ -679,98 +679,103 @@ VolumeOfFluid<dim>::postprocess(bool first_iteration)
         }
     }
 
-  if (this->simulation_parameters.multiphysics.vof_parameters.conservation
-        .monitoring)
+  if (this->simulation_parameters.post_processing.calculate_mass_conservation)
     {
-      // Calculate volume and mass (this->mass_monitored)
-      calculate_volume_and_mass(this->present_solution,
-                                *multiphysics->get_solution(
-                                  PhysicsID::fluid_dynamics),
-                                simulation_parameters.multiphysics
-                                  .vof_parameters.conservation.monitored_fluid);
+      const std::vector<Parameters::FluidIndicator> fluid_indicators =
+      { Parameters::FluidIndicator::fluid0,
+        Parameters::FluidIndicator::fluid1 };
 
-      if (first_iteration)
-        this->mass_first_iteration = this->mass_monitored;
+      for (int i = 0; i < 2; i++)
+      {
+        // Calculate volume and mass (this->mass_monitored)
+        calculate_volume_and_mass(this->present_solution,
+                                  *multiphysics->get_solution(
+                                    PhysicsID::fluid_dynamics),
+                                  fluid_indicators[i]);
+
+        if (first_iteration)
+          this->mass_first_iteration = this->mass_monitored;
 
 
 
-      if (this_mpi_process == 0)
-        {
-          // Set conservation monitoring table
-          if (this->simulation_control->is_steady())
-            {
-              this->table_monitoring_vof.add_value(
-                "cells", this->triangulation->n_global_active_cells());
-            }
-          else
-            {
-              this->table_monitoring_vof.add_value(
-                "time", this->simulation_control->get_current_time());
-              this->table_monitoring_vof.set_scientific("time", true);
-            }
+        if (this_mpi_process == 0)
+          {
+            // Set conservation monitoring table
+            if (this->simulation_control->is_steady())
+              {
+                this->table_monitoring_vof.add_value(
+                  "cells", this->triangulation->n_global_active_cells());
+              }
+            else
+              {
+                this->table_monitoring_vof.add_value(
+                  "time", this->simulation_control->get_current_time());
+                this->table_monitoring_vof.set_scientific("time", true);
+              }
 
-          std::string fluid_id("");
+            std::string fluid_id("");
 
-          if (this->simulation_parameters.multiphysics.vof_parameters
-                .conservation.monitored_fluid ==
-              Parameters::FluidIndicator::fluid1)
-            {
-              fluid_id = "fluid_1";
-            }
-          else if (this->simulation_parameters.multiphysics.vof_parameters
-                     .conservation.monitored_fluid ==
-                   Parameters::FluidIndicator::fluid0)
-            {
-              fluid_id = "fluid_0";
-            }
+            if (fluid_indicators[i] ==
+                Parameters::FluidIndicator::fluid1)
+              {
+                fluid_id = "fluid_1";
+              }
+            else if (fluid_indicators[i] ==
+                     Parameters::FluidIndicator::fluid0)
+              {
+                fluid_id = "fluid_0";
+              }
 
-          if (dim == 2)
-            {
-              // Add surface column
-              this->table_monitoring_vof.add_value("surface_" + fluid_id,
-                                                   this->volume_monitored);
-              this->table_monitoring_vof.set_scientific("surface_" + fluid_id,
-                                                        true);
+            if (dim == 2)
+              {
+                // Add surface column
+                this->table_monitoring_vof.add_value("surface_" + fluid_id,
+                                                     this->volume_monitored);
+                this->table_monitoring_vof.set_scientific("surface_" + fluid_id,
+                                                          true);
 
-              // Add mass per length column
-              this->table_monitoring_vof.add_value("mass_per_length_" +
-                                                     fluid_id,
-                                                   this->mass_monitored);
-              this->table_monitoring_vof.set_scientific("mass_per_length_" +
-                                                          fluid_id,
-                                                        true);
-            }
-          else if (dim == 3)
-            {
-              // Add volume column
-              this->table_monitoring_vof.add_value("volume_" + fluid_id,
-                                                   this->volume_monitored);
-              this->table_monitoring_vof.set_scientific("volume_" + fluid_id,
-                                                        true);
+                // Add mass per length column
+                this->table_monitoring_vof.add_value("mass_per_length_" +
+                                                       fluid_id,
+                                                     this->mass_monitored);
+                this->table_monitoring_vof.set_scientific("mass_per_length_" +
+                                                            fluid_id,
+                                                          true);
+              }
+            else if (dim == 3)
+              {
+                // Add volume column
+                this->table_monitoring_vof.add_value("volume_" + fluid_id,
+                                                     this->volume_monitored);
+                this->table_monitoring_vof.set_scientific("volume_" + fluid_id,
+                                                          true);
 
-              // Add mass column
-              this->table_monitoring_vof.add_value("mass_" + fluid_id,
-                                                   this->mass_monitored);
-              this->table_monitoring_vof.set_scientific("mass_" + fluid_id,
-                                                        true);
-            }
+                // Add mass column
+                this->table_monitoring_vof.add_value("mass_" + fluid_id,
+                                                     this->mass_monitored);
+                this->table_monitoring_vof.set_scientific("mass_" + fluid_id,
+                                                          true);
+              }
 
-          // Add sharpening threshold column
-          this->table_monitoring_vof.add_value("sharpening_threshold",
-                                               this->sharpening_threshold);
+            // Add sharpening threshold column
+            this->table_monitoring_vof.add_value("sharpening_threshold",
+                                                 this->sharpening_threshold);
 
-          if (this->simulation_control->get_step_number() %
-                this->simulation_parameters.post_processing.output_frequency ==
-              0)
-            {
-              // Save table to .dat
-              std::string filename =
-                this->simulation_parameters.simulation_control.output_folder +
-                "VOF_monitoring_" + fluid_id + ".dat";
-              std::ofstream output(filename.c_str());
-              this->table_monitoring_vof.write_text(output);
-            }
-        }
+            if (this->simulation_control->get_step_number() %
+                  this->simulation_parameters.post_processing
+                    .output_frequency ==
+                0)
+              {
+                // Save table to .dat
+                std::string filename = this->simulation_parameters.simulation_control.output_folder +
+                this->simulation_parameters.post_processing
+                  .mass_conservation_output_name + fluid_id +
+                ".dat";
+                std::ofstream output(filename.c_str());
+                this->table_monitoring_vof.write_text(output);
+              }
+          }
+      }
     }
 
   if (this->simulation_parameters.post_processing.calculate_barycenter)
@@ -870,29 +875,33 @@ VolumeOfFluid<dim>::postprocess(bool first_iteration)
           this->table_barycenter.add_value("x_vof",
                                            position_and_velocity.first[0]);
           this->table_barycenter.set_scientific("x_vof", true);
-                                           
+
           this->table_barycenter.add_value("y_vof",
                                            position_and_velocity.first[1]);
           this->table_barycenter.set_scientific("y_vof", true);
-                                           
+
           if constexpr (dim == 3)
-            this->table_barycenter.add_value("z_vof",
-                                             position_and_velocity.first[2]);
-            this->table_barycenter.set_scientific("z_vof", true);
-           
+            {
+              this->table_barycenter.add_value("z_vof",
+                                               position_and_velocity.first[2]);
+              this->table_barycenter.set_scientific("z_vof", true);
+            }
+
 
           this->table_barycenter.add_value("vx_vof",
                                            position_and_velocity.second[0]);
           this->table_barycenter.set_scientific("vx_vof", true);
-          
+
           this->table_barycenter.add_value("vy_vof",
                                            position_and_velocity.second[1]);
           this->table_barycenter.set_scientific("vy_vof", true);
-          
+
           if constexpr (dim == 3)
-            this->table_barycenter.add_value("vz_vof",
-                                             position_and_velocity.second[2]);
-            this->table_barycenter.set_scientific("vz_vof", true);
+            {
+              this->table_barycenter.add_value("vz_vof",
+                                               position_and_velocity.second[2]);
+              this->table_barycenter.set_scientific("vz_vof", true);
+            }
 
 
           if (this->simulation_control->get_step_number() %
@@ -953,7 +962,7 @@ VolumeOfFluid<dim>::handle_interface_sharpening()
 {
   if (this->simulation_parameters.multiphysics.vof_parameters.sharpening
           .verbosity != Parameters::Verbosity::quiet ||
-      this->simulation_parameters.multiphysics.vof_parameters.conservation
+      this->simulation_parameters.multiphysics.vof_parameters.sharpening
           .verbosity != Parameters::Verbosity::quiet)
     {
       this->pcout << "Sharpening interface at step "
@@ -962,7 +971,7 @@ VolumeOfFluid<dim>::handle_interface_sharpening()
   if (this->simulation_parameters.multiphysics.vof_parameters.sharpening.type ==
       Parameters::SharpeningType::adaptive)
     {
-      if (this->simulation_parameters.multiphysics.vof_parameters.conservation
+      if (this->simulation_parameters.multiphysics.vof_parameters.sharpening
             .verbosity != Parameters::Verbosity::quiet)
         {
           this->pcout << "   Adapting the sharpening threshold" << std::endl;
@@ -970,7 +979,7 @@ VolumeOfFluid<dim>::handle_interface_sharpening()
 
       this->sharpening_threshold = find_sharpening_threshold();
 
-      if (this->simulation_parameters.multiphysics.vof_parameters.conservation
+      if (this->simulation_parameters.multiphysics.vof_parameters.sharpening
             .verbosity != Parameters::Verbosity::quiet)
         {
           this->pcout << "   ... final sharpening is : "
@@ -1007,7 +1016,7 @@ VolumeOfFluid<dim>::find_sharpening_threshold()
       .max_iterations;
 
   const Parameters::FluidIndicator monitored_fluid =
-    this->simulation_parameters.multiphysics.vof_parameters.conservation
+    this->simulation_parameters.multiphysics.vof_parameters.sharpening
       .monitored_fluid;
 
   unsigned int nb_search_ite = 0;
@@ -1030,7 +1039,7 @@ VolumeOfFluid<dim>::find_sharpening_threshold()
 
       mass_deviation_avg = calculate_mass_deviation(monitored_fluid, st_avg);
 
-      if (this->simulation_parameters.multiphysics.vof_parameters.conservation
+      if (this->simulation_parameters.multiphysics.vof_parameters.sharpening
             .verbosity != Parameters::Verbosity::quiet)
         {
           this->pcout
@@ -1096,7 +1105,7 @@ VolumeOfFluid<dim>::find_sharpening_threshold()
     }
 
   // Output message that mass conservation condition is reached
-  if (this->simulation_parameters.multiphysics.vof_parameters.conservation
+  if (this->simulation_parameters.multiphysics.vof_parameters.sharpening
         .verbosity != Parameters::Verbosity::quiet)
     {
       this->pcout << "   ... search algorithm took : " << nb_search_ite
@@ -1853,11 +1862,10 @@ VolumeOfFluid<dim>::write_checkpoint()
       this->error_table,
       prefix + this->simulation_parameters.analytical_solution->get_filename() +
         "_VOF" + suffix);
-  if (this->simulation_parameters.multiphysics.vof_parameters.conservation
-        .monitoring)
+  if (this->simulation_parameters.post_processing.calculate_mass_conservation)
     {
       std::string fluid_id("");
-      if (this->simulation_parameters.multiphysics.vof_parameters.conservation
+      if (this->simulation_parameters.multiphysics.vof_parameters.sharpening
             .monitored_fluid == Parameters::FluidIndicator::fluid1)
         {
           fluid_id = "fluid_1";
@@ -1919,11 +1927,10 @@ VolumeOfFluid<dim>::read_checkpoint()
       this->error_table,
       prefix + this->simulation_parameters.analytical_solution->get_filename() +
         "_VOF" + suffix);
-  if (this->simulation_parameters.multiphysics.vof_parameters.conservation
-        .monitoring)
+  if (this->simulation_parameters.post_processing.calculate_mass_conservation)
     {
       std::string fluid_id("");
-      if (this->simulation_parameters.multiphysics.vof_parameters.conservation
+      if (this->simulation_parameters.multiphysics.vof_parameters.sharpening
             .monitored_fluid == Parameters::FluidIndicator::fluid1)
         {
           fluid_id = "fluid_1";
