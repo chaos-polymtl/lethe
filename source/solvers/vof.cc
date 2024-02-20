@@ -628,10 +628,12 @@ VolumeOfFluid<dim>::finish_simulation()
         "error_phase", this->simulation_control->get_log_precision());
       this->error_table.write_text(std::cout);
     }
+
   if (this_mpi_process == 0 &&
-      this->simulation_parameters.multiphysics.vof_parameters.sharpening
-          .verbosity == Parameters::Verbosity::extra_verbose && this->simulation_parameters.multiphysics.vof_parameters.sharpening.monitoring)
+    simulation_parameters.post_processing.verbosity ==
+        Parameters::Verbosity::verbose && this->simulation_parameters.post_processing.calculate_mass_conservation)
     {
+      std::cout << "BOOP" << std::endl;
       this->table_monitoring_vof.write_text(std::cout);
     }
 }

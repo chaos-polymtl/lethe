@@ -27,14 +27,10 @@ end
 # VOF
 #---------------------------------------------------
 
-subsection VOF
-  subsection interface sharpening
-    set monitoring = true
-    set monitored fluid = fluid 1
-    set verbosity       = extra verbose
-  end
+subsection post-processing
+  set verbosity       = verbose
+  set calculate mass conservation = true
 end
-
 
 #---------------------------------------------------
 # Initial Conditions
