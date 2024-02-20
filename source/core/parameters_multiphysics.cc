@@ -285,7 +285,7 @@ Parameters::VOF_InterfaceSharpening::declare_parameters(ParameterHandler &prm)
       "20",
       Patterns::Integer(),
       "Maximum number of iteration in the bissection algorithm that ensures mass conservation");
-      
+
     prm.declare_entry(
       "monitoring",
       "false",
@@ -349,7 +349,7 @@ Parameters::VOF_InterfaceSharpening::parse_parameters(ParameterHandler &prm)
     // Parameters for adaptive sharpening
     threshold_max_deviation = prm.get_double("threshold max deviation");
     max_iterations          = prm.get_double("max iterations");
-    monitoring = prm.get_bool("monitoring");
+    monitoring              = prm.get_bool("monitoring");
     tolerance               = prm.get_double("tolerance");
 
     // Monitored fluid

@@ -630,8 +630,9 @@ VolumeOfFluid<dim>::finish_simulation()
     }
 
   if (this_mpi_process == 0 &&
-    simulation_parameters.post_processing.verbosity ==
-        Parameters::Verbosity::verbose && this->simulation_parameters.post_processing.calculate_mass_conservation)
+      simulation_parameters.post_processing.verbosity ==
+        Parameters::Verbosity::verbose &&
+      this->simulation_parameters.post_processing.calculate_mass_conservation)
     {
       std::cout << "BOOP" << std::endl;
       this->table_monitoring_vof.write_text(std::cout);
@@ -683,113 +684,119 @@ VolumeOfFluid<dim>::postprocess(bool first_iteration)
 
   if (this->simulation_parameters.post_processing.calculate_mass_conservation)
     {
-      const std::vector<Parameters::FluidIndicator> fluid_indicators =
-      { Parameters::FluidIndicator::fluid0,
-        Parameters::FluidIndicator::fluid1 };
+      const std::vector<Parameters::FluidIndicator> fluid_indicators = {
+        Parameters::FluidIndicator::fluid0, Parameters::FluidIndicator::fluid1};
 
-      // for (int i = 0; i < 2; i++)
-      // {
-      //   // Calculate volume and mass (this->mass_monitored)
-      //   calculate_volume_and_mass(this->present_solution,
-      //                             *multiphysics->get_solution(
-      //                               PhysicsID::fluid_dynamics),
-      //                             fluid_indicators[i]);
+      if (this_mpi_process == 0)
+        {
+          std::cout << "BOOP BOOP" << std::endl;
+        }
 
-        if (first_iteration)
-          this->mass_first_iteration = this->mass_monitored;
+      if (this_mpi_process == 0)
+        {
+          std::cout << "BOOP BOOP BOOP" << std::endl;
+          // Set conservation monitoring table
+          if (this->simulation_control->is_steady())
+            {
+              this->table_monitoring_vof.add_value(
+                "cells", this->triangulation->n_global_active_cells());
+            }
+          else
+            {
+              this->table_monitoring_vof.add_value(
+                "time", this->simulation_control->get_current_time());
+              this->table_monitoring_vof.set_scientific("time", true);
+            }
+        }
+
+
+      for (int i = 0; i < 2; i++)
+        {
+          // Calculate volume and mass (this->mass_monitored)
+          calculate_volume_and_mass(this->present_solution,
+                                    *multiphysics->get_solution(
+                                      PhysicsID::fluid_dynamics),
+                                    fluid_indicators[i]);
+
+          if (first_iteration)
+            this->mass_first_iteration = this->mass_monitored;
 
 
 
-        if (this_mpi_process == 0)
-          {
-            // Set conservation monitoring table
-            if (this->simulation_control->is_steady())
-              {
-                this->table_monitoring_vof.add_value(
-                  "cells", this->triangulation->n_global_active_cells());
-              }
-            else
-              {
-                this->table_monitoring_vof.add_value(
-                  "time", this->simulation_control->get_current_time());
-                this->table_monitoring_vof.set_scientific("time", true);
-              }
-              
-              for (int i = 0; i < 2; i++)
-              {
-                
-                // Calculate volume and mass (this->mass_monitored)
-                calculate_volume_and_mass(this->present_solution,
-                                          *multiphysics->get_solution(
-                                            PhysicsID::fluid_dynamics),
-                                          fluid_indicators[i]);
-            std::string fluid_id("");
+          if (this_mpi_process == 0)
+            {
+              std::string fluid_id("");
 
-            if (fluid_indicators[i] ==
-                Parameters::FluidIndicator::fluid1)
-              {
-                fluid_id = "fluid_1";
-              }
-            else if (fluid_indicators[i] ==
-                     Parameters::FluidIndicator::fluid0)
-              {
-                fluid_id = "fluid_0";
-              }
-              
-              std::cout << fluid_id << std::endl;
+              if (fluid_indicators[i] == Parameters::FluidIndicator::fluid1)
+                {
+                  fluid_id = "fluid_1";
+                }
+              else if (fluid_indicators[i] ==
+                       Parameters::FluidIndicator::fluid0)
+                {
+                  fluid_id = "fluid_0";
+                }
 
-            if (dim == 2)
-              {
-                // Add surface column
-                this->table_monitoring_vof.add_value("surface_" + fluid_id,
-                                                     this->volume_monitored);
-                this->table_monitoring_vof.set_scientific("surface_" + fluid_id,
-                                                          true);
+              std::cout << "Fluid ID is " << fluid_id << std::endl;
 
-                // Add mass per length column
-                this->table_monitoring_vof.add_value("mass_per_length_" +
-                                                       fluid_id,
-                                                     this->mass_monitored);
-                this->table_monitoring_vof.set_scientific("mass_per_length_" +
-                                                            fluid_id,
-                                                          true);
-              }
-            else if (dim == 3)
-              {
-                // Add volume column
-                this->table_monitoring_vof.add_value("volume_" + fluid_id,
-                                                     this->volume_monitored);
-                this->table_monitoring_vof.set_scientific("volume_" + fluid_id,
-                                                          true);
+              if (dim == 2)
+                {
+                  // Add surface column
+                  this->table_monitoring_vof.add_value("surface_" + fluid_id,
+                                                       this->volume_monitored);
+                  this->table_monitoring_vof.set_scientific("surface_" +
+                                                              fluid_id,
+                                                            true);
 
-                // Add mass column
-                this->table_monitoring_vof.add_value("mass_" + fluid_id,
-                                                     this->mass_monitored);
-                this->table_monitoring_vof.set_scientific("mass_" + fluid_id,
-                                                          true);
-              }
-}
-            // Add sharpening threshold column
-            this->table_monitoring_vof.add_value("sharpening_threshold",
-                                                 this->sharpening_threshold);
-                                                 
+                  // Add mass per length column
+                  this->table_monitoring_vof.add_value("mass_per_length_" +
+                                                         fluid_id,
+                                                       this->mass_monitored);
+                  this->table_monitoring_vof.set_scientific("mass_per_length_" +
+                                                              fluid_id,
+                                                            true);
+                }
+              else if (dim == 3)
+                {
+                  // Add volume column
+                  this->table_monitoring_vof.add_value("volume_" + fluid_id,
+                                                       this->volume_monitored);
+                  this->table_monitoring_vof.set_scientific("volume_" +
+                                                              fluid_id,
+                                                            true);
 
-            if (this->simulation_control->get_step_number() %
-                  this->simulation_parameters.post_processing
-                    .output_frequency ==
-                0)
-              {
-                // Save table to .dat
-                std::string filename = this->simulation_parameters.simulation_control.output_folder +
+                  // Add mass column
+                  this->table_monitoring_vof.add_value("mass_" + fluid_id,
+                                                       this->mass_monitored);
+                  this->table_monitoring_vof.set_scientific("mass_" + fluid_id,
+                                                            true);
+                }
+            }
+        }
+
+      if (this_mpi_process == 0)
+        {
+          // Add sharpening threshold column
+          this->table_monitoring_vof.add_value("sharpening_threshold",
+                                               this->sharpening_threshold);
+
+
+          if (this->simulation_control->get_step_number() %
+                this->simulation_parameters.post_processing.output_frequency ==
+              0)
+            {
+              // Save table to .dat
+              std::string filename =
+                this->simulation_parameters.simulation_control.output_folder +
                 this->simulation_parameters.post_processing
                   .mass_conservation_output_name +
                 ".dat";
-                std::ofstream output(filename.c_str());
-                this->table_monitoring_vof.write_text(output);
-              }
-          }
-      
+              std::ofstream output(filename.c_str());
+              this->table_monitoring_vof.write_text(output);
+            }
+        }
     }
+
 
   if (this->simulation_parameters.post_processing.calculate_barycenter)
     {

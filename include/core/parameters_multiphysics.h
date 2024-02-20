@@ -138,7 +138,7 @@ namespace Parameters
     Parameters::Verbosity verbosity;
 
     bool monitoring;
-    
+
     // Conservation tolerance on the fluid monitored,
     // used with adaptive Sharpening
     double tolerance;
