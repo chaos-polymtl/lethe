@@ -241,16 +241,16 @@ public:
     std::vector<double> time_steps_vector =
       simulation_control->get_time_steps_vector();
 
+    // If change between the temperature is insufficient, backtrack to the
+    // first order implementation
+    auto method = simulation_control->get_assembly_method();
+    const Vector<double>& bdf_coefs = simulation_control->get_bdf_coefficients();
+
     for (unsigned int i = 0; i < n_values; ++i)
       {
         double temperature    = temperature_vec[i];
         double temperature_p1 = p1_temperature_vec[i];
         double temperature_p2 = p2_temperature_vec[i];
-
-        // If change between the temperature is insufficient, backtrack to the
-        // first order implementation
-        auto method = simulation_control->get_assembly_method();
-        const Vector<double>& bdf_coefs = simulation_control->get_bdf_coefficients();
 
         switch (method)
           {
