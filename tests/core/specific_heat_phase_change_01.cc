@@ -47,7 +47,7 @@ test()
   simulationControlParameters.subdivision            = 7;
   simulationControlParameters.output_folder          = "canard";
   simulationControlParameters.output_frequency       = 8;
-  
+
 
   std::shared_ptr<SimulationControl> simulation_control;
   simulation_control =
