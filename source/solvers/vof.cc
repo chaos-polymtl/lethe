@@ -687,13 +687,13 @@ VolumeOfFluid<dim>::postprocess(bool first_iteration)
       { Parameters::FluidIndicator::fluid0,
         Parameters::FluidIndicator::fluid1 };
 
-      for (int i = 0; i < 2; i++)
-      {
-        // Calculate volume and mass (this->mass_monitored)
-        calculate_volume_and_mass(this->present_solution,
-                                  *multiphysics->get_solution(
-                                    PhysicsID::fluid_dynamics),
-                                  fluid_indicators[i]);
+      // for (int i = 0; i < 2; i++)
+      // {
+      //   // Calculate volume and mass (this->mass_monitored)
+      //   calculate_volume_and_mass(this->present_solution,
+      //                             *multiphysics->get_solution(
+      //                               PhysicsID::fluid_dynamics),
+      //                             fluid_indicators[i]);
 
         if (first_iteration)
           this->mass_first_iteration = this->mass_monitored;
@@ -714,7 +714,15 @@ VolumeOfFluid<dim>::postprocess(bool first_iteration)
                   "time", this->simulation_control->get_current_time());
                 this->table_monitoring_vof.set_scientific("time", true);
               }
-
+              
+              for (int i = 0; i < 2; i++)
+              {
+                
+                // Calculate volume and mass (this->mass_monitored)
+                calculate_volume_and_mass(this->present_solution,
+                                          *multiphysics->get_solution(
+                                            PhysicsID::fluid_dynamics),
+                                          fluid_indicators[i]);
             std::string fluid_id("");
 
             if (fluid_indicators[i] ==
@@ -727,6 +735,8 @@ VolumeOfFluid<dim>::postprocess(bool first_iteration)
               {
                 fluid_id = "fluid_0";
               }
+              
+              std::cout << fluid_id << std::endl;
 
             if (dim == 2)
               {
@@ -758,10 +768,11 @@ VolumeOfFluid<dim>::postprocess(bool first_iteration)
                 this->table_monitoring_vof.set_scientific("mass_" + fluid_id,
                                                           true);
               }
-
+}
             // Add sharpening threshold column
             this->table_monitoring_vof.add_value("sharpening_threshold",
                                                  this->sharpening_threshold);
+                                                 
 
             if (this->simulation_control->get_step_number() %
                   this->simulation_parameters.post_processing
@@ -771,13 +782,13 @@ VolumeOfFluid<dim>::postprocess(bool first_iteration)
                 // Save table to .dat
                 std::string filename = this->simulation_parameters.simulation_control.output_folder +
                 this->simulation_parameters.post_processing
-                  .mass_conservation_output_name + fluid_id +
+                  .mass_conservation_output_name +
                 ".dat";
                 std::ofstream output(filename.c_str());
                 this->table_monitoring_vof.write_text(output);
               }
           }
-      }
+      
     }
 
   if (this->simulation_parameters.post_processing.calculate_barycenter)
