@@ -210,7 +210,7 @@ sgn(T val)
 
 /**
  * @brief Used to clip a properties between a lower and a higher value
- * @tparam T val argument's type
+ * @tparam T argument's type
  * @param lower lower admissible value
  * @param upper upper admissible value
  * @return clipped variable that is not below lower and not above upper
