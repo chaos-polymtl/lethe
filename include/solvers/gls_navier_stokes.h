@@ -128,12 +128,9 @@ protected:
 
   /**
    * @brief Define the zero constraints used to solved the problem.
-   *
-   * @param[in] is_dynamic Boolean indicating if zero constraints are dynamic
-   * (true) or not (false).
    */
   void
-  define_zero_constraints(const bool is_dynamic);
+  define_zero_constraints();
 
   /**
    * @brief Define the zero constraints used to solved the problem that change

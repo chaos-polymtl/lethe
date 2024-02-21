@@ -1742,7 +1742,8 @@ NavierStokesBase<dim, VectorType, DofsType>::establish_solid_domain(
           if (cell->material_id() > 0)
             {
               constrain_solid_cell_velocity_dofs(non_zero_constraints,
-                                                 local_dof_indices);
+                                                 local_dof_indices,
+                                                 this->zero_constraints);
             }
           else
             {
@@ -1777,7 +1778,9 @@ NavierStokesBase<dim, VectorType, DofsType>::establish_solid_domain(
               // DOFs.
               if (!connected_to_fluid)
                 {
-                  constrain_pressure(non_zero_constraints, local_dof_indices);
+                  constrain_pressure(non_zero_constraints,
+                                     local_dof_indices,
+                                     this->zero_constraints);
                 }
             }
         }
@@ -1832,7 +1835,8 @@ NavierStokesBase<dim, VectorType, DofsType>::constrain_solid_domain(
                   temperature <= max_solid_temperature)
                 {
                   flag_dofs_in_solid(dofs_are_in_solid, local_dof_indices);
-                  constrain_solid_cell_velocity_dofs(false, local_dof_indices);
+                  constrain_solid_cell_velocity_dofs(
+                    false, local_dof_indices, this->dynamic_zero_constraints);
                   cell_is_solid = true;
                   break;
                 }
@@ -1862,7 +1866,9 @@ NavierStokesBase<dim, VectorType, DofsType>::constrain_solid_domain(
                 {
                   // Set homogenous constraints to pressure DOFs that are not
                   // connected to a fluid.
-                  constrain_pressure(false, local_dof_indices);
+                  constrain_pressure(false,
+                                     local_dof_indices,
+                                     this->dynamic_zero_constraints);
                 }
             }
         }
@@ -1873,7 +1879,8 @@ template <int dim, typename VectorType, typename DofsType>
 void
 NavierStokesBase<dim, VectorType, DofsType>::constrain_solid_cell_velocity_dofs(
   const bool                                 &non_zero_constraints,
-  const std::vector<types::global_dof_index> &local_dof_indices)
+  const std::vector<types::global_dof_index> &local_dof_indices,
+  AffineConstraints<double>                  &zero_constraints)
 {
   for (unsigned int i = 0; i < local_dof_indices.size(); ++i)
     {
@@ -1964,7 +1971,8 @@ template <int dim, typename VectorType, typename DofsType>
 void
 NavierStokesBase<dim, VectorType, DofsType>::constrain_pressure(
   const bool                                 &non_zero_constraints,
-  const std::vector<types::global_dof_index> &local_dof_indices)
+  const std::vector<types::global_dof_index> &local_dof_indices,
+  AffineConstraints<double>                  &zero_constraints)
 {
   for (unsigned int i = 0; i < local_dof_indices.size(); ++i)
     {

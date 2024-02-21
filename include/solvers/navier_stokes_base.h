@@ -377,11 +377,14 @@ protected:
    * domain.
    *
    * @param[in] local_dof_indices Vector of a cell's local DOF indices.
+   *
+   * @param[out] zero_constraints Homogenous constraints holding object.
    */
   void
   constrain_solid_cell_velocity_dofs(
     const bool                                 &non_zero_constraints,
-    const std::vector<types::global_dof_index> &local_dof_indices);
+    const std::vector<types::global_dof_index> &local_dof_indices,
+    AffineConstraints<double>                  &zero_constraints);
 
   /**
    * @brief Flag DOFs in solid cells.
@@ -452,11 +455,14 @@ protected:
    * domain.
    *
    * @param[in] local_dof_indices Vector of a cell's local DOF indices.
+   *
+   * @param[out] zero_constraints Homogenous constraints holding object.
    */
   void
   constrain_pressure(
     const bool                                 &non_zero_constraints,
-    const std::vector<types::global_dof_index> &local_dof_indices);
+    const std::vector<types::global_dof_index> &local_dof_indices,
+    AffineConstraints<double>                  &zero_constraints);
 
   /**
    * @brief Constrain a certain portion of a fluid domain to a null velocity
@@ -600,6 +606,10 @@ protected:
 
   /// FEValues object used for temperature-dependant solid domain constraints
   std::shared_ptr<FEValues<dim>> fe_values_temperature;
+
+  /// Dynamic homogenous constraints used for temperature-dependant solid domain
+  /// constraints
+  AffineConstraints<double> dynamic_zero_constraints;
 };
 
 #endif

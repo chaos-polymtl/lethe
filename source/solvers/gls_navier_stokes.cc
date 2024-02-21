@@ -98,7 +98,7 @@ GLSNavierStokesSolver<dim>::setup_dofs_fd()
   define_non_zero_constraints();
 
   // Zero constraints
-  define_zero_constraints(false);
+  define_zero_constraints();
 
   this->present_solution.reinit(this->locally_owned_dofs,
                                 this->locally_relevant_dofs,
@@ -305,7 +305,7 @@ GLSNavierStokesSolver<dim>::define_non_zero_constraints()
 
 template <int dim>
 void
-GLSNavierStokesSolver<dim>::define_zero_constraints(const bool is_dynamic)
+GLSNavierStokesSolver<dim>::define_zero_constraints()
 {
   FEValuesExtractors::Vector velocities(0);
   FEValuesExtractors::Scalar pressure(dim);
@@ -379,13 +379,6 @@ GLSNavierStokesSolver<dim>::define_zero_constraints(const bool is_dynamic)
 
   this->establish_solid_domain(false);
 
-  if (is_dynamic)
-    {
-      const DoFHandler<dim> *dof_handler_ht =
-        this->multiphysics->get_dof_handler(PhysicsID::heat_transfer);
-      this->constrain_solid_domain(dof_handler_ht);
-    }
-
   this->zero_constraints.close();
 }
 
@@ -395,7 +388,23 @@ GLSNavierStokesSolver<dim>::setup_dynamic_zero_constraints()
 {
   if (!this->simulation_parameters.constrain_solid_domain.enable)
     return;
-  define_zero_constraints(true);
+
+  this->dynamic_zero_constraints.clear();
+  this->dynamic_zero_constraints.reinit(this->locally_relevant_dofs);
+
+  DoFTools::make_hanging_node_constraints(this->dof_handler,
+                                          this->dynamic_zero_constraints);
+
+
+  const DoFHandler<dim> *dof_handler_ht =
+    this->multiphysics->get_dof_handler(PhysicsID::heat_transfer);
+  this->constrain_solid_domain(dof_handler_ht);
+
+  this->dynamic_zero_constraints.merge(
+    this->zero_constraints,
+    AffineConstraints<double>::MergeConflictBehavior::right_object_wins);
+
+  this->dynamic_zero_constraints.close();
 }
 
 template <int dim>
@@ -870,10 +879,13 @@ GLSNavierStokesSolver<dim>::copy_local_matrix_to_global_matrix(
   if (!copy_data.cell_is_local)
     return;
 
-  const AffineConstraints<double> &constraints_used = this->zero_constraints;
+  const AffineConstraints<double> &constraints_used =
+    (!this->simulation_parameters.constrain_solid_domain.enable) ?
+      this->zero_constraints :
+      this->dynamic_zero_constraints;
   constraints_used.distribute_local_to_global(copy_data.local_matrix,
                                               copy_data.local_dof_indices,
-                                              system_matrix);
+                                              this->system_matrix);
 }
 
 
@@ -1084,7 +1096,10 @@ GLSNavierStokesSolver<dim>::copy_local_rhs_to_global_rhs(
   if (!copy_data.cell_is_local)
     return;
 
-  const AffineConstraints<double> &constraints_used = this->zero_constraints;
+  const AffineConstraints<double> &constraints_used =
+    (!this->simulation_parameters.constrain_solid_domain.enable) ?
+      this->zero_constraints :
+      this->dynamic_zero_constraints;
   constraints_used.distribute_local_to_global(copy_data.local_rhs,
                                               copy_data.local_dof_indices,
                                               this->system_rhs);
@@ -1490,8 +1505,13 @@ GLSNavierStokesSolver<dim>::solve_system_GMRES(const bool   initial_step,
   auto &system_rhs          = this->system_rhs;
   auto &nonzero_constraints = this->nonzero_constraints;
 
+  const AffineConstraints<double> &zero_constraints_used =
+    (!this->simulation_parameters.constrain_solid_domain.enable) ?
+      this->zero_constraints :
+      this->dynamic_zero_constraints;
+
   const AffineConstraints<double> &constraints_used =
-    initial_step ? nonzero_constraints : this->zero_constraints;
+    initial_step ? nonzero_constraints : zero_constraints_used;
 
   const double linear_solver_tolerance =
     std::max(relative_residual * system_rhs.l2_norm(), absolute_residual);
@@ -1622,8 +1642,13 @@ GLSNavierStokesSolver<dim>::solve_system_BiCGStab(
   auto &system_rhs          = this->system_rhs;
   auto &nonzero_constraints = this->nonzero_constraints;
 
+  const AffineConstraints<double> &zero_constraints_used =
+    (!this->simulation_parameters.constrain_solid_domain.enable) ?
+      this->zero_constraints :
+      this->dynamic_zero_constraints;
+
   const AffineConstraints<double> &constraints_used =
-    initial_step ? nonzero_constraints : this->zero_constraints;
+    initial_step ? nonzero_constraints : zero_constraints_used;
   const double linear_solver_tolerance =
     std::max(relative_residual * system_rhs.l2_norm(), absolute_residual);
   if (this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
@@ -1716,8 +1741,13 @@ GLSNavierStokesSolver<dim>::solve_system_direct(const bool   initial_step,
   auto &system_rhs          = this->system_rhs;
   auto &nonzero_constraints = this->nonzero_constraints;
 
+  const AffineConstraints<double> &zero_constraints_used =
+    (!this->simulation_parameters.constrain_solid_domain.enable) ?
+      this->zero_constraints :
+      this->dynamic_zero_constraints;
+
   const AffineConstraints<double> &constraints_used =
-    initial_step ? nonzero_constraints : this->zero_constraints;
+    initial_step ? nonzero_constraints : zero_constraints_used;
   const double linear_solver_tolerance =
     std::max(relative_residual * system_rhs.l2_norm(), absolute_residual);
 
