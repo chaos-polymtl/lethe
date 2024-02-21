@@ -1004,7 +1004,6 @@ NavierStokesTransientSUPGPSPGOperator<dim, number>::local_evaluate_residual(
 
       const auto h = integrator.read_cell_data(this->get_element_size());
 
-      // Time stepping information
       // Vector for the BDF coefficients
       const Vector<double> &bdf_coefs =
         this->simulation_control->get_bdf_coefficients();
