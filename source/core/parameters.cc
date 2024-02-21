@@ -1721,7 +1721,7 @@ namespace Parameters
 
       prm.declare_entry(
         "calculate mass conservation",
-        "true",
+        "false",
         Patterns::Bool(),
         "Enable calculation of the mass of both fluids in VOF simualtions.");
 
