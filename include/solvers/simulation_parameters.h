@@ -436,6 +436,16 @@ public:
           ").\n "
           "Only 1 constraint per fluid can be declared.\n ");
       }
+
+    if (constrain_solid_domain.enable && multiphysics.VOF ||
+        constrain_solid_domain.enable && multiphysics.cahn_hilliard)
+      {
+        throw std::logic_error(
+          "Inconsistency in .prm!\n "
+          "The current implementation for constraining solid domains with\n "
+          "temperature does not allow multiple fluid simulations.\n "
+          "This feature will become available soon.\n ");
+      }
   }
 
   inline bool
