@@ -37,6 +37,9 @@ SimulationControl::SimulationControl(const Parameters::SimulationControl param)
   time_step_vector[1] = param.dt;
   time_step_vector[2] = param.dt;
   time_step_vector[3] = param.dt;
+
+  // Resize the bdf_coefficients to ensure they have a default size;
+  bdf_coefs.reinit(n_previous_time_steps + 1);
 }
 
 void
@@ -207,6 +210,8 @@ SimulationControlTransient::integrate()
       add_time_step(calculate_time_step());
       current_time += time_step;
 
+      if (is_bdf())
+        update_bdf_coefficients();
       return true;
     }
 

@@ -37,37 +37,6 @@ using namespace dealii;
  * integration based on the BDF for viscous flows." Journal of Computational
  * Physics 291 (2015): 151-176.
  *
- * @param[in] order Order of the BDF method. The BDF method of @p order
- * \f$n\f$ requires \f$n+1\f$ coefficients.
- *
- * @param[in] time_steps Vector containing all the time steps. The time steps
- * should be in decreasing order.
- *
- * For example, if the method is a BDF2 (\f$n=2\f$), it uses three values for
- * the time: \f$t\f$, \f$t-\Delta t_1\f$ and \f$t-\Delta t_2\f$. Thus the @p
- * time_steps vector should contain \f$\Delta t_1\f$ and \f$\Delta t_2\f$.
- *
- * @return Vector containing BDF integration coefficient values.
- *
- * @note At the moment, the highest implemented scheme is @p bdf3 (@p order=3).
- */
-Vector<double>
-bdf_coefficients(unsigned int order, const std::vector<double> time_steps);
-
-
-/**
- * @brief Calculate the coefficients required for backward differentiation
- * formula (BDF) integration of @p order \f$n\f$.
- *
- * The coefficients are determined through a recursion algorithm.
- * The algorithm is taken from: Hay, Alexander, et al. "hp-Adaptive time
- * integration based on the BDF for viscous flows." Journal of Computational
- * Physics 291 (2015): 151-176.
- *
- * For example, if the method is a BDF2, it uses three values for the time :
- * \f$t\f$, \f$t-\Delta t_1\f$ and \f$t-\Delta t_2\f$. Thus the @p time_steps
- * vector should contain \f$\Delta t_1\f$ and \f$\Delta t_2\f$.
- *
  * @param[in] method Time stepping method.
  *
  * @param[in] time_steps Vector containing all the time steps. The time steps
@@ -82,8 +51,9 @@ bdf_coefficients(unsigned int order, const std::vector<double> time_steps);
  * @note At the moment, the highest implemented scheme is @p bdf3 (@p order=3).
  */
 Vector<double>
-bdf_coefficients(const Parameters::SimulationControl::TimeSteppingMethod method,
-                 const std::vector<double> time_steps);
+calculate_bdf_coefficients(
+  const Parameters::SimulationControl::TimeSteppingMethod method,
+  const std::vector<double>                               time_steps);
 
 
 /**
