@@ -37,10 +37,6 @@ using namespace dealii;
  * integration based on the BDF for viscous flows." Journal of Computational
  * Physics 291 (2015): 151-176.
  *
- * For example, if the method is a BDF2, it uses three values for the time :
- * \f$t\f$, \f$t-\Delta t_1\f$ and \f$t-\Delta t_2\f$. Thus the @p time_steps
- * vector should contain \f$\Delta t_1\f$ and \f$\Delta t_2\f$.
- *
  * @param[in] method Time stepping method.
  *
  * @param[in] time_steps Vector containing all the time steps. The time steps

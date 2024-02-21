@@ -139,7 +139,7 @@ protected:
   /// BDF coefficients used for time-stepping methods
   Vector<double> bdf_coefs;
 
-   /**
+  /**
    * @brief Update the BDF coefficients. It is necessary to update the
    * coefficients when there is a change in the time step values or the
    * time stepping scheme.
