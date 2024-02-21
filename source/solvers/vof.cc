@@ -1795,11 +1795,11 @@ VolumeOfFluid<dim>::post_mesh_adaptation()
 template <int dim>
 void
 VolumeOfFluid<dim>::compute_kelly(
-  const std::pair<const Parameters::MeshAdaptation::Variable,
-                  Parameters::MultipleAdaptationParameters> &ivar,
+  const std::pair<const Variable, Parameters::MultipleAdaptationParameters>
+                        &ivar,
   dealii::Vector<float> &estimated_error_per_cell)
 {
-  if (ivar.first == Parameters::MeshAdaptation::Variable::phase)
+  if (ivar.first == Variable::phase)
     {
       const FEValuesExtractors::Scalar phase(0);
 

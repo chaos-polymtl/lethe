@@ -120,18 +120,27 @@ protected:
   void
   setup_preconditioner();
 
-
   /**
-   * @brief  defined the non zero constraints used to solve the problem.
+   * @brief Define the non-zero constraints used to solve the problem.
    */
   void
   define_non_zero_constraints();
 
   /**
-   * @brief defined the zero_constraints used to solved the problem.
+   * @brief Define the zero constraints used to solved the problem.
+   *
+   * @param[in] is_dynamic Boolean indicating if zero constraints are dynamic
+   * (true) or not (false).
    */
   void
-  define_zero_constraints();
+  define_zero_constraints(const bool is_dynamic);
+
+  /**
+   * @brief Define the zero constraints used to solved the problem that change
+   * with physic solutions.
+   */
+  void
+  setup_dynamic_zero_constraints();
 
   /**
    * @brief Assemble the local matrix for a given cell.

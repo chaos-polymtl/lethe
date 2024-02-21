@@ -511,7 +511,7 @@ namespace Parameters
 
     /*
      * Reference Temperature for all physical properties of fluids and solids.
-     * Currently this is only used by the thermal expansion models
+     * Currently, this is only used by the thermal expansion models
      */
     double reference_temperature;
 
@@ -520,6 +520,85 @@ namespace Parameters
     void
     parse_parameters(ParameterHandler    &prm,
                      const Dimensionality dimensions = Dimensionality());
+  };
+
+  /**
+   * @brief Set of parameters constraining a certain portion of a fluid domain
+   * to a null velocity and pressure fields to mimic a solid subdomain.
+   *
+   * @remark Pressure DOFs in "solid" cells that are next to "fluid" cells are
+   * not constrained.
+   *
+   * @note At the moment, only the temperature field is used to constrain the
+   * "solid" domain.
+   */
+  struct ConstrainSolidDomain
+  {
+    /// Enable/disable (@p true/false) the solid domain constraining feature.
+    bool enable;
+
+    /// Number of constraints (1 per fluid)
+    unsigned int number_of_constraints;
+
+    /// Field on which the constraint is imposed
+    static const Variable constrained_field = Variable::velocity;
+
+    /// Field on which the constraining condition is based
+    static const Variable constraining_field = Variable::temperature;
+
+    /// Identifier of fluids that are constrained
+    std::vector<unsigned int> fluid_ids;
+
+    /// Lower threshold values of the constraining field (temperature)
+    std::vector<double> temperature_min_values;
+
+    /// Upper threshold values of the constraining field (temperature)
+    std::vector<double> temperature_max_values;
+
+    /**
+     * @brief Declare the parameters.
+     *
+     * @param[in,out] prm ParameterHandler object.
+     *
+     * @param[in] number_of_constraints Number of zero velocity constraints
+     * applied to the domain.
+     */
+    void
+    declare_parameters(ParameterHandler  &prm,
+                       const unsigned int number_of_constraints);
+
+    /**
+     * @brief Parse the parameters.
+     *
+     * @param[in,out] prm ParameterHandler object.
+     */
+    void
+    parse_parameters(ParameterHandler &prm);
+
+    /**
+     *
+     * @brief Declare the default parameters for each constraint.
+     *
+     * @param[in,out] prm ParameterHandler object.
+     *
+     * @param[in] constraint_id Identifiers of the constraint (1 per fluid). The
+     * numbering starts at 0.
+     */
+    void
+    declare_default_entries(ParameterHandler &prm);
+
+    /**
+     *
+     * @brief Parse parameters for each constraint.
+     *
+     * @param[in,out] prm ParameterHandler object.
+     *
+     * @param[in] constraint_id Identifiers of the constraint (1 per fluid). The
+     * numbering starts at 0.
+     */
+    void
+    parse_constraint_parameters(ParameterHandler  &prm,
+                                const unsigned int constraint_id);
   };
 
   /**
@@ -1165,15 +1244,8 @@ namespace Parameters
       kelly
     } type;
 
-    enum class Variable
-    {
-      velocity,
-      pressure,
-      phase,
-      temperature,
-      phase_cahn_hilliard,
-      chemical_potential_cahn_hilliard
-    } variable;
+    /// Field influencing the mesh adaptation
+    Variable variable;
 
     // Map containing the refinement variables
     std::map<Variable, MultipleAdaptationParameters> variables;

@@ -98,7 +98,7 @@ GLSNavierStokesSolver<dim>::setup_dofs_fd()
   define_non_zero_constraints();
 
   // Zero constraints
-  define_zero_constraints();
+  define_zero_constraints(false);
 
   this->present_solution.reinit(this->locally_owned_dofs,
                                 this->locally_relevant_dofs,
@@ -305,7 +305,7 @@ GLSNavierStokesSolver<dim>::define_non_zero_constraints()
 
 template <int dim>
 void
-GLSNavierStokesSolver<dim>::define_zero_constraints()
+GLSNavierStokesSolver<dim>::define_zero_constraints(const bool is_dynamic)
 {
   FEValuesExtractors::Vector velocities(0);
   FEValuesExtractors::Scalar pressure(dim);
@@ -379,9 +379,24 @@ GLSNavierStokesSolver<dim>::define_zero_constraints()
 
   this->establish_solid_domain(false);
 
+  if (is_dynamic)
+    {
+      const DoFHandler<dim> *dof_handler_ht =
+        this->multiphysics->get_dof_handler(PhysicsID::heat_transfer);
+      this->constrain_solid_domain(dof_handler_ht);
+    }
+
   this->zero_constraints.close();
 }
 
+template <int dim>
+void
+GLSNavierStokesSolver<dim>::setup_dynamic_zero_constraints()
+{
+  if (!this->simulation_parameters.constrain_solid_domain.enable)
+    return;
+  define_zero_constraints(true);
+}
 
 template <int dim>
 void
@@ -1740,6 +1755,7 @@ GLSNavierStokesSolver<dim>::solve()
     this->simulation_parameters.boundary_conditions);
 
   this->setup_dofs();
+  this->enable_dynamic_zero_constraints_fd();
   this->box_refine_mesh();
   this->set_initial_condition(
     this->simulation_parameters.initial_condition->type,
@@ -1775,11 +1791,13 @@ GLSNavierStokesSolver<dim>::solve()
 
       if (this->simulation_control->is_at_start())
         {
+          this->setup_dynamic_zero_constraints();
           this->iterate();
         }
       else
         {
           NavierStokesBase<dim, GlobalVectorType, IndexSet>::refine_mesh();
+          this->setup_dynamic_zero_constraints();
           this->iterate();
         }
       this->postprocess(false);

@@ -35,6 +35,16 @@ enum PhysicsID : unsigned int
   cahn_hilliard  = 4
 };
 
+enum class Variable : unsigned int
+{
+  velocity                         = 0,
+  pressure                         = 1,
+  phase                            = 2,
+  temperature                      = 3,
+  phase_cahn_hilliard              = 4,
+  chemical_potential_cahn_hilliard = 5
+};
+
 /**
  * @brief Utility function used for parsing physics-based
  * parameters

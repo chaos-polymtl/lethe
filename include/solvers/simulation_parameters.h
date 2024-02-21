@@ -67,6 +67,7 @@ public:
   std::shared_ptr<Parameters::IBParticles<dim>> particlesParameters;
   Parameters::DynamicFlowControl                flow_control;
   Parameters::Multiphysics                      multiphysics;
+  Parameters::ConstrainSolidDomain              constrain_solid_domain;
   Parameters::Stabilization                     stabilization;
   Parameters::ALE<dim>                          ale;
   Parameters::Evaporation                       evaporation;
@@ -133,6 +134,10 @@ public:
 
     Parameters::VelocitySource::declare_parameters(prm);
 
+    constrain_solid_domain.declare_parameters(
+      prm, 1); // at the moment, default value of the number of constraints is
+               // set to one since we are only applying to 1 fluid simulations
+
     Parameters::Stabilization::declare_parameters(prm);
 
     ale.declare_parameters(prm);
@@ -183,6 +188,7 @@ public:
     velocity_sources.parse_parameters(prm);
     particlesParameters->parse_parameters(prm);
     multiphysics.parse_parameters(prm);
+    constrain_solid_domain.parse_parameters(prm);
     stabilization.parse_parameters(prm);
     ale.parse_parameters(prm);
     evaporation.parse_parameters(prm);
@@ -403,6 +409,32 @@ public:
           "Please enable the VOF auxiliary physic in the 'multiphysics' subsection, \n"
           "specify a 2nd fluid in the 'physical properties' subsection,\n"
           "and define appropriate initial conditions in the 'initial conditions' subsection.");
+      }
+
+    if (!physical_properties_manager.has_phase_change() &&
+        constrain_solid_domain.enable)
+      {
+        throw std::logic_error(
+          "Inconsistency in .prm!\n "
+          "The apply constraints on a solid domain feature is enabled, however\n "
+          "there is no 'phase_change' physical property model declared in the\n "
+          "'physical properties' subsection.");
+      }
+
+    if (physical_properties_manager.get_number_of_fluids() <
+        constrain_solid_domain.number_of_constraints)
+      {
+        std::string n_constraints =
+          Utilities::to_string(constrain_solid_domain.number_of_constraints);
+        std::string n_fluids = Utilities::to_string(
+          physical_properties_manager.get_number_of_fluids());
+        throw std::logic_error(
+          "Inconsistency in .prm!\n "
+          "The number of constraints (" +
+          n_constraints + ") is greater than the number of fluids (" +
+          n_fluids +
+          ").\n "
+          "Only 1 constraint per fluid can be declared.\n ");
       }
   }
 

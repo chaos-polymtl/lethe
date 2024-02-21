@@ -12,9 +12,10 @@ Postprocessing code for melting cavity example
 import numpy as np
 import matplotlib.pyplot as plt
 import pyvista as pv
+import pandas as pd
 
+import os
 import sys
-
 #############################################################################
 
 #############################################################################
@@ -68,7 +69,6 @@ b_bot = [1, y_bot, 0]
 #Read vtu data
 for vtu_file in (list_vtu):
     sim = pv.read(f"{output_path}/{vtu_file}")
-    print("Processing file: ", vtu_file)
 
     sampled_data_top = sim.sample_over_line(a_top, b_top, resolution=1000)
     temperature_top = pd.DataFrame(sampled_data_top["temperature"])
