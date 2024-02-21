@@ -25,13 +25,13 @@ DeclException1(
   << std::endl
   << "Interface sharpening model requires an integer sharpening frequency larger than 0.");
 
-DeclException1(
-  AdaptiveSharpeningError,
-  bool,
-  << "Sharpening type is set to 'adaptive' but monitoring is : " << arg1
-  << std::endl
-  << "Adaptive sharpening requires to set 'monitoring = true', and to define"
-  << " the 'fluid monitored' and the 'tolerance' to reach. See documentation for further details.");
+// DeclException1(
+//   AdaptiveSharpeningError,
+//   bool,
+//   << "Sharpening type is set to 'adaptive' but monitoring is : " << arg1
+//   << std::endl
+//   << "Adaptive sharpening requires to set 'monitoring = true', and to define"
+//   << " the 'fluid monitored' and the 'tolerance' to reach. See documentation for further details.");
 
 void
 Parameters::Multiphysics::declare_parameters(ParameterHandler &prm)
@@ -168,11 +168,11 @@ Parameters::VOF::parse_parameters(ParameterHandler &prm)
     compressible = prm.get_bool("compressible");
 
     // Error definitions
-    if (sharpening.type == Parameters::SharpeningType::adaptive)
-      {
-        AssertThrow(conservation.monitoring,
-                    AdaptiveSharpeningError(conservation.monitoring));
-      }
+    // if (sharpening.type == Parameters::SharpeningType::adaptive)
+    //   {
+    //     AssertThrow(conservation.monitoring,
+    //                 AdaptiveSharpeningError(conservation.monitoring));
+    //   }
   }
   prm.leave_subsection();
 }

@@ -84,18 +84,20 @@ end
 #---------------------------------------------------
 
 subsection VOF
-  subsection mass conservation
-    set monitoring      = true
-    set monitored fluid = fluid 1
-    set tolerance       = 1e-6
-    set verbosity       = extra verbose
-  end
-
   subsection phase filtration
     set type      = tanh
     set verbosity = quiet
     set beta      = 20
   end
+end
+
+#---------------------------------------------------
+# Post-Processing
+#---------------------------------------------------
+
+subsection post-processing
+  set verbosity       = verbose
+  set calculate mass conservation = true
 end
 
 #---------------------------------------------------

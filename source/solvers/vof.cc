@@ -630,11 +630,16 @@ VolumeOfFluid<dim>::finish_simulation()
     }
 
   if (this_mpi_process == 0 &&
-      simulation_parameters.post_processing.verbosity ==
+      this->simulation_parameters.post_processing.verbosity ==
         Parameters::Verbosity::verbose &&
       this->simulation_parameters.post_processing.calculate_mass_conservation)
     {
-      std::cout << "BOOP" << std::endl;
+      std::cout << "+------------------------------------------+"
+                << std::endl;
+      std::cout << "|           VOF Mass Conservation          |"
+                << std::endl;
+      std::cout << "+------------------------------------------+"
+                << std::endl;
       this->table_monitoring_vof.write_text(std::cout);
     }
 }
@@ -689,12 +694,7 @@ VolumeOfFluid<dim>::postprocess(bool first_iteration)
 
       if (this_mpi_process == 0)
         {
-          std::cout << "BOOP BOOP" << std::endl;
-        }
 
-      if (this_mpi_process == 0)
-        {
-          std::cout << "BOOP BOOP BOOP" << std::endl;
           // Set conservation monitoring table
           if (this->simulation_control->is_steady())
             {
@@ -736,8 +736,6 @@ VolumeOfFluid<dim>::postprocess(bool first_iteration)
                 {
                   fluid_id = "fluid_0";
                 }
-
-              std::cout << "Fluid ID is " << fluid_id << std::endl;
 
               if (dim == 2)
                 {
@@ -1029,7 +1027,7 @@ VolumeOfFluid<dim>::find_sharpening_threshold()
 
   // Useful definitions for readability
   const double mass_deviation_tol = this->simulation_parameters.multiphysics
-                                      .vof_parameters.conservation.tolerance *
+                                      .vof_parameters.sharpening.tolerance *
                                     this->mass_first_iteration;
   const unsigned int max_iterations =
     this->simulation_parameters.multiphysics.vof_parameters.sharpening
@@ -1891,7 +1889,7 @@ VolumeOfFluid<dim>::write_checkpoint()
           fluid_id = "fluid_1";
         }
       else if (this->simulation_parameters.multiphysics.vof_parameters
-                 .conservation.monitored_fluid ==
+                 .sharpening.monitored_fluid ==
                Parameters::FluidIndicator::fluid0)
         {
           fluid_id = "fluid_0";
@@ -1956,7 +1954,7 @@ VolumeOfFluid<dim>::read_checkpoint()
           fluid_id = "fluid_1";
         }
       else if (this->simulation_parameters.multiphysics.vof_parameters
-                 .conservation.monitored_fluid ==
+                 .sharpening.monitored_fluid ==
                Parameters::FluidIndicator::fluid0)
         {
           fluid_id = "fluid_0";

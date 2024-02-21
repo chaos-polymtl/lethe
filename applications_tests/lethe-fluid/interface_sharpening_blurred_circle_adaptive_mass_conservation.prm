@@ -30,16 +30,20 @@ subsection VOF
     set frequency           = 2
     set type                = adaptive
     set max iterations      = 50
-  end
-
-  subsection mass conservation
-    set monitoring         = true
-    set monitored fluid    = fluid 1
-    # parameters used with adaptive sharpening
     set tolerance = 1e-8
-    set verbosity = verbose
+    set monitored fluid    = fluid 1
+    set verbosity       = verbose
   end
 end
+
+#---------------------------------------------------
+# Post-Processing
+#---------------------------------------------------
+
+#subsection post-processing
+#  set verbosity       = verbose
+#  set calculate mass conservation = true
+#end
 
 #---------------------------------------------------
 # Initial condition
