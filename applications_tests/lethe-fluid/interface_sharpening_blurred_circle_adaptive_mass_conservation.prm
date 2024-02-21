@@ -40,10 +40,10 @@ end
 # Post-Processing
 #---------------------------------------------------
 
-#subsection post-processing
-#  set verbosity       = verbose
-#  set calculate mass conservation = true
-#end
+subsection post-processing
+  set verbosity       = verbose
+  set calculate mass conservation = false
+end
 
 #---------------------------------------------------
 # Initial condition

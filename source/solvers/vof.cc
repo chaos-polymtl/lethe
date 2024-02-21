@@ -718,11 +718,6 @@ VolumeOfFluid<dim>::postprocess(bool first_iteration)
                                       PhysicsID::fluid_dynamics),
                                     fluid_indicators[i]);
 
-          if (first_iteration)
-            this->mass_first_iteration = this->mass_monitored;
-
-
-
           if (this_mpi_process == 0)
             {
               std::string fluid_id("");
@@ -979,8 +974,6 @@ void
 VolumeOfFluid<dim>::handle_interface_sharpening()
 {
   if (this->simulation_parameters.multiphysics.vof_parameters.sharpening
-          .verbosity != Parameters::Verbosity::quiet ||
-      this->simulation_parameters.multiphysics.vof_parameters.sharpening
           .verbosity != Parameters::Verbosity::quiet)
     {
       this->pcout << "Sharpening interface at step "
@@ -989,12 +982,13 @@ VolumeOfFluid<dim>::handle_interface_sharpening()
   if (this->simulation_parameters.multiphysics.vof_parameters.sharpening.type ==
       Parameters::SharpeningType::adaptive)
     {
+      
       if (this->simulation_parameters.multiphysics.vof_parameters.sharpening
             .verbosity != Parameters::Verbosity::quiet)
         {
           this->pcout << "   Adapting the sharpening threshold" << std::endl;
         }
-
+        
       this->sharpening_threshold = find_sharpening_threshold();
 
       if (this->simulation_parameters.multiphysics.vof_parameters.sharpening
@@ -1882,20 +1876,10 @@ VolumeOfFluid<dim>::write_checkpoint()
         "_VOF" + suffix);
   if (this->simulation_parameters.post_processing.calculate_mass_conservation)
     {
-      std::string fluid_id("");
-      if (this->simulation_parameters.multiphysics.vof_parameters.sharpening
-            .monitored_fluid == Parameters::FluidIndicator::fluid1)
-        {
-          fluid_id = "fluid_1";
-        }
-      else if (this->simulation_parameters.multiphysics.vof_parameters
-                 .sharpening.monitored_fluid ==
-               Parameters::FluidIndicator::fluid0)
-        {
-          fluid_id = "fluid_0";
-        }
       serialize_table(this->table_monitoring_vof,
-                      prefix + "VOF_monitoring_" + fluid_id + suffix);
+                      prefix +
+                      this->simulation_parameters.post_processing
+                        .mass_conservation_output_name + suffix);
     }
   if (this->simulation_parameters.post_processing.calculate_barycenter)
     serialize_table(
@@ -1947,20 +1931,10 @@ VolumeOfFluid<dim>::read_checkpoint()
         "_VOF" + suffix);
   if (this->simulation_parameters.post_processing.calculate_mass_conservation)
     {
-      std::string fluid_id("");
-      if (this->simulation_parameters.multiphysics.vof_parameters.sharpening
-            .monitored_fluid == Parameters::FluidIndicator::fluid1)
-        {
-          fluid_id = "fluid_1";
-        }
-      else if (this->simulation_parameters.multiphysics.vof_parameters
-                 .sharpening.monitored_fluid ==
-               Parameters::FluidIndicator::fluid0)
-        {
-          fluid_id = "fluid_0";
-        }
       deserialize_table(this->table_monitoring_vof,
-                        prefix + "VOF_monitoring_" + fluid_id + suffix);
+                      prefix +
+                      this->simulation_parameters.post_processing
+                        .mass_conservation_output_name + suffix);
     }
   if (this->simulation_parameters.post_processing.calculate_barycenter)
     deserialize_table(
@@ -2319,10 +2293,20 @@ VolumeOfFluid<dim>::set_initial_conditions()
   this->nonzero_constraints.distribute(this->newton_update);
   this->present_solution = this->newton_update;
   apply_phase_filter();
-
+    
   if (simulation_parameters.initial_condition->enable_projection_step)
     smooth_phase_fraction();
 
+  if (this->simulation_parameters.multiphysics.vof_parameters.sharpening.type ==   Parameters::SharpeningType::adaptive)
+      {
+        // Calculate volume and mass (this->mass_monitored)
+        calculate_volume_and_mass(this->present_solution,
+                                  *multiphysics->get_solution(
+                                    PhysicsID::fluid_dynamics),this->simulation_parameters.multiphysics.vof_parameters.sharpening.monitored_fluid);
+
+        this->mass_first_iteration = this->mass_monitored;
+      }
+        
   percolate_time_vectors();
 }
 
