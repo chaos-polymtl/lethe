@@ -209,11 +209,11 @@ sgn(T val)
 
 
 /**
- * @brief Used to clip a properties between a lower and a higher value
+ * @brief Clip a properties between a lower and a higher value
  * @tparam T argument's type
- * @param lower lower admissible value
- * @param upper upper admissible value
- * @return clipped variable that is not below lower and not above upper
+ * @param[in,out] lower Lower admissible value
+ * @param[in,out] upper Upper admissible value
+ * @return Clipped variable that is not below the lower limit and not above the upper limit
  *
  */
 template <typename T>
