@@ -634,12 +634,9 @@ VolumeOfFluid<dim>::finish_simulation()
         Parameters::Verbosity::verbose &&
       this->simulation_parameters.post_processing.calculate_mass_conservation)
     {
-      std::cout << "+------------------------------------------+"
-                << std::endl;
-      std::cout << "|           VOF Mass Conservation          |"
-                << std::endl;
-      std::cout << "+------------------------------------------+"
-                << std::endl;
+      std::cout << "+------------------------------------------+" << std::endl;
+      std::cout << "|           VOF Mass Conservation          |" << std::endl;
+      std::cout << "+------------------------------------------+" << std::endl;
       this->table_monitoring_vof.write_text(std::cout);
     }
 }
@@ -694,7 +691,6 @@ VolumeOfFluid<dim>::postprocess(bool first_iteration)
 
       if (this_mpi_process == 0)
         {
-
           // Set conservation monitoring table
           if (this->simulation_control->is_steady())
             {
@@ -974,7 +970,7 @@ void
 VolumeOfFluid<dim>::handle_interface_sharpening()
 {
   if (this->simulation_parameters.multiphysics.vof_parameters.sharpening
-          .verbosity != Parameters::Verbosity::quiet)
+        .verbosity != Parameters::Verbosity::quiet)
     {
       this->pcout << "Sharpening interface at step "
                   << this->simulation_control->get_step_number() << std::endl;
@@ -982,13 +978,12 @@ VolumeOfFluid<dim>::handle_interface_sharpening()
   if (this->simulation_parameters.multiphysics.vof_parameters.sharpening.type ==
       Parameters::SharpeningType::adaptive)
     {
-      
       if (this->simulation_parameters.multiphysics.vof_parameters.sharpening
             .verbosity != Parameters::Verbosity::quiet)
         {
           this->pcout << "   Adapting the sharpening threshold" << std::endl;
         }
-        
+
       this->sharpening_threshold = find_sharpening_threshold();
 
       if (this->simulation_parameters.multiphysics.vof_parameters.sharpening
@@ -1878,8 +1873,9 @@ VolumeOfFluid<dim>::write_checkpoint()
     {
       serialize_table(this->table_monitoring_vof,
                       prefix +
-                      this->simulation_parameters.post_processing
-                        .mass_conservation_output_name + suffix);
+                        this->simulation_parameters.post_processing
+                          .mass_conservation_output_name +
+                        suffix);
     }
   if (this->simulation_parameters.post_processing.calculate_barycenter)
     serialize_table(
@@ -1932,9 +1928,10 @@ VolumeOfFluid<dim>::read_checkpoint()
   if (this->simulation_parameters.post_processing.calculate_mass_conservation)
     {
       deserialize_table(this->table_monitoring_vof,
-                      prefix +
-                      this->simulation_parameters.post_processing
-                        .mass_conservation_output_name + suffix);
+                        prefix +
+                          this->simulation_parameters.post_processing
+                            .mass_conservation_output_name +
+                          suffix);
     }
   if (this->simulation_parameters.post_processing.calculate_barycenter)
     deserialize_table(
@@ -2293,20 +2290,23 @@ VolumeOfFluid<dim>::set_initial_conditions()
   this->nonzero_constraints.distribute(this->newton_update);
   this->present_solution = this->newton_update;
   apply_phase_filter();
-    
+
   if (simulation_parameters.initial_condition->enable_projection_step)
     smooth_phase_fraction();
 
-  if (this->simulation_parameters.multiphysics.vof_parameters.sharpening.type ==   Parameters::SharpeningType::adaptive)
-      {
-        // Calculate volume and mass (this->mass_monitored)
-        calculate_volume_and_mass(this->present_solution,
-                                  *multiphysics->get_solution(
-                                    PhysicsID::fluid_dynamics),this->simulation_parameters.multiphysics.vof_parameters.sharpening.monitored_fluid);
+  if (this->simulation_parameters.multiphysics.vof_parameters.sharpening.type ==
+      Parameters::SharpeningType::adaptive)
+    {
+      // Calculate volume and mass (this->mass_monitored)
+      calculate_volume_and_mass(this->present_solution,
+                                *multiphysics->get_solution(
+                                  PhysicsID::fluid_dynamics),
+                                this->simulation_parameters.multiphysics
+                                  .vof_parameters.sharpening.monitored_fluid);
 
-        this->mass_first_iteration = this->mass_monitored;
-      }
-        
+      this->mass_first_iteration = this->mass_monitored;
+    }
+
   percolate_time_vectors();
 }
 

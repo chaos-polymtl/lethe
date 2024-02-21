@@ -31,7 +31,8 @@ DeclException1(
 //   << "Sharpening type is set to 'adaptive' but monitoring is : " << arg1
 //   << std::endl
 //   << "Adaptive sharpening requires to set 'monitoring = true', and to define"
-//   << " the 'fluid monitored' and the 'tolerance' to reach. See documentation for further details.");
+//   << " the 'fluid monitored' and the 'tolerance' to reach. See documentation
+//   for further details.");
 
 void
 Parameters::Multiphysics::declare_parameters(ParameterHandler &prm)
