@@ -7,6 +7,8 @@ This guide gives provides a brief overview of the core functionalities of the Fi
 - :ref:`Installation <installation>`
 - :ref:`Interface overview <interface>`
 - :ref:`Make your first 2D Geometry <making_2D_geo>`
+- :ref:`Tips and tricks <tips>`
+
 
 .. _installation: 
 
@@ -50,7 +52,62 @@ Interface overview
 
 First, lets get familiar with some basic controls and some important functionalities of the interface.
 
+Moving around
+--------------
+
 To move around, use the ``shift + right click`` and ``ctrl + right click``. The first one lets you shift the geometry around in a linear fashion while the second one lets you rotate the geometry around the axis.
+
+Menu bar and toolbar
+--------------------
+
+Here is a short description of the different menu bars located on the top of the displayed window:
+
+- ``File``: Is used for opening and saving Fidelity Pointwise Project Files and importing and exporting files from other systems.
+- ``Edit``: Contains Undo, Redo, and commands for modifying entities.
+- ``View``: Has controls for various Display window view orientations and the overall layout of panels and toolbars.
+- ``Examine``: Provides ways to get detailed information about grid quality and other aspects of the grid.
+- ``Select``: Includes various ways of selecting entities and controls for selection behavior.
+- ``Create``: Is used to build new database and grid entities.
+- ``Grid``: Is used to apply Fidelity Pointwise's grid methods to improved grid quality.
+- ``Script``: Provides Glyph scripting and journaling controls.
+- ``CAE``: Is used to set the analysis software type and dimensionality which Fidelity Pointwise will export to, and is also used to set boundary and volume conditions.
+- ``Help``: Provides access to the Fidelity Pointwise help system.
+
+Even if the menu bar exists, a lot of the useful fonctionalities can be accessed quickly in the toolbar that is just below. Lets look at some of the most valuable ones.
+
+The **mask** is probably the most important tool. It is situated at the extreme right of the software's window. It lets you choose which entities are selectable. At this point the different entities have not been introduced so lets make a quick overview of some of them.
+
+.. image:: images/toolbar_mask.png
+    :align: center
+    :width: 400px
+
+Starting from the left is the **block mask**. A **Block** represents a section of a 3D mesh. It is composed of **Domains** which are the 2D equivalent of **Blocks**. These **Domains** are constituted of **Connectors** which are the 1D equivalent of **Domains**.
+
+So in short, to create a 3D mesh, it is first necessary to create all the structure of the geometry using connectors. The connectors can then be assembled as domains and the domains can finally be assembled as blocks. An exemple of the three different entities is present in the image down below. The other entities are not useful for the time being. Some of them will be revisited in the last section of this tutorial.
+
+.. image:: images/block_domain_connector.png
+    :align: center
+
+The next important part of the toolbar is displayed below. The two point curve and the draw curve can be used to create connectors. The symbol of the wrench over the domain and block are shortcuts to assemble domains and blocks. Another more efficient way to assemble domains will be presented further into this guide.
+
+.. image:: images/toolbar_create.png
+    :align: center
+    :width: 500px
+
+Finally, lets look at the two boxes in this last presented part of the toolbar. The first one can be used to specify the number of points on a connector. The second lets the user specify the distance between every points.
+
+.. image:: images/toolbar_grid.png
+    :align: center
+    :width: 500px
+
+
+
+
+
+
+
+Useful shortcuts
+----------------
 
 Here is a list of some keyboard shortcuts that are useful to remember:
 
@@ -170,4 +227,10 @@ The boundary conditions identification numbers are chosen by Pointwise. The user
 
 .. image:: images/mesh_file.png
     :align: center
+
+.. _tips: 
+
+--------------------------
+Tips and tricks
+--------------------------
 
