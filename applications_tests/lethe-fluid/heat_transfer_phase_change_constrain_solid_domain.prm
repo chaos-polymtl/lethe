@@ -9,8 +9,8 @@ set dimension = 2
 
 subsection simulation control
   set method           = bdf1
-  set time end         = 0.04
-  set time step        = 0.01
+  set time end         = 0.4
+  set time step        = 0.1
   set output frequency = 0
 end
 
@@ -137,9 +137,8 @@ end
 #---------------------------------------------------
 
 subsection post-processing
-  set verbosity                        = verbose
-  set calculate temperature statistics = true
-  set calculate pressure drop          = true
+  set verbosity               = verbose
+  set calculate pressure drop = true
 end
 
 #---------------------------------------------------
