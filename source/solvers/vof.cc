@@ -1939,6 +1939,19 @@ VolumeOfFluid<dim>::read_checkpoint()
       prefix +
         this->simulation_parameters.post_processing.barycenter_output_name +
         suffix);
+
+  if (this->simulation_parameters.multiphysics.vof_parameters.sharpening.type ==
+      Parameters::SharpeningType::adaptive)
+    {
+      // Calculate volume and mass (this->mass_monitored)
+      calculate_volume_and_mass(this->present_solution,
+                                *multiphysics->get_solution(
+                                  PhysicsID::fluid_dynamics),
+                                this->simulation_parameters.multiphysics
+                                  .vof_parameters.sharpening.monitored_fluid);
+
+      this->mass_first_iteration = this->mass_monitored;
+    }
 }
 
 

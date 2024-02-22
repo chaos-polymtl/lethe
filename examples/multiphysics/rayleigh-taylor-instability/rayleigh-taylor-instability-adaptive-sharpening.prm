@@ -110,18 +110,23 @@ subsection VOF
     set type                    = adaptive
     set threshold max deviation = 0.2
     set max iterations          = 50
-  end
-  subsection mass conservation
-    set monitoring      = true
     set monitored fluid = fluid 1
     set tolerance       = 1e-6
-    set verbosity       = extra verbose
   end
   subsection phase filtration
     set type      = tanh
     set verbosity = quiet
     set beta      = 10
   end
+end
+
+#---------------------------------------------------
+# Post-Processing
+#---------------------------------------------------
+
+subsection post-processing
+  set verbosity                   = verbose
+  set calculate mass conservation = true
 end
 
 #---------------------------------------------------
@@ -204,3 +209,14 @@ subsection linear solver
   end
 end
 
+subsection restart
+  # Checkpointing parameters
+  set checkpoint = true
+  set frequency  = 10
+
+  # Output/input files
+  set filename   = restart
+
+  # Restarting parameter
+  set restart    = false
+end

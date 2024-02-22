@@ -109,16 +109,20 @@ subsection VOF
     set frequency           = 25
     set type                = constant
   end
-  subsection mass conservation
-    set monitoring      = true
-    set monitored fluid = fluid 1
-    set verbosity       = extra verbose
-  end
   subsection phase filtration
     set type      = tanh
     set verbosity = quiet
     set beta      = 10
   end
+end
+
+#---------------------------------------------------
+# Post-Processing
+#---------------------------------------------------
+
+subsection post-processing
+  set verbosity                   = verbose
+  set calculate mass conservation = true
 end
 
 #---------------------------------------------------
@@ -199,4 +203,16 @@ subsection linear solver
     set ilu preconditioner absolute tolerance = 1e-12
     set ilu preconditioner relative tolerance = 1.00
   end
+end
+
+subsection restart
+  # Checkpointing parameters
+  set checkpoint = true
+  set frequency  = 10
+
+  # Output/input files
+  set filename   = restart
+
+  # Restarting parameter
+  set restart    = true
 end
