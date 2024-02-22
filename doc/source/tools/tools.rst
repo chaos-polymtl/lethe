@@ -9,6 +9,7 @@ Tools
 
     updating-test-results
     gmsh/gmsh
+    pointwise/pointwise
     automatic_launch/automatic_launch
     postprocessing/postprocessing_paraview
     postprocessing/postprocessing_pyvista
