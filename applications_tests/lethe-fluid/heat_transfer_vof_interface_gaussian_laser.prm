@@ -87,9 +87,11 @@ end
 #---------------------------------------------------
 # Post-processing
 #---------------------------------------------------
+
 subsection post-processing
   set verbosity                        = verbose
   set calculate temperature statistics = true
+  set calculate mass conservation      = true
 end
 
 #---------------------------------------------------

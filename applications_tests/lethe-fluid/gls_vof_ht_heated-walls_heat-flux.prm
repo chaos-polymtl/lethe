@@ -57,6 +57,7 @@ subsection post-processing
   set calculate temperature statistics = true
   set calculate heat flux              = true
   set postprocessed fluid              = fluid 1
+  set calculate mass conservation      = false
 end
 
 #---------------------------------------------------
@@ -116,15 +117,15 @@ end
 subsection boundary conditions heat transfer
   set number = 2
   subsection bc 0 #left wall
-    set id    = 0
-    set type  = temperature
+    set id   = 0
+    set type = temperature
     subsection value
       set Function expression = 5
     end
   end
   subsection bc 1 #right wall
-    set id    = 1
-    set type  = temperature
+    set id   = 1
+    set type = temperature
     subsection value
       set Function expression = 1
     end

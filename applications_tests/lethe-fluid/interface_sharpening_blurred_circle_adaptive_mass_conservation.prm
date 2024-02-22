@@ -37,15 +37,6 @@ subsection VOF
 end
 
 #---------------------------------------------------
-# Post-Processing
-#---------------------------------------------------
-
-#subsection post-processing
-#  set verbosity       = verbose
-#  set calculate mass conservation = true
-#end
-
-#---------------------------------------------------
 # Initial condition
 #---------------------------------------------------
 
