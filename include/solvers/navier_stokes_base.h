@@ -362,7 +362,7 @@ protected:
    *
    * @param[in] non_zero_constraints If this parameter is true, it indicates
    * that non-zero constraints are being constrained for the solid domain. If
-   * this is set to false, homogenous constraints are constrained in the solid
+   * this is set to false, homogeneous constraints are constrained in the solid
    * domain.
    */
   void
@@ -373,12 +373,12 @@ protected:
    *
    * @param[in] non_zero_constraints If this parameter is true, it indicates
    * that non-zero constraints are being constrained for the solid domain. If
-   * this is set to false, homogenous constraints are constrained in the solid
+   * this is set to false, homogeneous constraints are constrained in the solid
    * domain.
    *
    * @param[in] local_dof_indices Vector of a cell's local DOF indices.
    *
-   * @param[out] zero_constraints Homogenous constraints holding object.
+   * @param[out] zero_constraints homogeneous constraints holding object.
    */
   void
   constrain_solid_cell_velocity_dofs(
@@ -451,12 +451,12 @@ protected:
    *
    * @param[in] non_zero_constraints If this parameter is true, it indicates
    * that non-zero constraints are being constrained for the solid domain. If
-   * this is set to false, homogenous constraints are constrained in the solid
+   * this is set to false, homogeneous constraints are constrained in the solid
    * domain.
    *
    * @param[in] local_dof_indices Vector of a cell's local DOF indices.
    *
-   * @param[out] zero_constraints Homogenous constraints holding object.
+   * @param[out] zero_constraints homogeneous constraints holding object.
    */
   void
   constrain_pressure(
@@ -607,7 +607,7 @@ protected:
   /// FEValues object used for temperature-dependant solid domain constraints
   std::shared_ptr<FEValues<dim>> fe_values_temperature;
 
-  /// Dynamic homogenous constraints used for temperature-dependant solid domain
+  /// Dynamic homogeneous constraints used for temperature-dependant solid domain
   /// constraints
   AffineConstraints<double> dynamic_zero_constraints;
 };

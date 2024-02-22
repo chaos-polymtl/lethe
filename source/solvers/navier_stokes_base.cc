@@ -1864,7 +1864,7 @@ NavierStokesBase<dim, VectorType, DofsType>::constrain_solid_domain(
                                                  local_dof_indices);
               if (!connected_to_fluid)
                 {
-                  // Set homogenous constraints to pressure DOFs that are not
+                  // Set homogeneous constraints to pressure DOFs that are not
                   // connected to a fluid.
                   constrain_pressure(false,
                                      local_dof_indices,
