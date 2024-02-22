@@ -48,9 +48,11 @@ test()
   simulationControlParameters.output_folder          = "canard";
   simulationControlParameters.output_frequency       = 8;
 
+
   std::shared_ptr<SimulationControl> simulation_control;
   simulation_control =
     std::make_shared<SimulationControlTransient>(simulationControlParameters);
+  simulation_control->integrate();
   specific_heat_model.provide_simulation_control(simulation_control);
 
   deallog << "Testing solid fraction xi" << std::endl;

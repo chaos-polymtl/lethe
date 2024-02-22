@@ -123,7 +123,15 @@
 				<div class="benchmarks">
 					<h1>Explore Examples</h1>
 
-<!--				Add here new examples; the current implementation allows 5 examples -->
+<!--				Add here new examples; the current implementation allows 6 examples -->
+					<div class="benchmark-slide fade">
+						<iframe src="https://www.youtube.com/embed/GGij2g_yz5g?rel=0&vq=hd720" title="Taylor-Green Vortex - Velocity
+						Contours" frameborder="0" allow="accelerometer; autoplay; clipboard-write;
+						encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+						<br>
+						<a href="https://lethe-cfd.github.io/lethe/documentation/examples/incompressible-flow/3d-taylor-green-vortex/3d-taylor-green-vortex.html" class="slide-button" target="_blank">View example</a>
+					</div>
+
 					<div class="benchmark-slide fade">
 						<iframe src="https://www.youtube.com/embed/GI_jfsO0ZeM?rel=0&vq=hd720" title="Bunny drill simulation" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 						<br>
@@ -165,12 +173,15 @@
 						<span class="dot" onclick="currentSlide(3,1)"></span>
 						<span class="dot" onclick="currentSlide(4,1)"></span>
 						<span class="dot" onclick="currentSlide(5,1)"></span>
+						<span class="dot" onclick="currentSlide(6,1)"></span>
 					</div>
 				</div>
 			</div>
 
 			<script>
 				let slideIndex = [1,1];
+				let number_of_slides = [5,6]
+				let count = [0,number_of_slides[0]]
 				// Class the members of each slideshow group with different CSS classes
 				let slideId = ["article-slide", "benchmark-slide"]
 				showSlides(1, 0);
@@ -201,14 +212,14 @@
 					for (i = 0; i < x.length; i++) {
 						x[i].style.display = "none";
 					}
-					// Deactivate dot selections for each slideshow group
-					for (i = no*dots.length/2; i < dots.length/2+(no*dots.length/2); i++) {
+					for (i = count[no]; i < count[no]+number_of_slides[no]; i++)
+					{
 						dots[i].className = dots[i].className.replace(" active", "");
 					}
 					// Display only selected slides
 					x[slideIndex[no]-1].style.display = "block";
 					// Activate only selected slides' dot for each slideshow group
-  					dots[(slideIndex[no]-1)+(no*dots.length/2)].className += " active";
+  					dots[(slideIndex[no]-1)+(count[no])].className += " active";
 				}
 			</script>
 		</div>
