@@ -607,8 +607,8 @@ protected:
   /// FEValues object used for temperature-dependant solid domain constraints
   std::shared_ptr<FEValues<dim>> fe_values_temperature;
 
-  /// Dynamic homogeneous constraints used for temperature-dependant solid domain
-  /// constraints
+  /// Dynamic homogeneous constraints used for temperature-dependant solid
+  /// domain constraints
   AffineConstraints<double> dynamic_zero_constraints;
 };
 
