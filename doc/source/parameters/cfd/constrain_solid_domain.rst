@@ -5,7 +5,7 @@ Constrain Solid Domain
 This subsection is used to define temperature-dependant solid domains within a defined fluid.
 Homogenous constraints are applied on velocity and pressure degrees of freedom of cells found within the prescribed temperature range to mimic a solid-like substance.
 
-The subsection with default parameters go as follows:
+The subsection with default parameters goes as follows:
 
 .. code-block:: text
 
@@ -24,7 +24,7 @@ The subsection with default parameters go as follows:
 * The ``number of constraints`` parameter is an integer representing the number of constraints that will be applied. Only one constraint per fluid can be applied. Each constraint comes with its own subsection (starting with number ``0``) containing its own set of parameters as detailed below.
 
   .. warning::
-      Currently, only single fluid simulations can handle this feature. Consequently, only one constraint can be defined.
+      Currently, only single fluid simulations can handle this feature. Consequently, only one constraint should be defined.
 
   * The ``fluid id`` parameter is an integer representing the fluid on which the current constraint should be applied.
 

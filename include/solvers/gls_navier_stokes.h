@@ -134,7 +134,7 @@ protected:
 
   /**
    * @brief Define the zero constraints used to solved the problem that change
-   * with physic solutions.
+   * with other physics' solutions.
    */
   void
   setup_dynamic_zero_constraints();
