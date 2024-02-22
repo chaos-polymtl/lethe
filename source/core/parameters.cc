@@ -523,7 +523,7 @@ namespace Parameters
       // Declare default entries
       for (unsigned int c_id = 0; c_id < number_of_constraints; c_id++)
         {
-          prm.enter_subsection("constraint " + std::to_string(0));
+          prm.enter_subsection("constraint " + std::to_string(c_id));
           {
             declare_default_entries(prm);
           }
@@ -569,7 +569,7 @@ namespace Parameters
       // Parse parameters for each constraint
       for (unsigned int c_id = 0; c_id < number_of_constraints; c_id++)
         {
-          prm.enter_subsection("constraint " + std::to_string(0));
+          prm.enter_subsection("constraint " + std::to_string(c_id));
           {
             parse_constraint_parameters(prm, c_id);
           }
