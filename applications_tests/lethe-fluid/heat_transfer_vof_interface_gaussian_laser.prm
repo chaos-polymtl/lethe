@@ -91,7 +91,7 @@ end
 subsection post-processing
   set verbosity                        = verbose
   set calculate temperature statistics = true
-  set calculate mass conservation      = true
+  set calculate mass conservation      = false
 end
 
 #---------------------------------------------------
