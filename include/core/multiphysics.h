@@ -35,13 +35,23 @@ enum PhysicsID : unsigned int
   cahn_hilliard  = 4
 };
 
+/**
+ * @brief Solution fields of the different physics that are used as an indicator
+ * for multiple purposes (e.g. adaptive mesh refinement, solid domain
+ * constraints).
+ */
 enum class Variable : unsigned int
-{
-  velocity                         = 0,
-  pressure                         = 1,
-  phase                            = 2,
-  temperature                      = 3,
-  phase_cahn_hilliard              = 4,
+{ /// Velocity vector field from fluid dynamics
+  velocity = 0,
+  /// Pressure scalar field from fluid dynamics
+  pressure = 1,
+  /// Phase fraction scalar field from VOF
+  phase = 2,
+  /// Temperature scalar field from heat transfer
+  temperature = 3,
+  /// Phase order scalar field from Cahn Hilliard
+  phase_cahn_hilliard = 4,
+  /// Chemical potential scalar field from Cahn Hilliard
   chemical_potential_cahn_hilliard = 5
 };
 

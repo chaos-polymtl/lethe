@@ -524,7 +524,7 @@ namespace Parameters
 
   /**
    * @brief Set of parameters constraining a certain portion of a fluid domain
-   * to a null velocity and pressure fields to mimic a solid subdomain.
+   * to null velocity and pressure fields to mimic a solid subdomain.
    *
    * @remark Pressure DOFs in "solid" cells that are next to "fluid" cells are
    * not constrained.
