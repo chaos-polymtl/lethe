@@ -28,7 +28,7 @@ end
 #---------------------------------------------------
 
 subsection post-processing
-  set verbosity       = verbose
+  set verbosity                   = verbose
   set calculate mass conservation = true
 end
 

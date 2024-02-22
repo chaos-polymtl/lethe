@@ -11,7 +11,7 @@ subsection simulation control
   set method           = bdf1
   set time end         = 0.2
   set time step        = 0.1
-  set output name      = NSVOF_2_isothermal_compressible_fluids
+  set output name      = NSVOF_1_isothermal_compressible_fluid
   set output frequency = 0
 end
 
@@ -67,10 +67,7 @@ subsection physical properties
     set kinematic viscosity = 0.001516
   end
   subsection fluid 1
-    set density model = isothermal_ideal_gas
-    subsection isothermal_ideal_gas
-      set density_ref = 50
-    end
+    set density             = 1000
     set kinematic viscosity = 0.000001
   end
 end
