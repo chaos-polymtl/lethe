@@ -444,11 +444,12 @@ ParticleWallDMTForce<dim>::calculate_dmt_contact_force_and_torque(
     sqrt(model_parameter_st / (model_parameter_sn + DBL_MIN));
 
   // Calculation of the normal force coefficient (F_n_DMT)
-  const double normal_force_norm =
+  const double cohesive_term = 4. * M_PI * effective_radius *
+                               this->effective_surface_energy[particle_type];
+  double normal_force_norm =
     normal_spring_constant * contact_info.normal_overlap +
     normal_damping_constant * contact_info.normal_relative_velocity -
-    4. * M_PI * effective_radius *
-      this->effective_surface_energy[particle_type];
+    cohesive_term;
 
   Tensor<1, 3> normal_force = normal_force_norm * normal_vector;
 
@@ -461,7 +462,8 @@ ParticleWallDMTForce<dim>::calculate_dmt_contact_force_and_torque(
   double tangential_force_norm = tangential_force.norm();
 
   double coulomb_threshold =
-    this->effective_coefficient_of_friction[particle_type] * normal_force_norm;
+    this->effective_coefficient_of_friction[particle_type] *
+    (normal_force_norm + cohesive_term);
 
   // Check for gross sliding
   if (tangential_force_norm > coulomb_threshold)
@@ -478,6 +480,8 @@ ParticleWallDMTForce<dim>::calculate_dmt_contact_force_and_torque(
         (tangential_spring_constant * contact_info.tangential_overlap) +
         damping_tangential_force;
     }
+
+
 
   // Calculation torque caused by tangential force
   // We add the minus sign here since the tangential_force is applied on the

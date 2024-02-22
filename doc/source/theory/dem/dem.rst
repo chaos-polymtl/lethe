@@ -164,7 +164,7 @@ Regarding the particle-wall contacts, applied models are the same than particle-
 Johnson-Kendall-Roberts force model
 ---------------------------------------------
 The Johnson-Kendall-Roberts (JKR) force models attractive forces due to van der Waals effects. `[3] <https://doi.org/10.3390/pr11010005>`_
-This model modifies the Hertz formulation by defining a larger contact path radius (:math:`\mathbf{a}`) and taking into account the effective surface energy (:math:`\mathbf{\gamma}_{e}`).
+This model modifies the Hertz formulation by defining a larger contact path radius (:math:`\mathbf{a}`) and taking into account the effective surface energy (:math:`\mathbf{\gamma}_{e}`). It should be noted that the JKR model is more suitable for particles with a larger diameter made of softer material. 
 The model is defined by:
 
 .. math::
@@ -220,6 +220,11 @@ Finally, the :math:`\mathbf{F_{n}^{JKR}}` can be computed as follows:
 The normal damping, tangential damping and tangential spring constants need to be computed using the same procedure as the nonlinear model.
 
 For implementation reasons, a simplified version of the JKR model (SJKR-A) is implemented in Lethe. This version does not calculate non-contact forces. Please refer to C. J. Coetzee and O. C. Scheffler for more information on the different versions of the JKR model and their specific features. `[3] <https://doi.org/10.3390/pr11010005>`_
+
+---------------------------------------------
+Derjaguin-Muller-Toporov force model
+---------------------------------------------
+
 
 --------------------
 Integration Methods
