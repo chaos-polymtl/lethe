@@ -437,8 +437,8 @@ public:
           "Only 1 constraint per fluid can be declared.\n ");
       }
 
-    if (constrain_solid_domain.enable && multiphysics.VOF ||
-        constrain_solid_domain.enable && multiphysics.cahn_hilliard)
+    if ((constrain_solid_domain.enable && multiphysics.VOF) ||
+        (constrain_solid_domain.enable && multiphysics.cahn_hilliard))
       {
         throw std::logic_error(
           "Inconsistency in .prm!\n "
