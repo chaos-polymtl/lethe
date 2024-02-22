@@ -540,12 +540,6 @@ namespace Parameters
     /// Number of constraints (1 per fluid)
     unsigned int number_of_constraints;
 
-    /// Field on which the constraint is imposed
-    static const Variable constrained_field = Variable::velocity;
-
-    /// Field on which the constraining condition is based
-    static const Variable constraining_field = Variable::temperature;
-
     /// Identifier of fluids that are constrained
     std::vector<unsigned int> fluid_ids;
 
