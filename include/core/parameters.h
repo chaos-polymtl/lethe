@@ -511,7 +511,7 @@ namespace Parameters
 
     /*
      * Reference Temperature for all physical properties of fluids and solids.
-     * Currently, this is only used by the thermal expansion models
+     * Currently, this is only used by the thermal expansion models.
      */
     double reference_temperature;
 
@@ -537,7 +537,7 @@ namespace Parameters
     /// Enable/disable (@p true/false) the solid domain constraining feature.
     bool enable;
 
-    /// Number of constraints (1 per fluid)
+    /// Number of constraints (maximum of 1 per fluid)
     unsigned int number_of_constraints;
 
     /// Identifier of fluids that are constrained

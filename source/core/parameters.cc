@@ -514,7 +514,7 @@ namespace Parameters
       prm.declare_entry("number of constraints",
                         Utilities::int_to_string(number_of_constraints),
                         Patterns::Integer(),
-                        "Number of solid constraints (1 per fluid).");
+                        "Number of solid constraints (maximum of 1 per fluid).");
       // Resize vectors
       this->fluid_ids.resize(number_of_constraints);
       this->temperature_min_values.resize(number_of_constraints);

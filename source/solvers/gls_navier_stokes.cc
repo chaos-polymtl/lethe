@@ -395,7 +395,6 @@ GLSNavierStokesSolver<dim>::setup_dynamic_zero_constraints()
   DoFTools::make_hanging_node_constraints(this->dof_handler,
                                           this->dynamic_zero_constraints);
 
-
   const DoFHandler<dim> *dof_handler_ht =
     this->multiphysics->get_dof_handler(PhysicsID::heat_transfer);
   this->constrain_solid_domain(dof_handler_ht);

@@ -353,7 +353,7 @@ protected:
    * block by injecting it into the constraints. It is achieved by imposing
    * \f$\mathbf{u}=0\f$ within the cells which have a @p material_id>0.
    * In addition, solid cells which are not connected to the fluid by any means
-   * also get a pressure dirichlet boundary condition which fixes the pressure
+   * also get a pressure Dirichlet boundary condition which fixes the pressure
    * to 0. This ensures that the linear system is well-posed. Right now, this
    * routine only supports the usage of 1 solid domain, but eventually it could
    * be extended to more than one. By default, the fluid domain is assumed to
@@ -378,7 +378,7 @@ protected:
    *
    * @param[in] local_dof_indices Vector of a cell's local DOF indices.
    *
-   * @param[out] zero_constraints homogeneous constraints holding object.
+   * @param[out] zero_constraints Homogeneous constraints holding object.
    */
   void
   constrain_solid_cell_velocity_dofs(
@@ -413,8 +413,6 @@ protected:
   check_cell_is_in_solid(
     const std::unordered_set<types::global_dof_index> &dofs_are_in_solid,
     const std::vector<types::global_dof_index>        &local_dof_indices);
-
-
   /**
    * @brief Flag DOFs connected to fluid cells.
    *
@@ -456,7 +454,7 @@ protected:
    *
    * @param[in] local_dof_indices Vector of a cell's local DOF indices.
    *
-   * @param[out] zero_constraints homogeneous constraints holding object.
+   * @param[out] zero_constraints Homogeneous constraints holding object.
    */
   void
   constrain_pressure(
