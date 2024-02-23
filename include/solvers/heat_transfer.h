@@ -73,7 +73,7 @@ class HeatTransfer : public AuxiliaryPhysics<dim, GlobalVectorType>
 {
 public:
   /**
-   * @brief Constructor of the HeatTransfer object
+   * @brief Constructor of the HeatTransfer object.
    *
    * @param multiphysics_interface Map of the auxiliary physics that will be
    * solved on top of a computational fluid dynamic simulation.
