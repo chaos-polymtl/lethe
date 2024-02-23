@@ -384,7 +384,7 @@ GLSNavierStokesSolver<dim>::define_zero_constraints()
 
 template <int dim>
 void
-GLSNavierStokesSolver<dim>::setup_dynamic_zero_constraints()
+GLSNavierStokesSolver<dim>::define_dynamic_zero_constraints()
 {
   if (!this->simulation_parameters.constrain_solid_domain.enable)
     return;
@@ -1820,13 +1820,13 @@ GLSNavierStokesSolver<dim>::solve()
 
       if (this->simulation_control->is_at_start())
         {
-          this->setup_dynamic_zero_constraints();
+          this->define_dynamic_zero_constraints();
           this->iterate();
         }
       else
         {
           NavierStokesBase<dim, GlobalVectorType, IndexSet>::refine_mesh();
-          this->setup_dynamic_zero_constraints();
+          this->define_dynamic_zero_constraints();
           this->iterate();
         }
       this->postprocess(false);

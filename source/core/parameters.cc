@@ -511,10 +511,11 @@ namespace Parameters
         "false",
         Patterns::Bool(),
         "Enable/disable (true/false) the solid domain constraining feature.");
-      prm.declare_entry("number of constraints",
-                        Utilities::int_to_string(number_of_constraints),
-                        Patterns::Integer(),
-                        "Number of solid constraints (maximum of 1 per fluid).");
+      prm.declare_entry(
+        "number of constraints",
+        Utilities::int_to_string(number_of_constraints),
+        Patterns::Integer(),
+        "Number of solid constraints (maximum of 1 per fluid).");
       // Resize vectors
       this->fluid_ids.resize(number_of_constraints);
       this->temperature_min_values.resize(number_of_constraints);
@@ -542,7 +543,7 @@ namespace Parameters
                       Patterns::Integer(),
                       "Identifier of the fluid material that is constrained.");
     prm.declare_entry("min temperature",
-                      "0",
+                      "-999",
                       Patterns::Double(),
                       "Minimum temperature value of the fluid for it be "
                       "considered as a solid.");

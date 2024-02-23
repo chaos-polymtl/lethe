@@ -137,7 +137,7 @@ protected:
    * with other physics' solutions.
    */
   void
-  setup_dynamic_zero_constraints();
+  define_dynamic_zero_constraints();
 
   /**
    * @brief Assemble the local matrix for a given cell.

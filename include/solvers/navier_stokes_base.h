@@ -350,15 +350,16 @@ protected:
 
   /**
    * @brief Turn regions of the mesh where the @p material_id>0 into a solid
-   * block by injecting it into the constraints. It is achieved by imposing
-   * \f$\mathbf{u}=0\f$ within the cells which have a @p material_id>0.
-   * In addition, solid cells which are not connected to the fluid by any means
-   * also get a pressure Dirichlet boundary condition which fixes the pressure
-   * to 0. This ensures that the linear system is well-posed. Right now, this
-   * routine only supports the usage of 1 solid domain, but eventually it could
-   * be extended to more than one. By default, the fluid domain is assumed to
-   * have a @p material_id=0 and the rest of the domains have a
-   * @p material_id>0.
+   * block by injecting velocity and pressure DOFs into the zero constraints.
+   *
+   * It is achieved by imposing \f$\mathbf{u}=0\f$ within the cells which have a
+   * @p material_id>0. In addition, solid cells which are not connected to the
+   * fluid by any means also get a pressure Dirichlet boundary condition which
+   * fixes the pressure to 0. It ensures that the linear system is well-posed.
+   * Right now, this routine only supports the usage of 1 solid domain, but
+   * eventually it could be extended to more than one. By default, the fluid
+   * domain is assumed to have a @p material_id=0 and the rest of the domains
+   * have a @p material_id>0.
    *
    * @param[in] non_zero_constraints If this parameter is true, it indicates
    * that non-zero constraints are being constrained for the solid domain. If

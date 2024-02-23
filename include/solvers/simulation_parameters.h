@@ -411,14 +411,12 @@ public:
           "and define appropriate initial conditions in the 'initial conditions' subsection.");
       }
 
-    if (!physical_properties_manager.has_phase_change() &&
-        constrain_solid_domain.enable)
+    if (!multiphysics.heat_transfer && constrain_solid_domain.enable)
       {
         throw std::logic_error(
           "Inconsistency in .prm!\n "
           "The apply constraints on a solid domain feature is enabled, however\n "
-          "there is no 'phase_change' physical property model declared in the\n "
-          "'physical properties' subsection.");
+          "'heat transfer' was not set to 'true' in the 'multiphysics' subsection.\n ");
       }
 
     if (physical_properties_manager.get_number_of_fluids() <
