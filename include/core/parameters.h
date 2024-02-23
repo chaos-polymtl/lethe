@@ -575,8 +575,6 @@ namespace Parameters
      *
      * @param[in,out] prm ParameterHandler object.
      *
-     * @param[in] constraint_id Identifiers of the constraint (1 per fluid). The
-     * numbering starts at 0.
      */
     void
     declare_default_entries(ParameterHandler &prm);
@@ -1238,7 +1236,7 @@ namespace Parameters
       kelly
     } type;
 
-    /// Field influencing the mesh adaptation
+    /// Fields on which the mesh adaptation can be based
     Variable variable;
 
     // Map containing the refinement variables
