@@ -372,8 +372,8 @@ protected:
    * @brief Constrain velocity DOFs of a solid cell.
    *
    * @param[in] non_zero_constraints If this parameter is true, it indicates
-   * that non-zero constraints are being constrained for the solid domain. If
-   * this is set to false, homogeneous constraints are constrained in the solid
+   * that non-zero constraints are applied in the solid domain. If
+   * this is set to false, homogeneous constraints are applied in the solid
    * domain.
    *
    * @param[in] local_dof_indices Vector of a cell's local DOF indices.
@@ -400,7 +400,7 @@ protected:
     const std::vector<types::global_dof_index>  &local_dof_indices);
 
   /**
-   * @brief Check if the cell is in a solid cell.
+   * @brief Check if the cell is a solid.
    *
    * @param[in] dofs_are_in_solid Container of global DOF indices located in
    * solid cells.
@@ -450,8 +450,8 @@ protected:
    * are locally owned.
    *
    * @param[in] non_zero_constraints If this parameter is true, it indicates
-   * that non-zero constraints are being constrained for the solid domain. If
-   * this is set to false, homogeneous constraints are constrained in the solid
+   * that non-zero constraints are applied in the solid domain. If
+   * this is set to false, homogeneous constraints are applied in the solid
    * domain.
    *
    * @param[in] local_dof_indices Vector of a cell's local DOF indices.
@@ -465,8 +465,8 @@ protected:
     AffineConstraints<double>                  &zero_constraints);
 
   /**
-   * @brief Constrain a certain portion of a fluid domain to a null velocity
-   * and pressure fields to mimic a solid subdomain.
+   * @brief Constrain a fluid domain according to the temperature field to a null velocity
+   * and pressure fields to model a solid subdomain.
    *
    * @param[in] dof_handler_ht DoFHandler of the Heat Transfer (HT) auxiliary
    * physic.
