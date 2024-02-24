@@ -1167,13 +1167,13 @@ protected:
       normal_damping_constant * sqrt(model_parameter_st / model_parameter_sn);
 
     // Calculation of normal force. The cohesive term is computed here.
-    const double normal_force_norm =
+    const double cohesive_term =
+      2. * M_PI * effective_radius *
+      this->effective_surface_energy[vec_particle_type_index(
+        particle_one_type, particle_two_type)];
+    double normal_force_norm =
       normal_spring_constant * normal_overlap +
-      normal_damping_constant * normal_relative_velocity_value -
-      4. * M_PI * this->effective_radius *
-        this->effective_surface_energy[vec_particle_type_index(
-          particle_one_type, particle_two_type)];
-    normal_force = normal_force_norm * normal_unit_vector;
+      normal_damping_constant * normal_relative_velocity_value;
 
     // Calculation of tangential force. Since we need damping tangential force
     // in the gross sliding again, we define it as a separate variable
@@ -1186,7 +1186,7 @@ protected:
     double coulomb_threshold =
       this->effective_coefficient_of_friction[vec_particle_type_index(
         particle_one_type, particle_two_type)] *
-      normal_force_norm;
+      (normal_force_norm + cohesive_term);
 
     // Check for gross sliding
     const double tangential_force_norm = tangential_force.norm();
@@ -1204,6 +1204,8 @@ protected:
           (tangential_spring_constant * contact_info.tangential_overlap) +
           damping_tangential_force;
       }
+    normal_force_norm -= cohesive_term;
+    normal_force = normal_force_norm * normal_unit_vector;
 
     // Calculation of torque caused by tangential force (tangential_torque)
     particle_one_tangential_torque =
