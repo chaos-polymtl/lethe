@@ -283,18 +283,45 @@ attach_grid_to_triangulation(
       // Split the argument to extract the radius
       std::vector<std::string> split_arguments =
         Utilities::split_string_list(mesh_parameters.grid_arguments, ":");
-      // Length if argument 0
+
       const double length = Utilities::string_to_double(split_arguments[0]);
-      const double inner_radius =
-        Utilities::string_to_double(split_arguments[1]);
-      const double outer_radius =
-        Utilities::string_to_double(split_arguments[2]);
 
-      double eps_z               = 1e-3 * (outer_radius - inner_radius);
+      // Tolerance along z
+      const double eps_z = 1e-6 * length;
+
+      // Gather the inner radius from the faces instead of the argument, this is
+      // more robust for some aspect ratios. First initialize the outer to 0 and
+      // the inner to a large value
+      double inner_radius = DBL_MAX;
+      double outer_radius = 0.;
+
+      // Loop over the cells once to acquire the min and max radius at the face
+      // centers Otherwise, for some cell ratio, the center of the faces can be
+      // at a radius which is significantly different from the one prescribed.
+      for (const auto &cell : triangulation.active_cell_iterators())
+        for (const unsigned int f : GeometryInfo<3>::face_indices())
+          {
+            if (!cell->face(f)->at_boundary())
+              continue;
+
+            const auto   face_center = cell->face(f)->center();
+            const double z           = face_center[2];
+
+            if ((std::fabs(z) > eps_z) &&
+                (std::fabs(z - length) > eps_z)) // Not a zmin or zmax boundary
+              {
+                const double radius =
+                  std::sqrt(face_center[0] * face_center[0] +
+                            face_center[1] * face_center[1]);
+                inner_radius = std::min(inner_radius, radius);
+                outer_radius = std::max(outer_radius, radius);
+              }
+          }
+
+      // Use the gathered radius to define the medium radial distance.
       double mid_radial_distance = 0.5 * (outer_radius - inner_radius);
-      Triangulation<3>::cell_iterator cell = triangulation.begin();
 
-      for (; cell != triangulation.end(); ++cell)
+      for (const auto &cell : triangulation.active_cell_iterators())
         for (const unsigned int f : GeometryInfo<3>::face_indices())
           {
             if (!cell->face(f)->at_boundary())
