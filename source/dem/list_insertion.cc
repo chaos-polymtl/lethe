@@ -5,8 +5,8 @@ using namespace DEM;
 DeclException2(DiameterSizeCoherence,
                int,
                int,
-               << "Incoherent particle diameter lists x=" << arg1
-               << ", d=" << arg2);
+               << "Incoherent particle diameter lists: list x has " << arg1
+               << " element(s) and list d has " << arg2 << " element(s).");
 
 // The constructor of list insertion class does not accomplish anything other
 // than check if the position list are of the coherent size and to
@@ -23,18 +23,30 @@ ListInsertion<dim>::ListInsertion(
   // Initializing current inserting particle type
   current_inserting_particle_type = 0;
 
-  const auto &list_x  = dem_parameters.insertion_info.list_x;
-  const auto &list_y  = dem_parameters.insertion_info.list_y;
-  const auto &list_z  = dem_parameters.insertion_info.list_z;
-  const auto &list_vx = dem_parameters.insertion_info.list_vx;
-  const auto &list_vy = dem_parameters.insertion_info.list_vy;
-  const auto &list_vz = dem_parameters.insertion_info.list_vz;
-  const auto &list_wx = dem_parameters.insertion_info.list_wx;
-  const auto &list_wy = dem_parameters.insertion_info.list_wy;
-  const auto &list_wz = dem_parameters.insertion_info.list_wz;
-  const auto &list_d  = dem_parameters.insertion_info.list_d;
+  const std::vector<double> &list_x  = dem_parameters.insertion_info.list_x;
+  const std::vector<double> &list_y  = dem_parameters.insertion_info.list_y;
+  const std::vector<double> &list_z  = dem_parameters.insertion_info.list_z;
+  const std::vector<double> &list_vx = dem_parameters.insertion_info.list_vx;
+  const std::vector<double> &list_vy = dem_parameters.insertion_info.list_vy;
+  const std::vector<double> &list_vz = dem_parameters.insertion_info.list_vz;
+  const std::vector<double> &list_wx = dem_parameters.insertion_info.list_wx;
+  const std::vector<double> &list_wy = dem_parameters.insertion_info.list_wy;
+  const std::vector<double> &list_wz = dem_parameters.insertion_info.list_wz;
+  std::vector<double> list_d  = dem_parameters.insertion_info.list_d;
 
-  Assert(list_x.size() == list_d.size(),
+  // If the default diameter is negative, the diameter list is resized to the
+  // number of particles and assigned the average particle diameter to all
+  // particles
+  if (list_d[0] < 0)
+    {
+      double particle_average_diameter =
+        dem_parameters.lagrangian_physical_properties.particle_average_diameter.at(current_inserting_particle_type);
+      list_d.assign(list_x.size(), particle_average_diameter);
+    }
+
+  // Throw an error if the number diameter provided is not coherent with the
+  // number of particles.
+  AssertThrow(list_x.size() == list_d.size(),
          DiameterSizeCoherence(list_x.size(), list_d.size()));
 
   // Generate vector of insertion position
@@ -55,8 +67,8 @@ ListInsertion<dim>::ListInsertion(
           angular_velocities.emplace_back(
             Tensor<1, 3>({list_wx[i], list_wy[i], list_wz[i]}));
         }
-      diameters.emplace_back(list_d[i]);
     }
+  diameters = list_d;
 }
 
 // The main insertion function. Insert_global_function is used to insert the
