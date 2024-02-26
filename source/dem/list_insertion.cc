@@ -32,7 +32,7 @@ ListInsertion<dim>::ListInsertion(
   const std::vector<double> &list_wx = dem_parameters.insertion_info.list_wx;
   const std::vector<double> &list_wy = dem_parameters.insertion_info.list_wy;
   const std::vector<double> &list_wz = dem_parameters.insertion_info.list_wz;
-  std::vector<double> list_d  = dem_parameters.insertion_info.list_d;
+  std::vector<double>        list_d  = dem_parameters.insertion_info.list_d;
 
   // If the default diameter is negative, the diameter list is resized to the
   // number of particles and assigned the average particle diameter to all
@@ -40,14 +40,15 @@ ListInsertion<dim>::ListInsertion(
   if (list_d[0] < 0)
     {
       double particle_average_diameter =
-        dem_parameters.lagrangian_physical_properties.particle_average_diameter.at(current_inserting_particle_type);
+        dem_parameters.lagrangian_physical_properties.particle_average_diameter
+          .at(current_inserting_particle_type);
       list_d.assign(list_x.size(), particle_average_diameter);
     }
 
   // Throw an error if the number diameter provided is not coherent with the
   // number of particles.
   AssertThrow(list_x.size() == list_d.size(),
-         DiameterSizeCoherence(list_x.size(), list_d.size()));
+              DiameterSizeCoherence(list_x.size(), list_d.size()));
 
   // Generate vector of insertion position
   for (unsigned int i = 0; i < list_x.size(); ++i)
