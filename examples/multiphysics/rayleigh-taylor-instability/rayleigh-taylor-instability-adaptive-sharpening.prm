@@ -110,8 +110,8 @@ subsection VOF
     set type                    = adaptive
     set threshold max deviation = 0.2
     set max iterations          = 50
-    set monitored fluid = fluid 1
-    set tolerance       = 1e-6
+    set monitored fluid         = fluid 1
+    set tolerance               = 1e-6
   end
   subsection phase filtration
     set type      = tanh
