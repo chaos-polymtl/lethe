@@ -5,6 +5,9 @@ Constrain Solid Domain
 This subsection is used to define temperature-dependant solid domains within a defined fluid.
 Homogenous constraints are applied on velocity and pressure degrees of freedom of cells found within the prescribed temperature range to mimic a solid.
 
+.. attention::
+    In order to use this feature, the ``heat transfer`` physic must be enabled (``true``) in the :doc:`./multiphysics` subsection.
+
 The subsection with default parameters goes as follows:
 
 .. code-block:: text
