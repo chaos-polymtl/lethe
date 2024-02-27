@@ -62,7 +62,7 @@ This subsection controls the post-processing other than the forces and torque on
     set calculate barycenter             = false
     set barycenter name                  = barycenter_information
     set calculate mass conservation      = true
-    set mass conservation name           = barycenter_information
+    set mass conservation name           = mass_conservation_information
 
     # Other Cahn-Hilliard postprocessing
     set calculate phase statistics       = false

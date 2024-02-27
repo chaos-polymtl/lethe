@@ -826,10 +826,10 @@ namespace Parameters
     // Prefix for the phase output
     std::string phase_output_name;
 
-    // Enable mass conservation calculation for both fluids in VOF simulations
+    /// Enable mass conservation calculation for both fluids in VOF simulations
     bool calculate_mass_conservation;
 
-    // Prefix for the VOF mass conservation output
+    /// Prefix for the VOF mass conservation output
     std::string mass_conservation_output_name;
 
     static void

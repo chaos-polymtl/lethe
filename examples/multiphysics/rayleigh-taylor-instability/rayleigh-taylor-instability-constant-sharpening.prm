@@ -117,7 +117,7 @@ subsection VOF
 end
 
 #---------------------------------------------------
-# Post-Processing
+# Post-processing
 #---------------------------------------------------
 
 subsection post-processing

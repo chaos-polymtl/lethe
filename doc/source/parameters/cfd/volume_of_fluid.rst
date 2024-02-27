@@ -35,7 +35,6 @@ The default values of the VOF parameters are given in the text box below.
       set max iterations          = 20
       set tolerance               = 1e-6
       set monitored fluid         = fluid 1
-      
       set verbosity               = quiet
     end
 
@@ -81,7 +80,7 @@ Interface Sharpening
   * ``type``: defines the interface sharpening type, either ``constant`` or ``adaptive``
 
     * ``set type = constant``: the sharpening ``threshold`` is the same throughout the simulation. This ``threshold``, between ``0`` and ``1`` (``0.5`` by default), corresponds to the phase fraction at which the interface is located.
-    * ``set type = adaptive``: the sharpening threshold is searched in the range :math:`\left[0.5-c_\text{dev} \; ; 0.5+c_\text{dev}\right]`, with :math:`c_\text{dev}` the ``threshold max deviation`` (``0.2`` by default), to ensure mass conservation. The search algorithm will stop either if the mass conservation ``tolerance`` is reached, or if the number of search steps reach the number of ``max iterations``. If the ``tolerance`` is not reached, a warning message will be printed.
+    * ``set type = adaptive``: the sharpening threshold is searched in the range :math:`\left[0.5-c_\text{dev} \; ; 0.5+c_\text{dev}\right]`, with :math:`c_\text{dev}` the ``threshold max deviation`` (``0.2`` by default), to ensure mass conservation. The search algorithm will stop either if the mass conservation ``tolerance`` is reached, or if the number of search steps reaches the number of ``max iterations``. If the ``tolerance`` is not reached, a warning message will be printed.
 
     .. admonition:: Example of a warning message if sharpening is adaptive but the mass conservation tolerance is not reached:
 
@@ -101,7 +100,7 @@ Interface Sharpening
       
   * ``monitored fluid``: Fluid in which the mass conservation is monitored to find the adaptive sharpening threshold. The choices are ``fluid 1`` (default) or ``fluid 0``.
   
-  * ``tolerance``: value for the tolerance on the mass conservation of the monitored fluid.
+  * ``tolerance``: Value of the tolerance on the mass conservation of the monitored fluid.
   
     For instance, with ``set tolerance = 0.02`` the sharpening threshold will be adapted so that the mass of the ``monitored fluid`` varies less than :math:`\pm 2\%` from the initial mass (at :math:`t = 0.0` sec).
     

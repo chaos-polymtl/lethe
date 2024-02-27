@@ -24,7 +24,7 @@ subsection multiphysics
 end
 
 #---------------------------------------------------
-# Post-Processing
+# Post-processing
 #---------------------------------------------------
 
 subsection post-processing

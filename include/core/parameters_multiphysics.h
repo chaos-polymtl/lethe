@@ -116,8 +116,8 @@ namespace Parameters
 
     bool monitoring;
 
-    // Conservation tolerance on the fluid monitored,
-    // used with adaptive Sharpening
+    /// Conservation tolerance on the fluid monitored,
+    /// used with adaptive sharpening
     double tolerance;
 
     Parameters::FluidIndicator monitored_fluid;

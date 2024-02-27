@@ -206,7 +206,7 @@ Parameters::VOF_InterfaceSharpening::declare_parameters(ParameterHandler &prm)
       "monitoring",
       "false",
       Patterns::Bool(),
-      "Enable conservation monitoring in free surface calculation <true|false>");
+      "Enable conservation monitoring in multiphase fluid simulations <true|false>");
 
     prm.declare_entry(
       "tolerance",
@@ -218,7 +218,7 @@ Parameters::VOF_InterfaceSharpening::declare_parameters(ParameterHandler &prm)
       "monitored fluid",
       "fluid 1",
       Patterns::Selection("fluid 0|fluid 1"),
-      "Fluid for which conservation is monitored <fluid 0|fluid 1>.");
+      "Fluid for which conservation is monitored <fluid 0|fluid 1>, used with adaptive sharpening.");
 
     // This parameter must be larger than 1 for interface sharpening. Choosing
     // values less than 1 leads to interface smoothing instead of sharpening.

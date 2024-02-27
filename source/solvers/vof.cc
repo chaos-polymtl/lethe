@@ -708,7 +708,7 @@ VolumeOfFluid<dim>::postprocess(bool first_iteration)
 
       for (int i = 0; i < 2; i++)
         {
-          // Calculate volume and mass (this->mass_monitored)
+          // Calculate volume and mass
           calculate_volume_and_mass(this->present_solution,
                                     *multiphysics->get_solution(
                                       PhysicsID::fluid_dynamics),
@@ -728,7 +728,7 @@ VolumeOfFluid<dim>::postprocess(bool first_iteration)
                   fluid_id = "fluid_0";
                 }
 
-              if (dim == 2)
+              if constexpr (dim == 2)
                 {
                   // Add surface column
                   this->table_monitoring_vof.add_value("surface_" + fluid_id,
@@ -745,7 +745,7 @@ VolumeOfFluid<dim>::postprocess(bool first_iteration)
                                                               fluid_id,
                                                             true);
                 }
-              else if (dim == 3)
+              else if constexpr (dim == 3)
                 {
                   // Add volume column
                   this->table_monitoring_vof.add_value("volume_" + fluid_id,
@@ -768,7 +768,6 @@ VolumeOfFluid<dim>::postprocess(bool first_iteration)
           // Add sharpening threshold column
           this->table_monitoring_vof.add_value("sharpening_threshold",
                                                this->sharpening_threshold);
-
 
           if (this->simulation_control->get_step_number() %
                 this->simulation_parameters.post_processing.output_frequency ==
@@ -1943,7 +1942,7 @@ VolumeOfFluid<dim>::read_checkpoint()
   if (this->simulation_parameters.multiphysics.vof_parameters.sharpening.type ==
       Parameters::SharpeningType::adaptive)
     {
-      // Calculate volume and mass (this->mass_monitored)
+      // Calculate volume and mass
       calculate_volume_and_mass(this->present_solution,
                                 *multiphysics->get_solution(
                                   PhysicsID::fluid_dynamics),
@@ -2310,7 +2309,7 @@ VolumeOfFluid<dim>::set_initial_conditions()
   if (this->simulation_parameters.multiphysics.vof_parameters.sharpening.type ==
       Parameters::SharpeningType::adaptive)
     {
-      // Calculate volume and mass (this->mass_monitored)
+      // Calculate volume and mass
       calculate_volume_and_mass(this->present_solution,
                                 *multiphysics->get_solution(
                                   PhysicsID::fluid_dynamics),
