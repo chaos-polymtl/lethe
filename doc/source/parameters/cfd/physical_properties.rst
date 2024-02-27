@@ -94,7 +94,7 @@ Physical Properties
 
   * The ``thermal conductivity`` parameter is the thermal conductivity coefficient of the fluid with units of :math:`\text{Power} \cdot \text{Temperature}^{-1} \cdot \text{Length}^{-1}`.
 
-  * The ``thermal expansion model`` specifies the model used to calculate the thermal expansion coefficient. At the moment, ``constant`` and ``phase change`` thermal expansion are supported. For more details on the thermal expansion models, see `Thermal Expansion Models`_.
+  * The ``thermal expansion model`` specifies the model used to calculate the thermal expansion coefficient. At the moment, ``constant`` and ``phase_change`` thermal expansion are supported. For more details on the thermal expansion models, see `Thermal Expansion Models`_.
 
   * The ``thermal expansion`` parameter is the thermal expansion coefficient of the fluid with dimension of :math:`\text{Temperature}^{-1}`. It is used to define the buoyancy-driven flow (natural convection) using the Boussinesq approximation, which leads to the definition of the following source term that is added to the Navier-Stokes equation:
 
@@ -123,7 +123,7 @@ Physical Properties
       .. attention::
           The ``second fluid id`` should be greater than the ``first fluid id``.
 
-    * The ``surface tension model`` specifies the model used to calculate the surface tension coefficient of the fluid-fluid pair. At the moment, ``constant``, ``linear``, and ``phase change`` models are supported. For more details on the surface tension models, see `Surface Tension Models`_.
+    * The ``surface tension model`` specifies the model used to calculate the surface tension coefficient of the fluid-fluid pair. At the moment, ``constant``, ``linear``, and ``phase_change`` models are supported. For more details on the surface tension models, see `Surface Tension Models`_.
 
     * The ``surface tension coefficient`` parameter is a constant surface tension coefficient of the two interacting fluids in units of :math:`\text{Mass} \cdot \text{Time}^{-2}`. In SI, this is :math:`\text{N} \cdot \text{m}^{-1}`. The surface tension coefficient is used as defined in the Weber number (:math:`We`):
 
@@ -136,7 +136,7 @@ Physical Properties
 
     * The ``temperature-driven surface tension gradient`` parameter is the surface tension gradient with respect to the temperature of the two interacting fluids in units of :math:`\text{Mass} \cdot \text{Time}^{-2} \cdot \text{Temperature}^{-1}`. In SI, this is :math:`\text{N} \cdot \text{m}^{-1} \cdot \text{K}^{-1}`. This parameter is used in the calculation of the surface tension using the ``linear`` surface tension model (see `Surface Tension Models`_).
     
-    * The ``solidus temperature`` and ``liquidus temperature`` parameters are used in the calculation of the surface tension using the ``phase change`` surface tension model (see `Surface Tension Models`_).
+    * The ``solidus temperature`` and ``liquidus temperature`` parameters are used in the calculation of the surface tension using the ``phase_change`` surface tension model (see `Surface Tension Models`_).
       
     * The ``cahn hilliard mobility model`` specifies the model used to calculate the mobility used in the Cahn-Hilliard equations for the pair of fluid. Two models are available: a ``constant`` mobility and a ``quartic`` mobility. The reader is refered to :doc:`cahn_hilliard` for more details.
       
@@ -576,7 +576,7 @@ This model is parameterized using the following section:
 Phase Change
 ~~~~~~~~~~~~~
 
-The current section recapitulates the `phase change` subsection.
+The current section recapitulates the ``phase change`` subsection.
 Snippets of this subsection can be found across the different physical property models' descriptions.
 
 .. code-block:: text
@@ -644,14 +644,14 @@ Interface Physical Property Models
 Surface Tension Models
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-Lethe supports three types of surface tension models: ``constant``, ``linear``, and ``phase change``. A ``constant`` surface tension model assumes a constant value of surface tension, while a ``linear`` surface tension assumes that the surface tension evolves linearly with the temperature:
+Lethe supports three types of surface tension models: ``constant``, ``linear``, and ``phase_change``. A ``constant`` surface tension model assumes a constant value of surface tension, while a ``linear`` surface tension assumes that the surface tension evolves linearly with the temperature:
 
 .. math::
   \sigma(T) = \sigma_0 + \frac{d\sigma}{dT} (T-T_0)
 
 where :math:`\sigma_0` is the ``surface tension coefficient`` evaluated at ``reference state temperature`` :math:`T_0` and :math:`\frac{d\sigma}{dT}` is the ``surface tension gradient`` with respect to the temperature :math:`T`.
 
-For problems treating solid-liquid phase change, the ``phase change`` model is intended to apply the surface tension force only when the fluid is liquid such that:
+For problems treating solid-liquid phase change, the ``phase_change`` model is intended to apply the surface tension force only when the fluid is liquid such that:
 
 .. math::
   \sigma(T) = 
@@ -672,7 +672,7 @@ where :math:`T_\mathrm{s}` and :math:`T_\mathrm{l}` correspond to the ``solidus 
     \end{cases}
 
 .. Warning::
-    In Lethe, the ``linear`` and ``phase change`` surface tension models are only used to account for the thermocapillary effect known as the Marangoni effect. Therefore, to enable the Marangoni effect, the surface tension model must be set to ``linear`` or ``phase change`` and a ``surface tension gradient`` different from zero :math:`(\frac{d\sigma}{dT} \neq 0)` must be specified.
+    In Lethe, the ``linear`` and ``phase_change`` surface tension models are only used to account for the thermocapillary effect known as the Marangoni effect. Therefore, to enable the Marangoni effect, the surface tension model must be set to ``linear`` or ``phase_change`` and a ``surface tension gradient`` different from zero :math:`(\frac{d\sigma}{dT} \neq 0)` must be specified.
 
 Cahn-Hilliard Mobility Models
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

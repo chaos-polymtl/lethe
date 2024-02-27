@@ -511,7 +511,7 @@ namespace Parameters
 
     /*
      * Reference Temperature for all physical properties of fluids and solids.
-     * Currently this is only used by the thermal expansion models
+     * Currently, this is only used by the thermal expansion models.
      */
     double reference_temperature;
 
@@ -520,6 +520,77 @@ namespace Parameters
     void
     parse_parameters(ParameterHandler    &prm,
                      const Dimensionality dimensions = Dimensionality());
+  };
+
+  /**
+   * @brief Set of parameters constraining a certain portion of a fluid domain
+   * to null velocity and pressure fields to mimic a solid subdomain.
+   *
+   * @remark Pressure DOFs in "solid" cells that are next to "fluid" cells are
+   * not constrained.
+   *
+   * @note At the moment, only the temperature field is used to constrain the
+   * "solid" domain.
+   */
+  struct ConstrainSolidDomain
+  {
+    /// Enable/disable (@p true/false) the solid domain constraining feature.
+    bool enable;
+
+    /// Total number of constraints (maximum of 1 per fluid)
+    unsigned int number_of_constraints;
+
+    /// Identifier of fluids that are constrained
+    std::vector<unsigned int> fluid_ids;
+
+    /// Lower threshold values of the constraining field (temperature)
+    std::vector<double> temperature_min_values;
+
+    /// Upper threshold values of the constraining field (temperature)
+    std::vector<double> temperature_max_values;
+
+    /**
+     * @brief Declare the parameters.
+     *
+     * @param[in,out] prm ParameterHandler object.
+     *
+     * @param[in] max_number_of_constraints Maximum number of zero velocity
+     * constraints applied to the domain.
+     */
+    void
+    declare_parameters(ParameterHandler  &prm,
+                       const unsigned int max_number_of_constraints);
+
+    /**
+     * @brief Parse the parameters.
+     *
+     * @param[in] prm ParameterHandler object.
+     */
+    void
+    parse_parameters(ParameterHandler &prm);
+
+    /**
+     *
+     * @brief Declare the default parameters for each constraint.
+     *
+     * @param[in,out] prm ParameterHandler object.
+     *
+     */
+    void
+    declare_default_entries(ParameterHandler &prm);
+
+    /**
+     *
+     * @brief Parse parameters for each constraint.
+     *
+     * @param[in] prm ParameterHandler object.
+     *
+     * @param[in] constraint_id Identifiers of the constraint (1 per fluid). The
+     * numbering starts at 0.
+     */
+    void
+    parse_constraint_parameters(ParameterHandler  &prm,
+                                const unsigned int constraint_id);
   };
 
   /**
@@ -841,7 +912,7 @@ namespace Parameters
   /**
    * @brief FEM - The finite element section
    * controls the properties of the finite element method. This section
-   * constrols the order of polynomial integration and the number of quadrature
+   * controls the order of polynomial integration and the number of quadrature
    * points within the cells.
    */
   struct FEM
@@ -1171,15 +1242,8 @@ namespace Parameters
       kelly
     } type;
 
-    enum class Variable
-    {
-      velocity,
-      pressure,
-      phase,
-      temperature,
-      phase_cahn_hilliard,
-      chemical_potential_cahn_hilliard
-    } variable;
+    /// Fields on which the mesh adaptation can be based
+    Variable variable;
 
     // Map containing the refinement variables
     std::map<Variable, MultipleAdaptationParameters> variables;

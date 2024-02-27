@@ -754,14 +754,14 @@ CahnHilliard<dim>::post_mesh_adaptation()
 template <int dim>
 void
 CahnHilliard<dim>::compute_kelly(
-  const std::pair<const Parameters::MeshAdaptation::Variable,
-                  Parameters::MultipleAdaptationParameters> &ivar,
+  const std::pair<const Variable, Parameters::MultipleAdaptationParameters>
+                        &ivar,
   dealii::Vector<float> &estimated_error_per_cell)
 {
   const FEValuesExtractors::Scalar phase_order(0);
   const FEValuesExtractors::Scalar chemical_potential(1);
 
-  if (ivar.first == Parameters::MeshAdaptation::Variable::phase_cahn_hilliard)
+  if (ivar.first == Variable::phase_cahn_hilliard)
     {
       KellyErrorEstimator<dim>::estimate(
         *this->mapping,
@@ -772,8 +772,7 @@ CahnHilliard<dim>::compute_kelly(
         estimated_error_per_cell,
         this->fe->component_mask(phase_order));
     }
-  else if (ivar.first == Parameters::MeshAdaptation::Variable::
-                           chemical_potential_cahn_hilliard)
+  else if (ivar.first == Variable::chemical_potential_cahn_hilliard)
     {
       KellyErrorEstimator<dim>::estimate(
         *this->mapping,

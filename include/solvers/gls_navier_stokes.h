@@ -120,18 +120,28 @@ protected:
   void
   setup_preconditioner();
 
-
   /**
-   * @brief  defined the non zero constraints used to solve the problem.
+   * @brief Define the non-zero constraints used to solve the problem.
    */
   void
   define_non_zero_constraints();
 
   /**
-   * @brief defined the zero_constraints used to solved the problem.
+   * @brief Define the zero constraints used to solve the problem.
    */
   void
   define_zero_constraints();
+
+  /**
+   * @brief Define the zero constraints used to solved the problem that change
+   * with other physics' solutions.
+   *
+   * It differs from GLSNavierStokesSolver::define_zero_constraints as it
+   * changes in time depending on the physics' solutions. Currently, it is only
+   * used to constraint solid with the temperature's evolution.
+   */
+  void
+  define_dynamic_zero_constraints();
 
   /**
    * @brief Assemble the local matrix for a given cell.
