@@ -63,7 +63,7 @@ subsection lagrangian physical properties
   subsection particle type 0
     set size distribution type            = uniform
     set diameter                          = 0.002
-    set number                            = 10000
+    set number of particles               = 10000
     set density particles                 = 1000
     set young modulus particles           = 100000000
     set poisson ratio particles           = 0.3
@@ -82,7 +82,7 @@ end
 #---------------------------------------------------
 
 subsection insertion info
-  set insertion method                               = non_uniform
+  set insertion method                               = volume
   set inserted number of particles at each time step = 10000
   set insertion frequency                            = 20000
   set insertion box minimum x                        = -0.029
@@ -92,8 +92,8 @@ subsection insertion info
   set insertion box maximum y                        = 0.029
   set insertion box maximum z                        = 0.09
   set insertion distance threshold                   = 1.4
-  set insertion random number range                  = 0.19
-  set insertion random number seed                   = 19
+  set insertion maximum offset             = 0.19
+  set insertion prn seed                   = 19
 end
 
 #---------------------------------------------------
