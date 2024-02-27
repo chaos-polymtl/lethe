@@ -554,17 +554,17 @@ namespace Parameters
      *
      * @param[in,out] prm ParameterHandler object.
      *
-     * @param[in] number_of_constraints Number of zero velocity constraints
-     * applied to the domain.
+     * @param[in] max_number_of_constraints Maximum number of zero velocity
+     * constraints applied to the domain.
      */
     void
     declare_parameters(ParameterHandler  &prm,
-                       const unsigned int number_of_constraints);
+                       const unsigned int max_number_of_constraints);
 
     /**
      * @brief Parse the parameters.
      *
-     * @param[in,out] prm ParameterHandler object.
+     * @param[in] prm ParameterHandler object.
      */
     void
     parse_parameters(ParameterHandler &prm);
@@ -583,7 +583,7 @@ namespace Parameters
      *
      * @brief Parse parameters for each constraint.
      *
-     * @param[in,out] prm ParameterHandler object.
+     * @param[in] prm ParameterHandler object.
      *
      * @param[in] constraint_id Identifiers of the constraint (1 per fluid). The
      * numbering starts at 0.
@@ -906,7 +906,7 @@ namespace Parameters
   /**
    * @brief FEM - The finite element section
    * controls the properties of the finite element method. This section
-   * constrols the order of polynomial integration and the number of quadrature
+   * controls the order of polynomial integration and the number of quadrature
    * points within the cells.
    */
   struct FEM

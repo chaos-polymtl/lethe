@@ -135,8 +135,9 @@ public:
     Parameters::VelocitySource::declare_parameters(prm);
 
     constrain_solid_domain.declare_parameters(
-      prm, 1); // at the moment, default value of the number of constraints is
-               // set to one since we are only applying to one-fluid simulations
+      prm, 1); // At the moment, default value of the maximum number of
+               // constraints is set to one since we are only applying to
+               // one-fluid simulations.
 
     Parameters::Stabilization::declare_parameters(prm);
 

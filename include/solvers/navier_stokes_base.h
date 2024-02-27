@@ -381,11 +381,31 @@ protected:
    *
    * @param[out] zero_constraints Homogeneous constraints holding object.
    */
-  void
+  inline void
   constrain_solid_cell_velocity_dofs(
     const bool                                 &non_zero_constraints,
     const std::vector<types::global_dof_index> &local_dof_indices,
-    AffineConstraints<double>                  &zero_constraints);
+    AffineConstraints<double>                  &zero_constraints)
+  {
+    for (unsigned int i = 0; i < local_dof_indices.size(); ++i)
+      {
+        const unsigned int component =
+          this->fe->system_to_component_index(i).first;
+        if (component < dim) // velocity DOFs
+          {
+            // We apply a constraint to all DOFs in the solid region, whether
+            // they are locally owned or not.
+            if (non_zero_constraints)
+              {
+                this->nonzero_constraints.add_line(local_dof_indices[i]);
+                this->nonzero_constraints.set_inhomogeneity(
+                  local_dof_indices[i], 0);
+              }
+            else
+              zero_constraints.add_line(local_dof_indices[i]);
+          }
+      }
+  }
 
   /**
    * @brief Flag DOFs in solid cells.
@@ -395,10 +415,21 @@ protected:
    *
    * @param[in] local_dof_indices Vector of a cell's local DOF indices.
    */
-  void
+  inline void
   flag_dofs_in_solid(
     std::unordered_set<types::global_dof_index> &dofs_are_in_solid,
-    const std::vector<types::global_dof_index>  &local_dof_indices);
+    const std::vector<types::global_dof_index>  &local_dof_indices)
+  {
+    for (unsigned int i = 0; i < local_dof_indices.size(); ++i)
+      {
+        const unsigned int component =
+          this->fe->system_to_component_index(i).first;
+        if (component == dim)
+          {
+            dofs_are_in_solid.insert(local_dof_indices[i]);
+          }
+      }
+  }
 
   /**
    * @brief Check if the cell is a solid.
@@ -410,22 +441,43 @@ protected:
    *
    * @return Boolean indicating if the cell is in a solid (true) or not (false).
    */
-  bool
+  inline bool
   check_cell_is_in_solid(
     const std::unordered_set<types::global_dof_index> &dofs_are_in_solid,
-    const std::vector<types::global_dof_index>        &local_dof_indices);
+    const std::vector<types::global_dof_index>        &local_dof_indices)
+  {
+    for (unsigned int i = 0; i < local_dof_indices.size(); ++i)
+      {
+        auto search = dofs_are_in_solid.find(local_dof_indices[i]);
+        if (search != dofs_are_in_solid.end())
+          return true;
+      }
+    return false;
+  }
+
   /**
    * @brief Flag DOFs connected to fluid cells.
    *
+   * @param[in] local_dof_indices Vector of a cell's local DOF indices.
+   *
    * @param[out] dofs_are_connected_to_fluid Container of global DOF indices
    * connected to at least one fluid cell.
-   *
-   * @param[in] local_dof_indices Vector of a cell's local DOF indices.
    */
-  void
+  inline void
   flag_dofs_connected_to_fluid(
-    std::unordered_set<types::global_dof_index> &dofs_are_connected_to_fluid,
-    const std::vector<types::global_dof_index>  &local_dof_indices);
+    const std::vector<types::global_dof_index>  &local_dof_indices,
+    std::unordered_set<types::global_dof_index> &dofs_are_connected_to_fluid)
+  {
+    for (unsigned int i = 0; i < local_dof_indices.size(); ++i)
+      {
+        const unsigned int component =
+          this->fe->system_to_component_index(i).first;
+        if (component == dim)
+          {
+            dofs_are_connected_to_fluid.insert(local_dof_indices[i]);
+          }
+      }
+  }
 
   /**
    * @brief Check if the cell is connected to a fluid cell.
@@ -438,11 +490,20 @@ protected:
    * @return Boolean indicating if the cell is connected to a fluid (true) or
    * not (false).
    */
-  bool
+  inline bool
   check_cell_is_connected_to_fluid(
     const std::unordered_set<types::global_dof_index>
                                                &dofs_are_connected_to_fluid,
-    const std::vector<types::global_dof_index> &local_dof_indices);
+    const std::vector<types::global_dof_index> &local_dof_indices)
+  {
+    for (unsigned int i = 0; i < local_dof_indices.size(); ++i)
+      {
+        auto search = dofs_are_connected_to_fluid.find(local_dof_indices[i]);
+        if (search != dofs_are_connected_to_fluid.end())
+          return true;
+      }
+    return false;
+  }
 
   /**
    * @brief Constrain pressure DOFs if cells are not connected to fluid and DOFs
@@ -457,11 +518,56 @@ protected:
    *
    * @param[out] zero_constraints Homogeneous constraints holding object.
    */
-  void
+  inline void
   constrain_pressure(
     const bool                                 &non_zero_constraints,
     const std::vector<types::global_dof_index> &local_dof_indices,
-    AffineConstraints<double>                  &zero_constraints);
+    AffineConstraints<double>                  &zero_constraints)
+  {
+    for (unsigned int i = 0; i < local_dof_indices.size(); ++i)
+      {
+        const unsigned int component =
+          this->fe->system_to_component_index(i).first;
+
+        // Only pressure DOFs have an additional Dirichlet condition
+        if (component == dim) // pressure DOFs
+          {
+            // We only apply the constraint on the locally owned pressure DOFs
+            // since we have no way of verifying if the locally relevant DOFs
+            // are connected to a fluid cell.
+            bool dof_is_locally_owned = false;
+
+            // For the GLS-family of solvers, we only have a single index set
+            if constexpr (std::is_same_v<DofsType, IndexSet>)
+              {
+                dof_is_locally_owned =
+                  this->locally_owned_dofs.is_element(local_dof_indices[i]);
+              }
+
+            // For the GD-family of solvers, we have two index sets. One for
+            // velocities and one for pressure.
+            if constexpr (std::is_same_v<DofsType, std::vector<IndexSet>>)
+              {
+                dof_is_locally_owned =
+                  this->locally_owned_dofs[1].is_element(local_dof_indices[i]);
+              }
+
+            if (dof_is_locally_owned)
+              {
+                if (non_zero_constraints)
+                  {
+                    this->nonzero_constraints.add_line(local_dof_indices[i]);
+                    this->nonzero_constraints.set_inhomogeneity(
+                      local_dof_indices[i], 0);
+                  }
+                else
+                  {
+                    zero_constraints.add_line(local_dof_indices[i]);
+                  }
+              }
+          }
+      }
+  }
 
   /**
    * @brief Constrain a fluid domain according to the temperature field to a null velocity

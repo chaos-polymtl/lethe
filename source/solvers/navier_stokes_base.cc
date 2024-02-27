@@ -1750,8 +1750,8 @@ NavierStokesBase<dim, VectorType, DofsType>::establish_solid_domain(
               // Cell is a fluid cell and as such all the pressure DOFs of that
               // cell are connected to the fluid. This will be used later on to
               // identify which pressure cells to constrain.
-              flag_dofs_connected_to_fluid(dofs_are_connected_to_fluid,
-                                           local_dof_indices);
+              flag_dofs_connected_to_fluid(local_dof_indices,
+                                           dofs_are_connected_to_fluid);
             }
         }
     }
@@ -1844,8 +1844,8 @@ NavierStokesBase<dim, VectorType, DofsType>::constrain_solid_domain(
           // Flag non-solid cell DOFs to identify which pressure DOFs should not
           // be constrained.
           if (!cell_is_solid)
-            flag_dofs_connected_to_fluid(dofs_are_connected_to_fluid,
-                                         local_dof_indices);
+            flag_dofs_connected_to_fluid(local_dof_indices,
+                                         dofs_are_connected_to_fluid);
         }
     }
 
@@ -1874,151 +1874,6 @@ NavierStokesBase<dim, VectorType, DofsType>::constrain_solid_domain(
         }
     }
 }
-
-template <int dim, typename VectorType, typename DofsType>
-void
-NavierStokesBase<dim, VectorType, DofsType>::constrain_solid_cell_velocity_dofs(
-  const bool                                 &non_zero_constraints,
-  const std::vector<types::global_dof_index> &local_dof_indices,
-  AffineConstraints<double>                  &zero_constraints)
-{
-  for (unsigned int i = 0; i < local_dof_indices.size(); ++i)
-    {
-      const unsigned int component =
-        this->fe->system_to_component_index(i).first;
-      if (component < dim) // velocity DOFs
-        {
-          // We apply a constraint to all DOFs in the solid region, whether they
-          // are locally owned or not.
-          if (non_zero_constraints)
-            {
-              this->nonzero_constraints.add_line(local_dof_indices[i]);
-              this->nonzero_constraints.set_inhomogeneity(local_dof_indices[i],
-                                                          0);
-            }
-          else
-            zero_constraints.add_line(local_dof_indices[i]);
-        }
-    }
-}
-
-template <int dim, typename VectorType, typename DofsType>
-void
-NavierStokesBase<dim, VectorType, DofsType>::flag_dofs_in_solid(
-  std::unordered_set<types::global_dof_index> &dofs_are_in_solid,
-  const std::vector<types::global_dof_index>  &local_dof_indices)
-{
-  for (unsigned int i = 0; i < local_dof_indices.size(); ++i)
-    {
-      const unsigned int component =
-        this->fe->system_to_component_index(i).first;
-      if (component == dim)
-        {
-          dofs_are_in_solid.insert(local_dof_indices[i]);
-        }
-    }
-}
-
-template <int dim, typename VectorType, typename DofsType>
-bool
-NavierStokesBase<dim, VectorType, DofsType>::check_cell_is_in_solid(
-  const std::unordered_set<types::global_dof_index> &dofs_are_in_solid,
-  const std::vector<types::global_dof_index>        &local_dof_indices)
-{
-  for (unsigned int i = 0; i < local_dof_indices.size(); ++i)
-    {
-      auto search = dofs_are_in_solid.find(local_dof_indices[i]);
-      if (search != dofs_are_in_solid.end())
-        return true;
-    }
-  return false;
-}
-
-template <int dim, typename VectorType, typename DofsType>
-void
-NavierStokesBase<dim, VectorType, DofsType>::flag_dofs_connected_to_fluid(
-  std::unordered_set<types::global_dof_index> &dofs_are_connected_to_fluid,
-  const std::vector<types::global_dof_index>  &local_dof_indices)
-{
-  for (unsigned int i = 0; i < local_dof_indices.size(); ++i)
-    {
-      const unsigned int component =
-        this->fe->system_to_component_index(i).first;
-      if (component == dim)
-        {
-          dofs_are_connected_to_fluid.insert(local_dof_indices[i]);
-        }
-    }
-}
-
-template <int dim, typename VectorType, typename DofsType>
-bool
-NavierStokesBase<dim, VectorType, DofsType>::check_cell_is_connected_to_fluid(
-  const std::unordered_set<types::global_dof_index>
-                                             &dofs_are_connected_to_fluid,
-  const std::vector<types::global_dof_index> &local_dof_indices)
-{
-  for (unsigned int i = 0; i < local_dof_indices.size(); ++i)
-    {
-      auto search = dofs_are_connected_to_fluid.find(local_dof_indices[i]);
-      if (search != dofs_are_connected_to_fluid.end())
-        return true;
-    }
-  return false;
-}
-
-template <int dim, typename VectorType, typename DofsType>
-void
-NavierStokesBase<dim, VectorType, DofsType>::constrain_pressure(
-  const bool                                 &non_zero_constraints,
-  const std::vector<types::global_dof_index> &local_dof_indices,
-  AffineConstraints<double>                  &zero_constraints)
-{
-  for (unsigned int i = 0; i < local_dof_indices.size(); ++i)
-    {
-      const unsigned int component =
-        this->fe->system_to_component_index(i).first;
-
-      // Only pressure DOFs have an additional Dirichlet condition
-      if (component == dim) // pressure DOFs
-        {
-          // We only apply the constraint on the locally owned pressure DOFs
-          // since we have no way of verifying if the locally relevant DOFs are
-          // connected to a fluid cell.
-          bool dof_is_locally_owned = false;
-
-          // For the GLS-family of solvers, we only have a single index set
-          if constexpr (std::is_same_v<DofsType, IndexSet>)
-            {
-              dof_is_locally_owned =
-                locally_owned_dofs.is_element(local_dof_indices[i]);
-            }
-
-          // For the GD-family of solvers, we have two index sets. One for
-          // velocities and one for pressure.
-          if constexpr (std::is_same_v<DofsType, std::vector<IndexSet>>)
-            {
-              dof_is_locally_owned =
-                locally_owned_dofs[1].is_element(local_dof_indices[i]);
-            }
-
-          if (dof_is_locally_owned)
-            {
-              if (non_zero_constraints)
-                {
-                  this->nonzero_constraints.add_line(local_dof_indices[i]);
-                  this->nonzero_constraints.set_inhomogeneity(
-                    local_dof_indices[i], 0);
-                }
-              else
-                {
-                  zero_constraints.add_line(local_dof_indices[i]);
-                }
-            }
-        }
-    }
-}
-
 
 template <int dim, typename VectorType, typename DofsType>
 void
