@@ -12,8 +12,7 @@ update_fine_search_candidates(pairs_structure      &pairs_in_contact,
                               candidates_structure &contact_candidates)
 {
   for (auto pairs_in_contact_iterator = pairs_in_contact.begin();
-       pairs_in_contact_iterator != pairs_in_contact.end();
-       ++pairs_in_contact_iterator)
+       pairs_in_contact_iterator != pairs_in_contact.end();)
     {
       // Get the current particle id from fine search history
       auto particle_id = pairs_in_contact_iterator->first;
@@ -164,6 +163,18 @@ update_fine_search_candidates(pairs_structure      &pairs_in_contact,
                 }
             }
         }
+
+      // If there are still particle/wall/face in the adjacent_pairs_content
+      // then the pairs_in_contact_iterator remains in memory
+      if (adjacent_pairs_content->size() > 0)
+        ++pairs_in_contact_iterator;
+
+      // Otherwise it is deleted. This is necessary to prevent memory inflation.
+      // If this is not done, pairs_in_contact keeps on growing until it reaches
+      // the total number of particles in the simulation.
+      else
+        pairs_in_contact_iterator =
+          pairs_in_contact.erase(pairs_in_contact_iterator);
     }
 }
 
