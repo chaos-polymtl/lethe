@@ -128,7 +128,7 @@ Where:
 * :math:`\nu_i, \nu_j` poisson coefficient of particle i or j;
 
 ~~~~~~~~~~~~~~~~~~~~
-Coulomb limit
+Coulomb's limit
 ~~~~~~~~~~~~~~~~~~~~
 
 Coulomb's criterion is violated when the following condition is not respected during a collision:
