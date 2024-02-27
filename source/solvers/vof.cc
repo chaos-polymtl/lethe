@@ -634,9 +634,7 @@ VolumeOfFluid<dim>::finish_simulation()
         Parameters::Verbosity::verbose &&
       this->simulation_parameters.post_processing.calculate_mass_conservation)
     {
-      std::cout << "+------------------------------------------+" << std::endl;
-      std::cout << "|           VOF Mass Conservation          |" << std::endl;
-      std::cout << "+------------------------------------------+" << std::endl;
+      announce_string(this->pcout, "VOF Mass Conservation");
       this->table_monitoring_vof.write_text(std::cout);
     }
 }
@@ -867,12 +865,7 @@ VolumeOfFluid<dim>::postprocess(bool first_iteration)
                 dependent_column_names,
                 this->simulation_parameters.simulation_control.log_precision);
 
-              std::cout << "+------------------------------------------+"
-                        << std::endl;
-              std::cout << "|  VOF Barycenter                          |"
-                        << std::endl;
-              std::cout << "+------------------------------------------+"
-                        << std::endl;
+              announce_string(this->pcout, "VOF Barycenter");
               table.write_text(std::cout);
             }
 
