@@ -274,8 +274,6 @@ Parameters::VOF_InterfaceSharpening::parse_parameters(ParameterHandler &prm)
       monitored_fluid = Parameters::FluidIndicator::fluid1;
     else if (op_mf == "fluid 0")
       monitored_fluid = Parameters::FluidIndicator::fluid0;
-    else if (op_mf == "both")
-      monitored_fluid = Parameters::FluidIndicator::both;
     else
       throw(std::runtime_error("Invalid monitored fluid. "
                                "Options are 'fluid 0' or 'fluid 1'."));
