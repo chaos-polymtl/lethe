@@ -179,15 +179,6 @@ subsection boundary conditions heat transfer
 end
 
 #---------------------------------------------------
-# FEM
-#---------------------------------------------------
-
-subsection FEM
-  set velocity order = 1
-  set pressure order = 1
-end
-
-#---------------------------------------------------
 # Non-Linear Solver Control
 #---------------------------------------------------
 

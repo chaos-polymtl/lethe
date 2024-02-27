@@ -164,17 +164,6 @@ subsection post-processing
   set calculate mass conservation = false
 end
 
-#---------------------------------------------------
-# FEM
-#---------------------------------------------------
-
-subsection FEM
-  set velocity order    = 1
-  set pressure order    = 1
-  set VOF order         = 1
-  set temperature order = 1
-end
-
 # --------------------------------------------------
 # Non-Linear Solver Control
 #---------------------------------------------------
