@@ -191,22 +191,25 @@ Where:
 -----------------------
 Cohesive force models
 -----------------------
-Lethe supports two cohesive force models named the Johnson-Kendall-Roberts (JKR) and the Derjaguin-Muller-Toporov (DMT). Both model describes attractive forces due to van der Waals effects. Choosing the right model can be based on the Tabor parameter :math:`\mathbf{\tau}` which represents the ratio between the normal elastic deformation caused by adhesion and the distance at which adhesion forces occur.
+Lethe supports two cohesive force models named the Johnson-Kendall-Roberts (JKR) and the Derjaguin-Muller-Toporov (DMT). Both models describes attractive forces due to van der Waals effects. Choosing the right model can be based on the Tabor parameter :math:`\mathbf{\tau}` which represents the ratio between the normal elastic deformation caused by adhesion and the distance at which adhesion forces occur. `[3] <https://doi.org/10.1163/1568561054352685>`_
+
+This parameter can be described as:
+
 
 .. math::
-    \mathbf{\tau} = \left( \frac{R_{e} \gamma_{e}^2}{E_{eq}^2 z_{o}^3}\right)^{1/3}
+    \mathbf{\tau} = \left( \frac{R_{e} \gamma_{e}^2}{E_{eq}^2 z_{o}^3}\right)^{1/3}.
 
-Where :math:`\mathbf{z_{o}}` is the equilibrium separation of the surfaces `[Sourceeee]` and :math:`\mathbf{\gamma}_{e}` the effective surface energy. For low :math:`\mathbf{\tau}` values (:math:`(\mathbf{\tau} < 1)` ) the DMT model is applicable where as for high :math:`\mathbf{\tau}` values (:math:`(\mathbf{\tau} > 1 )` the JKR model is more appropriate. In essence, the DMT model is preferred for small, hard particles (high :math:`\mathbf{Y}`) and the JKR model for large, soft particles.
+Where :math:`\mathbf{z_{o}}` is the equilibrium separation of the surfaces and :math:`\mathbf{\gamma}_{e}` the effective surface energy. For low :math:`\mathbf{\tau}` values (:math:`\mathbf{\tau} < 1` ) the DMT model is applicable where as for high :math:`\mathbf{\tau}` values (:math:`(\mathbf{\tau} > 1 )` the JKR model is more appropriate. In essence, the DMT model is preferred for small, hard particles (high :math:`\mathbf{Y}`) and the JKR model for large, soft particles.
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Johnson-Kendall-Roberts force model
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-The Johnson-Kendall-Roberts (JKR) model describes attractive forces due to van der Waals effects. `[3] <https://doi.org/10.3390/pr11010005>`_
+The Johnson-Kendall-Roberts (JKR) model describes attractive forces due to van der Waals effects. `[4] <https://doi.org/10.3390/pr11010005>`_
 This model modifies the Hertz formulation by defining a larger contact path radius (:math:`\mathbf{a}`) and taking into account the effective surface energy (:math:`\mathbf{\gamma}_{e}`).
 The model is defined by:
 
 .. math::
-    a^{3} = \frac{3 R_{e}}{4 Y_{e}} \left[F_{n}^{JKR} + 3\pi\gamma_{e}R_{e}  + \sqrt{6 F_{n}^{JKR} \pi\gamma_{e}R_{e} + (3\pi\gamma_{e}R_{e})^2 }\right]
+    a^{3} = \frac{3 R_{e}}{4 Y_{e}} \left[F_{n}^{JKR} + 3\pi\gamma_{e}R_{e}  + \sqrt{6 F_{n}^{JKR} \pi\gamma_{e}R_{e} + (3\pi\gamma_{e}R_{e})^2 }\right].
 
 Where :math:`\mathbf{F_{n}^{JKR}}` corresponds to the normal spring force and attractive force combined and :math:`\mathbf{\gamma_{e}}` is the effective surface energy.
 Note that if the effective surface energy is equal to zero, the JKR model reverts to Hertz model.
@@ -217,7 +220,7 @@ The effective surface energy can be computed as:
     \gamma_{e} = \gamma_{1} + \gamma_{2} - 2\gamma_{1,2}
 
 Where :math:`\gamma_{1}` and :math:`\gamma_{2}` are the surface energy of each material (particle or wall) :math:`\gamma_{1,2}` is the interface energy which is equal to zero when both surfaces are coming from the same material.
-In Lethe, the interface energy term is approximated using `[4] <https://doi.org/10.1016/B978-0-12-391927-4.10013-1>`_:
+In Lethe, the interface energy term is approximated using `[5] <https://doi.org/10.1016/B978-0-12-391927-4.10013-1>`_:
 
 .. math::
     \gamma_{1,2} \approx \left( \sqrt{\gamma_{1}} - \sqrt{\gamma_{2}}  \right)^{2}
@@ -232,7 +235,7 @@ This equation can be rewritten as a fourth-order polynomial function with two co
 .. math::
     0 = a^{4} - 2R_{e}\delta_{n}a^{2} - 2\pi\gamma_{e}R_{e}^{2}a + R_{e}^{2}\delta_{n}^{2}
 
-Since we are always solving for the same real root, a straightforward procedure, described by Parteli et al. can be used `[5] <https://doi.org/10.1038/srep06227>`_:
+Since we are always solving for the same real root, a straightforward procedure, described by Parteli et al. can be used `[6] <https://doi.org/10.1038/srep06227>`_:
 
 .. math::
     c_{0} &= R_{e}^{2}\delta_{n}^{2} \\
@@ -257,7 +260,7 @@ Finally, the :math:`\mathbf{F_{n}^{JKR}}` can be computed as follows:
 
 The normal damping, tangential damping and tangential spring constants need to be computed using the same procedure as the nonlinear model.
 
-For implementation reasons, a simplified version of the JKR model (SJKR-A) is implemented in Lethe. This version does not calculate non-contact forces. Please refer to C. J. Coetzee and O. C. Scheffler for more information on the different versions of the JKR model and their specific features. `[3] <https://doi.org/10.3390/pr11010005>`_
+For implementation reasons, a simplified version of the JKR model (SJKR-A) is implemented in Lethe. This version does not calculate non-contact forces. Please refer to C. J. Coetzee and O. C. Scheffler for more information on the different versions of the JKR model and their specific features. `[4] <https://doi.org/10.3390/pr11010005>`_
 
 ---------------------------------------------
 Derjaguin-Muller-Toporov force model
@@ -298,8 +301,10 @@ References
 
 `[2] <https://mfix.netl.doe.gov/doc/mfix-archive/mfix_current_documentation/dem_doc_2012-1.pdf>`_ R. Garg, J. Galvin-Carney, T. Li, and S. Pannala, “Documentation of open-source MFIX–DEM software for gas-solids flows,” Tingwen Li Dr., p. 10, Sep. 2012.
 
-`[3] <https://doi.org/10.3390/pr11010005>`_ C. J. Coetzee and O. C. Scheffler, “Review: The Calibration of DEM Parameters for the Bulk Modelling of Cohesive Materials,” Processes, vol. 11, no. 1, Art. no. 1, Jan. 2023, doi: 10.3390/pr11010005.
+`[3]  <https://doi.org/10.1163/1568561054352685>`_ D. S. Grierson, E. E. Flater, and R. W. Carpick, “Accounting for the JKR–DMT transition in adhesion and friction measurements with atomic force microscopy,” Journal of Adhesion Science and Technology, vol. 19, no. 3–5, pp. 291–311, Jan. 2005, doi: 10.1163/1568561054352685.
 
-`[4] <https://doi.org/10.1016/B978-0-12-391927-4.10013-1>`_ J. N. Israelachvili, “Chapter 13 - Van der Waals Forces between Particles and Surfaces,” in Intermolecular and Surface Forces (Third Edition), Third Edition., J. N. Israelachvili, Ed., Boston: Academic Press, 2011, pp. 253–289. doi: https://doi.org/10.1016/B978-0-12-391927-4.10013-1.
+`[4] <https://doi.org/10.3390/pr11010005>`_ C. J. Coetzee and O. C. Scheffler, “Review: The Calibration of DEM Parameters for the Bulk Modelling of Cohesive Materials,” Processes, vol. 11, no. 1, Art. no. 1, Jan. 2023, doi: 10.3390/pr11010005.
 
-`[5] <https://doi.org/10.1038/srep06227>`_ E. J. R. Parteli, J. Schmidt, C. Blümel, K.-E. Wirth, W. Peukert, and T. Pöschel, “Attractive particle interaction forces and packing density of fine glass powders,” Sci Rep, vol. 4, no. 1, Art. no. 1, Sep. 2014, doi: 10.1038/srep06227.
+`[5] <https://doi.org/10.1016/B978-0-12-391927-4.10013-1>`_ J. N. Israelachvili, “Chapter 13 - Van der Waals Forces between Particles and Surfaces,” in Intermolecular and Surface Forces (Third Edition), Third Edition., J. N. Israelachvili, Ed., Boston: Academic Press, 2011, pp. 253–289. doi: https://doi.org/10.1016/B978-0-12-391927-4.10013-1.
+
+`[6] <https://doi.org/10.1038/srep06227>`_ E. J. R. Parteli, J. Schmidt, C. Blümel, K.-E. Wirth, W. Peukert, and T. Pöschel, “Attractive particle interaction forces and packing density of fine glass powders,” Sci Rep, vol. 4, no. 1, Art. no. 1, Sep. 2014, doi: 10.1038/srep06227.

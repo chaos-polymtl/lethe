@@ -424,8 +424,10 @@ ParticleWallNonLinearForce<dim>::calculate_nonlinear_contact_force_and_torque(
       radius_times_overlap_sqrt +
     DBL_MIN;
 
+  // There is a minus sign since the tangential damping force is applied in the
+  // opposite direction of the tangential_relative_velocity
   const double tangential_damping_constant =
-    normal_damping_constant *
+    -normal_damping_constant *
     sqrt(model_parameter_st / (model_parameter_sn + DBL_MIN));
 
   // Calculation of normal force using spring and dashpot normal forces
@@ -434,9 +436,10 @@ ParticleWallNonLinearForce<dim>::calculate_nonlinear_contact_force_and_torque(
      normal_damping_constant * contact_info.normal_relative_velocity) *
     normal_vector;
 
-  // Calculation of tangential force
+  // Calculation of tangential damping force
   Tensor<1, 3> damping_tangential_force =
     tangential_damping_constant * contact_info.tangential_relative_velocity;
+
   Tensor<1, 3> tangential_force =
     tangential_spring_constant * contact_info.tangential_overlap +
     damping_tangential_force;
