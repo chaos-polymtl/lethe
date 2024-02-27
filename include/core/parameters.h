@@ -537,7 +537,7 @@ namespace Parameters
     /// Enable/disable (@p true/false) the solid domain constraining feature.
     bool enable;
 
-    /// Number of constraints (maximum of 1 per fluid)
+    /// Total number of constraints (maximum of 1 per fluid)
     unsigned int number_of_constraints;
 
     /// Identifier of fluids that are constrained
