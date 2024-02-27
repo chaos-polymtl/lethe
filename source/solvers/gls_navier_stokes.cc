@@ -1818,17 +1818,11 @@ GLSNavierStokesSolver<dim>::solve()
       this->simulation_control->print_progression(this->pcout);
       this->dynamic_flow_control();
 
-      if (this->simulation_control->is_at_start())
-        {
-          this->define_dynamic_zero_constraints();
-          this->iterate();
-        }
-      else
-        {
+      if (!this->simulation_control->is_at_start())
           NavierStokesBase<dim, GlobalVectorType, IndexSet>::refine_mesh();
-          this->define_dynamic_zero_constraints();
-          this->iterate();
-        }
+
+      this->define_dynamic_zero_constraints();
+      this->iterate();
       this->postprocess(false);
       this->finish_time_step();
     }
