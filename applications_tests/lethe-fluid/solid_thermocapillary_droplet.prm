@@ -21,7 +21,7 @@ end
 #---------------------------------------------------
 
 subsection multiphysics
-  set VOF = true
+  set VOF           = true
   set heat transfer = true
 end
 
@@ -51,7 +51,7 @@ subsection initial conditions
   subsection VOF
     set Function expression = if (x*x + y*y < 1.0*1.0 , 1, 0)
     subsection projection step
-      set enable = true
+      set enable           = true
       set diffusion factor = 1.0
     end
   end
@@ -67,13 +67,13 @@ end
 subsection physical properties
   set number of fluids = 2
   subsection fluid 1
-    set density             = 1
-    set kinematic viscosity = 1
+    set density              = 1
+    set kinematic viscosity  = 1
     set thermal conductivity = 100
   end
   subsection fluid 0
-    set density             = 1
-    set kinematic viscosity = 1
+    set density              = 1
+    set kinematic viscosity  = 1
     set thermal conductivity = 100
   end
 
@@ -87,8 +87,8 @@ subsection physical properties
       set surface tension coefficient                 = 3.0
       set reference state temperature                 = 0.0
       set temperature-driven surface tension gradient = -1.0
-      set liquidus temperature 		= 7
-      set solidus temperature  		= 6
+      set liquidus temperature                        = 7
+      set solidus temperature                         = 6
     end
   end
 end
@@ -130,28 +130,28 @@ end
 
 subsection boundary conditions heat transfer
   set number = 4
-    subsection bc 0
-      set id = 0
-      set type	      = temperature
-      subsection value
-        set Function expression = 0
-      end
+  subsection bc 0
+    set id   = 0
+    set type = temperature
+    subsection value
+      set Function expression = 0
     end
-    subsection bc 1
-      set id = 1
-      set type	      = temperature
-      subsection value
-        set Function expression = 6
-      end
+  end
+  subsection bc 1
+    set id   = 1
+    set type = temperature
+    subsection value
+      set Function expression = 6
     end
-    subsection bc 2
-      set id = 2
-      set type	      = noflux
-    end
-    subsection bc 3
-      set id = 3
-      set type	      = noflux
-    end
+  end
+  subsection bc 2
+    set id   = 2
+    set type = noflux
+  end
+  subsection bc 3
+    set id   = 3
+    set type = noflux
+  end
 end
 
 #---------------------------------------------------
@@ -159,20 +159,9 @@ end
 #---------------------------------------------------
 
 subsection post-processing
-  set verbosity            = verbose
-  set calculate barycenter = true
-end
-
-
-#---------------------------------------------------
-# FEM
-#---------------------------------------------------
-
-subsection FEM
-  set velocity order = 1
-  set pressure order = 1
-  set VOF order      = 1
-  set temperature order = 1
+  set verbosity                   = verbose
+  set calculate barycenter        = true
+  set calculate mass conservation = false
 end
 
 # --------------------------------------------------

@@ -61,6 +61,8 @@ This subsection controls the post-processing other than the forces and torque on
     # Multiphase postprocessing
     set calculate barycenter             = false
     set barycenter name                  = barycenter_information
+    set calculate mass conservation      = true
+    set mass conservation name           = mass_conservation_information
 
     # Other Cahn-Hilliard postprocessing
     set calculate phase statistics       = false
@@ -197,6 +199,10 @@ This subsection controls the post-processing other than the forces and torque on
   
   
 * ``barycenter name``: name of the output file containing the position and velocity of the barycenter for VOF and Cahn-Hilliard simulations. The default file name is ``barycenter_information``.
+
+* ``calculate mass conservation``: calculates the mass of both fluids for VOF simulations.
+
+* ``mass conservation name``: name of the output file containing the mass of both fluids for VOF simulations. The default file name is ``mass_conservation_information``.
   
 * ``calculate phase statistics``: outputs phase statistics from the solution of the Cahn-Hilliard equations, including minimum, maximum, average, and standard deviation of the phase order parameter. This works only with the :doc:`cahn_hilliard` solver.
 
