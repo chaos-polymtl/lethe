@@ -23,6 +23,7 @@ The default values of the VOF parameters are given in the text box below.
 
     subsection interface sharpening
       set enable                  = false
+      set verbosity               = quiet
       set frequency               = 10
       set interface sharpness     = 2
       set type                    = constant
@@ -35,7 +36,6 @@ The default values of the VOF parameters are given in the text box below.
       set max iterations          = 20
       set tolerance               = 1e-6
       set monitored fluid         = fluid 1
-      set verbosity               = quiet
     end
 
     subsection phase filtration
@@ -74,6 +74,7 @@ Interface Sharpening
 * ``subsection interface sharpening``: defines parameters to counter numerical diffusion of the VOF method and to avoid the interface between the two fluids becoming more and more blurry after each time step. The reader is refered to the Interface sharpening section of :doc:`../../../theory/multiphysics/vof` theory guide for additional details on this sharpening method.
 
   * ``enable``: controls if interface sharpening is enabled.
+  * ``verbosity``: enables the display of the residual at each non-linear iteration, to monitor the progress of the linear iterations, similarly to the ``verbosity`` option in :doc:`linear_solver_control`. Choices are: ``quiet`` (default, no output), ``verbose`` (indicates sharpening steps) and ``extra verbose`` (details of the linear iterations).  
   * ``frequency``: sets the frequency (in number of iterations) for the interface sharpening computation.
   * ``interface sharpness``: sharpness of the moving interface (parameter :math:`a` in the `interface sharpening model <https://www.researchgate.net/publication/287118331_Development_of_efficient_interface_sharpening_procedure_for_viscous_incompressible_flows>`_). This parameter must be larger than 1 for interface sharpening. Choosing values less than 1 leads to interface smoothing instead of sharpening. A good value would be around 1.5.
 
@@ -103,8 +104,6 @@ Interface Sharpening
   * ``tolerance``: Value of the tolerance on the mass conservation of the monitored fluid.
   
     For instance, with ``set tolerance = 0.02`` the sharpening threshold will be adapted so that the mass of the ``monitored fluid`` varies less than :math:`\pm 2\%` from the initial mass (at :math:`t = 0.0` sec).
-    
-  * ``verbosity``: enables the display of the residual at each non-linear iteration, to monitor the progress of the linear iterations, similarly to the ``verbosity`` option in :doc:`linear_solver_control`. Choices are: ``quiet`` (default, no output), ``verbose`` (indicates sharpening steps) and ``extra verbose`` (details of the linear iterations).
 
   .. seealso::
 
