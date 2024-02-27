@@ -383,7 +383,7 @@ namespace Parameters
                           Patterns::List(Patterns::Double()),
                           "List of initial omega z");
         prm.declare_entry("list diameters",
-                          "1.0",
+                          "-1.0",
                           Patterns::List(Patterns::Double()),
                           "List of diameters");
         prm.declare_entry("velocity x",
