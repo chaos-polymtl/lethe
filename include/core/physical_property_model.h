@@ -35,7 +35,7 @@ DeclException2(SizeOfFields,
 
 /*
  * Fields on which physical property can depend. All fields are assumed
- * to be at time t+dt other than those for which a _p suffix is explicitely
+ * to be at time t+dt other than those for which a _p suffix is explicitly
  * given. The suffix _p1 implies that the field is at time t (previous one step)
  * and the suffix _p2 implies that the field is at time t_dt (previous two
  * steps).

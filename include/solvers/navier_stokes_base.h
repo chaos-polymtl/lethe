@@ -289,6 +289,17 @@ protected:
   iterate();
 
   /**
+   * @brief Enable the use of dynamic zero constraints by initializing required
+   * FEValues objects.
+   *
+   * @note At the moment, the only solution-dependant dynamic constraint depends
+   * on the temperature field obtained from the Heat Transfer (HT) auxiliary
+   * physic.
+   */
+  virtual void
+  enable_dynamic_zero_constraints_fd();
+
+  /**
    * @brief Allow the initial refinement of all cells of the principal mesh that are partially
    * contained in one of the cells of the box refinement mesh given in the
    * parameter.
@@ -338,22 +349,235 @@ protected:
   check_existance_of_bc(BoundaryConditions::BoundaryType bc);
 
   /**
-   * @brief Turns regions of the mesh where the material_id=1 to a solid block by injecting it into the constraints
-   * This is achieved by imposing $\mathbf{u}=0$ within the cells which have a
-   * material_id=1. In addition, solid cells which are not connected to the
-   * fluid by any means also get a pressure dirichlet boundary condition which
-   * fixes the pressure to 0. This ensures that the linear system is well-posed.
+   * @brief Turn regions of the mesh where the @p material_id>0 into a solid
+   * block by injecting velocity and pressure DOFs into the zero constraints.
+   *
+   * It is achieved by imposing \f$\mathbf{u}=0\f$ within the cells which have a
+   * @p material_id>0. In addition, solid cells which are not connected to the
+   * fluid by any means also get a pressure Dirichlet boundary condition which
+   * fixes the pressure to 0. It ensures that the linear system is well-posed.
    * Right now, this routine only supports the usage of 1 solid domain, but
    * eventually it could be extended to more than one. By default, the fluid
-   * domain is assumed to have a material_id=0 and the rest of the domains have
-   * a material_id>0.
+   * domain is assumed to have a @p material_id=0 and the rest of the domains
+   * have a @p material_id>0.
    *
-   * @param non_zero_constraints If this parameter is true, it indicates that it is the non_zero constraints
-   * which are being constrainted for the solid domain. If this is set to
-   * false, the zero constraints are constrained in the solid domain
+   * @param[in] non_zero_constraints If this parameter is true, it indicates
+   * that non-zero constraints are being constrained for the solid domain. If
+   * this is set to false, homogeneous constraints are constrained in the solid
+   * domain.
    */
   void
   establish_solid_domain(const bool non_zero_constraints);
+
+  /**
+   * @brief Constrain velocity DOFs of a solid cell.
+   *
+   * @param[in] non_zero_constraints If this parameter is true, it indicates
+   * that non-zero constraints are applied in the solid domain. If
+   * this is set to false, homogeneous constraints are applied in the solid
+   * domain.
+   *
+   * @param[in] local_dof_indices Vector of a cell's local DOF indices.
+   *
+   * @param[out] zero_constraints Homogeneous constraints holding object.
+   */
+  inline void
+  constrain_solid_cell_velocity_dofs(
+    const bool                                 &non_zero_constraints,
+    const std::vector<types::global_dof_index> &local_dof_indices,
+    AffineConstraints<double>                  &zero_constraints)
+  {
+    for (unsigned int i = 0; i < local_dof_indices.size(); ++i)
+      {
+        const unsigned int component =
+          this->fe->system_to_component_index(i).first;
+        if (component < dim) // velocity DOFs
+          {
+            // We apply a constraint to all DOFs in the solid region, whether
+            // they are locally owned or not.
+            if (non_zero_constraints)
+              {
+                this->nonzero_constraints.add_line(local_dof_indices[i]);
+                this->nonzero_constraints.set_inhomogeneity(
+                  local_dof_indices[i], 0);
+              }
+            else
+              zero_constraints.add_line(local_dof_indices[i]);
+          }
+      }
+  }
+
+  /**
+   * @brief Flag DOFs in solid cells.
+   *
+   * @param[out] dofs_are_in_solid Container of global DOF indices located in
+   * solid cells.
+   *
+   * @param[in] local_dof_indices Vector of a cell's local DOF indices.
+   */
+  inline void
+  flag_dofs_in_solid(
+    std::unordered_set<types::global_dof_index> &dofs_are_in_solid,
+    const std::vector<types::global_dof_index>  &local_dof_indices)
+  {
+    for (unsigned int i = 0; i < local_dof_indices.size(); ++i)
+      {
+        const unsigned int component =
+          this->fe->system_to_component_index(i).first;
+        if (component == dim)
+          {
+            dofs_are_in_solid.insert(local_dof_indices[i]);
+          }
+      }
+  }
+
+  /**
+   * @brief Check if the cell is a solid.
+   *
+   * @param[in] dofs_are_in_solid Container of global DOF indices located in
+   * solid cells.
+   *
+   * @param[in] local_dof_indices Vector of a cell's local DOF indices.
+   *
+   * @return Boolean indicating if the cell is in a solid (true) or not (false).
+   */
+  inline bool
+  check_cell_is_in_solid(
+    const std::unordered_set<types::global_dof_index> &dofs_are_in_solid,
+    const std::vector<types::global_dof_index>        &local_dof_indices)
+  {
+    for (unsigned int i = 0; i < local_dof_indices.size(); ++i)
+      {
+        auto search = dofs_are_in_solid.find(local_dof_indices[i]);
+        if (search != dofs_are_in_solid.end())
+          return true;
+      }
+    return false;
+  }
+
+  /**
+   * @brief Flag DOFs connected to fluid cells.
+   *
+   * @param[in] local_dof_indices Vector of a cell's local DOF indices.
+   *
+   * @param[out] dofs_are_connected_to_fluid Container of global DOF indices
+   * connected to at least one fluid cell.
+   */
+  inline void
+  flag_dofs_connected_to_fluid(
+    const std::vector<types::global_dof_index>  &local_dof_indices,
+    std::unordered_set<types::global_dof_index> &dofs_are_connected_to_fluid)
+  {
+    for (unsigned int i = 0; i < local_dof_indices.size(); ++i)
+      {
+        const unsigned int component =
+          this->fe->system_to_component_index(i).first;
+        if (component == dim)
+          {
+            dofs_are_connected_to_fluid.insert(local_dof_indices[i]);
+          }
+      }
+  }
+
+  /**
+   * @brief Check if the cell is connected to a fluid cell.
+   *
+   * @param[in] dofs_are_connected_to_fluid Container of global DOF indices
+   * connected to at least one fluid cell.
+   *
+   * @param[in] local_dof_indices Vector of a cell's local DOF indices.
+   *
+   * @return Boolean indicating if the cell is connected to a fluid (true) or
+   * not (false).
+   */
+  inline bool
+  check_cell_is_connected_to_fluid(
+    const std::unordered_set<types::global_dof_index>
+                                               &dofs_are_connected_to_fluid,
+    const std::vector<types::global_dof_index> &local_dof_indices)
+  {
+    for (unsigned int i = 0; i < local_dof_indices.size(); ++i)
+      {
+        auto search = dofs_are_connected_to_fluid.find(local_dof_indices[i]);
+        if (search != dofs_are_connected_to_fluid.end())
+          return true;
+      }
+    return false;
+  }
+
+  /**
+   * @brief Constrain pressure DOFs if cells are not connected to fluid and DOFs
+   * are locally owned.
+   *
+   * @param[in] non_zero_constraints If this parameter is true, it indicates
+   * that non-zero constraints are applied in the solid domain. If
+   * this is set to false, homogeneous constraints are applied in the solid
+   * domain.
+   *
+   * @param[in] local_dof_indices Vector of a cell's local DOF indices.
+   *
+   * @param[out] zero_constraints Homogeneous constraints holding object.
+   */
+  inline void
+  constrain_pressure(
+    const bool                                 &non_zero_constraints,
+    const std::vector<types::global_dof_index> &local_dof_indices,
+    AffineConstraints<double>                  &zero_constraints)
+  {
+    for (unsigned int i = 0; i < local_dof_indices.size(); ++i)
+      {
+        const unsigned int component =
+          this->fe->system_to_component_index(i).first;
+
+        // Only pressure DOFs have an additional Dirichlet condition
+        if (component == dim) // pressure DOFs
+          {
+            // We only apply the constraint on the locally owned pressure DOFs
+            // since we have no way of verifying if the locally relevant DOFs
+            // are connected to a fluid cell.
+            bool dof_is_locally_owned = false;
+
+            // For the GLS-family of solvers, we only have a single index set
+            if constexpr (std::is_same_v<DofsType, IndexSet>)
+              {
+                dof_is_locally_owned =
+                  this->locally_owned_dofs.is_element(local_dof_indices[i]);
+              }
+
+            // For the GD-family of solvers, we have two index sets. One for
+            // velocities and one for pressure.
+            if constexpr (std::is_same_v<DofsType, std::vector<IndexSet>>)
+              {
+                dof_is_locally_owned =
+                  this->locally_owned_dofs[1].is_element(local_dof_indices[i]);
+              }
+
+            if (dof_is_locally_owned)
+              {
+                if (non_zero_constraints)
+                  {
+                    this->nonzero_constraints.add_line(local_dof_indices[i]);
+                    this->nonzero_constraints.set_inhomogeneity(
+                      local_dof_indices[i], 0);
+                  }
+                else
+                  {
+                    zero_constraints.add_line(local_dof_indices[i]);
+                  }
+              }
+          }
+      }
+  }
+
+  /**
+   * @brief Constrain a fluid domain according to the temperature field to a null velocity
+   * and pressure fields to model a solid subdomain.
+   *
+   * @param[in] dof_handler_ht DoFHandler of the Heat Transfer (HT) auxiliary
+   * physic.
+   */
+  void
+  constrain_solid_domain(const DoFHandler<dim> *dof_handler_ht);
 
   /**
    * @brief write_checkpoint
@@ -484,6 +708,13 @@ protected:
   std::vector<Tensor<1, 3>>                torques_on_boundaries;
   std::vector<TableHandler>                forces_tables;
   std::vector<TableHandler>                torques_tables;
+
+  /// FEValues object used for temperature-dependant solid domain constraints
+  std::shared_ptr<FEValues<dim>> fe_values_temperature;
+
+  /// Dynamic homogeneous constraints used for temperature-dependant solid
+  /// domain constraints
+  AffineConstraints<double> dynamic_zero_constraints;
 };
 
 #endif

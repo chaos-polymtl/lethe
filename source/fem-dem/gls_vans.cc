@@ -1958,7 +1958,7 @@ GLSVANSSolver<dim>::solve()
           .restart == false)
     read_dem();
 
-  setup_dofs();
+  this->setup_dofs();
 
   this->set_initial_condition(
     this->cfd_dem_simulation_parameters.cfd_parameters.initial_condition->type,
