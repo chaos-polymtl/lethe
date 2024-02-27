@@ -1718,6 +1718,18 @@ namespace Parameters
         "barycenter_information",
         Patterns::FileName(),
         "Name of barycenter information output file in VOF or Cahn-Hilliard simulations");
+
+      prm.declare_entry(
+        "calculate mass conservation",
+        "true",
+        Patterns::Bool(),
+        "Enable calculation of the mass of both fluids in VOF simualtions.");
+
+      prm.declare_entry(
+        "mass conservation name",
+        "mass_conservation_information",
+        Patterns::FileName(),
+        "Name of mass conservation output file in VOF simulations");
     }
     prm.leave_subsection();
   }
@@ -1763,7 +1775,8 @@ namespace Parameters
       heat_flux_output_name       = prm.get("heat flux name");
       calculate_barycenter        = prm.get_bool("calculate barycenter");
       barycenter_output_name      = prm.get("barycenter name");
-
+      calculate_mass_conservation = prm.get_bool("calculate mass conservation");
+      mass_conservation_output_name = prm.get("mass conservation name");
 
       // Viscous dissipative fluid
       const std::string op_fluid = prm.get("postprocessed fluid");

@@ -218,7 +218,7 @@ The boundary conditions applied on the left and right boundaries are ``periodic`
 VOF
 ~~~
 
-In the ``VOF`` subsection, we enable ``interface sharpening`` to reconstruct the interface and keep it sharp during the simulation. Note that here we use the ``constant`` and ``adaptive`` methods for interface sharpening. The ``mass conservation`` results show that choosing a ``constant`` method does not affect the mass conservation significantly. Hence, the results of both methods are almost identical. For the ``constant`` sharpening we use
+In the ``VOF`` subsection, we enable ``interface sharpening`` to reconstruct the interface and keep it sharp during the simulation. Note that here, we use the ``constant`` and ``adaptive`` methods for interface sharpening. Mass conservation results show that choosing a ``constant`` method does not affect the mass conservation significantly. Hence, the results of both methods are almost identical. For the ``constant`` sharpening we use:
 
 .. code-block:: text
 
@@ -230,11 +230,6 @@ In the ``VOF`` subsection, we enable ``interface sharpening`` to reconstruct the
        set frequency           = 25
        set type                = constant
      end
-     subsection mass conservation
-       set monitoring      = true
-       set monitored fluid = fluid 1
-       set verbosity       = extra verbose
-     end
      subsection phase filtration
        set type      = tanh
        set verbosity = quiet
@@ -242,7 +237,7 @@ In the ``VOF`` subsection, we enable ``interface sharpening`` to reconstruct the
      end
    end
 
-and for the ``adaptive`` sharpening
+and for the ``adaptive`` sharpening:
 
 .. code-block:: text
 
@@ -255,12 +250,8 @@ and for the ``adaptive`` sharpening
        set type                    = adaptive
        set threshold max deviation = 0.2
        set max iterations          = 50
-     end
-     subsection mass conservation
-       set monitoring      = true
-       set monitored fluid = fluid 1
-       set tolerance       = 1e-2
-       set verbosity       = extra verbose
+       set monitored fluid         = fluid 1
+       set tolerance               = 1e-2
      end
      subsection phase filtration
        set type  = tanh
@@ -272,6 +263,17 @@ and for the ``adaptive`` sharpening
 The ``phase filtration`` is enabled in this example.
 We refer the reader to the :doc:`../../../../parameters/cfd/volume_of_fluid` documentation for more explanation on the phase filtration.
 
+Post-processing
+~~~~~~~~~~~~~~~
+
+In the ``post-processing`` subsection, the output of the mass of each fluid is enabled and allows to track to mass conservation throughout the simulation.
+
+.. code-block:: text
+
+    subsection post-processing
+      set verbosity                   = verbose
+      set calculate mass conservation = true
+    end
 
 ---------------------------
 Running the Simulation

@@ -87,29 +87,6 @@ namespace Parameters
   };
 
   /**
-   * @brief Defines the sub-parameters for free surface mass conservation.
-   * Has to be declared before member creation in VOF structure.
-   */
-  struct VOF_MassConservation
-  {
-    bool monitoring;
-
-    // Conservation tolerance on the fluid monitored,
-    // used with adaptive Sharpening
-    double tolerance;
-
-    Parameters::FluidIndicator monitored_fluid;
-
-    // Type of verbosity for the mass conservation algorithm
-    Parameters::Verbosity verbosity;
-
-    static void
-    declare_parameters(ParameterHandler &prm);
-    void
-    parse_parameters(ParameterHandler &prm);
-  };
-
-  /**
    * @brief VOF_InterfaceSharpening - Defines the parameters for
    * interface sharpening in the VOF solver.
    */
@@ -136,6 +113,14 @@ namespace Parameters
 
     // Type of verbosity for the interface sharpening calculation
     Parameters::Verbosity verbosity;
+
+    bool monitoring;
+
+    /// Conservation tolerance on the fluid monitored,
+    /// used with adaptive sharpening
+    double tolerance;
+
+    Parameters::FluidIndicator monitored_fluid;
 
     void
     declare_parameters(ParameterHandler &prm);
@@ -196,7 +181,6 @@ namespace Parameters
    */
   struct VOF
   {
-    Parameters::VOF_MassConservation    conservation;
     Parameters::VOF_InterfaceSharpening sharpening;
     Parameters::VOF_SurfaceTensionForce surface_tension_force;
     Parameters::VOF_PhaseFilter         phase_filter;
