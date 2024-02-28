@@ -1017,12 +1017,9 @@ protected:
                     normal_damping_constant * normal_relative_velocity_value) *
                    normal_unit_vector;
 
-    Tensor<1, 3> damping_tangential_force =
-      tangential_damping_constant * tangential_relative_velocity;
     tangential_force =
       tangential_spring_constant * contact_info.tangential_overlap +
-      damping_tangential_force;
-    double tangential_force_norm = tangential_force.norm();
+      tangential_damping_constant * tangential_relative_velocity;
 
     // JKR theory says that the coulomb threshold must be modified with the
     // pull-out force.
@@ -1036,18 +1033,13 @@ protected:
       this->effective_coefficient_of_friction[vec_particle_type_index(
         particle_one_type, particle_two_type)];
 
-    if (tangential_force_norm > modified_coulomb_threshold)
+    if (tangential_force.norm() > modified_coulomb_threshold)
       {
         // Gross sliding occurs and the tangential overlap and tangential
-        // force are limited to Coulomb's criterion
-        contact_info.tangential_overlap =
-          (modified_coulomb_threshold *
-             (tangential_force / (tangential_force_norm + DBL_MIN)) -
-           damping_tangential_force) /
-          (tangential_spring_constant + DBL_MIN);
+        // force are limited to Coulumb's criterion
         tangential_force =
-          (tangential_spring_constant * contact_info.tangential_overlap) *
-          damping_tangential_force;
+          modified_coulomb_threshold *
+          (tangential_force / (tangential_force.norm() + DBL_MIN));
       }
 
     // Calculation of torque caused by tangential force (tangential_torque)
