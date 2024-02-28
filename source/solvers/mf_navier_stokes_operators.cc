@@ -1133,6 +1133,7 @@ NavierStokesGLSOperator<dim, number>::NavierStokesGLSOperator() = default;
  * \+ ((u·∇)δu + (δu·∇)u + ∇δp - ν∆δu)τu·∇v (SUPG Jacobian Part 1)
  * \+ ((u·∇)u + ∇p - ν∆u - f )τδu·∇v (SUPG Jacobian Part 2)
  * \+ ((u·∇)δu + (δu·∇)u + ∇δp - ν∆δu)τ(−ν∆v) (GLS Jacobian)
+ * \+ (∇·δu)τ'(∇·v) (LSIC Jacobian).
  */
 template <int dim, typename number>
 void
@@ -1183,6 +1184,8 @@ NavierStokesGLSOperator<dim, number>::do_cell_integral_local(
         1. / std::sqrt(4. * u_mag / h / h +
                        9. * Utilities::fixed_power<2>(
                               4. * this->kinematic_viscosity / (h * h)));
+
+      const auto tau_lsic = u_mag * h * 0.5;
 
       // Weak form Jacobian
       for (unsigned int i = 0; i < dim; ++i)
@@ -1272,6 +1275,9 @@ NavierStokesGLSOperator<dim, number>::do_cell_integral_local(
               hessian_result[i][k][k] +=
                 tau * -this->kinematic_viscosity * gradient[dim][i];
             }
+          // LSIC term
+          // (∇·δu)τ'(∇·v)
+          gradient_result[i][i] += tau_lsic * gradient[i][i];
         }
 
 
@@ -1289,7 +1295,8 @@ NavierStokesGLSOperator<dim, number>::do_cell_integral_local(
  * (q, ∇·u) + (v,(u·∇)u) - (∇·v,p) + ν(∇v,∇u) - (v,f) (Weak form)
  * \+ ((u·∇)u + ∇p - ν∆u - f)τ∇·q (PSPG term)
  * \+ ((u·∇)u + ∇p - ν∆u - f)τu·∇v (SUPG term)
- * \+ ((u·∇)u + ∇p - ν∆u - f)τ(−ν∆v) (GLS term).
+ * \+ ((u·∇)u + ∇p - ν∆u - f)τ(−ν∆v) (GLS term)
+ * \+ (∇·u)τ'(∇·v) (LSIC term).
  */
 template <int dim, typename number>
 void
@@ -1336,6 +1343,8 @@ NavierStokesGLSOperator<dim, number>::local_evaluate_residual(
             1. / std::sqrt(4. * u_mag / h / h +
                            9. * Utilities::fixed_power<2>(
                                   4. * this->kinematic_viscosity / (h * h)));
+
+          const auto tau_lsic = u_mag * h * 0.5;
 
           // Result value/gradient we will use
           typename FECellIntegrator::value_type    value_result;
@@ -1415,6 +1424,9 @@ NavierStokesGLSOperator<dim, number>::local_evaluate_residual(
                     tau * -this->kinematic_viscosity *
                     (gradient[dim][i] - source_value[i]);
                 }
+              // LSIC term
+              // (∇·u)τ'(∇·v)
+              gradient_result[i][i] += tau_lsic * gradient[i][i];
             }
 
           integrator.submit_gradient(gradient_result, q);
@@ -1444,7 +1456,8 @@ NavierStokesTransientGLSOperator<dim,
  * \+ (∂t δu +(u·∇)δu + (δu·∇)u + ∇δp - ν∆δu)τ·∇q (PSPG Jacobian)
  * \+ (∂t δu +(u·∇)δu + (δu·∇)u + ∇δp - ν∆δu)τu·∇v (SUPG Jacobian Part 1)
  * \+ (∂t u +(u·∇)u + ∇p - ν∆u - f )τδu·∇v (SUPG Jacobian Part 2)
- * \+ (∂t δu +(u·∇)δu + (δu·∇)u + ∇δp - ν∆δu)τ(−ν∆v) (GLS Jacobian).
+ * \+ (∂t δu +(u·∇)δu + (δu·∇)u + ∇δp - ν∆δu)τ(−ν∆v) (GLS Jacobian)
+ * \+ (∇·δu)τ'(∇·v) (LSIC Jacobian).
  */
 template <int dim, typename number>
 void
@@ -1508,6 +1521,8 @@ NavierStokesTransientGLSOperator<dim, number>::do_cell_integral_local(
         1. / std::sqrt(Utilities::fixed_power<2>(sdt) + 4. * u_mag / h / h +
                        9. * Utilities::fixed_power<2>(
                               4. * this->kinematic_viscosity / (h * h)));
+
+      const auto tau_lsic = u_mag * h * 0.5;
 
       // Weak form Jacobian
       for (unsigned int i = 0; i < dim; ++i)
@@ -1605,6 +1620,9 @@ NavierStokesTransientGLSOperator<dim, number>::do_cell_integral_local(
                 tau * -this->kinematic_viscosity *
                 (gradient[dim][i] + bdf_coefs[0] * value[i]);
             }
+          // LSIC term
+          // (∇·δu)τ'(∇·v)
+          gradient_result[i][i] += tau_lsic * gradient[i][i];
         }
 
       integrator.submit_gradient(gradient_result, q);
@@ -1620,8 +1638,9 @@ NavierStokesTransientGLSOperator<dim, number>::do_cell_integral_local(
  * The expressions calculated in this cell integral are:
  *  (q, ∇·u) + (v,∂t u) + (v,(u·∇)u) - (∇·v,p) + ν(∇v,∇u) - (v,f) (Weak form)
  * \+ (∂t u +(u·∇)u + ∇p - ν∆u - f)τ∇·q (PSPG term)
- * \+ (∂t u +(u·∇)u + ∇p - ν∆u - f)τu·∇v (SUPG term).
- * \+ (∂t u +(u·∇)u + ∇p - ν∆u - f)τ(−ν∆v) (GLS term).
+ * \+ (∂t u +(u·∇)u + ∇p - ν∆u - f)τu·∇v (SUPG term)
+ * \+ (∂t u +(u·∇)u + ∇p - ν∆u - f)τ(−ν∆v) (GLS term)
+ * \+ (∇·u)τ'(∇·v) (LSIC term).
  */
 template <int dim, typename number>
 void
@@ -1680,6 +1699,8 @@ NavierStokesTransientGLSOperator<dim, number>::local_evaluate_residual(
             1. / std::sqrt(Utilities::fixed_power<2>(sdt) + 4. * u_mag / h / h +
                            9. * Utilities::fixed_power<2>(
                                   4. * this->kinematic_viscosity / (h * h)));
+
+          const auto tau_lsic = u_mag * h * 0.5;
 
           // Result value/gradient we will use
           typename FECellIntegrator::value_type    value_result;
@@ -1767,6 +1788,9 @@ NavierStokesTransientGLSOperator<dim, number>::local_evaluate_residual(
                     (gradient[dim][i] - source_value[i] +
                      +bdf_coefs[0] * value[i] + previous_time_derivatives[i]);
                 }
+              // LSIC term
+              // (∇·u)τ'(∇·v)
+              gradient_result[i][i] += tau_lsic * gradient[i][i];
             }
 
           integrator.submit_gradient(gradient_result, q);
