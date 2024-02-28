@@ -74,8 +74,15 @@ This subsection controls the post-processing other than the forces and torque on
 
 * ``output frequency``: frequency at which the enabled post-processing is outputted in the respective file. For ``output frequency = 1`` (default value), results are outputted at each iteration.
 
-* ``calculate kinetic energy``: controls if calculation of total kinetic energy is enabled. 
+* ``calculate kinetic energy``: controls if calculation of kinetic energy is enabled. 
     * ``kinetic energy name``: output filename for kinetic energy calculations.
+    * The kinetic energy :math:`{E}_k` is calculated as 
+
+    .. math::
+      {E}_k =  \frac{1}{2 \Omega} \int_{\Omega} \mathbf{u} \cdot \mathbf{u} \ \mathrm{d} \Omega
+
+    with :math:`\Omega` representing the volume of the domain and :math:`\mathbf{u}` the velocity.
+    
 
 * ``calculate average velocities``: controls if calculation of time-averaged velocities is enabled.
     * ``initial time``: initial time used for the average velocities calculations.
@@ -83,23 +90,31 @@ This subsection controls the post-processing other than the forces and torque on
 * ``calculate pressure drop``: controls if calculation of the pressure drop from the inlet boundary to the outlet boundary is enabled.
     * ``inlet boundary id`` and ``outlet boundary id``: define the IDs for inlet and outlet boundaries, respectively. 
     * ``pressure drop name``: output filename for pressure drop calculations.
-    * The pressure drop :math:`\Delta P` and total pressure drop :math:`\Delta P_\text{total}` are calculated as such, with :math:`\Gamma` representing the boundary, :math:`\pmb{u}` the velocity  and :math:`P` the pressure:
+    * The pressure drop :math:`\Delta P` and total pressure drop :math:`\Delta P_\text{total}` are calculated as:
 
-.. math::
-    \Delta P =  \frac{ \int_{\Gamma_\text{inlet}} P d \Gamma}{\int_{\Gamma_\text{inlet}} 1 d \Gamma} - \frac{ \int_{\Gamma_\text{outlet}} P d \Gamma}{\int_{\Gamma_\text{outlet}} 1 d \Gamma}
+    .. math::
+      \Delta P =  \frac{ \int_{\Gamma_\text{inlet}} P \mathrm{d} \Gamma}{\int_{\Gamma_\text{inlet}} 1 \mathrm{d} \Gamma} - \frac{ \int_{\Gamma_\text{outlet}} P \mathrm{d} \Gamma}{\int_{\Gamma_\text{outlet}} 1 \mathrm{d} \Gamma}
 
-.. math::
-    \Delta P_\text{total} =  \frac{ \int_{\Gamma_\text{inlet}} (P + \frac{1}{2} \pmb{u} \cdot \pmb{u}) d \Gamma}{\int_{\Gamma_\text{inlet}} d \Gamma} - \frac{ \int_{\Gamma_\text{outlet}} (P + \frac{1}{2} \pmb{u} \cdot \pmb{u}) d \Gamma}{\int_{\Gamma_\text{outlet}} d \Gamma}
+    .. math::
+      \Delta P_\text{total} =  \frac{ \int_{\Gamma_\text{inlet}} (P + \frac{1}{2} \mathbf{u} \cdot \mathbf{u}) \mathrm{d} \Gamma}{\int_{\Gamma_\text{inlet}} \mathrm{d} \Gamma} - \frac{ \int_{\Gamma_\text{outlet}} (P + \frac{1}{2} \mathbf{u} \cdot \mathbf{u}) \mathrm{d} \Gamma}{\int_{\Gamma_\text{outlet}} \mathrm{d} \Gamma}
+
+    with :math:`\Gamma` representing the boundary, :math:`\mathbf{u}` the velocity  and :math:`P` the pressure.
 
 * ``calculate flow rate``: controls if calculation of the volumetric flow rates at every boundary is enabled.
     * ``flow rate name``: output filename for flow rate calculations.
-    * The flow rate :math:`Q` is calculated as such, with :math:`\Gamma` representing the boundary, :math:`\pmb{u}` the velocity and :math:`\pmb{n}` the vector normal to the surface:
+    * The flow rate :math:`Q` is calculated as such, with :math:`\Gamma` representing the boundary, :math:`\mathbf{u}` the velocity and :math:`\mathbf{n}` the vector normal to the surface:
 
 .. math::
-    Q =  \int_{\Gamma} \pmb{n} \cdot \pmb{u} d \Gamma
+    Q =  \int_{\Gamma} \mathbf{n} \cdot \mathbf{u} d \Gamma
 
-* ``calculate enstrophy``: controls if calculation of total enstrophy, which corresponds to dissipation effects in the fluid, is enabled. 
+* ``calculate enstrophy``: controls if the volume-averaged enstrophy is calculated.
     * ``enstrophy name``: output filename for enstrophy calculations.
+    * The enstrophy :math:`\mathcal{E}` is calculated as 
+
+    .. math::
+      \mathcal{E} =  \frac{1}{2 \Omega} \int_{\Omega} \mathbf{\omega} \cdot \mathbf{\omega} \mathrm{d} \Omega
+
+    with :math:`\Omega` representing the volume of the domain and :math:`\mathbf{\omega}` the vorticity.
 
 * ``smoothed output fields``: controls if the Qcriterion field will be smoothed using an L2-projection over the nodes. The same will shortly be applied to the Vorticity. 
 
