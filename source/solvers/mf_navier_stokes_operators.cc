@@ -1264,7 +1264,7 @@ NavierStokesGLSOperator<dim, number>::do_cell_integral_local(
               for (unsigned int l = 0; l < dim; ++l)
                 {
                   // +((u·∇)δu + (δu·∇)u - ν∆δu)τ(−ν∆v)
-                  hessian_result[i][k][k] =
+                  hessian_result[i][k][k] +=
                     tau * -this->kinematic_viscosity *
                     (gradient[i][l] * previous_values[l] +
                      previous_gradient[i][l] * value[l] -
@@ -1274,10 +1274,11 @@ NavierStokesGLSOperator<dim, number>::do_cell_integral_local(
               // +(∇δp)τ(−ν∆v)
               hessian_result[i][k][k] +=
                 tau * -this->kinematic_viscosity * gradient[dim][i];
+
+              // LSIC term
+              // (∇·δu)τ'(∇·v)
+              gradient_result[i][i] += tau_lsic * gradient[k][k];
             }
-          // LSIC term
-          // (∇·δu)τ'(∇·v)
-          gradient_result[i][i] += tau_lsic * gradient[i][i];
         }
 
 
@@ -1414,7 +1415,7 @@ NavierStokesGLSOperator<dim, number>::local_evaluate_residual(
                   for (unsigned int l = 0; l < dim; ++l)
                     {
                       // (-ν∆u + (u·∇)u)τ(−ν∆v)
-                      hessian_result[i][k][k] =
+                      hessian_result[i][k][k] +=
                         tau * -this->kinematic_viscosity *
                         (-this->kinematic_viscosity * hessian_diagonal[i][l] +
                          gradient[i][l] * value[l]);
@@ -1423,10 +1424,11 @@ NavierStokesGLSOperator<dim, number>::local_evaluate_residual(
                   hessian_result[i][k][k] +=
                     tau * -this->kinematic_viscosity *
                     (gradient[dim][i] - source_value[i]);
+
+                  // LSIC term
+                  // (∇·u)τ'(∇·v)
+                  gradient_result[i][i] += tau_lsic * gradient[k][k];
                 }
-              // LSIC term
-              // (∇·u)τ'(∇·v)
-              gradient_result[i][i] += tau_lsic * gradient[i][i];
             }
 
           integrator.submit_gradient(gradient_result, q);
@@ -1608,7 +1610,7 @@ NavierStokesTransientGLSOperator<dim, number>::do_cell_integral_local(
               for (unsigned int l = 0; l < dim; ++l)
                 {
                   // +((u·∇)δu + (δu·∇)u - ν∆δu)τ(−ν∆v)
-                  hessian_result[i][k][k] =
+                  hessian_result[i][k][k] +=
                     tau * -this->kinematic_viscosity *
                     (gradient[i][l] * previous_values[l] +
                      previous_gradient[i][l] * value[l] -
@@ -1619,10 +1621,11 @@ NavierStokesTransientGLSOperator<dim, number>::do_cell_integral_local(
               hessian_result[i][k][k] +=
                 tau * -this->kinematic_viscosity *
                 (gradient[dim][i] + bdf_coefs[0] * value[i]);
+
+              // LSIC term
+              // (∇·δu)τ'(∇·v)
+              gradient_result[i][i] += tau_lsic * gradient[k][k];
             }
-          // LSIC term
-          // (∇·δu)τ'(∇·v)
-          gradient_result[i][i] += tau_lsic * gradient[i][i];
         }
 
       integrator.submit_gradient(gradient_result, q);
@@ -1777,7 +1780,7 @@ NavierStokesTransientGLSOperator<dim, number>::local_evaluate_residual(
                   for (unsigned int l = 0; l < dim; ++l)
                     {
                       // (-ν∆u + (u·∇)u)τ(−ν∆v)
-                      hessian_result[i][k][k] =
+                      hessian_result[i][k][k] +=
                         tau * -this->kinematic_viscosity *
                         (-this->kinematic_viscosity * hessian_diagonal[i][l] +
                          gradient[i][l] * value[l]);
@@ -1787,10 +1790,11 @@ NavierStokesTransientGLSOperator<dim, number>::local_evaluate_residual(
                     tau * -this->kinematic_viscosity *
                     (gradient[dim][i] - source_value[i] +
                      +bdf_coefs[0] * value[i] + previous_time_derivatives[i]);
+
+                  // LSIC term
+                  // (∇·u)τ'(∇·v)
+                  gradient_result[i][i] += tau_lsic * gradient[k][k];
                 }
-              // LSIC term
-              // (∇·u)τ'(∇·v)
-              gradient_result[i][i] += tau_lsic * gradient[i][i];
             }
 
           integrator.submit_gradient(gradient_result, q);
