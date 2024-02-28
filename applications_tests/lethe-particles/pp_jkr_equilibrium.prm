@@ -11,9 +11,9 @@ end
 # Simulation Control
 #---------------------------------------------------
 subsection simulation control
-  set time step         = 1e-7
+  set time step         = 1e-5
   set time end          = 1.75
-  set log frequency     = 17500000
+  set log frequency     = 175000
   set output frequency  = -1
   set output path       = ./out/
   set output boundaries = true
