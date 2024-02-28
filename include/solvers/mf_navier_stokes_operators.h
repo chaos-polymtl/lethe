@@ -595,4 +595,51 @@ protected:
     const std::pair<unsigned int, unsigned int> &range) const override;
 };
 
+/**
+ * @brief Implements the matrix-free operator to solve transient Navier-Stokes equations
+ * using GLS stabilization.
+ *
+ * @tparam dim An integer that denotes the number of spatial dimensions.
+ * @tparam number Abstract type for number across the class (i.e., double).
+ */
+template <int dim, typename number>
+class NavierStokesTransientGLSOperator
+  : public NavierStokesOperatorBase<dim, number>
+{
+public:
+  using FECellIntegrator = FEEvaluation<dim, -1, 0, dim + 1, number>;
+  using VectorType       = LinearAlgebra::distributed::Vector<number>;
+
+  NavierStokesTransientGLSOperator();
+
+protected:
+  /**
+   * @brief Perform cell integral on a cell batch without gathering and scattering
+   * the values, and according to the Jacobian of the discretized transient
+   * Navier-Stokes equations with GLS stabilization.
+   *
+   * @param[in] integrator FEEvaluation object that allows to evaluate functions
+   * at quadrature points and perform cell integrations.
+   */
+  void
+  do_cell_integral_local(FECellIntegrator &integrator) const override;
+
+  /**
+   * @brief Perform cell integral on a cell batch with gathering and scattering
+   * the values, and according to the residual of the discretized transient
+   * Navier-Stokes equations with GLS stabilization.
+   *
+   * @param[in] matrix_free Object that contains all data.
+   * @param[in,out] dst Global vector where the final result is added.
+   * @param[in] src Input vector with all values in all cells.
+   * @param[in] range Range of the cell batch.
+   */
+  void
+  local_evaluate_residual(
+    const MatrixFree<dim, number>               &matrix_free,
+    VectorType                                  &dst,
+    const VectorType                            &src,
+    const std::pair<unsigned int, unsigned int> &range) const override;
+};
+
 #endif
