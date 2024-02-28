@@ -74,10 +74,10 @@ This subsection controls the post-processing other than the forces and torque on
 
 * ``calculate kinetic energy``: controls if calculation of kinetic energy is enabled. 
     * ``kinetic energy name``: output filename for kinetic energy calculations.
-    * The kinetic energy :math:`{E}_k` calculated is calculated as 
+    * The kinetic energy :math:`{E}_k` is calculated as 
 
     .. math::
-      {E}_k =  \frac{1}{2 \Omega} \int_{\Omega} \mathbf{u} \cdot \mathbf{u} \mathrm{d} \Omega
+      {E}_k =  \frac{1}{2 \Omega} \int_{\Omega} \mathbf{u} \cdot \mathbf{u} \ \mathrm{d} \Omega
 
     with :math:`\Omega` representing the volume of the domain and :math:`\mathbf{u}` the velocity.
     
@@ -91,10 +91,10 @@ This subsection controls the post-processing other than the forces and torque on
     * The pressure drop :math:`\Delta P` and total pressure drop :math:`\Delta P_\text{total}` are calculated as:
 
     .. math::
-      \Delta P =  \frac{ \int_{\Gamma_\text{inlet}} P d \Gamma}{\int_{\Gamma_\text{inlet}} 1 d \Gamma} - \frac{ \int_{\Gamma_\text{outlet}} P d \Gamma}{\int_{\Gamma_\text{outlet}} 1 d \Gamma}
+      \Delta P =  \frac{ \int_{\Gamma_\text{inlet}} P \mathrm{d} \Gamma}{\int_{\Gamma_\text{inlet}} 1 \mathrm{d} \Gamma} - \frac{ \int_{\Gamma_\text{outlet}} P \mathrm{d} \Gamma}{\int_{\Gamma_\text{outlet}} 1 \mathrm{d} \Gamma}
 
     .. math::
-      \Delta P_\text{total} =  \frac{ \int_{\Gamma_\text{inlet}} (P + \frac{1}{2} \mathbf{u} \cdot \mathbf{u}) d \Gamma}{\int_{\Gamma_\text{inlet}} d \Gamma} - \frac{ \int_{\Gamma_\text{outlet}} (P + \frac{1}{2} \mathbf{u} \cdot \mathbf{u}) d \Gamma}{\int_{\Gamma_\text{outlet}} d \Gamma}
+      \Delta P_\text{total} =  \frac{ \int_{\Gamma_\text{inlet}} (P + \frac{1}{2} \mathbf{u} \cdot \mathbf{u}) \mathrm{d} \Gamma}{\int_{\Gamma_\text{inlet}} \mathrm{d} \Gamma} - \frac{ \int_{\Gamma_\text{outlet}} (P + \frac{1}{2} \mathbf{u} \cdot \mathbf{u}) \mathrm{d} \Gamma}{\int_{\Gamma_\text{outlet}} \mathrm{d} \Gamma}
 
     with :math:`\Gamma` representing the boundary, :math:`\mathbf{u}` the velocity  and :math:`P` the pressure.
 
