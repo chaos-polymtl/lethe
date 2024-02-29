@@ -59,7 +59,7 @@ using namespace dealii;
 
 /**
  * @brief Struct containing fluid id, temperature range information, and flag
- * containers for DOFs used in temperature-dependant solid domain constraints.
+ * containers for DOFs used in temperature-dependent solid domain constraints.
  *
  * @param[in] fluid_id Identifier of the fluid that is constrained.
  *
@@ -332,7 +332,7 @@ protected:
    * @brief Enable the use of dynamic zero constraints by initializing required
    * FEValues objects.
    *
-   * @note At the moment, the only solution-dependant dynamic constraint depends
+   * @note At the moment, the only solution-dependent dynamic constraint depends
    * on the temperature field obtained from the Heat Transfer (HT) auxiliary
    * physic.
    */
@@ -863,15 +863,15 @@ protected:
   std::vector<TableHandler>                forces_tables;
   std::vector<TableHandler>                torques_tables;
 
-  /// FEValues object used for temperature-dependant solid domain constraints
+  /// FEValues object used for temperature-dependent solid domain constraints
   std::shared_ptr<FEValues<dim>> fe_values_temperature;
-  /// FEValues object used for temperature-dependant solid domain constraints in
+  /// FEValues object used for temperature-dependent solid domain constraints in
   /// VOF simulations
   std::shared_ptr<FEValues<dim>> fe_values_vof;
   /// Vector containing solid domain constraint structs for
-  /// temperature-dependant solid domain constraints in VOF simulations
+  /// temperature-dependent solid domain constraints in VOF simulations
   std::vector<SolidDomainConstraint> solid_domain_constraint_structs;
-  /// Dynamic homogeneous constraints used for temperature-dependant solid
+  /// Dynamic homogeneous constraints used for temperature-dependent solid
   /// domain constraints
   AffineConstraints<double> dynamic_zero_constraints;
 };

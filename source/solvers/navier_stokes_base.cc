@@ -641,7 +641,7 @@ NavierStokesBase<dim, VectorType, DofsType>::
         solid_domain_constraint_struct);
     }
 
-  // For temperature-dependant constraints
+  // For temperature-dependent constraints
   const DoFHandler<dim> *dof_handler_ht =
     this->multiphysics->get_dof_handler(PhysicsID::heat_transfer);
 

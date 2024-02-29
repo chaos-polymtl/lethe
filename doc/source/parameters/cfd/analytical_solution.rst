@@ -65,7 +65,7 @@ If there is an analytical solution for the Cahn-Hilliard physics, enter the ``ca
 * The ``Function expression`` parameter sets the expression of the phase order parameter and the chemical potential.
 
 .. note:: 
-    The variables *x*, *y*, *z* (3D) and *t* (time-dependant) can be used in the function expressions.
+    The variables *x*, *y*, *z* (3D) and *t* (time-dependent) can be used in the function expressions.
 
 In all four last subsections, you can add a ``Function constants`` parameter that will act as a constant in the ``Function expression``.
 
