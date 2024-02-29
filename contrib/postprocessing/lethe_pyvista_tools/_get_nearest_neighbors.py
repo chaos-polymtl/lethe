@@ -75,8 +75,8 @@ def get_nearest_neighbors(self, return_id = True, n_neighbors = 15):
                 df["neighbors_id"] = df["ID"][indices]
             df["neighbors"] = indices
             df["neighbors_dist"] = dist
-            df.save(f'{self.path_output}/{self.list_pvtu[i]}')
+            df.save(f'{self.path_output}/{self.list_vtu[i]}')
 
-    self.parallel_run(get_nearest_neighbors_loop, range(len(self.list_pvtu)), tqdm_desc = "Finding neighbors")
+    self.parallel_run(get_nearest_neighbors_loop, range(len(self.list_vtu)), tqdm_desc = "Finding neighbors")
 
     self.has_neighbors = True

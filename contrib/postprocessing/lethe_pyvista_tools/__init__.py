@@ -3,7 +3,6 @@
 #############################################################################
 
 # Import modules
-import shutil
 import pyvista as pv
 from tqdm import tqdm
 
@@ -67,7 +66,7 @@ class lethe_pyvista_tools():
         self.time_list          -> Returns the list of times corresponding to 
         datasets.
 
-        self.list_pvtu           -> Returns the list of names of .pvtu files.
+        self.list_vtu           -> Returns the list of names of .pvtu files.
 
         self.padding            -> Returns the padding of pvtu file numbering.
 
@@ -75,6 +74,7 @@ class lethe_pyvista_tools():
 
         self.path_case = case_path
         self.prm_file = prm_file_name
+        self.pvd_name = pvd_name
         self.ignore_data = ignore_data
         self.sorted = False
         self.has_neighbors = False
@@ -89,6 +89,8 @@ class lethe_pyvista_tools():
 
         if ".prm" not in self.prm_file:
             self.prm_file = self.prm_file + ".prm"
+            
+        print(self.prm_file)
         
         # Read .prm file to dictionary
         # Create dictionary
@@ -177,76 +179,29 @@ class lethe_pyvista_tools():
         self.time_list = self.reader.time_values
 
         # Create a list of all files' names
-        list_pvtu = [pvd_datasets[x].path for x in range(len(pvd_datasets))]
+        list_vtu = [pvd_datasets[x].path for x in range(len(pvd_datasets))]
 
         # Remove duplicates
-        list_pvtu = list(dict.fromkeys(list_pvtu))
+        list_vtu = list(dict.fromkeys(list_vtu))
 
         # Select data
         if last is None:
-            list_pvtu = list_pvtu[first::step]
+            self.list_vtu = list_vtu[first::step]
             self.time_list = self.time_list[first::step]
             self.first = first
             self.step = step
             self.last = len(self.time_list) - 1
+            self.pvd_datasets = self.reader.datasets[first::step]
         else:
-            list_pvtu = list_pvtu[first:last:step]
+            self.list_vtu = list_vtu[first:last:step]
             self.time_list = self.time_list[first:last:step]
             self.first = first
             self.step = step
             self.last = last
+            self.pvd_datasets = self.reader.datasets[first:last:step]
 
-        # List of paths among read data
-        read_files_path_list = [pvd_datasets[x].path for x in range(len(pvd_datasets))]
-
-        # Write new pvtu and pvd files to store modified data.
-        # IMPORTANT!!!! If this parameter is empty, that is,  "", data will be written over original pvtu and pvd files.
-        with open(f'{self.path_output}/{pvd_name}') as pvd_in:
-            with open(f'{self.path_output}/{prefix}{pvd_name}', 'w') as pvd_out:
-                for line in pvd_in:
-                
-                    # If line refers to a dataset
-                    if "pvtu" in line:
-
-                        # For all read files
-                        for path in read_files_path_list:
-
-                            # If line matches one of the files
-                            if path in line:
-                            
-                                # If vtu is in list_pvtu
-                                if line.split('file="')[1].split('"/>')[0] in list_pvtu:
-                                    line = line.replace('file="', f'file="{prefix}')
-                                    pvd_out.write(line)
-                                read_files_path_list.remove(path)
-                                pass
-                
-                    # Write config lines
-                    else:
-                        pvd_out.write(line)
-
-            # Make a copy of PVTU files
-            n_pvtu = len(list_pvtu)
-            pbar = tqdm(total = n_pvtu, desc="Preparing PVTU and PVD files")
-            self.list_pvtu = []
-            for i in range(len(list_pvtu)):
-                # Copy file
-                if len(prefix) > 0:
-                    shutil.copy2(f'{self.path_output}/{list_pvtu[i]}', f'{self.path_output}/{prefix}{list_pvtu[i]}')
-
-                # Append to list of names of PVTU files
-                self.list_pvtu.append(f'{prefix}{list_pvtu[i]}')
-                pbar.update(1)
-
-        # Fix name of PVD file
-        self.pvd_name = prefix + pvd_name
-        print(self.pvd_name)
-
-        # Create pyvista reader for files in the new .pvd file 
-        self.reader = pv.get_reader(f"{self.path_output}/{self.pvd_name}") 
-
-        # Create list of PVD datasets with new files
-        self.pvd_datasets = self.reader.datasets
+        if len(prefix) > 0:
+            self.create_copy(prefix = prefix)
 
         # Boolean indicating that the dataframes are not stored in the
         # self.df object. If read_to_df = True is called, all data 
@@ -263,9 +218,9 @@ class lethe_pyvista_tools():
             self.df = []
 
             # Read PVTU data
-            n_pvtu = len(self.list_pvtu)
+            n_pvtu = len(self.list_vtu)
             pbar = tqdm(total = n_pvtu, desc="Reading PVTU files")
-            for i in range(len(self.list_pvtu)):
+            for i in range(len(self.list_vtu)):
                 
                 # Read dataframes from VTU files into df
                 self.df.append(self.get_df)
@@ -273,12 +228,15 @@ class lethe_pyvista_tools():
 
             self.df_available = True
 
-            print(f'Written .df[timestep] from timestep = 0 to timestep = {len(self.list_pvtu)-1}')
+            print(f'Written .df[timestep] from timestep = 0 to timestep = {len(self.list_vtu)-1}')
 
     # IMPORT FUNCTIONS:
 
     # Apply multiprocessing imap
     from .parallel_run import parallel_run
+
+    # Use prefix argument to create new pvtu and pvd
+    from ._create_copy import create_copy
 
     # Return single pyvista dataset from list
     from ._get_df import get_df

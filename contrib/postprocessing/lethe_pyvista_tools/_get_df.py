@@ -11,7 +11,7 @@ def get_df(self, time_step):
     """
 
     # Get reader for the PVTU file
-    pvtu_reader = pv.get_reader(f"{self.path_output}/{self.list_pvtu[time_step]}")
+    pvtu_reader = pv.get_reader(f"{self.path_output}/{self.list_vtu[time_step]}")
 
     # Ignore selected data in order to reduce RAM usage
     for data in self.ignore_data:

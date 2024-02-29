@@ -28,9 +28,9 @@ def sort_by_array(self, reference_array_name="ID"):
             for name in df.array_names:
                 df[name] = df[name][df[reference_array_name].argsort()]
 
-            df.save(f'{self.path_output}/{self.list_pvtu[i]}')
+            df.save(f'{self.path_output}/{self.list_vtu[i]}')
 
-    self.parallel_run(sort_by_array_loop, range(len(self.list_pvtu)),
+    self.parallel_run(sort_by_array_loop, range(len(self.list_vtu)),
                       tqdm_desc=f"Sorting dataframe by {reference_array_name}")
 
     self.sorted = True

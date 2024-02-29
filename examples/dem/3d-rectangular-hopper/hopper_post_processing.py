@@ -71,7 +71,7 @@ print(f'Total mass in hopper : {n_particle * density * volume / correction_facto
 rate = []
 
 # Loop through all results
-for i in range(len(particle.list_pvtu)):
+for i in range(len(particle.list_vtu)):
     # Store results in 'df'
     df = particle.get_df(i)
 

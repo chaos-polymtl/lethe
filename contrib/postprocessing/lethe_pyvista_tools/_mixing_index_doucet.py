@@ -71,8 +71,8 @@ def mixing_index_doucet(self, reference_time_step = 0, use_cyl = False, increasi
     id_keys = df["ID"]
 
     # Create list of mixing indices per time-step and array of eigenvectors
-    self.mixing_index = Manager().list(np.empty(len(self.list_pvtu)))
-    self.mixing_eigenvector = Manager().list(np.empty((len(self.list_pvtu), 3)))
+    self.mixing_index = Manager().list(np.empty(len(self.list_vtu)))
+    self.mixing_eigenvector = Manager().list(np.empty((len(self.list_vtu), 3)))
 
     # Loop through dataframes and find its mixing index
     global mixing_index_doucet_loop
@@ -109,7 +109,7 @@ def mixing_index_doucet(self, reference_time_step = 0, use_cyl = False, increasi
         self.mixing_index[i] = max_eigenvalue
         self.mixing_eigenvector[i] = assoc_eigenvectors.flatten().tolist()
 
-    self.parallel_run(mixing_index_doucet_loop, range(len(self.list_pvtu)), tqdm_desc = "Calculating mixing index")
+    self.parallel_run(mixing_index_doucet_loop, range(len(self.list_vtu)), tqdm_desc = "Calculating mixing index")
 
     # Fix eigenvector data structure
     self.mixing_eigenvector = np.asarray(self.mixing_eigenvector)

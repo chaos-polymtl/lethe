@@ -46,7 +46,7 @@ H_a = [0,-0.02, 0]
 H_b = [0, 0.02, 0]
 
 # Read PVTU files
-for i in range(len(fluids.list_pvtu)):
+for i in range(len(fluids.list_vtu)):
     # Store results in 'df'
     df = fluids.get_df(i)
 

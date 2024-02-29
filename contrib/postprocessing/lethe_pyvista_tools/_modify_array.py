@@ -94,9 +94,9 @@ def modify_array(self, reference_array_name = "ID", array_name = "new_array", re
             else:
                 df = self.get_df(i)
                 df[array_name] = np.repeat(standard_value, len(df[reference_array_name]))
-                df.save(f'{self.path_output}/{self.list_pvtu[i]}')
+                df.save(f'{self.path_output}/{self.list_vtu[i]}')
 
-        self.parallel_run(create_array, range(len(self.list_pvtu)), tqdm_desc = f"Creating array {array_name}")
+        self.parallel_run(create_array, range(len(self.list_vtu)), tqdm_desc = f"Creating array {array_name}")
 
     else:
         if self.df_available:
@@ -218,7 +218,7 @@ def modify_array(self, reference_array_name = "ID", array_name = "new_array", re
             if self.df_available:
                 self.df[i] = df
             else:
-                df.save(f'{self.path_output}/{self.list_pvtu[i]}')
+                df.save(f'{self.path_output}/{self.list_vtu[i]}')
 
     # If not time dependent, the condition and array_values will be applied
     # at the reference_time_step.
@@ -289,7 +289,7 @@ def modify_array(self, reference_array_name = "ID", array_name = "new_array", re
             self.df[reference_time_step][array_name] = new_array
         else:
             df_reference[array_name] = new_array
-            df_reference.save(f'{self.path_output}/{self.list_pvtu[reference_time_step]}')
+            df_reference.save(f'{self.path_output}/{self.list_vtu[reference_time_step]}')
 
         # Create dictionary (map) based on reference_array
         reference_time_step_dict = dict(zip(df_reference[reference_array_name], df_reference[array_name]))
@@ -316,6 +316,6 @@ def modify_array(self, reference_array_name = "ID", array_name = "new_array", re
                 self.df[i][array_name][indices] = itemgetter(*keys)(reference_time_step_dict)
             else:
                 df[array_name][indices] = itemgetter(*keys)(reference_time_step_dict)
-                df.save(f'{self.path_output}/{self.list_pvtu[i]}')
+                df.save(f'{self.path_output}/{self.list_vtu[i]}')
 
-    self.parallel_run(modify_array_loop, range(len(self.list_pvtu)), tqdm_desc = "Assigning array")
+    self.parallel_run(modify_array_loop, range(len(self.list_vtu)), tqdm_desc = "Assigning array")
