@@ -37,7 +37,7 @@ print('The path to the case can be seen using: example.case_path')
 # .list_pvtu and reads the '.pvtu' files inside the pointed folder as pyvista
 # dataframes.
 print('List of all .pvtu: ')
-print(example.list_pvtu)
+print(example.list_vtu)
 print('Time list, if transient: ')
 print(example.time_list)
 
