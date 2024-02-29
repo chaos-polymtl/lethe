@@ -134,10 +134,7 @@ public:
 
     Parameters::VelocitySource::declare_parameters(prm);
 
-    constrain_solid_domain.declare_parameters(
-      prm, 1); // At the moment, default value of the maximum number of
-               // constraints is set to one since we are only applying to
-               // one-fluid simulations.
+    constrain_solid_domain.declare_parameters(prm, 2);
 
     Parameters::Stabilization::declare_parameters(prm);
 
@@ -411,8 +408,9 @@ public:
           "'heat transfer' was not set to 'true' in the 'multiphysics' subsection.\n ");
       }
 
-    if (physical_properties_manager.get_number_of_fluids() <
-        constrain_solid_domain.number_of_constraints)
+    if (constrain_solid_domain.enable &&
+        physical_properties_manager.get_number_of_fluids() <
+          constrain_solid_domain.number_of_constraints)
       {
         std::string n_constraints =
           Utilities::to_string(constrain_solid_domain.number_of_constraints);
@@ -427,14 +425,12 @@ public:
           "Only 1 constraint per fluid can be declared.\n ");
       }
 
-    if ((constrain_solid_domain.enable && multiphysics.VOF) ||
-        (constrain_solid_domain.enable && multiphysics.cahn_hilliard))
+    if (constrain_solid_domain.enable && multiphysics.cahn_hilliard)
       {
         throw std::logic_error(
           "Inconsistency in .prm!\n "
           "The current implementation for constraining solid domains with\n "
-          "temperature does not allow multiple fluid simulations.\n "
-          "This feature will become available soon.\n ");
+          "temperature is not implemented for Cahn Hilliard simulations.\n ");
       }
   }
 

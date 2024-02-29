@@ -623,6 +623,25 @@ NavierStokesBase<dim, VectorType, DofsType>::
   if (!this->simulation_parameters.constrain_solid_domain.enable)
     return;
 
+  // Initialize SolidDomainConstraint structs for each constraint
+  for (unsigned int c_id = 0;
+       c_id <
+       this->simulation_parameters.constrain_solid_domain.number_of_constraints;
+       c_id++)
+    {
+      SolidDomainConstraint solid_domain_constraint_struct(
+        this->simulation_parameters.constrain_solid_domain.fluid_ids[c_id],
+        this->simulation_parameters.constrain_solid_domain
+          .temperature_min_values[c_id],
+        this->simulation_parameters.constrain_solid_domain
+          .temperature_max_values[c_id],
+        this->simulation_parameters.constrain_solid_domain
+          .filtered_phase_fraction_tolerance[c_id]);
+      this->solid_domain_constraint_structs.push_back(
+        solid_domain_constraint_struct);
+    }
+
+  // For temperature-dependant constraints
   const DoFHandler<dim> *dof_handler_ht =
     this->multiphysics->get_dof_handler(PhysicsID::heat_transfer);
 
@@ -631,6 +650,19 @@ NavierStokesBase<dim, VectorType, DofsType>::
                                     dof_handler_ht->get_fe(),
                                     *this->cell_quadrature,
                                     update_values);
+
+  // For VOF simulations
+  if (this->simulation_parameters.multiphysics.VOF)
+    {
+      const DoFHandler<dim> *dof_handler_vof =
+        this->multiphysics->get_dof_handler(PhysicsID::heat_transfer);
+
+      this->fe_values_vof =
+        std::make_shared<FEValues<dim>>(*this->mapping,
+                                        dof_handler_vof->get_fe(),
+                                        *this->cell_quadrature,
+                                        update_values);
+    }
 }
 
 template <int dim, typename VectorType, typename DofsType>
@@ -1795,20 +1827,14 @@ NavierStokesBase<dim, VectorType, DofsType>::constrain_solid_domain(
   const unsigned int                   dofs_per_cell = this->fe->dofs_per_cell;
   std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
 
-  // This is hardcoded to get the first value for now, since we only have 1
-  // fluid.
-  const double min_solid_temperature =
-    simulation_parameters.constrain_solid_domain.temperature_min_values[0];
-  const double max_solid_temperature =
-    simulation_parameters.constrain_solid_domain.temperature_max_values[0];
-
-  std::unordered_set<types::global_dof_index> dofs_are_connected_to_fluid;
-  std::unordered_set<types::global_dof_index> dofs_are_in_solid;
+  // Get struct containing temperature range information and flag
+  // containers for DOFs.
+  SolidDomainConstraint &solid_domain_constraint_struct =
+    this->solid_domain_constraint_structs[0];
 
   // Get temperature solution
   const auto temperature_solution =
     *this->multiphysics->get_solution(PhysicsID::heat_transfer);
-
   std::vector<double> local_temperature_values(this->cell_quadrature->size());
 
   for (const auto &cell : dof_handler.active_cell_iterators())
@@ -1816,52 +1842,150 @@ NavierStokesBase<dim, VectorType, DofsType>::constrain_solid_domain(
       if (cell->is_locally_owned() || cell->is_ghost())
         {
           cell->get_dof_indices(local_dof_indices);
-          bool cell_is_solid = false;
+          get_cell_temperature_values(cell,
+                                      dof_handler_ht,
+                                      temperature_solution,
+                                      local_temperature_values);
+          add_flags_and_constrain_velocity(local_dof_indices,
+                                           local_temperature_values,
+                                           solid_domain_constraint_struct);
+        }
+    }
+  check_and_constrain_pressure(solid_domain_constraint_struct,
+                               local_dof_indices);
+}
 
-          typename DoFHandler<dim>::active_cell_iterator temperature_cell(
-            &(*(this->triangulation)),
-            cell->level(),
-            cell->index(),
-            dof_handler_ht);
+template <int dim, typename VectorType, typename DofsType>
+void
+NavierStokesBase<dim, VectorType, DofsType>::constrain_solid_domain_vof(
+  const DoFHandler<dim> *dof_handler_vof,
+  const DoFHandler<dim> *dof_handler_ht)
+{
+  const unsigned int                   dofs_per_cell = this->fe->dofs_per_cell;
+  std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
 
-          this->fe_values_temperature->reinit(temperature_cell);
-          this->fe_values_temperature->get_function_values(
-            temperature_solution, local_temperature_values);
+  // Get filtered phase fraction solution
+  const auto filtered_phase_fraction_solution =
+    *this->multiphysics->get_filtered_solution(PhysicsID::VOF);
+  std::vector<double> local_filtered_phase_fraction_values(
+    this->cell_quadrature->size());
 
-          // Flag cell if the cell is solid and constrain its velocity DOFs
-          for (const double temperature : local_temperature_values)
+  // Get temperature solution
+  const auto temperature_solution =
+    *this->multiphysics->get_solution(PhysicsID::heat_transfer);
+  std::vector<double> local_temperature_values(this->cell_quadrature->size());
+
+  // Loop over structs containing fluid id, temperature range information and
+  // flag containers for DOFs.
+  for (SolidDomainConstraint &solid_domain_constraint_struct :
+       this->solid_domain_constraint_structs)
+    {
+      for (const auto &cell : dof_handler.active_cell_iterators())
+        {
+          if (cell->is_locally_owned() || cell->is_ghost())
             {
-              if (temperature >= min_solid_temperature &&
-                  temperature <= max_solid_temperature)
+              cell->get_dof_indices(local_dof_indices);
+              bool cell_is_in_right_fluid = true;
+
+              get_cell_filtered_phase_fraction_values(
+                cell,
+                dof_handler_vof,
+                filtered_phase_fraction_solution,
+                local_filtered_phase_fraction_values);
+
+              // Check if cell is only in the fluid of interest. As soon as one
+              // filtered phase fraction value is outside the tolerated range,
+              // the cell is perceived as being in the wrong fluid.
+              for (const double &filtered_phase_fraction :
+                   local_filtered_phase_fraction_values)
                 {
-                  flag_dofs_in_solid(dofs_are_in_solid, local_dof_indices);
-                  constrain_solid_cell_velocity_dofs(
-                    false, local_dof_indices, this->dynamic_zero_constraints);
-                  cell_is_solid = true;
-                  break;
+                  if (abs(solid_domain_constraint_struct.fluid_id -
+                          filtered_phase_fraction) >=
+                      solid_domain_constraint_struct
+                        .filtered_phase_fraction_tolerance)
+                    {
+                      cell_is_in_right_fluid = false;
+                      break;
+                    }
                 }
+
+              // If the cell is not in the right fluid, no solid constraint will
+              // be applied on the cell's DOFs. We flag the current cell's DOFs
+              // as "connected to fluid" and we skip to the next cell.
+              if (!cell_is_in_right_fluid)
+                {
+                  flag_dofs_connected_to_fluid(
+                    local_dof_indices,
+                    solid_domain_constraint_struct.dofs_are_connected_to_fluid);
+                  continue;
+                }
+
+              get_cell_temperature_values(cell,
+                                          dof_handler_ht,
+                                          temperature_solution,
+                                          local_temperature_values);
+              add_flags_and_constrain_velocity(local_dof_indices,
+                                               local_temperature_values,
+                                               solid_domain_constraint_struct);
             }
-          // Flag non-solid cell DOFs to identify which pressure DOFs should not
-          // be constrained.
-          if (!cell_is_solid)
-            flag_dofs_connected_to_fluid(local_dof_indices,
-                                         dofs_are_connected_to_fluid);
+        }
+      check_and_constrain_pressure(solid_domain_constraint_struct,
+                                   local_dof_indices);
+    }
+}
+
+template <int dim, typename VectorType, typename DofsType>
+void
+NavierStokesBase<dim, VectorType, DofsType>::add_flags_and_constrain_velocity(
+  const std::vector<types::global_dof_index> &local_dof_indices,
+  const std::vector<double>                  &local_temperature_values,
+  SolidDomainConstraint                      &solid_domain_constraint_struct)
+{
+  bool cell_is_solid = false;
+
+  // Flag cell if the cell is solid and constrain its velocity DOFs
+  for (const double &temperature : local_temperature_values)
+    {
+      if (temperature >= solid_domain_constraint_struct.min_solid_temperature &&
+          temperature <= solid_domain_constraint_struct.max_solid_temperature)
+        {
+          flag_dofs_in_solid(local_dof_indices,
+                             solid_domain_constraint_struct.dofs_are_in_solid);
+          constrain_solid_cell_velocity_dofs(false,
+                                             local_dof_indices,
+                                             this->dynamic_zero_constraints);
+          cell_is_solid = true;
+          break;
         }
     }
 
+  // Flag non-solid cell DOFs to identify which pressure DOFs should not
+  // be constrained.
+  if (!cell_is_solid)
+    flag_dofs_connected_to_fluid(
+      local_dof_indices,
+      solid_domain_constraint_struct.dofs_are_connected_to_fluid);
+}
+
+template <int dim, typename VectorType, typename DofsType>
+void
+NavierStokesBase<dim, VectorType, DofsType>::check_and_constrain_pressure(
+  const SolidDomainConstraint          &solid_domain_constraint_struct,
+  std::vector<types::global_dof_index> &local_dof_indices)
+{
   for (const auto &cell : dof_handler.active_cell_iterators())
     {
       if (cell->is_locally_owned() || cell->is_ghost())
         {
           cell->get_dof_indices(local_dof_indices);
-          bool cell_is_solid =
-            check_cell_is_in_solid(dofs_are_in_solid, local_dof_indices);
-
+          bool cell_is_solid = check_cell_is_in_solid(
+            solid_domain_constraint_struct.dofs_are_in_solid,
+            local_dof_indices);
           if (cell_is_solid)
             {
-              bool connected_to_fluid =
-                check_cell_is_connected_to_fluid(dofs_are_connected_to_fluid,
-                                                 local_dof_indices);
+              bool connected_to_fluid = check_cell_is_connected_to_fluid(
+                solid_domain_constraint_struct.dofs_are_connected_to_fluid,
+                local_dof_indices);
               if (!connected_to_fluid)
                 {
                   // Set homogeneous constraints to pressure DOFs that are not
