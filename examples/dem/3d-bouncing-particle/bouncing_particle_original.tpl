@@ -12,7 +12,7 @@ subsection simulation control
   set time end          = 8
   set log frequency     = 100000
   set output frequency  = 100000
-  set output path       = ./out_{{ER}}/
+  set output path       = ./bouncing_particle_{{ER}}/
   set output name       = out
   set output boundaries = true
 end

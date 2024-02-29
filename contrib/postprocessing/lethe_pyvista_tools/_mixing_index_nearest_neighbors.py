@@ -31,7 +31,7 @@ def mixing_index_nearest_neighbors(self, n_neighbors = 15, reference_array = "pa
 
     self.df[$TIME-STEP]     -> Assign array to dataset named according to
     mixing_index_array_name. This array can be used in visual postprocessing
-    softwares, such as ParaView. Check the write_vtu method of this module.
+    softwares, such as ParaView. Check the write_pvtu method of this module.
     """
 
     # Apply NNM by Godlieb et al. (2007)
@@ -52,8 +52,8 @@ def mixing_index_nearest_neighbors(self, n_neighbors = 15, reference_array = "pa
     self.get_nearest_neighbors(n_neighbors = n_neighbors)
 
     # Create empty list to store mixing_index per time-step
-    self.mixing_index = Manager().list(np.empty(len(self.list_vtu)))
-    self.mixing_index_std = Manager().list(np.empty(len(self.list_vtu)))
+    self.mixing_index = Manager().list(np.empty(len(self.list_pvtu)))
+    self.mixing_index_std = Manager().list(np.empty(len(self.list_pvtu)))
 
     # Loop through dataframes and find its mixing index
     global mixing_index_nearest_neighbors_loop
@@ -77,7 +77,7 @@ def mixing_index_nearest_neighbors(self, n_neighbors = 15, reference_array = "pa
             self.df[i][self.mixing_index_array_name] = mixing_index_per_particle
         else:
             df[self.mixing_index_array_name] = mixing_index_per_particle
-            df.save(f'{self.path_output}/{self.list_vtu[i]}')
+            df.save(f'{self.path_output}/{self.list_pvtu[i]}')
 
         mixing_index = np.mean(mixing_index_per_particle)
         mixing_index_std = np.std(mixing_index_per_particle)
@@ -86,5 +86,5 @@ def mixing_index_nearest_neighbors(self, n_neighbors = 15, reference_array = "pa
         self.mixing_index[i] = mixing_index
         self.mixing_index_std[i] = mixing_index_std
 
-    self.parallel_run(mixing_index_nearest_neighbors_loop, range(len(self.list_vtu)), tqdm_desc = "Calculating mixing index")
+    self.parallel_run(mixing_index_nearest_neighbors_loop, range(len(self.list_pvtu)), tqdm_desc = "Calculating mixing index")
 

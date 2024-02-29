@@ -70,8 +70,8 @@ def get_cylindrical_coords(self, radial_components = "yz"):
             df['points_cyl'][:, 0] = radius.tolist()
             df['points_cyl'][:, 1] = theta
             df['points_cyl'][:, 2] = z
-            df.save(f'{self.path_output}/{self.list_vtu[i]}')
+            df.save(f'{self.path_output}/{self.list_pvtu[i]}')
 
-    self.parallel_run(get_cylindrical_coords_loop, range(len(self.list_vtu)), tqdm_desc = "Getting cylindrical coords")
+    self.parallel_run(get_cylindrical_coords_loop, range(len(self.list_pvtu)), tqdm_desc = "Getting cylindrical coords")
 
     self.has_cylindrical_coords = True

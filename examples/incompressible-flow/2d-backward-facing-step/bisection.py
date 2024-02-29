@@ -33,7 +33,7 @@ data = list(range(0,n))
 N_elements = np.zeros(n)
 for i in range(0,n):
     file[i] = ('Reynolds100-600/backward_facing_step_output.' 
-               + f'{i:04d}' + '.0000.vtu')
+               + f'{i:04d}' + '.0000.pvtu')
     data[i] = pv.read(file[i])
     data[i].set_active_vectors("velocity")
     N_elements[i] = data[i].GetNumberOfElements(0)
