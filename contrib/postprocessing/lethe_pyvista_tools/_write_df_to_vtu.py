@@ -1,5 +1,7 @@
 from tqdm import tqdm
 
+# Hard coded string :
+padding_string = ".00000.vtu"
 
 # Write modifications on each df to VTU files
 def write_df_to_vtu(self, prefix = "mod_"):
@@ -29,7 +31,7 @@ def write_df_to_vtu(self, prefix = "mod_"):
 
                         # If line matches one of the files
                         if path in line:
-                            line = line.replace(".pvtu", "."+self.padding+".vtu")
+                            line = line.replace('.pvtu', padding_string)
                             
                             # If vtu is in list_vtu
                             if line.split('file="')[1].split('"/>')[0] in self.list_vtu:

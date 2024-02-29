@@ -7,11 +7,14 @@ import shutil
 import pyvista as pv
 from tqdm import tqdm
 
+# Hard coded string :
+padding_string = ".00000.vtu"
+
 # Define class:
 class lethe_pyvista_tools():
 
     def __init__(self, case_path = '.', prm_file_name = '', pvd_name = '', prefix = 'mod_', first = 0, last = None,
-                    step = 1, read_to_df = False, ignore_data = [], n_procs = None):
+                 step = 1, read_to_df = False, ignore_data = [], n_procs = None):
         """
         Constructor of post-processing object.
         
@@ -69,8 +72,6 @@ class lethe_pyvista_tools():
 
         self.list_vtu           -> Returns the list of names of .vtu files.
 
-        self.padding            -> Returns the padding of vtu file numbering.
-
         """
 
         self.path_case = case_path
@@ -79,7 +80,6 @@ class lethe_pyvista_tools():
         self.sorted = False
         self.has_neighbors = False
         self.has_cylindrical_coords = False
-        self.padding = '0'
 
         if n_procs is None:
             from os import cpu_count
@@ -89,7 +89,7 @@ class lethe_pyvista_tools():
 
         if ".prm" not in self.prm_file:
             self.prm_file = self.prm_file + ".prm"
-        
+
         # Read .prm file to dictionary
         # Create dictionary
         self.prm_dict = {}
@@ -116,19 +116,19 @@ class lethe_pyvista_tools():
 
                     # Split the string in [variable, value]
                     clean_line = clean_line.split('=')
-                    
+
                     # Clean line from spaces
                     for element in range(len(clean_line)):
-                    
+
                         clean_line[element] = clean_line[element].strip()
-                    
+
                     # Convert values to float when possible
                     try:
                         clean_line[1] = float(clean_line[1])
 
                     except:
                         pass
-                    
+
                     # Define [variable, value] as key and value in the
                     # dictionary
                     # If 'set' is a 'Function expression' or 'type'
@@ -139,36 +139,36 @@ class lethe_pyvista_tools():
                         if subsection_clean_line in self.prm_dict.keys():
                             if type(self.prm_dict[subsection_clean_line]) is list:
                                 self.prm_dict[subsection_clean_line].append(clean_line[1])
-                            
+
                             else:
                                 self.prm_dict[subsection_clean_line] = [self.prm_dict[subsection_clean_line]]
                                 self.prm_dict[subsection_clean_line].append(clean_line[1])
-                    
+
                         else:
                             self.prm_dict[subsection_clean_line] = clean_line[1]
-                    
+
                     else:
-                    
+
                         # If attribute already exists, create a list
                         # Otherwise, create key-value
                         if clean_line[0] in self.prm_dict.keys():
                             if type(self.prm_dict[clean_line[0]]) is list:
                                 self.prm_dict[clean_line[0]].append(clean_line[1])
-                            
+
                             else:
                                 self.prm_dict[clean_line[0]] = [self.prm_dict[clean_line[0]]]
                                 self.prm_dict[clean_line[0]].append(clean_line[1])
-                    
+
                         else:
                             self.prm_dict[clean_line[0]] = clean_line[1]
 
             print(f'Successfully constructed. To see the .prm dictionary, print($NAME.prm_dict)')
-        
+
         # Define path where vtu files are
         self.path_output = self.path_case + self.prm_dict['output path'].replace('.', '')
-        
-        # Read name of files in .pvd file        
-        self.reader = pv.get_reader(f"{self.path_output}/{pvd_name}") 
+
+        # Read name of files in .pvd file
+        self.reader = pv.get_reader(f"{self.path_output}/{pvd_name}")
 
         # Create list of pvd datasets
         pvd_datasets = self.reader.datasets
@@ -178,11 +178,7 @@ class lethe_pyvista_tools():
 
         # Create a list of all files' names
         list_vtu = [pvd_datasets[x].path for x in range(len(pvd_datasets))]
-        substr1_index = list_vtu[0].find(".")
-        substr2_index = list_vtu[0].find(".pvtu")
-        padding_length = len(list_vtu[0][substr1_index + 1 : substr2_index])
-        self.padding = '0'.zfill(padding_length)
-        list_vtu = [x.replace(".pvtu", "."+self.padding+".vtu") for x in list_vtu]
+        list_vtu = [x.replace(".pvtu", padding_string) for x in list_vtu]
 
         # Remove duplicates
         list_vtu = list(dict.fromkeys(list_vtu))
@@ -209,7 +205,7 @@ class lethe_pyvista_tools():
         with open(f'{self.path_output}/{pvd_name}') as pvd_in:
             with open(f'{self.path_output}/{prefix}{pvd_name}', 'w') as pvd_out:
                 for line in pvd_in:
-                    
+
                     # If line refers to a dataset
                     if "vtu" in line:
 
@@ -218,15 +214,15 @@ class lethe_pyvista_tools():
 
                             # If line matches one of the files
                             if path in line:
-                                line = line.replace(".pvtu", "."+self.padding+".vtu")
-                                
+                                line = line.replace('.pvtu', padding_string)
+
                                 # If vtu is in list_vtu
                                 if line.split('file="')[1].split('"/>')[0] in list_vtu:
                                     line = line.replace('file="', f'file="{prefix}')
                                     pvd_out.write(line)
                                 read_files_path_list.remove(path)
                                 pass
-                    
+
                     # Write config lines
                     else:
                         pvd_out.write(line)
@@ -247,7 +243,7 @@ class lethe_pyvista_tools():
         self.pvd_name = prefix + pvd_name
 
         # Create pyvista reader for files in the new .pvd file 
-        self.reader = pv.get_reader(f"{self.path_output}/{self.pvd_name}") 
+        self.reader = pv.get_reader(f"{self.path_output}/{self.pvd_name}")
 
         # Create list of PVD datasets with new files
         self.pvd_datasets = self.reader.datasets
@@ -270,7 +266,7 @@ class lethe_pyvista_tools():
             n_vtu = len(self.list_vtu)
             pbar = tqdm(total = n_vtu, desc="Reading VTU files")
             for i in range(len(self.list_vtu)):
-                
+
                 # Read dataframes from VTU files into df
                 self.df.append(self.get_df)
                 pbar.update(1)

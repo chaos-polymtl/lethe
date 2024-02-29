@@ -65,6 +65,8 @@ write_vtu_and_pvd(PVDHandler                            &pvd_handler,
                   const unsigned int                     group_files,
                   const MPI_Comm                        &mpi_communicator,
                   const unsigned int                     digits = 5);
+//  By changing the default digit value, you need to change the hard
+//  coded strings in Lethe_pyvista (__init__.py and write_df_to_vtu.py)
 
 /**
  * @brief Output the Data Out Faces to a single vtu file
