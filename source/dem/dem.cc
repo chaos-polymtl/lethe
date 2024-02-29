@@ -478,6 +478,7 @@ template <int dim>
 void
 DEMSolver<dim>::load_balance()
 {
+  TimerOutput::Scope t(this->computing_timer, "Load balancing");
   // Prepare particle handler for the adaptation of the triangulation to the
   // load
   particle_handler.prepare_for_coarsening_and_refinement();
@@ -990,6 +991,8 @@ template <int dim>
 void
 DEMSolver<dim>::write_output_results()
 {
+  TimerOutput::Scope t(this->computing_timer, "Output VTU");
+
   const std::string folder = parameters.simulation_control.output_folder;
   const std::string particles_solution_name =
     parameters.simulation_control.output_name;
