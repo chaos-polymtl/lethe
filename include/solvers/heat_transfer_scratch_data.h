@@ -54,10 +54,10 @@ using namespace dealii;
  * for a heat transfer advection-diffusion equation. Consequently, this class
  * calculates the heat transfer (values, gradients, laplacians) and the shape
  * function (values, gradients, laplacians) at all the gauss points for all
- * degrees of freedom and stores it into arrays. Additionnaly, the user can
+ * degrees of freedom and stores it into arrays. Additionally, the user can
  * request that this class gathers additional fields for physics which are
  * coupled to the heat transfer equation, such as the velocity which is
- * required. This class serves as a seperation between the evaluation at the
+ * required. This class serves as a separation between the evaluation at the
  * gauss point of the variables of interest and their use in the assembly, which
  * is carried out by the assembler methods. For more information on this
  * design, the reader can consult deal.II step-9
@@ -79,7 +79,7 @@ public:
    * @brief Constructor. The constructor creates the fe_values that will be used
    * to fill the member variables of the scratch. It also allocated the
    * necessary memory for all member variables. However, it does not do any
-   * evalution, since this needs to be done at the cell level.
+   * evaluation, since this needs to be done at the cell level.
    *
    * @param properties_manager The physical properties Manager (see physical_properties_manager.h)
    *
@@ -106,6 +106,8 @@ public:
                   quadrature,
                   update_values | update_quadrature_points | update_JxW_values |
                     update_gradients | update_hessians)
+    , velocities(0)
+    , pressure(dim)
     , fe_values_fd(mapping, fe_fd, quadrature, update_values | update_gradients)
     , fe_face_values_ht(mapping,
                         fe_ht,
@@ -134,6 +136,8 @@ public:
                   sd.fe_values_T.get_quadrature(),
                   update_values | update_quadrature_points | update_JxW_values |
                     update_gradients | update_hessians)
+    , velocities(0)
+    , pressure(dim)
     , fe_values_fd(sd.fe_values_fd.get_mapping(),
                    sd.fe_values_fd.get_fe(),
                    sd.fe_values_fd.get_quadrature(),
@@ -341,6 +345,29 @@ public:
       current_solution, velocity_gradient_values);
   }
 
+  /**
+   *@brief Reinitialize cell's pressure value with value calculated in the Fluid
+   * Dynamics (FD) physic.
+   *
+   * @tparam VectorType Type of vector used for storing fluid dynamics
+   * solutions.
+   *
+   * @param[in] cell The cell for which the pressure is reinitialized
+   * This cell must be compatible with the FD FiniteElement.
+   *
+   * @param[in] current_solution Solution vector from FD containing velocity
+   * components and pressure values.
+   */
+  template <typename VectorType>
+  void
+  reinit_pressure(const typename DoFHandler<dim>::active_cell_iterator &cell,
+                  const VectorType &current_solution)
+  {
+    this->fe_values_fd.reinit(cell);
+    this->fe_values_fd[pressure].get_function_values(current_solution,
+                                                     pressure_values);
+  }
+
 
   /**
    * @brief enable_vof Enables the collection of the VOF data by the scratch.
@@ -482,14 +509,17 @@ public:
   std::shared_ptr<VolumeOfFluidFilterBase> filter; // Phase fraction filter
 
   /**
-   * Scratch component for the Navier-Stokes component
+   * Scratch component for the Navier-Stokes components
    */
-  FEValuesExtractors::Vector velocities;
-  // This FEValues must mandatorily be instantiated for the velocity
+  const FEValuesExtractors::Vector velocities;
+  const FEValuesExtractors::Scalar pressure;
+  // This FEValues must be instantiated for the velocity
   FEValues<dim>               fe_values_fd;
   std::vector<Tensor<1, dim>> velocity_values;
   std::vector<Tensor<2, dim>> velocity_gradient_values;
   std::vector<double>         shear_rate_values;
+  /// Pressure field for physical property models requiring them
+  std::vector<double> pressure_values;
 
   // Scratch for the face boundary condition
   FEFaceValues<dim>                fe_face_values_ht;
