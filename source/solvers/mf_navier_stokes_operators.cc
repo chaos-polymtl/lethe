@@ -613,12 +613,12 @@ NavierStokesSUPGPSPGOperator<dim, number>::do_cell_integral_local(
         this->nonlinear_previous_hessian_diagonal(cell, q);
 
       // Calculate tau
-      VectorizedArray<number> u_mag = 1e-12;
+      VectorizedArray<number> u_mag_squared = 1e-12;
       for (unsigned int k = 0; k < dim; ++k)
-        u_mag += Utilities::fixed_power<2>(previous_values[k]);
+        u_mag_squared += Utilities::fixed_power<2>(previous_values[k]);
 
       const auto tau =
-        1. / std::sqrt(4. * u_mag / h / h +
+        1. / std::sqrt(4. * u_mag_squared / h / h +
                        9. * Utilities::fixed_power<2>(
                               4. * this->kinematic_viscosity / (h * h)));
 
@@ -741,12 +741,12 @@ NavierStokesSUPGPSPGOperator<dim, number>::local_evaluate_residual(
             integrator.get_hessian_diagonal(q);
 
           // Calculate tau
-          VectorizedArray<number> u_mag = 1e-12;
+          VectorizedArray<number> u_mag_squared = 1e-12;
           for (unsigned int k = 0; k < dim; ++k)
-            u_mag += Utilities::fixed_power<2>(value[k]);
+            u_mag_squared += Utilities::fixed_power<2>(value[k]);
 
           const auto tau =
-            1. / std::sqrt(4. * u_mag / h / h +
+            1. / std::sqrt(4. * u_mag_squared / h / h +
                            9. * Utilities::fixed_power<2>(
                                   4. * this->kinematic_viscosity / (h * h)));
 
@@ -887,14 +887,15 @@ NavierStokesTransientSUPGPSPGOperator<dim, number>::do_cell_integral_local(
         this->time_derivatives_previous_solutions(cell, q);
 
       // Calculate tau
-      VectorizedArray<number> u_mag = 1e-12;
+      VectorizedArray<number> u_mag_squared = 1e-12;
       for (unsigned int k = 0; k < dim; ++k)
-        u_mag += Utilities::fixed_power<2>(previous_values[k]);
+        u_mag_squared += Utilities::fixed_power<2>(previous_values[k]);
 
       const auto tau =
-        1. / std::sqrt(Utilities::fixed_power<2>(sdt) + 4. * u_mag / h / h +
-                       9. * Utilities::fixed_power<2>(
-                              4. * this->kinematic_viscosity / (h * h)));
+        1. /
+        std::sqrt(Utilities::fixed_power<2>(sdt) + 4. * u_mag_squared / h / h +
+                  9. * Utilities::fixed_power<2>(
+                         4. * this->kinematic_viscosity / (h * h)));
 
       // Weak form Jacobian
       for (unsigned int i = 0; i < dim; ++i)
@@ -1034,12 +1035,13 @@ NavierStokesTransientSUPGPSPGOperator<dim, number>::local_evaluate_residual(
             this->time_derivatives_previous_solutions(cell, q);
 
           // Calculate tau
-          VectorizedArray<number> u_mag = 1e-12;
+          VectorizedArray<number> u_mag_squared = 1e-12;
           for (unsigned int k = 0; k < dim; ++k)
-            u_mag += Utilities::fixed_power<2>(value[k]);
+            u_mag_squared += Utilities::fixed_power<2>(value[k]);
 
           const auto tau =
-            1. / std::sqrt(Utilities::fixed_power<2>(sdt) + 4. * u_mag / h / h +
+            1. / std::sqrt(Utilities::fixed_power<2>(sdt) +
+                           4. * u_mag_squared / h / h +
                            9. * Utilities::fixed_power<2>(
                                   4. * this->kinematic_viscosity / (h * h)));
 
@@ -1176,16 +1178,16 @@ NavierStokesGLSOperator<dim, number>::do_cell_integral_local(
         this->nonlinear_previous_hessian_diagonal(cell, q);
 
       // Calculate tau
-      VectorizedArray<number> u_mag = 1e-12;
+      VectorizedArray<number> u_mag_squared = 1e-12;
       for (unsigned int k = 0; k < dim; ++k)
-        u_mag += Utilities::fixed_power<2>(previous_values[k]);
+        u_mag_squared += Utilities::fixed_power<2>(previous_values[k]);
 
       const auto tau =
-        1. / std::sqrt(4. * u_mag / h / h +
+        1. / std::sqrt(4. * u_mag_squared / h / h +
                        9. * Utilities::fixed_power<2>(
                               4. * this->kinematic_viscosity / (h * h)));
 
-      const auto tau_lsic = u_mag * h * 0.5;
+      const auto tau_lsic = std::sqrt(u_mag_squared) * h * 0.5;
 
       // Weak form Jacobian
       for (unsigned int i = 0; i < dim; ++i)
@@ -1336,16 +1338,16 @@ NavierStokesGLSOperator<dim, number>::local_evaluate_residual(
             integrator.get_hessian_diagonal(q);
 
           // Calculate tau
-          VectorizedArray<number> u_mag = 1e-12;
+          VectorizedArray<number> u_mag_squared = 1e-12;
           for (unsigned int k = 0; k < dim; ++k)
-            u_mag += Utilities::fixed_power<2>(value[k]);
+            u_mag_squared += Utilities::fixed_power<2>(value[k]);
 
           const auto tau =
-            1. / std::sqrt(4. * u_mag / h / h +
+            1. / std::sqrt(4. * u_mag_squared / h / h +
                            9. * Utilities::fixed_power<2>(
                                   4. * this->kinematic_viscosity / (h * h)));
 
-          const auto tau_lsic = u_mag * h * 0.5;
+          const auto tau_lsic = std::sqrt(u_mag_squared) * h * 0.5;
 
           // Result value/gradient we will use
           typename FECellIntegrator::value_type    value_result;
@@ -1515,16 +1517,17 @@ NavierStokesTransientGLSOperator<dim, number>::do_cell_integral_local(
         this->time_derivatives_previous_solutions(cell, q);
 
       // Calculate tau
-      VectorizedArray<number> u_mag = 1e-12;
+      VectorizedArray<number> u_mag_squared = 1e-12;
       for (unsigned int k = 0; k < dim; ++k)
-        u_mag += Utilities::fixed_power<2>(previous_values[k]);
+        u_mag_squared += Utilities::fixed_power<2>(previous_values[k]);
 
       const auto tau =
-        1. / std::sqrt(Utilities::fixed_power<2>(sdt) + 4. * u_mag / h / h +
-                       9. * Utilities::fixed_power<2>(
-                              4. * this->kinematic_viscosity / (h * h)));
+        1. /
+        std::sqrt(Utilities::fixed_power<2>(sdt) + 4. * u_mag_squared / h / h +
+                  9. * Utilities::fixed_power<2>(
+                         4. * this->kinematic_viscosity / (h * h)));
 
-      const auto tau_lsic = u_mag * h * 0.5;
+      const auto tau_lsic = std::sqrt(u_mag_squared) * h * 0.5;
 
       // Weak form Jacobian
       for (unsigned int i = 0; i < dim; ++i)
@@ -1694,16 +1697,17 @@ NavierStokesTransientGLSOperator<dim, number>::local_evaluate_residual(
             this->time_derivatives_previous_solutions(cell, q);
 
           // Calculate tau
-          VectorizedArray<number> u_mag = 1e-12;
+          VectorizedArray<number> u_mag_squared = 1e-12;
           for (unsigned int k = 0; k < dim; ++k)
-            u_mag += Utilities::fixed_power<2>(value[k]);
+            u_mag_squared += Utilities::fixed_power<2>(value[k]);
 
           const auto tau =
-            1. / std::sqrt(Utilities::fixed_power<2>(sdt) + 4. * u_mag / h / h +
+            1. / std::sqrt(Utilities::fixed_power<2>(sdt) +
+                           4. * u_mag_squared / h / h +
                            9. * Utilities::fixed_power<2>(
                                   4. * this->kinematic_viscosity / (h * h)));
 
-          const auto tau_lsic = u_mag * h * 0.5;
+          const auto tau_lsic = std::sqrt(u_mag_squared) * h * 0.5;
 
           // Result value/gradient we will use
           typename FECellIntegrator::value_type    value_result;
