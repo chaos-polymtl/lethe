@@ -284,29 +284,39 @@ public:
       }
   }
 
-  /** @brief Reinitialize the velocity, calculated by the fluid dynamics while also taking into account ALE
+  /**
+   * @brief Reinitialize cell's velocity and pressure values with values
+   * calculated in the Fluid Dynamics (FD) physic while also taking into account
+   * ALE for the velocity.
    *
-   * @tparam VectorType The Vector type used for the solvers
+   * @tparam VectorType Type of vector used for storing fluid dynamics
+   * solutions.
    *
-   * @param cell The cell for which the velocity is reinitialized
-   * This cell must be compatible with the Fluid Dynamics FE
+   * @param[in] cell Pointer to an active cell for which the velocity and
+   * pressure are reinitialized.This cell must be compatible with the FD
+   * FiniteElement.
    *
-   * @param current_solution The present value of the solution for [u,p]
+   * @param[in] current_solution Solution vector from FD containing velocity
+   * components and pressure values.
    *
-   * @param ale The ALE parameters which include the ALE function
+   * @param[in] ale The ALE parameters which include the ALE function
    *
    */
 
   template <typename VectorType>
   void
-  reinit_velocity(const typename DoFHandler<dim>::active_cell_iterator &cell,
-                  const VectorType           &current_solution,
-                  const Parameters::ALE<dim> &ale)
+  reinit_fluid_dynamics(
+    const typename DoFHandler<dim>::active_cell_iterator &cell,
+    const VectorType                                     &current_solution,
+    const Parameters::ALE<dim>                           &ale)
   {
     this->fe_values_fd.reinit(cell);
 
     this->fe_values_fd[velocities].get_function_values(current_solution,
                                                        velocity_values);
+    if (!this->properties_manager.density_is_constant())
+      this->fe_values_fd[pressure].get_function_values(current_solution,
+                                                       pressure_values);
 
     if (!ale.enabled())
       return;
@@ -344,30 +354,6 @@ public:
     this->fe_values_fd[velocities].get_function_gradients(
       current_solution, velocity_gradient_values);
   }
-
-  /**
-   *@brief Reinitialize cell's pressure value with value calculated in the Fluid
-   * Dynamics (FD) physic.
-   *
-   * @tparam VectorType Type of vector used for storing fluid dynamics
-   * solutions.
-   *
-   * @param[in] cell The cell for which the pressure is reinitialized
-   * This cell must be compatible with the FD FiniteElement.
-   *
-   * @param[in] current_solution Solution vector from FD containing velocity
-   * components and pressure values.
-   */
-  template <typename VectorType>
-  void
-  reinit_pressure(const typename DoFHandler<dim>::active_cell_iterator &cell,
-                  const VectorType &current_solution)
-  {
-    this->fe_values_fd.reinit(cell);
-    this->fe_values_fd[pressure].get_function_values(current_solution,
-                                                     pressure_values);
-  }
-
 
   /**
    * @brief enable_vof Enables the collection of the VOF data by the scratch.
