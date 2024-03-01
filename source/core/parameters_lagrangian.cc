@@ -285,7 +285,7 @@ namespace Parameters
       {
         prm.declare_entry("insertion method",
                           "volume",
-                          Patterns::Selection("volume|list|plane"),
+                          Patterns::Selection("volume|list|from_file|plane"),
                           "Choosing insertion method. "
                           "Choices are <volume|list|plane>.");
         prm.declare_entry("inserted number of particles at each time step",
@@ -410,6 +410,10 @@ namespace Parameters
                           "0.0",
                           Patterns::Double(),
                           "Initial omega z");
+        prm.declare_entry("particles file",
+                          "particle.input",
+                          Patterns::FileName(),
+                          "The file name from which we load the particles");
         prm.declare_entry("insertion plane point",
                           "0., 0., 0.",
                           Patterns::List(Patterns::Double()),
@@ -554,6 +558,9 @@ namespace Parameters
 
         // Convert the diameters string vector to a double vector
         list_d = Utilities::string_to_double(d_str_list);
+
+        // File for the insertion
+        insertion_particles_file = prm.get("particles file");
 
         // Insertion plane normal vector
         insertion_plane_normal_vector =

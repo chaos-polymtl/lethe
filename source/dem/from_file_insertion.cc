@@ -1,19 +1,12 @@
-#include <dem/list_insertion.h>
+#include <core/utilities.h>
+
+#include <dem/from_file_insertion.h>
+
 
 using namespace DEM;
 
-DeclException2(DiameterSizeCoherence,
-               int,
-               int,
-               << "Incoherent particle diameter lists: list x has " << arg1
-               << " element(s) and list d has " << arg2 << " element(s).");
-
-/* @brief The constructor of list insertion class does not accomplish anything other
- * than check if the position list are of the coherent size and to
- * create the insertion_points member
- */
 template <int dim>
-ListInsertion<dim>::ListInsertion(
+FromFileInsertion<dim>::FromFileInsertion(
   const DEMSolverParameters<dim> &dem_parameters,
   const std::vector<std::shared_ptr<Distribution>>
     &distribution_object_container)
@@ -24,65 +17,18 @@ ListInsertion<dim>::ListInsertion(
   // Initializing current inserting particle type
   current_inserting_particle_type = 0;
 
-  const std::vector<double> &list_x  = dem_parameters.insertion_info.list_x;
-  const std::vector<double> &list_y  = dem_parameters.insertion_info.list_y;
-  const std::vector<double> &list_z  = dem_parameters.insertion_info.list_z;
-  const std::vector<double> &list_vx = dem_parameters.insertion_info.list_vx;
-  const std::vector<double> &list_vy = dem_parameters.insertion_info.list_vy;
-  const std::vector<double> &list_vz = dem_parameters.insertion_info.list_vz;
-  const std::vector<double> &list_wx = dem_parameters.insertion_info.list_wx;
-  const std::vector<double> &list_wy = dem_parameters.insertion_info.list_wy;
-  const std::vector<double> &list_wz = dem_parameters.insertion_info.list_wz;
-  std::vector<double>        list_d  = dem_parameters.insertion_info.list_d;
-
-  // If the default diameter is negative, the diameter list is resized to the
-  // number of particles and assigned the average particle diameter to all
-  // particles
-  if (list_d[0] < 0)
-    {
-      double particle_average_diameter =
-        dem_parameters.lagrangian_physical_properties.particle_average_diameter
-          .at(current_inserting_particle_type);
-      list_d.assign(list_x.size(), particle_average_diameter);
-    }
-
-  // Throw an error if the number diameter provided is not coherent with the
-  // number of particles.
-  AssertThrow(list_x.size() == list_d.size(),
-              DiameterSizeCoherence(list_x.size(), list_d.size()));
-
-  // Generate vector of insertion position
-  for (unsigned int i = 0; i < list_x.size(); ++i)
-    {
-      if constexpr (dim == 2)
-        {
-          insertion_points.emplace_back(Point<dim>({list_x[i], list_y[i]}));
-          velocities.emplace_back(Tensor<1, 3>({list_vx[i], list_vy[i], 0.}));
-          angular_velocities.emplace_back(Tensor<1, 3>({0., 0., list_wz[i]}));
-        }
-      if constexpr (dim == 3)
-        {
-          insertion_points.emplace_back(
-            Point<dim>({list_x[i], list_y[i], list_z[i]}));
-          velocities.emplace_back(
-            Tensor<1, 3>({list_vx[i], list_vy[i], list_vz[i]}));
-          angular_velocities.emplace_back(
-            Tensor<1, 3>({list_wx[i], list_wy[i], list_wz[i]}));
-        }
-    }
-  diameters = list_d;
+  file_name = dem_parameters.insertion_info.insertion_particles_file;
 }
 
 // The main insertion function. Insert_global_function is used to insert the
 // particles
 template <int dim>
 void
-ListInsertion<dim>::insert(
+FromFileInsertion<dim>::insert(
   Particles::ParticleHandler<dim>                 &particle_handler,
   const parallel::distributed::Triangulation<dim> &triangulation,
   const DEMSolverParameters<dim>                  &dem_parameters)
 {
-  // TODO refactor into a function call
   if (remaining_particles_of_each_type == 0 &&
       current_inserting_particle_type !=
         dem_parameters.lagrangian_physical_properties.particle_type_number - 1)
@@ -92,13 +38,22 @@ ListInsertion<dim>::insert(
           ++current_inserting_particle_type);
     }
 
+
   if (remaining_particles_of_each_type > 0)
     {
-      unsigned int n_total_particles_to_insert = insertion_points.size();
+      // Read the input file
+      std::map<std::string, std::vector<double>> particles_data;
+      fill_vectors_from_file(particles_data, this->file_name, ";");
+
+      // Number of particles in the file
+      unsigned int n_total_particles_to_insert = particles_data["p_x"].size();
+
+      // Adjusting the value in case we exceed the maximum number of particle in
+      // the simulation.
       n_total_particles_to_insert =
         std::min(remaining_particles_of_each_type, n_total_particles_to_insert);
 
-      // All processors except 0 will not insert particles
+      // Processors 0 will be the only one inserting particles
       MPI_Comm communicator = triangulation.get_communicator();
       auto this_mpi_process = Utilities::MPI::this_mpi_process(communicator);
       const unsigned int n_particles_to_insert_this_proc =
@@ -108,14 +63,23 @@ ListInsertion<dim>::insert(
       insertion_points_on_proc_this_step.reserve(
         n_particles_to_insert_this_proc);
 
-      // Because the list insertion is made to insert only a few particles
-      // only processor 0 manages the insertion of these particles
       if (this_mpi_process == 0)
         {
           for (unsigned int p = 0; p < n_particles_to_insert_this_proc; ++p)
             {
-              insertion_points_on_proc_this_step.emplace_back(
-                insertion_points[p]);
+              if constexpr (dim == 2)
+                {
+                  insertion_points_on_proc_this_step.emplace_back(Point<dim>(
+                    {particles_data["p_x"][p], particles_data["p_y"][p]}))
+                }
+
+              if constexpr (dim == 3)
+                {
+                  insertion_points_on_proc_this_step.emplace_back(
+                    Point<dim>({particles_data["p_x"][p],
+                                particles_data["p_y"][p],
+                                particles_data["p_z"][p]}))
+                }
             }
         }
 
@@ -126,15 +90,16 @@ ListInsertion<dim>::insert(
       const auto global_bounding_boxes =
         Utilities::MPI::all_gather(communicator, my_bounding_box);
 
-      // A vector of vectors, which contains all the properties of all inserted
-      // particles at each insertion step
+      // A vector of vectors, which contains all the properties of all particles
+      // about to get inserted
       std::vector<std::vector<double>> particle_properties;
 
       // Assign inserted particles properties
-      this->assign_particle_properties_for_list_insertion(
+      this->assign_particle_properties_for_from_file_insertion(
         dem_parameters,
         n_particles_to_insert_this_proc,
         current_inserting_particle_type,
+        particles_data,
         particle_properties);
 
       // Insert the particles using the points and assigned properties
@@ -158,17 +123,17 @@ ListInsertion<dim>::insert(
 
 template <int dim>
 void
-ListInsertion<dim>::assign_particle_properties_for_list_insertion(
-  const DEMSolverParameters<dim>   &dem_parameters,
-  const unsigned int               &inserted_this_step_this_proc,
-  const unsigned int               &current_inserting_particle_type,
-  std::vector<std::vector<double>> &particle_properties)
+FromFileInsertion<dim>::assign_particle_properties_for_from_file_insertion(
+  const DEMSolverParameters<dim> &dem_parameters,
+  const unsigned int             &inserted_this_step_this_proc,
+  const unsigned int             &current_inserting_particle_type,
+  const std::map<std::string, std::vector<double>> &particles_data,
+  std::vector<std::vector<double>>                 &particle_properties)
 {
   // Clearing and resizing particle_properties
   particle_properties.reserve(inserted_this_step_this_proc);
 
   // Getting properties as local parameters
-  // TODO: MAYBE CHANGE THE INPUT TO PHYSICAL PROPERTIES DIRECTLY
   auto physical_properties = dem_parameters.lagrangian_physical_properties;
 
   // A loop is defined over the number of particles which are going to be
@@ -178,15 +143,15 @@ ListInsertion<dim>::assign_particle_properties_for_list_insertion(
        ++particle_counter)
     {
       double type     = current_inserting_particle_type;
-      double diameter = this->diameters[particle_counter];
+      double diameter = particles_data["diameter"][particle_counter];
       double density =
         physical_properties.density_particle[current_inserting_particle_type];
-      double vel_x        = this->velocities[particle_counter][0];
-      double vel_y        = this->velocities[particle_counter][1];
-      double vel_z        = this->velocities[particle_counter][2];
-      double omega_x      = this->angular_velocities[particle_counter][0];
-      double omega_y      = this->angular_velocities[particle_counter][1];
-      double omega_z      = this->angular_velocities[particle_counter][2];
+      double vel_x        = particles_data["v_x"][particle_counter];
+      double vel_y        = particles_data["v_y"][particle_counter];
+      double vel_z        = particles_data["v_z"][particle_counter];
+      double omega_x      = particles_data["w_x"][particle_counter];
+      double omega_y      = particles_data["w_y"][particle_counter];
+      double omega_z      = particles_data["w_z"][particle_counter];
       double fem_force_x  = 0.;
       double fem_force_y  = 0.;
       double fem_force_z  = 0.;
@@ -220,5 +185,5 @@ ListInsertion<dim>::assign_particle_properties_for_list_insertion(
 }
 
 
-template class ListInsertion<2>;
-template class ListInsertion<3>;
+template class FromFileInsertion<2>;
+template class FromFileInsertion<3>;
