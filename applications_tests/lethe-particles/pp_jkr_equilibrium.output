@@ -12,20 +12,12 @@ This feature is useful in geometries with concave boundaries.
 *********************************************************************
 2 particles of type 0 were inserted, 0 particles of type 0 remaining
 *********************************************************************
--->Repartitionning triangulation
-Load balance finished
-Average, minimum and maximum number of particles on the processors are 2 , 2 and 2
-Minimum and maximum number of cells owned by the processors are 4096 and 4096
--->Repartitionning triangulation
-Load balance finished
-Average, minimum and maximum number of particles on the processors are 2 , 2 and 2
-Minimum and maximum number of cells owned by the processors are 4096 and 4096
 
 *****************************************************************
 Transient iteration: 175000   Time: 1.75     Time step: 1e-05
 *****************************************************************
 | Variable                     | Min        | Max         | Average    | Total      |
-| Contact list generation      | 0.0000e+00 | 1.9000e+01  | 1.9000e+01 | 1.9000e+01 |
+| Contact list generation      | 0.0000e+00 | 1.8000e+01  | 1.8000e+01 | 1.8000e+01 |
 | Velocity magnitude           | 4.1322e-04 | 5.8678e-04  | 5.0000e-04 | 1.0000e-03 |
 | Angular velocity magnitude   | 0.0000e+00 | 2.2251e-308 | 0.0000e+00 | 0.0000e+00 |
 | Translational kinetic energy | 9.2979e-07 | 1.8749e-06  | 1.4024e-06 | 2.8047e-06 |

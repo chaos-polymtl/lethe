@@ -68,9 +68,9 @@ The normal and tangential overlaps are calculated as follow:
     \mathbf{\delta}_{ij}^{t,\text{new}} &= \mathbf{\delta}_{ij}^{t,\text{old}}+\mathbf{v}_{rt}dt
 
 ~~~~~~~~~~~~~~~~~~~~~
-Relative velocities
+Relative Velocities
 ~~~~~~~~~~~~~~~~~~~~~
-The relative velocities are calculated to update the tangential overlap :
+The relative velocities are calculated to update the tangential overlap:
 
 .. math::
     \mathbf{v}_{ij} &= \mathbf{v}_i-\mathbf{v}_j+\left(R_i\mathbf{\omega}_i+R_j\mathbf{\omega}_j\right)\times\mathbf{n}_{ij}
@@ -81,9 +81,9 @@ The relative velocities are calculated to update the tangential overlap :
 Spring and damping constants
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The spring and damping constants for the linear and nonlinear viscoelastic models are calculated as follow:
+The spring and damping constants for the linear and nonlinear viscoelastic models are calculated as follows:
 
-.. list-table:: Spring and Damping Models used in Lethe.
+.. list-table:: Spring and damping Models used in Lethe.
    :widths: 40 30 30
    :header-rows: 1
 
@@ -112,7 +112,7 @@ Where:
 * :math:`e` coefficient of restitution;
 * :math:`G_e` effective shear modulus;
 
-Theses parameters are computed as follow:
+These parameters are computed as follows:
 
 .. math::
     \frac{1}{m_{e}} &= \frac{1}{m_i}+\frac{1}{m_j} \\
@@ -131,23 +131,23 @@ Where:
 Coulomb's limit
 ~~~~~~~~~~~~~~~~~~~~
 
-Coulomb's criterion is violated when the following condition is not respected during a collision:
+Coulomb's criterion is breached when the following condition is broken during a collision:
 
 .. math::
     |\mathbf{F}_{ij}^{t}| \geq \mu |\mathbf{F}_{ij}^{n}|
 
 
-A violation means the collision is having gross sliding and tangential force needs to be limited to the Coulomb limit.
+A breach means the collision is having gross sliding and tangential force needs to be limited to the Coulomb limit.
 To do so, the tangential overlap :math:`\mathbf{\delta_t}` is first limited and then the tangential force is recalculated.
 
-The tangential overlap is calculated with the tangential force with no damping force as default nonlinear contact model as follow:
+The tangential overlap is computed from tangential force without damping force when using nonlinear viscoelastic contact model:
 
 .. math::
     \mathbf{\delta_t} &= \frac{\mathbf{\tilde{F}_{ij}}}{-k_{t}} \\
     \mathbf{\tilde{F}_{ij}} &= \mathbf{\hat{F}_{ij}} + \eta_{t}\mathbf{v}_{rt} \\
     \mathbf{\hat{F}_{ij}^{t}} &= \mu |\mathbf{F}_{ij}^{n}| \frac{\mathbf{F}_{ij}^{t}}{|\mathbf{F}_{ij}^{t}|}
 
-Regarding the particle-wall contacts, applied models are the same than particle-particle contacts with a background triangulation and mapping with walls.
+Regarding the particle-wall contacts, the models applied are the same as particle-particle contacts with a background triangulation and mapping with walls.
 
 .. note::
     When using a cohesive force models, Coulomb's criterion need to be adjusted, since the normal contact force isn't equal to the total normal force between particle in a collision.
