@@ -61,30 +61,13 @@ MFNavierStokesSolver<dim>::MFNavierStokesSolver(
 
   this->fe = std::make_shared<FESystem<dim>>(
     FE_Q<dim>(nsparam.fem_parameters.velocity_order), dim + 1);
-  if ((nsparam.stabilization.use_default_stabilization == true) ||
-      nsparam.stabilization.stabilization ==
-        Parameters::Stabilization::NavierStokesStabilization::pspg_supg)
-    {
-      if (is_bdf(this->simulation_control->get_assembly_method()))
-        system_operator = std::make_shared<
-          NavierStokesTransientSUPGPSPGOperator<dim, double>>();
-      else
-        system_operator =
-          std::make_shared<NavierStokesSUPGPSPGOperator<dim, double>>();
-    }
-  else if (nsparam.stabilization.stabilization ==
-           Parameters::Stabilization::NavierStokesStabilization::gls)
-    {
-      if (is_bdf(this->simulation_control->get_assembly_method()))
-        system_operator =
-          std::make_shared<NavierStokesTransientGLSOperator<dim, double>>();
-      else
-        system_operator =
-          std::make_shared<NavierStokesGLSOperator<dim, double>>();
-    }
+
+  if (is_bdf(this->simulation_control->get_assembly_method()))
+    system_operator =
+      std::make_shared<NavierStokesTransientOperator<dim, double>>();
   else
-    throw std::runtime_error(
-      "Only SUPG/PSPG and GLS stabilization is supported at the moment.");
+    system_operator =
+      std::make_shared<NavierStokesSteadyOperator<dim, double>>();
 }
 
 template <int dim>
@@ -211,6 +194,7 @@ MFNavierStokesSolver<dim>::setup_dofs_fd()
     &(*this->forcing_function),
     this->simulation_parameters.physical_properties_manager
       .get_kinematic_viscosity_scale(),
+    this->simulation_parameters.stabilization.stabilization,
     mg_level,
     this->simulation_control);
 
@@ -682,18 +666,12 @@ MFNavierStokesSolver<dim>::solve_with_LSMG(SolverGMRES<VectorType> &solver)
 
       this->mg_computing_timer.enter_subsection("Set up operators");
 
-      if ((this->simulation_parameters.stabilization
-             .use_default_stabilization == true) ||
-          this->simulation_parameters.stabilization.stabilization ==
-            Parameters::Stabilization::NavierStokesStabilization::pspg_supg)
-        {
-          if (is_bdf(this->simulation_control->get_assembly_method()))
-            mg_operators[level] = std::make_shared<
-              NavierStokesTransientSUPGPSPGOperator<dim, double>>();
-          else
-            mg_operators[level] =
-              std::make_shared<NavierStokesSUPGPSPGOperator<dim, double>>();
-        }
+      if (is_bdf(this->simulation_control->get_assembly_method()))
+        mg_operators[level] =
+          std::make_shared<NavierStokesTransientOperator<dim, double>>();
+      else
+        mg_operators[level] =
+          std::make_shared<NavierStokesSteadyOperator<dim, double>>();
 
       mg_operators[level]->reinit(
         *this->mapping,
@@ -703,6 +681,7 @@ MFNavierStokesSolver<dim>::solve_with_LSMG(SolverGMRES<VectorType> &solver)
         &(*this->forcing_function),
         this->simulation_parameters.physical_properties_manager
           .get_kinematic_viscosity_scale(),
+        this->simulation_parameters.stabilization.stabilization,
         level,
         this->simulation_control);
 
@@ -1200,18 +1179,12 @@ MFNavierStokesSolver<dim>::solve_with_GCMG(SolverGMRES<VectorType> &solver)
 
       this->mg_computing_timer.enter_subsection("Set up operators");
 
-      if ((this->simulation_parameters.stabilization
-             .use_default_stabilization == true) ||
-          this->simulation_parameters.stabilization.stabilization ==
-            Parameters::Stabilization::NavierStokesStabilization::pspg_supg)
-        {
-          if (is_bdf(this->simulation_control->get_assembly_method()))
-            mg_operators[level] = std::make_shared<
-              NavierStokesTransientSUPGPSPGOperator<dim, double>>();
-          else
-            mg_operators[level] =
-              std::make_shared<NavierStokesSUPGPSPGOperator<dim, double>>();
-        }
+      if (is_bdf(this->simulation_control->get_assembly_method()))
+        mg_operators[level] =
+          std::make_shared<NavierStokesTransientOperator<dim, double>>();
+      else
+        mg_operators[level] =
+          std::make_shared<NavierStokesSteadyOperator<dim, double>>();
 
       mg_operators[level]->reinit(
         *this->mapping,
@@ -1221,6 +1194,7 @@ MFNavierStokesSolver<dim>::solve_with_GCMG(SolverGMRES<VectorType> &solver)
         &(*this->forcing_function),
         this->simulation_parameters.physical_properties_manager
           .get_kinematic_viscosity_scale(),
+        this->simulation_parameters.stabilization.stabilization,
         numbers::invalid_unsigned_int,
         this->simulation_control);
 

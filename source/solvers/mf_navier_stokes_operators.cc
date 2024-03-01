@@ -79,6 +79,7 @@ NavierStokesOperatorBase<dim, number>::NavierStokesOperatorBase(
   const Quadrature<dim>             &quadrature,
   const Function<dim>               *forcing_function,
   const double                       kinematic_viscosity,
+  const StabilizationType            stabilization,
   const unsigned int                 mg_level,
   std::shared_ptr<SimulationControl> simulation_control)
 {
@@ -88,6 +89,7 @@ NavierStokesOperatorBase<dim, number>::NavierStokesOperatorBase(
                quadrature,
                forcing_function,
                kinematic_viscosity,
+               stabilization,
                mg_level,
                simulation_control);
 }
@@ -101,6 +103,7 @@ NavierStokesOperatorBase<dim, number>::reinit(
   const Quadrature<dim>             &quadrature,
   const Function<dim>               *forcing_function,
   const double                       kinematic_viscosity,
+  const StabilizationType            stabilization,
   const unsigned int                 mg_level,
   std::shared_ptr<SimulationControl> simulation_control)
 {
@@ -121,6 +124,17 @@ NavierStokesOperatorBase<dim, number>::reinit(
   this->forcing_function = forcing_function;
 
   this->kinematic_viscosity = kinematic_viscosity;
+
+  if (stabilization ==
+        Parameters::Stabilization::NavierStokesStabilization::pspg_supg ||
+      stabilization ==
+        Parameters::Stabilization::NavierStokesStabilization::gls)
+    {
+      this->stabilization = stabilization;
+    }
+  else
+    throw std::runtime_error(
+      "Only SUPG/PSPG and GLS stabilization is supported at the moment.");
 
   this->simulation_control = simulation_control;
 
@@ -562,584 +576,23 @@ template class NavierStokesOperatorBase<2, double>;
 template class NavierStokesOperatorBase<3, double>;
 
 template <int dim, typename number>
-NavierStokesSUPGPSPGOperator<dim, number>::NavierStokesSUPGPSPGOperator() =
-  default;
+NavierStokesSteadyOperator<dim, number>::NavierStokesSteadyOperator() = default;
 
 /**
  * The expressions calculated in this cell integral are:
  * (q,∇δu) + (v,(u·∇)δu) + (v,(δu·∇)u) - (∇·v,δp) + ν(∇v,∇δu) (Weak form
- * Jacobian)
+ * Jacobian),
+ * plus three additional terms in the case of SUPG-PSPG stabilization:
  * \+ ((u·∇)δu + (δu·∇)u + ∇δp - ν∆δu)τ·∇q (PSPG Jacobian)
  * \+ ((u·∇)δu + (δu·∇)u + ∇δp - ν∆δu)τu·∇v (SUPG Jacobian Part 1)
- * \+ ((u·∇)u + ∇p - ν∆u - f )τδu·∇v (SUPG Jacobian Part 2).
- */
-template <int dim, typename number>
-void
-NavierStokesSUPGPSPGOperator<dim, number>::do_cell_integral_local(
-  FECellIntegrator &integrator) const
-{
-  integrator.evaluate(EvaluationFlags::values | EvaluationFlags::gradients |
-                      EvaluationFlags::hessians);
-
-  const unsigned int cell = integrator.get_current_cell_index();
-
-  const auto h = integrator.read_cell_data(this->get_element_size());
-
-  for (const auto q : integrator.quadrature_point_indices())
-    {
-      // Evaluate source term function
-      Tensor<1, dim + 1, VectorizedArray<number>> source_value;
-      Point<dim, VectorizedArray<number>>         point_batch =
-        integrator.quadrature_point(q);
-      source_value =
-        evaluate_function<dim, number, dim + 1>(*(this->forcing_function),
-                                                point_batch);
-
-      // Gather the original value/gradient
-      typename FECellIntegrator::value_type    value = integrator.get_value(q);
-      typename FECellIntegrator::gradient_type gradient =
-        integrator.get_gradient(q);
-      typename FECellIntegrator::gradient_type hessian_diagonal =
-        integrator.get_hessian_diagonal(q);
-
-      // Result value/gradient we will use
-      typename FECellIntegrator::value_type    value_result;
-      typename FECellIntegrator::gradient_type gradient_result;
-
-      // Gather previous values of the velocity and the pressure
-      auto previous_values   = this->nonlinear_previous_values(cell, q);
-      auto previous_gradient = this->nonlinear_previous_gradient(cell, q);
-      auto previous_hessian_diagonal =
-        this->nonlinear_previous_hessian_diagonal(cell, q);
-
-      // Calculate tau
-      VectorizedArray<number> u_mag_squared = 1e-12;
-      for (unsigned int k = 0; k < dim; ++k)
-        u_mag_squared += Utilities::fixed_power<2>(previous_values[k]);
-
-      const auto tau =
-        1. / std::sqrt(4. * u_mag_squared / h / h +
-                       9. * Utilities::fixed_power<2>(
-                              4. * this->kinematic_viscosity / (h * h)));
-
-      // Weak form Jacobian
-      for (unsigned int i = 0; i < dim; ++i)
-        {
-          // ν(∇v,∇δu)
-          gradient_result[i] = this->kinematic_viscosity * gradient[i];
-          // -(∇·v,δp)
-          gradient_result[i][i] += -value[dim];
-          // +(q,∇δu)
-          value_result[dim] += gradient[i][i];
-
-          for (unsigned int k = 0; k < dim; ++k)
-            {
-              // +(v,(u·∇)δu + (δu·∇)u)
-              value_result[i] += gradient[i][k] * previous_values[k] +
-                                 previous_gradient[i][k] * value[k];
-            }
-        }
-
-      // PSPG Jacobian
-      for (unsigned int i = 0; i < dim; ++i)
-        {
-          for (unsigned int k = 0; k < dim; ++k)
-            {
-              // (-ν∆δu + (u·∇)δu + (δu·∇)u)·τ∇q
-              gradient_result[dim][i] +=
-                tau * (-this->kinematic_viscosity * hessian_diagonal[i][k] +
-                       gradient[i][k] * previous_values[k] +
-                       previous_gradient[i][k] * value[k]);
-            }
-        }
-      // (∇δp)τ·∇q
-      gradient_result[dim] += tau * gradient[dim];
-
-      // SUPG Jacobian
-      for (unsigned int i = 0; i < dim; ++i)
-        {
-          for (unsigned int k = 0; k < dim; ++k)
-            {
-              // Part 1
-              for (unsigned int l = 0; l < dim; ++l)
-                {
-                  // +((u·∇)δu + (δu·∇)u - ν∆δu)τ(u·∇)v
-                  gradient_result[i][k] +=
-                    tau * previous_values[k] *
-                    (gradient[i][l] * previous_values[l] +
-                     previous_gradient[i][l] * value[l] -
-                     this->kinematic_viscosity * hessian_diagonal[i][l]);
-                }
-
-              // +(∇δp)τ(u·∇)v
-              gradient_result[i][k] +=
-                tau * previous_values[k] * gradient[dim][i];
-
-              // Part 2
-              for (unsigned int l = 0; l < dim; ++l)
-                {
-                  // +((u·∇)u -ν∆u)τ(δu·∇)v
-                  gradient_result[i][k] +=
-                    tau * value[k] *
-                    (previous_gradient[i][l] * previous_values[l] -
-                     this->kinematic_viscosity *
-                       previous_hessian_diagonal[i][l]);
-                }
-              // +(∇p - f)τ(δu·∇)v
-              gradient_result[i][k] +=
-                tau * value[k] * (previous_gradient[dim][i] - source_value[i]);
-            }
-        }
-
-      integrator.submit_gradient(gradient_result, q);
-      integrator.submit_value(value_result, q);
-    }
-
-  integrator.integrate(EvaluationFlags::values | EvaluationFlags::gradients);
-}
-
-/**
- * The expressions calculated in this cell integral are:
- * (q, ∇·u) + (v,(u·∇)u) - (∇·v,p) + ν(∇v,∇u) - (v,f) (Weak form)
- * \+ ((u·∇)u + ∇p - ν∆u - f)τ∇·q (PSPG term)
- * \+ ((u·∇)u + ∇p - ν∆u - f)τu·∇v (SUPG term).
- */
-template <int dim, typename number>
-void
-NavierStokesSUPGPSPGOperator<dim, number>::local_evaluate_residual(
-  const MatrixFree<dim, number>               &matrix_free,
-  VectorType                                  &dst,
-  const VectorType                            &src,
-  const std::pair<unsigned int, unsigned int> &range) const
-{
-  FECellIntegrator integrator(matrix_free);
-
-  for (unsigned int cell = range.first; cell < range.second; ++cell)
-    {
-      integrator.reinit(cell);
-      integrator.read_dof_values_plain(src);
-      integrator.evaluate(EvaluationFlags::values | EvaluationFlags::gradients |
-                          EvaluationFlags::hessians);
-
-      const auto h = integrator.read_cell_data(this->get_element_size());
-
-      for (const auto q : integrator.quadrature_point_indices())
-        {
-          // Evaluate source term function
-          Tensor<1, dim + 1, VectorizedArray<number>> source_value;
-          Point<dim, VectorizedArray<number>>         point_batch =
-            integrator.quadrature_point(q);
-          source_value =
-            evaluate_function<dim, number, dim + 1>(*(this->forcing_function),
-                                                    point_batch);
-
-          // Gather the original value/gradient
-          typename FECellIntegrator::value_type value = integrator.get_value(q);
-          typename FECellIntegrator::gradient_type gradient =
-            integrator.get_gradient(q);
-          typename FECellIntegrator::gradient_type hessian_diagonal =
-            integrator.get_hessian_diagonal(q);
-
-          // Calculate tau
-          VectorizedArray<number> u_mag_squared = 1e-12;
-          for (unsigned int k = 0; k < dim; ++k)
-            u_mag_squared += Utilities::fixed_power<2>(value[k]);
-
-          const auto tau =
-            1. / std::sqrt(4. * u_mag_squared / h / h +
-                           9. * Utilities::fixed_power<2>(
-                                  4. * this->kinematic_viscosity / (h * h)));
-
-          // Result value/gradient we will use
-          typename FECellIntegrator::value_type    value_result;
-          typename FECellIntegrator::gradient_type gradient_result;
-
-          // Weak form
-          for (unsigned int i = 0; i < dim; ++i)
-            {
-              // ν(∇v,∇u)
-              gradient_result[i] = this->kinematic_viscosity * gradient[i];
-              // -(∇·v,p)
-              gradient_result[i][i] += -value[dim];
-              // -(v,f)
-              value_result[i] = -source_value[i];
-              // +(q,∇·u)
-              value_result[dim] += gradient[i][i];
-
-              for (unsigned int k = 0; k < dim; ++k)
-                {
-                  // +(v,(u·∇)u)
-                  value_result[i] += gradient[i][k] * value[k];
-                }
-            }
-
-          // PSPG term
-          for (unsigned int i = 0; i < dim; ++i)
-            {
-              // (-f)·τ∇q
-              gradient_result[dim][i] += -tau * source_value[i];
-
-              for (unsigned int k = 0; k < dim; ++k)
-                {
-                  //(-ν∆u + (u·∇)u)·τ∇q
-                  gradient_result[dim][i] +=
-                    tau * (-this->kinematic_viscosity * hessian_diagonal[i][k] +
-                           gradient[i][k] * value[k]);
-                }
-            }
-          // +(∇p)τ∇·q
-          gradient_result[dim] += tau * gradient[dim];
-
-          // SUPG term
-          for (unsigned int i = 0; i < dim; ++i)
-            {
-              for (unsigned int k = 0; k < dim; ++k)
-                {
-                  for (unsigned int l = 0; l < dim; ++l)
-                    {
-                      // (-ν∆u + (u·∇)u)τ(u·∇)v
-                      gradient_result[i][k] +=
-                        tau * value[k] *
-                        (-this->kinematic_viscosity * hessian_diagonal[i][l] +
-                         gradient[i][l] * value[l]);
-                    }
-                  // + (∇p - f)τ(u·∇)v
-                  gradient_result[i][k] +=
-                    tau * value[k] * (gradient[dim][i] - source_value[i]);
-                }
-            }
-
-          integrator.submit_gradient(gradient_result, q);
-          integrator.submit_value(value_result, q);
-        }
-
-      integrator.integrate_scatter(EvaluationFlags::values |
-                                     EvaluationFlags::gradients,
-                                   dst);
-    }
-}
-
-template class NavierStokesSUPGPSPGOperator<2, double>;
-template class NavierStokesSUPGPSPGOperator<3, double>;
-
-template <int dim, typename number>
-NavierStokesTransientSUPGPSPGOperator<dim, number>::
-  NavierStokesTransientSUPGPSPGOperator() = default;
-
-/**
- * The expressions calculated in this cell integral are:
- * (q,∇δu) + (v,∂t δu) + (v,(u·∇)δu) + (v,(δu·∇)u) - (∇·v,δp) + ν(∇v,∇δu) (Weak
- * form Jacobian)
- * \+ (∂t δu +(u·∇)δu + (δu·∇)u + ∇δp - ν∆δu)τ·∇q (PSPG Jacobian)
- * \+ (∂t δu +(u·∇)δu + (δu·∇)u + ∇δp - ν∆δu)τu·∇v (SUPG Jacobian Part 1)
- * \+ (∂t u +(u·∇)u + ∇p - ν∆u - f )τδu·∇v (SUPG Jacobian Part 2).
- */
-template <int dim, typename number>
-void
-NavierStokesTransientSUPGPSPGOperator<dim, number>::do_cell_integral_local(
-  FECellIntegrator &integrator) const
-{
-  integrator.evaluate(EvaluationFlags::values | EvaluationFlags::gradients |
-                      EvaluationFlags::hessians);
-
-  const unsigned int cell = integrator.get_current_cell_index();
-
-  const auto h = integrator.read_cell_data(this->get_element_size());
-
-  // Vector for the BDF coefficients
-  const Vector<double> &bdf_coefs =
-    this->simulation_control->get_bdf_coefficients();
-  const auto time_steps_vector =
-    this->simulation_control->get_time_steps_vector();
-  const double dt  = time_steps_vector[0];
-  const double sdt = 1. / dt;
-
-
-  for (const auto q : integrator.quadrature_point_indices())
-    {
-      // Evaluate source term function
-      Tensor<1, dim + 1, VectorizedArray<number>> source_value;
-      Point<dim, VectorizedArray<number>>         point_batch =
-        integrator.quadrature_point(q);
-      source_value =
-        evaluate_function<dim, number, dim + 1>(*(this->forcing_function),
-                                                point_batch);
-
-      // Gather the original value/gradient
-      typename FECellIntegrator::value_type    value = integrator.get_value(q);
-      typename FECellIntegrator::gradient_type gradient =
-        integrator.get_gradient(q);
-      typename FECellIntegrator::gradient_type hessian_diagonal =
-        integrator.get_hessian_diagonal(q);
-
-      // Result value/gradient we will use
-      typename FECellIntegrator::value_type    value_result;
-      typename FECellIntegrator::gradient_type gradient_result;
-
-      // Gather previous values of the velocity and the pressure
-      auto previous_values   = this->nonlinear_previous_values(cell, q);
-      auto previous_gradient = this->nonlinear_previous_gradient(cell, q);
-      auto previous_hessian_diagonal =
-        this->nonlinear_previous_hessian_diagonal(cell, q);
-
-      // Time derivatives of previous solutions
-      auto previous_time_derivatives =
-        this->time_derivatives_previous_solutions(cell, q);
-
-      // Calculate tau
-      VectorizedArray<number> u_mag_squared = 1e-12;
-      for (unsigned int k = 0; k < dim; ++k)
-        u_mag_squared += Utilities::fixed_power<2>(previous_values[k]);
-
-      const auto tau =
-        1. /
-        std::sqrt(Utilities::fixed_power<2>(sdt) + 4. * u_mag_squared / h / h +
-                  9. * Utilities::fixed_power<2>(
-                         4. * this->kinematic_viscosity / (h * h)));
-
-      // Weak form Jacobian
-      for (unsigned int i = 0; i < dim; ++i)
-        {
-          // ν(∇v,∇δu)
-          gradient_result[i] = this->kinematic_viscosity * gradient[i];
-          // -(∇·v,δp)
-          gradient_result[i][i] += -value[dim];
-          // +(q,∇δu)
-          value_result[dim] += gradient[i][i];
-
-          for (unsigned int k = 0; k < dim; ++k)
-            {
-              // +(v,(u·∇)δu + (δu·∇)u)
-              value_result[i] += gradient[i][k] * previous_values[k] +
-                                 previous_gradient[i][k] * value[k];
-            }
-          // +(v,∂t δu)
-          value_result[i] += bdf_coefs[0] * value[i];
-        }
-
-      // PSPG Jacobian
-      for (unsigned int i = 0; i < dim; ++i)
-        {
-          for (unsigned int k = 0; k < dim; ++k)
-            {
-              // (-ν∆δu + (u·∇)δu + (δu·∇)u)·τ∇q
-              gradient_result[dim][i] +=
-                tau * (-this->kinematic_viscosity * hessian_diagonal[i][k] +
-                       gradient[i][k] * previous_values[k] +
-                       previous_gradient[i][k] * value[k]);
-            }
-          // +(∂t δu)·τ∇q
-          gradient_result[dim][i] += tau * bdf_coefs[0] * value[i];
-        }
-      // (∇δp)τ·∇q
-      gradient_result[dim] += tau * gradient[dim];
-
-      // SUPG Jacobian
-      for (unsigned int i = 0; i < dim; ++i)
-        {
-          for (unsigned int k = 0; k < dim; ++k)
-            {
-              // Part 1
-              for (unsigned int l = 0; l < dim; ++l)
-                {
-                  // +((u·∇)δu + (δu·∇)u - ν∆δu)τ(u·∇)v
-                  gradient_result[i][k] +=
-                    tau * previous_values[k] *
-                    (gradient[i][l] * previous_values[l] +
-                     previous_gradient[i][l] * value[l] -
-                     this->kinematic_viscosity * hessian_diagonal[i][l]);
-                }
-              // +(∇δp + ∂t δu)τ(u·∇)v
-              gradient_result[i][k] +=
-                tau * previous_values[k] *
-                (gradient[dim][i] + bdf_coefs[0] * value[i]);
-
-              // Part 2
-              for (unsigned int l = 0; l < dim; ++l)
-                {
-                  // +((u·∇)u - ν∆u)τ(δu·∇)v
-                  gradient_result[i][k] +=
-                    tau * value[k] *
-                    (previous_gradient[i][l] * previous_values[l] -
-                     this->kinematic_viscosity *
-                       previous_hessian_diagonal[i][l]);
-                }
-              // +(∇p - f + ∂t u)τ(δu·∇)v
-              gradient_result[i][k] +=
-                tau * value[k] *
-                (previous_gradient[dim][i] - source_value[i] +
-                 bdf_coefs[0] * previous_values[i] +
-                 previous_time_derivatives[i]);
-            }
-        }
-
-      integrator.submit_gradient(gradient_result, q);
-      integrator.submit_value(value_result, q);
-    }
-
-  integrator.integrate(EvaluationFlags::values | EvaluationFlags::gradients);
-}
-
-/**
- * The expressions calculated in this cell integral are:
- *  (q, ∇·u) + (v,∂t u) + (v,(u·∇)u) - (∇·v,p) + ν(∇v,∇u) - (v,f) (Weak form)
- * \+ (∂t u +(u·∇)u + ∇p - ν∆u - f)τ∇·q (PSPG term)
- * \+ (∂t u +(u·∇)u + ∇p - ν∆u - f)τu·∇v (SUPG term).
- */
-template <int dim, typename number>
-void
-NavierStokesTransientSUPGPSPGOperator<dim, number>::local_evaluate_residual(
-  const MatrixFree<dim, number>               &matrix_free,
-  VectorType                                  &dst,
-  const VectorType                            &src,
-  const std::pair<unsigned int, unsigned int> &range) const
-{
-  FECellIntegrator integrator(matrix_free);
-
-  for (unsigned int cell = range.first; cell < range.second; ++cell)
-    {
-      integrator.reinit(cell);
-      integrator.read_dof_values_plain(src);
-      integrator.evaluate(EvaluationFlags::values | EvaluationFlags::gradients |
-                          EvaluationFlags::hessians);
-
-      const auto h = integrator.read_cell_data(this->get_element_size());
-
-      // Vector for the BDF coefficients
-      const Vector<double> &bdf_coefs =
-        this->simulation_control->get_bdf_coefficients();
-      const auto time_steps_vector =
-        this->simulation_control->get_time_steps_vector();
-      const double dt  = time_steps_vector[0];
-      const double sdt = 1. / dt;
-
-      for (const auto q : integrator.quadrature_point_indices())
-        {
-          // Evaluate source term function
-          Tensor<1, dim + 1, VectorizedArray<number>> source_value;
-          Point<dim, VectorizedArray<number>>         point_batch =
-            integrator.quadrature_point(q);
-          source_value =
-            evaluate_function<dim, number, dim + 1>(*(this->forcing_function),
-                                                    point_batch);
-
-          // Gather the original value/gradient
-          typename FECellIntegrator::value_type value = integrator.get_value(q);
-          typename FECellIntegrator::gradient_type gradient =
-            integrator.get_gradient(q);
-          typename FECellIntegrator::gradient_type hessian_diagonal =
-            integrator.get_hessian_diagonal(q);
-
-          // Time derivatives of previoussolutions
-          auto previous_time_derivatives =
-            this->time_derivatives_previous_solutions(cell, q);
-
-          // Calculate tau
-          VectorizedArray<number> u_mag_squared = 1e-12;
-          for (unsigned int k = 0; k < dim; ++k)
-            u_mag_squared += Utilities::fixed_power<2>(value[k]);
-
-          const auto tau =
-            1. / std::sqrt(Utilities::fixed_power<2>(sdt) +
-                           4. * u_mag_squared / h / h +
-                           9. * Utilities::fixed_power<2>(
-                                  4. * this->kinematic_viscosity / (h * h)));
-
-          // Result value/gradient we will use
-          typename FECellIntegrator::value_type    value_result;
-          typename FECellIntegrator::gradient_type gradient_result;
-
-          // Weak form
-          for (unsigned int i = 0; i < dim; ++i)
-            {
-              // ν(∇v,∇u)
-              gradient_result[i] = this->kinematic_viscosity * gradient[i];
-              // -(∇·v,p)
-              gradient_result[i][i] += -value[dim];
-              // +(v,-f + ∂t u)
-              value_result[i] = -source_value[i] + bdf_coefs[0] * value[i] +
-                                previous_time_derivatives[i];
-              // +(q,∇·u)
-              value_result[dim] += gradient[i][i];
-
-              for (unsigned int k = 0; k < dim; ++k)
-                {
-                  // +(v,(u·∇)u)
-                  value_result[i] += gradient[i][k] * value[k];
-                }
-            }
-
-          // PSPG term
-          for (unsigned int i = 0; i < dim; ++i)
-            {
-              for (unsigned int k = 0; k < dim; ++k)
-                {
-                  // (-ν∆u + (u·∇)u)·τ∇q
-                  gradient_result[dim][i] +=
-                    tau * (-this->kinematic_viscosity * hessian_diagonal[i][k] +
-                           gradient[i][k] * value[k]);
-                }
-              // +(-f + ∂t u)·τ∇q
-              gradient_result[dim][i] +=
-                tau * (-source_value[i] + bdf_coefs[0] * value[i] +
-                       previous_time_derivatives[i]);
-            }
-          // +(∇p)τ∇·q
-          gradient_result[dim] += tau * gradient[dim];
-
-          // SUPG term
-          for (unsigned int i = 0; i < dim; ++i)
-            {
-              for (unsigned int k = 0; k < dim; ++k)
-                {
-                  for (unsigned int l = 0; l < dim; ++l)
-                    {
-                      // (-ν∆u)τ(u·∇)v
-                      gradient_result[i][k] +=
-                        -tau * this->kinematic_viscosity * value[k] *
-                        hessian_diagonal[i][l];
-
-                      // + ((u·∇)u)τ(u·∇)v
-                      gradient_result[i][k] +=
-                        tau * value[k] * gradient[i][l] * value[l];
-                    }
-                  // + (∇p - f + ∂t u)τ(u·∇)v
-                  gradient_result[i][k] +=
-                    tau * value[k] *
-                    (gradient[dim][i] - source_value[i] +
-                     bdf_coefs[0] * value[i] + previous_time_derivatives[i]);
-                }
-            }
-
-          integrator.submit_gradient(gradient_result, q);
-          integrator.submit_value(value_result, q);
-        }
-
-      integrator.integrate_scatter(EvaluationFlags::values |
-                                     EvaluationFlags::gradients,
-                                   dst);
-    }
-}
-
-template class NavierStokesTransientSUPGPSPGOperator<2, double>;
-template class NavierStokesTransientSUPGPSPGOperator<3, double>;
-
-template <int dim, typename number>
-NavierStokesGLSOperator<dim, number>::NavierStokesGLSOperator() = default;
-
-/**
- * The expressions calculated in this cell integral are:
- * (q,∇δu) + (v,(u·∇)δu) + (v,(δu·∇)u) - (∇·v,δp) + ν(∇v,∇δu) (Weak form
- * Jacobian)
- * \+ ((u·∇)δu + (δu·∇)u + ∇δp - ν∆δu)τ·∇q (PSPG Jacobian)
- * \+ ((u·∇)δu + (δu·∇)u + ∇δp - ν∆δu)τu·∇v (SUPG Jacobian Part 1)
- * \+ ((u·∇)u + ∇p - ν∆u - f )τδu·∇v (SUPG Jacobian Part 2)
+ * \+ ((u·∇)u + ∇p - ν∆u - f )τδu·∇v (SUPG Jacobian Part 2),
+ * plus two additional terms in the case of full gls stabilization:
  * \+ ((u·∇)δu + (δu·∇)u + ∇δp - ν∆δu)τ(−ν∆v) (GLS Jacobian)
  * \+ (∇·δu)τ'(∇·v) (LSIC Jacobian).
  */
 template <int dim, typename number>
 void
-NavierStokesGLSOperator<dim, number>::do_cell_integral_local(
+NavierStokesSteadyOperator<dim, number>::do_cell_integral_local(
   FECellIntegrator &integrator) const
 {
   integrator.evaluate(EvaluationFlags::values | EvaluationFlags::gradients |
@@ -1258,28 +711,32 @@ NavierStokesGLSOperator<dim, number>::do_cell_integral_local(
             }
         }
 
-      // GLS Jacobian
-      for (unsigned int i = 0; i < dim; ++i)
+      if (this->stabilization ==
+          Parameters::Stabilization::NavierStokesStabilization::gls)
         {
-          for (unsigned int k = 0; k < dim; ++k)
+          // GLS Jacobian
+          for (unsigned int i = 0; i < dim; ++i)
             {
-              for (unsigned int l = 0; l < dim; ++l)
+              for (unsigned int k = 0; k < dim; ++k)
                 {
-                  // +((u·∇)δu + (δu·∇)u - ν∆δu)τ(−ν∆v)
+                  for (unsigned int l = 0; l < dim; ++l)
+                    {
+                      // +((u·∇)δu + (δu·∇)u - ν∆δu)τ(−ν∆v)
+                      hessian_result[i][k][k] +=
+                        tau * -this->kinematic_viscosity *
+                        (gradient[i][l] * previous_values[l] +
+                         previous_gradient[i][l] * value[l] -
+                         this->kinematic_viscosity * hessian_diagonal[i][l]);
+                    }
+
+                  // +(∇δp)τ(−ν∆v)
                   hessian_result[i][k][k] +=
-                    tau * -this->kinematic_viscosity *
-                    (gradient[i][l] * previous_values[l] +
-                     previous_gradient[i][l] * value[l] -
-                     this->kinematic_viscosity * hessian_diagonal[i][l]);
+                    tau * -this->kinematic_viscosity * gradient[dim][i];
+
+                  // LSIC term
+                  // (∇·δu)τ'(∇·v)
+                  gradient_result[i][i] += tau_lsic * gradient[k][k];
                 }
-
-              // +(∇δp)τ(−ν∆v)
-              hessian_result[i][k][k] +=
-                tau * -this->kinematic_viscosity * gradient[dim][i];
-
-              // LSIC term
-              // (∇·δu)τ'(∇·v)
-              gradient_result[i][i] += tau_lsic * gradient[k][k];
             }
         }
 
@@ -1295,15 +752,17 @@ NavierStokesGLSOperator<dim, number>::do_cell_integral_local(
 
 /**
  * The expressions calculated in this cell integral are:
- * (q, ∇·u) + (v,(u·∇)u) - (∇·v,p) + ν(∇v,∇u) - (v,f) (Weak form)
+ * (q, ∇·u) + (v,(u·∇)u) - (∇·v,p) + ν(∇v,∇u) - (v,f) (Weak form),
+ * plus two additional terms in the case of SUPG-PSPG stabilization:
  * \+ ((u·∇)u + ∇p - ν∆u - f)τ∇·q (PSPG term)
- * \+ ((u·∇)u + ∇p - ν∆u - f)τu·∇v (SUPG term)
+ * \+ ((u·∇)u + ∇p - ν∆u - f)τu·∇v (SUPG term),
+ * plus two additional terms in the case of full gls stabilization:
  * \+ ((u·∇)u + ∇p - ν∆u - f)τ(−ν∆v) (GLS term)
  * \+ (∇·u)τ'(∇·v) (LSIC term).
  */
 template <int dim, typename number>
 void
-NavierStokesGLSOperator<dim, number>::local_evaluate_residual(
+NavierStokesSteadyOperator<dim, number>::local_evaluate_residual(
   const MatrixFree<dim, number>               &matrix_free,
   VectorType                                  &dst,
   const VectorType                            &src,
@@ -1409,27 +868,32 @@ NavierStokesGLSOperator<dim, number>::local_evaluate_residual(
                 }
             }
 
-          // GLS term
-          for (unsigned int i = 0; i < dim; ++i)
+          if (this->stabilization ==
+              Parameters::Stabilization::NavierStokesStabilization::gls)
             {
-              for (unsigned int k = 0; k < dim; ++k)
+              // GLS term
+              for (unsigned int i = 0; i < dim; ++i)
                 {
-                  for (unsigned int l = 0; l < dim; ++l)
+                  for (unsigned int k = 0; k < dim; ++k)
                     {
-                      // (-ν∆u + (u·∇)u)τ(−ν∆v)
+                      for (unsigned int l = 0; l < dim; ++l)
+                        {
+                          // (-ν∆u + (u·∇)u)τ(−ν∆v)
+                          hessian_result[i][k][k] +=
+                            tau * -this->kinematic_viscosity *
+                            (-this->kinematic_viscosity *
+                               hessian_diagonal[i][l] +
+                             gradient[i][l] * value[l]);
+                        }
+                      // + (∇p - f)τ(−ν∆v)
                       hessian_result[i][k][k] +=
                         tau * -this->kinematic_viscosity *
-                        (-this->kinematic_viscosity * hessian_diagonal[i][l] +
-                         gradient[i][l] * value[l]);
-                    }
-                  // + (∇p - f)τ(−ν∆v)
-                  hessian_result[i][k][k] +=
-                    tau * -this->kinematic_viscosity *
-                    (gradient[dim][i] - source_value[i]);
+                        (gradient[dim][i] - source_value[i]);
 
-                  // LSIC term
-                  // (∇·u)τ'(∇·v)
-                  gradient_result[i][i] += tau_lsic * gradient[k][k];
+                      // LSIC term
+                      // (∇·u)τ'(∇·v)
+                      gradient_result[i][i] += tau_lsic * gradient[k][k];
+                    }
                 }
             }
 
@@ -1445,27 +909,28 @@ NavierStokesGLSOperator<dim, number>::local_evaluate_residual(
     }
 }
 
-template class NavierStokesGLSOperator<2, double>;
-template class NavierStokesGLSOperator<3, double>;
+template class NavierStokesSteadyOperator<2, double>;
+template class NavierStokesSteadyOperator<3, double>;
 
 template <int dim, typename number>
-NavierStokesTransientGLSOperator<dim,
-                                 number>::NavierStokesTransientGLSOperator() =
+NavierStokesTransientOperator<dim, number>::NavierStokesTransientOperator() =
   default;
 
 /**
  * The expressions calculated in this cell integral are:
  * (q,∇δu) + (v,∂t δu) + (v,(u·∇)δu) + (v,(δu·∇)u) - (∇·v,δp) + ν(∇v,∇δu) (Weak
- * form Jacobian)
+ * form Jacobian),
+ * plus three additional terms in the case of SUPG-PSPG stabilization:
  * \+ (∂t δu +(u·∇)δu + (δu·∇)u + ∇δp - ν∆δu)τ·∇q (PSPG Jacobian)
  * \+ (∂t δu +(u·∇)δu + (δu·∇)u + ∇δp - ν∆δu)τu·∇v (SUPG Jacobian Part 1)
- * \+ (∂t u +(u·∇)u + ∇p - ν∆u - f )τδu·∇v (SUPG Jacobian Part 2)
+ * \+ (∂t u +(u·∇)u + ∇p - ν∆u - f )τδu·∇v (SUPG Jacobian Part 2),
+ * plus two additional terms in the case of full gls stabilization:
  * \+ (∂t δu +(u·∇)δu + (δu·∇)u + ∇δp - ν∆δu)τ(−ν∆v) (GLS Jacobian)
  * \+ (∇·δu)τ'(∇·v) (LSIC Jacobian).
  */
 template <int dim, typename number>
 void
-NavierStokesTransientGLSOperator<dim, number>::do_cell_integral_local(
+NavierStokesTransientOperator<dim, number>::do_cell_integral_local(
   FECellIntegrator &integrator) const
 {
   integrator.evaluate(EvaluationFlags::values | EvaluationFlags::gradients |
@@ -1605,29 +1070,33 @@ NavierStokesTransientGLSOperator<dim, number>::do_cell_integral_local(
             }
         }
 
-      // GLS Jacobian
-      for (unsigned int i = 0; i < dim; ++i)
+      if (this->stabilization ==
+          Parameters::Stabilization::NavierStokesStabilization::gls)
         {
-          for (unsigned int k = 0; k < dim; ++k)
+          // GLS Jacobian
+          for (unsigned int i = 0; i < dim; ++i)
             {
-              for (unsigned int l = 0; l < dim; ++l)
+              for (unsigned int k = 0; k < dim; ++k)
                 {
-                  // +((u·∇)δu + (δu·∇)u - ν∆δu)τ(−ν∆v)
+                  for (unsigned int l = 0; l < dim; ++l)
+                    {
+                      // +((u·∇)δu + (δu·∇)u - ν∆δu)τ(−ν∆v)
+                      hessian_result[i][k][k] +=
+                        tau * -this->kinematic_viscosity *
+                        (gradient[i][l] * previous_values[l] +
+                         previous_gradient[i][l] * value[l] -
+                         this->kinematic_viscosity * hessian_diagonal[i][l]);
+                    }
+
+                  // +(∇δp + ∂t δu)τ(−ν∆v)
                   hessian_result[i][k][k] +=
                     tau * -this->kinematic_viscosity *
-                    (gradient[i][l] * previous_values[l] +
-                     previous_gradient[i][l] * value[l] -
-                     this->kinematic_viscosity * hessian_diagonal[i][l]);
+                    (gradient[dim][i] + bdf_coefs[0] * value[i]);
+
+                  // LSIC term
+                  // (∇·δu)τ'(∇·v)
+                  gradient_result[i][i] += tau_lsic * gradient[k][k];
                 }
-
-              // +(∇δp + ∂t δu)τ(−ν∆v)
-              hessian_result[i][k][k] +=
-                tau * -this->kinematic_viscosity *
-                (gradient[dim][i] + bdf_coefs[0] * value[i]);
-
-              // LSIC term
-              // (∇·δu)τ'(∇·v)
-              gradient_result[i][i] += tau_lsic * gradient[k][k];
             }
         }
 
@@ -1642,15 +1111,17 @@ NavierStokesTransientGLSOperator<dim, number>::do_cell_integral_local(
 
 /**
  * The expressions calculated in this cell integral are:
- *  (q, ∇·u) + (v,∂t u) + (v,(u·∇)u) - (∇·v,p) + ν(∇v,∇u) - (v,f) (Weak form)
+ * (q, ∇·u) + (v,∂t u) + (v,(u·∇)u) - (∇·v,p) + ν(∇v,∇u) - (v,f) (Weak form),
+ * plus two additional terms in the case of SUPG-PSPG stabilization:
  * \+ (∂t u +(u·∇)u + ∇p - ν∆u - f)τ∇·q (PSPG term)
- * \+ (∂t u +(u·∇)u + ∇p - ν∆u - f)τu·∇v (SUPG term)
+ * \+ (∂t u +(u·∇)u + ∇p - ν∆u - f)τu·∇v (SUPG term),
+ * plus two additional terms in the case of full gls stabilization:
  * \+ (∂t u +(u·∇)u + ∇p - ν∆u - f)τ(−ν∆v) (GLS term)
  * \+ (∇·u)τ'(∇·v) (LSIC term).
  */
 template <int dim, typename number>
 void
-NavierStokesTransientGLSOperator<dim, number>::local_evaluate_residual(
+NavierStokesTransientOperator<dim, number>::local_evaluate_residual(
   const MatrixFree<dim, number>               &matrix_free,
   VectorType                                  &dst,
   const VectorType                            &src,
@@ -1776,28 +1247,34 @@ NavierStokesTransientGLSOperator<dim, number>::local_evaluate_residual(
                 }
             }
 
-          // GLS term
-          for (unsigned int i = 0; i < dim; ++i)
+          if (this->stabilization ==
+              Parameters::Stabilization::NavierStokesStabilization::gls)
             {
-              for (unsigned int k = 0; k < dim; ++k)
+              // GLS term
+              for (unsigned int i = 0; i < dim; ++i)
                 {
-                  for (unsigned int l = 0; l < dim; ++l)
+                  for (unsigned int k = 0; k < dim; ++k)
                     {
-                      // (-ν∆u + (u·∇)u)τ(−ν∆v)
+                      for (unsigned int l = 0; l < dim; ++l)
+                        {
+                          // (-ν∆u + (u·∇)u)τ(−ν∆v)
+                          hessian_result[i][k][k] +=
+                            tau * -this->kinematic_viscosity *
+                            (-this->kinematic_viscosity *
+                               hessian_diagonal[i][l] +
+                             gradient[i][l] * value[l]);
+                        }
+                      // + (∇p - f + ∂t u)τ(−ν∆v)
                       hessian_result[i][k][k] +=
                         tau * -this->kinematic_viscosity *
-                        (-this->kinematic_viscosity * hessian_diagonal[i][l] +
-                         gradient[i][l] * value[l]);
-                    }
-                  // + (∇p - f + ∂t u)τ(−ν∆v)
-                  hessian_result[i][k][k] +=
-                    tau * -this->kinematic_viscosity *
-                    (gradient[dim][i] - source_value[i] +
-                     +bdf_coefs[0] * value[i] + previous_time_derivatives[i]);
+                        (gradient[dim][i] - source_value[i] +
+                         +bdf_coefs[0] * value[i] +
+                         previous_time_derivatives[i]);
 
-                  // LSIC term
-                  // (∇·u)τ'(∇·v)
-                  gradient_result[i][i] += tau_lsic * gradient[k][k];
+                      // LSIC term
+                      // (∇·u)τ'(∇·v)
+                      gradient_result[i][i] += tau_lsic * gradient[k][k];
+                    }
                 }
             }
 
@@ -1813,5 +1290,5 @@ NavierStokesTransientGLSOperator<dim, number>::local_evaluate_residual(
     }
 }
 
-template class NavierStokesTransientGLSOperator<2, double>;
-template class NavierStokesTransientGLSOperator<3, double>;
+template class NavierStokesTransientOperator<2, double>;
+template class NavierStokesTransientOperator<3, double>;

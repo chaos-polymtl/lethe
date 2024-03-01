@@ -49,6 +49,8 @@ public:
   using VectorType       = LinearAlgebra::distributed::Vector<number>;
   using value_type       = number;
   using size_type        = VectorizedArray<number>;
+  using StabilizationType =
+    Parameters::Stabilization::NavierStokesStabilization;
 
   /**
    * @brief Default constructor.
@@ -65,6 +67,7 @@ public:
    * @param[in] forcing_function Function specified in parameter file as source
    * term.
    * @param[in] kinematic_viscosity Kinematic viscosity.
+   * @param[in] stabilization Stabilization type specified in parameter file.
    * @param[in] mg_level Level of the operator in case of MG methods.
    * @param[in] simulation_control Required to get the time stepping method.
    */
@@ -75,6 +78,7 @@ public:
     const Quadrature<dim>             &quadrature,
     const Function<dim>               *forcing_function,
     const double                       kinematic_viscosity,
+    const StabilizationType            stabilization,
     const unsigned int                 mg_level,
     std::shared_ptr<SimulationControl> simulation_control);
 
@@ -91,6 +95,7 @@ public:
    * @param[in] forcing_function Function specified in parameter file as source
    * term.
    * @param[in] kinematic_viscosity Kinematic viscosity.
+   * @param[in] stabilization Stabilization type specified in parameter file.
    * @param[in] mg_level Level of the operator in case of MG methods.
    */
   void
@@ -100,6 +105,7 @@ public:
          const Quadrature<dim>             &quadrature,
          const Function<dim>               *forcing_function,
          const double                       kinematic_viscosity,
+         const StabilizationType            stabilization,
          const unsigned int                 mg_level,
          std::shared_ptr<SimulationControl> simulation_control);
 
@@ -372,6 +378,13 @@ protected:
    */
   double kinematic_viscosity;
 
+
+  /**
+   * @brief Stabilization type needed to add or remove terms from operator
+   *
+   */
+  StabilizationType stabilization;
+
   /**
    * @brief Object storing the information regarding the time stepping method.
    *
@@ -451,15 +464,14 @@ protected:
 };
 
 /**
- * @brief Implements the matrix-free operator to solve the Navier-Stokes equations
- * using SUPG/PSPG stabilization.
+ * @brief Implements the matrix-free operator to solve the steady-state
+ * Navier-Stokes equations using stabilization.
  *
  * @tparam dim An integer that denotes the number of spatial dimensions.
  * @tparam number Abstract type for number across the class (i.e., double).
  */
 template <int dim, typename number>
-class NavierStokesSUPGPSPGOperator
-  : public NavierStokesOperatorBase<dim, number>
+class NavierStokesSteadyOperator : public NavierStokesOperatorBase<dim, number>
 {
 public:
   using FECellIntegrator = FEEvaluation<dim, -1, 0, dim + 1, number>;
@@ -469,13 +481,13 @@ public:
    * @brief Default constructor.
    *
    */
-  NavierStokesSUPGPSPGOperator();
+  NavierStokesSteadyOperator();
 
 protected:
   /**
    * @brief Perform cell integral on a cell batch without gathering and scattering
    * the values, and according to the Jacobian of the discretized Navier-Stokes
-   * equations with SUPG/PSPG stabilization.
+   * equations with stabilization.
    *
    * @param[in] integrator FEEvaluation object that allows to evaluate functions
    * at quadrature points and perform cell integrations.
@@ -486,7 +498,7 @@ protected:
   /**
    * @brief Perform cell integral on a cell batch with gathering and scattering
    * the values, and according to the residual of the discretized Navier-Stokes
-   * equations with SUPG/PSPG stabilization.
+   * equations with stabilization.
    *
    * @param[in] matrix_free Object that contains all data.
    * @param[in,out] dst Global vector where the final result is added.
@@ -503,26 +515,26 @@ protected:
 
 /**
  * @brief Implements the matrix-free operator to solve transient Navier-Stokes equations
- * using SUPG/PSPG stabilization.
+ * using stabilization.
  *
  * @tparam dim An integer that denotes the number of spatial dimensions.
  * @tparam number Abstract type for number across the class (i.e., double).
  */
 template <int dim, typename number>
-class NavierStokesTransientSUPGPSPGOperator
+class NavierStokesTransientOperator
   : public NavierStokesOperatorBase<dim, number>
 {
 public:
   using FECellIntegrator = FEEvaluation<dim, -1, 0, dim + 1, number>;
   using VectorType       = LinearAlgebra::distributed::Vector<number>;
 
-  NavierStokesTransientSUPGPSPGOperator();
+  NavierStokesTransientOperator();
 
 protected:
   /**
    * @brief Perform cell integral on a cell batch without gathering and scattering
    * the values, and according to the Jacobian of the discretized transient
-   * Navier-Stokes equations with SUPG/PSPG stabilization.
+   * Navier-Stokes equations with stabilization.
    *
    * @param[in] integrator FEEvaluation object that allows to evaluate functions
    * at quadrature points and perform cell integrations.
@@ -533,101 +545,7 @@ protected:
   /**
    * @brief Perform cell integral on a cell batch with gathering and scattering
    * the values, and according to the residual of the discretized transient
-   * Navier-Stokes equations with SUPG/PSPG stabilization.
-   *
-   * @param[in] matrix_free Object that contains all data.
-   * @param[in,out] dst Global vector where the final result is added.
-   * @param[in] src Input vector with all values in all cells.
-   * @param[in] range Range of the cell batch.
-   */
-  void
-  local_evaluate_residual(
-    const MatrixFree<dim, number>               &matrix_free,
-    VectorType                                  &dst,
-    const VectorType                            &src,
-    const std::pair<unsigned int, unsigned int> &range) const override;
-};
-
-/**
- * @brief Class in charge of implementing the main function required to
- * solve the Navier-Stokes equations using GLS stabilization and the
- * matrix-free approach.
- *
- * @tparam dim An integer that denotes the number of spatial dimensions.
- * @tparam number Abstract type for number across the class (i.e., double).
- */
-template <int dim, typename number>
-class NavierStokesGLSOperator : public NavierStokesOperatorBase<dim, number>
-{
-public:
-  using FECellIntegrator = FEEvaluation<dim, -1, 0, dim + 1, number>;
-  using VectorType       = LinearAlgebra::distributed::Vector<number>;
-
-  NavierStokesGLSOperator();
-
-protected:
-  /**
-   * @brief Perform cell integral on a cell batch without gathering and scattering
-   * the values, and according to the Jacobian of the Navier-Stokes equations
-   * with GLS stabilization.
-   *
-   * @param integrator FEEvaluation object that allows to evaluate functions at
-   * quadrature points and perform cell integrations.
-   */
-  void
-  do_cell_integral_local(FECellIntegrator &integrator) const override;
-
-  /**
-   * @brief Perform cell integral on a cell batch with gathering and scattering
-   * the values, and according to the residual of the Navier-Stokes equations
-   * with GLS stabilization.
-   *
-   * @param matrix_free Object that contains all data.
-   * @param dst Global vector where the final result is added.
-   * @param src Input vector with all values in all cells.
-   * @param range Range of the cell batch.
-   */
-  void
-  local_evaluate_residual(
-    const MatrixFree<dim, number>               &matrix_free,
-    VectorType                                  &dst,
-    const VectorType                            &src,
-    const std::pair<unsigned int, unsigned int> &range) const override;
-};
-
-/**
- * @brief Implements the matrix-free operator to solve transient Navier-Stokes equations
- * using GLS stabilization.
- *
- * @tparam dim An integer that denotes the number of spatial dimensions.
- * @tparam number Abstract type for number across the class (i.e., double).
- */
-template <int dim, typename number>
-class NavierStokesTransientGLSOperator
-  : public NavierStokesOperatorBase<dim, number>
-{
-public:
-  using FECellIntegrator = FEEvaluation<dim, -1, 0, dim + 1, number>;
-  using VectorType       = LinearAlgebra::distributed::Vector<number>;
-
-  NavierStokesTransientGLSOperator();
-
-protected:
-  /**
-   * @brief Perform cell integral on a cell batch without gathering and scattering
-   * the values, and according to the Jacobian of the discretized transient
-   * Navier-Stokes equations with GLS stabilization.
-   *
-   * @param[in] integrator FEEvaluation object that allows to evaluate functions
-   * at quadrature points and perform cell integrations.
-   */
-  void
-  do_cell_integral_local(FECellIntegrator &integrator) const override;
-
-  /**
-   * @brief Perform cell integral on a cell batch with gathering and scattering
-   * the values, and according to the residual of the discretized transient
-   * Navier-Stokes equations with GLS stabilization.
+   * Navier-Stokes equations with stabilization.
    *
    * @param[in] matrix_free Object that contains all data.
    * @param[in,out] dst Global vector where the final result is added.
