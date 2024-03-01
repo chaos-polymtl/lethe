@@ -21,11 +21,11 @@ The ``use default stabilization`` indicates that the solver should use the defau
 
 There are three choices of stabilization strategy:
 
-* ``stabilization=pspg-supg`` assembles a PSPG/SUPG stabilization for the Navier-Stokes equations. This stabilization should only be used with the monolithic GLS solver.
+* ``stabilization=pspg-supg`` assembles a PSPG/SUPG stabilization for the Navier-Stokes equations. This stabilization should only be used with the monolithic solver for the Navier-Stokes equations (``lethe-fluid`` or ``lethe-fluid-matrix-free``).
 
-* ``stabilization=gls`` assembles a full GLS stabilization for the Navier-Stokes equations. This stabilization is similar to the ``pspg-supg``, but adds the term :math:`\nu \nabla^2 \mathbf{v}` to the test function. This stabilization should only be used with the monolithic GLS solver.
+* ``stabilization=gls`` assembles a full GLS stabilization for the Navier-Stokes equations which adds two Least-Squares terms (for more details see :doc:`../../../../theory/fluid_dynamics/stabilization`). This stabilization should only be used with the monolithic solver for the Navier-Stokes equations (``lethe-fluid`` or ``lethe-fluid-matrix-free``).
 
-* ``stabilization=grad_div`` assembles a grad-div penalization term in the momentum equation to ensure mass conservation. This is not a stabilization method per-say and should not be used with elements that are not LBB stable. This stabilization should only be used with the grad-div Navier-Stokes solver (``lethe-fluid-block``).
+* ``stabilization=grad_div`` assembles a grad-div penalization term in the momentum equation to ensure mass conservation. This is not a stabilization method per-say and should not be used with elements that are not LBB stable. This stabilization should only be used with the grad-div block Navier-Stokes solver (``lethe-fluid-block``).
 
 The ``pressure scaling factor`` parameter is used as a multiplier for the pressure in the momentum equation; the inverse of the factor is applied to the pressure after solving. It helps the convergence of the linear solver  by decreasing the condition number for cases where pressure and velocity have very different scales.
 
