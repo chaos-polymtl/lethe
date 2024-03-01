@@ -56,29 +56,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 - MAJOR Robin boundary condition was renamed to incorporate the imposed heat flux (Neumann). The corresponding type parameter was ``convection-radiation`` and the current is ``convection-radiation-flux``. All application tests were updated accordingly.
 
-## [Master] - 2024-01-28
+## [Master] - 2023-01-28
 
 ### Fixed
 
-- MAJOR All application_tests that use files have now mpirun=1 in their output to ensure that they are run from a mpirun=1 folder. Since https://github.com/dealii/dealii/pull/16551 deal.II 9.6 uses a serial folder for serial tests. However, deal.II 9.5 does not. To maintain portability between the two versions, we manually force a folder called mpirun=1 when running tests and adapt the copy of the files to this folder. This is a temporary fix that can be reverted once we drop support for deal.II 9.5
-
-## [Master] - 2024-01-24
-
-### Added
-
-- MINOR Darcy-like penalization is now extended to two-fluid VOF simulations with the `PhaseChangeDarcyVOFAssembler` assembler class. Related documentation has been updated and a new application test was added. [#990](https://github.com/lethe-cfd/lethe/pull/990)
-
-- MINOR Extrapolation in time of temperature and temperature gradient values has been added. This is used for source terms in the Navier-Stokes equations requiring them (Marangoni and evaporation recoil force terms). [#994](https://github.com/lethe-cfd/lethe/pull/994)
-
-### Changed
-
-- MINOR Velocity extrapolation has been moved to `include/solvers/vof_scratch_data.h`. Solution extrapolations are now located in `ScratchData` to avoid constraint on assemblers order. [#994](https://github.com/lethe-cfd/lethe/pull/994)
-
-## [Master] - 2024-01-24
-
-### Fixed
-
-- MINOR In the previous implementation of the heat flux postprocessor ([#953](https://github.com/lethe-cfd/lethe/pull/953)), there was a confusion related to the `material_id` of a cell. As a cell's `material_id` is defined in the mesh, fluids moving from a cell to another did not have the right `material_id` when outputted. Furthermore, some deal.II meshes have an intrinsic way of numbering `material_ids` (e.g. colorized subdivided_hyper_rectangle) that were leading to inadequate comparison of the `material_ids`. As of now, in the heat flux postprocessor, the `material_id` is only used to indentify cell material when solids are present. When simulating with fluids and solids, cells of the mesh in which the fluids lie should have a `material_id` of `0`. For _fluids-only_ simulations, their heat fluxes are outputted on the entire domain, as the current `DataPostprocessor` can only hold 1 `dof_handler`. During postprocessing, the user could clip the domain of interest of each fluid using the `phase` or `filtered_phase` fields outputted. [#988](https://github.com/lethe-cfd/lethe/pull/988)
+- MAJOR All application_tests that use files have now mpirun=1 in their output to ensure that they are run from an mpirun=1 folder. Since https://github.com/dealii/dealii/pull/16551 deal.II 9.6 uses a serial folder for serial tests. However, deal.II 9.5 does not. To maintain portability between the two versions, we manually force a folder called mpirun=1 when running tests and adapt the copy of the files to this folder. This is a temporary fix that can be reverted once we drop support for deal.II 9.5
 
 ## [Master] - 2023-12-27
 
@@ -90,11 +72,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Fixed
 
-- MINOR  PVD handles for solid DEM objects were written with the wrong text format ("_" separators instead of ".")
+- MINOR  PVD handles for solid DEM objects were written with the wrong text format ("_" seperarators instead of ".")
 
 ### [Master] - Changed - 2023-12-17
 
 - MINOR The "insertion random number range" and "insertion random number seed" parameters got renamed to "insertion maximum offset" and "insertion prn seed" respectively. The old names didn't make sense, as they're not random because they're defined in the parameter file. [#970](https://github.com/lethe-cfd/lethe/pull/896)
+
 
 ## [Master] - 2023-12-11
 
@@ -160,7 +143,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
   
 ### Deprecated
 
-- MINOR The calculation of the source term was enabled using a parameter called "enable". This parameter was used in some physics, not in others and was poorly implemented. We deprecate the usage of this parameter and always enable source term, considering the fact that the default value of the source term is zero anyway. This prevents the false perception that source terms could be enabled or disabled, while the behavior was inconsistent across physics.
+- MINOR The calculation of the source term was enabled using a parameter called "enable". This parameter was used in some physics, not in others and was poorly implemented. We deprecate the usage of this parameter and always enable source term, considering the fact that the default value of the source term is zero anyway. This prevent the false perception that source terms could be enabled or disabled, while the behavior was inconsistent across physics.
 
  
 ## [Master] - 2023-09-19

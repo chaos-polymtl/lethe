@@ -15,7 +15,7 @@ FromFileInsertion<dim>::FromFileInsertion(
       dem_parameters.lagrangian_physical_properties.number.at(0))
 {
   // Initializing current inserting particle type
-  current_inserting_particle_type = 0;
+  this->current_inserting_particle_type = 0;
 
   file_name = dem_parameters.insertion_info.insertion_particles_file;
 }
@@ -30,12 +30,12 @@ FromFileInsertion<dim>::insert(
   const DEMSolverParameters<dim>                  &dem_parameters)
 {
   if (remaining_particles_of_each_type == 0 &&
-      current_inserting_particle_type !=
+      this->current_inserting_particle_type !=
         dem_parameters.lagrangian_physical_properties.particle_type_number - 1)
     {
       remaining_particles_of_each_type =
         dem_parameters.lagrangian_physical_properties.number.at(
-          ++current_inserting_particle_type);
+          ++this->current_inserting_particle_type);
     }
 
 
@@ -70,7 +70,7 @@ FromFileInsertion<dim>::insert(
               if constexpr (dim == 2)
                 {
                   insertion_points_on_proc_this_step.emplace_back(Point<dim>(
-                    {particles_data["p_x"][p], particles_data["p_y"][p]}))
+                    {particles_data["p_x"][p], particles_data["p_y"][p]}));
                 }
 
               if constexpr (dim == 3)
@@ -78,7 +78,7 @@ FromFileInsertion<dim>::insert(
                   insertion_points_on_proc_this_step.emplace_back(
                     Point<dim>({particles_data["p_x"][p],
                                 particles_data["p_y"][p],
-                                particles_data["p_z"][p]}))
+                                particles_data["p_z"][p]}));
                 }
             }
         }
@@ -98,7 +98,6 @@ FromFileInsertion<dim>::insert(
       this->assign_particle_properties_for_from_file_insertion(
         dem_parameters,
         n_particles_to_insert_this_proc,
-        current_inserting_particle_type,
         particles_data,
         particle_properties);
 
@@ -116,7 +115,7 @@ FromFileInsertion<dim>::insert(
         std::cout, Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0);
       this->print_insertion_info(n_total_particles_to_insert,
                                  remaining_particles_of_each_type,
-                                 current_inserting_particle_type,
+                                 this->current_inserting_particle_type,
                                  pcout);
     }
 }
@@ -124,11 +123,10 @@ FromFileInsertion<dim>::insert(
 template <int dim>
 void
 FromFileInsertion<dim>::assign_particle_properties_for_from_file_insertion(
-  const DEMSolverParameters<dim> &dem_parameters,
-  const unsigned int             &inserted_this_step_this_proc,
-  const unsigned int             &current_inserting_particle_type,
-  const std::map<std::string, std::vector<double>> &particles_data,
-  std::vector<std::vector<double>>                 &particle_properties)
+  const DEMSolverParameters<dim>             &dem_parameters,
+  const unsigned int                         &inserted_this_step_this_proc,
+  std::map<std::string, std::vector<double>> &particles_data,
+  std::vector<std::vector<double>>           &particle_properties)
 {
   // Clearing and resizing particle_properties
   particle_properties.reserve(inserted_this_step_this_proc);
@@ -142,10 +140,11 @@ FromFileInsertion<dim>::assign_particle_properties_for_from_file_insertion(
        particle_counter < inserted_this_step_this_proc;
        ++particle_counter)
     {
-      double type     = current_inserting_particle_type;
-      double diameter = particles_data["diameter"][particle_counter];
+      double type     = this->current_inserting_particle_type;
+      double diameter = particles_data["diameters"][particle_counter];
       double density =
-        physical_properties.density_particle[current_inserting_particle_type];
+        physical_properties
+          .density_particle[this->current_inserting_particle_type];
       double vel_x        = particles_data["v_x"][particle_counter];
       double vel_y        = particles_data["v_y"][particle_counter];
       double vel_z        = particles_data["v_z"][particle_counter];

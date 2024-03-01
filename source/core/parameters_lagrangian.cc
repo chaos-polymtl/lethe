@@ -441,6 +441,8 @@ namespace Parameters
           insertion_method = InsertionMethod::volume;
         else if (insertion == "list")
           insertion_method = InsertionMethod::list;
+        else if (insertion == "from_file")
+          insertion_method = InsertionMethod::from_file;
         else if (insertion == "plane")
           insertion_method = InsertionMethod::plane;
         else

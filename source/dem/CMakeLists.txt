@@ -56,7 +56,7 @@ add_library(lethe-dem
   ../../include/dem/find_boundary_cells_information.h
   ../../include/dem/find_cell_neighbors.h
   ../../include/dem/find_contact_detection_step.h
-  ../../from_file_insertion.h
+  ../../include/dem/from_file_insertion.h
   ../../include/dem/gear3_integrator.h
   ../../include/dem/grid_motion.h
   ../../include/dem/input_parameter_inspection.h

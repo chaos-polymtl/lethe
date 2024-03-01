@@ -61,7 +61,8 @@ class Insertion
 public:
   /**
    * @brief Carries out the insertion of particles. This is the base class of
-   * volume_insertion, plane_insertion and list_insertion classes.
+   * volume_insertion, plane_insertion, list_insertion and from_file_insertion
+   * classes.
    *
    * @param distribution_object_container Contains all distribution for each
    * type of particle
@@ -70,8 +71,8 @@ public:
               &distribution_object_container);
 
   /**
-   * @brief This function is overridden by the volume_insertion, plane_insertion and
-   * list_insertion classes to insert particles.
+   * @brief This function is overridden by the volume_insertion, plane_insertion,
+   * list_insertion and from_file_insertion classes.
    *
    * @param particle_handler The particle handler of particles which are being
    * inserted
@@ -87,7 +88,8 @@ public:
   /**
    * @brief Serialize the insertion object to an output archive. Is being used
    * when checkpointing a simulation. This function is overridden by
-   * volume_insertion, plane_insertion and list_insertion classes.
+   * volume_insertion, plane_insertion, list_insertion and from_file_insertion
+   * classes.
    *
    * @param ar Output archive where the attributes are stored.
    *
@@ -99,7 +101,8 @@ public:
   /**
    * @brief Deserialize an input archive to the insertion object. Is being used
    * when restarting a simulation. This function is overridden by
-   * volume_insertion, plane_insertion and list_insertion classes.
+   * volume_insertion, plane_insertion, list_insertion and from_file_insertion
+   * classes.
    *
    * @param ar Input archive where the attributes are stored.
    *
