@@ -72,9 +72,19 @@ MFNavierStokesSolver<dim>::MFNavierStokesSolver(
         system_operator =
           std::make_shared<NavierStokesSUPGPSPGOperator<dim, double>>();
     }
+  else if (nsparam.stabilization.stabilization ==
+           Parameters::Stabilization::NavierStokesStabilization::gls)
+    {
+      if (is_bdf(this->simulation_control->get_assembly_method()))
+        system_operator =
+          std::make_shared<NavierStokesTransientGLSOperator<dim, double>>();
+      else
+        system_operator =
+          std::make_shared<NavierStokesGLSOperator<dim, double>>();
+    }
   else
     throw std::runtime_error(
-      "Only SUPG/PSPG stabilization is supported at the moment.");
+      "Only SUPG/PSPG and GLS stabilization is supported at the moment.");
 }
 
 template <int dim>
