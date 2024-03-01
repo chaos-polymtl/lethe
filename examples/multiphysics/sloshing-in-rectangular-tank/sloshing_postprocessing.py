@@ -11,6 +11,9 @@ the wave.
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+import tqdm
+import time
+
 
 import sys
 sys.path.append("$LETHE_PATH/contrib/postprocessing/")
@@ -46,7 +49,8 @@ H_a = [0,-0.02, 0]
 H_b = [0, 0.02, 0]
 
 # Read PVTU files
-for i in range(len(fluids.list_vtu)):
+for i in tqdm(range(len(fluids.list_vtu))):
+    time.sleep(0.01)
     # Store results in 'df'
     df = fluids.get_df(i)
 
