@@ -454,8 +454,10 @@ HeatTransfer<dim>::assemble_local_system_matrix(
   const DoFHandler<dim> *dof_handler_fluid =
     multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
 
-  typename DoFHandler<dim>::active_cell_iterator velocity_cell(
-    &(*triangulation), cell->level(), cell->index(), dof_handler_fluid);
+  typename DoFHandler<dim>::active_cell_iterator fd_cell(&(*triangulation),
+                                                         cell->level(),
+                                                         cell->index(),
+                                                         dof_handler_fluid);
 
   if (multiphysics->fluid_dynamics_is_block())
     {
@@ -464,8 +466,8 @@ HeatTransfer<dim>::assemble_local_system_matrix(
           simulation_control->get_current_time() >
             this->simulation_parameters.post_processing.initial_time)
         {
-          scratch_data.reinit_velocity(
-            velocity_cell,
+          scratch_data.reinit_fluid_dynamics(
+            fd_cell,
             *multiphysics->get_block_time_average_solution(
               PhysicsID::fluid_dynamics),
             this->simulation_parameters.ale);
@@ -473,10 +475,10 @@ HeatTransfer<dim>::assemble_local_system_matrix(
       else
         {
           if (!this->simulation_parameters.ale.enabled())
-            scratch_data.reinit_velocity(velocity_cell,
-                                         *multiphysics->get_block_solution(
-                                           PhysicsID::fluid_dynamics),
-                                         this->simulation_parameters.ale);
+            scratch_data.reinit_fluid_dynamics(
+              fd_cell,
+              *multiphysics->get_block_solution(PhysicsID::fluid_dynamics),
+              this->simulation_parameters.ale);
         }
     }
   else
@@ -486,17 +488,17 @@ HeatTransfer<dim>::assemble_local_system_matrix(
           simulation_control->get_current_time() >
             this->simulation_parameters.post_processing.initial_time)
         {
-          scratch_data.reinit_velocity(velocity_cell,
-                                       *multiphysics->get_time_average_solution(
-                                         PhysicsID::fluid_dynamics),
-                                       this->simulation_parameters.ale);
+          scratch_data.reinit_fluid_dynamics(
+            fd_cell,
+            *multiphysics->get_time_average_solution(PhysicsID::fluid_dynamics),
+            this->simulation_parameters.ale);
         }
       else
         {
-          scratch_data.reinit_velocity(velocity_cell,
-                                       *multiphysics->get_solution(
-                                         PhysicsID::fluid_dynamics),
-                                       this->simulation_parameters.ale);
+          scratch_data.reinit_fluid_dynamics(fd_cell,
+                                             *multiphysics->get_solution(
+                                               PhysicsID::fluid_dynamics),
+                                             this->simulation_parameters.ale);
         }
     }
 
@@ -610,8 +612,10 @@ HeatTransfer<dim>::assemble_local_system_rhs(
   const DoFHandler<dim> *dof_handler_fluid =
     multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
 
-  typename DoFHandler<dim>::active_cell_iterator velocity_cell(
-    &(*triangulation), cell->level(), cell->index(), dof_handler_fluid);
+  typename DoFHandler<dim>::active_cell_iterator fd_cell(&(*triangulation),
+                                                         cell->level(),
+                                                         cell->index(),
+                                                         dof_handler_fluid);
 
   if (multiphysics->fluid_dynamics_is_block())
     {
@@ -620,18 +624,18 @@ HeatTransfer<dim>::assemble_local_system_rhs(
           simulation_control->get_current_time() >
             this->simulation_parameters.post_processing.initial_time)
         {
-          scratch_data.reinit_velocity(
-            velocity_cell,
+          scratch_data.reinit_fluid_dynamics(
+            fd_cell,
             *multiphysics->get_block_time_average_solution(
               PhysicsID::fluid_dynamics),
             this->simulation_parameters.ale);
         }
       else
         {
-          scratch_data.reinit_velocity(velocity_cell,
-                                       *multiphysics->get_block_solution(
-                                         PhysicsID::fluid_dynamics),
-                                       this->simulation_parameters.ale);
+          scratch_data.reinit_fluid_dynamics(fd_cell,
+                                             *multiphysics->get_block_solution(
+                                               PhysicsID::fluid_dynamics),
+                                             this->simulation_parameters.ale);
         }
       scratch_data.reinit_velocity_gradient(
         *multiphysics->get_block_solution(PhysicsID::fluid_dynamics));
@@ -643,17 +647,17 @@ HeatTransfer<dim>::assemble_local_system_rhs(
           simulation_control->get_current_time() >
             this->simulation_parameters.post_processing.initial_time)
         {
-          scratch_data.reinit_velocity(velocity_cell,
-                                       *multiphysics->get_time_average_solution(
-                                         PhysicsID::fluid_dynamics),
-                                       this->simulation_parameters.ale);
+          scratch_data.reinit_fluid_dynamics(
+            fd_cell,
+            *multiphysics->get_time_average_solution(PhysicsID::fluid_dynamics),
+            this->simulation_parameters.ale);
         }
       else
         {
-          scratch_data.reinit_velocity(velocity_cell,
-                                       *multiphysics->get_solution(
-                                         PhysicsID::fluid_dynamics),
-                                       this->simulation_parameters.ale);
+          scratch_data.reinit_fluid_dynamics(fd_cell,
+                                             *multiphysics->get_solution(
+                                               PhysicsID::fluid_dynamics),
+                                             this->simulation_parameters.ale);
         }
 
       scratch_data.reinit_velocity_gradient(

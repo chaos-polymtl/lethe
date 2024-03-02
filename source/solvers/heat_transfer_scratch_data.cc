@@ -19,12 +19,12 @@ HeatTransferScratchData<dim>::allocate()
   this->source = std::vector<double>(n_q_points);
 
   // Initialize arrays related to velocity and pressure
-  this->velocities.first_vector_component = 0;
   // Velocity
   this->velocity_values          = std::vector<Tensor<1, dim>>(n_q_points);
   this->velocity_gradient_values = std::vector<Tensor<2, dim>>(n_q_points);
   this->shear_rate_values        = std::vector<double>(n_q_points);
-
+  // Pressure
+  this->pressure_values = std::vector<double>(n_q_points);
 
   // Initialize arrays related to temperature
   this->present_temperature_values = std::vector<double>(n_q_points);
@@ -67,6 +67,8 @@ HeatTransferScratchData<dim>::allocate()
     std::pair<field, std::vector<double>>(field::temperature_p2, n_q_points));
   fields.insert(
     std::pair<field, std::vector<double>>(field::shear_rate, n_q_points));
+  fields.insert(
+    std::pair<field, std::vector<double>>(field::pressure, n_q_points));
 }
 
 template <int dim>
@@ -170,6 +172,11 @@ HeatTransferScratchData<dim>::calculate_physical_properties()
         }
 
       set_field_vector(field::shear_rate, shear_rate_values, this->fields);
+    }
+
+  if (properties_manager.field_is_required(field::pressure))
+    {
+      set_field_vector(field::pressure, this->pressure_values, this->fields);
     }
 
   if (material_id < 1 || properties_manager.get_number_of_solids() < 1)
