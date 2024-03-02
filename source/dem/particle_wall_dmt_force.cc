@@ -460,8 +460,7 @@ ParticleWallDMTForce<dim>::calculate_dmt_contact_force_and_torque(
 
   // Coulomb limit need to be modified (Thornton 1991)
   double coulomb_threshold =
-    this->effective_coefficient_of_friction[particle_type] *
-    (normal_force_norm + cohesive_term);
+    this->effective_coefficient_of_friction[particle_type] * normal_force_norm;
 
   // Check for gross sliding
   if (tangential_force_norm > coulomb_threshold)

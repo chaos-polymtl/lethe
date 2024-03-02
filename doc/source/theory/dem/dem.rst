@@ -2,9 +2,6 @@
 Discrete Element Method (DEM)
 =============================
 
-.. warning::
-  *This page is under construction*
-
 In this guide, we summarize the theory behind DEM. For further details, we refer the reader to the article by Golshan *et al.* `[1] <https://doi.org/10.1007/s40571-022-00478-6>`_
 
 .. math::
@@ -207,6 +204,7 @@ This parameter can be described as:
     \mathbf{\tau} = \left( \frac{R_{e} \gamma_{e}^2}{Y_{e}^2 z_{o}^3}\right)^{1/3}.
 
 Where :math:`\mathbf{z_{o}}` is the equilibrium separation of the surfaces and :math:`\mathbf{\gamma}_{e}` the effective surface energy. The DMT model is applicable for low :math:`\mathbf{\tau}` values (:math:`\mathbf{\tau} < 1`) while the JKR model is more appropriate for high :math:`\mathbf{\tau}` values (:math:`\mathbf{\tau} > 1`) . In essence, the DMT model is preferred for small, hard particles (high :math:`Y`) and the JKR model for large, soft particles.
+
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Johnson-Kendall-Roberts force model
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -268,10 +266,12 @@ The normal damping, tangential damping and tangential spring constants need to b
 
 A simplified version of the JKR model (SJKR-A) is implemented in Lethe. Please refer to C. J. Coetzee and O. C. Scheffler for more information on the different versions of the JKR model and their specific features. `[4] <https://doi.org/10.3390/pr11010005>`_
 
+A modified Coulomb's limit, based on the work of C. Thornton, is used for the JKR model. Since the normal force between   
+
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Derjaguin-Muller-Toporov force model
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-The Derjaguin-Muller-Toporov (DMT) model describes attractive forces due to van der Waals effects. This model is more suitable for particles with smaller diameter, lower surface energy and higher Young's modulus. In lethe, the DMT model is implemented using the Maugis approximation which simply adds an adhesion term :math:`\mathbf{F_{ad}^{DMT}}` to the normal force calculation.
+The Derjaguin-Muller-Toporov (DMT) model describes attractive forces due to van der Waals effects. This model is more suitable for particles with smaller diameter, lower surface energy and higher Young's modulus. In lethe, the DMT model is implemented using the Maugis approximation which simply adds an adhesion term :math:`\mathbf{F_{ad}^{DMT}}` to the normal force calculation. `[8] <https://doi.org/10.1016/j.prostr.2018.11.106.>`_
 
 .. math::
     F_{ad}^{DMT} = -2\pi\gamma_{e}R_{e}^{2}
@@ -314,3 +314,5 @@ References
 `[5] <https://doi.org/10.1016/B978-0-12-391927-4.10013-1>`_ J. N. Israelachvili, “Chapter 13 - Van der Waals Forces between Particles and Surfaces,” in Intermolecular and Surface Forces (Third Edition), Third Edition., J. N. Israelachvili, Ed., Boston: Academic Press, 2011, pp. 253–289. doi: https://doi.org/10.1016/B978-0-12-391927-4.10013-1.
 
 `[6] <https://doi.org/10.1038/srep06227>`_ E. J. R. Parteli, J. Schmidt, C. Blümel, K.-E. Wirth, W. Peukert, and T. Pöschel, “Attractive particle interaction forces and packing density of fine glass powders,” Sci Rep, vol. 4, no. 1, Art. no. 1, Sep. 2014, doi: 10.1038/srep06227.
+
+`[8] <https://doi.org/10.1016/j.prostr.2018.11.106.>`_ Violano, Guido, Giuseppe Pompeo Demelio, and Luciano Afferrante. “On the DMT Adhesion Theory: From the First Studies to the Modern Applications in Rough Contacts.” Procedia Structural Integrity, AIAS 2018 international conference on stress analysis, 12 (January 1, 2018): 58–70. https://doi.org/10.1016/j.prostr.2018.11.106.

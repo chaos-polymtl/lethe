@@ -484,7 +484,7 @@ ParticleWallJKRForce<dim>::calculate_jkr_contact_force_and_torque(
   // JKR theory says that the coulomb threshold must be modified with the
   // pull-out force. (Thornton 1991)
   const double modified_coulomb_threshold =
-    (normal_force_norm + 6. * M_PI *
+    (normal_force_norm + 3. * M_PI *
                            this->effective_surface_energy[particle_type] *
                            effective_radius) *
     this->effective_coefficient_of_friction[particle_type];

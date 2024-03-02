@@ -1178,7 +1178,7 @@ protected:
     double coulomb_threshold =
       this->effective_coefficient_of_friction[vec_particle_type_index(
         particle_one_type, particle_two_type)] *
-      (normal_force_norm + cohesive_term);
+      normal_force_norm;
 
     // Check for gross sliding
     const double tangential_force_norm = tangential_force.norm();
