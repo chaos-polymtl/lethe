@@ -6,7 +6,7 @@ def create_copy(self, prefix):
     read_files_path_list = [self.pvd_datasets[x].path for x in range(len(self.pvd_datasets))]
 
     # Write new vtu and pvd files to store modified data.
-    # IMPORTANT!!!! If this parameter is empty, that is,  "", data will be written over original vtu and pvd files.
+    # IMPORTANT!!!! If the prefix parameter is empty, that is,  "", data will be written over original vtu and pvd files.
     with open(f'{self.path_output}/{self.pvd_name}') as pvd_in:
         with open(f'{self.path_output}/{prefix}{self.pvd_name}', 'w') as pvd_out:
             for line in pvd_in:
