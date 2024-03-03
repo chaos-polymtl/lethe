@@ -31,7 +31,7 @@ def mixing_index_nearest_neighbors(self, n_neighbors = 15, reference_array = "pa
 
     self.df[$TIME-STEP]     -> Assign array to dataset named according to
     mixing_index_array_name. This array can be used in visual postprocessing
-    softwares, such as ParaView. Check the write_vtu method of this module.
+    softwares, such as ParaView. Check the write_pvtu method of this module.
     """
 
     # Apply NNM by Godlieb et al. (2007)

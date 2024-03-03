@@ -59,6 +59,8 @@
 build/*
 cmake-build-debug/*
 cmake-build-release/*
+.cache/*
+
 
 # Ignore clion recommandation file
 .idea/*
