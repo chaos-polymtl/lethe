@@ -34,17 +34,17 @@ print('To print out any value inside the dictionary, ask for it using ["paramete
 print('The path to the case can be seen using: example.case_path')
 
 # The read_lethe_to_pyvista method writes out the attributes .time_list,
-# .list_vtu and reads the '.vtu' files inside the pointed folder as pyvista
+# .list_pvtu and reads the '.pvtu' files inside the pointed folder as pyvista
 # dataframes.
-print('List of all .vtu: ')
+print('List of all .pvtu: ')
 print(example.list_vtu)
 print('Time list, if transient: ')
 print(example.time_list)
 
-# Each .vtu file will correspond to a dataframe named df, such that the first
-# vtu can be accessed through .get_df(0), the second .get_df(1), and so on.print(example.get_df(0))
+# Each .pvtu file will correspond to a dataframe named df, such that the first
+# pvtu can be accessed through .get_df(0), the second .get_df(1), and so on.print(example.get_df(0))
 
-# This should print out the name of the arrays in the first vtu file of your
+# This should print out the name of the arrays in the first pvtu file of your
 # case
 print('Name of the arrays in your pyvista dataframe: ')
 print(example.get_df(0).array_names)

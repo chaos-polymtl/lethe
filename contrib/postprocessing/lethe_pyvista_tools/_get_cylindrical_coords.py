@@ -1,6 +1,5 @@
 import numpy as np
 
-
 # Get cylindrical coordinates of each point of all dataframes
 def get_cylindrical_coords(self, radial_components = "yz"):
     """

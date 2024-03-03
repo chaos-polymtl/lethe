@@ -34,7 +34,7 @@ pressure = []
 sample_point_a = [-0.5, 0, 0]
 sample_point_b = [0.5, 0, 0]
 
-# Read VTU files
+# Read PVTU files
 for i in range(len(fluids.list_vtu)):
     # Store results in 'df'
     df = fluids.get_df(i)
