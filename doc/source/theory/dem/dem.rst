@@ -190,7 +190,7 @@ The parameters are computed as followed:
 
 .. math::
     \mathbf{\hat{\omega}}_{ij} &= \frac{\omega_{i} - \omega_{j}}{|\omega_{i} - \omega_{j}|} \\
-    \mathbf{V}_{\omega} &= \left( \omega_{i} \times R_{i}\mathbf{n}_{ij}-\omega_{j} \times R_{j}\mathbf{n}_{ji} \right)
+    \mathbf{V}_{\omega} &= \left( \omega_{i} \times R_{i}\mathbf{n}_{ij}-\omega_{j} \times R_{j}\mathbf{n}_{ji} \right).
 
 -----------------------
 Cohesive force models
@@ -221,18 +221,18 @@ Note that if the effective surface energy is equal to zero, the JKR model revert
 The effective surface energy can be computed as:
 
 .. math::
-    \gamma_{e} = \gamma_{i} + \gamma_{j} - 2\gamma_{i,j}
+    \gamma_{e} = \gamma_{i} + \gamma_{j} - 2\gamma_{i,j}.
 
 Where :math:`\gamma_{i}` and :math:`\gamma_{j}` are the surface energy of each material (particle or wall) and where :math:`\gamma_{i,j}` is the interface energy which is equal to zero when both surfaces are the same material.
 In Lethe, the interface energy term is approximated using `[5] <https://doi.org/10.1016/B978-0-12-391927-4.10013-1>`_:
 
 .. math::
-    \gamma_{i,j} \approx \left( \sqrt{\gamma_{i}} - \sqrt{\gamma_{j}}  \right)^{2}
+    \gamma_{i,j} \approx \left( \sqrt{\gamma_{i}} - \sqrt{\gamma_{j}}  \right)^{2}.
 
 To compute the :math:`\mathbf{F_{n}^{JKR}}`, the contact patch radius needs to be determined. The contact patch radius can be related to the normal overlap as follows:
 
 .. math::
-    \delta_{n} = \frac{ a^{2} }{ R_{e} } -  \sqrt{ \frac{2 \pi \gamma_{e} a }{ Y_{e} } }
+    \delta_{n} = \frac{ a^{2} }{ R_{e} } -  \sqrt{ \frac{2 \pi \gamma_{e} a }{ Y_{e} }}.
 
 This equation can be rewritten as a fourth-order polynomial function with two complex and two real roots.
 
@@ -255,18 +255,29 @@ Since we are always solving for the same real root, a straightforward procedure,
     \end{cases}\\
     \omega &= \sqrt{c_{2} + 2 s} \\
     \lambda &= \frac{c_{1} }{2 \omega}\\
-    a &= \frac{1}{2}\left(\omega + \sqrt{\omega^{2} - 4(c_{2} + s + \lambda ) } \right)
+    a &= \frac{1}{2}\left(\omega + \sqrt{\omega^{2} - 4(c_{2} + s + \lambda ) } \right).
 
 Finally, the :math:`\mathbf{F_{n}^{JKR}}` can be computed as follows:
 
 .. math::
-    F_{n}^{JKR} = \frac{4 Y_{e} a^{3}}{3 R_{e}} - \sqrt{8 \pi \gamma_{e} Y_{e} a^{3} }
+    F_{n}^{JKR} = \frac{4 Y_{e} a^{3}}{3 R_{e}} - \sqrt{8 \pi \gamma_{e} Y_{e} a^{3}}.
 
 The normal damping, tangential damping and tangential spring constants need to be computed using the same procedure as the nonlinear model.
 
 A simplified version of the JKR model (SJKR-A) is implemented in Lethe. Please refer to C. J. Coetzee and O. C. Scheffler for more information on the different versions of the JKR model and their specific features. `[4] <https://doi.org/10.3390/pr11010005>`_
 
-A modified Coulomb's limit, based on the work of C. Thornton, is used for the JKR model. Since the normal force between   
+A modified Coulomb's limit, based on the work of C. Thornton `[7] <https://doi.org/10.1088/0022-3727/24/11/007>`_, is used for the JKR model. Using the usual limit can result in permanent slip since the total normal force can be equal to zero even when there is a substantial overlap between particles.
+
+The modified Coulomb's criterion is breached when the following condition is broken during a collision:
+
+.. math::
+    |\mathbf{F}_{ij}^{t}| \geq \mu |\mathbf{F_{n}^{JKR} + 2F_{po}}|.
+
+Where :math:`\mathbf{2F_{po}}` is the pull-off force, which can be computed as follows:
+
+.. math::
+    \mathbf{F_{po}} = 1.5\pi\gamma_{e}R_{e}.
+
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Derjaguin-Muller-Toporov force model
@@ -275,6 +286,8 @@ The Derjaguin-Muller-Toporov (DMT) model describes attractive forces due to van 
 
 .. math::
     F_{ad}^{DMT} = -2\pi\gamma_{e}R_{e}^{2}
+
+The Coulomb's limit threshold for the DMT model is computed in the same way as for the non-linear viscoelastic model. This means that the adhesion force term in not taken into account when computing the norm of the normal force.
 
 --------------------
 Integration Methods
