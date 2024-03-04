@@ -132,12 +132,12 @@ The List insertion method insert particles at precis coordinates with specific v
 ---------------------
 From File
 ---------------------
-The From File insertion method insert particles in a similar way to the List insertion method. The main difference between these two methods is the need of an external file named ``particles.input`` by default. This external file has to follow this structure:
+The From File insertion method insert particles in a similar way to the List insertion method. The main difference between these two methods is the need of an external file with defined by the ``particles file`` parameter. This parameter is set at ``particles.input`` by default. This external file has to follow this structure:
 
 .. code-block:: text
 
-    p_x; p_y; p_z; v_x; v_y; v_z; w_x; w_y; w_z; diameters; fem_force_x; fem_force_y; fem_force_z; fem_torque_x; fem_torque_y; fem_torque_z; volumetric_contribution;
-    0.0; 0.0; 0.0; 0.0; 0.0; 0.0; 0.0; 0.0; 0.0;       0.2;           0;           0;           0;            0;            0;            0;                       0;
-    1.0; 2.0; 3.0; 0.0; 0.0; 0.0; 0.0; 0.0; 0.0;       0.2;           0;           0;           0;            0;            0;            0;                       0;
+    p_x; p_y; p_z; v_x; v_y; v_z; w_x; w_y; w_z; diameters; fem_force_x; fem_force_y; fem_force_z; fem_torque_x; fem_torque_y; fem_torque_z;
+    0.0; 0.0; 0.0; 0.0; 0.0; 0.0; 0.0; 0.0; 0.0;       0.2;           0;           0;           0;            0;            0;            0;
+    1.0; 2.0; 3.0; 0.0; 0.0; 0.0; 0.0; 0.0; 0.0;       0.2;           0;           0;           0;            0;            0;            0;
 
-Each line is associated with a particle and gives it its properties. The ``fem_force``, ``fem_torque`` and ``volumetric_contribution`` properties are useful for the CFD-DEM solver. The main advantage of using the ``from_file`` method over the ``list`` method is that the number of inserted particles in not limited to the number of character accepted on a single line a the parameter file.
+Each line is associated with a particle and gives it its properties. The ``fem_force`` and ``fem_torque`` properties are useful for the CFD-DEM solver. The main advantage of using the ``from_file`` method over the ``list`` method is that the number of inserted particles in not limited to the number of character accepted on a single line a the parameter file.
