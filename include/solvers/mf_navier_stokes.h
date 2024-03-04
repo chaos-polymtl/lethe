@@ -214,24 +214,6 @@ private:
   void
   solve_with_ILU(SolverGMRES<VectorType> &solver);
 
-  /**
-   * @brief Estimate the eigenvalues to obtain a relaxation parameter for the
-   * smoother used in all multigrid preconditioners.
-   *
-   * @param[in] operator Operator for which the estimation needs to be done.
-   *
-   * @param[in] level Corresponding multigrid level.
-   *
-   * @param[in] diagonal Pre-computed diagonal of level operator.
-   *
-   * @return Relaxation parameter omega.
-   */
-  double
-  estimate_omega(
-    std::shared_ptr<NavierStokesOperatorBase<dim, double>> &mg_operator,
-    const unsigned int                                     &level,
-    const VectorType                                       &diagonal);
-
 protected:
   /**
    * @brief Matrix-free operator in used for all the matrix-vector multiplications calls (vmult).
