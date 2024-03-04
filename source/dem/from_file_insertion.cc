@@ -155,12 +155,11 @@ FromFileInsertion<dim>::assign_particle_properties_for_from_file_insertion(
       double fem_force_y  = particles_data["fem_force_y"][particle_counter];
       double fem_force_z  = particles_data["fem_force_z"][particle_counter];
       double fem_torque_x = particles_data["fem_torque_x"][particle_counter];
-      double fem_torque_y = particles_data["fem_torque_x"][particle_counter];
-      double fem_torque_z = particles_data["fem_torque_x"][particle_counter];
+      double fem_torque_y = particles_data["fem_torque_y"][particle_counter];
+      double fem_torque_z = particles_data["fem_torque_z"][particle_counter];
       double mass         = density * 4. / 3. * M_PI *
                     Utilities::fixed_power<3, double>(diameter * 0.5);
-      double volumetric_contribution =
-        particles_data["volumetric_contribution"][particle_counter];
+      double volumetric_contribution = 0;
 
       std::vector<double> properties_of_one_particle{type,
                                                      diameter,
