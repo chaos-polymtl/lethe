@@ -651,26 +651,8 @@ public:
   momentum_flux(const std::map<field, double> &field_values) override
   {
     const double saturation_pressure_value = saturation_pressure(field_values);
-    const double mass_flux_value           = mass_flux(field_values);
-    const double temperature_inv =
-      1.0 / (field_values.at(field::temperature) + 1e-16);
 
-    const double R_inv = 1.0 / universal_gas_constant;
-
-    const double vapor_saturation_density_value =
-      molar_mass * saturation_pressure_value * R_inv * temperature_inv;
-
-    // rho_vap = 0.31*rho_sat according to Anisimov and Khokhlov 1995
-    const double vapor_density_inv =
-      1.0 / (0.31 * vapor_saturation_density_value);
-
-    double expansion_pressure = (std::abs(saturation_pressure_value) < 1e-16) ?
-                                  0.0 :
-                                  -mass_flux_value * mass_flux_value *
-                                    (liquid_density_inv - vapor_density_inv);
-
-    double pressure = expansion_pressure +
-                      recoil_pressure_coefficient * saturation_pressure_value;
+    double pressure = recoil_pressure_coefficient * saturation_pressure_value;
 
     return std::max(pressure - ambient_pressure, 0.0);
   }
@@ -687,34 +669,16 @@ public:
   momentum_flux(const std::map<field, std::vector<double>> &field_vectors,
                 std::vector<double> &momentum_flux_vector) override
   {
-    const unsigned int         n_pts = momentum_flux_vector.size();
-    const std::vector<double> &temperature =
-      field_vectors.at(field::temperature);
-
-    const double R_inv = 1.0 / universal_gas_constant;
+    const unsigned int n_pts = momentum_flux_vector.size();
 
     std::vector<double> saturation_pressure_vector(n_pts);
     saturation_pressure(field_vectors, saturation_pressure_vector);
 
-    std::vector<double> mass_flux_vector(n_pts);
-    mass_flux(field_vectors, mass_flux_vector);
-
     for (unsigned int i = 0; i < n_pts; ++i)
-      {
-        const double temperature_inv = 1.0 / (temperature[i] + 1e-16);
-
-        const double vapor_saturation_density_value =
-          molar_mass * saturation_pressure_vector[i] * R_inv * temperature_inv;
-
-        // rho_vap = 0.31*rho_sat according to Anisimov and Khokhlov 1995
-        const double vapor_density_inv =
-          1.0 / (0.31 * vapor_saturation_density_value);
-
-        momentum_flux_vector[i] =
-          -mass_flux_vector[i] * mass_flux_vector[i] *
-            (liquid_density_inv - vapor_density_inv) +
-          recoil_pressure_coefficient * saturation_pressure_vector[i];
-      }
+      momentum_flux_vector[i] =
+        std::max(recoil_pressure_coefficient * saturation_pressure_vector[i] -
+                   ambient_pressure,
+                 0.0);
   }
 
   /**
