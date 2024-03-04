@@ -7,11 +7,23 @@ Running on 1 MPI rank(s)...
 Pressure drop: 0 Pa
 Total pressure drop: 0 Pa
 
+---------------
+VOF Barycenter
+---------------
+  time    x_vof    y_vof    vx_vof   vy_vof  
+0.000000 0.125000 0.058681 0.000000 0.000000 
+
 *******************************************************************************
 Transient iteration: 1        Time: 0.1      Time step: 0.1      CFL: 0       
 *******************************************************************************
 Pressure drop: -0.366978 Pa
 Total pressure drop: -0.366978 Pa
+
+---------------
+VOF Barycenter
+---------------
+  time    x_vof    y_vof    vx_vof    vy_vof   
+0.100000 0.125000 0.058681 -0.000009 -0.000023 
 
 *********************************************************************************
 Transient iteration: 2        Time: 0.2      Time step: 0.1      CFL: 0.00412505
@@ -19,14 +31,32 @@ Transient iteration: 2        Time: 0.2      Time step: 0.1      CFL: 0.00412505
 Pressure drop: -0.367039 Pa
 Total pressure drop: -0.367039 Pa
 
+---------------
+VOF Barycenter
+---------------
+  time    x_vof    y_vof    vx_vof    vy_vof  
+0.200000 0.124998 0.058682 -0.000002 0.000006 
+
 *********************************************************************************
 Transient iteration: 3        Time: 0.3      Time step: 0.1      CFL: 0.00230552
 *********************************************************************************
 Pressure drop: -0.367051 Pa
 Total pressure drop: -0.367051 Pa
 
+---------------
+VOF Barycenter
+---------------
+  time    x_vof    y_vof    vx_vof   vy_vof  
+0.300000 0.124995 0.058684 0.000003 0.000031 
+
 ********************************************************************************
 Transient iteration: 4        Time: 0.4      Time step: 0.1      CFL: 0.0016325
 ********************************************************************************
 Pressure drop: -0.367145 Pa
 Total pressure drop: -0.367145 Pa
+
+---------------
+VOF Barycenter
+---------------
+  time    x_vof    y_vof    vx_vof   vy_vof  
+0.400000 0.124992 0.058687 0.000002 0.000032 

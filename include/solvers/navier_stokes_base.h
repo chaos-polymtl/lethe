@@ -59,7 +59,7 @@ using namespace dealii;
 
 /**
  * @brief Struct containing fluid id, temperature range information, and flag
- * containers for DOFs used in temperature-dependent solid domain constraints.
+ * containers for DOFs used in temperature-dependent stasis constraints.
  *
  * @param[in] fluid_id Identifier of the fluid that is constrained.
  *
