@@ -411,7 +411,7 @@ namespace Parameters
                           Patterns::Double(),
                           "Initial omega z");
         prm.declare_entry("particles file",
-                          "particle.input",
+                          "particles.input",
                           Patterns::FileName(),
                           "The file name from which we load the particles");
         prm.declare_entry("insertion plane point",

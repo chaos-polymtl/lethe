@@ -2,7 +2,7 @@
 Insertion Info
 ==============
 
-In this subsection, insertion methods which are ``volume``, ``plane`` and ``list`` are defined.
+In this subsection, insertion methods which are ``volume``, ``plane``, ``list`` and ``from_file`` are defined.
 
 .. note::
     Insertion in Lethe starts inserting particles from type 0 and proceeds to the next type when all the particles from the previous type are inserted.
@@ -11,7 +11,7 @@ In this subsection, insertion methods which are ``volume``, ``plane`` and ``list
 .. code-block:: text
 
   subsection insertion info
-    # Choices are volume|plane|list
+    # Choices are volume|plane|list|from_file
     set insertion method                               = volume
 
     # Every method
@@ -61,9 +61,12 @@ In this subsection, insertion methods which are ``volume``, ``plane`` and ``list
     set list omega z                                   = 0.
     set list diameters                                 = 0.
 
+    # If method = from_file
+    set particles file                                 = particles.input
+
   end
 
-The ``insertion method`` parameter chooses the type of insertion. Acceptable choices are ``volume``, ``plane`` and ``list``. Different insertion method can share the same parameter.
+The ``insertion method`` parameter chooses the type of insertion. Acceptable choices are ``volume``, ``plane``, ``list`` and ``from_file``. Different insertion method can share the same parameter.
 
 * The ``insertion frequency`` parameter defines the frequency of insertion. For example, if the ``insertion frequency`` is set equal to 10000, the iterations 1, 10001, 20001, ... will be defined as insertion steps.  The ``insertion frequency`` should be selected adequately depending on the insertion method. For ``volume`` it should be large, so that the inserted particles at the previous insertion step have enough time to leave the insertion box for the next insertion step, otherwise large overlap may occur which leads to a large velocity of particles. For the ``plane`` method, it should be small so that particles are being inserted as soon as a cell is empty.
 
@@ -125,3 +128,16 @@ The List insertion method insert particles at precis coordinates with specific v
     set list z = 0., 3.
 
 * The ``list velocity x``, ``list velocity y``, ``list velocity z``, ``list omega x``, ``list omega y``, ``list omega z`` and ``list diameters`` define the initial translational velocities, the initial angular velocities and diameters of each particles respectively following the same logic as the insertion coordinates.
+
+---------------------
+From File
+---------------------
+The From File insertion method insert particles in a similar way to the List insertion method. The main difference between these two methods is the need of an external file named ``particles.input`` by default. This external file has to follow this structure:
+
+.. code-block:: text
+
+    p_x; p_y; p_z; v_x; v_y; v_z; w_x; w_y; w_z; diameters; fem_force_x; fem_force_y; fem_force_z; fem_torque_x; fem_torque_y; fem_torque_z; volumetric_contribution;
+    0.0; 0.0; 0.0; 0.0; 0.0; 0.0; 0.0; 0.0; 0.0;       0.2;           0;           0;           0;            0;            0;            0;                       0;
+    1.0; 2.0; 3.0; 0.0; 0.0; 0.0; 0.0; 0.0; 0.0;       0.2;           0;           0;           0;            0;            0;            0;                       0;
+
+Each line is associated with a particle and gives it its properties. The ``fem_force``, ``fem_torque`` and ``volumetric_contribution`` properties are useful for the CFD-DEM solver. The main advantage of using the ``from_file`` method over the ``list`` method is that the number of inserted particles in not limited to the number of character accepted on a single line a the parameter file.
