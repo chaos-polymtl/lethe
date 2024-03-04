@@ -119,10 +119,10 @@ subsection boundary conditions heat transfer
 end
 
 #---------------------------------------------------
-# Constrain Solid Domain
+# Constrain Stasis
 #---------------------------------------------------
 
-subsection constrain solid domain
+subsection constrain stasis
   set enable                = true
   set number of constraints = 1
   subsection constraint 0

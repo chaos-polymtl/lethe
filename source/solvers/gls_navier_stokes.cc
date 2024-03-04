@@ -399,12 +399,13 @@ GLSNavierStokesSolver<dim>::define_dynamic_zero_constraints()
     this->multiphysics->get_dof_handler(PhysicsID::heat_transfer);
 
   if (!this->simulation_parameters.multiphysics.VOF)
-    this->constrain_solid_domain(dof_handler_ht);
+    this->constrain_stasis_with_temperature(dof_handler_ht);
   else
     {
       const DoFHandler<dim> *dof_handler_vof =
         this->multiphysics->get_dof_handler(PhysicsID::VOF);
-      this->constrain_solid_domain_vof(dof_handler_vof, dof_handler_ht);
+      this->constrain_stasis_with_temperature_vof(dof_handler_vof,
+                                                  dof_handler_ht);
     }
 
   this->dynamic_zero_constraints.merge(
@@ -414,11 +415,11 @@ GLSNavierStokesSolver<dim>::define_dynamic_zero_constraints()
   this->dynamic_zero_constraints.close();
 
   // Clear sets for next time step
-  for (SolidDomainConstraint &solid_domain_constraint_struct :
-       this->solid_domain_constraint_structs)
+  for (StasisConstraintWithTemperature &stasis_constraint_struct :
+       this->stasis_constraint_structs)
     {
-      solid_domain_constraint_struct.dofs_are_in_solid.clear();
-      solid_domain_constraint_struct.dofs_are_connected_to_fluid.clear();
+      stasis_constraint_struct.dofs_are_in_solid.clear();
+      stasis_constraint_struct.dofs_are_connected_to_fluid.clear();
     }
 }
 

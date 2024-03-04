@@ -504,7 +504,7 @@ namespace Parameters
     dealii::ParameterHandler &prm,
     const unsigned int        number_of_constraints)
   {
-    prm.enter_subsection("constrain solid domain");
+    prm.enter_subsection("constrain stasis");
     {
       prm.declare_entry(
         "enable",
@@ -564,7 +564,7 @@ namespace Parameters
   void
   ConstrainSolidDomain::parse_parameters(dealii::ParameterHandler &prm)
   {
-    prm.enter_subsection("constrain solid domain");
+    prm.enter_subsection("constrain stasis");
     {
       this->enable                = prm.get_bool("enable");
       this->number_of_constraints = prm.get_integer("number of constraints");

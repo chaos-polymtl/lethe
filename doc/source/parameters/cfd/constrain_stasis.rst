@@ -1,6 +1,6 @@
-=======================
-Constrain Solid Domain
-=======================
+=================
+Constrain Stasis
+=================
 
 This subsection is used to define temperature-dependent solid domains within a defined fluid.
 Homogenous constraints are applied on velocity and pressure degrees of freedom of cells found within the prescribed temperature range to mimic a solid.
@@ -12,7 +12,7 @@ The subsection with default parameters goes as follows:
 
 .. code-block:: text
 
-    subsection constrain solid domain
+    subsection constrain stasis
       set enable                = false
       set number of constraints = 0
       subsection constraint 0

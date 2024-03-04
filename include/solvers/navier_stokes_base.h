@@ -72,12 +72,13 @@ using namespace dealii;
  * @param[in] filtered_phase_fraction_tolerance Tolerance applied on filtered
  * phase fraction.
  */
-struct SolidDomainConstraint
+struct StasisConstraintWithTemperature
 {
-  SolidDomainConstraint(const unsigned int fluid_id,
-                        const double       min_solid_temperature,
-                        const double       max_solid_temperature,
-                        const double       filtered_phase_fraction_tolerance)
+  StasisConstraintWithTemperature(
+    const unsigned int fluid_id,
+    const double       min_solid_temperature,
+    const double       max_solid_temperature,
+    const double       filtered_phase_fraction_tolerance)
     : fluid_id(fluid_id)
     , min_solid_temperature(min_solid_temperature)
     , max_solid_temperature(max_solid_temperature)
@@ -478,14 +479,14 @@ protected:
    * @param[in] local_temperature_values Cell's local temperature values at
    * quadrature points.
    *
-   * @param[in,out] solid_domain_constraint_struct Struct containing flagged DOF
+   * @param[in,out] stasis_constraint_struct Struct containing flagged DOF
    * containers, temperature range information and fluid id.
    */
   void
   add_flags_and_constrain_velocity(
     const std::vector<types::global_dof_index> &local_dof_indices,
     const std::vector<double>                  &local_temperature_values,
-    SolidDomainConstraint                      &solid_domain_constraint_struct);
+    StasisConstraintWithTemperature            &stasis_constraint_struct);
 
   /**
    * @brief Check if solid cells are connected to fluid ones and constrain null
@@ -493,9 +494,9 @@ protected:
    *
    * The check is done by looking if the global DOF indices are located in the
    * flag containers (@p dofs_are_in_solid and @p dofs_are_connected_to_fluid)
-   * of @p solid_domain_constraint_struct.
+   * of @p stasis_constraint_struct.
    *
-   * @param[in] solid_domain_constraint_struct Struct containing flagged DOF
+   * @param[in] stasis_constraint_struct Struct containing flagged DOF
    * containers, temperature range information and fluid id.
    *
    * @param[in,out] local_dof_indices Vector for storing a cell's local DOF
@@ -503,8 +504,8 @@ protected:
    */
   void
   check_and_constrain_pressure(
-    const SolidDomainConstraint          &solid_domain_constraint_struct,
-    std::vector<types::global_dof_index> &local_dof_indices);
+    const StasisConstraintWithTemperature &stasis_constraint_struct,
+    std::vector<types::global_dof_index>  &local_dof_indices);
 
   /**
    * @brief Constrain velocity DOFs of a solid cell.
@@ -717,7 +718,7 @@ protected:
    * physic.
    */
   void
-  constrain_solid_domain(const DoFHandler<dim> *dof_handler_ht);
+  constrain_stasis_with_temperature(const DoFHandler<dim> *dof_handler_ht);
 
   /**
    * @brief Constrain fluids' subdomains according to the temperature field to
@@ -730,8 +731,8 @@ protected:
    * physic.
    */
   void
-  constrain_solid_domain_vof(const DoFHandler<dim> *dof_handler_vof,
-                             const DoFHandler<dim> *dof_handler_ht);
+  constrain_stasis_with_temperature_vof(const DoFHandler<dim> *dof_handler_vof,
+                                        const DoFHandler<dim> *dof_handler_ht);
 
   /**
    * @brief write_checkpoint
@@ -870,7 +871,7 @@ protected:
   std::shared_ptr<FEValues<dim>> fe_values_vof;
   /// Vector containing solid domain constraint structs for
   /// temperature-dependent solid domain constraints in VOF simulations
-  std::vector<SolidDomainConstraint> solid_domain_constraint_structs;
+  std::vector<StasisConstraintWithTemperature> stasis_constraint_structs;
   /// Dynamic homogeneous constraints used for temperature-dependent solid
   /// domain constraints
   AffineConstraints<double> dynamic_zero_constraints;
