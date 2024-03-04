@@ -11,7 +11,7 @@ subsection simulation control
   set method           = bdf1
   set time end         = 0.4
   set time step        = 0.1
-  set output frequency = 1
+  set output frequency = 0
 end
 
 #---------------------------------------------------

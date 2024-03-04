@@ -1873,8 +1873,8 @@ NavierStokesBase<dim, VectorType, DofsType>::
     *this->multiphysics->get_solution(PhysicsID::heat_transfer);
   std::vector<double> local_temperature_values(this->cell_quadrature->size());
 
-  // Loop over structs containing fluid id, temperature range information and
-  // flag containers for DOFs.
+  // Loop over structs containing fluid id, temperature and phase fraction range
+  // information, and flag containers for DOFs.
   for (StasisConstraintWithTemperature &stasis_constraint_struct :
        this->stasis_constraint_structs)
     {
@@ -1938,29 +1938,26 @@ NavierStokesBase<dim, VectorType, DofsType>::add_flags_and_constrain_velocity(
   const std::vector<double>                  &local_temperature_values,
   StasisConstraintWithTemperature            &stasis_constraint_struct)
 {
-  bool cell_is_solid = false;
-
-  // Flag cell if the cell is solid and constrain its velocity DOFs
   for (const double &temperature : local_temperature_values)
     {
-      if (temperature >= stasis_constraint_struct.min_solid_temperature &&
-          temperature <= stasis_constraint_struct.max_solid_temperature)
+      // Flag non-solid cell DOFs to identify which pressure DOFs should not
+      // be constrained.
+      if (temperature < stasis_constraint_struct.min_solid_temperature ||
+          temperature > stasis_constraint_struct.max_solid_temperature)
         {
-          flag_dofs_in_solid(local_dof_indices,
-                             stasis_constraint_struct.dofs_are_in_solid);
-          constrain_solid_cell_velocity_dofs(false,
-                                             local_dof_indices,
-                                             this->dynamic_zero_constraints);
-          cell_is_solid = true;
-          break;
+          flag_dofs_connected_to_fluid(
+            local_dof_indices,
+            stasis_constraint_struct.dofs_are_connected_to_fluid);
+          return;
         }
-    }
 
-  // Flag non-solid cell DOFs to identify which pressure DOFs should not
-  // be constrained.
-  if (!cell_is_solid)
-    flag_dofs_connected_to_fluid(
-      local_dof_indices, stasis_constraint_struct.dofs_are_connected_to_fluid);
+      // If the cell is solid, flag it as solid and constrain its velocity DOFs
+      flag_dofs_in_solid(local_dof_indices,
+                         stasis_constraint_struct.dofs_are_in_solid);
+      constrain_solid_cell_velocity_dofs(false,
+                                         local_dof_indices,
+                                         this->dynamic_zero_constraints);
+    }
 }
 
 template <int dim, typename VectorType, typename DofsType>
@@ -2152,7 +2149,8 @@ NavierStokesBase<dim, VectorType, DofsType>::write_output_results(
           density_models[f_id]->get_density_ref(),
           f_id));
 
-      // Only output when density is not constant or if it is a multiphase flow
+      // Only output when density is not constant or if it is a multiphase
+      // flow
       if (!density_models[f_id]->is_constant_density_model() ||
           this->simulation_parameters.multiphysics.VOF ||
           this->simulation_parameters.multiphysics.cahn_hilliard)

@@ -544,7 +544,7 @@ namespace Parameters
                       Patterns::Integer(),
                       "Identifier of the fluid material that is constrained.");
     prm.declare_entry("phase fraction tolerance",
-                      "0",
+                      "1e-4",
                       Patterns::Double(),
                       "Absolute filtered phase fraction tolerance used in "
                       "conjunction with VOF simulations to select the cells "

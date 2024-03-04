@@ -211,6 +211,15 @@ public:
           "\n or: set postprocessed fluid = fluid 0");
       }
 
+    if (physical_properties.number_of_fluids == 2 &&
+        (!multiphysics.VOF && !multiphysics.cahn_hilliard))
+      {
+        throw std::logic_error(
+          "Inconsistency in .prm!\n "
+          "Number of fluids in 'physical properties' was set to 2,\n "
+          "but neither VOF or cahn hilliard is enabled in the 'multiphysics'.\n ");
+      }
+
     // Interface physical property models consistency check
     if (multiphysics.vof_parameters.surface_tension_force.enable)
       {
