@@ -1171,36 +1171,42 @@ namespace Parameters
     };
     Type type;
 
-    // File name of the mesh
+    /// File name of the mesh
     std::string file_name;
 
-    // Name of the grid in GridTools
+    /// Name of the grid in GridTools
     std::string grid_type;
 
-    // Arguments of the GridTools
+    /// Arguments of the GridTools
     std::string grid_arguments;
 
-    // Initial refinement level of primitive mesh
+    /// Initial refinement level of primitive mesh
     unsigned int initial_refinement;
 
-    // Enabling fixing initial refinement from a target size
+    /// Initial refinement level of primitive mesh near user-defined boundary conditions
+    unsigned int initial_refinement_at_boundaries;
+
+    /// List of boundary ids to refine
+    std::vector<int> boundaries_to_refine;
+
+    /// Enabling fixing initial refinement from a target size
     bool refine_until_target_size;
 
-    // Allowing the use of a simplex mesh
+    /// Allowing the use of a simplex mesh
     bool simplex;
 
-    // Target size when automatically refining initial mesh
+    /// Target size when automatically refining initial mesh
     double target_size;
 
-    // Enables checking the input grid for diamond-shaped cells
+    /// Enables checking the input grid for diamond-shaped cells
     bool check_for_diamond_cells;
 
-    // A boolean parameter which enables adding the neighbor boundary cells of
-    // boundary cells in DEM simulations. This parameter should only be enabled
-    // for simulations with concave geometries (for instance particles inside a
-    // drum). In simulations with convex geometries, it must not be enabled.
-    // This is also reported to users in a warning in
-    // find_boundary_cells_information.
+    /* A boolean parameter which enables adding the neighbor boundary cells of
+    * boundary cells in DEM simulations. This parameter should only be enabled
+    * for simulations with concave geometries (for instance particles inside a
+    * drum). In simulations with convex geometries, it must not be enabled.
+    * This is also reported to users in a warning in
+     find_boundary_cells_information.*/
     bool expand_particle_wall_contact_search;
 
     // Grid displacement at initiation
@@ -1582,14 +1588,34 @@ namespace Parameters
    * the default value is returned. If the entry is not equivalent to a vector,
    * an error will be thrown.
    *
+   * @tparam T The type of vector (int, unsigned int or double)
    * @param prm A parameter handler which is currently used to parse the simulation
    * information.
    * @param entry_string A declare string in the parameter file.
    *
    * @return A std::vector<double> corresponding to the entry_string in the prm file.
    */
-  std::vector<double>
+  template <typename T>
+  std::vector<T>
   convert_string_to_vector(ParameterHandler  &prm,
-                           const std::string &entry_string);
+                           const std::string &entry_string)
+  {
+    std::string              full_str = prm.get(entry_string);
+    std::vector<std::string> vector_of_string(
+      Utilities::split_string_list(full_str));
+    if constexpr (std::is_same<T, int>::value )
+      {
+        std::vector<T> vector =
+          Utilities::string_to_int(vector_of_string);
+        return vector;
+      }
+    if  constexpr (std::is_same<T, double>::value )
+      {
+        std::vector<T> vector =
+          Utilities::string_to_double(vector_of_string);
+        return vector;
+      }
+  }
+
 } // namespace Parameters
 #endif

@@ -2061,6 +2061,16 @@ namespace Parameters
                         Patterns::Integer(),
                         "Initial refinement of the mesh");
 
+      prm.declare_entry("initial boundary refinement",
+                        "0",
+                        Patterns::Integer(),
+                        "Initial refinement of the mesh at the boundaries specified by the user");
+
+      prm.declare_entry("boundaries refined",
+                        "",
+                        Patterns::List(Patterns::Integer()),
+                        "Boundary ids of the boundaries to be initially refined");
+
       if (prm.get("type") == "periodic_hills")
         {
           prm.declare_entry("grid arguments", "1 ; 1 ; 1 ; 1 ; 1");
@@ -2153,6 +2163,9 @@ namespace Parameters
       file_name = prm.get("file name");
 
       initial_refinement = prm.get_integer("initial refinement");
+      initial_refinement_at_boundaries = prm.get_integer("initial boundary refinement");
+
+      boundaries_to_refine =  convert_string_to_vector<int>(prm, "boundaries refined");
 
       grid_type      = prm.get("grid type");
       grid_arguments = prm.get("grid arguments");
@@ -3647,20 +3660,6 @@ namespace Parameters
       output_tensor[i] = vector_of_double[i];
 
     return output_tensor;
-  }
-
-  std::vector<double>
-  convert_string_to_vector(ParameterHandler  &prm,
-                           const std::string &entry_string)
-  {
-    std::string              full_str = prm.get(entry_string);
-    std::vector<std::string> vector_of_string(
-      Utilities::split_string_list(full_str));
-
-    std::vector<double> vector_of_double =
-      Utilities::string_to_double(vector_of_string);
-
-    return vector_of_double;
   }
 
   template class Laser<2>;
