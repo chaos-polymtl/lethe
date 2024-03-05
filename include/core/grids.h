@@ -84,9 +84,11 @@ read_mesh_and_manifolds(
  *
  * @param[in] n_refinement The number of times the boundary should be refined
  *
- * @param[in] boundary_ids The boundary ids for which the cells should be refined
+ * @param[in] boundary_ids The boundary ids for which the cells should be
+ * refined
  *
- * @param[in, out] triangulation The triangulation on which refinement must be carried out
+ * @param[in, out] triangulation The triangulation on which refinement must be
+ * carried out
  *
  */
 template <int dim, int spacedim = dim>
