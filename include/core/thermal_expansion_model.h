@@ -112,7 +112,7 @@ private:
 };
 
 /**
- * @brief Implements a phase-dependant thermal expansion coefficient
+ * @brief Implements a phase-dependent thermal expansion coefficient
  */
 class ThermalExpansionPhaseChange : public ThermalExpansionModel
 {

@@ -504,7 +504,7 @@ namespace Parameters
     dealii::ParameterHandler &prm,
     const unsigned int        number_of_constraints)
   {
-    prm.enter_subsection("constrain solid domain");
+    prm.enter_subsection("constrain stasis");
     {
       prm.declare_entry(
         "enable",
@@ -513,16 +513,17 @@ namespace Parameters
         "Enable/disable (true/false) the solid domain constraining feature.");
       prm.declare_entry(
         "number of constraints",
-        Utilities::int_to_string(number_of_constraints),
+        "0",
         Patterns::Integer(),
         "Number of solid constraints (maximum of 1 per fluid).");
       // Resize vectors
       this->fluid_ids.resize(number_of_constraints);
+      this->filtered_phase_fraction_tolerance.resize(number_of_constraints);
       this->temperature_min_values.resize(number_of_constraints);
       this->temperature_max_values.resize(number_of_constraints);
 
       // Declare default entries
-      for (unsigned int c_id = 0; c_id < number_of_constraints; c_id++)
+      for (unsigned int c_id = 0; c_id < number_of_constraints; ++c_id)
         {
           prm.enter_subsection("constraint " + std::to_string(c_id));
           {
@@ -542,6 +543,12 @@ namespace Parameters
                       "0",
                       Patterns::Integer(),
                       "Identifier of the fluid material that is constrained.");
+    prm.declare_entry("phase fraction tolerance",
+                      "1e-4",
+                      Patterns::Double(),
+                      "Absolute filtered phase fraction tolerance used in "
+                      "conjunction with VOF simulations to select the cells "
+                      "on which the constraint is applied.");
     prm.declare_entry("min temperature",
                       "-999",
                       Patterns::Double(),
@@ -557,18 +564,19 @@ namespace Parameters
   void
   ConstrainSolidDomain::parse_parameters(dealii::ParameterHandler &prm)
   {
-    prm.enter_subsection("constrain solid domain");
+    prm.enter_subsection("constrain stasis");
     {
       this->enable                = prm.get_bool("enable");
       this->number_of_constraints = prm.get_integer("number of constraints");
 
       // Resize vectors
       this->fluid_ids.resize(number_of_constraints);
+      this->filtered_phase_fraction_tolerance.resize(number_of_constraints);
       this->temperature_min_values.resize(number_of_constraints);
       this->temperature_max_values.resize(number_of_constraints);
 
       // Parse parameters for each constraint
-      for (unsigned int c_id = 0; c_id < number_of_constraints; c_id++)
+      for (unsigned int c_id = 0; c_id < number_of_constraints; ++c_id)
         {
           prm.enter_subsection("constraint " + std::to_string(c_id));
           {
@@ -587,6 +595,8 @@ namespace Parameters
     const unsigned int        constraint_id)
   {
     this->fluid_ids[constraint_id] = prm.get_integer("fluid id");
+    this->filtered_phase_fraction_tolerance[constraint_id] =
+      prm.get_double("phase fraction tolerance");
     this->temperature_min_values[constraint_id] =
       prm.get_double("min temperature");
     this->temperature_max_values[constraint_id] =

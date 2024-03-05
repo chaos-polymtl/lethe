@@ -1,0 +1,62 @@
+Running on 1 MPI rank(s)...
+   Number of active cells:       256
+   Number of degrees of freedom: 867
+   Volume of triangulation:      0.0625
+   Number of thermal degrees of freedom: 289
+   Number of VOF degrees of freedom: 289
+Pressure drop: 0 Pa
+Total pressure drop: 0 Pa
+
+---------------
+VOF Barycenter
+---------------
+  time    x_vof    y_vof    vx_vof   vy_vof  
+0.000000 0.125000 0.058681 0.000000 0.000000 
+
+*******************************************************************************
+Transient iteration: 1        Time: 0.1      Time step: 0.1      CFL: 0       
+*******************************************************************************
+Pressure drop: -0.367464 Pa
+Total pressure drop: -0.367464 Pa
+
+---------------
+VOF Barycenter
+---------------
+  time    x_vof    y_vof    vx_vof   vy_vof   
+0.100000 0.125000 0.058681 0.000004 -0.000023 
+
+*********************************************************************************
+Transient iteration: 2        Time: 0.2      Time step: 0.1      CFL: 0.00485702
+*********************************************************************************
+Pressure drop: -0.367538 Pa
+Total pressure drop: -0.367538 Pa
+
+---------------
+VOF Barycenter
+---------------
+  time    x_vof    y_vof    vx_vof   vy_vof  
+0.200000 0.124998 0.058682 0.000001 0.000006 
+
+*********************************************************************************
+Transient iteration: 3        Time: 0.3      Time step: 0.1      CFL: 0.00241665
+*********************************************************************************
+Pressure drop: -0.367861 Pa
+Total pressure drop: -0.367861 Pa
+
+---------------
+VOF Barycenter
+---------------
+  time    x_vof    y_vof    vx_vof   vy_vof  
+0.300000 0.124996 0.058684 0.000004 0.000023 
+
+*********************************************************************************
+Transient iteration: 4        Time: 0.4      Time step: 0.1      CFL: 0.00157289
+*********************************************************************************
+Pressure drop: -0.367981 Pa
+Total pressure drop: -0.367981 Pa
+
+---------------
+VOF Barycenter
+---------------
+  time    x_vof    y_vof    vx_vof   vy_vof  
+0.400000 0.124992 0.058686 0.000005 0.000023 

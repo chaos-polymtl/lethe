@@ -88,7 +88,7 @@ The rotating Lagrangian frame of reference is non-Galilean. Consequently, the Co
     \nabla \cdot \mathbf{u} &= 0   \\
     \frac{\partial \mathbf{u}}{\partial t}  + \mathbf{u} \cdot \nabla \mathbf{u} &= -\frac{1}{\rho} \nabla p  + \nu \nabla^2 \mathbf{u} +\mathbf{f} - \underbrace{\Omega \times \mathbf{u}}_{Coriolis} - \underbrace{\Omega \times (\mathbf{q} \times \mathbf{u})}_{Centrifugal}
 
-where :math:`\mathbf{q}` is the position in the fluid with respect to the center of rotation and :math:`\mathbf{\Omega}` is the angular velocity of the rotating reference frame. The Coriolis force adds a velocity dependant force to the Navier-Stokes equations whereas the centrifugal forces is independent of the flow and only modifies the pressure field.
+where :math:`\mathbf{q}` is the position in the fluid with respect to the center of rotation and :math:`\mathbf{\Omega}` is the angular velocity of the rotating reference frame. The Coriolis force adds a velocity dependent force to the Navier-Stokes equations whereas the centrifugal forces is independent of the flow and only modifies the pressure field.
 
 In this example, we will start by simulating the case when :math:`Re = 1` and then follow with simulations for :math:`Re` values ranging from :math:`0.1` to :math:`100` to generate :math:`N_p` vs :math:`Re` curves.
 

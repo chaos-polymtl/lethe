@@ -58,6 +58,48 @@
 using namespace dealii;
 
 /**
+ * @brief Struct containing fluid id, temperature and phase fraction range
+ * information, and flag containers for DOFs used in temperature-dependent
+ * stasis constraints.
+ *
+ * @param[in] fluid_id Identifier of the fluid that is constrained.
+ *
+ * @param[in] min_solid_temperature Lower threshold value of the constraining
+ * field (temperature).
+ *
+ * @param[in] max_solid_temperature Upper threshold values of the constraining
+ * field (temperature).
+ *
+ * @param[in] filtered_phase_fraction_tolerance Tolerance applied on filtered
+ * phase fraction.
+ */
+struct StasisConstraintWithTemperature
+{
+  StasisConstraintWithTemperature(
+    const unsigned int fluid_id,
+    const double       min_solid_temperature,
+    const double       max_solid_temperature,
+    const double       filtered_phase_fraction_tolerance)
+    : fluid_id(fluid_id)
+    , min_solid_temperature(min_solid_temperature)
+    , max_solid_temperature(max_solid_temperature)
+    , filtered_phase_fraction_tolerance(filtered_phase_fraction_tolerance)
+  {}
+  /// Identifier of the fluid that is constrained.
+  const unsigned int fluid_id;
+  /// Lower threshold values of the constraining field (temperature)
+  const double min_solid_temperature;
+  /// Upper threshold values of the constraining field (temperature)
+  const double max_solid_temperature;
+  /// Tolerance applied on filtered phase fraction
+  const double filtered_phase_fraction_tolerance;
+  /// Container of global DOF indices located in solid cells
+  std::unordered_set<types::global_dof_index> dofs_are_in_solid;
+  /// Container of global DOF indices connected to at least one fluid cell
+  std::unordered_set<types::global_dof_index> dofs_are_connected_to_fluid;
+};
+
+/**
  * A base class for all the Navier-Stokes equation
  * This class regroups common facilities that are shared by all
  * the Navier-Stokes implementations to reduce code multiplicity
@@ -292,7 +334,7 @@ protected:
    * @brief Enable the use of dynamic zero constraints by initializing required
    * FEValues objects.
    *
-   * @note At the moment, the only solution-dependant dynamic constraint depends
+   * @note At the moment, the only solution-dependent dynamic constraint depends
    * on the temperature field obtained from the Heat Transfer (HT) auxiliary
    * physic.
    */
@@ -370,6 +412,103 @@ protected:
   establish_solid_domain(const bool non_zero_constraints);
 
   /**
+   * @brief Get cell's local temperature values at quadrature points.
+   *
+   * @param[in] cell Pointer to an active cell of the fluid dynamics DoFHandler.
+   *
+   * @param[in] dof_handler_ht DoFHandler of the Heat Transfer (HT) auxiliary
+   * physic.
+   *
+   * @param[in] temperature_solution Temperature solution vector from the HT
+   * auxiliary physic.
+   *
+   * @param[out] local_temperature_values Cell's local temperature values at
+   * quadrature points.
+   */
+  inline void
+  get_cell_temperature_values(
+    const typename DoFHandler<dim>::active_cell_iterator &cell,
+    const DoFHandler<dim>                                *dof_handler_ht,
+    const TrilinosWrappers::MPI::Vector                  &temperature_solution,
+    std::vector<double> &local_temperature_values)
+  {
+    const typename DoFHandler<dim>::active_cell_iterator temperature_cell(
+      &(*(this->triangulation)), cell->level(), cell->index(), dof_handler_ht);
+
+    this->fe_values_temperature->reinit(temperature_cell);
+    this->fe_values_temperature->get_function_values(temperature_solution,
+                                                     local_temperature_values);
+  }
+
+  /**
+   * @brief Get cell's local filtered phase fraction values at quadrature
+   * points.
+   *
+   * @param[in] cell Pointer to an active cell of the fluid dynamics DoFHandler.
+   *
+   * @param[in] dof_handler_vof DoFHandler of the Volume of Fluid (VOF)
+   * auxiliary physic.
+   *
+   * @param[in] filtered_phase_fraction_solution Filtered phase fraction
+   * solution vector from the VOF auxiliary physic.
+   *
+   * @param[out] local_filtered_phase_fraction_values Cell's local filtered
+   * phase fraction values at quadrature points.
+   */
+  inline void
+  get_cell_filtered_phase_fraction_values(
+    const typename DoFHandler<dim>::active_cell_iterator &cell,
+    const DoFHandler<dim>                                *dof_handler_vof,
+    const TrilinosWrappers::MPI::Vector &filtered_phase_fraction_solution,
+    std::vector<double>                 &local_filtered_phase_fraction_values)
+  {
+    const typename DoFHandler<dim>::active_cell_iterator vof_cell(
+      &(*(this->triangulation)), cell->level(), cell->index(), dof_handler_vof);
+
+    this->fe_values_vof->reinit(vof_cell);
+    this->fe_values_vof->get_function_values(
+      filtered_phase_fraction_solution, local_filtered_phase_fraction_values);
+  }
+
+  /**
+   * @brief Flag cell DOFs (either "solid" or "connected to fluid") and
+   * constrain velocity DOFs with homogeneous constraints if cell is considered
+   * solid.
+   *
+   * @param[in] local_dof_indices Vector of a cell's local DOF indices.
+   *
+   * @param[in] local_temperature_values Cell's local temperature values at
+   * quadrature points.
+   *
+   * @param[in,out] stasis_constraint_struct Struct containing flagged DOF
+   * containers, temperature range information and fluid id.
+   */
+  void
+  add_flags_and_constrain_velocity(
+    const std::vector<types::global_dof_index> &local_dof_indices,
+    const std::vector<double>                  &local_temperature_values,
+    StasisConstraintWithTemperature            &stasis_constraint_struct);
+
+  /**
+   * @brief Check if solid cells are connected to fluid ones and constrain null
+   * pressure DOFs if they are not.
+   *
+   * The check is done by looking if the global DOF indices are located in the
+   * flag containers (@p dofs_are_in_solid and @p dofs_are_connected_to_fluid)
+   * of @p stasis_constraint_struct.
+   *
+   * @param[in] stasis_constraint_struct Struct containing flagged DOF
+   * containers, temperature range information and fluid id.
+   *
+   * @param[in,out] local_dof_indices Vector for storing a cell's local DOF
+   * indices.
+   */
+  void
+  check_and_constrain_pressure(
+    const StasisConstraintWithTemperature &stasis_constraint_struct,
+    std::vector<types::global_dof_index>  &local_dof_indices);
+
+  /**
    * @brief Constrain velocity DOFs of a solid cell.
    *
    * @param[in] non_zero_constraints If this parameter is true, it indicates
@@ -410,15 +549,15 @@ protected:
   /**
    * @brief Flag DOFs in solid cells.
    *
+   * @param[in] local_dof_indices Vector of a cell's local DOF indices.
+   *
    * @param[out] dofs_are_in_solid Container of global DOF indices located in
    * solid cells.
-   *
-   * @param[in] local_dof_indices Vector of a cell's local DOF indices.
    */
   inline void
   flag_dofs_in_solid(
-    std::unordered_set<types::global_dof_index> &dofs_are_in_solid,
-    const std::vector<types::global_dof_index>  &local_dof_indices)
+    const std::vector<types::global_dof_index>  &local_dof_indices,
+    std::unordered_set<types::global_dof_index> &dofs_are_in_solid)
   {
     for (unsigned int i = 0; i < local_dof_indices.size(); ++i)
       {
@@ -570,14 +709,31 @@ protected:
   }
 
   /**
-   * @brief Constrain a fluid domain according to the temperature field to a null velocity
-   * and pressure fields to model a solid subdomain.
+   * @brief Constrain a fluid's subdomains according to the temperature field to null
+   * velocity and pressure fields to model solid subdomains.
+   *
+   * @note Its equivalent for Volume of Fluid (VOF) simulations is
+   * NavierStokesBase<dim, VectorType, DofsType>::constrain_solid_domain_vof.
    *
    * @param[in] dof_handler_ht DoFHandler of the Heat Transfer (HT) auxiliary
    * physic.
    */
   void
-  constrain_solid_domain(const DoFHandler<dim> *dof_handler_ht);
+  constrain_stasis_with_temperature(const DoFHandler<dim> *dof_handler_ht);
+
+  /**
+   * @brief Constrain fluids' subdomains according to the temperature field to
+   * null velocity and pressure fields to model solid subdomains in Volume of
+   * Fluid (VOF) simulations.
+   *
+   * @param[in] dof_handler_vof DoFHandler of the VOF auxiliary physic.
+   *
+   * @param[in] dof_handler_ht DoFHandler of the Heat Transfer (HT) auxiliary
+   * physic.
+   */
+  void
+  constrain_stasis_with_temperature_vof(const DoFHandler<dim> *dof_handler_vof,
+                                        const DoFHandler<dim> *dof_handler_ht);
 
   /**
    * @brief write_checkpoint
@@ -709,10 +865,15 @@ protected:
   std::vector<TableHandler>                forces_tables;
   std::vector<TableHandler>                torques_tables;
 
-  /// FEValues object used for temperature-dependant solid domain constraints
+  /// FEValues object used for temperature-dependent solid domain constraints
   std::shared_ptr<FEValues<dim>> fe_values_temperature;
-
-  /// Dynamic homogeneous constraints used for temperature-dependant solid
+  /// FEValues object used for temperature-dependent solid domain constraints in
+  /// VOF simulations
+  std::shared_ptr<FEValues<dim>> fe_values_vof;
+  /// Vector containing solid domain constraint structs for
+  /// temperature-dependent solid domain constraints in VOF simulations
+  std::vector<StasisConstraintWithTemperature> stasis_constraint_structs;
+  /// Dynamic homogeneous constraints used for temperature-dependent solid
   /// domain constraints
   AffineConstraints<double> dynamic_zero_constraints;
 };

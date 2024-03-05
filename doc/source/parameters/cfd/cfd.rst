@@ -12,7 +12,7 @@ General, CFD and Multiphysics
    boundary_conditions_multiphysics
    box_refinement
    cahn_hilliard
-   constrain_solid_domain
+   constrain_stasis
    dimensionality
    dynamic_flow_control
    fem
