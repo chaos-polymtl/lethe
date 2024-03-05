@@ -62,12 +62,8 @@ MFNavierStokesSolver<dim>::MFNavierStokesSolver(
   this->fe = std::make_shared<FESystem<dim>>(
     FE_Q<dim>(nsparam.fem_parameters.velocity_order), dim + 1);
 
-  if (is_bdf(this->simulation_control->get_assembly_method()))
-    system_operator =
-      std::make_shared<NavierStokesTransientOperator<dim, double>>();
-  else
-    system_operator =
-      std::make_shared<NavierStokesSteadyOperator<dim, double>>();
+  system_operator =
+    std::make_shared<NavierStokesStabilizedOperator<dim, double>>();
 }
 
 template <int dim>
@@ -666,12 +662,8 @@ MFNavierStokesSolver<dim>::solve_with_LSMG(SolverGMRES<VectorType> &solver)
 
       this->mg_computing_timer.enter_subsection("Set up operators");
 
-      if (is_bdf(this->simulation_control->get_assembly_method()))
-        mg_operators[level] =
-          std::make_shared<NavierStokesTransientOperator<dim, double>>();
-      else
-        mg_operators[level] =
-          std::make_shared<NavierStokesSteadyOperator<dim, double>>();
+      mg_operators[level] =
+        std::make_shared<NavierStokesStabilizedOperator<dim, double>>();
 
       mg_operators[level]->reinit(
         *this->mapping,
@@ -1179,12 +1171,8 @@ MFNavierStokesSolver<dim>::solve_with_GCMG(SolverGMRES<VectorType> &solver)
 
       this->mg_computing_timer.enter_subsection("Set up operators");
 
-      if (is_bdf(this->simulation_control->get_assembly_method()))
-        mg_operators[level] =
-          std::make_shared<NavierStokesTransientOperator<dim, double>>();
-      else
-        mg_operators[level] =
-          std::make_shared<NavierStokesSteadyOperator<dim, double>>();
+      mg_operators[level] =
+        std::make_shared<NavierStokesStabilizedOperator<dim, double>>();
 
       mg_operators[level]->reinit(
         *this->mapping,

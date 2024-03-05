@@ -18,6 +18,7 @@
 
 #include <core/bdf.h>
 #include <core/simulation_control.h>
+#include <core/time_integration_utilities.h>
 
 #include <solvers/simulation_parameters.h>
 
@@ -380,7 +381,7 @@ protected:
 
 
   /**
-   * @brief Stabilization type needed to add or remove terms from operator
+   * @brief Stabilization type needed to add or remove terms from operator.
    *
    */
   StabilizationType stabilization;
@@ -464,77 +465,27 @@ protected:
 };
 
 /**
- * @brief Implements the matrix-free operator to solve the steady-state
- * Navier-Stokes equations using stabilization.
- *
- * @tparam dim An integer that denotes the number of spatial dimensions.
- * @tparam number Abstract type for number across the class (i.e., double).
- */
-template <int dim, typename number>
-class NavierStokesSteadyOperator : public NavierStokesOperatorBase<dim, number>
-{
-public:
-  using FECellIntegrator = FEEvaluation<dim, -1, 0, dim + 1, number>;
-  using VectorType       = LinearAlgebra::distributed::Vector<number>;
-
-  /**
-   * @brief Default constructor.
-   *
-   */
-  NavierStokesSteadyOperator();
-
-protected:
-  /**
-   * @brief Perform cell integral on a cell batch without gathering and scattering
-   * the values, and according to the Jacobian of the discretized Navier-Stokes
-   * equations with stabilization.
-   *
-   * @param[in] integrator FEEvaluation object that allows to evaluate functions
-   * at quadrature points and perform cell integrations.
-   */
-  void
-  do_cell_integral_local(FECellIntegrator &integrator) const override;
-
-  /**
-   * @brief Perform cell integral on a cell batch with gathering and scattering
-   * the values, and according to the residual of the discretized Navier-Stokes
-   * equations with stabilization.
-   *
-   * @param[in] matrix_free Object that contains all data.
-   * @param[in,out] dst Global vector where the final result is added.
-   * @param[in] src Input vector with all values in all cells.
-   * @param[out] range Range of the cell batch.
-   */
-  void
-  local_evaluate_residual(
-    const MatrixFree<dim, number>               &matrix_free,
-    VectorType                                  &dst,
-    const VectorType                            &src,
-    const std::pair<unsigned int, unsigned int> &range) const override;
-};
-
-/**
- * @brief Implements the matrix-free operator to solve transient Navier-Stokes equations
+ * @brief Implements the matrix-free operator to solve steady/transient Navier-Stokes equations
  * using stabilization.
  *
  * @tparam dim An integer that denotes the number of spatial dimensions.
  * @tparam number Abstract type for number across the class (i.e., double).
  */
 template <int dim, typename number>
-class NavierStokesTransientOperator
+class NavierStokesStabilizedOperator
   : public NavierStokesOperatorBase<dim, number>
 {
 public:
   using FECellIntegrator = FEEvaluation<dim, -1, 0, dim + 1, number>;
   using VectorType       = LinearAlgebra::distributed::Vector<number>;
 
-  NavierStokesTransientOperator();
+  NavierStokesStabilizedOperator();
 
 protected:
   /**
    * @brief Perform cell integral on a cell batch without gathering and scattering
-   * the values, and according to the Jacobian of the discretized transient
-   * Navier-Stokes equations with stabilization.
+   * the values, and according to the Jacobian of the discretized
+   * steady/transient Navier-Stokes equations with stabilization.
    *
    * @param[in] integrator FEEvaluation object that allows to evaluate functions
    * at quadrature points and perform cell integrations.
@@ -544,8 +495,8 @@ protected:
 
   /**
    * @brief Perform cell integral on a cell batch with gathering and scattering
-   * the values, and according to the residual of the discretized transient
-   * Navier-Stokes equations with stabilization.
+   * the values, and according to the residual of the discretized
+   * steady/transient Navier-Stokes equations with stabilization.
    *
    * @param[in] matrix_free Object that contains all data.
    * @param[in,out] dst Global vector where the final result is added.

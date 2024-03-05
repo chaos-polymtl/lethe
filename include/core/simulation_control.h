@@ -463,7 +463,7 @@ public:
     return times;
   }
 
-  Vector<double> const &
+  Vector<double> &
   get_bdf_coefficients()
   {
     return bdf_coefs;
