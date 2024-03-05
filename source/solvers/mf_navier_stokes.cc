@@ -448,6 +448,63 @@ MFNavierStokesSolver<dim>::calculate_time_derivative_previous_solutions()
 }
 
 template <int dim>
+double
+MFNavierStokesSolver<dim>::estimate_omega(
+  std::shared_ptr<NavierStokesOperatorBase<dim, double>> &mg_operator,
+  const unsigned int                                     &level,
+  const VectorType                                       &diagonal)
+{
+  TimerOutput::Scope t(this->mg_computing_timer, "Estimate eigenvalues");
+
+  double omega = 0.0;
+
+  using OperatorType               = NavierStokesOperatorBase<dim, double>;
+  using SmootherPreconditionerType = DiagonalMatrix<VectorType>;
+  using RelaxationPreconditionerType =
+    PreconditionRelaxation<OperatorType, SmootherPreconditionerType>;
+  typename RelaxationPreconditionerType::AdditionalData
+    relaxation_additional_data;
+
+  relaxation_additional_data.preconditioner =
+    std::make_shared<SmootherPreconditionerType>(diagonal);
+
+  relaxation_additional_data.relaxation = 0.0;
+  relaxation_additional_data.n_iterations =
+        this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+          .mg_smoother_iterations;
+  relaxation_additional_data.smoothing_range =
+    this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+      .eig_estimation_smoothing_range;
+  relaxation_additional_data.eig_cg_n_iterations =
+    this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+      .eig_estimation_cg_n_iterations;
+
+  auto relaxation = std::make_shared<RelaxationPreconditionerType>();
+  relaxation->initialize(*mg_operator, relaxation_additional_data);
+
+  VectorType vec;
+  mg_operator->initialize_dof_vector(vec);
+
+  const auto evs = relaxation->estimate_eigenvalues(vec);
+
+  if (this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+        .eig_estimation_verbose != Parameters::Verbosity::quiet)
+    {
+      this->pcout << std::endl;
+      this->pcout << "  -Eigenvalue estimation level " << level << ":"
+                  << std::endl;
+      this->pcout << "    Relaxation parameter: " << relaxation->get_relaxation() << std::endl;
+      this->pcout << "    Minimum eigenvalue: " << evs.min_eigenvalue_estimate
+                  << std::endl;
+      this->pcout << "    Maximum eigenvalue: " << evs.max_eigenvalue_estimate
+                  << std::endl;
+      this->pcout << std::endl;
+    }
+
+  return omega;
+}
+
+template <int dim>
 void
 MFNavierStokesSolver<dim>::solve_with_LSMG(SolverGMRES<VectorType> &solver)
 {
@@ -1221,6 +1278,9 @@ MFNavierStokesSolver<dim>::solve_with_GCMG(SolverGMRES<VectorType> &solver)
               .eig_estimation_cg_n_iterations;
           smoother_data[level].eigenvalue_algorithm =
             SmootherType::AdditionalData::EigenvalueAlgorithm::power_iteration;
+
+          // double omega =
+          // estimate_omega(mg_operators[level], level, diagonal_vector);
         }
       else
         smoother_data[level].relaxation =
