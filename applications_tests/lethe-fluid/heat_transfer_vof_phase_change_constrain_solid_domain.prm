@@ -21,6 +21,7 @@ end
 subsection multiphysics
   set heat transfer  = true
   set fluid dynamics = true
+  set VOF            = true
 end
 
 #---------------------------------------------------
@@ -30,6 +31,9 @@ end
 subsection initial conditions
   subsection temperature
     set Function expression = (40-25)*(0.25-x)*4+25
+  end
+  subsection VOF
+    set Function expression = if(y>=0.125, 0, 1)
   end
 end
 
@@ -48,7 +52,7 @@ end
 #---------------------------------------------------
 
 subsection physical properties
-  set number of fluids      = 1
+  set number of fluids      = 2
   set reference temperature = 30
   subsection fluid 0
     set thermal conductivity    = 0.5
@@ -59,6 +63,19 @@ subsection physical properties
       set latent enthalpy      = 200
       set liquidus temperature = 30
       set solidus temperature  = 29.8
+      set viscosity liquid     = 0.0001
+      set viscosity solid      = 10
+    end
+  end
+  subsection fluid 1
+    set thermal conductivity    = 0.5
+    set thermal expansion model = phase_change
+    set rheological model       = phase_change
+    set specific heat model     = phase_change
+    subsection phase change
+      set latent enthalpy      = 200
+      set liquidus temperature = 35
+      set solidus temperature  = 34.8
       set viscosity liquid     = 0.0001
       set viscosity solid      = 10
     end
@@ -124,11 +141,18 @@ end
 
 subsection constrain stasis
   set enable                = true
-  set number of constraints = 1
+  set number of constraints = 2
   subsection constraint 0
-    set fluid id        = 0
-    set min temperature = 0
-    set max temperature = 29
+    set fluid id                 = 0
+    set phase fraction tolerance = 1e-4
+    set min temperature          = 0
+    set max temperature          = 29
+  end
+  subsection constraint 1
+    set fluid id                 = 1
+    set phase fraction tolerance = 1e-4
+    set min temperature          = 0
+    set max temperature          = 34
   end
 end
 
@@ -137,8 +161,10 @@ end
 #---------------------------------------------------
 
 subsection post-processing
-  set verbosity               = verbose
-  set calculate pressure drop = true
+  set verbosity                   = verbose
+  set calculate pressure drop     = true
+  set calculate mass conservation = false
+  set calculate barycenter        = true
 end
 
 #---------------------------------------------------
@@ -146,14 +172,19 @@ end
 #---------------------------------------------------
 
 subsection non-linear solver
+  subsection fluid dynamics
+    set tolerance      = 1e-4
+    set max iterations = 5
+    set verbosity      = quiet
+  end
   subsection heat transfer
     set tolerance      = 1e-3
     set max iterations = 20
     set verbosity      = quiet
   end
-  subsection fluid dynamics
-    set tolerance      = 1e-4
-    set max iterations = 5
+  subsection VOF
+    set tolerance      = 1e-9
+    set max iterations = 20
     set verbosity      = quiet
   end
 end
@@ -181,6 +212,17 @@ subsection linear solver
     set max iters                             = 1000
     set relative residual                     = 1e-3
     set minimum residual                      = 1e-5
+    set preconditioner                        = ilu
+    set ilu preconditioner fill               = 0
+    set ilu preconditioner absolute tolerance = 1e-12
+    set ilu preconditioner relative tolerance = 1.00
+  end
+  subsection VOF
+    set verbosity                             = quiet
+    set method                                = gmres
+    set max iters                             = 1000
+    set relative residual                     = 1e-3
+    set minimum residual                      = 1e-10
     set preconditioner                        = ilu
     set ilu preconditioner fill               = 0
     set ilu preconditioner absolute tolerance = 1e-12

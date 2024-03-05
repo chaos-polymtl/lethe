@@ -113,7 +113,7 @@ private:
 
 
 /**
- * @brief Implements a linear temperature-dependant thermal conductivity of the form k = A + BT
+ * @brief Implements a linear temperature-dependent thermal conductivity of the form k = A + BT
  */
 class ThermalConductivityLinear : public ThermalConductivityModel
 {
@@ -190,7 +190,7 @@ private:
 };
 
 /**
- * @brief Implements a phase-dependant thermal conductivity
+ * @brief Implements a phase-dependent thermal conductivity
  */
 class ThermalConductivityPhaseChange : public ThermalConductivityModel
 {

@@ -540,8 +540,12 @@ namespace Parameters
     /// Total number of constraints (maximum of 1 per fluid)
     unsigned int number_of_constraints;
 
-    /// Identifier of fluids that are constrained
+    /// Identifiers of fluids that are constrained
     std::vector<unsigned int> fluid_ids;
+
+    /// Absolute tolerance applied on filtered phase fraction for
+    /// constrained cell selection
+    std::vector<double> filtered_phase_fraction_tolerance;
 
     /// Lower threshold values of the constraining field (temperature)
     std::vector<double> temperature_min_values;
