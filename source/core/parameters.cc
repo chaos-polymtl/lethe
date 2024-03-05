@@ -2061,15 +2061,17 @@ namespace Parameters
                         Patterns::Integer(),
                         "Initial refinement of the mesh");
 
-      prm.declare_entry("initial boundary refinement",
-                        "0",
-                        Patterns::Integer(),
-                        "Initial refinement of the mesh at the boundaries specified by the user");
+      prm.declare_entry(
+        "initial boundary refinement",
+        "0",
+        Patterns::Integer(),
+        "Initial refinement of the mesh at the boundaries specified by the user");
 
-      prm.declare_entry("boundaries refined",
-                        "",
-                        Patterns::List(Patterns::Integer()),
-                        "Boundary ids of the boundaries to be initially refined");
+      prm.declare_entry(
+        "boundaries refined",
+        "",
+        Patterns::List(Patterns::Integer()),
+        "Boundary ids of the boundaries to be initially refined");
 
       if (prm.get("type") == "periodic_hills")
         {
@@ -2163,9 +2165,11 @@ namespace Parameters
       file_name = prm.get("file name");
 
       initial_refinement = prm.get_integer("initial refinement");
-      initial_refinement_at_boundaries = prm.get_integer("initial boundary refinement");
+      initial_refinement_at_boundaries =
+        prm.get_integer("initial boundary refinement");
 
-      boundaries_to_refine =  convert_string_to_vector<int>(prm, "boundaries refined");
+      boundaries_to_refine =
+        convert_string_to_vector<int>(prm, "boundaries refined");
 
       grid_type      = prm.get("grid type");
       grid_arguments = prm.get("grid arguments");

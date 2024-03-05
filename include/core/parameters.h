@@ -1183,7 +1183,8 @@ namespace Parameters
     /// Initial refinement level of primitive mesh
     unsigned int initial_refinement;
 
-    /// Initial refinement level of primitive mesh near user-defined boundary conditions
+    /// Initial refinement level of primitive mesh near user-defined boundary
+    /// conditions
     unsigned int initial_refinement_at_boundaries;
 
     /// List of boundary ids to refine
@@ -1603,16 +1604,14 @@ namespace Parameters
     std::string              full_str = prm.get(entry_string);
     std::vector<std::string> vector_of_string(
       Utilities::split_string_list(full_str));
-    if constexpr (std::is_same<T, int>::value )
+    if constexpr (std::is_same<T, int>::value)
       {
-        std::vector<T> vector =
-          Utilities::string_to_int(vector_of_string);
+        std::vector<T> vector = Utilities::string_to_int(vector_of_string);
         return vector;
       }
-    if  constexpr (std::is_same<T, double>::value )
+    if constexpr (std::is_same<T, double>::value)
       {
-        std::vector<T> vector =
-          Utilities::string_to_double(vector_of_string);
+        std::vector<T> vector = Utilities::string_to_double(vector_of_string);
         return vector;
       }
   }
