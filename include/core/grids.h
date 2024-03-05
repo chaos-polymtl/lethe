@@ -82,11 +82,11 @@ read_mesh_and_manifolds(
 /**
  * @brief Refine a mesh around specific boundary ids
  *
- * @param n_refinement The number of times the boundary should be refined
+ * @param[in] n_refinement The number of times the boundary should be refined
  *
- * @param boundary_ids The boundary ids for which the cells should be refined
+ * @param[in] boundary_ids The boundary ids for which the cells should be refined
  *
- * @param triangulation The triangulation on which refinement must be carried out
+ * @param[in, out] triangulation The triangulation on which refinement must be carried out
  *
  */
 template <int dim, int spacedim = dim>
@@ -96,7 +96,7 @@ refine_triangulation_at_boundaries(
   const unsigned int                                     n_refinement,
   parallel::DistributedTriangulationBase<dim, spacedim> &triangulation)
 {
-  // For the amount of refinement required
+  // For the amount of refinements required
   for (unsigned int r = 0; r < n_refinement; ++r)
     {
       // Loop over the cells and flag all cells which are within the list of

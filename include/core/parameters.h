@@ -1190,16 +1190,16 @@ namespace Parameters
     /// List of boundary ids to refine
     std::vector<int> boundaries_to_refine;
 
-    /// Enabling fixing initial refinement from a target size
+    /// Enable fixing initial refinement from a target size
     bool refine_until_target_size;
 
-    /// Allowing the use of a simplex mesh
+    /// Allow the use of a simplex mesh
     bool simplex;
 
     /// Target size when automatically refining initial mesh
     double target_size;
 
-    /// Enables checking the input grid for diamond-shaped cells
+    /// Enable checking the input grid for diamond-shaped cells
     bool check_for_diamond_cells;
 
     /* A boolean parameter which enables adding the neighbor boundary cells of
