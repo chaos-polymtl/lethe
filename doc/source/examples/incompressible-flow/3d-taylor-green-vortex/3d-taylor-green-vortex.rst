@@ -242,7 +242,6 @@ The ``lethe-fluid-matrix-free`` has significantly more parameters for its linear
       set mg smoother eig estimation = true
       
       # Eigenvalue estimation parameters
-      set eig estimation degree          = 3
       set eig estimation smoothing range = 5
       set eig estimation cg n iterations = 20
       set eig estimation verbosity       = verbose

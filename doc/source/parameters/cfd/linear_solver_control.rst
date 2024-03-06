@@ -198,7 +198,6 @@ Different parameters for the main components of the two geometric multigrid algo
     set mg smoother eig estimation = false #if set to true, previous parameter is not used
 
     # Eigenvalue estimation parameters
-    set eig estimation degree          = 3
     set eig estimation smoothing range = 10
     set eig estimation cg n iterations = 10
     set eig estimation verbosity       = quiet
