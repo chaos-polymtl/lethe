@@ -285,7 +285,7 @@ Where :math:`\mathbf{F_{po}}` is the pull-off force, which can be computed as fo
 Derjaguin-Muller-Toporov force model
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The Derjaguin-Muller-Toporov (DMT) model describes attractive forces due to van der Waals effects. This model is more suitable for particles with smaller diameter, lower surface energy and higher Young's modulus. In lethe, the DMT model is implemented using the Maugis approximation which simply adds an adhesion term :math:`\mathbf{F_{ad}^{DMT}}` to the normal force calculation. `[8] <https://doi.org/10.1016/j.prostr.2018.11.106.>`_
+The Derjaguin-Muller-Toporov (DMT) model describes attractive forces due to van der Waals effects. This model is more suitable for particles with smaller diameter, lower surface energy and higher Young's modulus. In Lethe, the DMT model is implemented using the Maugis approximation which simply adds an adhesion term :math:`\mathbf{F_{ad}^{DMT}}` to the normal force calculation `[8] <https://doi.org/10.1016/j.prostr.2018.11.106.>`_.
 
 .. math::
     \mathbf{F_{ad}^{DMT}} = -2\pi\gamma_{e}R_{e}^{2} \mathbf{n}_{ij}
