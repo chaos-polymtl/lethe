@@ -608,12 +608,12 @@ NavierStokesStabilizedOperator<dim, number>::do_cell_integral_local(
     (is_bdf(this->simulation_control->get_assembly_method())) ? true : false;
 
   // Time step and vector for BDF coefficients
-  Vector<double> bdf_coefs;
-  double         sdt = 0.0;
+  const Vector<double> *bdf_coefs;
+  double                sdt = 0.0;
 
   if (transient)
     {
-      bdf_coefs = this->simulation_control->get_bdf_coefficients();
+      bdf_coefs = &this->simulation_control->get_bdf_coefficients();
       const auto time_steps_vector =
         this->simulation_control->get_time_steps_vector();
       const double dt = time_steps_vector[0];
@@ -685,7 +685,7 @@ NavierStokesStabilizedOperator<dim, number>::do_cell_integral_local(
             }
           // +(v,∂t δu)
           if (transient)
-            value_result[i] += bdf_coefs[0] * value[i];
+            value_result[i] += (*bdf_coefs)[0] * value[i];
         }
 
       // PSPG Jacobian
@@ -701,7 +701,7 @@ NavierStokesStabilizedOperator<dim, number>::do_cell_integral_local(
             }
           // +(∂t δu)·τ∇q
           if (transient)
-            gradient_result[dim][i] += tau * bdf_coefs[0] * value[i];
+            gradient_result[dim][i] += tau * (*bdf_coefs)[0] * value[i];
         }
       // (∇δp)τ·∇q
       gradient_result[dim] += tau * gradient[dim];
@@ -728,7 +728,7 @@ NavierStokesStabilizedOperator<dim, number>::do_cell_integral_local(
               // +(∂t δu)τ(u·∇)v
               if (transient)
                 gradient_result[i][k] +=
-                  tau * previous_values[k] * (bdf_coefs[0] * value[i]);
+                  tau * previous_values[k] * ((*bdf_coefs)[0] * value[i]);
 
 
               // Part 2
@@ -748,7 +748,7 @@ NavierStokesStabilizedOperator<dim, number>::do_cell_integral_local(
               // +(∂t u)τ(δu·∇)v
               if (transient)
                 gradient_result[i][k] += tau * value[k] *
-                                         (bdf_coefs[0] * previous_values[i] +
+                                         ((*bdf_coefs)[0] * previous_values[i] +
                                           previous_time_derivatives[i]);
             }
         }
@@ -779,7 +779,7 @@ NavierStokesStabilizedOperator<dim, number>::do_cell_integral_local(
                   if (transient)
                     hessian_result[i][k][k] += tau *
                                                -this->kinematic_viscosity *
-                                               (bdf_coefs[0] * value[i]);
+                                               ((*bdf_coefs)[0] * value[i]);
 
 
                   // LSIC term
@@ -833,12 +833,12 @@ NavierStokesStabilizedOperator<dim, number>::local_evaluate_residual(
                                                                     false;
 
       // Time step and vector for BDF coefficients
-      Vector<double> bdf_coefs;
-      double         sdt = 0.0;
+      const Vector<double> *bdf_coefs;
+      double                sdt = 0.0;
 
       if (transient)
         {
-          bdf_coefs = this->simulation_control->get_bdf_coefficients();
+          bdf_coefs = &this->simulation_control->get_bdf_coefficients();
           const auto time_steps_vector =
             this->simulation_control->get_time_steps_vector();
           const double dt = time_steps_vector[0];
@@ -900,7 +900,7 @@ NavierStokesStabilizedOperator<dim, number>::local_evaluate_residual(
               // +(v,∂t u)
               if (transient)
                 value_result[i] +=
-                  bdf_coefs[0] * value[i] + previous_time_derivatives[i];
+                  (*bdf_coefs)[0] * value[i] + previous_time_derivatives[i];
 
 
               // +(q,∇·u)
@@ -928,7 +928,7 @@ NavierStokesStabilizedOperator<dim, number>::local_evaluate_residual(
 
               // +(∂t u)·τ∇q
               if (transient)
-                gradient_result[dim][i] += tau * (bdf_coefs[0] * value[i] +
+                gradient_result[dim][i] += tau * ((*bdf_coefs)[0] * value[i] +
                                                   previous_time_derivatives[i]);
             }
           // +(∇p)τ∇·q
@@ -956,9 +956,9 @@ NavierStokesStabilizedOperator<dim, number>::local_evaluate_residual(
 
                   // + (∂t u)τ(u·∇)v
                   if (transient)
-                    gradient_result[i][k] +=
-                      tau * value[k] *
-                      (bdf_coefs[0] * value[i] + previous_time_derivatives[i]);
+                    gradient_result[i][k] += tau * value[k] *
+                                             ((*bdf_coefs)[0] * value[i] +
+                                              previous_time_derivatives[i]);
                 }
             }
 
@@ -988,7 +988,7 @@ NavierStokesStabilizedOperator<dim, number>::local_evaluate_residual(
                       if (transient)
                         hessian_result[i][k][k] +=
                           tau * -this->kinematic_viscosity *
-                          (bdf_coefs[0] * value[i] +
+                          ((*bdf_coefs)[0] * value[i] +
                            previous_time_derivatives[i]);
 
 
