@@ -478,6 +478,10 @@ read_mesh_and_manifolds(
         {
           const int initial_refinement = mesh_parameters.initial_refinement;
           triangulation.refine_global(initial_refinement);
+          refine_triangulation_at_boundaries(
+            mesh_parameters.boundaries_to_refine,
+            mesh_parameters.initial_refinement_at_boundaries,
+            triangulation);
         }
     }
 }

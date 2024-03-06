@@ -79,4 +79,52 @@ read_mesh_and_manifolds(
   const BoundaryConditions::BoundaryConditions<spacedim> &boundary_conditions);
 
 
+/**
+ * @brief Refine a mesh around specific boundary ids
+ *
+ * @param[in] n_refinement The number of times the boundary should be refined
+ *
+ * @param[in] boundary_ids The boundary ids for which the cells should be
+ * refined
+ *
+ * @param[in, out] triangulation The triangulation on which refinement must be
+ * carried out
+ *
+ */
+template <int dim, int spacedim = dim>
+void
+refine_triangulation_at_boundaries(
+  const std::vector<int>                                 boundary_ids,
+  const unsigned int                                     n_refinement,
+  parallel::DistributedTriangulationBase<dim, spacedim> &triangulation)
+{
+  // For the amount of refinements required
+  for (unsigned int r = 0; r < n_refinement; ++r)
+    {
+      // Loop over the cells and flag all cells which are within the list of
+      // boundary ids
+      for (const auto &cell : triangulation.active_cell_iterators())
+        {
+          if (cell->is_locally_owned())
+            {
+              for (const auto f : cell->face_indices())
+
+                {
+                  if (cell->face(f)->at_boundary())
+                    {
+                      if (std::find(boundary_ids.begin(),
+                                    boundary_ids.end(),
+                                    cell->face(f)->boundary_id()) !=
+                          boundary_ids.end())
+                        {
+                          cell->set_refine_flag();
+                        }
+                    }
+                }
+            }
+        }
+      triangulation.execute_coarsening_and_refinement();
+    }
+}
+
 #endif

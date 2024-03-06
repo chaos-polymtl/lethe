@@ -19,6 +19,12 @@ This subsection provides information of the simulation geometry and its mesh. Th
     # Initial refinement of the mesh
     set initial refinement = 0
 
+    # Initial refinement of the mesh near user-specified boundaries
+    set initial boundary refinement = 0
+
+    # Lists of boundaries next to which the mesh should be refined. The list must contain integers separated by commas.
+    set boundaries refined = 0, 1
+
     # Indicates that the mesh is a simplex mesh
     set simplex            = false
   end
@@ -40,5 +46,7 @@ This subsection provides information of the simulation geometry and its mesh. Th
     :align: center
 
 * The initial refinement number determines the number of refinements the grid will undergo in the simulation before the simulation is run. This allows one to refine a coarse grid automatically. By default, most deal.II grids will be as coarse as possible and need to be refined. This is a desirable behavior for parallel simulations, since for quad/hex meshes, the coarsest level of the grid is shared amongst all cores. Consequently, using a coarse grid with too many cells will lead to a prohibitive memory consumption.
+
+* The initial boundary refinement determines the number of refinements the grid will undergo in the simulation in the vicinities of the boundary specified by the ``boundaries refined`` parameter.
 
 * `simplex`. If simplex is set to true, it indicates that the mesh being read is made of only simplex elements. If the mesh is of ``type = dealii`` it will be converted from a quad/hex mesh to a simplex mesh. If the mesh is of ``type = gsmh``, it will be read from a file as long as it is only made of simplices.
