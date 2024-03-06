@@ -288,9 +288,9 @@ Derjaguin-Muller-Toporov force model
 The Derjaguin-Muller-Toporov (DMT) model describes attractive forces due to van der Waals effects. This model is more suitable for particles with smaller diameter, lower surface energy and higher Young's modulus. In Lethe, the DMT model is implemented using the Maugis approximation which simply adds an adhesion term :math:`\mathbf{F_{ad}^{DMT}}` to the normal force calculation `[8] <https://doi.org/10.1016/j.prostr.2018.11.106.>`_.
 
 .. math::
-    \mathbf{F_{ad}^{DMT}} = -2\pi\gamma_{e}R_{e}^{2} \mathbf{n}_{ij}
+    \mathbf{F_{ad}^{DMT}} = -2\pi\gamma_{e}R_{e} \mathbf{n}_{ij}
 
-The Coulomb's limit threshold for the DMT model is computed in the same way as for the non-linear viscoelastic model. This means that the adhesion force term in not taken into account when computing the norm of the normal force.
+The Coulomb's limit threshold for the DMT model is computed in the same way as for the non-linear viscoelastic model. This means that the adhesion force term in not taken into account when computing the norm of the normal force. For further information, see `Coulomb's limit`_ .
 
 --------------------
 Integration Methods

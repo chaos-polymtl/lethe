@@ -1,6 +1,6 @@
 /* ---------------------------------------------------------------------
  *
- * Copyright (C) 2019 - 2020 by the Lethe authors
+ * Copyright (C) 2019 - 2024 by the Lethe authors
  *
  * This file is part of the Lethe library
  *
@@ -1023,13 +1023,13 @@ protected:
 
     // JKR theory says that the coulomb threshold must be modified with the
     // pull-out force.
-    const double pull_off_force =
+    const double two_pull_off_force =
       3. * M_PI *
       this->effective_surface_energy[vec_particle_type_index(
         particle_one_type, particle_two_type)] *
       this->effective_radius;
     const double modified_coulomb_threshold =
-      (normal_force_coefficient + 2. * pull_off_force) *
+      (normal_force_coefficient + two_pull_off_force) *
       this->effective_coefficient_of_friction[vec_particle_type_index(
         particle_one_type, particle_two_type)];
 
