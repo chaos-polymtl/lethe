@@ -103,18 +103,22 @@ refine_triangulation_at_boundaries(
     {
       // Loop over the cells and flag all cells which are within the list of
       // boundary ids
-      for (const auto &cell : triangulation.cell_iterators())
+      for (const auto &cell : triangulation.active_cell_iterators())
         {
-          for (const auto f : cell->face_indices())
+          if (cell->is_locally_owned())
             {
-              if (cell->face(f)->at_boundary())
+              for (const auto f : cell->face_indices())
+
                 {
-                  if (std::find(boundary_ids.begin(),
-                                boundary_ids.end(),
-                                cell->face(f)->boundary_id()) !=
-                      boundary_ids.end())
+                  if (cell->face(f)->at_boundary())
                     {
-                      cell->set_refine_flag();
+                      if (std::find(boundary_ids.begin(),
+                                    boundary_ids.end(),
+                                    cell->face(f)->boundary_id()) !=
+                          boundary_ids.end())
+                        {
+                          cell->set_refine_flag();
+                        }
                     }
                 }
             }
