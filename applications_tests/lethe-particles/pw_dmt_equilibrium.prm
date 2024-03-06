@@ -27,7 +27,7 @@ subsection model parameters
     set neighborhood threshold                  = 20
   end
   subsection load balancing
-    set load balance method = once
+    set load balance method = none
   end
   set particle particle contact force method = DMT
   set particle wall contact force method     = DMT
