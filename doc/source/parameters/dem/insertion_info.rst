@@ -140,4 +140,4 @@ The "file" insertion method insert particles in a similar way to the "list" inse
     0.0; 0.0; 0.0; 0.0; 0.0; 0.0; 0.0; 0.0; 0.0;       0.2;           0;           0;           0;            0;            0;            0;
     1.0; 2.0; 3.0; 0.0; 0.0; 0.0; 0.0; 0.0; 0.0;       0.2;           0;           0;           0;            0;            0;            0;
 
-Each line is associated with a particle and gives it its properties. The ``fem_force`` and ``fem_torque`` properties are useful for the CFD-DEM solver. The main advantage of using the ``file`` method over the ``list`` method is that the number of inserted particles in not limited to the number of character accepted on a single line a the parameter file.
+Each line is associated with a particle and gives it its properties. The ``fem_force`` and ``fem_torque`` properties are used in the CFD-DEM solver, but most be specified in all cased. The main advantage of using the ``file`` method over the ``list`` method is that the number of inserted particles in not limited to the number of character accepted on a single line a the parameter file.

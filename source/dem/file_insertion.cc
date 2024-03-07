@@ -20,8 +20,6 @@ FileInsertion<dim>::FileInsertion(
   file_name = dem_parameters.insertion_info.insertion_particles_file;
 }
 
-// The main insertion function. Insert_global_function is used to insert the
-// particles
 template <int dim>
 void
 FileInsertion<dim>::insert(
@@ -53,7 +51,7 @@ FileInsertion<dim>::insert(
       n_total_particles_to_insert =
         std::min(remaining_particles_of_each_type, n_total_particles_to_insert);
 
-      // Processors 0 will be the only one inserting particles
+      // Processor 0 will be the only one inserting particles
       MPI_Comm communicator = triangulation.get_communicator();
       auto this_mpi_process = Utilities::MPI::this_mpi_process(communicator);
       const unsigned int n_particles_to_insert_this_proc =
@@ -107,7 +105,7 @@ FileInsertion<dim>::insert(
         global_bounding_boxes,
         particle_properties);
 
-      // Update number of particles remaining to be inserted
+      // Update number of particle remaining to be inserted
       remaining_particles_of_each_type -= n_total_particles_to_insert;
 
 

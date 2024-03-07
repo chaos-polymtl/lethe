@@ -58,10 +58,13 @@ public:
    * and angular velocities and the diameter of each particles is set.
    *
    * @param dem_parameters DEM parameters declared in the .prm file
+   *
    * @param inserted_this_step_this_proc Number of particles that are inserted
    * at each insertion step on each processor. This value can change in the last
    * insertion step to reach the desired number of particles
+   *
    * @param particles_data Contains the particles
+   *
    * @param particle_properties Properties of all inserted particles at each insertion step
    */
   void
