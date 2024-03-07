@@ -22,6 +22,7 @@ file(COPY sliding_restart_files/sliding_restart.triangulation_variable.data DEST
 
 file(COPY periodic_gmsh_files/pipe.msh DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/insert_periodic_boundary_gmsh.${_build_type}")
 file(COPY load_balancing_solid_object_files/square.msh DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/load_balancing_solid_object.${_build_type}")
+file(COPY insert_file_3d_files/particles.input DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/insert_file_3d.${_build_type}")
 file(COPY moving_float_files/square.msh DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/moving_float.${_build_type}")
 
 file(COPY moving_receptacle_files/restart.insertion_object DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/restart_moving_receptacle.${_build_type}/mpirun=1/")
