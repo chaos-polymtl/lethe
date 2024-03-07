@@ -420,7 +420,6 @@ CahnHilliard<dim>::calculate_phase_statistics()
   double volume_0(0.);
   double volume_1(0.);
 
-
   for (const auto &cell : dof_handler.active_cell_iterators())
     {
       if (cell->is_locally_owned())
@@ -451,7 +450,6 @@ CahnHilliard<dim>::calculate_phase_statistics()
   integral = Utilities::MPI::sum(integral, mpi_communicator);
   volume_0 = Utilities::MPI::sum(volume_0, mpi_communicator);
   volume_1 = Utilities::MPI::sum(volume_1, mpi_communicator);
-
   double global_volume = GridTools::volume(*triangulation, *mapping);
   double phase_average = integral / global_volume;
 
