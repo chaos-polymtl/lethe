@@ -169,7 +169,7 @@ namespace Parameters
       {
         volume,
         list,
-        from_file,
+        file,
         plane
       } insertion_method;
 

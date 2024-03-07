@@ -21,8 +21,8 @@
 #include <dem/dem.h>
 #include <dem/distributions.h>
 #include <dem/explicit_euler_integrator.h>
+#include <dem/file_insertion.h>
 #include <dem/find_contact_detection_step.h>
-#include <dem/from_file_insertion.h>
 #include <dem/gear3_integrator.h>
 #include <dem/input_parameter_inspection.h>
 #include <dem/list_insertion.h>

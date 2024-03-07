@@ -2,7 +2,7 @@
 Insertion Info
 ==============
 
-In this subsection, insertion methods which are ``volume``, ``plane``, ``list`` and ``from_file`` are defined.
+In this subsection, insertion methods which are ``volume``, ``plane``, ``list`` and ``file`` are defined.
 
 .. note::
     Insertion in Lethe starts inserting particles from type 0 and proceeds to the next type when all the particles from the previous type are inserted.
@@ -11,7 +11,7 @@ In this subsection, insertion methods which are ``volume``, ``plane``, ``list`` 
 .. code-block:: text
 
   subsection insertion info
-    # Choices are volume|plane|list|from_file
+    # Choices are volume|plane|list|file
     set insertion method                               = volume
 
     # Every method
@@ -61,12 +61,12 @@ In this subsection, insertion methods which are ``volume``, ``plane``, ``list`` 
     set list omega z                                   = 0.
     set list diameters                                 = 0.
 
-    # If method = from_file
-    set particles file                                 = particles.input
+    # If method = file
+    set insertion file                                 = particles.input
 
   end
 
-The ``insertion method`` parameter chooses the type of insertion. Acceptable choices are ``volume``, ``plane``, ``list`` and ``from_file``. Different insertion method can share the same parameter.
+The ``insertion method`` parameter chooses the type of insertion. Acceptable choices are ``volume``, ``plane``, ``list`` and ``file``. Different insertion method can share the same parameter.
 
 * The ``insertion frequency`` parameter defines the frequency of insertion. For example, if the ``insertion frequency`` is set equal to 10000, the iterations 1, 10001, 20001, ... will be defined as insertion steps.  The ``insertion frequency`` should be selected adequately depending on the insertion method. For ``volume`` it should be large, so that the inserted particles at the previous insertion step have enough time to leave the insertion box for the next insertion step, otherwise large overlap may occur which leads to a large velocity of particles. For the ``plane`` method, it should be small so that particles are being inserted as soon as a cell is empty.
 
@@ -140,4 +140,4 @@ The From File insertion method insert particles in a similar way to the List ins
     0.0; 0.0; 0.0; 0.0; 0.0; 0.0; 0.0; 0.0; 0.0;       0.2;           0;           0;           0;            0;            0;            0;
     1.0; 2.0; 3.0; 0.0; 0.0; 0.0; 0.0; 0.0; 0.0;       0.2;           0;           0;           0;            0;            0;            0;
 
-Each line is associated with a particle and gives it its properties. The ``fem_force`` and ``fem_torque`` properties are useful for the CFD-DEM solver. The main advantage of using the ``from_file`` method over the ``list`` method is that the number of inserted particles in not limited to the number of character accepted on a single line a the parameter file.
+Each line is associated with a particle and gives it its properties. The ``fem_force`` and ``fem_torque`` properties are useful for the CFD-DEM solver. The main advantage of using the ``file`` method over the ``list`` method is that the number of inserted particles in not limited to the number of character accepted on a single line a the parameter file.

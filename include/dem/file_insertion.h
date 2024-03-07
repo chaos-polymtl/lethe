@@ -24,19 +24,19 @@
 
 #include <deal.II/particles/particle_handler.h>
 
-#ifndef lethe_from_file_insertion_h
-#  define lethe_from_file_insertion_h
+#ifndef lethe_file_insertion_h
+#  define lethe_file_insertion_h
 
 template <int dim>
-class FromFileInsertion : public Insertion<dim>
+class FileInsertion : public Insertion<dim>
 {
 public:
-  FromFileInsertion(const DEMSolverParameters<dim> &dem_parameters,
-                    const std::vector<std::shared_ptr<Distribution>>
-                      &distribution_object_container);
+  FileInsertion(const DEMSolverParameters<dim> &dem_parameters,
+                const std::vector<std::shared_ptr<Distribution>>
+                  &distribution_object_container);
 
   /**
-   * @brief The FromFileInsertion class inserts particles using data stored in a file.
+   * @brief The FileInsertion class inserts particles using data stored in a file.
    * This allows the insertion of any number of particles at a well-controlled
    * location with any diameter value, translation and angular velocity.
    *
@@ -54,7 +54,7 @@ public:
 
   /**
    * @brief Carries out assigning the properties of inserted particles specifically
-   * for the from_file insertion method. In this method, the initial translation
+   * for the file insertion method. In this method, the initial translation
    * and angular velocities and the diameter of each particles is set.
    *
    * @param dem_parameters DEM parameters declared in the .prm file
@@ -65,7 +65,7 @@ public:
    * @param particle_properties Properties of all inserted particles at each insertion step
    */
   void
-  assign_particle_properties_for_from_file_insertion(
+  assign_particle_properties_for_file_insertion(
     const DEMSolverParameters<dim>             &dem_parameters,
     const unsigned int                         &inserted_this_step_this_proc,
     std::map<std::string, std::vector<double>> &particles_data,
@@ -105,4 +105,4 @@ public:
   std::string file_name;
 };
 
-#endif /* from_file_insertion_h */
+#endif /* file_insertion_h */
