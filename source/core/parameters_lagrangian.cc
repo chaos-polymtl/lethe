@@ -285,7 +285,7 @@ namespace Parameters
       {
         prm.declare_entry("insertion method",
                           "volume",
-                          Patterns::Selection("volume|list|from_file|plane"),
+                          Patterns::Selection("volume|list|file|plane"),
                           "Choosing insertion method. "
                           "Choices are <volume|list|plane>.");
         prm.declare_entry("inserted number of particles at each time step",
@@ -441,8 +441,8 @@ namespace Parameters
           insertion_method = InsertionMethod::volume;
         else if (insertion == "list")
           insertion_method = InsertionMethod::list;
-        else if (insertion == "from_file")
-          insertion_method = InsertionMethod::from_file;
+        else if (insertion == "file")
+          insertion_method = InsertionMethod::file;
         else if (insertion == "plane")
           insertion_method = InsertionMethod::plane;
         else

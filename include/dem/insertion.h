@@ -1,6 +1,6 @@
 /* ---------------------------------------------------------------------
  *
- * Copyright (C) 2019 - 2020 by the Lethe authors
+ * Copyright (C) 2019 - 2024 by the Lethe authors
  *
  * This file is part of the Lethe library
  *
@@ -61,7 +61,7 @@ class Insertion
 public:
   /**
    * @brief Carries out the insertion of particles. This is the base class of
-   * volume_insertion, plane_insertion, list_insertion and from_file_insertion
+   * volume_insertion, plane_insertion, list_insertion and file_insertion
    * classes.
    *
    * @param distribution_object_container Contains all distribution for each
@@ -72,7 +72,7 @@ public:
 
   /**
    * @brief This function is overridden by the volume_insertion, plane_insertion,
-   * list_insertion and from_file_insertion classes.
+   * list_insertion and file_insertion classes.
    *
    * @param particle_handler The particle handler of particles which are being
    * inserted
@@ -88,7 +88,7 @@ public:
   /**
    * @brief Serialize the insertion object to an output archive. Is being used
    * when checkpointing a simulation. This function is overridden by
-   * volume_insertion, plane_insertion, list_insertion and from_file_insertion
+   * volume_insertion, plane_insertion, list_insertion and file_insertion
    * classes.
    *
    * @param ar Output archive where the attributes are stored.

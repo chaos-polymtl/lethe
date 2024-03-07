@@ -130,9 +130,9 @@ The List insertion method insert particles at precis coordinates with specific v
 * The ``list velocity x``, ``list velocity y``, ``list velocity z``, ``list omega x``, ``list omega y``, ``list omega z`` and ``list diameters`` define the initial translational velocities, the initial angular velocities and diameters of each particles respectively following the same logic as the insertion coordinates.
 
 ---------------------
-From File
+File
 ---------------------
-The From File insertion method insert particles in a similar way to the List insertion method. The main difference between these two methods is the need of an external file with defined by the ``particles file`` parameter. This parameter is set at ``particles.input`` by default. This external file has to follow this structure:
+The "file" insertion method insert particles in a similar way to the "list" insertion method. The main difference between these two methods is the need of an external file provided by the ``particles file`` parameter. This parameter is set at ``particles.input`` by default. This external file has to follow this structure:
 
 .. code-block:: text
 

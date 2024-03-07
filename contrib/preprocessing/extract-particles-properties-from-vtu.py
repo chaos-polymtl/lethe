@@ -1,7 +1,7 @@
 #############################################################################
 """
 Extraction particles properties and write them an particles.input file for
-"from_file" insertion method.
+"file" insertion method.
 """
 #############################################################################
 '''Importing Libraries'''

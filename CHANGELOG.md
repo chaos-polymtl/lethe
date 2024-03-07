@@ -19,7 +19,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Added - 2024-03-04
 
-- MINOR The From File insertion method has been added to the DEM and CFD-DEM solvers.[#1054](https://github.com/lethe-cfd/lethe/pull/1054)
+- MINOR The "file" insertion method has been added to the DEM and CFD-DEM solvers.[#1054](https://github.com/lethe-cfd/lethe/pull/1054)
 
 ## [Master] - 2024-03-02
 
