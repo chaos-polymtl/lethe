@@ -949,8 +949,8 @@ DEMSolver<dim>::set_insertion_type(const DEMSolverParameters<dim> &parameters)
            Parameters::Lagrangian::InsertionInfo::InsertionMethod::file)
     {
       insertion_object =
-        std::make_shared<FromFileInsertion<dim>>(parameters,
-                                                 distribution_object_container);
+        std::make_shared<FileInsertion<dim>>(parameters,
+                                             distribution_object_container);
     }
   else if (parameters.insertion_info.insertion_method ==
            Parameters::Lagrangian::InsertionInfo::InsertionMethod::plane)

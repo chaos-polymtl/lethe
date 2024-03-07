@@ -410,7 +410,7 @@ namespace Parameters
                           "0.0",
                           Patterns::Double(),
                           "Initial omega z");
-        prm.declare_entry("particles file",
+        prm.declare_entry("insertion file",
                           "particles.input",
                           Patterns::FileName(),
                           "The file name from which we load the particles");
@@ -562,7 +562,7 @@ namespace Parameters
         list_d = Utilities::string_to_double(d_str_list);
 
         // File for the insertion
-        insertion_particles_file = prm.get("particles file");
+        insertion_particles_file = prm.get("insertion file");
 
         // Insertion plane normal vector
         insertion_plane_normal_vector =
