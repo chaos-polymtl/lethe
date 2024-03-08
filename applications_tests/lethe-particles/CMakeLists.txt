@@ -49,6 +49,7 @@ if(CMAKE_BUILD_TYPE STREQUAL "Debug")
   set_tests_properties(lethe-particles/packing_in_ball_dynamic_contact.debug PROPERTIES TIMEOUT 3000)
   set_tests_properties(lethe-particles/sliding_in_box.debug PROPERTIES TIMEOUT 3000)
   set_tests_properties(lethe-particles/load_balancing_solid_object.mpirun=2.debug PROPERTIES TIMEOUT 3000)	
+  set_tests_properties(lethe-particles/insert_file_3d.mpirun=2.debug PROPERTIES TIMEOUT 3000)
 endif()
 
 
