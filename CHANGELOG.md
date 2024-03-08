@@ -21,6 +21,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 - MINOR The "file" insertion method has been added to the DEM and CFD-DEM solvers.[#1054](https://github.com/lethe-cfd/lethe/pull/1054)
 
+### Fixed
+
+- MINOR In LPBF simulations, recoil pressure formulation p_rec = 0.55p_sat + [1/rho]m_dot^2 was accounting 2 times for the term [1/rho]m_dot^2 because the latter is included in the term 0.55p_sat. The formulation is now corrected and reads p_rec = 0.55p_sat.
+
 ## [Master] - 2024-03-02
 
 ### Fixed
@@ -200,5 +204,3 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 ### Fixed
 
 - MAJOR/MINOR/PATCH Description (#PR).
-
-
