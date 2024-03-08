@@ -191,7 +191,6 @@ subsection initial conditions
     end
   end
   subsection temperature
-    #set Function expression = if (y<0.43, min(298 + (156e5/(4*3.1416*28.8e3*((x-0.3)*(x-0.3) + (y-0.43)*(y-0.43))^0.5)), 1825), 298)
     set Function expression = 298
   end
 end
