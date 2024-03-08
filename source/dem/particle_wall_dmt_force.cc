@@ -1,12 +1,12 @@
 #include <core/lethe_grid_tools.h>
 #include <core/tensors_and_points_dimension_manipulation.h>
 
-#include <dem/particle_wall_jkr_force.h>
+#include <dem/particle_wall_dmt_force.h>
 
 using namespace dealii;
 
 template <int dim>
-ParticleWallJKRForce<dim>::ParticleWallJKRForce(
+ParticleWallDMTForce<dim>::ParticleWallDMTForce(
   const DEMSolverParameters<dim>       &dem_parameters,
   const std::vector<types::boundary_id> boundary_index)
   : ParticleWallContactForce<dim>(dem_parameters)
@@ -79,7 +79,6 @@ ParticleWallJKRForce<dim>::ParticleWallJKRForce(
         log_coeff_restitution /
         sqrt((log_coeff_restitution * log_coeff_restitution) + 9.8696);
 
-
       this->effective_coefficient_of_friction[i] =
         2 * particle_friction_coefficient * wall_friction_coefficient /
         (particle_friction_coefficient + wall_friction_coefficient + DBL_MIN);
@@ -95,22 +94,20 @@ ParticleWallJKRForce<dim>::ParticleWallJKRForce(
       Parameters::Lagrangian::RollingResistanceMethod::no_resistance)
     {
       calculate_rolling_resistance_torque =
-        &ParticleWallJKRForce<dim>::no_resistance;
+        &ParticleWallDMTForce<dim>::no_resistance;
     }
   else if (dem_parameters.model_parameters.rolling_resistance_method ==
            Parameters::Lagrangian::RollingResistanceMethod::constant_resistance)
     {
       calculate_rolling_resistance_torque =
-        &ParticleWallJKRForce<dim>::constant_resistance;
+        &ParticleWallDMTForce<dim>::constant_resistance;
     }
   else if (dem_parameters.model_parameters.rolling_resistance_method ==
            Parameters::Lagrangian::RollingResistanceMethod::viscous_resistance)
     {
       calculate_rolling_resistance_torque =
-        &ParticleWallJKRForce<dim>::viscous_resistance;
+        &ParticleWallDMTForce<dim>::viscous_resistance;
     }
-
-
   this->calculate_force_torque_on_boundary =
     dem_parameters.forces_torques.calculate_force_torque;
   this->center_mass_container = dem_parameters.forces_torques.point_center_mass;
@@ -121,7 +118,7 @@ ParticleWallJKRForce<dim>::ParticleWallJKRForce(
 
 template <int dim>
 void
-ParticleWallJKRForce<dim>::calculate_particle_wall_contact_force(
+ParticleWallDMTForce<dim>::calculate_particle_wall_contact_force(
   typename DEM::dem_data_structures<dim>::particle_wall_in_contact
                             &particle_wall_pairs_in_contact,
   const double               dt,
@@ -153,7 +150,6 @@ ParticleWallJKRForce<dim>::calculate_particle_wall_contact_force(
           auto normal_vector     = contact_information.normal_vector;
           auto point_on_boundary = contact_information.point_on_boundary;
 
-
           Point<3> particle_location_3d = [&] {
             if constexpr (dim == 3)
               {
@@ -164,6 +160,7 @@ ParticleWallJKRForce<dim>::calculate_particle_wall_contact_force(
                 return (point_nd_to_3d(particle->get_location()));
               }
           }();
+          ;
 
           // A vector (point_to_particle_vector) is defined which connects the
           // center of particle to the point_on_boundary. This vector will then
@@ -196,7 +193,7 @@ ParticleWallJKRForce<dim>::calculate_particle_wall_contact_force(
               // and 4, rolling resistance torque, respectively
               std::tuple<Tensor<1, 3>, Tensor<1, 3>, Tensor<1, 3>, Tensor<1, 3>>
                 forces_and_torques =
-                  this->calculate_jkr_contact_force_and_torque(
+                  this->calculate_dmt_contact_force_and_torque(
                     contact_information, particle_properties);
 
               // Get particle's torque and force
@@ -227,7 +224,7 @@ ParticleWallJKRForce<dim>::calculate_particle_wall_contact_force(
 
 template <int dim>
 void
-ParticleWallJKRForce<dim>::calculate_particle_floating_wall_contact_force(
+ParticleWallDMTForce<dim>::calculate_particle_floating_wall_contact_force(
   typename DEM::dem_data_structures<dim>::particle_floating_mesh_in_contact
                             &particle_floating_mesh_in_contact,
   const double               dt,
@@ -353,7 +350,7 @@ ParticleWallJKRForce<dim>::calculate_particle_floating_wall_contact_force(
                                      Tensor<1, 3>,
                                      Tensor<1, 3>>
                             forces_and_torques =
-                              this->calculate_jkr_contact_force_and_torque(
+                              this->calculate_dmt_contact_force_and_torque(
                                 contact_info, particle_properties);
 
                           // Get particle's torque and force
@@ -388,15 +385,15 @@ ParticleWallJKRForce<dim>::calculate_particle_floating_wall_contact_force(
     }
 }
 
-// Calculates JKR contact force and torques
+// Calculates DMT contact force and torques
 template <int dim>
 std::tuple<Tensor<1, 3>, Tensor<1, 3>, Tensor<1, 3>, Tensor<1, 3>>
-ParticleWallJKRForce<dim>::calculate_jkr_contact_force_and_torque(
+ParticleWallDMTForce<dim>::calculate_dmt_contact_force_and_torque(
   particle_wall_contact_info<dim> &contact_info,
   const ArrayView<const double>   &particle_properties)
 {
   // i is the particle, j is the wall.
-  // we need to put a minus sign infront of the normal_vector to respect the
+  // we need to put a minus sign in front of the normal_vector to respect the
   // convention (i -> j)
   Tensor<1, 3>       normal_vector = -contact_info.normal_vector;
   const unsigned int particle_type =
@@ -408,41 +405,26 @@ ParticleWallJKRForce<dim>::calculate_jkr_contact_force_and_torque(
   // Calculation of model parameters (beta, sn and st). These values
   // are used to consider non-linear relation of the contact force to
   // the normal overlap
-  double radius_times_overlap_sqrt =
-    sqrt(particle_properties[DEM::PropertiesIndex::dp] * 0.5 *
-         contact_info.normal_overlap);
-  double model_parameter_sn = 2 *
-                              this->effective_youngs_modulus[particle_type] *
-                              radius_times_overlap_sqrt;
+  const double radius_times_overlap_sqrt =
+    sqrt(effective_radius * contact_info.normal_overlap);
+  const double model_parameter_sn =
+    2 * this->effective_youngs_modulus[particle_type] *
+    radius_times_overlap_sqrt;
 
-  double model_parameter_st = 8 * this->effective_shear_modulus[particle_type] *
-                              radius_times_overlap_sqrt;
+  const double model_parameter_st =
+    8 * this->effective_shear_modulus[particle_type] *
+    radius_times_overlap_sqrt;
 
-  // Calculation of the contact patch radius (a) using the analytical solution
-  // describe in the theory guide.
-  const double c0 =
-    Utilities::fixed_power<2>(effective_radius * contact_info.normal_overlap);
-  const double c1 = -2. * Utilities::fixed_power<2>(effective_radius) * M_PI *
-                    this->effective_surface_energy[particle_type] /
-                    this->effective_youngs_modulus[particle_type];
-  const double c2 = -2. * contact_info.normal_overlap * effective_radius;
-  const double P  = -Utilities::fixed_power<2>(c2) / 12. - c0;
-  const double Q  = -Utilities::fixed_power<3>(c2) / 108. + c0 * c2 / 3. -
-                   Utilities::fixed_power<2>(c1) * 0.125;
-  const double root1  = std::max(0.,
-                                (0.25 * Utilities::fixed_power<2>(Q)) +
-                                  (Utilities::fixed_power<3>(P) / 27.));
-  const double U      = std::cbrt(-0.5 * Q + std::sqrt(root1));
-  const double s      = -c2 * (5. / 6.) + U - P / (3. * U);
-  const double w      = std::sqrt(std::max(1e-16, c2 + 2. * s));
-  const double lambda = 0.5 * c1 / w;
-  const double root2  = std::max(1e-16, w * w - 4. * (c2 + s + lambda));
-  const double a      = 0.5 * (w + std::sqrt(root2));
+  // Calculation of normal and tangential spring and dashpot constants
+  // using particle and wall properties
+  const double normal_spring_constant =
+    1.3333 * this->effective_youngs_modulus[particle_type] *
+    radius_times_overlap_sqrt;
 
   // Calculation of normal damping and tangential spring and dashpot constants
-  // using particle and wall properties.
-  // There is no minus sign here since model_parameter_beta is negative or
-  // equal to zero.
+  //  using particle and wall properties.
+  //  There is no minus sign here since model_parameter_beta is negative or
+  //  equal to zero.
   const double normal_damping_constant =
     1.8257 * this->model_parameter_beta[particle_type] * // 2. * sqrt(5./6.)
     sqrt(model_parameter_sn * particle_properties[DEM::PropertiesIndex::mass]);
@@ -452,7 +434,8 @@ ParticleWallJKRForce<dim>::calculate_jkr_contact_force_and_torque(
   // in the tangential_damping_calculation.
   double tangential_spring_constant =
     -8. * this->effective_shear_modulus[particle_type] *
-    radius_times_overlap_sqrt;
+      radius_times_overlap_sqrt +
+    DBL_MIN;
 
   // There is no minus sign here since model_parameter_beta is negative or
   // equal to zero.
@@ -460,20 +443,14 @@ ParticleWallJKRForce<dim>::calculate_jkr_contact_force_and_torque(
     normal_damping_constant *
     sqrt(model_parameter_st / (model_parameter_sn + DBL_MIN));
 
-  // Calculation of the normal force coefficient (F_n_JKR)
-  const double normal_force_norm =
-    4. * this->effective_youngs_modulus[particle_type] *
-      Utilities::fixed_power<3>(a) / (3. * effective_radius) -
-    std::sqrt(8 * M_PI * this->effective_surface_energy[particle_type] *
-              this->effective_youngs_modulus[particle_type] *
-              Utilities::fixed_power<3>(a)) +
+  // Calculation of the normal force coefficient (F_n_DMT)
+  const double cohesive_term = 2. * M_PI * effective_radius *
+                               this->effective_surface_energy[particle_type];
+  double normal_force_norm =
+    normal_spring_constant * contact_info.normal_overlap +
     normal_damping_constant * contact_info.normal_relative_velocity;
 
-  // Calculation of normal force using the normal_force_norm and the
-  // normal vector.
-  Tensor<1, 3> normal_force = normal_force_norm * normal_vector;
-
-  // Calculation of tangential forces.
+  // Calculation of tangential force
   Tensor<1, 3> damping_tangential_force =
     tangential_damping_constant * contact_info.tangential_relative_velocity;
   Tensor<1, 3> tangential_force =
@@ -481,21 +458,17 @@ ParticleWallJKRForce<dim>::calculate_jkr_contact_force_and_torque(
     damping_tangential_force;
   double tangential_force_norm = tangential_force.norm();
 
-  // JKR theory says that the coulomb threshold must be modified with the
-  // pull-out force. (Thornton 1991)
-  const double modified_coulomb_threshold =
-    (normal_force_norm + 3. * M_PI *
-                           this->effective_surface_energy[particle_type] *
-                           effective_radius) *
-    this->effective_coefficient_of_friction[particle_type];
+  // Coulomb limit need to be modified (Thornton 1991)
+  double coulomb_threshold =
+    this->effective_coefficient_of_friction[particle_type] * normal_force_norm;
 
   // Check for gross sliding
-  if (tangential_force_norm > modified_coulomb_threshold)
+  if (tangential_force_norm > coulomb_threshold)
     {
       // Gross sliding occurs and the tangential overlap and tangential
       // force are limited to Coulomb's criterion
       contact_info.tangential_overlap =
-        (modified_coulomb_threshold *
+        (coulomb_threshold *
            (tangential_force / (tangential_force_norm + DBL_MIN)) -
          damping_tangential_force) /
         (tangential_spring_constant + DBL_MIN);
@@ -504,6 +477,8 @@ ParticleWallJKRForce<dim>::calculate_jkr_contact_force_and_torque(
         (tangential_spring_constant * contact_info.tangential_overlap) +
         damping_tangential_force;
     }
+  normal_force_norm -= cohesive_term;
+  Tensor<1, 3> normal_force = normal_force_norm * normal_vector;
 
   // Calculation torque caused by tangential force
   // We add the minus sign here since the tangential_force is applied on the
@@ -528,5 +503,5 @@ ParticleWallJKRForce<dim>::calculate_jkr_contact_force_and_torque(
 }
 
 
-template class ParticleWallJKRForce<2>;
-template class ParticleWallJKRForce<3>;
+template class ParticleWallDMTForce<2>;
+template class ParticleWallDMTForce<3>;

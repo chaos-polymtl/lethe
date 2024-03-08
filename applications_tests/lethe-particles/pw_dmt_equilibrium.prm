@@ -29,8 +29,8 @@ subsection model parameters
   subsection load balancing
     set load balance method = none
   end
-  set particle particle contact force method = hertz_JKR
-  set particle wall contact force method     = JKR
+  set particle particle contact force method = DMT
+  set particle wall contact force method     = DMT
   set integration method                     = velocity_verlet
 end
 #---------------------------------------------------
