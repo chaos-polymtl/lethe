@@ -2,7 +2,7 @@
 *********************
 Running on 1 rank(s)
 *********************
-DEM time-step is 0.011331% of Rayleigh time step
+DEM time-step is 0.11331% of Rayleigh time step
 Warning: It is recommended to increase the time-step
 Reading triangulation
 
@@ -10,18 +10,17 @@ Finished reading triangulation
 Warning: expansion of particle-wall contact list is disabled.
 This feature is useful in geometries with concave boundaries.
 *********************************************************************
-2 particles of type 0 were inserted, 0 particles of type 0 remaining
+1 particles of type 0 were inserted, 0 particles of type 0 remaining
 *********************************************************************
 
 *****************************************************************
-Transient iteration: 175000   Time: 1.75     Time step: 1e-05
+Transient iteration: 10000    Time: 10       Time step: 0.001
 *****************************************************************
 | Variable                     | Min        | Max         | Average    | Total      |
-| Contact list generation      | 0.0000e+00 | 1.8000e+01  | 1.8000e+01 | 1.8000e+01 |
-| Velocity magnitude           | 4.1322e-04 | 5.8678e-04  | 5.0000e-04 | 1.0000e-03 |
+| Contact list generation      | 0.0000e+00 | 1.0000e+00  | 1.0000e+00 | 1.0000e+00 |
+| Velocity magnitude           | 7.6385e-04 | 7.6385e-04  | 7.6385e-04 | 7.6385e-04 |
 | Angular velocity magnitude   | 0.0000e+00 | 2.2251e-308 | 0.0000e+00 | 0.0000e+00 |
-| Translational kinetic energy | 9.2979e-07 | 1.8749e-06  | 1.4024e-06 | 2.8047e-06 |
+| Translational kinetic energy | 3.1772e-03 | 3.1772e-03  | 3.1772e-03 | 3.1772e-03 |
 | Rotational kinetic energy    | 0.0000e+00 | 2.2251e-308 | 0.0000e+00 | 0.0000e+00 |
 id, type, dp, x, y, z
-0 0 0.20000 1.0062 1.0000 1.0000
-1 0 0.20000 1.1955 1.0000 1.0000
+0 0 2.00000 0.9586 1.0000 1.0000

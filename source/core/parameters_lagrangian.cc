@@ -656,15 +656,15 @@ namespace Parameters
           "particle particle contact force method",
           "hertz_mindlin_limit_overlap",
           Patterns::Selection(
-            "linear|hertz_mindlin_limit_force|hertz_mindlin_limit_overlap|hertz|hertz_JKR"),
+            "linear|hertz_mindlin_limit_force|hertz_mindlin_limit_overlap|hertz|hertz_JKR|DMT"),
           "Choosing particle-particle contact force model"
-          "Choices are <linear|hertz_mindlin_limit_force|hertz_mindlin_limit_overlap|hertz|hertz_JKR>.");
+          "Choices are <linear|hertz_mindlin_limit_force|hertz_mindlin_limit_overlap|hertz|hertz_JKR|DMT>.");
 
         prm.declare_entry("particle wall contact force method",
                           "nonlinear",
-                          Patterns::Selection("linear|nonlinear|JKR"),
+                          Patterns::Selection("linear|nonlinear|JKR|DMT"),
                           "Choosing particle-wall contact force model"
-                          "Choices are <linear|nonlinear|JKR>.");
+                          "Choices are <linear|nonlinear|JKR|DMT>.");
 
         prm.declare_entry(
           "rolling resistance torque method",
@@ -822,6 +822,9 @@ namespace Parameters
         else if (ppcf == "hertz_JKR")
           particle_particle_contact_force_model =
             ParticleParticleContactForceModel::hertz_JKR;
+        else if (ppcf == "DMT")
+          particle_particle_contact_force_model =
+            ParticleParticleContactForceModel::DMT;
         else
           {
             throw(std::runtime_error(
@@ -836,10 +839,11 @@ namespace Parameters
           particle_wall_contact_force_method =
             ParticleWallContactForceModel::nonlinear;
         else if (pwcf == "JKR")
-          {
-            particle_wall_contact_force_method =
-              ParticleWallContactForceModel::JKR;
-          }
+          particle_wall_contact_force_method =
+            ParticleWallContactForceModel::JKR;
+        else if (pwcf == "DMT")
+          particle_wall_contact_force_method =
+            ParticleWallContactForceModel::DMT;
         else
           {
             throw(

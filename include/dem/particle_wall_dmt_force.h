@@ -1,6 +1,5 @@
 /* ---------------------------------------------------------------------
- *
- * Copyright (C) 2019 - 2019 by the Lethe authors
+ * Copyright (C) 2019 - 2024 by the Lethe authors
  *
  * This file is part of the Lethe library
  *
@@ -12,8 +11,6 @@
  * the top level of the Lethe distribution.
  *
  * ---------------------------------------------------------------------
-
- *
  */
 
 #include <core/dem_properties.h>
@@ -30,37 +27,36 @@
 
 using namespace dealii;
 
-#ifndef particle_wall_jkr_force_h
-#  define particle_wall_jkr_force_h
+#ifndef particle_wall_dmt_force_h
+#  define particle_wall_dmt_force_h
 
 /**
- * @brief Calculation of the JKR particle-wall contact force using the
+ * @brief Calculation of the DMT particle-wall contact force using the
  * information obtained from the fine search and physical properties of
  * particles and walls
  */
-
 template <int dim>
-class ParticleWallJKRForce : public ParticleWallContactForce<dim>
+class ParticleWallDMTForce : public ParticleWallContactForce<dim>
 {
   using FuncPtrType =
-    Tensor<1, 3> (ParticleWallJKRForce<dim>::*)(const ArrayView<const double> &,
+    Tensor<1, 3> (ParticleWallDMTForce<dim>::*)(const ArrayView<const double> &,
                                                 const double,
                                                 const double,
                                                 const Tensor<1, 3> &);
   FuncPtrType calculate_rolling_resistance_torque;
 
 public:
-  ParticleWallJKRForce(
+  ParticleWallDMTForce(
     const DEMSolverParameters<dim>       &dem_parameters,
     const std::vector<types::boundary_id> boundary_index = {});
 
   /**
    * @brief Carries out the calculation of the particle-wall contact force using
-   * JKR model
+   * DMT model
    *
-   * @param particle_wall_pairs_in_contact Required information for the calculation of
-   * the particle-wall contact force. These information were obtained in
-   * the fine search
+   * @param particle_wall_pairs_in_contact Required information for the calculation
+   * of the particle-wall contact force. These information were obtained in the
+   * fine search
    * @param dt DEM time step
    * @param torque Torque acting on particles
    * @param force Force acting on particles
@@ -74,11 +70,11 @@ public:
     std::vector<Tensor<1, 3>> &force) override;
 
   /**
-   * @brief Carries out the calculation of particle-floating mesh contact force using
-   * JKR model
+   * @brief Carries out the calculation of particle-floating mesh contact force
+   * using DMT model
    *
-   * @param particle_floating_mesh_in_contact A container that stores the information of
-   * particle-floating mesh contact
+   * @param particle_floating_mesh_in_contact A container that stores the information
+   * of particle-floating mesh contact
    * @param dt DEM time step
    * @param torque Torque acting on particles
    * @param force Force acting on particles
@@ -94,17 +90,15 @@ public:
     const std::vector<std::shared_ptr<SerialSolid<dim - 1, dim>>> &solids)
     override;
 
-
 private:
   /**
-   * @brief No rolling resistance torque model
+   * @brief Carries out calculation of the rolling resistance torque using the no
+   * resistance model
    *
-   * @param particle_one_properties Particle one properties
-   * @param particle_two_properties Particle two properties
+   * @param particle_properties Particle properties
    * @param effective_rolling_friction_coefficient Effective rolling friction coefficient
    * @param normal_force_norm Normal force norm
-   *
-   * @return Rolling resistance torque
+   * @return rolling resistance torque
    */
   inline Tensor<1, 3>
   no_resistance(const ArrayView<const double> & /*particle_properties*/,
@@ -117,13 +111,14 @@ private:
   }
 
   /**
-   * @brief Carries out calculation of the rolling resistance torque using the constant model
+   * @brief Carries out calculation of the rolling resistance torque using the
+   * constant model
    *
    * @param particle_properties Particle properties
-   * @param effective_rolling_friction_coefficient Effective rolling friction coefficient
+   * @param effective_rolling_friction_coefficient Effective rolling friction
+   * coefficient
    * @param normal_force_norm Normal force norm
-   *
-   * @return Rolling resistance torque
+   * @return rolling resistance torque
    */
   inline Tensor<1, 3>
   constant_resistance(const ArrayView<const double> &particle_properties,
@@ -159,12 +154,12 @@ private:
   }
 
   /**
-   * @brief Carries out calculation of the rolling resistance torque using the viscous model
+   * @brief Carries out calculation of the rolling resistance torque using the
+   * viscous model
    *
    * @param particle_properties Particle properties
    * @param effective_rolling_friction_coefficient Effective rolling friction coefficient
    * @param normal_force_norm Normal force norm
-   *
    * @return rolling resistance torque
    */
   inline Tensor<1, 3>
@@ -206,18 +201,18 @@ private:
   }
 
   /**
-   * @brief Carries out the calculation of the particle-wall JKR contact
-   * force and torques based on the updated values in contact_info
+   * Carries out the calculation of the particle-wall DMT contact force and
+   * torques based on the updated values in contact_info
    *
    * @param contact_info A container that contains the required information for
    * calculation of the contact force for a particle pair in contact
-   * @param particle_properties Properties of particle one in contact
+   * @param particle_properties Properties of particle in contact
    * @return A tuple which contains: 1, normal force, 2,
    * tangential force, 3, tangential torque and 4, rolling resistance torque of
    * a contact pair
    */
   std::tuple<Tensor<1, 3>, Tensor<1, 3>, Tensor<1, 3>, Tensor<1, 3>>
-  calculate_jkr_contact_force_and_torque(
+  calculate_dmt_contact_force_and_torque(
     particle_wall_contact_info<dim> &contact_info,
     const ArrayView<const double>   &particle_properties);
 };

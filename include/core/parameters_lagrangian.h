@@ -39,7 +39,8 @@ namespace Parameters
       hertz_mindlin_limit_force,
       hertz_mindlin_limit_overlap,
       hertz,
-      hertz_JKR
+      hertz_JKR,
+      DMT
     };
 
     enum RollingResistanceMethod
@@ -269,7 +270,8 @@ namespace Parameters
       {
         linear,
         nonlinear,
-        JKR
+        JKR,
+        DMT
       } particle_wall_contact_force_method;
 
       // Rolling resistance torque method
