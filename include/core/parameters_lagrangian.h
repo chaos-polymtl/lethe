@@ -200,7 +200,7 @@ namespace Parameters
       std::vector<double> list_x, list_y, list_z, list_vx, list_vy, list_vz,
         list_wx, list_wy, list_wz, list_d;
 
-      std::string insertion_particles_file;
+      std::string insertion_particles_file_name;
 
       // Insertion plane definition
       Tensor<1, 3> insertion_plane_normal_vector;

@@ -17,7 +17,7 @@ FileInsertion<dim>::FileInsertion(
   // Initializing current inserting particle type
   this->current_inserting_particle_type = 0;
 
-  file_name = dem_parameters.insertion_info.insertion_particles_file;
+  file_name = dem_parameters.insertion_info.insertion_particles_file_name;
 }
 
 template <int dim>
