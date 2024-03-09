@@ -132,7 +132,7 @@ The List insertion method insert particles at precis coordinates with specific v
 ---------------------
 File
 ---------------------
-The "file" insertion method insert particles in a similar way to the "list" insertion method. The main difference between these two methods is the need of an external file provided by the ``particles file`` parameter. This parameter is set at ``particles.input`` by default. This external file has to follow this structure:
+The ``file`` insertion method insert particles in a similar way to the ``list`` insertion method. The main difference between these two methods is the option to use an external file provided by the ``insertion file`` parameter. This parameter is set at ``particles.input`` by default. This file has to follow this structure:
 
 .. code-block:: text
 
@@ -140,4 +140,4 @@ The "file" insertion method insert particles in a similar way to the "list" inse
     0.0; 0.0; 0.0; 0.0; 0.0; 0.0; 0.0; 0.0; 0.0;       0.2;           0;           0;           0;            0;            0;            0;
     1.0; 2.0; 3.0; 0.0; 0.0; 0.0; 0.0; 0.0; 0.0;       0.2;           0;           0;           0;            0;            0;            0;
 
-Each line is associated with a particle and gives it its properties. The ``fem_force`` and ``fem_torque`` properties are used in the CFD-DEM solver, but most be specified in all cased. The main advantage of using the ``file`` method over the ``list`` method is that the number of inserted particles in not limited to the number of character accepted on a single line a the parameter file.
+Each line is associated with a particle and its properties. The ``fem_force`` and ``fem_torque`` properties are only used in the CFD-DEM solver, but must be specified in all cases. The main advantage of using the ``file`` method over the ``list`` method is that the number of inserted particles is not limited to the maximum number of characters on a single line of parameter files.
