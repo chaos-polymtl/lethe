@@ -79,7 +79,7 @@ end
 
 subsection insertion info
   set insertion method    = file
-  set insertion file      = ../particles.input
+  set insertion file name = ../particles.input
   set insertion frequency = 5000
 end
 
