@@ -67,12 +67,12 @@ The normal and tangential overlaps are calculated as follow:
 ~~~~~~~~~~~~~~~~~~~~~
 Relative Velocities
 ~~~~~~~~~~~~~~~~~~~~~
-The relative velocities are calculated to update the tangential overlap:
+The relative velocities are calculated to update the tangential overlap and for their contribution in the force models:
 
 .. math::
-    \mathbf{v}_{ij} &= \mathbf{v}_i-\mathbf{v}_j+\left(R_i\mathbf{\omega}_i+R_j\mathbf{\omega}_j\right)\times\mathbf{n}_{ij}
+    \mathbf{v}_{ij} &= \mathbf{v}_i-\mathbf{v}_j+\left(R_i\mathbf{\omega}_i+R_j\mathbf{\omega}_j\right)\times\mathbf{n}_{ij} \\
     \mathbf{v}_{rn} &= \left(\mathbf{v}_{ij}.\mathbf{n}_{ij}\right)\mathbf{n}_{ij} \\
-    \mathbf{v}_{rt} &= \mathbf{v}_{ij}-\mathbf{v}_{rn} \\
+    \mathbf{v}_{rt} &= \mathbf{v}_{ij}-\mathbf{v}_{rn} 
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Spring and damping constants
