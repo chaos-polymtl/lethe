@@ -1,6 +1,6 @@
 # Lethe
 
-![Lethe](logo/logo_black.png?raw=true)
+![Lethe](logo/lethe-logo-without-bkgd.png?raw=true)
 
 [![CI-Debug](https://github.com/lethe-cfd/lethe/actions/workflows/main_debug.yml/badge.svg)](https://github.com/lethe-cfd/lethe/actions/workflows/main_debug.yml)
 [![CI-Release](https://github.com/lethe-cfd/lethe/actions/workflows/main_release.yml/badge.svg)](https://github.com/lethe-cfd/lethe/actions/workflows/main_release.yml)
