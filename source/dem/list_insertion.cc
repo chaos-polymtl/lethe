@@ -8,9 +8,10 @@ DeclException2(DiameterSizeCoherence,
                << "Incoherent particle diameter lists: list x has " << arg1
                << " element(s) and list d has " << arg2 << " element(s).");
 
-// The constructor of list insertion class does not accomplish anything other
-// than check if the position list are of the coherent size and to
-// create the insertion_points member
+/* @brief The constructor of list insertion class does not accomplish anything other
+ * than check if the position list are of the coherent size and to
+ * create the insertion_points member
+ */
 template <int dim>
 ListInsertion<dim>::ListInsertion(
   const DEMSolverParameters<dim> &dem_parameters,
