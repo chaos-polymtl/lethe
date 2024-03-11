@@ -21,6 +21,7 @@
 #include <dem/dem.h>
 #include <dem/distributions.h>
 #include <dem/explicit_euler_integrator.h>
+#include <dem/file_insertion.h>
 #include <dem/find_contact_detection_step.h>
 #include <dem/gear3_integrator.h>
 #include <dem/input_parameter_inspection.h>
@@ -942,6 +943,13 @@ DEMSolver<dim>::set_insertion_type(const DEMSolverParameters<dim> &parameters)
     {
       insertion_object =
         std::make_shared<ListInsertion<dim>>(parameters,
+                                             distribution_object_container);
+    }
+  else if (parameters.insertion_info.insertion_method ==
+           Parameters::Lagrangian::InsertionInfo::InsertionMethod::file)
+    {
+      insertion_object =
+        std::make_shared<FileInsertion<dim>>(parameters,
                                              distribution_object_container);
     }
   else if (parameters.insertion_info.insertion_method ==

@@ -24,26 +24,21 @@
 
 #include <deal.II/particles/particle_handler.h>
 
-#ifndef lethe_list_insertion_h
-#  define lethe_list_insertion_h
+#ifndef lethe_file_insertion_h
+#  define lethe_file_insertion_h
 
 template <int dim>
-class ListInsertion : public Insertion<dim>
+class FileInsertion : public Insertion<dim>
 {
 public:
-  ListInsertion(const DEMSolverParameters<dim> &dem_parameters,
+  FileInsertion(const DEMSolverParameters<dim> &dem_parameters,
                 const std::vector<std::shared_ptr<Distribution>>
                   &distribution_object_container);
 
   /**
-   * @brief The ListInsertion class inserts particles using a list specific position.
-   * This allows the insertion of any number of particles at a well-controled
-   * location which is especially useful from a testing perspective. The code
-   * ensures that the number of positions provided in the x,y (and possibly z)
-   * direction is coherent. If more particles than the number of position in the
-   * list are requested, the class will continue inserting particles at the
-   * insertion frequency using the list of position. There is no mechanism in
-   * place that prevents the overlap of these new particles with previous ones.
+   * @brief The FileInsertion class inserts particles using data stored in a file.
+   * This allows the insertion of any number of particles at a well-controlled
+   * location with any diameter value, translation and angular velocity.
    *
    * @param particle_handler The particle handler of particles which are being
    * inserted
@@ -57,25 +52,27 @@ public:
          const DEMSolverParameters<dim> &dem_parameters) override;
 
 
-
   /**
-   * @brief Carries out assigning the properties of inserted particles specificly
-   * for the list insertion method. In this method, the initial translationnal
+   * @brief Carries out assigning the properties of inserted particles specifically
+   * for the file insertion method. In this method, the initial translation
    * and angular velocities and the diameter of each particles is set.
    *
    * @param dem_parameters DEM parameters declared in the .prm file
+   *
    * @param inserted_this_step_this_proc Number of particles that are inserted
    * at each insertion step on each processor. This value can change in the last
    * insertion step to reach the desired number of particles
-   * @param current_inserting_particle_type Type of inserting particles
+   *
+   * @param particles_data Contains the particles
+   *
    * @param particle_properties Properties of all inserted particles at each insertion step
    */
   void
-  assign_particle_properties_for_list_insertion(
-    const DEMSolverParameters<dim>   &dem_parameters,
-    const unsigned int               &inserted_this_step_this_proc,
-    const unsigned int               &current_inserting_particle_type,
-    std::vector<std::vector<double>> &particle_properties);
+  assign_particle_properties_for_file_insertion(
+    const DEMSolverParameters<dim>             &dem_parameters,
+    const unsigned int                         &inserted_this_step_this_proc,
+    std::map<std::string, std::vector<double>> &particles_data,
+    std::vector<std::vector<double>>           &particle_properties);
 
 
 
@@ -107,12 +104,8 @@ public:
   unsigned int remaining_particles_of_each_type;
   unsigned int current_inserting_particle_type;
 
-  // Vector of the location, velocity and angular velocity used to insert the
-  // particles
-  std::vector<Point<dim>>   insertion_points;
-  std::vector<Tensor<1, 3>> velocities;
-  std::vector<Tensor<1, 3>> angular_velocities;
-  std::vector<double>       diameters;
+  // File name where the particles properties are stored.
+  std::string file_name;
 };
 
-#endif /* list_insertion_h */
+#endif /* file_insertion_h */
