@@ -683,9 +683,12 @@ VolumeOfFluid<dim>::postprocess(bool first_iteration)
           .get_number_of_fluids();
 
       // Set column names according to dim for volume and mass values
-      std::vector<std::vector<std::string>> volume_and_mass_column_names(
-        n_fluids, std::vector<std::string>(2));
+      std::string volume_column_name;
+      std::string mass_column_name;
 
+      // To display when verbose
+      std::vector<std::string> dependent_column_names;
+      dependent_column_names.reserve(n_fluids * 2 + 1);
       std::vector<double> volumes_masses_and_sharpening_threshold;
       volumes_masses_and_sharpening_threshold.reserve(n_fluids * 2 + 1);
 
@@ -730,31 +733,31 @@ VolumeOfFluid<dim>::postprocess(bool first_iteration)
 
               if constexpr (dim == 2)
                 {
-                  volume_and_mass_column_names[i][0] = "surface_" + fluid_id;
-                  volume_and_mass_column_names[i][1] =
-                    "mass_per_length_" + fluid_id;
+                  volume_column_name = "surface_" + fluid_id;
+                  mass_column_name   = "mass_per_length_" + fluid_id;
                 }
               else if constexpr (dim == 3)
                 {
-                  volume_and_mass_column_names[i][0] = "volume_" + fluid_id;
-                  volume_and_mass_column_names[i][1] = "mass_" + fluid_id;
+                  volume_column_name = "volume_" + fluid_id;
+                  mass_column_name   = "mass_" + fluid_id;
                 }
 
               // Add "surface" or "volume" column
-              this->table_monitoring_vof.add_value(
-                volume_and_mass_column_names[i][0], this->volume_monitored);
-              this->table_monitoring_vof.set_scientific(
-                volume_and_mass_column_names[i][0], true);
+              this->table_monitoring_vof.add_value(volume_column_name,
+                                                   this->volume_monitored);
+              this->table_monitoring_vof.set_scientific(volume_column_name,
+                                                        true);
 
               // Add "mass per length" or "mass" column
-              this->table_monitoring_vof.add_value(
-                volume_and_mass_column_names[i][1], this->mass_monitored);
-              this->table_monitoring_vof.set_scientific(
-                volume_and_mass_column_names[i][1], true);
+              this->table_monitoring_vof.add_value(mass_column_name,
+                                                   this->mass_monitored);
+              this->table_monitoring_vof.set_scientific(mass_column_name, true);
 
               if (this->simulation_parameters.post_processing.verbosity ==
                   Parameters::Verbosity::verbose)
                 {
+                  dependent_column_names.push_back(volume_column_name);
+                  dependent_column_names.push_back(mass_column_name);
                   volumes_masses_and_sharpening_threshold.push_back(
                     this->volume_monitored);
                   volumes_masses_and_sharpening_threshold.push_back(
@@ -789,26 +792,19 @@ VolumeOfFluid<dim>::postprocess(bool first_iteration)
             {
               volumes_masses_and_sharpening_threshold.push_back(
                 this->sharpening_threshold);
+              dependent_column_names.push_back("sharpening_threshold");
 
+              // Dependent variable columns (volumes, masses and sharpening
+              // threshold)
               std::vector<std::vector<double>>
                 volumes_masses_and_sharpening_thresholds;
               volumes_masses_and_sharpening_thresholds.push_back(
                 volumes_masses_and_sharpening_threshold);
 
-              std::cout << std::endl;
+              // Time column
               std::string         independent_column_name = "time";
               std::vector<double> time                    = {
                 this->simulation_control->get_current_time()};
-
-              std::vector<std::string> dependent_column_names;
-              for (unsigned int i = 0; i < n_fluids; i++)
-                {
-                  dependent_column_names.push_back(
-                    volume_and_mass_column_names[i][0]);
-                  dependent_column_names.push_back(
-                    volume_and_mass_column_names[i][1]);
-                }
-              dependent_column_names.push_back("sharpening_threshold");
 
               TableHandler table = make_table_scalars_vectors(
                 time,
@@ -818,6 +814,7 @@ VolumeOfFluid<dim>::postprocess(bool first_iteration)
                 this->simulation_parameters.simulation_control.log_precision,
                 true);
 
+              std::cout << std::endl;
               announce_string(this->pcout, "VOF Mass Conservation");
               table.write_text(std::cout);
             }
