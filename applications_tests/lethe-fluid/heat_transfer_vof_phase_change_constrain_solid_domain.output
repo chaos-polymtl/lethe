@@ -7,6 +7,12 @@ Running on 1 MPI rank(s)...
 Pressure drop: 0 Pa
 Total pressure drop: 0 Pa
 
+----------------------
+VOF Mass Conservation
+----------------------
+   time    surface_fluid_0 mass_per_length_fluid_0 surface_fluid_1 mass_per_length_fluid_1 sharpening_threshold 
+0.0000e+00      3.3203e-02              3.3203e-02      2.9297e-02              2.9297e-02           5.0000e-01 
+
 ---------------
 VOF Barycenter
 ---------------
@@ -18,6 +24,12 @@ Transient iteration: 1        Time: 0.1      Time step: 0.1      CFL: 0
 *******************************************************************************
 Pressure drop: -0.367464 Pa
 Total pressure drop: -0.367464 Pa
+
+----------------------
+VOF Mass Conservation
+----------------------
+   time    surface_fluid_0 mass_per_length_fluid_0 surface_fluid_1 mass_per_length_fluid_1 sharpening_threshold 
+1.0000e-01      3.3203e-02              3.3203e-02      2.9297e-02              2.9297e-02           5.0000e-01 
 
 ---------------
 VOF Barycenter
@@ -31,6 +43,12 @@ Transient iteration: 2        Time: 0.2      Time step: 0.1      CFL: 0.00485702
 Pressure drop: -0.367538 Pa
 Total pressure drop: -0.367538 Pa
 
+----------------------
+VOF Mass Conservation
+----------------------
+   time    surface_fluid_0 mass_per_length_fluid_0 surface_fluid_1 mass_per_length_fluid_1 sharpening_threshold 
+2.0000e-01      3.3203e-02              3.3203e-02      2.9297e-02              2.9297e-02           5.0000e-01 
+
 ---------------
 VOF Barycenter
 ---------------
@@ -43,6 +61,12 @@ Transient iteration: 3        Time: 0.3      Time step: 0.1      CFL: 0.00241665
 Pressure drop: -0.367861 Pa
 Total pressure drop: -0.367861 Pa
 
+----------------------
+VOF Mass Conservation
+----------------------
+   time    surface_fluid_0 mass_per_length_fluid_0 surface_fluid_1 mass_per_length_fluid_1 sharpening_threshold 
+3.0000e-01      3.3202e-02              3.3202e-02      2.9298e-02              2.9298e-02           5.0000e-01 
+
 ---------------
 VOF Barycenter
 ---------------
@@ -54,6 +78,12 @@ Transient iteration: 4        Time: 0.4      Time step: 0.1      CFL: 0.00157289
 *********************************************************************************
 Pressure drop: -0.367981 Pa
 Total pressure drop: -0.367981 Pa
+
+----------------------
+VOF Mass Conservation
+----------------------
+   time    surface_fluid_0 mass_per_length_fluid_0 surface_fluid_1 mass_per_length_fluid_1 sharpening_threshold 
+4.0000e-01      3.3201e-02              3.3201e-02      2.9299e-02              2.9299e-02           5.0000e-01 
 
 ---------------
 VOF Barycenter

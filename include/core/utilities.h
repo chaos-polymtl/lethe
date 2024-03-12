@@ -75,6 +75,44 @@ add_statistics_to_table_handler(const std::string variable,
 }
 
 /**
+ * @brief Generate a table from two vector of scalars.
+ *
+ * @tparam T1 Scalar type of independent variables.
+ *
+ * @tparam T2 Scalar type of dependent variables.
+ *
+ * @param[in] independent_values Vector of scalar values that serve as the
+ * independent variable. For example, time.
+ *
+ * @param[in] independent_column_name Vector of strings representing the labels
+ * of independent scalar values.
+ *
+ * @param[in] dependent_vector Vector of vectors of scalar values containing
+ * dependant values.
+ *
+ * @param[in] dependent_column_name Vector of strings representing the labels of
+ * dependent scalar values.
+ *
+ * @param[in] display_precision Integer indicating the precision at which
+ * the table is written.
+ *
+ * @param[in] display_scientific_notation Boolean indicating if the values
+ * should be displayed in scientific notation (true) or not (false).
+ *
+ * @return A table with the independent values followed by the dependent values.
+ */
+template <typename T1, typename T2>
+TableHandler
+make_table_scalars_vectors(
+  const std::vector<T1>              &independent_values,
+  const std::string                  &independent_column_name,
+  const std::vector<std::vector<T2>> &dependent_vector,
+  const std::vector<std::string>     &dependent_column_name,
+  const unsigned int                  display_precision,
+  const bool                          display_scientific_notation = false);
+
+
+/**
  * @brief Generate a table from a vector of scalar and a vector of tensor<1,dim>
  *
  * @param independent_values A vector of scalar values that serve as the independent

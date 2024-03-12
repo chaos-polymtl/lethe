@@ -5,6 +5,43 @@
 #  include <filesystem>
 #endif
 
+template <typename T1, typename T2>
+TableHandler
+make_table_scalars_vectors(
+  const std::vector<T1>              &independent_values,
+  const std::string                  &independent_column_name,
+  const std::vector<std::vector<T2>> &dependent_vector,
+  const std::vector<std::string>     &dependent_column_name,
+  const unsigned int                  display_precision,
+  const bool                          display_scientific_notation)
+{
+  AssertDimension(independent_values.size(), dependent_vector.size());
+
+  TableHandler table;
+
+  for (unsigned int i = 0; i < independent_values.size(); ++i)
+    {
+      table.add_value(independent_column_name, independent_values[i]);
+      for (unsigned int d = 0; d < dependent_column_name.size(); ++d)
+        table.add_value(dependent_column_name[d], dependent_vector[i][d]);
+    }
+
+  if (display_scientific_notation)
+    {
+      table.set_scientific(independent_column_name, true);
+      for (unsigned int d = 0; d < dependent_column_name.size(); ++d)
+        table.set_scientific(dependent_column_name[d], true);
+    }
+  else
+    {
+      table.set_precision(independent_column_name, display_precision);
+      for (unsigned int d = 0; d < dependent_column_name.size(); ++d)
+        table.set_precision(dependent_column_name[d], display_precision);
+    }
+
+  return table;
+}
+
 template <int dim, typename T>
 TableHandler
 make_table_scalars_tensors(
@@ -307,6 +344,33 @@ create_output_folder(const std::string &dirname)
   // mkdir(dirname.c_str(), 0755);
 #endif
 }
+
+template TableHandler
+make_table_scalars_vectors(
+  const std::vector<double>              &independent_values,
+  const std::string                      &independent_column_name,
+  const std::vector<std::vector<double>> &dependent_vector,
+  const std::vector<std::string>         &dependent_column_name,
+  const unsigned int                      display_precision,
+  const bool                              display_scientific_notation);
+
+template TableHandler
+make_table_scalars_vectors(
+  const std::vector<unsigned int>        &independent_values,
+  const std::string                      &independent_column_name,
+  const std::vector<std::vector<double>> &dependent_vector,
+  const std::vector<std::string>         &dependent_column_name,
+  const unsigned int                      display_precision,
+  const bool                              display_scientific_notation);
+
+template TableHandler
+make_table_scalars_vectors(
+  const std::vector<int>                 &independent_values,
+  const std::string                      &independent_column_name,
+  const std::vector<std::vector<double>> &dependent_vector,
+  const std::vector<std::string>         &dependent_column_name,
+  const unsigned int                      display_precision,
+  const bool                              display_scientific_notation);
 
 template TableHandler
 make_table_scalars_tensors(
