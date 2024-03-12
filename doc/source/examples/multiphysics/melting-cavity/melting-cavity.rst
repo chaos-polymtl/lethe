@@ -14,6 +14,7 @@ Features
 - Solver: ``lethe-fluid`` 
 - Phase change (solid-liquid)
 - Buoyant force (natural convection)
+- Temperature-dependent stasis constraint
 - Unsteady problem handled by an adaptive BDF2 time-stepping scheme 
 - Usage of a python script for post-processing data
 
