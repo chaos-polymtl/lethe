@@ -11,7 +11,7 @@ make_table_scalars_vectors(
   const std::vector<T>                   &independent_values,
   const std::string                      &independent_column_name,
   const std::vector<std::vector<double>> &dependent_vector,
-  const std::vector<std::string>         &dependent_column_name,
+  const std::vector<std::string>         &dependent_column_names,
   const unsigned int                      display_precision,
   const bool                              display_scientific_notation)
 {
@@ -22,21 +22,21 @@ make_table_scalars_vectors(
   for (unsigned int i = 0; i < independent_values.size(); ++i)
     {
       table.add_value(independent_column_name, independent_values[i]);
-      for (unsigned int d = 0; d < dependent_column_name.size(); ++d)
-        table.add_value(dependent_column_name[d], dependent_vector[i][d]);
+      for (unsigned int d = 0; d < dependent_column_names.size(); ++d)
+        table.add_value(dependent_column_names[d], dependent_vector[i][d]);
     }
 
   if (display_scientific_notation)
     {
       table.set_scientific(independent_column_name, true);
-      for (unsigned int d = 0; d < dependent_column_name.size(); ++d)
-        table.set_scientific(dependent_column_name[d], true);
+      for (unsigned int d = 0; d < dependent_column_names.size(); ++d)
+        table.set_scientific(dependent_column_names[d], true);
     }
   else
     {
       table.set_precision(independent_column_name, display_precision);
-      for (unsigned int d = 0; d < dependent_column_name.size(); ++d)
-        table.set_precision(dependent_column_name[d], display_precision);
+      for (unsigned int d = 0; d < dependent_column_names.size(); ++d)
+        table.set_precision(dependent_column_names[d], display_precision);
     }
 
   return table;
@@ -48,12 +48,12 @@ make_table_scalars_tensors(
   const std::vector<T>              &independent_vector,
   const std::string                 &independent_column_name,
   const std::vector<Tensor<1, dim>> &dependent_vector,
-  const std::vector<std::string>    &dependent_column_name,
+  const std::vector<std::string>    &dependent_column_names,
   const unsigned int                 display_precision,
   const bool                         display_scientific_notation)
 {
   AssertDimension(independent_vector.size(), dependent_vector.size());
-  AssertDimension(dependent_column_name.size(), dim);
+  AssertDimension(dependent_column_names.size(), dim);
 
   TableHandler table;
 
@@ -61,20 +61,20 @@ make_table_scalars_tensors(
     {
       table.add_value(independent_column_name, independent_vector[i]);
       for (unsigned int d = 0; d < dim; ++d)
-        table.add_value(dependent_column_name[d], dependent_vector[i][d]);
+        table.add_value(dependent_column_names[d], dependent_vector[i][d]);
     }
 
   if (display_scientific_notation)
     {
       table.set_scientific(independent_column_name, true);
       for (unsigned int d = 0; d < dim; ++d)
-        table.set_scientific(dependent_column_name[d], true);
+        table.set_scientific(dependent_column_names[d], true);
     }
   else
     {
       table.set_precision(independent_column_name, display_precision);
       for (unsigned int d = 0; d < dim; ++d)
-        table.set_precision(dependent_column_name[d], display_precision);
+        table.set_precision(dependent_column_names[d], display_precision);
     }
 
   return table;
@@ -86,11 +86,12 @@ make_table_scalars_tensors(
   const std::vector<T>                           &independent_vector,
   const std::string                              &independent_column_name,
   const std::vector<std::vector<Tensor<1, dim>>> &dependent_vectors,
-  const std::vector<std::string>                 &dependent_column_name,
+  const std::vector<std::string>                 &dependent_column_names,
   const unsigned int                              display_precision,
   const bool                                      display_scientific_notation)
 {
-  AssertDimension(dependent_column_name.size(), dependent_vectors.size() * dim);
+  AssertDimension(dependent_column_names.size(),
+                  dependent_vectors.size() * dim);
 
   TableHandler table;
   unsigned int vect_index = 0;
@@ -105,16 +106,16 @@ make_table_scalars_tensors(
         {
           for (unsigned int d = 0; d < dim; ++d)
             {
-              table.add_value(dependent_column_name[d + vect_index],
+              table.add_value(dependent_column_names[d + vect_index],
                               vect[i][d]);
               if (display_scientific_notation)
                 {
-                  table.set_scientific(dependent_column_name[d + vect_index],
+                  table.set_scientific(dependent_column_names[d + vect_index],
                                        display_precision);
                 }
               else
                 {
-                  table.set_precision(dependent_column_name[d + vect_index],
+                  table.set_precision(dependent_column_names[d + vect_index],
                                       display_precision);
                 }
             }
@@ -134,15 +135,15 @@ template <int dim>
 TableHandler
 make_table_tensors_tensors(
   const std::vector<Tensor<1, dim>> &independent_vector,
-  const std::vector<std::string>    &independent_column_name,
+  const std::vector<std::string>    &independent_column_names,
   const std::vector<Tensor<1, dim>> &dependent_vector,
-  const std::vector<std::string>    &dependent_column_name,
+  const std::vector<std::string>    &dependent_column_names,
   const unsigned int                 display_precision,
   const bool                         display_scientific_notation)
 {
   AssertDimension(independent_vector.size(), dependent_vector.size());
-  AssertDimension(independent_column_name.size(), dim);
-  AssertDimension(dependent_column_name.size(), dim);
+  AssertDimension(independent_column_names.size(), dim);
+  AssertDimension(dependent_column_names.size(), dim);
 
   TableHandler table;
 
@@ -150,21 +151,22 @@ make_table_tensors_tensors(
     {
       for (unsigned int d = 0; d < dim; ++d)
         {
-          table.add_value(independent_column_name[d], independent_vector[i][d]);
-          table.add_value(dependent_column_name[d], dependent_vector[i][d]);
+          table.add_value(independent_column_names[d],
+                          independent_vector[i][d]);
+          table.add_value(dependent_column_names[d], dependent_vector[i][d]);
         }
     }
   if (display_scientific_notation)
     for (unsigned int d = 0; d < dim; ++d)
       {
-        table.set_scientific(independent_column_name[d], display_precision);
-        table.set_scientific(dependent_column_name[d], display_precision);
+        table.set_scientific(independent_column_names[d], display_precision);
+        table.set_scientific(dependent_column_names[d], display_precision);
       }
   else
     for (unsigned int d = 0; d < dim; ++d)
       {
-        table.set_precision(independent_column_name[d], display_precision);
-        table.set_precision(dependent_column_name[d], display_precision);
+        table.set_precision(independent_column_names[d], display_precision);
+        table.set_precision(dependent_column_names[d], display_precision);
       }
 
   return table;
@@ -174,14 +176,14 @@ template <int dim>
 TableHandler
 make_table_tensors_scalars(
   const std::vector<Tensor<1, dim>> &independent_vector,
-  const std::vector<std::string>    &independent_column_name,
+  const std::vector<std::string>    &independent_column_names,
   const std::vector<double>         &dependent_vector,
   const std::string                 &dependent_column_name,
   const unsigned int                 display_precision,
   const bool                         display_scientific_notation)
 {
   AssertDimension(independent_vector.size(), dependent_vector.size());
-  AssertDimension(independent_column_name.size(), dim);
+  AssertDimension(independent_column_names.size(), dim);
 
 
   TableHandler table;
@@ -190,20 +192,20 @@ make_table_tensors_scalars(
     {
       table.add_value(dependent_column_name, dependent_vector[i]);
       for (unsigned int d = 0; d < dim; ++d)
-        table.add_value(independent_column_name[d], independent_vector[i][d]);
+        table.add_value(independent_column_names[d], independent_vector[i][d]);
     }
 
   if (display_scientific_notation)
     {
       table.set_scientific(dependent_column_name, display_precision);
       for (unsigned int d = 0; d < dim; ++d)
-        table.set_scientific(independent_column_name[d], display_precision);
+        table.set_scientific(independent_column_names[d], display_precision);
     }
   else
     {
       table.set_precision(dependent_column_name, display_precision);
       for (unsigned int d = 0; d < dim; ++d)
-        table.set_precision(independent_column_name[d], display_precision);
+        table.set_precision(independent_column_names[d], display_precision);
     }
 
   return table;
@@ -387,7 +389,7 @@ make_table_scalars_vectors(
   const std::vector<double>              &independent_values,
   const std::string                      &independent_column_name,
   const std::vector<std::vector<double>> &dependent_vector,
-  const std::vector<std::string>         &dependent_column_name,
+  const std::vector<std::string>         &dependent_column_names,
   const unsigned int                      display_precision,
   const bool                              display_scientific_notation);
 
@@ -396,7 +398,7 @@ make_table_scalars_vectors(
   const std::vector<unsigned int>        &independent_values,
   const std::string                      &independent_column_name,
   const std::vector<std::vector<double>> &dependent_vector,
-  const std::vector<std::string>         &dependent_column_name,
+  const std::vector<std::string>         &dependent_column_names,
   const unsigned int                      display_precision,
   const bool                              display_scientific_notation);
 
@@ -405,7 +407,7 @@ make_table_scalars_vectors(
   const std::vector<int>                 &independent_values,
   const std::string                      &independent_column_name,
   const std::vector<std::vector<double>> &dependent_vector,
-  const std::vector<std::string>         &dependent_column_name,
+  const std::vector<std::string>         &dependent_column_names,
   const unsigned int                      display_precision,
   const bool                              display_scientific_notation);
 
@@ -414,7 +416,7 @@ make_table_scalars_tensors(
   const std::vector<double>       &independent_values,
   const std::string               &independent_column_name,
   const std::vector<Tensor<1, 2>> &dependent_vector,
-  const std::vector<std::string>  &dependent_column_name,
+  const std::vector<std::string>  &dependent_column_names,
   const unsigned int               display_precision,
   const bool                       display_scientific_notation);
 
@@ -423,7 +425,7 @@ make_table_scalars_tensors(
   const std::vector<double>       &independent_values,
   const std::string               &independent_column_name,
   const std::vector<Tensor<1, 3>> &dependent_vector,
-  const std::vector<std::string>  &dependent_column_name,
+  const std::vector<std::string>  &dependent_column_names,
   const unsigned int               display_precision,
   const bool                       display_scientific_notation);
 
@@ -432,7 +434,7 @@ make_table_scalars_tensors(
   const std::vector<double>                    &independent_values,
   const std::string                            &independent_column_name,
   const std::vector<std::vector<Tensor<1, 2>>> &dependent_vector,
-  const std::vector<std::string>               &dependent_column_name,
+  const std::vector<std::string>               &dependent_column_names,
   const unsigned int                            display_precision,
   const bool                                    display_scientific_notation);
 
@@ -441,7 +443,7 @@ make_table_scalars_tensors(
   const std::vector<double>                    &independent_values,
   const std::string                            &independent_column_name,
   const std::vector<std::vector<Tensor<1, 3>>> &dependent_vector,
-  const std::vector<std::string>               &dependent_column_name,
+  const std::vector<std::string>               &dependent_column_names,
   const unsigned int                            display_precision,
   const bool                                    display_scientific_notation);
 
@@ -450,7 +452,7 @@ make_table_scalars_tensors(
   const std::vector<unsigned int> &independent_values,
   const std::string               &independent_column_name,
   const std::vector<Tensor<1, 2>> &dependent_vector,
-  const std::vector<std::string>  &dependent_column_name,
+  const std::vector<std::string>  &dependent_column_names,
   const unsigned int               display_precision,
   const bool                       display_scientific_notation);
 
@@ -459,7 +461,7 @@ make_table_scalars_tensors(
   const std::vector<unsigned int> &independent_values,
   const std::string               &independent_column_name,
   const std::vector<Tensor<1, 3>> &dependent_vector,
-  const std::vector<std::string>  &dependent_column_name,
+  const std::vector<std::string>  &dependent_column_names,
   const unsigned int               display_precision,
   const bool                       display_scientific_notation);
 
@@ -468,7 +470,7 @@ make_table_scalars_tensors(
   const std::vector<unsigned int>              &independent_values,
   const std::string                            &independent_column_name,
   const std::vector<std::vector<Tensor<1, 2>>> &dependent_vector,
-  const std::vector<std::string>               &dependent_column_name,
+  const std::vector<std::string>               &dependent_column_names,
   const unsigned int                            display_precision,
   const bool                                    display_scientific_notation);
 
@@ -477,7 +479,7 @@ make_table_scalars_tensors(
   const std::vector<unsigned int>              &independent_values,
   const std::string                            &independent_column_name,
   const std::vector<std::vector<Tensor<1, 3>>> &dependent_vector,
-  const std::vector<std::string>               &dependent_column_name,
+  const std::vector<std::string>               &dependent_column_names,
   const unsigned int                            display_precision,
   const bool                                    display_scientific_notation);
 
@@ -486,7 +488,7 @@ make_table_scalars_tensors(
   const std::vector<int>          &independent_values,
   const std::string               &independent_column_name,
   const std::vector<Tensor<1, 2>> &dependent_vector,
-  const std::vector<std::string>  &dependent_column_name,
+  const std::vector<std::string>  &dependent_column_names,
   const unsigned int               display_precision,
   const bool                       display_scientific_notation);
 
@@ -495,7 +497,7 @@ make_table_scalars_tensors(
   const std::vector<int>          &independent_values,
   const std::string               &independent_column_name,
   const std::vector<Tensor<1, 3>> &dependent_vector,
-  const std::vector<std::string>  &dependent_column_name,
+  const std::vector<std::string>  &dependent_column_names,
   const unsigned int               display_precision,
   const bool                       display_scientific_notation);
 
@@ -504,7 +506,7 @@ make_table_scalars_tensors(
   const std::vector<int>                       &independent_values,
   const std::string                            &independent_column_name,
   const std::vector<std::vector<Tensor<1, 2>>> &dependent_vector,
-  const std::vector<std::string>               &dependent_column_name,
+  const std::vector<std::string>               &dependent_column_names,
   const unsigned int                            display_precision,
   const bool                                    display_scientific_notation);
 
@@ -513,32 +515,32 @@ make_table_scalars_tensors(
   const std::vector<int>                       &independent_values,
   const std::string                            &independent_column_name,
   const std::vector<std::vector<Tensor<1, 3>>> &dependent_vector,
-  const std::vector<std::string>               &dependent_column_name,
+  const std::vector<std::string>               &dependent_column_names,
   const unsigned int                            display_precision,
   const bool                                    display_scientific_notation);
 
 template TableHandler
 make_table_tensors_tensors(
   const std::vector<Tensor<1, 2>> &independent_values,
-  const std::vector<std::string>  &independent_column_name,
+  const std::vector<std::string>  &independent_column_names,
   const std::vector<Tensor<1, 2>> &dependent_vector,
-  const std::vector<std::string>  &dependent_column_name,
+  const std::vector<std::string>  &dependent_column_names,
   const unsigned int               display_precision,
   const bool                       display_scientific_notation);
 
 template TableHandler
 make_table_tensors_tensors(
   const std::vector<Tensor<1, 3>> &independent_values,
-  const std::vector<std::string>  &independent_column_name,
+  const std::vector<std::string>  &independent_column_names,
   const std::vector<Tensor<1, 3>> &dependent_vector,
-  const std::vector<std::string>  &dependent_column_name,
+  const std::vector<std::string>  &dependent_column_names,
   const unsigned int               display_precision,
   const bool                       display_scientific_notation);
 
 template TableHandler
 make_table_tensors_scalars(
   const std::vector<Tensor<1, 2>> &independent_vector,
-  const std::vector<std::string>  &independent_column_name,
+  const std::vector<std::string>  &independent_column_names,
   const std::vector<double>       &dependent_values,
   const std::string               &dependent_column_name,
   const unsigned int               display_precision,
@@ -547,7 +549,7 @@ make_table_tensors_scalars(
 template TableHandler
 make_table_tensors_scalars(
   const std::vector<Tensor<1, 3>> &independent_vector,
-  const std::vector<std::string>  &independent_column_name,
+  const std::vector<std::string>  &independent_column_names,
   const std::vector<double>       &dependent_values,
   const std::string               &dependent_column_name,
   const unsigned int               display_precision,

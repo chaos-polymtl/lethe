@@ -88,8 +88,8 @@ add_statistics_to_table_handler(const std::string variable,
  * @param[in] dependent_vector Vector of vectors of scalar values containing
  * dependant variables values.
  *
- * @param[in] dependent_column_name Vector of strings representing the labels of
- * dependent variables.
+ * @param[in] dependent_column_names Vector of strings representing the labels
+ * of dependent variables.
  *
  * @param[in] display_precision Integer indicating the precision at which the
  * table is written.
@@ -106,7 +106,7 @@ make_table_scalars_vectors(
   const std::vector<T>                   &independent_values,
   const std::string                      &independent_column_name,
   const std::vector<std::vector<double>> &dependent_vector,
-  const std::vector<std::string>         &dependent_column_name,
+  const std::vector<std::string>         &dependent_column_names,
   const unsigned int                      display_precision,
   const bool                              display_scientific_notation = false);
 
@@ -145,7 +145,7 @@ make_table_scalars_tensors(
   const std::vector<T>              &independent_values,
   const std::string                 &independent_column_name,
   const std::vector<Tensor<1, dim>> &dependent_vector,
-  const std::vector<std::string>    &dependent_column_name,
+  const std::vector<std::string>    &dependent_column_names,
   const unsigned int                 display_precision,
   const bool                         display_scientific_notation = false);
 
@@ -183,7 +183,7 @@ make_table_scalars_tensors(
   const std::vector<T>                           &independent_values,
   const std::string                              &independent_column_name,
   const std::vector<std::vector<Tensor<1, dim>>> &dependent_vector,
-  const std::vector<std::string>                 &dependent_column_name,
+  const std::vector<std::string>                 &dependent_column_names,
   const unsigned int                              display_precision,
   const bool display_scientific_notation = false);
 
@@ -196,7 +196,7 @@ make_table_scalars_tensors(
  * @param[in] independent_values Vector of Tensor<1,dim> that serves as the
  * independent variable (e.g., position).
  *
- * @param[in] independent_column_name Vector of strings representing labels of
+ * @param[in] independent_column_names Vector of strings representing labels of
  * the independent tensor.
  *
  * @param[in] dependent_vector Vector of vectors of Tensor<1,dim> containing
@@ -218,9 +218,9 @@ template <int dim>
 TableHandler
 make_table_tensors_tensors(
   const std::vector<Tensor<1, dim>> &independent_vector,
-  const std::vector<std::string>    &independent_column_name,
+  const std::vector<std::string>    &independent_column_names,
   const std::vector<Tensor<1, dim>> &dependent_vector,
-  const std::vector<std::string>    &dependent_column_name,
+  const std::vector<std::string>    &dependent_column_names,
   const unsigned int                 display_precision,
   const bool                         display_scientific_notation = false);
 
@@ -234,13 +234,13 @@ make_table_tensors_tensors(
  * @param[in] independent_values Vector of Tensor<1,dim> that serves as the
  * independent variable (e.g., position).
  *
- * @param[in] independent_column_name Vector of strings representing labels of
+ * @param[in] independent_column_names Vector of strings representing labels of
  * the independent tensor.
  *
  * @param[in] dependent_vector Vector of scalar that serves as the dependent
  * variable (e.g., energy).
  *
- * @param[in] dependent_column_names Label of the dependent variable.
+ * @param[in] dependent_column_name Label of the dependent variable.
  *
  * @param[in] display_scientific_notation Boolean indicating if the values
  * should be displayed in scientific notation (true) or not (false).
@@ -252,7 +252,7 @@ template <int dim>
 TableHandler
 make_table_tensors_scalars(
   const std::vector<Tensor<1, dim>> &independent_vector,
-  const std::vector<std::string>    &independent_column_name,
+  const std::vector<std::string>    &independent_column_names,
   const std::vector<double>         &dependent_values,
   const std::string                 &dependent_column_name,
   const unsigned int                 display_precision,
