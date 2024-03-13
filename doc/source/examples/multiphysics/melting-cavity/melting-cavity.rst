@@ -14,6 +14,7 @@ Features
 - Solver: ``lethe-fluid`` 
 - Phase change (solid-liquid)
 - Buoyant force (natural convection)
+- Temperature-dependent stasis constraint
 - Unsteady problem handled by an adaptive BDF2 time-stepping scheme 
 - Usage of a python script for post-processing data
 
@@ -24,7 +25,7 @@ Files Used in This Example
 
 All files mentioned below are located in the example's folder (``examples/multiphysics/melting-cavity``).
 
-- Parameter files: ``melting-cavity.prm``, ``melting-cavity-darcy.prm``
+- Parameter files: ``melting-cavity.prm``, ``melting-cavity-stasis-constraint.prm``, ``melting-cavity-darcy.prm``
 - Postprocessing Python scripts: ``melting-cavity.py``, ``compare-melting-cavity.py``
 - Python script to calculate the dimensionless numbers: ``dimensionless_number_calculator.py``
 
@@ -252,17 +253,40 @@ contains the simulation results. In post-processing, the position of the solid-l
     :width: 500
 
 
+-------------------------------------------------------------
+Improving Computational Performances with Stasis Constraints
+-------------------------------------------------------------
+
+Lethe is able to :doc:`constrain temperature-dependent stasis <../../../parameters/cfd/constrain_stasis>` on fluids.
+To use this feature, the ``constrain stasis`` subsection is added to the parameter file (see ``melting-cavity-stasis-constraint.prm``):
+
+.. code-block:: text
+
+  subsection constrain stasis
+    set enable                = true
+    set number of constraints = 1
+    subsection constraint 0
+      set fluid id        = 0
+      set min temperature = 0
+      set max temperature = 28.5
+    end
+  end
+
+Employing this feature enables a more effective conditioning of the global matrix by imposing homogeneous velocity and pressure constraints on degrees of freedom (DoFs) of cells within the specified temperature range, consequently reducing computation time. For example, running the simulation with 16 CPU cores and the stasis constraint specified above only takes :math:`\sim 24 \; \mathrm{minutes}` while the solved quantities of interest remain unchanged.
+
+.. caution::
+  When using this feature, ensure that the imposed ``max temperature`` value is lower than the solidus temperature of the material. Additionally, we advise maintaining a buffer zone to prevent disruption to fluid flow resolution near the melting zone.
 
 --------------------------------------------
 Darcy Penalization: An Alternative Approach
 --------------------------------------------
 
-Lethe supports an alternative strategy to impose statis (no motion) within the solidified material using a Darcy-like penalization. This penalization adds a forcing term to the momentum equation to prohibit the motion of the solid instead of increasing its viscosity. This has the advantage of leading to a better matrix conditioning, at the expense of potentially increased motion within the solid phase. To enable this forcing term, a velocity source term must be specified:
+Lethe supports an alternative strategy to impose stasis (no motion) within the solidified material using a Darcy-like penalization. This penalization adds a forcing term to the momentum equation to prohibit the motion of the solid instead of increasing its viscosity. This has the advantage of leading to a better matrix conditioning, at the expense of potentially increased motion within the solid phase. To enable this forcing term, a velocity source term must be specified:
 
 .. code-block:: text
 
   subsection velocity source
-  set Darcy type          = phase_change
+  set Darcy type = phase_change
   end
 
 Furthermore, the ``phase change`` subsection within the physical properties but also be modified to specify the Darcy penalty of the solid and liquid phase:
@@ -270,7 +294,7 @@ Furthermore, the ``phase change`` subsection within the physical properties but 
 .. code-block:: text
 
     subsection physical properties
-      set number of fluids = 1
+      set number of fluids      = 1
       set reference temperature = 29.8
       subsection fluid 0
         set thermal conductivity model = constant
@@ -307,16 +331,16 @@ Furthermore, the ``phase change`` subsection within the physical properties but 
           set viscosity solid = 0.0007366698558439125
     
           # Thermal expansion of the liquid phase
-          set thermal expansion liquid       = 1
+          set thermal expansion liquid = 1
     
           # Thermal expansion of the solid phase
-          set thermal expansion solid        = 0
+          set thermal expansion solid = 0
     
           # Permeability of the liquid phase
-          set Darcy penalty liquid         = 0
+          set Darcy penalty liquid = 0
     
           # Permeability of the  solid phase
-          set Darcy penalty solid          = 1e4
+          set Darcy penalty solid = 1e4
         end
       end
     end
