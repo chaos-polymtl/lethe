@@ -13,6 +13,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Added
 
+- MINOR Assertion on fields required for physical property models were added to the code. This is done to ensure that if a physical property model necessitating a certain field is employed and the field is not defined, the exception thrown is comprehensible. [#add_PR_number](add_PR_link)
+
 - MINOR A new `make_table_scalars_vectors` function has been added in `utilities.h`(`.cc`). [#1062](https://github.com/lethe-cfd/lethe/pull/1062)
 
 ## [Master] - 2024-03-11
