@@ -699,7 +699,9 @@ MFNavierStokesSolver<dim>::solve_with_LSMG(SolverGMRES<VectorType> &solver)
   mg_smoother.initialize(mg_operators, smoother_data);
 
   if (this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
-        .eig_estimation_verbose != Parameters::Verbosity::quiet)
+        .mg_smoother_eig_estimation &&
+      this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+          .eig_estimation_verbose != Parameters::Verbosity::quiet)
     {
       // Print eigenvalue estimation for all levels
       for (unsigned int level = minlevel; level <= maxlevel; ++level)
@@ -1257,7 +1259,9 @@ MFNavierStokesSolver<dim>::solve_with_GCMG(SolverGMRES<VectorType> &solver)
   mg_smoother.initialize(mg_operators, smoother_data);
 
   if (this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
-        .eig_estimation_verbose != Parameters::Verbosity::quiet)
+        .mg_smoother_eig_estimation &&
+      this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+          .eig_estimation_verbose != Parameters::Verbosity::quiet)
     {
       // Print eigenvalue estimation for all levels
       for (unsigned int level = minlevel; level <= maxlevel; ++level)
