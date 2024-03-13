@@ -5,9 +5,15 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ## [Master] - 2024-03-11
 
+## Changed
+
+- MINOR The eigenvalue estimation for the multigrid preconditioners in the lethe-fluid-matrix-free solver is now done internally by the PreconditionRelaxation class instead of using a PreconditionChebyshev and an estimate omega function [#1064](https://github.com/lethe-cfd/lethe/pull/1064).
+
+## [Master] - 2024-03-11
+
 ### Added
 
-- MINOR Temperatue-dependent `stasis constraint` is now featured in the Melting Cavity heat transfer example. [#1061](https://github.com/lethe-cfd/lethe/pull/1061)
+- MINOR Temperature-dependent `stasis constraint` is now featured in the Melting Cavity heat transfer example. [#1061](https://github.com/lethe-cfd/lethe/pull/1061)
 
 ## [Master] - 2024-03-05
 
