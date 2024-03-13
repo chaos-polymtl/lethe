@@ -215,7 +215,7 @@ public:
     , ambient_gas_density_inv(1.0 / p_evaporation.ambient_gas_density)
     , liquid_density_inv(1.0 / p_evaporation.liquid_density)
   {
-    model_depends_on[temperature] = false;
+    model_depends_on[field::temperature] = false;
   }
 
 
@@ -413,7 +413,7 @@ public:
     , liquid_density_inv(1.0 / p_evaporation.liquid_density)
     , universal_gas_constant(p_evaporation.universal_gas_constant)
   {
-    model_depends_on[temperature] = true;
+    model_depends_on[field::temperature] = true;
   }
 
   /**
@@ -425,6 +425,9 @@ public:
   double
   saturation_pressure(const std::map<field, double> &field_values)
   {
+    AssertThrow(field_values.find(field::temperature) != field_values.end(),
+                PhysicialPropertyModelFieldUndefined(
+                  "EvaporationModelTemperature", "temperature"));
     const double temperature_inv =
       1.0 / (field_values.at(field::temperature) + 1e-16);
 
@@ -450,6 +453,9 @@ public:
   saturation_pressure(const std::map<field, std::vector<double>> &field_vectors,
                       std::vector<double> &saturation_pressure_vector)
   {
+    AssertThrow(field_vectors.find(field::temperature) != field_vectors.end(),
+                PhysicialPropertyModelFieldUndefined(
+                  "EvaporationModelTemperature", "temperature"));
     const std::vector<double> &temperature =
       field_vectors.at(field::temperature);
 
@@ -506,6 +512,9 @@ public:
   mass_flux(const std::map<field, std::vector<double>> &field_vectors,
             std::vector<double> &mass_flux_vector) override
   {
+    AssertThrow(field_vectors.find(field::temperature) != field_vectors.end(),
+                PhysicialPropertyModelFieldUndefined(
+                  "EvaporationModelTemperature", "temperature"));
     const std::vector<double> &temperature =
       field_vectors.at(field::temperature);
 
@@ -578,6 +587,9 @@ public:
   heat_flux_jacobian(const std::map<field, double> &field_values,
                      const field                    id) override
   {
+    AssertThrow(field_values.find(field::temperature) != field_values.end(),
+                PhysicialPropertyModelFieldUndefined(
+                  "EvaporationModelTemperature", "temperature"));
     const double temperature_inv =
       1.0 / (field_values.at(field::temperature) + 1e-16);
 
@@ -620,6 +632,10 @@ public:
 
     if (id == field::temperature)
       {
+        AssertThrow(
+          field_vectors.find(field::temperature) != field_vectors.end(),
+          PhysicialPropertyModelFieldUndefined("EvaporationModelTemperature",
+                                               "temperature"));
         const std::vector<double> &temperature =
           field_vectors.at(field::temperature);
 

@@ -143,6 +143,15 @@ public:
   double
   value(const std::map<field, double> &fields_value) override
   {
+    AssertThrow(fields_value.find(field::temperature) != fields_value.end(),
+                PhysicialPropertyModelFieldUndefined("PhaseChangeSpecificHeat",
+                                                     "temperature"));
+    AssertThrow(fields_value.find(field::temperature_p1) != fields_value.end(),
+                PhysicialPropertyModelFieldUndefined("PhaseChangeSpecificHeat",
+                                                     "temperature_p1"));
+    AssertThrow(fields_value.find(field::temperature_p2) != fields_value.end(),
+                PhysicialPropertyModelFieldUndefined("PhaseChangeSpecificHeat",
+                                                     "temperature_p2"));
     double temperature    = fields_value.at(field::temperature);
     double temperature_p1 = fields_value.at(field::temperature_p1);
     double temperature_p2 = fields_value.at(field::temperature_p2);
@@ -217,6 +226,17 @@ public:
   vector_value(const std::map<field, std::vector<double>> &field_vectors,
                std::vector<double> &property_vector) override
   {
+    AssertThrow(field_vectors.find(field::temperature) != field_vectors.end(),
+                PhysicialPropertyModelFieldUndefined("PhaseChangeSpecificHeat",
+                                                     "temperature"));
+    AssertThrow(field_vectors.find(field::temperature_p1) !=
+                  field_vectors.end(),
+                PhysicialPropertyModelFieldUndefined("PhaseChangeSpecificHeat",
+                                                     "temperature_p1"));
+    AssertThrow(field_vectors.find(field::temperature_p2) !=
+                  field_vectors.end(),
+                PhysicialPropertyModelFieldUndefined("PhaseChangeSpecificHeat",
+                                                     "temperature_p2"));
     const std::vector<double> &temperature_vec =
       field_vectors.at(field::temperature);
     const std::vector<double> &p1_temperature_vec =
@@ -310,7 +330,12 @@ public:
   jacobian(const std::map<field, double> &field_values, field id) override
   {
     if (id == field::temperature)
-      return numerical_jacobian(field_values, field::temperature);
+      {
+        AssertThrow(field_values.find(field::temperature) != field_values.end(),
+                    PhysicialPropertyModelFieldUndefined(
+                      "EvaporationModelTemperature", "temperature"));
+        return numerical_jacobian(field_values, field::temperature);
+      }
     else
       return 0;
   };
@@ -326,6 +351,9 @@ public:
                   const field                                 id,
                   std::vector<double> &jacobian_vector) override
   {
+    AssertThrow(field_vectors.find(field::temperature) != field_vectors.end(),
+                PhysicialPropertyModelFieldUndefined(
+                  "EvaporationModelTemperature", "temperature"));
     vector_numerical_jacobian(field_vectors, id, jacobian_vector);
   };
 

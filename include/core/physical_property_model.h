@@ -33,6 +33,13 @@ DeclException2(SizeOfFields,
                << " is not equal to the number of values for another field "
                << arg2);
 
+DeclException2(PhysicialPropertyModelFieldUndefined,
+               std::string,
+               std::string,
+               << "Error in '" << arg1 << "' model. \n "
+               << "The " << arg2
+               << " field required by the model is not defined.");
+
 /*
  * Fields on which physical property can depend. All fields are assumed
  * to be at time t+dt other than those for which a _p suffix is explicitly
