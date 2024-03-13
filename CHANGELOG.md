@@ -3,11 +3,17 @@
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Master] - 2024-03-11
+
+### Added
+
+- MINOR Temperatue-dependent `stasis constraint` is now featured in the Melting Cavity heat transfer example. [#1061](https://github.com/lethe-cfd/lethe/pull/1061)
+
 ## [Master] - 2024-03-05
 
 ### Added
 
-- MINOR  The new temperature-dependent solid domain constraints for two-phase Volume of Fluid (VOF) simulations has been implemented (`constrain_stasis_with_temperature_vof()`). To select cells on which the constraints are applied, we check if the filtered phase fraction at quadrature points in the cell are within a range of accepted values. This range of accepted values is defined with the `phase fraction tolerance` parameter. This parameter defines an absolute tolerance on filtered phase fraction. Related documentation was updated and a new application test was also added. [#1048](https://github.com/lethe-cfd/lethe/pull/1048)
+- MINOR The new temperature-dependent solid domain constraints for two-phase Volume of Fluid (VOF) simulations has been implemented (`constrain_stasis_with_temperature_vof()`). To select cells on which the constraints are applied, we check if the filtered phase fraction at quadrature points in the cell are within a range of accepted values. This range of accepted values is defined with the `phase fraction tolerance` parameter. This parameter defines an absolute tolerance on filtered phase fraction. Related documentation was updated and a new application test was also added. [#1048](https://github.com/lethe-cfd/lethe/pull/1048)
 
 - MINOR Added the capability to locally refine the mesh in the vicinity of the boundary conditions as specified by a list of boundary conditions. [#1056](https://github.com/lethe-cfd/lethe/pull/1056)
 
@@ -23,7 +29,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Fixed
 
-- MINOR In LPBF simulations, recoil pressure formulation p_rec = 0.55p_sat + [1/rho]m_dot^2 was accounting 2 times for the term [1/rho]m_dot^2 because the latter is included in the term 0.55p_sat. The formulation is now corrected and reads p_rec = 0.55p_sat.
+- MINOR In LPBF simulations, recoil pressure formulation $`p_\mathrm{rec} = 0.55p_\mathrm{sat} + [1/\rho]m_\mathrm{dot}^2`$ was accounting 2 times for the term $`[1/\rho]m_\mathrm{dot}^2`$ because the latter is included in the term $`0.55p_\mathrm{sat}`$. The formulation is now corrected and reads $`p_\mathrm{rec} = 0.55p_\mathrm{sat}`$.
 
 ## [Master] - 2024-03-02
 
@@ -107,7 +113,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Fixed
 
-- MINOR  The number of remaining particle to insert of each type is being checkpointed adequately. This means that no modification are required to the "number of particle" parameter after restarting a simulation. [#964](https://github.com/lethe-cfd/lethe/pull/964)
+- MINOR The number of remaining particle to insert of each type is being checkpointed adequately. This means that no modification are required to the "number of particle" parameter after restarting a simulation. [#964](https://github.com/lethe-cfd/lethe/pull/964)
 
 ### Fixed
 
