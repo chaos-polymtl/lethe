@@ -25,20 +25,20 @@
 using namespace dealii;
 
 /**
- * @brief Abstract class that allows to calculate the
- * specific heat on each quadrature point using the temperature of the fluid.
- * magnitude. SpecficiHeat::get_specific_heat() is a pure virtual method,
- * since it can only be calculated knowing the model for the specific
- * heat that has been specifid
+ * @brief Abstract class for calculating the specific heat of materials on
+ * quadrature points using the temperature of the fluid.
  */
 class SpecificHeatModel : public PhysicalPropertyModel
 {
 public:
   /**
-   * @brief Instantiates and returns a pointer to a SpecificHeatModel object by casting it to
-   * the proper child class
+   * @brief Instantiates and returns a pointer to a SpecificHeatModel object
+   * by casting it to the proper child class.
    *
-   * @param material_properties Parameters for a material
+   * @param[in] material_properties Property parameters of a material (fluid or
+   * solid).
+   *
+   * @return Casted SpecificHeatModel object.
    */
   static std::shared_ptr<SpecificHeatModel>
   model_cast(const Parameters::Material &material_properties);
@@ -46,68 +46,108 @@ public:
 
 
 /**
- * @brief Constant specific heat. Returns a constant specific
- * heat for a fluid
+ * @brief Constant specific heat model.
  */
 class ConstantSpecificHeat : public SpecificHeatModel
 {
 public:
   /**
-   * @brief Default constructor
+   * @brief Constructor of the constant specific heat model.
+   *
+   * @param[in] p_specific_heat Constant specific heat value.
    */
   ConstantSpecificHeat(const double p_specific_heat)
     : specific_heat(p_specific_heat)
   {}
 
   /**
-   * @brief value Calculates the value of the specific heat.
-   * @param fields_value Value of the various field on which the specific heat depends.
-   * @return value of the specific heat.
+   * @brief Compute specific heat value.
+   *
+   * @param[in] field_values Value of the various field on which the specific
+   * heat may depend. The map stores a single value per field.
+   *
+   * @note Here, the @p field_values parameter is ignored since the specific
+   * heat remains constant.
+   *
+   * @return Specific heat value.
    */
   double
-  value(const std::map<field, double> & /*fields_value*/) override
+  value(const std::map<field, double> &field_values) override
   {
+    (void)field_values;
     return specific_heat;
   };
 
   /**
-   * @brief vector_value Calculates the vector of specific heat.
-   * @param field_vectors Vector of fields on which the specific heat may depend.
-   * @param property_vector Vector of specific_heat values.
+   * @brief vector_value Compute specific heat values.
+   *
+   * @param[in] field_vectors Vectors of the fields on which the specific heat
+   * may depend. The map stores a vector of values per field.
+   *
+   * @param[out] property_vector Vector of computed specific heat values.
+   *
+   * @note Here, the @p field_vectors parameter is ignored since the specific
+   * heat remains constant.
    */
   void
-  vector_value(const std::map<field, std::vector<double>> & /*field_vectors*/,
+  vector_value(const std::map<field, std::vector<double>> &field_vectors,
                std::vector<double> &property_vector) override
   {
+    (void)field_vectors;
     std::fill(property_vector.begin(), property_vector.end(), specific_heat);
   }
 
   /**
-   * @brief jacobian Calculates the jacobian (the partial derivative) of the specific heat with respect to a field
-   * @param field_values Value of the various fields on which the specific heat may depend.
-   * @param id Indicator of the field with respect to which the jacobian
-   * should be calculated
-   * @return value of the partial derivative of the specific heat with respect to the field.
+   * @brief Compute the jacobian (the partial derivative) of the specific heat
+   * with respect to a specified field.
+   *
+   * @param[in] field_values Values of the various fields on which the specific
+   * heat may depend. The map stores a single value per field.
+   *
+   * @param[in] id Indicator of the field with respect to which the jacobian
+   * should be computed.
+   *
+   * @note Here, the @p field_values and @p id parameters are ignored since the
+   * specific heat remains constant.
+   *
+   * @return Value of the derivative of the specific heat with respect to the
+   * specified field. Since the specific heat remains constant, this function
+   * returns zero.
    */
   double
-  jacobian(const std::map<field, double> & /*field_values*/,
-           field /*id*/) override
+  jacobian(const std::map<field, double> &field_values, field id) override
   {
+    (void)field_values;
+    (void)id;
     return 0;
   };
 
   /**
-   * @brief vector_jacobian Calculate the derivative of the specific heat with respect to a field
-   * @param field_vectors Vector for the values of the fields used to evaluate the property
-   * @param id Identifier of the field with respect to which a derivative should be calculated
-   * @param jacobian Vector of the value of the derivative of the specific heat with respect to the field id
+   * @brief Computes the derivative of the specific heat with respect to
+   * specified fields.
+   *
+   * @param[in] field_vectors Vector of values of the fields used to evaluate
+   * the specific heat. The map stores a vector of values per field.
+   *
+   * @param[in] id Identifier of the field with respect to which a derivative
+   * should be computed.
+   *
+   * @param[out] jacobian Vector of computed derivative values of the specific
+   * heat
+   * with respect to the field of the specified @p id. In this case, it returns
+   * a vector of zeros since the specific heat remains constant.
+   *
+   * @note Here, the @p field_vectors and @p id parameters are ignored since the
+   * specific heat remains constant.
+   *
    */
   void
-  vector_jacobian(
-    const std::map<field, std::vector<double>> & /*field_vectors*/,
-    const field /*id*/,
-    std::vector<double> &jacobian_vector) override
+  vector_jacobian(const std::map<field, std::vector<double>> &field_vectors,
+                  const field                                 id,
+                  std::vector<double> &jacobian_vector) override
   {
+    (void)field_vectors;
+    (void)id;
     std::fill(jacobian_vector.begin(), jacobian_vector.end(), 0);
   };
 
@@ -117,15 +157,35 @@ private:
 
 
 /**
- * @brief This model takes into account the phase change of a material
- * by considering the latent heat into the specific heat over a phase change
- * interval determined by [T_solidus,T_liquidus].
+ * @brief Phase change specific heat model.
+ *
+ * The phase change specific heat \f$(c^{*}_\mathrm{p})\f$ model takes into
+ * account the phase change of a material by considering the latent heat into
+ * the specific heat over a phase change temperature interval determined by
+ * \f$\left[T_\mathrm{s},T_\mathrm{l}\right]\f$ where \f$T_\mathrm{s}\f$ is the
+ * solidus temperature and \f$T_\mathrm{l}\f$ is the liquidus temperature.
+ *
+ * The specific heat is evaluated as:
+ * \f$ c^{*}_\mathrm{p}(T)  =
+ *    \begin{cases}
+ *      C_\mathrm{p,s} & \text{if} \; T<T_\mathrm{s}\\
+ *      \frac{C_\mathrm{p,s}+C_\mathrm{p,l}}{2}+\frac{h_\mathrm{l}}
+ *        {T_\mathrm{l}-T_\mathrm{s}} & \text{if} \;
+ * T\in[T_\mathrm{s},T_\mathrm{l}]\\ C_\mathrm{p,l} & \text{if} \;
+ * T>T_\mathrm{l} \end{cases} \f$
+ *
+ * where \f$C_\mathrm{p,s}\f$ and \f$C_\mathrm{p,l}\f$ are the solid and liquid
+ * specific heat, respectively, and \f$h_\mathrm{l}\f$ is the latent enthalpy
+ * (enthalpy related to the phase change).
  */
 class PhaseChangeSpecificHeat : public SpecificHeatModel
 {
 public:
   /**
-   * @brief Default constructor
+   * @brief Constructor of the phase change specific heat model.
+   *
+   * @param[in] p_phase_change_parameters Set of parameters of the phase change
+   * model.
    */
   PhaseChangeSpecificHeat(
     const Parameters::PhaseChange p_phase_change_parameters)
@@ -137,24 +197,29 @@ public:
   }
 
   /**
-   * @brief value Calculates the value of the phase change specific heat.
-   * @param fields_value Value of the various field on which the specific heat depends.
-   * @return value of the specific heat.   */
+   * @brief Compute the specific heat of the isothermal ideal gas.
+   *
+   * @param[in] field_values Values of the various fields on which the property
+   * may depend. In this case, the specific heat depends on temperature.
+   * The map stores a single value per field.
+   *
+   * @return Value of the specific heat computed with the @p field_values.
+   */
   double
-  value(const std::map<field, double> &fields_value) override
+  value(const std::map<field, double> &field_values) override
   {
-    AssertThrow(fields_value.find(field::temperature) != fields_value.end(),
+    AssertThrow(field_values.find(field::temperature) != field_values.end(),
                 PhysicialPropertyModelFieldUndefined("PhaseChangeSpecificHeat",
                                                      "temperature"));
-    AssertThrow(fields_value.find(field::temperature_p1) != fields_value.end(),
+    AssertThrow(field_values.find(field::temperature_p1) != field_values.end(),
                 PhysicialPropertyModelFieldUndefined("PhaseChangeSpecificHeat",
                                                      "temperature_p1"));
-    AssertThrow(fields_value.find(field::temperature_p2) != fields_value.end(),
+    AssertThrow(field_values.find(field::temperature_p2) != field_values.end(),
                 PhysicialPropertyModelFieldUndefined("PhaseChangeSpecificHeat",
                                                      "temperature_p2"));
-    double temperature    = fields_value.at(field::temperature);
-    double temperature_p1 = fields_value.at(field::temperature_p1);
-    double temperature_p2 = fields_value.at(field::temperature_p2);
+    double temperature    = field_values.at(field::temperature);
+    double temperature_p1 = field_values.at(field::temperature_p1);
+    double temperature_p2 = field_values.at(field::temperature_p2);
 
 
     // Gather information required from the simulation control to have the time
@@ -185,8 +250,6 @@ public:
             const double dT =
               bdf_coefs[0] * temperature + bdf_coefs[1] * temperature_p1;
             return dH / dT;
-
-            break;
           }
 
         case Parameters::SimulationControl::TimeSteppingMethod::bdf2:
@@ -207,7 +270,6 @@ public:
                               bdf_coefs[1] * temperature_p1 +
                               bdf_coefs[2] * temperature_p2;
             return dH / dT;
-            break;
           }
 
         default:
@@ -216,11 +278,14 @@ public:
       }
   }
 
-
   /**
-   * @brief vector_value Calculates the vector of specific heat.
-   * @param field_vectors Vector of fields on which the specific heat may depend.
-   * @param property_vector Vector of specific_heat values.
+   * @brief Compute a vector of specific heat values for an isothermal ideal gas.
+   *
+   * @param[in] field_vectors Vectors of the fields on which the specific heat
+   * may depend. In this case, the specific heat depends on temperature. The map
+   * stores a vector of values per field.
+   *
+   * @param[out] property_vector Vectors of computed specific heat values.
    */
   void
   vector_value(const std::map<field, std::vector<double>> &field_vectors,
@@ -320,11 +385,17 @@ public:
   }
 
   /**
-   * @brief jacobian Calculates the jacobian (the partial derivative) of the specific heat with respect to a field
-   * @param field_values Value of the various fields on which the specific heat may depend.
-   * @param id Indicator of the field with respect to which the jacobian
-   * should be calculated
-   * @return value of the partial derivative of the specific heat with respect to the field.
+   * @brief Compute the jacobian (the partial derivative) of the specific heat
+   * with respect to a specified field.
+   *
+   * @param[in] field_values Values of the various fields on which the specific
+   * heat may depend. The map stores a single value per field.
+   *
+   * @param[in] id Indicator of the field with respect to which the jacobian
+   * should be computed.
+   *
+   * @return Value of the derivative of the specific heat with respect to the
+   * specified field.
    */
   double
   jacobian(const std::map<field, double> &field_values, field id) override
@@ -341,10 +412,17 @@ public:
   };
 
   /**
-   * @brief vector_jacobian Calculate the derivative of the specific heat with respect to a field
-   * @param field_vectors Vector for the values of the fields used to evaluate the property
-   * @param id Identifier of the field with respect to which a derivative should be calculated
-   * @param jacobian Vector of the value of the derivative of the specific heat with respect to the field id
+   * @brief Compute the derivative of the specific heat with respect to a field
+   * for an isothermal ideal gas.
+   *
+   * @param[in] field_vectors Vector of values of the fields used to evaluate
+   * the specific heat. The map stores a vector of values per field.
+   *
+   * @param[in] id Identifier of the field with respect to which a derivative
+   * should be computed.
+   *
+   * @param[out] jacobian Vector of computed derivative values of the specific
+   * heat with respect to the field of the specified @p id.
    */
   void
   vector_jacobian(const std::map<field, std::vector<double>> &field_vectors,
@@ -358,25 +436,29 @@ public:
   };
 
   /**
-   * @brief enthalpy Calculates the enthalpy of a phase change material for a temperature T
-   * The enthalpy is defined as :
+   * @brief Compute the enthalpy of a phase change material for a temperature
+   * \f$T\f$.
    *
-   * Pure liquid
-   * ------------
-   * if (T>T_liquidus) : H = cp_solid * T_solidus + 0.5*(cp_solid+cp_liquid) *
-   * (T_liquidus-T_solidus) + latent_enthalpy + cp_liquid * (T-T_liquidus)
+   * The enthalpy \f$(H)\f$ is defined:
    *
-   * Liquid-solid mixture
-   * -----------------
-   * else if (T>T_solidus) : cp_solid * T_solidus + 0.5*(cp_solid+cp_liquid) *
-   * (T-T_solidus) + liquid_fraction * latent_enthalpy
+   * - In pure liquid \f$(T>T_\mathrm{l})\f$ as:\n
+   * \f$H(T) = c_\mathrm{p,s} T_\mathrm{s} + 0.5(c_\mathrm{p,s}+c_\mathrm{p,l})
+   * (T_\mathrm{l}-T_\mathrm{s}) + h_\mathrm{l} + c_\mathrm{p,l}
+   * (T-T_\mathrm{l})\f$\n\n
    *
-   * Pure solid
-   * ------------
-   * else : cp_solid * T
+   * - In liquid-solid mixture \f$(T_\mathrm{s} \leq T \leq T_\mathrm{l})\f$
+   * as:\n
+   *\f$H(T) = c_\mathrm{p,s} T_\mathrm{s} + 0.5(c_\mathrm{p,s}+c_\mathrm{p,l})
+   * (T_\mathrm{l}-T_\mathrm{s}) + \alpha_\mathrm{l} h_\mathrm{l}\f$\n
+   * where \f$\alpha_\mathrm{l} = \frac{T-T_\mathrm{s}}{T_\mathrm{l}-
+   * T_\mathrm{s}}\f$ is the liquid fraction.\n\n
    *
-   * @param T temperature at which to calculate the enthalpy
-   * @return Value of the enthalpy
+   * - In pure solid \f$(T<T_\mathrm{s})\f$ as:\n
+   * \f$H(T) = c_\mathrm{p,s} T\f$
+   *
+   * @param[in] T temperature at which the enthalpy is computed.
+   *
+   * @return Value of the enthalpy evaluated at \f$T\f$.
    */
 
   inline double
