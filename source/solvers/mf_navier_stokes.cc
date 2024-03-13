@@ -1246,9 +1246,6 @@ MFNavierStokesSolver<dim>::solve_with_GCMG(SolverGMRES<VectorType> &solver)
               .eig_estimation_cg_n_iterations;
           smoother_data[level].eigenvalue_algorithm =
             SmootherType::AdditionalData::EigenvalueAlgorithm::power_iteration;
-
-          // double omega =
-          // estimate_omega(mg_operators[level], level, diagonal_vector);
         }
       else
         smoother_data[level].relaxation =
