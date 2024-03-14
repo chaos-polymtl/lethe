@@ -4,6 +4,12 @@ Running on 1 MPI rank(s)...
    Volume of triangulation:      1
    Number of VOF degrees of freedom: 81
 
+----------------------
+VOF Mass Conservation
+----------------------
+   time    surface_fluid_0 mass_per_length_fluid_0 surface_fluid_1 mass_per_length_fluid_1 sharpening_threshold 
+0.0000e+00      8.7500e-01              8.7500e-02      1.2500e-01              1.2500e+01           5.0000e-01 
+
 ---------------
 VOF Barycenter
 ---------------
@@ -13,6 +19,12 @@ VOF Barycenter
 *******************************************************************************
 Transient iteration: 1        Time: 0.5      Time step: 0.5      CFL: 2.79578 
 *******************************************************************************
+
+----------------------
+VOF Mass Conservation
+----------------------
+   time    surface_fluid_0 mass_per_length_fluid_0 surface_fluid_1 mass_per_length_fluid_1 sharpening_threshold 
+5.0000e-01      8.7789e-01              8.7789e-02      1.2211e-01              1.2211e+01           5.0000e-01 
 
 ---------------
 VOF Barycenter
@@ -24,15 +36,14 @@ VOF Barycenter
 Transient iteration: 2        Time: 1        Time step: 0.5      CFL: 3.72386 
 *******************************************************************************
 
+----------------------
+VOF Mass Conservation
+----------------------
+   time    surface_fluid_0 mass_per_length_fluid_0 surface_fluid_1 mass_per_length_fluid_1 sharpening_threshold 
+1.0000e+00      8.2689e-01              8.2689e-02      1.7311e-01              1.7311e+01           5.0000e-01 
+
 ---------------
 VOF Barycenter
 ---------------
   time    x_vof    y_vof    vx_vof   vy_vof   
 1.000000 0.513560 0.638656 0.449731 -0.013803 
-----------------------
-VOF Mass Conservation
-----------------------
-   time    surface_fluid_0 mass_per_length_fluid_0 surface_fluid_1 mass_per_length_fluid_1 sharpening_threshold 
-0.0000e+00      8.7500e-01              8.7500e-02      1.2500e-01              1.2500e+01               0.5000 
-5.0000e-01      8.7789e-01              8.7789e-02      1.2211e-01              1.2211e+01               0.5000 
-1.0000e+00      8.2689e-01              8.2689e-02      1.7311e-01              1.7311e+01               0.5000 

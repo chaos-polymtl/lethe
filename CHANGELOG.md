@@ -3,6 +3,18 @@
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Master] - 2024-03-13
+
+### Changed
+
+- MINOR In a similar way to "VOF Barycenter", the output of the "VOF Mass Conservation" is now displayed at every time iteration on the terminal when `calculate mass conservation` in the `post-processing` is enabled (default) and the `verbosity` is set to `verbose`. [#1062](https://github.com/lethe-cfd/lethe/pull/1062)
+
+- MINOR A new boolean argument in `make_table` functions has been added, namely `display_scientific_notation` to decide if the display of table values is displayed at a fixed decimal or in scientific notation. [#1062](https://github.com/lethe-cfd/lethe/pull/1062)
+
+### Added
+
+- MINOR A new `make_table_scalars_vectors` function has been added in `utilities.h`(`.cc`). [#1062](https://github.com/lethe-cfd/lethe/pull/1062)
+
 ## [Master] - 2024-03-11
 
 ### Added

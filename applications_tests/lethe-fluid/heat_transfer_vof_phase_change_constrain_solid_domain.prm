@@ -163,7 +163,7 @@ end
 subsection post-processing
   set verbosity                   = verbose
   set calculate pressure drop     = true
-  set calculate mass conservation = false
+  set calculate mass conservation = true
   set calculate barycenter        = true
 end
 
