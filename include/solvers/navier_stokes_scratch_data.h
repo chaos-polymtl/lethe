@@ -984,7 +984,7 @@ public:
     this->phase_order.component        = 0;
     this->chemical_potential.component = 1;
 
-    // Gather phase fraction (values, gradients)
+    // Gather phase fraction and chemical potential (values, gradients)
     this->fe_values_cahn_hilliard->operator[](phase_order)
       .get_function_values(current_solution,
                            this->phase_order_cahn_hilliard_values);
@@ -1180,6 +1180,7 @@ public:
   /**
    * Scratch component for the CahnHilliard auxiliary physics
    */
+  double                      density_diff;
   bool                        gather_cahn_hilliard;
   unsigned int                n_dofs_cahn_hilliard;
   std::vector<double>         phase_order_cahn_hilliard_values;

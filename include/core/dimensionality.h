@@ -102,6 +102,9 @@ namespace Parameters
     double enthalpy_scaling;
     double diffusivity_scaling;
     double thermal_expansion_scaling;
+    double surface_tension_scaling;
+    double cahn_hilliard_mobility_scaling;
+    double cahn_hilliard_epsilon_scaling;
   };
 } // namespace Parameters
 

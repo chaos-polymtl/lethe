@@ -199,14 +199,10 @@ NavierStokesScratchData<dim>::enable_cahn_hilliard(
     std::vector<Tensor<1, dim>>(this->n_q_points);
   chemical_potential_cahn_hilliard_gradients =
     std::vector<Tensor<1, dim>>(this->n_q_points);
-
   // For STF calculation
   filtered_phase_order_cahn_hilliard_values =
     std::vector<double>(this->n_q_points);
 
-  fields.insert(
-    std::pair<field, std::vector<double>>(field::phase_order_cahn_hilliard,
-                                          n_q_points));
   fields.insert(std::pair<field, std::vector<double>>(
     field::phase_order_cahn_hilliard_filtered, n_q_points));
 
@@ -222,7 +218,6 @@ NavierStokesScratchData<dim>::enable_cahn_hilliard(
   surface_tension                       = std::vector<double>(n_q_points);
   surface_tension_gradient              = std::vector<double>(n_q_points);
   cahn_hilliard_mobility                = std::vector<double>(n_q_points);
-
   // Create filter
   cahn_hilliard_filter =
     CahnHilliardFilterBase::model_cast(cahn_hilliard_parameters);
@@ -255,10 +250,6 @@ NavierStokesScratchData<dim>::enable_cahn_hilliard(
   filtered_phase_order_cahn_hilliard_values =
     std::vector<double>(this->n_q_points);
 
-  fields.insert(
-    std::pair<field, std::vector<double>>(field::phase_order_cahn_hilliard,
-                                          n_q_points));
-
   fields.insert(std::pair<field, std::vector<double>>(
     field::phase_order_cahn_hilliard_filtered, n_q_points));
 
@@ -274,7 +265,6 @@ NavierStokesScratchData<dim>::enable_cahn_hilliard(
   surface_tension                       = std::vector<double>(n_q_points);
   surface_tension_gradient              = std::vector<double>(n_q_points);
   cahn_hilliard_mobility                = std::vector<double>(n_q_points);
-
   // Create filter
   this->cahn_hilliard_filter = cahn_hilliard_filter;
 }
@@ -584,9 +574,6 @@ NavierStokesScratchData<dim>::calculate_physical_properties()
               // Blend the physical properties using the CahnHilliard field
               for (unsigned int q = 0; q < this->n_q_points; ++q)
                 {
-                  double phase_order_cahn_hilliard_value =
-                    this->filtered_phase_order_cahn_hilliard_values[q];
-
                   this->density_diff =
                     0.5 * std::abs(density_0[q] - density_1[q]);
 
@@ -599,6 +586,12 @@ NavierStokesScratchData<dim>::calculate_physical_properties()
                       material_interaction_id);
                   mobility_cahn_hilliard_model->vector_value(
                     fields, cahn_hilliard_mobility);
+
+                  double phase_order_cahn_hilliard_value =
+                    this->filtered_phase_order_cahn_hilliard_values[q];
+
+                  this->density_diff =
+                    0.5 * std::abs(density_0[q] - density_1[q]);
 
                   density[q] = calculate_point_property_cahn_hilliard(
                     phase_order_cahn_hilliard_value,

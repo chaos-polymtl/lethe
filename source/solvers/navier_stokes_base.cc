@@ -1517,13 +1517,13 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess_fd(bool firstIter)
             simulation_parameters.post_processing.flow_rate_output_name +
             ".dat";
           std::ofstream output(filename.c_str());
-          flow_rate_table.set_precision("time", 12);
+          flow_rate_table.set_precision("time", 4);
           for (unsigned int boundary_id = 0;
                boundary_id < simulation_parameters.boundary_conditions.size;
                ++boundary_id)
             flow_rate_table.set_precision(
               "flow-rate-" + Utilities::int_to_string(boundary_id, 2), 12);
-          this->flow_rate_table.write_text(output);
+this->flow_rate_table.write_text(output);
         }
     }
 

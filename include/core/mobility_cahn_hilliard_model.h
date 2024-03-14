@@ -172,7 +172,7 @@ public:
     const double p_mobility_cahn_hilliard_constant)
     : mobility_cahn_hilliard_constant(p_mobility_cahn_hilliard_constant)
   {
-    this->model_depends_on[field::phase_order_cahn_hilliard] = true;
+    this->model_depends_on[field::phase_order_cahn_hilliard_filtered] = true;
   }
 
   /**
@@ -204,7 +204,7 @@ public:
       PhysicialPropertyModelFieldUndefined("MobilityCahnHilliardModelQuartic",
                                            "phase_order_cahn_hilliard"));
     const double &phase_order_cahn_hilliard =
-      fields_value.at(field::phase_order_cahn_hilliard);
+      fields_value.at(field::phase_order_cahn_hilliard_filtered);
 
     // The phase order values are clamped to avoid unphysical mobilities in the
     // bulk phases.
@@ -231,7 +231,7 @@ public:
       PhysicialPropertyModelFieldUndefined("MobilityCahnHilliardModelQuartic",
                                            "phase_order_cahn_hilliard"));
     const std::vector<double> &phase_order_cahn_hilliard =
-      field_vectors.at(field::phase_order_cahn_hilliard);
+      field_vectors.at(field::phase_order_cahn_hilliard_filtered);
     for (unsigned int i = 0; i < property_vector.size(); ++i)
       {
         property_vector[i] =
@@ -262,7 +262,7 @@ public:
       PhysicialPropertyModelFieldUndefined("MobilityCahnHilliardModelQuartic",
                                            "phase_order_cahn_hilliard"));
     const double &phase_order_cahn_hilliard =
-      fields_value.at(field::phase_order_cahn_hilliard);
+      fields_value.at(field::phase_order_cahn_hilliard_filtered);
 
     return -4 *
            (std::max(-1.0, std::min(phase_order_cahn_hilliard, 0.0)) +
@@ -294,7 +294,7 @@ public:
       PhysicialPropertyModelFieldUndefined("MobilityCahnHilliardModelQuartic",
                                            "phase_order_cahn_hilliard"));
     const std::vector<double> &phase_order_cahn_hilliard =
-      field_vectors.at(field::phase_order_cahn_hilliard);
+      field_vectors.at(field::phase_order_cahn_hilliard_filtered);
     for (unsigned int i = 0; i < jacobian_vector.size(); ++i)
       jacobian_vector[i] =
         -4 *

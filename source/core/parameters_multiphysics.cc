@@ -79,7 +79,8 @@ Parameters::Multiphysics::declare_parameters(ParameterHandler &prm)
 }
 
 void
-Parameters::Multiphysics::parse_parameters(ParameterHandler &prm)
+Parameters::Multiphysics::parse_parameters(ParameterHandler    &prm,
+                                           const Dimensionality dimensions)
 {
   prm.enter_subsection("multiphysics");
   {
@@ -97,7 +98,7 @@ Parameters::Multiphysics::parse_parameters(ParameterHandler &prm)
   }
   prm.leave_subsection();
   vof_parameters.parse_parameters(prm);
-  cahn_hilliard_parameters.parse_parameters(prm);
+  cahn_hilliard_parameters.parse_parameters(prm, dimensions);
 }
 
 void
@@ -533,7 +534,8 @@ Parameters::CahnHilliard::declare_parameters(ParameterHandler &prm)
 }
 
 void
-Parameters::CahnHilliard::parse_parameters(ParameterHandler &prm)
+Parameters::CahnHilliard::parse_parameters(ParameterHandler    &prm,
+                                           const Dimensionality dimensions)
 {
   prm.enter_subsection("cahn hilliard");
   {
@@ -560,6 +562,7 @@ Parameters::CahnHilliard::parse_parameters(ParameterHandler &prm)
                                  "Options are 'automatic' or 'manual'."));
 
       epsilon = prm.get_double("value");
+      epsilon *= dimensions.cahn_hilliard_epsilon_scaling;
     }
     prm.leave_subsection();
   }

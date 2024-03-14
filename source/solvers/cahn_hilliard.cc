@@ -71,7 +71,9 @@ CahnHilliard<dim>::setup_assemblers()
          .epsilon_set_method == Parameters::EpsilonSetMethod::manual) ?
         this->simulation_parameters.multiphysics.cahn_hilliard_parameters
           .epsilon :
-        GridTools::minimal_cell_diameter(*triangulation),
+        GridTools::minimal_cell_diameter(*triangulation) *
+          this->simulation_parameters.dimensionality
+            .cahn_hilliard_epsilon_scaling,
       this->simulation_parameters.boundary_conditions_cahn_hilliard));
 
   // Free angle of contact boundary condition
@@ -83,7 +85,9 @@ CahnHilliard<dim>::setup_assemblers()
          .epsilon_set_method == Parameters::EpsilonSetMethod::manual) ?
         this->simulation_parameters.multiphysics.cahn_hilliard_parameters
           .epsilon :
-        GridTools::minimal_cell_diameter(*triangulation),
+        GridTools::minimal_cell_diameter(*triangulation) *
+          this->simulation_parameters.dimensionality
+            .cahn_hilliard_epsilon_scaling,
       this->simulation_parameters.boundary_conditions_cahn_hilliard));
 
   // Core assembler
@@ -94,7 +98,9 @@ CahnHilliard<dim>::setup_assemblers()
        .epsilon_set_method == Parameters::EpsilonSetMethod::manual) ?
       this->simulation_parameters.multiphysics.cahn_hilliard_parameters
         .epsilon :
-      GridTools::minimal_cell_diameter(*triangulation)));
+      GridTools::minimal_cell_diameter(*triangulation) *
+        this->simulation_parameters.dimensionality
+          .cahn_hilliard_epsilon_scaling));
 }
 
 template <int dim>
@@ -408,6 +414,10 @@ CahnHilliard<dim>::calculate_phase_statistics()
                           update_values | update_gradients |
                             update_quadrature_points | update_JxW_values);
 
+  std::shared_ptr<CahnHilliardFilterBase> filter =
+    CahnHilliardFilterBase::model_cast(
+      this->simulation_parameters.multiphysics.cahn_hilliard_parameters);
+
   const FEValuesExtractors::Scalar phase_order(0);
 
   const unsigned int          n_q_points = cell_quadrature->size();
@@ -431,9 +441,12 @@ CahnHilliard<dim>::calculate_phase_statistics()
             present_solution, local_phase_order_gradients);
           for (unsigned int q = 0; q < n_q_points; q++)
             {
-              integral += local_phase_order_values[q] * fe_values.JxW(q);
+              const double filtered_phase_cahn_hilliard_values =
+                filter->filter_phase(local_phase_order_values[q]);
+              integral +=
+                filtered_phase_cahn_hilliard_values * fe_values.JxW(q);
               max_phase_value =
-                std::max(local_phase_order_values[q], max_phase_value);
+                std::max(filtered_phase_cahn_hilliard_values, max_phase_value);
               min_phase_value =
                 std::min(local_phase_order_values[q], min_phase_value);
               volume_0 +=

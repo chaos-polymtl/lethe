@@ -89,9 +89,6 @@ CahnHilliardScratchData<dim>::allocate()
   this->mobility_cahn_hilliard_gradient = std::vector<double>(n_q_points);
 
   // Physical properties
-  fields.insert(
-    std::pair<field, std::vector<double>>(field::phase_order_cahn_hilliard,
-                                          n_q_points));
   fields.insert(std::pair<field, std::vector<double>>(
     field::phase_order_cahn_hilliard_filtered, n_q_points));
 }
@@ -108,7 +105,7 @@ CahnHilliardScratchData<dim>::calculate_physical_properties()
         }
       case 2:
         {
-          set_field_vector(field::phase_order_cahn_hilliard,
+          set_field_vector(field::phase_order_cahn_hilliard_filtered,
                            this->phase_order_values,
                            this->fields);
 
