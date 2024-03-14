@@ -94,18 +94,18 @@ public:
   /**
    * @brief Compute density value.
    *
-   * @param[in] fields_value Value of the various fields on which the property
-   * may depend.
+   * @param[in] field_values Value of the various fields on which the property
+   * may depend. The map stores a single value per field.
    *
-   * @note Here, the @p fields_value parameter is ignored since the density
+   * @note Here, the @p field_values parameter is ignored since the density
    * remains constant.
    *
    * @return Density value.
    */
   double
-  value(const std::map<field, double> &fields_value) override
+  value(const std::map<field, double> &field_values) override
   {
-    (void)fields_value;
+    (void)field_values;
     return density;
   }
 
@@ -113,7 +113,7 @@ public:
    * @brief Compute a vector of density values.
    *
    * @param[in] field_vectors Vectors of the fields on which the density may
-   * depend.
+   * depend. The map stores a vector of values per field.
    *
    * @param[out] property_vector Vector of computed density values.
    *
@@ -133,7 +133,7 @@ public:
    * respect to a specified field.
    *
    * @param[in] field_values Values of the various fields on which the density
-   * may depend.
+   * may depend. The map stores a single value per field.
    *
    * @param[in] id Indicator of the field with respect to which the jacobian
    * should be computed.
@@ -158,7 +158,7 @@ public:
    * fields.
    *
    * @param[in] field_vectors Vector of values of the fields used to evaluate
-   * the density.
+   * the density. The map stores a vector of values per field.
    *
    * @param[in] id Identifier of the field with respect to which a derivative
    * should be computed.
@@ -167,7 +167,7 @@ public:
    * with respect to the field of the specified @p id. In this case, it returns
    * a vector of zeros since the density remains constant.
    *
-   * @note Here, the @p field_values and @p id parameters are ignored since the
+   * @note Here, the @p field_vectors and @p id parameters are ignored since the
    * density remains constant.
    *
    */
@@ -256,15 +256,19 @@ public:
   /**
    * @brief Compute the density of the isothermal ideal gas.
    *
-   * @param[in] fields_value Value of the various fields on which the property
-   * may depend. In this case, the density depends on pressure.
+   * @param[in] field_values Values of the various fields on which the property
+   * may depend. In this case, the density depends on pressure. The map stores a
+   * single value per field.
    *
-   * @return Value of the density computed with the @p fields_value.
+   * @return Value of the density computed with the @p field_values.
    */
   double
-  value(const std::map<field, double> &fields_value) override
+  value(const std::map<field, double> &field_values) override
   {
-    const double pressure = fields_value.at(field::pressure);
+    AssertThrow(field_values.find(field::pressure) != field_values.end(),
+                PhysicialPropertyModelFieldUndefined(
+                  "DensityIsothermalIdealGas", "pressure"));
+    const double pressure = field_values.at(field::pressure);
     return density_ref + psi * pressure;
   }
 
@@ -272,7 +276,8 @@ public:
    * @brief Compute a vector of density values for an isothermal ideal gas.
    *
    * @param[in] field_vectors Vectors of the fields on which the density may
-   * depend. In this case, the density depends on pressure.
+   * depend. In this case, the density depends on pressure. The map stores a
+   * vector of values per field.
    *
    * @param[out] property_vector Vectors of computed density values.
    */
@@ -280,6 +285,9 @@ public:
   vector_value(const std::map<field, std::vector<double>> &field_vectors,
                std::vector<double> &property_vector) override
   {
+    AssertThrow(field_vectors.find(field::pressure) != field_vectors.end(),
+                PhysicialPropertyModelFieldUndefined(
+                  "DensityIsothermalIdealGas", "pressure"));
     const std::vector<double> &pressure = field_vectors.at(field::pressure);
     for (unsigned int i = 0; i < property_vector.size(); ++i)
       property_vector[i] = density_ref + psi * pressure[i];
@@ -290,7 +298,7 @@ public:
    * respect to a specified field.
    *
    * @param[in] field_values Values of the various fields on which the density
-   * may depend.
+   * may depend. The map stores a single value per field.
    *
    * @param[in] id Indicator of the field with respect to which the jacobian
    * should be computed.
@@ -313,7 +321,7 @@ public:
    * an isothermal ideal gas.
    *
    * @param[in] field_vectors Vector of values of the fields used to evaluate
-   * the density.
+   * the density. The map stores a vector of values per field.
    *
    * @param[in] id Identifier of the field with respect to which a derivative
    * should be computed.

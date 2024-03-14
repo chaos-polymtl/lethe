@@ -254,7 +254,7 @@ namespace Parameters
   };
 
   /**
-   * @brief Carreau rheological model to solve for non Newtonian
+   * @brief Carreau model to solve for non Newtonian
    * flows.
    */
   struct CarreauParameters
