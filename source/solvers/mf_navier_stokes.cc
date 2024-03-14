@@ -1265,18 +1265,18 @@ MFNavierStokesSolver<dim>::solve_with_GCMG(SolverGMRES<VectorType> &solver)
               .eig_estimation_cg_n_iterations;
           smoother_data[level].eigenvalue_algorithm =
             SmootherType::AdditionalData::EigenvalueAlgorithm::power_iteration;
-        }
-      else
-        smoother_data[level].relaxation =
-          this->simulation_parameters.linear_solver
-            .at(PhysicsID::fluid_dynamics)
-            .mg_smoother_relaxation;
 #else
           AssertThrow(
             false,
             ExcMessage(
               "The estimation of eigenvalues within GCMG requires a version of deal.II >= 9.6.0"));
 #endif
+        }
+      else
+        smoother_data[level].relaxation =
+          this->simulation_parameters.linear_solver
+            .at(PhysicsID::fluid_dynamics)
+            .mg_smoother_relaxation;
     }
 
   mg_smoother.initialize(mg_operators, smoother_data);
@@ -1309,10 +1309,10 @@ MFNavierStokesSolver<dim>::solve_with_GCMG(SolverGMRES<VectorType> &solver)
         }
     }
 #else
-      AssertThrow(
-        false,
-        ExcMessage(
-          "The estimation of eigenvalues within GCMG requires a version of deal.II >= 9.6.0"));
+  AssertThrow(
+    false,
+    ExcMessage(
+      "The estimation of eigenvalues within GCMG requires a version of deal.II >= 9.6.0"));
 #endif
 
   this->mg_computing_timer.leave_subsection("Set up and initialize smoother");
