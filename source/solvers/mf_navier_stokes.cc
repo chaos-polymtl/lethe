@@ -672,10 +672,12 @@ MFNavierStokesSolver<dim>::solve_with_LSMG(SolverGMRES<VectorType> &solver)
       smoother_data[level].n_iterations =
         this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
           .mg_smoother_iterations;
+
       if (this->simulation_parameters.linear_solver
             .at(PhysicsID::fluid_dynamics)
             .mg_smoother_eig_estimation)
         {
+#if DEAL_II_VERSION_GTE(9, 6, 0)
           // Set relaxation to zero so that eigenvalues are estimated internally
           smoother_data[level].relaxation = 0.0;
           smoother_data[level].smoothing_range =
@@ -688,6 +690,12 @@ MFNavierStokesSolver<dim>::solve_with_LSMG(SolverGMRES<VectorType> &solver)
               .eig_estimation_cg_n_iterations;
           smoother_data[level].eigenvalue_algorithm =
             SmootherType::AdditionalData::EigenvalueAlgorithm::power_iteration;
+#else
+          AssertThrow(
+            false,
+            ExcMessage(
+              "The estimation of eigenvalues within LSMG requires a version of deal.II >= 9.6.0"));
+#endif
         }
       else
         smoother_data[level].relaxation =
@@ -698,6 +706,7 @@ MFNavierStokesSolver<dim>::solve_with_LSMG(SolverGMRES<VectorType> &solver)
 
   mg_smoother.initialize(mg_operators, smoother_data);
 
+#if DEAL_II_VERSION_GTE(9, 6, 0)
   if (this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
         .mg_smoother_eig_estimation &&
       this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
@@ -724,6 +733,12 @@ MFNavierStokesSolver<dim>::solve_with_LSMG(SolverGMRES<VectorType> &solver)
           this->pcout << std::endl;
         }
     }
+#else
+  AssertThrow(
+    false,
+    ExcMessage(
+      "The estimation of eigenvalues within LSMG requires a version of deal.II >= 9.6.0"));
+#endif
 
   this->mg_computing_timer.leave_subsection("Set up and initialize smoother");
 
@@ -1232,10 +1247,12 @@ MFNavierStokesSolver<dim>::solve_with_GCMG(SolverGMRES<VectorType> &solver)
       smoother_data[level].n_iterations =
         this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
           .mg_smoother_iterations;
+
       if (this->simulation_parameters.linear_solver
             .at(PhysicsID::fluid_dynamics)
             .mg_smoother_eig_estimation)
         {
+#if DEAL_II_VERSION_GTE(9, 6, 0)
           // Set relaxation to zero so that eigenvalues are estimated internally
           smoother_data[level].relaxation = 0.0;
           smoother_data[level].smoothing_range =
@@ -1254,10 +1271,17 @@ MFNavierStokesSolver<dim>::solve_with_GCMG(SolverGMRES<VectorType> &solver)
           this->simulation_parameters.linear_solver
             .at(PhysicsID::fluid_dynamics)
             .mg_smoother_relaxation;
+#else
+          AssertThrow(
+            false,
+            ExcMessage(
+              "The estimation of eigenvalues within GCMG requires a version of deal.II >= 9.6.0"));
+#endif
     }
 
   mg_smoother.initialize(mg_operators, smoother_data);
 
+#if DEAL_II_VERSION_GTE(9, 6, 0)
   if (this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
         .mg_smoother_eig_estimation &&
       this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
@@ -1284,6 +1308,12 @@ MFNavierStokesSolver<dim>::solve_with_GCMG(SolverGMRES<VectorType> &solver)
           this->pcout << std::endl;
         }
     }
+#else
+      AssertThrow(
+        false,
+        ExcMessage(
+          "The estimation of eigenvalues within GCMG requires a version of deal.II >= 9.6.0"));
+#endif
 
   this->mg_computing_timer.leave_subsection("Set up and initialize smoother");
 
