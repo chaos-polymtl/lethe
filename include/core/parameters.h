@@ -1119,9 +1119,6 @@ namespace Parameters
     // MG eigenvalue estimation for smoother relaxation parameter
     bool mg_smoother_eig_estimation;
 
-    // MG degree of Chebyshev polynomial used for eigenvalue estimation
-    int eig_estimation_degree;
-
     // MG smoothing range to set range between eigenvalues
     int eig_estimation_smoothing_range;
 
