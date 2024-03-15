@@ -294,9 +294,8 @@ NavierStokesOperatorBase<dim, number>::vmult(VectorType       &dst,
   // save values for edge constrained dofs and set them to 0 in src vector
   for (unsigned int i = 0; i < edge_constrained_indices.size(); ++i)
     {
-      edge_constrained_values[i] = std::pair<number, number>(
-        src.local_element(edge_constrained_indices[i]),
-        dst.local_element(edge_constrained_indices[i]));
+      edge_constrained_values[i] =
+        src.local_element(edge_constrained_indices[i]);
 
       const_cast<LinearAlgebra::distributed::Vector<number> &>(src)
         .local_element(edge_constrained_indices[i]) = 0.;
@@ -315,9 +314,9 @@ NavierStokesOperatorBase<dim, number>::vmult(VectorType       &dst,
     {
       const_cast<LinearAlgebra::distributed::Vector<number> &>(src)
         .local_element(edge_constrained_indices[i]) =
-        edge_constrained_values[i].first;
+        edge_constrained_values[i];
       dst.local_element(edge_constrained_indices[i]) =
-        edge_constrained_values[i].first;
+        edge_constrained_values[i];
     }
 }
 
