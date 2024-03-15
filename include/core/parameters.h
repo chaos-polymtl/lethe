@@ -943,9 +943,6 @@ namespace Parameters
     unsigned int phase_cahn_hilliard_order;
     unsigned int potential_cahn_hilliard_order;
 
-    // Apply high order mapping everywhere
-    bool qmapping_all;
-
     static void
     declare_parameters(ParameterHandler &prm);
     void

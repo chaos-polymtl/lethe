@@ -103,18 +103,15 @@ public:
         // Usual case, for quad/hex meshes
         fe = std::make_shared<FE_Q<dim>>(
           simulation_parameters.fem_parameters.VOF_order);
-        mapping = std::make_shared<MappingQ<dim>>(
-          fe->degree, simulation_parameters.fem_parameters.qmapping_all);
+        mapping = std::make_shared<MappingQ<dim>>(fe->degree);
         fe_projected_phase_fraction_gradient =
           std::make_shared<FESystem<dim>>(FE_Q<dim>(fe->degree), dim);
         fe_curvature = std::make_shared<FE_Q<dim>>(fe->degree);
         projected_phase_fraction_gradient_mapping =
           std::make_shared<MappingQ<dim>>(
-            fe_projected_phase_fraction_gradient->degree,
-            simulation_parameters.fem_parameters.qmapping_all);
-        curvature_mapping = std::make_shared<MappingQ<dim>>(
-          fe_curvature->degree,
-          simulation_parameters.fem_parameters.qmapping_all);
+            fe_projected_phase_fraction_gradient->degree);
+        curvature_mapping =
+          std::make_shared<MappingQ<dim>>(fe_curvature->degree);
         cell_quadrature = std::make_shared<QGauss<dim>>(fe->degree + 1);
         face_quadrature = std::make_shared<QGauss<dim - 1>>(fe->degree + 1);
       }
