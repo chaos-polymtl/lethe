@@ -2346,11 +2346,6 @@ namespace Parameters
                           Patterns::Bool(),
                           "estimate eigenvalues for relaxation parameter");
 
-        prm.declare_entry("eig estimation degree",
-                          "3",
-                          Patterns::Integer(),
-                          "degree used for the Chebyshev polynomial");
-
         prm.declare_entry("eig estimation smoothing range",
                           "10",
                           Patterns::Integer(),
@@ -2478,7 +2473,6 @@ namespace Parameters
         mg_smoother_iterations     = prm.get_integer("mg smoother iterations");
         mg_smoother_relaxation     = prm.get_double("mg smoother relaxation");
         mg_smoother_eig_estimation = prm.get_bool("mg smoother eig estimation");
-        eig_estimation_degree      = prm.get_integer("eig estimation degree");
         eig_estimation_smoothing_range =
           prm.get_integer("eig estimation smoothing range");
         eig_estimation_cg_n_iterations =
