@@ -690,6 +690,10 @@ MFNavierStokesSolver<dim>::solve_with_LSMG(SolverGMRES<VectorType> &solver)
               .eig_estimation_cg_n_iterations;
           smoother_data[level].eigenvalue_algorithm =
             SmootherType::AdditionalData::EigenvalueAlgorithm::power_iteration;
+          smoother_data[level].constraints.copy_from(
+            mg_operators[level]
+              ->get_system_matrix_free()
+              .get_affine_constraints());
 #else
           AssertThrow(
             false,
@@ -1265,6 +1269,10 @@ MFNavierStokesSolver<dim>::solve_with_GCMG(SolverGMRES<VectorType> &solver)
               .eig_estimation_cg_n_iterations;
           smoother_data[level].eigenvalue_algorithm =
             SmootherType::AdditionalData::EigenvalueAlgorithm::power_iteration;
+          smoother_data[level].constraints.copy_from(
+            mg_operators[level]
+              ->get_system_matrix_free()
+              .get_affine_constraints());
 #else
           AssertThrow(
             false,
