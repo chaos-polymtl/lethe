@@ -452,53 +452,57 @@ ParticleWallJKRForce<dim>::calculate_jkr_contact_force_and_torque(
   // in the tangential_damping_calculation.
   double tangential_spring_constant =
     -8. * this->effective_shear_modulus[particle_type] *
-      radius_times_overlap_sqrt +
-    DBL_MIN;
+    radius_times_overlap_sqrt;
 
   // There is no minus sign here since model_parameter_beta is negative or
   // equal to zero.
   const double tangential_damping_constant =
-    normal_damping_constant * sqrt(model_parameter_st / model_parameter_sn) +
-    DBL_MIN;
+    normal_damping_constant *
+    sqrt(model_parameter_st / (model_parameter_sn + DBL_MIN));
 
   // Calculation of the normal force coefficient (F_n_JKR)
-  const double normal_force_coefficient =
+  const double normal_force_norm =
     4. * this->effective_youngs_modulus[particle_type] *
       Utilities::fixed_power<3>(a) / (3. * effective_radius) -
     std::sqrt(8 * M_PI * this->effective_surface_energy[particle_type] *
               this->effective_youngs_modulus[particle_type] *
-              Utilities::fixed_power<3>(a));
+              Utilities::fixed_power<3>(a)) +
+    normal_damping_constant * contact_info.normal_relative_velocity;
 
-  // Calculation of normal force using the normal_force_coefficient and dashpot
-  // force model.
-  Tensor<1, 3> normal_force =
-    (normal_force_coefficient +
-     normal_damping_constant * contact_info.normal_relative_velocity) *
-    normal_vector;
+  // Calculation of normal force using the normal_force_norm and the
+  // normal vector.
+  Tensor<1, 3> normal_force = normal_force_norm * normal_vector;
 
   // Calculation of tangential forces.
+  Tensor<1, 3> damping_tangential_force =
+    tangential_damping_constant * contact_info.tangential_relative_velocity;
   Tensor<1, 3> tangential_force =
     tangential_spring_constant * contact_info.tangential_overlap +
-    tangential_damping_constant * contact_info.tangential_relative_velocity;
+    damping_tangential_force;
+  double tangential_force_norm = tangential_force.norm();
 
   // JKR theory says that the coulomb threshold must be modified with the
-  // pull-out force.
-  const double pull_off_force = 3. * M_PI *
-                                this->effective_surface_energy[particle_type] *
-                                effective_radius;
+  // pull-out force. (Thornton 1991)
   const double modified_coulomb_threshold =
-    (normal_force_coefficient + 2. * pull_off_force) *
+    (normal_force_norm + 3. * M_PI *
+                           this->effective_surface_energy[particle_type] *
+                           effective_radius) *
     this->effective_coefficient_of_friction[particle_type];
 
   // Check for gross sliding
-  if (tangential_force.norm() > modified_coulomb_threshold)
+  if (tangential_force_norm > modified_coulomb_threshold)
     {
       // Gross sliding occurs and the tangential overlap and tangential
       // force are limited to Coulomb's criterion
-      tangential_force = modified_coulomb_threshold *
-                         (tangential_force / tangential_force.norm());
       contact_info.tangential_overlap =
-        tangential_force / (tangential_spring_constant + DBL_MIN);
+        (modified_coulomb_threshold *
+           (tangential_force / (tangential_force_norm + DBL_MIN)) -
+         damping_tangential_force) /
+        (tangential_spring_constant + DBL_MIN);
+
+      tangential_force =
+        (tangential_spring_constant * contact_info.tangential_overlap) +
+        damping_tangential_force;
     }
 
   // Calculation torque caused by tangential force

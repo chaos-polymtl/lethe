@@ -1,0 +1,31 @@
+Running on 1 MPI rank(s)...
+   Number of active cells:       256
+   Number of degrees of freedom: 867
+   Volume of triangulation:      0.0625
+   Number of thermal degrees of freedom: 289
+Pressure drop: 0 Pa
+Total pressure drop: 0 Pa
+
+*******************************************************************************
+Transient iteration: 1        Time: 0.1      Time step: 0.1      CFL: 0       
+*******************************************************************************
+Pressure drop: -0.42844 Pa
+Total pressure drop: -0.42844 Pa
+
+*********************************************************************************
+Transient iteration: 2        Time: 0.2      Time step: 0.1      CFL: 0.00658308
+*********************************************************************************
+Pressure drop: -0.428532 Pa
+Total pressure drop: -0.428532 Pa
+
+*********************************************************************************
+Transient iteration: 3        Time: 0.3      Time step: 0.1      CFL: 0.00319593
+*********************************************************************************
+Pressure drop: -0.428499 Pa
+Total pressure drop: -0.428499 Pa
+
+*********************************************************************************
+Transient iteration: 4        Time: 0.4      Time step: 0.1      CFL: 0.00307199
+*********************************************************************************
+Pressure drop: -0.42855 Pa
+Total pressure drop: -0.42855 Pa

@@ -1,21 +1,19 @@
 /* ---------------------------------------------------------------------
-  *
-  * Copyright (C) 2019 - 2020 by the Lethe authors
-  *
-  * This file is part of the Lethe library
-  *
-  * The Lethe library is free software; you can use it, redistribute
-  * it, and/or modify it under the terms of the GNU Lesser General
-  * Public License as published by the Free Software Foundation; either
-  * version 2.1 of the License, or (at your option) any later version.
-  * The full text of the license can be found in the file LICENSE at
-  * the top level of the Lethe distribution.
-  *
-  * ---------------------------------------------------------------------
-
-  *
-  * Author: Shahab Golshan, Polytechnique Montreal, 2019
-  */
+ *
+ * Copyright (C) 2019 - 2020 by the Lethe authors
+ *
+ * This file is part of the Lethe library
+ *
+ * The Lethe library is free software; you can use it, redistribute
+ * it, and/or modify it under the terms of the GNU Lesser General
+ * Public License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ * The full text of the license can be found in the file LICENSE at
+ * the top level of the Lethe distribution.
+ *
+ * ---------------------------------------------------------------------
+ *
+ */
 
 #include <core/parameters_lagrangian.h>
 #include <core/tensors_and_points_dimension_manipulation.h>
@@ -225,6 +223,24 @@ ParticleParticleContactForce<dim, contact_model, rolling_friction_model>::
                     particle_one_location,
                     particle_two_location,
                     dt);
+                  if constexpr (contact_model ==
+                                Parameters::Lagrangian::
+                                  ParticleParticleContactForceModel::DMT)
+                    {
+                      this->calculate_DMT_contact(
+                        contact_info,
+                        tangential_relative_velocity,
+                        normal_relative_velocity_value,
+                        normal_unit_vector,
+                        normal_overlap,
+                        particle_one_properties,
+                        particle_two_properties,
+                        normal_force,
+                        tangential_force,
+                        particle_one_tangential_torque,
+                        particle_two_tangential_torque,
+                        rolling_resistance_torque);
+                    }
 
                   if constexpr (contact_model ==
                                 Parameters::Lagrangian::
@@ -444,6 +460,24 @@ ParticleParticleContactForce<dim, contact_model, rolling_friction_model>::
                                                particle_two_tangential_torque,
                                                rolling_resistance_torque);
                     }
+                  if constexpr (contact_model ==
+                                Parameters::Lagrangian::
+                                  ParticleParticleContactForceModel::DMT)
+                    {
+                      this->calculate_DMT_contact(
+                        contact_info,
+                        tangential_relative_velocity,
+                        normal_relative_velocity_value,
+                        normal_unit_vector,
+                        normal_overlap,
+                        particle_one_properties,
+                        particle_two_properties,
+                        normal_force,
+                        tangential_force,
+                        particle_one_tangential_torque,
+                        particle_two_tangential_torque,
+                        rolling_resistance_torque);
+                    }
 
                   if constexpr (contact_model ==
                                 Parameters::Lagrangian::
@@ -634,6 +668,24 @@ ParticleParticleContactForce<dim, contact_model, rolling_friction_model>::
                                                particle_one_tangential_torque,
                                                particle_two_tangential_torque,
                                                rolling_resistance_torque);
+                    }
+                  if constexpr (contact_model ==
+                                Parameters::Lagrangian::
+                                  ParticleParticleContactForceModel::DMT)
+                    {
+                      this->calculate_DMT_contact(
+                        contact_info,
+                        tangential_relative_velocity,
+                        normal_relative_velocity_value,
+                        normal_unit_vector,
+                        normal_overlap,
+                        particle_one_properties,
+                        particle_two_properties,
+                        normal_force,
+                        tangential_force,
+                        particle_one_tangential_torque,
+                        particle_two_tangential_torque,
+                        rolling_resistance_torque);
                     }
 
                   if constexpr (contact_model ==
@@ -837,6 +889,24 @@ ParticleParticleContactForce<dim, contact_model, rolling_friction_model>::
                                                particle_two_tangential_torque,
                                                rolling_resistance_torque);
                     }
+                  if constexpr (contact_model ==
+                                Parameters::Lagrangian::
+                                  ParticleParticleContactForceModel::DMT)
+                    {
+                      this->calculate_DMT_contact(
+                        contact_info,
+                        tangential_relative_velocity,
+                        normal_relative_velocity_value,
+                        normal_unit_vector,
+                        normal_overlap,
+                        particle_one_properties,
+                        particle_two_properties,
+                        normal_force,
+                        tangential_force,
+                        particle_one_tangential_torque,
+                        particle_two_tangential_torque,
+                        rolling_resistance_torque);
+                    }
 
                   if constexpr (contact_model ==
                                 Parameters::Lagrangian::
@@ -1009,23 +1079,23 @@ ParticleParticleContactForce<dim, contact_model, rolling_friction_model>::
                     particle_two_location,
                     particle_one_location,
                     dt);
-
                   if constexpr (contact_model ==
                                 Parameters::Lagrangian::
-                                  ParticleParticleContactForceModel::linear)
+                                  ParticleParticleContactForceModel::DMT)
                     {
-                      calculate_linear_contact(contact_info,
-                                               tangential_relative_velocity,
-                                               normal_relative_velocity_value,
-                                               normal_unit_vector,
-                                               normal_overlap,
-                                               particle_two_properties,
-                                               particle_one_properties,
-                                               normal_force,
-                                               tangential_force,
-                                               particle_one_tangential_torque,
-                                               particle_two_tangential_torque,
-                                               rolling_resistance_torque);
+                      this->calculate_DMT_contact(
+                        contact_info,
+                        tangential_relative_velocity,
+                        normal_relative_velocity_value,
+                        normal_unit_vector,
+                        normal_overlap,
+                        particle_two_properties,
+                        particle_one_properties,
+                        normal_force,
+                        tangential_force,
+                        particle_two_tangential_torque,
+                        particle_one_tangential_torque,
+                        rolling_resistance_torque);
                     }
 
                   if constexpr (contact_model ==
@@ -1105,6 +1175,23 @@ ParticleParticleContactForce<dim, contact_model, rolling_friction_model>::
                         particle_one_tangential_torque,
                         rolling_resistance_torque);
                     }
+                  if constexpr (contact_model ==
+                                Parameters::Lagrangian::
+                                  ParticleParticleContactForceModel::linear)
+                    {
+                      calculate_linear_contact(contact_info,
+                                               tangential_relative_velocity,
+                                               normal_relative_velocity_value,
+                                               normal_unit_vector,
+                                               normal_overlap,
+                                               particle_two_properties,
+                                               particle_one_properties,
+                                               normal_force,
+                                               tangential_force,
+                                               particle_one_tangential_torque,
+                                               particle_two_tangential_torque,
+                                               rolling_resistance_torque);
+                    }
 
                   // Apply the calculated forces and torques on the particle
                   // pair
@@ -1127,96 +1214,139 @@ ParticleParticleContactForce<dim, contact_model, rolling_friction_model>::
     }
 }
 
+// No resistance
+template class ParticleParticleContactForce<
+  2,
+  Parameters::Lagrangian::ParticleParticleContactForceModel::DMT,
+  Parameters::Lagrangian::RollingResistanceMethod::no_resistance>;
+template class ParticleParticleContactForce<
+  3,
+  Parameters::Lagrangian::ParticleParticleContactForceModel::DMT,
+  Parameters::Lagrangian::RollingResistanceMethod::no_resistance>;
+template class ParticleParticleContactForce<
+  2,
+  Parameters::Lagrangian::ParticleParticleContactForceModel::hertz,
+  Parameters::Lagrangian::RollingResistanceMethod::no_resistance>;
+template class ParticleParticleContactForce<
+  3,
+  Parameters::Lagrangian::ParticleParticleContactForceModel::hertz,
+  Parameters::Lagrangian::RollingResistanceMethod::no_resistance>;
+template class ParticleParticleContactForce<
+  2,
+  Parameters::Lagrangian::ParticleParticleContactForceModel::hertz_JKR,
+  Parameters::Lagrangian::RollingResistanceMethod::no_resistance>;
+template class ParticleParticleContactForce<
+  3,
+  Parameters::Lagrangian::ParticleParticleContactForceModel::hertz_JKR,
+  Parameters::Lagrangian::RollingResistanceMethod::no_resistance>;
+template class ParticleParticleContactForce<
+  2,
+  Parameters::Lagrangian::ParticleParticleContactForceModel::
+    hertz_mindlin_limit_force,
+  Parameters::Lagrangian::RollingResistanceMethod::no_resistance>;
+template class ParticleParticleContactForce<
+  3,
+  Parameters::Lagrangian::ParticleParticleContactForceModel::
+    hertz_mindlin_limit_force,
+  Parameters::Lagrangian::RollingResistanceMethod::no_resistance>;
+template class ParticleParticleContactForce<
+  2,
+  Parameters::Lagrangian::ParticleParticleContactForceModel::
+    hertz_mindlin_limit_overlap,
+  Parameters::Lagrangian::RollingResistanceMethod::no_resistance>;
+template class ParticleParticleContactForce<
+  3,
+  Parameters::Lagrangian::ParticleParticleContactForceModel::
+    hertz_mindlin_limit_overlap,
+  Parameters::Lagrangian::RollingResistanceMethod::no_resistance>;
+template class ParticleParticleContactForce<
+  2,
+  Parameters::Lagrangian::ParticleParticleContactForceModel::linear,
+  Parameters::Lagrangian::RollingResistanceMethod::no_resistance>;
+template class ParticleParticleContactForce<
+  3,
+  Parameters::Lagrangian::ParticleParticleContactForceModel::linear,
+  Parameters::Lagrangian::RollingResistanceMethod::no_resistance>;
 
+// Constant resistance
+template class ParticleParticleContactForce<
+  2,
+  Parameters::Lagrangian::ParticleParticleContactForceModel::DMT,
+  Parameters::Lagrangian::RollingResistanceMethod::constant_resistance>;
+template class ParticleParticleContactForce<
+  3,
+  Parameters::Lagrangian::ParticleParticleContactForceModel::DMT,
+  Parameters::Lagrangian::RollingResistanceMethod::constant_resistance>;
+template class ParticleParticleContactForce<
+  2,
+  Parameters::Lagrangian::ParticleParticleContactForceModel::hertz,
+  Parameters::Lagrangian::RollingResistanceMethod::constant_resistance>;
+template class ParticleParticleContactForce<
+  3,
+  Parameters::Lagrangian::ParticleParticleContactForceModel::hertz,
+  Parameters::Lagrangian::RollingResistanceMethod::constant_resistance>;
+template class ParticleParticleContactForce<
+  2,
+  Parameters::Lagrangian::ParticleParticleContactForceModel::hertz_JKR,
+  Parameters::Lagrangian::RollingResistanceMethod::constant_resistance>;
+template class ParticleParticleContactForce<
+  3,
+  Parameters::Lagrangian::ParticleParticleContactForceModel::hertz_JKR,
+  Parameters::Lagrangian::RollingResistanceMethod::constant_resistance>;
+template class ParticleParticleContactForce<
+  2,
+  Parameters::Lagrangian::ParticleParticleContactForceModel::
+    hertz_mindlin_limit_force,
+  Parameters::Lagrangian::RollingResistanceMethod::constant_resistance>;
+template class ParticleParticleContactForce<
+  3,
+  Parameters::Lagrangian::ParticleParticleContactForceModel::
+    hertz_mindlin_limit_force,
+  Parameters::Lagrangian::RollingResistanceMethod::constant_resistance>;
+template class ParticleParticleContactForce<
+  2,
+  Parameters::Lagrangian::ParticleParticleContactForceModel::
+    hertz_mindlin_limit_overlap,
+  Parameters::Lagrangian::RollingResistanceMethod::constant_resistance>;
+template class ParticleParticleContactForce<
+  3,
+  Parameters::Lagrangian::ParticleParticleContactForceModel::
+    hertz_mindlin_limit_overlap,
+  Parameters::Lagrangian::RollingResistanceMethod::constant_resistance>;
+template class ParticleParticleContactForce<
+  2,
+  Parameters::Lagrangian::ParticleParticleContactForceModel::linear,
+  Parameters::Lagrangian::RollingResistanceMethod::constant_resistance>;
+template class ParticleParticleContactForce<
+  3,
+  Parameters::Lagrangian::ParticleParticleContactForceModel::linear,
+  Parameters::Lagrangian::RollingResistanceMethod::constant_resistance>;
 
+// Viscous resistance
 template class ParticleParticleContactForce<
   2,
-  Parameters::Lagrangian::ParticleParticleContactForceModel::
-    hertz_mindlin_limit_force,
-  Parameters::Lagrangian::RollingResistanceMethod::no_resistance>;
+  Parameters::Lagrangian::ParticleParticleContactForceModel::DMT,
+  Parameters::Lagrangian::RollingResistanceMethod::viscous_resistance>;
 template class ParticleParticleContactForce<
   3,
-  Parameters::Lagrangian::ParticleParticleContactForceModel::
-    hertz_mindlin_limit_force,
-  Parameters::Lagrangian::RollingResistanceMethod::no_resistance>;
-template class ParticleParticleContactForce<
-  2,
-  Parameters::Lagrangian::ParticleParticleContactForceModel::
-    hertz_mindlin_limit_overlap,
-  Parameters::Lagrangian::RollingResistanceMethod::no_resistance>;
-template class ParticleParticleContactForce<
-  3,
-  Parameters::Lagrangian::ParticleParticleContactForceModel::
-    hertz_mindlin_limit_overlap,
-  Parameters::Lagrangian::RollingResistanceMethod::no_resistance>;
+  Parameters::Lagrangian::ParticleParticleContactForceModel::DMT,
+  Parameters::Lagrangian::RollingResistanceMethod::viscous_resistance>;
 template class ParticleParticleContactForce<
   2,
   Parameters::Lagrangian::ParticleParticleContactForceModel::hertz,
-  Parameters::Lagrangian::RollingResistanceMethod::no_resistance>;
+  Parameters::Lagrangian::RollingResistanceMethod::viscous_resistance>;
 template class ParticleParticleContactForce<
   3,
   Parameters::Lagrangian::ParticleParticleContactForceModel::hertz,
-  Parameters::Lagrangian::RollingResistanceMethod::no_resistance>;
+  Parameters::Lagrangian::RollingResistanceMethod::viscous_resistance>;
 template class ParticleParticleContactForce<
   2,
   Parameters::Lagrangian::ParticleParticleContactForceModel::hertz_JKR,
-  Parameters::Lagrangian::RollingResistanceMethod::no_resistance>;
+  Parameters::Lagrangian::RollingResistanceMethod::viscous_resistance>;
 template class ParticleParticleContactForce<
   3,
   Parameters::Lagrangian::ParticleParticleContactForceModel::hertz_JKR,
-  Parameters::Lagrangian::RollingResistanceMethod::no_resistance>;
-template class ParticleParticleContactForce<
-  2,
-  Parameters::Lagrangian::ParticleParticleContactForceModel::linear,
-  Parameters::Lagrangian::RollingResistanceMethod::no_resistance>;
-template class ParticleParticleContactForce<
-  3,
-  Parameters::Lagrangian::ParticleParticleContactForceModel::linear,
-  Parameters::Lagrangian::RollingResistanceMethod::no_resistance>;
-template class ParticleParticleContactForce<
-  2,
-  Parameters::Lagrangian::ParticleParticleContactForceModel::
-    hertz_mindlin_limit_force,
-  Parameters::Lagrangian::RollingResistanceMethod::constant_resistance>;
-template class ParticleParticleContactForce<
-  3,
-  Parameters::Lagrangian::ParticleParticleContactForceModel::
-    hertz_mindlin_limit_force,
-  Parameters::Lagrangian::RollingResistanceMethod::constant_resistance>;
-template class ParticleParticleContactForce<
-  2,
-  Parameters::Lagrangian::ParticleParticleContactForceModel::
-    hertz_mindlin_limit_overlap,
-  Parameters::Lagrangian::RollingResistanceMethod::constant_resistance>;
-template class ParticleParticleContactForce<
-  3,
-  Parameters::Lagrangian::ParticleParticleContactForceModel::
-    hertz_mindlin_limit_overlap,
-  Parameters::Lagrangian::RollingResistanceMethod::constant_resistance>;
-template class ParticleParticleContactForce<
-  2,
-  Parameters::Lagrangian::ParticleParticleContactForceModel::hertz,
-  Parameters::Lagrangian::RollingResistanceMethod::constant_resistance>;
-template class ParticleParticleContactForce<
-  3,
-  Parameters::Lagrangian::ParticleParticleContactForceModel::hertz,
-  Parameters::Lagrangian::RollingResistanceMethod::constant_resistance>;
-template class ParticleParticleContactForce<
-  2,
-  Parameters::Lagrangian::ParticleParticleContactForceModel::hertz_JKR,
-  Parameters::Lagrangian::RollingResistanceMethod::constant_resistance>;
-template class ParticleParticleContactForce<
-  3,
-  Parameters::Lagrangian::ParticleParticleContactForceModel::hertz_JKR,
-  Parameters::Lagrangian::RollingResistanceMethod::constant_resistance>;
-template class ParticleParticleContactForce<
-  2,
-  Parameters::Lagrangian::ParticleParticleContactForceModel::linear,
-  Parameters::Lagrangian::RollingResistanceMethod::constant_resistance>;
-template class ParticleParticleContactForce<
-  3,
-  Parameters::Lagrangian::ParticleParticleContactForceModel::linear,
-  Parameters::Lagrangian::RollingResistanceMethod::constant_resistance>;
+  Parameters::Lagrangian::RollingResistanceMethod::viscous_resistance>;
 template class ParticleParticleContactForce<
   2,
   Parameters::Lagrangian::ParticleParticleContactForceModel::
@@ -1236,22 +1366,6 @@ template class ParticleParticleContactForce<
   3,
   Parameters::Lagrangian::ParticleParticleContactForceModel::
     hertz_mindlin_limit_overlap,
-  Parameters::Lagrangian::RollingResistanceMethod::viscous_resistance>;
-template class ParticleParticleContactForce<
-  2,
-  Parameters::Lagrangian::ParticleParticleContactForceModel::hertz,
-  Parameters::Lagrangian::RollingResistanceMethod::viscous_resistance>;
-template class ParticleParticleContactForce<
-  3,
-  Parameters::Lagrangian::ParticleParticleContactForceModel::hertz,
-  Parameters::Lagrangian::RollingResistanceMethod::viscous_resistance>;
-template class ParticleParticleContactForce<
-  2,
-  Parameters::Lagrangian::ParticleParticleContactForceModel::hertz_JKR,
-  Parameters::Lagrangian::RollingResistanceMethod::viscous_resistance>;
-template class ParticleParticleContactForce<
-  3,
-  Parameters::Lagrangian::ParticleParticleContactForceModel::hertz_JKR,
   Parameters::Lagrangian::RollingResistanceMethod::viscous_resistance>;
 template class ParticleParticleContactForce<
   2,

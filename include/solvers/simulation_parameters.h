@@ -67,6 +67,7 @@ public:
   std::shared_ptr<Parameters::IBParticles<dim>> particlesParameters;
   Parameters::DynamicFlowControl                flow_control;
   Parameters::Multiphysics                      multiphysics;
+  Parameters::ConstrainSolidDomain              constrain_solid_domain;
   Parameters::Stabilization                     stabilization;
   Parameters::ALE<dim>                          ale;
   Parameters::Evaporation                       evaporation;
@@ -133,6 +134,8 @@ public:
 
     Parameters::VelocitySource::declare_parameters(prm);
 
+    constrain_solid_domain.declare_parameters(prm, 2);
+
     Parameters::Stabilization::declare_parameters(prm);
 
     ale.declare_parameters(prm);
@@ -183,6 +186,7 @@ public:
     velocity_sources.parse_parameters(prm);
     particlesParameters->parse_parameters(prm);
     multiphysics.parse_parameters(prm);
+    constrain_solid_domain.parse_parameters(prm);
     stabilization.parse_parameters(prm);
     ale.parse_parameters(prm);
     evaporation.parse_parameters(prm);
@@ -207,13 +211,13 @@ public:
           "\n or: set postprocessed fluid = fluid 0");
       }
 
-    if (multiphysics.vof_parameters.sharpening.type ==
-          Parameters::SharpeningType::adaptive &&
-        not(multiphysics.vof_parameters.conservation.monitoring))
+    if (physical_properties.number_of_fluids == 2 &&
+        (!multiphysics.VOF && !multiphysics.cahn_hilliard))
       {
         throw std::logic_error(
-          "Inconsistency in .prm!\n in subsection VOF, with sharpening type = adaptive\n "
-          "use: monitoring = true");
+          "Inconsistency in .prm!\n "
+          "Number of fluids in 'physical properties' was set to 2,\n "
+          "but neither VOF or cahn hilliard is enabled in the 'multiphysics'.\n ");
       }
 
     // Interface physical property models consistency check
@@ -403,6 +407,39 @@ public:
           "Please enable the VOF auxiliary physic in the 'multiphysics' subsection, \n"
           "specify a 2nd fluid in the 'physical properties' subsection,\n"
           "and define appropriate initial conditions in the 'initial conditions' subsection.");
+      }
+
+    if (!multiphysics.heat_transfer && constrain_solid_domain.enable)
+      {
+        throw std::logic_error(
+          "Inconsistency in .prm!\n "
+          "The apply constraints on a solid domain feature is enabled, however\n "
+          "'heat transfer' was not set to 'true' in the 'multiphysics' subsection.\n ");
+      }
+
+    if (constrain_solid_domain.enable &&
+        physical_properties_manager.get_number_of_fluids() <
+          constrain_solid_domain.number_of_constraints)
+      {
+        std::string n_constraints =
+          Utilities::to_string(constrain_solid_domain.number_of_constraints);
+        std::string n_fluids = Utilities::to_string(
+          physical_properties_manager.get_number_of_fluids());
+        throw std::logic_error(
+          "Inconsistency in .prm!\n "
+          "The number of constraints (" +
+          n_constraints + ") is greater than the number of fluids (" +
+          n_fluids +
+          ").\n "
+          "Only 1 constraint per fluid can be declared.\n ");
+      }
+
+    if (constrain_solid_domain.enable && multiphysics.cahn_hilliard)
+      {
+        throw std::logic_error(
+          "Inconsistency in .prm!\n "
+          "The current implementation for constraining solid domains with\n "
+          "temperature is not implemented for Cahn Hilliard simulations.\n ");
       }
   }
 

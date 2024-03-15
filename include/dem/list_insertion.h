@@ -12,9 +12,7 @@
  * the top level of the Lethe distribution.
  *
  * ---------------------------------------------------------------------
-
  *
- * Author: Shahab Golshan, Polytechnique Montreal, 2019
  */
 
 #include <core/dem_properties.h>
@@ -28,12 +26,6 @@
 
 #ifndef lethe_list_insertion_h
 #  define lethe_list_insertion_h
-
-/**
- * Insertion of particles using a list of positions
- *
- * @author Bruno Blais, Polytechnique Montreal 2021-
- */
 
 template <int dim>
 class ListInsertion : public Insertion<dim>
@@ -123,4 +115,4 @@ public:
   std::vector<double>       diameters;
 };
 
-#endif /* uniform_insertion_h */
+#endif /* list_insertion_h */

@@ -37,6 +37,9 @@ SimulationControl::SimulationControl(const Parameters::SimulationControl param)
   time_step_vector[1] = param.dt;
   time_step_vector[2] = param.dt;
   time_step_vector[3] = param.dt;
+
+  // Resize the bdf_coefficients to ensure they have a default size;
+  bdf_coefs.reinit(n_previous_time_steps + 1);
 }
 
 void
@@ -172,6 +175,7 @@ SimulationControlTransient::SimulationControlTransient(
   : SimulationControl(param)
   , adapt(param.adapt)
   , adaptative_time_step_scaling(param.adaptative_time_step_scaling)
+  , max_dt(param.max_dt)
 {}
 
 void
@@ -206,6 +210,8 @@ SimulationControlTransient::integrate()
       add_time_step(calculate_time_step());
       current_time += time_step;
 
+      if (is_bdf())
+        update_bdf_coefficients();
       return true;
     }
 
@@ -232,6 +238,8 @@ SimulationControlTransient::calculate_time_step()
       new_time_step = time_step * adaptative_time_step_scaling;
       if (CFL > 0 && max_CFL / CFL < adaptative_time_step_scaling)
         new_time_step = time_step * max_CFL / CFL;
+
+      new_time_step = std::min(new_time_step, max_dt);
     }
   if (current_time + new_time_step > end_time)
     new_time_step = end_time - current_time;
@@ -286,6 +294,8 @@ SimulationControlTransientDynamicOutput::calculate_time_step()
       new_time_step = time_step * adaptative_time_step_scaling;
       if (CFL > 0 && max_CFL / CFL < adaptative_time_step_scaling)
         new_time_step = time_step * max_CFL / CFL;
+
+      new_time_step = std::min(new_time_step, max_dt);
     }
 
   if (current_time + new_time_step > end_time)
@@ -399,6 +409,8 @@ SimulationControlAdjointSteady::calculate_time_step()
       new_time_step = time_step * adaptative_time_step_scaling;
       if (CFL > 0 && max_CFL / CFL < adaptative_time_step_scaling)
         new_time_step = time_step * max_CFL / CFL;
+
+      new_time_step = std::min(new_time_step, max_dt);
     }
 
   return new_time_step;

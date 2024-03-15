@@ -13,7 +13,7 @@ subsection simulation control
   set output name          = cfd_dem
   set output frequency     = 1000000
   set startup time scaling = 0.6
-  set time end             = 0.05
+  set time end             = 0.025
   set time step            = 1e-3
   set output boundaries    = true
 end
@@ -23,11 +23,10 @@ end
 #---------------------------------------------------
 
 subsection mesh
-  set type                                = cylinder
-  set grid type                           = balanced
-  set grid arguments                      = 10 : 0.0265 : 0.1
-  set initial refinement                  = 0
-  set expand particle-wall contact search = true
+  set type               = dealii
+  set grid type          = subdivided_hyper_rectangle
+  set grid arguments     = 6, 1, 1 : 0, 0, 0 : 0.24, 0.04, 0.04 : true
+  set initial refinement = 1
 end
 
 #---------------------------------------------------
@@ -53,7 +52,7 @@ subsection lagrangian physical properties
   subsection particle type 0
     set size distribution type            = uniform
     set diameter                          = 0.01
-    set number of particles               = 1
+    set number of particles               = 2
     set density particles                 = 500
     set young modulus particles           = 1e7
     set poisson ratio particles           = 0.33
@@ -87,25 +86,29 @@ end
 #---------------------------------------------------
 
 subsection boundary conditions
-  set number = 2
+  set number         = 5
+  set time dependent = true
+  set number         = 5
   subsection bc 0
-    set id   = 0
-    set type = function weak
-    set beta = 100
-    subsection u
-      set Function expression = 0
-    end
-    subsection v
-      set Function expression = 0
-    end
-    subsection w
-      set Function expression = 0
-    end
+    set id   = 2
+    set type = slip
   end
   subsection bc 1
-    set id                 = 1
+    set id   = 3
+    set type = slip
+  end
+  subsection bc 2
+    set id   = 4
+    set type = slip
+  end
+  subsection bc 3
+    set id   = 5
+    set type = slip
+  end
+  subsection bc 4
+    set id                 = 0
     set type               = periodic
-    set periodic_id        = 2
+    set periodic_id        = 1
     set periodic_direction = 0
   end
 end
@@ -118,8 +121,8 @@ subsection DEM boundary conditions
   set number of boundary conditions = 1
   subsection boundary condition 0
     set type               = periodic
-    set periodic id 0      = 1
-    set periodic id 1      = 2
+    set periodic id 0      = 0
+    set periodic id 1      = 1
     set periodic direction = 0
   end
 end

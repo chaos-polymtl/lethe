@@ -10,6 +10,7 @@ add_library(lethe-dem
   find_boundary_cells_information.cc
   find_cell_neighbors.cc
   find_contact_detection_step.cc
+  file_insertion.cc
   gear3_integrator.cc
   grid_motion.cc
   input_parameter_inspection.cc
@@ -27,6 +28,7 @@ add_library(lethe-dem
   particle_wall_broad_search.cc
   particle_wall_contact_force.cc
   particle_wall_fine_search.cc
+  particle_wall_dmt_force.cc
   particle_wall_jkr_force.cc
   particle_wall_linear_force.cc
   particle_wall_nonlinear_force.cc
@@ -55,6 +57,7 @@ add_library(lethe-dem
   ../../include/dem/find_boundary_cells_information.h
   ../../include/dem/find_cell_neighbors.h
   ../../include/dem/find_contact_detection_step.h
+        ../../include/dem/file_insertion.h
   ../../include/dem/gear3_integrator.h
   ../../include/dem/grid_motion.h
   ../../include/dem/input_parameter_inspection.h
@@ -75,6 +78,7 @@ add_library(lethe-dem
   ../../include/dem/particle_wall_contact_force.h
   ../../include/dem/particle_wall_contact_info.h
   ../../include/dem/particle_wall_fine_search.h
+  ../../include/dem/particle_wall_dmt_force.h
   ../../include/dem/particle_wall_jkr_force.h
   ../../include/dem/particle_wall_linear_force.h
   ../../include/dem/particle_wall_nonlinear_force.h

@@ -109,6 +109,10 @@ namespace Parameters
                         "1",
                         Patterns::Double(),
                         "Maximum CFL value");
+      prm.declare_entry("max time step",
+                        "1e6",
+                        Patterns::Double(),
+                        "Maximum time step value");
       prm.declare_entry("stop tolerance",
                         "1e-10",
                         Patterns::Double(),
@@ -216,6 +220,7 @@ namespace Parameters
       timeEnd        = prm.get_double("time end");
       adapt          = prm.get_bool("adapt");
       maxCFL         = prm.get_double("max cfl");
+      max_dt         = prm.get_double("max time step");
       stop_tolerance = prm.get_double("stop tolerance");
       adaptative_time_step_scaling =
         prm.get_double("adaptative time step scaling");
@@ -494,6 +499,109 @@ namespace Parameters
       prm.get_double("cahn hilliard mobility constant");
   }
 
+  void
+  ConstrainSolidDomain::declare_parameters(
+    dealii::ParameterHandler &prm,
+    const unsigned int        number_of_constraints)
+  {
+    prm.enter_subsection("constrain stasis");
+    {
+      prm.declare_entry(
+        "enable",
+        "false",
+        Patterns::Bool(),
+        "Enable/disable (true/false) the solid domain constraining feature.");
+      prm.declare_entry(
+        "number of constraints",
+        "0",
+        Patterns::Integer(),
+        "Number of solid constraints (maximum of 1 per fluid).");
+      // Resize vectors
+      this->fluid_ids.resize(number_of_constraints);
+      this->filtered_phase_fraction_tolerance.resize(number_of_constraints);
+      this->temperature_min_values.resize(number_of_constraints);
+      this->temperature_max_values.resize(number_of_constraints);
+
+      // Declare default entries
+      for (unsigned int c_id = 0; c_id < number_of_constraints; ++c_id)
+        {
+          prm.enter_subsection("constraint " + std::to_string(c_id));
+          {
+            declare_default_entries(prm);
+          }
+          prm.leave_subsection();
+        }
+    }
+
+    prm.leave_subsection();
+  }
+
+  void
+  ConstrainSolidDomain::declare_default_entries(dealii::ParameterHandler &prm)
+  {
+    prm.declare_entry("fluid id",
+                      "0",
+                      Patterns::Integer(),
+                      "Identifier of the fluid material that is constrained.");
+    prm.declare_entry("phase fraction tolerance",
+                      "1e-4",
+                      Patterns::Double(),
+                      "Absolute filtered phase fraction tolerance used in "
+                      "conjunction with VOF simulations to select the cells "
+                      "on which the constraint is applied.");
+    prm.declare_entry("min temperature",
+                      "-999",
+                      Patterns::Double(),
+                      "Minimum temperature value of the fluid for it be "
+                      "considered as a solid.");
+    prm.declare_entry("max temperature",
+                      "0",
+                      Patterns::Double(),
+                      "Maximum temperature value of the fluid for it be "
+                      "considered as a solid.");
+  }
+
+  void
+  ConstrainSolidDomain::parse_parameters(dealii::ParameterHandler &prm)
+  {
+    prm.enter_subsection("constrain stasis");
+    {
+      this->enable                = prm.get_bool("enable");
+      this->number_of_constraints = prm.get_integer("number of constraints");
+
+      // Resize vectors
+      this->fluid_ids.resize(number_of_constraints);
+      this->filtered_phase_fraction_tolerance.resize(number_of_constraints);
+      this->temperature_min_values.resize(number_of_constraints);
+      this->temperature_max_values.resize(number_of_constraints);
+
+      // Parse parameters for each constraint
+      for (unsigned int c_id = 0; c_id < number_of_constraints; ++c_id)
+        {
+          prm.enter_subsection("constraint " + std::to_string(c_id));
+          {
+            parse_constraint_parameters(prm, c_id);
+          }
+          prm.leave_subsection();
+        }
+      prm.leave_subsection();
+    }
+  }
+
+
+  void
+  ConstrainSolidDomain::parse_constraint_parameters(
+    dealii::ParameterHandler &prm,
+    const unsigned int        constraint_id)
+  {
+    this->fluid_ids[constraint_id] = prm.get_integer("fluid id");
+    this->filtered_phase_fraction_tolerance[constraint_id] =
+      prm.get_double("phase fraction tolerance");
+    this->temperature_min_values[constraint_id] =
+      prm.get_double("min temperature");
+    this->temperature_max_values[constraint_id] =
+      prm.get_double("max temperature");
+  }
 
   void
   Stabilization::declare_parameters(ParameterHandler &prm)
@@ -1713,6 +1821,18 @@ namespace Parameters
         "barycenter_information",
         Patterns::FileName(),
         "Name of barycenter information output file in VOF or Cahn-Hilliard simulations");
+
+      prm.declare_entry(
+        "calculate mass conservation",
+        "true",
+        Patterns::Bool(),
+        "Enable calculation of the mass of both fluids in VOF simualtions.");
+
+      prm.declare_entry(
+        "mass conservation name",
+        "mass_conservation_information",
+        Patterns::FileName(),
+        "Name of mass conservation output file in VOF simulations");
     }
     prm.leave_subsection();
   }
@@ -1758,7 +1878,8 @@ namespace Parameters
       heat_flux_output_name       = prm.get("heat flux name");
       calculate_barycenter        = prm.get_bool("calculate barycenter");
       barycenter_output_name      = prm.get("barycenter name");
-
+      calculate_mass_conservation = prm.get_bool("calculate mass conservation");
+      mass_conservation_output_name = prm.get("mass conservation name");
 
       // Viscous dissipative fluid
       const std::string op_fluid = prm.get("postprocessed fluid");
@@ -1922,12 +2043,13 @@ namespace Parameters
   {
     prm.enter_subsection("mesh");
     {
-      prm.declare_entry("type",
-                        "dealii",
-                        Patterns::Selection(
-                          "gmsh|dealii|periodic_hills|cylinder"),
-                        "Type of mesh "
-                        "Choices are <gmsh|dealii|periodic_hills|cylinder>.");
+      prm.declare_entry(
+        "type",
+        "dealii",
+        Patterns::Selection(
+          "gmsh|dealii|periodic_hills|cylinder|colorized_cylinder_shell"),
+        "Type of mesh "
+        "Choices are <gmsh|dealii|periodic_hills|cylinder|colorized_cylinder_shell>.");
 
       prm.declare_entry("file name",
                         "none",
@@ -1938,6 +2060,18 @@ namespace Parameters
                         "0",
                         Patterns::Integer(),
                         "Initial refinement of the mesh");
+
+      prm.declare_entry(
+        "initial boundary refinement",
+        "0",
+        Patterns::Integer(),
+        "Initial refinement of the mesh at the boundaries specified by the user");
+
+      prm.declare_entry(
+        "boundaries refined",
+        "",
+        Patterns::List(Patterns::Integer()),
+        "Boundary ids of the boundaries to be initially refined");
 
       if (prm.get("type") == "periodic_hills")
         {
@@ -2021,6 +2155,8 @@ namespace Parameters
           type = Type::periodic_hills;
         else if (op == "cylinder")
           type = Type::cylinder;
+        else if (op == "colorized_cylinder_shell")
+          type = Type::colorized_cylinder_shell;
         else
           throw std::logic_error(
             "Error, invalid mesh type. Choices are gmsh and dealii");
@@ -2029,6 +2165,11 @@ namespace Parameters
       file_name = prm.get("file name");
 
       initial_refinement = prm.get_integer("initial refinement");
+      initial_refinement_at_boundaries =
+        prm.get_integer("initial boundary refinement");
+
+      boundaries_to_refine =
+        convert_string_to_vector<int>(prm, "boundaries refined");
 
       grid_type      = prm.get("grid type");
       grid_arguments = prm.get("grid arguments");
@@ -2205,11 +2346,6 @@ namespace Parameters
                           Patterns::Bool(),
                           "estimate eigenvalues for relaxation parameter");
 
-        prm.declare_entry("eig estimation degree",
-                          "3",
-                          Patterns::Integer(),
-                          "degree used for the Chebyshev polynomial");
-
         prm.declare_entry("eig estimation smoothing range",
                           "10",
                           Patterns::Integer(),
@@ -2337,7 +2473,6 @@ namespace Parameters
         mg_smoother_iterations     = prm.get_integer("mg smoother iterations");
         mg_smoother_relaxation     = prm.get_double("mg smoother relaxation");
         mg_smoother_eig_estimation = prm.get_bool("mg smoother eig estimation");
-        eig_estimation_degree      = prm.get_integer("eig estimation degree");
         eig_estimation_smoothing_range =
           prm.get_integer("eig estimation smoothing range");
         eig_estimation_cg_n_iterations =
@@ -3523,20 +3658,6 @@ namespace Parameters
       output_tensor[i] = vector_of_double[i];
 
     return output_tensor;
-  }
-
-  std::vector<double>
-  convert_string_to_vector(ParameterHandler  &prm,
-                           const std::string &entry_string)
-  {
-    std::string              full_str = prm.get(entry_string);
-    std::vector<std::string> vector_of_string(
-      Utilities::split_string_list(full_str));
-
-    std::vector<double> vector_of_double =
-      Utilities::string_to_double(vector_of_string);
-
-    return vector_of_double;
   }
 
   template class Laser<2>;

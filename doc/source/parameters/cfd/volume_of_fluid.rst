@@ -23,6 +23,7 @@ The default values of the VOF parameters are given in the text box below.
 
     subsection interface sharpening
       set enable                  = false
+      set verbosity               = quiet
       set frequency               = 10
       set interface sharpness     = 2
       set type                    = constant
@@ -33,8 +34,8 @@ The default values of the VOF parameters are given in the text box below.
       # parameters for adaptive sharpening
       set threshold max deviation = 0.20
       set max iterations          = 20
-
-      set verbosity               = quiet
+      set tolerance               = 1e-6
+      set monitored fluid         = fluid 1
     end
 
     subsection phase filtration
@@ -54,14 +55,6 @@ The default values of the VOF parameters are given in the text box below.
       set enable marangoni effect               = false
     end
 
-    subsection mass conservation
-      set monitoring         = false
-      set monitored fluid    = fluid 1
-
-      # parameters used with adaptive sharpening
-      set tolerance          = 1e-6
-      set verbosity          = quiet
-    end
   end
 
 * ``viscous dissipative fluid``: defines fluid(s) to which viscous dissipation is applied.
@@ -81,17 +74,14 @@ Interface Sharpening
 * ``subsection interface sharpening``: defines parameters to counter numerical diffusion of the VOF method and to avoid the interface between the two fluids becoming more and more blurry after each time step. The reader is refered to the Interface sharpening section of :doc:`../../../theory/multiphysics/vof` theory guide for additional details on this sharpening method.
 
   * ``enable``: controls if interface sharpening is enabled.
+  * ``verbosity``: enables the display of the residual at each non-linear iteration, to monitor the progress of the linear iterations, similarly to the ``verbosity`` option in :doc:`linear_solver_control`. Choices are: ``quiet`` (default, no output), ``verbose`` (indicates sharpening steps) and ``extra verbose`` (details of the linear iterations).  
   * ``frequency``: sets the frequency (in number of iterations) for the interface sharpening computation.
   * ``interface sharpness``: sharpness of the moving interface (parameter :math:`a` in the `interface sharpening model <https://www.researchgate.net/publication/287118331_Development_of_efficient_interface_sharpening_procedure_for_viscous_incompressible_flows>`_). This parameter must be larger than 1 for interface sharpening. Choosing values less than 1 leads to interface smoothing instead of sharpening. A good value would be around 1.5.
 
   * ``type``: defines the interface sharpening type, either ``constant`` or ``adaptive``
 
     * ``set type = constant``: the sharpening ``threshold`` is the same throughout the simulation. This ``threshold``, between ``0`` and ``1`` (``0.5`` by default), corresponds to the phase fraction at which the interface is located.
-    * ``set type = adaptive``: the sharpening threshold is searched in the range :math:`\left[0.5-c_\text{dev} \; ; 0.5+c_\text{dev}\right]`, with :math:`c_\text{dev}` the ``threshold max deviation`` (``0.2`` by default), to ensure mass conservation. The search algorithm will stop either if the mass conservation ``tolerance`` is reached (see ``subsection mass conservation``), or if the number of search steps reach the number of ``max iterations``. If the ``tolerance`` is not reached, a warning message will be printed.
-
-    .. warning::
-
-      In case of adaptive interface sharpening (``set type = adaptive``), mass conservation must be monitored (``set monitoring = true`` in ``mass conservation`` subsection).
+    * ``set type = adaptive``: the sharpening threshold is searched in the range :math:`\left[0.5-c_\text{dev} \; ; 0.5+c_\text{dev}\right]`, with :math:`c_\text{dev}` the ``threshold max deviation`` (``0.2`` by default), to ensure mass conservation. The search algorithm will stop either if the mass conservation ``tolerance`` is reached, or if the number of search steps reaches the number of ``max iterations``. If the ``tolerance`` is not reached, a warning message will be printed.
 
     .. admonition:: Example of a warning message if sharpening is adaptive but the mass conservation tolerance is not reached:
 
@@ -108,8 +98,12 @@ Interface Sharpening
       Usually the first iterations with sharpening are the most at risk to reach the ``max iterations`` without the ``tolerance`` being met, particularly if the mesh is quite coarse.
 
       As most of the other iterations converge in only one step (corresponding to a final threshold of :math:`0.5`), increasing the sharpening search range through a higher ``threshold max deviation`` will relax the condition on the first iterations with a limited impact on the computational cost.
-
-  * ``verbosity``: enables the display of the residual at each non-linear iteration, to monitor the progress of the linear iterations, similarly to the ``verbosity`` option in :doc:`linear_solver_control`. Choices are: ``quiet`` (default, no output), ``verbose`` (indicates sharpening steps) and ``extra verbose`` (details of the linear iterations).
+      
+  * ``monitored fluid``: Fluid in which the mass conservation is monitored to find the adaptive sharpening threshold. The choices are ``fluid 1`` (default) or ``fluid 0``.
+  
+  * ``tolerance``: Value of the tolerance on the mass conservation of the monitored fluid.
+  
+    For instance, with ``set tolerance = 0.02`` the sharpening threshold will be adapted so that the mass of the ``monitored fluid`` varies less than :math:`\pm 2\%` from the initial mass (at :math:`t = 0.0` sec).
 
   .. seealso::
 
@@ -179,41 +173,3 @@ The following procedure is recommended to choose proper values for the ``phase f
 2. Choose a value close to 1, for example, :math:`\alpha = 4` and :math:`\beta = 1`.
 3. Run the simulation and check whether the filtered phase fraction gradient field is smooth and without oscillation.
 4.  If the filtered phase fraction gradient and filtered curvature fields show oscillations, increase the value :math:`\alpha` and :math:`\beta` to larger values, and repeat this process until reaching smooth filtered phase fraction gradient and filtered curvature fields without oscillations.
-
-
-.. _mass conservation:
-
-Mass Conservation
-~~~~~~~~~~~~~~~~~~~~~
-
-* ``subsection mass conservation``: By default, mass conservation (continuity) equations are solved on the whole domain, i.e. on both fluids. This subsection defines parameters that are used to solve mass conservation in both fluids, and to monitor the surface/volume (2D/3D) occupied by the fluid of interest (``monitored fluid``).
-
-  * ``monitoring``: controls if conservation is monitored at each iteration, through the volume (3D) or surface (2D) computation of the fluid given as ``monitored fluid`` (``fluid 1`` (default) or ``fluid 0``). Results are outputted in a data table (`VOF_monitoring_fluid_0.dat` or `VOF_monitoring_fluid_1.dat`).
-
-    .. tip::
-      In 2D, the mass returned is in the dimension of :math:`\left[\text{mass}/\text{length}\right]`: multiply this value by the depth of your system to get the ``monitored fluid`` mass (in :math:`\text{kg}` if using SI units).
-
-    .. admonition:: Example of file output, `VOF_monitoring_fluid_1.dat`:
-
-      The ``volume_fluid_1`` column gives the volume occupied by the fluid with index 1, its total mass, and the sharpening threshold used for this iteration.
-  
-      .. code-block:: text
-
-        time  volume_fluid_1 mass_fluid_1 sharpening_threshold 
-        0.0000     4.9067e-01   3.8125e+02               0.5000 
-        0.0050     4.9297e-01   3.8304e+02               0.5000 
-        0.0100     4.9150e-01   3.8189e+02               0.5000 
-        0.0150     4.9001e-01   3.8074e+02               0.5000 
-        0.0200     4.8844e-01   3.7952e+02               0.5000 
-        0.0250     4.9762e-01   3.8665e+02               0.5000 
-        0.0300     4.9588e-01   3.8530e+02               0.5000 
-        0.0350     4.9437e-01   3.8413e+02               0.5000 
-        0.0400     4.9294e-01   3.8302e+02               0.5000 
-        0.0450     4.9144e-01   3.8185e+02               0.5000 
-        0.0500     5.0639e-01   3.9346e+02               0.5000 
-
-  * ``tolerance``: value for the tolerance on the mass conservation of the monitored fluid, used with adaptive sharpening (see the ``subsection sharpening``).
-  
-    For instance, with ``set tolerance = 0.02`` the sharpening threshold will be adapted so that the mass of the ``monitored fluid`` varies less than :math:`\pm 2\%` from the initial mass (at :math:`t = 0.0` sec).
-
-  * ``verbosity``: states whether from the mass conservation data should be printed. Choices are quiet (no output), verbose (output information from the ``adaptive`` sharpening threshold) and extra verbose (output of the monitoring table in the terminal at the end of the simulation).

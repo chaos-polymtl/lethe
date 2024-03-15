@@ -328,12 +328,10 @@ GLSNavierStokesVOFAssemblerBDF<dim>::assemble_matrix(
   auto &local_matrix    = copy_data.local_matrix;
 
   // Time stepping information
-  const auto          method = this->simulation_control->get_assembly_method();
-  std::vector<double> time_steps_vector =
-    this->simulation_control->get_time_steps_vector();
-
+  const auto method = this->simulation_control->get_assembly_method();
   // Vector for the BDF coefficients
-  Vector<double> bdf_coefs = bdf_coefficients(method, time_steps_vector);
+  const Vector<double> &bdf_coefs =
+    this->simulation_control->get_bdf_coefficients();
   std::vector<Tensor<1, dim>> velocity(1 +
                                        number_of_previous_solutions(method));
 
@@ -389,12 +387,10 @@ GLSNavierStokesVOFAssemblerBDF<dim>::assemble_rhs(
   auto &local_rhs       = copy_data.local_rhs;
 
   // Time stepping information
-  const auto          method = this->simulation_control->get_assembly_method();
-  std::vector<double> time_steps_vector =
-    this->simulation_control->get_time_steps_vector();
-
+  const auto method = this->simulation_control->get_assembly_method();
   // Vector for the BDF coefficients
-  Vector<double> bdf_coefs = bdf_coefficients(method, time_steps_vector);
+  const Vector<double> &bdf_coefs =
+    this->simulation_control->get_bdf_coefficients();
   std::vector<Tensor<1, dim>> velocity(1 +
                                        number_of_previous_solutions(method));
 
@@ -610,14 +606,29 @@ GLSNavierStokesVOFAssemblerSTF<dim>::assemble_rhs(
       const double surface_tension_coef = scratch_data.surface_tension[q];
 
       // Gather pfg and curvature values
-      const double         &curvature_value = scratch_data.curvature_values[q];
+      const double &curvature_value = scratch_data.curvature_values[q];
+
+      // Gather phase fraction gradient
+      const Tensor<1, dim> &phase_gradient_value_q =
+        scratch_data.phase_gradient_values[q];
+
+      // Gather filtered phase fraction gradient
       const Tensor<1, dim> &filtered_phase_gradient_value_q =
         scratch_data.filtered_phase_gradient_values[q];
+
+      const double phase_gradient_norm = phase_gradient_value_q.norm();
+
+      const double filtered_phase_gradient_norm =
+        filtered_phase_gradient_value_q.norm();
+
+      const Tensor<1, dim> normalized_phase_fraction_gradient =
+        phase_gradient_value_q / (phase_gradient_norm + DBL_MIN);
+
       const double JxW_value = JxW[q];
 
       const Tensor<1, dim> surface_tension_force =
         -surface_tension_coef * curvature_value *
-        filtered_phase_gradient_value_q;
+        normalized_phase_fraction_gradient * filtered_phase_gradient_norm;
 
       strong_residual[q] += surface_tension_force;
 
@@ -675,15 +686,20 @@ GLSNavierStokesVOFAssemblerMarangoni<dim>::assemble_rhs(
       const double &curvature_value = scratch_data.curvature_values[q];
 
       // Gather phase fraction gradient
+      const Tensor<1, dim> &phase_gradient_value_q =
+        scratch_data.phase_gradient_values[q];
+
+      // Gather filtered phase fraction gradient
       const Tensor<1, dim> &filtered_phase_gradient_value_q =
         scratch_data.filtered_phase_gradient_values[q];
+
+      const double phase_gradient_norm = phase_gradient_value_q.norm();
 
       const double filtered_phase_gradient_norm =
         filtered_phase_gradient_value_q.norm();
 
       const Tensor<1, dim> normalized_phase_fraction_gradient =
-        filtered_phase_gradient_value_q /
-        (filtered_phase_gradient_norm + DBL_MIN);
+        phase_gradient_value_q / (phase_gradient_norm + DBL_MIN);
 
       // Gather temperature gradient
       const Tensor<1, dim> temperature_gradient =
@@ -693,7 +709,8 @@ GLSNavierStokesVOFAssemblerMarangoni<dim>::assemble_rhs(
 
 
       const Tensor<1, dim> surface_tension_force =
-        -surface_tension * curvature_value * filtered_phase_gradient_value_q;
+        -surface_tension * curvature_value *
+        normalized_phase_fraction_gradient * filtered_phase_gradient_norm;
 
       const Tensor<1, dim> marangoni_effect =
         -surface_tension_gradient *
@@ -757,13 +774,26 @@ NavierStokesVOFAssemblerEvaporation<dim>::assemble_rhs(
         this->evaporation_model->momentum_flux(field_value);
 
       // Gather phase fraction gradient
+      const Tensor<1, dim> &phase_gradient_value_q =
+        scratch_data.phase_gradient_values[q];
+
       const Tensor<1, dim> &filtered_phase_gradient_value_q =
         scratch_data.filtered_phase_gradient_values[q];
+
+      const double phase_gradient_norm = phase_gradient_value_q.norm();
+
+      const double filtered_phase_gradient_norm =
+        filtered_phase_gradient_value_q.norm();
+
+      const Tensor<1, dim> normalized_phase_fraction_gradient =
+        phase_gradient_value_q / (phase_gradient_norm + DBL_MIN);
+
 
       const double JxW_value = JxW[q];
 
       const Tensor<1, dim> recoil_pressure_force =
-        recoil_pressure * filtered_phase_gradient_value_q;
+        recoil_pressure * normalized_phase_fraction_gradient *
+        filtered_phase_gradient_norm;
 
       strong_residual[q] -= recoil_pressure_force;
 

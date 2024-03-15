@@ -109,16 +109,20 @@ subsection VOF
     set frequency           = 25
     set type                = constant
   end
-  subsection mass conservation
-    set monitoring      = true
-    set monitored fluid = fluid 1
-    set verbosity       = extra verbose
-  end
   subsection phase filtration
     set type      = tanh
     set verbosity = quiet
     set beta      = 10
   end
+end
+
+#---------------------------------------------------
+# Post-processing
+#---------------------------------------------------
+
+subsection post-processing
+  set verbosity                   = verbose
+  set calculate mass conservation = true
 end
 
 #---------------------------------------------------

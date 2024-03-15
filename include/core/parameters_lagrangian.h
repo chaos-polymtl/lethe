@@ -12,9 +12,7 @@
  * the top level of the Lethe distribution.
  *
  * ---------------------------------------------------------------------
-
  *
- * Author: Shahab Golshan, Bruno Blais, Polytechnique Montreal, 2019-
  */
 
 #ifndef lethe_parameters_lagrangian_h
@@ -39,7 +37,8 @@ namespace Parameters
       hertz_mindlin_limit_force,
       hertz_mindlin_limit_overlap,
       hertz,
-      hertz_JKR
+      hertz_JKR,
+      DMT
     };
 
     enum RollingResistanceMethod
@@ -171,6 +170,7 @@ namespace Parameters
       {
         volume,
         list,
+        file,
         plane
       } insertion_method;
 
@@ -200,6 +200,8 @@ namespace Parameters
 
       std::vector<double> list_x, list_y, list_z, list_vx, list_vy, list_vz,
         list_wx, list_wy, list_wz, list_d;
+
+      std::string insertion_particles_file_name;
 
       // Insertion plane definition
       Tensor<1, 3> insertion_plane_normal_vector;
@@ -269,7 +271,8 @@ namespace Parameters
       {
         linear,
         nonlinear,
-        JKR
+        JKR,
+        DMT
       } particle_wall_contact_force_method;
 
       // Rolling resistance torque method

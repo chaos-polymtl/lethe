@@ -156,7 +156,7 @@ subsection linear solver
     set max krylov vectors = 200
 
     #MG parameters
-    set mg verbosity       =  quiet
+    set mg verbosity       = quiet
     set mg min level       = -1
     set mg level min cells = -1
 
@@ -166,7 +166,6 @@ subsection linear solver
     set mg smoother eig estimation = true #if set to true, previous parameter is not used
 
     # Eigenvalue estimation parameters
-    set eig estimation degree          = 3
     set eig estimation smoothing range = 5
     set eig estimation cg n iterations = 20
     set eig estimation verbosity       = quiet

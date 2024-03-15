@@ -38,6 +38,14 @@ set_particle_wall_contact_force_model(
         std::make_shared<ParticleWallJKRForce<dim>>(dem_parameters,
                                                     boundary_index);
     }
+  else if (dem_parameters.model_parameters.particle_wall_contact_force_method ==
+           Parameters::Lagrangian::ModelParameters::
+             ParticleWallContactForceModel::DMT)
+    {
+      particle_wall_contact_force_object =
+        std::make_shared<ParticleWallDMTForce<dim>>(dem_parameters,
+                                                    boundary_index);
+    }
   else
     {
       throw "The chosen particle-wall contact force model is invalid";

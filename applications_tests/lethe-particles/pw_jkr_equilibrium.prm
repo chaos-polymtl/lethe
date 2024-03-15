@@ -11,9 +11,9 @@ end
 # Simulation Control
 #---------------------------------------------------
 subsection simulation control
-  set time step         = 1e-6
-  set time end          = 20.
-  set log frequency     = 20000000
+  set time step         = 1e-3
+  set time end          = 10.
+  set log frequency     = 10000
   set output frequency  = -1
   set output boundaries = true
 end
@@ -27,7 +27,7 @@ subsection model parameters
     set neighborhood threshold                  = 20
   end
   subsection load balancing
-    set load balance method = once
+    set load balance method = none
   end
   set particle particle contact force method = hertz_JKR
   set particle wall contact force method     = JKR
@@ -48,7 +48,7 @@ subsection lagrangian physical properties
     set density particles                 = 2600
     set young modulus particles           = 1e5
     set poisson ratio particles           = 0.3
-    set restitution coefficient particles = 0.4
+    set restitution coefficient particles = 0.3
     set friction coefficient particles    = 0.0
     set surface energy particles          = 50.
   end
@@ -64,7 +64,7 @@ end
 subsection insertion info
   set insertion method    = list
   set insertion frequency = 10000
-  set list x              = 1.00001
+  set list x              = 1.000001
   set list y              = 1.0
   set list z              = 1.0
   set list velocity x     = -0.001

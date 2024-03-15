@@ -16,7 +16,7 @@ subsection simulation control
   set adaptative time step scaling = 1.1
   set output name                  = melting
   set output control               = iteration
-  set output frequency             = 100
+  set output frequency             = 10
   set output path                  = ./output-darcy/
 end
 
@@ -38,6 +38,9 @@ subsection initial conditions
   set type = nodal
   subsection uvwp
     set Function expression = 0; 0; 0
+  end
+  subsection temperature
+    set Function expression = 28
   end
 end
 

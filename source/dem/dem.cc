@@ -21,6 +21,7 @@
 #include <dem/dem.h>
 #include <dem/distributions.h>
 #include <dem/explicit_euler_integrator.h>
+#include <dem/file_insertion.h>
 #include <dem/find_contact_detection_step.h>
 #include <dem/gear3_integrator.h>
 #include <dem/input_parameter_inspection.h>
@@ -478,6 +479,7 @@ template <int dim>
 void
 DEMSolver<dim>::load_balance()
 {
+  TimerOutput::Scope t(this->computing_timer, "Load balancing");
   // Prepare particle handler for the adaptation of the triangulation to the
   // load
   particle_handler.prepare_for_coarsening_and_refinement();
@@ -944,6 +946,13 @@ DEMSolver<dim>::set_insertion_type(const DEMSolverParameters<dim> &parameters)
                                              distribution_object_container);
     }
   else if (parameters.insertion_info.insertion_method ==
+           Parameters::Lagrangian::InsertionInfo::InsertionMethod::file)
+    {
+      insertion_object =
+        std::make_shared<FileInsertion<dim>>(parameters,
+                                             distribution_object_container);
+    }
+  else if (parameters.insertion_info.insertion_method ==
            Parameters::Lagrangian::InsertionInfo::InsertionMethod::plane)
     {
       insertion_object =
@@ -990,6 +999,8 @@ template <int dim>
 void
 DEMSolver<dim>::write_output_results()
 {
+  TimerOutput::Scope t(this->computing_timer, "Output VTU");
+
   const std::string folder = parameters.simulation_control.output_folder;
   const std::string particles_solution_name =
     parameters.simulation_control.output_name;

@@ -79,9 +79,9 @@ namespace Parameters
       particle_size_std.at(particle_type) =
         prm.get_double("standard deviation");
       particle_custom_diameter.at(particle_type) =
-        convert_string_to_vector(prm, "custom diameters");
+        convert_string_to_vector<double>(prm, "custom diameters");
       particle_custom_probability.at(particle_type) =
-        convert_string_to_vector(prm, "custom volume fractions");
+        convert_string_to_vector<double>(prm, "custom volume fractions");
       seed_for_distributions.push_back(
         prm.get_integer("random seed distribution"));
 
@@ -285,7 +285,7 @@ namespace Parameters
       {
         prm.declare_entry("insertion method",
                           "volume",
-                          Patterns::Selection("volume|list|plane"),
+                          Patterns::Selection("volume|list|file|plane"),
                           "Choosing insertion method. "
                           "Choices are <volume|list|plane>.");
         prm.declare_entry("inserted number of particles at each time step",
@@ -383,7 +383,7 @@ namespace Parameters
                           Patterns::List(Patterns::Double()),
                           "List of initial omega z");
         prm.declare_entry("list diameters",
-                          "1.0",
+                          "-1.0",
                           Patterns::List(Patterns::Double()),
                           "List of diameters");
         prm.declare_entry("velocity x",
@@ -410,6 +410,10 @@ namespace Parameters
                           "0.0",
                           Patterns::Double(),
                           "Initial omega z");
+        prm.declare_entry("insertion file name",
+                          "particles.input",
+                          Patterns::FileName(),
+                          "The file name from which we load the particles");
         prm.declare_entry("insertion plane point",
                           "0., 0., 0.",
                           Patterns::List(Patterns::Double()),
@@ -437,6 +441,8 @@ namespace Parameters
           insertion_method = InsertionMethod::volume;
         else if (insertion == "list")
           insertion_method = InsertionMethod::list;
+        else if (insertion == "file")
+          insertion_method = InsertionMethod::file;
         else if (insertion == "plane")
           insertion_method = InsertionMethod::plane;
         else
@@ -555,6 +561,9 @@ namespace Parameters
         // Convert the diameters string vector to a double vector
         list_d = Utilities::string_to_double(d_str_list);
 
+        // File for the insertion
+        insertion_particles_file_name = prm.get("insertion file name");
+
         // Insertion plane normal vector
         insertion_plane_normal_vector =
           entry_string_to_tensor3(prm, "insertion plane normal vector");
@@ -656,15 +665,15 @@ namespace Parameters
           "particle particle contact force method",
           "hertz_mindlin_limit_overlap",
           Patterns::Selection(
-            "linear|hertz_mindlin_limit_force|hertz_mindlin_limit_overlap|hertz|hertz_JKR"),
+            "linear|hertz_mindlin_limit_force|hertz_mindlin_limit_overlap|hertz|hertz_JKR|DMT"),
           "Choosing particle-particle contact force model"
-          "Choices are <linear|hertz_mindlin_limit_force|hertz_mindlin_limit_overlap|hertz|hertz_JKR>.");
+          "Choices are <linear|hertz_mindlin_limit_force|hertz_mindlin_limit_overlap|hertz|hertz_JKR|DMT>.");
 
         prm.declare_entry("particle wall contact force method",
                           "nonlinear",
-                          Patterns::Selection("linear|nonlinear|JKR"),
+                          Patterns::Selection("linear|nonlinear|JKR|DMT"),
                           "Choosing particle-wall contact force model"
-                          "Choices are <linear|nonlinear|JKR>.");
+                          "Choices are <linear|nonlinear|JKR|DMT>.");
 
         prm.declare_entry(
           "rolling resistance torque method",
@@ -822,6 +831,9 @@ namespace Parameters
         else if (ppcf == "hertz_JKR")
           particle_particle_contact_force_model =
             ParticleParticleContactForceModel::hertz_JKR;
+        else if (ppcf == "DMT")
+          particle_particle_contact_force_model =
+            ParticleParticleContactForceModel::DMT;
         else
           {
             throw(std::runtime_error(
@@ -836,10 +848,11 @@ namespace Parameters
           particle_wall_contact_force_method =
             ParticleWallContactForceModel::nonlinear;
         else if (pwcf == "JKR")
-          {
-            particle_wall_contact_force_method =
-              ParticleWallContactForceModel::JKR;
-          }
+          particle_wall_contact_force_method =
+            ParticleWallContactForceModel::JKR;
+        else if (pwcf == "DMT")
+          particle_wall_contact_force_method =
+            ParticleWallContactForceModel::DMT;
         else
           {
             throw(

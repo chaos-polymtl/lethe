@@ -62,7 +62,7 @@ H = []
 H_a = [0,-2e-6, 0]
 H_b = [0, 2e-6, 0]
 
-# Read VTU files
+# Read PVTU files
 for i in range(len(fluids.list_vtu)):
     # Store results in 'df'
     df = fluids.get_df(i)

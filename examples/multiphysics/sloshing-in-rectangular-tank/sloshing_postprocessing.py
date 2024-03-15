@@ -11,6 +11,8 @@ the wave.
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+from tqdm import tqdm
+
 
 import sys
 sys.path.append("$LETHE_PATH/contrib/postprocessing/")
@@ -45,8 +47,10 @@ H = []
 H_a = [0,-0.02, 0]
 H_b = [0, 0.02, 0]
 
-# Read VTU files
-for i in range(len(fluids.list_vtu)):
+# Read PVTU files
+pbar = tqdm(total = len(fluids.list_vtu), desc="Calculate H_max")
+for i in tqdm(range(len(fluids.list_vtu))):
+
     # Store results in 'df'
     df = fluids.get_df(i)
 
@@ -65,6 +69,8 @@ for i in range(len(fluids.list_vtu)):
         amplitude_0 = H_max
 
     H.append(H_max)
+
+    pbar.update(1)
 
 # Calculate relative
 relative_amplitude = [h/amplitude_0 for h in H]

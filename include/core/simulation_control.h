@@ -136,6 +136,20 @@ protected:
   // simulation
   double startup_timestep_scaling;
 
+  /// BDF coefficients used for time-stepping methods
+  Vector<double> bdf_coefs;
+
+  /**
+   * @brief Update the BDF coefficients. It is necessary to update the
+   * coefficients when there is a change in the time step values or the
+   * time stepping scheme.
+   **/
+  void
+  update_bdf_coefficients()
+  {
+    bdf_coefs = calculate_bdf_coefficients(assembly_method, time_step_vector);
+  }
+
 
 
 public:
@@ -202,9 +216,23 @@ public:
              Parameters::SimulationControl::TimeSteppingMethod::steady_bdf;
   }
 
+  /**
+   * @brief Establish if the method is a bdf method
+   *
+   */
+  bool
+  is_bdf()
+  {
+    return method == Parameters::SimulationControl::TimeSteppingMethod::bdf1 ||
+           method ==
+             Parameters::SimulationControl::TimeSteppingMethod::steady_bdf ||
+           method == Parameters::SimulationControl::TimeSteppingMethod::bdf2 ||
+           method == Parameters::SimulationControl::TimeSteppingMethod::bdf3;
+  }
+
 
   /**
-   * @brief Calculates the next value of the time step. The base function returns
+   * @brief Calculate the next value of the time step. The base function returns
    * the value of the time step, but derived class may implement adaptative time
    * stepping
    */
@@ -435,6 +463,11 @@ public:
     return times;
   }
 
+  Vector<double> const &
+  get_bdf_coefficients()
+  {
+    return bdf_coefs;
+  }
 
 
   void
@@ -452,6 +485,9 @@ protected:
 
   // Time step scaling for adaptative time stepping
   double adaptative_time_step_scaling;
+
+  // Max time step
+  double max_dt;
 
   /**
    * @brief Calculates the next value of the time step. If adaptation

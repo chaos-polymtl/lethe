@@ -75,19 +75,69 @@ add_statistics_to_table_handler(const std::string variable,
 }
 
 /**
- * @brief Generate a table from a vector of scalar and a vector of tensor<1,dim>
+ * @brief Generate a table from a vector of scalars (independent variable) and
+ * a vector of vectors of scalars (dependent variables).
  *
- * @param independent_values A vector of scalar values that serve as the independent
- * variable. For example time.
+ * @tparam T Scalar type of independent variables.
  *
- * @param independent_column_name The name of the independent variable
+ * @param[in] independent_values Vector of scalar values that serve as the
+ * independent variable (e.g., time).
  *
- * @param dependent_vector. A vector of Tensor<1,dim> which are the dependent variable. For example force.
+ * @param[in] independent_column_name Label of the independent variable.
  *
- * @param dependent_column_names. A vector of string which are the label of dependent tensor
+ * @param[in] dependent_vector Vector of vectors of scalar values containing
+ * dependant variables values.
  *
- * @param display_precision. An integer which indicate the precision at which the tables are written
+ * @param[in] dependent_column_names Vector of strings representing the labels
+ * of dependent variables.
  *
+ * @param[in] display_precision Integer indicating the precision at which the
+ * table is written.
+ *
+ * @param[in] display_scientific_notation Boolean indicating if the values
+ * should be displayed in scientific notation (true) or not (false).
+ *
+ * @return Table with the independent variable values followed by the dependent
+ * variables values.
+ */
+template <typename T>
+TableHandler
+make_table_scalars_vectors(
+  const std::vector<T>                   &independent_values,
+  const std::string                      &independent_column_name,
+  const std::vector<std::vector<double>> &dependent_vector,
+  const std::vector<std::string>         &dependent_column_names,
+  const unsigned int                      display_precision,
+  const bool                              display_scientific_notation = false);
+
+
+/**
+ * @brief Generate a table from a vector of scalars (independent variable) and
+ * a vector of Tensor<1,dim> (dependent variables).
+ *
+ * @tparam T Scalar type of independent variables.
+ *
+ * @tparam dim Integer that denotes the number of spatial dimensions.
+ *
+ * @param[in] independent_values Vector of scalar values that serve as the
+ * independent variable (e.g., time).
+ *
+ * @param[in] independent_column_name Label of the independent variable.
+ *
+ * @param[in] dependent_vector Vector of Tensor<1,dim> containing dependent
+ * variables values (e.g., force).
+ *
+ * @param[in] dependent_column_names Vector of strings representing the labels
+ * of dependent variables.
+ *
+ * @param[in] display_precision Integer indicating the precision at which the
+ * table is written.
+ *
+ * @param[in] display_scientific_notation Boolean indicating if the values
+ * should be displayed in scientific notation (true) or not (false).
+ *
+ * @return Table with the independent variable values followed by the dependent
+ * variables values.
  */
 template <int dim, typename T>
 TableHandler
@@ -95,74 +145,123 @@ make_table_scalars_tensors(
   const std::vector<T>              &independent_values,
   const std::string                 &independent_column_name,
   const std::vector<Tensor<1, dim>> &dependent_vector,
-  const std::vector<std::string>    &dependent_column_name,
-  const unsigned int                 display_precision);
+  const std::vector<std::string>    &dependent_column_names,
+  const unsigned int                 display_precision,
+  const bool                         display_scientific_notation = false);
 
-
+/**
+ * @brief Generate a table from a vector of scalar (independent variable) and a
+ * vector of vectors of Tensor<1,dim> (dependent variables).
+ *
+ * @tparam T Scalar type of independent variables.
+ *
+ * @tparam dim Integer that denotes the number of spatial dimensions.
+ *
+ * @param[in] independent_values Vector of scalar values that serve as the
+ * independent variable (e.g., time).
+ *
+ * @param[in] independent_column_name Label of the independent variable.
+ *
+ * @param[in] dependent_vector Vector of vectors of Tensor<1,dim> containing
+ * dependent variables values (e.g., force).
+ *
+ * @param[in] dependent_column_names Vector of strings representing the labels
+ * of dependent variables.
+ *
+ * @param[in] display_precision Integer indicating the precision at which the
+ * table is written.
+ *
+ * @param[in] display_scientific_notation Boolean indicating if the values
+ * should be displayed in scientific notation (true) or not (false).
+ *
+ * @return Table with the independent variable values followed by the dependent
+ * variables values.
+ */
 template <int dim, typename T>
 TableHandler
 make_table_scalars_tensors(
   const std::vector<T>                           &independent_values,
   const std::string                              &independent_column_name,
   const std::vector<std::vector<Tensor<1, dim>>> &dependent_vector,
-  const std::vector<std::string>                 &dependent_column_name,
-  const unsigned int                              display_precision);
+  const std::vector<std::string>                 &dependent_column_names,
+  const unsigned int                              display_precision,
+  const bool display_scientific_notation = false);
 
 /**
- * @brief Generate a table from a vector of tensor<1,dim> and a vector of tensor<1,dim>
+ * @brief Generate a table from a vector of Tensor<1,dim> (independent
+ * variables) and a vector of Tensor<1,dim> (dependent variables).
  *
- * @param independent_values A vector of Tensor<1,dim> that serve as the independent
- * variable. For example position.
+ * @tparam dim Integer that denotes the number of spatial dimensions.
  *
- * @param independent_column_name A vector of string which are the label of the independent tensor.
+ * @param[in] independent_values Vector of Tensor<1,dim> that serves as the
+ * independent variable (e.g., position).
  *
- * @param dependent_vector. A vector of Tensor<1,dim> which are the dependent variable. For example force.
+ * @param[in] independent_column_names Vector of strings representing labels of
+ * the independent tensor.
  *
- * @param dependent_column_names. A vector of string which are the label of dependent tensor.
+ * @param[in] dependent_vector Vector of vectors of Tensor<1,dim> containing
+ * dependent variables values (e.g., force).
  *
- * @param display_precision. An integer which indicate the precision at which the tables are written.
+ * @param[in] dependent_column_names Vector of strings representing the labels
+ * of dependent variables.
  *
+ * @param[in] display_precision Integer indicating the precision at which the
+ * table is written.
+ *
+ * @param[in] display_scientific_notation Boolean indicating if the values
+ * should be displayed in scientific notation (true) or not (false).
+ *
+ * @return Table with the independent variables values followed by the dependent
+ * variables values.
  */
-
-
 template <int dim>
 TableHandler
 make_table_tensors_tensors(
   const std::vector<Tensor<1, dim>> &independent_vector,
-  const std::vector<std::string>    &independent_column_name,
+  const std::vector<std::string>    &independent_column_names,
   const std::vector<Tensor<1, dim>> &dependent_vector,
-  const std::vector<std::string>    &dependent_column_name,
-  const unsigned int                 display_precision);
+  const std::vector<std::string>    &dependent_column_names,
+  const unsigned int                 display_precision,
+  const bool                         display_scientific_notation = false);
 
 
 /**
- * @brief Generate a table from a vector of tensor<1,dim> and a vector of tensor<1,dim>.
+ * @brief Generate a table from a vector of Tensor<1,dim> (independent
+ * variables) and a vector of scalars (dependent variable).
  *
- * @param independent_values A vector of Tensor<1,dim> that serve as the independent
- * variable. For example position.
+ * @tparam dim Integer that denotes the number of spatial dimensions.
  *
- * @param independent_column_name The name of the independent variable.
+ * @param[in] independent_values Vector of Tensor<1,dim> that serves as the
+ * independent variable (e.g., position).
  *
- * @param dependent_vector. A vector of scalar which are the dependent variable. For example energy.
+ * @param[in] independent_column_names Vector of strings representing labels of
+ * the independent tensor.
  *
- * @param dependent_column_names. The label of the dependent scalar.
+ * @param[in] dependent_vector Vector of scalar that serves as the dependent
+ * variable (e.g., energy).
  *
- * @param display_precision. An integer which indicate the precision at which the tables are written.
+ * @param[in] dependent_column_name Label of the dependent variable.
  *
+ * @param[in] display_scientific_notation Boolean indicating if the values
+ * should be displayed in scientific notation (true) or not (false).
+ *
+ * @return Table with the independent variables values followed by the dependent
+ * variable values.
  */
 template <int dim>
 TableHandler
 make_table_tensors_scalars(
   const std::vector<Tensor<1, dim>> &independent_vector,
-  const std::vector<std::string>    &independent_column_name,
+  const std::vector<std::string>    &independent_column_names,
   const std::vector<double>         &dependent_values,
   const std::string                 &dependent_column_name,
-  const unsigned int                 display_precision);
-
+  const unsigned int                 display_precision,
+  const bool                         display_scientific_notation = false);
 
 
 /**
- * @brief Used in multiphasic simulations to calculates the equivalent properties for a given phase. Method called in quadrature points loop
+ * @brief Calculate the equivalent properties for a given phase. Method called
+ * in quadrature points loops in VOF simulations.
  *
  * @param phase Phase value for the given quadrature point
  *
@@ -207,8 +306,25 @@ sgn(T val)
   return (static_cast<T>(0) < val) - (val < static_cast<T>(0));
 }
 
+
 /**
- * @brief Used in multiphasic simulations to calculates the equivalent properties for a given phase given by the Cahn-Hilliard equations. Method called in quadrature points loop
+ * @brief Clip a properties between a lower and a higher value
+ * @tparam T argument's type
+ * @param[in,out] lower Lower admissible value
+ * @param[in,out] upper Upper admissible value
+ * @return Clipped variable that is not below the lower limit and not above the upper limit
+ *
+ */
+template <typename T>
+T
+clip(const T &n, const T &lower, const T &upper)
+{
+  return std::max(lower, std::min(n, upper));
+}
+
+/**
+ * @brief Calculate the equivalent properties for a given phase. Method called
+ * in quadrature points loops in Cahn-Hilliard simulations.
  *
  * @param phase Phase value for the given quadrature point
  *

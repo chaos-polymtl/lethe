@@ -51,7 +51,7 @@ public:
   /**
    * @brief solve Solves the Navier-Stokes problem
    *
-   * This functions solves the problem defined by the Navier-Stokes paramter
+   * This functions solves the problem defined by the Navier-Stokes parameter
    * by iterating through time or through the mesh refinements.
    */
   virtual void
@@ -81,7 +81,7 @@ protected:
    *
    * @param restart A boolean that indicates if the simulation is being restarted.
    * if set to true, the initial conditions are never set, but are instead
-   * overriden by the read_checkpoint functionnality.
+   * overridden by the read_checkpoint functionality.
    *
    **/
   virtual void
@@ -120,18 +120,28 @@ protected:
   void
   setup_preconditioner();
 
-
   /**
-   * @brief  defined the non zero constraints used to solve the problem.
+   * @brief Define the non-zero constraints used to solve the problem.
    */
   void
   define_non_zero_constraints();
 
   /**
-   * @brief defined the zero_constraints used to solved the problem.
+   * @brief Define the zero constraints used to solve the problem.
    */
   void
   define_zero_constraints();
+
+  /**
+   * @brief Define the zero constraints used to solved the problem that change
+   * with other physics' solutions.
+   *
+   * It differs from GLSNavierStokesSolver::define_zero_constraints as it
+   * changes in time depending on the physics' solutions. Currently, it is only
+   * used to constraint solid with the temperature's evolution.
+   */
+  void
+  define_dynamic_zero_constraints();
 
   /**
    * @brief Assemble the local matrix for a given cell.
@@ -206,7 +216,7 @@ protected:
    * the Dirichlet boundary conditions
    *
    * @param renewed_matrix Indicates if the matrix has been reassembled, and thus
-   * the preconditioner needs to be reassmbled.
+   * the preconditioner needs to be reassembled.
    *
    * //TODO the renewed_matrix parameters needs to be deprecated
    *
