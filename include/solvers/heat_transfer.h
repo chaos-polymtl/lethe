@@ -18,7 +18,8 @@
  * Implementation of heat transfer as an auxiliary physics.
  * This heat equation is weakly coupled to the velocity field.
  * Equation solved:
- * \f$ \rho * C_p * (\frac{dT}{dt} + u \cdot \nabla T) = k \nabla^2T + \tau : \nabla u \f$
+ * \f$ \rho * C_p * (\frac{dT}{dt} + u \cdot \nabla T) = k \nabla^2T + \tau :
+ \nabla u \f$
  *
 
  *
@@ -75,7 +76,7 @@ public:
    * @brief Constructor of the HeatTransfer object
    *
    * @param multiphysics_interface Map of the auxiliary physics that will be
-   * solved on top of a computational fluid dynamic simulation. 
+   * solved on top of a computational fluid dynamic simulation.
    *
    * @param p_simulation_parameters Contain the simulation parameter file
    * information.
