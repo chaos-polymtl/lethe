@@ -21,7 +21,7 @@ namespace Parameters
     enthalpy_scaling               = 1. / M / L / L * T * T;
     diffusivity_scaling            = 1. / L / L * T;
     thermal_expansion_scaling      = T;
-    surface_tension_scaling        = 1. * T * T / L;
+    surface_tension_scaling        = 1. * T * T / M;
     cahn_hilliard_mobility_scaling = 1. * M / L / L / L / T;
     cahn_hilliard_epsilon_scaling  = 1.0 / L;
   }

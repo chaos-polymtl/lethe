@@ -71,9 +71,7 @@ CahnHilliard<dim>::setup_assemblers()
          .epsilon_set_method == Parameters::EpsilonSetMethod::manual) ?
         this->simulation_parameters.multiphysics.cahn_hilliard_parameters
           .epsilon :
-        GridTools::minimal_cell_diameter(*triangulation) *
-          this->simulation_parameters.dimensionality
-            .cahn_hilliard_epsilon_scaling,
+        GridTools::minimal_cell_diameter(*triangulation),
       this->simulation_parameters.boundary_conditions_cahn_hilliard));
 
   // Free angle of contact boundary condition
@@ -85,9 +83,7 @@ CahnHilliard<dim>::setup_assemblers()
          .epsilon_set_method == Parameters::EpsilonSetMethod::manual) ?
         this->simulation_parameters.multiphysics.cahn_hilliard_parameters
           .epsilon :
-        GridTools::minimal_cell_diameter(*triangulation) *
-          this->simulation_parameters.dimensionality
-            .cahn_hilliard_epsilon_scaling,
+        GridTools::minimal_cell_diameter(*triangulation),
       this->simulation_parameters.boundary_conditions_cahn_hilliard));
 
   // Core assembler
@@ -98,9 +94,7 @@ CahnHilliard<dim>::setup_assemblers()
        .epsilon_set_method == Parameters::EpsilonSetMethod::manual) ?
       this->simulation_parameters.multiphysics.cahn_hilliard_parameters
         .epsilon :
-      GridTools::minimal_cell_diameter(*triangulation) *
-        this->simulation_parameters.dimensionality
-          .cahn_hilliard_epsilon_scaling));
+      GridTools::minimal_cell_diameter(*triangulation)));
 }
 
 template <int dim>
