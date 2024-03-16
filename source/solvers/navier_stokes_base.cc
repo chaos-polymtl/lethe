@@ -104,8 +104,7 @@ NavierStokesBase<dim, VectorType, DofsType>::NavierStokesBase(
         dim,
         FE_Q<dim>(p_nsparam.fem_parameters.pressure_order),
         1);
-      mapping = std::make_shared<MappingQ<dim>>(
-        velocity_fem_degree, simulation_parameters.fem_parameters.qmapping_all);
+      mapping         = std::make_shared<MappingQ<dim>>(velocity_fem_degree);
       cell_quadrature = std::make_shared<QGauss<dim>>(number_quadrature_points);
       face_quadrature =
         std::make_shared<QGauss<dim - 1>>(number_quadrature_points);

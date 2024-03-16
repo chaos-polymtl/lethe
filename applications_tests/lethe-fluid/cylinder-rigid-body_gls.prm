@@ -22,7 +22,6 @@ end
 subsection FEM
   set velocity order = 1
   set pressure order = 1
-  set qmapping all   = false
 end
 
 #---------------------------------------------------

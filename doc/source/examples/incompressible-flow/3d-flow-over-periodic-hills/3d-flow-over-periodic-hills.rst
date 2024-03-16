@@ -192,7 +192,7 @@ The FEM subsection specifies the order of the elements used for both velocity an
       set pressure order = 1
     end
 
-For this example we simply consider Q1-Q1 elements. However, it can also be run using Q2-Q2 elements. In that case, it is important to remember to add the ``set qmapping all = true`` line after the velocity and pressure orders.
+For this example we simply consider Q1-Q1 elements. However, it can also be run using Q2-Q2 elements.
 
 Non-linear Solver
 ~~~~~~~~~~~~~~~~~
