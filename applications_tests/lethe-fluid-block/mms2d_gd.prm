@@ -45,8 +45,6 @@ subsection FEM
   set velocity order = 2
   # interpolation order pressure
   set pressure order = 1
-  # Apply high order mapping everywhere
-  set qmapping all = false
 end
 
 #---------------------------------------------------

@@ -23,7 +23,6 @@ end
 subsection FEM
   set velocity order = 2
   set pressure order = 1
-  set qmapping all   = true
 end
 
 #---------------------------------------------------

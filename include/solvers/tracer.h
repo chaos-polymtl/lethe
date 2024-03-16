@@ -84,8 +84,7 @@ public:
         // Usual case, for quad/hex meshes
         fe = std::make_shared<FE_Q<dim>>(
           simulation_parameters.fem_parameters.tracer_order);
-        mapping = std::make_shared<MappingQ<dim>>(
-          fe->degree, simulation_parameters.fem_parameters.qmapping_all);
+        mapping         = std::make_shared<MappingQ<dim>>(fe->degree);
         cell_quadrature = std::make_shared<QGauss<dim>>(fe->degree + 1);
       }
 

@@ -112,11 +112,9 @@ public:
           FE_Q<dim>(
             simulation_parameters.fem_parameters.potential_cahn_hilliard_order),
           1);
-        mapping = std::make_shared<MappingQ<dim>>(
-          std::max(
-            simulation_parameters.fem_parameters.phase_cahn_hilliard_order,
-            simulation_parameters.fem_parameters.potential_cahn_hilliard_order),
-          simulation_parameters.fem_parameters.qmapping_all);
+        mapping         = std::make_shared<MappingQ<dim>>(std::max(
+          simulation_parameters.fem_parameters.phase_cahn_hilliard_order,
+          simulation_parameters.fem_parameters.potential_cahn_hilliard_order));
         cell_quadrature = std::make_shared<QGauss<dim>>(
           std::max(
             simulation_parameters.fem_parameters.phase_cahn_hilliard_order,
