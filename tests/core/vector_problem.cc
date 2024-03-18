@@ -49,8 +49,6 @@
 void
 test()
 {
-  MPI_Comm mpi_communicator(MPI_COMM_WORLD);
-  
   Triangulation<3> tria(
     typename Triangulation<3>::MeshSmoothing(
       Triangulation<3>::smoothing_on_refinement |
@@ -59,7 +57,7 @@ test()
   GridGenerator::hyper_cube(tria, -1, 1);
   DoFHandler<3> dof_handler(tria);
     
-  FESystem<3> fe(FE_Q<3>(2), 3, FE_Q<3>(1), 1);
+  FESystem<3> fe(FE_Q<3>(1), 3, FE_Q<3>(1), 1);
   
   dof_handler.distribute_dofs(fe);
   
@@ -79,11 +77,9 @@ test()
         for (unsigned int i = 0; i < dofs_per_cell; ++i)
         {
           const auto comp_i = fe.system_to_component_index(i).first;
+
+          cell_dummy_solution(i) = 1.0*(float(comp_i)+1);
           
-          if (comp_i < 3)
-          {
-            cell_dummy_solution(i) = 1.0*(float(comp_i)+1);
-          }
         }
         
        cell->get_dof_indices(local_dof_indices);
@@ -100,32 +96,35 @@ test()
   ComponentMask pressure_mask = fe.component_mask(pressure);
   
   
-  std::vector<IndexSet> index_set = DoFTools::locally_owned_dofs_per_component(dof_handler, velocity_mask); 
+  std::vector<IndexSet> index_set_velocity = DoFTools::locally_owned_dofs_per_component(dof_handler, velocity_mask); 
+  std::vector<IndexSet> index_set_pressure = DoFTools::locally_owned_dofs_per_component(dof_handler, pressure_mask); 
   
-  Vector<double> velocity_solution(3*index_set[0].n_elements());	
+  Vector<double> velocity_solution(3*index_set_velocity[0].n_elements());	
+  Vector<double> pressure_solution(index_set_velocity[0].n_elements());
   
   unsigned int k = 0;
   for (unsigned int d = 0; d < 3; ++d)
-  {
+  {  
+    unsigned int index_set_velocity_size = index_set_velocity[d].n_elements();
     
-    unsigned int index_set_size = index_set[d].n_elements();
-    
-    std::cout << "IndexSet comp " << d << " size = " << index_set_size << std::endl;
-    
-    for (auto j = index_set[d].begin(); j !=index_set[d].end(); j++, k++)
+    for (auto j = index_set_velocity[d].begin(); j !=index_set_velocity[d].end(); j++, k++)
     {
       velocity_solution[k] = dummy_solution[*j];
-      
-      std::cout << "DoF index = " <<  *j << " dummy_velocity = " << velocity_solution[k] <<'\n';
     }
   }
   
-  for (unsigned int i = 0; i < 3*index_set[0].n_elements(); ++i)
-  {
-    auto comp_i = i/index_set[0].n_elements();
-    
-    std::cout << "velocity comp_i " <<  comp_i << " = " << velocity_solution[i] <<'\n';
-  }
+  k = 0;
+  for (auto j = index_set_pressure[3].begin(); j !=index_set_pressure[3].end(); j++, k++)
+    {
+      pressure_solution[k] = dummy_solution[*j];
+    }
+  
+  deallog << "||u||_L2 : " << velocity_solution.l2_norm() << std::endl;
+  deallog << "||u||_Linfty : " << velocity_solution.linfty_norm() << std::endl;
+  
+  deallog << "||p||_L2 : " << pressure_solution.l2_norm() << std::endl;
+  deallog << "||p||_Linfty : " << pressure_solution.linfty_norm() << std::endl;
+
 }
 
 int
