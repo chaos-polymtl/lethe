@@ -1842,6 +1842,9 @@ VolumeOfFluid<dim>::post_mesh_adaptation()
       this->previous_solutions[i] = tmp_previous_solution;
     }
 
+  // Apply filter to phase fraction
+  apply_phase_filter();
+
   // PFG and curvature
   if (this->simulation_parameters.multiphysics.vof_parameters
         .surface_tension_force.enable)
@@ -1945,6 +1948,9 @@ VolumeOfFluid<dim>::read_checkpoint()
     {
       this->previous_solutions[i] = distributed_previous_solutions[i];
     }
+
+  // Apply filter to phase fraction
+  apply_phase_filter();
 
   // Deserialize tables
   const std::string prefix =
