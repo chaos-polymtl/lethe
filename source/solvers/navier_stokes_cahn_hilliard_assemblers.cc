@@ -106,8 +106,8 @@ GLSNavierStokesCahnHilliardAssemblerCore<dim>::assemble_matrix(
       auto strong_residual =
         density_eq * velocity_gradient * velocity + pressure_gradient -
         dynamic_viscosity_eq * velocity_laplacian -
-        dynamic_viscosity_eq * grad_div_velocity - density_eq * force -
-        // velocity_gradient * relative_diffusive_flux -
+        dynamic_viscosity_eq * grad_div_velocity - density_eq * force +
+        velocity_gradient * relative_diffusive_flux -
         potential_value * phase_order_gradient + strong_residual_vec[q];
 
       std::vector<Tensor<1, dim>> grad_phi_u_j_x_velocity(n_dofs);
@@ -131,7 +131,8 @@ GLSNavierStokesCahnHilliardAssemblerCore<dim>::assemble_matrix(
           strong_jacobian_vec[q][j] +=
             (density_eq * velocity_gradient * phi_u_j +
              density_eq * grad_phi_u_j * velocity + grad_phi_p_j -
-             dynamic_viscosity_eq * laplacian_phi_u_j);
+             dynamic_viscosity_eq * laplacian_phi_u_j
+             + grad_phi_u_j*relative_diffusive_flux);
 
           // Store these temporary products in auxiliary variables for speed
           grad_phi_u_j_x_velocity[j]     = grad_phi_u_j * velocity;
@@ -171,9 +172,9 @@ GLSNavierStokesCahnHilliardAssemblerCore<dim>::assemble_matrix(
                 density_eq * grad_phi_u_j_x_velocity[j] * phi_u_i -
                 div_phi_u_i * phi_p_j +
                 // Continuity terms
-                phi_p_i * div_phi_u_j;
+                phi_p_i * div_phi_u_j
               // Relative diffusive flux terms
-              //- grad_phi_u_j * relative_diffusive_flux * phi_u_i;
+              + grad_phi_u_j * relative_diffusive_flux * phi_u_i;
 
               // PSPG GLS Term
               local_matrix_ij += tau / density_eq * (strong_jac * grad_phi_p_i);
@@ -297,8 +298,8 @@ GLSNavierStokesCahnHilliardAssemblerCore<dim>::assemble_rhs(
       auto strong_residual =
         density_eq * velocity_gradient * velocity + pressure_gradient -
         dynamic_viscosity_eq * velocity_laplacian -
-        dynamic_viscosity_eq * grad_div_velocity - density_eq * force -
-        // velocity_gradient * relative_diffusive_flux -
+        dynamic_viscosity_eq * grad_div_velocity - density_eq * force +
+        velocity_gradient * relative_diffusive_flux -
         potential_value * phase_order_gradient + strong_residual_vec[q];
 
       // Assembly of the right-hand side
@@ -322,7 +323,7 @@ GLSNavierStokesCahnHilliardAssemblerCore<dim>::assemble_rhs(
              // Continuity equation
              - velocity_divergence * phi_p_i
              // Relative diffusive flux term (Cahn-Hilliard)
-             //+ velocity_gradient * relative_diffusive_flux * phi_u_i
+             - velocity_gradient * relative_diffusive_flux * phi_u_i
              // Surface tension term
              + potential_value * phi_u_i * phase_order_gradient) *
             JxW;
