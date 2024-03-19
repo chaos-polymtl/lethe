@@ -71,14 +71,9 @@ subsection insertion info
   set insertion method                               = volume
   set inserted number of particles at each time step = 600
   set insertion frequency                            = 10000
-  set insertion box minimum x                        = 0.0025
-  set insertion box minimum y                        = 0.0025
-  set insertion box minimum z                        = 0.0025
-  set insertion box maximum x                        = 0.597
-  set insertion box maximum y                        = 0.340
-  set insertion box maximum z                        = 0.397
+  set insertion box points coordinates               = 0.0025, 0.0025, 0 : 0.597, 0.340, 0
   set insertion distance threshold                   = 1.075
-  set insertion maximum offset                  = 0.025
+  set insertion maximum offset                       = 0.025
   set insertion prn seed                             = 19
 end
 
@@ -92,12 +87,11 @@ subsection restart
   set frequency  = 14000
 
   # Output/input files
-  set filename   = restart
+  set filename = restart
 
   # Restarting parameter
-  set restart    = false
+  set restart = false
 end
-
 
 #---------------------------------------------------
 # Mesh
