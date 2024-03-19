@@ -68,11 +68,6 @@ GLSNavierStokesCahnHilliardAssemblerCore<dim>::assemble_matrix(
       const double potential_value =
         scratch_data.chemical_potential_cahn_hilliard_values[q];
 
-      const Tensor<1, dim> relative_diffusive_flux =
-        -density_diff * scratch_data.cahn_hilliard_mobility[q] *
-        scratch_data.chemical_potential_cahn_hilliard_gradients[q];
-
-
       // Forcing term
       Tensor<1, dim> force = scratch_data.force[q];
 
@@ -106,8 +101,7 @@ GLSNavierStokesCahnHilliardAssemblerCore<dim>::assemble_matrix(
       auto strong_residual =
         density_eq * velocity_gradient * velocity + pressure_gradient -
         dynamic_viscosity_eq * velocity_laplacian -
-        dynamic_viscosity_eq * grad_div_velocity - density_eq * force +
-        velocity_gradient * relative_diffusive_flux -
+        dynamic_viscosity_eq * grad_div_velocity - density_eq * force -
         potential_value * phase_order_gradient + strong_residual_vec[q];
 
       std::vector<Tensor<1, dim>> grad_phi_u_j_x_velocity(n_dofs);
@@ -131,8 +125,7 @@ GLSNavierStokesCahnHilliardAssemblerCore<dim>::assemble_matrix(
           strong_jacobian_vec[q][j] +=
             (density_eq * velocity_gradient * phi_u_j +
              density_eq * grad_phi_u_j * velocity + grad_phi_p_j -
-             dynamic_viscosity_eq * laplacian_phi_u_j
-             + grad_phi_u_j*relative_diffusive_flux);
+             dynamic_viscosity_eq * laplacian_phi_u_j);
 
           // Store these temporary products in auxiliary variables for speed
           grad_phi_u_j_x_velocity[j]     = grad_phi_u_j * velocity;
@@ -172,9 +165,7 @@ GLSNavierStokesCahnHilliardAssemblerCore<dim>::assemble_matrix(
                 density_eq * grad_phi_u_j_x_velocity[j] * phi_u_i -
                 div_phi_u_i * phi_p_j +
                 // Continuity terms
-                phi_p_i * div_phi_u_j
-              // Relative diffusive flux terms
-              + grad_phi_u_j * relative_diffusive_flux * phi_u_i;
+                phi_p_i * div_phi_u_j;
 
               // PSPG GLS Term
               local_matrix_ij += tau / density_eq * (strong_jac * grad_phi_p_i);
@@ -230,11 +221,6 @@ GLSNavierStokesCahnHilliardAssemblerCore<dim>::assemble_rhs(
         scratch_data.phase_order_cahn_hilliard_gradients[q];
       const double potential_value =
         scratch_data.chemical_potential_cahn_hilliard_values[q];
-
-      const Tensor<1, dim> relative_diffusive_flux =
-        -density_diff * scratch_data.cahn_hilliard_mobility[q] *
-        scratch_data.chemical_potential_cahn_hilliard_gradients[q];
-
 
       // Gather into local variables the relevant fields for velocity
       const Tensor<1, dim> velocity    = scratch_data.velocity_values[q];
@@ -298,8 +284,7 @@ GLSNavierStokesCahnHilliardAssemblerCore<dim>::assemble_rhs(
       auto strong_residual =
         density_eq * velocity_gradient * velocity + pressure_gradient -
         dynamic_viscosity_eq * velocity_laplacian -
-        dynamic_viscosity_eq * grad_div_velocity - density_eq * force +
-        velocity_gradient * relative_diffusive_flux -
+        dynamic_viscosity_eq * grad_div_velocity - density_eq * force -
         potential_value * phase_order_gradient + strong_residual_vec[q];
 
       // Assembly of the right-hand side
@@ -322,8 +307,6 @@ GLSNavierStokesCahnHilliardAssemblerCore<dim>::assemble_rhs(
              density_eq * force * phi_u_i
              // Continuity equation
              - velocity_divergence * phi_p_i
-             // Relative diffusive flux term (Cahn-Hilliard)
-             - velocity_gradient * relative_diffusive_flux * phi_u_i
              // Surface tension term
              + potential_value * phi_u_i * phase_order_gradient) *
             JxW;
