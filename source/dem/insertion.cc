@@ -171,16 +171,16 @@ Insertion<dim>::calculate_insertion_domain_maximum_particle_number(
       switch (axis)
         {
           case 0:
-            axis_min[0] = insertion_information.x_min;
-            axis_max[0] = insertion_information.x_max;
+            axis_min[0] = insertion_information.insertion_box_point_1(0);
+            axis_max[0] = insertion_information.insertion_box_point_2(0);
             break;
           case 1:
-            axis_min[1] = insertion_information.y_min;
-            axis_max[1] = insertion_information.y_max;
+            axis_min[1] = insertion_information.insertion_box_point_1(1);
+            axis_max[1] = insertion_information.insertion_box_point_2(1);
             break;
           case 2:
-            axis_min[2] = insertion_information.z_min;
-            axis_max[2] = insertion_information.z_max;
+            axis_min[2] = insertion_information.insertion_box_point_1(2);
+            axis_max[2] = insertion_information.insertion_box_point_2(2);
             break;
           default:
             AssertThrow(false,

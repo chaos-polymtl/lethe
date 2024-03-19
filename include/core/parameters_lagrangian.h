@@ -184,7 +184,7 @@ namespace Parameters
       unsigned int axis_0, axis_1, axis_2;
 
       // Insertion box info (xmin,xmax,ymin,ymax,zmin,zmax)
-      double x_min, y_min, z_min, x_max, y_max, z_max;
+      Point<3> insertion_box_point_1, insertion_box_point_2;
 
       // Insertion initial conditions
       double vel_x, vel_y, vel_z, omega_x, omega_y, omega_z;
