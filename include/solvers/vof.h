@@ -217,7 +217,7 @@ public:
    * the phase of interest.
    */
   template <typename VectorType>
-  Tensor<1,dim>
+  Tensor<1, dim>
   calculate_momentum(const GlobalVectorType          &solution,
                      const VectorType                &current_solution_fd,
                      const Parameters::FluidIndicator monitored_fluid);

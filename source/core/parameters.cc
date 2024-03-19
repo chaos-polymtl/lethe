@@ -1828,7 +1828,6 @@ namespace Parameters
         "mass_conservation_information",
         Patterns::FileName(),
         "Name of mass conservation output file in VOF simulations");
-
     }
     prm.leave_subsection();
   }
