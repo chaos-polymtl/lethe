@@ -98,7 +98,7 @@ public:
   get_local_evaluation_point() = 0;
   virtual VectorType &
   get_newton_update() = 0;
-  virtual std::string
+  virtual void
   get_newton_update_norms_output(const unsigned int display_precision) = 0;
   virtual VectorType &
   get_present_solution() = 0;

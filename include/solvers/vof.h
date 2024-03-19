@@ -379,10 +379,10 @@ public:
   {
     return newton_update;
   }
-  std::string
+  void
   get_newton_update_norms_output(const unsigned int display_precision) override
   {
-    return "boop";
+    this->pcout << "boop" << std::endl;
   }
   GlobalVectorType &
   get_present_solution() override

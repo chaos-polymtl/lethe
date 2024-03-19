@@ -148,7 +148,7 @@ protected:
   {
     return newton_update;
   };
-  virtual std::string
+  virtual void
   get_newton_update_norms_output(const unsigned int display_precision) override;
   virtual VectorType &
   get_present_solution() override
