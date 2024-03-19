@@ -1408,8 +1408,6 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess_fd(bool firstIter)
                                 boundary_id,
                                 *this->face_quadrature,
                                 *this->mapping);
-          this->flow_rate_table.add_value(
-            "time", simulation_control->get_current_time());
 
           this->flow_rate_table.add_value("flow-rate-" +
                                             std::to_string(boundary_id),
