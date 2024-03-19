@@ -835,7 +835,6 @@ VolumeOfFluid<dim>::postprocess(bool first_iteration)
             {
               std::string fluid_id("");
 
-
               if (fluid_indicators[i] == Parameters::FluidIndicator::fluid1)
                 {
                   fluid_id = "fluid_1";
