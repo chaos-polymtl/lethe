@@ -7,7 +7,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Added
 
-- MINOR The mass conservation feature of the VOF model now also monitors the momentum of both phases. This should be useful for some cases and to improve the sharpening mechanism. [#1073](https://github.com/lethe-cfd/lethe/pull/1073)
+- MINOR The mass conservation feature of the VOF model now also monitors the momentum of both phases. This should be useful for some cases and improve the sharpening mechanism. [#1073](https://github.com/lethe-cfd/lethe/pull/1073)
 
 ## [Master] - 2024-03-16
 
