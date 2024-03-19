@@ -206,6 +206,23 @@ public:
                             const Parameters::FluidIndicator monitored_fluid);
 
   /**
+   * @brief Calculates the momentum for a given fluid phase.
+   * Used for conservation monitoring.
+   *
+   * @param solution VOF solution (phase fraction)
+   *
+   * @param current_solution_fd current solution for the fluid dynamics
+   *
+   * @param monitored_fluid Fluid indicator (fluid0 or fluid1) corresponding to
+   * the phase of interest.
+   */
+  template <typename VectorType>
+  Tensor<1,dim>
+  calculate_momentum(const GlobalVectorType          &solution,
+                     const VectorType                &current_solution_fd,
+                     const Parameters::FluidIndicator monitored_fluid);
+
+  /**
    * @brief Calculates the barycenter of the fluid and its velocity
    *
    * @param solution VOF solution
