@@ -6,7 +6,7 @@ This guide provides a brief overview of the core functionalities of the Fidelity
 
 - :ref:`Installation <installation>`
 - :ref:`Basics <basics>`
-- :ref:`Make your first 2D Geometry <making_2D_geo>`
+- :ref:`Making your first 2D Geometry <making_2D_geo>`
 - :ref:`Moving to 3D <moving_3d>`
 
 
@@ -16,33 +16,32 @@ This guide provides a brief overview of the core functionalities of the Fidelity
 Installation
 --------------------------
 
-Fidelity Pointwise is a mesh generation proprietary software. To download it, please refer to the
-official instructions provided by the Fidelity Pointwise documentation or to the designated person in your group.
+Fidelity Pointwise is a proprietary mesh generation software. To download it, please refer to the official instructions provided by the Fidelity `Pointwise documentation <https://www.pointwise.com/doc/user-manual/>`_ or to the designated person in your group.
 
 For Linux users, start by extracting the .tgz file that holds the software. Open a terminal and move to the directory where you extracted the file. Make the file executable:
 
 .. code-block:: text
     
-    chmod +x your_file.sh
+    chmod +x <your_file>.sh
 
 Execute the installation file using the following command:
 
 .. code-block:: text
 
-    ./your_file.sh
+    ./<your_file>.sh
 
 At the end of the installation, add the following to your ``.bashrc`` system file:
 
 .. code-block:: text
 
     #Pointwise license
-    export CDS_LIC_FILE=license_server_ip_adress
+    export CDS_LIC_FILE=<your_license_server_ip_adress>
     export LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libstdc++.so.6
 
     #Launch pointwise
     alias pointwise=~/Fidelity/Pointwise/Pointwise2023.1.1/pointwise
 
-Make sure to modify the ``license_server_ip_adress`` with the actual license server IP address so it can be accessed by the software. After these modifications, you can launch pointwise by entering ``pointwise`` in the terminal.
+Make sure to modify ``your_license_server_ip_adress`` with the actual license server IP address so it can be accessed by the software. After these modifications, you can launch pointwise by entering ``pointwise`` in the terminal.
 
 .. _basics: 
 
@@ -50,28 +49,41 @@ Make sure to modify the ``license_server_ip_adress`` with the actual license ser
 Basics
 --------------------------
 
-First, let us get familiar with some basic controls and some important functionalities of the interface.
+First, let us familiarize ourselves with some basic controls and important interface functionalities.
 
 ----
 
 Moving Around
 --------------
 
-To move around, use the ``shift + right-click`` and ``ctrl + right-click``. The first one lets you linearly shift the geometry while the second one lets you rotate the geometry around the axis.
+To move around, use:
+
+- ``shift + right-click``: Linearly translate the geometry.
+- ``ctrl + right-click``: Rotate the geometry around the currently defined axis.
+
 
 ----
 
 Entities
 ----------
 
-The entities are the different objects that can be created using Pointwise. Only the **blocks**, **domains** and **connectors** are specifically used to create meshes. The other entities are employed in specific cases but are not necessary to build meshes. Some of them will be revisited in the last section of this tutorial.
+The **Entities** are the different objects that can be created using Pointwise. They are shown below:
 
 .. image:: images/entities.png
     :align: center
 
-To create a 3D mesh, it is first essential to create the structure of the geometry using **connectors**. These **connectors** can then be assembled as 2D **domains** which can be used to generate the 3D **blocks**. An example of the three different entities is displayed in the image below.
+The principal ones are:
 
-.. image:: images/block_domain_connector.png
+- **Connectors**: 1D grid element that is the foundation of all other grid hierarchies.
+- **Domains**: 2D grid element assembled using connectors.
+- **Blocks**: 3D grid element assembled using domains.
+
+ .. warning::
+    Only the **blocks**, **domains** and **connectors** are specifically used to create meshes. The other entities are employed in specific cases. See the `Pointwise manual <https://www.pointwise.com/doc/user-manual/index.html>`_ for more information.
+
+An example of the three principal entities is displayed in the image below.
+
+.. image:: images/connector_domain_block.png
     :align: center
 
 ----
@@ -98,19 +110,34 @@ Here is a short description of the different menus located on the top of the gra
 Toolbar
 ------------------
 
-Some functionalities contained in the menu bars are easily accessible through the toolbar. Here are some of the most valuable ones.
+Some functionalities contained in the menu bars are easily accessible through the toolbar. Here are some of the most used ones.
 
-The **Two Points Curve** and the **Draw Curve** displayed below at the left can be used to create connectors. The symbol of the wrench over the domain and block on the right are shortcuts to **Assemble Domains and Blocks** quickly.
+The **Two Points Curve** and the **Draw Curve** displayed below can be used to create connectors: 
 
-.. image:: images/toolbar_create.png
-    :align: center
-    :width: 500px
+.. centered::
+    |pic1|  |pic2|
 
-The three boxes displayed below are used to dimension connectors and to distribute the points along them. The number of points on a connector can be specified in the first box. The average distance between the points can be defined using the second one while the last entry can be employed with **Spacing Constraints** to enforce a non-uniform distribution of points on a connector.
+.. |pic1| image:: images/icon_two_pt_curve.png
+.. |pic2| image:: images/icon_curve.png
+
+The symbol of the wrench over the domain and block are shortcuts to **Assemble Domains** and **Assemble Blocks**:
+
+.. centered::
+    |pic3|  |pic4|
+
+.. |pic3| image:: images/icon_assemble_doms.png
+.. |pic4| image:: images/icon_assemble_blocks.png
+
+
+The three boxes displayed below are used to dimension connectors and to distribute the points along them:
 
 .. image:: images/toolbar_grid.png
     :align: center
     :width: 500px
+
+- Left box: Specify the number of points on a connector. 
+- Middle box: Specify the average distance between points on a connector
+- Right box: Enforce a non-uniform distribution of points on a connector.
 
 The **mask** is situated at the extreme right of the software's window. It lets you choose which entities are selectable.
 
@@ -128,7 +155,7 @@ Here is a list of some keyboard shortcuts:
 - ``ctrl + k``: Assemble Domains (Assemble connectors to create a 2D mesh)
 - ``ctrl + shift + k``: Assemble Blocks (Assemble domains to create a 3D mesh)
 - ``ctrl + f``: Next Edge (Confirm the edge selection of the quadrilateral)
-- ``ctrl + j``: join (join two connectors)
+- ``ctrl + j``: Join (join two connectors)
 - ``ctrl + q``: Split (split a connector)
 - ``ctrl + shift + right-click``: Change axis (Snap the position of the rotational axis to a new point)
 - ``middle-click``: Get the current position (get position and distance from the last click)
@@ -138,9 +165,9 @@ Here is a list of some keyboard shortcuts:
 
 .. _making_2D_geo: 
 
-----------------------------
-Make your first 2D Geometry
-----------------------------
+--------------------------------
+Making your first 2D Geometry
+--------------------------------
 
 This section will give you a good idea of the tools that can be used to create the following 2D mesh.
 
@@ -155,10 +182,12 @@ Assembling the geometry
 
 - Select the **2 Point Curve** symbol in the shortcut bar at the top of the pointwise window.
 
-- Make sure the entity type is set to **Connector** (the green curved line). A majority of the meshes can be assembled by only using connectors. **Database entities** (the pink squiggly rectangle) are your worst enemies if you are not using imported CAD geometries. 
+- Make sure the entity type is set to **Connector** (the green curved line). 
 
 - In the XYZ box, enter the coordinates **0 0 0** of the first point of the **2 Point Curve** and press enter. Reselect the XYZ box. Enter the coordinates **0 1 0** of the second point of the **2 Point Curve** and press enter again. This will create the left wall of our geometry.
 
+.. warning::
+    A majority of the meshes can be assembled by only using connectors. **Database entities** (the pink squiggly rectangle) are your worst enemies if you are not using imported CAD geometries. 
 
 At this point, you should have a vertical **connector** that starts from the origin (0, 0, 0) to the point (0, 1, 0) as is displayed in the image below.
 
@@ -179,7 +208,7 @@ The final geometry should look like this.
 
 Few geometries are nice convex quadrilaterals. Concave shapes generally lead to low-quality meshes. It is therefore ideal to separate the geometry into trapezoidal or rectangular sections that will facilitate the meshing process. This is exactly the purpose of the last two created connectors. Separating the weird elbow into squares will improve the overall quality of the generated mesh.
 
-The subsequent step involves dividing the long connectors positioned on the top and left sides to ensure their contribution is limited to the meshing of a single subsection of the geometry.
+The subsequent step involves dividing the top and left long connectors. This is done to ensure they do not interfere with the meshing of the other regions.
 
 - Select the top connector and go to the option **Edit** and **Split** at the top of the page. Enter 50 in the **Percent of Length** to split the connector in half. Repeat the same process for the left connector. Without this step, the meshing process is impossible.
 
@@ -217,7 +246,7 @@ By default, the created connectors have no dimension. However, this is the metri
     - **Next Edge** was not selected before clicking on the next side of the square.
     - The connectors are dimensionless.
     - A line is not correctly connected to its neighboring line.
-    - The dimension of the connector on the opposite side do not match.
+    - The dimensions of the connector on the opposite side do not match.
     - A line was not split when the geometry was separated into subsections. 
 
 
@@ -247,9 +276,15 @@ Assigning the boundary conditions and exporting the mesh
  
 The boundary conditions identification numbers are chosen by Pointwise. The user has no control over the software's decision. The boundary condition IDs can be retrieved at the end of the ``.msh`` file generated. In the present case, the boundary IDs would correspond to 2 for the inlet, 3 for the outlet and 4 for all the walls.
 
-.. image:: images/mesh_file.png
-    :align: center
-    :width: 400px
+.. code-block:: text
+    
+    $PhysicalNames
+    4
+    2 1 "Unspecified"
+    1 2 "inlet"
+    1 3 "outlet"
+    1 4 "walls"
+    $EndPhysicalNames
 
 
 .. _moving_3d: 
@@ -260,7 +295,7 @@ Moving to 3D
 
 This section will give you an idea of the tools that can be used to create the following 3D mesh.
 
-.. image:: images/final_mesh_3d2.png
+.. image:: images/final_mesh_3d.png
     :align: center
 
 ----
@@ -277,10 +312,13 @@ The best way to create 3D **block** meshes from 2D geometries is by using extrus
 .. image:: images/translation.png
     :align: center
 
-The last action should have translated the geometry from 0.5 in the x direction. This translation is needed to avoid the creation of tetrahedral cells in the center of the mesh during the rotational extrusion. 
+The last action should have translated the geometry from 0.5 in the x direction.
+
+.. warning::
+    Lethe cannot solve problems containing tetrahedral cells. This translation is needed to avoid their creation in the center during the rotational extrusion. 
 
 - In the **Create** menu, select **Extrude** and **Rotate**
-- click **Done** after the first menu appears. Enter the desired number of cells in the **Steps** box. 50 is used in this example.
+- Click **Done** after the first menu appears. Enter the desired number of cells in the **Steps** box. 50 is used in this example.
 - Insert 360 in the **Angle** box.
 - Select the **Point and Direction** option. Insert the point **0 0 0** in the **XYZ** box and choose the Y direction.
 - Click the **Run** button on the top.  
@@ -290,12 +328,12 @@ The last action should have translated the geometry from 0.5 in the x direction.
 
 The following mesh should be obtained at the end of these steps.
 
-.. image:: images/final_mesh_3d.png
+.. image:: images/final_mesh_no_center.png
     :align: center
 
 ----
 
-filling the center
+Filling the center
 --------------------
 
 An initial translation makes sure no tetrahedral is created at the center of the mesh. The interior of the inlet must however be filled.
@@ -306,7 +344,7 @@ The next step will guarantee the hole created is filled.
 .. image:: images/split_3d.png
     :align: center
 
-- Generate a square on the bottom of the hole of the geometry with the **2 Point Curve**. The four coordinates of the square are (0.25, 0, 0), (-0.25, 0, 0), (0, 0, 0.25) and (0, 0, -0.25)
+- Generate a square on the bottom of the hole of the geometry with the **2 Point Curve**. The four coordinates of the corner of the square are (0.25, 0, 0), (-0.25, 0, 0), (0, 0, 0.25) and (0, 0, -0.25)
 - Connect the edges of the square to the lowest points that appeared after the splitting of the inside connectors.
 
 The image below represents the current state of the geometry. 
