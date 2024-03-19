@@ -209,11 +209,11 @@ public:
    * @brief Calculates the momentum for a given fluid phase.
    * Used for conservation monitoring.
    *
-   * @param solution VOF solution (phase fraction)
+   * @param[in] solution VOF solution (phase fraction)
    *
-   * @param current_solution_fd current solution for the fluid dynamics
+   * @param[in] current_solution_fd current solution for the fluid dynamics
    *
-   * @param monitored_fluid Fluid indicator (fluid0 or fluid1) corresponding to
+   * @param[in] monitored_fluid Fluid indicator (fluid0 or fluid1) corresponding to
    * the phase of interest.
    */
   template <typename VectorType>
