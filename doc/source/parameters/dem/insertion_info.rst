@@ -22,9 +22,7 @@ In this subsection, insertion methods which are ``volume``, ``plane``, ``list`` 
 
     set insertion box points coordinates               = 0.0, 0.0, 0.0 : 1.0, 1.0, 1.0
 
-    set insertion first direction                      = 0
-    set insertion second direction                     = 1
-    set insertion third direction                      = 2
+    set insertion order of direction                   = 0, 1, 2
 
     set velocity x                                     = 0.0
     set velocity y                                     = 0.0
@@ -79,7 +77,7 @@ The ``volume`` insertion method uses an insertion box where particles will be in
 .. note::
     We recommend that the defined insertion box have at least a distance of :math:`{d^{max}_p}` (maximum diameter of particles) from the triangulation boundaries. Otherwise, particles may have an overlap with the triangulation walls in the insertion.
 
-* The ``insertion first direction``, ``insertion second direction``, and ``insertion third direction`` parameters define the directions of insertion. For example, if ``insertion first direction`` = 0, ``insertion second direction`` = 1, and ``insertion third direction`` = 2, the particles are inserted in priority in the x, in y, and then in z directions. This is the default configuration. This is useful to specify the insertion directions to cover a specific area of the insertion box with the first and second direction parameters.
+* The ``insertion order of direction`` parameter defines the directions of insertion. For example, if the parameter is equal to ``0, 1, 2``, the particles are inserted in priority in the x, in y, and then in z directions. This is the default configuration. This is useful to specify the insertion directions to cover a specific area of the insertion box with the first and second direction parameters.
 
 * The ``velocity x``, ``velocity y``, and ``velocity z`` determine the initial translational velocity (in :math:`\frac{m}{s}`) at which particles are inserted in the x, y, and z directions, respectively.
 
