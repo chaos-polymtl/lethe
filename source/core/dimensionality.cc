@@ -20,10 +20,10 @@ namespace Parameters
     thermal_conductivity_scaling   = 1. / M / L * T * T * T * theta;
     enthalpy_scaling               = 1. / M / L / L * T * T;
     diffusivity_scaling            = 1. / L / L * T;
-    thermal_expansion_scaling      = T;
+    thermal_expansion_scaling      = 1. * T;
     surface_tension_scaling        = 1. * T * T / M;
     cahn_hilliard_mobility_scaling = 1. * M / L / L / L / T;
-    cahn_hilliard_epsilon_scaling  = 1.0 / L;
+    cahn_hilliard_epsilon_scaling  = 1. / L;
   }
 
   void

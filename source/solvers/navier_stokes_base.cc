@@ -1498,7 +1498,6 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess_fd(bool firstIter)
           if (this->simulation_parameters.post_processing.verbosity ==
               Parameters::Verbosity::verbose)
             {
-
               this->pcout << "Flow rate at boundary " +
                                std::to_string(boundary_id) + ": "
                           << std::setprecision(
