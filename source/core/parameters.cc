@@ -1821,7 +1821,7 @@ namespace Parameters
         "calculate mass conservation",
         "true",
         Patterns::Bool(),
-        "Enable calculation of the mass of both fluids in VOF simulations.");
+        "Enable calculation of the mass and momentum of both fluids in VOF simulations.");
 
       prm.declare_entry(
         "mass conservation name",
