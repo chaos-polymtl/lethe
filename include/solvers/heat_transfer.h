@@ -341,6 +341,12 @@ public:
   {
     return newton_update;
   }
+  
+  std::string
+  get_newton_update_norms_output(const unsigned int display_precision) override
+  {
+    return "boop";
+  }
 
   /**
    * @brief Getter method to access the private attribute

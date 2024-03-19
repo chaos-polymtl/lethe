@@ -139,6 +139,7 @@ NewtonNonLinearSolver<VectorType>::solve(const bool is_initial_step)
                             << "\tL^infty(dx) = "
                             << std::setprecision(this->params.display_precision)
                             << newton_update.linfty_norm() << std::endl;
+              solver->pcout << solver->get_newton_update_norms_output(this->params.display_precision) << std::endl;
             }
 
           // If it's not the first iteration of alpha check if the residual is

@@ -98,25 +98,24 @@ test()
   
   std::vector<IndexSet> index_set_velocity = DoFTools::locally_owned_dofs_per_component(dof_handler, velocity_mask); 
   std::vector<IndexSet> index_set_pressure = DoFTools::locally_owned_dofs_per_component(dof_handler, pressure_mask); 
-  
-  Vector<double> velocity_solution(3*index_set_velocity[0].n_elements());	
-  Vector<double> pressure_solution(index_set_velocity[0].n_elements());
+
+  Vector<double> velocity_solution(dof_handler.n_locally_owned_dofs());	
+  Vector<double> pressure_solution(dof_handler.n_locally_owned_dofs());
   
   unsigned int k = 0;
   for (unsigned int d = 0; d < 3; ++d)
   {  
-    unsigned int index_set_velocity_size = index_set_velocity[d].n_elements();
     
     for (auto j = index_set_velocity[d].begin(); j !=index_set_velocity[d].end(); j++, k++)
     {
-      velocity_solution[k] = dummy_solution[*j];
+      velocity_solution[*j] = dummy_solution[*j];
     }
   }
   
   k = 0;
   for (auto j = index_set_pressure[3].begin(); j !=index_set_pressure[3].end(); j++, k++)
     {
-      pressure_solution[k] = dummy_solution[*j];
+      pressure_solution[*j] = dummy_solution[*j];
     }
   
   deallog << "||u||_L2 : " << velocity_solution.l2_norm() << std::endl;

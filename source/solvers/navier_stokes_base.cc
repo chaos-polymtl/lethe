@@ -2484,6 +2484,83 @@ NavierStokesBase<dim, VectorType, DofsType>::
 }
 
 template <int dim, typename VectorType, typename DofsType>
+std::string
+NavierStokesBase<dim, VectorType, DofsType>::get_newton_update_norms_output(const unsigned int display_precision)
+{
+  if constexpr (std::is_same_v<VectorType, GlobalVectorType>)
+  {
+    FEValuesExtractors::Vector velocities(0);
+    FEValuesExtractors::Scalar pressure(dim);
+    
+    ComponentMask velocity_mask = fe->component_mask(velocities);
+    ComponentMask pressure_mask = fe->component_mask(pressure);
+    
+    
+    const std::vector<IndexSet> index_set_velocity = DoFTools::locally_owned_dofs_per_component(dof_handler, velocity_mask); 
+    const std::vector<IndexSet> index_set_pressure = DoFTools::locally_owned_dofs_per_component(dof_handler, pressure_mask);
+    
+    VectorType velocity_correction = init_temporary_vector();
+    VectorType pressure_correction = init_temporary_vector();
+    
+    double local_sum = 0.0;
+    double local_max = DBL_MIN;
+    
+    for (unsigned int d = 0; d < dim; ++d)
+    {  
+      for (auto j = index_set_velocity[d].begin(); j !=index_set_velocity[d].end(); j++)
+      {
+        double dof_newton_update = newton_update[*j];
+        
+        velocity_correction[*j] = dof_newton_update;
+        
+        local_sum += dof_newton_update*dof_newton_update;
+        
+        if (dof_newton_update > local_max)
+        {
+          local_max = dof_newton_update;
+        }
+      }
+    }
+    
+    double global_velocity_l2_norm = std::sqrt(Utilities::MPI::sum(local_sum, this->mpi_communicator));
+    double global_velocity_linfty_norm = Utilities::MPI::max(local_max, this->mpi_communicator);
+    
+    local_sum = 0.0;
+    local_max = DBL_MIN;
+      
+    for (auto j = index_set_pressure[dim].begin(); j !=index_set_pressure[dim].end(); j++)
+      {
+        double dof_newton_update = newton_update[*j];
+        
+        pressure_correction[*j] = dof_newton_update;
+        
+        local_sum += dof_newton_update*dof_newton_update;
+        
+        if (dof_newton_update > local_max)
+        {
+          local_max = dof_newton_update;
+        }
+      } 
+      
+    double global_pressure_l2_norm = std::sqrt(Utilities::MPI::sum(local_sum, this->mpi_communicator));
+    double global_pressure_linfty_norm = Utilities::MPI::max(local_max, this->mpi_communicator);
+    
+    std::string velocity_norms_output = "\t||du||_L2 = " + Utilities::to_string(velocity_correction.l2_norm()) + "\t||du||_Linfty = " + Utilities::to_string(velocity_correction.linfty_norm())  + "\n" + "\t||du||_L2 = " + Utilities::to_string(global_velocity_l2_norm) + "\t||du||_Linfty = " + Utilities::to_string(global_velocity_linfty_norm) + "\n";
+    
+    std::string pressure_norms_output = "\t||dp||_L2 = " + Utilities::to_string(pressure_correction.l2_norm(), 6) + "\t||dp||_Linfty = " + Utilities::to_string(pressure_correction.linfty_norm(), 6)  + "\n" + "\t||dp||_L2 = " + Utilities::to_string(global_pressure_l2_norm, 6) + "\t||dp||_Linfty = " + Utilities::to_string(global_pressure_linfty_norm, 6);
+    
+    return velocity_norms_output + pressure_norms_output;
+    
+  }
+  else
+  {
+    std::string correction_norms_output = "\t||dx||_L2 = " + Utilities::to_string(newton_update.l2_norm(), 6) + "\t||dx||_Linfty = " + Utilities::to_string(newton_update.linfty_norm(), 6);
+    
+    return correction_norms_output;
+  }
+};
+
+template <int dim, typename VectorType, typename DofsType>
 inline VectorType
 NavierStokesBase<dim, VectorType, DofsType>::init_temporary_vector()
 {
