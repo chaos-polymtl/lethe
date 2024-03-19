@@ -89,7 +89,7 @@ subsection insertion info
   set insertion method                               = non_uniform
   set inserted number of particles at each time step = 10000
   set insertion frequency                            = 200
-  set insertion box points coordinates               = -0.05, -0.04, 0 : 0.05, -0.005, 0
+  set insertion box points coordinates               = -0.05, -0.04, -0.05 : 0.05, -0.005, 0.05
   set insertion distance threshold                   = 1.05
   set insertion maximum offset                       = 0.02
   set insertion prn seed                             = 19
