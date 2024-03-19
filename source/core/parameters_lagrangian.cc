@@ -296,18 +296,11 @@ namespace Parameters
                           "1",
                           Patterns::Integer(),
                           "Insertion frequency");
-        prm.declare_entry("insertion first direction",
-                          "0",
-                          Patterns::Integer(),
+        prm.declare_entry("insertion order of direction",
+                          "0,1,2",
+                          Patterns::List(Patterns::Integer()),
                           "First direction of particle insertion");
-        prm.declare_entry("insertion second direction",
-                          "1",
-                          Patterns::Integer(),
-                          "Second direction of particle insertion");
-        prm.declare_entry("insertion third direction",
-                          "2",
-                          Patterns::Integer(),
-                          "Third direction of particle insertion");
+
         prm.declare_entry(
           "insertion box points coordinates",
           "0. , 0. , 0. : 1. , 1. , 1.",
@@ -432,9 +425,12 @@ namespace Parameters
         inserted_this_step =
           prm.get_integer("inserted number of particles at each time step");
         insertion_frequency = prm.get_integer("insertion frequency");
-        axis_0              = prm.get_integer("insertion first direction");
-        axis_1              = prm.get_integer("insertion second direction");
-        axis_2              = prm.get_integer("insertion third direction");
+
+        const std::vector<int> axis_order =
+          convert_string_to_vector<int>(prm, "insertion order of direction");
+        axis_0 = axis_order.at(0);
+        axis_1 = axis_order.at(1);
+        axis_2 = axis_order.at(2);
 
         const std::vector<std::string> point_coordinates_list(
           Utilities::split_string_list(

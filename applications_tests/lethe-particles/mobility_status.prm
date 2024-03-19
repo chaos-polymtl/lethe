@@ -74,9 +74,7 @@ subsection insertion info
   set insertion distance threshold                   = 1.01
   set insertion maximum offset                       = 0.005
   set insertion prn seed                             = 20
-  set insertion first direction                      = 0
-  set insertion second direction                     = 2
-  set insertion third direction                      = 1
+  set insertion order of direction                   = 0, 2, 1
 end
 
 #---------------------------------------------------
