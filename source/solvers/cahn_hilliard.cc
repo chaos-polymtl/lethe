@@ -431,8 +431,7 @@ CahnHilliard<dim>::calculate_phase_statistics()
             present_solution, local_phase_order_gradients);
           for (unsigned int q = 0; q < n_q_points; q++)
             {
-              integral +=
-                local_phase_order_values[q] * fe_values.JxW(q);
+              integral += local_phase_order_values[q] * fe_values.JxW(q);
               max_phase_value =
                 std::max(local_phase_order_values[q], max_phase_value);
               min_phase_value =
