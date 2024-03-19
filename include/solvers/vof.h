@@ -213,8 +213,8 @@ public:
    *
    * @param[in] current_solution_fd current solution for the fluid dynamics
    *
-   * @param[in] monitored_fluid Fluid indicator (fluid0 or fluid1) corresponding to
-   * the phase of interest.
+   * @param[in] monitored_fluid Fluid indicator (fluid0 or fluid1) corresponding
+   * to the phase of interest.
    */
   template <typename VectorType>
   Tensor<1, dim>
