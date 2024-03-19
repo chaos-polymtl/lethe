@@ -152,12 +152,7 @@ The ``insertion info`` subsection manages the insertion of particles. It allows 
       set insertion method                               = volume
       set inserted number of particles at each time step = 2000
       set insertion frequency                            = 2000
-      set insertion box minimum x                        = -0.018
-      set insertion box minimum y                        = -0.05
-      set insertion box minimum z                        = -0.018
-      set insertion box maximum x                        = 0.018
-      set insertion box maximum y                        = 0.05
-      set insertion box maximum z                        = 0.018
+      set insertion box points coordinates               = -0.018, -0.05, 0 : 0.018, 0.05, 0
       set insertion distance threshold                   = 1.5
       set insertion maximum offset                       = 0.2
       set insertion prn seed                             = 19

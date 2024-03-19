@@ -20,12 +20,7 @@ In this subsection, insertion methods which are ``volume``, ``plane``, ``list`` 
     # If method = volume
     set inserted number of particles at each time step = 100
 
-    set insertion box minimum x                        = -0.05
-    set insertion box minimum y                        = -0.05
-    set insertion box minimum z                        = -0.03
-    set insertion box maximum x                        = 0.05
-    set insertion box maximum y                        = 0.05
-    set insertion box maximum z                        = 0.07
+    set insertion box points coordinates               = 0.0, 0.0, 0.0 : 1.0, 1.0, 1.0
 
     set insertion first direction                      = 0
     set insertion second direction                     = 1
@@ -79,7 +74,7 @@ The ``volume`` insertion method uses an insertion box where particles will be in
 
 * The ``inserted number of particles at each time step`` defines the desired number of particles to be inserted at each insertion step. If the insertion box is not adequately large to insert ``inserted number of particles at each time step`` particles with the defined arrangement (initial distance between the inserted particles), Lethe prints a warning and inserts the maximum number of particles that fit inside the insertion box at each insertion step.
 
-* The ``insertion box minimum x``, ``insertion box minimum y``, ``insertion box minimum z``, ``insertion box maximum x``, ``insertion box maximum y``, ``insertion box maximum z`` parameters define the insertion box dimensions.
+* The ``insertion box points coordinates`` parameter defines the insertion box dimensions using two points: ``x1, y1, z1 : x2, y2, z2``. It is the same principle has what is being done for the `CFD <https://lethe-cfd.github.io/lethe/documentation/parameters/cfd/mesh.html>`_ triangulation.
 
 .. note::
     We recommend that the defined insertion box have at least a distance of :math:`{d^{max}_p}` (maximum diameter of particles) from the triangulation boundaries. Otherwise, particles may have an overlap with the triangulation walls in the insertion.

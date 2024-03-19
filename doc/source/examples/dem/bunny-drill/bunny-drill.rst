@@ -57,12 +57,7 @@ An insertion box is defined inside at the top part of the cylinder. The insertio
     set insertion method                               = non_uniform
     set inserted number of particles at each time step = 10000
     set insertion frequency                            = 100000
-    set insertion box minimum x                        = 0.1
-    set insertion box minimum y                        = -0.07
-    set insertion box minimum z                        = -0.07
-    set insertion box maximum x                        = 0.24
-    set insertion box maximum y                        = 0.07
-    set insertion box maximum z                        = 0.07
+    set insertion box points coordinates               = 0.1, -0.07, 0 : 0.24, 0.07, 0
     set insertion distance threshold                   = 1.10
     set insertion maximum offset                       = 0.10
     set insertion prn seed                             = 19
