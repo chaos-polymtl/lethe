@@ -72,7 +72,8 @@ ParticleParticleFineSearch<dim>::particle_particle_fine_search(
       auto               particle_one = particle_container[particle_one_id];
       Point<dim, double> particle_one_location = particle_one->get_location();
 
-      for (const unsigned int &particle_two_id : second_particle_container)
+      for (const types::particle_index &particle_two_id :
+           second_particle_container)
         {
           auto               particle_two = particle_container[particle_two_id];
           Point<dim, double> particle_two_location =

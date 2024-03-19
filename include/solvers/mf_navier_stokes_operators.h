@@ -453,7 +453,7 @@ protected:
    * @brief Vector with edge constrained values used for the local smoothing approach.
    *
    */
-  mutable std::vector<std::pair<number, number>> edge_constrained_values;
+  mutable std::vector<number> edge_constrained_values;
 
 
   /**

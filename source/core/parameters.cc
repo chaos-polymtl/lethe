@@ -1348,10 +1348,6 @@ namespace Parameters
         "1",
         Patterns::Integer(),
         "interpolation order chemical potential in the Cahn-Hilliard equations");
-      prm.declare_entry("qmapping all",
-                        "false",
-                        Patterns::Bool(),
-                        "Apply high order mapping everywhere");
     }
     prm.leave_subsection();
   }
@@ -1370,7 +1366,6 @@ namespace Parameters
       phase_cahn_hilliard_order = prm.get_integer("phase cahn hilliard order");
       potential_cahn_hilliard_order =
         prm.get_integer("potential cahn hilliard order");
-      qmapping_all = prm.get_bool("qmapping all");
     }
     prm.leave_subsection();
   }

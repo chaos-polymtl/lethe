@@ -11,8 +11,7 @@ PostProcessorSmoothing<dim, VectorType>::PostProcessorSmoothing(
   , number_quadrature_points(number_quadrature_points)
   , mpi_communicator(triangulation.get_communicator())
 {
-  mapping = std::make_shared<MappingQ<dim>>(
-    1, this->simulation_parameters.fem_parameters.qmapping_all);
+  mapping       = std::make_shared<MappingQ<dim>>(1);
   system_matrix = std::make_shared<TrilinosWrappers::SparseMatrix>();
 }
 

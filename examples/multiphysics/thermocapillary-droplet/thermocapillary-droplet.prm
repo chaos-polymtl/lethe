@@ -15,7 +15,7 @@ subsection simulation control
   set adapt            = false
   set max cfl          = 0.5
   set output name      = thermocapillary_migration
-  set output frequency = 10
+  set output frequency = 50
   set output path      = ./output/
 end
 
@@ -38,7 +38,18 @@ subsection VOF
     set verbosity = quiet
     set beta      = 20
   end
-
+  subsection interface sharpening
+    set enable                  = false
+    set threshold               = 0.5
+    set interface sharpness     = 1.5
+    set frequency               = 500
+    set type                    = adaptive
+    set threshold max deviation = 0.2
+    set max iterations          = 50
+    set monitored fluid         = fluid 1
+    set tolerance               = 1e-7
+    set verbosity = verbose
+  end
   subsection surface tension force
     set enable                                   = true
     set phase fraction gradient diffusion factor = 4
@@ -107,7 +118,7 @@ subsection mesh
   set type               = dealii
   set grid type          = subdivided_hyper_rectangle
   set grid arguments     = 4, 4, 4: -3, -3, -3: 3, 3, 3: true
-  set initial refinement = 5
+  set initial refinement = 4
 end
 
 #---------------------------------------------------
@@ -118,11 +129,11 @@ subsection mesh adaptation
   set type                     = kelly
   set variable                 = phase
   set fraction type            = fraction
-  set max refinement level     = 7
-  set min refinement level     = 5
+  set max refinement level     = 6
+  set min refinement level     = 4
   set frequency                = 1
   set fraction refinement      = 0.999
-  set fraction coarsening      = 0.001
+  set fraction coarsening      = 0.00
   set initial refinement steps = 4
 end
 

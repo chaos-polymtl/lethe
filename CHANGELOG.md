@@ -3,6 +3,12 @@
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Master] - 2024-03-16
+
+### Fixed
+
+- MINOR The recently implemented VOF stasis constraint ([#1048](https://github.com/lethe-cfd/lethe/pull/1048)) was not compatible with adaptive mesh refinements and checkpointing system. When refining the mesh or when restarting a simulation, the filtered phase fraction was reinitialized, but not filled with the appropriate values. This issue is now solved by adding `apply_phase_filter()` to `post_mesh_adaptation()` and `read_checkpoint()` VOF functions. [#1072](https://github.com/lethe-cfd/lethe/pull/1072)
+
 ## [Master] - 2024-03-13
 
 ### Changed
@@ -19,7 +25,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ## [Master] - 2024-03-11
 
-## Changed
+### Changed
 
 - MINOR The eigenvalue estimation for the multigrid preconditioners in the lethe-fluid-matrix-free solver is now done internally by the PreconditionRelaxation class instead of using a PreconditionChebyshev and an estimate omega function [#1064](https://github.com/lethe-cfd/lethe/pull/1064).
 
