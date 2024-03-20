@@ -1611,8 +1611,8 @@ GLSNavierStokesSolver<dim>::solve_system_GMRES(const bool   initial_step,
               {
                 this->pcout
                   << "  -Iterative solver took : " << solver_control.last_step()
-                  << " steps to reach a residual norm of " 
-                  <<  solver_control.last_value() << std::endl;
+                  << " steps to reach a residual norm of "
+                  << solver_control.last_value() << std::endl;
               }
           }
           constraints_used.distribute(completely_distributed_solution);
@@ -1724,8 +1724,8 @@ GLSNavierStokesSolver<dim>::solve_system_BiCGStab(
               {
                 this->pcout
                   << "  -Iterative solver took : " << solver_control.last_step()
-                  << " steps to reach a residual norm of " 
-                  <<  solver_control.last_value() << std::endl;
+                  << " steps to reach a residual norm of "
+                  << solver_control.last_value() << std::endl;
               }
             constraints_used.distribute(completely_distributed_solution);
             this->newton_update = completely_distributed_solution;

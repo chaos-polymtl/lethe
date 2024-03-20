@@ -134,8 +134,9 @@ NewtonNonLinearSolver<VectorType>::solve(const bool is_initial_step)
                             << std::setw(0) << " res = "
                             << std::setprecision(this->params.display_precision)
                             << std::setw(6) << current_res;
-                            
-              solver->get_newton_update_norms_output(this->params.display_precision);
+
+              solver->get_newton_update_norms_output(
+                this->params.display_precision);
             }
 
           // If it's not the first iteration of alpha check if the residual is
