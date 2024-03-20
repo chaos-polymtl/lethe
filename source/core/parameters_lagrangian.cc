@@ -298,7 +298,7 @@ namespace Parameters
                           "Insertion frequency");
         prm.declare_entry("insertion order of direction",
                           "0,1,2",
-                          Patterns::List(Patterns::Integer()),
+                          Patterns::List(Patterns::Integer(), 2, 3),
                           "First direction of particle insertion");
 
         prm.declare_entry(
