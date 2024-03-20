@@ -37,13 +37,13 @@ In this example, we choose a ``cylinder`` grid type to create a cylinder. Grid a
 
 .. code-block:: text
 
-subsection mesh
-  set type                                = dealii
-  set grid type                           = subdivided_cylinder
-  set grid arguments                      = 4: 0.12:0.18
-  set initial refinement                  = 4
-  set expand particle-wall contact search = true
-end
+    subsection mesh
+      set type                                = dealii
+      set grid type                           = subdivided_cylinder
+      set grid arguments                      = 4: 0.12:0.18
+      set initial refinement                  = 4
+      set expand particle-wall contact search = true
+    end
 
 Insertion Info
 ~~~~~~~~~~~~~~~~~~~

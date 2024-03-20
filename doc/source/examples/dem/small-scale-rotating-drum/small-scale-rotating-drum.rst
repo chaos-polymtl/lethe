@@ -38,12 +38,12 @@ In this example, we choose a ``cylinder`` grid type to create a cylinder. Grid a
 
 .. code-block:: text
 
-subsection mesh
-  set type               = dealii
-  set grid type          = cylinder
-  set grid arguments     = 0.056:0.051
-  set initial refinement = 3
-end
+    subsection mesh
+      set type               = dealii
+      set grid type          = cylinder
+      set grid arguments     = 0.056:0.051
+      set initial refinement = 3
+    end
 
 Packing information
 ~~~~~~~~~~~~~~~~~~~~

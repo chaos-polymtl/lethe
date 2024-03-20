@@ -33,12 +33,12 @@ The ``grid type`` in this example is a ``hyper_cube``. Its dimensions are 0.04 m
 
 .. code-block:: text
 
-subsection mesh
-  set type               = dealii
-  set grid type          = hyper_cube
-  set grid arguments     = -0.02 : 0.02 : false
-  set initial refinement = 3
-end
+    subsection mesh
+      set type               = dealii
+      set grid type          = hyper_cube
+      set grid arguments     = -0.02 : 0.02 : false
+      set initial refinement = 3
+    end
 
 Insertion Info
 ~~~~~~~~~~~~~~~~~~~
