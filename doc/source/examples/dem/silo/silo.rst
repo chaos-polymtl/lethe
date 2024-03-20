@@ -4,7 +4,6 @@ Silo
 
 This example simulates the filling and discharge of particles in a wedge-shaped silo. We set up this simulation according to the experiments of Golshan *et al.* `[1] <https://doi.org/10.1016/j.powtec.2020.06.093>`_ It is recommended to visit `DEM parameters <../../../parameters/dem/dem.html>`_ for more detailed information on the concepts and physical meanings of the parameters in Lethe-DEM.
 
-
 ----------------------------------
 Features
 ----------------------------------
@@ -13,20 +12,17 @@ Features
 - `GMSH <https://gmsh.info/>`_ grids
 - Checkpointing (restart)
 
-
 ----------------------------
 Files Used in This Example
 ----------------------------
 
 - Parameter file: ``examples/dem/3d-silo/silo-Golshan.prm``
 
-
 -----------------------
 Description of the Case
 -----------------------
 
 This simulation consists of two stages: filling (0-4 s) and discharge (4-40 s) of particles. During the filling stage, we use a stopper (floating wall) to keep the inserted particles in the hopper region of the silo. When all the particles are inserted and packed in the hopper, we remove the stopper and particles leave the hopper.
-
 
 --------------
 Parameter File
@@ -46,7 +42,6 @@ Contrary to previous examples, in this example, we use a mesh generated using `G
       set initial refinement  = 1
     end
 
-
 Insertion Info
 ~~~~~~~~~~~~~~~~~~~
 
@@ -58,12 +53,11 @@ An insertion box is defined inside and on the top of the silo.
       set insertion method                               = volume
       set inserted number of particles at each time step = 20000
       set insertion frequency                            = 10000
-      set insertion box points coordinates               = -0.37, -0.042, 0 : 0.37, 0.007, 0
+      set insertion box points coordinates               = -0.37, -0.042, 0.9 : 0.37, 0.007, 1.09
       set insertion distance threshold                   = 1.5
       set insertion maximum offset                       = 0.1
       set insertion prn seed                             = 19
     end
-
 
 Lagrangian Physical Properties
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -93,7 +87,6 @@ The total number of particles in this simulation is equal to 132300. Considering
       set friction coefficient wall    = 0.5
     end
 
-
 Model Parameters
 ~~~~~~~~~~~~~~~~~
 
@@ -114,7 +107,6 @@ Model Parameters
       set integration method                        = velocity_verlet
     end
 
-
 Simulation Control
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -127,7 +119,6 @@ Simulation Control
       set output frequency = 1000
     end
 
-
 Restart
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -139,7 +130,6 @@ In this subsection, we specify the checkpointing parameters. Checkpoints are ver
       set checkpoint = true
       set frequency  = 100000
     end
-
 
 Floating Walls
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -170,7 +160,6 @@ In this simulation, we need a stopper (floating wall) in the filling stage (0-4 
       end
     end
 
-
 ----------------------
 Running the Simulation
 ----------------------
@@ -199,7 +188,6 @@ Animation of the subdomains distribution throughout the simulation:
 .. raw:: html
 
     <iframe width="560" height="315" src="https://www.youtube.com/embed/uoQG97SO6Zc" frameborder="0" allowfullscreen></iframe>
-
 
 ---------
 Reference

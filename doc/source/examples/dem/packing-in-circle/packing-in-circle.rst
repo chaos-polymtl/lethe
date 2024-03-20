@@ -4,7 +4,6 @@ Packing in Circle
 
 This example introduces the concept of parameter files to parametrize Lethe simulations. It is strongly recommended to visit `DEM parameters <../../../parameters/dem/dem.html>`_ for more detailed information on the concepts and physical meaning of the parameters in Lethe-DEM.
 
-
 ----------------------------------
 Features
 ----------------------------------
@@ -12,20 +11,17 @@ Features
 - Two-dimensional problem
 - Displays the selection of models and physical properties
 
-
 ----------------------------
 Files Used in This Example
 ----------------------------
 
 - Parameter file: ``examples/dem/2d-packing-in-circle/packing-in-circle.prm``
 
-
 -----------------------
 Description of the Case
 -----------------------
 
 Packing in a circle is the most basic example in Lethe-DEM. In this example, 50 two-dimensional particles are inserted in a circle. Due to the action of gravity, they accelerate in the defined direction of gravity. Upon reaching the outer periphery of the circle (the boundary walls of the triangulation), the particle-wall contact stops the particles from leaving the triangulation. Finally a balance forms between the particle-particle and particle-wall contact force and the gravity force. Particles lose kinetic energy (and velocity), get packed on the triangulation boundary, and remain at rest.
-
 
 --------------
 Parameter File
@@ -42,7 +38,6 @@ Parameter files are made of subsections which describe a portion of the simulati
 The syntax is flexible. Parameters do not need to be specified in a specific order, but only within the subsection in which they belong. For a full list of the parameters within Lethe-DEM, we refer to the DEM parameter page.
 
 To set-up the packing-in-circle case, we first need to establish the triangulation used for the simulation.
-
 
 Mesh
 ~~~~~
@@ -69,13 +64,11 @@ The ``expand particle-wall contact search`` parameter is an advanced feature of 
 .. note:: 
 	Since the simulation is two-dimensional, we have a circle instead of a ball for the triangulation.
 
-
 The last parameter is the ``initial refinement`` of the grid. Most deal.ii grid generators contain a minimal number of cells. Indicating an ``initial refinement=3`` implies that the initial mesh is refined 3 times. Each refinement corresponds to dividing the cell element into two for each dimension, i.e, in 2D, each cell is divided into 4 per refinement.
 
 
 .. note:: 
 	The computational complexity of the functions in Lethe-DEM is either a function of the number of particles or a function of the number of cells. As the number of refinement increases, the number of cells in the triangulation increases, while the number of particles in each cell decreases. This is in favor of particle-based functions (such as fine search), whereas cell-based functions (such as sorting particles in the cells) become more computationally expensive. Hence, we recommend the users choose an ``initial refinement`` to reach an average cell size equal to 3-4 times the particle diameter.
-
 
 Insertion Info
 ~~~~~~~~~~~~~~~~~~~
@@ -88,7 +81,7 @@ The ``insertion info`` subsection manages the insertion of particles.
       set insertion method                               = volume
       set inserted number of particles at each time step = 50
       set insertion frequency                            = 1000000
-      set insertion box points coordinates               = -0.05, 0,  : 0.05, 0.07,
+      set insertion box points coordinates               = -0.05, 0  : 0.05, 0.07
       set insertion distance threshold                   = 2
       set insertion maximum offset                       = 0.75
       set insertion prn seed                             = 19
@@ -108,7 +101,6 @@ First, the ``insertion method`` is selected. There are two insertion methods (``
     We recommend that the defined insertion box have at least a distance of :math:`{d^{max}_p}` (maximum diameter of particles) from the triangulation boundaries. Otherwise, particles may have an overlap with the triangulation walls in the insertion.
 
 ``insertion distance threshold`` specifies the initial distance between the particles in the insertion. If we choose a ``non_uniform`` insertion, this initial distance is added by a random number to generate randomness. The random numbers are generated in the range [0 - ``insertion maximum offset``], and from a seed of ``insertion prn seed``.
-
 
 Lagrangian Physical Properties
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -141,7 +133,6 @@ First, gravitational acceleration is defined. Since the simulation is two-dimens
 
 .. note::
     The ``diameter`` parameter defines the diameter of the particles in a ``uniform`` distribution. For a ``normal`` distribution, we need to define ``average diameter`` and ``standard deviation`` parameters.
-
 
 Model Parameters
 ~~~~~~~~~~~~~~~~~
@@ -177,7 +168,6 @@ where :math:`{\phi}`, :math:`{d_c^{min}}`, :math:`{r_p^{max}}`, :math:`{\epsilon
 
 ``dynamic contact search size coefficient``, as illustrated in the equation above, is a safety factor to ensure the late detection of particles will not happen in the simulations with ``dynamic`` contact search; and its value should be defined generally in the range of 0.5-1. 0.5 is a rather conservative value for ``dynamic contact search size coefficient``.
 
-
 Simulation Control
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -204,10 +194,8 @@ Launching the simulation is as simple as specifying the executable name and the 
 
 Lethe will generate a number of files. The most important one bears the extension ``.pvd``. It can be read by popular visualization programs such as `Paraview <https://www.paraview.org/>`_. 
 
-
 .. note:: 
     The vtu files generated by Lethe are compressed archives. Consequently, they cannot be postprocessed directly. Although they can be easily post-processed using Paraview, it is sometimes necessary to be able to work with the raw data. The python library `PyVista <https://www.pyvista.org/>`_  allows us to do this.
-
 
 ---------
 Results

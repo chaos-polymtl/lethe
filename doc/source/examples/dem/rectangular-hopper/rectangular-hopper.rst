@@ -6,7 +6,6 @@ This example simulates the filling and discharging of particles in a rectangular
 We set up this simulation based on the simulation of Anand *et al.* `[1] <https://doi.org/10.1016/j.ces.2008.08.015>`_ It is recommended to visit `DEM parameters <../../../parameters/dem/dem.html>`_ for more detailed information on the concepts and physical meanings of the parameters in Lethe-DEM.
 The main example does not use periodic boundary conditions in the depth of the hopper like article, but an extended case, presented at the end, does.
 
-
 ----------------------------------
 Features
 ----------------------------------
@@ -21,7 +20,6 @@ Files Used in This Example
 ----------------------------
 
 - Parameter file: ``examples/dem/3d-rectangular-hopper/hopper.prm``
-
 
 -----------------------
 Description of the Case
@@ -42,32 +40,29 @@ The geometry follow the Anand *et al.* `[1] <https://doi.org/10.1016/j.ces.2008.
 
 .. code-block:: text
 
-    subsection mesh
-      set type                                = gmsh
-      set file name                           = hopper_structured.msh
-      set initial refinement                  = 1
-      set expand particle-wall contact search = false
-      set check diamond cells                 = true
-    end
-
+subsection mesh
+  set type                                = gmsh
+  set file name                           = hopper_structured.msh
+  set initial refinement                  = 1
+  set expand particle-wall contact search = false
+  set check diamond cells                 = true
+end
 
 .. list-table::
 
-    * - .. figure:: images/packed_hopper_2d.png
-           :width: 300
-           :alt: Mesh
-           :align: center
+* - .. figure:: images/packed_hopper_2d.png
+:width: 300
+:alt: Mesh
+:align: center
 
-           Rectangular hopper packed with particle before the discharge with a 2d view.
+Rectangular hopper packed with particle before the discharge with a 2d view.
 
-      - .. figure:: images/packed_hopper_3d.png
-           :width: 300
-           :alt: Mesh
-           :align: center
+- .. figure:: images/packed_hopper_3d.png
+:width: 300
+:alt: Mesh
+:align: center
 
-           Rectangular hopper packed with particle before the discharge with a 3d view.
-
-
+Rectangular hopper packed with particle before the discharge with a 3d view.
 
 Insertion Info
 ~~~~~~~~~~~~~~~~~~~
@@ -85,7 +80,6 @@ An insertion box is defined inside and the top part of the hopper. The inserted 
       set insertion maximum offset                       = 0.1
       set insertion prn seed                             = 20
     end
-
 
 Lagrangian Physical Properties
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -126,7 +120,6 @@ The following properties are chosen according to the Anand et al. paper :
       set rolling friction wall        = 0.09
     end
 
-
 Model Parameters
 ~~~~~~~~~~~~~~~~~
 
@@ -150,7 +143,6 @@ Model parameters are based on the `Silo example <../silo/silo.html>`_.
       set integration method                        = velocity_verlet
     end
 
-
 Simulation Control
 ~~~~~~~~~~~~~~~~~~
 
@@ -166,7 +158,6 @@ The time end of the simulation is 7.5 where most of the particles are discharged
       set output path      = ./output/
       set output name      = hopper
     end
-
 
 Floating Walls
 ~~~~~~~~~~~~~~
@@ -193,7 +184,6 @@ Floating wall in this example is handled as explained in the `Silo example <../s
       end
     end
 
-
 ----------------------
 Running the Simulation
 ----------------------
@@ -203,7 +193,6 @@ This simulation can be launched by
   :class: copy-button
 
   mpirun -np 8 lethe-particles hopper.prm
-
 
 ---------------
 Post-processing
@@ -219,11 +208,9 @@ It is possible to run the post-processing code with the following line. The argu
 
     python3 hopper_post_processing.py ./ hopper.prm
 
-
 .. important::
 
     You need to ensure that ``lethe_pyvista_tools`` is working on your machine. Click `here <../../../tools/postprocessing/postprocessing.html>`_ for details.
-
 
 -----------------------
 Results Post-processing
@@ -252,7 +239,6 @@ The simulated mass discharging rate is 84.94 g/s.
     Rectangular hopper at the end of the simulation.
 
 .. _ref-periodic-hopper:
-
 
 --------------------------------------
 Case with Periodic Boundary Conditions
@@ -360,7 +346,6 @@ The simulated mass discharging rate is 85.09 g/s from the original simulation an
     :align: center
 
     Comparison of mass discharge results from the 2 simulations and the journal article.
-
 
 ---------
 Reference

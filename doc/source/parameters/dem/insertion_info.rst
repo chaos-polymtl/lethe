@@ -7,7 +7,6 @@ In this subsection, insertion methods which are ``volume``, ``plane``, ``list`` 
 .. note::
     Insertion in Lethe starts inserting particles from type 0 and proceeds to the next type when all the particles from the previous type are inserted.
 
-
 .. code-block:: text
 
   subsection insertion info
@@ -20,7 +19,7 @@ In this subsection, insertion methods which are ``volume``, ``plane``, ``list`` 
     # If method = volume
     set inserted number of particles at each time step = 100
 
-    set insertion box points coordinates               = 0.0, 0.0, 0.0 : 1.0, 1.0, 1.0
+    set insertion box points coordinates               = -0.05, -0.05, -0.03 : 0.05, 0.05, 0.07
 
     set insertion order of direction                   = 0, 1, 2
 
@@ -56,7 +55,6 @@ In this subsection, insertion methods which are ``volume``, ``plane``, ``list`` 
 
     # If method = file
     set insertion file name                            = particles.input
-
   end
 
 The ``insertion method`` parameter chooses the type of insertion. Acceptable choices are ``volume``, ``plane``, ``list`` and ``file``. Different insertion method can share the same parameter.

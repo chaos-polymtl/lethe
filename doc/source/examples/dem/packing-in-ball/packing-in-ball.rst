@@ -4,7 +4,6 @@ Packing in Ball
 
 This example is the three-dimensional version of the ``packing_in_circle`` example. It is recommended to visit `DEM parameters <../../../parameters/dem/dem.html>`_ for more detailed information on the concepts and physical meanings of the parameters in Lethe-DEM.
 
-
 ----------------------------------
 Features
 ----------------------------------
@@ -13,13 +12,11 @@ Features
 - Three-dimensional problem
 - Parallelism
 
-
 ----------------------------
 Files Used in This Example
 ----------------------------
 
 - Parameter file: ``examples/dem/3d-packing-in-ball/packing-in-ball.prm``
-
 
 -----------------------
 Description of the Case
@@ -28,8 +25,7 @@ Description of the Case
 Packing in ball example is the three-dimensional version of the packing in circle example.
 
 .. warning::
-	The ``lethe-particles`` DEM solver in two dimensions is not an accurate model, since several phenomena including torque on particles are intrinsically three-dimensional. Therefore, it should only be used for simple basic analyses before performing three-dimensional simulations.
-
+The ``lethe-particles`` DEM solver in two dimensions is not an accurate model, since several phenomena including torque on particles are intrinsically three-dimensional. Therefore, it should only be used for simple basic analyses before performing three-dimensional simulations.
 
 --------------
 Parameter File
@@ -52,7 +48,6 @@ In a three-dimensional simulation, ``hyper_ball`` creates a three-dimensional ba
       set expand particle-wall contact search = true
     end
 
-
 Insertion Info
 ~~~~~~~~~~~~~~
 
@@ -64,12 +59,11 @@ In a three-dimensional simulation, we have to define the minimum and maximum dim
       set insertion method                               = volume
       set inserted number of particles at each time step = 1000
       set insertion frequency                            = 150000
-      set insertion box points coordinates               = -0.05, -0.05, 0 : 0.05, 0.05, 0
+      set insertion box points coordinates               = -0.05, -0.05, -0.03 : 0.05, 0.05, 0.07
       set insertion distance threshold                   = 2
       set insertion maximum offset                       = 0.75
       set insertion prn seed                             = 19
     end
-
 
 Lagrangian Physical Properties
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -99,7 +93,6 @@ Gravitational acceleration has three components in three directions.
       set friction coefficient wall    = 0.3
     end
 
-
 Model Parameters
 ~~~~~~~~~~~~~~~~~
 
@@ -116,7 +109,6 @@ Model Parameters
       set integration method                        = velocity_verlet
     end
 
-
 Simulation Control
 ~~~~~~~~~~~~~~~~~~
 
@@ -128,7 +120,6 @@ Simulation Control
       set log frequency    = 10000
       set output frequency = 10000
     end
-
 
 ----------------------
 Running the Simulation
@@ -150,7 +141,6 @@ We can also launch this simulation in parallel mode. For example, to launch the 
 
 .. note::
 	The parallel simulations are generally faster than simulations on a single process. However, to leverage the full performance of a parallel simulation, it should be performed with a load-balancing strategy throughout the simulation. Load-balancing is explained in the `next example <../rotating-drum/rotating-drum.html>`_.
-
 
 ---------
 Results
