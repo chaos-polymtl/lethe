@@ -25,7 +25,7 @@ Description of the Case
 Packing in ball example is the three-dimensional version of the packing in circle example.
 
 .. warning::
-The ``lethe-particles`` DEM solver in two dimensions is not an accurate model, since several phenomena including torque on particles are intrinsically three-dimensional. Therefore, it should only be used for simple basic analyses before performing three-dimensional simulations.
+	The ``lethe-particles`` DEM solver in two dimensions is not an accurate model, since several phenomena including torque on particles are intrinsically three-dimensional. Therefore, it should only be used for simple basic analyses before performing three-dimensional simulations.
 
 --------------
 Parameter File
