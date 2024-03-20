@@ -40,29 +40,29 @@ The geometry follow the Anand *et al.* `[1] <https://doi.org/10.1016/j.ces.2008.
 
 .. code-block:: text
 
-subsection mesh
-  set type                                = gmsh
-  set file name                           = hopper_structured.msh
-  set initial refinement                  = 1
-  set expand particle-wall contact search = false
-  set check diamond cells                 = true
-end
+    subsection mesh
+      set type                                = gmsh
+      set file name                           = hopper_structured.msh
+      set initial refinement                  = 1
+      set expand particle-wall contact search = false
+      set check diamond cells                 = true
+    end
 
 .. list-table::
 
-* - .. figure:: images/packed_hopper_2d.png
-:width: 300
-:alt: Mesh
-:align: center
+    * - .. figure:: images/packed_hopper_2d.png
+           :width: 300
+           :alt: Mesh
+           :align: center
 
-Rectangular hopper packed with particle before the discharge with a 2d view.
+           Rectangular hopper packed with particle before the discharge with a 2d view.
 
-- .. figure:: images/packed_hopper_3d.png
-:width: 300
-:alt: Mesh
-:align: center
+      - .. figure:: images/packed_hopper_3d.png
+           :width: 300
+           :alt: Mesh
+           :align: center
 
-Rectangular hopper packed with particle before the discharge with a 3d view.
+           Rectangular hopper packed with particle before the discharge with a 3d view.
 
 Insertion Info
 ~~~~~~~~~~~~~~~~~~~
