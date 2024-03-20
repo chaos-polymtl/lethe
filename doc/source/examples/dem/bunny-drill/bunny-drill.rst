@@ -4,6 +4,7 @@ Bunny Drill
 
 This example simulates the drilling motion of a bunny within a bed of particles. It illustrates that the DEM module of Lethe can simulate complex moving objects and is a testament to our love of lagomorphs. Do not worry friend, no bunnies were hurt in the making of this example!
 
+
 ----------------------------------
 Features
 ----------------------------------
@@ -94,6 +95,8 @@ The total number of particles in this simulation is 8000. All particles have a d
     set rolling friction wall        = 0.1
   end
 
+
+
 Simulation Control (Loading)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -126,6 +129,8 @@ The time end of the simulation is 4.75 seconds after which the bunny has done on
     set output boundaries = true
   end
 
+
+
 Solid Objects (Drilling)
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -153,6 +158,7 @@ The bunny is defined using the solid objects feature of Lethe. The surface mesh 
     end
   end
 
+
 ----------------------
 Running the Simulation
 ----------------------
@@ -169,6 +175,7 @@ Whereas the drilling is launched after the loading using:
   :class: copy-button
 
   mpirun -np 8 lethe-particles bunny-drill.prm
+
 
 -------
 Results
@@ -193,3 +200,6 @@ Possibilities for Extension
 
 - Use finer particles to see if the drilling dynamics are affected by the particle size.
 - Use an STL of an alternative animal. Although we believe lagomorphs are amazing, we are also fans of mustelidae (e.g., otters) and chinchillidae (e.g., chinchillas or, even better, viscachas). Feel free to replace the drill with your favorite animal and to send us your animation to lethe.cfd@gmail.com.
+
+
+ 

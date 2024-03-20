@@ -11,6 +11,7 @@ Features
 - Rotational boundary
 - Load-balancing
 
+
 ----------------------------
 Files Used in This Example
 ----------------------------
@@ -26,6 +27,7 @@ Description of the Case
 
 226080 particles are first inserted into a cylindrical domain and then start rolling on the cylinder wall because of the rotation of the cylinder. The rotation of the cylinder is applied using a ``rotational`` boundary condition. Because of the large number of particles, this simulation should be launched in parallel mode with load-balancing. The concepts and different types of ``boundary condition`` and load-balancing are explained in this example.
 
+
 --------------
 Parameter File
 --------------
@@ -33,17 +35,18 @@ Parameter File
 Mesh
 ~~~~~
 
-In this example, we choose a ``cylinder`` grid type to create a cylinder. Grid arguments are the radius and half-length, respectively. Therefore, the specified grid arguments create a cylinder with a diameter of 0.24 m and a length of 0.36 m. The grid is refined 4 times to reach the desired cell size to particle diameter ratio (see packing in ball example for more details). The ``expand particle-wall contact search`` is used in concave geometries to enable extended particle-wall contact search with boundary faces of neighbor cells for particles located in each boundary cell.
+In this example, we choose a ``cylinder`` grid type to create a cylinder. Grid arguments are the radius and half-length, respectively. Therefore, the specified grid arguments create a cylinder with a diameter of 0.24 m and a length of 0.36 m. The grid is refined 4 times to reach the desired cell size to particle diameter ratio (see packing in ball example for more details). The ``expand particle-wall contact search`` is used in concave geometries to enable extended particle-wall contact search with boundary faces of neighbor cells for particles located in each boundary cell. 
 
 .. code-block:: text
 
     subsection mesh
-      set type                                = dealii
-      set grid type                           = subdivided_cylinder
-      set grid arguments                      = 4: 0.12:0.18
-      set initial refinement                  = 4
-      set expand particle-wall contact search = true
+  set type                                = dealii
+  set grid type                           = subdivided_cylinder
+  set grid arguments                      = 4: 0.12:0.18
+  set initial refinement                  = 4
+  set expand particle-wall contact search = true
     end
+
 
 Insertion Info
 ~~~~~~~~~~~~~~~~~~~
@@ -61,6 +64,7 @@ An insertion box is defined inside the cylindrical domain. 38000 particles are i
     set insertion maximum offset                       = 0.025
     set insertion prn seed                             = 19
   end
+
 
 Lagrangian Physical Properties
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -90,10 +94,12 @@ The particles (226080 particles) are monodispersed, their diameter and density a
       set friction coefficient wall    = 0.35
     end
 
+
 Model Parameters
 ~~~~~~~~~~~~~~~~~
 
 Load-balancing updates the distribution of the subdomains between the processes in parallel simulation to achieve better computational performance (less simulation time). Three load-balancing methods are available in Lethe-DEM: ``once``, ``frequent``, or ``dynamic``. Read `this article <https://www.mdpi.com/2227-9717/10/1/79>`_ for more information about different load-balancing methods and their performances in various types of DEM simulations.
+
 
 In the rotating drum simulation, we use a ``frequent`` load-balancing method and repartition the particles every :math:`20 000` iterations.
 
@@ -115,6 +121,7 @@ In the rotating drum simulation, we use a ``frequent`` load-balancing method and
       set integration method                        = velocity_verlet
     end
 
+
 DEM Boundary Conditions
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -131,6 +138,7 @@ In this subsection, the boundary conditions of the DEM simulation are defined. F
         set rotational vector = 1, 0, 0
       end
     end
+
 
 Simulation Control
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -150,6 +158,7 @@ For the loading the simulation control is:
       set output path       = ./output/
     end
 
+
 For the simulation it is:
 
 .. code-block:: text
@@ -162,6 +171,7 @@ For the simulation it is:
       set output boundaries = false
       set output path       = ./output/
     end
+
 
 ----------------------
 Running the Simulation
@@ -182,6 +192,7 @@ Then we run the simulation with the rotating walls:
 
 .. warning::
   In this example, particles insertion requires approximately 50 minutes, while simulating their motion requires additional 8 hours on 8 cores. The high computational cost is due to the large number of particles and the long duration of the simulation.
+
 
 ---------
 Results

@@ -10,17 +10,20 @@ Features
 - Solvers: ``lethe-particles``
 - Rotating a triangulation
 
+
 ----------------------------
 Files Used in This Example
 ----------------------------
 
 - Parameter file: ``examples/dem/3d-grid-rotation-in-box/grid-rotation-box.prm``
 
+
 -----------------------
 Description of the Case
 -----------------------
 
 4000 particles are inserted in a rotating box and rotate with the box. In this example, the whole triangulation is rotated.
+
 
 --------------
 Parameter File
@@ -40,6 +43,7 @@ The ``grid type`` in this example is a ``hyper_cube``. Its dimensions are 0.04 m
       set initial refinement = 3
     end
 
+
 Insertion Info
 ~~~~~~~~~~~~~~~~~~~
 
@@ -56,6 +60,7 @@ An insertion box is defined inside the cubic domain. 4000 particles are inserted
       set insertion maximum offset                       = 0.2
       set insertion prn seed                             = 19
     end
+
 
 Lagrangian Physical Properties
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -87,6 +92,7 @@ The ``number`` of particles (4000) is equal to the specified ``inserted number o
       set rolling friction wall        = 0.05
     end
 
+
 Model Parameters
 ~~~~~~~~~~~~~~~~~
 
@@ -104,6 +110,7 @@ Model Parameters
       set integration method                        = velocity_verlet
     end
 
+
 Simulation Control
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -116,6 +123,7 @@ Simulation Control
       set output frequency = 1000
     end
 
+
 ----------------------
 Running the Simulation
 ----------------------
@@ -125,6 +133,7 @@ This simulation can be launched by:
   :class: copy-button
 
   lethe-particles grid-rotation-box.prm
+
 
 ---------
 Results
