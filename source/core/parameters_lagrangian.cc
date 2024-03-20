@@ -305,7 +305,7 @@ namespace Parameters
           "insertion box points coordinates",
           "0. , 0. , 0. : 1. , 1. , 1.",
           Patterns::List(
-            Patterns::List(Patterns::Double(), 3, 3, ","), 2, 2, ":"),
+            Patterns::List(Patterns::Double(), 2, 3, ","), 2, 2, ":"),
           "Coordinates of two points (x1, y1, z1 : x2, y2, z2)");
         prm.declare_entry("insertion distance threshold",
                           "1",
