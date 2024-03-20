@@ -215,6 +215,8 @@ public:
    *
    * @param[in] monitored_fluid Fluid indicator (fluid0 or fluid1) corresponding
    * to the phase of interest.
+   *
+   * @return A tensor<1,dim> corresponding to the entry_string in the prm file.
    */
   template <typename VectorType>
   Tensor<1, dim>
