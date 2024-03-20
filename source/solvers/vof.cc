@@ -881,8 +881,6 @@ VolumeOfFluid<dim>::postprocess(bool first_iteration)
                                                             true);
                 }
 
-              this->table_monitoring_vof.set_scientific(mass_column_name, true);
-
               if (this->simulation_parameters.post_processing.verbosity ==
                   Parameters::Verbosity::verbose)
                 {
