@@ -126,6 +126,15 @@ public:
   {
     return newton_update;
   };
+  virtual void
+  get_newton_update_norms_output(const unsigned int display_precision) override
+  {
+    this->pcout << std::setprecision(display_precision)
+                << "\t||dx||_L2 = " << std::setw(6) << newton_update.l2_norm()
+                << std::setw(6)
+                << "\t||dx||_Linfty = " << std::setprecision(display_precision)
+                << newton_update.linfty_norm() << std::endl;
+  };
   virtual Vector<double> &
   get_present_solution() override
   {
