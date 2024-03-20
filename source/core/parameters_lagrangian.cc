@@ -426,8 +426,11 @@ namespace Parameters
           prm.get_integer("inserted number of particles at each time step");
         insertion_frequency = prm.get_integer("insertion frequency");
 
-        const std::vector<int> axis_order =
+        std::vector<int> axis_order =
           convert_string_to_vector<int>(prm, "insertion order of direction");
+        if (axis_order.size() == 2)
+          axis_order.resize(3);
+
         axis_0 = axis_order.at(0);
         axis_1 = axis_order.at(1);
         axis_2 = axis_order.at(2);
@@ -436,13 +439,16 @@ namespace Parameters
           Utilities::split_string_list(
             prm.get("insertion box points coordinates"), ":"));
 
-        const std::vector<double> point_coord_temp_1 =
-          Utilities::string_to_double(
-            Utilities::split_string_list(point_coordinates_list.at(0)));
-        const std::vector<double> point_coord_temp_2 =
-          Utilities::string_to_double(
-            Utilities::split_string_list(point_coordinates_list.at(1)));
+        std::vector<double> point_coord_temp_1 = Utilities::string_to_double(
+          Utilities::split_string_list(point_coordinates_list.at(0)));
+        std::vector<double> point_coord_temp_2 = Utilities::string_to_double(
+          Utilities::split_string_list(point_coordinates_list.at(1)));
 
+        if (point_coord_temp_1.size() == 2 && point_coord_temp_2.size() == 2)
+          {
+            point_coord_temp_1.resize(3);
+            point_coord_temp_2.resize(3);
+          }
         for (int i = 0; i < 3; ++i)
           {
             insertion_box_point_1[i] = point_coord_temp_1.at(i);
