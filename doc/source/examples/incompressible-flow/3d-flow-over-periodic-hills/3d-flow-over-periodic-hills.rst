@@ -155,8 +155,8 @@ Since the flow is periodic and a specific Reynolds number is targeted for the si
 
     subsection flow control
       set enable               = true
-      set boundary id          = 0
-      set volumetric flow rate = -9.1575 # bulk velocity = -1
+      set inlet boundary id    = 0
+      set average velocity     = 1
       set flow direction       = 0
       set initial beta         = 7.66
       set verbosity            = verbose
