@@ -380,7 +380,7 @@ public:
     return newton_update;
   }
   void
-  get_newton_update_norms_output(const unsigned int display_precision) override
+  output_newton_update_norms(const unsigned int display_precision) override
   {
     this->pcout << std::setprecision(display_precision)
                 << "\t||dphi||_L2 = " << std::setw(6) << newton_update.l2_norm()

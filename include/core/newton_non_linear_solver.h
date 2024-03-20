@@ -135,7 +135,7 @@ NewtonNonLinearSolver<VectorType>::solve(const bool is_initial_step)
                             << std::setprecision(this->params.display_precision)
                             << std::setw(6) << current_res;
 
-              solver->get_newton_update_norms_output(
+              solver->output_newton_update_norms(
                 this->params.display_precision);
             }
 

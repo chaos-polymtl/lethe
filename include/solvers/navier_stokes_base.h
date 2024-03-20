@@ -149,7 +149,7 @@ protected:
     return newton_update;
   };
   virtual void
-  get_newton_update_norms_output(const unsigned int display_precision) override;
+  output_newton_update_norms(const unsigned int display_precision) override;
   virtual VectorType &
   get_present_solution() override
   {

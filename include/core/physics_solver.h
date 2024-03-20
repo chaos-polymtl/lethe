@@ -99,7 +99,7 @@ public:
   virtual VectorType &
   get_newton_update() = 0;
   virtual void
-  get_newton_update_norms_output(const unsigned int display_precision) = 0;
+  output_newton_update_norms(const unsigned int display_precision) = 0;
   virtual VectorType &
   get_present_solution() = 0;
   virtual VectorType &

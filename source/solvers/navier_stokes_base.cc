@@ -2485,7 +2485,7 @@ NavierStokesBase<dim, VectorType, DofsType>::
 
 template <int dim, typename VectorType, typename DofsType>
 void
-NavierStokesBase<dim, VectorType, DofsType>::get_newton_update_norms_output(
+NavierStokesBase<dim, VectorType, DofsType>::output_newton_update_norms(
   const unsigned int display_precision)
 {
   if constexpr (std::is_same_v<VectorType, GlobalVectorType> ||
