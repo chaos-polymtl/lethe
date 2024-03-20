@@ -345,7 +345,11 @@ public:
   void
   get_newton_update_norms_output(const unsigned int display_precision) override
   {
-    this->pcout << "boop" << std::endl;
+    this->pcout << std::setprecision(display_precision) << "\t||dT||_L2 = " << std::setw(6)
+                            << newton_update.l2_norm() << std::setw(6)
+                            << "\t||dT||_Linfty = "
+                            << std::setprecision(display_precision)
+                            << newton_update.linfty_norm() << std::endl;
   }
 
   /**

@@ -99,30 +99,44 @@ test()
   std::vector<IndexSet> index_set_velocity = DoFTools::locally_owned_dofs_per_component(dof_handler, velocity_mask); 
   std::vector<IndexSet> index_set_pressure = DoFTools::locally_owned_dofs_per_component(dof_handler, pressure_mask); 
 
-  Vector<double> velocity_solution(dof_handler.n_locally_owned_dofs());	
-  Vector<double> pressure_solution(dof_handler.n_locally_owned_dofs());
+  // Vector<double> velocity_solution(dof_handler.n_locally_owned_dofs());	
+  // Vector<double> pressure_solution(dof_handler.n_locally_owned_dofs());
   
-  unsigned int k = 0;
+  double correction_norm = 0.0;
+  double max_correction = DBL_MIN;
+  
   for (unsigned int d = 0; d < 3; ++d)
   {  
     
-    for (auto j = index_set_velocity[d].begin(); j !=index_set_velocity[d].end(); j++, k++)
+    for (auto j = index_set_velocity[d].begin(); j !=index_set_velocity[d].end(); j++)
     {
-      velocity_solution[*j] = dummy_solution[*j];
+      correction_norm += dummy_solution[*j]*dummy_solution[*j];
+      
+      if (dummy_solution[*j]>max_correction)
+      {
+        max_correction = dummy_solution[*j];
+      }
     }
   }
   
-  k = 0;
-  for (auto j = index_set_pressure[3].begin(); j !=index_set_pressure[3].end(); j++, k++)
+  deallog << "||u||_L2 : " << std::sqrt(correction_norm) << std::endl;
+  deallog << "||u||_Linfty : " << max_correction << std::endl;
+  
+  correction_norm = 0.0;
+  max_correction = DBL_MIN;
+  
+  for (auto j = index_set_pressure[3].begin(); j !=index_set_pressure[3].end(); j++)
     {
-      pressure_solution[*j] = dummy_solution[*j];
+      correction_norm += dummy_solution[*j]*dummy_solution[*j];
+      
+      if (dummy_solution[*j]>max_correction)
+      {
+        max_correction = dummy_solution[*j];
+      }
     }
   
-  deallog << "||u||_L2 : " << velocity_solution.l2_norm() << std::endl;
-  deallog << "||u||_Linfty : " << velocity_solution.linfty_norm() << std::endl;
-  
-  deallog << "||p||_L2 : " << pressure_solution.l2_norm() << std::endl;
-  deallog << "||p||_Linfty : " << pressure_solution.linfty_norm() << std::endl;
+  deallog << "||p||_L2 : " << std::sqrt(correction_norm) << std::endl;
+  deallog << "||p||_Linfty : " << max_correction << std::endl;
 
 }
 

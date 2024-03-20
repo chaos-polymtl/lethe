@@ -1154,7 +1154,8 @@ GDNavierStokesSolver<dim>::solve_system_GMRES(const bool   initial_step,
           .verbosity != Parameters::Verbosity::quiet)
       {
         this->pcout << "  -Iterative solver took : "
-                    << solver_control.last_step() << " steps " << std::endl;
+                    << solver_control.last_step() << " steps to reach a residual norm of " 
+                    <<  solver_control.last_value() << std::endl;
       }
 
     constraints_used.distribute(this->newton_update);

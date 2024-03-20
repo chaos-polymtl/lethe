@@ -1146,7 +1146,8 @@ CahnHilliard<dim>::solve_linear_system(const bool initial_step,
         .verbosity != Parameters::Verbosity::quiet)
     {
       this->pcout << "  -Iterative solver took : " << solver_control.last_step()
-                  << " steps " << std::endl;
+                  << " steps to reach a residual norm of " 
+                  <<  solver_control.last_value() << std::endl;
     }
 
   constraints_used.distribute(completely_distributed_solution);

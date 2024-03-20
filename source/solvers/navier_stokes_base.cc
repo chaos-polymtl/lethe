@@ -2487,15 +2487,14 @@ template <int dim, typename VectorType, typename DofsType>
 void
 NavierStokesBase<dim, VectorType, DofsType>::get_newton_update_norms_output(const unsigned int display_precision)
 {
-  if constexpr (std::is_same_v<VectorType, GlobalVectorType>)
+  if constexpr (std::is_same_v<VectorType, GlobalVectorType> || std::is_same_v<VectorType, LinearAlgebra::distributed::Vector<double>>)
   {
     FEValuesExtractors::Vector velocities(0);
     FEValuesExtractors::Scalar pressure(dim);
     
     ComponentMask velocity_mask = fe->component_mask(velocities);
     ComponentMask pressure_mask = fe->component_mask(pressure);
-    
-    
+      
     const std::vector<IndexSet> index_set_velocity = DoFTools::locally_owned_dofs_per_component(dof_handler, velocity_mask); 
     const std::vector<IndexSet> index_set_pressure = DoFTools::locally_owned_dofs_per_component(dof_handler, pressure_mask);
     
@@ -2548,6 +2547,19 @@ NavierStokesBase<dim, VectorType, DofsType>::get_newton_update_norms_output(cons
                             << "\t||dp||_Linfty = "
                             << std::setprecision(display_precision)
                             << global_pressure_linfty_norm << std::endl;
+  }
+  if constexpr (std::is_same_v<VectorType, GlobalBlockVectorType>)
+  {                          
+    this->pcout << std::setprecision(display_precision) << "\t||du||_L2 = " << std::setw(6)
+                            << newton_update.block(0).l2_norm() << std::setw(6)
+                            << "\t||du||_Linfty = "
+                            << std::setprecision(display_precision)
+                            << newton_update.block(0).linfty_norm() << std::endl;
+    this->pcout << std::setprecision(display_precision) << "\t||dp||_L2 = " << std::setw(6)
+                            << newton_update.block(1).l2_norm() << std::setw(6)
+                            << "\t||dp||_Linfty = "
+                            << std::setprecision(display_precision)
+                            << newton_update.block(1).linfty_norm() << std::endl;
   }
 };
 
