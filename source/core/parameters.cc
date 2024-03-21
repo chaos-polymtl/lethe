@@ -1821,7 +1821,7 @@ namespace Parameters
         "calculate mass conservation",
         "true",
         Patterns::Bool(),
-        "Enable calculation of the mass of both fluids in VOF simualtions.");
+        "Enable calculation of the mass and momentum of both fluids in VOF simulations.");
 
       prm.declare_entry(
         "mass conservation name",
@@ -2925,14 +2925,6 @@ namespace Parameters
                         "1",
                         Patterns::Double(),
                         "density of the particle ");
-      // The implementation is postponed since it makes the evaluation of the
-      // levelset more complex.
-      /*prm.declare_entry(
-        "center of mass location",
-        "0; 0; 0",
-        Patterns::Anything(),
-        "position of the center of mass relative to the frame of reference of
-        the particule");*/
       prm.declare_entry(
         "volume",
         "0",
