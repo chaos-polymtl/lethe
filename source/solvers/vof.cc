@@ -606,6 +606,112 @@ VolumeOfFluid<dim>::calculate_volume_and_mass(
 }
 
 template <int dim>
+template <typename VectorType>
+Tensor<1, dim>
+VolumeOfFluid<dim>::calculate_momentum(
+  const GlobalVectorType          &solution,
+  const VectorType                &current_solution_fd,
+  const Parameters::FluidIndicator monitored_fluid)
+{
+  const MPI_Comm mpi_communicator = this->triangulation->get_communicator();
+
+  FEValues<dim> fe_values_vof(*this->mapping,
+                              *this->fe,
+                              *this->cell_quadrature,
+                              update_values | update_JxW_values);
+
+  QGauss<dim>            quadrature_formula(this->cell_quadrature->size());
+  const DoFHandler<dim> *dof_handler_fd =
+    multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
+
+  FEValues<dim> fe_values_fd(*this->mapping,
+                             dof_handler_fd->get_fe(),
+                             quadrature_formula,
+                             update_values);
+
+  const FEValuesExtractors::Vector velocity(0);
+  const FEValuesExtractors::Scalar pressure(dim);
+
+  const unsigned int          n_q_points = this->cell_quadrature->size();
+  std::vector<double>         phase_values(n_q_points);
+  std::vector<double>         density_0(n_q_points);
+  std::vector<double>         density_1(n_q_points);
+  std::vector<double>         pressure_values(n_q_points);
+  std::vector<Tensor<1, dim>> velocity_values(n_q_points);
+
+  Tensor<1, dim> total_momentum;
+
+  // Physical properties
+  const auto density_models =
+    this->simulation_parameters.physical_properties_manager
+      .get_density_vector();
+  std::map<field, std::vector<double>> fields;
+  fields.insert(
+    std::pair<field, std::vector<double>>(field::pressure, n_q_points));
+
+  for (const auto &cell_vof : this->dof_handler.active_cell_iterators())
+    {
+      if (cell_vof->is_locally_owned())
+        {
+          fe_values_vof.reinit(cell_vof);
+          fe_values_vof.get_function_values(solution, phase_values);
+
+          // Get fluid dynamics active cell iterator
+          typename DoFHandler<dim>::active_cell_iterator cell_fd(
+            &(*(this->triangulation)),
+            cell_vof->level(),
+            cell_vof->index(),
+            dof_handler_fd);
+          fe_values_fd.reinit(cell_fd);
+
+          fe_values_fd[velocity].get_function_values(current_solution_fd,
+                                                     velocity_values);
+
+          if (this->simulation_parameters.physical_properties_manager
+                .field_is_required(field::pressure))
+            {
+              fe_values_fd[pressure].get_function_values(current_solution_fd,
+                                                         pressure_values);
+              set_field_vector(field::pressure, pressure_values, fields);
+            }
+
+
+
+          // Calculate physical properties for the cell
+          density_models[0]->vector_value(fields, density_0);
+          density_models[1]->vector_value(fields, density_1);
+
+          for (unsigned int q = 0; q < n_q_points; q++)
+            {
+              switch (monitored_fluid)
+                {
+                  case Parameters::FluidIndicator::fluid0:
+                    {
+                      total_momentum += fe_values_vof.JxW(q) *
+                                        (1 - phase_values[q]) *
+                                        velocity_values[q] * density_0[q];
+                      break;
+                    }
+                  case Parameters::FluidIndicator::fluid1:
+                    {
+                      total_momentum += fe_values_vof.JxW(q) * phase_values[q] *
+                                        velocity_values[q] * density_1[q];
+                      break;
+                    }
+                  default:
+                    throw std::runtime_error(
+                      "Unsupported number of fluids (>2)");
+                }
+            }
+        }
+    }
+
+  total_momentum = Utilities::MPI::sum(total_momentum, mpi_communicator);
+
+  return total_momentum;
+}
+
+template <int dim>
 void
 VolumeOfFluid<dim>::finish_simulation()
 {
@@ -689,8 +795,9 @@ VolumeOfFluid<dim>::postprocess(bool first_iteration)
       // To display when verbose
       std::vector<std::string> dependent_column_names;
       dependent_column_names.reserve(n_fluids * 2 + 1);
-      std::vector<double> volumes_masses_and_sharpening_threshold;
-      volumes_masses_and_sharpening_threshold.reserve(n_fluids * 2 + 1);
+      std::vector<double> volumes_masses_momentum_and_sharpening_threshold;
+      volumes_masses_momentum_and_sharpening_threshold.reserve(n_fluids * 2 +
+                                                               1);
 
       if (this_mpi_process == 0)
         {
@@ -717,6 +824,13 @@ VolumeOfFluid<dim>::postprocess(bool first_iteration)
                                       PhysicsID::fluid_dynamics),
                                     fluid_indicators[i]);
 
+          // Calculate momentum
+          const Tensor<1, dim> momentum =
+            calculate_momentum(this->present_solution,
+                               *multiphysics->get_solution(
+                                 PhysicsID::fluid_dynamics),
+                               fluid_indicators[i]);
+
           if (this_mpi_process == 0)
             {
               std::string fluid_id("");
@@ -730,6 +844,11 @@ VolumeOfFluid<dim>::postprocess(bool first_iteration)
                 {
                   fluid_id = "fluid_0";
                 }
+
+              std::vector<std::string> momentum_names(
+                {"momentum-x_" + fluid_id, "momentum-y_" + fluid_id});
+              if constexpr (dim == 3)
+                momentum_names.push_back("momentum-z_" + fluid_id);
 
               if constexpr (dim == 2)
                 {
@@ -753,15 +872,30 @@ VolumeOfFluid<dim>::postprocess(bool first_iteration)
                                                    this->mass_monitored);
               this->table_monitoring_vof.set_scientific(mass_column_name, true);
 
+              // Add "momentum" columns
+              for (unsigned int d = 0; d < dim; ++d)
+                {
+                  this->table_monitoring_vof.add_value(momentum_names[d],
+                                                       momentum[d]);
+                  this->table_monitoring_vof.set_scientific(momentum_names[d],
+                                                            true);
+                }
+
               if (this->simulation_parameters.post_processing.verbosity ==
                   Parameters::Verbosity::verbose)
                 {
                   dependent_column_names.push_back(volume_column_name);
                   dependent_column_names.push_back(mass_column_name);
-                  volumes_masses_and_sharpening_threshold.push_back(
+                  volumes_masses_momentum_and_sharpening_threshold.push_back(
                     this->volume_monitored);
-                  volumes_masses_and_sharpening_threshold.push_back(
+                  volumes_masses_momentum_and_sharpening_threshold.push_back(
                     this->mass_monitored);
+                  for (unsigned int d = 0; d < dim; ++d)
+                    {
+                      dependent_column_names.push_back(momentum_names[d]);
+                      volumes_masses_momentum_and_sharpening_threshold
+                        .push_back(momentum[d]);
+                    }
                 }
             }
         }
@@ -790,7 +924,7 @@ VolumeOfFluid<dim>::postprocess(bool first_iteration)
           if (this->simulation_parameters.post_processing.verbosity ==
               Parameters::Verbosity::verbose)
             {
-              volumes_masses_and_sharpening_threshold.push_back(
+              volumes_masses_momentum_and_sharpening_threshold.push_back(
                 this->sharpening_threshold);
               dependent_column_names.push_back("sharpening_threshold");
 
@@ -799,7 +933,7 @@ VolumeOfFluid<dim>::postprocess(bool first_iteration)
               std::vector<std::vector<double>>
                 volumes_masses_and_sharpening_thresholds;
               volumes_masses_and_sharpening_thresholds.push_back(
-                volumes_masses_and_sharpening_threshold);
+                volumes_masses_momentum_and_sharpening_threshold);
 
               // Time column
               std::string         independent_column_name = "time";
@@ -820,7 +954,6 @@ VolumeOfFluid<dim>::postprocess(bool first_iteration)
             }
         }
     }
-
 
   if (this->simulation_parameters.post_processing.calculate_barycenter)
     {
