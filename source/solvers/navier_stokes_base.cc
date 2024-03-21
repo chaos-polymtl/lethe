@@ -2577,7 +2577,7 @@ NavierStokesBase<dim, VectorType, DofsType>::output_newton_update_norms(
                   << std::setprecision(display_precision)
                   << newton_update.block(1).linfty_norm() << std::endl;
     }
-};
+}
 
 template <int dim, typename VectorType, typename DofsType>
 inline VectorType
