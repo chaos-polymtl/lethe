@@ -342,16 +342,6 @@ public:
     return newton_update;
   }
 
-  void
-  output_newton_update_norms(const unsigned int display_precision) override
-  {
-    this->pcout << std::setprecision(display_precision)
-                << "\t||dT||_L2 = " << std::setw(6) << newton_update.l2_norm()
-                << std::setw(6)
-                << "\t||dT||_Linfty = " << std::setprecision(display_precision)
-                << newton_update.linfty_norm() << std::endl;
-  }
-
   /**
    * @brief Getter method to access the private attribute
    * present_solution for the physic currently solved. NB : present_solution is
@@ -392,6 +382,20 @@ public:
     return nonzero_constraints;
   }
 
+  /**
+   * @brief Output the L2 and Linfty norms of the correction vector.
+   *
+   * @param display_precision [in] Number of outputed digits.
+   */
+  void
+  output_newton_update_norms(const unsigned int display_precision) override
+  {
+    this->pcout << std::setprecision(display_precision)
+                << "\t||dT||_L2 = " << std::setw(6) << newton_update.l2_norm()
+                << std::setw(6)
+                << "\t||dT||_Linfty = " << std::setprecision(display_precision)
+                << newton_update.linfty_norm() << std::endl;
+  }
 
 private:
   /**

@@ -98,14 +98,20 @@ public:
   get_local_evaluation_point() = 0;
   virtual VectorType &
   get_newton_update() = 0;
-  virtual void
-  output_newton_update_norms(const unsigned int display_precision) = 0;
   virtual VectorType &
   get_present_solution() = 0;
   virtual VectorType &
   get_system_rhs() = 0;
   virtual AffineConstraints<double> &
   get_nonzero_constraints() = 0;
+
+  /**
+   * @brief Output the L2 and Linfty norms of the correction vector.
+   *
+   * @param display_precision [in] Number of outputed digits.
+   */
+  virtual void
+  output_newton_update_norms(const unsigned int display_precision) = 0;
 
   /**
    * @brief Default way to evaluate the residual for the nonlinear solver.

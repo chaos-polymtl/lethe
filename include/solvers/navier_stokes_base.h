@@ -148,8 +148,6 @@ protected:
   {
     return newton_update;
   };
-  virtual void
-  output_newton_update_norms(const unsigned int display_precision) override;
   virtual VectorType &
   get_present_solution() override
   {
@@ -165,6 +163,14 @@ protected:
   {
     return nonzero_constraints;
   };
+
+  /**
+   * @brief Output the L2 and Linfty norms of the correction vector.
+   *
+   * @param display_precision [in] Number of outputed digits.
+   */
+  virtual void
+  output_newton_update_norms(const unsigned int display_precision) override;
 
   /**
    *  Generic interface routine to allow the CFD solver

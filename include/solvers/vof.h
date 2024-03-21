@@ -379,15 +379,6 @@ public:
   {
     return newton_update;
   }
-  void
-  output_newton_update_norms(const unsigned int display_precision) override
-  {
-    this->pcout << std::setprecision(display_precision)
-                << "\t||dphi||_L2 = " << std::setw(6) << newton_update.l2_norm()
-                << std::setw(6) << "\t||dphi||_Linfty = "
-                << std::setprecision(display_precision)
-                << newton_update.linfty_norm() << std::endl;
-  }
   GlobalVectorType &
   get_present_solution() override
   {
@@ -422,6 +413,21 @@ public:
   get_curvature_solution()
   {
     return &present_curvature_solution;
+  }
+
+  /**
+   * @brief Output the L2 and Linfty norms of the correction vector.
+   *
+   * @param display_precision [in] Number of outputed digits.
+   */
+  void
+  output_newton_update_norms(const unsigned int display_precision) override
+  {
+    this->pcout << std::setprecision(display_precision)
+                << "\t||dphi||_L2 = " << std::setw(6) << newton_update.l2_norm()
+                << std::setw(6) << "\t||dphi||_Linfty = "
+                << std::setprecision(display_precision)
+                << newton_update.linfty_norm() << std::endl;
   }
 
 private:
