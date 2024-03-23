@@ -181,7 +181,7 @@ namespace Parameters
       int insertion_frequency;
 
       // Direction (axis) of insertion of particles (1st, 2nd, 3rd)
-      unsigned int axis_0, axis_1, axis_2;
+      std::vector<unsigned int> direction_sequence;
 
       // Insertion box info (xmin,xmax,ymin,ymax,zmin,zmax)
       Point<3> insertion_box_point_1, insertion_box_point_2;

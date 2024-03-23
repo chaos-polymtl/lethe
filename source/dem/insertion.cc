@@ -130,7 +130,8 @@ Insertion<dim>::calculate_insertion_domain_maximum_particle_number(
   int axis_sum = 0;
   if constexpr (dim == 2)
     {
-      axis_sum = insertion_information.axis_0 + insertion_information.axis_1;
+      axis_sum = insertion_information.direction_sequence[0] +
+                 insertion_information.direction_sequence[1];
 
       AssertThrow(
         axis_sum == 1,
@@ -138,8 +139,9 @@ Insertion<dim>::calculate_insertion_domain_maximum_particle_number(
     }
   if constexpr (dim == 3)
     {
-      axis_sum = insertion_information.axis_0 + insertion_information.axis_1 +
-                 insertion_information.axis_2;
+      axis_sum = insertion_information.direction_sequence[0] +
+                 insertion_information.direction_sequence[1] +
+                 insertion_information.direction_sequence[2];
 
       AssertThrow(
         axis_sum == 3,
@@ -156,12 +158,13 @@ Insertion<dim>::calculate_insertion_domain_maximum_particle_number(
   axis_min.resize(dim);
   axis_max.resize(dim);
 
-  std::vector<unsigned int> axis_list = {insertion_information.axis_0,
-                                         insertion_information.axis_1};
+  std::vector<unsigned int> axis_list = {
+    insertion_information.direction_sequence[0],
+    insertion_information.direction_sequence[1]};
 
   if constexpr (dim == 3)
     {
-      axis_list.push_back(insertion_information.axis_2);
+      axis_list.push_back(insertion_information.direction_sequence[2]);
     }
 
   // Assigning the minimum and maximum positions of the insertion box in respect

@@ -55,9 +55,7 @@ test()
   // Defining simulation general parameters
   dem_parameters.insertion_info.insertion_box_point_1 = {-0.05, -0.05, -0.05};
   dem_parameters.insertion_info.insertion_box_point_2 = {0.05, 0.05, 0.05};
-  dem_parameters.insertion_info.axis_0                = 0;
-  dem_parameters.insertion_info.axis_1                = 1;
-  dem_parameters.insertion_info.axis_2                = 2;
+  dem_parameters.insertion_info.direction_sequence    = {0, 1, 2};
   dem_parameters.insertion_info.inserted_this_step    = 10;
   dem_parameters.insertion_info.distance_threshold    = 2;
   dem_parameters.lagrangian_physical_properties.particle_type_number = 1;

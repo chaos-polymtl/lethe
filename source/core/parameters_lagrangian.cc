@@ -431,9 +431,10 @@ namespace Parameters
         if (axis_order.size() == 2)
           axis_order.resize(3);
 
-        axis_0 = axis_order.at(0);
-        axis_1 = axis_order.at(1);
-        axis_2 = axis_order.at(2);
+        direction_sequence.reserve(3);
+        direction_sequence.push_back(axis_order[0]);
+        direction_sequence.push_back(axis_order[1]);
+        direction_sequence.push_back(axis_order[2]);
 
         const std::vector<std::string> point_coordinates_list(
           Utilities::split_string_list(
