@@ -296,7 +296,7 @@ namespace Parameters
                           "1",
                           Patterns::Integer(),
                           "Insertion frequency");
-        prm.declare_entry("insertion order of direction",
+        prm.declare_entry("insertion direction sequence",
                           "0,1,2",
                           Patterns::List(Patterns::Integer(), 2, 3),
                           "First direction of particle insertion");
@@ -427,7 +427,7 @@ namespace Parameters
         insertion_frequency = prm.get_integer("insertion frequency");
 
         std::vector<int> axis_order =
-          convert_string_to_vector<int>(prm, "insertion order of direction");
+          convert_string_to_vector<int>(prm, "insertion direction sequence");
         if (axis_order.size() == 2)
           axis_order.resize(3);
 
