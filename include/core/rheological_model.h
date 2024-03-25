@@ -704,6 +704,12 @@ public:
     std::vector<double> &jacobian_vector) override;
 
   double
+  get_kinematic_viscosity_scale() const override
+  {
+    return param.kinematic_viscosity_l;
+  }
+
+  double
   get_dynamic_viscosity(
     const double                  &p_density_ref,
     const std::map<field, double> &field_values) const override

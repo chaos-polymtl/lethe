@@ -16,6 +16,9 @@ GLSIsothermalCompressibleNavierStokesAssemblerCore<dim>::assemble_matrix(
   const std::vector<double> &dynamic_viscosity_vector =
     scratch_data.dynamic_viscosity;
   const double density_psi = scratch_data.density_psi;
+  
+  const double viscosity_scale =
+    scratch_data.kinematic_viscosity_scale;
 
   // Loop and quadrature information
   const auto        &JxW_vec    = scratch_data.JxW;
@@ -72,10 +75,10 @@ GLSIsothermalCompressibleNavierStokesAssemblerCore<dim>::assemble_matrix(
         this->simulation_control->get_assembly_method() ==
             Parameters::SimulationControl::TimeSteppingMethod::steady ?
           calculate_navier_stokes_gls_tau_steady(u_mag,
-                                                 dynamic_viscosity / density,
+                                                 viscosity_scale,
                                                  h) :
           calculate_navier_stokes_gls_tau_transient(u_mag,
-                                                    dynamic_viscosity / density,
+                                                    viscosity_scale,
                                                     h,
                                                     sdt);
 
@@ -205,6 +208,8 @@ GLSIsothermalCompressibleNavierStokesAssemblerCore<dim>::assemble_rhs(
   const std::vector<double> &density_vector = scratch_data.density;
   const std::vector<double> &dynamic_viscosity_vector =
     scratch_data.dynamic_viscosity;
+  const double viscosity_scale =
+    scratch_data.kinematic_viscosity_scale;
   const double density_psi = scratch_data.density_psi;
 
   // Loop and quadrature information
@@ -261,10 +266,10 @@ GLSIsothermalCompressibleNavierStokesAssemblerCore<dim>::assemble_rhs(
         this->simulation_control->get_assembly_method() ==
             Parameters::SimulationControl::TimeSteppingMethod::steady ?
           calculate_navier_stokes_gls_tau_steady(u_mag,
-                                                 dynamic_viscosity / density,
+                                                 viscosity_scale,
                                                  h) :
           calculate_navier_stokes_gls_tau_transient(u_mag,
-                                                    dynamic_viscosity / density,
+                                                    viscosity_scale,
                                                     h,
                                                     sdt);
 

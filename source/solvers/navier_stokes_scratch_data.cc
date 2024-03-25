@@ -400,8 +400,8 @@ NavierStokesScratchData<dim>::calculate_physical_properties()
           // required property
           const auto rheology_model = properties_manager.get_rheology();
           rheology_model->vector_value(fields, kinematic_viscosity);
-          kinematic_viscosity_scale =
-            rheology_model->get_kinematic_viscosity_scale();
+          
+          kinematic_viscosity_scale = rheology_model->get_kinematic_viscosity_scale();
 
           if (!properties_manager.density_is_constant())
             {
@@ -442,6 +442,11 @@ NavierStokesScratchData<dim>::calculate_physical_properties()
 
           density_ref_0 = density_model_0->get_density_ref();
           density_ref_1 = density_model_1->get_density_ref();
+          
+          kinematic_viscosity_scale_0 = rheology_model_0->get_kinematic_viscosity_scale();
+          kinematic_viscosity_scale_1 = rheology_model_1->get_kinematic_viscosity_scale();
+          
+          kinematic_viscosity_scale = std::max(kinematic_viscosity_scale_0, kinematic_viscosity_scale_1);
 
           // Gather properties from material interactions if necessary
           if (properties_manager.get_number_of_material_interactions() > 0)
