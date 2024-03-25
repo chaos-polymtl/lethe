@@ -40,8 +40,6 @@ CahnHilliardAssemblerCore<dim>::assemble_matrix(
   // Copy data elements
   auto &local_matrix = copy_data.local_matrix;
 
-  // std::cout<<"epsilon = "<<epsilon<<std::endl;
-
   for (unsigned int q = 0; q < n_q_points; ++q)
     {
       const double lambda =
