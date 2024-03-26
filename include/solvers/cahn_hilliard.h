@@ -315,14 +315,7 @@ public:
    * @param[in] display_precision Number of outputted digits.
    */
   void
-  output_newton_update_norms(const unsigned int display_precision) override
-  {
-    this->pcout << std::setprecision(display_precision)
-                << "\t||dx||_L2 = " << std::setw(6) << newton_update.l2_norm()
-                << std::setw(6)
-                << "\t||dx||_Linfty = " << std::setprecision(display_precision)
-                << newton_update.linfty_norm() << std::endl;
-  }
+  output_newton_update_norms(const unsigned int display_precision) override;
 
 
 private:
