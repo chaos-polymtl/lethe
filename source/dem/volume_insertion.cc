@@ -177,7 +177,7 @@ VolumeInsertion<2>::find_insertion_location_volume(
   int          number_of_particles_0;
 
   // First direction (axis) to have particles inserted
-  axis_0                  = insertion_information.axis_0;
+  axis_0                  = insertion_information.direction_sequence.at(0);
   number_of_particles_0   = this->number_of_particles_directions[axis_0];
   insertion_index[axis_0] = id % number_of_particles_0;
   insertion_location[axis_0] =
@@ -187,7 +187,7 @@ VolumeInsertion<2>::find_insertion_location_volume(
                                this->maximum_diameter;
 
   // Second direction (axis) to have particles inserted
-  axis_1                  = insertion_information.axis_1;
+  axis_1                  = insertion_information.direction_sequence.at(1);
   insertion_index[axis_1] = static_cast<int>(id / number_of_particles_0);
   insertion_location[axis_1] =
     this->axis_min[axis_1] + ((insertion_index[axis_1] + 0.5) *
@@ -212,7 +212,7 @@ VolumeInsertion<3>::find_insertion_location_volume(
   int          number_of_particles_0, number_of_particles_1;
 
   // First direction (axis) to have particles inserted
-  axis_0                  = insertion_information.axis_0;
+  axis_0                  = insertion_information.direction_sequence.at(0);
   number_of_particles_0   = this->number_of_particles_directions[axis_0];
   insertion_index[axis_0] = id % number_of_particles_0;
   insertion_location[axis_0] =
@@ -222,7 +222,7 @@ VolumeInsertion<3>::find_insertion_location_volume(
                                this->maximum_diameter;
 
   // Second direction (axis) to have particles inserted
-  axis_1                = insertion_information.axis_1;
+  axis_1                = insertion_information.direction_sequence.at(1);
   number_of_particles_1 = this->number_of_particles_directions[axis_1];
   insertion_index[axis_1] =
     static_cast<int>(id % (number_of_particles_0 * number_of_particles_1)) /
@@ -234,7 +234,7 @@ VolumeInsertion<3>::find_insertion_location_volume(
                                this->maximum_diameter;
 
   // Third direction (axis) to have particles inserted
-  axis_2 = insertion_information.axis_2;
+  axis_2 = insertion_information.direction_sequence.at(2);
   insertion_index[axis_2] =
     static_cast<int>(id / (number_of_particles_0 * number_of_particles_1));
   insertion_location[axis_2] =

@@ -208,12 +208,7 @@ The volume of the insertion box should be large enough to fit all particles. Als
       set insertion method                               = volume
       set inserted number of particles at each time step = 48841 # for alginate, we recommend 79600
       set insertion frequency                            = 200000
-      set insertion box minimum x                        = -0.15
-      set insertion box minimum y                        = -0.035
-      set insertion box minimum z                        = -0.035
-      set insertion box maximum x                        = 0.53
-      set insertion box maximum y                        = 0.035
-      set insertion box maximum z                        = 0.035
+      set insertion box points coordinates               = -0.15, -0.035, -0.035 : 0.53, 0.035, 0.035
       set insertion distance threshold                   = 1.3
       set insertion maximum offset                       = 0.3
       set insertion prn seed                             = 19

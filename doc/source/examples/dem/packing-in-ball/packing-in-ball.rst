@@ -64,12 +64,7 @@ In a three-dimensional simulation, we have to define the minimum and maximum dim
       set insertion method                               = volume
       set inserted number of particles at each time step = 1000
       set insertion frequency                            = 150000
-      set insertion box minimum x                        = -0.05
-      set insertion box minimum y                        = -0.05
-      set insertion box minimum z                        = -0.03
-      set insertion box maximum x                        = 0.05
-      set insertion box maximum y                        = 0.05
-      set insertion box maximum z                        = 0.07
+      set insertion box points coordinates               = -0.05, -0.05, -0.03 : 0.05, 0.05, 0.07
       set insertion distance threshold                   = 2
       set insertion maximum offset                       = 0.75
       set insertion prn seed                             = 19

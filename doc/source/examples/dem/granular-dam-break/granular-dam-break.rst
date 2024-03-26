@@ -117,12 +117,7 @@ An insertion box is defined inside the rectangular box. 60 000 particles are ins
     set insertion method                               = volume
     set inserted number of particles at each time step = 60000
     set insertion frequency                            = 10000
-    set insertion box minimum x                        = 0.0025
-    set insertion box minimum y                        = 0.0025
-    set insertion box minimum z                        = 0.0025
-    set insertion box maximum x                        = 0.597
-    set insertion box maximum y                        = 0.340
-    set insertion box maximum z                        = 0.397
+    set insertion box points coordinates               = 0.0025, 0.0025, 0.0025 : 0.597, 0.340, 0.397
     set insertion distance threshold                   = 1.075
     set insertion maximum offset                       = 0.025
     set insertion prn seed                             = 19

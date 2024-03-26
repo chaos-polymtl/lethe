@@ -62,12 +62,7 @@ An insertion box is defined inside the cylindrical domain, inserting 8000 partic
       set insertion method                               = volume
       set inserted number of particles at each time step = 8000
       set insertion frequency                            = 100000
-      set insertion box minimum x                        = -0.05
-      set insertion box minimum y                        = 0.
-      set insertion box minimum z                        = -0.04
-      set insertion box maximum x                        = 0.05
-      set insertion box maximum y                        = 0.04
-      set insertion box maximum z                        = 0.04
+      set insertion box points coordinates               = -0.05, 0., -0.04 : 0.05, 0.04, 0.04
       set insertion distance threshold                   = 1.1
       set insertion maximum offset                       = 0.05
       set insertion prn seed                             = 19
