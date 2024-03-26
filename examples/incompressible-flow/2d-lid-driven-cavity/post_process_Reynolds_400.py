@@ -26,7 +26,7 @@ y_ghia=raw_ghia[:,0]
 u_ghia=raw_ghia[:,2]
 
 # Load VTU file
-vtu_file="out.0001.0000.vtu"
+vtu_file="out.00001.00000.vtu"
 sim = pv.read(vtu_file)
 sim.set_active_vectors("velocity")
 

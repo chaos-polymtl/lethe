@@ -28,7 +28,7 @@ The source folder of lethe contains an examples folder. This folder contains rea
 
 .. code-block:: text
 
- cp -r $SOURCE_FOLDER/examples/incompressible_flow/2d_lid_driven_cavity destination/first_simulation
+ cp -r $SOURCE_FOLDER/examples/incompressible-flow/2d-lid-driven-cavity destination/first_simulation
 
 Step 2: Launching the Example
 -----------------------------
