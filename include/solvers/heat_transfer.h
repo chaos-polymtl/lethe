@@ -385,7 +385,7 @@ public:
   /**
    * @brief Output the L2 and Linfty norms of the correction vector.
    *
-   * @param display_precision [in] Number of outputed digits.
+   * @param[in] display_precision Number of outputted digits.
    */
   void
   output_newton_update_norms(const unsigned int display_precision) override

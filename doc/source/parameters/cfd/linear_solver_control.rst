@@ -76,7 +76,7 @@ In this subsection, the control options of the linear solvers are specified. The
 		-Tolerance of iterative solver is : 1e-13
 		-Iterative solver took : 0 steps 
 
-When set at ``extra verbose``, the residual at each iteration of the linear solver is printed.
+When set to ``extra verbose``, the residual at each iteration of the linear solver is printed.
 
 * The ``minimum residual`` for the linear solver.
 

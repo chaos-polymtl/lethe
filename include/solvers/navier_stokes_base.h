@@ -167,7 +167,7 @@ protected:
   /**
    * @brief Output the L2 and Linfty norms of the correction vector.
    *
-   * @param display_precision [in] Number of outputed digits.
+   * @param[in] display_precision Number of outputted digits.
    */
   virtual void
   output_newton_update_norms(const unsigned int display_precision) override;
