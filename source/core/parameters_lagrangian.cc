@@ -296,44 +296,17 @@ namespace Parameters
                           "1",
                           Patterns::Integer(),
                           "Insertion frequency");
-
-        prm.declare_entry("insertion first direction",
-                          "0",
-                          Patterns::Integer(),
+        prm.declare_entry("insertion direction sequence",
+                          "0,1,2",
+                          Patterns::List(Patterns::Integer(), 2, 3),
                           "First direction of particle insertion");
-        prm.declare_entry("insertion second direction",
-                          "1",
-                          Patterns::Integer(),
-                          "Second direction of particle insertion");
-        prm.declare_entry("insertion third direction",
-                          "2",
-                          Patterns::Integer(),
-                          "Third direction of particle insertion");
 
-        prm.declare_entry("insertion box minimum x",
-                          "1",
-                          Patterns::Double(),
-                          "Insertion x min");
-        prm.declare_entry("insertion box minimum y",
-                          "1",
-                          Patterns::Double(),
-                          "Insertion y min");
-        prm.declare_entry("insertion box minimum z",
-                          "1",
-                          Patterns::Double(),
-                          "Insertion z min");
-        prm.declare_entry("insertion box maximum x",
-                          "1",
-                          Patterns::Double(),
-                          "Insertion x max");
-        prm.declare_entry("insertion box maximum y",
-                          "1",
-                          Patterns::Double(),
-                          "Insertion y max");
-        prm.declare_entry("insertion box maximum z",
-                          "1",
-                          Patterns::Double(),
-                          "Insertion z max");
+        prm.declare_entry(
+          "insertion box points coordinates",
+          "0. , 0. , 0. : 1. , 1. , 1.",
+          Patterns::List(
+            Patterns::List(Patterns::Double(), 2, 3, ","), 2, 2, ":"),
+          "Coordinates of two points (x1, y1, z1 : x2, y2, z2)");
         prm.declare_entry("insertion distance threshold",
                           "1",
                           Patterns::Double(),
@@ -452,16 +425,38 @@ namespace Parameters
         inserted_this_step =
           prm.get_integer("inserted number of particles at each time step");
         insertion_frequency = prm.get_integer("insertion frequency");
-        axis_0              = prm.get_integer("insertion first direction");
-        axis_1              = prm.get_integer("insertion second direction");
-        axis_2              = prm.get_integer("insertion third direction");
-        x_min               = prm.get_double("insertion box minimum x");
-        y_min               = prm.get_double("insertion box minimum y");
-        z_min               = prm.get_double("insertion box minimum z");
-        x_max               = prm.get_double("insertion box maximum x");
-        y_max               = prm.get_double("insertion box maximum y");
-        z_max               = prm.get_double("insertion box maximum z");
-        distance_threshold  = prm.get_double("insertion distance threshold");
+
+        std::vector<int> axis_order =
+          convert_string_to_vector<int>(prm, "insertion direction sequence");
+        if (axis_order.size() == 2)
+          axis_order.resize(3);
+
+        direction_sequence.reserve(3);
+        direction_sequence.push_back(axis_order[0]);
+        direction_sequence.push_back(axis_order[1]);
+        direction_sequence.push_back(axis_order[2]);
+
+        const std::vector<std::string> point_coordinates_list(
+          Utilities::split_string_list(
+            prm.get("insertion box points coordinates"), ":"));
+
+        std::vector<double> point_coord_temp_1 = Utilities::string_to_double(
+          Utilities::split_string_list(point_coordinates_list.at(0)));
+        std::vector<double> point_coord_temp_2 = Utilities::string_to_double(
+          Utilities::split_string_list(point_coordinates_list.at(1)));
+
+        if (point_coord_temp_1.size() == 2 && point_coord_temp_2.size() == 2)
+          {
+            point_coord_temp_1.resize(3);
+            point_coord_temp_2.resize(3);
+          }
+        for (int i = 0; i < 3; ++i)
+          {
+            insertion_box_point_1[i] = point_coord_temp_1.at(i);
+            insertion_box_point_2[i] = point_coord_temp_2.at(i);
+          }
+
+        distance_threshold = prm.get_double("insertion distance threshold");
         insertion_maximum_offset = prm.get_double("insertion maximum offset");
         seed_for_insertion       = prm.get_integer("insertion prn seed");
 
@@ -472,23 +467,10 @@ namespace Parameters
         omega_y = prm.get_double("omega y");
         omega_z = prm.get_double("omega z");
 
-        // Read x, y and z lists as singles strings
-        std::string x_str = prm.get("list x");
-        std::string y_str = prm.get("list y");
-        std::string z_str = prm.get("list z");
-
-        // Convert x,y and z strings to vectors of strings
-        std::vector<std::string> x_str_list(
-          Utilities::split_string_list(x_str));
-        std::vector<std::string> y_str_list(
-          Utilities::split_string_list(y_str));
-        std::vector<std::string> z_str_list(
-          Utilities::split_string_list(z_str));
-
-        // Convert x,y and z string vectors to vectors of doubles
-        list_x = Utilities::string_to_double(x_str_list);
-        list_y = Utilities::string_to_double(y_str_list);
-        list_z = Utilities::string_to_double(z_str_list);
+        // Read x, y and z lists
+        list_x = convert_string_to_vector<double>(prm, "list x");
+        list_y = convert_string_to_vector<double>(prm, "list y");
+        list_z = convert_string_to_vector<double>(prm, "list z");
 
         // Find which vector is the longest
         int max_size = std::max({list_x.size(), list_y.size(), list_z.size()});
@@ -498,23 +480,10 @@ namespace Parameters
         list_y.resize(max_size);
         list_z.resize(max_size);
 
-        // Read vx, vv and vz lists as singles strings
-        std::string vx_str = prm.get("list velocity x");
-        std::string vy_str = prm.get("list velocity y");
-        std::string vz_str = prm.get("list velocity z");
-
-        // Convert vx, vy and vz strings to vectors of strings
-        std::vector<std::string> vx_str_list(
-          Utilities::split_string_list(vx_str));
-        std::vector<std::string> vy_str_list(
-          Utilities::split_string_list(vy_str));
-        std::vector<std::string> vz_str_list(
-          Utilities::split_string_list(vz_str));
-
-        // Convert vx, vy and vz string vectors to vectors of doubles
-        list_vx = Utilities::string_to_double(vx_str_list);
-        list_vy = Utilities::string_to_double(vy_str_list);
-        list_vz = Utilities::string_to_double(vz_str_list);
+        // Read vx, vv and vz
+        list_vx = convert_string_to_vector<double>(prm, "list velocity x");
+        list_vy = convert_string_to_vector<double>(prm, "list velocity y");
+        list_vz = convert_string_to_vector<double>(prm, "list velocity z");
 
         // Fill the velocity vectors with zeros to match the size of list_x
         if (list_vx != list_x)
@@ -524,23 +493,10 @@ namespace Parameters
         if (list_vz != list_x)
           list_vz.resize(max_size);
 
-        // Read wx, wy and wz lists as singles strings
-        std::string wx_str = prm.get("list omega x");
-        std::string wy_str = prm.get("list omega y");
-        std::string wz_str = prm.get("list omega z");
-
-        // Convert wx, wy and wz strings to vectors of strings
-        std::vector<std::string> wx_str_list(
-          Utilities::split_string_list(wx_str));
-        std::vector<std::string> wy_str_list(
-          Utilities::split_string_list(wy_str));
-        std::vector<std::string> wz_str_list(
-          Utilities::split_string_list(wz_str));
-
-        // Convert x, y and z string vectors to vectors of doubles
-        list_wx = Utilities::string_to_double(wx_str_list);
-        list_wy = Utilities::string_to_double(wy_str_list);
-        list_wz = Utilities::string_to_double(wz_str_list);
+        // Read wx, wy and wz
+        list_wx = convert_string_to_vector<double>(prm, "list omega x");
+        list_wy = convert_string_to_vector<double>(prm, "list omega y");
+        list_wz = convert_string_to_vector<double>(prm, "list omega z");
 
         // Fill the angular velocity vectors with zeros to match the size of
         // list_x
@@ -551,15 +507,8 @@ namespace Parameters
         if (list_wz != list_x)
           list_wz.resize(max_size);
 
-        // Read the diameters list as a single string
-        std::string d_str = prm.get("list diameters");
-
-        // Convert the diameters list to a vector of strings
-        std::vector<std::string> d_str_list(
-          Utilities::split_string_list(d_str));
-
-        // Convert the diameters string vector to a double vector
-        list_d = Utilities::string_to_double(d_str_list);
+        // Read the diameters list
+        list_d = convert_string_to_vector<double>(prm, "list diameters");
 
         // File for the insertion
         insertion_particles_file_name = prm.get("insertion file name");

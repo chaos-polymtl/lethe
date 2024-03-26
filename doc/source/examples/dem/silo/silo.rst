@@ -58,12 +58,7 @@ An insertion box is defined inside and on the top of the silo.
       set insertion method                               = volume
       set inserted number of particles at each time step = 20000
       set insertion frequency                            = 10000
-      set insertion box minimum x                        = -0.37
-      set insertion box minimum y                        = -0.042
-      set insertion box minimum z                        = 0.9
-      set insertion box maximum x                        = 0.37
-      set insertion box maximum y                        = 0.007
-      set insertion box maximum z                        = 1.09
+      set insertion box points coordinates               = -0.37, -0.042, 0.9 : 0.37, 0.007, 1.09
       set insertion distance threshold                   = 1.5
       set insertion maximum offset                       = 0.1
       set insertion prn seed                             = 19

@@ -55,12 +55,7 @@ An insertion box is defined inside the cubic domain. 4000 particles are inserted
       set insertion method                               = volume
       set inserted number of particles at each time step = 4000
       set insertion frequency                            = 2000000
-      set insertion box minimum x                        = -0.019
-      set insertion box minimum y                        = -0.019
-      set insertion box minimum z                        = -0.01
-      set insertion box maximum x                        = 0.019
-      set insertion box maximum y                        = 0.019
-      set insertion box maximum z                        = 0.019
+      set insertion box points coordinates               = -0.019, -0.019, -0.01 : 0.019, 0.019, 0.019
       set insertion distance threshold                   = 1.5
       set insertion maximum offset                       = 0.2
       set insertion prn seed                             = 19

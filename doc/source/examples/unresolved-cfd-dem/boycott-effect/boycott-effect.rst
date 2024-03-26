@@ -145,17 +145,11 @@ We insert the particles uniformly in the specified insertion box at the top of t
       set insertion method                               = volume
       set inserted number of particles at each time step = 8379
       set insertion frequency                            = 2000
-      set insertion box minimum x                        = -0.025
-      set insertion box minimum y                        = 0.3
-      set insertion box minimum z                        = -0.025
-      set insertion box maximum x                        = 0.026
-      set insertion box maximum y                        = 0.396
-      set insertion box maximum z                        = 0.026
+      set insertion box points coordinates               = -0.025, 0.3, -0.025 : 0.026, 0.396, 0.026
       set insertion distance threshold                   = 1.2
       set insertion maximum offset                       = 0.
       set insertion prn seed                             = 19
     end
-
 
 ---------------------------
 Running the DEM Simulation
@@ -276,7 +270,6 @@ Lagrangian Physical Properties
 
 This section is identical to the one previously mentioned for the DEM simulation of particle insertion. The only difference is the definition of gravity. For the vertical case, we set :math:`g_y = -9.81` and :math:`g_x = g_z = 0`. For the inclined case, we determine the gravity by setting: :math:`g_x = \frac{-9.81}{cos \theta}, \; g_y = \frac{-9.81}{sin \theta}, \; g_z = 0` where :math:`\theta` is the angle of inclination with the vertical.
 
-
 The additional sections for the CFD-DEM simulations are the void fraction subsection and the CFD-DEM subsection. These subsections are descrichannel in detail in the `CFD-DEM parameters <../../../parameters/unresolved-cfd-dem/unresolved-cfd-dem.html>`_ .
 
 Void Fraction
@@ -358,7 +351,6 @@ Linear Solver
 
 For more information about the linear solver, please refer to the `Linear Solver Section <../../../parameters/cfd/linear_solver_control.html>`_
 
-
 ------------------------------
 Running the CFD-DEM Simulation
 ------------------------------
@@ -370,7 +362,6 @@ The simulation is run using the ``lethe-fluid-particles`` application.  Assuming
 
   lethe-fluid-particles boycott-effect.prm
 
-
 --------
 Results
 --------
@@ -380,5 +371,3 @@ The results are shown in an animation below. The sedimentation of the particles 
 .. raw:: html
 
     <iframe width="560" height="315" src="https://www.youtube.com/embed/ZyY5C6o6R8Q" frameborder="0" allowfullscreen></iframe>
-
-

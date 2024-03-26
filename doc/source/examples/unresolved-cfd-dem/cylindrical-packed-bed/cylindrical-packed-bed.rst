@@ -142,16 +142,12 @@ The ``insertion info`` subsection manages the insertion of particles. It allows 
     set insertion method                               = volume
     set inserted number of particles at each time step = 500
     set insertion frequency                            = 1000
-    set insertion box minimum x                        = 0
-    set insertion box minimum y                        = -0.01
-    set insertion box minimum z                        = 0
-    set insertion box maximum x                        = 0.1
-    set insertion box maximum y                        = 0.01
-    set insertion box maximum z                        = 0.01
+    set insertion box points coordinates               = 0, -0.01, 0 : 0.1, 0.01, 0.01
     set insertion distance threshold                   = 2.2
     set insertion maximum offset                       = 0.5
     set insertion prn seed                             = 19
   end
+
 
 Floating Walls
 ~~~~~~~~~~~~~~~~~~~

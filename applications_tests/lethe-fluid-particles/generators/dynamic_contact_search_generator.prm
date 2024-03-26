@@ -84,12 +84,7 @@ subsection insertion info
   set insertion method                               = uniform
   set inserted number of particles at each time step = 1
   set insertion frequency                            = 2000
-  set insertion box minimum x                        = -0.02
-  set insertion box minimum y                        = -0.002
-  set insertion box minimum z                        = -0.002
-  set insertion box maximum x                        = 0.2
-  set insertion box maximum y                        = 0.002
-  set insertion box maximum z                        = 0.002
+  set insertion box points coordinates               = -0.02, -0.002, -0.002 : 0.2, 0.002, 0.002
   set insertion distance threshold                   = 1.5
   set insertion maximum offset                       = 0.5
   set insertion prn seed                             = 19
