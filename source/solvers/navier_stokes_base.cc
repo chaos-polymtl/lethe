@@ -2504,7 +2504,7 @@ NavierStokesBase<dim, VectorType, DofsType>::output_newton_update_norms(
         DoFTools::locally_owned_dofs_per_component(dof_handler, pressure_mask);
 
       double local_sum = 0.0;
-      double local_max = DBL_MIN;
+      double local_max = std::numeric_limits<double>::lowest();
 
       for (unsigned int d = 0; d < dim; ++d)
         {
@@ -2516,10 +2516,7 @@ NavierStokesBase<dim, VectorType, DofsType>::output_newton_update_norms(
 
               local_sum += dof_newton_update * dof_newton_update;
 
-              if (dof_newton_update > local_max)
-                {
-                  local_max = dof_newton_update;
-                }
+              local_max = std::max(local_max, dof_newton_update);
             }
         }
 
@@ -2529,7 +2526,7 @@ NavierStokesBase<dim, VectorType, DofsType>::output_newton_update_norms(
         Utilities::MPI::max(local_max, this->mpi_communicator);
 
       local_sum = 0.0;
-      local_max = DBL_MIN;
+      local_max = std::numeric_limits<double>::lowest();
 
       for (auto j = index_set_pressure[dim].begin();
            j != index_set_pressure[dim].end();
@@ -2539,10 +2536,7 @@ NavierStokesBase<dim, VectorType, DofsType>::output_newton_update_norms(
 
           local_sum += dof_newton_update * dof_newton_update;
 
-          if (dof_newton_update > local_max)
-            {
-              local_max = dof_newton_update;
-            }
+          local_max = std::max(local_max, dof_newton_update);
         }
 
       double global_pressure_l2_norm =

@@ -95,7 +95,7 @@ test()
     DoFTools::locally_owned_dofs_per_component(dof_handler, pressure_mask);
 
   double correction_norm = 0.0;
-  double max_correction  = DBL_MIN;
+  double max_correction  = std::numeric_limits<double>::lowest();
 
   for (unsigned int d = 0; d < 3; ++d)
     {
@@ -105,10 +105,7 @@ test()
         {
           correction_norm += dummy_solution[*j] * dummy_solution[*j];
 
-          if (dummy_solution[*j] > max_correction)
-            {
-              max_correction = dummy_solution[*j];
-            }
+          max_correction = std::max(max_correction, dummy_solution[*j]);
         }
     }
 
