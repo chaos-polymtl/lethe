@@ -366,31 +366,6 @@ namespace Parameters
                           "0.0, 0.0, 0.0",
                           Patterns::List(Patterns::Double()),
                           "Initial angular velocity (x, y, z)");
-        /*prm.declare_entry("velocity x",
-                          "0.0",
-                          Patterns::Double(),
-                          "Initial velocity x");
-        prm.declare_entry("velocity y",
-                          "0.0",
-                          Patterns::Double(),
-                          "Initial velocity y");
-        prm.declare_entry("velocity z",
-                          "0.0",
-                          Patterns::Double(),
-                          "Initial velocity z");
-        prm.declare_entry("omega x",
-                          "0.0",
-                          Patterns::Double(),
-                          "Initial omega x");
-        prm.declare_entry("omega y",
-                          "0.0",
-                          Patterns::Double(),
-                          "Initial omega y");
-        prm.declare_entry("omega z",
-                          "0.0",
-                          Patterns::Double(),
-                          "Initial omega z");
-                          */
         prm.declare_entry("insertion file name",
                           "particles.input",
                           Patterns::FileName(),
