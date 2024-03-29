@@ -3,13 +3,19 @@
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Master] - 2024-03-28
+
+### Changed
+
+- MINOR The ``velocity x/y/z`` parameters have been replaced by one parameter named ``initial velocity``. The ``omega x/y/z`` parameters have been replaced by one parameter named ``initial angular velocity``. [#1078](https://github.com/lethe-cfd/lethe/pull/1078)
+ [#1078](https://github.com/lethe-cfd/lethe/pull/1078)
+
+
 ## [Master] - 2024-03-20
 
-### Fixed
+### Changed
 
-- MINOR The ``insertion box minimum/maximum x/y/z`` parameters have been replaced by one parameter named ``insertion box points coordinates`` [#1074](https://github.com/lethe-cfd/lethe/pull/1074)
-
-- MINOR The ``insertion first/second/third direction `` parameters have been replaced by one parameter named ``insertion direction sequence`` [#1074](https://github.com/lethe-cfd/lethe/pull/1074)
+- MINOR The ``insertion box minimum/maximum x/y/z`` parameters have been replaced by one parameter named ``insertion box points coordinates``. The ``insertion first/second/third direction `` parameters have been replaced by one parameter named ``insertion direction sequence``. [#1074](https://github.com/lethe-cfd/lethe/pull/1074)
 
 ## [Master] - 2024-03-19
 

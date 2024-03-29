@@ -85,8 +85,7 @@ subsection insertion info
   set insertion distance threshold                   = 1.01
   set insertion maximum offset                       = 0.
   set insertion prn seed                             = 19
-
-  set velocity y = 10.0
+  set initial velocity                               = 0, 10.0, 0
 end
 
 #---------------------------------------------------
