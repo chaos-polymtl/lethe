@@ -24,19 +24,19 @@
 
 #include <deal.II/particles/particle_handler.h>
 
-#ifndef lethe_list_insertion_h
-#  define lethe_list_insertion_h
+#ifndef lethe_insertion_list_h
+#  define lethe_insertion_list_h
 
 template <int dim>
-class ListInsertion : public Insertion<dim>
+class InsertionList : public Insertion<dim>
 {
 public:
-  ListInsertion(const DEMSolverParameters<dim> &dem_parameters,
+  InsertionList(const DEMSolverParameters<dim> &dem_parameters,
                 const std::vector<std::shared_ptr<Distribution>>
                   &distribution_object_container);
 
   /**
-   * @brief The ListInsertion class inserts particles using a list specific position.
+   * @brief The InsertionList class inserts particles using a list specific position.
    * This allows the insertion of any number of particles at a well-controled
    * location which is especially useful from a testing perspective. The code
    * ensures that the number of positions provided in the x,y (and possibly z)
@@ -115,4 +115,4 @@ public:
   std::vector<double>       diameters;
 };
 
-#endif /* list_insertion_h */
+#endif /* lethe_insertion_list_h */

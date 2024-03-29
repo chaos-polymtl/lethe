@@ -22,11 +22,11 @@
 
 #include <deal.II/particles/particle_handler.h>
 
-#ifndef volume_insertion_h
-#  define volume_insertion_h
+#ifndef insertion_volume_h
+#  define insertion_volume_h
 
 template <int dim>
-class VolumeInsertion : public Insertion<dim>
+class InsertionVolume : public Insertion<dim>
 {
 public:
   /**
@@ -41,7 +41,7 @@ public:
    * @param maximum_particle_diameter Maximum particle diameter based on values
    * defined in the parameter handler
    */
-  VolumeInsertion(const DEMSolverParameters<dim> &dem_parameters,
+  InsertionVolume(const DEMSolverParameters<dim> &dem_parameters,
                   const double                    maximum_particle_diameter,
                   const std::vector<std::shared_ptr<Distribution>>
                     &distribution_object_container);
@@ -125,4 +125,4 @@ private:
   // upcoming insertion steps
   unsigned int particles_of_each_type_remaining;
 };
-#endif /* volume_insertion_h */
+#endif /* insertion_volume_h */

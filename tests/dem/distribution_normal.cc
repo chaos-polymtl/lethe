@@ -27,7 +27,7 @@
 
 // Lethe
 #include <dem/dem_solver_parameters.h>
-#include <dem/volume_insertion.h>
+#include <dem/insertion_volume.h>
 
 // Tests (with common definitions)
 #include <../tests/tests.h>
@@ -82,7 +82,7 @@ test()
     dem_parameters.lagrangian_physical_properties.seed_for_distributions[0]));
 
   // Calling volume insertion
-  VolumeInsertion<dim> insertion_object(
+  InsertionVolume<dim> insertion_object(
     dem_parameters,
     distribution_object_container[0]->find_max_diameter(),
     distribution_object_container);

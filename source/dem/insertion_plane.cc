@@ -1,6 +1,6 @@
 #include <core/tensors_and_points_dimension_manipulation.h>
 
-#include <dem/plane_insertion.h>
+#include <dem/insertion_plane.h>
 
 using namespace DEM;
 
@@ -8,7 +8,7 @@ using namespace DEM;
 // cells are going to be use for the insertion and we also find the centers of
 // those cells.
 template <int dim>
-PlaneInsertion<dim>::PlaneInsertion(
+InsertionPlane<dim>::InsertionPlane(
   const DEMSolverParameters<dim>                  &dem_parameters,
   const parallel::distributed::Triangulation<dim> &triangulation,
   const std::vector<std::shared_ptr<Distribution>>
@@ -42,7 +42,7 @@ PlaneInsertion<dim>::PlaneInsertion(
 
 template <int dim>
 void
-PlaneInsertion<dim>::find_inplane_cells(
+InsertionPlane<dim>::find_inplane_cells(
   const parallel::distributed::Triangulation<dim> &triangulation,
   Point<3>                                         plane_point,
   Tensor<1, 3>                                     plane_normal_vector)
@@ -92,7 +92,7 @@ PlaneInsertion<dim>::find_inplane_cells(
 
 template <int dim>
 void
-PlaneInsertion<dim>::find_centers_of_inplane_cells()
+InsertionPlane<dim>::find_centers_of_inplane_cells()
 {
   cells_centers.clear();
   for (const auto &cell : plane_cells_for_insertion)
@@ -105,7 +105,7 @@ PlaneInsertion<dim>::find_centers_of_inplane_cells()
 // particle at the cell center with a random shifts particles
 template <int dim>
 void
-PlaneInsertion<dim>::insert(
+InsertionPlane<dim>::insert(
   Particles::ParticleHandler<dim>                 &particle_handler,
   const parallel::distributed::Triangulation<dim> &triangulation,
   const DEMSolverParameters<dim>                  &dem_parameters)
@@ -305,5 +305,5 @@ PlaneInsertion<dim>::insert(
     }
 }
 
-template class PlaneInsertion<2>;
-template class PlaneInsertion<3>;
+template class InsertionPlane<2>;
+template class InsertionPlane<3>;

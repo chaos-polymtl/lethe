@@ -1,4 +1,4 @@
-#include <dem/list_insertion.h>
+#include <dem/insertion_list.h>
 
 using namespace DEM;
 
@@ -13,7 +13,7 @@ DeclException2(DiameterSizeCoherence,
  * create the insertion_points member
  */
 template <int dim>
-ListInsertion<dim>::ListInsertion(
+InsertionList<dim>::InsertionList(
   const DEMSolverParameters<dim> &dem_parameters,
   const std::vector<std::shared_ptr<Distribution>>
     &distribution_object_container)
@@ -77,7 +77,7 @@ ListInsertion<dim>::ListInsertion(
 // particles
 template <int dim>
 void
-ListInsertion<dim>::insert(
+InsertionList<dim>::insert(
   Particles::ParticleHandler<dim>                 &particle_handler,
   const parallel::distributed::Triangulation<dim> &triangulation,
   const DEMSolverParameters<dim>                  &dem_parameters)
@@ -158,7 +158,7 @@ ListInsertion<dim>::insert(
 
 template <int dim>
 void
-ListInsertion<dim>::assign_particle_properties_for_list_insertion(
+InsertionList<dim>::assign_particle_properties_for_list_insertion(
   const DEMSolverParameters<dim>   &dem_parameters,
   const unsigned int               &inserted_this_step_this_proc,
   const unsigned int               &current_inserting_particle_type,
@@ -220,5 +220,5 @@ ListInsertion<dim>::assign_particle_properties_for_list_insertion(
 }
 
 
-template class ListInsertion<2>;
-template class ListInsertion<3>;
+template class InsertionList<2>;
+template class InsertionList<3>;

@@ -168,10 +168,10 @@ namespace Parameters
       // Insertion method
       enum class InsertionMethod
       {
-        volume,
-        list,
         file,
-        plane
+        list,
+        plane,
+        volume
       } insertion_method;
 
       // Inserted number of particles at each time step

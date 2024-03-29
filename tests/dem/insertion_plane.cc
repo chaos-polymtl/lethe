@@ -29,7 +29,7 @@
 
 // Lethe
 #include <dem/dem_solver_parameters.h>
-#include <dem/plane_insertion.h>
+#include <dem/insertion_plane.h>
 
 // Tests (with common definitions)
 #include <../tests/tests.h>
@@ -77,7 +77,7 @@ test()
       .particle_average_diameter[0]));
 
   // Calling plane insertion
-  PlaneInsertion<dim> insertion_object(dem_parameters,
+  InsertionPlane<dim> insertion_object(dem_parameters,
                                        tr,
                                        distribution_object_container);
 

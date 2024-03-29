@@ -21,20 +21,20 @@
 #include <dem/dem.h>
 #include <dem/distributions.h>
 #include <dem/explicit_euler_integrator.h>
-#include <dem/file_insertion.h>
 #include <dem/find_contact_detection_step.h>
 #include <dem/gear3_integrator.h>
 #include <dem/input_parameter_inspection.h>
-#include <dem/list_insertion.h>
+#include <dem/insertion_file.h>
+#include <dem/insertion_list.h>
+#include <dem/insertion_plane.h>
+#include <dem/insertion_volume.h>
 #include <dem/particle_wall_nonlinear_force.h>
-#include <dem/plane_insertion.h>
 #include <dem/post_processing.h>
 #include <dem/read_checkpoint.h>
 #include <dem/read_mesh.h>
 #include <dem/set_particle_particle_contact_force_model.h>
 #include <dem/set_particle_wall_contact_force_model.h>
 #include <dem/velocity_verlet_integrator.h>
-#include <dem/volume_insertion.h>
 #include <dem/write_checkpoint.h>
 
 #include <deal.II/base/table_handler.h>
@@ -934,7 +934,7 @@ DEMSolver<dim>::set_insertion_type(const DEMSolverParameters<dim> &parameters)
       Parameters::Lagrangian::InsertionInfo::InsertionMethod::volume)
     {
       insertion_object =
-        std::make_shared<VolumeInsertion<dim>>(parameters,
+        std::make_shared<InsertionVolume<dim>>(parameters,
                                                maximum_particle_diameter,
                                                distribution_object_container);
     }
@@ -942,21 +942,21 @@ DEMSolver<dim>::set_insertion_type(const DEMSolverParameters<dim> &parameters)
            Parameters::Lagrangian::InsertionInfo::InsertionMethod::list)
     {
       insertion_object =
-        std::make_shared<ListInsertion<dim>>(parameters,
+        std::make_shared<InsertionList<dim>>(parameters,
                                              distribution_object_container);
     }
   else if (parameters.insertion_info.insertion_method ==
            Parameters::Lagrangian::InsertionInfo::InsertionMethod::file)
     {
       insertion_object =
-        std::make_shared<FileInsertion<dim>>(parameters,
+        std::make_shared<InsertionFile<dim>>(parameters,
                                              distribution_object_container);
     }
   else if (parameters.insertion_info.insertion_method ==
            Parameters::Lagrangian::InsertionInfo::InsertionMethod::plane)
     {
       insertion_object =
-        std::make_shared<PlaneInsertion<dim>>(parameters,
+        std::make_shared<InsertionPlane<dim>>(parameters,
                                               triangulation,
                                               distribution_object_container);
     }
