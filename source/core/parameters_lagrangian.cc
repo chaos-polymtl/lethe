@@ -300,7 +300,6 @@ namespace Parameters
                           "0,1,2",
                           Patterns::List(Patterns::Integer(), 2, 3),
                           "First direction of particle insertion");
-
         prm.declare_entry(
           "insertion box points coordinates",
           "0. , 0. , 0. : 1. , 1. , 1.",
@@ -444,12 +443,9 @@ namespace Parameters
         insertion_maximum_offset = prm.get_double("insertion maximum offset");
         seed_for_insertion       = prm.get_integer("insertion prn seed");
 
-        vel_x   = prm.get_double("velocity x");
-        vel_y   = prm.get_double("velocity y");
-        vel_z   = prm.get_double("velocity z");
-        omega_x = prm.get_double("omega x");
-        omega_y = prm.get_double("omega y");
-        omega_z = prm.get_double("omega z");
+        initial_vel = entry_string_to_tensor3(prm, "initial velocity");
+        initial_ang_vel =
+          entry_string_to_tensor3(prm, "initial angular velocity");
 
         // Read x, y and z lists
         list_x = convert_string_to_vector<double>(prm, "list x");
