@@ -444,7 +444,7 @@ namespace Parameters
         seed_for_insertion       = prm.get_integer("insertion prn seed");
 
         initial_vel = entry_string_to_tensor3(prm, "initial velocity");
-        initial_ang_vel =
+        initial_omega =
           entry_string_to_tensor3(prm, "initial angular velocity");
 
         // Read x, y and z lists
