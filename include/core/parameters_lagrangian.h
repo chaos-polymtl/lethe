@@ -186,8 +186,8 @@ namespace Parameters
       // Insertion box info (xmin,xmax,ymin,ymax,zmin,zmax)
       Point<3> insertion_box_point_1, insertion_box_point_2;
 
-      // Insertion initial conditions
-      double vel_x, vel_y, vel_z, omega_x, omega_y, omega_z;
+      // Insertion initial velocity conditions
+      Tensor<1, 3> initial_vel, initial_ang_vel;
 
       // Insertion distance threshold
       double distance_threshold;

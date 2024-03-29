@@ -23,12 +23,8 @@ In this subsection, insertion methods which are ``volume``, ``plane``, ``list`` 
 
     set insertion order of direction                   = 0, 1, 2
 
-    set velocity x                                     = 0.0
-    set velocity y                                     = 0.0
-    set velocity z                                     = 0.0
-    set omega x                                        = 0.0
-    set omega y                                        = 0.0
-    set omega z                                        = 0.0
+    set initial velocity                               = 0.0, 0.0, 0.0
+    set initial angular velocity                       = 0.0, 0.0, 0.0
 
     set insertion distance threshold                   = 2
 
@@ -77,9 +73,9 @@ The ``volume`` insertion method uses an insertion box where particles will be in
 
 * The ``insertion order of direction`` parameter defines the directions of insertion. For example, if the parameter is equal to ``0, 1, 2``, the particles are inserted in priority in the x, in y, and then in z directions. This is the default configuration. This is useful to specify the insertion directions to cover a specific area of the insertion box with the first and second direction parameters.
 
-* The ``velocity x``, ``velocity y``, and ``velocity z`` determine the initial translational velocity (in :math:`\frac{m}{s}`) at which particles are inserted in the x, y, and z directions, respectively.
+* The ``initial velocity`` determine the initial translational velocity (in :math:`\frac{m}{s}`) at which particles are inserted in the x, y, and z directions.
 
-* The ``omega x``, ``omega y``, and ``omega z`` determine the initial rotational velocity (in :math:`\frac{rad}{s}`) at which particles are inserted in the x, y, and z directions, respectively. 
+* The ``initial angular velocity`` determine the initial rotational velocity (in :math:`\frac{rad}{s}`) at which particles are inserted in the x, y, and z directions.
 
 .. note:: 
     Since the ``insertion info`` subsection is valid for all particle types, by using ``velocity x``, ``velocity y``, ``velocity z``, ``omega x``, ``omega y``, or ``omega z``, the given condition is applied to all particles, indistinctively.
