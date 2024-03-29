@@ -25,7 +25,6 @@
 #include <dem/find_boundary_cells_information.h>
 #include <dem/grid_motion.h>
 #include <dem/insertion.h>
-#include <dem/insertion_volume.h>
 #include <dem/integrator.h>
 #include <dem/lagrangian_post_processing.h>
 #include <dem/output_force_torque_calculation.h>
