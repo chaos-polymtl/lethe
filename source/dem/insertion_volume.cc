@@ -1,4 +1,4 @@
-#include <dem/volume_insertion.h>
+#include <dem/insertion_volume.h>
 
 using namespace DEM;
 
@@ -8,7 +8,7 @@ using namespace DEM;
 // direction (number_of_particles_x_direction, number_of_particles_y_direction
 // and number_of_particles_z_direction) are also obtained
 template <int dim>
-VolumeInsertion<dim>::VolumeInsertion(
+InsertionVolume<dim>::InsertionVolume(
   const DEMSolverParameters<dim> &dem_parameters,
   const double                    maximum_particle_diameter,
   const std::vector<std::shared_ptr<Distribution>>
@@ -27,7 +27,7 @@ VolumeInsertion<dim>::VolumeInsertion(
 // the particles
 template <int dim>
 void
-VolumeInsertion<dim>::insert(
+InsertionVolume<dim>::insert(
   Particles::ParticleHandler<dim>                 &particle_handler,
   const parallel::distributed::Triangulation<dim> &triangulation,
   const DEMSolverParameters<dim>                  &dem_parameters)
@@ -147,7 +147,7 @@ VolumeInsertion<dim>::insert(
 // in the parameter handler
 template <int dim>
 void
-VolumeInsertion<dim>::create_random_number_container(
+InsertionVolume<dim>::create_random_number_container(
   std::vector<double> &random_container,
   const double         maximum_range,
   const int            seed_for_insertion)
@@ -163,7 +163,7 @@ VolumeInsertion<dim>::create_random_number_container(
 // This function assigns the insertion points of the inserted particles
 template <>
 void
-VolumeInsertion<2>::find_insertion_location_volume(
+InsertionVolume<2>::find_insertion_location_volume(
   Point<2>                                    &insertion_location,
   const unsigned int                           id,
   const double                                 random_number1,
@@ -198,7 +198,7 @@ VolumeInsertion<2>::find_insertion_location_volume(
 
 template <>
 void
-VolumeInsertion<3>::find_insertion_location_volume(
+InsertionVolume<3>::find_insertion_location_volume(
   Point<3>                                    &insertion_location,
   const unsigned int                           id,
   const double                                 random_number1,
@@ -243,5 +243,5 @@ VolumeInsertion<3>::find_insertion_location_volume(
                               random_number1) *
                                this->maximum_diameter;
 }
-template class VolumeInsertion<2>;
-template class VolumeInsertion<3>;
+template class InsertionVolume<2>;
+template class InsertionVolume<3>;
