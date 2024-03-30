@@ -24,19 +24,19 @@
 
 #include <deal.II/particles/particle_handler.h>
 
-#ifndef lethe_file_insertion_h
-#  define lethe_file_insertion_h
+#ifndef lethe_insertion_file_h
+#  define lethe_insertion_file_h
 
 template <int dim>
-class FileInsertion : public Insertion<dim>
+class InsertionFile : public Insertion<dim>
 {
 public:
-  FileInsertion(const DEMSolverParameters<dim> &dem_parameters,
+  InsertionFile(const DEMSolverParameters<dim> &dem_parameters,
                 const std::vector<std::shared_ptr<Distribution>>
                   &distribution_object_container);
 
   /**
-   * @brief The FileInsertion class inserts particles using data stored in a file.
+   * @brief The InsertionFile class inserts particles using data stored in a file.
    * This allows the insertion of any number of particles at a well-controlled
    * location with any diameter value, translation and angular velocity.
    *
@@ -108,4 +108,4 @@ public:
   std::string file_name;
 };
 
-#endif /* file_insertion_h */
+#endif /* lethe_insertion_file_h */

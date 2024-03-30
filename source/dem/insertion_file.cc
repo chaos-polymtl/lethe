@@ -1,12 +1,12 @@
 #include <core/utilities.h>
 
-#include <dem/file_insertion.h>
+#include <dem/insertion_file.h>
 
 
 using namespace DEM;
 
 template <int dim>
-FileInsertion<dim>::FileInsertion(
+InsertionFile<dim>::InsertionFile(
   const DEMSolverParameters<dim> &dem_parameters,
   const std::vector<std::shared_ptr<Distribution>>
     &distribution_object_container)
@@ -22,7 +22,7 @@ FileInsertion<dim>::FileInsertion(
 
 template <int dim>
 void
-FileInsertion<dim>::insert(
+InsertionFile<dim>::insert(
   Particles::ParticleHandler<dim>                 &particle_handler,
   const parallel::distributed::Triangulation<dim> &triangulation,
   const DEMSolverParameters<dim>                  &dem_parameters)
@@ -120,7 +120,7 @@ FileInsertion<dim>::insert(
 
 template <int dim>
 void
-FileInsertion<dim>::assign_particle_properties_for_file_insertion(
+InsertionFile<dim>::assign_particle_properties_for_file_insertion(
   const DEMSolverParameters<dim>             &dem_parameters,
   const unsigned int                         &inserted_this_step_this_proc,
   std::map<std::string, std::vector<double>> &particles_data,
@@ -181,5 +181,5 @@ FileInsertion<dim>::assign_particle_properties_for_file_insertion(
     }
 }
 
-template class FileInsertion<2>;
-template class FileInsertion<3>;
+template class InsertionFile<2>;
+template class InsertionFile<3>;

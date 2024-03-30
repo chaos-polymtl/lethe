@@ -24,8 +24,8 @@
 #include <deal.II/particles/particle_handler.h>
 
 
-#ifndef plane_insertion_h
-#  define plane_insertion_h
+#ifndef insertion_plane_h
+#  define insertion_plane_h
 
 /**
  * Insertion of particles using cells cut by a plane
@@ -40,7 +40,7 @@
  */
 
 template <int dim>
-class PlaneInsertion : public Insertion<dim>
+class InsertionPlane : public Insertion<dim>
 {
 public:
   /**
@@ -54,7 +54,7 @@ public:
    * @param dem_parameters DEM parameters declared in the .prm file
    * @param triangulation Triangulation object used in the simulation.
    */
-  PlaneInsertion(const DEMSolverParameters<dim> &dem_parameters,
+  InsertionPlane(const DEMSolverParameters<dim> &dem_parameters,
                  const parallel::distributed::Triangulation<dim> &triangulation,
                  const std::vector<std::shared_ptr<Distribution>>
                    &distribution_object_container);
@@ -130,4 +130,4 @@ private:
 };
 
 
-#endif /* plane_insertion_h */
+#endif /* insertion_plane_h */
