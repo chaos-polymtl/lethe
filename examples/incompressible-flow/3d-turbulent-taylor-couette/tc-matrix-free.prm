@@ -47,8 +47,9 @@ end
 #---------------------------------------------------
 
 subsection mesh
-  set type               = colorized_cylinder_shell
-  set grid arguments     = 3.14159265359 : 0.5 : 1.0 : 5 : 4
+  set type               = dealii 
+  set grid type          = cylinder_shell
+  set grid arguments     = 3.14159265359 : 0.5 : 1.0 : 5 : 4 : true
   set initial refinement = 4
 end
 
@@ -69,7 +70,6 @@ end
 subsection FEM
   set velocity order = 2      #3 for Q3
   set pressure order = 2      #3 for Q3
-  set qmapping all   = true
 end
 
 #---------------------------------------------------
@@ -159,7 +159,6 @@ subsection linear solver
     set mg smoother eig estimation = true
 
     # Eigenvalue estimation parameters
-    set eig estimation degree          = 3
     set eig estimation smoothing range = 5
     set eig estimation cg n iterations = 20
     set eig estimation verbosity       = verbose

@@ -97,12 +97,13 @@ The ``mesh`` subsection specifies the computational grid:
 .. code-block:: text
 
   subsection mesh
-    set type               = colorized_cylinder_shell
-    set grid arguments     = 3.14159265359 : 0.5 : 1.0 : 5 : 4
+    set type               = dealii 
+    set grid type          = cylinder_shell
+    set grid arguments     = 3.14159265359 : 0.5 : 1.0 : 5 : 4 : true
     set initial refinement = 4
   end
 
-The ``type`` specifies the mesh format used. We use the ``colorized_cylinder_shell`` mesh from Lethe. This mesh is based on the  ``cylinder_shell`` from deal.II `GridGenerator <https://www.dealii.org/current/doxygen/deal.II/namespaceGridGenerator.html>`_ that creates a shell from two concentric cylinders with the option to set-up specific boundary conditions to each surface. The arguments are the length (3.14159265359), the inner cylinder radius (0.5), the outer cylinder radius (1.0), the number of azimuthal cells (5) and the number of axial cells (4).
+The ``type`` specifies the mesh format used. We use the  ``cylinder_shell`` from deal.II `GridGenerator <https://www.dealii.org/current/doxygen/deal.II/namespaceGridGenerator.html>`_ that creates a shell from two concentric cylinders with the option to set-up specific boundary conditions to each surface. The arguments are the length (3.14159265359), the inner cylinder radius (0.5), the outer cylinder radius (1.0), the number of azimuthal cells (5) and the number of axial cells (4).
 
 The last parameter specifies the ``initial refinement`` of the grid. Indicating an ``initial refinement = 4`` implies that the initial mesh is refined 4 times. In 3D, each cell is divided by 8 per refinement. Consequently, the final grid is made of 16 radial elements, 80 azimuthal elements and 64 axial elements for a total of 81,920 cells. The following figure illustrates the mesh : 
 
