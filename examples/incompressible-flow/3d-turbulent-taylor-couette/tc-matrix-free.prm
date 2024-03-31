@@ -1,0 +1,177 @@
+# Listing of Parameters
+#----------------------
+
+set dimension = 3
+
+#---------------------------------------------------
+# Simulation Control 
+#---------------------------------------------------
+
+subsection simulation control
+  set method            = bdf3
+  set output name       = taylor-couette
+  set output path       = ./output1/
+  set time end          = 60
+  set time step         = 0.0125
+  set number mesh adapt = 0
+  set output frequency  = 2
+  set subdivision       = 2
+end
+
+#------------------------ ---------------------------
+# Physical Properties 
+#---------------------------------------------------
+
+subsection physical properties
+  subsection fluid 0
+    set kinematic viscosity = 6.25e-05
+  end
+end
+
+#---------------------------------------------------
+# Initial conditions 
+#---------------------------------------------------
+
+subsection initial conditions
+  set type = nodal
+  subsection uvwp
+    # A= -(kappa * kappa) / (1. - kappa * kappa);
+    # B= ri * ri / (1. - kappa * kappa);
+    set Function constants  = epsilon=0.1, ri=0.5, omega=1.0, d=0.5 , A= -0.3333333333333333, B= 0.3333333333333333
+    set Function expression = cos(atan2(y,x))*(epsilon*omega*ri*cos(atan2(y,x))*sin(((sqrt(x*x+y*y)-ri)*pi)/ri)*sin(z/d)) - sin(atan2(y,x))*(A*(sqrt(x*x+y*y)) + B/(sqrt(x*x+y*y)) + epsilon*omega*ri*sin(atan2(y,x))*sin(((sqrt(x*x+y*y)-ri)*pi)/ri)*sin(z/d)); sin(atan2(y,x))*(epsilon*omega*ri*cos(atan2(y,x))*sin(((sqrt(x*x+y*y)-ri)*pi)/ri)*sin(z/d)) + cos(atan2(y,x))*(A*(sqrt(x*x+y*y)) + B/(sqrt(x*x+y*y)) + epsilon*omega*ri*sin(atan2(y,x))*sin(((sqrt(x*x+y*y)-ri)*pi)/ri)*sin(z/d)); 0.0; ((0.5*A*A*(x*x+y*y)) + (2*A*B*ln(sqrt(x*x+y*y)))) - (0.5*B*B/(x*x+y*y)) + (0.5*(epsilon*omega*ri)*(epsilon*omega*ri)*cos(2*atan2(y,x))*sin((2*(sqrt(x*x+y*y)-ri)*pi)/ri)*sin(2*z/d))
+  end
+end
+
+#---------------------------------------------------
+# Mesh
+#---------------------------------------------------
+
+subsection mesh
+  set type               = colorized_cylinder_shell
+  set grid arguments     = 3.14159265359 : 0.5 : 1.0 : 5 : 4
+  set initial refinement = 4
+end
+
+
+#---------------------------------------------------
+# Forces
+#---------------------------------------------------
+
+subsection forces
+  set verbosity        = quiet   # Output force and torques in log <quiet|verbose>
+  set calculate torque = true    # Enable torque calculation
+end
+
+#---------------------------------------------------
+# FEM
+#---------------------------------------------------
+
+subsection FEM
+  set velocity order = 2      #3 for Q3
+  set pressure order = 2      #3 for Q3
+  set qmapping all   = true
+end
+
+#---------------------------------------------------
+# Post-Processing
+#---------------------------------------------------
+
+subsection post-processing
+  set verbosity                        = quiet
+  set output frequency                 = 1
+
+  # Kinetic energy calculation
+  set calculate kinetic energy         = true
+  set kinetic energy name              = kinetic_energy
+
+  # Enstrophy calculation
+  set calculate enstrophy              = true
+  set enstrophy name                   = enstrophy
+end
+
+
+#---------------------------------------------------
+# Boundary Conditions
+#---------------------------------------------------
+
+subsection boundary conditions
+  set number = 3 
+  subsection bc 0          
+    set type = function
+    subsection u
+      set Function expression = -y
+    end
+    subsection v
+      set Function expression = x
+    end
+    subsection w
+      set Function expression = 0
+    end
+  end
+  subsection bc 1       
+    set type = noslip
+  end
+  subsection bc 2            
+    set type               = periodic
+    set id                 = 2
+    set periodic_id        = 3
+    set periodic_direction = 2
+  end
+end
+
+#---------------------------------------------------
+# Mesh Adaptation Control
+#---------------------------------------------------
+subsection mesh adaptation
+  set type = none
+end
+
+#---------------------------------------------------
+# Non-Linear Solver Control
+#---------------------------------------------------
+subsection non-linear solver
+  subsection fluid dynamics
+    set tolerance = 1e-3
+    set verbosity = verbose
+  end
+end
+
+#---------------------------------------------------
+# Linear Solver Control
+#---------------------------------------------------
+
+subsection linear solver
+  subsection fluid dynamics
+    set method            = gmres
+    set max iters         = 100
+    set relative residual = 1e-4
+    set minimum residual  = 1e-7
+    set preconditioner    = gcmg
+    set verbosity         = verbose
+
+    # MG parameters
+    set mg verbosity       = quiet
+    set mg min level       = -1
+    set mg level min cells = 16
+
+    # Smoother
+    set mg smoother iterations     = 10
+    set mg smoother eig estimation = true
+
+    # Eigenvalue estimation parameters
+    set eig estimation degree          = 3
+    set eig estimation smoothing range = 5
+    set eig estimation cg n iterations = 20
+    set eig estimation verbosity       = verbose
+
+    # Coarse-grid solver
+    set mg coarse grid max iterations         = 2000
+    set mg coarse grid tolerance              = 1e-7
+    set mg coarse grid reduce                 = 1e-4
+    set mg coarse grid max krylov vectors     = 30
+    set mg coarse grid preconditioner         = ilu
+    set ilu preconditioner fill               = 1
+    set ilu preconditioner absolute tolerance = 1e-10
+    set ilu preconditioner relative tolerance = 1.00
+  end
+end
