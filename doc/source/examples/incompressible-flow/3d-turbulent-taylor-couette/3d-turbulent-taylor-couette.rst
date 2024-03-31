@@ -17,7 +17,7 @@ Features
 Files Used in This Example
 ---------------------------
 
-All files mentioned below are located in the example's folder (``examples/incompressible-flow/3d-taylor-couette-flow``).
+All files mentioned below are located in the example's folder (``examples/incompressible-flow/3d-turbulent-taylor-couette``).
 
 - Parameter file: ``tc-matrix-free.prm``
 - Reference data files from Wang and Jourdan (2021): `[1] <https://doi.org/10.1186/s42774-021-00071-0>`_ (``enstrophy_wang_p%.dat``)
