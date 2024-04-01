@@ -563,36 +563,32 @@ public:
   {
     if (ls_multigrid_preconditioner)
       ls_multigrid_preconditioner->vmult(dst, src);
+    if (gc_multigrid_preconditioner)
+      gc_multigrid_preconditioner->vmult(dst, src);
     else
       AssertThrow(false, ExcNotImplemented());
   }
 
 
   void
-  solve_with_gc(TimerOutput                            &computing_timer,
-                const DoFHandler<dim>                  &dof_handler,
-                const SimulationParameters<dim>        &simulation_parameters,
-                const std::shared_ptr<Mapping<dim>>    &mapping,
-                const std::shared_ptr<FESystem<dim>>    fe,
-                TimerOutput                            &mg_computing_timer,
-                const std::shared_ptr<Quadrature<dim>> &cell_quadrature,
-                const std::shared_ptr<Function<dim>>    forcing_function,
-                const VectorType                       &present_solution,
-                const VectorType         &time_derivative_previous_solutions,
-                const ConditionalOStream &pcout,
-                VectorType               &newton_update,
-                const VectorType         &system_rhs,
-                const std::shared_ptr<SimulationControl> simulation_control,
-                SolverGMRES<VectorType>                 &solver,
-                const std::shared_ptr<NavierStokesOperatorBase<dim, double>>
-                  system_operator) const
+  initialize_gc(
+    TimerOutput                             &computing_timer,
+    const DoFHandler<dim>                   &dof_handler,
+    const SimulationParameters<dim>         &simulation_parameters,
+    const std::shared_ptr<Mapping<dim>>     &mapping,
+    const std::shared_ptr<FESystem<dim>>     fe,
+    TimerOutput                             &mg_computing_timer,
+    const std::shared_ptr<Quadrature<dim>>  &cell_quadrature,
+    const std::shared_ptr<Function<dim>>     forcing_function,
+    const VectorType                        &present_solution,
+    const VectorType                        &time_derivative_previous_solutions,
+    const ConditionalOStream                &pcout,
+    const std::shared_ptr<SimulationControl> simulation_control) const
   {
     computing_timer.enter_subsection("Setup GCMG");
 
     // Create level objects
-    MGLevelObject<DoFHandler<dim>>                     dof_handlers;
-    MGLevelObject<MGTwoLevelTransfer<dim, VectorType>> transfers;
-    MGLevelObject<VectorType>                          mg_solution;
+    MGLevelObject<VectorType> mg_solution;
     MGLevelObject<VectorType> mg_time_derivative_previous_solutions;
     MGLevelObject<AffineConstraints<typename VectorType::value_type>>
       constraints;
@@ -1066,27 +1062,13 @@ public:
         dof_handler, *this->mg, *this->mg_transfer_gc);
 
     computing_timer.leave_subsection("Setup GCMG");
-
-    computing_timer.enter_subsection("Solve linear system");
-
-    solver.solve(*(system_operator),
-                 newton_update,
-                 system_rhs,
-                 *gc_multigrid_preconditioner);
-
-    computing_timer.leave_subsection("Solve linear system");
-
-    if (simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
-          .mg_verbosity != Parameters::Verbosity::quiet)
-      {
-        pcout << "  -Coarse grid solver took: "
-              << this->coarse_grid_solver_control->last_step() << " steps "
-              << std::endl;
-        pcout << std::endl;
-      }
   }
 
 private:
+  // onlt GC
+  mutable MGLevelObject<DoFHandler<dim>>                     dof_handlers;
+  mutable MGLevelObject<MGTwoLevelTransfer<dim, VectorType>> transfers;
+
   // level matrices
   mutable MGLevelObject<std::shared_ptr<OperatorType>>
                                                   mg_operators; // TODO: reuse
@@ -1578,7 +1560,7 @@ MFNavierStokesSolver<dim>::solve_with_GCMG(SolverGMRES<VectorType> &solver)
 {
   PreconditionGMG<dim> gmg;
 
-  gmg.solve_with_gc(this->computing_timer,
+  gmg.initialize_gc(this->computing_timer,
                     this->dof_handler,
                     this->simulation_parameters,
                     this->mapping,
@@ -1589,11 +1571,25 @@ MFNavierStokesSolver<dim>::solve_with_GCMG(SolverGMRES<VectorType> &solver)
                     this->present_solution,
                     this->time_derivative_previous_solutions,
                     this->pcout,
-                    this->newton_update,
-                    this->system_rhs,
-                    this->simulation_control,
-                    solver,
-                    this->system_operator);
+                    this->simulation_control);
+
+  this->computing_timer.enter_subsection("Solve linear system");
+
+  solver.solve(*(this->system_operator),
+               this->newton_update,
+               this->system_rhs,
+               gmg);
+
+  this->computing_timer.leave_subsection("Solve linear system");
+
+  if (this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+        .mg_verbosity != Parameters::Verbosity::quiet)
+    {
+      // this->pcout << "  -Coarse grid solver took: "
+      //       << this->coarse_grid_solver_control->last_step() << " steps "
+      //       << std::endl;
+      // this->pcout << std::endl;
+    }
 }
 
 template <int dim>
