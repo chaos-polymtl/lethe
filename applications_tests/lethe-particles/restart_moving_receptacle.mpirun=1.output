@@ -13,118 +13,118 @@ This feature is useful in geometries with concave boundaries.
 Transient iteration: 14500    Time: 0.725    Time step: 5e-05   
 *****************************************************************
 | Variable                     | Min        | Max        | Average    | Total      | 
-| Contact list generation      | 0.0000e+00 | 8.0000e+00 | 2.7586e-01 | 8.0000e+00 | 
-| Velocity magnitude           | 1.0524e-05 | 4.6928e-01 | 1.7239e-02 | 1.7239e+00 | 
-| Angular velocity magnitude   | 2.5539e-03 | 1.3591e+02 | 3.0865e+00 | 3.0865e+02 | 
-| Translational kinetic energy | 7.4231e-14 | 1.4760e-04 | 2.8228e-06 | 2.8228e-04 | 
-| Rotational kinetic energy    | 8.7426e-14 | 2.4758e-04 | 3.2431e-06 | 3.2431e-04 | 
+| Contact list generation      | 0.0000e+00 | 4.0000e+00 | 1.3793e-01 | 4.0000e+00 | 
+| Velocity magnitude           | 1.3154e-05 | 1.0991e-01 | 4.1517e-03 | 4.1517e-01 | 
+| Angular velocity magnitude   | 8.8809e-03 | 1.2967e+01 | 2.7285e-01 | 2.7285e+01 | 
+| Translational kinetic energy | 1.1597e-13 | 8.0956e-06 | 1.7347e-07 | 1.7347e-05 | 
+| Rotational kinetic energy    | 1.0572e-12 | 2.2539e-06 | 2.5057e-08 | 2.5057e-06 | 
 
 *****************************************************************
 Transient iteration: 15000    Time: 0.75     Time step: 5e-05   
 *****************************************************************
 | Variable                     | Min        | Max        | Average    | Total      | 
-| Contact list generation      | 0.0000e+00 | 1.0000e+01 | 6.0000e-01 | 1.8000e+01 | 
-| Velocity magnitude           | 2.2391e-06 | 6.7722e-01 | 1.8322e-02 | 1.8322e+00 | 
-| Angular velocity magnitude   | 1.2823e-02 | 1.3591e+02 | 2.9881e+00 | 2.9881e+02 | 
-| Translational kinetic energy | 3.3602e-15 | 3.0737e-04 | 4.7425e-06 | 4.7425e-04 | 
-| Rotational kinetic energy    | 2.2041e-12 | 2.4758e-04 | 3.2611e-06 | 3.2611e-04 | 
+| Contact list generation      | 0.0000e+00 | 4.0000e+00 | 1.6667e-01 | 5.0000e+00 | 
+| Velocity magnitude           | 3.0851e-06 | 1.3567e-01 | 3.6801e-03 | 3.6801e-01 | 
+| Angular velocity magnitude   | 8.9970e-05 | 5.6792e+00 | 2.2061e-01 | 2.2061e+01 | 
+| Translational kinetic energy | 6.3789e-15 | 1.2336e-05 | 2.0446e-07 | 2.0446e-05 | 
+| Rotational kinetic energy    | 1.0850e-16 | 4.3233e-07 | 1.0893e-08 | 1.0893e-06 | 
 
 *****************************************************************
 Transient iteration: 15500    Time: 0.775    Time step: 5e-05   
 *****************************************************************
 | Variable                     | Min        | Max        | Average    | Total      | 
-| Contact list generation      | 0.0000e+00 | 1.1000e+01 | 9.3548e-01 | 2.9000e+01 | 
-| Velocity magnitude           | 8.1481e-07 | 6.0538e-01 | 1.4490e-02 | 1.4490e+00 | 
-| Angular velocity magnitude   | 1.3460e-02 | 4.3128e+01 | 1.5623e+00 | 1.5623e+02 | 
-| Translational kinetic energy | 4.4496e-16 | 2.4562e-04 | 3.6849e-06 | 3.6849e-04 | 
-| Rotational kinetic energy    | 2.4284e-12 | 2.4932e-05 | 6.5577e-07 | 6.5577e-05 | 
+| Contact list generation      | 0.0000e+00 | 4.0000e+00 | 1.9355e-01 | 6.0000e+00 | 
+| Velocity magnitude           | 1.0588e-06 | 8.0315e-02 | 1.7053e-03 | 1.7053e-01 | 
+| Angular velocity magnitude   | 1.0625e-02 | 1.1098e+01 | 1.9533e-01 | 1.9533e+01 | 
+| Translational kinetic energy | 7.5128e-16 | 4.3231e-06 | 5.5710e-08 | 5.5710e-06 | 
+| Rotational kinetic energy    | 1.5131e-12 | 1.6510e-06 | 1.8461e-08 | 1.8461e-06 | 
 
 *****************************************************************
 Transient iteration: 16000    Time: 0.8      Time step: 5e-05   
 *****************************************************************
 | Variable                     | Min        | Max        | Average    | Total      | 
-| Contact list generation      | 0.0000e+00 | 1.1000e+01 | 1.1875e+00 | 3.8000e+01 | 
-| Velocity magnitude           | 5.9380e-07 | 3.1640e-01 | 7.3137e-03 | 7.3137e-01 | 
-| Angular velocity magnitude   | 4.3665e-03 | 4.0440e+01 | 1.0065e+00 | 1.0065e+02 | 
-| Translational kinetic energy | 2.3632e-16 | 6.7093e-05 | 9.4522e-07 | 9.4522e-05 | 
-| Rotational kinetic energy    | 2.5557e-13 | 2.1921e-05 | 3.5803e-07 | 3.5803e-05 | 
+| Contact list generation      | 0.0000e+00 | 4.0000e+00 | 2.1875e-01 | 7.0000e+00 | 
+| Velocity magnitude           | 3.9847e-07 | 1.2162e-02 | 5.8305e-04 | 5.8305e-02 | 
+| Angular velocity magnitude   | 5.7071e-03 | 1.0731e+00 | 7.1067e-02 | 7.1067e+00 | 
+| Translational kinetic energy | 1.0641e-16 | 9.9140e-08 | 2.5361e-09 | 2.5361e-07 | 
+| Rotational kinetic energy    | 4.3659e-13 | 1.5435e-08 | 3.7589e-10 | 3.7589e-08 | 
 
 *****************************************************************
 Transient iteration: 16500    Time: 0.825    Time step: 5e-05   
 *****************************************************************
 | Variable                     | Min        | Max        | Average    | Total      | 
-| Contact list generation      | 0.0000e+00 | 1.1000e+01 | 1.2727e+00 | 4.2000e+01 | 
-| Velocity magnitude           | 5.8984e-07 | 1.9996e-01 | 3.9305e-03 | 3.9305e-01 | 
-| Angular velocity magnitude   | 4.8619e-03 | 4.0440e+01 | 5.6722e-01 | 5.6722e+01 | 
-| Translational kinetic energy | 2.3317e-16 | 2.6798e-05 | 3.4080e-07 | 3.4080e-05 | 
-| Rotational kinetic energy    | 3.1685e-13 | 2.1921e-05 | 2.2765e-07 | 2.2765e-05 | 
+| Contact list generation      | 0.0000e+00 | 4.0000e+00 | 2.1212e-01 | 7.0000e+00 | 
+| Velocity magnitude           | 3.0398e-07 | 6.1441e-03 | 2.1462e-04 | 2.1462e-02 | 
+| Angular velocity magnitude   | 5.4686e-03 | 1.8275e+00 | 6.2161e-02 | 6.2161e+00 | 
+| Translational kinetic energy | 6.1928e-17 | 2.5300e-08 | 4.4222e-10 | 4.4222e-08 | 
+| Rotational kinetic energy    | 4.0086e-13 | 4.4765e-08 | 4.7955e-10 | 4.7955e-08 | 
 
 *****************************************************************
 Transient iteration: 17000    Time: 0.85     Time step: 5e-05   
 *****************************************************************
 | Variable                     | Min        | Max        | Average    | Total      | 
-| Contact list generation      | 0.0000e+00 | 1.1000e+01 | 1.4118e+00 | 4.8000e+01 | 
-| Velocity magnitude           | 5.8973e-07 | 4.2213e-01 | 6.7377e-03 | 6.7377e-01 | 
-| Angular velocity magnitude   | 6.8052e-03 | 4.0440e+01 | 4.5464e-01 | 4.5464e+01 | 
-| Translational kinetic energy | 2.3308e-16 | 1.1942e-04 | 1.4384e-06 | 1.4384e-04 | 
-| Rotational kinetic energy    | 6.2076e-13 | 2.1921e-05 | 2.1930e-07 | 2.1930e-05 | 
+| Contact list generation      | 0.0000e+00 | 4.0000e+00 | 2.0588e-01 | 7.0000e+00 | 
+| Velocity magnitude           | 3.0251e-07 | 4.2014e-04 | 5.6579e-05 | 5.6579e-03 | 
+| Angular velocity magnitude   | 5.6916e-03 | 1.3536e-01 | 4.4661e-02 | 4.4661e+00 | 
+| Translational kinetic energy | 6.1333e-17 | 1.1830e-10 | 6.0270e-12 | 6.0270e-10 | 
+| Rotational kinetic energy    | 4.3421e-13 | 2.4560e-10 | 3.2368e-11 | 3.2368e-09 | 
 
 *****************************************************************
 Transient iteration: 17500    Time: 0.875    Time step: 5e-05   
 *****************************************************************
 | Variable                     | Min        | Max        | Average    | Total      | 
-| Contact list generation      | 0.0000e+00 | 1.1000e+01 | 1.5429e+00 | 5.4000e+01 | 
-| Velocity magnitude           | 5.8973e-07 | 4.2183e-01 | 5.5285e-03 | 5.5285e-01 | 
-| Angular velocity magnitude   | 1.0318e-02 | 8.8501e+00 | 1.3890e-01 | 1.3890e+01 | 
-| Translational kinetic energy | 2.3308e-16 | 1.1926e-04 | 1.2857e-06 | 1.2857e-04 | 
-| Rotational kinetic energy    | 1.4270e-12 | 1.0499e-06 | 1.0593e-08 | 1.0593e-06 | 
+| Contact list generation      | 0.0000e+00 | 4.0000e+00 | 2.0000e-01 | 7.0000e+00 | 
+| Velocity magnitude           | 3.0245e-07 | 2.9731e-04 | 4.0927e-05 | 4.0927e-03 | 
+| Angular velocity magnitude   | 6.1267e-03 | 1.3526e-01 | 4.4448e-02 | 4.4448e+00 | 
+| Translational kinetic energy | 6.1309e-17 | 5.9241e-11 | 2.8922e-12 | 2.8922e-10 | 
+| Rotational kinetic energy    | 5.0314e-13 | 2.4523e-10 | 3.2187e-11 | 3.2187e-09 | 
 
 *****************************************************************
 Transient iteration: 18000    Time: 0.9      Time step: 5e-05   
 *****************************************************************
 | Variable                     | Min        | Max        | Average    | Total      | 
-| Contact list generation      | 0.0000e+00 | 1.1000e+01 | 1.6111e+00 | 5.8000e+01 | 
-| Velocity magnitude           | 5.8973e-07 | 1.3290e-01 | 2.3218e-03 | 2.3218e-01 | 
-| Angular velocity magnitude   | 1.4299e-02 | 8.8501e+00 | 1.3256e-01 | 1.3256e+01 | 
-| Translational kinetic energy | 2.3308e-16 | 1.1837e-05 | 1.7015e-07 | 1.7015e-05 | 
-| Rotational kinetic energy    | 2.7406e-12 | 1.0499e-06 | 1.0532e-08 | 1.0532e-06 | 
+| Contact list generation      | 0.0000e+00 | 4.0000e+00 | 1.9444e-01 | 7.0000e+00 | 
+| Velocity magnitude           | 3.0245e-07 | 2.9967e-04 | 3.7703e-05 | 3.7703e-03 | 
+| Angular velocity magnitude   | 6.6046e-03 | 1.3547e-01 | 4.4803e-02 | 4.4803e+00 | 
+| Translational kinetic energy | 6.1308e-17 | 6.0188e-11 | 2.5420e-12 | 2.5420e-10 | 
+| Rotational kinetic energy    | 5.8470e-13 | 2.4598e-10 | 3.2511e-11 | 3.2511e-09 | 
 
 *****************************************************************
 Transient iteration: 18500    Time: 0.925    Time step: 5e-05   
 *****************************************************************
 | Variable                     | Min        | Max        | Average    | Total      | 
-| Contact list generation      | 0.0000e+00 | 1.1000e+01 | 1.6486e+00 | 6.1000e+01 | 
-| Velocity magnitude           | 5.8973e-07 | 1.6054e-01 | 2.8529e-03 | 2.8529e-01 | 
-| Angular velocity magnitude   | 1.4299e-02 | 1.5765e-01 | 4.4184e-02 | 4.4184e+00 | 
-| Translational kinetic energy | 2.3308e-16 | 1.7274e-05 | 2.6924e-07 | 2.6924e-05 | 
-| Rotational kinetic energy    | 2.7406e-12 | 3.3313e-10 | 3.3156e-11 | 3.3156e-09 | 
+| Contact list generation      | 0.0000e+00 | 4.0000e+00 | 1.8919e-01 | 7.0000e+00 | 
+| Velocity magnitude           | 3.0245e-07 | 3.0252e-04 | 3.6343e-05 | 3.6343e-03 | 
+| Angular velocity magnitude   | 7.2098e-03 | 1.3566e-01 | 4.4591e-02 | 4.4591e+00 | 
+| Translational kinetic energy | 6.1308e-17 | 6.1338e-11 | 2.4253e-12 | 2.4253e-10 | 
+| Rotational kinetic energy    | 6.9676e-13 | 2.4667e-10 | 3.2193e-11 | 3.2193e-09 | 
 
 *****************************************************************
 Transient iteration: 19000    Time: 0.95     Time step: 5e-05   
 *****************************************************************
 | Variable                     | Min        | Max        | Average    | Total      | 
-| Contact list generation      | 0.0000e+00 | 1.1000e+01 | 1.6842e+00 | 6.4000e+01 | 
-| Velocity magnitude           | 5.8973e-07 | 1.2758e-01 | 2.1400e-03 | 2.1400e-01 | 
-| Angular velocity magnitude   | 1.7410e-02 | 1.5827e-01 | 4.3933e-02 | 4.3933e+00 | 
-| Translational kinetic energy | 2.3308e-16 | 1.0908e-05 | 1.5456e-07 | 1.5456e-05 | 
-| Rotational kinetic energy    | 4.0627e-12 | 3.3578e-10 | 3.2777e-11 | 3.2777e-09 | 
+| Contact list generation      | 0.0000e+00 | 4.0000e+00 | 1.8421e-01 | 7.0000e+00 | 
+| Velocity magnitude           | 3.0245e-07 | 3.0541e-04 | 3.6265e-05 | 3.6265e-03 | 
+| Angular velocity magnitude   | 7.7873e-03 | 1.3580e-01 | 4.4523e-02 | 4.4523e+00 | 
+| Translational kinetic energy | 6.1308e-17 | 6.2512e-11 | 2.4120e-12 | 2.4120e-10 | 
+| Rotational kinetic energy    | 8.1285e-13 | 2.4720e-10 | 3.2137e-11 | 3.2137e-09 | 
 
 *****************************************************************
 Transient iteration: 19500    Time: 0.975    Time step: 5e-05   
 *****************************************************************
 | Variable                     | Min        | Max        | Average    | Total      | 
-| Contact list generation      | 0.0000e+00 | 1.1000e+01 | 1.6923e+00 | 6.6000e+01 | 
-| Velocity magnitude           | 5.8973e-07 | 1.6386e-01 | 2.1806e-03 | 2.1806e-01 | 
-| Angular velocity magnitude   | 1.7402e-02 | 1.5878e-01 | 4.4341e-02 | 4.4341e+00 | 
-| Translational kinetic energy | 2.3308e-16 | 1.7995e-05 | 1.9684e-07 | 1.9684e-05 | 
-| Rotational kinetic energy    | 4.0592e-12 | 3.3794e-10 | 3.3105e-11 | 3.3105e-09 | 
+| Contact list generation      | 0.0000e+00 | 4.0000e+00 | 1.7949e-01 | 7.0000e+00 | 
+| Velocity magnitude           | 3.0245e-07 | 3.0840e-04 | 3.6174e-05 | 3.6174e-03 | 
+| Angular velocity magnitude   | 8.4314e-03 | 1.3592e-01 | 4.4534e-02 | 4.4534e+00 | 
+| Translational kinetic energy | 6.1308e-17 | 6.3742e-11 | 2.4075e-12 | 2.4075e-10 | 
+| Rotational kinetic energy    | 9.5288e-13 | 2.4764e-10 | 3.2168e-11 | 3.2168e-09 | 
 
 *****************************************************************
 Transient iteration: 20000    Time: 1        Time step: 5e-05   
 *****************************************************************
 | Variable                     | Min        | Max        | Average    | Total      | 
-| Contact list generation      | 0.0000e+00 | 1.1000e+01 | 1.6750e+00 | 6.7000e+01 | 
-| Velocity magnitude           | 5.8973e-07 | 9.1317e-02 | 1.0867e-03 | 1.0867e-01 | 
-| Angular velocity magnitude   | 1.7402e-02 | 2.4798e-01 | 4.6631e-02 | 4.6631e+00 | 
-| Translational kinetic energy | 2.3308e-16 | 5.5887e-06 | 5.7090e-08 | 5.7090e-06 | 
-| Rotational kinetic energy    | 4.0593e-12 | 8.2428e-10 | 4.1317e-11 | 4.1317e-09 | 
+| Contact list generation      | 0.0000e+00 | 4.0000e+00 | 1.7500e-01 | 7.0000e+00 | 
+| Velocity magnitude           | 3.0245e-07 | 3.1146e-04 | 3.4725e-05 | 3.4725e-03 | 
+| Angular velocity magnitude   | 8.7028e-03 | 1.3552e-01 | 4.4477e-02 | 4.4477e+00 | 
+| Translational kinetic energy | 6.1308e-17 | 6.5017e-11 | 2.1269e-12 | 2.1269e-10 | 
+| Rotational kinetic energy    | 1.0152e-12 | 2.4619e-10 | 3.2115e-11 | 3.2115e-09 | 
