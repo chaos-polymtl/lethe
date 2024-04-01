@@ -563,7 +563,7 @@ public:
   {
     if (ls_multigrid_preconditioner)
       ls_multigrid_preconditioner->vmult(dst, src);
-    if (gc_multigrid_preconditioner)
+    else if (gc_multigrid_preconditioner)
       gc_multigrid_preconditioner->vmult(dst, src);
     else
       AssertThrow(false, ExcNotImplemented());
