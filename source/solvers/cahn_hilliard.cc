@@ -419,6 +419,15 @@ CahnHilliard<dim>::calculate_phase_statistics()
   double min_phase_value(std::numeric_limits<double>::max());
   double volume_0(0.);
   double volume_1(0.);
+  double bulk_energy(0.);
+  double interface_energy(0.);
+  double total_energy(0.);
+
+  double epsilon = (this->simulation_parameters.multiphysics.cahn_hilliard_parameters
+                            .epsilon_set_method == Parameters::EpsilonSetMethod::manual) ?
+                   this->simulation_parameters.multiphysics.cahn_hilliard_parameters
+                           .epsilon :
+                   GridTools::minimal_cell_diameter(*triangulation);
 
   for (const auto &cell : dof_handler.active_cell_iterators())
     {
@@ -481,6 +490,12 @@ CahnHilliard<dim>::calculate_phase_statistics()
   statistics_table.set_scientific("volume_0", true);
   statistics_table.add_value("volume_1", volume_1);
   statistics_table.set_scientific("volume_1", true);
+  statistics_table.add_value("bulk_energy",bulk_energy);
+  statistics_table.set_scientific("bulk_energy",true);
+    statistics_table.add_value("interface_energy",interface_energy);
+    statistics_table.set_scientific("interface_energy",true);
+    statistics_table.add_value("total_energy",total_energy);
+    statistics_table.set_scientific("total_energy",true);
 }
 
 template <int dim>
