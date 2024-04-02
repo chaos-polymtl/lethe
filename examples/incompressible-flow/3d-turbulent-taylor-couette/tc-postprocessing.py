@@ -23,8 +23,10 @@ class parameter():
 
 prm = parameter() 
 
-### Simulations datas ###
-#enstrophy
+### Simulations data ###
+
+#Enstrophy
+
 t_1, e = enstrophy(prm,'enstrophy.dat')
 t_p3, e_ref_p3, t_p4, e_ref_p4, t_p5, e_ref_p5 = enstrophy_ref()
  

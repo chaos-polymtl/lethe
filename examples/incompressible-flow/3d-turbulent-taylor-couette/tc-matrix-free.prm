@@ -13,7 +13,6 @@ subsection simulation control
   set output path       = ./output1/
   set time end          = 60
   set time step         = 0.0125
-  set number mesh adapt = 0
   set output frequency  = 2
   set subdivision       = 2
 end
@@ -77,16 +76,12 @@ end
 #---------------------------------------------------
 
 subsection post-processing
-  set verbosity                        = quiet
-  set output frequency                 = 1
 
   # Kinetic energy calculation
   set calculate kinetic energy         = true
-  set kinetic energy name              = kinetic_energy
 
   # Enstrophy calculation
   set calculate enstrophy              = true
-  set enstrophy name                   = enstrophy
 end
 
 
@@ -117,13 +112,6 @@ subsection boundary conditions
     set periodic_id        = 3
     set periodic_direction = 2
   end
-end
-
-#---------------------------------------------------
-# Mesh Adaptation Control
-#---------------------------------------------------
-subsection mesh adaptation
-  set type = none
 end
 
 #---------------------------------------------------
