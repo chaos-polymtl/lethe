@@ -21,14 +21,115 @@
 #include <solvers/mf_navier_stokes_operators.h>
 #include <solvers/navier_stokes_base.h>
 
+#include <deal.II/lac/precondition.h>
 #include <deal.II/lac/solver_gmres.h>
 
+#include <deal.II/multigrid/mg_coarse.h>
+#include <deal.II/multigrid/mg_constrained_dofs.h>
+#include <deal.II/multigrid/mg_matrix.h>
+#include <deal.II/multigrid/mg_smoother.h>
+#include <deal.II/multigrid/mg_tools.h>
 #include <deal.II/multigrid/mg_transfer_global_coarsening.h>
 #include <deal.II/multigrid/mg_transfer_matrix_free.h>
 #include <deal.II/multigrid/multigrid.h>
 
 
 using namespace dealii;
+
+
+template <int dim>
+class MFNavierStokesPreconditionGMG
+{
+  using VectorType     = LinearAlgebra::distributed::Vector<double>;
+  using LSTransferType = MGTransferMatrixFree<dim, double>;
+  using GCTransferType = MGTransferGlobalCoarsening<dim, VectorType>;
+  using OperatorType   = NavierStokesOperatorBase<dim, double>;
+  using SmootherPreconditionerType = DiagonalMatrix<VectorType>;
+  using SmootherType =
+    PreconditionRelaxation<OperatorType, SmootherPreconditionerType>;
+  using PreconditionerTypeLS = PreconditionMG<dim, VectorType, LSTransferType>;
+  using PreconditionerTypeGC = PreconditionMG<dim, VectorType, GCTransferType>;
+
+public:
+  void
+  initialize_ls(
+    TimerOutput                             &computing_timer,
+    const DoFHandler<dim>                   &dof_handler,
+    const SimulationParameters<dim>         &simulation_parameters,
+    const std::shared_ptr<Mapping<dim>>     &mapping,
+    const std::shared_ptr<FESystem<dim>>     fe,
+    TimerOutput                             &mg_computing_timer,
+    const std::shared_ptr<Quadrature<dim>>  &cell_quadrature,
+    const std::shared_ptr<Function<dim>>     forcing_function,
+    const VectorType                        &present_solution,
+    const VectorType                        &time_derivative_previous_solutions,
+    const ConditionalOStream                &pcout,
+    const std::shared_ptr<SimulationControl> simulation_control) const;
+
+  void
+  initialize_gc(
+    TimerOutput                             &computing_timer,
+    const DoFHandler<dim>                   &dof_handler,
+    const SimulationParameters<dim>         &simulation_parameters,
+    const std::shared_ptr<Mapping<dim>>     &mapping,
+    const std::shared_ptr<FESystem<dim>>     fe,
+    TimerOutput                             &mg_computing_timer,
+    const std::shared_ptr<Quadrature<dim>>  &cell_quadrature,
+    const std::shared_ptr<Function<dim>>     forcing_function,
+    const VectorType                        &present_solution,
+    const VectorType                        &time_derivative_previous_solutions,
+    const ConditionalOStream                &pcout,
+    const std::shared_ptr<SimulationControl> simulation_control) const;
+
+  void
+  vmult(VectorType &dst, const VectorType &src) const;
+
+private:
+  // onlt GC
+  mutable MGLevelObject<DoFHandler<dim>>                     dof_handlers;
+  mutable MGLevelObject<MGTwoLevelTransfer<dim, VectorType>> transfers;
+
+  // level matrices
+  mutable MGLevelObject<std::shared_ptr<OperatorType>>
+                                                  mg_operators; // TODO: reuse
+  mutable std::shared_ptr<mg::Matrix<VectorType>> mg_matrix;
+
+  // edge matrices (only LS)
+  mutable std::shared_ptr<mg::Matrix<VectorType>> mg_interface_matrix_in;
+  mutable std::shared_ptr<mg::Matrix<VectorType>> mg_interface_matrix_out;
+  mutable MGLevelObject<MatrixFreeOperators::MGInterfaceOperator<OperatorType>>
+    ls_mg_operators;
+  mutable MGLevelObject<MatrixFreeOperators::MGInterfaceOperator<OperatorType>>
+    ls_mg_interface_in;
+  mutable MGLevelObject<MatrixFreeOperators::MGInterfaceOperator<OperatorType>>
+                                                       ls_mg_interface_out;
+  mutable MGLevelObject<std::shared_ptr<OperatorType>> mg_interface_in;
+  mutable MGLevelObject<std::shared_ptr<OperatorType>> mg_interface_out;
+
+  // smoother
+  mutable std::shared_ptr<
+    MGSmootherPrecondition<OperatorType, SmootherType, VectorType>>
+    mg_smoother;
+
+  // transfer operators
+  mutable MGConstrainedDoFs               mg_constrained_dofs;
+  mutable std::shared_ptr<LSTransferType> mg_transfer_ls; // TODO: reuse
+  mutable std::shared_ptr<GCTransferType> mg_transfer_gc; // TODO: reuse
+
+  // coarse-grid solvers
+  mutable TrilinosWrappers::PreconditionAMG        precondition_amg;
+  mutable TrilinosWrappers::PreconditionILU        precondition_ilu;
+  mutable std::shared_ptr<ReductionControl>        coarse_grid_solver_control;
+  mutable std::shared_ptr<SolverGMRES<VectorType>> coarse_grid_solver;
+  mutable std::shared_ptr<MGCoarseGridBase<VectorType>> mg_coarse;
+
+  // multigrid as precondtioner
+  mutable std::shared_ptr<Multigrid<VectorType>> mg;
+  mutable std::shared_ptr<PreconditionMG<dim, VectorType, LSTransferType>>
+    ls_multigrid_preconditioner;
+  mutable std::shared_ptr<PreconditionMG<dim, VectorType, GCTransferType>>
+    gc_multigrid_preconditioner;
+};
 
 
 /**
