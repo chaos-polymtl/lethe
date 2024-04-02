@@ -127,4 +127,4 @@ Transient iteration: 20000    Time: 1        Time step: 5e-05
 | Velocity magnitude           | 2.3093e-08 | 5.8701e-04 | 4.9384e-05 | 4.9384e-03 |
 | Angular velocity magnitude   | 1.2673e-02 | 1.5014e-01 | 4.4621e-02 | 4.4621e+00 |
 | Translational kinetic energy | 3.5740e-19 | 2.3094e-10 | 6.3497e-12 | 6.3497e-10 |
-| Rotational kinetic energy    | 2.1529e-12 | 3.0218e-10 | 3.2685e-11 | 3.2685e-09 |
+| Rotational kinetic energy    | 2.1529e-12 | 3.0218e-10 | 3.2685e-11 | 3.2685e-09 | 
