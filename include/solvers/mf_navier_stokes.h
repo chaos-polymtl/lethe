@@ -84,6 +84,9 @@ public:
   void
   vmult(VectorType &dst, const VectorType &src) const;
 
+  void
+  clear() const;
+
 private:
   // onlt GC
   mutable MGLevelObject<DoFHandler<dim>>                     dof_handlers;
