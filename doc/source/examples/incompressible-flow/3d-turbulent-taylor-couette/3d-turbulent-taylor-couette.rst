@@ -27,7 +27,7 @@ All files mentioned below are located in the example's folder (``examples/incomp
 Description of the Case
 ------------------------
 
-The Taylor-Couette flow occurs in the annular space between two coaxial cylinders with different angular velocities. For a laminar flow, an analytical solution exists (see `Taylor-Couette Flow <https://lethe-cfd.github.io/lethe/documentation/examples/incompressible-flow/2d-taylor-couette-flow/2d-taylor-couette-flow.html>`_). As the Reynolds number increases, the flow undergoes a transition where Taylor's vortices emerge (symmetrical vortices in the radial-vertical plane). Eventually, as the flow becomes fully turbulent, a chaotic vortex structure appears with intense fluid agitation `[2] <https://en.wikipedia.org/wiki/Taylor%E2%80%93Couette_flow>`_ .
+The Taylor-Couette flow occurs in the annular space between two coaxial cylinders with different angular velocities. For a laminar flow, an analytical solution exists (see `Taylor-Couette Flow <https://lethe-cfd.github.io/lethe/documentation/examples/incompressible-flow/2d-taylor-couette-flow/2d-taylor-couette-flow.html>`_). As the Reynolds number increases, the flow undergoes a transition where Taylor vortices emerge (symmetrical vortices in the radial-vertical plane). Eventually, as the flow becomes fully turbulent, a chaotic vortex structure appears with intense fluid agitation `[2] <https://en.wikipedia.org/wiki/Taylor%E2%80%93Couette_flow>`_ .
 
 This example is drawn from a case study by Wang and Jourdan `[1] <https://doi.org/10.1186/s42774-021-00071-0>`_. It simulates a turbulent Taylor-Couette flow with a Reynolds number of 4000. It incorporates initial conditions based on a modified version of the laminar solution to generate specific vortical structures, inspired by the Taylor-Green vortex.
 
@@ -50,7 +50,7 @@ The initial conditions for velocity and pressure are defined as follow:
 
 where :math:`A = -\frac{\omega \kappa^2}{1-\kappa^2}`, :math:`B = \frac{\omega r_i^2}{1-\kappa^2}`,  :math:`U = \omega r_i`, :math:`\kappa =  \frac{r_i}{r_o}`, :math:`d = r_o - r_i`, :math:`\epsilon` is a relaxing factor, :math:`r_i` is the inner cylinder radius, :math:`r_o` is the outer cylinder radius, r is the radial coordinate and z is the axial coordinate. 
 
-For this particular case, the value for each variable can be found in the following table : 
+For this particular case, the value for each variable can be found in the following table: 
 
 .. list-table::
     :header-rows: 1
@@ -76,7 +76,7 @@ For this particular case, the value for each variable can be found in the follow
       - :math:`r_o`
       - 1.0
 
-Since Lethe uses a Cartesian coordinate system, the following expressions have been transformed to proceed with the simulation. Finally, the histories of the enstrophy and kinetic energy are use as a benchmark. For an incompressible flow, the enstrophy and the kinetic energy are defined as: 
+Since Lethe uses a Cartesian coordinate system, the following expressions have been transformed to proceed with the simulation. Finally, the histories of the enstrophy and kinetic energy are used as a benchmark. For an incompressible flow, the enstrophy and the kinetic energy are defined as: 
 
 .. math::
   \mathcal{E} &= \frac{1}{\Omega} \int_{\Omega} \frac{\mathbf{\omega}\cdot \mathbf{\omega}}{2} \mathrm{d}\Omega \\
@@ -105,7 +105,7 @@ The ``mesh`` subsection specifies the computational grid:
 
 The ``type`` specifies the mesh format used. We use the  ``cylinder_shell`` from deal.II `GridGenerator <https://www.dealii.org/current/doxygen/deal.II/namespaceGridGenerator.html>`_ that creates a shell from two concentric cylinders with the option to set-up specific boundary conditions to each surface. The arguments are the length (3.14159265359), the inner cylinder radius (0.5), the outer cylinder radius (1.0), the number of azimuthal cells (5) and the number of axial cells (4).
 
-The last parameter specifies the ``initial refinement`` of the grid. Indicating an ``initial refinement = 4`` implies that the initial mesh is refined 4 times. In 3D, each cell is divided by 8 per refinement. Consequently, the final grid is made of 16 radial elements, 80 azimuthal elements and 64 axial elements for a total of 81,920 cells. The following figure illustrates the mesh : 
+The last parameter specifies the ``initial refinement`` of the grid. Indicating an ``initial refinement = 4`` implies that the initial mesh is refined 4 times. In 3D, each cell is divided by 8 per refinement. Consequently, the final grid is made of 16 radial elements, 80 azimuthal elements and 64 axial elements for a total of 81,920 cells. The following figure illustrates the mesh: 
 
 
 .. image:: images/mesh.png
@@ -150,12 +150,12 @@ The ``boundary conditions`` subsection establishes the constraints on different 
     end
   end
 
-First, the ``number`` of boundary conditions to be applied must be specified. For each boundary condition, the ``id`` of the boundary (refer to `geometry`_ for details of surface ``id``) as well as its ``type`` must be specified. The inner cylinder (``bc 0``) is rotating at a constant angular velocity (:math:`\omega=1`). We use the ``type = function`` and prescribe a function for the components of the velocity. By prescribing :math:`\mathbf{u}=[-y,x]^T`, we prescribe the rotation of the inner cylinder at an angular velocity of :math:`1 \ \text{rad/s}` in the trigonometric direction. The outer cylinder (``bc1``) is static and, consequently, a ``noslip`` boundary condition is applied. Finally, a periodic condition is used for the inlet and outlet (``bc 2``). The ``z-`` (``id=2``) is periodic with ``z+`` (``id=3``). For this condition, the periodic direction must be specified. In Lethe, the periodic direction of ``3`` implies that the normal direction is the :math:`\mathbf{e}_z` vector. 
+First, the ``number`` of boundary conditions to be applied must be specified. For each boundary condition, the ``id`` of the boundary (refer to `geometry`_ for details of surface ``id``) as well as its ``type`` must be specified. The inner cylinder (``bc 0``) is rotating at a constant angular velocity (:math:`\omega=1 \ \text{rad/s}`). We use the ``type = function`` and prescribe a function for the components of the velocity. By prescribing :math:`\mathbf{u}=[-y,x,0]^T`, we prescribe the rotation of the inner cylinder at an angular velocity of :math:`1 \ \text{rad/s}` in the trigonometric direction. The outer cylinder (``bc1``) is static and, consequently, a ``noslip`` boundary condition is applied. Finally, a periodic condition is used for the inlet and outlet (``bc 2``). The ``z-`` (``id=2``) is periodic with ``z+`` (``id=3``). For this condition, the periodic direction must be specified. In Lethe, the periodic direction of ``2`` implies that the normal direction is the :math:`\mathbf{e}_z` vector. 
 
 Physical Properties
 ~~~~~~~~~~~~~~~~~~~
 
-In the present case, the Reynolds number is defined as: :math:`Re = \frac{Ud}{\nu}`. Since we set the values of :math:`U` and :math:`d`, the Reynold number of 4000 can be set solely using the kinematic viscosity : 
+In the present case, the Reynolds number is defined as: :math:`Re = \frac{Ud}{\nu}`. Since we set the values of :math:`U` and :math:`d`, the Reynold number of 4000 can be set solely using the kinematic viscosity: 
 
 
 .. code-block:: text
@@ -171,7 +171,7 @@ In the present case, the Reynolds number is defined as: :math:`Re = \frac{Ud}{\n
 Initial Conditions 
 ~~~~~~~~~~~~~~~~~~
 
-The ``initial conditions`` section let us set-up the velocity and pressure of the flow at t = 0 :  
+The ``initial conditions`` subsection lets us set-up the velocity and pressure of the flow at :math:`t = 0 \ \text{s}`:  
 
 .. code-block:: text
 
@@ -185,7 +185,7 @@ The ``initial conditions`` section let us set-up the velocity and pressure of th
       end
     end
 
-The ``type`` is set to ``nodal`` (as per now, ``lethe-fluid-matrix-free`` solver only let us use this option). Than we choose the ``uvwp subsection`` which allows us to respectively set the :math:`u_x;u_y;u_z;p` expressions under the ``function expression``. Switching from cylindrical to Cartesian coordinates results in a quite complex expression. To help with that matter, we use the ``Fucntion constant``. 
+The ``type`` is set to ``nodal`` (as per now, ``lethe-fluid-matrix-free`` solver only lets us use this option). Then we choose the ``uvwp subsection`` which allows us to respectively set the :math:`u_x;u_y;u_z;p` expressions under the ``function expression``. Switching from cylindrical to Cartesian coordinates results in a quite complex expression. To help with that matter, we use the ``Function constant``. 
 
 FEM Interpolation
 ~~~~~~~~~~~~~~~~~
@@ -202,7 +202,7 @@ The results obtained for the turbulent Taylor-Couette flow are highly dependent 
 Forces
 ~~~~~~
 
-The ``forces`` subsection controls the postprocessing of the torque and the forces acting on the boundaries of the domain : 
+The ``forces`` subsection controls the postprocessing of the torque and the forces acting on the boundaries of the domain: 
 
 .. code-block:: text
 
@@ -254,10 +254,10 @@ The ``simulation control`` subsection controls the flow of the simulation. To ma
 
   A good practice is to use as many subdivisions as the interpolation order scheme. 
 
-Rest of the Subsections
+Other Subsections
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
-The ``non-linear solver`` and ``linear solver`` subsections use the same parameters of the `Taylor-Green Vortex <https://lethe-cfd.github.io/lethe/documentation/examples/incompressible-flow/3d-taylor-green-vortex/3d-taylor-green-vortex.html>`_ example. More details can be found in this example and a complete overview of the ``lethe-fluid-matrix-free`` linear solver can be found in the **Theory Guide** (under construction).
+The ``non-linear solver`` and ``linear solver`` subsections use the same parameters as the `Taylor-Green Vortex <https://lethe-cfd.github.io/lethe/documentation/examples/incompressible-flow/3d-taylor-green-vortex/3d-taylor-green-vortex.html>`_ example. More details can be found in this example and a complete overview of the ``lethe-fluid-matrix-free`` linear solver can be found in the **Theory Guide** (under construction).
 
 ----------------------
 Running the Simulation
@@ -290,7 +290,7 @@ Using the ``enstrophy.dat`` file generated by Lethe, the history of enstrophy ca
 
   python3 tc_postprocessing.py 
 
-The enstrophy plot features a zoom section of the enstrophy cascade. The following plot shows the history of the enstrophy as measured with the Q2 scheme : 
+The enstrophy plot features a zoomed section of the enstrophy cascade. The following plot shows the history of the enstrophy as measured with the Q2 scheme: 
 
 +-------------------------------------------------------------------------------------------------------------------+
 |  .. figure:: images/enstrophy_comparison_82k_Q2.png                                                               |
@@ -334,6 +334,6 @@ Possibilities for Extension
 References
 ------------
 
-`[1] <https://doi.org/10.1186/s42774-021-00071-0>`_ “Z. J. Wang and E. Jourdan, “Benchmark for scale-resolving simulation with curved walls: the Taylor Couette flow,” Advances in Aerodynamics, vol. 3, no. 1, Jun. 2021, doi: 10.1186/s42774-021-00071-0.
+`[1] <https://doi.org/10.1186/s42774-021-00071-0>`_ Z. J. Wang and E. Jourdan, “Benchmark for scale-resolving simulation with curved walls: the Taylor Couette flow,” Advances in Aerodynamics, vol. 3, no. 1, Jun. 2021, doi: 10.1186/s42774-021-00071-0.
 
 `[2] <https://en.wikipedia.org/wiki/Taylor%E2%80%93Couette_flow>`_ “Taylor–Couette flow,” *Wikipedia*. Feb. 15, 2024. Available: https://en.wikipedia.org/wiki/Taylor%E2%80%93Couette_flow
