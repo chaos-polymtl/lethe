@@ -187,24 +187,14 @@ private:
                      const double relative_residual);
 
   /**
-   * @brief  Setup the local smoothing multigrid preconditioner and call the solve
+   * @brief  Setup the geometric multigrid preconditioner and call the solve
    * function of the linear solver.
    *
    * @param[in] solver Linear solver object that needs the multigrid
    * preconditioner.
    */
   void
-  solve_with_LSMG(SolverGMRES<VectorType> &solver);
-
-  /**
-   * @brief Setup the global coarsening multigrid preconditioner and call the solve
-   * function of the linear solver.
-   *
-   * @param[in] solver Linear solver object that needs the multigrid
-   * preconditioner.
-   */
-  void
-  solve_with_GCMG(SolverGMRES<VectorType> &solver);
+  solve_with_GMG(SolverGMRES<VectorType> &solver);
 
   /**
    * @brief Setup the implicit LU preconditioner and call the solve function of the

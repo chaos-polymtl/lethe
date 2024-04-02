@@ -1516,22 +1516,43 @@ MFNavierStokesSolver<dim>::calculate_time_derivative_previous_solutions()
 
 template <int dim>
 void
-MFNavierStokesSolver<dim>::solve_with_LSMG(SolverGMRES<VectorType> &solver)
+MFNavierStokesSolver<dim>::solve_with_GMG(SolverGMRES<VectorType> &solver)
 {
   PreconditionGMG<dim> gmg;
 
-  gmg.initialize_ls(this->computing_timer,
-                    this->dof_handler,
-                    this->simulation_parameters,
-                    this->mapping,
-                    this->fe,
-                    this->mg_computing_timer,
-                    this->cell_quadrature,
-                    this->forcing_function,
-                    this->present_solution,
-                    this->time_derivative_previous_solutions,
-                    this->pcout,
-                    this->simulation_control);
+  if (this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+        .preconditioner == Parameters::LinearSolver::PreconditionerType::lsmg)
+    gmg.initialize_ls(this->computing_timer,
+                      this->dof_handler,
+                      this->simulation_parameters,
+                      this->mapping,
+                      this->fe,
+                      this->mg_computing_timer,
+                      this->cell_quadrature,
+                      this->forcing_function,
+                      this->present_solution,
+                      this->time_derivative_previous_solutions,
+                      this->pcout,
+                      this->simulation_control);
+  else if (this->simulation_parameters.linear_solver
+             .at(PhysicsID::fluid_dynamics)
+             .preconditioner ==
+           Parameters::LinearSolver::PreconditionerType::gcmg)
+    gmg.initialize_gc(this->computing_timer,
+                      this->dof_handler,
+                      this->simulation_parameters,
+                      this->mapping,
+                      this->fe,
+                      this->mg_computing_timer,
+                      this->cell_quadrature,
+                      this->forcing_function,
+                      this->present_solution,
+                      this->time_derivative_previous_solutions,
+                      this->pcout,
+                      this->simulation_control);
+  else
+    AssertThrow(false, ExcNotImplemented());
+
 
   this->computing_timer.enter_subsection("Solve linear system");
 
@@ -1550,44 +1571,6 @@ MFNavierStokesSolver<dim>::solve_with_LSMG(SolverGMRES<VectorType> &solver)
       //            << this->coarse_grid_solver_control->last_step() << " steps
       //            "
       //            << std::endl;
-      // this->pcout << std::endl;
-    }
-}
-
-template <int dim>
-void
-MFNavierStokesSolver<dim>::solve_with_GCMG(SolverGMRES<VectorType> &solver)
-{
-  PreconditionGMG<dim> gmg;
-
-  gmg.initialize_gc(this->computing_timer,
-                    this->dof_handler,
-                    this->simulation_parameters,
-                    this->mapping,
-                    this->fe,
-                    this->mg_computing_timer,
-                    this->cell_quadrature,
-                    this->forcing_function,
-                    this->present_solution,
-                    this->time_derivative_previous_solutions,
-                    this->pcout,
-                    this->simulation_control);
-
-  this->computing_timer.enter_subsection("Solve linear system");
-
-  solver.solve(*(this->system_operator),
-               this->newton_update,
-               this->system_rhs,
-               gmg);
-
-  this->computing_timer.leave_subsection("Solve linear system");
-
-  if (this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
-        .mg_verbosity != Parameters::Verbosity::quiet)
-    {
-      // this->pcout << "  -Coarse grid solver took: "
-      //       << this->coarse_grid_solver_control->last_step() << " steps "
-      //       << std::endl;
       // this->pcout << std::endl;
     }
 }
@@ -1864,14 +1847,12 @@ MFNavierStokesSolver<dim>::solve_system_GMRES(const bool   initial_step,
 
   this->newton_update = 0.0;
 
-  if (this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
-        .preconditioner == Parameters::LinearSolver::PreconditionerType::lsmg)
-    solve_with_LSMG(solver);
-  else if (this->simulation_parameters.linear_solver
-             .at(PhysicsID::fluid_dynamics)
-             .preconditioner ==
-           Parameters::LinearSolver::PreconditionerType::gcmg)
-    solve_with_GCMG(solver);
+  if ((this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+         .preconditioner ==
+       Parameters::LinearSolver::PreconditionerType::lsmg) ||
+      (this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+         .preconditioner == Parameters::LinearSolver::PreconditionerType::gcmg))
+    solve_with_GMG(solver);
   else if (this->simulation_parameters.linear_solver
              .at(PhysicsID::fluid_dynamics)
              .preconditioner ==
