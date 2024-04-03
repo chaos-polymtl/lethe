@@ -76,8 +76,6 @@ template <int dim>
 void
 MFNavierStokesSolver<dim>::solve()
 {
-  MultithreadInfo::set_thread_limit(1);
-
   read_mesh_and_manifolds(
     *this->triangulation,
     this->simulation_parameters.mesh,

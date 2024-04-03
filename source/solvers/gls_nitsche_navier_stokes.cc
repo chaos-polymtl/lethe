@@ -702,8 +702,6 @@ template <int dim, int spacedim>
 void
 GLSNitscheNavierStokesSolver<dim, spacedim>::solve()
 {
-  MultithreadInfo::set_thread_limit(1);
-
   // Fluid setup
   read_mesh_and_manifolds(
     *this->triangulation,

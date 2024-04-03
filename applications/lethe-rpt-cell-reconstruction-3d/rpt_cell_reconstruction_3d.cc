@@ -18,7 +18,7 @@ main(int argc, char *argv[])
         }
 
       Utilities::MPI::MPI_InitFinalize mpi_initialization(
-        argc, argv, numbers::invalid_unsigned_int);
+        argc, argv, 1);
 
       ParameterHandler         prm;
       RPTCalculatingParameters rpt_parameters;

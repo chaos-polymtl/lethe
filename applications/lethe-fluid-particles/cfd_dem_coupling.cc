@@ -24,7 +24,7 @@ main(int argc, char *argv[])
   try
     {
       Utilities::MPI::MPI_InitFinalize mpi_initialization(
-        argc, argv, dealii::numbers::invalid_unsigned_int);
+        argc, argv, 1);
 
 
       if (argc != 2)
