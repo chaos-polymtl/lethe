@@ -43,10 +43,10 @@ The inner cylinder rotates counterclockwise at a constant angular velocity :math
 The initial conditions for velocity and pressure are defined as follow: 
 
 .. math::
-   u_{\theta} &= Ar + \frac{B}{r} + \epsilon U\sin(\theta) \sin(\frac{(r-r_i)\pi}{r_i}) \sin(\frac{z}{d}) \\
-   u_{r} &= \epsilon U\cos(\theta) \sin(\frac{(r-r_i)\pi}{r_i}) \sin(\frac{z}{d}) \\
+   u_{\theta} &= Ar + \frac{B}{r} + \epsilon U\sin(\theta) \sin \left( \frac{(r-r_i)\pi}{r_i} \right) \sin \left( \frac{z}{d} \right) \\
+   u_{r} &= \epsilon U\cos(\theta) \sin \left( \frac{(r-r_i)\pi}{r_i} \right) \sin \left( \frac{z}{d} \right) \\
    u_{z} &= 0 \\
-   p &= \frac{1}{2}A^2r^2 + 2AB\ln(r) - \frac{\frac{1}{2}B^2}{r^2} + \frac{1}{2}(\epsilon U)^2 \cos(2\theta) \sin(\frac{2(r-r_i)\pi}{r_i}) \sin(\frac{2z}{d})
+   p &= \frac{1}{2}A^2r^2 + 2AB\ln(r) - \frac{\frac{1}{2}B^2}{r^2} + \frac{1}{2}(\epsilon U)^2 \cos(2\theta) \sin  \left( \frac{2(r-r_i)\pi}{r_i} \right) \sin \left( \frac{2z}{d} \right)
 
 where :math:`A = -\frac{\omega \kappa^2}{1-\kappa^2}`, :math:`B = \frac{\omega r_i^2}{1-\kappa^2}`,  :math:`U = \omega r_i`, :math:`\kappa =  \frac{r_i}{r_o}`, :math:`d = r_o - r_i`, :math:`\epsilon` is a relaxing factor, :math:`r_i` is the inner cylinder radius, :math:`r_o` is the outer cylinder radius, r is the radial coordinate and z is the axial coordinate. 
 
@@ -76,14 +76,14 @@ For this particular case, the value for each variable can be found in the follow
       - :math:`r_o`
       - 1.0
 
-Since Lethe uses a Cartesian coordinate system, the following expressions have been transformed to proceed with the simulation. Finally, the histories of the enstrophy and kinetic energy are used as a benchmark. For an incompressible flow, the enstrophy and the kinetic energy are defined as: 
+Since Lethe uses a Cartesian coordinate system, the following expressions have been transformed to proceed with the simulation. For an incompressible flow, the enstrophy and the kinetic energy are defined as: 
 
 .. math::
   \mathcal{E} &= \frac{1}{\Omega} \int_{\Omega} \frac{\mathbf{\omega}\cdot \mathbf{\omega}}{2} \mathrm{d}\Omega \\
   E_k &= \frac{1}{\Omega} \int_{\Omega} \frac{\mathbf{u}\cdot \mathbf{u}}{2} \mathrm{d}\Omega \\
 
 
-where :math:`\mathbf{\omega}=\nabla \times \mathbf{u}` represents the vorticity. The results obtained from our simulation are compared to the benchmark values from the case study. 
+where :math:`\mathbf{\omega}=\nabla \times \mathbf{u}` represents the vorticity. The results obtained for both enstrophy and kinetic energy are compared to the benchmark values from the case study. 
 
 --------------
 Parameter File
@@ -116,7 +116,7 @@ The last parameter specifies the ``initial refinement`` of the grid. Indicating 
 
 .. note::
 
-  The mesh resolution used in the case study consists of 20 radial elements, 80 azimuthal elements, and 64 axial elements totalling 102,400 elements. Additionally, it incorporates a mesh refinement near both walls in the radial direction. 
+  The mesh resolution used in the case study consists of 20 radial elements, 80 azimuthal elements, and 64 axial elements totalling 102,400 elements.  
 
 Boundary Conditions
 ~~~~~~~~~~~~~~~~~~~
