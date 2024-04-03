@@ -154,9 +154,7 @@ class MFNavierStokesSolver
                             LinearAlgebra::distributed::Vector<double>,
                             IndexSet>
 {
-  using VectorType     = LinearAlgebra::distributed::Vector<double>;
-  using LSTransferType = MGTransferMatrixFree<dim, double>;
-  using GCTransferType = MGTransferGlobalCoarsening<dim, VectorType>;
+  using VectorType = LinearAlgebra::distributed::Vector<double>;
 
 public:
   /**
@@ -251,6 +249,13 @@ protected:
   define_zero_constraints();
 
   /**
+   * @brief Set up appropriate preconditioner.
+   *
+   */
+  void
+  setup_preconditioner();
+
+  /**
    * @brief Solve the linear system of equations using the method specified in
    * the simulation parameters.
    *
@@ -293,12 +298,9 @@ private:
   /**
    * @brief  Setup the geometric multigrid preconditioner and call the solve
    * function of the linear solver.
-   *
-   * @param[in] solver Linear solver object that needs the multigrid
-   * preconditioner.
    */
   void
-  solve_with_GMG(SolverGMRES<VectorType> &solver);
+  setup_GMG();
 
   /**
    * @brief Setup the implicit LU preconditioner and call the solve function of the
@@ -306,7 +308,7 @@ private:
    * the matrix-free operator.
    */
   void
-  solve_with_ILU(SolverGMRES<VectorType> &solver);
+  setup_ILU();
 
 protected:
   /**
@@ -316,18 +318,10 @@ protected:
   std::shared_ptr<NavierStokesOperatorBase<dim, double>> system_operator;
 
   /**
-   * @brief Geometric local smoothing multigrid preconditioner.
+   * @brief Geometric multigrid preconditioner.
    *
    */
-  std::shared_ptr<PreconditionMG<dim, VectorType, LSTransferType>>
-    ls_multigrid_preconditioner;
-
-  /**
-   * @brief Geometric global coarsening multigrid preconditioner.
-   *
-   */
-  std::shared_ptr<PreconditionMG<dim, VectorType, GCTransferType>>
-    gc_multigrid_preconditioner;
+  std::shared_ptr<MFNavierStokesPreconditionGMG<dim>> gmg_preconditioner;
 
   /**
    * @brief Implicit LU preconditioner.

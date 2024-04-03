@@ -1055,16 +1055,12 @@ MFNavierStokesPreconditionGMG<dim>::vmult(VectorType       &dst,
     AssertThrow(false, ExcNotImplemented());
 }
 
-
-
 template <int dim>
 void
 MFNavierStokesPreconditionGMG<dim>::clear() const
 {
-  AssertThrow(false, ExcNotImplemented());
+  // AssertThrow(false, ExcNotImplemented());
 }
-
-
 
 template <int dim>
 MFNavierStokesSolver<dim>::MFNavierStokesSolver(
@@ -1176,8 +1172,7 @@ MFNavierStokesSolver<dim>::setup_dofs_fd()
 
   // Clear the preconditioners
   ilu_preconditioner.reset();
-  gc_multigrid_preconditioner.reset();
-  ls_multigrid_preconditioner.reset();
+  gmg_preconditioner.reset();
 
   // Clear matrix free operator
   this->system_operator->clear();
@@ -1423,7 +1418,11 @@ void
 MFNavierStokesSolver<dim>::assemble_system_matrix()
 {
   // Required for compilation but not used for matrix free solvers.
-  TimerOutput::Scope t(this->computing_timer, "Assemble matrix");
+  this->computing_timer.enter_subsection("Assemble matrix");
+
+  this->computing_timer.leave_subsection("Assemble matrix");
+
+  setup_preconditioner();
 }
 
 template <int dim>
@@ -1471,52 +1470,42 @@ MFNavierStokesSolver<dim>::calculate_time_derivative_previous_solutions()
 
 template <int dim>
 void
-MFNavierStokesSolver<dim>::solve_with_GMG(SolverGMRES<VectorType> &solver)
+MFNavierStokesSolver<dim>::setup_GMG()
 {
-  MFNavierStokesPreconditionGMG<dim> gmg;
+  gmg_preconditioner = std::make_shared<MFNavierStokesPreconditionGMG<dim>>();
 
   if (this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
         .preconditioner == Parameters::LinearSolver::PreconditionerType::lsmg)
-    gmg.initialize_ls(this->computing_timer,
-                      this->dof_handler,
-                      this->simulation_parameters,
-                      this->mapping,
-                      this->fe,
-                      this->mg_computing_timer,
-                      this->cell_quadrature,
-                      this->forcing_function,
-                      this->present_solution,
-                      this->time_derivative_previous_solutions,
-                      this->pcout,
-                      this->simulation_control);
+    gmg_preconditioner->initialize_ls(this->computing_timer,
+                                      this->dof_handler,
+                                      this->simulation_parameters,
+                                      this->mapping,
+                                      this->fe,
+                                      this->mg_computing_timer,
+                                      this->cell_quadrature,
+                                      this->forcing_function,
+                                      this->present_solution,
+                                      this->time_derivative_previous_solutions,
+                                      this->pcout,
+                                      this->simulation_control);
   else if (this->simulation_parameters.linear_solver
              .at(PhysicsID::fluid_dynamics)
              .preconditioner ==
            Parameters::LinearSolver::PreconditionerType::gcmg)
-    gmg.initialize_gc(this->computing_timer,
-                      this->dof_handler,
-                      this->simulation_parameters,
-                      this->mapping,
-                      this->fe,
-                      this->mg_computing_timer,
-                      this->cell_quadrature,
-                      this->forcing_function,
-                      this->present_solution,
-                      this->time_derivative_previous_solutions,
-                      this->pcout,
-                      this->simulation_control);
+    gmg_preconditioner->initialize_gc(this->computing_timer,
+                                      this->dof_handler,
+                                      this->simulation_parameters,
+                                      this->mapping,
+                                      this->fe,
+                                      this->mg_computing_timer,
+                                      this->cell_quadrature,
+                                      this->forcing_function,
+                                      this->present_solution,
+                                      this->time_derivative_previous_solutions,
+                                      this->pcout,
+                                      this->simulation_control);
   else
     AssertThrow(false, ExcNotImplemented());
-
-
-  this->computing_timer.enter_subsection("Solve linear system");
-
-  solver.solve(*(this->system_operator),
-               this->newton_update,
-               this->system_rhs,
-               gmg);
-
-  this->computing_timer.leave_subsection("Solve linear system");
 
   if (this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
         .mg_verbosity != Parameters::Verbosity::quiet)
@@ -1532,7 +1521,7 @@ MFNavierStokesSolver<dim>::solve_with_GMG(SolverGMRES<VectorType> &solver)
 
 template <int dim>
 void
-MFNavierStokesSolver<dim>::solve_with_ILU(SolverGMRES<VectorType> &solver)
+MFNavierStokesSolver<dim>::setup_ILU()
 {
   this->computing_timer.enter_subsection("Setup ILU");
 
@@ -1554,15 +1543,6 @@ MFNavierStokesSolver<dim>::solve_with_ILU(SolverGMRES<VectorType> &solver)
                                  preconditionerOptions);
 
   this->computing_timer.leave_subsection("Setup ILU");
-
-  this->computing_timer.enter_subsection("Solve linear system");
-
-  solver.solve(*(system_operator),
-               this->newton_update,
-               this->system_rhs,
-               *ilu_preconditioner);
-
-  this->computing_timer.leave_subsection("Solve linear system");
 }
 
 template <int dim>
@@ -1734,6 +1714,37 @@ MFNavierStokesSolver<dim>::define_zero_constraints()
 
 template <int dim>
 void
+MFNavierStokesSolver<dim>::setup_preconditioner()
+{
+  this->present_solution.update_ghost_values();
+  this->system_operator->evaluate_non_linear_term(this->present_solution);
+
+  if (this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+        .preconditioner == Parameters::LinearSolver::PreconditionerType::ilu)
+    setup_ILU();
+  else if ((this->simulation_parameters.linear_solver
+              .at(PhysicsID::fluid_dynamics)
+              .preconditioner ==
+            Parameters::LinearSolver::PreconditionerType::lsmg) ||
+           (this->simulation_parameters.linear_solver
+              .at(PhysicsID::fluid_dynamics)
+              .preconditioner ==
+            Parameters::LinearSolver::PreconditionerType::gcmg))
+    setup_GMG();
+  else
+    AssertThrow(
+      this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+            .preconditioner ==
+          Parameters::LinearSolver::PreconditionerType::ilu ||
+        this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+            .preconditioner ==
+          Parameters::LinearSolver::PreconditionerType::amg,
+      ExcMessage(
+        "This linear solver does not support this preconditioner. Only <ilu|lsmg|gcmg> preconditioners are supported."));
+}
+
+template <int dim>
+void
 MFNavierStokesSolver<dim>::solve_linear_system(const bool initial_step,
                                                const bool /* renewed_matrix */)
 {
@@ -1796,23 +1807,30 @@ MFNavierStokesSolver<dim>::solve_system_GMRES(const bool   initial_step,
 
   SolverGMRES<VectorType> solver(solver_control, solver_parameters);
 
-  this->present_solution.update_ghost_values();
-
-  this->system_operator->evaluate_non_linear_term(this->present_solution);
+  if (!gmg_preconditioner && !ilu_preconditioner)
+    setup_preconditioner();
 
   this->newton_update = 0.0;
+
+  this->computing_timer.enter_subsection("Solve linear system");
 
   if ((this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
          .preconditioner ==
        Parameters::LinearSolver::PreconditionerType::lsmg) ||
       (this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
          .preconditioner == Parameters::LinearSolver::PreconditionerType::gcmg))
-    solve_with_GMG(solver);
+    solver.solve(*(this->system_operator),
+                 this->newton_update,
+                 this->system_rhs,
+                 *(this->gmg_preconditioner));
   else if (this->simulation_parameters.linear_solver
              .at(PhysicsID::fluid_dynamics)
              .preconditioner ==
            Parameters::LinearSolver::PreconditionerType::ilu)
-    solve_with_ILU(solver);
+    solver.solve(*(this->system_operator),
+                 this->newton_update,
+                 this->system_rhs,
+                 *(this->ilu_preconditioner));
   else
     AssertThrow(
       this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
@@ -1826,6 +1844,8 @@ MFNavierStokesSolver<dim>::solve_system_GMRES(const bool   initial_step,
           Parameters::LinearSolver::PreconditionerType::gcmg,
       ExcMessage(
         "This linear solver does not support this preconditioner. Only <ilu|lsmg|gcmg> preconditioners are supported."));
+
+  this->computing_timer.leave_subsection("Solve linear system");
 
   if (this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
         .verbosity != Parameters::Verbosity::quiet)
