@@ -173,6 +173,7 @@ In the nano terminal, copy-paste (with ``Ctrl+Shift+V``):
 
   export DEAL_II_DIR=$HOME/dealii/inst/
   export PATH=$PATH:$HOME/lethe/inst/bin/
+  export OMP_NUM_THREADS=1  # This prevents Trilinos from using multithreading, which could lead to a drop in performance. 
 
 Exit the nano mode with ``Ctrl+x`` and save the document by hitting ``y`` on the prompt "Save modify buffer?" (in the bottom). The prompt "File Name to Write: .dealii" should then appear, hit ``Enter``.
 
