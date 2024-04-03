@@ -86,7 +86,6 @@ MFNavierStokesPreconditionGMG<dim>::initialize_ls(
   mg_time_derivative_previous_solutions.resize(0, n_h_levels - 1);
   level_constraints.resize(0, n_h_levels - 1);
   this->ls_mg_interface_in.resize(0, n_h_levels - 1);
-  this->ls_mg_interface_out.resize(0, n_h_levels - 1);
   this->ls_mg_operators.resize(0, n_h_levels - 1);
 
   // Fill the constraints
@@ -210,7 +209,6 @@ MFNavierStokesPreconditionGMG<dim>::initialize_ls(
 
       this->ls_mg_operators[level].initialize(*mg_operators[level]);
       this->ls_mg_interface_in[level].initialize(*mg_operators[level]);
-      this->ls_mg_interface_out[level].initialize(*mg_operators[level]);
 
       partitioners[level] = this->mg_operators[level]->get_vector_partitioner();
 
@@ -364,9 +362,21 @@ MFNavierStokesPreconditionGMG<dim>::initialize_ls(
     simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
       .mg_level_min_cells;
 
+
+  std::vector<unsigned int> n_cells_on_levels(
+    dof_handler.get_triangulation().n_global_levels(), 0);
+
+  for (unsigned int l = 0; l < dof_handler.get_triangulation().n_levels(); ++l)
+    for (const auto &cell :
+         dof_handler.get_triangulation().cell_iterators_on_level(l))
+      if (cell->is_locally_owned_on_level())
+        n_cells_on_levels[l]++;
+
+  Utilities::MPI::sum(n_cells_on_levels,
+                      dof_handler.get_communicator(),
+                      n_cells_on_levels);
   AssertThrow(
-    mg_level_min_cells <=
-      static_cast<int>(dof_handler.get_triangulation().n_cells(maxlevel)),
+    mg_level_min_cells <= static_cast<int>(n_cells_on_levels[maxlevel]),
     ExcMessage(
       "The mg level min cells specified are larger than the cells of the finest mg level."));
 
@@ -377,8 +387,7 @@ MFNavierStokesPreconditionGMG<dim>::initialize_ls(
   if (mg_level_min_cells != -1)
     {
       for (unsigned int level = minlevel; level <= maxlevel; ++level)
-        if (static_cast<int>(dof_handler.get_triangulation().n_cells(level)) >=
-            mg_level_min_cells)
+        if (static_cast<int>(n_cells_on_levels[maxlevel]) >= mg_level_min_cells)
           {
             minlevel = level;
             break;
@@ -393,8 +402,7 @@ MFNavierStokesPreconditionGMG<dim>::initialize_ls(
       for (unsigned int level = minlevel; level <= maxlevel; ++level)
         pcout << "    Level " << level - minlevel << ": "
               << dof_handler.n_dofs(level) << " DoFs, "
-              << dof_handler.get_triangulation().n_cells(level) << " cells"
-              << std::endl;
+              << n_cells_on_levels[maxlevel] << " cells" << std::endl;
       pcout << std::endl;
     }
 
@@ -520,8 +528,6 @@ MFNavierStokesPreconditionGMG<dim>::initialize_ls(
   // refinement
   this->mg_interface_matrix_in =
     std::make_shared<mg::Matrix<VectorType>>(this->ls_mg_interface_in);
-  this->mg_interface_matrix_out =
-    std::make_shared<mg::Matrix<VectorType>>(this->ls_mg_interface_out);
 
   // Create main MG object
   this->mg = std::make_shared<Multigrid<VectorType>>(*mg_matrix,
@@ -532,8 +538,7 @@ MFNavierStokesPreconditionGMG<dim>::initialize_ls(
                                                      minlevel);
 
   if (dof_handler.get_triangulation().has_hanging_nodes())
-    this->mg->set_edge_matrices(*this->mg_interface_matrix_in,
-                                *this->mg_interface_matrix_out);
+    this->mg->set_edge_in_matrix(*this->mg_interface_matrix_in);
 
   // Create MG preconditioner
   this->ls_multigrid_preconditioner =

@@ -99,15 +99,10 @@ private:
 
   // edge matrices (only LS)
   mutable std::shared_ptr<mg::Matrix<VectorType>> mg_interface_matrix_in;
-  mutable std::shared_ptr<mg::Matrix<VectorType>> mg_interface_matrix_out;
   mutable MGLevelObject<MatrixFreeOperators::MGInterfaceOperator<OperatorType>>
     ls_mg_operators;
   mutable MGLevelObject<MatrixFreeOperators::MGInterfaceOperator<OperatorType>>
     ls_mg_interface_in;
-  mutable MGLevelObject<MatrixFreeOperators::MGInterfaceOperator<OperatorType>>
-                                                       ls_mg_interface_out;
-  mutable MGLevelObject<std::shared_ptr<OperatorType>> mg_interface_in;
-  mutable MGLevelObject<std::shared_ptr<OperatorType>> mg_interface_out;
 
   // smoother
   mutable std::shared_ptr<
