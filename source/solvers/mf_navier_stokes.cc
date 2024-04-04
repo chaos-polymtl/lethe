@@ -63,9 +63,6 @@ MFNavierStokesPreconditionGMG<dim>::initialize_ls(
 {
   computing_timer.enter_subsection("Setup LSMG");
 
-  dof_handler.get_triangulation().signals.post_refinement.connect(
-    [this]() { this->clear(); });
-
   // Create level objects
   MGLevelObject<VectorType> mg_solution;
   MGLevelObject<VectorType> mg_time_derivative_previous_solutions;
@@ -567,9 +564,6 @@ MFNavierStokesPreconditionGMG<dim>::initialize_gc(
 {
   computing_timer.enter_subsection("Setup GCMG");
 
-  dof_handler.get_triangulation().signals.post_refinement.connect(
-    [this]() { this->clear(); });
-
   // Create level objects
   MGLevelObject<VectorType> mg_solution;
   MGLevelObject<VectorType> mg_time_derivative_previous_solutions;
@@ -1058,13 +1052,6 @@ MFNavierStokesPreconditionGMG<dim>::vmult(VectorType       &dst,
     gc_multigrid_preconditioner->vmult(dst, src);
   else
     AssertThrow(false, ExcNotImplemented());
-}
-
-template <int dim>
-void
-MFNavierStokesPreconditionGMG<dim>::clear() const
-{
-  // AssertThrow(false, ExcNotImplemented());
 }
 
 template <int dim>
