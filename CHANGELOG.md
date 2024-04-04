@@ -3,6 +3,12 @@
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Master] - 2024-04-04
+
+### Added
+
+- MINOR Added the turbulent Taylor-Couette incompressible flow example. [#1083](https://github.com/lethe-cfd/lethe/pull/1083)
+
 ## [Master] - 2024-03-28
 
 ### Changed
