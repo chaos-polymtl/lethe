@@ -687,9 +687,6 @@ GLSNavierStokesSolver<dim>::assemble_system_matrix()
 {
   this->GLSNavierStokesSolver<
     dim>::assemble_system_matrix_without_preconditioner();
-
-  // Assemble the preconditioner
-  this->setup_preconditioner();
 }
 
 

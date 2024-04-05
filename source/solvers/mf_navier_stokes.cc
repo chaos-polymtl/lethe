@@ -406,6 +406,13 @@ MFNavierStokesSolver<dim>::assemble_system_matrix()
 
 template <int dim>
 void
+MFNavierStokesSolver<dim>::setup_preconditioner()
+{
+  TimerOutput::Scope t(this->computing_timer, "Setup preconditioner");
+}
+
+template <int dim>
+void
 MFNavierStokesSolver<dim>::assemble_system_rhs()
 {
   TimerOutput::Scope t(this->computing_timer, "Assemble RHS");

@@ -115,6 +115,12 @@ protected:
   assemble_system_matrix() override;
 
   /**
+   * @brief Setup preconditioner.
+   */
+  virtual void
+  setup_preconditioner() override;
+
+  /**
    * @brief Assemble the system right hand side associated with the solver.
    */
   virtual void

@@ -50,6 +50,15 @@ public:
   assemble_system_matrix() = 0;
 
   /**
+   * @brief setup_preconditioner Setup preconditioner
+   */
+  virtual void
+  setup_preconditioner()
+  {
+    AssertThrow(false, ExcNotImplemented());
+  }
+
+  /**
    * @brief assemble_system_rhs Assembles the rhs
    */
   virtual void
