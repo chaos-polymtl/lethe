@@ -2516,7 +2516,7 @@ NavierStokesBase<dim, VectorType, DofsType>::output_newton_update_norms(
 
               local_sum += dof_newton_update * dof_newton_update;
 
-              local_max = std::max(local_max, dof_newton_update);
+              local_max = std::max(local_max, std::abs(dof_newton_update));
             }
         }
 
@@ -2536,7 +2536,7 @@ NavierStokesBase<dim, VectorType, DofsType>::output_newton_update_norms(
 
           local_sum += dof_newton_update * dof_newton_update;
 
-          local_max = std::max(local_max, dof_newton_update);
+          local_max = std::max(local_max, std::abs(dof_newton_update));
         }
 
       double global_pressure_l2_norm =

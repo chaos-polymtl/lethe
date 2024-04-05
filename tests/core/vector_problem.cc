@@ -105,7 +105,8 @@ test()
         {
           correction_norm += dummy_solution[*j] * dummy_solution[*j];
 
-          max_correction = std::max(max_correction, dummy_solution[*j]);
+          max_correction =
+            std::max(max_correction, std::abs(dummy_solution[*j]));
         }
     }
 
@@ -120,10 +121,7 @@ test()
     {
       correction_norm += dummy_solution[*j] * dummy_solution[*j];
 
-      if (dummy_solution[*j] > max_correction)
-        {
-          max_correction = dummy_solution[*j];
-        }
+      max_correction = std::max(max_correction, std::abs(dummy_solution[*j]));
     }
 
   deallog << "||p||_L2 : " << std::sqrt(correction_norm) << std::endl;
