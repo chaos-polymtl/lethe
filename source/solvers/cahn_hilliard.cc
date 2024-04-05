@@ -423,11 +423,12 @@ CahnHilliard<dim>::calculate_phase_statistics()
   double interface_energy(0.);
   double total_energy(0.);
 
-  double epsilon = (this->simulation_parameters.multiphysics.cahn_hilliard_parameters
-                            .epsilon_set_method == Parameters::EpsilonSetMethod::manual) ?
-                   this->simulation_parameters.multiphysics.cahn_hilliard_parameters
-                           .epsilon :
-                   GridTools::minimal_cell_diameter(*triangulation);
+  double epsilon =
+    (this->simulation_parameters.multiphysics.cahn_hilliard_parameters
+       .epsilon_set_method == Parameters::EpsilonSetMethod::manual) ?
+      this->simulation_parameters.multiphysics.cahn_hilliard_parameters
+        .epsilon :
+      GridTools::minimal_cell_diameter(*triangulation);
 
   for (const auto &cell : dof_handler.active_cell_iterators())
     {
@@ -490,12 +491,12 @@ CahnHilliard<dim>::calculate_phase_statistics()
   statistics_table.set_scientific("volume_0", true);
   statistics_table.add_value("volume_1", volume_1);
   statistics_table.set_scientific("volume_1", true);
-  statistics_table.add_value("bulk_energy",bulk_energy);
-  statistics_table.set_scientific("bulk_energy",true);
-    statistics_table.add_value("interface_energy",interface_energy);
-    statistics_table.set_scientific("interface_energy",true);
-    statistics_table.add_value("total_energy",total_energy);
-    statistics_table.set_scientific("total_energy",true);
+  statistics_table.add_value("bulk_energy", bulk_energy);
+  statistics_table.set_scientific("bulk_energy", true);
+  statistics_table.add_value("interface_energy", interface_energy);
+  statistics_table.set_scientific("interface_energy", true);
+  statistics_table.add_value("total_energy", total_energy);
+  statistics_table.set_scientific("total_energy", true);
 }
 
 template <int dim>
@@ -1477,73 +1478,94 @@ CahnHilliard<dim>::apply_phase_filter()
 template <int dim>
 void
 CahnHilliard<dim>::output_newton_update_norms(
-  const unsigned int display_precision)
+  const unsigned int display_precision) {
+    auto mpi_communicator = triangulation->get_communicator();
+
+    FEValuesExtractors::Scalar phase_order(0);
+    FEValuesExtractors::Scalar chemical_potential(1);
+
+    ComponentMask phase_order_mask = fe->component_mask(phase_order);
+    ComponentMask chemical_potential_mask =
+            fe->component_mask(chemical_potential);
+
+    const std::vector<IndexSet> index_set_phase_order =
+            DoFTools::locally_owned_dofs_per_component(dof_handler,
+                                                       phase_order_mask);
+    const std::vector<IndexSet> index_set_chemical_potential =
+            DoFTools::locally_owned_dofs_per_component(dof_handler,
+                                                       chemical_potential_mask);
+
+    double local_sum = 0.0;
+    double local_max = std::numeric_limits<double>::lowest();
+
+
+    for (auto j = index_set_phase_order[0].begin();
+         j != index_set_phase_order[0].end();
+         j++) {
+        double dof_newton_update = newton_update[*j];
+
+        local_sum += dof_newton_update * dof_newton_update;
+
+        local_max = std::max(local_max, std::abs(dof_newton_update));
+    }
+
+
+    double global_phase_order_l2_norm =
+            std::sqrt(Utilities::MPI::sum(local_sum, mpi_communicator));
+    double global_phase_order_linfty_norm =
+            Utilities::MPI::max(local_max, mpi_communicator);
+
+    local_sum = 0.0;
+    local_max = std::numeric_limits<double>::lowest();
+
+    for (auto j = index_set_chemical_potential[1].begin();
+         j != index_set_chemical_potential[1].end();
+         j++) {
+        double dof_newton_update = newton_update[*j];
+
+        local_sum += dof_newton_update * dof_newton_update;
+
+        local_max = std::max(local_max, std::abs(dof_newton_update));
+    }
+
+    double global_chemical_potential_l2_norm =
+            std::sqrt(Utilities::MPI::sum(local_sum, mpi_communicator));
+    double global_chemical_potential_linfty_norm =
+            Utilities::MPI::max(local_max, mpi_communicator);
+
+    this->pcout << std::setprecision(display_precision)
+                << "\n\t||dphi||_L2 = " << std::setw(6)
+                << global_phase_order_l2_norm << std::setw(6)
+                << "\t||dphi||_Linfty = "
+                << std::setprecision(display_precision)
+                << global_phase_order_linfty_norm << std::endl;
+    this->pcout << std::setprecision(display_precision)
+                << "\t||deta||_L2 = " << std::setw(6)
+                << global_chemical_potential_l2_norm << std::setw(6)
+                << "\t||deta||_Linfty = "
+                << std::setprecision(display_precision)
+                << global_chemical_potential_linfty_norm << std::endl;
+}
+
+double
+CahnHilliard<dim>::compute_epsilon()
 {
-  auto mpi_communicator = triangulation->get_communicator();
+    auto mpi_communicator = this->triangulation->get_communicator();
 
-  FEValuesExtractors::Scalar phase_order(0);
-  FEValuesExtractors::Scalar chemical_potential(1);
+    double epsilon(0.0);
+    const int max_level = this->triangulation->n_levels();
+    const int number_of_cells_on_level = this->triangulation->n_active_cells(max_level);
+    std::cout<<"max_level"<<max_level<<std::endl;
 
-  ComponentMask phase_order_mask = fe->component_mask(phase_order);
-  ComponentMask chemical_potential_mask =
-    fe->component_mask(chemical_potential);
-
-  const std::vector<IndexSet> index_set_phase_order =
-    DoFTools::locally_owned_dofs_per_component(dof_handler, phase_order_mask);
-  const std::vector<IndexSet> index_set_chemical_potential =
-    DoFTools::locally_owned_dofs_per_component(dof_handler,
-                                               chemical_potential_mask);
-
-  double local_sum = 0.0;
-  double local_max = std::numeric_limits<double>::lowest();
-
-
-  for (auto j = index_set_phase_order[0].begin();
-       j != index_set_phase_order[0].end();
-       j++)
+    for (const auto &cell: this->dof_handler.active_cell_iterators_on_level(max_level))
     {
-      double dof_newton_update = newton_update[*j];
-
-      local_sum += dof_newton_update * dof_newton_update;
-
-      local_max = std::max(local_max, std::abs(dof_newton_update));
+       epsilon += cell->diameter();
     }
 
+    epsilon = Utilities::MPI::sum(epsilon,mpi_communicator)/number_of_cells_on_level;
 
-  double global_phase_order_l2_norm =
-    std::sqrt(Utilities::MPI::sum(local_sum, mpi_communicator));
-  double global_phase_order_linfty_norm =
-    Utilities::MPI::max(local_max, mpi_communicator);
 
-  local_sum = 0.0;
-  local_max = std::numeric_limits<double>::lowest();
-
-  for (auto j = index_set_chemical_potential[1].begin();
-       j != index_set_chemical_potential[1].end();
-       j++)
-    {
-      double dof_newton_update = newton_update[*j];
-
-      local_sum += dof_newton_update * dof_newton_update;
-
-      local_max = std::max(local_max, std::abs(dof_newton_update));
-    }
-
-  double global_chemical_potential_l2_norm =
-    std::sqrt(Utilities::MPI::sum(local_sum, mpi_communicator));
-  double global_chemical_potential_linfty_norm =
-    Utilities::MPI::max(local_max, mpi_communicator);
-
-  this->pcout << std::setprecision(display_precision)
-              << "\n\t||dphi||_L2 = " << std::setw(6)
-              << global_phase_order_l2_norm << std::setw(6)
-              << "\t||dphi||_Linfty = " << std::setprecision(display_precision)
-              << global_phase_order_linfty_norm << std::endl;
-  this->pcout << std::setprecision(display_precision)
-              << "\t||deta||_L2 = " << std::setw(6)
-              << global_chemical_potential_l2_norm << std::setw(6)
-              << "\t||deta||_Linfty = " << std::setprecision(display_precision)
-              << global_chemical_potential_linfty_norm << std::endl;
+    return epsilon;
 }
 
 template std::pair<Tensor<1, 2>, Tensor<1, 2>>
