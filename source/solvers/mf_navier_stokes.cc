@@ -1039,8 +1039,6 @@ MFNavierStokesPreconditionGMG<dim>::initialize_gc(
   computing_timer.leave_subsection("Setup GCMG");
 }
 
-
-
 template <int dim>
 void
 MFNavierStokesPreconditionGMG<dim>::vmult(VectorType       &dst,
