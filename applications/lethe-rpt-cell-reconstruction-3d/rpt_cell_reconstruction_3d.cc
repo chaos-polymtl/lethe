@@ -17,8 +17,7 @@ main(int argc, char *argv[])
           std::exit(1);
         }
 
-      Utilities::MPI::MPI_InitFinalize mpi_initialization(
-        argc, argv, 1);
+      Utilities::MPI::MPI_InitFinalize mpi_initialization(argc, argv, 1);
 
       ParameterHandler         prm;
       RPTCalculatingParameters rpt_parameters;
