@@ -1,4 +1,9 @@
 
 DEAL::Creating solver
 DEAL::Solving non-linear system 
-DEAL::The final solution is : 1.22474 -1.50000
+DEAL::	||dx||_L2 = 1.521 	||dx||_Linfty = 1.500
+DEAL::	||dx||_L2 = 0.03125	||dx||_Linfty = 0.03125
+DEAL::	||dx||_L2 = 0.006010	||dx||_Linfty = 0.006010
+DEAL::	||dx||_L2 = 1.482e-05	||dx||_Linfty = 1.482e-05
+DEAL::	||dx||_L2 = 7.297e-08	||dx||_Linfty = 7.297e-08
+DEAL::The final solution is : 1.225 -1.500
