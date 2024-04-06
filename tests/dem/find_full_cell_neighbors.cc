@@ -79,8 +79,7 @@ main(int argc, char **argv)
   try
     {
       initlog();
-      Utilities::MPI::MPI_InitFinalize mpi_initialization(
-        argc, argv, numbers::invalid_unsigned_int);
+      Utilities::MPI::MPI_InitFinalize mpi_initialization(argc, argv, 1);
       test<3>();
     }
   catch (std::exception &exc)
