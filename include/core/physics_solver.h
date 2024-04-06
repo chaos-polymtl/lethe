@@ -106,6 +106,14 @@ public:
   get_nonzero_constraints() = 0;
 
   /**
+   * @brief Output the L2 and Linfty norms of the correction vector.
+   *
+   * @param[in] display_precision Number of outputted digits.
+   */
+  virtual void
+  output_newton_update_norms(const unsigned int display_precision) = 0;
+
+  /**
    * @brief Default way to evaluate the residual for the nonlinear solver.
    * Some application may use more complex evaluation of the residual and
    * override this method.

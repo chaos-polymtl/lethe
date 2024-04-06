@@ -46,6 +46,7 @@
 
 #include <deal.II/dofs/dof_handler.h>
 
+#include <deal.II/fe/component_mask.h>
 #include <deal.II/fe/fe_system.h>
 #include <deal.II/fe/mapping_fe.h>
 
@@ -162,6 +163,14 @@ protected:
   {
     return nonzero_constraints;
   };
+
+  /**
+   * @brief Output the L2 and Linfty norms of the correction vector.
+   *
+   * @param[in] display_precision Number of outputted digits.
+   */
+  virtual void
+  output_newton_update_norms(const unsigned int display_precision) override;
 
   /**
    *  Generic interface routine to allow the CFD solver

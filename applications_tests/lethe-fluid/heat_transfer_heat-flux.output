@@ -7,11 +7,6 @@ Running on 1 MPI rank(s)...
 *****************************
 Steady iteration:        1/1
 *****************************
----------------
-Fluid Dynamics
----------------
-  -Tolerance of iterative solver is : 1e-12
-  -Iterative solver took : 0 steps 
 L2 error velocity : 0
 L2 error temperature : 1.0986e-29
 cells error_velocity error_pressure 
