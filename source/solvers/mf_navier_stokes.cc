@@ -1093,7 +1093,7 @@ MFNavierStokesSolver<dim>::solve()
   this->set_initial_condition(
     this->simulation_parameters.initial_condition->type,
     this->simulation_parameters.restart_parameters.restart);
-  this->update_multiphysics_time_average_solution();
+  // this->update_multiphysics_time_average_solution();
 
   while (this->simulation_control->integrate())
     {
