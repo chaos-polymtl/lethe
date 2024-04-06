@@ -3,6 +3,12 @@
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Master] - 2024-04-05
+
+### Changed
+
+- MINOR The output at every iteration in the terminal of the non-linear solver now displays the norms of the correction for both the velocity and pressure contributions for the Navier-Stokes solver when `verbosity` in the `non-linear solver` subsection is set to `verbose`. [#1076](https://github.com/lethe-cfd/lethe/pull/1076)
+
 ## [Master] - 2024-04-04
 
 ### Added
