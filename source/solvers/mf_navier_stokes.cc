@@ -59,7 +59,7 @@ MFNavierStokesPreconditionGMG<dim>::initialize_ls(
   const VectorType                        &present_solution,
   const VectorType                        &time_derivative_previous_solutions,
   const ConditionalOStream                &pcout,
-  const std::shared_ptr<SimulationControl> simulation_control) const
+  const std::shared_ptr<SimulationControl> simulation_control)
 {
   computing_timer.enter_subsection("Setup LSMG");
 
@@ -452,6 +452,13 @@ MFNavierStokesPreconditionGMG<dim>::initialize_ls(
       amg_data.output_details = false;
       amg_data.smoother_type  = "ILU";
       amg_data.coarse_type    = "ILU";
+      // Constant modes for velocity and pressure
+      // std::vector<std::vector<bool>> constant_modes;
+      // ComponentMask                  components(dim + 1, true);
+      // DoFTools::extract_constant_modes(dof_handler,
+      //                                  components,
+      //                                  constant_modes);
+      // amg_data.constant_modes = constant_modes;
 
       Teuchos::ParameterList              parameter_ml;
       std::unique_ptr<Epetra_MultiVector> distributed_constant_modes;
@@ -553,7 +560,7 @@ MFNavierStokesPreconditionGMG<dim>::initialize_gc(
   const VectorType                        &present_solution,
   const VectorType                        &time_derivative_previous_solutions,
   const ConditionalOStream                &pcout,
-  const std::shared_ptr<SimulationControl> simulation_control) const
+  const std::shared_ptr<SimulationControl> simulation_control)
 {
   computing_timer.enter_subsection("Setup GCMG");
 
@@ -701,10 +708,7 @@ MFNavierStokesPreconditionGMG<dim>::initialize_gc(
           else if (simulation_parameters.boundary_conditions.type[i_bc] ==
                    BoundaryConditions::BoundaryType::pressure)
             {
-              AssertThrow(
-                false,
-                ExcMessage(
-                  "The boundary conditions on pressure are not implemented."));
+              /*do nothing*/
             }
           else if (simulation_parameters.boundary_conditions.type[i_bc] ==
                    BoundaryConditions::BoundaryType::function_weak)

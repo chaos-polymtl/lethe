@@ -76,19 +76,18 @@ public:
    * @param[in] simulation_control Required to get the time stepping method.
    */
   void
-  initialize_ls(
-    TimerOutput                             &computing_timer,
-    const DoFHandler<dim>                   &dof_handler,
-    const SimulationParameters<dim>         &simulation_parameters,
-    const std::shared_ptr<Mapping<dim>>     &mapping,
-    const std::shared_ptr<FESystem<dim>>     fe,
-    TimerOutput                             &mg_computing_timer,
-    const std::shared_ptr<Quadrature<dim>>  &cell_quadrature,
-    const std::shared_ptr<Function<dim>>     forcing_function,
-    const VectorType                        &present_solution,
-    const VectorType                        &time_derivative_previous_solutions,
-    const ConditionalOStream                &pcout,
-    const std::shared_ptr<SimulationControl> simulation_control) const;
+  initialize_ls(TimerOutput                            &computing_timer,
+                const DoFHandler<dim>                  &dof_handler,
+                const SimulationParameters<dim>        &simulation_parameters,
+                const std::shared_ptr<Mapping<dim>>    &mapping,
+                const std::shared_ptr<FESystem<dim>>    fe,
+                TimerOutput                            &mg_computing_timer,
+                const std::shared_ptr<Quadrature<dim>> &cell_quadrature,
+                const std::shared_ptr<Function<dim>>    forcing_function,
+                const VectorType                       &present_solution,
+                const VectorType         &time_derivative_previous_solutions,
+                const ConditionalOStream &pcout,
+                const std::shared_ptr<SimulationControl> simulation_control);
 
   /**
    * @brief Initialize all relevant objects needed for the local smoothing
@@ -112,19 +111,18 @@ public:
    * @param[in] simulation_control Required to get the time stepping method.
    */
   void
-  initialize_gc(
-    TimerOutput                             &computing_timer,
-    const DoFHandler<dim>                   &dof_handler,
-    const SimulationParameters<dim>         &simulation_parameters,
-    const std::shared_ptr<Mapping<dim>>     &mapping,
-    const std::shared_ptr<FESystem<dim>>     fe,
-    TimerOutput                             &mg_computing_timer,
-    const std::shared_ptr<Quadrature<dim>>  &cell_quadrature,
-    const std::shared_ptr<Function<dim>>     forcing_function,
-    const VectorType                        &present_solution,
-    const VectorType                        &time_derivative_previous_solutions,
-    const ConditionalOStream                &pcout,
-    const std::shared_ptr<SimulationControl> simulation_control) const;
+  initialize_gc(TimerOutput                            &computing_timer,
+                const DoFHandler<dim>                  &dof_handler,
+                const SimulationParameters<dim>        &simulation_parameters,
+                const std::shared_ptr<Mapping<dim>>    &mapping,
+                const std::shared_ptr<FESystem<dim>>    fe,
+                TimerOutput                            &mg_computing_timer,
+                const std::shared_ptr<Quadrature<dim>> &cell_quadrature,
+                const std::shared_ptr<Function<dim>>    forcing_function,
+                const VectorType                       &present_solution,
+                const VectorType         &time_derivative_previous_solutions,
+                const ConditionalOStream &pcout,
+                const std::shared_ptr<SimulationControl> simulation_control);
 
   /**
    * @brief Calls the v cycle function of the multigrid object.
@@ -137,64 +135,63 @@ public:
 
 private:
   /// DoF handlers for each of the levels of the global coarsening algorithm
-  mutable MGLevelObject<DoFHandler<dim>> dof_handlers;
+  MGLevelObject<DoFHandler<dim>> dof_handlers;
 
   /// Transfers for each of the levels of the global coarsening algorithm
-  mutable MGLevelObject<MGTwoLevelTransfer<dim, VectorType>> transfers;
+  MGLevelObject<MGTwoLevelTransfer<dim, VectorType>> transfers;
 
   /// Level operators for the geometric multigrid
-  mutable MGLevelObject<std::shared_ptr<OperatorType>>
-    mg_operators; // TODO: reuse
+  MGLevelObject<std::shared_ptr<OperatorType>> mg_operators; // TODO: reuse
 
   /// Multigrid level object storing all operators
-  mutable std::shared_ptr<mg::Matrix<VectorType>> mg_matrix;
+  std::shared_ptr<mg::Matrix<VectorType>> mg_matrix;
 
   /// Interface edge matrix needed only for local smoothing
-  mutable std::shared_ptr<mg::Matrix<VectorType>> mg_interface_matrix_in;
-  mutable MGLevelObject<MatrixFreeOperators::MGInterfaceOperator<OperatorType>>
+  std::shared_ptr<mg::Matrix<VectorType>> mg_interface_matrix_in;
+  MGLevelObject<MatrixFreeOperators::MGInterfaceOperator<OperatorType>>
     ls_mg_operators;
-  mutable MGLevelObject<MatrixFreeOperators::MGInterfaceOperator<OperatorType>>
+  MGLevelObject<MatrixFreeOperators::MGInterfaceOperator<OperatorType>>
     ls_mg_interface_in;
 
   /// Smoother object
-  mutable std::shared_ptr<
+  std::shared_ptr<
     MGSmootherPrecondition<OperatorType, SmootherType, VectorType>>
     mg_smoother;
 
   /// Collection of boundary constraints and refinement edge constrations for
   /// the different levels in the local smoothing approach.
-  mutable MGConstrainedDoFs mg_constrained_dofs;
+  MGConstrainedDoFs mg_constrained_dofs;
 
   /// Transfer operator for local smoothing
-  mutable std::shared_ptr<LSTransferType> mg_transfer_ls; // TODO: reuse
+  std::shared_ptr<LSTransferType> mg_transfer_ls; // TODO: reuse
 
   /// Transfer operator for global coarsening
-  mutable std::shared_ptr<GCTransferType> mg_transfer_gc; // TODO: reuse
+  std::shared_ptr<GCTransferType> mg_transfer_gc; // TODO: reuse
 
   /// Algebraic multigrid as coarse grid solver
-  mutable TrilinosWrappers::PreconditionAMG precondition_amg;
+  TrilinosWrappers::PreconditionAMG precondition_amg;
 
   /// Incomplete LU as coarse grid solver
-  mutable TrilinosWrappers::PreconditionILU precondition_ilu;
+  TrilinosWrappers::PreconditionILU precondition_ilu;
 
   /// Solver control for the coarse grid solver
-  mutable std::shared_ptr<ReductionControl> coarse_grid_solver_control;
+  std::shared_ptr<ReductionControl> coarse_grid_solver_control;
 
   /// GMRES as coarse grid solver
-  mutable std::shared_ptr<SolverGMRES<VectorType>> coarse_grid_solver;
+  std::shared_ptr<SolverGMRES<VectorType>> coarse_grid_solver;
 
   /// Multigrid wrapper for the coarse grid solver
-  mutable std::shared_ptr<MGCoarseGridBase<VectorType>> mg_coarse;
+  std::shared_ptr<MGCoarseGridBase<VectorType>> mg_coarse;
 
   /// Multigrid method
-  mutable std::shared_ptr<Multigrid<VectorType>> mg;
+  std::shared_ptr<Multigrid<VectorType>> mg;
 
   /// Local smoothing multigrid preconditioner object
-  mutable std::shared_ptr<PreconditionMG<dim, VectorType, LSTransferType>>
+  std::shared_ptr<PreconditionMG<dim, VectorType, LSTransferType>>
     ls_multigrid_preconditioner;
 
   /// Global coarsening multigrid preconiditoner object
-  mutable std::shared_ptr<PreconditionMG<dim, VectorType, GCTransferType>>
+  std::shared_ptr<PreconditionMG<dim, VectorType, GCTransferType>>
     gc_multigrid_preconditioner;
 };
 
