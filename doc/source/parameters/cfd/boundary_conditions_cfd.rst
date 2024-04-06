@@ -32,6 +32,7 @@ where `beta` is a constant and  :math:`(\mathbf{u}\cdot n)_{-}` is :math:`min (0
   subsection boundary conditions
     set number         = 2
     set time dependent = false
+    set fix pressure constant = false;
     subsection bc 0
       set id                 = 0
       set type               = function
@@ -73,6 +74,8 @@ where `beta` is a constant and  :math:`(\mathbf{u}\cdot n)_{-}` is :math:`min (0
     Likewise, if ``number = 2`` and there is no ``subsection bc 0`` explicitly stated, the boundary is still created, with ``none`` by default.
 
 * ``time dependent`` specifies if a boundary condition is time-dependent (``true``) or steady (``false``). By default, this parameter is set to ``false``. This is here to improve the computational efficiency for transient cases in which the boundary conditions do not change.
+
+* ``fix pressure constant`` specifies if a zero pressure constraint should be applied on a single node of the coarse grid solver when using geometric multigrid preconditioning combined with the **lethe-fluid-matrix-free** solver. Essentially, this condition should be set to true whenever a user is using the **lethe-fluid-matrix-free** solver and simulating the flow within a closed domain (that is a domain on which all boundaries are either periodic or Dirichlet boundary conditions).
 
 * Each fluid dynamics boundary condition is stored in a ``bc #`` subsection :
     * ``id``  is the number associated with the boundary condition. By default, Lethe assumes that the id is equivalent to the number ``#`` of the bc. 

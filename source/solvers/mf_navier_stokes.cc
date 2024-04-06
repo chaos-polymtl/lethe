@@ -1620,6 +1620,8 @@ MFNavierStokesSolver<dim>::define_non_zero_constraints()
       }
   }
 
+
+
   this->establish_solid_domain(true);
 
   nonzero_constraints.close();
