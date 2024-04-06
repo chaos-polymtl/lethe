@@ -10,7 +10,7 @@ set dimension = 3
 subsection simulation control
   set method            = bdf3
   set output name       = taylor-couette
-  set output path       = ./output1/
+  set output path       = ./output/
   set time end          = 60
   set time step         = 0.0125
   set output frequency  = 2
