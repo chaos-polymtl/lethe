@@ -452,13 +452,6 @@ MFNavierStokesPreconditionGMG<dim>::initialize_ls(
       amg_data.output_details = false;
       amg_data.smoother_type  = "ILU";
       amg_data.coarse_type    = "ILU";
-      // Constant modes for velocity and pressure
-      // std::vector<std::vector<bool>> constant_modes;
-      // ComponentMask                  components(dim + 1, true);
-      // DoFTools::extract_constant_modes(dof_handler,
-      //                                  components,
-      //                                  constant_modes);
-      // amg_data.constant_modes = constant_modes;
 
       Teuchos::ParameterList              parameter_ml;
       std::unique_ptr<Epetra_MultiVector> distributed_constant_modes;
@@ -639,8 +632,8 @@ MFNavierStokesPreconditionGMG<dim>::initialize_gc(
   // Extract min and max levels and resize mg level objects accordingly
   const unsigned int n_h_levels = coarse_grid_triangulations.size();
 
-  unsigned int minlevel = 0;
-  unsigned int maxlevel = n_h_levels - 1;
+  const unsigned int minlevel = 0;
+  const unsigned int maxlevel = n_h_levels - 1;
 
   dof_handlers.resize(minlevel, maxlevel);
   mg_operators.resize(minlevel, maxlevel);
@@ -708,7 +701,10 @@ MFNavierStokesPreconditionGMG<dim>::initialize_gc(
           else if (simulation_parameters.boundary_conditions.type[i_bc] ==
                    BoundaryConditions::BoundaryType::pressure)
             {
-              /*do nothing*/
+              AssertThrow(
+                false,
+                ExcMessage(
+                  "The boundary conditions on pressure are not implemented."));
             }
           else if (simulation_parameters.boundary_conditions.type[i_bc] ==
                    BoundaryConditions::BoundaryType::function_weak)
@@ -1436,7 +1432,10 @@ template <int dim>
 void
 MFNavierStokesSolver<dim>::update_multiphysics_time_average_solution()
 {
-  // TODO
+  AssertThrow(
+    false,
+    ExcMessage(
+      "The update multiphysics time average solution is not implemented yet."));
 }
 
 template <int dim>
