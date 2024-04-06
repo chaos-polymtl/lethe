@@ -17,8 +17,7 @@ main(int argc, char *argv[])
           std::exit(1);
         }
 
-      Utilities::MPI::MPI_InitFinalize mpi_initialization(
-        argc, argv, numbers::invalid_unsigned_int);
+      Utilities::MPI::MPI_InitFinalize mpi_initialization(argc, argv, 1);
 
       // Check the number of MPI processes
       int number_of_processes;
