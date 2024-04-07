@@ -4,20 +4,18 @@
 set dimension = 2
 
 #---------------------------------------------------
-# Simulation Control 
+# Simulation Control
 #---------------------------------------------------
-
 
 subsection simulation control
   set method            = steady
   set output name       = taylor-couette
-  set output path       = ./output/
   set number mesh adapt = 2
   set output frequency  = 0
 end
 
 #---------------------------------------------------
-# Physical Properties 
+# Physical Properties
 #---------------------------------------------------
 
 subsection physical properties
@@ -31,22 +29,21 @@ end
 #---------------------------------------------------
 
 subsection mesh
-  set type               = dealii
-  set grid type          = hyper_shell
-  set grid arguments     = 0, 0 : 0.25 : 1 : 4:  true
-  set initial refinement = 2
+  set type                        = dealii
+  set grid type                   = hyper_shell
+  set grid arguments              = 0, 0 : 0.25 : 1 : 4:  true
+  set initial refinement          = 2
   set initial boundary refinement = 1
-  set boundaries refined = 0, 1
+  set boundaries refined          = 0, 1
 end
-
 
 #---------------------------------------------------
 # Forces
 #---------------------------------------------------
 
 subsection forces
-  set verbosity        = quiet   # Output force and torques in log <quiet|verbose>
-  set calculate torque = true    # Enable torque calculation
+  set verbosity        = quiet # Output force and torques in log <quiet|verbose>
+  set calculate torque = false  # Enable torque calculation
 end
 
 #---------------------------------------------------
@@ -64,8 +61,8 @@ end
 
 subsection boundary conditions
   set fix pressure constant = true
-  set number = 2
-  subsection bc 0         # inner cylinder 
+  set number                = 2
+  subsection bc 0 # inner cylinder
     set type = function
     subsection u
       set Function expression = -y
@@ -77,7 +74,7 @@ subsection boundary conditions
       set Function expression = 0
     end
   end
-  subsection bc 1       #outer cylinder
+  subsection bc 1 #outer cylinder
     set type = noslip
   end
 end
@@ -85,6 +82,7 @@ end
 #---------------------------------------------------
 # Mesh Adaptation Control
 #---------------------------------------------------
+
 subsection mesh adaptation
   set type = uniform
 end
@@ -92,10 +90,11 @@ end
 #---------------------------------------------------
 # Non-Linear Solver Control
 #---------------------------------------------------
+
 subsection non-linear solver
   subsection fluid dynamics
-    set tolerance = 1e-4
-    set verbosity = quiet
+    set tolerance      = 1e-4
+    set verbosity      = quiet
     set max iterations = 3
   end
 end
@@ -113,6 +112,7 @@ subsection analytical solution
     set Function expression = -sin(atan2(y,x))*(-(kappa*kappa) / (1-kappa*kappa)* sqrt(x*x+y*y)+ ri*ri/(1-kappa*kappa)/sqrt(x*x+y*y)); cos(atan2(y,x))*(-(kappa*kappa) / (1-kappa*kappa)* sqrt(x*x+y*y)+ ri*ri/(1-kappa*kappa)/sqrt(x*x+y*y)) ; A*A*(x^2+y^2)/2 + 2 *A*B *ln(sqrt(x^2+y^2)) - 0.5*B*B/(x^2+y^2)
   end
 end
+
 #---------------------------------------------------
 # Linear Solver Control
 #---------------------------------------------------
