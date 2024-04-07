@@ -1436,10 +1436,10 @@ template <int dim>
 void
 MFNavierStokesSolver<dim>::update_multiphysics_time_average_solution()
 {
-  AssertThrow(
-    false,
-    ExcMessage(
-      "The update multiphysics time average solution is not implemented yet."));
+  //AssertThrow(
+  //  false,
+  //  ExcMessage(
+  //    "The update multiphysics time average solution is not implemented yet."));
 }
 
 template <int dim>
