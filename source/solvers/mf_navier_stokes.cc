@@ -1097,7 +1097,7 @@ MFNavierStokesSolver<dim>::solve()
   this->set_initial_condition(
     this->simulation_parameters.initial_condition->type,
     this->simulation_parameters.restart_parameters.restart);
-  // this->update_multiphysics_time_average_solution();
+  this->update_multiphysics_time_average_solution();
 
   while (this->simulation_control->integrate())
     {
@@ -1436,10 +1436,11 @@ template <int dim>
 void
 MFNavierStokesSolver<dim>::update_multiphysics_time_average_solution()
 {
-  //AssertThrow(
-  //  false,
-  //  ExcMessage(
-  //    "The update multiphysics time average solution is not implemented yet."));
+  // AssertThrow(
+  //   false,
+  //   ExcMessage(
+  //     "The update multiphysics time average solution is not implemented
+  //     yet."));
 }
 
 template <int dim>
