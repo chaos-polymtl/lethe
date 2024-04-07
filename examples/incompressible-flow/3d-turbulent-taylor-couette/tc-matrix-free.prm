@@ -10,7 +10,7 @@ set dimension = 3
 subsection simulation control
   set method            = bdf3
   set output name       = taylor-couette
-  set output path       = ./output1/
+  set output path       = ./output/
   set time end          = 60
   set time step         = 0.0125
   set output frequency  = 2
@@ -90,7 +90,8 @@ end
 #---------------------------------------------------
 
 subsection boundary conditions
-  set number = 3 
+  set number = 3
+  set fix pressure constant = true
   subsection bc 0          
     set type = function
     subsection u

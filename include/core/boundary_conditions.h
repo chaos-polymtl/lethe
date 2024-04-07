@@ -90,7 +90,10 @@ namespace BoundaryConditions
 
     // Number of boundary conditions
     unsigned int size;
-    bool         time_dependent;
+
+    /// indicator for transient BCs
+    bool time_dependent;
+
 
     // Periodic boundary condition matching
     std::vector<unsigned int> periodic_id;
@@ -183,6 +186,9 @@ namespace BoundaryConditions
     parse_parameters(ParameterHandler &prm);
     void
     createNoSlip();
+
+    /// Fix pressure constant using a node
+    bool fix_pressure_constant;
   };
 
 
@@ -376,6 +382,12 @@ namespace BoundaryConditions
         Patterns::Bool(),
         "Bool to define if the boundary condition is time dependent");
 
+      prm.declare_entry(
+        "fix pressure constant",
+        "false",
+        Patterns::Bool(),
+        "Bool to define if zero pressure is used as a constraint one node");
+
       this->id.resize(number_of_boundary_conditions);
       this->beta.resize(number_of_boundary_conditions);
       this->boundary_layer_thickness.resize(number_of_boundary_conditions);
@@ -409,8 +421,9 @@ namespace BoundaryConditions
   {
     prm.enter_subsection("boundary conditions");
     {
-      this->size           = prm.get_integer("number");
-      this->time_dependent = prm.get_bool("time dependent");
+      this->size                  = prm.get_integer("number");
+      this->time_dependent        = prm.get_bool("time dependent");
+      this->fix_pressure_constant = prm.get_bool("fix pressure constant");
       this->type.resize(this->size);
       this->id.resize(this->size);
       this->periodic_direction.resize(this->size);

@@ -1,0 +1,153 @@
+# Listing of Parameters
+#----------------------
+
+set dimension = 2
+
+#---------------------------------------------------
+# Simulation Control
+#---------------------------------------------------
+
+subsection simulation control
+  set method            = steady
+  set output name       = taylor-couette
+  set number mesh adapt = 2
+  set output frequency  = 0
+end
+
+#---------------------------------------------------
+# Physical Properties
+#---------------------------------------------------
+
+subsection physical properties
+  subsection fluid 0
+    set kinematic viscosity = 1e-00
+  end
+end
+
+#---------------------------------------------------
+# Mesh
+#---------------------------------------------------
+
+subsection mesh
+  set type                        = dealii
+  set grid type                   = hyper_shell
+  set grid arguments              = 0, 0 : 0.25 : 1 : 4:  true
+  set initial refinement          = 2
+  set initial boundary refinement = 1
+  set boundaries refined          = 0, 1
+end
+
+#---------------------------------------------------
+# Forces
+#---------------------------------------------------
+
+subsection forces
+  set verbosity        = quiet # Output force and torques in log <quiet|verbose>
+  set calculate torque = false  # Enable torque calculation
+end
+
+#---------------------------------------------------
+# FEM
+#---------------------------------------------------
+
+subsection FEM
+  set velocity order = 2
+  set pressure order = 2
+end
+
+#---------------------------------------------------
+# Boundary Conditions
+#---------------------------------------------------
+
+subsection boundary conditions
+  set fix pressure constant = true
+  set number                = 2
+  subsection bc 0 # inner cylinder
+    set type = function
+    subsection u
+      set Function expression = -y
+    end
+    subsection v
+      set Function expression = x
+    end
+    subsection w
+      set Function expression = 0
+    end
+  end
+  subsection bc 1 #outer cylinder
+    set type = noslip
+  end
+end
+
+#---------------------------------------------------
+# Mesh Adaptation Control
+#---------------------------------------------------
+
+subsection mesh adaptation
+  set type = uniform
+end
+
+#---------------------------------------------------
+# Non-Linear Solver Control
+#---------------------------------------------------
+
+subsection non-linear solver
+  subsection fluid dynamics
+    set tolerance      = 1e-4
+    set verbosity      = quiet
+    set max iterations = 3
+  end
+end
+
+#---------------------------------------------------
+# Analytical solution
+#---------------------------------------------------
+
+subsection analytical solution
+  set enable = true
+  subsection uvwp
+    # A= -(kappa * kappa) / (1. - kappa * kappa);
+    # B= ri * ri / (1. - kappa * kappa);
+    set Function constants  = kappa=0.25, ri=0.25, A=-0.06666666666666667, B=0.06666666666666666667
+    set Function expression = -sin(atan2(y,x))*(-(kappa*kappa) / (1-kappa*kappa)* sqrt(x*x+y*y)+ ri*ri/(1-kappa*kappa)/sqrt(x*x+y*y)); cos(atan2(y,x))*(-(kappa*kappa) / (1-kappa*kappa)* sqrt(x*x+y*y)+ ri*ri/(1-kappa*kappa)/sqrt(x*x+y*y)) ; A*A*(x^2+y^2)/2 + 2 *A*B *ln(sqrt(x^2+y^2)) - 0.5*B*B/(x^2+y^2)
+  end
+end
+
+#---------------------------------------------------
+# Linear Solver Control
+#---------------------------------------------------
+
+subsection linear solver
+  subsection fluid dynamics
+    set method            = gmres
+    set max iters         = 100
+    set relative residual = 1e-4
+    set minimum residual  = 1e-7
+    set preconditioner    = gcmg
+    set verbosity         = quiet
+
+    # MG parameters
+    set mg verbosity       = quiet
+    set mg min level       = 0
+    set mg level min cells = -1
+
+    # Smoother
+    set mg smoother iterations     = 10
+    set mg smoother eig estimation = true
+
+    # Eigenvalue estimation parameters
+    set eig estimation smoothing range = 5
+    set eig estimation cg n iterations = 10
+    set eig estimation verbosity       = quiet
+
+    # Coarse-grid solver
+    set mg coarse grid max iterations         = 50
+    set mg coarse grid tolerance              = 1e-7
+    set mg coarse grid reduce                 = 1e-4
+    set mg coarse grid max krylov vectors     = 50
+    set mg coarse grid preconditioner         = ilu
+    set ilu preconditioner fill               = 0
+    set ilu preconditioner absolute tolerance = 1e-10
+    set ilu preconditioner relative tolerance = 1.00
+  end
+end
