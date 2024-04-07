@@ -181,6 +181,37 @@ MFNavierStokesPreconditionGMG<dim>::initialize_ls(
           "The constraints for the lsmg preconditioner require a most recent version of deal.II."));
 #endif
 
+      if (this->simulation_parameters.boundary_conditions
+            .fix_pressure_constant &&
+          level == minlevel)
+        {
+          unsigned int min_index = numbers::invalid_unsigned_int;
+
+          std::vector<types::global_dof_index> dof_indices;
+
+          // Loop over the cells to identify the min index
+          for (const auto &cell : this->dof_handler.active_cell_iterators())
+            {
+              if (cell->is_locally_owned())
+                {
+                  const auto &fe = cell->get_fe();
+
+                  dof_indices.resize(fe.n_dofs_per_cell());
+                  cell->get_dof_indices(dof_indices);
+
+                  for (unsigned int i = 0; i < dof_indices.size(); ++i)
+                    if (fe.system_to_component_index(i).first == dim)
+                      min_index = std::min(min_index, dof_indices[i]);
+                }
+            }
+
+          // Necessary to find the min across all cores.
+          min_index = Utilities::MPI::min(min_index, this->mpi_communicator);
+
+          if (this->locally_relevant_dofs.is_element(min_index))
+            level_constraints[level].add_line(min_index);
+        }
+
       level_constraints[level].close();
 
       mg_computing_timer.enter_subsection("Set up operators");
@@ -735,6 +766,37 @@ MFNavierStokesPreconditionGMG<dim>::initialize_gc(
                 level_constraint,
                 fe->component_mask(velocities));
             }
+        }
+
+      if (this->simulation_parameters.boundary_conditions
+            .fix_pressure_constant &&
+          level == minlevel)
+        {
+          unsigned int min_index = numbers::invalid_unsigned_int;
+
+          std::vector<types::global_dof_index> dof_indices;
+
+          // Loop over the cells to identify the min index
+          for (const auto &cell : this->dof_handler.active_cell_iterators())
+            {
+              if (cell->is_locally_owned())
+                {
+                  const auto &fe = cell->get_fe();
+
+                  dof_indices.resize(fe.n_dofs_per_cell());
+                  cell->get_dof_indices(dof_indices);
+
+                  for (unsigned int i = 0; i < dof_indices.size(); ++i)
+                    if (fe.system_to_component_index(i).first == dim)
+                      min_index = std::min(min_index, dof_indices[i]);
+                }
+            }
+
+          // Necessary to find the min across all cores.
+          min_index = Utilities::MPI::min(min_index, this->mpi_communicator);
+
+          if (this->locally_relevant_dofs.is_element(min_index))
+            level_constraints.add_line(min_index);
         }
 
       level_constraint.close();
