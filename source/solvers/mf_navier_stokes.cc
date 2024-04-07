@@ -181,8 +181,7 @@ MFNavierStokesPreconditionGMG<dim>::initialize_ls(
           "The constraints for the lsmg preconditioner require a most recent version of deal.II."));
 #endif
 
-      if (this->simulation_parameters.boundary_conditions
-            .fix_pressure_constant &&
+      if (simulation_parameters.boundary_conditions.fix_pressure_constant &&
           level == minlevel)
         {
           unsigned int min_index = numbers::invalid_unsigned_int;
@@ -190,7 +189,7 @@ MFNavierStokesPreconditionGMG<dim>::initialize_ls(
           std::vector<types::global_dof_index> dof_indices;
 
           // Loop over the cells to identify the min index
-          for (const auto &cell : this->dof_handler.active_cell_iterators())
+          for (const auto &cell : dof_handler.active_cell_iterators())
             {
               if (cell->is_locally_owned())
                 {
@@ -206,9 +205,10 @@ MFNavierStokesPreconditionGMG<dim>::initialize_ls(
             }
 
           // Necessary to find the min across all cores.
-          min_index = Utilities::MPI::min(min_index, this->mpi_communicator);
+          min_index =
+            Utilities::MPI::min(min_index, dof_handler.get_communicator());
 
-          if (this->locally_relevant_dofs.is_element(min_index))
+          if (relevant_dofs.is_element(min_index))
             level_constraints[level].add_line(min_index);
         }
 
@@ -768,8 +768,7 @@ MFNavierStokesPreconditionGMG<dim>::initialize_gc(
             }
         }
 
-      if (this->simulation_parameters.boundary_conditions
-            .fix_pressure_constant &&
+      if (simulation_parameters.boundary_conditions.fix_pressure_constant &&
           level == minlevel)
         {
           unsigned int min_index = numbers::invalid_unsigned_int;
@@ -777,7 +776,7 @@ MFNavierStokesPreconditionGMG<dim>::initialize_gc(
           std::vector<types::global_dof_index> dof_indices;
 
           // Loop over the cells to identify the min index
-          for (const auto &cell : this->dof_handler.active_cell_iterators())
+          for (const auto &cell : level_dof_handler.active_cell_iterators())
             {
               if (cell->is_locally_owned())
                 {
@@ -793,10 +792,11 @@ MFNavierStokesPreconditionGMG<dim>::initialize_gc(
             }
 
           // Necessary to find the min across all cores.
-          min_index = Utilities::MPI::min(min_index, this->mpi_communicator);
+          min_index =
+            Utilities::MPI::min(min_index, dof_handler.get_communicator());
 
-          if (this->locally_relevant_dofs.is_element(min_index))
-            level_constraints.add_line(min_index);
+          if (locally_relevant_dofs.is_element(min_index))
+            level_constraint.add_line(min_index);
         }
 
       level_constraint.close();
