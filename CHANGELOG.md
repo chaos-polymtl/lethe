@@ -3,6 +3,12 @@
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Master] - 2024-04-07
+
+### Added
+
+- MINOR The lethe-fluid-matrix-free solver would not work adequately on mesh that were not refined homogenously if all the boundary conditions of the domain were periodic or dirichlet boundary condition. This is fixed by adding a new parameter to fix the pressure constant in the coarse grid solver. This prevents the coarse grid linear solver from failing. [#1089](https://github.com/lethe-cfd/lethe/pull/1089)
+
 ## [Master] - 2024-04-05
 
 ### Changed
