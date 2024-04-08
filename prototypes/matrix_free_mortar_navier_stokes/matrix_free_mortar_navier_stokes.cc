@@ -88,7 +88,8 @@ struct Settings
   {
     hypercube,
     hyperrectangle,
-    cocircle
+    cocircle,
+    corectangle
   };
 
   enum SourceTermType
@@ -131,8 +132,8 @@ Settings::try_parse(const std::string &prm_filename)
                     "Number of cycles <1 up to 9-dim >");
   prm.declare_entry("geometry",
                     "hypercube",
-                    Patterns::Selection("hypercube|hyperrectangle|cocircle"),
-                    "Geometry <hypercube|hyperrectangle|cocircle>");
+                    Patterns::Selection("hypercube|hyperrectangle|cocircle|corectangle"),
+                    "Geometry <hypercube|hyperrectangle|cocircle|corectangle>");
   prm.declare_entry("initial refinement",
                     "1",
                     Patterns::Integer(),
@@ -215,6 +216,8 @@ Settings::try_parse(const std::string &prm_filename)
     this->geometry = hyperrectangle;
   else if (prm.get("geometry") == "cocircle")
     this->geometry = cocircle;
+  else if (prm.get("geometry") == "corectangle")
+    this->geometry = corectangle;
   else
     AssertThrow(false, ExcNotImplemented());
 
@@ -749,8 +752,33 @@ NavierStokesOperator<dim, number>::vmult(VectorType &      dst,
         .local_element(edge_constrained_indices[i]) = 0.;
     }
 
-  this->matrix_free.cell_loop(
-    &NavierStokesOperator::do_cell_integral_range, this, dst, src, true);
+  //this->matrix_free.cell_loop(
+  //  &NavierStokesOperator::do_cell_integral_range, this, dst, src, true);
+
+
+  const auto cell_function =
+    [&](const auto &data, auto &dst, const auto &src, const auto range) {
+      FECellIntegrator integrator(matrix_free, range);
+
+      for (unsigned int cell = range.first; cell < range.second; ++cell)
+        {
+          integrator.reinit(cell);
+
+          integrator.read_dof_values(src);
+
+          do_cell_integral_local(integrator);
+
+          integrator.distribute_local_to_global(dst);
+        }
+    };
+  const auto face_function =
+    [&](const auto &data, auto &dst, const auto &src, const auto face_range) {};
+
+  const auto boundary_function =
+    [&](const auto &data, auto &dst, const auto &src, const auto face_range) {};
+
+  this->matrix_free.template loop<VectorType, VectorType>(
+    cell_function, face_function, boundary_function, dst, src, true);
 
   // set constrained dofs as the sum of current dst value and src value
   for (unsigned int i = 0; i < constrained_indices.size(); ++i)
@@ -1642,6 +1670,7 @@ private:
 
 
   parallel::distributed::Triangulation<dim> triangulation;
+  std::vector<std::pair<unsigned int, unsigned int>> face_pairs;
 
   Settings parameters;
 
@@ -1730,9 +1759,33 @@ MatrixFreeNavierStokes<dim>::make_grid()
           Triangulation<dim> circle_two;
           GridGenerator::concentric_hyper_shells(circle_two,(dim == 2) ? Point<dim>(0, 0) : Point<dim>(0, 0, 0),r2_i,r2_o);
 
-          GridGenerator::merge_triangulations(circle_one, circle_two, triangulation, 0, true, true);
+          // shift boundary id of circle two
+          for (const auto &face : circle_two.active_face_iterators())
+            if (face->at_boundary())
+              face->set_boundary_id(face->boundary_id() + 2);
 
+          GridGenerator::merge_triangulations(circle_one, circle_two, triangulation, 0, true, true);
           triangulation.set_manifold(0,SphericalManifold<dim>((dim == 2) ? Point<dim>(0, 0) : Point<dim>(0, 0, 0)));
+          break;
+        }
+        case Settings::corectangle: {
+          // create non-matching grid
+          Triangulation<dim>                        tria_0, tria_1;
+
+          GridGenerator::subdivided_hyper_rectangle(
+            tria_0, {7, 7}, {0.0, 0.0}, {1.2, 1.0}, true);
+
+          GridGenerator::subdivided_hyper_rectangle(
+            tria_1, {6, 3}, {1.2, 0.0}, {3.0, 1.0}, true);
+
+          for (const auto &face : tria_1.active_face_iterators())
+            if (face->at_boundary())
+              face->set_boundary_id(face->boundary_id() + 2 * dim);
+
+          GridGenerator::merge_triangulations(tria_0, tria_1, triangulation, 0., false, true);
+          AssertDimension(tria_0.n_vertices() + tria_1.n_vertices(), triangulation.n_vertices());
+
+
           break;
         }
     }
@@ -1781,29 +1834,58 @@ MatrixFreeNavierStokes<dim>::setup_system()
   constraints.reinit(locally_relevant_dofs);
   DoFTools::make_hanging_node_constraints(dof_handler, constraints);
 
-  // Set homogeneous constraints for the matrix-free operator
-  // Create zero BCs for the delta.
-  // Left wall
-  VectorTools::interpolate_boundary_values(
-    dof_handler, 0, Functions::ZeroFunction<dim>(dim + 1), constraints);
-
-  VectorTools::interpolate_boundary_values(
-    dof_handler, 1, Functions::ZeroFunction<dim>(dim + 1), constraints);
-
-  VectorTools::interpolate_boundary_values(
-    dof_handler, 2, Functions::ZeroFunction<dim>(dim + 1), constraints);
-
-  VectorTools::interpolate_boundary_values(
-    dof_handler, 3, Functions::ZeroFunction<dim>(dim + 1), constraints);
-
-  if constexpr (dim == 3)
+  if (parameters.geometry== Settings::corectangle)
     {
+
+      // Establish the constraints linking the two domains
+      face_pairs.emplace_back(1, 2 * dim);
+      face_pairs.emplace_back(2 * dim, 1);
+
+      for (unsigned int d = 0; d < 4 * dim; ++d)
+        if (face_pairs.size() == 0)
+          {
+            DoFTools::make_zero_boundary_constraints(dof_handler,
+                                                     d,
+                                                     constraints);
+          }
+        else
+          {
+            for (const auto &face_pair : face_pairs)
+              if (d != face_pair.first && d != face_pair.second)
+                DoFTools::make_zero_boundary_constraints(dof_handler,
+                                                         d,
+                                                         constraints);
+          }
+    }
+  else
+    {
+      // Set homogeneous constraints for the matrix-free operator
+      // Create zero BCs for the delta.
+      // Left wall
       VectorTools::interpolate_boundary_values(
-        dof_handler, 4, Functions::ZeroFunction<dim>(dim + 1), constraints);
+        dof_handler, 0, Functions::ZeroFunction<dim>(dim + 1), constraints);
 
       VectorTools::interpolate_boundary_values(
-        dof_handler, 5, Functions::ZeroFunction<dim>(dim + 1), constraints);
+        dof_handler, 1, Functions::ZeroFunction<dim>(dim + 1), constraints);
+
+      VectorTools::interpolate_boundary_values(
+        dof_handler, 2, Functions::ZeroFunction<dim>(dim + 1), constraints);
+
+      VectorTools::interpolate_boundary_values(
+        dof_handler, 3, Functions::ZeroFunction<dim>(dim + 1), constraints);
+
+      if constexpr (dim == 3)
+        {
+          VectorTools::interpolate_boundary_values(
+            dof_handler, 4, Functions::ZeroFunction<dim>(dim + 1), constraints);
+
+          VectorTools::interpolate_boundary_values(
+            dof_handler, 5, Functions::ZeroFunction<dim>(dim + 1), constraints);
+        }
     }
+
+
+
 
   constraints.close();
 
@@ -2352,6 +2434,8 @@ MatrixFreeNavierStokes<dim>::run()
       GEOMETRY_header = "Geometry: hyperrectangle";
     else if (parameters.geometry == Settings::cocircle)
       GEOMETRY_header = "Geometry: cocircle";
+    else if (parameters.geometry == Settings::corectangle)
+      GEOMETRY_header = "Geometry: corectangle";
     std::string SOURCE_header = "";
     if (parameters.source_term == Settings::zero)
       SOURCE_header = "Source term: zero";
