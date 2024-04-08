@@ -581,9 +581,9 @@ test(const unsigned int fe_degree,
     const double r2_o=1;
 
     Triangulation<dim> circle_one;
-    GridGenerator::concentric_hyper_shells(circle_one,(dim == 2) ? Point<dim>(0, 0) : Point<dim>(0, 0, 0),r1_i,r1_o);
+    GridGenerator::concentric_hyper_shells(circle_one,(dim == 2) ? Point<dim>(0, 0) : Point<dim>(0, 0, 0),r1_i,r1_o,true);
     Triangulation<dim> circle_two;
-    GridGenerator::concentric_hyper_shells(circle_two,(dim == 2) ? Point<dim>(0, 0) : Point<dim>(0, 0, 0),r2_i,r2_o);
+    GridGenerator::concentric_hyper_shells(circle_two,(dim == 2) ? Point<dim>(0, 0) : Point<dim>(0, 0, 0),r2_i,r2_o,true);
 
     // shift boundary id of circle two
     for (const auto &face : circle_two.active_face_iterators())
