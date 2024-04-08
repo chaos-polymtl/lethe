@@ -213,12 +213,10 @@ public:
   value(const Point<dim> &p,
         const unsigned int /* component */ = 0) const override
   {
-    double val = 1.0;
-    for (unsigned int d = 0; d < dim; ++d)
-      {
-        val *= std::sin(numbers::PI * p[d]);
-      }
-    return val;
+    double x = p[0];
+    double y = p[1];
+    double r = x * x + y * y;
+    return (r - 0.25 * 0.25) * (r - 1);
   }
 };
 
@@ -230,18 +228,13 @@ public:
   value(const Point<dim> &p,
         const unsigned int /* component */ = 0) const override
   {
-    const double coeff  = dim * numbers::PI * numbers::PI;
-    double       factor = 1.0;
-    for (unsigned int d = 0; d < dim; ++d)
-      {
-        factor *= std::sin(numbers::PI * p[d]);
-      }
-    return -std::exp(factor) + coeff * factor;
+    double x = p[0];
+    double y = p[1];
+    return 16 * x * x + 16 * y * y -
+           exp((x * x + y * y - 1) * (x * x + y * y - 0.0625)) - 4.25;
   }
 };
 
-
-using namespace dealii;
 
 template <int dim,
           typename number,
@@ -382,7 +375,7 @@ public:
       {
         auto previous_values =
           nonlinear_previous_values(phi.get_current_cell_index(), q);
-        phi.submit_value(std::exp(previous_values)*phi.get_value(q),q);
+        phi.submit_value(std::exp(previous_values) * phi.get_value(q), q);
         phi.submit_gradient(phi.get_gradient(q), q);
       }
     phi.integrate(EvaluationFlags::values | EvaluationFlags::gradients);
@@ -460,18 +453,37 @@ public:
     const std::pair<unsigned int, unsigned int> &cell_range) const
   {
     FECellIntegrator phi(data);
+    SourceTerm<dim>  source_term_function;
+
 
     for (unsigned int cell = cell_range.first; cell < cell_range.second; ++cell)
       {
         phi.reinit(cell);
+
         phi.gather_evaluate(src,
                             EvaluationFlags::values |
                               EvaluationFlags::gradients);
         for (unsigned int q = 0; q < phi.n_q_points; ++q)
           {
+            // Evaluate source term function
+            VectorizedArray<double> source_value = VectorizedArray<double>(0.0);
+
+
+            Point<dim, VectorizedArray<double>> point_batch =
+              phi.quadrature_point(q);
+
+            for (unsigned int v = 0; v < VectorizedArray<double>::size(); ++v)
+              {
+                Point<dim> single_point;
+                for (unsigned int d = 0; d < dim; ++d)
+                  single_point[d] = point_batch[d][v];
+                source_value[v] = source_term_function.value(single_point);
+              }
+
+
             // (∇v,∇u) + exp(u) = 0
             phi.submit_gradient(phi.get_gradient(q), q);
-            phi.submit_value(std::exp(phi.get_value(q)), q);
+            phi.submit_value(std::exp(phi.get_value(q)) + source_value, q);
           }
         phi.integrate_scatter(EvaluationFlags::values |
                                 EvaluationFlags::gradients,
@@ -552,11 +564,11 @@ public:
       }
   }
 
-  void evaluate_non_linear_term(
-    const VectorType &evaluation_point)
+  void
+  evaluate_non_linear_term(const VectorType &evaluation_point)
   {
     // Invalidate the system due to the update of the solution vector;
-    valid_system=false;
+    valid_system               = false;
     const unsigned int n_cells = this->matrix_free.n_cell_batches();
     FECellIntegrator   phi(this->matrix_free);
 
@@ -570,7 +582,7 @@ public:
 
         for (unsigned int q = 0; q < phi.n_q_points; ++q)
           {
-            nonlinear_previous_values(cell, q)   = phi.get_value(q);
+            nonlinear_previous_values(cell, q) = phi.get_value(q);
           }
       }
   }
@@ -700,6 +712,8 @@ private:
   void
   setup_system();
 
+
+
   // void
   // evaluate_residual(
   //   LinearAlgebra::distributed::Vector<double> &      dst,
@@ -777,7 +791,7 @@ MatrixFreeMortarNonLinearPoisson<dim>::make_grid()
     {
       // Generate two grids of two non-matching circles
       const double r1_i = 0.25;
-      const double r1_o = 0.5;
+      const double r1_o = 0.51;
       const double r2_i = 0.5;
       const double r2_o = 1;
 
@@ -945,6 +959,23 @@ MatrixFreeMortarNonLinearPoisson<dim>::solve()
         }
     }
 
+  // Compute the L2 error
+  Vector<float> error_per_cell(tria.n_active_cells());
+
+  VectorTools::integrate_difference(mapping,
+                                    dof_handler,
+                                    solution,
+                                    MMSSolution<dim>(),
+                                    error_per_cell,
+                                    quad,
+                                    VectorTools::L2_norm);
+
+  solution.zero_out_ghost_values();
+
+  const double error = VectorTools::compute_global_error(tria,
+                                                         error_per_cell,
+                                                         VectorTools::L2_norm);
+  std::cout << " The L2 norm of the error is : " << error << std::endl;
   // output result
   DataOut<dim> data_out;
   data_out.attach_dof_handler(dof_handler);
@@ -956,6 +987,7 @@ MatrixFreeMortarNonLinearPoisson<dim>::solve()
   data_out.build_patches();
   data_out.write_vtu_in_parallel("solution_poisson.vtu", MPI_COMM_WORLD);
 }
+
 
 int
 main(int argc, char **argv)
