@@ -424,6 +424,95 @@ public:
       cell_function, face_function, boundary_function, dst, src, true);
   }
 
+  template <typename VectorType>
+  void
+  evaluate_residual(VectorType &dst, const VectorType &src) const
+  {
+    phi_r_cache->gather_evaluate(src,
+                                 EvaluationFlags::values |
+                                   EvaluationFlags::gradients);
+
+    const auto cell_function =
+      [&](const auto &data, auto &dst, const auto &src, const auto cell_range) {
+        FECellIntegrator phi(data);
+
+        for (unsigned int cell = cell_range.first; cell < cell_range.second;
+             ++cell)
+          {
+            phi.reinit(cell);
+            phi.gather_evaluate(src, EvaluationFlags::gradients);
+            for (unsigned int q = 0; q < phi.n_q_points; ++q)
+              {
+                phi.submit_gradient(phi.get_gradient(q), q);
+                phi.submit_value(-1.0, q);
+              }
+            phi.integrate_scatter(EvaluationFlags::gradients, dst);
+          }
+      };
+
+    const auto face_function =
+      [&](const auto &data, auto &dst, const auto &src, const auto face_range) {
+
+      };
+
+    const auto boundary_function =
+      [&](const auto &data, auto &dst, const auto &src, const auto face_range) {
+        FEFaceIntegrator phi_m(data, true);
+
+        auto phi_r       = phi_r_cache->get_data_accessor();
+        auto phi_r_sigma = phi_r_sigma_cache->get_data_accessor();
+
+        for (unsigned int face = face_range.first; face < face_range.second;
+             ++face)
+          {
+            if ((is_dg == false) && ((is_internal_face(face) == false)))
+              continue; // nothing to do
+
+            phi_m.reinit(face);
+
+            phi_m.gather_evaluate(src,
+                                  EvaluationFlags::values |
+                                    EvaluationFlags::gradients);
+
+            const bool iface = is_internal_face(face);
+
+            if (iface)
+              {
+                phi_r.reinit(face);
+                phi_r_sigma.reinit(face);
+              }
+
+            const auto sigma_m = phi_m.read_cell_data(array_penalty_parameter);
+
+            for (unsigned int q = 0; q < phi_m.n_q_points; ++q)
+              {
+                const auto value_m = phi_m.get_value(q);
+                const auto value_p = iface ? phi_r.get_value(q) : -value_m;
+
+                const auto gradient_m = phi_m.get_gradient(q);
+                const auto gradient_p =
+                  iface ? phi_r.get_gradient(q) : gradient_m;
+
+                const auto sigma_p = iface ? phi_r_sigma.get_value(q) : sigma_m;
+                const auto sigma = std::max(sigma_m, sigma_p) * panalty_factor;
+
+                const auto jump_value = (value_m - value_p) * 0.5;
+                const auto avg_gradient =
+                  phi_m.get_normal_vector(q) * (gradient_m + gradient_p) * 0.5;
+
+                phi_m.submit_normal_derivative(-jump_value, q);
+                phi_m.submit_value(jump_value * sigma * 2.0 - avg_gradient, q);
+              }
+            phi_m.integrate_scatter(EvaluationFlags::values |
+                                      EvaluationFlags::gradients,
+                                    dst);
+          }
+      };
+
+    matrix_free.template loop<VectorType, VectorType>(
+      cell_function, face_function, boundary_function, dst, src, true);
+  }
+
 private:
   bool
   is_internal_face(const unsigned int face) const
@@ -525,21 +614,21 @@ class MatrixFreeMortarNonLinearPoisson
 {
 public:
   MatrixFreeMortarNonLinearPoisson(const Settings &parameters):
-    parameters(parameters), fe_q(parameters.element_order), quad(parameters.element_order+1), tria(MPI_COMM_WORLD)
+    parameters(parameters), fe_q(parameters.element_order), quad(parameters.element_order+1), tria(MPI_COMM_WORLD), dof_handler(tria)
   {};
 
   void
   solve();
 
 private:
- // void
- // make_grid();
+  void
+  make_grid();
 //
  // void
  // refine_grid();
 //
- // void
- // setup_system();
+  void
+ setup_system();
 
   //void
   //evaluate_residual(
@@ -577,6 +666,8 @@ private:
   const FE_Q<dim>      fe_q;
   const QGauss<dim>    quad;
   parallel::distributed::Triangulation<dim> tria;
+  DoFHandler<dim> dof_handler;
+
 
   std::vector<std::pair<unsigned int, unsigned int>> face_pairs;
   std::vector<unsigned int>                          nm_face_pairs;
@@ -584,19 +675,9 @@ private:
 
 template <int dim>
 void
-MatrixFreeMortarNonLinearPoisson<dim>::solve()
+MatrixFreeMortarNonLinearPoisson<dim>::make_grid()
 {
-  using Number              = double;
-  using VectorizedArrayType = VectorizedArray<Number>;
-  using VectorType          = LinearAlgebra::distributed::Vector<Number>;
 
-  const unsigned int fe_degree=parameters.element_order;
-  const unsigned int n_global_refinements=parameters.initial_refinement;
-
-  ConditionalOStream pcout(std::cout,
-                           Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) ==
-                             0);
-  
   if (parameters.geometry==Settings::GeometryType::corectangle)
     {
       Triangulation<dim>                        tria_0, tria_1;
@@ -615,7 +696,7 @@ MatrixFreeMortarNonLinearPoisson<dim>::solve()
       AssertDimension(tria_0.n_vertices() + tria_1.n_vertices(),
                       tria.n_vertices());
 
-      tria.refine_global(n_global_refinements);
+      tria.refine_global(parameters.initial_refinement);
 
       face_pairs.emplace_back(1, 2 * dim);
       face_pairs.emplace_back(2 * dim, 1);
@@ -627,7 +708,7 @@ MatrixFreeMortarNonLinearPoisson<dim>::solve()
     {
       // Generate two grids of two non-matching circles
       const double r1_i = 0.25;
-      const double r1_o = 0.51;
+      const double r1_o = 0.5;
       const double r2_i = 0.5;
       const double r2_o = 1;
 
@@ -660,7 +741,7 @@ MatrixFreeMortarNonLinearPoisson<dim>::solve()
                         SphericalManifold<dim>(
                           (dim == 2) ? Point<dim>(0, 0) : Point<dim>(0, 0, 0)));
 
-      tria.refine_global(n_global_refinements);
+      tria.refine_global(parameters.initial_refinement);
 
       face_pairs.emplace_back(1, 2);
       face_pairs.emplace_back(2, 1);
@@ -672,11 +753,29 @@ MatrixFreeMortarNonLinearPoisson<dim>::solve()
     {
       throw (std::runtime_error("Not implemented"));
     }
+}
 
+
+
+template <int dim>
+void
+MatrixFreeMortarNonLinearPoisson<dim>::solve()
+{
+  using Number              = double;
+  using VectorizedArrayType = VectorizedArray<Number>;
+  using VectorType          = LinearAlgebra::distributed::Vector<Number>;
+
+  const unsigned int fe_degree=parameters.element_order;
+  const unsigned int n_global_refinements=parameters.initial_refinement;
+
+  ConditionalOStream pcout(std::cout,
+                           Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) ==
+                             0);
+
+  //Make triangulation
+  make_grid();
 
   // create DoFHandler
-  DoFHandler<dim> dof_handler(tria);
-
   dof_handler.distribute_dofs(fe_q);
 
   // create MatrixFree
@@ -688,7 +787,6 @@ MatrixFreeMortarNonLinearPoisson<dim>::solve()
 
   MatrixFree<dim, Number, VectorizedArrayType> matrix_free;
   AffineConstraints<Number>                    constraints;
-
 
   for (unsigned int d = 0; d < 4 * dim; ++d)
     if (face_pairs.size() == 0)
@@ -719,10 +817,12 @@ MatrixFreeMortarNonLinearPoisson<dim>::solve()
   PoissonOperator<dim, Number, VectorizedArrayType> op(matrix_free,
                                                        nm_face_pairs);
 
-  VectorType rhs, solution;
+  VectorType rhs, solution, residual;
 
   op.initialize_dof_vector(rhs);
   op.initialize_dof_vector(solution);
+  op.initialize_dof_vector(residual);
+
 
   op.rhs(rhs);
   rhs.zero_out_ghost_values();
@@ -748,6 +848,10 @@ MatrixFreeMortarNonLinearPoisson<dim>::solve()
 
       pcout << "Converged in " << reduction_control.last_step()
             << " iterations." << std::endl;
+
+      op.evaluate_residual(residual,solution);
+
+      pcout << "Norm of residual is: " << residual.l2_norm() << std::endl;
 
       //assemble_rhs();
       //compute_update();
