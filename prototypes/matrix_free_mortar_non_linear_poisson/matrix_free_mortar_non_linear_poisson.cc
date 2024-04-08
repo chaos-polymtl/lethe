@@ -95,7 +95,6 @@ struct Settings
   unsigned int element_order;
   unsigned int number_of_cycles;
   unsigned int initial_refinement;
-  unsigned int repetitions;
   bool         output;
   std::string  output_name;
   std::string  output_path;
@@ -118,18 +117,14 @@ Settings::try_parse(const std::string &prm_filename)
                     Patterns::Integer(),
                     "Number of cycles <1 up to 9-dim >");
   prm.declare_entry("geometry",
-                    "hyperball",
+                    "cocircle",
                     Patterns::Selection(
-                      "hypercube|hyperrectangle|cocircle|corectangle"),
-                    "Geometry <hypercube|hyperrectangle|cocircle|corectangle>");
+                      "cocircle|corectangle"),
+                    "Geometry <cocircle|corectangle>");
   prm.declare_entry("initial refinement",
                     "1",
                     Patterns::Integer(),
                     "Global refinement 1st cycle");
-  prm.declare_entry("repetitions",
-                    "1",
-                    Patterns::Integer(),
-                    "Repetitions in z direction for the hyper rectangle");
   prm.declare_entry("output",
                     "true",
                     Patterns::Bool(),
@@ -203,7 +198,6 @@ Settings::try_parse(const std::string &prm_filename)
   this->element_order      = prm.get_integer("element order");
   this->number_of_cycles   = prm.get_integer("number of cycles");
   this->initial_refinement = prm.get_integer("initial refinement");
-  this->repetitions        = prm.get_integer("repetitions");
   this->output             = prm.get_bool("output");
   this->output_name        = prm.get("output name");
   this->output_path        = prm.get("output path");
@@ -524,31 +518,88 @@ private:
   const bool is_dg = false;
 };
 
+
+// Main class to solve the Mortar Non-Linear Poisson problem
+template <int dim>
+class MatrixFreeMortarNonLinearPoisson
+{
+public:
+  MatrixFreeMortarNonLinearPoisson(const Settings &parameters):
+    parameters(parameters), fe_q(parameters.element_order), quad(parameters.element_order+1), tria(MPI_COMM_WORLD)
+  {};
+
+  void
+  solve();
+
+private:
+ // void
+ // make_grid();
+//
+ // void
+ // refine_grid();
+//
+ // void
+ // setup_system();
+
+  //void
+  //evaluate_residual(
+  //  LinearAlgebra::distributed::Vector<double> &      dst,
+  //  const LinearAlgebra::distributed::Vector<double> &src) const;
+
+  //void
+  //local_evaluate_residual(
+  //  const MatrixFree<dim, double> &                   data,
+  //  LinearAlgebra::distributed::Vector<double> &      dst,
+  //  const LinearAlgebra::distributed::Vector<double> &src,
+  //  const std::pair<unsigned int, unsigned int> &     cell_range) const;
+//
+  //void
+  //assemble_rhs();
+//
+  //double
+  //compute_residual(const double alpha);
+//
+  //void
+  //compute_update();
+
+  //void
+  //compute_solution_norm() const;
+//
+  //void
+  //compute_l2_error() const;
+//
+  //void
+  //output_results(const unsigned int cycle) const;
+private:
+  Settings parameters;
+
+  const MappingQ1<dim> mapping;
+  const FE_Q<dim>      fe_q;
+  const QGauss<dim>    quad;
+  parallel::distributed::Triangulation<dim> tria;
+
+  std::vector<std::pair<unsigned int, unsigned int>> face_pairs;
+  std::vector<unsigned int>                          nm_face_pairs;
+};
+
 template <int dim>
 void
-test(const unsigned int fe_degree, const unsigned int n_global_refinements = 2)
+MatrixFreeMortarNonLinearPoisson<dim>::solve()
 {
   using Number              = double;
   using VectorizedArrayType = VectorizedArray<Number>;
   using VectorType          = LinearAlgebra::distributed::Vector<Number>;
 
+  const unsigned int fe_degree=parameters.element_order;
+  const unsigned int n_global_refinements=parameters.initial_refinement;
+
   ConditionalOStream pcout(std::cout,
                            Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) ==
                              0);
-
-  const MappingQ1<dim> mapping;
-  const FE_Q<dim>      fe_q(fe_degree);
-  const QGauss<dim>    quad(fe_degree + 1);
-
-  // create non-matching grid
-  parallel::distributed::Triangulation<dim> tria(MPI_COMM_WORLD);
-  Triangulation<dim>                        tria_0, tria_1;
-
-  std::vector<std::pair<unsigned int, unsigned int>> face_pairs;
-  std::vector<unsigned int>                          nm_face_pairs;
-
-  if (false)
+  
+  if (parameters.geometry==Settings::GeometryType::corectangle)
     {
+      Triangulation<dim>                        tria_0, tria_1;
       GridGenerator::subdivided_hyper_rectangle(
         tria_0, {7, 7}, {0.0, 0.0}, {1.0, 1.0}, true);
 
@@ -572,7 +623,7 @@ test(const unsigned int fe_degree, const unsigned int n_global_refinements = 2)
       nm_face_pairs.emplace_back(1);
       nm_face_pairs.emplace_back(2 * dim);
     }
-  else
+  else if (parameters.geometry==Settings::GeometryType::cocircle)
     {
       // Generate two grids of two non-matching circles
       const double r1_i = 0.25;
@@ -616,6 +667,10 @@ test(const unsigned int fe_degree, const unsigned int n_global_refinements = 2)
 
       nm_face_pairs.emplace_back(1);
       nm_face_pairs.emplace_back(2);
+    }
+  else
+    {
+      throw (std::runtime_error("Not implemented"));
     }
 
 
@@ -674,8 +729,17 @@ test(const unsigned int fe_degree, const unsigned int n_global_refinements = 2)
 
   constraints.set_zero(rhs);
 
-  try
+
+  const unsigned int itmax = 1;
+  const double       TOLf  = 1e-12;
+  const double       TOLx  = 1e-10;
+
+  Timer solver_timer;
+  solver_timer.start();
+
+  for (unsigned int newton_step = 1; newton_step <= itmax; ++newton_step)
     {
+
       ReductionControl reduction_control(10000, 1e-20, 1e-2);
 
       // note: we need to use GMRES, since the system is non-symmetrical
@@ -684,11 +748,28 @@ test(const unsigned int fe_degree, const unsigned int n_global_refinements = 2)
 
       pcout << "Converged in " << reduction_control.last_step()
             << " iterations." << std::endl;
-    }
-  catch (const dealii::SolverControl::NoConvergence &e)
-    {
-      std::cout << e.what() << std::endl;
-    }
+
+      //assemble_rhs();
+      //compute_update();
+      //const double ERRx = newton_update.l2_norm();
+      //const double ERRf = compute_residual(1.0);
+      //solution.add(1.0, newton_update);
+//
+      //pcout << "   Nstep " << newton_step << ", errf = " << ERRf
+      //      << ", errx = " << ERRx << ", it = " << linear_iterations
+      //      << std::endl;
+//
+      //if (ERRf < TOLf || ERRx < TOLx)
+      //  {
+      //    solver_timer.stop();
+//
+      //    pcout << "Convergence step " << newton_step << " value " << ERRf
+      //          << " (used wall time: " << solver_timer.wall_time() << " s)"
+      //          << std::endl;
+//
+      //    break;
+      //  }
+}
 
   // output result
   DataOut<dim> data_out;
@@ -706,5 +787,63 @@ main(int argc, char **argv)
 {
   Utilities::MPI::MPI_InitFinalize mpi_initialization(argc, argv, 1);
 
-  test<2>(1, 2);
+  ConditionalOStream pcout(std::cout,
+                           Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) ==
+                             0);
+
+  Settings parameters;
+  if (!parameters.try_parse((argc > 1) ? (argv[1]) : ""))
+    return 0;
+
+  try
+    {
+      switch (parameters.dimension)
+        {
+          case 2: {
+              MatrixFreeMortarNonLinearPoisson<2> problem(parameters);
+             problem.solve();
+
+              break;
+            }
+
+          case 3: {
+              MatrixFreeMortarNonLinearPoisson<3> problem(parameters);
+              problem.solve();
+              break;
+            }
+
+          default:
+            Assert(
+              false,
+              ExcMessage(
+                "This program only works in 2d and 3d and for element orders equal to 1, 2 or 3."));
+        }
+    }
+  catch (std::exception &exc)
+    {
+      std::cerr << std::endl
+                << std::endl
+                << "----------------------------------------------------"
+                << std::endl;
+      std::cerr << "Exception on processing: " << std::endl
+                << exc.what() << std::endl
+                << "Aborting!" << std::endl
+                << "----------------------------------------------------"
+                << std::endl;
+      return 1;
+    }
+  catch (...)
+    {
+      std::cerr << std::endl
+                << std::endl
+                << "----------------------------------------------------"
+                << std::endl;
+      std::cerr << "Unknown exception!" << std::endl
+                << "Aborting!" << std::endl
+                << "----------------------------------------------------"
+                << std::endl;
+      return 1;
+    }
+
+  return 0;
 }
