@@ -26,8 +26,6 @@
 #include <deal.II/fe/fe_q.h>
 #include <deal.II/fe/mapping_q.h>
 
-#include <deal.II/matrix_free/fe_remote_evaluation.h>
-
 #include <deal.II/grid/grid_generator.h>
 #include <deal.II/grid/grid_out.h>
 #include <deal.II/grid/grid_refinement.h>
@@ -39,11 +37,11 @@
 #include <deal.II/lac/affine_constraints.h>
 #include <deal.II/lac/precondition.h>
 #include <deal.II/lac/solver_cg.h>
-#include <deal.II/lac/vector.h>
-#include <deal.II/lac/precondition.h>
 #include <deal.II/lac/solver_gmres.h>
+#include <deal.II/lac/vector.h>
 
 #include <deal.II/matrix_free/fe_evaluation.h>
+#include <deal.II/matrix_free/fe_remote_evaluation.h>
 #include <deal.II/matrix_free/matrix_free.h>
 #include <deal.II/matrix_free/operators.h>
 #include <deal.II/matrix_free/tools.h>
@@ -121,7 +119,8 @@ Settings::try_parse(const std::string &prm_filename)
                     "Number of cycles <1 up to 9-dim >");
   prm.declare_entry("geometry",
                     "hyperball",
-                    Patterns::Selection("hypercube|hyperrectangle|cocircle|corectangle"),
+                    Patterns::Selection(
+                      "hypercube|hyperrectangle|cocircle|corectangle"),
                     "Geometry <hypercube|hyperrectangle|cocircle|corectangle>");
   prm.declare_entry("initial refinement",
                     "1",
@@ -522,13 +521,12 @@ private:
 
   std::set<unsigned int> faces;
 
-  const bool is_dg=false;
+  const bool is_dg = false;
 };
 
 template <int dim>
 void
-test(const unsigned int fe_degree,
-     const unsigned int n_global_refinements = 2)
+test(const unsigned int fe_degree, const unsigned int n_global_refinements = 2)
 {
   using Number              = double;
   using VectorizedArrayType = VectorizedArray<Number>;
@@ -547,61 +545,78 @@ test(const unsigned int fe_degree,
   Triangulation<dim>                        tria_0, tria_1;
 
   std::vector<std::pair<unsigned int, unsigned int>> face_pairs;
-  std::vector<unsigned int> nm_face_pairs;
+  std::vector<unsigned int>                          nm_face_pairs;
 
   if (false)
     {
-    GridGenerator::subdivided_hyper_rectangle(
-      tria_0, {7, 7}, {0.0, 0.0}, {1.0, 1.0}, true);
+      GridGenerator::subdivided_hyper_rectangle(
+        tria_0, {7, 7}, {0.0, 0.0}, {1.0, 1.0}, true);
 
-  GridGenerator::subdivided_hyper_rectangle(
-    tria_1, {6, 3}, {1.0, 0.0}, {3.0, 1.0}, true);
+      GridGenerator::subdivided_hyper_rectangle(
+        tria_1, {6, 3}, {1.0, 0.0}, {3.0, 1.0}, true);
 
-  for (const auto &face : tria_1.active_face_iterators())
-    if (face->at_boundary())
-      face->set_boundary_id(face->boundary_id() + 2 * dim);
+      for (const auto &face : tria_1.active_face_iterators())
+        if (face->at_boundary())
+          face->set_boundary_id(face->boundary_id() + 2 * dim);
 
-  GridGenerator::merge_triangulations(tria_0, tria_1, tria, 0., false, true);
-  AssertDimension(tria_0.n_vertices() + tria_1.n_vertices(), tria.n_vertices());
+      GridGenerator::merge_triangulations(
+        tria_0, tria_1, tria, 0., false, true);
+      AssertDimension(tria_0.n_vertices() + tria_1.n_vertices(),
+                      tria.n_vertices());
 
-  tria.refine_global(n_global_refinements);
+      tria.refine_global(n_global_refinements);
 
-  face_pairs.emplace_back(1, 2 * dim);
-  face_pairs.emplace_back(2 * dim, 1);
+      face_pairs.emplace_back(1, 2 * dim);
+      face_pairs.emplace_back(2 * dim, 1);
 
-  nm_face_pairs.emplace_back(1);
-  nm_face_pairs.emplace_back(2 * dim);
-  }
+      nm_face_pairs.emplace_back(1);
+      nm_face_pairs.emplace_back(2 * dim);
+    }
   else
-  {
-    // Generate two grids of two non-matching circles
-    const double r1_i=0.25;
-    const double r1_o=0.51;
-    const double r2_i=0.5;
-    const double r2_o=1;
+    {
+      // Generate two grids of two non-matching circles
+      const double r1_i = 0.25;
+      const double r1_o = 0.51;
+      const double r2_i = 0.5;
+      const double r2_o = 1;
 
 
-    Triangulation<dim> circle_one;
-    GridGenerator::hyper_shell(circle_one,(dim == 2) ? Point<dim>(0, 0) : Point<dim>(0, 0, 0),r1_i,r1_o,0,true);
-    Triangulation<dim> circle_two;
-    GridGenerator::hyper_shell(circle_two,(dim == 2) ? Point<dim>(0, 0) : Point<dim>(0, 0, 0),r2_i,r2_o,6,true);
+      Triangulation<dim> circle_one;
+      GridGenerator::hyper_shell(circle_one,
+                                 (dim == 2) ? Point<dim>(0, 0) :
+                                              Point<dim>(0, 0, 0),
+                                 r1_i,
+                                 r1_o,
+                                 0,
+                                 true);
+      Triangulation<dim> circle_two;
+      GridGenerator::hyper_shell(circle_two,
+                                 (dim == 2) ? Point<dim>(0, 0) :
+                                              Point<dim>(0, 0, 0),
+                                 r2_i,
+                                 r2_o,
+                                 6,
+                                 true);
 
-    // shift boundary id of circle two
-    for (const auto &face : circle_two.active_face_iterators())
-      if (face->at_boundary())
-        face->set_boundary_id(face->boundary_id() + 2);
+      // shift boundary id of circle two
+      for (const auto &face : circle_two.active_face_iterators())
+        if (face->at_boundary())
+          face->set_boundary_id(face->boundary_id() + 2);
 
-    GridGenerator::merge_triangulations(circle_one, circle_two, tria, 0, true, true);
-    tria.set_manifold(0,SphericalManifold<dim>((dim == 2) ? Point<dim>(0, 0) : Point<dim>(0, 0, 0)));
+      GridGenerator::merge_triangulations(
+        circle_one, circle_two, tria, 0, true, true);
+      tria.set_manifold(0,
+                        SphericalManifold<dim>(
+                          (dim == 2) ? Point<dim>(0, 0) : Point<dim>(0, 0, 0)));
 
-    tria.refine_global(n_global_refinements);
+      tria.refine_global(n_global_refinements);
 
-    face_pairs.emplace_back(1, 2);
-    face_pairs.emplace_back(2, 1);
+      face_pairs.emplace_back(1, 2);
+      face_pairs.emplace_back(2, 1);
 
-    nm_face_pairs.emplace_back(1);
-    nm_face_pairs.emplace_back(2);
-  }
+      nm_face_pairs.emplace_back(1);
+      nm_face_pairs.emplace_back(2);
+    }
 
 
   // create DoFHandler
@@ -623,17 +638,15 @@ test(const unsigned int fe_degree,
   for (unsigned int d = 0; d < 4 * dim; ++d)
     if (face_pairs.size() == 0)
       {
-        DoFTools::make_zero_boundary_constraints(dof_handler,
-                                                     d,
-                                                     constraints);
+        DoFTools::make_zero_boundary_constraints(dof_handler, d, constraints);
       }
     else
       {
-            for (const auto &face_pair : face_pairs)
-              if (d != face_pair.first && d != face_pair.second)
-                DoFTools::make_zero_boundary_constraints(dof_handler,
-                                                         d,
-                                                         constraints);
+        for (const auto &face_pair : face_pairs)
+          if (d != face_pair.first && d != face_pair.second)
+            DoFTools::make_zero_boundary_constraints(dof_handler,
+                                                     d,
+                                                     constraints);
       }
 
   constraints.close();
@@ -695,4 +708,3 @@ main(int argc, char **argv)
 
   test<2>(1, 2);
 }
-
