@@ -38,6 +38,7 @@
 #include <deal.II/lac/precondition.h>
 #include <deal.II/lac/solver_cg.h>
 #include <deal.II/lac/solver_gmres.h>
+#include <deal.II/lac/trilinos_precondition.h>
 #include <deal.II/lac/vector.h>
 
 #include <deal.II/matrix_free/fe_evaluation.h>
@@ -262,6 +263,7 @@ public:
     , panalty_factor(
         compute_pentaly_factor(matrix_free.get_dof_handler().get_fe().degree,
                                1.0))
+    , valid_system(false)
   {
     // store all boundary faces in one set
     for (const auto &face_pair : non_matching_faces)
@@ -364,11 +366,19 @@ public:
     for (unsigned int cell = cell_range.first; cell < cell_range.second; ++cell)
       {
         phi.reinit(cell);
-        phi.gather_evaluate(src, EvaluationFlags::gradients);
-        for (unsigned int q = 0; q < phi.n_q_points; ++q)
-          phi.submit_gradient(phi.get_gradient(q), q);
-        phi.integrate_scatter(EvaluationFlags::gradients, dst);
+        phi.read_dof_values(src);
+        do_vmult_cell_single(phi);
+        phi.distribute_local_to_global(dst);
       }
+  }
+
+  void
+  do_vmult_cell_single(FECellIntegrator &phi) const
+  {
+    phi.evaluate(EvaluationFlags::gradients);
+    for (unsigned int q = 0; q < phi.n_q_points; ++q)
+      phi.submit_gradient(phi.get_gradient(q), q);
+    phi.integrate(EvaluationFlags::gradients);
   }
 
   void
@@ -526,7 +536,8 @@ public:
           matrix_free,
           constraints,
           system_matrix,
-          &PoissonOperator<dim, number, VectorizedArrayType>::do_vmult_cell,
+          &PoissonOperator<dim, number, VectorizedArrayType>::
+            do_vmult_cell_single,
           this);
 
         this->valid_system = true;
@@ -534,6 +545,7 @@ public:
   }
 
   mutable TrilinosWrappers::SparseMatrix system_matrix;
+  mutable bool                           valid_system;
 
 private:
   bool
@@ -859,33 +871,37 @@ MatrixFreeMortarNonLinearPoisson<dim>::solve()
   Timer solver_timer;
   solver_timer.start();
 
-  op.evaluate_residual(residual,solution);
-  pcout << "Initial norm of the residual is: " << residual.l2_norm() << std::endl;
+  op.evaluate_residual(residual, solution);
+  pcout << "Initial norm of the residual is: " << residual.l2_norm()
+        << std::endl;
 
   for (unsigned int newton_step = 1; newton_step <= itmax; ++newton_step)
     {
       ReductionControl reduction_control(10000, 1e-20, 1e-12);
 
       // note: we need to use GMRES, since the system is non-symmetrical
+      TrilinosWrappers::PreconditionAMG preconditioner;
+      preconditioner.initialize(op.get_system_matrix());
+
       SolverGMRES<VectorType> solver(reduction_control);
       op.evaluate_residual(residual, solution);
       // Multiply by -1 to have J(x) dx = - R(x)
-      residual*=-1;
+      residual *= -1;
 
-      solver.solve(op, newton_update, residual, PreconditionIdentity());
+      solver.solve(op, newton_update, residual, preconditioner);
 
-      unsigned int  linear_iterations = reduction_control.last_step();
+      unsigned int linear_iterations = reduction_control.last_step();
 
       const double ERRx = newton_update.l2_norm();
       solution.add(1.0, newton_update);
-      op.evaluate_residual(residual,solution);
+      op.evaluate_residual(residual, solution);
       const double ERRf = residual.l2_norm();
 
-       pcout << "   Nstep " << newton_step << ", errf = " << ERRf
+      pcout << "   Nstep " << newton_step << ", errf = " << ERRf
             << ", errx = " << ERRx << ", it = " << linear_iterations
             << std::endl;
 
-       if (ERRf < TOLf || ERRx < TOLx)
+      if (ERRf < TOLf || ERRx < TOLx)
         {
           pcout << "Convergence step " << newton_step << " value " << ERRf
                 << std::endl;
