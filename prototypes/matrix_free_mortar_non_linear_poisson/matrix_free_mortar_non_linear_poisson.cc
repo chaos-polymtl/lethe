@@ -26,6 +26,8 @@
 #include <deal.II/fe/fe_q.h>
 #include <deal.II/fe/mapping_q.h>
 
+#include <deal.II/matrix_free/fe_remote_evaluation.h>
+
 #include <deal.II/grid/grid_generator.h>
 #include <deal.II/grid/grid_out.h>
 #include <deal.II/grid/grid_refinement.h>
@@ -38,6 +40,8 @@
 #include <deal.II/lac/precondition.h>
 #include <deal.II/lac/solver_cg.h>
 #include <deal.II/lac/vector.h>
+#include <deal.II/lac/precondition.h>
+#include <deal.II/lac/solver_gmres.h>
 
 #include <deal.II/matrix_free/fe_evaluation.h>
 #include <deal.II/matrix_free/matrix_free.h>
@@ -73,9 +77,10 @@ struct Settings
 
   enum GeometryType
   {
-    hyperball,
     hypercube,
-    hyperrectangle
+    hyperrectangle,
+    cocircle,
+    corectangle
   };
 
   enum SourceTermType
@@ -116,8 +121,8 @@ Settings::try_parse(const std::string &prm_filename)
                     "Number of cycles <1 up to 9-dim >");
   prm.declare_entry("geometry",
                     "hyperball",
-                    Patterns::Selection("hyperball|hypercube|hyperrectangle"),
-                    "Geometry <hyperball|hypercube|hyperrectangle>");
+                    Patterns::Selection("hypercube|hyperrectangle|cocircle|corectangle"),
+                    "Geometry <hypercube|hyperrectangle|cocircle|corectangle>");
   prm.declare_entry("initial refinement",
                     "1",
                     Patterns::Integer(),
@@ -177,12 +182,14 @@ Settings::try_parse(const std::string &prm_filename)
   else
     AssertThrow(false, ExcNotImplemented());
 
-  if (prm.get("geometry") == "hyperball")
-    this->geometry = hyperball;
-  else if (prm.get("geometry") == "hypercube")
+  if (prm.get("geometry") == "hypercube")
     this->geometry = hypercube;
   else if (prm.get("geometry") == "hyperrectangle")
     this->geometry = hyperrectangle;
+  else if (prm.get("geometry") == "cocircle")
+    this->geometry = cocircle;
+  else if (prm.get("geometry") == "corectangle")
+    this->geometry = corectangle;
   else
     AssertThrow(false, ExcNotImplemented());
 
@@ -240,982 +247,451 @@ public:
   }
 };
 
-// Matrix-free differential operator for a nonlinear Poisson problem
-template <int dim, int fe_degree, typename number>
-class JacobianOperator
-  : public MatrixFreeOperators::Base<dim,
-                                     LinearAlgebra::distributed::Vector<number>>
+
+using namespace dealii;
+
+template <int dim,
+          typename number,
+          typename VectorizedArrayType = VectorizedArray<number>>
+class PoissonOperator
 {
 public:
-  using value_type = number;
-
   using FECellIntegrator =
-    FEEvaluation<dim, fe_degree, fe_degree + 1, 1, number>;
-
-  JacobianOperator();
-
-  virtual void
-  clear() override;
-
-  void
-  evaluate_newton_step(
-    const LinearAlgebra::distributed::Vector<number> &newton_step);
-
-  virtual void
-  compute_diagonal() override;
-
-private:
-  virtual void
-  apply_add(
-    LinearAlgebra::distributed::Vector<number> &      dst,
-    const LinearAlgebra::distributed::Vector<number> &src) const override;
-
-  void
-  local_apply(const MatrixFree<dim, number> &                   data,
-              LinearAlgebra::distributed::Vector<number> &      dst,
-              const LinearAlgebra::distributed::Vector<number> &src,
-              const std::pair<unsigned int, unsigned int> &cell_range) const;
-
-  void
-  local_compute_diagonal(FECellIntegrator &integrator) const;
-
-  Table<2, VectorizedArray<number>> nonlinear_values;
-};
-
-template <int dim, int fe_degree, typename number>
-JacobianOperator<dim, fe_degree, number>::JacobianOperator()
-  : MatrixFreeOperators::Base<dim, LinearAlgebra::distributed::Vector<number>>()
-{}
-
-template <int dim, int fe_degree, typename number>
-void
-JacobianOperator<dim, fe_degree, number>::clear()
-{
-  nonlinear_values.reinit(0, 0);
-  MatrixFreeOperators::Base<dim, LinearAlgebra::distributed::Vector<number>>::
-    clear();
-}
-
-template <int dim, int fe_degree, typename number>
-void
-JacobianOperator<dim, fe_degree, number>::evaluate_newton_step(
-  const LinearAlgebra::distributed::Vector<number> &newton_step)
-{
-  const unsigned int n_cells = this->data->n_cell_batches();
-  FECellIntegrator   phi(*this->data);
-
-  nonlinear_values.reinit(n_cells, phi.n_q_points);
-
-  for (unsigned int cell = 0; cell < n_cells; ++cell)
-    {
-      phi.reinit(cell);
-      phi.read_dof_values_plain(newton_step);
-      phi.evaluate(EvaluationFlags::values);
-
-      for (unsigned int q = 0; q < phi.n_q_points; ++q)
-        {
-          nonlinear_values(cell, q) = std::exp(phi.get_value(q));
-        }
-    }
-}
-
-template <int dim, int fe_degree, typename number>
-void
-JacobianOperator<dim, fe_degree, number>::local_apply(
-  const MatrixFree<dim, number> &                   data,
-  LinearAlgebra::distributed::Vector<number> &      dst,
-  const LinearAlgebra::distributed::Vector<number> &src,
-  const std::pair<unsigned int, unsigned int> &     cell_range) const
-{
-  FECellIntegrator phi(data);
-
-  for (unsigned int cell = cell_range.first; cell < cell_range.second; ++cell)
-    {
-      AssertDimension(nonlinear_values.size(0),
-                      phi.get_matrix_free().n_cell_batches());
-      AssertDimension(nonlinear_values.size(1), phi.n_q_points);
-
-
-      phi.reinit(cell);
-
-      phi.gather_evaluate(src,
-                          EvaluationFlags::values | EvaluationFlags::gradients);
-
-      for (unsigned int q = 0; q < phi.n_q_points; ++q)
-        {
-          phi.submit_value(-nonlinear_values(cell, q) * phi.get_value(q), q);
-          phi.submit_gradient(phi.get_gradient(q), q);
-        }
-
-      phi.integrate_scatter(EvaluationFlags::values |
-                              EvaluationFlags::gradients,
-                            dst);
-    }
-}
-
-template <int dim, int fe_degree, typename number>
-void
-JacobianOperator<dim, fe_degree, number>::apply_add(
-  LinearAlgebra::distributed::Vector<number> &      dst,
-  const LinearAlgebra::distributed::Vector<number> &src) const
-{
-  this->data->cell_loop(&JacobianOperator::local_apply, this, dst, src);
-}
-
-template <int dim, int fe_degree, typename number>
-void
-JacobianOperator<dim, fe_degree, number>::local_compute_diagonal(
-  FECellIntegrator &phi) const
-{
-  AssertDimension(nonlinear_values.size(0),
-                  phi.get_matrix_free().n_cell_batches());
-  AssertDimension(nonlinear_values.size(1), phi.n_q_points);
-
-  const unsigned int cell = phi.get_current_cell_index();
-
-  phi.evaluate(EvaluationFlags::values | EvaluationFlags::gradients);
-
-  for (unsigned int q = 0; q < phi.n_q_points; ++q)
-    {
-      phi.submit_value(-nonlinear_values(cell, q) * phi.get_value(q), q);
-      phi.submit_gradient(phi.get_gradient(q), q);
-    }
-
-  phi.integrate(EvaluationFlags::values | EvaluationFlags::gradients);
-}
-
-template <int dim, int fe_degree, typename number>
-void
-JacobianOperator<dim, fe_degree, number>::compute_diagonal()
-{
-  this->inverse_diagonal_entries.reset(
-    new DiagonalMatrix<LinearAlgebra::distributed::Vector<number>>());
-  LinearAlgebra::distributed::Vector<number> &inverse_diagonal =
-    this->inverse_diagonal_entries->get_vector();
-  this->data->initialize_dof_vector(inverse_diagonal);
-
-  MatrixFreeTools::compute_diagonal(*this->data,
-                                    inverse_diagonal,
-                                    &JacobianOperator::local_compute_diagonal,
-                                    this);
-
-  for (auto &diagonal_element : inverse_diagonal)
-    {
-      diagonal_element =
-        (std::abs(diagonal_element) > 1.0e-10) ? (1.0 / diagonal_element) : 1.0;
-    }
-}
-
-// Main class for the nonlinear Poisson problem given by
-// -Laplacian(u) = exp(u) using Newton's method, the matrix-free
-// approach and zero Dirichlet boundary conditions.
-template <int dim, int fe_degree>
-class MatrixFreePoissonProblem
-{
-public:
-  MatrixFreePoissonProblem(const Settings &parameters);
-
-  void
-  run();
-
-private:
-  void
-  make_grid();
-
-  void
-  setup_system();
-
-  void
-  setup_gmg();
-
-  void
-  evaluate_residual(
-    LinearAlgebra::distributed::Vector<double> &      dst,
-    const LinearAlgebra::distributed::Vector<double> &src) const;
-
-  void
-  local_evaluate_residual(
-    const MatrixFree<dim, double> &                   data,
-    LinearAlgebra::distributed::Vector<double> &      dst,
-    const LinearAlgebra::distributed::Vector<double> &src,
-    const std::pair<unsigned int, unsigned int> &     cell_range) const;
-
-  void
-  assemble_rhs();
-
-  double
-  compute_residual(const double alpha);
-
-  void
-  compute_update();
-
-  void
-  solve();
-
-  double
-  compute_solution_norm() const;
-
-  double
-  compute_l2_error() const;
-
-  void
-  output_results(const unsigned int cycle) const;
-
-
-  parallel::distributed::Triangulation<dim> triangulation;
-  const MappingQ<dim>                       mapping;
-
-  FE_Q<dim>                 fe;
-  DoFHandler<dim>           dof_handler;
-  AffineConstraints<double> constraints;
-  using SystemMatrixType = JacobianOperator<dim, fe_degree, double>;
-  SystemMatrixType  system_matrix;
-  MGConstrainedDoFs mg_constrained_dofs;
-  using LevelMatrixType = JacobianOperator<dim, fe_degree, float>;
-  MGLevelObject<LevelMatrixType>                           mg_matrices;
-  MGLevelObject<LinearAlgebra::distributed::Vector<float>> mg_solution;
-  MGTransferMatrixFree<dim, float>                         mg_transfer;
-
-
-  LinearAlgebra::distributed::Vector<double> solution;
-  LinearAlgebra::distributed::Vector<double> newton_update;
-  LinearAlgebra::distributed::Vector<double> system_rhs;
-
-  unsigned int       linear_iterations;
-  ConditionalOStream pcout;
-  TimerOutput        computing_timer;
-
-  Settings parameters;
-};
-
-template <int dim, int fe_degree>
-MatrixFreePoissonProblem<dim, fe_degree>::MatrixFreePoissonProblem(
-  const Settings &parameters)
-  : triangulation(
-      MPI_COMM_WORLD,
-      Triangulation<dim>::limit_level_difference_at_vertices,
-      parallel::distributed::Triangulation<dim>::construct_multigrid_hierarchy)
-  , mapping(fe_degree)
-  , fe(fe_degree)
-  , dof_handler(triangulation)
-  , pcout(std::cout, Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0)
-  , computing_timer(MPI_COMM_WORLD,
-                    pcout,
-                    TimerOutput::never,
-                    TimerOutput::wall_times)
-  , parameters(parameters)
-{}
-
-template <int dim, int fe_degree>
-void
-MatrixFreePoissonProblem<dim, fe_degree>::make_grid()
-{
-  TimerOutput::Scope t(computing_timer, "make grid");
-
-  switch (parameters.geometry)
-    {
-        case Settings::hyperball: {
-          SphericalManifold<dim>                boundary_manifold;
-          TransfiniteInterpolationManifold<dim> inner_manifold;
-
-          GridGenerator::hyper_ball(triangulation);
-
-          triangulation.set_all_manifold_ids(1);
-          triangulation.set_all_manifold_ids_on_boundary(0);
-
-          triangulation.set_manifold(0, boundary_manifold);
-
-          inner_manifold.initialize(triangulation);
-          triangulation.set_manifold(1, inner_manifold);
-
-          break;
-        }
-        case Settings::hypercube: {
-          GridGenerator::hyper_cube(triangulation);
-          break;
-        }
-        case Settings::hyperrectangle: {
-          std::vector<unsigned int> repetitions(dim);
-          for (unsigned int i = 0; i < dim - 1; i++)
-            {
-              repetitions[i] = 1;
-            }
-          repetitions[dim - 1] = parameters.repetitions;
-
-          GridGenerator::subdivided_hyper_rectangle(
-            triangulation,
-            repetitions,
-            Point<dim>(),
-            (dim == 2) ? Point<dim>(1., parameters.repetitions) :
-                         Point<dim>(1., 1., parameters.repetitions));
-          break;
-        }
-    }
-
-  triangulation.refine_global(parameters.initial_refinement);
-}
-
-template <int dim, int fe_degree>
-void
-MatrixFreePoissonProblem<dim, fe_degree>::setup_system()
-{
-  TimerOutput::Scope t(computing_timer, "setup system");
-
-  system_matrix.clear();
-
-  dof_handler.distribute_dofs(fe);
-
-  const IndexSet locally_relevant_dofs =
-    DoFTools::extract_locally_relevant_dofs(dof_handler);
-
-  constraints.clear();
-  constraints.reinit(locally_relevant_dofs);
-  DoFTools::make_hanging_node_constraints(dof_handler, constraints);
-  VectorTools::interpolate_boundary_values(dof_handler,
-                                           0,
-                                           Functions::ZeroFunction<dim>(),
-                                           constraints);
-  constraints.close();
-
+    FEEvaluation<dim, -1, 0, 1, number, VectorizedArrayType>;
+  using FEFaceIntegrator =
+    FEFaceEvaluation<dim, -1, 0, 1, number, VectorizedArrayType>;
+
+  PoissonOperator(
+    const MatrixFree<dim, double, VectorizedArrayType> &matrix_free,
+    const std::vector<unsigned int>                    &non_matching_faces)
+    : matrix_free(matrix_free)
+    , panalty_factor(
+        compute_pentaly_factor(matrix_free.get_dof_handler().get_fe().degree,
+                               1.0))
+    , is_dg(false)
   {
-    typename MatrixFree<dim, double>::AdditionalData additional_data;
-    additional_data.tasks_parallel_scheme =
-      MatrixFree<dim, double>::AdditionalData::none;
-    additional_data.mapping_update_flags =
-      (update_values | update_gradients | update_JxW_values |
-       update_quadrature_points);
-    auto system_mf_storage = std::make_shared<MatrixFree<dim, double>>();
-    system_mf_storage->reinit(mapping,
-                              dof_handler,
-                              constraints,
-                              QGauss<1>(fe.degree + 1),
-                              additional_data);
+    // store all boundary faces in one set
+    for (const auto &face_pair : non_matching_faces)
+      faces.insert(face_pair);
 
-    system_matrix.initialize(system_mf_storage);
+
+    std::vector<
+      std::pair<types::boundary_id, std::function<std::vector<bool>()>>>
+      non_matching_faces_marked_vertices;
+
+    for (const auto &nm_face : non_matching_faces)
+      {
+        auto marked_vertices = [&]() {
+          const auto &tria = matrix_free.get_dof_handler().get_triangulation();
+
+          std::vector<bool> mask(tria.n_vertices(), true);
+
+          for (const auto &cell : tria.active_cell_iterators())
+            for (auto const &f : cell->face_indices())
+              if (cell->face(f)->at_boundary() &&
+                  cell->face(f)->boundary_id() == nm_face)
+                for (const auto v : cell->vertex_indices())
+                  mask[cell->vertex_index(v)] = false;
+
+          return mask;
+        };
+
+        non_matching_faces_marked_vertices.emplace_back(
+          std::make_pair(nm_face, marked_vertices));
+      }
+
+    phi_r_comm =
+      Utilities::compute_remote_communicator_faces_point_to_point_interpolation(
+        matrix_free, non_matching_faces_marked_vertices);
+
+    phi_r_cache =
+      std::make_shared<FERemoteEvaluation<dim, 1, VectorizedArrayType>>(
+        phi_r_comm, matrix_free.get_dof_handler());
+
+    phi_r_sigma_cache =
+      std::make_shared<FERemoteEvaluation<dim, 1, VectorizedArrayType>>(
+        phi_r_comm, matrix_free.get_dof_handler().get_triangulation());
+
+    compute_penalty_parameters();
   }
 
-  system_matrix.initialize_dof_vector(solution);
-  system_matrix.initialize_dof_vector(newton_update);
-  system_matrix.initialize_dof_vector(system_rhs);
-}
-
-template <int dim, int fe_degree>
-void
-MatrixFreePoissonProblem<dim, fe_degree>::setup_gmg()
-{
-  TimerOutput::Scope t(computing_timer, "setup GMG");
-
-  dof_handler.distribute_mg_dofs();
-
-  mg_matrices.clear_elements();
-
-  const unsigned int nlevels = triangulation.n_global_levels();
-  mg_matrices.resize(0, nlevels - 1);
-  mg_solution.resize(0, nlevels - 1);
-
-  const std::set<types::boundary_id> dirichlet_boundary_ids = {0};
-  mg_constrained_dofs.initialize(dof_handler);
-  mg_constrained_dofs.make_zero_boundary_constraints(dof_handler,
-                                                     dirichlet_boundary_ids);
-
-  mg_transfer.initialize_constraints(mg_constrained_dofs);
-  mg_transfer.build(dof_handler);
-
-  for (unsigned int level = 0; level < nlevels; ++level)
-    {
-      const IndexSet relevant_dofs =
-        DoFTools::extract_locally_relevant_level_dofs(dof_handler, level);
-
-      AffineConstraints<double> level_constraints;
-      level_constraints.reinit(relevant_dofs);
-      level_constraints.add_lines(
-        mg_constrained_dofs.get_boundary_indices(level));
-      level_constraints.close();
-
-      typename MatrixFree<dim, float>::AdditionalData additional_data;
-      additional_data.tasks_parallel_scheme =
-        MatrixFree<dim, float>::AdditionalData::partition_color;
-      additional_data.mapping_update_flags =
-        (update_values | update_gradients | update_JxW_values |
-         update_quadrature_points);
-      additional_data.mg_level = level;
-      auto mg_mf_storage_level = std::make_shared<MatrixFree<dim, float>>();
-      mg_mf_storage_level->reinit(mapping,
-                                  dof_handler,
-                                  level_constraints,
-                                  QGauss<1>(fe.degree + 1),
-                                  additional_data);
-
-      mg_matrices[level].initialize(mg_mf_storage_level,
-                                    mg_constrained_dofs,
-                                    level);
-      mg_matrices[level].initialize_dof_vector(mg_solution[level]);
-    }
-}
-
-template <int dim, int fe_degree>
-void
-MatrixFreePoissonProblem<dim, fe_degree>::evaluate_residual(
-  LinearAlgebra::distributed::Vector<double> &      dst,
-  const LinearAlgebra::distributed::Vector<double> &src) const
-{
-  auto matrix_free = system_matrix.get_matrix_free();
-
-  matrix_free->cell_loop(
-    &MatrixFreePoissonProblem::local_evaluate_residual, this, dst, src, true);
-}
-
-template <int dim, int fe_degree>
-void
-MatrixFreePoissonProblem<dim, fe_degree>::local_evaluate_residual(
-  const MatrixFree<dim, double> &                   data,
-  LinearAlgebra::distributed::Vector<double> &      dst,
-  const LinearAlgebra::distributed::Vector<double> &src,
-  const std::pair<unsigned int, unsigned int> &     cell_range) const
-{
-  FEEvaluation<dim, fe_degree, fe_degree + 1, 1, double> phi(data);
-  SourceTerm<dim>                                        source_term_function;
-
-  for (unsigned int cell = cell_range.first; cell < cell_range.second; ++cell)
-    {
-      phi.reinit(cell);
-
-      phi.read_dof_values_plain(src);
-      phi.evaluate(EvaluationFlags::values | EvaluationFlags::gradients);
-
-      for (unsigned int q = 0; q < phi.n_q_points; ++q)
-        {
-          VectorizedArray<double> source_value = VectorizedArray<double>(0.0);
-
-          if (parameters.source_term == Settings::mms)
-            {
-              Point<dim, VectorizedArray<double>> point_batch =
-                phi.quadrature_point(q);
-
-              for (unsigned int v = 0; v < VectorizedArray<double>::size(); ++v)
-                {
-                  Point<dim> single_point;
-                  for (unsigned int d = 0; d < dim; ++d)
-                    single_point[d] = point_batch[d][v];
-                  source_value[v] = source_term_function.value(single_point);
-                }
-            }
-          phi.submit_value(-std::exp(phi.get_value(q)) - source_value, q);
-          phi.submit_gradient(phi.get_gradient(q), q);
-        }
-
-      phi.integrate_scatter(EvaluationFlags::values |
-                              EvaluationFlags::gradients,
-                            dst);
-    }
-}
-
-template <int dim, int fe_degree>
-void
-MatrixFreePoissonProblem<dim, fe_degree>::assemble_rhs()
-{
-  TimerOutput::Scope t(computing_timer, "assemble right hand side");
-
-  evaluate_residual(system_rhs, solution);
-
-  system_rhs *= -1.0;
-}
-
-template <int dim, int fe_degree>
-double
-MatrixFreePoissonProblem<dim, fe_degree>::compute_residual(const double alpha)
-{
-  TimerOutput::Scope t(computing_timer, "compute residual");
-
-  LinearAlgebra::distributed::Vector<double> residual;
-  LinearAlgebra::distributed::Vector<double> evaluation_point;
-
-  system_matrix.initialize_dof_vector(residual);
-  system_matrix.initialize_dof_vector(evaluation_point);
-
-  evaluation_point = solution;
-  if (alpha > 1e-12)
-    {
-      evaluation_point.add(alpha, newton_update);
-    }
-
-  evaluate_residual(residual, evaluation_point);
-
-  return residual.l2_norm();
-}
-
-template <int dim, int fe_degree>
-void
-MatrixFreePoissonProblem<dim, fe_degree>::compute_update()
-{
-  TimerOutput::Scope t(computing_timer, "compute update");
-
-  solution.update_ghost_values();
-
-  system_matrix.evaluate_newton_step(solution);
-
-  mg_transfer.interpolate_to_mg(dof_handler, mg_solution, solution);
-
-  using SmootherType =
-    PreconditionChebyshev<LevelMatrixType,
-                          LinearAlgebra::distributed::Vector<float>>;
-  mg::SmootherRelaxation<SmootherType,
-                         LinearAlgebra::distributed::Vector<float>>
-                                                       mg_smoother;
-  MGLevelObject<typename SmootherType::AdditionalData> smoother_data;
-  smoother_data.resize(0, triangulation.n_global_levels() - 1);
-  for (unsigned int level = 0; level < triangulation.n_global_levels(); ++level)
-    {
-      if (level > 0)
-        {
-          smoother_data[level].smoothing_range     = 15.;
-          smoother_data[level].degree              = 4;
-          smoother_data[level].eig_cg_n_iterations = 10;
-        }
-      else
-        {
-          smoother_data[0].smoothing_range     = 1e-3;
-          smoother_data[0].degree              = numbers::invalid_unsigned_int;
-          smoother_data[0].eig_cg_n_iterations = mg_matrices[0].m();
-        }
-
-      mg_matrices[level].evaluate_newton_step(mg_solution[level]);
-      mg_matrices[level].compute_diagonal();
-
-      smoother_data[level].preconditioner =
-        mg_matrices[level].get_matrix_diagonal_inverse();
-    }
-  mg_smoother.initialize(mg_matrices, smoother_data);
-
-
-  SolverControl coarse_solver_control(1000, 1e-12, false, false);
-  SolverCG<LinearAlgebra::distributed::Vector<float>> coarse_solver(
-    coarse_solver_control);
-  PreconditionIdentity identity;
-  MGCoarseGridIterativeSolver<
-    LinearAlgebra::distributed::Vector<float>,
-    SolverCG<LinearAlgebra::distributed::Vector<float>>,
-    LevelMatrixType,
-    PreconditionIdentity>
-    mg_coarse(coarse_solver, mg_matrices[0], identity);
-
-  mg::Matrix<LinearAlgebra::distributed::Vector<float>> mg_matrix(mg_matrices);
-
-  MGLevelObject<MatrixFreeOperators::MGInterfaceOperator<LevelMatrixType>>
-    mg_interface_matrices;
-  mg_interface_matrices.resize(0, triangulation.n_global_levels() - 1);
-  for (unsigned int level = 0; level < triangulation.n_global_levels(); ++level)
-    {
-      mg_interface_matrices[level].initialize(mg_matrices[level]);
-    }
-  mg::Matrix<LinearAlgebra::distributed::Vector<float>> mg_interface(
-    mg_interface_matrices);
-
-  Multigrid<LinearAlgebra::distributed::Vector<float>> mg(
-    mg_matrix, mg_coarse, mg_transfer, mg_smoother, mg_smoother);
-  mg.set_edge_matrices(mg_interface, mg_interface);
-
-  PreconditionMG<dim,
-                 LinearAlgebra::distributed::Vector<float>,
-                 MGTransferMatrixFree<dim, float>>
-    preconditioner(dof_handler, mg, mg_transfer);
-
-  SolverControl solver_control(100, 1.e-12);
-  SolverCG<LinearAlgebra::distributed::Vector<double>> cg(solver_control);
-
-  newton_update = 0.0;
-
-  cg.solve(system_matrix, newton_update, system_rhs, preconditioner);
-
-  constraints.distribute(newton_update);
-
-  linear_iterations = solver_control.last_step();
-
-  solution.zero_out_ghost_values();
-}
-
-template <int dim, int fe_degree>
-void
-MatrixFreePoissonProblem<dim, fe_degree>::solve()
-{
-  TimerOutput::Scope t(computing_timer, "solve");
-
-  const unsigned int itmax = 10;
-  const double       TOLf  = 1e-12;
-  const double       TOLx  = 1e-10;
-
-  Timer solver_timer;
-  solver_timer.start();
-
-  for (unsigned int newton_step = 1; newton_step <= itmax; ++newton_step)
-    {
-      assemble_rhs();
-      compute_update();
-      const double ERRx = newton_update.l2_norm();
-      const double ERRf = compute_residual(1.0);
-      solution.add(1.0, newton_update);
-
-      pcout << "   Nstep " << newton_step << ", errf = " << ERRf
-            << ", errx = " << ERRx << ", it = " << linear_iterations
-            << std::endl;
-
-      if (ERRf < TOLf || ERRx < TOLx)
-        {
-          solver_timer.stop();
-
-          pcout << "Convergence step " << newton_step << " value " << ERRf
-                << " (used wall time: " << solver_timer.wall_time() << " s)"
-                << std::endl;
-
-          break;
-        }
-      else if (newton_step == itmax)
-        {
-          solver_timer.stop();
-          pcout << "WARNING: No convergence of Newton's method after "
-                << newton_step << " steps." << std::endl;
-
-          break;
-        }
-    }
-}
-
-template <int dim, int fe_degree>
-double
-MatrixFreePoissonProblem<dim, fe_degree>::compute_solution_norm() const
-{
-  solution.update_ghost_values();
-
-  Vector<float> norm_per_cell(triangulation.n_active_cells());
-
-  VectorTools::integrate_difference(mapping,
-                                    dof_handler,
-                                    solution,
-                                    Functions::ZeroFunction<dim>(),
-                                    norm_per_cell,
-                                    QGauss<dim>(fe.degree + 1),
-                                    VectorTools::H1_seminorm);
-
-  solution.zero_out_ghost_values();
-
-  return VectorTools::compute_global_error(triangulation,
-                                           norm_per_cell,
-                                           VectorTools::H1_seminorm);
-}
-
-template <int dim, int fe_degree>
-double
-MatrixFreePoissonProblem<dim, fe_degree>::compute_l2_error() const
-{
-  solution.update_ghost_values();
-
-  Vector<float> error_per_cell(triangulation.n_active_cells());
-
-  VectorTools::integrate_difference(mapping,
-                                    dof_handler,
-                                    solution,
-                                    MMSSolution<dim>(),
-                                    error_per_cell,
-                                    QGauss<dim>(fe.degree + 1),
-                                    VectorTools::L2_norm);
-
-  solution.zero_out_ghost_values();
-
-  return VectorTools::compute_global_error(triangulation,
-                                           error_per_cell,
-                                           VectorTools::L2_norm);
-}
-
-template <int dim, int fe_degree>
-void
-MatrixFreePoissonProblem<dim, fe_degree>::output_results(
-  const unsigned int cycle) const
-{
-  if (triangulation.n_global_active_cells() > 1e6)
-    return;
-
-  solution.update_ghost_values();
-
-  DataOut<dim> data_out;
-  data_out.attach_dof_handler(dof_handler);
-  data_out.add_data_vector(solution, "solution");
-
-  Vector<float> subdomain(triangulation.n_active_cells());
-  for (unsigned int i = 0; i < subdomain.size(); ++i)
-    {
-      subdomain(i) = triangulation.locally_owned_subdomain();
-    }
-  data_out.add_data_vector(subdomain, "subdomain");
-
-  data_out.build_patches(mapping, fe.degree, DataOut<dim>::curved_inner_cells);
-
-  DataOutBase::VtkFlags flags;
-  flags.compression_level = DataOutBase::VtkFlags::best_speed;
-  data_out.set_flags(flags);
-  data_out.write_vtu_with_pvtu_record(parameters.output_path,
-                                      parameters.output_name +
-                                        std::to_string(dim) + "d",
-                                      cycle,
-                                      MPI_COMM_WORLD,
-                                      3);
-
-  solution.zero_out_ghost_values();
-}
-
-template <int dim, int fe_degree>
-void
-MatrixFreePoissonProblem<dim, fe_degree>::run()
-{
+  template <typename VectorType>
+  void
+  initialize_dof_vector(VectorType &vec)
   {
-    const unsigned int n_ranks =
-      Utilities::MPI::n_mpi_processes(MPI_COMM_WORLD);
-    const unsigned int n_vect_doubles = VectorizedArray<double>::size();
-    const unsigned int n_vect_bits    = 8 * sizeof(double) * n_vect_doubles;
-
-    std::string DAT_header = "START DATE: " + Utilities::System::get_date() +
-                             ", TIME: " + Utilities::System::get_time() +
-                             ", MATRIX-FREE SOLVER";
-    std::string MPI_header = "Running with " + std::to_string(n_ranks) +
-                             " MPI process" + (n_ranks > 1 ? "es" : "");
-    std::string VEC_header =
-      "Vectorization over " + std::to_string(n_vect_doubles) +
-      " doubles = " + std::to_string(n_vect_bits) + " bits (" +
-      Utilities::System::get_current_vectorization_level() +
-      "), VECTORIZATION_LEVEL=" +
-      std::to_string(DEAL_II_COMPILER_VECTORIZATION_LEVEL);
-    std::string SOL_header      = "Finite element space: " + fe.get_name();
-    std::string PRECOND_header  = "Preconditioner: GMG";
-    std::string GEOMETRY_header = "";
-    if (parameters.geometry == Settings::hyperball)
-      GEOMETRY_header = "Geometry: hyperball";
-    else if (parameters.geometry == Settings::hypercube)
-      GEOMETRY_header = "Geometry: hypercube";
-    else if (parameters.geometry == Settings::hyperrectangle)
-      GEOMETRY_header = "Geometry: hyper rectangle";
-    std::string SOURCE_header = "";
-    if (parameters.source_term == Settings::zero)
-      SOURCE_header = "Source term: zero";
-    else if (parameters.source_term == Settings::mms)
-      SOURCE_header = "Source term: according to MMS";
-    std::string REFINE_header =
-      "Initial refinement: " + std::to_string(parameters.initial_refinement);
-    std::string REPETITIONS_header =
-      "Repetitions in z: " + std::to_string(parameters.repetitions);
-    std::string CYCLES_header =
-      "Total number of cycles: " + std::to_string(parameters.number_of_cycles);
-
-    pcout << std::string(80, '=') << std::endl;
-    pcout << DAT_header << std::endl;
-    pcout << std::string(80, '-') << std::endl;
-
-    pcout << MPI_header << std::endl;
-    pcout << VEC_header << std::endl;
-    pcout << SOL_header << std::endl;
-    pcout << PRECOND_header << std::endl;
-    pcout << GEOMETRY_header << std::endl;
-    pcout << SOURCE_header << std::endl;
-    pcout << REFINE_header << std::endl;
-    pcout << REPETITIONS_header << std::endl;
-    pcout << CYCLES_header << std::endl;
-
-    pcout << std::string(80, '=') << std::endl;
+    matrix_free.initialize_dof_vector(vec);
   }
 
-  for (unsigned int cycle = 0; cycle < parameters.number_of_cycles; ++cycle)
-    {
-      pcout << std::string(80, '-') << std::endl;
-      pcout << "Cycle " << cycle << std::endl;
-      pcout << std::string(80, '-') << std::endl;
+  template <typename VectorType>
+  void
+  rhs(VectorType &vec) const
+  {
+    const int dummy = 0;
 
-      if (cycle == 0)
+    matrix_free.template cell_loop<VectorType, int>(
+      [&](const auto &data, auto &dst, const auto &, const auto cells) {
+        FECellIntegrator phi(data);
+        for (unsigned int cell = cells.first; cell < cells.second; ++cell)
+          {
+            phi.reinit(cell);
+            for (unsigned int q = 0; q < phi.n_q_points; ++q)
+              phi.submit_value(1.0, q);
+
+            phi.integrate_scatter(EvaluationFlags::values, dst);
+          }
+      },
+      vec,
+      dummy,
+      true);
+  }
+
+  template <typename VectorType>
+  void
+  vmult(VectorType &dst, const VectorType &src) const
+  {
+    phi_r_cache->gather_evaluate(src,
+                                 EvaluationFlags::values |
+                                   EvaluationFlags::gradients);
+
+    const auto cell_function =
+      [&](const auto &data, auto &dst, const auto &src, const auto cell_range) {
+        FECellIntegrator phi(data);
+
+        for (unsigned int cell = cell_range.first; cell < cell_range.second;
+             ++cell)
+          {
+            phi.reinit(cell);
+            phi.gather_evaluate(src, EvaluationFlags::gradients);
+            for (unsigned int q = 0; q < phi.n_q_points; ++q)
+              phi.submit_gradient(phi.get_gradient(q), q);
+            phi.integrate_scatter(EvaluationFlags::gradients, dst);
+          }
+      };
+
+    const auto face_function =
+      [&](const auto &data, auto &dst, const auto &src, const auto face_range) {
+
+      };
+
+    const auto boundary_function =
+      [&](const auto &data, auto &dst, const auto &src, const auto face_range) {
+        FEFaceIntegrator phi_m(data, true);
+
+        auto phi_r       = phi_r_cache->get_data_accessor();
+        auto phi_r_sigma = phi_r_sigma_cache->get_data_accessor();
+
+        for (unsigned int face = face_range.first; face < face_range.second;
+             ++face)
+          {
+            if ((is_dg == false) && ((is_internal_face(face) == false)))
+              continue; // nothing to do
+
+            phi_m.reinit(face);
+
+            phi_m.gather_evaluate(src,
+                                  EvaluationFlags::values |
+                                    EvaluationFlags::gradients);
+
+            const bool iface = is_internal_face(face);
+
+            if (iface)
+              {
+                phi_r.reinit(face);
+                phi_r_sigma.reinit(face);
+              }
+
+            const auto sigma_m = phi_m.read_cell_data(array_penalty_parameter);
+
+            for (unsigned int q = 0; q < phi_m.n_q_points; ++q)
+              {
+                const auto value_m = phi_m.get_value(q);
+                const auto value_p = iface ? phi_r.get_value(q) : -value_m;
+
+                const auto gradient_m = phi_m.get_gradient(q);
+                const auto gradient_p =
+                  iface ? phi_r.get_gradient(q) : gradient_m;
+
+                const auto sigma_p = iface ? phi_r_sigma.get_value(q) : sigma_m;
+                const auto sigma = std::max(sigma_m, sigma_p) * panalty_factor;
+
+                const auto jump_value = (value_m - value_p) * 0.5;
+                const auto avg_gradient =
+                  phi_m.get_normal_vector(q) * (gradient_m + gradient_p) * 0.5;
+
+                phi_m.submit_normal_derivative(-jump_value, q);
+                phi_m.submit_value(jump_value * sigma * 2.0 - avg_gradient, q);
+              }
+            phi_m.integrate_scatter(EvaluationFlags::values |
+                                      EvaluationFlags::gradients,
+                                    dst);
+          }
+      };
+
+    matrix_free.template loop<VectorType, VectorType>(
+      cell_function, face_function, boundary_function, dst, src, true);
+  }
+
+private:
+  bool
+  is_internal_face(const unsigned int face) const
+  {
+    return faces.find(matrix_free.get_boundary_id(face)) != faces.end();
+  }
+
+  void
+  compute_penalty_parameters()
+  {
+    // step 1) compute penalty parameter of each cell
+    const unsigned int n_cells =
+      matrix_free.n_cell_batches() + matrix_free.n_ghost_cell_batches();
+    array_penalty_parameter.resize(n_cells);
+
+    dealii::Mapping<dim> const &mapping =
+      *matrix_free.get_mapping_info().mapping;
+    dealii::FiniteElement<dim> const &fe =
+      matrix_free.get_dof_handler().get_fe();
+    const unsigned int degree = fe.degree;
+
+    dealii::QGauss<dim>   quadrature(degree + 1);
+    dealii::FEValues<dim> fe_values(mapping,
+                                    fe,
+                                    quadrature,
+                                    dealii::update_JxW_values);
+
+    dealii::QGauss<dim - 1>   face_quadrature(degree + 1);
+    dealii::FEFaceValues<dim> fe_face_values(mapping,
+                                             fe,
+                                             face_quadrature,
+                                             dealii::update_JxW_values);
+
+    Vector<number> array_penalty_parameter_scalar(
+      matrix_free.get_dof_handler().get_triangulation().n_active_cells());
+
+    for (unsigned int i = 0; i < n_cells; ++i)
+      for (unsigned int v = 0;
+           v < matrix_free.n_active_entries_per_cell_batch(i);
+           ++v)
         {
-          make_grid();
-        }
-      else
-        {
-          triangulation.refine_global(1);
-        }
+          typename dealii::DoFHandler<dim>::cell_iterator cell =
+            matrix_free.get_cell_iterator(i, v);
+          fe_values.reinit(cell);
 
-      Timer timer;
+          number volume = 0;
+          for (unsigned int q = 0; q < quadrature.size(); ++q)
+            volume += fe_values.JxW(q);
 
-      pcout << "Set up system..." << std::endl;
-      setup_system();
+          number surface_area = 0;
+          for (const auto f : cell->face_indices())
+            {
+              fe_face_values.reinit(cell, f);
+              const number factor =
+                (cell->at_boundary(f) && !cell->has_periodic_neighbor(f)) ? 1. :
+                                                                            0.5;
+              for (unsigned int q = 0; q < face_quadrature.size(); ++q)
+                surface_area += fe_face_values.JxW(q) * factor;
+            }
 
-      setup_gmg();
-
-      pcout << "   Triangulation: " << triangulation.n_global_active_cells()
-            << " cells" << std::endl;
-      pcout << "   DoFHandler:    " << dof_handler.n_dofs() << " DoFs"
-            << std::endl;
-      for (unsigned int level = 0; level < triangulation.n_global_levels();
-           ++level)
-        pcout << "   MG Level " << level << ": " << dof_handler.n_dofs(level)
-              << " DoFs" << std::endl;
-
-      pcout << std::endl;
-
-
-      pcout << "Solve using Newton's method..." << std::endl;
-      solve();
-      pcout << std::endl;
-
-
-      timer.stop();
-      pcout << "Time for setup+solve (CPU/Wall) " << timer.cpu_time() << '/'
-            << timer.wall_time() << " s" << std::endl;
-      pcout << std::endl;
-
-      const double norm = compute_solution_norm();
-      if (parameters.output)
-        {
-          pcout << "Output results..." << std::endl;
-          output_results(cycle);
+          array_penalty_parameter[i][v] = surface_area / volume;
+          array_penalty_parameter_scalar[cell->active_cell_index()] =
+            surface_area / volume;
         }
 
-      pcout << "  H1 seminorm: " << norm << std::endl;
-      pcout << std::endl;
 
-      if (parameters.source_term == Settings::mms)
-        {
-          pcout << "  L2 norm: " << compute_l2_error() << std::endl;
-        }
+    dealii::FEEvaluation<dim, -1, 0, 1, number> fe_eval(matrix_free, 0, 0);
 
-      computing_timer.print_summary();
-      computing_timer.reset();
-    }
-}
+    phi_r_sigma_cache->gather_evaluate(array_penalty_parameter_scalar,
+                                       EvaluationFlags::values);
+  }
 
-int
-main(int argc, char *argv[])
+  static number
+  compute_pentaly_factor(const unsigned int degree, const number factor)
+  {
+    return factor * (degree + 1.0) * (degree + 1.0);
+  }
+
+  const MatrixFree<dim, number, VectorizedArrayType> &matrix_free;
+
+  FERemoteEvaluationCommunicator<dim> phi_r_comm;
+  mutable std::shared_ptr<FERemoteEvaluation<dim, 1, VectorizedArrayType>>
+    phi_r_cache;
+  mutable std::shared_ptr<FERemoteEvaluation<dim, 1, VectorizedArrayType>>
+    phi_r_sigma_cache;
+
+  const double                               panalty_factor;
+  dealii::AlignedVector<VectorizedArrayType> array_penalty_parameter;
+
+  std::set<unsigned int> faces;
+
+  const bool is_dg=false;
+};
+
+template <int dim>
+void
+test(const unsigned int fe_degree,
+     const unsigned int n_global_refinements = 2)
 {
-  Utilities::MPI::MPI_InitFinalize       mpi_init(argc, argv, 1);
-  dealii::Utilities::System::MemoryStats stats;
-  dealii::Utilities::System::get_memory_stats(stats);
+  using Number              = double;
+  using VectorizedArrayType = VectorizedArray<Number>;
+  using VectorType          = LinearAlgebra::distributed::Vector<Number>;
 
   ConditionalOStream pcout(std::cout,
                            Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) ==
                              0);
 
-  Settings parameters;
-  if (!parameters.try_parse((argc > 1) ? (argv[1]) : ""))
-    return 0;
+  const MappingQ1<dim> mapping;
+  const FE_Q<dim>      fe_q(fe_degree);
+  const QGauss<dim>    quad(fe_degree + 1);
+
+  // create non-matching grid
+  parallel::distributed::Triangulation<dim> tria(MPI_COMM_WORLD);
+  Triangulation<dim>                        tria_0, tria_1;
+
+  std::vector<std::pair<unsigned int, unsigned int>> face_pairs;
+  std::vector<unsigned int> nm_face_pairs;
+
+  if (false)
+    {
+    GridGenerator::subdivided_hyper_rectangle(
+      tria_0, {7, 7}, {0.0, 0.0}, {1.0, 1.0}, true);
+
+  GridGenerator::subdivided_hyper_rectangle(
+    tria_1, {6, 3}, {1.0, 0.0}, {3.0, 1.0}, true);
+
+  for (const auto &face : tria_1.active_face_iterators())
+    if (face->at_boundary())
+      face->set_boundary_id(face->boundary_id() + 2 * dim);
+
+  GridGenerator::merge_triangulations(tria_0, tria_1, tria, 0., false, true);
+  AssertDimension(tria_0.n_vertices() + tria_1.n_vertices(), tria.n_vertices());
+
+  tria.refine_global(n_global_refinements);
+
+  face_pairs.emplace_back(1, 2 * dim);
+  face_pairs.emplace_back(2 * dim, 1);
+
+  nm_face_pairs.emplace_back(1);
+  nm_face_pairs.emplace_back(2 * dim);
+  }
+  else
+  {
+    // Generate two grids of two non-matching circles
+    const double r1_i=0.25;
+    const double r1_o=0.55;
+    const double r2_i=0.5;
+    const double r2_o=1;
+
+    Triangulation<dim> circle_one;
+    GridGenerator::concentric_hyper_shells(circle_one,(dim == 2) ? Point<dim>(0, 0) : Point<dim>(0, 0, 0),r1_i,r1_o);
+    Triangulation<dim> circle_two;
+    GridGenerator::concentric_hyper_shells(circle_two,(dim == 2) ? Point<dim>(0, 0) : Point<dim>(0, 0, 0),r2_i,r2_o);
+
+    // shift boundary id of circle two
+    for (const auto &face : circle_two.active_face_iterators())
+      if (face->at_boundary())
+        face->set_boundary_id(face->boundary_id() + 2);
+
+    GridGenerator::merge_triangulations(circle_one, circle_two, tria, 0, true, true);
+    tria.set_manifold(0,SphericalManifold<dim>((dim == 2) ? Point<dim>(0, 0) : Point<dim>(0, 0, 0)));
+
+    tria.refine_global(n_global_refinements);
+
+    face_pairs.emplace_back(1, 0);
+    face_pairs.emplace_back(0, 1);
+
+    nm_face_pairs.emplace_back(0);
+    nm_face_pairs.emplace_back(1);
+  }
+
+
+  // create DoFHandler
+  DoFHandler<dim> dof_handler(tria);
+
+  dof_handler.distribute_dofs(fe_q);
+
+  // create MatrixFree
+  typename MatrixFree<dim, Number, VectorizedArrayType>::AdditionalData data;
+  data.mapping_update_flags =
+    update_quadrature_points | update_gradients | update_values;
+  data.mapping_update_flags_boundary_faces = data.mapping_update_flags;
+  data.mapping_update_flags_inner_faces    = data.mapping_update_flags;
+
+  MatrixFree<dim, Number, VectorizedArrayType> matrix_free;
+  AffineConstraints<Number>                    constraints;
+
+
+  for (unsigned int d = 0; d < 4 * dim; ++d)
+    if (face_pairs.size() == 0)
+      {
+        DoFTools::make_zero_boundary_constraints(dof_handler,
+                                                     d,
+                                                     constraints);
+      }
+    else
+      {
+            for (const auto &face_pair : face_pairs)
+              if (d != face_pair.first && d != face_pair.second)
+                DoFTools::make_zero_boundary_constraints(dof_handler,
+                                                         d,
+                                                         constraints);
+      }
+
+  constraints.close();
+
+  matrix_free.reinit(mapping, dof_handler, constraints, quad, data);
+
+  pcout << "Statistics:" << std::endl;
+  pcout << " - n cells: " << tria.n_global_active_cells() << std::endl;
+  pcout << " - n dof:   " << dof_handler.n_dofs() << std::endl;
+  pcout << std::endl;
+
+  std::ofstream mesh_file("mesh.vtu");
+  GridOut().write_vtu(tria, mesh_file);
+
+  PoissonOperator<dim, Number, VectorizedArrayType> op(matrix_free,
+                                                       nm_face_pairs);
+
+  VectorType rhs, solution;
+
+  op.initialize_dof_vector(rhs);
+  op.initialize_dof_vector(solution);
+
+  op.rhs(rhs);
+  rhs.zero_out_ghost_values();
+
+  constraints.set_zero(rhs);
 
   try
     {
-      switch (parameters.dimension)
-        {
-            case 2: {
-              switch (parameters.element_order)
-                {
-                    case 1: {
-                      MatrixFreePoissonProblem<2, 1> non_linear_poisson_problem(
-                        parameters);
-                      non_linear_poisson_problem.run();
+      ReductionControl reduction_control(10000, 1e-20, 1e-2);
 
-                      break;
-                    }
-                    case 2: {
-                      MatrixFreePoissonProblem<2, 2> non_linear_poisson_problem(
-                        parameters);
-                      non_linear_poisson_problem.run();
+      // note: we need to use GMRES, since the system is non-symmetrical
+      SolverGMRES<VectorType> solver(reduction_control);
+      solver.solve(op, solution, rhs, PreconditionIdentity());
 
-                      break;
-                    }
-                    case 3: {
-                      MatrixFreePoissonProblem<2, 3> non_linear_poisson_problem(
-                        parameters);
-                      non_linear_poisson_problem.run();
-
-                      break;
-                    }
-                }
-              break;
-            }
-
-            case 3: {
-              switch (parameters.element_order)
-                {
-                    case 1: {
-                      MatrixFreePoissonProblem<3, 1> non_linear_poisson_problem(
-                        parameters);
-                      non_linear_poisson_problem.run();
-
-                      break;
-                    }
-                    case 2: {
-                      MatrixFreePoissonProblem<3, 2> non_linear_poisson_problem(
-                        parameters);
-                      non_linear_poisson_problem.run();
-
-                      break;
-                    }
-                    case 3: {
-                      MatrixFreePoissonProblem<3, 3> non_linear_poisson_problem(
-                        parameters);
-                      non_linear_poisson_problem.run();
-
-                      break;
-                    }
-                }
-              break;
-            }
-
-          default:
-            Assert(
-              false,
-              ExcMessage(
-                "This program only works in 2d and 3d and for element orders equal to 1, 2 or 3."));
-        }
-
-      pcout << "MEMORY STATS: " << std::endl;
-      const auto print = [&pcout](const double value) {
-        const auto min_max_avg =
-          dealii::Utilities::MPI::min_max_avg(value, MPI_COMM_WORLD);
-
-        pcout << "MIN: " << min_max_avg.min << " MAX: " << min_max_avg.max
-              << " AVG: " << min_max_avg.avg << " SUM: " << min_max_avg.sum
-              << std::endl;
-      };
-
-      pcout << "VmPeak: ";
-      print(stats.VmPeak);
-
-      pcout << "VmSize: ";
-      print(stats.VmSize);
-
-      pcout << "VmHWM: ";
-      print(stats.VmHWM);
-
-      pcout << "VmRSS: ";
-      print(stats.VmRSS);
-
-      pcout << std::endl;
+      pcout << "Converged in " << reduction_control.last_step()
+            << " iterations." << std::endl;
     }
-  catch (std::exception &exc)
+  catch (const dealii::SolverControl::NoConvergence &e)
     {
-      std::cerr << std::endl
-                << std::endl
-                << "----------------------------------------------------"
-                << std::endl;
-      std::cerr << "Exception on processing: " << std::endl
-                << exc.what() << std::endl
-                << "Aborting!" << std::endl
-                << "----------------------------------------------------"
-                << std::endl;
-      return 1;
-    }
-  catch (...)
-    {
-      std::cerr << std::endl
-                << std::endl
-                << "----------------------------------------------------"
-                << std::endl;
-      std::cerr << "Unknown exception!" << std::endl
-                << "Aborting!" << std::endl
-                << "----------------------------------------------------"
-                << std::endl;
-      return 1;
+      std::cout << e.what() << std::endl;
     }
 
-  return 0;
+  // output result
+  DataOut<dim> data_out;
+  data_out.attach_dof_handler(dof_handler);
+  data_out.add_data_vector(solution, "solution_poisson");
+  Vector<float> ranks(tria.n_active_cells());
+  ranks = Utilities::MPI::this_mpi_process(MPI_COMM_WORLD);
+  data_out.add_data_vector(ranks, "ranks");
+  data_out.build_patches();
+  data_out.write_vtu_in_parallel("solution_poisson.vtu", MPI_COMM_WORLD);
 }
+
+int
+main(int argc, char **argv)
+{
+  Utilities::MPI::MPI_InitFinalize mpi_initialization(argc, argv, 1);
+
+  test<2>(1, 2);
+}
+
