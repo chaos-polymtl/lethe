@@ -65,28 +65,29 @@ checks
 # Process all source and header files:
 #
 
-process "applications tests include source examples prototypes" ".*\.(cc|h)" format_file
+process "tests applications include source prototypes" ".*\.(cc|h)" format_file
+
 
 #
 # Fix permissions and convert to unix line ending if necessary:
 #
 
-process "applications tests include source examples prototypes" \
+process "tests applications include source examples prototypes" \
   ".*\.(cc|h|inst.in|output.*|cmake)" fix_permissions
 
-process "applications tests include source examples prototypes" \
+process "tests applications include source examples prototypes" \
   ".*\.(cc|h|inst.in|cmake)" dos_to_unix
 
 #
 # Removing trailing whitespace
 #
 
-process "applications tests include source examples prototypes doc" \
+process "tests applications include source doc prototypes" \
   ".*\.(cc|h|html|dox|txt)" remove_trailing_whitespace
 
 #
 # Ensure only a single newline at end of files
 #
 
-process "applications tests include source examples prototypes doc" \
+process "tests applications include source doc prototypes" \
   ".*\.(cc|h|html|dox|txt)" ensure_single_trailing_newline

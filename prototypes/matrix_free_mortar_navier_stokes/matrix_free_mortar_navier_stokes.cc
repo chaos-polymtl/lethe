@@ -132,7 +132,8 @@ Settings::try_parse(const std::string &prm_filename)
                     "Number of cycles <1 up to 9-dim >");
   prm.declare_entry("geometry",
                     "hypercube",
-                    Patterns::Selection("hypercube|hyperrectangle|cocircle|corectangle"),
+                    Patterns::Selection(
+                      "hypercube|hyperrectangle|cocircle|corectangle"),
                     "Geometry <hypercube|hyperrectangle|cocircle|corectangle>");
   prm.declare_entry("initial refinement",
                     "1",
@@ -258,7 +259,7 @@ public:
 template <int dim>
 void
 AnalyticalSolution<dim>::vector_value(const Point<dim> &p,
-                                      Vector<double> &  values) const
+                                      Vector<double>   &values) const
 {
   AssertDimension(values.size(), dim + 1);
 
@@ -411,7 +412,7 @@ FullSourceTerm<dim>::value(const Point<dim, number> &p,
 
 template <int dim>
 double
-FullSourceTerm<dim>::value(const Point<dim> & p,
+FullSourceTerm<dim>::value(const Point<dim>  &p,
                            const unsigned int component) const
 {
   return value<double>(p, component);
@@ -422,7 +423,7 @@ FullSourceTerm<dim>::value(const Point<dim> & p,
 // to be used for the source terms in the Jacobian and Residual functions.
 template <int dim, typename Number>
 VectorizedArray<Number>
-evaluate_function(const Function<dim> &                      function,
+evaluate_function(const Function<dim>                       &function,
                   const Point<dim, VectorizedArray<Number>> &p_vectorized)
 {
   VectorizedArray<Number> result;
@@ -441,7 +442,7 @@ evaluate_function(const Function<dim> &                      function,
 // to be used for the source terms in the Jacobian and Residual functions.
 template <int dim, typename Number, int components>
 Tensor<1, components, VectorizedArray<Number>>
-evaluate_function(const Function<dim> &                      function,
+evaluate_function(const Function<dim>                       &function,
                   const Point<dim, VectorizedArray<Number>> &p_vectorized)
 {
   Tensor<1, components, VectorizedArray<Number>> result;
@@ -472,19 +473,19 @@ public:
 
   NavierStokesOperator();
 
-  NavierStokesOperator(const MappingQ<dim> &            mapping,
-                       const DoFHandler<dim> &          dof_handler,
+  NavierStokesOperator(const MappingQ<dim>             &mapping,
+                       const DoFHandler<dim>           &dof_handler,
                        const AffineConstraints<number> &constraints,
-                       const QGauss<1> &                quadrature,
-                       const Settings &                 parameters,
+                       const QGauss<1>                 &quadrature,
+                       const Settings                  &parameters,
                        const unsigned int               mg_level);
 
   void
-  reinit(const MappingQ<dim> &            mapping,
-         const DoFHandler<dim> &          dof_handler,
+  reinit(const MappingQ<dim>             &mapping,
+         const DoFHandler<dim>           &dof_handler,
          const AffineConstraints<number> &constraints,
-         const QGauss<1> &                quadrature,
-         const Settings &                 parameters,
+         const QGauss<1>                 &quadrature,
+         const Settings                  &parameters,
          const unsigned int               mg_level);
 
   void
@@ -538,9 +539,9 @@ private:
 
   void
   do_cell_integral_range(
-    const MatrixFree<dim, number> &              matrix_free,
-    VectorType &                                 dst,
-    const VectorType &                           src,
+    const MatrixFree<dim, number>               &matrix_free,
+    VectorType                                  &dst,
+    const VectorType                            &src,
     const std::pair<unsigned int, unsigned int> &range) const;
 
   static IndexSet
@@ -574,11 +575,11 @@ NavierStokesOperator<dim, number>::NavierStokesOperator()
 
 template <int dim, typename number>
 NavierStokesOperator<dim, number>::NavierStokesOperator(
-  const MappingQ<dim> &            mapping,
-  const DoFHandler<dim> &          dof_handler,
+  const MappingQ<dim>             &mapping,
+  const DoFHandler<dim>           &dof_handler,
   const AffineConstraints<number> &constraints,
-  const QGauss<1> &                quadrature,
-  const Settings &                 parameters,
+  const QGauss<1>                 &quadrature,
+  const Settings                  &parameters,
   const unsigned int               mg_level)
 {
   this->reinit(
@@ -588,11 +589,11 @@ NavierStokesOperator<dim, number>::NavierStokesOperator(
 template <int dim, typename number>
 void
 NavierStokesOperator<dim, number>::reinit(
-  const MappingQ<dim> &            mapping,
-  const DoFHandler<dim> &          dof_handler,
+  const MappingQ<dim>             &mapping,
+  const DoFHandler<dim>           &dof_handler,
   const AffineConstraints<number> &constraints,
-  const QGauss<1> &                quadrature,
-  const Settings &                 parameters,
+  const QGauss<1>                 &quadrature,
+  const Settings                  &parameters,
   const unsigned int               mg_level)
 {
   this->system_matrix.clear();
@@ -738,7 +739,7 @@ NavierStokesOperator<dim, number>::get_vector_partitioner() const
 // and evaluating the integrals in the matrix-free way
 template <int dim, typename number>
 void
-NavierStokesOperator<dim, number>::vmult(VectorType &      dst,
+NavierStokesOperator<dim, number>::vmult(VectorType       &dst,
                                          const VectorType &src) const
 {
   // save values for edge constrained dofs and set them to 0 in src vector
@@ -752,8 +753,8 @@ NavierStokesOperator<dim, number>::vmult(VectorType &      dst,
         .local_element(edge_constrained_indices[i]) = 0.;
     }
 
-  //this->matrix_free.cell_loop(
-  //  &NavierStokesOperator::do_cell_integral_range, this, dst, src, true);
+  // this->matrix_free.cell_loop(
+  //   &NavierStokesOperator::do_cell_integral_range, this, dst, src, true);
 
 
   const auto cell_function =
@@ -801,7 +802,7 @@ NavierStokesOperator<dim, number>::vmult(VectorType &      dst,
 // Note: required for compilation but not used at the moment.
 template <int dim, typename number>
 void
-NavierStokesOperator<dim, number>::Tvmult(VectorType &      dst,
+NavierStokesOperator<dim, number>::Tvmult(VectorType       &dst,
                                           const VectorType &src) const
 {
   this->vmult(dst, src);
@@ -810,7 +811,7 @@ NavierStokesOperator<dim, number>::Tvmult(VectorType &      dst,
 template <int dim, typename number>
 void
 NavierStokesOperator<dim, number>::vmult_interface_down(
-  VectorType &      dst,
+  VectorType       &dst,
   VectorType const &src) const
 {
   this->matrix_free.cell_loop(
@@ -825,7 +826,7 @@ NavierStokesOperator<dim, number>::vmult_interface_down(
 template <int dim, typename number>
 void
 NavierStokesOperator<dim, number>::vmult_interface_up(
-  VectorType &      dst,
+  VectorType       &dst,
   VectorType const &src) const
 {
   if (has_edge_constrained_indices == false)
@@ -1118,9 +1119,9 @@ NavierStokesOperator<dim, number>::do_cell_integral_local(
 template <int dim, typename number>
 void
 NavierStokesOperator<dim, number>::do_cell_integral_range(
-  const MatrixFree<dim, number> &              matrix_free,
-  VectorType &                                 dst,
-  const VectorType &                           src,
+  const MatrixFree<dim, number>               &matrix_free,
+  VectorType                                  &dst,
+  const VectorType                            &src,
   const std::pair<unsigned int, unsigned int> &range) const
 {
   FECellIntegrator integrator(matrix_free, range);
@@ -1186,14 +1187,14 @@ template <typename VectorType,
           typename LevelMatrixType,
           typename MGTransferType>
 static void
-gcmg_solve(SolverControl &            solver_control,
-           VectorType &               dst,
-           const VectorType &         src,
+gcmg_solve(SolverControl             &solver_control,
+           VectorType                &dst,
+           const VectorType          &src,
            const MultigridParameters &mg_data,
-           const DoFHandler<dim> &    dof,
-           const SystemMatrixType &   fine_matrix,
+           const DoFHandler<dim>     &dof,
+           const SystemMatrixType    &fine_matrix,
            const MGLevelObject<std::unique_ptr<LevelMatrixType>> &mg_matrices,
-           const MGTransferType &                                 mg_transfer)
+           const MGTransferType                                  &mg_transfer)
 {
   AssertThrow(mg_data.coarse_solver.type == "gmres_with_amg",
               ExcNotImplemented());
@@ -1262,16 +1263,16 @@ gcmg_solve(SolverControl &            solver_control,
 
 template <typename VectorType, typename OperatorType, int dim>
 void
-solve_with_gcmg(SolverControl &            solver_control,
-                const OperatorType &       system_matrix,
-                VectorType &               dst,
-                const VectorType &         src,
+solve_with_gcmg(SolverControl             &solver_control,
+                const OperatorType        &system_matrix,
+                VectorType                &dst,
+                const VectorType          &src,
                 const MultigridParameters &mg_data,
                 const MappingQ<dim>        mapping,
-                const DoFHandler<dim> &    dof_handler,
-                const QGauss<1> &          quadrature,
-                const Settings &           parameters,
-                const VectorType &         solution)
+                const DoFHandler<dim>     &dof_handler,
+                const QGauss<1>           &quadrature,
+                const Settings            &parameters,
+                const VectorType          &solution)
 {
   MGLevelObject<DoFHandler<dim>>                     dof_handlers;
   MGLevelObject<std::unique_ptr<OperatorType>>       operators;
@@ -1307,7 +1308,7 @@ solve_with_gcmg(SolverControl &            solver_control,
   for (unsigned int level = minlevel; level <= maxlevel; ++level)
     {
       const auto &dof_handler = dof_handlers[level];
-      auto &      constraint  = constraints[level];
+      auto       &constraint  = constraints[level];
 
       const IndexSet locally_relevant_dofs =
         DoFTools::extract_locally_relevant_dofs(dof_handler);
@@ -1412,14 +1413,14 @@ template <typename VectorType,
           typename MGTransferType>
 static void
 lsmg_solve(
-  SolverControl &                                        solver_control,
-  VectorType &                                           dst,
-  const VectorType &                                     src,
-  const MultigridParameters &                            mg_data,
-  const DoFHandler<dim> &                                dof,
-  const SystemMatrixType &                               fine_matrix,
+  SolverControl                                         &solver_control,
+  VectorType                                            &dst,
+  const VectorType                                      &src,
+  const MultigridParameters                             &mg_data,
+  const DoFHandler<dim>                                 &dof,
+  const SystemMatrixType                                &fine_matrix,
   const MGLevelObject<std::unique_ptr<LevelMatrixType>> &mg_matrices,
-  const MGTransferType &                                 mg_transfer,
+  const MGTransferType                                  &mg_transfer,
   const MGLevelObject<MatrixFreeOperators::MGInterfaceOperator<LevelMatrixType>>
     &ls_mg_interface_in,
   const MGLevelObject<MatrixFreeOperators::MGInterfaceOperator<LevelMatrixType>>
@@ -1502,16 +1503,16 @@ lsmg_solve(
 
 template <typename VectorType, typename OperatorType, int dim>
 void
-solve_with_lsmg(SolverControl &            solver_control,
-                const OperatorType &       system_matrix,
-                VectorType &               dst,
-                const VectorType &         src,
+solve_with_lsmg(SolverControl             &solver_control,
+                const OperatorType        &system_matrix,
+                VectorType                &dst,
+                const VectorType          &src,
                 const MultigridParameters &mg_data,
                 const MappingQ<dim>        mapping,
-                const DoFHandler<dim> &    dof_handler,
-                const QGauss<1> &          quadrature,
-                const Settings &           parameters,
-                const VectorType &         solution)
+                const DoFHandler<dim>     &dof_handler,
+                const QGauss<1>           &quadrature,
+                const Settings            &parameters,
+                const VectorType          &solution)
 {
   MGLevelObject<std::unique_ptr<OperatorType>> operators;
   MGTransferMatrixFree<dim, double>            mg_transfer;
@@ -1637,15 +1638,15 @@ private:
 
   void
   evaluate_residual(
-    LinearAlgebra::distributed::Vector<double> &      dst,
+    LinearAlgebra::distributed::Vector<double>       &dst,
     const LinearAlgebra::distributed::Vector<double> &src) const;
 
   void
   local_evaluate_residual(
-    const MatrixFree<dim, double> &                   data,
-    LinearAlgebra::distributed::Vector<double> &      dst,
+    const MatrixFree<dim, double>                    &data,
+    LinearAlgebra::distributed::Vector<double>       &dst,
     const LinearAlgebra::distributed::Vector<double> &src,
-    const std::pair<unsigned int, unsigned int> &     cell_range) const;
+    const std::pair<unsigned int, unsigned int>      &cell_range) const;
 
   void
   assemble_rhs();
@@ -1669,7 +1670,7 @@ private:
   output_results(const unsigned int cycle) const;
 
 
-  parallel::distributed::Triangulation<dim> triangulation;
+  parallel::distributed::Triangulation<dim>          triangulation;
   std::vector<std::pair<unsigned int, unsigned int>> face_pairs;
 
   Settings parameters;
@@ -1725,11 +1726,13 @@ MatrixFreeNavierStokes<dim>::make_grid()
 
   switch (parameters.geometry)
     {
-        case Settings::hypercube: {
+      case Settings::hypercube:
+        {
           GridGenerator::hyper_cube(triangulation, -1.0, 1.0, true);
           break;
         }
-        case Settings::hyperrectangle: {
+      case Settings::hyperrectangle:
+        {
           std::vector<unsigned int> repetitions(dim);
           for (unsigned int i = 0; i < dim - 1; i++)
             {
@@ -1746,31 +1749,47 @@ MatrixFreeNavierStokes<dim>::make_grid()
             true);
           break;
         }
-        case Settings::cocircle: {
+      case Settings::cocircle:
+        {
           // Generate two grids of two non-matching circles
 
-          const double r1_i=0.25;
-          const double r1_o=0.51;
-          const double r2_i=0.5;
-          const double r2_o=1;
+          const double r1_i = 0.25;
+          const double r1_o = 0.51;
+          const double r2_i = 0.5;
+          const double r2_o = 1;
 
           Triangulation<dim> circle_one;
-          GridGenerator::concentric_hyper_shells(circle_one,(dim == 2) ? Point<dim>(0, 0) : Point<dim>(0, 0, 0),r1_i,r1_o);
+          GridGenerator::concentric_hyper_shells(circle_one,
+                                                 (dim == 2) ?
+                                                   Point<dim>(0, 0) :
+                                                   Point<dim>(0, 0, 0),
+                                                 r1_i,
+                                                 r1_o);
           Triangulation<dim> circle_two;
-          GridGenerator::concentric_hyper_shells(circle_two,(dim == 2) ? Point<dim>(0, 0) : Point<dim>(0, 0, 0),r2_i,r2_o);
+          GridGenerator::concentric_hyper_shells(circle_two,
+                                                 (dim == 2) ?
+                                                   Point<dim>(0, 0) :
+                                                   Point<dim>(0, 0, 0),
+                                                 r2_i,
+                                                 r2_o);
 
           // shift boundary id of circle two
           for (const auto &face : circle_two.active_face_iterators())
             if (face->at_boundary())
               face->set_boundary_id(face->boundary_id() + 2);
 
-          GridGenerator::merge_triangulations(circle_one, circle_two, triangulation, 0, true, true);
-          triangulation.set_manifold(0,SphericalManifold<dim>((dim == 2) ? Point<dim>(0, 0) : Point<dim>(0, 0, 0)));
+          GridGenerator::merge_triangulations(
+            circle_one, circle_two, triangulation, 0, true, true);
+          triangulation.set_manifold(0,
+                                     SphericalManifold<dim>(
+                                       (dim == 2) ? Point<dim>(0, 0) :
+                                                    Point<dim>(0, 0, 0)));
           break;
         }
-        case Settings::corectangle: {
+      case Settings::corectangle:
+        {
           // create non-matching grid
-          Triangulation<dim>                        tria_0, tria_1;
+          Triangulation<dim> tria_0, tria_1;
 
           GridGenerator::subdivided_hyper_rectangle(
             tria_0, {7, 7}, {0.0, 0.0}, {1.2, 1.0}, true);
@@ -1782,8 +1801,10 @@ MatrixFreeNavierStokes<dim>::make_grid()
             if (face->at_boundary())
               face->set_boundary_id(face->boundary_id() + 2 * dim);
 
-          GridGenerator::merge_triangulations(tria_0, tria_1, triangulation, 0., false, true);
-          AssertDimension(tria_0.n_vertices() + tria_1.n_vertices(), triangulation.n_vertices());
+          GridGenerator::merge_triangulations(
+            tria_0, tria_1, triangulation, 0., false, true);
+          AssertDimension(tria_0.n_vertices() + tria_1.n_vertices(),
+                          triangulation.n_vertices());
 
 
           break;
@@ -1834,9 +1855,8 @@ MatrixFreeNavierStokes<dim>::setup_system()
   constraints.reinit(locally_relevant_dofs);
   DoFTools::make_hanging_node_constraints(dof_handler, constraints);
 
-  if (parameters.geometry== Settings::corectangle)
+  if (parameters.geometry == Settings::corectangle)
     {
-
       // Establish the constraints linking the two domains
       face_pairs.emplace_back(1, 2 * dim);
       face_pairs.emplace_back(2 * dim, 1);
@@ -1886,7 +1906,6 @@ MatrixFreeNavierStokes<dim>::setup_system()
 
 
 
-
   constraints.close();
 
   system_matrix.reinit(mapping,
@@ -1904,7 +1923,7 @@ MatrixFreeNavierStokes<dim>::setup_system()
 template <int dim>
 void
 MatrixFreeNavierStokes<dim>::evaluate_residual(
-  LinearAlgebra::distributed::Vector<double> &      dst,
+  LinearAlgebra::distributed::Vector<double>       &dst,
   const LinearAlgebra::distributed::Vector<double> &src) const
 {
   system_matrix.get_system_matrix_free().cell_loop(
@@ -1922,10 +1941,10 @@ MatrixFreeNavierStokes<dim>::evaluate_residual(
 template <int dim>
 void
 MatrixFreeNavierStokes<dim>::local_evaluate_residual(
-  const MatrixFree<dim, double> &                   data,
-  LinearAlgebra::distributed::Vector<double> &      dst,
+  const MatrixFree<dim, double>                    &data,
+  LinearAlgebra::distributed::Vector<double>       &dst,
   const LinearAlgebra::distributed::Vector<double> &src,
-  const std::pair<unsigned int, unsigned int> &     cell_range) const
+  const std::pair<unsigned int, unsigned int>      &cell_range) const
 {
   using FECellIntegratorType =
     FEEvaluation<dim, -1, 0, dim + 1, double, VectorizedArray<double>>;
@@ -2111,7 +2130,8 @@ MatrixFreeNavierStokes<dim>::compute_update()
 
   switch (parameters.preconditioner)
     {
-        case Settings::amg: {
+      case Settings::amg:
+        {
           TrilinosWrappers::PreconditionAMG                 preconditioner;
           TrilinosWrappers::PreconditionAMG::AdditionalData data;
 
@@ -2125,7 +2145,8 @@ MatrixFreeNavierStokes<dim>::compute_update()
           gmres.solve(system_matrix, newton_update, system_rhs, preconditioner);
           break;
         }
-        case Settings::gcmg: {
+      case Settings::gcmg:
+        {
           MultigridParameters mg_data;
           mg_data.smoother.relaxation = parameters.relaxation_parameter;
 
@@ -2141,7 +2162,8 @@ MatrixFreeNavierStokes<dim>::compute_update()
                           solution);
           break;
         }
-        case Settings::lsmg: {
+      case Settings::lsmg:
+        {
           MultigridParameters mg_data;
           mg_data.smoother.relaxation = parameters.relaxation_parameter;
 
@@ -2157,7 +2179,8 @@ MatrixFreeNavierStokes<dim>::compute_update()
                           solution);
           break;
         }
-        case Settings::ilu: {
+      case Settings::ilu:
+        {
           TrilinosWrappers::PreconditionILU                 preconditioner;
           TrilinosWrappers::PreconditionILU::AdditionalData data_ilu;
           preconditioner.initialize(system_matrix.get_system_matrix(),
@@ -2166,7 +2189,8 @@ MatrixFreeNavierStokes<dim>::compute_update()
           gmres.solve(system_matrix, newton_update, system_rhs, preconditioner);
           break;
         }
-        case Settings::none: {
+      case Settings::none:
+        {
           PreconditionIdentity preconditioner;
           gmres.solve(system_matrix, newton_update, system_rhs, preconditioner);
           break;
@@ -2538,14 +2562,16 @@ main(int argc, char *argv[])
     {
       switch (parameters.dimension)
         {
-            case 2: {
+          case 2:
+            {
               MatrixFreeNavierStokes<2> vector_valued_problem(parameters);
               vector_valued_problem.run();
 
               break;
             }
 
-            case 3: {
+          case 3:
+            {
               MatrixFreeNavierStokes<3> vector_valued_problem(parameters);
               vector_valued_problem.run();
               break;

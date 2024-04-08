@@ -118,8 +118,7 @@ Settings::try_parse(const std::string &prm_filename)
                     "Number of cycles <1 up to 9-dim >");
   prm.declare_entry("geometry",
                     "cocircle",
-                    Patterns::Selection(
-                      "cocircle|corectangle"),
+                    Patterns::Selection("cocircle|corectangle"),
                     "Geometry <cocircle|corectangle>");
   prm.declare_entry("initial refinement",
                     "1",
@@ -362,10 +361,10 @@ public:
 
     const auto face_function =
       [&](const auto &data, auto &dst, const auto &src, const auto face_range) {
-        (void) data;
-        (void) dst;
-        (void) src;
-        (void) face_range;
+        (void)data;
+        (void)dst;
+        (void)src;
+        (void)face_range;
       };
 
     const auto boundary_function =
@@ -436,13 +435,17 @@ public:
              ++cell)
           {
             phi.reinit(cell);
-            phi.gather_evaluate(src, EvaluationFlags::values | EvaluationFlags::gradients);
+            phi.gather_evaluate(src,
+                                EvaluationFlags::values |
+                                  EvaluationFlags::gradients);
             for (unsigned int q = 0; q < phi.n_q_points; ++q)
               {
                 phi.submit_gradient(phi.get_gradient(q), q);
                 phi.submit_value(-1.0, q);
               }
-            phi.integrate_scatter(EvaluationFlags::values | EvaluationFlags::gradients, dst);
+            phi.integrate_scatter(EvaluationFlags::values |
+                                    EvaluationFlags::gradients,
+                                  dst);
           }
       };
 
@@ -607,9 +610,12 @@ template <int dim>
 class MatrixFreeMortarNonLinearPoisson
 {
 public:
-  MatrixFreeMortarNonLinearPoisson(const Settings &parameters):
-    parameters(parameters), fe_q(parameters.element_order), quad(parameters.element_order+1), tria(MPI_COMM_WORLD), dof_handler(tria)
-  {};
+  MatrixFreeMortarNonLinearPoisson(const Settings &parameters)
+    : parameters(parameters)
+    , fe_q(parameters.element_order)
+    , quad(parameters.element_order + 1)
+    , tria(MPI_COMM_WORLD)
+    , dof_handler(tria){};
 
   void
   solve();
@@ -617,50 +623,50 @@ public:
 private:
   void
   make_grid();
-//
- // void
- // refine_grid();
-//
+  //
+  // void
+  // refine_grid();
+  //
   void
- setup_system();
+  setup_system();
 
-  //void
-  //evaluate_residual(
-  //  LinearAlgebra::distributed::Vector<double> &      dst,
-  //  const LinearAlgebra::distributed::Vector<double> &src) const;
+  // void
+  // evaluate_residual(
+  //   LinearAlgebra::distributed::Vector<double> &      dst,
+  //   const LinearAlgebra::distributed::Vector<double> &src) const;
 
-  //void
-  //local_evaluate_residual(
-  //  const MatrixFree<dim, double> &                   data,
-  //  LinearAlgebra::distributed::Vector<double> &      dst,
-  //  const LinearAlgebra::distributed::Vector<double> &src,
-  //  const std::pair<unsigned int, unsigned int> &     cell_range) const;
-//
-  //void
-  //assemble_rhs();
-//
-  //double
-  //compute_residual(const double alpha);
-//
-  //void
-  //compute_update();
+  // void
+  // local_evaluate_residual(
+  //   const MatrixFree<dim, double> &                   data,
+  //   LinearAlgebra::distributed::Vector<double> &      dst,
+  //   const LinearAlgebra::distributed::Vector<double> &src,
+  //   const std::pair<unsigned int, unsigned int> &     cell_range) const;
+  //
+  // void
+  // assemble_rhs();
+  //
+  // double
+  // compute_residual(const double alpha);
+  //
+  // void
+  // compute_update();
 
-  //void
-  //compute_solution_norm() const;
-//
-  //void
-  //compute_l2_error() const;
-//
-  //void
-  //output_results(const unsigned int cycle) const;
+  // void
+  // compute_solution_norm() const;
+  //
+  // void
+  // compute_l2_error() const;
+  //
+  // void
+  // output_results(const unsigned int cycle) const;
 private:
   Settings parameters;
 
-  const MappingQ1<dim> mapping;
-  const FE_Q<dim>      fe_q;
-  const QGauss<dim>    quad;
+  const MappingQ1<dim>                      mapping;
+  const FE_Q<dim>                           fe_q;
+  const QGauss<dim>                         quad;
   parallel::distributed::Triangulation<dim> tria;
-  DoFHandler<dim> dof_handler;
+  DoFHandler<dim>                           dof_handler;
 
 
   std::vector<std::pair<unsigned int, unsigned int>> face_pairs;
@@ -671,10 +677,9 @@ template <int dim>
 void
 MatrixFreeMortarNonLinearPoisson<dim>::make_grid()
 {
-
-  if (parameters.geometry==Settings::GeometryType::corectangle)
+  if (parameters.geometry == Settings::GeometryType::corectangle)
     {
-      Triangulation<dim>                        tria_0, tria_1;
+      Triangulation<dim> tria_0, tria_1;
       GridGenerator::subdivided_hyper_rectangle(
         tria_0, {7, 7}, {0.0, 0.0}, {1.0, 1.0}, true);
 
@@ -698,7 +703,7 @@ MatrixFreeMortarNonLinearPoisson<dim>::make_grid()
       nm_face_pairs.emplace_back(1);
       nm_face_pairs.emplace_back(2 * dim);
     }
-  else if (parameters.geometry==Settings::GeometryType::cocircle)
+  else if (parameters.geometry == Settings::GeometryType::cocircle)
     {
       // Generate two grids of two non-matching circles
       const double r1_i = 0.25;
@@ -745,7 +750,7 @@ MatrixFreeMortarNonLinearPoisson<dim>::make_grid()
     }
   else
     {
-      throw (std::runtime_error("Not implemented"));
+      throw(std::runtime_error("Not implemented"));
     }
 }
 
@@ -759,14 +764,14 @@ MatrixFreeMortarNonLinearPoisson<dim>::solve()
   using VectorizedArrayType = VectorizedArray<Number>;
   using VectorType          = LinearAlgebra::distributed::Vector<Number>;
 
-  const unsigned int fe_degree=parameters.element_order;
-  const unsigned int n_global_refinements=parameters.initial_refinement;
+  const unsigned int fe_degree            = parameters.element_order;
+  const unsigned int n_global_refinements = parameters.initial_refinement;
 
   ConditionalOStream pcout(std::cout,
                            Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) ==
                              0);
 
-  //Make triangulation
+  // Make triangulation
   make_grid();
 
   // create DoFHandler
@@ -833,7 +838,6 @@ MatrixFreeMortarNonLinearPoisson<dim>::solve()
 
   for (unsigned int newton_step = 1; newton_step <= itmax; ++newton_step)
     {
-
       ReductionControl reduction_control(10000, 1e-20, 1e-2);
 
       // note: we need to use GMRES, since the system is non-symmetrical
@@ -843,31 +847,31 @@ MatrixFreeMortarNonLinearPoisson<dim>::solve()
       pcout << "Converged in " << reduction_control.last_step()
             << " iterations." << std::endl;
 
-      op.evaluate_residual(residual,solution);
+      op.evaluate_residual(residual, solution);
 
       pcout << "Norm of residual is: " << residual.l2_norm() << std::endl;
 
-      //assemble_rhs();
-      //compute_update();
-      //const double ERRx = newton_update.l2_norm();
-      //const double ERRf = compute_residual(1.0);
-      //solution.add(1.0, newton_update);
-//
-      //pcout << "   Nstep " << newton_step << ", errf = " << ERRf
+      // assemble_rhs();
+      // compute_update();
+      // const double ERRx = newton_update.l2_norm();
+      // const double ERRf = compute_residual(1.0);
+      // solution.add(1.0, newton_update);
+      //
+      // pcout << "   Nstep " << newton_step << ", errf = " << ERRf
       //      << ", errx = " << ERRx << ", it = " << linear_iterations
       //      << std::endl;
-//
-      //if (ERRf < TOLf || ERRx < TOLx)
+      //
+      // if (ERRf < TOLf || ERRx < TOLx)
       //  {
       //    solver_timer.stop();
-//
+      //
       //    pcout << "Convergence step " << newton_step << " value " << ERRf
       //          << " (used wall time: " << solver_timer.wall_time() << " s)"
       //          << std::endl;
-//
+      //
       //    break;
       //  }
-}
+    }
 
   // output result
   DataOut<dim> data_out;
@@ -898,14 +902,16 @@ main(int argc, char **argv)
     {
       switch (parameters.dimension)
         {
-          case 2: {
+          case 2:
+            {
               MatrixFreeMortarNonLinearPoisson<2> problem(parameters);
-             problem.solve();
+              problem.solve();
 
               break;
             }
 
-          case 3: {
+          case 3:
+            {
               MatrixFreeMortarNonLinearPoisson<3> problem(parameters);
               problem.solve();
               break;
