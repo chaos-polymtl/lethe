@@ -464,7 +464,7 @@ public:
         for (unsigned int face = face_range.first; face < face_range.second;
              ++face)
           {
-            if ((is_dg == false) && ((is_internal_face(face) == false)))
+            if (((is_internal_face(face) == false)))
               continue; // nothing to do
 
             phi_m.reinit(face);
@@ -838,7 +838,7 @@ MatrixFreeMortarNonLinearPoisson<dim>::solve()
 
   for (unsigned int newton_step = 1; newton_step <= itmax; ++newton_step)
     {
-      ReductionControl reduction_control(10000, 1e-20, 1e-2);
+      ReductionControl reduction_control(10000, 1e-20, 1e-8);
 
       // note: we need to use GMRES, since the system is non-symmetrical
       SolverGMRES<VectorType> solver(reduction_control);
