@@ -437,14 +437,11 @@ public:
   }
 
   void
-  evaluate_residual(VectorType &dst, const VectorType &src) const
+  do_residual_cell(const MatrixFree<dim, number>               &data,
+                 VectorType                                  &dst,
+                 const VectorType                            &src,
+                 const std::pair<unsigned int, unsigned int> &cell_range) const
   {
-    phi_r_cache->gather_evaluate(src,
-                                 EvaluationFlags::values |
-                                   EvaluationFlags::gradients);
-
-    const auto cell_function =
-      [&](const auto &data, auto &dst, const auto &src, const auto cell_range) {
         FECellIntegrator phi(data);
 
         for (unsigned int cell = cell_range.first; cell < cell_range.second;
@@ -463,69 +460,23 @@ public:
                                     EvaluationFlags::gradients,
                                   dst);
           }
-      };
+  }
 
-    const auto face_function =
-      [&](const auto &data, auto &dst, const auto &src, const auto face_range) {
+  void
+  evaluate_residual(VectorType &dst, const VectorType &src) const
+  {
+    phi_r_cache->gather_evaluate(src,
+                                 EvaluationFlags::values |
+                                   EvaluationFlags::gradients);
 
-      };
-
-    const auto boundary_function =
-      [&](const auto &data, auto &dst, const auto &src, const auto face_range) {
-        FEFaceIntegrator phi_m(data, true);
-
-        auto phi_r       = phi_r_cache->get_data_accessor();
-        auto phi_r_sigma = phi_r_sigma_cache->get_data_accessor();
-
-        for (unsigned int face = face_range.first; face < face_range.second;
-             ++face)
-          {
-            if (is_internal_face(face) == false)
-              continue; // nothing to do
-
-            phi_m.reinit(face);
-
-            phi_m.gather_evaluate(src,
-                                  EvaluationFlags::values |
-                                    EvaluationFlags::gradients);
-
-            const bool iface = is_internal_face(face);
-
-            if (iface)
-              {
-                phi_r.reinit(face);
-                phi_r_sigma.reinit(face);
-              }
-
-            const auto sigma_m = phi_m.read_cell_data(array_penalty_parameter);
-
-            for (unsigned int q = 0; q < phi_m.n_q_points; ++q)
-              {
-                const auto value_m = phi_m.get_value(q);
-                const auto value_p = iface ? phi_r.get_value(q) : -value_m;
-
-                const auto gradient_m = phi_m.get_gradient(q);
-                const auto gradient_p =
-                  iface ? phi_r.get_gradient(q) : gradient_m;
-
-                const auto sigma_p = iface ? phi_r_sigma.get_value(q) : sigma_m;
-                const auto sigma = std::max(sigma_m, sigma_p) * panalty_factor;
-
-                const auto jump_value = (value_m - value_p) * 0.5;
-                const auto avg_gradient =
-                  phi_m.get_normal_vector(q) * (gradient_m + gradient_p) * 0.5;
-
-                phi_m.submit_normal_derivative(-jump_value, q);
-                phi_m.submit_value(jump_value * sigma * 2.0 - avg_gradient, q);
-              }
-            phi_m.integrate_scatter(EvaluationFlags::values |
-                                      EvaluationFlags::gradients,
-                                    dst);
-          }
-      };
-
-    matrix_free.template loop<VectorType, VectorType>(
-      cell_function, face_function, boundary_function, dst, src, true);
+    matrix_free.loop(      
+      &PoissonOperator<dim, number, VectorizedArrayType>::do_residual_cell, 
+      &PoissonOperator<dim, number, VectorizedArrayType>::do_vmult_face, 
+      &PoissonOperator<dim, number, VectorizedArrayType>::do_vmult_boundary, 
+      this,
+      dst, 
+      src, 
+      true);
   }
 
 private:
