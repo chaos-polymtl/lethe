@@ -436,13 +436,13 @@ public:
              ++cell)
           {
             phi.reinit(cell);
-            phi.gather_evaluate(src, EvaluationFlags::gradients);
+            phi.gather_evaluate(src, EvaluationFlags::values | EvaluationFlags::gradients);
             for (unsigned int q = 0; q < phi.n_q_points; ++q)
               {
                 phi.submit_gradient(phi.get_gradient(q), q);
                 phi.submit_value(-1.0, q);
               }
-            phi.integrate_scatter(EvaluationFlags::gradients, dst);
+            phi.integrate_scatter(EvaluationFlags::values | EvaluationFlags::gradients, dst);
           }
       };
 
@@ -873,6 +873,7 @@ MatrixFreeMortarNonLinearPoisson<dim>::solve()
   DataOut<dim> data_out;
   data_out.attach_dof_handler(dof_handler);
   data_out.add_data_vector(solution, "solution_poisson");
+  data_out.add_data_vector(residual, "residual");
   Vector<float> ranks(tria.n_active_cells());
   ranks = Utilities::MPI::this_mpi_process(MPI_COMM_WORLD);
   data_out.add_data_vector(ranks, "ranks");
