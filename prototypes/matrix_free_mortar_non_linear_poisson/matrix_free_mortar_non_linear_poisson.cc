@@ -367,6 +367,7 @@ public:
       {
         phi.reinit(cell);
         phi.read_dof_values(src);
+
         do_vmult_cell_single(phi);
         phi.distribute_local_to_global(dst);
       }
@@ -375,10 +376,16 @@ public:
   void
   do_vmult_cell_single(FECellIntegrator &phi) const
   {
-    phi.evaluate(EvaluationFlags::gradients);
+    phi.evaluate(EvaluationFlags::values | EvaluationFlags::gradients);
+
     for (unsigned int q = 0; q < phi.n_q_points; ++q)
-      phi.submit_gradient(phi.get_gradient(q), q);
-    phi.integrate(EvaluationFlags::gradients);
+      {
+        auto previous_values =
+          nonlinear_previous_values(phi.get_current_cell_index(), q);
+        phi.submit_value(std::exp(previous_values)*phi.get_value(q),q);
+        phi.submit_gradient(phi.get_gradient(q), q);
+      }
+    phi.integrate(EvaluationFlags::values | EvaluationFlags::gradients);
   }
 
   void
@@ -462,8 +469,9 @@ public:
                               EvaluationFlags::gradients);
         for (unsigned int q = 0; q < phi.n_q_points; ++q)
           {
+            // (∇v,∇u) + exp(u) = 0
             phi.submit_gradient(phi.get_gradient(q), q);
-            phi.submit_value(-1.0, q);
+            phi.submit_value(std::exp(phi.get_value(q)), q);
           }
         phi.integrate_scatter(EvaluationFlags::values |
                                 EvaluationFlags::gradients,
@@ -541,6 +549,29 @@ public:
           this);
 
         this->valid_system = true;
+      }
+  }
+
+  void evaluate_non_linear_term(
+    const VectorType &evaluation_point)
+  {
+    // Invalidate the system due to the update of the solution vector;
+    valid_system=false;
+    const unsigned int n_cells = this->matrix_free.n_cell_batches();
+    FECellIntegrator   phi(this->matrix_free);
+
+    nonlinear_previous_values.reinit(n_cells, phi.n_q_points);
+
+    for (unsigned int cell = 0; cell < n_cells; ++cell)
+      {
+        phi.reinit(cell);
+        phi.read_dof_values_plain(evaluation_point);
+        phi.evaluate(EvaluationFlags::values);
+
+        for (unsigned int q = 0; q < phi.n_q_points; ++q)
+          {
+            nonlinear_previous_values(cell, q)   = phi.get_value(q);
+          }
       }
   }
 
@@ -625,6 +656,8 @@ private:
     return factor * (degree + 1.0) * (degree + 1.0);
   }
 
+
+
   const MatrixFree<dim, number, VectorizedArrayType> &matrix_free;
 
   FERemoteEvaluationCommunicator<dim> phi_r_comm;
@@ -637,6 +670,8 @@ private:
   dealii::AlignedVector<VectorizedArrayType> array_penalty_parameter;
 
   std::set<unsigned int> faces;
+
+  Table<2, VectorizedArray<number>> nonlinear_previous_values;
 };
 
 
@@ -877,6 +912,7 @@ MatrixFreeMortarNonLinearPoisson<dim>::solve()
 
   for (unsigned int newton_step = 1; newton_step <= itmax; ++newton_step)
     {
+      op.evaluate_non_linear_term(solution);
       ReductionControl reduction_control(10000, 1e-20, 1e-12);
 
       // note: we need to use GMRES, since the system is non-symmetrical
