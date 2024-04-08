@@ -576,7 +576,7 @@ test(const unsigned int fe_degree,
   {
     // Generate two grids of two non-matching circles
     const double r1_i=0.25;
-    const double r1_o=0.55;
+    const double r1_o=0.52;
     const double r2_i=0.5;
     const double r2_o=1;
 
@@ -595,11 +595,11 @@ test(const unsigned int fe_degree,
 
     tria.refine_global(n_global_refinements);
 
-    face_pairs.emplace_back(1, 0);
-    face_pairs.emplace_back(0, 1);
+    face_pairs.emplace_back(1, 2);
+    face_pairs.emplace_back(2, 1);
 
-    nm_face_pairs.emplace_back(0);
     nm_face_pairs.emplace_back(1);
+    nm_face_pairs.emplace_back(2);
   }
 
 
