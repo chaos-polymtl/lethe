@@ -782,10 +782,11 @@ MatrixFreeMortarNonLinearPoisson<dim>::solve()
   PoissonOperator<dim, Number, VectorizedArrayType> op(matrix_free,
                                                        nm_face_pairs);
 
-  VectorType rhs, solution, residual;
+  VectorType rhs, solution, newton_update, residual;
 
   op.initialize_dof_vector(rhs);
   op.initialize_dof_vector(solution);
+  op.initialize_dof_vector(newton_update);
   op.initialize_dof_vector(residual);
 
 
@@ -794,49 +795,45 @@ MatrixFreeMortarNonLinearPoisson<dim>::solve()
 
   constraints.set_zero(rhs);
 
-
-  const unsigned int itmax = 1;
+  const unsigned int itmax = 10;
   const double       TOLf  = 1e-12;
   const double       TOLx  = 1e-10;
 
   Timer solver_timer;
   solver_timer.start();
 
+  op.evaluate_residual(residual,solution);
+  pcout << "Initial norm of the residual is: " << residual.l2_norm() << std::endl;
+
   for (unsigned int newton_step = 1; newton_step <= itmax; ++newton_step)
     {
-      ReductionControl reduction_control(10000, 1e-20, 1e-8);
+      ReductionControl reduction_control(10000, 1e-20, 1e-12);
 
       // note: we need to use GMRES, since the system is non-symmetrical
       SolverGMRES<VectorType> solver(reduction_control);
-      solver.solve(op, solution, rhs, PreconditionIdentity());
-
-      pcout << "Converged in " << reduction_control.last_step()
-            << " iterations." << std::endl;
-
       op.evaluate_residual(residual, solution);
+      // Multiply by -1 to have J(x) dx = - R(x)
+      residual*=-1;
 
-      pcout << "Norm of residual is: " << residual.l2_norm() << std::endl;
+      solver.solve(op, newton_update, residual, PreconditionIdentity());
 
-      // assemble_rhs();
-      // compute_update();
-      // const double ERRx = newton_update.l2_norm();
-      // const double ERRf = compute_residual(1.0);
-      // solution.add(1.0, newton_update);
-      //
-      // pcout << "   Nstep " << newton_step << ", errf = " << ERRf
-      //      << ", errx = " << ERRx << ", it = " << linear_iterations
-      //      << std::endl;
-      //
-      // if (ERRf < TOLf || ERRx < TOLx)
-      //  {
-      //    solver_timer.stop();
-      //
-      //    pcout << "Convergence step " << newton_step << " value " << ERRf
-      //          << " (used wall time: " << solver_timer.wall_time() << " s)"
-      //          << std::endl;
-      //
-      //    break;
-      //  }
+      unsigned int  linear_iterations = reduction_control.last_step();
+
+      const double ERRx = newton_update.l2_norm();
+      solution.add(1.0, newton_update);
+      op.evaluate_residual(residual,solution);
+      const double ERRf = residual.l2_norm();
+
+       pcout << "   Nstep " << newton_step << ", errf = " << ERRf
+            << ", errx = " << ERRx << ", it = " << linear_iterations
+            << std::endl;
+
+       if (ERRf < TOLf || ERRx < TOLx)
+        {
+          pcout << "Convergence step " << newton_step << " value " << ERRf
+                << std::endl;
+          break;
+        }
     }
 
   // output result
