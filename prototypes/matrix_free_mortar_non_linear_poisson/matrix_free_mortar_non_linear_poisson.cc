@@ -478,6 +478,63 @@ public:
       true);
   }
 
+  const TrilinosWrappers::SparseMatrix &
+  get_system_matrix() const
+  {
+    initialize_system_matrix();
+
+    return system_matrix;
+  }
+
+  void
+  initialize_system_matrix() const
+  {
+    const auto &dof_handler = matrix_free.get_dof_handler();
+    const auto &constraints = matrix_free.get_affine_constraints();
+
+    if (system_matrix.m() == 0 || system_matrix.n() == 0)
+      {
+        system_matrix.clear();
+
+        TrilinosWrappers::SparsityPattern dsp;
+
+        dsp.reinit(this->matrix_free.get_mg_level() !=
+                       numbers::invalid_unsigned_int ?
+                     dof_handler.locally_owned_mg_dofs(
+                       this->matrix_free.get_mg_level()) :
+                     dof_handler.locally_owned_dofs(),
+                   dof_handler.get_communicator());
+
+        if (this->matrix_free.get_mg_level() != numbers::invalid_unsigned_int)
+          MGTools::make_sparsity_pattern(dof_handler,
+                                         dsp,
+                                         this->matrix_free.get_mg_level(),
+                                         constraints);
+        else
+          DoFTools::make_sparsity_pattern(dof_handler, dsp, constraints);
+
+        dsp.compress();
+
+        system_matrix.reinit(dsp);
+      }
+
+    if (this->valid_system == false)
+      {
+        system_matrix = 0.0;
+
+        MatrixFreeTools::compute_matrix(
+          matrix_free,
+          constraints,
+          system_matrix,
+          &PoissonOperator<dim, number, VectorizedArrayType>::do_vmult_cell,
+          this);
+
+        this->valid_system = true;
+      }
+  }
+
+  mutable TrilinosWrappers::SparseMatrix system_matrix;
+
 private:
   bool
   is_internal_face(const unsigned int face) const
