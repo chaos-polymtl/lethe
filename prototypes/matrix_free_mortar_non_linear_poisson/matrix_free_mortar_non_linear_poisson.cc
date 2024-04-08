@@ -261,7 +261,6 @@ public:
     , panalty_factor(
         compute_pentaly_factor(matrix_free.get_dof_handler().get_fe().degree,
                                1.0))
-    , is_dg(false)
   {
     // store all boundary faces in one set
     for (const auto &face_pair : non_matching_faces)
@@ -363,7 +362,10 @@ public:
 
     const auto face_function =
       [&](const auto &data, auto &dst, const auto &src, const auto face_range) {
-
+        (void) data;
+        (void) dst;
+        (void) src;
+        (void) face_range;
       };
 
     const auto boundary_function =
@@ -376,7 +378,7 @@ public:
         for (unsigned int face = face_range.first; face < face_range.second;
              ++face)
           {
-            if ((is_dg == false) && ((is_internal_face(face) == false)))
+            if (is_internal_face(face) == false)
               continue; // nothing to do
 
             phi_m.reinit(face);
@@ -385,26 +387,20 @@ public:
                                   EvaluationFlags::values |
                                     EvaluationFlags::gradients);
 
-            const bool iface = is_internal_face(face);
-
-            if (iface)
-              {
-                phi_r.reinit(face);
-                phi_r_sigma.reinit(face);
-              }
+            phi_r.reinit(face);
+            phi_r_sigma.reinit(face);
 
             const auto sigma_m = phi_m.read_cell_data(array_penalty_parameter);
 
             for (unsigned int q = 0; q < phi_m.n_q_points; ++q)
               {
                 const auto value_m = phi_m.get_value(q);
-                const auto value_p = iface ? phi_r.get_value(q) : -value_m;
+                const auto value_p = phi_r.get_value(q);
 
                 const auto gradient_m = phi_m.get_gradient(q);
-                const auto gradient_p =
-                  iface ? phi_r.get_gradient(q) : gradient_m;
+                const auto gradient_p = phi_r.get_gradient(q);
 
-                const auto sigma_p = iface ? phi_r_sigma.get_value(q) : sigma_m;
+                const auto sigma_p = phi_r_sigma.get_value(q);
                 const auto sigma = std::max(sigma_m, sigma_p) * panalty_factor;
 
                 const auto jump_value = (value_m - value_p) * 0.5;
@@ -603,8 +599,6 @@ private:
   dealii::AlignedVector<VectorizedArrayType> array_penalty_parameter;
 
   std::set<unsigned int> faces;
-
-  const bool is_dg = false;
 };
 
 
