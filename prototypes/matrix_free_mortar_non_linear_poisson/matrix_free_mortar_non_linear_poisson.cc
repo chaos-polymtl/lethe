@@ -253,6 +253,8 @@ public:
   using FEFaceIntegrator =
     FEFaceEvaluation<dim, -1, 0, 1, number, VectorizedArrayType>;
 
+  using VectorType          = LinearAlgebra::distributed::Vector<number>;
+
   PoissonOperator(
     const MatrixFree<dim, double, VectorizedArrayType> &matrix_free,
     const std::vector<unsigned int>                    &non_matching_faces)
@@ -306,14 +308,12 @@ public:
     compute_penalty_parameters();
   }
 
-  template <typename VectorType>
   void
   initialize_dof_vector(VectorType &vec)
   {
     matrix_free.initialize_dof_vector(vec);
   }
 
-  template <typename VectorType>
   void
   rhs(VectorType &vec) const
   {
@@ -336,7 +336,6 @@ public:
       true);
   }
 
-  template <typename VectorType>
   void
   vmult(VectorType &dst, const VectorType &src) const
   {
@@ -344,8 +343,22 @@ public:
                                  EvaluationFlags::values |
                                    EvaluationFlags::gradients);
 
-    const auto cell_function =
-      [&](const auto &data, auto &dst, const auto &src, const auto cell_range) {
+    matrix_free.loop(      
+      &PoissonOperator<dim, number, VectorizedArrayType>::do_vmult_cell, 
+      &PoissonOperator<dim, number, VectorizedArrayType>::do_vmult_face, 
+      &PoissonOperator<dim, number, VectorizedArrayType>::do_vmult_boundary, 
+      this,
+      dst, 
+      src, 
+      true);
+  }
+
+  void
+  do_vmult_cell(const MatrixFree<dim, number>               &data,
+                 VectorType                                  &dst,
+                 const VectorType                            &src,
+                 const std::pair<unsigned int, unsigned int> &cell_range) const
+  {
         FECellIntegrator phi(data);
 
         for (unsigned int cell = cell_range.first; cell < cell_range.second;
@@ -357,18 +370,26 @@ public:
               phi.submit_gradient(phi.get_gradient(q), q);
             phi.integrate_scatter(EvaluationFlags::gradients, dst);
           }
-      };
+  }
 
-    const auto face_function =
-      [&](const auto &data, auto &dst, const auto &src, const auto face_range) {
+  void
+  do_vmult_face(const MatrixFree<dim, number>               &data,
+                 VectorType                                  &dst,
+                 const VectorType                            &src,
+                 const std::pair<unsigned int, unsigned int> &face_range) const
+  {
         (void)data;
         (void)dst;
         (void)src;
         (void)face_range;
-      };
+  }
 
-    const auto boundary_function =
-      [&](const auto &data, auto &dst, const auto &src, const auto face_range) {
+  void
+  do_vmult_boundary(const MatrixFree<dim, number>               &data,
+                 VectorType                                  &dst,
+                 const VectorType                            &src,
+                 const std::pair<unsigned int, unsigned int> &face_range) const
+  {
         FEFaceIntegrator phi_m(data, true);
 
         auto phi_r       = phi_r_cache->get_data_accessor();
@@ -413,13 +434,8 @@ public:
                                       EvaluationFlags::gradients,
                                     dst);
           }
-      };
-
-    matrix_free.template loop<VectorType, VectorType>(
-      cell_function, face_function, boundary_function, dst, src, true);
   }
 
-  template <typename VectorType>
   void
   evaluate_residual(VectorType &dst, const VectorType &src) const
   {
@@ -464,7 +480,7 @@ public:
         for (unsigned int face = face_range.first; face < face_range.second;
              ++face)
           {
-            if (((is_internal_face(face) == false)))
+            if (is_internal_face(face) == false)
               continue; // nothing to do
 
             phi_m.reinit(face);
