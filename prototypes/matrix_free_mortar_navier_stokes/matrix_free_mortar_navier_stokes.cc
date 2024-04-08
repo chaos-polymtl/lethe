@@ -87,7 +87,8 @@ struct Settings
   enum GeometryType
   {
     hypercube,
-    hyperrectangle
+    hyperrectangle,
+    cocircle
   };
 
   enum SourceTermType
@@ -130,8 +131,8 @@ Settings::try_parse(const std::string &prm_filename)
                     "Number of cycles <1 up to 9-dim >");
   prm.declare_entry("geometry",
                     "hypercube",
-                    Patterns::Selection("hypercube|hyperrectangle"),
-                    "Geometry <hypercube|hyperrectangle>");
+                    Patterns::Selection("hypercube|hyperrectangle|cocircle"),
+                    "Geometry <hypercube|hyperrectangle|cocircle>");
   prm.declare_entry("initial refinement",
                     "1",
                     Patterns::Integer(),
@@ -207,10 +208,13 @@ Settings::try_parse(const std::string &prm_filename)
   else
     AssertThrow(false, ExcNotImplemented());
 
+
   if (prm.get("geometry") == "hypercube")
     this->geometry = hypercube;
   else if (prm.get("geometry") == "hyperrectangle")
     this->geometry = hyperrectangle;
+  else if (prm.get("geometry") == "cocircle")
+    this->geometry = cocircle;
   else
     AssertThrow(false, ExcNotImplemented());
 
@@ -1713,6 +1717,24 @@ MatrixFreeNavierStokes<dim>::make_grid()
             true);
           break;
         }
+        case Settings::cocircle: {
+          // Generate two grids of two non-matching circles
+
+          const double r1_i=0.25;
+          const double r1_o=0.51;
+          const double r2_i=0.5;
+          const double r2_o=1;
+
+          Triangulation<dim> circle_one;
+          GridGenerator::concentric_hyper_shells(circle_one,(dim == 2) ? Point<dim>(0, 0) : Point<dim>(0, 0, 0),r1_i,r1_o);
+          Triangulation<dim> circle_two;
+          GridGenerator::concentric_hyper_shells(circle_two,(dim == 2) ? Point<dim>(0, 0) : Point<dim>(0, 0, 0),r2_i,r2_o);
+
+          GridGenerator::merge_triangulations(circle_one, circle_two, triangulation, 0, true, true);
+
+          triangulation.set_manifold(0,SphericalManifold<dim>((dim == 2) ? Point<dim>(0, 0) : Point<dim>(0, 0, 0)));
+          break;
+        }
     }
 
   triangulation.refine_global(parameters.initial_refinement);
@@ -2328,6 +2350,8 @@ MatrixFreeNavierStokes<dim>::run()
       GEOMETRY_header = "Geometry: hypercube";
     else if (parameters.geometry == Settings::hyperrectangle)
       GEOMETRY_header = "Geometry: hyperrectangle";
+    else if (parameters.geometry == Settings::cocircle)
+      GEOMETRY_header = "Geometry: cocircle";
     std::string SOURCE_header = "";
     if (parameters.source_term == Settings::zero)
       SOURCE_header = "Source term: zero";
