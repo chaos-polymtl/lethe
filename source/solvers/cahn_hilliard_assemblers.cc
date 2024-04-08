@@ -28,6 +28,8 @@ CahnHilliardAssemblerCore<dim>::assemble_matrix(
 {
   // Gather physical properties
   const double epsilon   = this->epsilon;
+  //std::cout<<std::setprecision(6);
+  //std::cout<<"epsilon value in assembler :"<< epsilon<<std::endl;
   const double cell_size = scratch_data.cell_size;
   const double xi =
     this->cahn_hilliard_parameters.potential_smoothing_coefficient;

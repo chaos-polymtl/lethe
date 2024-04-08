@@ -62,6 +62,8 @@ CahnHilliard<dim>::setup_assemblers()
   // it cannot be used directly from the simulation parameters and it is passed
   // to the constructor separately.
 
+  double epsilon = compute_epsilon();
+
   // Angle of contact boundary condition
   this->assemblers.push_back(
     std::make_shared<CahnHilliardAssemblerAngleOfContact<dim>>(
@@ -71,7 +73,7 @@ CahnHilliard<dim>::setup_assemblers()
          .epsilon_set_method == Parameters::EpsilonSetMethod::manual) ?
         this->simulation_parameters.multiphysics.cahn_hilliard_parameters
           .epsilon :
-        GridTools::minimal_cell_diameter(*triangulation),
+        epsilon,
       this->simulation_parameters.boundary_conditions_cahn_hilliard));
 
   // Free angle of contact boundary condition
@@ -83,7 +85,7 @@ CahnHilliard<dim>::setup_assemblers()
          .epsilon_set_method == Parameters::EpsilonSetMethod::manual) ?
         this->simulation_parameters.multiphysics.cahn_hilliard_parameters
           .epsilon :
-        GridTools::minimal_cell_diameter(*triangulation),
+        epsilon,
       this->simulation_parameters.boundary_conditions_cahn_hilliard));
 
   // Core assembler
@@ -93,8 +95,7 @@ CahnHilliard<dim>::setup_assemblers()
     (this->simulation_parameters.multiphysics.cahn_hilliard_parameters
        .epsilon_set_method == Parameters::EpsilonSetMethod::manual) ?
       this->simulation_parameters.multiphysics.cahn_hilliard_parameters
-        .epsilon :
-      GridTools::minimal_cell_diameter(*triangulation)));
+        .epsilon : epsilon));
 }
 
 template <int dim>
@@ -708,6 +709,13 @@ CahnHilliard<dim>::postprocess(bool first_iteration)
         }
     }
 
+  if (simulation_parameters.multiphysics.cahn_hilliard_parameters.epsilon_verbosity == Parameters::EpsilonVerbosity::verbose)
+  {
+      double epsilon = compute_epsilon();
+      announce_string(this->pcout, "Epsilon value");
+      this->pcout <<"Epsilon value: "<<epsilon<<std::endl;
+  }
+
   if (simulation_parameters.post_processing.calculate_phase_statistics)
     {
       calculate_phase_statistics();
@@ -857,6 +865,7 @@ CahnHilliard<dim>::postprocess(bool first_iteration)
               this->barycenter_table.write_text(output);
               output.close();
             }
+
         }
     }
 }
@@ -1553,17 +1562,30 @@ CahnHilliard<dim>::compute_epsilon()
     auto mpi_communicator = this->triangulation->get_communicator();
 
     double epsilon(0.0);
-    const int max_level = this->triangulation->n_levels();
-    const int number_of_cells_on_level = this->triangulation->n_active_cells(max_level);
-    std::cout<<"max_level"<<max_level<<std::endl;
 
-    for (const auto &cell: this->dof_handler.active_cell_iterators_on_level(max_level))
+    const int max_level = this->triangulation->n_levels();
+    int number_of_cells_on_level(this->triangulation->n_active_cells(max_level-1));
+
+    double max_diameter = GridTools::maximal_cell_diameter(*triangulation);
+    double min_diameter = GridTools::minimal_cell_diameter(*triangulation);
+
+
+/*    for (const auto &cell: this->dof_handler.active_cell_iterators_on_level(max_level-1))
     {
        epsilon += cell->diameter();
     }
 
-    epsilon = Utilities::MPI::sum(epsilon,mpi_communicator)/number_of_cells_on_level;
+    number_of_cells_on_level = Utilities::MPI::sum(number_of_cells_on_level,mpi_communicator);
 
+    epsilon = Utilities::MPI::sum(epsilon,mpi_communicator)/number_of_cells_on_level;*/
+
+    epsilon = 0.5*(max_diameter+min_diameter);
+
+/*    if(simulation_parameters.multiphysics.cahn_hilliard_parameters.epsilon_verbosity == Parameters::EpsilonVerbosity::verbose)
+    {
+        announce_string(this->pcout, "Phase statistics");
+        this->pcout <<"Epsilon value: "<<epsilon<< std::endl;
+    }*/
 
     return epsilon;
 }
