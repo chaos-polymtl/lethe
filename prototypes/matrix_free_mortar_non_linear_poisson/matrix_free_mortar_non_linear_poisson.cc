@@ -1251,7 +1251,7 @@ MatrixFreeMortarNonLinearPoisson<dim>::solve()
 
   constraints.set_zero(rhs);
 
-  const unsigned int itmax = 10;
+  const unsigned int itmax = 2;
   const double       TOLf  = 1e-12;
   const double       TOLx  = 1e-10;
 
@@ -1290,7 +1290,7 @@ MatrixFreeMortarNonLinearPoisson<dim>::solve()
             {
               pcout << "Beggining linear solver " << std::endl;
               MultigridParameters mg_data;
-              mg_data.smoother.relaxation = 0.75;
+              mg_data.smoother.relaxation = 0.25;
 
               solve_with_gcmg(reduction_control,
                               op,
