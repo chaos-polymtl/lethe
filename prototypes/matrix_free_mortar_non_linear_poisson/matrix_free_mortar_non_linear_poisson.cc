@@ -550,6 +550,68 @@ public:
                                       &PoissonOperator::do_vmult_cell_single,
                                       this);
 
+
+    FEFaceIntegrator phi_m(matrix_free, true);
+
+    auto phi_r       = phi_r_cache->get_data_accessor();
+    auto phi_r_sigma = phi_r_sigma_cache->get_data_accessor();
+
+    unsigned int const dofs_per_cell = phi_m.dofs_per_cell;
+    dealii::AlignedVector<dealii::VectorizedArray<Number>> local_diag(
+      dofs_per_cell);
+
+    for (unsigned int face = matrix_free.n_inner_face_batches();
+         face < matrix_free.n_inner_face_batches() +
+                  matrix_free.n_boundary_face_batches();
+         ++face)
+      {
+        if (is_internal_face(face) == false)
+          continue; // nothing to do
+
+        phi_m.reinit(face);
+
+        for (unsigned int j = 0; j < dofs_per_cell; ++j)
+          {
+            for (unsigned int i = 0; i < dofs_per_cell; ++i)
+              phi_m.begin_dof_values()[i] = static_cast<number>(i == j);
+
+            phi_m.evaluate(EvaluationFlags::values |
+                           EvaluationFlags::gradients);
+
+            phi_r.reinit(face);
+            phi_r_sigma.reinit(face);
+
+            const auto sigma_m = phi_m.read_cell_data(array_penalty_parameter);
+
+            for (unsigned int q = 0; q < phi_m.n_q_points; ++q)
+              {
+                const auto value_m    = phi_m.get_value(q);
+                const auto gradient_m = phi_m.get_gradient(q);
+
+                const auto sigma_p = phi_r_sigma.get_value(q);
+                const auto sigma = std::max(sigma_m, sigma_p) * panalty_factor;
+
+                const auto jump_value = (value_m)*0.5;
+                const auto avg_gradient =
+                  phi_m.get_normal_vector(q) * (gradient_m)*0.5;
+
+                phi_m.submit_normal_derivative(-jump_value, q);
+                phi_m.submit_value(jump_value * sigma * 2.0 - avg_gradient, q);
+              }
+
+            phi_m.integrate(EvaluationFlags::values |
+                            EvaluationFlags::gradients);
+
+
+            local_diag[j] = phi_m.begin_dof_values()[j];
+          }
+
+        for (unsigned int j = 0; j < dofs_per_cell; ++j)
+          phi_m.begin_dof_values()[j] = local_diag[j];
+
+        phi_m.distribute_local_to_global(diagonal);
+      }
+
     for (auto &i : diagonal)
       i = (std::abs(i) > 1.0e-10) ? (1.0 / i) : 1.0;
   }
@@ -631,7 +693,7 @@ public:
 
     for (unsigned int face = face_range.first; face < face_range.second; ++face)
       {
-        if (true || (is_internal_face(face) == false))
+        if (is_internal_face(face) == false)
           continue; // nothing to do
 
         phi_m.reinit(face);
