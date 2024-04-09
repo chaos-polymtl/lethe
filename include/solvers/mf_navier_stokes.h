@@ -87,7 +87,8 @@ public:
                 const VectorType                       &present_solution,
                 const VectorType         &time_derivative_previous_solutions,
                 const ConditionalOStream &pcout,
-                const std::shared_ptr<SimulationControl> simulation_control);
+                const std::shared_ptr<SimulationControl> simulation_control,
+                FlowControl<dim>                        &flow_control);
 
   /**
    * @brief Initialize all relevant objects needed for the local smoothing
@@ -122,7 +123,8 @@ public:
                 const VectorType                       &present_solution,
                 const VectorType         &time_derivative_previous_solutions,
                 const ConditionalOStream &pcout,
-                const std::shared_ptr<SimulationControl> simulation_control);
+                const std::shared_ptr<SimulationControl> simulation_control,
+                FlowControl<dim>                        &flow_control);
 
   /**
    * @brief Calls the v cycle function of the multigrid object.
