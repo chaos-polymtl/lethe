@@ -67,6 +67,152 @@ using Number              = double;
 using VectorizedArrayType = VectorizedArray<Number>;
 using VectorType          = LinearAlgebra::distributed::Vector<Number>;
 
+// TODO: make part of deal.II
+namespace dealii
+{
+  /**
+   * Coarse grid solver using a preconditioner only. This is a little wrapper,
+   * transforming a preconditioner into a coarse grid solver.
+   */
+  template <class VectorType, class PreconditionerType>
+  class MGCoarseGridApplyPreconditioner : public MGCoarseGridBase<VectorType>
+  {
+  public:
+    /**
+     * Default constructor.
+     */
+    MGCoarseGridApplyPreconditioner();
+
+    /**
+     * Constructor. Store a pointer to the preconditioner for later use.
+     */
+    MGCoarseGridApplyPreconditioner(const PreconditionerType &precondition);
+
+    /**
+     * Clear the pointer.
+     */
+    void
+    clear();
+
+    /**
+     * Initialize new data.
+     */
+    void
+    initialize(const PreconditionerType &precondition);
+
+    /**
+     * Implementation of the abstract function.
+     */
+    virtual void
+    operator()(const unsigned int level,
+               VectorType        &dst,
+               const VectorType  &src) const override;
+
+  private:
+    /**
+     * Reference to the preconditioner.
+     */
+    SmartPointer<
+      const PreconditionerType,
+      MGCoarseGridApplyPreconditioner<VectorType, PreconditionerType>>
+      preconditioner;
+  };
+
+
+
+  template <class VectorType, class PreconditionerType>
+  MGCoarseGridApplyPreconditioner<VectorType, PreconditionerType>::
+    MGCoarseGridApplyPreconditioner()
+    : preconditioner(0, typeid(*this).name())
+  {}
+
+
+
+  template <class VectorType, class PreconditionerType>
+  MGCoarseGridApplyPreconditioner<VectorType, PreconditionerType>::
+    MGCoarseGridApplyPreconditioner(const PreconditionerType &preconditioner)
+    : preconditioner(&preconditioner, typeid(*this).name())
+  {}
+
+
+
+  template <class VectorType, class PreconditionerType>
+  void
+  MGCoarseGridApplyPreconditioner<VectorType, PreconditionerType>::initialize(
+    const PreconditionerType &preconditioner_)
+  {
+    preconditioner = &preconditioner_;
+  }
+
+
+
+  template <class VectorType, class PreconditionerType>
+  void
+  MGCoarseGridApplyPreconditioner<VectorType, PreconditionerType>::clear()
+  {
+    preconditioner = 0;
+  }
+
+
+
+  namespace internal
+  {
+    namespace MGCoarseGridApplyPreconditioner
+    {
+      template <class VectorType,
+                class PreconditionerType,
+                typename std::enable_if<
+                  std::is_same<typename VectorType::value_type, double>::value,
+                  VectorType>::type * = nullptr>
+      void
+      solve(const PreconditionerType preconditioner,
+            VectorType              &dst,
+            const VectorType        &src)
+      {
+        // to allow the case that the preconditioner was only set up on a
+        // subset of processes
+        if (preconditioner != nullptr)
+          preconditioner->vmult(dst, src);
+      }
+
+      template <class VectorType,
+                class PreconditionerType,
+                typename std::enable_if<
+                  !std::is_same<typename VectorType::value_type, double>::value,
+                  VectorType>::type * = nullptr>
+      void
+      solve(const PreconditionerType preconditioner,
+            VectorType              &dst,
+            const VectorType        &src)
+      {
+        LinearAlgebra::distributed::Vector<double> src_;
+        LinearAlgebra::distributed::Vector<double> dst_;
+
+        src_ = src;
+        dst_ = dst;
+
+        // to allow the case that the preconditioner was only set up on a
+        // subset of processes
+        if (preconditioner != nullptr)
+          preconditioner->vmult(dst_, src_);
+
+        dst = dst_;
+      }
+    } // namespace MGCoarseGridApplyPreconditioner
+  }   // namespace internal
+
+
+  template <class VectorType, class PreconditionerType>
+  void
+  MGCoarseGridApplyPreconditioner<VectorType, PreconditionerType>::operator()(
+    const unsigned int /*level*/,
+    VectorType       &dst,
+    const VectorType &src) const
+  {
+    internal::MGCoarseGridApplyPreconditioner::solve(preconditioner, dst, src);
+  }
+} // namespace dealii
+
 // Define all the parameters that can be specified in the .prm file
 struct Settings
 {
@@ -404,9 +550,6 @@ public:
                                       &PoissonOperator::do_vmult_cell_single,
                                       this);
 
-    for (unsigned int i = 0; i < edge_constrained_indices.size(); ++i)
-      diagonal.local_element(edge_constrained_indices[i]) = 0.0;
-
     for (auto &i : diagonal)
       i = (std::abs(i) > 1.0e-10) ? (1.0 / i) : 1.0;
   }
@@ -488,7 +631,7 @@ public:
 
     for (unsigned int face = face_range.first; face < face_range.second; ++face)
       {
-        if (is_internal_face(face) == false)
+        if (true || (is_internal_face(face) == false))
           continue; // nothing to do
 
         phi_m.reinit(face);
@@ -793,7 +936,7 @@ struct MultigridParameters
   {
     std::string  type         = "relaxation";
     unsigned int n_iterations = 10;
-    double       relaxation   = 0.5;
+    double       relaxation   = 0.0;
   } smoother;
 };
 
@@ -837,10 +980,34 @@ gcmg_solve(SolverControl             &solver_control,
         smoother_data[level].preconditioner->get_vector());
       smoother_data[level].n_iterations = mg_data.smoother.n_iterations;
       smoother_data[level].relaxation   = mg_data.smoother.relaxation;
+      smoother_data[level].eigenvalue_algorithm =
+        SmootherType::AdditionalData::EigenvalueAlgorithm::power_iteration;
     }
 
   MGSmootherPrecondition<LevelMatrixType, SmootherType, VectorType> mg_smoother;
   mg_smoother.initialize(mg_matrices, smoother_data);
+
+
+  {
+    // Print eigenvalue estimation for all levels
+    for (unsigned int level = min_level; level <= max_level; ++level)
+      {
+        VectorType vec;
+        mg_matrices[level]->initialize_dof_vector(vec);
+        const auto evs = mg_smoother.smoothers[level].estimate_eigenvalues(vec);
+
+        std::cout << std::endl;
+        std::cout << "  -Eigenvalue estimation level " << level << ":"
+                  << std::endl;
+        std::cout << "    Relaxation parameter: "
+                  << mg_smoother.smoothers[level].get_relaxation() << std::endl;
+        std::cout << "    Minimum eigenvalue: " << evs.min_eigenvalue_estimate
+                  << std::endl;
+        std::cout << "    Maximum eigenvalue: " << evs.max_eigenvalue_estimate
+                  << std::endl;
+        std::cout << std::endl;
+      }
+  }
 
   ReductionControl coarse_grid_solver_control(mg_data.coarse_solver.maxiter,
                                               mg_data.coarse_solver.abstol,
@@ -849,7 +1016,7 @@ gcmg_solve(SolverControl             &solver_control,
                                               false);
   SolverGMRES<VectorType> coarse_grid_solver(coarse_grid_solver_control);
 
-  std::unique_ptr<MGCoarseGridBase<VectorType>> mg_coarse;
+  std::shared_ptr<MGCoarseGridBase<VectorType>> mg_coarse;
 
   TrilinosWrappers::PreconditionAMG                 precondition_amg;
   TrilinosWrappers::PreconditionAMG::AdditionalData amg_data;
@@ -860,12 +1027,9 @@ gcmg_solve(SolverControl             &solver_control,
   precondition_amg.initialize(mg_matrices[min_level]->get_system_matrix(),
                               amg_data);
 
-  mg_coarse =
-    std::make_unique<MGCoarseGridIterativeSolver<VectorType,
-                                                 SolverGMRES<VectorType>,
-                                                 LevelMatrixType,
-                                                 decltype(precondition_amg)>>(
-      coarse_grid_solver, *mg_matrices[min_level], precondition_amg);
+  mg_coarse = std::make_shared<
+    MGCoarseGridApplyPreconditioner<VectorType, decltype(precondition_amg)>>(
+    precondition_amg);
 
   Multigrid<VectorType> mg(
     mg_matrix, *mg_coarse, mg_transfer, mg_smoother, mg_smoother);
@@ -901,6 +1065,7 @@ solve_with_gcmg(SolverControl             &solver_control,
   coarse_grid_triangulations =
     MGTransferGlobalCoarseningTools::create_geometric_coarsening_sequence(
       dof_handler.get_triangulation());
+  // coarse_grid_triangulations.erase(coarse_grid_triangulations.begin());
 
   const unsigned int n_h_levels = coarse_grid_triangulations.size();
 
@@ -1251,7 +1416,7 @@ MatrixFreeMortarNonLinearPoisson<dim>::solve()
 
   constraints.set_zero(rhs);
 
-  const unsigned int itmax = 2;
+  const unsigned int itmax = 20;
   const double       TOLf  = 1e-12;
   const double       TOLx  = 1e-10;
 
@@ -1290,7 +1455,6 @@ MatrixFreeMortarNonLinearPoisson<dim>::solve()
             {
               pcout << "Beggining linear solver " << std::endl;
               MultigridParameters mg_data;
-              mg_data.smoother.relaxation = 0.25;
 
               solve_with_gcmg(reduction_control,
                               op,
