@@ -13,6 +13,7 @@
  *
  * ---------------------------------------------------------------------*/
 
+#include <deal.II/base/convergence_table.h>
 #include <deal.II/base/function.h>
 #include <deal.II/base/parameter_handler.h>
 #include <deal.II/base/quadrature_lib.h>
@@ -1262,7 +1263,8 @@ public:
     , fe_q(parameters.element_order)
     , quad(parameters.element_order + 1)
     , tria(MPI_COMM_WORLD)
-    , dof_handler(tria){};
+    , dof_handler(tria)
+    , pcout(std::cout, Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0){};
 
   void
   solve();
@@ -1270,52 +1272,24 @@ public:
 private:
   void
   make_grid();
-  //
-  // void
-  // refine_grid();
-  //
+
   void
   setup_system();
 
-
-
-  // void
-  // evaluate_residual(
-  //   LinearAlgebra::distributed::Vector<double> &      dst,
-  //   const LinearAlgebra::distributed::Vector<double> &src) const;
-
-  // void
-  // local_evaluate_residual(
-  //   const MatrixFree<dim, double> &                   data,
-  //   LinearAlgebra::distributed::Vector<double> &      dst,
-  //   const LinearAlgebra::distributed::Vector<double> &src,
-  //   const std::pair<unsigned int, unsigned int> &     cell_range) const;
-  //
-  // void
-  // assemble_rhs();
-  //
-  // double
-  // compute_residual(const double alpha);
-  //
-  // void
-  // compute_update();
-
-  // void
-  // compute_solution_norm() const;
-  //
-  // void
-  // compute_l2_error() const;
-  //
-  // void
-  // output_results(const unsigned int cycle) const;
 private:
   Settings parameters;
 
-  const MappingQ1<dim>                      mapping;
-  const FE_Q<dim>                           fe_q;
-  const QGauss<dim>                         quad;
-  parallel::distributed::Triangulation<dim> tria;
-  DoFHandler<dim>                           dof_handler;
+  const MappingQ1<dim>                         mapping;
+  const FE_Q<dim>                              fe_q;
+  const QGauss<dim>                            quad;
+  parallel::distributed::Triangulation<dim>    tria;
+  DoFHandler<dim>                              dof_handler;
+  MatrixFree<dim, Number, VectorizedArrayType> matrix_free;
+  AffineConstraints<Number>                    constraints;
+
+  ConditionalOStream pcout;
+
+  ConvergenceTable error_table;
 
 
   std::vector<std::pair<unsigned int, unsigned int>> face_pairs;
@@ -1403,27 +1377,14 @@ MatrixFreeMortarNonLinearPoisson<dim>::make_grid()
     }
 }
 
-
-
 template <int dim>
 void
-MatrixFreeMortarNonLinearPoisson<dim>::solve()
+MatrixFreeMortarNonLinearPoisson<dim>::setup_system()
 {
-  using Number              = double;
-  using VectorizedArrayType = VectorizedArray<Number>;
-  using VectorType          = LinearAlgebra::distributed::Vector<Number>;
+  // Clear stuff first
+  dof_handler.clear();
+  constraints.clear();
 
-  const unsigned int fe_degree            = parameters.element_order;
-  const unsigned int n_global_refinements = parameters.initial_refinement;
-
-  ConditionalOStream pcout(std::cout,
-                           Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) ==
-                             0);
-
-  // Make triangulation
-  make_grid();
-
-  // create DoFHandler
   dof_handler.distribute_dofs(fe_q);
 
   // create MatrixFree
@@ -1432,9 +1393,6 @@ MatrixFreeMortarNonLinearPoisson<dim>::solve()
     update_quadrature_points | update_gradients | update_values;
   data.mapping_update_flags_boundary_faces = data.mapping_update_flags;
   data.mapping_update_flags_inner_faces    = data.mapping_update_flags;
-
-  MatrixFree<dim, Number, VectorizedArrayType> matrix_free;
-  AffineConstraints<Number>                    constraints;
 
   for (unsigned int d = 0; d < 4 * dim; ++d)
     if (face_pairs.size() == 0)
@@ -1458,124 +1416,152 @@ MatrixFreeMortarNonLinearPoisson<dim>::solve()
   pcout << " - n cells: " << tria.n_global_active_cells() << std::endl;
   pcout << " - n dof:   " << dof_handler.n_dofs() << std::endl;
   pcout << std::endl;
-
-  std::ofstream mesh_file("mesh.vtu");
-  GridOut().write_vtu(tria, mesh_file);
-
-  PoissonOperator<dim, Number, VectorizedArrayType> op(matrix_free,
-                                                       nm_face_pairs);
-
-  VectorType rhs, solution, newton_update, residual;
-
-  op.initialize_dof_vector(rhs);
-  op.initialize_dof_vector(solution);
-  op.initialize_dof_vector(newton_update);
-  op.initialize_dof_vector(residual);
+}
 
 
-  op.rhs(rhs);
-  rhs.zero_out_ghost_values();
+template <int dim>
+void
+MatrixFreeMortarNonLinearPoisson<dim>::solve()
+{
+  using Number              = double;
+  using VectorizedArrayType = VectorizedArray<Number>;
+  using VectorType          = LinearAlgebra::distributed::Vector<Number>;
 
-  constraints.set_zero(rhs);
+  const unsigned int fe_degree            = parameters.element_order;
+  const unsigned int n_global_refinements = parameters.initial_refinement;
 
-  const unsigned int itmax = 20;
-  const double       TOLf  = 1e-12;
-  const double       TOLx  = 1e-10;
+  // Make triangulation
+  make_grid();
 
-  Timer solver_timer;
-  solver_timer.start();
-
-  op.evaluate_residual(residual, solution);
-  pcout << "Initial norm of the residual is: " << residual.l2_norm()
-        << std::endl;
-
-  for (unsigned int newton_step = 1; newton_step <= itmax; ++newton_step)
+  for (unsigned int cycle = 0; cycle < parameters.number_of_cycles; ++cycle)
     {
-      op.evaluate_non_linear_term(solution);
-      ReductionControl reduction_control(10000, 1e-20, 1e-12);
+      if (cycle > 0)
+        tria.refine_global();
+
+      // Setup dof_handler and matrix free object
+      setup_system();
+
+      // Setup-operator and initialize solution vectors
+      PoissonOperator<dim, Number, VectorizedArrayType> op(matrix_free,
+                                                           nm_face_pairs);
+
+      VectorType rhs, solution, newton_update, residual;
+
+      op.initialize_dof_vector(rhs);
+      op.initialize_dof_vector(solution);
+      op.initialize_dof_vector(newton_update);
+      op.initialize_dof_vector(residual);
+      op.rhs(rhs);
+      rhs.zero_out_ghost_values();
+      constraints.set_zero(rhs);
+
+
+      // Parameters for the non-linear solver
+      const unsigned int itmax = 20;
+      const double       TOLf  = 1e-12;
+      const double       TOLx  = 1e-10;
+
+      Timer solver_timer;
+      solver_timer.start();
+
       op.evaluate_residual(residual, solution);
-      // Multiply by -1 to have J(x) dx = - R(x)
-      residual *= -1;
-      pcout << "Beggining iteration : " << newton_step << std::endl;
-
-
-      switch (parameters.preconditioner)
-        {
-          case Settings::amg:
-            {
-              // note: we need to use GMRES, since the system is non-symmetrical
-
-              TrilinosWrappers::PreconditionAMG preconditioner;
-              preconditioner.initialize(op.get_system_matrix());
-
-              SolverGMRES<VectorType> solver(reduction_control);
-              solver.solve(op, newton_update, residual, preconditioner);
-
-              break;
-            }
-          case Settings::gmg:
-            {
-              pcout << "Beggining linear solver " << std::endl;
-              MultigridParameters mg_data;
-
-              solve_with_gcmg(reduction_control,
-                              op,
-                              newton_update,
-                              residual,
-                              mg_data,
-                              mapping,
-                              dof_handler,
-                              QGauss<1>(fe_q.degree + 1),
-                              parameters,
-                              solution);
-              break;
-            }
-        }
-
-      const double ERRx = newton_update.l2_norm();
-      solution.add(1.0, newton_update);
-      op.evaluate_residual(residual, solution);
-      const double ERRf = residual.l2_norm();
-
-      pcout << "   Nstep " << newton_step << ", errf = " << ERRf
-            << ", errx = " << ERRx << ", it = " << reduction_control.last_step()
+      pcout << "Initial norm of the residual is: " << residual.l2_norm()
             << std::endl;
 
-      if (ERRf < TOLf || ERRx < TOLx)
+      // Newton method
+      for (unsigned int newton_step = 1; newton_step <= itmax; ++newton_step)
         {
-          pcout << "Convergence step " << newton_step << " value " << ERRf
-                << std::endl;
-          break;
+          op.evaluate_non_linear_term(solution);
+          ReductionControl reduction_control(10000, 1e-20, 1e-12);
+          op.evaluate_residual(residual, solution);
+          // Multiply by -1 to have J(x) dx = - R(x)
+          residual *= -1;
+          pcout << "Beggining iteration : " << newton_step << std::endl;
+
+          switch (parameters.preconditioner)
+            {
+              case Settings::amg:
+                {
+                  TrilinosWrappers::PreconditionAMG preconditioner;
+                  preconditioner.initialize(op.get_system_matrix());
+
+                  SolverGMRES<VectorType> solver(reduction_control);
+                  solver.solve(op, newton_update, residual, preconditioner);
+
+                  break;
+                }
+              case Settings::gmg:
+                {
+                  pcout << "Beggining linear solver " << std::endl;
+                  MultigridParameters mg_data;
+
+                  solve_with_gcmg(reduction_control,
+                                  op,
+                                  newton_update,
+                                  residual,
+                                  mg_data,
+                                  mapping,
+                                  dof_handler,
+                                  QGauss<1>(fe_q.degree + 1),
+                                  parameters,
+                                  solution);
+                  break;
+                }
+            }
+
+          const double ERRx = newton_update.l2_norm();
+          solution.add(1.0, newton_update);
+          op.evaluate_residual(residual, solution);
+          const double ERRf = residual.l2_norm();
+
+          pcout << "   Nstep " << newton_step << ", errf = " << ERRf
+                << ", errx = " << ERRx
+                << ", it = " << reduction_control.last_step() << std::endl;
+
+          if (ERRf < TOLf || ERRx < TOLx)
+            {
+              pcout << "Convergence step " << newton_step << " value " << ERRf
+                    << std::endl;
+              break;
+            }
         }
+
+      // Compute the L2 error
+      Vector<float> error_per_cell(tria.n_active_cells());
+
+      VectorTools::integrate_difference(mapping,
+                                        dof_handler,
+                                        solution,
+                                        MMSSolution<dim>(),
+                                        error_per_cell,
+                                        quad,
+                                        VectorTools::L2_norm);
+
+      solution.zero_out_ghost_values();
+
+      const double error =
+        VectorTools::compute_global_error(tria,
+                                          error_per_cell,
+                                          VectorTools::L2_norm);
+      std::cout << " The L2 norm of the error is : " << error << std::endl;
+      // output result
+      DataOut<dim> data_out;
+      data_out.attach_dof_handler(dof_handler);
+      data_out.add_data_vector(solution, "solution_poisson");
+      data_out.add_data_vector(residual, "residual");
+      Vector<float> ranks(tria.n_active_cells());
+      ranks = Utilities::MPI::this_mpi_process(MPI_COMM_WORLD);
+      data_out.add_data_vector(ranks, "ranks");
+      data_out.build_patches();
+      data_out.write_vtu_in_parallel("solution_poisson." +
+                                       Utilities::int_to_string(cycle) + ".vtu",
+                                     MPI_COMM_WORLD);
+      error_table.add_value("error", error);
     }
-
-  // Compute the L2 error
-  Vector<float> error_per_cell(tria.n_active_cells());
-
-  VectorTools::integrate_difference(mapping,
-                                    dof_handler,
-                                    solution,
-                                    MMSSolution<dim>(),
-                                    error_per_cell,
-                                    quad,
-                                    VectorTools::L2_norm);
-
-  solution.zero_out_ghost_values();
-
-  const double error = VectorTools::compute_global_error(tria,
-                                                         error_per_cell,
-                                                         VectorTools::L2_norm);
-  std::cout << " The L2 norm of the error is : " << error << std::endl;
-  // output result
-  DataOut<dim> data_out;
-  data_out.attach_dof_handler(dof_handler);
-  data_out.add_data_vector(solution, "solution_poisson");
-  data_out.add_data_vector(residual, "residual");
-  Vector<float> ranks(tria.n_active_cells());
-  ranks = Utilities::MPI::this_mpi_process(MPI_COMM_WORLD);
-  data_out.add_data_vector(ranks, "ranks");
-  data_out.build_patches();
-  data_out.write_vtu_in_parallel("solution_poisson.vtu", MPI_COMM_WORLD);
+  error_table.set_scientific("error", true);
+  error_table.evaluate_all_convergence_rates(
+    ConvergenceTable::RateMode::reduction_rate_log2);
+  error_table.write_text(std::cout);
 }
 
 
