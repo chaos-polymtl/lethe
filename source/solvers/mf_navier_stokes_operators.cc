@@ -507,7 +507,7 @@ NavierStokesOperatorBase<dim, number>::update_beta_force(
 {
   for (unsigned int v = 0; v < VectorizedArray<number>::size(); ++v)
     {
-      for (unsigned int d = 0; d < dim + 1; ++d)
+      for (unsigned int d = 0; d < dim; ++d)
         this->beta_force[d][v] = beta_force[d];
     }
 }
