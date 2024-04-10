@@ -255,6 +255,15 @@ public:
     const VectorType &time_derivative_previous_solutions);
 
   /**
+   * @brief Store the values of the source term calculated if dynamic control
+   * is enabled in the appropriate structure.
+   *
+   * @param[in] beta_force Source term calculated by the dynamic flow control.
+   */
+  void
+  update_beta_force(const Tensor<1, dim> &beta_force);
+
+  /**
    * @brief Evaluate right hand side using the matrix-free operator.
    *
    * @param[in,out] dst Destination vector holding the result.
@@ -372,6 +381,13 @@ protected:
    *
    */
   const Function<dim> *forcing_function;
+
+
+  /**
+   * @brief Additional source term in the case of dynamic flow control.
+   *
+   */
+  Tensor<1, dim, VectorizedArray<number>> beta_force;
 
   /**
    * @brief Kinematic viscosity needed for the operator.

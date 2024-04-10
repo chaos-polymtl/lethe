@@ -59,7 +59,8 @@ MFNavierStokesPreconditionGMG<dim>::initialize_ls(
   const VectorType                        &present_solution,
   const VectorType                        &time_derivative_previous_solutions,
   const ConditionalOStream                &pcout,
-  const std::shared_ptr<SimulationControl> simulation_control)
+  const std::shared_ptr<SimulationControl> simulation_control,
+  FlowControl<dim>                        &flow_control)
 {
   computing_timer.enter_subsection("Setup LSMG");
 
@@ -272,6 +273,9 @@ MFNavierStokesPreconditionGMG<dim>::initialize_ls(
           mg_time_derivative_previous_solutions[level].update_ghost_values();
           mg_operators[level]->evaluate_time_derivative_previous_solutions(
             mg_time_derivative_previous_solutions[level]);
+
+          if (simulation_parameters.flow_control.enable_flow_control)
+            mg_operators[level]->update_beta_force(flow_control.get_beta());
         }
     }
 
@@ -591,7 +595,8 @@ MFNavierStokesPreconditionGMG<dim>::initialize_gc(
   const VectorType                        &present_solution,
   const VectorType                        &time_derivative_previous_solutions,
   const ConditionalOStream                &pcout,
-  const std::shared_ptr<SimulationControl> simulation_control)
+  const std::shared_ptr<SimulationControl> simulation_control,
+  FlowControl<dim>                        &flow_control)
 {
   computing_timer.enter_subsection("Setup GCMG");
 
@@ -860,6 +865,10 @@ MFNavierStokesPreconditionGMG<dim>::initialize_gc(
           this->mg_operators[level]
             ->evaluate_time_derivative_previous_solutions(
               mg_time_derivative_previous_solutions[level]);
+
+          if (simulation_parameters.flow_control.enable_flow_control)
+            this->mg_operators[level]->update_beta_force(
+              flow_control.get_beta());
         }
     }
 
@@ -1195,6 +1204,10 @@ MFNavierStokesSolver<dim>::solve()
           this->time_derivative_previous_solutions.update_ghost_values();
           this->system_operator->evaluate_time_derivative_previous_solutions(
             this->time_derivative_previous_solutions);
+
+          if (this->simulation_parameters.flow_control.enable_flow_control)
+            this->system_operator->update_beta_force(
+              this->flow_control.get_beta());
         }
 
       this->iterate();
@@ -1541,7 +1554,8 @@ MFNavierStokesSolver<dim>::setup_GMG()
                                       this->present_solution,
                                       this->time_derivative_previous_solutions,
                                       this->pcout,
-                                      this->simulation_control);
+                                      this->simulation_control,
+                                      this->flow_control);
   else if (this->simulation_parameters.linear_solver
              .at(PhysicsID::fluid_dynamics)
              .preconditioner ==
@@ -1557,7 +1571,8 @@ MFNavierStokesSolver<dim>::setup_GMG()
                                       this->present_solution,
                                       this->time_derivative_previous_solutions,
                                       this->pcout,
-                                      this->simulation_control);
+                                      this->simulation_control,
+                                      this->flow_control);
   else
     AssertThrow(false, ExcNotImplemented());
 

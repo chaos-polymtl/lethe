@@ -502,6 +502,18 @@ NavierStokesOperatorBase<dim, number>::
 
 template <int dim, typename number>
 void
+NavierStokesOperatorBase<dim, number>::update_beta_force(
+  const Tensor<1, dim> &beta_force)
+{
+  for (unsigned int v = 0; v < VectorizedArray<number>::size(); ++v)
+    {
+      for (unsigned int d = 0; d < dim; ++d)
+        this->beta_force[d][v] = beta_force[d];
+    }
+}
+
+template <int dim, typename number>
+void
 NavierStokesOperatorBase<dim, number>::evaluate_residual(VectorType       &dst,
                                                          const VectorType &src)
 {
@@ -622,12 +634,15 @@ NavierStokesStabilizedOperator<dim, number>::do_cell_integral_local(
   for (const auto q : integrator.quadrature_point_indices())
     {
       // Evaluate source term function
-      Tensor<1, dim + 1, VectorizedArray<number>> source_value;
-      Point<dim, VectorizedArray<number>>         point_batch =
+      Tensor<1, dim, VectorizedArray<number>> source_value;
+      Point<dim, VectorizedArray<number>>     point_batch =
         integrator.quadrature_point(q);
       source_value =
-        evaluate_function<dim, number, dim + 1>(*(this->forcing_function),
-                                                point_batch);
+        evaluate_function<dim, number, dim>(*(this->forcing_function),
+                                            point_batch);
+
+      // Add to source term the dynamic flow control force (zero if not enabled)
+      source_value += this->beta_force;
 
       // Gather the original value/gradient
       typename FECellIntegrator::value_type    value = integrator.get_value(q);
@@ -847,12 +862,16 @@ NavierStokesStabilizedOperator<dim, number>::local_evaluate_residual(
       for (const auto q : integrator.quadrature_point_indices())
         {
           // Evaluate source term function
-          Tensor<1, dim + 1, VectorizedArray<number>> source_value;
-          Point<dim, VectorizedArray<number>>         point_batch =
+          Tensor<1, dim, VectorizedArray<number>> source_value;
+          Point<dim, VectorizedArray<number>>     point_batch =
             integrator.quadrature_point(q);
           source_value =
-            evaluate_function<dim, number, dim + 1>(*(this->forcing_function),
-                                                    point_batch);
+            evaluate_function<dim, number, dim>(*(this->forcing_function),
+                                                point_batch);
+
+          // Add to source term the dynamic flow control force (zero if not
+          // enabled)
+          source_value += this->beta_force;
 
           // Gather the original value/gradient
           typename FECellIntegrator::value_type value = integrator.get_value(q);
