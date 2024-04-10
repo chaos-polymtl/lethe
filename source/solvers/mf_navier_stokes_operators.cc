@@ -638,7 +638,8 @@ NavierStokesStabilizedOperator<dim, number>::do_cell_integral_local(
       Point<dim, VectorizedArray<number>>     point_batch =
         integrator.quadrature_point(q);
       source_value =
-        evaluate_function<dim, number, dim>(*(this->forcing_function), point_batch);
+        evaluate_function<dim, number, dim>(*(this->forcing_function),
+                                            point_batch);
 
       // Add to source term the dynamic flow control force (zero if not enabled)
       source_value += this->beta_force;
