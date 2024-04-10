@@ -191,6 +191,9 @@ public:
     , dof_handler(dof_handler)
     , constraints(constraints)
     , quadrature(quadrature)
+    , panalty_factor(
+        compute_pentaly_factor(dof_handler.get_fe().degree,
+                               1.0))
     , valid_system(false)
   {
     typename MatrixFree<dim, Number, VectorizedArrayType>::AdditionalData data;
@@ -203,6 +206,44 @@ public:
     const auto &tria = dof_handler.get_triangulation();
 
     const double radius = 0.5; // TODO
+
+    const auto compute_penalty_parameter = [&](const auto & cell)
+      {
+    const dealii::FiniteElement<dim> &fe =
+      matrix_free.get_dof_handler().get_fe();
+    const unsigned int degree = fe.degree;
+
+    dealii::QGauss<dim>   quadrature(degree + 1);
+    dealii::FEValues<dim> fe_values(mapping,
+                                    fe,
+                                    quadrature,
+                                    dealii::update_JxW_values);
+
+    dealii::QGauss<dim - 1>   face_quadrature(degree + 1);
+    dealii::FEFaceValues<dim> fe_face_values(mapping,
+                                             fe,
+                                             face_quadrature,
+                                             dealii::update_JxW_values);
+
+          fe_values.reinit(cell);
+
+          Number volume = 0;
+          for (unsigned int q = 0; q < quadrature.size(); ++q)
+            volume += fe_values.JxW(q);
+
+          Number surface_area = 0;
+          for (const auto f : cell->face_indices())
+            {
+              fe_face_values.reinit(cell, f);
+              const Number factor =
+                (cell->at_boundary(f) && !cell->has_periodic_neighbor(f)) ? 1. :
+                                                                            0.5;
+              for (unsigned int q = 0; q < face_quadrature.size(); ++q)
+                surface_area += fe_face_values.JxW(q) * factor;
+            }
+
+          return surface_area / volume;
+      };
 
     for (const auto &cell_0 : tria.active_cell_iterators())
       for (const auto &face_0 : cell_0->face_iterators())
@@ -232,8 +273,14 @@ public:
                   for (const auto &p : points)
                     normal.emplace_back(p / p.norm());
 
+                  const Number penalty_parameter = std::min(
+                    compute_penalty_parameter(cell_0),
+                    compute_penalty_parameter(cell_1)
+                  );
+                  
+
                   all_intersections.emplace_back(
-                    JxWs, cell_0, points_0, cell_1, points_1, normal);
+                    JxWs, cell_0, points_0, cell_1, points_1, normal, penalty_parameter);
                 }
   }
 
@@ -283,7 +330,7 @@ public:
     Vector<double> buffer_0;
     Vector<double> buffer_1;
 
-    for (const auto &[JxWs, cell_0, points_0, cell_1, points_1, normals] :
+    for (const auto &[JxWs, cell_0, points_0, cell_1, points_1, normals, penalty_parameter] :
          all_intersections)
       {
         const auto cell_dof_0 = cell_0->as_dof_handler_iterator(dof_handler);
@@ -306,6 +353,7 @@ public:
         for (const auto q : phi_m.quadrature_point_indices())
           {
             const auto normal = normals[q];
+            const auto JxW    = JxWs [q];
 
             const auto value_m = phi_m.get_value(q);
             const auto value_p = phi_p.get_value(q);
@@ -313,10 +361,10 @@ public:
             const auto gradient_m = phi_m.get_gradient(q);
             const auto gradient_p = phi_p.get_gradient(q);
 
-            const auto jump_value   = (value_m - value_p) * 0.5;
-            const auto avg_gradient = normal * (gradient_m + gradient_p) * 0.5;
+            const auto jump_value   = (value_m - value_p) * 0.5 * JxW;
+            const auto avg_gradient = normal * (gradient_m + gradient_p) * 0.5 * JxW;
 
-            const double sigma = 1.0; // TODO
+            const double sigma = penalty_parameter * panalty_factor;
 
             phi_m.submit_gradient(-jump_value * normal, q);
             phi_m.submit_value(+jump_value * sigma * 2.0 - avg_gradient, q);
@@ -404,7 +452,7 @@ private:
                          std::vector<Point<dim>>,
                          typename Triangulation<dim>::active_cell_iterator,
                          std::vector<Point<dim>>,
-                         std::vector<Tensor<1, dim, Number>>>>
+                         std::vector<Tensor<1, dim, Number>>, Number>>
     all_intersections;
 
   void
@@ -436,7 +484,14 @@ private:
     phi.integrate(EvaluationFlags::gradients);
   }
 
+  static Number
+  compute_pentaly_factor(const unsigned int degree, const Number factor)
+  {
+    return factor * (degree + 1.0) * (degree + 1.0);
+  }
+
   mutable TrilinosWrappers::SparseMatrix system_matrix;
+  const Number panalty_factor;
   mutable bool                           valid_system;
 };
 
