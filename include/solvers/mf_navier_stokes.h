@@ -55,40 +55,38 @@ class MFNavierStokesPreconditionGMG
 
 public:
   /**
-   * @brief Initialize all relevant objects needed for the local smoothing
-   * geometric multigrid approach.
+   * @brief Construct a new precondition GMG object.
    *
-   * @param[in] computing_timer General solver timer.
-   * @param[in] dof_handler Describes the layout of DoFs and the type of FE.
-   * @param[in] simulation_parameters Object containing all parameters specified
+   * @param simulation_parameters Object containing all parameters specified
    * in input file.
-   * @param[in] mapping Describes the transformations from unit to real cell.
-   * @param[in] fe Describes the FE system for the vector-valued problem.
-   * @param[in] mg_computing_timer Timer for specific MG components.
-   * @param[in] cell_quadrature  Required for local operations on cells.
-   * @param[in] forcing_function Function specified in parameter file as source
+   * @param dof_handler Describes the layout of DoFs and the type of FE.
+   * @param mapping Describes the transformations from unit to real cell.
+   * @param cell_quadrature Required for local operations on cells.
+   * @param forcing_function Function specified in parameter file as source
    * term.
-   * @param[in] present_solution Previous solution needed to evaluate the non
+   * @param simulation_control Required to get the time stepping method.
+   * @param mg_computing_timer Timer for specific MG components.
+   * @param pcout Object that allows parallel printing.
+   * @param fe Describes the FE system for the vector-valued problem.
+   * @param present_solution Previous solution needed to evaluate the non
    * linear term.
-   * @param[in] time_derivative_previous_solutions Vector storing time
+   * @param time_derivative_previous_solutions Vector storing time
    * derivatives of previous solutions.
-   * @param[in] pcout Object that allows parallel printing.
-   * @param[in] simulation_control Required to get the time stepping method.
+   * @param flow_control
    */
-  void
-  initialize_ls(TimerOutput                            &computing_timer,
-                const DoFHandler<dim>                  &dof_handler,
-                const SimulationParameters<dim>        &simulation_parameters,
-                const std::shared_ptr<Mapping<dim>>    &mapping,
-                const std::shared_ptr<FESystem<dim>>    fe,
-                TimerOutput                            &mg_computing_timer,
-                const std::shared_ptr<Quadrature<dim>> &cell_quadrature,
-                const std::shared_ptr<Function<dim>>    forcing_function,
-                const VectorType                       &present_solution,
-                const VectorType         &time_derivative_previous_solutions,
-                const ConditionalOStream &pcout,
-                const std::shared_ptr<SimulationControl> simulation_control,
-                FlowControl<dim>                        &flow_control);
+  MFNavierStokesPreconditionGMG(
+    const SimulationParameters<dim>         &simulation_parameters,
+    const DoFHandler<dim>                   &dof_handler,
+    const std::shared_ptr<Mapping<dim>>     &mapping,
+    const std::shared_ptr<Quadrature<dim>>  &cell_quadrature,
+    const std::shared_ptr<Function<dim>>     forcing_function,
+    const std::shared_ptr<SimulationControl> simulation_control,
+    TimerOutput                             &mg_computing_timer,
+    const ConditionalOStream                &pcout,
+    const std::shared_ptr<FESystem<dim>>     fe,
+    const VectorType                        &present_solution,
+    const VectorType                        &time_derivative_previous_solutions,
+    FlowControl<dim>                        &flow_control);
 
   /**
    * @brief Initialize all relevant objects needed for the local smoothing
@@ -98,33 +96,33 @@ public:
    * @param[in] dof_handler Describes the layout of DoFs and the type of FE.
    * @param[in] simulation_parameters Object containing all parameters specified
    * in input file.
-   * @param[in] mapping Describes the transformations from unit to real cell.
-   * @param[in] fe Describes the FE system for the vector-valued problem.
    * @param[in] mg_computing_timer Timer for specific MG components.
-   * @param[in] cell_quadrature  Required for local operations on cells.
-   * @param[in] forcing_function Function specified in parameter file as source
-   * term.
-   * @param[in] present_solution Previous solution needed to evaluate the non
-   * linear term.
-   * @param[in] time_derivative_previous_solutions Vector storing time
-   * derivatives of previous solutions.
    * @param[in] pcout Object that allows parallel printing.
-   * @param[in] simulation_control Required to get the time stepping method.
    */
   void
-  initialize_gc(TimerOutput                            &computing_timer,
-                const DoFHandler<dim>                  &dof_handler,
-                const SimulationParameters<dim>        &simulation_parameters,
-                const std::shared_ptr<Mapping<dim>>    &mapping,
-                const std::shared_ptr<FESystem<dim>>    fe,
-                TimerOutput                            &mg_computing_timer,
-                const std::shared_ptr<Quadrature<dim>> &cell_quadrature,
-                const std::shared_ptr<Function<dim>>    forcing_function,
-                const VectorType                       &present_solution,
-                const VectorType         &time_derivative_previous_solutions,
-                const ConditionalOStream &pcout,
-                const std::shared_ptr<SimulationControl> simulation_control,
-                FlowControl<dim>                        &flow_control);
+  initialize_ls(TimerOutput                     &computing_timer,
+                const DoFHandler<dim>           &dof_handler,
+                const SimulationParameters<dim> &simulation_parameters,
+                TimerOutput                     &mg_computing_timer,
+                const ConditionalOStream        &pcout);
+
+  /**
+   * @brief Initialize all relevant objects needed for the local smoothing
+   * geometric multigrid approach.
+   *
+   * @param[in] computing_timer General solver timer.
+   * @param[in] dof_handler Describes the layout of DoFs and the type of FE.
+   * @param[in] simulation_parameters Object containing all parameters specified
+   * in input file.
+   * @param[in] mg_computing_timer Timer for specific MG components.
+   * @param[in] pcout Object that allows parallel printing.
+   */
+  void
+  initialize_gc(TimerOutput                     &computing_timer,
+                const DoFHandler<dim>           &dof_handler,
+                const SimulationParameters<dim> &simulation_parameters,
+                TimerOutput                     &mg_computing_timer,
+                const ConditionalOStream        &pcout);
 
   /**
    * @brief Calls the v cycle function of the multigrid object.
@@ -136,6 +134,16 @@ public:
   vmult(VectorType &dst, const VectorType &src) const;
 
 private:
+  /// Min level
+  unsigned int minlevel;
+
+  /// Max level
+  unsigned int maxlevel;
+
+  /// Triangulations for the global coarsening case
+  std::vector<std::shared_ptr<const Triangulation<dim>>>
+    coarse_grid_triangulations;
+
   /// DoF handlers for each of the levels of the global coarsening algorithm
   MGLevelObject<DoFHandler<dim>> dof_handlers;
 
