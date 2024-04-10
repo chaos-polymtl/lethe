@@ -387,7 +387,7 @@ protected:
    * @brief Additional source term in the case of dynamic flow control.
    *
    */
-  Tensor<1, dim + 1, VectorizedArray<number>> beta_force;
+  Tensor<1, dim, VectorizedArray<number>> beta_force;
 
   /**
    * @brief Kinematic viscosity needed for the operator.
