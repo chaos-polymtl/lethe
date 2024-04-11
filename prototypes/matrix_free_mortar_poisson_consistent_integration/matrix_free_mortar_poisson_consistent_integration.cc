@@ -349,7 +349,7 @@ public:
         phi_m.evaluate(buffer_0, EvaluationFlags::values);
         phi_p.evaluate(buffer_1, EvaluationFlags::values);
 
-        // quadratuer loop
+        // quadrature loop
         for (const auto q : phi_m.quadrature_point_indices())
           {
             const auto normal = normals[q];
