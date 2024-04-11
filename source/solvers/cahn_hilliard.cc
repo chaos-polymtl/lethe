@@ -95,7 +95,8 @@ CahnHilliard<dim>::setup_assemblers()
     (this->simulation_parameters.multiphysics.cahn_hilliard_parameters
        .epsilon_set_method == Parameters::EpsilonSetMethod::manual) ?
       this->simulation_parameters.multiphysics.cahn_hilliard_parameters
-        .epsilon : epsilon));
+        .epsilon :
+      epsilon));
 }
 
 template <int dim>
@@ -709,12 +710,13 @@ CahnHilliard<dim>::postprocess(bool first_iteration)
         }
     }
 
-  if (simulation_parameters.multiphysics.cahn_hilliard_parameters.epsilon_verbosity == Parameters::EpsilonVerbosity::verbose)
-  {
+  if (simulation_parameters.multiphysics.cahn_hilliard_parameters
+        .epsilon_verbosity == Parameters::EpsilonVerbosity::verbose)
+    {
       double epsilon = compute_epsilon();
       announce_string(this->pcout, "Epsilon value");
-      this->pcout <<"Epsilon value: "<<epsilon<<std::endl;
-  }
+      this->pcout << "Epsilon value: " << epsilon << std::endl;
+    }
 
   if (simulation_parameters.post_processing.calculate_phase_statistics)
     {
@@ -865,7 +867,6 @@ CahnHilliard<dim>::postprocess(bool first_iteration)
               this->barycenter_table.write_text(output);
               output.close();
             }
-
         }
     }
 }
@@ -1559,35 +1560,31 @@ CahnHilliard<dim>::output_newton_update_norms(
 double
 CahnHilliard<dim>::compute_epsilon()
 {
-    auto mpi_communicator = this->triangulation->get_communicator();
+  auto mpi_communicator = this->triangulation->get_communicator();
 
-    double epsilon(0.0);
+  double epsilon(0.0);
+  double min_cell_diameter = std::numeric_limits<double>::max();
+  double max_cell_diameter = std::numeric_limits<double>::min();
 
-    const int max_level = this->triangulation->n_levels();
-    int number_of_cells_on_level(this->triangulation->n_active_cells(max_level-1));
+  const int max_level = this->triangulation->n_levels();
+  int       number_of_cells_on_level(
+    this->triangulation->n_active_cells(max_level - 1));
 
-    double max_diameter = GridTools::maximal_cell_diameter(*triangulation);
-    double min_diameter = GridTools::minimal_cell_diameter(*triangulation);
+  std::vector<double> cell_sizes_max_level;
 
-
-/*    for (const auto &cell: this->dof_handler.active_cell_iterators_on_level(max_level-1))
+  for (const auto &cell :
+       this->dof_handler.active_cell_iterators_on_level(max_level - 1))
     {
-       epsilon += cell->diameter();
+      max_cell_diameter = std::max(max_cell_diameter, cell->diameter());
+      min_cell_diameter = std::min(min_cell_diameter, cell->diameter());
     }
 
-    number_of_cells_on_level = Utilities::MPI::sum(number_of_cells_on_level,mpi_communicator);
+  max_cell_diameter = Utilities::MPI::max(max_cell_diameter, mpi_communicator);
+  min_cell_diameter = Utilities::MPI::min(min_cell_diameter, mpi_communicator);
 
-    epsilon = Utilities::MPI::sum(epsilon,mpi_communicator)/number_of_cells_on_level;*/
+  epsilon = 0.5 * (max_cell_diameter + min_cell_diameter);
 
-    epsilon = 0.5*(max_diameter+min_diameter);
-
-/*    if(simulation_parameters.multiphysics.cahn_hilliard_parameters.epsilon_verbosity == Parameters::EpsilonVerbosity::verbose)
-    {
-        announce_string(this->pcout, "Phase statistics");
-        this->pcout <<"Epsilon value: "<<epsilon<< std::endl;
-    }*/
-
-    return epsilon;
+  return epsilon;
 }
 
 template std::pair<Tensor<1, 2>, Tensor<1, 2>>

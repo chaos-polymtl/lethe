@@ -439,11 +439,11 @@ private:
   void
   apply_phase_filter();
 
-    /**
+  /**
    * @brief Compute the interface thickness parameter automaticaly
    */
-    double
-    compute_epsilon();
+  double
+  compute_epsilon();
 
 
   MultiphysicsInterface<dim> *multiphysics;

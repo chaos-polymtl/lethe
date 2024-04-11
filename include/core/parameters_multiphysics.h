@@ -67,8 +67,8 @@ namespace Parameters
 
   enum class EpsilonVerbosity
   {
-      quiet,
-      verbose
+    quiet,
+    verbose
   };
 
 

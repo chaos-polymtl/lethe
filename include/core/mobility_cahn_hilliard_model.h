@@ -200,7 +200,8 @@ public:
   value(const std::map<field, double> &fields_value) override
   {
     AssertThrow(
-      fields_value.find(field::phase_order_cahn_hilliard) != fields_value.end(),
+      fields_value.find(field::phase_order_cahn_hilliard_filtered) !=
+        fields_value.end(),
       PhysicialPropertyModelFieldUndefined("MobilityCahnHilliardModelQuartic",
                                            "phase_order_cahn_hilliard"));
     const double &phase_order_cahn_hilliard =
@@ -226,7 +227,7 @@ public:
                std::vector<double> &property_vector) override
   {
     AssertThrow(
-      field_vectors.find(field::phase_order_cahn_hilliard) !=
+      field_vectors.find(field::phase_order_cahn_hilliard_filtered) !=
         field_vectors.end(),
       PhysicialPropertyModelFieldUndefined("MobilityCahnHilliardModelQuartic",
                                            "phase_order_cahn_hilliard"));
@@ -258,7 +259,8 @@ public:
   jacobian(const std::map<field, double> &fields_value, field /*id*/) override
   {
     AssertThrow(
-      fields_value.find(field::phase_order_cahn_hilliard) != fields_value.end(),
+      fields_value.find(field::phase_order_cahn_hilliard_filtered) !=
+        fields_value.end(),
       PhysicialPropertyModelFieldUndefined("MobilityCahnHilliardModelQuartic",
                                            "phase_order_cahn_hilliard"));
     const double &phase_order_cahn_hilliard =
@@ -289,7 +291,7 @@ public:
                   std::vector<double> &jacobian_vector) override
   {
     AssertThrow(
-      field_vectors.find(field::phase_order_cahn_hilliard) !=
+      field_vectors.find(field::phase_order_cahn_hilliard_filtered) !=
         field_vectors.end(),
       PhysicialPropertyModelFieldUndefined("MobilityCahnHilliardModelQuartic",
                                            "phase_order_cahn_hilliard"));
