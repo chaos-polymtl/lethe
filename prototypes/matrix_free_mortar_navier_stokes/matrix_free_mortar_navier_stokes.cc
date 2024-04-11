@@ -51,6 +51,7 @@
 #include <deal.II/matrix_free/matrix_free.h>
 #include <deal.II/matrix_free/operators.h>
 #include <deal.II/matrix_free/tools.h>
+#include <deal.II/matrix_free/fe_remote_evaluation.h>
 
 #include <deal.II/multigrid/mg_coarse.h>
 #include <deal.II/multigrid/mg_constrained_dofs.h>
@@ -68,6 +69,153 @@
 #include <iostream>
 
 using namespace dealii;
+// TODO: make part of deal.II
+namespace dealii
+{
+  /**
+   * Coarse grid solver using a preconditioner only. This is a little wrapper,
+   * transforming a preconditioner into a coarse grid solver.
+   */
+  template <class VectorType, class PreconditionerType>
+  class MGCoarseGridApplyPreconditioner : public MGCoarseGridBase<VectorType>
+  {
+  public:
+    /**
+     * Default constructor.
+     */
+    MGCoarseGridApplyPreconditioner();
+
+    /**
+     * Constructor. Store a pointer to the preconditioner for later use.
+     */
+    MGCoarseGridApplyPreconditioner(const PreconditionerType &precondition);
+
+    /**
+     * Clear the pointer.
+     */
+    void
+    clear();
+
+    /**
+     * Initialize new data.
+     */
+    void
+    initialize(const PreconditionerType &precondition);
+
+    /**
+     * Implementation of the abstract function.
+     */
+    virtual void
+    operator()(const unsigned int level,
+               VectorType        &dst,
+               const VectorType  &src) const override;
+
+  private:
+    /**
+     * Reference to the preconditioner.
+     */
+    SmartPointer<
+      const PreconditionerType,
+      MGCoarseGridApplyPreconditioner<VectorType, PreconditionerType>>
+      preconditioner;
+  };
+
+
+
+  template <class VectorType, class PreconditionerType>
+  MGCoarseGridApplyPreconditioner<VectorType, PreconditionerType>::
+    MGCoarseGridApplyPreconditioner()
+    : preconditioner(0, typeid(*this).name())
+  {}
+
+
+
+  template <class VectorType, class PreconditionerType>
+  MGCoarseGridApplyPreconditioner<VectorType, PreconditionerType>::
+    MGCoarseGridApplyPreconditioner(const PreconditionerType &preconditioner)
+    : preconditioner(&preconditioner, typeid(*this).name())
+  {}
+
+
+
+  template <class VectorType, class PreconditionerType>
+  void
+  MGCoarseGridApplyPreconditioner<VectorType, PreconditionerType>::initialize(
+    const PreconditionerType &preconditioner_)
+  {
+    preconditioner = &preconditioner_;
+  }
+
+
+
+  template <class VectorType, class PreconditionerType>
+  void
+  MGCoarseGridApplyPreconditioner<VectorType, PreconditionerType>::clear()
+  {
+    preconditioner = 0;
+  }
+
+
+
+  namespace internal
+  {
+    namespace MGCoarseGridApplyPreconditioner
+    {
+      template <class VectorType,
+                class PreconditionerType,
+                typename std::enable_if<
+                  std::is_same<typename VectorType::value_type, double>::value,
+                  VectorType>::type * = nullptr>
+      void
+      solve(const PreconditionerType preconditioner,
+            VectorType              &dst,
+            const VectorType        &src)
+      {
+        // to allow the case that the preconditioner was only set up on a
+        // subset of processes
+        if (preconditioner != nullptr)
+          preconditioner->vmult(dst, src);
+      }
+
+      template <class VectorType,
+                class PreconditionerType,
+                typename std::enable_if<
+                  !std::is_same<typename VectorType::value_type, double>::value,
+                  VectorType>::type * = nullptr>
+      void
+      solve(const PreconditionerType preconditioner,
+            VectorType              &dst,
+            const VectorType        &src)
+      {
+        LinearAlgebra::distributed::Vector<double> src_;
+        LinearAlgebra::distributed::Vector<double> dst_;
+
+        src_ = src;
+        dst_ = dst;
+
+        // to allow the case that the preconditioner was only set up on a
+        // subset of processes
+        if (preconditioner != nullptr)
+          preconditioner->vmult(dst_, src_);
+
+        dst = dst_;
+      }
+    } // namespace MGCoarseGridApplyPreconditioner
+  }   // namespace internal
+
+
+  template <class VectorType, class PreconditionerType>
+  void
+  MGCoarseGridApplyPreconditioner<VectorType, PreconditionerType>::operator()(
+    const unsigned int /*level*/,
+    VectorType       &dst,
+    const VectorType &src) const
+  {
+    internal::MGCoarseGridApplyPreconditioner::solve(preconditioner, dst, src);
+  }
+} // namespace dealii
+
+
 
 // Define all the parameters that can be specified in the .prm file
 struct Settings
@@ -464,6 +612,8 @@ class NavierStokesOperator : public Subscriptor
 {
 public:
   using FECellIntegrator = FEEvaluation<dim, -1, 0, dim + 1, number>;
+  using FEFaceIntegrator =
+    FEFaceEvaluation<dim, -1, 0, dim+1, number, VectorizedArray<number>>;
 
   using VectorType = LinearAlgebra::distributed::Vector<number>;
 
@@ -478,7 +628,8 @@ public:
                        const AffineConstraints<number> &constraints,
                        const QGauss<1>                 &quadrature,
                        const Settings                  &parameters,
-                       const unsigned int               mg_level);
+                       const unsigned int               mg_level,
+                       const std::vector<unsigned int>                    &non_matching_faces);
 
   void
   reinit(const MappingQ<dim>             &mapping,
@@ -486,7 +637,8 @@ public:
          const AffineConstraints<number> &constraints,
          const QGauss<1>                 &quadrature,
          const Settings                  &parameters,
-         const unsigned int               mg_level);
+         const unsigned int               mg_level,
+         const std::vector<unsigned int>                    &non_matching_faces);
 
   void
   compute_element_size();
@@ -547,7 +699,24 @@ private:
   static IndexSet
   get_refinement_edges(const MatrixFree<dim, number> &matrix_free);
 
+  static number
+  compute_penalty_factor(const unsigned int degree, const number factor)
+  {
+    return factor * (degree + 1.0) * (degree + 1.0);
+  }
+
+  bool
+  is_internal_face(const unsigned int face) const
+  {
+    return faces.find(matrix_free.get_boundary_id(face)) != faces.end();
+  }
+
+  void
+  compute_penalty_parameters();
+
 private:
+
+
   MatrixFree<dim, number>                matrix_free;
   AffineConstraints<number>              constraints;
   mutable TrilinosWrappers::SparseMatrix system_matrix;
@@ -559,6 +728,21 @@ private:
     nonlinear_previous_gradient;
   Table<2, Tensor<1, dim + 1, Tensor<1, dim, VectorizedArray<number>>>>
     nonlinear_previous_hessian_diagonal;
+
+  // Penalty factor used for the mortar approach
+  double                               penalty_factor;
+  dealii::AlignedVector<VectorizedArray<number>> array_penalty_parameter;
+
+
+  FERemoteEvaluationCommunicator<dim> phi_r_comm;
+  mutable std::shared_ptr<FERemoteEvaluation<dim, dim+1, VectorizedArray<number>>>
+    phi_r_cache;
+  mutable std::shared_ptr<FERemoteEvaluation<dim, 1, VectorizedArray<number>>>
+    phi_r_sigma_cache;
+
+  std::set<unsigned int> faces;
+
+
 
   // Variables needed for local smoothing
   std::vector<unsigned int>                      constrained_indices;
@@ -580,10 +764,11 @@ NavierStokesOperator<dim, number>::NavierStokesOperator(
   const AffineConstraints<number> &constraints,
   const QGauss<1>                 &quadrature,
   const Settings                  &parameters,
-  const unsigned int               mg_level)
+  const unsigned int               mg_level,
+  const std::vector<unsigned int>                    &non_matching_faces)
 {
   this->reinit(
-    mapping, dof_handler, constraints, quadrature, parameters, mg_level);
+    mapping, dof_handler, constraints, quadrature, parameters, mg_level,non_matching_faces);
 }
 
 template <int dim, typename number>
@@ -594,7 +779,8 @@ NavierStokesOperator<dim, number>::reinit(
   const AffineConstraints<number> &constraints,
   const QGauss<1>                 &quadrature,
   const Settings                  &parameters,
-  const unsigned int               mg_level)
+  const unsigned int               mg_level,
+  const std::vector<unsigned int>                    &non_matching_faces)
 {
   this->system_matrix.clear();
   this->constraints.copy_from(constraints);
@@ -669,6 +855,50 @@ NavierStokesOperator<dim, number>::reinit(
             }
         }
     }
+
+  penalty_factor= compute_penalty_factor(dof_handler.get_fe().degree,1.);
+
+  // store all boundary faces in one set
+  for (const auto &face_pair : non_matching_faces)
+    faces.insert(face_pair);
+
+  std::vector<
+    std::pair<types::boundary_id, std::function<std::vector<bool>()>>>
+    non_matching_faces_marked_vertices;
+
+  for (const auto &nm_face : non_matching_faces)
+    {
+      auto marked_vertices = [&]() {
+        const auto &tria = matrix_free.get_dof_handler().get_triangulation();
+
+        std::vector<bool> mask(tria.n_vertices(), true);
+
+        for (const auto &cell : tria.active_cell_iterators())
+          for (auto const &f : cell->face_indices())
+            if (cell->face(f)->at_boundary() &&
+                cell->face(f)->boundary_id() == nm_face)
+              for (const auto v : cell->vertex_indices())
+                mask[cell->vertex_index(v)] = false;
+
+        return mask;
+      };
+
+      non_matching_faces_marked_vertices.emplace_back(
+        std::make_pair(nm_face, marked_vertices));
+    }
+
+  phi_r_comm =
+    Utilities::compute_remote_communicator_faces_point_to_point_interpolation(
+      matrix_free, non_matching_faces_marked_vertices);
+
+  phi_r_cache =
+    std::make_shared<FERemoteEvaluation<dim, dim+1, VectorizedArray<number>>>(
+      phi_r_comm, matrix_free.get_dof_handler());
+
+  phi_r_sigma_cache =
+    std::make_shared<FERemoteEvaluation<dim, 1, VectorizedArray<number>>>(
+      phi_r_comm, matrix_free.get_dof_handler().get_triangulation());
+
 }
 
 template <int dim, typename number>
@@ -696,6 +926,73 @@ NavierStokesOperator<dim, number>::compute_element_size()
         }
     }
 }
+
+template <int dim, typename number>
+void
+NavierStokesOperator<dim, number>::compute_penalty_parameters()
+{
+  // step 1) compute penalty parameter of each cell
+  const unsigned int n_cells =
+    matrix_free.n_cell_batches() + matrix_free.n_ghost_cell_batches();
+  array_penalty_parameter.resize(n_cells);
+
+  dealii::Mapping<dim> const &mapping =
+    *matrix_free.get_mapping_info().mapping;
+  dealii::FiniteElement<dim> const &fe =
+    matrix_free.get_dof_handler().get_fe();
+  const unsigned int degree = fe.degree;
+
+  dealii::QGauss<dim>   quadrature(degree + 1);
+  dealii::FEValues<dim> fe_values(mapping,
+                                  fe,
+                                  quadrature,
+                                  dealii::update_JxW_values);
+
+  dealii::QGauss<dim - 1>   face_quadrature(degree + 1);
+  dealii::FEFaceValues<dim> fe_face_values(mapping,
+                                           fe,
+                                           face_quadrature,
+                                           dealii::update_JxW_values);
+
+  Vector<number> array_penalty_parameter_scalar(
+    matrix_free.get_dof_handler().get_triangulation().n_active_cells());
+
+  for (unsigned int i = 0; i < n_cells; ++i)
+    for (unsigned int v = 0;
+         v < matrix_free.n_active_entries_per_cell_batch(i);
+         ++v)
+      {
+        typename dealii::DoFHandler<dim>::cell_iterator cell =
+          matrix_free.get_cell_iterator(i, v);
+        fe_values.reinit(cell);
+
+        number volume = 0;
+        for (unsigned int q = 0; q < quadrature.size(); ++q)
+          volume += fe_values.JxW(q);
+
+        number surface_area = 0;
+        for (const auto f : cell->face_indices())
+          {
+            fe_face_values.reinit(cell, f);
+            const number factor =
+              (cell->at_boundary(f) && !cell->has_periodic_neighbor(f)) ? 1. :
+                                                                          0.5;
+            for (unsigned int q = 0; q < face_quadrature.size(); ++q)
+              surface_area += fe_face_values.JxW(q) * factor;
+          }
+
+        array_penalty_parameter[i][v] = surface_area / volume;
+        array_penalty_parameter_scalar[cell->active_cell_index()] =
+          surface_area / volume;
+      }
+
+
+  dealii::FEEvaluation<dim, -1, 0, 1, number> fe_eval(matrix_free, 0, 0);
+
+  phi_r_sigma_cache->gather_evaluate(array_penalty_parameter_scalar,
+                                     EvaluationFlags::values);
+}
+
 
 template <int dim, typename number>
 types::global_dof_index
@@ -776,7 +1073,60 @@ NavierStokesOperator<dim, number>::vmult(VectorType       &dst,
     [&](const auto &data, auto &dst, const auto &src, const auto face_range) {};
 
   const auto boundary_function =
-    [&](const auto &data, auto &dst, const auto &src, const auto face_range) {};
+    [&](const auto &data, auto &dst, const auto &src, const auto face_range)
+  {
+    FEFaceIntegrator phi_m(data, true);
+
+    // Result value/gradient we will use
+    typename FEFaceIntegrator::value_type    value_result;
+    typename FEFaceIntegrator::value_type normal_derivative;
+
+    auto phi_r       = phi_r_cache->get_data_accessor();
+    auto phi_r_sigma = phi_r_sigma_cache->get_data_accessor();
+
+    for (unsigned int face = face_range.first; face < face_range.second; ++face)
+      {
+        if (is_internal_face(face) == false)
+          continue; // nothing to do
+
+        phi_m.reinit(face);
+
+        phi_m.gather_evaluate(src,
+                              EvaluationFlags::values |
+                                EvaluationFlags::gradients);
+
+        phi_r.reinit(face);
+        phi_r_sigma.reinit(face);
+
+        const auto sigma_m = phi_m.read_cell_data(array_penalty_parameter);
+
+        for (unsigned int q = 0; q < phi_m.n_q_points; ++q)
+          {
+            const auto value_m = phi_m.get_value(q);
+            const auto value_p = phi_r.get_value(q);
+
+            const auto gradient_m = phi_m.get_gradient(q);
+            const auto gradient_p = phi_r.get_gradient(q);
+
+            const auto sigma_p = phi_r_sigma.get_value(q);
+
+            for (unsigned int d=0 ; d<dim+1 ; ++d)
+              {
+                const auto sigma = std::max(sigma_m[d], sigma_p[d]) * penalty_factor;
+                const auto jump_value = (value_m[d] - value_p[d]) * 0.5;
+                value_result[d] = - jump_value;
+                const auto avg_gradient =
+                  phi_m.get_normal_vector(q) * (gradient_m[d] + gradient_p[d]) * 0.5;
+                normal_derivative[d] = jump_value * sigma * 2.0 - avg_gradient;
+              }
+            phi_m.submit_normal_derivative(normal_derivative, q);
+             phi_m.submit_value(value_result, q);
+          }
+        phi_m.integrate_scatter(EvaluationFlags::values |
+                                  EvaluationFlags::gradients,
+                                dst);
+      }
+  };
 
   this->matrix_free.template loop<VectorType, VectorType>(
     cell_function, face_function, boundary_function, dst, src, true);
@@ -1307,6 +1657,8 @@ solve_with_gcmg(SolverControl             &solver_control,
 
   for (unsigned int level = minlevel; level <= maxlevel; ++level)
     {
+      std::vector<std::pair<unsigned int, unsigned int>> face_pairs;
+      std::vector<unsigned int>                          nm_face_pairs;
       const auto &dof_handler = dof_handlers[level];
       auto       &constraint  = constraints[level];
 
@@ -1315,49 +1667,81 @@ solve_with_gcmg(SolverControl             &solver_control,
       constraint.reinit(locally_relevant_dofs);
 
       DoFTools::make_hanging_node_constraints(dof_handler, constraint);
-      VectorTools::interpolate_boundary_values(mapping,
-                                               dof_handler,
-                                               0,
-                                               Functions::ZeroFunction<dim>(
-                                                 dim + 1),
-                                               constraint);
-      VectorTools::interpolate_boundary_values(mapping,
-                                               dof_handler,
-                                               1,
-                                               Functions::ZeroFunction<dim>(
-                                                 dim + 1),
-                                               constraint);
-      VectorTools::interpolate_boundary_values(mapping,
-                                               dof_handler,
-                                               2,
-                                               Functions::ZeroFunction<dim>(
-                                                 dim + 1),
-                                               constraint);
-      VectorTools::interpolate_boundary_values(mapping,
-                                               dof_handler,
-                                               3,
-                                               Functions::ZeroFunction<dim>(
-                                                 dim + 1),
-                                               constraint);
-      if constexpr (dim == 3)
-        {
-          VectorTools::interpolate_boundary_values(mapping,
-                                                   dof_handler,
-                                                   4,
-                                                   Functions::ZeroFunction<dim>(
-                                                     dim + 1),
-                                                   constraint);
-          VectorTools::interpolate_boundary_values(mapping,
-                                                   dof_handler,
-                                                   5,
-                                                   Functions::ZeroFunction<dim>(
-                                                     dim + 1),
-                                                   constraint);
-        }
+
+       if (parameters.geometry == Settings::corectangle || parameters.geometry == Settings::cocircle)
+         {
+           // Establish the constraints linking the two domains
+           if (parameters.geometry == Settings::GeometryType::corectangle)
+             {
+               face_pairs.emplace_back(1, 2 * dim);
+               face_pairs.emplace_back(2 * dim, 1);
+               nm_face_pairs.emplace_back(1);
+               nm_face_pairs.emplace_back(2 * dim);
+               for (unsigned int d = 0; d < 4 * dim; ++d)
+                if (face_pairs.size() == 0)
+                  {
+                    DoFTools::make_zero_boundary_constraints(dof_handler,
+                                                             d,
+                                                             constraint);
+                  }
+                else
+                  {
+                    for (const auto &face_pair : face_pairs)
+                      if (d != face_pair.first && d != face_pair.second)
+                        DoFTools::make_zero_boundary_constraints(dof_handler,
+                                                                 d,
+                                                                 constraint);
+                  }
+             }
+           else
+             {
+               face_pairs.emplace_back(1, 2);
+               face_pairs.emplace_back(2, 1);
+               nm_face_pairs.emplace_back(1);
+               nm_face_pairs.emplace_back(2);
+
+               DoFTools::make_zero_boundary_constraints(dof_handler,
+                                                        0,
+                                                        constraint);
+
+               DoFTools::make_zero_boundary_constraints(dof_handler,
+                                                        3,
+                                                        constraint);
+             }
+         }
+       else
+         {
+           // Set homogeneous constraints for the matrix-free operator
+           // Create zero BCs for the delta.
+           // Left wall
+           VectorTools::interpolate_boundary_values(
+             dof_handler, 0, Functions::ZeroFunction<dim>(dim + 1), constraint);
+
+           VectorTools::interpolate_boundary_values(
+             dof_handler, 1, Functions::ZeroFunction<dim>(dim + 1), constraint);
+
+           VectorTools::interpolate_boundary_values(
+             dof_handler, 2, Functions::ZeroFunction<dim>(dim + 1), constraint);
+
+           VectorTools::interpolate_boundary_values(
+             dof_handler, 3, Functions::ZeroFunction<dim>(dim + 1), constraint);
+
+           if constexpr (dim == 3)
+             {
+               VectorTools::interpolate_boundary_values(
+                 dof_handler, 4, Functions::ZeroFunction<dim>(dim + 1), constraint);
+
+               VectorTools::interpolate_boundary_values(
+                 dof_handler, 5, Functions::ZeroFunction<dim>(dim + 1), constraint);
+             }
+         }
 
       DoFTools::make_hanging_node_constraints(dof_handler, constraint);
 
       constraint.close();
+
+      std::vector<unsigned int> matching_faces;
+
 
       operators[level] =
         std::make_unique<OperatorType>(mapping,
@@ -1365,7 +1749,8 @@ solve_with_gcmg(SolverControl             &solver_control,
                                        constraint,
                                        quadrature,
                                        parameters,
-                                       numbers::invalid_unsigned_int);
+                                       numbers::invalid_unsigned_int,
+                                       matching_faces);
     }
 
   for (unsigned int level = minlevel; level < maxlevel; ++level)
@@ -1566,13 +1951,17 @@ solve_with_lsmg(SolverControl             &solver_control,
         mg_constrained_dofs.get_boundary_indices(level));
       level_constraints[level].close();
 
+
+      std::vector<unsigned int> matching_faces;
+
       operators[level] =
         std::make_unique<OperatorType>(mapping,
                                        dof_handler,
                                        level_constraints[level],
                                        quadrature,
                                        parameters,
-                                       level);
+                                       level,
+                                       matching_faces);
 
       operators[level]->initialize_dof_vector(mg_solution[level]);
 
@@ -1672,6 +2061,7 @@ private:
 
   parallel::distributed::Triangulation<dim>          triangulation;
   std::vector<std::pair<unsigned int, unsigned int>> face_pairs;
+  std::vector<unsigned int>                          nm_face_pairs;
 
   Settings parameters;
 
@@ -1752,26 +2142,28 @@ MatrixFreeNavierStokes<dim>::make_grid()
       case Settings::cocircle:
         {
           // Generate two grids of two non-matching circles
-
           const double r1_i = 0.25;
           const double r1_o = 0.51;
           const double r2_i = 0.5;
           const double r2_o = 1;
 
+
           Triangulation<dim> circle_one;
-          GridGenerator::concentric_hyper_shells(circle_one,
-                                                 (dim == 2) ?
-                                                   Point<dim>(0, 0) :
-                                                   Point<dim>(0, 0, 0),
-                                                 r1_i,
-                                                 r1_o);
+          GridGenerator::hyper_shell(circle_one,
+                                     (dim == 2) ? Point<dim>(0, 0) :
+                                                  Point<dim>(0, 0, 0),
+                                     r1_i,
+                                     r1_o,
+                                     0,
+                                     true);
           Triangulation<dim> circle_two;
-          GridGenerator::concentric_hyper_shells(circle_two,
-                                                 (dim == 2) ?
-                                                   Point<dim>(0, 0) :
-                                                   Point<dim>(0, 0, 0),
-                                                 r2_i,
-                                                 r2_o);
+          GridGenerator::hyper_shell(circle_two,
+                                     (dim == 2) ? Point<dim>(0, 0) :
+                                                  Point<dim>(0, 0, 0),
+                                     r2_i,
+                                     r2_o,
+                                     6,
+                                     true);
 
           // shift boundary id of circle two
           for (const auto &face : circle_two.active_face_iterators())
@@ -1781,9 +2173,11 @@ MatrixFreeNavierStokes<dim>::make_grid()
           GridGenerator::merge_triangulations(
             circle_one, circle_two, triangulation, 0, true, true);
           triangulation.set_manifold(0,
-                                     SphericalManifold<dim>(
-                                       (dim == 2) ? Point<dim>(0, 0) :
-                                                    Point<dim>(0, 0, 0)));
+                            SphericalManifold<dim>(
+                              (dim == 2) ? Point<dim>(0, 0) : Point<dim>(0, 0, 0)));
+
+          triangulation.refine_global(parameters.initial_refinement);
+
           break;
         }
       case Settings::corectangle:
@@ -1855,27 +2249,50 @@ MatrixFreeNavierStokes<dim>::setup_system()
   constraints.reinit(locally_relevant_dofs);
   DoFTools::make_hanging_node_constraints(dof_handler, constraints);
 
-  if (parameters.geometry == Settings::corectangle)
+  if (parameters.geometry == Settings::corectangle || parameters.geometry == Settings::cocircle)
     {
       // Establish the constraints linking the two domains
-      face_pairs.emplace_back(1, 2 * dim);
-      face_pairs.emplace_back(2 * dim, 1);
+      if (parameters.geometry == Settings::GeometryType::corectangle)
+        {
+          face_pairs.emplace_back(1, 2 * dim);
+          face_pairs.emplace_back(2 * dim, 1);
+          nm_face_pairs.emplace_back(1);
+          nm_face_pairs.emplace_back(2 * dim);
 
-      for (unsigned int d = 0; d < 4 * dim; ++d)
-        if (face_pairs.size() == 0)
-          {
-            DoFTools::make_zero_boundary_constraints(dof_handler,
-                                                     d,
-                                                     constraints);
-          }
-        else
-          {
-            for (const auto &face_pair : face_pairs)
-              if (d != face_pair.first && d != face_pair.second)
+          for (unsigned int d = 0; d < 4 * dim; ++d)
+            if (face_pairs.size() == 0)
+              {
                 DoFTools::make_zero_boundary_constraints(dof_handler,
                                                          d,
                                                          constraints);
-          }
+              }
+            else
+              {
+                for (const auto &face_pair : face_pairs)
+                   if (d != face_pair.first && d != face_pair.second)
+                     DoFTools::make_zero_boundary_constraints(dof_handler,
+                                                              d,
+                                                              constraints);
+              }
+        }
+      else
+        {
+          face_pairs.emplace_back(1, 2);
+          face_pairs.emplace_back(2, 1);
+          nm_face_pairs.emplace_back(1);
+          nm_face_pairs.emplace_back(2);
+
+          DoFTools::make_zero_boundary_constraints(dof_handler,
+                                                   0,
+                                                   constraints);
+
+          DoFTools::make_zero_boundary_constraints(dof_handler,
+                                                   3,
+                                                   constraints);
+        }
+
+
+
     }
   else
     {
@@ -1913,7 +2330,8 @@ MatrixFreeNavierStokes<dim>::setup_system()
                        constraints,
                        QGauss<1>(element_order + 1),
                        parameters,
-                       numbers::invalid_unsigned_int);
+                       numbers::invalid_unsigned_int,
+                       nm_face_pairs);
 
   system_matrix.initialize_dof_vector(solution);
   system_matrix.initialize_dof_vector(newton_update);
@@ -2216,7 +2634,7 @@ MatrixFreeNavierStokes<dim>::solve()
 {
   TimerOutput::Scope t(computing_timer, "solve");
 
-  const unsigned int itmax = 14;
+  const unsigned int itmax = 5;
   const double       TOLf  = 1e-12;
   const double       TOLx  = 1e-10;
 
