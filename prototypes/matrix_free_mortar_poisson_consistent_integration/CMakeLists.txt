@@ -1,0 +1,2 @@
+add_executable(matrix_free_mortar_poisson_consistent_integration matrix_free_mortar_poisson_consistent_integration.cc)
+deal_ii_setup_target(matrix_free_mortar_poisson_consistent_integration)
