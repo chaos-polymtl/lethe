@@ -1488,73 +1488,73 @@ CahnHilliard<dim>::apply_phase_filter()
 template <int dim>
 void
 CahnHilliard<dim>::output_newton_update_norms(
-  const unsigned int display_precision) {
-    auto mpi_communicator = triangulation->get_communicator();
+  const unsigned int display_precision)
+{
+  auto mpi_communicator = triangulation->get_communicator();
 
-    FEValuesExtractors::Scalar phase_order(0);
-    FEValuesExtractors::Scalar chemical_potential(1);
+  FEValuesExtractors::Scalar phase_order(0);
+  FEValuesExtractors::Scalar chemical_potential(1);
 
-    ComponentMask phase_order_mask = fe->component_mask(phase_order);
-    ComponentMask chemical_potential_mask =
-            fe->component_mask(chemical_potential);
+  ComponentMask phase_order_mask = fe->component_mask(phase_order);
+  ComponentMask chemical_potential_mask =
+    fe->component_mask(chemical_potential);
 
-    const std::vector<IndexSet> index_set_phase_order =
-            DoFTools::locally_owned_dofs_per_component(dof_handler,
-                                                       phase_order_mask);
-    const std::vector<IndexSet> index_set_chemical_potential =
-            DoFTools::locally_owned_dofs_per_component(dof_handler,
-                                                       chemical_potential_mask);
+  const std::vector<IndexSet> index_set_phase_order =
+    DoFTools::locally_owned_dofs_per_component(dof_handler, phase_order_mask);
+  const std::vector<IndexSet> index_set_chemical_potential =
+    DoFTools::locally_owned_dofs_per_component(dof_handler,
+                                               chemical_potential_mask);
 
-    double local_sum = 0.0;
-    double local_max = std::numeric_limits<double>::lowest();
+  double local_sum = 0.0;
+  double local_max = std::numeric_limits<double>::lowest();
 
 
-    for (auto j = index_set_phase_order[0].begin();
-         j != index_set_phase_order[0].end();
-         j++) {
-        double dof_newton_update = newton_update[*j];
+  for (auto j = index_set_phase_order[0].begin();
+       j != index_set_phase_order[0].end();
+       j++)
+    {
+      double dof_newton_update = newton_update[*j];
 
-        local_sum += dof_newton_update * dof_newton_update;
+      local_sum += dof_newton_update * dof_newton_update;
 
-        local_max = std::max(local_max, std::abs(dof_newton_update));
+      local_max = std::max(local_max, std::abs(dof_newton_update));
     }
 
 
-    double global_phase_order_l2_norm =
-            std::sqrt(Utilities::MPI::sum(local_sum, mpi_communicator));
-    double global_phase_order_linfty_norm =
-            Utilities::MPI::max(local_max, mpi_communicator);
+  double global_phase_order_l2_norm =
+    std::sqrt(Utilities::MPI::sum(local_sum, mpi_communicator));
+  double global_phase_order_linfty_norm =
+    Utilities::MPI::max(local_max, mpi_communicator);
 
-    local_sum = 0.0;
-    local_max = std::numeric_limits<double>::lowest();
+  local_sum = 0.0;
+  local_max = std::numeric_limits<double>::lowest();
 
-    for (auto j = index_set_chemical_potential[1].begin();
-         j != index_set_chemical_potential[1].end();
-         j++) {
-        double dof_newton_update = newton_update[*j];
+  for (auto j = index_set_chemical_potential[1].begin();
+       j != index_set_chemical_potential[1].end();
+       j++)
+    {
+      double dof_newton_update = newton_update[*j];
 
-        local_sum += dof_newton_update * dof_newton_update;
+      local_sum += dof_newton_update * dof_newton_update;
 
-        local_max = std::max(local_max, std::abs(dof_newton_update));
+      local_max = std::max(local_max, std::abs(dof_newton_update));
     }
 
-    double global_chemical_potential_l2_norm =
-            std::sqrt(Utilities::MPI::sum(local_sum, mpi_communicator));
-    double global_chemical_potential_linfty_norm =
-            Utilities::MPI::max(local_max, mpi_communicator);
+  double global_chemical_potential_l2_norm =
+    std::sqrt(Utilities::MPI::sum(local_sum, mpi_communicator));
+  double global_chemical_potential_linfty_norm =
+    Utilities::MPI::max(local_max, mpi_communicator);
 
-    this->pcout << std::setprecision(display_precision)
-                << "\n\t||dphi||_L2 = " << std::setw(6)
-                << global_phase_order_l2_norm << std::setw(6)
-                << "\t||dphi||_Linfty = "
-                << std::setprecision(display_precision)
-                << global_phase_order_linfty_norm << std::endl;
-    this->pcout << std::setprecision(display_precision)
-                << "\t||deta||_L2 = " << std::setw(6)
-                << global_chemical_potential_l2_norm << std::setw(6)
-                << "\t||deta||_Linfty = "
-                << std::setprecision(display_precision)
-                << global_chemical_potential_linfty_norm << std::endl;
+  this->pcout << std::setprecision(display_precision)
+              << "\n\t||dphi||_L2 = " << std::setw(6)
+              << global_phase_order_l2_norm << std::setw(6)
+              << "\t||dphi||_Linfty = " << std::setprecision(display_precision)
+              << global_phase_order_linfty_norm << std::endl;
+  this->pcout << std::setprecision(display_precision)
+              << "\t||deta||_L2 = " << std::setw(6)
+              << global_chemical_potential_l2_norm << std::setw(6)
+              << "\t||deta||_Linfty = " << std::setprecision(display_precision)
+              << global_chemical_potential_linfty_norm << std::endl;
 }
 
 double
@@ -1568,8 +1568,10 @@ CahnHilliard<dim>::compute_epsilon()
 
   const int max_level = this->triangulation->n_levels();
 
-  //add locally owned cells, pb with ghost cells? tracker valeurs min et max pour checker treshold de coeurs pour que ça fonctionne
-  // diametre d'une cellule qui n'est pas owned? lancer en debug pour checker si erreur là dessus.
+  // add locally owned cells, pb with ghost cells? tracker valeurs min et max
+  // pour checker treshold de coeurs pour que ça fonctionne
+  //  diametre d'une cellule qui n'est pas owned? lancer en debug pour checker
+  //  si erreur là dessus.
 
   for (const auto &cell :
        this->dof_handler.active_cell_iterators_on_level(max_level - 1))
