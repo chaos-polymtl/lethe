@@ -1567,10 +1567,9 @@ CahnHilliard<dim>::compute_epsilon()
   double max_cell_diameter = std::numeric_limits<double>::min();
 
   const int max_level = this->triangulation->n_levels();
-  int       number_of_cells_on_level(
-    this->triangulation->n_active_cells(max_level - 1));
 
-  std::vector<double> cell_sizes_max_level;
+  //add locally owned cells, pb with ghost cells? tracker valeurs min et max pour checker treshold de coeurs pour que ça fonctionne
+  // diametre d'une cellule qui n'est pas owned? lancer en debug pour checker si erreur là dessus.
 
   for (const auto &cell :
        this->dof_handler.active_cell_iterators_on_level(max_level - 1))
