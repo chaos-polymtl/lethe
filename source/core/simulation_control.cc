@@ -167,6 +167,9 @@ SimulationControl::read(std::string prefix)
   input >> buffer >> CFL;
   input >> buffer >> current_time;
   input >> buffer >> iteration_number;
+
+  // Fix time step to be the last time_step that was used
+  time_step = time_step_vector[0];
 }
 
 
