@@ -410,12 +410,25 @@ CahnHilliard<dim>::calculate_phase_statistics()
 
   const FEValuesExtractors::Scalar phase_order(0);
 
-  const unsigned int  n_q_points = cell_quadrature->size();
-  std::vector<double> local_phase_order_values(n_q_points);
+  const unsigned int          n_q_points = cell_quadrature->size();
+  std::vector<double>         local_phase_order_values(n_q_points);
+  std::vector<Tensor<1, dim>> local_phase_order_gradients(n_q_points);
 
   double integral(0.);
   double max_phase_value(std::numeric_limits<double>::min());
   double min_phase_value(std::numeric_limits<double>::max());
+  double volume_0(0.);
+  double volume_1(0.);
+  double bulk_energy(0.);
+  double interface_energy(0.);
+  double total_energy(0.);
+
+  double epsilon =
+    (this->simulation_parameters.multiphysics.cahn_hilliard_parameters
+       .epsilon_set_method == Parameters::EpsilonSetMethod::manual) ?
+      this->simulation_parameters.multiphysics.cahn_hilliard_parameters
+        .epsilon :
+      GridTools::minimal_cell_diameter(*triangulation);
 
   for (const auto &cell : dof_handler.active_cell_iterators())
     {
@@ -424,7 +437,8 @@ CahnHilliard<dim>::calculate_phase_statistics()
           fe_values.reinit(cell);
           fe_values[phase_order].get_function_values(present_solution,
                                                      local_phase_order_values);
-
+          fe_values[phase_order].get_function_gradients(
+            present_solution, local_phase_order_gradients);
           for (unsigned int q = 0; q < n_q_points; q++)
             {
               integral += local_phase_order_values[q] * fe_values.JxW(q);
@@ -432,6 +446,19 @@ CahnHilliard<dim>::calculate_phase_statistics()
                 std::max(local_phase_order_values[q], max_phase_value);
               min_phase_value =
                 std::min(local_phase_order_values[q], min_phase_value);
+              volume_0 +=
+                (1 + local_phase_order_values[q]) * 0.5 * fe_values.JxW(q);
+              volume_1 +=
+                (1 - local_phase_order_values[q]) * 0.5 * fe_values.JxW(q);
+              bulk_energy += (1 - local_phase_order_values[q] *
+                                    local_phase_order_values[q]) *
+                             (1 - local_phase_order_values[q] *
+                                    local_phase_order_values[q]) *
+                             fe_values.JxW(q);
+              interface_energy += epsilon * epsilon * 0.5 *
+                                  (local_phase_order_gradients[q] *
+                                   local_phase_order_gradients[q]) *
+                                  fe_values.JxW(q);
             }
         }
     }
@@ -439,7 +466,12 @@ CahnHilliard<dim>::calculate_phase_statistics()
   min_phase_value = Utilities::MPI::min(min_phase_value, mpi_communicator);
   max_phase_value = Utilities::MPI::max(max_phase_value, mpi_communicator);
 
-  integral             = Utilities::MPI::sum(integral, mpi_communicator);
+  integral         = Utilities::MPI::sum(integral, mpi_communicator);
+  volume_0         = Utilities::MPI::sum(volume_0, mpi_communicator);
+  volume_1         = Utilities::MPI::sum(volume_1, mpi_communicator);
+  bulk_energy      = Utilities::MPI::sum(bulk_energy, mpi_communicator);
+  interface_energy = Utilities::MPI::sum(interface_energy, mpi_communicator);
+  total_energy     = bulk_energy + interface_energy;
   double global_volume = GridTools::volume(*triangulation, *mapping);
   double phase_average = integral / global_volume;
 
@@ -453,13 +485,33 @@ CahnHilliard<dim>::calculate_phase_statistics()
       this->pcout << "Max: " << max_phase_value << std::endl;
       this->pcout << "Average: " << phase_average << std::endl;
       this->pcout << "Integral: " << integral << std::endl;
+      this->pcout << "Volume phase 0: " << volume_0 << std::endl;
+      this->pcout << "Volume phase 1: " << volume_1 << std::endl;
+      this->pcout << "Bulk energy: " << bulk_energy << std::endl;
+      this->pcout << "Interface energy: " << interface_energy << std::endl;
+      this->pcout << "Total energy: " << total_energy << std::endl;
     }
 
   statistics_table.add_value("time", simulation_control->get_current_time());
+  statistics_table.set_scientific("time", true);
   statistics_table.add_value("min", min_phase_value);
+  statistics_table.set_scientific("min", true);
   statistics_table.add_value("max", max_phase_value);
+  statistics_table.set_scientific("max", true);
   statistics_table.add_value("average", phase_average);
+  statistics_table.set_scientific("average", true);
   statistics_table.add_value("integral", integral);
+  statistics_table.set_scientific("integral", true);
+  statistics_table.add_value("volume_0", volume_0);
+  statistics_table.set_scientific("volume_0", true);
+  statistics_table.add_value("volume_1", volume_1);
+  statistics_table.set_scientific("volume_1", true);
+  statistics_table.add_value("bulk_energy", bulk_energy);
+  statistics_table.set_scientific("bulk_energy", true);
+  statistics_table.add_value("interface_energy", interface_energy);
+  statistics_table.set_scientific("interface_energy", true);
+  statistics_table.add_value("total_energy", total_energy);
+  statistics_table.set_scientific("total_energy", true);
 }
 
 template <int dim>
