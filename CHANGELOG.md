@@ -3,6 +3,12 @@
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Master] - 2024-04-16
+
+### Fixed
+
+- MINOR Simulations with adaptive time-stepping would checkpoint correctly, but would not restart with the correct time-step due to the way the time-step was read from the checkpointing files. This is now fixed and tested. [#1093](https://github.com/lethe-cfd/lethe/pull/1093)
+
 ## [Master] - 2024-04-07
 
 ### Added
