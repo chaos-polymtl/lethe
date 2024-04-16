@@ -33,14 +33,14 @@ file(COPY taylor-green-vortex-restart_gls_bdf1/enstrophy.checkpoint DESTINATION 
 file(COPY taylor-green-vortex-restart_gls_bdf1/kinetic_energy.checkpoint DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/taylor-green-vortex-restart_gls_bdf1.${_build_type}/mpirun=1/")
 file(COPY taylor-green-vortex-restart_gls_bdf1/L2Error_FD.checkpoint DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/taylor-green-vortex-restart_gls_bdf1.${_build_type}/mpirun=1/")
 
-file(COPY taylor-green-vortex-restart-bdf1-adaptive/restart.pvdhandler DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/taylor-green-vortex-restart_gls_bdf1.${_build_type}/mpirun=1/")
-file(COPY taylor-green-vortex-restart-bdf1-adaptive/restart.simulationcontrol DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/taylor-green-vortex-restart_gls_bdf1.${_build_type}/mpirun=1/")
-file(COPY taylor-green-vortex-restart-bdf1-adaptive/restart.triangulation DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/taylor-green-vortex-restart_gls_bdf1.${_build_type}/mpirun=1/")
-file(COPY taylor-green-vortex-restart-bdf1-adaptive/restart.triangulation_fixed.data DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/taylor-green-vortex-restart_gls_bdf1.${_build_type}/mpirun=1/")
-file(COPY taylor-green-vortex-restart-bdf1-adaptive/restart.triangulation.info DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/taylor-green-vortex-restart_gls_bdf1.${_build_type}/mpirun=1/")
-file(COPY taylor-green-vortex-restart-bdf1-adaptive/enstrophy.checkpoint DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/taylor-green-vortex-restart_gls_bdf1.${_build_type}/mpirun=1/")
-file(COPY taylor-green-vortex-restart-bdf1-adaptive/kinetic_energy.checkpoint DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/taylor-green-vortex-restart_gls_bdf1.${_build_type}/mpirun=1/")
-file(COPY taylor-green-vortex-restart-bdf1-adaptive/L2Error_FD.checkpoint DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/taylor-green-vortex-restart_gls_bdf1.${_build_type}/mpirun=1/")
+file(COPY taylor-green-vortex-restart-bdf1-adaptive/restart.pvdhandler DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/taylor-green-vortex-restart-bdf1-adaptive.${_build_type}/mpirun=1/")
+file(COPY taylor-green-vortex-restart-bdf1-adaptive/restart.simulationcontrol DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/taylor-green-vortex-restart-bdf1-adaptive.${_build_type}/mpirun=1/")
+file(COPY taylor-green-vortex-restart-bdf1-adaptive/restart.triangulation DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/taylor-green-vortex-restart-bdf1-adaptive.${_build_type}/mpirun=1/")
+file(COPY taylor-green-vortex-restart-bdf1-adaptive/restart.triangulation_fixed.data DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/taylor-green-vortex-restart-bdf1-adaptive.${_build_type}/mpirun=1/")
+file(COPY taylor-green-vortex-restart-bdf1-adaptive/restart.triangulation.info DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/taylor-green-vortex-restart-bdf1-adaptive.${_build_type}/mpirun=1/")
+file(COPY taylor-green-vortex-restart-bdf1-adaptive/enstrophy.checkpoint DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/taylor-green-vortex-restart-bdf1-adaptive.${_build_type}/mpirun=1/")
+file(COPY taylor-green-vortex-restart-bdf1-adaptive/kinetic_energy.checkpoint DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/taylor-green-vortex-restart-bdf1-adaptive.${_build_type}/mpirun=1/")
+file(COPY taylor-green-vortex-restart-bdf1-adaptive/L2Error_FD.checkpoint DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/taylor-green-vortex-restart-bdf1-adaptive.${_build_type}/mpirun=1/")
 
 
 file(COPY cylinder_unstructured.msh DESTINATION "${CMAKE_CURRENT_BINARY_DIR}")
