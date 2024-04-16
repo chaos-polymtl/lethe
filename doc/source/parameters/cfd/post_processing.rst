@@ -67,6 +67,8 @@ This subsection controls the post-processing other than the forces and torque on
     # Other Cahn-Hilliard postprocessing
     set calculate phase statistics       = false
     set phase statistics name            = phase_statistics
+    set calculate phase energy           = true
+    set phase energy name                = phase_energy
     
   end
 
@@ -222,5 +224,25 @@ This subsection controls the post-processing other than the forces and torque on
 * ``calculate phase statistics``: outputs phase statistics from the solution of the Cahn-Hilliard equations, including minimum, maximum, average, and standard deviation of the phase order parameter. This works only with the :doc:`cahn_hilliard` solver.
 
 * ``phase statistics name``: name of the output file containing phase order parameter statistics from Cahn-Hilliard simulations. The default file name is ``phase_statistics``.
+
+* ``calculate phase energy``:  outputs phase energies from the solution of the Cahn-Hilliard equations : bulk energy, interface energy and total energy. This works only with the :doc:`cahn_hilliard` solver. The energies are computed as follow:
+
+  .. math::
+
+     E_{bulk} = \int_{\Omega} (1-\phi^2)^2 \mathrm{d}\Omega 
+      
+  .. math::
+
+     E_{interface} = \int_{\Omega} 0.5\epsilon^2|\nabla \phi |^2 \mathrm{d}\Omega 
+      
+  .. math::
+
+     E_{total} = E_{bulk} + E_{interface}  
+    
+  where :math:`\epsilon` is the numerical interface thickness. Note that these energies are not homogeneous to physical energies, but they give nonetheless a good insight on the system's evolution.
+
+
+* ``phase energy name``: name of the output file containing phase energies from Cahn-Hilliard simulations. The default file name is ``phase_energy``.
+
 
         
