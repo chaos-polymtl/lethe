@@ -12,7 +12,6 @@ subsection simulation control
   set adapt = true
   set max cfl = 1
   set time step         = 0.01 # Time step
-  set number mesh adapt = 0    # If steady, nb mesh adaptation
   set time end          = 0.455991 # End time of simulation
   set output frequency  = 0    # Frequency of simulation output
 end
