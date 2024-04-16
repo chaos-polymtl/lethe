@@ -66,7 +66,6 @@ public:
    * term.
    * @param simulation_control Required to get the time stepping method.
    * @param mg_computing_timer Timer for specific MG components.
-   * @param pcout Object that allows parallel printing.
    * @param fe Describes the FE system for the vector-valued problem.
    * @param present_solution Previous solution needed to evaluate the non
    * linear term.
@@ -82,7 +81,6 @@ public:
     const std::shared_ptr<Function<dim>>     forcing_function,
     const std::shared_ptr<SimulationControl> simulation_control,
     TimerOutput                             &mg_computing_timer,
-    const ConditionalOStream                &pcout,
     const std::shared_ptr<FESystem<dim>>     fe,
     const VectorType                        &present_solution,
     const VectorType                        &time_derivative_previous_solutions,
@@ -93,36 +91,20 @@ public:
    * geometric multigrid approach.
    *
    * @param[in] computing_timer General solver timer.
-   * @param[in] dof_handler Describes the layout of DoFs and the type of FE.
-   * @param[in] simulation_parameters Object containing all parameters specified
-   * in input file.
    * @param[in] mg_computing_timer Timer for specific MG components.
-   * @param[in] pcout Object that allows parallel printing.
    */
   void
-  initialize_ls(TimerOutput                     &computing_timer,
-                const DoFHandler<dim>           &dof_handler,
-                const SimulationParameters<dim> &simulation_parameters,
-                TimerOutput                     &mg_computing_timer,
-                const ConditionalOStream        &pcout);
+  initialize_ls(TimerOutput &computing_timer, TimerOutput &mg_computing_timer);
 
   /**
    * @brief Initialize all relevant objects needed for the local smoothing
    * geometric multigrid approach.
    *
    * @param[in] computing_timer General solver timer.
-   * @param[in] dof_handler Describes the layout of DoFs and the type of FE.
-   * @param[in] simulation_parameters Object containing all parameters specified
-   * in input file.
    * @param[in] mg_computing_timer Timer for specific MG components.
-   * @param[in] pcout Object that allows parallel printing.
    */
   void
-  initialize_gc(TimerOutput                     &computing_timer,
-                const DoFHandler<dim>           &dof_handler,
-                const SimulationParameters<dim> &simulation_parameters,
-                TimerOutput                     &mg_computing_timer,
-                const ConditionalOStream        &pcout);
+  initialize_gc(TimerOutput &computing_timer, TimerOutput &mg_computing_timer);
 
   /**
    * @brief Calls the v cycle function of the multigrid object.
@@ -203,6 +185,15 @@ private:
   /// Global coarsening multigrid preconiditoner object
   std::shared_ptr<PreconditionMG<dim, VectorType, GCTransferType>>
     gc_multigrid_preconditioner;
+
+  /// Conditional Ostream
+  ConditionalOStream pcout;
+
+  /// Simulation parameters
+  SimulationParameters<dim> simulation_parameters;
+
+  /// DoF Handler
+  const DoFHandler<dim> &dof_handler;
 };
 
 

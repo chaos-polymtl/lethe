@@ -53,11 +53,13 @@ MFNavierStokesPreconditionGMG<dim>::MFNavierStokesPreconditionGMG(
   const std::shared_ptr<Function<dim>>     forcing_function,
   const std::shared_ptr<SimulationControl> simulation_control,
   TimerOutput                             &mg_computing_timer,
-  const ConditionalOStream                &pcout,
   const std::shared_ptr<FESystem<dim>>     fe,
   const VectorType                        &present_solution,
   const VectorType                        &time_derivative_previous_solutions,
   FlowControl<dim>                        &flow_control)
+  : pcout(std::cout, Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0)
+  , simulation_parameters(simulation_parameters)
+  , dof_handler(dof_handler)
 {
   if (simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
         .preconditioner == Parameters::LinearSolver::PreconditionerType::lsmg)
@@ -590,11 +592,8 @@ MFNavierStokesPreconditionGMG<dim>::MFNavierStokesPreconditionGMG(
 template <int dim>
 void
 MFNavierStokesPreconditionGMG<dim>::initialize_ls(
-  TimerOutput                     &computing_timer,
-  const DoFHandler<dim>           &dof_handler,
-  const SimulationParameters<dim> &simulation_parameters,
-  TimerOutput                     &mg_computing_timer,
-  const ConditionalOStream        &pcout)
+  TimerOutput &computing_timer,
+  TimerOutput &mg_computing_timer)
 {
   computing_timer.enter_subsection("Setup LSMG");
 
@@ -900,11 +899,8 @@ MFNavierStokesPreconditionGMG<dim>::initialize_ls(
 template <int dim>
 void
 MFNavierStokesPreconditionGMG<dim>::initialize_gc(
-  TimerOutput                     &computing_timer,
-  const DoFHandler<dim>           &dof_handler,
-  const SimulationParameters<dim> &simulation_parameters,
-  TimerOutput                     &mg_computing_timer,
-  const ConditionalOStream        &pcout)
+  TimerOutput &computing_timer,
+  TimerOutput &mg_computing_timer)
 {
   computing_timer.enter_subsection("Setup GCMG");
 
@@ -1141,6 +1137,14 @@ MFNavierStokesPreconditionGMG<dim>::vmult(VectorType       &dst,
     gc_multigrid_preconditioner->vmult(dst, src);
   else
     AssertThrow(false, ExcNotImplemented());
+
+  if (this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+        .mg_verbosity != Parameters::Verbosity::quiet)
+    {
+      this->pcout << "  -Coarse grid solver took: "
+                  << this->coarse_grid_solver_control->last_step()
+                  << " iterations" << std::endl;
+    }
 }
 
 template <int dim>
@@ -1567,7 +1571,6 @@ MFNavierStokesSolver<dim>::setup_GMG()
     this->forcing_function,
     this->simulation_control,
     this->mg_computing_timer,
-    this->pcout,
     this->fe,
     this->present_solution,
     this->time_derivative_previous_solutions,
@@ -1576,32 +1579,15 @@ MFNavierStokesSolver<dim>::setup_GMG()
   if (this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
         .preconditioner == Parameters::LinearSolver::PreconditionerType::lsmg)
     gmg_preconditioner->initialize_ls(this->computing_timer,
-                                      this->dof_handler,
-                                      this->simulation_parameters,
-                                      this->mg_computing_timer,
-                                      this->pcout);
+                                      this->mg_computing_timer);
   else if (this->simulation_parameters.linear_solver
              .at(PhysicsID::fluid_dynamics)
              .preconditioner ==
            Parameters::LinearSolver::PreconditionerType::gcmg)
     gmg_preconditioner->initialize_gc(this->computing_timer,
-                                      this->dof_handler,
-                                      this->simulation_parameters,
-                                      this->mg_computing_timer,
-                                      this->pcout);
+                                      this->mg_computing_timer);
   else
     AssertThrow(false, ExcNotImplemented());
-
-  if (this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
-        .mg_verbosity != Parameters::Verbosity::quiet)
-    {
-      // TODO
-      // this->pcout << "  -Coarse grid solver took: "
-      //            << this->coarse_grid_solver_control->last_step() << " steps
-      //            "
-      //            << std::endl;
-      // this->pcout << std::endl;
-    }
 }
 
 template <int dim>
