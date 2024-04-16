@@ -10,9 +10,11 @@ Min: -0.994529
 Max: 1
 Average: 0.544551
 Integral: 2.1782
+Volume phase 0: 3.0891
+Volume phase 1: 0.910898
 
 *******************************************************************************
-Transient iteration: 1        Time: 0.5      Time step: 0.5      CFL: 0       
+Transient iteration: 1        Time: 0.5      Time step: 0.5      CFL: 0
 *******************************************************************************
 -----------------
 Phase statistics
@@ -21,6 +23,8 @@ Min: -0.786164
 Max: 0.781734
 Average: 0.423636
 Integral: 1.69454
+Volume phase 0: 2.84727
+Volume phase 1: 1.15273
 
 *******************************************************************************
 Transient iteration: 2        Time: 1        Time step: 0.5      CFL: 0.533525
@@ -32,3 +36,5 @@ Min: -0.780241
 Max: 0.794182
 Average: 0.427977
 Integral: 1.71191
+Volume phase 0: 2.85595
+Volume phase 1: 1.14405
