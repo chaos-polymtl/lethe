@@ -1557,6 +1557,7 @@ CahnHilliard<dim>::output_newton_update_norms(
               << global_chemical_potential_linfty_norm << std::endl;
 }
 
+template <int dim>
 double
 CahnHilliard<dim>::compute_epsilon()
 {
