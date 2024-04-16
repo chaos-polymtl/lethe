@@ -77,5 +77,5 @@ The ``*`` means that we want to import all members of lethe_pyvista_tools.
 Using lethe_pyvista_tools
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-To get quick-started, follow the hand-on `Small Scale Rotating Drum Post-processing example <../../examples/dem/small-scale-rotating-drum-post-processing>`_. It has a detailed explanation on how to use the module. You can also start with a "raw" template file, check `this example file <https://github.com/lethe-cfd/lethe/tree/master/contrib/postprocessing/example.py>`_.
+To get quick-started, follow the hand-on :doc:`Small Scale Rotating Drum Post-processing example <../../examples/dem/small-scale-rotating-drum-postprocessing/small-scale-rotating-drum-postprocessing>`. It has a detailed explanation on how to use the module. You can also start with a "raw" template file, check `this example file <https://github.com/lethe-cfd/lethe/tree/master/contrib/postprocessing/example.py>`_.
 

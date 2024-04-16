@@ -159,7 +159,7 @@ In the ``mesh`` subsection, we define a subdivided hyper rectangle with appropri
 Mesh Adaptation
 ~~~~~~~~~~~~~~~~
 
-In the ``mesh adaptation`` subsection, we dynamically adapt the mesh using the ``phase`` as refinement ``variable``. We choose :math:`3` as the ``min refinement level`` and :math:``5`` as the ``max refinement level``. We set ``initial refinement steps = 4`` to adapt the mesh to the initial value of the VOF field.
+In the ``mesh adaptation`` subsection, we dynamically adapt the mesh using the ``phase`` as refinement ``variable``. We choose :math:`3` as the ``min refinement level`` and :math:`5` as the ``max refinement level``. We set ``initial refinement steps = 4`` to adapt the mesh to the initial value of the VOF field.
 
 .. code-block:: text
 

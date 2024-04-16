@@ -166,7 +166,7 @@ In the nano terminal, copy-paste (with ``Ctrl+Shift+V``):
   module load cmake/3.23.1
   module load gcc/9.3.0
   module load openmpi/4.0.3
-  module load trilinos/13.0.1
+  module load trilinos/13.4.1
   module load parmetis/4.0.3
   module load p4est/2.2
   module load opencascade/7.5.2
