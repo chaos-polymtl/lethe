@@ -396,7 +396,7 @@ private:
   copy_local_rhs_to_global_rhs(const StabilizedMethodsCopyData &copy_data);
 
   /**
-   * @brief Calculate phase order parameter integral for monitoring purposes
+   * @brief Calculate phase statistics for monitoring purposes
    */
   void
   calculate_phase_statistics();
@@ -409,7 +409,7 @@ private:
 
   /**
    *
-   * @return A pointer to an array of double containing the energies. First element is bulk energy, second is interface energy and third is total energy
+   * @brief Calculate the phase energies :  bulk energy, interface energy and total energy.
    */
   void
   calculate_phase_energy();

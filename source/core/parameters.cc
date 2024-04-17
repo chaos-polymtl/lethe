@@ -1833,13 +1833,13 @@ namespace Parameters
         "calculate phase energy",
         "false",
         Patterns::Bool(),
-        "Enable calculation of phase energies : total energy, bulk energy and interface energy");
+        "Enable calculation of phase energies, including: total energy, bulk energy, and interface energy");
 
       prm.declare_entry(
         "phase energy name",
         "phase_energy",
         Patterns::FileName(),
-        "Name of energy output file in Cahn-Hilliard simulations.");
+        "Name of energy output file in Cahn-Hilliard simulations. The file is stored in the output folder specified in the simulation control subsection");
     }
     prm.leave_subsection();
   }
