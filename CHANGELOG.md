@@ -7,7 +7,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Added
 
-- MINOR Added computation of the energies involved in the Cahn-Hilliard equations and updated related documentation. [#1095](https://github.com/lethe-cfd/lethe/pull/1095)
+- MINOR Added Cahn-Hilliard equations energy computation and output. The documentation was updated accordingly. [#1095](https://github.com/lethe-cfd/lethe/pull/1095)
 
 ## [Master] - 2024-04-16
 
