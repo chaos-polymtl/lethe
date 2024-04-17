@@ -3,6 +3,12 @@
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Master] - 2024-04-17
+
+### Added
+
+- MINOR Added computation of the energies involved in the Cahn-Hilliard equations and updated related documentation. [#1094](future PR link)
+
 ## [Master] - 2024-04-16
 
 ### Fixed
