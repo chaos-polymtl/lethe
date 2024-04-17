@@ -221,7 +221,7 @@ This subsection controls the post-processing other than the forces and torque on
 
 * ``mass conservation name``: name of the output file containing the mass of both fluids for VOF simulations. The default file name is ``mass_conservation_information``.
   
-* ``calculate phase statistics``: outputs phase statistics from the solution of the Cahn-Hilliard equations, including minimum, maximum, average, and standard deviation of the phase order parameter. This works only with the :doc:`cahn_hilliard` solver.
+* ``calculate phase statistics``: outputs phase statistics from the solution of the Cahn-Hilliard equations, including minimum, maximum, average, integral of the phase order parameter. Also includes the volume of each phase. This works only with the :doc:`cahn_hilliard` solver.
 
 * ``phase statistics name``: name of the output file containing phase order parameter statistics from Cahn-Hilliard simulations. The default file name is ``phase_statistics``.
 
