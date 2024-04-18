@@ -898,6 +898,8 @@ CahnHilliard<dim>::post_mesh_adaptation()
   solution_transfer->interpolate(tmp);
 
   // Distribute constraints
+  nonzero_constraints.reinit();
+  nonzero_constraints.close();
   nonzero_constraints.distribute(tmp);
 
   // Fix on the new mesh
@@ -1214,6 +1216,8 @@ CahnHilliard<dim>::set_initial_conditions()
   const FEValuesExtractors::Scalar phase_order(0);
   const FEValuesExtractors::Scalar potential(1);
 
+
+
   VectorTools::interpolate(
     *mapping,
     dof_handler,
@@ -1230,6 +1234,9 @@ CahnHilliard<dim>::set_initial_conditions()
     newton_update,
     fe->component_mask(potential));
 
+  //nonzero_constraints.close();
+  nonzero_constraints.reinit();
+  nonzero_constraints.close();
   nonzero_constraints.distribute(newton_update);
   present_solution = newton_update;
   apply_phase_filter();
@@ -1245,8 +1252,13 @@ CahnHilliard<dim>::solve_linear_system(const bool initial_step,
 
   auto mpi_communicator = triangulation->get_communicator();
 
-  const AffineConstraints<double> &constraints_used =
+
+
+  AffineConstraints<double> &constraints_used =
     initial_step ? nonzero_constraints : this->zero_constraints;
+
+  constraints_used.reinit();
+  constraints_used.close();
 
   const double absolute_residual =
     simulation_parameters.linear_solver.at(PhysicsID::cahn_hilliard)
@@ -1563,28 +1575,43 @@ CahnHilliard<dim>::compute_epsilon()
 {
   auto mpi_communicator = this->triangulation->get_communicator();
 
-  double epsilon(0.0);
   double min_cell_diameter = std::numeric_limits<double>::max();
-  double max_cell_diameter = std::numeric_limits<double>::min();
+  double max_cell_diameter = std::numeric_limits<double>::lowest();
 
-  const int max_level = this->triangulation->n_levels();
+//  int rank, size;
+//  MPI_Comm_rank(mpi_communicator,&rank);
+//  MPI_Comm_size(mpi_communicator,&size);
+
+  const unsigned int local_max_level = this->triangulation->n_levels();
 
   // add locally owned cells, pb with ghost cells? tracker valeurs min et max
   // pour checker treshold de coeurs pour que ça fonctionne
   //  diametre d'une cellule qui n'est pas owned? lancer en debug pour checker
   //  si erreur là dessus.
+//    printf("Rank %d out of %d \n n_global_level = %d \n",rank,size, n_global_level);
 
-  for (const auto &cell :
-       this->dof_handler.active_cell_iterators_on_level(max_level - 1))
-    {
-      max_cell_diameter = std::max(max_cell_diameter, cell->diameter());
-      min_cell_diameter = std::min(min_cell_diameter, cell->diameter());
-    }
+  if (local_max_level==this->triangulation->n_global_levels())
+  {
+      for (const auto &cell:
+              this->dof_handler.active_cell_iterators_on_level(local_max_level - 1))
+      {
+          if (cell->is_locally_owned())
+          {
+              max_cell_diameter = std::max(max_cell_diameter, cell->diameter());
+              min_cell_diameter = std::min(min_cell_diameter, cell->diameter());
+          }
+      }
+  }
+
+  //printf("Rank %d out of %d \n max_cell_diameter = %f \n min_cell_diameter = %f \n",rank,size,max_cell_diameter, min_cell_diameter);
+
 
   max_cell_diameter = Utilities::MPI::max(max_cell_diameter, mpi_communicator);
   min_cell_diameter = Utilities::MPI::min(min_cell_diameter, mpi_communicator);
 
-  epsilon = 0.5 * (max_cell_diameter + min_cell_diameter);
+  double epsilon = 0.5 * (max_cell_diameter + min_cell_diameter);
+
+  //printf("Final epsilon value = %f \n", epsilon);
 
   return epsilon;
 }
