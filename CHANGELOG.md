@@ -3,6 +3,12 @@
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Master] - 2024-04-17
+
+### Added
+
+- MINOR Added Cahn-Hilliard equations energy computation and output. The documentation was updated accordingly. [#1095](https://github.com/lethe-cfd/lethe/pull/1095)
+
 ## [Master] - 2024-04-16
 
 ### Fixed

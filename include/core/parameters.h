@@ -907,6 +907,12 @@ namespace Parameters
     /// Prefix for the VOF mass conservation output
     std::string mass_conservation_output_name;
 
+    /// Enable energies calculation on the domain in Cahn-Hilliard simulations
+    bool calculate_phase_energy;
+
+    /// Prefix for the energy output in Cahn-Hilliard simulations
+    std::string phase_energy_output_name;
+
     static void
     declare_parameters(ParameterHandler &prm);
     void
