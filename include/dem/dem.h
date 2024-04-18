@@ -60,7 +60,6 @@ template <int dim>
 class DEMSolver
 {
   using FuncPtrType = bool (DEMSolver<dim>::*)();
-  FuncPtrType check_contact_search_step;
   FuncPtrType check_load_balance_step;
 
 public:
@@ -141,6 +140,12 @@ private:
     const CellStatus status) const;
 #  endif
 
+
+  /**
+   * Finds contact search steps for constant contact search method
+   */
+  inline bool
+  is_contact_search_step();
 
   /**
    * Finds contact search steps for constant contact search method

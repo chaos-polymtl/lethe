@@ -143,27 +143,6 @@ DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
     });
 #endif
 
-
-  // Setting contact detection method (constant or dynamic)
-  if (parameters.model_parameters.contact_detection_method ==
-      Parameters::Lagrangian::ModelParameters::ContactDetectionMethod::constant)
-    {
-      check_contact_search_step =
-        &DEMSolver<dim>::check_contact_search_step_constant;
-    }
-  else if (parameters.model_parameters.contact_detection_method ==
-           Parameters::Lagrangian::ModelParameters::ContactDetectionMethod::
-             dynamic)
-    {
-      check_contact_search_step =
-        &DEMSolver<dim>::check_contact_search_step_dynamic;
-    }
-  else
-    {
-      throw std::runtime_error(
-        "Specified contact detection method is not valid");
-    }
-
   // Setting load-balance method (single-step, frequent or dynamic)
   if (parameters.model_parameters.load_balance_method ==
       Parameters::Lagrangian::ModelParameters::LoadBalanceMethod::once)
@@ -750,12 +729,27 @@ DEMSolver<dim>::check_load_balance_dynamic()
 
 template <int dim>
 inline bool
+DEMSolver<dim>::is_contact_search_step()
+{
+  if (parameters.model_parameters.contact_detection_method ==
+      Parameters::Lagrangian::ModelParameters::ContactDetectionMethod::constant)
+    check_contact_search_step_constant();
+  else if (parameters.model_parameters.contact_detection_method ==
+           Parameters::Lagrangian::ModelParameters::ContactDetectionMethod::
+             dynamic)
+    check_contact_search_step_dynamic();
+  else
+    throw std::runtime_error("Specified contact detection method is not valid");
+}
+
+template <int dim>
+inline bool
 DEMSolver<dim>::check_contact_search_step_dynamic()
 {
   bool sorting_in_subdomains_step =
     (particles_insertion_step || load_balance_step || contact_detection_step);
 
-  contact_detection_step = find_particle_contact_detection_step<dim>(
+  return find_particle_contact_detection_step<dim>(
     particle_handler,
     simulation_control->get_time_step(),
     smallest_contact_search_criterion,
@@ -763,8 +757,6 @@ DEMSolver<dim>::check_contact_search_step_dynamic()
     sorting_in_subdomains_step,
     displacement,
     (simulation_control->get_step_number() % contact_detection_frequency) == 0);
-
-  return contact_detection_step;
 }
 
 template <int dim>
@@ -1292,7 +1284,7 @@ DEMSolver<dim>::solve()
         }
 
       // Check to see if it is contact search step
-      contact_detection_step = (this->*check_contact_search_step)();
+      contact_detection_step = is_contact_search_step();
 
       // Sort particles in cells
       if (particles_insertion_step || load_balance_step ||
