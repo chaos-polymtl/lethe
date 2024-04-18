@@ -733,13 +733,17 @@ DEMSolver<dim>::is_contact_search_step()
 {
   if (parameters.model_parameters.contact_detection_method ==
       Parameters::Lagrangian::ModelParameters::ContactDetectionMethod::constant)
-    check_contact_search_step_constant();
+    return check_contact_search_step_constant();
   else if (parameters.model_parameters.contact_detection_method ==
            Parameters::Lagrangian::ModelParameters::ContactDetectionMethod::
              dynamic)
-    check_contact_search_step_dynamic();
+    return check_contact_search_step_dynamic();
   else
-    throw std::runtime_error("Specified contact detection method is not valid");
+    {
+      throw std::runtime_error(
+        "Specified contact detection method is not valid");
+      return false;
+    }
 }
 
 template <int dim>
