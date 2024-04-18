@@ -396,16 +396,29 @@ private:
   copy_local_rhs_to_global_rhs(const StabilizedMethodsCopyData &copy_data);
 
   /**
-   * @brief Calculate phase order parameter integral for monitoring purposes
+   * @brief Calculate phase statistics for monitoring purposes
    */
   void
   calculate_phase_statistics();
 
   /**
-   * @brief Writes the phase integral to an output file
+   * @brief Writes the phase statistics to an output file
    */
   void
   write_phase_statistics();
+
+  /**
+   *
+   * @brief Calculate the phase energies :  bulk energy, interface energy and total energy.
+   */
+  void
+  calculate_phase_energy();
+
+  /*
+   * @brief Write the energy to an output file
+   */
+  void
+  write_phase_energy();
 
   /**
    * @brief Calculates the barycenter of fluid 1 and its velocity
@@ -482,6 +495,9 @@ private:
 
   // Phase statistics table
   TableHandler statistics_table;
+
+  // Phase energy table
+  TableHandler phase_energy_table;
 
   // Phase fraction filter
   std::shared_ptr<CahnHilliardFilterBase> filter;

@@ -8,10 +8,16 @@ Phase statistics
 -----------------
 Min: -0.994529
 Max: 1
-Average: 0.544551
-Integral: 2.1782
-Volume phase 0: 3.0891
-Volume phase 1: 0.910898
+Average: 0.607051
+Integral: 2.4282
+Volume phase 0: 3.2141
+Volume phase 1: 0.785898
+-------------
+Phase energy
+-------------
+Bulk energy: 0.667619
+Interface energy: 1.74433
+Total energy: 2.41195
 
 *******************************************************************************
 Transient iteration: 1        Time: 0.5      Time step: 0.5      CFL: 0
@@ -19,22 +25,34 @@ Transient iteration: 1        Time: 0.5      Time step: 0.5      CFL: 0
 -----------------
 Phase statistics
 -----------------
-Min: -0.786164
-Max: 0.781734
-Average: 0.423636
-Integral: 1.69454
-Volume phase 0: 2.84727
-Volume phase 1: 1.15273
+Min: -1.01453
+Max: 1.00534
+Average: 0.60706
+Integral: 2.42824
+Volume phase 0: 3.21412
+Volume phase 1: 0.78588
+-------------
+Phase energy
+-------------
+Bulk energy: 0.687751
+Interface energy: 1.66703
+Total energy: 2.35478
 
 *******************************************************************************
-Transient iteration: 2        Time: 1        Time step: 0.5      CFL: 0.533525
+Transient iteration: 2        Time: 1        Time step: 0.5      CFL: 0.967317
 *******************************************************************************
 -----------------
 Phase statistics
 -----------------
-Min: -0.780241
-Max: 0.794182
-Average: 0.427977
-Integral: 1.71191
-Volume phase 0: 2.85595
-Volume phase 1: 1.14405
+Min: -0.891115
+Max: 1.0132
+Average: 0.61502
+Integral: 2.46008
+Volume phase 0: 3.23004
+Volume phase 1: 0.76996
+-------------
+Phase energy
+-------------
+Bulk energy: 1.08564
+Interface energy: 1.19563
+Total energy: 2.28127

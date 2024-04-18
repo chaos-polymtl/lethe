@@ -1828,6 +1828,18 @@ namespace Parameters
         "mass_conservation_information",
         Patterns::FileName(),
         "Name of mass conservation output file in VOF simulations");
+
+      prm.declare_entry(
+        "calculate phase energy",
+        "false",
+        Patterns::Bool(),
+        "Enable calculation of phase energies, including: total energy, bulk energy, and interface energy");
+
+      prm.declare_entry(
+        "phase energy name",
+        "phase_energy",
+        Patterns::FileName(),
+        "Name of energy output file in Cahn-Hilliard simulations. The file is stored in the output folder specified in the simulation control subsection");
     }
     prm.leave_subsection();
   }
@@ -1875,6 +1887,8 @@ namespace Parameters
       barycenter_output_name      = prm.get("barycenter name");
       calculate_mass_conservation = prm.get_bool("calculate mass conservation");
       mass_conservation_output_name = prm.get("mass conservation name");
+      calculate_phase_energy        = prm.get_bool("calculate phase energy");
+      phase_energy_output_name      = prm.get("phase energy name");
 
       // Viscous dissipative fluid
       const std::string op_fluid = prm.get("postprocessed fluid");
