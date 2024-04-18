@@ -59,9 +59,6 @@ using namespace DEM;
 template <int dim>
 class DEMSolver
 {
-  using FuncPtrType = bool (DEMSolver<dim>::*)();
-  FuncPtrType check_load_balance_step;
-
 public:
   DEMSolver(DEMSolverParameters<dim> dem_parameters);
 
