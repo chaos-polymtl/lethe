@@ -419,7 +419,7 @@ MFNavierStokesPreconditionGMG<dim>::initialize_ls(
   if (mg_level_min_cells != -1)
     {
       for (unsigned int level = minlevel; level <= maxlevel; ++level)
-        if (static_cast<int>(n_cells_on_levels[maxlevel]) >= mg_level_min_cells)
+        if (static_cast<int>(n_cells_on_levels[level]) >= mg_level_min_cells)
           {
             minlevel = level;
             break;
