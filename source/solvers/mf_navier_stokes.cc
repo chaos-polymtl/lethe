@@ -434,7 +434,7 @@ MFNavierStokesPreconditionGMG<dim>::initialize_ls(
       for (unsigned int level = minlevel; level <= maxlevel; ++level)
         pcout << "    Level " << level - minlevel << ": "
               << dof_handler.n_dofs(level) << " DoFs, "
-              << n_cells_on_levels[maxlevel] << " cells" << std::endl;
+              << n_cells_on_levels[level] << " cells" << std::endl;
       pcout << std::endl;
     }
 
