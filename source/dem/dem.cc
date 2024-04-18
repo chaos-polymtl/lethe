@@ -143,39 +143,6 @@ DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
     });
 #endif
 
-  // Setting load-balance method (single-step, frequent or dynamic)
-  if (parameters.model_parameters.load_balance_method ==
-      Parameters::Lagrangian::ModelParameters::LoadBalanceMethod::once)
-    {
-      check_load_balance_step = &DEMSolver<dim>::check_load_balance_once;
-    }
-  else if (parameters.model_parameters.load_balance_method ==
-           Parameters::Lagrangian::ModelParameters::LoadBalanceMethod::frequent)
-    {
-      check_load_balance_step = &DEMSolver<dim>::check_load_balance_frequent;
-    }
-  else if (parameters.model_parameters.load_balance_method ==
-           Parameters::Lagrangian::ModelParameters::LoadBalanceMethod::dynamic)
-    {
-      check_load_balance_step = &DEMSolver<dim>::check_load_balance_dynamic;
-    }
-  else if (parameters.model_parameters.load_balance_method ==
-           Parameters::Lagrangian::ModelParameters::LoadBalanceMethod::
-             dynamic_with_disabling_contacts)
-    {
-      check_load_balance_step =
-        &DEMSolver<dim>::check_load_balance_with_disabled_contacts;
-    }
-  else if (parameters.model_parameters.load_balance_method ==
-           Parameters::Lagrangian::ModelParameters::LoadBalanceMethod::none)
-    {
-      check_load_balance_step = &DEMSolver<dim>::no_load_balance;
-    }
-  else
-    {
-      throw std::runtime_error("Specified load balance method is not valid");
-    }
-
   if (parameters.model_parameters.disable_particle_contacts)
     {
       has_disabled_contacts = true;
@@ -523,6 +490,44 @@ DEMSolver<dim>::load_balance()
   pcout << "Minimum and maximum number of cells owned by the processors are "
         << average_minimum_maximum_cells.min << " and "
         << average_minimum_maximum_cells.max << std::endl;
+}
+
+template <int dim>
+inline bool
+DEMSolver<dim>::is_load_balance_step()
+{
+  // Setting load-balance method (single-step, frequent or dynamic)
+  if (parameters.model_parameters.load_balance_method ==
+      Parameters::Lagrangian::ModelParameters::LoadBalanceMethod::once)
+    {
+      return check_load_balance_once();
+    }
+  else if (parameters.model_parameters.load_balance_method ==
+           Parameters::Lagrangian::ModelParameters::LoadBalanceMethod::frequent)
+    {
+      return check_load_balance_frequent();
+    }
+  else if (parameters.model_parameters.load_balance_method ==
+           Parameters::Lagrangian::ModelParameters::LoadBalanceMethod::dynamic)
+    {
+      return check_load_balance_dynamic();
+    }
+  else if (parameters.model_parameters.load_balance_method ==
+           Parameters::Lagrangian::ModelParameters::LoadBalanceMethod::
+             dynamic_with_disabling_contacts)
+    {
+      return check_load_balance_with_disabled_contacts();
+    }
+  else if (parameters.model_parameters.load_balance_method ==
+           Parameters::Lagrangian::ModelParameters::LoadBalanceMethod::none)
+    {
+      return false;
+    }
+  else
+    {
+      throw std::runtime_error("Specified load balance method is not valid");
+      return false;
+    }
 }
 
 template <int dim>
@@ -1274,7 +1279,7 @@ DEMSolver<dim>::solve()
         displacement.resize(particle_handler.get_max_local_particle_index());
 
       // Load balancing
-      load_balance_step = (this->*check_load_balance_step)();
+      load_balance_step = is_load_balance_step();
 
       if (load_balance_step || checkpoint_step)
         {

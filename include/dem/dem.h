@@ -59,9 +59,6 @@ using namespace DEM;
 template <int dim>
 class DEMSolver
 {
-  using FuncPtrType = bool (DEMSolver<dim>::*)();
-  FuncPtrType check_load_balance_step;
-
 public:
   DEMSolver(DEMSolverParameters<dim> dem_parameters);
 
@@ -142,7 +139,7 @@ private:
 
 
   /**
-   * Finds contact search steps for constant contact search method
+   * @brief Establish if this is a contact detection step using the adequate contact search method
    */
   inline bool
   is_contact_search_step();
@@ -158,6 +155,12 @@ private:
    */
   inline bool
   check_contact_search_step_dynamic();
+
+  /**
+   * @brief Establish if this is a load balance step using the adequate method.
+   */
+  inline bool
+  is_load_balance_step();
 
   /**
    * Finds load-balance step for single-step load-balance
