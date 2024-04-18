@@ -228,6 +228,11 @@ CahnHilliard<dim>::assemble_system_rhs()
 
 template <int dim>
 void
+CahnHilliard<dim>::setup_preconditioner()
+{}
+
+template <int dim>
+void
 CahnHilliard<dim>::assemble_local_system_rhs(
   const typename DoFHandler<dim>::active_cell_iterator &cell,
   CahnHilliardScratchData<dim>                         &scratch_data,

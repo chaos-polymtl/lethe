@@ -118,7 +118,7 @@ protected:
    * @brief  Set-up the appropriate preconditioner
    */
   void
-  setup_preconditioner();
+  setup_preconditioner() override;
 
   /**
    * @brief Define the non-zero constraints used to solve the problem.
