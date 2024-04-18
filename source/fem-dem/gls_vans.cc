@@ -166,9 +166,11 @@ template <int dim>
 void
 GLSVANSSolver<dim>::finish_time_step_fd()
 {
-  GLSNavierStokesSolver<dim>::finish_time_step();
-
+  // Void fraction percolation must be done before the time step is finished to
+  // ensure that the checkpointed information is correct
   percolate_void_fraction();
+
+  GLSNavierStokesSolver<dim>::finish_time_step();
 }
 
 template <int dim>
