@@ -55,7 +55,8 @@ class MFNavierStokesPreconditionGMG
 
 public:
   /**
-   * @brief Construct a new precondition GMG object.
+   * @brief Construct a new precondition GMG object. Sets constraints,
+   * operators and transfer objects.
    *
    * @param simulation_parameters Object containing all parameters specified
    * in input file.
@@ -87,24 +88,22 @@ public:
     FlowControl<dim>                        &flow_control);
 
   /**
-   * @brief Initialize all relevant objects needed for the local smoothing
-   * geometric multigrid approach.
+   * @brief Initialize smoother, coarse grid solver and multigrid object
+   * needed for the local smoothing geometric multigrid preconditioner.
    *
-   * @param[in] computing_timer General solver timer.
    * @param[in] mg_computing_timer Timer for specific MG components.
    */
   void
-  initialize_ls(TimerOutput &computing_timer, TimerOutput &mg_computing_timer);
+  initialize_ls(TimerOutput &mg_computing_timer);
 
   /**
-   * @brief Initialize all relevant objects needed for the local smoothing
-   * geometric multigrid approach.
+   * @brief Initialize smoother, coarse grid solver and multigrid object
+   * needed for the global coarsening geometric multigrid preconditioner.
    *
-   * @param[in] computing_timer General solver timer.
    * @param[in] mg_computing_timer Timer for specific MG components.
    */
   void
-  initialize_gc(TimerOutput &computing_timer, TimerOutput &mg_computing_timer);
+  initialize_gc(TimerOutput &mg_computing_timer);
 
   /**
    * @brief Calls the v cycle function of the multigrid object.
@@ -315,7 +314,7 @@ protected:
    *
    */
   void
-  setup_preconditioner();
+  setup_preconditioner() override;
 
   /**
    * @brief Solve the linear system of equations using the method specified in

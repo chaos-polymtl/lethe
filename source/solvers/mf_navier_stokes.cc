@@ -592,11 +592,8 @@ MFNavierStokesPreconditionGMG<dim>::MFNavierStokesPreconditionGMG(
 template <int dim>
 void
 MFNavierStokesPreconditionGMG<dim>::initialize_ls(
-  TimerOutput &computing_timer,
   TimerOutput &mg_computing_timer)
 {
-  computing_timer.enter_subsection("Setup LSMG");
-
   this->mg_matrix =
     std::make_shared<mg::Matrix<VectorType>>(this->ls_mg_operators);
 
@@ -802,19 +799,29 @@ MFNavierStokesPreconditionGMG<dim>::initialize_ls(
       amg_data.output_details = false;
       amg_data.smoother_type  = "ILU";
       amg_data.coarse_type    = "ILU";
+
+#if DEAL_II_VERSION_GTE(9, 6, 0)
       // Constant modes for velocity and pressure
-      // std::vector<std::vector<bool>> constant_modes;
-      // ComponentMask                  components(dim + 1, true);
-      // DoFTools::extract_constant_modes(dof_handler,
-      //                                  components,
-      //                                  constant_modes);
-      // amg_data.constant_modes = constant_modes;
+      std::vector<std::vector<bool>> constant_modes;
+      ComponentMask                  components(dim + 1, true);
+      DoFTools::extract_level_constant_modes(minlevel,
+                                             dof_handler,
+                                             components,
+                                             constant_modes);
+      amg_data.constant_modes = constant_modes;
+#else
+      AssertThrow(
+        false,
+        ExcMessage(
+          "the extraction of constant modes for the AMG coarse-grid solver requires a version od deal.II >= 9.6.0"));
+#endif
 
       Teuchos::ParameterList              parameter_ml;
       std::unique_ptr<Epetra_MultiVector> distributed_constant_modes;
       amg_data.set_parameters(parameter_ml,
                               distributed_constant_modes,
                               mg_operators[minlevel]->get_system_matrix());
+
       const double ilu_fill =
         simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
           .ilu_precond_fill;
@@ -891,19 +898,14 @@ MFNavierStokesPreconditionGMG<dim>::initialize_ls(
   this->ls_multigrid_preconditioner =
     std::make_shared<PreconditionMG<dim, VectorType, LSTransferType>>(
       dof_handler, *this->mg, *this->mg_transfer_ls);
-
-  computing_timer.leave_subsection("Setup LSMG");
 }
 
 
 template <int dim>
 void
 MFNavierStokesPreconditionGMG<dim>::initialize_gc(
-  TimerOutput &computing_timer,
   TimerOutput &mg_computing_timer)
 {
-  computing_timer.enter_subsection("Setup GCMG");
-
   this->mg_matrix = std::make_shared<mg::Matrix<VectorType>>(mg_operators);
 
   // Create smoother, fill parameters for each level and intialize it
@@ -1043,7 +1045,8 @@ MFNavierStokesPreconditionGMG<dim>::initialize_gc(
       amg_data.output_details = false;
       amg_data.smoother_type  = "ILU";
       amg_data.coarse_type    = "ILU";
-      // Constant modes for velocity
+
+      // Constant modes for velocity and pressure
       std::vector<std::vector<bool>> constant_modes;
       ComponentMask                  components(dim + 1, true);
       DoFTools::extract_constant_modes(dof_handlers[minlevel],
@@ -1057,6 +1060,7 @@ MFNavierStokesPreconditionGMG<dim>::initialize_gc(
         parameter_ml,
         distributed_constant_modes,
         this->mg_operators[minlevel]->get_system_matrix());
+
       const double ilu_fill =
         simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
           .ilu_precond_fill;
@@ -1122,8 +1126,6 @@ MFNavierStokesPreconditionGMG<dim>::initialize_gc(
   this->gc_multigrid_preconditioner =
     std::make_shared<PreconditionMG<dim, VectorType, GCTransferType>>(
       dof_handler, *this->mg, *this->mg_transfer_gc);
-
-  computing_timer.leave_subsection("Setup GCMG");
 }
 
 template <int dim>
@@ -1508,8 +1510,6 @@ MFNavierStokesSolver<dim>::assemble_system_matrix()
   this->computing_timer.enter_subsection("Assemble matrix");
 
   this->computing_timer.leave_subsection("Assemble matrix");
-
-  setup_preconditioner();
 }
 
 template <int dim>
@@ -1563,6 +1563,8 @@ template <int dim>
 void
 MFNavierStokesSolver<dim>::setup_GMG()
 {
+  this->computing_timer.enter_subsection("Setup GMG");
+
   gmg_preconditioner = std::make_shared<MFNavierStokesPreconditionGMG<dim>>(
     this->simulation_parameters,
     this->dof_handler,
@@ -1578,16 +1580,16 @@ MFNavierStokesSolver<dim>::setup_GMG()
 
   if (this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
         .preconditioner == Parameters::LinearSolver::PreconditionerType::lsmg)
-    gmg_preconditioner->initialize_ls(this->computing_timer,
-                                      this->mg_computing_timer);
+    gmg_preconditioner->initialize_ls(this->mg_computing_timer);
   else if (this->simulation_parameters.linear_solver
              .at(PhysicsID::fluid_dynamics)
              .preconditioner ==
            Parameters::LinearSolver::PreconditionerType::gcmg)
-    gmg_preconditioner->initialize_gc(this->computing_timer,
-                                      this->mg_computing_timer);
+    gmg_preconditioner->initialize_gc(this->mg_computing_timer);
   else
     AssertThrow(false, ExcNotImplemented());
+
+  this->computing_timer.leave_subsection("Setup GMG");
 }
 
 template <int dim>
@@ -1879,9 +1881,6 @@ MFNavierStokesSolver<dim>::solve_system_GMRES(const bool   initial_step,
   solver_parameters.right_preconditioning = true;
 
   SolverGMRES<VectorType> solver(solver_control, solver_parameters);
-
-  if (!gmg_preconditioner && !ilu_preconditioner)
-    setup_preconditioner();
 
   this->newton_update = 0.0;
 
