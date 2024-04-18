@@ -9,6 +9,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 - MINOR Simulations with adaptive time-stepping would checkpoint correctly, but would not restart with the correct time-step due to the way the time-step was read from the checkpointing files. This is now fixed and tested. [#1093](https://github.com/lethe-cfd/lethe/pull/1093)
 
+## [Master] - 2024-04-15
+
+### Fixed
+
+- MINOR The previous flow rate post processing tool would add a line to the .dat file for each defined boundary (in the boundary condition subsection of the .prm file) for every time iteration. This is not the expected output as one would expect a single line to be added for each time step with the flow rates of every boundary. This is now fixed. [#1092](https://github.com/lethe-cfd/lethe/pull/1092)
+
 ## [Master] - 2024-04-07
 
 ### Added

@@ -1386,7 +1386,18 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess_fd(bool firstIter)
   // Calculate flow rate at every boundary
   if (this->simulation_parameters.post_processing.calculate_flow_rate)
     {
+      this->flow_rate_table.add_value("time",
+                                      simulation_control->get_current_time());
+      this->flow_rate_table.set_scientific("time", true);
+
       TimerOutput::Scope t(this->computing_timer, "flow_rate_calculation");
+
+      if (this->simulation_parameters.post_processing.verbosity ==
+          Parameters::Verbosity::verbose)
+        {
+          announce_string(this->pcout, "Flow rates");
+        }
+
       for (unsigned int boundary_id = 0;
            boundary_id < simulation_parameters.boundary_conditions.size;
            ++boundary_id)
@@ -1397,11 +1408,12 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess_fd(bool firstIter)
                                 boundary_id,
                                 *this->face_quadrature,
                                 *this->mapping);
+
           this->flow_rate_table.add_value(
-            "time", simulation_control->get_current_time());
-          this->flow_rate_table.add_value("flow-rate-" +
-                                            std::to_string(boundary_id),
-                                          boundary_flow_rate.first);
+            "flow-rate-" + Utilities::int_to_string(boundary_id, 2),
+            boundary_flow_rate.first);
+          this->flow_rate_table.set_scientific(
+            "flow-rate-" + Utilities::int_to_string(boundary_id, 2), true);
           if (this->simulation_parameters.post_processing.verbosity ==
               Parameters::Verbosity::verbose)
             {
@@ -1428,9 +1440,8 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess_fd(bool firstIter)
           for (unsigned int boundary_id = 0;
                boundary_id < simulation_parameters.boundary_conditions.size;
                ++boundary_id)
-            flow_rate_table.set_precision("flow-rate-" +
-                                            std::to_string(boundary_id),
-                                          12);
+            flow_rate_table.set_precision(
+              "flow-rate-" + Utilities::int_to_string(boundary_id, 2), 12);
           this->flow_rate_table.write_text(output);
         }
     }
