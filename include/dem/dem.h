@@ -59,6 +59,9 @@ using namespace DEM;
 template <int dim>
 class DEMSolver
 {
+  using FuncPtrType = bool (DEMSolver<dim>::*)();
+  FuncPtrType check_load_balance_step;
+
 public:
   DEMSolver(DEMSolverParameters<dim> dem_parameters);
 
@@ -145,6 +148,12 @@ private:
    */
   inline bool
   is_contact_search_iteration();
+
+  /**
+   * Finds contact search steps for constant contact search method
+   */
+  inline bool
+  check_contact_search_iteration_constant();
 
   /**
    * @brief Establish if this is a contact detection iteration using the constant contact detection frequency.
