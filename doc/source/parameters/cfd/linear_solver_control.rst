@@ -219,9 +219,6 @@ Different parameters for the main components of the two geometric multigrid algo
     set amg w cycles                              = false
     set amg smoother sweeps                       = 2
     set amg smoother overlap                      = 1
-    set amg preconditioner ilu fill               = 0
-    set amg preconditioner ilu absolute tolerance = 1e-12
-    set amg preconditioner ilu relative tolerance = 1.00
 
     # Coarse-grid ILU preconditioner parameters
     set ilu preconditioner fill               = 1
