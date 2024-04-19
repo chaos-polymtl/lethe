@@ -501,9 +501,13 @@ template <int dim>
 inline bool
 DEMSolver<dim>::is_load_balance_iteration()
 {
-  // Setting load-balance method (single-step, frequent or dynamic)
   if (parameters.model_parameters.load_balance_method ==
-      Parameters::Lagrangian::ModelParameters::LoadBalanceMethod::once)
+      Parameters::Lagrangian::ModelParameters::LoadBalanceMethod::none)
+    {
+      return false;
+    }
+  else if (parameters.model_parameters.load_balance_method ==
+           Parameters::Lagrangian::ModelParameters::LoadBalanceMethod::once)
     {
       return check_load_balance_once();
     }
@@ -522,11 +526,6 @@ DEMSolver<dim>::is_load_balance_iteration()
              dynamic_with_disabling_contacts)
     {
       return check_load_balance_with_disabled_contacts();
-    }
-  else if (parameters.model_parameters.load_balance_method ==
-           Parameters::Lagrangian::ModelParameters::LoadBalanceMethod::none)
-    {
-      return false;
     }
   else
     {
