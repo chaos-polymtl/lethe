@@ -504,3 +504,4 @@ References
 `[2] <https://doi.org/10.1016/j.enconman.2023.117224>`_ V. O. Ferreira, D. Silva Junior, K. R. B. de Melo, B. Blais, and G. C. Lopes, “Prediction of the bed expansion of a liquid fluidized bed bioreactor applied to wastewater treatment and biogas production,” *Energy Convers. Manag.*, vol. 290, p. 117224, Aug. 2023, doi: 10.1016/j.enconman.2023.117224.
 
 `[3] <https://doi.org/10.1201/9780203912744>`_ W.-C. Yang, Ed., *Handbook of Fluidization and Fluid-Particle Systems*, 1st ed. Boca Raton: CRC Press, 2003. doi: 10.1201/9780203912744.
+

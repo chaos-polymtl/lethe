@@ -208,7 +208,7 @@ Regarding the boundary conditions we apply slip boundary condition to the wall, 
     :height: 10cm
 
 
-we set the inlet velosity to 2.5 m/s, and don't impose the background velocity on the bottom of the cylinder like the another example.
+we set the inlet velosity to 2.5 m/s, and don't impose the background velocity on the bottom of the cylinder like the another example. The value of beta on the outlet boundary was set to 100, which is relatively high, in order to get stable simulation.
 
 .. code-block:: text
 
@@ -220,6 +220,7 @@ we set the inlet velosity to 2.5 m/s, and don't impose the background velocity o
     subsection bc 0 #outlet
       set id   = 3
       set type = outlet
+      set beta = 100
     end
 
     subsection bc 1 #inlet
@@ -272,6 +273,7 @@ The simulation is run using the ``lethe-fluid-particles`` application. Assuming 
 
 .. code-block:: text
   :class: copy-button
+
   lethe-fluid-particles gas-solid-spouted-bed.prm
 
 ---------
@@ -281,26 +283,26 @@ Results
 We briefly discuss the results that can be obtained from this example here.
 
 Tolal Pressure Drop
--------------------
+~~~~~~~~~~~~~~~~~~~
 
 Here, We show the data about pressure drop, which is very impotant value for fluidization phenomena.
 
 This graph illustrates the variation of pressure drop from 1s to 5s. We can see the pressure ossillation which is caused by bubbly state.
 
-.. image:: pressure_time.png
+.. image:: images/pressure_drop.png
     :alt: Pressure drop as a function of time
     :align: center
     :name: press_t
 
+The graph below shows pressure drop as a function of height, depending on time. Here you can see the ossillation of the pressure drop as well.
 
-
-.. image:: pressure_heigt.gif
+.. image:: images/pressure_height.gif
     :alt: Pressure drop as a function of height
     :align: center
-    :name: press_t
+    :name: press_h
 
 visualization
---------------
+~~~~~~~~~~~~~
 The results are shown in an animation below. You see the bubbly state flow is mixing the particles on the right side. the color of the particles represents its ID, to make it easier to see mixing. On the left side, you see the velocity profile as well.
 
 .. raw:: html
@@ -311,4 +313,4 @@ The results are shown in an animation below. You see the bubbly state flow is mi
 References
 ----------
 
-`[1]<https://pubs.acs.org/doi/full/10.1021/acs.iecr.2c03546>`Toni El Geitani, Shahab Golshan, and Bruno Blais, "Toward High-Order CFD-DEM: Development and Validation", *Industrial & Engineering Chemistry Research*, 2023, 62, 2,1141-1159, doi:10.1021/acs.iecr.2c03546.
+`[1]<https://pubs.acs.org/doi/full/10.1021/acs.iecr.2c03546>`_Toni El Geitani, Shahab Golshan, and Bruno Blais, "Toward High-Order CFD-DEM: Development and Validation", *Industrial & Engineering Chemistry Research*, 2023, 62, 2,1141-1159, doi:10.1021/acs.iecr.2c03546.
