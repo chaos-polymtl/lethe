@@ -3,6 +3,12 @@
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Master] - 2024-04-18
+
+### Fixed
+
+- MINOR Checkpoints were not established correctly with the lethe-fluid-particles solver. The void fraction was delayed in time and the restart file would not yield the same result because of this, resulting in crashes when the time derivative of the void fraction was used in the calculations. [#1096](https://github.com/lethe-cfd/lethe/pull/1096)
+
 ## [Master] - 2024-04-17
 
 ### Added
