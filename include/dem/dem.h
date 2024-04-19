@@ -166,13 +166,10 @@ private:
   inline bool
   check_contact_search_iteration_dynamic();
 
-  /**
-   * @brief Establish if this is a load balance iteration using the adequate method.
-   *
-   * @return bool indicating if this is a load balance iteration.
-   */
-  inline bool
-  is_load_balance_iteration();
+
+  std::function<bool()>
+                        set_is_load_balance_iteration();
+  std::function<bool()> is_load_balance_iteration_function;
 
   /**
    * @brief Establish if this is a load-balance step when load balance is

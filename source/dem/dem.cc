@@ -425,7 +425,7 @@ template <int dim>
 void
 DEMSolver<dim>::load_balance()
 {
-  load_balance_step = is_load_balance_iteration();
+  load_balance_step = is_load_balance_iteration_function();
 
   if (!load_balance_step)
     return;
@@ -496,41 +496,39 @@ DEMSolver<dim>::load_balance()
         << average_minimum_maximum_cells.min << " and "
         << average_minimum_maximum_cells.max << std::endl;
 }
-
 template <int dim>
-inline bool
-DEMSolver<dim>::is_load_balance_iteration()
+std::function<bool()>
+DEMSolver<dim>::set_is_load_balance_iteration()
 {
   if (parameters.model_parameters.load_balance_method ==
       Parameters::Lagrangian::ModelParameters::LoadBalanceMethod::none)
     {
-      return false;
+      return [&] { return false; };
     }
   else if (parameters.model_parameters.load_balance_method ==
            Parameters::Lagrangian::ModelParameters::LoadBalanceMethod::once)
     {
-      return check_load_balance_once();
+      return [&] { return check_load_balance_once(); };
     }
   else if (parameters.model_parameters.load_balance_method ==
            Parameters::Lagrangian::ModelParameters::LoadBalanceMethod::frequent)
     {
-      return check_load_balance_frequent();
+      return [&] { return check_load_balance_frequent(); };
     }
   else if (parameters.model_parameters.load_balance_method ==
            Parameters::Lagrangian::ModelParameters::LoadBalanceMethod::dynamic)
     {
-      return check_load_balance_dynamic();
+      return [&] { return check_load_balance_dynamic(); };
     }
   else if (parameters.model_parameters.load_balance_method ==
            Parameters::Lagrangian::ModelParameters::LoadBalanceMethod::
              dynamic_with_disabling_contacts)
     {
-      return check_load_balance_with_disabled_contacts();
+      return [&] { return check_load_balance_with_disabled_contacts(); };
     }
   else
     {
       throw std::runtime_error("Specified load balance method is not valid");
-      return false;
     }
 }
 
@@ -1145,6 +1143,8 @@ DEMSolver<dim>::solve()
   // Set insertion object type before the restart because the restart only
   // rebuilds the member of the insertion object
   insertion_object = set_insertion_type(parameters);
+
+  is_load_balance_iteration_function = set_is_load_balance_iteration();
 
   if (parameters.restart.restart == true)
     {
