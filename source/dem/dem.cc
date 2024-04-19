@@ -425,6 +425,11 @@ template <int dim>
 void
 DEMSolver<dim>::load_balance()
 {
+  load_balance_step = is_load_balance_iteration();
+
+  if (!load_balance_step)
+    return;
+
   TimerOutput::Scope t(this->computing_timer, "Load balancing");
   // Prepare particle handler for the adaptation of the triangulation to the
   // load
@@ -494,7 +499,7 @@ DEMSolver<dim>::load_balance()
 
 template <int dim>
 inline bool
-DEMSolver<dim>::is_load_balance_step()
+DEMSolver<dim>::is_load_balance_iteration()
 {
   // Setting load-balance method (single-step, frequent or dynamic)
   if (parameters.model_parameters.load_balance_method ==
@@ -532,44 +537,34 @@ DEMSolver<dim>::is_load_balance_step()
 
 template <int dim>
 inline bool
-DEMSolver<dim>::no_load_balance()
-{
-  return false;
-}
-
-template <int dim>
-inline bool
 DEMSolver<dim>::check_load_balance_once()
 {
-  bool load_balance_step = (simulation_control->get_step_number() ==
-                            parameters.model_parameters.load_balance_step);
+  if (simulation_control->get_step_number() ==
+      parameters.model_parameters.load_balance_step)
+    {
+      return true;
+    }
 
-  if (load_balance_step || checkpoint_step)
-    load_balance();
-
-  return load_balance_step;
+  return false;
 }
 
 template <int dim>
 inline bool
 DEMSolver<dim>::check_load_balance_frequent()
 {
-  bool load_balance_step =
-    (simulation_control->get_step_number() %
-       parameters.model_parameters.load_balance_frequency ==
-     0);
+  if ((simulation_control->get_step_number() %
+       parameters.model_parameters.load_balance_frequency) == 0)
+    {
+      return true;
+    }
 
-  if (load_balance_step || checkpoint_step)
-    load_balance();
-
-  return load_balance_step;
+  return false;
 }
 
 template <int dim>
 inline bool
 DEMSolver<dim>::check_load_balance_with_disabled_contacts()
 {
-  bool load_balance_step = false;
   if (simulation_control->get_step_number() %
         parameters.model_parameters.dynamic_load_balance_check_frequency ==
       0)
@@ -657,12 +652,9 @@ DEMSolver<dim>::check_load_balance_with_disabled_contacts()
               (total_load / n_mpi_processes) ||
           checkpoint_step)
         {
-          load_balance();
-          load_balance_step = true;
+          return true;
         }
     }
-
-
 
   // Clear and connect a new cell weight function
   triangulation.signals.weight.disconnect_all_slots();
@@ -695,14 +687,13 @@ DEMSolver<dim>::check_load_balance_with_disabled_contacts()
     });
 #endif
 
-  return load_balance_step;
+  return false;
 }
 
 template <int dim>
 inline bool
 DEMSolver<dim>::check_load_balance_dynamic()
 {
-  bool load_balance_step = false;
   if (simulation_control->get_step_number() %
         parameters.model_parameters.dynamic_load_balance_check_frequency ==
       0)
@@ -724,25 +715,24 @@ DEMSolver<dim>::check_load_balance_dynamic()
               (particle_handler.n_global_particles() / n_mpi_processes) ||
           checkpoint_step)
         {
-          load_balance();
-          load_balance_step = true;
+          return true;
         }
     }
 
-  return load_balance_step;
+  return false;
 }
 
 template <int dim>
 inline bool
-DEMSolver<dim>::is_contact_search_step()
+DEMSolver<dim>::is_contact_search_iteration()
 {
   if (parameters.model_parameters.contact_detection_method ==
       Parameters::Lagrangian::ModelParameters::ContactDetectionMethod::constant)
-    return check_contact_search_step_constant();
+    return check_contact_search_iteration_constant();
   else if (parameters.model_parameters.contact_detection_method ==
            Parameters::Lagrangian::ModelParameters::ContactDetectionMethod::
              dynamic)
-    return check_contact_search_step_dynamic();
+    return check_contact_search_iteration_dynamic();
   else
     {
       throw std::runtime_error(
@@ -753,7 +743,7 @@ DEMSolver<dim>::is_contact_search_step()
 
 template <int dim>
 inline bool
-DEMSolver<dim>::check_contact_search_step_dynamic()
+DEMSolver<dim>::check_contact_search_iteration_dynamic()
 {
   bool sorting_in_subdomains_step =
     (particles_insertion_step || load_balance_step || contact_detection_step);
@@ -770,7 +760,7 @@ DEMSolver<dim>::check_contact_search_step_dynamic()
 
 template <int dim>
 inline bool
-DEMSolver<dim>::check_contact_search_step_constant()
+DEMSolver<dim>::check_contact_search_iteration_constant()
 {
   return (
     (simulation_control->get_step_number() % contact_detection_frequency) == 0);
@@ -1279,7 +1269,7 @@ DEMSolver<dim>::solve()
         displacement.resize(particle_handler.get_max_local_particle_index());
 
       // Load balancing
-      load_balance_step = is_load_balance_step();
+      load_balance();
 
       if (load_balance_step || checkpoint_step)
         {
@@ -1293,7 +1283,7 @@ DEMSolver<dim>::solve()
         }
 
       // Check to see if it is contact search step
-      contact_detection_step = is_contact_search_step();
+      contact_detection_step = is_contact_search_iteration();
 
       // Sort particles in cells
       if (particles_insertion_step || load_balance_step ||

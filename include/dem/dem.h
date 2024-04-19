@@ -139,63 +139,81 @@ private:
 
 
   /**
-   * @brief Establish if this is a contact detection step using the adequate contact search method
+   * @brief Establish if this is a contact detection iteration using the adequate contact search method
+   *
+   * @return bool indicating if the contact search should be carried out in the current iteration calculated using the appropriate method.
    */
   inline bool
-  is_contact_search_step();
+  is_contact_search_iteration();
 
   /**
-   * Finds contact search steps for constant contact search method
+   * @brief Establish if this is a contact detection iteration using the constant contact detection frequency.
+   * If the iteration number is a multiple of the frequency, this iteration is
+   * considered to be a contact detection iteration.
+   *
+   * @return bool indicating if the contact search should be carried out in the current iteration.
    */
   inline bool
-  check_contact_search_step_constant();
+  check_contact_search_iteration_constant();
 
   /**
-   * Finds contact search steps for dynamic contact search method
+   * @brief Establish if this is a contact detection iteration using the maximal displacement of the particles.
+   * If this particle displacement surpasses a threshold, this iteration is a
+   * contact detection iteration.
+   *
+   * @return bool indicating if the contact search should be carried out in the current iteration.
    */
   inline bool
-  check_contact_search_step_dynamic();
+  check_contact_search_iteration_dynamic();
 
   /**
-   * @brief Establish if this is a load balance step using the adequate method.
+   * @brief Establish if this is a load balance iteration using the adequate method.
+   *
+   * @return bool indicating if this is a load balance iteration.
    */
   inline bool
-  is_load_balance_step();
+  is_load_balance_iteration();
 
   /**
-   * Finds load-balance step for single-step load-balance
+   * @brief Establish if this is a load-balance step when load balance is
+   * established once at a user-defined iteration number.
+   *
+   * @return bool indicating if this is a load balance iteration.
    */
   inline bool
   check_load_balance_once();
 
   /**
-   * For cases where load balance method is equal to none
-   */
-  inline bool
-  no_load_balance();
-
-  /**
-   * Finds load-balance step for frequent load-balance
+   * @brief Establish if this is a load-balance step when load balance is
+   * established at a user-defined frequency.
+   *
+   * @return bool indicating if this is a load balance iteration.
    */
   inline bool
   check_load_balance_frequent();
 
   /**
-   * Finds load-balance step for dynamic load-balance
+   * @brief Establish if this is a load-balance step using the dynamic method. The dynamic method
+   * uses the load imbalance between the core as a load balancing criteria.
+   *
+   * @return bool indicating if this is a load balance iteration.
    */
   inline bool
   check_load_balance_dynamic();
 
   /**
-   * Finds load-balance step for dynamic load-balance with disabled contact
+   * @brief Establish if this is a load-balance step using the dynamic method when the disabled contacts mechanism is enabled.
+   * The dynamic method uses the load imbalance between the core as a load
+   * balancing criteria.
+   *
+   * @return bool indicating if this is a load balance iteration.
    */
   inline bool
   check_load_balance_with_disabled_contacts();
 
   /**
-   * @brief Manages the call to the load balancing. Returns true if
-   * load balancing is performed
-   *
+   * @brief Manages the call to the load balance by first identifying if
+   * load balancing is required and then performing the load balance.
    */
   void
   load_balance();
