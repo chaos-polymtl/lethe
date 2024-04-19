@@ -1240,15 +1240,14 @@ MFNavierStokesSolver<dim>::solve()
 
       this->postprocess(false);
       this->finish_time_step();
-      if (this->simulation_parameters.linear_solver
-            .at(PhysicsID::fluid_dynamics)
-            .mg_verbosity == Parameters::Verbosity::extra_verbose)
-        {
-          announce_string(this->pcout, "Multigrid setup timings");
-          this->mg_computing_timer.print_summary();
-        }
-      this->mg_computing_timer.reset();
+
+      if (this->simulation_parameters.timer.type ==
+          Parameters::Timer::Type::iteration)
+        print_mg_setup_times();
     }
+
+  if (this->simulation_parameters.timer.type == Parameters::Timer::Type::end)
+    print_mg_setup_times();
 
   this->finish_simulation();
 }
@@ -1616,6 +1615,21 @@ MFNavierStokesSolver<dim>::setup_ILU()
                                  preconditionerOptions);
 
   this->computing_timer.leave_subsection("Setup ILU");
+}
+
+
+template <int dim>
+void
+MFNavierStokesSolver<dim>::print_mg_setup_times()
+{
+  if (this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+        .mg_verbosity == Parameters::Verbosity::extra_verbose)
+    {
+      announce_string(this->pcout, "Multigrid setup times");
+      this->mg_computing_timer.print_summary();
+    }
+
+  this->mg_computing_timer.reset();
 }
 
 template <int dim>
