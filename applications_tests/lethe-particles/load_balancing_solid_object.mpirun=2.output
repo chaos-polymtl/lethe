@@ -11,10 +11,6 @@ This feature is useful in geometries with concave boundaries.
 ************************************************************************
 1000 particles of type 0 were inserted, 0 particles of type 0 remaining
 ************************************************************************
--->Repartitionning triangulation
-Load balance finished 
-Average, minimum and maximum number of particles on the processors are 500 , 265 and 735
-Minimum and maximum number of cells owned by the processors are 647 and 5085
 
 *****************************************************************
 Transient iteration: 1000     Time: 0.01     Time step: 1e-05   
