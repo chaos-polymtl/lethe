@@ -539,7 +539,8 @@ inline bool
 DEMSolver<dim>::check_load_balance_once()
 {
   if (simulation_control->get_step_number() ==
-      parameters.model_parameters.load_balance_step)
+        parameters.model_parameters.load_balance_step ||
+      checkpoint_step)
     {
       return true;
     }
@@ -552,7 +553,8 @@ inline bool
 DEMSolver<dim>::check_load_balance_frequent()
 {
   if ((simulation_control->get_step_number() %
-       parameters.model_parameters.load_balance_frequency) == 0)
+         parameters.model_parameters.load_balance_frequency ||
+       checkpoint_step) == 0)
     {
       return true;
     }
