@@ -176,10 +176,13 @@ private:
   inline bool
   check_contact_search_iteration_dynamic();
 
-
+  /**
+   * @brief Sets the right iteration check function according to the chosen load balancing method.
+   *
+   * @return Return a function. This function returns a bool indicating if the current time step is a load balance iteration.
+   */
   std::function<bool()>
-                        set_is_load_balance_iteration();
-  std::function<bool()> is_load_balance_iteration_function;
+  set_load_balance_iteration_check();
 
   /**
    * @brief Establish if this is a load-balance step when load balance is
@@ -425,6 +428,9 @@ private:
   // Dynamic disabling of particle contacts in cells object
   DisableContacts<dim> disable_contacts_object;
   bool                 has_disabled_contacts;
+
+  // Load balancing iteration check function
+  std::function<bool()> load_balance_iteration_check_function;
 };
 
 #endif

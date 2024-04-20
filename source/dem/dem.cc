@@ -425,7 +425,7 @@ template <int dim>
 void
 DEMSolver<dim>::load_balance()
 {
-  load_balance_step = is_load_balance_iteration_function();
+  load_balance_step = load_balance_iteration_check_function();
 
   if (!load_balance_step)
     return;
@@ -498,7 +498,7 @@ DEMSolver<dim>::load_balance()
 }
 template <int dim>
 std::function<bool()>
-DEMSolver<dim>::set_is_load_balance_iteration()
+DEMSolver<dim>::set_load_balance_iteration_check()
 {
   if (parameters.model_parameters.load_balance_method ==
       Parameters::Lagrangian::ModelParameters::LoadBalanceMethod::none)
@@ -1144,7 +1144,7 @@ DEMSolver<dim>::solve()
   // rebuilds the member of the insertion object
   insertion_object = set_insertion_type(parameters);
 
-  is_load_balance_iteration_function = set_is_load_balance_iteration();
+  load_balance_iteration_check_function = set_load_balance_iteration_check();
 
   if (parameters.restart.restart == true)
     {
