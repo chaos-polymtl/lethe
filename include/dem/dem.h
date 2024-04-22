@@ -140,7 +140,7 @@ private:
   /**
    * @brief Sets the right iteration check function according to the chosen contact detection method.
    *
-   * @return Return a function. This function returns a bool indicating if the contact search should be carried out in the current iteration calculated using the appropriate method.
+   * @return Return a function. This function returns a bool indicating if the contact search should be carried out in the current iteration.
    */
   inline std::function<bool()>
   set_contact_search_iteration_function();
@@ -185,7 +185,6 @@ private:
 
   /**
    * @brief Establish if this is a load-balance step when load balance is
-   * established once at a user-defined iteration number.
    *
    * @return bool indicating if this is a load balance iteration.
    */
@@ -193,8 +192,7 @@ private:
   check_load_balance_once();
 
   /**
-   * @brief Establish if this is a load-balance step when load balance is
-   * established at a user-defined frequency.
+   * @brief Determine whether the present is a load-balance step given a user-defined frequency.
    *
    * @return bool indicating if this is a load balance iteration.
    */
