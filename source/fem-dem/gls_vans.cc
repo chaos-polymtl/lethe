@@ -1581,7 +1581,6 @@ GLSVANSSolver<dim>::assemble_system_matrix()
                                            this->cell_quadrature->size()));
     this->system_matrix.compress(VectorOperation::add);
   }
-  this->setup_preconditioner();
 }
 
 template <int dim>

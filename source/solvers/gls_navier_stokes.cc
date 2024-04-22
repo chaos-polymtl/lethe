@@ -685,19 +685,6 @@ template <int dim>
 void
 GLSNavierStokesSolver<dim>::assemble_system_matrix()
 {
-  this->GLSNavierStokesSolver<
-    dim>::assemble_system_matrix_without_preconditioner();
-
-  // Assemble the preconditioner
-  // this->setup_preconditioner();
-}
-
-
-
-template <int dim>
-void
-GLSNavierStokesSolver<dim>::assemble_system_matrix_without_preconditioner()
-{
   TimerOutput::Scope t(this->computing_timer, "Assemble matrix");
 
   this->system_matrix = 0;
