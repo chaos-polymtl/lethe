@@ -85,6 +85,10 @@ public:
   }
 
   virtual void
+  setup_preconditioner() override
+  {}
+
+  virtual void
   assemble_system_rhs() override
   {
     double x_0 = evaluation_point[0];
@@ -108,7 +112,7 @@ public:
   }
 
   virtual void
-  apply_constraints()
+  apply_constraints() override
   {}
 
   virtual Vector<double> &
