@@ -14,6 +14,7 @@ This section includes examples related to multiphase fluid-solid flows. We organ
     gas-solid-spouted-bed/gas-solid-spouted-bed
     liquid-solid-fluidized-bed/liquid-solid-fluidized-bed
     boycott-effect/boycott-effect
+    gas-solid-spouted-cylinder-bed/gas-solid-spouted-cylinder-bed
 
 .. graphviz:: 
 
@@ -35,10 +36,14 @@ This section includes examples related to multiphase fluid-solid flows. We organ
       cfd_dem_4 [label="Liquid-Solid Fluidized Bed", href="https://chaos-polymtl.github.io/lethe/documentation/examples/unresolved-cfd-dem/liquid-solid-fluidized-bed/liquid-solid-fluidized-bed.html"];
 
       cfd_dem_5 [label="Boycott Effect", href="https://chaos-polymtl.github.io/lethe/documentation/examples/unresolved-cfd-dem/boycott-effect/boycott-effect.html"];
+
+      cfd_dem_6 [label="Gas-Solid Spouted Cylinder Bed", href="https://chaos-polymtl.github.io/lethe/documentation/examples/unresolved-cfd-dem/gas-solid-spouted-cylinder-bed/gas-solid-spouted-cylinder-bed.html"];
       
       unresolved_cfd_dem -> cfd_dem_1:w;
       unresolved_cfd_dem -> cfd_dem_2:w;
       unresolved_cfd_dem -> cfd_dem_3:w;
       unresolved_cfd_dem -> cfd_dem_4:w;
       unresolved_cfd_dem -> cfd_dem_5:w;
+      unresolved_cfd_dem -> cfd_dem_6:w;
+
     }
