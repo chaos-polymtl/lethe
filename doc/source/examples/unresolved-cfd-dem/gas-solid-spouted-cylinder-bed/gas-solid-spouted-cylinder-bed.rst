@@ -309,8 +309,4 @@ The results are shown in an animation below. You see the bubbly state flow is mi
 
     <iframe width="560" height="315" src="https://www.youtube.com/embed/KMVL2hPUbx8" frameborder="0" allowfullscreen></iframe>
 
-----------
-References
-----------
 
-`[1]<https://pubs.acs.org/doi/full/10.1021/acs.iecr.2c03546>`_Toni El Geitani, Shahab Golshan, and Bruno Blais, "Toward High-Order CFD-DEM: Development and Validation", *Industrial & Engineering Chemistry Research*, 2023, 62, 2,1141-1159, doi:10.1021/acs.iecr.2c03546.
