@@ -221,11 +221,6 @@ VolumeOfFluid<dim>::assemble_system_rhs()
 
 template <int dim>
 void
-VolumeOfFluid<dim>::setup_preconditioner()
-{}
-
-template <int dim>
-void
 VolumeOfFluid<dim>::assemble_local_system_rhs(
   const typename DoFHandler<dim>::active_cell_iterator &cell,
   VOFScratchData<dim>                                  &scratch_data,

@@ -205,11 +205,6 @@ Tracer<dim>::assemble_system_rhs()
 
 template <int dim>
 void
-Tracer<dim>::setup_preconditioner()
-{}
-
-template <int dim>
-void
 Tracer<dim>::assemble_local_system_rhs(
   const typename DoFHandler<dim>::active_cell_iterator &cell,
   TracerScratchData<dim>                               &scratch_data,

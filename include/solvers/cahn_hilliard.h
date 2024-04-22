@@ -332,13 +332,6 @@ private:
   assemble_system_rhs() override;
 
   /**
-   * @brief Set up preconditioner. Not used for this solver but
-   * needed for other physics solvers.
-   */
-  void
-  setup_preconditioner() override;
-
-  /**
    * @brief Assemble the local matrix for a given cell.
    *
    * This function is used by the WorkStream class to assemble
