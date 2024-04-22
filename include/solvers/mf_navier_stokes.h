@@ -114,6 +114,13 @@ public:
   void
   vmult(VectorType &dst, const VectorType &src) const;
 
+  /**
+   * @brief Prints relevant multigrid information
+   *
+   */
+  void
+  print_relevant_info() const;
+
 private:
   /// Min level
   unsigned int minlevel;
@@ -193,6 +200,9 @@ private:
 
   /// DoF Handler
   const DoFHandler<dim> &dof_handler;
+
+  /// Vector holding number of coarse grid iterations
+  mutable std::vector<unsigned int> coarse_grid_iterations;
 };
 
 

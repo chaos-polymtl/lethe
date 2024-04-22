@@ -1140,12 +1140,30 @@ MFNavierStokesPreconditionGMG<dim>::vmult(VectorType       &dst,
   else
     AssertThrow(false, ExcNotImplemented());
 
-  if (this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
-        .mg_verbosity != Parameters::Verbosity::quiet)
+  // Save number of coarse grid iterations needed in one vmult
+  this->coarse_grid_iterations.emplace_back(
+    this->coarse_grid_solver_control->last_step());
+}
+
+template <int dim>
+void
+MFNavierStokesPreconditionGMG<dim>::print_relevant_info() const
+{
+  if (coarse_grid_iterations.empty())
+    this->pcout << "  -Coarse grid solver took: 0 iterations" << std::endl;
+  else
     {
+      unsigned int total = coarse_grid_iterations[0];
       this->pcout << "  -Coarse grid solver took: "
-                  << this->coarse_grid_solver_control->last_step()
-                  << " iterations" << std::endl;
+                  << coarse_grid_iterations[0];
+      for (unsigned int i = 1; i < coarse_grid_iterations.size(); i++)
+        {
+          this->pcout << " + " << coarse_grid_iterations[i];
+          total += coarse_grid_iterations[i];
+        }
+      this->pcout << " = " << total << " iterations" << std::endl;
+
+      coarse_grid_iterations.clear();
     }
 }
 
@@ -1905,10 +1923,17 @@ MFNavierStokesSolver<dim>::solve_system_GMRES(const bool   initial_step,
        Parameters::LinearSolver::PreconditionerType::lsmg) ||
       (this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
          .preconditioner == Parameters::LinearSolver::PreconditionerType::gcmg))
-    solver.solve(*(this->system_operator),
-                 this->newton_update,
-                 this->system_rhs,
-                 *(this->gmg_preconditioner));
+    {
+      solver.solve(*(this->system_operator),
+                   this->newton_update,
+                   this->system_rhs,
+                   *(this->gmg_preconditioner));
+
+      if (this->simulation_parameters.linear_solver
+            .at(PhysicsID::fluid_dynamics)
+            .mg_verbosity != Parameters::Verbosity::quiet)
+        this->gmg_preconditioner->print_relevant_info();
+    }
   else if (this->simulation_parameters.linear_solver
              .at(PhysicsID::fluid_dynamics)
              .preconditioner ==
