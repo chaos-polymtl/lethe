@@ -67,7 +67,7 @@ subsection lagrangian physical properties
     set size distribution type            = uniform
     set diameter                          = 0.005
     set number of particles               = 100000
-    set density particles                 = 1000
+    set density particles                 = 100 #2526 
     set young modulus particles           = 1e6
     set poisson ratio particles           = 0.25
     set restitution coefficient particles = 0.97
@@ -128,6 +128,6 @@ end
 
 subsection mesh
   set type                                = gmsh
-  set file name                           = ./mesh/spouted_bed_cylinder.msh
+  set file name                           = ./mesh/test_0403.msh
   set expand particle-wall contact search = false
 end
