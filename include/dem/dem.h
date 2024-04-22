@@ -137,14 +137,13 @@ private:
     const CellStatus status) const;
 #  endif
 
-
   /**
-   * @brief Establish if this is a contact detection iteration using the adequate contact search method
+   * @brief Sets the right iteration check function according to the chosen contact detection method.
    *
-   * @return bool indicating if the contact search should be carried out in the current iteration calculated using the appropriate method.
+   * @return Return a function. This function returns a bool indicating if the contact search should be carried out in the current iteration calculated using the appropriate method.
    */
-  inline bool
-  is_contact_search_iteration();
+  inline std::function<bool()>
+  set_contact_search_iteration_function();
 
   /**
    * @brief Establish if this is a contact detection iteration using the constant contact detection frequency.
@@ -181,8 +180,8 @@ private:
    *
    * @return Return a function. This function returns a bool indicating if the current time step is a load balance iteration.
    */
-  std::function<bool()>
-  set_load_balance_iteration_check();
+  inline std::function<bool()>
+  set_load_balance_iteration_check_function();
 
   /**
    * @brief Establish if this is a load-balance step when load balance is
@@ -431,6 +430,9 @@ private:
 
   // Load balancing iteration check function
   std::function<bool()> load_balance_iteration_check_function;
+
+  // Contact detection iteration check function
+  std::function<bool()> contact_detection_iteration_check_function;
 };
 
 #endif

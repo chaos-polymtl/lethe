@@ -497,8 +497,8 @@ DEMSolver<dim>::load_balance()
         << average_minimum_maximum_cells.max << std::endl;
 }
 template <int dim>
-std::function<bool()>
-DEMSolver<dim>::set_load_balance_iteration_check()
+inline std::function<bool()>
+DEMSolver<dim>::set_load_balance_iteration_check_function()
 {
   if (parameters.model_parameters.load_balance_method ==
       Parameters::Lagrangian::ModelParameters::LoadBalanceMethod::none)
@@ -722,21 +722,24 @@ DEMSolver<dim>::check_load_balance_dynamic()
 }
 
 template <int dim>
-inline bool
-DEMSolver<dim>::is_contact_search_iteration()
+inline std::function<bool()>
+DEMSolver<dim>::set_contact_search_iteration_function()
 {
   if (parameters.model_parameters.contact_detection_method ==
       Parameters::Lagrangian::ModelParameters::ContactDetectionMethod::constant)
-    return check_contact_search_iteration_constant();
+    {
+      return [&] { return check_contact_search_iteration_constant(); };
+    }
   else if (parameters.model_parameters.contact_detection_method ==
            Parameters::Lagrangian::ModelParameters::ContactDetectionMethod::
              dynamic)
-    return check_contact_search_iteration_dynamic();
+    {
+      return [&] { return check_contact_search_iteration_dynamic(); };
+    }
   else
     {
       throw std::runtime_error(
         "Specified contact detection method is not valid");
-      return false;
     }
 }
 
@@ -1144,7 +1147,11 @@ DEMSolver<dim>::solve()
   // rebuilds the member of the insertion object
   insertion_object = set_insertion_type(parameters);
 
-  load_balance_iteration_check_function = set_load_balance_iteration_check();
+  load_balance_iteration_check_function =
+    set_load_balance_iteration_check_function();
+
+  contact_detection_iteration_check_function =
+    set_contact_search_iteration_function();
 
   if (parameters.restart.restart == true)
     {
@@ -1284,7 +1291,7 @@ DEMSolver<dim>::solve()
         }
 
       // Check to see if it is contact search step
-      contact_detection_step = is_contact_search_iteration();
+      contact_detection_step = contact_detection_iteration_check_function();
 
       // Sort particles in cells
       if (particles_insertion_step || load_balance_step ||
