@@ -156,16 +156,6 @@ private:
   check_contact_search_iteration_constant();
 
   /**
-   * @brief Establish if this is a contact detection iteration using the constant contact detection frequency.
-   * If the iteration number is a multiple of the frequency, this iteration is
-   * considered to be a contact detection iteration.
-   *
-   * @return bool indicating if the contact search should be carried out in the current iteration.
-   */
-  inline bool
-  check_contact_search_iteration_constant();
-
-  /**
    * @brief Establish if this is a contact detection iteration using the maximal displacement of the particles.
    * If this particle displacement surpasses a threshold, this iteration is a
    * contact detection iteration.
