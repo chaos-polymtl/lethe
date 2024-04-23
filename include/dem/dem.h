@@ -176,7 +176,7 @@ private:
   check_contact_search_iteration_dynamic();
 
   /**
-   * @brief Sets the right iteration check function according to the chosen load balancing method.
+   * @brief Sets the right contact iteration check function according to the chosen load balancing method.
    *
    * @return Return a function. This function returns a bool indicating if the current time step is a load balance iteration.
    */
