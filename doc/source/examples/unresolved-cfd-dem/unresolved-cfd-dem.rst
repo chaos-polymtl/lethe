@@ -45,5 +45,4 @@ This section includes examples related to multiphase fluid-solid flows. We organ
       unresolved_cfd_dem -> cfd_dem_4:w;
       unresolved_cfd_dem -> cfd_dem_5:w;
       unresolved_cfd_dem -> cfd_dem_6:w;
-
     }

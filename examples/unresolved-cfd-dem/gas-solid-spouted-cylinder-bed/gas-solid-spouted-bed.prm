@@ -138,7 +138,6 @@ subsection boundary conditions
   set time dependent = false
   set number         = 5
 
-
   subsection bc 0 #outlet
     set id   = 3
     set type = outlet
