@@ -184,7 +184,7 @@ private:
   set_load_balance_iteration_check_function();
 
   /**
-   * @brief Establish if this is a load-balance step when load balance is
+   * @brief For `load balance method = once`, determines whether the present is the load balance step.
    *
    * @return bool indicating if this is a load balance iteration.
    */
