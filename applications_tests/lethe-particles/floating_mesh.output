@@ -12,10 +12,6 @@ Warning: the requested number of particles for insertion (20000) is higher than 
 ************************************************************************
 78 particles of type 0 were inserted, 422 particles of type 0 remaining
 ************************************************************************
--->Repartitionning triangulation
-Load balance finished 
-Average, minimum and maximum number of particles on the processors are 78 , 78 and 78
-Minimum and maximum number of cells owned by the processors are 8 and 8
 id, type, dp, x, y, z 
 0 0 0.00100 0.0198 0.0030 0.0025
 1 0 0.00100 0.0221 0.0033 0.0025

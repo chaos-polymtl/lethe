@@ -59,10 +59,6 @@ using namespace DEM;
 template <int dim>
 class DEMSolver
 {
-  using FuncPtrType = bool (DEMSolver<dim>::*)();
-  FuncPtrType check_contact_search_step;
-  FuncPtrType check_load_balance_step;
-
 public:
   DEMSolver(DEMSolverParameters<dim> dem_parameters);
 
@@ -141,53 +137,80 @@ private:
     const CellStatus status) const;
 #  endif
 
+  /**
+   * @brief Sets the right iteration check function according to the chosen contact detection method.
+   *
+   * @return Return a function. This function returns a bool indicating if the contact search should be carried out in the current iteration.
+   */
+  inline std::function<bool()>
+  set_contact_search_iteration_function();
 
   /**
-   * Finds contact search steps for constant contact search method
+   * @brief Establish if this is a contact detection iteration using the constant contact detection frequency.
+   * If the iteration number is a multiple of the frequency, this iteration is
+   * considered to be a contact detection iteration.
+   *
+   * @return bool indicating if the contact search should be carried out in the current iteration.
    */
   inline bool
-  check_contact_search_step_constant();
+  check_contact_search_iteration_constant();
 
   /**
-   * Finds contact search steps for dynamic contact search method
+   * @brief Establish if this is a contact detection iteration using the maximal displacement of the particles.
+   * If this particle displacement surpasses a threshold, this iteration is a
+   * contact detection iteration.
+   *
+   * @return bool indicating if the contact search should be carried out in the current iteration.
    */
   inline bool
-  check_contact_search_step_dynamic();
+  check_contact_search_iteration_dynamic();
 
   /**
-   * Finds load-balance step for single-step load-balance
+   * @brief Sets the right contact iteration check function according to the chosen load balancing method.
+   *
+   * @return Return a function. This function returns a bool indicating if the current time step is a load balance iteration.
+   */
+  inline std::function<bool()>
+  set_load_balance_iteration_check_function();
+
+  /**
+   * @brief For `load balance method = once`, determines whether the present is the load balance step.
+   *
+   * @return bool indicating if this is a load balance iteration.
    */
   inline bool
   check_load_balance_once();
 
   /**
-   * For cases where load balance method is equal to none
-   */
-  inline bool
-  no_load_balance();
-
-  /**
-   * Finds load-balance step for frequent load-balance
+   * @brief Determine whether the present is a load-balance step given a user-defined frequency.
+   *
+   * @return bool indicating if this is a load balance iteration.
    */
   inline bool
   check_load_balance_frequent();
 
   /**
-   * Finds load-balance step for dynamic load-balance
+   * @brief Establish if this is a load-balance step using the dynamic method. The dynamic method
+   * uses the load imbalance between the core as a load balancing criteria.
+   *
+   * @return bool indicating if this is a load balance iteration.
    */
   inline bool
   check_load_balance_dynamic();
 
   /**
-   * Finds load-balance step for dynamic load-balance with disabled contact
+   * @brief Establish if this is a load-balance step using the dynamic method when the disabled contacts mechanism is enabled.
+   * The dynamic method uses the load imbalance between the core as a load
+   * balancing criteria.
+   *
+   * @return bool indicating if this is a load balance iteration.
    */
   inline bool
   check_load_balance_with_disabled_contacts();
 
   /**
-   * @brief Manages the call to the load balancing. Returns true if
-   * load balancing is performed
-   *
+   * @brief Manages the call to the load balance by first identifying if
+   * load balancing is required and then performing the load balance.
    */
   void
   load_balance();
@@ -392,6 +415,12 @@ private:
   // Dynamic disabling of particle contacts in cells object
   DisableContacts<dim> disable_contacts_object;
   bool                 has_disabled_contacts;
+
+  // Load balancing iteration check function
+  std::function<bool()> load_balance_iteration_check_function;
+
+  // Contact detection iteration check function
+  std::function<bool()> contact_detection_iteration_check_function;
 };
 
 #endif
