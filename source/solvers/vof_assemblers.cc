@@ -77,7 +77,7 @@ VOFAssemblerCore<dim>::assemble_matrix(VOFScratchData<dim>       &scratch_data,
       Tensor<1, dim> velocity_unit_vector =
         velocity / (velocity.norm() + 1e-12);
       const Tensor<2, dim> k_corr =
-        (gradient_unit_vector * velocity_unit_vector) *
+        std::pow(gradient_unit_vector * velocity_unit_vector, 2) *
         outer_product(velocity_unit_vector, velocity_unit_vector);
       const Tensor<2, dim> gradient_unit_tensor =
         outer_product(gradient_unit_vector, gradient_unit_vector);
@@ -222,7 +222,7 @@ VOFAssemblerCore<dim>::assemble_rhs(VOFScratchData<dim>       &scratch_data,
       Tensor<1, dim> velocity_unit_vector =
         velocity / (velocity.norm() + 1e-12);
       const Tensor<2, dim> k_corr =
-        (gradient_unit_vector * velocity_unit_vector) *
+        std::pow(gradient_unit_vector * velocity_unit_vector, 2) *
         outer_product(velocity_unit_vector, velocity_unit_vector);
       const Tensor<2, dim> gradient_unit_tensor =
         outer_product(gradient_unit_vector, gradient_unit_vector);
