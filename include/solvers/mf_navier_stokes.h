@@ -72,7 +72,7 @@ public:
    * linear term.
    * @param time_derivative_previous_solutions Vector storing time
    * derivatives of previous solutions.
-   * @param flow_control
+   * @param flow_control Required for dynamic flow control.
    */
   MFNavierStokesPreconditionGMG(
     const SimulationParameters<dim>         &simulation_parameters,
@@ -82,19 +82,22 @@ public:
     const std::shared_ptr<Function<dim>>     forcing_function,
     const std::shared_ptr<SimulationControl> simulation_control,
     TimerOutput                             &mg_computing_timer,
-    const std::shared_ptr<FESystem<dim>>     fe,
-    const VectorType                        &present_solution,
-    const VectorType                        &time_derivative_previous_solutions,
-    FlowControl<dim>                        &flow_control);
+    const std::shared_ptr<FESystem<dim>>     fe);
 
   /**
    * @brief Initialize smoother, coarse grid solver and multigrid object
    * needed for the local smoothing geometric multigrid preconditioner.
    *
    * @param[in] mg_computing_timer Timer for specific MG components.
+   * @param simulation_control Required to get the time stepping method.
+   * @param flow_control Required for dynamic flow control.
    */
   void
-  initialize_ls(TimerOutput &mg_computing_timer);
+  initialize_ls(TimerOutput                             &mg_computing_timer,
+                const std::shared_ptr<SimulationControl> simulation_control,
+                FlowControl<dim>                        &flow_control,
+                const VectorType                        &present_solution,
+                const VectorType &time_derivative_previous_solutions);
 
   /**
    * @brief Initialize smoother, coarse grid solver and multigrid object
@@ -103,7 +106,11 @@ public:
    * @param[in] mg_computing_timer Timer for specific MG components.
    */
   void
-  initialize_gc(TimerOutput &mg_computing_timer);
+  initialize_gc(TimerOutput                             &mg_computing_timer,
+                const std::shared_ptr<SimulationControl> simulation_control,
+                FlowControl<dim>                        &flow_control,
+                const VectorType                        &present_solution,
+                const VectorType &time_derivative_previous_solutions);
 
   /**
    * @brief Calls the v cycle function of the multigrid object.
