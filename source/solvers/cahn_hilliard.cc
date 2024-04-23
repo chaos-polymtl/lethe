@@ -423,13 +423,6 @@ CahnHilliard<dim>::calculate_phase_statistics()
   double volume_0(0.);
   double volume_1(0.);
 
-  double epsilon =
-    (this->simulation_parameters.multiphysics.cahn_hilliard_parameters
-       .epsilon_set_method == Parameters::EpsilonSetMethod::manual) ?
-      this->simulation_parameters.multiphysics.cahn_hilliard_parameters
-        .epsilon :
-      GridTools::minimal_cell_diameter(*triangulation);
-
   for (const auto &cell : dof_handler.active_cell_iterators())
     {
       if (cell->is_locally_owned())
