@@ -63,6 +63,7 @@ CahnHilliard<dim>::setup_assemblers()
   // to the constructor separately.
 
   double epsilon = compute_epsilon();
+//  double epsilon = GridTools::minimal_cell_diameter(*triangulation);
 
   // Angle of contact boundary condition
   this->assemblers.push_back(
@@ -1564,44 +1565,44 @@ template <int dim>
 double
 CahnHilliard<dim>::compute_epsilon()
 {
-  auto mpi_communicator = this->triangulation->get_communicator();
+//  auto mpi_communicator = this->triangulation->get_communicator();
+//
+//  double min_cell_diameter = std::numeric_limits<double>::max();
+//  double max_cell_diameter = std::numeric_limits<double>::lowest();
+//
+////  int rank, size;
+////  MPI_Comm_rank(mpi_communicator,&rank);
+////  MPI_Comm_size(mpi_communicator,&size);
+//
+//  const unsigned int local_max_level = this->triangulation->n_levels();
+//
+//  // add locally owned cells, pb with ghost cells? tracker valeurs min et max
+//  // pour checker treshold de coeurs pour que ça fonctionne
+//  //  diametre d'une cellule qui n'est pas owned? lancer en debug pour checker
+//  //  si erreur là dessus.
+////    printf("Rank %d out of %d \n n_global_level = %d \n",rank,size, n_global_level);
+//
+//  if (local_max_level==this->triangulation->n_global_levels())
+//  {
+//      for (const auto &cell:
+//              this->dof_handler.active_cell_iterators_on_level(local_max_level - 1))
+//      {
+//          if (cell->is_locally_owned())
+//          {
+//              max_cell_diameter = std::max(max_cell_diameter, cell->diameter());
+//              min_cell_diameter = std::min(min_cell_diameter, cell->diameter());
+//          }
+//      }
+//  }
+//
+//  //printf("Rank %d out of %d \n max_cell_diameter = %f \n min_cell_diameter = %f \n",rank,size,max_cell_diameter, min_cell_diameter);
+//
+//
+//  max_cell_diameter = Utilities::MPI::max(max_cell_diameter, mpi_communicator);
+//  min_cell_diameter = Utilities::MPI::min(min_cell_diameter, mpi_communicator);
 
-  double min_cell_diameter = std::numeric_limits<double>::max();
-  double max_cell_diameter = std::numeric_limits<double>::lowest();
-
-//  int rank, size;
-//  MPI_Comm_rank(mpi_communicator,&rank);
-//  MPI_Comm_size(mpi_communicator,&size);
-
-  const unsigned int local_max_level = this->triangulation->n_levels();
-
-  // add locally owned cells, pb with ghost cells? tracker valeurs min et max
-  // pour checker treshold de coeurs pour que ça fonctionne
-  //  diametre d'une cellule qui n'est pas owned? lancer en debug pour checker
-  //  si erreur là dessus.
-//    printf("Rank %d out of %d \n n_global_level = %d \n",rank,size, n_global_level);
-
-  if (local_max_level==this->triangulation->n_global_levels())
-  {
-      for (const auto &cell:
-              this->dof_handler.active_cell_iterators_on_level(local_max_level - 1))
-      {
-          if (cell->is_locally_owned())
-          {
-              max_cell_diameter = std::max(max_cell_diameter, cell->diameter());
-              min_cell_diameter = std::min(min_cell_diameter, cell->diameter());
-          }
-      }
-  }
-
-  //printf("Rank %d out of %d \n max_cell_diameter = %f \n min_cell_diameter = %f \n",rank,size,max_cell_diameter, min_cell_diameter);
-
-
-  max_cell_diameter = Utilities::MPI::max(max_cell_diameter, mpi_communicator);
-  min_cell_diameter = Utilities::MPI::min(min_cell_diameter, mpi_communicator);
-
-  double epsilon = 0.5 * (max_cell_diameter + min_cell_diameter);
-
+//  double epsilon = 0.5 * (max_cell_diameter + min_cell_diameter);
+  double epsilon = GridTools::minimal_cell_diameter(*triangulation);
   //printf("Final epsilon value = %f \n", epsilon);
 
   return epsilon;
