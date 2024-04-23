@@ -96,9 +96,7 @@ NewtonNonLinearSolver<VectorType>::solve(const bool is_initial_step)
 
       solver->assemble_system_matrix();
 
-      if (this->params.reuse_preconditioner && this->outer_iteration == 0)
-        solver->setup_preconditioner();
-      else if (!this->params.reuse_preconditioner)
+      if (!this->params.reuse_preconditioner || this->outer_iteration == 0)
         solver->setup_preconditioner();
 
       if (this->params.force_rhs_calculation || this->outer_iteration == 0)
