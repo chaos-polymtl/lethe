@@ -58,21 +58,16 @@ public:
    * @brief Construct a new precondition GMG object. Sets constraints,
    * operators and transfer objects.
    *
-   * @param simulation_parameters Object containing all parameters specified
+   * @param[in] simulation_parameters Object containing all parameters specified
    * in input file.
-   * @param dof_handler Describes the layout of DoFs and the type of FE.
-   * @param mapping Describes the transformations from unit to real cell.
-   * @param cell_quadrature Required for local operations on cells.
-   * @param forcing_function Function specified in parameter file as source
+   * @param[in] dof_handler Describes the layout of DoFs and the type of FE.
+   * @param[in] mapping Describes the transformations from unit to real cell.
+   * @param[in] cell_quadrature Required for local operations on cells.
+   * @param[in] forcing_function Function specified in parameter file as source
    * term.
-   * @param simulation_control Required to get the time stepping method.
-   * @param mg_computing_timer Timer for specific MG components.
-   * @param fe Describes the FE system for the vector-valued problem.
-   * @param present_solution Previous solution needed to evaluate the non
-   * linear term.
-   * @param time_derivative_previous_solutions Vector storing time
-   * derivatives of previous solutions.
-   * @param flow_control Required for dynamic flow control.
+   * @param[in] simulation_control Required to get the time stepping method.
+   * @param[in] mg_computing_timer Timer for specific MG components.
+   * @param[in] fe Describes the FE system for the vector-valued problem.
    */
   MFNavierStokesPreconditionGMG(
     const SimulationParameters<dim>         &simulation_parameters,
@@ -86,31 +81,22 @@ public:
 
   /**
    * @brief Initialize smoother, coarse grid solver and multigrid object
-   * needed for the local smoothing geometric multigrid preconditioner.
+   * needed for the geometric multigrid preconditioner.
    *
    * @param[in] mg_computing_timer Timer for specific MG components.
-   * @param simulation_control Required to get the time stepping method.
-   * @param flow_control Required for dynamic flow control.
+   * @param[in] simulation_control Required to get the time stepping method.
+   * @param[in] flow_control Required for dynamic flow control.
+   * @param[in] present_solution Previous solution needed to evaluate the non
+   * linear term.
+   * @param[in] time_derivative_previous_solutions Vector storing time
+   * derivatives of previous solutions.
    */
   void
-  initialize_ls(TimerOutput                             &mg_computing_timer,
-                const std::shared_ptr<SimulationControl> simulation_control,
-                FlowControl<dim>                        &flow_control,
-                const VectorType                        &present_solution,
-                const VectorType &time_derivative_previous_solutions);
-
-  /**
-   * @brief Initialize smoother, coarse grid solver and multigrid object
-   * needed for the global coarsening geometric multigrid preconditioner.
-   *
-   * @param[in] mg_computing_timer Timer for specific MG components.
-   */
-  void
-  initialize_gc(TimerOutput                             &mg_computing_timer,
-                const std::shared_ptr<SimulationControl> simulation_control,
-                FlowControl<dim>                        &flow_control,
-                const VectorType                        &present_solution,
-                const VectorType &time_derivative_previous_solutions);
+  initialize(TimerOutput                             &mg_computing_timer,
+             const std::shared_ptr<SimulationControl> simulation_control,
+             FlowControl<dim>                        &flow_control,
+             const VectorType                        &present_solution,
+             const VectorType &time_derivative_previous_solutions);
 
   /**
    * @brief Calls the v cycle function of the multigrid object.
