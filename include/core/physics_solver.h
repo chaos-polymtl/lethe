@@ -55,6 +55,12 @@ public:
   virtual void
   assemble_system_rhs() = 0;
 
+  /**
+   * @brief Set up preconditioner.
+   *
+   */
+  virtual void
+  setup_preconditioner() = 0;
 
   /**
    * @brief solve_linear_system Solves the linear system of equations

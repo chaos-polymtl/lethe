@@ -1986,6 +1986,12 @@ namespace Parameters
           "Reuse the last jacobian matrix for the next non-linear problem solution");
 
         prm.declare_entry(
+          "reuse preconditioner",
+          "false",
+          Patterns::Bool(),
+          "Reuse the last preconditioner for the next non-linear problem solution");
+
+        prm.declare_entry(
           "abort at convergence failure",
           "false",
           Patterns::Bool(),
@@ -2040,6 +2046,7 @@ namespace Parameters
         display_precision     = prm.get_integer("residual precision");
         force_rhs_calculation = prm.get_bool("force rhs calculation");
         reuse_matrix          = prm.get_bool("reuse matrix");
+        reuse_preconditioner  = prm.get_bool("reuse preconditioner");
         abort_at_convergence_failure =
           prm.get_bool("abort at convergence failure");
       }

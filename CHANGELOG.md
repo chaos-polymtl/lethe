@@ -3,6 +3,18 @@
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Master] - 2024-04-24
+
+### Added
+
+- MAJOR A new parameter to reuse the preconditioner between Newton iterations was added. Therefore, the logic of the Newton solver was also modified as it required a different call for the assembly of the matrix and the set up of the preconditioner. These calls were separated for all relevant physics solvers. [#1102](https://github.com/lethe-cfd/lethe/pull/1102)
+
+## [Master] - 2024-04-24
+
+### Changed
+
+- MAJOR For the multigrid preconditioners of the matrix-free application a new class was added, where the constructor sets the operators, constraints and transfers, and the initialize function sets the smoother, coarse-grid solver and final multigrid object. This allows to reuse the operators, constraints and transfers whenever possible reducing computational cost. [#1102](https://github.com/lethe-cfd/lethe/pull/1102)
+
 ## [Master] - 2024-04-18
 
 ### Fixed

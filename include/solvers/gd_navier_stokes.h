@@ -99,6 +99,13 @@ private:
   assemble_system_rhs() override;
 
   /**
+   * @brief Set up preconditioner. Not used for this solver but
+   * needed for other physics solvers.
+   */
+  void
+  setup_preconditioner() override;
+
+  /**
    * @brief  Update the average velocity field solution in the multiphysics interface
    */
   virtual void
