@@ -97,12 +97,6 @@ protected:
   assemble_system_matrix() override;
 
   /**
-   *  @brief Assembles the matrix associated with the solver without computing the preconditioner
-   */
-  virtual void
-  assemble_system_matrix_without_preconditioner();
-
-  /**
    * @brief Assemble the rhs associated with the solver
    */
   virtual void
@@ -118,7 +112,7 @@ protected:
    * @brief  Set-up the appropriate preconditioner
    */
   void
-  setup_preconditioner();
+  setup_preconditioner() override;
 
   /**
    * @brief Define the non-zero constraints used to solve the problem.

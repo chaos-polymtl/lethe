@@ -178,6 +178,13 @@ public:
    */
   virtual void
   set_initial_conditions() = 0;
+
+  /**
+   * @brief Set up preconditioner. Not used for the auxiliary physics but
+   * needed for the compilation of the non-linear solver.
+   */
+  void
+  setup_preconditioner() override{};
 };
 
 

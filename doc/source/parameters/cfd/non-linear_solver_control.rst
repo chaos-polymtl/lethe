@@ -2,7 +2,7 @@
 Non-linear Solver
 =================
 
-The Navier-Stokes equations (and other) are non-linear equations. The parameters in ``subsection non-linear solver``, whose default values are given in the text block below, control the non-linear solver used within Lethe. Lethe supports different physics (``fluid dynamics``, ``VOF``, ``heat transfer``, ``cahn hilliard`` and ``tracer``) and it is possible to specify non-linear solver parameters for each of them. In the example below, only ``fluid dynamics`` is used but the same block can be used for other physics.
+The Navier-Stokes equations (and others) are non-linear equations. The parameters in ``subsection non-linear solver``, whose default values are given in the text block below, control the non-linear solver used within Lethe. Lethe supports different physics (``fluid dynamics``, ``VOF``, ``heat transfer``, ``cahn hilliard`` and ``tracer``) and it is possible to specify non-linear solver parameters for each of them. In the example below, only ``fluid dynamics`` is shown but the same block can be used for other physics.
 
 .. code-block:: text
 
@@ -20,7 +20,10 @@ The Navier-Stokes equations (and other) are non-linear equations. The parameters
       # For the inexact_newton solver, carry jacobian matrix over to the new non-linear problem
       set reuse matrix                 = false
 
-      # For the kinsol_newton solver,
+      # For the newton solver, it allows to reuse the preconditioner for the non linear iterations
+      set reuse preconditioner         = false
+
+      # For the kinsol_newton solver
       set kinsol_strategy              = line_search
 
       # Newton solver tolerance
@@ -87,3 +90,4 @@ The Navier-Stokes equations (and other) are non-linear equations. The parameters
 * The ``residual precision`` parameter enables to change the number of digits displayed when showing residuals (with ``set verbosity = verbose``).
 * The ``force_rhs_calculation``: Force RHS recalculation at the beginning of every non-linear steps, This is required if there is a fixed point component to the non-linear solver that is changed at the beginning of every newton iteration. This is notably the case of the sharp edge method. The default value of this parameter is false.
 * The ``abort at convergence failure`` allows the user to stop the simulation and throw an error if the non-linear solver has failed to converge. Setting ``abort at convergence failure = true`` will enable this feature. This is generally useful when launching a large batch of simulation to quickly identify which one have failed.
+* The ``reuse preconditioner = true`` allows the simulation to use the same preconditioner between Newton iterations when using the Newton solver. This can reduce the overall time depending on the problem, and it is especially useful for the ``lethe-fluid-matrix-free`` application.

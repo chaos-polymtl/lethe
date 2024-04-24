@@ -103,7 +103,11 @@ InexactNewtonNonLinearSolver<VectorType>::solve(const bool is_initial_step)
       evaluation_point = present_solution;
 
       if (matrix_requires_assembly)
-        solver->assemble_system_matrix();
+        {
+          solver->assemble_system_matrix();
+          solver->setup_preconditioner();
+        }
+
       if (this->params.force_rhs_calculation || outer_iteration == 0)
         solver->assemble_system_rhs();
 

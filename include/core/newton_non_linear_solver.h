@@ -95,6 +95,10 @@ NewtonNonLinearSolver<VectorType>::solve(const bool is_initial_step)
       evaluation_point = present_solution;
 
       solver->assemble_system_matrix();
+
+      if (!this->params.reuse_preconditioner || this->outer_iteration == 0)
+        solver->setup_preconditioner();
+
       if (this->params.force_rhs_calculation || this->outer_iteration == 0)
         solver->assemble_system_rhs();
 

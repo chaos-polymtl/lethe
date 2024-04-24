@@ -127,6 +127,7 @@ KinsolNewtonNonLinearSolver<VectorType>::solve(const bool is_initial_step)
       solver->pcout << "Computing jacobian matrix..." << std::endl;
       evaluation_point = present_solution_for_kinsol;
       solver->assemble_system_matrix();
+      solver->setup_preconditioner();
       return 0;
     };
 

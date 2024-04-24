@@ -1016,6 +1016,9 @@ namespace Parameters
     // Carry jacobian matrix over to the new non-linear problem
     bool reuse_matrix;
 
+    // Reuse preconditioner for the next non-linear iterations
+    bool reuse_preconditioner;
+
     // Abort solver if non-linear solution has not reached tolerance
     bool abort_at_convergence_failure;
 

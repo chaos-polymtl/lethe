@@ -384,6 +384,10 @@ GDNavierStokesSolver<dim>::assemble_system_rhs()
     this->simulation_control->provide_residual(this->system_rhs.l2_norm());
 }
 
+template <int dim>
+void
+GDNavierStokesSolver<dim>::setup_preconditioner()
+{}
 
 template <int dim>
 void

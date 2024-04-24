@@ -183,14 +183,9 @@ private:
         else
           generate_cut_cells_map();
       }
-    this->GLSNavierStokesSolver<
-      dim>::assemble_system_matrix_without_preconditioner();
-
+    this->GLSNavierStokesSolver<dim>::assemble_system_matrix();
 
     sharp_edge();
-
-    // Assemble the preconditioner
-    this->setup_preconditioner();
   }
 
 
