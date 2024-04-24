@@ -28,4 +28,4 @@ Transient iteration: 2        Time: 0.2      Time step: 0.1      CFL: 1.53178
 VOF Mass Conservation
 ----------------------
    time    surface_fluid_0 mass_per_length_fluid_0 momentum-x_fluid_0 momentum-y_fluid_0 surface_fluid_1 mass_per_length_fluid_1 momentum-x_fluid_1 momentum-y_fluid_1 sharpening_threshold 
-2.0000e-01      6.5796e-01              7.8955e-01        -1.8829e-02         4.3885e-02      3.4204e-01              1.7102e+01         8.6422e-01        -1.8387e+00           5.0000e-01 
+2.0000e-01      6.5797e-01              7.8956e-01        -1.8808e-02         4.3901e-02      3.4203e-01              1.7102e+01         8.6376e-01        -1.8392e+00           5.0000e-01
