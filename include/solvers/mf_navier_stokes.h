@@ -115,10 +115,10 @@ public:
   print_relevant_info() const;
 
 private:
-  /// Min level
+  /// Min level of the multigrid hierarchy
   unsigned int minlevel;
 
-  /// Max level
+  /// Max level of the multigrid hierarchy
   unsigned int maxlevel;
 
   /// Triangulations for the global coarsening case
@@ -375,7 +375,7 @@ private:
   setup_ILU();
 
   /**
-   * @brief Prints the setup times for the gemoetric multigrid preconditioner.
+   * @brief Prints the setup times for the geometric multigrid preconditioner.
    *
    */
   void
