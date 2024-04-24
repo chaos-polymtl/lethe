@@ -30,7 +30,6 @@ end
 subsection restart
   set checkpoint = true
   set frequency  = 10000
-  set restart    = false
   set filename   = dem
 end
 
@@ -59,8 +58,6 @@ end
 #---------------------------------------------------
 
 subsection lagrangian physical properties
-  set gx                       = 0
-  set gy                       = 0
   set gz                       = -9.81
   set number of particle types = 1
   subsection particle type 0
@@ -118,7 +115,7 @@ subsection floating walls
       set nz = 1
     end
     set start time = 0
-    set end time   = 50
+    set end time   = 999
   end
 end
 
@@ -129,5 +126,5 @@ end
 subsection mesh
   set type                                = gmsh
   set file name                           = ./mesh/test_0403.msh
-  set expand particle-wall contact search = false
+  set expand particle-wall contact search = true
 end

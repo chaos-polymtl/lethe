@@ -3,7 +3,7 @@ Gas-Solid Spouted Cylinder Bed
 ==================================
 
 It is strongly recommended to visit `DEM parameters <../../../parameters/dem/dem.html>`_  and `CFD-DEM parameters <../../../parameters/unresolved-cfd-dem/unresolved-cfd-dem.html>`_ for a detailed description on the concepts and physical meanings of the DEM and CFD-DEM parameters.
-This example is an extension of the `Gas-Solid Spouted Bed <../gas-solid-spouted-bed/gas-solid-spouted-bed.html>`_ for a cylindrical geometry. The boundary condition and some parameters have been changed accordingly.
+This example is an extension of the `Gas-Solid Spouted Bed <../gas-solid-spouted-bed/gas-solid-spouted-bed.html>`_ for a cylindrical geometry. 
 
 ----------------------------------
 Features
@@ -11,7 +11,6 @@ Features
 
 - Solvers: ``lethe-particles`` and ``lethe-fluid-particles``
 - Three-dimensional problem
-- Displays the selection of models and physical properties
 - Simulates a solid-gas cylinder-shaped spouted bed
 
 ---------------------------
@@ -27,7 +26,7 @@ Both files mentioned below are located in the example's folder (``examples/unres
 Description of the Case
 -----------------------
 
-This example simulates the spouting of spherical particles in air in a cylindrical geometry. As noted in the example of `Gas-Solid Spouted Bed <../gas-solid-spouted-bed/gas-solid-spouted-beml>`_, we use ``lethe-particles`` to fill the bed with particles, and ``lethe-fluid-particles`` as a solver of CFD-DEM.
+This example simulates the spouting of spherical particles in air in a cylinder. As noted in the example of `Gas-Solid Spouted Bed <../gas-solid-spouted-bed/gas-solid-spouted-beml>`_, we use ``lethe-particles`` to fill the bed with particles, and ``lethe-fluid-particles`` as a solver of CFD-DEM.
 
 -------------------
 DEM Parameter File
@@ -38,7 +37,7 @@ Here, we will focus only on the parts that have been modified.
 Mesh
 ~~~~~
 
-In this example, we are simulating a cylinder shaped spouted bed. We introduce the flow through a short channel that is connected to the inlet of the bed. A schematic image is shown below;
+In this example, we are simulating a cylinder shaped spouted bed. We introduce the flow through a cylinder of smaller radius channel that  constitutes the inlet of the bed. A schematic image is shown below;
 
 .. image:: images/geometry.png
     :alt: The geometry and boundary conditions
@@ -70,8 +69,6 @@ The physical properties section is almost the same as the previous spouted bed e
 .. code-block:: text
 
     subsection lagrangian physical properties
-      set gx                       = 0
-      set gy                       = 0
       set gz                       = -9.81
       set number of particle types = 1
       subsection particle type 0
@@ -95,7 +92,7 @@ The physical properties section is almost the same as the previous spouted bed e
 Insertion Info
 ~~~~~~~~~~~~~~~~~~~
 
-The ``insertion info`` subsection manages the insertion of particles. This section has to be modified because of the change in particle number and use of a different geometry. The insertion box parameter was set as follows so that it could fit in the cylinder.
+The ``insertion info`` subsection manages the insertion of particles. The insertion box parameter is set so that it can fit in the cylinder.
 
 .. code-block:: text
 
@@ -117,7 +114,7 @@ The ``insertion info`` subsection manages the insertion of particles. This secti
 Floating Walls
 ~~~~~~~~~~~~~~~~~~~
 
-When we pack the cylinder with particles, we need to keep them inside and prevent them from falling through the small inlet channel. To do so, we place the stopper at the bottom of the cylinder, which is :math:`z = 0` plain, as in:
+When we pack the cylinder with particles, we need to keep them inside and prevent them from falling through the small inlet channel. To do so, we place a floating wall at the bottom of the cylinder, which is :math:`z = 0` plain, as in:
 
 .. code-block:: text
 
@@ -163,7 +160,7 @@ After the particles have been packed inside the square bed, we can move on to th
 CFD-DEM Parameter File
 -----------------------
 
-The CFD simulation is to be carried out using the packed bed simulated in the previous step. Here we will focus on the modified section as well.
+The CFD-DEM simulation is carried out using the packed bed previously generated. Here we will focus on the modified section as well.
 
 Simulation Control
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -188,7 +185,7 @@ The simulation is run for 5 s with a time step of 0.001 s. The time scheme and s
 Boundary Conditions
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Regarding the boundary conditions, we apply slip boundary condition to the wall, a uniform Dirichlet boundary condition at the bottom of the small channel, and free-stream to the top of the cylinder. The following schematic figure describes the ID of each boundary and the positon of the floating wall.
+Regarding the boundary conditions, we apply slip boundary condition to the wall, a uniform Dirichlet boundary condition at the bottom of the small channel, and outlet to the top of the cylinder. The following schematic figure describes the ID of each boundary and the positon of the floating wall.
 
 .. image:: images/ID.png
     :alt: The geometry and boundary conditions
@@ -196,7 +193,7 @@ Regarding the boundary conditions, we apply slip boundary condition to the wall,
     :name: ID
     :height: 10cm
 
-we set the inlet velocity to 2.5 m/s, and we do not impose the background velocity on the bottom of the cylinder as in the previous spouted bed example. The value of beta on the outlet boundary was set to 100, which is relatively high, to stabilize the simulation.
+we set the inlet velocity to 2.5 m/s, and we do not impose the background velocity on the bottom of the cylinder as in the previous spouted bed example. The value of beta on the outlet boundary was set to 100, which is relatively high, to stabilize the simulation and prevent backflow.
 
 .. code-block:: text
 
@@ -289,7 +286,7 @@ The graph below shows pressure drop as a function of height, depending on time. 
     :align: center
     :name: press_h
 
-visualization
+Visualization
 ~~~~~~~~~~~~~
 The results are shown in an animation below. As seen, the bubbly flow can be observed on the right side. the color of the particles represents the ID, to make it easier to see mixing. On the left side, you see the velocity profile as well.
 

@@ -9,15 +9,12 @@ set dimension = 3
 
 subsection simulation control
   set method               = bdf1
-  set number mesh adapt    = 0
   set output name          = result
   set output frequency     = 10
   set startup time scaling = 0.6
   set time end             = 5
   set time step            = 0.001
-  set subdivision          = 1
-  set log precision        = 10
-  set output path          = ./output/
+  set output path          = output/
 end
 
 #---------------------------------------------------
@@ -112,14 +109,6 @@ subsection post-processing
 end
 
 #---------------------------------------------------
-# Lagrangian post-processing
-#---------------------------------------------------
-
-subsection post-processing
-  set Lagrangian post-processing = false
-end
-
-#---------------------------------------------------
 # Initial condition
 #---------------------------------------------------
 
@@ -184,13 +173,6 @@ subsection boundary conditions
 end
 
 
-#---------------------------------------------------
-# Mesh Adaptation Control
-#---------------------------------------------------
-
-subsection mesh adaptation
-  set type = none
-end
 
 #---------------------------------------------------
 # Timer
@@ -220,8 +202,6 @@ end
 #---------------------------------------------------
 
 subsection lagrangian physical properties
-  set gx                       = 0
-  set gy                       = 0
   set gz                       = -9.81
   set number of particle types = 1
   subsection particle type 0
