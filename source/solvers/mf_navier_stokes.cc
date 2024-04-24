@@ -67,6 +67,76 @@ MFNavierStokesPreconditionGMG<dim>::MFNavierStokesPreconditionGMG(
       this->minlevel = 0;
       this->maxlevel = n_h_levels - 1;
 
+      // If multigrid number of levels or minimum number of cells in level are
+      // specified, change the min level fnd print levels information
+
+      int mg_min_level =
+        this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+          .mg_min_level;
+
+      AssertThrow(
+        mg_min_level <= static_cast<int>(MGTools::max_level_for_coarse_mesh(
+                          this->dof_handler.get_triangulation())),
+        ExcMessage(std::string(
+          "The maximum level allowed for the coarse mesh (mg min level) is: " +
+          std::to_string(MGTools::max_level_for_coarse_mesh(
+            this->dof_handler.get_triangulation())) +
+          ".")));
+
+      int mg_level_min_cells =
+        this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+          .mg_level_min_cells;
+
+
+      std::vector<unsigned int> n_cells_on_levels(
+        this->dof_handler.get_triangulation().n_global_levels(), 0);
+
+      for (unsigned int l = 0;
+           l < this->dof_handler.get_triangulation().n_levels();
+           ++l)
+        for (const auto &cell :
+             this->dof_handler.get_triangulation().cell_iterators_on_level(l))
+          if (cell->is_locally_owned_on_level())
+            n_cells_on_levels[l]++;
+
+      Utilities::MPI::sum(n_cells_on_levels,
+                          this->dof_handler.get_communicator(),
+                          n_cells_on_levels);
+      AssertThrow(
+        mg_level_min_cells <= static_cast<int>(n_cells_on_levels[maxlevel]),
+        ExcMessage(
+          "The mg level min cells specified are larger than the cells of the finest mg level."));
+
+
+      if (mg_min_level != -1)
+        this->minlevel = mg_min_level;
+
+      if (mg_level_min_cells != -1)
+        {
+          for (unsigned int level = this->minlevel; level <= this->maxlevel;
+               ++level)
+            if (static_cast<int>(n_cells_on_levels[level]) >=
+                mg_level_min_cells)
+              {
+                this->minlevel = level;
+                break;
+              }
+        }
+
+      if (this->simulation_parameters.linear_solver
+            .at(PhysicsID::fluid_dynamics)
+            .mg_verbosity != Parameters::Verbosity::quiet)
+        {
+          this->pcout << std::endl;
+          this->pcout << "  -Levels of MG preconditioner:" << std::endl;
+          for (unsigned int level = this->minlevel; level <= this->maxlevel;
+               ++level)
+            this->pcout << "    Level " << level - this->minlevel << ": "
+                        << this->dof_handler.n_dofs(level) << " DoFs, "
+                        << n_cells_on_levels[level] << " cells" << std::endl;
+          this->pcout << std::endl;
+        }
+
       std::vector<std::shared_ptr<const Utilities::MPI::Partitioner>>
         partitioners(this->dof_handler.get_triangulation().n_global_levels());
 
@@ -74,10 +144,10 @@ MFNavierStokesPreconditionGMG<dim>::MFNavierStokesPreconditionGMG(
       MGLevelObject<AffineConstraints<double>> level_constraints;
 
       // Resize all multilevel objects according to level
-      this->mg_operators.resize(0, this->maxlevel);
-      level_constraints.resize(0, this->maxlevel);
-      this->ls_mg_interface_in.resize(0, this->maxlevel);
-      this->ls_mg_operators.resize(0, this->maxlevel);
+      this->mg_operators.resize(this->minlevel, this->maxlevel);
+      level_constraints.resize(this->minlevel, this->maxlevel);
+      this->ls_mg_interface_in.resize(this->minlevel, this->maxlevel);
+      this->ls_mg_operators.resize(this->minlevel, this->maxlevel);
 
       // Fill the level constraints
       mg_computing_timer.enter_subsection("Set boundary conditions");
@@ -547,8 +617,9 @@ MFNavierStokesPreconditionGMG<dim>::initialize(
       MGLevelObject<VectorType> mg_time_derivative_previous_solutions;
 
       // Resize all multilevel objects according to level
-      mg_solution.resize(0, this->maxlevel);
-      mg_time_derivative_previous_solutions.resize(0, this->maxlevel);
+      mg_solution.resize(this->minlevel, this->maxlevel);
+      mg_time_derivative_previous_solutions.resize(this->minlevel,
+                                                   this->maxlevel);
 
       for (unsigned int level = this->minlevel; level <= this->maxlevel;
            ++level)
@@ -675,8 +746,8 @@ MFNavierStokesPreconditionGMG<dim>::initialize(
                 mg_smoother->smoothers[level].estimate_eigenvalues(vec);
 
               this->pcout << std::endl;
-              this->pcout << "  -Eigenvalue estimation level " << level << ":"
-                          << std::endl;
+              this->pcout << "  -Eigenvalue estimation level "
+                          << level - this->minlevel << ":" << std::endl;
               this->pcout << "    Relaxation parameter: "
                           << mg_smoother->smoothers[level].get_relaxation()
                           << std::endl;
@@ -696,76 +767,80 @@ MFNavierStokesPreconditionGMG<dim>::initialize(
 
       mg_computing_timer.leave_subsection("Set up and initialize smoother");
 
-      // If multigrid number of levels or minimum number of cells in level are
-      // specified, change the min level for the coarse-grid solver and the
-      // multigrid object, and print levels with appropriate numbering
+      // // If multigrid number of levels or minimum number of cells in level
+      // are
+      // // specified, change the min level for the coarse-grid solver and the
+      // // multigrid object, and print levels with appropriate numbering
 
-      int mg_min_level =
-        this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
-          .mg_min_level;
+      // int mg_min_level =
+      //   this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+      //     .mg_min_level;
 
-      AssertThrow(
-        mg_min_level <= static_cast<int>(MGTools::max_level_for_coarse_mesh(
-                          this->dof_handler.get_triangulation())),
-        ExcMessage(std::string(
-          "The maximum level allowed for the coarse mesh (mg min level) is: " +
-          std::to_string(MGTools::max_level_for_coarse_mesh(
-            this->dof_handler.get_triangulation())) +
-          ".")));
+      // AssertThrow(
+      //   mg_min_level <= static_cast<int>(MGTools::max_level_for_coarse_mesh(
+      //                     this->dof_handler.get_triangulation())),
+      //   ExcMessage(std::string(
+      //     "The maximum level allowed for the coarse mesh (mg min level) is: "
+      //     + std::to_string(MGTools::max_level_for_coarse_mesh(
+      //       this->dof_handler.get_triangulation())) +
+      //     ".")));
 
-      int mg_level_min_cells =
-        this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
-          .mg_level_min_cells;
-
-
-      std::vector<unsigned int> n_cells_on_levels(
-        this->dof_handler.get_triangulation().n_global_levels(), 0);
-
-      for (unsigned int l = 0;
-           l < this->dof_handler.get_triangulation().n_levels();
-           ++l)
-        for (const auto &cell :
-             this->dof_handler.get_triangulation().cell_iterators_on_level(l))
-          if (cell->is_locally_owned_on_level())
-            n_cells_on_levels[l]++;
-
-      Utilities::MPI::sum(n_cells_on_levels,
-                          this->dof_handler.get_communicator(),
-                          n_cells_on_levels);
-      AssertThrow(
-        mg_level_min_cells <= static_cast<int>(n_cells_on_levels[maxlevel]),
-        ExcMessage(
-          "The mg level min cells specified are larger than the cells of the finest mg level."));
+      // int mg_level_min_cells =
+      //   this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+      //     .mg_level_min_cells;
 
 
-      if (mg_min_level != -1)
-        this->minlevel = mg_min_level;
+      // std::vector<unsigned int> n_cells_on_levels(
+      //   this->dof_handler.get_triangulation().n_global_levels(), 0);
 
-      if (mg_level_min_cells != -1)
-        {
-          for (unsigned int level = this->minlevel; level <= this->maxlevel;
-               ++level)
-            if (static_cast<int>(n_cells_on_levels[level]) >=
-                mg_level_min_cells)
-              {
-                this->minlevel = level;
-                break;
-              }
-        }
+      // for (unsigned int l = 0;
+      //      l < this->dof_handler.get_triangulation().n_levels();
+      //      ++l)
+      //   for (const auto &cell :
+      //        this->dof_handler.get_triangulation().cell_iterators_on_level(l))
+      //     if (cell->is_locally_owned_on_level())
+      //       n_cells_on_levels[l]++;
 
-      if (this->simulation_parameters.linear_solver
-            .at(PhysicsID::fluid_dynamics)
-            .mg_verbosity != Parameters::Verbosity::quiet)
-        {
-          this->pcout << std::endl;
-          this->pcout << "  -Levels of MG preconditioner:" << std::endl;
-          for (unsigned int level = this->minlevel; level <= this->maxlevel;
-               ++level)
-            this->pcout << "    Level " << level - this->minlevel << ": "
-                        << this->dof_handler.n_dofs(level) << " DoFs, "
-                        << n_cells_on_levels[level] << " cells" << std::endl;
-          this->pcout << std::endl;
-        }
+      // Utilities::MPI::sum(n_cells_on_levels,
+      //                     this->dof_handler.get_communicator(),
+      //                     n_cells_on_levels);
+      // AssertThrow(
+      //   mg_level_min_cells <= static_cast<int>(n_cells_on_levels[maxlevel]),
+      //   ExcMessage(
+      //     "The mg level min cells specified are larger than the cells of the
+      //     finest mg level."));
+
+
+      // if (mg_min_level != -1)
+      //   this->minlevel = mg_min_level;
+
+      // if (mg_level_min_cells != -1)
+      //   {
+      //     for (unsigned int level = this->minlevel; level <= this->maxlevel;
+      //          ++level)
+      //       if (static_cast<int>(n_cells_on_levels[level]) >=
+      //           mg_level_min_cells)
+      //         {
+      //           this->minlevel = level;
+      //           break;
+      //         }
+      //   }
+
+      // this->pcout << "Min level: " << this->minlevel << std::endl;
+
+      // if (this->simulation_parameters.linear_solver
+      //       .at(PhysicsID::fluid_dynamics)
+      //       .mg_verbosity != Parameters::Verbosity::quiet)
+      //   {
+      //     this->pcout << std::endl;
+      //     this->pcout << "  -Levels of MG preconditioner:" << std::endl;
+      //     for (unsigned int level = this->minlevel; level <= this->maxlevel;
+      //          ++level)
+      //       this->pcout << "    Level " << level - this->minlevel << ": "
+      //                   << this->dof_handler.n_dofs(level) << " DoFs, "
+      //                   << n_cells_on_levels[level] << " cells" << std::endl;
+      //     this->pcout << std::endl;
+      //   }
 
       // Create coarse-grid GMRES solver and AMG preconditioner
       mg_computing_timer.enter_subsection("Create coarse-grid solver");
