@@ -883,8 +883,8 @@ CahnHilliard<dim>::post_mesh_adaptation()
   solution_transfer->interpolate(tmp);
 
   // Distribute constraints
-  nonzero_constraints.reinit();
-  nonzero_constraints.close();
+//  nonzero_constraints.reinit();
+//  nonzero_constraints.close();
   nonzero_constraints.distribute(tmp);
 
   // Fix on the new mesh
@@ -1220,8 +1220,8 @@ CahnHilliard<dim>::set_initial_conditions()
     fe->component_mask(potential));
 
   //nonzero_constraints.close();
-  nonzero_constraints.reinit();
-  nonzero_constraints.close();
+//  nonzero_constraints.reinit();
+//  nonzero_constraints.close();
   nonzero_constraints.distribute(newton_update);
   present_solution = newton_update;
   apply_phase_filter();
@@ -1242,8 +1242,8 @@ CahnHilliard<dim>::solve_linear_system(const bool initial_step,
   AffineConstraints<double> &constraints_used =
     initial_step ? nonzero_constraints : this->zero_constraints;
 
-  constraints_used.reinit();
-  constraints_used.close();
+//  constraints_used.reinit();
+//  constraints_used.close();
 
   const double absolute_residual =
     simulation_parameters.linear_solver.at(PhysicsID::cahn_hilliard)
