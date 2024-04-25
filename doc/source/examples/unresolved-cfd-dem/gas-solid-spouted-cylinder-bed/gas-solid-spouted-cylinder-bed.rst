@@ -2,7 +2,6 @@
 Gas-Solid Spouted Cylinder Bed
 ==================================
 
-It is strongly recommended to visit `DEM parameters <../../../parameters/dem/dem.html>`_  and `CFD-DEM parameters <../../../parameters/unresolved-cfd-dem/unresolved-cfd-dem.html>`_ for a detailed description on the concepts and physical meanings of the DEM and CFD-DEM parameters.
 This example is an extension of the `Gas-Solid Spouted Bed <../gas-solid-spouted-bed/gas-solid-spouted-bed.html>`_ for a cylindrical geometry. 
 
 ----------------------------------
@@ -19,8 +18,8 @@ Files Used in This Example
 
 Both files mentioned below are located in the example's folder (``examples/unresolved-cfd-dem/gas-solid-spouted-cylinder-bed``).
 
-- Parameter file for CFD-DEM simulation of the spouted bed: ``gas-solid-spouted-bed.prm``
-- Parameter file for particle generation and packing: ``dem-packing-in-spouted-bed.prm``
+- Parameter file for CFD-DEM simulation of the spouted bed: ``gas-solid-spouted-cylinder-bed.prm``
+- Parameter file for particle generation and packing: ``dem-packing-in-spouted-cylinder-bed.prm``
 
 -----------------------
 Description of the Case
@@ -32,7 +31,7 @@ This example simulates the spouting of spherical particles in air in a cylinder.
 DEM Parameter File
 -------------------
 
-Here, we will focus only on the parts that have been modified.
+Here, we will focus only on the parts that have been modified. It is strongly recommended to visit `DEM parameters <../../../parameters/dem/dem.html>`_ for a detailed description on the concepts and physical meanings of the DEM parameters.
 
 Mesh
 ~~~~~
@@ -53,13 +52,22 @@ The geometry of the bed was created using `Pointiwise <../../../tools/pointwise/
     :name: mesh_ver
     :height: 10cm
 
-In Unresolved CFD-DEM, the averaging volume used to calculate the void fraction needs to be large enough to contain several particles (>10). Since the averaging volume used in the quadrature-centred method is generally related to the cell volume, this introduces a limitation on the cell size. In general, the averaging volume, which in this case corresponds to the cell size, should be approximatively three time larger than the diameter of the particles in order to get stable calculation. So this can be expressed as follows:
+In Unresolved-CFD-DEM, Cells need to have a enough volume to contain particles in it. Basically the size of cells should be least three time larger than the diameter of the particles so that the void fraction would not be discontinuous `[1] <https://doi.org/10.1002/cjce.23686>`_. So this can be expressed as follows.
 
 .. math:: 
   \dfrac{d_p}{\Delta x} \leq 3
 
-where :math:`d_p` is the particle diameter, and :math:`\Delta x` is the characteristic size of the cell. In this example, we use particles with diameters of 5 mm which means that we need at least 15 mm for cell size. Also, we need to apply a relatively small mesh to the short channel below. Thus, we set the size of the central cylinder to 15mm, and made other grid coarser.
+where :math:`d_p` is the particle diameter, and :math:`\Delta x` is the characteristic size of the cell. In this example, we use particles with diameters of 5 mm which means that we need at least 15 mm for cell size. Also, we need to apply a relatively small mesh to the short channel below. Thus, we set the size of the central cylinder to 15 mm, and made other grid coarser. We show the parameter related to the mesh below.
 
+.. code-block:: text
+
+    subsection mesh
+      set type                                = gmsh
+      set file name                           = ./mesh/cylinder-spouted-bed.msh
+      set expand particle-wall contact search = true
+    end
+
+where the file name includes the path to the mesh file. Here, we activate ``expand particle-wall contact search``, which is only used in geometries with concave boundary such as cylinder and sphere. For more details, please refer to `Mesh Parameters Guide <../../../parameters/dem/mesh.html>`_.
 
 Lagrangian Physical Properties
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -100,12 +108,7 @@ The ``insertion info`` subsection manages the insertion of particles. The insert
       set insertion method                               = volume
       set inserted number of particles at each time step = 100000
       set insertion frequency                            = 2000
-      set insertion box minimum x                        = -0.075
-      set insertion box minimum y                        = -0.075
-      set insertion box minimum z                        = 0
-      set insertion box maximum x                        = 0.075
-      set insertion box maximum y                        = 0.075
-      set insertion box maximum z                        = 0.07
+      set insertion box points coordinates               = -0.075, -0.075, 0, 0.075, 0.075, 0.7
       set insertion distance threshold                   = 1.05
       set insertion maximum offset                       = 0.3
       set insertion prn seed                             = 19
@@ -132,7 +135,7 @@ When we pack the cylinder with particles, we need to keep them inside and preven
           set nz = 1
         end
         set start time = 0
-        set end time   = 50
+        set end time   = 999
       end
     end
 
@@ -144,14 +147,14 @@ Launching the simulation is as simple as specifying the executable name and the 
 .. code-block:: text
   :class: copy-button
 
-  lethe-particles dem-packing-in-spouted-bed.prm
+  lethe-particles dem-packing-in-spouted-cylinder-bed.prm
 
 or in parallel (where 8 represents the number of processors)
 
 .. code-block:: text
   :class: copy-button
 
-  mpirun -np 8 lethe-particles dem-packing-in-spouted-bed.prm
+  mpirun -np 8 lethe-particles dem-packing-in-spouted-cylinder-bed.prm
 
 After the particles have been packed inside the square bed, we can move on to the fluid-particles simulation.
 
@@ -160,7 +163,7 @@ After the particles have been packed inside the square bed, we can move on to th
 CFD-DEM Parameter File
 -----------------------
 
-The CFD-DEM simulation is carried out using the packed bed previously generated. Here we will focus on the modified section as well.
+The CFD-DEM simulation is carried out using the packed bed previously generated. Here we will focus on the modified section as well. We recommend visiting `CFD-DEM parameters <../../../parameters/unresolved-cfd-dem/unresolved-cfd-dem.html>`_ for a detailed description.
 
 Simulation Control
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -172,14 +175,9 @@ The simulation is run for 5 s with a time step of 0.001 s. The time scheme and s
     subsection simulation control
       set method               = bdf1
       set number mesh adapt    = 0
-      set output name          = result_
       set output frequency     = 50
-      set startup time scaling = 0.6
       set time end             = 5
       set time step            = 0.001
-      set subdivision          = 1
-      set log precision        = 10
-      set output path          = ./output/
     end
 
 Boundary Conditions
@@ -193,7 +191,8 @@ Regarding the boundary conditions, we apply slip boundary condition to the wall,
     :name: ID
     :height: 10cm
 
-we set the inlet velocity to 2.5 m/s, and we do not impose the background velocity on the bottom of the cylinder as in the previous spouted bed example. The value of beta on the outlet boundary was set to 100, which is relatively high, to stabilize the simulation and prevent backflow.
+
+We set the inlet velocity to 2.5 m/s, and the background velocity to 0.5 m/s on the bottom of the cylinder as in the previous spouted bed example. The value of beta on the outlet boundary was set to 100, which is relatively high, to stabilize the simulation and prevent backflow.
 
 .. code-block:: text
 
@@ -222,7 +221,7 @@ we set the inlet velocity to 2.5 m/s, and we do not impose the background veloci
       end
     end
 
-    subsection bc 2 #bed_wall
+    subsection bc 2 #wall
       set id = 6
       set type = slip
     end
@@ -259,7 +258,14 @@ The simulation is run using the ``lethe-fluid-particles`` application. Assuming 
 .. code-block:: text
   :class: copy-button
 
-  lethe-fluid-particles gas-solid-spouted-bed.prm
+  lethe-fluid-particles gas-solid-spouted-cylinder-bed.prm
+
+or in parallel (where 8 represents the number of processors)
+
+.. code-block:: text
+  :class: copy-button
+
+  mpirun -np 8 lethe-particles gas-solid-spouted-cylinder-bed.prm
 
 ---------
 Results
@@ -279,19 +285,16 @@ This graph illustrates the variation of pressure drop from 1s to 5s. We can see 
     :align: center
     :name: press_t
 
-The graph below shows pressure drop as a function of height, depending on time. Here we see the oscillation of the pressure drop as well.
-
-.. image:: images/pressure_height.gif
-    :alt: Pressure drop as a function of height
-    :align: center
-    :name: press_h
-
 Visualization
 ~~~~~~~~~~~~~
 The results are shown in an animation below. As seen, the bubbly flow can be observed on the right side. the color of the particles represents the ID, to make it easier to see mixing. On the left side, you see the velocity profile as well.
 
 .. raw:: html
 
-    <iframe width="560" height="315" src="https://www.youtube.com/embed/KMVL2hPUbx8" frameborder="0" allowfullscreen></iframe>
+    <p align="center"><iframe width="560" height="315" src="https://www.youtube.com/embed/weMRnz24GWM" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
 
+-----------
+References
+-----------
 
+`[1] <https://doi.org/10.1002/cjce.23686>`_ A. Bérard, G. S. Patience, and B. Blais, “Experimental methods in chemical engineering: Unresolved CFD-DEM,” *Can. J. Chem. Eng.*, vol. 98, no. 2, pp. 424–440, 2020, doi: 10.1002/cjce.23686.
