@@ -53,7 +53,7 @@ The geometry of the bed was created using `Pointiwise <../../../tools/pointwise/
     :name: mesh_ver
     :height: 10cm
 
-In Unresolved-CFD-DEM, Cells need to have a enough volume to contain particles in it. Basically the size of cells should be least three time larger than the diameter of the particles in order to get stable calculation. So this can be expressed as follows.
+In Unresolved CFD-DEM, the averaging volume used to calculate the void fraction needs to be large enough to contain several particles (>10). Since the averaging volume used in the quadrature-centred method is generally related to the cell volume, this introduces a limitation on the cell size. In general, the averaging volume, which in this case corresponds to the cell size, should be approximatively three time larger than the diameter of the particles in order to get stable calculation. So this can be expressed as follows:
 
 .. math:: 
   \dfrac{d_p}{\Delta x} \leq 3
