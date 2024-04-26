@@ -77,7 +77,7 @@ VOFAssemblerCore<dim>::assemble_matrix(VOFScratchData<dim>       &scratch_data,
       Tensor<1, dim> velocity_unit_vector =
         velocity / (velocity.norm() + 1e-12);
       const Tensor<2, dim> k_corr =
-        (gradient_unit_vector * velocity_unit_vector) *
+        Utilities::fixed_power<2>(gradient_unit_vector * velocity_unit_vector) *
         outer_product(velocity_unit_vector, velocity_unit_vector);
       const Tensor<2, dim> gradient_unit_tensor =
         outer_product(gradient_unit_vector, gradient_unit_vector);
@@ -91,10 +91,13 @@ VOFAssemblerCore<dim>::assemble_matrix(VOFScratchData<dim>       &scratch_data,
       // method for transient advection-diffusion problems, CMAME 2004]
       const double tau =
         is_steady(method) ?
-          1. / std::sqrt(std::pow(2. * u_mag / h, 2) +
-                         9 * std::pow(4 * diffusivity / (h * h), 2)) :
-          1. / std::sqrt(std::pow(sdt, 2) + std::pow(2. * u_mag / h, 2) +
-                         9 * std::pow(4 * diffusivity / (h * h), 2));
+          1. / std::sqrt(
+                 Utilities::fixed_power<2>(2. * u_mag / h) +
+                 9 * Utilities::fixed_power<2>(4 * diffusivity / (h * h))) :
+          1. /
+            std::sqrt(Utilities::fixed_power<2>(sdt) +
+                      Utilities::fixed_power<2>(2. * u_mag / h) +
+                      9 * Utilities::fixed_power<2>(4 * diffusivity / (h * h)));
 
       for (unsigned int j = 0; j < n_dofs; ++j)
         {
@@ -222,7 +225,7 @@ VOFAssemblerCore<dim>::assemble_rhs(VOFScratchData<dim>       &scratch_data,
       Tensor<1, dim> velocity_unit_vector =
         velocity / (velocity.norm() + 1e-12);
       const Tensor<2, dim> k_corr =
-        (gradient_unit_vector * velocity_unit_vector) *
+        Utilities::fixed_power<2>(gradient_unit_vector * velocity_unit_vector) *
         outer_product(velocity_unit_vector, velocity_unit_vector);
       const Tensor<2, dim> gradient_unit_tensor =
         outer_product(gradient_unit_vector, gradient_unit_vector);
@@ -240,10 +243,13 @@ VOFAssemblerCore<dim>::assemble_rhs(VOFScratchData<dim>       &scratch_data,
       // method for transient advection-diffusion problems, CMAME 2004]
       const double tau =
         is_steady(method) ?
-          1. / std::sqrt(std::pow(2. * u_mag / h, 2) +
-                         9 * std::pow(4 * diffusivity / (h * h), 2)) :
-          1. / std::sqrt(std::pow(sdt, 2) + std::pow(2. * u_mag / h, 2) +
-                         9 * std::pow(4 * diffusivity / (h * h), 2));
+          1. / std::sqrt(
+                 Utilities::fixed_power<2>(2. * u_mag / h) +
+                 9 * Utilities::fixed_power<2>(4 * diffusivity / (h * h))) :
+          1. /
+            std::sqrt(Utilities::fixed_power<2>(sdt) +
+                      Utilities::fixed_power<2>(2. * u_mag / h) +
+                      9 * Utilities::fixed_power<2>(4 * diffusivity / (h * h)));
 
       // Calculate the strong residual for GLS stabilization
       strong_residual_vec[q] +=
