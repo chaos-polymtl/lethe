@@ -9,8 +9,8 @@ Let :math:`\Omega = \Omega_0 \cup \Omega_1` be the domain formed by two fluids, 
 .. math::
   \phi =
   \begin{cases}
-    0 \quad \forall \vec{x} \in \Omega_0\\
-    1 \quad \forall \vec{x} \in \Omega_1
+    0 \quad \forall \mathbf{x} \in \Omega_0\\
+    1 \quad \forall \mathbf{x} \in \Omega_1
   \end{cases}
 
 This phase indicator (or phase fraction) changes rapidly but smoothly from :math:`0` to :math:`1` at the interface such that :math:`\Gamma` is located at the iso-contour :math:`\phi=0.5`, as illustrated below.
@@ -20,10 +20,10 @@ This phase indicator (or phase fraction) changes rapidly but smoothly from :math
     :align: center
     :width: 600
 
-The evolution of :math:`\Gamma` (or the iso-contour :math:`\phi=0.5`) in the time interval :math:`[0,T]` due to the action of velocity field :math:`\vec{u}` on :math:`\Omega` is described by the advection equation of the field :math:`\phi`:
+The evolution of :math:`\Gamma` (or the iso-contour :math:`\phi=0.5`) in the time interval :math:`[0,T]` due to the action of velocity field :math:`\mathbf{u}` on :math:`\Omega` is described by the advection equation of the field :math:`\phi`:
 
 .. math::
-  \frac{\partial \phi}{\partial t} + \nabla \cdot \left( \vec{u} \phi \right) = 0 \quad \forall (\vec{x},t)\in \Omega\times[0,T]
+  \frac{\partial \phi}{\partial t} + \nabla \cdot \left( \mathbf{u} \phi \right) = 0 \quad \forall (\mathbf{x},t)\in \Omega\times[0,T]
 
 or using `Einstein notation <https://en.wikipedia.org/wiki/Einstein_notation>`_:
 
@@ -35,14 +35,14 @@ Developing the second term gives:
 .. math::
   \partial_t \phi + \phi\partial_i u_i + u_i\partial_i\phi = 0 \quad \forall (x_i,t)\in \Omega\times[0,T]
 
-Typically, the term :math:`\phi\partial_i u_i` (or :math:`\phi \nabla \cdot \vec{u}`) is zero due to mass conservation in the Navier-Stokes equations. However, previous work done in Lethe showed that while :math:`\nabla \cdot \vec{u}=0` is globally respected, it is not locally respected, especially around the interface, so lets keep it for now.
+Typically, the term :math:`\phi\partial_i u_i` (or :math:`\phi \nabla \cdot \mathbf{u}`) is zero due to mass conservation in the Navier-Stokes equations. However, previous work done in Lethe showed that while :math:`\nabla \cdot \mathbf{u}=0` is globally respected, it is not locally respected, especially around the interface, so lets keep it for now.
 
 To complete the strong formulation of the problem, let's impose a no flux boundary condition on :math:`\partial \Omega`:
 
 .. math::
   \partial_i \phi n_i= 0 \quad \forall (x_i,t)\in \partial \Omega\times[0,T]
 
-where :math:`n_i` represent the outward pointing unit normal vector of :math:`\partial \Omega`, i.e., :math:`\vec{n}`.
+where :math:`n_i` represent the outward pointing unit normal vector of :math:`\partial \Omega`, i.e., :math:`\mathbf{n}`.
 
 Finite Element Formulation
 ---------------------------
@@ -74,12 +74,12 @@ Find :math:`\phi^h \in \Phi^h \times [0,T]` such that
 .. math::
   \int_\Omega v^h \left( \partial_t \phi^h + \phi^h\partial_i u_i + u_i\partial_i\phi^h\right) d \Omega = 0 \quad \forall v^h\in V^h\times [0,T]
 
-where :math:`\Phi^h` and :math:`V^h` are finite element spaces, and :math:`\phi^h(\vec{x},t) = \sum_{j=1}^N \phi_j(t)\psi_j(\vec{x})`. In standard notation, this formulation corresponds to:
+where :math:`\Phi^h` and :math:`V^h` are finite element spaces, and :math:`\phi^h(\mathbf{x},t) = \sum_{j=1}^N \phi_j(t)\psi_j(\mathbf{x})`. In standard notation, this formulation corresponds to:
 
 Find :math:`\phi^h \in \Phi^h \times [0,T]` such that
 
 .. math::
-  \int_\Omega v^h \left(\frac{\partial \phi^h}{\partial t} + \phi^h \nabla \cdot \vec{u} + \vec{u}\cdot \nabla \phi^h \right) d \Omega = 0 \quad \forall v^h\in V^h\times [0,T]
+  \int_\Omega v^h \left(\frac{\partial \phi^h}{\partial t} + \phi^h \nabla \cdot \mathbf{u} + \mathbf{u}\cdot \nabla \phi^h \right) d \Omega = 0 \quad \forall v^h\in V^h\times [0,T]
 
 Stabilization
 --------------
@@ -96,12 +96,15 @@ where the first element wise summation represents the SUPG stabilization term an
 
 .. math::
 
-  &v_\mathrm{DCDD} = \frac{1}{2} h^2 \|\vec{u}\| \| \nabla \phi^h \| \\
-  &f_\mathrm{DCDD} = \frac{\nabla \phi^h}{\| \nabla \phi^h \|} \frac{\nabla \phi^h}{\| \nabla \phi^h \|}
+  &v_\mathrm{DCDD} = \frac{1}{2} h^2 \|\mathbf{u}\| \| \nabla \phi^h_\mathrm{old} \| \\
+  &f_\mathrm{DCDD} =
+    \frac{\mathbf{u}}{\|\mathbf{u}\| } \frac{\mathbf{u}}{\|\mathbf{u}\|}
+    - \left(\frac{\nabla \phi^h_\mathrm{old}}{\| \nabla \phi^h_\mathrm{old} \|} \cdot \frac{\mathbf{u}}{\|\mathbf{u}\| } \right)^2
+    \frac{\nabla \phi^h_\mathrm{old}}{\| \nabla \phi^h_\mathrm{old} \|} \frac{\nabla \phi^h_\mathrm{old}}{\| \nabla \phi^h_\mathrm{old} \|}
 
-The term :math:`v_\mathrm{DCDD}` ensures that diffusivity is added only where there is a large phase gradient and a non-zero velocity, i.e., where the interface :math:`\Gamma` is in motion. The term :math:`f_\mathrm{DCDD}` is intended to add diffusivity only in the crosswind direction, since streamline diffusion is already added by the SUPG stabilization. However, for now, diffusivity is added in every direction where there is a phase gradient.
+The term :math:`v_\mathrm{DCDD}` ensures that diffusivity is added only where there is a large phase gradient and a non-zero velocity, i.e., where the interface :math:`\Gamma` is in motion. The term :math:`f_\mathrm{DCDD}` adds diffusivity only in the crosswind direction, since streamline diffusion is already added by the SUPG stabilization.
 
-The DCDD scheme leads to a non-linear finite element formulation. Thus, the latter is resolved with the Newton-Raphson method.
+To avoid a non-linear finite element formulation, the phase gradient of the previous time step :math:`(\phi^h_\mathrm{old})` is used.
 
 Interface Diffusion and Sharpening
 -----------------------------------
@@ -121,7 +124,7 @@ The current interface sharpening method consists of two steps:
 
 .. math::
 
-    \phi = \min \left( \max \left(\phi^{old},0 \right),1 \right)
+    \phi = \min \left( \max \left(\phi_\mathrm{old},0 \right),1 \right)
 
 The phase fraction limiter above will update the phase fraction if it failed to respect these bounds.
 

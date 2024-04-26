@@ -15,45 +15,45 @@ L2 error phase : 0.00279114
 *******************************************************************************
 Transient iteration: 2        Time: 0.04     Time step: 0.02     CFL: 1.25786 
 *******************************************************************************
-L2 error velocity : 1.091
-L2 error temperature : 4.73269e-12
-L2 error phase : 0.00286026
+L2 error velocity : 1.09115
+L2 error temperature : 4.68382e-12
+L2 error phase : 0.00284754
 
 *******************************************************************************
-Transient iteration: 3        Time: 0.06     Time step: 0.02     CFL: 1.28679 
+Transient iteration: 3        Time: 0.06     Time step: 0.02     CFL: 1.28682
 *******************************************************************************
-L2 error velocity : 1.12496
-L2 error temperature : 2.16659e-11
-L2 error phase : 0.00295017
+L2 error velocity : 1.12524
+L2 error temperature : 2.14831e-11
+L2 error phase : 0.00292325
 
 *******************************************************************************
-Transient iteration: 4        Time: 0.08     Time step: 0.02     CFL: 1.29508 
+Transient iteration: 4        Time: 0.08     Time step: 0.02     CFL: 1.29512
 *******************************************************************************
-L2 error velocity : 1.13507
-L2 error temperature : 6.43194e-11
-L2 error phase : 0.00305334
+L2 error velocity : 1.13541
+L2 error temperature : 6.41882e-11
+L2 error phase : 0.00301194
 
 *******************************************************************************
-Transient iteration: 5        Time: 0.1      Time step: 0.02     CFL: 1.29745 
+Transient iteration: 5        Time: 0.1      Time step: 0.02     CFL: 1.2975
 *******************************************************************************
-L2 error velocity : 1.13666
-L2 error temperature : 1.42948e-10
-L2 error phase : 0.00316573
- time  error_velocity error_pressure 
-0.0200   9.915105e-01        12.1545 
-0.0400   1.091004e+00        11.7602 
-0.0600   1.124961e+00        11.7061 
-0.0800   1.135072e+00        11.8248 
-0.1000   1.136664e+00        11.9419 
-cells error_temperature 
-  256      4.958868e-13 
-  256      4.732688e-12 
-  256      2.166589e-11 
-  256      6.431939e-11 
-  256      1.429483e-10 
- time  error_phase  
-0.0200 2.791137e-03 
-0.0400 2.860260e-03 
-0.0600 2.950171e-03 
-0.0800 3.053344e-03 
-0.1000 3.165733e-03 
+L2 error velocity : 1.137
+L2 error temperature : 1.43343e-10
+L2 error phase : 0.0031096
+ time  error_velocity error_pressure
+0.0200   9.915105e-01        12.1545
+0.0400   1.091154e+00        11.7510
+0.0600   1.125244e+00        11.6955
+0.0800   1.135406e+00        11.8167
+0.1000   1.136995e+00        11.9363
+cells error_temperature
+  256      4.958868e-13
+  256      4.683819e-12
+  256      2.148313e-11
+  256      6.418824e-11
+  256      1.433434e-10
+ time  error_phase
+0.0200 2.791137e-03
+0.0400 2.847543e-03
+0.0600 2.923250e-03
+0.0800 3.011940e-03
+0.1000 3.109602e-03
