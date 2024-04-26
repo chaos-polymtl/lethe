@@ -285,23 +285,23 @@ SolidBase<dim, spacedim>::load_triangulation(const std::string filename_tria)
   // TODO not functional for now, as not all information as passed with the load
   // function (see dealii documentation for classTriangulation) => change the
   // way the load works, or change the way the solid triangulation is handled
-  std::ifstream in_folder(filename_tria.c_str());
-  if (!in_folder)
-    AssertThrow(false,
-                ExcMessage(
-                  std::string(
-                    "You are trying to restart a previous computation, "
-                    "but the restart file <") +
-                  filename_tria + "> does not appear to exist!"));
+  // std::ifstream in_folder(filename_tria.c_str());
+  // if (!in_folder)
+  //   AssertThrow(false,
+  //               ExcMessage(
+  //                 std::string(
+  //                   "You are trying to restart a previous computation, "
+  //                   "but the restart file <") +
+  //                 filename_tria + "> does not appear to exist!"));
 
   try
     {
-      if (auto solid_tria =
-            dynamic_cast<parallel::distributed::Triangulation<dim, spacedim> *>(
-              get_solid_triangulation().get()))
-        {
+      // if (auto solid_tria =
+      //       dynamic_cast<parallel::distributed::Triangulation<dim, spacedim> *>(
+      //         get_solid_triangulation().get()))
+      //   {
           solid_tria->load(filename_tria.c_str());
-        }
+        // }
     }
   catch (...)
     {
@@ -752,12 +752,12 @@ SolidBase<dim, spacedim>::write_checkpoint(std::string prefix)
 
   system_trans_vectors.prepare_for_serialization(sol_set_transfer);
 
-  if (auto tria = dynamic_cast<parallel::distributed::Triangulation<dim> *>(
-        this->solid_tria.get()))
-    {
+  // if (auto tria = dynamic_cast<parallel::distributed::Triangulation<dim> *>(
+  //       this->solid_tria.get()))
+  //   {
       std::string triangulationName = prefix + ".triangulation";
-      tria->save(prefix + ".triangulation");
-    }
+      this->solid_tria.get()->save(prefix + ".triangulation");
+    // }
 }
 
 template <int dim, int spacedim>
@@ -769,19 +769,19 @@ SolidBase<dim, spacedim>::read_checkpoint(std::string prefix)
 
   // Read the triangulation from the checkpoint
   const std::string filename = prefix + ".triangulation";
-  std::ifstream     in(filename.c_str());
-  if (!in)
-    AssertThrow(false,
-                ExcMessage(
-                  std::string("You are trying to read a solid triangulation, "
-                              "but the restart file <") +
-                  filename + "> does not appear to exist!"));
+  // std::ifstream     in(filename.c_str());
+  // if (!in)
+  //   AssertThrow(false,
+  //               ExcMessage(
+  //                 std::string("You are trying to read a solid triangulation, "
+  //                             "but the restart file <") +
+  //                 filename + "> does not appear to exist!"));
 
   try
     {
-      if (auto tria = dynamic_cast<parallel::distributed::Triangulation<dim> *>(
-            this->solid_tria.get()))
-        tria->load(filename.c_str());
+      // if (auto tria = dynamic_cast<parallel::distributed::Triangulation<dim> *>(
+      //       this->solid_tria.get()))
+        this->solid_tria.get()->load(filename.c_str());
     }
   catch (...)
     {
