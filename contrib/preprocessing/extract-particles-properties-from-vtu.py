@@ -47,11 +47,6 @@ fem_t_x = df["fem_torque"][:, 0]
 fem_t_y = df["fem_torque"][:, 1]
 fem_t_z = df["fem_torque"][:, 2]
 
-with open('example.txt', 'w') as file:
-    # Write content to the file
-    file.write('Hello, this is a text file.\n')
-    file.write('This is another line of text.')
-
 with open(output_file_name, 'w') as file:
     # Write content to the file
     file.write(
