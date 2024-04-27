@@ -94,7 +94,7 @@ namespace Parameters
   {
     // Interface sharpening parameters. The sharpening method and parameters are
     // explained in the dam break VOF example:
-    // https://lethe-cfd.github.io/lethe/examples/multiphysics/dam-break-VOF/dam-break-VOF.html
+    // https://chaos-polymtl.github.io/lethe/examples/multiphysics/dam-break-VOF/dam-break-VOF.html
 
     bool enable;
 

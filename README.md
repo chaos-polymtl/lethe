@@ -2,12 +2,12 @@
 
 ![Lethe](logo/lethe-logo-without-bkgd.png?raw=true)
 
-[![CI-Debug](https://github.com/lethe-cfd/lethe/actions/workflows/main_debug.yml/badge.svg)](https://github.com/lethe-cfd/lethe/actions/workflows/main_debug.yml)
-[![CI-Release](https://github.com/lethe-cfd/lethe/actions/workflows/main_release.yml/badge.svg)](https://github.com/lethe-cfd/lethe/actions/workflows/main_release.yml)
-[![CI-Warnings](https://github.com/lethe-cfd/lethe/actions/workflows/main_warnings.yml/badge.svg)](https://github.com/lethe-cfd/lethe/actions/workflows/main_warnings.yml)
-[![CI-Examples](https://github.com/lethe-cfd/lethe/actions/workflows/main_parameter_files.yml/badge.svg)](https://github.com/lethe-cfd/lethe/actions/workflows/main_parameter_files.yml)
-[![Documentation](https://github.com/lethe-cfd/lethe/actions/workflows/doc-github-pages.yml/badge.svg)](https://github.com/lethe-cfd/lethe/actions/workflows/doc-github-pages.yml)
-[![Docker Image](https://github.com/lethe-cfd/lethe/actions/workflows/docker.yml/badge.svg)](https://github.com/lethe-cfd/lethe/actions/workflows/docker.yml)
+[![CI-Debug](https://github.com/chaos-polymtl/lethe/actions/workflows/main_debug.yml/badge.svg)](https://github.com/chaos-polymtl/lethe/actions/workflows/main_debug.yml)
+[![CI-Release](https://github.com/chaos-polymtl/lethe/actions/workflows/main_release.yml/badge.svg)](https://github.com/chaos-polymtl/lethe/actions/workflows/main_release.yml)
+[![CI-Warnings](https://github.com/chaos-polymtl/lethe/actions/workflows/main_warnings.yml/badge.svg)](https://github.com/chaos-polymtl/lethe/actions/workflows/main_warnings.yml)
+[![CI-Examples](https://github.com/chaos-polymtl/lethe/actions/workflows/main_parameter_files.yml/badge.svg)](https://github.com/chaos-polymtl/lethe/actions/workflows/main_parameter_files.yml)
+[![Documentation](https://github.com/chaos-polymtl/lethe/actions/workflows/doc-github-pages.yml/badge.svg)](https://github.com/chaos-polymtl/lethe/actions/workflows/doc-github-pages.yml)
+[![Docker Image](https://github.com/chaos-polymtl/lethe/actions/workflows/docker.yml/badge.svg)](https://github.com/chaos-polymtl/lethe/actions/workflows/docker.yml)
 
 Lethe (pronounced /ˈliːθiː/) is an open-source computational fluid dynamics
 (CFD), discrete element method (DEM) and coupled CFD-DEM
@@ -43,15 +43,15 @@ dedicated solvers like Lethe could not exist.
 ## Documentation
 
 Documentation, tutorials, and more can be found 
-[here](https://lethe-cfd.github.io/lethe/documentation/index.html).
+[here](https://chaos-polymtl.github.io/lethe/documentation/index.html).
 
 Developer documentation based on Doxygen can be found 
-[here](https://lethe-cfd.github.io/lethe/doxygen/index.html)
+[here](https://chaos-polymtl.github.io/lethe/doxygen/index.html)
 
 ## Installation
 
 Follow the instructions in the
-[documentation](https://lethe-cfd.github.io/lethe/documentation/installation/installation.html).
+[documentation](https://chaos-polymtl.github.io/lethe/documentation/installation/installation.html).
 
 ## Authors
 

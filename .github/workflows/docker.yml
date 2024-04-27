@@ -16,7 +16,7 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: lethe-cfd/lethe
+  IMAGE_NAME: chaos-polymtl/lethe
   CACHE_IMAGE_TAG: master
 
 jobs:
