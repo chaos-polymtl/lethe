@@ -669,7 +669,8 @@ private:
  * @brief Compute the density scalar field of a material within a domain.
  *
  * The expression for the density depends on the density model of the material.
- * See <a href="https://chaos-polymtl.github.io/lethe/documentation/parameters/cfd/
+ * See <a
+ * href="https://chaos-polymtl.github.io/lethe/documentation/parameters/cfd/
  * physical_properties.html#density-models" target="_blank">documentation on
  * density models</a>.
  */
