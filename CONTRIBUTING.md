@@ -9,13 +9,13 @@ is welcome to do so.
 This document aims at establishing guidelines for contributions within
 Lethe.
 
-Lethe has a wiki which is openly accessible on : https://github.com/lethe-cfd/lethe/wiki
+Lethe has a wiki which is openly accessible on : https://github.com/chaos-polymtl/lethe/wiki
 
 
 # How can I contribute?
 
 Contributions through code or documentation should be done through pull
-request at the official Github repository of Lethe : https://github.com/lethe-cfd/lethe.
+request at the official Github repository of Lethe : https://github.com/chaos-polymtl/lethe.
 We recommend that users either request access to the Lethe repository or
 create their own fork of Lethe on their own github account. This can then be
 used to open pull requests

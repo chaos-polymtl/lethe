@@ -285,7 +285,7 @@ private:
  * domain.
  *
  * The expression for the kinematic viscosity depends on the rheological
- * model of the fluid. See <a href="https://lethe-cfd.github.io/lethe/
+ * model of the fluid. See <a href="https://chaos-polymtl.github.io/lethe/
  * documentation/parameters/cfd/physical_properties.html#rheological-models"
  * target="_blank">documentation on rheological models</a>.
  */
@@ -366,7 +366,7 @@ private:
  * density of the fluid at reference state.
  *
  * The expression for the kinematic viscosity depends on the rheological
- * model of the fluid. See <a href="https://lethe-cfd.github.io/lethe/
+ * model of the fluid. See <a href="https://chaos-polymtl.github.io/lethe/
  * documentation/parameters/cfd/physical_properties.html#rheological-models"
  * target="_blank">documentation on rheological models</a>.
  */
@@ -669,7 +669,7 @@ private:
  * @brief Compute the density scalar field of a material within a domain.
  *
  * The expression for the density depends on the density model of the material.
- * See <a href="https://lethe-cfd.github.io/lethe/documentation/parameters/cfd/
+ * See <a href="https://chaos-polymtl.github.io/lethe/documentation/parameters/cfd/
  * physical_properties.html#density-models" target="_blank">documentation on
  * density models</a>.
  */

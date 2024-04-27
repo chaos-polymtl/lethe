@@ -16,7 +16,7 @@ setup(
     license='LGPL-2.1',
     packages=['lethe_pyvista_tools'],
     author='Lethe',
-    url="https://lethe-cfd.github.io/lethe/index.html",
+    url="https://chaos-polymtl.github.io/lethe/index.html",
     author_email='',
     python_requires='>=3.8',
     install_requires=REQUIRES,
