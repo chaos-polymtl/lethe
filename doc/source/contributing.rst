@@ -1,5 +1,5 @@
 .. tip::
-    Check the `utils <https://github.com/lethe-cfd/lethe-utils>`_ repository for additional cases, scripts, geo files and meshes.
+    Check the `utils <https://github.com/chaos-polymtl/lethe-utils>`_ repository for additional cases, scripts, geo files and meshes.
 
 ############
 Contributing

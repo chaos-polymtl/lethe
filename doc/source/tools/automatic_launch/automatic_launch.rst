@@ -3,7 +3,7 @@ How to Automatically Create and Launch Lethe Simulations
 ========================================================
 
 .. seealso::
-	All files used in this example are available in `lethe/contrib/utilities <https://github.com/lethe-cfd/lethe/tree/master/contrib/utilities>`_ under ``automatic_launch``.
+	All files used in this example are available in `lethe/contrib/utilities <https://github.com/chaos-polymtl/lethe/tree/master/contrib/utilities>`_ under ``automatic_launch``.
 
 The main Python scripts of this tutorial are:
 

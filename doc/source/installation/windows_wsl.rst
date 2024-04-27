@@ -315,7 +315,7 @@ After installation is complete, the folder structure will be:
   :class: copy-button
 
   cd lethe
-  git clone https://github.com/lethe-cfd/lethe git
+  git clone https://github.com/chaos-polymtl/lethe git
 
 3. |linux_shell| Build lethe:
 

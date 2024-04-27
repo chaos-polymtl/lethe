@@ -104,12 +104,12 @@ numdiff is used within the automatic testing procedure of Lethe to compare files
 Installation of Lethe (Step #2)
 -------------------------------
 
-Clone lethe from the `official repository <https://github.com/lethe-cfd/lethe>`
+Clone lethe from the `official repository <https://github.com/chaos-polymtl/lethe>`
 
 .. code-block:: text
   :class: copy-button
 
-  git clone https://github.com/lethe-cfd/lethe 
+  git clone https://github.com/chaos-polymtl/lethe 
 
 Create a build folder at the same level as the lethe folder
 

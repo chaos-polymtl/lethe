@@ -56,7 +56,7 @@ Then, we can clone and compile ``dealii``. Although Lethe always supports the ma
 .. code-block:: text
   :class: copy-button
 
-  git clone https://github.com/lethe-cfd/dealii.git
+  git clone https://github.com/chaos-polymtl/dealii.git
 
 We can compile ``dealii`` in the ``$HOME/dealii/build`` folder, by defining the paths to installation folders of ``Trilinos``, ``Parmetis`` and ``P4est``. To increase the speed of this step, we skip ``dealii`` tests and compile in release mode only.
 
@@ -86,7 +86,7 @@ In the ``$HOME/lethe`` directory, download Lethe:
 .. code-block:: text
   :class: copy-button
 
-  git clone https://github.com/lethe-cfd/lethe.git
+  git clone https://github.com/chaos-polymtl/lethe.git
 
 To install Lethe in the ``$HOME/lethe/inst`` directory (applications will be in ``inst/bin``), run in the ``$HOME/lethe/build`` directory:
 
@@ -225,7 +225,7 @@ Console outputs are written in ``slurm-$jobID.out``. For instance, to display th
   tail -n 20 slurm-$jobID.out
 
 .. note::
- If you need to launch multiple simulations, such as with varying parameter, feel free to adapt one of the scripts provided on `lethe-utils <https://github.com/lethe-cfd/lethe-utils/tree/master/python/cluster>`_.
+ If you need to launch multiple simulations, such as with varying parameter, feel free to adapt one of the scripts provided on `lethe-utils <https://github.com/chaos-polymtl/lethe-utils/tree/master/python/cluster>`_.
 
 
 Saving a SSH Key (Linux)

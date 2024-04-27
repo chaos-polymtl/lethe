@@ -157,7 +157,7 @@ FEM Interpolation
 
 .. note::
 
-  In `Example 2 <https://lethe-cfd.github.io/lethe/documentation/examples/incompressible-flow/2d-taylor-couette-flow/2d-taylor-couette-flow.html>`_ we have used second order element for velocity. In this problem, since we are using immersed boundary conditions, moving to higher order polynomials would not enhance the order of convergence as the solid boundary is not represented with high accuracy.
+  In `Example 2 <https://chaos-polymtl.github.io/lethe/documentation/examples/incompressible-flow/2d-taylor-couette-flow/2d-taylor-couette-flow.html>`_ we have used second order element for velocity. In this problem, since we are using immersed boundary conditions, moving to higher order polynomials would not enhance the order of convergence as the solid boundary is not represented with high accuracy.
 
 .. code-block:: text
 

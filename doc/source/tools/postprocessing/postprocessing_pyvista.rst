@@ -2,7 +2,7 @@
 Post-processing Lethe with PyVista
 ====================================
 
-Lethe has a `post-processing module <https://github.com/lethe-cfd/lethe/tree/master/contrib/postprocessing>`_ written in Python based on Lethe users specific needs. `lethe_pyvista_tools <https://github.com/lethe-cfd/lethe/tree/master/contrib/postprocessing>`_ was conceived to optimize the reading and post-treatment of Lethe data using Python.
+Lethe has a `post-processing module <https://github.com/chaos-polymtl/lethe/tree/master/contrib/postprocessing>`_ written in Python based on Lethe users specific needs. `lethe_pyvista_tools <https://github.com/chaos-polymtl/lethe/tree/master/contrib/postprocessing>`_ was conceived to optimize the reading and post-treatment of Lethe data using Python.
 
 The module is powered by `PyVista <https://docs.pyvista.org/>`_, a powerful 3D plotting and mesh analysis tool. It is a *pythonic* interface to deal with Visualization Toolkit (VTK) data. The module also uses the powerful `multiprocessing <https://docs.python.org/3/library/multiprocessing.html>`_ Python library to increase post-processing speed by running tasks in multiple processors.
 
@@ -10,7 +10,7 @@ The module is powered by `PyVista <https://docs.pyvista.org/>`_, a powerful 3D p
 
 .. warning::
 
-  For `lethe_pyvista_tools <https://github.com/lethe-cfd/lethe/tree/master/contrib/postprocessing>`_ to work, along with `Python 3 <https://www.python.org/downloads/>`_, the following libraries are needed: `os <https://docs.python.org/3/library/os.html>`_, `NumPy <https://numpy.org/>`_, `PyVista <https://docs.pyvista.org/>`_, `tqdm <https://tqdm.github.io/>`_, `matplotlib <https://matplotlib.org/stable/index.html>`_, `SciPy <https://scipy.org/>`_, and `scikit-learn <https://scikit-learn.org/stable/index.html>`_. If any of the modules are missing, use `pip <https://pypi.org/project/pip/>`_ to install it by running ``pip3 install $NAME_OF_THE_MODULE`` on the terminal. Alternatively, use the ``requirements.txt`` file and install them all at once running ``pip install -r requirements.txt`` located at ``contrib/postprocessing/``.
+  For `lethe_pyvista_tools <https://github.com/chaos-polymtl/lethe/tree/master/contrib/postprocessing>`_ to work, along with `Python 3 <https://www.python.org/downloads/>`_, the following libraries are needed: `os <https://docs.python.org/3/library/os.html>`_, `NumPy <https://numpy.org/>`_, `PyVista <https://docs.pyvista.org/>`_, `tqdm <https://tqdm.github.io/>`_, `matplotlib <https://matplotlib.org/stable/index.html>`_, `SciPy <https://scipy.org/>`_, and `scikit-learn <https://scikit-learn.org/stable/index.html>`_. If any of the modules are missing, use `pip <https://pypi.org/project/pip/>`_ to install it by running ``pip3 install $NAME_OF_THE_MODULE`` on the terminal. Alternatively, use the ``requirements.txt`` file and install them all at once running ``pip install -r requirements.txt`` located at ``contrib/postprocessing/``.
 
 
 ------------------------------
@@ -23,7 +23,7 @@ There are two ways to have access to ``lethe_pyvista_tools``: you can install th
 Installing
 ~~~~~~~~~~
 
-Installing ``lethe_pyvista_tools`` is very simple. In the `contrib/postprocessing <https://github.com/lethe-cfd/lethe/tree/master/contrib/postprocessing>`_ of your Lethe version you will find all source files, including ``setup.py`` and ``requirements.txt``. Those two files take care of configuring your installation and assuring that everything is set correctly. To install it, navigate to `contrib/postprocessing <https://github.com/lethe-cfd/lethe/tree/master/contrib/postprocessing>`_ on your terminal and run:
+Installing ``lethe_pyvista_tools`` is very simple. In the `contrib/postprocessing <https://github.com/chaos-polymtl/lethe/tree/master/contrib/postprocessing>`_ of your Lethe version you will find all source files, including ``setup.py`` and ``requirements.txt``. Those two files take care of configuring your installation and assuring that everything is set correctly. To install it, navigate to `contrib/postprocessing <https://github.com/chaos-polymtl/lethe/tree/master/contrib/postprocessing>`_ on your terminal and run:
 
 
 
@@ -60,7 +60,7 @@ In this case, we use the `sys <https://docs.python.org/3/library/sys.html>`_ mod
   from lethe_pyvista_tools import *
   import matplotlib.pyplot as plt
 
-where `sys.path <https://docs.python.org/3/library/sys.html#sys.path:~:text=in%20version%203.10.-,sys.path%C2%B6,-A%20list%20of>`_ is a list of strings that specifies the search path for modules. Another option is to simply copy the `lethe_pyvista_tools.py <https://github.com/lethe-cfd/lethe/tree/master/contrib/postprocessing>`_ file to the same folder as the Python post-processing script, and import it as follows:
+where `sys.path <https://docs.python.org/3/library/sys.html#sys.path:~:text=in%20version%203.10.-,sys.path%C2%B6,-A%20list%20of>`_ is a list of strings that specifies the search path for modules. Another option is to simply copy the `lethe_pyvista_tools.py <https://github.com/chaos-polymtl/lethe/tree/master/contrib/postprocessing>`_ file to the same folder as the Python post-processing script, and import it as follows:
 
 
 .. code-block::
@@ -77,5 +77,5 @@ The ``*`` means that we want to import all members of lethe_pyvista_tools.
 Using lethe_pyvista_tools
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-To get quick-started, follow the hand-on :doc:`Small Scale Rotating Drum Post-processing example <../../examples/dem/small-scale-rotating-drum-postprocessing/small-scale-rotating-drum-postprocessing>`. It has a detailed explanation on how to use the module. You can also start with a "raw" template file, check `this example file <https://github.com/lethe-cfd/lethe/tree/master/contrib/postprocessing/example.py>`_.
+To get quick-started, follow the hand-on :doc:`Small Scale Rotating Drum Post-processing example <../../examples/dem/small-scale-rotating-drum-postprocessing/small-scale-rotating-drum-postprocessing>`. It has a detailed explanation on how to use the module. You can also start with a "raw" template file, check `this example file <https://github.com/chaos-polymtl/lethe/tree/master/contrib/postprocessing/example.py>`_.
 

@@ -71,7 +71,7 @@ The dimensions are listed in the following table:
 +--------------------+----------------------------+---------------------------------------+
 		
 .. seealso::
-	The ``.geo`` file used to generate the mesh is available in the example folder, or `in lethe-utils repository <https://github.com/lethe-cfd/lethe-utils>`_.
+	The ``.geo`` file used to generate the mesh is available in the example folder, or `in lethe-utils repository <https://github.com/chaos-polymtl/lethe-utils>`_.
 
 The boundary conditions on the tank are:
 

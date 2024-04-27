@@ -171,7 +171,7 @@ The boundary conditions are defined as presented above:
        end
      end
 	
-The boundary 0, corresponding to the NACA0012 surface, is a ``noslip`` boundary condition that sets the velocity to zero on the boundary. Boundary 1 is the inlet where the velocity field was chosen to be horizontal and unitary to ensure that :math:`Re = 1000` is correct. It is represented in green on the figure. Boundary 2, in black on the image, corresponds to the upper and lower walls which are endowed with a ``slip`` boundary condition. Finally, boundary 3 is of type ``outlet`` with a parameter :math:`\beta = 1.3`. The reader is referred to the `Parameters Guide <https://lethe-cfd.github.io/lethe/documentation/parameters/cfd/linear_solver_control.html>`_ for more information about the :math:`\beta` parameter.
+The boundary 0, corresponding to the NACA0012 surface, is a ``noslip`` boundary condition that sets the velocity to zero on the boundary. Boundary 1 is the inlet where the velocity field was chosen to be horizontal and unitary to ensure that :math:`Re = 1000` is correct. It is represented in green on the figure. Boundary 2, in black on the image, corresponds to the upper and lower walls which are endowed with a ``slip`` boundary condition. Finally, boundary 3 is of type ``outlet`` with a parameter :math:`\beta = 1.3`. The reader is referred to the `Parameters Guide <https://chaos-polymtl.github.io/lethe/documentation/parameters/cfd/linear_solver_control.html>`_ for more information about the :math:`\beta` parameter.
 
 Non-linear Solver
 ~~~~~~~~~~~~~~~~~
@@ -212,7 +212,7 @@ Again, in order to reduce the computational time, the ``minimum residual`` for t
 	
 	
 .. tip::
-	It is important to note that the ``minimum residual`` of the linear solver is smaller than the ``tolerance`` of the non-linear solver. The reader can consult the `Parameters Guide <https://lethe-cfd.github.io/lethe/documentation/parameters/cfd/linear_solver_control.html>`_ for more information.
+	It is important to note that the ``minimum residual`` of the linear solver is smaller than the ``tolerance`` of the non-linear solver. The reader can consult the `Parameters Guide <https://chaos-polymtl.github.io/lethe/documentation/parameters/cfd/linear_solver_control.html>`_ for more information.
 
 
 -----------------------

@@ -631,7 +631,7 @@ The phase change is modelled with the underlying hypothesis that melting and sol
   * ``thermal expansion liquid``: thermal expansion of the liquid phase :math:`(\beta_\text{l})`
   * ``thermal expansion solid``: thermal expansion of the solid phase :math:`(\beta_\text{s})`
 
-* Darcy penalization (see `Darcy penalization <https://lethe-cfd.github.io/lethe/documentation/parameters/cfd/velocity_source.html#darcy-penalization>`_):
+* Darcy penalization (see `Darcy penalization <https://chaos-polymtl.github.io/lethe/documentation/parameters/cfd/velocity_source.html#darcy-penalization>`_):
 
   * ``Darcy penalty liquid``: Darcy penalty coefficient for the liquid phase
   * ``Darcy penalty solid``: Darcy penalty coefficient for the solid phase

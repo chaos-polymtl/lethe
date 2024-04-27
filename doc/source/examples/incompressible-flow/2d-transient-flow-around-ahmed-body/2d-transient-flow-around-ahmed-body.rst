@@ -54,7 +54,7 @@ The basic geometry for the Ahmed body is given below, as defined in Ahmed et al.
 Parameter File
 --------------
 
-First, we import the mesh as in the `2D Flow around a cylinder <https://lethe-cfd.github.io/lethe/documentation/examples/incompressible-flow/2d-flow-around-cylinder/2d-flow-around-cylinder.html>`_. 
+First, we import the mesh as in the `2D Flow around a cylinder <https://chaos-polymtl.github.io/lethe/documentation/examples/incompressible-flow/2d-flow-around-cylinder/2d-flow-around-cylinder.html>`_. 
 
 Mesh
 ~~~~~
@@ -82,7 +82,7 @@ Geometry parameters can be adapted in the "Parameters" section of the ``.geo`` f
     xmax = 2500/unit;
     ymax = 1000/unit;
 
-The initial `Mesh <https://lethe-cfd.github.io/lethe/documentation/parameters/cfd/mesh.html>`_ is built with `Gmsh <https://gmsh.info/#Download>`_. It is defined as transfinite at the body boundary layer and between the body and the road, and free for the rest of the domain. The mesh is dynamically refined throughout the simulation. This will be explained later in this example.
+The initial `Mesh <https://chaos-polymtl.github.io/lethe/documentation/parameters/cfd/mesh.html>`_ is built with `Gmsh <https://gmsh.info/#Download>`_. It is defined as transfinite at the body boundary layer and between the body and the road, and free for the rest of the domain. The mesh is dynamically refined throughout the simulation. This will be explained later in this example.
 
 The input mesh ``Ahmed-Body-20-2D.msh`` is in the same folder as the ``.prm`` file. The mesh subsection is set to use this file.
 
@@ -95,11 +95,11 @@ The input mesh ``Ahmed-Body-20-2D.msh`` is in the same folder as the ``.prm`` fi
 
 .. note::
 
-    For further information about `Mesh <https://lethe-cfd.github.io/lethe/documentation/parameters/cfd/mesh.html>`_ generation, we refer to the reader to the :doc:`../../../tools/gmsh/gmsh` page of this documentation, or the `GridGenerator <https://www.dealii.org/current/doxygen/deal.II/namespaceGridGenerator.html>`_ on the deal.ii documentation and the `Gmsh <https://gmsh.info/#Download>`_ website.
+    For further information about `Mesh <https://chaos-polymtl.github.io/lethe/documentation/parameters/cfd/mesh.html>`_ generation, we refer to the reader to the :doc:`../../../tools/gmsh/gmsh` page of this documentation, or the `GridGenerator <https://www.dealii.org/current/doxygen/deal.II/namespaceGridGenerator.html>`_ on the deal.ii documentation and the `Gmsh <https://gmsh.info/#Download>`_ website.
 
 Initial and Boundary Conditions
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-The `Initial Condition <https://lethe-cfd.github.io/lethe/documentation/parameters/cfd/initial_conditions.html>`_ and `Boundary Conditions <https://lethe-cfd.github.io/lethe/documentation/parameters/cfd/boundary_conditions_cfd.html>`_ are defined as in `Example 3 <https://lethe-cfd.github.io/lethe/documentation/examples/incompressible-flow/2d-flow-around-cylinder/2d-flow-around-cylinder.html>`_.
+The `Initial Condition <https://chaos-polymtl.github.io/lethe/documentation/parameters/cfd/initial_conditions.html>`_ and `Boundary Conditions <https://chaos-polymtl.github.io/lethe/documentation/parameters/cfd/boundary_conditions_cfd.html>`_ are defined as in `Example 3 <https://chaos-polymtl.github.io/lethe/documentation/examples/incompressible-flow/2d-flow-around-cylinder/2d-flow-around-cylinder.html>`_.
 
 .. code-block:: text
 
@@ -134,7 +134,7 @@ The `Initial Condition <https://lethe-cfd.github.io/lethe/documentation/paramete
 
 Simulation Control
 ~~~~~~~~~~~~~~~~~~
-Time integration is defined by a 1st order backward differentiation (``bdf1``), for a 4 seconds simulation (``time end``) with a 0.01 second ``time step``. The ``output path`` is defined to save obtained results in a sub-directory, as stated in `Simulation Control <https://lethe-cfd.github.io/lethe/documentation/parameters/cfd/simulation_control.html>`_:
+Time integration is defined by a 1st order backward differentiation (``bdf1``), for a 4 seconds simulation (``time end``) with a 0.01 second ``time step``. The ``output path`` is defined to save obtained results in a sub-directory, as stated in `Simulation Control <https://chaos-polymtl.github.io/lethe/documentation/parameters/cfd/simulation_control.html>`_:
 
 .. code-block:: text
 
@@ -184,7 +184,7 @@ Alternatively, specify the path to the ``lethe-fluid`` in your ``build/applicati
 
   mpirun -np 6 ../build/applications/lethe-fluid/lethe-fluid ahmed.prm
 
-Guidelines for parameters other than the previous mentioned are found at the `Parameters guide <https://lethe-cfd.github.io/lethe/documentation/parameters/parameters.html>`_.
+Guidelines for parameters other than the previous mentioned are found at the `Parameters guide <https://chaos-polymtl.github.io/lethe/documentation/parameters/parameters.html>`_.
 
 
 -------

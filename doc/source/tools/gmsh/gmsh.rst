@@ -3,7 +3,7 @@ Introduction on How to Use GMSH
 ===============================
 
 .. seealso::
-	``.geo`` files are available in the `lethe-utils github folder <https://github.com/lethe-cfd/lethe-utils/tree/master/gmsh>`_
+	``.geo`` files are available in the `lethe-utils github folder <https://github.com/chaos-polymtl/lethe-utils/tree/master/gmsh>`_
 	
 
 --------------------------
