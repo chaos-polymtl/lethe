@@ -28,7 +28,7 @@ All files mentioned below are located in the example's folder (``examples/incomp
 Description of the Case
 -----------------------
 
-We simulate the flow around a fixed cylinder with a constant upstream fluid velocity. We re-use the geometry and mesh presented in `2D Flow around a cylinder <https://lethe-cfd.github.io/lethe/documentation/examples/incompressible-flow/2d-flow-around-cylinder/2d-flow-around-cylinder.html>`_, which were taken from Blais *et al.* `[1] <https://doi.org/10.1016/j.compchemeng.2015.10.019>`_:
+We simulate the flow around a fixed cylinder with a constant upstream fluid velocity. We re-use the geometry and mesh presented in `2D Flow around a cylinder <https://chaos-polymtl.github.io/lethe/documentation/examples/incompressible-flow/2d-flow-around-cylinder/2d-flow-around-cylinder.html>`_, which were taken from Blais *et al.* `[1] <https://doi.org/10.1016/j.compchemeng.2015.10.019>`_:
 
 .. image:: images/geometry-description.png
     :alt: The geometry
@@ -77,7 +77,7 @@ The interpolation orders for the velocity and pressure are set to Q2-Q1 in the `
 Mesh
 ~~~~~
 
-The initial mesh is generated with `Gmsh <https://gmsh.info/#Download>`_ and imported as described in  `2D Flow around a cylinder <https://lethe-cfd.github.io/lethe/documentation/examples/incompressible-flow/2d-flow-around-cylinder/2d-flow-around-cylinder.html>`_.
+The initial mesh is generated with `Gmsh <https://gmsh.info/#Download>`_ and imported as described in  `2D Flow around a cylinder <https://chaos-polymtl.github.io/lethe/documentation/examples/incompressible-flow/2d-flow-around-cylinder/2d-flow-around-cylinder.html>`_.
 
 .. code-block:: text
 
@@ -106,12 +106,12 @@ While the discretization in the wake of the cylinder has less impact on the forc
       set fraction coarsening  = 0.01
     end
 
-Here, we are using the pressure as the variable for the `Kelly error estimator <https://lethe-cfd.github.io/lethe/documentation/parameters/cfd/mesh_adaptation_control.html>`_, unlike the previous examples which were using the velocity. Indeed, we have observed that the refinement has less tendency to follow the vortices as they move through the wake with the pressure as the refinement indicator than if we select the velocity. Additionally, the ``fraction refinement`` and ``fraction coarsening`` are set to lower values than the previous examples (i.e., respectively 0.02 and 0.01) to enable a gradual growth of the mesh size.
+Here, we are using the pressure as the variable for the `Kelly error estimator <https://chaos-polymtl.github.io/lethe/documentation/parameters/cfd/mesh_adaptation_control.html>`_, unlike the previous examples which were using the velocity. Indeed, we have observed that the refinement has less tendency to follow the vortices as they move through the wake with the pressure as the refinement indicator than if we select the velocity. Additionally, the ``fraction refinement`` and ``fraction coarsening`` are set to lower values than the previous examples (i.e., respectively 0.02 and 0.01) to enable a gradual growth of the mesh size.
 
 
 Initial and Boundary Conditions
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-The `Initial Condition <https://lethe-cfd.github.io/lethe/documentation/parameters/cfd/initial_conditions.html>`_ and `Boundary Conditions <https://lethe-cfd.github.io/lethe/documentation/parameters/cfd/boundary_conditions_cfd.html>`_ are defined as in `2D Flow around a cylinder <https://lethe-cfd.github.io/lethe/documentation/examples/incompressible-flow/2d-flow-around-cylinder/2d-flow-around-cylinder.html>`_.
+The `Initial Condition <https://chaos-polymtl.github.io/lethe/documentation/parameters/cfd/initial_conditions.html>`_ and `Boundary Conditions <https://chaos-polymtl.github.io/lethe/documentation/parameters/cfd/boundary_conditions_cfd.html>`_ are defined as in `2D Flow around a cylinder <https://chaos-polymtl.github.io/lethe/documentation/examples/incompressible-flow/2d-flow-around-cylinder/2d-flow-around-cylinder.html>`_.
 
 .. code-block:: text
 
@@ -147,7 +147,7 @@ The `Initial Condition <https://lethe-cfd.github.io/lethe/documentation/paramete
 Physical Properties
 ~~~~~~~~~~~~~~~~~~~
 
-The Reynolds number must be high enough to capture a transient flow and study the evolution of the drag and lift coefficients in time. Therefore, we set Re = 200 through the value of the kinematic viscosity in the same manner as for the `2D Lid-driven cavity flow <https://lethe-cfd.github.io/lethe/documentation/examples/incompressible-flow/2d-lid%E2%80%90driven-cavity-flow/lid%E2%80%90driven-cavity-flow.html>`_. Since :math:`U_\infty = 1` and the :math:`D = 1`, we have :math:`Re=\frac{1}{\nu}`, where :math:`\nu` is the kinematic viscosity.
+The Reynolds number must be high enough to capture a transient flow and study the evolution of the drag and lift coefficients in time. Therefore, we set Re = 200 through the value of the kinematic viscosity in the same manner as for the `2D Lid-driven cavity flow <https://chaos-polymtl.github.io/lethe/documentation/examples/incompressible-flow/2d-lid%E2%80%90driven-cavity-flow/lid%E2%80%90driven-cavity-flow.html>`_. Since :math:`U_\infty = 1` and the :math:`D = 1`, we have :math:`Re=\frac{1}{\nu}`, where :math:`\nu` is the kinematic viscosity.
 
 .. code-block:: text
 
@@ -209,14 +209,14 @@ As we set ``calculation frequency`` to 1, the forces on each boundary are comput
 
 .. warning::
 
-  The computational cost of writing this output file at each time step by setting ``output frequency`` to 1 can be significant, as explained in `Force and torque calculation <https://lethe-cfd.github.io/lethe/documentation/parameters/cfd/force_and_torque.html>`_. It is a good practice to set ``output frequency`` to higher values, such as 10-100, to reduce the computational cost.
+  The computational cost of writing this output file at each time step by setting ``output frequency`` to 1 can be significant, as explained in `Force and torque calculation <https://chaos-polymtl.github.io/lethe/documentation/parameters/cfd/force_and_torque.html>`_. It is a good practice to set ``output frequency`` to higher values, such as 10-100, to reduce the computational cost.
 
 
 ----------------------
 Running the Simulation
 ----------------------
 
-The simulation is launched in parallel using 10 CPUs, as explained in `2D Transient flow around an Ahmed body <https://lethe-cfd.github.io/lethe/documentation/examples/incompressible-flow/2d-transient-around-ahmed-body/2d-transient-around-ahmed-body.html>`_ :
+The simulation is launched in parallel using 10 CPUs, as explained in `2D Transient flow around an Ahmed body <https://chaos-polymtl.github.io/lethe/documentation/examples/incompressible-flow/2d-transient-around-ahmed-body/2d-transient-around-ahmed-body.html>`_ :
 
 .. code-block:: text
   :class: copy-button

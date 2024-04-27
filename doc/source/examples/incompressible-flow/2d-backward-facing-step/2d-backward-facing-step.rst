@@ -248,7 +248,7 @@ For :math:`Re \geq 700`, however, it is often necessary to set ``ilu precondtion
     end
 	
 .. tip::
-	It is important to note that the ``minimum residual`` of the linear solver is smaller than the ``tolerance`` of the nonlinear solver. The reader can consult the `Parameters Guide <https://lethe-cfd.github.io/lethe/documentation/parameters/cfd/linear_solver_control.html>`_ for more information.
+	It is important to note that the ``minimum residual`` of the linear solver is smaller than the ``tolerance`` of the nonlinear solver. The reader can consult the `Parameters Guide <https://chaos-polymtl.github.io/lethe/documentation/parameters/cfd/linear_solver_control.html>`_ for more information.
 
 
 -----------------------

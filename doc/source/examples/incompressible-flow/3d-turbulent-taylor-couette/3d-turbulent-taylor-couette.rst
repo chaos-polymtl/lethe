@@ -2,7 +2,7 @@
 Turbulent Taylor-Couette Flow
 ==============================
 
-This example showcases a turbulent extension of the `Taylor-Couette Flow <https://lethe-cfd.github.io/lethe/documentation/examples/incompressible-flow/2d-taylor-couette-flow/2d-taylor-couette-flow.html>`_. It features the matrix-free solver (``lethe-fluid-matrix-free``) which is more computationally efficient when solving problems using high-order elements and fine meshes. It also demonstrates the utilization of initial conditions and the postprocessing of the enstrophy.
+This example showcases a turbulent extension of the `Taylor-Couette Flow <https://chaos-polymtl.github.io/lethe/documentation/examples/incompressible-flow/2d-taylor-couette-flow/2d-taylor-couette-flow.html>`_. It features the matrix-free solver (``lethe-fluid-matrix-free``) which is more computationally efficient when solving problems using high-order elements and fine meshes. It also demonstrates the utilization of initial conditions and the postprocessing of the enstrophy.
 
 ---------
 Features
@@ -27,7 +27,7 @@ All files mentioned below are located in the example's folder (``examples/incomp
 Description of the Case
 ------------------------
 
-The Taylor-Couette flow occurs in the annular space between two coaxial cylinders with different angular velocities. For a laminar flow, an analytical solution exists (see `Taylor-Couette Flow <https://lethe-cfd.github.io/lethe/documentation/examples/incompressible-flow/2d-taylor-couette-flow/2d-taylor-couette-flow.html>`_). As the Reynolds number increases, the flow undergoes a transition where Taylor vortices emerge (symmetrical vortices in the radial-vertical plane). Eventually, as the flow becomes fully turbulent, a chaotic vortex structure appears with intense fluid agitation `[2] <https://en.wikipedia.org/wiki/Taylor%E2%80%93Couette_flow>`_ .
+The Taylor-Couette flow occurs in the annular space between two coaxial cylinders with different angular velocities. For a laminar flow, an analytical solution exists (see `Taylor-Couette Flow <https://chaos-polymtl.github.io/lethe/documentation/examples/incompressible-flow/2d-taylor-couette-flow/2d-taylor-couette-flow.html>`_). As the Reynolds number increases, the flow undergoes a transition where Taylor vortices emerge (symmetrical vortices in the radial-vertical plane). Eventually, as the flow becomes fully turbulent, a chaotic vortex structure appears with intense fluid agitation `[2] <https://en.wikipedia.org/wiki/Taylor%E2%80%93Couette_flow>`_ .
 
 This example is drawn from a case study by Wang and Jourdan `[1] <https://doi.org/10.1186/s42774-021-00071-0>`_. It simulates a turbulent Taylor-Couette flow with a Reynolds number of 4000. It incorporates initial conditions based on a modified version of the laminar solution to generate specific vortical structures, inspired by the Taylor-Green vortex.
 
@@ -257,7 +257,7 @@ The ``simulation control`` subsection controls the flow of the simulation. To ma
 Other Subsections
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
-The ``non-linear solver`` and ``linear solver`` subsections use the same parameters as the `Taylor-Green Vortex <https://lethe-cfd.github.io/lethe/documentation/examples/incompressible-flow/3d-taylor-green-vortex/3d-taylor-green-vortex.html>`_ example. More details can be found in this example and a complete overview of the ``lethe-fluid-matrix-free`` linear solver can be found in the **Theory Guide** (under construction).
+The ``non-linear solver`` and ``linear solver`` subsections use the same parameters as the `Taylor-Green Vortex <https://chaos-polymtl.github.io/lethe/documentation/examples/incompressible-flow/3d-taylor-green-vortex/3d-taylor-green-vortex.html>`_ example. More details can be found in this example and a complete overview of the ``lethe-fluid-matrix-free`` linear solver can be found in the **Theory Guide** (under construction).
 
 ----------------------
 Running the Simulation

@@ -66,7 +66,7 @@ The ``volume`` insertion method uses an insertion box where particles will be in
 
 * The ``inserted number of particles at each time step`` defines the desired number of particles to be inserted at each insertion step. If the insertion box is not adequately large to insert ``inserted number of particles at each time step`` particles with the defined arrangement (initial distance between the inserted particles), Lethe prints a warning and inserts the maximum number of particles that fit inside the insertion box at each insertion step.
 
-* The ``insertion box points coordinates`` parameter defines the insertion box dimensions using two points: ``x1, y1, z1 : x2, y2, z2``. It is the same principle has what is being done for the `CFD <https://lethe-cfd.github.io/lethe/documentation/parameters/cfd/mesh.html>`_ triangulation.
+* The ``insertion box points coordinates`` parameter defines the insertion box dimensions using two points: ``x1, y1, z1 : x2, y2, z2``. It is the same principle has what is being done for the `CFD <https://chaos-polymtl.github.io/lethe/documentation/parameters/cfd/mesh.html>`_ triangulation.
 
 .. note::
     We recommend that the defined insertion box have at least a distance of :math:`{d^{max}_p}` (maximum diameter of particles) from the triangulation boundaries. Otherwise, particles may have an overlap with the triangulation walls in the insertion.

@@ -113,7 +113,7 @@ In the ``laser parameters`` section, the parameters of the laser model are defin
     q(x,y,z) = \frac{\eta \alpha P}{\pi r^2 \mu} \exp{\left(-\eta \frac{r^2}{R^2}\right)} \exp{\left(- \frac{|z|}{\mu}\right)}
 
 
-where :math:`\eta`, :math:`\alpha`, :math:`P`, :math:`R`, :math:`\mu`, :math:`r` and :math:`z` denote concentration factor, absorptivity, laser power, beam radius, penetration depth, radial distance from the laser focal point, and axial distance from the laser focal point, respectively. These parameters are explained in more detail in the `laser parameters <https://lethe-cfd.github.io/lethe/documentation/parameters/cfd/laser_heat_source.html>`_.
+where :math:`\eta`, :math:`\alpha`, :math:`P`, :math:`R`, :math:`\mu`, :math:`r` and :math:`z` denote concentration factor, absorptivity, laser power, beam radius, penetration depth, radial distance from the laser focal point, and axial distance from the laser focal point, respectively. These parameters are explained in more detail in the `laser parameters <https://chaos-polymtl.github.io/lethe/documentation/parameters/cfd/laser_heat_source.html>`_.
 
 
 .. note:: 
@@ -141,7 +141,7 @@ where :math:`\eta`, :math:`\alpha`, :math:`P`, :math:`R`, :math:`\mu`, :math:`r`
 Mesh Adaptation
 ~~~~~~~~~~~~~~~
 
-In the ``mesh adaptation`` subsection, we choose a mesh refinement based on the variable ``temperature``. Mesh adaptation is explained in more detail in `mesh adaptation control <https://lethe-cfd.github.io/lethe/documentation/parameters/cfd/mesh_adaptation_control.html>`_
+In the ``mesh adaptation`` subsection, we choose a mesh refinement based on the variable ``temperature``. Mesh adaptation is explained in more detail in `mesh adaptation control <https://chaos-polymtl.github.io/lethe/documentation/parameters/cfd/mesh_adaptation_control.html>`_
 
 
 .. code-block:: text

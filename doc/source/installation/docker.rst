@@ -12,7 +12,7 @@ Docker
 No Compilation Required: Using the Provided Lethe Docker Image
 ##############################################################
 
-If you don't want to build Lethe and its dependencies, you can use the provided `Docker image <https://github.com/lethe-cfd/lethe/pkgs/container/lethe>`_.
+If you don't want to build Lethe and its dependencies, you can use the provided `Docker image <https://github.com/chaos-polymtl/lethe/pkgs/container/lethe>`_.
 
 For example, to launch the 2D Lid-Driven Cavity Flow simulation, run the following lines inside the root Lethe folder:
 
@@ -21,7 +21,7 @@ For example, to launch the 2D Lid-Driven Cavity Flow simulation, run the followi
 
   docker run --rm \
     -v $(pwd):/home/dealii \
-    ghcr.io/lethe-cfd/lethe:master \
+    ghcr.io/chaos-polymtl/lethe:master \
     lethe-fluid examples/incompressible_flow/2d_lid_driven_cavity/cavity.prm
 
 In general, to run a lethe simulation you will just need to run the following command:
@@ -31,7 +31,7 @@ In general, to run a lethe simulation you will just need to run the following co
 
   docker run --rm \
     -v $(pwd):/home/dealii \
-    ghcr.io/lethe-cfd/lethe:master \
+    ghcr.io/chaos-polymtl/lethe:master \
     lethe-executable parameter-file.prm
 
 #################################

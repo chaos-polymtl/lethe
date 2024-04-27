@@ -8,7 +8,7 @@ Regular Installation on Linux
 .. important::
   Distributions on which compatibility was tested are: Ubuntu 20.04 LTS, Ubuntu 22.04 LTS, Centos 7 and Manjaro.
 
-Lethe requires a modern version of the `deal.II library <https://www.dealii.org/>`_ and its dependencies (MPI, numdiff, p4est, trilinos and METIS). At the time of this writing, ``deal.II 9.5`` and ``deal.II 9.6pre`` (the ``master`` branch version) are supported. A `dealii fork <https://github.com/lethe-cfd/dealii>`_ is maintained by the Lethe team. This fork does not include any modification to deal.II library, but it is the latest version with which Lethe was tested. 
+Lethe requires a modern version of the `deal.II library <https://www.dealii.org/>`_ and its dependencies (MPI, numdiff, p4est, trilinos and METIS). At the time of this writing, ``deal.II 9.5`` and ``deal.II 9.6pre`` (the ``master`` branch version) are supported. A `dealii fork <https://github.com/chaos-polymtl/dealii>`_ is maintained by the Lethe team. This fork does not include any modification to deal.II library, but it is the latest version with which Lethe was tested. 
 
 **Lethe installation steps:**
   
@@ -131,12 +131,12 @@ After installation, add the following lines variable to your ``.bashrc`` :
 Installing Lethe 
 -------------------------------
 
-Clone Lethe from the `Lethe official repository <https://github.com/lethe-cfd/lethe>`_.
+Clone Lethe from the `Lethe official repository <https://github.com/chaos-polymtl/lethe>`_.
 
 .. code-block:: text
   :class: copy-button
 
-  git clone https://github.com/lethe-cfd/lethe 
+  git clone https://github.com/chaos-polymtl/lethe 
 
 Create a build folder at the same level as the lethe folder
 
@@ -250,7 +250,7 @@ As all other ``apt`` packages, run:
 
 Through the Git Repository
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
-The deal.II version supported by Lethe is updated and tested every week or so, see the repository `here <https://github.com/lethe-cfd/dealii>`_. If Lethe was installed with this forked version of deal.II, updating your deal.II installation is as simple as pulling the repository and recompiling the deal.II library. If your deal.II was installed manually using the deal.II master repository, the same process can be used.
+The deal.II version supported by Lethe is updated and tested every week or so, see the repository `here <https://github.com/chaos-polymtl/dealii>`_. If Lethe was installed with this forked version of deal.II, updating your deal.II installation is as simple as pulling the repository and recompiling the deal.II library. If your deal.II was installed manually using the deal.II master repository, the same process can be used.
 
 With Candi
 ~~~~~~~~~~~~~

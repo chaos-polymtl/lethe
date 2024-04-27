@@ -2,7 +2,7 @@
 Simulation Control
 ==================
 
-The Simulation Control subsection of DEM simulations is identical to the `CFD <https://lethe-cfd.github.io/lethe/documentation/parameters/cfd/simulation_control.html>`_ in Lethe.
+The Simulation Control subsection of DEM simulations is identical to the `CFD <https://chaos-polymtl.github.io/lethe/documentation/parameters/cfd/simulation_control.html>`_ in Lethe.
 
 .. note::
     A constant ``time step`` must be defined in the DEM solver. Lethe-DEM does not support adaptative time step scaling method.
