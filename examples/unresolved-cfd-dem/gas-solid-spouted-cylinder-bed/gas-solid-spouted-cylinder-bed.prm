@@ -8,11 +8,12 @@ set dimension = 3
 #---------------------------------------------------
 
 subsection simulation control
-  set method               = bdf1
+  set method               = bdf2
   set number mesh adapt    = 0
   set output frequency     = 50
   set time end             = 5
   set time step            = 0.001
+  set output path          = output/
 end
 
 #---------------------------------------------------
@@ -82,8 +83,8 @@ subsection cfd-dem
   set saffman lift force            = false
   set drag model                    = rong
   set coupling frequency            = 100
-  set implicit stabilization        = false
-  set grad-div length scale         = 0.005
+  set implicit stabilization        = true
+  set grad-div length scale         = 0.26
   set vans model                    = modelA
 end
 
@@ -104,24 +105,6 @@ subsection post-processing
   set output frequency = 100
 
   set verbosity = verbose
-end
-
-#---------------------------------------------------
-# Lagrangian post-processing
-#---------------------------------------------------
-
-subsection post-processing
-  set Lagrangian post-processing = false
-end
-
-#---------------------------------------------------
-# Initial condition
-#---------------------------------------------------
-
-subsection initial conditions
-  subsection uvwp
-    set Function expression = 0; 0; 0; 0
-  end
 end
 
 #---------------------------------------------------
@@ -179,14 +162,6 @@ subsection boundary conditions
 end
 
 #---------------------------------------------------
-# Mesh Adaptation Control
-#---------------------------------------------------
-
-subsection mesh adaptation
-  set type = none
-end
-
-#---------------------------------------------------
 # Timer
 #---------------------------------------------------
 
@@ -221,13 +196,13 @@ subsection lagrangian physical properties
     set diameter                          = 0.005
     set number of particles               = 100000
     set density particles                 = 500
-    set young modulus particles           = 1e6
+    set young modulus particles           = 1e7
     set poisson ratio particles           = 0.25
     set restitution coefficient particles = 0.97
     set friction coefficient particles    = 0.4
     set rolling friction particles        = 0.3
   end
-  set young modulus wall           = 1e6
+  set young modulus wall           = 1e7
   set poisson ratio wall           = 0.25
   set restitution coefficient wall = 0.33
   set friction coefficient wall    = 0.2

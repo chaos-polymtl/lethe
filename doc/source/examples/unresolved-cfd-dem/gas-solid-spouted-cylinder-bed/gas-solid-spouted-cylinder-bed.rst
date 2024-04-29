@@ -31,7 +31,7 @@ This example simulates the spouting of spherical particles in air in a cylinder.
 DEM Parameter File
 -------------------
 
-Here, we will focus only on the parts that have been modified. It is strongly recommended to visit `DEM parameters <../../../parameters/dem/dem.html>`_ for a detailed description on the concepts and physical meanings of the DEM parameters.
+Here, we will focus only on the parts that have been modified compared to  `Gas-Solid Spouted Bed <../gas-solid-spouted-bed/gas-solid-spouted-bed.html>`_. It is also strongly recommended to visit `DEM parameters <../../../parameters/dem/dem.html>`_ for a detailed description on the concepts and physical meanings of the DEM parameters.
 
 Mesh
 ~~~~~
@@ -42,7 +42,7 @@ In this example, we are simulating a cylinder shaped spouted bed. We introduce t
     :alt: The geometry and boundary conditions
     :align: center
     :name: geometry
-    :height: 10cm 
+    :height: 15cm 
 
 The geometry of the bed was created using `Pointiwise <../../../tools/pointwise/pointowise.html>`_, and the overview of created mesh is also shown below;
 
@@ -52,7 +52,7 @@ The geometry of the bed was created using `Pointiwise <../../../tools/pointwise/
     :name: mesh_ver
     :height: 10cm
 
-In Unresolved-CFD-DEM, Cells need to have a enough volume to contain particles in it. Basically the size of cells should be least three time larger than the diameter of the particles so that the void fraction would not be discontinuous `[1] <https://doi.org/10.1002/cjce.23686>`_. So this can be expressed as follows.
+In Unresolved CFD-DEM, the averaging volume used to calculate the void fraction needs to be large enough to contain several particles (>10). Since the averaging volume used in the quadrature-centred method is generally related to the cell volume, this introduces a limitation on the cell size. In general, the averaging volume, which in this case corresponds to the cell size, should be approximatively three time larger than the diameter of the particles in order to get stable calculation. So this can be expressed as follows:
 
 .. math:: 
   \dfrac{d_p}{\Delta x} \leq 3
@@ -173,7 +173,7 @@ The simulation is run for 5 s with a time step of 0.001 s. The time scheme and s
 .. code-block:: text
 
     subsection simulation control
-      set method               = bdf1
+      set method               = bdf2
       set number mesh adapt    = 0
       set output frequency     = 50
       set time end             = 5
@@ -189,7 +189,7 @@ Regarding the boundary conditions, we apply slip boundary condition to the wall,
     :alt: The geometry and boundary conditions
     :align: center
     :name: ID
-    :height: 10cm
+    :height: 15cm
 
 
 We set the inlet velocity to 2.5 m/s, and the background velocity to 0.5 m/s on the bottom of the cylinder as in the previous spouted bed example. The value of beta on the outlet boundary was set to 100, which is relatively high, to stabilize the simulation and prevent backflow.
@@ -241,13 +241,35 @@ We set the inlet velocity to 2.5 m/s, and the background velocity to 0.5 m/s on 
         set Function expression = 0
       end
       subsection w
-        set Function expression = 0.5
+        see Function expression = 0.5
       end
     end
   end
 
+CFD-DEM
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The additional sections for the CFD-DEM simulations are the void fraction subsection and the CFD-DEM subsection. These subsections are described in detail in the `CFD-DEM parameters <../../../parameters/unresolved-cfd-dem/unresolved-cfd-dem.html>`_.
+Here, we enable grad-div stabilization for local mass conservation, and take the time derivative of the void fraction into account.
+
+.. code-block:: text
+
+    subsection cfd-dem
+      set grad div                      = true
+      set void fraction time derivative = true
+      set drag force                    = true
+      set buoyancy force                = true
+      set shear force                   = true
+      set pressure force                = true
+      set saffman lift force            = false
+      set drag model                    = rong
+      set post processing               = true
+      set coupling frequency            = 100
+      set implicit stabilization        = false
+      set grad-div length scale         = 0.26
+      set vans model                    = modelA
+    end
+
+Here, we set the `grad-div length stabilization` parameter to 0.26, which is the diameter of the geometry. This parameter should be the same length as the characteristic length of the flow. For more detail, please refer to `CFD-DEM parameters <../../../parameters/unresolved-cfd-dem/cfd-dem.html>`_. Also, the additional sections for the CFD-DEM simulations is the void fraction subsection. This subsections is described in detail in the `Void Fraction <../../../parameters/unresolved-cfd-dem/void-fraction.html>`_.
 
 ------------------------------
 Running the CFD-DEM Simulation
@@ -292,9 +314,3 @@ The results are shown in an animation below. As seen, the bubbly flow can be obs
 .. raw:: html
 
     <p align="center"><iframe width="560" height="315" src="https://www.youtube.com/embed/weMRnz24GWM" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
-
------------
-References
------------
-
-`[1] <https://doi.org/10.1002/cjce.23686>`_ A. Bérard, G. S. Patience, and B. Blais, “Experimental methods in chemical engineering: Unresolved CFD-DEM,” *Can. J. Chem. Eng.*, vol. 98, no. 2, pp. 424–440, 2020, doi: 10.1002/cjce.23686.
