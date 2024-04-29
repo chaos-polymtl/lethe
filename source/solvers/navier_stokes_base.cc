@@ -1523,7 +1523,7 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess_fd(bool firstIter)
                ++boundary_id)
             flow_rate_table.set_precision(
               "flow-rate-" + Utilities::int_to_string(boundary_id, 2), 12);
-this->flow_rate_table.write_text(output);
+          this->flow_rate_table.write_text(output);
         }
     }
 

@@ -27,7 +27,7 @@ CahnHilliardAssemblerCore<dim>::assemble_matrix(
   StabilizedMethodsCopyData    &copy_data)
 {
   // Gather physical properties
-  const double epsilon = this->epsilon;
+  const double epsilon   = this->epsilon;
   const double cell_size = scratch_data.cell_size;
   const double xi =
     this->cahn_hilliard_parameters.potential_smoothing_coefficient;
