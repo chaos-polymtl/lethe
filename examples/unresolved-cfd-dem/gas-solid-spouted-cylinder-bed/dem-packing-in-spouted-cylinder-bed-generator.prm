@@ -86,7 +86,7 @@ subsection insertion info
   set insertion method                               = volume
   set inserted number of particles at each time step = 100000
   set insertion frequency                            = 2000
-  set insertion box points coordinates               = -0.075, -0.075, 0, 0.075, 0.075, 0.7
+  set insertion box points coordinates               = -0.075, -0.075, 0 : 0.075, 0.075, 0.7
   set insertion distance threshold                   = 1.05
   set insertion maximum offset                       = 0.3
   set insertion prn seed                             = 19
