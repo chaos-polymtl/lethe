@@ -282,27 +282,11 @@ void
 SolidBase<dim, spacedim>::load_triangulation(const std::string filename_tria)
 {
   // Load solid triangulation from given file
-  // TODO not functional for now, as not all information as passed with the load
-  // function (see dealii documentation for classTriangulation) => change the
-  // way the load works, or change the way the solid triangulation is handled
-  // std::ifstream in_folder(filename_tria.c_str());
-  // if (!in_folder)
-  //   AssertThrow(false,
-  //               ExcMessage(
-  //                 std::string(
-  //                   "You are trying to restart a previous computation, "
-  //                   "but the restart file <") +
-  //                 filename_tria + "> does not appear to exist!"));
-
+  // Currently we only load the triangulation without loading the particles,
+  // this is an issue that needs to be addressed in a near future.
   try
     {
-      // if (auto solid_tria =
-      //       dynamic_cast<parallel::distributed::Triangulation<dim, spacedim>
-      //       *>(
-      //         get_solid_triangulation().get()))
-      //   {
       solid_tria->load(filename_tria.c_str());
-      // }
     }
   catch (...)
     {
