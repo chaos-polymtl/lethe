@@ -3,6 +3,12 @@
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Master] - 2024-04-30
+
+### Fixed
+
+- MINOR The lethe-fluid-nitsche solver was unable to restart when the immersed triangulation was made of simplices. This has been fixed, however, mesh adaptation crashes when it is done after the restart process. I (problembär) have an idea why (the previous particle_handler of the previous checkpoint is still registered somehow in the triangulation), but I will need more time to come up with an adequate solution. [#1106](https://github.com/chaos-polymtl/lethe/pull/1106)
+
 ## [Master] - 2024-04-24
 
 ### Added
