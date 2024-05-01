@@ -1270,6 +1270,13 @@ MFNavierStokesPreconditionGMG<dim>::print_relevant_info() const
 }
 
 template <int dim>
+const MGLevelObject<std::shared_ptr<NavierStokesOperatorBase<dim, double>>> &
+MFNavierStokesPreconditionGMG<dim>::get_mg_operators() const
+{
+  return this->mg_operators;
+}
+
+template <int dim>
 MFNavierStokesSolver<dim>::MFNavierStokesSolver(
   SimulationParameters<dim> &nsparam)
   : NavierStokesBase<dim, VectorType, IndexSet>(nsparam)
@@ -1600,6 +1607,40 @@ MFNavierStokesSolver<dim>::set_initial_condition_fd(
             this->simulation_parameters.physical_properties_manager
               .get_kinematic_viscosity_scale());
 
+          if ((this->simulation_parameters.linear_solver
+                 .at(PhysicsID::fluid_dynamics)
+                 .preconditioner ==
+               Parameters::LinearSolver::PreconditionerType::lsmg) ||
+              (this->simulation_parameters.linear_solver
+                 .at(PhysicsID::fluid_dynamics)
+                 .preconditioner ==
+               Parameters::LinearSolver::PreconditionerType::gcmg))
+            {
+              // Create the mg operators if they do not exist to be able
+              // to change the viscosity for all of them
+              if (!gmg_preconditioner)
+                gmg_preconditioner =
+                  std::make_shared<MFNavierStokesPreconditionGMG<dim>>(
+                    this->simulation_parameters,
+                    this->dof_handler,
+                    this->mapping,
+                    this->cell_quadrature,
+                    this->forcing_function,
+                    this->simulation_control,
+                    this->mg_computing_timer,
+                    this->fe);
+
+              auto mg_operators = this->gmg_preconditioner->get_mg_operators();
+              for (unsigned int level = mg_operators.min_level();
+                   level <= mg_operators.max_level();
+                   level++)
+                {
+                  mg_operators[level]->set_kinematic_viscosity(
+                    this->simulation_parameters.physical_properties_manager
+                      .get_kinematic_viscosity_scale());
+                }
+            }
+
           this->simulation_control->set_assembly_method(
             Parameters::SimulationControl::TimeSteppingMethod::steady);
           // Solve the problem with the temporary viscosity
@@ -1613,6 +1654,24 @@ MFNavierStokesSolver<dim>::set_initial_condition_fd(
       // Reset kinematic viscosity to simulation parameters
       viscosity_model->set_kinematic_viscosity(viscosity_end);
       this->system_operator->set_kinematic_viscosity(viscosity_end);
+
+      if ((this->simulation_parameters.linear_solver
+             .at(PhysicsID::fluid_dynamics)
+             .preconditioner ==
+           Parameters::LinearSolver::PreconditionerType::lsmg) ||
+          (this->simulation_parameters.linear_solver
+             .at(PhysicsID::fluid_dynamics)
+             .preconditioner ==
+           Parameters::LinearSolver::PreconditionerType::gcmg))
+        {
+          auto mg_operators = this->gmg_preconditioner->get_mg_operators();
+          for (unsigned int level = mg_operators.min_level();
+               level <= mg_operators.max_level();
+               level++)
+            {
+              mg_operators[level]->set_kinematic_viscosity(viscosity_end);
+            }
+        }
     }
   else
     {
