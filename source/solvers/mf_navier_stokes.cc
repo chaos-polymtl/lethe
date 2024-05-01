@@ -1546,6 +1546,41 @@ MFNavierStokesSolver<dim>::set_initial_condition_fd(
         this->simulation_parameters.physical_properties_manager
           .get_kinematic_viscosity_scale());
 
+      // Set temporary viscosity in the multigrid operators
+      if ((this->simulation_parameters.linear_solver
+             .at(PhysicsID::fluid_dynamics)
+             .preconditioner ==
+           Parameters::LinearSolver::PreconditionerType::lsmg) ||
+          (this->simulation_parameters.linear_solver
+             .at(PhysicsID::fluid_dynamics)
+             .preconditioner ==
+           Parameters::LinearSolver::PreconditionerType::gcmg))
+        {
+          // Create the mg operators if they do not exist to be able
+          // to change the viscosity for all of them
+          if (!gmg_preconditioner)
+            gmg_preconditioner =
+              std::make_shared<MFNavierStokesPreconditionGMG<dim>>(
+                this->simulation_parameters,
+                this->dof_handler,
+                this->mapping,
+                this->cell_quadrature,
+                this->forcing_function,
+                this->simulation_control,
+                this->mg_computing_timer,
+                this->fe);
+
+          auto mg_operators = this->gmg_preconditioner->get_mg_operators();
+          for (unsigned int level = mg_operators.min_level();
+               level <= mg_operators.max_level();
+               level++)
+            {
+              mg_operators[level]->set_kinematic_viscosity(
+                this->simulation_parameters.physical_properties_manager
+                  .get_kinematic_viscosity_scale());
+            }
+        }
+
       // Solve the problem with the temporary viscosity
       PhysicsSolver<LinearAlgebra::distributed::Vector<double>>::
         solve_non_linear_system(false);
@@ -1558,6 +1593,24 @@ MFNavierStokesSolver<dim>::set_initial_condition_fd(
       // Reset kinematic viscosity to simulation parameters
       viscosity_model->set_kinematic_viscosity(viscosity_end);
       this->system_operator->set_kinematic_viscosity(viscosity_end);
+
+      if ((this->simulation_parameters.linear_solver
+             .at(PhysicsID::fluid_dynamics)
+             .preconditioner ==
+           Parameters::LinearSolver::PreconditionerType::lsmg) ||
+          (this->simulation_parameters.linear_solver
+             .at(PhysicsID::fluid_dynamics)
+             .preconditioner ==
+           Parameters::LinearSolver::PreconditionerType::gcmg))
+        {
+          auto mg_operators = this->gmg_preconditioner->get_mg_operators();
+          for (unsigned int level = mg_operators.min_level();
+               level <= mg_operators.max_level();
+               level++)
+            {
+              mg_operators[level]->set_kinematic_viscosity(viscosity_end);
+            }
+        }
     }
   else if (initial_condition_type == Parameters::InitialConditionType::ramp)
     {
@@ -1607,6 +1660,7 @@ MFNavierStokesSolver<dim>::set_initial_condition_fd(
             this->simulation_parameters.physical_properties_manager
               .get_kinematic_viscosity_scale());
 
+          // Set temporary viscosity in the multigrid operators
           if ((this->simulation_parameters.linear_solver
                  .at(PhysicsID::fluid_dynamics)
                  .preconditioner ==

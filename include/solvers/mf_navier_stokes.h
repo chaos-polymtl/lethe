@@ -116,8 +116,8 @@ public:
 
   /**
    * @brief Getter function for all level operators.
-   * 
-   * @return Multigrid object that contains all level operators. 
+   *
+   * @return Multigrid object that contains all level operators.
    */
   const MGLevelObject<std::shared_ptr<OperatorType>> &
   get_mg_operators() const;
