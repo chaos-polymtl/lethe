@@ -282,26 +282,11 @@ void
 SolidBase<dim, spacedim>::load_triangulation(const std::string filename_tria)
 {
   // Load solid triangulation from given file
-  // TODO not functional for now, as not all information as passed with the load
-  // function (see dealii documentation for classTriangulation) => change the
-  // way the load works, or change the way the solid triangulation is handled
-  std::ifstream in_folder(filename_tria.c_str());
-  if (!in_folder)
-    AssertThrow(false,
-                ExcMessage(
-                  std::string(
-                    "You are trying to restart a previous computation, "
-                    "but the restart file <") +
-                  filename_tria + "> does not appear to exist!"));
-
+  // Currently we only load the triangulation without loading the particles,
+  // this is an issue that needs to be addressed in a near future.
   try
     {
-      if (auto solid_tria =
-            dynamic_cast<parallel::distributed::Triangulation<dim, spacedim> *>(
-              get_solid_triangulation().get()))
-        {
-          solid_tria->load(filename_tria.c_str());
-        }
+      solid_tria->load(filename_tria.c_str());
     }
   catch (...)
     {
@@ -752,36 +737,26 @@ SolidBase<dim, spacedim>::write_checkpoint(std::string prefix)
 
   system_trans_vectors.prepare_for_serialization(sol_set_transfer);
 
-  if (auto tria = dynamic_cast<parallel::distributed::Triangulation<dim> *>(
-        this->solid_tria.get()))
-    {
-      std::string triangulationName = prefix + ".triangulation";
-      tria->save(prefix + ".triangulation");
-    }
+  std::string triangulationName = prefix + ".triangulation";
+  this->solid_tria.get()->save(prefix + ".triangulation");
 }
 
 template <int dim, int spacedim>
 void
 SolidBase<dim, spacedim>::read_checkpoint(std::string prefix)
 {
-  // Setup an un-refined triangulation before loading
-  setup_triangulation(true);
+  // Setup an un-refined triangulation before loading if we have a fully
+  // distributed triangulation. If we have a fully distributed triangulation,
+  // nothing should be done to setup the triangulation since it will be fully
+  // generated during the restart process.
+  if (!param->solid_mesh.simplex)
+    setup_triangulation(true);
 
   // Read the triangulation from the checkpoint
   const std::string filename = prefix + ".triangulation";
-  std::ifstream     in(filename.c_str());
-  if (!in)
-    AssertThrow(false,
-                ExcMessage(
-                  std::string("You are trying to read a solid triangulation, "
-                              "but the restart file <") +
-                  filename + "> does not appear to exist!"));
-
   try
     {
-      if (auto tria = dynamic_cast<parallel::distributed::Triangulation<dim> *>(
-            this->solid_tria.get()))
-        tria->load(filename.c_str());
+      this->solid_tria->load(filename.c_str());
     }
   catch (...)
     {
@@ -793,7 +768,6 @@ SolidBase<dim, spacedim>::read_checkpoint(std::string prefix)
   // Setup dof-handler for solid and displacement
   solid_dh.distribute_dofs(*fe);
   setup_displacement();
-
 
   // Read displacement vector
   std::vector<GlobalVectorType *> x_system(1);
@@ -811,9 +785,11 @@ SolidBase<dim, spacedim>::read_checkpoint(std::string prefix)
   system_trans_vectors.deserialize(x_system);
   displacement_relevant = displacement;
 
-  // Reset triangulation position using displacement vector
-  move_solid_triangulation_with_displacement();
-
+  // Reset triangulation position using displacement vector if is not a simplex
+  // triangulation fullydistributed::triangulation store their displacement when
+  // they are saved wheras distributed::triangulation do not.
+  if (!param->solid_mesh.simplex)
+    move_solid_triangulation_with_displacement();
 
   // We did not checkpoint particles, we re-create them from scratch
   setup_particles();
