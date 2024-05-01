@@ -204,6 +204,9 @@ private:
 
   /// Vector holding number of coarse grid iterations
   mutable std::vector<unsigned int> coarse_grid_iterations;
+
+  /// Internal timer for vmult timings
+  mutable TimerOutput timer;
 };
 
 
