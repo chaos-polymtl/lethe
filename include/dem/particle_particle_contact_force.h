@@ -218,6 +218,9 @@ protected:
     // new particles are equal to zero
     // delta_t_new = delta_t_old + v_rt*dt
     contact_info.tangential_overlap += tangential_relative_velocity * dt;
+    contact_info.tangential_overlap -=
+      (contact_info.tangential_overlap * normal_unit_vector) *
+      normal_unit_vector;
   }
 
   /**
