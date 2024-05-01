@@ -14,6 +14,8 @@
 
 (defun get-dest (path build-dir lethe-dir)
   (match-case path
+    (`@{build-dir}/applications_tests/@app/@test.@{nil #/release|debug/}/serial/output`
+     `@{lethe-dir}/applications_tests/@app/@test.output`)
     (`@{build-dir}/applications_tests/@app/@test.@{nil #/release|debug/}/@mpirun/output`
      `@{lethe-dir}/applications_tests/@app/@test.@mpirun.output`)
     (`@{build-dir}/applications_tests/@app/@test.@{nil #/release|debug/}/output`
