@@ -59,7 +59,7 @@ MFNavierStokesPreconditionGMG<dim>::MFNavierStokesPreconditionGMG(
   , dof_handler(dof_handler)
   , timer(MPI_COMM_WORLD,
           this->pcout,
-          TimerOutput::never,
+          TimerOutput::summary,
           TimerOutput::wall_times)
 {
   if (this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
@@ -931,6 +931,52 @@ MFNavierStokesPreconditionGMG<dim>::initialize(
       this->ls_multigrid_preconditioner =
         std::make_shared<PreconditionMG<dim, VectorType, LSTransferType>>(
           this->dof_handler, *this->mg, *this->mg_transfer_ls);
+
+      // Print detailed timings of multigrid vmult
+      const auto create_mg_timer_function = [&](const std::string &label) {
+        return [label, this](const bool flag, const unsigned int level) {
+          const std::string label_full =
+            (label == "") ?
+              ("gmg::vmult::level_" + std::to_string(level)) :
+              ("gmg::vmult::level_" + std::to_string(level) + "::" + label);
+
+          if (flag)
+            this->timer.enter_subsection(label_full);
+          else
+            this->timer.leave_subsection(label_full);
+        };
+      };
+
+      this->mg->connect_pre_smoother_step(
+        create_mg_timer_function("0_pre_smoother_step"));
+      this->mg->connect_residual_step(
+        create_mg_timer_function("1_residual_step"));
+      this->mg->connect_restriction(create_mg_timer_function("2_restriction"));
+      this->mg->connect_coarse_solve(create_mg_timer_function(""));
+      this->mg->connect_prolongation(
+        create_mg_timer_function("3_prolongation"));
+      this->mg->connect_edge_prolongation(
+        create_mg_timer_function("4_edge_prolongation"));
+      this->mg->connect_post_smoother_step(
+        create_mg_timer_function("5_post_smoother_step"));
+
+
+      const auto create_mg_precon_timer_function =
+        [&](const std::string &label) {
+          return [label, this](const bool flag) {
+            const std::string label_full = "gmg::vmult::" + label;
+
+            if (flag)
+              this->timer.enter_subsection(label_full);
+            else
+              this->timer.leave_subsection(label_full);
+          };
+        };
+
+      this->ls_multigrid_preconditioner->connect_transfer_to_mg(
+        create_mg_precon_timer_function("transfer_to_mg"));
+      this->ls_multigrid_preconditioner->connect_transfer_to_global(
+        create_mg_precon_timer_function("transfer_to_global"));
     }
   else if (this->simulation_parameters.linear_solver
              .at(PhysicsID::fluid_dynamics)
@@ -1230,7 +1276,7 @@ MFNavierStokesPreconditionGMG<dim>::initialize(
         std::make_shared<PreconditionMG<dim, VectorType, GCTransferType>>(
           this->dof_handler, *this->mg, *this->mg_transfer_gc);
 
-      // Print detailed timings of MG steps.
+      // Print detailed timings of multigrid vmult
       const auto create_mg_timer_function = [&](const std::string &label) {
         return [label, this](const bool flag, const unsigned int level) {
           const std::string label_full =
