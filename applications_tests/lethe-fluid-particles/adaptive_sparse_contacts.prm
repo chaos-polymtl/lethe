@@ -14,9 +14,17 @@ subsection simulation control
   set output frequency     = 0
   set log frequency        = 100
   set startup time scaling = 0.6
-  set time end             = 0.6
+  set time end             = 0.45
   set time step            = 0.001
   set subdivision          = 1
+end
+
+#---------------------------------------------------
+# DEM Post-Processing
+#---------------------------------------------------
+
+subsection post-processing
+  set Lagrangian post-processing = false
 end
 
 #---------------------------------------------------
@@ -68,7 +76,7 @@ subsection model parameters
   subsection dynamic disabling contacts
     set enable dynamic disabling contacts = true
     set enable particle advection         = true
-    set granular temperature threshold    = 1e-5
+    set granular temperature threshold    = 1e-4
     set solid fraction threshold          = 0.1
   end
 end
@@ -210,12 +218,4 @@ subsection linear solver
     set verbosity                             = quiet
     set max krylov vectors                    = 200
   end
-end
-
-#---------------------------------------------------
-# DEM Post-Processing
-#---------------------------------------------------
-
-subsection post-processing
-  set Lagrangian post-processing = true
 end

@@ -705,7 +705,7 @@ CFDDEMSolver<dim>::initialize_dem_parameters()
   if (dem_parameters.model_parameters.disable_particle_contacts)
     {
       has_disabled_contacts = true;
-      disable_contacts_object.set_threshold_values(
+      disable_contacts_object.set_parameters(
         dem_parameters.model_parameters.granular_temperature_threshold,
         dem_parameters.model_parameters.solid_fraction_threshold,
         dem_parameters.model_parameters.advect_particles);
@@ -1216,6 +1216,7 @@ CFDDEMSolver<dim>::dem_post_process_results()
       const auto parallel_triangulation =
         dynamic_cast<parallel::distributed::Triangulation<dim> *>(
           &*this->triangulation);
+
 
       dem_post_processing_object.write_post_processing_results(
         *parallel_triangulation,

@@ -350,5 +350,75 @@ DisableContacts<dim>::identify_mobility_status(
     }
 }
 
+template <int dim>
+void
+DisableContacts<dim>::update_average_velocities_acceleration(
+  Particles::ParticleHandler<dim> &particle_handler,
+  const Tensor<1, 3>              &g,
+  const std::vector<Tensor<1, 3>> &force,
+  const double                     dt)
+{
+  cell_velocities_accelerations.clear();
+
+  // Tensors for velocity and acceleration * dt computation
+  Tensor<1, 3> velocity_cell_average;
+  Tensor<1, 3> acc_dt_cell_average;
+
+  const Tensor<1, 3> dt_g = g * dt;
+
+  // Loop over all the cells even if they are not mobile to reset the force
+  // and torque values
+  for (auto cell : local_and_ghost_cells)
+    {
+      if (cell->is_locally_owned())
+        {
+          const unsigned int n_particles_in_cell =
+            particle_handler.n_particles_in_cell(cell);
+
+          velocity_cell_average.clear();
+          acc_dt_cell_average.clear();
+
+          if (n_particles_in_cell > 0)
+            {
+              auto particles_in_cell = particle_handler.particles_in_cell(cell);
+              for (auto &particle : particles_in_cell)
+                {
+                  // Get particle properties
+                  auto particle_properties = particle.get_properties();
+                  types::particle_index particle_id =
+                    particle.get_local_index();
+
+                  double dt_mass_inverse =
+                    dt / particle_properties[DEM::PropertiesIndex::mass];
+
+                  // Calculate the acceleration of the particle times the time
+                  // step
+                  Tensor<1, 3> acc_dt_particle =
+                    dt_g + force[particle_id] * dt_mass_inverse;
+
+                  // Add up the acc. * dt for the average
+                  acc_dt_cell_average += acc_dt_particle;
+
+                  for (int d = 0; d < dim; ++d)
+                    {
+                      // Add up the current velocity for the average velocity
+                      velocity_cell_average[d] +=
+                        particle_properties[DEM::PropertiesIndex::v_x + d] +
+                        acc_dt_particle[d];
+                    }
+                }
+
+              // Compute the average velocity and acceleration * dt
+              velocity_cell_average /= n_particles_in_cell;
+              acc_dt_cell_average /= n_particles_in_cell;
+            }
+
+          // Insert the average pair in map
+          cell_velocities_accelerations.insert(std::make_pair(
+            cell, std::make_pair(velocity_cell_average, acc_dt_cell_average)));
+        }
+    }
+}
+
 template class DisableContacts<2>;
 template class DisableContacts<3>;

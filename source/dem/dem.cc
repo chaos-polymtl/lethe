@@ -130,7 +130,7 @@ DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
   if (parameters.model_parameters.disable_particle_contacts)
     {
       has_disabled_contacts = true;
-      disable_contacts_object.set_threshold_values(
+      disable_contacts_object.set_parameters(
         parameters.model_parameters.granular_temperature_threshold,
         parameters.model_parameters.solid_fraction_threshold,
         parameters.model_parameters.advect_particles);

@@ -266,7 +266,8 @@ private:
              (contact_build_counter == 0))
       {
         // Ensure that the contact search is executed at least once per CFD time
-        // step.
+        // step. It checks if contact search step if there was no contact search
+        // a at the end of the CFD time step.
         return true;
       }
     else if (has_disabled_contacts && (counter == 1))

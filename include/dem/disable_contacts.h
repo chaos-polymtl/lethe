@@ -45,49 +45,64 @@ template class LinearAlgebra::distributed::Vector<int>;
 
 /**
  * The general idea behind the algorithm:
- * It uses the granular temperature to determinate if particles in a cell are
- * mobile enough that the contact forces are worth computation. A cell having a
- * granular temperature under a value (default is 1e-4) will have an inactive
- * or advected status which makes them rejected in the broad search step.
- * While the inactive status make the particles static, the advected status will
- * lead to some special handling. Instead of having all p-p and p-f forces
- * calculated at present, the resulting locations of particles come from forces
- * computed at the time step prior to assigning the advected status. Those
- * forces are reapplied after being converted into cell-averaged velocity and
- * acceleration forms. By skipping the fine contact search and p-p & p-w forces
- * calculation, the computational cost is significantly diminished. This status
- * is critical for CFD-DEM since many other forces contribute to the particle
- * motion. This results in no contact forces or velocity integration in future
- * steps for those particles, which reduces the computational cost of the
- * simulation.
  *
- * Cells may be flagged as that called mobility status:
- * - mobile (everything contacts are calculated, same as if feature is not
- * enabled)
+ * It uses the granular temperature to determinate if particles in a cell are
+ * sufficiently mobile that the contact forces are worth computation.
+ * A cell having a granular temperature under a value (default is 1e-4) will
+ * have an inactive or advected status which makes them rejected in the broad
+ * search step. There is also an extra layer of mobile cells around the current
+ * mobile cells to propagate the motion of particles. The cell in the layer
+ * around the mobile cells are flagged as static_active or advected_active
+ * cells.
+ * *
+ * While the inactive status makes the particles static (no further handling),
+ * the advected status will lead to computation and application of a
+ * cell-averaged advected term. This term is computed from the last average
+ * velocity and acceleration of the particles when the cell had a mobile status,
+ * or at the first DEM time step of a CFD iteration in CFD-DEM (ensures an
+ * update of the hydrodynamic forces). Those forces are reapplied after each
+ * DEM time step.
+ *
+ * Particles in cell with an inactive status results in skipping the fine
+ * contact search, the p-p & p-w forces computation and the velocity and
+ * position update. It reduces the computational cost of the simulation when
+ * particles are not moving.
+ *
+ * Particles in cell with an advected status results in skipping the fine
+ * contact search, the p-p & p-w forces computation but they do have a velocity
+ * and position update through the advection term. This is critical for CFD-DEM.
+ *
+ * In summary, cells may be flagged as that called mobility status:
+ * - mobile (every contacts are calculated, same as if feature is not enabled)
  * - static_active (particles with low velocity variance next to mobile
  * particles)
- * - advected_active (same as above but particles has to be advected)
- * - inactive (particles are not in a neighbor’s candidate list of cells around)
- * - advected (same as above, but particles has to be advected)
+ * - advected_active (same as above but particles will be advected)
+ * - inactive (particles next to mobile particles that allow one way contact
+ * forces calculation, not computation of collision pair in the cell)
+ * - advected (same as above, but particles will be advected)
  *
  * There are some edge cases that need some attention. In these cases, particles
- * in cells can't be deactivated:
+ * in cells cannot be deactivated:
  *
- * 1. The solid fraction of the cell is under a value (default = 40%): particles
+ * 1. Solid fraction
+ * The solid fraction of the cell is under a value (default = 40%): particles
  * in the cell may have other forces that can move them and it is supposed that
- * with this fraction, there is not enough particles around to hold them in
+ * with this fraction, there are not enough particles around to hold them in
  * their position.
  *
- * 2. Cell having empty cell neighbors: it means that particles are next to a
+ * 2. Empty cell neighbor
+ * Cell having empty cell neighbors: it means that particles are next to a
  * floating wall/mesh and they may have a change of contact forces from it if
- * the wall disappears or is moving.
+ * the wall moves or disappears.
  *
- * 3. The cell has cell neighbors which is flagged as mobile from the 3 criteria
+ * 3. Additional mobile cell layer
+ * The cell has at least one cell neighbor flagged as mobile from the 3 criteria
  * mentioned above (granular temperature, solid fractions or floating walls):
  * this is because motion is badly propagated to particles to the cell around
  * without this additional "layer" of mobile cells.
  *
- * 4. The cell has cell neighbors which is flagged as mobile from the previous
+ * 4. Active cell layer
+ * The cell has at least one cell neighbor flagged as mobile from the previous
  * criterion (additional layer of mobile cells): again, this is to allow the
  * motion propagation, but only the particles in contact with particles
  * from the mobile cells are considered for the contact force calculation but
@@ -103,17 +118,17 @@ public:
   DisableContacts();
 
   /**
-   * Mobility status flag used to identify the status at nodes and the status
+   * Mobility status flags used to identify the status at nodes and the status
    * of the cell:
    *
    * inactive (0)
-   * The movement of particles in the cell is considered as negligible,
+   * The motion of particles in the cell is considered as negligible,
    * particles within this cell are not considered in the contact detection
    * (rejected at the broad search step), so no force calculation or
    * integration is applied
    *
    * static_active (1)
-   * The movement of particles in the cell is considered as negligible, but
+   * The motion of particles in the cell is considered as negligible, but
    * there's at least one neighbor cell that is flagged as mobile, meaning that
    * particles need to be in contact candidates lists at the broad search step,
    * particles directly in contact with the mobile cell are also considered in
@@ -130,22 +145,22 @@ public:
    * particles.
    *
    * advected_active (3)
-   * Same as active, but particles are advected by the last computed
+   * Same as (1), but particles are advected by the last computed
    * cell-averaged velocity and acceleration.
    *
    * mobile (4)
-   * The movement of particles in the cell is significant or there is at least
-   * one neighbor cell that is mobile by criteria (see the
+   * The motion of particles in the cell is significant or there is at least
+   * one cell neighbor that is mobile by criteria (see the
    * identify_mobility_status() description), particles need to be in contact
-   * candidates lists at the broad search step and particles are treated as
+   * candidate lists at the broad search step and particles are treated as
    * usual (force calculation and integration)
    *
    * empty (5)
    * This status is only used for the node-based mobility status identification,
-   * no cells are flagged as empty, only node can by identify as empty. Without
-   * this identification of the empty cells, we can't identify the cell that
-   * have a empty neighbor cell, which is critical for simulations using
-   * floating walls or mesh
+   * no cells are flagged as empty, only node can be identified as empty.
+   * Without this identification of the empty cells, we cannot identify the cell
+   * that have an empty neighbor cell, which is critical for simulations using
+   * floating walls or mesh.
    */
 
   enum mobility_status : unsigned int
@@ -159,10 +174,10 @@ public:
   };
 
   /**
-   * @brief Creates or updates a set of the active and ghost cells so that there's
-   * no loop over all the cells of the triangulation for the granular
+   * @brief Create or update a set of the active and ghost cells so that
+   * there is no loop over all the cells of the triangulation for the granular
    * temperature and solid fraction calculation, and during the identification
-   * of the mobility status. This set prevent 4 iteration steps over all the
+   * of the mobility status. This set prevents 4 iteration steps over all the
    * cells and the verification if the cell is locally owned, ghost or not.
    * This set is updated at every load balance step since cells are
    * redistributed among processors.
@@ -173,7 +188,34 @@ public:
   update_local_and_ghost_cell_set(const DoFHandler<dim> &background_dh);
 
   /**
-   * @brief Carries out the identification of the mobility status of each cell
+   * @brief Calculate or update the cell-averaged velocities and accelerations
+   * of the cells. This is used for the advection of particles during
+   * integration and the velocities and accelerations map is fully updated at
+   * least at each CFD time step since the first DEM iteration computes every
+   * contacts. This map is also partially updated when cell is mobile in the
+   * Verlet integration (not implemented for other scheme).
+   * Since this step loops over all the particles of mobile cells and new values
+   * of velocities are computed, this helps to have a more accurate value of the
+   * average velocities and accelerations when applied to the particles in
+   * next DEM time steps.
+   *
+   * @param particle_handler The particle handler that contains all the particles
+   *
+   * @param g The external forces, same for all cells (gravity or other sources)
+   *
+   * @param force The contact or hydrodynamic forces
+   *
+   * @param dt The DEM time step
+   */
+  void
+  update_average_velocities_acceleration(
+    Particles::ParticleHandler<dim> &particle_handler,
+    const Tensor<1, 3>              &g,
+    const std::vector<Tensor<1, 3>> &force,
+    const double                     dt);
+
+  /**
+   * @brief Carrie out the identification of the mobility status of each cell
    * through a node-based identification and check. Only the active and ghost
    * cells are processed.
    *
@@ -212,6 +254,23 @@ public:
     const unsigned int                     n_active_cells,
     MPI_Comm                               mpi_communicator);
 
+  /**
+   * @brief Carrie out the identification of the mobility status of each cell
+   * through a node-based identification and check. Only the active and ghost
+   * cells are processed. For CFD-DEM, the node status have to be reset at each
+   * first DEM iteration of a CFD time step as mobile in order to update
+   * all forces.
+   *
+   * @param background_dh The dof handler of the background grid
+   *
+   * @param particle_handler The particle handler that contains all the particles
+   *
+   * @param n_active_cells The number of active cells in triangulation
+   *
+   * @param mpi_communicator The MPI communicator
+   *
+   * @param counter The counter of the DEM iteration
+   */
   void
   identify_mobility_status(
     const DoFHandler<dim>                 &background_dh,
@@ -240,7 +299,11 @@ public:
   }
 
   /**
-   * @brief Maps the periodic nodes pairs of the triangulation using the constraints
+   * @brief Map the periodic nodes pairs of the triangulation using the
+   * constraints. It allows to compare the mobility status of the nodes with the
+   * status of the periodic node.
+   *
+   * Note: this might not be the efficient way to pair the periodic nodes.
    *
    * @param constraints The background constraints of triangulation
    */
@@ -264,7 +327,7 @@ public:
   }
 
   /**
-   * @brief Finds the mobility status of a cell
+   * @brief Find the mobility status of a cell
    *
    * @param cell The iterator of the cell that needs mobility evaluation
    */
@@ -276,30 +339,9 @@ public:
   }
 
   /**
-   * @brief Sets the threshold values for the mobile status criteria (granular
-   * temperature and solid fraction) and the flag for the advection of particles
-   *
-   * @param granular_temperature The threshold value for the granular temperature
-   *
-   * @param solid_fraction The threshold value for the solid fraction (volume of
-   * particles in the cell)
-   *
-   * @param advect_particles The flag for the advection of particles
-   */
-  void
-  set_threshold_values(const double granular_temperature,
-                       const double solid_fraction,
-                       const double advect_particles)
-  {
-    granular_temperature_threshold = granular_temperature;
-    solid_fraction_threshold       = solid_fraction;
-    advect_particles_enabled       = advect_particles;
-  }
-
-  /**
-   * @brief Converts the map of mobility status to a vector of mobility status
-   * because map can't be used as is in the pvd post-processing or any data out,
-   * it needs to be converted to a vector of mobility status by active cell
+   * @brief Convert the map of mobility status to a vector of mobility status
+   * because map cannot be used as is in the pvd post-processing or any data
+   * out, it needs to be converted to a vector of mobility status by active cell
    * index
    *
    * @param status The initiated vector for the conversion
@@ -311,103 +353,41 @@ public:
       {
         status[cell_to_status.first] = cell_to_status.second;
       }
-  };
-
-  /**
-   * @brief Calculates or updates the average velocities and accelerations of
-   * the cells. This is used for the advection of particles during integration
-   * and the map is fully updated at least at each CFD time step since the first
-   * DEM iteration computes every contacts. This map is also partially updated
-   * when cell is mobile in the Verlet integration. Since this step loops over
-   * all the particles of mobile cells and new values of velocities are computed
-   * this helps to have a more accurate value of the average velocities and
-   * accelerations when applied to the particles in following DEM time steps.
-   *
-   * @param particle_handler The particle handler that contains all the particles
-   *
-   * @param g The external force, same for all cells (gravity or other sources)
-   *
-   * @param force The contacts forces or forces from fluid
-   *
-   * @param dt The DEM time step
-   */
-  void
-  update_average_velocities_acceleration(
-    Particles::ParticleHandler<dim> &particle_handler,
-    const Tensor<1, 3>              &g,
-    const std::vector<Tensor<1, 3>> &force,
-    const double                     dt)
-  {
-    cell_velocities_accelerations.clear();
-
-    // Tensor for velocity and acceleration * dt computation
-    Tensor<1, 3> velocity_cell_average;
-    Tensor<1, 3> acc_dt_cell_average;
-
-    const Tensor<1, 3> dt_g = g * dt;
-
-    // Loop over all the cells even if they are not mobile to reset the force
-    // and torque value
-    for (auto cell : local_and_ghost_cells)
-      {
-        if (cell->is_locally_owned())
-          {
-            const unsigned int n_particles_in_cell =
-              particle_handler.n_particles_in_cell(cell);
-
-            velocity_cell_average.clear();
-            acc_dt_cell_average.clear();
-
-            if (n_particles_in_cell > 0)
-              {
-                auto particles_in_cell =
-                  particle_handler.particles_in_cell(cell);
-                for (auto &particle : particles_in_cell)
-                  {
-                    // Get particle properties
-                    auto particle_properties = particle.get_properties();
-                    types::particle_index particle_id =
-                      particle.get_local_index();
-
-                    double dt_mass_inverse =
-                      dt / particle_properties[DEM::PropertiesIndex::mass];
-
-                    // Calculate the acceleration of the particle times the time
-                    // step
-                    Tensor<1, 3> acc_dt_particle =
-                      dt_g + force[particle_id] * dt_mass_inverse;
-                    acc_dt_cell_average += acc_dt_particle;
-
-                    for (int d = 0; d < dim; ++d)
-                      {
-                        // Add up the current velocity for the average velocity
-                        velocity_cell_average[d] +=
-                          particle_properties[DEM::PropertiesIndex::v_x + d] +
-                          acc_dt_particle[d];
-                      }
-                  }
-
-                // Compute the average velocity and acceleration, the time step
-                // is multiplied here for the hole vector instead of each time a
-                // value is used
-                velocity_cell_average /= n_particles_in_cell;
-                acc_dt_cell_average /= n_particles_in_cell;
-              }
-
-            // Update acceleration for particles in cell
-            cell_velocities_accelerations.insert(std::make_pair(
-              cell,
-              std::make_pair(velocity_cell_average, acc_dt_cell_average)));
-          }
-      }
   }
 
+  /**
+   * @brief Set the threshold values for the mobile status criteria (granular
+   * temperature and solid fraction) and the flag for the advection of particles
+   *
+   * @param granular_temperature The threshold value for the granular temperature
+   *
+   * @param solid_fraction The threshold value for the solid fraction (volume of
+   * particles in the cell)
+   *
+   * @param advect_particles The flag for the advection of particles
+   */
+  void
+  set_parameters(const double granular_temperature,
+                 const double solid_fraction,
+                 const double advect_particles)
+  {
+    granular_temperature_threshold = granular_temperature;
+    solid_fraction_threshold       = solid_fraction;
+    advect_particles_enabled       = advect_particles;
+  }
+
+  /**
+   * @brief Give the map of the mobility status of the cells
+   */
   typename DEM::dem_data_structures<dim>::cell_index_int_map &
   get_mobility_status()
   {
     return cell_mobility_status;
   }
 
+  /**
+   * @brief Give the map of the cell-averaged velocities and accelerations * dt
+   */
   std::map<typename Triangulation<dim>::active_cell_iterator,
            std::pair<Tensor<1, 3>, Tensor<1, 3>>> &
   get_velocities_accelerations()
@@ -415,6 +395,9 @@ public:
     return cell_velocities_accelerations;
   }
 
+  /**
+   * @brief Give the advected particles flag
+   */
   bool
   has_advected_particles() const
   {
@@ -423,24 +406,14 @@ public:
 
 private:
   /**
-   * @brief Carries out the calculation of the granular temperature and solid
-   * fraction approximation (pcm method) in each active cell. Those values are
-   * criteria for cell mobility
-   *
-   * solid fraction = n particles * particle volume / cell volume
-   *
-   * Granular temperature:
-   * 1. average velocity of cell = sum of particle velocity /
-   * n_particles
-   * 2. average of cell velocity fluctuation squared = sum of particle velocity
-   * fluctuation squared / n_particles
-   * 3. granular temperature = sum of average of cell velocity fluctuation
-   * squared / dim
+   * @brief Carrie out the calculation of the granular temperature and solid
+   * fraction approximation (pcm method). Those values are criteria for cell
+   * mobility.
    *
    * @param particle_handler The particle handler that contains all the particles
    *
-   * @param local_and_ghost_cells_with_particles The set of locally owned and ghost
-   * cells that empty cells are removed from
+   * @param local_and_ghost_cells_with_particles The set of locally owned and
+   * ghost cells that empty cells were removed from
    *
    * @param cell_granular_temperature The empty vector of granular temperature
    *
@@ -454,33 +427,32 @@ private:
     Vector<double> &cell_granular_temperature,
     Vector<double> &cell_solid_fraction);
 
-  inline void
-  assign_mobility_status(unsigned int cell_id, const int cell_status)
-  {
-    cell_mobility_status.insert({cell_id, cell_status});
-  }
   /**
-   * @brief Assigns the mobility status to node and the periodic coinciding node from the
-   * periodic nodes map. If required, this will prevent overwriting a node
-   * status prevailing over the initial one. For instance, empty status must not
-   * be overwritten by mobile status because all cells with this node will be
-   * part of the additional mobile layer and will propagate wrong mobility
-   * status to the next cells.
+   * @brief Assign the mobility status to the cell, its nodes, and its periodic
+   * coinciding nodes from the periodic nodes map. If required, this will
+   * prevent overwriting a node status prevailing over the initial one.
+   * For instance, empty status must not be overwritten by mobile status because
+   * all cells with this node will be part of the additional mobile layer and
+   * will wrongly propagate mobility status to the next cells.
+   *
+   * @param cell_id The current cell index
+   *
+   * @param dof_indices The vector of the DoF indices of the cell
    *
    * @param node_id The current node index (periodic or not)
    *
-   * @param mobility_status The mobility status to assign to the periodic node
+   * @param mobility_status The mobility status to assign
    *
    */
   inline void
-  assign_mobility_status(unsigned int                         cell_id,
-                         std::vector<types::global_dof_index> dof_indices,
-                         const int                            cell_status,
-                         const int                            node_status)
+  assign_mobility_status(unsigned int                          cell_id,
+                         std::vector<types::global_dof_index> &dof_indices,
+                         const int                             cell_status,
+                         const int                             node_status)
   {
     cell_mobility_status.insert({cell_id, cell_status});
 
-    // Assign mobility status to nodes but don't overwrite empty or mobile nodes
+    // Assign mobility status to nodes without overwriting empty or mobile nodes
     // in regard to the case
     for (auto node_id : dof_indices)
       {
@@ -499,25 +471,45 @@ private:
       }
   }
 
-  // Set of locally owned and ghost cells, used to loop over only the locally
-  // owned and ghost cells without looping over all the cells in the
-  // triangulation many times
+  /**
+   * @brief Assign the mobility status to the cell. No need to update the node
+   * status. Only use for active status assignment since nodes are not evaluated
+   * after this step.
+   *
+   * @param cell_id The current cell index
+   *
+   * @param mobility_status The mobility status to assign
+   *
+   */
+  inline void
+  assign_mobility_status(unsigned int cell_id, const int cell_status)
+  {
+    cell_mobility_status.insert({cell_id, cell_status});
+  }
+
+  // Set of locally owned and ghost cells: <local/ghost cells>
+  // Used to loop over only the locally owned and ghost cells without looping
+  // over all the cells in the triangulation numerous times.
   std::set<typename DoFHandler<dim>::active_cell_iterator>
     local_and_ghost_cells;
 
-  // Map of cell mobility status, the key is the active cell index and the value
-  // is the mobility status
+  // Map of cell mobility status: <cell index: mobility status>
   typename DEM::dem_data_structures<dim>::cell_index_int_map
     cell_mobility_status;
 
-  // Vector of mobility status at nodes, used to check the value at node to
-  // determine the mobility status of the cell, this type of vector is used
-  // to allow update values in parallel
+  // Vector of mobility status at nodes: [mobility status]
+  // Used to check the value at node to determine the mobility status of the
+  // cell, this type of vector is used to allow update values in parallel
   LinearAlgebra::distributed::Vector<int> mobility_at_nodes;
 
-  // Map of periodic nodes, the key is the periodic node index and the value is
-  // the coinciding node index
+  // Map of periodic nodes: <periodic node index: coinciding node index>
   std::unordered_map<unsigned int, unsigned int> periodic_node_ids;
+
+  // Map of cell velocities and accelerations * dt:
+  // <cell iterator: <velocity, acceleration * dt>>
+  std::map<typename Triangulation<dim>::active_cell_iterator,
+           std::pair<Tensor<1, 3>, Tensor<1, 3>>>
+    cell_velocities_accelerations;
 
   // Particle advection flag
   bool advect_particles_enabled;
@@ -525,12 +517,6 @@ private:
   // Threshold values for granular temperature and solid fraction
   double granular_temperature_threshold;
   double solid_fraction_threshold;
-
-  // Map of cell velocities and accelerations, the key is the active cell
-  // iterator and the value is a pair of the cell velocity and acceleration
-  std::map<typename Triangulation<dim>::active_cell_iterator,
-           std::pair<Tensor<1, 3>, Tensor<1, 3>>>
-    cell_velocities_accelerations;
 };
 
 #endif // lethe_disable_contacts_h
