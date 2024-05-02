@@ -3,6 +3,13 @@
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Master] - 2024-05-02
+
+### Fixed
+
+- MAJOR Periodic boundary conditions were not working if they weren't the last boundary condition being declare in the parameter file. Now, every boundary condition work in which even order they are being declared. [#1110](https://github.com/chaos-polymtl/lethe/pull/1110)
+
+
 ## [Master] - 2024-04-30
 
 ### Fixed
