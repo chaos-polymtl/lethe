@@ -15,9 +15,9 @@
  *
  */
 
+#include <dem/adaptive_sparse_contacts.h>
 #include <dem/data_containers.h>
 #include <dem/dem_solver_parameters.h>
-#include <dem/disable_contacts.h>
 
 #include <deal.II/particles/particle_handler.h>
 
@@ -94,7 +94,7 @@ public:
             std::vector<Tensor<1, 3>>                       &force,
             const std::vector<double>                       &MOI,
             const parallel::distributed::Triangulation<dim> &triangulation,
-            DisableContacts<dim> &disable_contacts_object) = 0;
+            AdaptiveSparseContacts<dim> &sparse_contacts_object) = 0;
 };
 
 #endif /* integration_h */

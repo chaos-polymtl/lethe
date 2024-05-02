@@ -132,7 +132,7 @@ template <int dim>
 CFDDEMSolver<dim>::CFDDEMSolver(CFDDEMSimulationParameters<dim> &nsparam)
   : GLSVANSSolver<dim>(nsparam)
   , has_periodic_boundaries(false)
-  , has_disabled_contacts(false)
+  , has_sparse_contacts(false)
   , this_mpi_process(Utilities::MPI::this_mpi_process(this->mpi_communicator))
   , n_mpi_processes(Utilities::MPI::n_mpi_processes(this->mpi_communicator))
 {}
@@ -345,9 +345,9 @@ CFDDEMSolver<dim>::read_checkpoint()
   this->setup_dofs();
 
   // Remap periodic nodes after setup of dofs
-  if (has_periodic_boundaries && has_disabled_contacts)
+  if (has_periodic_boundaries && has_sparse_contacts)
     {
-      disable_contacts_object.map_periodic_nodes(
+      sparse_contacts_object.map_periodic_nodes(
         this->void_fraction_constraints);
     }
 
@@ -599,9 +599,9 @@ CFDDEMSolver<dim>::load_balance()
   this->setup_dofs();
 
   // Remap periodic nodes after setup of dofs
-  if (has_periodic_boundaries && has_disabled_contacts)
+  if (has_periodic_boundaries && has_sparse_contacts)
     {
-      disable_contacts_object.map_periodic_nodes(
+      sparse_contacts_object.map_periodic_nodes(
         this->void_fraction_constraints);
     }
 
@@ -704,8 +704,8 @@ CFDDEMSolver<dim>::initialize_dem_parameters()
 
   if (dem_parameters.model_parameters.disable_particle_contacts)
     {
-      has_disabled_contacts = true;
-      disable_contacts_object.set_parameters(
+      has_sparse_contacts = true;
+      sparse_contacts_object.set_parameters(
         dem_parameters.model_parameters.granular_temperature_threshold,
         dem_parameters.model_parameters.solid_fraction_threshold,
         dem_parameters.model_parameters.advect_particles);
@@ -876,7 +876,7 @@ CFDDEMSolver<dim>::dem_iterator(unsigned int counter)
     }
   else
     {
-      if (!has_disabled_contacts)
+      if (!has_sparse_contacts)
         {
           integrator_object->integrate(
             this->particle_handler, g, dem_time_step, torque, force, MOI);
@@ -895,7 +895,7 @@ CFDDEMSolver<dim>::dem_iterator(unsigned int counter)
                                            force,
                                            MOI,
                                            *parallel_triangulation,
-                                           disable_contacts_object);
+                                           sparse_contacts_object);
             }
           else // counter == 0
             {
@@ -908,7 +908,7 @@ CFDDEMSolver<dim>::dem_iterator(unsigned int counter)
               // agitation.
 
               // Update the cell average velocities and accelerations
-              disable_contacts_object.update_average_velocities_acceleration(
+              sparse_contacts_object.update_average_velocities_acceleration(
                 this->particle_handler, g, force, dem_time_step);
 
               integrator_object->integrate(
@@ -980,14 +980,14 @@ CFDDEMSolver<dim>::dem_contact_build(unsigned int counter)
 
       this->particle_handler.exchange_ghost_particles(true);
 
-      if (has_disabled_contacts)
+      if (has_sparse_contacts)
         {
           if (load_balance_step || checkpoint_step ||
               (this->simulation_control->is_at_start() && (counter == 0)))
-            disable_contacts_object.update_local_and_ghost_cell_set(
+            sparse_contacts_object.update_local_and_ghost_cell_set(
               this->void_fraction_dof_handler);
 
-          disable_contacts_object.identify_mobility_status(
+          sparse_contacts_object.identify_mobility_status(
             this->void_fraction_dof_handler,
             this->particle_handler,
             (*this->triangulation).n_active_cells(),
@@ -1017,7 +1017,7 @@ CFDDEMSolver<dim>::dem_contact_build(unsigned int counter)
         {
           contact_manager.execute_particle_particle_broad_search(
             this->particle_handler,
-            disable_contacts_object,
+            sparse_contacts_object,
             has_periodic_boundaries);
 
           contact_manager.execute_particle_wall_broad_search(
@@ -1026,7 +1026,7 @@ CFDDEMSolver<dim>::dem_contact_build(unsigned int counter)
             floating_mesh_info,
             dem_parameters.floating_walls,
             this->simulation_control->get_current_time(),
-            disable_contacts_object);
+            sparse_contacts_object);
         }
 
       // Update contacts, remove replicates and add new contact pairs
@@ -1227,7 +1227,7 @@ CFDDEMSolver<dim>::dem_post_process_results()
         this->simulation_control->get_current_time(),
         this->simulation_control->get_step_number(),
         this->mpi_communicator,
-        disable_contacts_object);
+        sparse_contacts_object);
     }
 }
 
@@ -1584,9 +1584,9 @@ CFDDEMSolver<dim>::solve()
   initialize_dem_parameters();
 
   // Remap periodic nodes after setup of dofs
-  if (has_periodic_boundaries && has_disabled_contacts)
+  if (has_periodic_boundaries && has_sparse_contacts)
     {
-      disable_contacts_object.map_periodic_nodes(
+      sparse_contacts_object.map_periodic_nodes(
         this->void_fraction_constraints);
     }
 
@@ -1647,7 +1647,7 @@ CFDDEMSolver<dim>::solve()
                       // Get mobility status vector sorted by cell id
                       Vector<float> mobility_status(
                         this->triangulation->n_active_cells());
-                      disable_contacts_object.get_mobility_status_vector(
+                      sparse_contacts_object.get_mobility_status_vector(
                         mobility_status);
 
                       // Output mobility status vector

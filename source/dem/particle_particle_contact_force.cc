@@ -190,9 +190,6 @@ ParticleParticleContactForce<dim, contact_model, rolling_friction_model>::
               if (normal_overlap > 0.0)
                 {
                   // This means that the adjacent particles are in contact
-
-
-
                   // Since the normal overlap is already calculated, we update
                   // this element of the container here. The rest of information
                   // are updated using the following function
@@ -341,7 +338,6 @@ ParticleParticleContactForce<dim, contact_model, rolling_friction_model>::
                     particle_one_force,
                     particle_two_force);
                 }
-
               else
                 {
                   // if the adjacent pair is not in contact anymore, only the

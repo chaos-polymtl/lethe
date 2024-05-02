@@ -1,7 +1,7 @@
 #include <core/dem_properties.h>
 #include <core/tensors_and_points_dimension_manipulation.h>
 
-#include <dem/disable_contacts.h>
+#include <dem/adaptive_sparse_contacts.h>
 #include <dem/velocity_verlet_integrator.h>
 
 using namespace DEM;
@@ -141,18 +141,18 @@ VelocityVerletIntegrator<dim>::integrate(
   std::vector<Tensor<1, 3>>                       &force,
   const std::vector<double>                       &MOI,
   const parallel::distributed::Triangulation<dim> &triangulation,
-  DisableContacts<dim>                            &disable_contacts_object)
+  AdaptiveSparseContacts<dim>                     &sparse_contacts_object)
 {
   // If there are advected particles, we use another function since the average
   // velocity and acceleration of cells are computed for mobile cells
-  if (!disable_contacts_object.has_advected_particles())
+  if (!sparse_contacts_object.has_advected_particles())
     {
       Point<3>           particle_position;
       const Tensor<1, 3> dt_g = g * dt;
 
       // Get the map of mobility status of cells
       auto &cell_mobility_status_map =
-        disable_contacts_object.get_mobility_status();
+        sparse_contacts_object.get_mobility_status();
 
       for (auto &cell : triangulation.active_cell_iterators())
         {
@@ -171,7 +171,7 @@ VelocityVerletIntegrator<dim>::integrate(
 
               if (n_particles_in_cell > 0)
                 {
-                  if (mobility_status == DisableContacts<dim>::mobile)
+                  if (mobility_status == AdaptiveSparseContacts<dim>::mobile)
                     {
                       for (auto &particle : particles_in_cell)
                         {
@@ -257,7 +257,7 @@ VelocityVerletIntegrator<dim>::integrate(
                                         force,
                                         MOI,
                                         triangulation,
-                                        disable_contacts_object);
+                                        sparse_contacts_object);
     }
 }
 
@@ -271,17 +271,17 @@ VelocityVerletIntegrator<dim>::integrate_with_advected_particles(
   std::vector<Tensor<1, 3>>                       &force,
   const std::vector<double>                       &MOI,
   const parallel::distributed::Triangulation<dim> &triangulation,
-  DisableContacts<dim>                            &disable_contacts_object)
+  AdaptiveSparseContacts<dim>                     &sparse_contacts_object)
 {
   Point<3>           particle_position;
   const Tensor<1, 3> dt_g = g * dt;
 
   // Get the map of average velocities and accelerations of cells
   auto cell_velocities_accelerations_map =
-    disable_contacts_object.get_velocities_accelerations();
+    sparse_contacts_object.get_velocities_accelerations();
 
   // Get the map of mobility status of cells
-  auto cell_mobility_status_map = disable_contacts_object.get_mobility_status();
+  auto cell_mobility_status_map = sparse_contacts_object.get_mobility_status();
 
   for (auto &cell : triangulation.active_cell_iterators())
     {
@@ -303,7 +303,7 @@ VelocityVerletIntegrator<dim>::integrate_with_advected_particles(
 
           if (n_particles_in_cell > 0)
             {
-              if (mobility_status == DisableContacts<dim>::mobile)
+              if (mobility_status == AdaptiveSparseContacts<dim>::mobile)
                 {
                   // When mobile, the average velocity of the cell and the
                   // acceleration is updated at the same step that the particles
@@ -381,8 +381,10 @@ VelocityVerletIntegrator<dim>::integrate_with_advected_particles(
                   acc_dt_cell_average /= n_particles_in_cell;
                   velocity_cell_average /= n_particles_in_cell;
                 }
-              else if (mobility_status == DisableContacts<dim>::advected ||
-                       mobility_status == DisableContacts<dim>::advected_active)
+              else if (mobility_status ==
+                         AdaptiveSparseContacts<dim>::advected ||
+                       mobility_status ==
+                         AdaptiveSparseContacts<dim>::advected_active)
                 {
                   for (auto &particle : particles_in_cell)
                     {

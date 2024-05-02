@@ -98,10 +98,10 @@ ExplicitEulerIntegrator<dim>::integrate(
   std::vector<Tensor<1, 3>> & /* force */,
   const std::vector<double> & /* MOI */,
   const parallel::distributed::Triangulation<dim> & /* triangulation */,
-  DisableContacts<dim> & /* disable_contacts_object */)
+  AdaptiveSparseContacts<dim> & /* sparse_contacts_object */)
 {
   throw std::runtime_error(
-    "Disabling particle contacts not supported with explicit Euler integrator, use Verlet integrator.");
+    "Adaptive sparse contacts are not supported with explicit Euler integrator, use Velocity Verlet integrator.");
 }
 
 template class ExplicitEulerIntegrator<2>;

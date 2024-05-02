@@ -35,8 +35,8 @@
 
 using namespace dealii;
 
-#ifndef lethe_disable_contacts_h
-#  define lethe_disable_contacts_h
+#ifndef lethe_adaptive_sparse_contacts_h
+#  define lethe_adaptive_sparse_contacts_h
 
 // Special template instance for this class.
 // Unsigned integer would have been a better choice, but is not working
@@ -112,10 +112,10 @@ template class LinearAlgebra::distributed::Vector<int>;
  *
  */
 template <int dim>
-class DisableContacts
+class AdaptiveSparseContacts
 {
 public:
-  DisableContacts();
+  AdaptiveSparseContacts();
 
   /**
    * Mobility status flags used to identify the status at nodes and the status
@@ -519,4 +519,4 @@ private:
   double solid_fraction_threshold;
 };
 
-#endif // lethe_disable_contacts_h
+#endif // lethe_adaptive_sparse_contacts_h

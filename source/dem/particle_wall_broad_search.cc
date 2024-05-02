@@ -227,8 +227,8 @@ ParticleWallBroadSearch<dim>::find_particle_wall_contact_pairs(
                                         &boundary_cells_information,
   const Particles::ParticleHandler<dim> &particle_handler,
   typename DEM::dem_data_structures<dim>::particle_wall_candidates
-                             &particle_wall_contact_candidates,
-  const DisableContacts<dim> &disable_contacts_object)
+                                    &particle_wall_contact_candidates,
+  const AdaptiveSparseContacts<dim> &sparse_contacts_object)
 {
   // Clearing particle_wall_contact_candidates (output of this function)
   particle_wall_contact_candidates.clear();
@@ -250,8 +250,8 @@ ParticleWallBroadSearch<dim>::find_particle_wall_contact_pairs(
       // No needs to check if the main cell has any particle after this
       // step since mobile cells have particles
       unsigned int main_cell_mobility_status =
-        disable_contacts_object.check_cell_mobility(cell);
-      if (main_cell_mobility_status != DisableContacts<dim>::mobile)
+        sparse_contacts_object.check_cell_mobility(cell);
+      if (main_cell_mobility_status != AdaptiveSparseContacts<dim>::mobile)
         continue;
 
       // Finding particles located in the corresponding cell
@@ -286,8 +286,8 @@ ParticleWallBroadSearch<dim>::find_particle_floating_wall_contact_pairs(
   const Parameters::Lagrangian::FloatingWalls<dim> &floating_wall_properties,
   const double                                      simulation_time,
   typename DEM::dem_data_structures<dim>::particle_floating_wall_candidates
-                             &particle_floating_wall_candidates,
-  const DisableContacts<dim> &disable_contacts_object)
+                                    &particle_floating_wall_candidates,
+  const AdaptiveSparseContacts<dim> &sparse_contacts_object)
 {
   // Clearing particle_floating_wall_candidates(output of this function)
   particle_floating_wall_candidates.clear();
@@ -323,8 +323,9 @@ ParticleWallBroadSearch<dim>::find_particle_floating_wall_contact_pairs(
               // No needs to check if the main cell has any particle after this
               // step since mobile cells have particles
               unsigned int main_cell_mobility_status =
-                disable_contacts_object.check_cell_mobility(*cell);
-              if (main_cell_mobility_status != DisableContacts<dim>::mobile)
+                sparse_contacts_object.check_cell_mobility(*cell);
+              if (main_cell_mobility_status !=
+                  AdaptiveSparseContacts<dim>::mobile)
                 continue;
 
               // Finding particles located in the corresponding cell
@@ -353,8 +354,8 @@ ParticleWallBroadSearch<dim>::particle_floating_mesh_contact_search(
   typename DEM::dem_data_structures<dim>::particle_floating_mesh_candidates
     &particle_floating_mesh_contact_candidates,
   typename DEM::dem_data_structures<dim>::cells_total_neighbor_list
-                             &cells_total_neighbor_list,
-  const DisableContacts<dim> &disable_contacts_object)
+                                    &cells_total_neighbor_list,
+  const AdaptiveSparseContacts<dim> &sparse_contacts_object)
 {
   // Clear the candidate container
   particle_floating_mesh_contact_candidates.clear();
@@ -401,8 +402,9 @@ ParticleWallBroadSearch<dim>::particle_floating_mesh_contact_search(
                   // No needs to check if the main cell has any particle after
                   // this step since mobile cells have particles
                   unsigned int main_cell_mobility_status =
-                    disable_contacts_object.check_cell_mobility(cell_iterator);
-                  if (main_cell_mobility_status != DisableContacts<dim>::mobile)
+                    sparse_contacts_object.check_cell_mobility(cell_iterator);
+                  if (main_cell_mobility_status !=
+                      AdaptiveSparseContacts<dim>::mobile)
                     continue;
 
                   // Find particles located in cell

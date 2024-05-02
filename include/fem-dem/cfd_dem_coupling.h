@@ -17,10 +17,10 @@
 
 #include <solvers/navier_stokes_scratch_data.h>
 
+#include <dem/adaptive_sparse_contacts.h>
 #include <dem/data_containers.h>
 #include <dem/dem_contact_manager.h>
 #include <dem/dem_solver_parameters.h>
-#include <dem/disable_contacts.h>
 #include <dem/find_contact_detection_step.h>
 #include <dem/lagrangian_post_processing.h>
 #include <dem/periodic_boundaries_manipulator.h>
@@ -244,7 +244,7 @@ private:
   inline bool
   contacts_are_disabled(unsigned int counter) const
   {
-    return has_disabled_contacts && counter > 0;
+    return has_sparse_contacts && counter > 0;
   }
 
   /**
@@ -270,7 +270,7 @@ private:
         // a at the end of the CFD time step.
         return true;
       }
-    else if (has_disabled_contacts && (counter == 1))
+    else if (has_sparse_contacts && (counter == 1))
       {
         // First mobility status identification of the CFD time step (from the
         // velocity computed at the first DEM time step (counter = 0) of the CFD
@@ -344,9 +344,9 @@ private:
   bool                               has_periodic_boundaries;
   bool                               particle_displaced_in_pbc;
 
-  DisableContacts<dim> disable_contacts_object;
-  bool                 has_disabled_contacts;
-  unsigned int         contact_build_counter;
+  AdaptiveSparseContacts<dim> sparse_contacts_object;
+  bool                        has_sparse_contacts;
+  unsigned int                contact_build_counter;
 
   unsigned int contact_build_number;
 

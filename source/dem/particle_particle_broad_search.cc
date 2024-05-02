@@ -137,7 +137,7 @@ void
 ParticleParticleBroadSearch<dim>::find_particle_particle_contact_pairs(
   dealii::Particles::ParticleHandler<dim> &particle_handler,
   DEMContactManager<dim>                  &container_manager,
-  const DisableContacts<dim>              &disable_contacts_object)
+  const AdaptiveSparseContacts<dim>       &sparse_contacts_object)
 {
   // Pre-fetch and clear containers
   auto &local_contact_pair_candidates =
@@ -162,14 +162,14 @@ ParticleParticleBroadSearch<dim>::find_particle_particle_contact_pairs(
       // The main cell & its mobility status
       auto cell_neighbor_iterator = cell_neighbor_list_iterator->begin();
       unsigned int main_cell_mobility_status =
-        disable_contacts_object.check_cell_mobility(*cell_neighbor_iterator);
+        sparse_contacts_object.check_cell_mobility(*cell_neighbor_iterator);
 
       // If main cell has status inactive or advected, skip to next main
       // cell No needs to check if the main cell has any particle after this
       // step since empty cells have inactive or advected mobility status
       // and are skipped
-      if (main_cell_mobility_status == DisableContacts<dim>::inactive ||
-          main_cell_mobility_status == DisableContacts<dim>::advected)
+      if (main_cell_mobility_status == AdaptiveSparseContacts<dim>::inactive ||
+          main_cell_mobility_status == AdaptiveSparseContacts<dim>::advected)
         continue;
 
       // Get particles in the main cell
@@ -180,7 +180,7 @@ ParticleParticleBroadSearch<dim>::find_particle_particle_contact_pairs(
       // Store other particles in the main cell as contact candidates if
       // main cell is mobile only (this is equivalent to when disabling
       // particle contacts feature is not enabled)
-      if (main_cell_mobility_status == DisableContacts<dim>::mobile)
+      if (main_cell_mobility_status == AdaptiveSparseContacts<dim>::mobile)
         {
           // Find local-local collision pairs in the main cell, 1st particle
           // iterator is skipped since the main particle will not be
@@ -203,8 +203,7 @@ ParticleParticleBroadSearch<dim>::find_particle_particle_contact_pairs(
         {
           // Get mobility status of current neighbor cell
           unsigned int neighbor_cell_mobility_status =
-            disable_contacts_object.check_cell_mobility(
-              *cell_neighbor_iterator);
+            sparse_contacts_object.check_cell_mobility(*cell_neighbor_iterator);
 
           // No storing of particles as candidate if main cell has any active
           // status, but neighbor is not mobile (active or inactive). Particle
@@ -212,10 +211,11 @@ ParticleParticleBroadSearch<dim>::find_particle_particle_contact_pairs(
           // inactive cells are irrelevant. In this case, we skip this neighbor
           // cell.
           if ((main_cell_mobility_status ==
-                 DisableContacts<dim>::static_active ||
+                 AdaptiveSparseContacts<dim>::static_active ||
                main_cell_mobility_status ==
-                 DisableContacts<dim>::advected_active) &&
-              neighbor_cell_mobility_status != DisableContacts<dim>::mobile)
+                 AdaptiveSparseContacts<dim>::advected_active) &&
+              neighbor_cell_mobility_status !=
+                AdaptiveSparseContacts<dim>::mobile)
             continue;
 
           // Store particles in the neighbor cell as contact candidates
@@ -245,14 +245,14 @@ ParticleParticleBroadSearch<dim>::find_particle_particle_contact_pairs(
       // The main cell & its mobility status
       auto cell_neighbor_iterator = cell_neighbor_list_iterator->begin();
       unsigned int main_cell_mobility_status =
-        disable_contacts_object.check_cell_mobility(*cell_neighbor_iterator);
+        sparse_contacts_object.check_cell_mobility(*cell_neighbor_iterator);
 
       // If main cell has status inactive or advected, skip to next main
       // cell No needs to check if the main cell has any particle after this
       // step since empty cells have inactive or advected mobility status and
       // are skipped
-      if (main_cell_mobility_status == DisableContacts<dim>::inactive ||
-          main_cell_mobility_status == DisableContacts<dim>::advected)
+      if (main_cell_mobility_status == AdaptiveSparseContacts<dim>::inactive ||
+          main_cell_mobility_status == AdaptiveSparseContacts<dim>::advected)
         continue;
 
       // Particles in the main cell
@@ -267,16 +267,16 @@ ParticleParticleBroadSearch<dim>::find_particle_particle_contact_pairs(
            ++cell_neighbor_iterator)
         {
           unsigned int neighbor_cell_mobility_status =
-            disable_contacts_object.check_cell_mobility(
-              *cell_neighbor_iterator);
+            sparse_contacts_object.check_cell_mobility(*cell_neighbor_iterator);
 
           // No storing of particles as candidate if main cell is active
           // but neighbor is not mobile
           if ((main_cell_mobility_status ==
-                 DisableContacts<dim>::static_active ||
+                 AdaptiveSparseContacts<dim>::static_active ||
                main_cell_mobility_status ==
-                 DisableContacts<dim>::advected_active) &&
-              neighbor_cell_mobility_status != DisableContacts<dim>::mobile)
+                 AdaptiveSparseContacts<dim>::advected_active) &&
+              neighbor_cell_mobility_status !=
+                AdaptiveSparseContacts<dim>::mobile)
             continue;
 
           // Defining iterator on ghost particles in the neighbor cells
@@ -482,7 +482,7 @@ void
 ParticleParticleBroadSearch<dim>::find_particle_particle_periodic_contact_pairs(
   dealii::Particles::ParticleHandler<dim> &particle_handler,
   DEMContactManager<dim>                  &container_manager,
-  const DisableContacts<dim>              &disable_contacts_object)
+  const AdaptiveSparseContacts<dim>       &sparse_contacts_object)
 {
   // Pre-fetch and clear containers
   auto &local_contact_pair_periodic_candidates =
@@ -513,15 +513,15 @@ ParticleParticleBroadSearch<dim>::find_particle_particle_periodic_contact_pairs(
       auto cell_periodic_neighbor_iterator =
         cell_periodic_neighbor_list_iterator->begin();
       unsigned int main_cell_mobility_status =
-        disable_contacts_object.check_cell_mobility(
+        sparse_contacts_object.check_cell_mobility(
           *cell_periodic_neighbor_iterator);
 
       // If main cell has status inactive or advected, skip to next main cell
       // No needs to check if the main cell has any particle after this
       // step since empty cells have inactive or advected mobility status
       // and are skipped
-      if (main_cell_mobility_status == DisableContacts<dim>::inactive ||
-          main_cell_mobility_status == DisableContacts<dim>::advected)
+      if (main_cell_mobility_status == AdaptiveSparseContacts<dim>::inactive ||
+          main_cell_mobility_status == AdaptiveSparseContacts<dim>::advected)
         continue;
 
       // Particles in the main cell
@@ -537,16 +537,17 @@ ParticleParticleBroadSearch<dim>::find_particle_particle_periodic_contact_pairs(
            ++cell_periodic_neighbor_iterator)
         {
           unsigned int neighbor_cell_mobility_status =
-            disable_contacts_object.check_cell_mobility(
+            sparse_contacts_object.check_cell_mobility(
               *cell_periodic_neighbor_iterator);
 
           // No storing of particles if main cell is active but neighbor is
           // not mobile
           if ((main_cell_mobility_status ==
-                 DisableContacts<dim>::static_active ||
+                 AdaptiveSparseContacts<dim>::static_active ||
                main_cell_mobility_status ==
-                 DisableContacts<dim>::advected_active) &&
-              neighbor_cell_mobility_status != DisableContacts<dim>::mobile)
+                 AdaptiveSparseContacts<dim>::advected_active) &&
+              neighbor_cell_mobility_status !=
+                AdaptiveSparseContacts<dim>::mobile)
             continue;
 
           // Defining iterator on local particles in the periodic neighbor
@@ -584,15 +585,15 @@ ParticleParticleBroadSearch<dim>::find_particle_particle_periodic_contact_pairs(
       auto cell_periodic_neighbor_iterator =
         cell_periodic_neighbor_list_iterator->begin();
       unsigned int main_cell_mobility_status =
-        disable_contacts_object.check_cell_mobility(
+        sparse_contacts_object.check_cell_mobility(
           *cell_periodic_neighbor_iterator);
 
       // If main cell has status inactive or advected, skip to next main
       // cell No needs to check if the main cell has any particle after this
       // step since empty cells have inactive or advected mobility status
       // and are skipped
-      if (main_cell_mobility_status == DisableContacts<dim>::inactive ||
-          main_cell_mobility_status == DisableContacts<dim>::advected)
+      if (main_cell_mobility_status == AdaptiveSparseContacts<dim>::inactive ||
+          main_cell_mobility_status == AdaptiveSparseContacts<dim>::advected)
         continue;
 
       // Particles in the main cell
@@ -607,16 +608,17 @@ ParticleParticleBroadSearch<dim>::find_particle_particle_periodic_contact_pairs(
            ++cell_periodic_neighbor_iterator)
         {
           unsigned int neighbor_cell_mobility_status =
-            disable_contacts_object.check_cell_mobility(
+            sparse_contacts_object.check_cell_mobility(
               *cell_periodic_neighbor_iterator);
 
           // No storing of particles if main cell is active but neighbor is
           // not mobile
           if ((main_cell_mobility_status ==
-                 DisableContacts<dim>::static_active ||
+                 AdaptiveSparseContacts<dim>::static_active ||
                main_cell_mobility_status ==
-                 DisableContacts<dim>::advected_active) &&
-              neighbor_cell_mobility_status != DisableContacts<dim>::mobile)
+                 AdaptiveSparseContacts<dim>::advected_active) &&
+              neighbor_cell_mobility_status !=
+                AdaptiveSparseContacts<dim>::mobile)
             continue;
 
           // Defining iterator on ghost particles in the neighbor cells
@@ -656,10 +658,10 @@ ParticleParticleBroadSearch<dim>::find_particle_particle_periodic_contact_pairs(
       // step since empty cells have inactive or advected mobility status
       // and are skipped
       unsigned int main_cell_mobility_status =
-        disable_contacts_object.check_cell_mobility(
+        sparse_contacts_object.check_cell_mobility(
           *cell_periodic_neighbor_iterator);
-      if (main_cell_mobility_status == DisableContacts<dim>::inactive ||
-          main_cell_mobility_status == DisableContacts<dim>::advected)
+      if (main_cell_mobility_status == AdaptiveSparseContacts<dim>::inactive ||
+          main_cell_mobility_status == AdaptiveSparseContacts<dim>::advected)
         continue;
 
       // Particles in the main cell
@@ -674,16 +676,17 @@ ParticleParticleBroadSearch<dim>::find_particle_particle_periodic_contact_pairs(
            ++cell_periodic_neighbor_iterator)
         {
           unsigned int neighbor_cell_mobility_status =
-            disable_contacts_object.check_cell_mobility(
+            sparse_contacts_object.check_cell_mobility(
               *cell_periodic_neighbor_iterator);
 
           // No storing of particles if main cell is active but neighbor is
           // not mobile
           if ((main_cell_mobility_status ==
-                 DisableContacts<dim>::static_active ||
+                 AdaptiveSparseContacts<dim>::static_active ||
                main_cell_mobility_status ==
-                 DisableContacts<dim>::advected_active) &&
-              neighbor_cell_mobility_status != DisableContacts<dim>::mobile)
+                 AdaptiveSparseContacts<dim>::advected_active) &&
+              neighbor_cell_mobility_status !=
+                AdaptiveSparseContacts<dim>::mobile)
             continue;
 
           // Defining iterator on local particles in the neighbor cells

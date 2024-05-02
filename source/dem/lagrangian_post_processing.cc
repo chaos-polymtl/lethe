@@ -27,7 +27,7 @@ LagrangianPostProcessing<dim>::calculate_average_particles_velocity(
   velocity_average_z.reinit(triangulation.n_active_cells());
   velocity_average_magnitude.reinit(triangulation.n_active_cells());
 
-  // Iterating through the active cells in the trangulation
+  // Iterating through the active cells in the triangulation
   for (const auto &cell : triangulation.active_cell_iterators())
     {
       if (cell->is_locally_owned())
@@ -65,7 +65,7 @@ LagrangianPostProcessing<dim>::calculate_average_granular_temperature(
 {
   granular_temperature_average.reinit(triangulation.n_active_cells());
 
-  // Iterating through the active cells in the trangulation
+  // Iterating through the active cells in the triangulation
   for (const auto &cell : triangulation.active_cell_iterators())
     {
       if (cell->is_locally_owned())
@@ -182,7 +182,7 @@ LagrangianPostProcessing<dim>::write_post_processing_results(
   const double                                     current_time,
   const unsigned int                               step_number,
   const MPI_Comm                                  &mpi_communicator,
-  DisableContacts<dim>                            &disable_contacts_object)
+  AdaptiveSparseContacts<dim>                     &sparse_contacts_object)
 {
   const std::string folder = dem_parameters.simulation_control.output_folder;
   const std::string particles_solution_name =
@@ -237,7 +237,7 @@ LagrangianPostProcessing<dim>::write_post_processing_results(
   average_solution_names.push_back("mobility_status");
 
   Vector<float> mobility_status(triangulation.n_active_cells());
-  disable_contacts_object.get_mobility_status_vector(mobility_status);
+  sparse_contacts_object.get_mobility_status_vector(mobility_status);
   data_out.add_data_vector(mobility_status,
                            average_solution_names.back(),
                            DataOut<dim>::type_cell_data);

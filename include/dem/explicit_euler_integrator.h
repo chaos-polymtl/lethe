@@ -94,7 +94,7 @@ public:
             std::vector<Tensor<1, 3>>                       &force,
             const std::vector<double>                       &MOI,
             const parallel::distributed::Triangulation<dim> &triangulation,
-            DisableContacts<dim> &disable_contacts_object) override;
+            AdaptiveSparseContacts<dim> &sparse_contacts_object) override;
 
 private:
   Tensor<1, 3> acceleration;

@@ -16,19 +16,19 @@
 *
 */
 
-#include <dem/disable_contacts.h>
+#include <dem/adaptive_sparse_contacts.h>
 
 #include <deal.II/dofs/dof_tools.h>
 
 #include <deal.II/fe/fe_q.h>
 
 template <int dim>
-DisableContacts<dim>::DisableContacts()
+AdaptiveSparseContacts<dim>::AdaptiveSparseContacts()
 {}
 
 template <int dim>
 void
-DisableContacts<dim>::update_local_and_ghost_cell_set(
+AdaptiveSparseContacts<dim>::update_local_and_ghost_cell_set(
   const DoFHandler<dim> &background_dh)
 {
   local_and_ghost_cells.clear();
@@ -43,7 +43,7 @@ DisableContacts<dim>::update_local_and_ghost_cell_set(
 
 template <int dim>
 void
-DisableContacts<dim>::calculate_granular_temperature_and_solid_fraction(
+AdaptiveSparseContacts<dim>::calculate_granular_temperature_and_solid_fraction(
   const Particles::ParticleHandler<dim> &particle_handler,
   const std::set<typename DoFHandler<dim>::active_cell_iterator>
                  &local_and_ghost_cells_with_particles,
@@ -135,7 +135,7 @@ DisableContacts<dim>::calculate_granular_temperature_and_solid_fraction(
 
 template <int dim>
 void
-DisableContacts<dim>::identify_mobility_status(
+AdaptiveSparseContacts<dim>::identify_mobility_status(
   const DoFHandler<dim>                 &background_dh,
   const Particles::ParticleHandler<dim> &particle_handler,
   const unsigned int                     n_active_cells,
@@ -352,7 +352,7 @@ DisableContacts<dim>::identify_mobility_status(
 
 template <int dim>
 void
-DisableContacts<dim>::update_average_velocities_acceleration(
+AdaptiveSparseContacts<dim>::update_average_velocities_acceleration(
   Particles::ParticleHandler<dim> &particle_handler,
   const Tensor<1, 3>              &g,
   const std::vector<Tensor<1, 3>> &force,
@@ -420,5 +420,5 @@ DisableContacts<dim>::update_average_velocities_acceleration(
     }
 }
 
-template class DisableContacts<2>;
-template class DisableContacts<3>;
+template class AdaptiveSparseContacts<2>;
+template class AdaptiveSparseContacts<3>;
