@@ -7,7 +7,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Fixed
 
-- MAJOR Periodic boundary conditions in the DEM and CFD-DEM were not working if they weren't the last boundary condition being declare in the parameter file. Now, every boundary condition work in which even order they are being declared. [#1110](https://github.com/chaos-polymtl/lethe/pull/1110)
+- MAJOR Periodic boundary conditions for the DEM were not working if they weren't the last boundary conditions being declare in the parameter file. Now, every boundary condition work in which even order they are being declared. [#1110](https://github.com/chaos-polymtl/lethe/pull/1110)
 
 
 ## [Master] - 2024-04-30
