@@ -1118,12 +1118,12 @@ namespace Parameters
 
       if (boundary_type == "outlet")
         {
-          BC_type = BoundaryType::outlet;
+          bc_types.push_back(BoundaryType::outlet);
           this->outlet_boundaries.push_back(boundary_id);
         }
       else if (boundary_type == "translational")
         {
-          BC_type = BoundaryType::translational;
+          bc_types.push_back(BoundaryType::translational);
           Tensor<1, 3> translational_velocity;
           translational_velocity[0] = prm.get_double("speed x");
           translational_velocity[1] = prm.get_double("speed y");
@@ -1134,7 +1134,7 @@ namespace Parameters
         }
       else if (boundary_type == "rotational")
         {
-          BC_type                 = BoundaryType::rotational;
+          bc_types.push_back(BoundaryType::rotational);
           double rotational_speed = prm.get_double("rotational speed");
 
           // Read the rotational vector from a list of doubles
@@ -1157,11 +1157,11 @@ namespace Parameters
         }
       else if (boundary_type == "fixed_wall")
         {
-          BC_type = BoundaryType::fixed_wall;
+          bc_types.push_back(BoundaryType::fixed_wall);
         }
       else if (boundary_type == "periodic")
         {
-          BC_type                   = BoundaryType::periodic;
+          bc_types.push_back(BoundaryType::periodic);
           this->periodic_boundary_0 = prm.get_integer("periodic id 0");
           this->periodic_boundary_1 = prm.get_integer("periodic id 1");
           this->periodic_direction  = prm.get_integer("periodic direction");
@@ -1206,7 +1206,8 @@ namespace Parameters
                             boundary_rotational_speed,
                             boundary_rotational_vector,
                             point_on_rotation_axis,
-                            outlet_boundaries);
+                            outlet_boundaries,
+                            bc_types);
 
       for (unsigned int counter = 0; counter < DEM_BC_number; ++counter)
         {
@@ -1228,7 +1229,8 @@ namespace Parameters
       std::unordered_map<unsigned int, Tensor<1, 3>>
                                                  &boundary_rotational_vector,
       std::unordered_map<unsigned int, Point<3>> &point_on_rotation_axis,
-      std::vector<unsigned int>                  &outlet_boundaries)
+      std::vector<unsigned int>                  &outlet_boundaries,
+      std::vector<BoundaryType>                  &bc_types)
     {
       Tensor<1, 3> zero_tensor({0.0, 0.0, 0.0});
 
@@ -1240,7 +1242,9 @@ namespace Parameters
           point_on_rotation_axis.insert({counter, Point<3>(zero_tensor)});
         }
 
+      // NOTE This first vector should not be initialized this big.
       outlet_boundaries.reserve(DEM_BC_number);
+      bc_types.reserve(DEM_BC_number);
     }
 
     template <int dim>
