@@ -1470,10 +1470,16 @@ CFDDEMSolver<dim>::dem_setup_contact_parameters()
   load_balance_step      = false;
 
   // Check if there's periodic boundaries
-  if (dem_parameters.boundary_conditions.BC_type ==
-      Parameters::Lagrangian::BCDEM::BoundaryType::periodic)
+  for (unsigned int i_bc = 0;
+       i_bc < dem_parameters.boundary_conditions.bc_types.size();
+       ++i_bc)
     {
-      has_periodic_boundaries = true;
+      if (dem_parameters.boundary_conditions.bc_types[i_bc] ==
+          Parameters::Lagrangian::BCDEM::BoundaryType::periodic)
+        {
+          has_periodic_boundaries = true;
+          break;
+        }
     }
 }
 

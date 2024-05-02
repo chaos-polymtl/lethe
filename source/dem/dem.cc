@@ -232,10 +232,16 @@ DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
     }
 
   // Check if there's periodic boundaries
-  if (parameters.boundary_conditions.BC_type ==
-      Parameters::Lagrangian::BCDEM::BoundaryType::periodic)
+  for (unsigned int i_bc = 0;
+       i_bc < parameters.boundary_conditions.bc_types.size();
+       ++i_bc)
     {
-      has_periodic_boundaries = true;
+      if (parameters.boundary_conditions.bc_types[i_bc] ==
+          Parameters::Lagrangian::BCDEM::BoundaryType::periodic)
+        {
+          has_periodic_boundaries = true;
+          break;
+        }
     }
 
   // Assign gravity/acceleration
