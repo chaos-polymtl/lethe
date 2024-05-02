@@ -52,12 +52,7 @@ The geometry of the bed was created using `Pointiwise <../../../tools/pointwise/
     :name: mesh_ver
     :height: 10cm
 
-In Unresolved CFD-DEM, the averaging volume used to calculate the void fraction needs to be large enough to contain several particles (>10). Since the averaging volume used in the quadrature-centred method is generally related to the cell volume, this introduces a limitation on the cell size. In general, the averaging volume, which in this case corresponds to the cell size, should be approximatively three time larger than the diameter of the particles in order to get stable calculation. So this can be expressed as follows:
-
-.. math:: 
-  \dfrac{d_p}{\Delta x} \leq 3
-
-where :math:`d_p` is the particle diameter, and :math:`\Delta x` is the characteristic size of the cell. In this example, we use particles with diameters of 5 mm which means that we need at least 15 mm for cell size. Also, we need to apply a relatively small mesh to the short channel below. Thus, we set the size of the central cylinder to 15 mm, and made other grid coarser. We show the parameter related to the mesh below.
+In Unresolved CFD-DEM, the averaging volume used to calculate the void fraction needs to be large enough to contain several particles (>10). Since the averaging volume used in the quadrature-centred method is generally related to the cell volume, this introduces a limitation on the cell size. In general, the averaging volume, which in this case corresponds to the cell size, should be approximatively three time larger than the diameter of the particles in order to get stable calculation. In this example, we use particles with diameters of 5 mm which means that we need at least 15 mm for cell size. Also, we need to apply a relatively small mesh to the short channel below. Thus, we set the size of the central cylinder to 15 mm, and made other grid coarser. We show the parameter related to the mesh below.
 
 .. code-block:: text
 
@@ -155,6 +150,9 @@ or in parallel (where 8 represents the number of processors)
   :class: copy-button
 
   mpirun -np 8 lethe-particles dem-packing-in-spouted-cylinder-bed.prm
+
+.. note::
+  Running the packing should take approximately 10 hours on 8 cores.
 
 After the particles have been packed inside the square bed, we can move on to the fluid-particles simulation.
 
@@ -264,7 +262,7 @@ Here, we enable grad-div stabilization for local mass conservation, and take the
       set drag model                    = rong
       set post processing               = true
       set coupling frequency            = 100
-      set implicit stabilization        = false
+      set implicit stabilization        = true
       set grad-div length scale         = 0.26
       set vans model                    = modelA
     end
