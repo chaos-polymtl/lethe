@@ -378,7 +378,10 @@ namespace Parameters
         translational,
         rotational,
         periodic
-      } BC_type;
+      };
+
+      // Vector of each boundary types
+      std::vector<BoundaryType> bc_types;
 
       // Outlet boundary IDs
       std::vector<unsigned int> outlet_boundaries;
@@ -421,7 +424,8 @@ namespace Parameters
         std::unordered_map<unsigned int, Tensor<1, 3>>
                                                    &boundary_rotational_vector,
         std::unordered_map<unsigned int, Point<3>> &point_on_rotation_axis,
-        std::vector<unsigned int>                  &outlet_boundaries);
+        std::vector<unsigned int>                  &outlet_boundaries,
+        std::vector<BoundaryType>                  &bc_types);
     };
 
     template <int dim>
