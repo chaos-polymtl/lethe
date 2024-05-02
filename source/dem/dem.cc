@@ -231,7 +231,7 @@ DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
       contact_manager.particle_floating_mesh_in_contact.resize(solids.size());
     }
 
-  // Check if there's periodic boundaries
+  // Check if there are periodic boundaries
   for (unsigned int i_bc = 0;
        i_bc < parameters.boundary_conditions.bc_types.size();
        ++i_bc)

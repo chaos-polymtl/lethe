@@ -15,7 +15,7 @@ read_mesh(const Parameters::Mesh   &mesh_parameters,
 
   attach_grid_to_triangulation(triangulation, mesh_parameters);
 
-  // Check if there's periodic boundaries
+  // Check if there are periodic boundaries
   for (unsigned int i_bc = 0; i_bc < bc_params.bc_types.size(); ++i_bc)
     {
       if (bc_params.bc_types[i_bc] ==

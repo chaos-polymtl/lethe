@@ -1469,7 +1469,7 @@ CFDDEMSolver<dim>::dem_setup_contact_parameters()
   contact_detection_step = false;
   load_balance_step      = false;
 
-  // Check if there's periodic boundaries
+  // Check if there are periodic boundaries
   for (unsigned int i_bc = 0;
        i_bc < dem_parameters.boundary_conditions.bc_types.size();
        ++i_bc)
