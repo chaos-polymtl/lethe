@@ -237,17 +237,6 @@ private:
   dynamic_flow_control() override;
 
   /**
-   * @brief Check if the disabling contacts is enabled and that the counter is
-   * for the first (counter = 0)
-   *
-   */
-  inline bool
-  contacts_are_disabled(unsigned int counter) const
-  {
-    return has_sparse_contacts && counter > 0;
-  }
-
-  /**
    * @brief contact_search_step
    * Checks all the conditions that require a contact search step. The check of
    * conditions is done in order of suspected frequency occurrence.
@@ -266,8 +255,7 @@ private:
              (contact_build_counter == 0))
       {
         // Ensure that the contact search is executed at least once per CFD time
-        // step. It checks if contact search step if there was no contact search
-        // a at the end of the CFD time step.
+        // step.
         return true;
       }
     else if (has_sparse_contacts && (counter == 1))

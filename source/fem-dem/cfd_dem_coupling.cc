@@ -932,11 +932,11 @@ CFDDEMSolver<dim>::dem_iterator(unsigned int counter)
               this->particle_handler, periodic_boundaries_cells_information);
 
           // Exchange information between processors
-          particle_has_been_moved =
+          particle_displaced_in_pbc =
             Utilities::MPI::logical_or(particle_has_been_moved,
                                        this->mpi_communicator);
 
-          if (particle_has_been_moved)
+          if (particle_displaced_in_pbc)
             {
               this->particle_handler.sort_particles_into_subdomains_and_cells();
               this->particle_handler.exchange_ghost_particles(true);
@@ -1001,7 +1001,7 @@ CFDDEMSolver<dim>::dem_contact_build(unsigned int counter)
       // Execute broad search by filling containers of particle-particle
       // contact pair candidates and containers of particle-wall
       // contact pair candidates
-      if (!contacts_are_disabled(counter))
+      if (!(has_sparse_contacts && counter > 0))
         {
           contact_manager.execute_particle_particle_broad_search(
             this->particle_handler, has_periodic_boundaries);

@@ -14,7 +14,7 @@ subsection simulation control
   set output frequency     = 1
   set log frequency        = 1
   set startup time scaling = 0.6
-  set time end             = 0.45
+  set time end             = 0.005
   set time step            = 0.001
   set subdivision          = 1
 end
@@ -24,7 +24,7 @@ end
 #---------------------------------------------------
 
 subsection post-processing
-  set Lagrangian post-processing = true
+  set Lagrangian post-processing = false
 end
 
 #---------------------------------------------------
@@ -47,18 +47,10 @@ subsection physical properties
   end
 end
 
-#---------------------------------------------------
-# Flow control
-#---------------------------------------------------
-
-subsection flow control
-  set enable               = true
-  set enable beta particle = true
-  set average velocity     = 3.0
-  set flow direction       = 1
-  set beta threshold       = 0.05
-  set alpha                = 0.25
-  set verbosity            = quiet
+subsection source term
+  subsection xyz
+    set Function expression = 0; 5; 0; 0
+  end
 end
 
 #---------------------------------------------------
@@ -67,7 +59,9 @@ end
 
 subsection model parameters
   subsection contact detection
-    set contact detection method = dynamic
+    set contact detection method                = dynamic
+    set frequency                               = 1
+    set dynamic contact search size coefficient = 0.8
   end
   set particle particle contact force method = hertz_mindlin_limit_overlap
   set particle wall contact force method     = nonlinear
@@ -87,7 +81,7 @@ end
 
 subsection lagrangian physical properties
   set gx                       = -9.81
-  set gy                       = 0.0
+  set gy                       = 0.01205
   set gz                       = 0.0
   set number of particle types = 1
   subsection particle type 0
@@ -167,10 +161,10 @@ subsection cfd-dem
   set saffman lift force     = true
   set buoyancy force         = true
   set magnus lift force      = false
-  set coupling frequency     = 25
+  set coupling frequency     = 50
   set implicit stabilization = false
   set grad-div length scale  = 0.001
-  set particle statistics    = true
+  set particle statistics    = false
 end
 
 #---------------------------------------------------
