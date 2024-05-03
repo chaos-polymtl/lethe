@@ -428,6 +428,7 @@ NavierStokesOperatorBase<dim, number>::get_system_matrix() const
     }
 
   system_matrix = 0.0;
+
   MatrixFreeTools::compute_matrix(
     matrix_free,
     constraints,
