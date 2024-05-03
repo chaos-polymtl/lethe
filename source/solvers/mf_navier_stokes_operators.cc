@@ -425,14 +425,17 @@ NavierStokesOperatorBase<dim, number>::get_system_matrix() const
                            locally_owned_dofs,
                            dsp,
                            dof_handler.get_triangulation().get_communicator());
-
-      MatrixFreeTools::compute_matrix(
-        matrix_free,
-        constraints,
-        system_matrix,
-        &NavierStokesOperatorBase::do_cell_integral_local,
-        this);
     }
+
+  system_matrix = 0.0;
+
+  MatrixFreeTools::compute_matrix(
+    matrix_free,
+    constraints,
+    system_matrix,
+    &NavierStokesOperatorBase::do_cell_integral_local,
+    this);
+
   return this->system_matrix;
 }
 

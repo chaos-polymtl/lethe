@@ -834,12 +834,15 @@ MFNavierStokesPreconditionGMG<dim>::initialize(
               "the extraction of constant modes for the AMG coarse-grid solver requires a version od deal.II >= 9.6.0"));
 #endif
 
+          // Extract matrix of the minlevel to avoid building it twice
+          const TrilinosWrappers::SparseMatrix &min_level_matrix =
+            this->mg_operators[this->minlevel]->get_system_matrix();
+
           Teuchos::ParameterList              parameter_ml;
           std::unique_ptr<Epetra_MultiVector> distributed_constant_modes;
-          amg_data.set_parameters(
-            parameter_ml,
-            distributed_constant_modes,
-            this->mg_operators[this->minlevel]->get_system_matrix());
+          amg_data.set_parameters(parameter_ml,
+                                  distributed_constant_modes,
+                                  min_level_matrix);
 
           const double ilu_fill = this->simulation_parameters.linear_solver
                                     .at(PhysicsID::fluid_dynamics)
@@ -858,9 +861,7 @@ MFNavierStokesPreconditionGMG<dim>::initialize(
           parameter_ml.set("coarse: ifpack absolute threshold", ilu_atol);
           parameter_ml.set("coarse: ifpack relative threshold", ilu_rtol);
 
-          this->precondition_amg.initialize(
-            this->mg_operators[this->minlevel]->get_system_matrix(),
-            parameter_ml);
+          this->precondition_amg.initialize(min_level_matrix, parameter_ml);
 
           this->mg_coarse = std::make_shared<
             MGCoarseGridIterativeSolver<VectorType,
@@ -1140,12 +1141,15 @@ MFNavierStokesPreconditionGMG<dim>::initialize(
                                            constant_modes);
           amg_data.constant_modes = constant_modes;
 
+          // Extract matrix of the minlevel to avoid building it twice
+          const TrilinosWrappers::SparseMatrix &min_level_matrix =
+            this->mg_operators[this->minlevel]->get_system_matrix();
+
           Teuchos::ParameterList              parameter_ml;
           std::unique_ptr<Epetra_MultiVector> distributed_constant_modes;
-          amg_data.set_parameters(
-            parameter_ml,
-            distributed_constant_modes,
-            this->mg_operators[this->minlevel]->get_system_matrix());
+          amg_data.set_parameters(parameter_ml,
+                                  distributed_constant_modes,
+                                  min_level_matrix);
 
           const double ilu_fill = this->simulation_parameters.linear_solver
                                     .at(PhysicsID::fluid_dynamics)
@@ -1164,9 +1168,7 @@ MFNavierStokesPreconditionGMG<dim>::initialize(
           parameter_ml.set("coarse: ifpack absolute threshold", ilu_atol);
           parameter_ml.set("coarse: ifpack relative threshold", ilu_rtol);
 
-          this->precondition_amg.initialize(
-            this->mg_operators[this->minlevel]->get_system_matrix(),
-            parameter_ml);
+          this->precondition_amg.initialize(min_level_matrix, parameter_ml);
 
           this->mg_coarse = std::make_shared<
             MGCoarseGridIterativeSolver<VectorType,
