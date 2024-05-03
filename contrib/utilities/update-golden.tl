@@ -49,17 +49,17 @@
 
     (catch (ftw build-dir
                 (do whenlet ((dest (get-dest @1 build-dir lethe-dir)))
-                    (match-case dest
-                      (`@{lethe-dir}/applications_tests/@app/@test.mpirun=@n.output`
-                       (let ((matches (glob `@{lethe-dir}/applications_tests/@app/@test.*.mpirun=@n.output`)))
-                         (cond
-                           ((endp (rest matches)) (set dest (first matches)))
-                           (t (put-line `@{prog-name}: several golden candidates for output: @dest` *stderr*)))))
-                      (`@{lethe-dir}/applications_tests/@app/@test.output`
-                       (let ((matches (glob `@{lethe-dir}/applications_tests/@app/@test.*.output`)))
-                         (cond
-                           ((endp (rest matches)) (set dest (first matches)))
-                           (t (put-line `@{prog-name}: several golden candidates for output: @dest` *stderr*))))))
+                    (let ((matches
+                            (glob
+                             (match-case dest
+                               (`@{lethe-dir}/applications_tests/@app/@test.mpirun=@n.output`
+                                `@{lethe-dir}/applications_tests/@app/@test.*.mpirun=@n.output`)
+                               (`@{lethe-dir}/applications_tests/@app/@test.output`
+                                `@{lethe-dir}/applications_tests/@app/@test.*.output`)))))
+                      (match-case matches
+                        (())
+                        ((@new-dest) (set dest new-dest))
+                        (t (put-line `@{prog-name}: several golden candidates for output: @dest` *stderr*))))
                     (when (or o.dry-run o.verbose)
                       (put-line `cp @@1 @dest`))
                     (unless o.dry-run
