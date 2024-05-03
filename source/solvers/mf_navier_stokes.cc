@@ -1660,7 +1660,6 @@ MFNavierStokesSolver<dim>::set_initial_condition_fd(
                 this->cell_quadrature,
                 this->forcing_function,
                 this->simulation_control,
-                this->mg_computing_timer,
                 this->fe);
 
           auto mg_operators = this->gmg_preconditioner->get_mg_operators();
@@ -1774,7 +1773,6 @@ MFNavierStokesSolver<dim>::set_initial_condition_fd(
                     this->cell_quadrature,
                     this->forcing_function,
                     this->simulation_control,
-                    this->mg_computing_timer,
                     this->fe);
 
               auto mg_operators = this->gmg_preconditioner->get_mg_operators();
