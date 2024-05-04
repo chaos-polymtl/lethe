@@ -644,7 +644,7 @@ get_dimension(const std::string &file_name)
       // a carriage-return without a newline -- so the error message looks
       // like this:
       //
-      //    >.  While reading the dimension from the input file, ASPECT found
+      //    >.  While reading the dimension from the input file, Lethe found
       //    a string that can not be converted to an integer: <2
       //
       // Note how the end of the error message overwrites the beginning
