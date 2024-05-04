@@ -218,47 +218,43 @@ fill_table_from_file(TableHandler     &table,
 {
   table.clear();
   std::ifstream myfile(file_name);
-  // open the file
-  if (myfile.is_open())
-    {
-      std::string              line;
-      std::vector<std::string> vector_of_column_names;
-      std::vector<double>      line_of_data;
-      unsigned int             line_count = 0;
+  AssertThrow(myfile, ExcFileNotOpen(file_name));
 
-      while (std::getline(myfile, line))
+  std::string              line;
+  std::vector<std::string> vector_of_column_names;
+  std::vector<double>      line_of_data;
+  unsigned int             line_count = 0;
+
+  while (std::getline(myfile, line))
+    {
+      // read the line and clean the resulting vector
+      std::vector<std::string> list_of_words_base =
+        Utilities::split_string_list(line, delimiter);
+      std::vector<std::string> list_of_words_clean;
+      for (unsigned int i = 0; i < list_of_words_base.size(); ++i)
         {
-          // read the line and clean the resulting vector
-          std::vector<std::string> list_of_words_base =
-            Utilities::split_string_list(line, delimiter);
-          std::vector<std::string> list_of_words_clean;
-          for (unsigned int i = 0; i < list_of_words_base.size(); ++i)
+          if (list_of_words_base[i] != "")
             {
-              if (list_of_words_base[i] != "")
-                {
-                  list_of_words_clean.push_back(list_of_words_base[i]);
-                }
+              list_of_words_clean.push_back(list_of_words_base[i]);
             }
-          //  If it's the first line, we only initialize the variable names.
-          if (line_count != 0)
-            {
-              line_of_data = Utilities::string_to_double(list_of_words_clean);
-              for (unsigned int i = 0; i < line_of_data.size(); ++i)
-                {
-                  table.add_value(vector_of_column_names[i], line_of_data[i]);
-                }
-            }
-          else
-            {
-              // the line contains words we assume these are the column
-              vector_of_column_names = list_of_words_clean;
-            }
-          ++line_count;
         }
-      myfile.close();
+      //  If it's the first line, we only initialize the variable names.
+      if (line_count != 0)
+        {
+          line_of_data = Utilities::string_to_double(list_of_words_clean);
+          for (unsigned int i = 0; i < line_of_data.size(); ++i)
+            {
+              table.add_value(vector_of_column_names[i], line_of_data[i]);
+            }
+        }
+      else
+        {
+          // the line contains words we assume these are the column
+          vector_of_column_names = list_of_words_clean;
+        }
+      ++line_count;
     }
-  else
-    std::cout << "Unable to open file";
+  myfile.close();
 }
 
 void
@@ -268,55 +264,50 @@ fill_vectors_from_file(std::map<std::string, std::vector<double>> &map,
 {
   // fill a pair, first being a vector of vector name and the second being the
   // vector of vector associated with the vector name.
-
-
   std::ifstream myfile(file);
-  // open the file.
-  if (myfile.is_open())
-    {
-      std::string              line;
-      std::vector<std::string> column_names;
-      std::vector<double>      line_of_data;
-      unsigned int             line_count = 0;
+  AssertThrow(myfile, ExcFileNotOpen(file));
 
-      while (std::getline(myfile, line))
+  std::string              line;
+  std::vector<std::string> column_names;
+  std::vector<double>      line_of_data;
+  unsigned int             line_count = 0;
+
+  while (std::getline(myfile, line))
+    {
+      // read the line and clean the resulting vector.
+      std::vector<std::string> list_of_words_base =
+        Utilities::split_string_list(line, delimiter);
+      std::vector<std::string> list_of_words_clean;
+      for (unsigned int i = 0; i < list_of_words_base.size(); ++i)
         {
-          // read the line and clean the resulting vector.
-          std::vector<std::string> list_of_words_base =
-            Utilities::split_string_list(line, delimiter);
-          std::vector<std::string> list_of_words_clean;
-          for (unsigned int i = 0; i < list_of_words_base.size(); ++i)
+          if (list_of_words_base[i] != "")
             {
-              if (list_of_words_base[i] != "")
-                {
-                  list_of_words_clean.push_back(list_of_words_base[i]);
-                }
+              list_of_words_clean.push_back(list_of_words_base[i]);
             }
-          // check if the line is contained words or numbers.
-          if (line_count != 0)
-            {
-              line_of_data = Utilities::string_to_double(list_of_words_clean);
-              for (unsigned int i = 0; i < line_of_data.size(); ++i)
-                {
-                  map[column_names[i]].push_back(line_of_data[i]);
-                }
-            }
-          else
-            {
-              // the line contains words, we assume these are the columns names.
-              column_names = list_of_words_clean;
-              for (unsigned int i = 0; i < list_of_words_clean.size(); ++i)
-                {
-                  std::vector<double> base_vector;
-                  map[column_names[i]] = base_vector;
-                }
-            }
-          ++line_count;
         }
-      myfile.close();
+      // check if the line is contained words or numbers.
+      if (line_count != 0)
+        {
+          line_of_data = Utilities::string_to_double(list_of_words_clean);
+          for (unsigned int i = 0; i < line_of_data.size(); ++i)
+            {
+              map[column_names[i]].push_back(line_of_data[i]);
+            }
+        }
+      else
+        {
+          // the line contains words, we assume these are the columns
+          // names.
+          column_names = list_of_words_clean;
+          for (unsigned int i = 0; i < list_of_words_clean.size(); ++i)
+            {
+              std::vector<double> base_vector;
+              map[column_names[i]] = base_vector;
+            }
+        }
+      ++line_count;
     }
-  else
-    std::cout << "Unable to open file";
+  myfile.close();
 }
 
 void
@@ -326,52 +317,48 @@ fill_string_vectors_from_file(
   const std::string                                delimiter)
 {
   std::ifstream myfile(file);
-  // open the file.
-  if (myfile.is_open())
-    {
-      std::string              line;
-      std::vector<std::string> column_names;
-      std::vector<std::string> line_of_data;
-      unsigned int             line_count = 0;
+  AssertThrow(myfile, ExcFileNotOpen(file));
 
-      while (std::getline(myfile, line))
+  std::string              line;
+  std::vector<std::string> column_names;
+  std::vector<std::string> line_of_data;
+  unsigned int             line_count = 0;
+
+  while (std::getline(myfile, line))
+    {
+      // read the line and clean the resulting vector.
+      std::vector<std::string> list_of_words_base =
+        Utilities::split_string_list(line, delimiter);
+      std::vector<std::string> list_of_words_clean;
+      for (unsigned int i = 0; i < list_of_words_base.size(); ++i)
         {
-          // read the line and clean the resulting vector.
-          std::vector<std::string> list_of_words_base =
-            Utilities::split_string_list(line, delimiter);
-          std::vector<std::string> list_of_words_clean;
-          for (unsigned int i = 0; i < list_of_words_base.size(); ++i)
+          if (list_of_words_base[i] != "")
             {
-              if (list_of_words_base[i] != "")
-                {
-                  list_of_words_clean.push_back(list_of_words_base[i]);
-                }
+              list_of_words_clean.push_back(list_of_words_base[i]);
             }
-          // Check if it is the first line. If it is we assume it is the column
-          // name.
-          if (line_count != 0)
-            {
-              line_of_data = list_of_words_clean;
-              for (unsigned int i = 0; i < line_of_data.size(); ++i)
-                {
-                  map[column_names[i]].push_back(line_of_data[i]);
-                }
-            }
-          else
-            {
-              column_names = list_of_words_clean;
-              for (unsigned int i = 0; i < list_of_words_clean.size(); ++i)
-                {
-                  std::vector<std::string> base_vector;
-                  map[column_names[i]] = base_vector;
-                }
-            }
-          ++line_count;
         }
-      myfile.close();
+      // Check if it is the first line. If it is we assume it is the
+      // column name.
+      if (line_count != 0)
+        {
+          line_of_data = list_of_words_clean;
+          for (unsigned int i = 0; i < line_of_data.size(); ++i)
+            {
+              map[column_names[i]].push_back(line_of_data[i]);
+            }
+        }
+      else
+        {
+          column_names = list_of_words_clean;
+          for (unsigned int i = 0; i < list_of_words_clean.size(); ++i)
+            {
+              std::vector<std::string> base_vector;
+              map[column_names[i]] = base_vector;
+            }
+        }
+      ++line_count;
     }
-  else
-    std::cout << "Unable to open file";
+  myfile.close();
 }
 
 void
@@ -584,8 +571,8 @@ get_last_value_of_parameter(const std::string &file_name,
         "set[ \t]+" + parameter_name + "[ \t]*=[ \t]*(.*)";
       if (std::regex_match(line, matches, std::regex(regex)))
         {
-          // Since the line as a whole matched, the 'matches' variable needs to
-          // contain two entries: [0] denotes the whole string, and [1] the
+          // Since the line as a whole matched, the 'matches' variable needs
+          // to contain two entries: [0] denotes the whole string, and [1] the
           // one that was matched by the '(.*)' expression.
           Assert(matches.size() == 2, dealii::ExcInternalError());
           return_value = std::string(matches[1].first, matches[1].second);
@@ -625,8 +612,8 @@ get_max_value_of_parameter(const std::string &file_name,
         "set[ \t]+" + parameter_name + "[ \t]*=[ \t]*(.*)";
       if (std::regex_match(line, matches, std::regex(regex)))
         {
-          // Since the line as a whole matched, the 'matches' variable needs to
-          // contain two entries: [0] denotes the whole string, and [1] the
+          // Since the line as a whole matched, the 'matches' variable needs
+          // to contain two entries: [0] denotes the whole string, and [1] the
           // one that was matched by the '(.*)' expression.
           Assert(matches.size() == 2, dealii::ExcInternalError());
           return_string = std::string(matches[1].first, matches[1].second);
@@ -657,8 +644,8 @@ get_dimension(const std::string &file_name)
       // a carriage-return without a newline -- so the error message looks
       // like this:
       //
-      //    >.  While reading the dimension from the input file, ASPECT found a
-      //    string that can not be converted to an integer: <2
+      //    >.  While reading the dimension from the input file, Lethe found
+      //    a string that can not be converted to an integer: <2
       //
       // Note how the end of the error message overwrites the beginning
       // of the line.
