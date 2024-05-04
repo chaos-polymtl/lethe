@@ -258,7 +258,9 @@ fill_table_from_file(TableHandler     &table,
       myfile.close();
     }
   else
-    std::cout << "Unable to open file";
+    {
+      throw std::runtime_error("Unable to open file " + file_name + ".");
+    }
 }
 
 void
@@ -316,7 +318,9 @@ fill_vectors_from_file(std::map<std::string, std::vector<double>> &map,
       myfile.close();
     }
   else
-    std::cout << "Unable to open file";
+    {
+      throw std::runtime_error("Unable to open file " + file + ".");
+    }
 }
 
 void
@@ -371,7 +375,9 @@ fill_string_vectors_from_file(
       myfile.close();
     }
   else
-    std::cout << "Unable to open file";
+    {
+      throw std::runtime_error("Unable to open file " + file + ".");
+    }
 }
 
 void
