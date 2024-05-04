@@ -52,11 +52,18 @@ MFNavierStokesPreconditionGMG<dim>::MFNavierStokesPreconditionGMG(
   const std::shared_ptr<Quadrature<dim>>  &cell_quadrature,
   const std::shared_ptr<Function<dim>>     forcing_function,
   const std::shared_ptr<SimulationControl> simulation_control,
-  TimerOutput                             &mg_computing_timer,
   const std::shared_ptr<FESystem<dim>>     fe)
   : pcout(std::cout, Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0)
   , simulation_parameters(simulation_parameters)
   , dof_handler(dof_handler)
+  , mg_setup_timer(MPI_COMM_WORLD,
+                   this->pcout,
+                   TimerOutput::never,
+                   TimerOutput::wall_times)
+  , mg_vmult_timer(MPI_COMM_WORLD,
+                   this->pcout,
+                   TimerOutput::never,
+                   TimerOutput::wall_times)
 {
   if (this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
         .preconditioner == Parameters::LinearSolver::PreconditionerType::lsmg)
@@ -150,7 +157,7 @@ MFNavierStokesPreconditionGMG<dim>::MFNavierStokesPreconditionGMG(
       this->ls_mg_operators.resize(this->minlevel, this->maxlevel);
 
       // Fill the level constraints
-      mg_computing_timer.enter_subsection("Set boundary conditions");
+      this->mg_setup_timer.enter_subsection("Set boundary conditions");
 
       this->mg_constrained_dofs.clear();
       this->mg_constrained_dofs.initialize(this->dof_handler);
@@ -228,7 +235,7 @@ MFNavierStokesPreconditionGMG<dim>::MFNavierStokesPreconditionGMG(
             }
         }
 
-      mg_computing_timer.leave_subsection("Set boundary conditions");
+      this->mg_setup_timer.leave_subsection("Set boundary conditions");
 
       // Create mg operators for each level and additional operators needed only
       // for local smoothing
@@ -288,7 +295,7 @@ MFNavierStokesPreconditionGMG<dim>::MFNavierStokesPreconditionGMG(
 
           level_constraints[level].close();
 
-          mg_computing_timer.enter_subsection("Set up operators");
+          this->mg_setup_timer.enter_subsection("Set up operators");
 
           this->mg_operators[level] =
             std::make_shared<NavierStokesStabilizedOperator<dim, double>>();
@@ -312,18 +319,18 @@ MFNavierStokesPreconditionGMG<dim>::MFNavierStokesPreconditionGMG(
           partitioners[level] =
             this->mg_operators[level]->get_vector_partitioner();
 
-          mg_computing_timer.leave_subsection("Set up operators");
+          this->mg_setup_timer.leave_subsection("Set up operators");
         }
 
       // Create transfer operators
-      mg_computing_timer.enter_subsection("Create transfer operator");
+      this->mg_setup_timer.enter_subsection("Create transfer operator");
 
       this->mg_transfer_ls = std::make_shared<LSTransferType>();
 
       this->mg_transfer_ls->initialize_constraints(this->mg_constrained_dofs);
       this->mg_transfer_ls->build(this->dof_handler, partitioners);
 
-      mg_computing_timer.leave_subsection("Create transfer operator");
+      this->mg_setup_timer.leave_subsection("Create transfer operator");
     }
   else if (this->simulation_parameters.linear_solver
              .at(PhysicsID::fluid_dynamics)
@@ -331,11 +338,11 @@ MFNavierStokesPreconditionGMG<dim>::MFNavierStokesPreconditionGMG(
            Parameters::LinearSolver::PreconditionerType::gcmg)
     {
       // Create triangulations
-      mg_computing_timer.enter_subsection("Create level triangulations");
+      this->mg_setup_timer.enter_subsection("Create level triangulations");
       this->coarse_grid_triangulations =
         MGTransferGlobalCoarseningTools::create_geometric_coarsening_sequence(
           this->dof_handler.get_triangulation());
-      mg_computing_timer.leave_subsection("Create level triangulations");
+      this->mg_setup_timer.leave_subsection("Create level triangulations");
 
       // Modify the triangulations if multigrid number of levels or minimum
       // number of cells in level are specified
@@ -409,7 +416,7 @@ MFNavierStokesPreconditionGMG<dim>::MFNavierStokesPreconditionGMG(
       this->transfers.resize(this->minlevel, this->maxlevel);
 
       // Distribute DoFs for each level
-      mg_computing_timer.enter_subsection(
+      this->mg_setup_timer.enter_subsection(
         "Create DoFHandlers and distribute DoFs");
       this->dof_handlers.resize(this->minlevel, this->maxlevel);
 
@@ -418,7 +425,7 @@ MFNavierStokesPreconditionGMG<dim>::MFNavierStokesPreconditionGMG(
           this->dof_handlers[l].reinit(*this->coarse_grid_triangulations[l]);
           this->dof_handlers[l].distribute_dofs(this->dof_handler.get_fe());
         }
-      mg_computing_timer.leave_subsection(
+      this->mg_setup_timer.leave_subsection(
         "Create DoFHandlers and distribute DoFs");
 
       if (this->simulation_parameters.linear_solver
@@ -444,7 +451,7 @@ MFNavierStokesPreconditionGMG<dim>::MFNavierStokesPreconditionGMG(
           const auto &level_dof_handler = this->dof_handlers[level];
           auto       &level_constraint  = constraints[level];
 
-          mg_computing_timer.enter_subsection("Set boundary conditions");
+          this->mg_setup_timer.enter_subsection("Set boundary conditions");
 
           level_constraint.clear();
           const IndexSet locally_relevant_dofs =
@@ -558,9 +565,9 @@ MFNavierStokesPreconditionGMG<dim>::MFNavierStokesPreconditionGMG(
 
           level_constraint.close();
 
-          mg_computing_timer.leave_subsection("Set boundary conditions");
+          this->mg_setup_timer.leave_subsection("Set boundary conditions");
 
-          mg_computing_timer.enter_subsection("Set up operators");
+          this->mg_setup_timer.enter_subsection("Set up operators");
 
           this->mg_operators[level] =
             std::make_shared<NavierStokesStabilizedOperator<dim, double>>();
@@ -577,11 +584,11 @@ MFNavierStokesPreconditionGMG<dim>::MFNavierStokesPreconditionGMG(
             numbers::invalid_unsigned_int,
             simulation_control);
 
-          mg_computing_timer.leave_subsection("Set up operators");
+          this->mg_setup_timer.leave_subsection("Set up operators");
         }
 
       // Create transfer operators
-      mg_computing_timer.enter_subsection("Create transfer operator");
+      this->mg_setup_timer.enter_subsection("Create transfer operator");
 
       for (unsigned int level = this->minlevel; level < this->maxlevel; ++level)
         this->transfers[level + 1].reinit(this->dof_handlers[level + 1],
@@ -594,7 +601,7 @@ MFNavierStokesPreconditionGMG<dim>::MFNavierStokesPreconditionGMG(
           this->mg_operators[l]->initialize_dof_vector(vec);
         });
 
-      mg_computing_timer.leave_subsection("Create transfer operator");
+      this->mg_setup_timer.leave_subsection("Create transfer operator");
     }
   else
     AssertThrow(false, ExcNotImplemented());
@@ -603,7 +610,6 @@ MFNavierStokesPreconditionGMG<dim>::MFNavierStokesPreconditionGMG(
 template <int dim>
 void
 MFNavierStokesPreconditionGMG<dim>::initialize(
-  TimerOutput                             &mg_computing_timer,
   const std::shared_ptr<SimulationControl> simulation_control,
   FlowControl<dim>                        &flow_control,
   const VectorType                        &present_solution,
@@ -630,7 +636,7 @@ MFNavierStokesPreconditionGMG<dim>::initialize(
         }
 
       // Create transfer operator and transfer solution to mg levels
-      mg_computing_timer.enter_subsection("Execute relevant transfers");
+      this->mg_setup_timer.enter_subsection("Execute relevant transfers");
 
       this->mg_transfer_ls->interpolate_to_mg(this->dof_handler,
                                               mg_solution,
@@ -664,13 +670,13 @@ MFNavierStokesPreconditionGMG<dim>::initialize(
             }
         }
 
-      mg_computing_timer.leave_subsection("Execute relevant transfers");
+      this->mg_setup_timer.leave_subsection("Execute relevant transfers");
 
       this->mg_matrix =
         std::make_shared<mg::Matrix<VectorType>>(this->ls_mg_operators);
 
       // Create smoother, fill parameters for each level and intialize it
-      mg_computing_timer.enter_subsection("Set up and initialize smoother");
+      this->mg_setup_timer.enter_subsection("Set up and initialize smoother");
 
       this->mg_smoother = std::make_shared<
         MGSmootherPrecondition<OperatorType, SmootherType, VectorType>>();
@@ -765,10 +771,10 @@ MFNavierStokesPreconditionGMG<dim>::initialize(
           "The estimation of eigenvalues within LSMG requires a version of deal.II >= 9.6.0"));
 #endif
 
-      mg_computing_timer.leave_subsection("Set up and initialize smoother");
+      this->mg_setup_timer.leave_subsection("Set up and initialize smoother");
 
       // Create coarse-grid GMRES solver and AMG preconditioner
-      mg_computing_timer.enter_subsection("Create coarse-grid solver");
+      this->mg_setup_timer.enter_subsection("Create coarse-grid solver");
 
       const int max_iterations =
         this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
@@ -906,7 +912,7 @@ MFNavierStokesPreconditionGMG<dim>::initialize(
             *this->mg_operators[this->minlevel],
             this->precondition_ilu);
         }
-      mg_computing_timer.leave_subsection("Create coarse-grid solver");
+      this->mg_setup_timer.leave_subsection("Create coarse-grid solver");
 
       // Create interface matrices needed for local smoothing in case of local
       // refinement
@@ -928,6 +934,52 @@ MFNavierStokesPreconditionGMG<dim>::initialize(
       this->ls_multigrid_preconditioner =
         std::make_shared<PreconditionMG<dim, VectorType, LSTransferType>>(
           this->dof_handler, *this->mg, *this->mg_transfer_ls);
+
+      // Print detailed timings of multigrid vmult
+      const auto create_mg_timer_function = [&](const std::string &label) {
+        return [label, this](const bool flag, const unsigned int level) {
+          const std::string label_full =
+            (label == "") ?
+              ("gmg::vmult::level_" + std::to_string(level)) :
+              ("gmg::vmult::level_" + std::to_string(level) + "::" + label);
+
+          if (flag)
+            this->mg_vmult_timer.enter_subsection(label_full);
+          else
+            this->mg_vmult_timer.leave_subsection(label_full);
+        };
+      };
+
+      this->mg->connect_pre_smoother_step(
+        create_mg_timer_function("0_pre_smoother_step"));
+      this->mg->connect_residual_step(
+        create_mg_timer_function("1_residual_step"));
+      this->mg->connect_restriction(create_mg_timer_function("2_restriction"));
+      this->mg->connect_coarse_solve(create_mg_timer_function(""));
+      this->mg->connect_prolongation(
+        create_mg_timer_function("3_prolongation"));
+      this->mg->connect_edge_prolongation(
+        create_mg_timer_function("4_edge_prolongation"));
+      this->mg->connect_post_smoother_step(
+        create_mg_timer_function("5_post_smoother_step"));
+
+
+      const auto create_mg_precon_timer_function =
+        [&](const std::string &label) {
+          return [label, this](const bool flag) {
+            const std::string label_full = "gmg::vmult::" + label;
+
+            if (flag)
+              this->mg_vmult_timer.enter_subsection(label_full);
+            else
+              this->mg_vmult_timer.leave_subsection(label_full);
+          };
+        };
+
+      this->ls_multigrid_preconditioner->connect_transfer_to_mg(
+        create_mg_precon_timer_function("transfer_to_mg"));
+      this->ls_multigrid_preconditioner->connect_transfer_to_global(
+        create_mg_precon_timer_function("transfer_to_global"));
     }
   else if (this->simulation_parameters.linear_solver
              .at(PhysicsID::fluid_dynamics)
@@ -944,7 +996,7 @@ MFNavierStokesPreconditionGMG<dim>::initialize(
                                                    this->maxlevel);
 
       // Create transfer operators and transfer solution to mg levels
-      mg_computing_timer.enter_subsection("Execute relevant transfers");
+      this->mg_setup_timer.enter_subsection("Execute relevant transfers");
 
       this->mg_transfer_gc->interpolate_to_mg(this->dof_handler,
                                               mg_solution,
@@ -979,13 +1031,13 @@ MFNavierStokesPreconditionGMG<dim>::initialize(
             }
         }
 
-      mg_computing_timer.leave_subsection("Execute relevant transfers");
+      this->mg_setup_timer.leave_subsection("Execute relevant transfers");
 
       this->mg_matrix =
         std::make_shared<mg::Matrix<VectorType>>(this->mg_operators);
 
       // Create smoother, fill parameters for each level and intialize it
-      mg_computing_timer.enter_subsection("Set up and initialize smoother");
+      this->mg_setup_timer.enter_subsection("Set up and initialize smoother");
 
       this->mg_smoother = std::make_shared<
         MGSmootherPrecondition<OperatorType, SmootherType, VectorType>>();
@@ -1080,10 +1132,10 @@ MFNavierStokesPreconditionGMG<dim>::initialize(
           "The estimation of eigenvalues within GCMG requires a version of deal.II >= 9.6.0"));
 #endif
 
-      mg_computing_timer.leave_subsection("Set up and initialize smoother");
+      this->mg_setup_timer.leave_subsection("Set up and initialize smoother");
 
       // Create coarse-grid GMRES solver and AMG preconditioner
-      mg_computing_timer.enter_subsection("Create coarse-grid solver");
+      this->mg_setup_timer.enter_subsection("Create coarse-grid solver");
 
       const int max_iterations =
         this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
@@ -1214,7 +1266,7 @@ MFNavierStokesPreconditionGMG<dim>::initialize(
             this->precondition_ilu);
         }
 
-      mg_computing_timer.leave_subsection("Create coarse-grid solver");
+      this->mg_setup_timer.leave_subsection("Create coarse-grid solver");
 
       // Create main MG object
       this->mg = std::make_shared<Multigrid<VectorType>>(*this->mg_matrix,
@@ -1227,6 +1279,52 @@ MFNavierStokesPreconditionGMG<dim>::initialize(
       this->gc_multigrid_preconditioner =
         std::make_shared<PreconditionMG<dim, VectorType, GCTransferType>>(
           this->dof_handler, *this->mg, *this->mg_transfer_gc);
+
+      // Print detailed timings of multigrid vmult
+      const auto create_mg_timer_function = [&](const std::string &label) {
+        return [label, this](const bool flag, const unsigned int level) {
+          const std::string label_full =
+            (label == "") ?
+              ("gmg::vmult::level_" + std::to_string(level)) :
+              ("gmg::vmult::level_" + std::to_string(level) + "::" + label);
+
+          if (flag)
+            this->mg_vmult_timer.enter_subsection(label_full);
+          else
+            this->mg_vmult_timer.leave_subsection(label_full);
+        };
+      };
+
+      this->mg->connect_pre_smoother_step(
+        create_mg_timer_function("0_pre_smoother_step"));
+      this->mg->connect_residual_step(
+        create_mg_timer_function("1_residual_step"));
+      this->mg->connect_restriction(create_mg_timer_function("2_restriction"));
+      this->mg->connect_coarse_solve(create_mg_timer_function(""));
+      this->mg->connect_prolongation(
+        create_mg_timer_function("3_prolongation"));
+      this->mg->connect_edge_prolongation(
+        create_mg_timer_function("4_edge_prolongation"));
+      this->mg->connect_post_smoother_step(
+        create_mg_timer_function("5_post_smoother_step"));
+
+
+      const auto create_mg_precon_timer_function =
+        [&](const std::string &label) {
+          return [label, this](const bool flag) {
+            const std::string label_full = "gmg::vmult::" + label;
+
+            if (flag)
+              this->mg_vmult_timer.enter_subsection(label_full);
+            else
+              this->mg_vmult_timer.leave_subsection(label_full);
+          };
+        };
+
+      this->gc_multigrid_preconditioner->connect_transfer_to_mg(
+        create_mg_precon_timer_function("transfer_to_mg"));
+      this->gc_multigrid_preconditioner->connect_transfer_to_global(
+        create_mg_precon_timer_function("transfer_to_global"));
     }
   else
     AssertThrow(false, ExcNotImplemented());
@@ -1282,10 +1380,6 @@ template <int dim>
 MFNavierStokesSolver<dim>::MFNavierStokesSolver(
   SimulationParameters<dim> &nsparam)
   : NavierStokesBase<dim, VectorType, IndexSet>(nsparam)
-  , mg_computing_timer(this->mpi_communicator,
-                       this->pcout,
-                       TimerOutput::never,
-                       TimerOutput::wall_times)
 {
   AssertThrow(
     nsparam.fem_parameters.velocity_order ==
@@ -1400,7 +1494,6 @@ MFNavierStokesSolver<dim>::setup_dofs_fd()
   if (this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
         .preconditioner == Parameters::LinearSolver::PreconditionerType::lsmg)
     {
-      TimerOutput::Scope t(this->mg_computing_timer, "Distribute MG DoFs");
       this->dof_handler.distribute_mg_dofs();
     }
 
@@ -1569,7 +1662,6 @@ MFNavierStokesSolver<dim>::set_initial_condition_fd(
                 this->cell_quadrature,
                 this->forcing_function,
                 this->simulation_control,
-                this->mg_computing_timer,
                 this->fe);
 
           auto mg_operators = this->gmg_preconditioner->get_mg_operators();
@@ -1683,7 +1775,6 @@ MFNavierStokesSolver<dim>::set_initial_condition_fd(
                     this->cell_quadrature,
                     this->forcing_function,
                     this->simulation_control,
-                    this->mg_computing_timer,
                     this->fe);
 
               auto mg_operators = this->gmg_preconditioner->get_mg_operators();
@@ -1807,11 +1898,9 @@ MFNavierStokesSolver<dim>::setup_GMG()
       this->cell_quadrature,
       this->forcing_function,
       this->simulation_control,
-      this->mg_computing_timer,
       this->fe);
 
-  gmg_preconditioner->initialize(this->mg_computing_timer,
-                                 this->simulation_control,
+  gmg_preconditioner->initialize(this->simulation_control,
                                  this->flow_control,
                                  this->present_solution,
                                  this->time_derivative_previous_solutions);
@@ -1854,10 +1943,15 @@ MFNavierStokesSolver<dim>::print_mg_setup_times()
         .mg_verbosity == Parameters::Verbosity::extra_verbose)
     {
       announce_string(this->pcout, "Multigrid setup times");
-      this->mg_computing_timer.print_summary();
+      this->gmg_preconditioner->mg_setup_timer.print_summary();
+
+      announce_string(this->pcout, "Multigrid vmult times");
+      this->gmg_preconditioner->mg_vmult_timer.print_summary();
     }
 
-  this->mg_computing_timer.reset();
+  this->gmg_preconditioner->mg_setup_timer.reset();
+
+  this->gmg_preconditioner->mg_vmult_timer.reset();
 }
 
 template <int dim>
