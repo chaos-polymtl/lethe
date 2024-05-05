@@ -724,11 +724,7 @@ public:
       number_of_particles = i_particle;
     }
 
-    // If there were particles, calculate the average particle velocity within
-    // the cell
-    if (number_of_particles > 0)
-      average_particle_velocity =
-        average_particle_velocity / number_of_particles;
+
 
     if (!interpolated_void_fraction)
       {
@@ -743,6 +739,10 @@ public:
     if (number_of_particles == 0)
       return;
 
+
+    // Calculate the average particle velocity within
+    // the cell
+    average_particle_velocity = average_particle_velocity / number_of_particles;
 
     // Create local vector that will be used to spawn an in-situ quadrature to
     // interpolate at the location of the particles
@@ -839,11 +839,9 @@ public:
             (kinematic_viscosity + DBL_MIN);
         i_particle++;
       }
-    if (i_particle > 0)
-      {
-        average_fluid_particle_relative_velocity =
-          average_fluid_particle_relative_velocity / i_particle;
-      }
+
+    average_fluid_particle_relative_velocity =
+      average_fluid_particle_relative_velocity / i_particle;
   }
 
 
