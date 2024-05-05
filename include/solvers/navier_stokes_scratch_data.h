@@ -740,19 +740,9 @@ public:
           cell_void_fraction[j] = cell_void_fraction_bulk;
       }
 
-    // Resize arrays to be of the right size
-    fluid_velocity_laplacian_at_particle_location.resize(number_of_particles);
-    fluid_velocity_curls_at_particle_location_2d.resize(number_of_particles);
-    fluid_velocity_curls_at_particle_location_3d.resize(number_of_particles);
-    fluid_pressure_gradients_at_particle_location.resize(number_of_particles);
-    fluid_velocity_at_particle_location.resize(number_of_particles);
-
     if (number_of_particles == 0)
       return;
 
-
-    // If particles are in the cell, gather the rest of the
-    // information
 
     // Create local vector that will be used to spawn an in-situ quadrature to
     // interpolate at the location of the particles
@@ -770,7 +760,6 @@ public:
 
     // Create a quadrature for the Navier-Stokes equations that is based on the
     // particle reference location
-
     Quadrature<dim> q_local(particle_reference_location, particle_weights);
     FEValues<dim>   fe_values_local_particles(this->fe_values.get_fe(),
                                             q_local,

@@ -324,7 +324,8 @@ NavierStokesScratchData<dim>::enable_particle_fluid_interactions(
   max_number_of_particles_per_cell = n_global_max_particles_per_cell;
   interpolated_void_fraction       = enable_void_fraction_interpolation;
 
-  // Velocities
+  // Reinitialize vectors used to store flow information at the particle
+  // location
   particle_velocity =
     std::vector<Tensor<1, dim>>(n_global_max_particles_per_cell);
   fluid_velocity_at_particle_location =
@@ -333,6 +334,15 @@ NavierStokesScratchData<dim>::enable_particle_fluid_interactions(
   fluid_particle_relative_velocity_at_particle_location =
     std::vector<Tensor<1, dim>>(n_global_max_particles_per_cell);
   Re_particle = std::vector<double>(n_global_max_particles_per_cell);
+
+  fluid_velocity_laplacian_at_particle_location =
+    std::vector<Tensor<1, dim>>(n_global_max_particles_per_cell);
+  fluid_velocity_curls_at_particle_location_2d =
+    std::vector<Tensor<1, 1>>(n_global_max_particles_per_cell);
+  fluid_velocity_curls_at_particle_location_3d =
+    std::vector<Tensor<1, 3>>(n_global_max_particles_per_cell);
+  fluid_pressure_gradients_at_particle_location =
+    std::vector<Tensor<1, dim>>(n_global_max_particles_per_cell);
 }
 
 
