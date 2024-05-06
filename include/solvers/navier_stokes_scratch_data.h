@@ -765,9 +765,10 @@ public:
                                             update_gradients | update_values |
                                               update_hessians);
 
-    // Reallocate memory for the fields to be interpolated at the particle location
-    // This has to be done for every cell because deal.II expects the size of the vector
-    // to be strictly equal to the number of points in the quadrature
+    // Reallocate memory for the fields to be interpolated at the particle
+    // location This has to be done for every cell because deal.II expects the
+    // size of the vector to be strictly equal to the number of points in the
+    // quadrature
     fluid_velocity_at_particle_location.resize(number_of_particles);
     fluid_velocity_laplacian_at_particle_location.resize(number_of_particles);
     fluid_velocity_curls_at_particle_location_2d.resize(number_of_particles);

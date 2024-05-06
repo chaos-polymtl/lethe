@@ -333,7 +333,6 @@ NavierStokesScratchData<dim>::enable_particle_fluid_interactions(
   fluid_particle_relative_velocity_at_particle_location =
     std::vector<Tensor<1, dim>>(n_global_max_particles_per_cell);
   Re_particle = std::vector<double>(n_global_max_particles_per_cell);
-
 }
 
 
