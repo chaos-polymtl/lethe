@@ -482,13 +482,16 @@ protected:
   std::vector<bool> edge_constrained_cell;
 
   /**
-   * @brief Conditional OStream for parallel output
+   * @brief Conditional OStream for parallel output.
    *
    */
   ConditionalOStream pcout;
 
 public:
-  // Timer for internal operator calls
+  /**
+   * @brief Timer for internal operator calls.
+   *
+   */
   mutable TimerOutput timer;
 };
 
