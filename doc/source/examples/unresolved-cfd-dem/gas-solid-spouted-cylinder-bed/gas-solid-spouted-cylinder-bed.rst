@@ -307,7 +307,7 @@ This graph illustrates the variation of pressure drop from 1s to 5s. We can see 
 
 Visualization
 ~~~~~~~~~~~~~
-The results are shown in an animation below. As seen, the bubbly flow can be observed on the right side. the color of the particles represents the ID, to make it easier to see mixing. On the left side, you see the velocity profile as well.
+The results are shown in an animation below. As seen, the bubbly flow can be observed on the right side. the color of the particles represents their IDs, allowing for the visualization of the mixing. On the left side, we show the fluid velocity field.
 
 .. raw:: html
 
