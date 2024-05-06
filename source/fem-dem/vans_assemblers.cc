@@ -313,6 +313,8 @@ GLSVansAssemblerCoreModelB<dim>::assemble_rhs(
       // Assembly of the right-hand side
       for (unsigned int i = 0; i < n_dofs; ++i)
         {
+          const unsigned int component_i = scratch_data.components[i];
+
           const auto phi_u_i      = scratch_data.phi_u[q][i];
           const auto grad_phi_u_i = scratch_data.grad_phi_u[q][i];
           const auto phi_p_i      = scratch_data.phi_p[q][i];
@@ -322,8 +324,8 @@ GLSVansAssemblerCoreModelB<dim>::assemble_rhs(
           double local_rhs_i = 0;
 
           // Navier-Stokes Residual
-          local_rhs_i +=
-            (
+          if (component_i < dim)
+            local_rhs_i +=
               // Momentum
               -kinematic_viscosity *
                 scalar_product(velocity_gradient, grad_phi_u_i) -
@@ -331,22 +333,22 @@ GLSVansAssemblerCoreModelB<dim>::assemble_rhs(
               // Mass Source
               - mass_source * velocity * phi_u_i
               // Pressure and Force
-              + pressure * div_phi_u_i +
-              force * void_fraction * phi_u_i
-              // Continuity
-              - (velocity_divergence * void_fraction +
-                 velocity * void_fraction_gradients - mass_source) *
-                  phi_p_i) *
-            JxW;
+              + pressure * div_phi_u_i + force * void_fraction * phi_u_i;
+
+          if (component_i == dim)
+            // Continuity
+            local_rhs_i += -(velocity_divergence * void_fraction +
+                             velocity * void_fraction_gradients - mass_source) *
+                           phi_p_i;
 
           // PSPG GLS term
-          local_rhs_i += -tau * (strong_residual * grad_phi_p_i) * JxW;
+          local_rhs_i += -tau * (strong_residual * grad_phi_p_i);
 
           // SUPG GLS term
-          if (SUPG)
+          if (SUPG && component_i < dim)
             {
               local_rhs_i +=
-                -tau * (strong_residual * (grad_phi_u_i * velocity)) * JxW;
+                -tau * (strong_residual * (grad_phi_u_i * velocity));
             }
 
           // Grad-div stabilization
@@ -355,10 +357,10 @@ GLSVansAssemblerCoreModelB<dim>::assemble_rhs(
               local_rhs_i -= gamma *
                              (void_fraction * velocity_divergence +
                               velocity * void_fraction_gradients) *
-                             div_phi_u_i * JxW;
+                             div_phi_u_i;
             }
 
-          local_rhs(i) += local_rhs_i;
+          local_rhs(i) += local_rhs_i * JxW;
         }
     }
 }
@@ -690,20 +692,20 @@ GLSVansAssemblerCoreModelA<dim>::assemble_rhs(
           // Navier-Stokes Residual
           double local_rhs_i = 0;
 
-          // if (component_i < dim)
-          local_rhs_i += (
-            // Momentum
-            -(void_fraction * kinematic_viscosity *
-                scalar_product(velocity_gradient, grad_phi_u_i) +
-              kinematic_viscosity * velocity_gradient *
-                void_fraction_gradients * phi_u_i) -
-            velocity_gradient * velocity * void_fraction * phi_u_i
-            // Mass Source
-            - mass_source * velocity * phi_u_i
-            // Pressure and Force
-            + (void_fraction * pressure * div_phi_u_i +
-               pressure * void_fraction_gradients * phi_u_i) +
-            force * void_fraction * phi_u_i);
+          if (component_i < dim)
+            local_rhs_i += (
+              // Momentum
+              -(void_fraction * kinematic_viscosity *
+                  scalar_product(velocity_gradient, grad_phi_u_i) +
+                kinematic_viscosity * velocity_gradient *
+                  void_fraction_gradients * phi_u_i) -
+              velocity_gradient * velocity * void_fraction * phi_u_i
+              // Mass Source
+              - mass_source * velocity * phi_u_i
+              // Pressure and Force
+              + (void_fraction * pressure * div_phi_u_i +
+                 pressure * void_fraction_gradients * phi_u_i) +
+              force * void_fraction * phi_u_i);
 
           if (component_i == dim)
             // Continuity
