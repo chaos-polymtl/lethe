@@ -653,7 +653,7 @@ MFNavierStokesPreconditionGMG<dim>::initialize(
            ++level)
         {
           mg_solution[level].update_ghost_values();
-          this->mg_operators[level]->evaluate_non_linear_term(
+          this->mg_operators[level]->evaluate_non_linear_term_and_calculate_tau(
             mg_solution[level]);
 
           if (is_bdf(simulation_control->get_assembly_method()))
@@ -1014,7 +1014,7 @@ MFNavierStokesPreconditionGMG<dim>::initialize(
            ++level)
         {
           mg_solution[level].update_ghost_values();
-          this->mg_operators[level]->evaluate_non_linear_term(
+          this->mg_operators[level]->evaluate_non_linear_term_and_calculate_tau(
             mg_solution[level]);
 
           if (is_bdf(simulation_control->get_assembly_method()))
@@ -2146,7 +2146,8 @@ void
 MFNavierStokesSolver<dim>::setup_preconditioner()
 {
   this->present_solution.update_ghost_values();
-  this->system_operator->evaluate_non_linear_term(this->present_solution);
+  this->system_operator->evaluate_non_linear_term_and_calculate_tau(
+    this->present_solution);
 
   if (this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
         .preconditioner == Parameters::LinearSolver::PreconditionerType::ilu)

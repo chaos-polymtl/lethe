@@ -238,12 +238,12 @@ public:
 
   /**
    * @brief Store relevant values of the vector of the last newton step to use it
-   * in the Jacobian.
+   * in the Jacobian and pre-calculate the stabilization parameter tau.
    *
    * @param[in] newton_step Vector of the last newton step.
    */
   void
-  evaluate_non_linear_term(const VectorType &newton_step);
+  evaluate_non_linear_term_and_calculate_tau(const VectorType &newton_step);
 
   /**
    * @brief Store the values of the vector containing the time derivatives of
@@ -441,6 +441,20 @@ protected:
    */
   Table<2, Tensor<1, dim + 1, VectorizedArray<number>>>
     time_derivatives_previous_solutions;
+
+  /**
+   * @brief Table with correct alignment for vectorization to store the values
+   * of the stabilization parameter tau.
+   *
+   */
+  Table<2, VectorizedArray<number>> stabilization_parameter;
+
+  /**
+   * @brief Table with correct alignment for vectorization to store the values
+   * of the stabilization parameter tau lsic.
+   *
+   */
+  Table<2, VectorizedArray<number>> stabilization_parameter_lsic;
 
   /**
    * @brief Vector with the constrained indices used for the local smoothing approach.
