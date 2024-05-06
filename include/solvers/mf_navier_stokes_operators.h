@@ -22,6 +22,8 @@
 
 #include <solvers/simulation_parameters.h>
 
+#include <deal.II/base/timer.h>
+
 #include <deal.II/lac/dynamic_sparsity_pattern.h>
 #include <deal.II/lac/sparsity_tools.h>
 #include <deal.II/lac/trilinos_sparse_matrix.h>
@@ -478,6 +480,16 @@ protected:
    *
    */
   std::vector<bool> edge_constrained_cell;
+
+  /**
+   * @brief Conditional OStream for parallel output
+   *
+   */
+  ConditionalOStream pcout;
+
+public:
+  // Timer for internal operator calls
+  mutable TimerOutput timer;
 };
 
 /**
