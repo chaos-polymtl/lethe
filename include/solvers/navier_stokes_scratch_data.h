@@ -682,7 +682,6 @@ public:
     DoFHandler<dim>                       &dof_handler,
     DoFHandler<dim>                       &void_fraction_dof_handler)
   {
-    bool interpolated_void_fraction = this->interpolated_void_fraction;
     pic = particle_handler.particles_in_cell(this->fe_values.get_cell());
 
     average_particle_velocity = 0;
@@ -691,7 +690,7 @@ public:
     // Loop over particles in cell
     double total_particle_volume = 0;
     {
-      unsigned int i_particle = 0;
+      unsigned int particle_i = 0;
       for (auto &particle : pic)
         {
           auto particle_properties = particle.get_properties();
@@ -704,29 +703,29 @@ public:
             }
 
           // Stock the values of particle velocity in a tensor
-          particle_velocity[i_particle][0] =
+          particle_velocity[particle_i][0] =
             particle_properties[DEM::PropertiesIndex::v_x];
-          particle_velocity[i_particle][1] =
+          particle_velocity[particle_i][1] =
             particle_properties[DEM::PropertiesIndex::v_y];
           if constexpr (dim == 3)
-            particle_velocity[i_particle][2] =
+            particle_velocity[particle_i][2] =
               particle_properties[DEM::PropertiesIndex::v_z];
 
-          cell_void_fraction[i_particle] = 0;
+          cell_void_fraction[particle_i] = 0;
           if (!interpolated_void_fraction)
             total_particle_volume +=
               M_PI * pow(particle_properties[DEM::PropertiesIndex::dp], dim) /
               (2 * dim);
 
-          average_particle_velocity += particle_velocity[i_particle];
-          i_particle++;
+          average_particle_velocity += particle_velocity[particle_i];
+          particle_i++;
         }
-      number_of_particles = i_particle;
+      number_of_particles = particle_i;
     }
 
 
 
-    if (!interpolated_void_fraction)
+    if (!this->interpolated_void_fraction)
       {
         double cell_void_fraction_bulk = 0;
         cell_void_fraction_bulk =
@@ -766,6 +765,15 @@ public:
                                             update_gradients | update_values |
                                               update_hessians);
 
+    // Reallocate memory for the fields to be interpolated at the particle location
+    // This has to be done for every cell because deal.II expects the size of the vector
+    // to be strictly equal to the number of points in the quadrature
+    fluid_velocity_at_particle_location.resize(number_of_particles);
+    fluid_velocity_laplacian_at_particle_location.resize(number_of_particles);
+    fluid_velocity_curls_at_particle_location_2d.resize(number_of_particles);
+    fluid_velocity_curls_at_particle_location_3d.resize(number_of_particles);
+    fluid_pressure_gradients_at_particle_location.resize(number_of_particles);
+
     // Evaluate the relevant information at the
     // quadrature points to do the interpolation.
     const auto &velocity_cell =
@@ -797,7 +805,7 @@ public:
 
     // Create a quadrature for the void fraction that is based on the particle
     // reference location
-    if (interpolated_void_fraction)
+    if (this->interpolated_void_fraction)
       {
         FEValues<dim> fe_values_particles_void_fraction(
           this->fe_values_void_fraction->get_fe(), q_local, update_values);
@@ -814,7 +822,7 @@ public:
       }
 
     // Relative velocity and particle Reynolds
-    unsigned int i_particle                  = 0;
+    unsigned int particle_i                  = 0;
     average_fluid_particle_relative_velocity = 0;
 
     // TODO, get the real viscosity at the particle localtion
@@ -824,24 +832,24 @@ public:
     for (auto &particle : pic)
       {
         auto particle_properties = particle.get_properties();
-        fluid_particle_relative_velocity_at_particle_location[i_particle] =
-          fluid_velocity_at_particle_location[i_particle] -
-          particle_velocity[i_particle];
+        fluid_particle_relative_velocity_at_particle_location[particle_i] =
+          fluid_velocity_at_particle_location[particle_i] -
+          particle_velocity[particle_i];
         average_fluid_particle_relative_velocity +=
-          fluid_particle_relative_velocity_at_particle_location[i_particle];
+          fluid_particle_relative_velocity_at_particle_location[particle_i];
 
-        Re_particle[i_particle] =
+        Re_particle[particle_i] =
           1e-3 +
-          cell_void_fraction[i_particle] *
-            fluid_particle_relative_velocity_at_particle_location[i_particle]
+          cell_void_fraction[particle_i] *
+            fluid_particle_relative_velocity_at_particle_location[particle_i]
               .norm() *
             particle_properties[DEM::PropertiesIndex::dp] /
             (kinematic_viscosity + DBL_MIN);
-        i_particle++;
+        particle_i++;
       }
 
     average_fluid_particle_relative_velocity =
-      average_fluid_particle_relative_velocity / i_particle;
+      average_fluid_particle_relative_velocity / particle_i;
   }
 
 
