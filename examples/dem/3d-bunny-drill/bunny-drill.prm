@@ -34,10 +34,6 @@ subsection model parameters
   set rolling resistance torque method       = constant_resistance
   set particle wall contact force method     = nonlinear
   set integration method                     = velocity_verlet
-  subsection dynamic disabling contacts
-    set enable dynamic disabling contacts = false
-    set granular temperature threshold    = 0.01
-  end
 end
 
 subsection restart
