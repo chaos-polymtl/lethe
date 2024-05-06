@@ -616,18 +616,16 @@ MFNavierStokesPreconditionGMG<dim>::initialize(
   const VectorType                        &time_derivative_previous_solutions)
 {
   // Local objects for the different levels
-  MGLevelObject<VectorType> mg_solution;
-  MGLevelObject<VectorType> mg_time_derivative_previous_solutions;
-
-  // Resize all multilevel objects according to level
-  mg_solution.resize(this->minlevel, this->maxlevel);
-  mg_time_derivative_previous_solutions.resize(this->minlevel, this->maxlevel);
+  MGLevelObject<VectorType> mg_solution(this->minlevel, this->maxlevel);
+  MGLevelObject<VectorType> mg_time_derivative_previous_solutions(
+    this->minlevel, this->maxlevel);
 
   for (unsigned int level = this->minlevel; level <= this->maxlevel; ++level)
     {
       this->mg_operators[level]->initialize_dof_vector(mg_solution[level]);
-      this->mg_operators[level]->initialize_dof_vector(
-        mg_time_derivative_previous_solutions[level]);
+      if (is_bdf(simulation_control->get_assembly_method()))
+        this->mg_operators[level]->initialize_dof_vector(
+          mg_time_derivative_previous_solutions[level]);
     }
 
   this->mg_setup_timer.enter_subsection("Execute relevant transfers");
