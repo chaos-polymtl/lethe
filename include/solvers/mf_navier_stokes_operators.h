@@ -236,7 +236,7 @@ public:
 
   /**
    * @brief Store relevant values of the vector of the last newton step to use it
-   * in the Jacobian.
+   * in the Jacobian and pre-calculate the stabilization parameter tau.
    *
    * @param[in] newton_step Vector of the last newton step.
    */
