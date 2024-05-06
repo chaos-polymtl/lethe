@@ -154,16 +154,6 @@ GLSVansAssemblerCoreModelB<dim>::assemble_matrix(
               double local_matrix_ij =
                 component_j == dim ? -div_phi_u_i * phi_p_j : 0;
 
-              if (component_i == component_j)
-                {
-                  local_matrix_ij +=
-                    // Deviatoric stress tensor
-                    kinematic_viscosity *
-                      (grad_phi_u_j[component_j] * grad_phi_u_i[component_i])
-                    // Mass source
-                    + mass_source * phi_u_j * phi_u_i;
-                }
-
               if (component_i == dim)
                 {
                   // Continuity
@@ -181,8 +171,17 @@ GLSVansAssemblerCoreModelB<dim>::assemble_matrix(
                   local_matrix_ij +=
                     ((phi_u_j * void_fraction * velocity_gradient * phi_u_i) +
                      (grad_phi_u_j * void_fraction * velocity * phi_u_i));
-                }
 
+                  if (component_i == component_j)
+                    {
+                      local_matrix_ij +=
+                        // Deviatoric stress tensor
+                        kinematic_viscosity * (grad_phi_u_j[component_j] *
+                                               grad_phi_u_i[component_i])
+                        // Mass source
+                        + mass_source * phi_u_j * phi_u_i;
+                    }
+                }
 
               // The jacobian matrix for the SUPG formulation
               // currently does not include the jacobian of the stabilization
@@ -518,10 +517,8 @@ GLSVansAssemblerCoreModelA<dim>::assemble_matrix(
 
               // Pressure
               double local_matrix_ij =
-                component_j == dim ?
-                  -(div_phi_u_i * phi_p_j * void_fraction +
-                    phi_p_j * void_fraction_gradients * phi_u_i) :
-                  0;
+                -(div_phi_u_i * phi_p_j * void_fraction +
+                  phi_p_j * void_fraction_gradients * phi_u_i);
 
               if (component_i == dim)
                 {
@@ -693,20 +690,20 @@ GLSVansAssemblerCoreModelA<dim>::assemble_rhs(
           // Navier-Stokes Residual
           double local_rhs_i = 0;
 
-          if (component_i < dim)
-            local_rhs_i += (
-              // Momentum
-              -(void_fraction * kinematic_viscosity *
-                  scalar_product(velocity_gradient, grad_phi_u_i) +
-                kinematic_viscosity * velocity_gradient *
-                  void_fraction_gradients * phi_u_i) -
-              velocity_gradient * velocity * void_fraction * phi_u_i
-              // Mass Source
-              - mass_source * velocity * phi_u_i
-              // Pressure and Force
-              + (void_fraction * pressure * div_phi_u_i +
-                 pressure * void_fraction_gradients * phi_u_i) +
-              force * void_fraction * phi_u_i);
+          // if (component_i < dim)
+          local_rhs_i += (
+            // Momentum
+            -(void_fraction * kinematic_viscosity *
+                scalar_product(velocity_gradient, grad_phi_u_i) +
+              kinematic_viscosity * velocity_gradient *
+                void_fraction_gradients * phi_u_i) -
+            velocity_gradient * velocity * void_fraction * phi_u_i
+            // Mass Source
+            - mass_source * velocity * phi_u_i
+            // Pressure and Force
+            + (void_fraction * pressure * div_phi_u_i +
+               pressure * void_fraction_gradients * phi_u_i) +
+            force * void_fraction * phi_u_i);
 
           if (component_i == dim)
             // Continuity
