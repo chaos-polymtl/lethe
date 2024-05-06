@@ -127,7 +127,7 @@ DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
     });
 #endif
 
-  if (parameters.model_parameters.disable_particle_contacts)
+  if (parameters.model_parameters.sparse_particle_contacts)
     {
       has_sparse_contacts = true;
       sparse_contacts_object.set_parameters(
@@ -544,7 +544,7 @@ DEMSolver<dim>::set_load_balance_iteration_check_function()
     }
   else if (parameters.model_parameters.load_balance_method ==
            Parameters::Lagrangian::ModelParameters::LoadBalanceMethod::
-             dynamic_with_disabling_contacts)
+             dynamic_with_sparse_contacts)
     {
       return [&] { return check_load_balance_with_sparse_contacts(); };
     }

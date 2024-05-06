@@ -220,7 +220,7 @@ namespace Parameters
         once,
         frequent,
         dynamic,
-        dynamic_with_disabling_contacts
+        dynamic_with_sparse_contacts
       } load_balance_method;
 
       // Load balance step (for single step load-balancing)
@@ -285,7 +285,7 @@ namespace Parameters
       } integration_method;
 
       // Disable particle contacts to optimize performance
-      bool disable_particle_contacts;
+      bool sparse_particle_contacts;
 
       // Enable advection of particles (applies cell average velocity and
       // acceleration to particles)

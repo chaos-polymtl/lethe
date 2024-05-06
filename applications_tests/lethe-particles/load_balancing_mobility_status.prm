@@ -26,7 +26,7 @@ subsection model parameters
   end
 
   subsection load balancing
-    set load balance method     = dynamic_with_disabling_contacts
+    set load balance method     = dynamic_with_sparse_contacts
     set threshold               = 0.5
     set dynamic check frequency = 100
     set active weight factor    = 0.001
@@ -38,10 +38,10 @@ subsection model parameters
   set rolling resistance torque method       = constant_resistance
   set integration method                     = velocity_verlet
 
-  subsection dynamic disabling contacts
-    set enable dynamic disabling contacts = true
-    set granular temperature threshold    = 1e-4
-    set solid fraction threshold          = 0.3
+  subsection adaptive sparse contacts
+    set enable adaptive sparse contacts = true
+    set granular temperature threshold  = 1e-4
+    set solid fraction threshold        = 0.3
   end
 end
 

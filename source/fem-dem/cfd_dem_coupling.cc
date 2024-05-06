@@ -702,7 +702,7 @@ CFDDEMSolver<dim>::initialize_dem_parameters()
       particle_displaced_in_pbc = false;
     }
 
-  if (dem_parameters.model_parameters.disable_particle_contacts)
+  if (dem_parameters.model_parameters.sparse_particle_contacts)
     {
       has_sparse_contacts = true;
       sparse_contacts_object.set_parameters(
