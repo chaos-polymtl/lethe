@@ -675,7 +675,8 @@ MFNavierStokesPreconditionGMG<dim>::initialize(
   for (unsigned int level = this->minlevel; level <= this->maxlevel; ++level)
     {
       mg_solution[level].update_ghost_values();
-      this->mg_operators[level]->evaluate_non_linear_term_and_calculate_tau(mg_solution[level]);
+      this->mg_operators[level]->evaluate_non_linear_term_and_calculate_tau(
+        mg_solution[level]);
 
       if (is_bdf(simulation_control->get_assembly_method()))
         {
