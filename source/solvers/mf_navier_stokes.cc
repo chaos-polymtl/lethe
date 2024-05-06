@@ -1943,15 +1943,33 @@ MFNavierStokesSolver<dim>::print_mg_setup_times()
         .mg_verbosity == Parameters::Verbosity::extra_verbose)
     {
       announce_string(this->pcout, "Multigrid setup times");
-      this->gmg_preconditioner->mg_setup_timer.print_summary();
+      this->gmg_preconditioner->mg_setup_timer.print_wall_time_statistics(
+        MPI_COMM_WORLD);
 
       announce_string(this->pcout, "Multigrid vmult times");
-      this->gmg_preconditioner->mg_vmult_timer.print_summary();
+      this->gmg_preconditioner->mg_vmult_timer.print_wall_time_statistics(
+        MPI_COMM_WORLD);
+
+      announce_string(this->pcout, "System operator times");
+      this->system_operator->timer.print_wall_time_statistics(MPI_COMM_WORLD);
+
+      auto mg_operators = this->gmg_preconditioner->get_mg_operators();
+      for (unsigned int level = mg_operators.min_level();
+           level <= mg_operators.max_level();
+           level++)
+        {
+          announce_string(this->pcout,
+                          "Operator level " + std::to_string(level) + " times");
+          mg_operators[level]->timer.print_wall_time_statistics(MPI_COMM_WORLD);
+
+          // Reset timer if output is set to every iteration
+          mg_operators[level]->timer.reset();
+        }
+
+      // Reset timers if output is set to every iteration
+      this->gmg_preconditioner->mg_setup_timer.reset();
+      this->gmg_preconditioner->mg_vmult_timer.reset();
     }
-
-  this->gmg_preconditioner->mg_setup_timer.reset();
-
-  this->gmg_preconditioner->mg_vmult_timer.reset();
 }
 
 template <int dim>
