@@ -25,7 +25,7 @@ Both files mentioned below are located in the example's folder (``examples/unres
 Description of the Case
 -----------------------
 
-This example simulates the spouting of spherical particles in air in a cylinder. As noted in the example of `Gas-Solid Spouted Bed <../gas-solid-spouted-bed/gas-solid-spouted-beml>`_, we use ``lethe-particles`` to fill the bed with particles, and ``lethe-fluid-particles`` as a solver of CFD-DEM.
+This example simulates the spouting of spherical particles in air in a cylinder. As noted in the example of `Gas-Solid Spouted Bed <../gas-solid-spouted-bed/gas-solid-spouted-beml>`_, we use ``lethe-particles`` to fill the bed with particles, and ``lethe-fluid-particles`` as the CFD-DEM solver.
 
 -------------------
 DEM Parameter File
@@ -36,7 +36,7 @@ Here, we will focus only on the parts that have been modified compared to  `Gas-
 Mesh
 ~~~~~
 
-In this example, we are simulating a cylinder shaped spouted bed. We introduce the flow through a cylinder of smaller radius channel that  constitutes the inlet of the bed. A schematic image is shown below;
+In this example, we are simulating a cylinder shaped spouted bed. We introduce the flow through a cylinder of smaller radius that  constitutes the inlet of the bed. A schematic image is shown below;
 
 .. image:: images/geometry.png
     :alt: The geometry and boundary conditions
@@ -44,7 +44,7 @@ In this example, we are simulating a cylinder shaped spouted bed. We introduce t
     :name: geometry
     :height: 15cm 
 
-The geometry of the bed was created using `Pointiwise <../../../tools/pointwise/pointowise.html>`_, and the overview of created mesh is also shown below;
+The geometry of the bed was created using `Pointiwise <../../../tools/pointwise/pointowise.html>`_, and the overview of created mesh is:
 
 .. image:: images/mesh.png
     :alt: The geometry and boundary conditions
@@ -52,7 +52,7 @@ The geometry of the bed was created using `Pointiwise <../../../tools/pointwise/
     :name: mesh_ver
     :height: 10cm
 
-In Unresolved CFD-DEM, the averaging volume used to calculate the void fraction needs to be large enough to contain several particles (>10). Since the averaging volume used in the quadrature-centred method is generally related to the cell volume, this introduces a limitation on the cell size. In general, the averaging volume, which in this case corresponds to the cell size, should be approximatively three time larger than the diameter of the particles in order to get stable calculation. In this example, we use particles with diameters of 5 mm which means that we need at least 15 mm for cell size. Also, we need to apply a relatively small mesh to the short channel below. Thus, we set the size of the central cylinder to 15 mm, and made other grid coarser. We show the parameter related to the mesh below.
+In unresolved CFD-DEM, the averaging volume used to calculate the void fraction needs to be large enough to contain several particles (>10). Since the averaging volume used in the quadrature-centred method is generally related to the cell volume, this introduces a limitation on the cell size. In general, the averaging volume, which in this case is controlled by the cell size, should be approximately three time larger than the diameter of the particles in order to get stable calculation.
 
 .. code-block:: text
 
@@ -67,7 +67,7 @@ where the file name includes the path to the mesh file. Here, we activate ``expa
 Lagrangian Physical Properties
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The physical properties section is almost the same as the previous spouted bed example. Here, parameters for the direction of gravity, the diameter, density, and the number of particles are modified. In this simulation, we use 100,000 particles with a 5 mm diameter. 
+The physical properties section is almost the same as the previous spouted bed example. Here, parameters for the gravity, the diameter, density, and the number of particles are modified. In this simulation, we use 100,000 particles with a 5 mm diameter. 
 
 .. code-block:: text
 
@@ -247,7 +247,7 @@ We set the inlet velocity to 2.5 m/s, and the background velocity to 0.5 m/s on 
 CFD-DEM
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Here, we enable grad-div stabilization for local mass conservation, and take the time derivative of the void fraction into account.
+Here, we enable grad-div stabilization , and take the time derivative of the void fraction into account.
 
 .. code-block:: text
 
