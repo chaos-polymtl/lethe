@@ -164,11 +164,10 @@ namespace Parameters
         "The control for the output of the simulation results"
         "Results can be either outputted at constant iteration frequency or at constant time");
 
-      prm.declare_entry(
-        "output time interval",
-        "0, 1.7976931348623157e308", //0, Maximum double
-        Patterns::List(Patterns::Double()),
-        "Output files for a desired time interval");
+      prm.declare_entry("output time interval",
+                        "0, 1.7976931348623157e308", // 0, Maximum double
+                        Patterns::List(Patterns::Double()),
+                        "Output files for a desired time interval");
 
       prm.declare_entry("subdivision",
                         "1",
@@ -239,10 +238,11 @@ namespace Parameters
                                     output_name.end(),
                                     '/'),
                         output_name.end());
-      output_frequency     = prm.get_integer("output frequency");
-      output_time          = prm.get_double("output time");
-      output_time_interval = convert_string_to_vector<double>(prm,"output time interval");
-      output_boundaries    = prm.get_bool("output boundaries");
+      output_frequency = prm.get_integer("output frequency");
+      output_time      = prm.get_double("output time");
+      output_time_interval =
+        convert_string_to_vector<double>(prm, "output time interval");
+      output_boundaries = prm.get_bool("output boundaries");
 
       subdivision   = prm.get_integer("subdivision");
       group_files   = prm.get_integer("group files");

@@ -46,7 +46,7 @@ test()
   simulationControlParameters.subdivision            = 7;
   simulationControlParameters.output_folder          = "canard";
   simulationControlParameters.output_frequency       = 8;
-  simulationControlParameters.output_time_interval   = {0,1000000000};
+  simulationControlParameters.output_time_interval   = {0, 1000000000};
 
   SimulationControlSteady simulation_control(simulationControlParameters);
 

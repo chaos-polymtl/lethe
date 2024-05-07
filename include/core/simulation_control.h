@@ -101,7 +101,8 @@ protected:
   double output_time_frequency;
 
   // Output window
-  // Output file will be generated only if current step number is in the output window or if the current simulation time is in the output window
+  // Output file will be generated if current step number is in the output time
+  // interval or if the current simulation time is in the output time interval
   std::vector<double> output_time_interval;
 
   // Log iteration frequency
