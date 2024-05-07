@@ -1134,6 +1134,16 @@ namespace Parameters
     // MG print max, min, eigenvalues
     Verbosity eig_estimation_verbose;
 
+    // Type of coarse grid solver
+    enum class CoarseGridSolverType
+    {
+      gmres,
+      amg,
+      ilu,
+      direct
+    };
+    CoarseGridSolverType mg_coarse_grid_solver;
+
     // MG coarse-grid solver maximum number of iterations
     int mg_coarse_grid_max_iterations;
 

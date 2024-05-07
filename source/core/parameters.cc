@@ -2378,6 +2378,12 @@ namespace Parameters
                           "State whether MG should print max and min eigenvalue"
                           "Choices are <quiet|verbose>.");
 
+        prm.declare_entry("mg coarse grid solver",
+                          "gmres",
+                          Patterns::Selection("gmres|amg|ilu|direct"),
+                          "The coarse grid solver for lsmg or gcmg"
+                          "Choices are <gmres|amg|ilu|direct>.");
+
         prm.declare_entry("mg coarse grid max iterations",
                           "2000",
                           Patterns::Integer(),
@@ -2503,6 +2509,19 @@ namespace Parameters
         else
           throw(std::runtime_error(
             "Unknown verbosity mode for the eigenvalue estimation"));
+
+        const std::string cg_solver = prm.get("mg coarse grid solver");
+        if (cg_solver == "gmres")
+          mg_coarse_grid_solver = CoarseGridSolverType::gmres;
+        else if (cg_solver == "amg")
+          mg_coarse_grid_solver = CoarseGridSolverType::amg;
+        else if (cg_solver == "ilu")
+          mg_coarse_grid_solver = CoarseGridSolverType::ilu;
+        else if (cg_solver == "direct")
+          mg_coarse_grid_solver = CoarseGridSolverType::direct;
+        else
+          throw std::logic_error(
+            "Error, invalid coarse grid solver type. Choices are gmres, amg, ilu or direct.");
 
         mg_coarse_grid_max_iterations =
           prm.get_integer("mg coarse grid max iterations");
