@@ -166,7 +166,7 @@ The CFD-DEM simulation is carried out using the packed bed previously generated.
 Simulation Control
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The simulation is run for 5 s with a time step of 0.001 s. The time scheme and setting for output is shown as follows.
+The simulation is run for 5 seconds with a time step of 0.001 seconds. The time scheme and setting for output is shown as follows.
 
 .. code-block:: text
 
@@ -267,7 +267,7 @@ Here, we enable grad-div stabilization , and take the time derivative of the voi
       set vans model                    = modelA
     end
 
-Here, we set the `grad-div length stabilization` parameter to 0.26, which is the diameter of the geometry. This parameter should be the same length as the characteristic length of the flow. For more detail, please refer to `CFD-DEM parameters <../../../parameters/unresolved-cfd-dem/cfd-dem.html>`_. Also, the additional sections for the CFD-DEM simulations is the void fraction subsection. This subsections is described in detail in the `Void Fraction <../../../parameters/unresolved-cfd-dem/void-fraction.html>`_.
+We set the `grad-div length stabilization` parameter to 0.26, which is the diameter of the geometry. This parameter should be the same length as the characteristic length of the flow. For more detail, please refer to `CFD-DEM parameters <../../../parameters/unresolved-cfd-dem/cfd-dem.html>`_. Also, the additional sections for the CFD-DEM simulations is the void fraction subsection. This subsections is described in detail in the `Void Fraction <../../../parameters/unresolved-cfd-dem/void-fraction.html>`_.
 
 ------------------------------
 Running the CFD-DEM Simulation
