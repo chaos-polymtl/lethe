@@ -1012,7 +1012,7 @@ MFNavierStokesPreconditionGMG<dim>::initialize(
                   AssertThrow(
                     false,
                     ExcMessage(
-                      "the extraction of constant modes for the AMG coarse-grid solver requires a version od deal.II >= 9.6.0"));
+                      "The extraction of constant modes for the AMG coarse-grid solver requires a version of deal.II >= 9.6.0"));
 #endif
                 }
               else if (this->simulation_parameters.linear_solver
@@ -1159,7 +1159,7 @@ MFNavierStokesPreconditionGMG<dim>::initialize(
               AssertThrow(
                 false,
                 ExcMessage(
-                  "the extraction of constant modes for the AMG coarse-grid solver requires a version od deal.II >= 9.6.0"));
+                  "The extraction of constant modes for the AMG coarse-grid solver requires a version of deal.II >= 9.6.0"));
 #endif
             }
           else if (this->simulation_parameters.linear_solver
