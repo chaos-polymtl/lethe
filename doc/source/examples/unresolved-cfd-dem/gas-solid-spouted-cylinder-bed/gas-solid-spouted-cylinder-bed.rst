@@ -76,7 +76,7 @@ The physical properties section is almost the same as the previous spouted bed e
       set number of particle types = 1
       subsection particle type 0
         set size distribution type            = uniform
-        set diameter                          = 0.0025
+        set diameter                          = 0.005
         set number                            = 100000
         set density particles                 = 500
         set young modulus particles           = 10000000
@@ -152,7 +152,7 @@ or in parallel (where 8 represents the number of processors)
   mpirun -np 8 lethe-particles dem-packing-in-spouted-cylinder-bed.prm
 
 .. note::
-  Running the packing should take approximately 10 hours on 8 cores.
+  Running the packing should take approximately 10 hours on 8 cores using Intel(R) Core(TM) i7-9700K.
 
 After the particles have been packed inside the square bed, we can move on to the fluid-particles simulation.
 
@@ -287,6 +287,9 @@ or in parallel (where 8 represents the number of processors)
 
   mpirun -np 8 lethe-particles gas-solid-spouted-cylinder-bed.prm
 
+.. note::
+  Running the packing should take approximately 8 days on 8 cores using Intel(R) Core(TM) i7-9700K.
+
 ---------
 Results
 ---------
@@ -296,9 +299,9 @@ We briefly discuss the results that can be obtained from this example here.
 Total Pressure Drop
 ~~~~~~~~~~~~~~~~~~~
 
-We show the data about pressure drop, which is a very important value for the fluidization phenomena.
+Here, we show the simulated pressure drop.
 
-This graph illustrates the variation of pressure drop from 1s to 5s. We can see the pressure oscillation which is caused by the bubbly state.
+This graph illustrates the variation of pressure drop from 1 second to 5 seconds. We can see the pressure oscillation which is caused by the bubbly state.
 
 .. image:: images/pressure_drop.png
     :alt: Pressure drop as a function of time
