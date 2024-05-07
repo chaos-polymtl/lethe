@@ -247,11 +247,12 @@ The ``lethe-fluid-matrix-free`` has significantly more parameters for its linear
       set eig estimation verbosity       = verbose
 
       # Coarse-grid solver
-      set mg coarse grid max iterations         = 2000
-      set mg coarse grid tolerance              = 1e-7
-      set mg coarse grid reduce                 = 1e-4
-      set mg coarse grid max krylov vectors     = 30
-      set mg coarse grid preconditioner         = ilu
+      set mg coarse grid solver                 = gmres
+      set mg gmres max iterations               = 2000
+      set mg gmres tolerance                    = 1e-7
+      set mg gmres reduce                       = 1e-4
+      set mg gmres max krylov vectors           = 30
+      set mg gmres preconditioner               = ilu
       set ilu preconditioner fill               = 1
       set ilu preconditioner absolute tolerance = 1e-10
       set ilu preconditioner relative tolerance = 1.00
