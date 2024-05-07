@@ -169,6 +169,9 @@ private:
   /// Incomplete LU as coarse grid solver
   TrilinosWrappers::PreconditionILU precondition_ilu;
 
+  /// Direct solver as coarse grid solver
+  TrilinosWrappers::SolverDirect precondition_direct;
+
   /// Solver control for the coarse grid solver
   std::shared_ptr<ReductionControl> coarse_grid_solver_control;
 
