@@ -937,26 +937,26 @@ MFNavierStokesPreconditionGMG<dim>::initialize(
     {
       const int max_iterations =
         this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
-          .mg_coarse_grid_max_iterations;
+          .mg_gmres_max_iterations;
       const double tolerance =
         this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
-          .mg_coarse_grid_tolerance;
+          .mg_gmres_tolerance;
       const double reduce =
         this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
-          .mg_coarse_grid_reduce;
+          .mg_gmres_reduce;
       this->coarse_grid_solver_control = std::make_shared<ReductionControl>(
         max_iterations, tolerance, reduce, false, false);
       SolverGMRES<VectorType>::AdditionalData solver_parameters;
       solver_parameters.max_n_tmp_vectors =
         this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
-          .mg_coarse_grid_max_krylov_vectors;
+          .mg_gmres_max_krylov_vectors;
 
       this->coarse_grid_solver = std::make_shared<SolverGMRES<VectorType>>(
         *this->coarse_grid_solver_control, solver_parameters);
 
       if (this->simulation_parameters.linear_solver
             .at(PhysicsID::fluid_dynamics)
-            .mg_coarse_grid_preconditioner ==
+            .mg_gmres_preconditioner ==
           Parameters::LinearSolver::PreconditionerType::amg)
         {
           TrilinosWrappers::PreconditionAMG::AdditionalData amg_data;
@@ -1070,7 +1070,7 @@ MFNavierStokesPreconditionGMG<dim>::initialize(
         }
       else if (this->simulation_parameters.linear_solver
                  .at(PhysicsID::fluid_dynamics)
-                 .mg_coarse_grid_preconditioner ==
+                 .mg_gmres_preconditioner ==
                Parameters::LinearSolver::PreconditionerType::ilu)
         {
           int current_preconditioner_fill_level =

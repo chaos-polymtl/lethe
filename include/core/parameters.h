@@ -1145,19 +1145,19 @@ namespace Parameters
     CoarseGridSolverType mg_coarse_grid_solver;
 
     // MG coarse-grid solver maximum number of iterations
-    int mg_coarse_grid_max_iterations;
+    int mg_gmres_max_iterations;
 
     // MG coarse-grid solver tolerance
-    double mg_coarse_grid_tolerance;
+    double mg_gmres_tolerance;
 
     // MG coarse-grid solver reduce
-    double mg_coarse_grid_reduce;
+    double mg_gmres_reduce;
 
     // MG coarse-grid solver maximum number of krylov vectors
-    int mg_coarse_grid_max_krylov_vectors;
+    int mg_gmres_max_krylov_vectors;
 
     // MG coarse-grid solver preconditioner
-    PreconditionerType mg_coarse_grid_preconditioner;
+    PreconditionerType mg_gmres_preconditioner;
 
     // MG use default parameters for AMG
     bool mg_use_amg_default_parameters;
