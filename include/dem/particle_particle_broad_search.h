@@ -149,7 +149,7 @@ private:
                                        &particles_to_evaluate,
     std::vector<types::particle_index> &contact_pair_candidates_container)
   {
-    // Create a arbitrary temporary empty container
+    // Reserve arbitrary vector capacity
     if (contact_pair_candidates_container.empty())
       {
         contact_pair_candidates_container.reserve(40);
