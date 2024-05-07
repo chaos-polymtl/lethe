@@ -2410,6 +2410,11 @@ namespace Parameters
                           "The preconditioner for the mg coarse grid solver"
                           "Choices are <amg|ilu>.");
 
+        prm.declare_entry("mg use amg default parameters",
+                          "false",
+                          Patterns::Bool(),
+                          "Use default parameters for Trilinos AMG");
+
         prm.declare_entry(
           "mg verbosity",
           "verbose",
@@ -2538,6 +2543,9 @@ namespace Parameters
         else
           throw std::logic_error(
             "Error, invalid preconditioner type for mg coarse grid solver. Choices are amg or ilu.");
+
+        mg_use_amg_default_parameters =
+          prm.get_bool("mg use amg default parameters");
 
         const std::string mg_op = prm.get("mg verbosity");
         if (mg_op == "verbose")

@@ -1159,6 +1159,9 @@ namespace Parameters
     // MG coarse-grid solver preconditioner
     PreconditionerType mg_coarse_grid_preconditioner;
 
+    // MG use default parameters for AMG
+    bool mg_use_amg_default_parameters;
+
     // MG information about levels
     Verbosity mg_verbosity;
 
