@@ -172,11 +172,11 @@ subsection linear solver
     set eig estimation verbosity       = quiet
 
     #coarse-grid solver
-    set mg coarse grid preconditioner     = ilu
-    set mg coarse grid max iterations     = 500
-    set mg coarse grid tolerance          = 1e-12
-    set mg coarse grid reduce             = 1e-12
-    set mg coarse grid max krylov vectors = 500
+    set mg gmres preconditioner     = ilu
+    set mg gmres max iterations     = 500
+    set mg gmres tolerance          = 1e-12
+    set mg gmres reduce             = 1e-12
+    set mg gmres max krylov vectors = 500
 
     #coarse-grid ILU preconditioner
     set ilu preconditioner fill               = 1
