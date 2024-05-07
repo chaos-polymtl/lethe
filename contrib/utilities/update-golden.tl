@@ -14,10 +14,10 @@
 
 (defun get-dest (path build-dir lethe-dir)
   (match-case path
+    (`@{build-dir}/applications_tests/@app/@test.@{nil #/release|debug/}/serial/output`
+     `@{lethe-dir}/applications_tests/@app/@test.output`)
     (`@{build-dir}/applications_tests/@app/@test.@{nil #/release|debug/}/@mpirun/output`
      `@{lethe-dir}/applications_tests/@app/@test.@mpirun.output`)
-    (`@{build-dir}/applications_tests/@app/@test.@{nil #/release|debug/}/output`
-     `@{lethe-dir}/applications_tests/@app/@test.output`)
     (@otherwise nil)))
 
 (let ((o (new opts)))
@@ -49,6 +49,17 @@
 
     (catch (ftw build-dir
                 (do whenlet ((dest (get-dest @1 build-dir lethe-dir)))
+                    (let ((matches
+                            (glob
+                             (match-case dest
+                               (`@{lethe-dir}/applications_tests/@app/@test.mpirun=@n.output`
+                                `@{lethe-dir}/applications_tests/@app/@test.*.mpirun=@n.output`)
+                               (`@{lethe-dir}/applications_tests/@app/@test.output`
+                                `@{lethe-dir}/applications_tests/@app/@test.*.output`)))))
+                      (match-case matches
+                        (())
+                        ((@new-dest) (set dest new-dest))
+                        (t (put-line `@{prog-name}: several golden candidates for output: @dest` *stderr*))))
                     (when (or o.dry-run o.verbose)
                       (put-line `cp @@1 @dest`))
                     (unless o.dry-run

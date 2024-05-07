@@ -15,10 +15,12 @@ read_mesh(const Parameters::Mesh   &mesh_parameters,
 
   attach_grid_to_triangulation(triangulation, mesh_parameters);
 
-  if (bc_params.BC_type ==
-      Parameters::Lagrangian::BCDEM::BoundaryType::periodic)
+  // Check if there are periodic boundaries
+  for (unsigned int i_bc = 0; i_bc < bc_params.bc_types.size(); ++i_bc)
     {
-      match_periodic_boundaries(triangulation, bc_params);
+      if (bc_params.bc_types[i_bc] ==
+          Parameters::Lagrangian::BCDEM::BoundaryType::periodic)
+        match_periodic_boundaries(triangulation, bc_params);
     }
 
   if (!restart)

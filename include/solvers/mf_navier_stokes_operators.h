@@ -22,6 +22,8 @@
 
 #include <solvers/simulation_parameters.h>
 
+#include <deal.II/base/timer.h>
+
 #include <deal.II/lac/dynamic_sparsity_pattern.h>
 #include <deal.II/lac/sparsity_tools.h>
 #include <deal.II/lac/trilinos_sparse_matrix.h>
@@ -236,12 +238,12 @@ public:
 
   /**
    * @brief Store relevant values of the vector of the last newton step to use it
-   * in the Jacobian.
+   * in the Jacobian and pre-calculate the stabilization parameter tau.
    *
    * @param[in] newton_step Vector of the last newton step.
    */
   void
-  evaluate_non_linear_term(const VectorType &newton_step);
+  evaluate_non_linear_term_and_calculate_tau(const VectorType &newton_step);
 
   /**
    * @brief Store the values of the vector containing the time derivatives of
@@ -441,6 +443,20 @@ protected:
     time_derivatives_previous_solutions;
 
   /**
+   * @brief Table with correct alignment for vectorization to store the values
+   * of the stabilization parameter tau.
+   *
+   */
+  Table<2, VectorizedArray<number>> stabilization_parameter;
+
+  /**
+   * @brief Table with correct alignment for vectorization to store the values
+   * of the stabilization parameter tau lsic.
+   *
+   */
+  Table<2, VectorizedArray<number>> stabilization_parameter_lsic;
+
+  /**
    * @brief Vector with the constrained indices used for the local smoothing approach.
    *
    */
@@ -478,6 +494,19 @@ protected:
    *
    */
   std::vector<bool> edge_constrained_cell;
+
+  /**
+   * @brief Conditional OStream for parallel output.
+   *
+   */
+  ConditionalOStream pcout;
+
+public:
+  /**
+   * @brief Timer for internal operator calls.
+   *
+   */
+  mutable TimerOutput timer;
 };
 
 /**

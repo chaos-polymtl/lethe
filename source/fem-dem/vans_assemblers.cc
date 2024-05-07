@@ -1930,8 +1930,6 @@ GLSVansAssemblerFPI<dim>::assemble_matrix(
             beta_drag * (velocity - average_particles_velocity);
         }
 
-      // We loop over the column first to prevent recalculation
-      // of the strong jacobian in the inner loop
       for (unsigned int j = 0; j < n_dofs; ++j)
         {
           const auto &phi_u_j = scratch_data.phi_u[q][j];
@@ -1939,7 +1937,6 @@ GLSVansAssemblerFPI<dim>::assemble_matrix(
             // Drag Force
             beta_drag * phi_u_j;
         }
-
 
       for (unsigned int i = 0; i < n_dofs; ++i)
         {

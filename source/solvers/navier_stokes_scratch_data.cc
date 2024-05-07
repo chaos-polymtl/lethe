@@ -324,11 +324,11 @@ NavierStokesScratchData<dim>::enable_particle_fluid_interactions(
   max_number_of_particles_per_cell = n_global_max_particles_per_cell;
   interpolated_void_fraction       = enable_void_fraction_interpolation;
 
-  // Velocities
+  // Reinitialize vectors used to store flow information at the particle
+  // location that do not rely on a quadrature
   particle_velocity =
     std::vector<Tensor<1, dim>>(n_global_max_particles_per_cell);
-  fluid_velocity_at_particle_location =
-    std::vector<Tensor<1, dim>>(n_global_max_particles_per_cell);
+
   cell_void_fraction = std::vector<double>(n_global_max_particles_per_cell);
   fluid_particle_relative_velocity_at_particle_location =
     std::vector<Tensor<1, dim>>(n_global_max_particles_per_cell);

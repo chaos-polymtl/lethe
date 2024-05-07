@@ -66,7 +66,6 @@ public:
    * @param[in] forcing_function Function specified in parameter file as source
    * term.
    * @param[in] simulation_control Required to get the time stepping method.
-   * @param[in] mg_computing_timer Timer for specific MG components.
    * @param[in] fe Describes the FE system for the vector-valued problem.
    */
   MFNavierStokesPreconditionGMG(
@@ -76,14 +75,12 @@ public:
     const std::shared_ptr<Quadrature<dim>>  &cell_quadrature,
     const std::shared_ptr<Function<dim>>     forcing_function,
     const std::shared_ptr<SimulationControl> simulation_control,
-    TimerOutput                             &mg_computing_timer,
     const std::shared_ptr<FESystem<dim>>     fe);
 
   /**
    * @brief Initialize smoother, coarse grid solver and multigrid object
    * needed for the geometric multigrid preconditioner.
    *
-   * @param[in] mg_computing_timer Timer for specific MG components.
    * @param[in] simulation_control Required to get the time stepping method.
    * @param[in] flow_control Required for dynamic flow control.
    * @param[in] present_solution Previous solution needed to evaluate the non
@@ -92,8 +89,7 @@ public:
    * derivatives of previous solutions.
    */
   void
-  initialize(TimerOutput                             &mg_computing_timer,
-             const std::shared_ptr<SimulationControl> simulation_control,
+  initialize(const std::shared_ptr<SimulationControl> simulation_control,
              FlowControl<dim>                        &flow_control,
              const VectorType                        &present_solution,
              const VectorType &time_derivative_previous_solutions);
@@ -204,6 +200,13 @@ private:
 
   /// Vector holding number of coarse grid iterations
   mutable std::vector<unsigned int> coarse_grid_iterations;
+
+public:
+  /// Timer for specific geometric multigrid components.
+  mutable TimerOutput mg_setup_timer;
+
+  /// Internal timer for vmult timings
+  mutable TimerOutput mg_vmult_timer;
 };
 
 
@@ -414,12 +417,6 @@ protected:
    *
    */
   VectorType time_derivative_previous_solutions;
-
-  /**
-   * @brief Timer for specific geometric multigrid components.
-   *
-   */
-  TimerOutput mg_computing_timer;
 };
 
 #endif
