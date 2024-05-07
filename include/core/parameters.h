@@ -155,6 +155,9 @@ namespace Parameters
     // Frequency of the output
     double output_time;
 
+    // Time window for file output
+    std::vector<double> output_time_interval;
+
     // Enable output of the boundaries
     bool output_boundaries;
 

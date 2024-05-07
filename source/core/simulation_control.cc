@@ -21,6 +21,7 @@ SimulationControl::SimulationControl(const Parameters::SimulationControl param)
   , stop_tolerance(param.stop_tolerance)
   , output_frequency(param.output_frequency)
   , output_time_frequency(param.output_time)
+  , output_time_interval(param.output_time_interval)
   , log_frequency(param.log_frequency)
   , log_precision(param.log_precision)
   , subdivision(param.subdivision)
@@ -61,7 +62,8 @@ SimulationControl::is_output_iteration()
     return false;
   else
     {
-      return (get_step_number() % output_frequency == 0);
+      // Check if the current step number matches the output frequency and falls within the user-specified time window.
+      return (get_step_number() % output_frequency == 0 && get_current_time() >= output_time_interval[0] && get_current_time() <= output_time_interval[1]);
     }
 }
 
@@ -316,9 +318,10 @@ SimulationControlTransientDynamicOutput::calculate_time_step()
 bool
 SimulationControlTransientDynamicOutput::is_output_iteration()
 {
+  // Check if the current step number matches the output time frequency and falls within the user-specified time window.
   bool is_output_time =
-    (current_time - last_output_time) - output_time_frequency >
-    -1e-12 * output_time_frequency;
+    ((current_time - last_output_time) - output_time_frequency >
+    -1e-12 * output_time_frequency && get_current_time() >= output_time_interval[0] && get_current_time() <= output_time_interval[1]);
   if (is_output_time)
     last_output_time = current_time;
 

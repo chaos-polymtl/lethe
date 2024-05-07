@@ -100,6 +100,10 @@ protected:
   // by the time
   double output_time_frequency;
 
+  // Output window
+  // Output file will be generated only if current step number is in the output window or if the current simulation time is in the output window
+  std::vector<double> output_time_interval;
+
   // Log iteration frequency
   // Controls the frequency at which status of the simulation is written to
   // the terminal
