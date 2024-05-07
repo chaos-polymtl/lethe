@@ -1037,7 +1037,7 @@ MFNavierStokesPreconditionGMG<dim>::initialize(
 
               const double ilu_fill = this->simulation_parameters.linear_solver
                                         .at(PhysicsID::fluid_dynamics)
-                                        .ilu_precond_fill;
+                                        .amg_precond_ilu_fill;
               const double ilu_atol = this->simulation_parameters.linear_solver
                                         .at(PhysicsID::fluid_dynamics)
                                         .amg_precond_ilu_atol;
@@ -1182,7 +1182,7 @@ MFNavierStokesPreconditionGMG<dim>::initialize(
 
           const double ilu_fill = this->simulation_parameters.linear_solver
                                     .at(PhysicsID::fluid_dynamics)
-                                    .ilu_precond_fill;
+                                    .amg_precond_ilu_fill;
           const double ilu_atol = this->simulation_parameters.linear_solver
                                     .at(PhysicsID::fluid_dynamics)
                                     .amg_precond_ilu_atol;
