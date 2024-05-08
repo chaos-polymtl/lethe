@@ -193,6 +193,7 @@ template <int dim>
 MFNavierStokesPreconditionGMG<dim>::MFNavierStokesPreconditionGMG(
   const SimulationParameters<dim>         &simulation_parameters,
   const DoFHandler<dim>                   &dof_handler,
+  const DoFHandler<dim>                   &dof_handler_q_iso_q1,
   const std::shared_ptr<Mapping<dim>>     &mapping,
   const std::shared_ptr<Quadrature<dim>>  &cell_quadrature,
   const std::shared_ptr<Function<dim>>     forcing_function,
@@ -201,6 +202,7 @@ MFNavierStokesPreconditionGMG<dim>::MFNavierStokesPreconditionGMG(
   : pcout(std::cout, Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0)
   , simulation_parameters(simulation_parameters)
   , dof_handler(dof_handler)
+  , dof_handler_q_iso_q1(dof_handler_q_iso_q1)
   , mg_setup_timer(MPI_COMM_WORLD,
                    this->pcout,
                    TimerOutput::never,
@@ -442,14 +444,37 @@ MFNavierStokesPreconditionGMG<dim>::MFNavierStokesPreconditionGMG(
 
           this->mg_setup_timer.enter_subsection("Set up operators");
 
+          // Provide appropriate quadrature depending on the type of elements of
+          // the level
+          auto quadrature_mg = *cell_quadrature;
+          if (this->simulation_parameters.linear_solver
+                .at(PhysicsID::fluid_dynamics)
+                .mg_use_fe_q_iso_q1 &&
+              level == this->minlevel)
+            {
+              const auto points =
+                true ? QGaussLobatto<1>(this->dof_handler.get_fe().degree + 1)
+                         .get_points() :
+                       QIterated<1>(QGaussLobatto<1>(2),
+                                    this->dof_handler.get_fe().degree)
+                         .get_points();
+
+              quadrature_mg = QIterated<dim>(QGauss<1>(2), points);
+            }
+
           this->mg_operators[level] =
             std::make_shared<NavierStokesStabilizedOperator<dim, double>>();
 
           this->mg_operators[level]->reinit(
             *mapping,
-            this->dof_handler,
+            (this->simulation_parameters.linear_solver
+               .at(PhysicsID::fluid_dynamics)
+               .mg_use_fe_q_iso_q1 &&
+             level == this->minlevel) ?
+              this->dof_handler_q_iso_q1 :
+              this->dof_handler,
             level_constraints[level],
-            *cell_quadrature,
+            quadrature_mg,
             &(*forcing_function),
             this->simulation_parameters.physical_properties_manager
               .get_kinematic_viscosity_scale(),
@@ -568,8 +593,29 @@ MFNavierStokesPreconditionGMG<dim>::MFNavierStokesPreconditionGMG(
       for (unsigned int l = this->minlevel; l <= this->maxlevel; ++l)
         {
           this->dof_handlers[l].reinit(*this->coarse_grid_triangulations[l]);
-          this->dof_handlers[l].distribute_dofs(this->dof_handler.get_fe());
+
+          // To use elements with linear interpolation for coarse-grid we need
+          // to create the min level dof handler with the appropriate element
+          // type
+          if (this->simulation_parameters.linear_solver
+                .at(PhysicsID::fluid_dynamics)
+                .mg_use_fe_q_iso_q1 &&
+              l == this->minlevel)
+            {
+              const auto points =
+                true ? QGaussLobatto<1>(this->dof_handler.get_fe().degree + 1)
+                         .get_points() :
+                       QIterated<1>(QGaussLobatto<1>(2),
+                                    this->dof_handler.get_fe().degree)
+                         .get_points();
+
+              this->dof_handlers[l].distribute_dofs(
+                FESystem<dim>(FE_Q_iso_Q1<dim>(points), dim + 1));
+            }
+          else
+            this->dof_handlers[l].distribute_dofs(this->dof_handler.get_fe());
         }
+        
       this->mg_setup_timer.leave_subsection(
         "Create DoFHandlers and distribute DoFs");
 
@@ -714,6 +760,24 @@ MFNavierStokesPreconditionGMG<dim>::MFNavierStokesPreconditionGMG(
 
           this->mg_setup_timer.enter_subsection("Set up operators");
 
+          // Provide appropriate quadrature depending on the type of elements of
+          // the level
+          auto quadrature_mg = *cell_quadrature;
+          if (this->simulation_parameters.linear_solver
+                .at(PhysicsID::fluid_dynamics)
+                .mg_use_fe_q_iso_q1 &&
+              level == this->minlevel)
+            {
+              const auto points =
+                true ? QGaussLobatto<1>(this->dof_handler.get_fe().degree + 1)
+                         .get_points() :
+                       QIterated<1>(QGaussLobatto<1>(2),
+                                    this->dof_handler.get_fe().degree)
+                         .get_points();
+
+              quadrature_mg = QIterated<dim>(QGauss<1>(2), points);
+            }
+
           this->mg_operators[level] =
             std::make_shared<NavierStokesStabilizedOperator<dim, double>>();
 
@@ -721,7 +785,7 @@ MFNavierStokesPreconditionGMG<dim>::MFNavierStokesPreconditionGMG(
             *mapping,
             level_dof_handler,
             level_constraint,
-            *cell_quadrature,
+            quadrature_mg,
             &(*forcing_function),
             this->simulation_parameters.physical_properties_manager
               .get_kinematic_viscosity_scale(),
@@ -1461,6 +1525,26 @@ MFNavierStokesSolver<dim>::setup_dofs_fd()
         .preconditioner == Parameters::LinearSolver::PreconditionerType::lsmg)
     {
       this->dof_handler.distribute_mg_dofs();
+
+      // To use elements with linear interpolation for coarse-grid we need to
+      // have another dof handler with the appropriate element type
+      if (this->simulation_parameters.linear_solver
+            .at(PhysicsID::fluid_dynamics)
+            .mg_use_fe_q_iso_q1)
+        {
+          this->dof_handler_q_iso_q1.reinit(*this->triangulation);
+
+          const auto points =
+            true ? QGaussLobatto<1>(this->dof_handler.get_fe().degree + 1)
+                     .get_points() :
+                   QIterated<1>(QGaussLobatto<1>(2),
+                                this->dof_handler.get_fe().degree)
+                     .get_points();
+
+          this->dof_handler_q_iso_q1.distribute_dofs(
+            FESystem<dim>(FE_Q_iso_Q1<dim>(points), dim + 1));
+          this->dof_handler_q_iso_q1.distribute_mg_dofs();
+        }
     }
 
   this->locally_owned_dofs = this->dof_handler.locally_owned_dofs();
@@ -1624,6 +1708,7 @@ MFNavierStokesSolver<dim>::set_initial_condition_fd(
               std::make_shared<MFNavierStokesPreconditionGMG<dim>>(
                 this->simulation_parameters,
                 this->dof_handler,
+                this->dof_handler_q_iso_q1,
                 this->mapping,
                 this->cell_quadrature,
                 this->forcing_function,
@@ -1737,6 +1822,7 @@ MFNavierStokesSolver<dim>::set_initial_condition_fd(
                   std::make_shared<MFNavierStokesPreconditionGMG<dim>>(
                     this->simulation_parameters,
                     this->dof_handler,
+                    this->dof_handler_q_iso_q1,
                     this->mapping,
                     this->cell_quadrature,
                     this->forcing_function,
@@ -1860,6 +1946,7 @@ MFNavierStokesSolver<dim>::setup_GMG()
     gmg_preconditioner = std::make_shared<MFNavierStokesPreconditionGMG<dim>>(
       this->simulation_parameters,
       this->dof_handler,
+      this->dof_handler_q_iso_q1,
       this->mapping,
       this->cell_quadrature,
       this->forcing_function,

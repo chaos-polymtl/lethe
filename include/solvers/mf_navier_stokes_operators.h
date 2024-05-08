@@ -496,6 +496,12 @@ protected:
   std::vector<bool> edge_constrained_cell;
 
   /**
+   * @brief
+   *
+   */
+  const Table<2, bool> bool_dof_mask;
+
+  /**
    * @brief Conditional OStream for parallel output.
    *
    */

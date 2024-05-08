@@ -15,6 +15,65 @@
 
 #include "solvers/mf_navier_stokes_operators.h"
 
+#include <deal.II/grid/grid_generator.h>
+/**
+ * @brief Create a bool dof mask object
+ *
+ * @tparam dim
+ * @tparam spacedim
+ * @param fe
+ * @param quadrature
+ * @return Table<2, bool>
+ */
+template <int dim, int spacedim>
+Table<2, bool>
+create_bool_dof_mask(const FiniteElement<dim, spacedim> &fe,
+                     const Quadrature<dim>              &quadrature)
+{
+  const auto compute_scalar_bool_dof_mask = [&quadrature](const auto &fe) {
+    Table<2, bool>           bool_dof_mask(fe.dofs_per_cell, fe.dofs_per_cell);
+    MappingQ1<dim, spacedim> mapping;
+    FEValues<dim>            fe_values(mapping, fe, quadrature, update_values);
+
+    Triangulation<dim, spacedim> tria;
+    GridGenerator::hyper_cube(tria);
+
+    fe_values.reinit(tria.begin());
+    for (unsigned int i = 0; i < fe.dofs_per_cell; ++i)
+      for (unsigned int j = 0; j < fe.dofs_per_cell; ++j)
+        {
+          double sum = 0;
+          for (unsigned int q = 0; q < quadrature.size(); ++q)
+            sum += fe_values.shape_value(i, q) * fe_values.shape_value(j, q);
+          if (sum != 0)
+            bool_dof_mask(i, j) = true;
+        }
+
+    return bool_dof_mask;
+  };
+
+  Table<2, bool> bool_dof_mask(fe.dofs_per_cell, fe.dofs_per_cell);
+
+  if (fe.n_components() == 1)
+    {
+      bool_dof_mask = compute_scalar_bool_dof_mask(fe);
+    }
+  else
+    {
+      const auto scalar_bool_dof_mask =
+        compute_scalar_bool_dof_mask(fe.base_element(0));
+
+      for (unsigned int i = 0; i < fe.n_dofs_per_cell(); ++i)
+        for (unsigned int j = 0; j < fe.n_dofs_per_cell(); ++j)
+          if (scalar_bool_dof_mask[fe.system_to_component_index(i).second]
+                                  [fe.system_to_component_index(j).second])
+            bool_dof_mask[i][j] = true;
+    }
+
+
+  return bool_dof_mask;
+}
+
 /**
  * @brief Matrix free helper function
  *
@@ -84,7 +143,8 @@ NavierStokesOperatorBase<dim, number>::NavierStokesOperatorBase(
   const StabilizationType            stabilization,
   const unsigned int                 mg_level,
   std::shared_ptr<SimulationControl> simulation_control)
-  : pcout(std::cout, Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0)
+  : bool_dof_mask(create_bool_dof_mask(dof_handler.get_fe(), quadrature))
+  , pcout(std::cout, Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0)
   , timer(this->pcout, TimerOutput::never, TimerOutput::wall_times)
 {
   this->reinit(mapping,
@@ -397,15 +457,17 @@ NavierStokesOperatorBase<dim, number>::get_system_matrix() const
     {
       const auto &dof_handler = this->matrix_free.get_dof_handler();
 
+      const unsigned int mg_level = this->matrix_free.get_mg_level();
+
       IndexSet locally_relevant_dofs;
       IndexSet locally_owned_dofs;
 
-      if (this->matrix_free.get_mg_level() != numbers::invalid_unsigned_int)
+      if (mg_level != numbers::invalid_unsigned_int)
         {
-          locally_relevant_dofs = DoFTools::extract_locally_relevant_level_dofs(
-            dof_handler, this->matrix_free.get_mg_level());
-          locally_owned_dofs =
-            dof_handler.locally_owned_mg_dofs(this->matrix_free.get_mg_level());
+          locally_relevant_dofs =
+            DoFTools::extract_locally_relevant_level_dofs(dof_handler,
+                                                          mg_level);
+          locally_owned_dofs = dof_handler.locally_owned_mg_dofs(mg_level);
         }
       else
         {
@@ -416,18 +478,59 @@ NavierStokesOperatorBase<dim, number>::get_system_matrix() const
 
       DynamicSparsityPattern dsp(locally_relevant_dofs);
 
-      if (this->matrix_free.get_mg_level() != numbers::invalid_unsigned_int)
-        MGTools::make_sparsity_pattern(dof_handler,
-                                       dsp,
-                                       this->matrix_free.get_mg_level(),
-                                       this->constraints,
-                                       false);
-      else
-        DoFTools::make_sparsity_pattern(dof_handler,
-                                        dsp,
-                                        this->constraints,
-                                        false);
+      if (mg_level != numbers::invalid_unsigned_int)
+        {
+          // MGTools::make_sparsity_pattern(dof_handler,
+          //                                dsp,
+          //                                mg_level,
+          //                                this->constraints,
+          //                                false);
 
+          // the following code does the same as
+          // MGTools::make_sparsity_pattern() but also
+          // consideres bool_dof_mask for FE_Q_iso_Q1
+          std::vector<types::global_dof_index> dofs_on_this_cell;
+
+          for (const auto &cell : dof_handler.cell_iterators_on_level(mg_level))
+            if (cell->is_locally_owned_on_level())
+              {
+                const unsigned int dofs_per_cell =
+                  dof_handler.get_fe().n_dofs_per_cell();
+                dofs_on_this_cell.resize(dofs_per_cell);
+                cell->get_mg_dof_indices(dofs_on_this_cell);
+
+                constraints.add_entries_local_to_global(dofs_on_this_cell,
+                                                        dsp,
+                                                        false,
+                                                        bool_dof_mask);
+              }
+        }
+      else
+        {
+          // DoFTools::make_sparsity_pattern(dof_handler,
+          //                                 dsp,
+          //                                 this->constraints,
+          //                                 false);
+
+          // the following code does the same as
+          // DoFTools::make_sparsity_pattern() but also
+          // consideres bool_dof_mask for FE_Q_iso_Q1
+          std::vector<types::global_dof_index> dofs_on_this_cell;
+
+          for (const auto &cell : dof_handler.active_cell_iterators())
+            if (cell->is_locally_owned())
+              {
+                const unsigned int dofs_per_cell =
+                  cell->get_fe().n_dofs_per_cell();
+                dofs_on_this_cell.resize(dofs_per_cell);
+                cell->get_dof_indices(dofs_on_this_cell);
+
+                constraints.add_entries_local_to_global(dofs_on_this_cell,
+                                                        dsp,
+                                                        false,
+                                                        bool_dof_mask);
+              }
+        }
 
       SparsityTools::distribute_sparsity_pattern(
         dsp,
@@ -449,6 +552,32 @@ NavierStokesOperatorBase<dim, number>::get_system_matrix() const
     system_matrix,
     &NavierStokesOperatorBase::do_cell_integral_local,
     this);
+
+  // const auto &lexicographic_numbering =
+  //   matrix_free.get_shape_info().lexicographic_numbering;
+
+  // unsigned int cell   = numbers::invalid_unsigned_int;
+  // unsigned int column = numbers::invalid_unsigned_int;
+
+  // MatrixFreeTools::
+  //   compute_matrix<dim, -1, 0, dim + 1, number, VectorizedArray<number>>(
+  //     matrix_free, constraints, system_matrix, [&](auto &integrator) {
+  //       if (cell != integrator.get_current_cell_index())
+  //         {
+  //           cell   = integrator.get_current_cell_index();
+  //           column = 0;
+  //         }
+
+  //       this->do_cell_integral_local(integrator);
+
+  //       // remove spurious entries for FE_Q_iso_Q1
+  //       for (unsigned int i = 0; i < lexicographic_numbering.size(); ++i)
+  //         if (!bool_dof_mask[lexicographic_numbering[i]]
+  //                           [lexicographic_numbering[column]])
+  //           integrator.begin_dof_values()[i] = 0.0;
+
+  //       column++;
+  //     });
 
   this->timer.leave_subsection("operator::get_system_matrix");
 
