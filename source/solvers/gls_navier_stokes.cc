@@ -500,6 +500,7 @@ GLSNavierStokesSolver<dim>::setup_assemblers()
             .is_non_newtonian())
         {
           // Core assembler with Non-Newtonian viscosity
+          // printf("Non-newtonian assembler was called");
           this->assemblers.push_back(
             std::make_shared<
               GLSNavierStokesCahnHilliardAssemblerNonNewtonianCore<dim>>(
@@ -508,6 +509,7 @@ GLSNavierStokesSolver<dim>::setup_assemblers()
 
       else
         {
+          // printf("Newtonian assembler was called");
           this->assemblers.push_back(
             std::make_shared<GLSNavierStokesCahnHilliardAssemblerCore<dim>>(
               this->simulation_control, this->simulation_parameters));

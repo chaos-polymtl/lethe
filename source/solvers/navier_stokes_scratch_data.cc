@@ -125,6 +125,9 @@ NavierStokesScratchData<dim>::enable_vof(
   surface_tension_gradient              = std::vector<double>(n_q_points);
   compressibility_multiplier            = std::vector<double>(n_q_points);
 
+  grad_kinematic_viscosity_shear_rate_0 = std::vector<double>(n_q_points);
+  grad_kinematic_viscosity_shear_rate_1 = std::vector<double>(n_q_points);
+
   // Create filter
   filter = VolumeOfFluidFilterBase::model_cast(phase_filter_parameters);
 }
@@ -165,6 +168,9 @@ NavierStokesScratchData<dim>::enable_vof(
   surface_tension                       = std::vector<double>(n_q_points);
   surface_tension_gradient              = std::vector<double>(n_q_points);
   compressibility_multiplier            = std::vector<double>(n_q_points);
+
+  grad_kinematic_viscosity_shear_rate_0 = std::vector<double>(n_q_points);
+  grad_kinematic_viscosity_shear_rate_1 = std::vector<double>(n_q_points);
 
   // Create filter
   this->filter = filter;
@@ -483,6 +489,8 @@ NavierStokesScratchData<dim>::calculate_physical_properties()
                   fields, field::temperature, surface_tension_gradient);
             }
 
+
+
           density_model_0->vector_value(fields, density_0);
           rheology_model_0->get_dynamic_viscosity_vector(density_ref_0,
                                                          fields,
@@ -496,6 +504,7 @@ NavierStokesScratchData<dim>::calculate_physical_properties()
                                                          dynamic_viscosity_1);
           rheology_model_1->get_dynamic_viscosity_for_stabilization_vector(
             density_ref_1, fields, dynamic_viscosity_for_stabilization_1);
+          
           if (gather_temperature)
             {
               const auto thermal_expansion_model_0 =
@@ -533,6 +542,12 @@ NavierStokesScratchData<dim>::calculate_physical_properties()
                     calculate_point_property(filtered_phase_value,
                                              this->thermal_expansion_0[q],
                                              this->thermal_expansion_1[q]);
+
+//                    grad_kinematic_viscosity_shear_rate[q] =
+//                            calculate_point_property(
+//                                    filtered_phase_value,
+//                                    this->grad_kinematic_viscosity_shear_rate_0[q],
+//                                    this->grad_kinematic_viscosity_shear_rate_1[q]);
                 }
 
               // Gather density_psi for isothermal compressible NS equations
