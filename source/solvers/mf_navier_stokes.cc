@@ -1016,6 +1016,7 @@ MFNavierStokesPreconditionGMG<dim>::initialize(
              .mg_coarse_grid_solver ==
            Parameters::LinearSolver::CoarseGridSolverType::direct)
     {
+#if DEAL_II_VERSION_GTE(9, 6, 0)
       TrilinosWrappers::SolverDirect::AdditionalData data;
       this->direct_solver_control =
         std::make_shared<SolverControl>(100, 1.e-10);
@@ -1031,6 +1032,12 @@ MFNavierStokesPreconditionGMG<dim>::initialize(
         MGCoarseGridApplyPreconditioner<VectorType,
                                         TrilinosWrappers::SolverDirect>>(
         *this->precondition_direct);
+#else
+      AssertThrow(
+        false,
+        ExcMessage(
+          "The usage of a direct solver as coarse grid solver requires a version of deal.II >= 9.6.0"));
+#endif
     }
   else
     AssertThrow(
