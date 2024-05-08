@@ -159,7 +159,7 @@ AdaptiveSparseContacts<dim>::identify_mobility_status(
   IndexSet       locally_relevant_dofs =
     DoFTools::extract_locally_relevant_dofs(background_dh);
 
-  // Reinit all value of mobility at nodes as inactive (0)
+  // Reinit all value of mobility at nodes as inactive
   mobility_at_nodes.reinit(locally_owned_dofs,
                            locally_relevant_dofs,
                            mpi_communicator);
@@ -180,7 +180,7 @@ AdaptiveSparseContacts<dim>::identify_mobility_status(
                                       mobility_status::advected_active;
 
   // Check if the cell is empty (n_particle = 0), if so, nodes and cells are
-  // flagged as empty mobility status (5)
+  // flagged as empty mobility status
   for (auto cell = local_and_ghost_cells_copy.begin();
        cell != local_and_ghost_cells_copy.end();)
     {
@@ -225,7 +225,7 @@ AdaptiveSparseContacts<dim>::identify_mobility_status(
   // * granular temperature > threshold or
   // * solid fraction of cell < threshold or
   // * is next to an empty cell
-  // If so, nodes are flagged and cells are stored with mobile status (2)
+  // If so, nodes are flagged and cells are stored with mobile status
   for (auto cell = local_and_ghost_cells_copy.begin();
        cell != local_and_ghost_cells_copy.end();)
     {
@@ -269,8 +269,8 @@ AdaptiveSparseContacts<dim>::identify_mobility_status(
 
   // Check if the cell is mobile by neighbor (at least a node is flagged as
   // mobile from previous check), this is the additional mobile layer.
-  // If so, cells are stored in map as mobile status (4) and nodes that are not
-  // mobile are flagged as active (1/3)
+  // If so, cells are stored in map as mobile status and nodes that are not
+  // mobile are flagged as active
   for (auto cell = local_and_ghost_cells_copy.begin();
        cell != local_and_ghost_cells_copy.end();)
     {
@@ -309,7 +309,7 @@ AdaptiveSparseContacts<dim>::identify_mobility_status(
 
   // Check if the cell is active (at least a node is flagged as active from
   // previous check), this is the layer of active cells
-  // If so, cells are stored with active status in the map (1)
+  // If so, cells are stored with active status in the map
   for (auto cell = local_and_ghost_cells_copy.begin();
        cell != local_and_ghost_cells_copy.end();)
     {

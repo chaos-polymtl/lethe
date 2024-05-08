@@ -1,12 +1,12 @@
 add_library(lethe-dem
   # Sources
+  adaptive_sparse_contacts.cc
   data_containers.cc
   dem.cc
   dem_contact_manager.cc
   dem_solver_parameters.cc
   distributions.cc
   explicit_euler_integrator.cc
-  adaptive_sparse_contacts.cc
   find_boundary_cells_information.cc
   find_cell_neighbors.cc
   find_contact_detection_step.cc
@@ -46,12 +46,12 @@ add_library(lethe-dem
   visualization.cc
   write_checkpoint.cc
   # Headers
+  ../../include/dem/adaptive_sparse_contacts.h
   ../../include/dem/boundary_cells_info_struct.h
   ../../include/dem/contact_type.h
   ../../include/dem/data_containers.h
   ../../include/dem/dem.h
   ../../include/dem/dem_solver_parameters.h
-  ../../include/dem/adaptive_sparse_contacts.h
   ../../include/dem/distributions.h
   ../../include/dem/explicit_euler_integrator.h
   ../../include/dem/find_boundary_cells_information.h
@@ -79,8 +79,8 @@ add_library(lethe-dem
   ../../include/dem/particle_wall_broad_search.h
   ../../include/dem/particle_wall_contact_force.h
   ../../include/dem/particle_wall_contact_info.h
-  ../../include/dem/particle_wall_fine_search.h
   ../../include/dem/particle_wall_dmt_force.h
+  ../../include/dem/particle_wall_fine_search.h
   ../../include/dem/particle_wall_jkr_force.h
   ../../include/dem/particle_wall_linear_force.h
   ../../include/dem/particle_wall_nonlinear_force.h

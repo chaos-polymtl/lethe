@@ -145,7 +145,18 @@ VelocityVerletIntegrator<dim>::integrate(
 {
   // If there are advected particles, we use another function since the average
   // velocity and acceleration of cells are computed for mobile cells
-  if (!sparse_contacts_object.has_advected_particles())
+  if (sparse_contacts_object.has_advected_particles())
+    {
+      integrate_with_advected_particles(particle_handler,
+                                        g,
+                                        dt,
+                                        torque,
+                                        force,
+                                        MOI,
+                                        triangulation,
+                                        sparse_contacts_object);
+    }
+  else
     {
       Point<3>           particle_position;
       const Tensor<1, 3> dt_g = g * dt;
@@ -247,17 +258,6 @@ VelocityVerletIntegrator<dim>::integrate(
                 }
             }
         }
-    }
-  else
-    {
-      integrate_with_advected_particles(particle_handler,
-                                        g,
-                                        dt,
-                                        torque,
-                                        force,
-                                        MOI,
-                                        triangulation,
-                                        sparse_contacts_object);
     }
 }
 

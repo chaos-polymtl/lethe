@@ -252,7 +252,7 @@ private:
         return true;
       }
     else if (counter == (coupling_frequency - 1) &&
-             (contact_build_counter == 0))
+             (contact_search_counter == 0))
       {
         // Ensure that the contact search is executed at least once per CFD time
         // step.
@@ -332,11 +332,17 @@ private:
   bool                               has_periodic_boundaries;
   bool                               particle_displaced_in_pbc;
 
+  // Object handling the sparse contacts
   AdaptiveSparseContacts<dim> sparse_contacts_object;
-  bool                        has_sparse_contacts;
-  unsigned int                contact_build_counter;
 
-  unsigned int contact_build_number;
+  // Flag to indicate if sparse contacts are used
+  bool has_sparse_contacts;
+
+  // Counter of contact searches in a CFD iteration
+  unsigned int contact_search_counter;
+
+  // Total number of contact searches since the beginning of the simulation
+  unsigned int contact_search_total_number;
 
   // Storage of statistics about time and contact lists
   statistics contact_list;

@@ -966,7 +966,7 @@ CFDDEMSolver<dim>::dem_contact_build(unsigned int counter)
   if (contact_search_step(counter))
     {
       this->pcout << "DEM contact search at dem step " << counter << std::endl;
-      contact_build_counter++;
+      contact_search_counter++;
 
       periodic_boundaries_object.execute_particles_displacement(
         this->particle_handler, periodic_boundaries_cells_information);
@@ -1150,12 +1150,12 @@ CFDDEMSolver<dim>::dem_post_process_results()
 {
   // Update statistics on contact list
   double number_of_list_built_since_last_log =
-    double(contact_build_number) - contact_list.total;
+    double(contact_search_total_number) - contact_list.total;
   contact_list.max =
     std::max(number_of_list_built_since_last_log, contact_list.max);
   contact_list.min =
     std::min(number_of_list_built_since_last_log, contact_list.min);
-  contact_list.total += number_of_list_built_since_last_log;
+  contact_list.total   = double(contact_search_total_number);
   contact_list.average = contact_list.total /
                          (this->simulation_control->get_step_number()) *
                          this->simulation_control->get_log_frequency();
@@ -1437,7 +1437,7 @@ CFDDEMSolver<dim>::dem_setup_contact_parameters()
 
 
   // Finding the smallest contact search frequency criterion between (smallest
-  // cell size - largest particle radius) and (security factor * (blab diameter
+  // cell size - largest particle radius) and (security factor * (blob diameter
   // - 1) *  largest particle radius). This value is used in
   // find_contact_detection_frequency function
   smallest_contact_search_criterion =
@@ -1667,7 +1667,7 @@ CFDDEMSolver<dim>::solve()
         announce_string(this->pcout, "DEM");
         TimerOutput::Scope t(this->computing_timer, "DEM_Iterator");
 
-        contact_build_counter = 0;
+        contact_search_counter = 0;
         for (unsigned int dem_counter = 0; dem_counter < coupling_frequency;
              ++dem_counter)
           {
@@ -1677,7 +1677,7 @@ CFDDEMSolver<dim>::solve()
             dem_iterator(dem_counter);
           }
       }
-      contact_build_number += contact_build_counter;
+      contact_search_total_number += contact_search_counter;
 
       this->pcout << "Finished " << coupling_frequency << " DEM iterations "
                   << std::endl;
