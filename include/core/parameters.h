@@ -1119,6 +1119,9 @@ namespace Parameters
     /// MG minimum number of cells per level
     int mg_level_min_cells;
 
+    /// MG use elements with linear interpolation for coarse grid
+    bool mg_use_fe_q_iso_q1;
+
     /// MG smoother number of iterations
     int mg_smoother_iterations;
 
