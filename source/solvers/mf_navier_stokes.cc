@@ -1016,13 +1016,21 @@ MFNavierStokesPreconditionGMG<dim>::initialize(
              .mg_coarse_grid_solver ==
            Parameters::LinearSolver::CoarseGridSolverType::direct)
     {
-      this->precondition_direct.initialize(
+      TrilinosWrappers::SolverDirect::AdditionalData data;
+      this->direct_solver_control =
+        std::make_shared<SolverControl>(100, 1.e-10);
+
+      this->precondition_direct =
+        std::make_shared<TrilinosWrappers::SolverDirect>(
+          *this->direct_solver_control, data);
+
+      this->precondition_direct->initialize(
         this->mg_operators[this->minlevel]->get_system_matrix());
 
       this->mg_coarse = std::make_shared<
         MGCoarseGridApplyPreconditioner<VectorType,
                                         TrilinosWrappers::SolverDirect>>(
-        this->precondition_direct);
+        *this->precondition_direct);
     }
   else
     AssertThrow(
