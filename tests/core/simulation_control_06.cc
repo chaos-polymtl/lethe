@@ -13,13 +13,8 @@
  *
  * ---------------------------------------------------------------------
 
-*
-* Author: Bruno Blais, Polytechnique Montreal, 2020-
-*/
-
 /**
- * @brief This test checks that the steady-state simulation control stops
- * at the correct moment and behaves in a correct manner
+ * @brief This test checks if files are only generated within the output time interval
  */
 
 // Lethe

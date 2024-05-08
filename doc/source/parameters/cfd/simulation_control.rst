@@ -83,7 +83,7 @@ This subsection contains the general information of the simulation, including th
     set output time                  = 1
 
     # Output time interval
-    set output time interval         = 1, 5
+    set output time interval         = 1, 1.7e308
 
     # Maximum number of vtu output files
     set group files                  = 1

@@ -3,6 +3,13 @@
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Master] - 2024-05-09
+
+### Added
+
+- MINOR Added a new parameter to specify the time interval to write .vtu and .pvd files in order to reduce simulation disk usage. [#1120] (https://github.com/chaos-polymtl/lethe/pull/1120) 
+
+
 ## [Master] - 2024-05-02
 
 ### Fixed

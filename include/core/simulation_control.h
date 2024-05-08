@@ -100,9 +100,10 @@ protected:
   // by the time
   double output_time_frequency;
 
-  // Output window
-  // Output file will be generated if current step number is in the output time
-  // interval or if the current simulation time is in the output time interval
+  // Adds a condition to the generation of .vtu and .pvd files in addition to
+  // the output generation frequency. If specified in the parameter file, only
+  // the results within the specified simulation time interval will be
+  // generated.
   std::vector<double> output_time_interval;
 
   // Log iteration frequency
