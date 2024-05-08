@@ -2410,7 +2410,7 @@ namespace Parameters
                           "The preconditioner for the mg gmres solver"
                           "Choices are <amg|ilu>.");
 
-        prm.declare_entry("mg use amg default parameters",
+        prm.declare_entry("mg amg use default parameters",
                           "false",
                           Patterns::Bool(),
                           "Use default parameters for Trilinos AMG");
@@ -2543,8 +2543,8 @@ namespace Parameters
           throw std::logic_error(
             "Error, invalid preconditioner type for mg gmres solver. Choices are amg or ilu.");
 
-        mg_use_amg_default_parameters =
-          prm.get_bool("mg use amg default parameters");
+        mg_amg_use_default_parameters =
+          prm.get_bool("mg amg use default parameters");
 
         const std::string mg_op = prm.get("mg verbosity");
         if (mg_op == "verbose")

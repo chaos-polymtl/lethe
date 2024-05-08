@@ -184,7 +184,7 @@ AMG preconditioner
 LSMG and GCMG preconditioners
 ------------------------------
 
-Different parameters for the main components of the two geometric multigrid algorithms can be specified. The parameters can be general or can belong to either the smoother or the coarse-grid solver. Lethe supports different coarse-grid solvers: ``gmres``, ``amg``, ``ilu`` and ``direct``. The ``gmres`` coarse-grid solver supports two preconditioners ``amg`` or ``ilu``. 
+Different parameters for the main components of the two geometric multigrid algorithms can be specified. The parameters can be general or can belong to either the smoother or the coarse-grid solver. Lethe supports different coarse-grid solvers: ``gmres``, ``amg``, ``ilu`` and ``direct``. The ``gmres`` coarse-grid solver supports two preconditioners ``amg`` and ``ilu``. 
 
 .. code-block:: text
 
@@ -214,7 +214,7 @@ Different parameters for the main components of the two geometric multigrid algo
     set mg gmres preconditioner     = amg
     
     # Parameters for AMG as coarse-grid solver or GMRES preconditioner
-    set mg use amg default parameters             = false
+    set mg amg use default parameters             = false
     set amg preconditioner ilu fill               = 0
     set amg preconditioner ilu absolute tolerance = 1e-12
     set amg preconditioner ilu relative tolerance = 1.00
@@ -236,4 +236,4 @@ Different parameters for the main components of the two geometric multigrid algo
   If ``mg verbosity`` is set to ``verbose``, the information about the levels (cells and degrees of freedom) and the number of iterations of the coarse grid solver are displayed. If this parameter is set to ``extra verbose``, apart from all the previous information, several additional tables with the times related to multigrid are also displayed. 
 
 .. tip::
-  If your coarse-grid level is small enough, it might be worth it for some problems to set ``mg use amg default parameters = true`` to use a direct solver.
+  If your coarse-grid level is small enough, it might be worth it for some problems to set ``mg amg use default parameters = true`` to use a direct solver.

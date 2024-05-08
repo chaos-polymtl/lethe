@@ -967,7 +967,7 @@ MFNavierStokesPreconditionGMG<dim>::initialize(
 
           if (!this->simulation_parameters.linear_solver
                  .at(PhysicsID::fluid_dynamics)
-                 .mg_use_amg_default_parameters)
+                 .mg_amg_use_default_parameters)
             {
               amg_data.elliptic = false;
               if (this->dof_handler.get_fe().degree > 1)
@@ -1116,7 +1116,7 @@ MFNavierStokesPreconditionGMG<dim>::initialize(
 
       if (!this->simulation_parameters.linear_solver
              .at(PhysicsID::fluid_dynamics)
-             .mg_use_amg_default_parameters)
+             .mg_amg_use_default_parameters)
         {
           amg_data.elliptic = false;
           if (this->dof_handler.get_fe().degree > 1)

@@ -1046,22 +1046,22 @@ namespace Parameters
 
     SolverType solver;
 
-    // Verbosity of linear solver
+    /// Verbosity of linear solver
     Verbosity verbosity;
 
-    // Relative residuals of the iterative solver
+    /// Relative residuals of the iterative solver
     double relative_residual;
 
-    // Minimum residual of the iterative solver
+    /// Minimum residual of the iterative solver
     double minimum_residual;
 
-    // Maximum number of iterations
+    /// Maximum number of iterations
     int max_iterations;
 
-    // Maximum number of krylov vectors
+    /// Maximum number of krylov vectors
     int max_krylov_vectors;
 
-    // Type of preconditioner
+    /// Type of preconditioner
     enum class PreconditionerType
     {
       ilu,
@@ -1071,70 +1071,70 @@ namespace Parameters
     };
     PreconditionerType preconditioner;
 
-    // ILU or ILUT fill
+    /// ILU or ILUT fill
     double ilu_precond_fill;
 
-    // ILU or ILUT absolute tolerance
+    /// ILU or ILUT absolute tolerance
     double ilu_precond_atol;
 
-    // ILU or ILUT relative tolerance
+    /// ILU or ILUT relative tolerance
     double ilu_precond_rtol;
 
-    // AMG parameters either as linear solver preconditioner or as
-    // preconditioner of a coarse-grid solver for LSMG or GCMG
+    /// AMG parameters either as linear solver preconditioner or as
+    /// preconditioner of a coarse-grid solver for LSMG or GCMG
 
-    // ILU or ILUT fill for smoother
+    /// ILU or ILUT fill for smoother
     double amg_precond_ilu_fill;
 
-    // ILU or ILUT absolute tolerance for smoother
+    /// ILU or ILUT absolute tolerance for smoother
     double amg_precond_ilu_atol;
 
-    // ILU or ILUT relative tolerance for smoother
+    /// ILU or ILUT relative tolerance for smoother
     double amg_precond_ilu_rtol;
 
-    // AMG aggregation threshold
+    /// AMG aggregation threshold
     double amg_aggregation_threshold;
 
-    // AMG number of cycles
+    /// AMG number of cycles
     unsigned int amg_n_cycles;
 
-    // AMG W_cycle
+    /// AMG W_cycle
     bool amg_w_cycles;
 
-    // AMG Smoother sweeps
+    /// AMG Smoother sweeps
     unsigned int amg_smoother_sweeps;
 
-    // AMG Smoother overalp
+    /// AMG Smoother overalp
     unsigned int amg_smoother_overlap;
 
-    // Block linear solver to throw error.
+    /// Block linear solver to throw error.
     bool force_linear_solver_continuation;
 
-    // MG min level
+    /// MG min level
     int mg_min_level;
 
-    // MG minimum number of cells per level
+    /// MG minimum number of cells per level
     int mg_level_min_cells;
 
-    // MG smoother number of iterations
+    /// MG smoother number of iterations
     int mg_smoother_iterations;
 
-    // MG smoother relaxation parameter
+    /// MG smoother relaxation parameter
     double mg_smoother_relaxation;
 
-    // MG eigenvalue estimation for smoother relaxation parameter
+    /// MG eigenvalue estimation for smoother relaxation parameter
     bool mg_smoother_eig_estimation;
 
-    // MG smoothing range to set range between eigenvalues
+    /// MG smoothing range to set range between eigenvalues
     int eig_estimation_smoothing_range;
 
-    // MG number of cg iterations to find eigenvalue
+    /// MG number of cg iterations to find eigenvalue
     int eig_estimation_cg_n_iterations;
 
-    // MG print max, min, eigenvalues
+    /// MG print max, min, eigenvalues
     Verbosity eig_estimation_verbose;
 
-    // Type of coarse grid solver
+    /// Type of coarse grid solver
     enum class CoarseGridSolverType
     {
       gmres,
@@ -1144,25 +1144,25 @@ namespace Parameters
     };
     CoarseGridSolverType mg_coarse_grid_solver;
 
-    // MG coarse-grid solver maximum number of iterations
+    /// MG coarse-grid solver maximum number of iterations
     int mg_gmres_max_iterations;
 
-    // MG coarse-grid solver tolerance
+    /// MG coarse-grid solver tolerance
     double mg_gmres_tolerance;
 
-    // MG coarse-grid solver reduce
+    /// MG coarse-grid solver reduce
     double mg_gmres_reduce;
 
-    // MG coarse-grid solver maximum number of krylov vectors
+    /// MG coarse-grid solver maximum number of krylov vectors
     int mg_gmres_max_krylov_vectors;
 
-    // MG coarse-grid solver preconditioner
+    /// MG coarse-grid solver preconditioner
     PreconditionerType mg_gmres_preconditioner;
 
-    // MG use default parameters for AMG
-    bool mg_use_amg_default_parameters;
+    /// MG use default parameters for AMG
+    bool mg_amg_use_default_parameters;
 
-    // MG information about levels
+    /// MG information about levels
     Verbosity mg_verbosity;
 
     static void
