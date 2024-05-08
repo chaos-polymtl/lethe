@@ -25,7 +25,7 @@ Both files mentioned below are located in the example's folder (``examples/unres
 Description of the Case
 -----------------------
 
-This example simulates the spouting of spherical particles in air in a cylinder. As noted in the example of `Gas-Solid Spouted Bed <../gas-solid-spouted-bed/gas-solid-spouted-beml>`_, we use ``lethe-particles`` to fill the bed with particles, and ``lethe-fluid-particles`` as the CFD-DEM solver.
+This example simulates the spouting of spherical particles in air in a cylinder. As noted in the example of `Gas-Solid Spouted Bed <../gas-solid-spouted-bed/gas-solid-spouted-bed.html>`_, we use ``lethe-particles`` to fill the bed with particles, and ``lethe-fluid-particles`` as the CFD-DEM solver.
 
 -------------------
 DEM Parameter File
@@ -161,7 +161,7 @@ After the particles have been packed inside the square bed, we can move on to th
 CFD-DEM Parameter File
 -----------------------
 
-The CFD-DEM simulation is carried out using the packed bed previously generated. Here we will focus on the modified section as well. We recommend visiting `CFD-DEM parameters <../../../parameters/unresolved-cfd-dem/unresolved-cfd-dem.html>`_ for a detailed description.
+The CFD-DEM simulation is carried out using the packed bed previously generated. Here we will focus on the modified section as well. We recommend visiting `Unresolved CFD-DEM Parameters Guide <../../../parameters/unresolved-cfd-dem/unresolved-cfd-dem.html>`_ for a detailed description.
 
 Simulation Control
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
