@@ -124,11 +124,11 @@ subsection linear solver
     set mg smoother relaxation = 0.5
 
     #coarse-grid solver
-    set mg coarse grid max iterations     = 2000
-    set mg coarse grid tolerance          = 1e-14
-    set mg coarse grid reduce             = 1e-4
-    set mg coarse grid max krylov vectors = 30
-    set mg coarse grid preconditioner     = amg
+    set mg gmres max iterations     = 2000
+    set mg gmres tolerance          = 1e-14
+    set mg gmres reduce             = 1e-4
+    set mg gmres max krylov vectors = 30
+    set mg gmres preconditioner     = amg
 
     #coarse-grid AMG preconditioner
     set amg aggregation threshold                 = 1e-14

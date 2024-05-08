@@ -44,6 +44,151 @@
 
 #include <deal.II/numerics/vector_tools.h>
 
+namespace dealii
+{
+  /**
+   * Coarse grid solver using a preconditioner only. This is a little wrapper,
+   * transforming a preconditioner into a coarse grid solver.
+   */
+  template <class VectorType, class PreconditionerType>
+  class MGCoarseGridApplyPreconditioner : public MGCoarseGridBase<VectorType>
+  {
+  public:
+    /**
+     * Default constructor.
+     */
+    MGCoarseGridApplyPreconditioner();
+
+    /**
+     * Constructor. Store a pointer to the preconditioner for later use.
+     */
+    MGCoarseGridApplyPreconditioner(const PreconditionerType &precondition);
+
+    /**
+     * Clear the pointer.
+     */
+    void
+    clear();
+
+    /**
+     * Initialize new data.
+     */
+    void
+    initialize(const PreconditionerType &precondition);
+
+    /**
+     * Implementation of the abstract function.
+     */
+    virtual void
+    operator()(const unsigned int level,
+               VectorType        &dst,
+               const VectorType  &src) const override;
+
+  private:
+    /**
+     * Reference to the preconditioner.
+     */
+    SmartPointer<
+      const PreconditionerType,
+      MGCoarseGridApplyPreconditioner<VectorType, PreconditionerType>>
+      preconditioner;
+  };
+
+
+
+  template <class VectorType, class PreconditionerType>
+  MGCoarseGridApplyPreconditioner<VectorType, PreconditionerType>::
+    MGCoarseGridApplyPreconditioner()
+    : preconditioner(0, typeid(*this).name())
+  {}
+
+
+
+  template <class VectorType, class PreconditionerType>
+  MGCoarseGridApplyPreconditioner<VectorType, PreconditionerType>::
+    MGCoarseGridApplyPreconditioner(const PreconditionerType &preconditioner)
+    : preconditioner(&preconditioner, typeid(*this).name())
+  {}
+
+
+
+  template <class VectorType, class PreconditionerType>
+  void
+  MGCoarseGridApplyPreconditioner<VectorType, PreconditionerType>::initialize(
+    const PreconditionerType &preconditioner_)
+  {
+    preconditioner = &preconditioner_;
+  }
+
+
+
+  template <class VectorType, class PreconditionerType>
+  void
+  MGCoarseGridApplyPreconditioner<VectorType, PreconditionerType>::clear()
+  {
+    preconditioner = 0;
+  }
+
+
+
+  namespace internal
+  {
+    namespace MGCoarseGridApplyPreconditioner
+    {
+      template <class VectorType,
+                class PreconditionerType,
+                typename std::enable_if<
+                  std::is_same<typename VectorType::value_type, double>::value,
+                  VectorType>::type * = nullptr>
+      void
+      solve(const PreconditionerType preconditioner,
+            VectorType              &dst,
+            const VectorType        &src)
+      {
+        // to allow the case that the preconditioner was only set up on a
+        // subset of processes
+        if (preconditioner != nullptr)
+          preconditioner->vmult(dst, src);
+      }
+
+      template <class VectorType,
+                class PreconditionerType,
+                typename std::enable_if<
+                  !std::is_same<typename VectorType::value_type, double>::value,
+                  VectorType>::type * = nullptr>
+      void
+      solve(const PreconditionerType preconditioner,
+            VectorType              &dst,
+            const VectorType        &src)
+      {
+        LinearAlgebra::distributed::Vector<double> src_;
+        LinearAlgebra::distributed::Vector<double> dst_;
+
+        src_ = src;
+        dst_ = dst;
+
+        // to allow the case that the preconditioner was only set up on a
+        // subset of processes
+        if (preconditioner != nullptr)
+          preconditioner->vmult(dst_, src_);
+
+        dst = dst_;
+      }
+    } // namespace MGCoarseGridApplyPreconditioner
+  }   // namespace internal
+
+
+  template <class VectorType, class PreconditionerType>
+  void
+  MGCoarseGridApplyPreconditioner<VectorType, PreconditionerType>::operator()(
+    const unsigned int /*level*/,
+    VectorType       &dst,
+    const VectorType &src) const
+  {
+    internal::MGCoarseGridApplyPreconditioner::solve(preconditioner, dst, src);
+  }
+} // namespace dealii
+
 template <int dim>
 MFNavierStokesPreconditionGMG<dim>::MFNavierStokesPreconditionGMG(
   const SimulationParameters<dim>         &simulation_parameters,
@@ -786,162 +931,138 @@ MFNavierStokesPreconditionGMG<dim>::initialize(
   // Create coarse-grid GMRES solver and AMG preconditioner
   this->mg_setup_timer.enter_subsection("Create coarse-grid solver");
 
-  const int max_iterations =
-    this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
-      .mg_coarse_grid_max_iterations;
-  const double tolerance =
-    this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
-      .mg_coarse_grid_tolerance;
-  const double reduce =
-    this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
-      .mg_coarse_grid_reduce;
-  this->coarse_grid_solver_control = std::make_shared<ReductionControl>(
-    max_iterations, tolerance, reduce, false, false);
-  SolverGMRES<VectorType>::AdditionalData solver_parameters;
-  solver_parameters.max_n_tmp_vectors =
-    this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
-      .mg_coarse_grid_max_krylov_vectors;
-
-  this->coarse_grid_solver =
-    std::make_shared<SolverGMRES<VectorType>>(*this->coarse_grid_solver_control,
-                                              solver_parameters);
-
   if (this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
-        .mg_coarse_grid_preconditioner ==
-      Parameters::LinearSolver::PreconditionerType::amg)
+        .mg_coarse_grid_solver ==
+      Parameters::LinearSolver::CoarseGridSolverType::gmres)
     {
-      TrilinosWrappers::PreconditionAMG::AdditionalData amg_data;
-      amg_data.elliptic = false;
-      if (this->dof_handler.get_fe().degree > 1)
-        amg_data.higher_order_elements = true;
-      amg_data.n_cycles =
+      const int max_iterations =
         this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
-          .amg_n_cycles;
-      amg_data.w_cycle =
+          .mg_gmres_max_iterations;
+      const double tolerance =
         this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
-          .amg_w_cycles;
-      amg_data.aggregation_threshold =
+          .mg_gmres_tolerance;
+      const double reduce =
         this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
-          .amg_aggregation_threshold;
-      amg_data.smoother_sweeps =
+          .mg_gmres_reduce;
+      this->coarse_grid_solver_control = std::make_shared<ReductionControl>(
+        max_iterations, tolerance, reduce, false, false);
+      SolverGMRES<VectorType>::AdditionalData solver_parameters;
+      solver_parameters.max_n_tmp_vectors =
         this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
-          .amg_smoother_sweeps;
-      amg_data.smoother_overlap =
-        this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
-          .amg_smoother_overlap;
-      amg_data.output_details = false;
-      amg_data.smoother_type  = "ILU";
-      amg_data.coarse_type    = "ILU";
+          .mg_gmres_max_krylov_vectors;
 
-      std::vector<std::vector<bool>> constant_modes;
-      ComponentMask                  components(dim + 1, true);
+      this->coarse_grid_solver = std::make_shared<SolverGMRES<VectorType>>(
+        *this->coarse_grid_solver_control, solver_parameters);
+
       if (this->simulation_parameters.linear_solver
             .at(PhysicsID::fluid_dynamics)
-            .preconditioner ==
-          Parameters::LinearSolver::PreconditionerType::lsmg)
-
+            .mg_gmres_preconditioner ==
+          Parameters::LinearSolver::PreconditionerType::amg)
         {
-#if DEAL_II_VERSION_GTE(9, 6, 0)
-          // Constant modes for velocity and pressure
-          DoFTools::extract_level_constant_modes(this->minlevel,
-                                                 this->dof_handler,
-                                                 components,
-                                                 constant_modes);
-#else
-          AssertThrow(
-            false,
-            ExcMessage(
-              "the extraction of constant modes for the AMG coarse-grid solver requires a version od deal.II >= 9.6.0"));
-#endif
+          setup_AMG();
+
+          this->mg_coarse = std::make_shared<
+            MGCoarseGridIterativeSolver<VectorType,
+                                        SolverGMRES<VectorType>,
+                                        OperatorType,
+                                        TrilinosWrappers::PreconditionAMG>>(
+            *this->coarse_grid_solver,
+            *this->mg_operators[this->minlevel],
+            *this->precondition_amg);
         }
       else if (this->simulation_parameters.linear_solver
                  .at(PhysicsID::fluid_dynamics)
-                 .preconditioner ==
-               Parameters::LinearSolver::PreconditionerType::gcmg)
+                 .mg_gmres_preconditioner ==
+               Parameters::LinearSolver::PreconditionerType::ilu)
         {
-          // Constant modes for velocity and pressure
-          DoFTools::extract_constant_modes(this->dof_handlers[this->minlevel],
-                                           components,
-                                           constant_modes);
+          setup_ILU();
+
+          this->mg_coarse = std::make_shared<
+            MGCoarseGridIterativeSolver<VectorType,
+                                        SolverGMRES<VectorType>,
+                                        OperatorType,
+                                        TrilinosWrappers::PreconditionILU>>(
+            *this->coarse_grid_solver,
+            *this->mg_operators[this->minlevel],
+            *this->precondition_ilu);
         }
-
-      amg_data.constant_modes = constant_modes;
-
-      // Extract matrix of the minlevel to avoid building it twice
-      const TrilinosWrappers::SparseMatrix &min_level_matrix =
-        this->mg_operators[this->minlevel]->get_system_matrix();
-
-      Teuchos::ParameterList              parameter_ml;
-      std::unique_ptr<Epetra_MultiVector> distributed_constant_modes;
-      amg_data.set_parameters(parameter_ml,
-                              distributed_constant_modes,
-                              min_level_matrix);
-
-      const double ilu_fill =
-        this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
-          .ilu_precond_fill;
-      const double ilu_atol =
-        this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
-          .amg_precond_ilu_atol;
-      const double ilu_rtol =
-        this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
-          .amg_precond_ilu_rtol;
-      parameter_ml.set("smoother: ifpack level-of-fill", ilu_fill);
-      parameter_ml.set("smoother: ifpack absolute threshold", ilu_atol);
-      parameter_ml.set("smoother: ifpack relative threshold", ilu_rtol);
-
-      parameter_ml.set("coarse: ifpack level-of-fill", ilu_fill);
-      parameter_ml.set("coarse: ifpack absolute threshold", ilu_atol);
-      parameter_ml.set("coarse: ifpack relative threshold", ilu_rtol);
-
-      this->precondition_amg.initialize(min_level_matrix, parameter_ml);
-
-      this->mg_coarse = std::make_shared<
-        MGCoarseGridIterativeSolver<VectorType,
-                                    SolverGMRES<VectorType>,
-                                    OperatorType,
-                                    decltype(this->precondition_amg)>>(
-        *this->coarse_grid_solver,
-        *this->mg_operators[this->minlevel],
-        this->precondition_amg);
     }
   else if (this->simulation_parameters.linear_solver
              .at(PhysicsID::fluid_dynamics)
-             .mg_coarse_grid_preconditioner ==
-           Parameters::LinearSolver::PreconditionerType::ilu)
+             .mg_coarse_grid_solver ==
+           Parameters::LinearSolver::CoarseGridSolverType::amg)
     {
-      int current_preconditioner_fill_level =
-        this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
-          .ilu_precond_fill;
-      const double ilu_atol =
-        this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
-          .ilu_precond_atol;
-      const double ilu_rtol =
-        this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
-          .ilu_precond_rtol;
-      TrilinosWrappers::PreconditionILU::AdditionalData preconditionerOptions(
-        current_preconditioner_fill_level, ilu_atol, ilu_rtol, 0);
-
-      this->precondition_ilu.initialize(
-        this->mg_operators[this->minlevel]->get_system_matrix(),
-        preconditionerOptions);
+      setup_AMG();
 
       this->mg_coarse = std::make_shared<
-        MGCoarseGridIterativeSolver<VectorType,
-                                    SolverGMRES<VectorType>,
-                                    OperatorType,
-                                    decltype(this->precondition_ilu)>>(
-        *this->coarse_grid_solver,
-        *this->mg_operators[this->minlevel],
-        this->precondition_ilu);
+        MGCoarseGridApplyPreconditioner<VectorType,
+                                        TrilinosWrappers::PreconditionAMG>>(
+        *this->precondition_amg);
     }
+  else if (this->simulation_parameters.linear_solver
+             .at(PhysicsID::fluid_dynamics)
+             .mg_coarse_grid_solver ==
+           Parameters::LinearSolver::CoarseGridSolverType::ilu)
+    {
+      setup_ILU();
+
+      this->mg_coarse = std::make_shared<
+        MGCoarseGridApplyPreconditioner<VectorType,
+                                        TrilinosWrappers::PreconditionILU>>(
+        *this->precondition_ilu);
+    }
+  else if (this->simulation_parameters.linear_solver
+             .at(PhysicsID::fluid_dynamics)
+             .mg_coarse_grid_solver ==
+           Parameters::LinearSolver::CoarseGridSolverType::direct)
+    {
+#if DEAL_II_VERSION_GTE(9, 6, 0)
+      TrilinosWrappers::SolverDirect::AdditionalData data;
+      this->direct_solver_control =
+        std::make_shared<SolverControl>(100, 1.e-10);
+
+      this->precondition_direct =
+        std::make_shared<TrilinosWrappers::SolverDirect>(
+          *this->direct_solver_control, data);
+
+      this->precondition_direct->initialize(
+        this->mg_operators[this->minlevel]->get_system_matrix());
+
+      this->mg_coarse = std::make_shared<
+        MGCoarseGridApplyPreconditioner<VectorType,
+                                        TrilinosWrappers::SolverDirect>>(
+        *this->precondition_direct);
+#else
+      AssertThrow(
+        false,
+        ExcMessage(
+          "The usage of a direct solver as coarse grid solver requires a version of deal.II >= 9.6.0"));
+#endif
+    }
+  else
+    AssertThrow(
+      this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+            .mg_coarse_grid_solver ==
+          Parameters::LinearSolver::CoarseGridSolverType::gmres ||
+        this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+            .mg_coarse_grid_solver ==
+          Parameters::LinearSolver::CoarseGridSolverType::amg ||
+        this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+            .mg_coarse_grid_solver ==
+          Parameters::LinearSolver::CoarseGridSolverType::ilu ||
+        this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+            .mg_coarse_grid_solver ==
+          Parameters::LinearSolver::CoarseGridSolverType::direct,
+      ExcMessage(
+        "This coarse-grid solver is not supported. Supported options are <gmres|amg|ilu|direct>."));
+
   this->mg_setup_timer.leave_subsection("Create coarse-grid solver");
 
   if (this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
         .preconditioner == Parameters::LinearSolver::PreconditionerType::lsmg)
     {
-      // Create interface matrices needed for local smoothing in case of local
-      // refinement
+      // Create interface matrices needed for local smoothing in case of
+      // local refinement
       this->mg_interface_matrix_in =
         std::make_shared<mg::Matrix<VectorType>>(this->ls_mg_interface_in);
 
@@ -1050,29 +1171,37 @@ MFNavierStokesPreconditionGMG<dim>::vmult(VectorType       &dst,
     AssertThrow(false, ExcNotImplemented());
 
   // Save number of coarse grid iterations needed in one vmult
-  this->coarse_grid_iterations.emplace_back(
-    this->coarse_grid_solver_control->last_step());
+  if (this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+        .mg_coarse_grid_solver ==
+      Parameters::LinearSolver::CoarseGridSolverType::gmres)
+    this->coarse_grid_iterations.emplace_back(
+      this->coarse_grid_solver_control->last_step());
 }
 
 template <int dim>
 void
 MFNavierStokesPreconditionGMG<dim>::print_relevant_info() const
 {
-  if (this->coarse_grid_iterations.empty())
-    this->pcout << "  -Coarse grid solver took: 0 iterations" << std::endl;
-  else
+  if (this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+        .mg_coarse_grid_solver ==
+      Parameters::LinearSolver::CoarseGridSolverType::gmres)
     {
-      unsigned int total = this->coarse_grid_iterations[0];
-      this->pcout << "  -Coarse grid solver took: "
-                  << this->coarse_grid_iterations[0];
-      for (unsigned int i = 1; i < this->coarse_grid_iterations.size(); i++)
+      if (this->coarse_grid_iterations.empty())
+        this->pcout << "  -Coarse grid solver took: 0 iterations" << std::endl;
+      else
         {
-          this->pcout << " + " << this->coarse_grid_iterations[i];
-          total += this->coarse_grid_iterations[i];
-        }
-      this->pcout << " = " << total << " iterations" << std::endl;
+          unsigned int total = this->coarse_grid_iterations[0];
+          this->pcout << "  -Coarse grid solver took: "
+                      << this->coarse_grid_iterations[0];
+          for (unsigned int i = 1; i < this->coarse_grid_iterations.size(); i++)
+            {
+              this->pcout << " + " << this->coarse_grid_iterations[i];
+              total += this->coarse_grid_iterations[i];
+            }
+          this->pcout << " = " << total << " iterations" << std::endl;
 
-      this->coarse_grid_iterations.clear();
+          this->coarse_grid_iterations.clear();
+        }
     }
 }
 
@@ -1081,6 +1210,136 @@ const MGLevelObject<std::shared_ptr<NavierStokesOperatorBase<dim, double>>> &
 MFNavierStokesPreconditionGMG<dim>::get_mg_operators() const
 {
   return this->mg_operators;
+}
+
+template <int dim>
+void
+MFNavierStokesPreconditionGMG<dim>::setup_AMG()
+{
+  TrilinosWrappers::PreconditionAMG::AdditionalData amg_data;
+
+  // Extract matrix of the minlevel to avoid building it twice
+  const TrilinosWrappers::SparseMatrix &min_level_matrix =
+    this->mg_operators[this->minlevel]->get_system_matrix();
+
+  if (!this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+         .mg_amg_use_default_parameters)
+    {
+      amg_data.elliptic = false;
+      if (this->dof_handler.get_fe().degree > 1)
+        amg_data.higher_order_elements = true;
+      amg_data.n_cycles =
+        this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+          .amg_n_cycles;
+      amg_data.w_cycle =
+        this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+          .amg_w_cycles;
+      amg_data.aggregation_threshold =
+        this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+          .amg_aggregation_threshold;
+      amg_data.smoother_sweeps =
+        this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+          .amg_smoother_sweeps;
+      amg_data.smoother_overlap =
+        this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+          .amg_smoother_overlap;
+      amg_data.output_details = false;
+      amg_data.smoother_type  = "ILU";
+      amg_data.coarse_type    = "ILU";
+
+      std::vector<std::vector<bool>> constant_modes;
+      ComponentMask                  components(dim + 1, true);
+      if (this->simulation_parameters.linear_solver
+            .at(PhysicsID::fluid_dynamics)
+            .preconditioner ==
+          Parameters::LinearSolver::PreconditionerType::lsmg)
+
+        {
+#if DEAL_II_VERSION_GTE(9, 6, 0)
+          // Constant modes for velocity and pressure
+          DoFTools::extract_level_constant_modes(this->minlevel,
+                                                 this->dof_handler,
+                                                 components,
+                                                 constant_modes);
+#else
+          AssertThrow(
+            false,
+            ExcMessage(
+              "The extraction of constant modes for the AMG coarse-grid solver requires a version of deal.II >= 9.6.0"));
+#endif
+        }
+      else if (this->simulation_parameters.linear_solver
+                 .at(PhysicsID::fluid_dynamics)
+                 .preconditioner ==
+               Parameters::LinearSolver::PreconditionerType::gcmg)
+        {
+          // Constant modes for velocity and pressure
+          DoFTools::extract_constant_modes(this->dof_handlers[this->minlevel],
+                                           components,
+                                           constant_modes);
+        }
+
+      amg_data.constant_modes = constant_modes;
+
+      Teuchos::ParameterList              parameter_ml;
+      std::unique_ptr<Epetra_MultiVector> distributed_constant_modes;
+      amg_data.set_parameters(parameter_ml,
+                              distributed_constant_modes,
+                              min_level_matrix);
+
+      const double ilu_fill =
+        this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+          .amg_precond_ilu_fill;
+      const double ilu_atol =
+        this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+          .amg_precond_ilu_atol;
+      const double ilu_rtol =
+        this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+          .amg_precond_ilu_rtol;
+      parameter_ml.set("smoother: ifpack level-of-fill", ilu_fill);
+      parameter_ml.set("smoother: ifpack absolute threshold", ilu_atol);
+      parameter_ml.set("smoother: ifpack relative threshold", ilu_rtol);
+
+      parameter_ml.set("coarse: ifpack level-of-fill", ilu_fill);
+      parameter_ml.set("coarse: ifpack absolute threshold", ilu_atol);
+      parameter_ml.set("coarse: ifpack relative threshold", ilu_rtol);
+
+      this->precondition_amg =
+        std::make_shared<TrilinosWrappers::PreconditionAMG>();
+
+      this->precondition_amg->initialize(min_level_matrix, parameter_ml);
+    }
+  else
+    {
+      this->precondition_amg =
+        std::make_shared<TrilinosWrappers::PreconditionAMG>();
+
+      this->precondition_amg->initialize(min_level_matrix, amg_data);
+    }
+}
+
+template <int dim>
+void
+MFNavierStokesPreconditionGMG<dim>::setup_ILU()
+{
+  int current_preconditioner_fill_level =
+    this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+      .ilu_precond_fill;
+  const double ilu_atol =
+    this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+      .ilu_precond_atol;
+  const double ilu_rtol =
+    this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+      .ilu_precond_rtol;
+  TrilinosWrappers::PreconditionILU::AdditionalData preconditionerOptions(
+    current_preconditioner_fill_level, ilu_atol, ilu_rtol, 0);
+
+  this->precondition_ilu =
+    std::make_shared<TrilinosWrappers::PreconditionILU>();
+
+  this->precondition_ilu->initialize(
+    this->mg_operators[this->minlevel]->get_system_matrix(),
+    preconditionerOptions);
 }
 
 template <int dim>
@@ -1342,8 +1601,8 @@ MFNavierStokesSolver<dim>::set_initial_condition_fd(
       viscosity_model->set_kinematic_viscosity(
         this->simulation_parameters.initial_condition->kinematic_viscosity);
 
-      // Set the kinematic viscosity in the system operator to be the temporary
-      // viscosity
+      // Set the kinematic viscosity in the system operator to be the
+      // temporary viscosity
       this->system_operator->set_kinematic_viscosity(
         this->simulation_parameters.physical_properties_manager
           .get_kinematic_viscosity_scale());
