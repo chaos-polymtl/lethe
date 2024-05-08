@@ -7,7 +7,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Added
 
-- MINOR Added a new parameter to specify the time interval to write .vtu and .pvd files in order to reduce simulation disk usage. [#1120] (https://github.com/chaos-polymtl/lethe/pull/1120) 
+- MINOR Added a condition to the generation of .vtu and .pvd files in addition to the output generation frequency. If specified in the parameter file, only the results within the specified simulation time interval will be generated. [#1120] (https://github.com/chaos-polymtl/lethe/pull/1120) 
 
 
 ## [Master] - 2024-05-02
