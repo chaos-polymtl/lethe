@@ -119,6 +119,22 @@ public:
   get_mg_operators() const;
 
 private:
+  /**
+   * @brief Set the up AMG object needed for coarse-grid solver or
+   * preconditioning.
+   *
+   */
+  void
+  setup_AMG();
+
+  /**
+   * @brief Set the up ILU object needed for coarse-grid solver or
+   * preconditioning.
+   *
+   */
+  void
+  setup_ILU();
+
   /// Min level of the multigrid hierarchy
   unsigned int minlevel;
 
@@ -136,7 +152,7 @@ private:
   MGLevelObject<MGTwoLevelTransfer<dim, VectorType>> transfers;
 
   /// Level operators for the geometric multigrid
-  MGLevelObject<std::shared_ptr<OperatorType>> mg_operators; // TODO: reuse
+  MGLevelObject<std::shared_ptr<OperatorType>> mg_operators;
 
   /// Multigrid level object storing all operators
   std::shared_ptr<mg::Matrix<VectorType>> mg_matrix;
@@ -158,16 +174,16 @@ private:
   MGConstrainedDoFs mg_constrained_dofs;
 
   /// Transfer operator for local smoothing
-  std::shared_ptr<LSTransferType> mg_transfer_ls; // TODO: reuse
+  std::shared_ptr<LSTransferType> mg_transfer_ls;
 
   /// Transfer operator for global coarsening
-  std::shared_ptr<GCTransferType> mg_transfer_gc; // TODO: reuse
+  std::shared_ptr<GCTransferType> mg_transfer_gc;
 
   /// Algebraic multigrid as coarse grid solver
-  TrilinosWrappers::PreconditionAMG precondition_amg;
+  std::shared_ptr<TrilinosWrappers::PreconditionAMG> precondition_amg;
 
   /// Incomplete LU as coarse grid solver
-  TrilinosWrappers::PreconditionILU precondition_ilu;
+  std::shared_ptr<TrilinosWrappers::PreconditionILU> precondition_ilu;
 
   /// Direct solver as coarse grid solver
   TrilinosWrappers::SolverDirect precondition_direct;
