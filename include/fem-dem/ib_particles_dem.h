@@ -1,25 +1,19 @@
 /* ---------------------------------------------------------------------
-*
-* Copyright (C) 2019 - 2019 by the Lethe authors
-*
-* This file is part of the Lethe library
-*
-* The Lethe library is free software; you can use it, redistribute
-* it, and/or modify it under the terms of the GNU Lesser General
-* Public License as published by the Free Software Foundation; either
-* version 2.1 of the License, or (at your option) any later version.
-* The full text of the license can be found in the file LICENSE at
-* the top level of the Lethe distribution.
-*
-* ---------------------------------------------------------------------
-
-*
-* Author: Lucka Barbeau, Shahab Golshan, Bruno Blais Polytechnique Montreal,
-2021
-*/
-
-#ifndef lethe_ib_particles_dem_h
-#define lethe_ib_particles_dem_h
+ *
+ * Copyright (C) 2019 - 2024 by the Lethe authors
+ *
+ * This file is part of the Lethe library
+ *
+ * The Lethe library is free software; you can use it, redistribute
+ * it, and/or modify it under the terms of the GNU Lesser General
+ * Public License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ * The full text of the license can be found in the file LICENSE at
+ * the top level of the Lethe distribution.
+ *
+ * ---------------------------------------------------------------------
+ *
+ */
 
 #include <core/ib_particle.h>
 #include <core/ib_stencil.h>
@@ -35,8 +29,10 @@
 #include <deal.II/dofs/dof_handler.h>
 #include <deal.II/dofs/dof_tools.h>
 
-using namespace dealii;
+#ifndef lethe_ib_particles_dem_h
+#  define lethe_ib_particles_dem_h
 
+using namespace dealii;
 
 /**
  * @brief A solver class for the DEM used in conjunction with IB particles and

@@ -1,6 +1,6 @@
 /* ---------------------------------------------------------------------
  *
- * Copyright (C) 2019 - 2021 by the Lethe authors
+ * Copyright (C) 2019 - 2024 by the Lethe authors
  *
  * This file is part of the Lethe library
  *
@@ -12,9 +12,7 @@
  * the top level of the Lethe distribution.
  *
  * ---------------------------------------------------------------------
-
  *
- * Author: Shahab Golshan, Polytechnique Montreal, 2019
  */
 
 #include <core/dem_properties.h>
@@ -42,8 +40,6 @@ using namespace dealii;
  * class.
  *
  * @todo Add tracer particles
- *
- * @author Shahab Golshan, Polytechnique Montreal 2019-
  */
 
 template <int dim>

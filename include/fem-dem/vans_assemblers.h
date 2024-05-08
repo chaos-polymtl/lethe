@@ -1,6 +1,6 @@
 /* ---------------------------------------------------------------------
  *
- * Copyright (C) 2019 - 2019 by the Lethe authors
+ * Copyright (C) 2019 - 2024 by the Lethe authors
  *
  * This file is part of the Lethe library
  *
@@ -11,8 +11,9 @@
  * The full text of the license can be found in the file LICENSE at
  * the top level of the Lethe distribution.
  *
- * ---------------------------------------------------------------------*/
-
+ * ---------------------------------------------------------------------
+ *
+ */
 
 #include <core/simulation_control.h>
 
@@ -29,7 +30,7 @@
 
 /**
  * @brief A pure virtual class that serves as an interface for all
- * of the assemblers for the particle_fluid interqactions of the
+ * of the assemblers for the particle_fluid interactions of the
  * VANS equations
  *
  * @tparam dim An integer that denotes the number of spatial dimensions
@@ -41,7 +42,8 @@ class ParticleFluidAssemblerBase
 {
 public:
   /**
-   * @brief calculate_particle_fluid_interactions calculted the solid_fluid interactions
+   * @brief calculate_particle_fluid_interactions calculated the solid_fluid
+   * interactions
    * @param scratch_data Scratch data containing the Navier-Stokes information.
    * It is important to note that the scratch data has to have been re-inited
    * before calling for matrix assembly.
@@ -207,7 +209,7 @@ public:
   {}
 
   /**
-   * @brief calculate_particle_fluid_interactions calculted the solid_fluid interactions
+   * @brief calculate_particle_fluid_interactions calculated the solid_fluid interactions
    * @param scratch_data (see base class)
    * @param copy_data (see base class)
    */
@@ -243,7 +245,7 @@ public:
   {}
 
   /**
-   * @brief calculate_particle_fluid_interactions calculted the solid_fluid interactions
+   * @brief calculate_particle_fluid_interactions calculated the solid_fluid interactions
    * @param scratch_data (see base class)
    * @param copy_data (see base class)
    */

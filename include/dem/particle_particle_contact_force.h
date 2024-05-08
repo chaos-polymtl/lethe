@@ -37,7 +37,6 @@ using namespace dealii;
 
 using namespace DEM;
 
-
 /**
  * Base class for the particle-particle contact force models
  * This class does not implement any of the models, but ensures that

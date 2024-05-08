@@ -1,6 +1,6 @@
 /* ---------------------------------------------------------------------
  *
- * Copyright (C) 2019 - 2021 by the Lethe authors
+ * Copyright (C) 2019 - 2024 by the Lethe authors
  *
  * This file is part of the Lethe library
  *
@@ -12,14 +12,15 @@
  * the top level of the Lethe distribution.
  *
  * ---------------------------------------------------------------------
+ *
  */
-
-#ifndef dem_post_processing_h
-#define dem_post_processing_h
 
 #include <core/utilities.h>
 
 #include <deal.II/particles/particle_handler.h>
+
+#ifndef dem_post_processing_h
+#  define dem_post_processing_h
 
 using namespace dealii;
 

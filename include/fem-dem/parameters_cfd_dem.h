@@ -1,6 +1,6 @@
 /* ---------------------------------------------------------------------
  *
- * Copyright (C) 2019 - 2020 by the Lethe authors
+ * Copyright (C) 2019 - 2024 by the Lethe authors
  *
  * This file is part of the Lethe library
  *
@@ -12,13 +12,8 @@
  * the top level of the Lethe distribution.
  *
  * ---------------------------------------------------------------------
-
  *
- * Author: Toni EL Geitani, Bruno Blais, Polytechnique Montreal, 2020-
  */
-
-#ifndef lethe_parameters_cfd_dem_h
-#define lethe_parameters_cfd_dem_h
 
 #include <core/parameters.h>
 #include <core/parameters_lagrangian.h>
@@ -26,6 +21,8 @@
 #include <deal.II/base/parameter_handler.h>
 #include <deal.II/base/parsed_function.h>
 
+#ifndef lethe_parameters_cfd_dem_h
+#  define lethe_parameters_cfd_dem_h
 
 using namespace dealii;
 /**
