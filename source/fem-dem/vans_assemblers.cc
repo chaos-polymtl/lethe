@@ -139,10 +139,10 @@ GLSVansAssemblerCoreModelB<dim>::assemble_matrix(
 
           for (unsigned int j = 0; j < n_dofs; ++j)
             {
-              const unsigned int component_j = scratch_data.components[j];
-              const auto &phi_u_j      = scratch_data.phi_u[q][j];
-              const auto &grad_phi_u_j = scratch_data.grad_phi_u[q][j];
-              const auto &div_phi_u_j  = scratch_data.div_phi_u[q][j];
+              const unsigned int component_j  = scratch_data.components[j];
+              const auto        &phi_u_j      = scratch_data.phi_u[q][j];
+              const auto        &grad_phi_u_j = scratch_data.grad_phi_u[q][j];
+              const auto        &div_phi_u_j  = scratch_data.div_phi_u[q][j];
 
               const auto &phi_p_j =
                 pressure_scaling_factor * scratch_data.phi_p[q][j];
@@ -312,12 +312,12 @@ GLSVansAssemblerCoreModelB<dim>::assemble_rhs(
       // Assembly of the right-hand side
       for (unsigned int i = 0; i < n_dofs; ++i)
         {
-          const unsigned int component_i = scratch_data.components[i];
-          const auto phi_u_i      = scratch_data.phi_u[q][i];
-          const auto grad_phi_u_i = scratch_data.grad_phi_u[q][i];
-          const auto phi_p_i      = scratch_data.phi_p[q][i];
-          const auto grad_phi_p_i = scratch_data.grad_phi_p[q][i];
-          const auto div_phi_u_i  = scratch_data.div_phi_u[q][i];
+          const unsigned int component_i  = scratch_data.components[i];
+          const auto         phi_u_i      = scratch_data.phi_u[q][i];
+          const auto         grad_phi_u_i = scratch_data.grad_phi_u[q][i];
+          const auto         phi_p_i      = scratch_data.phi_p[q][i];
+          const auto         grad_phi_p_i = scratch_data.grad_phi_p[q][i];
+          const auto         div_phi_u_i  = scratch_data.div_phi_u[q][i];
 
           double local_rhs_i = 0;
 
@@ -495,20 +495,20 @@ GLSVansAssemblerCoreModelA<dim>::assemble_matrix(
 
       for (unsigned int i = 0; i < n_dofs; ++i)
         {
-          const unsigned int component_i = scratch_data.components[i];
-          const auto &phi_u_i      = scratch_data.phi_u[q][i];
-          const auto &grad_phi_u_i = scratch_data.grad_phi_u[q][i];
-          const auto &div_phi_u_i  = scratch_data.div_phi_u[q][i];
-          const auto &phi_p_i      = scratch_data.phi_p[q][i];
-          const auto &grad_phi_p_i = scratch_data.grad_phi_p[q][i];
+          const unsigned int component_i  = scratch_data.components[i];
+          const auto        &phi_u_i      = scratch_data.phi_u[q][i];
+          const auto        &grad_phi_u_i = scratch_data.grad_phi_u[q][i];
+          const auto        &div_phi_u_i  = scratch_data.div_phi_u[q][i];
+          const auto        &phi_p_i      = scratch_data.phi_p[q][i];
+          const auto        &grad_phi_p_i = scratch_data.grad_phi_p[q][i];
 
           for (unsigned int j = 0; j < n_dofs; ++j)
             {
-              const unsigned int component_j = scratch_data.components[j];
-              const auto &phi_u_j      = scratch_data.phi_u[q][j];
-              const auto &grad_phi_u_j = scratch_data.grad_phi_u[q][j];
-              const auto &div_phi_u_j  = scratch_data.div_phi_u[q][j];
-              const auto &phi_p_j =
+              const unsigned int component_j  = scratch_data.components[j];
+              const auto        &phi_u_j      = scratch_data.phi_u[q][j];
+              const auto        &grad_phi_u_j = scratch_data.grad_phi_u[q][j];
+              const auto        &div_phi_u_j  = scratch_data.div_phi_u[q][j];
+              const auto        &phi_p_j =
                 pressure_scaling_factor * scratch_data.phi_p[q][j];
 
               const auto &strong_jac = strong_jacobian_vec[q][j];
