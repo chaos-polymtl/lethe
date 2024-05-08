@@ -504,6 +504,11 @@ GLSNavierStokesCahnHilliardAssemblerNonNewtonianCore<dim>::assemble_matrix(
           shear_rate_magnitude,
           scratch_data.grad_kinematic_viscosity_shear_rate[q]);
 
+      const Tensor<1, dim> phase_order_gradient =
+        scratch_data.phase_order_cahn_hilliard_gradients[q];
+      const double potential_value =
+        scratch_data.chemical_potential_cahn_hilliard_values[q];
+
       // Forcing term
       Tensor<1, dim> force = scratch_data.force[q];
 
@@ -533,11 +538,11 @@ GLSNavierStokesCahnHilliardAssemblerNonNewtonianCore<dim>::assemble_matrix(
             u_mag, dynamic_viscosity_eq / density_eq, h, sdt);
 
       // Calculate the strong residual for GLS stabilization
-      auto strong_residual = density_eq * velocity_gradient * velocity +
-                             pressure_gradient -
-                             shear_rate * dynamic_viscosity_gradient -
-                             dynamic_viscosity_eq * velocity_laplacian -
-                             density_eq * force + strong_residual_vec[q];
+      auto strong_residual =
+        density_eq * velocity_gradient * velocity + pressure_gradient -
+        shear_rate * dynamic_viscosity_gradient -
+        dynamic_viscosity_eq * velocity_laplacian - density_eq * force -
+        potential_value * phase_order_gradient + strong_residual_vec[q];
 
       std::vector<Tensor<1, dim>> grad_phi_u_j_x_velocity(n_dofs);
       std::vector<Tensor<1, dim>> velocity_gradient_x_phi_u_j(n_dofs);
@@ -666,6 +671,13 @@ GLSNavierStokesCahnHilliardAssemblerNonNewtonianCore<dim>::assemble_rhs(
   // Loop over the quadrature points
   for (unsigned int q = 0; q < n_q_points; ++q)
     {
+      // Gather into local variables the fields for Cahn-Hilliard terms
+      const Tensor<1, dim> phase_order_gradient =
+        scratch_data.phase_order_cahn_hilliard_gradients[q];
+      const double potential_value =
+        scratch_data.chemical_potential_cahn_hilliard_values[q];
+
+
       // Velocity
       const Tensor<1, dim> &velocity   = scratch_data.velocity_values[q];
       const double velocity_divergence = scratch_data.velocity_divergences[q];
@@ -729,11 +741,11 @@ GLSNavierStokesCahnHilliardAssemblerNonNewtonianCore<dim>::assemble_rhs(
 
 
       // Calculate the strong residual for GLS stabilization
-      auto strong_residual = density_eq * velocity_gradient * velocity +
-                             pressure_gradient -
-                             shear_rate * dynamic_viscosity_gradient -
-                             dynamic_viscosity_eq * velocity_laplacian -
-                             density_eq * force + strong_residual_vec[q];
+      auto strong_residual =
+        density_eq * velocity_gradient * velocity + pressure_gradient -
+        shear_rate * dynamic_viscosity_gradient -
+        dynamic_viscosity_eq * velocity_laplacian - density_eq * force -
+        potential_value * phase_order_gradient + strong_residual_vec[q];
 
       // Assembly of the right-hand side
       for (unsigned int i = 0; i < n_dofs; ++i)
@@ -755,6 +767,11 @@ GLSNavierStokesCahnHilliardAssemblerNonNewtonianCore<dim>::assemble_rhs(
 
           // Continuity
           local_rhs(i) += -(velocity_divergence * phi_p_i) * JxW;
+
+          // Surface tension terms
+
+          local_rhs(i) +=
+            +potential_value * phase_order_gradient * phi_u_i * JxW;
 
           // PSPG GLS term
           local_rhs(i) += -tau * (strong_residual * grad_phi_p_i) * JxW;

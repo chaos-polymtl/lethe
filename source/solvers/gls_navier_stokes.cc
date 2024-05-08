@@ -496,9 +496,22 @@ GLSNavierStokesSolver<dim>::setup_assemblers()
                     Parameters::VelocitySource::DarcySourceType::phase_change,
                   PhaseChangeDarcyModelDoesNotSupportCHN());
 
-      this->assemblers.push_back(
-        std::make_shared<GLSNavierStokesCahnHilliardAssemblerCore<dim>>(
-          this->simulation_control, this->simulation_parameters));
+      if (this->simulation_parameters.physical_properties_manager
+            .is_non_newtonian())
+        {
+          // Core assembler with Non-Newtonian viscosity
+          this->assemblers.push_back(
+            std::make_shared<
+              GLSNavierStokesCahnHilliardAssemblerNonNewtonianCore<dim>>(
+              this->simulation_control, this->simulation_parameters));
+        }
+
+      else
+        {
+          this->assemblers.push_back(
+            std::make_shared<GLSNavierStokesCahnHilliardAssemblerCore<dim>>(
+              this->simulation_control, this->simulation_parameters));
+        }
     }
 
   if (this->simulation_parameters.multiphysics.VOF)
