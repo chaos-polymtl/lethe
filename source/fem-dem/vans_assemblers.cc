@@ -140,7 +140,6 @@ GLSVansAssemblerCoreModelB<dim>::assemble_matrix(
           for (unsigned int j = 0; j < n_dofs; ++j)
             {
               const unsigned int component_j = scratch_data.components[j];
-
               const auto &phi_u_j      = scratch_data.phi_u[q][j];
               const auto &grad_phi_u_j = scratch_data.grad_phi_u[q][j];
               const auto &div_phi_u_j  = scratch_data.div_phi_u[q][j];
@@ -314,7 +313,6 @@ GLSVansAssemblerCoreModelB<dim>::assemble_rhs(
       for (unsigned int i = 0; i < n_dofs; ++i)
         {
           const unsigned int component_i = scratch_data.components[i];
-
           const auto phi_u_i      = scratch_data.phi_u[q][i];
           const auto grad_phi_u_i = scratch_data.grad_phi_u[q][i];
           const auto phi_p_i      = scratch_data.phi_p[q][i];
@@ -498,7 +496,6 @@ GLSVansAssemblerCoreModelA<dim>::assemble_matrix(
       for (unsigned int i = 0; i < n_dofs; ++i)
         {
           const unsigned int component_i = scratch_data.components[i];
-
           const auto &phi_u_i      = scratch_data.phi_u[q][i];
           const auto &grad_phi_u_i = scratch_data.grad_phi_u[q][i];
           const auto &div_phi_u_i  = scratch_data.div_phi_u[q][i];
@@ -508,7 +505,6 @@ GLSVansAssemblerCoreModelA<dim>::assemble_matrix(
           for (unsigned int j = 0; j < n_dofs; ++j)
             {
               const unsigned int component_j = scratch_data.components[j];
-
               const auto &phi_u_j      = scratch_data.phi_u[q][j];
               const auto &grad_phi_u_j = scratch_data.grad_phi_u[q][j];
               const auto &div_phi_u_j  = scratch_data.div_phi_u[q][j];
