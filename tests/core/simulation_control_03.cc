@@ -50,6 +50,7 @@ test()
   simulation_control_parameters.subdivision            = 7;
   simulation_control_parameters.output_folder          = "canard";
   simulation_control_parameters.output_frequency       = 8;
+  simulation_control_parameters.output_time_interval   = {0, 1000000000};
 
   {
     SimulationControlTransient simulation_control(
