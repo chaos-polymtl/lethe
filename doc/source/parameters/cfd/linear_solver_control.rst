@@ -184,7 +184,7 @@ AMG preconditioner
 LSMG and GCMG preconditioners
 ------------------------------
 
-Different parameters for the main components of the two geometric multigrid algorithms can be specified. The parameters can be general or can belong to either the smoother, the coarse-grid solver or the coarse-grid solver preconditioner. For the latter, one can choose between ``amg`` and ``ilu``.
+Different parameters for the main components of the two geometric multigrid algorithms can be specified. The parameters can be general or can belong to either the smoother or the coarse-grid solver. Lethe supports different coarse-grid solvers: ``gmres``, ``amg``, ``ilu`` and ``direct``. The ``gmres`` coarse-grid solver supports two preconditioners ``amg`` and ``ilu``. 
 
 .. code-block:: text
 
@@ -204,13 +204,17 @@ Different parameters for the main components of the two geometric multigrid algo
     set eig estimation verbosity       = quiet
 
     # Coarse-grid solver parameters
-    set mg coarse grid max iterations     = 2000
-    set mg coarse grid tolerance          = 1e-14
-    set mg coarse grid reduce             = 1e-4
-    set mg coarse grid max krylov vectors = 30
-    set mg coarse grid preconditioner     = amg
+    set mg coarse grid solver = gmres
+
+    # Parameters for GMRES as coarse grid solver
+    set mg gmres max iterations     = 2000
+    set mg gmres tolerance          = 1e-14
+    set mg gmres reduce             = 1e-4
+    set mg gmres max krylov vectors = 30
+    set mg gmres preconditioner     = amg
     
-    # Coarse-grid AMG preconditioner parameters
+    # Parameters for AMG as coarse-grid solver or GMRES preconditioner
+    set mg amg use default parameters             = false
     set amg preconditioner ilu fill               = 0
     set amg preconditioner ilu absolute tolerance = 1e-12
     set amg preconditioner ilu relative tolerance = 1.00
@@ -220,7 +224,7 @@ Different parameters for the main components of the two geometric multigrid algo
     set amg smoother sweeps                       = 2
     set amg smoother overlap                      = 1
 
-    # Coarse-grid ILU preconditioner parameters
+    # Parameters for ILU as coarse-grid solver or GMRES preconditioner
     set ilu preconditioner fill               = 1
     set ilu preconditioner absolute tolerance = 1e-12
     set ilu preconditioner relative tolerance = 1
@@ -229,4 +233,7 @@ Different parameters for the main components of the two geometric multigrid algo
   The default algorithms build and use ALL the multigrid levels. There are two ways to change the number of levels, either by setting the ``mg min level`` parameter OR the ``mg level min cells`` parameter. For ``lsmg`` the coarsest mesh should cover the whole domain, i.e., no hanging nodes are allowed.
 
 .. tip::
-  If ``mg verbosity`` is set to ``verbose``, the information about the levels (cells and degrees of freedom) and the number of iterations of the coarse grid solver are displayed. If this parameter is set to ``extra verbose``, apart from all the previous information, an additional table with the time it took to set up the different components of the multigrid preconditioners is also displayed. 
+  If ``mg verbosity`` is set to ``verbose``, the information about the levels (cells and degrees of freedom) and the number of iterations of the coarse grid solver are displayed. If this parameter is set to ``extra verbose``, apart from all the previous information, several additional tables with the times related to multigrid are also displayed. 
+
+.. tip::
+  If your coarse-grid level is small enough, it might be worth it for some problems to set ``mg amg use default parameters = true`` to use a direct solver.

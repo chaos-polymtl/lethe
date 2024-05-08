@@ -2378,31 +2378,42 @@ namespace Parameters
                           "State whether MG should print max and min eigenvalue"
                           "Choices are <quiet|verbose>.");
 
-        prm.declare_entry("mg coarse grid max iterations",
+        prm.declare_entry("mg coarse grid solver",
+                          "gmres",
+                          Patterns::Selection("gmres|amg|ilu|direct"),
+                          "The coarse grid solver for lsmg or gcmg"
+                          "Choices are <gmres|amg|ilu|direct>.");
+
+        prm.declare_entry("mg gmres max iterations",
                           "2000",
                           Patterns::Integer(),
-                          "mg coarse grid iterations for lsmg or gcmg");
+                          "mg gmres iterations for lsmg or gcmg");
 
-        prm.declare_entry("mg coarse grid tolerance",
+        prm.declare_entry("mg gmres tolerance",
                           "1e-14",
                           Patterns::Double(),
-                          "mg coarse grid tolerance n for lsmg or gcmg");
+                          "mg gmres tolerance n for lsmg or gcmg");
 
-        prm.declare_entry("mg coarse grid reduce",
+        prm.declare_entry("mg gmres reduce",
                           "1e-4",
                           Patterns::Double(),
-                          "mg coarse grid reduce for lsmg or gcmg");
+                          "mg gmres reduce for lsmg or gcmg");
 
-        prm.declare_entry("mg coarse grid max krylov vectors",
+        prm.declare_entry("mg gmres max krylov vectors",
                           "30",
                           Patterns::Integer(),
-                          "mg coarse grid max krylov vectors for lsmg or gcmg");
+                          "mg gmres max krylov vectors for lsmg or gcmg");
 
-        prm.declare_entry("mg coarse grid preconditioner",
+        prm.declare_entry("mg gmres preconditioner",
                           "amg",
                           Patterns::Selection("amg|ilu"),
-                          "The preconditioner for the mg coarse grid solver"
+                          "The preconditioner for the mg gmres solver"
                           "Choices are <amg|ilu>.");
+
+        prm.declare_entry("mg amg use default parameters",
+                          "false",
+                          Patterns::Bool(),
+                          "Use default parameters for Trilinos AMG");
 
         prm.declare_entry(
           "mg verbosity",
@@ -2468,8 +2479,8 @@ namespace Parameters
           prm.get_double("ilu preconditioner absolute tolerance");
         ilu_precond_rtol =
           prm.get_double("ilu preconditioner relative tolerance");
-        amg_precond_ilu_fill = prm.get_double("amg preconditioner ilu fill");
 
+        amg_precond_ilu_fill = prm.get_double("amg preconditioner ilu fill");
         amg_precond_ilu_atol =
           prm.get_double("amg preconditioner ilu absolute tolerance");
         amg_precond_ilu_rtol =
@@ -2504,21 +2515,36 @@ namespace Parameters
           throw(std::runtime_error(
             "Unknown verbosity mode for the eigenvalue estimation"));
 
-        mg_coarse_grid_max_iterations =
-          prm.get_integer("mg coarse grid max iterations");
-        mg_coarse_grid_tolerance = prm.get_double("mg coarse grid tolerance");
-        mg_coarse_grid_reduce    = prm.get_double("mg coarse grid reduce");
-        mg_coarse_grid_max_krylov_vectors =
-          prm.get_integer("mg coarse grid max krylov vectors");
-
-        const std::string cg_precond = prm.get("mg coarse grid preconditioner");
-        if (cg_precond == "amg")
-          mg_coarse_grid_preconditioner = PreconditionerType::amg;
-        else if (cg_precond == "ilu")
-          mg_coarse_grid_preconditioner = PreconditionerType::ilu;
+        const std::string cg_solver = prm.get("mg coarse grid solver");
+        if (cg_solver == "gmres")
+          mg_coarse_grid_solver = CoarseGridSolverType::gmres;
+        else if (cg_solver == "amg")
+          mg_coarse_grid_solver = CoarseGridSolverType::amg;
+        else if (cg_solver == "ilu")
+          mg_coarse_grid_solver = CoarseGridSolverType::ilu;
+        else if (cg_solver == "direct")
+          mg_coarse_grid_solver = CoarseGridSolverType::direct;
         else
           throw std::logic_error(
-            "Error, invalid preconditioner type for mg coarse grid solver. Choices are amg or ilu.");
+            "Error, invalid coarse grid solver type. Choices are gmres, amg, ilu or direct.");
+
+        mg_gmres_max_iterations = prm.get_integer("mg gmres max iterations");
+        mg_gmres_tolerance      = prm.get_double("mg gmres tolerance");
+        mg_gmres_reduce         = prm.get_double("mg gmres reduce");
+        mg_gmres_max_krylov_vectors =
+          prm.get_integer("mg gmres max krylov vectors");
+
+        const std::string cg_precond = prm.get("mg gmres preconditioner");
+        if (cg_precond == "amg")
+          mg_gmres_preconditioner = PreconditionerType::amg;
+        else if (cg_precond == "ilu")
+          mg_gmres_preconditioner = PreconditionerType::ilu;
+        else
+          throw std::logic_error(
+            "Error, invalid preconditioner type for mg gmres solver. Choices are amg or ilu.");
+
+        mg_amg_use_default_parameters =
+          prm.get_bool("mg amg use default parameters");
 
         const std::string mg_op = prm.get("mg verbosity");
         if (mg_op == "verbose")
