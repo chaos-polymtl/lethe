@@ -100,6 +100,12 @@ protected:
   // by the time
   double output_time_frequency;
 
+  // Adds a condition to the generation of .vtu and .pvd files in addition to
+  // the output generation frequency. If specified in the parameter file, only
+  // the results within the specified simulation time interval will be
+  // generated.
+  std::vector<double> output_time_interval;
+
   // Log iteration frequency
   // Controls the frequency at which status of the simulation is written to
   // the terminal

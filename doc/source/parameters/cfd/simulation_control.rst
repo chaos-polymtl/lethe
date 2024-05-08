@@ -82,6 +82,9 @@ This subsection contains the general information of the simulation, including th
     # Output time
     set output time                  = 1
 
+    # Output time interval
+    set output time interval         = 1, 1.7e308
+
     # Maximum number of vtu output files
     set group files                  = 1
 
@@ -151,6 +154,8 @@ This subsection contains the general information of the simulation, including th
 
 
 * ``output time``: controls the time when the ``.pvd`` / ``.vtu`` results are written. This parameter is only used when ``set output control = time``.
+
+* ``output time interval``: Only writes the ``.pvd`` / ``.vtu`` files when the simulation time is within the closed interval defined by the ``output time interval``. Default values are 0s and 1.7e308s.
 
 * ``group files``: number of ``.vtu`` files generated in a parallel simulation
 

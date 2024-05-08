@@ -13,13 +13,8 @@
  *
  * ---------------------------------------------------------------------
 
-*
-* Author: Bruno Blais, Polytechnique Montreal, 2020-
-*/
-
 /**
- * @brief This test checks that the steady-state simulation control stops
- * at the correct moment and behaves in a correct manner
+ * @brief This test checks if files are only generated within the output time interval
  */
 
 // Lethe
@@ -45,8 +40,8 @@ test()
   simulationControlParameters.output_name            = "test";
   simulationControlParameters.subdivision            = 7;
   simulationControlParameters.output_folder          = "canard";
-  simulationControlParameters.output_frequency       = 8;
-  simulationControlParameters.output_time_interval   = {0, 1000000000};
+  simulationControlParameters.output_frequency       = 1;
+  simulationControlParameters.output_time_interval   = {1, 2};
 
   SimulationControlSteady simulation_control(simulationControlParameters);
 
