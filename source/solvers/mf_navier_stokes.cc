@@ -193,7 +193,7 @@ template <int dim>
 MFNavierStokesPreconditionGMG<dim>::MFNavierStokesPreconditionGMG(
   const SimulationParameters<dim>         &simulation_parameters,
   const DoFHandler<dim>                   &dof_handler,
-  const DoFHandler<dim>                   &dof_handler_q_iso_q1,
+  const DoFHandler<dim>                   &dof_handler_fe_q_iso_q1,
   const std::shared_ptr<Mapping<dim>>     &mapping,
   const std::shared_ptr<Quadrature<dim>>  &cell_quadrature,
   const std::shared_ptr<Function<dim>>     forcing_function,
@@ -202,7 +202,7 @@ MFNavierStokesPreconditionGMG<dim>::MFNavierStokesPreconditionGMG(
   : pcout(std::cout, Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0)
   , simulation_parameters(simulation_parameters)
   , dof_handler(dof_handler)
-  , dof_handler_q_iso_q1(dof_handler_q_iso_q1)
+  , dof_handler_fe_q_iso_q1(dof_handler_fe_q_iso_q1)
   , mg_setup_timer(MPI_COMM_WORLD,
                    this->pcout,
                    TimerOutput::never,
@@ -468,7 +468,7 @@ MFNavierStokesPreconditionGMG<dim>::MFNavierStokesPreconditionGMG(
                .at(PhysicsID::fluid_dynamics)
                .mg_use_fe_q_iso_q1 &&
              level == this->minlevel) ?
-              this->dof_handler_q_iso_q1 :
+              this->dof_handler_fe_q_iso_q1 :
               this->dof_handler,
             level_constraints[level],
             quadrature_mg,
@@ -1523,15 +1523,15 @@ MFNavierStokesSolver<dim>::setup_dofs_fd()
             .at(PhysicsID::fluid_dynamics)
             .mg_use_fe_q_iso_q1)
         {
-          this->dof_handler_q_iso_q1.reinit(*this->triangulation);
+          this->dof_handler_fe_q_iso_q1.reinit(*this->triangulation);
 
           const auto points =
             QGaussLobatto<1>(this->dof_handler.get_fe().degree + 1)
               .get_points();
 
-          this->dof_handler_q_iso_q1.distribute_dofs(
+          this->dof_handler_fe_q_iso_q1.distribute_dofs(
             FESystem<dim>(FE_Q_iso_Q1<dim>(points), dim + 1));
-          this->dof_handler_q_iso_q1.distribute_mg_dofs();
+          this->dof_handler_fe_q_iso_q1.distribute_mg_dofs();
         }
     }
 
@@ -1696,7 +1696,7 @@ MFNavierStokesSolver<dim>::set_initial_condition_fd(
               std::make_shared<MFNavierStokesPreconditionGMG<dim>>(
                 this->simulation_parameters,
                 this->dof_handler,
-                this->dof_handler_q_iso_q1,
+                this->dof_handler_fe_q_iso_q1,
                 this->mapping,
                 this->cell_quadrature,
                 this->forcing_function,
@@ -1810,7 +1810,7 @@ MFNavierStokesSolver<dim>::set_initial_condition_fd(
                   std::make_shared<MFNavierStokesPreconditionGMG<dim>>(
                     this->simulation_parameters,
                     this->dof_handler,
-                    this->dof_handler_q_iso_q1,
+                    this->dof_handler_fe_q_iso_q1,
                     this->mapping,
                     this->cell_quadrature,
                     this->forcing_function,
@@ -1934,7 +1934,7 @@ MFNavierStokesSolver<dim>::setup_GMG()
     gmg_preconditioner = std::make_shared<MFNavierStokesPreconditionGMG<dim>>(
       this->simulation_parameters,
       this->dof_handler,
-      this->dof_handler_q_iso_q1,
+      this->dof_handler_fe_q_iso_q1,
       this->mapping,
       this->cell_quadrature,
       this->forcing_function,

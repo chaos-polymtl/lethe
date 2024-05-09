@@ -61,6 +61,8 @@ public:
    * @param[in] simulation_parameters Object containing all parameters specified
    * in input file.
    * @param[in] dof_handler Describes the layout of DoFs and the type of FE.
+   * @param[in] dof_handler_fe_q_iso_q1 Describes the layout of DoFs for
+   * FE_Q_iso_Q1 elements.
    * @param[in] mapping Describes the transformations from unit to real cell.
    * @param[in] cell_quadrature Required for local operations on cells.
    * @param[in] forcing_function Function specified in parameter file as source
@@ -71,7 +73,7 @@ public:
   MFNavierStokesPreconditionGMG(
     const SimulationParameters<dim>         &simulation_parameters,
     const DoFHandler<dim>                   &dof_handler,
-    const DoFHandler<dim>                   &dof_handler_q_iso_q1,
+    const DoFHandler<dim>                   &dof_handler_fe_q_iso_q1,
     const std::shared_ptr<Mapping<dim>>     &mapping,
     const std::shared_ptr<Quadrature<dim>>  &cell_quadrature,
     const std::shared_ptr<Function<dim>>     forcing_function,
@@ -222,7 +224,7 @@ private:
   const DoFHandler<dim> &dof_handler;
 
   /// Describes the layout of DoFs for FE_Q_iso_Q1 elements.
-  const DoFHandler<dim> &dof_handler_q_iso_q1;
+  const DoFHandler<dim> &dof_handler_fe_q_iso_q1;
 
   /// Vector holding number of coarse grid iterations
   mutable std::vector<unsigned int> coarse_grid_iterations;
@@ -448,7 +450,7 @@ protected:
    * @brief Describes the layout of DoFs for FE_Q_iso_Q1 elements.
    *
    */
-  DoFHandler<dim> dof_handler_q_iso_q1;
+  DoFHandler<dim> dof_handler_fe_q_iso_q1;
 };
 
 #endif
