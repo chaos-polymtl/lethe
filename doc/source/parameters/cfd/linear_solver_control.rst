@@ -204,7 +204,8 @@ Different parameters for the main components of the two geometric multigrid algo
     set eig estimation verbosity       = quiet
 
     # Coarse-grid solver parameters
-    set mg coarse grid solver = gmres
+    set mg coarse grid solver          = gmres
+    set mg coarse grid use fe q iso q1 = false
 
     # Parameters for GMRES as coarse grid solver
     set mg gmres max iterations     = 2000
@@ -236,4 +237,4 @@ Different parameters for the main components of the two geometric multigrid algo
   If ``mg verbosity`` is set to ``verbose``, the information about the levels (cells and degrees of freedom) and the number of iterations of the coarse grid solver are displayed. If this parameter is set to ``extra verbose``, apart from all the previous information, several additional tables with the times related to multigrid are also displayed. 
 
 .. tip::
-  If your coarse-grid level is small enough, it might be worth it for some problems to set ``mg amg use default parameters = true`` to use a direct solver.
+  If your coarse-grid level is small enough, it might be worth it for some problems to set ``mg amg use default parameters = true`` to use a direct solver. On the other hand, if high order elements are used, it might be useful to set ``set mg coarse grid use fe q iso q1 = true`` to solve the coarse grid problem using `FE_Q_iso_Q1 elements <https://www.dealii.org/developer/doxygen/deal.II/classFE__Q__iso__Q1.html>`_.
