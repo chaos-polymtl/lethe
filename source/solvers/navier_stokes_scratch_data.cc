@@ -78,6 +78,8 @@ NavierStokesScratchData<dim>::allocate()
   density                             = std::vector<double>(n_q_points);
   dynamic_viscosity                   = std::vector<double>(n_q_points);
   kinematic_viscosity                 = std::vector<double>(n_q_points);
+  dynamic_viscosity_for_stabilization = std::vector<double>(n_q_points);
+  kinematic_viscosity_for_stabilization = std::vector<double>(n_q_points);
   thermal_expansion                   = std::vector<double>(n_q_points);
   grad_kinematic_viscosity_shear_rate = std::vector<double>(n_q_points);
 
@@ -115,6 +117,8 @@ NavierStokesScratchData<dim>::enable_vof(
   density_1                  = std::vector<double>(n_q_points);
   dynamic_viscosity_0        = std::vector<double>(n_q_points);
   dynamic_viscosity_1        = std::vector<double>(n_q_points);
+  dynamic_viscosity_for_stabilization_0 = std::vector<double>(n_q_points);
+  dynamic_viscosity_for_stabilization_1 = std::vector<double>(n_q_points);
   thermal_expansion_0        = std::vector<double>(n_q_points);
   thermal_expansion_1        = std::vector<double>(n_q_points);
   surface_tension            = std::vector<double>(n_q_points);
@@ -154,6 +158,8 @@ NavierStokesScratchData<dim>::enable_vof(
   density_1                  = std::vector<double>(n_q_points);
   dynamic_viscosity_0        = std::vector<double>(n_q_points);
   dynamic_viscosity_1        = std::vector<double>(n_q_points);
+  dynamic_viscosity_for_stabilization_0 = std::vector<double>(n_q_points);
+  dynamic_viscosity_for_stabilization_1 = std::vector<double>(n_q_points);
   thermal_expansion_0        = std::vector<double>(n_q_points);
   thermal_expansion_1        = std::vector<double>(n_q_points);
   surface_tension            = std::vector<double>(n_q_points);
@@ -201,6 +207,8 @@ NavierStokesScratchData<dim>::enable_cahn_hilliard(
   density_1                = std::vector<double>(n_q_points);
   dynamic_viscosity_0      = std::vector<double>(n_q_points);
   dynamic_viscosity_1      = std::vector<double>(n_q_points);
+  dynamic_viscosity_for_stabilization_0 = std::vector<double>(n_q_points);
+  dynamic_viscosity_for_stabilization_1 = std::vector<double>(n_q_points);
   thermal_expansion_0      = std::vector<double>(n_q_points);
   thermal_expansion_1      = std::vector<double>(n_q_points);
   surface_tension          = std::vector<double>(n_q_points);
@@ -248,6 +256,8 @@ NavierStokesScratchData<dim>::enable_cahn_hilliard(
   density_1                = std::vector<double>(n_q_points);
   dynamic_viscosity_0      = std::vector<double>(n_q_points);
   dynamic_viscosity_1      = std::vector<double>(n_q_points);
+  dynamic_viscosity_for_stabilization_0 = std::vector<double>(n_q_points);
+  dynamic_viscosity_for_stabilization_1 = std::vector<double>(n_q_points);
   thermal_expansion_0      = std::vector<double>(n_q_points);
   thermal_expansion_1      = std::vector<double>(n_q_points);
   surface_tension          = std::vector<double>(n_q_points);
@@ -401,6 +411,8 @@ NavierStokesScratchData<dim>::calculate_physical_properties()
           const auto rheology_model = properties_manager.get_rheology();
           rheology_model->vector_value(fields, kinematic_viscosity);
           
+          rheology_model->get_kinematic_viscosity_for_stabilization_vector(fields, kinematic_viscosity_for_stabilization);
+          
           kinematic_viscosity_scale = rheology_model->get_kinematic_viscosity_scale();
 
           if (!properties_manager.density_is_constant())
@@ -468,12 +480,17 @@ NavierStokesScratchData<dim>::calculate_physical_properties()
           rheology_model_0->get_dynamic_viscosity_vector(density_ref_0,
                                                          fields,
                                                          dynamic_viscosity_0);
+          rheology_model_0->get_dynamic_viscosity_for_stabilization_vector(density_ref_0,
+                                                         fields,
+                                                         dynamic_viscosity_for_stabilization_0);
 
           density_model_1->vector_value(fields, density_1);
           rheology_model_1->get_dynamic_viscosity_vector(density_ref_1,
                                                          fields,
                                                          dynamic_viscosity_1);
-
+          rheology_model_1->get_dynamic_viscosity_for_stabilization_vector(density_ref_1,
+                                                         fields,
+                                                         dynamic_viscosity_for_stabilization_1);
           if (gather_temperature)
             {
               const auto thermal_expansion_model_0 =
@@ -501,6 +518,11 @@ NavierStokesScratchData<dim>::calculate_physical_properties()
                                              this->dynamic_viscosity_0[q],
                                              this->dynamic_viscosity_1[q]);
 
+                  dynamic_viscosity_for_stabilization[q] =
+                    calculate_point_property(filtered_phase_value,
+                                             this->dynamic_viscosity_for_stabilization_0[q],
+                                             this->dynamic_viscosity_for_stabilization_1[q]);
+                                             
                   thermal_expansion[q] =
                     calculate_point_property(filtered_phase_value,
                                              this->thermal_expansion_0[q],
@@ -558,6 +580,11 @@ NavierStokesScratchData<dim>::calculate_physical_properties()
                     phase_order_cahn_hilliard_value,
                     this->dynamic_viscosity_0[q],
                     this->dynamic_viscosity_1[q]);
+                    
+                  dynamic_viscosity_for_stabilization[q] =
+                    calculate_point_property_cahn_hilliard(phase_order_cahn_hilliard_value,
+                                             this->dynamic_viscosity_for_stabilization_0[q],
+                                             this->dynamic_viscosity_for_stabilization_1[q]);
                 }
               break;
             }

@@ -15,7 +15,10 @@ PSPGSUPGNavierStokesAssemblerCore<dim>::assemble_matrix(
   // Scheme and physical properties
   const std::vector<double> &viscosity_vector =
     scratch_data.kinematic_viscosity;
-
+  
+  const std::vector<double> &viscosity_for_stabilization_vector =
+    scratch_data.kinematic_viscosity_for_stabilization;
+      
   const double viscosity_scale =
     scratch_data.kinematic_viscosity_scale;
 
@@ -72,10 +75,10 @@ PSPGSUPGNavierStokesAssemblerCore<dim>::assemble_matrix(
         this->simulation_control->get_assembly_method() ==
             Parameters::SimulationControl::TimeSteppingMethod::steady ?
           calculate_navier_stokes_gls_tau_steady(u_mag,
-                                                 viscosity_scale,
+                                                 viscosity_for_stabilization_vector[q],
                                                  h) :
           calculate_navier_stokes_gls_tau_transient(u_mag,
-                                                    viscosity_scale,
+                                                    viscosity_for_stabilization_vector[q],
                                                     h,
                                                     sdt);
 
@@ -194,7 +197,10 @@ PSPGSUPGNavierStokesAssemblerCore<dim>::assemble_rhs(
   // Scheme and physical properties
   const std::vector<double> &viscosity_vector =
     scratch_data.kinematic_viscosity;
-
+    
+    const std::vector<double> &viscosity_for_stabilization_vector =
+      scratch_data.kinematic_viscosity_for_stabilization;
+        
   const double viscosity_scale =
     scratch_data.kinematic_viscosity_scale;
 
@@ -251,10 +257,10 @@ PSPGSUPGNavierStokesAssemblerCore<dim>::assemble_rhs(
         this->simulation_control->get_assembly_method() ==
             Parameters::SimulationControl::TimeSteppingMethod::steady ?
           calculate_navier_stokes_gls_tau_steady(u_mag,
-                                                 viscosity_scale,
+                                                 viscosity_for_stabilization_vector[q],
                                                  h) :
           calculate_navier_stokes_gls_tau_transient(u_mag,
-                                                    viscosity_scale,
+                                                    viscosity_for_stabilization_vector[q],
                                                     h,
                                                     sdt);
 
@@ -314,7 +320,10 @@ GLSNavierStokesAssemblerCore<dim>::assemble_matrix(
   // Scheme and physical properties
   const std::vector<double> &viscosity_vector =
     scratch_data.kinematic_viscosity;
-
+    
+    const std::vector<double> &viscosity_for_stabilization_vector =
+      scratch_data.kinematic_viscosity_for_stabilization;
+      
   const double viscosity_scale =
     scratch_data.kinematic_viscosity_scale;
 
@@ -371,10 +380,10 @@ GLSNavierStokesAssemblerCore<dim>::assemble_matrix(
         this->simulation_control->get_assembly_method() ==
             Parameters::SimulationControl::TimeSteppingMethod::steady ?
           calculate_navier_stokes_gls_tau_steady(u_mag,
-                                                 viscosity_scale,
+                                                 viscosity_for_stabilization_vector[q],
                                                  h) :
           calculate_navier_stokes_gls_tau_transient(u_mag,
-                                                    viscosity_scale,
+                                                    viscosity_for_stabilization_vector[q],
                                                     h,
                                                     sdt);
 
@@ -502,6 +511,9 @@ GLSNavierStokesAssemblerCore<dim>::assemble_rhs(
   const std::vector<double> &viscosity_vector =
     scratch_data.kinematic_viscosity;
 
+    const std::vector<double> &viscosity_for_stabilization_vector =
+      scratch_data.kinematic_viscosity_for_stabilization;
+      
   const double viscosity_scale =
     scratch_data.kinematic_viscosity_scale;
   // Loop and quadrature information
@@ -557,10 +569,10 @@ GLSNavierStokesAssemblerCore<dim>::assemble_rhs(
         this->simulation_control->get_assembly_method() ==
             Parameters::SimulationControl::TimeSteppingMethod::steady ?
           calculate_navier_stokes_gls_tau_steady(u_mag,
-                                                 viscosity_scale,
+                                                 viscosity_for_stabilization_vector[q],
                                                  h) :
           calculate_navier_stokes_gls_tau_transient(u_mag,
-                                                    viscosity_scale,
+                                                    viscosity_for_stabilization_vector[q],
                                                     h,
                                                     sdt);
 
@@ -632,6 +644,9 @@ GLSNavierStokesAssemblerNonNewtonianCore<dim>::assemble_matrix(
   const std::vector<double> &viscosity_vector =
     scratch_data.kinematic_viscosity;
 
+    const std::vector<double> &viscosity_for_stabilization_vector =
+      scratch_data.kinematic_viscosity_for_stabilization;
+      
   const double viscosity_scale =
     scratch_data.kinematic_viscosity_scale;
 
@@ -709,10 +724,10 @@ GLSNavierStokesAssemblerNonNewtonianCore<dim>::assemble_matrix(
         this->simulation_control->get_assembly_method() ==
             Parameters::SimulationControl::TimeSteppingMethod::steady ?
           calculate_navier_stokes_gls_tau_steady(u_mag,
-                                                 viscosity_scale,
+                                                 viscosity_for_stabilization_vector[q],
                                                  h) :
           calculate_navier_stokes_gls_tau_transient(u_mag,
-                                                    viscosity_scale,
+                                                    viscosity_for_stabilization_vector[q],
                                                     h,
                                                     sdt);
 
@@ -824,6 +839,10 @@ GLSNavierStokesAssemblerNonNewtonianCore<dim>::assemble_rhs(
   // Scheme and physical properties
   const std::vector<double> &viscosity_vector =
     scratch_data.kinematic_viscosity;
+    
+    const std::vector<double> &viscosity_for_stabilization_vector =
+      scratch_data.kinematic_viscosity_for_stabilization;
+      
   const double viscosity_scale =
     scratch_data.kinematic_viscosity_scale;
 
@@ -900,10 +919,10 @@ GLSNavierStokesAssemblerNonNewtonianCore<dim>::assemble_rhs(
         this->simulation_control->get_assembly_method() ==
             Parameters::SimulationControl::TimeSteppingMethod::steady ?
           calculate_navier_stokes_gls_tau_steady(u_mag,
-                                                 viscosity_scale,
+                                                 viscosity_for_stabilization_vector[q],
                                                  h) :
           calculate_navier_stokes_gls_tau_transient(u_mag,
-                                                    viscosity_scale,
+                                                    viscosity_for_stabilization_vector[q],
                                                     h,
                                                     sdt);
 

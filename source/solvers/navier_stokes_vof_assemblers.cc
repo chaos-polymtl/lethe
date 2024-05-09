@@ -15,6 +15,9 @@ GLSNavierStokesVOFAssemblerCore<dim>::assemble_matrix(
   
   const double viscosity_scale =
     scratch_data.kinematic_viscosity_scale;
+  
+  const std::vector<double> &viscosity_for_stabilization_vector =
+    scratch_data.dynamic_viscosity_for_stabilization;
     
   // Loop and quadrature information
   const auto        &JxW_vec    = scratch_data.JxW;
@@ -87,9 +90,9 @@ GLSNavierStokesVOFAssemblerCore<dim>::assemble_matrix(
         this->simulation_control->get_assembly_method() ==
             Parameters::SimulationControl::TimeSteppingMethod::steady ?
           calculate_navier_stokes_gls_tau_steady(
-            u_mag, viscosity_scale, h) :
+            u_mag, viscosity_for_stabilization_vector[q]/density_eq, h) :
           calculate_navier_stokes_gls_tau_transient(
-            u_mag, viscosity_scale, h, sdt);
+            u_mag, viscosity_for_stabilization_vector[q]/density_eq, h, sdt);
 
       // Calculate the strong residual for GLS stabilization
       auto strong_residual = density_eq * velocity_gradient * velocity +
@@ -187,7 +190,9 @@ GLSNavierStokesVOFAssemblerCore<dim>::assemble_rhs(
 {
   const double viscosity_scale =
     scratch_data.kinematic_viscosity_scale;
-    
+  
+    const std::vector<double> &viscosity_for_stabilization_vector =
+      scratch_data.dynamic_viscosity_for_stabilization;
   // Loop and quadrature information
   const auto        &JxW_vec    = scratch_data.JxW;
   const unsigned int n_q_points = scratch_data.n_q_points;
@@ -267,9 +272,9 @@ GLSNavierStokesVOFAssemblerCore<dim>::assemble_rhs(
         this->simulation_control->get_assembly_method() ==
             Parameters::SimulationControl::TimeSteppingMethod::steady ?
           calculate_navier_stokes_gls_tau_steady(
-            u_mag, viscosity_scale, h) :
+            u_mag, viscosity_for_stabilization_vector[q]/density_eq, h) :
           calculate_navier_stokes_gls_tau_transient(
-            u_mag, viscosity_scale, h, sdt);
+            u_mag, viscosity_for_stabilization_vector[q]/density_eq, h, sdt);
 
 
       // Calculate the strong residual for GLS stabilization
@@ -828,6 +833,9 @@ GLSNavierStokesVOFAssemblerNonNewtonianCore<dim>::assemble_matrix(
   const double viscosity_scale =
     scratch_data.kinematic_viscosity_scale;
     
+    const std::vector<double> &viscosity_for_stabilization_vector =
+      scratch_data.dynamic_viscosity_for_stabilization;
+      
   // Loop and quadrature information
   const auto        &JxW_vec    = scratch_data.JxW;
   const unsigned int n_q_points = scratch_data.n_q_points;
@@ -907,9 +915,9 @@ GLSNavierStokesVOFAssemblerNonNewtonianCore<dim>::assemble_matrix(
         this->simulation_control->get_assembly_method() ==
             Parameters::SimulationControl::TimeSteppingMethod::steady ?
           calculate_navier_stokes_gls_tau_steady(
-            u_mag, viscosity_scale, h) :
+            u_mag, viscosity_for_stabilization_vector[q]/density_eq, h) :
           calculate_navier_stokes_gls_tau_transient(
-            u_mag, viscosity_scale, h, sdt);
+            u_mag, viscosity_for_stabilization_vector[q]/density_eq, h, sdt);
 
       // Calculate the strong residual for GLS stabilization
       auto strong_residual = density_eq * velocity_gradient * velocity +
@@ -1023,7 +1031,10 @@ GLSNavierStokesVOFAssemblerNonNewtonianCore<dim>::assemble_rhs(
 {
   const double viscosity_scale =
     scratch_data.kinematic_viscosity_scale;
-    
+  
+    const std::vector<double> &viscosity_for_stabilization_vector =
+      scratch_data.dynamic_viscosity_for_stabilization;
+      
   // Loop and quadrature information
   const auto        &JxW_vec    = scratch_data.JxW;
   const unsigned int n_q_points = scratch_data.n_q_points;
@@ -1104,9 +1115,9 @@ GLSNavierStokesVOFAssemblerNonNewtonianCore<dim>::assemble_rhs(
         this->simulation_control->get_assembly_method() ==
             Parameters::SimulationControl::TimeSteppingMethod::steady ?
           calculate_navier_stokes_gls_tau_steady(
-            u_mag, viscosity_scale, h) :
+            u_mag, viscosity_for_stabilization_vector[q]/density_eq, h) :
           calculate_navier_stokes_gls_tau_transient(
-            u_mag, viscosity_scale, h, sdt);
+            u_mag, viscosity_for_stabilization_vector[q]/density_eq, h, sdt);
 
 
       // Calculate the strong residual for GLS stabilization
