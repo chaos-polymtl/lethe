@@ -96,7 +96,7 @@ public:
                               update_values | update_quadrature_points |
                                 update_JxW_values | update_gradients |
                                 update_hessians)
-    , fe_values_fd(mapping, fe_fd, quadrature, update_values)
+    , fe_values_fd(mapping, fe_fd, quadrature, update_values | update_gradients)
     , fe_face_values_cahn_hilliard(mapping,
                                    fe_cahn_hilliard,
                                    face_quadrature,
@@ -131,7 +131,7 @@ public:
     , fe_values_fd(sd.fe_values_fd.get_mapping(),
                    sd.fe_values_fd.get_fe(),
                    sd.fe_values_fd.get_quadrature(),
-                   update_values)
+                   update_values | update_gradients)
     , fe_face_values_cahn_hilliard(
         sd.fe_face_values_cahn_hilliard.get_mapping(),
         sd.fe_face_values_cahn_hilliard.get_fe(),
@@ -322,6 +322,13 @@ public:
 
     this->fe_values_fd[velocities].get_function_values(current_solution,
                                                        velocity_values);
+      this->fe_values_fd[velocities].get_function_gradients(
+              current_solution, velocity_gradient_values);
+
+      for (unsigned int q = 0; q < this->n_q_points; ++q)
+      {
+          this->velocity_divergences[q] = trace(velocity_gradient_values[q]);
+      }
 
     if (!ale.enabled())
       return;
@@ -411,6 +418,7 @@ public:
   std::vector<Tensor<1, dim>>              velocity_values;
   std::vector<std::vector<Tensor<1, dim>>> previous_velocity_values;
   std::vector<Tensor<2, dim>>              velocity_gradient_values;
+  std::vector<double>                      velocity_divergences;
 
   // Scratch for the face boundary condition
   FEFaceValues<dim>                fe_face_values_cahn_hilliard;

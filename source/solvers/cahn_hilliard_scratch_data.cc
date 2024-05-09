@@ -81,6 +81,7 @@ CahnHilliardScratchData<dim>::allocate()
     std::vector<Tensor<1, dim>>(this->n_q_points));
   this->velocity_gradient_values =
     std::vector<Tensor<2, dim>>(this->n_q_points);
+  this->velocity_divergences = std::vector<double>(n_q_points);
 
   // Allocate physical properties
   this->surface_tension                 = std::vector<double>(n_q_points);
