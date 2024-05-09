@@ -453,11 +453,8 @@ MFNavierStokesPreconditionGMG<dim>::MFNavierStokesPreconditionGMG(
               level == this->minlevel)
             {
               const auto points =
-                true ? QGaussLobatto<1>(this->dof_handler.get_fe().degree + 1)
-                         .get_points() :
-                       QIterated<1>(QGaussLobatto<1>(2),
-                                    this->dof_handler.get_fe().degree)
-                         .get_points();
+                QGaussLobatto<1>(this->dof_handler.get_fe().degree + 1)
+                  .get_points();
 
               quadrature_mg = QIterated<dim>(QGauss<1>(2), points);
             }
@@ -603,11 +600,8 @@ MFNavierStokesPreconditionGMG<dim>::MFNavierStokesPreconditionGMG(
               l == this->minlevel)
             {
               const auto points =
-                true ? QGaussLobatto<1>(this->dof_handler.get_fe().degree + 1)
-                         .get_points() :
-                       QIterated<1>(QGaussLobatto<1>(2),
-                                    this->dof_handler.get_fe().degree)
-                         .get_points();
+                QGaussLobatto<1>(this->dof_handler.get_fe().degree + 1)
+                  .get_points();
 
               this->dof_handlers[l].distribute_dofs(
                 FESystem<dim>(FE_Q_iso_Q1<dim>(points), dim + 1));
@@ -769,11 +763,8 @@ MFNavierStokesPreconditionGMG<dim>::MFNavierStokesPreconditionGMG(
               level == this->minlevel)
             {
               const auto points =
-                true ? QGaussLobatto<1>(this->dof_handler.get_fe().degree + 1)
-                         .get_points() :
-                       QIterated<1>(QGaussLobatto<1>(2),
-                                    this->dof_handler.get_fe().degree)
-                         .get_points();
+                QGaussLobatto<1>(this->dof_handler.get_fe().degree + 1)
+                  .get_points();
 
               quadrature_mg = QIterated<dim>(QGauss<1>(2), points);
             }
@@ -1535,11 +1526,8 @@ MFNavierStokesSolver<dim>::setup_dofs_fd()
           this->dof_handler_q_iso_q1.reinit(*this->triangulation);
 
           const auto points =
-            true ? QGaussLobatto<1>(this->dof_handler.get_fe().degree + 1)
-                     .get_points() :
-                   QIterated<1>(QGaussLobatto<1>(2),
-                                this->dof_handler.get_fe().degree)
-                     .get_points();
+            QGaussLobatto<1>(this->dof_handler.get_fe().degree + 1)
+              .get_points();
 
           this->dof_handler_q_iso_q1.distribute_dofs(
             FESystem<dim>(FE_Q_iso_Q1<dim>(points), dim + 1));

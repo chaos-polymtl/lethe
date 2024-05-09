@@ -2354,12 +2354,6 @@ namespace Parameters
                           Patterns::Integer(),
                           "mg minimum number of cells for coarse level");
 
-        prm.declare_entry(
-          "mg use linear interpolation coarse grid",
-          "false",
-          Patterns::Bool(),
-          "use elements with linear interpolation for coarse grid");
-
         prm.declare_entry("mg smoother iterations",
                           "10",
                           Patterns::Integer(),
@@ -2396,6 +2390,12 @@ namespace Parameters
                           Patterns::Selection("gmres|amg|ilu|direct"),
                           "The coarse grid solver for lsmg or gcmg"
                           "Choices are <gmres|amg|ilu|direct>.");
+
+        prm.declare_entry(
+          "mg coarse grid use fe q iso q1",
+          "false",
+          Patterns::Bool(),
+          "use elements with linear interpolation for coarse grid");
 
         prm.declare_entry("mg gmres max iterations",
                           "2000",
@@ -2509,8 +2509,6 @@ namespace Parameters
 
         mg_min_level       = prm.get_integer("mg min level");
         mg_level_min_cells = prm.get_integer("mg level min cells");
-        mg_use_fe_q_iso_q1 =
-          prm.get_bool("mg use linear interpolation coarse grid");
 
         mg_smoother_iterations     = prm.get_integer("mg smoother iterations");
         mg_smoother_relaxation     = prm.get_double("mg smoother relaxation");
@@ -2542,6 +2540,8 @@ namespace Parameters
         else
           throw std::logic_error(
             "Error, invalid coarse grid solver type. Choices are gmres, amg, ilu or direct.");
+
+        mg_use_fe_q_iso_q1 = prm.get_bool("mg coarse grid use fe q iso q1");
 
         mg_gmres_max_iterations = prm.get_integer("mg gmres max iterations");
         mg_gmres_tolerance      = prm.get_double("mg gmres tolerance");

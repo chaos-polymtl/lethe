@@ -496,7 +496,8 @@ protected:
   std::vector<bool> edge_constrained_cell;
 
   /**
-   * @brief
+   * @brief DoF mask object needed for the sparsity pattern and computation of the system
+   * matrix of the coarse level in case FE_Q_iso_Q1 elements are used.
    *
    */
   Table<2, bool> bool_dof_mask;
