@@ -237,12 +237,11 @@ private:
   dynamic_flow_control() override;
 
   /**
-   * @brief contact_search_step
-   * Checks all the conditions that require a contact search step. The check of
-   * conditions is done in order of suspected frequency occurrence.
+   * @brief Checks all the conditions that require a contact search step. The
+   * check of conditions is done in order of suspected frequency occurrence.
    *
+   * @param counter The counter of DEM iterations in a CFD iteration.
    */
-
   inline bool
   contact_search_step(const unsigned int counter)
   {

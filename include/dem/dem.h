@@ -399,10 +399,14 @@ private:
   // Distribution objects
   std::vector<std::shared_ptr<Distribution>> distribution_object_container;
 
-  // Dynamic disabling of particle contacts in cells object
+  // Adaptive sparce contacts (ASC) in cells object
   AdaptiveSparseContacts<dim> sparse_contacts_object;
-  bool                        has_sparse_contacts;
-  AffineConstraints<double>   background_constraints;
+
+  // Flag to indicate if sparse contacts are enabled
+  bool has_sparse_contacts;
+
+  // Contraints for the background grid needed for ASC with PBC
+  AffineConstraints<double> background_constraints;
 
   // Load balancing iteration check function
   std::function<bool()> load_balance_iteration_check_function;

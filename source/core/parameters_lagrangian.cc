@@ -694,9 +694,9 @@ namespace Parameters
             }
           else if (load_balance == "dynamic_with_sparse_contacts")
             {
-              // Check if dynamic disabling contacts is enabled, otherwise
+              // Check if adaptive sparse contacts is enabled, otherwise
               // throw an error message indicating that the user should use
-              // dynamic load balancing instead or enable dynamic disabling
+              // dynamic load balancing instead or enable adaptive sparse
               // contacts
               if (sparse_particle_contacts)
                 {

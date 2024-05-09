@@ -51,13 +51,13 @@ template class LinearAlgebra::distributed::Vector<int>;
  *
  * It uses the granular temperature to determinate if particles in a cell are
  * sufficiently mobile that the contact forces are worth computation.
- * A cell having a granular temperature under a value (default is 1e-4) will
+ * A cell having a granular temperature under a threshold (default is 1e-4) will
  * have an inactive or advected status which makes them rejected in the broad
  * search step. There is also an extra layer of mobile cells around the current
- * mobile cells to propagate the motion of particles. The cell in the layer
- * around the mobile cells are flagged as static_active or advected_active
- * cells.
- * *
+ * mobile cells to propagate the motion of particles. Additionally, there is
+ * another layer of cells around those mobile cells that are flagged as
+ * static_active or advected_active cells.
+ *
  * While the inactive status makes the particles static (no further handling),
  * the advected status will lead to computation and application of a
  * cell-averaged advected term. This term is computed from the last average
@@ -76,7 +76,7 @@ template class LinearAlgebra::distributed::Vector<int>;
  * and position update through the advection term. This is critical for CFD-DEM.
  *
  * In summary, cells are flagged using a mobility status:
- * - mobile (every contacts are calculated, same as if feature is not enabled)
+ * - mobile (all contacts are calculated, same as if the feature is not enabled)
  * - static_active (particles with low velocity variance next to mobile
  * particles)
  * - advected_active (same as above but particles will be advected)

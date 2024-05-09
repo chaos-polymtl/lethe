@@ -243,7 +243,7 @@ namespace Parameters
 
       // Factors applied on the particle weight in load balancing for active and
       // inactive cells (factor of mobile cells is always 1), only available
-      // when dynamic disabling particle contacts is enable
+      // when adaptive sparse contacts is enable
       double active_load_balancing_factor;
       double inactive_load_balancing_factor;
 

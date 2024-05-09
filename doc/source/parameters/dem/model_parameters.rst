@@ -2,7 +2,7 @@
 Model Parameters
 ================
 
-In this subsection, contact detection, force models, time integration, load balancing and dynamic contact disabling parameters are defined.
+In this subsection, contact detection, force models, time integration, load balancing and adaptive sparse contacts parameters are defined.
 
 .. code-block:: text
 
@@ -144,6 +144,14 @@ Adaptive Sparse Contacts (ASC)
 ------------------------------
 
 The ASC controls the disabling contact mechanism for performance enhancement. This feature adaptively searches for cells with low particle motion (granular temperature), disabling the computation of contacts for particles within these cells.
+See how the mechanism works with mobility status in the figure below:
+
+.. figure:: images/mobility_status.png
+    :alt: Schematic
+    :align: center
+    :width: 800
+
+    The 5 steps of the mobility status identification of cells applied to a hopper case.
 
 * ``enable adaptive sparse contacts`` enables the feature.
 

@@ -77,7 +77,7 @@ for (auto particle = particle_handler.begin();
   */
 }
 
-// Gear 3 not implemented for disabling contacts
+// Gear 3 not implemented for adaptive sparse contacts
 template <int dim>
 void
 Gear3Integrator<dim>::integrate(
@@ -91,7 +91,7 @@ Gear3Integrator<dim>::integrate(
   AdaptiveSparseContacts<dim> & /* disable_contacts_object */)
 {
   throw std::runtime_error(
-    "Disabling particle contacts not supported with explicit Gear 3 integrator, use Verlet integrator.");
+    "Adaptive sparse contacts not supported with explicit Gear 3 integrator, use Verlet integrator.");
 }
 
 template class Gear3Integrator<2>;

@@ -166,14 +166,14 @@ public:
     const bool                               has_periodic_boundaries = false);
 
   /**
-   * @brief Execute the particle-particle broad searches with disabling of
+   * @brief Execute the particle-particle broad searches with adaptive sparse
    * contacts.
    *
    * Calls proper functions to find the candidates of local and ghost
    * particle-particle contact pairs and the periodic particle-particle contacts
    * if required. These contact pairs will be used in the fine search step to
    * investigate if they are in contact. This version of the function is used
-   * when disabling particle contacts regards mobility is enabled.
+   * when adaptive sparse contacts regards mobility is enabled.
    *
    * @param[in,out] particle_handler Storage of particles and their accessor
    * functions.
@@ -216,13 +216,14 @@ public:
     const bool has_floating_mesh = false);
 
   /**
-   * @brief Execute the particle-wall broad searches with disabling of contacts.
+   * @brief Execute the particle-wall broad searches with adaptive sparse
+   * contacts.
    *
    * Calls proper functions to find the candidates of particle-wall contact
    * pairs and the particle-floating wall or particle-floating mesh if required.
    * These contact pairs will be used in the fine search step to investigate if
-   * they are in contact. This version of the function is used when disabling
-   * particle contacts regards mobility is enabled.
+   * they are in contact. This version of the function is used when adaptive
+   * sparse contacts regards mobility is enabled.
    *
    * @param[in] particle_handler Storage of particles and their accessor
    * functions.

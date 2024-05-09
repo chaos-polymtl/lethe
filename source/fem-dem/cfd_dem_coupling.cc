@@ -1013,7 +1013,7 @@ CFDDEMSolver<dim>::dem_contact_build(unsigned int counter)
             dem_parameters.floating_walls,
             this->simulation_control->get_current_time());
         }
-      else // disabling particle contacts are enabled & counter > 0
+      else
         {
           contact_manager.execute_particle_particle_broad_search(
             this->particle_handler,

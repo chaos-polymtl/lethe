@@ -178,8 +178,8 @@ ParticleParticleBroadSearch<dim>::find_particle_particle_contact_pairs(
           particle_handler.particles_in_cell(*cell_neighbor_iterator);
 
       // Store other particles in the main cell as contact candidates if
-      // main cell is mobile only (this is equivalent to when disabling
-      // particle contacts feature is not enabled)
+      // main cell is mobile only (this is equivalent to when adaptive sparse
+      // contacts feature is not enabled)
       if (main_cell_mobility_status == AdaptiveSparseContacts<dim>::mobile)
         {
           // Find local-local collision pairs in the main cell, 1st particle
@@ -210,13 +210,16 @@ ParticleParticleBroadSearch<dim>::find_particle_particle_contact_pairs(
           // contacts between particles in 2 active cells or with particles in
           // inactive cells are irrelevant. In this case, we skip this neighbor
           // cell.
-          if ((main_cell_mobility_status ==
-                 AdaptiveSparseContacts<dim>::static_active ||
-               main_cell_mobility_status ==
-                 AdaptiveSparseContacts<dim>::advected_active) &&
-              neighbor_cell_mobility_status !=
-                AdaptiveSparseContacts<dim>::mobile)
-            continue;
+          if (neighbor_cell_mobility_status !=
+              AdaptiveSparseContacts<dim>::mobile)
+            {
+              if (main_cell_mobility_status ==
+                  AdaptiveSparseContacts<dim>::static_active)
+                continue;
+              if (main_cell_mobility_status ==
+                  AdaptiveSparseContacts<dim>::advected_active)
+                continue;
+            }
 
           // Store particles in the neighbor cell as contact candidates
           typename Particles::ParticleHandler<dim>::particle_iterator_range
@@ -271,13 +274,17 @@ ParticleParticleBroadSearch<dim>::find_particle_particle_contact_pairs(
 
           // No storing of particles as candidate if main cell is active
           // but neighbor is not mobile
-          if ((main_cell_mobility_status ==
-                 AdaptiveSparseContacts<dim>::static_active ||
-               main_cell_mobility_status ==
-                 AdaptiveSparseContacts<dim>::advected_active) &&
-              neighbor_cell_mobility_status !=
-                AdaptiveSparseContacts<dim>::mobile)
-            continue;
+          if (neighbor_cell_mobility_status !=
+              AdaptiveSparseContacts<dim>::mobile)
+            {
+              if (main_cell_mobility_status ==
+                  AdaptiveSparseContacts<dim>::static_active)
+                continue;
+              if (main_cell_mobility_status ==
+                  AdaptiveSparseContacts<dim>::advected_active)
+                continue;
+            }
+
 
           // Defining iterator on ghost particles in the neighbor cells
           typename Particles::ParticleHandler<dim>::particle_iterator_range
