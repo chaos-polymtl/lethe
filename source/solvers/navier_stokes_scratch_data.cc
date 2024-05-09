@@ -454,41 +454,39 @@ NavierStokesScratchData<dim>::calculate_physical_properties()
             }
           break;
         }
-      case 2:
-        {
+      case 2: {
           // We need both density and viscosity
-          const auto density_model_0  = properties_manager.get_density(0);
+          const auto density_model_0 = properties_manager.get_density(0);
           const auto rheology_model_0 = properties_manager.get_rheology(0);
-          const auto density_model_1  = properties_manager.get_density(1);
+          const auto density_model_1 = properties_manager.get_density(1);
           const auto rheology_model_1 = properties_manager.get_rheology(1);
 
           density_ref_0 = density_model_0->get_density_ref();
           density_ref_1 = density_model_1->get_density_ref();
 
           kinematic_viscosity_scale_0 =
-            rheology_model_0->get_kinematic_viscosity_scale();
+                  rheology_model_0->get_kinematic_viscosity_scale();
           kinematic_viscosity_scale_1 =
-            rheology_model_1->get_kinematic_viscosity_scale();
+                  rheology_model_1->get_kinematic_viscosity_scale();
 
           kinematic_viscosity_scale =
-            std::max(kinematic_viscosity_scale_0, kinematic_viscosity_scale_1);
-
+                  std::max(kinematic_viscosity_scale_0,
+                           kinematic_viscosity_scale_1);
           // Gather properties from material interactions if necessary
-          if (properties_manager.get_number_of_material_interactions() > 0)
-            {
+          if (properties_manager.get_number_of_material_interactions() > 0) {
               const auto material_interaction_id =
-                properties_manager.get_material_interaction_id(
-                  material_interactions_type::fluid_fluid, 0, 1);
+                      properties_manager.get_material_interaction_id(
+                              material_interactions_type::fluid_fluid, 0, 1);
               // Gather surface tension
               const auto surface_tension_model =
-                properties_manager.get_surface_tension(material_interaction_id);
+                      properties_manager.get_surface_tension(
+                              material_interaction_id);
               surface_tension_model->vector_value(fields, surface_tension);
               // Gather surface tension gradient only if necessary
               if (!properties_manager.surface_tension_is_constant())
-                surface_tension_model->vector_jacobian(
-                  fields, field::temperature, surface_tension_gradient);
-            }
-
+                  surface_tension_model->vector_jacobian(
+                          fields, field::temperature, surface_tension_gradient);
+          }
 
 
           density_model_0->vector_value(fields, density_0);
@@ -496,31 +494,27 @@ NavierStokesScratchData<dim>::calculate_physical_properties()
                                                          fields,
                                                          dynamic_viscosity_0);
           rheology_model_0->get_dynamic_viscosity_for_stabilization_vector(
-            density_ref_0, fields, dynamic_viscosity_for_stabilization_0);
+                  density_ref_0, fields, dynamic_viscosity_for_stabilization_0);
 
           density_model_1->vector_value(fields, density_1);
           rheology_model_1->get_dynamic_viscosity_vector(density_ref_1,
                                                          fields,
                                                          dynamic_viscosity_1);
           rheology_model_1->get_dynamic_viscosity_for_stabilization_vector(
-            density_ref_1, fields, dynamic_viscosity_for_stabilization_1);
-          
-          if (gather_temperature)
-            {
+                  density_ref_1, fields, dynamic_viscosity_for_stabilization_1);
+          if (gather_temperature) {
               const auto thermal_expansion_model_0 =
-                properties_manager.get_thermal_expansion(0);
+                      properties_manager.get_thermal_expansion(0);
               const auto thermal_expansion_model_1 =
-                properties_manager.get_thermal_expansion(1);
+                      properties_manager.get_thermal_expansion(1);
               thermal_expansion_model_0->vector_value(fields,
                                                       thermal_expansion_0);
               thermal_expansion_model_1->vector_value(fields,
                                                       thermal_expansion_1);
-            }
+          }
 
-          if (gather_vof && !gather_cahn_hilliard)
-            {
-              for (unsigned int q = 0; q < this->n_q_points; ++q)
-                {
+          if (gather_vof && !gather_cahn_hilliard) {
+              for (unsigned int q = 0; q < this->n_q_points; ++q) {
                   double filtered_phase_value = this->filtered_phase_values[q];
 
                   density[q] = calculate_point_property(filtered_phase_value,
@@ -528,94 +522,88 @@ NavierStokesScratchData<dim>::calculate_physical_properties()
                                                         this->density_1[q]);
 
                   dynamic_viscosity[q] =
-                    calculate_point_property(filtered_phase_value,
-                                             this->dynamic_viscosity_0[q],
-                                             this->dynamic_viscosity_1[q]);
+                          calculate_point_property(filtered_phase_value,
+                                                   this->dynamic_viscosity_0[q],
+                                                   this->dynamic_viscosity_1[q]);
 
                   dynamic_viscosity_for_stabilization[q] =
-                    calculate_point_property(
-                      filtered_phase_value,
-                      this->dynamic_viscosity_for_stabilization_0[q],
-                      this->dynamic_viscosity_for_stabilization_1[q]);
+                          calculate_point_property(
+                                  filtered_phase_value,
+                                  this->dynamic_viscosity_for_stabilization_0[q],
+                                  this->dynamic_viscosity_for_stabilization_1[q]);
 
                   thermal_expansion[q] =
-                    calculate_point_property(filtered_phase_value,
-                                             this->thermal_expansion_0[q],
-                                             this->thermal_expansion_1[q]);
+                          calculate_point_property(filtered_phase_value,
+                                                   this->thermal_expansion_0[q],
+                                                   this->thermal_expansion_1[q]);
 
-                  //                    grad_kinematic_viscosity_shear_rate[q] =
-                  //                            calculate_point_property(
-                  //                                    filtered_phase_value,
-                  //                                    this->grad_kinematic_viscosity_shear_rate_0[q],
-                  //                                    this->grad_kinematic_viscosity_shear_rate_1[q]);
-                }
+                  grad_kinematic_viscosity_shear_rate[q] =
+                          calculate_point_property(
+                                  filtered_phase_value,
+                                  this->grad_kinematic_viscosity_shear_rate_0[q],
+                                  this->grad_kinematic_viscosity_shear_rate_1[q]);
+              }
 
               // Gather density_psi for isothermal compressible NS equations
-              if (!properties_manager.density_is_constant())
-                {
+              if (!properties_manager.density_is_constant()) {
                   density_psi_0 = density_model_0->get_psi();
                   density_psi_1 = density_model_1->get_psi();
 
-                  for (unsigned int q = 0; q < this->n_q_points; ++q)
-                    {
+                  for (unsigned int q = 0; q < this->n_q_points; ++q) {
                       double filtered_phase_value =
-                        this->filtered_phase_values[q];
+                              this->filtered_phase_values[q];
                       // To avoid calculating twice in the assemblers
                       compressibility_multiplier[q] =
-                        filtered_phase_value *
-                          (density_0[q] / density_1[q] * density_psi_1 -
-                           density_psi_0) +
-                        density_psi_0;
-                    }
-                }
+                              filtered_phase_value *
+                              (density_0[q] / density_1[q] * density_psi_1 -
+                               density_psi_0) +
+                              density_psi_0;
+                  }
+              }
 
-              for (unsigned p = 0; p < previous_phase_values.size(); ++p)
-                {
+              for (unsigned p = 0; p < previous_phase_values.size(); ++p) {
                   // Blend the physical properties using the VOF field
-                  for (unsigned int q = 0; q < this->n_q_points; ++q)
-                    {
+                  for (unsigned int q = 0; q < this->n_q_points; ++q) {
                       // Calculate previous density (right now assumes constant
                       // density model per phase)
                       previous_density[p][q] = calculate_point_property(
-                        filter->filter_phase(this->previous_phase_values[p][q]),
-                        this->density_0[q],
-                        this->density_1[q]);
-                    }
-                }
+                              filter->filter_phase(
+                                      this->previous_phase_values[p][q]),
+                              this->density_0[q],
+                              this->density_1[q]);
+                  }
+              }
               break;
-            }
-          else if (gather_cahn_hilliard && !gather_vof)
-            {
+          } else if (gather_cahn_hilliard && !gather_vof) {
               // Blend the physical properties using the CahnHilliard field
-              for (unsigned int q = 0; q < this->n_q_points; ++q)
-                {
+              for (unsigned int q = 0; q < this->n_q_points; ++q) {
                   double phase_order_cahn_hilliard_value =
-                    this->filtered_phase_order_cahn_hilliard_values[q];
+                          this->filtered_phase_order_cahn_hilliard_values[q];
 
                   density[q] = calculate_point_property_cahn_hilliard(
-                    phase_order_cahn_hilliard_value,
-                    this->density_0[q],
-                    this->density_1[q]);
+                          phase_order_cahn_hilliard_value,
+                          this->density_0[q],
+                          this->density_1[q]);
 
                   dynamic_viscosity[q] = calculate_point_property_cahn_hilliard(
-                    phase_order_cahn_hilliard_value,
-                    this->dynamic_viscosity_0[q],
-                    this->dynamic_viscosity_1[q]);
+                          phase_order_cahn_hilliard_value,
+                          this->dynamic_viscosity_0[q],
+                          this->dynamic_viscosity_1[q]);
 
                   dynamic_viscosity_for_stabilization[q] =
-                    calculate_point_property_cahn_hilliard(
-                      phase_order_cahn_hilliard_value,
-                      this->dynamic_viscosity_for_stabilization_0[q],
-                      this->dynamic_viscosity_for_stabilization_1[q]);
-                }
+                          calculate_point_property_cahn_hilliard(
+                                  phase_order_cahn_hilliard_value,
+                                  this->dynamic_viscosity_for_stabilization_0[q],
+                                  this->dynamic_viscosity_for_stabilization_1[q]);
+              }
               break;
-            }
+          }
           break;
+      }
+          default:
+            throw std::runtime_error("Unsupported number of fluids (>2)");
         }
-      default:
-        throw std::runtime_error("Unsupported number of fluids (>2)");
     }
-}
 
-template class NavierStokesScratchData<2>;
-template class NavierStokesScratchData<3>;
+  template class NavierStokesScratchData<2>;
+  template class NavierStokesScratchData<3>;

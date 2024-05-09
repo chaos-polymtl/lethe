@@ -528,6 +528,8 @@ GLSNavierStokesCahnHilliardAssemblerNonNewtonianCore<dim>::assemble_matrix(
       const Tensor<1, dim> dynamic_viscosity_gradient =
         density_eq * kinematic_viscosity_gradient;
 
+      const double viscosity_scale = scratch_data.kinematic_viscosity_scale;
+
       // Calculation of the GLS stabilization parameter. The
       // stabilization parameter used is different if the simulation
       // is steady or unsteady. In the unsteady case it includes the
@@ -535,10 +537,11 @@ GLSNavierStokesCahnHilliardAssemblerNonNewtonianCore<dim>::assemble_matrix(
       const double tau =
         this->simulation_control->get_assembly_method() ==
             Parameters::SimulationControl::TimeSteppingMethod::steady ?
-          calculate_navier_stokes_gls_tau_steady(
-            u_mag, dynamic_viscosity_eq / density_eq, h) :
-          calculate_navier_stokes_gls_tau_transient(
-            u_mag, dynamic_viscosity_eq / density_eq, h, sdt);
+          calculate_navier_stokes_gls_tau_steady(u_mag, viscosity_scale, h) :
+          calculate_navier_stokes_gls_tau_transient(u_mag,
+                                                    viscosity_scale,
+                                                    h,
+                                                    sdt);
 
       // Calculate the strong residual for GLS stabilization
       auto strong_residual =
@@ -729,6 +732,7 @@ GLSNavierStokesCahnHilliardAssemblerNonNewtonianCore<dim>::assemble_rhs(
       const double dynamic_viscosity_eq = scratch_data.dynamic_viscosity[q];
       const Tensor<1, dim> dynamic_viscosity_gradient =
         density_eq * kinematic_viscosity_gradient;
+      const double viscosity_scale = scratch_data.kinematic_viscosity_scale;
 
       // Calculation of the GLS stabilization parameter. The
       // stabilization parameter used is different if the simulation
@@ -737,10 +741,11 @@ GLSNavierStokesCahnHilliardAssemblerNonNewtonianCore<dim>::assemble_rhs(
       const double tau =
         this->simulation_control->get_assembly_method() ==
             Parameters::SimulationControl::TimeSteppingMethod::steady ?
-          calculate_navier_stokes_gls_tau_steady(
-            u_mag, dynamic_viscosity_eq / density_eq, h) :
-          calculate_navier_stokes_gls_tau_transient(
-            u_mag, dynamic_viscosity_eq / density_eq, h, sdt);
+          calculate_navier_stokes_gls_tau_steady(u_mag, viscosity_scale, h) :
+          calculate_navier_stokes_gls_tau_transient(u_mag,
+                                                    viscosity_scale,
+                                                    h,
+                                                    sdt);
 
 
       // Calculate the strong residual for GLS stabilization
