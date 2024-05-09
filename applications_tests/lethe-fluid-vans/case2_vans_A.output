@@ -1,0 +1,50 @@
+Running on 1 MPI rank(s)...
+   Number of active cells:       256
+   Number of degrees of freedom: 867
+   Volume of triangulation:      4
+
+*****************************
+Steady iteration:        1/3
+*****************************
+--------------
+Void Fraction
+--------------
+-------------------------------
+Volume-Averaged Fluid Dynamics
+-------------------------------
+Global continuity equation error: 9.32414e-18 s^-1
+Max local continuity error: 0.000422042 s^-1
+
+*****************************
+Steady iteration:        2/3
+*****************************
+   Number of active cells:       1024
+   Number of degrees of freedom: 3267
+   Volume of triangulation:      4
+--------------
+Void Fraction
+--------------
+-------------------------------
+Volume-Averaged Fluid Dynamics
+-------------------------------
+Global continuity equation error: -2.62309e-17 s^-1
+Max local continuity error: 5.42948e-05 s^-1
+
+*****************************
+Steady iteration:        3/3
+*****************************
+   Number of active cells:       4096
+   Number of degrees of freedom: 12675
+   Volume of triangulation:      4
+--------------
+Void Fraction
+--------------
+-------------------------------
+Volume-Averaged Fluid Dynamics
+-------------------------------
+Global continuity equation error: -7.56485e-18 s^-1
+Max local continuity error: 6.75279e-06 s^-1
+cells  error_velocity    error_pressure   
+  256 3.759812e-02    - 1.921624e-01    - 
+ 1024 9.721626e-03 1.95 5.048783e-02 1.93 
+ 4096 2.451208e-03 1.99 1.299070e-02 1.96 

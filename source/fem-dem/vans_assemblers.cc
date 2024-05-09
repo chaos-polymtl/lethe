@@ -129,46 +129,65 @@ GLSVansAssemblerCoreModelB<dim>::assemble_matrix(
 
       for (unsigned int i = 0; i < n_dofs; ++i)
         {
-          const auto &phi_u_i      = scratch_data.phi_u[q][i];
-          const auto &grad_phi_u_i = scratch_data.grad_phi_u[q][i];
-          const auto &div_phi_u_i  = scratch_data.div_phi_u[q][i];
-          const auto &phi_p_i      = scratch_data.phi_p[q][i];
-          const auto &grad_phi_p_i = scratch_data.grad_phi_p[q][i];
+          const unsigned int component_i  = scratch_data.components[i];
+          const auto        &phi_u_i      = scratch_data.phi_u[q][i];
+          const auto        &grad_phi_u_i = scratch_data.grad_phi_u[q][i];
+          const auto        &div_phi_u_i  = scratch_data.div_phi_u[q][i];
+          const auto        &phi_p_i      = scratch_data.phi_p[q][i];
+          const auto        &grad_phi_p_i = scratch_data.grad_phi_p[q][i];
+
 
           for (unsigned int j = 0; j < n_dofs; ++j)
             {
-              const auto &phi_u_j      = scratch_data.phi_u[q][j];
-              const auto &grad_phi_u_j = scratch_data.grad_phi_u[q][j];
-              const auto &div_phi_u_j  = scratch_data.div_phi_u[q][j];
+              const unsigned int component_j  = scratch_data.components[j];
+              const auto        &phi_u_j      = scratch_data.phi_u[q][j];
+              const auto        &grad_phi_u_j = scratch_data.grad_phi_u[q][j];
+              const auto        &div_phi_u_j  = scratch_data.div_phi_u[q][j];
 
               const auto &phi_p_j =
                 pressure_scaling_factor * scratch_data.phi_p[q][j];
 
               const auto &strong_jac = strong_jacobian_vec[q][j];
 
+              // Pressure
               double local_matrix_ij =
-                kinematic_viscosity *
-                  scalar_product(grad_phi_u_j, grad_phi_u_i) +
-                // Convection
-                ((phi_u_j * void_fraction * velocity_gradient * phi_u_i) +
-                 (grad_phi_u_j * void_fraction * velocity * phi_u_i))
-                // Mass source term
-                + mass_source * phi_u_j * phi_u_i
-                // Pressure
-                - (div_phi_u_i * phi_p_j) +
-                // Continuity
-                phi_p_i * ((void_fraction * div_phi_u_j) +
-                           (phi_u_j * void_fraction_gradients));
+                component_j == dim ? -div_phi_u_i * phi_p_j : 0;
 
-              // PSPG GLS term
-              local_matrix_ij += tau * (strong_jac * grad_phi_p_i);
+              if (component_i == dim)
+                {
+                  // Continuity
+                  local_matrix_ij +=
+                    phi_p_i * ((void_fraction * div_phi_u_j) +
+                               (phi_u_j * void_fraction_gradients));
+
+                  // PSPG GLS term
+                  local_matrix_ij += tau * (strong_jac * grad_phi_p_i);
+                }
+
+              if (component_i < dim && component_j < dim)
+                {
+                  // Convection
+                  local_matrix_ij +=
+                    ((phi_u_j * void_fraction * velocity_gradient * phi_u_i) +
+                     (grad_phi_u_j * void_fraction * velocity * phi_u_i));
+
+                  if (component_i == component_j)
+                    {
+                      local_matrix_ij +=
+                        // Deviatoric stress tensor
+                        kinematic_viscosity * (grad_phi_u_j[component_j] *
+                                               grad_phi_u_i[component_i])
+                        // Mass source
+                        + mass_source * phi_u_j * phi_u_i;
+                    }
+                }
 
               // The jacobian matrix for the SUPG formulation
               // currently does not include the jacobian of the stabilization
               // parameter tau. Our experience has shown that does not alter the
               // number of newton iteration for convergence, but greatly
               // simplifies assembly.
-              if (SUPG)
+              if (SUPG && component_i < dim)
                 {
                   local_matrix_ij +=
                     tau * (strong_jac * grad_phi_u_i * velocity +
@@ -293,17 +312,18 @@ GLSVansAssemblerCoreModelB<dim>::assemble_rhs(
       // Assembly of the right-hand side
       for (unsigned int i = 0; i < n_dofs; ++i)
         {
-          const auto phi_u_i      = scratch_data.phi_u[q][i];
-          const auto grad_phi_u_i = scratch_data.grad_phi_u[q][i];
-          const auto phi_p_i      = scratch_data.phi_p[q][i];
-          const auto grad_phi_p_i = scratch_data.grad_phi_p[q][i];
-          const auto div_phi_u_i  = scratch_data.div_phi_u[q][i];
+          const unsigned int component_i  = scratch_data.components[i];
+          const auto         phi_u_i      = scratch_data.phi_u[q][i];
+          const auto         grad_phi_u_i = scratch_data.grad_phi_u[q][i];
+          const auto         phi_p_i      = scratch_data.phi_p[q][i];
+          const auto         grad_phi_p_i = scratch_data.grad_phi_p[q][i];
+          const auto         div_phi_u_i  = scratch_data.div_phi_u[q][i];
 
           double local_rhs_i = 0;
 
           // Navier-Stokes Residual
-          local_rhs_i +=
-            (
+          if (component_i < dim)
+            local_rhs_i +=
               // Momentum
               -kinematic_viscosity *
                 scalar_product(velocity_gradient, grad_phi_u_i) -
@@ -311,22 +331,22 @@ GLSVansAssemblerCoreModelB<dim>::assemble_rhs(
               // Mass Source
               - mass_source * velocity * phi_u_i
               // Pressure and Force
-              + pressure * div_phi_u_i +
-              force * void_fraction * phi_u_i
-              // Continuity
-              - (velocity_divergence * void_fraction +
-                 velocity * void_fraction_gradients - mass_source) *
-                  phi_p_i) *
-            JxW;
+              + pressure * div_phi_u_i + force * void_fraction * phi_u_i;
+
+          if (component_i == dim)
+            // Continuity
+            local_rhs_i += -(velocity_divergence * void_fraction +
+                             velocity * void_fraction_gradients - mass_source) *
+                           phi_p_i;
 
           // PSPG GLS term
-          local_rhs_i += -tau * (strong_residual * grad_phi_p_i) * JxW;
+          local_rhs_i += -tau * (strong_residual * grad_phi_p_i);
 
           // SUPG GLS term
-          if (SUPG)
+          if (SUPG && component_i < dim)
             {
               local_rhs_i +=
-                -tau * (strong_residual * (grad_phi_u_i * velocity)) * JxW;
+                -tau * (strong_residual * (grad_phi_u_i * velocity));
             }
 
           // Grad-div stabilization
@@ -335,10 +355,10 @@ GLSVansAssemblerCoreModelB<dim>::assemble_rhs(
               local_rhs_i -= gamma *
                              (void_fraction * velocity_divergence +
                               velocity * void_fraction_gradients) *
-                             div_phi_u_i * JxW;
+                             div_phi_u_i;
             }
 
-          local_rhs(i) += local_rhs_i;
+          local_rhs(i) += local_rhs_i * JxW;
         }
     }
 }
@@ -475,49 +495,63 @@ GLSVansAssemblerCoreModelA<dim>::assemble_matrix(
 
       for (unsigned int i = 0; i < n_dofs; ++i)
         {
-          const auto &phi_u_i      = scratch_data.phi_u[q][i];
-          const auto &grad_phi_u_i = scratch_data.grad_phi_u[q][i];
-          const auto &div_phi_u_i  = scratch_data.div_phi_u[q][i];
-          const auto &phi_p_i      = scratch_data.phi_p[q][i];
-          const auto &grad_phi_p_i = scratch_data.grad_phi_p[q][i];
+          const unsigned int component_i  = scratch_data.components[i];
+          const auto        &phi_u_i      = scratch_data.phi_u[q][i];
+          const auto        &grad_phi_u_i = scratch_data.grad_phi_u[q][i];
+          const auto        &div_phi_u_i  = scratch_data.div_phi_u[q][i];
+          const auto        &phi_p_i      = scratch_data.phi_p[q][i];
+          const auto        &grad_phi_p_i = scratch_data.grad_phi_p[q][i];
 
           for (unsigned int j = 0; j < n_dofs; ++j)
             {
-              const auto &phi_u_j      = scratch_data.phi_u[q][j];
-              const auto &grad_phi_u_j = scratch_data.grad_phi_u[q][j];
-              const auto &div_phi_u_j  = scratch_data.div_phi_u[q][j];
-
-              const auto &phi_p_j =
+              const unsigned int component_j  = scratch_data.components[j];
+              const auto        &phi_u_j      = scratch_data.phi_u[q][j];
+              const auto        &grad_phi_u_j = scratch_data.grad_phi_u[q][j];
+              const auto        &div_phi_u_j  = scratch_data.div_phi_u[q][j];
+              const auto        &phi_p_j =
                 pressure_scaling_factor * scratch_data.phi_p[q][j];
 
               const auto &strong_jac = strong_jacobian_vec[q][j];
 
+              // Pressure
               double local_matrix_ij =
-                (void_fraction * kinematic_viscosity *
-                   scalar_product(grad_phi_u_j, grad_phi_u_i) +
-                 kinematic_viscosity * grad_phi_u_j * void_fraction_gradients *
-                   phi_u_i) +
-                // Convection
-                ((phi_u_j * void_fraction * velocity_gradient * phi_u_i) +
-                 (grad_phi_u_j * void_fraction * velocity * phi_u_i))
-                // Mass source term
-                + mass_source * phi_u_j * phi_u_i
-                // Pressure
-                - (div_phi_u_i * phi_p_j * void_fraction +
-                   phi_p_j * void_fraction_gradients * phi_u_i) +
-                // Continuity
-                phi_p_i * ((void_fraction * div_phi_u_j) +
-                           (phi_u_j * void_fraction_gradients));
+                -(div_phi_u_i * phi_p_j * void_fraction +
+                  phi_p_j * void_fraction_gradients * phi_u_i);
 
-              // PSPG GLS term
-              local_matrix_ij += tau * (strong_jac * grad_phi_p_i);
+              if (component_i == dim)
+                {
+                  local_matrix_ij +=
+                    phi_p_i * ((void_fraction * div_phi_u_j) +
+                               (phi_u_j * void_fraction_gradients));
+
+                  // PSPG GLS term
+                  local_matrix_ij += tau * (strong_jac * grad_phi_p_i);
+                }
+
+              if (component_i < dim && component_j < dim)
+                {
+                  // Convection
+                  local_matrix_ij +=
+                    ((phi_u_j * void_fraction * velocity_gradient * phi_u_i) +
+                     (grad_phi_u_j * void_fraction * velocity * phi_u_i));
+
+                  if (component_i == component_j)
+                    {
+                      local_matrix_ij += void_fraction * kinematic_viscosity *
+                                           (grad_phi_u_j[component_j] *
+                                            grad_phi_u_i[component_i]) +
+                                         kinematic_viscosity * grad_phi_u_j *
+                                           void_fraction_gradients * phi_u_i +
+                                         mass_source * phi_u_j * phi_u_i;
+                    }
+                }
 
               // The jacobian matrix for the SUPG formulation
               // currently does not include the jacobian of the stabilization
               // parameter tau. Our experience has shown that does not alter the
               // number of newton iteration for convergence, but greatly
               // simplifies assembly.
-              if (SUPG)
+              if (SUPG && component_i < dim)
                 {
                   local_matrix_ij +=
                     tau * (strong_jac * grad_phi_u_i * velocity +
@@ -643,17 +677,19 @@ GLSVansAssemblerCoreModelA<dim>::assemble_rhs(
       // Assembly of the right-hand side
       for (unsigned int i = 0; i < n_dofs; ++i)
         {
+          const unsigned int component_i = scratch_data.components[i];
+
           const auto phi_u_i      = scratch_data.phi_u[q][i];
           const auto grad_phi_u_i = scratch_data.grad_phi_u[q][i];
           const auto phi_p_i      = scratch_data.phi_p[q][i];
           const auto grad_phi_p_i = scratch_data.grad_phi_p[q][i];
           const auto div_phi_u_i  = scratch_data.div_phi_u[q][i];
 
+          // Navier-Stokes Residual
           double local_rhs_i = 0;
 
-          // Navier-Stokes Residual
-          local_rhs_i +=
-            (
+          if (component_i < dim)
+            local_rhs_i += (
               // Momentum
               -(void_fraction * kinematic_viscosity *
                   scalar_product(velocity_gradient, grad_phi_u_i) +
@@ -665,21 +701,22 @@ GLSVansAssemblerCoreModelA<dim>::assemble_rhs(
               // Pressure and Force
               + (void_fraction * pressure * div_phi_u_i +
                  pressure * void_fraction_gradients * phi_u_i) +
-              force * void_fraction * phi_u_i
-              // Continuity
-              - (velocity_divergence * void_fraction +
-                 velocity * void_fraction_gradients - mass_source) *
-                  phi_p_i) *
-            JxW;
+              force * void_fraction * phi_u_i);
+
+          if (component_i == dim)
+            // Continuity
+            local_rhs_i -= (velocity_divergence * void_fraction +
+                            velocity * void_fraction_gradients - mass_source) *
+                           phi_p_i;
 
           // PSPG GLS term
-          local_rhs_i += -tau * (strong_residual * grad_phi_p_i) * JxW;
+          local_rhs_i += -tau * (strong_residual * grad_phi_p_i);
 
           // SUPG GLS term
           if (SUPG)
             {
               local_rhs_i +=
-                -tau * (strong_residual * (grad_phi_u_i * velocity)) * JxW;
+                -tau * (strong_residual * (grad_phi_u_i * velocity));
             }
 
           // Grad-div stabilization
@@ -688,9 +725,10 @@ GLSVansAssemblerCoreModelA<dim>::assemble_rhs(
               local_rhs_i -= gamma *
                              (void_fraction * velocity_divergence +
                               velocity * void_fraction_gradients) *
-                             div_phi_u_i * JxW;
+                             div_phi_u_i;
             }
 
+          local_rhs_i *= JxW;
           local_rhs(i) += local_rhs_i;
         }
     }
@@ -1641,8 +1679,6 @@ GLSVansAssemblerViscousTorque<dim>::calculate_particle_fluid_interactions(
     RequiresConstantDensity(
       "GLSVansAssemblerViscousTorque<dim>::calculate_particle_fluid_interactions"));
 
-  double viscous_torque = 0.0;
-
   const double density = scratch_data.properties_manager.get_density_scale();
   const double kinematic_viscosity =
     scratch_data.properties_manager.get_kinematic_viscosity_scale();
@@ -1656,18 +1692,16 @@ GLSVansAssemblerViscousTorque<dim>::calculate_particle_fluid_interactions(
     {
       auto particle_properties = particle.get_properties();
 
+      // Extract constant factor to avoid remultiplying it during the loop
+      const double factor = M_PI *
+                            Utilities::fixed_power<3, double>(
+                              particle_properties[DEM::PropertiesIndex::dp]) *
+                            kinematic_viscosity * density * 0.5;
+
       for (unsigned int d = 0; d < dim; d++)
         {
-          // Calculate viscous torque
-          viscous_torque =
-            M_PI *
-            Utilities::fixed_power<3, double>(
-              particle_properties[DEM::PropertiesIndex::dp]) *
-            kinematic_viscosity * density *
-            (-particle_properties[DEM::PropertiesIndex::omega_x + d]);
-
-          particle_properties[DEM::PropertiesIndex::fem_torque_x + d] +=
-            viscous_torque;
+          particle_properties[DEM::PropertiesIndex::fem_torque_x + d] -=
+            factor * particle_properties[DEM::PropertiesIndex::omega_x + d];
         }
     }
   particle_number += 1;
@@ -1681,9 +1715,6 @@ void
 GLSVansAssemblerVorticalTorque<dim>::calculate_particle_fluid_interactions(
   NavierStokesScratchData<dim> &scratch_data)
 {
-  // particle_number is an increment that goes from 0 to n_particles_in_cell.
-  // It is incremented at the end of the loop over particles
-
   // Physical Properties
   Assert(
     !scratch_data.properties_manager.is_non_newtonian(),
@@ -1695,8 +1726,6 @@ GLSVansAssemblerVorticalTorque<dim>::calculate_particle_fluid_interactions(
     RequiresConstantDensity(
       "GLSVansAssemblerVorticalTorque<dim>::calculate_particle_fluid_interactions"));
 
-  double viscous_torque = 0.0;
-
   const double density = scratch_data.properties_manager.get_density_scale();
   const double kinematic_viscosity =
     scratch_data.properties_manager.get_kinematic_viscosity_scale();
@@ -1706,27 +1735,29 @@ GLSVansAssemblerVorticalTorque<dim>::calculate_particle_fluid_interactions(
 
   const auto pic = scratch_data.pic;
 
-  unsigned int particle_number = 0;
+  // Local index used to access the local fields calculated at the particle
+  // location
+  unsigned int i_particle = 0;
 
   // Loop over particles in cell
   for (auto &particle : pic)
     {
       auto particle_properties = particle.get_properties();
 
+      // Extract constant factor to avoid remultiplying it during the loop
+      const double factor = M_PI *
+                            Utilities::fixed_power<3, double>(
+                              particle_properties[DEM::PropertiesIndex::dp]) *
+                            kinematic_viscosity * density * 0.5;
+
       for (unsigned int d = 0; d < dim; d++)
         {
-          // Calculate viscous torque
-          viscous_torque = M_PI *
-                           Utilities::fixed_power<3, double>(
-                             particle_properties[DEM::PropertiesIndex::dp]) *
-                           kinematic_viscosity * density *
-                           (0.5 * vorticity_3d[particle_number][d]);
-
+          // Calculate and apply viscous torque
           particle_properties[DEM::PropertiesIndex::fem_torque_x + d] +=
-            viscous_torque;
+            factor * vorticity_3d[i_particle][d];
         }
     }
-  particle_number += 1;
+  i_particle += 1;
 }
 
 template class GLSVansAssemblerVorticalTorque<2>;
