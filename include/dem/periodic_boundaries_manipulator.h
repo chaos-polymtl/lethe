@@ -1,6 +1,6 @@
 /* ---------------------------------------------------------------------
  *
- * Copyright (C) 2019 - 2019 by the Lethe authors
+ * Copyright (C) 2019 - 2024 by the Lethe authors
  *
  * This file is part of the Lethe library
  *
@@ -12,7 +12,9 @@
  * the top level of the Lethe distribution.
  *
  * ---------------------------------------------------------------------
+ *
  */
+
 #include <dem/boundary_cells_info_struct.h>
 #include <dem/data_containers.h>
 #include <dem/dem_contact_manager.h>

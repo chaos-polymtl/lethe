@@ -1,6 +1,6 @@
 /* ---------------------------------------------------------------------
  *
- * Copyright (C) 2019 - 2019 by the Lethe authors
+ * Copyright (C) 2019 - 2024 by the Lethe authors
  *
  * This file is part of the Lethe library
  *
@@ -12,13 +12,8 @@
  * the top level of the Lethe distribution.
  *
  * ---------------------------------------------------------------------
-
  *
- * Author: Toni EL Geitani, Polytechnique Montreal, 2020-
  */
-
-#ifndef lethe_gls_vans_h
-#define lethe_gls_vans_h
 
 #include <core/bdf.h>
 #include <core/dem_properties.h>
@@ -45,7 +40,8 @@
 #include <boost/archive/text_iarchive.hpp>
 #include <boost/archive/text_oarchive.hpp>
 
-
+#ifndef lethe_gls_vans_h
+#  define lethe_gls_vans_h
 
 using namespace dealii;
 

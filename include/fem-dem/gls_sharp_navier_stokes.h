@@ -1,6 +1,6 @@
 /* ---------------------------------------------------------------------
  *
- * Copyright (C) 2019 - 2019 by the Lethe authors
+ * Copyright (C) 2019 - 2024 by the Lethe authors
  *
  * This file is part of the Lethe library
  *
@@ -12,10 +12,8 @@
  * the top level of the Lethe distribution.
  *
  * ---------------------------------------------------------------------
+ *
  */
-
-#ifndef LETHE_GLSSHARPNS_H
-#define LETHE_GLSSHARPNS_H
 
 #include <core/ib_particle.h>
 #include <core/ib_stencil.h>
@@ -29,6 +27,9 @@
 
 #include <deal.II/dofs/dof_tools.h>
 
+#ifndef LETHE_GLSSHARPNS_H
+#  define LETHE_GLSSHARPNS_H
+
 using namespace dealii;
 
 /**
@@ -39,7 +40,6 @@ using namespace dealii;
  * the flow is solved
  *
  * @ingroup solvers
- * @author Lucka Barbeau, Bruno Blais, 2020
  */
 
 template <int dim>

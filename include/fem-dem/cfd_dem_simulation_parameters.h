@@ -1,6 +1,6 @@
 /* ---------------------------------------------------------------------
  *
- * Copyright (C) 2021 -  by the Lethe authors
+ * Copyright (C) 2021 - 2024 by the Lethe authors
  *
  * This file is part of the Lethe library
  *
@@ -12,10 +12,8 @@
  * the top level of the Lethe distribution.
  *
  * ---------------------------------------------------------------------
+ *
  */
-
-#ifndef lethe_cfd_dem_simulation_parameters_h
-#define lethe_cfd_dem_simulation_parameters_h
 
 #include <core/boundary_conditions.h>
 #include <core/manifolds.h>
@@ -29,6 +27,9 @@
 
 #include <dem/dem_solver_parameters.h>
 #include <fem-dem/parameters_cfd_dem.h>
+
+#ifndef lethe_cfd_dem_simulation_parameters_h
+#  define lethe_cfd_dem_simulation_parameters_h
 
 template <int dim>
 class CFDDEMSimulationParameters

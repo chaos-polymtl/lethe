@@ -11,6 +11,7 @@
  * the top level of the Lethe distribution.
  *
  * ---------------------------------------------------------------------
+ *
  */
 
 #include <core/dem_properties.h>
