@@ -12,7 +12,7 @@ GLSIsothermalCompressibleNavierStokesVOFAssemblerCore<dim>::assemble_matrix(
 {
   const std::vector<double> &viscosity_for_stabilization_vector =
     scratch_data.dynamic_viscosity_for_stabilization;
-    
+
   // Loop and quadrature information
   const auto        &JxW_vec    = scratch_data.JxW;
   const unsigned int n_q_points = scratch_data.n_q_points;
@@ -185,7 +185,7 @@ GLSIsothermalCompressibleNavierStokesVOFAssemblerCore<dim>::assemble_rhs(
 {
   const std::vector<double> &viscosity_for_stabilization_vector =
     scratch_data.dynamic_viscosity_for_stabilization;
-    
+
   // Loop and quadrature information
   const auto        &JxW_vec    = scratch_data.JxW;
   const unsigned int n_q_points = scratch_data.n_q_points;

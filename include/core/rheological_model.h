@@ -123,7 +123,7 @@ public:
     const double                               &p_density_ref,
     const std::map<field, std::vector<double>> &field_vectors,
     std::vector<double>                        &property_vector) = 0;
-    
+
   /**
    * @brief Calculates the kinematic viscosity used in PSPG and SUPG stabilization.
    * @param field_values Value of the various fields on which the property may
@@ -131,11 +131,11 @@ public:
    */
   virtual double
   get_kinematic_viscosity_for_stabilization(
-                        const std::map<field, double> &field_values)
+    const std::map<field, double> &field_values)
   {
     return value(field_values);
-  } 
-  
+  }
+
   /**
    * @brief Calculates the vector values of the kinematic viscosity used in PSPG and SUPG stabilization.
    * @param field_vectors Values of the field on which the property may
@@ -148,7 +148,7 @@ public:
   {
     vector_value(field_vectors, property_vector);
   }
-  
+
   /**
    * @brief Calculates the dynamic viscosity, if a kinematic viscosity
    * and a reference density value is specified.
@@ -157,8 +157,9 @@ public:
    * depend.
    */
   virtual double
-  get_dynamic_viscosity_for_stabilization(const double                  &p_density_ref,
-                        const std::map<field, double> &field_values)
+  get_dynamic_viscosity_for_stabilization(
+    const double                  &p_density_ref,
+    const std::map<field, double> &field_values)
   {
     return get_dynamic_viscosity(p_density_ref, field_values);
   }
@@ -176,8 +177,8 @@ public:
     std::vector<double>                        &property_vector)
   {
     get_dynamic_viscosity_vector(p_density_ref, field_vectors, property_vector);
-  }  
-  
+  }
+
   /**
    * @brief is_non_newtonian_rheological_model Returns a boolean indicating if
    * the model is a non newtonian rheological model.
@@ -189,7 +190,7 @@ public:
   {
     return non_newtonian_rheological_model;
   }
-  
+
   /**
    * @brief is_phase_change_rheological_model Returns a boolean indicating if
    * the model is a phase change rheological model.
@@ -204,7 +205,7 @@ public:
 
 protected:
   bool non_newtonian_rheological_model = false;
-  bool phase_change_rheological_model = false;  
+  bool phase_change_rheological_model  = false;
 };
 
 class Newtonian : public RheologicalModel
@@ -715,7 +716,7 @@ public:
     : param(p_phase_change_parameters)
   {
     this->model_depends_on[field::temperature] = true;
-    this->phase_change_rheological_model = true;
+    this->phase_change_rheological_model       = true;
   }
 
   /**
@@ -810,7 +811,7 @@ public:
     for (unsigned int i = 0; i < property_vector.size(); ++i)
       property_vector[i] = kinematic_viscosity(temperature[i]) * p_density_ref;
   }
-  
+
   /**
    * @brief Calculates the kinematic viscosity used in PSPG and SUPG stabilization.
    * @param field_values Value of the various fields on which the property may
@@ -818,8 +819,8 @@ public:
    */
   double
   get_kinematic_viscosity_for_stabilization(
-                        const std::map<field, double> & /*field_values*/) override;
-  
+    const std::map<field, double> & /*field_values*/) override;
+
   /**
    * @brief Calculates the vector values of the kinematic viscosity used in PSPG and SUPG stabilization.
    * @param field_vectors Values of the field on which the property may
@@ -828,8 +829,8 @@ public:
   void
   get_kinematic_viscosity_for_stabilization_vector(
     const std::map<field, std::vector<double>> & /*field_vectors*/,
-    std::vector<double>                        &property_vector) override;
-    
+    std::vector<double> &property_vector) override;
+
   /**
    * @brief Calculates the dynamic viscosity, if a kinematic viscosity
    * and a reference density value is specified.
@@ -838,8 +839,9 @@ public:
    * depend.
    */
   virtual double
-  get_dynamic_viscosity_for_stabilization(const double                  &p_density_ref,
-                        const std::map<field, double> & /*field_values*/) override;
+  get_dynamic_viscosity_for_stabilization(
+    const double &p_density_ref,
+    const std::map<field, double> & /*field_values*/) override;
 
   /**
    * @brief Calculates the vector values of the dynamic viscosity.
@@ -849,9 +851,9 @@ public:
    */
   virtual void
   get_dynamic_viscosity_for_stabilization_vector(
-    const double                               &p_density_ref,
+    const double &p_density_ref,
     const std::map<field, std::vector<double>> & /*field_vectors*/,
-    std::vector<double>                        &property_vector) override;
+    std::vector<double> &property_vector) override;
 
 private:
   /**

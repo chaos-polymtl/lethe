@@ -1021,8 +1021,8 @@ public:
   std::vector<double>                  dynamic_viscosity;
   std::vector<double>                  kinematic_viscosity;
   double                               kinematic_viscosity_scale;
-  std::vector<double>                               kinematic_viscosity_for_stabilization;
-  std::vector<double>                               dynamic_viscosity_for_stabilization;
+  std::vector<double>                  kinematic_viscosity_for_stabilization;
+  std::vector<double>                  dynamic_viscosity_for_stabilization;
   std::vector<double>                  thermal_expansion;
   std::vector<double>                  grad_kinematic_viscosity_shear_rate;
   std::vector<std::vector<double>>     previous_density;

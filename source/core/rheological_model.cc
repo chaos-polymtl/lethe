@@ -213,10 +213,10 @@ PhaseChangeRheology::vector_jacobian(
  */
 double
 PhaseChangeRheology::get_kinematic_viscosity_for_stabilization(
-                      const std::map<field, double> &/*field_values*/) 
+  const std::map<field, double> & /*field_values*/)
 {
   return param.kinematic_viscosity_l;
-} 
+}
 
 /**
  * @brief Calculates the vector values of the kinematic viscosity used in PSPG and SUPG stabilization.
@@ -225,10 +225,12 @@ PhaseChangeRheology::get_kinematic_viscosity_for_stabilization(
  */
 void
 PhaseChangeRheology::get_kinematic_viscosity_for_stabilization_vector(
-  const std::map<field, std::vector<double>> &/*field_vectors*/,
-  std::vector<double>                        &property_vector)
+  const std::map<field, std::vector<double>> & /*field_vectors*/,
+  std::vector<double> &property_vector)
 {
-  std::fill(property_vector.begin(), property_vector.end(), param.kinematic_viscosity_l);
+  std::fill(property_vector.begin(),
+            property_vector.end(),
+            param.kinematic_viscosity_l);
 }
 
 /**
@@ -239,10 +241,11 @@ PhaseChangeRheology::get_kinematic_viscosity_for_stabilization_vector(
  * depend.
  */
 double
-PhaseChangeRheology::get_dynamic_viscosity_for_stabilization(const double                  &p_density_ref,
-                      const std::map<field, double> & /*field_values*/)
+PhaseChangeRheology::get_dynamic_viscosity_for_stabilization(
+  const double &p_density_ref,
+  const std::map<field, double> & /*field_values*/)
 {
-  return param.kinematic_viscosity_l*p_density_ref;
+  return param.kinematic_viscosity_l * p_density_ref;
 }
 
 /**
@@ -253,10 +256,11 @@ PhaseChangeRheology::get_dynamic_viscosity_for_stabilization(const double       
  */
 void
 PhaseChangeRheology::get_dynamic_viscosity_for_stabilization_vector(
-  const double                               &p_density_ref,
+  const double &p_density_ref,
   const std::map<field, std::vector<double>> & /*field_vectors*/,
-  std::vector<double>                        &property_vector)
+  std::vector<double> &property_vector)
 {
-
-  std::fill(property_vector.begin(), property_vector.end(), param.kinematic_viscosity_l*p_density_ref);
-}  
+  std::fill(property_vector.begin(),
+            property_vector.end(),
+            param.kinematic_viscosity_l * p_density_ref);
+}
