@@ -75,15 +75,15 @@ public:
    * @param[in] simulation_control Required to get the time stepping method.
    */
   NavierStokesOperatorBase(
-    const Mapping<dim>                &mapping,
-    const DoFHandler<dim>             &dof_handler,
-    const AffineConstraints<number>   &constraints,
-    const Quadrature<dim>             &quadrature,
-    const Function<dim>               *forcing_function,
-    const double                       kinematic_viscosity,
-    const StabilizationType            stabilization,
-    const unsigned int                 mg_level,
-    std::shared_ptr<SimulationControl> simulation_control);
+    const Mapping<dim>                  &mapping,
+    const DoFHandler<dim>               &dof_handler,
+    const AffineConstraints<number>     &constraints,
+    const Quadrature<dim>               &quadrature,
+    const std::shared_ptr<Function<dim>> forcing_function,
+    const double                         kinematic_viscosity,
+    const StabilizationType              stabilization,
+    const unsigned int                   mg_level,
+    std::shared_ptr<SimulationControl>   simulation_control);
 
   /**
    * @brief Initialize the main matrix free object that contains all data and is
@@ -102,15 +102,15 @@ public:
    * @param[in] mg_level Level of the operator in case of MG methods.
    */
   void
-  reinit(const Mapping<dim>                &mapping,
-         const DoFHandler<dim>             &dof_handler,
-         const AffineConstraints<number>   &constraints,
-         const Quadrature<dim>             &quadrature,
-         const Function<dim>               *forcing_function,
-         const double                       kinematic_viscosity,
-         const StabilizationType            stabilization,
-         const unsigned int                 mg_level,
-         std::shared_ptr<SimulationControl> simulation_control);
+  reinit(const Mapping<dim>                  &mapping,
+         const DoFHandler<dim>               &dof_handler,
+         const AffineConstraints<number>     &constraints,
+         const Quadrature<dim>               &quadrature,
+         const std::shared_ptr<Function<dim>> forcing_function,
+         const double                         kinematic_viscosity,
+         const StabilizationType              stabilization,
+         const unsigned int                   mg_level,
+         std::shared_ptr<SimulationControl>   simulation_control);
 
   /**
    * @brief Compute the element size h of the cells required to calculate
@@ -379,11 +379,22 @@ protected:
   unsigned int fe_degree;
 
   /**
+   * @brief Flag to activate or not a source term for the operator.
+   *
+   */
+  bool enable_source_term;
+
+  /**
    * @brief Force function or source function for the Navier-Stokes equations.
    *
    */
   const Function<dim> *forcing_function;
 
+  /**
+   * @brief Flag to activate or not the dyanimc flow control for the operator.
+   *
+   */
+  bool enable_beta_force;
 
   /**
    * @brief Additional source term in the case of dynamic flow control.

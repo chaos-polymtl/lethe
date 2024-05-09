@@ -136,15 +136,15 @@ NavierStokesOperatorBase<dim, number>::NavierStokesOperatorBase()
 
 template <int dim, typename number>
 NavierStokesOperatorBase<dim, number>::NavierStokesOperatorBase(
-  const Mapping<dim>                &mapping,
-  const DoFHandler<dim>             &dof_handler,
-  const AffineConstraints<number>   &constraints,
-  const Quadrature<dim>             &quadrature,
-  const Function<dim>               *forcing_function,
-  const double                       kinematic_viscosity,
-  const StabilizationType            stabilization,
-  const unsigned int                 mg_level,
-  std::shared_ptr<SimulationControl> simulation_control)
+  const Mapping<dim>                  &mapping,
+  const DoFHandler<dim>               &dof_handler,
+  const AffineConstraints<number>     &constraints,
+  const Quadrature<dim>               &quadrature,
+  const std::shared_ptr<Function<dim>> forcing_function,
+  const double                         kinematic_viscosity,
+  const StabilizationType              stabilization,
+  const unsigned int                   mg_level,
+  std::shared_ptr<SimulationControl>   simulation_control)
   : pcout(std::cout, Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0)
   , timer(this->pcout, TimerOutput::never, TimerOutput::wall_times)
 {
@@ -162,15 +162,15 @@ NavierStokesOperatorBase<dim, number>::NavierStokesOperatorBase(
 template <int dim, typename number>
 void
 NavierStokesOperatorBase<dim, number>::reinit(
-  const Mapping<dim>                &mapping,
-  const DoFHandler<dim>             &dof_handler,
-  const AffineConstraints<number>   &constraints,
-  const Quadrature<dim>             &quadrature,
-  const Function<dim>               *forcing_function,
-  const double                       kinematic_viscosity,
-  const StabilizationType            stabilization,
-  const unsigned int                 mg_level,
-  std::shared_ptr<SimulationControl> simulation_control)
+  const Mapping<dim>                  &mapping,
+  const DoFHandler<dim>               &dof_handler,
+  const AffineConstraints<number>     &constraints,
+  const Quadrature<dim>               &quadrature,
+  const std::shared_ptr<Function<dim>> forcing_function,
+  const double                         kinematic_viscosity,
+  const StabilizationType              stabilization,
+  const unsigned int                   mg_level,
+  std::shared_ptr<SimulationControl>   simulation_control)
 {
   this->system_matrix.clear();
   this->constraints.copy_from(constraints);
@@ -186,7 +186,10 @@ NavierStokesOperatorBase<dim, number>::reinit(
 
   this->fe_degree = dof_handler.get_fe().degree;
 
-  this->forcing_function = forcing_function;
+  this->enable_source_term = forcing_function ? true : false;
+
+  if (this->enable_source_term)
+    this->forcing_function = &(*forcing_function);
 
   this->kinematic_viscosity = kinematic_viscosity;
 
@@ -687,6 +690,8 @@ void
 NavierStokesOperatorBase<dim, number>::update_beta_force(
   const Tensor<1, dim> &beta_force)
 {
+  this->enable_beta_force = true;
+
   for (unsigned int v = 0; v < VectorizedArray<number>::size(); ++v)
     {
       for (unsigned int d = 0; d < dim; ++d)
@@ -813,16 +818,23 @@ NavierStokesStabilizedOperator<dim, number>::do_cell_integral_local(
 
   for (const auto q : integrator.quadrature_point_indices())
     {
-      // Evaluate source term function
       Tensor<1, dim, VectorizedArray<number>> source_value;
-      Point<dim, VectorizedArray<number>>     point_batch =
-        integrator.quadrature_point(q);
-      source_value =
-        evaluate_function<dim, number, dim>(*(this->forcing_function),
-                                            point_batch);
 
-      // Add to source term the dynamic flow control force (zero if not enabled)
-      source_value += this->beta_force;
+      // Evaluate source term function if enabled
+      if (this->enable_source_term)
+        {
+          Point<dim, VectorizedArray<number>> point_batch =
+            integrator.quadrature_point(q);
+          source_value =
+            evaluate_function<dim, number, dim>(*(this->forcing_function),
+                                                point_batch);
+        }
+
+      // Add to source term the dynamic flow control force if enabled
+      if (this->enable_beta_force)
+        {
+          source_value += this->beta_force;
+        }
 
       // Gather the original value/gradient
       typename FECellIntegrator::value_type    value = integrator.get_value(q);
@@ -925,9 +937,13 @@ NavierStokesStabilizedOperator<dim, number>::do_cell_integral_local(
                      this->kinematic_viscosity *
                        previous_hessian_diagonal[i][l]);
                 }
-              // +(∇p - f)τ(δu·∇)v
+              // +(∇p)τ(δu·∇)v
               gradient_result[i][k] +=
-                tau * value[k] * (previous_gradient[dim][i] - source_value[i]);
+                tau * value[k] * previous_gradient[dim][i];
+
+              // +(-f)τ(δu·∇)v
+              if (this->enable_source_term || this->enable_beta_force)
+                gradient_result[i][k] -= tau * value[k] * source_value[i];
 
               // +(∂t u)τ(δu·∇)v
               if (transient)
@@ -1021,17 +1037,23 @@ NavierStokesStabilizedOperator<dim, number>::local_evaluate_residual(
 
       for (const auto q : integrator.quadrature_point_indices())
         {
-          // Evaluate source term function
           Tensor<1, dim, VectorizedArray<number>> source_value;
-          Point<dim, VectorizedArray<number>>     point_batch =
-            integrator.quadrature_point(q);
-          source_value =
-            evaluate_function<dim, number, dim>(*(this->forcing_function),
-                                                point_batch);
 
-          // Add to source term the dynamic flow control force (zero if not
-          // enabled)
-          source_value += this->beta_force;
+          // Evaluate source term function if enabled
+          if (this->enable_source_term)
+            {
+              Point<dim, VectorizedArray<number>> point_batch =
+                integrator.quadrature_point(q);
+              source_value =
+                evaluate_function<dim, number, dim>(*(this->forcing_function),
+                                                    point_batch);
+            }
+
+          // Add to source term the dynamic flow control force if enabled
+          if (this->enable_beta_force)
+            {
+              source_value += this->beta_force;
+            }
 
           // Gather the original value/gradient
           typename FECellIntegrator::value_type value = integrator.get_value(q);
@@ -1062,8 +1084,10 @@ NavierStokesStabilizedOperator<dim, number>::local_evaluate_residual(
               gradient_result[i] = this->kinematic_viscosity * gradient[i];
               // -(∇·v,p)
               gradient_result[i][i] += -value[dim];
+
               // +(v,-f)
-              value_result[i] = -source_value[i];
+              if (this->enable_source_term || this->enable_beta_force)
+                value_result[i] = -source_value[i];
 
               // +(v,∂t u)
               if (transient)
@@ -1092,7 +1116,8 @@ NavierStokesStabilizedOperator<dim, number>::local_evaluate_residual(
                            gradient[i][k] * value[k]);
                 }
               // +(-f)·τ∇q
-              gradient_result[dim][i] += tau * (-source_value[i]);
+              if (this->enable_source_term || this->enable_beta_force)
+                gradient_result[dim][i] += tau * (-source_value[i]);
 
               // +(∂t u)·τ∇q
               if (transient)
@@ -1118,9 +1143,12 @@ NavierStokesStabilizedOperator<dim, number>::local_evaluate_residual(
                       gradient_result[i][k] +=
                         tau * value[k] * gradient[i][l] * value[l];
                     }
-                  // + (∇p - f)τ(u·∇)v
-                  gradient_result[i][k] +=
-                    tau * value[k] * (gradient[dim][i] - source_value[i]);
+                  // + (∇p)τ(u·∇)v
+                  gradient_result[i][k] += tau * value[k] * gradient[dim][i];
+
+                  // + (-f)τ(u·∇)v
+                  if (this->enable_source_term || this->enable_beta_force)
+                    gradient_result[i][k] -= tau * value[k] * source_value[i];
 
                   // + (∂t u)τ(u·∇)v
                   if (transient)
@@ -1149,8 +1177,12 @@ NavierStokesStabilizedOperator<dim, number>::local_evaluate_residual(
                         }
                       // + (∇p - f)τ(−ν∆v)
                       hessian_result[i][k][k] +=
-                        tau * -this->kinematic_viscosity *
-                        (gradient[dim][i] - source_value[i]);
+                        tau * -this->kinematic_viscosity * gradient[dim][i];
+
+                      // + (-f)τ(−ν∆v)
+                      if (this->enable_source_term || this->enable_beta_force)
+                        hessian_result[i][k][k] -=
+                          tau * -this->kinematic_viscosity * source_value[i];
 
                       // + (∂t u)τ(−ν∆v)
                       if (transient)

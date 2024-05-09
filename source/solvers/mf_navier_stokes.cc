@@ -472,7 +472,7 @@ MFNavierStokesPreconditionGMG<dim>::MFNavierStokesPreconditionGMG(
               this->dof_handler,
             level_constraints[level],
             quadrature_mg,
-            &(*forcing_function),
+            forcing_function,
             this->simulation_parameters.physical_properties_manager
               .get_kinematic_viscosity_scale(),
             this->simulation_parameters.stabilization.stabilization,
@@ -777,7 +777,7 @@ MFNavierStokesPreconditionGMG<dim>::MFNavierStokesPreconditionGMG(
             level_dof_handler,
             level_constraint,
             quadrature_mg,
-            &(*forcing_function),
+            forcing_function,
             this->simulation_parameters.physical_properties_manager
               .get_kinematic_viscosity_scale(),
             this->simulation_parameters.stabilization.stabilization,
@@ -1413,6 +1413,11 @@ MFNavierStokesSolver<dim>::MFNavierStokesSolver(
 
   system_operator =
     std::make_shared<NavierStokesStabilizedOperator<dim, double>>();
+
+  if (!this->simulation_parameters.source_term.enable)
+    {
+      this->forcing_function.reset();
+    }
 }
 
 template <int dim>
@@ -1440,8 +1445,9 @@ MFNavierStokesSolver<dim>::solve()
 
   while (this->simulation_control->integrate())
     {
-      this->forcing_function->set_time(
-        this->simulation_control->get_current_time());
+      if (this->forcing_function)
+        this->forcing_function->set_time(
+          this->simulation_control->get_current_time());
 
       bool refinement_step;
       if (this->simulation_parameters.mesh_adaptation.refinement_at_frequency)
@@ -1552,7 +1558,7 @@ MFNavierStokesSolver<dim>::setup_dofs_fd()
     this->dof_handler,
     this->zero_constraints,
     *this->cell_quadrature,
-    &(*this->forcing_function),
+    this->forcing_function,
     this->simulation_parameters.physical_properties_manager
       .get_kinematic_viscosity_scale(),
     this->simulation_parameters.stabilization.stabilization,
