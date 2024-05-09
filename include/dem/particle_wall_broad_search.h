@@ -158,7 +158,91 @@ public:
       &particle_floating_mesh_contact_candidates,
     typename DEM::dem_data_structures<dim>::cells_total_neighbor_list
                                       &cells_total_neighbor_list,
-    const AdaptiveSparseContacts<dim> &sparse_contacts_object);
+    const AdaptiveSparseContacts<dim> &sparse_contacts_object)
+
+private:
+  /**
+   * @brief Stores the candidate particle-wall contact pairs.
+   *
+   * @param particle_iterator The particle iterator to start boundary id.
+   * @param boundary_cells_content The info of the current boundary cell to
+   * store.
+   * @param contact_pair_candidates A map which will contain all the
+   * particle/wall pairs candidate.
+   */
+  inline void
+  store_candidates(
+    const typename Particles::ParticleHandler<
+      dim>::particle_iterator_range::iterator &particle_iterator,
+    const boundary_cells_info_struct<dim>     &boundary_cells_content,
+    typename DEM::dem_data_structures<dim>::particle_wall_candidates
+      &contact_pair_candidates)
+  {
+    // Find the contact candidate container of the particle
+    const types::particle_index particle_id = particle_iterator->get_id();
+    auto candidates_container_it = contact_pair_candidates.find(particle_id);
+
+    // Reserve arbitrary vector capacity and store if the particle does not have
+    // contact candidate yet
+    if (candidates_container_it == contact_pair_candidates.end())
+      {
+        auto pair_it_bool = contact_pair_candidates.emplace(
+          particle_id,
+          ankerl::unordered_dense::map<
+            DEM::global_face_id,
+            std::tuple<Particles::ParticleIterator<dim>,
+                       Tensor<1, dim>,
+                       Point<dim>,
+                       DEM::global_face_id>>());
+
+        candidates_container_it = pair_it_bool.first;
+      }
+
+    // Store particle ids from the selected particle iterator
+    candidates_container_it->second.emplace(
+      boundary_cells_content.global_face_id,
+      std::make_tuple(particle_iterator,
+                      boundary_cells_content.normal_vector,
+                      boundary_cells_content.point_on_face,
+                      boundary_cells_content.boundary_id));
+  }
+
+  /**
+   * @brief Stores the candidate particle-floating wall contact pairs.
+   *
+   * @param particle_iterator The particle iterator to start boundary id.
+   * @param floating_wall_id The floating wall id.
+   * @param contact_pair_candidates A map which will contain all the
+   * particle/wall pairs candidate.
+   */
+  inline void
+  store_candidates(
+    const typename Particles::ParticleHandler<
+      dim>::particle_iterator_range::iterator &particle_iterator,
+    const DEM::global_face_id                 &floating_wall_id,
+    typename DEM::dem_data_structures<dim>::particle_floating_wall_candidates
+      &contact_pair_candidates)
+  {
+    // Find the contact candidate container of the particle
+    const types::particle_index particle_id = particle_iterator->get_id();
+    auto candidates_container_it = contact_pair_candidates.find(particle_id);
+
+    // Reserve arbitrary vector capacity and store if the particle does not have
+    // contact candidate yet
+    if (candidates_container_it == contact_pair_candidates.end())
+      {
+        auto pair_it_bool = contact_pair_candidates.emplace(
+          particle_id,
+          std::unordered_map<DEM::global_face_id,
+                             Particles::ParticleIterator<dim>>());
+
+        candidates_container_it = pair_it_bool.first;
+      }
+
+    // Store particle ids from the selected particle iterator
+    candidates_container_it->second.emplace(floating_wall_id,
+                                            particle_iterator);
+  }
 };
 
 #endif /* particle_wall_broad_search_h */
