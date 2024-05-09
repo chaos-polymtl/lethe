@@ -543,11 +543,11 @@ NavierStokesScratchData<dim>::calculate_physical_properties()
                                              this->thermal_expansion_0[q],
                                              this->thermal_expansion_1[q]);
 
-//                    grad_kinematic_viscosity_shear_rate[q] =
-//                            calculate_point_property(
-//                                    filtered_phase_value,
-//                                    this->grad_kinematic_viscosity_shear_rate_0[q],
-//                                    this->grad_kinematic_viscosity_shear_rate_1[q]);
+                  //                    grad_kinematic_viscosity_shear_rate[q] =
+                  //                            calculate_point_property(
+                  //                                    filtered_phase_value,
+                  //                                    this->grad_kinematic_viscosity_shear_rate_0[q],
+                  //                                    this->grad_kinematic_viscosity_shear_rate_1[q]);
                 }
 
               // Gather density_psi for isothermal compressible NS equations

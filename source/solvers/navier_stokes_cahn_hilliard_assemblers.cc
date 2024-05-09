@@ -496,8 +496,8 @@ GLSNavierStokesCahnHilliardAssemblerNonNewtonianCore<dim>::assemble_matrix(
       shear_rate_magnitude =
         shear_rate_magnitude > 1e-12 ? shear_rate_magnitude : 1e-12;
 
-//            printf("grad_kinematic_viscosity_shear_rate[q] = %E ",
-//                   scratch_data.grad_kinematic_viscosity_shear_rate[q]);
+      //            printf("grad_kinematic_viscosity_shear_rate[q] = %E ",
+      //                   scratch_data.grad_kinematic_viscosity_shear_rate[q]);
 
       // Calculate kinematic viscosity gradient
       const Tensor<1, dim> kinematic_viscosity_gradient =
@@ -773,7 +773,8 @@ GLSNavierStokesCahnHilliardAssemblerNonNewtonianCore<dim>::assemble_rhs(
 
           // Surface tension terms
 
-          local_rhs(i) += (potential_value * phi_u_i * phase_order_gradient)  * JxW;
+          local_rhs(i) +=
+            (potential_value * phi_u_i * phase_order_gradient) * JxW;
 
           // PSPG GLS term
           local_rhs(i) += -tau * (strong_residual * grad_phi_p_i) * JxW;
