@@ -1070,7 +1070,6 @@ NavierStokesStabilizedOperator<dim, number>::local_evaluate_residual(
               gradient_result[i] = this->kinematic_viscosity * gradient[i];
               // -(∇·v,p)
               gradient_result[i][i] += -value[dim];
-
               // +(v,-f)
               value_result[i] = -source_value[i];
 
