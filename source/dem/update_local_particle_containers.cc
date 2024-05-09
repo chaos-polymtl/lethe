@@ -17,7 +17,8 @@ update_particle_container(
        particle_iterator != particle_handler->end();
        ++particle_iterator)
     {
-      particle_container[particle_iterator->get_id()] = particle_iterator;
+      particle_container.emplace(particle_iterator->get_id(),
+                                 particle_iterator);
     }
 
   // Update the local particle container with ghost particles
@@ -25,7 +26,8 @@ update_particle_container(
        particle_iterator != particle_handler->end_ghost();
        ++particle_iterator)
     {
-      particle_container[particle_iterator->get_id()] = particle_iterator;
+      particle_container.emplace(particle_iterator->get_id(),
+                                 particle_iterator);
     }
 }
 
@@ -79,11 +81,11 @@ update_contact_container_iterators(
                   // For particle-particle contacts, iterators of both particles
                   // must be updated
                   adjacent_map_iterator->second.particle_one =
-                    particle_container[particle_id];
+                    particle_container.at(particle_id);
 
                   unsigned int particle_two_id = adjacent_map_iterator->first;
                   adjacent_map_iterator->second.particle_two =
-                    particle_container[particle_two_id];
+                    particle_container.at(particle_two_id);
 
                   if (clear_contact_structures)
                     {
@@ -96,7 +98,7 @@ update_contact_container_iterators(
                 {
                   // Particle iterator is updated
                   adjacent_map_iterator->second.particle =
-                    particle_container[particle_id];
+                    particle_container.at(particle_id);
                 }
             }
         }
@@ -112,7 +114,7 @@ update_contact_container_iterators(
 
               // Update the particle of the contact
               adjacent_map_iterator->second.particle =
-                particle_container[particle_id];
+                particle_container.at(particle_id);
 
               // Note : particle_floating_wall_from_mesh_in_contact is stored as
               // <cell iterator, <particle id, particle-wall info>> and
@@ -127,7 +129,7 @@ update_contact_container_iterators(
         {
           // Get current particle id and particle iterator is updated
           unsigned int particle_id         = pairs_in_contact_iterator->first;
-          adjacent_pairs_content->particle = particle_container[particle_id];
+          adjacent_pairs_content->particle = particle_container.at(particle_id);
         }
     }
 }
