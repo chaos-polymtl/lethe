@@ -17,16 +17,18 @@
 
 #include <deal.II/grid/grid_generator.h>
 /**
- * @brief Create a bool dof mask object
+ * @brief Creates and fills a table that works as bool dof mask object
+ * needed for the sparsity pattern and computation of the system matrix
+ * of the coarse level in case FE_Q_iso_Q1 elements are used.
  *
- * @tparam dim
- * @tparam spacedim
- * @param fe
- * @param quadrature
- * @return Table<2, bool>
+ * @tparam dim An integer that denotes the number of spatial dimensions.
+ * @tparam spacedim Space dimension.
+ * @param[in] fe Type of finite element used.
+ * @param[in] quadrature Quadrature being used.
+ * @return  Table<2, bool> Boolean mask with pairs of dof indices.
  */
 template <int dim, int spacedim>
-Table<2, bool>
+const Table<2, bool>
 create_bool_dof_mask(const FiniteElement<dim, spacedim> &fe,
                      const Quadrature<dim>              &quadrature)
 {
@@ -143,8 +145,7 @@ NavierStokesOperatorBase<dim, number>::NavierStokesOperatorBase(
   const StabilizationType            stabilization,
   const unsigned int                 mg_level,
   std::shared_ptr<SimulationControl> simulation_control)
-  : bool_dof_mask(create_bool_dof_mask(dof_handler.get_fe(), quadrature))
-  , pcout(std::cout, Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0)
+  : pcout(std::cout, Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0)
   , timer(this->pcout, TimerOutput::never, TimerOutput::wall_times)
 {
   this->reinit(mapping,
@@ -203,6 +204,8 @@ NavierStokesOperatorBase<dim, number>::reinit(
   this->simulation_control = simulation_control;
 
   this->compute_element_size();
+
+  bool_dof_mask = create_bool_dof_mask(dof_handler.get_fe(), quadrature);
 
   constrained_indices.clear();
   for (auto i : this->matrix_free.get_constrained_dofs())
@@ -480,15 +483,9 @@ NavierStokesOperatorBase<dim, number>::get_system_matrix() const
 
       if (mg_level != numbers::invalid_unsigned_int)
         {
-          // MGTools::make_sparsity_pattern(dof_handler,
-          //                                dsp,
-          //                                mg_level,
-          //                                this->constraints,
-          //                                false);
-
           // the following code does the same as
           // MGTools::make_sparsity_pattern() but also
-          // consideres bool_dof_mask for FE_Q_iso_Q1
+          // considers bool_dof_mask for FE_Q_iso_Q1
           std::vector<types::global_dof_index> dofs_on_this_cell;
 
           for (const auto &cell : dof_handler.cell_iterators_on_level(mg_level))
@@ -507,14 +504,9 @@ NavierStokesOperatorBase<dim, number>::get_system_matrix() const
         }
       else
         {
-          // DoFTools::make_sparsity_pattern(dof_handler,
-          //                                 dsp,
-          //                                 this->constraints,
-          //                                 false);
-
           // the following code does the same as
           // DoFTools::make_sparsity_pattern() but also
-          // consideres bool_dof_mask for FE_Q_iso_Q1
+          // considers bool_dof_mask for FE_Q_iso_Q1
           std::vector<types::global_dof_index> dofs_on_this_cell;
 
           for (const auto &cell : dof_handler.active_cell_iterators())
@@ -546,38 +538,35 @@ NavierStokesOperatorBase<dim, number>::get_system_matrix() const
 
   system_matrix = 0.0;
 
-  MatrixFreeTools::compute_matrix(
-    matrix_free,
-    constraints,
-    system_matrix,
-    &NavierStokesOperatorBase::do_cell_integral_local,
-    this);
+  // the following code does the same as
+  // MatrixFreeTools::compute_matrix() but with
+  // minor corrections for FE_Q_iso_Q1
 
-  // const auto &lexicographic_numbering =
-  //   matrix_free.get_shape_info().lexicographic_numbering;
+  const auto &lexicographic_numbering =
+    matrix_free.get_shape_info().lexicographic_numbering;
 
-  // unsigned int cell   = numbers::invalid_unsigned_int;
-  // unsigned int column = numbers::invalid_unsigned_int;
+  unsigned int cell   = numbers::invalid_unsigned_int;
+  unsigned int column = numbers::invalid_unsigned_int;
 
-  // MatrixFreeTools::
-  //   compute_matrix<dim, -1, 0, dim + 1, number, VectorizedArray<number>>(
-  //     matrix_free, constraints, system_matrix, [&](auto &integrator) {
-  //       if (cell != integrator.get_current_cell_index())
-  //         {
-  //           cell   = integrator.get_current_cell_index();
-  //           column = 0;
-  //         }
+  MatrixFreeTools::
+    compute_matrix<dim, -1, 0, dim + 1, number, VectorizedArray<number>>(
+      matrix_free, constraints, system_matrix, [&](auto &integrator) {
+        if (cell != integrator.get_current_cell_index())
+          {
+            cell   = integrator.get_current_cell_index();
+            column = 0;
+          }
 
-  //       this->do_cell_integral_local(integrator);
+        do_cell_integral_local(integrator);
 
-  //       // remove spurious entries for FE_Q_iso_Q1
-  //       for (unsigned int i = 0; i < lexicographic_numbering.size(); ++i)
-  //         if (!bool_dof_mask[lexicographic_numbering[i]]
-  //                           [lexicographic_numbering[column]])
-  //           integrator.begin_dof_values()[i] = 0.0;
+        // remove spurious entries for FE_Q_iso_Q1
+        for (unsigned int i = 0; i < lexicographic_numbering.size(); ++i)
+          if (!bool_dof_mask[lexicographic_numbering[i]]
+                            [lexicographic_numbering[column]])
+            integrator.begin_dof_values()[i] = 0.0;
 
-  //       column++;
-  //     });
+        column++;
+      });
 
   this->timer.leave_subsection("operator::get_system_matrix");
 

@@ -221,7 +221,7 @@ private:
   /// Describes the layout of DoFs and the type of FE.
   const DoFHandler<dim> &dof_handler;
 
-  /// Describes the layout of DoFs for FE Q iso Q1 elements.
+  /// Describes the layout of DoFs for FE_Q_iso_Q1 elements.
   const DoFHandler<dim> &dof_handler_q_iso_q1;
 
   /// Vector holding number of coarse grid iterations
@@ -445,7 +445,7 @@ protected:
   VectorType time_derivative_previous_solutions;
 
   /**
-   * @brief Describes the layout of DoFs for FE Q iso Q1 elements.
+   * @brief Describes the layout of DoFs for FE_Q_iso_Q1 elements.
    *
    */
   DoFHandler<dim> dof_handler_q_iso_q1;

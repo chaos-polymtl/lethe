@@ -499,7 +499,7 @@ protected:
    * @brief
    *
    */
-  const Table<2, bool> bool_dof_mask;
+  Table<2, bool> bool_dof_mask;
 
   /**
    * @brief Conditional OStream for parallel output.

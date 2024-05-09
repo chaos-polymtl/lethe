@@ -615,7 +615,7 @@ MFNavierStokesPreconditionGMG<dim>::MFNavierStokesPreconditionGMG(
           else
             this->dof_handlers[l].distribute_dofs(this->dof_handler.get_fe());
         }
-        
+
       this->mg_setup_timer.leave_subsection(
         "Create DoFHandlers and distribute DoFs");
 
