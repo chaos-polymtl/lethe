@@ -427,6 +427,9 @@ NavierStokesScratchData<dim>::calculate_physical_properties()
               rheology_model->get_dynamic_viscosity_vector(density_ref,
                                                            fields,
                                                            dynamic_viscosity);
+              rheology_model->get_dynamic_viscosity_for_stabilization_vector(density_ref,
+                                                           fields,
+                                                           dynamic_viscosity_for_stabilization);
             }
 
           if (properties_manager.is_non_newtonian())
