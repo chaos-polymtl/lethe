@@ -1,6 +1,6 @@
 /* ---------------------------------------------------------------------
  *
- * Copyright (C) 2019 - 2019 by the Lethe authors
+ * Copyright (C) 2019 - 2024 by the Lethe authors
  *
  * This file is part of the Lethe library
  *
@@ -14,9 +14,6 @@
  * ---------------------------------------------------------------------
  *
  */
-
-#ifndef lethe_dem_cfd_coupling_h
-#define lethe_dem_cfd_coupling_h
 
 #include <solvers/navier_stokes_scratch_data.h>
 
@@ -40,6 +37,9 @@
 #include <deal.II/grid/grid_in.h>
 
 #include <deal.II/numerics/vector_tools.h>
+
+#ifndef lethe_dem_cfd_coupling_h
+#  define lethe_dem_cfd_coupling_h
 
 using namespace dealii;
 
@@ -76,20 +76,20 @@ public:
    * repartitions the domain between ranks (the connection is created inside the
    * particles_generation() function of this class).
    */
-#if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 6)
+#  if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 6)
   unsigned int
   cell_weight(
     const typename parallel::distributed::Triangulation<dim>::cell_iterator
                                                                         &cell,
     const typename parallel::distributed::Triangulation<dim>::CellStatus status)
     const;
-#else
+#  else
   unsigned int
   cell_weight(
     const typename parallel::distributed::Triangulation<dim>::cell_iterator
                     &cell,
     const CellStatus status) const;
-#endif
+#  endif
 
 
   /**

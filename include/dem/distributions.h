@@ -1,6 +1,6 @@
 /* ---------------------------------------------------------------------
  *
- * Copyright (C) 2019 - 2023 by the Lethe authors
+ * Copyright (C) 2019 - 2024 by the Lethe authors
  *
  * This file is part of the Lethe library
  *
@@ -14,6 +14,7 @@
  * ---------------------------------------------------------------------
  *
  */
+
 #include <cmath>
 #include <fstream>
 #include <iostream>

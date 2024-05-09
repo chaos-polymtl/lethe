@@ -1,6 +1,6 @@
 /* ---------------------------------------------------------------------
  *
- * Copyright (C) 2019 - 2020 by the Lethe authors
+ * Copyright (C) 2019 - 2024 by the Lethe authors
  *
  * This file is part of the Lethe library
  *
@@ -13,6 +13,7 @@
  *
  * ---------------------------------------------------------------------
  */
+
 #include <core/auxiliary_math_functions.h>
 #include <core/dem_properties.h>
 #include <core/serial_solid.h>
