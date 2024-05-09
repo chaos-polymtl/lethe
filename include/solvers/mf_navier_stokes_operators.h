@@ -379,22 +379,10 @@ protected:
   unsigned int fe_degree;
 
   /**
-   * @brief Flag to activate or not a source term for the operator.
-   *
-   */
-  bool enable_source_term;
-
-  /**
    * @brief Force function or source function for the Navier-Stokes equations.
    *
    */
-  const Function<dim> *forcing_function;
-
-  /**
-   * @brief Flag to activate or not the dyanimc flow control for the operator.
-   *
-   */
-  bool enable_beta_force;
+  std::shared_ptr<Function<dim>> forcing_function;
 
   /**
    * @brief Additional source term in the case of dynamic flow control.
