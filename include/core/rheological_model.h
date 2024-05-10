@@ -126,8 +126,8 @@ public:
 
   /**
    * @brief Calculates the kinematic viscosity used in PSPG and SUPG stabilizations.
-   * @param[in] field_values Value of the various fields on which the property may
-   * depend.
+   * @param[in] field_values Value of the various fields on which the property
+   * may depend.
    */
   virtual double
   get_kinematic_viscosity_for_stabilization(
@@ -153,8 +153,8 @@ public:
   /**
    * @brief Calculates the dynamic viscosity used in PSPG and SUPG stabilizations.
    * @param[in] p_density_ref The density of the fluid at the reference state
-   * @param[in] field_values Value of the various fields on which the property may
-   * depend.
+   * @param[in] field_values Value of the various fields on which the property
+   * may depend.
    */
   virtual double
   get_dynamic_viscosity_for_stabilization(
@@ -205,12 +205,11 @@ public:
   }
 
 protected:
-  
   /// Boolean to indicate if the rheolofical model is a non-newtonian model.
   bool non_newtonian_rheological_model = false;
-  
+
   /// Boolean to indicate if the rheolofical model is a phase change model.
-  bool phase_change_rheological_model  = false;
+  bool phase_change_rheological_model = false;
 };
 
 class Newtonian : public RheologicalModel
@@ -778,8 +777,8 @@ public:
     std::vector<double> &jacobian_vector) override;
 
   /**
-   * @brief Returns the kinematic viscosity scale. 
-   */     
+   * @brief Returns the kinematic viscosity scale.
+   */
   double
   get_kinematic_viscosity_scale() const override
   {
@@ -822,8 +821,8 @@ public:
 
   /**
    * @brief Calculates the kinematic viscosity used in PSPG and SUPG stabilizations.
-   * @param[in] field_values Value of the various fields on which the property may
-   * depend.
+   * @param[in] field_values Value of the various fields on which the property
+   * may depend.
    */
   double
   get_kinematic_viscosity_for_stabilization(
@@ -843,8 +842,8 @@ public:
   /**
    * @brief Calculates the dynamic viscosity used in PSPG and SUPG stabilizations.
    * @param[in] p_density_ref The density of the fluid at the reference state
-   * @param[in] field_values Value of the various fields on which the property may
-   * depend.
+   * @param[in] field_values Value of the various fields on which the property
+   * may depend.
    */
   virtual double
   get_dynamic_viscosity_for_stabilization(
