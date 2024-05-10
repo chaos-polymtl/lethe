@@ -51,8 +51,9 @@ CahnHilliardAssemblerCore<dim>::assemble_matrix(
 
       // Gather into local variables the relevant fields
       const Tensor<1, dim> velocity_field = scratch_data.velocity_values[q];
-      //const double velocity_divergence = scratch_data.velocity_divergences[q];
-      // Store JxW in local variable for faster access;
+      // const double velocity_divergence =
+      // scratch_data.velocity_divergences[q];
+      //  Store JxW in local variable for faster access;
       const double JxW = JxW_vec[q];
 
       const double phase_order_value = scratch_data.phase_order_values[q];
@@ -83,7 +84,7 @@ CahnHilliardAssemblerCore<dim>::assemble_matrix(
               local_matrix(i, j) +=
                 // Phase order equation
                 (phi_phase_i * (velocity_field * grad_phi_phase_j) +
-                        //phi_phase_i*velocity_divergence*phi_phase_j +
+                 // phi_phase_i*velocity_divergence*phi_phase_j +
                  mobility * grad_phi_phase_i * grad_phi_potential_j +
                  mobility_gradient * grad_phi_phase_i * potential_gradient *
                    phi_phase_j
@@ -134,7 +135,8 @@ CahnHilliardAssemblerCore<dim>::assemble_rhs(
 
       // Gather into local variables the relevant fields
       const Tensor<1, dim> velocity_field = scratch_data.velocity_values[q];
-      //const double velocity_divergence = scratch_data.velocity_divergences[q];
+      // const double velocity_divergence =
+      // scratch_data.velocity_divergences[q];
 
       // Store JxW in local variable for faster access;
       const double JxW               = JxW_vec[q];
@@ -160,9 +162,9 @@ CahnHilliardAssemblerCore<dim>::assemble_rhs(
 
           local_rhs(i) +=
             // Phase order equation
-            (- phi_phase_i * (velocity_field * phase_order_gradient)
-            //- phi_phase_i*velocity_divergence*phase_order_value
-            - mobility * grad_phi_phase_i * potential_gradient
+            (-phi_phase_i * (velocity_field * phase_order_gradient)
+             //- phi_phase_i*velocity_divergence*phase_order_value
+             - mobility * grad_phi_phase_i * potential_gradient
              // Chemical potential equation
              - phi_potential_i * potential_value +
              (lambda / (epsilon * epsilon)) * phi_potential_i *

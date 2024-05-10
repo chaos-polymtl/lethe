@@ -994,7 +994,9 @@ public:
     this->fe_values_cahn_hilliard->operator[](phase_order)
       .get_function_gradients(current_solution,
                               this->phase_order_cahn_hilliard_gradients);
-
+    this->fe_values_cahn_hilliard->operator[](chemical_potential)
+      .get_function_gradients(current_solution,
+                              this->chemical_potential_cahn_hilliard_gradients);
     // Gather filtered phase fraction (values, gradients)
     this->fe_values_cahn_hilliard->operator[](phase_order)
       .get_function_values(current_filtered_solution,
@@ -1062,6 +1064,7 @@ public:
   std::vector<double> grad_kinematic_viscosity_shear_rate_1;
   std::vector<double> surface_tension;
   std::vector<double> surface_tension_gradient;
+  std::vector<double> cahn_hilliard_mobility;
 
   // FEValues for the Navier-Stokes problem
   FEValues<dim>              fe_values;
@@ -1183,6 +1186,8 @@ public:
   std::vector<double>         filtered_phase_order_cahn_hilliard_values;
   std::vector<Tensor<1, dim>> phase_order_cahn_hilliard_gradients;
   std::vector<double>         chemical_potential_cahn_hilliard_values;
+  std::vector<Tensor<1, dim>> chemical_potential_cahn_hilliard_gradients;
+  double                      density_diff;
 
   std::shared_ptr<CahnHilliardFilterBase>
     cahn_hilliard_filter; // Phase order fraction filter

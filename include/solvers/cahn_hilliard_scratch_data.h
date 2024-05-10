@@ -322,12 +322,12 @@ public:
 
     this->fe_values_fd[velocities].get_function_values(current_solution,
                                                        velocity_values);
-      this->fe_values_fd[velocities].get_function_gradients(
-              current_solution, velocity_gradient_values);
+    this->fe_values_fd[velocities].get_function_gradients(
+      current_solution, velocity_gradient_values);
 
-      for (unsigned int q = 0; q < this->n_q_points; ++q)
+    for (unsigned int q = 0; q < this->n_q_points; ++q)
       {
-          this->velocity_divergences[q] = trace(velocity_gradient_values[q]);
+        this->velocity_divergences[q] = trace(velocity_gradient_values[q]);
       }
 
     if (!ale.enabled())

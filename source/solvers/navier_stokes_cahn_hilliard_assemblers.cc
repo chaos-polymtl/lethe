@@ -466,6 +466,8 @@ GLSNavierStokesCahnHilliardAssemblerNonNewtonianCore<dim>::assemble_matrix(
   const double dt  = time_steps_vector[0];
   const double sdt = 1. / dt;
 
+  const double density_diff = scratch_data.density_diff;
+
   Assert(
     scratch_data.properties_manager.density_is_constant(),
     RequiresConstantDensity(
@@ -484,6 +486,10 @@ GLSNavierStokesCahnHilliardAssemblerNonNewtonianCore<dim>::assemble_matrix(
         scratch_data.velocity_hessians[q];
       const Tensor<1, dim> &pressure_gradient =
         scratch_data.pressure_gradients[q];
+
+      const Tensor<1, dim> relative_diffusive_flux =
+        -density_diff * scratch_data.cahn_hilliard_mobility[q] *
+        scratch_data.chemical_potential_cahn_hilliard_gradients[q];
 
       // Calculate shear rate (at each q)
       const Tensor<2, dim> shear_rate =
@@ -548,6 +554,7 @@ GLSNavierStokesCahnHilliardAssemblerNonNewtonianCore<dim>::assemble_matrix(
         density_eq * velocity_gradient * velocity + pressure_gradient -
         shear_rate * dynamic_viscosity_gradient -
         dynamic_viscosity_eq * velocity_laplacian - density_eq * force -
+        velocity_gradient * relative_diffusive_flux -
         potential_value * phase_order_gradient + strong_residual_vec[q];
 
       std::vector<Tensor<1, dim>> grad_phi_u_j_x_velocity(n_dofs);
@@ -575,6 +582,7 @@ GLSNavierStokesCahnHilliardAssemblerNonNewtonianCore<dim>::assemble_matrix(
             density_eq * velocity_gradient * phi_u_j +
             density_eq * grad_phi_u_j * velocity + grad_phi_p_j -
             dynamic_viscosity_eq * laplacian_phi_u_j -
+            grad_phi_u_j * relative_diffusive_flux -
             grad_phi_u_j_non_newtonian * dynamic_viscosity_gradient;
 
           // Store these temporary products in auxiliary variables for speed
@@ -621,7 +629,8 @@ GLSNavierStokesCahnHilliardAssemblerNonNewtonianCore<dim>::assemble_matrix(
                   scalar_product(shear_rate, grad_phi_u_i) +
                 density_eq * velocity_gradient_x_phi_u_j[j] * 0.5 * phi_u_i +
                 density_eq * grad_phi_u_j_x_velocity[j] * phi_u_i -
-                div_phi_u_i * phi_p_j;
+                div_phi_u_i * phi_p_j -
+                grad_phi_u_j * relative_diffusive_flux * phi_u_i;
 
               // Continuity
               local_matrix_ij += phi_p_i * div_phi_u_j;
@@ -669,6 +678,8 @@ GLSNavierStokesCahnHilliardAssemblerNonNewtonianCore<dim>::assemble_rhs(
   const double dt  = time_steps_vector[0];
   const double sdt = 1. / dt;
 
+  const double density_diff = scratch_data.density_diff;
+
   Assert(
     scratch_data.properties_manager.density_is_constant(),
     RequiresConstantDensity(
@@ -693,6 +704,10 @@ GLSNavierStokesCahnHilliardAssemblerNonNewtonianCore<dim>::assemble_rhs(
         scratch_data.velocity_laplacians[q];
       const Tensor<3, dim> &velocity_hessian =
         scratch_data.velocity_hessians[q];
+
+      const Tensor<1, dim> relative_diffusive_flux =
+        -density_diff * scratch_data.cahn_hilliard_mobility[q] *
+        scratch_data.chemical_potential_cahn_hilliard_gradients[q];
 
       // Calculate shear rate (at each q)
       const Tensor<2, dim> shear_rate =
@@ -753,6 +768,7 @@ GLSNavierStokesCahnHilliardAssemblerNonNewtonianCore<dim>::assemble_rhs(
         density_eq * velocity_gradient * velocity + pressure_gradient -
         shear_rate * dynamic_viscosity_gradient -
         dynamic_viscosity_eq * velocity_laplacian - density_eq * force -
+        velocity_gradient * relative_diffusive_flux -
         potential_value * phase_order_gradient + strong_residual_vec[q];
 
       // Assembly of the right-hand side
@@ -780,6 +796,9 @@ GLSNavierStokesCahnHilliardAssemblerNonNewtonianCore<dim>::assemble_rhs(
 
           local_rhs(i) +=
             (potential_value * phi_u_i * phase_order_gradient) * JxW;
+
+          local_rhs(i) +=
+            (-velocity_gradient * relative_diffusive_flux * phi_u_i) * JxW;
 
           // PSPG GLS term
           local_rhs(i) += -tau * (strong_residual * grad_phi_p_i) * JxW;
