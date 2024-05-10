@@ -1147,6 +1147,9 @@ namespace Parameters
     };
     CoarseGridSolverType mg_coarse_grid_solver;
 
+    /// MG use FE_Q_iso_Q1 elements for coarse grid
+    bool mg_use_fe_q_iso_q1;
+
     /// MG coarse-grid solver maximum number of iterations
     int mg_gmres_max_iterations;
 

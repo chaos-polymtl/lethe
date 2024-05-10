@@ -2391,6 +2391,12 @@ namespace Parameters
                           "The coarse grid solver for lsmg or gcmg"
                           "Choices are <gmres|amg|ilu|direct>.");
 
+        prm.declare_entry(
+          "mg coarse grid use fe q iso q1",
+          "false",
+          Patterns::Bool(),
+          "use elements with linear interpolation for coarse grid");
+
         prm.declare_entry("mg gmres max iterations",
                           "2000",
                           Patterns::Integer(),
@@ -2534,6 +2540,8 @@ namespace Parameters
         else
           throw std::logic_error(
             "Error, invalid coarse grid solver type. Choices are gmres, amg, ilu or direct.");
+
+        mg_use_fe_q_iso_q1 = prm.get_bool("mg coarse grid use fe q iso q1");
 
         mg_gmres_max_iterations = prm.get_integer("mg gmres max iterations");
         mg_gmres_tolerance      = prm.get_double("mg gmres tolerance");
