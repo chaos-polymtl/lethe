@@ -2012,7 +2012,7 @@ namespace Parameters
 
         prm.declare_entry(
           "enable hessians in rhs",
-          "false",
+          "true",
           Patterns::Bool(),
           "Turns off the terms involving the hessian in the rhs");
       }
@@ -2307,7 +2307,7 @@ namespace Parameters
 
         prm.declare_entry(
           "enable hessians in rhs",
-          "false",
+          "true",
           Patterns::Bool(),
           "Turns off the terms involving the hessian in the rhs");
 
