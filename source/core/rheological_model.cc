@@ -207,8 +207,8 @@ PhaseChangeRheology::vector_jacobian(
 }
 
 /**
- * @brief Calculates the kinematic viscosity used in PSPG and SUPG stabilization.
- * @param field_values Value of the various fields on which the property may
+ * @brief Calculates the kinematic viscosity used in PSPG and SUPG stabilizations.
+ * @param[in] field_values Value of the various fields on which the property may
  * depend.
  */
 double
@@ -219,9 +219,10 @@ PhaseChangeRheology::get_kinematic_viscosity_for_stabilization(
 }
 
 /**
- * @brief Calculates the vector values of the kinematic viscosity used in PSPG and SUPG stabilization.
- * @param field_vectors Values of the field on which the property may
+ * @brief Calculates the vector values of the kinematic viscosity used in PSPG and SUPG stabilizations.
+ * @param[in] field_vectors Value of the fields on which the property may
  * depend on.
+ * @param[out] property_vector Vector of computed viscosities.
  */
 void
 PhaseChangeRheology::get_kinematic_viscosity_for_stabilization_vector(
@@ -234,10 +235,9 @@ PhaseChangeRheology::get_kinematic_viscosity_for_stabilization_vector(
 }
 
 /**
- * @brief Calculates the dynamic viscosity, if a kinematic viscosity
- * and a reference density value is specified.
- * @param p_density_ref The density of the fluid at the reference state
- * @param field_values Value of the various fields on which the property may
+ * @brief Calculates the dynamic viscosity used in PSPG and SUPG stabilizations.
+ * @param[in] p_density_ref The density of the fluid at the reference state
+ * @param[in] field_values Value of the various fields on which the property may
  * depend.
  */
 double
@@ -249,10 +249,11 @@ PhaseChangeRheology::get_dynamic_viscosity_for_stabilization(
 }
 
 /**
- * @brief Calculates the vector values of the dynamic viscosity.
- * @param p_density_ref The density of the fluid at the reference state
- * @param field_vectors Values of the field on which the dynamic viscosity may
+ * @brief Calculates the vector values of the dynamic viscosity used in PSPG and SUPG stabilizations.
+ * @param[in] p_density_ref The density of the fluid at the reference state
+ * @param[in] field_vectors Value of the fields on which the property may
  * depend on.
+ * @param[out] property_vector Vector of computed viscosities.
  */
 void
 PhaseChangeRheology::get_dynamic_viscosity_for_stabilization_vector(
