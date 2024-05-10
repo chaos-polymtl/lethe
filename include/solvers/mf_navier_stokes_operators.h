@@ -75,21 +75,21 @@ public:
    * @param[in] simulation_control Required to get the time stepping method.
    * @param[in] enable_hessians_jacobian Flag to turn hessian terms from
    * jacobian on or off.
-   * @param[in] enable_hessians_rhs Flag to turn hessian terms from residual on
-   * or off.
+   * @param[in] enable_hessians_residual Flag to turn hessian terms from
+   * residual on or off.
    */
   NavierStokesOperatorBase(
-    const Mapping<dim>                  &mapping,
-    const DoFHandler<dim>               &dof_handler,
-    const AffineConstraints<number>     &constraints,
-    const Quadrature<dim>               &quadrature,
-    const std::shared_ptr<Function<dim>> forcing_function,
-    const double                         kinematic_viscosity,
-    const StabilizationType              stabilization,
-    const unsigned int                   mg_level,
-    std::shared_ptr<SimulationControl>   simulation_control,
-    const bool                          &enable_hessians_jacobian,
-    const bool                          &enable_hessians_rhs);
+    const Mapping<dim>                &mapping,
+    const DoFHandler<dim>             &dof_handler,
+    const AffineConstraints<number>   &constraints,
+    const Quadrature<dim>             &quadrature,
+  const std::shared_ptr<Function<dim>> forcing_function,
+    const double                       kinematic_viscosity,
+    const StabilizationType            stabilization,
+    const unsigned int                 mg_level,
+    std::shared_ptr<SimulationControl> simulation_control,
+    const bool                        &enable_hessians_jacobian,
+    const bool                        &enable_hessians_residual);
 
   /**
    * @brief Initialize the main matrix free object that contains all data and is
@@ -109,21 +109,21 @@ public:
    * @param[in] simulation_control Required to get the time stepping method.
    * @param[in] enable_hessians_jacobian Flag to turn hessian terms from
    * jacobian on or off.
-   * @param[in] enable_hessians_rhs Flag to turn hessian terms from residual on
-   * or off.
+   * @param[in] enable_hessians_residual Flag to turn hessian terms from
+   * residual on or off.
    */
   void
-  reinit(const Mapping<dim>                  &mapping,
-         const DoFHandler<dim>               &dof_handler,
-         const AffineConstraints<number>     &constraints,
-         const Quadrature<dim>               &quadrature,
-         const std::shared_ptr<Function<dim>> forcing_function,
-         const double                         kinematic_viscosity,
-         const StabilizationType              stabilization,
-         const unsigned int                   mg_level,
-         std::shared_ptr<SimulationControl>   simulation_control,
-         const bool                          &enable_hessians_jacobian,
-         const bool                          &enable_hessians_rhs);
+  reinit(const Mapping<dim>                &mapping,
+         const DoFHandler<dim>             &dof_handler,
+         const AffineConstraints<number>   &constraints,
+         const Quadrature<dim>             &quadrature,
+  const std::shared_ptr<Function<dim>> forcing_function,
+         const double                       kinematic_viscosity,
+         const StabilizationType            stabilization,
+         const unsigned int                 mg_level,
+         std::shared_ptr<SimulationControl> simulation_control,
+         const bool                        &enable_hessians_jacobian,
+         const bool                        &enable_hessians_residual);
 
   /**
    * @brief Compute the element size h of the cells required to calculate
@@ -432,7 +432,7 @@ protected:
    * @brief Flag to turn hessian terms from residual on or off.
    *
    */
-  bool enable_hessians_rhs;
+  bool enable_hessians_residual;
 
   /**
    * @brief Table with correct alignment for vectorization to store the values

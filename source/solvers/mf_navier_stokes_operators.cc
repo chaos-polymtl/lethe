@@ -136,17 +136,17 @@ NavierStokesOperatorBase<dim, number>::NavierStokesOperatorBase()
 
 template <int dim, typename number>
 NavierStokesOperatorBase<dim, number>::NavierStokesOperatorBase(
-  const Mapping<dim>                  &mapping,
-  const DoFHandler<dim>               &dof_handler,
-  const AffineConstraints<number>     &constraints,
-  const Quadrature<dim>               &quadrature,
+  const Mapping<dim>                &mapping,
+  const DoFHandler<dim>             &dof_handler,
+  const AffineConstraints<number>   &constraints,
+  const Quadrature<dim>             &quadrature,
   const std::shared_ptr<Function<dim>> forcing_function,
-  const double                         kinematic_viscosity,
-  const StabilizationType              stabilization,
-  const unsigned int                   mg_level,
-  std::shared_ptr<SimulationControl>   simulation_control,
-  const bool                          &enable_hessians_jacobian,
-  const bool                          &enable_hessians_rhs)
+  const double                       kinematic_viscosity,
+  const StabilizationType            stabilization,
+  const unsigned int                 mg_level,
+  std::shared_ptr<SimulationControl> simulation_control,
+  const bool                        &enable_hessians_jacobian,
+  const bool                        &enable_hessians_residual)
   : pcout(std::cout, Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0)
   , timer(this->pcout, TimerOutput::never, TimerOutput::wall_times)
 {
@@ -160,23 +160,23 @@ NavierStokesOperatorBase<dim, number>::NavierStokesOperatorBase(
                mg_level,
                simulation_control,
                enable_hessians_jacobian,
-               enable_hessians_rhs);
+               enable_hessians_residual);
 }
 
 template <int dim, typename number>
 void
 NavierStokesOperatorBase<dim, number>::reinit(
-  const Mapping<dim>                  &mapping,
-  const DoFHandler<dim>               &dof_handler,
-  const AffineConstraints<number>     &constraints,
-  const Quadrature<dim>               &quadrature,
+  const Mapping<dim>                &mapping,
+  const DoFHandler<dim>             &dof_handler,
+  const AffineConstraints<number>   &constraints,
+  const Quadrature<dim>             &quadrature,
   const std::shared_ptr<Function<dim>> forcing_function,
-  const double                         kinematic_viscosity,
-  const StabilizationType              stabilization,
-  const unsigned int                   mg_level,
-  std::shared_ptr<SimulationControl>   simulation_control,
-  const bool                          &enable_hessians_jacobian,
-  const bool                          &enable_hessians_rhs)
+  const double                       kinematic_viscosity,
+  const StabilizationType            stabilization,
+  const unsigned int                 mg_level,
+  std::shared_ptr<SimulationControl> simulation_control,
+  const bool                        &enable_hessians_jacobian,
+  const bool                        &enable_hessians_residual)
 {
   this->system_matrix.clear();
   this->constraints.copy_from(constraints);
@@ -211,7 +211,7 @@ NavierStokesOperatorBase<dim, number>::reinit(
 
   this->enable_hessians_jacobian = enable_hessians_jacobian;
 
-  this->enable_hessians_rhs = enable_hessians_rhs;
+  this->enable_hessians_residual = enable_hessians_residual;
 
   this->compute_element_size();
 
@@ -1042,7 +1042,7 @@ NavierStokesStabilizedOperator<dim, number>::local_evaluate_residual(
       integrator.reinit(cell);
       integrator.read_dof_values_plain(src);
 
-      if (this->enable_hessians_rhs)
+      if (this->enable_hessians_residual)
         integrator.evaluate(EvaluationFlags::values |
                             EvaluationFlags::gradients |
                             EvaluationFlags::hessians);
@@ -1084,7 +1084,7 @@ NavierStokesStabilizedOperator<dim, number>::local_evaluate_residual(
             integrator.get_gradient(q);
           typename FECellIntegrator::gradient_type hessian_diagonal;
 
-          if (this->enable_hessians_rhs)
+          if (this->enable_hessians_residual)
             hessian_diagonal = integrator.get_hessian_diagonal(q);
 
           // Time derivatives of previous solutions
@@ -1185,7 +1185,7 @@ NavierStokesStabilizedOperator<dim, number>::local_evaluate_residual(
                 {
                   for (unsigned int k = 0; k < dim; ++k)
                     {
-                      if (this->enable_hessians_rhs)
+                      if (this->enable_hessians_residual)
                         {
                           for (unsigned int l = 0; l < dim; ++l)
                             {
@@ -1218,11 +1218,11 @@ NavierStokesStabilizedOperator<dim, number>::local_evaluate_residual(
 
           integrator.submit_gradient(gradient_result, q);
           integrator.submit_value(value_result, q);
-          if (this->enable_hessians_rhs)
+          if (this->enable_hessians_residual)
             integrator.submit_hessian(hessian_result, q);
         }
 
-      if (this->enable_hessians_rhs)
+      if (this->enable_hessians_residual)
         integrator.integrate_scatter(EvaluationFlags::values |
                                        EvaluationFlags::gradients |
                                        EvaluationFlags::hessians,

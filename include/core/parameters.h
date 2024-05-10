@@ -1066,8 +1066,8 @@ namespace Parameters
     /// Enable hessians in jacobian
     bool enable_hessians_jacobian;
 
-    /// Enable hessians in rhs
-    bool enable_hessians_rhs;
+    /// Enable hessians in residual
+    bool enable_hessians_residual;
 
     /// Type of preconditioner
     enum class PreconditionerType
@@ -1124,11 +1124,11 @@ namespace Parameters
     /// MG minimum number of cells per level
     int mg_level_min_cells;
 
-    /// Enable hessians in jacobian
+    /// MG enable hessians in jacobian
     bool mg_enable_hessians_jacobian;
 
-    /// Enable hessians in rhs
-    bool mg_enable_hessians_rhs;
+    /// MG enable hessians in residual
+    bool mg_enable_hessians_residual;
 
     /// MG smoother number of iterations
     int mg_smoother_iterations;
