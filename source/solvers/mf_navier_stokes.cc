@@ -477,7 +477,13 @@ MFNavierStokesPreconditionGMG<dim>::MFNavierStokesPreconditionGMG(
               .get_kinematic_viscosity_scale(),
             this->simulation_parameters.stabilization.stabilization,
             level,
-            simulation_control);
+            simulation_control,
+            this->simulation_parameters.linear_solver
+              .at(PhysicsID::fluid_dynamics)
+              .enable_hessians_jacobian,
+            this->simulation_parameters.linear_solver
+              .at(PhysicsID::fluid_dynamics)
+              .enable_hessians_rhs);
 
           this->ls_mg_operators[level].initialize(*(this->mg_operators)[level]);
           this->ls_mg_interface_in[level].initialize(
@@ -782,7 +788,13 @@ MFNavierStokesPreconditionGMG<dim>::MFNavierStokesPreconditionGMG(
               .get_kinematic_viscosity_scale(),
             this->simulation_parameters.stabilization.stabilization,
             numbers::invalid_unsigned_int,
-            simulation_control);
+            simulation_control,
+            this->simulation_parameters.linear_solver
+              .at(PhysicsID::fluid_dynamics)
+              .enable_hessians_jacobian,
+            this->simulation_parameters.linear_solver
+              .at(PhysicsID::fluid_dynamics)
+              .enable_hessians_rhs);
 
           this->mg_setup_timer.leave_subsection("Set up operators");
         }
@@ -1563,7 +1575,11 @@ MFNavierStokesSolver<dim>::setup_dofs_fd()
       .get_kinematic_viscosity_scale(),
     this->simulation_parameters.stabilization.stabilization,
     mg_level,
-    this->simulation_control);
+    this->simulation_control,
+    this->simulation_parameters.non_linear_solver.at(PhysicsID::fluid_dynamics)
+      .enable_hessians_jacobian,
+    this->simulation_parameters.non_linear_solver.at(PhysicsID::fluid_dynamics)
+      .enable_hessians_rhs);
 
 
   // Initialize vectors using operator
