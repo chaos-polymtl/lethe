@@ -18,9 +18,9 @@
 #include <core/dem_properties.h>
 #include <core/pvd_handler.h>
 
+#include <dem/adaptive_sparse_contacts.h>
 #include <dem/data_containers.h>
 #include <dem/dem_solver_parameters.h>
-#include <dem/disable_contacts.h>
 
 #include <deal.II/distributed/tria.h>
 
@@ -70,7 +70,7 @@ public:
     const double                                     current_time,
     const unsigned int                               step_number,
     const MPI_Comm                                  &mpi_communicator,
-    DisableContacts<dim>                            &disable_contacts_object);
+    AdaptiveSparseContacts<dim>                     &sparse_contacts_object);
 
 private:
   /**

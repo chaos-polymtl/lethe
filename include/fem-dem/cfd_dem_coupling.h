@@ -17,10 +17,10 @@
 
 #include <solvers/navier_stokes_scratch_data.h>
 
+#include <dem/adaptive_sparse_contacts.h>
 #include <dem/data_containers.h>
 #include <dem/dem_contact_manager.h>
 #include <dem/dem_solver_parameters.h>
-#include <dem/disable_contacts.h>
 #include <dem/find_contact_detection_step.h>
 #include <dem/lagrangian_post_processing.h>
 #include <dem/periodic_boundaries_manipulator.h>
@@ -237,13 +237,55 @@ private:
   dynamic_flow_control() override;
 
   /**
-   * @brief Check if the disabling contacts is enabled and that
+   * @brief Checks all the conditions that require a contact search step. The
+   * check of conditions is done in order of suspected frequency occurrence.
    *
+   * @param counter The counter of DEM iterations in a CFD iteration.
    */
   inline bool
-  contacts_are_disabled(unsigned int counter) const
+  contact_search_step(const unsigned int counter)
   {
-    return has_disabled_contacts && counter > 1;
+    if (contact_detection_step)
+      {
+        // Contact search step according to the contact detection method
+        return true;
+      }
+    else if (counter == (coupling_frequency - 1) &&
+             (contact_search_counter == 0))
+      {
+        // Ensure that the contact search is executed at least once per CFD time
+        // step.
+        return true;
+      }
+    else if (has_sparse_contacts && (counter == 1))
+      {
+        // First mobility status identification of the CFD time step (from the
+        // velocity computed at the first DEM time step (counter = 0) of the CFD
+        // time step) The contact search is executed to make sure the mobility
+        // status of cell match the particles that are in.
+        return true;
+      }
+    else if (load_balance_step)
+      {
+        // Needs to update contacts since particles/cells may have been
+        // distributed to a different subdomain
+        return true;
+      }
+    else if ((this->simulation_control->is_at_start() && (counter == 0)) ||
+             checkpoint_step)
+      {
+        // First contact search of the simulation
+        return true;
+      }
+    else if (has_periodic_boundaries && particle_displaced_in_pbc)
+      {
+        // Particles have been displaced in periodic boundaries
+        return true;
+      }
+    else
+      {
+        return false;
+      }
   }
 
   unsigned int                               coupling_frequency;
@@ -287,10 +329,19 @@ private:
   PeriodicBoundariesManipulator<dim> periodic_boundaries_object;
   Tensor<1, dim>                     periodic_offset;
   bool                               has_periodic_boundaries;
+  bool                               particle_displaced_in_pbc;
 
-  DisableContacts<dim> disable_contacts_object;
-  bool                 has_disabled_contacts;
-  unsigned int         contact_build_number;
+  // Object handling the sparse contacts
+  AdaptiveSparseContacts<dim> sparse_contacts_object;
+
+  // Flag to indicate if sparse contacts are used
+  bool has_sparse_contacts;
+
+  // Counter of contact searches in a CFD iteration
+  unsigned int contact_search_counter;
+
+  // Total number of contact searches since the beginning of the simulation
+  unsigned int contact_search_total_number;
 
   // Storage of statistics about time and contact lists
   statistics contact_list;

@@ -58,7 +58,7 @@ DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
   , has_floating_mesh(false)
   , distribution_object_container(
       parameters.lagrangian_physical_properties.particle_type_number)
-  , has_disabled_contacts(false)
+  , has_sparse_contacts(false)
 {
   // Print simulation starting information
   pcout << std::endl;
@@ -127,12 +127,13 @@ DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
     });
 #endif
 
-  if (parameters.model_parameters.disable_particle_contacts)
+  if (parameters.model_parameters.sparse_particle_contacts)
     {
-      has_disabled_contacts = true;
-      disable_contacts_object.set_threshold_values(
+      has_sparse_contacts = true;
+      sparse_contacts_object.set_parameters(
         parameters.model_parameters.granular_temperature_threshold,
-        parameters.model_parameters.solid_fraction_threshold);
+        parameters.model_parameters.solid_fraction_threshold,
+        parameters.model_parameters.advect_particles);
     }
 
   maximum_particle_diameter = 0;
@@ -338,16 +339,18 @@ DEMSolver<dim>::cell_weight_with_mobility_status(
 
   // Get mobility status of the cell
   const unsigned int cell_mobility_status =
-    disable_contacts_object.check_cell_mobility(cell);
+    sparse_contacts_object.check_cell_mobility(cell);
 
   // Applied a factor on the particle weight regards the mobility status
   // Factor of 1 when mobile cell
   double alpha = 1.0;
-  if (cell_mobility_status == disable_contacts_object.active)
+  if (cell_mobility_status == sparse_contacts_object.static_active ||
+      cell_mobility_status == sparse_contacts_object.advected_active)
     {
       alpha = parameters.model_parameters.active_load_balancing_factor;
     }
-  else if (cell_mobility_status == disable_contacts_object.inactive)
+  else if (cell_mobility_status == sparse_contacts_object.inactive ||
+           cell_mobility_status == sparse_contacts_object.advected)
     {
       alpha = parameters.model_parameters.inactive_load_balancing_factor;
     }
@@ -409,7 +412,35 @@ DEMSolver<dim>::setup_background_dofs()
 {
   FE_Q<dim> background_fe(1);
   background_dh.distribute_dofs(background_fe);
+
+  // Periodic nodes must be mapped otherwise the disabling of contacts will not
+  // propagate the mobility status to the periodic nodes during iterations.
+  // Identification of periodic nodes is done with the background constraints.
+  // Those constraints are not used for any matrix assembly in DEM solver, this
+  // approach comes from CFD-DEM coupling where void fraction constraints are
+  // used to achieve the periodic node mapping.
+  if (has_sparse_contacts && has_periodic_boundaries)
+    {
+      IndexSet locally_relevant_dofs;
+      DoFTools::extract_locally_relevant_dofs(background_dh,
+                                              locally_relevant_dofs);
+
+      background_constraints.clear();
+      background_constraints.reinit(locally_relevant_dofs);
+
+      DoFTools::make_periodicity_constraints(
+        background_dh,
+        parameters.boundary_conditions.periodic_boundary_0,
+        parameters.boundary_conditions.periodic_boundary_1,
+        parameters.boundary_conditions.periodic_direction,
+        background_constraints);
+
+      background_constraints.close();
+
+      sparse_contacts_object.map_periodic_nodes(background_constraints);
+    }
 }
+
 
 template <int dim>
 void
@@ -427,7 +458,6 @@ DEMSolver<dim>::load_balance()
 
   pcout << "-->Repartitionning triangulation" << std::endl;
   triangulation.repartition();
-  setup_background_dofs();
 
   // Unpack the particle handler after the mesh has been repartitioned
   particle_handler.unpack_after_coarsening_and_refinement();
@@ -485,6 +515,8 @@ DEMSolver<dim>::load_balance()
   pcout << "Minimum and maximum number of cells owned by the processors are "
         << average_minimum_maximum_cells.min << " and "
         << average_minimum_maximum_cells.max << std::endl;
+
+  setup_background_dofs();
 }
 template <int dim>
 inline std::function<bool()>
@@ -512,9 +544,9 @@ DEMSolver<dim>::set_load_balance_iteration_check_function()
     }
   else if (parameters.model_parameters.load_balance_method ==
            Parameters::Lagrangian::ModelParameters::LoadBalanceMethod::
-             dynamic_with_disabling_contacts)
+             dynamic_with_sparse_contacts)
     {
-      return [&] { return check_load_balance_with_disabled_contacts(); };
+      return [&] { return check_load_balance_with_sparse_contacts(); };
     }
   else
     {
@@ -552,7 +584,7 @@ DEMSolver<dim>::check_load_balance_frequent()
 
 template <int dim>
 inline bool
-DEMSolver<dim>::check_load_balance_with_disabled_contacts()
+DEMSolver<dim>::check_load_balance_with_sparse_contacts()
 {
   if (simulation_control->get_step_number() %
         parameters.model_parameters.dynamic_load_balance_check_frequency ==
@@ -574,10 +606,9 @@ DEMSolver<dim>::check_load_balance_with_disabled_contacts()
               // Apply a weight of 1000 to the cell (default value)
               process_to_load_weight[this_mpi_process] += 1000;
 
-              // Get the mobility status of the cell & the number of
-              // particles
+              // Get the mobility status of the cell & the number of particles
               const unsigned int cell_mobility_status =
-                disable_contacts_object.check_cell_mobility(cell);
+                sparse_contacts_object.check_cell_mobility(cell);
               const unsigned int n_particles_in_cell =
                 particle_handler.n_particles_in_cell(cell);
 
@@ -585,12 +616,17 @@ DEMSolver<dim>::check_load_balance_with_disabled_contacts()
               // mobility status. alpha = 1 by default for mobile cell, but
               // is modified if cell is active or inactive
               double alpha = 1.0;
-              if (cell_mobility_status == disable_contacts_object.active)
+              if (cell_mobility_status ==
+                    sparse_contacts_object.static_active ||
+                  cell_mobility_status ==
+                    sparse_contacts_object.advected_active)
                 {
                   alpha =
                     parameters.model_parameters.active_load_balancing_factor;
                 }
-              else if (cell_mobility_status == disable_contacts_object.inactive)
+              else if (cell_mobility_status ==
+                         sparse_contacts_object.inactive ||
+                       cell_mobility_status == sparse_contacts_object.advected)
                 {
                   alpha =
                     parameters.model_parameters.inactive_load_balancing_factor;
@@ -871,7 +907,7 @@ DEMSolver<dim>::finish_simulation()
             {
               // Get mobility status vector sorted by cell id
               Vector<float> mobility_status(triangulation.n_active_cells());
-              disable_contacts_object.get_mobility_status_vector(
+              sparse_contacts_object.get_mobility_status_vector(
                 mobility_status);
 
               // Output mobility status vector
@@ -1040,7 +1076,7 @@ DEMSolver<dim>::post_process_results()
     simulation_control->get_current_time(),
     simulation_control->get_step_number(),
     mpi_communicator,
-    disable_contacts_object);
+    sparse_contacts_object);
 }
 
 template <int dim>
@@ -1273,9 +1309,9 @@ DEMSolver<dim>::solve()
         {
           displacement.resize(particle_handler.get_max_local_particle_index());
 
-          if (has_disabled_contacts)
+          if (has_sparse_contacts)
             {
-              disable_contacts_object.update_local_and_ghost_cell_set(
+              sparse_contacts_object.update_local_and_ghost_cell_set(
                 background_dh);
             }
         }
@@ -1293,6 +1329,17 @@ DEMSolver<dim>::solve()
 
           particle_handler.sort_particles_into_subdomains_and_cells();
 
+          if (has_sparse_contacts && !simulation_control->is_at_start())
+            {
+              // Compute cell mobility for all cells after the sort particles
+              // into subdomains and cells and exchange ghost particles
+              sparse_contacts_object.identify_mobility_status(
+                background_dh,
+                particle_handler,
+                triangulation.n_active_cells(),
+                mpi_communicator);
+            }
+
           displacement.resize(particle_handler.get_max_local_particle_index());
           force.resize(displacement.size());
           torque.resize(displacement.size());
@@ -1301,17 +1348,6 @@ DEMSolver<dim>::solve()
           update_moment_of_inertia(particle_handler, MOI);
 
           particle_handler.exchange_ghost_particles(true);
-
-          if (has_disabled_contacts && !simulation_control->is_at_start())
-            {
-              // Compute cell mobility for all cells after the sort particles
-              // into subdomains and cells and exchange ghost particles
-              disable_contacts_object.identify_mobility_status(
-                background_dh,
-                particle_handler,
-                triangulation.n_active_cells(),
-                mpi_communicator);
-            }
         }
       else
         {
@@ -1346,7 +1382,7 @@ DEMSolver<dim>::solve()
           // Execute broad search by filling containers of particle-particle
           // contact pair candidates and containers of particle-wall
           // contact pair candidates
-          if (!contacts_are_disabled())
+          if (!(has_sparse_contacts && contact_build_number > 1))
             {
               contact_manager.execute_particle_particle_broad_search(
                 particle_handler, has_periodic_boundaries);
@@ -1359,11 +1395,11 @@ DEMSolver<dim>::solve()
                 simulation_control->get_current_time(),
                 has_floating_mesh);
             }
-          else // has_disabled_contacts && contact_build_number > 1
+          else
             {
               contact_manager.execute_particle_particle_broad_search(
                 particle_handler,
-                disable_contacts_object,
+                sparse_contacts_object,
                 has_periodic_boundaries);
 
               contact_manager.execute_particle_wall_broad_search(
@@ -1372,7 +1408,7 @@ DEMSolver<dim>::solve()
                 floating_mesh_info,
                 parameters.floating_walls,
                 simulation_control->get_current_time(),
-                disable_contacts_object,
+                sparse_contacts_object,
                 has_floating_mesh);
             }
 
@@ -1452,7 +1488,7 @@ DEMSolver<dim>::solve()
         }
       else // Step number > 0
         {
-          if (!contacts_are_disabled())
+          if (!(has_sparse_contacts && contact_build_number > 1))
             {
               integrator_object->integrate(particle_handler,
                                            g,
@@ -1461,17 +1497,16 @@ DEMSolver<dim>::solve()
                                            force,
                                            MOI);
             }
-          else // has_disabled_contacts && contact_build_number > 1
+          else
             {
-              integrator_object->integrate(
-                particle_handler,
-                g,
-                simulation_control->get_time_step(),
-                torque,
-                force,
-                MOI,
-                triangulation,
-                disable_contacts_object.get_mobility_status());
+              integrator_object->integrate(particle_handler,
+                                           g,
+                                           simulation_control->get_time_step(),
+                                           torque,
+                                           force,
+                                           MOI,
+                                           triangulation,
+                                           sparse_contacts_object);
             }
         }
 

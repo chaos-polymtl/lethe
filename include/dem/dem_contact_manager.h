@@ -17,9 +17,9 @@
 
 #include <core/serial_solid.h>
 
+#include <dem/adaptive_sparse_contacts.h>
 #include <dem/boundary_cells_info_struct.h>
 #include <dem/data_containers.h>
-#include <dem/disable_contacts.h>
 #include <dem/find_boundary_cells_information.h>
 #include <dem/find_cell_neighbors.h>
 #include <dem/particle_particle_broad_search.h>
@@ -166,18 +166,18 @@ public:
     const bool                               has_periodic_boundaries = false);
 
   /**
-   * @brief Execute the particle-particle broad searches with disabling of
+   * @brief Execute the particle-particle broad searches with adaptive sparse
    * contacts.
    *
    * Calls proper functions to find the candidates of local and ghost
    * particle-particle contact pairs and the periodic particle-particle contacts
    * if required. These contact pairs will be used in the fine search step to
    * investigate if they are in contact. This version of the function is used
-   * when disabling particle contacts regards mobility is enabled.
+   * when adaptive sparse contacts regards mobility is enabled.
    *
    * @param[in,out] particle_handler Storage of particles and their accessor
    * functions.
-   * @param[in] disable_particle_contact_object Allow to check the mobility
+   * @param[in] sparse_particle_contact_object Allow to check the mobility
    * status of cells
    * @param[in] has_periodic_boundaries Allow manipulations of periodic
    * containers if required.
@@ -185,7 +185,7 @@ public:
   void
   execute_particle_particle_broad_search(
     dealii::Particles::ParticleHandler<dim> &particle_handler,
-    const DisableContacts<dim>              &disable_particle_contact_object,
+    const AdaptiveSparseContacts<dim>       &sparse_particle_contact_object,
     const bool                               has_periodic_boundaries = false);
 
   /**
@@ -216,13 +216,14 @@ public:
     const bool has_floating_mesh = false);
 
   /**
-   * @brief Execute the particle-wall broad searches with disabling of contacts.
+   * @brief Execute the particle-wall broad searches with adaptive sparse
+   * contacts.
    *
    * Calls proper functions to find the candidates of particle-wall contact
    * pairs and the particle-floating wall or particle-floating mesh if required.
    * These contact pairs will be used in the fine search step to investigate if
-   * they are in contact. This version of the function is used when disabling
-   * particle contacts regards mobility is enabled.
+   * they are in contact. This version of the function is used when adaptive
+   * sparse contacts regards mobility is enabled.
    *
    * @param[in] particle_handler Storage of particles and their accessor
    * functions.
@@ -231,7 +232,7 @@ public:
    * @param[in] floating_mesh_info Mapping of floating meshes.
    * @param[in] floating_wall Properties of the floating walls.
    * @param[in] simulation_time Current simulation time.
-   * @param[in] disable_particle_contact_object Allow to check the mobility
+   * @param[in] sparse_particle_contact_object Allow to check the mobility
    * status of cells
    * @param[in] has_floating_mesh Allow dealing with floating mesh neighbors.
    */
@@ -243,8 +244,8 @@ public:
                                                       floating_mesh_info,
     const Parameters::Lagrangian::FloatingWalls<dim> &floating_walls,
     const double                                      simulation_time,
-    const DisableContacts<dim> &disable_particle_contact_object,
-    const bool                  has_floating_mesh = false);
+    const AdaptiveSparseContacts<dim> &sparse_particle_contact_object,
+    const bool                         has_floating_mesh = false);
 
   /**
    * @brief Execute the particle-particles fine searches.

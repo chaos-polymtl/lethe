@@ -72,8 +72,8 @@ ParticlePointLineBroadSearch<dim>::find_particle_point_contact_pairs(
   const std::unordered_map<
     std::string,
     std::pair<typename Triangulation<dim>::active_cell_iterator, Point<dim>>>
-                             &boundary_cells_with_points,
-  const DisableContacts<dim> &disable_contacts_object)
+                                    &boundary_cells_with_points,
+  const AdaptiveSparseContacts<dim> &sparse_contacts_object)
 {
   std::unordered_map<types::particle_index,
                      std::pair<Particles::ParticleIterator<dim>, Point<dim>>>
@@ -98,11 +98,10 @@ ParticlePointLineBroadSearch<dim>::find_particle_point_contact_pairs(
       auto cell_with_boundary_point =
         cells_with_boundary_points_information->first;
 
-      // If main cell has status inactive or active, skip to next
-      // cell
+      // If main cell has status other than mobile, skip to next cell
       unsigned int main_cell_mobility_status =
-        disable_contacts_object.check_cell_mobility(cell_with_boundary_point);
-      if (main_cell_mobility_status != DisableContacts<dim>::mobile)
+        sparse_contacts_object.check_cell_mobility(cell_with_boundary_point);
+      if (main_cell_mobility_status != AdaptiveSparseContacts<dim>::mobile)
         continue;
 
       Point<dim> vertex_location =
@@ -204,8 +203,8 @@ ParticlePointLineBroadSearch<dim>::find_particle_line_contact_pairs(
     std::string,
     std::tuple<typename Triangulation<dim>::active_cell_iterator,
                Point<dim>,
-               Point<dim>>>  &boundary_cells_with_lines,
-  const DisableContacts<dim> &disable_contacts_object)
+               Point<dim>>>         &boundary_cells_with_lines,
+  const AdaptiveSparseContacts<dim> &sparse_contacts_object)
 {
   std::unordered_map<
     types::particle_index,
@@ -232,10 +231,10 @@ ParticlePointLineBroadSearch<dim>::find_particle_line_contact_pairs(
       auto cell_with_boundary_line =
         std::get<0>(*cells_with_boundary_lines_information);
 
-      // If main cell has status inactive or active, skip to next cell
+      // If main cell has status other than mobile, skip to next cell
       unsigned int main_cell_mobility_status =
-        disable_contacts_object.check_cell_mobility(cell_with_boundary_line);
-      if (main_cell_mobility_status != DisableContacts<dim>::mobile)
+        sparse_contacts_object.check_cell_mobility(cell_with_boundary_line);
+      if (main_cell_mobility_status != AdaptiveSparseContacts<dim>::mobile)
         continue;
 
       Point<dim> first_vertex_location =

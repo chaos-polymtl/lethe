@@ -15,10 +15,10 @@
  *
  */
 
+#include <dem/adaptive_sparse_contacts.h>
 #include <dem/boundary_cells_info_struct.h>
 #include <dem/data_containers.h>
 #include <dem/dem_solver_parameters.h>
-#include <dem/disable_contacts.h>
 
 #include <deal.II/distributed/tria.h>
 
@@ -38,12 +38,7 @@ using namespace dealii;
 #  define particle_wall_broad_search_h
 
 /**
- * This class is used for broad particle-wall contact search. Broad search
- * is used to obtain all the particles located at boundary cells
- *
- * @note
- *
- * @author Shahab Golshan, Polytechnique Montreal 2019-
+ * Broad search is used to obtain all the particles located at boundary cells
  */
 
 template <int dim>
@@ -83,8 +78,8 @@ public:
                                           &boundary_cells_information,
     const Particles::ParticleHandler<dim> &particle_handler,
     typename DEM::dem_data_structures<dim>::particle_wall_candidates
-                               &particle_wall_contact_candidates,
-    const DisableContacts<dim> &disable_contacts_object);
+                                      &particle_wall_contact_candidates,
+    const AdaptiveSparseContacts<dim> &sparse_contacts_object);
 
   /**
    * Finds a two-layered unordered map of particle iterators which shows the
@@ -125,8 +120,8 @@ public:
     const Parameters::Lagrangian::FloatingWalls<dim> &floating_wall_properties,
     const double                                      simulation_time,
     typename DEM::dem_data_structures<dim>::particle_floating_wall_candidates
-                               &particle_floating_wall_candidates,
-    const DisableContacts<dim> &disable_contacts_object);
+                                      &particle_floating_wall_candidates,
+    const AdaptiveSparseContacts<dim> &sparse_contacts_object);
 
   /**
    * Finds a two-layered unordered map
@@ -162,8 +157,8 @@ public:
     typename DEM::dem_data_structures<dim>::particle_floating_mesh_candidates
       &particle_floating_mesh_contact_candidates,
     typename DEM::dem_data_structures<dim>::cells_total_neighbor_list
-                               &cells_total_neighbor_list,
-    const DisableContacts<dim> &disable_contacts_object);
+                                      &cells_total_neighbor_list,
+    const AdaptiveSparseContacts<dim> &sparse_contacts_object);
 };
 
 #endif /* particle_wall_broad_search_h */

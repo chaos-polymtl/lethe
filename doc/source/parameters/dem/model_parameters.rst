@@ -2,7 +2,7 @@
 Model Parameters
 ================
 
-In this subsection, contact detection, force models, time integration, load balancing and dynamic contact disabling parameters are defined.
+In this subsection, contact detection, force models, time integration, load balancing and adaptive sparse contacts parameters are defined.
 
 .. code-block:: text
 
@@ -20,7 +20,7 @@ In this subsection, contact detection, force models, time integration, load bala
     end
 
     subsection load balancing
-      # Choices are none|once|frequent|dynamic|dynamic_with_disabling_contacts
+      # Choices are none|once|frequent|dynamic|dynamic_with_sparse_contacts
       set load balance method     = none
       set particle weight         = 10000  # Every method, except none
       set step                    = 100000 # if method = once
@@ -45,10 +45,11 @@ In this subsection, contact detection, force models, time integration, load bala
     # Choices are no_resistance|constant_resistance|viscous_resistance
     set rolling resistance torque method       = constant_resistance
 
-    subsection dynamic disabling contacts
-      set enable dynamic disabling contacts = false
-      set granular temperature threshold    = 1e-4
-      set solid fraction threshold          = 0.4
+    subsection adaptive sparse contacts
+      set enable adaptive sparse contacts = false
+      set enable particle advection       = false
+      set granular temperature threshold  = 1e-4
+      set solid fraction threshold        = 0.4
     end
   end
 
@@ -138,16 +139,25 @@ load balancing will be executed. :math:`{L}` and :math:`{\beta}` denote computat
 * ``dynamic check frequency`` frequency (in iterations) at which the load check on all processes is performed.
 * ``threshold`` is the maximal load unbalance tolerated by the load balancing.
 
----------------------------
-Dynamic Disabling Contacts
----------------------------
+------------------------------
+Adaptive Sparse Contacts (ASC)
+------------------------------
 
-The dynamic disabling controls the disabling contact mechanism for performance enhancement. This feature dynamically searches for cells with low particle motion (granular temperature), disabling the computation of contacts for particles within these cells.
+The ASC controls the disabling contact mechanism for performance enhancement. This feature adaptively searches for cells with low particle motion (granular temperature), disabling the computation of contacts for particles within these cells.
+See how the mechanism works with mobility status in the figure below:
 
-* ``enable dynamic disabling contacts`` enables the feature.
+.. figure:: images/mobility_status.png
+    :alt: Schematic
+    :align: center
+    :width: 800
 
+    The 5 steps of the mobility status identification of cells applied to a hopper case.
+
+* ``enable adaptive sparse contacts`` enables the feature.
+
+* ``enable particle advection`` enabled the advection of particles from an average source term derived from the average velocity of particles in cell. This is highly recommended for CFD-DEM simulations because of the hydrodynamic forces.
 * ``granular temperature threshold`` is the threshold of the granular temperature below which the contacts are disabled.
 * ``solid fraction threshold`` is the minimum solid fraction of the cell in which the contacts may be disabled.
 
 Some parameters in the load balance section may be used to improve the performance of the dynamic disabling contacts feature using the dynamic load balancing.
-Note: The ``load balance method`` may be set to ``dynamic_with_disabling_contacts`` and factors of the weight of the cells by mobility status may be adjusted using the ``active weight factor`` and ``inactive weight factor`` parameters. There is factor only for active and inactive status, mobile factor is always 1. 
+Note: The ``load balance method`` may be set to ``dynamic_with_sparse_contacts`` and factors of the weight of the cells by mobility status may be adjusted using the ``active weight factor`` and ``inactive weight factor`` parameters. There is factor only for active and inactive status, mobile factor is always 1.
