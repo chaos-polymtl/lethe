@@ -35,9 +35,10 @@ check_contact_detection_method(
   else if (param.dem_parameters.model_parameters.contact_detection_method ==
            Parameters::Lagrangian::ModelParameters::ContactDetectionMethod::
              dynamic)
-    { // The sorting into subdomain step checks whether or not the current time
-      // step
-      // is a step that requires sorting particles into subdomains and cells.
+    {
+      // The sorting into subdomain step checks whether or not the current time
+      // step is a step that requires sorting particles into subdomains and
+      // cells.
       // This is applicable if any of the following three conditions apply:if
       // its a load balancing step, a restart simulation step, or a contact
       // detection tsep.
@@ -131,7 +132,7 @@ template <int dim>
 CFDDEMSolver<dim>::CFDDEMSolver(CFDDEMSimulationParameters<dim> &nsparam)
   : GLSVANSSolver<dim>(nsparam)
   , has_periodic_boundaries(false)
-  , has_disabled_contacts(false)
+  , has_sparse_contacts(false)
   , this_mpi_process(Utilities::MPI::this_mpi_process(this->mpi_communicator))
   , n_mpi_processes(Utilities::MPI::n_mpi_processes(this->mpi_communicator))
 {}
@@ -344,9 +345,9 @@ CFDDEMSolver<dim>::read_checkpoint()
   this->setup_dofs();
 
   // Remap periodic nodes after setup of dofs
-  if (has_periodic_boundaries && has_disabled_contacts)
+  if (has_periodic_boundaries && has_sparse_contacts)
     {
-      disable_contacts_object.map_periodic_nodes(
+      sparse_contacts_object.map_periodic_nodes(
         this->void_fraction_constraints);
     }
 
@@ -598,9 +599,9 @@ CFDDEMSolver<dim>::load_balance()
   this->setup_dofs();
 
   // Remap periodic nodes after setup of dofs
-  if (has_periodic_boundaries && has_disabled_contacts)
+  if (has_periodic_boundaries && has_sparse_contacts)
     {
-      disable_contacts_object.map_periodic_nodes(
+      sparse_contacts_object.map_periodic_nodes(
         this->void_fraction_constraints);
     }
 
@@ -696,14 +697,18 @@ CFDDEMSolver<dim>::initialize_dem_parameters()
       // boundary on an axis.
       periodic_offset =
         periodic_boundaries_object.get_periodic_offset_distance();
+
+      // Initialize the flag for particle displacement in PBC
+      particle_displaced_in_pbc = false;
     }
 
-  if (dem_parameters.model_parameters.disable_particle_contacts)
+  if (dem_parameters.model_parameters.sparse_particle_contacts)
     {
-      has_disabled_contacts = true;
-      disable_contacts_object.set_threshold_values(
+      has_sparse_contacts = true;
+      sparse_contacts_object.set_parameters(
         dem_parameters.model_parameters.granular_temperature_threshold,
-        dem_parameters.model_parameters.solid_fraction_threshold);
+        dem_parameters.model_parameters.solid_fraction_threshold,
+        dem_parameters.model_parameters.advect_particles);
     }
 
   // Finding cell neighbors
@@ -871,25 +876,44 @@ CFDDEMSolver<dim>::dem_iterator(unsigned int counter)
     }
   else
     {
-      if (!contacts_are_disabled(counter))
+      if (!has_sparse_contacts)
         {
           integrator_object->integrate(
             this->particle_handler, g, dem_time_step, torque, force, MOI);
         }
-      else // contacts are disabled
+      else
         {
-          const auto parallel_triangulation =
-            dynamic_cast<parallel::distributed::Triangulation<dim> *>(
-              &*this->triangulation);
-          integrator_object->integrate(
-            this->particle_handler,
-            g,
-            dem_time_step,
-            torque,
-            force,
-            MOI,
-            *parallel_triangulation,
-            disable_contacts_object.get_mobility_status());
+          if (counter > 0)
+            {
+              const auto parallel_triangulation =
+                dynamic_cast<parallel::distributed::Triangulation<dim> *>(
+                  &*this->triangulation);
+              integrator_object->integrate(this->particle_handler,
+                                           g,
+                                           dem_time_step,
+                                           torque,
+                                           force,
+                                           MOI,
+                                           *parallel_triangulation,
+                                           sparse_contacts_object);
+            }
+          else // counter == 0
+            {
+              // The cell average velocities and accelerations are updated
+              // from the fully computed forces at step 0, but we do not use the
+              // mobility status to disabled contacts at this step. The reason
+              // is that the current mobility status are computed for the last
+              // DEM time step (from the last CFD time step) are the force of
+              // the fluid may have significantly changed the particulate
+              // agitation.
+
+              // Update the cell average velocities and accelerations
+              sparse_contacts_object.update_average_velocities_acceleration(
+                this->particle_handler, g, force, dem_time_step);
+
+              integrator_object->integrate(
+                this->particle_handler, g, dem_time_step, torque, force, MOI);
+            }
         }
     }
 
@@ -908,11 +932,11 @@ CFDDEMSolver<dim>::dem_iterator(unsigned int counter)
               this->particle_handler, periodic_boundaries_cells_information);
 
           // Exchange information between processors
-          particle_has_been_moved =
+          particle_displaced_in_pbc =
             Utilities::MPI::logical_or(particle_has_been_moved,
                                        this->mpi_communicator);
 
-          if (particle_has_been_moved)
+          if (particle_displaced_in_pbc)
             {
               this->particle_handler.sort_particles_into_subdomains_and_cells();
               this->particle_handler.exchange_ghost_particles(true);
@@ -925,7 +949,7 @@ template <int dim>
 void
 CFDDEMSolver<dim>::dem_contact_build(unsigned int counter)
 {
-  // Check to see if it is contact search step
+  // Check to see if it is contact detection step
   contact_detection_step =
     check_contact_detection_method(counter,
                                    this->cfd_dem_simulation_parameters,
@@ -939,21 +963,13 @@ CFDDEMSolver<dim>::dem_contact_build(unsigned int counter)
                                    smallest_contact_search_criterion);
 
   // Sort particles in cells
-  // The last statement in the if condition allows the calling of
-  // dem_contact_build for the first DEM iteration in the first CFD time step
-  // directly after reading the dem initial checkpoint files
-
-  if (contact_detection_step || checkpoint_step || load_balance_step ||
-      (this->simulation_control->is_at_start() && (counter == 0)) ||
-      (has_periodic_boundaries && (counter == 0)))
+  if (contact_search_step(counter))
     {
       this->pcout << "DEM contact search at dem step " << counter << std::endl;
-      contact_build_number++;
+      contact_search_counter++;
 
-      // Particles displacement if passing through a periodic boundary
-      if (has_periodic_boundaries)
-        periodic_boundaries_object.execute_particles_displacement(
-          this->particle_handler, periodic_boundaries_cells_information);
+      periodic_boundaries_object.execute_particles_displacement(
+        this->particle_handler, periodic_boundaries_cells_information);
 
       this->particle_handler.sort_particles_into_subdomains_and_cells();
 
@@ -964,38 +980,28 @@ CFDDEMSolver<dim>::dem_contact_build(unsigned int counter)
 
       this->particle_handler.exchange_ghost_particles(true);
 
-      if (has_disabled_contacts)
+      if (has_sparse_contacts)
         {
-          // Update the active and ghost cells set (this should be done after a
-          // load balance or a checkpoint, but since the fem-dem code do not
-          // have a specific step for that we do it also when the contact search
-          // is done)
-          disable_contacts_object.update_local_and_ghost_cell_set(
-            this->void_fraction_dof_handler);
-          disable_contacts_object.identify_mobility_status(
+          if (load_balance_step || checkpoint_step ||
+              (this->simulation_control->is_at_start() && (counter == 0)))
+            sparse_contacts_object.update_local_and_ghost_cell_set(
+              this->void_fraction_dof_handler);
+
+          sparse_contacts_object.identify_mobility_status(
             this->void_fraction_dof_handler,
             this->particle_handler,
             (*this->triangulation).n_active_cells(),
-            this->mpi_communicator);
+            this->mpi_communicator,
+            counter);
         }
 
       // Updating moment of inertia container
       update_moment_of_inertia(this->particle_handler, MOI);
-    }
-  else
-    {
-      this->particle_handler.update_ghost_particles();
-    }
 
-  // Modify particles contact containers by search sequence
-  if (contact_detection_step || checkpoint_step || load_balance_step ||
-      (this->simulation_control->is_at_start() && (counter == 0)) ||
-      (has_periodic_boundaries && (counter == 0)))
-    {
       // Execute broad search by filling containers of particle-particle
       // contact pair candidates and containers of particle-wall
       // contact pair candidates
-      if (!contacts_are_disabled(counter))
+      if (!(has_sparse_contacts && counter > 0))
         {
           contact_manager.execute_particle_particle_broad_search(
             this->particle_handler, has_periodic_boundaries);
@@ -1007,11 +1013,11 @@ CFDDEMSolver<dim>::dem_contact_build(unsigned int counter)
             dem_parameters.floating_walls,
             this->simulation_control->get_current_time());
         }
-      else // disabling particle contacts are enabled & counter > 1
+      else
         {
           contact_manager.execute_particle_particle_broad_search(
             this->particle_handler,
-            disable_contacts_object,
+            sparse_contacts_object,
             has_periodic_boundaries);
 
           contact_manager.execute_particle_wall_broad_search(
@@ -1020,7 +1026,7 @@ CFDDEMSolver<dim>::dem_contact_build(unsigned int counter)
             floating_mesh_info,
             dem_parameters.floating_walls,
             this->simulation_control->get_current_time(),
-            disable_contacts_object);
+            sparse_contacts_object);
         }
 
       // Update contacts, remove replicates and add new contact pairs
@@ -1055,10 +1061,14 @@ CFDDEMSolver<dim>::dem_contact_build(unsigned int counter)
       // been performed, this functions are set to false. The checkpoint_step
       // remains false for the duration of the simulation while the load
       // balancing is reset everytime load balancing is called.
-      checkpoint_step   = false;
-      load_balance_step = false;
+      checkpoint_step           = false;
+      load_balance_step         = false;
+      particle_displaced_in_pbc = false;
     }
-
+  else
+    {
+      this->particle_handler.update_ghost_particles();
+    }
   // TODO add DEM post-processing
 }
 
@@ -1140,12 +1150,12 @@ CFDDEMSolver<dim>::dem_post_process_results()
 {
   // Update statistics on contact list
   double number_of_list_built_since_last_log =
-    double(contact_build_number) - contact_list.total;
+    double(contact_search_total_number) - contact_list.total;
   contact_list.max =
     std::max(number_of_list_built_since_last_log, contact_list.max);
   contact_list.min =
     std::min(number_of_list_built_since_last_log, contact_list.min);
-  contact_list.total += number_of_list_built_since_last_log;
+  contact_list.total   = double(contact_search_total_number);
   contact_list.average = contact_list.total /
                          (this->simulation_control->get_step_number()) *
                          this->simulation_control->get_log_frequency();
@@ -1207,6 +1217,7 @@ CFDDEMSolver<dim>::dem_post_process_results()
         dynamic_cast<parallel::distributed::Triangulation<dim> *>(
           &*this->triangulation);
 
+
       dem_post_processing_object.write_post_processing_results(
         *parallel_triangulation,
         grid_pvdhandler,
@@ -1216,7 +1227,7 @@ CFDDEMSolver<dim>::dem_post_process_results()
         this->simulation_control->get_current_time(),
         this->simulation_control->get_step_number(),
         this->mpi_communicator,
-        disable_contacts_object);
+        sparse_contacts_object);
     }
 }
 
@@ -1425,10 +1436,10 @@ CFDDEMSolver<dim>::dem_setup_contact_parameters()
              2);
 
 
-  //   Finding the smallest contact search frequency criterion between (smallest
-  //   cell size - largest particle radius) and (security factor * (blab
-  //   diamater - 1) *  largest particle radius). This value is used in
-  //   find_contact_detection_frequency function
+  // Finding the smallest contact search frequency criterion between (smallest
+  // cell size - largest particle radius) and (security factor * (blob diameter
+  // - 1) *  largest particle radius). This value is used in
+  // find_contact_detection_frequency function
   smallest_contact_search_criterion =
     std::min((GridTools::minimal_cell_diameter(*this->triangulation) -
               maximum_particle_diameter * 0.5),
@@ -1573,9 +1584,9 @@ CFDDEMSolver<dim>::solve()
   initialize_dem_parameters();
 
   // Remap periodic nodes after setup of dofs
-  if (has_periodic_boundaries && has_disabled_contacts)
+  if (has_periodic_boundaries && has_sparse_contacts)
     {
-      disable_contacts_object.map_periodic_nodes(
+      sparse_contacts_object.map_periodic_nodes(
         this->void_fraction_constraints);
     }
 
@@ -1620,13 +1631,43 @@ CFDDEMSolver<dim>::solve()
 
       if (this->cfd_dem_simulation_parameters.cfd_parameters.test.enabled)
         {
-          print_particles_summary();
+          switch (
+            this->cfd_dem_simulation_parameters.cfd_parameters.test.test_type)
+            {
+              case Parameters::Testing::TestType::particles:
+                {
+                  print_particles_summary();
+                  break;
+                }
+              case Parameters::Testing::TestType::mobility_status:
+                {
+                  if (this->simulation_control->is_at_end())
+
+                    {
+                      // Get mobility status vector sorted by cell id
+                      Vector<float> mobility_status(
+                        this->triangulation->n_active_cells());
+                      sparse_contacts_object.get_mobility_status_vector(
+                        mobility_status);
+
+                      // Output mobility status vector
+                      visualization_object.print_intermediate_format(
+                        mobility_status,
+                        this->void_fraction_dof_handler,
+                        this->mpi_communicator);
+                    }
+                  break;
+                }
+              default:
+                print_particles_summary();
+            }
         }
 
       {
         announce_string(this->pcout, "DEM");
         TimerOutput::Scope t(this->computing_timer, "DEM_Iterator");
 
+        contact_search_counter = 0;
         for (unsigned int dem_counter = 0; dem_counter < coupling_frequency;
              ++dem_counter)
           {
@@ -1636,6 +1677,7 @@ CFDDEMSolver<dim>::solve()
             dem_iterator(dem_counter);
           }
       }
+      contact_search_total_number += contact_search_counter;
 
       this->pcout << "Finished " << coupling_frequency << " DEM iterations "
                   << std::endl;

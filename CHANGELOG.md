@@ -7,6 +7,13 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Added
 
+- MAJOR Added advection of particles in the Adaptive Sparse Contacts (ASC) feature in DEM and CFD-DEM (Disabling Contacts is renamed Adaptive Sparse Contacts). [#1113](https://github.com/chaos-polymtl/lethe/pull/1113)
+
+
+## [Master] - 2024-05-09
+
+### Added
+
 - MINOR Added a condition to the generation of .vtu and .pvd files in addition to the output generation frequency. If specified in the parameter file, only the results within the specified simulation time interval will be generated. [#1120] (https://github.com/chaos-polymtl/lethe/pull/1120) 
 
 

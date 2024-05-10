@@ -515,9 +515,9 @@ namespace Parameters
             "load balance method",
             "none",
             Patterns::Selection(
-              "none|once|frequent|dynamic|dynamic_with_disabling_contacts"),
+              "none|once|frequent|dynamic|dynamic_with_sparse_contacts"),
             "Choosing load-balance method"
-            "Choices are <none|once|frequent|dynamic|dynamic_with_disabling_contacts>.");
+            "Choices are <none|once|frequent|dynamic|dynamic_with_sparse_contacts>.");
 
           prm.declare_entry(
             "step",
@@ -619,13 +619,20 @@ namespace Parameters
           "Choosing integration method"
           "Choices are <velocity_verlet|explicit_euler|gear3>.");
 
-        prm.enter_subsection("dynamic disabling contacts");
+        prm.enter_subsection("adaptive sparse contacts");
         {
           prm.declare_entry(
-            "enable dynamic disabling contacts",
+            "enable adaptive sparse contacts",
             "false",
             Patterns::Selection("true|false"),
-            "Enable the dynamic search for disabling particle contacts"
+            "Enable the dynamic search for sparse particle contacts"
+            "Choices are <true|false>.");
+
+          prm.declare_entry(
+            "enable particle advection",
+            "false",
+            Patterns::Selection("true|false"),
+            "Enable the advection of particles with hydrodynamic forces"
             "Choices are <true|false>.");
 
           prm.declare_entry(
@@ -651,10 +658,11 @@ namespace Parameters
     {
       prm.enter_subsection("model parameters");
       {
-        prm.enter_subsection("dynamic disabling contacts");
+        prm.enter_subsection("adaptive sparse contacts");
         {
-          disable_particle_contacts =
-            prm.get_bool("enable dynamic disabling contacts");
+          sparse_particle_contacts =
+            prm.get_bool("enable adaptive sparse contacts");
+          advect_particles = prm.get_bool("enable particle advection");
 
           // Thresholds for disabling contacts
           granular_temperature_threshold =
@@ -684,16 +692,16 @@ namespace Parameters
               dynamic_load_balance_check_frequency =
                 prm.get_integer("dynamic check frequency");
             }
-          else if (load_balance == "dynamic_with_disabling_contacts")
+          else if (load_balance == "dynamic_with_sparse_contacts")
             {
-              // Check if dynamic disabling contacts is enabled, otherwise
+              // Check if adaptive sparse contacts is enabled, otherwise
               // throw an error message indicating that the user should use
-              // dynamic load balancing instead or enable dynamic disabling
+              // dynamic load balancing instead or enable adaptive sparse
               // contacts
-              if (disable_particle_contacts)
+              if (sparse_particle_contacts)
                 {
                   load_balance_method =
-                    LoadBalanceMethod::dynamic_with_disabling_contacts;
+                    LoadBalanceMethod::dynamic_with_sparse_contacts;
                   load_balance_threshold = prm.get_double("threshold");
                   dynamic_load_balance_check_frequency =
                     prm.get_integer("dynamic check frequency");
@@ -707,8 +715,8 @@ namespace Parameters
               else
                 {
                   throw(std::runtime_error(
-                    "Invalid contact detection method: dynamic disabling contacts is not enabled "
-                    "while dynamic_with_disabling_contacts is selected, use dynamic instead"));
+                    "Invalid contact detection method: adaptive sparse contacts is not enabled "
+                    "while dynamic_with_sparse_contacts is selected, use dynamic instead"));
                 }
             }
           else if (load_balance == "none")

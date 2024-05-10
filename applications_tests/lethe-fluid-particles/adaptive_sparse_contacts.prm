@@ -1,0 +1,176 @@
+# Listing of Parameters
+#----------------------
+
+set dimension = 3
+
+# --------------------------------------------------
+# Simulation and IO Control
+#---------------------------------------------------
+
+subsection simulation control
+  set method               = bdf1
+  set output name          = cfd_dem
+  set output frequency     = 0
+  set log frequency        = 1
+  set startup time scaling = 0.6
+  set time end             = 0.005
+  set time step            = 0.001
+end
+
+#---------------------------------------------------
+# test
+#---------------------------------------------------
+
+subsection test
+  set enable = true
+  set type   = mobility_status
+end
+
+#---------------------------------------------------
+# Physical Properties CFD
+#---------------------------------------------------
+
+subsection physical properties
+  subsection fluid 0
+    set kinematic viscosity = 1.5e-5
+    set density             = 1.205
+  end
+end
+
+subsection source term
+  subsection xyz
+    set Function expression = 0; 5; 0; 0
+  end
+end
+
+#---------------------------------------------------
+# Model parameters
+#---------------------------------------------------
+
+subsection model parameters
+  subsection adaptive sparse contacts
+    set enable adaptive sparse contacts = true
+    set enable particle advection       = true
+    set granular temperature threshold  = 1e-4
+    set solid fraction threshold        = 0.1
+  end
+end
+
+#---------------------------------------------------
+# Physical Properties
+#---------------------------------------------------
+
+subsection lagrangian physical properties
+  set gx                       = -9.81
+  set gy                       = 0.01205
+  set gz                       = 0.0
+  set number of particle types = 1
+  subsection particle type 0
+    set diameter                          = 0.0125
+    set number of particles               = 350
+    set density particles                 = 500
+    set young modulus particles           = 1e6
+    set poisson ratio particles           = 0.3
+    set restitution coefficient particles = 0.9
+    set friction coefficient particles    = 0.9
+    set rolling friction particles        = 0.1
+  end
+  set young modulus wall           = 1e6
+  set poisson ratio wall           = 0.3
+  set friction coefficient wall    = 0.01
+  set restitution coefficient wall = 0.9
+  set rolling friction wall        = 0.01
+end
+
+#---------------------------------------------------
+# Boundary Conditions DEM
+#---------------------------------------------------
+
+subsection DEM boundary conditions
+  set number of boundary conditions = 1
+
+  subsection boundary condition 0
+    set type               = periodic
+    set periodic id 0      = 2
+    set periodic id 1      = 3
+    set periodic direction = 1
+  end
+end
+
+# --------------------------------------------------
+# Boundary Conditions CFD
+#---------------------------------------------------
+
+subsection boundary conditions
+  set number = 1
+  subsection bc 0
+    set id                 = 2
+    set type               = periodic
+    set periodic_id        = 3
+    set periodic_direction = 1
+  end
+end
+
+#---------------------------------------------------
+# Mesh
+#---------------------------------------------------
+
+subsection mesh
+  set type               = dealii
+  set grid type          = subdivided_hyper_rectangle
+  set grid arguments     = 1,8,1 : 0.0,0.0,0.0 : 0.05,0.5,0.05 : true
+  set initial refinement = 0
+end
+
+#---------------------------------------------------
+# CFD-DEM
+#---------------------------------------------------
+
+subsection cfd-dem
+  set saffman lift force     = true
+  set coupling frequency     = 50
+  set implicit stabilization = false
+  set grad-div length scale  = 0.001
+  set particle statistics    = false
+end
+
+#---------------------------------------------------
+# Void Fraction CFD-DEM
+#---------------------------------------------------
+
+subsection void fraction
+  set mode                = qcm
+  set read dem            = true
+  set dem file name       = dem
+  set l2 smoothing factor = 0.0001
+  set l2 lower bound      = 0
+end
+
+# --------------------------------------------------
+# Non-Linear Solver Control CFD
+#---------------------------------------------------
+
+subsection non-linear solver
+  subsection fluid dynamics
+    set solver           = inexact_newton
+    set reuse matrix     = true
+    set tolerance        = 1e-4
+    set verbosity        = quiet
+  end
+end
+
+# --------------------------------------------------
+# Linear Solver Control CFD
+#---------------------------------------------------
+
+subsection linear solver
+  subsection fluid dynamics
+    set max iters                             = 200
+    set relative residual                     = 1e-4
+    set minimum residual                      = 1e-6
+    set ilu preconditioner fill               = 0
+    set ilu preconditioner absolute tolerance = 1e-8
+    set verbosity                             = quiet
+    set max krylov vectors                    = 200
+  end
+end

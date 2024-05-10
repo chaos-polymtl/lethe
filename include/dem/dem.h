@@ -19,10 +19,10 @@
 #include <core/pvd_handler.h>
 #include <core/serial_solid.h>
 
+#include <dem/adaptive_sparse_contacts.h>
 #include <dem/data_containers.h>
 #include <dem/dem_contact_manager.h>
 #include <dem/dem_solver_parameters.h>
-#include <dem/disable_contacts.h>
 #include <dem/find_boundary_cells_information.h>
 #include <dem/grid_motion.h>
 #include <dem/insertion.h>
@@ -200,14 +200,14 @@ private:
   check_load_balance_dynamic();
 
   /**
-   * @brief Establish if this is a load-balance step using the dynamic method when the disabled contacts mechanism is enabled.
+   * @brief Establish if this is a load-balance step using the dynamic method when the sparse contacts mechanism is enabled.
    * The dynamic method uses the load imbalance between the core as a load
    * balancing criteria.
    *
    * @return bool indicating if this is a load balance iteration.
    */
   inline bool
-  check_load_balance_with_disabled_contacts();
+  check_load_balance_with_sparse_contacts();
 
   /**
    * @brief Manages the call to the load balance by first identifying if
@@ -296,20 +296,6 @@ private:
    */
   void
   setup_background_dofs();
-
-  /**
-   * @brief Check if the contacts are disabled and the contact build
-   * number is at least 2. To allow the disabling of contacts in broad search,
-   * we need a first full solved iteration to execute the mobility status
-   * identification, meaning that the first application of the mobility status
-   * in broad search is at after the second contact search.
-   *
-   */
-  inline bool
-  contacts_are_disabled() const
-  {
-    return has_disabled_contacts && contact_build_number > 1;
-  }
 
   /**
    * @brief write_output_results
@@ -413,9 +399,14 @@ private:
   // Distribution objects
   std::vector<std::shared_ptr<Distribution>> distribution_object_container;
 
-  // Dynamic disabling of particle contacts in cells object
-  DisableContacts<dim> disable_contacts_object;
-  bool                 has_disabled_contacts;
+  // Adaptive sparce contacts (ASC) in cells object
+  AdaptiveSparseContacts<dim> sparse_contacts_object;
+
+  // Flag to indicate if sparse contacts are enabled
+  bool has_sparse_contacts;
+
+  // Contraints for the background grid needed for ASC with PBC
+  AffineConstraints<double> background_constraints;
 
   // Load balancing iteration check function
   std::function<bool()> load_balance_iteration_check_function;

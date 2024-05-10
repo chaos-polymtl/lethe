@@ -18,8 +18,6 @@
 #ifndef lethe_parameters_lagrangian_h
 #define lethe_parameters_lagrangian_h
 
-// #include <deal.II/base/conditional_ostream.h>
-// #include <deal.II/base/function.h>
 #include <core/parameters.h>
 
 #include <deal.II/base/parameter_handler.h>
@@ -222,7 +220,7 @@ namespace Parameters
         once,
         frequent,
         dynamic,
-        dynamic_with_disabling_contacts
+        dynamic_with_sparse_contacts
       } load_balance_method;
 
       // Load balance step (for single step load-balancing)
@@ -245,7 +243,7 @@ namespace Parameters
 
       // Factors applied on the particle weight in load balancing for active and
       // inactive cells (factor of mobile cells is always 1), only available
-      // when dynamic disabling particle contacts is enable
+      // when adaptive sparse contacts is enable
       double active_load_balancing_factor;
       double inactive_load_balancing_factor;
 
@@ -287,7 +285,11 @@ namespace Parameters
       } integration_method;
 
       // Disable particle contacts to optimize performance
-      bool disable_particle_contacts;
+      bool sparse_particle_contacts;
+
+      // Enable advection of particles (applies cell average velocity and
+      // acceleration to particles)
+      bool advect_particles;
 
       // Minimal granular temperature value of cells where particle contacts
       // are considered
