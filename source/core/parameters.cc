@@ -2003,6 +2003,18 @@ namespace Parameters
           "false",
           Patterns::Bool(),
           "Aborts Lethe by throwing an exception if non-linear solver convergence has failed");
+
+        prm.declare_entry(
+          "enable hessians in jacobian",
+          "true",
+          Patterns::Bool(),
+          "Turns off the terms involving the hessian in the Jacobian");
+
+        prm.declare_entry(
+          "enable hessians in rhs",
+          "false",
+          Patterns::Bool(),
+          "Turns off the terms involving the hessian in the rhs");
       }
       prm.leave_subsection();
     }
@@ -2046,16 +2058,16 @@ namespace Parameters
           throw(std::runtime_error(
             "Invalid strategy for kinsol non-linear solver "));
 
-        tolerance             = prm.get_double("tolerance");
-        step_tolerance        = prm.get_double("step tolerance");
-        matrix_tolerance      = prm.get_double("matrix tolerance");
-        max_iterations        = prm.get_integer("max iterations");
-        display_precision     = prm.get_integer("residual precision");
-        force_rhs_calculation = prm.get_bool("force rhs calculation");
-        reuse_matrix          = prm.get_bool("reuse matrix");
-        reuse_preconditioner  = prm.get_bool("reuse preconditioner");
-        abort_at_convergence_failure =
-          prm.get_bool("abort at convergence failure");
+        tolerance                = prm.get_double("tolerance");
+        step_tolerance           = prm.get_double("step tolerance");
+        matrix_tolerance         = prm.get_double("matrix tolerance");
+        max_iterations           = prm.get_integer("max iterations");
+        display_precision        = prm.get_integer("residual precision");
+        force_rhs_calculation    = prm.get_bool("force rhs calculation");
+        reuse_matrix             = prm.get_bool("reuse matrix");
+        reuse_preconditioner     = prm.get_bool("reuse preconditioner");
+        enable_hessians_jacobian = prm.get_bool("enable hessians in jacobian");
+        enable_hessians_rhs      = prm.get_bool("enable hessians in rhs");
       }
       prm.leave_subsection();
     }
@@ -2287,6 +2299,18 @@ namespace Parameters
                           "The preconditioner for the linear solver."
                           "Choices are <amg|ilu|lsmg|gcmg>.");
 
+        prm.declare_entry(
+          "enable hessians in jacobian",
+          "true",
+          Patterns::Bool(),
+          "Turns off the terms involving the hessian in the Jacobian");
+
+        prm.declare_entry(
+          "enable hessians in rhs",
+          "false",
+          Patterns::Bool(),
+          "Turns off the terms involving the hessian in the rhs");
+
         prm.declare_entry("ilu preconditioner fill",
                           "0",
                           Patterns::Double(),
@@ -2486,6 +2510,9 @@ namespace Parameters
         else
           throw std::logic_error(
             "Error, invalid preconditioner type. Choices are amg, ilu, lsmg or gcmg.");
+
+        enable_hessians_jacobian = prm.get_bool("enable hessians in jacobian");
+        enable_hessians_rhs      = prm.get_bool("enable hessians in rhs");
 
         ilu_precond_fill = prm.get_double("ilu preconditioner fill");
         ilu_precond_atol =
