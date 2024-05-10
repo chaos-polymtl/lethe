@@ -203,7 +203,6 @@ Different parameters for the main components of the two geometric multigrid algo
     set mg min level                   = -1
     set mg level min cells             = -1
     set mg enable hessians in jacobian = true
-    set mg enable hessians in residual = true
 
     # Relaxation smoother parameters
     set mg smoother iterations     = 10
@@ -252,4 +251,4 @@ Different parameters for the main components of the two geometric multigrid algo
   If your coarse-grid level is small enough, it might be worth it for some problems to set ``mg amg use default parameters = true`` to use a direct solver. On the other hand, if high order elements are used, it might be useful to set ``set mg coarse grid use fe q iso q1 = true`` to solve the coarse grid problem using `FE_Q_iso_Q1 elements <https://www.dealii.org/developer/doxygen/deal.II/classFE__Q__iso__Q1.html>`_.
 
 .. tip::
-  Evaluating terms involving the hessian is expensive. Therefore, one can turn on or off those terms in the mg level operators to improve performance by setting ``mg enable hessians in jacobian`` and ``mg enable hessians in residual`` equal to ``false``. This is useful for certain problems and must be used carefully.
+  Evaluating terms involving the hessian is expensive. Therefore, one can turn on or off those terms in the mg level operators to improve performance by setting ``mg enable hessians in jacobian`` to ``false``. This is useful for certain problems and must be used carefully.

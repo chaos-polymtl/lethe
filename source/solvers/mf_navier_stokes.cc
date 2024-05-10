@@ -481,9 +481,7 @@ MFNavierStokesPreconditionGMG<dim>::MFNavierStokesPreconditionGMG(
             this->simulation_parameters.linear_solver
               .at(PhysicsID::fluid_dynamics)
               .mg_enable_hessians_jacobian,
-            this->simulation_parameters.linear_solver
-              .at(PhysicsID::fluid_dynamics)
-              .mg_enable_hessians_residual);
+            true);
 
           this->ls_mg_operators[level].initialize(*(this->mg_operators)[level]);
           this->ls_mg_interface_in[level].initialize(
@@ -792,9 +790,7 @@ MFNavierStokesPreconditionGMG<dim>::MFNavierStokesPreconditionGMG(
             this->simulation_parameters.linear_solver
               .at(PhysicsID::fluid_dynamics)
               .mg_enable_hessians_jacobian,
-            this->simulation_parameters.linear_solver
-              .at(PhysicsID::fluid_dynamics)
-              .mg_enable_hessians_residual);
+            true);
 
           this->mg_setup_timer.leave_subsection("Set up operators");
         }

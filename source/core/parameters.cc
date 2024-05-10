@@ -2373,12 +2373,6 @@ namespace Parameters
           Patterns::Bool(),
           "Turns off the terms involving the hessian in the Jacobian of mg operators");
 
-        prm.declare_entry(
-          "mg enable hessians in residual",
-          "true",
-          Patterns::Bool(),
-          "Turns off the terms involving the hessian in the rhs of mg operators");
-
         prm.declare_entry("mg smoother iterations",
                           "10",
                           Patterns::Integer(),
@@ -2539,8 +2533,6 @@ namespace Parameters
         mg_level_min_cells = prm.get_integer("mg level min cells");
         mg_enable_hessians_jacobian =
           prm.get_bool("mg enable hessians in jacobian");
-        mg_enable_hessians_residual =
-          prm.get_bool("mg enable hessians in residual");
 
         mg_smoother_iterations     = prm.get_integer("mg smoother iterations");
         mg_smoother_relaxation     = prm.get_double("mg smoother relaxation");

@@ -1127,9 +1127,6 @@ namespace Parameters
     /// MG enable hessians in jacobian
     bool mg_enable_hessians_jacobian;
 
-    /// MG enable hessians in residual
-    bool mg_enable_hessians_residual;
-
     /// MG smoother number of iterations
     int mg_smoother_iterations;
 
