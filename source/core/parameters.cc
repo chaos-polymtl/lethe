@@ -2058,14 +2058,16 @@ namespace Parameters
           throw(std::runtime_error(
             "Invalid strategy for kinsol non-linear solver "));
 
-        tolerance                = prm.get_double("tolerance");
-        step_tolerance           = prm.get_double("step tolerance");
-        matrix_tolerance         = prm.get_double("matrix tolerance");
-        max_iterations           = prm.get_integer("max iterations");
-        display_precision        = prm.get_integer("residual precision");
-        force_rhs_calculation    = prm.get_bool("force rhs calculation");
-        reuse_matrix             = prm.get_bool("reuse matrix");
-        reuse_preconditioner     = prm.get_bool("reuse preconditioner");
+        tolerance             = prm.get_double("tolerance");
+        step_tolerance        = prm.get_double("step tolerance");
+        matrix_tolerance      = prm.get_double("matrix tolerance");
+        max_iterations        = prm.get_integer("max iterations");
+        display_precision     = prm.get_integer("residual precision");
+        force_rhs_calculation = prm.get_bool("force rhs calculation");
+        reuse_matrix          = prm.get_bool("reuse matrix");
+        reuse_preconditioner  = prm.get_bool("reuse preconditioner");
+        abort_at_convergence_failure =
+          prm.get_bool("abort at convergence failure");
         enable_hessians_jacobian = prm.get_bool("enable hessians in jacobian");
         enable_hessians_rhs      = prm.get_bool("enable hessians in rhs");
       }
