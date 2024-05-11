@@ -79,17 +79,17 @@ public:
    * residual on or off.
    */
   NavierStokesOperatorBase(
-    const Mapping<dim>                &mapping,
-    const DoFHandler<dim>             &dof_handler,
-    const AffineConstraints<number>   &constraints,
-    const Quadrature<dim>             &quadrature,
-  const std::shared_ptr<Function<dim>> forcing_function,
-    const double                       kinematic_viscosity,
-    const StabilizationType            stabilization,
-    const unsigned int                 mg_level,
-    std::shared_ptr<SimulationControl> simulation_control,
-    const bool                        &enable_hessians_jacobian,
-    const bool                        &enable_hessians_residual);
+    const Mapping<dim>                  &mapping,
+    const DoFHandler<dim>               &dof_handler,
+    const AffineConstraints<number>     &constraints,
+    const Quadrature<dim>               &quadrature,
+    const std::shared_ptr<Function<dim>> forcing_function,
+    const double                         kinematic_viscosity,
+    const StabilizationType              stabilization,
+    const unsigned int                   mg_level,
+    std::shared_ptr<SimulationControl>   simulation_control,
+    const bool                          &enable_hessians_jacobian,
+    const bool                          &enable_hessians_residual);
 
   /**
    * @brief Initialize the main matrix free object that contains all data and is
@@ -113,17 +113,17 @@ public:
    * residual on or off.
    */
   void
-  reinit(const Mapping<dim>                &mapping,
-         const DoFHandler<dim>             &dof_handler,
-         const AffineConstraints<number>   &constraints,
-         const Quadrature<dim>             &quadrature,
-  const std::shared_ptr<Function<dim>> forcing_function,
-         const double                       kinematic_viscosity,
-         const StabilizationType            stabilization,
-         const unsigned int                 mg_level,
-         std::shared_ptr<SimulationControl> simulation_control,
-         const bool                        &enable_hessians_jacobian,
-         const bool                        &enable_hessians_residual);
+  reinit(const Mapping<dim>                  &mapping,
+         const DoFHandler<dim>               &dof_handler,
+         const AffineConstraints<number>     &constraints,
+         const Quadrature<dim>               &quadrature,
+         const std::shared_ptr<Function<dim>> forcing_function,
+         const double                         kinematic_viscosity,
+         const StabilizationType              stabilization,
+         const unsigned int                   mg_level,
+         std::shared_ptr<SimulationControl>   simulation_control,
+         const bool                          &enable_hessians_jacobian,
+         const bool                          &enable_hessians_residual);
 
   /**
    * @brief Compute the element size h of the cells required to calculate

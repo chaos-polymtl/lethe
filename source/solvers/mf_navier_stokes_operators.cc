@@ -136,17 +136,17 @@ NavierStokesOperatorBase<dim, number>::NavierStokesOperatorBase()
 
 template <int dim, typename number>
 NavierStokesOperatorBase<dim, number>::NavierStokesOperatorBase(
-  const Mapping<dim>                &mapping,
-  const DoFHandler<dim>             &dof_handler,
-  const AffineConstraints<number>   &constraints,
-  const Quadrature<dim>             &quadrature,
+  const Mapping<dim>                  &mapping,
+  const DoFHandler<dim>               &dof_handler,
+  const AffineConstraints<number>     &constraints,
+  const Quadrature<dim>               &quadrature,
   const std::shared_ptr<Function<dim>> forcing_function,
-  const double                       kinematic_viscosity,
-  const StabilizationType            stabilization,
-  const unsigned int                 mg_level,
-  std::shared_ptr<SimulationControl> simulation_control,
-  const bool                        &enable_hessians_jacobian,
-  const bool                        &enable_hessians_residual)
+  const double                         kinematic_viscosity,
+  const StabilizationType              stabilization,
+  const unsigned int                   mg_level,
+  std::shared_ptr<SimulationControl>   simulation_control,
+  const bool                          &enable_hessians_jacobian,
+  const bool                          &enable_hessians_residual)
   : pcout(std::cout, Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0)
   , timer(this->pcout, TimerOutput::never, TimerOutput::wall_times)
 {
@@ -166,17 +166,17 @@ NavierStokesOperatorBase<dim, number>::NavierStokesOperatorBase(
 template <int dim, typename number>
 void
 NavierStokesOperatorBase<dim, number>::reinit(
-  const Mapping<dim>                &mapping,
-  const DoFHandler<dim>             &dof_handler,
-  const AffineConstraints<number>   &constraints,
-  const Quadrature<dim>             &quadrature,
+  const Mapping<dim>                  &mapping,
+  const DoFHandler<dim>               &dof_handler,
+  const AffineConstraints<number>     &constraints,
+  const Quadrature<dim>               &quadrature,
   const std::shared_ptr<Function<dim>> forcing_function,
-  const double                       kinematic_viscosity,
-  const StabilizationType            stabilization,
-  const unsigned int                 mg_level,
-  std::shared_ptr<SimulationControl> simulation_control,
-  const bool                        &enable_hessians_jacobian,
-  const bool                        &enable_hessians_residual)
+  const double                         kinematic_viscosity,
+  const StabilizationType              stabilization,
+  const unsigned int                   mg_level,
+  std::shared_ptr<SimulationControl>   simulation_control,
+  const bool                          &enable_hessians_jacobian,
+  const bool                          &enable_hessians_residual)
 {
   this->system_matrix.clear();
   this->constraints.copy_from(constraints);
