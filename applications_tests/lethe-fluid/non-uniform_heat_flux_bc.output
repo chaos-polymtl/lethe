@@ -12,13 +12,8 @@ Temperature statistics on fluid :
 *****************************
 Steady iteration:        1/1
 *****************************
---------------
-Heat Transfer
---------------
-  -Tolerance of iterative solver is : 9.00917e-05
-  -Iterative solver took : 16 steps to reach a residual norm of 4.55329e-05
 Temperature statistics on fluid : 
-	     Min : 45.9222
+	     Min : 45.9221
 	     Max : 79.7944
 	 Average : 68.7103
 	 Std-Dev : 7.72838

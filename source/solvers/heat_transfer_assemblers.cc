@@ -387,9 +387,6 @@ HeatTransferAssemblerRobinBC<dim>::assemble_matrix(
       if (this->boundary_conditions_ht.type[i_bc] ==
           BoundaryConditions::BoundaryType::convection_radiation)
         {
-          // The expression is applied over the perpendicular surface, so the
-          // number of coordinates in the function expression should be always
-          // dim-1
           Function<dim> &h_function = *(this->boundary_conditions_ht.h[i_bc]);
           Function<dim> &emissivity_function =
             *(this->boundary_conditions_ht.emissivity[i_bc]);
@@ -402,17 +399,13 @@ HeatTransferAssemblerRobinBC<dim>::assemble_matrix(
                   for (unsigned int q = 0; q < scratch_data.n_faces_q_points;
                        ++q)
                     {
-                      Point<dim> quadrature_point_on_face;
-                      for (unsigned int d = 0; d < dim; d++)
-                        quadrature_point_on_face[d] =
-                          scratch_data.quadrature_points[q][d];
                       const double T_face =
                         scratch_data.temperature_face_value[f][q];
                       const double JxW = scratch_data.face_JxW[f][q];
                       const double h =
-                        h_function.value(quadrature_point_on_face);
-                      const double emissivity =
-                        emissivity_function.value(quadrature_point_on_face);
+                        h_function.value(scratch_data.quadrature_points[q]);
+                      const double emissivity = emissivity_function.value(
+                        scratch_data.quadrature_points[q]);
                       for (unsigned int i = 0; i < scratch_data.n_dofs; ++i)
                         {
                           const double phi_face_T_i =
@@ -477,21 +470,17 @@ HeatTransferAssemblerRobinBC<dim>::assemble_rhs(
                   for (unsigned int q = 0; q < scratch_data.n_faces_q_points;
                        ++q)
                     {
-                      Point<dim> quadrature_point_on_face;
-                      for (unsigned int d = 0; d < dim; d++)
-                        quadrature_point_on_face[d] =
-                          scratch_data.quadrature_points[q][d];
                       const double T_face =
                         scratch_data.temperature_face_value[f][q];
                       const double JxW = scratch_data.face_JxW[f][q];
                       const double h =
-                        h_function.value(quadrature_point_on_face);
+                        h_function.value(scratch_data.quadrature_points[q]);
                       const double T_inf =
-                        T_inf_function.value(quadrature_point_on_face);
-                      const double emissivity =
-                        emissivity_function.value(quadrature_point_on_face);
-                      const double heat_flux_bc =
-                        heat_flux_bc_function.value(quadrature_point_on_face);
+                        T_inf_function.value(scratch_data.quadrature_points[q]);
+                      const double emissivity = emissivity_function.value(
+                        scratch_data.quadrature_points[q]);
+                      const double heat_flux_bc = heat_flux_bc_function.value(
+                        scratch_data.quadrature_points[q]);
                       for (unsigned int i = 0; i < scratch_data.n_dofs; ++i)
                         {
                           const double phi_face_T_i =

@@ -46,7 +46,7 @@ end
 #---------------------------------------------------
 
 subsection multiphysics
-  set heat transfer       = true
+  set heat transfer = true
 end
 
 #---------------------------------------------------
@@ -63,18 +63,18 @@ subsection boundary conditions heat transfer
     end
   end
   subsection bc 1
-    set id    = 1
-    set type  = temperature
+    set id   = 1
+    set type = temperature
     subsection value
       set Function expression = 80
     end
   end
   subsection bc 2
-    set id    = 2
+    set id   = 2
     set type = convection-radiation-flux
   end
   subsection bc 3
-    set id    = 3
+    set id   = 3
     set type = convection-radiation-flux
   end
 end
@@ -83,7 +83,7 @@ subsection post-processing
   set verbosity                        = verbose
   set output frequency                 = 100000
   set calculate temperature statistics = true
-  set temperature statistics name = non_uniform_heat_flux
+  set temperature statistics name      = non_uniform_heat_flux
 end
 
 #---------------------------------------------------
@@ -93,11 +93,11 @@ end
 subsection non-linear solver
   subsection heat transfer
     set verbosity      = quiet
-    set tolerance      = 1e-1
+    set tolerance      = 1e-6
     set max iterations = 10
   end
   subsection fluid dynamics
-    set verbosity      = quiet
+    set verbosity = quiet
   end
 end
 
@@ -107,14 +107,14 @@ end
 
 subsection linear solver
   subsection fluid dynamics
-    set verbosity                             = quiet
+    set verbosity = quiet
   end
   subsection heat transfer
-    set verbosity                             = verbose
-    set method                                = gmres
-    set max iters                             = 5000
-    set relative residual                     = 1e-7
-    set minimum residual                      = 1e-8
-    set preconditioner                        = ilu
+    set verbosity         = quiet
+    set method            = gmres
+    set max iters         = 5000
+    set relative residual = 1e-7
+    set minimum residual  = 1e-8
+    set preconditioner    = ilu
   end
 end
