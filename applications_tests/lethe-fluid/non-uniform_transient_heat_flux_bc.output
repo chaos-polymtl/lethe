@@ -1,0 +1,55 @@
+Running on 1 MPI rank(s)...
+   Number of active cells:       64
+   Number of degrees of freedom: 243
+   Volume of triangulation:      0.5
+   Number of thermal degrees of freedom: 289
+Temperature statistics on fluid : 
+	     Min : -6.98387
+	     Max : 54.9839
+	 Average : 1.66667
+	 Std-Dev : 10.1926
+
+*******************************************************************************
+Transient iteration: 1        Time: 0.4      Time step: 0.4      CFL: 0       
+*******************************************************************************
+Temperature statistics on fluid : 
+	     Min : 59.0177
+	     Max : 79.4152
+	 Average : 66.2991
+	 Std-Dev : 6.07187
+
+*******************************************************************************
+Transient iteration: 2        Time: 1        Time step: 0.6      CFL: 0       
+*******************************************************************************
+Temperature statistics on fluid : 
+	     Min : 80.1504
+	     Max : 84.0266
+	 Average : 82.529
+	 Std-Dev : 0.95031
+
+*******************************************************************************
+Transient iteration: 3        Time: 2        Time step: 1        CFL: 0       
+*******************************************************************************
+Temperature statistics on fluid : 
+	     Min : 76.5036
+	     Max : 81.1492
+	 Average : 79.8468
+	 Std-Dev : 0.897986
+
+*******************************************************************************
+Transient iteration: 4        Time: 3        Time step: 1        CFL: 0       
+*******************************************************************************
+Temperature statistics on fluid : 
+	     Min : 70.3221
+	     Max : 79.9482
+	 Average : 76.9288
+	 Std-Dev : 2.18037
+
+*******************************************************************************
+Transient iteration: 5        Time: 4        Time step: 1        CFL: 0       
+*******************************************************************************
+Temperature statistics on fluid : 
+	     Min : 66.5185
+	     Max : 79.9191
+	 Average : 75.5495
+	 Std-Dev : 3.05313
