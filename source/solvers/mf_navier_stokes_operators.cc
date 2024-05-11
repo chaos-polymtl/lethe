@@ -136,15 +136,15 @@ NavierStokesOperatorBase<dim, number>::NavierStokesOperatorBase()
 
 template <int dim, typename number>
 NavierStokesOperatorBase<dim, number>::NavierStokesOperatorBase(
-  const Mapping<dim>                &mapping,
-  const DoFHandler<dim>             &dof_handler,
-  const AffineConstraints<number>   &constraints,
-  const Quadrature<dim>             &quadrature,
-  const Function<dim>               *forcing_function,
-  const double                       kinematic_viscosity,
-  const StabilizationType            stabilization,
-  const unsigned int                 mg_level,
-  std::shared_ptr<SimulationControl> simulation_control)
+  const Mapping<dim>                  &mapping,
+  const DoFHandler<dim>               &dof_handler,
+  const AffineConstraints<number>     &constraints,
+  const Quadrature<dim>               &quadrature,
+  const std::shared_ptr<Function<dim>> forcing_function,
+  const double                         kinematic_viscosity,
+  const StabilizationType              stabilization,
+  const unsigned int                   mg_level,
+  std::shared_ptr<SimulationControl>   simulation_control)
   : pcout(std::cout, Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0)
   , timer(this->pcout, TimerOutput::never, TimerOutput::wall_times)
 {
@@ -162,15 +162,15 @@ NavierStokesOperatorBase<dim, number>::NavierStokesOperatorBase(
 template <int dim, typename number>
 void
 NavierStokesOperatorBase<dim, number>::reinit(
-  const Mapping<dim>                &mapping,
-  const DoFHandler<dim>             &dof_handler,
-  const AffineConstraints<number>   &constraints,
-  const Quadrature<dim>             &quadrature,
-  const Function<dim>               *forcing_function,
-  const double                       kinematic_viscosity,
-  const StabilizationType            stabilization,
-  const unsigned int                 mg_level,
-  std::shared_ptr<SimulationControl> simulation_control)
+  const Mapping<dim>                  &mapping,
+  const DoFHandler<dim>               &dof_handler,
+  const AffineConstraints<number>     &constraints,
+  const Quadrature<dim>               &quadrature,
+  const std::shared_ptr<Function<dim>> forcing_function,
+  const double                         kinematic_viscosity,
+  const StabilizationType              stabilization,
+  const unsigned int                   mg_level,
+  std::shared_ptr<SimulationControl>   simulation_control)
 {
   this->system_matrix.clear();
   this->constraints.copy_from(constraints);
@@ -813,13 +813,17 @@ NavierStokesStabilizedOperator<dim, number>::do_cell_integral_local(
 
   for (const auto q : integrator.quadrature_point_indices())
     {
-      // Evaluate source term function
       Tensor<1, dim, VectorizedArray<number>> source_value;
-      Point<dim, VectorizedArray<number>>     point_batch =
-        integrator.quadrature_point(q);
-      source_value =
-        evaluate_function<dim, number, dim>(*(this->forcing_function),
-                                            point_batch);
+
+      // Evaluate source term function if enabled
+      if (this->forcing_function)
+        {
+          Point<dim, VectorizedArray<number>> point_batch =
+            integrator.quadrature_point(q);
+          source_value =
+            evaluate_function<dim, number, dim>(*(this->forcing_function),
+                                                point_batch);
+        }
 
       // Add to source term the dynamic flow control force (zero if not enabled)
       source_value += this->beta_force;
@@ -1021,13 +1025,17 @@ NavierStokesStabilizedOperator<dim, number>::local_evaluate_residual(
 
       for (const auto q : integrator.quadrature_point_indices())
         {
-          // Evaluate source term function
           Tensor<1, dim, VectorizedArray<number>> source_value;
-          Point<dim, VectorizedArray<number>>     point_batch =
-            integrator.quadrature_point(q);
-          source_value =
-            evaluate_function<dim, number, dim>(*(this->forcing_function),
-                                                point_batch);
+
+          // Evaluate source term function if enabled
+          if (this->forcing_function)
+            {
+              Point<dim, VectorizedArray<number>> point_batch =
+                integrator.quadrature_point(q);
+              source_value =
+                evaluate_function<dim, number, dim>(*(this->forcing_function),
+                                                    point_batch);
+            }
 
           // Add to source term the dynamic flow control force (zero if not
           // enabled)
