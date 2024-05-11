@@ -50,14 +50,6 @@ subsection multiphysics
 end
 
 #---------------------------------------------------
-# Mesh Adaptation Control
-#---------------------------------------------------
-
-subsection mesh adaptation
-  set type = none
-end
-
-#---------------------------------------------------
 # Boundary Conditions
 #---------------------------------------------------
 
