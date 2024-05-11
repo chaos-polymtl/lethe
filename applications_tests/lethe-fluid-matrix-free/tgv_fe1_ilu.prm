@@ -122,7 +122,7 @@ end
 #---------------------------------------------------
 
 subsection source term
-  subsection xyz
+  subsection navier stokes
     set enable = false
   end
 end

@@ -160,7 +160,7 @@ end
 #---------------------------------------------------
 
 subsection source term
-  subsection xyz
+  subsection navier stokes
     set Function expression = 0 ; -10 ; 0
   end
 end

@@ -145,7 +145,7 @@ The ``source term`` subsection defines the gravitational acceleration:
     
     subsection source term
       set enable = true
-      subsection xyz
+      subsection navier stokes
         set Function expression = 0;-1.0; 0
       end
     end
