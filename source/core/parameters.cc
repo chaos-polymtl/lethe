@@ -2494,6 +2494,8 @@ namespace Parameters
         max_krylov_vectors       = prm.get_integer("max krylov vectors");
         enable_hessians_jacobian = prm.get_bool("enable hessians in jacobian");
         enable_hessians_residual = prm.get_bool("enable hessians in residual");
+        
+        Assert(enable_hessians_residual || !enable_hessians_jacobian);
 
         const std::string precond = prm.get("preconditioner");
         if (precond == "amg")
@@ -2533,6 +2535,7 @@ namespace Parameters
         mg_level_min_cells = prm.get_integer("mg level min cells");
         mg_enable_hessians_jacobian =
           prm.get_bool("mg enable hessians in jacobian");
+        Assert(enable_hessians_jacobian || !mg_enable_hessians_jacobian);
 
         mg_smoother_iterations     = prm.get_integer("mg smoother iterations");
         mg_smoother_relaxation     = prm.get_double("mg smoother relaxation");
