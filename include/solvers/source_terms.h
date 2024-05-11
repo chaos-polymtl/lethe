@@ -64,16 +64,19 @@ namespace SourceTerms
     virtual void
     parse_parameters(ParameterHandler &prm);
 
-    // Velocity-pressure components
+    /// Enable the Navier-Stokes source term
+    bool enable;
+
+    /// Velocity-pressure components
     std::shared_ptr<Functions::ParsedFunction<dim>> navier_stokes_source;
 
-    // Heat transfer source
+    /// Heat transfer source
     std::shared_ptr<Functions::ParsedFunction<dim>> heat_transfer_source;
 
-    // Tracer source
+    /// Tracer source
     std::shared_ptr<Functions::ParsedFunction<dim>> tracer_source;
 
-    // Cahn-Hilliard source
+    /// Cahn-Hilliard source
     std::shared_ptr<Functions::ParsedFunction<dim>> cahn_hilliard_source;
   };
 
@@ -84,6 +87,10 @@ namespace SourceTerms
     prm.enter_subsection("source term");
 
     prm.enter_subsection("xyz");
+    prm.declare_entry("enable",
+                      "true",
+                      Patterns::Bool(),
+                      "Enable the usage of a source term for the fluid solver");
     navier_stokes_source->declare_parameters(prm, dim + 1);
     prm.leave_subsection();
 
@@ -109,6 +116,7 @@ namespace SourceTerms
     prm.enter_subsection("source term");
 
     prm.enter_subsection("xyz");
+    enable = prm.get_bool("enable");
     navier_stokes_source->parse_parameters(prm);
     prm.leave_subsection();
 
