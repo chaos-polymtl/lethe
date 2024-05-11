@@ -1,0 +1,24 @@
+Running on 1 MPI rank(s)...
+   Number of active cells:       64
+   Number of degrees of freedom: 243
+   Volume of triangulation:      0.5
+   Number of thermal degrees of freedom: 289
+Temperature statistics on fluid : 
+	     Min : -6.98387
+	     Max : 54.9839
+	 Average : 1.66667
+	 Std-Dev : 10.1926
+
+*****************************
+Steady iteration:        1/1
+*****************************
+--------------
+Heat Transfer
+--------------
+  -Tolerance of iterative solver is : 9.00917e-05
+  -Iterative solver took : 16 steps to reach a residual norm of 4.55329e-05
+Temperature statistics on fluid : 
+	     Min : 45.9222
+	     Max : 79.7944
+	 Average : 68.7103
+	 Std-Dev : 7.72838
