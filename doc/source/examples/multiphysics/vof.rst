@@ -13,6 +13,7 @@ VOF
     rising-bubble/rising-bubble
     sloshing-in-rectangular-tank/sloshing-in-rectangular-tank
     capillary-wave/capillary-wave
+    rayleigh-plateau-instability/rayleigh-plateau-instability
     3d-dam-break/3d-dam-break
     water-injection-in-a-closed-cell/water-injection-in-a-closed-cell
     air-bubble-compression/air-bubble-compression
