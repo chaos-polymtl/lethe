@@ -8,11 +8,11 @@
 #include <dem/find_contact_detection_step.h>
 #include <dem/gear3_integrator.h>
 #include <dem/input_parameter_inspection.h>
+#include <dem/insertion_clear_and_add.h>
 #include <dem/insertion_file.h>
 #include <dem/insertion_list.h>
 #include <dem/insertion_plane.h>
 #include <dem/insertion_volume.h>
-#include <dem/particle_wall_nonlinear_force.h>
 #include <dem/post_processing.h>
 #include <dem/read_checkpoint.h>
 #include <dem/read_mesh.h>
@@ -950,19 +950,12 @@ std::shared_ptr<Insertion<dim>>
 DEMSolver<dim>::set_insertion_type(const DEMSolverParameters<dim> &parameters)
 {
   if (parameters.insertion_info.insertion_method ==
-      Parameters::Lagrangian::InsertionInfo::InsertionMethod::volume)
+      Parameters::Lagrangian::InsertionInfo::InsertionMethod::clear_and_add)
     {
-      insertion_object =
-        std::make_shared<InsertionVolume<dim>>(parameters,
-                                               maximum_particle_diameter,
-                                               distribution_object_container);
-    }
-  else if (parameters.insertion_info.insertion_method ==
-           Parameters::Lagrangian::InsertionInfo::InsertionMethod::list)
-    {
-      insertion_object =
-        std::make_shared<InsertionList<dim>>(parameters,
-                                             distribution_object_container);
+      insertion_object = std::make_shared<InsertionClearAndAdd<dim>>(
+        parameters,
+        triangulation,
+        distribution_object_container);
     }
   else if (parameters.insertion_info.insertion_method ==
            Parameters::Lagrangian::InsertionInfo::InsertionMethod::file)
@@ -972,12 +965,27 @@ DEMSolver<dim>::set_insertion_type(const DEMSolverParameters<dim> &parameters)
                                              distribution_object_container);
     }
   else if (parameters.insertion_info.insertion_method ==
+           Parameters::Lagrangian::InsertionInfo::InsertionMethod::list)
+    {
+      insertion_object =
+        std::make_shared<InsertionList<dim>>(parameters,
+                                             distribution_object_container);
+    }
+  else if (parameters.insertion_info.insertion_method ==
            Parameters::Lagrangian::InsertionInfo::InsertionMethod::plane)
     {
       insertion_object =
         std::make_shared<InsertionPlane<dim>>(parameters,
                                               triangulation,
                                               distribution_object_container);
+    }
+  else if (parameters.insertion_info.insertion_method ==
+           Parameters::Lagrangian::InsertionInfo::InsertionMethod::volume)
+    {
+      insertion_object =
+        std::make_shared<InsertionVolume<dim>>(parameters,
+                                               maximum_particle_diameter,
+                                               distribution_object_container);
     }
   else
     {

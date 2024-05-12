@@ -283,11 +283,12 @@ namespace Parameters
     {
       prm.enter_subsection("insertion info");
       {
-        prm.declare_entry("insertion method",
-                          "volume",
-                          Patterns::Selection("volume|list|file|plane"),
-                          "Choosing insertion method. "
-                          "Choices are <volume|list|plane>.");
+        prm.declare_entry(
+          "insertion method",
+          "volume",
+          Patterns::Selection("clear_and_add|file|plane|list|volume"),
+          "Choosing insertion method. "
+          "Choices are <clear_and_add|file|plane|list|volume>.");
         prm.declare_entry("inserted number of particles at each time step",
                           "1",
                           Patterns::Integer(),
@@ -296,28 +297,42 @@ namespace Parameters
                           "1",
                           Patterns::Integer(),
                           "Insertion frequency");
-        prm.declare_entry("insertion direction sequence",
-                          "0,1,2",
-                          Patterns::List(Patterns::Integer(), 2, 3),
-                          "First direction of particle insertion");
+
+        // Clear and Add :
         prm.declare_entry(
-          "insertion box points coordinates",
+          "list of input files",
+          "particles.input",
+          Patterns::List(Patterns::FileName()),
+          "List of files from which we load the particles using the clear_and_add method");
+        prm.declare_entry(
+          "clearing box points coordinates",
           "0. , 0. , 0. : 1. , 1. , 1.",
           Patterns::List(
             Patterns::List(Patterns::Double(), 2, 3, ","), 2, 2, ":"),
-          "Coordinates of two points (x1, y1, z1 : x2, y2, z2)");
-        prm.declare_entry("insertion distance threshold",
-                          "1",
-                          Patterns::Double(),
-                          "Distance threshold");
-        prm.declare_entry("insertion maximum offset",
-                          "1",
-                          Patterns::Double(),
-                          "Maximum position offset went insertion particles");
-        prm.declare_entry("insertion prn seed",
-                          "1",
-                          Patterns::Integer(),
-                          "Prn seed used to generate the position offsets");
+          "Coordinates of two points for the clearing box (x1, y1, z1 : x2, y2, z2)");
+
+        // File:
+        prm.declare_entry("insertion file name",
+                          "particles.input",
+                          Patterns::FileName(),
+                          "The file name from which we load the particles");
+
+        // Plane:
+        prm.declare_entry("insertion plane point",
+                          "0., 0., 0.",
+                          Patterns::List(Patterns::Double()),
+                          "Insertion plane point location");
+        prm.declare_entry("insertion plane normal vector",
+                          "1., 0., 0.",
+                          Patterns::List(Patterns::Double()),
+                          "Insertion plane normal vector");
+        prm.declare_entry(
+          "insertion plane threshold distance",
+          "0.",
+          Patterns::Double(),
+          "If all the vertices of a cell are closer or equal to this value, than this cell is in the plane");
+
+        // List:
         prm.declare_entry("list x",
                           "0",
                           Patterns::List(Patterns::Double()),
@@ -358,6 +373,30 @@ namespace Parameters
                           "-1.0",
                           Patterns::List(Patterns::Double()),
                           "List of diameters");
+        // Volume:
+        prm.declare_entry(
+          "insertion direction sequence",
+          "0,1,2",
+          Patterns::List(Patterns::Integer(), 2, 3),
+          "Direction of particle insertion for the volume insertion method");
+        prm.declare_entry(
+          "insertion box points coordinates",
+          "0. , 0. , 0. : 1. , 1. , 1.",
+          Patterns::List(
+            Patterns::List(Patterns::Double(), 2, 3, ","), 2, 2, ":"),
+          "Coordinates of two points for the insertion box (x1, y1, z1 : x2, y2, z2)");
+        prm.declare_entry("insertion distance threshold",
+                          "1",
+                          Patterns::Double(),
+                          "Distance threshold");
+        prm.declare_entry("insertion maximum offset",
+                          "1",
+                          Patterns::Double(),
+                          "Maximum position offset went insertion particles");
+        prm.declare_entry("insertion prn seed",
+                          "1",
+                          Patterns::Integer(),
+                          "Prn seed used to generate the position offsets");
         prm.declare_entry("initial velocity",
                           "0.0, 0.0, 0.0",
                           Patterns::List(Patterns::Double()),
@@ -366,23 +405,6 @@ namespace Parameters
                           "0.0, 0.0, 0.0",
                           Patterns::List(Patterns::Double()),
                           "Initial angular velocity (x, y, z)");
-        prm.declare_entry("insertion file name",
-                          "particles.input",
-                          Patterns::FileName(),
-                          "The file name from which we load the particles");
-        prm.declare_entry("insertion plane point",
-                          "0., 0., 0.",
-                          Patterns::List(Patterns::Double()),
-                          "Insertion plane point location");
-        prm.declare_entry("insertion plane normal vector",
-                          "1., 0., 0.",
-                          Patterns::List(Patterns::Double()),
-                          "Insertion plane normal vector");
-        prm.declare_entry(
-          "insertion plane threshold distance",
-          "0.",
-          Patterns::Double(),
-          "If all the vertices of a cell are closer or equal to this value, than this cell is in the plane");
       }
       prm.leave_subsection();
     }
@@ -393,14 +415,16 @@ namespace Parameters
       prm.enter_subsection("insertion info");
       {
         const std::string insertion = prm.get("insertion method");
-        if (insertion == "volume")
-          insertion_method = InsertionMethod::volume;
-        else if (insertion == "list")
-          insertion_method = InsertionMethod::list;
+        if (insertion == "clear_and_add")
+          insertion_method = InsertionMethod::clear_and_add;
         else if (insertion == "file")
           insertion_method = InsertionMethod::file;
         else if (insertion == "plane")
           insertion_method = InsertionMethod::plane;
+        else if (insertion == "list")
+          insertion_method = InsertionMethod::list;
+        else if (insertion == "volume")
+          insertion_method = InsertionMethod::volume;
         else
           {
             throw(std::runtime_error("Invalid insertion method "));
@@ -409,44 +433,48 @@ namespace Parameters
           prm.get_integer("inserted number of particles at each time step");
         insertion_frequency = prm.get_integer("insertion frequency");
 
-        std::vector<int> axis_order =
-          convert_string_to_vector<int>(prm, "insertion direction sequence");
-        if (axis_order.size() == 2)
-          axis_order.resize(3);
-
-        direction_sequence.reserve(3);
-        direction_sequence.push_back(axis_order[0]);
-        direction_sequence.push_back(axis_order[1]);
-        direction_sequence.push_back(axis_order[2]);
-
-        const std::vector<std::string> point_coordinates_list(
+        // Clear and add:
+        const std::vector<std::string> clearing_box_point_coordinates_list(
           Utilities::split_string_list(
-            prm.get("insertion box points coordinates"), ":"));
+            prm.get("clearing box points coordinates"), ":"));
 
-        std::vector<double> point_coord_temp_1 = Utilities::string_to_double(
-          Utilities::split_string_list(point_coordinates_list.at(0)));
-        std::vector<double> point_coord_temp_2 = Utilities::string_to_double(
-          Utilities::split_string_list(point_coordinates_list.at(1)));
+        std::vector<double> clearing_point_coord_temp_1 =
+          Utilities::string_to_double(Utilities::split_string_list(
+            clearing_box_point_coordinates_list.at(0)));
+        std::vector<double> clearing_point_coord_temp_2 =
+          Utilities::string_to_double(Utilities::split_string_list(
+            clearing_box_point_coordinates_list.at(1)));
 
-        if (point_coord_temp_1.size() == 2 && point_coord_temp_2.size() == 2)
+        if (clearing_point_coord_temp_1.size() == 2 &&
+            clearing_point_coord_temp_2.size() == 2)
           {
-            point_coord_temp_1.resize(3);
-            point_coord_temp_2.resize(3);
-          }
-        for (int i = 0; i < 3; ++i)
-          {
-            insertion_box_point_1[i] = point_coord_temp_1.at(i);
-            insertion_box_point_2[i] = point_coord_temp_2.at(i);
+            clearing_point_coord_temp_1.resize(3);
+            clearing_point_coord_temp_2.resize(3);
           }
 
-        distance_threshold = prm.get_double("insertion distance threshold");
-        insertion_maximum_offset = prm.get_double("insertion maximum offset");
-        seed_for_insertion       = prm.get_integer("insertion prn seed");
+        for (unsigned int i = 0; i < 3; ++i)
+          {
+            clear_box_point_1[i] = clearing_point_coord_temp_1.at(i);
+            clear_box_point_1[i] = clearing_point_coord_temp_2.at(i);
+          }
 
-        initial_vel = entry_string_to_tensor3(prm, "initial velocity");
-        initial_omega =
-          entry_string_to_tensor3(prm, "initial angular velocity");
+        list_of_input_files =
+          convert_string_to_vector<std::string>(prm, "list of input files");
 
+        //// File:
+        // File for the insertion
+        insertion_particles_file_name = prm.get("insertion file name");
+
+        //// Plane:
+        // Insertion plane normal vector
+        insertion_plane_normal_vector =
+          entry_string_to_tensor3(prm, "insertion plane normal vector");
+
+        // Insertion plane point
+        insertion_plane_point =
+          entry_string_to_tensor3(prm, "insertion plane point");
+
+        //// List:
         // Read x, y and z lists
         list_x = convert_string_to_vector<double>(prm, "list x");
         list_y = convert_string_to_vector<double>(prm, "list y");
@@ -490,16 +518,44 @@ namespace Parameters
         // Read the diameters list
         list_d = convert_string_to_vector<double>(prm, "list diameters");
 
-        // File for the insertion
-        insertion_particles_file_name = prm.get("insertion file name");
+        //// Volume:
+        std::vector<int> axis_order =
+          convert_string_to_vector<int>(prm, "insertion direction sequence");
+        if (axis_order.size() == 2)
+          axis_order.resize(3);
 
-        // Insertion plane normal vector
-        insertion_plane_normal_vector =
-          entry_string_to_tensor3(prm, "insertion plane normal vector");
+        direction_sequence.reserve(3);
+        direction_sequence.push_back(axis_order[0]);
+        direction_sequence.push_back(axis_order[1]);
+        direction_sequence.push_back(axis_order[2]);
 
-        // Insertion plane point
-        insertion_plane_point =
-          entry_string_to_tensor3(prm, "insertion plane point");
+        const std::vector<std::string> point_coordinates_list(
+          Utilities::split_string_list(
+            prm.get("insertion box points coordinates"), ":"));
+
+        std::vector<double> point_coord_temp_1 = Utilities::string_to_double(
+          Utilities::split_string_list(point_coordinates_list.at(0)));
+        std::vector<double> point_coord_temp_2 = Utilities::string_to_double(
+          Utilities::split_string_list(point_coordinates_list.at(1)));
+
+        if (point_coord_temp_1.size() == 2 && point_coord_temp_2.size() == 2)
+          {
+            point_coord_temp_1.resize(3);
+            point_coord_temp_2.resize(3);
+          }
+        for (int i = 0; i < 3; ++i)
+          {
+            insertion_box_point_1[i] = point_coord_temp_1.at(i);
+            insertion_box_point_2[i] = point_coord_temp_2.at(i);
+          }
+
+        distance_threshold = prm.get_double("insertion distance threshold");
+        insertion_maximum_offset = prm.get_double("insertion maximum offset");
+        seed_for_insertion       = prm.get_integer("insertion prn seed");
+
+        initial_vel = entry_string_to_tensor3(prm, "initial velocity");
+        initial_omega =
+          entry_string_to_tensor3(prm, "initial angular velocity");
       }
       prm.leave_subsection();
     }
