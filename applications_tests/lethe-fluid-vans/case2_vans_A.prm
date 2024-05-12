@@ -113,7 +113,7 @@ end
 #---------------------------------------------------
 
 subsection source term
-  subsection navier stokes
+  subsection fluid dynamics
     set Function expression = 1.0*pi*(2.0*pi*exp(sin(pi*x)*sin(pi*y) + 1)*sin(pi*x)^2*sin(pi*y)^2 - 1.0*pi*exp(sin(pi*x)*sin(pi*y) + 1)*sin(pi*x)^2 + 2.0*pi*exp(sin(pi*x)*sin(pi*y) + 1)*sin(pi*x)*sin(pi*y) - 1.0*pi*exp(sin(pi*x)*sin(pi*y) + 1)*sin(pi*y)^2 + 1.0*exp(2*sin(pi*x)*sin(pi*y))*sin(pi*(x + y)) + 0.5*exp(2)*sin(pi*y)*cos(pi*x))*exp(-2)  ;  1.0*pi*(2.0*pi*exp(sin(pi*x)*sin(pi*y) + 1)*sin(pi*x)^2*sin(pi*y)^2 - 1.0*pi*exp(sin(pi*x)*sin(pi*y) + 1)*sin(pi*x)^2 + 2.0*pi*exp(sin(pi*x)*sin(pi*y) + 1)*sin(pi*x)*sin(pi*y) - 1.0*pi*exp(sin(pi*x)*sin(pi*y) + 1)*sin(pi*y)^2 + 1.0*exp(2*sin(pi*x)*sin(pi*y))*sin(pi*(x + y)) + 0.5*exp(2)*sin(pi*x)*cos(pi*y))*exp(-2)  ;  0
   end
 end

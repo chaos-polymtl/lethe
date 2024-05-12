@@ -150,7 +150,7 @@ The ``source term`` subsection is used to enable the gravitational acceleration 
 
   subsection source term
     set enable = true
-    subsection navier stokes
+    subsection fluid dynamics
       set Function expression = 0 ; -1 ; 0
     end
   end

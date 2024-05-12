@@ -84,7 +84,7 @@ end
 #---------------------------------------------------
 
 subsection source term
-  subsection navier stokes
+  subsection fluid dynamics
     set enable = false
   end
 end

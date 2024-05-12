@@ -181,7 +181,7 @@ end
 #---------------------------------------------------
 
 subsection source term
-  subsection navier stokes
+  subsection fluid dynamics
     set Function expression = 2*x*x*y-2; 2*x*y*y-2 ; 0
   end
 

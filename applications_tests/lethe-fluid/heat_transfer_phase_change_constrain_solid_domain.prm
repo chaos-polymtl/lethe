@@ -38,7 +38,7 @@ end
 #---------------------------------------------------
 
 subsection source term
-  subsection navier stokes
+  subsection fluid dynamics
     set Function expression = 5 ; 0 ; 0
   end
 end
