@@ -49,7 +49,7 @@ The mesh is a cylinder generated using the deal.II grid generator.
 Insertion Info
 ~~~~~~~~~~~~~~~~~~~
 
-An insertion plane is defined just bellow the bunny drill. The insertion plane is a useful mechanism to insert particles in a simulation in which the available volume is limited. To ensure a more rapid insertion, we also give an initial velocity to the particles.
+An insertion plane is defined just below the bunny drill. The insertion plane is a useful mechanism to insert particles in a simulation in which the available volume is limited for rectangular box insertion. To ensure a more rapid insertion, we also give an initial velocity to the particles.
 
 .. code-block:: text
 
@@ -134,7 +134,7 @@ The time end of the simulation is 4.75 seconds after which the bunny has done on
 Solid Objects (Drilling)
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The bunny is defined using the solid objects feature of Lethe. The surface mesh of the bunny is a GMSH file. The translational of the velocity is defined to have a periodic motion along the axis of the cylinder and the bunny is rotating at a constant angular velocity once the particles have been loaded (:math:`t>2\text{s}`) . This complex drilling motion is fully parametrized from the input file using the function parser functionalities of the translational and the angular velocity of the solid object.
+The bunny is defined using the solid objects feature of Lethe. The surface mesh of the bunny is a GMSH file. The translational velocity is defined to have a periodic motion along the axis of the cylinder and the bunny is rotating at a constant angular velocity once the particles have been loaded (:math:`t>2\text{s}`) . This complex drilling motion is fully parametrized from the input file using the function parser of the translational and the angular velocity of the solid object.
 
 .. code-block:: text
 
