@@ -105,7 +105,7 @@ subsection solid objects
       set initial translation    = 0.05, 0, 0.035
     end
     subsection translational velocity
-      set Function expression = -0.27*sin(0.8*3.1416*(t-2)) ; 0 ; 0
+      set Function expression = if (t>2,-0.27*sin(0.8*3.1416*(t-2)),0) ; 0 ; 0
     end
     subsection angular velocity
       set Function expression = 31.42 ; 0 ; 0
