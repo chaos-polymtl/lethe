@@ -7,12 +7,12 @@ template <int dim>
 ParticleParticleFineSearch<dim>::ParticleParticleFineSearch()
 {}
 
-//TODO PUT CONST
+// TODO PUT CONST
 template <int dim>
 void
 ParticleParticleFineSearch<dim>::particle_particle_fine_search(
   const typename DEM::dem_data_structures<dim>::particle_index_iterator_map
-     &particle_container,
+    &particle_container,
   typename DEM::dem_data_structures<dim>::adjacent_particle_pairs
     &adjacent_particles,
   const typename DEM::dem_data_structures<dim>::particle_particle_candidates
@@ -76,7 +76,7 @@ ParticleParticleFineSearch<dim>::particle_particle_fine_search(
       for (const types::particle_index &particle_two_id :
            second_particle_container)
         {
-          auto               particle_two = particle_container.at(particle_two_id);
+          auto particle_two = particle_container.at(particle_two_id);
           Point<dim, double> particle_two_location =
             particle_two->get_location() - periodic_offset;
 

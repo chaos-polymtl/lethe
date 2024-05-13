@@ -17,7 +17,8 @@ update_particle_container(
        particle_iterator != particle_handler->end();
        ++particle_iterator)
     {
-      particle_container.emplace(particle_iterator->get_id(), particle_iterator);
+      particle_container.emplace(particle_iterator->get_id(),
+                                 particle_iterator);
     }
 
   // Update the local particle container with ghost particles
@@ -25,7 +26,8 @@ update_particle_container(
        particle_iterator != particle_handler->end_ghost();
        ++particle_iterator)
     {
-      particle_container.emplace(particle_iterator->get_id(), particle_iterator);
+      particle_container.emplace(particle_iterator->get_id(),
+                                 particle_iterator);
     }
 }
 
@@ -61,17 +63,18 @@ update_contact_container_iterators(
           // Find if particle one is still a particle on this process
           auto particle_one_container = particle_container.find(particle_id);
 
-          // Particle one is not on this process anymore, remove the container and move on
+          // Particle one is not on this process anymore, remove the container
+          // and move on
           if (particle_one_container == particle_container.end())
             {
-              pairs_in_contact_iterator = pairs_in_contact.erase(pairs_in_contact_iterator);
+              pairs_in_contact_iterator =
+                pairs_in_contact.erase(pairs_in_contact_iterator);
               continue;
             }
 
           // Loop over all the other objects of contact_type in contact
           for (auto adjacent_map_iterator = adjacent_pairs_content->begin();
-               adjacent_map_iterator != adjacent_pairs_content->end();
-               )
+               adjacent_map_iterator != adjacent_pairs_content->end();)
             {
               if constexpr (contact_type ==
                               ContactType::local_particle_particle ||
@@ -88,16 +91,20 @@ update_contact_container_iterators(
                   unsigned int particle_two_id = adjacent_map_iterator->first;
 
                   // Find if particle two is still a particle on this process
-                  auto particle_two_container = particle_container.find(particle_two_id);
+                  auto particle_two_container =
+                    particle_container.find(particle_two_id);
 
-                  // Particle two is not on this process anymore, remove the container and move on
+                  // Particle two is not on this process anymore, remove the
+                  // container and move on
                   if (particle_two_container == particle_container.end())
                     {
-                      adjacent_map_iterator = adjacent_pairs_content->erase(adjacent_map_iterator);
+                      adjacent_map_iterator =
+                        adjacent_pairs_content->erase(adjacent_map_iterator);
                       continue;
                     }
 
-                  // Both particles are still on this process, update their iterators
+                  // Both particles are still on this process, update their
+                  // iterators
                   adjacent_map_iterator->second.particle_one =
                     particle_one_container->second;
                   adjacent_map_iterator->second.particle_two =
@@ -151,10 +158,12 @@ update_contact_container_iterators(
           // Find if particle one is still a particle on this process
           auto particle_one_container = particle_container.find(particle_id);
 
-          // Particle one is not on this process anymore, remove the container and move on
+          // Particle one is not on this process anymore, remove the container
+          // and move on
           if (particle_one_container == particle_container.end())
             {
-              pairs_in_contact_iterator = pairs_in_contact.erase(pairs_in_contact_iterator);
+              pairs_in_contact_iterator =
+                pairs_in_contact.erase(pairs_in_contact_iterator);
               continue;
             }
 

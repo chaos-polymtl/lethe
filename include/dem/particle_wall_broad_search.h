@@ -158,7 +158,7 @@ public:
       &particle_floating_mesh_contact_candidates,
     typename DEM::dem_data_structures<dim>::cells_total_neighbor_list
                                       &cells_total_neighbor_list,
-    const AdaptiveSparseContacts<dim> &sparse_contacts_object)
+    const AdaptiveSparseContacts<dim> &sparse_contacts_object);
 
 private:
   /**
