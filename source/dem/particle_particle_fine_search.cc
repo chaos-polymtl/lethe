@@ -88,7 +88,7 @@ ParticleParticleFineSearch<dim>::particle_particle_fine_search(
             {
               // Getting the particle one contact list and particle two id
               auto particle_one_contact_list =
-                &adjacent_particles[particle_one_id];
+                &adjacent_particles.at(particle_one_id);
 
               particle_one_contact_list->emplace(
                 particle_two_id,
