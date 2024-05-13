@@ -53,10 +53,10 @@ ParticleParticleBroadSearch<dim>::find_particle_particle_contact_pairs(
                particle_in_main_cell != particles_in_main_cell.end();
                ++particle_in_main_cell)
             {
-              store_candidates(particle_in_main_cell->get_id(),
-                               std::next(particle_in_main_cell, 1),
-                               particles_in_main_cell,
-                               local_contact_pair_candidates);
+              store_candidates(
+                std::next(particle_in_main_cell, 1),
+                particles_in_main_cell,
+                local_contact_pair_candidates[particle_in_main_cell->get_id()]);
             }
 
           // Going through neighbor cells of the main cell
@@ -75,10 +75,10 @@ ParticleParticleBroadSearch<dim>::find_particle_particle_contact_pairs(
                    particle_in_main_cell != particles_in_main_cell.end();
                    ++particle_in_main_cell)
                 {
-                  store_candidates(particle_in_main_cell->get_id(),
-                                   particles_in_neighbor_cell.begin(),
+                  store_candidates(particles_in_neighbor_cell.begin(),
                                    particles_in_neighbor_cell,
-                                   local_contact_pair_candidates);
+                                   local_contact_pair_candidates
+                                     [particle_in_main_cell->get_id()]);
                 }
             }
         }
@@ -122,10 +122,10 @@ ParticleParticleBroadSearch<dim>::find_particle_particle_contact_pairs(
                    particle_in_main_cell != particles_in_main_cell.end();
                    ++particle_in_main_cell)
                 {
-                  store_candidates(particle_in_main_cell->get_id(),
-                                   particles_in_neighbor_cell.begin(),
+                  store_candidates(particles_in_neighbor_cell.begin(),
                                    particles_in_neighbor_cell,
-                                   ghost_contact_pair_candidates);
+                                   ghost_contact_pair_candidates
+                                     [particle_in_main_cell->get_id()]);
                 }
             }
         }
@@ -189,10 +189,10 @@ ParticleParticleBroadSearch<dim>::find_particle_particle_contact_pairs(
                particle_in_main_cell != particles_in_main_cell.end();
                ++particle_in_main_cell)
             {
-              store_candidates(particle_in_main_cell->get_id(),
-                               std::next(particle_in_main_cell, 1),
-                               particles_in_main_cell,
-                               local_contact_pair_candidates);
+              store_candidates(
+                std::next(particle_in_main_cell, 1),
+                particles_in_main_cell,
+                local_contact_pair_candidates[particle_in_main_cell->get_id()]);
             }
         }
 
@@ -229,10 +229,10 @@ ParticleParticleBroadSearch<dim>::find_particle_particle_contact_pairs(
                particle_in_main_cell != particles_in_main_cell.end();
                ++particle_in_main_cell)
             {
-              store_candidates(particle_in_main_cell->get_id(),
-                               particles_in_neighbor_cell.begin(),
-                               particles_in_neighbor_cell,
-                               local_contact_pair_candidates);
+              store_candidates(
+                particles_in_neighbor_cell.begin(),
+                particles_in_neighbor_cell,
+                local_contact_pair_candidates[particle_in_main_cell->get_id()]);
             }
         }
     }
@@ -298,10 +298,10 @@ ParticleParticleBroadSearch<dim>::find_particle_particle_contact_pairs(
                particle_in_main_cell != particles_in_main_cell.end();
                ++particle_in_main_cell)
             {
-              store_candidates(particle_in_main_cell->get_id(),
-                               particles_in_neighbor_cell.begin(),
-                               particles_in_neighbor_cell,
-                               ghost_contact_pair_candidates);
+              store_candidates(
+                particles_in_neighbor_cell.begin(),
+                particles_in_neighbor_cell,
+                ghost_contact_pair_candidates[particle_in_main_cell->get_id()]);
             }
         }
     }
@@ -373,10 +373,10 @@ ParticleParticleBroadSearch<dim>::find_particle_particle_periodic_contact_pairs(
                    particle_in_main_cell != particles_in_main_cell.end();
                    ++particle_in_main_cell)
                 {
-                  store_candidates(particle_in_main_cell->get_id(),
-                                   particles_in_periodic_neighbor_cell.begin(),
+                  store_candidates(particles_in_periodic_neighbor_cell.begin(),
                                    particles_in_periodic_neighbor_cell,
-                                   local_contact_pair_periodic_candidates);
+                                   local_contact_pair_periodic_candidates
+                                     [particle_in_main_cell->get_id()]);
                 }
             }
         }
@@ -425,10 +425,10 @@ ParticleParticleBroadSearch<dim>::find_particle_particle_periodic_contact_pairs(
                    particle_in_main_cell != particles_in_main_cell.end();
                    ++particle_in_main_cell)
                 {
-                  store_candidates(particle_in_main_cell->get_id(),
-                                   particles_in_periodic_neighbor_cell.begin(),
+                  store_candidates(particles_in_periodic_neighbor_cell.begin(),
                                    particles_in_periodic_neighbor_cell,
-                                   ghost_contact_pair_periodic_candidates);
+                                   ghost_contact_pair_periodic_candidates
+                                     [particle_in_main_cell->get_id()]);
                 }
             }
         }
@@ -474,11 +474,10 @@ ParticleParticleBroadSearch<dim>::find_particle_particle_periodic_contact_pairs(
                    particle_in_main_cell != particles_in_main_cell.end();
                    ++particle_in_main_cell)
                 {
-                  store_candidates(
-                    particle_in_main_cell->get_id(),
-                    particles_in_periodic_neighbor_cell.begin(),
-                    particles_in_periodic_neighbor_cell,
-                    ghost_local_contact_pair_periodic_candidates);
+                  store_candidates(particles_in_periodic_neighbor_cell.begin(),
+                                   particles_in_periodic_neighbor_cell,
+                                   ghost_local_contact_pair_periodic_candidates
+                                     [particle_in_main_cell->get_id()]);
                 }
             }
         }
@@ -571,10 +570,10 @@ ParticleParticleBroadSearch<dim>::find_particle_particle_periodic_contact_pairs(
                particle_in_main_cell != particles_in_main_cell.end();
                ++particle_in_main_cell)
             {
-              store_candidates(particle_in_main_cell->get_id(),
-                               particles_in_periodic_neighbor_cell.begin(),
+              store_candidates(particles_in_periodic_neighbor_cell.begin(),
                                particles_in_periodic_neighbor_cell,
-                               local_contact_pair_periodic_candidates);
+                               local_contact_pair_periodic_candidates
+                                 [particle_in_main_cell->get_id()]);
             }
         }
     }
@@ -642,10 +641,10 @@ ParticleParticleBroadSearch<dim>::find_particle_particle_periodic_contact_pairs(
                particle_in_main_cell != particles_in_main_cell.end();
                ++particle_in_main_cell)
             {
-              store_candidates(particle_in_main_cell->get_id(),
-                               particles_in_periodic_neighbor_cell.begin(),
+              store_candidates(particles_in_periodic_neighbor_cell.begin(),
                                particles_in_periodic_neighbor_cell,
-                               ghost_contact_pair_periodic_candidates);
+                               ghost_contact_pair_periodic_candidates
+                                 [particle_in_main_cell->get_id()]);
             }
         }
     }
@@ -710,10 +709,10 @@ ParticleParticleBroadSearch<dim>::find_particle_particle_periodic_contact_pairs(
                particle_in_main_cell != particles_in_main_cell.end();
                ++particle_in_main_cell)
             {
-              store_candidates(particle_in_main_cell->get_id(),
-                               particles_in_periodic_neighbor_cell.begin(),
+              store_candidates(particles_in_periodic_neighbor_cell.begin(),
                                particles_in_periodic_neighbor_cell,
-                               ghost_local_contact_pair_periodic_candidates);
+                               ghost_local_contact_pair_periodic_candidates
+                                 [particle_in_main_cell->get_id()]);
             }
         }
     }
