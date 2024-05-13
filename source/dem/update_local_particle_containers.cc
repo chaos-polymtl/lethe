@@ -60,7 +60,7 @@ update_contact_container_iterators(
           // Get current particle id
           unsigned int particle_id = pairs_in_contact_iterator->first;
 
-          // Find if particle one is still a particle on this process
+          // Find if particle one is still on this process
           auto particle_one_container = particle_container.find(particle_id);
 
           // Particle one is not on this process anymore, remove the container
