@@ -1,6 +1,6 @@
-=============================
-Discrete Element Method (DEM)
-=============================
+====================================
+Discrete Element Method (DEM) Theory
+====================================
 
 In this guide, we summarize the theory behind DEM. For further details, we refer the reader to the article by Golshan *et al.* `[1] <https://doi.org/10.1007/s40571-022-00478-6>`_
 

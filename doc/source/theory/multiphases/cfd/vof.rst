@@ -92,7 +92,7 @@ The numerical resolution of the advection equation requires stabilization becaus
   &\quad + \sum_k \int_{\Omega_k}\tau_\mathrm{SUPG} u_i\partial_i v^h\left(\partial_t \phi^h + \phi^h\partial_i u_i + u_i\partial_i\phi^h \right) d \Omega_k \\
   &\qquad + \sum_k \int_{\Omega_k}v_\mathrm{DCDD}f_\mathrm{DCDD} \partial_i v^h \partial_i \phi^h  d \Omega_k  = 0
 
-where the first element wise summation represents the SUPG stabilization term and the second is the shock capturing scheme. The same SUPG stabilization as in the Navier-Stokes finite element formulation is used (see :doc:`../fluid_dynamics/stabilization`). The terms of the DCDD scheme are:
+where the first element wise summation represents the SUPG stabilization term and the second is the shock capturing scheme. The same SUPG stabilization as in the Navier-Stokes finite element formulation is used (see :doc:`../../multiphysics/fluid_dynamics/stabilization`). The terms of the DCDD scheme are:
 
 .. math::
 
