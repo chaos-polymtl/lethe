@@ -44,6 +44,24 @@
 
 #include <deal.II/numerics/vector_tools.h>
 
+/**
+ * @brief Helper function that allows to conver from dealii vectors to trilinos vectors.
+ *
+ * @tparam number Abstract type for number across the class (i.e., double).
+ * @param out Destination TrilinosWrappers::MPI::Vector vector.
+ * @param in Source LinearAlgebra::distributed::Vector<number> vector.
+ */
+template <typename number>
+void
+convert_dealii_to_trilinos(TrilinosWrappers::MPI::Vector &out,
+                           const LinearAlgebra::distributed::Vector<number> &in)
+{
+  LinearAlgebra::ReadWriteVector<double> rwv(out.locally_owned_elements());
+  rwv.import_elements(in, VectorOperation::insert);
+  out.import_elements(rwv, VectorOperation::insert);
+}
+
+
 namespace dealii
 {
   /**
@@ -1472,6 +1490,7 @@ MFNavierStokesSolver<dim>::solve()
           this->simulation_parameters.boundary_conditions.time_dependent)
         {
           update_boundary_conditions();
+          this->multiphysics->update_boundary_conditions();
         }
 
       this->simulation_control->print_progression(this->pcout);
@@ -1601,6 +1620,10 @@ MFNavierStokesSolver<dim>::setup_dofs_fd()
         this->fe->n_dofs_per_vertex(),
         this->mpi_communicator);
 
+      this->multiphysics_average_velocities.reinit(this->locally_owned_dofs,
+                                                   this->locally_relevant_dofs,
+                                                   this->mpi_communicator);
+
       if (this->simulation_parameters.restart_parameters.checkpoint)
         {
           this->average_velocities->initialize_checkpoint_vectors(
@@ -1619,6 +1642,36 @@ MFNavierStokesSolver<dim>::setup_dofs_fd()
               << this->dof_handler.n_dofs() << std::endl;
   this->pcout << "   Volume of triangulation:      " << global_volume
               << std::endl;
+
+  // Provide the fluid dynamics dof_handler and present solution to the
+  // multiphysics interface
+  this->multiphysics->set_dof_handler(PhysicsID::fluid_dynamics,
+                                      &this->dof_handler);
+
+  this->multiphysics_present_solution.reinit(this->locally_owned_dofs,
+                                             this->locally_relevant_dofs,
+                                             this->mpi_communicator);
+
+  convert_dealii_to_trilinos(multiphysics_present_solution,
+                             this->present_solution);
+
+  this->multiphysics->set_solution(PhysicsID::fluid_dynamics,
+                                   &(multiphysics_present_solution));
+
+  // Provide the fluid dynamics previous solutions to the multiphysics interface
+
+  // Pre-allocate memory for the previous solutions using the information
+  // of the BDF schemes
+  this->multiphysics_previous_solutions.resize(
+    maximum_number_of_previous_solutions());
+
+  for (auto &solution : this->multiphysics_previous_solutions)
+    solution.reinit(this->locally_owned_dofs,
+                    this->locally_relevant_dofs,
+                    this->mpi_communicator);
+
+  this->multiphysics->set_previous_solutions(
+    PhysicsID::fluid_dynamics, &this->multiphysics_previous_solutions);
 }
 
 template <int dim>
@@ -1913,11 +1966,15 @@ template <int dim>
 void
 MFNavierStokesSolver<dim>::update_multiphysics_time_average_solution()
 {
-  // AssertThrow(
-  //   false,
-  //   ExcMessage(
-  //     "The update multiphysics time average solution is not implemented
-  //     yet."));
+  if (this->simulation_parameters.post_processing.calculate_average_velocities)
+    {
+      convert_dealii_to_trilinos(
+        this->multiphysics_average_velocities,
+        this->average_velocities->get_average_velocities());
+
+      this->multiphysics->set_time_average_solution(
+        PhysicsID::fluid_dynamics, &this->multiphysics_average_velocities);
+    }
 }
 
 template <int dim>

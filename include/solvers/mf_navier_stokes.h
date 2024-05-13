@@ -451,6 +451,24 @@ protected:
    *
    */
   DoFHandler<dim> dof_handler_fe_q_iso_q1;
+
+  /**
+   * @brief Trilinos vector storing the average velocities that is provided to other physics.
+   *
+   */
+  TrilinosWrappers::MPI::Vector multiphysics_average_velocities;
+
+  /**
+   * @brief Trilinos vector storing the present solution that is provided to other physics.
+   *
+   */
+  TrilinosWrappers::MPI::Vector multiphysics_present_solution;
+
+  /**
+   * @brief Trilinos vector storing the previous solutions that are provided to other physics.
+   *
+   */
+  std::vector<TrilinosWrappers::MPI::Vector> multiphysics_previous_solutions;
 };
 
 #endif
