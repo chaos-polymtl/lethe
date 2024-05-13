@@ -90,7 +90,7 @@ update_contact_container_iterators(
                 {
                   unsigned int particle_two_id = adjacent_map_iterator->first;
 
-                  // Find if particle two is still a particle on this process
+                  // Find if particle two is still on this process
                   auto particle_two_container =
                     particle_container.find(particle_two_id);
 
