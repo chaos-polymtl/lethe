@@ -11,6 +11,7 @@ Features
 - Solvers: ``lethe-particles``
 - Floating walls
 - `GMSH <https://gmsh.info/>`_ grids
+- Insertion of particles from a plane
 
 ----------------------------
 Files Used in This Example
@@ -49,7 +50,7 @@ The mesh is a cylinder generated using the deal.II grid generator.
 Insertion Info
 ~~~~~~~~~~~~~~~~~~~
 
-An insertion plane is defined just below the bunny drill. The insertion plane is a useful mechanism to insert particles in a simulation in which the available volume is limited for rectangular box insertion. To ensure a more rapid insertion, we also give an initial velocity to the particles.
+An insertion plane is defined just below the bunny drill. The insertion plane is a useful mechanism to insert particles in a simulation in which the available volume is limited for rectangular box insertion. To ensure a more rapid insertion, we also give an initial velocity to the particles. We set ``insertion maximum offset = 0`` so that the particles inserted are all exactly on the insertion plane.
 
 .. code-block:: text
 
@@ -59,7 +60,7 @@ An insertion plane is defined just below the bunny drill. The insertion plane is
     set insertion frequency                            = 4000
     set insertion plane point                          = 0.025, 0, 0
     set insertion plane normal vector                  = -1, 0, 0
-    set insertion maximum offset                       = 0.00
+    set insertion maximum offset                       = 0
     set insertion prn seed                             = 19
     set initial velocity                               = -0.1, 0.0, 0.0
   end
