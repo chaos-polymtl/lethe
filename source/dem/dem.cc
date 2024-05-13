@@ -1319,6 +1319,28 @@ DEMSolver<dim>::solve()
       // Check to see if it is contact search step
       contact_detection_step = contact_detection_iteration_check_function();
 
+      bool floating_mesh_map_step = false;
+      // Check to see if floating meshes need to be mapped in background mesh
+      if (has_floating_mesh)
+        {
+          floating_mesh_map_step = find_floating_mesh_mapping_step(
+            smallest_floating_mesh_mapping_criterion, this->solids);
+
+          if (floating_mesh_map_step)
+            {
+
+              // Update floating mesh information in the container manager
+              for (unsigned int i_solid = 0; i_solid < solids.size(); ++i_solid)
+                {
+                  floating_mesh_info[i_solid] =
+                    solids[i_solid]->map_solid_in_background_triangulation(
+                      triangulation);
+                }
+            }
+        }
+
+      contact_detection_step = contact_detection_step || floating_mesh_map_step;
+
       // Sort particles in cells
       if (particles_insertion_step || load_balance_step ||
           contact_detection_step || checkpoint_step)
@@ -1354,23 +1376,7 @@ DEMSolver<dim>::solve()
           particle_handler.update_ghost_particles();
         }
 
-      // Check to see if floating meshes need to be mapped in background mesh
-      if (has_floating_mesh)
-        {
-          bool floating_mesh_map_step = find_floating_mesh_mapping_step(
-            smallest_floating_mesh_mapping_criterion, this->solids);
 
-          if (floating_mesh_map_step)
-            {
-              // Update floating mesh information in the container manager
-              for (unsigned int i_solid = 0; i_solid < solids.size(); ++i_solid)
-                {
-                  floating_mesh_info[i_solid] =
-                    solids[i_solid]->map_solid_in_background_triangulation(
-                      triangulation);
-                }
-            }
-        }
 
       // Modify particles contact containers by search sequence
       if (particles_insertion_step || load_balance_step ||

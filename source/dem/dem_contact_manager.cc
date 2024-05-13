@@ -294,6 +294,7 @@ DEMContactManager<dim>::execute_particle_wall_broad_search(
   // Particle-floating mesh broad search
   if (has_floating_mesh)
     {
+      std::cout << " Floating mesh broad search" << std::endl;
       particle_wall_broad_search_object.particle_floating_mesh_contact_search(
         floating_mesh_info,
         particle_handler,
