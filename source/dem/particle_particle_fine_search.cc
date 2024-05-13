@@ -7,7 +7,6 @@ template <int dim>
 ParticleParticleFineSearch<dim>::ParticleParticleFineSearch()
 {}
 
-// TODO PUT CONST
 template <int dim>
 void
 ParticleParticleFineSearch<dim>::particle_particle_fine_search(
