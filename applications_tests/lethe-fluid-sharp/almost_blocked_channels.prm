@@ -88,7 +88,7 @@ end
 #---------------------------------------------------
 
 subsection source term
-  subsection xyz
+  subsection fluid dynamics
     set Function expression = 0.01; 0; 0; 0
   end
 end
