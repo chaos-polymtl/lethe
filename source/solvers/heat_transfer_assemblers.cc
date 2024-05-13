@@ -409,8 +409,8 @@ HeatTransferAssemblerRobinBC<dim>::assemble_matrix(
                         h_function.value(scratch_data.quadrature_points[q]);
                       const double emissivity = emissivity_function.value(
                         scratch_data.quadrature_points[q]);
-                      Assert(emissivity <= 1.0 && emissivity >= 0.0,
-                             EmissivityError(emissivity));
+                      AssertThrow(emissivity <= 1.0 && emissivity >= 0.0,
+                                  EmissivityError(emissivity));
                       for (unsigned int i = 0; i < scratch_data.n_dofs; ++i)
                         {
                           const double phi_face_T_i =
@@ -490,8 +490,8 @@ HeatTransferAssemblerRobinBC<dim>::assemble_rhs(
                         T_inf_function.value(scratch_data.quadrature_points[q]);
                       const double emissivity = emissivity_function.value(
                         scratch_data.quadrature_points[q]);
-                      Assert(emissivity <= 1.0 && emissivity >= 0.0,
-                             EmissivityError(emissivity));
+                      AssertThrow(emissivity <= 1.0 && emissivity >= 0.0,
+                                  EmissivityError(emissivity));
                       const double heat_flux_bc = heat_flux_bc_function.value(
                         scratch_data.quadrature_points[q]);
                       for (unsigned int i = 0; i < scratch_data.n_dofs; ++i)
