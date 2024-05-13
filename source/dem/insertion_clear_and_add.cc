@@ -136,20 +136,17 @@ InsertionClearAndAdd<dim>::insert(
           // Check if this cell has particles
           auto particles_in_cell =
             particle_handler.particles_in_cell(cell_in_box);
-          std::cout<<__LINE__<<std::endl;
 
           if (!particles_in_cell.empty())
             {
-              std::cout<<__LINE__<<std::endl;
-
               // Loop over the particle in the cell
               for (auto particle_in_cell = particles_in_cell.begin();
                    particle_in_cell != particles_in_cell.end();
                    ++particle_in_cell)
                 {
-                  std::cout<<__LINE__<<std::endl;
                   // Since we know the cell is fully inside the box, we can
                   // delete every particles in it.
+
                   to_remove_iterators.push_back(particle_in_cell);
                 }
             }

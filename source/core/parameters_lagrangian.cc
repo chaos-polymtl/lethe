@@ -455,7 +455,7 @@ namespace Parameters
         for (unsigned int i = 0; i < 3; ++i)
           {
             clear_box_point_1[i] = clearing_point_coord_temp_1.at(i);
-            clear_box_point_1[i] = clearing_point_coord_temp_2.at(i);
+            clear_box_point_2[i] = clearing_point_coord_temp_2.at(i);
           }
 
         list_of_input_files =
