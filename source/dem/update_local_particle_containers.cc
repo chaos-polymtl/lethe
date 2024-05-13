@@ -17,7 +17,7 @@ update_particle_container(
        particle_iterator != particle_handler->end();
        ++particle_iterator)
     {
-      particle_container[particle_iterator->get_id()] = particle_iterator;
+      particle_container.emplace(particle_iterator->get_id(), particle_iterator);
     }
 
   // Update the local particle container with ghost particles
@@ -25,7 +25,7 @@ update_particle_container(
        particle_iterator != particle_handler->end_ghost();
        ++particle_iterator)
     {
-      particle_container[particle_iterator->get_id()] = particle_iterator;
+      particle_container.emplace(particle_iterator->get_id(), particle_iterator);
     }
 }
 
@@ -33,14 +33,13 @@ template <int dim, typename pairs_structure, ContactType contact_type>
 void
 update_contact_container_iterators(
   pairs_structure &pairs_in_contact,
-  typename DEM::dem_data_structures<dim>::particle_index_iterator_map
+  const typename DEM::dem_data_structures<dim>::particle_index_iterator_map
             &particle_container,
   const bool clear_contact_structures)
 {
   // Loop over particle-object (particle/wall/line/point) pairs in contact
   for (auto pairs_in_contact_iterator = pairs_in_contact.begin();
-       pairs_in_contact_iterator != pairs_in_contact.end();
-       ++pairs_in_contact_iterator)
+       pairs_in_contact_iterator != pairs_in_contact.end();)
     {
       // Get the adjacent objects content
       auto adjacent_pairs_content = &pairs_in_contact_iterator->second;
@@ -59,10 +58,20 @@ update_contact_container_iterators(
           // Get current particle id
           unsigned int particle_id = pairs_in_contact_iterator->first;
 
+          // Find if particle one is still a particle on this process
+          auto particle_one_container = particle_container.find(particle_id);
+
+          // Particle one is not on this process anymore, remove the container and move on
+          if (particle_one_container == particle_container.end())
+            {
+              pairs_in_contact_iterator = pairs_in_contact.erase(pairs_in_contact_iterator);
+              continue;
+            }
+
           // Loop over all the other objects of contact_type in contact
           for (auto adjacent_map_iterator = adjacent_pairs_content->begin();
                adjacent_map_iterator != adjacent_pairs_content->end();
-               ++adjacent_map_iterator)
+               )
             {
               if constexpr (contact_type ==
                               ContactType::local_particle_particle ||
@@ -76,19 +85,29 @@ update_contact_container_iterators(
                               ContactType::
                                 ghost_local_periodic_particle_particle)
                 {
-                  // For particle-particle contacts, iterators of both particles
-                  // must be updated
-                  adjacent_map_iterator->second.particle_one =
-                    particle_container[particle_id];
-
                   unsigned int particle_two_id = adjacent_map_iterator->first;
+
+                  // Find if particle two is still a particle on this process
+                  auto particle_two_container = particle_container.find(particle_two_id);
+
+                  // Particle two is not on this process anymore, remove the container and move on
+                  if (particle_two_container == particle_container.end())
+                    {
+                      adjacent_map_iterator = adjacent_pairs_content->erase(adjacent_map_iterator);
+                      continue;
+                    }
+
+                  // Both particles are still on this process, update their iterators
+                  adjacent_map_iterator->second.particle_one =
+                    particle_one_container->second;
                   adjacent_map_iterator->second.particle_two =
-                    particle_container[particle_two_id];
+                    particle_two_container->second;
 
                   if (clear_contact_structures)
                     {
                       adjacent_map_iterator->second.tangential_overlap.clear();
                     }
+                  ++adjacent_map_iterator;
                 }
 
               if constexpr (contact_type == ContactType::particle_wall ||
@@ -96,7 +115,8 @@ update_contact_container_iterators(
                 {
                   // Particle iterator is updated
                   adjacent_map_iterator->second.particle =
-                    particle_container[particle_id];
+                    particle_container.at(particle_id);
+                  ++adjacent_map_iterator;
                 }
             }
         }
@@ -112,7 +132,7 @@ update_contact_container_iterators(
 
               // Update the particle of the contact
               adjacent_map_iterator->second.particle =
-                particle_container[particle_id];
+                particle_container.at(particle_id);
 
               // Note : particle_floating_wall_from_mesh_in_contact is stored as
               // <cell iterator, <particle id, particle-wall info>> and
@@ -125,10 +145,24 @@ update_contact_container_iterators(
       if constexpr (contact_type == ContactType::particle_line ||
                     contact_type == ContactType::particle_point)
         {
+          // Get current particle id
+          unsigned int particle_id = pairs_in_contact_iterator->first;
+
+          // Find if particle one is still a particle on this process
+          auto particle_one_container = particle_container.find(particle_id);
+
+          // Particle one is not on this process anymore, remove the container and move on
+          if (particle_one_container == particle_container.end())
+            {
+              pairs_in_contact_iterator = pairs_in_contact.erase(pairs_in_contact_iterator);
+              continue;
+            }
+
           // Get current particle id and particle iterator is updated
-          unsigned int particle_id         = pairs_in_contact_iterator->first;
-          adjacent_pairs_content->particle = particle_container[particle_id];
+          adjacent_pairs_content->particle = particle_container.at(particle_id);
         }
+
+      ++pairs_in_contact_iterator;
     }
 }
 
@@ -153,7 +187,7 @@ update_contact_container_iterators<
   ContactType::local_particle_particle>(
   typename DEM::dem_data_structures<2>::adjacent_particle_pairs
     &pairs_in_contact,
-  typename DEM::dem_data_structures<2>::particle_index_iterator_map
+  const typename DEM::dem_data_structures<2>::particle_index_iterator_map
             &particle_container,
   const bool clear_contact_structures);
 
@@ -164,7 +198,7 @@ update_contact_container_iterators<
   ContactType::local_particle_particle>(
   typename DEM::dem_data_structures<3>::adjacent_particle_pairs
     &pairs_in_contact,
-  typename DEM::dem_data_structures<3>::particle_index_iterator_map
+  const typename DEM::dem_data_structures<3>::particle_index_iterator_map
             &particle_container,
   const bool clear_contact_structures);
 
@@ -176,7 +210,7 @@ update_contact_container_iterators<
   ContactType::ghost_particle_particle>(
   typename DEM::dem_data_structures<2>::adjacent_particle_pairs
     &pairs_in_contact,
-  typename DEM::dem_data_structures<2>::particle_index_iterator_map
+  const typename DEM::dem_data_structures<2>::particle_index_iterator_map
             &particle_container,
   const bool clear_contact_structures);
 
@@ -187,7 +221,7 @@ update_contact_container_iterators<
   ContactType::ghost_particle_particle>(
   typename DEM::dem_data_structures<3>::adjacent_particle_pairs
     &pairs_in_contact,
-  typename DEM::dem_data_structures<3>::particle_index_iterator_map
+  const typename DEM::dem_data_structures<3>::particle_index_iterator_map
             &particle_container,
   const bool clear_contact_structures);
 
@@ -199,7 +233,7 @@ update_contact_container_iterators<
   ContactType::local_periodic_particle_particle>(
   typename DEM::dem_data_structures<2>::adjacent_particle_pairs
     &pairs_in_contact,
-  typename DEM::dem_data_structures<2>::particle_index_iterator_map
+  const typename DEM::dem_data_structures<2>::particle_index_iterator_map
             &particle_container,
   const bool clear_contact_structures);
 
@@ -210,7 +244,7 @@ update_contact_container_iterators<
   ContactType::local_periodic_particle_particle>(
   typename DEM::dem_data_structures<3>::adjacent_particle_pairs
     &pairs_in_contact,
-  typename DEM::dem_data_structures<3>::particle_index_iterator_map
+  const typename DEM::dem_data_structures<3>::particle_index_iterator_map
             &particle_container,
   const bool clear_contact_structures);
 
@@ -222,7 +256,7 @@ update_contact_container_iterators<
   ContactType::ghost_periodic_particle_particle>(
   typename DEM::dem_data_structures<2>::adjacent_particle_pairs
     &pairs_in_contact,
-  typename DEM::dem_data_structures<2>::particle_index_iterator_map
+  const typename DEM::dem_data_structures<2>::particle_index_iterator_map
             &particle_container,
   const bool clear_contact_structures);
 
@@ -233,7 +267,7 @@ update_contact_container_iterators<
   ContactType::ghost_periodic_particle_particle>(
   typename DEM::dem_data_structures<3>::adjacent_particle_pairs
     &pairs_in_contact,
-  typename DEM::dem_data_structures<3>::particle_index_iterator_map
+  const typename DEM::dem_data_structures<3>::particle_index_iterator_map
             &particle_container,
   const bool clear_contact_structures);
 
@@ -245,7 +279,7 @@ update_contact_container_iterators<
   ContactType::ghost_local_periodic_particle_particle>(
   typename DEM::dem_data_structures<2>::adjacent_particle_pairs
     &pairs_in_contact,
-  typename DEM::dem_data_structures<2>::particle_index_iterator_map
+  const typename DEM::dem_data_structures<2>::particle_index_iterator_map
             &particle_container,
   const bool clear_contact_structures);
 
@@ -256,7 +290,7 @@ update_contact_container_iterators<
   ContactType::ghost_local_periodic_particle_particle>(
   typename DEM::dem_data_structures<3>::adjacent_particle_pairs
     &pairs_in_contact,
-  typename DEM::dem_data_structures<3>::particle_index_iterator_map
+  const typename DEM::dem_data_structures<3>::particle_index_iterator_map
             &particle_container,
   const bool clear_contact_structures);
 
@@ -268,7 +302,7 @@ update_contact_container_iterators<
   ContactType::particle_wall>(
   typename DEM::dem_data_structures<2>::particle_wall_in_contact
     &pairs_in_contact,
-  typename DEM::dem_data_structures<2>::particle_index_iterator_map
+  const typename DEM::dem_data_structures<2>::particle_index_iterator_map
             &particle_container,
   const bool clear_contact_structures);
 
@@ -279,7 +313,7 @@ update_contact_container_iterators<
   ContactType::particle_wall>(
   typename DEM::dem_data_structures<3>::particle_wall_in_contact
     &pairs_in_contact,
-  typename DEM::dem_data_structures<3>::particle_index_iterator_map
+  const typename DEM::dem_data_structures<3>::particle_index_iterator_map
             &particle_container,
   const bool clear_contact_structures);
 
@@ -291,7 +325,7 @@ update_contact_container_iterators<
   ContactType::particle_floating_wall>(
   typename DEM::dem_data_structures<2>::particle_wall_in_contact
     &pairs_in_contact,
-  typename DEM::dem_data_structures<2>::particle_index_iterator_map
+  const typename DEM::dem_data_structures<2>::particle_index_iterator_map
             &particle_container,
   const bool clear_contact_structures);
 
@@ -302,7 +336,7 @@ update_contact_container_iterators<
   ContactType::particle_floating_wall>(
   typename DEM::dem_data_structures<3>::particle_wall_in_contact
     &pairs_in_contact,
-  typename DEM::dem_data_structures<3>::particle_index_iterator_map
+  const typename DEM::dem_data_structures<3>::particle_index_iterator_map
             &particle_container,
   const bool clear_contact_structures);
 
@@ -315,7 +349,7 @@ update_contact_container_iterators<
   ContactType::particle_floating_mesh>(
   typename DEM::dem_data_structures<
     2>::particle_floating_wall_from_mesh_in_contact &pairs_in_contact,
-  typename DEM::dem_data_structures<2>::particle_index_iterator_map
+  const typename DEM::dem_data_structures<2>::particle_index_iterator_map
             &particle_container,
   const bool clear_contact_structures);
 
@@ -327,7 +361,7 @@ update_contact_container_iterators<
   ContactType::particle_floating_mesh>(
   typename DEM::dem_data_structures<
     3>::particle_floating_wall_from_mesh_in_contact &pairs_in_contact,
-  typename DEM::dem_data_structures<3>::particle_index_iterator_map
+  const typename DEM::dem_data_structures<3>::particle_index_iterator_map
             &particle_container,
   const bool clear_contact_structures);
 
@@ -339,7 +373,7 @@ update_contact_container_iterators<
   ContactType::particle_point>(
   typename DEM::dem_data_structures<2>::particle_point_line_contact_info
     &pairs_in_contact,
-  typename DEM::dem_data_structures<2>::particle_index_iterator_map
+  const typename DEM::dem_data_structures<2>::particle_index_iterator_map
             &particle_container,
   const bool clear_contact_structures);
 
@@ -350,7 +384,7 @@ update_contact_container_iterators<
   ContactType::particle_point>(
   typename DEM::dem_data_structures<3>::particle_point_line_contact_info
     &pairs_in_contact,
-  typename DEM::dem_data_structures<3>::particle_index_iterator_map
+  const typename DEM::dem_data_structures<3>::particle_index_iterator_map
             &particle_container,
   const bool clear_contact_structures);
 
@@ -362,7 +396,7 @@ update_contact_container_iterators<
   ContactType::particle_line>(
   typename DEM::dem_data_structures<2>::particle_point_line_contact_info
     &pairs_in_contact,
-  typename DEM::dem_data_structures<2>::particle_index_iterator_map
+  const typename DEM::dem_data_structures<2>::particle_index_iterator_map
             &particle_container,
   const bool clear_contact_structures);
 
@@ -373,6 +407,6 @@ update_contact_container_iterators<
   ContactType::particle_line>(
   typename DEM::dem_data_structures<3>::particle_point_line_contact_info
     &pairs_in_contact,
-  typename DEM::dem_data_structures<3>::particle_index_iterator_map
+  const typename DEM::dem_data_structures<3>::particle_index_iterator_map
             &particle_container,
   const bool clear_contact_structures);
