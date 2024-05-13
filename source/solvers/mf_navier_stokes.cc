@@ -1671,11 +1671,6 @@ MFNavierStokesSolver<dim>::set_initial_condition_fd(
     }
   else if (initial_condition_type == Parameters::InitialConditionType::viscous)
     {
-      AssertThrow(
-        this->simulation_control->is_steady(),
-        dealii::ExcMessage(
-          "The lethe-fluid-matrix-free solver does not support viscous initial conditions for transient simulations."));
-
       // Set the nodal values to have an initial condition that is adequate
       this->set_nodal_values();
       this->present_solution.update_ghost_values();
@@ -1733,6 +1728,8 @@ MFNavierStokesSolver<dim>::set_initial_condition_fd(
         }
 
       // Solve the problem with the temporary viscosity
+      this->simulation_control->set_assembly_method(
+        Parameters::SimulationControl::TimeSteppingMethod::steady);
       PhysicsSolver<LinearAlgebra::distributed::Vector<double>>::
         solve_non_linear_system(false);
       this->finish_time_step();
