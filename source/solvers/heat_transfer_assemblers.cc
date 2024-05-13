@@ -7,6 +7,7 @@
 #include <solvers/heat_transfer_assemblers.h>
 
 #include <deal.II/base/symmetric_tensor.h>
+#include <petsctao.h>
 
 template <int dim>
 void
@@ -44,6 +45,17 @@ HeatTransferAssemblerCore<dim>::assemble_matrix(
   // Copy data elements
   auto &strong_jacobian_vec = copy_data.strong_jacobian;
   auto &local_matrix        = copy_data.local_matrix;
+  
+  double max_velocity = 1e-12;
+  double min_velocity = 100000;
+  
+  for (unsigned int q = 0; q < n_q_points; ++q)
+  {
+    max_velocity = std::max(scratch_data.velocity_values[q].norm(), max_velocity);
+    min_velocity = std::min(scratch_data.velocity_values[q].norm(), min_velocity);
+  }
+
+  const double ref_velocity = max_velocity - min_velocity;
 
   // assembling local matrix and right hand side
   for (unsigned int q = 0; q < n_q_points; ++q)
@@ -59,10 +71,9 @@ HeatTransferAssemblerCore<dim>::assemble_matrix(
       const auto velocity = scratch_data.velocity_values[q];
 
       // Temperature gradient information for DCDD stabilization
-      const auto previous_temperature_gradient =
-        scratch_data.previous_temperature_gradients[0][q];
-      const double previous_temperature_gradient_norm =
-        previous_temperature_gradient.norm();
+      const auto temperature_gradient =
+        scratch_data.temperature_gradients[q];
+      //const double temperature_gradient_norm = temperature_gradient.norm();
 
       // Calculation of the magnitude of the velocity for the
       // stabilization parameter
@@ -85,18 +96,18 @@ HeatTransferAssemblerCore<dim>::assemble_matrix(
       // (2003). Computation of moving boundaries and interfaces and
       // stabilization parameters. International Journal for Numerical Methods
       // in Fluids, 43(5), 555-575. Our implementation is based on equations
-      // (70) and (79), which are adapted for the VOF solver.
+      // (70) and (79), which are adapted for the heat transfer solver.
       const double tolerance = 1e-12;
 
 
       // In Tezduyar 2003, this is denoted r
       Tensor<1, dim> gradient_unit_vector =
-        previous_temperature_gradient /
-        (previous_temperature_gradient_norm + tolerance);
+        temperature_gradient /
+        (temperature_gradient.norm() + tolerance);
 
       // Calculate the artificial viscosity of the shock capture
       const double vdcdd =
-        (0.5 * h * h) * velocity.norm() * previous_temperature_gradient_norm;
+        (0.5 * h * h) * (velocity.norm() / ref_velocity) * temperature_gradient.norm();
 
       // We remove the diffusion aligned with the velocity
       // as is done in the original article.  In Tezduyar 2003, this is denoted
@@ -145,8 +156,8 @@ HeatTransferAssemblerCore<dim>::assemble_matrix(
 
               // DCDD shock capturing
               local_matrix(i, j) +=
-                vdcdd *
-                scalar_product(grad_phi_T_j, dcdd_factor * grad_phi_T_i) * JxW;
+                (vdcdd *
+                scalar_product(grad_phi_T_j, dcdd_factor * grad_phi_T_i)) * JxW;
             }
         }
 
@@ -180,6 +191,17 @@ HeatTransferAssemblerCore<dim>::assemble_rhs(
   auto &strong_residual_vec = copy_data.strong_residual;
   auto &local_rhs           = copy_data.local_rhs;
 
+  double max_velocity = 1e-12;
+  double min_velocity = 100000;
+  
+  for (unsigned int q = 0; q < n_q_points; ++q)
+  {
+    max_velocity = std::max(scratch_data.velocity_values[q].norm(), max_velocity);
+    min_velocity = std::min(scratch_data.velocity_values[q].norm(), min_velocity);
+  }
+
+  const double ref_velocity = max_velocity - min_velocity;
+  
   // assembling right hand side
   for (unsigned int q = 0; q < n_q_points; ++q)
     {
@@ -198,35 +220,28 @@ HeatTransferAssemblerCore<dim>::assemble_rhs(
 
       const auto velocity = scratch_data.velocity_values[q];
 
-
-      // Temperature gradient information for DCDD stabilization
-      const auto previous_temperature_gradient =
-        scratch_data.previous_temperature_gradients[0][q];
-      const double previous_temperature_gradient_norm =
-        previous_temperature_gradient.norm();
-
       // Implementation of a DCDD shock capturing scheme.
       // For more information see
       // Tezduyar, T. E. (2003). Computation of moving boundaries and interfaces
       // and stabilization parameters. International Journal for Numerical
       // Methods in Fluids, 43(5), 555-575. Our implementation is based on
-      // equations (70) and (79), which are adapted for the VOF solver.
+      // equations (70) and (79), which are adapted for the heat transfer solver.
       const double tolerance = 1e-12;
 
       // In Tezduyar 2003, this is denoted r
       Tensor<1, dim> gradient_unit_vector =
-        previous_temperature_gradient /
-        (previous_temperature_gradient_norm + tolerance);
+        temperature_gradient /
+        (temperature_gradient.norm() + tolerance);
 
       // Calculate the artificial viscosity of the shock capture
       const double vdcdd =
-        (0.5 * h * h) * velocity.norm() * previous_temperature_gradient_norm;
+        (0.5 * h * h) * (velocity.norm() / ref_velocity) * temperature_gradient.norm();
 
       // We  remove the diffusion aligned with the velocity
       // as is done in the original article. In Tezduyar 2003, this is denoted
       // s.
       Tensor<1, dim> velocity_unit_vector =
-        velocity / (velocity.norm() + 1e-12);
+        velocity / (velocity.norm() + tolerance);
       const Tensor<2, dim> k_corr =
         Utilities::fixed_power<2>(gradient_unit_vector * velocity_unit_vector) *
         outer_product(velocity_unit_vector, velocity_unit_vector);
@@ -274,8 +289,8 @@ HeatTransferAssemblerCore<dim>::assemble_rhs(
 
           // Apply DCDD
           local_rhs(i) -=
-            vdcdd *
-            scalar_product(temperature_gradient, dcdd_factor * grad_phi_T_i) *
+            (vdcdd *
+            scalar_product(temperature_gradient, dcdd_factor * grad_phi_T_i)) *
             JxW;
         }
 
