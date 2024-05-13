@@ -78,7 +78,7 @@ The physical properties section is almost the same as the previous spouted bed e
         set size distribution type            = uniform
         set diameter                          = 0.005
         set number                            = 100000
-        set density particles                 = 500
+        set density particles                 = 100
         set young modulus particles           = 10000000
         set poisson ratio particles           = 0.25
         set restitution coefficient particles = 0.97
