@@ -105,7 +105,7 @@ The time end of the simulation is 2 seconds after all particles have been loaded
 .. code-block:: text
 
   subsection simulation control
-    set time step         = 1e-5
+    set time step         = 5e-6
     set time end          = 2
     set log frequency     = 1000
     set output frequency  = 1000
@@ -121,7 +121,7 @@ The time end of the simulation is 4.75 seconds after which the bunny has done on
 .. code-block:: text
 
   subsection simulation control
-    set time step         = 1e-5
+    set time step         = 5e-6
     set time end          = 4.75
     set log frequency     = 1000
     set output frequency  = 1000
