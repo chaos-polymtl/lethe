@@ -17,7 +17,7 @@ InsertionClearAndAdd<dim>::InsertionClearAndAdd(
   , insertion_files(dem_parameters.insertion_info.list_of_input_files)
 {
   // Boost signal for load balancing
-  mark_for_update = false;
+  mark_for_update = true;
   this->change_to_triangulation =
     triangulation.signals.any_change.connect([&] { mark_for_update = true; });
 
@@ -131,30 +131,29 @@ InsertionClearAndAdd<dim>::insert(
       to_remove_iterators.reserve(particle_handler.n_locally_owned_particles());
 
       // Loop over the first container
-      for (auto cell_in_box = in_the_clearing_box.begin();
-           cell_in_box != in_the_clearing_box.end();
-           ++cell_in_box)
+      for (const auto &cell_in_box: in_the_clearing_box)
         {
-          // Check if this cell has particle
+          // Check if this cell has particles
           auto particles_in_cell =
-            particle_handler.particles_in_cell(*cell_in_box);
-          const bool particles_exist_in_cell = !particles_in_cell.empty();
+            particle_handler.particles_in_cell(cell_in_box);
+          std::cout<<__LINE__<<std::endl;
 
-          if (particles_exist_in_cell)
+          if (!particles_in_cell.empty())
             {
+              std::cout<<__LINE__<<std::endl;
+
               // Loop over the particle in the cell
               for (auto particle_in_cell = particles_in_cell.begin();
                    particle_in_cell != particles_in_cell.end();
                    ++particle_in_cell)
                 {
+                  std::cout<<__LINE__<<std::endl;
                   // Since we know the cell is fully inside the box, we can
                   // delete every particles in it.
                   to_remove_iterators.push_back(particle_in_cell);
                 }
             }
         }
-      particle_handler.remove_particles(to_remove_iterators);
-
 
       // Loop over the second container
       for (auto cell_edge_of_box = edge_of_box.begin();
