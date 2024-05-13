@@ -92,7 +92,7 @@ The ``source term`` subsection defines the gravitational acceleration:
 .. code-block:: text
     
     subsection source term
-      subsection xyz
+      subsection fluid dynamics
         set Function expression = 0; -0.98; 0
       end
     end

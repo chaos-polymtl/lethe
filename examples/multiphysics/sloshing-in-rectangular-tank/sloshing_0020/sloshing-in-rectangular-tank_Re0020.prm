@@ -139,7 +139,7 @@ end
 #---------------------------------------------------
 
 subsection source term
-  subsection xyz
+  subsection fluid dynamics
     set Function expression = 0 ; -1 ; 0
   end
 end

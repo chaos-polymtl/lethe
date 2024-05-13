@@ -1025,7 +1025,6 @@ namespace Parameters
     // Abort solver if non-linear solution has not reached tolerance
     bool abort_at_convergence_failure;
 
-
     static void
     declare_parameters(ParameterHandler &prm, const std::string &physics_name);
     void
@@ -1063,6 +1062,12 @@ namespace Parameters
 
     /// Maximum number of krylov vectors
     int max_krylov_vectors;
+
+    /// Enable hessians in jacobian
+    bool enable_hessians_jacobian;
+
+    /// Enable hessians in residual
+    bool enable_hessians_residual;
 
     /// Type of preconditioner
     enum class PreconditionerType
@@ -1118,6 +1123,9 @@ namespace Parameters
 
     /// MG minimum number of cells per level
     int mg_level_min_cells;
+
+    /// MG enable hessians in jacobian
+    bool mg_enable_hessians_jacobian;
 
     /// MG smoother number of iterations
     int mg_smoother_iterations;
