@@ -137,7 +137,7 @@ private:
    *
    * @param particle_begin The particle iterator to start storing particle ids.
    * @param particles_to_evaluate The particle range to evaluate with the
-   * particle iterator prior storing ids..
+   * particle iterator prior storing ids.
    * @param contact_pair_candidates A map which will contain all the particle
    * pairs candidate.
    */
