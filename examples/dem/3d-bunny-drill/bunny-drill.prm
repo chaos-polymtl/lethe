@@ -8,7 +8,7 @@ set dimension = 3
 #---------------------------------------------------
 
 subsection simulation control
-  set time step         = 2e-6
+  set time step         = 1e-5
   set time end          = 4.75
   set log frequency     = 1000
   set output frequency  = 1000
@@ -28,7 +28,7 @@ subsection model parameters
   end
   subsection load balancing
     set load balance method = frequent
-    set frequency           = 20000
+    set frequency           = 10000
   end
   set particle particle contact force method = hertz_mindlin_limit_overlap
   set rolling resistance torque method       = constant_resistance
@@ -108,7 +108,7 @@ subsection solid objects
       set Function expression = if (t>2,-0.27*sin(0.8*3.1416*(t-2)),0) ; 0 ; 0
     end
     subsection angular velocity
-      set Function expression = 31.42 ; 0 ; 0
+      set Function expression = if (t>2,31.42,0) ; 0 ; 0
     end
   end
 end

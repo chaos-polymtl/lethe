@@ -8,7 +8,7 @@ set dimension = 3
 #---------------------------------------------------
 
 subsection simulation control
-  set time step         = 2e-6
+  set time step         = 1e-5
   set time end          = 2
   set log frequency     = 1000
   set output frequency  = 1000
@@ -36,7 +36,7 @@ subsection model parameters
   end
   subsection load balancing
     set load balance method = frequent
-    set frequency           = 200000
+    set frequency           = 10000
   end
   set particle particle contact force method = hertz_mindlin_limit_overlap
   set rolling resistance torque method       = constant_resistance
@@ -46,7 +46,7 @@ end
 
 subsection restart
   set checkpoint = true
-  set frequency  = 250000
+  set frequency  = 10000
   set restart    = false
   set filename   = dem
 end
@@ -63,7 +63,7 @@ subsection lagrangian physical properties
   subsection particle type 0
     set size distribution type            = uniform
     set diameter                          = 0.01
-    set number of particles               = 800
+    set number of particles               = 8000
     set density particles                 = 2560
     set young modulus particles           = 1e7
     set poisson ratio particles           = 0.3
@@ -91,14 +91,14 @@ end
 #---------------------------------------------------
 
 subsection insertion info
-  set insertion method                               = volume
-  set inserted number of particles at each time step = 10000
-  set insertion frequency                            = 100000
-  set insertion box points coordinates               = 0.1, -0.07, -0.07 : 0.24, 0.07, 0.07
-  set insertion distance threshold                   = 1.10
-  set insertion maximum offset                       = 0.10
+  set insertion method                               = plane
+  set inserted number of particles at each time step = 200
+  set insertion frequency                            = 4000
+  set insertion plane point                          = 0.025, 0, 0
+  set insertion plane normal vector                  = -1, 0, 0
+  set insertion maximum offset                       = 0.00
   set insertion prn seed                             = 19
-  set insertion direction sequence                   = 0, 2, 1
+  set initial velocity                             = -0.1, 0.0, 0.0
 end
 
 #---------------------------------------------------
@@ -131,7 +131,7 @@ subsection solid objects
       set Function expression = if (t>2,-0.27*sin(0.8*3.1416*(t-2)),0) ; 0 ; 0
     end
     subsection angular velocity
-      set Function expression = 31.42 ; 0 ; 0
+      set Function expression = if (t>2,31.42,0) ; 0 ; 0
     end
   end
 end
