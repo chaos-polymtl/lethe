@@ -1328,7 +1328,6 @@ DEMSolver<dim>::solve()
 
           if (floating_mesh_map_step)
             {
-
               // Update floating mesh information in the container manager
               for (unsigned int i_solid = 0; i_solid < solids.size(); ++i_solid)
                 {
