@@ -133,13 +133,13 @@ private:
    * first particle in main cell (particle_begin will be the iterator after the
    * particles_to_evaluate.begin() in that case). When particle_begin is
    * particles_to_evaluate.begin(), it stores all the particle id in
-   * contact_pair_candidates_container.
+   * contact_pair_candidates.
    *
-   * @param particle_begin The particle iterator to start storing particle id
+   * @param particle_begin The particle iterator to start storing particle ids.
    * @param particles_to_evaluate The particle range to evaluate with the
-   * particle iterator prior storing ids
-   * @param contact_pair_candidates_container A vector which will contain all
-   * the particle pairs which are collision candidates
+   * particle iterator prior storing ids..
+   * @param contact_pair_candidates A map which will contain all the particle
+   * pairs candidate.
    */
   inline void
   store_candidates(
