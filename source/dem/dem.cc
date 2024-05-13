@@ -953,9 +953,7 @@ DEMSolver<dim>::set_insertion_type(const DEMSolverParameters<dim> &parameters)
       Parameters::Lagrangian::InsertionInfo::InsertionMethod::clear_and_add)
     {
       insertion_object = std::make_shared<InsertionClearAndAdd<dim>>(
-        parameters,
-        triangulation,
-        distribution_object_container);
+        parameters, triangulation, distribution_object_container);
     }
   else if (parameters.insertion_info.insertion_method ==
            Parameters::Lagrangian::InsertionInfo::InsertionMethod::file)

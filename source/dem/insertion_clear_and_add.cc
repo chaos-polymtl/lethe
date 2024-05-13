@@ -131,7 +131,7 @@ InsertionClearAndAdd<dim>::insert(
       to_remove_iterators.reserve(particle_handler.n_locally_owned_particles());
 
       // Loop over the first container
-      for (const auto &cell_in_box: in_the_clearing_box)
+      for (const auto &cell_in_box : in_the_clearing_box)
         {
           // Check if this cell has particles
           auto particles_in_cell =
