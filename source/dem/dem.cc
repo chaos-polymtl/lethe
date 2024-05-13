@@ -1369,18 +1369,7 @@ DEMSolver<dim>::solve()
           update_moment_of_inertia(particle_handler, MOI);
 
           particle_handler.exchange_ghost_particles(true);
-        }
-      else
-        {
-          particle_handler.update_ghost_particles();
-        }
 
-
-
-      // Modify particles contact containers by search sequence
-      if (particles_insertion_step || load_balance_step ||
-          contact_detection_step || checkpoint_step)
-        {
           // Reset checkpoint step
           checkpoint_step = false;
 
@@ -1444,6 +1433,10 @@ DEMSolver<dim>::solve()
             simulation_control->get_current_time(),
             neighborhood_threshold_squared,
             has_floating_mesh);
+        }
+      else
+        {
+          particle_handler.update_ghost_particles();
         }
 
       // Particle-particle contact force
