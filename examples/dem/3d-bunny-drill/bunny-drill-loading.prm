@@ -8,7 +8,7 @@ set dimension = 3
 #---------------------------------------------------
 
 subsection simulation control
-  set time step         = 1e-5
+  set time step         = 5e-6
   set time end          = 2
   set log frequency     = 1000
   set output frequency  = 1000
@@ -93,7 +93,7 @@ end
 subsection insertion info
   set insertion method                               = plane
   set inserted number of particles at each time step = 200
-  set insertion frequency                            = 4000
+  set insertion frequency                            = 8000
   set insertion plane point                          = 0.025, 0, 0
   set insertion plane normal vector                  = -1, 0, 0
   set insertion maximum offset                       = 0.00
