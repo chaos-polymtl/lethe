@@ -69,13 +69,13 @@ ParticleParticleFineSearch<dim>::particle_particle_fine_search(
       if (second_particle_container.empty())
         continue;
 
-      auto               particle_one = particle_container.at(particle_one_id);
+      auto               particle_one = particle_container[particle_one_id];
       Point<dim, double> particle_one_location = particle_one->get_location();
 
       for (const types::particle_index &particle_two_id :
            second_particle_container)
         {
-          auto particle_two = particle_container.at(particle_two_id);
+          auto               particle_two = particle_container[particle_two_id];
           Point<dim, double> particle_two_location =
             particle_two->get_location() - periodic_offset;
 
@@ -88,7 +88,7 @@ ParticleParticleFineSearch<dim>::particle_particle_fine_search(
             {
               // Getting the particle one contact list and particle two id
               auto particle_one_contact_list =
-                &adjacent_particles.at(particle_one_id);
+                &adjacent_particles[particle_one_id];
 
               particle_one_contact_list->emplace(
                 particle_two_id,
