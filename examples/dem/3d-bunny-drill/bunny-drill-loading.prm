@@ -98,7 +98,7 @@ subsection insertion info
   set insertion plane normal vector                  = -1, 0, 0
   set insertion maximum offset                       = 0.00
   set insertion prn seed                             = 19
-  set initial velocity                             = -0.1, 0.0, 0.0
+  set initial velocity                               = -0.1, 0.0, 0.0
 end
 
 #---------------------------------------------------
