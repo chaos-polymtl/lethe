@@ -86,7 +86,7 @@ namespace SourceTerms
   {
     prm.enter_subsection("source term");
 
-    prm.enter_subsection("xyz");
+    prm.enter_subsection("fluid dynamics");
     prm.declare_entry("enable",
                       "true",
                       Patterns::Bool(),
@@ -115,7 +115,7 @@ namespace SourceTerms
   {
     prm.enter_subsection("source term");
 
-    prm.enter_subsection("xyz");
+    prm.enter_subsection("fluid dynamics");
     enable = prm.get_bool("enable");
     navier_stokes_source->parse_parameters(prm);
     prm.leave_subsection();
