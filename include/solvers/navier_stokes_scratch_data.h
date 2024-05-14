@@ -748,7 +748,6 @@ public:
     // Create local vector that will be used to spawn an in-situ quadrature to
     // interpolate at the location of the particles
     std::vector<Point<dim>> particle_reference_location;
-    std::vector<double>     particle_weights(number_of_particles, 1);
 
     // Loop over particles in cell and cache their reference location
     for (auto &particle : pic)
@@ -759,13 +758,8 @@ public:
           particle.get_reference_location());
       }
 
-    // Create a quadrature for the Navier-Stokes equations that is based on the
-    // particle reference location
-    Quadrature<dim> q_local(particle_reference_location, particle_weights);
-    FEValues<dim>   fe_values_local_particles(this->fe_values.get_fe(),
-                                            q_local,
-                                            update_gradients | update_values |
-                                              update_hessians);
+    // Create a point evaluator for the Navier-Stokes equations
+    FEPointEvaluation<dim+1, dim> evaluator(this->fe_values.get_mapping(), this->fe_values.get_fe(), update_values | update_gradients | update_hessians);
 
     // Reallocate memory for the fields to be interpolated at the particle
     // location This has to be done for every cell because deal.II expects the
@@ -777,51 +771,74 @@ public:
     fluid_velocity_curls_at_particle_location_3d.resize(number_of_particles);
     fluid_pressure_gradients_at_particle_location.resize(number_of_particles);
 
+
     // Evaluate the relevant information at the
     // quadrature points to do the interpolation.
     const auto &velocity_cell =
       typename DoFHandler<dim>::cell_iterator(*this->fe_values.get_cell(),
                                               &dof_handler);
 
-    fe_values_local_particles.reinit(velocity_cell);
+    Vector<double> local_dof_values(this->fe_values.get_fe().dofs_per_cell);
+    velocity_cell->get_dof_values(previous_solution,local_dof_values);
+    evaluator.reinit(velocity_cell, particle_reference_location);
 
+    evaluator.evaluate(make_array_view(local_dof_values),
+                       EvaluationFlags::values | EvaluationFlags::gradients | EvaluationFlags::hessians);
+
+    Tensor<1,dim+1> temporary_storage_value;
+   typename FEPointEvaluationBase<dim+1, dim, dim, double>::gradient_type temporary_storage_gradient;
+  // Tensor<3,dim+1> temporary_storage_hessian;
     // Calculate all fluid properties at the particle location
-    fe_values_local_particles[velocities].get_function_values(
-      previous_solution, fluid_velocity_at_particle_location);
-
-    fe_values_local_particles[velocities].get_function_laplacians(
-      previous_solution, fluid_velocity_laplacian_at_particle_location);
-
-    if constexpr (dim == 2)
+    for (unsigned int i = 0 ; i < number_of_particles ; ++i)
       {
-        fe_values_local_particles[velocities].get_function_curls(
-          previous_solution, fluid_velocity_curls_at_particle_location_2d);
-      }
-    else if constexpr (dim == 3)
-      {
-        fe_values_local_particles[velocities].get_function_curls(
-          previous_solution, fluid_velocity_curls_at_particle_location_3d);
+        temporary_storage_value = evaluator.get_value(i);
+        temporary_storage_gradient = evaluator.get_gradient(i);
+        //temporary_storage_hessian = evaluator.get_gradient(i);
+
+        for (unsigned int d = 0 ; d < dim; ++d)
+          {
+            fluid_velocity_at_particle_location[i][d] =
+              temporary_storage_value[d];
+            fluid_pressure_gradients_at_particle_location[i][d] = temporary_storage_gradient[dim][d];
+          }
       }
 
-    fe_values_local_particles[pressure].get_function_gradients(
-      previous_solution, fluid_pressure_gradients_at_particle_location);
+  //  evaluator[velocities].get_function_laplacians(
+  //    previous_solution, fluid_velocity_laplacian_at_particle_location);
+
+//if constexpr (dim == 2)
+//  {
+//    evaluator[velocities].get_function_curls(
+//      previous_solution, fluid_velocity_curls_at_particle_location_2d);
+//  }
+//else if constexpr (dim == 3)
+//  {
+//    evaluator[velocities].get_function_curls(
+//      previous_solution, fluid_velocity_curls_at_particle_location_3d);
+//  }
 
     // Create a quadrature for the void fraction that is based on the particle
     // reference location
     if (this->interpolated_void_fraction)
       {
-        FEValues<dim> fe_values_particles_void_fraction(
-          this->fe_values_void_fraction->get_fe(), q_local, update_values);
+        FEPointEvaluation<1, dim> evaluator_void_fraction(this->fe_values_void_fraction->get_mapping(), this->fe_values_void_fraction->get_fe(), update_values);
+
+        Vector<double> local_dof_values_void_fraction(this->fe_values_void_fraction->get_fe().dofs_per_cell);
 
         const auto &void_fraction_dh_cell =
           typename DoFHandler<dim>::cell_iterator(
             *this->fe_values_void_fraction->get_cell(),
             &void_fraction_dof_handler);
 
-        fe_values_particles_void_fraction.reinit(void_fraction_dh_cell);
+        void_fraction_dh_cell->get_dof_values(void_fraction_solution,local_dof_values_void_fraction);
+        evaluator_void_fraction.reinit(velocity_cell, particle_reference_location);
 
-        fe_values_particles_void_fraction.get_function_values(
-          void_fraction_solution, cell_void_fraction);
+        evaluator_void_fraction.evaluate(make_array_view(local_dof_values_void_fraction),
+                                EvaluationFlags::values);
+        for (unsigned int i = 0 ; i < number_of_particles ; ++i)
+          {
+            cell_void_fraction[i] =    evaluator_void_fraction.get_value(i);
+          }
       }
 
     // Relative velocity and particle Reynolds
