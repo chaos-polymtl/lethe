@@ -61,7 +61,7 @@ template <int dim, typename pairs_structure, ContactType contact_type>
 void
 update_contact_container_iterators(
   pairs_structure &pairs_in_contact,
-  typename DEM::dem_data_structures<dim>::particle_index_iterator_map
+  const typename DEM::dem_data_structures<dim>::particle_index_iterator_map
             &particle_container,
   const bool clear_contact_structures = false);
 

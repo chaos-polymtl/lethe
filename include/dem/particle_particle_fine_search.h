@@ -79,7 +79,7 @@ public:
 
   void
   particle_particle_fine_search(
-    typename DEM::dem_data_structures<dim>::particle_index_iterator_map
+    typename DEM::dem_data_structures<dim>::particle_index_iterator_map const
       &particle_container,
     typename DEM::dem_data_structures<dim>::adjacent_particle_pairs
       &adjacent_particles,
