@@ -7,7 +7,6 @@
 #include <solvers/heat_transfer_assemblers.h>
 
 #include <deal.II/base/symmetric_tensor.h>
-#include <petsctao.h>
 
 template <int dim>
 void
@@ -45,17 +44,6 @@ HeatTransferAssemblerCore<dim>::assemble_matrix(
   // Copy data elements
   auto &strong_jacobian_vec = copy_data.strong_jacobian;
   auto &local_matrix        = copy_data.local_matrix;
-  
-  double max_velocity = 1e-12;
-  double min_velocity = 100000;
-  
-  for (unsigned int q = 0; q < n_q_points; ++q)
-  {
-    max_velocity = std::max(scratch_data.velocity_values[q].norm(), max_velocity);
-    min_velocity = std::min(scratch_data.velocity_values[q].norm(), min_velocity);
-  }
-
-  const double ref_velocity = max_velocity - min_velocity;
 
   // assembling local matrix and right hand side
   for (unsigned int q = 0; q < n_q_points; ++q)
@@ -107,8 +95,8 @@ HeatTransferAssemblerCore<dim>::assemble_matrix(
 
       // Calculate the artificial viscosity of the shock capture
       const double vdcdd =
-        (0.5 * h * h) * (velocity.norm() / ref_velocity) * temperature_gradient.norm();
-
+        density[q] * (0.5 * h * h) * velocity.norm() / u_mag * temperature_gradient.norm() / specific_heat[q];
+      
       // We remove the diffusion aligned with the velocity
       // as is done in the original article.  In Tezduyar 2003, this is denoted
       // s.
@@ -191,17 +179,6 @@ HeatTransferAssemblerCore<dim>::assemble_rhs(
   auto &strong_residual_vec = copy_data.strong_residual;
   auto &local_rhs           = copy_data.local_rhs;
 
-  double max_velocity = 1e-12;
-  double min_velocity = 100000;
-  
-  for (unsigned int q = 0; q < n_q_points; ++q)
-  {
-    max_velocity = std::max(scratch_data.velocity_values[q].norm(), max_velocity);
-    min_velocity = std::min(scratch_data.velocity_values[q].norm(), min_velocity);
-  }
-
-  const double ref_velocity = max_velocity - min_velocity;
-  
   // assembling right hand side
   for (unsigned int q = 0; q < n_q_points; ++q)
     {
@@ -220,6 +197,21 @@ HeatTransferAssemblerCore<dim>::assemble_rhs(
 
       const auto velocity = scratch_data.velocity_values[q];
 
+      // Calculation of the magnitude of the velocity for the
+      // stabilization parameter
+      const double u_mag = std::max(velocity.norm(), 1e-12);
+
+      // Calculation of the GLS stabilization parameter. The
+      // stabilization parameter used is different if the simulation is
+      // steady or unsteady. In the unsteady case it includes the value
+      // of the time-step
+      const double tau =
+        is_steady(method) ?
+          1. / std::sqrt(std::pow(2. * u_mag / h, 2) +
+                         9 * std::pow(4 * alpha / (h * h), 2)) :
+          1. / std::sqrt(std::pow(sdt, 2) + std::pow(2. * u_mag / h, 2) +
+                         9 * std::pow(4 * alpha / (h * h), 2));
+
       // Implementation of a DCDD shock capturing scheme.
       // For more information see
       // Tezduyar, T. E. (2003). Computation of moving boundaries and interfaces
@@ -235,7 +227,7 @@ HeatTransferAssemblerCore<dim>::assemble_rhs(
 
       // Calculate the artificial viscosity of the shock capture
       const double vdcdd =
-        (0.5 * h * h) * (velocity.norm() / ref_velocity) * temperature_gradient.norm();
+        density[q] * (0.5 * h * h) * velocity.norm() / u_mag * temperature_gradient.norm() / specific_heat[q];
 
       // We  remove the diffusion aligned with the velocity
       // as is done in the original article. In Tezduyar 2003, this is denoted
@@ -248,21 +240,6 @@ HeatTransferAssemblerCore<dim>::assemble_rhs(
       const Tensor<2, dim> gradient_unit_tensor =
         outer_product(gradient_unit_vector, gradient_unit_vector);
       const Tensor<2, dim> dcdd_factor = gradient_unit_tensor - k_corr;
-
-      // Calculation of the magnitude of the velocity for the
-      // stabilization parameter
-      const double u_mag = std::max(velocity.norm(), 1e-12);
-
-      // Calculation of the GLS stabilization parameter. The
-      // stabilization parameter used is different if the simulation is
-      // steady or unsteady. In the unsteady case it includes the value
-      // of the time-step
-      const double tau =
-        is_steady(method) ?
-          1. / std::sqrt(std::pow(2. * u_mag / h, 2) +
-                         9 * std::pow(4 * alpha / (h * h), 2)) :
-          1. / std::sqrt(std::pow(sdt, 2) + std::pow(2. * u_mag / h, 2) +
-                         9 * std::pow(4 * alpha / (h * h), 2));
 
       // Calculate the strong residual for GLS stabilization
       strong_residual_vec[q] +=
