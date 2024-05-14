@@ -68,8 +68,7 @@ calculate_total_volume(const DoFHandler<dim> &void_fraction_dof_handler,
               fe_vf_values[void_fraction].get_function_values(
                 present_void_fraction_solution, void_fraction_values);
 
-              // Add the area of the face on boundary
-              // weighted by void fraction
+              // Calculate total volume
               total_volume_fluid += void_fraction_values[q] * fe_vf_values.JxW(q);
               total_volume_solid += (1 - void_fraction_values[q]) * fe_vf_values.JxW(q); 
             }

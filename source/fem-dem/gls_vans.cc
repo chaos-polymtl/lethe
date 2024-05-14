@@ -1968,6 +1968,63 @@ GLSVANSSolver<dim>::monitor_mass_conservation()
 
 template <int dim>
 void
+GLSVANSSolver<dim>::postprocess_cfd_dem(bool firstIter)
+{
+  // Calculate total volume of fluid and solid 
+  if (this->simulation_parameters.post_processing.calculate_pressure_drop)
+    {
+      TimerOutput::Scope t(this->computing_timer, "total_volume_calculation");
+      double             total_volume_fluid, total_volume_solid;
+      std::tie(total_volume_fluid, total_volume_solid) = calculate_total_volume(
+        this->dof_handler,
+        this->solution_void_fraction,
+        *this->cell_quadrature,
+        this->mapping),
+      this->total_volume_table.add_value(
+        "time", simulation_control->get_current_time());
+      this->total_volume_table.add_value("total-volume-fluid", total_volume_fluid);
+      this->total_volume_table.add_value("total-volume-solid",
+                                          total_volume_fluid);
+      if (this->simulation_parameters.post_processing.verbosity ==
+          Parameters::Verbosity::verbose)
+        {
+          this->pcout << "Total volume of fluid: "
+                      << std::setprecision(
+                           simulation_control->get_log_precision())
+                      << this->simulation_parameters.physical_properties_manager
+                             .get_density_scale() *
+                           total_volume_fluid
+                      << " m^3" << std::endl;
+          this->pcout << "Total volume of fluid: "
+                      << std::setprecision(
+                           simulation_control->get_log_precision())
+                      << this->simulation_parameters.physical_properties_manager
+                             .get_density_scale() *
+                           total_volume_solid
+                      << " m^3" << std::endl;
+        }
+
+      // Output pressure drop to a text file from processor 0
+      if ((simulation_control->get_step_number() %
+             this->simulation_parameters.post_processing.output_frequency ==
+           0) &&
+          this->this_mpi_process == 0)
+        {
+          std::string filename =
+            simulation_parameters.simulation_control.output_folder +
+            simulation_parameters.post_processing.pressure_drop_output_name +
+            ".dat";
+          std::ofstream output(filename.c_str());
+          total_volume_table.set_precision("time", 12);
+          total_volume_table.set_precision("pressure-drop", 12);
+          total_volume_table.set_precision("total-pressure-drop", 12);
+          this->total_volume_table.write_text(output);
+        }
+    }
+}
+
+template <int dim>
+void
 GLSVANSSolver<dim>::solve()
 {
   read_mesh_and_manifolds(
@@ -2033,6 +2090,7 @@ GLSVANSSolver<dim>::solve()
         }
 
       this->postprocess(false);
+      postprocess_cfd_dem();
       monitor_mass_conservation();
       finish_time_step_fd();
     }

@@ -24,6 +24,7 @@
 
 #include <solvers/gls_navier_stokes.h>
 #include <solvers/postprocessing_cfd.h>
+#include <solvers/postprocessing_cfd_dem.h>
 
 #include <dem/dem.h>
 #include <fem-dem/cfd_dem_simulation_parameters.h>
@@ -36,6 +37,8 @@
 #include <deal.II/particles/generators.h>
 #include <deal.II/particles/particle_handler.h>
 #include <deal.II/particles/property_pool.h>
+
+#include <deal.II/base/table_handler.h>
 
 #include <boost/archive/text_iarchive.hpp>
 #include <boost/archive/text_oarchive.hpp>
@@ -225,6 +228,13 @@ protected:
   virtual void
   monitor_mass_conservation();
 
+/**
+ *  @brief calculate the total fluid volume and total solid volume
+ *  Postprocessing file
+ */
+  void
+  postprocess_cfd_dem();
+
   /**
    * @brief finish_time_step
    * Finishes the time step
@@ -339,6 +349,9 @@ protected:
 
   GlobalVectorType nodal_void_fraction_relevant;
   GlobalVectorType nodal_void_fraction_owned;
+
+  // Post-processing variables
+  TableHandler total_volume_table;
 
   // Assemblers for the particle_fluid interactions
   std::vector<std::shared_ptr<ParticleFluidAssemblerBase<dim>>>
