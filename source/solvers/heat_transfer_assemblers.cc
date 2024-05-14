@@ -45,6 +45,9 @@ HeatTransferAssemblerCore<dim>::assemble_matrix(
   auto &strong_jacobian_vec = copy_data.strong_jacobian;
   auto &local_matrix        = copy_data.local_matrix;
 
+  // Get T_mag for the DCDD shock capture term
+  const double T_mag = this->simulation_control->get_T_mag();
+
   for (unsigned int q = 0; q < n_q_points; ++q)
     {
       const double rho_cp = density[q] * specific_heat[q];
@@ -122,7 +125,6 @@ HeatTransferAssemblerCore<dim>::assemble_matrix(
           // Temperature gradient information for DCDD stabilization
           const auto temperature_gradient =
             scratch_data.temperature_gradients[q];
-          const double temperature_mag = ();
 
           // Calculation of the magnitude of the velocity for the
           // stabilization parameter
@@ -155,9 +157,8 @@ HeatTransferAssemblerCore<dim>::assemble_matrix(
             temperature_gradient / (temperature_gradient.norm() + tolerance);
 
           // Calculate the artificial viscosity of the shock capture
-          const double vdcdd = density[q] * (0.5 * h * h) * velocity.norm() /
-                               u_mag * temperature_gradient.norm() /
-                               specific_heat[q];
+          const double vdcdd =
+            h * h * u_mag * temperature_gradient.norm() / T_mag;
 
           // We remove the diffusion aligned with the velocity
           // as is done in the original article.  In Tezduyar 2003, this is
@@ -228,7 +229,7 @@ HeatTransferAssemblerCore<dim>::assemble_matrix(
 
                   // DCDD shock capturing
                   local_matrix(i, j) +=
-                    (vdcdd *
+                    (rho_cp * vdcdd *
                      scalar_product(grad_phi_T_j, dcdd_factor * grad_phi_T_i)) *
                     JxW;
                 }
@@ -236,16 +237,18 @@ HeatTransferAssemblerCore<dim>::assemble_matrix(
 
         } // end loop on quadrature points
     }
+}
 
-  template <int dim>
-  void HeatTransferAssemblerCore<dim>::assemble_rhs(
-    HeatTransferScratchData<dim> & scratch_data,
-    StabilizedMethodsCopyData & copy_data)
-  {
-    const auto         method = this->simulation_control->get_assembly_method();
-    const unsigned int n_q_points = scratch_data.n_q_points;
-    const double       h          = scratch_data.cell_size;
-    const unsigned int n_dofs     = scratch_data.n_dofs;
+template <int dim>
+void
+HeatTransferAssemblerCore<dim>::assemble_rhs(
+  HeatTransferScratchData<dim> &scratch_data,
+  StabilizedMethodsCopyData    &copy_data)
+{
+  const auto         method = this->simulation_control->get_assembly_method();
+  const unsigned int n_q_points = scratch_data.n_q_points;
+  const double       h          = scratch_data.cell_size;
+  const unsigned int n_dofs     = scratch_data.n_dofs;
 
       // Temperature gradient information for DCDD stabilization
       Tensor<1, dim> dcdd_temperature_gradient;
@@ -299,14 +302,15 @@ HeatTransferAssemblerCore<dim>::assemble_matrix(
         thermal_conductivity[q] * temperature_laplacian -
         scratch_data.source[q];
 
-        // Store JxW in local variable for faster access
-        const double JxW = scratch_data.fe_values_T.JxW(q);
+      // Gather physical properties in case of mono fluids simulations (to be
+      // modified by cell in case of multiple fluids simulations)
+      double rho_cp = density[q] * specific_heat[q];
+      double alpha  = thermal_conductivity[q] / (rho_cp + DBL_MIN);
 
-        const auto velocity = scratch_data.velocity_values[q];
+      // Store JxW in local variable for faster access
+      const double JxW = scratch_data.fe_values_T.JxW(q);
 
-        // Calculation of the magnitude of the velocity for the
-        // stabilization parameter
-        const double u_mag = std::max(velocity.norm(), 1e-12);
+      const auto velocity = scratch_data.velocity_values[q];
 
           // DCDD shock capturing
           local_rhs(i) -= (scalar_product(dcdd_temperature_gradient,
@@ -314,72 +318,80 @@ HeatTransferAssemblerCore<dim>::assemble_matrix(
                           JxW;
         }
 
-        // Implementation of a DCDD shock capturing scheme.
-        // For more information see
-        // Tezduyar, T. E. (2003). Computation of moving boundaries and
-        // interfaces and stabilization parameters. International Journal for
-        // Numerical Methods in Fluids, 43(5), 555-575. Our implementation is
-        // based on equations (70) and (79), which are adapted for the heat
-        // transfer solver.
-        const double tolerance = 1e-12;
+      // Calculation of the GLS stabilization parameter. The
+      // stabilization parameter used is different if the simulation is
+      // steady or unsteady. In the unsteady case it includes the value
+      // of the time-step
+      const double tau =
+        is_steady(method) ?
+          1. / std::sqrt(std::pow(2. * u_mag / h, 2) +
+                         9 * std::pow(4 * alpha / (h * h), 2)) :
+          1. / std::sqrt(std::pow(sdt, 2) + std::pow(2. * u_mag / h, 2) +
+                         9 * std::pow(4 * alpha / (h * h), 2));
 
-        // In Tezduyar 2003, this is denoted r
-        Tensor<1, dim> gradient_unit_vector =
-          temperature_gradient / (temperature_gradient.norm() + tolerance);
+      // Implementation of a DCDD shock capturing scheme.
+      // For more information see
+      // Tezduyar, T. E. (2003). Computation of moving boundaries and
+      // interfaces and stabilization parameters. International Journal for
+      // Numerical Methods in Fluids, 43(5), 555-575. Our implementation is
+      // based on equations (70) and (79), which are adapted for the heat
+      // transfer solver.
+      const double tolerance = 1e-12;
 
-        // Calculate the artificial viscosity of the shock capture
-        const double vdcdd = density[q] * (0.5 * h * h) * velocity.norm() /
-                             u_mag * temperature_gradient.norm() /
-                             specific_heat[q];
+      // In Tezduyar 2003, this is denoted r
+      Tensor<1, dim> gradient_unit_vector =
+        temperature_gradient / (temperature_gradient.norm() + tolerance);
 
-        // We  remove the diffusion aligned with the velocity
-        // as is done in the original article. In Tezduyar 2003, this is denoted
-        // s.
-        Tensor<1, dim> velocity_unit_vector =
-          velocity / (velocity.norm() + tolerance);
-        const Tensor<2, dim> k_corr =
-          Utilities::fixed_power<2>(gradient_unit_vector *
-                                    velocity_unit_vector) *
-          outer_product(velocity_unit_vector, velocity_unit_vector);
-        const Tensor<2, dim> gradient_unit_tensor =
-          outer_product(gradient_unit_vector, gradient_unit_vector);
-        const Tensor<2, dim> dcdd_factor = gradient_unit_tensor - k_corr;
+      // Calculate the artificial viscosity of the shock capture
+      const double vdcdd = h * h * u_mag * temperature_gradient.norm() / T_mag;
 
-        // Calculate the strong residual for GLS stabilization
-        strong_residual_vec[q] +=
-          rho_cp * velocity * temperature_gradient -
-          thermal_conductivity[q] * temperature_laplacian -
-          scratch_data.source[q];
+      // We  remove the diffusion aligned with the velocity
+      // as is done in the original article. In Tezduyar 2003, this is denoted
+      // s.
+      Tensor<1, dim> velocity_unit_vector =
+        velocity / (velocity.norm() + tolerance);
+      const Tensor<2, dim> k_corr =
+        Utilities::fixed_power<2>(gradient_unit_vector * velocity_unit_vector) *
+        outer_product(velocity_unit_vector, velocity_unit_vector);
+      const Tensor<2, dim> gradient_unit_tensor =
+        outer_product(gradient_unit_vector, gradient_unit_vector);
+      const Tensor<2, dim> dcdd_factor = gradient_unit_tensor - k_corr;
 
-        for (unsigned int i = 0; i < n_dofs; ++i)
-          {
-            const auto phi_T_i      = scratch_data.phi_T[q][i];
-            const auto grad_phi_T_i = scratch_data.grad_phi_T[q][i];
+      // Calculate the strong residual for GLS stabilization
+      strong_residual_vec[q] +=
+        rho_cp * velocity * temperature_gradient -
+        thermal_conductivity[q] * temperature_laplacian -
+        scratch_data.source[q];
 
-            // rhs for : - k * laplacian T + rho * cp * u * grad T - f
-            // -grad(u)*grad(u) = 0
-            local_rhs(i) -=
-              (thermal_conductivity[q] * grad_phi_T_i * temperature_gradient +
-               rho_cp * phi_T_i * velocity * temperature_gradient -
-               scratch_data.source[q] * phi_T_i) *
-              JxW;
+      for (unsigned int i = 0; i < n_dofs; ++i)
+        {
+          const auto phi_T_i      = scratch_data.phi_T[q][i];
+          const auto grad_phi_T_i = scratch_data.grad_phi_T[q][i];
 
-            // Apply GLS
-            local_rhs(i) -=
-              tau * (strong_residual_vec[q] * (grad_phi_T_i * velocity)) * JxW;
+          // rhs for : - k * laplacian T + rho * cp * u * grad T - f
+          // -grad(u)*grad(u) = 0
+          local_rhs(i) -=
+            (thermal_conductivity[q] * grad_phi_T_i * temperature_gradient +
+             rho_cp * phi_T_i * velocity * temperature_gradient -
+             scratch_data.source[q] * phi_T_i) *
+            JxW;
 
-            // Apply DCDD
-            local_rhs(i) -=
-              (vdcdd * scalar_product(temperature_gradient,
-                                      dcdd_factor * grad_phi_T_i)) *
-              JxW;
-          }
+          // Apply GLS
+          local_rhs(i) -=
+            tau * (strong_residual_vec[q] * (grad_phi_T_i * velocity)) * JxW;
 
-      } // end loop on quadrature points
-  }
+          // Apply DCDD
+          local_rhs(i) -=
+            (rho_cp * vdcdd *
+             scalar_product(temperature_gradient, dcdd_factor * grad_phi_T_i)) *
+            JxW;
+        }
 
-  template class HeatTransferAssemblerCore<2>;
-  template class HeatTransferAssemblerCore<3>;
+    } // end loop on quadrature points
+}
+
+template class HeatTransferAssemblerCore<2>;
+template class HeatTransferAssemblerCore<3>;
 
 template <int dim>
 void
@@ -573,6 +585,7 @@ HeatTransferAssemblerRobinBC<dim>::assemble_matrix(
           Function<dim> &h_function = *(this->boundary_conditions_ht.h[i_bc]);
           Function<dim> &emissivity_function =
             *(this->boundary_conditions_ht.emissivity[i_bc]);
+
           for (unsigned int f = 0; f < scratch_data.n_faces; ++f)
             {
               if (scratch_data.boundary_face_id[f] ==
@@ -645,6 +658,7 @@ HeatTransferAssemblerRobinBC<dim>::assemble_rhs(
             *(this->boundary_conditions_ht.emissivity[i_bc]);
           Function<dim> &heat_flux_bc_function =
             *(this->boundary_conditions_ht.heat_flux_bc[i_bc]);
+
           for (unsigned int f = 0; f < scratch_data.n_faces; ++f)
             {
               if (scratch_data.boundary_face_id[f] ==
@@ -1576,3 +1590,4 @@ HeatTransferAssemblerVOFEvaporation<dim>::assemble_rhs(
 
 template class HeatTransferAssemblerVOFEvaporation<2>;
 template class HeatTransferAssemblerVOFEvaporation<3>;
+

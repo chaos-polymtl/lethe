@@ -191,10 +191,17 @@ public:
 
 
   /**
+<<<<<<< HEAD
    * @brief Calculate delta_T_ref for the DCDD shock capture mechanism. delta_T_ref = T_max - T_min.
    */
   double
   calculate_delta_T_ref();
+=======
+   * @brief Calculate T_mag for the DCDD shock capture mechanism. T_mag = T_max - T_min.
+   */
+  void
+  calculate_T_mag();
+>>>>>>> 643f84051 (Checkpoint before rebasing)
 
   /**
    * @brief Calculate the L2 error of the solution.
@@ -371,6 +378,17 @@ public:
   get_system_rhs() override
   {
     return system_rhs;
+  }
+
+  /**
+   * @brief Getter for T_mag
+   *
+   * @return T_mag
+   */
+  double
+  get_T_mag()
+  {
+    return T_mag;
   }
 
   /**
@@ -791,6 +809,14 @@ private:
    */
   std::vector<HeatFluxPostprocessor<dim>> heat_flux_postprocessors;
 
+<<<<<<< HEAD
+=======
+  /**
+   * @brief Temperature magnitude to be used in the DCDD shock capture stabilization term.
+   */
+  double T_mag;
+
+>>>>>>> 643f84051 (Checkpoint before rebasing)
   /*
    * Phase change post-processing. These parameters track the presence of a
    * phase change physical property and the associated post-processing
