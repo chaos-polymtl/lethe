@@ -1,5 +1,5 @@
 ===========================
-Resolved CFD-DEM Coupling
+Resolved CFD-DEM
 ===========================
 
 **Under construction**

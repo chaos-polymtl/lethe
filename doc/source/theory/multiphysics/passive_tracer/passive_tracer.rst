@@ -1,4 +1,4 @@
-Advection-Diffusion
+Passive Tracer
 --------------------
 
 
@@ -7,4 +7,4 @@ Advection-Diffusion
     :glob:
     :titlesonly:
 
-    advection_diffusion
+    passive_tracer_equations

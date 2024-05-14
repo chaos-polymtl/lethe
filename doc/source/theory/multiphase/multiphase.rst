@@ -1,4 +1,4 @@
-Multiphases
+Multiphase
 =============================
 
 .. toctree::
