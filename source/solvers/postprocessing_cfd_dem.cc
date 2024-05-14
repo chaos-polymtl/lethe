@@ -42,6 +42,7 @@ calculate_total_volume(const DoFHandler<dim> &void_fraction_dof_handler,
                            const Mapping<dim>    &mapping)
 {
   // Set up for void fraction fe values
+  const unsigned int               n_q_points = quadrature_formula.size();
   const FESystem<dim, dim> fe_void_fraction =
     void_fraction_dof_handler.get_fe();
   const FEValuesExtractors::Scalar void_fraction(0);
@@ -79,7 +80,7 @@ calculate_total_volume(const DoFHandler<dim> &void_fraction_dof_handler,
   total_volume_fluid = Utilities::MPI::sum(total_volume_fluid, mpi_communicator);
   total_volume_solid = Utilities::MPI::sum(total_volume_solid, mpi_communicator);
 
-  return {total_volume_fluid, total_volume_solid}
+  return {total_volume_fluid, total_volume_solid};
 }
 
 template double
