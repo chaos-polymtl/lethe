@@ -447,6 +447,7 @@ GLSNavierStokesCahnHilliardAssemblerNonNewtonianCore<dim>::assemble_matrix(
   NavierStokesScratchData<dim>         &scratch_data,
   StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
+    printf("in cahn hilliard assembler nn");
   // Loop and quadrature information
   const auto        &JxW_vec    = scratch_data.JxW;
   const unsigned int n_q_points = scratch_data.n_q_points;
@@ -660,6 +661,7 @@ GLSNavierStokesCahnHilliardAssemblerNonNewtonianCore<dim>::assemble_rhs(
   NavierStokesScratchData<dim>         &scratch_data,
   StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
+    printf("in cahn hilliard assembler nn");
   // Loop and quadrature information
   const auto        &JxW_vec    = scratch_data.JxW;
   const unsigned int n_q_points = scratch_data.n_q_points;
