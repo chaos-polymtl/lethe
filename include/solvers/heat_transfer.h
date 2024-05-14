@@ -28,7 +28,6 @@
  * Equation solved:
  * rho * Cp * (dT/dt + u.gradT) = k div(gradT) + nu/rho * (gradu : gradu)
  *
- * Polytechnique Montreal, 2020-
  */
 
 #ifndef lethe_heat_transfer_h
@@ -190,6 +189,12 @@ public:
   void
   attach_solution_to_output(DataOut<dim> &data_out) override;
 
+
+  /**
+   * @brief Calculate T_mag for the DCDD shock capture mechanism. T_mag = T_max - T_min.
+   */
+  void
+  calculate_T_mag();
 
   /**
    * @brief Calculate the L2 error of the solution.
@@ -366,6 +371,17 @@ public:
   get_system_rhs() override
   {
     return system_rhs;
+  }
+
+  /**
+   * @brief Getter for T_mag
+   *
+   * @return T_mag
+   */
+  double
+  get_T_mag()
+  {
+    return T_mag;
   }
 
   /**
@@ -786,6 +802,10 @@ private:
    */
   std::vector<HeatFluxPostprocessor<dim>> heat_flux_postprocessors;
 
+  /**
+   * @brief Temperature magnitude to be used in the DCDD shock capture stabilization term.
+   */
+  double T_mag;
 
   /*
    * Phase change post-processing. These parameters track the presence of a

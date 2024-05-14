@@ -755,6 +755,15 @@ HeatTransfer<dim>::attach_solution_to_output(DataOut<dim> &data_out)
 }
 
 template <int dim>
+void
+HeatTransfer<dim>::calculate_T_mag()
+{
+  double previous_solution_min = this->previous_solutions[0].min();
+  double previous_solution_max = this->previous_solutions[0].max();
+  this->T_mag = std::max(previous_solution_max - previous_solution_min, 1e-12);
+}
+
+template <int dim>
 double
 HeatTransfer<dim>::calculate_L2_error()
 {
@@ -799,51 +808,6 @@ HeatTransfer<dim>::calculate_L2_error()
   return l2error;
 }
 
-
-template <int dim>
-double
-HeatTransfer<dim>::calculate_T_mag()
-{
-  auto mpi_communicator = triangulation->get_communicator();
-
-  FEValues<dim> fe_values(*this->temperature_mapping,
-                          *fe,
-                          *this->cell_quadrature,
-                          update_values | update_gradients |
-                            update_quadrature_points | update_JxW_values);
-
-  const unsigned int n_q_points = this->cell_quadrature->size();
-
-  std::vector<double> q_exact_solution(n_q_points);
-  std::vector<double> q_scalar_values(n_q_points);
-
-  auto &exact_solution = simulation_parameters.analytical_solution->temperature;
-  exact_solution.set_time(simulation_control->get_current_time());
-
-  double l2error = 0.;
-
-  for (const auto &cell : dof_handler.active_cell_iterators())
-    {
-      if (cell->is_locally_owned())
-        {
-          fe_values.reinit(cell);
-          fe_values.get_function_values(present_solution, q_scalar_values);
-
-          // Get the exact solution at all gauss points
-          exact_solution.value_list(fe_values.get_quadrature_points(),
-                                    q_exact_solution);
-
-          for (unsigned int q = 0; q < n_q_points; q++)
-            {
-              double sim   = q_scalar_values[q];
-              double exact = q_exact_solution[q];
-              l2error += (sim - exact) * (sim - exact) * fe_values.JxW(q);
-            }
-        }
-    }
-  l2error = Utilities::MPI::sum(l2error, mpi_communicator);
-  return l2error;
-}
 template <int dim>
 void
 HeatTransfer<dim>::finish_simulation()
