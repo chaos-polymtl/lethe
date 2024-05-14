@@ -45,7 +45,7 @@
 #include <deal.II/numerics/vector_tools.h>
 
 /**
- * @brief Helper function that allows to conver from dealii vectors to trilinos vectors.
+ * @brief Helper function that allows to convert deal.II vectors to Trilinos vectors.
  *
  * @tparam number Abstract type for number across the class (i.e., double).
  * @param out Destination TrilinosWrappers::MPI::Vector vector.
@@ -53,14 +53,14 @@
  */
 template <typename number>
 void
-convert_dealii_to_trilinos(TrilinosWrappers::MPI::Vector &out,
-                           const LinearAlgebra::distributed::Vector<number> &in)
+convert_vector_dealii_to_trilinos(
+  TrilinosWrappers::MPI::Vector                    &out,
+  const LinearAlgebra::distributed::Vector<number> &in)
 {
   LinearAlgebra::ReadWriteVector<double> rwv(out.locally_owned_elements());
   rwv.import_elements(in, VectorOperation::insert);
   out.import_elements(rwv, VectorOperation::insert);
 }
-
 
 namespace dealii
 {
@@ -1513,8 +1513,11 @@ MFNavierStokesSolver<dim>::solve()
               this->flow_control.get_beta());
         }
 
-      this->iterate();
+      // Provide the fluid dynamics dof_handler, present solution and previous
+      // solution to the multiphysics interface
+      update_solutions_for_multiphysics();
 
+      this->iterate();
       this->postprocess(false);
       this->finish_time_step();
 
@@ -1620,6 +1623,8 @@ MFNavierStokesSolver<dim>::setup_dofs_fd()
         this->fe->n_dofs_per_vertex(),
         this->mpi_communicator);
 
+      // Intialize Trilinos vectors used to pass average velocities to
+      // multiphysics interface
       this->multiphysics_average_velocities.reinit(this->locally_owned_dofs,
                                                    this->locally_relevant_dofs,
                                                    this->mpi_communicator);
@@ -1643,22 +1648,10 @@ MFNavierStokesSolver<dim>::setup_dofs_fd()
   this->pcout << "   Volume of triangulation:      " << global_volume
               << std::endl;
 
-  // Provide the fluid dynamics dof_handler and present solution to the
-  // multiphysics interface
-  this->multiphysics->set_dof_handler(PhysicsID::fluid_dynamics,
-                                      &this->dof_handler);
-
+  // Initialize Trilinos vectors used to pass solution to multiphysics interface
   this->multiphysics_present_solution.reinit(this->locally_owned_dofs,
                                              this->locally_relevant_dofs,
                                              this->mpi_communicator);
-
-  convert_dealii_to_trilinos(multiphysics_present_solution,
-                             this->present_solution);
-
-  this->multiphysics->set_solution(PhysicsID::fluid_dynamics,
-                                   &(multiphysics_present_solution));
-
-  // Provide the fluid dynamics previous solutions to the multiphysics interface
 
   // Pre-allocate memory for the previous solutions using the information
   // of the BDF schemes
@@ -1670,8 +1663,8 @@ MFNavierStokesSolver<dim>::setup_dofs_fd()
                     this->locally_relevant_dofs,
                     this->mpi_communicator);
 
-  this->multiphysics->set_previous_solutions(
-    PhysicsID::fluid_dynamics, &this->multiphysics_previous_solutions);
+  // Provide relevant solution to multiphysics interface
+  update_solutions_for_multiphysics();
 }
 
 template <int dim>
@@ -1968,7 +1961,7 @@ MFNavierStokesSolver<dim>::update_multiphysics_time_average_solution()
 {
   if (this->simulation_parameters.post_processing.calculate_average_velocities)
     {
-      convert_dealii_to_trilinos(
+      convert_vector_dealii_to_trilinos(
         this->multiphysics_average_velocities,
         this->average_velocities->get_average_velocities());
 
@@ -2083,6 +2076,32 @@ MFNavierStokesSolver<dim>::print_mg_setup_times()
       this->gmg_preconditioner->mg_setup_timer.reset();
       this->gmg_preconditioner->mg_vmult_timer.reset();
     }
+}
+
+template <int dim>
+void
+MFNavierStokesSolver<dim>::update_solutions_for_multiphysics()
+{
+  // Provide the fluid dynamics dof_handler to the multiphysics interface
+  this->multiphysics->set_dof_handler(PhysicsID::fluid_dynamics,
+                                      &this->dof_handler);
+
+  // Convert the present solution to multiphysics vector type and provide it to
+  // the multiphysics interface
+  convert_vector_dealii_to_trilinos(multiphysics_present_solution,
+                                    this->present_solution);
+
+  this->multiphysics->set_solution(PhysicsID::fluid_dynamics,
+                                   &this->multiphysics_present_solution);
+
+  // Convert the previous solutions to multiphysics vector type and provide them
+  // to the multiphysics interface
+  for (auto &trilinos_solution : this->multiphysics_previous_solutions)
+    for (auto &dealii_solution : this->previous_solutions)
+      convert_vector_dealii_to_trilinos(trilinos_solution, dealii_solution);
+
+  this->multiphysics->set_previous_solutions(
+    PhysicsID::fluid_dynamics, &this->multiphysics_previous_solutions);
 }
 
 template <int dim>

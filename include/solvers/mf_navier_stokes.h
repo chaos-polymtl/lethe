@@ -327,7 +327,6 @@ protected:
 
   /**
    * @brief  Update the average velocity field solution in the multiphyscics interface.
-   * Currently not implemented for this solver but required for compilation.
    */
   virtual void
   update_multiphysics_time_average_solution() override;
@@ -420,6 +419,13 @@ private:
   void
   print_mg_setup_times();
 
+
+  /**
+   * @brief  Provide relevant solutions to multiphysics interface.
+   */
+  void
+  update_solutions_for_multiphysics();
+
 protected:
   /**
    * @brief Matrix-free operator in used for all the matrix-vector multiplications calls (vmult).
@@ -453,7 +459,8 @@ protected:
   DoFHandler<dim> dof_handler_fe_q_iso_q1;
 
   /**
-   * @brief Trilinos vector storing the average velocities that is provided to other physics.
+   * @brief Trilinos vector storing the average velocities that are provided to other
+   * physics.
    *
    */
   TrilinosWrappers::MPI::Vector multiphysics_average_velocities;
@@ -465,7 +472,8 @@ protected:
   TrilinosWrappers::MPI::Vector multiphysics_present_solution;
 
   /**
-   * @brief Trilinos vector storing the previous solutions that are provided to other physics.
+   * @brief Vector storing trilinos vectors containing the previous solutions that are
+   * provided to other physics.
    *
    */
   std::vector<TrilinosWrappers::MPI::Vector> multiphysics_previous_solutions;
