@@ -48,116 +48,109 @@ HeatTransferAssemblerCore<dim>::assemble_matrix(
   // Get T_mag for the DCDD shock capture term
   const double T_mag = this->simulation_control->get_T_mag();
 
+  // assembling local matrix and right hand side
   for (unsigned int q = 0; q < n_q_points; ++q)
     {
-      // assembling local matrix and right hand side
-      for (unsigned int q = 0; q < n_q_points; ++q)
+      const double rho_cp = density[q] * specific_heat[q];
+      const double alpha  = thermal_conductivity[q] / (rho_cp + DBL_MIN);
+
+      const auto method = this->simulation_control->get_assembly_method();
+
+      // Store JxW in local variable for faster access
+      const double JxW = JxW_vec[q];
+
+      const auto velocity = scratch_data.velocity_values[q];
+
+      // Temperature gradient information for DCDD stabilization
+      const auto temperature_gradient = scratch_data.temperature_gradients[q];
+
+      // Calculation of the magnitude of the velocity for the
+      // stabilization parameter
+      const double u_mag = std::max(velocity.norm(), 1e-12);
+
+      // Calculation of the GLS stabilization parameter. The
+      // stabilization parameter used is different if the simulation is
+      // steady or unsteady. In the unsteady case it includes the value
+      // of the time-step
+      const double tau =
+        is_steady(method) ?
+          1. / std::sqrt(std::pow(2. * u_mag / h, 2) +
+                         9 * std::pow(4 * alpha / (h * h), 2)) :
+          1. / std::sqrt(std::pow(sdt, 2) + std::pow(2. * u_mag / h, 2) +
+                         9 * std::pow(4 * alpha / (h * h), 2));
+
+
+      // Implementation of a Discontinuity-Capturing Directional Dissipation
+      // (DCDD) shock capturing scheme. For more information see Tezduyar,
+      // T. E. (2003). Computation of moving boundaries and interfaces and
+      // stabilization parameters. International Journal for Numerical
+      // Methods in Fluids, 43(5), 555-575. Our implementation is based on
+      // equations (70) and (79), which are adapted for the heat transfer
+      // solver.
+      const double tolerance = 1e-12;
+
+
+      // In Tezduyar 2003, this is denoted r
+      Tensor<1, dim> gradient_unit_vector =
+        temperature_gradient / (temperature_gradient.norm() + tolerance);
+
+      // Calculate the artificial viscosity of the shock capture
+      const double vdcdd = h * h * u_mag * temperature_gradient.norm() / T_mag;
+
+      // We remove the diffusion aligned with the velocity
+      // as is done in the original article.  In Tezduyar 2003, this is
+      // denoted s.
+      Tensor<1, dim> velocity_unit_vector =
+        velocity / (velocity.norm() + 1e-12);
+      const Tensor<2, dim> k_corr =
+        Utilities::fixed_power<2>(gradient_unit_vector * velocity_unit_vector) *
+        outer_product(velocity_unit_vector, velocity_unit_vector);
+      const Tensor<2, dim> gradient_unit_tensor =
+        outer_product(gradient_unit_vector, gradient_unit_vector);
+      const Tensor<2, dim> dcdd_factor = gradient_unit_tensor - k_corr;
+
+      for (unsigned int j = 0; j < n_dofs; ++j)
         {
-          const double rho_cp = density[q] * specific_heat[q];
-          const double alpha  = thermal_conductivity[q] / (rho_cp + DBL_MIN);
+          strong_jacobian_vec[q][j] +=
+            rho_cp * velocity * scratch_data.grad_phi_T[q][j] -
+            thermal_conductivity[q] * scratch_data.laplacian_phi_T[q][j];
+        }
 
-          const auto method = this->simulation_control->get_assembly_method();
+      for (unsigned int i = 0; i < n_dofs; ++i)
+        {
+          const auto phi_T_i      = scratch_data.phi_T[q][i];
+          const auto grad_phi_T_i = scratch_data.grad_phi_T[q][i];
 
-          // Store JxW in local variable for faster access
-          const double JxW = JxW_vec[q];
-
-          const auto velocity = scratch_data.velocity_values[q];
-
-          // Temperature gradient information for DCDD stabilization
-          const auto temperature_gradient =
-            scratch_data.temperature_gradients[q];
-
-          // Calculation of the magnitude of the velocity for the
-          // stabilization parameter
-          const double u_mag = std::max(velocity.norm(), 1e-12);
-
-          // Calculation of the GLS stabilization parameter. The
-          // stabilization parameter used is different if the simulation is
-          // steady or unsteady. In the unsteady case it includes the value
-          // of the time-step
-          const double tau =
-            is_steady(method) ?
-              1. / std::sqrt(std::pow(2. * u_mag / h, 2) +
-                             9 * std::pow(4 * alpha / (h * h), 2)) :
-              1. / std::sqrt(std::pow(sdt, 2) + std::pow(2. * u_mag / h, 2) +
-                             9 * std::pow(4 * alpha / (h * h), 2));
-
-
-          // Implementation of a Discontinuity-Capturing Directional Dissipation
-          // (DCDD) shock capturing scheme. For more information see Tezduyar,
-          // T. E. (2003). Computation of moving boundaries and interfaces and
-          // stabilization parameters. International Journal for Numerical
-          // Methods in Fluids, 43(5), 555-575. Our implementation is based on
-          // equations (70) and (79), which are adapted for the heat transfer
-          // solver.
-          const double tolerance = 1e-12;
-
-
-          // In Tezduyar 2003, this is denoted r
-          Tensor<1, dim> gradient_unit_vector =
-            temperature_gradient / (temperature_gradient.norm() + tolerance);
-
-          // Calculate the artificial viscosity of the shock capture
-          const double vdcdd =
-            h * h * u_mag * temperature_gradient.norm() / T_mag;
-
-          // We remove the diffusion aligned with the velocity
-          // as is done in the original article.  In Tezduyar 2003, this is
-          // denoted s.
-          Tensor<1, dim> velocity_unit_vector =
-            velocity / (velocity.norm() + 1e-12);
-          const Tensor<2, dim> k_corr =
-            Utilities::fixed_power<2>(gradient_unit_vector *
-                                      velocity_unit_vector) *
-            outer_product(velocity_unit_vector, velocity_unit_vector);
-          const Tensor<2, dim> gradient_unit_tensor =
-            outer_product(gradient_unit_vector, gradient_unit_vector);
-          const Tensor<2, dim> dcdd_factor = gradient_unit_tensor - k_corr;
 
           for (unsigned int j = 0; j < n_dofs; ++j)
             {
-              strong_jacobian_vec[q][j] +=
-                rho_cp * velocity * scratch_data.grad_phi_T[q][j] -
-                thermal_conductivity[q] * scratch_data.laplacian_phi_T[q][j];
+              const Tensor<1, dim> grad_phi_T_j = scratch_data.grad_phi_T[q][j];
+
+
+              // Weak form for : - k * laplacian T + rho * cp *
+              //                  u * gradT - f -
+              //                  tau:grad(u) =0
+              // Hypothesis : incompressible newtonian fluid
+              // so tau:grad(u) =
+              // mu*(grad(u)+transpose(grad(u)).transpose(grad(u))
+              local_matrix(i, j) +=
+                (thermal_conductivity[q] * grad_phi_T_i * grad_phi_T_j +
+                 rho_cp * phi_T_i * velocity * grad_phi_T_j) *
+                JxW;
+
+              // Addition to the cell matrix for GLS stabilization
+              local_matrix(i, j) += tau * strong_jacobian_vec[q][j] *
+                                    (grad_phi_T_i * velocity) * JxW;
+
+              // DCDD shock capturing
+              local_matrix(i, j) +=
+                (rho_cp * vdcdd *
+                 scalar_product(grad_phi_T_j, dcdd_factor * grad_phi_T_i)) *
+                JxW;
             }
+        }
 
-          for (unsigned int i = 0; i < n_dofs; ++i)
-            {
-              const auto phi_T_i      = scratch_data.phi_T[q][i];
-              const auto grad_phi_T_i = scratch_data.grad_phi_T[q][i];
-
-
-              for (unsigned int j = 0; j < n_dofs; ++j)
-                {
-                  const Tensor<1, dim> grad_phi_T_j =
-                    scratch_data.grad_phi_T[q][j];
-
-
-                  // Weak form for : - k * laplacian T + rho * cp *
-                  //                  u * gradT - f -
-                  //                  tau:grad(u) =0
-                  // Hypothesis : incompressible newtonian fluid
-                  // so tau:grad(u) =
-                  // mu*(grad(u)+transpose(grad(u)).transpose(grad(u))
-                  local_matrix(i, j) +=
-                    (thermal_conductivity[q] * grad_phi_T_i * grad_phi_T_j +
-                     rho_cp * phi_T_i * velocity * grad_phi_T_j) *
-                    JxW;
-
-                  // Addition to the cell matrix for GLS stabilization
-                  local_matrix(i, j) += tau * strong_jacobian_vec[q][j] *
-                                        (grad_phi_T_i * velocity) * JxW;
-
-                  // DCDD shock capturing
-                  local_matrix(i, j) +=
-                    (rho_cp * vdcdd *
-                     scalar_product(grad_phi_T_j, dcdd_factor * grad_phi_T_i)) *
-                    JxW;
-                }
-            }
-
-        } // end loop on quadrature points
-    }
+    } // end loop on quadrature points
 }
 
 template <int dim>
