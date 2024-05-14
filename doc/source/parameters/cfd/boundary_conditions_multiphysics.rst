@@ -68,10 +68,6 @@ The default parameters for ``temperature`` and ``convection-radiation-flux`` are
 
     where :math:`\mathbf{\sigma}` is the Stefan-Boltzmann constant.
 
-    .. note::
-
-      Note that the expressions for ``h``, ``Tinf``, ``emissivity``, and ``heat_flux`` can be time-dependent, but the current implementation does not allow for space dependence (the expressions are evaluated at the origin).
-
     .. important::
 
       The flux represented by the ``convection-radiation-flux`` BC follow the direction of the normal vector to the boundary, i.e., pointing outwards the boundary. As consequence, a positive value for ``heat_flux``, for example, will result on heat being extracted from the boundary.

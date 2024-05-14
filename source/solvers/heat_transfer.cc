@@ -1269,15 +1269,6 @@ HeatTransfer<dim>::update_boundary_conditions()
         ->set_time(time);
       this->simulation_parameters.boundary_conditions_ht.heat_flux_bc[i_bc]
         ->set_time(time);
-
-      Assert(
-        this->simulation_parameters.boundary_conditions_ht.emissivity[i_bc]
-              ->value(Point<dim>()) <= 1.0 &&
-          this->simulation_parameters.boundary_conditions_ht.emissivity[i_bc]
-              ->value(Point<dim>()) >= 0.0,
-        EmissivityError(
-          this->simulation_parameters.boundary_conditions_ht.emissivity[i_bc]
-            ->value(Point<dim>())));
     }
 
   nonzero_constraints.clear();
