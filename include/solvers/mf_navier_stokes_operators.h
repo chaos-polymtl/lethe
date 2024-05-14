@@ -73,6 +73,10 @@ public:
    * @param[in] stabilization Stabilization type specified in parameter file.
    * @param[in] mg_level Level of the operator in case of MG methods.
    * @param[in] simulation_control Required to get the time stepping method.
+   * @param[in] enable_hessians_jacobian Flag to turn hessian terms from
+   * jacobian on or off.
+   * @param[in] enable_hessians_residual Flag to turn hessian terms from
+   * residual on or off.
    */
   NavierStokesOperatorBase(
     const Mapping<dim>                  &mapping,
@@ -83,7 +87,9 @@ public:
     const double                         kinematic_viscosity,
     const StabilizationType              stabilization,
     const unsigned int                   mg_level,
-    std::shared_ptr<SimulationControl>   simulation_control);
+    std::shared_ptr<SimulationControl>   simulation_control,
+    const bool                          &enable_hessians_jacobian,
+    const bool                          &enable_hessians_residual);
 
   /**
    * @brief Initialize the main matrix free object that contains all data and is
@@ -100,6 +106,11 @@ public:
    * @param[in] kinematic_viscosity Kinematic viscosity.
    * @param[in] stabilization Stabilization type specified in parameter file.
    * @param[in] mg_level Level of the operator in case of MG methods.
+   * @param[in] simulation_control Required to get the time stepping method.
+   * @param[in] enable_hessians_jacobian Flag to turn hessian terms from
+   * jacobian on or off.
+   * @param[in] enable_hessians_residual Flag to turn hessian terms from
+   * residual on or off.
    */
   void
   reinit(const Mapping<dim>                  &mapping,
@@ -110,7 +121,9 @@ public:
          const double                         kinematic_viscosity,
          const StabilizationType              stabilization,
          const unsigned int                   mg_level,
-         std::shared_ptr<SimulationControl>   simulation_control);
+         std::shared_ptr<SimulationControl>   simulation_control,
+         const bool                          &enable_hessians_jacobian,
+         const bool                          &enable_hessians_residual);
 
   /**
    * @brief Compute the element size h of the cells required to calculate
@@ -408,6 +421,18 @@ protected:
    *
    */
   std::shared_ptr<SimulationControl> simulation_control;
+
+  /**
+   * @brief Flag to turn hessian terms from jacobian on or off.
+   *
+   */
+  bool enable_hessians_jacobian;
+
+  /**
+   * @brief Flag to turn hessian terms from residual on or off.
+   *
+   */
+  bool enable_hessians_residual;
 
   /**
    * @brief Table with correct alignment for vectorization to store the values

@@ -3,12 +3,17 @@
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Master] - 2024-05-13
+
+### Changed
+
+- MAJOR The source term specifications for the Navier-Stokes equations were using the label "xyz" which made no sense. This has been changed to "fluid dynamics" [#1130](https://github.com/chaos-polymtl/lethe/pull/1130)
+
 ## [Master] - 2024-05-09
 
 ### Added
 
 - MAJOR Added advection of particles in the Adaptive Sparse Contacts (ASC) feature in DEM and CFD-DEM (Disabling Contacts is renamed Adaptive Sparse Contacts). [#1113](https://github.com/chaos-polymtl/lethe/pull/1113)
-
 
 ## [Master] - 2024-05-09
 
@@ -22,7 +27,6 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 ### Fixed
 
 - MAJOR Periodic boundary conditions for the DEM were not working if they weren't the last boundary conditions being declare in the parameter file. Now, every boundary condition work in which even order they are being declared. [#1110](https://github.com/chaos-polymtl/lethe/pull/1110)
-
 
 ## [Master] - 2024-04-30
 

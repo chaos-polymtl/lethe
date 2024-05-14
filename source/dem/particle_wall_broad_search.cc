@@ -42,22 +42,15 @@ ParticleWallBroadSearch<dim>::find_particle_wall_contact_pairs(
       if (particles_exist_in_main_cell)
         {
           for (typename Particles::ParticleHandler<dim>::
-                 particle_iterator_range::iterator particles_in_cell_iterator =
+                 particle_iterator_range::iterator particle_in_cell_iterator =
                    particles_in_cell.begin();
-               particles_in_cell_iterator != particles_in_cell.end();
-               ++particles_in_cell_iterator)
+               particle_in_cell_iterator != particles_in_cell.end();
+               ++particle_in_cell_iterator)
             {
-              // Making the tuple and adding it to the
-              // particle_wall_contact_candidates vector. This vector is the
-              // output of this function
-
-              particle_wall_contact_candidates[particles_in_cell_iterator
-                                                 ->get_id()]
-                .emplace(boundary_cells_content.global_face_id,
-                         std::make_tuple(particles_in_cell_iterator,
-                                         boundary_cells_content.normal_vector,
-                                         boundary_cells_content.point_on_face,
-                                         boundary_cells_content.boundary_id));
+              // Store particles candidate to wall with boundary cell info
+              store_candidates(particle_in_cell_iterator,
+                               boundary_cells_content,
+                               particle_wall_contact_candidates);
             }
         }
     }
@@ -67,7 +60,7 @@ template <int dim>
 void
 ParticleWallBroadSearch<dim>::find_particle_floating_wall_contact_pairs(
   const std::unordered_map<
-    types::global_dof_index,
+    DEM::global_face_id,
     std::set<typename Triangulation<dim>::active_cell_iterator>>
                                         &boundary_cells_for_floating_walls,
   const Particles::ParticleHandler<dim> &particle_handler,
@@ -118,14 +111,13 @@ ParticleWallBroadSearch<dim>::find_particle_floating_wall_contact_pairs(
                 {
                   for (typename Particles::ParticleHandler<
                          dim>::particle_iterator_range::iterator
-                         particles_in_cell_iterator = particles_in_cell.begin();
-                       particles_in_cell_iterator != particles_in_cell.end();
-                       ++particles_in_cell_iterator)
+                         particle_in_cell_iterator = particles_in_cell.begin();
+                       particle_in_cell_iterator != particles_in_cell.end();
+                       ++particle_in_cell_iterator)
                     {
-                      particle_floating_wall_candidates
-                        [particles_in_cell_iterator->get_id()]
-                          .insert(
-                            {floating_wall_id, particles_in_cell_iterator});
+                      store_candidates(particle_in_cell_iterator,
+                                       floating_wall_id,
+                                       particle_floating_wall_candidates);
                     }
                 }
             }
@@ -203,15 +195,14 @@ ParticleWallBroadSearch<dim>::particle_floating_mesh_contact_search(
                       // contact candidate pairs
                       for (typename Particles::ParticleHandler<
                              dim>::particle_iterator_range::iterator
-                             particles_in_cell_iterator =
+                             particle_in_cell_iterator =
                                particles_in_cell.begin();
-                           particles_in_cell_iterator !=
-                           particles_in_cell.end();
-                           ++particles_in_cell_iterator)
+                           particle_in_cell_iterator != particles_in_cell.end();
+                           ++particle_in_cell_iterator)
                         {
                           candidates[cut_cells].insert(
-                            {particles_in_cell_iterator->get_id(),
-                             particles_in_cell_iterator});
+                            {particle_in_cell_iterator->get_id(),
+                             particle_in_cell_iterator});
                         }
                     }
                 }
@@ -258,19 +249,16 @@ ParticleWallBroadSearch<dim>::find_particle_wall_contact_pairs(
       typename Particles::ParticleHandler<dim>::particle_iterator_range
         particles_in_cell = particle_handler.particles_in_cell(cell);
 
-      for (auto particles_in_cell_iterator = particles_in_cell.begin();
-           particles_in_cell_iterator != particles_in_cell.end();
-           ++particles_in_cell_iterator)
+      for (typename Particles::ParticleHandler<
+             dim>::particle_iterator_range::iterator particle_in_cell_iterator =
+             particles_in_cell.begin();
+           particle_in_cell_iterator != particles_in_cell.end();
+           ++particle_in_cell_iterator)
         {
-          // Making the tuple and adding it to the
-          // particle_wall_contact_candidates. This unordered map is the
-          // output of this function
-          particle_wall_contact_candidates[particles_in_cell_iterator->get_id()]
-            .emplace(boundary_cells_content.global_face_id,
-                     std::make_tuple(particles_in_cell_iterator,
-                                     boundary_cells_content.normal_vector,
-                                     boundary_cells_content.point_on_face,
-                                     boundary_cells_content.boundary_id));
+          // Store particles candidate to wall with boundary cell info
+          store_candidates(particle_in_cell_iterator,
+                           boundary_cells_content,
+                           particle_wall_contact_candidates);
         }
     }
 }
@@ -332,13 +320,15 @@ ParticleWallBroadSearch<dim>::find_particle_floating_wall_contact_pairs(
               typename Particles::ParticleHandler<dim>::particle_iterator_range
                 particles_in_cell = particle_handler.particles_in_cell(*cell);
 
-              for (auto particles_in_cell_iterator = particles_in_cell.begin();
-                   particles_in_cell_iterator != particles_in_cell.end();
-                   ++particles_in_cell_iterator)
+              for (typename Particles::ParticleHandler<
+                     dim>::particle_iterator_range::iterator
+                     particle_in_cell_iterator = particles_in_cell.begin();
+                   particle_in_cell_iterator != particles_in_cell.end();
+                   ++particle_in_cell_iterator)
                 {
-                  particle_floating_wall_candidates[particles_in_cell_iterator
-                                                      ->get_id()]
-                    .insert({floating_wall_id, particles_in_cell_iterator});
+                  store_candidates(particle_in_cell_iterator,
+                                   floating_wall_id,
+                                   particle_floating_wall_candidates);
                 }
             }
         }
@@ -414,14 +404,14 @@ ParticleWallBroadSearch<dim>::particle_floating_mesh_contact_search(
 
                   // Loop through particles in the main cell and build
                   // contact candidate pairs
-                  for (auto particles_in_cell_iterator =
+                  for (auto particle_in_cell_iterator =
                          particles_in_cell.begin();
-                       particles_in_cell_iterator != particles_in_cell.end();
-                       ++particles_in_cell_iterator)
+                       particle_in_cell_iterator != particles_in_cell.end();
+                       ++particle_in_cell_iterator)
                     {
                       candidates[cut_cells].insert(
-                        {particles_in_cell_iterator->get_id(),
-                         particles_in_cell_iterator});
+                        {particle_in_cell_iterator->get_id(),
+                         particle_in_cell_iterator});
                     }
                 }
             }

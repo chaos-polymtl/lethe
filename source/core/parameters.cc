@@ -2281,11 +2281,24 @@ namespace Parameters
                           Patterns::Integer(),
                           "Maximum number of krylov vectors for GMRES");
 
+        prm.declare_entry(
+          "enable hessians in jacobian",
+          "true",
+          Patterns::Bool(),
+          "Turns off the terms involving the hessian in the Jacobian");
+
+        prm.declare_entry(
+          "enable hessians in residual",
+          "true",
+          Patterns::Bool(),
+          "Turns off the terms involving the hessian in the rhs");
+
         prm.declare_entry("preconditioner",
                           "ilu",
                           Patterns::Selection("amg|ilu|lsmg|gcmg"),
                           "The preconditioner for the linear solver."
                           "Choices are <amg|ilu|lsmg|gcmg>.");
+
 
         prm.declare_entry("ilu preconditioner fill",
                           "0",
@@ -2353,6 +2366,12 @@ namespace Parameters
                           "-1",
                           Patterns::Integer(),
                           "mg minimum number of cells for coarse level");
+
+        prm.declare_entry(
+          "mg enable hessians in jacobian",
+          "true",
+          Patterns::Bool(),
+          "Turns off the terms involving the hessian in the Jacobian of mg operators");
 
         prm.declare_entry("mg smoother iterations",
                           "10",
@@ -2469,10 +2488,15 @@ namespace Parameters
           throw(
             std::runtime_error("Unknown verbosity mode for the linear solver"));
 
-        relative_residual  = prm.get_double("relative residual");
-        minimum_residual   = prm.get_double("minimum residual");
-        max_iterations     = prm.get_integer("max iters");
-        max_krylov_vectors = prm.get_integer("max krylov vectors");
+        relative_residual        = prm.get_double("relative residual");
+        minimum_residual         = prm.get_double("minimum residual");
+        max_iterations           = prm.get_integer("max iters");
+        max_krylov_vectors       = prm.get_integer("max krylov vectors");
+        enable_hessians_jacobian = prm.get_bool("enable hessians in jacobian");
+        enable_hessians_residual = prm.get_bool("enable hessians in residual");
+
+        Assert(enable_hessians_residual || !enable_hessians_jacobian,
+               ExcNotImplemented());
 
         const std::string precond = prm.get("preconditioner");
         if (precond == "amg")
@@ -2486,6 +2510,7 @@ namespace Parameters
         else
           throw std::logic_error(
             "Error, invalid preconditioner type. Choices are amg, ilu, lsmg or gcmg.");
+
 
         ilu_precond_fill = prm.get_double("ilu preconditioner fill");
         ilu_precond_atol =
@@ -2509,6 +2534,10 @@ namespace Parameters
 
         mg_min_level       = prm.get_integer("mg min level");
         mg_level_min_cells = prm.get_integer("mg level min cells");
+        mg_enable_hessians_jacobian =
+          prm.get_bool("mg enable hessians in jacobian");
+        Assert(enable_hessians_jacobian || !mg_enable_hessians_jacobian,
+               ExcNotImplemented());
 
         mg_smoother_iterations     = prm.get_integer("mg smoother iterations");
         mg_smoother_relaxation     = prm.get_double("mg smoother relaxation");

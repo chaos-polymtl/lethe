@@ -119,7 +119,7 @@ end
 #---------------------------------------------------
 
 subsection source term
-  subsection xyz
+  subsection fluid dynamics
     set enable = false
   end
 end
