@@ -419,7 +419,6 @@ private:
   void
   print_mg_setup_times();
 
-
   /**
    * @brief  Provide relevant solutions to multiphysics interface.
    */

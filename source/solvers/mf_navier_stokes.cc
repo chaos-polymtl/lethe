@@ -1656,7 +1656,7 @@ MFNavierStokesSolver<dim>::setup_dofs_fd()
   // Pre-allocate memory for the previous solutions using the information
   // of the BDF schemes
   this->multiphysics_previous_solutions.resize(
-    maximum_number_of_previous_solutions());
+    this->simulation_control->get_number_of_previous_solution_in_assembly());
 
   for (auto &solution : this->multiphysics_previous_solutions)
     solution.reinit(this->locally_owned_dofs,
@@ -2096,9 +2096,12 @@ MFNavierStokesSolver<dim>::update_solutions_for_multiphysics()
 
   // Convert the previous solutions to multiphysics vector type and provide them
   // to the multiphysics interface
-  for (auto &trilinos_solution : this->multiphysics_previous_solutions)
-    for (auto &dealii_solution : this->previous_solutions)
-      convert_vector_dealii_to_trilinos(trilinos_solution, dealii_solution);
+  const unsigned int number_of_previous_solutions =
+    this->simulation_control->get_number_of_previous_solution_in_assembly();
+
+  for (unsigned int i = 0; i < number_of_previous_solutions; i++)
+    convert_vector_dealii_to_trilinos(this->multiphysics_previous_solutions[i],
+                                      this->previous_solutions[i]);
 
   this->multiphysics->set_previous_solutions(
     PhysicsID::fluid_dynamics, &this->multiphysics_previous_solutions);
