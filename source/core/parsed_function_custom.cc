@@ -225,10 +225,8 @@ ParsedFunctionCustom<n_components>::vector_gradient(
 
 template <int n_components>
 void
-ParsedFunctionCustom<n_components>::set_time(const double newtime)
-{
-  // this->FunctionTime::set_time(newtime);
-}
+ParsedFunctionCustom<n_components>::set_time(const double /*newtime*/)
+{}
 
 // Explicit instantiations
 template class ParsedFunctionCustom<1>;
