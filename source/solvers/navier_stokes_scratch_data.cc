@@ -185,7 +185,6 @@ NavierStokesScratchData<dim>::enable_cahn_hilliard(
   const Mapping<dim>             &mapping,
   const Parameters::CahnHilliard &cahn_hilliard_parameters)
 {
-    printf("11");
   gather_cahn_hilliard    = true;
   fe_values_cahn_hilliard = std::make_shared<FEValues<dim>>(
     mapping, fe, quadrature, update_values | update_gradients);
@@ -219,7 +218,7 @@ NavierStokesScratchData<dim>::enable_cahn_hilliard(
   thermal_expansion_1                   = std::vector<double>(n_q_points);
   surface_tension                       = std::vector<double>(n_q_points);
   surface_tension_gradient              = std::vector<double>(n_q_points);
-  cahn_hilliard_mobility                = std::vector<double>(n_q_points);
+  mobility_cahn_hilliard                = std::vector<double>(n_q_points);
   // Create filter
   cahn_hilliard_filter =
     CahnHilliardFilterBase::model_cast(cahn_hilliard_parameters);
@@ -233,7 +232,6 @@ NavierStokesScratchData<dim>::enable_cahn_hilliard(
   const Mapping<dim>                            &mapping,
   const std::shared_ptr<CahnHilliardFilterBase> &cahn_hilliard_filter)
 {
-  printf("10");
   gather_cahn_hilliard    = true;
   fe_values_cahn_hilliard = std::make_shared<FEValues<dim>>(
     mapping, fe, quadrature, update_values | update_gradients);
@@ -245,6 +243,8 @@ NavierStokesScratchData<dim>::enable_cahn_hilliard(
 
   // Allocate CahnHilliard gradients
   phase_order_cahn_hilliard_gradients =
+    std::vector<Tensor<1, dim>>(this->n_q_points);
+  chemical_potential_cahn_hilliard_gradients =
     std::vector<Tensor<1, dim>>(this->n_q_points);
 
   // For physical properties calculations
@@ -265,7 +265,7 @@ NavierStokesScratchData<dim>::enable_cahn_hilliard(
   thermal_expansion_1                   = std::vector<double>(n_q_points);
   surface_tension                       = std::vector<double>(n_q_points);
   surface_tension_gradient              = std::vector<double>(n_q_points);
-  cahn_hilliard_mobility                = std::vector<double>(n_q_points);
+    mobility_cahn_hilliard                = std::vector<double>(n_q_points);
   // Create filter
   this->cahn_hilliard_filter = cahn_hilliard_filter;
 }
@@ -377,7 +377,6 @@ template <int dim>
 void
 NavierStokesScratchData<dim>::calculate_physical_properties()
 {
-    std::cout<<"0"<<std::endl;
   if (properties_manager.field_is_required(field::temperature) &&
       gather_temperature)
     {
@@ -459,6 +458,7 @@ NavierStokesScratchData<dim>::calculate_physical_properties()
           const auto density_model_1 = properties_manager.get_density(1);
           const auto rheology_model_1 = properties_manager.get_rheology(1);
 
+
           density_ref_0 = density_model_0->get_density_ref();
           density_ref_1 = density_model_1->get_density_ref();
 
@@ -486,7 +486,6 @@ NavierStokesScratchData<dim>::calculate_physical_properties()
                           fields, field::temperature, surface_tension_gradient);
           }
 
-            printf("2");
           density_model_0->vector_value(fields, density_0);
           rheology_model_0->get_dynamic_viscosity_vector(density_ref_0,
                                                          fields,
@@ -576,13 +575,22 @@ NavierStokesScratchData<dim>::calculate_physical_properties()
               // Blend the physical properties using the CahnHilliard field
               for (unsigned int q = 0; q < this->n_q_points; ++q)
                 {
-                    printf("4");
                   double phase_order_cahn_hilliard_value =
                     this->filtered_phase_order_cahn_hilliard_values[q];
-                    printf("5");
 
-                  this->density_diff =
-                    0.5 * std::abs(density_0[q] - density_1[q]);
+                  this->density_diff = 0.5 * (density_0[q] - density_1[q]);
+
+                  // Gather properties from material interactions
+                  const auto material_interaction_id =
+                    properties_manager.get_material_interaction_id(
+                      material_interactions_type::fluid_fluid, 0, 1);
+
+                  // Gather mobility
+                  const auto mobility_cahn_hilliard_model =
+                    properties_manager.get_mobility_cahn_hilliard(
+                      material_interaction_id);
+                  mobility_cahn_hilliard_model->vector_value(
+                    fields, mobility_cahn_hilliard);
 
                   density[q] = calculate_point_property_cahn_hilliard(
                     phase_order_cahn_hilliard_value,

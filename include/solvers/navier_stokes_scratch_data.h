@@ -1065,7 +1065,7 @@ public:
   std::vector<double> grad_kinematic_viscosity_shear_rate_1;
   std::vector<double> surface_tension;
   std::vector<double> surface_tension_gradient;
-  std::vector<double> cahn_hilliard_mobility;
+  std::vector<double> mobility_cahn_hilliard;
 
   // FEValues for the Navier-Stokes problem
   FEValues<dim>              fe_values;
