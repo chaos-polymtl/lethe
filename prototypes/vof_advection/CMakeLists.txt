@@ -1,0 +1,2 @@
+add_executable(vof_advection vof_advection.cc)
+deal_ii_setup_target(vof_advection)
