@@ -384,16 +384,20 @@ namespace Parameters
 
     prm.enter_subsection("solid objects");
     {
-      prm.declare_entry("number of solids",
-                        "0",
-                        Patterns::Integer(),
-                        "Number of solid object");
+      prm.enter_subsection("two dimensions");
+      {
+        prm.declare_entry("number of solids",
+                          "0",
+                          Patterns::Integer(),
+                          "Number of solid object");
 
-      for (unsigned int i_solid = 0; i_solid < max_number_of_solids; ++i_solid)
-        {
-          solids[i_solid] = std::make_shared<RigidSolidObject<dim>>();
-          solids[i_solid]->declare_parameters(prm, i_solid);
-        }
+        for (unsigned int i_solid = 0; i_solid < max_number_of_solids;
+             ++i_solid)
+          {
+            solids[i_solid] = std::make_shared<RigidSolidObject<dim>>();
+            solids[i_solid]->declare_parameters(prm, i_solid);
+          }
+      }
     }
     prm.leave_subsection();
   }
@@ -404,11 +408,14 @@ namespace Parameters
   {
     prm.enter_subsection("solid objects");
     {
-      number_solids = prm.get_integer("number of solids");
-      for (unsigned int i_solid = 0; i_solid < number_solids; ++i_solid)
-        {
-          solids[i_solid]->parse_parameters(prm, i_solid);
-        }
+      prm.enter_subsection("two dimensions");
+      {
+        number_solids = prm.get_integer("number of solids");
+        for (unsigned int i_solid = 0; i_solid < number_solids; ++i_solid)
+          {
+            solids[i_solid]->parse_parameters(prm, i_solid);
+          }
+      }
     }
     prm.leave_subsection();
   }
