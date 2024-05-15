@@ -79,8 +79,8 @@ HeatTransferAssemblerCore<dim>::assemble_matrix(
 
       // Calculate the artificial viscosity of the shock capture.
       // nu = 1 / 2 h^2 U_mag norm(\grad T) / T_mag
-      const double vdcdd =
-        0.5 * h * h * u_mag * temperature_gradient.norm() / scratch_data.global_T_mag;
+      const double vdcdd = 0.5 * h * h * u_mag * temperature_gradient.norm() /
+                           scratch_data.global_T_mag;
 
       // We remove the diffusion aligned with the velocity
       // as is done in the original article.  In Tezduyar 2003, this is
@@ -214,8 +214,8 @@ HeatTransferAssemblerCore<dim>::assemble_rhs(
 
       // Calculate the artificial viscosity of the shock capture.
       // nu = 1 / 2 h^2 U_mag norm(\grad T) / T_mag
-      const double vdcdd =
-        0.5 * h * h * u_mag * temperature_gradient.norm() / scratch_data.global_T_mag;
+      const double vdcdd = 0.5 * h * h * u_mag * temperature_gradient.norm() /
+                           scratch_data.global_T_mag;
 
       // We remove the diffusion aligned with the velocity
       // as is done in the original article.  In Tezduyar 2003, this is

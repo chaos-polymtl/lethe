@@ -193,8 +193,7 @@ public:
   reinit(const typename DoFHandler<dim>::active_cell_iterator &cell,
          const VectorType                                     &current_solution,
          const std::vector<GlobalVectorType> &previous_solutions,
-         Function<dim>                       *source_function,
-         const double &T_mag)
+         Function<dim>                       *source_function)
   {
     material_id = cell->material_id();
     this->fe_values_T.reinit(cell);
@@ -288,7 +287,6 @@ public:
               }
           }
       }
-    std::cout << this->global_T_mag << std::endl;
   }
 
   /**

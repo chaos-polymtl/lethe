@@ -451,13 +451,10 @@ HeatTransfer<dim>::assemble_local_system_matrix(
   auto source_term = simulation_parameters.source_term.heat_transfer_source;
   source_term->set_time(simulation_control->get_current_time());
 
-  const double T_mag = calculate_T_mag();
-
   scratch_data.reinit(cell,
                       this->evaluation_point,
                       this->previous_solutions,
-                      &(*source_term),
-                      T_mag);
+                      &(*source_term));
 
   const DoFHandler<dim> *dof_handler_fluid =
     multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
@@ -615,13 +612,10 @@ HeatTransfer<dim>::assemble_local_system_rhs(
   auto source_term = simulation_parameters.source_term.heat_transfer_source;
   source_term->set_time(simulation_control->get_current_time());
 
-  const double T_mag = calculate_T_mag();
-
   scratch_data.reinit(cell,
                       this->evaluation_point,
                       this->previous_solutions,
-                      &(*source_term),
-                      T_mag);
+                      &(*source_term));
 
   const DoFHandler<dim> *dof_handler_fluid =
     multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
@@ -775,7 +769,8 @@ HeatTransfer<dim>::calculate_T_mag()
   const double previous_solution_maximum = this->previous_solutions[0].max();
   const double previous_solution_minimum = this->previous_solutions[0].min();
 
-  return std::max(previous_solution_maximum - previous_solution_minimum, 1e-12);
+  // Set minimum value as 1 to prevent overshooting of diffusivity
+  return std::max(previous_solution_maximum - previous_solution_minimum, 1.);
 }
 
 template <int dim>
