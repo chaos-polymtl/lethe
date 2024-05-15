@@ -20,6 +20,7 @@
 
 
 #ifndef lethe_postprocessing_cfd_h
+#define lethe_postprocessing_cfd_h
 
 
 // Base
@@ -66,6 +67,5 @@ calculate_total_volume(const DoFHandler<dim> &void_fraction_dof_handler,
                            const Mapping<dim>    &mapping);
 
 
-#  define lethe_postprocessing_cfd_h
 
 #endif

@@ -80,6 +80,7 @@ calculate_total_volume(const DoFHandler<dim> &void_fraction_dof_handler,
   total_volume_fluid = Utilities::MPI::sum(total_volume_fluid, mpi_communicator);
   total_volume_solid = Utilities::MPI::sum(total_volume_solid, mpi_communicator);
 
+
   return {total_volume_fluid, total_volume_solid};
 }
 
