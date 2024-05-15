@@ -1,5 +1,5 @@
 ===========================
-Unresolved CFD-DEM Coupling
+Unresolved CFD-DEM 
 ===========================
 
 Unresolved CFD-DEM is a technique with high potential for designing and analyzing multiphase flows involving particles and fluid. Some examples of these systems are fluidized beds, stirred-tanks, and flocculation processes. In this approach, we apply Newton's second law of motion to each particle individually such that their movement is described at a micro-scale (as in DEM simulations). On the other hand, the fluid is represented at a meso-scale by a mesh of cells, to which we apply the Volume Average Navier-Stokes (VANS) equations.
@@ -38,7 +38,7 @@ where:
 * :math:`\mathbf{M}_{c,iw}` is the torque between particle :math:`i` and walls :math:`w`;
 * :math:`\mathbf{M}_{c,iw}` is the rolling friction between particle :math:`i` and walls :math:`w`;
 
-Apart from :math:`\mathbf{f}_{pf,i}`, all the other terms of the previous equations are detailed in the DEM section of this theory guide (see :doc:`../dem/dem`). The momentum transport between phases :math:`\mathbf{f}_{pf,i}` can be written as:
+Apart from :math:`\mathbf{f}_{pf,i}`, all the other terms of the previous equations are detailed in the DEM section of this theory guide (see :doc:`./dem`). The momentum transport between phases :math:`\mathbf{f}_{pf,i}` can be written as:
 
 .. math::
     \mathbf{f}_{pf,i} = \mathbf{f}_{\nabla p,i} + \mathbf{f}_{\nabla \cdot \mathbf{\tau},i} + \mathbf{f}_{d,i} + \mathbf{f}_{Ar,i} + \mathbf{f}_{g,i} + \mathbf{f}''_{i}
@@ -53,9 +53,9 @@ where:
 * :math:`\mathbf{f}''_{i}` are the remaining forces, including virtual mass, Basset, Lift, and Magnus (currently not implemented in Lethe).
 
 .. note::
-    Since pressure in Lethe does not account for the hydrostatic pressure, i.e., the gravity term is not taken into account in the Navier-Stokes equations (see :doc:`../fluid_dynamics/navier-stokes`), we explicitly insert :math:`\mathbf{f}_{Ar,i}` in :math:`\mathbf{f}_{pf,i}`.
+    Since the pressure in Lethe does not account for the hydrostatic pressure, i.e., the gravity term is not taken into account in the Navier-Stokes equations (see :doc:`../../multiphysics/fluid_dynamics/navier-stokes`), we explicitly insert :math:`\mathbf{f}_{Ar,i}` in :math:`\mathbf{f}_{pf,i}`.  
 
-In unresolved CFD-DEM, the drag force is calculated using correlations (frequently called drag models). The drag models implemented in Lethe are described in the `unresolved CFD-DEM parameters guide <https://chaos-polymtl.github.io/lethe/documentation/parameters/unresolved_cfd-dem/cfd_dem.html>`_.
+In unresolved CFD-DEM, the drag force is calculated using correlations (frequently called drag models). The drag models implemented in Lethe are described in the `unresolved CFD-DEM parameters guide <../../../parameters/unresolved-cfd-dem/cfd-dem>`_.
 
 Volume Average Navier-Stokes
 -----------------------------
@@ -103,7 +103,7 @@ while for Model B, since the pressure and shear stress are totally in the fluid,
 
 where :math:`n_p` is the number of particles inside the cell :math:`\Omega` with volume :math:`V_{\Omega}`.
 
-Lethe is capable of simulating unresolved CFD-DEM cases with both Models A and B (see the :doc:`../../parameters/unresolved-cfd-dem/cfd-dem` page of this guide).
+Lethe is capable of simulating unresolved CFD-DEM cases with both Models A and B (see the :doc:`../../../parameters/unresolved-cfd-dem/cfd-dem` page of this guide).
 
 Void Fraction
 --------------
