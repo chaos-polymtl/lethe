@@ -374,17 +374,6 @@ public:
   }
 
   /**
-   * @brief Getter for T_mag
-   *
-   * @return T_mag
-   */
-  double
-  get_T_mag()
-  {
-    return T_mag;
-  }
-
-  /**
    * @brief Getter method to access the private attribute
    * nonzero_constraints for the physic currently solved.
    *
@@ -803,7 +792,7 @@ private:
   std::vector<HeatFluxPostprocessor<dim>> heat_flux_postprocessors;
 
   /**
-   * @brief Temperature magnitude to be used in the DCDD shock capture stabilization term.
+   * @brief Temperature magnitude to be used in the DCDD shock capture stabilization term. It represents the difference between the maximum and the minimum temperature of the system.
    */
   double T_mag;
 

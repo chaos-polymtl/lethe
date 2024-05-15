@@ -19,6 +19,8 @@
 #include <deal.II/numerics/error_estimator.h>
 #include <deal.II/numerics/vector_tools.h>
 
+#include <limits>
+
 DeclExceptionMsg(
   LiquidFractionRequiresPhaseChange,
   "Calculation of the liquid fraction requires that a fluid has a phase_change specific heat model");
@@ -398,13 +400,16 @@ HeatTransfer<dim>::assemble_system_matrix()
   const DoFHandler<dim> *dof_handler_fluid =
     multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
 
+  calculate_T_mag();
+
   auto scratch_data = HeatTransferScratchData<dim>(
     this->simulation_parameters.physical_properties_manager,
     *this->fe,
     *this->cell_quadrature,
     *this->temperature_mapping,
     dof_handler_fluid->get_fe(),
-    *this->face_quadrature);
+    *this->face_quadrature,
+    this->T_mag);
 
   if (this->simulation_parameters.multiphysics.VOF)
     {
@@ -446,10 +451,13 @@ HeatTransfer<dim>::assemble_local_system_matrix(
   auto source_term = simulation_parameters.source_term.heat_transfer_source;
   source_term->set_time(simulation_control->get_current_time());
 
+  calculate_T_mag();
+
   scratch_data.reinit(cell,
                       this->evaluation_point,
                       this->previous_solutions,
-                      &(*source_term));
+                      &(*source_term),
+                      this->T_mag);
 
   const DoFHandler<dim> *dof_handler_fluid =
     multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
@@ -556,13 +564,16 @@ HeatTransfer<dim>::assemble_system_rhs()
   const DoFHandler<dim> *dof_handler_fluid =
     multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
 
+  calculate_T_mag();
+
   auto scratch_data = HeatTransferScratchData<dim>(
     this->simulation_parameters.physical_properties_manager,
     *this->fe,
     *this->cell_quadrature,
     *this->temperature_mapping,
     dof_handler_fluid->get_fe(),
-    *this->face_quadrature);
+    *this->face_quadrature,
+    this->T_mag);
 
   if (this->simulation_parameters.multiphysics.VOF)
     {
@@ -604,10 +615,13 @@ HeatTransfer<dim>::assemble_local_system_rhs(
   auto source_term = simulation_parameters.source_term.heat_transfer_source;
   source_term->set_time(simulation_control->get_current_time());
 
+  calculate_T_mag();
+
   scratch_data.reinit(cell,
                       this->evaluation_point,
                       this->previous_solutions,
-                      &(*source_term));
+                      &(*source_term),
+                      this->T_mag);
 
   const DoFHandler<dim> *dof_handler_fluid =
     multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
@@ -758,9 +772,12 @@ template <int dim>
 void
 HeatTransfer<dim>::calculate_T_mag()
 {
-  double previous_solution_min = this->previous_solutions[0].min();
-  double previous_solution_max = this->previous_solutions[0].max();
-  this->T_mag = std::max(previous_solution_max - previous_solution_min, 1e-12);
+  const double previous_solution_maximum = this->previous_solutions[0].max();
+  const double previous_solution_minimum = this->previous_solutions[0].min();
+
+  this->T_mag =
+    std::max(previous_solution_maximum - previous_solution_minimum, 1e-12);
+  // this->pcout << "VALUE OF T_MAG = " << this->T_mag << std::endl;
 }
 
 template <int dim>

@@ -21,7 +21,6 @@ HeatTransferAssemblerCore<dim>::assemble_matrix(
   const std::vector<double> &thermal_conductivity =
     scratch_data.thermal_conductivity;
 
-
   // Loop and quadrature information
   const auto        &JxW_vec    = scratch_data.JxW;
   const unsigned int n_q_points = scratch_data.n_q_points;
@@ -45,9 +44,6 @@ HeatTransferAssemblerCore<dim>::assemble_matrix(
   auto &strong_jacobian_vec = copy_data.strong_jacobian;
   auto &local_matrix        = copy_data.local_matrix;
 
-  // Get T_mag for the DCDD shock capture term
-  const double T_mag = this->simulation_control->get_T_mag();
-
   // assembling local matrix and right hand side
   for (unsigned int q = 0; q < n_q_points; ++q)
     {
@@ -61,24 +57,12 @@ HeatTransferAssemblerCore<dim>::assemble_matrix(
 
       const auto velocity = scratch_data.velocity_values[q];
 
-      // Temperature gradient information for DCDD stabilization
-      const auto temperature_gradient = scratch_data.temperature_gradients[q];
-
       // Calculation of the magnitude of the velocity for the
       // stabilization parameter
       const double u_mag = std::max(velocity.norm(), 1e-12);
 
-      // Calculation of the GLS stabilization parameter. The
-      // stabilization parameter used is different if the simulation is
-      // steady or unsteady. In the unsteady case it includes the value
-      // of the time-step
-      const double tau =
-        is_steady(method) ?
-          1. / std::sqrt(std::pow(2. * u_mag / h, 2) +
-                         9 * std::pow(4 * alpha / (h * h), 2)) :
-          1. / std::sqrt(std::pow(sdt, 2) + std::pow(2. * u_mag / h, 2) +
-                         9 * std::pow(4 * alpha / (h * h), 2));
-
+      // Temperature gradient information for DCDD stabilization
+      const auto temperature_gradient = scratch_data.temperature_gradients[q];
 
       // Implementation of a Discontinuity-Capturing Directional Dissipation
       // (DCDD) shock capturing scheme. For more information see Tezduyar,
@@ -89,13 +73,14 @@ HeatTransferAssemblerCore<dim>::assemble_matrix(
       // solver.
       const double tolerance = 1e-12;
 
-
       // In Tezduyar 2003, this is denoted r
       Tensor<1, dim> gradient_unit_vector =
         temperature_gradient / (temperature_gradient.norm() + tolerance);
 
-      // Calculate the artificial viscosity of the shock capture
-      const double vdcdd = h * h * u_mag * temperature_gradient.norm() / T_mag;
+      // Calculate the artificial viscosity of the shock capture.
+      // nu = 1 / 2 h^2 U_mag norm(\grad T) / T_mag
+      const double vdcdd =
+        0.5 * h * h * u_mag * temperature_gradient.norm() / scratch_data.T_mag;
 
       // We remove the diffusion aligned with the velocity
       // as is done in the original article.  In Tezduyar 2003, this is
@@ -108,6 +93,17 @@ HeatTransferAssemblerCore<dim>::assemble_matrix(
       const Tensor<2, dim> gradient_unit_tensor =
         outer_product(gradient_unit_vector, gradient_unit_vector);
       const Tensor<2, dim> dcdd_factor = gradient_unit_tensor - k_corr;
+
+      // Calculation of the GLS stabilization parameter. The
+      // stabilization parameter used is different if the simulation is
+      // steady or unsteady. In the unsteady case it includes the value
+      // of the time-step
+      const double tau =
+        is_steady(method) ?
+          1. / std::sqrt(std::pow(2. * u_mag / h, 2) +
+                         9 * std::pow(4 * alpha / (h * h), 2)) :
+          1. / std::sqrt(std::pow(sdt, 2) + std::pow(2. * u_mag / h, 2) +
+                         9 * std::pow(4 * alpha / (h * h), 2));
 
       for (unsigned int j = 0; j < n_dofs; ++j)
         {
@@ -181,9 +177,6 @@ HeatTransferAssemblerCore<dim>::assemble_rhs(
   auto &strong_residual_vec = copy_data.strong_residual;
   auto &local_rhs           = copy_data.local_rhs;
 
-  // Get T_mag for the DCDD shock capture term
-  const double T_mag = this->simulation_control->get_T_mag();
-
   // assembling right hand side
   for (unsigned int q = 0; q < n_q_points; ++q)
     {
@@ -206,6 +199,36 @@ HeatTransferAssemblerCore<dim>::assemble_rhs(
       // stabilization parameter
       const double u_mag = std::max(velocity.norm(), 1e-12);
 
+      // Implementation of a Discontinuity-Capturing Directional Dissipation
+      // (DCDD) shock capturing scheme. For more information see Tezduyar,
+      // T. E. (2003). Computation of moving boundaries and interfaces and
+      // stabilization parameters. International Journal for Numerical
+      // Methods in Fluids, 43(5), 555-575. Our implementation is based on
+      // equations (70) and (79), which are adapted for the heat transfer
+      // solver.
+      const double tolerance = 1e-12;
+
+      // In Tezduyar 2003, this is denoted r
+      Tensor<1, dim> gradient_unit_vector =
+        temperature_gradient / (temperature_gradient.norm() + tolerance);
+
+      // Calculate the artificial viscosity of the shock capture.
+      // nu = 1 / 2 h^2 U_mag norm(\grad T) / T_mag
+      const double vdcdd =
+        0.5 * h * h * u_mag * temperature_gradient.norm() / scratch_data.T_mag;
+
+      // We remove the diffusion aligned with the velocity
+      // as is done in the original article.  In Tezduyar 2003, this is
+      // denoted s.
+      Tensor<1, dim> velocity_unit_vector =
+        velocity / (velocity.norm() + 1e-12);
+      const Tensor<2, dim> k_corr =
+        Utilities::fixed_power<2>(gradient_unit_vector * velocity_unit_vector) *
+        outer_product(velocity_unit_vector, velocity_unit_vector);
+      const Tensor<2, dim> gradient_unit_tensor =
+        outer_product(gradient_unit_vector, gradient_unit_vector);
+      const Tensor<2, dim> dcdd_factor = gradient_unit_tensor - k_corr;
+
       // Calculation of the GLS stabilization parameter. The
       // stabilization parameter used is different if the simulation is
       // steady or unsteady. In the unsteady case it includes the value
@@ -216,34 +239,6 @@ HeatTransferAssemblerCore<dim>::assemble_rhs(
                          9 * std::pow(4 * alpha / (h * h), 2)) :
           1. / std::sqrt(std::pow(sdt, 2) + std::pow(2. * u_mag / h, 2) +
                          9 * std::pow(4 * alpha / (h * h), 2));
-
-      // Implementation of a DCDD shock capturing scheme.
-      // For more information see
-      // Tezduyar, T. E. (2003). Computation of moving boundaries and
-      // interfaces and stabilization parameters. International Journal for
-      // Numerical Methods in Fluids, 43(5), 555-575. Our implementation is
-      // based on equations (70) and (79), which are adapted for the heat
-      // transfer solver.
-      const double tolerance = 1e-12;
-
-      // In Tezduyar 2003, this is denoted r
-      Tensor<1, dim> gradient_unit_vector =
-        temperature_gradient / (temperature_gradient.norm() + tolerance);
-
-      // Calculate the artificial viscosity of the shock capture
-      const double vdcdd = h * h * u_mag * temperature_gradient.norm() / T_mag;
-
-      // We  remove the diffusion aligned with the velocity
-      // as is done in the original article. In Tezduyar 2003, this is denoted
-      // s.
-      Tensor<1, dim> velocity_unit_vector =
-        velocity / (velocity.norm() + tolerance);
-      const Tensor<2, dim> k_corr =
-        Utilities::fixed_power<2>(gradient_unit_vector * velocity_unit_vector) *
-        outer_product(velocity_unit_vector, velocity_unit_vector);
-      const Tensor<2, dim> gradient_unit_tensor =
-        outer_product(gradient_unit_vector, gradient_unit_vector);
-      const Tensor<2, dim> dcdd_factor = gradient_unit_tensor - k_corr;
 
       // Calculate the strong residual for GLS stabilization
       strong_residual_vec[q] +=
@@ -379,7 +374,6 @@ HeatTransferAssemblerBDF<dim>::assemble_rhs(
   // modified by cell in case of multiple fluids simulations)
   const std::vector<double> &density       = scratch_data.density;
   const std::vector<double> &specific_heat = scratch_data.specific_heat;
-
 
   // Loop and quadrature information
   const auto        &JxW        = scratch_data.JxW;

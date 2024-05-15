@@ -12,12 +12,7 @@
  * the top level of the Lethe distribution.
  *
  * ---------------------------------------------------------------------
-
  *
- * Author: Bruno Blais, Polytechnique Montreal, 2021-
- */
-
-/*
  * This file defines a small enum which is used to identify
  * the various physics solved within Lethe.
  */

@@ -19,7 +19,6 @@
  * Equation solved:
  * rho * Cp * (dT/dt + u.gradT) = k div(gradT) + nu/rho * (gradu : gradu)
  *
- * Polytechnique Montreal, 2020-
  */
 
 #ifndef lethe_heat_transfer_assemblers_h

@@ -45,6 +45,9 @@
 
 #include <deal.II/numerics/vector_tools.h>
 
+#include <typeindex>
+#include <typeinfo>
+
 using namespace dealii;
 
 
@@ -98,13 +101,15 @@ public:
                           const Quadrature<dim>          &quadrature,
                           const Mapping<dim>             &mapping,
                           const FiniteElement<dim>       &fe_fd,
-                          const Quadrature<dim - 1>      &face_quadrature)
+                          const Quadrature<dim - 1>      &face_quadrature,
+                          const double                   &T_mag)
     : properties_manager(properties_manager)
     , fe_values_T(mapping,
                   fe_ht,
                   quadrature,
                   update_values | update_quadrature_points | update_JxW_values |
                     update_gradients | update_hessians)
+    , T_mag(T_mag)
     , velocities(0)
     , pressure(dim)
     , fe_values_fd(mapping, fe_fd, quadrature, update_values | update_gradients)
@@ -135,6 +140,7 @@ public:
                   sd.fe_values_T.get_quadrature(),
                   update_values | update_quadrature_points | update_JxW_values |
                     update_gradients | update_hessians)
+    , T_mag(T_mag)
     , velocities(0)
     , pressure(dim)
     , fe_values_fd(sd.fe_values_fd.get_mapping(),
@@ -147,6 +153,7 @@ public:
                         update_values | update_quadrature_points |
                           update_JxW_values)
   {
+    std::cout << "T_MAG = " << 1. / (2. * T_mag) << std::endl;
     gather_vof = sd.gather_vof;
     allocate();
     if (sd.gather_vof)
@@ -187,7 +194,8 @@ public:
   reinit(const typename DoFHandler<dim>::active_cell_iterator &cell,
          const VectorType                                     &current_solution,
          const std::vector<GlobalVectorType> &previous_solutions,
-         Function<dim>                       *source_function)
+         Function<dim>                       *source_function,
+         const double                        &T_mag)
   {
     material_id = cell->material_id();
     this->fe_values_T.reinit(cell);
@@ -472,6 +480,7 @@ public:
   std::vector<double>                      present_face_temperature_values;
   std::vector<std::vector<double>>         previous_temperature_values;
   std::vector<std::vector<Tensor<1, dim>>> previous_temperature_gradients;
+  double                                   T_mag;
 
   // Shape functions and gradients
   std::vector<std::vector<double>>         phi_T;
