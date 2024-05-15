@@ -13,9 +13,11 @@ add_library(lethe-core
   manifolds.cc
   mesh_controller.cc
   mobility_cahn_hilliard_model.cc
+  mu_parser_internal.cc
   parameters.cc
   parameters_lagrangian.cc
   parameters_multiphysics.cc
+  parsed_function_custom.cc
   pvd_handler.cc
   rheological_model.cc
   serial_solid.cc
@@ -51,12 +53,14 @@ add_library(lethe-core
   ../../include/core/manifolds.h
   ../../include/core/mesh_controller.h
   ../../include/core/mobility_cahn_hilliard_model.h
+  ../../include/core/mu_parser_internal.h
   ../../include/core/multiphysics.h
   ../../include/core/newton_non_linear_solver.h
   ../../include/core/non_linear_solver.h
   ../../include/core/parameters.h
   ../../include/core/parameters_lagrangian.h
   ../../include/core/parameters_multiphysics.h
+  ../../include/core/parsed_function_custom.h
   ../../include/core/periodic_hills_grid.h
   ../../include/core/phase_change.h
   ../../include/core/physical_property_model.h

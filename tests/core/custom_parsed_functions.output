@@ -1,0 +1,25 @@
+
+DEAL::Beginning
+DEAL::Testing first set
+DEAL:: Source term = -16.0000 -24.0000 12.0000
+DEAL:: Source term [0] = -16.0000
+DEAL:: Source term [1] = -24.0000
+DEAL:: Source term [2] = 12.0000
+DEAL:: Source term gradients = -32.0000 -24.0000 0.00000  -48.0000 -36.0000 0.00000  24.0000 18.0000 0.00000
+DEAL:: Source term gradient [0] = -32.0000 -24.0000 0.00000
+DEAL:: Source term gradient [1] = -48.0000 -36.0000 0.00000
+DEAL:: Source term gradient [2] = 24.0000 18.0000 0.00000
+DEAL::Testing first set
+DEAL:: Source term = -16.0000 -24.0000 11.9051 -0.0632456 0.126491
+DEAL:: Source term [0] = -16.0000
+DEAL:: Source term [1] = -24.0000
+DEAL:: Source term [2] = 11.9051
+DEAL:: Source term [3] = -0.0632456
+DEAL:: Source term [4] = 0.126491
+DEAL:: Source term gradients = -32.0000 -24.0000 0.00000 0.00000 0.00000  -48.0000 -36.0000 0.00000 0.00000 0.00000  24.0000 18.0000 -1.42302 -0.0474341 1.48030e-08  1.15648e-10 1.15648e-10 -0.948683 -0.0316228 1.15648e-10  -2.31296e-10 -2.31296e-10 1.89737 0.0632456 -2.31296e-10
+DEAL:: Source term gradient [0] = -32.0000 -24.0000 0.00000 0.00000 0.00000
+DEAL:: Source term gradient [1] = -48.0000 -36.0000 0.00000 0.00000 0.00000
+DEAL:: Source term gradient [2] = 24.0000 18.0000 -1.42302 -0.0474341 1.48030e-08
+DEAL:: Source term gradient [3] = 1.15648e-10 1.15648e-10 -0.948683 -0.0316228 1.15648e-10
+DEAL:: Source term gradient [4] = -2.31296e-10 -2.31296e-10 1.89737 0.0632456 -2.31296e-10
+DEAL::OK
