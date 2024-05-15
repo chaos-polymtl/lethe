@@ -60,7 +60,7 @@ file(COPY poiseuille_restart_files/poiseuille_restart-output.0005.0000.vtu DESTI
 file(COPY poiseuille_restart_files/poiseuille_restart-output.0010.0000.vtu DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/poiseuille_restart.${_build_type}/mpirun=1/")
 file(COPY poiseuille_restart_files/poiseuille_restart-output.0015.0000.vtu DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/poiseuille_restart.${_build_type}/mpirun=1/")
 
-sdeal_ii_pickup_tests()
+deal_ii_pickup_tests()
 
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
   set_tests_properties(lethe-fluid/mms3d_isothermal_compressible_ns_gls.debug PROPERTIES TIMEOUT 2000)
