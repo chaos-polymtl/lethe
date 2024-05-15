@@ -2090,7 +2090,7 @@ GLSVANSSolver<dim>::solve()
         }
 
       this->postprocess(false);
-      postprocess_cfd_dem();
+      postprocess_cfd_dem(false);
       monitor_mass_conservation();
       finish_time_step_fd();
     }

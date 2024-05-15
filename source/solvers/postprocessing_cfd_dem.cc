@@ -35,7 +35,7 @@ using namespace dealii;
 
 
 template <int dim, typename VectorType>
-double
+std::pair<double, double>
 calculate_total_volume(const DoFHandler<dim> &void_fraction_dof_handler,
                            const VectorType   &present_void_fraction_solution,
                            const Quadrature<dim> &quadrature_formula,
@@ -57,7 +57,7 @@ calculate_total_volume(const DoFHandler<dim> &void_fraction_dof_handler,
   double total_volume_fluid = 0;
   double total_volume_solid = 0;
 
-  for (const auto &cell : dof_handler.active_cell_iterators())
+  for (const auto &cell : void_fraction_dof_handler.active_cell_iterators())
     {
       if (cell->is_locally_owned())
         {
@@ -76,21 +76,21 @@ calculate_total_volume(const DoFHandler<dim> &void_fraction_dof_handler,
         }
     }
 
-  const MPI_Comm mpi_communicator = dof_handler.get_communicator();
+  const MPI_Comm mpi_communicator = void_fraction_dof_handler.get_communicator();
   total_volume_fluid = Utilities::MPI::sum(total_volume_fluid, mpi_communicator);
   total_volume_solid = Utilities::MPI::sum(total_volume_solid, mpi_communicator);
 
   return {total_volume_fluid, total_volume_solid};
 }
 
-template double
+std::pair<double, double>
 calculate_total_volume(
   const DoFHandler<2>    &void_fraction_dof_handler,
   const GlobalVectorType &present_void_fraction_solution,
   const Quadrature<2>    &quadrature_formula,
   const Mapping<2>       &mapping);
 
-template double
+std::pair<double, double>
 calculate_total_volume(
   const DoFHandler<3>    &void_fraction_dof_handler,
   const GlobalVectorType &present_void_fraction_solution,

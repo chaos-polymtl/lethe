@@ -59,7 +59,7 @@
  * @param mapping The mapping of the simulation
  */
 template <int dim, typename VectorType>
-double
+std::pair<double, double>
 calculate_total_volume(const DoFHandler<dim> &void_fraction_dof_handler,
                            const VectorType   &present_void_fraction_solution,
                            const Quadrature<dim> &quadrature_formula,
