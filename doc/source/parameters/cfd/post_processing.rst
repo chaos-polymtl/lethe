@@ -51,7 +51,7 @@ This subsection controls the post-processing other than the forces and torque on
     set calculate tracer statistics      = false
     set tracer statistics name           = tracer_statistics
 
-    # Thermal postprocesses
+    # Thermal postprocessing
     set postprocessed fluid              = both
     set calculate temperature statistics = false
     set temperature statistics name      = temperature_statistics

@@ -30,9 +30,9 @@ where `beta` is a constant and  :math:`(\mathbf{u}\cdot n)_{-}` is :math:`min (0
 .. code-block:: text
 
   subsection boundary conditions
-    set number         = 2
-    set time dependent = false
-    set fix pressure constant = false;
+    set number                = 2
+    set time dependent        = false
+    set fix pressure constant = false
     subsection bc 0
       set id                 = 0
       set type               = function
