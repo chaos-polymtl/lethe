@@ -109,7 +109,7 @@ public:
                   quadrature,
                   update_values | update_quadrature_points | update_JxW_values |
                     update_gradients | update_hessians)
-    , T_mag(T_mag)
+    , global_T_mag(T_mag)
     , velocities(0)
     , pressure(dim)
     , fe_values_fd(mapping, fe_fd, quadrature, update_values | update_gradients)
@@ -140,7 +140,7 @@ public:
                   sd.fe_values_T.get_quadrature(),
                   update_values | update_quadrature_points | update_JxW_values |
                     update_gradients | update_hessians)
-    , T_mag(T_mag)
+    , global_T_mag(sd.global_T_mag)
     , velocities(0)
     , pressure(dim)
     , fe_values_fd(sd.fe_values_fd.get_mapping(),
@@ -153,7 +153,6 @@ public:
                         update_values | update_quadrature_points |
                           update_JxW_values)
   {
-    std::cout << "T_MAG = " << 1. / (2. * T_mag) << std::endl;
     gather_vof = sd.gather_vof;
     allocate();
     if (sd.gather_vof)
@@ -195,7 +194,7 @@ public:
          const VectorType                                     &current_solution,
          const std::vector<GlobalVectorType> &previous_solutions,
          Function<dim>                       *source_function,
-         const double                        &T_mag)
+         const double &T_mag)
   {
     material_id = cell->material_id();
     this->fe_values_T.reinit(cell);
@@ -289,6 +288,7 @@ public:
               }
           }
       }
+    std::cout << this->global_T_mag << std::endl;
   }
 
   /**
@@ -480,7 +480,7 @@ public:
   std::vector<double>                      present_face_temperature_values;
   std::vector<std::vector<double>>         previous_temperature_values;
   std::vector<std::vector<Tensor<1, dim>>> previous_temperature_gradients;
-  double                                   T_mag;
+  double                                   global_T_mag;
 
   // Shape functions and gradients
   std::vector<std::vector<double>>         phi_T;

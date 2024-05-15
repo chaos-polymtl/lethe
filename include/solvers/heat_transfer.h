@@ -193,7 +193,7 @@ public:
   /**
    * @brief Calculate T_mag for the DCDD shock capture mechanism. T_mag = T_max - T_min.
    */
-  void
+  double
   calculate_T_mag();
 
   /**
@@ -790,11 +790,6 @@ private:
    * material properties.
    */
   std::vector<HeatFluxPostprocessor<dim>> heat_flux_postprocessors;
-
-  /**
-   * @brief Temperature magnitude to be used in the DCDD shock capture stabilization term. It represents the difference between the maximum and the minimum temperature of the system.
-   */
-  double T_mag;
 
   /*
    * Phase change post-processing. These parameters track the presence of a
