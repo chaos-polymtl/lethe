@@ -125,7 +125,7 @@ public:
     std::vector<double>                        &property_vector) = 0;
 
   /**
-   * @brief Calculates the kinematic viscosity used in PSPG and SUPG stabilizations.
+   * @brief Calculates the kinematic viscosity used in PSPG and SUPG stabilization terms.
    * @param[in] field_values Value of the various fields on which the property
    * may depend.
    */
@@ -182,7 +182,7 @@ public:
 
   /**
    * @brief is_non_newtonian_rheological_model Returns a boolean indicating if
-   * the model is a non newtonian rheological model.
+   * the model is a non-Newtonian rheological model.
    * @return Boolean value of if the model corresponds to a non newtonian
    * rheological model.
    */
@@ -193,7 +193,7 @@ public:
   }
 
   /**
-   * @brief is_phase_change_rheological_model Returns a boolean indicating if
+   * @brief Returns a boolean indicating if
    * the model is a phase change rheological model.
    * @return Boolean value of if the model corresponds to a phase change
    * rheological model.
@@ -205,10 +205,10 @@ public:
   }
 
 protected:
-  /// Boolean to indicate if the rheolofical model is a non-newtonian model.
+  /// Boolean to indicate if the rheological model is a non-Newtonian model.
   bool non_newtonian_rheological_model = false;
 
-  /// Boolean to indicate if the rheolofical model is a phase change model.
+  /// Boolean to indicate if the rheological model is a phase change model.
   bool phase_change_rheological_model = false;
 };
 
