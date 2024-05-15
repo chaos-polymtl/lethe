@@ -498,10 +498,24 @@ Tracer<dim>::calculate_tracer_statistics()
     }
 
   statistics_table.add_value("time", simulation_control->get_current_time());
+  statistics_table.set_scientific("time", true);
+  statistics_table.set_precision("time", 12);
+
   statistics_table.add_value("min", min_tracer_value);
+  statistics_table.set_scientific("min", true);
+  statistics_table.set_precision("min", 12);
+
   statistics_table.add_value("max", max_tracer_value);
+  statistics_table.set_scientific("max", true);
+  statistics_table.set_precision("max", 12);
+
   statistics_table.add_value("average", tracer_average);
+  statistics_table.set_scientific("average", true);
+  statistics_table.set_precision("average", 12);
+
   statistics_table.add_value("std-dev", tracer_std_deviation);
+  statistics_table.set_scientific("std-dev", true);
+  statistics_table.set_precision("std-dev", 12);
 }
 
 template <int dim>
@@ -516,6 +530,7 @@ Tracer<dim>::write_tracer_statistics()
         simulation_parameters.simulation_control.output_folder +
         simulation_parameters.post_processing.tracer_output_name + ".dat";
       std::ofstream output(filename.c_str());
+
 
       statistics_table.write_text(output);
     }
