@@ -420,7 +420,9 @@ private:
   print_mg_setup_times();
 
   /**
-   * @brief  Provide relevant solutions to multiphysics interface.
+   * @brief  Provide present and previous flow solutions to the multiphysics
+   * interface. These solutions can be accessed through the multiphysics
+   * interface by the different physics.
    */
   void
   update_solutions_for_multiphysics();
