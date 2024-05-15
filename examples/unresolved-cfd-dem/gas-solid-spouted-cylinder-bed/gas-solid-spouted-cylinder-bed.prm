@@ -36,6 +36,10 @@ subsection FEM
   set pressure order = 1
 end
 
+subsection timer
+  set type = iteration
+end
+
 #---------------------------------------------------
 # Physical Properties
 #---------------------------------------------------
@@ -53,8 +57,8 @@ end
 
 subsection mesh
   set type                                = gmsh
-  set file name                           = ./mesh/cylinder-spouted-bed.msh
-  set expand particle-wall contact search = true
+  set file name                           = cylinder-spouted-bed.msh
+  set expand particle-wall contact search = false
 end
 
 #---------------------------------------------------
@@ -195,7 +199,7 @@ subsection lagrangian physical properties
     set size distribution type            = uniform
     set diameter                          = 0.005
     set number of particles               = 100000
-    set density particles                 = 500
+    set density particles                 = 100
     set young modulus particles           = 1e7
     set poisson ratio particles           = 0.25
     set restitution coefficient particles = 0.97
@@ -204,8 +208,8 @@ subsection lagrangian physical properties
   end
   set young modulus wall           = 1e7
   set poisson ratio wall           = 0.25
-  set restitution coefficient wall = 0.33
-  set friction coefficient wall    = 0.2
+  set restitution coefficient wall = 0.97
+  set friction coefficient wall    = 0.4
   set rolling friction wall        = 0.3
 end
 
@@ -241,7 +245,7 @@ subsection non-linear solver
     set tolerance        = 1e-8
     set max iterations   = 20
     set verbosity        = verbose
-    set matrix tolerance = 0.75
+    set matrix tolerance = 0.5
   end
 end
 

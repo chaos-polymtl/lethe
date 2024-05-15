@@ -390,7 +390,6 @@ HeatTransferAssemblerRobinBC<dim>::assemble_matrix(
           Function<dim> &h_function = *(this->boundary_conditions_ht.h[i_bc]);
           Function<dim> &emissivity_function =
             *(this->boundary_conditions_ht.emissivity[i_bc]);
-
           for (unsigned int f = 0; f < scratch_data.n_faces; ++f)
             {
               if (scratch_data.boundary_face_id[f] ==
@@ -463,7 +462,6 @@ HeatTransferAssemblerRobinBC<dim>::assemble_rhs(
             *(this->boundary_conditions_ht.emissivity[i_bc]);
           Function<dim> &heat_flux_bc_function =
             *(this->boundary_conditions_ht.heat_flux_bc[i_bc]);
-
           for (unsigned int f = 0; f < scratch_data.n_faces; ++f)
             {
               if (scratch_data.boundary_face_id[f] ==

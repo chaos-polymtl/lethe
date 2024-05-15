@@ -133,26 +133,41 @@ private:
    * first particle in main cell (particle_begin will be the iterator after the
    * particles_to_evaluate.begin() in that case). When particle_begin is
    * particles_to_evaluate.begin(), it stores all the particle id in
-   * contact_pair_candidates_container.
+   * contact_pair_candidates.
    *
-   * @param particle_begin The particle iterator to start storing particle id
+   * @param particle_begin The particle iterator to start storing particle ids.
    * @param particles_to_evaluate The particle range to evaluate with the
-   * particle iterator prior storing ids
-   * @param contact_pair_candidates_container A vector which will contain all
-   * the particle pairs which are collision candidates
+   * particle iterator prior storing ids.
+   * @param contact_pair_candidates A map which will contain all the particle
+   * pairs candidate.
    */
   inline void
   store_candidates(
+    const types::particle_index &main_particle_id,
     const typename Particles::ParticleHandler<
       dim>::particle_iterator_range::iterator &particle_begin,
     const typename Particles::ParticleHandler<dim>::particle_iterator_range
-                                       &particles_to_evaluate,
-    std::vector<types::particle_index> &contact_pair_candidates_container)
+      &particles_to_evaluate,
+    typename DEM::dem_data_structures<dim>::particle_particle_candidates
+      &contact_pair_candidates)
   {
-    // Create a arbitrary temporary empty container
-    if (contact_pair_candidates_container.empty())
+    // Find the contact candidate container of the main particle
+    auto candidates_container_it =
+      contact_pair_candidates.find(main_particle_id);
+
+    // Reserve arbitrary vector capacity and store if the particle does not have
+    // contact candidate yet
+    if (candidates_container_it == contact_pair_candidates.end())
       {
-        contact_pair_candidates_container.reserve(40);
+        std::vector<types::particle_index> candidates_container;
+        candidates_container.reserve(40);
+
+        // Insert the empty vector and get the iterator to the inserted element
+        // prior storing the particle ids
+        auto pair_it_bool =
+          contact_pair_candidates.emplace(main_particle_id,
+                                          candidates_container);
+        candidates_container_it = pair_it_bool.first;
       }
 
     // Store particle ids from the selected particle iterator
@@ -160,7 +175,7 @@ private:
          particle_iterator != particles_to_evaluate.end();
          ++particle_iterator)
       {
-        contact_pair_candidates_container.emplace_back(
+        candidates_container_it->second.emplace_back(
           particle_iterator->get_id());
       }
   }
