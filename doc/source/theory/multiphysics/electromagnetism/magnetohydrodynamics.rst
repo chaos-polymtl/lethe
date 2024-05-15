@@ -1,5 +1,5 @@
 ================================
-Magnetohydrodynamics Physics
+Magnetohydrodynamics Equations
 ================================
 
 **Under construction**
