@@ -18,7 +18,7 @@ concurrency:
 
 env:
   COMPILE_JOBS: 18
-  TEST_JOBS: 18
+  TEST_JOBS: 12
 
 
 jobs:
