@@ -46,8 +46,9 @@ GLSIsothermalCompressibleNavierStokesAssemblerCore<dim>::assemble_matrix(
       // Gather into local variables the relevant fields
       const double density           = density_vector[q];
       const double dynamic_viscosity = dynamic_viscosity_vector[q];
-      const double dynamic_viscosity_for_stabilization = viscosity_for_stabilization_vector[q];
-      
+      const double dynamic_viscosity_for_stabilization =
+        viscosity_for_stabilization_vector[q];
+
 
       const Tensor<1, dim> &velocity = scratch_data.velocity_values[q];
       const Tensor<2, dim> &velocity_gradient =
