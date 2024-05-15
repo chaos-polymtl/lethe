@@ -45,8 +45,6 @@
 
 #include <deal.II/numerics/vector_tools.h>
 
-#include <typeindex>
-#include <typeinfo>
 
 using namespace dealii;
 
