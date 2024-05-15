@@ -7,8 +7,10 @@ add_library(lethe-fem-dem
   ib_particles_dem.cc
   parameters_cfd_dem.cc
   vans_assemblers.cc
+  postprocessing_cfd_dem.cc
   # Headers
   ../../include/fem-dem/cfd_dem_coupling.h
+  ../../include/fem-dem/postprocessing_cfd_dem.h
   ../../include/fem-dem/cfd_dem_simulation_parameters.h
   ../../include/fem-dem/gls_sharp_navier_stokes.h
   ../../include/fem-dem/gls_vans.h

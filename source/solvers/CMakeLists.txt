@@ -26,7 +26,6 @@ add_library(lethe-solvers
   navier_stokes_vof_assemblers.cc
   physical_properties_manager.cc
   postprocessing_cfd.cc
-  postprocessing_cfd_dem.cc
   postprocessing_velocities.cc
   postprocessors_smoothing.cc
   simulation_parameters.cc
@@ -67,7 +66,6 @@ add_library(lethe-solvers
   ../../include/solvers/navier_stokes_vof_assemblers.h
   ../../include/solvers/physical_properties_manager.h
   ../../include/solvers/postprocessing_cfd.h
-  ../../include/solvers/postprocessing_cfd_dem.h
   ../../include/solvers/postprocessing_velocities.h
   ../../include/solvers/postprocessors_smoothing.h
   ../../include/solvers/postprocessors.h

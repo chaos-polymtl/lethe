@@ -24,7 +24,7 @@
 
 #include <solvers/gls_navier_stokes.h>
 #include <solvers/postprocessing_cfd.h>
-#include <solvers/postprocessing_cfd_dem.h>
+#include <fem-dem/postprocessing_cfd_dem.h>
 
 #include <dem/dem.h>
 #include <fem-dem/cfd_dem_simulation_parameters.h>

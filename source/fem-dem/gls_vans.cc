@@ -1976,7 +1976,7 @@ GLSVANSSolver<dim>::postprocess_cfd_dem()
       TimerOutput::Scope t(this->computing_timer, "total_volume_calculation");
       double             total_volume_fluid, total_volume_solid;
       std::tie(total_volume_fluid, total_volume_solid) = calculate_total_volume(
-        this->dof_handler,
+        this->void_fraction_dof_handler,
         this->nodal_void_fraction_relevant,
         this->cell_quadrature,
         this->mapping),
