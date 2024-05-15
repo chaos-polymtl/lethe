@@ -22,8 +22,8 @@ VOF Barycenter
 *******************************************************************************
 Transient iteration: 1        Time: 0.01     Time step: 0.01     CFL: 0       
 *******************************************************************************
-Pressure drop: -1.40464e-05 Pa
-Total pressure drop: -1.40464e-05 Pa
+Pressure drop: 4.15321e-05 Pa
+Total pressure drop: 4.15321e-05 Pa
 
 ----------------------
 VOF Mass Conservation
@@ -40,53 +40,53 @@ VOF Barycenter
 *******************************************************************************
 Transient iteration: 2        Time: 0.02     Time step: 0.01     CFL: 0       
 *******************************************************************************
-Pressure drop: 0.000615917 Pa
-Total pressure drop: 0.000615917 Pa
+Pressure drop: -0.0651556 Pa
+Total pressure drop: -0.0651556 Pa
 
 ----------------------
 VOF Mass Conservation
 ----------------------
    time    surface_fluid_0 mass_per_length_fluid_0 momentum-x_fluid_0 momentum-y_fluid_0 surface_fluid_1 mass_per_length_fluid_1 momentum-x_fluid_1 momentum-y_fluid_1 sharpening_threshold 
-2.0000e-02      5.9128e-01              5.9128e-01        -2.4350e-07        -2.2212e-05      1.2272e-01              1.2272e-01         2.1979e-07        -1.4932e-06           5.0000e-01 
+2.0000e-02      5.9128e-01              5.9128e-01         2.9513e-06        -2.5420e-05      1.2272e-01              1.2272e-01        -6.1617e-07         1.7791e-06           5.0000e-01 
 
 ---------------
 VOF Barycenter
 ---------------
-  time    x_vof    y_vof    vx_vof   vy_vof   
-0.020000 0.500000 0.061528 0.000002 -0.000014 
+  time    x_vof    y_vof    vx_vof    vy_vof  
+0.020000 0.500000 0.061528 -0.000004 0.000015 
 
 **********************************************************************************
-Transient iteration: 3        Time: 0.03     Time step: 0.01     CFL: 3.59198e-05
+Transient iteration: 3        Time: 0.03     Time step: 0.01     CFL: 0.000268176
 **********************************************************************************
-Pressure drop: 0.0036765 Pa
-Total pressure drop: 0.0036765 Pa
+Pressure drop: -0.0352122 Pa
+Total pressure drop: -0.0352122 Pa
 
 ----------------------
 VOF Mass Conservation
 ----------------------
    time    surface_fluid_0 mass_per_length_fluid_0 momentum-x_fluid_0 momentum-y_fluid_0 surface_fluid_1 mass_per_length_fluid_1 momentum-x_fluid_1 momentum-y_fluid_1 sharpening_threshold 
-3.0000e-02      5.9128e-01              5.9128e-01        -1.7162e-07        -2.2712e-05      1.2272e-01              1.2272e-01         2.3680e-07        -1.5308e-06           5.0000e-01 
+3.0000e-02      5.9128e-01              5.9128e-01         2.8505e-05        -1.6262e-06      1.2272e-01              1.2272e-01        -2.2053e-06         2.6642e-06           5.0000e-01 
 
 ---------------
 VOF Barycenter
 ---------------
-  time    x_vof    y_vof    vx_vof   vy_vof   
-0.030000 0.500000 0.061528 0.000002 -0.000015 
+  time    x_vof    y_vof    vx_vof    vy_vof  
+0.030000 0.499999 0.061528 -0.000017 0.000024 
 
 **********************************************************************************
-Transient iteration: 4        Time: 0.04     Time step: 0.01     CFL: 3.47327e-05
+Transient iteration: 4        Time: 0.04     Time step: 0.01     CFL: 0.000305555
 **********************************************************************************
-Pressure drop: 0.000598788 Pa
-Total pressure drop: 0.000598788 Pa
+Pressure drop: -0.0420473 Pa
+Total pressure drop: -0.0420473 Pa
 
 ----------------------
 VOF Mass Conservation
 ----------------------
    time    surface_fluid_0 mass_per_length_fluid_0 momentum-x_fluid_0 momentum-y_fluid_0 surface_fluid_1 mass_per_length_fluid_1 momentum-x_fluid_1 momentum-y_fluid_1 sharpening_threshold 
-4.0000e-02      5.9128e-01              5.9128e-01         4.1339e-07        -2.3261e-05      1.2272e-01              1.2272e-01         3.1716e-07        -1.6150e-06           5.0000e-01 
+4.0000e-02      5.9128e-01              5.9128e-01         3.1468e-05        -1.6370e-06      1.2272e-01              1.2272e-01        -3.2549e-06         2.8215e-06           5.0000e-01 
 
 ---------------
 VOF Barycenter
 ---------------
-  time    x_vof    y_vof    vx_vof   vy_vof   
-0.040000 0.500000 0.061528 0.000003 -0.000015 
+  time    x_vof    y_vof    vx_vof    vy_vof  
+0.040000 0.499997 0.061528 -0.000026 0.000025 

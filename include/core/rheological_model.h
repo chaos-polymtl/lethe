@@ -137,7 +137,7 @@ public:
   }
 
   /**
-   * @brief Calculates the vector values of the kinematic viscosity used in PSPG and SUPG stabilizations.
+   * @brief Calculates the vector values of the kinematic viscosity used in PSPG and SUPG stabilization terms.
    * @param[in] field_vectors Value of the fields on which the property may
    * depend on.
    * @param[out] property_vector Vector of computed viscosities.
@@ -151,7 +151,7 @@ public:
   }
 
   /**
-   * @brief Calculates the dynamic viscosity used in PSPG and SUPG stabilizations.
+   * @brief Calculates the dynamic viscosity used in PSPG and SUPG stabilization terms.
    * @param[in] p_density_ref The density of the fluid at the reference state
    * @param[in] field_values Value of the various fields on which the property
    * may depend.
@@ -165,7 +165,7 @@ public:
   }
 
   /**
-   * @brief Calculates the vector values of the dynamic viscosity used in PSPG and SUPG stabilizations.
+   * @brief Calculates the vector values of the dynamic viscosity used in PSPG and SUPG stabilization terms.
    * @param[in] p_density_ref The density of the fluid at the reference state
    * @param[in] field_vectors Value of the fields on which the property may
    * depend on.
@@ -820,7 +820,7 @@ public:
   }
 
   /**
-   * @brief Calculates the kinematic viscosity used in PSPG and SUPG stabilizations.
+   * @brief Calculates the kinematic viscosity used in PSPG and SUPG stabilization terms.
    * @param[in] field_values Value of the various fields on which the property
    * may depend.
    */
@@ -829,7 +829,7 @@ public:
     const std::map<field, double> & /*field_values*/) override;
 
   /**
-   * @brief Calculates the vector values of the kinematic viscosity used in PSPG and SUPG stabilizations.
+   * @brief Calculates the vector values of the kinematic viscosity used in PSPG and SUPG stabilization terms.
    * @param[in] field_vectors Value of the fields on which the property may
    * depend on.
    * @param[out] property_vector Vector of computed viscosities.
@@ -840,7 +840,7 @@ public:
     std::vector<double> &property_vector) override;
 
   /**
-   * @brief Calculates the dynamic viscosity used in PSPG and SUPG stabilizations.
+   * @brief Calculates the dynamic viscosity used in PSPG and SUPG stabilization terms.
    * @param[in] p_density_ref The density of the fluid at the reference state
    * @param[in] field_values Value of the various fields on which the property
    * may depend.
@@ -851,7 +851,7 @@ public:
     const std::map<field, double> & /*field_values*/) override;
 
   /**
-   * @brief Calculates the vector values of the dynamic viscosity used in PSPG and SUPG stabilizations.
+   * @brief Calculates the vector values of the dynamic viscosity used in PSPG and SUPG stabilization terms.
    * @param[in] p_density_ref The density of the fluid at the reference state
    * @param[in] field_vectors Value of the fields on which the property may
    * depend on.

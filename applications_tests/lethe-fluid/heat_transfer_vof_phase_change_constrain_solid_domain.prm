@@ -56,78 +56,30 @@ subsection physical properties
   set reference temperature = 29.8
   
   subsection fluid 0
-    set thermal conductivity model = constant
     set thermal conductivity       = 0.040516842071415184
-
     set thermal expansion model = phase_change
-
-    set rheological model   = phase_change
+    set thermal expansion model = phase_change
     set specific heat model = phase_change
-
-    set density = 1
-
     subsection phase change
-      # Enthalpy of the phase change
       set latent enthalpy = 200
-
-      # Temperature of the liquidus
       set liquidus temperature = 29.8
-
-      # Temperature of the solidus
       set solidus temperature = 29.6
-
-      # Specific heat of the liquid phase
-      set specific heat liquid = 1
-
-      # Specific heat of the solid phase
-      set specific heat solid = 1
-
-      # Kinematic viscosity of the liquid phase
       set viscosity liquid = 0.0007366698558439125
-
-      # Kinematic viscosity of the solid phase
-      set viscosity solid = 100
-
-      set thermal expansion liquid = 1
-      set thermal expansion solid  = 0
+      set viscosity solid = 10
     end
   end
-  subsection fluid 1
-      set thermal conductivity model = constant
-      set thermal conductivity       = 0.040516842071415184
-
-      set thermal expansion model = phase_change
-
-      set rheological model   = phase_change
-      set specific heat model = phase_change
-
-      set density = 1
-
-      subsection phase change
-        # Enthalpy of the phase change
-        set latent enthalpy = 200
-
-        # Temperature of the liquidus
-        set liquidus temperature = 29.8
-
-        # Temperature of the solidus
-        set solidus temperature = 29.6
-
-        # Specific heat of the liquid phase
-        set specific heat liquid = 1
-
-        # Specific heat of the solid phase
-        set specific heat solid = 1
-
-        # Kinematic viscosity of the liquid phase
-        set viscosity liquid = 0.0007366698558439125
-
-        # Kinematic viscosity of the solid phase
-        set viscosity solid = 100
-
-        set thermal expansion liquid = 1
-        set thermal expansion solid  = 0
-      end
+  subsection fluid 0
+    set thermal conductivity       = 0.040516842071415184
+    set thermal expansion model = phase_change
+    set thermal expansion model = phase_change
+    set specific heat model = phase_change
+    subsection phase change
+      set latent enthalpy = 200
+      set liquidus temperature = 34.8
+      set solidus temperature = 34.6
+      set viscosity liquid = 0.0007366698558439125
+      set viscosity solid = 10
+    end
   end
 end
 
@@ -201,7 +153,7 @@ subsection constrain stasis
     set fluid id                 = 1
     set phase fraction tolerance = 1e-4
     set min temperature          = 0
-    set max temperature          = 28
+    set max temperature          = 33
   end
 end
 
@@ -245,33 +197,15 @@ end
 subsection linear solver
   subsection fluid dynamics
     set verbosity                             = quiet
-    set method                                = gmres
-    set max iters                             = 1000
-    set relative residual                     = 1e-3
     set minimum residual                      = 1e-7
-    set ilu preconditioner relative tolerance = 1.00
     set max krylov vectors                    = 1000
   end
   subsection heat transfer
     set verbosity                             = quiet
-    set method                                = gmres
-    set max iters                             = 1000
-    set relative residual                     = 1e-3
     set minimum residual                      = 1e-8
-    set preconditioner                        = ilu
-    set ilu preconditioner fill               = 0
-    set ilu preconditioner absolute tolerance = 1e-12
-    set ilu preconditioner relative tolerance = 1.00
   end
   subsection VOF
     set verbosity                             = quiet
-    set method                                = gmres
-    set max iters                             = 1000
-    set relative residual                     = 1e-3
     set minimum residual                      = 1e-10
-    set preconditioner                        = ilu
-    set ilu preconditioner fill               = 0
-    set ilu preconditioner absolute tolerance = 1e-12
-    set ilu preconditioner relative tolerance = 1.00
   end
 end
