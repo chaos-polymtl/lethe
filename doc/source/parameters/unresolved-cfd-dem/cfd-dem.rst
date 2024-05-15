@@ -29,7 +29,7 @@ This subsection includes parameters related to multiphase flow simulations using
 * The ``grad div`` parameter allows the enabling of the grad div stabilization for the Volume Averaged Navier Stokes equations `[1] <https://doi.org/10.1016/j.softx.2020.100579>`_. This allows for a much better mass conservation of the system.
 * The ``void fraction time derivative`` parameter allows us to choose whether or not we want to account for the time derivative of the void fraction or take it equal to zero.
 * The ``interpolated void fraction`` parameter allows us choose whether the void fraction used to calculate drag is the cell void fraction or the one interpolated at the position of the particle (Using the cell void fraction to calculate drag on each particle instead of the interpolated one is currently under investigation).
-* The ``vans model`` parameter allows us to choose between the vans Model A or Model B. Details about the differences between the models are provided in Lethe's unresolved CFD-DEM theory guide :doc:`../../theory/unresolved_cfd-dem/unresolved_cfd-dem`.
+* The ``vans model`` parameter allows us to choose between the vans Model A or Model B. Details about the differences between the models are provided in Lethe's unresolved CFD-DEM theory guide :doc:`../../theory/multiphase/cfd_dem/unresolved_cfd-dem`.
 * The ``drag force``, ``saffman lift force``, ``magnus lift force``, ``buoyancy force``, ``shear force``, and ``pressure force`` parameters allow us to enable or disable the respective forces in a cfd-dem simulation.
 
 .. note::
