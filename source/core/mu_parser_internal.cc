@@ -1,6 +1,5 @@
 #include <core/mu_parser_internal.h>
 
-#include <deal.II/base/mu_parser_internal.h>
 #include <deal.II/base/thread_management.h>
 #include <deal.II/base/utilities.h>
 
@@ -13,6 +12,8 @@
 #include <mutex>
 #include <random>
 #include <vector>
+
+using namespace dealii;
 
 namespace internal
 {
@@ -184,7 +185,7 @@ namespace internal
     /**
      * PIMPL for mu::Parser.
      */
-    class Parser : public internal::FunctionParserCustom::muParserBase
+    class Parser : public ::internal::FunctionParserCustom::muParserBase
     {
     public:
       operator dealii::mu::Parser &()
@@ -360,7 +361,7 @@ namespace internal
 
       // initialize the parser if that hasn't happened yet on the current
       // thread
-      internal::FunctionParserCustom::ParserData &data =
+      ::internal::FunctionParserCustom::ParserData &data =
         this->parser_data.get();
       if (data.vars.empty())
         init_muparser();
@@ -403,7 +404,7 @@ namespace internal
 
       // initialize the parser if that hasn't happened yet on the current
       // thread
-      internal::FunctionParserCustom::ParserData &data =
+      ::internal::FunctionParserCustom::ParserData &data =
         this->parser_data.get();
       if (data.vars.empty())
         init_muparser();
