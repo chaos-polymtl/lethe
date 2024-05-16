@@ -27,6 +27,7 @@
 #include <deal.II/base/utilities.h>
 
 #include <muParser.h>
+#include <muParserFixes.h>
 
 #include <cmath>
 #include <ctime>
@@ -203,6 +204,5 @@ namespace internal
     };
   } // namespace FunctionParserCustom
 } // namespace internal
-
 
 #endif // lethe_mu_parser_internal_h
