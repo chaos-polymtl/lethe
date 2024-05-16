@@ -26,7 +26,6 @@
 #include <deal.II/base/thread_management.h>
 #include <deal.II/base/utilities.h>
 
-#include <muParserFixes.h>
 #include <muParser.h>
 #include <muParserFixes.h>
 

@@ -251,8 +251,7 @@ namespace internal
       for (unsigned int component = 0; component < n_components; ++component)
         {
           data.parsers.emplace_back(std::make_unique<Parser>());
-          mu::Parser &parser =
-            dynamic_cast<Parser &>(*data.parsers.back());
+          mu::Parser &parser = dynamic_cast<Parser &>(*data.parsers.back());
 
           for (const auto &constant : this->constants)
             parser.DefineConst(constant.first, constant.second);
@@ -363,8 +362,7 @@ namespace internal
           Assert(dynamic_cast<Parser *>(data.parsers[component].get()),
                  dealii::StandardExceptions::ExcInternalError());
           // NOLINTNEXTLINE don't warn about using static_cast once we check
-          mu::Parser &parser =
-            static_cast<Parser &>(*data.parsers[component]);
+          mu::Parser &parser = static_cast<Parser &>(*data.parsers[component]);
           return parser.Eval();
         } // try
       catch (mu::ParserError &e)
