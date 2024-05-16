@@ -191,10 +191,10 @@ public:
 
 
   /**
-   * @brief Calculate T_mag for the DCDD shock capture mechanism. T_mag = T_max - T_min.
+   * @brief Calculate delta_T_ref for the DCDD shock capture mechanism. delta_T_ref = T_max - T_min.
    */
   double
-  calculate_T_mag();
+  calculate_delta_T_ref();
 
   /**
    * @brief Calculate the L2 error of the solution.

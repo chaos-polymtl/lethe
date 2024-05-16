@@ -100,14 +100,14 @@ public:
                           const Mapping<dim>             &mapping,
                           const FiniteElement<dim>       &fe_fd,
                           const Quadrature<dim - 1>      &face_quadrature,
-                          const double                   &T_mag)
+                          const double                   &delta_T_ref)
     : properties_manager(properties_manager)
     , fe_values_T(mapping,
                   fe_ht,
                   quadrature,
                   update_values | update_quadrature_points | update_JxW_values |
                     update_gradients | update_hessians)
-    , global_T_mag(T_mag)
+    , global_delta_T_ref(delta_T_ref)
     , velocities(0)
     , pressure(dim)
     , fe_values_fd(mapping, fe_fd, quadrature, update_values | update_gradients)
@@ -138,7 +138,7 @@ public:
                   sd.fe_values_T.get_quadrature(),
                   update_values | update_quadrature_points | update_JxW_values |
                     update_gradients | update_hessians)
-    , global_T_mag(sd.global_T_mag)
+    , global_delta_T_ref(sd.global_delta_T_ref)
     , velocities(0)
     , pressure(dim)
     , fe_values_fd(sd.fe_values_fd.get_mapping(),
@@ -476,7 +476,7 @@ public:
   std::vector<double>                      present_face_temperature_values;
   std::vector<std::vector<double>>         previous_temperature_values;
   std::vector<std::vector<Tensor<1, dim>>> previous_temperature_gradients;
-  double                                   global_T_mag;
+  double                                   global_delta_T_ref;
 
   // Shape functions and gradients
   std::vector<std::vector<double>>         phi_T;

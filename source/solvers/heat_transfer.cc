@@ -400,7 +400,7 @@ HeatTransfer<dim>::assemble_system_matrix()
   const DoFHandler<dim> *dof_handler_fluid =
     multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
 
-  const double T_mag = calculate_T_mag();
+  const double delta_T_ref = calculate_delta_T_ref();
 
   auto scratch_data = HeatTransferScratchData<dim>(
     this->simulation_parameters.physical_properties_manager,
@@ -409,7 +409,7 @@ HeatTransfer<dim>::assemble_system_matrix()
     *this->temperature_mapping,
     dof_handler_fluid->get_fe(),
     *this->face_quadrature,
-    T_mag);
+    delta_T_ref);
 
   if (this->simulation_parameters.multiphysics.VOF)
     {
@@ -561,7 +561,7 @@ HeatTransfer<dim>::assemble_system_rhs()
   const DoFHandler<dim> *dof_handler_fluid =
     multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
 
-  const double T_mag = calculate_T_mag();
+  const double delta_T_ref = calculate_delta_T_ref();
 
   auto scratch_data = HeatTransferScratchData<dim>(
     this->simulation_parameters.physical_properties_manager,
@@ -570,7 +570,7 @@ HeatTransfer<dim>::assemble_system_rhs()
     *this->temperature_mapping,
     dof_handler_fluid->get_fe(),
     *this->face_quadrature,
-    T_mag);
+    delta_T_ref);
 
   if (this->simulation_parameters.multiphysics.VOF)
     {
@@ -764,10 +764,19 @@ HeatTransfer<dim>::attach_solution_to_output(DataOut<dim> &data_out)
 
 template <int dim>
 double
-HeatTransfer<dim>::calculate_T_mag()
+HeatTransfer<dim>::calculate_delta_T_ref()
 {
-  const double previous_solution_maximum = this->previous_solutions[0].max();
-  const double previous_solution_minimum = this->previous_solutions[0].min();
+  double previous_solution_maximum, previous_solution_minimum;
+  if (is_steady(simulation_parameters.simulation_control.method))
+    {
+      previous_solution_maximum = this->present_solution.max();
+      previous_solution_minimum = this->present_solution.min();
+    }
+  else
+    {
+      previous_solution_maximum = this->previous_solutions[0].max();
+      previous_solution_minimum = this->previous_solutions[0].min();
+    }
 
   // Set minimum value as 1 to prevent overshooting of diffusivity
   return std::max(previous_solution_maximum - previous_solution_minimum, 1.);
