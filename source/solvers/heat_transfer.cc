@@ -19,8 +19,6 @@
 #include <deal.II/numerics/error_estimator.h>
 #include <deal.II/numerics/vector_tools.h>
 
-#include <limits>
-
 DeclExceptionMsg(
   LiquidFractionRequiresPhaseChange,
   "Calculation of the liquid fraction requires that a fluid has a phase_change specific heat model");
@@ -761,7 +759,6 @@ HeatTransfer<dim>::attach_solution_to_output(DataOut<dim> &data_out)
                                heat_flux_postprocessors[m_id]);
     }
 }
-
 
 template <int dim>
 double

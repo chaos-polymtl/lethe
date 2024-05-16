@@ -6,8 +6,6 @@
 #include <solvers/heat_transfer.h>
 #include <solvers/heat_transfer_assemblers.h>
 
-#include <deal.II/base/symmetric_tensor.h>
-
 template <int dim>
 void
 HeatTransferAssemblerCore<dim>::assemble_matrix(
@@ -545,9 +543,6 @@ HeatTransferAssemblerRobinBC<dim>::assemble_rhs(
             *(this->boundary_conditions_ht.emissivity[i_bc]);
           Function<dim> &heat_flux_bc_function =
             *(this->boundary_conditions_ht.heat_flux_bc[i_bc]);
-          heat_flux_bc_function.set_time(
-            this->simulation_control->get_current_time());
-
           for (unsigned int f = 0; f < scratch_data.n_faces; ++f)
             {
               if (scratch_data.boundary_face_id[f] ==
@@ -845,7 +840,6 @@ HeatTransferAssemblerLaserExponentialDecay<dim>::assemble_rhs(
           // quadrature_point_depth is larger than laser_location_in_depth we
           // need to apply the laser on the quadrature point, otherwise it is
           // zero
-
           double laser_quadrature_point_distance_in_depth = 0.0;
           if ((beam_direction == 0 &&
                quadrature_point_depth <= laser_location_in_depth) |

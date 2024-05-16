@@ -189,7 +189,6 @@ public:
   void
   attach_solution_to_output(DataOut<dim> &data_out) override;
 
-
   /**
    * @brief Calculate delta_T_ref for the DCDD shock capture mechanism. delta_T_ref = T_max - T_min.
    */
