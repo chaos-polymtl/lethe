@@ -19,6 +19,7 @@
 #include <dem/set_particle_wall_contact_force_model.h>
 #include <dem/velocity_verlet_integrator.h>
 #include <dem/write_checkpoint.h>
+#include <dem/force_chains_visualization.h>
 
 #include <deal.II/base/table_handler.h>
 
@@ -1447,6 +1448,18 @@ DEMSolver<dim>::solve()
           torque,
           force,
           periodic_offset);
+
+
+      // Force chains visualization
+      ParticlesForceChains<dim,Parameters::Lagrangian::ParticleParticleContactForceModel::hertz, Parameters::Lagrangian::RollingResistanceMethod::no_resistance>  particles_force_chains_object(parameters);
+      particles_force_chains_object.write_force_chains(
+          contact_manager,
+          simulation_control->get_time_step(),
+          torque,
+          force,
+          periodic_offset);
+
+
 
       // We have to update the positions of the points on boundary faces and
       // their normal vectors here. The update_contacts deletes the
