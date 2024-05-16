@@ -15,7 +15,6 @@
  */
 
 #include <core/lethe_grid_tools.h>
-#include <core/serial_solid.h>
 #include <core/solutions_output.h>
 
 #include <deal.II/base/point.h>
