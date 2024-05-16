@@ -40,37 +40,93 @@ class ParsedFunctionCustom
       n_components>
 {
 public:
+  /**
+   * @brief Basic constructor with only the finite difference step
+   * @param[in] h Step for finite difference
+   */
   ParsedFunctionCustom(const double h = 1e-8);
 
+  /**
+   * @brief Declaration of the parameters for the parameter file.
+   *
+   * @param[in,out] prm Parameter object for parameters parsing
+   */
   void
   declare_parameters(ParameterHandler &prm);
 
+  /**
+   * @brief Initialization of the muParser object using member strings.
+   *
+   * This functions exists to avoid code duplication.
+   */
   void
   initialize();
 
+  /**
+   * @brief Parse the parameters from the parameter file.
+   *
+   * @param[in,out] prm Parameter object for parameters parsing
+   */
   void
   parse_parameters(ParameterHandler &prm);
 
+  /**
+   * @brief Initialize the muParser object using the input strings.
+   *
+   * @param[in] vnames Name of all variables
+   * @param[in] expression Expressions for all source terms
+   * @param[in] constants_list Constants used by the expressions
+   */
   void
   initialize(const std::string vnames,
              const std::string expression,
              const std::string constants_list);
 
+  /**
+   * @brief Evaluate all components at the evaluation point
+   *
+   * @param[in] p Evaluation point
+   * @param[out] values Output values
+   */
   void
   vector_value(const Tensor<1, n_components> &p,
                Tensor<1, n_components>       &values) const;
 
+  /**
+   * @brief Evaluation the value at evaluation point for one component
+   *
+   * @param[in] p Evaluation point
+   * @param[in] component Component of interest
+   * @return Value
+   */
   double
   value(const Tensor<1, n_components> &p,
         const unsigned int             component = 0) const;
 
+  /**
+   * @brief Evaluate the gradient at evaluation point for one component
+   *
+   * @param[in] p Evaluation point
+   * @param[in] comp Component of interest
+   * @return Gradient
+   */
   Tensor<1, n_components>
   gradient(const Tensor<1, n_components> &p, unsigned int comp = 0) const;
 
+  /**
+   * @brief Evaluation the gradient at evaluation point for all components
+   * @param[in] p Evaluation point
+   * @param[out] gradients Gradients
+   */
   void
   vector_gradient(const Tensor<1, n_components> &p,
                   Tensor<2, n_components>       &gradients) const;
 
+  /**
+   * @brief Set the time.
+   *
+   * @param[in] newtime New time value
+   */
   virtual void
   set_time(const double newtime) override;
 
@@ -79,11 +135,13 @@ private:
   double                               h;
   std::vector<Tensor<1, n_components>> ht;
 
-  // muParser components
+  // muParser components: variable names, expressions (same number as
+  // variables), constants
   std::string vnames;
   std::string expression;
   std::string constants_list;
 
+  // Used to know if member variables for muParser have been initialized
   bool initialized;
 };
 

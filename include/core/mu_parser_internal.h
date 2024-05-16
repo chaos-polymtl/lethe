@@ -79,7 +79,9 @@ namespace internal
     double
     mu_rand();
 
-
+    /**
+     * @brief Get the array of all function names.
+     */
     std::vector<std::string>
     get_function_names();
 
@@ -89,8 +91,13 @@ namespace internal
                    << "Parsing Error at Column " << arg1
                    << ". The parser said: " << arg2);
 
-
-
+    /**
+     * deal.II uses muParser as a purely internal dependency. To this end, we do
+     * not include any muParser headers in our own headers (and the bundled
+     * version of the dependency does not install its headers or compile a
+     * separate muparser library). Hence, to interface with muParser, we use the
+     * PIMPL idiom here to wrap a pointer to mu::Parser objects.
+     */
     class muParserBase
     {
     public:
@@ -108,6 +115,10 @@ namespace internal
       std::vector<std::unique_ptr<muParserBase>> parsers;
     };
 
+    /**
+     * @brief Class that interfaces with muParser
+     * @tparam n_components
+     */
     template <int n_components>
     class ParserImplementation
     {
@@ -116,20 +127,44 @@ namespace internal
 
       virtual ~ParserImplementation() = default;
 
+      /**
+       * @brief Treat the input and initialize the muParser object
+       * @param[in] vars Variable names
+       * @param[in] expressions Expressions
+       * @param[in] constants Constants
+       * @param[in] time_dependent Boolean to define if the function is time
+       * dependent
+       */
       void
       initialize(const std::string                   &vars,
                  const std::vector<std::string>      &expressions,
                  const std::map<std::string, double> &constants,
                  const bool                           time_dependent = false);
 
+      /**
+       * @brief Actual initialization of the muParser object
+       */
       void
       init_muparser() const;
 
+      /**
+       * @brief Evaluation of the function at a specific point
+       * @param[in] p Evalution point
+       * @param[in] time Current time
+       * @param[in] component Component of interest
+       * @return Value
+       */
       double
       do_value(const dealii::Tensor<1, n_components> &p,
                const double                           time,
                unsigned int                           component) const;
 
+      /**
+       * @brief Evaluation of the function at a specific point for all components
+       * @param[in] p Evaluation point
+       * @param[in] time Current time
+       * @param[out] values Output values
+       */
       void
       do_all_values(const dealii::Tensor<1, n_components> &p,
                     const double                           time,
@@ -138,21 +173,25 @@ namespace internal
       std::vector<std::string> expressions;
 
     private:
+      // Thread safe object for using muParser
       mutable dealii::Threads::ThreadLocalStorage<
         ::internal::FunctionParserCustom::ParserData>
         parser_data;
 
+      // Constants
       std::map<std::string, double> constants;
 
-
+      // Variable name
       std::vector<std::string> var_names;
 
+      // Keeps track if the muParser object is initialized
       bool initialized;
 
+      // Number of variables
       unsigned int n_vars;
     };
   } // namespace FunctionParserCustom
 } // namespace internal
 
 
-#endif // LETHE_MU_PARSER_INTERNAL_H
+#endif // lethe_mu_parser_internal_h
