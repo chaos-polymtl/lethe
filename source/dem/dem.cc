@@ -199,21 +199,32 @@ DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
                                            simulation_control->get_time_step());
 
   for (unsigned int i_solid = 0;
-       i_solid < parameters.solid_objects->number_solids;
+       i_solid < parameters.solid_objects->number_solids_2d;
        ++i_solid)
     {
-      solids.push_back(std::make_shared<SerialSolid<dim - 1, dim>>(
-        this->parameters.solid_objects->solids[i_solid], i_solid));
+      solids_2d.push_back(std::make_shared<SerialSolid<dim - 1, dim>>(
+        this->parameters.solid_objects->solids_2d[i_solid], i_solid));
+    }
+
+  for (unsigned int i_solid = 0;
+       i_solid < parameters.solid_objects->number_solids_3d;
+       ++i_solid)
+    {
+      solids_3d.push_back(std::make_shared<SerialSolid<dim, dim>>(
+        this->parameters.solid_objects->solids_3d[i_solid], i_solid));
     }
 
   // Generate solid objects
-  floating_mesh_info.resize(solids.size());
+  floating_mesh_info.resize(solids_2d.size());
+
+  manifold_mesh_information.resize(solids_3d.size());
 
   // Resize particle_floating_mesh_in_contact
-  if (solids.size() > 0)
+  if ((solids_2d.size() + solids_3d.size()) > 0)
     {
       has_floating_mesh = true;
-      contact_manager.particle_floating_mesh_in_contact.resize(solids.size());
+      contact_manager.particle_floating_mesh_in_contact.resize(
+        solids_2d.size() + solids_3d.size());
     }
 
   // Check if there are periodic boundaries
@@ -464,10 +475,18 @@ DEMSolver<dim>::load_balance()
 
   // Update the container with all the combinations of background and
   // solid cells
-  for (unsigned int i_solid = 0; i_solid < solids.size(); ++i_solid)
+  for (unsigned int i_solid = 0; i_solid < solids_2d.size(); ++i_solid)
     {
       floating_mesh_info[i_solid] =
-        solids[i_solid]->map_solid_in_background_triangulation(triangulation);
+        solids_2d[i_solid]->map_solid_in_background_triangulation(
+          triangulation);
+    }
+
+  for (unsigned int i_solid = 0; i_solid < solids_3d.size(); ++i_solid)
+    {
+      manifold_mesh_information[i_solid] =
+        solids_3d[i_solid]->map_solid_in_background_triangulation(
+          triangulation);
     }
 
   if (has_periodic_boundaries)
@@ -862,7 +881,7 @@ DEMSolver<dim>::particle_wall_contact_force()
           simulation_control->get_time_step(),
           torque,
           force,
-          solids);
+          solids_2d);
     }
 
   particle_point_line_contact_force_object
@@ -1070,7 +1089,10 @@ DEMSolver<dim>::write_output_results()
     }
 
   // Write all solid objects
-  for (const auto &solid_object : solids)
+  for (const auto &solid_object : solids_2d)
+    solid_object->write_output_results(simulation_control);
+
+  for (const auto &solid_object : solids_3d)
     solid_object->write_output_results(simulation_control);
 }
 
@@ -1174,10 +1196,18 @@ DEMSolver<dim>::solve()
             parameters.boundary_conditions);
 
   // Store information about floating mesh/background mesh intersection
-  for (unsigned int i_solid = 0; i_solid < solids.size(); ++i_solid)
+  for (unsigned int i_solid = 0; i_solid < solids_2d.size(); ++i_solid)
     {
       floating_mesh_info[i_solid] =
-        solids[i_solid]->map_solid_in_background_triangulation(triangulation);
+        solids_2d[i_solid]->map_solid_in_background_triangulation(
+          triangulation);
+    }
+
+  for (unsigned int i_solid = 0; i_solid < solids_3d.size(); ++i_solid)
+    {
+      manifold_mesh_information[i_solid] =
+        solids_3d[i_solid]->map_solid_in_background_triangulation(
+          triangulation);
     }
 
   // Set insertion object type before the restart because the restart only
@@ -1200,7 +1230,7 @@ DEMSolver<dim>::solve()
                       triangulation,
                       particle_handler,
                       insertion_object,
-                      solids);
+                      solids_2d);
 
       displacement.resize(particle_handler.get_max_local_particle_index());
       force.resize(displacement.size());
@@ -1212,10 +1242,18 @@ DEMSolver<dim>::solve()
     }
 
   // Store information about floating mesh/background mesh intersection
-  for (unsigned int i_solid = 0; i_solid < solids.size(); ++i_solid)
+  for (unsigned int i_solid = 0; i_solid < solids_2d.size(); ++i_solid)
     {
       floating_mesh_info[i_solid] =
-        solids[i_solid]->map_solid_in_background_triangulation(triangulation);
+        solids_2d[i_solid]->map_solid_in_background_triangulation(
+          triangulation);
+    }
+
+  for (unsigned int i_solid = 0; i_solid < solids_3d.size(); ++i_solid)
+    {
+      manifold_mesh_information[i_solid] =
+        solids_3d[i_solid]->map_solid_in_background_triangulation(
+          triangulation);
     }
 
   // Find the smallest contact search frequency criterion between (smallest
@@ -1335,15 +1373,16 @@ DEMSolver<dim>::solve()
       if (has_floating_mesh)
         {
           floating_mesh_map_step = find_floating_mesh_mapping_step(
-            smallest_floating_mesh_mapping_criterion, this->solids);
+            smallest_floating_mesh_mapping_criterion, this->solids_2d);
 
           if (floating_mesh_map_step)
             {
               // Update floating mesh information in the container manager
-              for (unsigned int i_solid = 0; i_solid < solids.size(); ++i_solid)
+              for (unsigned int i_solid = 0; i_solid < solids_2d.size();
+                   ++i_solid)
                 {
                   floating_mesh_info[i_solid] =
-                    solids[i_solid]->map_solid_in_background_triangulation(
+                    solids_2d[i_solid]->map_solid_in_background_triangulation(
                       triangulation);
                 }
             }
@@ -1474,7 +1513,12 @@ DEMSolver<dim>::solve()
 
       // Move the solid triangulations, previous time must be used here
       // instead of current time.
-      for (auto &solid_object : solids)
+      for (auto &solid_object : solids_2d)
+        solid_object->move_solid_triangulation(
+          simulation_control->get_time_step(),
+          simulation_control->get_previous_time());
+
+      for (auto &solid_object : solids_3d)
         solid_object->move_solid_triangulation(
           simulation_control->get_time_step(),
           simulation_control->get_previous_time());
@@ -1556,7 +1600,7 @@ DEMSolver<dim>::solve()
                            triangulation,
                            particle_handler,
                            insertion_object,
-                           solids,
+                           solids_2d,
                            pcout,
                            mpi_communicator);
         }

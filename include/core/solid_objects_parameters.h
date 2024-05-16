@@ -370,8 +370,11 @@ namespace Parameters
     Verbosity verbosity;
 
     // DEM solid objects
-    std::vector<std::shared_ptr<RigidSolidObject<dim>>> solids;
-    unsigned int                                        number_solids;
+    std::vector<std::shared_ptr<RigidSolidObject<dim>>> solids_2d;
+    std::vector<std::shared_ptr<RigidSolidObject<dim>>> solids_3d;
+    unsigned int                                        number_solids_2d;
+    unsigned int                                        number_solids_3d;
+
     static const unsigned int max_number_of_solids = 50;
   };
 
@@ -379,8 +382,10 @@ namespace Parameters
   void
   DEMSolidObjects<dim>::declare_parameters(ParameterHandler &prm)
   {
-    solids.resize(max_number_of_solids);
-    number_solids = 0;
+    solids_2d.resize(max_number_of_solids);
+    solids_3d.resize(max_number_of_solids);
+    number_solids_2d = 0;
+    number_solids_3d = 0;
 
     prm.enter_subsection("solid objects");
     {
@@ -394,10 +399,27 @@ namespace Parameters
         for (unsigned int i_solid = 0; i_solid < max_number_of_solids;
              ++i_solid)
           {
-            solids[i_solid] = std::make_shared<RigidSolidObject<dim>>();
-            solids[i_solid]->declare_parameters(prm, i_solid);
+            solids_2d[i_solid] = std::make_shared<RigidSolidObject<dim>>();
+            solids_2d[i_solid]->declare_parameters(prm, i_solid);
           }
       }
+      prm.leave_subsection();
+
+      prm.enter_subsection("three dimensions");
+      {
+        prm.declare_entry("number of solids",
+                          "0",
+                          Patterns::Integer(),
+                          "Number of solid object");
+
+        for (unsigned int i_solid = 0; i_solid < max_number_of_solids;
+             ++i_solid)
+          {
+            solids_3d[i_solid] = std::make_shared<RigidSolidObject<dim>>();
+            solids_3d[i_solid]->declare_parameters(prm, i_solid);
+          }
+      }
+      prm.leave_subsection();
     }
     prm.leave_subsection();
   }
@@ -410,12 +432,23 @@ namespace Parameters
     {
       prm.enter_subsection("two dimensions");
       {
-        number_solids = prm.get_integer("number of solids");
-        for (unsigned int i_solid = 0; i_solid < number_solids; ++i_solid)
+        number_solids_2d = prm.get_integer("number of solids");
+        for (unsigned int i_solid = 0; i_solid < number_solids_2d; ++i_solid)
           {
-            solids[i_solid]->parse_parameters(prm, i_solid);
+            solids_2d[i_solid]->parse_parameters(prm, i_solid);
           }
       }
+      prm.leave_subsection();
+
+      prm.enter_subsection("three dimensions");
+      {
+        number_solids_3d = prm.get_integer("number of solids");
+        for (unsigned int i_solid = 0; i_solid < number_solids_3d; ++i_solid)
+          {
+            solids_3d[i_solid]->parse_parameters(prm, i_solid);
+          }
+      }
+      prm.leave_subsection();
     }
     prm.leave_subsection();
   }

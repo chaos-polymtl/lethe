@@ -372,6 +372,8 @@ private:
   // Mesh and boundary information
   typename dem_data_structures<dim>::floating_mesh_information
     floating_mesh_info;
+  typename dem_data_structures<dim>::manifold_mesh_information
+    manifold_mesh_information;
   typename dem_data_structures<dim>::boundary_points_and_normal_vectors
     updated_boundary_points_and_normal_vectors;
   typename dem_data_structures<dim>::vector_on_boundary
@@ -396,7 +398,8 @@ private:
   statistics simulation_time;
 
   // Solid DEM objects
-  std::vector<std::shared_ptr<SerialSolid<dim - 1, dim>>> solids;
+  std::vector<std::shared_ptr<SerialSolid<dim - 1, dim>>> solids_2d;
+  std::vector<std::shared_ptr<SerialSolid<dim, dim>>>     solids_3d;
 
   // Distribution objects
   std::vector<std::shared_ptr<Distribution>> size_distribution_object_container;
