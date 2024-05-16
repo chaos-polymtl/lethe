@@ -1961,9 +1961,12 @@ MFNavierStokesSolver<dim>::update_multiphysics_time_average_solution()
 {
   if (this->simulation_parameters.post_processing.calculate_average_velocities)
     {
+      TrilinosWrappers::MPI::Vector temp_average_velocities(
+        this->locally_owned_dofs, this->mpi_communicator);
       convert_vector_dealii_to_trilinos(
-        this->multiphysics_average_velocities,
+        temp_average_velocities,
         this->average_velocities->get_average_velocities());
+      this->multiphysics_average_velocities = temp_average_velocities;
 
       this->multiphysics->set_time_average_solution(
         PhysicsID::fluid_dynamics, &this->multiphysics_average_velocities);
@@ -2086,10 +2089,16 @@ MFNavierStokesSolver<dim>::update_solutions_for_multiphysics()
   this->multiphysics->set_dof_handler(PhysicsID::fluid_dynamics,
                                       &this->dof_handler);
 
+
+
   // Convert the present solution to multiphysics vector type and provide it to
   // the multiphysics interface
-  convert_vector_dealii_to_trilinos(multiphysics_present_solution,
-                                    this->present_solution);
+  TrilinosWrappers::MPI::Vector temp_solution(this->locally_owned_dofs,
+                                              this->mpi_communicator);
+
+  this->present_solution.update_ghost_values();
+  convert_vector_dealii_to_trilinos(temp_solution, this->present_solution);
+  multiphysics_present_solution = temp_solution;
 
   this->multiphysics->set_solution(PhysicsID::fluid_dynamics,
                                    &this->multiphysics_present_solution);
@@ -2099,9 +2108,20 @@ MFNavierStokesSolver<dim>::update_solutions_for_multiphysics()
   const unsigned int number_of_previous_solutions =
     this->simulation_control->get_number_of_previous_solution_in_assembly();
 
+  std::vector<TrilinosWrappers::MPI::Vector> temp_previous_solutions;
+
+  temp_previous_solutions.resize(number_of_previous_solutions);
+  for (auto &solution : temp_previous_solutions)
+    solution.reinit(this->locally_owned_dofs, this->mpi_communicator);
+
   for (unsigned int i = 0; i < number_of_previous_solutions; i++)
-    convert_vector_dealii_to_trilinos(this->multiphysics_previous_solutions[i],
-                                      this->previous_solutions[i]);
+    {
+      this->previous_solutions[i].update_ghost_values();
+      convert_vector_dealii_to_trilinos(temp_previous_solutions[i],
+                                        this->previous_solutions[i]);
+
+      this->multiphysics_previous_solutions[i] = temp_previous_solutions[i];
+    }
 
   this->multiphysics->set_previous_solutions(
     PhysicsID::fluid_dynamics, &this->multiphysics_previous_solutions);
