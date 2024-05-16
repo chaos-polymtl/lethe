@@ -20,7 +20,7 @@ Interface energy: 1.74433
 Total energy: 2.41195
 
 *******************************************************************************
-Transient iteration: 1        Time: 0.5      Time step: 0.5      CFL: 0       
+Transient iteration: 1        Time: 0.5      Time step: 0.5      CFL: 0
 *******************************************************************************
 -----------------
 Phase statistics

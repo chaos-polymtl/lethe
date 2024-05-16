@@ -14,7 +14,7 @@ Volume phase 0: 3.0891
 Volume phase 1: 0.910898
 
 *******************************************************************************
-Transient iteration: 1        Time: 0.5      Time step: 0.5      CFL: 0       
+Transient iteration: 1        Time: 0.5      Time step: 0.5      CFL: 0
 *******************************************************************************
 -----------------
 Phase statistics

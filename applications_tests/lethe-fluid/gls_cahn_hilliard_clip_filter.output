@@ -3,7 +3,7 @@ Running on 1 MPI rank(s)...
    Number of degrees of freedom: 243
    Volume of triangulation:      1
    Number of Cahn-Hilliard degrees of freedom: 162
-Filtered phase values: 
+Filtered phase values:
 -1
 0
 -1
@@ -168,9 +168,9 @@ Filtered phase values:
 0
 
 *******************************************************************************
-Transient iteration: 1        Time: 0.5      Time step: 0.5      CFL: 0       
+Transient iteration: 1        Time: 0.5      Time step: 0.5      CFL: 0
 *******************************************************************************
-Filtered phase values: 
+Filtered phase values:
 -1
 0
 -1
@@ -335,9 +335,9 @@ Filtered phase values:
 0
 
 *******************************************************************************
-Transient iteration: 2        Time: 1        Time step: 0.5      CFL: 0       
+Transient iteration: 2        Time: 1        Time step: 0.5      CFL: 0
 *******************************************************************************
-Filtered phase values: 
+Filtered phase values:
 -1
 0
 -1

@@ -44,18 +44,18 @@ Thermal energy in fluid : 0.311974
 Transient iteration: 2        Time: 1        Time step: 0.5      CFL: 3.0594  
 *******************************************************************************
 Temperature statistics on fluid : 
-	     Min : -0.740064
-	     Max : 0.981044
-	 Average : 0.459203
-	 Std-Dev : 0.415024
+	     Min : -0.739682
+	     Max : 0.981035
+	 Average : 0.459279
+	 Std-Dev : 0.414919
 Total heat flux at the heat transfer boundary conditions : 
-	 boundary 0 : 2.42404
-	 boundary 1 : 1.50599
-	 boundary 2 : -3.46652
-	 boundary 3 : 0.232445
+	 boundary 0 : 2.42381
+	 boundary 1 : 1.50555
+	 boundary 2 : -3.46622
+	 boundary 3 : 0.231674
 Convective heat flux at the heat transfer boundary conditions : 
 	 boundary 0 : 0
-	 boundary 1 : -1.81092
-	 boundary 2 : 4.5302
-	 boundary 3 : -0.172579
-Thermal energy in fluid : 0.459203
+	 boundary 1 : -1.81116
+	 boundary 2 : 4.53045
+	 boundary 3 : -0.172674
+Thermal energy in fluid : 0.459279

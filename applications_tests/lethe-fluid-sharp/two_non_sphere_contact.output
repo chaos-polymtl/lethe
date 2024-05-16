@@ -44,7 +44,7 @@ Transient iteration: 2        Time: 0.02     Time step: 0.01     CFL: 0.0230022
    Number of degrees of freedom: 22952
    Volume of triangulation:      6.4e+04
 particle 0 position 20 1 20
-particle 0 velocity 0.26 0.00679 -5.72e-06
+particle 0 velocity 0.26 0.00679 -5.69e-06
 particle 1 position 19 2.87 20
 particle 1 velocity -0.119 -0.649 -3.77e-05
 +------------------------------------------+
@@ -55,7 +55,7 @@ particle_ID  time   T_x   omega_x theta_x  T_y   omega_y theta_y  T_z   omega_z 
           1 0.0200  0.000  0.000   1.570  0.000  -0.001   1.566  0.024  -0.556  -1.570  0.045 -0.119 18.999  0.078 -0.649 2.870 0.000 0.000 20.000  0.002  0.021 0.000  0.043  0.057 0.000 
 
 ********************************************************************************
-Transient iteration: 3        Time: 0.03     Time step: 0.01     CFL: 0.0409981
+Transient iteration: 3        Time: 0.03     Time step: 0.01     CFL: 0.0409979
 ********************************************************************************
    Number of active cells:       4395
    Number of degrees of freedom: 22952
@@ -72,7 +72,7 @@ particle_ID  time   T_x  omega_x theta_x  T_y  omega_y theta_y  T_z   omega_z th
           1 0.0300 0.000   0.000   1.570 0.000  -0.002   1.559  0.028  -0.800  -1.570  0.046 -0.180 18.998  0.087 -0.939 2.862 0.000 0.000 20.000  0.002  0.029 0.000  0.043  0.058 0.000 
 
 ********************************************************************************
-Transient iteration: 4        Time: 0.04     Time step: 0.01     CFL: 0.0571298
+Transient iteration: 4        Time: 0.04     Time step: 0.01     CFL: 0.0571297
 ********************************************************************************
    Number of active cells:       4437
    Number of degrees of freedom: 23184

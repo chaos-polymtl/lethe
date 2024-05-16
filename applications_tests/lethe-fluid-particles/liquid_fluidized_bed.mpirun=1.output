@@ -31,7 +31,7 @@ DEM
 DEM contact search at dem step 0
 Finished 10 DEM iterations 
 ---------------------------------------------------------------
-Global continuity equation error: -8.247081502e-13 s^-1
+Global continuity equation error: -8.247081705e-13 s^-1
 Max local continuity error: 2.939360858e-07 s^-1
 
 *********************************************************************************
@@ -47,9 +47,9 @@ Volume-Averaged Fluid Dynamics
 DEM
 ----
 DEM contact search at dem step 9
-Finished 10 DEM iterations 
+Finished 10 DEM iterations
 ---------------------------------------------------------------
-Global continuity equation error: -1.170125063e-11 s^-1
+Global continuity equation error: -1.170125065e-11 s^-1
 Max local continuity error: 2.667651567e-07 s^-1
 
 *********************************************************************************
@@ -65,9 +65,9 @@ Volume-Averaged Fluid Dynamics
 DEM
 ----
 DEM contact search at dem step 9
-Finished 10 DEM iterations 
+Finished 10 DEM iterations
 ---------------------------------------------------------------
-Global continuity equation error: -4.687697634e-12 s^-1
+Global continuity equation error: -4.687697607e-12 s^-1
 Max local continuity error: 2.432011016e-07 s^-1
 
 *********************************************************************************
@@ -83,9 +83,9 @@ Volume-Averaged Fluid Dynamics
 DEM
 ----
 DEM contact search at dem step 9
-Finished 10 DEM iterations 
+Finished 10 DEM iterations
 ---------------------------------------------------------------
-Global continuity equation error: -1.77932138e-13 s^-1
+Global continuity equation error: -1.779321072e-13 s^-1
 Max local continuity error: 2.531493203e-07 s^-1
 
 *********************************************************************************
@@ -101,7 +101,7 @@ Volume-Averaged Fluid Dynamics
 DEM
 ----
 DEM contact search at dem step 9
-Finished 10 DEM iterations 
+Finished 10 DEM iterations
 ---------------------------------------------------------------
-Global continuity equation error: 3.408380603e-13 s^-1
+Global continuity equation error: 3.40838042e-13 s^-1
 Max local continuity error: 2.611538796e-07 s^-1

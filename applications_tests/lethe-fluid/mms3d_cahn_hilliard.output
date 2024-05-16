@@ -21,7 +21,7 @@ Steady iteration:        2/4
    Number of Cahn-Hilliard degrees of freedom: 1458
 L2 error velocity : 0
 L2 error pressure : 0
-L2 error phase order: 0.0513636
+L2 error phase order: 0.0513637
 L2 error chemical potential: inf
 
 *****************************
@@ -47,13 +47,13 @@ L2 error velocity : 0
 L2 error pressure : 0
 L2 error phase order: 0.00318616
 L2 error chemical potential: inf
-cells  error_velocity   error_pressure  
-   64 0.000000e+00   - 0.000000e+00   - 
-  512 0.000000e+00 nan 0.000000e+00 nan 
- 4096 0.000000e+00 nan 0.000000e+00 nan 
-32768 0.000000e+00 nan 0.000000e+00 nan 
-cells error_phase_order error_chemical_potential 
-   64 2.133486e-01    - inf                    - 
-  512 5.136365e-02 2.05 inf                  nan 
- 4096 1.276131e-02 2.01 inf                  nan 
-32768 3.186157e-03 2.00 inf                  nan 
+cells  error_velocity   error_pressure
+   64 0.000000e+00   - 0.000000e+00   -
+  512 0.000000e+00 nan 0.000000e+00 nan
+ 4096 0.000000e+00 nan 0.000000e+00 nan
+32768 0.000000e+00 nan 0.000000e+00 nan
+cells error_phase_order error_chemical_potential
+   64 2.133486e-01    - inf                    -
+  512 5.136370e-02 2.05 inf                  nan
+ 4096 1.276131e-02 2.01 inf                  nan
+32768 3.186157e-03 2.00 inf                  nan

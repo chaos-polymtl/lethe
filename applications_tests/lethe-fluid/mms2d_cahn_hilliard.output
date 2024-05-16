@@ -47,13 +47,13 @@ L2 error velocity : 0
 L2 error pressure : 0
 L2 error phase order: 0.000194107
 L2 error chemical potential: inf
-cells  error_velocity   error_pressure  
-  256 0.000000e+00   - 0.000000e+00   - 
- 1024 0.000000e+00 nan 0.000000e+00 nan 
- 4096 0.000000e+00 nan 0.000000e+00 nan 
-16384 0.000000e+00 nan 0.000000e+00 nan 
-cells error_phase_order error_chemical_potential 
-  256 1.242087e-02    - inf                    - 
- 1024 3.105586e-03 2.00 inf                  nan 
- 4096 7.764236e-04 2.00 inf                  nan 
-16384 1.941073e-04 2.00 inf                  nan 
+cells  error_velocity   error_pressure
+  256 0.000000e+00   - 0.000000e+00   -
+ 1024 0.000000e+00 nan 0.000000e+00 nan
+ 4096 0.000000e+00 nan 0.000000e+00 nan
+16384 0.000000e+00 nan 0.000000e+00 nan
+cells error_phase_order error_chemical_potential
+  256 1.242087e-02    - inf                    -
+ 1024 3.105586e-03 2.00 inf                  nan
+ 4096 7.764236e-04 2.00 inf                  nan
+16384 1.941073e-04 2.00 inf                  nan

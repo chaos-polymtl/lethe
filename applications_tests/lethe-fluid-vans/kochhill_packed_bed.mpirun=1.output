@@ -16,7 +16,7 @@ Volume-Averaged Fluid Dynamics
 -------------------------------
 Pressure drop: 39.33568709 Pa
 Total pressure drop: 39.33568697 Pa
-Global continuity equation error: -5.338419379e-12 s^-1
+Global continuity equation error: -5.338419395e-12 s^-1
 Max local continuity error: 6.566696675e-08 s^-1
 
 *******************************************************************************
@@ -30,7 +30,7 @@ Volume-Averaged Fluid Dynamics
 -------------------------------
 Pressure drop: 24.62494278 Pa
 Total pressure drop: 24.62520034 Pa
-Global continuity equation error: -1.454868401e-12 s^-1
+Global continuity equation error: -1.45486845e-12 s^-1
 Max local continuity error: 6.473096476e-08 s^-1
 
 *******************************************************************************
@@ -44,7 +44,7 @@ Volume-Averaged Fluid Dynamics
 -------------------------------
 Pressure drop: 25.0051089 Pa
 Total pressure drop: 25.00484991 Pa
-Global continuity equation error: -1.867910019e-11 s^-1
+Global continuity equation error: -1.867910016e-11 s^-1
 Max local continuity error: 6.584245308e-08 s^-1
 
 *******************************************************************************
@@ -58,7 +58,7 @@ Volume-Averaged Fluid Dynamics
 -------------------------------
 Pressure drop: 24.56164937 Pa
 Total pressure drop: 24.56190716 Pa
-Global continuity equation error: -9.009261805e-12 s^-1
+Global continuity equation error: -9.009261809e-12 s^-1
 Max local continuity error: 6.546700257e-08 s^-1
 
 *******************************************************************************
@@ -72,7 +72,7 @@ Volume-Averaged Fluid Dynamics
 -------------------------------
 Pressure drop: 25.00460555 Pa
 Total pressure drop: 25.00434671 Pa
-Global continuity equation error: -3.765235098e-12 s^-1
+Global continuity equation error: -3.765235105e-12 s^-1
 Max local continuity error: 6.627262879e-08 s^-1
 
 *******************************************************************************
@@ -86,7 +86,7 @@ Volume-Averaged Fluid Dynamics
 -------------------------------
 Pressure drop: 24.5614401 Pa
 Total pressure drop: 24.56169798 Pa
-Global continuity equation error: -6.342168528e-12 s^-1
+Global continuity equation error: -6.342168507e-12 s^-1
 Max local continuity error: 6.575446388e-08 s^-1
 
 *******************************************************************************
@@ -100,7 +100,7 @@ Volume-Averaged Fluid Dynamics
 -------------------------------
 Pressure drop: 25.00448424 Pa
 Total pressure drop: 25.00422545 Pa
-Global continuity equation error: -2.816507135e-12 s^-1
+Global continuity equation error: -2.816507148e-12 s^-1
 Max local continuity error: 6.64813947e-08 s^-1
 
 *******************************************************************************
@@ -114,7 +114,7 @@ Volume-Averaged Fluid Dynamics
 -------------------------------
 Pressure drop: 24.56136376 Pa
 Total pressure drop: 24.56162165 Pa
-Global continuity equation error: -5.391325698e-12 s^-1
+Global continuity equation error: -5.391325731e-12 s^-1
 Max local continuity error: 6.591558711e-08 s^-1
 
 *******************************************************************************
@@ -128,7 +128,7 @@ Volume-Averaged Fluid Dynamics
 -------------------------------
 Pressure drop: 25.00443306 Pa
 Total pressure drop: 25.00417423 Pa
-Global continuity equation error: -1.745596317e-12 s^-1
+Global continuity equation error: -1.745596306e-12 s^-1
 Max local continuity error: 6.661089638e-08 s^-1
 
 *******************************************************************************
@@ -142,5 +142,5 @@ Volume-Averaged Fluid Dynamics
 -------------------------------
 Pressure drop: 24.56132788 Pa
 Total pressure drop: 24.5615857 Pa
-Global continuity equation error: -4.6515047e-12 s^-1
+Global continuity equation error: -4.651504697e-12 s^-1
 Max local continuity error: 6.602312068e-08 s^-1
