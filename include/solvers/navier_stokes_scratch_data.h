@@ -1189,6 +1189,7 @@ public:
   std::vector<double>         chemical_potential_cahn_hilliard_values;
   std::vector<Tensor<1, dim>> chemical_potential_cahn_hilliard_gradients;
   double                      density_diff;
+  double                      dynamic_viscosity_diff;
 
   std::shared_ptr<CahnHilliardFilterBase>
     cahn_hilliard_filter; // Phase order fraction filter

@@ -579,6 +579,7 @@ NavierStokesScratchData<dim>::calculate_physical_properties()
                     this->filtered_phase_order_cahn_hilliard_values[q];
 
                   this->density_diff = 0.5 * (density_0[q] - density_1[q]);
+                  this->dynamic_viscosity_diff = 0.5*(dynamic_viscosity_0[q]-dynamic_viscosity_1[q]);
 
                   // Gather properties from material interactions
                   const auto material_interaction_id =
