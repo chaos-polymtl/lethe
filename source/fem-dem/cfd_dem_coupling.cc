@@ -1250,6 +1250,63 @@ CFDDEMSolver<dim>::postprocess_fd(bool first_iteration)
 
 template <int dim>
 void
+CFDDEMSolver<dim>::postprocess_cfd_dem()
+{
+  // Calculate total volume of fluid and solid 
+  if (this->simulation_parameters.post_processing.calculate_pressure_drop)
+   {
+      TimerOutput::Scope t(this->computing_timer, "total_volume_calculation");
+      double             total_volume_fluid, total_volume_solid;
+      std::tie(total_volume_fluid, total_volume_solid) = calculate_total_volume(
+        this->void_fraction_dof_handler,
+        this->nodal_void_fraction_relevant,
+        *this->cell_quadrature,
+        *this->mapping);
+      this->total_volume_table.add_value(
+        "time", this->simulation_control->get_current_time());
+      this->total_volume_table.add_value("total-volume-fluid", total_volume_fluid);
+      this->total_volume_table.add_value("total-volume-solid",
+                                          total_volume_fluid);
+      if (this->simulation_parameters.post_processing.verbosity ==
+          Parameters::Verbosity::verbose)
+        {
+          this->pcout << "Total volume of fluid: "
+                      << std::setprecision(
+                           this->simulation_control->get_log_precision())
+                      << this->simulation_parameters.physical_properties_manager
+                             .get_density_scale() *
+                           total_volume_fluid
+                      << " m^3" << std::endl;
+          this->pcout << "Total volume of fluid: "
+                      << std::setprecision(
+                           this->simulation_control->get_log_precision())
+                      << this->simulation_parameters.physical_properties_manager
+                             .get_density_scale() *
+                           total_volume_solid
+                      << " m^3" << std::endl;
+        }
+
+      // Output pressure drop to a text file from processor 0
+      if ((this->simulation_control->get_step_number() %
+             this->simulation_parameters.post_processing.output_frequency ==
+           0) &&
+          this->this_mpi_process == 0)
+        {
+          std::string filename =
+            this->simulation_parameters.simulation_control.output_folder +
+            this->simulation_parameters.post_processing.pressure_drop_output_name +
+            ".dat";
+          std::ofstream output(filename.c_str());
+          total_volume_table.set_precision("time", 12);
+          total_volume_table.set_precision("total-volume-fluid", 12);
+          total_volume_table.set_precision("total-volume-solid", 12);
+          this->total_volume_table.write_text(output);
+        }
+    }
+}
+
+template <int dim>
+void
 CFDDEMSolver<dim>::dynamic_flow_control()
 {
   if (this->simulation_parameters.flow_control.enable_flow_control &&
@@ -1683,6 +1740,7 @@ CFDDEMSolver<dim>::solve()
                   << std::endl;
 
       this->postprocess(false);
+      this->postprocess_cfd_dem();
       this->finish_time_step_fd();
 
       this->GLSVANSSolver<dim>::monitor_mass_conservation();
