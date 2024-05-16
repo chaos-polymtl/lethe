@@ -76,29 +76,6 @@ ParsedFunctionCustom<n_components>::declare_parameters(ParameterHandler &prm)
     "defines both `pi' and `Pi' by default, but you get the idea.)");
 }
 
-template <int n_components>
-void
-ParsedFunctionCustom<n_components>::parse_parameters(ParameterHandler &prm)
-{
-  vnames         = prm.get("Variable names");
-  expression     = prm.get("Function expression");
-  constants_list = prm.get("Function constants");
-  initialized    = true;
-  initialize();
-}
-
-template <int n_components>
-void
-ParsedFunctionCustom<n_components>::initialize(const std::string vnames,
-                                               const std::string expression,
-                                               const std::string constants_list)
-{
-  this->vnames         = vnames;
-  this->expression     = expression;
-  this->constants_list = constants_list;
-  initialized          = true;
-  initialize();
-}
 
 template <int n_components>
 void
@@ -156,6 +133,30 @@ ParsedFunctionCustom<n_components>::initialize()
                       " either n_components (for a time-independent function)" +
                       " or n_components+1 (for a time-dependent function)."));
     }
+}
+
+template <int n_components>
+void
+ParsedFunctionCustom<n_components>::parse_parameters(ParameterHandler &prm)
+{
+  vnames         = prm.get("Variable names");
+  expression     = prm.get("Function expression");
+  constants_list = prm.get("Function constants");
+  initialized    = true;
+  initialize();
+}
+
+template <int n_components>
+void
+ParsedFunctionCustom<n_components>::initialize(const std::string vnames,
+                                               const std::string expression,
+                                               const std::string constants_list)
+{
+  this->vnames         = vnames;
+  this->expression     = expression;
+  this->constants_list = constants_list;
+  initialized          = true;
+  initialize();
 }
 
 template <int n_components>

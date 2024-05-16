@@ -181,7 +181,6 @@ namespace internal
               "rand_seed"};
     }
 
-#ifdef DEAL_II_WITH_MUPARSER
     /**
      * PIMPL for mu::Parser.
      */
@@ -201,7 +200,6 @@ namespace internal
     protected:
       dealii::mu::Parser parser;
     };
-#endif
 
     template <int n_components>
     ::internal::FunctionParserCustom::ParserImplementation<
@@ -252,12 +250,12 @@ namespace internal
     void
     ParserImplementation<n_components>::init_muparser() const
     {
-#ifdef DEAL_II_WITH_MUPARSER
       // check that we have not already initialized the parser on the
       // current thread, i.e., that the current function is only called
       // once per thread
       ParserData &data = this->parser_data.get();
-      Assert(data.parsers.empty() && data.vars.empty(), ExcInternalError());
+      Assert(data.parsers.empty() && data.vars.empty(),
+             dealii::StandardExceptions::ExcInternalError());
 
       // initialize the objects for the current thread
       data.parsers.reserve(n_components);
@@ -348,9 +346,6 @@ namespace internal
               AssertThrow(false, ExcParseError(e.GetCode(), e.GetMsg()));
             }
         }
-#else
-      AssertThrow(false, ExcNeedsFunctionparser());
-#endif
     }
 
     template <int n_components>
@@ -360,8 +355,8 @@ namespace internal
       const double                           time,
       unsigned int                           component) const
     {
-#ifdef DEAL_II_WITH_MUPARSER
-      Assert(this->initialized == true, ExcNotInitialized());
+      Assert(this->initialized == true,
+             dealii::StandardExceptions::ExcNotInitialized());
 
       // initialize the parser if that hasn't happened yet on the current
       // thread
@@ -378,7 +373,7 @@ namespace internal
       try
         {
           Assert(dynamic_cast<Parser *>(data.parsers[component].get()),
-                 ExcInternalError());
+                 dealii::StandardExceptions::ExcInternalError());
           // NOLINTNEXTLINE don't warn about using static_cast once we check
           dealii::mu::Parser &parser =
             static_cast<Parser &>(*data.parsers[component]);
@@ -393,13 +388,6 @@ namespace internal
           std::cerr << "Errc:     <" << e.GetCode() << ">" << std::endl;
           AssertThrow(false, ExcParseError(e.GetCode(), e.GetMsg()));
         } // catch
-
-#else
-      (void)p;
-      (void)time;
-      (void)component;
-      AssertThrow(false, ExcNeedsFunctionparser());
-#endif
       return std::numeric_limits<double>::signaling_NaN();
     }
 
@@ -410,8 +398,8 @@ namespace internal
       const double                           time,
       dealii::ArrayView<double>             &values) const
     {
-#ifdef DEAL_II_WITH_MUPARSER
-      Assert(this->initialized == true, ExcNotInitialized());
+      Assert(this->initialized == true,
+             dealii::StandardExceptions::ExcNotInitialized());
 
       // initialize the parser if that hasn't happened yet on the current
       // thread
@@ -432,7 +420,7 @@ namespace internal
                ++component)
             {
               Assert(dynamic_cast<Parser *>(data.parsers[component].get()),
-                     ExcInternalError());
+                     dealii::StandardExceptions::ExcInternalError());
               dealii::mu::Parser &parser =
                 // We just checked that the pointer is valid so suppress the
                 // clang-tidy check
@@ -449,12 +437,6 @@ namespace internal
           std::cerr << "Errc:     <" << e.GetCode() << ">" << std::endl;
           AssertThrow(false, ExcParseError(e.GetCode(), e.GetMsg()));
         } // catch
-#else
-      (void)p;
-      (void)time;
-      (void)values;
-      AssertThrow(false, ExcNeedsFunctionparser());
-#endif
     }
 
     // explicit instantiations

@@ -46,15 +46,15 @@ public:
   declare_parameters(ParameterHandler &prm);
 
   void
+  initialize();
+
+  void
   parse_parameters(ParameterHandler &prm);
 
   void
   initialize(const std::string vnames,
              const std::string expression,
              const std::string constants_list);
-
-  void
-  initialize();
 
   void
   vector_value(const Tensor<1, n_components> &p,

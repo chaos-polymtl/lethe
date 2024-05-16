@@ -116,7 +116,7 @@ namespace internal
 
       virtual ~ParserImplementation() = default;
 
-      virtual void
+      void
       initialize(const std::string                   &vars,
                  const std::vector<std::string>      &expressions,
                  const std::map<std::string, double> &constants,
