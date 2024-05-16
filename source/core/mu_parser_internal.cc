@@ -175,18 +175,18 @@ namespace internal
     class Parser : public ::internal::FunctionParserCustom::muParserBase
     {
     public:
-      operator dealii::mu::Parser &()
+      operator mu::Parser &()
       {
         return parser;
       }
 
-      operator const dealii::mu::Parser &() const
+      operator const mu::Parser &() const
       {
         return parser;
       }
 
     protected:
-      dealii::mu::Parser parser;
+      mu::Parser parser;
     };
 
     template <int n_components>
@@ -251,7 +251,7 @@ namespace internal
       for (unsigned int component = 0; component < n_components; ++component)
         {
           data.parsers.emplace_back(std::make_unique<Parser>());
-          dealii::mu::Parser &parser =
+          mu::Parser &parser =
             dynamic_cast<Parser &>(*data.parsers.back());
 
           for (const auto &constant : this->constants)
@@ -324,7 +324,7 @@ namespace internal
               // now use the transformed expression
               parser.SetExpr(transformed_expression);
             }
-          catch (dealii::mu::ParserError &e)
+          catch (mu::ParserError &e)
             {
               std::cerr << "Message:  <" << e.GetMsg() << ">\n";
               std::cerr << "Formula:  <" << e.GetExpr() << ">\n";
@@ -363,11 +363,11 @@ namespace internal
           Assert(dynamic_cast<Parser *>(data.parsers[component].get()),
                  dealii::StandardExceptions::ExcInternalError());
           // NOLINTNEXTLINE don't warn about using static_cast once we check
-          dealii::mu::Parser &parser =
+          mu::Parser &parser =
             static_cast<Parser &>(*data.parsers[component]);
           return parser.Eval();
         } // try
-      catch (dealii::mu::ParserError &e)
+      catch (mu::ParserError &e)
         {
           std::cerr << "Message:  <" << e.GetMsg() << ">\n";
           std::cerr << "Formula:  <" << e.GetExpr() << ">\n";
@@ -409,14 +409,14 @@ namespace internal
             {
               Assert(dynamic_cast<Parser *>(data.parsers[component].get()),
                      dealii::StandardExceptions::ExcInternalError());
-              dealii::mu::Parser &parser =
+              mu::Parser &parser =
                 // We just checked that the pointer is valid so suppress the
                 // clang-tidy check
                 static_cast<Parser &>(*data.parsers[component]); // NOLINT
               values[component] = parser.Eval();
             }
         } // try
-      catch (dealii::mu::ParserError &e)
+      catch (mu::ParserError &e)
         {
           std::cerr << "Message:  <" << e.GetMsg() << ">\n";
           std::cerr << "Formula:  <" << e.GetExpr() << ">\n";
