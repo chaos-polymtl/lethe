@@ -23,8 +23,18 @@
 #include <deal.II/base/mu_parser_internal.h>
 #include <deal.II/base/tensor.h>
 #include <deal.II/base/thread_local_storage.h>
+#include <deal.II/base/thread_management.h>
+#include <deal.II/base/utilities.h>
 
+#include <muParser.h>
+
+#include <cmath>
+#include <ctime>
+#include <limits>
+#include <map>
 #include <memory>
+#include <mutex>
+#include <random>
 #include <string>
 #include <vector>
 

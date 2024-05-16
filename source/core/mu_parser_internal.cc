@@ -1,18 +1,5 @@
 #include <core/mu_parser_internal.h>
 
-#include <deal.II/base/thread_management.h>
-#include <deal.II/base/utilities.h>
-
-#include <muParser.h>
-
-#include <cmath>
-#include <ctime>
-#include <limits>
-#include <map>
-#include <mutex>
-#include <random>
-#include <vector>
-
 using namespace dealii;
 
 namespace internal
