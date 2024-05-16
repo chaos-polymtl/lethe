@@ -675,9 +675,9 @@ public:
   void
   reinit_particle_fluid_interactions(
     const typename DoFHandler<dim>::active_cell_iterator & /*cell*/,
-    const VectorType /*current_solution*/,
-    const VectorType                       previous_solution,
-    const VectorType                       void_fraction_solution,
+    const VectorType & /*current_solution*/,
+    const VectorType                      &previous_solution,
+    const VectorType                      &void_fraction_solution,
     const Particles::ParticleHandler<dim> &particle_handler,
     DoFHandler<dim>                       &dof_handler,
     DoFHandler<dim>                       &void_fraction_dof_handler)
