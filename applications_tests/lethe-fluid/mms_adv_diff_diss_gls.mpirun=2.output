@@ -1,4 +1,4 @@
-Running on 2 MPI rank(s)...
+Running on 1 MPI rank(s)...
    Number of active cells:       64
    Number of degrees of freedom: 243
    Volume of triangulation:      1
@@ -7,6 +7,38 @@ Running on 2 MPI rank(s)...
 *****************************
 Steady iteration:        1/3
 *****************************
+---------------
+Fluid Dynamics
+---------------
+Newton iteration: 0  - Residual:  4.42204
+  -Tolerance of iterative solver is : 0.000442204
+  -Iterative solver took : 5 steps to reach a residual norm of 0.000165167
+	alpha =      1 res = 0.06858
+	||du||_L2 =  4.027	||du||_Linfty = 0.7695
+	||dp||_L2 =   19.2	||dp||_Linfty = 2.433
+Newton iteration: 1  - Residual:  0.06858
+  -Tolerance of iterative solver is : 6.858e-06
+  -Iterative solver took : 5 steps to reach a residual norm of 1.156e-06
+	alpha =      1 res = 2.389e-06
+	||du||_L2 = 0.01528	||du||_Linfty = 0.003687
+	||dp||_L2 = 0.9797	||dp||_Linfty = 0.278
+Newton iteration: 2  - Residual:  2.389e-06
+  -Tolerance of iterative solver is : 2.389e-10
+  -Iterative solver took : 5 steps to reach a residual norm of 5.878e-11
+	alpha =      1 res = 5.878e-11
+	||du||_L2 = 6.6e-07	||du||_Linfty = 1.512e-07
+	||dp||_L2 = 2.334e-05	||dp||_Linfty = 6.63e-06
+--------------
+Heat Transfer
+--------------
+Newton iteration: 0  - Residual:  0.08395
+  -Tolerance of iterative solver is : 8.395e-06
+  -Iterative solver took : 4 steps to reach a residual norm of 6.08e-07
+	alpha =      1 res = 6.08e-07	||dT||_L2 = 0.2736	||dT||_Linfty = 0.06419
+Newton iteration: 1  - Residual:  6.08e-07
+  -Tolerance of iterative solver is : 6.08e-11
+  -Iterative solver took : 4 steps to reach a residual norm of 9.902e-12
+	alpha =      1 res = 9.902e-12	||dT||_L2 = 5.616e-07	||dT||_Linfty = 2.034e-07
 L2 error velocity : 0.00810306
 L2 error temperature : 2.82406e-07
 
@@ -17,8 +49,40 @@ Steady iteration:        2/3
    Number of degrees of freedom: 867
    Volume of triangulation:      1
    Number of thermal degrees of freedom: 289
+---------------
+Fluid Dynamics
+---------------
+Newton iteration: 0  - Residual:  0.159761
+  -Tolerance of iterative solver is : 1.59761e-05
+  -Iterative solver took : 6 steps to reach a residual norm of 8.44254e-06
+	alpha =      1 res = 9.937e-06
+	||du||_L2 = 0.1052	||du||_Linfty = 0.007864
+	||dp||_L2 =  2.344	||dp||_Linfty = 0.3163
+Newton iteration: 1  - Residual:  9.937e-06
+  -Tolerance of iterative solver is : 9.937e-10
+  -Iterative solver took : 8 steps to reach a residual norm of 1.931e-10
+	alpha =      1 res = 1.931e-10
+	||du||_L2 = 9.72e-06	||du||_Linfty = 1.052e-06
+	||dp||_L2 = 0.000571	||dp||_Linfty = 7.172e-05
+Newton iteration: 2  - Residual:  1.931e-10
+  -Tolerance of iterative solver is : 1.931e-14
+  -Iterative solver took : 7 steps to reach a residual norm of 1.783e-14
+	alpha =      1 res = 1.789e-14
+	||du||_L2 = 1.535e-10	||du||_Linfty = 2.007e-11
+	||dp||_L2 = 6.324e-09	||dp||_Linfty = 1.631e-09
+--------------
+Heat Transfer
+--------------
+Newton iteration: 0  - Residual:  0.03162
+  -Tolerance of iterative solver is : 3.162e-06
+  -Iterative solver took : 5 steps to reach a residual norm of 1.438e-06
+	alpha =      1 res = 1.438e-06	||dT||_L2 = 0.01051	||dT||_Linfty = 0.00166
+Newton iteration: 1  - Residual:  1.438e-06
+  -Tolerance of iterative solver is : 1.438e-10
+  -Iterative solver took : 6 steps to reach a residual norm of 3.61e-11
+	alpha =      1 res = 3.61e-11	||dT||_L2 = 1.095e-05	||dT||_Linfty = 1.523e-06
 L2 error velocity : 0.00208696
-L2 error temperature : 1.59721e-08
+L2 error temperature : 1.54803e-08
 
 *****************************
 Steady iteration:        3/3
@@ -27,13 +91,45 @@ Steady iteration:        3/3
    Number of degrees of freedom: 3267
    Volume of triangulation:      1
    Number of thermal degrees of freedom: 1089
+---------------
+Fluid Dynamics
+---------------
+Newton iteration: 0  - Residual:  0.084544
+  -Tolerance of iterative solver is : 8.4544e-06
+  -Iterative solver took : 9 steps to reach a residual norm of 3.27976e-06
+	alpha =      1 res = 3.278e-06
+	||du||_L2 = 0.0544	||du||_Linfty = 0.001964
+	||dp||_L2 =   1.63	||dp||_Linfty = 0.1435
+Newton iteration: 1  - Residual:  3.278e-06
+  -Tolerance of iterative solver is : 3.278e-10
+  -Iterative solver took : 14 steps to reach a residual norm of 1.905e-10
+	alpha =      1 res = 1.905e-10
+	||du||_L2 = 1.332e-05	||du||_Linfty = 9.22e-07
+	||dp||_L2 = 0.0004691	||dp||_Linfty = 5.727e-05
+Newton iteration: 2  - Residual:  1.905e-10
+  -Tolerance of iterative solver is : 1.905e-14
+  -Iterative solver took : 14 steps to reach a residual norm of 1.891e-14
+	alpha =      1 res = 1.946e-14
+	||du||_L2 = 1.23e-09	||du||_Linfty = 9.434e-11
+	||dp||_L2 = 1.849e-08	||dp||_Linfty = 1.44e-09
+--------------
+Heat Transfer
+--------------
+Newton iteration: 0  - Residual:  0.01592
+  -Tolerance of iterative solver is : 1.592e-06
+  -Iterative solver took : 6 steps to reach a residual norm of 8.393e-07
+	alpha =      1 res = 8.393e-07	||dT||_L2 = 0.005048	||dT||_Linfty = 0.0003503
+Newton iteration: 1  - Residual:  8.393e-07
+  -Tolerance of iterative solver is : 8.393e-11
+  -Iterative solver took : 10 steps to reach a residual norm of 1.284e-11
+	alpha =      1 res = 1.284e-11	||dT||_L2 = 2.866e-05	||dT||_Linfty = 1.689e-06
 L2 error velocity : 0.000528216
-L2 error temperature : 9.52192e-10
+L2 error temperature : 9.22042e-10
 cells  error_velocity    error_pressure   
    64 8.103056e-03    - 5.396812e-02    - 
   256 2.086963e-03 1.96 1.695858e-02 1.67 
  1024 5.282164e-04 1.98 5.327909e-03 1.67 
 cells error_temperature 
    64 2.824062e-07    - 
-  256 1.597213e-08 4.14 
- 1024 9.521918e-10 4.07 
+  256 1.548027e-08 4.19 
+ 1024 9.220418e-10 4.07 

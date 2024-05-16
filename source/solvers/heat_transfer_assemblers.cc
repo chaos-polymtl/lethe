@@ -195,7 +195,7 @@ HeatTransferAssemblerCore<dim>::assemble_matrix(
 
               // DCDD shock capturing
               local_matrix(i, j) +=
-                (scalar_product(grad_phi_T_j, kappa_dc * grad_phi_T_i)) * JxW;
+               (scalar_product(grad_phi_T_j, kappa_dc * grad_phi_T_i)) * JxW;
             }
 
           for (unsigned int i = 0; i < n_dofs; ++i)
