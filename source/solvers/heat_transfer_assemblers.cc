@@ -45,9 +45,7 @@ HeatTransferAssemblerCore<dim>::assemble_matrix(
   auto &strong_jacobian_vec = copy_data.strong_jacobian;
   auto &local_matrix        = copy_data.local_matrix;
 
-  // Get T_mag for the DCDD shock capture term
-  const double T_mag = this->simulation_control->get_T_mag();
-
+  // assembling local matrix and right hand side
   for (unsigned int q = 0; q < n_q_points; ++q)
     {
       const double rho_cp = density[q] * specific_heat[q];
@@ -112,66 +110,16 @@ HeatTransferAssemblerCore<dim>::assemble_matrix(
 
       for (unsigned int j = 0; j < n_dofs; ++j)
         {
-          const double rho_cp = density[q] * specific_heat[q];
-          const double alpha  = thermal_conductivity[q] / (rho_cp + DBL_MIN);
+          strong_jacobian_vec[q][j] +=
+            rho_cp * velocity * scratch_data.grad_phi_T[q][j] -
+            thermal_conductivity[q] * scratch_data.laplacian_phi_T[q][j];
+        }
 
-          const auto method = this->simulation_control->get_assembly_method();
+      for (unsigned int i = 0; i < n_dofs; ++i)
+        {
+          const auto phi_T_i      = scratch_data.phi_T[q][i];
+          const auto grad_phi_T_i = scratch_data.grad_phi_T[q][i];
 
-          // Store JxW in local variable for faster access
-          const double JxW = JxW_vec[q];
-
-          const auto velocity = scratch_data.velocity_values[q];
-
-          // Temperature gradient information for DCDD stabilization
-          const auto temperature_gradient =
-            scratch_data.temperature_gradients[q];
-
-          // Calculation of the magnitude of the velocity for the
-          // stabilization parameter
-          const double u_mag = std::max(velocity.norm(), 1e-12);
-
-          // Calculation of the GLS stabilization parameter. The
-          // stabilization parameter used is different if the simulation is
-          // steady or unsteady. In the unsteady case it includes the value
-          // of the time-step
-          const double tau =
-            is_steady(method) ?
-              1. / std::sqrt(std::pow(2. * u_mag / h, 2) +
-                             9 * std::pow(4 * alpha / (h * h), 2)) :
-              1. / std::sqrt(std::pow(sdt, 2) + std::pow(2. * u_mag / h, 2) +
-                             9 * std::pow(4 * alpha / (h * h), 2));
-
-
-          // Implementation of a Discontinuity-Capturing Directional Dissipation
-          // (DCDD) shock capturing scheme. For more information see Tezduyar,
-          // T. E. (2003). Computation of moving boundaries and interfaces and
-          // stabilization parameters. International Journal for Numerical
-          // Methods in Fluids, 43(5), 555-575. Our implementation is based on
-          // equations (70) and (79), which are adapted for the heat transfer
-          // solver.
-          const double tolerance = 1e-12;
-
-
-          // In Tezduyar 2003, this is denoted r
-          Tensor<1, dim> gradient_unit_vector =
-            temperature_gradient / (temperature_gradient.norm() + tolerance);
-
-          // Calculate the artificial viscosity of the shock capture
-          const double vdcdd =
-            h * h * u_mag * temperature_gradient.norm() / T_mag;
-
-          // We remove the diffusion aligned with the velocity
-          // as is done in the original article.  In Tezduyar 2003, this is
-          // denoted s.
-          Tensor<1, dim> velocity_unit_vector =
-            velocity / (velocity.norm() + 1e-12);
-          const Tensor<2, dim> k_corr =
-            Utilities::fixed_power<2>(gradient_unit_vector *
-                                      velocity_unit_vector) *
-            outer_product(velocity_unit_vector, velocity_unit_vector);
-          const Tensor<2, dim> gradient_unit_tensor =
-            outer_product(gradient_unit_vector, gradient_unit_vector);
-          const Tensor<2, dim> dcdd_factor = gradient_unit_tensor - k_corr;
 
           for (unsigned int j = 0; j < n_dofs; ++j)
             {
@@ -197,46 +145,9 @@ HeatTransferAssemblerCore<dim>::assemble_matrix(
               local_matrix(i, j) +=
                (scalar_product(grad_phi_T_j, kappa_dc * grad_phi_T_i)) * JxW;
             }
+        }
 
-          for (unsigned int i = 0; i < n_dofs; ++i)
-            {
-              const auto phi_T_i      = scratch_data.phi_T[q][i];
-              const auto grad_phi_T_i = scratch_data.grad_phi_T[q][i];
-
-
-  // Time steps and inverse time steps which is used for stabilization
-  // constant
-  std::vector<double> time_steps_vector =
-    this->simulation_control->get_time_steps_vector();
-  const double dt  = time_steps_vector[0];
-  const double sdt = 1. / dt;
-
-
-                  // Weak form for : - k * laplacian T + rho * cp *
-                  //                  u * gradT - f -
-                  //                  tau:grad(u) =0
-                  // Hypothesis : incompressible newtonian fluid
-                  // so tau:grad(u) =
-                  // mu*(grad(u)+transpose(grad(u)).transpose(grad(u))
-                  local_matrix(i, j) +=
-                    (thermal_conductivity[q] * grad_phi_T_i * grad_phi_T_j +
-                     rho_cp * phi_T_i * velocity * grad_phi_T_j) *
-                    JxW;
-
-                  // Addition to the cell matrix for GLS stabilization
-                  local_matrix(i, j) += tau * strong_jacobian_vec[q][j] *
-                                        (grad_phi_T_i * velocity) * JxW;
-
-                  // DCDD shock capturing
-                  local_matrix(i, j) +=
-                    (rho_cp * vdcdd *
-                     scalar_product(grad_phi_T_j, dcdd_factor * grad_phi_T_i)) *
-                    JxW;
-                }
-            }
-
-        } // end loop on quadrature points
-    }
+    } // end loop on quadrature points
 }
 
 template <int dim>
@@ -249,6 +160,45 @@ HeatTransferAssemblerCore<dim>::assemble_rhs(
   const unsigned int n_q_points = scratch_data.n_q_points;
   const double       h          = scratch_data.cell_size;
   const unsigned int n_dofs     = scratch_data.n_dofs;
+
+  const std::vector<double> &density       = scratch_data.density;
+  const std::vector<double> &specific_heat = scratch_data.specific_heat;
+  const std::vector<double> &thermal_conductivity =
+    scratch_data.thermal_conductivity;
+
+
+  // Time steps and inverse time steps which is used for stabilization
+  // constant
+  std::vector<double> time_steps_vector =
+    this->simulation_control->get_time_steps_vector();
+  const double dt  = time_steps_vector[0];
+  const double sdt = 1. / dt;
+
+  // Copy data elements
+  auto &strong_residual_vec = copy_data.strong_residual;
+  auto &local_rhs           = copy_data.local_rhs;
+
+  // assembling right hand side
+  for (unsigned int q = 0; q < n_q_points; ++q)
+    {
+      const Tensor<1, dim> temperature_gradient =
+        scratch_data.temperature_gradients[q];
+      const double temperature_laplacian =
+        scratch_data.present_temperature_laplacians[q];
+
+      // Gather physical properties in case of mono fluids simulations (to be
+      // modified by cell in case of multiple fluids simulations)
+      double rho_cp = density[q] * specific_heat[q];
+      double alpha  = thermal_conductivity[q] / (rho_cp + DBL_MIN);
+
+      // Store JxW in local variable for faster access
+      const double JxW = scratch_data.fe_values_T.JxW(q);
+
+      const auto velocity = scratch_data.velocity_values[q];
+
+      // Calculation of the magnitude of the velocity for the
+      // stabilization parameter
+      const double u_mag = std::max(velocity.norm(), 1e-12);
 
       // Temperature gradient information for DCDD stabilization
       Tensor<1, dim> dcdd_temperature_gradient;
@@ -302,67 +252,6 @@ HeatTransferAssemblerCore<dim>::assemble_rhs(
         thermal_conductivity[q] * temperature_laplacian -
         scratch_data.source[q];
 
-      // Gather physical properties in case of mono fluids simulations (to be
-      // modified by cell in case of multiple fluids simulations)
-      double rho_cp = density[q] * specific_heat[q];
-      double alpha  = thermal_conductivity[q] / (rho_cp + DBL_MIN);
-
-      // Store JxW in local variable for faster access
-      const double JxW = scratch_data.fe_values_T.JxW(q);
-
-      const auto velocity = scratch_data.velocity_values[q];
-
-          // DCDD shock capturing
-          local_rhs(i) -= (scalar_product(dcdd_temperature_gradient,
-                                          kappa_dc * grad_phi_T_i)) *
-                          JxW;
-        }
-
-      // Calculation of the GLS stabilization parameter. The
-      // stabilization parameter used is different if the simulation is
-      // steady or unsteady. In the unsteady case it includes the value
-      // of the time-step
-      const double tau =
-        is_steady(method) ?
-          1. / std::sqrt(std::pow(2. * u_mag / h, 2) +
-                         9 * std::pow(4 * alpha / (h * h), 2)) :
-          1. / std::sqrt(std::pow(sdt, 2) + std::pow(2. * u_mag / h, 2) +
-                         9 * std::pow(4 * alpha / (h * h), 2));
-
-      // Implementation of a DCDD shock capturing scheme.
-      // For more information see
-      // Tezduyar, T. E. (2003). Computation of moving boundaries and
-      // interfaces and stabilization parameters. International Journal for
-      // Numerical Methods in Fluids, 43(5), 555-575. Our implementation is
-      // based on equations (70) and (79), which are adapted for the heat
-      // transfer solver.
-      const double tolerance = 1e-12;
-
-      // In Tezduyar 2003, this is denoted r
-      Tensor<1, dim> gradient_unit_vector =
-        temperature_gradient / (temperature_gradient.norm() + tolerance);
-
-      // Calculate the artificial viscosity of the shock capture
-      const double vdcdd = h * h * u_mag * temperature_gradient.norm() / T_mag;
-
-      // We  remove the diffusion aligned with the velocity
-      // as is done in the original article. In Tezduyar 2003, this is denoted
-      // s.
-      Tensor<1, dim> velocity_unit_vector =
-        velocity / (velocity.norm() + tolerance);
-      const Tensor<2, dim> k_corr =
-        Utilities::fixed_power<2>(gradient_unit_vector * velocity_unit_vector) *
-        outer_product(velocity_unit_vector, velocity_unit_vector);
-      const Tensor<2, dim> gradient_unit_tensor =
-        outer_product(gradient_unit_vector, gradient_unit_vector);
-      const Tensor<2, dim> dcdd_factor = gradient_unit_tensor - k_corr;
-
-      // Calculate the strong residual for GLS stabilization
-      strong_residual_vec[q] +=
-        rho_cp * velocity * temperature_gradient -
-        thermal_conductivity[q] * temperature_laplacian -
-        scratch_data.source[q];
-
       for (unsigned int i = 0; i < n_dofs; ++i)
         {
           const auto phi_T_i      = scratch_data.phi_T[q][i];
@@ -380,11 +269,10 @@ HeatTransferAssemblerCore<dim>::assemble_rhs(
           local_rhs(i) -=
             tau * (strong_residual_vec[q] * (grad_phi_T_i * velocity)) * JxW;
 
-          // Apply DCDD
-          local_rhs(i) -=
-            (rho_cp * vdcdd *
-             scalar_product(temperature_gradient, dcdd_factor * grad_phi_T_i)) *
-            JxW;
+          // DCDD shock capturing
+          local_rhs(i) -= (scalar_product(dcdd_temperature_gradient,
+                                          kappa_dc * grad_phi_T_i)) *
+                          JxW;
         }
 
     } // end loop on quadrature points
@@ -881,20 +769,20 @@ HeatTransferAssemblerLaserExponentialDecay<dim>::assemble_rhs(
       Function<dim> &laser_scan_path = *(laser_parameters->laser_scan_path);
       laser_scan_path.set_time(current_time);
 
-      // For the laser heat source calculations, we need the radial distance,
-      // r, (in a dim-1 dimensional plane perpendicular to the laser beam
-      // direction) between the laser focal point and the quadrature points,
-      // as well as the axial distance, z, (in a laser emission direction)
-      // between the laser focal point and the quadrature points, separately.
-      // Hence, we get the laser location (laser_location) as a Point<dim>, in
-      // which the first and second components show the position of the laser
-      // focal point in a plane perpendicular to the emission direction, and
-      // the (dim-1)th component denotes the position of the laser focal point
-      // in the direction of emission. Then we use dim-1 auxiliary variables
+      // For the laser heat source calculations, we need the radial distance, r,
+      // (in a dim-1 dimensional plane perpendicular to the laser beam
+      // direction) between the laser focal point and the quadrature points, as
+      // well as the axial distance, z, (in a laser emission direction) between
+      // the laser focal point and the quadrature points, separately. Hence, we
+      // get the laser location (laser_location) as a Point<dim>, in which the
+      // first and second components show the position of the laser focal point
+      // in a plane perpendicular to the emission direction, and the (dim-1)th
+      // component denotes the position of the laser focal point in the
+      // direction of emission. Then we use dim-1 auxiliary variables
       // (Point<dim-1> laser_location_on_surface) to store the position of the
-      // laser focal point in the perpendicular plane to the emission
-      // direction, and double laser_location_in_depth to store the position
-      // of the laser focal point in the direction of emission.
+      // laser focal point in the perpendicular plane to the emission direction,
+      // and double laser_location_in_depth to store the position of the laser
+      // focal point in the direction of emission.
 
       // Get laser location
       Point<dim> laser_location;
@@ -929,9 +817,9 @@ HeatTransferAssemblerLaserExponentialDecay<dim>::assemble_rhs(
       // assembling right hand side
       for (unsigned int q = 0; q < n_q_points; ++q)
         {
-          // Get quadrature point location on surface to calculate its
-          // distance from the laser focal point in a perpendicular plane to
-          // the direction of emission
+          // Get quadrature point location on surface to calculate its distance
+          // from the laser focal point in a perpendicular plane to the
+          // direction of emission
           Point<dim - 1> quadrature_point_on_surface;
           quadrature_point_on_surface[0] =
             scratch_data.quadrature_points
@@ -943,20 +831,20 @@ HeatTransferAssemblerLaserExponentialDecay<dim>::assemble_rhs(
                   [q][laser_parameters->perpendicular_plane_coordinate_two];
             }
 
-          // Get quadrature point depth to calculate its distance from the
-          // laser focal point in the direction of emission. Note that in
-          // two-dimensional simulations, this variable is always equal to
-          // zero
+          // Get quadrature point depth to calculate its distance from the laser
+          // focal point in the direction of emission. Note that in
+          // two-dimensional simulations, this variable is always equal to zero
           const double quadrature_point_depth =
             scratch_data.quadrature_points[q][laser_parameters
                                                 ->beam_orientation_coordinate];
 
           // if the laser beam is in negative direction and
-          // quadrature_point_depth is smaller than the
-          // laser_location_in_depth, or the laser beam is in positive
-          // direction and quadrature_point_depth is larger than
-          // laser_location_in_depth we need to apply the laser on the
-          // quadrature point, otherwise it is zero
+          // quadrature_point_depth is smaller than the laser_location_in_depth,
+          // or the laser beam is in positive direction and
+          // quadrature_point_depth is larger than laser_location_in_depth we
+          // need to apply the laser on the quadrature point, otherwise it is
+          // zero
+
           double laser_quadrature_point_distance_in_depth = 0.0;
           if ((beam_direction == 0 &&
                quadrature_point_depth <= laser_location_in_depth) |
@@ -985,11 +873,11 @@ HeatTransferAssemblerLaserExponentialDecay<dim>::assemble_rhs(
             {
               const auto phi_T_i = scratch_data.phi_T[q][i];
 
-              // rhs for : eta * alpha * P / (pi * R^2 * mu) * exp(-eta * r^2
-              // / R^2) * exp(-|z| / mu) where eta, alpha, P, R, mu, r and z
+              // rhs for : eta * alpha * P / (pi * R^2 * mu) * exp(-eta * r^2 /
+              // R^2) * exp(-|z| / mu) where eta, alpha, P, R, mu, r and z
               // denote concentration factor, absorptivity, laser power, beam
-              // radius, penetration depth, radial distance from the laser
-              // focal point, and axial distance from the laser focal point,
+              // radius, penetration depth, radial distance from the laser focal
+              // point, and axial distance from the laser focal point,
               // respectively.
               local_rhs(i) += laser_heat_source * phi_T_i * JxW;
             }
@@ -1028,8 +916,8 @@ HeatTransferAssemblerLaserGaussianHeatFluxVOFInterface<dim>::assemble_rhs(
       Function<dim> &laser_scan_path = *(laser_parameters->laser_scan_path);
       laser_scan_path.set_time(current_time);
 
-      // For the laser heat source calculations, we need the radial distance,
-      // r, (in a dim-1 dimensional plane perpendicular to the laser beam
+      // For the laser heat source calculations, we need the radial distance, r,
+      // (in a dim-1 dimensional plane perpendicular to the laser beam
       // direction) between the laser focal point and the quadrature points.
       // Here, the focal point is any given point on the laser's axis.
       // Hence, we get the laser location (laser_location) as a Point<dim>, in
@@ -1065,9 +953,9 @@ HeatTransferAssemblerLaserGaussianHeatFluxVOFInterface<dim>::assemble_rhs(
       // assembling right hand side
       for (unsigned int q = 0; q < n_q_points; ++q)
         {
-          // Get quadrature point location on surface to calculate its
-          // distance from the laser focal point in a perpendicular plane to
-          // the direction of emission
+          // Get quadrature point location on surface to calculate its distance
+          // from the laser focal point in a perpendicular plane to the
+          // direction of emission
           Point<dim - 1> quadrature_point_on_surface;
           quadrature_point_on_surface[0] =
             scratch_data.quadrature_points
@@ -1114,10 +1002,10 @@ HeatTransferAssemblerLaserGaussianHeatFluxVOFInterface<dim>::assemble_rhs(
               const auto phi_T_i = scratch_data.phi_T[q][i];
 
               // rhs for: eta * alpha * P / (pi * R^2) * exp(-eta * r^2 /
-              // R^2) * \grad_phi_norm where eta, alpha, P, R, and r denote
-              // the concentration factor, absorptivity, laser power, beam
-              // radius, radial distance from the laser focal point, and
-              // filtered phase fraction gradient L2 norm, respectively.
+              // R^2) * \grad_phi_norm where eta, alpha, P, R, and r denote the
+              // concentration factor, absorptivity, laser power, beam radius,
+              // radial distance from the laser focal point, and filtered phase
+              // fraction gradient L2 norm, respectively.
               local_rhs(i) += filtered_phase_gradient_value_q_norm *
                               laser_heat_source * phi_T_i * JxW;
             }
@@ -1158,20 +1046,20 @@ HeatTransferAssemblerLaserExponentialDecayVOF<dim>::assemble_rhs(
       Function<dim> &laser_scan_path = *(laser_parameters->laser_scan_path);
       laser_scan_path.set_time(current_time);
 
-      // For the laser heat source calculations, we need the radial distance,
-      // r, (in a dim-1 dimensional plane perpendicular to the laser beam
-      // direction) between the laser focal point and the quadrature points,
-      // as well as the axial distance, z, (in a laser emission direction)
-      // between the laser focal point and the quadrature points, separately.
-      // Hence, we get the laser location (laser_location) as a Point<dim>, in
-      // which the first and second components show the position of the laser
-      // focal point in a plane perpendicular to the emission direction, and
-      // the (dim-1)th component denotes the position of the laser focal point
-      // in the direction of emission. Then we use dim-1 auxiliary variables
+      // For the laser heat source calculations, we need the radial distance, r,
+      // (in a dim-1 dimensional plane perpendicular to the laser beam
+      // direction) between the laser focal point and the quadrature points, as
+      // well as the axial distance, z, (in a laser emission direction) between
+      // the laser focal point and the quadrature points, separately. Hence, we
+      // get the laser location (laser_location) as a Point<dim>, in which the
+      // first and second components show the position of the laser focal point
+      // in a plane perpendicular to the emission direction, and the (dim-1)th
+      // component denotes the position of the laser focal point in the
+      // direction of emission. Then we use dim-1 auxiliary variables
       // (Point<dim-1> laser_location_on_surface) to store the position of the
-      // laser focal point in the perpendicular plane to the emission
-      // direction, and double laser_location_in_depth to store the position
-      // of the laser focal point in the direction of emission.
+      // laser focal point in the perpendicular plane to the emission direction,
+      // and double laser_location_in_depth to store the position of the laser
+      // focal point in the direction of emission.
 
       // Get laser location
       Point<dim> laser_location;
@@ -1206,10 +1094,10 @@ HeatTransferAssemblerLaserExponentialDecayVOF<dim>::assemble_rhs(
       // assembling right hand side
       for (unsigned int q = 0; q < n_q_points; ++q)
         {
-          // Get quadrature point location on surface to calculate its
-          // distance from the laser focal point in a perpendicular plane to
-          // the direction of emission
-          Point<dim - 1> quadrature_point_on_surface;
+          // Get quadrature point location on surface to calculate its distance
+          // from the laser focal point in a perpendicular plane to the
+          // direction of emission
+         Point<dim - 1> quadrature_point_on_surface;
           quadrature_point_on_surface[0] =
             scratch_data.quadrature_points
               [q][laser_parameters->perpendicular_plane_coordinate_one];
@@ -1220,20 +1108,19 @@ HeatTransferAssemblerLaserExponentialDecayVOF<dim>::assemble_rhs(
                   [q][laser_parameters->perpendicular_plane_coordinate_two];
             }
 
-          // Get quadrature point depth to calculate its distance from the
-          // laser focal point in the direction of emission. Note that in
-          // two-dimensional simulations, this variable is always equal to
-          // zero
+          // Get quadrature point depth to calculate its distance from the laser
+          // focal point in the direction of emission. Note that in
+          // two-dimensional simulations, this variable is always equal to zero
           const double quadrature_point_depth =
             scratch_data.quadrature_points[q][laser_parameters
                                                 ->beam_orientation_coordinate];
 
           // if the laser beam is in negative direction and
-          // quadrature_point_depth is smaller than the
-          // laser_location_in_depth, or the laser beam is in positive
-          // direction and quadrature_point_depth is larger than
-          // laser_location_in_depth we need to apply the laser on the
-          // quadrature point, otherwise it is zero
+          // quadrature_point_depth is smaller than the laser_location_in_depth,
+          // or the laser beam is in positive direction and
+          // quadrature_point_depth is larger than laser_location_in_depth we
+          // need to apply the laser on the quadrature point, otherwise it is
+          // zero
           double laser_quadrature_point_distance_in_depth = 0.0;
           if ((beam_direction == 0 &&
                quadrature_point_depth <= laser_location_in_depth) |
@@ -1266,13 +1153,13 @@ HeatTransferAssemblerLaserExponentialDecayVOF<dim>::assemble_rhs(
               const auto phi_T_i = scratch_data.phi_T[q][i];
 
               // rhs for : phase * eta * alpha * P / (pi * R^2 * mu) *
-              // exp(-eta * r^2 / R^2) * exp(-|z| / mu) where phase, eta,
-              // alpha, P, R, mu, r and z denote the phase (from the VOF)
-              // concentration factor, absorptivity, laser power, beam radius,
-              // penetration depth, radial distance from the laser focal
-              // point, and axial distance from the laser focal point,
-              // respectively. The phase is used here so that the laser source
-              // is only applied in the metal (when phase is non-null).
+              // exp(-eta * r^2 / R^2) * exp(-|z| / mu) where phase, eta, alpha,
+              // P, R, mu, r and z denote the phase (from the VOF) concentration
+              // factor, absorptivity, laser power, beam radius, penetration
+              // depth, radial distance from the laser focal point, and axial
+              // distance from the laser focal point, respectively. The phase
+              // is used here so that the laser source is only applied in the
+              // metal (when phase is non-null).
 
               local_rhs(i) +=
                 filtered_phase_value_q * laser_heat_source * phi_T_i * JxW;
@@ -1311,8 +1198,8 @@ HeatTransferAssemblerLaserUniformHeatFluxVOFInterface<dim>::assemble_rhs(
       Function<dim> &laser_scan_path = *(laser_parameters->laser_scan_path);
       laser_scan_path.set_time(current_time);
 
-      // For the laser heat source calculations, we need the radial distance,
-      // r, (in a dim-1 dimensional plane perpendicular to the laser beam
+      // For the laser heat source calculations, we need the radial distance, r,
+      // (in a dim-1 dimensional plane perpendicular to the laser beam
       // direction) between the laser focal point and the quadrature points.
       // Here, the focal point is any given point on the laser's axis.
       // Hence, we get the laser location (laser_location) as a Point<dim>, in
@@ -1348,9 +1235,9 @@ HeatTransferAssemblerLaserUniformHeatFluxVOFInterface<dim>::assemble_rhs(
       // assembling right-hand side
       for (unsigned int q = 0; q < n_q_points; ++q)
         {
-          // Get quadrature point location on surface to calculate its
-          // distance from the laser focal point in a perpendicular plane to
-          // the direction of emission
+          // Get quadrature point location on surface to calculate its distance
+          // from the laser focal point in a perpendicular plane to the
+          // direction of emission
           Point<dim - 1> quadrature_point_on_surface;
           quadrature_point_on_surface[0] =
             scratch_data.quadrature_points

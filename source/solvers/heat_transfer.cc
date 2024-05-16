@@ -762,14 +762,6 @@ HeatTransfer<dim>::attach_solution_to_output(DataOut<dim> &data_out)
     }
 }
 
-template <int dim>
-void
-HeatTransfer<dim>::calculate_T_mag()
-{
-  double previous_solution_min = this->previous_solutions[0].min();
-  double previous_solution_max = this->previous_solutions[0].max();
-  this->T_mag = std::max(previous_solution_max - previous_solution_min, 1e-12);
-}
 
 template <int dim>
 double
