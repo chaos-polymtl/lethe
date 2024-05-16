@@ -84,16 +84,46 @@ calculate_total_volume(const DoFHandler<dim> &void_fraction_dof_handler,
   return {total_volume_fluid, total_volume_solid};
 }
 
-std::pair<double, double>
-calculate_total_volume(
+template std::pair<double, double>
+calculate_total_volume<2, GlobalVectorType>(
   const DoFHandler<2>    &void_fraction_dof_handler,
   const GlobalVectorType &present_void_fraction_solution,
   const Quadrature<2>    &quadrature_formula,
   const Mapping<2>       &mapping);
 
-std::pair<double, double>
-calculate_total_volume(
+template std::pair<double, double>
+calculate_total_volume<3, GlobalVectorType>(
   const DoFHandler<3>    &void_fraction_dof_handler,
   const GlobalVectorType &present_void_fraction_solution,
   const Quadrature<3>    &quadrature_formula,
   const Mapping<3>       &mapping);
+
+template std::pair<double, double>
+calculate_total_volume<2, GlobalBlockVectorType>(
+  const DoFHandler<2>    &void_fraction_dof_handler,
+  const GlobalBlockVectorType &present_void_fraction_solution,
+  const Quadrature<2>    &quadrature_formula,
+  const Mapping<2>       &mapping);
+
+template std::pair<double, double>
+calculate_total_volume<3, GlobalBlockVectorType>(
+  const DoFHandler<3>    &void_fraction_dof_handler,
+  const GlobalBlockVectorType &present_void_fraction_solution,
+  const Quadrature<3>    &quadrature_formula,
+  const Mapping<3>       &mapping);
+
+#ifndef LETHE_USE_LDV
+template std::pair<double, double>
+calculate_total_volume<2, LinearAlgebra::distributed::Vector<double>>(
+  const DoFHandler<2>    &void_fraction_dof_handler,
+  const LinearAlgebra::distributed::Vector<double> &present_void_fraction_solution,
+  const Quadrature<2>    &quadrature_formula,
+  const Mapping<2>       &mapping);
+
+template std::pair<double, double>
+calculate_total_volume<3, LinearAlgebra::distributed::Vector<double>>(
+  const DoFHandler<3>    &void_fraction_dof_handler,
+  const LinearAlgebra::distributed::Vector<double> &present_void_fraction_solution,
+  const Quadrature<3>    &quadrature_formula,
+  const Mapping<3>       &mapping);
+#endif

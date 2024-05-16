@@ -1978,8 +1978,8 @@ GLSVANSSolver<dim>::postprocess_cfd_dem()
       std::tie(total_volume_fluid, total_volume_solid) = calculate_total_volume(
         this->void_fraction_dof_handler,
         this->nodal_void_fraction_relevant,
-        this->cell_quadrature,
-        this->mapping),
+        *this->cell_quadrature,
+        *this->mapping);
       this->total_volume_table.add_value(
         "time", this->simulation_control->get_current_time());
       this->total_volume_table.add_value("total-volume-fluid", total_volume_fluid);

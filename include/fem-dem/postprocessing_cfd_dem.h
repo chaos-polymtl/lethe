@@ -19,8 +19,8 @@
  */
 
 
-#ifndef lethe_postprocessing_cfd_h
-#define lethe_postprocessing_cfd_h
+#ifndef lethe_postprocessing_cfd_dem_h
+#define lethe_postprocessing_cfd_dem_h
 
 
 // Base
