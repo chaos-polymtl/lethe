@@ -388,12 +388,8 @@ HeatTransferAssemblerRobinBC<dim>::assemble_matrix(
           BoundaryConditions::BoundaryType::convection_radiation)
         {
           Function<dim> &h_function = *(this->boundary_conditions_ht.h[i_bc]);
-          h_function.set_time(this->simulation_control->get_current_time());
           Function<dim> &emissivity_function =
             *(this->boundary_conditions_ht.emissivity[i_bc]);
-          emissivity_function.set_time(
-            this->simulation_control->get_current_time());
-
           for (unsigned int f = 0; f < scratch_data.n_faces; ++f)
             {
               if (scratch_data.boundary_face_id[f] ==
@@ -460,19 +456,12 @@ HeatTransferAssemblerRobinBC<dim>::assemble_rhs(
           BoundaryConditions::BoundaryType::convection_radiation)
         {
           Function<dim> &h_function = *(this->boundary_conditions_ht.h[i_bc]);
-          h_function.set_time(this->simulation_control->get_current_time());
           Function<dim> &T_inf_function =
             *(this->boundary_conditions_ht.Tinf[i_bc]);
-          T_inf_function.set_time(this->simulation_control->get_current_time());
           Function<dim> &emissivity_function =
             *(this->boundary_conditions_ht.emissivity[i_bc]);
-          emissivity_function.set_time(
-            this->simulation_control->get_current_time());
           Function<dim> &heat_flux_bc_function =
             *(this->boundary_conditions_ht.heat_flux_bc[i_bc]);
-          heat_flux_bc_function.set_time(
-            this->simulation_control->get_current_time());
-
           for (unsigned int f = 0; f < scratch_data.n_faces; ++f)
             {
               if (scratch_data.boundary_face_id[f] ==
