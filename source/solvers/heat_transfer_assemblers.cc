@@ -143,7 +143,7 @@ HeatTransferAssemblerCore<dim>::assemble_matrix(
 
               // DCDD shock capturing
               local_matrix(i, j) +=
-               (scalar_product(grad_phi_T_j, kappa_dc * grad_phi_T_i)) * JxW;
+                (scalar_product(grad_phi_T_j, kappa_dc * grad_phi_T_i)) * JxW;
             }
         }
 
@@ -1098,7 +1098,7 @@ HeatTransferAssemblerLaserExponentialDecayVOF<dim>::assemble_rhs(
           // Get quadrature point location on surface to calculate its distance
           // from the laser focal point in a perpendicular plane to the
           // direction of emission
-         Point<dim - 1> quadrature_point_on_surface;
+          Point<dim - 1> quadrature_point_on_surface;
           quadrature_point_on_surface[0] =
             scratch_data.quadrature_points
               [q][laser_parameters->perpendicular_plane_coordinate_one];
@@ -1478,4 +1478,3 @@ HeatTransferAssemblerVOFEvaporation<dim>::assemble_rhs(
 
 template class HeatTransferAssemblerVOFEvaporation<2>;
 template class HeatTransferAssemblerVOFEvaporation<3>;
-
