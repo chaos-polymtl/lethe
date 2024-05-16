@@ -1261,7 +1261,7 @@ CFDDEMSolver<dim>::postprocess_cfd_dem()
         this->void_fraction_dof_handler,
         this->nodal_void_fraction_relevant,
         *this->cell_quadrature,
-        *this->mapping);
+        this->mapping);
       this->total_volume_table.add_value(
         "time", this->simulation_control->get_current_time());
       this->total_volume_table.add_value("total-volume-fluid", total_volume_fluid);

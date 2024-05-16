@@ -64,7 +64,7 @@ std::pair<double, double>
 calculate_total_volume(const DoFHandler<dim> &void_fraction_dof_handler,
                            const VectorType   &present_void_fraction_solution,
                            const Quadrature<dim> &quadrature_formula,
-                           const Mapping<dim>    &mapping);
+                           std::shared_ptr<Mapping<dim>>    mapping);
 
 
 

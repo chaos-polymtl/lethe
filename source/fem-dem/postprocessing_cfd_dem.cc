@@ -39,8 +39,9 @@ std::pair<double, double>
 calculate_total_volume(const DoFHandler<dim> &void_fraction_dof_handler,
                            const VectorType   &present_void_fraction_solution,
                            const Quadrature<dim> &quadrature_formula,
-                           const Mapping<dim>    &mapping)
+                           std::shared_ptr<Mapping<dim>>    mapping)
 {
+  std::cout << "!!!!!!!!!!!!!before calling funciton!!!!!!!!!!!!!!!!"<< std:: endl;
   // Set up for void fraction fe values
   const unsigned int               n_q_points = quadrature_formula.size();
   const FESystem<dim, dim> fe_void_fraction =
@@ -48,11 +49,12 @@ calculate_total_volume(const DoFHandler<dim> &void_fraction_dof_handler,
   const FEValuesExtractors::Scalar void_fraction(0);
   std::vector<double>              void_fraction_values(n_q_points);
 
-  FEValues<dim> fe_vf_values(mapping,
+  FEValues<dim> fe_vf_values(*mapping,
                              fe_void_fraction,
                              quadrature_formula,
                              update_values | update_quadrature_points);
 
+  std::cout << "!!!!!!!!!!!!!After creating finite element!!!!!!!!!!!!!!!!"<< std:: endl;
   // Initialize variables for summation
   double total_volume_fluid = 0;
   double total_volume_solid = 0;
@@ -75,11 +77,11 @@ calculate_total_volume(const DoFHandler<dim> &void_fraction_dof_handler,
             }
         }
     }
-
+  std::cout << "!!!!!!!!!!!!!Before summulationof MPI!!!!!!!!!!!!!!!!"<< std:: endl;
   const MPI_Comm mpi_communicator = void_fraction_dof_handler.get_communicator();
   total_volume_fluid = Utilities::MPI::sum(total_volume_fluid, mpi_communicator);
   total_volume_solid = Utilities::MPI::sum(total_volume_solid, mpi_communicator);
-
+  std::cout << "!!!!!!!!!!!!!After summulationof MPI!!!!!!!!!!!!!!!!"<< std:: endl;
 
   return {total_volume_fluid, total_volume_solid};
 }
@@ -89,28 +91,28 @@ calculate_total_volume<2, GlobalVectorType>(
   const DoFHandler<2>    &void_fraction_dof_handler,
   const GlobalVectorType &present_void_fraction_solution,
   const Quadrature<2>    &quadrature_formula,
-  const Mapping<2>       &mapping);
+  std::shared_ptr<Mapping<2>> mapping);
 
 template std::pair<double, double>
 calculate_total_volume<3, GlobalVectorType>(
   const DoFHandler<3>    &void_fraction_dof_handler,
   const GlobalVectorType &present_void_fraction_solution,
   const Quadrature<3>    &quadrature_formula,
-  const Mapping<3>       &mapping);
+  std::shared_ptr<Mapping<3>> mapping);
 
 template std::pair<double, double>
 calculate_total_volume<2, GlobalBlockVectorType>(
   const DoFHandler<2>    &void_fraction_dof_handler,
   const GlobalBlockVectorType &present_void_fraction_solution,
   const Quadrature<2>    &quadrature_formula,
-  const Mapping<2>       &mapping);
+  std::shared_ptr<Mapping<2>> mapping);
 
 template std::pair<double, double>
 calculate_total_volume<3, GlobalBlockVectorType>(
   const DoFHandler<3>    &void_fraction_dof_handler,
   const GlobalBlockVectorType &present_void_fraction_solution,
   const Quadrature<3>    &quadrature_formula,
-  const Mapping<3>       &mapping);
+  std::shared_ptr<Mapping<3>> mapping);
 
 #ifndef LETHE_USE_LDV
 template std::pair<double, double>
@@ -118,12 +120,12 @@ calculate_total_volume<2, LinearAlgebra::distributed::Vector<double>>(
   const DoFHandler<2>    &void_fraction_dof_handler,
   const LinearAlgebra::distributed::Vector<double> &present_void_fraction_solution,
   const Quadrature<2>    &quadrature_formula,
-  const Mapping<2>       &mapping);
+  std::shared_ptr<Mapping<2>> mapping);
 
 template std::pair<double, double>
 calculate_total_volume<3, LinearAlgebra::distributed::Vector<double>>(
   const DoFHandler<3>    &void_fraction_dof_handler,
   const LinearAlgebra::distributed::Vector<double> &present_void_fraction_solution,
   const Quadrature<3>    &quadrature_formula,
-  const Mapping<3>       &mapping);
+  std::shared_ptr<Mapping<3>> mapping);
 #endif
