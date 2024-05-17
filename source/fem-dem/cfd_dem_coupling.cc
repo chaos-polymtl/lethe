@@ -1253,7 +1253,7 @@ void
 CFDDEMSolver<dim>::postprocess_cfd_dem()
 {
   // Calculate total volume of fluid and solid 
-  if (this->simulation_parameters.post_processing.calculate_pressure_drop)
+  if (this->cfd_dem_simulation_parameters.cfd_dem_postprocessing.calculate_total_volume)
    {
       TimerOutput::Scope t(this->computing_timer, "total_volume_calculation");
       double             total_volume_fluid, total_volume_solid;
@@ -1294,7 +1294,7 @@ CFDDEMSolver<dim>::postprocess_cfd_dem()
         {
           std::string filename =
             this->simulation_parameters.simulation_control.output_folder +
-            this->simulation_parameters.post_processing.pressure_drop_output_name +
+            this->cfd_dem_simulation_parameters.cfd_dem_postprocessing.total_volume_output_name +
             ".dat";
           std::ofstream output(filename.c_str());
           total_volume_table.set_precision("time", 12);
