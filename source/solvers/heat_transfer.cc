@@ -398,7 +398,7 @@ HeatTransfer<dim>::assemble_system_matrix()
   const DoFHandler<dim> *dof_handler_fluid =
     multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
 
-  const double delta_T_ref = calculate_delta_T_ref();
+  const double delta_T_ref = calculate_delta_T_ref(1.);
 
   auto scratch_data = HeatTransferScratchData<dim>(
     this->simulation_parameters.physical_properties_manager,
@@ -559,7 +559,7 @@ HeatTransfer<dim>::assemble_system_rhs()
   const DoFHandler<dim> *dof_handler_fluid =
     multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
 
-  const double delta_T_ref = calculate_delta_T_ref();
+  const double delta_T_ref = calculate_delta_T_ref(1.);
 
   auto scratch_data = HeatTransferScratchData<dim>(
     this->simulation_parameters.physical_properties_manager,
@@ -762,22 +762,22 @@ HeatTransfer<dim>::attach_solution_to_output(DataOut<dim> &data_out)
 
 template <int dim>
 double
-HeatTransfer<dim>::calculate_delta_T_ref()
+HeatTransfer<dim>::calculate_delta_T_ref(double minimum_delta_T_ref)
 {
-  double previous_solution_maximum, previous_solution_minimum;
+  double solution_maximum, solution_minimum;
   if (is_steady(simulation_parameters.simulation_control.method))
     {
-      previous_solution_maximum = this->present_solution.max();
-      previous_solution_minimum = this->present_solution.min();
+      solution_maximum = this->present_solution.max();
+      solution_minimum = this->present_solution.min();
     }
   else
     {
-      previous_solution_maximum = this->previous_solutions[0].max();
-      previous_solution_minimum = this->previous_solutions[0].min();
+      solution_maximum = this->previous_solutions[0].max();
+      solution_minimum = this->previous_solutions[0].min();
     }
 
   // Set minimum value as 1 to prevent overshooting of diffusivity
-  return std::max(previous_solution_maximum - previous_solution_minimum, 1.);
+  return std::max(solution_maximum - solution_minimum, minimum_delta_T_ref);
 }
 
 template <int dim>
