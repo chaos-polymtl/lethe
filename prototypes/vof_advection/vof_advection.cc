@@ -58,11 +58,36 @@ template <int dim>
 Tensor<1, dim> AdvectionField<dim>::value(const Point<dim> &p) const
 {
   Tensor<1, dim> value;
-  value[0] = 2;
+  value[0] = 0.001;
   for (unsigned int i = 1; i < dim; ++i)
-    value[i] = 1 + 0.8 * std::sin(8. * numbers::PI * p[0]);
+    value[i] = 0;
 
   return value;
+}
+
+template <int dim>
+class InitialConditions : public Function<dim>
+{
+public:
+  virtual double value(const Point<dim>  &p,
+                       const unsigned int component = 0) const override;
+
+private:
+  static const Point<dim> center_point;
+};
+
+template <int dim>
+double InitialConditions<dim>::value(const Point<dim>  &p,
+                                  const unsigned int component) const
+{
+  (void)component;
+  Assert(component == 0, ExcIndexRange(component, 0, 1));
+  
+  Point<dim> center = Point<dim>();
+  Tensor<1,dim> dist = center - p;
+  if (p[0]> 0.1 || p[0]<-0.1)
+    return 0.0;
+  return 1.0;
 }
 
 template <int dim>
@@ -89,7 +114,9 @@ private:
     FEValues<dim>     fe_values;
     
     // Previous phase values
-    Vector<double>    previous_phase_values;
+    std::vector<double>    previous_phase_values;
+    
+    std::vector<Tensor<1, dim>> advection_directions;
     
     // Velocity
     AdvectionField<dim> advection_field;
@@ -109,9 +136,10 @@ private:
     AssemblyCopyData                                     &copy_data);    
   void copy_local_to_global(const AssemblyCopyData &copy_data);
   
+  void set_initial_conditions();
   void solve();
   void refine_grid();
-  void output_results(const unsigned int cycle) const;
+  void output_results() const;
   
   parallel::distributed::Triangulation<dim> triangulation;
   const MappingQ<dim>                       mapping;
@@ -142,9 +170,9 @@ AdvectionProblem<dim>::AdvectionProblem()
                     Triangulation<dim>::smoothing_on_refinement |
                     Triangulation<dim>::smoothing_on_coarsening))
   , mapping(2)
-  , dof_handler(triangulation)
   , fe(1)
-  , dt(0.1)
+  , dof_handler(triangulation)
+  , dt(0.01)
   , mpi_communicator(MPI_COMM_WORLD)
   , pcout(std::cout, (Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0))
 {}
@@ -152,10 +180,16 @@ AdvectionProblem<dim>::AdvectionProblem()
 template <int dim>
 void AdvectionProblem<dim>::setup_system()
 {
+  std::cout << "boop 0" << std::endl;
+  
   dof_handler.distribute_dofs(fe);
+  
+  std::cout << "boop 1" << std::endl;
   
   locally_owned_dofs    = dof_handler.locally_owned_dofs();
   locally_relevant_dofs = DoFTools::extract_locally_relevant_dofs(dof_handler);
+  
+  std::cout << "boop 2" << std::endl;
   
   solution.reinit(locally_owned_dofs, locally_relevant_dofs, mpi_communicator);
   previous_solution.reinit(locally_owned_dofs, locally_relevant_dofs, mpi_communicator);
@@ -199,6 +233,7 @@ AdvectionProblem<dim>::AssemblyScratchData::AssemblyScratchData(
               QGauss<dim>(fe.degree + 1),
               update_values | update_gradients | update_quadrature_points |
                 update_JxW_values)
+  , advection_directions(fe_values.get_quadrature().size())
 {
   const unsigned int n_q_points =
     fe_values.get_quadrature().size();
@@ -213,6 +248,7 @@ AdvectionProblem<dim>::AssemblyScratchData::AssemblyScratchData(
               scratch_data.fe_values.get_quadrature(),
               update_values | update_gradients | update_quadrature_points |
                 update_JxW_values)
+  , advection_directions(fe_values.get_quadrature().size())
 {
   const unsigned int n_q_points =
     fe_values.get_quadrature().size();
@@ -226,7 +262,6 @@ void AdvectionProblem<dim>::local_assemble_system(
   AssemblyScratchData                                  &scratch_data,
   AssemblyCopyData                                     &copy_data)
 {
-  copy_data.cell_is_local = cell->is_locally_owned();
   if (!cell->is_locally_owned())
     return;
   
@@ -245,38 +280,51 @@ void AdvectionProblem<dim>::local_assemble_system(
   scratch_data.advection_field.value_list(
     scratch_data.fe_values.get_quadrature_points(),
     scratch_data.advection_directions);
-  
+    
   const double cell_size = cell->diameter();
 
   
-  double dt_inv = 1.0/this.dt;
+  double dt_inv = 1.0/this->dt;
   
-  
+  const auto &sd = scratch_data;
   for (unsigned int q_point = 0; q_point < n_q_points; ++q_point)
-    for (unsigned int i = 0; i < dofs_per_cell; ++i)
+    {
+      const Tensor<1, dim> velocity = sd.advection_directions[q_point];
+      
+      const double u_mag = std::max(velocity.norm(), 1e-12);
+      
+      const double tau =   1. /
+                std::sqrt(Utilities::fixed_power<2>(dt_inv) +
+                          Utilities::fixed_power<2>(2. * u_mag / cell_size));
+                          
+      for (unsigned int i = 0; i < dofs_per_cell; ++i)
       {
-        const auto &sd = scratch_data;
+        
+        
         for (unsigned int j = 0; j < dofs_per_cell; ++j)
           {
             // LHS
             
             // Time integration
-            copy_data.cell_matrix(i, j) += dt_inv*sd.fe_values.shape_value(i, q_point)*sd.fe_values.shape_value(j, q_point);
+            copy_data.cell_matrix(i, j) += dt_inv*sd.fe_values.shape_value(i, q_point)*sd.fe_values.shape_value(j, q_point)* sd.fe_values.JxW(q_point);
             // Advective term
-            copy_data.cell_matrix(i, j) += sd.fe_values.shape_value(i, q_point)*sd.advection_directions[q_point]*sd.fe_values.shape_grad(j, q_point);
+            copy_data.cell_matrix(i, j) += sd.fe_values.shape_value(i, q_point)*sd.advection_directions[q_point]*sd.fe_values.shape_grad(j, q_point)*sd.fe_values.JxW(q_point);
             // Stabilization term
-            copy_data.cell_matrix(i, j) += tau*sd.advection_directions[q_point]*sd.fe_values.shape_grad(i, q_point)*(sd.advection_directions[q_point]*sd.fe_values.shape_grad(j, q_point) + sd.fe_values.shape_value(j, q_point)*dt_inv);
             
-            copy_data.cell_matrix(i, j) *= sd.fe_values.JxW(q_point);
+            copy_data.cell_matrix(i, j) += tau*sd.advection_directions[q_point]*sd.fe_values.shape_grad(i, q_point)*(sd.advection_directions[q_point]*sd.fe_values.shape_grad(j, q_point) + sd.fe_values.shape_value(j, q_point)*dt_inv);
             
           }
           //RHS
           
-          // Stabilization term (it's the only term since there is no forcing)
-          copy_data.cell_rhs(i) -= tau*sd.advection_directions[q_point]*sd.fe_values.shape_grad(i, q_point)*dt_inv*scratch_data.previous_phase_values[q]*sd.fe_values.JxW(q_point);
+          // Stabilization term
+          copy_data.cell_rhs(i) += tau*sd.advection_directions[q_point]*sd.fe_values.shape_grad(i, q_point)*dt_inv*scratch_data.previous_phase_values[q_point]*sd.fe_values.JxW(q_point);
+          
+          copy_data.cell_rhs(i) += dt_inv*sd.fe_values.shape_value(i, q_point)*scratch_data.previous_phase_values[q_point]*sd.fe_values.JxW(q_point);
       }
       
-      cell->get_dof_indices(copy_data.local_dof_indices);
+    }
+    cell->get_dof_indices(copy_data.local_dof_indices);
+    
 }
 
 template <int dim>
@@ -292,20 +340,36 @@ AdvectionProblem<dim>::copy_local_to_global(const AssemblyCopyData &copy_data)
 }
 
 template <int dim>
+void
+AdvectionProblem<dim>::set_initial_conditions()
+{
+  VectorTools::interpolate(this->dof_handler,
+                           InitialConditions<dim>(),
+                           this->previous_solution);
+  this->solution = this->previous_solution;                 
+}
+
+template <int dim>
 void AdvectionProblem<dim>::solve()
 {
-  SolverControl               solver_control(std::max<std::size_t>(1000,
-                                                     system_rhs.size() / 10),
+  SolverControl               solver_control(200,
                                1e-10 * system_rhs.l2_norm());
-  SolverGMRES<Vector<double>> solver(solver_control);
-  PreconditionJacobi<SparseMatrix<double>> preconditioner;
-  preconditioner.initialize(system_matrix, 1.0);
-  solver.solve(system_matrix, solution, system_rhs, preconditioner);
+  TrilinosWrappers::SolverGMRES solver(solver_control);
+  
+  TrilinosWrappers::PreconditionILU                 preconditioner;
+  TrilinosWrappers::PreconditionILU::AdditionalData data_ilu;
+  
+  preconditioner.initialize(system_matrix, data_ilu);
 
-  Vector<double> residual(dof_handler.n_dofs());
+  solver.solve(system_matrix,
+              solution,
+              system_rhs,
+              preconditioner);
 
+  VectorType residual(locally_owned_dofs, locally_relevant_dofs, mpi_communicator);
+  
   system_matrix.vmult(residual, solution);
-  residual -= system_rhs;
+  // residual -= system_rhs;
   std::cout << "   Iterations required for convergence: "
             << solver_control.last_step() << '\n'
             << "   Max norm of residual:                "
@@ -315,20 +379,60 @@ void AdvectionProblem<dim>::solve()
 }
 
 template <int dim>
+void AdvectionProblem<dim>::output_results() const
+{
+  DataOut<dim> data_out;
+  data_out.attach_dof_handler(dof_handler);
+  data_out.add_data_vector(solution, "solution");
+  data_out.build_patches(8);
+
+  DataOutBase::VtkFlags vtk_flags;
+  vtk_flags.compression_level = DataOutBase::CompressionLevel::best_speed;
+  data_out.set_flags(vtk_flags);
+
+  const std::string filename = "solution.vtu";
+  std::ofstream     output(filename);
+  data_out.write_vtu(output);
+  std::cout << "Solution written to " << filename << std::endl;
+}
+
+template <int dim>
 void AdvectionProblem<dim>::run()
 {
+  std::cout << "Bonjour from run" << std::endl;
   
+  GridGenerator::hyper_cube(triangulation, -1, 1);
+  triangulation.refine_global(3);
+            
+  std::cout << "Bonjour from after triangulation" << std::endl;
   // initial time step
   setup_system();
+  
+  std::cout << "Bonjour from after setup_system()" << std::endl;
+  
+  
+  set_initial_conditions();
+  
+  std::cout << "Bonjour from after set_initial_conditions()" << std::endl;
+  
   assemble_system();
+  
+  std::cout << "Bonjour from after assemble_system()" << std::endl;
+
   solve();
   
-  previous_solution = solution;
+  std::cout << "Bonjour from after solve()" << std::endl;
+  
+  
+  output_results();
+  
+  // 
+  // previous_solution = solution;
   
 
 }
 
-int main()
+int main(int argc, char *argv[])
 {  
 Utilities::MPI::MPI_InitFinalize       mpi_init(argc, argv, 1);
 try
