@@ -2,7 +2,7 @@
 Heat Transfer Equations
 ================================
 
-In Lethe, it is possible to solve the heat equation in various loading conditions. The main equation is derived from the energy equation in incompressible fluids. Assuming a constant heat capacity :math:`c_p` and dynamic viscosity :math:`\mu`, the equation takes the following form: 
+In Lethe, it is possible to solve the heat transfer in various loading conditions. The main equation is derived from the energy equation in incompressible flows. Assuming a constant heat capacity :math:`C_p` and dynamic viscosity :math:`\mu`, the equation takes the following form:
 
 .. math::
     \rho c_p \frac{\partial T}{\partial t} + \rho c_p (\mathbf{u} \cdot \nabla)T - k \nabla^2 T = - \phi + Q
