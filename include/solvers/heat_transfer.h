@@ -191,10 +191,10 @@ public:
 
   /**
    * @brief Calculate delta_T_ref for the DCDD shock capture mechanism. delta_T_ref = T_max - T_min.
-   * 
+   *
    * @param minimum_delta_T_ref Limit the artificial viscosity added by the DCDD shock capture. DCDD shock capture elements are divided by delta_T_ref. An extremely low value of delta_T_ref will affect the results.
-   * 
-   * @return The difference between the maximal temperature and the minimal temperature in the whole domain. 
+   *
+   * @return The difference between the maximal temperature and the minimal temperature in the whole domain.
    */
   double
   calculate_delta_T_ref(double minimum_delta_T_ref);
