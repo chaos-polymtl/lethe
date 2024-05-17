@@ -58,7 +58,7 @@ template <int dim>
 Tensor<1, dim> AdvectionField<dim>::value(const Point<dim> &p) const
 {
   Tensor<1, dim> value;
-  value[0] = 0.001;
+  value[0] = 1;
   for (unsigned int i = 1; i < dim; ++i)
     value[i] = 0;
 
@@ -85,9 +85,9 @@ double InitialConditions<dim>::value(const Point<dim>  &p,
   
   Point<dim> center = Point<dim>();
   Tensor<1,dim> dist = center - p;
-  if (p[0]> 0.1 || p[0]<-0.1)
+  if (p[0]> 0.25 || p[0]<-0.25)
     return 0.0;
-  return 1.0;
+  return 0.5 + 0.5*std::cos(4*p[0]*M_PI);
 }
 
 template <int dim>
@@ -139,7 +139,7 @@ private:
   void set_initial_conditions();
   void solve();
   void refine_grid();
-  void output_results() const;
+  void output_results(const int time_iteration, const double time) const;
   
   parallel::distributed::Triangulation<dim> triangulation;
   const MappingQ<dim>                       mapping;
@@ -172,7 +172,7 @@ AdvectionProblem<dim>::AdvectionProblem()
   , mapping(2)
   , fe(1)
   , dof_handler(triangulation)
-  , dt(0.01)
+  , dt(0.001)
   , mpi_communicator(MPI_COMM_WORLD)
   , pcout(std::cout, (Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0))
 {}
@@ -217,6 +217,9 @@ void AdvectionProblem<dim>::setup_system()
 template <int dim>
 void AdvectionProblem<dim>::assemble_system()
 {
+  system_matrix = 0;
+  system_rhs = 0;
+  
   WorkStream::run(dof_handler.begin_active(),
                   dof_handler.end(),
                   *this,
@@ -281,8 +284,16 @@ void AdvectionProblem<dim>::local_assemble_system(
     scratch_data.fe_values.get_quadrature_points(),
     scratch_data.advection_directions);
     
-  const double cell_size = cell->diameter();
-
+  double cell_size;
+  
+  if (dim == 2)
+    {
+      cell_size = std::sqrt(4. * cell->measure() / M_PI);
+    }
+  else if (dim == 3)
+    {
+      cell_size = std::pow(6 * cell->measure() / M_PI, 1. / 3.);
+    }
   
   double dt_inv = 1.0/this->dt;
   
@@ -299,8 +310,6 @@ void AdvectionProblem<dim>::local_assemble_system(
                           
       for (unsigned int i = 0; i < dofs_per_cell; ++i)
       {
-        
-        
         for (unsigned int j = 0; j < dofs_per_cell; ++j)
           {
             // LHS
@@ -311,7 +320,7 @@ void AdvectionProblem<dim>::local_assemble_system(
             copy_data.cell_matrix(i, j) += sd.fe_values.shape_value(i, q_point)*sd.advection_directions[q_point]*sd.fe_values.shape_grad(j, q_point)*sd.fe_values.JxW(q_point);
             // Stabilization term
             
-            copy_data.cell_matrix(i, j) += tau*sd.advection_directions[q_point]*sd.fe_values.shape_grad(i, q_point)*(sd.advection_directions[q_point]*sd.fe_values.shape_grad(j, q_point) + sd.fe_values.shape_value(j, q_point)*dt_inv);
+            copy_data.cell_matrix(i, j) += tau*sd.advection_directions[q_point]*sd.fe_values.shape_grad(i, q_point)*(sd.advection_directions[q_point]*sd.fe_values.shape_grad(j, q_point) + sd.fe_values.shape_value(j, q_point)*dt_inv)*sd.fe_values.JxW(q_point);
             
           }
           //RHS
@@ -352,8 +361,8 @@ AdvectionProblem<dim>::set_initial_conditions()
 template <int dim>
 void AdvectionProblem<dim>::solve()
 {
-  SolverControl               solver_control(200,
-                               1e-10 * system_rhs.l2_norm());
+  SolverControl               solver_control(1000,
+                               1e-10 * system_rhs.l2_norm() );
   TrilinosWrappers::SolverGMRES solver(solver_control);
   
   TrilinosWrappers::PreconditionILU                 preconditioner;
@@ -379,21 +388,29 @@ void AdvectionProblem<dim>::solve()
 }
 
 template <int dim>
-void AdvectionProblem<dim>::output_results() const
+void AdvectionProblem<dim>::output_results(const int time_iteration, const double time) const
 {
   DataOut<dim> data_out;
   data_out.attach_dof_handler(dof_handler);
   data_out.add_data_vector(solution, "solution");
-  data_out.build_patches(8);
+  data_out.build_patches();
 
   DataOutBase::VtkFlags vtk_flags;
   vtk_flags.compression_level = DataOutBase::CompressionLevel::best_speed;
   data_out.set_flags(vtk_flags);
 
   const std::string filename = "solution.vtu";
-  std::ofstream     output(filename);
-  data_out.write_vtu(output);
-  std::cout << "Solution written to " << filename << std::endl;
+  // std::ofstream     output(filename);
+  // data_out.write_vtu(output);
+  data_out.write_vtu_with_pvtu_record("output/",
+                                      "solution",
+                                      time_iteration,
+                                      MPI_COMM_WORLD,
+                                      3);
+  // std::cout << "Solution written to " << filename << std::endl;
+  std::ofstream out("grid-2.svg");
+  GridOut       grid_out;
+    grid_out.write_svg(triangulation, out);
 }
 
 template <int dim>
@@ -401,8 +418,23 @@ void AdvectionProblem<dim>::run()
 {
   std::cout << "Bonjour from run" << std::endl;
   
-  GridGenerator::hyper_cube(triangulation, -1, 1);
-  triangulation.refine_global(3);
+  Point<dim> p_0 = Point<dim>();
+  p_0[0] = -1;
+  for (unsigned int i = 1; i < dim; ++i)
+    p_0[i] = 0;
+    
+  Point<dim> p_1 = Point<dim>();
+  p_1[0] = 4;
+  for (unsigned int i = 1; i < dim; ++i)
+    p_1[i] = 1;
+    
+  std::vector< unsigned int > repetitions(dim);
+  repetitions[0] = 1024;
+  for (unsigned int i = 1; i < dim; ++i)
+    repetitions[i] = 1;
+    
+  GridGenerator::subdivided_hyper_rectangle(triangulation, repetitions, p_0, p_1);
+  // triangulation.refine_global(6);
             
   std::cout << "Bonjour from after triangulation" << std::endl;
   // initial time step
@@ -413,21 +445,37 @@ void AdvectionProblem<dim>::run()
   
   set_initial_conditions();
   
+  
+  unsigned int it = 0;
+  double time = 0.0;
+  double final_time = 1;
+  
+  output_results(it,time);
+  
+  
   std::cout << "Bonjour from after set_initial_conditions()" << std::endl;
   
-  assemble_system();
-  
-  std::cout << "Bonjour from after assemble_system()" << std::endl;
+  while (time < final_time) 
+  {
+    it += 1;
+    time += this->dt;
+    
+    
+    
+    assemble_system();
+    
+    std::cout << "time = " << time << std::endl;
 
-  solve();
+    solve();
+    
+    
+    output_results(it, time);
+    
+    // 
+    // previous_solution = solution;
+    this->previous_solution = this->solution; 
+  } 
   
-  std::cout << "Bonjour from after solve()" << std::endl;
-  
-  
-  output_results();
-  
-  // 
-  // previous_solution = solution;
   
 
 }
