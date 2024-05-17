@@ -282,7 +282,7 @@ HeatTransferAssemblerCore<dim>::assemble_rhs(
             tau * (strong_residual_vec[q] * (grad_phi_T_i * velocity)) * JxW;
 
           // DCDD shock capturing
-          local_rhs(i) +=
+          local_rhs(i) -=
             rho_cp * nu_dcdd *
             (scalar_product(temperature_gradient, dir_tensor * grad_phi_T_i)) *
             JxW;
