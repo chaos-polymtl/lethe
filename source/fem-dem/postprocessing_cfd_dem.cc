@@ -41,7 +41,6 @@ calculate_total_volume(const DoFHandler<dim> &void_fraction_dof_handler,
                            const Quadrature<dim> &quadrature_formula,
                            std::shared_ptr<Mapping<dim>>    mapping)
 {
-  std::cout << "!!!!!!!!!!!!!before calling funciton!!!!!!!!!!!!!!!!"<< std:: endl;
   // Set up for void fraction fe values
   const unsigned int               n_q_points = quadrature_formula.size();
   const FESystem<dim, dim> fe_void_fraction =
@@ -52,9 +51,9 @@ calculate_total_volume(const DoFHandler<dim> &void_fraction_dof_handler,
   FEValues<dim> fe_vf_values(*mapping,
                              fe_void_fraction,
                              quadrature_formula,
-                             update_values | update_quadrature_points);
+                             update_values | update_quadrature_points |
+                             update_JxW_values);
 
-  std::cout << "!!!!!!!!!!!!!After creating finite element!!!!!!!!!!!!!!!!"<< std:: endl;
   // Initialize variables for summation
   double total_volume_fluid = 0;
   double total_volume_solid = 0;
@@ -77,11 +76,9 @@ calculate_total_volume(const DoFHandler<dim> &void_fraction_dof_handler,
             }
         }
     }
-  std::cout << "!!!!!!!!!!!!!Before summulationof MPI!!!!!!!!!!!!!!!!"<< std:: endl;
   const MPI_Comm mpi_communicator = void_fraction_dof_handler.get_communicator();
   total_volume_fluid = Utilities::MPI::sum(total_volume_fluid, mpi_communicator);
   total_volume_solid = Utilities::MPI::sum(total_volume_solid, mpi_communicator);
-  std::cout << "!!!!!!!!!!!!!After summulationof MPI!!!!!!!!!!!!!!!!"<< std:: endl;
 
   return {total_volume_fluid, total_volume_solid};
 }

@@ -1266,7 +1266,7 @@ CFDDEMSolver<dim>::postprocess_cfd_dem()
         "time", this->simulation_control->get_current_time());
       this->total_volume_table.add_value("total-volume-fluid", total_volume_fluid);
       this->total_volume_table.add_value("total-volume-solid",
-                                          total_volume_fluid);
+                                          total_volume_solid);
       if (this->simulation_parameters.post_processing.verbosity ==
           Parameters::Verbosity::verbose)
         {
