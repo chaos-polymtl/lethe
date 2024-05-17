@@ -270,7 +270,7 @@ namespace Parameters
   public:
     RigidSolidObject()
       : translational_velocity(dim)
-      , angular_velocity(3)
+      , angular_velocity(dim)
     {}
 
     void
