@@ -2,8 +2,7 @@
 Cahn-Hilliard Method
 ================================
 
-  
-The Cahn-Hilliard system of equations `[1] <https://dx.doi.org/10.1063/1.1744102>`_ is a model used to describe the process of phase separation based on the principle of free energy minimization. The key idea is that the system evolves to a state where the free energy is minimized, which often leads to the formation of distinct phases or regions within the material. This competition between the tendency of the system to minimize its overall free energy and the energy cost associated with creating new interfaces between phases is at the heart of the Cahn-Hilliard equation. Let us introduce those concepts formally.
+The Cahn-Hilliard system of equations `[1] <https://dx.doi.org/10.1063/1.1744102>`_ is a model used to describe the process of phase separation based on the principle of free energy minimization. The key idea at the heart of the Cahn-Hilliard equation is that the system try to achieve a state where the free energy is minimized while competing with the energy cost associated with creating new interfaces between phases. Let us introduce those concepts formally.
 
 Let :math:`\Omega = \Omega_0 \cup \Omega_1` be the domain formed by two fluids, namely fluid :math:`0` and :math:`1`, with :math:`\Gamma` the boundaries of the system. Like in :doc:`vof`, we define a scalar function :math:`\phi` as a phase indicator such that:
 
@@ -20,8 +19,8 @@ The phase indicator transitions smoothly from one extremum to the other with the
     :alt: Schematic
     :align: center
     :width: 600
-    
-The length required to go from :math:`\phi=-0.99` to :math:`\phi=0.99` is about 7.5 times :math:`\epsilon`, which we will see appear later in the equations.
+
+The length required to go from :math:`\phi=-0.99` to :math:`\phi=0.99` is about 7.5 times :math:`\varepsilon`, which we will see appear later in the equations.
 
 Let us introduce the free energy functional :math:`\mathcal{F}`:
 
@@ -48,7 +47,6 @@ To formalize the idea that the system tries to lower its free energy, we introdu
   
 Then, the phases have to move to satisfy free energy minimization, by going from high chemical potential regions to low chemical potential regions. Let us introduce the flux of phase due to chemical potential differences, denoted by :math:`\mathbf{J}`:
 
-
 .. math::
   \mathbf{J} = -M(\phi)\nabla\eta
    
@@ -63,7 +61,8 @@ For a 1D case, we obtain the following equilibrium phase field by solving the ch
   \phi(x) = -\tanh{\left(\frac{x}{\sqrt{2}\epsilon}\right)}
   
   
-Lastly, we need to relate the surface tension coefficient with the mixing energy. Cahn and Hilliard define surface tension as the excess free energy of the system due to the interface, the second term in the expression of :math:`\psi`. If we consider a system in equilibrium, and suppose a planar interface, we can write:
+Lastly, we need to relate the surface tension coefficient with the mixing energy. Cahn and Hilliard 
+`[1] <https://doi.org/10.1063/1.1730447>`_ define surface tension as the excess free energy of the system due to the interface, the second term in the expression of :math:`\psi`. If we consider a system in equilibrium, and suppose a planar interface, we can write:
 
 .. math::
   \sigma = \int_{-\infty}^{+\infty}\lambda \left(\frac{\mathrm{d}\phi}{\mathrm{d}x}\right)^2 \mathrm{d}x
@@ -79,7 +78,6 @@ For the problem to have a unique solution, we give the following no-flux boundar
   (\nabla \phi \cdot\mathbf{n})_{| \partial \Omega} = 0
   
   (\nabla \eta \cdot \mathbf{n})_{| \partial \Omega} = 0
-
   
 Finite Element Formulation
 ---------------------------
@@ -190,14 +188,6 @@ References
 
 
 `[3] <https://doi.org/10.48550/arXiv.1104.1336>`_ H. Abels, H. Garcke, and G. Grün, ‘Thermodynamically Consistent, Frame Indifferent Diffuse Interface Models for Incompressible Two-Phase Flows with Different Densities’. arXiv, Apr. 07, 2011. doi: 10.48550/arXiv.1104.1336.
-
-
-
-
-
-
-
-
 
 
 
