@@ -141,8 +141,7 @@ The ``source term`` subsection defines the gravitational acceleration. The value
 .. code-block:: text
     
     subsection source term
-      set enable = true
-      subsection xyz
+      subsection fluid dynamics
         set Function expression = 0 ; -1 ; 0
       end
     end

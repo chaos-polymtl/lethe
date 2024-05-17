@@ -11,6 +11,7 @@ Features
 - Solvers: ``lethe-particles``
 - Floating walls
 - `GMSH <https://gmsh.info/>`_ grids
+- Insertion of particles from a plane
 
 ----------------------------
 Files Used in This Example
@@ -49,19 +50,19 @@ The mesh is a cylinder generated using the deal.II grid generator.
 Insertion Info
 ~~~~~~~~~~~~~~~~~~~
 
-An insertion box is defined inside at the top part of the cylinder. The insertion region is sufficiently high to ensure that there are no collisions between the particles bouncing on the bottom wall (or particles accumulated at the bottom) and the ones being inserted.
+An insertion plane is defined just below the bunny drill. The insertion plane is a useful mechanism to insert particles in a simulation in which the available volume is limited for rectangular box insertion. To ensure a more rapid insertion, we also give an initial velocity to the particles. We set ``insertion maximum offset = 0`` so that the particles inserted are all exactly on the insertion plane.
 
 .. code-block:: text
 
   subsection insertion info
-    set insertion method                               = non_uniform
-    set inserted number of particles at each time step = 10000
-    set insertion frequency                            = 100000
-    set insertion box points coordinates               = 0.1, -0.07, -0.07 : 0.24, 0.07, 0.07
-    set insertion distance threshold                   = 1.10
-    set insertion maximum offset                       = 0.10
+    set insertion method                               = plane
+    set inserted number of particles at each time step = 200
+    set insertion frequency                            = 4000
+    set insertion plane point                          = 0.025, 0, 0
+    set insertion plane normal vector                  = -1, 0, 0
+    set insertion maximum offset                       = 0
     set insertion prn seed                             = 19
-    set insertion order of direction                   = 0, 2, 1
+    set initial velocity                               = -0.1, 0.0, 0.0
   end
 
 
@@ -105,7 +106,7 @@ The time end of the simulation is 2 seconds after all particles have been loaded
 .. code-block:: text
 
   subsection simulation control
-    set time step         = 2e-6
+    set time step         = 5e-6
     set time end          = 2
     set log frequency     = 1000
     set output frequency  = 1000
@@ -121,7 +122,7 @@ The time end of the simulation is 4.75 seconds after which the bunny has done on
 .. code-block:: text
 
   subsection simulation control
-    set time step         = 2e-6
+    set time step         = 5e-6
     set time end          = 4.75
     set log frequency     = 1000
     set output frequency  = 1000
@@ -134,7 +135,7 @@ The time end of the simulation is 4.75 seconds after which the bunny has done on
 Solid Objects (Drilling)
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The bunny is defined using the solid objects feature of Lethe. The surface mesh of the bunny is a GMSH file. The translational of the velocity is defined to have a periodic motion along the axis of the cylinder and the bunny is rotating at a constant angular velocity. This complex drilling motion is fully parametrized from the input file using the function parser functionalities of the translational and the angular velocity of the solid object.
+The bunny is defined using the solid objects feature of Lethe. The surface mesh of the bunny is a GMSH file. The translational velocity is defined to have a periodic motion along the axis of the cylinder and the bunny is rotating at a constant angular velocity once the particles have been loaded (:math:`t>2\text{s}`) . This complex drilling motion is fully parametrized from the input file using the function parser of the translational and the angular velocity of the solid object.
 
 .. code-block:: text
 
@@ -150,10 +151,10 @@ The bunny is defined using the solid objects feature of Lethe. The surface mesh 
         set initial translation    = 0.05, 0, 0.035
       end
       subsection translational velocity
-        set Function expression = -0.27*sin(0.8*3.1416*(t-2)) ; 0 ; 0
+        set Function expression = if (t>2,-0.27*sin(0.8*3.1416*(t-2)),0) ; 0 ; 0
       end
       subsection angular velocity
-        set Function expression = 31.42 ; 0 ; 0
+        set Function expression = if (t>2,31.42,0) ; 0 ; 0
       end
     end
   end

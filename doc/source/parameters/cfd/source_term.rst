@@ -7,10 +7,10 @@ If the problem being simulated has a source, it can be added in this section. Th
 .. code-block:: text
 
   subsection source term
-    subsection xyz
-      # Default values in 2D
-      set Function expression = 0; 0; 0
-      # in 3D: set Function expression = 0; 0; 0; 0
+    subsection fluid dynamics
+      set Function expression = 0; 0; 0 #In 2D
+      set Function expression = 0; 0; 0; 0 #In 3D
+      set enable              = true
     end
 
     subsection heat transfer
@@ -36,14 +36,18 @@ If the problem being simulated has a source, it can be added in this section. Th
 
   Check the :ref:`ex function` for further help.
 
-* ``subsection xyz``: defines the parameters for a Navier-Stokes source term. This source term is defined by a ``Function expression`` and can depend on both space and time.
+* ``subsection fluid dynamics``: defines the parameters for a Navier-Stokes source term. This source term is defined by a ``Function expression`` and can depend on both space and time.
 
   * In 2D, the first two terms are the source terms for  the :math:`x`, :math:`y` component of the momentum equation. The third term is the mass source term. 
   * In 3D, the first three terms are for the :math:`x`, :math:`y` and :math:`z` component of the momentum equation and the fourth term is for the mass source term.
 
   .. tip::
 
-	For ``subsection xyz``, each term can depend on both space (``x``, ``y`` and, if 3D, ``z``) and time (``t``). See :ref:`ex function`.
+	For ``subsection fluid dynamics``, each term can depend on both space (``x``, ``y`` and, if 3D, ``z``) and time (``t``). See :ref:`ex function`.
+
+  .. tip::
+
+	If you are using the ``lethe-fluid-matrix-free`` application the usage of a source term significantly affects performance. If you are not using it, we advice you to disable it explicitly by setting ``enable = false``.
 
 * ``subsection heat transfer``: defines the parameters for a heat source term. This source term is defined by a ``Function expression`` and can depend on both space (``x``, ``y`` and, if 3D, ``z``) and time (``t``). See :ref:`ex function`.
 
@@ -61,7 +65,7 @@ CFD source term with ``Function constants``:
 
 .. code-block:: text
 
-    subsection xyz
+    subsection fluid dynamics
       set Function constants = A=2.0
       set Function expression = A*y; -A*x; 0
     end
@@ -70,7 +74,7 @@ CFD source term varying in time:
 
 .. code-block:: text
 
-    subsection xyz
+    subsection fluid dynamics
         set Function expression = 0; -10*cos(2*pi*t); 0
     end
 
@@ -94,7 +98,7 @@ CFD source term with ``Function constants``:
 
 .. code-block:: text
 
-    subsection xyz
+    subsection fluid dynamics
       set Function constants = A=2.0, B=1.0
       set Function expression = A*y; -B*x; 0
     end

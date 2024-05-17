@@ -141,8 +141,8 @@ if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
   if(BUILD_TESTING)
     set(DEAL_II_WITH_DEALII ON)
     set(DEAL_II_DEALII_VERSION ${DEAL_II_VERSION})
-    add_subdirectory(tests)
     add_subdirectory(applications_tests)
+    add_subdirectory(tests)
 
     if(TXR_EXECUTABLE)
       add_custom_target(update-golden

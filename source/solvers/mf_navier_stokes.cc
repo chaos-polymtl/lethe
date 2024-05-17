@@ -44,6 +44,24 @@
 
 #include <deal.II/numerics/vector_tools.h>
 
+/**
+ * @brief Helper function that allows to convert deal.II vectors to Trilinos vectors.
+ *
+ * @tparam number Abstract type for number across the class (i.e., double).
+ * @param out Destination TrilinosWrappers::MPI::Vector vector.
+ * @param in Source LinearAlgebra::distributed::Vector<number> vector.
+ */
+template <typename number>
+void
+convert_vector_dealii_to_trilinos(
+  TrilinosWrappers::MPI::Vector                    &out,
+  const LinearAlgebra::distributed::Vector<number> &in)
+{
+  LinearAlgebra::ReadWriteVector<double> rwv(out.locally_owned_elements());
+  rwv.import_elements(in, VectorOperation::insert);
+  out.import_elements(rwv, VectorOperation::insert);
+}
+
 namespace dealii
 {
   /**
@@ -472,12 +490,16 @@ MFNavierStokesPreconditionGMG<dim>::MFNavierStokesPreconditionGMG(
               this->dof_handler,
             level_constraints[level],
             quadrature_mg,
-            &(*forcing_function),
+            forcing_function,
             this->simulation_parameters.physical_properties_manager
               .get_kinematic_viscosity_scale(),
             this->simulation_parameters.stabilization.stabilization,
             level,
-            simulation_control);
+            simulation_control,
+            this->simulation_parameters.linear_solver
+              .at(PhysicsID::fluid_dynamics)
+              .mg_enable_hessians_jacobian,
+            true);
 
           this->ls_mg_operators[level].initialize(*(this->mg_operators)[level]);
           this->ls_mg_interface_in[level].initialize(
@@ -777,12 +799,16 @@ MFNavierStokesPreconditionGMG<dim>::MFNavierStokesPreconditionGMG(
             level_dof_handler,
             level_constraint,
             quadrature_mg,
-            &(*forcing_function),
+            forcing_function,
             this->simulation_parameters.physical_properties_manager
               .get_kinematic_viscosity_scale(),
             this->simulation_parameters.stabilization.stabilization,
             numbers::invalid_unsigned_int,
-            simulation_control);
+            simulation_control,
+            this->simulation_parameters.linear_solver
+              .at(PhysicsID::fluid_dynamics)
+              .mg_enable_hessians_jacobian,
+            true);
 
           this->mg_setup_timer.leave_subsection("Set up operators");
         }
@@ -1413,6 +1439,11 @@ MFNavierStokesSolver<dim>::MFNavierStokesSolver(
 
   system_operator =
     std::make_shared<NavierStokesStabilizedOperator<dim, double>>();
+
+  if (!this->simulation_parameters.source_term.enable)
+    {
+      this->forcing_function.reset();
+    }
 }
 
 template <int dim>
@@ -1440,8 +1471,9 @@ MFNavierStokesSolver<dim>::solve()
 
   while (this->simulation_control->integrate())
     {
-      this->forcing_function->set_time(
-        this->simulation_control->get_current_time());
+      if (this->forcing_function)
+        this->forcing_function->set_time(
+          this->simulation_control->get_current_time());
 
       bool refinement_step;
       if (this->simulation_parameters.mesh_adaptation.refinement_at_frequency)
@@ -1458,6 +1490,7 @@ MFNavierStokesSolver<dim>::solve()
           this->simulation_parameters.boundary_conditions.time_dependent)
         {
           update_boundary_conditions();
+          this->multiphysics->update_boundary_conditions();
         }
 
       this->simulation_control->print_progression(this->pcout);
@@ -1480,8 +1513,11 @@ MFNavierStokesSolver<dim>::solve()
               this->flow_control.get_beta());
         }
 
-      this->iterate();
+      // Provide the fluid dynamics dof_handler, present solution and previous
+      // solution to the multiphysics interface
+      update_solutions_for_multiphysics();
 
+      this->iterate();
       this->postprocess(false);
       this->finish_time_step();
 
@@ -1552,12 +1588,16 @@ MFNavierStokesSolver<dim>::setup_dofs_fd()
     this->dof_handler,
     this->zero_constraints,
     *this->cell_quadrature,
-    &(*this->forcing_function),
+    this->forcing_function,
     this->simulation_parameters.physical_properties_manager
       .get_kinematic_viscosity_scale(),
     this->simulation_parameters.stabilization.stabilization,
     mg_level,
-    this->simulation_control);
+    this->simulation_control,
+    this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+      .enable_hessians_jacobian,
+    this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+      .enable_hessians_residual);
 
 
   // Initialize vectors using operator
@@ -1583,6 +1623,12 @@ MFNavierStokesSolver<dim>::setup_dofs_fd()
         this->fe->n_dofs_per_vertex(),
         this->mpi_communicator);
 
+      // Intialize Trilinos vectors used to pass average velocities to
+      // multiphysics interface
+      this->multiphysics_average_velocities.reinit(this->locally_owned_dofs,
+                                                   this->locally_relevant_dofs,
+                                                   this->mpi_communicator);
+
       if (this->simulation_parameters.restart_parameters.checkpoint)
         {
           this->average_velocities->initialize_checkpoint_vectors(
@@ -1601,6 +1647,24 @@ MFNavierStokesSolver<dim>::setup_dofs_fd()
               << this->dof_handler.n_dofs() << std::endl;
   this->pcout << "   Volume of triangulation:      " << global_volume
               << std::endl;
+
+  // Initialize Trilinos vectors used to pass solution to multiphysics interface
+  this->multiphysics_present_solution.reinit(this->locally_owned_dofs,
+                                             this->locally_relevant_dofs,
+                                             this->mpi_communicator);
+
+  // Pre-allocate memory for the previous solutions using the information
+  // of the BDF schemes
+  this->multiphysics_previous_solutions.resize(
+    this->simulation_control->get_number_of_previous_solution_in_assembly());
+
+  for (auto &solution : this->multiphysics_previous_solutions)
+    solution.reinit(this->locally_owned_dofs,
+                    this->locally_relevant_dofs,
+                    this->mpi_communicator);
+
+  // Provide relevant solution to multiphysics interface
+  update_solutions_for_multiphysics();
 }
 
 template <int dim>
@@ -1653,11 +1717,6 @@ MFNavierStokesSolver<dim>::set_initial_condition_fd(
     }
   else if (initial_condition_type == Parameters::InitialConditionType::viscous)
     {
-      AssertThrow(
-        this->simulation_control->is_steady(),
-        dealii::ExcMessage(
-          "The lethe-fluid-matrix-free solver does not support viscous initial conditions for transient simulations."));
-
       // Set the nodal values to have an initial condition that is adequate
       this->set_nodal_values();
       this->present_solution.update_ghost_values();
@@ -1715,6 +1774,8 @@ MFNavierStokesSolver<dim>::set_initial_condition_fd(
         }
 
       // Solve the problem with the temporary viscosity
+      this->simulation_control->set_assembly_method(
+        Parameters::SimulationControl::TimeSteppingMethod::steady);
       PhysicsSolver<LinearAlgebra::distributed::Vector<double>>::
         solve_non_linear_system(false);
       this->finish_time_step();
@@ -1898,11 +1959,18 @@ template <int dim>
 void
 MFNavierStokesSolver<dim>::update_multiphysics_time_average_solution()
 {
-  // AssertThrow(
-  //   false,
-  //   ExcMessage(
-  //     "The update multiphysics time average solution is not implemented
-  //     yet."));
+  if (this->simulation_parameters.post_processing.calculate_average_velocities)
+    {
+      TrilinosWrappers::MPI::Vector temp_average_velocities(
+        this->locally_owned_dofs, this->mpi_communicator);
+      convert_vector_dealii_to_trilinos(
+        temp_average_velocities,
+        this->average_velocities->get_average_velocities());
+      this->multiphysics_average_velocities = temp_average_velocities;
+
+      this->multiphysics->set_time_average_solution(
+        PhysicsID::fluid_dynamics, &this->multiphysics_average_velocities);
+    }
 }
 
 template <int dim>
@@ -2011,6 +2079,52 @@ MFNavierStokesSolver<dim>::print_mg_setup_times()
       this->gmg_preconditioner->mg_setup_timer.reset();
       this->gmg_preconditioner->mg_vmult_timer.reset();
     }
+}
+
+template <int dim>
+void
+MFNavierStokesSolver<dim>::update_solutions_for_multiphysics()
+{
+  // Provide the fluid dynamics dof_handler to the multiphysics interface
+  this->multiphysics->set_dof_handler(PhysicsID::fluid_dynamics,
+                                      &this->dof_handler);
+
+
+
+  // Convert the present solution to multiphysics vector type and provide it to
+  // the multiphysics interface
+  TrilinosWrappers::MPI::Vector temp_solution(this->locally_owned_dofs,
+                                              this->mpi_communicator);
+
+  this->present_solution.update_ghost_values();
+  convert_vector_dealii_to_trilinos(temp_solution, this->present_solution);
+  multiphysics_present_solution = temp_solution;
+
+  this->multiphysics->set_solution(PhysicsID::fluid_dynamics,
+                                   &this->multiphysics_present_solution);
+
+  // Convert the previous solutions to multiphysics vector type and provide them
+  // to the multiphysics interface
+  const unsigned int number_of_previous_solutions =
+    this->simulation_control->get_number_of_previous_solution_in_assembly();
+
+  std::vector<TrilinosWrappers::MPI::Vector> temp_previous_solutions;
+
+  temp_previous_solutions.resize(number_of_previous_solutions);
+  for (auto &solution : temp_previous_solutions)
+    solution.reinit(this->locally_owned_dofs, this->mpi_communicator);
+
+  for (unsigned int i = 0; i < number_of_previous_solutions; i++)
+    {
+      this->previous_solutions[i].update_ghost_values();
+      convert_vector_dealii_to_trilinos(temp_previous_solutions[i],
+                                        this->previous_solutions[i]);
+
+      this->multiphysics_previous_solutions[i] = temp_previous_solutions[i];
+    }
+
+  this->multiphysics->set_previous_solutions(
+    PhysicsID::fluid_dynamics, &this->multiphysics_previous_solutions);
 }
 
 template <int dim>

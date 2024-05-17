@@ -118,6 +118,16 @@ subsection boundary conditions
 end
 
 #---------------------------------------------------
+# Source term
+#---------------------------------------------------
+
+subsection source term
+  subsection fluid dynamics
+    set enable = false
+  end
+end
+
+#---------------------------------------------------
 # Non-Linear Solver Control
 #---------------------------------------------------
 

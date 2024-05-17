@@ -136,15 +136,17 @@ NavierStokesOperatorBase<dim, number>::NavierStokesOperatorBase()
 
 template <int dim, typename number>
 NavierStokesOperatorBase<dim, number>::NavierStokesOperatorBase(
-  const Mapping<dim>                &mapping,
-  const DoFHandler<dim>             &dof_handler,
-  const AffineConstraints<number>   &constraints,
-  const Quadrature<dim>             &quadrature,
-  const Function<dim>               *forcing_function,
-  const double                       kinematic_viscosity,
-  const StabilizationType            stabilization,
-  const unsigned int                 mg_level,
-  std::shared_ptr<SimulationControl> simulation_control)
+  const Mapping<dim>                  &mapping,
+  const DoFHandler<dim>               &dof_handler,
+  const AffineConstraints<number>     &constraints,
+  const Quadrature<dim>               &quadrature,
+  const std::shared_ptr<Function<dim>> forcing_function,
+  const double                         kinematic_viscosity,
+  const StabilizationType              stabilization,
+  const unsigned int                   mg_level,
+  std::shared_ptr<SimulationControl>   simulation_control,
+  const bool                          &enable_hessians_jacobian,
+  const bool                          &enable_hessians_residual)
   : pcout(std::cout, Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0)
   , timer(this->pcout, TimerOutput::never, TimerOutput::wall_times)
 {
@@ -156,21 +158,25 @@ NavierStokesOperatorBase<dim, number>::NavierStokesOperatorBase(
                kinematic_viscosity,
                stabilization,
                mg_level,
-               simulation_control);
+               simulation_control,
+               enable_hessians_jacobian,
+               enable_hessians_residual);
 }
 
 template <int dim, typename number>
 void
 NavierStokesOperatorBase<dim, number>::reinit(
-  const Mapping<dim>                &mapping,
-  const DoFHandler<dim>             &dof_handler,
-  const AffineConstraints<number>   &constraints,
-  const Quadrature<dim>             &quadrature,
-  const Function<dim>               *forcing_function,
-  const double                       kinematic_viscosity,
-  const StabilizationType            stabilization,
-  const unsigned int                 mg_level,
-  std::shared_ptr<SimulationControl> simulation_control)
+  const Mapping<dim>                  &mapping,
+  const DoFHandler<dim>               &dof_handler,
+  const AffineConstraints<number>     &constraints,
+  const Quadrature<dim>               &quadrature,
+  const std::shared_ptr<Function<dim>> forcing_function,
+  const double                         kinematic_viscosity,
+  const StabilizationType              stabilization,
+  const unsigned int                   mg_level,
+  std::shared_ptr<SimulationControl>   simulation_control,
+  const bool                          &enable_hessians_jacobian,
+  const bool                          &enable_hessians_residual)
 {
   this->system_matrix.clear();
   this->constraints.copy_from(constraints);
@@ -202,6 +208,10 @@ NavierStokesOperatorBase<dim, number>::reinit(
       "Only SUPG/PSPG and GLS stabilization is supported at the moment.");
 
   this->simulation_control = simulation_control;
+
+  this->enable_hessians_jacobian = enable_hessians_jacobian;
+
+  this->enable_hessians_residual = enable_hessians_residual;
 
   this->compute_element_size();
 
@@ -622,8 +632,14 @@ NavierStokesOperatorBase<dim, number>::
     {
       integrator.reinit(cell);
       integrator.read_dof_values_plain(newton_step);
-      integrator.evaluate(EvaluationFlags::values | EvaluationFlags::gradients |
-                          EvaluationFlags::hessians);
+
+      if (this->enable_hessians_jacobian)
+        integrator.evaluate(EvaluationFlags::values |
+                            EvaluationFlags::gradients |
+                            EvaluationFlags::hessians);
+      else
+        integrator.evaluate(EvaluationFlags::values |
+                            EvaluationFlags::gradients);
 
       // Get previously calculated element size needed for tau
       const auto h = integrator.read_cell_data(this->get_element_size());
@@ -632,8 +648,10 @@ NavierStokesOperatorBase<dim, number>::
         {
           nonlinear_previous_values(cell, q)   = integrator.get_value(q);
           nonlinear_previous_gradient(cell, q) = integrator.get_gradient(q);
-          nonlinear_previous_hessian_diagonal(cell, q) =
-            integrator.get_hessian_diagonal(q);
+
+          if (this->enable_hessians_jacobian)
+            nonlinear_previous_hessian_diagonal(cell, q) =
+              integrator.get_hessian_diagonal(q);
 
           // Calculate tau
           VectorizedArray<number> u_mag_squared = 1e-12;
@@ -797,8 +815,11 @@ void
 NavierStokesStabilizedOperator<dim, number>::do_cell_integral_local(
   FECellIntegrator &integrator) const
 {
-  integrator.evaluate(EvaluationFlags::values | EvaluationFlags::gradients |
-                      EvaluationFlags::hessians);
+  if (this->enable_hessians_jacobian)
+    integrator.evaluate(EvaluationFlags::values | EvaluationFlags::gradients |
+                        EvaluationFlags::hessians);
+  else
+    integrator.evaluate(EvaluationFlags::values | EvaluationFlags::gradients);
 
   const unsigned int cell = integrator.get_current_cell_index();
 
@@ -813,13 +834,17 @@ NavierStokesStabilizedOperator<dim, number>::do_cell_integral_local(
 
   for (const auto q : integrator.quadrature_point_indices())
     {
-      // Evaluate source term function
       Tensor<1, dim, VectorizedArray<number>> source_value;
-      Point<dim, VectorizedArray<number>>     point_batch =
-        integrator.quadrature_point(q);
-      source_value =
-        evaluate_function<dim, number, dim>(*(this->forcing_function),
-                                            point_batch);
+
+      // Evaluate source term function if enabled
+      if (this->forcing_function)
+        {
+          Point<dim, VectorizedArray<number>> point_batch =
+            integrator.quadrature_point(q);
+          source_value =
+            evaluate_function<dim, number, dim>(*(this->forcing_function),
+                                                point_batch);
+        }
 
       // Add to source term the dynamic flow control force (zero if not enabled)
       source_value += this->beta_force;
@@ -828,8 +853,10 @@ NavierStokesStabilizedOperator<dim, number>::do_cell_integral_local(
       typename FECellIntegrator::value_type    value = integrator.get_value(q);
       typename FECellIntegrator::gradient_type gradient =
         integrator.get_gradient(q);
-      typename FECellIntegrator::gradient_type hessian_diagonal =
-        integrator.get_hessian_diagonal(q);
+      typename FECellIntegrator::gradient_type hessian_diagonal;
+
+      if (this->enable_hessians_jacobian)
+        hessian_diagonal = integrator.get_hessian_diagonal(q);
 
       // Result value/gradient we will use
       typename FECellIntegrator::value_type    value_result;
@@ -945,26 +972,29 @@ NavierStokesStabilizedOperator<dim, number>::do_cell_integral_local(
             {
               for (unsigned int k = 0; k < dim; ++k)
                 {
-                  for (unsigned int l = 0; l < dim; ++l)
+                  if (this->enable_hessians_jacobian)
                     {
-                      // +((u·∇)δu + (δu·∇)u - ν∆δu)τ(−ν∆v)
+                      for (unsigned int l = 0; l < dim; ++l)
+                        {
+                          // +((u·∇)δu + (δu·∇)u - ν∆δu)τ(−ν∆v)
+                          hessian_result[i][k][k] +=
+                            tau * -this->kinematic_viscosity *
+                            (gradient[i][l] * previous_values[l] +
+                             previous_gradient[i][l] * value[l] -
+                             this->kinematic_viscosity *
+                               hessian_diagonal[i][l]);
+                        }
+
+                      // +(∇δp)τ(−ν∆v)
                       hessian_result[i][k][k] +=
-                        tau * -this->kinematic_viscosity *
-                        (gradient[i][l] * previous_values[l] +
-                         previous_gradient[i][l] * value[l] -
-                         this->kinematic_viscosity * hessian_diagonal[i][l]);
+                        tau * -this->kinematic_viscosity * (gradient[dim][i]);
+
+                      // +(∂t δu)τ(−ν∆v)
+                      if (transient)
+                        hessian_result[i][k][k] += tau *
+                                                   -this->kinematic_viscosity *
+                                                   ((*bdf_coefs)[0] * value[i]);
                     }
-
-                  // +(∇δp)τ(−ν∆v)
-                  hessian_result[i][k][k] +=
-                    tau * -this->kinematic_viscosity * (gradient[dim][i]);
-
-                  // +(∂t δu)τ(−ν∆v)
-                  if (transient)
-                    hessian_result[i][k][k] += tau *
-                                               -this->kinematic_viscosity *
-                                               ((*bdf_coefs)[0] * value[i]);
-
 
                   // LSIC term
                   // (∇·δu)τ'(∇·v)
@@ -975,11 +1005,16 @@ NavierStokesStabilizedOperator<dim, number>::do_cell_integral_local(
 
       integrator.submit_gradient(gradient_result, q);
       integrator.submit_value(value_result, q);
-      integrator.submit_hessian(hessian_result, q);
+
+      if (this->enable_hessians_jacobian)
+        integrator.submit_hessian(hessian_result, q);
     }
 
-  integrator.integrate(EvaluationFlags::values | EvaluationFlags::gradients |
-                       EvaluationFlags::hessians);
+  if (this->enable_hessians_jacobian)
+    integrator.integrate(EvaluationFlags::values | EvaluationFlags::gradients |
+                         EvaluationFlags::hessians);
+  else
+    integrator.integrate(EvaluationFlags::values | EvaluationFlags::gradients);
 }
 
 /**
@@ -1006,8 +1041,14 @@ NavierStokesStabilizedOperator<dim, number>::local_evaluate_residual(
     {
       integrator.reinit(cell);
       integrator.read_dof_values_plain(src);
-      integrator.evaluate(EvaluationFlags::values | EvaluationFlags::gradients |
-                          EvaluationFlags::hessians);
+
+      if (this->enable_hessians_residual)
+        integrator.evaluate(EvaluationFlags::values |
+                            EvaluationFlags::gradients |
+                            EvaluationFlags::hessians);
+      else
+        integrator.evaluate(EvaluationFlags::values |
+                            EvaluationFlags::gradients);
 
       // To identify whether the problem is transient or steady
       bool transient =
@@ -1021,13 +1062,17 @@ NavierStokesStabilizedOperator<dim, number>::local_evaluate_residual(
 
       for (const auto q : integrator.quadrature_point_indices())
         {
-          // Evaluate source term function
           Tensor<1, dim, VectorizedArray<number>> source_value;
-          Point<dim, VectorizedArray<number>>     point_batch =
-            integrator.quadrature_point(q);
-          source_value =
-            evaluate_function<dim, number, dim>(*(this->forcing_function),
-                                                point_batch);
+
+          // Evaluate source term function if enabled
+          if (this->forcing_function)
+            {
+              Point<dim, VectorizedArray<number>> point_batch =
+                integrator.quadrature_point(q);
+              source_value =
+                evaluate_function<dim, number, dim>(*(this->forcing_function),
+                                                    point_batch);
+            }
 
           // Add to source term the dynamic flow control force (zero if not
           // enabled)
@@ -1037,8 +1082,10 @@ NavierStokesStabilizedOperator<dim, number>::local_evaluate_residual(
           typename FECellIntegrator::value_type value = integrator.get_value(q);
           typename FECellIntegrator::gradient_type gradient =
             integrator.get_gradient(q);
-          typename FECellIntegrator::gradient_type hessian_diagonal =
-            integrator.get_hessian_diagonal(q);
+          typename FECellIntegrator::gradient_type hessian_diagonal;
+
+          if (this->enable_hessians_residual)
+            hessian_diagonal = integrator.get_hessian_diagonal(q);
 
           // Time derivatives of previous solutions
           Tensor<1, dim + 1, VectorizedArray<number>> previous_time_derivatives;
@@ -1138,27 +1185,29 @@ NavierStokesStabilizedOperator<dim, number>::local_evaluate_residual(
                 {
                   for (unsigned int k = 0; k < dim; ++k)
                     {
-                      for (unsigned int l = 0; l < dim; ++l)
+                      if (this->enable_hessians_residual)
                         {
-                          // (-ν∆u + (u·∇)u)τ(−ν∆v)
+                          for (unsigned int l = 0; l < dim; ++l)
+                            {
+                              // (-ν∆u + (u·∇)u)τ(−ν∆v)
+                              hessian_result[i][k][k] +=
+                                tau * -this->kinematic_viscosity *
+                                (-this->kinematic_viscosity *
+                                   hessian_diagonal[i][l] +
+                                 gradient[i][l] * value[l]);
+                            }
+                          // + (∇p - f)τ(−ν∆v)
                           hessian_result[i][k][k] +=
                             tau * -this->kinematic_viscosity *
-                            (-this->kinematic_viscosity *
-                               hessian_diagonal[i][l] +
-                             gradient[i][l] * value[l]);
+                            (gradient[dim][i] - source_value[i]);
+
+                          // + (∂t u)τ(−ν∆v)
+                          if (transient)
+                            hessian_result[i][k][k] +=
+                              tau * -this->kinematic_viscosity *
+                              ((*bdf_coefs)[0] * value[i] +
+                               previous_time_derivatives[i]);
                         }
-                      // + (∇p - f)τ(−ν∆v)
-                      hessian_result[i][k][k] +=
-                        tau * -this->kinematic_viscosity *
-                        (gradient[dim][i] - source_value[i]);
-
-                      // + (∂t u)τ(−ν∆v)
-                      if (transient)
-                        hessian_result[i][k][k] +=
-                          tau * -this->kinematic_viscosity *
-                          ((*bdf_coefs)[0] * value[i] +
-                           previous_time_derivatives[i]);
-
 
                       // LSIC term
                       // (∇·u)τ'(∇·v)
@@ -1169,13 +1218,19 @@ NavierStokesStabilizedOperator<dim, number>::local_evaluate_residual(
 
           integrator.submit_gradient(gradient_result, q);
           integrator.submit_value(value_result, q);
-          integrator.submit_hessian(hessian_result, q);
+          if (this->enable_hessians_residual)
+            integrator.submit_hessian(hessian_result, q);
         }
 
-      integrator.integrate_scatter(EvaluationFlags::values |
-                                     EvaluationFlags::gradients |
-                                     EvaluationFlags::hessians,
-                                   dst);
+      if (this->enable_hessians_residual)
+        integrator.integrate_scatter(EvaluationFlags::values |
+                                       EvaluationFlags::gradients |
+                                       EvaluationFlags::hessians,
+                                     dst);
+      else
+        integrator.integrate_scatter(EvaluationFlags::values |
+                                       EvaluationFlags::gradients,
+                                     dst);
     }
 }
 
