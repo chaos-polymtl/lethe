@@ -19,16 +19,16 @@ Reading VOF checkpoint
 Transient iteration: 3        Time: 0.3      Time step: 0.1      CFL: 5.35622 
 *******************************************************************************
 Temperature statistics on fluid : 
-	     Min : 5.47645e-15
-	     Max : 0.959821
-	 Average : 0.0542959
-	 Std-Dev : 0.161996
+	     Min : 5.29557e-15
+	     Max : 0.966736
+	 Average : 0.0567888
+	 Std-Dev : 0.168812
 
 *******************************************************************************
 Transient iteration: 4        Time: 0.4      Time step: 0.1      CFL: 5.27749 
 *******************************************************************************
 Temperature statistics on fluid : 
-	     Min : 3.03447e-14
-	     Max : 0.967398
-	 Average : 0.0623577
-	 Std-Dev : 0.172861
+	     Min : 2.96593e-14
+	     Max : 0.973569
+	 Average : 0.0658253
+	 Std-Dev : 0.181219
