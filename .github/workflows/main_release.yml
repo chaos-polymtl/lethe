@@ -9,6 +9,8 @@ on:
   pull_request:
     paths-ignore:
       - 'doc/**'
+      - 'contrib/**'
+      - 'examples/**'
 
 # Cancels running instances when a pull request is updated by a commit
 concurrency:
