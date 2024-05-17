@@ -205,3 +205,63 @@ PhaseChangeRheology::vector_jacobian(
                                                    "temperature"));
   vector_numerical_jacobian(field_vectors, id, jacobian_vector);
 }
+
+/**
+ * @brief Calculates the kinematic viscosity used in PSPG and SUPG stabilizations.
+ * @param[in] field_values Value of the various fields on which the property may
+ * depend.
+ */
+double
+PhaseChangeRheology::get_kinematic_viscosity_for_stabilization(
+  const std::map<field, double> & /*field_values*/)
+{
+  return param.kinematic_viscosity_l;
+}
+
+/**
+ * @brief Calculates the vector values of the kinematic viscosity used in PSPG and SUPG stabilizations.
+ * @param[in] field_vectors Value of the fields on which the property may
+ * depend on.
+ * @param[out] property_vector Vector of computed viscosities.
+ */
+void
+PhaseChangeRheology::get_kinematic_viscosity_for_stabilization_vector(
+  const std::map<field, std::vector<double>> & /*field_vectors*/,
+  std::vector<double> &property_vector)
+{
+  std::fill(property_vector.begin(),
+            property_vector.end(),
+            param.kinematic_viscosity_l);
+}
+
+/**
+ * @brief Calculates the dynamic viscosity used in PSPG and SUPG stabilizations.
+ * @param[in] p_density_ref The density of the fluid at the reference state
+ * @param[in] field_values Value of the various fields on which the property may
+ * depend.
+ */
+double
+PhaseChangeRheology::get_dynamic_viscosity_for_stabilization(
+  const double &p_density_ref,
+  const std::map<field, double> & /*field_values*/)
+{
+  return param.kinematic_viscosity_l * p_density_ref;
+}
+
+/**
+ * @brief Calculates the vector values of the dynamic viscosity used in PSPG and SUPG stabilizations.
+ * @param[in] p_density_ref The density of the fluid at the reference state
+ * @param[in] field_vectors Value of the fields on which the property may
+ * depend on.
+ * @param[out] property_vector Vector of computed viscosities.
+ */
+void
+PhaseChangeRheology::get_dynamic_viscosity_for_stabilization_vector(
+  const double &p_density_ref,
+  const std::map<field, std::vector<double>> & /*field_vectors*/,
+  std::vector<double> &property_vector)
+{
+  std::fill(property_vector.begin(),
+            property_vector.end(),
+            param.kinematic_viscosity_l * p_density_ref);
+}

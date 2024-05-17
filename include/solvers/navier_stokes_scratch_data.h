@@ -1021,9 +1021,14 @@ public:
   std::vector<double>                  dynamic_viscosity;
   std::vector<double>                  kinematic_viscosity;
   double                               kinematic_viscosity_scale;
-  std::vector<double>                  thermal_expansion;
-  std::vector<double>                  grad_kinematic_viscosity_shear_rate;
-  std::vector<std::vector<double>>     previous_density;
+  /// Values of the kinematic viscosity used in the SUPG and PSPG
+  /// stabilizations.
+  std::vector<double> kinematic_viscosity_for_stabilization;
+  /// Values of the dynamic viscosity used in the SUPG and PSPG stabilizations.
+  std::vector<double>              dynamic_viscosity_for_stabilization;
+  std::vector<double>              thermal_expansion;
+  std::vector<double>              grad_kinematic_viscosity_shear_rate;
+  std::vector<std::vector<double>> previous_density;
 
   // Pressure scaling factor to facilitate different scales between velocity and
   // pressure
@@ -1041,6 +1046,16 @@ public:
   std::vector<double> dynamic_viscosity_1;
   std::vector<double> kinematic_viscosity_0;
   std::vector<double> kinematic_viscosity_1;
+  /// Scale of the kinematic viscosity for fluid 0.
+  double kinematic_viscosity_scale_0;
+  /// Scale of the kinematic viscosity for fluid 1.
+  double kinematic_viscosity_scale_1;
+  /// Values of the dynamic viscosity used in the SUPG and PSPG stabilizations
+  /// for fluid 0.
+  std::vector<double> dynamic_viscosity_for_stabilization_0;
+  /// Values of the dynamic viscosity used in the SUPG and PSPG stabilizations
+  /// for fluid 1.
+  std::vector<double> dynamic_viscosity_for_stabilization_1;
   std::vector<double> thermal_expansion_0;
   std::vector<double> thermal_expansion_1;
   std::vector<double> surface_tension;
