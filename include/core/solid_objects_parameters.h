@@ -128,11 +128,10 @@ namespace Parameters
         "inserted points will be higher for higher dimensions. Increasing this"
         "number will lead to a higher points density inside the solid.");
 
-      prm.enter_subsection("center of rotation");
-      prm.declare_entry("x", "0", Patterns::Double(), "X COR");
-      prm.declare_entry("y", "0", Patterns::Double(), "Y COR");
-      prm.declare_entry("z", "0", Patterns::Double(), "Z COR");
-      prm.leave_subsection();
+      prm.declare_entry("center of rotation",
+                        "0., 0., 0.",
+                        Patterns::List(Patterns::Double()),
+                        "Solid object center of rotation");
 
       prm.declare_entry("calculate force on solid",
                         "false",
@@ -177,12 +176,18 @@ namespace Parameters
       stop_particles_lost      = prm.get_bool("stop if particles lost");
       number_quadrature_points = prm.get_integer("number quadrature points");
 
-      prm.enter_subsection("center of rotation");
-      center_of_rotation[0] = prm.get_double("x");
-      center_of_rotation[1] = prm.get_double("y");
-      if (dim == 3)
-        center_of_rotation[2] = prm.get_double("z");
-      prm.leave_subsection();
+      const std::vector<double> temp =
+        convert_string_to_vector<double>(prm, "center of rotation");
+
+      AssertThrow(temp.size() >= dim,
+                  ExcMessage("Invalid center of rotation. This should be a " +
+                             Utilities::int_to_string(dim) +
+                             " dimensional point."));
+
+      for (unsigned int i = 0; i < dim; ++i)
+        {
+          center_of_rotation[i] = temp.at(i);
+        }
 
       calculate_force_on_solid  = prm.get_bool("calculate force on solid");
       calculate_torque_on_solid = prm.get_bool("calculate torque on solid");
@@ -312,12 +317,10 @@ namespace Parameters
       angular_velocity->declare_parameters(prm, 3);
       prm.leave_subsection();
 
-
-      prm.enter_subsection("center of rotation");
-      prm.declare_entry("x", "0", Patterns::Double(), "X COR");
-      prm.declare_entry("y", "0", Patterns::Double(), "Y COR");
-      prm.declare_entry("z", "0", Patterns::Double(), "Z COR");
-      prm.leave_subsection();
+      prm.declare_entry("center of rotation",
+                        "0., 0., 0.",
+                        Patterns::List(Patterns::Double()),
+                        "Solid object center of rotation");
 
       prm.declare_entry("output solid object",
                         "true",
@@ -343,12 +346,18 @@ namespace Parameters
       angular_velocity->parse_parameters(prm);
       prm.leave_subsection();
 
-      prm.enter_subsection("center of rotation");
-      center_of_rotation[0] = prm.get_double("x");
-      center_of_rotation[1] = prm.get_double("y");
-      if (dim == 3)
-        center_of_rotation[2] = prm.get_double("z");
-      prm.leave_subsection();
+      const std::vector<double> temp =
+        convert_string_to_vector<double>(prm, "center of rotation");
+
+      AssertThrow(temp.size() >= dim,
+                  ExcMessage("Invalid center of rotation. This should be a " +
+                             Utilities::int_to_string(dim) +
+                             " dimensional point."));
+
+      for (unsigned int i = 0; i < dim; ++i)
+        {
+          center_of_rotation[i] = temp.at(i);
+        }
 
       output_bool = prm.get_bool("output solid object");
     }

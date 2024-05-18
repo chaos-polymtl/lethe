@@ -113,11 +113,7 @@ subsection solid objects
         set Function expression = 0 ; 0  ; 0
       end # angular velocity
 
-      subsection center of rotation
-        set x = 0.1
-        set y = 0
-        set z = 0.05
-      end # center of rotation
+      set center of rotation =  0.1, 0., 0.05
     end # solid object 0
   end # two dimensions
 end # solid objects

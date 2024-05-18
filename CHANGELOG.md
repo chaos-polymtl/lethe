@@ -3,6 +3,12 @@
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Master] - 2024-06-01
+
+### Changed
+
+- MINOR The center of rotation of a solid object is no longer being defined using a subsection and three parameters. It is now defined with one parameter and a list of double. For more information, see the solid object documentation. [#1169](https://github.com/chaos-polymtl/lethe/pull/1169)
+
 ## [Master] - 2024-06-13
 
 ### Added
