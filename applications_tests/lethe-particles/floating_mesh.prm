@@ -91,18 +91,19 @@ end
 #---------------------------------------------------
 
 subsection solid objects
-  set number of solids = 1
-  subsection solid object 0
-    subsection mesh
-      set type               = dealii
-      set file name          = hyper_cube
-      set grid arguments     = 0 : 0.04 : false
-      set simplex            = true
-      set initial refinement = 0
-    end
-
-    subsection translational velocity
-      set Function expression = 0 ; 0 ; 0.02
-    end
-  end
-end
+  subsection two dimensions
+    set number of solids = 1
+      subsection solid object 0
+        subsection translational velocity
+          set Function expression = 0 ; 0 ; 0.02
+        end # translational velocity
+        subsection mesh
+          set type               = dealii
+          set file name          = hyper_cube
+          set grid arguments     = 0 : 0.04 : false
+          set simplex            = true
+          set initial refinement = 0
+        end # mesh
+      end # solid object 0
+  end # two dimensions
+end # solid objects

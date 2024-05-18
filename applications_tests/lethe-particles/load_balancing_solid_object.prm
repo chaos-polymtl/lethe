@@ -96,29 +96,28 @@ end
 #---------------------------------------------------
 
 subsection solid objects
-  set number of solids = 1
-  subsection solid object 0
-    subsection mesh
-      set type               = gmsh
-      set file name          = ../square.msh
-      set simplex            = true
-      set initial refinement = 0
-    end
+  subsection two dimensions
+    set number of solids = 1
+    subsection solid object 0
+      subsection mesh
+        set type               = gmsh
+        set file name          = ../square.msh
+        set simplex            = true
+        set initial refinement = 0
+      end # mesh
 
-    subsection translational velocity
-      set Function expression = 0 ; if(t>0.5,if(t<0.7,1,0),0) ; 0
-    end
-    subsection angular velocity
-      set Function expression = 0 ; 0  ; 0
-    end
+      subsection translational velocity
+        set Function expression = 0 ; if(t>0.5,if(t<0.7,1,0),0) ; 0
+      end # translational velocity
+      subsection angular velocity
+        set Function expression = 0 ; 0  ; 0
+      end # angular velocity
 
-    subsection center of rotation
-      # X COR
-      set x = 0.1
-      # Y COR
-      set y = 0
-      # Z COR
-      set z = 0.05
-    end
-  end
-end
+      subsection center of rotation
+        set x = 0.1
+        set y = 0
+        set z = 0.05
+      end # center of rotation
+    end # solid object 0
+  end # two dimensions
+end # solid objects

@@ -269,9 +269,11 @@ namespace Parameters
   {
   public:
     RigidSolidObject()
-      : translational_velocity(dim)
-      , angular_velocity(dim)
-    {}
+    {
+      translational_velocity =
+        std::make_shared<Functions::ParsedFunction<dim>>(dim);
+      angular_velocity = std::make_shared<Functions::ParsedFunction<dim>>(3);
+    }
 
     void
     declare_parameters(ParameterHandler &prm, unsigned int id);
@@ -285,8 +287,8 @@ namespace Parameters
     bool output_bool;
 
     // Solid velocity
-    Functions::ParsedFunction<dim> translational_velocity;
-    Functions::ParsedFunction<dim> angular_velocity;
+    std::shared_ptr<Functions::ParsedFunction<dim>> translational_velocity;
+    std::shared_ptr<Functions::ParsedFunction<dim>> angular_velocity;
     Point<dim>
       center_of_rotation; // Center of rotation used to locate the center of the
                           // object and also used to rotate the object
@@ -303,11 +305,11 @@ namespace Parameters
       solid_mesh.declare_parameters(prm);
 
       prm.enter_subsection("translational velocity");
-      translational_velocity.declare_parameters(prm, dim);
+      translational_velocity->declare_parameters(prm, dim);
       prm.leave_subsection();
 
       prm.enter_subsection("angular velocity");
-      angular_velocity.declare_parameters(prm, 3);
+      angular_velocity->declare_parameters(prm, 3);
       prm.leave_subsection();
 
 
@@ -334,11 +336,11 @@ namespace Parameters
     {
       solid_mesh.parse_parameters(prm);
       prm.enter_subsection("translational velocity");
-      translational_velocity.parse_parameters(prm);
+      translational_velocity->parse_parameters(prm);
       prm.leave_subsection();
 
       prm.enter_subsection("angular velocity");
-      angular_velocity.parse_parameters(prm);
+      angular_velocity->parse_parameters(prm);
       prm.leave_subsection();
 
       prm.enter_subsection("center of rotation");
