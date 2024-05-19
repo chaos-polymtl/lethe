@@ -1597,8 +1597,7 @@ FluidDynamicsVANS<dim>::assemble_system_matrix()
                                       *this->mapping);
 
     scratch_data.enable_particle_fluid_interactions(
-      particle_handler.n_global_max_particles_per_cell(),
-      this->cfd_dem_simulation_parameters.cfd_dem.interpolated_void_fraction);
+      particle_handler.n_global_max_particles_per_cell());
 
     WorkStream::run(
       this->dof_handler.begin_active(),
@@ -1702,8 +1701,7 @@ FluidDynamicsVANS<dim>::assemble_system_rhs()
                                     *this->mapping);
 
   scratch_data.enable_particle_fluid_interactions(
-    particle_handler.n_global_max_particles_per_cell(),
-    this->cfd_dem_simulation_parameters.cfd_dem.interpolated_void_fraction);
+    particle_handler.n_global_max_particles_per_cell());
 
   WorkStream::run(
     this->dof_handler.begin_active(),

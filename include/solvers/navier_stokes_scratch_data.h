@@ -39,6 +39,8 @@
 #include <deal.II/fe/fe_system.h>
 #include <deal.II/fe/mapping.h>
 
+#include <deal.II/matrix_free/fe_point_evaluation.h>
+
 #include <deal.II/numerics/vector_tools.h>
 
 #include <deal.II/particles/particle_handler.h>
@@ -186,8 +188,7 @@ public:
                            sd.fe_values_void_fraction->get_quadrature(),
                            sd.fe_values_void_fraction->get_mapping());
     if (sd.gather_particles_information)
-      enable_particle_fluid_interactions(sd.max_number_of_particles_per_cell,
-                                         sd.interpolated_void_fraction);
+      enable_particle_fluid_interactions(sd.max_number_of_particles_per_cell);
     if (sd.gather_temperature)
       enable_heat_transfer(sd.fe_values_temperature->get_fe(),
                            sd.fe_values_temperature->get_quadrature(),
@@ -458,7 +459,7 @@ public:
                           this->fe_face_values[velocities].gradient(k, q);
                         this->face_hess_phi_u[face][q][k] =
                           this->fe_face_values[velocities].hessian(k, q);
-                        for (int d = 0; d < dim; ++d)
+                        for (unsigned int d = 0; d < dim; ++d)
                           this->face_laplacian_phi_u[face][q][k][d] =
                             trace(this->face_hess_phi_u[face][q][k][d]);
                         // Pressure
@@ -646,17 +647,12 @@ public:
   /**
    * @brief enable_particle_fluid_interactions Enables the calculation of the drag force by the scratch
    *
-   * @param fe FiniteElement associated with the void fraction
-   *
-   * @param quadrature Quadrature rule of the Navier-Stokes problem assembly
-   *
-   * @param mapping Mapping used for the Navier-Stokes problem assembly
+   * @param global maximum number of particles per cell
    */
 
   void
   enable_particle_fluid_interactions(
-    const unsigned int n_global_max_particles_per_cell,
-    const bool         enable_void_fraction_interpolation);
+    const unsigned int n_global_max_particles_per_cell);
 
   /** @brief Calculates the content of the scratch for the particle fluid
    * interactions
@@ -683,63 +679,45 @@ public:
     DoFHandler<dim>                       &dof_handler,
     DoFHandler<dim>                       &void_fraction_dof_handler)
   {
+    // TODO compute hessian at particles location
+
     pic = particle_handler.particles_in_cell(this->fe_values.get_cell());
 
     average_particle_velocity = 0;
     cell_volume =
       compute_cell_measure_with_JxW(this->fe_values.get_JxW_values());
 
-    // Loop over particles in cell
-    double total_particle_volume = 0;
-    {
-      unsigned int particle_i = 0;
-      for (auto &particle : pic)
-        {
-          auto particle_properties = particle.get_properties();
-          // Set the particle_fluid_interactions properties and vectors to 0
-          for (int d = 0; d < dim; ++d)
-            {
-              particle_properties[DEM::PropertiesIndex::fem_force_x + d]  = 0.;
-              particle_properties[DEM::PropertiesIndex::fem_torque_x + d] = 0.;
-              undisturbed_flow_force[d]                                   = 0.;
-            }
-
-          // Stock the values of particle velocity in a tensor
-          particle_velocity[particle_i][0] =
-            particle_properties[DEM::PropertiesIndex::v_x];
-          particle_velocity[particle_i][1] =
-            particle_properties[DEM::PropertiesIndex::v_y];
-          if constexpr (dim == 3)
-            particle_velocity[particle_i][2] =
-              particle_properties[DEM::PropertiesIndex::v_z];
-
-          cell_void_fraction[particle_i] = 0;
-          if (!interpolated_void_fraction)
-            total_particle_volume +=
-              M_PI * pow(particle_properties[DEM::PropertiesIndex::dp], dim) /
-              (2 * dim);
-
-          average_particle_velocity += particle_velocity[particle_i];
-          particle_i++;
-        }
-      number_of_particles = particle_i;
-    }
-
-
-
-    if (!this->interpolated_void_fraction)
+    unsigned int particle_i = 0.;
+    for (auto &particle : pic)
       {
-        double cell_void_fraction_bulk = 0;
-        cell_void_fraction_bulk =
-          (cell_volume - total_particle_volume) / cell_volume;
+        auto particle_properties = particle.get_properties();
 
-        for (unsigned int j = 0; j < number_of_particles; ++j)
-          cell_void_fraction[j] = cell_void_fraction_bulk;
+        // Set the particle_fluid_interactions properties and vectors to 0
+        for (int d = 0; d < dim; ++d)
+          {
+            particle_properties[DEM::PropertiesIndex::fem_force_x + d]  = 0.;
+            particle_properties[DEM::PropertiesIndex::fem_torque_x + d] = 0.;
+            undisturbed_flow_force[d]                                   = 0.;
+          }
+
+        // Stock the values of particle velocity in a tensor
+        particle_velocity[particle_i][0] =
+          particle_properties[DEM::PropertiesIndex::v_x];
+        particle_velocity[particle_i][1] =
+          particle_properties[DEM::PropertiesIndex::v_y];
+        if constexpr (dim == 3)
+          particle_velocity[particle_i][2] =
+            particle_properties[DEM::PropertiesIndex::v_z];
+
+        cell_void_fraction[particle_i] = 0.;
+
+        average_particle_velocity += particle_velocity[particle_i];
+        particle_i++;
       }
+    number_of_particles = particle_i;
 
     if (number_of_particles == 0)
       return;
-
 
     // Calculate the average particle velocity within
     // the cell
@@ -759,7 +737,10 @@ public:
       }
 
     // Create a point evaluator for the Navier-Stokes equations
-    FEPointEvaluation<dim+1, dim> evaluator(this->fe_values.get_mapping(), this->fe_values.get_fe(), update_values | update_gradients | update_hessians);
+    FEPointEvaluation<dim + 1, dim> fe_point_evaluator(
+      this->fe_values.get_mapping(),
+      this->fe_values.get_fe(),
+      update_values | update_gradients); // | update_hessians);
 
     // Reallocate memory for the fields to be interpolated at the particle
     // location This has to be done for every cell because deal.II expects the
@@ -771,7 +752,6 @@ public:
     fluid_velocity_curls_at_particle_location_3d.resize(number_of_particles);
     fluid_pressure_gradients_at_particle_location.resize(number_of_particles);
 
-
     // Evaluate the relevant information at the
     // quadrature points to do the interpolation.
     const auto &velocity_cell =
@@ -779,70 +759,82 @@ public:
                                               &dof_handler);
 
     Vector<double> local_dof_values(this->fe_values.get_fe().dofs_per_cell);
-    velocity_cell->get_dof_values(previous_solution,local_dof_values);
-    evaluator.reinit(velocity_cell, particle_reference_location);
+    velocity_cell->get_dof_values(previous_solution, local_dof_values);
+    fe_point_evaluator.reinit(velocity_cell, particle_reference_location);
 
-    evaluator.evaluate(make_array_view(local_dof_values),
-                       EvaluationFlags::values | EvaluationFlags::gradients | EvaluationFlags::hessians);
+    fe_point_evaluator.evaluate(
+      make_array_view(local_dof_values),
+      EvaluationFlags::values |
+        EvaluationFlags::gradients); // | EvaluationFlags::hessians);
 
-    Tensor<1,dim+1> temporary_storage_value;
-   typename FEPointEvaluationBase<dim+1, dim, dim, double>::gradient_type temporary_storage_gradient;
-  // Tensor<3,dim+1> temporary_storage_hessian;
+    // Container for velocity and pressure values and gradients
+    Tensor<1, dim + 1> temporary_value;
+    typename FEPointEvaluation<dim + 1, dim, dim, double>::gradient_type
+      temporary_gradient;
+    // Tensor<3, dim + 1> temporary_storage_hessian;
+
     // Calculate all fluid properties at the particle location
-    for (unsigned int i = 0 ; i < number_of_particles ; ++i)
+    for (unsigned int i = 0; i < number_of_particles; ++i)
       {
-        temporary_storage_value = evaluator.get_value(i);
-        temporary_storage_gradient = evaluator.get_gradient(i);
-        //temporary_storage_hessian = evaluator.get_gradient(i);
+        temporary_value    = fe_point_evaluator.get_value(i);
+        temporary_gradient = fe_point_evaluator.get_gradient(i);
+        // temporary_storage_hessian = evaluator.get_value(i);
 
-        for (unsigned int d = 0 ; d < dim; ++d)
+        // Store values
+        for (unsigned int d = 0; d < dim; ++d)
           {
-            fluid_velocity_at_particle_location[i][d] =
-              temporary_storage_value[d];
-            fluid_pressure_gradients_at_particle_location[i][d] = temporary_storage_gradient[dim][d];
+            fluid_velocity_at_particle_location[i][d] = temporary_value[d];
+            fluid_pressure_gradients_at_particle_location[i][d] =
+              temporary_gradient[dim][d];
           }
+
+        // Compute velocity curls from gradient
+        if constexpr (dim == 2)
+          {
+            fluid_velocity_curls_at_particle_location_2d[i] =
+              (temporary_gradient[0][1] - temporary_gradient[1][0]);
+          }
+        else if constexpr (dim == 3)
+          {
+            const Tensor<1, 3> temporary_curls(
+              {temporary_gradient[1][2] - temporary_gradient[2][1],
+               temporary_gradient[2][0] - temporary_gradient[0][2],
+               temporary_gradient[0][1] - temporary_gradient[1][0]});
+
+            fluid_velocity_curls_at_particle_location_3d[i] = temporary_curls;
+          }
+
+        // Compute velocity laplacian
+        // fluid_velocity_laplacian_at_particle_location =
+        // temporary_gradient.divergence();
       }
-
-  //  evaluator[velocities].get_function_laplacians(
-  //    previous_solution, fluid_velocity_laplacian_at_particle_location);
-
-//if constexpr (dim == 2)
-//  {
-//    evaluator[velocities].get_function_curls(
-//      previous_solution, fluid_velocity_curls_at_particle_location_2d);
-//  }
-//else if constexpr (dim == 3)
-//  {
-//    evaluator[velocities].get_function_curls(
-//      previous_solution, fluid_velocity_curls_at_particle_location_3d);
-//  }
 
     // Create a quadrature for the void fraction that is based on the particle
     // reference location
-    if (this->interpolated_void_fraction)
+    FEPointEvaluation<1, dim> evaluator_void_fraction(
+      this->fe_values_void_fraction->get_mapping(),
+      this->fe_values_void_fraction->get_fe(),
+      update_values);
+
+    Vector<double> local_dof_values_void_fraction(
+      this->fe_values_void_fraction->get_fe().dofs_per_cell);
+
+    const auto &void_fraction_dh_cell = typename DoFHandler<dim>::cell_iterator(
+      *this->fe_values_void_fraction->get_cell(), &void_fraction_dof_handler);
+
+    void_fraction_dh_cell->get_dof_values(void_fraction_solution,
+                                          local_dof_values_void_fraction);
+    evaluator_void_fraction.reinit(velocity_cell, particle_reference_location);
+
+    evaluator_void_fraction.evaluate(
+      make_array_view(local_dof_values_void_fraction), EvaluationFlags::values);
+    for (unsigned int i = 0; i < number_of_particles; ++i)
       {
-        FEPointEvaluation<1, dim> evaluator_void_fraction(this->fe_values_void_fraction->get_mapping(), this->fe_values_void_fraction->get_fe(), update_values);
-
-        Vector<double> local_dof_values_void_fraction(this->fe_values_void_fraction->get_fe().dofs_per_cell);
-
-        const auto &void_fraction_dh_cell =
-          typename DoFHandler<dim>::cell_iterator(
-            *this->fe_values_void_fraction->get_cell(),
-            &void_fraction_dof_handler);
-
-        void_fraction_dh_cell->get_dof_values(void_fraction_solution,local_dof_values_void_fraction);
-        evaluator_void_fraction.reinit(velocity_cell, particle_reference_location);
-
-        evaluator_void_fraction.evaluate(make_array_view(local_dof_values_void_fraction),
-                                EvaluationFlags::values);
-        for (unsigned int i = 0 ; i < number_of_particles ; ++i)
-          {
-            cell_void_fraction[i] =    evaluator_void_fraction.get_value(i);
-          }
+        cell_void_fraction[i] = evaluator_void_fraction.get_value(i);
       }
 
     // Relative velocity and particle Reynolds
-    unsigned int particle_i                  = 0;
+    particle_i                               = 0;
     average_fluid_particle_relative_velocity = 0;
 
     // TODO, get the real viscosity at the particle localtion
@@ -1157,7 +1149,6 @@ public:
    * Scratch component for the particle fluid interaction auxiliary physics
    */
   bool                        gather_particles_information;
-  bool                        interpolated_void_fraction;
   std::vector<Tensor<1, dim>> particle_velocity;
   Tensor<1, dim>              average_particle_velocity;
   std::vector<Tensor<1, dim>> fluid_velocity_at_particle_location;

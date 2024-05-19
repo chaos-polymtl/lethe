@@ -103,11 +103,6 @@ namespace Parameters
                       "true",
                       Patterns::Bool(),
                       "Choose whether or not to implement d(epsilon)/dt ");
-    prm.declare_entry(
-      "interpolated void fraction",
-      "true",
-      Patterns::Bool(),
-      "Choose whether the void fraction is the one of the cell or the one interpolated at the particle position.");
     prm.declare_entry("drag force",
                       "true",
                       Patterns::Bool(),
@@ -183,19 +178,18 @@ namespace Parameters
     grad_div = prm.get_bool("grad div");
     void_fraction_time_derivative =
       prm.get_bool("void fraction time derivative");
-    interpolated_void_fraction = prm.get_bool("interpolated void fraction");
-    drag_force                 = prm.get_bool("drag force");
-    buoyancy_force             = prm.get_bool("buoyancy force");
-    shear_force                = prm.get_bool("shear force");
-    pressure_force             = prm.get_bool("pressure force");
-    saffman_lift_force         = prm.get_bool("saffman lift force");
-    magnus_lift_force          = prm.get_bool("magnus lift force");
-    rotational_viscous_torque  = prm.get_bool("rotational viscous torque");
-    vortical_viscous_torque    = prm.get_bool("vortical viscous torque");
-    coupling_frequency         = prm.get_integer("coupling frequency");
-    cstar                      = prm.get_double("grad-div length scale");
-    implicit_stabilization     = prm.get_bool("implicit stabilization");
-    particle_statistics        = prm.get_bool("particle statistics");
+    drag_force                = prm.get_bool("drag force");
+    buoyancy_force            = prm.get_bool("buoyancy force");
+    shear_force               = prm.get_bool("shear force");
+    pressure_force            = prm.get_bool("pressure force");
+    saffman_lift_force        = prm.get_bool("saffman lift force");
+    magnus_lift_force         = prm.get_bool("magnus lift force");
+    rotational_viscous_torque = prm.get_bool("rotational viscous torque");
+    vortical_viscous_torque   = prm.get_bool("vortical viscous torque");
+    coupling_frequency        = prm.get_integer("coupling frequency");
+    cstar                     = prm.get_double("grad-div length scale");
+    implicit_stabilization    = prm.get_bool("implicit stabilization");
+    particle_statistics       = prm.get_bool("particle statistics");
 
     const std::string op = prm.get("drag model");
     if (op == "difelice")
