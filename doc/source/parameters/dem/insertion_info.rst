@@ -10,7 +10,7 @@ In this subsection, insertion methods which are ``volume``, ``plane``, ``list`` 
 .. code-block:: text
 
   subsection insertion info
-    # Choices are volume|plane|list|file
+    # Choices are volume|plane|list|file|clear_and_add
     set insertion method                               = volume
 
     # Every method
@@ -51,6 +51,11 @@ In this subsection, insertion methods which are ``volume``, ``plane``, ``list`` 
 
     # If method = file
     set insertion file name                            = particles.input
+
+    # If method = clear_and_add
+    set list of input files                            = particles.input
+    set clearing box points coordinates                = 0., 0., 0.: 1., 1., 1.
+
   end
 
 The ``insertion method`` parameter chooses the type of insertion. Acceptable choices are ``volume``, ``plane``, ``list`` and ``file``. Different insertion method can share the same parameter.
@@ -134,3 +139,11 @@ Each line is associated with a particle and its properties. The ``fem_force`` an
 
 .. warning::
     The critical Rayleigh time step is computed from the parameters in the ``particle type`` subsections, not the ``insertion info`` subsection. It is the user's responsibility to fill the ``particle type`` subsections correctly according to the diameter values stored in the insertion input file, otherwise Rayleigh time percentage displayed at the start of every DEM simulation may not be accurate.
+
+---------------------
+Clear and add
+---------------------
+Just like the ``file`` insertion method, the ``clear_and_add`` insertion method insert particles using the same type of external files. Two main differences can be noted between these methods. First, with the ``clear_and_add`` method, a list of files can be define using the ``list of input files`` parameter. Each insertion time step, a different file will be used to insert the particles from this list of files in sequential order. If the end of the list is reached and there is still particles left to be inserted, the next file being used will be the first one in that list. The second difference between these two methods regard the clearing feature of the ``clear_and_add`` insertion method. At every insertion time step, all the particles located inside a predefined box will be deleted. This box can be defined using the ``clearing box points coordinates`` parameter which works exactly like the ``insertion box`` for the ``volume`` insertion method. The clearing is done before the insertion from a given file, thus there is no risk of inserting and deleting the same particle in the same insertion time step. If used properly, this method can be used to clear a certain zone of the simulation domain and add particle in that same zone right away. This assure that there is no excessive overlap between particle on insertion.
+
+.. note::
+    The ``clear_and_add`` insertion method shouldn't be used for most application. It can be extremely useful for really specific DEM simulation, but remain an experimental feature.
