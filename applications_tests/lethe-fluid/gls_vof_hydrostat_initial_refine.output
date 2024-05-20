@@ -69,11 +69,11 @@ Transient iteration: 3        Time: 0.06     Time step: 0.02     CFL: 7.71707e-0
    Number of VOF degrees of freedom: 2316
 L2 error velocity : 1.0951e-07
 L2 error phase : 0.000174452
- time  error_velocity error_pressure
-0.0200   1.095089e-07         0.0028
-0.0400   1.095107e-07         0.0028
-0.0600   1.095098e-07         0.0028
- time  error_phase
-0.0200 1.744461e-04
-0.0400 1.744490e-04
-0.0600 1.744518e-04
+ time  error_velocity error_pressure 
+0.0200   1.095089e-07         0.0028 
+0.0400   1.095107e-07         0.0028 
+0.0600   1.095098e-07         0.0028 
+ time  error_phase  
+0.0200 1.744461e-04 
+0.0400 1.744490e-04 
+0.0600 1.744518e-04 
