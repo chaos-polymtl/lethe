@@ -37,10 +37,12 @@
 
 #include <deal.II/fe/fe_q.h>
 #include <deal.II/fe/fe_system.h>
+#include <deal.II/fe/fe_update_flags.h>
 #include <deal.II/fe/mapping.h>
 
 #include <deal.II/matrix_free/fe_point_evaluation.h>
 
+#include <deal.II/numerics/fe_field_function.h>
 #include <deal.II/numerics/vector_tools.h>
 
 #include <deal.II/particles/particle_handler.h>
@@ -736,11 +738,13 @@ public:
           particle.get_reference_location());
       }
 
+    FEFieldFunction<>
+    
     // Create a point evaluator for the Navier-Stokes equations
-    FEPointEvaluation<dim + 1, dim> fe_point_evaluator(
-      this->fe_values.get_mapping(),
-      this->fe_values.get_fe(),
-      update_values | update_gradients); // | update_hessians);
+    //FEPointEvaluation<dim + 1, dim> fe_point_evaluator(
+    //  this->fe_values.get_mapping(),
+    //  this->fe_values.get_fe(),
+    //  update_values | update_gradients); // | update_hessians);
 
     // Reallocate memory for the fields to be interpolated at the particle
     // location This has to be done for every cell because deal.II expects the

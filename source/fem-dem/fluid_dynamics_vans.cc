@@ -1755,7 +1755,6 @@ FluidDynamicsVANS<dim>::assemble_local_system_rhs(
                                                   particle_handler,
                                                   this->dof_handler,
                                                   void_fraction_dof_handler);
-
   scratch_data.calculate_physical_properties();
   copy_data.reset();
 
