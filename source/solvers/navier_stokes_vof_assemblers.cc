@@ -269,13 +269,19 @@ GLSNavierStokesVOFAssemblerCore<dim>::assemble_rhs(
           calculate_navier_stokes_gls_tau_transient(
             u_mag, viscosity_for_stabilization_vector[q] / density_eq, h, sdt);
 
+      // Calculate viscosity jump for additional strong residual term
+      const double dynamic_viscosity_jump =
+        scratch_data.dynamic_viscosity_1[q] -
+        scratch_data.dynamic_viscosity_0[q];
+
 
       // Calculate the strong residual for GLS stabilization
       auto strong_residual = density_eq * velocity_gradient * velocity +
                              pressure_gradient -
                              dynamic_viscosity_eq * velocity_laplacian -
                              dynamic_viscosity_eq * grad_div_velocity -
-                             density_eq * force + strong_residual_vec[q];
+                             dynamic_viscosity_jump * (shear_rate * scratch_data.filtered_phase_gradient_values[q])
+                             -density_eq * force + strong_residual_vec[q];
 
       // Assembly of the right-hand side
       for (unsigned int i = 0; i < n_dofs; ++i)
