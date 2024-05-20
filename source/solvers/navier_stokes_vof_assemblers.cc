@@ -97,7 +97,8 @@ GLSNavierStokesVOFAssemblerCore<dim>::assemble_matrix(
             u_mag, viscosity_for_stabilization_vector[q] / density_eq, h, sdt);
 
       // Void fraction gradient for strong residual
-      const Tensor<1,dim> &filtered_phase_gradient = scratch_data.filtered_phase_gradient_values[q];
+      const Tensor<1, dim> &filtered_phase_gradient =
+        scratch_data.filtered_phase_gradient_values[q];
 
       // Calculate viscosity jump for additional strong residual term
       const double dynamic_viscosity_jump =
@@ -105,12 +106,12 @@ GLSNavierStokesVOFAssemblerCore<dim>::assemble_matrix(
         scratch_data.dynamic_viscosity_0[q];
 
       // Calculate the strong residual for GLS stabilization
-      auto strong_residual = density_eq * velocity_gradient * velocity +
-                             pressure_gradient -
-                             dynamic_viscosity_eq * velocity_laplacian -
-                             dynamic_viscosity_eq * grad_div_velocity -
-                             dynamic_viscosity_jump * (shear_rate * filtered_phase_gradient )
-                             -density_eq * force + strong_residual_vec[q];
+      auto strong_residual =
+        density_eq * velocity_gradient * velocity + pressure_gradient -
+        dynamic_viscosity_eq * velocity_laplacian -
+        dynamic_viscosity_eq * grad_div_velocity -
+        dynamic_viscosity_jump * (shear_rate * filtered_phase_gradient) -
+        density_eq * force + strong_residual_vec[q];
 
       std::vector<Tensor<1, dim>> grad_phi_u_j_x_velocity(n_dofs);
       std::vector<Tensor<1, dim>> velocity_gradient_x_phi_u_j(n_dofs);
@@ -158,7 +159,7 @@ GLSNavierStokesVOFAssemblerCore<dim>::assemble_matrix(
               const auto &phi_u_j      = scratch_data.phi_u[q][j];
               const auto &grad_phi_u_j = scratch_data.grad_phi_u[q][j];
               const auto &div_phi_u_j  = scratch_data.div_phi_u[q][j];
-              const auto shear_rate_j = grad_phi_u_j + transpose(grad_phi_u_j);
+              const auto  shear_rate_j = grad_phi_u_j + transpose(grad_phi_u_j);
 
               const auto &phi_p_j =
                 scratch_data.phi_p[q][j] * pressure_scaling_factor;
@@ -258,7 +259,8 @@ GLSNavierStokesVOFAssemblerCore<dim>::assemble_rhs(
         scratch_data.pressure_gradients[q];
 
       // Void fraction gradient for strong residual
-      const Tensor<1,dim> &filtered_phase_gradient = scratch_data.filtered_phase_gradient_values[q];
+      const Tensor<1, dim> &filtered_phase_gradient =
+        scratch_data.filtered_phase_gradient_values[q];
 
       // Forcing term
       Tensor<1, dim> force = scratch_data.force[q];
@@ -293,12 +295,12 @@ GLSNavierStokesVOFAssemblerCore<dim>::assemble_rhs(
 
 
       // Calculate the strong residual for GLS stabilization
-      auto strong_residual = density_eq * velocity_gradient * velocity +
-                             pressure_gradient -
-                             dynamic_viscosity_eq * velocity_laplacian -
-                             dynamic_viscosity_eq * grad_div_velocity -
-                             dynamic_viscosity_jump * (shear_rate * filtered_phase_gradient )
-                             -density_eq * force + strong_residual_vec[q];
+      auto strong_residual =
+        density_eq * velocity_gradient * velocity + pressure_gradient -
+        dynamic_viscosity_eq * velocity_laplacian -
+        dynamic_viscosity_eq * grad_div_velocity -
+        dynamic_viscosity_jump * (shear_rate * filtered_phase_gradient) -
+        density_eq * force + strong_residual_vec[q];
 
       // Assembly of the right-hand side
       for (unsigned int i = 0; i < n_dofs; ++i)
@@ -933,7 +935,8 @@ GLSNavierStokesVOFAssemblerNonNewtonianCore<dim>::assemble_matrix(
             u_mag, viscosity_for_stabilization_vector[q] / density_eq, h, sdt);
 
       // Void fraction gradient for strong residual
-      const Tensor<1,dim> &filtered_phase_gradient = scratch_data.filtered_phase_gradient_values[q];
+      const Tensor<1, dim> &filtered_phase_gradient =
+        scratch_data.filtered_phase_gradient_values[q];
 
       // Calculate viscosity jump for additional strong residual term
       const double dynamic_viscosity_jump =
@@ -941,12 +944,12 @@ GLSNavierStokesVOFAssemblerNonNewtonianCore<dim>::assemble_matrix(
         scratch_data.dynamic_viscosity_0[q];
 
       // Calculate the strong residual for GLS stabilization
-      auto strong_residual = density_eq * velocity_gradient * velocity +
-                             pressure_gradient -
-                             shear_rate * dynamic_viscosity_gradient -
-                             dynamic_viscosity_eq * velocity_laplacian -
-                             dynamic_viscosity_jump * (shear_rate * filtered_phase_gradient )
-                             - density_eq * force + strong_residual_vec[q];
+      auto strong_residual =
+        density_eq * velocity_gradient * velocity + pressure_gradient -
+        shear_rate * dynamic_viscosity_gradient -
+        dynamic_viscosity_eq * velocity_laplacian -
+        dynamic_viscosity_jump * (shear_rate * filtered_phase_gradient) -
+        density_eq * force + strong_residual_vec[q];
 
       std::vector<Tensor<1, dim>> grad_phi_u_j_x_velocity(n_dofs);
       std::vector<Tensor<1, dim>> velocity_gradient_x_phi_u_j(n_dofs);
@@ -1140,7 +1143,8 @@ GLSNavierStokesVOFAssemblerNonNewtonianCore<dim>::assemble_rhs(
 
 
       // Void fraction gradient for strong residual
-      const Tensor<1,dim> &filtered_phase_gradient = scratch_data.filtered_phase_gradient_values[q];
+      const Tensor<1, dim> &filtered_phase_gradient =
+        scratch_data.filtered_phase_gradient_values[q];
 
       // Calculate viscosity jump for additional strong residual term
       const double dynamic_viscosity_jump =
@@ -1148,12 +1152,12 @@ GLSNavierStokesVOFAssemblerNonNewtonianCore<dim>::assemble_rhs(
         scratch_data.dynamic_viscosity_0[q];
 
       // Calculate the strong residual for GLS stabilization
-      auto strong_residual = density_eq * velocity_gradient * velocity +
-                             pressure_gradient -
-                             shear_rate * dynamic_viscosity_gradient -
-                             dynamic_viscosity_eq * velocity_laplacian -
-                             dynamic_viscosity_jump * (shear_rate * filtered_phase_gradient )
-                             - density_eq * force + strong_residual_vec[q];
+      auto strong_residual =
+        density_eq * velocity_gradient * velocity + pressure_gradient -
+        shear_rate * dynamic_viscosity_gradient -
+        dynamic_viscosity_eq * velocity_laplacian -
+        dynamic_viscosity_jump * (shear_rate * filtered_phase_gradient) -
+        density_eq * force + strong_residual_vec[q];
 
       // Assembly of the right-hand side
       for (unsigned int i = 0; i < n_dofs; ++i)
