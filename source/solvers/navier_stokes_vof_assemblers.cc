@@ -68,8 +68,6 @@ GLSNavierStokesVOFAssemblerCore<dim>::assemble_matrix(
       const Tensor<1, dim> pressure_gradient =
         scratch_data.pressure_gradients[q];
 
-
-
       // Forcing term
       Tensor<1, dim> force = scratch_data.force[q];
 
