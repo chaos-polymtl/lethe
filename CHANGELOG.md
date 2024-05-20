@@ -7,7 +7,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Removed
 
-- MINOR The initial conditions executable which could be used to test some initials conditions has now been removed completely. This executable was never really used in production and was unstable to the multiphysics interface. [#1148](https://github.com/chaos-polymtl/lethe/pull/1148)
+- MINOR The initial conditions executable which could be used to test some initial conditions has now been removed completely. This executable was never used and was unstable to the multiphysics interface. [#1148](https://github.com/chaos-polymtl/lethe/pull/1148)
 
 ## [Master] - 2024-05-13
 
