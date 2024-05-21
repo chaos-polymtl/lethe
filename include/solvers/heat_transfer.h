@@ -197,7 +197,7 @@ public:
    * @return The difference between the maximal temperature and the minimal temperature in the whole domain.
    */
   double
-  calculate_delta_T_ref(double minimum_delta_T_ref);
+  calculate_delta_T_ref(double minimum_delta_T_ref = 1.);
 
   /**
    * @brief Calculate the L2 error of the solution.

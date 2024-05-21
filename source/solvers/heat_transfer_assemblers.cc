@@ -61,7 +61,9 @@ HeatTransferAssemblerCore<dim>::assemble_matrix(
       const double u_mag = std::max(velocity.norm(), 1e-12);
 
       // Temperature gradient information for DCDD stabilization
-      Tensor<1, dim> dcdd_temperature_gradient = is_steady(method) ?  scratch_data.temperature_gradients[q] : scratch_data.previous_temperature_gradients[0][q] ; 
+      Tensor<1, dim> dcdd_temperature_gradient =
+        is_steady(method) ? scratch_data.temperature_gradients[q] :
+                            scratch_data.previous_temperature_gradients[0][q];
 
       // Implementation of a Discontinuity-Capturing Directional Dissipation
       // (DCDD) shock capturing scheme. For more information see Tezduyar,
@@ -198,16 +200,9 @@ HeatTransferAssemblerCore<dim>::assemble_rhs(
       const double u_mag = std::max(velocity.norm(), 1e-12);
 
       // Temperature gradient information for DCDD stabilization
-      Tensor<1, dim> dcdd_temperature_gradient;
-      if (is_steady(method))
-        {
-          dcdd_temperature_gradient = temperature_gradient;
-        }
-      else
-        {
-          dcdd_temperature_gradient =
-            scratch_data.previous_temperature_gradients[0][q];
-        }
+      Tensor<1, dim> dcdd_temperature_gradient =
+        is_steady(method) ? scratch_data.temperature_gradients[q] :
+                            scratch_data.previous_temperature_gradients[0][q];
 
       // Implementation of a Discontinuity-Capturing Directional Dissipation
       // (DCDD) shock capturing scheme. For more information see Tezduyar,

@@ -34,6 +34,7 @@
 #include <solvers/multiphysics_interface.h>
 #include <solvers/vof_filter.h>
 
+#include <deal.II/base/exceptions.h>
 #include <deal.II/base/quadrature.h>
 
 #include <deal.II/dofs/dof_renumbering.h>
@@ -99,7 +100,7 @@ public:
                           const Mapping<dim>             &mapping,
                           const FiniteElement<dim>       &fe_fd,
                           const Quadrature<dim - 1>      &face_quadrature,
-                          const double                    delta_T_ref)
+                          const double                   &delta_T_ref)
     : properties_manager(properties_manager)
     , fe_values_T(mapping,
                   fe_ht,
@@ -116,6 +117,10 @@ public:
                         update_values | update_quadrature_points |
                           update_JxW_values)
   {
+    // Check if value is positive.
+    AssertThrow(delta_T_ref < 0,
+                ExcMessage("Reference temperature is invalid (< 0)."));
+
     gather_vof = false;
 
     allocate();
@@ -150,6 +155,10 @@ public:
                         update_values | update_quadrature_points |
                           update_JxW_values)
   {
+    // Check if value is positive.
+    AssertThrow(sd.global_delta_T_ref < 0,
+                ExcMessage("Reference temperature is invalid (< 0)."));
+
     gather_vof = sd.gather_vof;
     allocate();
     if (sd.gather_vof)

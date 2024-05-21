@@ -3,6 +3,7 @@
 
 #include <solvers/heat_transfer.h>
 
+#include <deal.II/base/exceptions.h>
 #include <deal.II/base/work_stream.h>
 
 #include <deal.II/dofs/dof_tools.h>
@@ -776,8 +777,12 @@ HeatTransfer<dim>::calculate_delta_T_ref(double minimum_delta_T_ref)
       solution_minimum = this->previous_solutions[0].min();
     }
 
+  // Calculate delta_T_ref.
+  double delta_T_ref =
+    std::max(solution_maximum - solution_minimum, minimum_delta_T_ref);
+
   // Set minimum value as 1 to prevent overshooting of diffusivity
-  return std::max(solution_maximum - solution_minimum, minimum_delta_T_ref);
+  return delta_T_ref;
 }
 
 template <int dim>
