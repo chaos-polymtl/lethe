@@ -813,95 +813,101 @@ namespace Parameters
   {
     Verbosity verbosity;
 
-    // Enable total kinetic energy post-processing
+    /// Enable total kinetic energy post-processing
     bool calculate_kinetic_energy;
 
-    // Enable total enstrophy post-processing
+    /// Enable total enstrophy post-processing
     bool calculate_enstrophy;
 
-    // Enable calculating apparent viscosity
+    /// Enable pressure work post-processing
+    bool calculate_pressure_work;
+
+    /// Enable calculating apparent viscosity
     bool calculate_apparent_viscosity;
 
-    // Enable velocity post-processing
+    /// Enable velocity post-processing
     bool calculate_average_velocities;
 
-    // Enable pressure drop post-processing
+    /// Enable pressure drop post-processing
     bool calculate_pressure_drop;
 
-    // The outlet boundary ID for pressure drop calculation
+    /// The inlet boundary ID for pressure drop calculation
     unsigned int inlet_boundary_id;
 
-    // The outlet boundary ID for pressure drop calculation
+    /// The outlet boundary ID for pressure drop calculation
     unsigned int outlet_boundary_id;
 
-    // Enable flow rate post-processing
+    /// Enable flow rate post-processing
     bool calculate_flow_rate;
 
-    // Set initial time to start calculations for velocities
+    /// Set initial time to start calculations for velocities
     double initial_time;
 
-    // Frequency of the calculation of the post-processed quantity
+    /// Frequency of the calculation of the post-processed quantity
     unsigned int calculation_frequency;
 
-    // Frequency of the output
+    /// Frequency of the output
     unsigned int output_frequency;
 
-    // Prefix for kinetic energy output
+    /// Prefix for kinetic energy output
     std::string kinetic_energy_output_name;
 
-    // Prefix for pressure drop output
+    /// Prefix for pressure drop output
     std::string pressure_drop_output_name;
 
-    // Prefix for flow rate output
+    /// Prefix for flow rate output
     std::string flow_rate_output_name;
 
-    // Prefix for the enstrophy output
+    /// Prefix for the enstrophy output
     std::string enstrophy_output_name;
 
-    // Prefix for the apparent viscosity output
+    /// Prefix for the pressure work output
+    std::string pressure_work_output_name;
+
+    /// Prefix for the apparent viscosity output
     std::string apparent_viscosity_output_name;
 
-    // Enable tracer statistics
+    /// Enable tracer statistics
     bool calculate_tracer_statistics;
 
-    // Prefix for the tracer output
+    /// Prefix for the tracer output
     std::string tracer_output_name;
 
-    // Enable temperature statistics
+    /// Enable temperature statistics
     bool calculate_temperature_statistics;
 
-    // Prefix for the temperature output
+    /// Prefix for the temperature output
     std::string temperature_output_name;
 
-    // Enable calculation of liquid fraction in phase change problems
+    /// Enable calculation of liquid fraction in phase change problems
     bool calculate_liquid_fraction;
 
-    // Prefix for the temperature output
+    /// Prefix for the temperature output
     std::string liquid_fraction_output_name;
 
-    // Enable heat flux calculation
+    /// Enable heat flux calculation
     bool calculate_heat_flux;
 
-    // Prefix for the total heat flux output
+    /// Prefix for the total heat flux output
     std::string heat_flux_output_name;
 
-    // Fluid domain, used when post-processing a multiphase simulation
+    /// Fluid domain, used when post-processing a multiphase simulation
     Parameters::FluidIndicator postprocessed_fluid;
 
-    // Enable barycenter calculation for fluid 1 in VOF and Cahn-Hilliard
-    // simulations
+    /// Enable barycenter calculation for fluid 1 in VOF and Cahn-Hilliard
+    /// simulations
     bool calculate_barycenter;
 
-    // Prefix for the VOF and Cahn-Hilliard barycenter output
+    /// Prefix for the VOF and Cahn-Hilliard barycenter output
     std::string barycenter_output_name;
 
-    // Enable smoothing postprocessed vectors and scalars
+    /// Enable smoothing postprocessed vectors and scalars
     bool smoothed_output_fields;
 
-    // Enable phase statistics
+    /// Enable phase statistics
     bool calculate_phase_statistics;
 
-    // Prefix for the phase output
+    /// Prefix for the phase output
     std::string phase_output_name;
 
     /// Enable mass conservation calculation for both fluids in VOF simulations

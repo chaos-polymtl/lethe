@@ -1670,6 +1670,14 @@ namespace Parameters
         "Enable calculation of total enstrophy. The total enstrophy "
         "is calculated from the volumetric integral of the enstrophy over the domain.");
 
+      prm.declare_entry(
+        "calculate pressure work",
+        "false",
+        Patterns::Bool(),
+        "Enable calculation of the pressure work. The pressure work "
+        "is calculated from the volumetric integral of u.grad(p) over the domain.");
+
+
       prm.declare_entry("calculate apparent viscosity",
                         "false",
                         Patterns::Bool(),
@@ -1726,6 +1734,11 @@ namespace Parameters
                         "enstrophy",
                         Patterns::FileName(),
                         "File output enstrophy");
+
+      prm.declare_entry("pressure work name",
+                        "pressure_work",
+                        Patterns::FileName(),
+                        "File output pressure work");
 
       prm.declare_entry("apparent viscosity name",
                         "apparent_viscosity",
@@ -1863,6 +1876,7 @@ namespace Parameters
 
       calculate_kinetic_energy = prm.get_bool("calculate kinetic energy");
       calculate_enstrophy      = prm.get_bool("calculate enstrophy");
+      calculate_pressure_work  = prm.get_bool("calculate pressure work");
       calculate_apparent_viscosity =
         prm.get_bool("calculate apparent viscosity");
       calculate_average_velocities =
@@ -1876,6 +1890,7 @@ namespace Parameters
       pressure_drop_output_name      = prm.get("pressure drop name");
       flow_rate_output_name          = prm.get("flow rate name");
       enstrophy_output_name          = prm.get("enstrophy name");
+      pressure_work_output_name      = prm.get("pressure work name");
       apparent_viscosity_output_name = prm.get("apparent viscosity name");
       output_frequency               = prm.get_integer("output frequency");
       calculate_tracer_statistics = prm.get_bool("calculate tracer statistics");

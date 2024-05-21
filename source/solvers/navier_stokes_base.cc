@@ -1200,6 +1200,8 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess_fd(bool firstIter)
 {
   auto &present_solution = this->present_solution;
 
+
+  // Enstrophy
   if (this->simulation_parameters.post_processing.calculate_enstrophy)
     {
       double enstrophy = calculate_enstrophy(this->dof_handler,
@@ -1232,6 +1234,42 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess_fd(bool firstIter)
           enstrophy_table.set_precision("time", 12);
           enstrophy_table.set_precision("enstrophy", 12);
           this->enstrophy_table.write_text(output);
+        }
+    }
+
+  // Pressure work
+  if (this->simulation_parameters.post_processing.calculate_pressure_work)
+    {
+      double pressure_work = calculate_pressure_work(this->dof_handler,
+                                             present_solution,
+                                             *this->cell_quadrature,
+                                             *this->mapping);
+
+      this->pressure_work_table.add_value("time",
+                                      simulation_control->get_current_time());
+      this->pressure_work_table.add_value("pressure_work", pressure_work);
+
+      // Display pressure work to screen if verbosity is enabled
+      if (this->simulation_parameters.post_processing.verbosity ==
+          Parameters::Verbosity::verbose)
+        {
+          this->pcout << "Pressure work  : " << pressure_work << std::endl;
+        }
+
+      // Output pressure work to a text file from processor 0
+      if (simulation_control->get_step_number() %
+              this->simulation_parameters.post_processing.output_frequency ==
+            0 &&
+          this->this_mpi_process == 0)
+        {
+          std::string filename =
+            simulation_parameters.simulation_control.output_folder +
+            simulation_parameters.post_processing.pressure_work_output_name +
+            ".dat";
+          std::ofstream output(filename.c_str());
+          pressure_work_table.set_precision("time", 12);
+          pressure_work_table.set_precision("pressure_work", 12);
+          this->pressure_work_table.write_text(output);
         }
     }
 
@@ -1702,6 +1740,10 @@ NavierStokesBase<dim, VectorType, DofsType>::read_checkpoint()
     if (post_processing.calculate_enstrophy)
       deserialize_table(this->enstrophy_table,
                         prefix + post_processing.enstrophy_output_name +
+                          suffix);
+    if (post_processing.calculate_pressure_work)
+      deserialize_table(this->pressure_work_table,
+                        prefix + post_processing.pressure_work_output_name +
                           suffix);
     if (post_processing.calculate_kinetic_energy)
       deserialize_table(this->kinetic_energy_table,

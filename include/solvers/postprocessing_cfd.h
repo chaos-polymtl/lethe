@@ -121,17 +121,39 @@ calculate_enstrophy(const DoFHandler<dim> &dof_handler,
  * Post-processing function
  * This function calculates the average kinetic energy in the simulation domain
  *
- * @param dof_handler The dof_handler used for the calculation
+ * @param[in] dof_handler The dof_handler used for the calculation
  *
- * @param evaluation_point The solution at which the force is calculated
+ * @param[in] evaluation_point The solution for the calculation
  *
- * @param quadrature_formula The quadrature formula for the calculation
+ * @param[in] quadrature_formula The quadrature formula for the calculation
  *
- * @param mapping The mapping of the simulation
+ * @param[in] mapping The mapping of the simulation
  */
 template <int dim, typename VectorType>
 double
 calculate_kinetic_energy(const DoFHandler<dim> &dof_handler,
+                         const VectorType      &evaluation_point,
+                         const Quadrature<dim> &quadrature_formula,
+                         const Mapping<dim>    &mapping);
+
+/**
+ * @brief Calculate the average work done by pressure in the simulation domain
+ * @return average work done by pressure in the simulation domain
+ * Post-processing function
+ * This function calculates the average work done by pressure in the simulation domain. This average
+ * work is defined as the W_p = ∫u.∇pdΩ/∫1dΩ
+ *
+ * @param[in] dof_handler The dof_handler used for the calculation
+ *
+ * @param[in] evaluation_point The solution for the calculation
+ *
+ * @param[in] quadrature_formula The quadrature formula for the calculation
+ *
+ * @param[in] mapping The mapping of the simulation
+ */
+template <int dim, typename VectorType>
+double
+calculate_pressure_work(const DoFHandler<dim> &dof_handler,
                          const VectorType      &evaluation_point,
                          const Quadrature<dim> &quadrature_formula,
                          const Mapping<dim>    &mapping);
