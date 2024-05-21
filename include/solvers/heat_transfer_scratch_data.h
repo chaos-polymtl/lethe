@@ -100,7 +100,7 @@ public:
                           const Mapping<dim>             &mapping,
                           const FiniteElement<dim>       &fe_fd,
                           const Quadrature<dim - 1>      &face_quadrature,
-                          const double                   delta_T_ref)
+                          const double                    delta_T_ref)
     : properties_manager(properties_manager)
     , fe_values_T(mapping,
                   fe_ht,
@@ -118,7 +118,7 @@ public:
                           update_JxW_values)
   {
     // Check if value is positive.
-    AssertThrow(delta_T_ref < 0,
+    AssertThrow(delta_T_ref > 0,
                 ExcMessage("Reference temperature is invalid (< 0)."));
 
     gather_vof = false;
@@ -156,7 +156,7 @@ public:
                           update_JxW_values)
   {
     // Check if value is positive.
-    AssertThrow(sd.global_delta_T_ref < 0,
+    AssertThrow(sd.global_delta_T_ref > 0,
                 ExcMessage("Reference temperature is invalid (< 0)."));
 
     gather_vof = sd.gather_vof;
