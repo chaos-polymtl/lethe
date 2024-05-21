@@ -100,7 +100,7 @@ public:
                           const Mapping<dim>             &mapping,
                           const FiniteElement<dim>       &fe_fd,
                           const Quadrature<dim - 1>      &face_quadrature,
-                          const double                   &delta_T_ref)
+                          const double                   delta_T_ref)
     : properties_manager(properties_manager)
     , fe_values_T(mapping,
                   fe_ht,
