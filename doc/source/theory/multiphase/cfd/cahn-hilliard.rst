@@ -61,8 +61,7 @@ For a 1D case, we obtain the following equilibrium phase field by solving the ch
   \phi(x) = -\tanh{\left(\frac{x}{\sqrt{2}\epsilon}\right)}
   
   
-Lastly, we need to relate the surface tension coefficient with the mixing energy. Cahn and Hilliard 
-`[1] <https://doi.org/10.1063/1.1730447>`_ define surface tension as the excess free energy of the system due to the interface, the second term in the expression of :math:`\psi`. If we consider a system in equilibrium, and suppose a planar interface, we can write:
+Lastly, we need to relate the surface tension coefficient with the mixing energy. Cahn and Hilliard define surface tension as the excess free energy of the system due to the interface, the second term in the expression of :math:`\psi`. If we consider a system in equilibrium, and suppose a planar interface, we can write:
 
 .. math::
   \sigma = \int_{-\infty}^{+\infty}\lambda \left(\frac{\mathrm{d}\phi}{\mathrm{d}x}\right)^2 \mathrm{d}x
@@ -186,9 +185,7 @@ References
 
 `[2] <https://doi.org/10.48550/arXiv.1911.06718>`_ A. Lovrić, W. G. Dettmer, and D. Perić, ‘Low Order Finite Element Methods for the Navier-Stokes-Cahn-Hilliard Equations’. arXiv, Nov. 15, 2019. doi: 10.48550/arXiv.1911.06718.
 
-
 `[3] <https://doi.org/10.48550/arXiv.1104.1336>`_ H. Abels, H. Garcke, and G. Grün, ‘Thermodynamically Consistent, Frame Indifferent Diffuse Interface Models for Incompressible Two-Phase Flows with Different Densities’. arXiv, Apr. 07, 2011. doi: 10.48550/arXiv.1104.1336.
-
 
 
 
