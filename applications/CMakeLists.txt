@@ -13,7 +13,6 @@ foreach(_target IN ITEMS
     lethe-rpt-fem-reconstruction-3d
     lethe-rpt-l2-projection-3d
     dem_parameter_template
-    initial_conditions
     navier_stokes_parameter_template
     )
   add_subdirectory(${_target})
