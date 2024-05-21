@@ -1137,7 +1137,7 @@ namespace Parameters
     bool mg_smoother_eig_estimation;
 
     /// MG smoothing range to set range between eigenvalues
-    int eig_estimation_smoothing_range;
+    double eig_estimation_smoothing_range;
 
     /// MG number of cg iterations to find eigenvalue
     int eig_estimation_cg_n_iterations;
