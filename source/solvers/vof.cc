@@ -2281,7 +2281,7 @@ VolumeOfFluid<dim>::setup_dofs()
   define_zero_constraints();
 
   // Sparse matrices initialization
-  DynamicSparsityPattern dsp(this->dof_handler.n_dofs());
+  DynamicSparsityPattern dsp(this->locally_relevant_dofs);
   DoFTools::make_sparsity_pattern(this->dof_handler,
                                   dsp,
                                   this->nonzero_constraints,
