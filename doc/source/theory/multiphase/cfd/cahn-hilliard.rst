@@ -2,12 +2,10 @@
 Cahn-Hilliard Method
 ================================
 
-**Under construction**
-
   
 The Cahn-Hilliard system of equations `[1] <https://dx.doi.org/10.1063/1.1744102>`_ is a model used to describe the process of phase separation based on the principle of free energy minimization. The key idea is that the system evolves to a state where the free energy is minimized, which often leads to the formation of distinct phases or regions within the material. This competition between the tendency of the system to minimize its overall free energy and the energy cost associated with creating new interfaces between phases is at the heart of the Cahn-Hilliard equation. Let us introduce those concepts formally.
 
-Let :math:`\Omega = \Omega_0 \cup \Omega_1` be the domain formed by two fluids, namely fluid :math:`0` and :math:`1`, with :math:`\Gamma` denoting their interface and :math:`\partial \Omega`, the remaining boundaries. Like in the VOF method (LINK), we define a scalar function :math:`\phi` as a phase indicator such that:
+Let :math:`\Omega = \Omega_0 \cup \Omega_1` be the domain formed by two fluids, namely fluid :math:`0` and :math:`1`, with :math:`\Gamma` denoting their interface and :math:`\partial \Omega`, the remaining boundaries. Like in :doc:`vof`, we define a scalar function :math:`\phi` as a phase indicator such that:
 
 .. math::
   \phi =
@@ -27,7 +25,7 @@ Let us introduce the free energy functional :math:`\mathcal{F}`:
 .. math::
   \Psi = \lambda\left(F(\phi) + \frac{1}{2}|\nabla \phi|^2\right)
   
-It is decomposed in a bulk free energy :math:`F(\phi)` and an interface energy :math:`\frac{1}{2}|\nabla \phi|^2`. :math:`\lambda` is called the mixing energy though not dimensionally consistent to an energy, see (LINK TO UNITS SUBSECTION). The bulk free energy has a double-well form, its expression is:
+It is decomposed in a bulk free energy :math:`F(\phi)` and an interface energy :math:`\frac{1}{2}|\nabla \phi|^2`. :math:`\lambda` is called the mixing energy though not dimensionally consistent to an energy. The bulk free energy has a double-well form, its expression is:
 
 .. math::
   F(\phi) = \frac{(1-\phi^2)^2}{4\epsilon^2}
@@ -156,7 +154,7 @@ Finally, the local physical properties (density, viscosity, \dots)  are deduced 
 The Cahn-Hilliard-Navier-Stokes momentum equation solved in Lethe is:
 
 .. math::
-  \rho(\phi)\left(\frac{\partial\mathbf{v}}{\partial t} + (\mathbf{v}\cdot\nabla)\mathbf{v}\right) + \left(\frac{\rho_0-\rho_1}{2}M(\phi)\nabla\eta\cdot \nabla\right)\mathbf{v} - \nabla \cdot \left(\mu(\phi)(\nabla\mathbf{v} + \nabla\mathbf{v}^\mathbf{T})\right) + \nabla \hat{p} - \eta\nabla\phi = 0
+  \rho(\phi)\left(\frac{\partial\mathbf{u}}{\partial t} + (\mathbf{u}\cdot\nabla)\mathbf{u}\right) + \left(\frac{\rho_0-\rho_1}{2}M(\phi)\nabla\eta\cdot \nabla\right)\mathbf{u} - \nabla \cdot \left(\mu(\phi)(\nabla\mathbf{u} + \nabla\mathbf{u}^\mathbf{T})\right) + \nabla \hat{p} - \eta\nabla\phi = 0
   
   
   
