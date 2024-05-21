@@ -93,6 +93,7 @@ namespace internal
 
     /**
      * @brief Get the array of all function names.
+     * @return Available implemented functions
      */
     std::vector<std::string>
     get_function_names();
@@ -103,12 +104,9 @@ namespace internal
                    << "Parsing Error at Column " << arg1
                    << ". The parser said: " << arg2);
 
+
     /**
-     * deal.II uses muParser as a purely internal dependency. To this end, we do
-     * not include any muParser headers in our own headers (and the bundled
-     * version of the dependency does not install its headers or compile a
-     * separate muparser library). Hence, to interface with muParser, we use the
-     * PIMPL idiom here to wrap a pointer to mu::Parser objects.
+     * @brief Base class used for thread safe instances of the parser.
      */
     class muParserBase
     {
