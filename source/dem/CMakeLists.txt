@@ -14,7 +14,6 @@ add_library(lethe-dem
   grid_motion.cc
   input_parameter_inspection.cc
   insertion.cc
-  insertion_clear_and_add.cc
   insertion_file.cc
   insertion_list.cc
   insertion_plane.cc
@@ -62,7 +61,6 @@ add_library(lethe-dem
   ../../include/dem/grid_motion.h
   ../../include/dem/input_parameter_inspection.h
   ../../include/dem/insertion.h
-  ../../include/dem/insertion_clear_and_add.h
   ../../include/dem/insertion_file.h
   ../../include/dem/insertion_list.h
   ../../include/dem/insertion_plane.h

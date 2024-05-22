@@ -63,12 +63,16 @@ public:
    * @brief Carries out the insertion of particles. This is the base class of
    * volume_insertion, plane_insertion, list_insertion and file_insertion
    * classes.
-   *
+   * @param triangulation Triangulation to access the cells in which the
+   * particles are inserted
+   * @param dem_parameters DEM parameters declared in the .prm file
    * @param distribution_object_container Contains all distribution for each
    * type of particle
    */
   Insertion(const std::vector<std::shared_ptr<Distribution>>
-              &distribution_object_container);
+                                           &distribution_object_container,
+            const parallel::distributed::Triangulation<dim> &triangulation,
+            const DEMSolverParameters<dim> &dem_parameters);
 
   /**
    * @brief This function is overridden by the volume_insertion, plane_insertion,
@@ -159,6 +163,30 @@ protected:
     const DEMSolverParameters<dim> &dem_parameters,
     const ConditionalOStream       &pcout);
 
+  /**
+   * @brief Find every cell that are completely and partially inside de the
+   * clearing box. For the cell completely inside the box, all the particles
+   * will be deleted. For those partially inside, fine verification is required.
+   *
+   * @param triangulation Triangulation to access the cells in which the
+   * particles deleted.
+   */
+  void
+  find_in_clearing_box_cells(
+    const parallel::distributed::Triangulation<dim> &triangulation);
+
+
+  /**
+   * @brief
+   *
+   *
+   * @param particle_handler The particle handler of particles which are being
+   * removed.
+   */
+  void
+  clear_particle_box(Particles::ParticleHandler<dim> &particle_handler);
+
+
   // Number of particles inserted at each insertion time step. This value can
   // change in the last insertion step to reach the desired number of particles
   unsigned int inserted_this_step;
@@ -180,6 +208,21 @@ protected:
   // A distribution object that carries out the attribution of diameter to every
   // particle during an insertion time step
   std::vector<std::shared_ptr<Distribution>> distributions_objects;
+
+  // Clearing bool
+  const bool clearing_particles;
+
+  // Clearing box coordinates
+  Point<dim> p_min, p_max;
+
+  // Cell iterator containers for clearing
+  std::set<typename Triangulation<dim>::active_cell_iterator>
+    in_the_clearing_box;
+  std::set<typename Triangulation<dim>::active_cell_iterator> edge_of_box;
+
+  // For when the triangulation has change (i.e. when load balancing)
+  bool                        mark_for_update;
+  boost::signals2::connection change_to_triangulation;
 
 private:
   // Stores particles diameters

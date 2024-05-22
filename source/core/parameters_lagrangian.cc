@@ -300,10 +300,11 @@ namespace Parameters
 
         // Clear and Add :
         prm.declare_entry(
-          "list of input files",
-          "particles.input",
-          Patterns::List(Patterns::FileName()),
-          "List of files from which we load the particles using the clear_and_add method");
+          "clearing particles",
+          "false",
+          Patterns::Bool(),
+          "State whether particles should be cleared on insertion.");
+
         prm.declare_entry(
           "clearing box points coordinates",
           "0. , 0. , 0. : 1. , 1. , 1.",
@@ -312,9 +313,9 @@ namespace Parameters
           "Coordinates of two points for the clearing box (x1, y1, z1 : x2, y2, z2)");
 
         // File:
-        prm.declare_entry("insertion file name",
+        prm.declare_entry("list of input files",
                           "particles.input",
-                          Patterns::FileName(),
+                          Patterns::List(Patterns::FileName()),
                           "The file name from which we load the particles");
 
         // Plane:
@@ -415,9 +416,7 @@ namespace Parameters
       prm.enter_subsection("insertion info");
       {
         const std::string insertion = prm.get("insertion method");
-        if (insertion == "clear_and_add")
-          insertion_method = InsertionMethod::clear_and_add;
-        else if (insertion == "file")
+        if (insertion == "file")
           insertion_method = InsertionMethod::file;
         else if (insertion == "plane")
           insertion_method = InsertionMethod::plane;
@@ -433,7 +432,9 @@ namespace Parameters
           prm.get_integer("inserted number of particles at each time step");
         insertion_frequency = prm.get_integer("insertion frequency");
 
-        // Clear and add:
+        // Clear:
+        clearing_particles = prm.get_bool("clearing particles");
+
         const std::vector<std::string> clearing_box_point_coordinates_list(
           Utilities::split_string_list(
             prm.get("clearing box points coordinates"), ":"));
@@ -458,12 +459,10 @@ namespace Parameters
             clear_box_point_2[i] = clearing_point_coord_temp_2.at(i);
           }
 
-        list_of_input_files =
-          convert_string_to_vector<std::string>(prm, "list of input files");
-
         //// File:
         // File for the insertion
-        insertion_particles_file_name = prm.get("insertion file name");
+        list_of_input_files =
+          convert_string_to_vector<std::string>(prm, "list of input files");
 
         //// Plane:
         // Insertion plane normal vector

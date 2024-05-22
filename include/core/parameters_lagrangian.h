@@ -166,7 +166,6 @@ namespace Parameters
       // Insertion method
       enum class InsertionMethod
       {
-        clear_and_add,
         file,
         plane,
         list,
@@ -180,14 +179,14 @@ namespace Parameters
       int insertion_frequency;
 
       //// Clear and Add :
-      // List of file used for the clear_and_insertion method
-      std::vector<std::string> list_of_input_files;
+      //
+      bool clearing_particles;
+
       // Clear box info (xmin,xmax,ymin,ymax,zmin,zmax)
       Point<3> clear_box_point_1, clear_box_point_2;
 
       //// File:
-      // Input file used for the file insertion method
-      std::string insertion_particles_file_name;
+      std::vector<std::string> list_of_input_files;
 
       //// Plane:
       // Plane normal vector

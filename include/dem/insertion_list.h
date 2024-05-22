@@ -31,9 +31,10 @@ template <int dim>
 class InsertionList : public Insertion<dim>
 {
 public:
-  InsertionList(const DEMSolverParameters<dim> &dem_parameters,
-                const std::vector<std::shared_ptr<Distribution>>
-                  &distribution_object_container);
+  InsertionList(const std::vector<std::shared_ptr<Distribution>>
+                                                                &distribution_object_container,
+                const parallel::distributed::Triangulation<dim> &triangulation,
+                const DEMSolverParameters<dim>                  &dem_parameters);
 
   /**
    * @brief The InsertionList class inserts particles using a list specific position.
