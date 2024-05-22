@@ -2390,7 +2390,7 @@ namespace Parameters
 
         prm.declare_entry("eig estimation smoothing range",
                           "10",
-                          Patterns::Integer(),
+                          Patterns::Double(),
                           "sets range between largest and smallest eig");
 
         prm.declare_entry("eig estimation cg n iterations",
@@ -2543,7 +2543,7 @@ namespace Parameters
         mg_smoother_relaxation     = prm.get_double("mg smoother relaxation");
         mg_smoother_eig_estimation = prm.get_bool("mg smoother eig estimation");
         eig_estimation_smoothing_range =
-          prm.get_integer("eig estimation smoothing range");
+          prm.get_double("eig estimation smoothing range");
         eig_estimation_cg_n_iterations =
           prm.get_integer("eig estimation cg n iterations");
 

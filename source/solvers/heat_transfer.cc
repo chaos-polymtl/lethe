@@ -1249,7 +1249,7 @@ HeatTransfer<dim>::setup_dofs()
   zero_constraints.close();
 
   // Sparse matrices initialization
-  DynamicSparsityPattern dsp(this->dof_handler.n_dofs());
+  DynamicSparsityPattern dsp(locally_relevant_dofs);
   DoFTools::make_sparsity_pattern(this->dof_handler,
                                   dsp,
                                   nonzero_constraints,
