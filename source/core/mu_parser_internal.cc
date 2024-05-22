@@ -216,7 +216,7 @@ namespace internal
       // Now we define how many variables we expect to read in. We distinguish
       // between two cases: Time dependent problems, and not time dependent
       // problems. In the first case the number of variables is given by the
-      // dimension plus one. In the other case, the number of variables is equal
+      // components plus one. In the other case, the number of variables is equal
       // to the dimension. Once we parsed the variables string, if none of this
       // is the case, then an exception is thrown.
       if (time_dependent)
@@ -224,8 +224,8 @@ namespace internal
       else
         this->n_vars = n_components;
 
-      // create a parser object for the current thread we can then query in
-      // value() and vector_value(). this is not strictly necessary because a
+      // Create a parser object for the current thread we can then query in
+      // value() and vector_value(). This is not strictly necessary because a
       // user may never call these functions on the current thread, but it gets
       // us error messages about wrong formulas right away
       this->init_muparser();
@@ -364,7 +364,7 @@ namespace internal
           // NOLINTNEXTLINE don't warn about using static_cast once we check
           mu::Parser &parser = static_cast<Parser &>(*data.parsers[component]);
           return parser.Eval();
-        } // try
+        }
       catch (mu::ParserError &e)
         {
           std::cerr << "Message:  <" << e.GetMsg() << ">\n";
@@ -373,7 +373,7 @@ namespace internal
           std::cerr << "Position: <" << e.GetPos() << ">\n";
           std::cerr << "Errc:     <" << e.GetCode() << ">" << std::endl;
           AssertThrow(false, ExcParseError(e.GetCode(), e.GetMsg()));
-        } // catch
+        }
       return std::numeric_limits<double>::signaling_NaN();
     }
 

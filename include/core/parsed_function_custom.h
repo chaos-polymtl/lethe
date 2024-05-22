@@ -124,7 +124,6 @@ public:
 
   /**
    * @brief Set the time.
-   *
    * @param[in] newtime New time value
    */
   virtual void

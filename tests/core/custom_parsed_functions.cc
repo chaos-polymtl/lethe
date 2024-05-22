@@ -46,7 +46,7 @@ test()
 
 
 
-  deallog << "Testing first set" << std::endl;
+  deallog << "Testing second set" << std::endl;
   // Kinetics for a 5 species system of
   // 2A+3B=>1.5C
   // 1C+1D=>2E

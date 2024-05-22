@@ -33,7 +33,7 @@ ParsedFunctionCustom<n_components>::declare_parameters(ParameterHandler &prm)
     "The names of the variables as they will be used in the "
     "function, separated by commas. By default, the names of variables "
     "with which the function will be evaluated are the `c_i' (i from 0 to "
-    "n_components-1 and `t' for time. You can then use these variable names "
+    "n_components-1) and `t' for time. You can then use these variable names "
     "in your function expression and they will be "
     "replaced by the values of these variables at which the function is "
     "currently evaluated. However, you can also choose a different set "
