@@ -68,7 +68,6 @@ namespace Parameters
     return sizes;
   }
 
-
   void
   SimulationControl::declare_parameters(ParameterHandler &prm)
   {
