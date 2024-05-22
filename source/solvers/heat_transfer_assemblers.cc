@@ -73,12 +73,12 @@ HeatTransferAssemblerCore<dim>::assemble_matrix(
       // equations (70) and (79), which are adapted for the heat transfer
       // solver.
 
-      // In Tezduyar 2007, this is denoted r in equation (67). The velocity is
+      // In Tezduyar 2003, this is denoted r in equation (67). The velocity is
       // replaced by the temperature.
       Tensor<1, dim> temperature_gradient_unit_vector =
         dcdd_temperature_gradient / (dcdd_temperature_gradient.norm() + 1e-12);
 
-      // In Tezduyar 2007, this is denoted s in equation (67)
+      // In Tezduyar 2003, this is denoted s in equation (67)
       Tensor<1, dim> velocity_unit_vector =
         velocity / (velocity.norm() + 1e-12);
 
@@ -90,7 +90,7 @@ HeatTransferAssemblerCore<dim>::assemble_matrix(
            temperature_gradient_unit_vector, velocity_unit_vector)) *
          outer_product(velocity_unit_vector, velocity_unit_vector));
 
-      // Calculate the artificial viscosity of the shock capture.
+      // Calculate the artificial viscosity of the shock capture as in equation (79) of Tezduyar 2003
       const double nu_dcdd = 0.5 * h * h * u_mag *
                              dcdd_temperature_gradient.norm() /
                              scratch_data.global_delta_T_ref;
@@ -142,7 +142,7 @@ HeatTransferAssemblerCore<dim>::assemble_matrix(
               // DCDD shock capturing
               local_matrix(i, j) +=
                 rho_cp * nu_dcdd *
-                (scalar_product(grad_phi_T_j, dir_tensor * grad_phi_T_i)) * JxW;
+                (scalar_product(grad_phi_T_i, dir_tensor * grad_phi_T_j)) * JxW;
             }
         }
 
@@ -216,7 +216,7 @@ HeatTransferAssemblerCore<dim>::assemble_rhs(
       Tensor<1, dim> temperature_gradient_unit_vector =
         dcdd_temperature_gradient / (dcdd_temperature_gradient.norm() + 1e-12);
 
-      // In Tezduyar 2007, this is denoted s in equation (67)
+      // In Tezduyar 2003, this is denoted s in equation (67)
       Tensor<1, dim> velocity_unit_vector =
         velocity / (velocity.norm() + 1e-12);
 
@@ -228,7 +228,7 @@ HeatTransferAssemblerCore<dim>::assemble_rhs(
            temperature_gradient_unit_vector, velocity_unit_vector)) *
          outer_product(velocity_unit_vector, velocity_unit_vector));
 
-      // Calculate the artificial viscosity of the shock capture.
+      // Calculate the artificial viscosity of the shock capture as in equation (79) of Tezduyar 2003
       const double nu_dcdd = 0.5 * h * h * u_mag *
                              dcdd_temperature_gradient.norm() /
                              scratch_data.global_delta_T_ref;
@@ -270,7 +270,7 @@ HeatTransferAssemblerCore<dim>::assemble_rhs(
           // DCDD shock capturing
           local_rhs(i) -=
             rho_cp * nu_dcdd *
-            (scalar_product(temperature_gradient, dir_tensor * grad_phi_T_i)) *
+            (scalar_product(grad_phi_T_i, dir_tensor * temperature_gradient)) *
             JxW;
         }
 

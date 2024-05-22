@@ -68,9 +68,11 @@ public:
 
   /**
    * @brief assemble_matrix Interface for the call to rhs
+   * 
    * @param scratch_data Scratch data containing the heat transfer information.
    * It is important to note that the scratch data has to have been re-inited
    * before calling for matrix assembly.
+   * 
    * @param copy_data Destination where the element for the local_rhs and
    * local_matrix are copied to
    */
