@@ -192,9 +192,10 @@ public:
   /**
    * @brief Calculate delta_T_ref for the DCDD shock capture mechanism. delta_T_ref = T_max - T_min.
    *
-   * @param minimum_delta_T_ref Minimum temperature value acceptable as reference to calculate the DCDD shock capture stabilization term. 
-   * DCDD shock capture elements are divided by delta_T_ref. Limiting delta_T_ref prevents overestimation 
-   * of the virtual diffusivity at simulations with low differences between minimum and maximum temperatures.
+   * @param minimum_delta_T_ref Minimum temperature value acceptable as reference to calculate the DCDD shock capture stabilization term.
+   * DCDD shock capture elements are divided by delta_T_ref. Limiting
+   * delta_T_ref prevents overestimation of the virtual diffusivity at
+   * simulations with low differences between minimum and maximum temperatures.
    *
    * @return The difference between the maximal temperature and the minimal temperature in the whole domain.
    */

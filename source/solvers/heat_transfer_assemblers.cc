@@ -90,7 +90,8 @@ HeatTransferAssemblerCore<dim>::assemble_matrix(
            temperature_gradient_unit_vector, velocity_unit_vector)) *
          outer_product(velocity_unit_vector, velocity_unit_vector));
 
-      // Calculate the artificial viscosity of the shock capture as in equation (79) of Tezduyar 2003
+      // Calculate the artificial viscosity of the shock capture as in equation
+      // (79) of Tezduyar 2003
       const double nu_dcdd = 0.5 * h * h * u_mag *
                              dcdd_temperature_gradient.norm() /
                              scratch_data.global_delta_T_ref;
@@ -228,7 +229,8 @@ HeatTransferAssemblerCore<dim>::assemble_rhs(
            temperature_gradient_unit_vector, velocity_unit_vector)) *
          outer_product(velocity_unit_vector, velocity_unit_vector));
 
-      // Calculate the artificial viscosity of the shock capture as in equation (79) of Tezduyar 2003
+      // Calculate the artificial viscosity of the shock capture as in equation
+      // (79) of Tezduyar 2003
       const double nu_dcdd = 0.5 * h * h * u_mag *
                              dcdd_temperature_gradient.norm() /
                              scratch_data.global_delta_T_ref;
