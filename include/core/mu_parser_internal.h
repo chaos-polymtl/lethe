@@ -183,21 +183,21 @@ namespace internal
       std::vector<std::string> expressions;
 
     private:
-      // Thread safe object for using muParser
+      /// Thread safe object for using muParser
       mutable dealii::Threads::ThreadLocalStorage<
         ::internal::FunctionParserCustom::ParserData>
         parser_data;
 
-      // Constants
+      /// Constants
       std::map<std::string, double> constants;
 
-      // Variable name
+      /// Variable name
       std::vector<std::string> var_names;
 
-      // Keeps track if the muParser object is initialized
+      /// Keeps track if the muParser object is initialized
       bool initialized;
 
-      // Number of variables
+      /// Number of variables
       unsigned int n_vars;
     };
   } // namespace FunctionParserCustom

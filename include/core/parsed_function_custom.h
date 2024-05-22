@@ -1,6 +1,6 @@
 /* ---------------------------------------------------------------------
  *
- * Copyright (C) 2019 - 2020 by the Lethe authors
+ * Copyright (C) 2019 -  by the Lethe authors
  *
  * This file is part of the Lethe library
  *
@@ -131,17 +131,19 @@ public:
   set_time(const double newtime) override;
 
 private:
-  // Autoderivative behavior components
-  double                               h;
-  std::vector<Tensor<1, n_components>> ht;
+  /// Autoderivative behavior h step
+  double h;
+  /// Tensor for autoderivative behavior
+  Tensor<2, n_components> ht;
 
-  // muParser components: variable names, expressions (same number as
-  // variables), constants
+  /// muParser component: variable names
   std::string vnames;
+  /// muParser component:  expressions (same number as variables)
   std::string expression;
+  /// muParser component: constants
   std::string constants_list;
 
-  // Used to know if member variables for muParser have been initialized
+  /// Used to know if member variables for muParser have been initialized
   bool initialized;
 };
 

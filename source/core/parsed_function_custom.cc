@@ -5,7 +5,7 @@
 template <int n_components>
 ParsedFunctionCustom<n_components>::ParsedFunctionCustom(const double h)
   : h(h)
-  , ht(n_components)
+  , ht()
   , vnames("")
   , expression("")
   , constants_list("")
