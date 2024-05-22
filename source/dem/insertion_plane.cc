@@ -127,7 +127,7 @@ InsertionPlane<dim>::insert(
 
           this->mark_for_update = false;
         }
-      if (!this->clearing_particles)
+      if (this->clearing_particles)
         {
           this->clear_particle_box(particle_handler);
         }
