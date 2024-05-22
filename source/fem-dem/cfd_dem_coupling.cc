@@ -1257,11 +1257,11 @@ CFDDEMSolver<dim>::postprocess_cfd_dem()
    {
       TimerOutput::Scope t(this->computing_timer, "total_volume_calculation");
       double             total_volume_fluid, total_volume_solid;
-      std::tie(total_volume_fluid, total_volume_solid) = calculate_total_volume(
+      std::tie(total_volume_fluid, total_volume_solid) = calculate_fluid_and_particle_volumes(
         this->void_fraction_dof_handler,
         this->nodal_void_fraction_relevant,
         *this->cell_quadrature,
-        this->mapping);
+        *this->mapping);
       this->total_volume_table.add_value(
         "time", this->simulation_control->get_current_time());
       this->total_volume_table.add_value("total-volume-fluid", total_volume_fluid);
