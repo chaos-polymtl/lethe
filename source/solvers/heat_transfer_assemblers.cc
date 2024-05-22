@@ -95,7 +95,7 @@ HeatTransferAssemblerCore<dim>::assemble_matrix(
                              dcdd_temperature_gradient.norm() /
                              scratch_data.global_delta_T_ref;
 
-      // Calculation of the GLS stabilization parameter. The
+      // Calculation of the SUPG stabilization parameter. The
       // stabilization parameter used is different if the simulation is
       // steady or unsteady. In the unsteady case it includes the value
       // of the time-step
@@ -135,7 +135,7 @@ HeatTransferAssemblerCore<dim>::assemble_matrix(
                  rho_cp * phi_T_i * velocity * grad_phi_T_j) *
                 JxW;
 
-              // Addition to the cell matrix for GLS stabilization
+              // Addition to the cell matrix for SUPG stabilization
               local_matrix(i, j) += tau * strong_jacobian_vec[q][j] *
                                     (grad_phi_T_i * velocity) * JxW;
 
@@ -233,7 +233,7 @@ HeatTransferAssemblerCore<dim>::assemble_rhs(
                              dcdd_temperature_gradient.norm() /
                              scratch_data.global_delta_T_ref;
 
-      // Calculation of the GLS stabilization parameter. The
+      // Calculation of the SUPG stabilization parameter. The
       // stabilization parameter used is different if the simulation is
       // steady or unsteady. In the unsteady case it includes the value
       // of the time-step
