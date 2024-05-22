@@ -21,7 +21,6 @@ The phase indicator transitions smoothly from one extremum to the other with the
     :width: 600
 
 The length required to go from :math:`\phi=-0.99` to :math:`\phi=0.99` is about 7.5 times :math:`\varepsilon`, which we will see appear later in the equations.
-
 Let us introduce the free energy functional :math:`\mathcal{F}`:
 
 .. math::
