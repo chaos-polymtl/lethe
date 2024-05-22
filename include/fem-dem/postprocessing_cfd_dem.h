@@ -12,16 +12,10 @@
  * the top level of the Lethe distribution.
  *
  * ---------------------------------------------------------------------
-
- *
- * Author: Audrey Collard-Daigneault, Bruno Blais, Polytechnique Montreal, 2020
- -
  */
-
 
 #ifndef lethe_postprocessing_cfd_dem_h
 #define lethe_postprocessing_cfd_dem_h
-
 
 // Base
 #  include <deal.II/base/quadrature_lib.h>
@@ -51,12 +45,9 @@
  * V_solid = ∫(1-ε)dΩ
  * Where ε is the void fraction and dΩ is the volume of the cell.
  *
- * @param void_fraction_dof_handler. The argument used to get void fraction at quadrature points
- *
- * @param present_void_fraction_solution. The vector which contains the void fraction values
- *
- * @param quadrature_formula The quadrature formula for the calculation
- *
+ * @param void_fraction_dof_handler. Used to calculate the void fraction at quadrature points
+ * @param present_void_fraction_solution. Void fraction solution vector
+ * @param quadrature_formula. Quadrature formula.
  * @param mapping The mapping of the simulation
  */
 template <int dim, typename VectorType>
@@ -65,7 +56,5 @@ calculate_total_volume(const DoFHandler<dim> &void_fraction_dof_handler,
                            const VectorType   &present_void_fraction_solution,
                            const Quadrature<dim> &quadrature_formula,
                            std::shared_ptr<Mapping<dim>>    mapping);
-
-
 
 #endif

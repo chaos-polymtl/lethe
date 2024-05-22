@@ -1966,7 +1966,6 @@ GLSVANSSolver<dim>::monitor_mass_conservation()
               << " s^-1" << std::endl;
 }
 
-
 template <int dim>
 void
 GLSVANSSolver<dim>::solve()

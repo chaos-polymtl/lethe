@@ -56,7 +56,7 @@ calculate_total_volume(const DoFHandler<dim> &void_fraction_dof_handler,
 
   // Initialize variables for summation
   double total_volume_fluid = 0;
-  double total_volume_solid = 0;
+  double total_volume_particles = 0;
 
   for (const auto &cell : void_fraction_dof_handler.active_cell_iterators())
     {
