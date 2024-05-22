@@ -220,7 +220,7 @@ HeatTransferAssemblerCore<dim>::assemble_rhs(
       Tensor<1, dim> velocity_unit_vector =
         velocity / (velocity.norm() + 1e-12);
 
-      // Directionality tensor
+      // Directionality tensor [rr - (r⋅s)^2*ss]
       Tensor<2, dim> dir_tensor =
         outer_product(temperature_gradient_unit_vector,
                       temperature_gradient_unit_vector) -
@@ -263,7 +263,7 @@ HeatTransferAssemblerCore<dim>::assemble_rhs(
              scratch_data.source[q] * phi_T_i) *
             JxW;
 
-          // Apply GLS
+          // Apply SUPG
           local_rhs(i) -=
             tau * (strong_residual_vec[q] * (grad_phi_T_i * velocity)) * JxW;
 
