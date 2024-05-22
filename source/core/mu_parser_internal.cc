@@ -216,9 +216,9 @@ namespace internal
       // Now we define how many variables we expect to read in. We distinguish
       // between two cases: Time dependent problems, and not time dependent
       // problems. In the first case the number of variables is given by the
-      // components plus one. In the other case, the number of variables is equal
-      // to the dimension. Once we parsed the variables string, if none of this
-      // is the case, then an exception is thrown.
+      // components plus one. In the other case, the number of variables is
+      // equal to the dimension. Once we parsed the variables string, if none of
+      // this is the case, then an exception is thrown.
       if (time_dependent)
         this->n_vars = n_components + 1;
       else

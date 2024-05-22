@@ -43,51 +43,136 @@ namespace internal
 {
   namespace FunctionParserCustom
   {
+    /**
+     * @brief Rounds the value to the nearest integer
+     * @param[in] val Value to round
+     * @return Rounded value
+     */
     int
     mu_round(double val);
 
+    /**
+     * @brief If-condition
+     * @param[in] condition Boolean expression
+     * @param[in] thenvalue Expression if true
+     * @param[in] elsevalue Expression if false
+     * @return Resulting value
+     */
     double
     mu_if(double condition, double thenvalue, double elsevalue);
 
+    /**
+     * @brief Logical or
+     * @param[in] left First parameter
+     * @param[in] right Second parameter
+     * @return 1 if either is true, 0 else
+     */
     double
     mu_or(double left, double right);
 
+    /**
+     * @brief Logical and
+     * @param[in] left First parameter
+     * @param[in] right Second parameter
+     * @return 1 if both are true, 0 else
+     */
     double
     mu_and(double left, double right);
 
+    /**
+     * Rounds the value to the nearest integer (same as round)
+     * @param[in] value Value to round
+     * @return Rounded value
+     */
     double
     mu_int(double value);
 
+    /**
+     * Rounds the value to the upper integer
+     * @param[in] value Value to round
+     * @return Rounded value
+     */
     double
     mu_ceil(double value);
 
+    /**
+     * @brief Rounds the value to the lower integer
+     * @param[in] value Value to round
+     * @return Rounded value
+     */
     double
     mu_floor(double value);
 
+    /**
+     * @brief Performs the cotangent operation
+     * @param[in] value Value to process
+     * @return Cotan(value)
+     */
     double
     mu_cot(double value);
 
+    /**
+     * @brief Performs the cosecant operation
+     * @param[in] value Value to process
+     * @return Cosec(value)
+     */
     double
     mu_csc(double value);
 
+    /**
+     * @brief Performs the secant operation
+     * @param[in] value Value to process
+     * @return Sec(value)
+     */
     double
     mu_sec(double value);
 
+    /**
+     * @brief Performs the natural-logarithm operation
+     * @param[in] value Value to process
+     * @return std::log(value)
+     */
     double
     mu_log(double value);
 
+    /**
+     * @brief Performs the a to the power b operation
+     * @param[in] a Base
+     * @param[in] b Exponent
+     * @return std::pow(a,b)
+     */
     double
     mu_pow(double a, double b);
 
+    /**
+     * @brief Performs the erf operation
+     * @param[in] value Value to process
+     * @return std::erf(value)
+     */
     double
     mu_erf(double value);
 
+    /**
+     * @brief Performs the erfc operation
+     * @param[in] value Value to process
+     * @return std::erfc(value)
+     */
     double
     mu_erfc(double value);
 
+    /**
+     * @brief Generate number in [0,1] with a specific seed
+     * @param[in] seed Number to be able to reproduce random behavior between
+     * runs
+     * @return Random number
+     */
     double
     mu_rand_seed(double seed);
 
+    /**
+     * @brief Generate number in [0,1]
+     * @return Random number
+     */
     double
     mu_rand();
 

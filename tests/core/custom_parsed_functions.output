@@ -9,7 +9,7 @@ DEAL:: Source term gradients = -32.0000 -24.0000 0.00000  -48.0000 -36.0000 0.00
 DEAL:: Source term gradient [0] = -32.0000 -24.0000 0.00000
 DEAL:: Source term gradient [1] = -48.0000 -36.0000 0.00000
 DEAL:: Source term gradient [2] = 24.0000 18.0000 0.00000
-DEAL::Testing first set
+DEAL::Testing second set
 DEAL:: Source term = -16.0000 -24.0000 11.9051 -0.0632456 0.126491
 DEAL:: Source term [0] = -16.0000
 DEAL:: Source term [1] = -24.0000

@@ -33,6 +33,10 @@
 #include <deal.II/grid/manifold.h>
 #include <deal.II/grid/manifold_lib.h>
 
+/**
+ * @brief Wrapper based on muParser to deal with arbitrary expressions
+ * @tparam n_components Number of variables (and expressions) parsed
+ */
 template <int n_components>
 class ParsedFunctionCustom
   : public FunctionTime<double>,
