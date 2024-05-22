@@ -40,8 +40,7 @@
 template <int n_components>
 class ParsedFunctionCustom
   : public FunctionTime<double>,
-    protected ::internal::FunctionParserCustom::ParserImplementation<
-      n_components>
+    protected ::internalFunctionParserCustom::ParserImplementation<n_components>
 {
 public:
   /**

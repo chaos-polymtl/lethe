@@ -108,7 +108,7 @@ ParsedFunctionCustom<n_components>::initialize()
     {
       case n_components:
         // Time independent function
-        this->::internal::FunctionParserCustom::ParserImplementation<
+        this->::internalFunctionParserCustom::ParserImplementation<
           n_components>::initialize(vnames,
                                     Utilities::split_string_list(expression,
                                                                  ';'),
@@ -116,7 +116,7 @@ ParsedFunctionCustom<n_components>::initialize()
         break;
       case n_components + 1:
         // Time dependent function
-        this->::internal::FunctionParserCustom::ParserImplementation<
+        this->::internalFunctionParserCustom::ParserImplementation<
           n_components>::initialize(vnames,
                                     Utilities::split_string_list(expression,
                                                                  ';'),
