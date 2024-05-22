@@ -5,7 +5,7 @@ Cahn-Hilliard Method
   
 The Cahn-Hilliard system of equations `[1] <https://dx.doi.org/10.1063/1.1744102>`_ is a model used to describe the process of phase separation based on the principle of free energy minimization. The key idea is that the system evolves to a state where the free energy is minimized, which often leads to the formation of distinct phases or regions within the material. This competition between the tendency of the system to minimize its overall free energy and the energy cost associated with creating new interfaces between phases is at the heart of the Cahn-Hilliard equation. Let us introduce those concepts formally.
 
-Let :math:`\Omega = \Omega_0 \cup \Omega_1` be the domain formed by two fluids, namely fluid :math:`0` and :math:`1`, with :math:`\Gamma` denoting their interface and :math:`\partial \Omega`, the remaining boundaries. Like in :doc:`vof`, we define a scalar function :math:`\phi` as a phase indicator such that:
+Let :math:`\Omega = \Omega_0 \cup \Omega_1` be the domain formed by two fluids, namely fluid :math:`0` and :math:`1`, with :math:`\Gamma` the boundaries of the system. Like in :doc:`vof`, we define a scalar function :math:`\phi` as a phase indicator such that:
 
 .. math::
   \phi =
@@ -14,6 +14,14 @@ Let :math:`\Omega = \Omega_0 \cup \Omega_1` be the domain formed by two fluids, 
     -1 \quad \forall \mathbf{x} \in \Omega_1
   \end{cases}
   
+The phase indicator transitions smoothly from one extremum to the other with the shape of an hyperbolic tangent function as illustrated below: 
+
+.. image:: images/tanh-solution.png
+    :alt: Schematic
+    :align: center
+    :width: 600
+    
+The length required to go from :math:`\phi=-0.99` to :math:`\phi=0.99` is about 7.5 times :math:`\epsilon`, which we will see appear later in the equations.
 
 Let us introduce the free energy functional :math:`\mathcal{F}`:
 
@@ -64,12 +72,12 @@ Substituting the solution previously found, we obtain the following expression f
 .. math::
   \lambda = \frac{3\epsilon\sigma}{2\sqrt{2}}
   
-For the problem to have a unique solution, we give the following no-flux boundary conditions on :math:`\Gamma` for the phase field and chemical potential:
+For the problem to have a unique solution, we give the following no-flux boundary conditions on :math:`\partial \Omega` for the phase field and chemical potential:
 
 .. math::
-  \nabla \phi \cdot\mathbf{n} = 0
+  (\nabla \phi \cdot\mathbf{n})_{| \partial \Omega} = 0
   
-  \nabla \eta \cdot \mathbf{n} = 0
+  (\nabla \eta \cdot \mathbf{n})_{| \partial \Omega} = 0
 
   
 Finite Element Formulation
@@ -137,7 +145,7 @@ This tensor is added to the usual viscous stress tensor to take into account the
   & = \eta\nabla\phi + \nabla\psi
   \end{align}
   
-We then define a modified pressure :math:`\hat{p}`, which corresponds to the usual pressure in the bulk phases and varies more smoothly in the interface `[2] <https://doi.org/10.48550/arXiv.1911.06718>`_. 
+We then define a modified pressure :math:`\hat{p}`, which corresponds to the usual pressure with the additional :math:`\psi` term. This new pressure is the same in the bulk phases and varies more smoothly in the interface `[2] <https://doi.org/10.48550/arXiv.1911.06718>`_. 
 Then, to take into account the change of momentum of the system due to the diffusive flux of species, we add the following term into the momentum equation:
 
 .. math::
@@ -154,8 +162,10 @@ Finally, the local physical properties (density, viscosity, \dots)  are deduced 
 The Cahn-Hilliard-Navier-Stokes momentum equation solved in Lethe is:
 
 .. math::
-  \rho(\phi)\left(\frac{\partial\mathbf{u}}{\partial t} + (\mathbf{u}\cdot\nabla)\mathbf{u}\right) + \left(\frac{\rho_0-\rho_1}{2}M(\phi)\nabla\eta\cdot \nabla\right)\mathbf{u} - \nabla \cdot \left(\mu(\phi)(\nabla\mathbf{u} + \nabla\mathbf{u}^\mathbf{T})\right) + \nabla \hat{p} - \eta\nabla\phi = 0
-  
+  \begin{align}
+  & \rho(\phi)\left(\frac{\partial\mathbf{u}}{\partial t} + (\mathbf{u}\cdot\nabla)\mathbf{u}\right) + \left(\frac{\rho_0-\rho_1}{2}M(\phi)\nabla\eta\cdot \nabla\right)\mathbf{u}  \\
+   & - \nabla \cdot \left(\mu(\phi)(\nabla\mathbf{u} + \nabla\mathbf{u}^\mathbf{T})\right) + \nabla \hat{p} - \eta\nabla\phi = 0 \\
+  \end{align}
   
   
 References
