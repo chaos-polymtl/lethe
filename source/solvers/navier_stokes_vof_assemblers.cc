@@ -94,7 +94,7 @@ GLSNavierStokesVOFAssemblerCore<dim>::assemble_matrix(
           calculate_navier_stokes_gls_tau_transient(
             u_mag, viscosity_for_stabilization_vector[q] / density_eq, h, sdt);
 
-      // Void fraction gradient for strong residual
+      // Filtered phase fraction gradient for strong residual
       const Tensor<1, dim> &filtered_phase_gradient =
         scratch_data.filtered_phase_gradient_values[q];
 
@@ -256,7 +256,7 @@ GLSNavierStokesVOFAssemblerCore<dim>::assemble_rhs(
       const Tensor<1, dim> pressure_gradient =
         scratch_data.pressure_gradients[q];
 
-      // Void fraction gradient for strong residual
+      // Filtered phase fraction gradient for strong residual
       const Tensor<1, dim> &filtered_phase_gradient =
         scratch_data.filtered_phase_gradient_values[q];
 
@@ -932,7 +932,7 @@ GLSNavierStokesVOFAssemblerNonNewtonianCore<dim>::assemble_matrix(
           calculate_navier_stokes_gls_tau_transient(
             u_mag, viscosity_for_stabilization_vector[q] / density_eq, h, sdt);
 
-      // Void fraction gradient for strong residual
+      // Filtered phase fraction gradient for strong residual
       const Tensor<1, dim> &filtered_phase_gradient =
         scratch_data.filtered_phase_gradient_values[q];
 
@@ -1140,7 +1140,7 @@ GLSNavierStokesVOFAssemblerNonNewtonianCore<dim>::assemble_rhs(
             u_mag, viscosity_for_stabilization_vector[q] / density_eq, h, sdt);
 
 
-      // Void fraction gradient for strong residual
+      // Filtered phase fraction gradient for strong residual
       const Tensor<1, dim> &filtered_phase_gradient =
         scratch_data.filtered_phase_gradient_values[q];
 
