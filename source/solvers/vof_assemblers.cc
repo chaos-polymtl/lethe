@@ -271,7 +271,10 @@ VOFAssemblerCore<dim>::assemble_rhs(VOFScratchData<dim>       &scratch_data,
             JxW;
 
           // DCDD shock capturing
-          local_rhs(i) -= vdcdd * scalar_product(grad_phi_phase_i, dcdd_factor * phase_gradient) * JxW;
+          local_rhs(i) -=
+            vdcdd *
+            scalar_product(grad_phi_phase_i, dcdd_factor * phase_gradient) *
+            JxW;
         }
     }
 }

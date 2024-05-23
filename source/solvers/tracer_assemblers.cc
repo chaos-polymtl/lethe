@@ -106,11 +106,17 @@ TracerAssemblerCore<dim>::assemble_matrix(TracerScratchData<dim> &scratch_data,
               local_matrix(i, j) += tau * strong_jacobian_vec[q][j] *
                                     (grad_phi_T_i * velocity) * JxW;
 
-              local_matrix(i, j) += (vdcdd * scalar_product(grad_phi_T_i, dcdd_factor * grad_phi_T_j) + d_vdcdd * grad_phi_T_j.norm() * scalar_product(grad_phi_T_i, dcdd_factor * tracer_gradient)) * JxW;
-                }
+              local_matrix(i, j) +=
+                (vdcdd *
+                   scalar_product(grad_phi_T_i, dcdd_factor * grad_phi_T_j) +
+                 d_vdcdd * grad_phi_T_j.norm() *
+                   scalar_product(grad_phi_T_i,
+                                  dcdd_factor * tracer_gradient)) *
+                JxW;
             }
         }
-    } // end loop on quadrature points
+    }
+} // end loop on quadrature points
 }
 
 
@@ -200,7 +206,9 @@ TracerAssemblerCore<dim>::assemble_rhs(TracerScratchData<dim>    &scratch_data,
           local_rhs(i) -=
             tau * (strong_residual_vec[q] * (grad_phi_T_i * velocity)) * JxW;
 
-          local_rhs(i) -= vdcdd * scalar_product(grad_phi_T_i, dcdd_factor * tracer_gradient) * JxW;
+          local_rhs(i) -=
+            vdcdd *
+            scalar_product(grad_phi_T_i, dcdd_factor * tracer_gradient) * JxW;
         }
     } // end loop on quadrature points
 }
