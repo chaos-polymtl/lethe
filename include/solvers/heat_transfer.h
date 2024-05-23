@@ -28,7 +28,6 @@
  * Equation solved:
  * rho * Cp * (dT/dt + u.gradT) = k div(gradT) + nu/rho * (gradu : gradu)
  *
- * Polytechnique Montreal, 2020-
  */
 
 #ifndef lethe_heat_transfer_h
@@ -190,6 +189,18 @@ public:
   void
   attach_solution_to_output(DataOut<dim> &data_out) override;
 
+  /**
+   * @brief Calculate delta_T_ref for the DCDD shock capture mechanism. delta_T_ref = T_max - T_min.
+   *
+   * @param minimum_delta_T_ref Minimum temperature value acceptable as reference to calculate the DCDD shock capture stabilization term.
+   * DCDD shock capture elements are divided by delta_T_ref. Limiting
+   * delta_T_ref prevents overestimation of the virtual diffusivity at
+   * simulations with low differences between minimum and maximum temperatures.
+   *
+   * @return The difference between the maximal temperature and the minimal temperature in the whole domain.
+   */
+  double
+  calculate_delta_T_ref(double minimum_delta_T_ref = 1.);
 
   /**
    * @brief Calculate the L2 error of the solution.
@@ -785,7 +796,6 @@ private:
    * material properties.
    */
   std::vector<HeatFluxPostprocessor<dim>> heat_flux_postprocessors;
-
 
   /*
    * Phase change post-processing. These parameters track the presence of a

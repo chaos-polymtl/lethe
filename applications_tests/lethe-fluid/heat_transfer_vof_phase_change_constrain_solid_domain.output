@@ -74,10 +74,10 @@ VOF Barycenter
 0.030000 0.499999 0.061528 -0.000017 0.000024 
 
 **********************************************************************************
-Transient iteration: 4        Time: 0.04     Time step: 0.01     CFL: 0.000305555
+Transient iteration: 4        Time: 0.04     Time step: 0.01     CFL: 0.000305556
 **********************************************************************************
-Pressure drop: -0.0420473 Pa
-Total pressure drop: -0.0420473 Pa
+Pressure drop: -0.0420472 Pa
+Total pressure drop: -0.0420472 Pa
 
 ----------------------
 VOF Mass Conservation
