@@ -50,6 +50,7 @@ Load ``Trilinos``, ``Parmetis`` and ``P4est``, and their prerequisite modules:
   module load parmetis/4.0.3
   module load p4est/2.2
   module load opencascade/7.5.2
+  module load muparser/2.3.2
 
 Then, we can clone and compile ``dealii``. Although Lethe always supports the master branch of deal.II, we maintain an identical deal.II fork on the lethe repository. This fork is always tested to make sure it works with lethe. To clone the deal.II fork github repository, execute in ``$HOME/dealii`` directory:
 
@@ -170,6 +171,7 @@ In the nano terminal, copy-paste (with ``Ctrl+Shift+V``):
   module load parmetis/4.0.3
   module load p4est/2.2
   module load opencascade/7.5.2
+  module load muparser/2.3.2
 
   export DEAL_II_DIR=$HOME/dealii/inst/
   export PATH=$PATH:$HOME/lethe/inst/bin/
