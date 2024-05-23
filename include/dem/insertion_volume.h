@@ -41,11 +41,12 @@ public:
    * @param maximum_particle_diameter Maximum particle diameter based on values
    * defined in the parameter handler
    */
-  InsertionVolume(const std::vector<std::shared_ptr<Distribution>>
-                                                                  &distribution_object_container,
-                  const parallel::distributed::Triangulation<dim> &triangulation,
-                  const DEMSolverParameters<dim>                  &dem_parameters,
-                  const double                    maximum_particle_diameter);
+  InsertionVolume(
+    const std::vector<std::shared_ptr<Distribution>>
+      &distribution_object_container,
+    const parallel::distributed::Triangulation<dim> &triangulation,
+    const DEMSolverParameters<dim>                  &dem_parameters,
+    const double                                     maximum_particle_diameter);
 
   /**
    * Carries out the volume insertion of particles.

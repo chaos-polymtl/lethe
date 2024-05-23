@@ -70,9 +70,9 @@ public:
    * type of particle
    */
   Insertion(const std::vector<std::shared_ptr<Distribution>>
-                                           &distribution_object_container,
+              &distribution_object_container,
             const parallel::distributed::Triangulation<dim> &triangulation,
-            const DEMSolverParameters<dim> &dem_parameters);
+            const DEMSolverParameters<dim>                  &dem_parameters);
 
   /**
    * @brief This function is overridden by the volume_insertion, plane_insertion,

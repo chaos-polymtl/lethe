@@ -12,9 +12,9 @@ InsertionVolume<dim>::InsertionVolume(
   const std::vector<std::shared_ptr<Distribution>>
     &distribution_object_container,
   const parallel::distributed::Triangulation<dim> &triangulation,
-  const DEMSolverParameters<dim>
-    &dem_parameters, const double maximum_particle_diameter)
-  : Insertion<dim>(distribution_object_container,triangulation,dem_parameters)
+  const DEMSolverParameters<dim>                  &dem_parameters,
+  const double                                     maximum_particle_diameter)
+  : Insertion<dim>(distribution_object_container, triangulation, dem_parameters)
   , particles_of_each_type_remaining(
       dem_parameters.lagrangian_physical_properties.number.at(0))
 {
@@ -51,7 +51,7 @@ InsertionVolume<dim>::insert(
           this->find_in_clearing_box_cells(triangulation);
           this->mark_for_update = false;
         }
-      if(this->clearing_particles)
+      if (this->clearing_particles)
         {
           this->clear_particle_box(particle_handler);
         }

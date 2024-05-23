@@ -54,9 +54,9 @@ public:
    * @param triangulation Triangulation object used in the simulation.
    */
   InsertionPlane(const std::vector<std::shared_ptr<Distribution>>
-                                                                 &distribution_object_container,
+                   &distribution_object_container,
                  const parallel::distributed::Triangulation<dim> &triangulation,
-                 const DEMSolverParameters<dim>                  &dem_parameters);
+                 const DEMSolverParameters<dim> &dem_parameters);
 
   /**
    * Carries out the insertion of particles.

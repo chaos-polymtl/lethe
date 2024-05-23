@@ -32,9 +32,9 @@ class InsertionList : public Insertion<dim>
 {
 public:
   InsertionList(const std::vector<std::shared_ptr<Distribution>>
-                                                                &distribution_object_container,
+                  &distribution_object_container,
                 const parallel::distributed::Triangulation<dim> &triangulation,
-                const DEMSolverParameters<dim>                  &dem_parameters);
+                const DEMSolverParameters<dim> &dem_parameters);
 
   /**
    * @brief The InsertionList class inserts particles using a list specific position.

@@ -9,14 +9,14 @@ Insertion<dim>::Insertion(
     &distribution_object_container,
   const parallel::distributed::Triangulation<dim> &triangulation,
   const DEMSolverParameters<dim>                  &dem_parameters)
-: clearing_particles(dem_parameters.insertion_info.clearing_particles)
+  : clearing_particles(dem_parameters.insertion_info.clearing_particles)
 {
   distributions_objects = distribution_object_container;
 
   // Boost signal for load balancing
-  this->mark_for_update = true;
-  this->change_to_triangulation =
-    triangulation.signals.any_change.connect([&] { this->mark_for_update = true; });
+  this->mark_for_update         = true;
+  this->change_to_triangulation = triangulation.signals.any_change.connect(
+    [&] { this->mark_for_update = true; });
 
   for (unsigned int i = 0; i < 3; ++i)
     {

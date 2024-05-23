@@ -32,9 +32,9 @@ class InsertionFile : public Insertion<dim>
 {
 public:
   InsertionFile(const std::vector<std::shared_ptr<Distribution>>
-                                                                &distribution_object_container,
+                  &distribution_object_container,
                 const parallel::distributed::Triangulation<dim> &triangulation,
-                const DEMSolverParameters<dim>                  &dem_parameters);
+                const DEMSolverParameters<dim> &dem_parameters);
 
   /**
    * @brief The InsertionFile class inserts particles using data stored in a file.
@@ -111,7 +111,6 @@ public:
 
   // Files where the particles properties are stored.
   const std::vector<std::string> insertion_files;
-
 };
 
 #endif /* lethe_insertion_file_h */

@@ -8,10 +8,10 @@ using namespace DEM;
 template <int dim>
 InsertionFile<dim>::InsertionFile(
   const std::vector<std::shared_ptr<Distribution>>
-                                                  &distribution_object_container,
+    &distribution_object_container,
   const parallel::distributed::Triangulation<dim> &triangulation,
   const DEMSolverParameters<dim>                  &dem_parameters)
-  : Insertion<dim>(distribution_object_container,triangulation,dem_parameters)
+  : Insertion<dim>(distribution_object_container, triangulation, dem_parameters)
   , remaining_particles_of_each_type(
       dem_parameters.lagrangian_physical_properties.number.at(0))
   , number_of_files(dem_parameters.insertion_info.list_of_input_files.size())
@@ -48,14 +48,16 @@ InsertionFile<dim>::insert(
           this->find_in_clearing_box_cells(triangulation);
           this->mark_for_update = false;
         }
-      if(this->clearing_particles)
+      if (this->clearing_particles)
         {
           this->clear_particle_box(particle_handler);
         }
 
       // Read the input file
       std::map<std::string, std::vector<double>> particles_data;
-      fill_vectors_from_file(particles_data, insertion_files.at(current_file_id), ";");
+      fill_vectors_from_file(particles_data,
+                             insertion_files.at(current_file_id),
+                             ";");
       current_file_id++;
       current_file_id = current_file_id % number_of_files;
 
