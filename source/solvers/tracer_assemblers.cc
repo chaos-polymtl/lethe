@@ -85,9 +85,6 @@ TracerAssemblerCore<dim>::assemble_matrix(TracerScratchData<dim> &scratch_data,
           const double laplacian_phi_T_j    = scratch_data.laplacian_phi[q][j];
           strong_jacobian_vec[q][j] +=
             velocity * grad_phi_T_j - diffusivity * laplacian_phi_T_j;
-
-          if (DCDD)
-            strong_jacobian_vec[q][j] += -vdcdd * laplacian_phi_T_j;
         }
 
       for (unsigned int i = 0; i < n_dofs; ++i)
@@ -109,15 +106,7 @@ TracerAssemblerCore<dim>::assemble_matrix(TracerScratchData<dim> &scratch_data,
               local_matrix(i, j) += tau * strong_jacobian_vec[q][j] *
                                     (grad_phi_T_i * velocity) * JxW;
 
-              if (DCDD)
-                {
-                  local_matrix(i, j) +=
-                    (vdcdd * scalar_product(grad_phi_T_j,
-                                            dcdd_factor * grad_phi_T_i) +
-                     d_vdcdd * grad_phi_T_j.norm() *
-                       scalar_product(tracer_gradient,
-                                      dcdd_factor * grad_phi_T_i)) *
-                    JxW;
+              local_matrix(i, j) += (vdcdd * scalar_product(grad_phi_T_i, dcdd_factor * grad_phi_T_j) + d_vdcdd * grad_phi_T_j.norm() * scalar_product(grad_phi_T_i, dcdd_factor * tracer_gradient)) * JxW;
                 }
             }
         }
@@ -197,9 +186,6 @@ TracerAssemblerCore<dim>::assemble_rhs(TracerScratchData<dim>    &scratch_data,
       strong_residual_vec[q] +=
         velocity * tracer_gradient - diffusivity * tracer_laplacian;
 
-      if (DCDD)
-        strong_residual_vec[q] += -vdcdd * tracer_laplacian;
-
       for (unsigned int i = 0; i < n_dofs; ++i)
         {
           const auto phi_T_i      = scratch_data.phi[q][i];
@@ -214,13 +200,7 @@ TracerAssemblerCore<dim>::assemble_rhs(TracerScratchData<dim>    &scratch_data,
           local_rhs(i) -=
             tau * (strong_residual_vec[q] * (grad_phi_T_i * velocity)) * JxW;
 
-          if (DCDD)
-            {
-              local_rhs(i) +=
-                -vdcdd *
-                scalar_product(tracer_gradient, dcdd_factor * grad_phi_T_i) *
-                JxW;
-            }
+          local_rhs(i) -= vdcdd * scalar_product(grad_phi_T_i, dcdd_factor * tracer_gradient) * JxW;
         }
     } // end loop on quadrature points
 }
