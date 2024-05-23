@@ -48,6 +48,7 @@ To formalize the idea that the system tries to lower its free energy, we introdu
   
 Then, the phases have to move to satisfy free energy minimization, by going from high chemical potential regions to low chemical potential regions. Let us introduce the flux of phase due to chemical potential differences, denoted by :math:`\mathbf{J}`:
 
+
 .. math::
   \mathbf{J} = -M(\phi)\nabla\eta
    
@@ -149,9 +150,9 @@ We then define a modified pressure :math:`\hat{p}`, which corresponds to the usu
 Then, to take into account the change of momentum of the system due to the diffusive flux of species, we add the following term into the momentum equation:
 
 .. math::
-  (\tilde{\mathbf{J}}\cdot \nabla)\mathbf{v} = (\frac{\rho_0-\rho_1}{2}\mathbf{J}\cdot \nabla)\mathbf{v}
+  (\mathbf{\tilde{J}}\cdot \nabla)\mathbf{v} = (\frac{\rho_0-\rho_1}{2}\mathbf{J}\cdot \nabla)\mathbf{v}
   
-Finally, the local physical properties (density, viscosity, \dots)  are deduced from the phase field by taking a linear approximation:
+Finally, the local physical properties (density, viscosity, `etc`.)  are deduced from the phase field by taking a linear approximation:
 
 .. math::
   \begin{align}
@@ -167,6 +168,17 @@ The Cahn-Hilliard-Navier-Stokes momentum equation solved in Lethe is:
    & - \nabla \cdot \left(\mu(\phi)(\nabla\mathbf{u} + \nabla\mathbf{u}^\mathbf{T})\right) + \nabla \hat{p} - \eta\nabla\phi = 0 \\
   \end{align}
   
+With an adequate choice of definition of velocity (see `[3] <https://doi.org/10.48550/arXiv.1104.1336>`_), the velocity field remains divergence-free:
+
+.. math::
+  \nabla \cdot \mathbf{u} = 0
+  
+However, the continuity equation is slightly different than the usual single-phase one:
+
+.. math::
+  \frac{\partial\rho}{\partial t} + \nabla \cdot (\rho\mathbf{u} +\mathbf{\tilde{J}}) = 0
+  
+This is to take into account the diffusion of species in the system.
   
 References
 -----------
@@ -175,6 +187,10 @@ References
 
 
 `[2] <https://doi.org/10.48550/arXiv.1911.06718>`_ A. Lovrić, W. G. Dettmer, and D. Perić, ‘Low Order Finite Element Methods for the Navier-Stokes-Cahn-Hilliard Equations’. arXiv, Nov. 15, 2019. doi: 10.48550/arXiv.1911.06718.
+
+
+`[3] <https://doi.org/10.48550/arXiv.1104.1336>`_ H. Abels, H. Garcke, and G. Grün, ‘Thermodynamically Consistent, Frame Indifferent Diffuse Interface Models for Incompressible Two-Phase Flows with Different Densities’. arXiv, Apr. 07, 2011. doi: 10.48550/arXiv.1104.1336.
+
 
 
 
