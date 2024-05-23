@@ -10,11 +10,13 @@ In this subsection, insertion methods which are ``volume``, ``plane``, ``list`` 
 .. code-block:: text
 
   subsection insertion info
-    # Choices are volume|plane|list|file|clear_and_add
+    # Choices are volume|plane|list|file
     set insertion method                               = volume
 
     # Every method
     set insertion frequency                            = 20000
+    set clearing particles                             = false
+    set clearing box points coordinates                = 0., 0., 0.: 1., 1., 1.
 
     # If method = volume
     set inserted number of particles at each time step = 100
@@ -50,11 +52,9 @@ In this subsection, insertion methods which are ``volume``, ``plane``, ``list`` 
     set list diameters                                 = 0.
 
     # If method = file
-    set insertion file name                            = particles.input
-
-    # If method = clear_and_add
     set list of input files                            = particles.input
-    set clearing box points coordinates                = 0., 0., 0.: 1., 1., 1.
+
+
 
   end
 
@@ -63,6 +63,8 @@ The ``insertion method`` parameter chooses the type of insertion. Acceptable cho
 * The ``insertion frequency`` parameter defines the frequency of insertion. For example, if the ``insertion frequency`` is set equal to 10000, the iterations 1, 10001, 20001, ... will be defined as insertion steps.  The ``insertion frequency`` should be selected adequately depending on the insertion method. For ``volume`` it should be large, so that the inserted particles at the previous insertion step have enough time to leave the insertion box for the next insertion step, otherwise large overlap may occur which leads to a large velocity of particles. For the ``plane`` method, it should be small so that particles are being inserted as soon as a cell is empty.
 
 * The ``insertion maximum offset`` and ``insertion prn seed`` parameters defines the random offset values to the initial positions of particles during a ``volume`` and ``plane`` insertion. The ``insertion maximum offset`` parameter defines the maximum value for an offset. The ``insertion prn seed`` parameter defines the pseudo-random number (PRN) with which offset values are getting generated.
+
+* The ``clearing box points coordinates`` parameter defines a clearing box where particles will be removed from the triangulation just before the insertion of new particles. This assures that there is no excessive overlap between new and previously inserted particles. If the ``clearing particles`` parameter is set to ``false`` particle removal will not be performed.
 
 -------
 Volume
@@ -124,7 +126,7 @@ The ``list`` insertion method insert particles at precis coordinates with specif
 ---------------------
 File
 ---------------------
-The ``file`` insertion method insert particles in a similar way to the ``list`` insertion method. The main difference between these two methods is the option to use an external file provided by the ``insertion file name`` parameter. This parameter is set at ``particles.input`` by default. This file has to follow this structure:
+The ``file`` insertion method insert particles in a similar way to the ``list`` insertion method. The main difference between these two methods is the option to use external files provided by the ``list of input files`` parameter. This parameter is set at ``particles.input`` by default, but a list a files can be specified. At each insertion time step, a different file will be used. If the end of the list is reached and there are still particles to be inserted, the list returns to the first file. An insertion file must follow this structure:
 
 .. code-block:: text
 
@@ -139,11 +141,3 @@ Each line is associated with a particle and its properties. The ``fem_force`` an
 
 .. warning::
     The critical Rayleigh time step is computed from the parameters in the ``particle type`` subsections, not the ``insertion info`` subsection. It is the user's responsibility to fill the ``particle type`` subsections correctly according to the diameter values stored in the insertion input file, otherwise Rayleigh time percentage displayed at the start of every DEM simulation may not be accurate.
-
----------------------
-Clear and add
----------------------
-Just like the ``file`` insertion method, the ``clear_and_add`` insertion method insert particles using the same type of external files. Two main differences can be noted between these methods. First, with the ``clear_and_add`` method, a list of files can be define using the ``list of input files`` parameter. Each insertion time step, a different file will be used to insert the particles from this list of files in sequential order. If the end of the list is reached and there is still particles left to be inserted, the next file being used will be the first one in that list. The second difference between these two methods regard the clearing feature of the ``clear_and_add`` insertion method. At every insertion time step, all the particles located inside a predefined box will be deleted. This box can be defined using the ``clearing box points coordinates`` parameter which works exactly like the ``insertion box`` for the ``volume`` insertion method. The clearing is done before the insertion from a given file, thus there is no risk of inserting and deleting the same particle in the same insertion time step. If used properly, this method can be used to clear a certain zone of the simulation domain and add particle in that same zone right away. This assure that there is no excessive overlap between particle on insertion.
-
-.. note::
-    The ``clear_and_add`` insertion method shouldn't be used for most application. It can be extremely useful for really specific DEM simulation, but remain an experimental feature.
