@@ -116,17 +116,6 @@ namespace Parameters
     void
     parse_parameters(ParameterHandler &prm);
   };
-
-  struct CFDDEM_postprocessing
-  {
-    bool calculate_total_volume;
-    std::string total_volume_output_name;
-
-    static void
-    declare_parameters(ParameterHandler &prm);
-    void
-    parse_parameters(ParameterHandler &prm);
-  };
 } // namespace Parameters
 
 #endif

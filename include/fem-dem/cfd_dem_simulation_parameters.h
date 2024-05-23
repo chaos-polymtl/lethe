@@ -40,7 +40,6 @@ public:
 
   std::shared_ptr<Parameters::VoidFraction<dim>> void_fraction;
   Parameters::CFDDEM                             cfd_dem;
-  Parameters::CFDDEM_postprocessing              cfd_dem_postprocessing;
 
   void
   declare(ParameterHandler             &prm,
@@ -52,7 +51,6 @@ public:
     void_fraction = std::make_shared<Parameters::VoidFraction<dim>>();
     void_fraction->declare_parameters(prm);
     Parameters::CFDDEM::declare_parameters(prm);
-    Parameters::CFDDEM_postprocessing::declare_parameters(prm);
   }
 
   void
@@ -63,7 +61,6 @@ public:
 
     void_fraction->parse_parameters(prm);
     cfd_dem.parse_parameters(prm);
-    cfd_dem_postprocessing.parse_parameters(prm);
   }
 };
 

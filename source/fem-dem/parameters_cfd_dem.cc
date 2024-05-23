@@ -223,30 +223,6 @@ namespace Parameters
         "Invalid vans model. Valid choices are modelA and modelB."));
     prm.leave_subsection();
   }
-
-  void
-  CFDDEM_postprocessing::declare_parameters(ParameterHandler &prm)
-  {
-    prm.enter_subsection("post-processing");
-    prm.declare_entry("calculate total volume",
-                      "false",
-                      Patterns::Bool(),
-                      "Choose whether or not to calculate total volume of fluid phase and solid phase");
-    prm.declare_entry("total volume name",
-                        "total_volume",
-                        Patterns::FileName(),
-                        "File output total volume");
-    prm.leave_subsection();
-  }
-
-  void
-  CFDDEM_postprocessing::parse_parameters(ParameterHandler &prm)
-  {
-    prm.enter_subsection("post-processing");
-    calculate_total_volume   = prm.get_bool("calculate total volume");
-    total_volume_output_name = prm.get("total volume name");
-    prm.leave_subsection();
-  }
 } // namespace Parameters
 // Pre-compile the 2D and 3D
 template class Parameters::VoidFraction<2>;

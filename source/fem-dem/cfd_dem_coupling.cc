@@ -1253,20 +1253,20 @@ void
 CFDDEMSolver<dim>::postprocess_cfd_dem()
 {
   // Calculate total volume of fluid and solid 
-  if (this->cfd_dem_simulation_parameters.cfd_dem_postprocessing.calculate_total_volume)
+  if (this->simulation_parameters.post_processing.calculate_volume_phases)
    {
       TimerOutput::Scope t(this->computing_timer, "total_volume_calculation");
-      double             total_volume_fluid, total_volume_solid;
-      std::tie(total_volume_fluid, total_volume_solid) = calculate_fluid_and_particle_volumes(
+      double             total_volume_fluid, total_volume_particles;
+      std::tie(total_volume_fluid, total_volume_particles) = calculate_fluid_and_particle_volumes(
         this->void_fraction_dof_handler,
         this->nodal_void_fraction_relevant,
         *this->cell_quadrature,
         *this->mapping);
-      this->total_volume_table.add_value(
+      this->total_volume_phases.add_value(
         "time", this->simulation_control->get_current_time());
-      this->total_volume_table.add_value("total-volume-fluid", total_volume_fluid);
-      this->total_volume_table.add_value("total-volume-solid",
-                                          total_volume_solid);
+      this->total_volume_phases.add_value("total-volume-fluid", total_volume_fluid);
+      this->total_volume_phases.add_value("total-volume-particles",
+                                          total_volume_particles);
       if (this->simulation_parameters.post_processing.verbosity ==
           Parameters::Verbosity::verbose)
         {
@@ -1277,12 +1277,12 @@ CFDDEMSolver<dim>::postprocess_cfd_dem()
                              .get_density_scale() *
                            total_volume_fluid
                       << " m^3" << std::endl;
-          this->pcout << "Total volume of fluid: "
+          this->pcout << "Total volume of particles: "
                       << std::setprecision(
                            this->simulation_control->get_log_precision())
                       << this->simulation_parameters.physical_properties_manager
                              .get_density_scale() *
-                           total_volume_solid
+                           total_volume_particles
                       << " m^3" << std::endl;
         }
 
@@ -1294,13 +1294,13 @@ CFDDEMSolver<dim>::postprocess_cfd_dem()
         {
           std::string filename =
             this->simulation_parameters.simulation_control.output_folder +
-            this->cfd_dem_simulation_parameters.cfd_dem_postprocessing.total_volume_output_name +
+            this->simulation_parameters.post_processing.volume_phases_output_name +
             ".dat";
           std::ofstream output(filename.c_str());
-          total_volume_table.set_precision("time", 12);
-          total_volume_table.set_precision("total-volume-fluid", 12);
-          total_volume_table.set_precision("total-volume-solid", 12);
-          this->total_volume_table.write_text(output);
+          total_volume_phases.set_precision("time", 12);
+          total_volume_phases.set_precision("total-volume-fluid", 12);
+          total_volume_phases.set_precision("total-volume-particles", 12);
+          this->total_volume_phases.write_text(output);
         }
     }
 }

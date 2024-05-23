@@ -78,34 +78,34 @@ calculate_fluid_and_particle_volumes(const DoFHandler<dim> &void_fraction_dof_ha
     }
   const MPI_Comm mpi_communicator = void_fraction_dof_handler.get_communicator();
   total_volume_fluid = Utilities::MPI::sum(total_volume_fluid, mpi_communicator);
-  total_volume_particles = Utilities::MPI::sum(total_volume_solid, mpi_communicator);
+  total_volume_particles = Utilities::MPI::sum(total_volume_particles, mpi_communicator);
 
-  return {total_volume_fluid, total_volume_solid};
+  return {total_volume_fluid, total_volume_particles};
 }
 
 template std::pair<double, double>
-calculate_total_volume<2, GlobalVectorType>(
+calculate_fluid_and_particle_volumes<2, GlobalVectorType>(
   const DoFHandler<2>    &void_fraction_dof_handler,
   const GlobalVectorType &present_void_fraction_solution,
   const Quadrature<2>    &quadrature_formula,
   const Mapping<2>       &mapping);
 
 template std::pair<double, double>
-calculate_total_volume<3, GlobalVectorType>(
+calculate_fluid_and_particle_volumes<3, GlobalVectorType>(
   const DoFHandler<3>    &void_fraction_dof_handler,
   const GlobalVectorType &present_void_fraction_solution,
   const Quadrature<3>    &quadrature_formula,
   const Mapping<3>       &mapping);
 
 template std::pair<double, double>
-calculate_total_volume<2, GlobalBlockVectorType>(
+calculate_fluid_and_particle_volumes<2, GlobalBlockVectorType>(
   const DoFHandler<2>    &void_fraction_dof_handler,
   const GlobalBlockVectorType &present_void_fraction_solution,
   const Quadrature<2>    &quadrature_formula,
   const Mapping<2>       &mapping);
 
 template std::pair<double, double>
-calculate_total_volume<3, GlobalBlockVectorType>(
+calculate_fluid_and_particle_volumes<3, GlobalBlockVectorType>(
   const DoFHandler<3>    &void_fraction_dof_handler,
   const GlobalBlockVectorType &present_void_fraction_solution,
   const Quadrature<3>    &quadrature_formula,
@@ -113,14 +113,14 @@ calculate_total_volume<3, GlobalBlockVectorType>(
 
 #ifndef LETHE_USE_LDV
 template std::pair<double, double>
-calculate_total_volume<2, LinearAlgebra::distributed::Vector<double>>(
+calculate_fluid_and_particle_volumes<2, LinearAlgebra::distributed::Vector<double>>(
   const DoFHandler<2>    &void_fraction_dof_handler,
   const LinearAlgebra::distributed::Vector<double> &present_void_fraction_solution,
   const Quadrature<2>    &quadrature_formula,
   const Mapping<2>       &mapping);
 
 template std::pair<double, double>
-calculate_total_volume<3, LinearAlgebra::distributed::Vector<double>>(
+calculate_fluid_and_particle_volumes<3, LinearAlgebra::distributed::Vector<double>>(
   const DoFHandler<3>    &void_fraction_dof_handler,
   const LinearAlgebra::distributed::Vector<double> &present_void_fraction_solution,
   const Quadrature<3>    &quadrature_formula,

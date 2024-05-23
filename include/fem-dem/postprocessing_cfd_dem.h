@@ -52,7 +52,7 @@
  */
 template <int dim, typename VectorType>
 std::pair<double, double>
-calculate_fluid_and_particles_volumes(const DoFHandler<dim> &void_fraction_dof_handler,
+calculate_fluid_and_particle_volumes(const DoFHandler<dim> &void_fraction_dof_handler,
                            const VectorType   &present_void_fraction_solution,
                            const Quadrature<dim> &quadrature_formula,
                            const Mapping<dim>    &mapping);
