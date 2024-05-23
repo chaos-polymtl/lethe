@@ -3,6 +3,12 @@
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Master] - 2024-05-23
+
+### Added
+
+- MINOR dependency on muParser. This requires to load an additional module "muparser/2.3.2" when compiling deal.II and Lethe on clusters. [#1143](https://github.com/chaos-polymtl/lethe/pull/1143) 
+
 ## [Master] - 2024-05-20
 
 ### Removed
