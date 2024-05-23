@@ -3,6 +3,7 @@
 
 #include <solvers/heat_transfer.h>
 
+#include <deal.II/base/exceptions.h>
 #include <deal.II/base/work_stream.h>
 
 #include <deal.II/dofs/dof_tools.h>
@@ -398,13 +399,16 @@ HeatTransfer<dim>::assemble_system_matrix()
   const DoFHandler<dim> *dof_handler_fluid =
     multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
 
+  const double delta_T_ref = calculate_delta_T_ref(1.);
+
   auto scratch_data = HeatTransferScratchData<dim>(
     this->simulation_parameters.physical_properties_manager,
     *this->fe,
     *this->cell_quadrature,
     *this->temperature_mapping,
     dof_handler_fluid->get_fe(),
-    *this->face_quadrature);
+    *this->face_quadrature,
+    delta_T_ref);
 
   if (this->simulation_parameters.multiphysics.VOF)
     {
@@ -556,13 +560,16 @@ HeatTransfer<dim>::assemble_system_rhs()
   const DoFHandler<dim> *dof_handler_fluid =
     multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
 
+  const double delta_T_ref = calculate_delta_T_ref(1.);
+
   auto scratch_data = HeatTransferScratchData<dim>(
     this->simulation_parameters.physical_properties_manager,
     *this->fe,
     *this->cell_quadrature,
     *this->temperature_mapping,
     dof_handler_fluid->get_fe(),
-    *this->face_quadrature);
+    *this->face_quadrature,
+    delta_T_ref);
 
   if (this->simulation_parameters.multiphysics.VOF)
     {
@@ -752,6 +759,30 @@ HeatTransfer<dim>::attach_solution_to_output(DataOut<dim> &data_out)
                                this->present_solution,
                                heat_flux_postprocessors[m_id]);
     }
+}
+
+template <int dim>
+double
+HeatTransfer<dim>::calculate_delta_T_ref(double minimum_delta_T_ref)
+{
+  double solution_maximum, solution_minimum;
+  if (is_steady(simulation_parameters.simulation_control.method))
+    {
+      solution_maximum = this->present_solution.max();
+      solution_minimum = this->present_solution.min();
+    }
+  else
+    {
+      solution_maximum = this->previous_solutions[0].max();
+      solution_minimum = this->previous_solutions[0].min();
+    }
+
+  // Calculate delta_T_ref.
+  double delta_T_ref =
+    std::max(solution_maximum - solution_minimum, minimum_delta_T_ref);
+
+  // Set minimum value as 1 to prevent overshooting of diffusivity
+  return delta_T_ref;
 }
 
 template <int dim>

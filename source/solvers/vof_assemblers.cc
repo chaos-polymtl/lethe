@@ -208,7 +208,6 @@ VOFAssemblerCore<dim>::assemble_rhs(VOFScratchData<dim>       &scratch_data,
       // and stabilization parameters. International Journal for Numerical
       // Methods in Fluids, 43(5), 555-575. Our implementation is based on
       // equations (70) and (79), which are adapted for the VOF solver.
-
       const double tolerance = 1e-12;
 
       // In Tezduyar 2003, this is denoted r

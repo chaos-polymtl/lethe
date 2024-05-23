@@ -19,7 +19,6 @@
  * Equation solved:
  * rho * Cp * (dT/dt + u.gradT) = k div(gradT) + nu/rho * (gradu : gradu)
  *
- * Polytechnique Montreal, 2020-
  */
 
 #ifndef lethe_heat_transfer_scratch_data_h
@@ -35,6 +34,7 @@
 #include <solvers/multiphysics_interface.h>
 #include <solvers/vof_filter.h>
 
+#include <deal.II/base/exceptions.h>
 #include <deal.II/base/quadrature.h>
 
 #include <deal.II/dofs/dof_renumbering.h>
@@ -99,13 +99,15 @@ public:
                           const Quadrature<dim>          &quadrature,
                           const Mapping<dim>             &mapping,
                           const FiniteElement<dim>       &fe_fd,
-                          const Quadrature<dim - 1>      &face_quadrature)
+                          const Quadrature<dim - 1>      &face_quadrature,
+                          const double                    delta_T_ref)
     : properties_manager(properties_manager)
     , fe_values_T(mapping,
                   fe_ht,
                   quadrature,
                   update_values | update_quadrature_points | update_JxW_values |
                     update_gradients | update_hessians)
+    , global_delta_T_ref(delta_T_ref)
     , velocities(0)
     , pressure(dim)
     , fe_values_fd(mapping, fe_fd, quadrature, update_values | update_gradients)
@@ -115,6 +117,10 @@ public:
                         update_values | update_quadrature_points |
                           update_JxW_values)
   {
+    // Check if value is positive.
+    AssertThrow(delta_T_ref > 0,
+                ExcMessage("Reference temperature is invalid (< 0)."));
+
     gather_vof = false;
 
     allocate();
@@ -136,6 +142,7 @@ public:
                   sd.fe_values_T.get_quadrature(),
                   update_values | update_quadrature_points | update_JxW_values |
                     update_gradients | update_hessians)
+    , global_delta_T_ref(sd.global_delta_T_ref)
     , velocities(0)
     , pressure(dim)
     , fe_values_fd(sd.fe_values_fd.get_mapping(),
@@ -148,6 +155,10 @@ public:
                         update_values | update_quadrature_points |
                           update_JxW_values)
   {
+    // Check if value is positive.
+    AssertThrow(sd.global_delta_T_ref > 0,
+                ExcMessage("Reference temperature is invalid (< 0)."));
+
     gather_vof = sd.gather_vof;
     allocate();
     if (sd.gather_vof)
@@ -473,6 +484,7 @@ public:
   std::vector<double>                      present_face_temperature_values;
   std::vector<std::vector<double>>         previous_temperature_values;
   std::vector<std::vector<Tensor<1, dim>>> previous_temperature_gradients;
+  double                                   global_delta_T_ref;
 
   // Shape functions and gradients
   std::vector<std::vector<double>>         phi_T;
