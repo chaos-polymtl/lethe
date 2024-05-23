@@ -1,20 +1,8 @@
-// Base
-#include <deal.II/base/quadrature_lib.h>
-
-// Lac
-#include <deal.II/lac/dynamic_sparsity_pattern.h>
-#include <deal.II/lac/vector.h>
-
-// grid
-#include <deal.II/grid/grid_tools.h>
-
 // Dofs
-#include <deal.II/dofs/dof_accessor.h>
 #include <deal.II/dofs/dof_handler.h>
 
 // Lac - Trilinos includes
 #include <deal.II/lac/trilinos_parallel_block_vector.h>
-#include <deal.II/lac/trilinos_vector.h>
 
 // Fe
 #include <deal.II/fe/fe_q.h>
@@ -23,11 +11,7 @@
 #include <deal.II/fe/mapping_q.h>
 
 // Lethe includes
-#include <core/boundary_conditions.h>
-#include <core/parameters.h>
-#include <core/rheological_model.h>
 #include <core/vector.h>
-
 #include <fem-dem/postprocessing_cfd_dem.h>
 
 

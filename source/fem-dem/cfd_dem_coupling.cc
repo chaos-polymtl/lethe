@@ -1262,10 +1262,10 @@ CFDDEMSolver<dim>::postprocess_cfd_dem()
         this->nodal_void_fraction_relevant,
         *this->cell_quadrature,
         *this->mapping);
-      this->total_volume_phases.add_value(
+      this->table_volume_phases.add_value(
         "time", this->simulation_control->get_current_time());
-      this->total_volume_phases.add_value("total-volume-fluid", total_volume_fluid);
-      this->total_volume_phases.add_value("total-volume-particles",
+      this->table_volume_phases.add_value("total-volume-fluid", total_volume_fluid);
+      this->table_volume_phases.add_value("total-volume-particles",
                                           total_volume_particles);
       if (this->simulation_parameters.post_processing.verbosity ==
           Parameters::Verbosity::verbose)
@@ -1297,10 +1297,10 @@ CFDDEMSolver<dim>::postprocess_cfd_dem()
             this->simulation_parameters.post_processing.volume_phases_output_name +
             ".dat";
           std::ofstream output(filename.c_str());
-          total_volume_phases.set_precision("time", 12);
-          total_volume_phases.set_precision("total-volume-fluid", 12);
-          total_volume_phases.set_precision("total-volume-particles", 12);
-          this->total_volume_phases.write_text(output);
+          table_volume_phases.set_precision("time", 12);
+          table_volume_phases.set_precision("total-volume-fluid", 12);
+          table_volume_phases.set_precision("total-volume-particles", 12);
+          this->table_volume_phases.write_text(output);
         }
     }
 }
