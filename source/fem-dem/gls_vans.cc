@@ -1399,9 +1399,6 @@ GLSVANSSolver<dim>::iterate()
   this->forcing_function->set_time(
     this->simulation_control->get_current_time());
 
-  this->simulation_control->set_assembly_method(
-    this->cfd_dem_simulation_parameters.cfd_parameters.simulation_control
-      .method);
   PhysicsSolver<GlobalVectorType>::solve_non_linear_system(false);
 }
 
