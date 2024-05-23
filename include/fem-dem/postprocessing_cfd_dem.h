@@ -28,12 +28,11 @@
 #  include <solvers/physical_properties_manager.h>
 
 /**
- * @brief calculate total_volume_fluid and total_volume_solid. This function calculates 
- * the each total volume of fluid and solid the domain for the solver CFD DEM.
+ * @brief This function calculates total volume of fluid and total volume of particles in cfd-dem simulation. 
  *
- * V_fluid = ∫εdΩ
- * V_solid = ∫(1-ε)dΩ
- * Where ε is the void fraction and dΩ is the volume of the cell.
+ * \f$V_{fluid} = \int \varepsilon d \Omega \f$,
+ * \f$V_{particles} = \int (1- \varepsilon) d \Omega \f$
+ * where \f$ \varepsilon \f$ is the void fraction and \f$ d \Omega \f$ is the volume of the cell.
  *
  * @param void_fraction_dof_handler. Used to calculate the void fraction at quadrature points
  * @param present_void_fraction_solution. Void fraction solution vector
