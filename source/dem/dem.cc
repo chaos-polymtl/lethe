@@ -1058,6 +1058,24 @@ DEMSolver<dim>::write_output_results()
       write_boundaries_vtu<dim>(
         data_out_faces, folder, time, iter, this->mpi_communicator);
     }
+  if (parameters.post_processing.force_chains)
+    {
+        // Force chains visualization
+         ParticlesForceChains<dim,
+         Parameters::Lagrangian::ParticleParticleContactForceModel::hertz, 
+         Parameters::Lagrangian::RollingResistanceMethod::no_resistance>  particles_force_chains_object(parameters);
+         particles_force_chains_object.calculate_force_chains(
+            contact_manager,
+            simulation_control->get_time_step(),
+            torque,
+            force,
+            periodic_offset);
+
+         particles_force_chains_object.write_force_chains(
+          this->mpi_communicator,
+          folder,
+           iter);
+    }
 
   // Write all solid objects
   for (const auto &solid_object : solids)
@@ -1450,15 +1468,6 @@ DEMSolver<dim>::solve()
           periodic_offset);
 
 
-      // Force chains visualization
-      ParticlesForceChains<dim,Parameters::Lagrangian::ParticleParticleContactForceModel::hertz, Parameters::Lagrangian::RollingResistanceMethod::no_resistance>  particles_force_chains_object(parameters);
-      particles_force_chains_object.write_force_chains(
-          contact_manager,
-          simulation_control->get_time_step(),
-          torque,
-          force,
-          periodic_offset);
-
 
 
       // We have to update the positions of the points on boundary faces and
@@ -1525,6 +1534,8 @@ DEMSolver<dim>::solve()
       if (simulation_control->is_output_iteration())
         {
           write_output_results();
+
+
         }
 
       if (parameters.forces_torques.calculate_force_torque &&
