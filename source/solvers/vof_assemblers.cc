@@ -145,7 +145,10 @@ VOFAssemblerCore<dim>::assemble_matrix(VOFScratchData<dim>       &scratch_data,
                                     (grad_phi_phase_i * velocity) * JxW;
 
               // DCDD shock capturing
-              local_matrix(i, j) += (vdcdd * scalar_product(grad_phi_phase_i, dcdd_factor * grad_phi_phase_j) * JxW;
+              local_matrix(i, j) +=
+                (vdcdd * scalar_product(grad_phi_phase_i,
+                                        dcdd_factor * grad_phi_phase_j)) *
+                JxW;
             }
         }
     } // end loop on quadrature points
