@@ -1581,7 +1581,10 @@ CFDDEMSolver<dim>::solve()
   else
     checkpoint_step = false;
 
+  // Initialize the DEM parameters and generate the required ghost particles
   initialize_dem_parameters();
+  this->particle_handler.exchange_ghost_particles(true);
+
 
   // Remap periodic nodes after setup of dofs
   if (has_periodic_boundaries && has_sparse_contacts)
