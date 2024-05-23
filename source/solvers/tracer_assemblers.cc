@@ -115,8 +115,7 @@ TracerAssemblerCore<dim>::assemble_matrix(TracerScratchData<dim> &scratch_data,
                 JxW;
             }
         }
-    }
-} // end loop on quadrature points
+    } // end loop on quadrature points
 }
 
 
