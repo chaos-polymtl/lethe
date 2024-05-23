@@ -3,6 +3,12 @@
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Master] - 2024-05-27
+
+### Changed
+
+- MINOR The "insertion file name" parameter has been renamed to "list of input files". It now supports a list of input files that will be used in order when inserting particles. [#1135](https://github.com/chaos-polymtl/lethe/pull/1135)
+
 ## [Master] - 2024-05-26
 
 ### Fixed
