@@ -104,11 +104,12 @@ GLSVANSSolver<dim>::setup_dofs()
                                       locally_relevant_dofs_voidfraction,
                                       this->mpi_communicator);
 
-  for (unsigned int i = 0; i < previous_void_fraction.size(); ++i)
+  // Initialize vector of previous solutions for the void fraction
+  for (auto &solution : this->previous_void_fraction)
     {
-      previous_void_fraction[i].reinit(locally_owned_dofs_voidfraction,
-                                       locally_relevant_dofs_voidfraction,
-                                       this->mpi_communicator);
+      solution.reinit(this->locally_owned_dofs_voidfraction,
+                      this->locally_relevant_dofs_voidfraction,
+                      this->mpi_communicator);
     }
 
   nodal_void_fraction_owned.reinit(locally_owned_dofs_voidfraction,
@@ -1398,9 +1399,6 @@ GLSVANSSolver<dim>::iterate()
   this->forcing_function->set_time(
     this->simulation_control->get_current_time());
 
-  this->simulation_control->set_assembly_method(
-    this->cfd_dem_simulation_parameters.cfd_parameters.simulation_control
-      .method);
   PhysicsSolver<GlobalVectorType>::solve_non_linear_system(false);
 }
 
