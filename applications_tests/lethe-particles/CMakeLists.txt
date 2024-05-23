@@ -24,8 +24,8 @@ file(COPY periodic_gmsh_files/pipe.msh DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/
 file(COPY load_balancing_solid_object_files/square.msh DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/load_balancing_solid_object.${_build_type}")
 file(COPY insert_file_3d_files/particles.input DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/insert_file_3d.${_build_type}")
 file(COPY moving_float_files/square.msh DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/moving_float.${_build_type}")
-file(COPY insert_clear_and_add_files/particles_00.input DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/insert_clear_and_add.${_build_type}")
-file(COPY insert_clear_and_add_files/particles_01.input DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/insert_clear_and_add.${_build_type}")
+file(COPY insert_clearing_with_files/particles_00.input DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/insert_clearing_with_files.${_build_type}")
+file(COPY insert_clearing_with_files/particles_01.input DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/insert_clearing_with_files.${_build_type}")
 
 file(COPY moving_receptacle_files/restart.insertion_object DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/restart_moving_receptacle.${_build_type}/mpirun=1/")
 file(COPY moving_receptacle_files/restart.particles DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/restart_moving_receptacle.${_build_type}/mpirun=1/")

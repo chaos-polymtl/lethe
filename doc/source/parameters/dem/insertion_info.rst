@@ -53,9 +53,6 @@ In this subsection, insertion methods which are ``volume``, ``plane``, ``list`` 
 
     # If method = file
     set list of input files                            = particles.input
-
-
-
   end
 
 The ``insertion method`` parameter chooses the type of insertion. Acceptable choices are ``volume``, ``plane``, ``list`` and ``file``. Different insertion method can share the same parameter.

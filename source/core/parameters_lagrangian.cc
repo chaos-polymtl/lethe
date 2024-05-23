@@ -286,9 +286,9 @@ namespace Parameters
         prm.declare_entry(
           "insertion method",
           "volume",
-          Patterns::Selection("clear_and_add|file|plane|list|volume"),
+          Patterns::Selection("file|plane|list|volume"),
           "Choosing insertion method. "
-          "Choices are <clear_and_add|file|plane|list|volume>.");
+          "Choices are <file|plane|list|volume>.");
         prm.declare_entry("inserted number of particles at each time step",
                           "1",
                           Patterns::Integer(),
@@ -298,7 +298,7 @@ namespace Parameters
                           Patterns::Integer(),
                           "Insertion frequency");
 
-        // Clear and Add :
+        // Clearing box:
         prm.declare_entry(
           "clearing particles",
           "false",

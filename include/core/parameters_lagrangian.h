@@ -178,28 +178,27 @@ namespace Parameters
       // Insertion frequency
       int insertion_frequency;
 
-      //// Clear and Add :
-      //
+      /* Clearing box: */
       bool clearing_particles;
 
       // Clear box info (xmin,xmax,ymin,ymax,zmin,zmax)
       Point<3> clear_box_point_1, clear_box_point_2;
 
-      //// File:
+      /* File: */
       std::vector<std::string> list_of_input_files;
 
-      //// Plane:
+      /* Plane: */
       // Plane normal vector
       Tensor<1, 3> insertion_plane_normal_vector;
       // Plane point
       Point<3> insertion_plane_point;
 
-      //// List
+      /* List */
       // Containers used for the list insertion method
       std::vector<double> list_x, list_y, list_z, list_vx, list_vy, list_vz,
         list_wx, list_wy, list_wz, list_d;
 
-      //// Volume
+      /* Volume */
       // Direction sequence for the insertion of particles (1st, 2nd, 3rd)
       std::vector<unsigned int> direction_sequence;
       // Insertion box info (p_1 , p_2)

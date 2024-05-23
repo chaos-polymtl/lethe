@@ -40,7 +40,6 @@ InsertionFile<dim>::insert(
           ++this->current_inserting_particle_type);
     }
 
-
   if (remaining_particles_of_each_type > 0)
     {
       if (this->mark_for_update)
