@@ -63,11 +63,12 @@ public:
    * @brief Carries out the insertion of particles. This is the base class of
    * volume_insertion, plane_insertion, list_insertion and file_insertion
    * classes.
+   *
+   * @param distribution_object_container Contains all distribution for each
+   * particle type
    * @param triangulation Triangulation to access the cells in which the
    * particles are inserted
    * @param dem_parameters DEM parameters declared in the .prm file
-   * @param distribution_object_container Contains all distribution for each
-   * type of particle
    */
   Insertion(const std::vector<std::shared_ptr<Distribution>>
               &distribution_object_container,
@@ -166,7 +167,8 @@ protected:
   /**
    * @brief Find every cell that are completely and partially inside de the
    * clearing box. For the cell completely inside the box, all the particles
-   * will be deleted. For those partially inside, fine verification is required.
+   * will be deleted. For those partially inside, a fine verification is
+   * required.
    *
    * @param triangulation Triangulation to access the cells in which the
    * particles deleted.
@@ -177,8 +179,8 @@ protected:
 
 
   /**
-   * @brief
-   *
+   * @brief Remove every particle located inside a predefined zone. Currently,
+   * the zone is defined by a box.
    *
    * @param particle_handler The particle handler of particles which are being
    * removed.

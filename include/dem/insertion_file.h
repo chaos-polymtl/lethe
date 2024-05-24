@@ -31,6 +31,17 @@ template <int dim>
 class InsertionFile : public Insertion<dim>
 {
 public:
+  /**
+   * @brief The InsertionFile class inserts particles using data stored in a file.
+   * This allows the insertion of any number of particles at a well-controlled
+   * location with any diameter value, translation and angular velocity.
+   *
+   * @param distribution_object_container Contains all distribution for each
+   * particle type
+   * @param triangulation Triangulation to access the cells in which the
+   * particles are inserted
+   * @param dem_parameters DEM parameters declared in the .prm file
+   */
   InsertionFile(const std::vector<std::shared_ptr<Distribution>>
                   &distribution_object_container,
                 const parallel::distributed::Triangulation<dim> &triangulation,

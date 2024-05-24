@@ -37,6 +37,10 @@ public:
    * insertion points in each direction (number_of_particles_x_direction,
    * number_of_particles_y_direction and number_of_particles_z_direction).
    *
+   * @param distribution_object_container Contains all distribution for each
+   * particle type
+   * @param triangulation Triangulation to access the cells in which the
+   * particles are inserted
    * @param dem_parameters DEM parameters declared in the .prm file
    * @param maximum_particle_diameter Maximum particle diameter based on values
    * defined in the parameter handler

@@ -50,8 +50,11 @@ public:
    * overlap between particles on insertion. The plane insertion method mitigate
    * this risk by insertion at the center of empty cells.
    *
+   * @param distribution_object_container Contains all distribution for each
+   * particle type
+   * @param triangulation Triangulation to access the cells in which the
+   * particles are inserted
    * @param dem_parameters DEM parameters declared in the .prm file
-   * @param triangulation Triangulation object used in the simulation.
    */
   InsertionPlane(const std::vector<std::shared_ptr<Distribution>>
                    &distribution_object_container,
