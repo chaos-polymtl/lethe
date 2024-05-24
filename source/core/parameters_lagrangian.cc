@@ -285,7 +285,7 @@ namespace Parameters
       {
         prm.declare_entry("insertion method",
                           "volume",
-                          Patterns::Selection("file|plane|list|volume"),
+                          Patterns::Selection("file|list|plane|volume"),
                           "Choosing insertion method. "
                           "Choices are <file|plane|list|volume>.");
         prm.declare_entry("inserted number of particles at each time step",
@@ -299,13 +299,13 @@ namespace Parameters
 
         // Clearing box:
         prm.declare_entry(
-          "clearing particles",
+          "remove particles",
           "false",
           Patterns::Bool(),
           "State whether particles should be cleared on insertion.");
 
         prm.declare_entry(
-          "clearing box points coordinates",
+          "removal box points coordinates",
           "0. , 0. , 0. : 1. , 1. , 1.",
           Patterns::List(
             Patterns::List(Patterns::Double(), 2, 3, ","), 2, 2, ":"),
@@ -432,11 +432,11 @@ namespace Parameters
         insertion_frequency = prm.get_integer("insertion frequency");
 
         // Clear:
-        clearing_particles = prm.get_bool("clearing particles");
+        removing_particles_in_region = prm.get_bool("remove particles");
 
         const std::vector<std::string> clearing_box_point_coordinates_list(
           Utilities::split_string_list(
-            prm.get("clearing box points coordinates"), ":"));
+            prm.get("removal box points coordinates"), ":"));
 
         std::vector<double> clearing_point_coord_temp_1 =
           Utilities::string_to_double(Utilities::split_string_list(
@@ -458,12 +458,12 @@ namespace Parameters
             clear_box_point_2[i] = clearing_point_coord_temp_2.at(i);
           }
 
-        //// File:
+        // File:
         // File for the insertion
         list_of_input_files =
           convert_string_to_vector<std::string>(prm, "list of input files");
 
-        //// Plane:
+        // Plane:
         // Insertion plane normal vector
         insertion_plane_normal_vector =
           entry_string_to_tensor3(prm, "insertion plane normal vector");
@@ -472,7 +472,7 @@ namespace Parameters
         insertion_plane_point =
           entry_string_to_tensor3(prm, "insertion plane point");
 
-        //// List:
+        // List:
         // Read x, y and z lists
         list_x = convert_string_to_vector<double>(prm, "list x");
         list_y = convert_string_to_vector<double>(prm, "list y");
@@ -516,7 +516,7 @@ namespace Parameters
         // Read the diameters list
         list_d = convert_string_to_vector<double>(prm, "list diameters");
 
-        //// Volume:
+        // Volume:
         std::vector<int> axis_order =
           convert_string_to_vector<int>(prm, "insertion direction sequence");
         if (axis_order.size() == 2)

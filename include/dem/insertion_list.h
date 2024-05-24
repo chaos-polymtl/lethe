@@ -32,13 +32,13 @@ class InsertionList : public Insertion<dim>
 {
 public:
   /**
-   * @brief The InsertionList class inserts particles using a list specific position.
-   * This allows the insertion of any number of particles at a well-controled
+   * @brief The InsertionList class inserts particles using a list specific positions.
+   * This allows the insertion of any number of particles at a well-controlled
    * location which is especially useful from a testing perspective. The code
    * ensures that the number of positions provided in the x,y (and possibly z)
-   * direction is coherent. If more particles than the number of position in the
-   * list are requested, the class will continue inserting particles at the
-   * insertion frequency using the list of position. There is no mechanism in
+   * direction is coherent. If more particles than the number of positions in the
+   * list is requested, the class will continue inserting particles at the
+   * insertion frequency using the list of positions. There is no mechanism in
    * place that prevents the overlap of these new particles with previous ones.
    *
    * @param distribution_object_container Contains all distribution for each

@@ -179,7 +179,7 @@ namespace Parameters
       int insertion_frequency;
 
       /* Clearing box: */
-      bool clearing_particles;
+      bool removing_particles_in_region;
 
       // Clear box info (xmin,xmax,ymin,ymax,zmin,zmax)
       Point<3> clear_box_point_1, clear_box_point_2;

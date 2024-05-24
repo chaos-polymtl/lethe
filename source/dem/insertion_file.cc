@@ -42,14 +42,15 @@ InsertionFile<dim>::insert(
 
   if (remaining_particles_of_each_type > 0)
     {
-      if (this->mark_for_update)
+
+      if (this->removing_particles_in_region)
         {
-          this->find_in_clearing_box_cells(triangulation);
-          this->mark_for_update = false;
-        }
-      if (this->clearing_particles)
-        {
-          this->clear_particle_box(particle_handler);
+          if (this->mark_for_update)
+            {
+              this->find_in_removing_box_cells(triangulation);
+              this->mark_for_update = false;
+            }
+          this->remove_particles_in_box(particle_handler);
         }
 
       // Read the input file

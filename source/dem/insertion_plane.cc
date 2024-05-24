@@ -123,13 +123,15 @@ InsertionPlane<dim>::insert(
             dem_parameters.insertion_info.insertion_plane_normal_vector);
           find_centers_of_inplane_cells();
 
-          this->find_in_clearing_box_cells(triangulation);
-
+          if (this->removing_particles_in_region)
+            {
+              this->find_in_removing_box_cells(triangulation);
+            }
           this->mark_for_update = false;
         }
-      if (this->clearing_particles)
+      if (this->removing_particles_in_region)
         {
-          this->clear_particle_box(particle_handler);
+          this->remove_particles_in_box(particle_handler);
         }
 
       MPI_Comm           communicator = triangulation.get_communicator();

@@ -81,8 +81,8 @@ subsection insertion info
   set insertion method                = file
   set insertion frequency             = 100
   set list of input files             = ../particles_00.input, ../particles_01.input
-  set clearing box points coordinates = 0., -1., -1.: 1., 1., 1.
-  set clearing particles              = true
+  set removal box points coordinates = 0., -1., -1.: 1., 1., 1.
+  set remove particles              = true
 end
 
 #---------------------------------------------------

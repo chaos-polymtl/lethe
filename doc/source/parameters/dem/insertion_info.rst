@@ -15,8 +15,8 @@ In this subsection, insertion methods which are ``volume``, ``plane``, ``list`` 
 
     # Every method
     set insertion frequency                            = 20000
-    set clearing particles                             = false
-    set clearing box points coordinates                = 0., 0., 0.: 1., 1., 1.
+    set remove particles                             = false
+    set removal box points coordinates                = 0., 0., 0.: 1., 1., 1.
 
     # If method = volume
     set inserted number of particles at each time step = 100
@@ -61,7 +61,7 @@ The ``insertion method`` parameter chooses the type of insertion. Acceptable cho
 
 * The ``insertion maximum offset`` and ``insertion prn seed`` parameters defines the random offset values to the initial positions of particles during a ``volume`` and ``plane`` insertion. The ``insertion maximum offset`` parameter defines the maximum value for an offset. The ``insertion prn seed`` parameter defines the pseudo-random number (PRN) with which offset values are getting generated.
 
-* The ``clearing box points coordinates`` parameter defines a clearing box where particles will be removed from the triangulation just before the insertion of new particles. This assures that there is no excessive overlap between new and previously inserted particles. If the ``clearing particles`` parameter is set to ``false`` particle removal will not be performed.
+* The ``removal box points coordinates`` parameter defines a clearing box where particles will be removed from the triangulation just before the insertion of new particles. This assures that there is no excessive overlap between new and previously inserted particles. If the ``remove particles`` parameter is set to ``false`` particle removal will not be performed.
 
 -------
 Volume
@@ -123,7 +123,7 @@ The ``list`` insertion method insert particles at precis coordinates with specif
 ---------------------
 File
 ---------------------
-The ``file`` insertion method insert particles in a similar way to the ``list`` insertion method. The main difference between these two methods is the option to use external files provided by the ``list of input files`` parameter. This parameter is set at ``particles.input`` by default, but a list a files can be specified. At each insertion time step, a different file will be used. If the end of the list is reached and there are still particles to be inserted, the list returns to the first file. An insertion file must follow this structure:
+The ``file`` insertion method inserts particles in a similar way to the ``list`` insertion method. The main difference between these two methods is the option to use external files provided by the ``list of input files`` parameter. This parameter is set at ``particles.input`` by default, but a file list can be specified. At each insertion time step, a different file will be used. If the end of the list is reached and there are still particles to be inserted, the list returns to the first file. An insertion file must follow this structure:
 
 .. code-block:: text
 

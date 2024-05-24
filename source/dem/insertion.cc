@@ -9,7 +9,7 @@ Insertion<dim>::Insertion(
     &distribution_object_container,
   const parallel::distributed::Triangulation<dim> &triangulation,
   const DEMSolverParameters<dim>                  &dem_parameters)
-  : clearing_particles(dem_parameters.insertion_info.clearing_particles)
+  : removing_particles_in_region(dem_parameters.insertion_info.clearing_particles)
 {
   distributions_objects = distribution_object_container;
 
@@ -225,7 +225,7 @@ Insertion<dim>::calculate_insertion_domain_maximum_particle_number(
 
 template <int dim>
 void
-Insertion<dim>::find_in_clearing_box_cells(
+Insertion<dim>::find_in_removing_box_cells(
   const parallel::distributed::Triangulation<dim> &triangulation)
 {
   // Clearing the containers
@@ -280,7 +280,7 @@ Insertion<dim>::find_in_clearing_box_cells(
 
 template <int dim>
 void
-Insertion<dim>::clear_particle_box(
+Insertion<dim>::remove_particles_in_box(
   Particles::ParticleHandler<dim> &particle_handler)
 {
   std::vector<

@@ -174,9 +174,8 @@ protected:
    * particles deleted.
    */
   void
-  find_in_clearing_box_cells(
+  find_in_removing_box_cells(
     const parallel::distributed::Triangulation<dim> &triangulation);
-
 
   /**
    * @brief Remove every particle located inside a predefined zone. Currently,
@@ -186,8 +185,7 @@ protected:
    * removed.
    */
   void
-  clear_particle_box(Particles::ParticleHandler<dim> &particle_handler);
-
+  remove_particles_in_box(Particles::ParticleHandler<dim> &particle_handler);
 
   // Number of particles inserted at each insertion time step. This value can
   // change in the last insertion step to reach the desired number of particles
@@ -212,7 +210,7 @@ protected:
   std::vector<std::shared_ptr<Distribution>> distributions_objects;
 
   // Clearing bool
-  const bool clearing_particles;
+  const bool removing_particles_in_region;
 
   // Clearing box coordinates
   Point<dim> p_min, p_max;
@@ -222,7 +220,7 @@ protected:
     in_the_clearing_box;
   std::set<typename Triangulation<dim>::active_cell_iterator> edge_of_box;
 
-  // For when the triangulation has change (i.e. when load balancing)
+  // For when the triangulation has changed (i.e. when load balancing)
   bool                        mark_for_update;
   boost::signals2::connection change_to_triangulation;
 
