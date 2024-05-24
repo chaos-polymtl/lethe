@@ -41,6 +41,10 @@
 #include <deal.II/numerics/solution_transfer.h>
 #include <deal.II/numerics/vector_tools.h>
 
+#include <deal.II/non_matching/fe_immersed_values.h>
+#include <deal.II/non_matching/fe_values.h>
+#include <deal.II/non_matching/mesh_classifier.h>
+
 #include <fstream>
 #include <iostream>
 
@@ -85,9 +89,15 @@ double InitialConditions<dim>::value(const Point<dim>  &p,
   
   Point<dim> center = Point<dim>();
   Tensor<1,dim> dist = center - p;
-  if (p[0]> 0.25 || p[0]<-0.25)
+  if (dist.norm() > 0.25)
+  {
     return 0.0;
-  return 0.5 + 0.5*std::cos(4*p[0]*M_PI);
+  }
+  return 1.0;
+  
+  // if (p[0]> 0.25 || p[0]<-0.25)
+  //   return 0.0;
+  // return 0.5 + 0.5*std::cos(4*p[0]*M_PI);
 }
 
 template <int dim>
@@ -138,6 +148,12 @@ private:
   
   void set_initial_conditions();
   void solve();
+  
+  void compute_level_set_from_phase_fraction();
+  void compute_phase_fraction_from_level_set();
+  void identify_cell_location();
+  
+  
   void refine_grid();
   void output_results(const int time_iteration, const double time) const;
   
@@ -148,12 +164,17 @@ private:
   DoFHandler<dim>           dof_handler;
   AffineConstraints<double> constraints;
   MatrixType                system_matrix;
+  
+  VectorType level_set;
+  
+  NonMatching::MeshClassifier<dim> mesh_classifier;
 
   IndexSet locally_owned_dofs;
   IndexSet locally_relevant_dofs;
   
   VectorType solution;
   VectorType previous_solution;
+  VectorType location;
   
   VectorType system_rhs;
   
@@ -172,6 +193,7 @@ AdvectionProblem<dim>::AdvectionProblem()
   , mapping(2)
   , fe(1)
   , dof_handler(triangulation)
+  , mesh_classifier(dof_handler, level_set)
   , dt(0.001)
   , mpi_communicator(MPI_COMM_WORLD)
   , pcout(std::cout, (Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0))
@@ -180,19 +202,22 @@ AdvectionProblem<dim>::AdvectionProblem()
 template <int dim>
 void AdvectionProblem<dim>::setup_system()
 {
-  std::cout << "boop 0" << std::endl;
-  
+  pcout << "boop 0" << std::endl;
   dof_handler.distribute_dofs(fe);
   
-  std::cout << "boop 1" << std::endl;
+  pcout << "boop 1" << std::endl;
   
   locally_owned_dofs    = dof_handler.locally_owned_dofs();
   locally_relevant_dofs = DoFTools::extract_locally_relevant_dofs(dof_handler);
   
-  std::cout << "boop 2" << std::endl;
+  pcout << "boop 2" << std::endl;
   
   solution.reinit(locally_owned_dofs, locally_relevant_dofs, mpi_communicator);
   previous_solution.reinit(locally_owned_dofs, locally_relevant_dofs, mpi_communicator);
+  level_set.reinit(locally_owned_dofs, locally_relevant_dofs, mpi_communicator);
+  location.reinit(locally_owned_dofs, locally_relevant_dofs, mpi_communicator);
+  
+  
   system_rhs.reinit(locally_owned_dofs, mpi_communicator);
                      
   constraints.clear();
@@ -379,7 +404,7 @@ void AdvectionProblem<dim>::solve()
   
   system_matrix.vmult(residual, solution);
   // residual -= system_rhs;
-  std::cout << "   Iterations required for convergence: "
+  pcout << "   Iterations required for convergence: "
             << solver_control.last_step() << '\n'
             << "   Max norm of residual:                "
             << residual.linfty_norm() << '\n';
@@ -388,11 +413,65 @@ void AdvectionProblem<dim>::solve()
 }
 
 template <int dim>
+void 
+AdvectionProblem<dim>::compute_level_set_from_phase_fraction()
+{
+  VectorType level_set_owned(this->locally_owned_dofs,
+                                           mpi_communicator);
+  for (auto p : this->locally_owned_dofs)
+    {
+      // level_set_owned[p] = std::log(std::max((2.0*solution[p])/(2.0-solution[p]),1e-12));
+      level_set_owned[p] = 2.0*solution[p] - 1.0;
+    }
+  level_set = level_set_owned;  
+}
+
+template <int dim>
+void 
+AdvectionProblem<dim>::identify_cell_location()
+{  
+  
+  for (const auto &cell : dof_handler.active_cell_iterators())
+    {
+      
+      if (!cell->is_locally_owned())
+        return;
+      
+      const NonMatching::LocationToLevelSet cell_location =
+            mesh_classifier.location_to_level_set(cell);
+      
+      const unsigned int dofs_per_cell = fe.n_dofs_per_cell();
+      
+      
+      std::vector<types::global_dof_index> dof_indices(dofs_per_cell);
+      
+      cell->get_dof_indices(dof_indices);
+      
+      
+      for (unsigned int i = 0; i < dofs_per_cell; ++i)
+      {
+        if (cell_location == NonMatching::LocationToLevelSet::intersected)
+          location[dof_indices[i]] = 1.0;
+      }
+      
+      // if (cell_location == NonMatching::LocationToLevelSet::outside)
+      // {
+      // 
+      // }
+        
+    }
+}
+
+template <int dim>
 void AdvectionProblem<dim>::output_results(const int time_iteration, const double time) const
 {
   DataOut<dim> data_out;
   data_out.attach_dof_handler(dof_handler);
   data_out.add_data_vector(solution, "solution");
+  data_out.add_data_vector(level_set, "level_set");
+  data_out.add_data_vector(location, "location");
+  
+  
   data_out.build_patches();
 
   DataOutBase::VtkFlags vtk_flags;
@@ -407,7 +486,7 @@ void AdvectionProblem<dim>::output_results(const int time_iteration, const doubl
                                       time_iteration,
                                       MPI_COMM_WORLD,
                                       3);
-  // std::cout << "Solution written to " << filename << std::endl;
+  // pcout << "Solution written to " << filename << std::endl;
   std::ofstream out("grid-2.svg");
   GridOut       grid_out;
     grid_out.write_svg(triangulation, out);
@@ -416,31 +495,31 @@ void AdvectionProblem<dim>::output_results(const int time_iteration, const doubl
 template <int dim>
 void AdvectionProblem<dim>::run()
 {
-  std::cout << "Bonjour from run" << std::endl;
+  pcout << "Bonjour from run" << std::endl;
   
   Point<dim> p_0 = Point<dim>();
   p_0[0] = -1;
   for (unsigned int i = 1; i < dim; ++i)
-    p_0[i] = 0;
+    p_0[i] = -1;
     
   Point<dim> p_1 = Point<dim>();
-  p_1[0] = 4;
+  p_1[0] = 1;
   for (unsigned int i = 1; i < dim; ++i)
     p_1[i] = 1;
     
   std::vector< unsigned int > repetitions(dim);
-  repetitions[0] = 1024;
+  repetitions[0] = 1;
   for (unsigned int i = 1; i < dim; ++i)
     repetitions[i] = 1;
     
   GridGenerator::subdivided_hyper_rectangle(triangulation, repetitions, p_0, p_1);
-  // triangulation.refine_global(6);
+  triangulation.refine_global(8);
             
-  std::cout << "Bonjour from after triangulation" << std::endl;
+  pcout << "Bonjour from after triangulation" << std::endl;
   // initial time step
   setup_system();
   
-  std::cout << "Bonjour from after setup_system()" << std::endl;
+  pcout << "Bonjour from after setup_system()" << std::endl;
   
   
   set_initial_conditions();
@@ -448,12 +527,19 @@ void AdvectionProblem<dim>::run()
   
   unsigned int it = 0;
   double time = 0.0;
-  double final_time = 1;
+  double final_time = 0.01;
+  
+  compute_level_set_from_phase_fraction();
+  
+  mesh_classifier.reclassify();
+
+  
+  identify_cell_location();
   
   output_results(it,time);
   
   
-  std::cout << "Bonjour from after set_initial_conditions()" << std::endl;
+  pcout << "Bonjour from after set_initial_conditions()" << std::endl;
   
   while (time < final_time) 
   {
@@ -464,10 +550,11 @@ void AdvectionProblem<dim>::run()
     
     assemble_system();
     
-    std::cout << "time = " << time << std::endl;
+    pcout << "time = " << time << std::endl;
 
     solve();
     
+    compute_level_set_from_phase_fraction();
     
     output_results(it, time);
     
