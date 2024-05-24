@@ -145,18 +145,14 @@ VOFAssemblerCore<dim>::assemble_matrix(VOFScratchData<dim>       &scratch_data,
                                     (grad_phi_phase_i * velocity) * JxW;
 
               // DCDD shock capturing
-              if (DCDD)
-                {
-                  local_matrix(i, j) +=
-                    (vdcdd * scalar_product(grad_phi_phase_j,
-                                            dcdd_factor * grad_phi_phase_i)) *
-                    JxW;
-                }
+              local_matrix(i, j) +=
+                (vdcdd * scalar_product(grad_phi_phase_i,
+                                        dcdd_factor * grad_phi_phase_j)) *
+                JxW;
             }
         }
     } // end loop on quadrature points
 }
-
 
 
 template <int dim>
@@ -278,13 +274,10 @@ VOFAssemblerCore<dim>::assemble_rhs(VOFScratchData<dim>       &scratch_data,
             JxW;
 
           // DCDD shock capturing
-          if (DCDD)
-            {
-              local_rhs(i) +=
-                -vdcdd *
-                scalar_product(phase_gradient, dcdd_factor * grad_phi_phase_i) *
-                JxW;
-            }
+          local_rhs(i) -=
+            vdcdd *
+            scalar_product(grad_phi_phase_i, dcdd_factor * phase_gradient) *
+            JxW;
         }
     }
 }
