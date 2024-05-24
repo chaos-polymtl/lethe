@@ -283,12 +283,11 @@ namespace Parameters
     {
       prm.enter_subsection("insertion info");
       {
-        prm.declare_entry(
-          "insertion method",
-          "volume",
-          Patterns::Selection("file|plane|list|volume"),
-          "Choosing insertion method. "
-          "Choices are <file|plane|list|volume>.");
+        prm.declare_entry("insertion method",
+                          "volume",
+                          Patterns::Selection("file|plane|list|volume"),
+                          "Choosing insertion method. "
+                          "Choices are <file|plane|list|volume>.");
         prm.declare_entry("inserted number of particles at each time step",
                           "1",
                           Patterns::Integer(),
