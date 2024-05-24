@@ -61,7 +61,7 @@ The ``insertion method`` parameter chooses the type of insertion. Acceptable cho
 
 * The ``insertion maximum offset`` and ``insertion prn seed`` parameters defines the random offset values to the initial positions of particles during a ``volume`` and ``plane`` insertion. The ``insertion maximum offset`` parameter defines the maximum value for an offset. The ``insertion prn seed`` parameter defines the pseudo-random number (PRN) with which offset values are getting generated.
 
-* The ``removal box points coordinates`` parameter defines a clearing box where particles will be removed from the triangulation just before the insertion of new particles. This assures that there is no excessive overlap between new and previously inserted particles. If the ``remove particles`` parameter is set to ``false`` particle removal will not be performed.
+* The ``removal box points coordinates`` parameter defines a removal box where particles will be removed from the triangulation just before the insertion of new particles. This assures that there is no excessive overlap between new and previously inserted particles. If the ``remove particles`` parameter is set to ``false`` particle removal will not be performed.
 
 -------
 Volume

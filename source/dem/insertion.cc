@@ -9,7 +9,7 @@ Insertion<dim>::Insertion(
     &distribution_object_container,
   const parallel::distributed::Triangulation<dim> &triangulation,
   const DEMSolverParameters<dim>                  &dem_parameters)
-  : removing_particles_in_region(dem_parameters.insertion_info.clearing_particles)
+  : removing_particles_in_region(dem_parameters.insertion_info.removing_particles_in_region)
 {
   distributions_objects = distribution_object_container;
 
@@ -229,8 +229,8 @@ Insertion<dim>::find_in_removing_box_cells(
   const parallel::distributed::Triangulation<dim> &triangulation)
 {
   // Clearing the containers
-  in_the_clearing_box.clear();
-  edge_of_box.clear();
+  in_removal_box.clear();
+  edge_of_removal_box.clear();
   bool partially_inside, completely_inside;
   // Looping through cells
   for (const auto &cell : triangulation.active_cell_iterators())
@@ -259,21 +259,18 @@ Insertion<dim>::find_in_removing_box_cells(
             }
           // If the cell is completely inside the clearing box, both bool will
           // be true. We need to add the cell iterator to the
-          // in_the_clearing_box container.
+          // in_removal_box container.
 
           // If the cell is partially inside, at least one of the "if" will have
           // failed, thus the second bool will be false but the first one true.
-          // We need to add the cell iterator to the edge_of_box container.
+          // We need to add the cell iterator to the edge_of_removal_box
+          // container.
 
           // If the cell is outside, both bool will be false, and we do nothing.
           if (completely_inside)
-            {
-              in_the_clearing_box.insert(cell);
-            }
+            in_removal_box.insert(cell);
           else if (!completely_inside && partially_inside)
-            {
-              edge_of_box.insert(cell);
-            }
+            edge_of_removal_box.insert(cell);
         }
     }
 }
@@ -287,11 +284,11 @@ Insertion<dim>::remove_particles_in_box(
     typename dealii::Particles::ParticleHandler<dim>::particle_iterator>
     to_remove_iterators;
 
-  // Reserve to the maximum number of particle on this proc
+  // Reserve to the maximum number of particle on this processor.
   to_remove_iterators.reserve(particle_handler.n_locally_owned_particles());
 
   // Loop over the first container
-  for (const auto &cell_in_box : in_the_clearing_box)
+  for (const auto &cell_in_box : in_removal_box)
     {
       // Check if this cell has particles
       auto particles_in_cell = particle_handler.particles_in_cell(cell_in_box);
@@ -304,7 +301,7 @@ Insertion<dim>::remove_particles_in_box(
                ++particle_in_cell)
             {
               // Since we know the cell is fully inside the box, we can
-              // delete every particles in it.
+              // remove every particles in it.
 
               to_remove_iterators.push_back(particle_in_cell);
             }
@@ -312,13 +309,13 @@ Insertion<dim>::remove_particles_in_box(
     }
 
   // Loop over the second container
-  for (auto cell_edge_of_box = edge_of_box.begin();
-       cell_edge_of_box != edge_of_box.end();
-       ++cell_edge_of_box)
+  for (auto cell_edge_of_removal_box = edge_of_removal_box.begin();
+       cell_edge_of_removal_box != edge_of_removal_box.end();
+       ++cell_edge_of_removal_box)
     {
       // Check if this cell has particle
       auto particles_in_cell =
-        particle_handler.particles_in_cell(*cell_edge_of_box);
+        particle_handler.particles_in_cell(*cell_edge_of_removal_box);
       const bool particles_exist_in_cell = !particles_in_cell.empty();
 
       if (particles_exist_in_cell)

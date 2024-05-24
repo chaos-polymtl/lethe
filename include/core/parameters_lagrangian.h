@@ -167,8 +167,8 @@ namespace Parameters
       enum class InsertionMethod
       {
         file,
-        plane,
         list,
+        plane,
         volume
       } insertion_method;
 
