@@ -35,6 +35,14 @@ This subsection controls the post-processing other than the forces and torque on
     set calculate enstrophy              = false
     set enstrophy name                   = enstrophy
 
+    # Viscous dissipation
+    set calculate viscous dissipation    = false
+    set viscous dissipation name         = viscous_dissipation
+
+    # Pressure power
+    set calculate pressure power         = false
+    set pressure power name              = pressure_power
+
     # Others
     set smoothed output fields           = false
 
@@ -92,15 +100,15 @@ This subsection controls the post-processing other than the forces and torque on
 * ``calculate pressure drop``: controls if calculation of the pressure drop from the inlet boundary to the outlet boundary is enabled.
     * ``inlet boundary id`` and ``outlet boundary id``: define the IDs for inlet and outlet boundaries, respectively. 
     * ``pressure drop name``: output filename for pressure drop calculations.
-    * The pressure drop :math:`\Delta P` and total pressure drop :math:`\Delta P_\text{total}` are calculated as:
+    * The pressure drop :math:`\Delta p` and total pressure drop :math:`\Delta p_\text{total}` are calculated as:
 
     .. math::
-      \Delta P =  \frac{ \int_{\Gamma_\text{inlet}} P \mathrm{d} \Gamma}{\int_{\Gamma_\text{inlet}} 1 \mathrm{d} \Gamma} - \frac{ \int_{\Gamma_\text{outlet}} P \mathrm{d} \Gamma}{\int_{\Gamma_\text{outlet}} 1 \mathrm{d} \Gamma}
+      \Delta p =  \frac{ \int_{\Gamma_\text{inlet}} p \mathrm{d} \Gamma}{\int_{\Gamma_\text{inlet}} 1 \mathrm{d} \Gamma} - \frac{ \int_{\Gamma_\text{outlet}} p \mathrm{d} \Gamma}{\int_{\Gamma_\text{outlet}} 1 \mathrm{d} \Gamma}
 
     .. math::
-      \Delta P_\text{total} =  \frac{ \int_{\Gamma_\text{inlet}} (P + \frac{1}{2} \mathbf{u} \cdot \mathbf{u}) \mathrm{d} \Gamma}{\int_{\Gamma_\text{inlet}} \mathrm{d} \Gamma} - \frac{ \int_{\Gamma_\text{outlet}} (P + \frac{1}{2} \mathbf{u} \cdot \mathbf{u}) \mathrm{d} \Gamma}{\int_{\Gamma_\text{outlet}} \mathrm{d} \Gamma}
+      \Delta p_\text{total} =  \frac{ \int_{\Gamma_\text{inlet}} (p + \frac{1}{2} \mathbf{u} \cdot \mathbf{u}) \mathrm{d} \Gamma}{\int_{\Gamma_\text{inlet}} \mathrm{d} \Gamma} - \frac{ \int_{\Gamma_\text{outlet}} (p + \frac{1}{2} \mathbf{u} \cdot \mathbf{u}) \mathrm{d} \Gamma}{\int_{\Gamma_\text{outlet}} \mathrm{d} \Gamma}
 
-    with :math:`\Gamma` representing the boundary, :math:`\mathbf{u}` the velocity  and :math:`P` the pressure.
+    with :math:`\Gamma` representing the boundary, :math:`\mathbf{u}` the velocity  and :math:`p` the pressure.
 
 * ``calculate flow rate``: controls if calculation of the volumetric flow rates at every boundary is enabled.
     * ``flow rate name``: output filename for flow rate calculations.
@@ -117,6 +125,24 @@ This subsection controls the post-processing other than the forces and torque on
       \mathcal{E} =  \frac{1}{2 \Omega} \int_{\Omega} \mathbf{\omega} \cdot \mathbf{\omega} \mathrm{d} \Omega
 
     with :math:`\Omega` representing the volume of the domain and :math:`\mathbf{\omega}` the vorticity.
+
+* ``calculate viscous dissipation``: controls if the viscous dissipation is calculated
+    * ``viscous dissipation name``: output filename for the viscous dissipation calculations.
+    * The viscous dissipation is calculated as 
+
+    .. math::
+       \frac{1}{\Omega} \int_{\Omega} \mathbf{\tau} : \nabla\mathbf{\u} \mathrm{d} \Omega
+
+    with :math:`\Omega` representing the volume of the domain and :math:`\mathbf{\tau}` the deviatoric stress tensor.
+
+* ``calculate pressure power``: controls if the pressure power is calculated.
+    * ``pressure power name``: output filename for the pressure power calculations.
+    * The pressure power is calculated as
+
+    .. math::
+       \frac{1}{\Omega} \int_{\Omega}  \nabla p \cdot \mathbf{\u} \mathrm{d} \Omega
+
+    with :math:`\Omega` representing the volume of the domain, :math:`\mathbf{u}` the velocity  and :math:`p` the pressure.
 
 * ``smoothed output fields``: controls if the Qcriterion field will be smoothed using an L2-projection over the nodes. The same will shortly be applied to the Vorticity. 
 

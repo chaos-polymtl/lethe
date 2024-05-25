@@ -84,6 +84,15 @@ subsection boundary conditions
 end
 
 #---------------------------------------------------
+# Post-processing
+#---------------------------------------------------
+
+subsection post-processing
+  set verbosity = verbose
+  set calculate viscous dissipation = true
+end
+
+#---------------------------------------------------
 # Manifolds
 #---------------------------------------------------
 
