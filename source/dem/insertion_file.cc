@@ -42,7 +42,6 @@ InsertionFile<dim>::insert(
 
   if (remaining_particles_of_each_type > 0)
     {
-
       if (this->removing_particles_in_region)
         {
           if (this->mark_for_update)

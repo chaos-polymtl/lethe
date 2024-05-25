@@ -216,9 +216,9 @@ protected:
   Point<dim> p_min, p_max;
 
   // Cell iterator containers for clearing
+  std::set<typename Triangulation<dim>::active_cell_iterator> in_removal_box;
   std::set<typename Triangulation<dim>::active_cell_iterator>
-    in_removal_box;
-  std::set<typename Triangulation<dim>::active_cell_iterator> edge_of_removal_box;
+    edge_of_removal_box;
 
   // For when the triangulation has changed (i.e. when load balancing)
   bool                        mark_for_update;

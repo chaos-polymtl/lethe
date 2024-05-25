@@ -9,7 +9,8 @@ Insertion<dim>::Insertion(
     &distribution_object_container,
   const parallel::distributed::Triangulation<dim> &triangulation,
   const DEMSolverParameters<dim>                  &dem_parameters)
-  : removing_particles_in_region(dem_parameters.insertion_info.removing_particles_in_region)
+  : removing_particles_in_region(
+      dem_parameters.insertion_info.removing_particles_in_region)
 {
   distributions_objects = distribution_object_container;
 
