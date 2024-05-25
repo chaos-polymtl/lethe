@@ -1415,7 +1415,7 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess_fd(bool firstIter)
       double             pressure_drop, total_pressure_drop;
       std::tie(pressure_drop, total_pressure_drop) = calculate_pressure_drop(
         this->dof_handler,
-        this->mapping,
+        *this->mapping,
         this->evaluation_point,
         *this->cell_quadrature,
         *this->face_quadrature,

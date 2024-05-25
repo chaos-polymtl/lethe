@@ -64,13 +64,13 @@
  */
 template <int dim, typename VectorType>
 std::pair<double, double>
-calculate_pressure_drop(const DoFHandler<dim>        &dof_handler,
-                        std::shared_ptr<Mapping<dim>> mapping,
-                        const VectorType             &evaluation_point,
-                        const Quadrature<dim>        &cell_quadrature_formula,
-                        const Quadrature<dim - 1>    &face_quadrature_formula,
-                        const unsigned int            inlet_boundary_id,
-                        const unsigned int            outlet_boundary_id);
+calculate_pressure_drop(const DoFHandler<dim>     &dof_handler,
+                        const Mapping<dim>        &mapping,
+                        const VectorType          &evaluation_point,
+                        const Quadrature<dim>     &cell_quadrature_formula,
+                        const Quadrature<dim - 1> &face_quadrature_formula,
+                        const unsigned int         inlet_boundary_id,
+                        const unsigned int         outlet_boundary_id);
 
 /**
  * @brief Calculate the CFL condition on the simulation domain

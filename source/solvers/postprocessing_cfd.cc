@@ -35,16 +35,16 @@ using namespace dealii;
 
 template <int dim, typename VectorType>
 std::pair<double, double>
-calculate_pressure_drop(const DoFHandler<dim>        &dof_handler,
-                        std::shared_ptr<Mapping<dim>> mapping,
-                        const VectorType             &evaluation_point,
-                        const Quadrature<dim>        &cell_quadrature_formula,
-                        const Quadrature<dim - 1>    &face_quadrature_formula,
-                        const unsigned int            inlet_boundary_id,
-                        const unsigned int            outlet_boundary_id)
+calculate_pressure_drop(const DoFHandler<dim>     &dof_handler,
+                        const Mapping<dim>        &mapping,
+                        const VectorType          &evaluation_point,
+                        const Quadrature<dim>     &cell_quadrature_formula,
+                        const Quadrature<dim - 1> &face_quadrature_formula,
+                        const unsigned int         inlet_boundary_id,
+                        const unsigned int         outlet_boundary_id)
 {
   FESystem<dim, dim> fe = dof_handler.get_fe();
-  FEValues<dim>      fe_values(*mapping,
+  FEValues<dim>      fe_values(mapping,
                           fe,
                           cell_quadrature_formula,
                           update_values | update_quadrature_points |
@@ -166,28 +166,28 @@ calculate_pressure_drop(const DoFHandler<dim>        &dof_handler,
 
 template std::pair<double, double>
 calculate_pressure_drop<2, GlobalVectorType>(
-  const DoFHandler<2>        &dof_handler,
-  std::shared_ptr<Mapping<2>> mapping,
-  const GlobalVectorType     &evaluation_point,
-  const Quadrature<2>        &cell_quadrature_formula,
-  const Quadrature<1>        &face_quadrature_formula,
-  const unsigned int          inlet_boundary_id,
-  const unsigned int          outlet_boundary_id);
+  const DoFHandler<2>    &dof_handler,
+  const Mapping<2>       &mapping,
+  const GlobalVectorType &evaluation_point,
+  const Quadrature<2>    &cell_quadrature_formula,
+  const Quadrature<1>    &face_quadrature_formula,
+  const unsigned int      inlet_boundary_id,
+  const unsigned int      outlet_boundary_id);
 
 template std::pair<double, double>
 calculate_pressure_drop<3, GlobalVectorType>(
-  const DoFHandler<3>        &dof_handler,
-  std::shared_ptr<Mapping<3>> mapping,
-  const GlobalVectorType     &evaluation_point,
-  const Quadrature<3>        &cell_quadrature_formula,
-  const Quadrature<2>        &face_quadrature_formula,
-  const unsigned int          inlet_boundary_id,
-  const unsigned int          outlet_boundary_id);
+  const DoFHandler<3>    &dof_handler,
+  const Mapping<3>       &mapping,
+  const GlobalVectorType &evaluation_point,
+  const Quadrature<3>    &cell_quadrature_formula,
+  const Quadrature<2>    &face_quadrature_formula,
+  const unsigned int      inlet_boundary_id,
+  const unsigned int      outlet_boundary_id);
 
 template std::pair<double, double>
 calculate_pressure_drop<2, GlobalBlockVectorType>(
   const DoFHandler<2>         &dof_handler,
-  std::shared_ptr<Mapping<2>>  mapping,
+  const Mapping<2>            &mapping,
   const GlobalBlockVectorType &evaluation_point,
   const Quadrature<2>         &cell_quadrature_formula,
   const Quadrature<1>         &face_quadrature_formula,
@@ -197,7 +197,7 @@ calculate_pressure_drop<2, GlobalBlockVectorType>(
 template std::pair<double, double>
 calculate_pressure_drop<3, GlobalBlockVectorType>(
   const DoFHandler<3>         &dof_handler,
-  std::shared_ptr<Mapping<3>>  mapping,
+  const Mapping<3>            &mapping,
   const GlobalBlockVectorType &evaluation_point,
   const Quadrature<3>         &cell_quadrature_formula,
   const Quadrature<2>         &face_quadrature_formula,
@@ -208,7 +208,7 @@ calculate_pressure_drop<3, GlobalBlockVectorType>(
 template std::pair<double, double>
 calculate_pressure_drop<2, LinearAlgebra::distributed::Vector<double>>(
   const DoFHandler<2>                              &dof_handler,
-  std::shared_ptr<Mapping<2>>                       mapping,
+  const Mapping<2>                                 &mapping,
   const LinearAlgebra::distributed::Vector<double> &evaluation_point,
   const Quadrature<2>                              &cell_quadrature_formula,
   const Quadrature<1>                              &face_quadrature_formula,
@@ -218,7 +218,7 @@ calculate_pressure_drop<2, LinearAlgebra::distributed::Vector<double>>(
 template std::pair<double, double>
 calculate_pressure_drop<3, LinearAlgebra::distributed::Vector<double>>(
   const DoFHandler<3>                              &dof_handler,
-  std::shared_ptr<Mapping<3>>                       mapping,
+  const Mapping<3>                                 &mapping,
   const LinearAlgebra::distributed::Vector<double> &evaluation_point,
   const Quadrature<3>                              &cell_quadrature_formula,
   const Quadrature<2>                              &face_quadrature_formula,
