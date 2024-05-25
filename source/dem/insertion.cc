@@ -19,7 +19,7 @@ Insertion<dim>::Insertion(
   this->change_to_triangulation = triangulation.signals.any_change.connect(
     [&] { this->mark_for_update = true; });
 
-  for (unsigned int i = 0; i < 3; ++i)
+  for (unsigned int i = 0; i < dim; ++i)
     {
       if (dem_parameters.insertion_info.clear_box_point_1[i] <=
           dem_parameters.insertion_info.clear_box_point_2[i])
