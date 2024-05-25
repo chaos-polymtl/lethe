@@ -1741,7 +1741,7 @@ namespace Parameters
                         Patterns::FileName(),
                         "File output enstrophy");
 
-      prm.declare_entry("pressure work name",
+      prm.declare_entry("pressure power name",
                         "pressure_power",
                         Patterns::FileName(),
                         "File output pressure work");
