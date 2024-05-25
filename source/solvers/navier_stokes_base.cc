@@ -1238,16 +1238,16 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess_fd(bool firstIter)
     }
 
   // Pressure work
-  if (this->simulation_parameters.post_processing.calculate_pressure_work)
+  if (this->simulation_parameters.post_processing.calculate_pressure_power)
     {
-      double pressure_work = calculate_pressure_work(this->dof_handler,
-                                                     present_solution,
-                                                     *this->cell_quadrature,
-                                                     *this->mapping);
+      double pressure_work = calculate_pressure_power(this->dof_handler,
+                                                      present_solution,
+                                                      *this->cell_quadrature,
+                                                      *this->mapping);
 
-      this->pressure_work_table.add_value(
+      this->pressure_power_table.add_value(
         "time", simulation_control->get_current_time());
-      this->pressure_work_table.add_value("pressure_work", pressure_work);
+      this->pressure_power_table.add_value("pressure_work", pressure_work);
 
       // Display pressure work to screen if verbosity is enabled
       if (this->simulation_parameters.post_processing.verbosity ==
@@ -1264,12 +1264,12 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess_fd(bool firstIter)
         {
           std::string filename =
             simulation_parameters.simulation_control.output_folder +
-            simulation_parameters.post_processing.pressure_work_output_name +
+            simulation_parameters.post_processing.pressure_power_output_name +
             ".dat";
           std::ofstream output(filename.c_str());
-          pressure_work_table.set_precision("time", 12);
-          pressure_work_table.set_precision("pressure_work", 12);
-          this->pressure_work_table.write_text(output);
+          pressure_power_table.set_precision("time", 12);
+          pressure_power_table.set_precision("pressure_work", 12);
+          this->pressure_power_table.write_text(output);
         }
     }
 
@@ -1782,9 +1782,14 @@ NavierStokesBase<dim, VectorType, DofsType>::read_checkpoint()
       deserialize_table(this->enstrophy_table,
                         prefix + post_processing.enstrophy_output_name +
                           suffix);
-    if (post_processing.calculate_pressure_work)
-      deserialize_table(this->pressure_work_table,
-                        prefix + post_processing.pressure_work_output_name +
+    if (post_processing.calculate_pressure_power)
+      deserialize_table(this->pressure_power_table,
+                        prefix + post_processing.pressure_power_output_name +
+                          suffix);
+    if (post_processing.calculate_viscous_dissipation)
+      deserialize_table(this->viscous_dissipation_table,
+                        prefix +
+                          post_processing.viscous_dissipation_output_name +
                           suffix);
     if (post_processing.calculate_kinetic_energy)
       deserialize_table(this->kinetic_energy_table,
@@ -2486,6 +2491,14 @@ NavierStokesBase<dim, VectorType, DofsType>::write_checkpoint()
     if (post_processing.calculate_kinetic_energy)
       serialize_table(this->kinetic_energy_table,
                       prefix + post_processing.kinetic_energy_output_name +
+                        suffix);
+    if (post_processing.calculate_pressure_power)
+      serialize_table(this->pressure_power_table,
+                      prefix + post_processing.pressure_power_output_name +
+                        suffix);
+    if (post_processing.calculate_viscous_dissipation)
+      serialize_table(this->viscous_dissipation_table,
+                      prefix + post_processing.viscous_dissipation_output_name +
                         suffix);
     if (post_processing.calculate_apparent_viscosity)
       serialize_table(this->apparent_viscosity_table,

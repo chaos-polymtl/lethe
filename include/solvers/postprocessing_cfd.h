@@ -153,10 +153,10 @@ calculate_kinetic_energy(const DoFHandler<dim> &dof_handler,
  */
 template <int dim, typename VectorType>
 double
-calculate_pressure_work(const DoFHandler<dim> &dof_handler,
-                        const VectorType      &evaluation_point,
-                        const Quadrature<dim> &quadrature_formula,
-                        const Mapping<dim>    &mapping);
+calculate_pressure_power(const DoFHandler<dim> &dof_handler,
+                         const VectorType      &evaluation_point,
+                         const Quadrature<dim> &quadrature_formula,
+                         const Mapping<dim>    &mapping);
 
 /**
  * @brief Calculate the viscous dissipation of kinetic energy

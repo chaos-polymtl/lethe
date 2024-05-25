@@ -854,7 +854,7 @@ protected:
 
   // Post-processing variables
   TableHandler enstrophy_table;
-  TableHandler pressure_work_table;
+  TableHandler pressure_power_table;
   TableHandler viscous_dissipation_table;
   TableHandler kinetic_energy_table;
   TableHandler apparent_viscosity_table;

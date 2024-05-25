@@ -1671,10 +1671,10 @@ namespace Parameters
         "is calculated from the volumetric integral of the enstrophy over the domain.");
 
       prm.declare_entry(
-        "calculate pressure work",
+        "calculate pressure power",
         "false",
         Patterns::Bool(),
-        "Enable calculation of the pressure work. The pressure work "
+        "Enable calculation of the pressure power. The pressure power "
         "is calculated from the volumetric integral of u.grad(p) over the domain.");
 
       prm.declare_entry(
@@ -1742,7 +1742,7 @@ namespace Parameters
                         "File output enstrophy");
 
       prm.declare_entry("pressure work name",
-                        "pressure_work",
+                        "pressure_power",
                         Patterns::FileName(),
                         "File output pressure work");
 
@@ -1887,7 +1887,7 @@ namespace Parameters
 
       calculate_kinetic_energy = prm.get_bool("calculate kinetic energy");
       calculate_enstrophy      = prm.get_bool("calculate enstrophy");
-      calculate_pressure_work  = prm.get_bool("calculate pressure work");
+      calculate_pressure_power = prm.get_bool("calculate pressure power");
       calculate_viscous_dissipation =
         prm.get_bool("calculate viscous dissipation");
       calculate_apparent_viscosity =
@@ -1903,7 +1903,7 @@ namespace Parameters
       pressure_drop_output_name       = prm.get("pressure drop name");
       flow_rate_output_name           = prm.get("flow rate name");
       enstrophy_output_name           = prm.get("enstrophy name");
-      pressure_work_output_name       = prm.get("pressure work name");
+      pressure_power_output_name      = prm.get("pressure power name");
       viscous_dissipation_output_name = prm.get("viscous dissipation name");
       apparent_viscosity_output_name  = prm.get("apparent viscosity name");
       output_frequency                = prm.get_integer("output frequency");
