@@ -172,13 +172,18 @@ calculate_pressure_power(const DoFHandler<dim> &dof_handler,
  * @param[in] quadrature_formula The quadrature formula for the calculation
  *
  * @param[in] mapping The mapping of the simulation
+ *
+ * @param[in] properties_manager Manager for the physical properties used to
+ * calculate the kinematic viscosity
  */
 template <int dim, typename VectorType>
 double
-calculate_viscous_dissipation(const DoFHandler<dim> &dof_handler,
-                              const VectorType      &evaluation_point,
-                              const Quadrature<dim> &quadrature_formula,
-                              const Mapping<dim>    &mapping);
+calculate_viscous_dissipation(
+  const DoFHandler<dim>           &dof_handler,
+  const VectorType                &evaluation_point,
+  const Quadrature<dim>           &quadrature_formula,
+  const Mapping<dim>              &mapping,
+  const PhysicalPropertiesManager &properties_manager);
 
 /**
  * @brief Calculates the apparent viscosity of the fluid for non Newtonian flows.
@@ -197,11 +202,12 @@ calculate_viscous_dissipation(const DoFHandler<dim> &dof_handler,
  */
 template <int dim, typename VectorType>
 double
-calculate_apparent_viscosity(const DoFHandler<dim>     &dof_handler,
-                             const VectorType          &evaluation_point,
-                             const Quadrature<dim>     &quadrature_formula,
-                             const Mapping<dim>        &mapping,
-                             PhysicalPropertiesManager &properties_manager);
+calculate_apparent_viscosity(
+  const DoFHandler<dim>           &dof_handler,
+  const VectorType                &evaluation_point,
+  const Quadrature<dim>           &quadrature_formula,
+  const Mapping<dim>              &mapping,
+  const PhysicalPropertiesManager &properties_manager);
 
 /**
  * @brief Calculates the force due to the fluid motion on every boundary conditions
@@ -228,7 +234,7 @@ std::vector<std::vector<Tensor<1, dim>>>
 calculate_forces(
   const DoFHandler<dim>                               &dof_handler,
   const VectorType                                    &evaluation_point,
-  PhysicalPropertiesManager                           &properties_manager,
+  const PhysicalPropertiesManager                     &properties_manager,
   const BoundaryConditions::NSBoundaryConditions<dim> &boundary_conditions,
   const Quadrature<dim - 1>                           &face_quadrature_formula,
   const Mapping<dim>                                  &mapping);
@@ -259,7 +265,7 @@ std::vector<Tensor<1, 3>>
 calculate_torques(
   const DoFHandler<dim>                               &dof_handler,
   const VectorType                                    &evaluation_point,
-  PhysicalPropertiesManager                           &properties_manager,
+  const PhysicalPropertiesManager                     &properties_manager,
   const BoundaryConditions::NSBoundaryConditions<dim> &boundary_conditions,
   const Quadrature<dim - 1>                           &face_quadrature_formula,
   const Mapping<dim>                                  &mapping);

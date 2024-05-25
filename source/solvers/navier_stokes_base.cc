@@ -1277,11 +1277,12 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess_fd(bool firstIter)
   // Viscous dissipation
   if (this->simulation_parameters.post_processing.calculate_viscous_dissipation)
     {
-      double viscous_dissipation =
-        calculate_viscous_dissipation(this->dof_handler,
-                                      present_solution,
-                                      *this->cell_quadrature,
-                                      *this->mapping);
+      double viscous_dissipation = calculate_viscous_dissipation(
+        this->dof_handler,
+        present_solution,
+        *this->cell_quadrature,
+        *this->mapping,
+        simulation_parameters.physical_properties_manager);
 
       this->viscous_dissipation_table.add_value(
         "time", simulation_control->get_current_time());
