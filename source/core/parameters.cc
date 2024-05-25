@@ -1744,7 +1744,7 @@ namespace Parameters
       prm.declare_entry("pressure power name",
                         "pressure_power",
                         Patterns::FileName(),
-                        "File output pressure work");
+                        "File output pressure power");
 
       prm.declare_entry("viscous dissipation name",
                         "viscous_dissipation",
