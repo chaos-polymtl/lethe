@@ -7,7 +7,7 @@ void
 input_parameter_inspection(
   const DEMSolverParameters<dim>              &dem_parameters,
   const ConditionalOStream                    &pcout,
-  const std::vector<shared_ptr<Distribution>> &distribution_object_container)
+  const std::vector<shared_ptr<Distribution>> &size_distribution_object_container)
 {
   // Getting the input parameters as local variable
   auto   parameters          = dem_parameters;
@@ -20,7 +20,7 @@ input_parameter_inspection(
         (2.0 * (1.0 + physical_properties.poisson_ratio_particle[i]));
 
       double min_diameter =
-        distribution_object_container.at(i)->find_min_diameter();
+        size_distribution_object_container.at(i)->find_min_diameter();
 
       rayleigh_time_step = std::min(
         M_PI_2 * min_diameter *
@@ -48,7 +48,7 @@ input_parameter_inspection(
   // Checking particle size range
   for (unsigned int i = 0; i < physical_properties.particle_type_number; ++i)
     {
-      if (distribution_object_container.at(i)->find_min_diameter() < 0.)
+      if (size_distribution_object_container.at(i)->find_min_diameter() < 0.)
         {
           pcout
             << "Warning: Requested particle size distribution for type: " << i
@@ -103,10 +103,10 @@ template void
 input_parameter_inspection(
   const DEMSolverParameters<2>                &dem_parameters,
   const ConditionalOStream                    &pcout,
-  const std::vector<shared_ptr<Distribution>> &distribution_object_container);
+  const std::vector<shared_ptr<Distribution>> &size_distribution_object_container);
 
 template void
 input_parameter_inspection(
   const DEMSolverParameters<3>                &dem_parameters,
   const ConditionalOStream                    &pcout,
-  const std::vector<shared_ptr<Distribution>> &distribution_object_container);
+  const std::vector<shared_ptr<Distribution>> &size_distribution_object_container);

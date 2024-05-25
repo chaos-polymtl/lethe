@@ -6,13 +6,13 @@
 template <int dim>
 Insertion<dim>::Insertion(
   const std::vector<std::shared_ptr<Distribution>>
-    &distribution_object_container,
+    &size_distribution_object_container,
   const parallel::distributed::Triangulation<dim> &triangulation,
   const DEMSolverParameters<dim>                  &dem_parameters)
   : removing_particles_in_region(
       dem_parameters.insertion_info.removing_particles_in_region)
 {
-  distributions_objects = distribution_object_container;
+  distributions_objects = size_distribution_object_container;
 
   // Boost signal for load balancing
   this->mark_for_update         = true;
@@ -226,7 +226,7 @@ Insertion<dim>::calculate_insertion_domain_maximum_particle_number(
 
 template <int dim>
 void
-Insertion<dim>::find_in_removing_box_cells(
+Insertion<dim>::find_cells_in_removing_box(
   const parallel::distributed::Triangulation<dim> &triangulation)
 {
   // Clearing the containers

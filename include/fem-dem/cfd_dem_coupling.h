@@ -298,7 +298,7 @@ private:
   std::vector<double>                        displacement;
   std::vector<double>                        MOI;
   double                                     neighborhood_threshold_squared;
-  std::vector<std::shared_ptr<Distribution>> distribution_object_container;
+  std::vector<std::shared_ptr<Distribution>> size_distribution_object_container;
   double                                     maximum_particle_diameter;
   double                                     smallest_contact_search_criterion;
 

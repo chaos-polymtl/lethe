@@ -37,7 +37,7 @@ public:
    * insertion points in each direction (number_of_particles_x_direction,
    * number_of_particles_y_direction and number_of_particles_z_direction).
    *
-   * @param distribution_object_container Contains all distribution for each
+   * @param size_distribution_object_container Contains all distribution for each
    * particle type
    * @param triangulation Triangulation to access the cells in which the
    * particles are inserted
@@ -47,7 +47,7 @@ public:
    */
   InsertionVolume(
     const std::vector<std::shared_ptr<Distribution>>
-      &distribution_object_container,
+      &size_distribution_object_container,
     const parallel::distributed::Triangulation<dim> &triangulation,
     const DEMSolverParameters<dim>                  &dem_parameters,
     const double                                     maximum_particle_diameter);

@@ -397,7 +397,7 @@ private:
   std::vector<std::shared_ptr<SerialSolid<dim - 1, dim>>> solids;
 
   // Distribution objects
-  std::vector<std::shared_ptr<Distribution>> distribution_object_container;
+  std::vector<std::shared_ptr<Distribution>> size_distribution_object_container;
 
   // Adaptive sparce contacts (ASC) in cells object
   AdaptiveSparseContacts<dim> sparse_contacts_object;

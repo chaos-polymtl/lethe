@@ -64,14 +64,14 @@ public:
    * volume_insertion, plane_insertion, list_insertion and file_insertion
    * classes.
    *
-   * @param distribution_object_container Contains all distribution for each
+   * @param size_distribution_object_container Contains all distribution for each
    * particle type
    * @param triangulation Triangulation to access the cells in which the
    * particles are inserted
    * @param dem_parameters DEM parameters declared in the .prm file
    */
   Insertion(const std::vector<std::shared_ptr<Distribution>>
-              &distribution_object_container,
+              &size_distribution_object_container,
             const parallel::distributed::Triangulation<dim> &triangulation,
             const DEMSolverParameters<dim>                  &dem_parameters);
 
@@ -174,7 +174,7 @@ protected:
    * particles deleted.
    */
   void
-  find_in_removing_box_cells(
+  find_cells_in_removing_box(
     const parallel::distributed::Triangulation<dim> &triangulation);
 
   /**

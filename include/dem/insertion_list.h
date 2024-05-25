@@ -41,14 +41,14 @@ public:
    * insertion frequency using the list of positions. There is no mechanism in
    * place that prevents the overlap of these new particles with previous ones.
    *
-   * @param distribution_object_container Contains all distribution for each
+   * @param size_distribution_object_container Contains all distribution for each
    * particle type
    * @param triangulation Triangulation to access the cells in which the
    * particles are inserted
    * @param dem_parameters DEM parameters declared in the .prm file
    */
   InsertionList(const std::vector<std::shared_ptr<Distribution>>
-                  &distribution_object_container,
+                  &size_distribution_object_container,
                 const parallel::distributed::Triangulation<dim> &triangulation,
                 const DEMSolverParameters<dim> &dem_parameters);
 

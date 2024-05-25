@@ -10,10 +10,10 @@ using namespace DEM;
 template <int dim>
 InsertionPlane<dim>::InsertionPlane(
   const std::vector<std::shared_ptr<Distribution>>
-    &distribution_object_container,
+    &size_distribution_object_container,
   const parallel::distributed::Triangulation<dim> &triangulation,
   const DEMSolverParameters<dim>                  &dem_parameters)
-  : Insertion<dim>(distribution_object_container, triangulation, dem_parameters)
+  : Insertion<dim>(size_distribution_object_container, triangulation, dem_parameters)
   , particles_of_each_type_remaining(
       dem_parameters.lagrangian_physical_properties.number.at(0))
 {
@@ -125,7 +125,7 @@ InsertionPlane<dim>::insert(
 
           if (this->removing_particles_in_region)
             {
-              this->find_in_removing_box_cells(triangulation);
+              this->find_cells_in_removing_box(triangulation);
             }
           this->mark_for_update = false;
         }
