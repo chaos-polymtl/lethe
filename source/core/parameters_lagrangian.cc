@@ -297,7 +297,7 @@ namespace Parameters
                           Patterns::Integer(),
                           "Insertion frequency");
 
-        // Clearing box:
+        // Removal box:
         prm.declare_entry(
           "remove particles",
           "false",
@@ -309,7 +309,7 @@ namespace Parameters
           "0. , 0. , 0. : 1. , 1. , 1.",
           Patterns::List(
             Patterns::List(Patterns::Double(), 2, 3, ","), 2, 2, ":"),
-          "Coordinates of two points for the clearing box (x1, y1, z1 : x2, y2, z2)");
+          "Coordinates of two points for the removal box (x1, y1, z1 : x2, y2, z2)");
 
         // File:
         prm.declare_entry("list of input files",
@@ -434,28 +434,28 @@ namespace Parameters
         // Clear:
         removing_particles_in_region = prm.get_bool("remove particles");
 
-        const std::vector<std::string> clearing_box_point_coordinates_list(
+        const std::vector<std::string> removal_box_point_coordinates_list(
           Utilities::split_string_list(
             prm.get("removal box points coordinates"), ":"));
 
-        std::vector<double> clearing_point_coord_temp_1 =
+        std::vector<double> removal_point_coord_temp_1 =
           Utilities::string_to_double(Utilities::split_string_list(
-            clearing_box_point_coordinates_list.at(0)));
-        std::vector<double> clearing_point_coord_temp_2 =
+            removal_box_point_coordinates_list.at(0)));
+        std::vector<double> removal_point_coord_temp_2 =
           Utilities::string_to_double(Utilities::split_string_list(
-            clearing_box_point_coordinates_list.at(1)));
+            removal_box_point_coordinates_list.at(1)));
 
-        if (clearing_point_coord_temp_1.size() == 2 &&
-            clearing_point_coord_temp_2.size() == 2)
+        if (removal_point_coord_temp_1.size() == 2 &&
+            removal_point_coord_temp_2.size() == 2)
           {
-            clearing_point_coord_temp_1.resize(3);
-            clearing_point_coord_temp_2.resize(3);
+            removal_point_coord_temp_1.push_back(0.);
+            removal_point_coord_temp_2.push_back(0.);
           }
 
         for (unsigned int i = 0; i < 3; ++i)
           {
-            clear_box_point_1[i] = clearing_point_coord_temp_1.at(i);
-            clear_box_point_2[i] = clearing_point_coord_temp_2.at(i);
+            clear_box_point_1[i] = removal_point_coord_temp_1.at(i);
+            clear_box_point_2[i] = removal_point_coord_temp_2.at(i);
           }
 
         // File:
@@ -520,7 +520,7 @@ namespace Parameters
         std::vector<int> axis_order =
           convert_string_to_vector<int>(prm, "insertion direction sequence");
         if (axis_order.size() == 2)
-          axis_order.resize(3);
+          axis_order.push_back(0.);
 
         direction_sequence.reserve(3);
         direction_sequence.push_back(axis_order[0]);
@@ -538,8 +538,8 @@ namespace Parameters
 
         if (point_coord_temp_1.size() == 2 && point_coord_temp_2.size() == 2)
           {
-            point_coord_temp_1.resize(3);
-            point_coord_temp_2.resize(3);
+            point_coord_temp_1.push_back(0.);
+            point_coord_temp_2.push_back(0.);
           }
         for (int i = 0; i < 3; ++i)
           {

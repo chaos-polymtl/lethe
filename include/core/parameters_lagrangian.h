@@ -178,7 +178,7 @@ namespace Parameters
       // Insertion frequency
       int insertion_frequency;
 
-      /* Clearing box: */
+      /* Removal box: */
       bool removing_particles_in_region;
 
       // Clear box info (xmin,xmax,ymin,ymax,zmin,zmax)
