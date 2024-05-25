@@ -1241,12 +1241,12 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess_fd(bool firstIter)
   if (this->simulation_parameters.post_processing.calculate_pressure_work)
     {
       double pressure_work = calculate_pressure_work(this->dof_handler,
-                                             present_solution,
-                                             *this->cell_quadrature,
-                                             *this->mapping);
+                                                     present_solution,
+                                                     *this->cell_quadrature,
+                                                     *this->mapping);
 
-      this->pressure_work_table.add_value("time",
-                                      simulation_control->get_current_time());
+      this->pressure_work_table.add_value(
+        "time", simulation_control->get_current_time());
       this->pressure_work_table.add_value("pressure_work", pressure_work);
 
       // Display pressure work to screen if verbosity is enabled
@@ -1270,6 +1270,47 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess_fd(bool firstIter)
           pressure_work_table.set_precision("time", 12);
           pressure_work_table.set_precision("pressure_work", 12);
           this->pressure_work_table.write_text(output);
+        }
+    }
+
+
+  // Viscous dissipation
+  if (this->simulation_parameters.post_processing.calculate_viscous_dissipation)
+    {
+      double viscous_dissipation =
+        calculate_viscous_dissipation(this->dof_handler,
+                                      present_solution,
+                                      *this->cell_quadrature,
+                                      *this->mapping);
+
+      this->viscous_dissipation_table.add_value(
+        "time", simulation_control->get_current_time());
+      this->viscous_dissipation_table.add_value("viscous_dissipation",
+                                                viscous_dissipation);
+
+      // Display pressure work to screen if verbosity is enabled
+      if (this->simulation_parameters.post_processing.verbosity ==
+          Parameters::Verbosity::verbose)
+        {
+          this->pcout << "Viscous dissipation : " << viscous_dissipation
+                      << std::endl;
+        }
+
+      // Output pressure work to a text file from processor 0
+      if (simulation_control->get_step_number() %
+              this->simulation_parameters.post_processing.output_frequency ==
+            0 &&
+          this->this_mpi_process == 0)
+        {
+          std::string filename =
+            simulation_parameters.simulation_control.output_folder +
+            simulation_parameters.post_processing
+              .viscous_dissipation_output_name +
+            ".dat";
+          std::ofstream output(filename.c_str());
+          viscous_dissipation_table.set_precision("time", 12);
+          viscous_dissipation_table.set_precision("viscous_dissipation", 12);
+          this->viscous_dissipation_table.write_text(output);
         }
     }
 

@@ -1677,6 +1677,12 @@ namespace Parameters
         "Enable calculation of the pressure work. The pressure work "
         "is calculated from the volumetric integral of u.grad(p) over the domain.");
 
+      prm.declare_entry(
+        "calculate viscous dissipation",
+        "false",
+        Patterns::Bool(),
+        "Enable calculation of the viscous dissipation. The viscous dissipation "
+        "is calculated from the volumetric integral of grad(u).tau over the domain.");
 
       prm.declare_entry("calculate apparent viscosity",
                         "false",
@@ -1739,6 +1745,11 @@ namespace Parameters
                         "pressure_work",
                         Patterns::FileName(),
                         "File output pressure work");
+
+      prm.declare_entry("viscous dissipation name",
+                        "viscous_dissipation",
+                        Patterns::FileName(),
+                        "File output viscous dissipation");
 
       prm.declare_entry("apparent viscosity name",
                         "apparent_viscosity",
@@ -1877,22 +1888,25 @@ namespace Parameters
       calculate_kinetic_energy = prm.get_bool("calculate kinetic energy");
       calculate_enstrophy      = prm.get_bool("calculate enstrophy");
       calculate_pressure_work  = prm.get_bool("calculate pressure work");
+      calculate_viscous_dissipation =
+        prm.get_bool("calculate viscous dissipation");
       calculate_apparent_viscosity =
         prm.get_bool("calculate apparent viscosity");
       calculate_average_velocities =
         prm.get_bool("calculate average velocities");
-      calculate_pressure_drop        = prm.get_bool("calculate pressure drop");
-      inlet_boundary_id              = prm.get_integer("inlet boundary id");
-      outlet_boundary_id             = prm.get_integer("outlet boundary id");
-      calculate_flow_rate            = prm.get_bool("calculate flow rate");
-      initial_time                   = prm.get_double("initial time");
-      kinetic_energy_output_name     = prm.get("kinetic energy name");
-      pressure_drop_output_name      = prm.get("pressure drop name");
-      flow_rate_output_name          = prm.get("flow rate name");
-      enstrophy_output_name          = prm.get("enstrophy name");
-      pressure_work_output_name      = prm.get("pressure work name");
-      apparent_viscosity_output_name = prm.get("apparent viscosity name");
-      output_frequency               = prm.get_integer("output frequency");
+      calculate_pressure_drop         = prm.get_bool("calculate pressure drop");
+      inlet_boundary_id               = prm.get_integer("inlet boundary id");
+      outlet_boundary_id              = prm.get_integer("outlet boundary id");
+      calculate_flow_rate             = prm.get_bool("calculate flow rate");
+      initial_time                    = prm.get_double("initial time");
+      kinetic_energy_output_name      = prm.get("kinetic energy name");
+      pressure_drop_output_name       = prm.get("pressure drop name");
+      flow_rate_output_name           = prm.get("flow rate name");
+      enstrophy_output_name           = prm.get("enstrophy name");
+      pressure_work_output_name       = prm.get("pressure work name");
+      viscous_dissipation_output_name = prm.get("viscous dissipation name");
+      apparent_viscosity_output_name  = prm.get("apparent viscosity name");
+      output_frequency                = prm.get_integer("output frequency");
       calculate_tracer_statistics = prm.get_bool("calculate tracer statistics");
       tracer_output_name          = prm.get("tracer statistics name");
       calculate_phase_statistics  = prm.get_bool("calculate phase statistics");

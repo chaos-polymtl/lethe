@@ -140,8 +140,8 @@ calculate_kinetic_energy(const DoFHandler<dim> &dof_handler,
  * @brief Calculate the average work done by pressure in the simulation domain
  * @return average work done by pressure in the simulation domain
  * Post-processing function
- * This function calculates the average work done by pressure in the simulation domain. This average
- * work is defined as the W_p = ∫u.∇pdΩ/∫1dΩ
+ * This function calculates the average work done by pressure in the simulation
+ * domain. This average work is defined as the W_p = ∫u.∇pdΩ/∫1dΩ
  *
  * @param[in] dof_handler The dof_handler used for the calculation
  *
@@ -154,9 +154,31 @@ calculate_kinetic_energy(const DoFHandler<dim> &dof_handler,
 template <int dim, typename VectorType>
 double
 calculate_pressure_work(const DoFHandler<dim> &dof_handler,
-                         const VectorType      &evaluation_point,
-                         const Quadrature<dim> &quadrature_formula,
-                         const Mapping<dim>    &mapping);
+                        const VectorType      &evaluation_point,
+                        const Quadrature<dim> &quadrature_formula,
+                        const Mapping<dim>    &mapping);
+
+/**
+ * @brief Calculate the viscous dissipation of kinetic energy
+ * @return Viscous dissipation of kinetic energy
+ * Post-processing function
+ * This function calculates the viscous energy dissipation  which is defined as
+ * the W_p = ∫∇u.τdΩ/∫1dΩ
+ *
+ * @param[in] dof_handler The dof_handler used for the calculation
+ *
+ * @param[in] evaluation_point The solution for the calculation
+ *
+ * @param[in] quadrature_formula The quadrature formula for the calculation
+ *
+ * @param[in] mapping The mapping of the simulation
+ */
+template <int dim, typename VectorType>
+double
+calculate_viscous_dissipation(const DoFHandler<dim> &dof_handler,
+                              const VectorType      &evaluation_point,
+                              const Quadrature<dim> &quadrature_formula,
+                              const Mapping<dim>    &mapping);
 
 /**
  * @brief Calculates the apparent viscosity of the fluid for non Newtonian flows.

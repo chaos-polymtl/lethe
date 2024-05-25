@@ -441,9 +441,9 @@ calculate_enstrophy<3, LinearAlgebra::distributed::Vector<double>>(
 template <int dim, typename VectorType>
 double
 calculate_pressure_work(const DoFHandler<dim> &dof_handler,
-                    const VectorType      &evaluation_point,
-                    const Quadrature<dim> &quadrature_formula,
-                    const Mapping<dim>    &mapping)
+                        const VectorType      &evaluation_point,
+                        const Quadrature<dim> &quadrature_formula,
+                        const Mapping<dim>    &mapping)
 {
   const FESystem<dim, dim> fe = dof_handler.get_fe();
   FEValues<dim>            fe_values(mapping,
@@ -460,8 +460,8 @@ calculate_pressure_work(const DoFHandler<dim> &dof_handler,
   std::vector<Tensor<1, dim>> velocity(n_q_points);
   std::vector<Tensor<1, dim>> pressure_gradients(n_q_points);
 
-  double                      pressure_work = 0.0;
-  double                      domain_volume =
+  double pressure_work = 0.0;
+  double domain_volume =
     GridTools::volume(dof_handler.get_triangulation(), mapping);
 
   for (const auto &cell : dof_handler.active_cell_iterators())
@@ -470,21 +470,20 @@ calculate_pressure_work(const DoFHandler<dim> &dof_handler,
         {
           fe_values.reinit(cell);
 
-          fe_values[pressure].get_function_gradients(
-            evaluation_point, pressure_gradients);
+          fe_values[pressure].get_function_gradients(evaluation_point,
+                                                     pressure_gradients);
 
-          fe_values[velocities].get_function_values(
-            evaluation_point, velocity);
+          fe_values[velocities].get_function_values(evaluation_point, velocity);
 
           for (unsigned int q = 0; q < n_q_points; q++)
             {
-                  pressure_work += velocity[q]*pressure_gradients[q] * fe_values.JxW(q) /
-                        domain_volume;
+              pressure_work += velocity[q] * pressure_gradients[q] *
+                               fe_values.JxW(q) / domain_volume;
             }
         }
     }
   const MPI_Comm mpi_communicator = dof_handler.get_communicator();
-  pressure_work                              = Utilities::MPI::sum(pressure_work, mpi_communicator);
+  pressure_work = Utilities::MPI::sum(pressure_work, mpi_communicator);
   return (pressure_work);
 }
 
@@ -526,6 +525,105 @@ calculate_pressure_work<2, LinearAlgebra::distributed::Vector<double>>(
 
 template double
 calculate_pressure_work<3, LinearAlgebra::distributed::Vector<double>>(
+  const DoFHandler<3>                              &dof_handler,
+  const LinearAlgebra::distributed::Vector<double> &evaluation_point,
+  const Quadrature<3>                              &quadrature_formula,
+  const Mapping<3>                                 &mapping);
+#endif
+
+
+template <int dim, typename VectorType>
+double
+calculate_viscous_dissipation(const DoFHandler<dim> &dof_handler,
+                              const VectorType      &evaluation_point,
+                              const Quadrature<dim> &quadrature_formula,
+                              const Mapping<dim>    &mapping)
+{
+  const FESystem<dim, dim> fe = dof_handler.get_fe();
+  FEValues<dim>            fe_values(mapping,
+                          fe,
+                          quadrature_formula,
+                          update_values | update_gradients |
+                            update_quadrature_points | update_JxW_values);
+
+  const FEValuesExtractors::Vector velocities(0);
+  const FEValuesExtractors::Scalar pressure(dim);
+
+  const unsigned int n_q_points = quadrature_formula.size();
+
+  std::vector<Tensor<1, dim>> velocity(n_q_points);
+  std::vector<Tensor<2, dim>> velocity_gradient(n_q_points);
+
+
+  double viscous_dissipation = 0;
+  double domain_volume =
+    GridTools::volume(dof_handler.get_triangulation(), mapping);
+
+  for (const auto &cell : dof_handler.active_cell_iterators())
+    {
+      if (cell->is_locally_owned())
+        {
+          fe_values.reinit(cell);
+
+          fe_values[velocities].get_function_values(evaluation_point, velocity);
+
+          fe_values[velocities].get_function_gradients(evaluation_point,
+                                                       velocity_gradient);
+
+          for (unsigned int q = 0; q < n_q_points; q++)
+            {
+              viscous_dissipation +=
+                scalar_product(transpose(velocity_gradient[q]) +
+                                 velocity_gradient[q],
+                               transpose(velocity_gradient[q])) *
+                fe_values.JxW(q) / domain_volume;
+            }
+        }
+    }
+  const MPI_Comm mpi_communicator = dof_handler.get_communicator();
+  viscous_dissipation =
+    Utilities::MPI::sum(viscous_dissipation, mpi_communicator);
+  return (viscous_dissipation);
+}
+
+template double
+calculate_viscous_dissipation<2, GlobalVectorType>(
+  const DoFHandler<2>    &dof_handler,
+  const GlobalVectorType &evaluation_point,
+  const Quadrature<2>    &quadrature_formula,
+  const Mapping<2>       &mapping);
+
+template double
+calculate_viscous_dissipation<3, GlobalVectorType>(
+  const DoFHandler<3>    &dof_handler,
+  const GlobalVectorType &evaluation_point,
+  const Quadrature<3>    &quadrature_formula,
+  const Mapping<3>       &mapping);
+
+template double
+calculate_viscous_dissipation<2, GlobalBlockVectorType>(
+  const DoFHandler<2>         &dof_handler,
+  const GlobalBlockVectorType &evaluation_point,
+  const Quadrature<2>         &quadrature_formula,
+  const Mapping<2>            &mapping);
+
+template double
+calculate_viscous_dissipation<3, GlobalBlockVectorType>(
+  const DoFHandler<3>         &dof_handler,
+  const GlobalBlockVectorType &evaluation_point,
+  const Quadrature<3>         &quadrature_formula,
+  const Mapping<3>            &mapping);
+
+#ifndef LETHE_USE_LDV
+template double
+calculate_viscous_dissipation<2, LinearAlgebra::distributed::Vector<double>>(
+  const DoFHandler<2>                              &dof_handler,
+  const LinearAlgebra::distributed::Vector<double> &evaluation_point,
+  const Quadrature<2>                              &quadrature_formula,
+  const Mapping<2>                                 &mapping);
+
+template double
+calculate_viscous_dissipation<3, LinearAlgebra::distributed::Vector<double>>(
   const DoFHandler<3>                              &dof_handler,
   const LinearAlgebra::distributed::Vector<double> &evaluation_point,
   const Quadrature<3>                              &quadrature_formula,

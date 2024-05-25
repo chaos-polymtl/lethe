@@ -822,6 +822,9 @@ namespace Parameters
     /// Enable pressure work post-processing
     bool calculate_pressure_work;
 
+    /// Enable viscous dissipation post-processing
+    bool calculate_viscous_dissipation;
+
     /// Enable calculating apparent viscosity
     bool calculate_apparent_viscosity;
 
@@ -863,6 +866,9 @@ namespace Parameters
 
     /// Prefix for the pressure work output
     std::string pressure_work_output_name;
+
+    /// Prefix for the viscous dissipation output
+    std::string viscous_dissipation_output_name;
 
     /// Prefix for the apparent viscosity output
     std::string apparent_viscosity_output_name;
