@@ -1644,7 +1644,6 @@ NavierStokesBase<dim, VectorType, DofsType>::read_checkpoint()
   std::vector<VectorType *> x_system(1 + previous_solutions.size());
 
   VectorType distributed_system(locally_owned_dofs,
-                                this->locally_relevant_dofs,
                                 this->mpi_communicator);
   x_system[0] = &(distributed_system);
 
@@ -1654,7 +1653,6 @@ NavierStokesBase<dim, VectorType, DofsType>::read_checkpoint()
     {
       distributed_previous_solutions.emplace_back(
         VectorType(locally_owned_dofs,
-                   this->locally_relevant_dofs,
                    this->mpi_communicator));
       x_system[i + 1] = &distributed_previous_solutions[i];
     }
