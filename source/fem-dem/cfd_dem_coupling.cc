@@ -366,8 +366,7 @@ CFDDEMSolver<dim>::read_checkpoint()
   for (unsigned int i = 0; i < this->previous_solutions.size(); ++i)
     {
       distributed_previous_solutions.emplace_back(
-        GlobalVectorType(this->locally_owned_dofs,
-                         this->mpi_communicator));
+        GlobalVectorType(this->locally_owned_dofs, this->mpi_communicator));
       x_system[i + 1] = &distributed_previous_solutions[i];
     }
 
@@ -415,8 +414,6 @@ CFDDEMSolver<dim>::read_checkpoint()
   parallel::distributed::SolutionTransfer<dim, GlobalVectorType>
     vf_system_trans_vectors(this->void_fraction_dof_handler);
 
-  std::cout << __LINE__ << std::endl;
-
   vf_system_trans_vectors.deserialize(vf_system);
 
   this->nodal_void_fraction_relevant = vf_distributed_system;
@@ -434,7 +431,6 @@ CFDDEMSolver<dim>::read_checkpoint()
 
   // Deserialize particles have the triangulation has been read
   this->particle_handler.deserialize();
-
 }
 
 #if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 6)

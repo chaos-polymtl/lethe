@@ -1643,8 +1643,7 @@ NavierStokesBase<dim, VectorType, DofsType>::read_checkpoint()
   enable_dynamic_zero_constraints_fd();
   std::vector<VectorType *> x_system(1 + previous_solutions.size());
 
-  VectorType distributed_system(locally_owned_dofs,
-                                this->mpi_communicator);
+  VectorType distributed_system(locally_owned_dofs, this->mpi_communicator);
   x_system[0] = &(distributed_system);
 
   std::vector<VectorType> distributed_previous_solutions;
@@ -1652,8 +1651,7 @@ NavierStokesBase<dim, VectorType, DofsType>::read_checkpoint()
   for (unsigned int i = 0; i < previous_solutions.size(); ++i)
     {
       distributed_previous_solutions.emplace_back(
-        VectorType(locally_owned_dofs,
-                   this->mpi_communicator));
+        VectorType(locally_owned_dofs, this->mpi_communicator));
       x_system[i + 1] = &distributed_previous_solutions[i];
     }
   parallel::distributed::SolutionTransfer<dim, VectorType> system_trans_vectors(
