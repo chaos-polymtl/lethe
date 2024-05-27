@@ -140,7 +140,7 @@ This subsection controls the post-processing other than the forces and torque on
     * The pressure power is calculated as
 
     .. math::
-       \frac{1}{\Omega} \int_{\Omega}  \nabla p \cdot \mathbf{\u} \mathrm{d} \Omega
+       \frac{1}{\Omega} \int_{\Omega}  \nabla p \cdot \mathbf{u} \mathrm{d} \Omega
 
     with :math:`\Omega` representing the volume of the domain, :math:`\mathbf{u}` the velocity  and :math:`p` the pressure.
 
