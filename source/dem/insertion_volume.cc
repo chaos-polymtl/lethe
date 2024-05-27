@@ -9,11 +9,14 @@ using namespace DEM;
 // and number_of_particles_z_direction) are also obtained
 template <int dim>
 InsertionVolume<dim>::InsertionVolume(
-  const DEMSolverParameters<dim> &dem_parameters,
-  const double                    maximum_particle_diameter,
   const std::vector<std::shared_ptr<Distribution>>
-    &distribution_object_container)
-  : Insertion<dim>(distribution_object_container)
+    &size_distribution_object_container,
+  const parallel::distributed::Triangulation<dim> &triangulation,
+  const DEMSolverParameters<dim>                  &dem_parameters,
+  const double                                     maximum_particle_diameter)
+  : Insertion<dim>(size_distribution_object_container,
+                   triangulation,
+                   dem_parameters)
   , particles_of_each_type_remaining(
       dem_parameters.lagrangian_physical_properties.number.at(0))
 {
@@ -45,6 +48,16 @@ InsertionVolume<dim>::insert(
   // not
   if (particles_of_each_type_remaining != 0)
     {
+      if (this->removing_particles_in_region)
+        {
+          if (this->mark_for_update)
+            {
+              this->find_cells_in_removing_box(triangulation);
+              this->mark_for_update = false;
+            }
+          this->remove_particles_in_box(particle_handler);
+        }
+
       MPI_Comm           communicator = triangulation.get_communicator();
       ConditionalOStream pcout(
         std::cout, Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0);

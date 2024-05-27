@@ -178,32 +178,39 @@ namespace Parameters
       // Insertion frequency
       int insertion_frequency;
 
-      // Direction (axis) of insertion of particles (1st, 2nd, 3rd)
-      std::vector<unsigned int> direction_sequence;
+      /* Removal box: */
+      bool removing_particles_in_region;
 
-      // Insertion box info (xmin,xmax,ymin,ymax,zmin,zmax)
-      Point<3> insertion_box_point_1, insertion_box_point_2;
+      // Clear box info (xmin,xmax,ymin,ymax,zmin,zmax)
+      Point<3> clear_box_point_1, clear_box_point_2;
 
-      // Insertion initial velocity conditions
-      Tensor<1, 3> initial_vel, initial_omega;
+      /* File: */
+      std::vector<std::string> list_of_input_files;
 
-      // Insertion distance threshold
-      double distance_threshold;
+      /* Plane: */
+      // Plane normal vector
+      Tensor<1, 3> insertion_plane_normal_vector;
+      // Plane point
+      Point<3> insertion_plane_point;
 
-      // Insertion random number range
-      double insertion_maximum_offset;
-
-      // Insertion random number seed
-      int seed_for_insertion;
-
+      /* List */
+      // Containers used for the list insertion method
       std::vector<double> list_x, list_y, list_z, list_vx, list_vy, list_vz,
         list_wx, list_wy, list_wz, list_d;
 
-      std::string insertion_particles_file_name;
-
-      // Insertion plane definition
-      Tensor<1, 3> insertion_plane_normal_vector;
-      Point<3>     insertion_plane_point;
+      /* Volume */
+      // Direction sequence for the insertion of particles (1st, 2nd, 3rd)
+      std::vector<unsigned int> direction_sequence;
+      // Insertion box info (p_1 , p_2)
+      Point<3> insertion_box_point_1, insertion_box_point_2;
+      // Insertion initial velocity conditions
+      Tensor<1, 3> initial_vel, initial_omega;
+      // Insertion distance threshold
+      double distance_threshold;
+      // Insertion random number range
+      double insertion_maximum_offset;
+      // Insertion random number seed
+      int seed_for_insertion;
 
       static void
       declare_parameters(ParameterHandler &prm);

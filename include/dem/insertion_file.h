@@ -31,9 +31,21 @@ template <int dim>
 class InsertionFile : public Insertion<dim>
 {
 public:
-  InsertionFile(const DEMSolverParameters<dim> &dem_parameters,
-                const std::vector<std::shared_ptr<Distribution>>
-                  &distribution_object_container);
+  /**
+   * @brief The InsertionFile class inserts particles using data stored in a file.
+   * This allows the insertion of any number of particles at a well-controlled
+   * location with any diameter value, translation and angular velocity.
+   *
+   * @param size_distribution_object_container Contains all distribution for each
+   * particle type
+   * @param triangulation Triangulation to access the cells in which the
+   * particles are inserted
+   * @param dem_parameters DEM parameters declared in the .prm file
+   */
+  InsertionFile(const std::vector<std::shared_ptr<Distribution>>
+                  &size_distribution_object_container,
+                const parallel::distributed::Triangulation<dim> &triangulation,
+                const DEMSolverParameters<dim> &dem_parameters);
 
   /**
    * @brief The InsertionFile class inserts particles using data stored in a file.
@@ -104,8 +116,12 @@ public:
   unsigned int remaining_particles_of_each_type;
   unsigned int current_inserting_particle_type;
 
-  // File name where the particles properties are stored.
-  std::string file_name;
+  // File id iterator
+  unsigned int       current_file_id;
+  const unsigned int number_of_files;
+
+  // Files where the particles properties are stored.
+  const std::vector<std::string> insertion_files;
 };
 
 #endif /* lethe_insertion_file_h */

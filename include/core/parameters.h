@@ -1644,6 +1644,10 @@ namespace Parameters
         std::vector<T> vector = Utilities::string_to_double(vector_of_string);
         return vector;
       }
+    if constexpr (std::is_same<T, std::string>::value)
+      {
+        return vector_of_string;
+      }
   }
 
 } // namespace Parameters

@@ -12,7 +12,6 @@
 #include <dem/insertion_list.h>
 #include <dem/insertion_plane.h>
 #include <dem/insertion_volume.h>
-#include <dem/particle_wall_nonlinear_force.h>
 #include <dem/post_processing.h>
 #include <dem/read_checkpoint.h>
 #include <dem/read_mesh.h>
@@ -56,7 +55,7 @@ DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
   , has_periodic_boundaries(false)
   , background_dh(triangulation)
   , has_floating_mesh(false)
-  , distribution_object_container(
+  , size_distribution_object_container(
       parameters.lagrangian_physical_properties.particle_type_number)
   , has_sparse_contacts(false)
 {
@@ -146,7 +145,7 @@ DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
             particle_type) ==
           Parameters::Lagrangian::SizeDistributionType::uniform)
         {
-          distribution_object_container[particle_type] =
+          size_distribution_object_container[particle_type] =
             std::make_shared<UniformDistribution>(
               parameters.lagrangian_physical_properties
                 .particle_average_diameter.at(particle_type));
@@ -155,7 +154,7 @@ DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
                  particle_type) ==
                Parameters::Lagrangian::SizeDistributionType::normal)
         {
-          distribution_object_container[particle_type] =
+          size_distribution_object_container[particle_type] =
             std::make_shared<NormalDistribution>(
               parameters.lagrangian_physical_properties
                 .particle_average_diameter.at(particle_type),
@@ -169,7 +168,7 @@ DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
                  particle_type) ==
                Parameters::Lagrangian::SizeDistributionType::custom)
         {
-          distribution_object_container[particle_type] =
+          size_distribution_object_container[particle_type] =
             std::make_shared<CustomDistribution>(
               parameters.lagrangian_physical_properties.particle_custom_diameter
                 .at(particle_type),
@@ -181,7 +180,7 @@ DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
         }
       maximum_particle_diameter = std::max(
         maximum_particle_diameter,
-        distribution_object_container[particle_type]->find_max_diameter());
+        size_distribution_object_container[particle_type]->find_max_diameter());
     }
 
   neighborhood_threshold_squared =
@@ -192,7 +191,7 @@ DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
   if (this_mpi_process == 0)
     input_parameter_inspection(parameters,
                                pcout,
-                               distribution_object_container);
+                               size_distribution_object_container);
 
   grid_motion_object =
     std::make_shared<GridMotion<dim, dim>>(parameters.grid_motion,
@@ -950,34 +949,35 @@ std::shared_ptr<Insertion<dim>>
 DEMSolver<dim>::set_insertion_type(const DEMSolverParameters<dim> &parameters)
 {
   if (parameters.insertion_info.insertion_method ==
-      Parameters::Lagrangian::InsertionInfo::InsertionMethod::volume)
+      Parameters::Lagrangian::InsertionInfo::InsertionMethod::file)
     {
       insertion_object =
-        std::make_shared<InsertionVolume<dim>>(parameters,
-                                               maximum_particle_diameter,
-                                               distribution_object_container);
+        std::make_shared<InsertionFile<dim>>(size_distribution_object_container,
+                                             triangulation,
+                                             parameters);
     }
   else if (parameters.insertion_info.insertion_method ==
            Parameters::Lagrangian::InsertionInfo::InsertionMethod::list)
     {
       insertion_object =
-        std::make_shared<InsertionList<dim>>(parameters,
-                                             distribution_object_container);
-    }
-  else if (parameters.insertion_info.insertion_method ==
-           Parameters::Lagrangian::InsertionInfo::InsertionMethod::file)
-    {
-      insertion_object =
-        std::make_shared<InsertionFile<dim>>(parameters,
-                                             distribution_object_container);
+        std::make_shared<InsertionList<dim>>(size_distribution_object_container,
+                                             triangulation,
+                                             parameters);
     }
   else if (parameters.insertion_info.insertion_method ==
            Parameters::Lagrangian::InsertionInfo::InsertionMethod::plane)
     {
-      insertion_object =
-        std::make_shared<InsertionPlane<dim>>(parameters,
-                                              triangulation,
-                                              distribution_object_container);
+      insertion_object = std::make_shared<InsertionPlane<dim>>(
+        size_distribution_object_container, triangulation, parameters);
+    }
+  else if (parameters.insertion_info.insertion_method ==
+           Parameters::Lagrangian::InsertionInfo::InsertionMethod::volume)
+    {
+      insertion_object = std::make_shared<InsertionVolume<dim>>(
+        size_distribution_object_container,
+        triangulation,
+        parameters,
+        maximum_particle_diameter);
     }
   else
     {

@@ -7,19 +7,25 @@ using namespace DEM;
 
 template <int dim>
 InsertionFile<dim>::InsertionFile(
-  const DEMSolverParameters<dim> &dem_parameters,
   const std::vector<std::shared_ptr<Distribution>>
-    &distribution_object_container)
-  : Insertion<dim>(distribution_object_container)
+    &size_distribution_object_container,
+  const parallel::distributed::Triangulation<dim> &triangulation,
+  const DEMSolverParameters<dim>                  &dem_parameters)
+  : Insertion<dim>(size_distribution_object_container,
+                   triangulation,
+                   dem_parameters)
   , remaining_particles_of_each_type(
       dem_parameters.lagrangian_physical_properties.number.at(0))
+  , number_of_files(dem_parameters.insertion_info.list_of_input_files.size())
+  , insertion_files(dem_parameters.insertion_info.list_of_input_files)
 {
   // Initializing current inserting particle type
   this->current_inserting_particle_type = 0;
 
-  file_name = dem_parameters.insertion_info.insertion_particles_file_name;
+  // Initializing current inserting particle type and file id
+  current_inserting_particle_type = 0;
+  current_file_id                 = 0;
 }
-
 template <int dim>
 void
 InsertionFile<dim>::insert(
@@ -36,12 +42,25 @@ InsertionFile<dim>::insert(
           ++this->current_inserting_particle_type);
     }
 
-
   if (remaining_particles_of_each_type > 0)
     {
+      if (this->removing_particles_in_region)
+        {
+          if (this->mark_for_update)
+            {
+              this->find_cells_in_removing_box(triangulation);
+              this->mark_for_update = false;
+            }
+          this->remove_particles_in_box(particle_handler);
+        }
+
       // Read the input file
       std::map<std::string, std::vector<double>> particles_data;
-      fill_vectors_from_file(particles_data, this->file_name, ";");
+      fill_vectors_from_file(particles_data,
+                             insertion_files.at(current_file_id),
+                             ";");
+      current_file_id++;
+      current_file_id = current_file_id % number_of_files;
 
       // Number of particles in the file
       unsigned int n_total_particles_to_insert = particles_data["p_x"].size();

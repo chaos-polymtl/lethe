@@ -85,9 +85,10 @@ test()
 
   // Calling volume insertion
   InsertionVolume<dim> insertion_object(
+    distribution_object_container,
+    tr,
     dem_parameters,
-    distribution_object_container[0]->find_max_diameter(),
-    distribution_object_container);
+    distribution_object_container[0]->find_max_diameter());
 
   insertion_object.insert(particle_handler, tr, dem_parameters);
 
