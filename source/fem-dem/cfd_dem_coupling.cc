@@ -370,7 +370,6 @@ CFDDEMSolver<dim>::read_checkpoint()
       x_system[i + 1] = &distributed_previous_solutions[i];
     }
 
-
   parallel::distributed::SolutionTransfer<dim, GlobalVectorType>
     system_trans_vectors(this->dof_handler);
 
@@ -389,8 +388,6 @@ CFDDEMSolver<dim>::read_checkpoint()
     {
       this->previous_solutions[i] = distributed_previous_solutions[i];
     }
-
-  x_system.clear();
 
   // Void Fraction Vectors
   std::vector<GlobalVectorType *> vf_system(
@@ -424,8 +421,6 @@ CFDDEMSolver<dim>::read_checkpoint()
     {
       this->previous_void_fraction[i] = vf_distributed_previous_solutions[i];
     }
-
-  vf_system.clear();
 
   if (this->simulation_parameters.flow_control.enable_flow_control)
     {
