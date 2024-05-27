@@ -126,7 +126,7 @@ This subsection controls the post-processing other than the forces and torque on
 
     with :math:`\Omega` representing the volume of the domain and :math:`\mathbf{\omega}` the vorticity.
 
-* ``calculate viscous dissipation``: controls if the viscous dissipation is calculated
+* ``calculate viscous dissipation``: controls if the viscous dissipation is calculated.
     * ``viscous dissipation name``: output filename for the viscous dissipation calculations.
     * The viscous dissipation is calculated as 
 
