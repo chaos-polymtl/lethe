@@ -17,7 +17,12 @@ The easiest way to install deal.II and its dependencies under Mac OS is through 
 Installing deal.II Using Candi (Step #1)
 -----------------------------------------
 
-To install the dependencies (mpi, p4est, trilinos and METIS) all together using Candi, the following `procedure <https://github.com/dealii/dealii/wiki/Apple-ARM-M1-OSX>`_ on the deal.II wiki can be followed.
+To install the dependencies (mpi, p4est, trilinos and METIS) all together using Candi, the following `procedure <https://github.com/dealii/dealii/wiki/Apple-ARM-M1-OSX>`_ on the deal.II wiki can be followed. You also need to ensure that muParser is installed:
+
+.. code-block:: text
+  :class: copy-button
+
+  sudo apt-get install libmuparser-dev
 
 Clone the candi git repository in a folder of your choice  (e.g. ``$HOME/sofware/``). You can edit the ``candi.cfg`` file if you want to force the installation of the deal.II master version instead of the current stable version by setting the ``STABLE_BUILD=false``. Under Apple ARM, we only recommend the installation of the required libraries, namely parmetis, trilinos and p4est.
 
