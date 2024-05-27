@@ -19,7 +19,7 @@ Lethe requires a modern version of the `deal.II library <https://www.dealii.org/
   
 1. :ref:`install-deal.II-apt` (recommended for users)
 2. :ref:`install-deal.II-candi` (recommended for developers) 
-3. :ref:`install-deal.II-manually` (recommended for experimented developers)
+3. :ref:`install-deal.II-manually` (recommended for experienced developers)
 
 
 .. _install-deal.II-apt:
