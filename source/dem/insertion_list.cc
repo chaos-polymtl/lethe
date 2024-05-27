@@ -18,7 +18,9 @@ InsertionList<dim>::InsertionList(
     &size_distribution_object_container,
   const parallel::distributed::Triangulation<dim> &triangulation,
   const DEMSolverParameters<dim>                  &dem_parameters)
-  : Insertion<dim>(size_distribution_object_container, triangulation, dem_parameters)
+  : Insertion<dim>(size_distribution_object_container,
+                   triangulation,
+                   dem_parameters)
   , remaining_particles_of_each_type(
       dem_parameters.lagrangian_physical_properties.number.at(0))
 {

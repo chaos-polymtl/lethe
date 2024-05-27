@@ -37,9 +37,9 @@ using namespace std;
 
 template <int dim>
 void
-input_parameter_inspection(
-  const DEMSolverParameters<dim>              &dem_parameters,
-  const ConditionalOStream                    &pcout,
-  const std::vector<shared_ptr<Distribution>> &size_distribution_object_container);
+input_parameter_inspection(const DEMSolverParameters<dim> &dem_parameters,
+                           const ConditionalOStream       &pcout,
+                           const std::vector<shared_ptr<Distribution>>
+                             &size_distribution_object_container);
 
 #endif /* input_parameter_inspection_h */

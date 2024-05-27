@@ -967,19 +967,17 @@ DEMSolver<dim>::set_insertion_type(const DEMSolverParameters<dim> &parameters)
   else if (parameters.insertion_info.insertion_method ==
            Parameters::Lagrangian::InsertionInfo::InsertionMethod::plane)
     {
-      insertion_object =
-        std::make_shared<InsertionPlane<dim>>(size_distribution_object_container,
-                                              triangulation,
-                                              parameters);
+      insertion_object = std::make_shared<InsertionPlane<dim>>(
+        size_distribution_object_container, triangulation, parameters);
     }
   else if (parameters.insertion_info.insertion_method ==
            Parameters::Lagrangian::InsertionInfo::InsertionMethod::volume)
     {
-      insertion_object =
-        std::make_shared<InsertionVolume<dim>>(size_distribution_object_container,
-                                               triangulation,
-                                               parameters,
-                                               maximum_particle_diameter);
+      insertion_object = std::make_shared<InsertionVolume<dim>>(
+        size_distribution_object_container,
+        triangulation,
+        parameters,
+        maximum_particle_diameter);
     }
   else
     {
