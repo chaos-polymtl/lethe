@@ -1,0 +1,46 @@
+Running on 2 MPI rank(s)...
+DEM time-step is 3.28354% of Rayleigh time step
+   Number of active cells:       40
+   Number of degrees of freedom: 656
+   Volume of triangulation:      0.00108
+************************
+---> Simulation Restart 
+************************
+   Number of active cells:       2560
+   Number of degrees of freedom: 16100
+   Volume of triangulation:      0.00108
+Initializing DEM parameters 
+Warning: expansion of particle-wall contact list is disabled. 
+This feature is useful in geometries with concave boundaries. 
+Finished initializing DEM parameters 
+DEM time-step is 5e-06 s 
+
+********************************************************************************
+Transient iteration: 6        Time: 0.00125  Time step: 0.00025  CFL: 0.0331839
+********************************************************************************
+--------------
+Void Fraction
+--------------
+-------------------------------
+Volume-Averaged Fluid Dynamics
+-------------------------------
+----
+DEM
+----
+DEM contact search at dem step 0
+DEM contact search at dem step 32
+Finished 50 DEM iterations 
+---------------------------------------------------------------
+Pressure drop: 18.8605 Pa
+Total pressure drop: 18.867 Pa
+Global continuity equation error: -1.40001e-09 s^-1
+Max local continuity error: 1.00743e-06 s^-1
+--------------------
+Particle statistics
+--------------------
+| Variable                     | Min        | Max        | Average    | Total      | 
+| Contact list generation      | 0.0000e+00 | 3.9347e+08 | 6.5579e+07 | 3.9347e+08 | 
+| Velocity magnitude           | 2.9581e-03 | 9.9454e-01 | 8.0320e-01 | 8.0320e+03 | 
+| Angular velocity magnitude   | 0.0000e+00 | 3.6513e+02 | 1.0924e+01 | 1.0924e+05 | 
+| Translational kinetic energy | 2.9322e-12 | 3.3145e-07 | 2.4824e-07 | 2.4824e-03 | 
+| Rotational kinetic energy    | 0.0000e+00 | 5.7185e-09 | 4.1102e-11 | 4.1102e-07 | 

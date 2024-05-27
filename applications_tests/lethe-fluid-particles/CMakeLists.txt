@@ -58,6 +58,15 @@ file(COPY adaptive_sparse_contacts_files/dem.triangulation.info DESTINATION "${C
 file(COPY adaptive_sparse_contacts_files/dem.triangulation_fixed.data DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/adaptive_sparse_contacts.${_build_type}/mpirun=1/")
 file(COPY adaptive_sparse_contacts_files/dem.triangulation_variable.data DESTINATION "${CMAKE_CURRENT_BINARY_DIR}//adaptive_sparse_contacts.${_build_type}/mpirun=1/")
 
+file(COPY restart_fluidized_bed_files/restart.particles DESTINATION                    "${CMAKE_CURRENT_BINARY_DIR}/restart-gas-solid-fluidized-bed.${_build_type}/mpirun=2/")
+file(COPY restart_fluidized_bed_files/restart_particles.pvdhandler DESTINATION       "${CMAKE_CURRENT_BINARY_DIR}/restart-gas-solid-fluidized-bed.${_build_type}/mpirun=2/")
+file(COPY restart_fluidized_bed_files/restart.pvdhandler DESTINATION                  "${CMAKE_CURRENT_BINARY_DIR}/restart-gas-solid-fluidized-bed.${_build_type}/mpirun=2/")
+file(COPY restart_fluidized_bed_files/restart.simulationcontrol DESTINATION           "${CMAKE_CURRENT_BINARY_DIR}/restart-gas-solid-fluidized-bed.${_build_type}/mpirun=2/")
+file(COPY restart_fluidized_bed_files/restart.triangulation DESTINATION               "${CMAKE_CURRENT_BINARY_DIR}/restart-gas-solid-fluidized-bed.${_build_type}/mpirun=2/")
+file(COPY restart_fluidized_bed_files/restart.triangulation_fixed.data DESTINATION    "${CMAKE_CURRENT_BINARY_DIR}/restart-gas-solid-fluidized-bed.${_build_type}/mpirun=2/")
+file(COPY restart_fluidized_bed_files/restart.triangulation.info DESTINATION          "${CMAKE_CURRENT_BINARY_DIR}/restart-gas-solid-fluidized-bed.${_build_type}/mpirun=2/")
+file(COPY restart_fluidized_bed_files/restart.triangulation_variable.data DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/restart-gas-solid-fluidized-bed.${_build_type}/mpirun=2/")
+
 deal_ii_pickup_tests()
 
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
