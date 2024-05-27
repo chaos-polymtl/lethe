@@ -131,7 +131,7 @@ This subsection controls the post-processing other than the forces and torque on
     * The viscous dissipation is calculated as 
 
     .. math::
-       \frac{1}{\Omega} \int_{\Omega} \mathbf{\tau} : \nabla\mathbf{\u} \mathrm{d} \Omega
+       \frac{1}{\Omega} \int_{\Omega} \mathbf{\tau} : \nabla\mathbf{u} \mathrm{d} \Omega
 
     with :math:`\Omega` representing the volume of the domain and :math:`\mathbf{\tau}` the deviatoric stress tensor.
 
