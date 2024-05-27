@@ -1641,6 +1641,15 @@ NavierStokesBase<dim, VectorType, DofsType>::read_checkpoint()
     }
   setup_dofs();
   enable_dynamic_zero_constraints_fd();
+
+  // BB note: There is an issue right now that will prevent this code from
+  // running in debug mode with Trilinos vectors Deal.II vectors require that
+  // the vectors used in the checkpointing mechanism have their relevant dofs
+  // whereas Trilinos vectors do not allow for this. Right now this code works
+  // well in release mode for both vector types, but will not work in debug mode
+  // for Trilinos vectors because of an assertion. A workaround will be
+  // implemented in a near future
+
   std::vector<VectorType *> x_system(1 + previous_solutions.size());
 
   VectorType distributed_system(locally_owned_dofs,

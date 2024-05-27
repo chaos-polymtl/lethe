@@ -3,6 +3,12 @@
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Master] - 2024-05-26
+
+### Fixed
+
+- MINOR Simulation restart would not work adequately when a boundary condition was time-dependent and this would lead unstable simulation restarts. [#1158](https://github.com/chaos-polymtl/lethe/pull/1158) 
+
 ## [Master] - 2024-05-23
 
 ### Added
