@@ -50,13 +50,16 @@ public:
    * overlap between particles on insertion. The plane insertion method mitigate
    * this risk by insertion at the center of empty cells.
    *
+   * @param size_distribution_object_container Contains all distribution for each
+   * particle type
+   * @param triangulation Triangulation to access the cells in which the
+   * particles are inserted
    * @param dem_parameters DEM parameters declared in the .prm file
-   * @param triangulation Triangulation object used in the simulation.
    */
-  InsertionPlane(const DEMSolverParameters<dim> &dem_parameters,
+  InsertionPlane(const std::vector<std::shared_ptr<Distribution>>
+                   &size_distribution_object_container,
                  const parallel::distributed::Triangulation<dim> &triangulation,
-                 const std::vector<std::shared_ptr<Distribution>>
-                   &distribution_object_container);
+                 const DEMSolverParameters<dim> &dem_parameters);
 
   /**
    * Carries out the insertion of particles.
@@ -124,8 +127,6 @@ private:
   int                                          particles_of_each_type_remaining;
   unsigned int                                 current_inserting_particle_type;
   std::unordered_map<unsigned int, Point<dim>> cells_centers;
-  bool                                         mark_for_update;
-  boost::signals2::connection                  change_to_triangulation;
 };
 
 

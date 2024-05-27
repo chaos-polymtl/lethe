@@ -31,9 +31,26 @@ template <int dim>
 class InsertionList : public Insertion<dim>
 {
 public:
-  InsertionList(const DEMSolverParameters<dim> &dem_parameters,
-                const std::vector<std::shared_ptr<Distribution>>
-                  &distribution_object_container);
+  /**
+   * @brief Insert particles using a list specific positions. This allows the
+   * insertion of any number of particles at a well-controlled location which is
+   * especially useful from a testing perspective. The code ensures that the
+   * number of positions provided in the x,y (and possibly z) direction is
+   * coherent. If more particles than the number of positions in the list is
+   * requested, the class will continue inserting particles at the insertion
+   * frequency using the list of positions. There is no mechanism in place that
+   * prevents the overlap of these new particles with previous ones.
+   *
+   * @param size_distribution_object_container Contains all distribution for each
+   * particle type
+   * @param triangulation Triangulation to access the cells in which the
+   * particles are inserted
+   * @param dem_parameters DEM parameters declared in the .prm file
+   */
+  InsertionList(const std::vector<std::shared_ptr<Distribution>>
+                  &size_distribution_object_container,
+                const parallel::distributed::Triangulation<dim> &triangulation,
+                const DEMSolverParameters<dim> &dem_parameters);
 
   /**
    * @brief The InsertionList class inserts particles using a list specific position.

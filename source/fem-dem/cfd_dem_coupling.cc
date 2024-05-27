@@ -1375,7 +1375,7 @@ CFDDEMSolver<dim>::dem_setup_contact_parameters()
   dem_parameters.mesh = this->cfd_dem_simulation_parameters.dem_parameters.mesh;
   dem_parameters.restart =
     this->cfd_dem_simulation_parameters.dem_parameters.restart;
-  distribution_object_container.reserve(
+  size_distribution_object_container.reserve(
     dem_parameters.lagrangian_physical_properties.particle_type_number);
 
   maximum_particle_diameter = 0.;
@@ -1388,7 +1388,7 @@ CFDDEMSolver<dim>::dem_setup_contact_parameters()
             particle_type) ==
           Parameters::Lagrangian::SizeDistributionType::uniform)
         {
-          distribution_object_container.push_back(
+          size_distribution_object_container.push_back(
             std::make_shared<UniformDistribution>(
               dem_parameters.lagrangian_physical_properties
                 .particle_average_diameter.at(particle_type)));
@@ -1397,7 +1397,7 @@ CFDDEMSolver<dim>::dem_setup_contact_parameters()
                  .at(particle_type) ==
                Parameters::Lagrangian::SizeDistributionType::normal)
         {
-          distribution_object_container.push_back(
+          size_distribution_object_container.push_back(
             std::make_shared<NormalDistribution>(
               dem_parameters.lagrangian_physical_properties
                 .particle_average_diameter.at(particle_type),
@@ -1410,7 +1410,7 @@ CFDDEMSolver<dim>::dem_setup_contact_parameters()
                  .at(particle_type) ==
                Parameters::Lagrangian::SizeDistributionType::custom)
         {
-          distribution_object_container.push_back(
+          size_distribution_object_container.push_back(
             std::make_shared<CustomDistribution>(
               dem_parameters.lagrangian_physical_properties
                 .particle_custom_diameter.at(particle_type),
@@ -1422,7 +1422,7 @@ CFDDEMSolver<dim>::dem_setup_contact_parameters()
 
       maximum_particle_diameter = std::max(
         maximum_particle_diameter,
-        distribution_object_container[particle_type]->find_max_diameter());
+        size_distribution_object_container[particle_type]->find_max_diameter());
     }
 
   neighborhood_threshold_squared =

@@ -52,13 +52,13 @@ end
 
 subsection lagrangian physical properties
   set gx                       = 0.0
-  set gy                       = -10.0
+  set gy                       = 0.0
   set gz                       = 0.0
   set number of particle types = 1
   subsection particle type 0
     set size distribution type            = uniform
-    set diameter                          = 0.005
-    set number of particles               = 9
+    set diameter                          = 0.1
+    set number of particles               = 6
     set density particles                 = 1000
     set young modulus particles           = 1000000
     set poisson ratio particles           = 0.3
@@ -78,9 +78,11 @@ end
 #---------------------------------------------------
 
 subsection insertion info
-  set insertion method    = file
-  set list of input files = ../particles.input
-  set insertion frequency = 5000
+  set insertion method                = file
+  set insertion frequency             = 100
+  set list of input files             = ../particles_00.input, ../particles_01.input
+  set removal box points coordinates = 0., -1., -1.: 1., 1., 1.
+  set remove particles              = true
 end
 
 #---------------------------------------------------
@@ -90,7 +92,8 @@ end
 subsection mesh
   set type                                = dealii
   set grid type                           = hyper_cube
-  set grid arguments                      = -0.11 : 0.111 : false
-  set initial refinement                  = 3
+  set grid arguments                      = -0.8 : 0.8 : false
+  set initial refinement                  = 2
   set expand particle-wall contact search = false
 end
+

@@ -9,11 +9,13 @@ using namespace DEM;
 // those cells.
 template <int dim>
 InsertionPlane<dim>::InsertionPlane(
-  const DEMSolverParameters<dim>                  &dem_parameters,
-  const parallel::distributed::Triangulation<dim> &triangulation,
   const std::vector<std::shared_ptr<Distribution>>
-    &distribution_object_container)
-  : Insertion<dim>(distribution_object_container)
+    &size_distribution_object_container,
+  const parallel::distributed::Triangulation<dim> &triangulation,
+  const DEMSolverParameters<dim>                  &dem_parameters)
+  : Insertion<dim>(size_distribution_object_container,
+                   triangulation,
+                   dem_parameters)
   , particles_of_each_type_remaining(
       dem_parameters.lagrangian_physical_properties.number.at(0))
 {
@@ -28,11 +30,6 @@ InsertionPlane<dim>::InsertionPlane(
 
   // Finding the center of those cells
   this->find_centers_of_inplane_cells();
-  mark_for_update = false;
-
-  // Boost signal for load balancing
-  change_to_triangulation =
-    triangulation.signals.any_change.connect([&] { mark_for_update = true; });
 
   // Initializing the variable for the random position of particle
   maximum_range_for_randomness =
@@ -120,14 +117,23 @@ InsertionPlane<dim>::insert(
     }
   if (particles_of_each_type_remaining > 0)
     {
-      if (mark_for_update)
+      if (this->mark_for_update)
         {
           find_inplane_cells(
             triangulation,
             dem_parameters.insertion_info.insertion_plane_point,
             dem_parameters.insertion_info.insertion_plane_normal_vector);
           find_centers_of_inplane_cells();
-          mark_for_update = false;
+
+          if (this->removing_particles_in_region)
+            {
+              this->find_cells_in_removing_box(triangulation);
+            }
+          this->mark_for_update = false;
+        }
+      if (this->removing_particles_in_region)
+        {
+          this->remove_particles_in_box(particle_handler);
         }
 
       MPI_Comm           communicator = triangulation.get_communicator();

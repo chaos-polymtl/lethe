@@ -14,10 +14,13 @@ DeclException2(DiameterSizeCoherence,
  */
 template <int dim>
 InsertionList<dim>::InsertionList(
-  const DEMSolverParameters<dim> &dem_parameters,
   const std::vector<std::shared_ptr<Distribution>>
-    &distribution_object_container)
-  : Insertion<dim>(distribution_object_container)
+    &size_distribution_object_container,
+  const parallel::distributed::Triangulation<dim> &triangulation,
+  const DEMSolverParameters<dim>                  &dem_parameters)
+  : Insertion<dim>(size_distribution_object_container,
+                   triangulation,
+                   dem_parameters)
   , remaining_particles_of_each_type(
       dem_parameters.lagrangian_physical_properties.number.at(0))
 {
@@ -94,6 +97,16 @@ InsertionList<dim>::insert(
 
   if (remaining_particles_of_each_type > 0)
     {
+      if (this->removing_particles_in_region)
+        {
+          if (this->mark_for_update)
+            {
+              this->find_cells_in_removing_box(triangulation);
+              this->mark_for_update = false;
+            }
+          this->remove_particles_in_box(particle_handler);
+        }
+
       unsigned int n_total_particles_to_insert = insertion_points.size();
       n_total_particles_to_insert =
         std::min(remaining_particles_of_each_type, n_total_particles_to_insert);
