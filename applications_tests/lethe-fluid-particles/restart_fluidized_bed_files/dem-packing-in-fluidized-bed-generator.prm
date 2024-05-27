@@ -23,13 +23,13 @@ subsection timer
   set type = iteration
 end
 
-
 #---------------------------------------------------
 # Post-processing
 #---------------------------------------------------
+
 subsection post-processing
- # Enable output of grid, granular temperature, and particles' average velocity
- set Lagrangian post-processing = true
+  # Enable output of grid, granular temperature, and particles' average velocity
+  set Lagrangian post-processing = true
 end
 
 #---------------------------------------------------
@@ -56,8 +56,8 @@ subsection model parameters
     set load balance method     = frequent
     set threshold               = 0.5
     set dynamic check frequency = 2000
-    set frequency = 10000
-    set particle weight = 10000
+    set frequency               = 10000
+    set particle weight         = 10000
   end
   set particle particle contact force method = hertz_mindlin_limit_overlap
   set particle wall contact force method     = nonlinear
@@ -104,7 +104,6 @@ subsection insertion info
   set insertion maximum offset                       = 0.1
   set insertion prn seed                             = 19
 end
-
 
 #---------------------------------------------------
 # Floating walls
