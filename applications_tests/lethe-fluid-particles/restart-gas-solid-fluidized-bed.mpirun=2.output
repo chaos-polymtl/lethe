@@ -39,7 +39,7 @@ Max local continuity error: 1.00743e-06 s^-1
 Particle statistics
 --------------------
 | Variable                     | Min        | Max        | Average    | Total      | 
-| Contact list generation      | 0.0000e+00 | 3.9347e+08 | 6.5579e+07 | 3.9347e+08 | 
+| Contact list generation      | 0.0000e+00 | 3.0804e+09 | 5.1341e+08 | 3.0804e+09 | 
 | Velocity magnitude           | 2.9581e-03 | 9.9454e-01 | 8.0320e-01 | 8.0320e+03 | 
 | Angular velocity magnitude   | 0.0000e+00 | 3.6513e+02 | 1.0924e+01 | 1.0924e+05 | 
 | Translational kinetic energy | 2.9322e-12 | 3.3145e-07 | 2.4824e-07 | 2.4824e-03 | 
