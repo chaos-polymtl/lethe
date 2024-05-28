@@ -103,7 +103,7 @@ end
 #---------------------------------------------------
 
 subsection post-processing
-  set verbosity = verbose
+  set verbosity                     = verbose
   set calculate viscous dissipation = true
 end
 
