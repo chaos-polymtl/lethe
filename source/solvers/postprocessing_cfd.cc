@@ -449,8 +449,7 @@ calculate_pressure_power(const DoFHandler<dim> &dof_handler,
   FEValues<dim>            fe_values(mapping,
                           fe,
                           quadrature_formula,
-                          update_values | update_gradients |
-                            update_quadrature_points | update_JxW_values);
+                          update_values | update_gradients | update_JxW_values);
 
   const FEValuesExtractors::Vector velocities(0);
   const FEValuesExtractors::Scalar pressure(dim);
@@ -460,9 +459,7 @@ calculate_pressure_power(const DoFHandler<dim> &dof_handler,
   std::vector<Tensor<1, dim>> velocity(n_q_points);
   std::vector<Tensor<1, dim>> pressure_gradients(n_q_points);
 
-  double pressure_work = 0.0;
-  double domain_volume =
-    GridTools::volume(dof_handler.get_triangulation(), mapping);
+  double pressure_power = 0.0;
 
   for (const auto &cell : dof_handler.active_cell_iterators())
     {
@@ -477,14 +474,18 @@ calculate_pressure_power(const DoFHandler<dim> &dof_handler,
 
           for (unsigned int q = 0; q < n_q_points; q++)
             {
-              pressure_work += velocity[q] * pressure_gradients[q] *
-                               fe_values.JxW(q) / domain_volume;
+              pressure_power +=
+                velocity[q] * pressure_gradients[q] * fe_values.JxW(q);
             }
         }
     }
+
+  pressure_power /= GridTools::volume(dof_handler.get_triangulation(), mapping);
+
   const MPI_Comm mpi_communicator = dof_handler.get_communicator();
-  pressure_work = Utilities::MPI::sum(pressure_work, mpi_communicator);
-  return (pressure_work);
+  pressure_power = Utilities::MPI::sum(pressure_power, mpi_communicator);
+
+  return pressure_power;
 }
 
 template double
@@ -595,7 +596,7 @@ calculate_viscous_dissipation(
   const MPI_Comm mpi_communicator = dof_handler.get_communicator();
   viscous_dissipation =
     Utilities::MPI::sum(viscous_dissipation, mpi_communicator);
-  return (viscous_dissipation);
+  return viscous_dissipation;
 }
 
 template double

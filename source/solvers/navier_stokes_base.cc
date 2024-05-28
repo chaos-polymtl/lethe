@@ -1240,20 +1240,21 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess_fd(bool firstIter)
   // Pressure power
   if (this->simulation_parameters.post_processing.calculate_pressure_power)
     {
-      double pressure_work = calculate_pressure_power(this->dof_handler,
-                                                      present_solution,
-                                                      *this->cell_quadrature,
-                                                      *this->mapping);
+      const double pressure_power =
+        calculate_pressure_power(this->dof_handler,
+                                 present_solution,
+                                 *this->cell_quadrature,
+                                 *this->mapping);
 
       this->pressure_power_table.add_value(
         "time", simulation_control->get_current_time());
-      this->pressure_power_table.add_value("pressure_work", pressure_work);
+      this->pressure_power_table.add_value("pressure_work", pressure_power);
 
       // Display pressure power to screen if verbosity is enabled
       if (this->simulation_parameters.post_processing.verbosity ==
           Parameters::Verbosity::verbose)
         {
-          this->pcout << "Pressure power : " << pressure_work << std::endl;
+          this->pcout << "Pressure power : " << pressure_power << std::endl;
         }
 
       // Output pressure power to a text file from processor 0
@@ -1268,7 +1269,7 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess_fd(bool firstIter)
             ".dat";
           std::ofstream output(filename.c_str());
           pressure_power_table.set_precision("time", 12);
-          pressure_power_table.set_precision("pressure_work", 12);
+          pressure_power_table.set_precision("pressure_power", 12);
           this->pressure_power_table.write_text(output);
         }
     }
@@ -1277,7 +1278,7 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess_fd(bool firstIter)
   // Viscous dissipation
   if (this->simulation_parameters.post_processing.calculate_viscous_dissipation)
     {
-      double viscous_dissipation = calculate_viscous_dissipation(
+      const double viscous_dissipation = calculate_viscous_dissipation(
         this->dof_handler,
         present_solution,
         *this->cell_quadrature,
