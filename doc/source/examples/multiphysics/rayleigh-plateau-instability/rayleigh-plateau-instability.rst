@@ -2,7 +2,7 @@
 Rayleigh-Plateau Instability
 ================================
 
-This example simulates the transition of a continuous jet to a droplet regime under the influence of a perturbation. The case simulated in this example corresponds to the case J1 in the work of Denner *et al.* `[1] <https://link.springer.com/article/10.1007/s10494-021-00291-w>`_ with :math:`We = 20` and :math:`Oh = 0.1` in absence of gravity.
+This example simulates the transition of a continuous jet to a droplet regime under the influence of a perturbation. The case simulated in this example corresponds to the case J1 in absence of gravity from the work of Denner *et al.* `[1] <https://link.springer.com/article/10.1007/s10494-021-00291-w>`_ with :math:`We = 20` and :math:`Oh = 0.1`.
 
 ****
 
