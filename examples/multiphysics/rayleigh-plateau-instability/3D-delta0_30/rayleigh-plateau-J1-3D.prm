@@ -8,15 +8,15 @@ set dimension = 3
 #---------------------------------------------------
 
 subsection simulation control
-  set method           = bdf2
-  set time end         = 0.08
-  set time step        = 4.4e-5
-  set adapt            = true
-  set max cfl          = 0.75
-  set max time step    = 4.4e-5
-  set output name      = rayleigh-plateau
-  set output frequency = 5
-  set output path      = ./3D-output_delta0_30/
+  set method            = bdf2
+  set time end          = 0.08
+  set time step         = 4.4e-5
+  set adapt             = true
+  set max cfl           = 0.75
+  set max time step     = 4.4e-5
+  set output name       = rayleigh-plateau
+  set output frequency  = 5
+  set output path       = ./3D-output_delta0_30/
   set output boundaries = true
 end
 
@@ -145,7 +145,7 @@ subsection boundary conditions
     set type = function
     subsection u
       set Function constants  = U=1.569, delta=0.3, kappa=0.7, r=1.145e-3
-      set Function expression = if ((y^2 + z^2) <= 1.3110e-6, U*(1 + delta*sin(kappa*U*t/r)), U)
+      set Function expression = if ((y^2 + z^2) <= 1.3110e-6, U*(1 + delta*sin(kappa*U*t/r)), 0)
     end
   end
   subsection bc 1
