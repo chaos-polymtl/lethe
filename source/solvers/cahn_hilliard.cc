@@ -1055,6 +1055,7 @@ CahnHilliard<dim>::setup_dofs()
 
   {
     nonzero_constraints.clear();
+    nonzero_constraints.reinit(this->locally_relevant_dofs);
     DoFTools::make_hanging_node_constraints(this->dof_handler,
                                             nonzero_constraints);
 
@@ -1091,6 +1092,7 @@ CahnHilliard<dim>::setup_dofs()
   // Boundary conditions for Newton correction
   {
     zero_constraints.clear();
+    zero_constraints.reinit(locally_relevant_dofs);
     DoFTools::make_hanging_node_constraints(this->dof_handler,
                                             zero_constraints);
 
@@ -1154,6 +1156,7 @@ CahnHilliard<dim>::update_boundary_conditions()
 
   double time = this->simulation_control->get_current_time();
   nonzero_constraints.clear();
+  nonzero_constraints.reinit(this->locally_relevant_dofs);
   DoFTools::make_hanging_node_constraints(this->dof_handler,
                                           nonzero_constraints);
 
