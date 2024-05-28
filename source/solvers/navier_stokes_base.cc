@@ -1248,7 +1248,7 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess_fd(bool firstIter)
 
       this->pressure_power_table.add_value(
         "time", simulation_control->get_current_time());
-      this->pressure_power_table.add_value("pressure_work", pressure_power);
+      this->pressure_power_table.add_value("pressure_power", pressure_power);
 
       // Display pressure power to screen if verbosity is enabled
       if (this->simulation_parameters.post_processing.verbosity ==
