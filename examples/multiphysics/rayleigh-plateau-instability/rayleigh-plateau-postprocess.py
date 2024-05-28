@@ -33,58 +33,139 @@ if len(sys.argv)!= 3:
 ''' Function definitions '''
 
 '''
-Function that calculates the length of the 1st gap from the continuous jet 
-after a breakup.
+Function that determines breakup times and lengths through the jet length 
+variation.
 
 Arguments:
-    - fluid0_points : LIST OF LIST OS FLOATS - list of fluid 0 points along 
-                      the center axis
-    - tol : FLOAT - tolerance to identify the first gap's end
-
-Returns:
-    - FLOAT representing the first gap's length
-    - FLOAT representing the end of the gap 
+    - fluids: lethe_pyvista_tools object containing all postprocessing 
+               information and simulation results
+    - phase_limit: FLOAT phase fraction value representing the interface
+    
+Returns lists of breakup times and lengths.
 '''
-def calculate_1st_gap_length(fluid0_points, tol):
-    gap_start = fluid0_points[0][0]
-    gap_end = fluid0_points[-1][0]
+def get_breakup_times_and_lengths(fluids, phase_limit):
+    # Initialize breakup time and length lists
+    tb_list = []
+    Lb_list = []
+    # Get active times
+    time_list = fluids.time_list
 
-    # Identify the first gap when there are many
-    for i, point in enumerate(fluid0_points[:-1]):
-        dx = fluid0_points[i+1][0] - point[0]
-        if dx > tol:
-            gap_end = point[0]
-            break
-    return gap_end-gap_start, gap_end
+    # Number of breakups
+    n_breakup = 0
+
+    # Initial domain length
+    x_max = 0.0916
+
+    # Jet radius
+    r_jet = 1.145e-3
+
+    # Initialize variables for breakup identification
+    sample_box_area = 2*r_jet**2
+    previous_x_jet = 1e-10
+    tol = r_jet*10
+
+
+    for i in range(len(fluids.list_vtu)):
+        # Store results in 'df'
+        df = fluids.get_df(i)
+
+        # Identify breakups
+        interface = df.contour([phase_limit], scalars="filtered_phase")
+        interface_blocks = interface.connectivity()
+        region_ids = np.unique(interface_blocks["RegionId"])
+
+        # Isolate continuous jet region
+        jet = interface_blocks.clip_scalar(scalars="RegionId",
+                                           invert=True, value=0)
+
+        # Find breakup length
+        Lb = np.max(jet.points[:, 0])
+
+        # Compute jet length variation to identify if a breakup occurs
+        x_jet_variation = (Lb-previous_x_jet)/previous_x_jet
+
+        # Only evaluate breakup length when there is a new breakup
+        if ((x_jet_variation + tol < 0) and (abs(Lb-x_max)/x_max > 0.05)):
+
+            # Find RegionId corresponding to the first drop
+            drop_index = find_drop_region_id(interface_blocks, region_ids)
+
+            drop = interface_blocks.threshold(value=(drop_index,drop_index),
+                                              scalars="RegionId",
+                                              invert=False)
+
+            # Store breakup time and length value only if the drop is not
+            # satellite
+            if (drop_is_not_satellite(df, drop, sample_box_area, phase_limit)):
+                n_breakup += 1
+                tb = time_list[i]
+                Lb_list.append(Lb)
+                tb_list.append(tb)
+                print("------------------------------------------------------------")
+                print(" breakup number:  ", n_breakup)
+                print(" time at breakup: ", f"{tb:.4f} s")
+                print(" Lb:              ", f"{Lb:.4f} m")
+
+        previous_x_jet = Lb
+
+    return tb_list, Lb_list
+
 
 '''
-Function that identifies if the drop is a satellite drop.
+Function that identifies the RegionID of the first drop from left.
 
 Arguments:
-    - df : DATAFRAME object of the current time step
-    - dx : FLOAT - length of one side of the sampling box
-    - gap_end : FLOAT - x-position of the end of the gap
-    - delta : FLOAT - jet perturbation amplitude at the inlet
+    - interface_blocks: DATAFRAME object of the current time step
+    - region_ids: LIST of INT representing the ids of closed loops
+    
+Returns an INT corresponding to the RegionID of the first breakup
+'''
+def find_drop_region_id(interface_blocks, region_ids):
 
-Returns a boolean. If TRUE, the drop is a satellite drop and the breakup 
+    region_min_list = []
+    for j in range(len(region_ids)):
+        exec(f"drop_{j} = interface_blocks.threshold(value=({region_ids[j]},{region_ids[j]}), scalars='RegionId', invert=False)")
+        exec(f"region_min_list.append(np.min(drop_{j}.points[:,0]))")
+
+    # Remove jet value to identify the first drop from left
+    jet_value = np.min(region_min_list)
+    truncated_region_min_list = region_min_list.copy()
+    truncated_region_min_list.remove(jet_value)
+    drop_min_value = np.min(truncated_region_min_list)
+
+    return region_min_list.index(drop_min_value)
+
+
+'''
+Function that identifies if the drop is a satellite drop by checking the area 
+ratio of a drop inside a sample box. This sample box is chosen to be a square 
+with sides of 2*r_jet m.
+
+Arguments:
+    - df: DATAFRAME object of the current time step
+    - drop_df: DATAFRAME object of the drop contour
+    - sample_box_area: FLOAT area of the sample box
+    - phase_limit: FLOAT phase fraction value representing the interface
+
+Returns a BOOLEAN. If TRUE, the drop is a satellite drop and the breakup
     length will not be saved.
 '''
-def check_drop_is_satellite(df, dx, gap_end, delta):
-    half_dx = 0.5 * dx
-    box_area = dx**2
-    if delta <= 0.5:
-        search_box_dimensions = [gap_end, gap_end+dx, -half_dx, half_dx, 0, 0]
-    else:
-        search_box_dimensions = [gap_end-dx, gap_end, -half_dx, half_dx, 0, 0]
+def drop_is_not_satellite(df, drop_df, sample_box_area, phase_limit):
+    # Make a search box around the drop
+    x, y = drop_df.points[:,0], drop_df.points[:,1]
+    search_box_dimensions = [np.min(x), np.max(x), np.min(y), np.max(y), 0, 0]
     box = df.clip_box(search_box_dimensions, invert=False)
-    fluid1_volume = box.clip_scalar(scalars="filtered_phase", invert = False,
-                                    value = 0.5)
-    volume_integration_data = fluid1_volume.integrate_data()
-    fluid1_volume_value = volume_integration_data["Area"]
-    area_ratio = fluid1_volume_value/box_area
-    # print("Area ratio: ", area_ratio)
 
-    return (area_ratio < 0.35)
+    # Evaluate drop area
+    fluid1_volume = box.clip_scalar(scalars="filtered_phase", invert = False,
+                                    value = phase_limit)
+    drop_integration_data = fluid1_volume.integrate_data()
+    current_drop_area = drop_integration_data["Area"]
+
+    # Evaluate area ratio
+    area_ratio = current_drop_area/sample_box_area
+    return (area_ratio > 1)
+
 
 #############################################################################
 #----------------------------------
@@ -113,84 +194,11 @@ phase_limit = 0.5
 # Get active times
 time_list = fluids.time_list
 
-# Create a list that holds breakup lengths
-Lb_list = []
-t_list = []
-dt_list = []
-
-# Create beginning and end points for jet length evaluations
-x_max = 0.0916
-Lb = x_max
-previous_gap_length = np.inf
-P1 = [0, 0, 0]
-P2 = [x_max, 0, 0]
-res = 5000
-
-# Jet radius
-r_jet = 1.145e-3
-
-# Parameters for identifying breakup
-dx_sample = x_max/(res)
-tol = dx_sample*10
-n_breakup = 1
-last_breakup_time = 0
-
-# For satellite drop identification
-drop_is_satellite = False
-n_satellite = 0
-satellite_lb = 1e-10
-search_box_dx = r_jet
-
-
+# Extract breakup times and lengths
 print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
 print("Extracting breakup lengths (Lb)")
 
-# Read PVTU files
-for i in range(len(fluids.list_vtu)):
-    # Store results in 'df'
-    df = fluids.get_df(i)
-
-    # Extract phase values and points over the axis line
-    sampled_data = df.sample_over_line(P1, P2, resolution=res)
-    phase_over_line = pd.DataFrame(sampled_data["filtered_phase"])
-    points_over_line = pd.DataFrame(sampled_data.points)
-
-    # Find the furthest point of fluid 1 before a first gap
-    fluid0_points = points_over_line[phase_over_line[0] <= phase_limit].values
-    if len(fluid0_points) > 0:
-        gap_length, gap_end = calculate_1st_gap_length(fluid0_points, tol)
-        # If the first gap reduces in size considerably, it is considered that
-        # a droplet is formed.
-        if gap_length < previous_gap_length-tol:
-            Lb = fluid0_points[0][0]
-            t = time_list[i]
-            dt = t - last_breakup_time
-
-            # Check if it is a satellite drop
-            if n_breakup > 1:
-                drop_is_satellite = check_drop_is_satellite(df, search_box_dx, gap_end, float(delta_value))
-                if drop_is_satellite:
-                    n_satellite += 1
-                    if n_satellite == 1:
-                        satellite_lb = Lb
-
-            # If the drop is not satellite
-            if not drop_is_satellite:
-                print("------------------------------------------------------------")
-                print(" breakup number:  ", n_breakup)
-                print(" time at breakup: ", f"{t:.4f} s")
-                print(" Lb:              ", f"{Lb:.4f} m")
-                Lb_list.append(Lb)
-                t_list.append(t)
-                dt_list.append(dt)
-                last_breakup_time = t_list[-1]
-                n_breakup += 1
-        previous_gap_length = gap_length
-
-print("------------------------------------------------------------")
-print(f" There were {n_satellite} satellite drops.")
-print(f" Their breakup length was approximately {satellite_lb:.4f} m.")
-print("------------------------------------------------------------")
+tb_list, Lb_list = get_breakup_times_and_lengths(fluids, phase_limit)
 
 
 #############################################################################
@@ -200,7 +208,7 @@ print("------------------------------------------------------------")
 csv_filename = f"lethe-delta{delta_string}.csv"
 print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
 print(f"Writing data into {csv_filename}")
-lethe_df = pd.DataFrame({'t': t_list, 'Lb': Lb_list, "dt":dt_list})
+lethe_df = pd.DataFrame({'t': tb_list, 'Lb': Lb_list})
 lethe_df.to_csv(f"../{csv_filename}", index=False)
 
 print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")

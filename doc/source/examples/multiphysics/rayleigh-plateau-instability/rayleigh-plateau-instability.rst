@@ -2,7 +2,7 @@
 Rayleigh-Plateau Instability
 ================================
 
-This example simulates the transition of a continuous jet to a droplet regime under the influence of a perturbation. Simulation results without the influence of gravity are compared with the work of Denner *et al.* `[1] <https://link.springer.com/article/10.1007/s10494-021-00291-w>`_
+This example simulates the transition of a continuous jet to a droplet regime under the influence of a perturbation. The case simulated in this example corresponds to the case J1 in the work of Denner *et al.* `[1] <https://link.springer.com/article/10.1007/s10494-021-00291-w>`_ with :math:`We = 20` and :math:`Oh = 0.1` in absence of gravity.
 
 ****
 
@@ -38,14 +38,14 @@ All files mentioned below are located in the example's folder (``examples/multip
 Description of the Case
 -----------------------
 
-Surface tension is renowned for its stabilizing effects, yet it also serves a disruptive role in various applications, such as inkjet printing. Here, the surface tension plays a pivotal role in breaking up the continuous inkjet into droplets, governed by the destabilizing mechanism on the interface between the air and the ink known as the Rayleigh-Plateau instability.
+Surface tension is renowned for its stabilizing effects, yet it also serves a disruptive role in various applications, such as inkjet printing. There, the surface tension plays a pivotal role in breaking up the continuous inkjet into droplets, governed by the destabilizing mechanism on the interface between the air and the ink known as the Rayleigh-Plateau instability.
 
 In this example the Rayleigh-Plateau instability is simulated through a continuous glycerol jet that undergoes a perturbation a of different excitation amplitudes. The velocity imposed at the jet inlet takes the following form:
 
 .. math::
   u_\mathrm{inlet} = U \left[1+\delta_0 \sin{\left(2 \mathrm{\pi} f t \right)}\right] = U \left[1+\delta_0 \sin{\left(\frac{\kappa U t}{R_\mathrm{inlet}}\right)}\right]
 
-where :math:`U` is the initial uniform velocity of the jet, :math:`\delta_0` is the excitation amplitude, :math:`f = \frac{\kappa U}{2 \mathrm{\pi} R_\mathrm{inlet}}` is the excitation frequency with :math:`\kappa = \frac{2 \mathrm{\pi} R_\mathrm{inlet}}{\lambda}` the dimensionless wavenumber (:math:`\lambda` is the wavelength) and :math:`R_\mathrm{inlet}` the inlet radius. Lastly, :math:`t` is the time.
+where :math:`U` is the initial uniform velocity of the jet, :math:`\delta_0` is the excitation amplitude, :math:`f = \frac{\kappa U}{2 \mathrm{\pi} R_\mathrm{inlet}}` is the excitation frequency with :math:`\kappa = \frac{2 \mathrm{\pi} R_\mathrm{inlet}}{\lambda}` the dimensionless wavenumber (:math:`\lambda` is the wavelength) and :math:`R_\mathrm{inlet}=1.145 \times 10^{-3} \; \mathrm m` the inlet radius. Lastly, :math:`t` is the time.
 
 .. note::
   It is assumed that at the initial state the air is static :math:`\left(\mathbf{u}_\mathrm{air} = \mathbf{0} \; \mathrm{m\, s^{-1}}\right)`.
@@ -189,7 +189,7 @@ The uniform jet velocity :math:`(U = 1.569 \; \mathrm{m \, s^{-1}})` corresponds
 Boundary Conditions
 ~~~~~~~~~~~~~~~~~~~
 
-In the ``boundary conditions`` subsection, the inlet velocity perturbation is specified as described in the `description of the case`_ with :math:`R_\mathrm{inlet}=1.145 \times 10^{-3} \; \mathrm m` and :math:`\kappa = 0.7`.
+In the ``boundary conditions`` subsection, the inlet velocity perturbation is specified as described in the `description of the case`_ with :math:`\kappa = 0.7`.
 
 .. code-block:: text
 
@@ -258,6 +258,9 @@ to run the simulation using fourteen CPU cores. Feel free to use more CPU cores.
 
   where ``"{0.05 0.1 0.15 0.2 0.25 0.3 0.35 0.4 0.5 0.6}"`` is the sequence of :math:`\delta_0` values of the different cases.
 
+  .. note::
+    An additional ``-ne`` argument can be added at the end before running the script if you do not wish to extract all breakup lengths but only generate the comparison figure.
+
 ****
 
 -------
@@ -269,28 +272,28 @@ Simulation Results
 
 The video below displays the results for the case of :math:`\delta_0 = 0.2`.
 
-.. image:: images/rayleigh-plateau-J1-We020-Oh0_10_delta0_20.gif
-    :align: center
-    :width: 600
-
 .. raw:: html
 
-    <iframe width="560" height="315" src="https://www.youtube.com/embed/gaz4PiqhOzg"  frameborder="0" allowfullscreen></iframe>
-
+    <iframe width="720" height="428" src="https://www.youtube.com/embed/QA8DEo3-9hA?rel=0&vq=hd720" title="2D Rayleigh-Plateau Instability with an excitation amplitude of 0.20" frameborder="0" allowfullscreen></iframe>
 
 Satellite Droplets
 ~~~~~~~~~~~~~~~~~~
 
 The video below displays the apparition of satellite droplets (secondary droplets) at at higher excitation amplitudes. Here, :math:`\delta_0 = 0.3`.
 
-**ADD VIDEO**
+.. raw:: html
+
+    <iframe width="720" height="428" src="https://www.youtube.com/embed/gtIBY9FRyvY?rel=0&vq=hd720" title="3D Rayleigh-Plateau Instability with an excitation amplitude of 0.30" frameborder="0" allowfullscreen></iframe>
 
 This 3D simulation was simulated using the ``3D-delta0_30/rayleigh-plateau-J1-3D.prm`` parameter file.
+
+.. note::
+  Note that in these simulations, the mass is not perfectly conserved. It can be observed that the satellite droplets are fading away. This will be worked on in future updates.
 
 Code to Code Comparison
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-We compare the dimensionless breakup length :math:`\left(\frac{L_b}{R_\mathrm{jet}}\right)` with the simulation results from Denner *et al.* `[1] <https://link.springer.com/article/10.1007/s10494-021-00291-w>`_ :math:`L_b` is the breakup length defined as **the shortest distance from the nozzle to the tip of the continuous jet**.
+We compare the dimensionless breakup length :math:`\left(\frac{L_\mathrm{b}}{R_\mathrm{jet}}\right)` with the simulation results from Denner *et al.* `[1] <https://link.springer.com/article/10.1007/s10494-021-00291-w>`_ :math:`L_\mathrm{b}` is the breakup length defined as **the shortest distance from the nozzle to the tip of the continuous jet**.
 
 The results can be postprocessed using the provided Bash script (``rayleigh-plateau-postprocess.sh``). Make sure that the file has executable permissions before calling it with:
 
@@ -305,7 +308,7 @@ with ``denner-et-al-2022-We020.csv`` being the path to the reference data csv fi
   You need to ensure that the ``lethe_pyvista_tools`` is working on your machine. Click :doc:`here <../../../tools/postprocessing/postprocessing_pyvista>` for details.
 
 This script extracts breakup lengths of the cases while excluding the satellite droplets.
-The script then calculates an average :math:`L_b` which is used to evaluate the dimensionless breakup length of the jet.
+The script then calculates an average :math:`L_\mathrm{b}` which is used to evaluate the dimensionless breakup length of the jet.
 
 .. note::
   The script ignores the first 2 breakups of the jet as they as considered not part of the periodical behavior.
@@ -319,7 +322,11 @@ The script then calculates an average :math:`L_b` which is used to evaluate the 
 +-------------------------------------------------------------------------------------------------------------------+
 
 As it can be seen above, for :math:`\delta_0 \leq 0.1`, we observe no breakup. The jet stabilizes despite the perturbation. An additional case was studied at :math:`\delta_0 = 0.12` to check the increasing stabilizing tendency of the jet for lower excitation amplitude values.
-We also observe that none the of the other evaluation points match with the work of Denner *et al.* `[1] <https://link.springer.com/article/10.1007/s10494-021-00291-w>`_  However, a similar tread in values is observed for :math:`\delta_0 \in [0.2,0.5]`. At :math:`\delta_0 = 0.6`, a huge difference is observed. This is due to the way the satellite droplets are forme. As opposed to previous simulations, the satellite droplets are formed from the broken-off part of the jet, decreasing significantly :math:`Lb`.
+We also observe that none the of the other evaluation points match with the work of Denner *et al.* `[1] <https://link.springer.com/article/10.1007/s10494-021-00291-w>`_  However, a similar trend in values is observed for :math:`\delta_0 \in [0.2,0.5]`. At :math:`\delta_0 = 0.6`, a huge difference is observed. This is due to the way the satellite droplets are formed. As opposed to previous simulations, the satellite droplets are formed from the broken-off part of the jet, decreasing significantly :math:`L_\mathrm{b}` as displayed in the video below. This might have not been the case in the work of Denner *et al.* `[1] <https://link.springer.com/article/10.1007/s10494-021-00291-w>`_
+
+.. raw:: html
+
+    <iframe width="720" height="428" src="https://www.youtube.com/embed/p3TXpNErbdc?rel=0&vq=hd720" title="2D Rayleigh-Plateau Instability with an excitation amplitude of 0.60" frameborder="0" allowfullscreen></iframe>
 
 ****
 
