@@ -564,7 +564,7 @@ GLSNavierStokesCahnHilliardAssemblerNonNewtonianCore<dim>::assemble_matrix(
         shear_rate * dynamic_viscosity_gradient -
         dynamic_viscosity_eq * velocity_laplacian - density_eq * force -
         shear_rate * dynamic_viscosity_diff * phase_order_gradient -
-         //velocity_gradient * relative_diffusive_flux -
+         velocity_gradient * relative_diffusive_flux -
         potential_value * phase_order_gradient + strong_residual_vec[q];
 
       std::vector<Tensor<1, dim>> grad_phi_u_j_x_velocity(n_dofs);
@@ -592,7 +592,7 @@ GLSNavierStokesCahnHilliardAssemblerNonNewtonianCore<dim>::assemble_matrix(
             density_eq * velocity_gradient * phi_u_j +
             density_eq * grad_phi_u_j * velocity + grad_phi_p_j -
             dynamic_viscosity_eq * laplacian_phi_u_j -
-             //grad_phi_u_j * relative_diffusive_flux -
+             grad_phi_u_j * relative_diffusive_flux -
             grad_phi_u_j_non_newtonian * (dynamic_viscosity_gradient + dynamic_viscosity_diff*phase_order_gradient);
 
           // Store these temporary products in auxiliary variables for speed
@@ -639,8 +639,8 @@ GLSNavierStokesCahnHilliardAssemblerNonNewtonianCore<dim>::assemble_matrix(
                   scalar_product(shear_rate, grad_phi_u_i) +
                 density_eq * velocity_gradient_x_phi_u_j[j] * 0.5 * phi_u_i +
                 density_eq * grad_phi_u_j_x_velocity[j] * phi_u_i -
-                div_phi_u_i * phi_p_j;
-                //- grad_phi_u_j * relative_diffusive_flux * phi_u_i;
+                div_phi_u_i * phi_p_j
+                - grad_phi_u_j * relative_diffusive_flux * phi_u_i;
 
               // Continuity
               local_matrix_ij += phi_p_i * div_phi_u_j;
@@ -779,7 +779,7 @@ GLSNavierStokesCahnHilliardAssemblerNonNewtonianCore<dim>::assemble_rhs(
         density_eq * velocity_gradient * velocity + pressure_gradient -
         shear_rate * dynamic_viscosity_gradient -
         dynamic_viscosity_eq * velocity_laplacian - density_eq * force -
-         //velocity_gradient * relative_diffusive_flux -
+         velocity_gradient * relative_diffusive_flux -
          shear_rate * dynamic_viscosity_diff * phase_order_gradient -
         potential_value * phase_order_gradient + strong_residual_vec[q];
 
@@ -802,16 +802,16 @@ GLSNavierStokesCahnHilliardAssemblerNonNewtonianCore<dim>::assemble_rhs(
             JxW;
 
           // Continuity
-          local_rhs(i) += -(velocity_divergence * phi_p_i) * JxW;
+          local_rhs(i) += -(velocity_divergence * phi_p_i + relative_diffusive_flux*grad_phi_p_i/density_eq) * JxW;
 
           // Surface tension terms
 
           local_rhs(i) +=
             (potential_value * phi_u_i * phase_order_gradient) * JxW;
 
-//          local_rhs(i) +=
-//                      (velocity_gradient * relative_diffusive_flux * phi_u_i)
-//                      * JxW;
+          local_rhs(i) +=
+                      (velocity_gradient * relative_diffusive_flux * phi_u_i)
+                      * JxW;
 
           // PSPG GLS term
           local_rhs(i) += -tau * (strong_residual * grad_phi_p_i) * JxW;
