@@ -1200,6 +1200,8 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess_fd(bool firstIter)
 {
   auto &present_solution = this->present_solution;
 
+
+  // Enstrophy
   if (this->simulation_parameters.post_processing.calculate_enstrophy)
     {
       double enstrophy = calculate_enstrophy(this->dof_handler,
@@ -1232,6 +1234,85 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess_fd(bool firstIter)
           enstrophy_table.set_precision("time", 12);
           enstrophy_table.set_precision("enstrophy", 12);
           this->enstrophy_table.write_text(output);
+        }
+    }
+
+  // Pressure power
+  if (this->simulation_parameters.post_processing.calculate_pressure_power)
+    {
+      const double pressure_power =
+        calculate_pressure_power(this->dof_handler,
+                                 present_solution,
+                                 *this->cell_quadrature,
+                                 *this->mapping);
+
+      this->pressure_power_table.add_value(
+        "time", simulation_control->get_current_time());
+      this->pressure_power_table.add_value("pressure_power", pressure_power);
+
+      // Display pressure power to screen if verbosity is enabled
+      if (this->simulation_parameters.post_processing.verbosity ==
+          Parameters::Verbosity::verbose)
+        {
+          this->pcout << "Pressure power : " << pressure_power << std::endl;
+        }
+
+      // Output pressure power to a text file from processor 0
+      if (simulation_control->get_step_number() %
+              this->simulation_parameters.post_processing.output_frequency ==
+            0 &&
+          this->this_mpi_process == 0)
+        {
+          std::string filename =
+            simulation_parameters.simulation_control.output_folder +
+            simulation_parameters.post_processing.pressure_power_output_name +
+            ".dat";
+          std::ofstream output(filename.c_str());
+          pressure_power_table.set_precision("time", 12);
+          pressure_power_table.set_precision("pressure_power", 12);
+          this->pressure_power_table.write_text(output);
+        }
+    }
+
+
+  // Viscous dissipation
+  if (this->simulation_parameters.post_processing.calculate_viscous_dissipation)
+    {
+      const double viscous_dissipation = calculate_viscous_dissipation(
+        this->dof_handler,
+        present_solution,
+        *this->cell_quadrature,
+        *this->mapping,
+        simulation_parameters.physical_properties_manager);
+
+      this->viscous_dissipation_table.add_value(
+        "time", simulation_control->get_current_time());
+      this->viscous_dissipation_table.add_value("viscous_dissipation",
+                                                viscous_dissipation);
+
+      // Display pressure power to screen if verbosity is enabled
+      if (this->simulation_parameters.post_processing.verbosity ==
+          Parameters::Verbosity::verbose)
+        {
+          this->pcout << "Viscous dissipation : " << viscous_dissipation
+                      << std::endl;
+        }
+
+      // Output pressure power to a text file from processor 0
+      if (simulation_control->get_step_number() %
+              this->simulation_parameters.post_processing.output_frequency ==
+            0 &&
+          this->this_mpi_process == 0)
+        {
+          std::string filename =
+            simulation_parameters.simulation_control.output_folder +
+            simulation_parameters.post_processing
+              .viscous_dissipation_output_name +
+            ".dat";
+          std::ofstream output(filename.c_str());
+          viscous_dissipation_table.set_precision("time", 12);
+          viscous_dissipation_table.set_precision("viscous_dissipation", 12);
+          this->viscous_dissipation_table.write_text(output);
         }
     }
 
@@ -1335,7 +1416,7 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess_fd(bool firstIter)
       double             pressure_drop, total_pressure_drop;
       std::tie(pressure_drop, total_pressure_drop) = calculate_pressure_drop(
         this->dof_handler,
-        this->mapping,
+        *this->mapping,
         this->evaluation_point,
         *this->cell_quadrature,
         *this->face_quadrature,
@@ -1711,6 +1792,15 @@ NavierStokesBase<dim, VectorType, DofsType>::read_checkpoint()
     if (post_processing.calculate_enstrophy)
       deserialize_table(this->enstrophy_table,
                         prefix + post_processing.enstrophy_output_name +
+                          suffix);
+    if (post_processing.calculate_pressure_power)
+      deserialize_table(this->pressure_power_table,
+                        prefix + post_processing.pressure_power_output_name +
+                          suffix);
+    if (post_processing.calculate_viscous_dissipation)
+      deserialize_table(this->viscous_dissipation_table,
+                        prefix +
+                          post_processing.viscous_dissipation_output_name +
                           suffix);
     if (post_processing.calculate_kinetic_energy)
       deserialize_table(this->kinetic_energy_table,
@@ -2412,6 +2502,14 @@ NavierStokesBase<dim, VectorType, DofsType>::write_checkpoint()
     if (post_processing.calculate_kinetic_energy)
       serialize_table(this->kinetic_energy_table,
                       prefix + post_processing.kinetic_energy_output_name +
+                        suffix);
+    if (post_processing.calculate_pressure_power)
+      serialize_table(this->pressure_power_table,
+                      prefix + post_processing.pressure_power_output_name +
+                        suffix);
+    if (post_processing.calculate_viscous_dissipation)
+      serialize_table(this->viscous_dissipation_table,
+                      prefix + post_processing.viscous_dissipation_output_name +
                         suffix);
     if (post_processing.calculate_apparent_viscosity)
       serialize_table(this->apparent_viscosity_table,

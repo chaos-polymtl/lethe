@@ -64,13 +64,13 @@
  */
 template <int dim, typename VectorType>
 std::pair<double, double>
-calculate_pressure_drop(const DoFHandler<dim>        &dof_handler,
-                        std::shared_ptr<Mapping<dim>> mapping,
-                        const VectorType             &evaluation_point,
-                        const Quadrature<dim>        &cell_quadrature_formula,
-                        const Quadrature<dim - 1>    &face_quadrature_formula,
-                        const unsigned int            inlet_boundary_id,
-                        const unsigned int            outlet_boundary_id);
+calculate_pressure_drop(const DoFHandler<dim>     &dof_handler,
+                        const Mapping<dim>        &mapping,
+                        const VectorType          &evaluation_point,
+                        const Quadrature<dim>     &cell_quadrature_formula,
+                        const Quadrature<dim - 1> &face_quadrature_formula,
+                        const unsigned int         inlet_boundary_id,
+                        const unsigned int         outlet_boundary_id);
 
 /**
  * @brief Calculate the CFL condition on the simulation domain
@@ -121,13 +121,13 @@ calculate_enstrophy(const DoFHandler<dim> &dof_handler,
  * Post-processing function
  * This function calculates the average kinetic energy in the simulation domain
  *
- * @param dof_handler The dof_handler used for the calculation
+ * @param[in] dof_handler The dof_handler used for the calculation
  *
- * @param evaluation_point The solution at which the force is calculated
+ * @param[in] evaluation_point The solution for the calculation
  *
- * @param quadrature_formula The quadrature formula for the calculation
+ * @param[in] quadrature_formula The quadrature formula for the calculation
  *
- * @param mapping The mapping of the simulation
+ * @param[in] mapping The mapping of the simulation
  */
 template <int dim, typename VectorType>
 double
@@ -135,6 +135,53 @@ calculate_kinetic_energy(const DoFHandler<dim> &dof_handler,
                          const VectorType      &evaluation_point,
                          const Quadrature<dim> &quadrature_formula,
                          const Mapping<dim>    &mapping);
+
+/**
+ * @brief Calculate the average power done by pressure in the simulation
+ * domain. The average power is defined as ∫u.∇pdΩ/∫1dΩ
+ * @return Average power done by pressure in the simulation domain
+ * Post-processing function
+ *
+ * @param[in] dof_handler The dof_handler used for the calculation
+ *
+ * @param[in] evaluation_point The solution for the calculation
+ *
+ * @param[in] quadrature_formula The quadrature formula for the calculation
+ *
+ * @param[in] mapping The mapping of the simulation
+ */
+template <int dim, typename VectorType>
+double
+calculate_pressure_power(const DoFHandler<dim> &dof_handler,
+                         const VectorType      &evaluation_point,
+                         const Quadrature<dim> &quadrature_formula,
+                         const Mapping<dim>    &mapping);
+
+/**
+ * @brief Calculate the viscous dissipation of kinetic energy which is defined as
+ *  ∫∇u.τdΩ/∫1dΩ
+ * @return Viscous dissipation of kinetic energy
+ * Post-processing function
+ *
+ * @param[in] dof_handler The dof_handler used for the calculation
+ *
+ * @param[in] evaluation_point The solution for the calculation
+ *
+ * @param[in] quadrature_formula The quadrature formula for the calculation
+ *
+ * @param[in] mapping The mapping of the simulation
+ *
+ * @param[in] properties_manager Manager for the physical properties used to
+ * calculate the kinematic viscosity
+ */
+template <int dim, typename VectorType>
+double
+calculate_viscous_dissipation(
+  const DoFHandler<dim>           &dof_handler,
+  const VectorType                &evaluation_point,
+  const Quadrature<dim>           &quadrature_formula,
+  const Mapping<dim>              &mapping,
+  const PhysicalPropertiesManager &properties_manager);
 
 /**
  * @brief Calculates the apparent viscosity of the fluid for non Newtonian flows.
@@ -153,11 +200,12 @@ calculate_kinetic_energy(const DoFHandler<dim> &dof_handler,
  */
 template <int dim, typename VectorType>
 double
-calculate_apparent_viscosity(const DoFHandler<dim>     &dof_handler,
-                             const VectorType          &evaluation_point,
-                             const Quadrature<dim>     &quadrature_formula,
-                             const Mapping<dim>        &mapping,
-                             PhysicalPropertiesManager &properties_manager);
+calculate_apparent_viscosity(
+  const DoFHandler<dim>           &dof_handler,
+  const VectorType                &evaluation_point,
+  const Quadrature<dim>           &quadrature_formula,
+  const Mapping<dim>              &mapping,
+  const PhysicalPropertiesManager &properties_manager);
 
 /**
  * @brief Calculates the force due to the fluid motion on every boundary conditions
@@ -184,7 +232,7 @@ std::vector<std::vector<Tensor<1, dim>>>
 calculate_forces(
   const DoFHandler<dim>                               &dof_handler,
   const VectorType                                    &evaluation_point,
-  PhysicalPropertiesManager                           &properties_manager,
+  const PhysicalPropertiesManager                     &properties_manager,
   const BoundaryConditions::NSBoundaryConditions<dim> &boundary_conditions,
   const Quadrature<dim - 1>                           &face_quadrature_formula,
   const Mapping<dim>                                  &mapping);
@@ -215,7 +263,7 @@ std::vector<Tensor<1, 3>>
 calculate_torques(
   const DoFHandler<dim>                               &dof_handler,
   const VectorType                                    &evaluation_point,
-  PhysicalPropertiesManager                           &properties_manager,
+  const PhysicalPropertiesManager                     &properties_manager,
   const BoundaryConditions::NSBoundaryConditions<dim> &boundary_conditions,
   const Quadrature<dim - 1>                           &face_quadrature_formula,
   const Mapping<dim>                                  &mapping);
