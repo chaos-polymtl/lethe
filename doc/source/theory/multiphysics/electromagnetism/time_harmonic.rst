@@ -14,7 +14,6 @@ Maxwell's equations are a set of partial differential equations that form the fo
     \nabla \times \mathbf{H} &= \mathbf{J}_f + \frac{\partial \mathbf{D}}{\partial t}
     \end{align*}
 
-
 where:
 
 * :math:`\mathbf{D}` is the electric field flux density;
