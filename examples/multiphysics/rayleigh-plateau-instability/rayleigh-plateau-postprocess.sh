@@ -51,7 +51,7 @@ if [ "$#" -eq 3 ]; then
     echo -e $USAGE
     exit 1
   fi
-else # only 2 arguments
+else
   # Loop over delta values to evaluate breakup lengths
   for delta_value in ${delta_values_array[@]}
   do
