@@ -1237,7 +1237,7 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess_fd(bool firstIter)
         }
     }
 
-  // Pressure work
+  // Pressure power
   if (this->simulation_parameters.post_processing.calculate_pressure_power)
     {
       double pressure_work = calculate_pressure_power(this->dof_handler,
@@ -1249,14 +1249,14 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess_fd(bool firstIter)
         "time", simulation_control->get_current_time());
       this->pressure_power_table.add_value("pressure_work", pressure_work);
 
-      // Display pressure work to screen if verbosity is enabled
+      // Display pressure power to screen if verbosity is enabled
       if (this->simulation_parameters.post_processing.verbosity ==
           Parameters::Verbosity::verbose)
         {
-          this->pcout << "Pressure work  : " << pressure_work << std::endl;
+          this->pcout << "Pressure power : " << pressure_work << std::endl;
         }
 
-      // Output pressure work to a text file from processor 0
+      // Output pressure power to a text file from processor 0
       if (simulation_control->get_step_number() %
               this->simulation_parameters.post_processing.output_frequency ==
             0 &&
@@ -1289,7 +1289,7 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess_fd(bool firstIter)
       this->viscous_dissipation_table.add_value("viscous_dissipation",
                                                 viscous_dissipation);
 
-      // Display pressure work to screen if verbosity is enabled
+      // Display pressure power to screen if verbosity is enabled
       if (this->simulation_parameters.post_processing.verbosity ==
           Parameters::Verbosity::verbose)
         {
@@ -1297,7 +1297,7 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess_fd(bool firstIter)
                       << std::endl;
         }
 
-      // Output pressure work to a text file from processor 0
+      // Output pressure power to a text file from processor 0
       if (simulation_control->get_step_number() %
               this->simulation_parameters.post_processing.output_frequency ==
             0 &&

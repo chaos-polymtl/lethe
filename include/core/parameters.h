@@ -819,7 +819,7 @@ namespace Parameters
     /// Enable total enstrophy post-processing
     bool calculate_enstrophy;
 
-    /// Enable pressure work post-processing
+    /// Enable pressure power post-processing
     bool calculate_pressure_power;
 
     /// Enable viscous dissipation post-processing
@@ -864,7 +864,7 @@ namespace Parameters
     /// Prefix for the enstrophy output
     std::string enstrophy_output_name;
 
-    /// Prefix for the pressure work output
+    /// Prefix for the pressure power output
     std::string pressure_power_output_name;
 
     /// Prefix for the viscous dissipation output

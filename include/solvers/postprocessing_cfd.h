@@ -138,10 +138,10 @@ calculate_kinetic_energy(const DoFHandler<dim> &dof_handler,
 
 /**
  * @brief Calculate the average work done by pressure in the simulation domain
- * @return average work done by pressure in the simulation domain
+ * @return Average power done by pressure in the simulation domain
  * Post-processing function
- * This function calculates the average work done by pressure in the simulation
- * domain. This average work is defined as the W_p = ∫u.∇pdΩ/∫1dΩ
+ * This function calculates the average power done by pressure in the simulation
+ * domain. This average power is defined as P_p = ∫u.∇pdΩ/∫1dΩ
  *
  * @param[in] dof_handler The dof_handler used for the calculation
  *
@@ -162,8 +162,8 @@ calculate_pressure_power(const DoFHandler<dim> &dof_handler,
  * @brief Calculate the viscous dissipation of kinetic energy
  * @return Viscous dissipation of kinetic energy
  * Post-processing function
- * This function calculates the viscous energy dissipation  which is defined as
- * the W_p = ∫∇u.τdΩ/∫1dΩ
+ * This function calculates the viscous energy dissipation which is defined as
+ *  W_p = ∫∇u.τdΩ/∫1dΩ
  *
  * @param[in] dof_handler The dof_handler used for the calculation
  *

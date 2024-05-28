@@ -548,7 +548,6 @@ calculate_viscous_dissipation(
                           update_gradients | update_JxW_values);
 
   const FEValuesExtractors::Vector velocity(0);
-  const FEValuesExtractors::Scalar pressure(dim);
 
   const unsigned int n_q_points = quadrature_formula.size();
 
