@@ -35,16 +35,16 @@ using namespace dealii;
 
 template <int dim, typename VectorType>
 std::pair<double, double>
-calculate_pressure_drop(const DoFHandler<dim>        &dof_handler,
-                        std::shared_ptr<Mapping<dim>> mapping,
-                        const VectorType             &evaluation_point,
-                        const Quadrature<dim>        &cell_quadrature_formula,
-                        const Quadrature<dim - 1>    &face_quadrature_formula,
-                        const unsigned int            inlet_boundary_id,
-                        const unsigned int            outlet_boundary_id)
+calculate_pressure_drop(const DoFHandler<dim>     &dof_handler,
+                        const Mapping<dim>        &mapping,
+                        const VectorType          &evaluation_point,
+                        const Quadrature<dim>     &cell_quadrature_formula,
+                        const Quadrature<dim - 1> &face_quadrature_formula,
+                        const unsigned int         inlet_boundary_id,
+                        const unsigned int         outlet_boundary_id)
 {
   FESystem<dim, dim> fe = dof_handler.get_fe();
-  FEValues<dim>      fe_values(*mapping,
+  FEValues<dim>      fe_values(mapping,
                           fe,
                           cell_quadrature_formula,
                           update_values | update_quadrature_points |
@@ -166,28 +166,28 @@ calculate_pressure_drop(const DoFHandler<dim>        &dof_handler,
 
 template std::pair<double, double>
 calculate_pressure_drop<2, GlobalVectorType>(
-  const DoFHandler<2>        &dof_handler,
-  std::shared_ptr<Mapping<2>> mapping,
-  const GlobalVectorType     &evaluation_point,
-  const Quadrature<2>        &cell_quadrature_formula,
-  const Quadrature<1>        &face_quadrature_formula,
-  const unsigned int          inlet_boundary_id,
-  const unsigned int          outlet_boundary_id);
+  const DoFHandler<2>    &dof_handler,
+  const Mapping<2>       &mapping,
+  const GlobalVectorType &evaluation_point,
+  const Quadrature<2>    &cell_quadrature_formula,
+  const Quadrature<1>    &face_quadrature_formula,
+  const unsigned int      inlet_boundary_id,
+  const unsigned int      outlet_boundary_id);
 
 template std::pair<double, double>
 calculate_pressure_drop<3, GlobalVectorType>(
-  const DoFHandler<3>        &dof_handler,
-  std::shared_ptr<Mapping<3>> mapping,
-  const GlobalVectorType     &evaluation_point,
-  const Quadrature<3>        &cell_quadrature_formula,
-  const Quadrature<2>        &face_quadrature_formula,
-  const unsigned int          inlet_boundary_id,
-  const unsigned int          outlet_boundary_id);
+  const DoFHandler<3>    &dof_handler,
+  const Mapping<3>       &mapping,
+  const GlobalVectorType &evaluation_point,
+  const Quadrature<3>    &cell_quadrature_formula,
+  const Quadrature<2>    &face_quadrature_formula,
+  const unsigned int      inlet_boundary_id,
+  const unsigned int      outlet_boundary_id);
 
 template std::pair<double, double>
 calculate_pressure_drop<2, GlobalBlockVectorType>(
   const DoFHandler<2>         &dof_handler,
-  std::shared_ptr<Mapping<2>>  mapping,
+  const Mapping<2>            &mapping,
   const GlobalBlockVectorType &evaluation_point,
   const Quadrature<2>         &cell_quadrature_formula,
   const Quadrature<1>         &face_quadrature_formula,
@@ -197,7 +197,7 @@ calculate_pressure_drop<2, GlobalBlockVectorType>(
 template std::pair<double, double>
 calculate_pressure_drop<3, GlobalBlockVectorType>(
   const DoFHandler<3>         &dof_handler,
-  std::shared_ptr<Mapping<3>>  mapping,
+  const Mapping<3>            &mapping,
   const GlobalBlockVectorType &evaluation_point,
   const Quadrature<3>         &cell_quadrature_formula,
   const Quadrature<2>         &face_quadrature_formula,
@@ -208,7 +208,7 @@ calculate_pressure_drop<3, GlobalBlockVectorType>(
 template std::pair<double, double>
 calculate_pressure_drop<2, LinearAlgebra::distributed::Vector<double>>(
   const DoFHandler<2>                              &dof_handler,
-  std::shared_ptr<Mapping<2>>                       mapping,
+  const Mapping<2>                                 &mapping,
   const LinearAlgebra::distributed::Vector<double> &evaluation_point,
   const Quadrature<2>                              &cell_quadrature_formula,
   const Quadrature<1>                              &face_quadrature_formula,
@@ -218,7 +218,7 @@ calculate_pressure_drop<2, LinearAlgebra::distributed::Vector<double>>(
 template std::pair<double, double>
 calculate_pressure_drop<3, LinearAlgebra::distributed::Vector<double>>(
   const DoFHandler<3>                              &dof_handler,
-  std::shared_ptr<Mapping<3>>                       mapping,
+  const Mapping<3>                                 &mapping,
   const LinearAlgebra::distributed::Vector<double> &evaluation_point,
   const Quadrature<3>                              &cell_quadrature_formula,
   const Quadrature<2>                              &face_quadrature_formula,
@@ -440,6 +440,218 @@ calculate_enstrophy<3, LinearAlgebra::distributed::Vector<double>>(
 
 template <int dim, typename VectorType>
 double
+calculate_pressure_power(const DoFHandler<dim> &dof_handler,
+                         const VectorType      &evaluation_point,
+                         const Quadrature<dim> &quadrature_formula,
+                         const Mapping<dim>    &mapping)
+{
+  const FESystem<dim, dim> fe = dof_handler.get_fe();
+  FEValues<dim>            fe_values(mapping,
+                          fe,
+                          quadrature_formula,
+                          update_values | update_gradients | update_JxW_values);
+
+  const FEValuesExtractors::Vector velocities(0);
+  const FEValuesExtractors::Scalar pressure(dim);
+
+  const unsigned int n_q_points = quadrature_formula.size();
+
+  std::vector<Tensor<1, dim>> velocity(n_q_points);
+  std::vector<Tensor<1, dim>> pressure_gradients(n_q_points);
+
+  double pressure_power = 0.0;
+
+  for (const auto &cell : dof_handler.active_cell_iterators())
+    {
+      if (cell->is_locally_owned())
+        {
+          fe_values.reinit(cell);
+
+          fe_values[pressure].get_function_gradients(evaluation_point,
+                                                     pressure_gradients);
+
+          fe_values[velocities].get_function_values(evaluation_point, velocity);
+
+          for (unsigned int q = 0; q < n_q_points; q++)
+            {
+              pressure_power +=
+                velocity[q] * pressure_gradients[q] * fe_values.JxW(q);
+            }
+        }
+    }
+
+  pressure_power /= GridTools::volume(dof_handler.get_triangulation(), mapping);
+
+  const MPI_Comm mpi_communicator = dof_handler.get_communicator();
+  pressure_power = Utilities::MPI::sum(pressure_power, mpi_communicator);
+
+  return pressure_power;
+}
+
+template double
+calculate_pressure_power<2, GlobalVectorType>(
+  const DoFHandler<2>    &dof_handler,
+  const GlobalVectorType &evaluation_point,
+  const Quadrature<2>    &quadrature_formula,
+  const Mapping<2>       &mapping);
+
+template double
+calculate_pressure_power<3, GlobalVectorType>(
+  const DoFHandler<3>    &dof_handler,
+  const GlobalVectorType &evaluation_point,
+  const Quadrature<3>    &quadrature_formula,
+  const Mapping<3>       &mapping);
+
+template double
+calculate_pressure_power<2, GlobalBlockVectorType>(
+  const DoFHandler<2>         &dof_handler,
+  const GlobalBlockVectorType &evaluation_point,
+  const Quadrature<2>         &quadrature_formula,
+  const Mapping<2>            &mapping);
+
+template double
+calculate_pressure_power<3, GlobalBlockVectorType>(
+  const DoFHandler<3>         &dof_handler,
+  const GlobalBlockVectorType &evaluation_point,
+  const Quadrature<3>         &quadrature_formula,
+  const Mapping<3>            &mapping);
+
+#ifndef LETHE_USE_LDV
+template double
+calculate_pressure_power<2, LinearAlgebra::distributed::Vector<double>>(
+  const DoFHandler<2>                              &dof_handler,
+  const LinearAlgebra::distributed::Vector<double> &evaluation_point,
+  const Quadrature<2>                              &quadrature_formula,
+  const Mapping<2>                                 &mapping);
+
+template double
+calculate_pressure_power<3, LinearAlgebra::distributed::Vector<double>>(
+  const DoFHandler<3>                              &dof_handler,
+  const LinearAlgebra::distributed::Vector<double> &evaluation_point,
+  const Quadrature<3>                              &quadrature_formula,
+  const Mapping<3>                                 &mapping);
+#endif
+
+
+template <int dim, typename VectorType>
+double
+calculate_viscous_dissipation(
+  const DoFHandler<dim>           &dof_handler,
+  const VectorType                &evaluation_point,
+  const Quadrature<dim>           &quadrature_formula,
+  const Mapping<dim>              &mapping,
+  const PhysicalPropertiesManager &properties_manager)
+{
+  const FESystem<dim, dim> fe = dof_handler.get_fe();
+  FEValues<dim>            fe_values(mapping,
+                          fe,
+                          quadrature_formula,
+                          update_gradients | update_JxW_values);
+
+  const FEValuesExtractors::Vector velocity(0);
+
+  const unsigned int n_q_points = quadrature_formula.size();
+
+  std::vector<Tensor<2, dim>> velocity_gradients(n_q_points);
+
+  const auto rheological_model = properties_manager.get_rheology();
+
+  double viscous_dissipation = 0;
+
+  for (const auto &cell : dof_handler.active_cell_iterators())
+    {
+      if (cell->is_locally_owned())
+        {
+          fe_values.reinit(cell);
+
+          fe_values[velocity].get_function_gradients(evaluation_point,
+                                                     velocity_gradients);
+
+          for (unsigned int q = 0; q < n_q_points; q++)
+            {
+              Tensor<2, dim> shear_rate =
+                velocity_gradients[q] + transpose(velocity_gradients[q]);
+
+              const double shear_rate_magnitude =
+                calculate_shear_rate_magnitude(shear_rate);
+
+              std::map<field, double> field_values;
+              field_values[field::shear_rate] = shear_rate_magnitude;
+
+              const double kinematic_viscosity =
+                rheological_model->value(field_values);
+
+              // Equation is t_ij djui (Eq 11.2-1 of BSL 2nd edition)
+              viscous_dissipation +=
+                kinematic_viscosity *
+                scalar_product(shear_rate, transpose(velocity_gradients[q])) *
+                fe_values.JxW(q);
+            }
+        }
+    }
+
+  viscous_dissipation /=
+    GridTools::volume(dof_handler.get_triangulation(), mapping);
+
+  const MPI_Comm mpi_communicator = dof_handler.get_communicator();
+  viscous_dissipation =
+    Utilities::MPI::sum(viscous_dissipation, mpi_communicator);
+  return viscous_dissipation;
+}
+
+template double
+calculate_viscous_dissipation<2, GlobalVectorType>(
+  const DoFHandler<2>             &dof_handler,
+  const GlobalVectorType          &evaluation_point,
+  const Quadrature<2>             &quadrature_formula,
+  const Mapping<2>                &mapping,
+  const PhysicalPropertiesManager &properties_manager);
+
+template double
+calculate_viscous_dissipation<3, GlobalVectorType>(
+  const DoFHandler<3>             &dof_handler,
+  const GlobalVectorType          &evaluation_point,
+  const Quadrature<3>             &quadrature_formula,
+  const Mapping<3>                &mapping,
+  const PhysicalPropertiesManager &properties_manager);
+
+template double
+calculate_viscous_dissipation<2, GlobalBlockVectorType>(
+  const DoFHandler<2>             &dof_handler,
+  const GlobalBlockVectorType     &evaluation_point,
+  const Quadrature<2>             &quadrature_formula,
+  const Mapping<2>                &mapping,
+  const PhysicalPropertiesManager &properties_manager);
+
+template double
+calculate_viscous_dissipation<3, GlobalBlockVectorType>(
+  const DoFHandler<3>             &dof_handler,
+  const GlobalBlockVectorType     &evaluation_point,
+  const Quadrature<3>             &quadrature_formula,
+  const Mapping<3>                &mapping,
+  const PhysicalPropertiesManager &properties_manager);
+
+#ifndef LETHE_USE_LDV
+template double
+calculate_viscous_dissipation<2, LinearAlgebra::distributed::Vector<double>>(
+  const DoFHandler<2>                              &dof_handler,
+  const LinearAlgebra::distributed::Vector<double> &evaluation_point,
+  const Quadrature<2>                              &quadrature_formula,
+  const Mapping<2>                                 &mapping,
+  const PhysicalPropertiesManager                  &properties_manager);
+
+template double
+calculate_viscous_dissipation<3, LinearAlgebra::distributed::Vector<double>>(
+  const DoFHandler<3>                              &dof_handler,
+  const LinearAlgebra::distributed::Vector<double> &evaluation_point,
+  const Quadrature<3>                              &quadrature_formula,
+  const Mapping<3>                                 &mapping,
+  const PhysicalPropertiesManager                  &properties_manager);
+#endif
+
+
+template <int dim, typename VectorType>
+double
 calculate_kinetic_energy(const DoFHandler<dim> &dof_handler,
                          const VectorType      &evaluation_point,
                          const Quadrature<dim> &quadrature_formula,
@@ -537,11 +749,12 @@ calculate_kinetic_energy<3, LinearAlgebra::distributed::Vector<double>>(
 
 template <int dim, typename VectorType>
 double
-calculate_apparent_viscosity(const DoFHandler<dim>     &dof_handler,
-                             const VectorType          &evaluation_point,
-                             const Quadrature<dim>     &quadrature_formula,
-                             const Mapping<dim>        &mapping,
-                             PhysicalPropertiesManager &properties_manager)
+calculate_apparent_viscosity(
+  const DoFHandler<dim>           &dof_handler,
+  const VectorType                &evaluation_point,
+  const Quadrature<dim>           &quadrature_formula,
+  const Mapping<dim>              &mapping,
+  const PhysicalPropertiesManager &properties_manager)
 {
   double         integral_viscosity_x_shear_rate = 0;
   double         integral_shear_rate             = 0;
@@ -554,14 +767,13 @@ calculate_apparent_viscosity(const DoFHandler<dim>     &dof_handler,
   FEValues<dim>            fe_values(mapping,
                           fe,
                           quadrature_formula,
-                          update_values | update_gradients |
-                            update_quadrature_points | update_JxW_values);
+                          update_gradients | update_JxW_values);
 
-  const FEValuesExtractors::Vector velocities(0);
+  const FEValuesExtractors::Vector velocity(0);
 
   const unsigned int n_q_points = quadrature_formula.size();
 
-  std::vector<Tensor<2, dim>> present_velocity_gradients(n_q_points);
+  std::vector<Tensor<2, dim>> velocity_gradients(n_q_points);
 
   for (const auto &cell : dof_handler.active_cell_iterators())
     {
@@ -569,13 +781,13 @@ calculate_apparent_viscosity(const DoFHandler<dim>     &dof_handler,
         {
           fe_values.reinit(cell);
 
-          fe_values[velocities].get_function_gradients(
-            evaluation_point, present_velocity_gradients);
+          fe_values[velocity].get_function_gradients(evaluation_point,
+                                                     velocity_gradients);
 
           for (unsigned int q = 0; q < n_q_points; q++)
             {
-              shear_rate = present_velocity_gradients[q] +
-                           transpose(present_velocity_gradients[q]);
+              shear_rate =
+                velocity_gradients[q] + transpose(velocity_gradients[q]);
 
               double shear_rate_x_velocity_gradient = 0;
               for (int i = 0; i < dim; ++i)
@@ -583,7 +795,7 @@ calculate_apparent_viscosity(const DoFHandler<dim>     &dof_handler,
                   for (int j = 0; j < dim; ++j)
                     {
                       shear_rate_x_velocity_gradient +=
-                        shear_rate[i][j] * present_velocity_gradients[q][j][i];
+                        shear_rate[i][j] * velocity_gradients[q][j][i];
                     }
                 }
 
@@ -612,35 +824,35 @@ calculate_apparent_viscosity(const DoFHandler<dim>     &dof_handler,
 
 template double
 calculate_apparent_viscosity<2, GlobalVectorType>(
-  const DoFHandler<2>       &dof_handler,
-  const GlobalVectorType    &evaluation_point,
-  const Quadrature<2>       &quadrature_formula,
-  const Mapping<2>          &mapping,
-  PhysicalPropertiesManager &properties_manager);
+  const DoFHandler<2>             &dof_handler,
+  const GlobalVectorType          &evaluation_point,
+  const Quadrature<2>             &quadrature_formula,
+  const Mapping<2>                &mapping,
+  const PhysicalPropertiesManager &properties_manager);
 
 template double
 calculate_apparent_viscosity<3, GlobalVectorType>(
-  const DoFHandler<3>       &dof_handler,
-  const GlobalVectorType    &evaluation_point,
-  const Quadrature<3>       &quadrature_formula,
-  const Mapping<3>          &mapping,
-  PhysicalPropertiesManager &properties_manager);
+  const DoFHandler<3>             &dof_handler,
+  const GlobalVectorType          &evaluation_point,
+  const Quadrature<3>             &quadrature_formula,
+  const Mapping<3>                &mapping,
+  const PhysicalPropertiesManager &properties_manager);
 
 template double
 calculate_apparent_viscosity<2, GlobalBlockVectorType>(
-  const DoFHandler<2>         &dof_handler,
-  const GlobalBlockVectorType &evaluation_point,
-  const Quadrature<2>         &quadrature_formula,
-  const Mapping<2>            &mapping,
-  PhysicalPropertiesManager   &properties_manager);
+  const DoFHandler<2>             &dof_handler,
+  const GlobalBlockVectorType     &evaluation_point,
+  const Quadrature<2>             &quadrature_formula,
+  const Mapping<2>                &mapping,
+  const PhysicalPropertiesManager &properties_manager);
 
 template double
 calculate_apparent_viscosity<3, GlobalBlockVectorType>(
-  const DoFHandler<3>         &dof_handler,
-  const GlobalBlockVectorType &evaluation_point,
-  const Quadrature<3>         &quadrature_formula,
-  const Mapping<3>            &mapping,
-  PhysicalPropertiesManager   &properties_manager);
+  const DoFHandler<3>             &dof_handler,
+  const GlobalBlockVectorType     &evaluation_point,
+  const Quadrature<3>             &quadrature_formula,
+  const Mapping<3>                &mapping,
+  const PhysicalPropertiesManager &properties_manager);
 
 #ifndef LETHE_USE_LDV
 template double
@@ -649,7 +861,7 @@ calculate_apparent_viscosity<2, LinearAlgebra::distributed::Vector<double>>(
   const LinearAlgebra::distributed::Vector<double> &evaluation_point,
   const Quadrature<2>                              &quadrature_formula,
   const Mapping<2>                                 &mapping,
-  PhysicalPropertiesManager                        &properties_manager);
+  const PhysicalPropertiesManager                  &properties_manager);
 
 template double
 calculate_apparent_viscosity<3, LinearAlgebra::distributed::Vector<double>>(
@@ -657,7 +869,7 @@ calculate_apparent_viscosity<3, LinearAlgebra::distributed::Vector<double>>(
   const LinearAlgebra::distributed::Vector<double> &evaluation_point,
   const Quadrature<3>                              &quadrature_formula,
   const Mapping<3>                                 &mapping,
-  PhysicalPropertiesManager                        &properties_manager);
+  const PhysicalPropertiesManager                  &properties_manager);
 #endif
 
 template <int dim, typename VectorType>
@@ -665,7 +877,7 @@ std::vector<std::vector<Tensor<1, dim>>>
 calculate_forces(
   const DoFHandler<dim>                               &dof_handler,
   const VectorType                                    &evaluation_point,
-  PhysicalPropertiesManager                           &properties_manager,
+  const PhysicalPropertiesManager                     &properties_manager,
   const BoundaryConditions::NSBoundaryConditions<dim> &boundary_conditions,
   const Quadrature<dim - 1>                           &face_quadrature_formula,
   const Mapping<dim>                                  &mapping)
@@ -789,7 +1001,7 @@ template std::vector<std::vector<Tensor<1, 2>>>
 calculate_forces<2, GlobalVectorType>(
   const DoFHandler<2>                               &dof_handler,
   const GlobalVectorType                            &evaluation_point,
-  PhysicalPropertiesManager                         &properties_manager,
+  const PhysicalPropertiesManager                   &properties_manager,
   const BoundaryConditions::NSBoundaryConditions<2> &boundary_conditions,
   const Quadrature<1>                               &face_quadrature_formula,
   const Mapping<2>                                  &mapping);
@@ -797,7 +1009,7 @@ template std::vector<std::vector<Tensor<1, 3>>>
 calculate_forces<3, GlobalVectorType>(
   const DoFHandler<3>                               &dof_handler,
   const GlobalVectorType                            &evaluation_point,
-  PhysicalPropertiesManager                         &properties_manager,
+  const PhysicalPropertiesManager                   &properties_manager,
   const BoundaryConditions::NSBoundaryConditions<3> &boundary_conditions,
   const Quadrature<2>                               &face_quadrature_formula,
   const Mapping<3>                                  &mapping);
@@ -806,7 +1018,7 @@ template std::vector<std::vector<Tensor<1, 2>>>
 calculate_forces<2, GlobalBlockVectorType>(
   const DoFHandler<2>                               &dof_handler,
   const GlobalBlockVectorType                       &evaluation_point,
-  PhysicalPropertiesManager                         &properties_manager,
+  const PhysicalPropertiesManager                   &properties_manager,
   const BoundaryConditions::NSBoundaryConditions<2> &boundary_conditions,
   const Quadrature<1>                               &face_quadrature_formula,
   const Mapping<2>                                  &mapping);
@@ -815,7 +1027,7 @@ template std::vector<std::vector<Tensor<1, 3>>>
 calculate_forces<3, GlobalBlockVectorType>(
   const DoFHandler<3>                               &dof_handler,
   const GlobalBlockVectorType                       &evaluation_point,
-  PhysicalPropertiesManager                         &properties_manager,
+  const PhysicalPropertiesManager                   &properties_manager,
   const BoundaryConditions::NSBoundaryConditions<3> &boundary_conditions,
   const Quadrature<2>                               &face_quadrature_formula,
   const Mapping<3>                                  &mapping);
@@ -825,7 +1037,7 @@ template std::vector<std::vector<Tensor<1, 2>>>
 calculate_forces<2, LinearAlgebra::distributed::Vector<double>>(
   const DoFHandler<2>                               &dof_handler,
   const LinearAlgebra::distributed::Vector<double>  &evaluation_point,
-  PhysicalPropertiesManager                         &properties_manager,
+  const PhysicalPropertiesManager                   &properties_manager,
   const BoundaryConditions::NSBoundaryConditions<2> &boundary_conditions,
   const Quadrature<1>                               &face_quadrature_formula,
   const Mapping<2>                                  &mapping);
@@ -834,7 +1046,7 @@ template std::vector<std::vector<Tensor<1, 3>>>
 calculate_forces<3, LinearAlgebra::distributed::Vector<double>>(
   const DoFHandler<3>                               &dof_handler,
   const LinearAlgebra::distributed::Vector<double>  &evaluation_point,
-  PhysicalPropertiesManager                         &properties_manager,
+  const PhysicalPropertiesManager                   &properties_manager,
   const BoundaryConditions::NSBoundaryConditions<3> &boundary_conditions,
   const Quadrature<2>                               &face_quadrature_formula,
   const Mapping<3>                                  &mapping);
@@ -845,7 +1057,7 @@ std::vector<Tensor<1, 3>>
 calculate_torques(
   const DoFHandler<dim>                               &dof_handler,
   const VectorType                                    &evaluation_point,
-  PhysicalPropertiesManager                           &properties_manager,
+  const PhysicalPropertiesManager                     &properties_manager,
   const BoundaryConditions::NSBoundaryConditions<dim> &boundary_conditions,
   const Quadrature<dim - 1>                           &face_quadrature_formula,
   const Mapping<dim>                                  &mapping)
@@ -957,7 +1169,7 @@ template std::vector<Tensor<1, 3>>
 calculate_torques<2, GlobalVectorType>(
   const DoFHandler<2>                               &dof_handler,
   const GlobalVectorType                            &evaluation_point,
-  PhysicalPropertiesManager                         &properties_manager,
+  const PhysicalPropertiesManager                   &properties_manager,
   const BoundaryConditions::NSBoundaryConditions<2> &boundary_conditions,
   const Quadrature<1>                               &face_quadrature_formula,
   const Mapping<2>                                  &mapping);
@@ -965,7 +1177,7 @@ template std::vector<Tensor<1, 3>>
 calculate_torques<3, GlobalVectorType>(
   const DoFHandler<3>                               &dof_handler,
   const GlobalVectorType                            &evaluation_point,
-  PhysicalPropertiesManager                         &properties_manager,
+  const PhysicalPropertiesManager                   &properties_manager,
   const BoundaryConditions::NSBoundaryConditions<3> &boundary_conditions,
   const Quadrature<2>                               &face_quadrature_formula,
   const Mapping<3>                                  &mapping);
@@ -974,7 +1186,7 @@ template std::vector<Tensor<1, 3>>
 calculate_torques<2, GlobalBlockVectorType>(
   const DoFHandler<2>                               &dof_handler,
   const GlobalBlockVectorType                       &evaluation_point,
-  PhysicalPropertiesManager                         &properties_manager,
+  const PhysicalPropertiesManager                   &properties_manager,
   const BoundaryConditions::NSBoundaryConditions<2> &boundary_conditions,
   const Quadrature<1>                               &face_quadrature_formula,
   const Mapping<2>                                  &mapping);
@@ -983,7 +1195,7 @@ template std::vector<Tensor<1, 3>>
 calculate_torques<3, GlobalBlockVectorType>(
   const DoFHandler<3>                               &dof_handler,
   const GlobalBlockVectorType                       &evaluation_point,
-  PhysicalPropertiesManager                         &properties_manager,
+  const PhysicalPropertiesManager                   &properties_manager,
   const BoundaryConditions::NSBoundaryConditions<3> &boundary_conditions,
   const Quadrature<2>                               &face_quadrature_formula,
   const Mapping<3>                                  &mapping);
@@ -993,7 +1205,7 @@ template std::vector<Tensor<1, 3>>
 calculate_torques<2, LinearAlgebra::distributed::Vector<double>>(
   const DoFHandler<2>                               &dof_handler,
   const LinearAlgebra::distributed::Vector<double>  &evaluation_point,
-  PhysicalPropertiesManager                         &properties_manager,
+  const PhysicalPropertiesManager                   &properties_manager,
   const BoundaryConditions::NSBoundaryConditions<2> &boundary_conditions,
   const Quadrature<1>                               &face_quadrature_formula,
   const Mapping<2>                                  &mapping);
@@ -1002,7 +1214,7 @@ template std::vector<Tensor<1, 3>>
 calculate_torques<3, LinearAlgebra::distributed::Vector<double>>(
   const DoFHandler<3>                               &dof_handler,
   const LinearAlgebra::distributed::Vector<double>  &evaluation_point,
-  PhysicalPropertiesManager                         &properties_manager,
+  const PhysicalPropertiesManager                   &properties_manager,
   const BoundaryConditions::NSBoundaryConditions<3> &boundary_conditions,
   const Quadrature<2>                               &face_quadrature_formula,
   const Mapping<3>                                  &mapping);
