@@ -19,8 +19,9 @@ The phase indicator transitions smoothly from one extremum to the other with the
     :alt: Schematic
     :align: center
     :width: 600
-
+    
 The length required to go from :math:`\phi=-0.99` to :math:`\phi=0.99` is about 7.5 times :math:`\varepsilon`, which we will see appear later in the equations.
+
 Let us introduce the free energy functional :math:`\mathcal{F}`:
 
 .. math::
@@ -34,14 +35,14 @@ Let us introduce the free energy functional :math:`\mathcal{F}`:
 It is decomposed in a bulk free energy :math:`F(\phi)` and an interface energy :math:`\frac{1}{2}|\nabla \phi|^2`. :math:`\lambda` is called the mixing energy though not dimensionally consistent to an energy. The bulk free energy has a double-well form, its expression is:
 
 .. math::
-  F(\phi) = \frac{(1-\phi^2)^2}{4\epsilon^2}
+  F(\phi) = \frac{(1-\phi^2)^2}{4\varepsilon^2}
 
-with :math:`\epsilon` a parameter related to the thickness of the interface between the phases.
+with :math:`\varepsilon` a parameter related to the thickness of the interface between the phases.
   
 To formalize the idea that the system tries to lower its free energy, we introduce a new variable, :math:`\eta`, called the chemical potential. It is defined as the variational derivative of :math:`\mathcal{F}`:
 
 .. math::
-  \eta = \frac{\delta\mathcal{F}}{\delta\phi} = \lambda\left(-\frac{\phi(1-\phi^2)}{\epsilon^2} + \nabla^2\phi\right)
+  \eta = \frac{\delta\mathcal{F}}{\delta\phi} = \lambda\left(-\frac{\phi(1-\phi^2)}{\varepsilon^2} + \nabla^2\phi\right)
   
   
 Then, the phases have to move to satisfy free energy minimization, by going from high chemical potential regions to low chemical potential regions. Let us introduce the flux of phase due to chemical potential differences, denoted by :math:`\mathbf{J}`:
@@ -54,13 +55,13 @@ With :math:`M(\phi)` the mobility function. Then, we can write the following con
 .. math::
   \frac{\partial \phi}{\partial t} + \mathbf{u}\cdot \nabla \phi = \nabla \cdot (M(\phi)\nabla \eta)
   
-For a 1D case, we obtain the following equilibrium phase field by solving the chemical potential equation with :math:`\eta = 0`:
+To demonstrate that the stable solutions of the Cahn-Hilliard have naturally diffuse interfaces, let us look at a simplified 1D case in equilibrium: :math:`\eta = 0` in the chemical potential equation. We obtain a differential equation on :math:`\phi` whose solution is:
 
 .. math::
-  \phi(x) = -\tanh{\left(\frac{x}{\sqrt{2}\epsilon}\right)}
+  \phi(x) = -\tanh{\left(\frac{x}{\sqrt{2}\varepsilon}\right)}
   
   
-Lastly, we need to relate the surface tension coefficient with the mixing energy. Cahn and Hilliard define surface tension as the excess free energy of the system due to the interface, the second term in the expression of :math:`\psi`. If we consider a system in equilibrium, and suppose a planar interface, we can write:
+Lastly, we need to relate the surface tension coefficient with the mixing energy. Cahn and Hilliard define surface tension as the excess free energy of the system due to the interface, the second term in the expression of :math:`\Psi`. If we consider a system in equilibrium, and suppose a planar interface, we can write:
 
 .. math::
   \sigma = \int_{-\infty}^{+\infty}\lambda \left(\frac{\mathrm{d}\phi}{\mathrm{d}x}\right)^2 \mathrm{d}x
@@ -68,7 +69,7 @@ Lastly, we need to relate the surface tension coefficient with the mixing energy
 Substituting the solution previously found, we obtain the following expression for :math:`\lambda`:
 
 .. math::
-  \lambda = \frac{3\epsilon\sigma}{2\sqrt{2}}
+  \lambda = \frac{3\varepsilon\sigma}{2\sqrt{2}}
   
 For the problem to have a unique solution, we give the following no-flux boundary conditions on :math:`\partial \Omega` for the phase field and chemical potential:
 
@@ -95,14 +96,14 @@ We multiply each equation by their test function and integrate over :math:`\Omeg
 .. math::
   \int_\Omega \alpha\left(\frac{\partial \phi}{\partial t} + \mathbf{a}\cdot \nabla \phi -\nabla \cdot (M(\phi)\nabla \eta)\right) \mathrm{d}\Omega = 0
   
-  \int_\Omega \beta\lambda\left(\frac{\phi(1-\phi^2)}{\epsilon^2} - \nabla^2\phi\right)\mathrm{d}\Omega = 0
+  \int_\Omega \beta\lambda\left(\frac{\phi(1-\phi^2)}{\varepsilon^2} - \nabla^2\phi\right)\mathrm{d}\Omega = 0
   
 After using the integration by part and Green-Ostrogradski's theorem:
 
 .. math::
-  \int_\Omega \alpha\left(\frac{\partial \phi}{\partial t} + \mathbf{a}\cdot \nabla \phi\mathrm{d}\Omega\right) -\int_\Omega M(\phi) \nabla\alpha \cdot\nabla\eta \mathrm{d}\Omega + \cancelto{\mathrm{no-flux}}{\int_{\Gamma} M(\phi)\alpha \nabla \eta \cdot \mathbf{n} \mathrm{d}\Gamma} = 0
+  \int_\Omega \alpha\left(\frac{\partial \phi}{\partial t} + \mathbf{a}\cdot \nabla \phi\right)\mathrm{d}\Omega -\int_\Omega M(\phi) \nabla\alpha \cdot\nabla\eta \mathrm{d}\Omega + \cancelto{\mathrm{no-flux}}{\int_{\Gamma} M(\phi)\alpha \nabla \eta \cdot \mathbf{n} \mathrm{d}\Gamma} = 0
   
-  \int_\Omega \beta\lambda\left(\frac{\phi(1-\phi^2)}{\epsilon^2}\right)\mathrm{d}\Omega - \int_\Omega \nabla \beta \cdot \nabla\phi\mathrm{d}\Omega + \cancelto{\mathrm{no-flux}}{\int_{\Gamma} \alpha \nabla \phi \cdot \mathbf{n} \mathrm{d}\Gamma} = 0
+  \int_\Omega \beta\lambda\left(\frac{\phi(1-\phi^2)}{\varepsilon^2}\right)\mathrm{d}\Omega - \int_\Omega \nabla \beta \cdot \lambda\nabla\phi\mathrm{d}\Omega + \cancelto{\mathrm{no-flux}}{\int_{\Gamma} \alpha \lambda\nabla \phi \cdot \mathbf{n} \mathrm{d}\Gamma} = 0
   
 Using Petrov-Galerkin method, the finite element formulation reads:
 
@@ -111,7 +112,7 @@ Find :math:`(\phi^h,\eta^h) \in \psi^h` such that:
 .. math::  
   \begin{array}{rl}
   \displaystyle \int_\Omega \alpha^h\left(\frac{\partial \phi^h}{\partial t} + \mathbf{a} \cdot \nabla \phi^h \right) \mathrm{d}\Omega - \int_\Omega M(\phi^h) \nabla \alpha^h \cdot \nabla \eta^h \mathrm{d}\Omega &= 0 \\[1em]
-  \displaystyle \int_\Omega \beta^h \lambda \left( \frac{\phi^h(1-(\phi^h)^2)}{\epsilon^2} \right) \mathrm{d}\Omega - \int_\Omega \nabla \beta^h \cdot \nabla \phi^h \mathrm{d}\Omega &= 0 
+  \displaystyle \int_\Omega \beta^h \lambda \left( \frac{\phi^h(1-(\phi^h)^2)}{\varepsilon^2} \right) \mathrm{d}\Omega - \int_\Omega \lambda\nabla \beta^h \cdot \nabla \phi^h \mathrm{d}\Omega &= 0 
   \end{array}
   \quad \forall (\alpha^h, \beta^h) \in \xi^h
   
@@ -121,7 +122,7 @@ Stabilization
 While developping the code, it turned useful to add a numerical diffusion term in the chemical potential form for some example. The new equation is:
 
 .. math::
-  \eta = \lambda\left(-\frac{\phi(1-\phi^2)}{\epsilon^2} + \nabla^2\phi\right) - \xi h^2 \nabla^2 \eta = 0
+  \eta = \lambda\left(-\frac{\phi(1-\phi^2)}{\varepsilon^2} + \nabla^2\phi\right) - \xi h^2 \nabla^2 \eta = 0
   
 With :math:`h` the local cell size and :math:`\xi` a user-defined smoothing coefficient (in general between 0 and 1). This fonctionnality may be deprecated later.
 
@@ -139,11 +140,11 @@ This tensor is added to the usual viscous stress tensor to take into account the
 .. math::
   \begin{align}
    \mathbf{f_\sigma} & = \nabla \cdot (\lambda(\nabla \phi \otimes \nabla \phi))\\
-  & = \eta\nabla\phi + \nabla\psi
+  & = \eta\nabla\phi + \nabla\Psi
   \end{align}
   
-We then define a modified pressure :math:`\hat{p}`, which corresponds to the usual pressure with the additional :math:`\psi` term. This new pressure is the same in the bulk phases and varies more smoothly in the interface `[2] <https://doi.org/10.48550/arXiv.1911.06718>`_. 
-Then, to take into account the change of momentum of the system due to the diffusive flux of species, we add the following term into the momentum equation:
+We then define a modified pressure :math:`\hat{p}`, which corresponds to the usual pressure with the additional :math:`\Psi` term. This new pressure is the same in the bulk phases and varies more smoothly in the interface `[2] <https://doi.org/10.48550/arXiv.1911.06718>`_. 
+Then, to take into account the change of momentum of the system due to the diffusive flux of species, we add the following term into the :doc:`usual momentum equation<../../multiphysics/fluid_dynamics/navier-stokes>`:
 
 .. math::
   (\mathbf{\tilde{J}}\cdot \nabla)\mathbf{v} = (\frac{\rho_0-\rho_1}{2}\mathbf{J}\cdot \nabla)\mathbf{v}
