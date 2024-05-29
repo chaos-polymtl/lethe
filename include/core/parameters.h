@@ -916,7 +916,8 @@ namespace Parameters
     /// Prefix for the energy output in Cahn-Hilliard simulations
     std::string phase_energy_output_name;
 
-    /// Enable calculation of total fluid volume and total particles volume in cfd-dem simulation
+    /// Enable calculation of total fluid volume and total particles volume in
+    /// cfd-dem simulation
     bool calculate_volume_phases;
 
     /// prifix for the total volume output in cfd-dem simulation
