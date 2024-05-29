@@ -33,7 +33,7 @@ if len(sys.argv)<4:
 # Excitation amplitudes to plot
 delta_values = sys.argv[2:]
 
-# Initialise lists
+# Initialize lists
 Lb_list = []
 delta_list = []
 no_breakup_delta_list = []

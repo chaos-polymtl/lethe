@@ -40,7 +40,7 @@ Description of the Case
 
 Surface tension is renowned for its stabilizing effects, yet it also serves a disruptive role in various applications, such as inkjet printing. There, the surface tension plays a pivotal role in breaking up the continuous inkjet into droplets, governed by the destabilizing mechanism on the interface between the air and the ink known as the Rayleigh-Plateau instability.
 
-In this example the Rayleigh-Plateau instability is simulated through a continuous glycerol jet that undergoes a perturbation a of different excitation amplitudes. The velocity imposed at the jet inlet takes the following form:
+In this example the Rayleigh-Plateau instability is simulated through a continuous glycerol jet that undergoes a perturbation of different excitation amplitudes. The velocity imposed at the jet inlet takes the following form:
 
 .. math::
   u_\mathrm{inlet} = U \left[1+\delta_0 \sin{\left(2 \mathrm{\pi} f t \right)}\right] = U \left[1+\delta_0 \sin{\left(\frac{\kappa U t}{R_\mathrm{inlet}}\right)}\right]
@@ -50,7 +50,7 @@ where :math:`U` is the initial uniform velocity of the jet, :math:`\delta_0` is 
 .. note::
   It is assumed that at the initial state the air is static :math:`\left(\mathbf{u}_\mathrm{air} = \mathbf{0} \; \mathrm{m\, s^{-1}}\right)`.
 
-The following figure display the initial state.
+The following figure displays the initial state:
 
 
 +-------------------------------------------------------------------------------------------------------------------+
@@ -167,7 +167,7 @@ Initial Conditions
 ~~~~~~~~~~~~~~~~~~
 
 In the ``initial conditions``, we define the initial condition as presented in the figure above.
-The uniform jet velocity :math:`(U = 1.569 \; \mathrm{m \, s^{-1}})` corresponds to a :math:`We=20`.
+The uniform jet velocity :math:`(U = 1.569 \; \mathrm{m \, s^{-1}})` corresponds to :math:`We=20`.
 
 .. code-block:: text
 
@@ -322,7 +322,7 @@ The script then calculates an average :math:`L_\mathrm{b}` which is used to eval
 +-------------------------------------------------------------------------------------------------------------------+
 
 As it can be seen above, for :math:`\delta_0 \leq 0.1`, we observe no breakup. The jet stabilizes despite the perturbation. An additional case was studied at :math:`\delta_0 = 0.12` to check the increasing stabilizing tendency of the jet for lower excitation amplitude values.
-We also observe that none the of the other evaluation points match with the work of Denner *et al.* `[1] <https://link.springer.com/article/10.1007/s10494-021-00291-w>`_  However, a similar trend in values is observed for :math:`\delta_0 \in [0.2,0.5]`. At :math:`\delta_0 = 0.6`, a huge difference is observed. This is due to the way the satellite droplets are formed. As opposed to previous simulations, the satellite droplets are formed from the broken-off part of the jet, decreasing significantly :math:`L_\mathrm{b}` as displayed in the video below. This might have not been the case in the work of Denner *et al.* `[1] <https://link.springer.com/article/10.1007/s10494-021-00291-w>`_
+We also observe that none of the other evaluation points match with the work of Denner *et al.* `[1] <https://link.springer.com/article/10.1007/s10494-021-00291-w>`_  However, a similar trend in values is observed for :math:`\delta_0 \in [0.2,0.5]`. At :math:`\delta_0 = 0.6`, a huge difference is observed. This is due to the way the satellite droplets are formed. As opposed to previous simulations, the satellite droplets are formed from the broken-off part of the jet, decreasing significantly :math:`L_\mathrm{b}` as displayed in the video below. This might have not been the case in the work of Denner *et al.* `[1] <https://link.springer.com/article/10.1007/s10494-021-00291-w>`_
 
 .. raw:: html
 
