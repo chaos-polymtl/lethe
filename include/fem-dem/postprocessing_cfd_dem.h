@@ -18,21 +18,22 @@
 #define lethe_postprocessing_cfd_dem_h
 
 // Dofs
-#  include <deal.II/dofs/dof_handler.h>
+#include <deal.II/dofs/dof_handler.h>
 
 // Fe
-#  include <deal.II/fe/fe.h>
-#  include <deal.II/fe/mapping_fe.h>
+#include <deal.II/fe/fe.h>
+#include <deal.II/fe/mapping_fe.h>
 
 // Lethe includes
-#  include <solvers/physical_properties_manager.h>
+#include <solvers/physical_properties_manager.h>
 
 /**
- * @brief This function calculates total volume of fluid and total volume of particles in cfd-dem simulation. 
+ * @brief This function calculates total volume of fluid and total volume of particles in cfd-dem simulation.
  *
  * \f$V_{fluid} = \int \varepsilon d \Omega \f$,
  * \f$V_{particles} = \int (1- \varepsilon) d \Omega \f$
- * where \f$ \varepsilon \f$ is the void fraction and \f$ d \Omega \f$ is the volume of the cell.
+ * where \f$ \varepsilon \f$ is the void fraction and \f$ d \Omega \f$ is the
+ * volume of the cell.
  *
  * @param void_fraction_dof_handler. Used to calculate the void fraction at quadrature points
  * @param present_void_fraction_solution. Void fraction solution vector
@@ -41,9 +42,10 @@
  */
 template <int dim, typename VectorType>
 std::pair<double, double>
-calculate_fluid_and_particle_volumes(const DoFHandler<dim> &void_fraction_dof_handler,
-                           const VectorType   &present_void_fraction_solution,
-                           const Quadrature<dim> &quadrature_formula,
-                           const Mapping<dim>    &mapping);
+calculate_fluid_and_particle_volumes(
+  const DoFHandler<dim> &void_fraction_dof_handler,
+  const VectorType      &present_void_fraction_solution,
+  const Quadrature<dim> &quadrature_formula,
+  const Mapping<dim>    &mapping);
 
 #endif

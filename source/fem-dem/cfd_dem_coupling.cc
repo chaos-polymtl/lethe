@@ -1252,19 +1252,20 @@ template <int dim>
 void
 CFDDEMSolver<dim>::postprocess_cfd_dem()
 {
-  // Calculate total volume of fluid and solid 
+  // Calculate total volume of fluid and solid
   if (this->simulation_parameters.post_processing.calculate_volume_phases)
-   {
+    {
       TimerOutput::Scope t(this->computing_timer, "total_volume_calculation");
       double             total_volume_fluid, total_volume_particles;
-      std::tie(total_volume_fluid, total_volume_particles) = calculate_fluid_and_particle_volumes(
-        this->void_fraction_dof_handler,
-        this->nodal_void_fraction_relevant,
-        *this->cell_quadrature,
-        *this->mapping);
+      std::tie(total_volume_fluid, total_volume_particles) =
+        calculate_fluid_and_particle_volumes(this->void_fraction_dof_handler,
+                                             this->nodal_void_fraction_relevant,
+                                             *this->cell_quadrature,
+                                             *this->mapping);
       this->table_volume_phases.add_value(
         "time", this->simulation_control->get_current_time());
-      this->table_volume_phases.add_value("total-volume-fluid", total_volume_fluid);
+      this->table_volume_phases.add_value("total-volume-fluid",
+                                          total_volume_fluid);
       this->table_volume_phases.add_value("total-volume-particles",
                                           total_volume_particles);
       if (this->simulation_parameters.post_processing.verbosity ==
@@ -1294,7 +1295,8 @@ CFDDEMSolver<dim>::postprocess_cfd_dem()
         {
           std::string filename =
             this->simulation_parameters.simulation_control.output_folder +
-            this->simulation_parameters.post_processing.volume_phases_output_name +
+            this->simulation_parameters.post_processing
+              .volume_phases_output_name +
             ".dat";
           std::ofstream output(filename.c_str());
           table_volume_phases.set_precision("time", 12);
