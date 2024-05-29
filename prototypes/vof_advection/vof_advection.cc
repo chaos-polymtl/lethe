@@ -35,6 +35,7 @@
 #include <deal.II/distributed/grid_refinement.h>
 
 #include <deal.II/base/work_stream.h>
+#include <deal.II/base/data_out_base.h>
 
 #include <deal.II/numerics/data_out.h>
 #include <deal.II/numerics/matrix_tools.h>
@@ -101,6 +102,94 @@ double InitialConditions<dim>::value(const Point<dim>  &p,
 }
 
 template <int dim>
+class Visualization : public dealii::DataOutInterface<0, dim>
+{
+public:
+  Visualization();
+  
+  void  
+  build_patches(DoFHandler<dim> &dof_handler, NonMatching::FEValues<dim> &non_matching_fe_values);
+  
+private:
+  /**
+   * Implementation of the corresponding function of the base class.
+   */
+  virtual const std::vector<DataOutBase::Patch<0, dim>> &
+  get_patches() const override;
+  
+  virtual std::vector<std::string>
+  get_dataset_names() const override;
+  
+  /**
+   * Output information that is filled by build_patches() and
+   * written by the write function of the base class.
+   */
+  std::vector<DataOutBase::Patch<0, dim>> patches;
+  
+  /**
+   * A list of field names for all data components stored in patches.
+   */
+  std::vector<std::string> dataset_names;
+};
+
+template <int dim>
+Visualization<dim>::Visualization()
+{}
+
+template <int dim>
+void
+Visualization<dim>::build_patches(DoFHandler<dim> &dof_handler, NonMatching::FEValues<dim> &non_matching_fe_values)
+{
+
+  for (const auto &cell : dof_handler.active_cell_iterators())
+  {
+  
+    
+    if (cell->is_locally_owned())
+    {
+  
+    
+    
+    non_matching_fe_values.reinit(cell);
+  
+    const std::optional<NonMatching::FEImmersedSurfaceValues<dim>>
+      &surface_fe_values = non_matching_fe_values.get_surface_fe_values();
+      
+    
+    
+    if (surface_fe_values)
+    {
+      
+      for (const unsigned int q :
+           surface_fe_values->quadrature_point_indices())
+        {
+          const Point<dim> &point = surface_fe_values->quadrature_point(q);
+          // pcout << "x = " << point[0] << "\t y = " << point[1] << std::endl;
+  
+          DataOutBase::Patch<0, dim> temp;
+          temp.vertices[0] = point;
+          patches.push_back(temp);
+        }
+      }
+    }
+  }
+}
+
+template <int dim>
+const std::vector<DataOutBase::Patch<0, dim>> &
+Visualization<dim>::get_patches() const
+{
+  return patches;
+}
+
+template <int dim>
+std::vector<std::string>
+Visualization<dim>::get_dataset_names() const
+{
+  return dataset_names;
+}
+
+template <int dim>
 class AdvectionProblem
 {
 public:
@@ -160,12 +249,16 @@ private:
   parallel::distributed::Triangulation<dim> triangulation;
   const MappingQ<dim>                       mapping;
   
-  FE_Q<dim>                 fe;
+  const FE_Q<dim>           fe;
   DoFHandler<dim>           dof_handler;
+  hp::FECollection<dim>     fe_collection;
+  
+  const FE_Q<dim> fe_level_set;
+  DoFHandler<dim> level_set_dof_handler;
+  VectorType      level_set;
+      
   AffineConstraints<double> constraints;
   MatrixType                system_matrix;
-  
-  VectorType level_set;
   
   NonMatching::MeshClassifier<dim> mesh_classifier;
 
@@ -175,6 +268,10 @@ private:
   VectorType solution;
   VectorType previous_solution;
   VectorType location;
+  VectorType signed_distance;
+  
+  
+  std::map<types::global_cell_index,Point<dim>> intersection_point;
   
   VectorType system_rhs;
   
@@ -184,15 +281,23 @@ private:
   ConditionalOStream pcout;
 };
 
+enum ActiveFEIndex
+{
+  lagrange = 0,
+  nothing  = 1
+};
+    
 template <int dim>
 AdvectionProblem<dim>::AdvectionProblem()
   : triangulation(MPI_COMM_WORLD,
                   typename Triangulation<dim>::MeshSmoothing(
                     Triangulation<dim>::smoothing_on_refinement |
                     Triangulation<dim>::smoothing_on_coarsening))
-  , mapping(2)
+  , mapping(1)
   , fe(1)
   , dof_handler(triangulation)
+  , fe_level_set(1)
+  , level_set_dof_handler(triangulation)
   , mesh_classifier(dof_handler, level_set)
   , dt(0.001)
   , mpi_communicator(MPI_COMM_WORLD)
@@ -202,8 +307,18 @@ AdvectionProblem<dim>::AdvectionProblem()
 template <int dim>
 void AdvectionProblem<dim>::setup_system()
 {
+  fe_collection.push_back(FE_Q<dim>(1));
+      // fe_collection.push_back(FE_Nothing<dim>());
+  
+  for (const auto &cell : dof_handler.active_cell_iterators())
+    {
+      // const NonMatching::LocationToLevelSet cell_location =
+      //   mesh_classifier.location_to_level_set(cell);
+      cell->set_active_fe_index(ActiveFEIndex::lagrange);
+    }
+        
   pcout << "boop 0" << std::endl;
-  dof_handler.distribute_dofs(fe);
+  dof_handler.distribute_dofs(fe_collection);
   
   pcout << "boop 1" << std::endl;
   
@@ -216,7 +331,7 @@ void AdvectionProblem<dim>::setup_system()
   previous_solution.reinit(locally_owned_dofs, locally_relevant_dofs, mpi_communicator);
   level_set.reinit(locally_owned_dofs, locally_relevant_dofs, mpi_communicator);
   location.reinit(locally_owned_dofs, locally_relevant_dofs, mpi_communicator);
-  
+  signed_distance.reinit(locally_owned_dofs, locally_relevant_dofs, mpi_communicator);
   
   system_rhs.reinit(locally_owned_dofs, mpi_communicator);
                      
@@ -292,6 +407,7 @@ void AdvectionProblem<dim>::local_assemble_system(
 {
   if (!cell->is_locally_owned())
     return;
+  
   
   const unsigned int dofs_per_cell = fe.n_dofs_per_cell();
   const unsigned int n_q_points =
@@ -420,7 +536,6 @@ AdvectionProblem<dim>::compute_level_set_from_phase_fraction()
                                            mpi_communicator);
   for (auto p : this->locally_owned_dofs)
     {
-      // level_set_owned[p] = std::log(std::max((2.0*solution[p])/(2.0-solution[p]),1e-12));
       level_set_owned[p] = 2.0*solution[p] - 1.0;
     }
   level_set = level_set_owned;  
@@ -430,36 +545,138 @@ template <int dim>
 void 
 AdvectionProblem<dim>::identify_cell_location()
 {  
+  // VectorType location_owned(this->locally_owned_dofs,
+  //                                          mpi_communicator);
+  // 
+
+  // 
+  //     if (!cell->is_locally_owned())
+  //       return;
+  // 
+  //     const NonMatching::LocationToLevelSet cell_location =
+  //           mesh_classifier.location_to_level_set(cell);
+  // 
+  //     const unsigned int dofs_per_cell = fe.n_dofs_per_cell();
+  // 
+  // 
+  //     std::vector<types::global_dof_index> dof_indices(dofs_per_cell);
+  // 
+  //     cell->get_dof_indices(dof_indices);
+  // 
+  // 
+  //     for (unsigned int i = 0; i < dofs_per_cell; ++i)
+  //     {
+  //       if (cell_location == NonMatching::LocationToLevelSet::intersected)
+  //         location_owned[dof_indices[i]] = 1.0;
+  //     }
+  // 
+  //   }
+  // 
+  // location = location_owned;  
+  
+  VectorType distance_owned(this->locally_owned_dofs,
+                                           mpi_communicator);
+                                           
+  distance_owned = DBL_MAX;
+  
+  const QGaussLobatto<1> quadrature_1D(2);
+  
+  NonMatching::RegionUpdateFlags region_update_flags;
+  // region_update_flags.inside = update_values | update_gradients |
+                               // update_JxW_values | update_quadrature_points;
+  region_update_flags.surface = update_quadrature_points |
+                                update_normal_vectors;
+                                
+
+                                
+  NonMatching::FEValues<dim> non_matching_fe_values(fe_collection,
+                                                    quadrature_1D,
+                                                    region_update_flags,
+                                                    mesh_classifier,
+                                                    dof_handler,
+                                                    level_set);
+  Visualization<dim> intersection_data_out;  
+  
+  intersection_data_out.build_patches(dof_handler, non_matching_fe_values);
+  
+  
+  intersection_data_out.write_vtu_with_pvtu_record("output/",
+                                      "interface",
+                                      1,
+                                      MPI_COMM_WORLD,
+                                      3);
+  
+  std::map< types::global_dof_index, Point<dim >> dof_support_points = DoFTools::map_dofs_to_support_points(mapping,
+                                       dof_handler);
   
   for (const auto &cell : dof_handler.active_cell_iterators())
+  {
+  
+    // pcout << "ohoh" << std::endl;
+  
+    if (cell->is_locally_owned())
     {
+  
+    const unsigned int dofs_per_cell = fe.n_dofs_per_cell();
+
+
+    std::vector<types::global_dof_index> dof_indices(dofs_per_cell);
+
+    cell->get_dof_indices(dof_indices);
+    
+    non_matching_fe_values.reinit(cell);
+  
+    const std::optional<NonMatching::FEImmersedSurfaceValues<dim>>
+      &surface_fe_values = non_matching_fe_values.get_surface_fe_values();
+  
+    if (surface_fe_values)
+    {
+      const unsigned int cell_index = cell->global_active_cell_index();
       
-      if (!cell->is_locally_owned())
-        return;
+      const Point<dim> &point_0 = surface_fe_values->quadrature_point(0);
+      const Point<dim> &point_1 = surface_fe_values->quadrature_point(1);
       
-      const NonMatching::LocationToLevelSet cell_location =
-            mesh_classifier.location_to_level_set(cell);
+      for (const unsigned int q :
+           surface_fe_values->quadrature_point_indices())
+        {
+          const Point<dim> &point = surface_fe_values->quadrature_point(q);
+          intersection_point[cell_index] = point;
+        }
       
-      const unsigned int dofs_per_cell = fe.n_dofs_per_cell();
-      
-      
-      std::vector<types::global_dof_index> dof_indices(dofs_per_cell);
-      
-      cell->get_dof_indices(dof_indices);
-      
+      const Tensor<1,dim> d = point_1 - point_0;
       
       for (unsigned int i = 0; i < dofs_per_cell; ++i)
       {
-        if (cell_location == NonMatching::LocationToLevelSet::intersected)
-          location[dof_indices[i]] = 1.0;
+        const Point<dim> y = dof_support_points.at(dof_indices[i]);
+        
+        const double t_bar = d*(y-point_0)/(d.norm()*d.norm());
+        
+        double D_square;
+        
+        if (t_bar <= 0.0)
+        {
+          const Tensor<1,dim> y_minus_p0 = y-point_0;
+          D_square = y_minus_p0.norm()*y_minus_p0.norm();
+        }
+        else if (t_bar >= 1.0)
+        {
+          const Tensor<1,dim> y_minus_p1 = y-point_1;
+          D_square = y_minus_p1.norm()*y_minus_p1.norm();
+        }
+        else
+        {
+          const Tensor<1,dim> projection = y-(point_0+t_bar*d);
+          D_square = projection.norm()*projection.norm();
+        }
+        const double previous_D = distance_owned[dof_indices[i]];
+        distance_owned[dof_indices[i]] = std::min(previous_D, std::sqrt(D_square));
       }
       
-      // if (cell_location == NonMatching::LocationToLevelSet::outside)
-      // {
-      // 
-      // }
-        
+              
     }
+    }
+  }
+  signed_distance = distance_owned;
 }
 
 template <int dim>
@@ -469,9 +686,16 @@ void AdvectionProblem<dim>::output_results(const int time_iteration, const doubl
   data_out.attach_dof_handler(dof_handler);
   data_out.add_data_vector(solution, "solution");
   data_out.add_data_vector(level_set, "level_set");
-  data_out.add_data_vector(location, "location");
+  data_out.add_data_vector(signed_distance, "signed_distance");
   
+  // data_out.add_data_vector(location, "location");
   
+  data_out.set_cell_selection(
+        [this](const typename Triangulation<dim>::cell_iterator &cell) {
+          return cell->is_active() &&
+                 mesh_classifier.location_to_level_set(cell) ==
+                   NonMatching::LocationToLevelSet::intersected;
+        });
   data_out.build_patches();
 
   DataOutBase::VtkFlags vtk_flags;
@@ -533,9 +757,11 @@ void AdvectionProblem<dim>::run()
   
   mesh_classifier.reclassify();
 
-  
+
   identify_cell_location();
-  
+
+
+    
   output_results(it,time);
   
   
