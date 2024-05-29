@@ -8,32 +8,32 @@ Running on 1 MPI rank(s)...
 *******************************************************************************
 Transient iteration: 1        Time: 0.02     Time step: 0.02     CFL: 0       
 *******************************************************************************
-L2 error velocity : 1.98025e-05
+L2 error velocity : 2.00185e-05
 L2 error temperature : 0
 L2 error phase : 0.0104167
 
 **********************************************************************************
-Transient iteration: 2        Time: 0.04     Time step: 0.02     CFL: 6.16399e-05
+Transient iteration: 2        Time: 0.04     Time step: 0.02     CFL: 5.07407e-05
 **********************************************************************************
-L2 error velocity : 1.98303e-05
+L2 error velocity : 2.0044e-05
 L2 error temperature : 0
-L2 error phase : 0.0104166
+L2 error phase : 0.0104164
 
 **********************************************************************************
-Transient iteration: 3        Time: 0.06     Time step: 0.02     CFL: 6.17275e-05
+Transient iteration: 3        Time: 0.06     Time step: 0.02     CFL: 5.08065e-05
 **********************************************************************************
-L2 error velocity : 1.98278e-05
+L2 error velocity : 2.00424e-05
 L2 error temperature : 0
-L2 error phase : 0.0104166
+L2 error phase : 0.0104161
  time  error_velocity error_pressure 
-0.0200   1.980252e-05         0.9287 
-0.0400   1.983028e-05         0.9288 
-0.0600   1.982779e-05         0.9288 
+0.0200   2.001848e-05         0.9288 
+0.0400   2.004399e-05         0.9289 
+0.0600   2.004244e-05         0.9289 
 cells error_temperature 
  1024      0.000000e+00 
  1024      0.000000e+00 
  1024      0.000000e+00 
  time  error_phase  
 0.0200 1.041667e-02 
-0.0400 1.041665e-02 
-0.0600 1.041663e-02 
+0.0400 1.041639e-02 
+0.0600 1.041611e-02 
