@@ -60,8 +60,7 @@ subsection initial conditions
   subsection VOF
     set Function expression = if(y^2 <= 1.3110e-6, 1, 0)
     subsection projection step
-      set enable           = true
-      set diffusion factor = 1
+      set enable = true
     end
   end
 end
