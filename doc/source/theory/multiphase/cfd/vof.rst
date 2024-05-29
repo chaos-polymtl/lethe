@@ -28,7 +28,7 @@ The evolution of :math:`\Gamma` (or the iso-contour :math:`\phi=0.5`) in the tim
 or using `Einstein notation <https://en.wikipedia.org/wiki/Einstein_notation>`_:
 
 .. math::
-  \partial_t \phi + \partial_i \phi u_i = 0 \quad \forall (x_i,t)\in \Omega\times[0,T]
+  \partial_t \phi + \partial_i (\phi u_i) = 0 \quad \forall (x_i,t)\in \Omega\times[0,T]
 
 Developing the second term gives:
 
@@ -40,7 +40,7 @@ Typically, the term :math:`\phi\partial_i u_i` (or :math:`\phi \nabla \cdot \mat
 To complete the strong formulation of the problem, let's impose a no flux boundary condition on :math:`\partial \Omega`:
 
 .. math::
-  \partial_i \phi n_i= 0 \quad \forall (x_i,t)\in \partial \Omega\times[0,T]
+  (\partial_i \phi) n_i= 0 \quad \forall (x_i,t)\in \partial \Omega\times[0,T]
 
 where :math:`n_i` represent the outward pointing unit normal vector of :math:`\partial \Omega`, i.e., :math:`\mathbf{n}`.
 
@@ -89,20 +89,20 @@ The numerical resolution of the advection equation requires stabilization becaus
 .. math::
 
   &\int_\Omega v^h \left( \partial_t \phi^h + \phi^h\partial_i u_i + u_i\partial_i\phi^h\right) d \Omega \\
-  &\quad + \sum_k \int_{\Omega_k}\tau_\mathrm{SUPG} u_i\partial_i v^h\left(\partial_t \phi^h + \phi^h\partial_i u_i + u_i\partial_i\phi^h \right) d \Omega_k \\
-  &\qquad + \sum_k \int_{\Omega_k}v_\mathrm{DCDD}f_\mathrm{DCDD} \partial_i v^h \partial_i \phi^h  d \Omega_k  = 0
+  &\quad + \sum_k \int_{\Omega_k}\tau_\mathrm{SUPG} (u_i\partial_i v^h)\left(\partial_t \phi^h + \phi^h\partial_i u_i + u_i\partial_i\phi^h \right) d \Omega_k \\
+  &\qquad + \sum_k \int_{\Omega_k}v_\mathrm{DCDD} (\partial_i v^h)( f_{\mathrm{DCDD}_ij}\partial_i \phi^h)  d \Omega_k  = 0
 
 where the first element-wise summation represents the SUPG stabilization term and the second is the shock capturing scheme. The same SUPG stabilization as in the Navier-Stokes finite element formulation is used (see :doc:`../../multiphysics/fluid_dynamics/stabilization`). The terms of the DCDD scheme are:  
 
 .. math::
 
   &v_\mathrm{DCDD} = \frac{1}{2} h^2 \|\mathbf{u}\| \| \nabla \phi^h_\mathrm{old} \| \\
-  &f_\mathrm{DCDD} =
-    \frac{\mathbf{u}}{\|\mathbf{u}\| } \frac{\mathbf{u}}{\|\mathbf{u}\|}
+  &\mathbf{f}_\mathrm{DCDD} =
+    \frac{\mathbf{u}}{\|\mathbf{u}\| } \otimes \frac{\mathbf{u}}{\|\mathbf{u}\|}
     - \left(\frac{\nabla \phi^h_\mathrm{old}}{\| \nabla \phi^h_\mathrm{old} \|} \cdot \frac{\mathbf{u}}{\|\mathbf{u}\| } \right)^2
-    \frac{\nabla \phi^h_\mathrm{old}}{\| \nabla \phi^h_\mathrm{old} \|} \frac{\nabla \phi^h_\mathrm{old}}{\| \nabla \phi^h_\mathrm{old} \|}
+    \frac{\nabla \phi^h_\mathrm{old}}{\| \nabla \phi^h_\mathrm{old} \|} \otimes \frac{\nabla \phi^h_\mathrm{old}}{\| \nabla \phi^h_\mathrm{old} \|}
 
-The term :math:`v_\mathrm{DCDD}` ensures that diffusivity is added only where there is a large phase gradient and a non-zero velocity, i.e., where the interface :math:`\Gamma` is in motion. The term :math:`f_\mathrm{DCDD}` adds diffusivity only in the crosswind direction, since streamline diffusion is already added by the SUPG stabilization.
+The term :math:`v_\mathrm{DCDD}` ensures that diffusivity is added only where there is a large phase gradient and a non-zero velocity, i.e., where the interface :math:`\Gamma` is in motion. The term :math:`\mathbf{f}_\mathrm{DCDD}` adds diffusivity only in the crosswind direction, since streamline diffusion is already added by the SUPG stabilization.
 
 To avoid a non-linear finite element formulation, the phase gradient of the previous time step :math:`(\phi^h_\mathrm{old})` is used.
 
