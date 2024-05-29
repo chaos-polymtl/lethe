@@ -62,7 +62,7 @@ The following figure displays the initial state:
 +-------------------------------------------------------------------------------------------------------------------+
 
 .. note::
-  In this example, gravity contributions are not considered (:math:`Fr \rightarrow \infty`).
+  In this example, gravity contributions are not considered :math:`\left(Fr = \frac{u}{\sqrt{g R_\mathrm{inlet}}} \rightarrow \infty \right)`.
 
 ****
 
@@ -104,7 +104,7 @@ The ``multiphysics`` subsection is used to enable the VOF solver.
 Physical Properties
 ~~~~~~~~~~~~~~~~~~~~
 
-In the ``physical properties`` subsection, we define the ``fluid 1`` as presented for case J1 in Denner *et al.* `[1] <https://link.springer.com/article/10.1007/s10494-021-00291-w>`_ The viscosity is deduced from an imposed Ohnesorge number (:math:`Oh`) value of :math:`0.1`. The ambient fluid (``fluid 0``) is defined such that the density :math:`\left(\frac{\rho_1}{\rho_0} = 10^3 \right)` and dynamic viscosity :math:`\left(\frac{\mu_1}{\mu_0} = 10^2\right)` ratios are respected. A ``fluid-fluid`` type of material interaction is also defined to specify the ``surface tension model``. In this case, it is set to ``constant`` with the ``surface tension coefficient`` set to :math:`0.0674 \; \mathrm{N \, m^{-1}}`.
+In the ``physical properties`` subsection, we define the ``fluid 1`` as presented for case J1 in Denner *et al.* `[1] <https://link.springer.com/article/10.1007/s10494-021-00291-w>`_ The viscosity is deduced from an imposed Ohnesorge number :math:`\left(Oh=\frac{\mu_1}{\sigma\rho_1 R_\mathrm{inlet}} \right)` value of :math:`0.1`. The ambient fluid (``fluid 0``) is defined such that the density :math:`\left(\frac{\rho_1}{\rho_0} = 10^3 \right)` and dynamic viscosity :math:`\left(\frac{\mu_1}{\mu_0} = 10^2\right)` ratios are respected. A ``fluid-fluid`` type of material interaction is also defined to specify the ``surface tension model``. In this case, it is set to ``constant`` (default value) with the ``surface tension coefficient`` (:math:`\sigma`) set to :math:`0.0674 \; \mathrm{N \, m^{-1}}`.
 
 .. code-block:: text
 
@@ -122,9 +122,6 @@ In the ``physical properties`` subsection, we define the ``fluid 1`` as presente
       subsection material interaction 0
         set type = fluid-fluid
         subsection fluid-fluid interaction
-          set first fluid id              = 0
-          set second fluid id             = 1
-          set surface tension model       = constant
           set surface tension coefficient = 0.0674
         end
       end
@@ -157,7 +154,6 @@ In the ``mesh adaptation`` subsection, we dynamically adapt the mesh using the `
       set fraction type            = fraction
       set max refinement level     = 8
       set min refinement level     = 5
-      set frequency                = 1
       set fraction refinement      = 0.99
       set fraction coarsening      = 0.001
       set initial refinement steps = 4
@@ -167,7 +163,7 @@ Initial Conditions
 ~~~~~~~~~~~~~~~~~~
 
 In the ``initial conditions``, we define the initial condition as presented in the figure above.
-The uniform jet velocity :math:`(U = 1.569 \; \mathrm{m \, s^{-1}})` corresponds to :math:`We=20`.
+The uniform jet velocity :math:`(U = 1.569 \; \mathrm{m \, s^{-1}})` corresponds to :math:`We=\frac{\rho_1 R_\mathrm{inlet} U^2}{\sigma}=20`.
 
 .. code-block:: text
 

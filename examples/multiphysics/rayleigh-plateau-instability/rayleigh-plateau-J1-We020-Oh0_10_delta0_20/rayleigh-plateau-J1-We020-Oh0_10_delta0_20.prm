@@ -33,17 +33,13 @@ end
 
 subsection VOF
   subsection surface tension force
-    set enable                                   = true
-    set phase fraction gradient diffusion factor = 4
-    set curvature diffusion factor               = 1
-    set output auxiliary fields                  = true
+    set enable                  = true
+    set output auxiliary fields = true
   end
   subsection interface sharpening
     set enable              = true
     set frequency           = 20
     set interface sharpness = 1.5
-    set type                = constant
-    set threshold           = 0.5
   end
   subsection phase filtration
     set type = tanh
@@ -88,9 +84,6 @@ subsection physical properties
   subsection material interaction 0
     set type = fluid-fluid
     subsection fluid-fluid interaction
-      set first fluid id              = 0
-      set second fluid id             = 1
-      set surface tension model       = constant
       set surface tension coefficient = 0.0674
     end
   end
@@ -117,7 +110,6 @@ subsection mesh adaptation
   set fraction type            = fraction
   set max refinement level     = 8
   set min refinement level     = 5
-  set frequency                = 1
   set fraction refinement      = 0.99
   set fraction coarsening      = 0.001
   set initial refinement steps = 4
@@ -145,6 +137,10 @@ subsection boundary conditions
   end
 end
 
+# --------------------------------------------------
+# Boundary Conditions VOF
+#---------------------------------------------------
+
 subsection boundary conditions VOF
   set number = 1
   subsection bc 0
@@ -156,16 +152,6 @@ subsection boundary conditions VOF
   end
 end
 
-#---------------------------------------------------
-# FEM
-#---------------------------------------------------
-
-subsection FEM
-  set velocity order = 1
-  set pressure order = 1
-  set VOF order      = 1
-end
-
 # --------------------------------------------------
 # Non-Linear Solver Control
 #---------------------------------------------------
@@ -174,12 +160,10 @@ subsection non-linear solver
   subsection fluid dynamics
     set tolerance      = 1e-8
     set max iterations = 20
-    set verbosity      = verbose
   end
   subsection VOF
     set tolerance      = 1e-10
     set max iterations = 2
-    set verbosity      = verbose
   end
 end
 
@@ -189,18 +173,12 @@ end
 
 subsection linear solver
   subsection fluid dynamics
-    set method            = gmres
     set relative residual = 1e-3
     set minimum residual  = 1e-9
-    set preconditioner    = ilu
-    set verbosity         = verbose
   end
   subsection VOF
-    set method            = gmres
     set relative residual = 1e-8
     set minimum residual  = 1e-11
-    set preconditioner    = ilu
-    set verbosity         = verbose
   end
 end
 
