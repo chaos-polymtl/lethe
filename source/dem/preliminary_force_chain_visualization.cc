@@ -20,8 +20,9 @@
 #include <dem/set_particle_particle_contact_force_model.h>
 #include <dem/set_particle_wall_contact_force_model.h>
 #include <dem/velocity_verlet_integrator.h>
-#include <dem/write_checkpoint.h>
 #include <dem/visualization.h>
+#include <dem/write_checkpoint.h>
+
 #include <deal.II/base/table_handler.h>
 
 #include <deal.II/fe/mapping_q_generic.h>
@@ -40,12 +41,11 @@ DEMForceChain<dim>::write_output_results()
 {
   TimerOutput::Scope t(this->computing_timer, "Output VTU");
 
-  const std::string folder = "./output/";
-  const std::string particles_solution_name =
-    "Force_chain_test";
-  const unsigned int iter        = 1;
-  const double       time        = 0;
-  const unsigned int group_files = 1;
+  const std::string  folder                  = "./output/";
+  const std::string  particles_solution_name = "Force_chain_test";
+  const unsigned int iter                    = 1;
+  const double       time                    = 0;
+  const unsigned int group_files             = 1;
 
   // Write particles
   Visualization<dim> particle_data_out;
@@ -88,9 +88,7 @@ template <int dim>
 void
 DEMForceChain<dim>::solve()
 {
-  
-    write_output_results();
-        
+  write_output_results();
 }
 
 template class DEMForceChain<2>;

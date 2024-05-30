@@ -15,82 +15,81 @@
  *
  */
 
-#include <deal.II/grid/tria.h>
-#include <deal.II/grid/grid_generator.h>
-#include <deal.II/grid/grid_out.h>
-#include <deal.II/numerics/data_out.h>
- 
-#include <iostream>
-#include <fstream>
-#include <cmath>
-
 #include <core/parameters_lagrangian.h>
 #include <core/tensors_and_points_dimension_manipulation.h>
 
 #include <dem/force_chains_visualization.h>
 #include <dem/particle_particle_contact_force.h>
 
+#include <deal.II/grid/grid_generator.h>
+#include <deal.II/grid/grid_out.h>
+#include <deal.II/grid/tria.h>
+
+#include <deal.II/numerics/data_out.h>
+
+#include <cmath>
+#include <fstream>
+#include <iostream>
+
 using namespace DEM;
 
 
 
-
 template <
-  int                                                           dim,
-  Parameters::Lagrangian::ParticleParticleContactForceModel     contact_model,
-  Parameters::Lagrangian::RollingResistanceMethod               rolling_friction_model>
+  int                                                       dim,
+  Parameters::Lagrangian::ParticleParticleContactForceModel contact_model,
+  Parameters::Lagrangian::RollingResistanceMethod rolling_friction_model>
 ParticlesForceChains<dim, contact_model, rolling_friction_model>::
-  ParticlesForceChains(const DEMSolverParameters<dim> &dem_parameters_in):
-  ParticleParticleContactForce<dim, contact_model, rolling_friction_model>(dem_parameters_in), 
-  dem_parameters(dem_parameters_in)
-  {
-    force_normal.push_back(0);
-    vertices.push_back(Point<3>(0,0,0));
-    vertices.push_back(Point<3>(0,0,0));
-  };
-
-
-
-template <
-  int                                                           dim,
-  Parameters::Lagrangian::ParticleParticleContactForceModel     contact_model,
-  Parameters::Lagrangian::RollingResistanceMethod               rolling_friction_model>
-void
-ParticlesForceChains<dim, contact_model, rolling_friction_model>::
-multi_general_cell(Triangulation<1, 3>        &tria,
-               const std::vector<Point<3>>    &vertices)
-  {
-    const unsigned int n_cells = vertices.size()/2;
-    std::vector<CellData<1>> cells(n_cells, CellData<1>());
-    for (unsigned int i =0; i< n_cells; ++i)
-    {
-      for (unsigned int j =0; j < 2; ++j)
-      {
-        cells[i].vertices[j] = 2*i +j ;
-        cells[i].material_id = 0;
-      }
-    };
-    tria.create_triangulation(vertices, cells, SubCellData());
-  };
-
-
-
-
-template <
-  int                                                             dim,
-  Parameters::Lagrangian::ParticleParticleContactForceModel       contact_model,
-  Parameters::Lagrangian::RollingResistanceMethod                 rolling_friction_model>
-void
-ParticlesForceChains<dim, contact_model, rolling_friction_model>::
-  calculate_force_chains(
-    DEMContactManager<dim>    &container_manager,
-    const double               dt,
-    std::vector<Tensor<1, 3>> &torque,
-    std::vector<Tensor<1, 3>> &force,
-    const Tensor<1, dim>       periodic_offset)
+  ParticlesForceChains(const DEMSolverParameters<dim> &dem_parameters_in)
+  : ParticleParticleContactForce<dim, contact_model, rolling_friction_model>(
+      dem_parameters_in)
+  , dem_parameters(dem_parameters_in)
 {
+  force_normal.push_back(0);
+  vertices.push_back(Point<3>(0, 0, 0));
+  vertices.push_back(Point<3>(0, 0, 0));
+};
 
-  ParticleParticleContactForce< dim, contact_model, rolling_friction_model> force_chains_object(dem_parameters);
+
+
+template <
+  int                                                       dim,
+  Parameters::Lagrangian::ParticleParticleContactForceModel contact_model,
+  Parameters::Lagrangian::RollingResistanceMethod rolling_friction_model>
+void
+ParticlesForceChains<dim, contact_model, rolling_friction_model>::
+  multi_general_cell(Triangulation<1, 3>         &tria,
+                     const std::vector<Point<3>> &vertices)
+{
+  const unsigned int       n_cells = vertices.size() / 2;
+  std::vector<CellData<1>> cells(n_cells, CellData<1>());
+  for (unsigned int i = 0; i < n_cells; ++i)
+    {
+      for (unsigned int j = 0; j < 2; ++j)
+        {
+          cells[i].vertices[j] = 2 * i + j;
+          cells[i].material_id = 0;
+        }
+    };
+  tria.create_triangulation(vertices, cells, SubCellData());
+};
+
+
+
+template <
+  int                                                       dim,
+  Parameters::Lagrangian::ParticleParticleContactForceModel contact_model,
+  Parameters::Lagrangian::RollingResistanceMethod rolling_friction_model>
+void
+ParticlesForceChains<dim, contact_model, rolling_friction_model>::
+  calculate_force_chains(DEMContactManager<dim>    &container_manager,
+                         const double               dt,
+                         std::vector<Tensor<1, 3>> &torque,
+                         std::vector<Tensor<1, 3>> &force,
+                         const Tensor<1, dim>       periodic_offset)
+{
+  ParticleParticleContactForce<dim, contact_model, rolling_friction_model>
+    force_chains_object(dem_parameters);
 
 
   auto &local_adjacent_particles = container_manager.local_adjacent_particles;
@@ -215,18 +214,19 @@ ParticlesForceChains<dim, contact_model, rolling_friction_model>::
                                 Parameters::Lagrangian::
                                   ParticleParticleContactForceModel::linear)
                     {
-                      this->calculate_linear_contact(contact_info,
-                                               tangential_relative_velocity,
-                                               normal_relative_velocity_value,
-                                               normal_unit_vector,
-                                               normal_overlap,
-                                               particle_one_properties,
-                                               particle_two_properties,
-                                               normal_force,
-                                               tangential_force,
-                                               particle_one_tangential_torque,
-                                               particle_two_tangential_torque,
-                                               rolling_resistance_torque);
+                      this->calculate_linear_contact(
+                        contact_info,
+                        tangential_relative_velocity,
+                        normal_relative_velocity_value,
+                        normal_unit_vector,
+                        normal_overlap,
+                        particle_one_properties,
+                        particle_two_properties,
+                        normal_force,
+                        tangential_force,
+                        particle_one_tangential_torque,
+                        particle_two_tangential_torque,
+                        rolling_resistance_torque);
                     }
 
                   if constexpr (contact_model ==
@@ -313,11 +313,10 @@ ParticlesForceChains<dim, contact_model, rolling_friction_model>::
 
                   Tensor<1, 3> &particle_two_torque = torque[particle_two_id];
                   Tensor<1, 3> &particle_two_force  = force[particle_two_id];
-                  
+
                   vertices.push_back(particle_one_location);
                   vertices.push_back(particle_two_location);
                   force_normal.push_back(sqrt(normal_force.norm()));
-                
                 }
 
               else
@@ -333,36 +332,33 @@ ParticlesForceChains<dim, contact_model, rolling_friction_model>::
 
 
 template <
-  int                                                           dim,
-  Parameters::Lagrangian::ParticleParticleContactForceModel     contact_model,
-  Parameters::Lagrangian::RollingResistanceMethod               rolling_friction_model>
+  int                                                       dim,
+  Parameters::Lagrangian::ParticleParticleContactForceModel contact_model,
+  Parameters::Lagrangian::RollingResistanceMethod rolling_friction_model>
 void
 ParticlesForceChains<dim, contact_model, rolling_friction_model>::
-  write_force_chains(
-    MPI_Comm                  mpi_communicator,
-    const std::string         folder,
-    const unsigned int        iter)
+  write_force_chains(MPI_Comm           mpi_communicator,
+                     const std::string  folder,
+                     const unsigned int iter)
 {
+  Triangulation<1, 3> triangulation;
+  multi_general_cell(triangulation, vertices);
+  DoFHandler<1, 3> force_dh(triangulation);
+  DataOut<1, 3>    data_out;
+  data_out.attach_dof_handler(force_dh);
 
-    Triangulation<1,3> triangulation;
-    multi_general_cell(triangulation, vertices);
-    DoFHandler<1,3> force_dh(triangulation);
-    DataOut<1,3> data_out;  
-    data_out.attach_dof_handler(force_dh);
-
-    Vector<float> force_values(triangulation.n_active_cells());
-    for (unsigned int i = 0; i < force_values.size(); ++i)
+  Vector<float> force_values(triangulation.n_active_cells());
+  for (unsigned int i = 0; i < force_values.size(); ++i)
     {
       force_values[i] = force_normal[i];
     }
-    data_out.add_data_vector(force_values, "force");
-      
-    data_out.build_patches();
+  data_out.add_data_vector(force_values, "force");
 
-    const std::string face_filename =
-      (folder + "force_chains." + Utilities::int_to_string(iter, 5) +".vtu");
-    data_out.write_vtu_in_parallel(face_filename.c_str(), mpi_communicator);
-  
+  data_out.build_patches();
+
+  const std::string face_filename =
+    (folder + "force_chains." + Utilities::int_to_string(iter, 5) + ".vtu");
+  data_out.write_vtu_in_parallel(face_filename.c_str(), mpi_communicator);
 };
 
 // No resistance
