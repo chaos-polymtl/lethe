@@ -6,6 +6,7 @@
 #include <dem/distributions.h>
 #include <dem/explicit_euler_integrator.h>
 #include <dem/find_contact_detection_step.h>
+#include <dem/force_chains_visualization.h>
 #include <dem/gear3_integrator.h>
 #include <dem/input_parameter_inspection.h>
 #include <dem/insertion_file.h>
@@ -19,7 +20,6 @@
 #include <dem/set_particle_wall_contact_force_model.h>
 #include <dem/velocity_verlet_integrator.h>
 #include <dem/write_checkpoint.h>
-#include <dem/force_chains_visualization.h>
 
 #include <deal.II/base/table_handler.h>
 
@@ -1060,21 +1060,22 @@ DEMSolver<dim>::write_output_results()
     }
   if (parameters.post_processing.force_chains)
     {
-        // Force chains visualization
-         ParticlesForceChains<dim,
-         Parameters::Lagrangian::ParticleParticleContactForceModel::hertz, 
-         Parameters::Lagrangian::RollingResistanceMethod::no_resistance>  particles_force_chains_object(parameters);
-         particles_force_chains_object.calculate_force_chains(
-            contact_manager,
-            simulation_control->get_time_step(),
-            torque,
-            force,
-            periodic_offset);
+      // Force chains visualization
+      ParticlesForceChains<
+        dim,
+        Parameters::Lagrangian::ParticleParticleContactForceModel::hertz,
+        Parameters::Lagrangian::RollingResistanceMethod::no_resistance>
+        particles_force_chains_object(parameters);
+      particles_force_chains_object.calculate_force_chains(
+        contact_manager,
+        simulation_control->get_time_step(),
+        torque,
+        force,
+        periodic_offset);
 
-         particles_force_chains_object.write_force_chains(
-          this->mpi_communicator,
-          folder,
-           iter);
+      particles_force_chains_object.write_force_chains(this->mpi_communicator,
+                                                       folder,
+                                                       iter);
     }
 
   // Write all solid objects
@@ -1469,7 +1470,6 @@ DEMSolver<dim>::solve()
 
 
 
-
       // We have to update the positions of the points on boundary faces and
       // their normal vectors here. The update_contacts deletes the
       // particle-wall contact candidate if it exists in the contact list. As
@@ -1534,8 +1534,6 @@ DEMSolver<dim>::solve()
       if (simulation_control->is_output_iteration())
         {
           write_output_results();
-
-
         }
 
       if (parameters.forces_torques.calculate_force_torque &&
