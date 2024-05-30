@@ -1,23 +1,22 @@
 # Lethe
 
-Lethe is an open source and we try to follow the deal.II mentality of having it
-developed in an open accessible environment. Consequently, all scientific
+Lethe is an open source software, and we try to follow the deal.II mentality of having it
+developed in an accessible environment. Consequently, all scientific
 developments made within Lethe are accessible to everyone even as they are
 currently being written. Anybody that wishes to use and contribute to a feature
 is welcome to do so.
 
-This document aims at establishing guidelines for contributions within
-Lethe.
+This document aims at establishing guidelines for contributions within Lethe.
 
-Lethe has a wiki which is openly accessible on : https://chaos-polymtl.github.io/lethe/index.html
+Lethe has its own documentation (user guide and developer guide) which are openly accessible on: https://chaos-polymtl.github.io/lethe/index.html
 
 
 # How can I contribute?
 
 Contributions through code or documentation should be done through pull
-request at the official Github repository of Lethe : https://github.com/chaos-polymtl/lethe.
+request at the official GitHub repository of Lethe : https://github.com/chaos-polymtl/lethe.
 We recommend that users either request access to the Lethe repository or
-create their own fork of Lethe on their own Github account. This can then be
+create their own fork of Lethe on their own GitHub account. This can then be
 used to open pull requests
 
 # What should be the content of a pull request (PR)?
@@ -43,7 +42,7 @@ See [this page](https://chaos-polymtl.github.io/lethe/documentation/contributing
 - Before making a pull request, the branch should be rebased on master to ensure
 a linear history and to make merging as easy as possible. It is the responsibility
 of the branch owner to ensure that the pull request goes as smoothly as possible.
-Pushing to Github after a rebase requires a force push. You can accomplish
+Pushing to GitHub after a rebase requires a force push. You can accomplish
 this by using `git push --force-with-lease`
 - All functions should be documented in the `.h`. All functions should contain
 a `@brief` that describes the function and a `@param` for each argument.
@@ -99,13 +98,13 @@ those libraries and executables) in the `CMakeLists.txt` files'
 `TARGET_LINK_LIBRARIES` calls, and omit any transitive dependencies.
 
 For example, the `lethe-particles` application
-[links to `lethe-core` and `lethe-dem`](applications/dem_2d/CMakeLists.txt)
+[links to `lethe-core` and `lethe-dem`](applications/lethe-particles/CMakeLists.txt)
 because it
-[includes core and DEM headers](applications/dem_2d/dem_2d.cc),
+[includes core and DEM headers](applications/lethe-particles/dem_2d.cc),
 but the `lethe-fluid` application
-[links only to `lethe-solvers`](applications/gd_navier_stokes_2d/CMakeLists.txt)
+[links only to `lethe-solvers`](applications/lethe-fluid/CMakeLists.txt)
 because it
-[includes only solvers headers](applications/gd_navier_stokes_2d/gd_navier_stokes_2d.cc),
+[includes only solvers headers](applications/lethe-fluid/gd_navier_stokes_2d.cc),
 and `lethe-core` is a transitive dependency of `lethe-solvers`.
 
 ## Dependencies between Lethe's libraries

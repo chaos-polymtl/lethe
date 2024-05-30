@@ -30,10 +30,11 @@ Code related list:
 - [ ] All in-code documentation related to this PR is updated (Doxygen format)
 - [ ] Lethe documentation is updated
 - [ ] If possible, new feature has a unit test or application test
+- [ ] The branch has been rebased onto master
 - [ ] Changelog (CHANGELOG.md) is updated
 - [ ] Code is indented with indent-all and .prm files with prm-indent
 
 Pull request related list:
 - [ ] Labels have been applied
 - [ ] There are at least 2 reviewers (or 1 if small feature) excluding the merger
-- [ ] If this PR close an issue or is related to a project, it is linked in the "Projects" or "Development" section
+- [ ] If this PR closes an issue or is related to a project, it is linked in the "Projects" or "Development" section
