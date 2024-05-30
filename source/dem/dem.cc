@@ -1067,8 +1067,7 @@ DEMSolver<dim>::write_output_results()
         Parameters::Lagrangian::RollingResistanceMethod::no_resistance>
         particles_force_chains_object(parameters);
       particles_force_chains_object.calculate_force_chains(
-        contact_manager,
-        simulation_control->get_time_step());
+        contact_manager, simulation_control->get_time_step());
 
       particles_force_chains_object.write_force_chains(this->mpi_communicator,
                                                        folder,

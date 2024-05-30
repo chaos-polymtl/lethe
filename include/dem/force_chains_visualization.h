@@ -42,9 +42,8 @@ public:
                      const std::vector<Point<3>> &vertices);
 
   void
-  calculate_force_chains(
-    DEMContactManager<dim>    &container_manager,
-    const double               dt);
+  calculate_force_chains(DEMContactManager<dim> &container_manager,
+                         const double            dt);
 
 
   void
