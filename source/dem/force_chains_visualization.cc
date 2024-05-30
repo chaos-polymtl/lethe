@@ -83,23 +83,20 @@ template <
 void
 ParticlesForceChains<dim, contact_model, rolling_friction_model>::
   calculate_force_chains(DEMContactManager<dim>    &container_manager,
-                         const double               dt,
-                         std::vector<Tensor<1, 3>> &torque,
-                         std::vector<Tensor<1, 3>> &force,
-                         const Tensor<1, dim>       periodic_offset)
+                         const double               dt)
 {
   ParticleParticleContactForce<dim, contact_model, rolling_friction_model>
     force_chains_object(dem_parameters);
 
 
   auto &local_adjacent_particles = container_manager.local_adjacent_particles;
-  auto &ghost_adjacent_particles = container_manager.ghost_adjacent_particles;
-  auto &local_periodic_adjacent_particles =
-    container_manager.local_periodic_adjacent_particles;
-  auto &ghost_periodic_adjacent_particles =
-    container_manager.ghost_periodic_adjacent_particles;
-  auto &ghost_local_periodic_adjacent_particles =
-    container_manager.ghost_local_periodic_adjacent_particles;
+  // auto &ghost_adjacent_particles = container_manager.ghost_adjacent_particles;
+  // auto &local_periodic_adjacent_particles =
+  //  container_manager.local_periodic_adjacent_particles;
+  // auto &ghost_periodic_adjacent_particles =
+  //  container_manager.ghost_periodic_adjacent_particles;
+  // auto &ghost_local_periodic_adjacent_particles =
+  //  container_manager.ghost_local_periodic_adjacent_particles;
 
   // Define local variables which will be used within the contact calculation
   //  Namely: normal and tangential contact forces, tangential and rolling
@@ -129,10 +126,6 @@ ParticlesForceChains<dim, contact_model, rolling_friction_model>::
           auto particle_one       = first_contact_info->second.particle_one;
           auto particle_one_properties = particle_one->get_properties();
 
-          types::particle_index particle_one_id =
-            particle_one->get_local_index();
-          Tensor<1, 3> &particle_one_torque = torque[particle_one_id];
-          Tensor<1, 3> &particle_one_force  = force[particle_one_id];
 
           // Fix particle one location for 2d and 3d
           Point<3> particle_one_location = [&] {
@@ -306,13 +299,6 @@ ParticlesForceChains<dim, contact_model, rolling_friction_model>::
                         particle_two_tangential_torque,
                         rolling_resistance_torque);
                     }
-
-
-                  types::particle_index particle_two_id =
-                    particle_two->get_local_index();
-
-                  Tensor<1, 3> &particle_two_torque = torque[particle_two_id];
-                  Tensor<1, 3> &particle_two_force  = force[particle_two_id];
 
                   vertices.push_back(particle_one_location);
                   vertices.push_back(particle_two_location);

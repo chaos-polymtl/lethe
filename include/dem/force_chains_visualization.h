@@ -44,10 +44,7 @@ public:
   void
   calculate_force_chains(
     DEMContactManager<dim>    &container_manager,
-    const double               dt,
-    std::vector<Tensor<1, 3>> &torque,
-    std::vector<Tensor<1, 3>> &force,
-    const Tensor<1, dim>       periodic_offset = Tensor<1, dim>());
+    const double               dt);
 
 
   void
