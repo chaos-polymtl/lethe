@@ -48,7 +48,7 @@ ParticlesForceChains<dim, contact_model, rolling_friction_model>::
   force_normal.push_back(0);
   vertices.push_back(Point<3>(0, 0, 0));
   vertices.push_back(Point<3>(0, 0, 0));
-};
+}
 
 
 
@@ -72,7 +72,7 @@ ParticlesForceChains<dim, contact_model, rolling_friction_model>::
         }
     };
   tria.create_triangulation(vertices, cells, SubCellData());
-};
+}
 
 
 
@@ -315,7 +315,7 @@ ParticlesForceChains<dim, contact_model, rolling_friction_model>::
             }
         }
     }
-};
+}
 
 
 template <
@@ -346,7 +346,7 @@ ParticlesForceChains<dim, contact_model, rolling_friction_model>::
   const std::string face_filename =
     (folder + "force_chains." + Utilities::int_to_string(iter, 5) + ".vtu");
   data_out.write_vtu_in_parallel(face_filename.c_str(), mpi_communicator);
-};
+}
 
 // No resistance
 template class ParticlesForceChains<
