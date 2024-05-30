@@ -2,7 +2,7 @@
 Rayleigh-Plateau Instability
 ================================
 
-This example simulates the transition of a continuous jet to a droplet regime under the influence of a perturbation. The case simulated in this example corresponds to the case J1 in absence of gravity from the work of Denner *et al.* `[1] <https://link.springer.com/article/10.1007/s10494-021-00291-w>`_ with :math:`We = 20` and :math:`Oh = 0.1`.
+This example simulates the transition of a continuous jet to a droplet regime under the influence of a perturbation. The case simulated in this example corresponds to the case J1 in absence of gravity from the work of Denner *et al.* `[1] <https://link.springer.com/article/10.1007/s10494-021-00291-w>`_ with the Weber number :math:`We = 20` and the Ohnesorge number :math:`Oh = 0.1`.
 
 ****
 
@@ -26,8 +26,8 @@ All files mentioned below are located in the example's folder (``examples/multip
 
 - Case generation and simulation launching Bash script: ``rayleigh-plateau-launch.sh``
 - Parameter file for case generation: ``rayleigh-plateau-J1-We020-Oh0_10.tpl``
-- Parameter file for :math:`\delta_0 = 0.2` 2D case: ``rayleigh-plateau-J1-We020-Oh0_10_delta0_20/rayleigh-plateau-J1-We020-Oh0_10_delta0_20.prm``
-- Parameter file for :math:`\delta_0 = 0.3` 3D case: ``3D-delta0_30/rayleigh-plateau-J1-3D.prm``
+- Parameter file the for 2D case with an excitation amplitude (:math:`\delta_0`) of :math:`0.2`: ``rayleigh-plateau-J1-We020-Oh0_10_delta0_20/rayleigh-plateau-J1-We020-Oh0_10_delta0_20.prm``
+- Parameter file for the 3D case with :math:`\delta_0 = 0.3`: ``3D-delta0_30/rayleigh-plateau-J1-3D.prm``
 - Postprocessing Python script for breakup lengths extraction: ``rayleigh-plateau-postprocess.py``
 - Postprocessing Python script for code to code comparison: ``rayleigh-plateau-compare.py``
 - Postprocessing Bash script: ``rayleigh-plateau-postprocess.sh``
@@ -40,7 +40,7 @@ Description of the Case
 
 Surface tension is renowned for its stabilizing effects, yet it also serves a disruptive role in various applications, such as inkjet printing. There, the surface tension plays a pivotal role in breaking up the continuous inkjet into droplets, governed by the destabilizing mechanism on the interface between the air and the ink known as the Rayleigh-Plateau instability.
 
-In this example the Rayleigh-Plateau instability is simulated through a continuous glycerol jet that undergoes a perturbation of different excitation amplitudes. The velocity imposed at the jet inlet takes the following form:
+In this example, the Rayleigh-Plateau instability is simulated through a continuous glycerol jet that undergoes a perturbation of different excitation amplitudes. The velocity imposed at the jet inlet takes the following form:
 
 .. math::
   u_\mathrm{inlet} = U \left[1+\delta_0 \sin{\left(2 \mathrm{\pi} f t \right)}\right] = U \left[1+\delta_0 \sin{\left(\frac{\kappa U t}{R_\mathrm{inlet}}\right)}\right]
@@ -62,7 +62,7 @@ The following figure displays the initial state:
 +-------------------------------------------------------------------------------------------------------------------+
 
 .. note::
-  In this example, gravity contributions are not considered :math:`\left(Fr = \frac{u}{\sqrt{g R_\mathrm{inlet}}} \rightarrow \infty \right)`.
+  In this example, the gravity contribution is not considered :math:`\left(Fr = \frac{u}{\sqrt{g R_\mathrm{inlet}}} \rightarrow \infty \right)`.
 
 ****
 
@@ -104,7 +104,7 @@ The ``multiphysics`` subsection is used to enable the VOF solver.
 Physical Properties
 ~~~~~~~~~~~~~~~~~~~~
 
-In the ``physical properties`` subsection, we define the ``fluid 1`` as presented for case J1 in Denner *et al.* `[1] <https://link.springer.com/article/10.1007/s10494-021-00291-w>`_ The viscosity is deduced from an imposed Ohnesorge number :math:`\left(Oh=\frac{\mu_1}{\sigma\rho_1 R_\mathrm{inlet}} \right)` value of :math:`0.1`. The ambient fluid (``fluid 0``) is defined such that the density :math:`\left(\frac{\rho_1}{\rho_0} = 10^3 \right)` and dynamic viscosity :math:`\left(\frac{\mu_1}{\mu_0} = 10^2\right)` ratios are respected. A ``fluid-fluid`` type of material interaction is also defined to specify the ``surface tension model``. In this case, it is set to ``constant`` (default value) with the ``surface tension coefficient`` (:math:`\sigma`) set to :math:`0.0674 \; \mathrm{N \, m^{-1}}`.
+In the ``physical properties`` subsection, we define the jet fluid (``fluid 1``) as presented for case J1 in Denner *et al.* `[1] <https://link.springer.com/article/10.1007/s10494-021-00291-w>`_ The viscosity is deduced from the imposed Ohnesorge number :math:`\left(Oh=\frac{\mu_1}{\sigma\rho_1 R_\mathrm{inlet}} \right)` value of :math:`0.1`. The ambient fluid (``fluid 0``) is defined such that the density :math:`\left(\frac{\rho_1}{\rho_0} = 10^3 \right)` and dynamic viscosity :math:`\left(\frac{\mu_1}{\mu_0} = 10^2\right)` ratios are respected. A ``fluid-fluid`` type of material interaction is also defined to specify the ``surface tension model``. In this case, it is set to ``constant`` (default value) with the ``surface tension coefficient`` (:math:`\sigma`) set to :math:`0.0674 \; \mathrm{N \, m^{-1}}`.
 
 .. code-block:: text
 
@@ -288,7 +288,7 @@ This 3D simulation was simulated using the ``3D-delta0_30/rayleigh-plateau-J1-3D
 Code to Code Comparison
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-We compare the dimensionless breakup length :math:`\left(\frac{L_\mathrm{b}}{R_\mathrm{jet}}\right)` with the simulation results from Denner *et al.* `[1] <https://link.springer.com/article/10.1007/s10494-021-00291-w>`_ :math:`L_\mathrm{b}` is the breakup length defined as **the shortest distance from the nozzle to the tip of the continuous jet**.
+We compare the dimensionless breakup length :math:`\left(\frac{L_\mathrm{b}}{R_\mathrm{jet}}\right)` with the simulation results from Denner *et al.* `[1] <https://link.springer.com/article/10.1007/s10494-021-00291-w>`_ :math:`L_\mathrm{b}` is the breakup length defined as **the shortest distance from the nozzle (inlet) to the tip of the continuous jet**.
 
 The results can be postprocessed using the provided Bash script (``rayleigh-plateau-postprocess.sh``). Make sure that the file has executable permissions before calling it with:
 
