@@ -81,4 +81,3 @@ subsection linear solver
     set verbosity                             = quiet
   end
 end
-
