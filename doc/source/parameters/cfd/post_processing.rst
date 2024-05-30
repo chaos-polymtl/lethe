@@ -74,7 +74,7 @@ This subsection controls the post-processing other than the forces and torque on
     # Multiphase post-processing
     #---------------------------------------------------
     # Tracer statistics
-    set calculate tracer statistics      = false
+    set calculate volume phases          = false
     set volume phases name               = volume_phases
     
   end
