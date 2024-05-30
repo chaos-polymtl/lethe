@@ -73,7 +73,7 @@ This subsection controls the post-processing other than the forces and torque on
     #---------------------------------------------------
     # Multiphase post-processing
     #---------------------------------------------------
-    # Tracer statistics
+    # CFD-DEM postprocessing
     set calculate volume phases          = false
     set volume phases name               = volume_phases
     
