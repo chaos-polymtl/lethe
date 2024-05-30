@@ -1,31 +1,39 @@
-# Description of the problem
+# Description of the issue
 
-- Explain the previous issue (description of the issue or the reference number of an open issue)
-- Explain the need for a new feature or component
-- Describe the added code
+- Describe the previous issue
+- Explain the need for a new feature, component or example
 
 # Description of the solution
 
 - Explain the solution to the existing issue
 - Explain the content of the new feature
 
-# How Has This Been Tested?
+# How has this been tested?
 
-- List and describe the test(s) for the added code (if there is no test for the pull request, explain why (i.e. the test already exists but was changed))
-
-- [ ] Test A
-- [ ] Test B
+- List and describe the new test(s) (i.e. what feature/parameter does it test)
+- Explain the changes and/or impacts on current tests
+- If not related to tests, how did you ensure that the solution works?
 
 # Documentation
 
-- If applicable, list the documentation files changed and their changes
+- Summarize documentation
 
-- [ ] File A
+# Miscellaneous
 
-# Future changes
-
+- Anything that you would like to add that does not fit into another category
 - If applicable, describe future changes or features that will be added in subsequent pull requests
 
-# Comments
+# Checklist (will be removed when merged)
+See [this page](https://chaos-polymtl.github.io/lethe/documentation/contributing.html#pull-requests) for more information about the pull request process.
 
-- Anything that you want to add up that didn't fit in any other category can be written here
+Code related list:
+- [ ] All in-code documentation related to this PR is updated (Doxygen format)
+- [ ] Lethe documentation is updated
+- [ ] If possible, new feature has a unit test or application test
+- [ ] Changelog (CHANGELOG.md) is updated
+- [ ] Code is indented with indent-all and .prm files with prm-indent
+
+Pull request related list:
+- [ ] Labels have been applied
+- [ ] There are at least 2 reviewers (or 1 if small feature) excluding the merger
+- [ ] If this PR close an issue or is related to a project, it is linked in the "Projects" or "Development" section
