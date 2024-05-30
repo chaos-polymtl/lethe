@@ -27,7 +27,8 @@ enum PhysicsID : unsigned int
   heat_transfer  = 1,
   tracer         = 2,
   VOF            = 3,
-  cahn_hilliard  = 4
+  cahn_hilliard  = 4,
+  reactions      = 5
 };
 
 /**
