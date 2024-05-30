@@ -82,16 +82,17 @@ template <
   Parameters::Lagrangian::RollingResistanceMethod rolling_friction_model>
 void
 ParticlesForceChains<dim, contact_model, rolling_friction_model>::
-  calculate_force_chains(DEMContactManager<dim>    &container_manager,
-                         const double               dt)
+  calculate_force_chains(DEMContactManager<dim> &container_manager,
+                         const double            dt)
 {
   ParticleParticleContactForce<dim, contact_model, rolling_friction_model>
     force_chains_object(dem_parameters);
 
 
   auto &local_adjacent_particles = container_manager.local_adjacent_particles;
-  // auto &ghost_adjacent_particles = container_manager.ghost_adjacent_particles;
-  // auto &local_periodic_adjacent_particles =
+  // auto &ghost_adjacent_particles =
+  // container_manager.ghost_adjacent_particles; auto
+  // &local_periodic_adjacent_particles =
   //  container_manager.local_periodic_adjacent_particles;
   // auto &ghost_periodic_adjacent_particles =
   //  container_manager.ghost_periodic_adjacent_particles;
