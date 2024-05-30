@@ -69,6 +69,13 @@ This subsection controls the post-processing other than the forces and torque on
     set phase statistics name            = phase_statistics
     set calculate phase energy           = false
     set phase energy name                = phase_energy
+
+    #---------------------------------------------------
+    # Multiphase post-processing
+    #---------------------------------------------------
+    # Tracer statistics
+    set calculate tracer statistics      = false
+    set volume phases name               = volume_phases
     
   end
 
