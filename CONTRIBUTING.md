@@ -2,9 +2,9 @@
 
 Lethe is an open source software, and we try to follow the deal.II mentality of having it
 developed in an accessible environment. Consequently, all scientific
-developments made within Lethe are accessible to everyone even as they are
+developments made within Lethe are available to everyone even as they are
 currently being written. Anybody that wishes to use and contribute to a feature
-is welcome to do so.
+is welcomed to do so.
 
 This document aims at establishing guidelines for contributions within Lethe.
 
