@@ -36,11 +36,13 @@ Multiphysics
 
       multiphysics_1_6 [label="Capillary Wave", href="https://chaos-polymtl.github.io/lethe/documentation/examples/multiphysics/capillary-wave/capillary-wave.html"];
 
-      multiphysics_1_7 [label="3D Dam-Break with an Obstacle", href="https://chaos-polymtl.github.io/lethe/documentation/examples/multiphysics/3d-dam-break/3d-dam-break.html"];
+      multiphysics_1_7 [label="Rayleigh-Plateau Instability", href="https://chaos-polymtl.github.io/lethe/documentation/examples/multiphysics/rayleigh-plateau-instability/rayleigh-plateau-instability.html"];
 
-      multiphysics_1_8 [label="Water Injection in a Closed Cell", href="https://chaos-polymtl.github.io/lethe/documentation/examples/multiphysics/water-injection-in-a-closed-cell/water-injection-in-a-closed-cell.html"];
+      multiphysics_1_8 [label="3D Dam-Break with an Obstacle", href="https://chaos-polymtl.github.io/lethe/documentation/examples/multiphysics/3d-dam-break/3d-dam-break.html"];
 
-      multiphysics_1_9 [label="Air Bubble Compression", href="https://chaos-polymtl.github.io/lethe/documentation/examples/multiphysics/air-bubble-compression/air-bubble-compression.html"];
+      multiphysics_1_9 [label="Water Injection in a Closed Cell", href="https://chaos-polymtl.github.io/lethe/documentation/examples/multiphysics/water-injection-in-a-closed-cell/water-injection-in-a-closed-cell.html"];
+
+      multiphysics_1_10 [label="Air Bubble Compression", href="https://chaos-polymtl.github.io/lethe/documentation/examples/multiphysics/air-bubble-compression/air-bubble-compression.html"];
 
       multiphysics_2 [label="Heat Transfer", href="https://chaos-polymtl.github.io/lethe/documentation/examples/multiphysics/heat-transfer.html"];
 
