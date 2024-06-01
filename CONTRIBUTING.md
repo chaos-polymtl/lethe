@@ -100,11 +100,11 @@ those libraries and executables) in the `CMakeLists.txt` files'
 For example, the `lethe-particles` application
 [links to `lethe-core` and `lethe-dem`](applications/lethe-particles/CMakeLists.txt)
 because it
-[includes core and DEM headers](applications/lethe-particles/dem_2d.cc),
+[includes core and DEM headers](applications/lethe-particles/dem.cc),
 but the `lethe-fluid` application
 [links only to `lethe-solvers`](applications/lethe-fluid/CMakeLists.txt)
 because it
-[includes only solvers headers](applications/lethe-fluid/gd_navier_stokes_2d.cc),
+[includes only solvers headers](applications/lethe-fluid/gls_navier_stokes.cc),
 and `lethe-core` is a transitive dependency of `lethe-solvers`.
 
 ## Dependencies between Lethe's libraries
