@@ -26,8 +26,7 @@
          Any comments or highlights for the reviewers -->
 
 ### Checklist (will be removed when merged)
-See [this page](https://chaos-polymtl.github.io/lethe/documentation/contributing.html#pull-requests)
-for more information about the pull request process.
+See [this page](https://chaos-polymtl.github.io/lethe/documentation/contributing.html#pull-requests) for more information about the pull request process.
 
 Code related list:
 - [ ] All in-code documentation related to this PR is updated (Doxygen format)

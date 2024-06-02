@@ -3,19 +3,19 @@
 ### Description
 
 <!-- Explain the issue with the bug (what part of the code, what are the side effects of the bug)
-     How did the bug was found, do you know what commit introduced the bug? -->
+       How did the bug was found, do you know what commit introduced the bug? -->
 
 ### Solution
 
 <!-- How did you fix the bug?
-     Is it a permanent or temporary fix? (if temporary, please open an issue) -->
+       Is it a permanent or temporary fix? (if temporary, please open an issue) -->
 
 ### Testing
 
 <!-- How has this been tested?
-     What are the new test(s) that reproduce the bug?
-     Are there changes and/or impacts on current tests, why?
-     How did you ensure that the solution works? -->
+       What are the new test(s) that reproduce the bug?
+       Are there changes and/or impacts on current tests, why?
+       How did you ensure that the solution works? -->
 
 ### Documentation
 
@@ -24,13 +24,12 @@
 ### Miscellaneous (will be removed when merged)
 
 <!-- Anything that you would like to add that does not fit into another category
-     Examples:
-       Future changes or features that will be added in subsequent pull requests
-       Any comments or highlights for the reviewers -->
+       Examples:
+         Future changes or features that will be added in subsequent pull requests
+         Any comments or highlights for the reviewers -->
 
 ### Checklist (will be removed when merged)
-See [this page](https://chaos-polymtl.github.io/lethe/documentation/contributing.html#pull-requests)
-for more information about the pull request process.
+See [this page](https://chaos-polymtl.github.io/lethe/documentation/contributing.html#pull-requests) for more information about the pull request process.
 *If applicable
 
 Code related list:
