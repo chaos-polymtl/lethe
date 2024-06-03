@@ -715,4 +715,51 @@ calculate_gamma(double velocity,
   return kinematic_viscosity + c_star * velocity;
 }
 
+template <int dim>
+class GLSVansAssemblerDistributedFPI : public NavierStokesAssemblerBase<dim>
+{
+public:
+  GLSVansAssemblerDistributedFPI(Parameters::CFDDEM cfd_dem)
+    : cfd_dem(cfd_dem)
+
+  {}
+
+  /**
+   * @brief assemble_matrix Assembles the matrix
+   * @param cell (see base class)
+   * @param particle_handler (see base class)
+   * @param scratch_data (see base class)
+   * @param copy_data (see base class)
+   */
+  virtual void
+  assemble_matrix(const typename DofHandler<dim>::active_cell_iterator &cell,
+                  const Particles::ParticleHanlder<dim> &particle_hanlder
+                  NavierStokesScratchData<dim>          &scratch_data,
+                  StabilizedMethodsTensorCopyData<dim>  &copy_data) override;
+
+  /**
+   * @brief assemble_rhs Assembles the rhs
+   * @param cell (see base class)
+   * @param particle_handler (see base class)
+   * @param scratch_data (see base class)
+   * @param copy_data (see base class)
+   */
+  virtual void
+  assemble_rhs(const typename DofHandler<dim>::active_cell_iterator &cell,
+                  const Particles::ParticleHanlder<dim> &particle_hanlder
+                  NavierStokesScratchData<dim>          &scratch_data,
+                  StabilizedMethodsTensorCopyData<dim>  &copy_data) override;
+
+  Parameters::CFDDEM cfd_dem;
+};
+
+inline double
+calculate_gamma(double velocity,
+                double kinematic_viscosity,
+                double /*h*/,
+                double c_star)
+{
+  return kinematic_viscosity + c_star * velocity;
+}
+
 #endif
