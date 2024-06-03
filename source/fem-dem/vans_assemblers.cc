@@ -1040,6 +1040,76 @@ template class GLSVansAssemblerRong<3>;
 
 template <int dim>
 void
+GLSVansAssemblerRong<dim>::distribute_particle_fluid_interactions(
+  NavierStokesScratchData<dim> &scratch_data)
+{
+  double      cell_void_fraction = 0;
+  double      C_d                = 0;
+  const auto &relative_velocity =
+    scratch_data.fluid_particle_relative_velocity_at_particle_location;
+  const auto &Re_p      = scratch_data.Re_particle;
+  auto       &beta_drag = scratch_data.beta_drag;
+
+  Tensor<1, dim> drag_force;
+
+  // Physical Properties
+  Assert(!scratch_data.properties_manager.is_non_newtonian(),
+         RequiresConstantViscosity(
+           "GLSVansAssemblerRong<dim>::calculate_particle_fluid_interactions"));
+
+  Assert(scratch_data.properties_manager.density_is_constant(),
+         RequiresConstantDensity(
+           "GLSVansAssemblerRong<dim>::calculate_particle_fluid_interactions"));
+  const double density = scratch_data.properties_manager.get_density_scale();
+
+  const auto pic               = scratch_data.pic;
+  beta_drag                    = 0;
+  unsigned int particle_number = 0;
+
+  // Loop over particles in cell
+  for (auto &particle : pic)
+    {
+      auto particle_properties = particle.get_properties();
+
+      cell_void_fraction =
+        std::min(scratch_data.cell_void_fraction[particle_number], 1.0);
+
+      // Rong Drag Model CD Calculation
+      C_d = pow((0.63 + 4.8 / sqrt(Re_p[particle_number])), 2) *
+            pow(cell_void_fraction,
+                2 - (2.65 * (cell_void_fraction + 1) -
+                     (5.3 - (3.5 * cell_void_fraction)) *
+                       pow(cell_void_fraction, 2) *
+                       exp(-pow(1.5 - log10(Re_p[particle_number]), 2) / 2)));
+
+      double momentum_transfer_coefficient =
+        (0.5 * C_d * M_PI *
+         pow(particle_properties[DEM::PropertiesIndex::dp], 2) / 4) *
+        relative_velocity[particle_number].norm();
+
+      particle_properties[DEM::PropertiesIndex::distributed_drag]
+       = momentum_transfer_coefficient;
+
+      drag_force = density * momentum_transfer_coefficient *
+                   relative_velocity[particle_number];
+
+      for (int d = 0; d < dim; ++d)
+        {
+          particle_properties[DEM::PropertiesIndex::fem_force_x + d] +=
+            drag_force[d];
+        }
+
+      particle_number += 1;
+    }
+
+  beta_drag = beta_drag / scratch_data.cell_volume;
+}
+
+template class GLSVansAssemblerRong<2>;
+template class GLSVansAssemblerRong<3>;
+
+template <int dim>
+void
 GLSVansAssemblerDallavalle<dim>::calculate_particle_fluid_interactions(
   NavierStokesScratchData<dim> &scratch_data)
 {
@@ -2051,3 +2121,234 @@ GLSVansAssemblerFPI<dim>::assemble_rhs(
 
 template class GLSVansAssemblerFPI<2>;
 template class GLSVansAssemblerFPI<3>;
+
+template <int dim>
+void
+GLSVansAssemblerDistributedFPI<dim>::assemble_matrix(
+  const typename DofHandler<dim>::active_cell_iterator &cell,
+  const Particles::ParticleHandler<dim>                &particle_handler
+  NavierStokesScratchData<dim>         &scratch_data,
+  StabilizedMethodsTensorCopyData<dim> &copy_data)
+{
+  // Loop and quadrature informations
+  const auto        &JxW_vec    = scratch_data.JxW;
+  const unsigned int n_q_points = scratch_data.n_q_points;
+  const unsigned int n_dofs     = scratch_data.n_dofs;
+
+  // Copy data elements
+  auto &strong_residual        = copy_data.strong_residual;
+  auto &strong_jacobian        = copy_data.strong_jacobian;
+  auto &local_matrix           = copy_data.local_matrix;
+  auto  quadrature_beta_drag   = scratch_data.quadrature_beta_drag;
+  auto &undisturbed_flow_force = scratch_data.undisturbed_flow_force;
+  const Tensor<1, dim> average_particles_velocity =
+    scratch_data.average_particle_velocity;
+
+  scratch_data.fe_values.reinit(cell);
+
+  std::vector<Point<dim>> quadrature_point_location;
+  const unsigned int      quadrature_point_location =
+    scrach_data.fe_values.get_quadrature_points();
+  
+  // Lambda functions for calculating the radius of the reference sphere
+  // Calculate the radius by the volume (area in 2D) of sphere:
+  // r = (2*dim*V/pi)^(1/dim) / 2
+  auto radius_sphere_volume_cell = [](auto cell_measure) {
+    return 0.5 * pow(2.0 * dim * cell_measure / M_PI, 1.0 / dim);
+  };
+
+  // Active neighbors include the current cell as well
+  auto active_neighbors =
+    LetheGridTools::find_cells_around_cell<dim>(vertices_to_cell, cell);
+
+  auto active_periodic_neighbors =
+    LetheGridTools::find_cells_around_cell<dim>(vertices_to_periodic_cell,
+                                                cell);
+  r_sphere =
+    radius_sphere_volume_cell(cell->measure());
+
+  // Loop over the quadrature points
+  for (unsigned int q = 0; q < n_q_points; ++q)
+    {
+      quadrature_beta_drag[q] = 0;
+
+      // Loop over neighboring cells to determine if a particle in neighbor cell is
+      // included in reference sphere 
+      //***********************************************************************
+      for (unsigned int n = 0; n < active_neighbors.size(); n++)
+        {
+          //Loop over particle in neighbor cell
+          pic =
+            particle_handler.particles_in_cell(active_neighbors[n]);
+          for (auto &particle : pic)
+          {
+            double distance = 0;
+            distance = particle.get_location().distance(quadrature_point_location[q]);
+
+            auto particle_properties = particle.get_properties();
+
+            if (distance <= r_sphere)
+              {
+                quadrature_beta_drag[q] += particle_properties[DEM::PropertiesIndex::distributed_drag];
+              }
+          }
+        }
+
+      // Gather into local variables the relevant fields
+      const Tensor<1, dim> velocity = scratch_data.velocity_values[q];
+
+      // Store JxW in local variable for faster access;
+      const double JxW = JxW_vec[q];
+
+      // Calculate the strong residual for GLS stabilization
+      if (cfd_dem.vans_model == Parameters::VANSModel::modelB)
+        {
+          strong_residual[q] += // Drag Force
+            (quadrature_beta_drag[q] * (velocity - average_particles_velocity) +
+             undisturbed_flow_force);
+        }
+      else if (cfd_dem.vans_model == Parameters::VANSModel::modelA)
+        {
+          strong_residual[q] += // Drag Force
+            quadrature_beta_drag[q] * (velocity - average_particles_velocity);
+        }
+
+      for (unsigned int j = 0; j < n_dofs; ++j)
+        {
+          const auto &phi_u_j = scratch_data.phi_u[q][j];
+          strong_jacobian[q][j] +=
+            // Drag Force
+            quadrature_beta_drag[q] * phi_u_j;
+        }
+
+      for (unsigned int i = 0; i < n_dofs; ++i)
+        {
+          const auto &phi_u_i = scratch_data.phi_u[q][i];
+
+          for (unsigned int j = 0; j < n_dofs; ++j)
+            {
+              const auto &phi_u_j = scratch_data.phi_u[q][j];
+
+              local_matrix(i, j) += // Drag Force
+                quadrature_beta_drag[q] * phi_u_j * phi_u_i * JxW;
+            }
+        }
+    }
+}
+
+template <int dim>
+void
+GLSVansAssemblerDistributedFPI<dim>::assemble_rhs(
+  const typename DofHandler<dim>::active_cell_iterator &cell,
+  const Particles::ParticleHandler<dim>                &particle_handler
+  NavierStokesScratchData<dim>         &scratch_data,
+  StabilizedMethodsTensorCopyData<dim> &copy_data)
+{
+  // Loop and quadrature informations
+  const auto        &JxW_vec    = scratch_data.JxW;
+  const unsigned int n_q_points = scratch_data.n_q_points;
+  const unsigned int n_dofs     = scratch_data.n_dofs;
+
+  // Copy data elements
+  auto &strong_residual        = copy_data.strong_residual;
+  auto &local_rhs              = copy_data.local_rhs;
+  auto  quadrature_beta_drag              = scratch_data.quadrature_beta_drag;
+  auto &undisturbed_flow_force = scratch_data.undisturbed_flow_force;
+  const Tensor<1, dim> average_particles_velocity =
+    scratch_data.average_particle_velocity;
+
+  scratch_data.fe_values.reinit(cell);
+
+  std::vector<Point<dim>> quadrature_point_location;
+  const unsigned int      quadrature_point_location =
+    scrach_data.fe_values.get_quadrature_points();
+  
+  // Lambda functions for calculating the radius of the reference sphere
+  // Calculate the radius by the volume (area in 2D) of sphere:
+  // r = (2*dim*V/pi)^(1/dim) / 2
+  auto radius_sphere_volume_cell = [](auto cell_measure) {
+    return 0.5 * pow(2.0 * dim * cell_measure / M_PI, 1.0 / dim);
+  };
+
+  // Active neighbors include the current cell as well
+  auto active_neighbors =
+    LetheGridTools::find_cells_around_cell<dim>(vertices_to_cell, cell);
+
+  auto active_periodic_neighbors =
+    LetheGridTools::find_cells_around_cell<dim>(vertices_to_periodic_cell,
+                                                cell);
+  r_sphere =
+    radius_sphere_volume_cell(cell->measure());
+  
+  // Loop over the quadrature points
+  for (unsigned int q = 0; q < n_q_points; ++q)
+    {
+      quadrature_beta_drag[q] = 0;
+
+      // Loop over neighboring cells to determine if a particle in neighbor cell is
+      // included in reference sphere 
+      //***********************************************************************
+      for (unsigned int n = 0; n < active_neighbors.size(); n++)
+        {
+          //Loop over particle in neighbor cell
+          pic =
+            particle_handler.particles_in_cell(active_neighbors[n]);
+          for (auto &particle : pic)
+          {
+            double distance = 0;
+            distance = particle.get_location().distance(quadrature_point_location[q]);
+
+            auto particle_properties = particle.get_properties();
+
+            if (distance <= r_sphere)
+              {
+                quadrature_beta_drag[q] += particle_properties[DEM::PropertiesIndex::distributed_drag];
+              }
+          }
+        }
+
+      // Velocity
+      const Tensor<1, dim> velocity = scratch_data.velocity_values[q];
+
+      // Store JxW in local variable for faster access;
+      const double JxW = JxW_vec[q];
+
+      // Calculate the strong residual for GLS stabilization
+      if (cfd_dem.vans_model == Parameters::VANSModel::modelB)
+        {
+          strong_residual[q] += // Drag Force
+            (quadrature_beta_drag[q] * (velocity - average_particles_velocity) +
+             undisturbed_flow_force);
+        }
+      else if (cfd_dem.vans_model == Parameters::VANSModel::modelA)
+        {
+          strong_residual[q] += // Drag Force
+            quadrature_beta_drag[q] * (velocity - average_particles_velocity);
+        }
+
+      // Assembly of the right-hand side
+      for (unsigned int i = 0; i < n_dofs; ++i)
+        {
+          const auto phi_u_i = scratch_data.phi_u[q][i];
+          // Drag Force
+          //  Model B of the VANS
+          if (cfd_dem.vans_model == Parameters::VANSModel::modelB)
+            {
+              local_rhs(i) -=
+                (quadrature_beta_drag[q] * (velocity - average_particles_velocity) +
+                 undisturbed_flow_force) *
+                phi_u_i * JxW;
+            }
+          //  Model A of the VANS
+          if (cfd_dem.vans_model == Parameters::VANSModel::modelA)
+            {
+              local_rhs(i) -=
+                (quadrature_beta_drag[q] * (velocity - average_particles_velocity)) *
+                phi_u_i * JxW;
+            }
+        }
+    }
+}
+
+template class GLSVansAssemblerDistributedFPI<2>;
+template class GLSVansAssemblerDistributedFPI<3>;

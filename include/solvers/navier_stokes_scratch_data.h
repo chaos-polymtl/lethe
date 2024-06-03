@@ -1153,6 +1153,7 @@ public:
   std::vector<double>         particle_weights;
   std::vector<double>         cell_void_fraction;
   std::vector<double>         Re_particle;
+  std::vector<double>         quadrature_beta_drag;
   unsigned int                max_number_of_particles_per_cell;
   unsigned int                number_of_particles;
   typename Particles::ParticleHandler<dim>::particle_iterator_range pic;
@@ -1207,6 +1208,15 @@ public:
   // If boundary cell indicator
   std::vector<bool>         is_boundary_face;
   std::vector<unsigned int> boundary_face_id;
+
+  // If distribute force enabled
+  // These are used to get neighbor cells when assemble drag force
+  std::map<unsigned int,
+           std::set<typename DoFHandler<dim>::active_cell_iterator>>
+    vertices_to_cell;
+  std::map<unsigned int,
+           std::set<typename DoFHandler<dim>::active_cell_iterator>>
+    vertices_to_periodic_cell;
 
   // Quadrature
   std::vector<std::vector<double>>         face_JxW;
