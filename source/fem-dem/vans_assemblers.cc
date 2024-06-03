@@ -1040,7 +1040,7 @@ template class GLSVansAssemblerRong<3>;
 
 template <int dim>
 void
-GLSVansAssemblerRong<dim>::distribute_particle_fluid_interactions(
+GLSVansAssemblerDistributedRong<dim>::calculate_particle_fluid_interactions(
   NavierStokesScratchData<dim> &scratch_data)
 {
   double      cell_void_fraction = 0;
@@ -2161,9 +2161,9 @@ GLSVansAssemblerDistributedFPI<dim>::assemble_matrix(
   auto active_neighbors =
     LetheGridTools::find_cells_around_cell<dim>(vertices_to_cell, cell);
 
-  auto active_periodic_neighbors =
-    LetheGridTools::find_cells_around_cell<dim>(vertices_to_periodic_cell,
-                                                cell);
+ // auto active_periodic_neighbors =
+ //   LetheGridTools::find_cells_around_cell<dim>(vertices_to_periodic_cell,
+ //                                               cell);
   r_sphere =
     radius_sphere_volume_cell(cell->measure());
 
@@ -2178,7 +2178,7 @@ GLSVansAssemblerDistributedFPI<dim>::assemble_matrix(
       for (unsigned int n = 0; n < active_neighbors.size(); n++)
         {
           //Loop over particle in neighbor cell
-          pic =
+          const auto pic =
             particle_handler.particles_in_cell(active_neighbors[n]);
           for (auto &particle : pic)
           {
@@ -2194,6 +2194,47 @@ GLSVansAssemblerDistributedFPI<dim>::assemble_matrix(
           }
         }
 
+      // Excute same operation for periodic neighbors, if the simulation
+      // simulation has no periodic boundaries, the container is empty.
+      //***********************************************************************
+      /*
+      for (unsigned int n = 0; n < active_periodic_neighbors.size(); n++)
+        {
+          //Loop over particle in periodic neighbor cell
+          const auto pic =
+            particle_handler.particles_in_cell(active_periodic_neighbors[n]);
+          for (auto &particle : pic)
+          {
+            double distance = 0;
+            auto particle_properties = particle.get_properties();
+
+            // Adjust the location of the particle in the cell to
+            // account for the periodicity. If the position of the
+            // periodic cell if greater than the position of the
+            // current cell, the particle location needs a negative
+            // correction, and vice versa. Since the particle is in
+            // the periodic cell, this correction is the inverse of
+            // the correction for the volumetric contribution
+            const Point<dim> particle_location =
+              (active_periodic_neighbors[m]
+                  ->center()[periodic_direction] >
+                cell->center()[periodic_direction]) ?
+                particle.get_location() - periodic_offset :
+                particle.get_location() + periodic_offset;
+
+            // Distance between particle and quadrature point
+            // centers
+            distance = particle_location.distance(
+              quadrature_point_location[q]);
+
+            if (distance <= r_sphere)
+              {
+                quadrature_beta_drag[q] += particle_properties[DEM::PropertiesIndex::distributed_drag];
+              }
+          }
+        }
+      */
+      
       // Gather into local variables the relevant fields
       const Tensor<1, dim> velocity = scratch_data.velocity_values[q];
 
@@ -2239,6 +2280,7 @@ GLSVansAssemblerDistributedFPI<dim>::assemble_matrix(
 template <int dim>
 void
 GLSVansAssemblerDistributedFPI<dim>::assemble_rhs(
+  const GLSVANSSolver<dim> &gls
   const typename DofHandler<dim>::active_cell_iterator &cell,
   const Particles::ParticleHandler<dim>                &particle_handler
   NavierStokesScratchData<dim>         &scratch_data,
@@ -2256,6 +2298,12 @@ GLSVansAssemblerDistributedFPI<dim>::assemble_rhs(
   auto &undisturbed_flow_force = scratch_data.undisturbed_flow_force;
   const Tensor<1, dim> average_particles_velocity =
     scratch_data.average_particle_velocity;
+  
+  // neighbor cell infomation
+  const auto vertices_to_cell          = gls.get_vertices_to_cell(); 
+  const auto vertices_to_periodic_cell = gls.get_vertices_to_periodic_cell(); 
+  const auto periodic_direction        = gls.get_periodic_direction(); 
+  const auto periodic_offset           = gls.get_periodic_offset(); 
 
   scratch_data.fe_values.reinit(cell);
 
@@ -2274,9 +2322,9 @@ GLSVansAssemblerDistributedFPI<dim>::assemble_rhs(
   auto active_neighbors =
     LetheGridTools::find_cells_around_cell<dim>(vertices_to_cell, cell);
 
-  auto active_periodic_neighbors =
-    LetheGridTools::find_cells_around_cell<dim>(vertices_to_periodic_cell,
-                                                cell);
+  //auto active_periodic_neighbors =
+  //  LetheGridTools::find_cells_around_cell<dim>(vertices_to_periodic_cell,
+  //                                              cell);
   r_sphere =
     radius_sphere_volume_cell(cell->measure());
   

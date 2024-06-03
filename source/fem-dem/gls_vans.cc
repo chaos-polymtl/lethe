@@ -1456,7 +1456,7 @@ GLSVANSSolver<dim>::setup_assemblers()
         {
           // Rong Model drag Assembler
           particle_fluid_assemblers.push_back(
-            std::make_shared<GLSVansAssemblerRong<dim>>(
+            std::make_shared<GLSVansAssemblerDistributedRong<dim>>(
               this->cfd_dem_simulation_parameters.cfd_dem));
         }
 
@@ -1552,7 +1552,7 @@ GLSVANSSolver<dim>::setup_assemblers()
     }
 
   //  Fluid_Particle Interactions Assembler
-  this->assemblers.push_back(std::make_shared<GLSVansAssemblerFPI<dim>>(
+  this->assemblers.push_back(std::make_shared<GLSVansAssemblerDistributedFPI<dim>>(
     this->cfd_dem_simulation_parameters.cfd_dem));
 
   // The core assembler should always be the last assembler to be called

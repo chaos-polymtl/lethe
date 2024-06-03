@@ -45,6 +45,8 @@ namespace DEM
     properties[PropertiesIndex::mass]         = std::make_pair("mass", 1);
     properties[PropertiesIndex::volumetric_contribution] =
       std::make_pair("volumetric_contribution", 1);
+    properties[PropertiesIndex::distributed_drag] =
+      std::make_pair("distributed_drag", 1);
 
     return properties;
   }
