@@ -2,7 +2,7 @@
 
 ### Description
 
-<!-- Explain the aim of this refactoring
+<!-- Explain the aim of this refactoring.
        What are the motivations? 
        How is it integrated to the current code? -->
 

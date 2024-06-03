@@ -4,4 +4,4 @@ Please, select the appropriate category of your pull request, go the `Preview` t
 * :wrench: [Bug fix](?expand=1&template=pull_request_template_bug-fix.md)
 * :books: [Documentation](?expand=1&template=pull_request_template_documentation.md)
 * :sparkles: [Refactoring](?expand=1&template=pull_request_template_refactoring.md) 
-* :crystal_ball: [Example](?expand=1&template=pull_request_template_example.md) 
+* :arrow_forward: [Example](?expand=1&template=pull_request_template_example.md) 

@@ -3,7 +3,7 @@
 ### Description
 
 <!-- Explain the content of this documentation
-       It is related to Lethe documentation (simulation parameters or theory guide) or in-code documentation? -->
+       Is it related to Lethe documentation (simulation parameters or theory guide) or in-code documentation? -->
 
 ### Miscellaneous (will be removed when merged)
 

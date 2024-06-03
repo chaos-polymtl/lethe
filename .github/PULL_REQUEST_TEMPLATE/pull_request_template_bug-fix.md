@@ -19,14 +19,14 @@
 
 ### Documentation
 
-<!-- Does this fix modify or have new simulation parameters? If so, describe them. -->
+<!-- Does this fix, modify or introduce new simulation parameters? If so, describe them. -->
 
 ### Miscellaneous (will be removed when merged)
 
-<!-- Anything that you would like to add that does not fit into another category
+<!-- Anything that you would like to add that does not fit into any of the categories above.
        Examples:
-         Future changes or features that will be added in subsequent pull requests
-         Any comments or highlights for the reviewers -->
+         Future changes or features that will be added in subsequent pull requests.
+         Any comments or highlights for the reviewers. -->
 
 ### Checklist (will be removed when merged)
 See [this page](https://chaos-polymtl.github.io/lethe/documentation/contributing.html#pull-requests) for more information about the pull request process.
@@ -44,5 +44,5 @@ Pull request related list:
 - [ ] Labels have been applied
 - [ ] There are at least 2 reviewers (or 1 if small feature) excluding the responsible for the merge
 - [ ] If this PR closes an issue or is related to a project, it is linked in the "Projects" or "Development" section
-- [ ] If temporary fix, an issue is opened
+- [ ] If the fix is temporary, an issue is opened
 - [ ] The PR description is cleaned and ready for merge

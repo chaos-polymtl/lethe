@@ -8,7 +8,7 @@ is welcomed to do so.
 
 This document aims at establishing guidelines for contributions within Lethe.
 
-Lethe has its own documentation (user guide and developer guide) which are openly accessible on: https://chaos-polymtl.github.io/lethe/index.html
+Lethe has its own documentation (user guide and developer guide) which are available on: https://chaos-polymtl.github.io/lethe/index.html
 
 
 # How can I contribute?

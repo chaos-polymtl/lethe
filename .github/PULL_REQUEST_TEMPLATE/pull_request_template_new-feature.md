@@ -9,14 +9,14 @@
 ### Testing
 
 <!-- How has this been tested?
-       What are the new test(s) and what feature/parameter does it test?
+       What are the new test(s) and what feature(s)/parameter(s) does it test?
        Are there changes and/or impacts on current tests, why?
        How did you ensure that the solution works?
        How will you ensure that it will continue to work in the future? -->
 
 ### Documentation
 
-<!-- Does this new feature have new simulation parameters? If so, describe them. -->
+<!-- Does this new feature introduce new simulation parameters? If so, describe them. -->
 
 ### Miscellaneous (will be removed when merged)
 

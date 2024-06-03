@@ -20,6 +20,7 @@ Code related list:
 - [ ] Lethe documentation is updated
 - [ ] The branch has been rebased onto master
 - [ ] Code is indented with indent-all and .prm files with prm-indent
+- [ ] Links have been added to parent .rst files.
 
 Pull request related list:
 - [ ] Labels have been applied
