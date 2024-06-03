@@ -54,6 +54,7 @@ namespace DEM
     mass                    = 14,
     volumetric_contribution = 15,
     n_properties            = 16,
+    distributed_drag        = 17,
   };
 
   unsigned int

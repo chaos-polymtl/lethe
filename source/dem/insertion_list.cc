@@ -209,6 +209,7 @@ InsertionList<dim>::assign_particle_properties_for_list_insertion(
       double mass         = density * 4. / 3. * M_PI *
                     Utilities::fixed_power<3, double>(diameter * 0.5);
       double volumetric_contribution = 0.;
+      double distributed_drag = 0.;
 
       std::vector<double> properties_of_one_particle{type,
                                                      diameter,
@@ -225,7 +226,8 @@ InsertionList<dim>::assign_particle_properties_for_list_insertion(
                                                      fem_torque_y,
                                                      fem_torque_z,
                                                      mass,
-                                                     volumetric_contribution};
+                                                     volumetric_contribution,
+                                                     distributed_drag};
 
       particle_properties.push_back(properties_of_one_particle);
       properties_of_one_particle.clear();
