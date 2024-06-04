@@ -1,5 +1,5 @@
-#include <dem/set_particle_particle_contact_force_model.h>
 #include <dem/force_chains_visualization.h>
+#include <dem/set_particle_particle_contact_force_model.h>
 
 using namespace dealii;
 
@@ -301,8 +301,7 @@ std::shared_ptr<ParticlesForceChainsBase<dim>>
 set_force_chains_contact_force_model(
   const DEMSolverParameters<dim> &dem_parameters)
 {
-  std::shared_ptr<ParticlesForceChainsBase<dim>>
-    particles_force_chains_object;
+  std::shared_ptr<ParticlesForceChainsBase<dim>> particles_force_chains_object;
 
   if (dem_parameters.model_parameters.particle_particle_contact_force_model ==
       Parameters::Lagrangian::ParticleParticleContactForceModel::linear)
@@ -451,13 +450,13 @@ set_force_chains_contact_force_model(
         {
           case Parameters::Lagrangian::RollingResistanceMethod::no_resistance:
             {
-              particles_force_chains_object =
-                std::make_shared<ParticlesForceChains<
-                  dim,
-                  Parameters::Lagrangian::ParticleParticleContactForceModel::
-                    hertz,
-                  Parameters::Lagrangian::RollingResistanceMethod::
-                    no_resistance>>(dem_parameters);
+              particles_force_chains_object = std::make_shared<
+                ParticlesForceChains<dim,
+                                     Parameters::Lagrangian::
+                                       ParticleParticleContactForceModel::hertz,
+                                     Parameters::Lagrangian::
+                                       RollingResistanceMethod::no_resistance>>(
+                dem_parameters);
               break;
             }
           case Parameters::Lagrangian::RollingResistanceMethod::
@@ -543,13 +542,13 @@ set_force_chains_contact_force_model(
         {
           case Parameters::Lagrangian::RollingResistanceMethod::no_resistance:
             {
-              particles_force_chains_object =
-                std::make_shared<ParticlesForceChains<
-                  dim,
-                  Parameters::Lagrangian::ParticleParticleContactForceModel::
-                    DMT,
-                  Parameters::Lagrangian::RollingResistanceMethod::
-                    no_resistance>>(dem_parameters);
+              particles_force_chains_object = std::make_shared<
+                ParticlesForceChains<dim,
+                                     Parameters::Lagrangian::
+                                       ParticleParticleContactForceModel::DMT,
+                                     Parameters::Lagrangian::
+                                       RollingResistanceMethod::no_resistance>>(
+                dem_parameters);
               break;
             }
           case Parameters::Lagrangian::RollingResistanceMethod::

@@ -45,7 +45,7 @@ set_particle_particle_contact_force_model(
  */
 template <int dim>
 std::shared_ptr<ParticlesForceChainsBase<dim>>
-  set_force_chains_contact_force_model(
+set_force_chains_contact_force_model(
   const DEMSolverParameters<dim> &dem_parameters);
 
 #endif /* set_particle_particle_contact_force_model_h */

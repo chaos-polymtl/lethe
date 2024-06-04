@@ -357,8 +357,7 @@ private:
   std::shared_ptr<Insertion<dim>>    insertion_object;
   std::shared_ptr<ParticleParticleContactForceBase<dim>>
     particle_particle_contact_force_object;
-  std::shared_ptr<ParticlesForceChainsBase<dim>>
-    particles_force_chains_object;
+  std::shared_ptr<ParticlesForceChainsBase<dim>> particles_force_chains_object;
   std::shared_ptr<ParticleWallContactForce<dim>>
                                 particle_wall_contact_force_object;
   Visualization<dim>            visualization_object;
