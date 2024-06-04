@@ -1253,7 +1253,7 @@ void
 CFDDEMSolver<dim>::postprocess_cfd_dem()
 {
   // Calculate total volume of fluid and solid
-  if (this->simulation_parameters.post_processing.calculate_volume_phases)
+  if (this->simulation_parameters.post_processing.calculate_phase_volumes)
     {
       TimerOutput::Scope t(this->computing_timer, "total_volume_calculation");
       double             total_volume_fluid, total_volume_particles;
@@ -1262,11 +1262,11 @@ CFDDEMSolver<dim>::postprocess_cfd_dem()
                                              this->nodal_void_fraction_relevant,
                                              *this->cell_quadrature,
                                              *this->mapping);
-      this->table_volume_phases.add_value(
+      this->table_phase_volumes.add_value(
         "time", this->simulation_control->get_current_time());
-      this->table_volume_phases.add_value("total-volume-fluid",
+      this->table_phase_volumes.add_value("total-volume-fluid",
                                           total_volume_fluid);
-      this->table_volume_phases.add_value("total-volume-particles",
+      this->table_phase_volumes.add_value("total-volume-particles",
                                           total_volume_particles);
       if (this->simulation_parameters.post_processing.verbosity ==
           Parameters::Verbosity::verbose)
@@ -1296,13 +1296,13 @@ CFDDEMSolver<dim>::postprocess_cfd_dem()
           std::string filename =
             this->simulation_parameters.simulation_control.output_folder +
             this->simulation_parameters.post_processing
-              .volume_phases_output_name +
+              .phase_volumes_output_name +
             ".dat";
           std::ofstream output(filename.c_str());
-          table_volume_phases.set_precision("time", 12);
-          table_volume_phases.set_precision("total-volume-fluid", 12);
-          table_volume_phases.set_precision("total-volume-particles", 12);
-          this->table_volume_phases.write_text(output);
+          table_phase_volumes.set_precision("time", 12);
+          table_phase_volumes.set_precision("total-volume-fluid", 12);
+          table_phase_volumes.set_precision("total-volume-particles", 12);
+          this->table_phase_volumes.write_text(output);
         }
     }
 }

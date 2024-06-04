@@ -367,8 +367,8 @@ private:
   const unsigned int            n_mpi_processes;
   LagrangianPostProcessing<dim> dem_post_processing_object;
 
-  // Post-processing variables to output total fluid volume and total particles
-  // volume
-  TableHandler table_volume_phases;
+  /// Post-processing variables to output total fluid volume and total particles
+  /// volume
+  TableHandler table_phase_volumes;
 };
 #endif

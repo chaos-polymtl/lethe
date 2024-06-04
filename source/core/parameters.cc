@@ -1849,14 +1849,14 @@ namespace Parameters
         "Name of energy output file in Cahn-Hilliard simulations. The file is stored in the output folder specified in the simulation control subsection");
 
       prm.declare_entry(
-        "calculate volume phases",
+        "calculate phase volumes",
         "false",
         Patterns::Bool(),
         "Enable calculation of total volume each phases in cfd-dem simulation, including: total volume of fluid, and total volume of particles");
 
       prm.declare_entry(
-        "volume phases name",
-        "volume_phases",
+        "phase volumes name",
+        "phase_volumes",
         Patterns::FileName(),
         "Name of phases volume output file in cfd-dem simulations. The file is stored in the output folder specified in the simulation control subsection");
     }
@@ -1908,8 +1908,8 @@ namespace Parameters
       mass_conservation_output_name = prm.get("mass conservation name");
       calculate_phase_energy        = prm.get_bool("calculate phase energy");
       phase_energy_output_name      = prm.get("phase energy name");
-      calculate_volume_phases       = prm.get_bool("calculate volume phases");
-      volume_phases_output_name     = prm.get("volume phases name");
+      calculate_phase_volumes       = prm.get_bool("calculate phase volumes");
+      phase_volumes_output_name     = prm.get("phase volumes name");
 
       // Viscous dissipative fluid
       const std::string op_fluid = prm.get("postprocessed fluid");

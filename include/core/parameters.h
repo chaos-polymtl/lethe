@@ -918,10 +918,10 @@ namespace Parameters
 
     /// Enable calculation of total fluid volume and total particles volume in
     /// cfd-dem simulation
-    bool calculate_volume_phases;
+    bool calculate_phase_volumes;
 
     /// prefix for the total volume output in cfd-dem simulation
-    std::string volume_phases_output_name;
+    std::string phase_volumes_output_name;
 
     static void
     declare_parameters(ParameterHandler &prm);
