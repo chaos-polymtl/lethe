@@ -39,7 +39,8 @@ template <
   Parameters::Lagrangian::RollingResistanceMethod rolling_friction_model>
 ParticlesForceChains<dim, contact_model, rolling_friction_model>::
   ParticlesForceChains(const DEMSolverParameters<dim> &dem_parameters_in)
-  : ParticleParticleContactForce<dim, contact_model, rolling_friction_model>(dem_parameters_in)
+  : ParticleParticleContactForce<dim, contact_model, rolling_friction_model>(
+      dem_parameters_in)
 {
   ParticleParticleContactForce<dim, contact_model, rolling_friction_model>
     force_chains_object(dem_parameters_in);

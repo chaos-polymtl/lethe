@@ -1410,7 +1410,7 @@ namespace Parameters
       prm.enter_subsection("post-processing");
       {
         Lagrangian_post_processing = prm.get_bool("Lagrangian post-processing");
-        force_chains = prm.get_bool("force chains");
+        force_chains               = prm.get_bool("force chains");
       }
       prm.leave_subsection();
     }
