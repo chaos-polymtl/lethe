@@ -117,7 +117,7 @@ Insertion<dim>::assign_particle_properties(
                                                      fem_torque_y,
                                                      fem_torque_z,
                                                      mass,
-                                                     volumetric_contribution
+                                                     volumetric_contribution,
                                                      distributed_drag};
 
       particle_properties.push_back(properties_of_one_particle);
