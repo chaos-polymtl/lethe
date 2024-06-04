@@ -385,11 +385,13 @@ public:
   std::map<unsigned int,std::set<typename DoFHandler<dim>::active_cell_iterator>>
   get_vertices_to_periodic_cell() const {
     return vertices_to_cell;
-  
+  } 
+
   //geter for periodic_direction
   Tensor<1,dim>
   get_periodic_direction() const {
     return periodic_direction;
+  }
 
   //geter for periodic_offset
   unsigned int

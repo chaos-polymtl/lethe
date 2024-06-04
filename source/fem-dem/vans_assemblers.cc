@@ -4,6 +4,7 @@
 #include <core/utilities.h>
 
 #include <fem-dem/vans_assemblers.h>
+#include <fem-dem/gls_vans.h>
 
 #include <deal.II/base/tensor.h>
 
@@ -1105,8 +1106,8 @@ GLSVansAssemblerDistributedRong<dim>::calculate_particle_fluid_interactions(
   beta_drag = beta_drag / scratch_data.cell_volume;
 }
 
-template class GLSVansAssemblerRong<2>;
-template class GLSVansAssemblerRong<3>;
+template class GLSVansAssemblerDistributedRong<2>;
+template class GLSVansAssemblerDistributedRong<3>;
 
 template <int dim>
 void
@@ -2125,8 +2126,9 @@ template class GLSVansAssemblerFPI<3>;
 template <int dim>
 void
 GLSVansAssemblerDistributedFPI<dim>::assemble_matrix(
-  const typename DofHandler<dim>::active_cell_iterator &cell,
-  const Particles::ParticleHandler<dim>                &particle_handler
+  GLSVANSSolver<dim> &gls
+  DofHandler<dim>::active_cell_iterator &cell,
+  Particles::ParticleHandler<dim>                &particle_handler
   NavierStokesScratchData<dim>         &scratch_data,
   StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
@@ -2280,8 +2282,8 @@ GLSVansAssemblerDistributedFPI<dim>::assemble_matrix(
 template <int dim>
 void
 GLSVansAssemblerDistributedFPI<dim>::assemble_rhs(
-  const GLSVANSSolver<dim> &gls
-  const typename DofHandler<dim>::active_cell_iterator &cell,
+  const GLSVANSSolver<dim> &gls,
+  const typename DoFHandler<dim>::active_cell_iterator &cell,
   const Particles::ParticleHandler<dim>                &particle_handler
   NavierStokesScratchData<dim>         &scratch_data,
   StabilizedMethodsTensorCopyData<dim> &copy_data)

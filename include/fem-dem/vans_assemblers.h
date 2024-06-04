@@ -22,6 +22,7 @@
 #include <solvers/navier_stokes_scratch_data.h>
 
 #include <fem-dem/cfd_dem_simulation_parameters.h>
+#include <solvers/gls_navier_stokes.h>
 
 #include <deal.II/particles/particle_handler.h>
 
@@ -752,6 +753,9 @@ calculate_gamma(double velocity,
 }
 
 template <int dim>
+class GLSVANSSolver : public GLSNavierStokesSolver<dim>{};
+
+template <int dim>
 class GLSVansAssemblerDistributedFPI : public NavierStokesAssemblerBase<dim>
 {
 public:
@@ -768,34 +772,27 @@ public:
    * @param copy_data (see base class)
    */
   virtual void
-  assemble_matrix(const typename DofHandler<dim>::active_cell_iterator &cell,
-                  const Particles::ParticleHanlder<dim> &particle_hanlder
+  assemble_matrix(const GLSVANSSolver<dim> &gls,
+                  const typename DoFHandler<dim>::active_cell_iterator &cell,
+                  const Particles::ParticleHandler<dim> &particle_hanlder,
                   NavierStokesScratchData<dim>          &scratch_data,
                   StabilizedMethodsTensorCopyData<dim>  &copy_data) override;
 
   /**
-   * @brief assemble_rhs Assembles the rhs
+   * @brief assemble_rhs Assembl#include <fem-dem/gls_vans.h>es the rhs
    * @param cell (see base class)
    * @param particle_handler (see base class)
    * @param scratch_data (see base class)
    * @param copy_data (see base class)
    */
   virtual void
-  assemble_rhs(const typename DofHandler<dim>::active_cell_iterator &cell,
-                  const Particles::ParticleHanlder<dim> &particle_hanlder
-                  NavierStokesScratchData<dim>          &scratch_data,
-                  StabilizedMethodsTensorCopyData<dim>  &copy_data) override;
+  assemble_rhs(const GLSVANSSolver<dim> &gls,
+               const typename DoFHandler<dim>::active_cell_iterator &cell,
+               const Particles::ParticleHandler<dim> &particle_hanlder,
+               NavierStokesScratchData<dim>          &scratch_data,
+               StabilizedMethodsTensorCopyData<dim>  &copy_data) override;
 
   Parameters::CFDDEM cfd_dem;
 };
-
-inline double
-calculate_gamma(double velocity,
-                double kinematic_viscosity,
-                double /*h*/,
-                double c_star)
-{
-  return kinematic_viscosity + c_star * velocity;
-}
 
 #endif
