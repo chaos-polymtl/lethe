@@ -2,10 +2,11 @@
 Heat Transfer Equations
 ================================
 
-In Lethe, it is possible to solve the heat transfer in various loading conditions. The main equation is derived from the energy equation in incompressible flows. Assuming a constant heat capacity :math:`C_p` and dynamic viscosity :math:`\mu`, the equation takes the following form:
+
+In Lethe, it is possible to solve the heat transfer in various loading conditions. The main equation is derived from the energy equation in incompressible flows. Assuming a constant heat capacity :math:`C_p` and dynamic viscosity :math:`\mu`, the equation takes the following form: 
 
 .. math::
-    \rho c_p \frac{\partial T}{\partial t} + \rho c_p (\mathbf{u} \cdot \nabla)T - k \nabla^2 T = - \phi + Q
+    \rho C_p \frac{\partial T}{\partial t} + \rho C_p (\mathbf{u} \cdot \nabla)T - \nabla \cdot (k \nabla T) = - \phi + Q
 
 where:
 
@@ -17,13 +18,15 @@ where:
 
 * :math:`\rho` is the density;
 
-* :math:`c_p` is the isobaric heat capacity;
+* :math:`C_p` is the isobaric heat capacity;
+
+* :math:`k` is the thermal conductivity;
 
 * :math:`Q` is the energy source term or heat generation;
 
 * :math:`\phi` is the viscous dissipation term. For an incompressible fluid it takes the following form: :math:`\phi = \mu (\nabla \mathbf{u} + \nabla \mathbf{u}^T):\nabla \mathbf{u}`, where :math:`\mu` is the `dynamic viscosity <https://en.wikipedia.org/wiki/Viscosity>`_;
 
-Depending on the physics involved, the terms :math:`\phi` and :math:`Q` can be included or excluded and can take various definitions. These cases will be discussed in a future update to the documentation.
+Depending on the physics involved, the terms :math:`\phi` and :math:`Q` can be included or excluded and can take various definitions.
 
 ================================
 Finite Element Formulation
@@ -42,7 +45,9 @@ where :math:`\mathbf{n}` is the normal vector to the boundary, :math:`q` is the 
 The weak form of the heat equation is obtained by multiplying the strong form by a test function :math:`v` and integrating over the domain :math:`\Omega`. After applying the integration by part and the Gauss-Ostrogradsky theorem, the weak form of the heat equation is given by the following equation:
 
 .. math::
-    \int_{\Omega} \left[ v \rho c_p \frac{\partial T}{\partial t} + v \rho c_p (\mathbf{u} \cdot \nabla)T + k (\nabla v \cdot \nabla T) \right] \;d\Omega - \int_{\Gamma} v k (\nabla T \cdot \mathbf{n}) \;d\Gamma = - \int_{\Omega} v \left[ \phi + Q \right] \;d\Omega
+    \int_{\Omega} \left[ v \rho C_p \frac{\partial T}{\partial t} + v \rho C_p (\mathbf{u} \cdot \nabla)T + k (\nabla v \cdot \nabla T) \right] \;d\Omega - \int_{\Gamma} v k (\nabla T \cdot \mathbf{n}) \;d\Gamma = - \int_{\Omega} v \left[ \phi + Q \right] \;d\Omega
+
+Note that this formulation treats the thermal conductivity :math:`k` as a constant.
 
 ================================
 Stabilization Techniques
