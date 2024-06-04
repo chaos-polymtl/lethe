@@ -753,7 +753,7 @@ calculate_gamma(double velocity,
 }
 
 template <int dim>
-class GLSVANSSolver : public GLSNavierStokesSolver<dim>{};
+class GLSVANSSolver;
 
 template <int dim>
 class GLSVansAssemblerDistributedFPI : public NavierStokesAssemblerBase<dim>

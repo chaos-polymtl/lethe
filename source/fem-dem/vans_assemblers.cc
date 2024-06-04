@@ -2,6 +2,7 @@
 #include <core/simulation_control.h>
 #include <core/time_integration_utilities.h>
 #include <core/utilities.h>
+#include <core/lethe_grid_tools.h>
 
 #include <fem-dem/vans_assemblers.h>
 #include <fem-dem/gls_vans.h>
@@ -2126,9 +2127,9 @@ template class GLSVansAssemblerFPI<3>;
 template <int dim>
 void
 GLSVansAssemblerDistributedFPI<dim>::assemble_matrix(
-  GLSVANSSolver<dim> &gls
-  DofHandler<dim>::active_cell_iterator &cell,
-  Particles::ParticleHandler<dim>                &particle_handler
+  const GLSVANSSolver<dim> &gls,
+  const typename DoFHandler<dim>::active_cell_iterator &cell,
+  const Particles::ParticleHandler<dim>      &particle_handler,
   NavierStokesScratchData<dim>         &scratch_data,
   StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
@@ -2146,11 +2147,17 @@ GLSVansAssemblerDistributedFPI<dim>::assemble_matrix(
   const Tensor<1, dim> average_particles_velocity =
     scratch_data.average_particle_velocity;
 
+  // neighbor cell infomation
+  const auto vertices_to_cell          = gls.get_vertices_to_cell(); 
+  const auto vertices_to_periodic_cell = gls.get_vertices_to_periodic_cell(); 
+  const auto periodic_direction        = gls.get_periodic_direction(); 
+  const auto periodic_offset           = gls.get_periodic_offset(); 
+
   scratch_data.fe_values.reinit(cell);
 
   std::vector<Point<dim>> quadrature_point_location;
-  const unsigned int      quadrature_point_location =
-    scrach_data.fe_values.get_quadrature_points();
+  quadrature_point_location =
+    scratch_data.fe_values.get_quadrature_points();
   
   // Lambda functions for calculating the radius of the reference sphere
   // Calculate the radius by the volume (area in 2D) of sphere:
@@ -2163,9 +2170,10 @@ GLSVansAssemblerDistributedFPI<dim>::assemble_matrix(
   auto active_neighbors =
     LetheGridTools::find_cells_around_cell<dim>(vertices_to_cell, cell);
 
- // auto active_periodic_neighbors =
- //   LetheGridTools::find_cells_around_cell<dim>(vertices_to_periodic_cell,
- //                                               cell);
+  auto active_periodic_neighbors =
+    LetheGridTools::find_cells_around_cell<dim>(vertices_to_periodic_cell,
+                                                cell);
+  double r_sphere = 0.0;
   r_sphere =
     radius_sphere_volume_cell(cell->measure());
 
@@ -2199,7 +2207,6 @@ GLSVansAssemblerDistributedFPI<dim>::assemble_matrix(
       // Excute same operation for periodic neighbors, if the simulation
       // simulation has no periodic boundaries, the container is empty.
       //***********************************************************************
-      /*
       for (unsigned int n = 0; n < active_periodic_neighbors.size(); n++)
         {
           //Loop over particle in periodic neighbor cell
@@ -2218,7 +2225,7 @@ GLSVansAssemblerDistributedFPI<dim>::assemble_matrix(
             // the periodic cell, this correction is the inverse of
             // the correction for the volumetric contribution
             const Point<dim> particle_location =
-              (active_periodic_neighbors[m]
+              (active_periodic_neighbors[n]
                   ->center()[periodic_direction] >
                 cell->center()[periodic_direction]) ?
                 particle.get_location() - periodic_offset :
@@ -2235,7 +2242,6 @@ GLSVansAssemblerDistributedFPI<dim>::assemble_matrix(
               }
           }
         }
-      */
       
       // Gather into local variables the relevant fields
       const Tensor<1, dim> velocity = scratch_data.velocity_values[q];
@@ -2284,7 +2290,7 @@ void
 GLSVansAssemblerDistributedFPI<dim>::assemble_rhs(
   const GLSVANSSolver<dim> &gls,
   const typename DoFHandler<dim>::active_cell_iterator &cell,
-  const Particles::ParticleHandler<dim>                &particle_handler
+  const Particles::ParticleHandler<dim>   &particle_handler,
   NavierStokesScratchData<dim>         &scratch_data,
   StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
@@ -2310,12 +2316,13 @@ GLSVansAssemblerDistributedFPI<dim>::assemble_rhs(
   scratch_data.fe_values.reinit(cell);
 
   std::vector<Point<dim>> quadrature_point_location;
-  const unsigned int      quadrature_point_location =
-    scrach_data.fe_values.get_quadrature_points();
+  quadrature_point_location =
+    scratch_data.fe_values.get_quadrature_points();
   
   // Lambda functions for calculating the radius of the reference sphere
   // Calculate the radius by the volume (area in 2D) of sphere:
   // r = (2*dim*V/pi)^(1/dim) / 2
+  double r_sphere = 0.0;
   auto radius_sphere_volume_cell = [](auto cell_measure) {
     return 0.5 * pow(2.0 * dim * cell_measure / M_PI, 1.0 / dim);
   };
@@ -2324,9 +2331,9 @@ GLSVansAssemblerDistributedFPI<dim>::assemble_rhs(
   auto active_neighbors =
     LetheGridTools::find_cells_around_cell<dim>(vertices_to_cell, cell);
 
-  //auto active_periodic_neighbors =
-  //  LetheGridTools::find_cells_around_cell<dim>(vertices_to_periodic_cell,
-  //                                              cell);
+  auto active_periodic_neighbors =
+    LetheGridTools::find_cells_around_cell<dim>(vertices_to_periodic_cell,
+                                                cell);
   r_sphere =
     radius_sphere_volume_cell(cell->measure());
   
@@ -2341,7 +2348,7 @@ GLSVansAssemblerDistributedFPI<dim>::assemble_rhs(
       for (unsigned int n = 0; n < active_neighbors.size(); n++)
         {
           //Loop over particle in neighbor cell
-          pic =
+          const auto pic =
             particle_handler.particles_in_cell(active_neighbors[n]);
           for (auto &particle : pic)
           {
@@ -2349,6 +2356,45 @@ GLSVansAssemblerDistributedFPI<dim>::assemble_rhs(
             distance = particle.get_location().distance(quadrature_point_location[q]);
 
             auto particle_properties = particle.get_properties();
+
+            if (distance <= r_sphere)
+              {
+                quadrature_beta_drag[q] += particle_properties[DEM::PropertiesIndex::distributed_drag];
+              }
+          }
+        }
+
+      // Excute same operation for periodic neighbors, if the simulation
+      // simulation has no periodic boundaries, the container is empty.
+      //***********************************************************************
+      for (unsigned int n = 0; n < active_periodic_neighbors.size(); n++)
+        {
+          //Loop over particle in periodic neighbor cell
+          const auto pic =
+            particle_handler.particles_in_cell(active_periodic_neighbors[n]);
+          for (auto &particle : pic)
+          {
+            double distance = 0;
+            auto particle_properties = particle.get_properties();
+
+            // Adjust the location of the particle in the cell to
+            // account for the periodicity. If the position of the
+            // periodic cell if greater than the position of the
+            // current cell, the particle location needs a negative
+            // correction, and vice versa. Since the particle is in
+            // the periodic cell, this correction is the inverse of
+            // the correction for the volumetric contribution
+            const Point<dim> particle_location =
+              (active_periodic_neighbors[n]
+                  ->center()[periodic_direction] >
+                cell->center()[periodic_direction]) ?
+                particle.get_location() - periodic_offset :
+                particle.get_location() + periodic_offset;
+
+            // Distance between particle and quadrature point
+            // centers
+            distance = particle_location.distance(
+              quadrature_point_location[q]);
 
             if (distance <= r_sphere)
               {
