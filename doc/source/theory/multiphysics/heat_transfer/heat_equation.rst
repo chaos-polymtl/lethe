@@ -2,7 +2,6 @@
 Heat Transfer Equations
 ================================
 
-
 In Lethe, it is possible to solve the heat transfer in various loading conditions. The main equation is derived from the energy equation in incompressible flows. Assuming a constant heat capacity :math:`C_p` and dynamic viscosity :math:`\mu`, the equation takes the following form: 
 
 .. math::
@@ -32,7 +31,7 @@ Depending on the physics involved, the terms :math:`\phi` and :math:`Q` can be i
 Finite Element Formulation
 ================================
 
-For the finite element formulation, we start from the strong form of the heat equation as shown above. We consider a domain :math:`\Omega` with boundary :math:`\Gamma`. The applied boundary condition can vary depending on the problem being solved, but the main ones are the following:
+For the finite element formulation, we start from the strong form of the equation as shown above. We consider a domain :math:`\Omega` with boundary :math:`\Gamma`. The applied boundary condition can vary depending on the problem being solved, but the main ones are the following:
 
 * Dirichlet boundary condition: :math:`T = T_0` on :math:`\Gamma_D`;
 
