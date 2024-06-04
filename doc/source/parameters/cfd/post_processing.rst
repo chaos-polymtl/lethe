@@ -269,7 +269,7 @@ This subsection controls the post-processing other than the forces and torque on
 
      V_{solid} = \int_{\Omega} (1 - \varepsilon_f) \mathrm{d}\Omega 
       
-  where :math:`\varepsilon` is void fraction.  This is a convenient way to check if the volume of each phase is conserved.
+  where :math:`\varepsilon` is the void fraction.  This is a convenient way to check if the volume of each phase is conserved.
   
   .. warning ::
 

@@ -920,7 +920,7 @@ namespace Parameters
     /// cfd-dem simulation
     bool calculate_volume_phases;
 
-    /// prifix for the total volume output in cfd-dem simulation
+    /// prefix for the total volume output in cfd-dem simulation
     std::string volume_phases_output_name;
 
     static void
