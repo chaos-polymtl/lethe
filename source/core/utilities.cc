@@ -706,3 +706,30 @@ get_max_number_of_boundary_conditions(const std::string &file_name)
 
   return std::max(max_number_of_boundary_conditions, 0);
 }
+
+template <int spacedim>
+Tensor<1, spacedim>
+entry_string_to_tensor(const std::string &entry_string)
+{
+  std::vector<std::string> vector_of_string(Utilities::split_string_list(entry_string));
+  std::vector<double> vector_of_double = Utilities::string_to_double(vector_of_string);
+
+  AssertThrow(vector_of_double.size() == 3 || vector_of_double.size() == 2,
+              ExcMessage(
+                "Invalid " + entry_string +
+                ". This should be a two or three dimensional vector or point."));
+
+  Tensor<1, spacedim> output_tensor;
+  for (unsigned int i = 0; i < spacedim; ++i)
+    output_tensor[i] = vector_of_double[i];
+
+  return output_tensor;
+}
+
+template
+Tensor<1, 2>
+entry_string_to_tensor(const std::string &entry_string);
+
+template
+Tensor<1, 3>
+entry_string_to_tensor(const std::string &entry_string);

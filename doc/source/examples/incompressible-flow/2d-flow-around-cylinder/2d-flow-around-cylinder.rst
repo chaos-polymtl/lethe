@@ -114,15 +114,16 @@ All the deal.II meshes supported by Lethe that correspond to the `GridGenerator 
       subsection manifold 0
         set id   = 0
         set type = spherical
-        set arg1 = 8
-        set arg2 = 8
+        set point coordinates = 8,8
       end
     end
 
 
-First the number of manifolds is specified by the ``set number`` command. Then a subsection for each of the manifolds is created starting with the ``manifold 0``. The boundary ``id`` is in this case set to ``0`` as we want to set a cylinder manifold and this is the corresponding id in this example. Then the ``type`` of the manifold is specified. In Lethe, there are two types supported:
+First the number of manifolds is specified by the ``set number`` command. Then a subsection for each of the manifolds is created starting with the ``manifold 0``. The boundary ``id`` is in this case set to ``0`` as we want to set a cylinder manifold and this is the corresponding id in this example. Then the ``type`` of the manifold is specified. In Lethe, there are three types supported:
 
-* ``spherical`` manifold: The former can be used to describe any sphere, circle, hypesphere or hyperdisc in two or three dimensions and requires as arguments two or three geometrical locations depending on the dimension, that are used to create the circle center where the manifold will be build. In this example we set ``arg1`` and ``arg2`` to ``8``. 
+* ``spherical`` manifold: The former can be used to describe any sphere, circle, hypesphere or hyperdisc in two or three dimensions and requires as arguments two or three geometrical locations depending on the dimension, that are used to create the circle center where the manifold will be build. In this example we set ``arg1`` and ``arg2`` to ``8``.
+
+* ``cylindrical`` manifold: Used to describe cylinders in three dimensions. It uses the coordinates of the point on the middle axis of the cylinder and a direction vector. Cylindrical manifolds are not supported in 2D.
 
 * ``iges`` manifold corresponding to a CAD geometry: the last two lines of the ``manifold 0`` subsection are replaced by the following command ``set cad file = file_name.iges`` where the path to the cad file is specified. 
 
