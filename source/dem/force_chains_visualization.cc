@@ -33,24 +33,20 @@
 
 using namespace DEM;
 
-
-
 template <
   int                                                       dim,
   Parameters::Lagrangian::ParticleParticleContactForceModel contact_model,
   Parameters::Lagrangian::RollingResistanceMethod rolling_friction_model>
 ParticlesForceChains<dim, contact_model, rolling_friction_model>::
   ParticlesForceChains(const DEMSolverParameters<dim> &dem_parameters_in)
-  : ParticleParticleContactForce<dim, contact_model, rolling_friction_model>(
-      dem_parameters_in)
-  , dem_parameters(dem_parameters_in)
+  : ParticleParticleContactForce<dim, contact_model, rolling_friction_model>(dem_parameters_in)
 {
+  ParticleParticleContactForce<dim, contact_model, rolling_friction_model>
+    force_chains_object(dem_parameters_in);
   force_normal.push_back(0);
   vertices.push_back(Point<3>(0, 0, 0));
   vertices.push_back(Point<3>(0, 0, 0));
 }
-
-
 
 template <
   int                                                       dim,
@@ -65,16 +61,12 @@ ParticlesForceChains<dim, contact_model, rolling_friction_model>::
   std::vector<CellData<1>> cells(n_cells, CellData<1>());
   for (unsigned int i = 0; i < n_cells; ++i)
     {
-      for (unsigned int j = 0; j < 2; ++j)
-        {
-          cells[i].vertices[j] = 2 * i + j;
-          cells[i].material_id = 0;
-        }
+      cells[i].vertices[0] = 2 * i;
+      cells[i].vertices[1] = 2 * i + 1;
+      cells[i].material_id = 0;
     };
   tria.create_triangulation(vertices, cells, SubCellData());
 }
-
-
 
 template <
   int                                                       dim,
@@ -85,11 +77,8 @@ ParticlesForceChains<dim, contact_model, rolling_friction_model>::
   calculate_force_chains(DEMContactManager<dim> &container_manager,
                          const double            dt)
 {
-  ParticleParticleContactForce<dim, contact_model, rolling_friction_model>
-    force_chains_object(dem_parameters);
-
-
   auto &local_adjacent_particles = container_manager.local_adjacent_particles;
+  // Lines 89 to 101 kept for future ghost particles implementation.
   // auto &ghost_adjacent_particles =
   // container_manager.ghost_adjacent_particles; auto
   // &local_periodic_adjacent_particles =
@@ -316,7 +305,6 @@ ParticlesForceChains<dim, contact_model, rolling_friction_model>::
         }
     }
 }
-
 
 template <
   int                                                       dim,
