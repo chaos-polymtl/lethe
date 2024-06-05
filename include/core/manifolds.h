@@ -20,13 +20,13 @@
 #ifndef lethe_manifolds_h
 #define lethe_manifolds_h
 
+#include <core/utilities.h>
+
 #include <deal.II/base/parameter_handler.h>
 
 #include <deal.II/distributed/tria_base.h>
 
 #include <deal.II/numerics/data_postprocessor.h>
-
-#include <core/utilities.h>
 
 #include <memory>
 
@@ -47,7 +47,7 @@ namespace Parameters
     {
       none,
       spherical,
-      cylindrical, 
+      cylindrical,
       iges
     };
 

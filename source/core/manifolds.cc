@@ -28,10 +28,11 @@ namespace Parameters
                       "none",
                       Patterns::FileName(),
                       "IGES file name");
-    prm.declare_entry("point coordinates",
-                      "0,0,0",
-                      Patterns::List(Patterns::Double()),
-                      "Point coordinates describing the spherical or cylindrical manifold");
+    prm.declare_entry(
+      "point coordinates",
+      "0,0,0",
+      Patterns::List(Patterns::Double()),
+      "Point coordinates describing the spherical or cylindrical manifold");
     prm.declare_entry("direction vector",
                       "0,1,0",
                       Patterns::List(Patterns::Double()),
@@ -51,10 +52,10 @@ namespace Parameters
     else if (op == "iges")
       types[i_bc] = ManifoldType::iges;
 
-    id[i_bc]        = prm.get_integer("id");
-    manifold_point[i_bc]   = prm.get("point coordinates");
+    id[i_bc]                 = prm.get_integer("id");
+    manifold_point[i_bc]     = prm.get("point coordinates");
     manifold_direction[i_bc] = prm.get("direction vector");
-    cad_files[i_bc] = prm.get("cad file");
+    cad_files[i_bc]          = prm.get("cad file");
   }
 
   void
@@ -242,26 +243,34 @@ attach_manifolds_to_triangulation(
       if (manifolds.types[i] == Parameters::Manifolds::ManifoldType::spherical)
         {
           // Create a point using the parameter file input
-          Point<spacedim> circle_center(entry_string_to_tensor<spacedim>(manifolds.manifold_point[i]));
+          Point<spacedim> circle_center(
+            entry_string_to_tensor<spacedim>(manifolds.manifold_point[i]));
 
-          static const SphericalManifold<dim, spacedim> manifold_description(circle_center);
+          static const SphericalManifold<dim, spacedim> manifold_description(
+            circle_center);
           triangulation.set_manifold(manifolds.id[i], manifold_description);
         }
-      if (manifolds.types[i] == Parameters::Manifolds::ManifoldType::cylindrical)
+      else if (manifolds.types[i] ==
+               Parameters::Manifolds::ManifoldType::cylindrical)
         {
           if constexpr (spacedim == 3)
-          {
-            // Create a point using the parameter file input
-            Point<spacedim> point_on_axis(entry_string_to_tensor<spacedim>(manifolds.manifold_point[i]));
-            
-            // Create a tensor for cylinder_axis
-            Tensor<1,spacedim> cylinder_axis(entry_string_to_tensor<spacedim>(manifolds.manifold_direction[i]));
+            {
+              // Create a point using the parameter file input
+              Point<spacedim> point_on_axis(
+                entry_string_to_tensor<spacedim>(manifolds.manifold_point[i]));
 
-            static const CylindricalManifold<dim, spacedim> manifold_description(cylinder_axis, point_on_axis);
-            triangulation.set_manifold(manifolds.id[i], manifold_description);
-          }
+              // Create a tensor for cylinder_axis
+              Tensor<1, spacedim> cylinder_axis(
+                entry_string_to_tensor<spacedim>(
+                  manifolds.manifold_direction[i]));
+
+              static const CylindricalManifold<dim, spacedim>
+                manifold_description(cylinder_axis, point_on_axis);
+              triangulation.set_manifold(manifolds.id[i], manifold_description);
+            }
           else
-            throw std::runtime_error("Cylindrical manifolds are not supported in 2D");
+            throw std::runtime_error(
+              "Cylindrical manifolds are not supported in 2D");
         }
       else if (manifolds.types[i] == Parameters::Manifolds::ManifoldType::iges)
         {

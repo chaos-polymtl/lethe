@@ -491,16 +491,17 @@ get_dimension(const std::string &file_name);
 int
 get_max_number_of_boundary_conditions(const std::string &file_name);
 
-  /**
-   * @brief Return the tensor of entry @p entry_string. If the entry is specified
-   * in the parameter file, then the changed value is returned, otherwise the
-   * default value is returned. An error will be thrown if spacedim is different than 2 or 3.
-   *
-   * @param entry_string A declare string in the parameter file.
-   *
-   * @return A tensor<1,3> corresponding to the entry_string in the prm file.
-   */
-template <int spacedim> 
+/**
+ * @brief Return the tensor of entry @p entry_string. If the entry is specified
+ * in the parameter file, then the changed value is returned, otherwise the
+ * default value is returned. An error will be thrown if spacedim is different
+ * than 2 or 3.
+ *
+ * @param entry_string A declare string in the parameter file.
+ *
+ * @return A tensor<1,3> corresponding to the entry_string in the prm file.
+ */
+template <int spacedim>
 Tensor<1, spacedim>
 entry_string_to_tensor(const std::string &entry_string);
 
