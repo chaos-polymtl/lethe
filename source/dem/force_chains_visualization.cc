@@ -75,8 +75,7 @@ template <
   Parameters::Lagrangian::RollingResistanceMethod rolling_friction_model>
 void
 ParticlesForceChains<dim, contact_model, rolling_friction_model>::
-  calculate_force_chains(DEMContactManager<dim> &container_manager,
-                         const double            dt)
+  calculate_force_chains(DEMContactManager<dim> &container_manager)
 {
   auto &local_adjacent_particles = container_manager.local_adjacent_particles;
   // Lines 89 to 101 kept for future ghost particles implementation.
@@ -171,7 +170,7 @@ ParticlesForceChains<dim, contact_model, rolling_friction_model>::
                     particle_two_properties,
                     particle_one_location,
                     particle_two_location,
-                    dt);
+                    0);
                   if constexpr (contact_model ==
                                 Parameters::Lagrangian::
                                   ParticleParticleContactForceModel::DMT)

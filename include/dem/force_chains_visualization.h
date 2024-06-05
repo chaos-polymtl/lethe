@@ -43,8 +43,7 @@ public:
    * @param dt DEM time step
    */
   virtual void
-  calculate_force_chains(DEMContactManager<dim> &container_manager,
-                         const double            dt) = 0;
+  calculate_force_chains(DEMContactManager<dim> &container_manager) = 0;
   /**
    * @brief Output the force chains in a single vtu file for each iteration.
    *
@@ -107,8 +106,7 @@ public:
    * @param dt DEM time step
    */
   void
-  calculate_force_chains(DEMContactManager<dim> &container_manager,
-                         const double            dt) override;
+  calculate_force_chains(DEMContactManager<dim> &container_manager) override;
   /**
    * @brief Output the force chains in a single vtu file for each iteration.
    *
