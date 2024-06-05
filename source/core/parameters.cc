@@ -558,6 +558,7 @@ namespace Parameters
         "false",
         Patterns::Bool(),
         "Enable/disable (true/false) the solid domain constraining feature.");
+
       prm.declare_entry(
         "enable domain restriction with plane",
         "false",
@@ -565,13 +566,14 @@ namespace Parameters
         "Enable/disable (true/false) the definition of a plane for geometrical\n"
         " restrictions on the domain where the solid domain constraining feature\n"
         " is applied.");
+      std::string default_entry_sting = (dim == 2) ? "0., 0." : "0., 0., 0.";
       prm.declare_entry("restriction plane point",
-                        "0., 0., 0.",
+                        default_entry_sting,
                         Patterns::List(Patterns::Double()),
                         "Domain restriction plane point coordinates.");
       prm.declare_entry(
         "restriction plane normal vector",
-        "0., 0., 0.",
+        default_entry_sting,
         Patterns::List(Patterns::Double()),
         "Domain restriction plane outward pointing normal vector.");
 
@@ -580,6 +582,7 @@ namespace Parameters
         "0",
         Patterns::Integer(),
         "Number of solid constraints (maximum of 1 per fluid).");
+
       // Resize vectors
       this->fluid_ids.resize(number_of_constraints);
       this->filtered_phase_fraction_tolerance.resize(number_of_constraints);
@@ -632,7 +635,16 @@ namespace Parameters
   {
     prm.enter_subsection("constrain stasis");
     {
-      this->enable                = prm.get_bool("enable");
+      this->enable = prm.get_bool("enable");
+
+      // Restriction plane parameters
+      this->enable_domain_restriction_with_plane =
+        prm.get_bool("enable domain restriction with plane");
+      this->restriction_plane_point =
+        entry_string_to_tensor_dim<dim>(prm, "restriction plane point");
+      this->restriction_plane_normal_vector =
+        entry_string_to_tensor_dim<dim>(prm, "restriction plane normal vector");
+
       this->number_of_constraints = prm.get_integer("number of constraints");
 
       // Resize vectors
@@ -3897,7 +3909,6 @@ namespace Parameters
   template class Laser<3>;
   template class IBParticles<2>;
   template class IBParticles<3>;
-
   template struct ConstrainSolidDomain<2>;
   template struct ConstrainSolidDomain<3>;
 

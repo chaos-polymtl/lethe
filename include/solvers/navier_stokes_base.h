@@ -62,20 +62,23 @@ using namespace dealii;
  * @brief Struct containing fluid id, temperature and phase fraction range
  * information, and flag containers for DOFs used in temperature-dependent
  * stasis constraints.
- *
- * @param[in] fluid_id Identifier of the fluid that is constrained.
- *
- * @param[in] min_solid_temperature Lower threshold value of the constraining
- * field (temperature).
- *
- * @param[in] max_solid_temperature Upper threshold values of the constraining
- * field (temperature).
- *
- * @param[in] filtered_phase_fraction_tolerance Tolerance applied on filtered
- * phase fraction.
  */
 struct StasisConstraintWithTemperature
 {
+  /**
+   * @brief Default constructor of the struct.
+   *
+   * @param[in] fluid_id Identifier of the fluid that is constrained.
+   *
+   * @param[in] min_solid_temperature Lower threshold value of the constraining
+   * field (temperature).
+   *
+   * @param[in] max_solid_temperature Upper threshold values of the constraining
+   * field (temperature).
+   *
+   * @param[in] filtered_phase_fraction_tolerance Tolerance applied on filtered
+   * phase fraction.
+   */
   StasisConstraintWithTemperature(
     const unsigned int fluid_id,
     const double       min_solid_temperature,
@@ -421,6 +424,41 @@ protected:
    */
   void
   establish_solid_domain(const bool non_zero_constraints);
+
+  /**
+   * @brief Checks if the cell is located in the constraining domain defined by
+   * a plane with its normal vector.
+   *
+   * @param[in] cell Pointer to an active cell of the fluid dynamics DoFHandler.
+   *
+   * @param[in] plane_point Coordinates of a point on the restriction plane for
+   * the stasis constraint application domain.
+   *
+   * @param[in] plane_normal_vector Outward pointing normal vector to define the
+   * restriction plane for the stasis constraint application domain.
+   *
+   * @return Boolean indicating if the cell is in the domain of interest
+   * (@p true) or not (@p false).
+   */
+  inline bool
+  check_cell_in_constraining_domain(
+    const typename DoFHandler<dim>::active_cell_iterator &cell,
+    const Point<dim>                                     &plane_point,
+    const Tensor<1, dim>                                 &plane_normal_vector)
+  {
+    for (unsigned int v = 0; v < cell->n_vertices(); ++v)
+      {
+        Point<dim>     cell_vertex = cell->vertex(v);
+        Tensor<1, dim> cell_vertex_to_plane_point_vector =
+          cell_vertex - plane_point;
+        double scalar_product_result =
+          scalar_product(cell_vertex_to_plane_point_vector,
+                         plane_normal_vector);
+        if (scalar_product_result <= 0)
+          return false;
+      }
+    return true;
+  }
 
   /**
    * @brief Get cell's local temperature values at quadrature points.

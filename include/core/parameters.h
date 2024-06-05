@@ -558,6 +558,8 @@ namespace Parameters
    * @remark Pressure DOFs in "solid" cells that are next to "fluid" cells are
    * not constrained.
    *
+   * @tparam dim Number of dimensions of the problem (2D or 3D).
+   *
    * @note At the moment, only the temperature field is used to constrain the
    * "solid" domain.
    */
@@ -589,7 +591,7 @@ namespace Parameters
 
     /// Coordinates of a point on the restriction plane for the stasis
     /// constraint application domain
-    Tensor<1, dim> restriction_plane_point;
+    Point<dim> restriction_plane_point;
 
     /// Outward pointing normal vector to define the restriction plane for the
     /// stasis constraint application domain
@@ -1663,11 +1665,12 @@ namespace Parameters
    *
    * @remark The function can be use to construct Point<dim> objects.
    *
-   * @tparam dim Dimensions of the problem (2D or 3D).
+   * @tparam dim Number of dimensions of the problem (2D or 3D).
    *
-   * @param [in] prm Parameter handler used to parse simulation information.
+   * @param[in] prm ParameterHandler object used to parse simulation
+   * information.
    *
-   * @param [in] entry_string Declare string in the parameter file.
+   * @param[in] entry_string Declare string in the parameter file.
    *
    * @return A Tensor<1,dim> corresponding to the @p entry_string in the
    * parameter file.

@@ -1968,6 +1968,16 @@ NavierStokesBase<dim, VectorType, DofsType>::constrain_stasis_with_temperature(
   StasisConstraintWithTemperature &stasis_constraint_struct =
     this->stasis_constraint_structs[0];
 
+  // Get domain restriction with plane information
+  bool restrain_domain_with_plane =
+    this->simulation_parameters.constrain_solid_domain
+      .enable_domain_restriction_with_plane;
+  Point<dim> plane_point(
+    this->simulation_parameters.constrain_solid_domain.restriction_plane_point);
+  Tensor<1, dim> plane_normal_vector(
+    this->simulation_parameters.constrain_solid_domain
+      .restriction_plane_normal_vector);
+
   // Get temperature solution
   const auto temperature_solution =
     *this->multiphysics->get_solution(PhysicsID::heat_transfer);
@@ -1978,13 +1988,26 @@ NavierStokesBase<dim, VectorType, DofsType>::constrain_stasis_with_temperature(
       if (cell->is_locally_owned() || cell->is_ghost())
         {
           cell->get_dof_indices(local_dof_indices);
-          get_cell_temperature_values(cell,
-                                      dof_handler_ht,
-                                      temperature_solution,
-                                      local_temperature_values);
-          add_flags_and_constrain_velocity(local_dof_indices,
-                                           local_temperature_values,
-                                           stasis_constraint_struct);
+
+          // If a restriction plane is defined, check if the cell is in the
+          // valid domain.
+          bool cell_is_in_valid_domain =
+            (restrain_domain_with_plane) ?
+              check_cell_in_constraining_domain(cell,
+                                                plane_point,
+                                                plane_normal_vector) :
+              true;
+
+          if (cell_is_in_valid_domain)
+            {
+              get_cell_temperature_values(cell,
+                                          dof_handler_ht,
+                                          temperature_solution,
+                                          local_temperature_values);
+              add_flags_and_constrain_velocity(local_dof_indices,
+                                               local_temperature_values,
+                                               stasis_constraint_struct);
+            }
         }
     }
   check_and_constrain_pressure(stasis_constraint_struct, local_dof_indices);
