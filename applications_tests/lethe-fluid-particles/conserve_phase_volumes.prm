@@ -67,14 +67,13 @@ end
 #---------------------------------------------------
 
 subsection void fraction
-  set mode                         = qcm
-  set qcm sphere equal cell volume = true
-  set read dem                     = true
-  set dem file name                = dem
-  set l2 smoothing factor          = 0.00000125
-  set l2 lower bound               = 0
-  set l2 upper bound               = 1
-  set bound void fraction          = false
+  set mode                = pcm
+  set read dem            = true
+  set dem file name       = dem
+  set l2 smoothing factor = 0.00000125
+  set l2 lower bound      = 0
+  set l2 upper bound      = 1
+  set bound void fraction = false
 end
 
 #---------------------------------------------------
@@ -90,7 +89,7 @@ subsection cfd-dem
   set pressure force                = true
   set drag model                    = difelice
   set coupling frequency            = 10
-  set vans model                    = modelA
+  set vans model                    = modelB
   set particle statistics           = false
 end
 
@@ -105,7 +104,6 @@ subsection post-processing
   set verbosity = verbose
 
   set calculate phase volumes = true
-  set phase volumes name      = phase_volumes
 end
 
 #---------------------------------------------------
@@ -147,6 +145,14 @@ subsection boundary conditions
 end
 
 #---------------------------------------------------
+# Timer
+#---------------------------------------------------
+
+subsection timer
+  set type = none
+end
+
+#---------------------------------------------------
 # Model parameters
 #---------------------------------------------------
 
@@ -172,7 +178,9 @@ end
 #---------------------------------------------------
 
 subsection lagrangian physical properties
+  set gx                       = 0
   set gy                       = -9.81
+  set gz                       = 0
   set number of particle types = 1
   subsection particle type 0
     set size distribution type            = uniform
