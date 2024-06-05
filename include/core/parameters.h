@@ -561,6 +561,7 @@ namespace Parameters
    * @note At the moment, only the temperature field is used to constrain the
    * "solid" domain.
    */
+  template <int dim>
   struct ConstrainSolidDomain
   {
     /// Enable/disable (@p true/false) the solid domain constraining feature.
@@ -581,6 +582,18 @@ namespace Parameters
 
     /// Upper threshold values of the constraining field (temperature)
     std::vector<double> temperature_max_values;
+
+    /// Enable/disable (@p true/false) the definition of a plane for geometrical
+    /// restrictions on the domain where the stasis constraint is applied.
+    bool enable_domain_restriction_with_plane;
+
+    /// Coordinates of a point on the restriction plane for the stasis
+    /// constraint application domain
+    Tensor<1, dim> restriction_plane_point;
+
+    /// Outward pointing normal vector to define the restriction plane for the
+    /// stasis constraint application domain
+    Tensor<1, dim> restriction_plane_normal_vector;
 
     /**
      * @brief Declare the parameters.
@@ -1641,6 +1654,54 @@ namespace Parameters
     void
     parse_parameters(ParameterHandler &prm);
   };
+
+  /**
+   * @brief Return the tensor corresponding to the entry (@p entry_string). If
+   * the dimension correspondence of the @p entry_string is not equivalent to
+   * @p dim, an exception will be thrown. The delimiter separating the elements
+   * of the @p entry_string is a comma (",").
+   *
+   * @remark The function can be use to construct Point<dim> objects.
+   *
+   * @tparam dim Dimensions of the problem (2D or 3D).
+   *
+   * @param [in] prm Parameter handler used to parse simulation information.
+   *
+   * @param [in] entry_string Declare string in the parameter file.
+   *
+   * @return A Tensor<1,dim> corresponding to the @p entry_string in the
+   * parameter file.
+   */
+  template <int dim>
+  Tensor<1, dim>
+  entry_string_to_tensor_dim(ParameterHandler  &prm,
+                             const std::string &entry_string);
+
+  /**
+   * @brief Return the tensor of entry @p entry_string. But it can allow for
+   * the usage of deprecated parameters that used to be 3 individual entries
+   * instead of a list of values.
+   *
+   * Note: It does not throw an error if the new entry is not equivalent to a
+   * tensor.
+   *
+   * @param[in,out] prm A parameter handler which is currently used to parse the
+   * simulation information.
+   * @param[in] entry_string A declare string in the parameter file.
+   * @param[in] entry_string_1 A declare string in the parameter file that is
+   * the equivalent of the second double deprecated parameter of the new list
+   * parameter.
+   * @param[in] entry_string_2 A declare string in the parameter file that is
+   * the equivalent of the second double deprecated parameter of the new list
+   * parameter.
+   *
+   * @return A tensor<1,3> corresponding to the entry_string in the prm file.
+   */
+  Tensor<1, 3>
+  entry_string_to_tensor3(ParameterHandler  &prm,
+                          const std::string &entry_string,
+                          const std::string &entry_string_1,
+                          const std::string &entry_string_2);
 
   /**
    * @brief Return the vector of size N of entry @entry_string. If the entry is

@@ -545,8 +545,9 @@ namespace Parameters
       prm.get_double("cahn hilliard mobility constant");
   }
 
+  template <int dim>
   void
-  ConstrainSolidDomain::declare_parameters(
+  ConstrainSolidDomain<dim>::declare_parameters(
     dealii::ParameterHandler &prm,
     const unsigned int        number_of_constraints)
   {
@@ -557,6 +558,23 @@ namespace Parameters
         "false",
         Patterns::Bool(),
         "Enable/disable (true/false) the solid domain constraining feature.");
+      prm.declare_entry(
+        "enable domain restriction with plane",
+        "false",
+        Patterns::Bool(),
+        "Enable/disable (true/false) the definition of a plane for geometrical\n"
+        " restrictions on the domain where the solid domain constraining feature\n"
+        " is applied.");
+      prm.declare_entry("restriction plane point",
+                        "0., 0., 0.",
+                        Patterns::List(Patterns::Double()),
+                        "Domain restriction plane point coordinates.");
+      prm.declare_entry(
+        "restriction plane normal vector",
+        "0., 0., 0.",
+        Patterns::List(Patterns::Double()),
+        "Domain restriction plane outward pointing normal vector.");
+
       prm.declare_entry(
         "number of constraints",
         "0",
@@ -578,12 +596,13 @@ namespace Parameters
           prm.leave_subsection();
         }
     }
-
     prm.leave_subsection();
   }
 
+  template <int dim>
   void
-  ConstrainSolidDomain::declare_default_entries(dealii::ParameterHandler &prm)
+  ConstrainSolidDomain<dim>::declare_default_entries(
+    dealii::ParameterHandler &prm)
   {
     prm.declare_entry("fluid id",
                       "0",
@@ -607,8 +626,9 @@ namespace Parameters
                       "considered as a solid.");
   }
 
+  template <int dim>
   void
-  ConstrainSolidDomain::parse_parameters(dealii::ParameterHandler &prm)
+  ConstrainSolidDomain<dim>::parse_parameters(dealii::ParameterHandler &prm)
   {
     prm.enter_subsection("constrain stasis");
     {
@@ -634,9 +654,9 @@ namespace Parameters
     }
   }
 
-
+  template <int dim>
   void
-  ConstrainSolidDomain::parse_constraint_parameters(
+  ConstrainSolidDomain<dim>::parse_constraint_parameters(
     dealii::ParameterHandler &prm,
     const unsigned int        constraint_id)
   {
@@ -3818,8 +3838,67 @@ namespace Parameters
     prm.leave_subsection();
   }
 
+
+  Tensor<1, 3>
+  entry_string_to_tensor3(ParameterHandler  &prm,
+                          const std::string &entry_string,
+                          const std::string &entry_string_1,
+                          const std::string &entry_string_2)
+  {
+    std::string              full_str = prm.get(entry_string);
+    std::vector<std::string> vector_of_string(
+      Utilities::split_string_list(full_str));
+    Tensor<1, 3> output_tensor;
+
+    // The used parameter is a list of values
+    if (vector_of_string.size() > 1)
+      {
+        std::vector<double> vector_of_double =
+          Utilities::string_to_double(vector_of_string);
+        for (unsigned int i = 0; i < vector_of_double.size(); ++i)
+          output_tensor[i] = vector_of_double[i];
+      }
+    else // Depreciated individual entries
+      {
+        // Since the first parameter is the alias of the new parameter,
+        // the value of the first parameter is obtained for its entry
+        output_tensor[0] = prm.get_double(entry_string);
+        output_tensor[1] = prm.get_double(entry_string_1);
+        output_tensor[2] = prm.get_double(entry_string_2);
+      }
+
+    return output_tensor;
+  }
+
+  template <int dim>
+  Tensor<1, dim>
+  entry_string_to_tensor_dim(ParameterHandler  &prm,
+                             const std::string &entry_string)
+  {
+    std::string              full_str = prm.get(entry_string);
+    std::vector<std::string> vector_of_string(
+      Utilities::split_string_list(full_str));
+    std::vector<double> vector_of_double =
+      Utilities::string_to_double(vector_of_string);
+    AssertThrow(vector_of_double.size() == dim,
+                ExcMessage("Invalid " + entry_string + ". This should be a" +
+                           Utilities::to_string(dim) +
+                           "dimensional vector or point."));
+
+    Tensor<1, dim> output_tensor;
+    for (unsigned int i = 0; i < dim; ++i)
+      output_tensor[i] = vector_of_double[i];
+
+    return output_tensor;
+  }
+
+  // Explicitly instantiate template classes and structs
   template class Laser<2>;
   template class Laser<3>;
   template class IBParticles<2>;
   template class IBParticles<3>;
+
+  template struct ConstrainSolidDomain<2>;
+  template struct ConstrainSolidDomain<3>;
+
 } // namespace Parameters
