@@ -1061,7 +1061,6 @@ DEMSolver<dim>::write_output_results()
   if (parameters.post_processing.force_chains)
     {
       // Force chains visualization
-      integrator_object = set_integrator_type(parameters);
       particles_force_chains_object =
         set_force_chains_contact_force_model(parameters);
       particles_force_chains_object->calculate_force_chains(

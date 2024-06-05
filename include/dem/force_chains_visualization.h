@@ -97,9 +97,9 @@ public:
   multi_general_cell(Triangulation<1, 3>         &tria,
                      const std::vector<Point<3>> &vertices);
   /**
-   * @brief Use a ParticleParticleContactForce object to calculate normal forces between
-   * all touching particles. Stock normal forces and particles position in
-   * vectors.
+   * @brief Calculate normal forces between all touching particles with
+   * ParticleParticleContactForce class' methods. Stock normal forces and
+   * particles position in vectors.
    *
    * @param container_manager The container manager object that contains
    * containers to modify of contact pair periodic candidates with other
