@@ -42,8 +42,8 @@ ParticlesForceChains<dim, contact_model, rolling_friction_model>::
   : ParticleParticleContactForce<dim, contact_model, rolling_friction_model>(
       dem_parameters_in)
 {
-  ParticleParticleContactForce<dim, contact_model, rolling_friction_model>
-    force_chains_object(dem_parameters_in);
+  /*Initialize with a dummy normal force between two same points (0,0,0) to be
+  sure every core have someting to write. */
   force_normal.push_back(0);
   vertices.push_back(Point<3>(0, 0, 0));
   vertices.push_back(Point<3>(0, 0, 0));
@@ -159,9 +159,6 @@ ParticlesForceChains<dim, contact_model, rolling_friction_model>::
               if (normal_overlap > 0.0)
                 {
                   // This means that the adjacent particles are in contact
-
-
-
                   // Since the normal overlap is already calculated, we update
                   // this element of the container here. The rest of information
                   // are updated using the following function
@@ -294,13 +291,6 @@ ParticlesForceChains<dim, contact_model, rolling_friction_model>::
                   vertices.push_back(particle_one_location);
                   vertices.push_back(particle_two_location);
                   force_normal.push_back(sqrt(normal_force.norm()));
-                }
-
-              else
-                {
-                  // if the adjacent pair is not in contact anymore, only the
-                  // tangential overlap is set to zero
-                  contact_info.tangential_overlap.clear();
                 }
             }
         }
