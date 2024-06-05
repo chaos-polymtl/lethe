@@ -259,7 +259,7 @@ attach_manifolds_to_triangulation(
               Point<spacedim> point_on_axis(
                 entry_string_to_tensor<spacedim>(manifolds.manifold_point[i]));
 
-              // Create a tensor for cylinder_axis
+              // Create a tensor representing the direction of the length of the cylinder
               Tensor<1, spacedim> cylinder_axis(
                 entry_string_to_tensor<spacedim>(
                   manifolds.manifold_direction[i]));

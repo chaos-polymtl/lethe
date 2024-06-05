@@ -57,6 +57,7 @@ namespace Parameters
     // List of boundary type for each number
     std::vector<ManifoldType> types;
 
+    // Vector containing strings describing the user inserted geometrical caracteristics of the manifolds 
     std::vector<std::string> manifold_point;
     std::vector<std::string> manifold_direction;
 

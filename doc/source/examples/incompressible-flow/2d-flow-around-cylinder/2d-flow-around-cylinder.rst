@@ -114,14 +114,14 @@ All the deal.II meshes supported by Lethe that correspond to the `GridGenerator 
       subsection manifold 0
         set id   = 0
         set type = spherical
-        set point coordinates = 8,8
+        set point coordinates = 8, 8
       end
     end
 
 
-First the number of manifolds is specified by the ``set number`` command. Then a subsection for each of the manifolds is created starting with the ``manifold 0``. The boundary ``id`` is in this case set to ``0`` as we want to set a cylinder manifold and this is the corresponding id in this example. Then the ``type`` of the manifold is specified. In Lethe, there are three types supported:
+First the number of manifolds is specified by the ``set number`` command. Then a subsection for each of the manifolds is created starting with the ``manifold 0``. The boundary ``id`` is in this case set to ``0`` as we want to set a spherical manifold and this is the corresponding id in this example. Then the ``type`` of the manifold is specified. In Lethe, there are three types supported:
 
-* ``spherical`` manifold: The former can be used to describe any sphere, circle, hypesphere or hyperdisc in two or three dimensions and requires as arguments two or three geometrical locations depending on the dimension, that are used to create the circle center where the manifold will be build. In this example we set ``arg1`` and ``arg2`` to ``8``.
+* ``spherical`` manifold: The former can be used to describe any sphere, circle, hypesphere or hyperdisc in two or three dimensions and requires the center of the geometry as an input argument. In this example we set ``point coordinates`` to ``8, 8``.
 
 * ``cylindrical`` manifold: Used to describe cylinders in three dimensions. It uses the coordinates of the point on the middle axis of the cylinder and a direction vector. Cylindrical manifolds are not supported in 2D.
 
