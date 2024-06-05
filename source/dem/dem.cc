@@ -1063,8 +1063,7 @@ DEMSolver<dim>::write_output_results()
       // Force chains visualization
       particles_force_chains_object =
         set_force_chains_contact_force_model(parameters);
-      particles_force_chains_object->calculate_force_chains(
-        contact_manager, simulation_control->get_time_step());
+      particles_force_chains_object->calculate_force_chains(contact_manager);
       particles_force_chains_object->write_force_chains(this->mpi_communicator,
                                                         folder,
                                                         iter);

@@ -474,7 +474,7 @@ namespace Parameters
     {
       // A bool variable which sets-up the Lagrangian post-processing
       bool Lagrangian_post_processing;
-      /// A bool variable which sets-up the force chains visualization
+      // A bool variable which sets-up the force chains visualization
       bool force_chains;
 
       static void
