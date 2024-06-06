@@ -704,6 +704,9 @@ public:
   Parameters::CFDDEM cfd_dem;
 };
 
+template <int dim>
+class GLSVANSSolver;
+
 /**
  * @brief Class that assembles the fluid_particle interactions (FPI) for the
  * VANS equations such as the drag force.
@@ -740,29 +743,6 @@ public:
   assemble_rhs(NavierStokesScratchData<dim>         &scratch_data,
                StabilizedMethodsTensorCopyData<dim> &copy_data) override;
 
-  Parameters::CFDDEM cfd_dem;
-};
-
-inline double
-calculate_gamma(double velocity,
-                double kinematic_viscosity,
-                double /*h*/,
-                double c_star)
-{
-  return kinematic_viscosity + c_star * velocity;
-}
-
-template <int dim>
-class GLSVANSSolver;
-
-template <int dim>
-class GLSVansAssemblerDistributedFPI : public NavierStokesAssemblerBase<dim>
-{
-public:
-  GLSVansAssemblerDistributedFPI(Parameters::CFDDEM cfd_dem)
-    : cfd_dem(cfd_dem)
-
-  {}
 
   /**
    * @brief assemble_matrix Assembles the matrix
@@ -776,7 +756,7 @@ public:
                   const typename DoFHandler<dim>::active_cell_iterator &cell,
                   const Particles::ParticleHandler<dim> &particle_hanlder,
                   NavierStokesScratchData<dim>          &scratch_data,
-                  StabilizedMethodsTensorCopyData<dim>  &copy_data) override;
+                  StabilizedMethodsTensorCopyData<dim>  &copy_data);
 
   /**
    * @brief assemble_rhs Assembl#include <fem-dem/gls_vans.h>es the rhs
@@ -790,9 +770,19 @@ public:
                const typename DoFHandler<dim>::active_cell_iterator &cell,
                const Particles::ParticleHandler<dim> &particle_hanlder,
                NavierStokesScratchData<dim>          &scratch_data,
-               StabilizedMethodsTensorCopyData<dim>  &copy_data) override;
+               StabilizedMethodsTensorCopyData<dim>  &copy_data);
 
   Parameters::CFDDEM cfd_dem;
 };
+
+inline double
+calculate_gamma(double velocity,
+                double kinematic_viscosity,
+                double /*h*/,
+                double c_star)
+{
+  return kinematic_viscosity + c_star * velocity;
+}
+
 
 #endif
