@@ -2140,7 +2140,7 @@ GLSVansAssemblerFPI<dim>::assemble_matrix(
   auto &strong_residual        = copy_data.strong_residual;
   auto &strong_jacobian        = copy_data.strong_jacobian;
   auto &local_matrix           = copy_data.local_matrix;
-  auto  quadrature_beta_drag   = scratch_data.quadrature_beta_drag;
+  //auto  quadrature_beta_drag   = scratch_data.quadrature_beta_drag;
   auto &undisturbed_flow_force = scratch_data.undisturbed_flow_force;
   const Tensor<1, dim> average_particles_velocity =
     scratch_data.average_particle_velocity;
@@ -2157,6 +2157,9 @@ GLSVansAssemblerFPI<dim>::assemble_matrix(
   quadrature_point_location =
     scratch_data.fe_values.get_quadrature_points();
   
+  double r_sphere = 0.0;
+  double quadrature_beta_drag;
+
   // Lambda functions for calculating the radius of the reference sphere
   // Calculate the radius by the volume (area in 2D) of sphere:
   // r = (2*dim*V/pi)^(1/dim) / 2
@@ -2171,14 +2174,13 @@ GLSVansAssemblerFPI<dim>::assemble_matrix(
   auto active_periodic_neighbors =
     LetheGridTools::find_cells_around_cell<dim>(vertices_to_periodic_cell,
                                                 cell);
-  double r_sphere = 0.0;
   r_sphere =
     radius_sphere_volume_cell(cell->measure());
 
   // Loop over the quadrature points
   for (unsigned int q = 0; q < n_q_points; ++q)
     {
-      quadrature_beta_drag[q] = 0;
+      quadrature_beta_drag = 0;
 
       // Loop over neighboring cells to determine if a particle in neighbor cell is
       // included in reference sphere 
@@ -2197,7 +2199,7 @@ GLSVansAssemblerFPI<dim>::assemble_matrix(
 
             if (distance <= r_sphere)
               {
-                quadrature_beta_drag[q] += particle_properties[DEM::PropertiesIndex::distributed_drag];
+                quadrature_beta_drag += particle_properties[DEM::PropertiesIndex::distributed_drag];
               }
           }
         }
@@ -2236,7 +2238,7 @@ GLSVansAssemblerFPI<dim>::assemble_matrix(
 
             if (distance <= r_sphere)
               {
-                quadrature_beta_drag[q] += particle_properties[DEM::PropertiesIndex::distributed_drag];
+                quadrature_beta_drag += particle_properties[DEM::PropertiesIndex::distributed_drag];
               }
           }
         }
@@ -2251,13 +2253,13 @@ GLSVansAssemblerFPI<dim>::assemble_matrix(
       if (cfd_dem.vans_model == Parameters::VANSModel::modelB)
         {
           strong_residual[q] += // Drag Force
-            (quadrature_beta_drag[q] * (velocity - average_particles_velocity) +
+            (quadrature_beta_drag * (velocity - average_particles_velocity) +
              undisturbed_flow_force);
         }
       else if (cfd_dem.vans_model == Parameters::VANSModel::modelA)
         {
           strong_residual[q] += // Drag Force
-            quadrature_beta_drag[q] * (velocity - average_particles_velocity);
+            quadrature_beta_drag * (velocity - average_particles_velocity);
         }
 
       for (unsigned int j = 0; j < n_dofs; ++j)
@@ -2265,7 +2267,7 @@ GLSVansAssemblerFPI<dim>::assemble_matrix(
           const auto &phi_u_j = scratch_data.phi_u[q][j];
           strong_jacobian[q][j] +=
             // Drag Force
-            quadrature_beta_drag[q] * phi_u_j;
+            quadrature_beta_drag * phi_u_j;
         }
 
       for (unsigned int i = 0; i < n_dofs; ++i)
@@ -2277,7 +2279,7 @@ GLSVansAssemblerFPI<dim>::assemble_matrix(
               const auto &phi_u_j = scratch_data.phi_u[q][j];
 
               local_matrix(i, j) += // Drag Force
-                quadrature_beta_drag[q] * phi_u_j * phi_u_i * JxW;
+                quadrature_beta_drag * phi_u_j * phi_u_i * JxW;
             }
         }
     }
@@ -2300,7 +2302,7 @@ GLSVansAssemblerFPI<dim>::assemble_rhs(
   // Copy data elements
   auto &strong_residual        = copy_data.strong_residual;
   auto &local_rhs              = copy_data.local_rhs;
-  auto  quadrature_beta_drag              = scratch_data.quadrature_beta_drag;
+  //auto  quadrature_beta_drag              = scratch_data.quadrature_beta_drag;
   auto &undisturbed_flow_force = scratch_data.undisturbed_flow_force;
   const Tensor<1, dim> average_particles_velocity =
     scratch_data.average_particle_velocity;
@@ -2317,10 +2319,11 @@ GLSVansAssemblerFPI<dim>::assemble_rhs(
   quadrature_point_location =
     scratch_data.fe_values.get_quadrature_points();
   
+  double r_sphere = 0.0;
+  double quadrature_beta_drag;
   // Lambda functions for calculating the radius of the reference sphere
   // Calculate the radius by the volume (area in 2D) of sphere:
   // r = (2*dim*V/pi)^(1/dim) / 2
-  double r_sphere = 0.0;
   auto radius_sphere_volume_cell = [](auto cell_measure) {
     return 0.5 * pow(2.0 * dim * cell_measure / M_PI, 1.0 / dim);
   };
@@ -2338,7 +2341,7 @@ GLSVansAssemblerFPI<dim>::assemble_rhs(
   // Loop over the quadrature points
   for (unsigned int q = 0; q < n_q_points; ++q)
     {
-      quadrature_beta_drag[q] = 0;
+      quadrature_beta_drag = 0;
 
       // Loop over neighboring cells to determine if a particle in neighbor cell is
       // included in reference sphere 
@@ -2357,7 +2360,7 @@ GLSVansAssemblerFPI<dim>::assemble_rhs(
 
             if (distance <= r_sphere)
               {
-                quadrature_beta_drag[q] += particle_properties[DEM::PropertiesIndex::distributed_drag];
+                quadrature_beta_drag += particle_properties[DEM::PropertiesIndex::distributed_drag];
               }
           }
         }
@@ -2396,7 +2399,7 @@ GLSVansAssemblerFPI<dim>::assemble_rhs(
 
             if (distance <= r_sphere)
               {
-                quadrature_beta_drag[q] += particle_properties[DEM::PropertiesIndex::distributed_drag];
+                quadrature_beta_drag += particle_properties[DEM::PropertiesIndex::distributed_drag];
               }
           }
         }
@@ -2411,13 +2414,13 @@ GLSVansAssemblerFPI<dim>::assemble_rhs(
       if (cfd_dem.vans_model == Parameters::VANSModel::modelB)
         {
           strong_residual[q] += // Drag Force
-            (quadrature_beta_drag[q] * (velocity - average_particles_velocity) +
+            (quadrature_beta_drag * (velocity - average_particles_velocity) +
              undisturbed_flow_force);
         }
       else if (cfd_dem.vans_model == Parameters::VANSModel::modelA)
         {
           strong_residual[q] += // Drag Force
-            quadrature_beta_drag[q] * (velocity - average_particles_velocity);
+            quadrature_beta_drag * (velocity - average_particles_velocity);
         }
 
       // Assembly of the right-hand side
@@ -2429,7 +2432,7 @@ GLSVansAssemblerFPI<dim>::assemble_rhs(
           if (cfd_dem.vans_model == Parameters::VANSModel::modelB)
             {
               local_rhs(i) -=
-                (quadrature_beta_drag[q] * (velocity - average_particles_velocity) +
+                (quadrature_beta_drag * (velocity - average_particles_velocity) +
                  undisturbed_flow_force) *
                 phi_u_i * JxW;
             }
@@ -2437,7 +2440,7 @@ GLSVansAssemblerFPI<dim>::assemble_rhs(
           if (cfd_dem.vans_model == Parameters::VANSModel::modelA)
             {
               local_rhs(i) -=
-                (quadrature_beta_drag[q] * (velocity - average_particles_velocity)) *
+                (quadrature_beta_drag * (velocity - average_particles_velocity)) *
                 phi_u_i * JxW;
             }
         }

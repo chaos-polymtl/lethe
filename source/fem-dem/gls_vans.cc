@@ -1406,7 +1406,7 @@ template <int dim>
 void
 GLSVANSSolver<dim>::setup_assemblers()
 {
-  std::cout << "IN THE SETUP_ASSEMBLER" << std::endl;
+  //std::cout << "IN THE SETUP_ASSEMBLER" << std::endl;
   this->assemblers.clear();
   particle_fluid_assemblers.clear();
 
@@ -1657,7 +1657,6 @@ GLSVANSSolver<dim>::assemble_local_system_matrix(
 
   for (auto &assembler : this->assemblers)
     {
-      assembler->assemble_matrix(scratch_data, copy_data);
       if (auto force_distributed_assembler =
             std::dynamic_pointer_cast<GLSVansAssemblerFPI<dim>>(assembler))
         {
@@ -1669,8 +1668,7 @@ GLSVANSSolver<dim>::assemble_local_system_matrix(
         }
       else
         {
-          std::cout << "Not a GLSVansAssemblerDistributedFPI instance in matrix"
-                    << std::endl;
+          assembler->assemble_matrix(scratch_data, copy_data);
         }
     }
 
@@ -1780,7 +1778,6 @@ GLSVANSSolver<dim>::assemble_local_system_rhs(
 
   for (auto &assembler : this->assemblers)
     {
-      assembler->assemble_rhs(scratch_data, copy_data);
       if (auto force_distributed_assembler =
             std::dynamic_pointer_cast<GLSVansAssemblerFPI<dim>>(assembler))
         {
@@ -1792,8 +1789,7 @@ GLSVANSSolver<dim>::assemble_local_system_rhs(
         }
       else
         {
-          std::cout << "Not a GLSVansAssemblerDistributedFPI instance in rhs"
-                    << std::endl;
+          assembler->assemble_rhs(scratch_data, copy_data);
         }
     }
 

@@ -1153,7 +1153,7 @@ public:
   std::vector<double>         particle_weights;
   std::vector<double>         cell_void_fraction;
   std::vector<double>         Re_particle;
-  std::vector<double>         quadrature_beta_drag;
+  //std::vector<double>         quadrature_beta_drag;
   unsigned int                max_number_of_particles_per_cell;
   unsigned int                number_of_particles;
   typename Particles::ParticleHandler<dim>::particle_iterator_range pic;
