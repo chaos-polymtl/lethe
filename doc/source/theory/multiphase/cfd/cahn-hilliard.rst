@@ -32,7 +32,7 @@ Let us introduce the free energy functional :math:`\mathcal{F}`:
 .. math::
   \Psi = \lambda\left(F(\phi) + \frac{1}{2}|\nabla \phi|^2\right)
   
-It is decomposed in a bulk free energy :math:`F(\phi)` and an interface energy :math:`\frac{1}{2}|\nabla \phi|^2`. :math:`\lambda` is called the mixing energy though not dimensionally consistent to an energy. The bulk free energy has a double-well form, its expression is:
+It is decomposed in a bulk free energy :math:`F(\phi)` and an interface energy :math:`\frac{1}{2}|\nabla \phi|^2`. :math:`\lambda` is called the mixing energy though not dimensionally consistent to an energy. It can be understood as a scaling factor for the energy of the system and it is proportionnal to the surface tension coefficient. The bulk free energy has a double-well form, its expression is:
 
 .. math::
   F(\phi) = \frac{(1-\phi^2)^2}{4\varepsilon^2}
