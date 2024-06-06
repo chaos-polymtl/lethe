@@ -34,7 +34,7 @@ class ParticlesForceChainsBase
 public:
   /**
    * @brief Use a ParticleParticleContactForce object to calculate normal forces between
-   * all touching particles. Stock normal forces and particles position in
+   * all touching particles. Store normal forces and particles position in
    * vectors.
    *
    * @param container_manager The container manager object that contains
