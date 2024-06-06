@@ -2121,12 +2121,10 @@ GLSVansAssemblerFPI<dim>::assemble_rhs(
     }
 }
 
-template class GLSVansAssemblerFPI<2>;
-template class GLSVansAssemblerFPI<3>;
 
 template <int dim>
 void
-GLSVansAssemblerDistributedFPI<dim>::assemble_matrix(
+GLSVansAssemblerFPI<dim>::assemble_matrix(
   GLSVANSSolver<dim> *gls,
   const typename DoFHandler<dim>::active_cell_iterator &cell,
   const Particles::ParticleHandler<dim>      &particle_handler,
@@ -2287,7 +2285,7 @@ GLSVansAssemblerDistributedFPI<dim>::assemble_matrix(
 
 template <int dim>
 void
-GLSVansAssemblerDistributedFPI<dim>::assemble_rhs(
+GLSVansAssemblerFPI<dim>::assemble_rhs(
   GLSVANSSolver<dim> *gls,
   const typename DoFHandler<dim>::active_cell_iterator &cell,
   const Particles::ParticleHandler<dim>   &particle_handler,
@@ -2446,5 +2444,5 @@ GLSVansAssemblerDistributedFPI<dim>::assemble_rhs(
     }
 }
 
-template class GLSVansAssemblerDistributedFPI<2>;
-template class GLSVansAssemblerDistributedFPI<3>;
+template class GLSVansAssemblerFPI<2>;
+template class GLSVansAssemblerFPI<3>;

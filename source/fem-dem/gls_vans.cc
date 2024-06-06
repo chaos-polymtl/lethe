@@ -1552,7 +1552,7 @@ GLSVANSSolver<dim>::setup_assemblers()
     }
 
   //  Fluid_Particle Interactions Assembler
-  this->assemblers.push_back(std::make_shared<GLSVansAssemblerDistributedFPI<dim>>(
+  this->assemblers.push_back(std::make_shared<GLSVansAssemblerFPI<dim>>(
     this->cfd_dem_simulation_parameters.cfd_dem));
 
   // The core assembler should always be the last assembler to be called
@@ -1658,7 +1658,7 @@ GLSVANSSolver<dim>::assemble_local_system_matrix(
     {
       assembler->assemble_matrix(scratch_data, copy_data);
       if (auto force_distributed_assembler =
-            std::dynamic_pointer_cast<GLSVansAssemblerDistributedFPI<dim>>(assembler))
+            std::dynamic_pointer_cast<GLSVansAssemblerFPI<dim>>(assembler))
         {
           force_distributed_assembler->assemble_matrix(this,
                                                        cell,
@@ -1781,7 +1781,7 @@ GLSVANSSolver<dim>::assemble_local_system_rhs(
     {
       assembler->assemble_rhs(scratch_data, copy_data);
       if (auto force_distributed_assembler =
-            std::dynamic_pointer_cast<GLSVansAssemblerDistributedFPI<dim>>(assembler))
+            std::dynamic_pointer_cast<GLSVansAssemblerFPI<dim>>(assembler))
         {
           force_distributed_assembler->assemble_rhs(this,
                                                     cell,
