@@ -77,6 +77,13 @@ This subsection controls the post-processing other than the forces and torque on
     set phase statistics name            = phase_statistics
     set calculate phase energy           = false
     set phase energy name                = phase_energy
+
+    #---------------------------------------------------
+    # Multiphase post-processing
+    #---------------------------------------------------
+    # CFD-DEM postprocessing
+    set calculate volume phases          = false
+    set phase volumes name               = phase_volumes
     
   end
 
@@ -278,5 +285,23 @@ This subsection controls the post-processing other than the forces and torque on
 
 * ``phase energy name``: name of the output file containing phase energies from Cahn-Hilliard simulations. The default file name is ``phase_energy``.
 
+* ``calculate phase volumes``: outputs total volume of fluid phase and total volume of solid phase in CFD-DEM simulation. These volumes are computed as follow:
+
+  .. math::
+
+     V_{fluid} = \int_{\Omega} \varepsilon_f \mathrm{d}\Omega 
+      
+  .. math::
+
+     V_{solid} = \int_{\Omega} (1 - \varepsilon_f) \mathrm{d}\Omega 
+      
+  where :math:`\varepsilon` is the void fraction.  This is a convenient way to check if the volume of each phase is conserved.
+  
+  .. warning ::
+
+      ``calculate phase volumes = true`` only works with the ``lethe-fluid-particle`` solver.
+
+
+* ``phase volumes name``: name of the output file containing phase energies from Cahn-Hilliard simulations. The default file name is ``phase_volumes``.
 
         
