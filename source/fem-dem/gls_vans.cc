@@ -1406,6 +1406,7 @@ template <int dim>
 void
 GLSVANSSolver<dim>::setup_assemblers()
 {
+  std::cout << "IN THE SETUP_ASSEMBLER" << std::endl;
   this->assemblers.clear();
   particle_fluid_assemblers.clear();
 
