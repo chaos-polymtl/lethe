@@ -771,12 +771,12 @@ public:
    * @param scratch_data (see base class)
    * @param copy_data (see base class)
    */
-  virtual void
-  assemble_matrix(const GLSVANSSolver<dim> &gls,
+  void
+  assemble_matrix(GLSVANSSolver<dim> *gls,
                   const typename DoFHandler<dim>::active_cell_iterator &cell,
                   const Particles::ParticleHandler<dim> &particle_hanlder,
                   NavierStokesScratchData<dim>          &scratch_data,
-                  StabilizedMethodsTensorCopyData<dim>  &copy_data) override;
+                  StabilizedMethodsTensorCopyData<dim>  &copy_data);
 
   /**
    * @brief assemble_rhs Assembl#include <fem-dem/gls_vans.h>es the rhs
@@ -785,12 +785,12 @@ public:
    * @param scratch_data (see base class)
    * @param copy_data (see base class)
    */
-  virtual void
-  assemble_rhs(const GLSVANSSolver<dim> &gls,
+  void
+  assemble_rhs(GLSVANSSolver<dim> *gls,
                const typename DoFHandler<dim>::active_cell_iterator &cell,
                const Particles::ParticleHandler<dim> &particle_hanlder,
                NavierStokesScratchData<dim>          &scratch_data,
-               StabilizedMethodsTensorCopyData<dim>  &copy_data) override;
+               StabilizedMethodsTensorCopyData<dim>  &copy_data);
 
   Parameters::CFDDEM cfd_dem;
 };

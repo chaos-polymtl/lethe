@@ -2127,7 +2127,7 @@ template class GLSVansAssemblerFPI<3>;
 template <int dim>
 void
 GLSVansAssemblerDistributedFPI<dim>::assemble_matrix(
-  const GLSVANSSolver<dim> &gls,
+  GLSVANSSolver<dim> *gls,
   const typename DoFHandler<dim>::active_cell_iterator &cell,
   const Particles::ParticleHandler<dim>      &particle_handler,
   NavierStokesScratchData<dim>         &scratch_data,
@@ -2148,10 +2148,10 @@ GLSVansAssemblerDistributedFPI<dim>::assemble_matrix(
     scratch_data.average_particle_velocity;
 
   // neighbor cell infomation
-  const auto vertices_to_cell          = gls.get_vertices_to_cell(); 
-  const auto vertices_to_periodic_cell = gls.get_vertices_to_periodic_cell(); 
-  const auto periodic_direction        = gls.get_periodic_direction(); 
-  const auto periodic_offset           = gls.get_periodic_offset(); 
+  auto vertices_to_cell          = gls->get_vertices_to_cell(); 
+  auto vertices_to_periodic_cell = gls->get_vertices_to_periodic_cell(); 
+  auto periodic_direction        = gls->get_periodic_direction(); 
+  auto periodic_offset           = gls->get_periodic_offset(); 
 
   scratch_data.fe_values.reinit(cell);
 
@@ -2288,7 +2288,7 @@ GLSVansAssemblerDistributedFPI<dim>::assemble_matrix(
 template <int dim>
 void
 GLSVansAssemblerDistributedFPI<dim>::assemble_rhs(
-  const GLSVANSSolver<dim> &gls,
+  GLSVANSSolver<dim> *gls,
   const typename DoFHandler<dim>::active_cell_iterator &cell,
   const Particles::ParticleHandler<dim>   &particle_handler,
   NavierStokesScratchData<dim>         &scratch_data,
@@ -2308,10 +2308,10 @@ GLSVansAssemblerDistributedFPI<dim>::assemble_rhs(
     scratch_data.average_particle_velocity;
   
   // neighbor cell infomation
-  const auto vertices_to_cell          = gls.get_vertices_to_cell(); 
-  const auto vertices_to_periodic_cell = gls.get_vertices_to_periodic_cell(); 
-  const auto periodic_direction        = gls.get_periodic_direction(); 
-  const auto periodic_offset           = gls.get_periodic_offset(); 
+  auto vertices_to_cell          = gls->get_vertices_to_cell(); 
+  auto vertices_to_periodic_cell = gls->get_vertices_to_periodic_cell(); 
+  auto periodic_direction        = gls->get_periodic_direction(); 
+  auto periodic_offset           = gls->get_periodic_offset();
 
   scratch_data.fe_values.reinit(cell);
 
