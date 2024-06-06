@@ -40,7 +40,6 @@ public:
    * @param container_manager The container manager object that contains
    * containers to modify of contact pair periodic candidates with other
    * containers with periodic neighbors lists
-   * @param dt DEM time step
    */
   virtual void
   calculate_force_chains(DEMContactManager<dim> &container_manager) = 0;
