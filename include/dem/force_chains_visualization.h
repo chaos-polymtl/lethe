@@ -66,7 +66,7 @@ public:
  *
  * @tparam dim The dimension of the problem
  * @tparam force_model The particle-particle contact force model
- * @tparam rolling_friction_model The rolling resistance model used
+ * @tparam rolling_friction_model The rolling resistance model
  */
 template <
   int                                                       dim,
