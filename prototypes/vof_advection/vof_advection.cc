@@ -51,6 +51,13 @@
 
 using namespace dealii;
 
+template <typename T>
+int
+sgn(T val)
+{
+  return (static_cast<T>(0) < val) - (val < static_cast<T>(0));
+}
+
 template <int dim>
 class AdvectionField : public TensorFunction<1, dim>
 {
@@ -263,6 +270,8 @@ private:
   NonMatching::MeshClassifier<dim> mesh_classifier;
 
   IndexSet locally_owned_dofs;
+  types::global_dof_index n_locally_owned_dofs;
+  
   IndexSet locally_relevant_dofs;
   
   VectorType solution;
@@ -272,7 +281,7 @@ private:
   
   
   std::map<types::global_cell_index,Point<dim>> intersection_point;
-  
+    
   VectorType system_rhs;
   
   double dt;
@@ -323,6 +332,8 @@ void AdvectionProblem<dim>::setup_system()
   pcout << "boop 1" << std::endl;
   
   locally_owned_dofs    = dof_handler.locally_owned_dofs();
+  n_locally_owned_dofs    = dof_handler.n_locally_owned_dofs();
+  
   locally_relevant_dofs = DoFTools::extract_locally_relevant_dofs(dof_handler);
   
   pcout << "boop 2" << std::endl;
@@ -544,46 +555,17 @@ AdvectionProblem<dim>::compute_level_set_from_phase_fraction()
 template <int dim>
 void 
 AdvectionProblem<dim>::identify_cell_location()
-{  
-  // VectorType location_owned(this->locally_owned_dofs,
-  //                                          mpi_communicator);
-  // 
-
-  // 
-  //     if (!cell->is_locally_owned())
-  //       return;
-  // 
-  //     const NonMatching::LocationToLevelSet cell_location =
-  //           mesh_classifier.location_to_level_set(cell);
-  // 
-  //     const unsigned int dofs_per_cell = fe.n_dofs_per_cell();
-  // 
-  // 
-  //     std::vector<types::global_dof_index> dof_indices(dofs_per_cell);
-  // 
-  //     cell->get_dof_indices(dof_indices);
-  // 
-  // 
-  //     for (unsigned int i = 0; i < dofs_per_cell; ++i)
-  //     {
-  //       if (cell_location == NonMatching::LocationToLevelSet::intersected)
-  //         location_owned[dof_indices[i]] = 1.0;
-  //     }
-  // 
-  //   }
-  // 
-  // location = location_owned;  
-  
+{   
   VectorType distance_owned(this->locally_owned_dofs,
                                            mpi_communicator);
+  std::unordered_set<types::global_dof_index> dofs_location_status;
                                            
   distance_owned = DBL_MAX;
+  
   
   const QGaussLobatto<1> quadrature_1D(2);
   
   NonMatching::RegionUpdateFlags region_update_flags;
-  // region_update_flags.inside = update_values | update_gradients |
-                               // update_JxW_values | update_quadrature_points;
   region_update_flags.surface = update_quadrature_points |
                                 update_normal_vectors;
                                 
@@ -611,8 +593,6 @@ AdvectionProblem<dim>::identify_cell_location()
   
   for (const auto &cell : dof_handler.active_cell_iterators())
   {
-  
-    // pcout << "ohoh" << std::endl;
   
     if (cell->is_locally_owned())
     {
@@ -669,14 +649,54 @@ AdvectionProblem<dim>::identify_cell_location()
           D_square = projection.norm()*projection.norm();
         }
         const double previous_D = distance_owned[dof_indices[i]];
-        distance_owned[dof_indices[i]] = std::min(previous_D, std::sqrt(D_square));
+        const double level_set_value = level_set[dof_indices[i]];
+        
+        distance_owned[dof_indices[i]] = std::min(std::abs(previous_D), std::abs(std::sqrt(D_square)))*sgn(level_set_value);
+        dofs_location_status.insert(dof_indices[i]);
       }
-      
-              
     }
     }
   }
   signed_distance = distance_owned;
+  
+  
+  // Edge distance approximation
+  // distance_owned = DBL_MAX;
+  // 
+  // bool change = true;
+  // 
+  // while (change)
+  // {
+  //   for (const auto &cell : dof_handler.active_cell_iterators())
+  //   {
+  //     if (cell->is_locally_owned())
+  //     {
+  //       change = false;
+  // 
+  //       const unsigned int dofs_per_cell = fe.n_dofs_per_cell();
+  // 
+  //       std::vector<types::global_dof_index> dof_indices(dofs_per_cell);
+  // 
+  //       cell->get_dof_indices(dof_indices);
+  // 
+  //       const NonMatching::LocationToLevelSet cell_location =
+  //             mesh_classifier.location_to_level_set(cell);
+  // 
+  //       if (cell_location != NonMatching::LocationToLevelSet::intersected)
+  //       {
+  //         for (unsigned int i = 0; i < dofs_per_cell; ++i)
+  //         {
+  //           if (dofs_location_status.find(dof_indices[i]) == dofs_location_status.end())
+  //           {
+  //             continue;
+  //           }
+  //           const Point<dim> y = dof_support_points.at(dof_indices[i]);
+  // 
+  //         }
+  //       }
+  //     }
+  //   }
+  // }
 }
 
 template <int dim>
