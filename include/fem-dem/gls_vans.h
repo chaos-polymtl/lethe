@@ -377,25 +377,25 @@ protected:
 public:
   //geter for vertices_to_cell
   std::map<unsigned int,std::set<typename DoFHandler<dim>::active_cell_iterator>>
-  get_vertices_to_cell() const {
+  get_vertices_to_cell() {
     return vertices_to_cell;
   }
 
   //geter for vertices_to_periodic_cell
   std::map<unsigned int,std::set<typename DoFHandler<dim>::active_cell_iterator>>
-  get_vertices_to_periodic_cell() const {
+  get_vertices_to_periodic_cell() {
     return vertices_to_cell;
   } 
 
   //geter for periodic_direction
-  Tensor<1,dim>
-  get_periodic_direction() const {
+  unsigned int
+  get_periodic_direction() {
     return periodic_direction;
   }
 
   //geter for periodic_offset
-  unsigned int
-  get_periodic_offset() const {
+  Tensor<1, dim>
+  get_periodic_offset() {
     return periodic_offset;
   }
 };

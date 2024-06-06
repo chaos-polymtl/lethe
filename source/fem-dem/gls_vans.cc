@@ -1657,6 +1657,20 @@ GLSVANSSolver<dim>::assemble_local_system_matrix(
   for (auto &assembler : this->assemblers)
     {
       assembler->assemble_matrix(scratch_data, copy_data);
+      if (auto force_distributed_assembler =
+            std::dynamic_pointer_cast<GLSVansAssemblerDistributedFPI<dim>>(assembler))
+        {
+          force_distributed_assembler->assemble_matrix(this,
+                                                       cell,
+                                                       particle_handler,
+                                                       scratch_data,
+                                                       copy_data);
+        }
+      else
+        {
+          std::cout << "Not a GLSVansAssemblerDistributedFPI instance in matrix"
+                    << std::endl;
+        }
     }
 
   cell->get_dof_indices(copy_data.local_dof_indices);
@@ -1766,6 +1780,20 @@ GLSVANSSolver<dim>::assemble_local_system_rhs(
   for (auto &assembler : this->assemblers)
     {
       assembler->assemble_rhs(scratch_data, copy_data);
+      if (auto force_distributed_assembler =
+            std::dynamic_pointer_cast<GLSVansAssemblerDistributedFPI<dim>>(assembler))
+        {
+          force_distributed_assembler->assemble_rhs(this,
+                                                    cell,
+                                                    particle_handler,
+                                                    scratch_data,
+                                                    copy_data);
+        }
+      else
+        {
+          std::cout << "Not a GLSVansAssemblerDistributedFPI instance in rhs"
+                    << std::endl;
+        }
     }
 
   cell->get_dof_indices(copy_data.local_dof_indices);
