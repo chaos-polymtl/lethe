@@ -2022,6 +2022,16 @@ NavierStokesBase<dim, VectorType, DofsType>::
   const unsigned int                   dofs_per_cell = this->fe->dofs_per_cell;
   std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
 
+  // Get domain restriction with plane information
+  bool restrain_domain_with_plane =
+    this->simulation_parameters.constrain_solid_domain
+      .enable_domain_restriction_with_plane;
+  Point<dim> plane_point(
+    this->simulation_parameters.constrain_solid_domain.restriction_plane_point);
+  Tensor<1, dim> plane_normal_vector(
+    this->simulation_parameters.constrain_solid_domain
+      .restriction_plane_normal_vector);
+
   // Get filtered phase fraction solution
   const auto filtered_phase_fraction_solution =
     *this->multiphysics->get_filtered_solution(PhysicsID::VOF);
@@ -2043,48 +2053,61 @@ NavierStokesBase<dim, VectorType, DofsType>::
           if (cell->is_locally_owned() || cell->is_ghost())
             {
               cell->get_dof_indices(local_dof_indices);
-              bool cell_is_in_right_fluid = true;
 
-              get_cell_filtered_phase_fraction_values(
-                cell,
-                dof_handler_vof,
-                filtered_phase_fraction_solution,
-                local_filtered_phase_fraction_values);
+              // If a restriction plane is defined, check if the cell is in the
+              // valid domain.
+              bool cell_is_in_valid_domain =
+                (restrain_domain_with_plane) ?
+                  check_cell_in_constraining_domain(cell,
+                                                    plane_point,
+                                                    plane_normal_vector) :
+                  true;
 
-              // Check if cell is only in the fluid of interest. As soon as one
-              // filtered phase fraction value is outside the tolerated range,
-              // the cell is perceived as being in the wrong fluid.
-              for (const double &filtered_phase_fraction :
-                   local_filtered_phase_fraction_values)
+              if (cell_is_in_valid_domain)
                 {
-                  if (abs(stasis_constraint_struct.fluid_id -
-                          filtered_phase_fraction) >=
-                      stasis_constraint_struct
-                        .filtered_phase_fraction_tolerance)
+                  bool cell_is_in_right_fluid = true;
+                  get_cell_filtered_phase_fraction_values(
+                    cell,
+                    dof_handler_vof,
+                    filtered_phase_fraction_solution,
+                    local_filtered_phase_fraction_values);
+
+                  // Check if cell is only in the fluid of interest. As soon as
+                  // one filtered phase fraction value is outside the tolerated
+                  // range, the cell is perceived as being in the wrong fluid.
+                  for (const double &filtered_phase_fraction :
+                       local_filtered_phase_fraction_values)
                     {
-                      cell_is_in_right_fluid = false;
-                      break;
+                      if (abs(stasis_constraint_struct.fluid_id -
+                              filtered_phase_fraction) >=
+                          stasis_constraint_struct
+                            .filtered_phase_fraction_tolerance)
+                        {
+                          cell_is_in_right_fluid = false;
+                          break;
+                        }
                     }
-                }
 
-              // If the cell is not in the right fluid, no solid constraint will
-              // be applied on the cell's DOFs. We flag the current cell's DOFs
-              // as "connected to fluid" and we skip to the next cell.
-              if (!cell_is_in_right_fluid)
-                {
-                  flag_dofs_connected_to_fluid(
-                    local_dof_indices,
-                    stasis_constraint_struct.dofs_are_connected_to_fluid);
-                  continue;
-                }
+                  // If the cell is not in the right fluid, no solid constraint
+                  // will be applied on the cell's DOFs. We flag the current
+                  // cell's DOFs as "connected to fluid" and we skip to the next
+                  // cell.
+                  if (!cell_is_in_right_fluid)
+                    {
+                      flag_dofs_connected_to_fluid(
+                        local_dof_indices,
+                        stasis_constraint_struct.dofs_are_connected_to_fluid);
+                      continue;
+                    }
 
-              get_cell_temperature_values(cell,
-                                          dof_handler_ht,
-                                          temperature_solution,
-                                          local_temperature_values);
-              add_flags_and_constrain_velocity(local_dof_indices,
-                                               local_temperature_values,
-                                               stasis_constraint_struct);
+                  get_cell_temperature_values(cell,
+                                              dof_handler_ht,
+                                              temperature_solution,
+                                              local_temperature_values);
+                  add_flags_and_constrain_velocity(local_dof_indices,
+                                                   local_temperature_values,
+                                                   stasis_constraint_struct);
+                }
             }
         }
       check_and_constrain_pressure(stasis_constraint_struct, local_dof_indices);
