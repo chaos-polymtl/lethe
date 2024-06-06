@@ -119,9 +119,9 @@ public:
                      const unsigned int iter) override;
 
 private:
-  // vector of normal forces between each touching particles.
+  /// vector of normal forces between each touching particles.
   std::vector<double> force_normal;
-  // vector of positions of touching particles.
+  /// vector of positions of touching particles.
   std::vector<Point<3>> vertices;
 };
 
