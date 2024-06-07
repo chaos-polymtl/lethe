@@ -1395,6 +1395,11 @@ namespace Parameters
           "false",
           Patterns::Bool(),
           "State whether Lagrangian post-processing should be performed.");
+        prm.declare_entry(
+          "force chains",
+          "false",
+          Patterns::Bool(),
+          "State whether force chains visualization should be performed.");
       }
       prm.leave_subsection();
     }
@@ -1405,6 +1410,7 @@ namespace Parameters
       prm.enter_subsection("post-processing");
       {
         Lagrangian_post_processing = prm.get_bool("Lagrangian post-processing");
+        force_chains               = prm.get_bool("force chains");
       }
       prm.leave_subsection();
     }
