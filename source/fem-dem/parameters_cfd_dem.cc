@@ -172,6 +172,12 @@ namespace Parameters
       Patterns::Bool(),
       "Outputs statistics about the particles such as their total kinetic energy, angular momentum, etc.");
 
+    prm.declare_entry(
+      "distribute drag force",
+      "false",
+      Patterns::Bool(),
+      "Evaluate drag force at each quadrature point using reference sphere.");
+    
     prm.leave_subsection();
   }
 
@@ -196,6 +202,7 @@ namespace Parameters
     cstar                      = prm.get_double("grad-div length scale");
     implicit_stabilization     = prm.get_bool("implicit stabilization");
     particle_statistics        = prm.get_bool("particle statistics");
+    distribute_drag_force      = prm.get_bool("distribute drag force");
 
     const std::string op = prm.get("drag model");
     if (op == "difelice")

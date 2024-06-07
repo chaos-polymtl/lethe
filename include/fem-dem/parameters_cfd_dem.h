@@ -110,6 +110,7 @@ namespace Parameters
     double       cstar;
     bool         implicit_stabilization;
     bool         particle_statistics;
+    bool         distribute_drag_force;
 
     static void
     declare_parameters(ParameterHandler &prm);
