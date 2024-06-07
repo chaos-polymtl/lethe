@@ -1,0 +1,77 @@
+Running on 1 MPI rank(s)...
+DEM time-step is 2.186842813% of Rayleigh time step
+Reading DEM checkpoint 
+Finished reading DEM checkpoint 
+10000 particles are in the simulation 
+   Number of active cells:       4500
+   Number of degrees of freedom: 21504
+   Volume of triangulation:      0.001
+---------------------------------------------------------------
+Initializing DEM parameters 
+Warning: expansion of particle-wall contact list is disabled. 
+This feature is useful in geometries with concave boundaries. 
+Finished initializing DEM parameters 
+DEM time-step is 1e-05 s 
+--------------
+Void Fraction
+--------------
+
+*********************************************************************************
+Transient iteration: 1        Time: 0.0001   Time step: 0.0001   CFL: 0.00104947
+*********************************************************************************
+--------------
+Void Fraction
+--------------
+-------------------------------
+Volume-Averaged Fluid Dynamics
+-------------------------------
+----
+DEM
+----
+DEM contact search at dem step 0
+Finished 10 DEM iterations 
+---------------------------------------------------------------
+Total volume of fluid: 0.8558614008 m^3
+Total volume of particles: 0.1409160992 m^3
+Global continuity equation error: -8.247081136e-13 s^-1
+Max local continuity error: 2.939360858e-07 s^-1
+
+*********************************************************************************
+Transient iteration: 2        Time: 0.0002   Time step: 0.0001   CFL: 0.00467056
+*********************************************************************************
+--------------
+Void Fraction
+--------------
+-------------------------------
+Volume-Averaged Fluid Dynamics
+-------------------------------
+----
+DEM
+----
+DEM contact search at dem step 9
+Finished 10 DEM iterations 
+---------------------------------------------------------------
+Total volume of fluid: 0.8558614008 m^3
+Total volume of particles: 0.1409160992 m^3
+Global continuity equation error: -1.170125066e-11 s^-1
+Max local continuity error: 2.667651567e-07 s^-1
+
+*********************************************************************************
+Transient iteration: 3        Time: 0.0003   Time step: 0.0001   CFL: 0.00426005
+*********************************************************************************
+--------------
+Void Fraction
+--------------
+-------------------------------
+Volume-Averaged Fluid Dynamics
+-------------------------------
+----
+DEM
+----
+DEM contact search at dem step 9
+Finished 10 DEM iterations 
+---------------------------------------------------------------
+Total volume of fluid: 0.8558614008 m^3
+Total volume of particles: 0.1409160992 m^3
+Global continuity equation error: -4.68769759e-12 s^-1
+Max local continuity error: 2.432011016e-07 s^-1

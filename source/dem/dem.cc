@@ -6,6 +6,7 @@
 #include <dem/distributions.h>
 #include <dem/explicit_euler_integrator.h>
 #include <dem/find_contact_detection_step.h>
+#include <dem/force_chains_visualization.h>
 #include <dem/gear3_integrator.h>
 #include <dem/input_parameter_inspection.h>
 #include <dem/insertion_file.h>
@@ -1056,6 +1057,16 @@ DEMSolver<dim>::write_output_results()
 
       write_boundaries_vtu<dim>(
         data_out_faces, folder, time, iter, this->mpi_communicator);
+    }
+  if (parameters.post_processing.force_chains)
+    {
+      // Force chains visualization
+      particles_force_chains_object =
+        set_force_chains_contact_force_model(parameters);
+      particles_force_chains_object->calculate_force_chains(contact_manager);
+      particles_force_chains_object->write_force_chains(this->mpi_communicator,
+                                                        folder,
+                                                        iter);
     }
 
   // Write all solid objects
