@@ -123,7 +123,10 @@ First the number of manifolds is specified by the ``set number`` command. Then a
 
 * ``spherical`` manifold: The former can be used to describe any sphere, circle, hypesphere or hyperdisc in two or three dimensions and requires the center of the geometry as an input argument. In this example we set ``point coordinates`` to ``8, 8``.
 
-* ``cylindrical`` manifold: Used to describe cylinders in three dimensions. It uses the coordinates of the point on the middle axis of the cylinder and a direction vector. Cylindrical manifolds are not supported in 2D.
+* ``cylindrical`` manifold: Used to describe cylinders in three dimensions. It uses the coordinates of a point and a direction vector located on the axis of the cylinder.
+
+  .. caution::
+    Cylindrical manifolds are not supported in 2D.
 
 * ``iges`` manifold corresponding to a CAD geometry: the last two lines of the ``manifold 0`` subsection are replaced by the following command ``set cad file = file_name.iges`` where the path to the cad file is specified. 
 

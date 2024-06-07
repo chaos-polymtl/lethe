@@ -106,15 +106,14 @@ end
 # Manifolds
 #---------------------------------------------------
 
-#subsection manifolds
-#  set number = 1
-#  subsection manifold 0
-#    set id   = 0
-#    set type = spherical
-#    set arg1 = 8
-#    set arg2 = 8
-#  end
-#end
+subsection manifolds
+  set number = 1
+  subsection manifold 0
+    set id   = 0
+    set type = spherical
+    set point coordinates = 8, 8
+  end
+end
 
 #---------------------------------------------------
 # Mesh Adaptation Control

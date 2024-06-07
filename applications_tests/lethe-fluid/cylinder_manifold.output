@@ -2,20 +2,11 @@ Running on 1 MPI rank(s)...
    Number of active cells:       80
    Number of degrees of freedom: 500
    Volume of triangulation:      2.83
+Pressure drop: 0 Pa
+Total pressure drop: 0 Pa
 
 *****************************
 Steady iteration:        1/1
 *****************************
----------------
-Fluid Dynamics
----------------
-  -Tolerance of iterative solver is : 0.00174
-  -Iterative solver took : 5 steps to reach a residual norm of 0.0012
-  -Tolerance of iterative solver is : 0.000174
-  -Iterative solver took : 5 steps to reach a residual norm of 6.66e-05
-  -Tolerance of iterative solver is : 1.03e-07
-  -Iterative solver took : 5 steps to reach a residual norm of 4.33e-08
-  -Tolerance of iterative solver is : 4.33e-11
-  -Iterative solver took : 5 steps to reach a residual norm of 3.28e-11
-  -Tolerance of iterative solver is : 1e-12
-  -Iterative solver took : 3 steps to reach a residual norm of 4.52e-13
+Pressure drop: 5.07 Pa
+Total pressure drop: 5.03 Pa

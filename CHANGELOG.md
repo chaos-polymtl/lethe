@@ -7,7 +7,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Added
 
-- MINOR A cylindrical manifold type has been added in the manifold parameter file option. Input arguments arg1, arg2, arg3, etc. used to describe the manifold geometry where modified to point coordinates and direction vector. A manifold section has been added to the documentation [#1167](https://github.com/chaos-polymtl/lethe/pull/1167)
+- MINOR A cylindrical manifold type has been added in the manifold parameter file option. Input arguments arg1, arg2, arg3, etc. used to describe the manifold geometry were modified to point coordinates and direction vector. A manifold section has been added to the documentation [#1167](https://github.com/chaos-polymtl/lethe/pull/1167)
 
 ## [Master] - 2024-05-27
 

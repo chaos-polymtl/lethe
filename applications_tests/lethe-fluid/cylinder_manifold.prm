@@ -15,41 +15,6 @@ subsection simulation control
 end
 
 #---------------------------------------------------
-# TESTING
-#---------------------------------------------------
-
-subsection test
-  set enable = true
-end
-
-#---------------------------------------------------
-# FEM
-#---------------------------------------------------
-
-subsection FEM
-  set velocity order = 1
-  set pressure order = 1
-end
-
-#---------------------------------------------------
-# Timer
-#---------------------------------------------------
-
-subsection timer
-  set type = none
-end
-
-#---------------------------------------------------
-# Physical Properties
-#---------------------------------------------------
-
-subsection physical properties
-  subsection fluid 0
-    set kinematic viscosity = 1.0
-  end
-end
-
-#---------------------------------------------------
 # Mesh
 #---------------------------------------------------
 
@@ -102,7 +67,7 @@ end
 
 subsection linear solver
   subsection fluid dynamics
-    set verbosity = verbose
+    set verbosity = quiet
   end
 end
 
@@ -115,7 +80,20 @@ subsection manifolds
     subsection manifold 0
         set id = 2
         set type = cylindrical
-        set point coordinates = 0,0,0
-        set direction vector = 0,1,0
     end
+end
+
+#---------------------------------------------------
+# Post-processing
+#---------------------------------------------------
+
+subsection post-processing
+  set verbosity                        = verbose
+  set output frequency                 = 1
+
+  # Pressure drop calculation
+  set calculate pressure drop          = true
+  set pressure drop name               = cylinder_manifold_pressure_drop
+  set inlet boundary id                = 3
+  set outlet boundary id               = 4
 end
