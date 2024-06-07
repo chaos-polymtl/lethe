@@ -1455,10 +1455,21 @@ GLSVANSSolver<dim>::setup_assemblers()
       if (this->cfd_dem_simulation_parameters.cfd_dem.drag_model ==
           Parameters::DragModel::rong)
         {
-          // Rong Model drag Assembler
-          particle_fluid_assemblers.push_back(
-            std::make_shared<GLSVansAssemblerDistributedRong<dim>>(
-              this->cfd_dem_simulation_parameters.cfd_dem));
+          if (this->cfd_dem_simulation_parameters.cfd_dem.distribute_drag_force == true)
+            {
+              //this->pcout << "Distributed Drag Model Rong "
+              //            << std::endl;
+              // Rong Model drag Assembler
+              particle_fluid_assemblers.push_back(
+              std::make_shared<GLSVansAssemblerDistributedRong<dim>>(
+                this->cfd_dem_simulation_parameters.cfd_dem));
+            }
+          else
+            {
+              particle_fluid_assemblers.push_back(
+              std::make_shared<GLSVansAssemblerRong<dim>>(
+                this->cfd_dem_simulation_parameters.cfd_dem));
+            } 
         }
 
       if (this->cfd_dem_simulation_parameters.cfd_dem.drag_model ==
@@ -1657,14 +1668,23 @@ GLSVANSSolver<dim>::assemble_local_system_matrix(
 
   for (auto &assembler : this->assemblers)
     {
-      if (auto force_distributed_assembler =
-            std::dynamic_pointer_cast<GLSVansAssemblerFPI<dim>>(assembler))
+      if (this->cfd_dem_simulation_parameters.cfd_dem.distribute_drag_force == true)
         {
-          force_distributed_assembler->assemble_matrix(this,
-                                                       cell,
-                                                       particle_handler,
-                                                       scratch_data,
-                                                       copy_data);
+          //this->pcout << "Distribute drag force MATRIX Assembler"
+          //            << std::endl;
+          if (auto force_distributed_assembler =
+                std::dynamic_pointer_cast<GLSVansAssemblerFPI<dim>>(assembler))
+            {
+              force_distributed_assembler->assemble_matrix(this,
+                                                           cell,
+                                                           particle_handler,
+                                                           scratch_data,
+                                                           copy_data);
+            }
+          else
+            {
+              assembler->assemble_matrix(scratch_data, copy_data);
+            }
         }
       else
         {
@@ -1778,14 +1798,23 @@ GLSVANSSolver<dim>::assemble_local_system_rhs(
 
   for (auto &assembler : this->assemblers)
     {
-      if (auto force_distributed_assembler =
-            std::dynamic_pointer_cast<GLSVansAssemblerFPI<dim>>(assembler))
+      if (this->cfd_dem_simulation_parameters.cfd_dem.distribute_drag_force == true)
         {
-          force_distributed_assembler->assemble_rhs(this,
-                                                    cell,
-                                                    particle_handler,
-                                                    scratch_data,
-                                                    copy_data);
+          //this->pcout << "Distribute drag force RHS Assembler"
+          //            << std::endl;
+          if (auto force_distributed_assembler =
+                std::dynamic_pointer_cast<GLSVansAssemblerFPI<dim>>(assembler))
+            {
+              force_distributed_assembler->assemble_rhs(this,
+                                                           cell,
+                                                           particle_handler,
+                                                           scratch_data,
+                                                           copy_data);
+            }
+          else
+            {
+              assembler->assemble_rhs(scratch_data, copy_data);
+            }
         }
       else
         {
