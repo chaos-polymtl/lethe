@@ -1050,7 +1050,7 @@ GLSVansAssemblerDistributedRong<dim>::calculate_particle_fluid_interactions(
   const auto &relative_velocity =
     scratch_data.fluid_particle_relative_velocity_at_particle_location;
   const auto &Re_p      = scratch_data.Re_particle;
-  auto       &beta_drag = scratch_data.beta_drag;
+  //auto       &beta_drag = scratch_data.beta_drag;
 
   Tensor<1, dim> drag_force;
 
@@ -1065,13 +1065,15 @@ GLSVansAssemblerDistributedRong<dim>::calculate_particle_fluid_interactions(
   const double density = scratch_data.properties_manager.get_density_scale();
 
   const auto pic               = scratch_data.pic;
-  beta_drag                    = 0;
+  //beta_drag                    = 0;
   unsigned int particle_number = 0;
 
   // Loop over particles in cell
   for (auto &particle : pic)
     {
       auto particle_properties = particle.get_properties();
+
+      particle_properties[DEM::PropertiesIndex::distributed_drag] = 0;
 
       cell_void_fraction =
         std::min(scratch_data.cell_void_fraction[particle_number], 1.0);
@@ -1104,7 +1106,7 @@ GLSVansAssemblerDistributedRong<dim>::calculate_particle_fluid_interactions(
       particle_number += 1;
     }
 
-  beta_drag = beta_drag / scratch_data.cell_volume;
+  //beta_drag = beta_drag / scratch_data.cell_volume;
 }
 
 template class GLSVansAssemblerDistributedRong<2>;
@@ -2242,6 +2244,7 @@ GLSVansAssemblerFPI<dim>::assemble_matrix(
               }
           }
         }
+      quadrature_beta_drag = quadrature_beta_drag / cell->measure(); 
       
       // Gather into local variables the relevant fields
       const Tensor<1, dim> velocity = scratch_data.velocity_values[q];
@@ -2403,6 +2406,7 @@ GLSVansAssemblerFPI<dim>::assemble_rhs(
               }
           }
         }
+      quadrature_beta_drag = quadrature_beta_drag / cell->measure(); 
 
       // Velocity
       const Tensor<1, dim> velocity = scratch_data.velocity_values[q];
