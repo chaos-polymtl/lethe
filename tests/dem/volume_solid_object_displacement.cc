@@ -34,15 +34,6 @@ test()
   MPI_Comm mpi_communicator(MPI_COMM_WORLD);
 
   // RigidSolidObject
-  ParameterAcceptorProxy<Functions::ParsedFunction<spacedim>> proxy(
-    "Embedded configuration", spacedim);
-
-  proxy.declare_parameters_call_back.connect(
-    []() -> void {
-      ParameterAcceptor::prm.set("Function expression",
-                                 "1.,0.,0");
-    });
-
   auto param = std::shared_ptr<Parameters::RigidSolidObject<spacedim>>();
   param->output_bool                   = false;
   param->solid_mesh.type               = Parameters::Mesh::Type::dealii;
@@ -55,11 +46,9 @@ test()
   param->solid_mesh.rotation_angle     = -0.39269908169; //  0.125 * pi
   param->center_of_rotation            = Point<3>({0., 0., 0.});
 
-
-
-
-  param->translational_velocity = proxy;
-
+  // Functions
+  param->translational_velocity        = std::make_shared<Function<dim>>();
+  param->angular_velocity              = std::make_shared<Function<dim>>();
 
 
   // Output
