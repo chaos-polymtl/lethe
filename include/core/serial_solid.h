@@ -297,9 +297,9 @@ private:
   // Elements used to store the velocity of the solid object
   std::shared_ptr<Function<spacedim>> translational_velocity;
   std::shared_ptr<Function<spacedim>> angular_velocity;
-  Point<spacedim>     center_of_rotation;
-  Tensor<1, spacedim> current_translational_velocity;
-  Tensor<1, 3>        current_angular_velocity;
+  Point<spacedim>                     center_of_rotation;
+  Tensor<1, spacedim>                 current_translational_velocity;
+  Tensor<1, 3>                        current_angular_velocity;
 };
 
 #endif

@@ -46,10 +46,12 @@ SerialSolid<dim, spacedim>::SerialSolid(
   , output_bool(param->output_bool)
   , center_of_rotation(param->center_of_rotation)
 {
-  translational_velocity = std::make_shared<Functions::ParsedFunction<spacedim>>(spacedim);
-  angular_velocity       = std::make_shared<Functions::ParsedFunction<spacedim>>(spacedim);
+  translational_velocity =
+    std::make_shared<Functions::ParsedFunction<spacedim>>(spacedim);
+  angular_velocity =
+    std::make_shared<Functions::ParsedFunction<spacedim>>(spacedim);
   translational_velocity = param->translational_velocity;
-  angular_velocity = param->angular_velocity;
+  angular_velocity       = param->angular_velocity;
 
   if (param->solid_mesh.simplex)
     {

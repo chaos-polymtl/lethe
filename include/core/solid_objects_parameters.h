@@ -301,7 +301,8 @@ namespace Parameters
   RigidSolidObject<dim>::declare_parameters(ParameterHandler &prm,
                                             unsigned int      id)
   {
-    // Use ParsedFunction<dim> during parameter declaration
+    // Use ParsedFunction<dim> during parameter declaration. We need to do this
+    // to use the declare_parameters function.
     auto translational_velocity_parsed =
       std::make_shared<Functions::ParsedFunction<dim>>(dim);
     auto angular_velocity_parsed =
@@ -312,11 +313,11 @@ namespace Parameters
       solid_mesh.declare_parameters(prm);
 
       prm.enter_subsection("translational velocity");
-      translational_velocity_parsed->declare_parameters(prm,dim);
+      translational_velocity_parsed->declare_parameters(prm, dim);
       prm.leave_subsection();
 
       prm.enter_subsection("angular velocity");
-      angular_velocity_parsed->declare_parameters(prm,3);
+      angular_velocity_parsed->declare_parameters(prm, 3);
       prm.leave_subsection();
 
       prm.declare_entry("center of rotation",
@@ -341,7 +342,8 @@ namespace Parameters
   RigidSolidObject<dim>::parse_parameters(ParameterHandler &prm,
                                           unsigned int      id)
   {
-    // Use ParsedFunction<dim> during parameter declaration
+    // Use ParsedFunction<dim> during parameter declaration. We need to do this
+    // to use the parse_parameters function.
     auto translational_velocity_parsed =
       std::make_shared<Functions::ParsedFunction<dim>>(dim);
     auto angular_velocity_parsed =
@@ -375,7 +377,7 @@ namespace Parameters
     }
     prm.leave_subsection();
     translational_velocity = translational_velocity_parsed;
-    angular_velocity = angular_velocity_parsed;
+    angular_velocity       = angular_velocity_parsed;
   }
 
 

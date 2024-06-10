@@ -4,23 +4,15 @@
 
 // Deal.II
 
-#include <deal.II/base/parameter_acceptor.h>
-
-#include <deal.II/fe/mapping_q1.h>
-#include <deal.II/fe/mapping_q_generic.h>
-
 #include <deal.II/grid/grid_generator.h>
 #include <deal.II/grid/grid_tools.h>
-#include <deal.II/grid/tria.h>
 
 #include <deal.II/particles/particle.h>
-#include <deal.II/particles/particle_handler.h>
-#include <deal.II/particles/particle_iterator.h>
 
 // Lethe
+#include <core/parameters.h>
 #include <core/serial_solid.h>
-#include <core/solid_objects_parameters.h>
-
+#include <core/solid_base.h>
 
 // Tests (with common definitions)
 #include <../tests/tests.h>
@@ -31,52 +23,53 @@ template <int dim, int spacedim>
 void
 test()
 {
-  MPI_Comm mpi_communicator(MPI_COMM_WORLD);
-
   // RigidSolidObject
-  auto param = std::shared_ptr<Parameters::RigidSolidObject<spacedim>>();
-  param->output_bool                   = false;
+  auto param = std::make_shared<Parameters::RigidSolidObject<spacedim>>();
+
+  // Mesh of the solid
   param->solid_mesh.type               = Parameters::Mesh::Type::dealii;
+  param->output_bool                   = false;
   param->solid_mesh.grid_type          = "hyper_cube";
   param->solid_mesh.grid_arguments     = "-0.5 : 0.5 : false";
   param->solid_mesh.initial_refinement = 0;
   param->solid_mesh.simplex            = false;
   param->solid_mesh.translation        = Tensor<1, 3>({0.5, 0.5, 0.5});
   param->solid_mesh.rotation_axis      = Tensor<1, 3>({1., 0., 0.});
-  param->solid_mesh.rotation_angle     = -0.39269908169; //  0.125 * pi
-  param->center_of_rotation            = Point<3>({0., 0., 0.});
+  param->solid_mesh.rotation_angle     = 0;
+  param->center_of_rotation            = Point<3>({0., -0.5, 0.25});
+
+  param->output_bool = false;
 
   // Functions
   std::vector<double> translational_vector = {1., 0., 0.};
-  std::vector<double> angular_vector       = {M_PI_2, 0., 0.};
+  std::vector<double> angular_vector = {-0.39269908169, 0., 0.}; //  0.125 * pi
 
   param->translational_velocity =
     std::make_shared<Functions::ConstantFunction<dim>>(translational_vector);
   param->angular_velocity =
     std::make_shared<Functions::ConstantFunction<dim>>(angular_vector);
 
+  // SerialSolid
+  SerialSolid<dim, spacedim> solid(param, 0);
 
+  double t = 0.1, dt = 0.1, t_end = 1.;
+  while (t < t_end)
+    {
+      solid.move_solid_triangulation(dt, t);
+      t += dt;
+    }
 
   // Output
-  for (auto particle_wall_contact_list_iterator =
-         particle_wall_contact_list.begin();
-       particle_wall_contact_list_iterator != particle_wall_contact_list.end();
-       ++particle_wall_contact_list_iterator)
+  auto displacement_vector = solid.get_displacement_vector();
+
+  for (unsigned int i = 0; i < (displacement_vector.size() / spacedim); ++i)
     {
-      auto particle_wall_candidate_content =
-        &particle_wall_contact_list_iterator->second;
-      for (auto particle_wall_candidate_content_iterator =
-             particle_wall_candidate_content->begin();
-           particle_wall_candidate_content_iterator !=
-           particle_wall_candidate_content->end();
-           ++particle_wall_candidate_content_iterator)
+      deallog << "Vertex " << i << " displacement: ";
+      for (unsigned int j = 0; j < spacedim; ++j)
         {
-          auto contact_information =
-            particle_wall_candidate_content_iterator->second;
-          auto particle_information = std::get<0>(contact_information);
-          deallog << "Particle " << particle_information->get_id()
-                  << " is located in a boundary cell" << std::endl;
+          deallog << displacement_vector[i * spacedim + j] << " ";
         }
+      deallog << ";" << std::endl;
     }
 }
 
