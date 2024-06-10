@@ -2173,6 +2173,7 @@ GLSVansAssemblerFPI<dim>::assemble_matrix(
   auto active_neighbors =
     LetheGridTools::find_cells_around_cell<dim>(vertices_to_cell, cell);
 
+  // Active periodic neighbors include the current cell as well
   auto active_periodic_neighbors =
     LetheGridTools::find_cells_around_cell<dim>(vertices_to_periodic_cell,
                                                 cell);
@@ -2199,6 +2200,7 @@ GLSVansAssemblerFPI<dim>::assemble_matrix(
 
             auto particle_properties = particle.get_properties();
 
+            // If the center of the particle is included in sphere
             if (distance <= r_sphere)
               {
                 quadrature_beta_drag += particle_properties[DEM::PropertiesIndex::distributed_drag];
@@ -2244,6 +2246,7 @@ GLSVansAssemblerFPI<dim>::assemble_matrix(
               }
           }
         }
+      // Divide by the cell volume. This was implemented in calculate_particle_interaciton previously
       quadrature_beta_drag = quadrature_beta_drag / cell->measure(); 
       
       // Gather into local variables the relevant fields
@@ -2324,6 +2327,7 @@ GLSVansAssemblerFPI<dim>::assemble_rhs(
   
   double r_sphere = 0.0;
   double quadrature_beta_drag;
+  
   // Lambda functions for calculating the radius of the reference sphere
   // Calculate the radius by the volume (area in 2D) of sphere:
   // r = (2*dim*V/pi)^(1/dim) / 2
@@ -2335,6 +2339,7 @@ GLSVansAssemblerFPI<dim>::assemble_rhs(
   auto active_neighbors =
     LetheGridTools::find_cells_around_cell<dim>(vertices_to_cell, cell);
 
+  // Active periodic neighbors include the current cell as well
   auto active_periodic_neighbors =
     LetheGridTools::find_cells_around_cell<dim>(vertices_to_periodic_cell,
                                                 cell);
@@ -2361,6 +2366,7 @@ GLSVansAssemblerFPI<dim>::assemble_rhs(
 
             auto particle_properties = particle.get_properties();
 
+            // If the center of the particle is included in sphere
             if (distance <= r_sphere)
               {
                 quadrature_beta_drag += particle_properties[DEM::PropertiesIndex::distributed_drag];
@@ -2406,6 +2412,7 @@ GLSVansAssemblerFPI<dim>::assemble_rhs(
               }
           }
         }
+      // Divide by the cell volume. This was implemented in calculate_particle_interaciton previously
       quadrature_beta_drag = quadrature_beta_drag / cell->measure(); 
 
       // Velocity
