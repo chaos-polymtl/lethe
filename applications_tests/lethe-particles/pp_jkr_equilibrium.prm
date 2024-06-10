@@ -98,3 +98,10 @@ subsection DEM boundary conditions
     set rotational vector = 1,0,0
   end
 end
+
+#---------------------------------------------------
+# Post-processing 
+#---------------------------------------------------
+subsection post-processing
+ set force chains = true
+end
