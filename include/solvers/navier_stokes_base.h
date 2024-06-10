@@ -450,7 +450,7 @@ protected:
       {
         Point<dim>     cell_vertex = cell->vertex(v);
         Tensor<1, dim> cell_vertex_to_plane_point_vector =
-          cell_vertex - plane_point;
+          plane_point - cell_vertex;
         double scalar_product_result =
           scalar_product(cell_vertex_to_plane_point_vector,
                          plane_normal_vector);

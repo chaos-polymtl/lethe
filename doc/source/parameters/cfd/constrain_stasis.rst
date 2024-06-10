@@ -16,8 +16,15 @@ The subsection with default parameters goes as follows:
 .. code-block:: text
 
     subsection constrain stasis
-      set enable                = false
-      set number of constraints = 0
+    set enable                               = false
+    set enable domain restriction with plane = false
+    # In 2D
+    set restriction plane point              = 0.0, 0.0
+    set restriction plane normal vector      = 0.0, 0.0
+    # In 3D
+    set restriction plane point              = 0.0, 0.0, 0.0
+    set restriction plane normal vector      = 0.0, 0.0, 0.0
+    set number of constraints                = 0
       subsection constraint 0
         set fluid id                 = 0
         set phase fraction tolerance = 1e-4
@@ -27,6 +34,12 @@ The subsection with default parameters goes as follows:
     end
 
 * The ``enable`` parameter is set to ``true`` when at least one temperature-dependent stasis constraint should be applied.
+
+* The ``enable domain restriction with plane`` parameter is set to ``true`` when it is desired to restrain the domain on which constraints are applied using a plane. The plane cuts the domain in two subdomains. Only cells in the subdomain in the opposite direction to the normal vector can be constrained.
+
+* The ``restriction plane point`` parameter is a point on the plane.
+
+* The ``restriction plane normal vector`` parameter is an outward pointing normal vector of the plane. This vector is used to select which side of the plane contains cells to constrain.
 
 * The ``number of constraints`` parameter is an integer representing the number of constraints that will be applied. It is used in multiphase (VOF) simulations to apply different constraints to each fluid. Only one constraint per fluid can be imposed. Each constraint comes with its own subsection (starting with number ``0``) containing its own set of parameters as detailed below.
 

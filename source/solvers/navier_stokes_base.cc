@@ -1991,14 +1991,10 @@ NavierStokesBase<dim, VectorType, DofsType>::constrain_stasis_with_temperature(
 
           // If a restriction plane is defined, check if the cell is in the
           // valid domain.
-          bool cell_is_in_valid_domain =
-            (restrain_domain_with_plane) ?
+          if (!restrain_domain_with_plane ||
               check_cell_in_constraining_domain(cell,
                                                 plane_point,
-                                                plane_normal_vector) :
-              true;
-
-          if (cell_is_in_valid_domain)
+                                                plane_normal_vector))
             {
               get_cell_temperature_values(cell,
                                           dof_handler_ht,
@@ -2056,14 +2052,10 @@ NavierStokesBase<dim, VectorType, DofsType>::
 
               // If a restriction plane is defined, check if the cell is in the
               // valid domain.
-              bool cell_is_in_valid_domain =
-                (restrain_domain_with_plane) ?
+              if (!restrain_domain_with_plane ||
                   check_cell_in_constraining_domain(cell,
                                                     plane_point,
-                                                    plane_normal_vector) :
-                  true;
-
-              if (cell_is_in_valid_domain)
+                                                    plane_normal_vector))
                 {
                   bool cell_is_in_right_fluid = true;
                   get_cell_filtered_phase_fraction_values(
