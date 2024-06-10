@@ -16,6 +16,7 @@
  */
 
 #include <dem/dem_solver_parameters.h>
+#include <dem/force_chains_visualization.h>
 #include <dem/particle_particle_contact_force.h>
 
 using namespace std;
@@ -33,6 +34,18 @@ using namespace std;
 template <int dim>
 std::shared_ptr<ParticleParticleContactForceBase<dim>>
 set_particle_particle_contact_force_model(
+  const DEMSolverParameters<dim> &dem_parameters);
+
+/**
+ * Sets the selected force chains contact force model in the parameter
+ * handler file.
+ *
+ * @param dem_parameters DEM parameters
+ * @return A pointer to the particle-particle contact force object
+ */
+template <int dim>
+std::shared_ptr<ParticlesForceChainsBase<dim>>
+set_force_chains_contact_force_model(
   const DEMSolverParameters<dim> &dem_parameters);
 
 #endif /* set_particle_particle_contact_force_model_h */

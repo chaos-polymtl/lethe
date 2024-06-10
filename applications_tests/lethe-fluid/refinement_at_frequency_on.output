@@ -1,0 +1,36 @@
+Running on 1 MPI rank(s)...
+   Number of active cells:       4096
+   Number of degrees of freedom: 12675
+   Volume of triangulation:      4
+
+*******************************************************************************
+Transient iteration: 1        Time: 0.1      Time step: 0.1      CFL: 2.23662 
+*******************************************************************************
+
+*******************************************************************************
+Transient iteration: 2        Time: 0.2      Time step: 0.1      CFL: 2.75501 
+*******************************************************************************
+   Number of active cells:       5218
+   Number of degrees of freedom: 16338
+   Volume of triangulation:      4
+
+*******************************************************************************
+Transient iteration: 3        Time: 0.3      Time step: 0.1      CFL: 5.5834
+*******************************************************************************
+   Number of active cells:       6721
+   Number of degrees of freedom: 21153
+   Volume of triangulation:      4
+
+*******************************************************************************
+Transient iteration: 4        Time: 0.4      Time step: 0.1      CFL: 11.1642
+*******************************************************************************
+   Number of active cells:       8623
+   Number of degrees of freedom: 27186
+   Volume of triangulation:      4
+
+*******************************************************************************
+Transient iteration: 5        Time: 0.5      Time step: 0.1      CFL: 22.3721
+*******************************************************************************
+   Number of active cells:       11035
+   Number of degrees of freedom: 34770
+   Volume of triangulation:      4

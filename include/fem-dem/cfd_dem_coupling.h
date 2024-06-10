@@ -26,6 +26,7 @@
 #include <dem/periodic_boundaries_manipulator.h>
 #include <fem-dem/cfd_dem_simulation_parameters.h>
 #include <fem-dem/gls_vans.h>
+#include <fem-dem/postprocessing_cfd_dem.h>
 
 #include <deal.II/base/work_stream.h>
 
@@ -229,6 +230,13 @@ private:
   postprocess_fd(bool first_iteration) override;
 
   /**
+   * @brief postprocess for cfd-dem
+   * Post-process cfd-dem after an iteration
+   */
+  void
+  postprocess_cfd_dem();
+
+  /**
    * @brief dynamic_flow_control
    * Dynamic flow control calculation that take into account the void fraction
    * for the average velocity calculation
@@ -358,5 +366,9 @@ private:
   const unsigned int            this_mpi_process;
   const unsigned int            n_mpi_processes;
   LagrangianPostProcessing<dim> dem_post_processing_object;
+
+  /// Post-processing variables to output total fluid volume and total particles
+  /// volume
+  TableHandler table_phase_volumes;
 };
 #endif

@@ -1,23 +1,22 @@
 # Lethe
 
-Lethe is an open source and we try to follow the deal.II mentality of having it
-developed in an open accessible environment. Consequently, all scientific
-developments made within Lethe are accessible to everyone even as they are
+Lethe is an open source software, and we try to follow the deal.II mentality of having it
+developed in an accessible environment. Consequently, all scientific
+developments made within Lethe are available to everyone even as they are
 currently being written. Anybody that wishes to use and contribute to a feature
-is welcome to do so.
+is welcomed to do so.
 
-This document aims at establishing guidelines for contributions within
-Lethe.
+This document aims at establishing guidelines for contributions within Lethe.
 
-Lethe has a wiki which is openly accessible on : https://github.com/chaos-polymtl/lethe/wiki
+Lethe has its own documentation (user guide and developer guide) which are available on: https://chaos-polymtl.github.io/lethe/index.html
 
 
 # How can I contribute?
 
 Contributions through code or documentation should be done through pull
-request at the official Github repository of Lethe : https://github.com/chaos-polymtl/lethe.
+request at the official GitHub repository of Lethe : https://github.com/chaos-polymtl/lethe.
 We recommend that users either request access to the Lethe repository or
-create their own fork of Lethe on their own github account. This can then be
+create their own fork of Lethe on their own GitHub account. This can then be
 used to open pull requests
 
 # What should be the content of a pull request (PR)?
@@ -25,31 +24,34 @@ used to open pull requests
 A pull request should contain the following elements:
 
 - A brief title (less than 60 characters) that describes the goal of the pull
-requests.
+request.
 - A detailed description of the content added by the pull request:
-i) If the PR adds a new feature: The feature should be documented, tests (with
-  a unit tests and/or an application test) and if the feature adds or alters
-  parameters in the input file, the appropriate section of the wiki should
-  be updated accordingly.
-ii) If the pull requests corrects a bug: the source of the bug should be
-explained and the way it was identified should be briefy described. A unit
-test or application test that reproduces the bug should be added.
+  * If the PR adds a new feature:\
+    The feature should be documented, tested (with unit tests and/or application tests) 
+    and if the feature adds or alters parameters in the input file, the appropriate section 
+    of the documentation should be updated accordingly.
+  * If the pull request corrects a bug:\
+    the source of the bug should be explained and the way it was identified should be briefly described. 
+    A unit test or application test that reproduces the bug should be added.
+
+See [this page](https://chaos-polymtl.github.io/lethe/documentation/contributing.html#pull-requests) for more information about the pull request process.
+
 
 # Good practices
 
 - Before making a pull request, the branch should be rebased on master to ensure
-a linear history and to make merging as easy as possible. It is the responsability
+a linear history and to make merging as easy as possible. It is the responsibility
 of the branch owner to ensure that the pull request goes as smoothly as possible.
-Pushing to github after a rebase requires a force push. You can accomplish
+Pushing to GitHub after a rebase requires a force push. You can accomplish
 this by using `git push --force-with-lease`
 - All functions should be documented in the `.h`. All functions should contain
 a `@brief` that describes the function and a `@param` for each argument.
-- Classes should be implemented in their `.cc`. All possibilities of the Classes
+- Classes should be implemented in their `.cc`. All possibilities of the classes
 should be instantiated at the end of the `.cc` files.
 - Lethe follows strict indentation guidelines. Automatic indentation can be
 carried out by launching the `/contrib/utilities/indent-all.sh` script as
 long as a valid version of clang-format is installed. An installation script for
-clan is provided in Lethe and within the deal.II respository. Lethe follows the
+clang is provided in Lethe and within the deal.II repository. Lethe follows the
 same indentation guidelines as deal.II to ensure continuity and compatibility.
 
 # Specific guidelines
@@ -95,14 +97,14 @@ determined by the headers included in the source files and headers of
 those libraries and executables) in the `CMakeLists.txt` files'
 `TARGET_LINK_LIBRARIES` calls, and omit any transitive dependencies.
 
-For example, the `dem_2d` application
-[links to `lethe-core` and `lethe-dem`](applications/dem_2d/CMakeLists.txt)
+For example, the `lethe-particles` application
+[links to `lethe-core` and `lethe-dem`](applications/lethe-particles/CMakeLists.txt)
 because it
-[includes core and DEM headers](applications/dem_2d/dem_2d.cc),
-but the `gd_navier_stokes_2d` application
-[links only to `lethe-solvers`](applications/gd_navier_stokes_2d/CMakeLists.txt)
+[includes core and DEM headers](applications/lethe-particles/dem.cc),
+but the `lethe-fluid` application
+[links only to `lethe-solvers`](applications/lethe-fluid/CMakeLists.txt)
 because it
-[includes only solvers headers](applications/gd_navier_stokes_2d/gd_navier_stokes_2d.cc),
+[includes only solvers headers](applications/lethe-fluid/gls_navier_stokes.cc),
 and `lethe-core` is a transitive dependency of `lethe-solvers`.
 
 ## Dependencies between Lethe's libraries

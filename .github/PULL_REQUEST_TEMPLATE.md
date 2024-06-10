@@ -1,31 +1,7 @@
-# Description of the problem
+Please, select the appropriate category of your pull request, go the `Preview` tab and select the template.
 
-- Explain the previous issue (description of the issue or the reference number of an open issue)
-- Explain the need for a new feature or component
-- Describe the added code
-
-# Description of the solution
-
-- Explain the solution to the existing issue
-- Explain the content of the new feature
-
-# How Has This Been Tested?
-
-- List and describe the test(s) for the added code (if there is no test for the pull request, explain why (i.e. the test already exists but was changed))
-
-- [ ] Test A
-- [ ] Test B
-
-# Documentation
-
-- If applicable, list the documentation files changed and their changes
-
-- [ ] File A
-
-# Future changes
-
-- If applicable, describe future changes or features that will be added in subsequent pull requests
-
-# Comments
-
-- Anything that you want to add up that didn't fit in any other category can be written here
+* :bulb: [New feature](?expand=1&template=pull_request_template_new-feature.md) 
+* :wrench: [Bug fix](?expand=1&template=pull_request_template_bug-fix.md)
+* :books: [Documentation](?expand=1&template=pull_request_template_documentation.md)
+* :sparkles: [Refactoring](?expand=1&template=pull_request_template_refactoring.md) 
+* :arrow_forward: [Example](?expand=1&template=pull_request_template_example.md) 

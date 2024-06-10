@@ -8,4 +8,5 @@ Electromagnetism
     :titlesonly:
 
     time_harmonic
+    time_harmonic_weak_form
     magnetohydrodynamics
