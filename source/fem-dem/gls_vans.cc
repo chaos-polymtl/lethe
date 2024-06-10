@@ -1406,7 +1406,6 @@ template <int dim>
 void
 GLSVANSSolver<dim>::setup_assemblers()
 {
-  //std::cout << "IN THE SETUP_ASSEMBLER" << std::endl;
   this->assemblers.clear();
   particle_fluid_assemblers.clear();
 
@@ -1457,9 +1456,6 @@ GLSVANSSolver<dim>::setup_assemblers()
         {
           if (this->cfd_dem_simulation_parameters.cfd_dem.distribute_drag_force == true)
             {
-              //this->pcout << "Distributed Drag Model Rong "
-              //            << std::endl;
-              // Rong Model drag Assembler
               particle_fluid_assemblers.push_back(
               std::make_shared<GLSVansAssemblerDistributedRong<dim>>(
                 this->cfd_dem_simulation_parameters.cfd_dem));
@@ -1670,8 +1666,6 @@ GLSVANSSolver<dim>::assemble_local_system_matrix(
     {
       if (this->cfd_dem_simulation_parameters.cfd_dem.distribute_drag_force == true)
         {
-          //this->pcout << "Distribute drag force MATRIX Assembler"
-          //            << std::endl;
           if (auto force_distributed_assembler =
                 std::dynamic_pointer_cast<GLSVansAssemblerFPI<dim>>(assembler))
             {
@@ -1800,8 +1794,6 @@ GLSVANSSolver<dim>::assemble_local_system_rhs(
     {
       if (this->cfd_dem_simulation_parameters.cfd_dem.distribute_drag_force == true)
         {
-          //this->pcout << "Distribute drag force RHS Assembler"
-          //            << std::endl;
           if (auto force_distributed_assembler =
                 std::dynamic_pointer_cast<GLSVansAssemblerFPI<dim>>(assembler))
             {
