@@ -47,8 +47,14 @@ test()
   param->center_of_rotation            = Point<3>({0., 0., 0.});
 
   // Functions
-  param->translational_velocity        = std::make_shared<Function<dim>>();
-  param->angular_velocity              = std::make_shared<Function<dim>>();
+  std::vector<double> translational_vector = {1., 0., 0.};
+  std::vector<double> angular_vector       = {M_PI_2, 0., 0.};
+
+  param->translational_velocity =
+    std::make_shared<Functions::ConstantFunction<dim>>(translational_vector);
+  param->angular_velocity =
+    std::make_shared<Functions::ConstantFunction<dim>>(angular_vector);
+
 
 
   // Output
