@@ -2327,7 +2327,7 @@ GLSVansAssemblerFPI<dim>::assemble_rhs(
   
   double r_sphere = 0.0;
   double quadrature_beta_drag;
-  
+
   // Lambda functions for calculating the radius of the reference sphere
   // Calculate the radius by the volume (area in 2D) of sphere:
   // r = (2*dim*V/pi)^(1/dim) / 2
@@ -2412,7 +2412,7 @@ GLSVansAssemblerFPI<dim>::assemble_rhs(
               }
           }
         }
-      // Divide by the cell volume. This was implemented in calculate_particle_interaciton previously
+      
       quadrature_beta_drag = quadrature_beta_drag / cell->measure(); 
 
       // Velocity
