@@ -20,6 +20,8 @@
 #ifndef lethe_manifolds_h
 #define lethe_manifolds_h
 
+#include <core/utilities.h>
+
 #include <deal.II/base/parameter_handler.h>
 
 #include <deal.II/distributed/tria_base.h>
@@ -45,6 +47,7 @@ namespace Parameters
     {
       none,
       spherical,
+      cylindrical,
       iges
     };
 
@@ -54,13 +57,10 @@ namespace Parameters
     // List of boundary type for each number
     std::vector<ManifoldType> types;
 
-    // Arguments of manifold
-    std::vector<double> arg1;
-    std::vector<double> arg2;
-    std::vector<double> arg3;
-    std::vector<double> arg4;
-    std::vector<double> arg5;
-    std::vector<double> arg6;
+    // Vector containing strings describing the user inserted geometrical
+    // caracteristics of the manifolds
+    std::vector<std::string> manifold_point;
+    std::vector<std::string> manifold_direction;
 
     // File names for cad manifolds
     std::vector<std::string> cad_files;

@@ -20,6 +20,7 @@ General, CFD and Multiphysics
    initial_conditions
    laser_heat_source
    linear_solver_control
+   manifolds
    mesh
    mesh_adaptation_control
    multiphysics

@@ -1,0 +1,12 @@
+Running on 2 MPI rank(s)...
+   Number of active cells:       80
+   Number of degrees of freedom: 500
+   Volume of triangulation:      2.83
+Pressure drop: 0 Pa
+Total pressure drop: 0 Pa
+
+*****************************
+Steady iteration:        1/1
+*****************************
+Pressure drop: 5.07 Pa
+Total pressure drop: 5.03 Pa

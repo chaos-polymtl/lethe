@@ -101,14 +101,12 @@ subsection manifolds
   subsection manifold 0
     set id   = 0
     set type = spherical
-    set arg1 = 0
-    set arg2 = 0
+    set point coordinates = 0,0
   end
   subsection manifold 1
     set id   = 1
     set type = spherical
-    set arg1 = 0
-    set arg2 = 0
+    set point coordinates = 0,0
   end
 end
 
