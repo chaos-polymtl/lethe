@@ -3,9 +3,9 @@ Solid Objects
 =============================
 
 Floating meshes (solid objects) are finite (limited) auxiliary objects that can be stationary or moving. Rotating impellers, sliding surfaces, and finite stoppers are examples of floating meshes. The main differences between floating meshes and floating walls are:
-1. floating wall is a surface, while a floating mesh can be a volume or a plane
-2. floating wall is infinite, while floating mesh is finite
-3. floating wall is stationary while floating mesh may be stationary or moving.
+1. floating wall is a plan, while a solid object can be either a volume or a surface
+2. floating wall is infinite, while solid object is finite
+3. floating wall is stationary while solid object may be stationary or moving.
 
 .. note:: 
     At the moment, solid objects (floating meshes) in Lethe have to be defined using triangular (simplex) meshes. Only triangular 2D meshes of 3D surfaces in 3D DEM simulations are presently supported. Quadrilateral 2D meshes of 3D surfaces and 1D mesh of 2D surfaces are not supported at the moment.
