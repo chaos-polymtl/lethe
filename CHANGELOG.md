@@ -11,6 +11,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Changed
 
+- MINOR A new subsection ``solid surfaces`` need to be used when defining solid objects in the parameter file. For more information, see the solid object documentation. [#1169](https://github.com/chaos-polymtl/lethe/pull/1169)
+
+## [Master] - 2024-06-11
+
+### Changed
+
 - MINOR The center of rotation of a solid object is no longer being defined using a subsection and three parameters. It is now defined with one parameter and a list of double. For more information, see the solid object documentation. [#1169](https://github.com/chaos-polymtl/lethe/pull/1169)
 
 ## [Master] - 2024-06-13
