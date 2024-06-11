@@ -92,29 +92,23 @@ In this subsection, the floating meshes are defined. We can use dealii or gmsh t
 .. code-block:: text
 
     subsection solid objects
-      set number of solids = 1
-      subsection solid object 0
-        subsection mesh
-          set type               = gmsh
-          set file name          = pitched-blade-impeller.msh
-          set simplex            = true
-          set initial refinement = 0
-        end
+      subsection solid surfaces
+        set number of solids = 1
+        subsection solid object 0
+          subsection mesh
+            set type               = gmsh
+            set file name          = pitched-blade-impeller.msh
+            set simplex            = true
+            set initial refinement = 0
+          end
     
-        subsection translational velocity
-          set Function expression = 0 ; 0 ; 0
-        end
-        subsection angular velocity
-          set Function expression = if(t>0.5,6,0) ; 0 ; 0
-        end
-    
-        subsection center of rotation
-          # X COR
-          set x = 0
-          # Y COR
-          set y = 0
-          # Z COR
-          set z = 0
+          subsection translational velocity
+            set Function expression = 0 ; 0 ; 0
+          end
+          subsection angular velocity
+            set Function expression = if(t>0.5,6,0) ; 0 ; 0
+          end
+          set center of rotation = 0, 0, 0
         end
       end
     end
