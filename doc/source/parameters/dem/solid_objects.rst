@@ -2,13 +2,13 @@
 Solid Objects
 =============================
 
-Floating meshes (solid objects) are finite (limited) auxiliary objects that can be stationary or moving. Rotating impellers, sliding surfaces, and finite stoppers are examples of floating meshes. The main differences between floating meshes and floating walls are:
+Solid objects are finite auxiliary objects that can be stationary or in motion. Rotating impellers, sliding surfaces, and finite stoppers are examples of solid objects. The main differences between them and floating walls are:
 1. floating wall is a plan, while a solid object can be either a volume or a surface
 2. floating wall is infinite, while solid object is finite
 3. floating wall is stationary while solid object may be stationary or moving.
 
 .. note:: 
-    At the moment, solid objects (floating meshes) in Lethe have to be defined using triangular (simplex) meshes. Only triangular 2D meshes of 3D surfaces in 3D DEM simulations are presently supported. Quadrilateral 2D meshes of 3D surfaces and 1D mesh of 2D surfaces are not supported at the moment.
+    At the moment, solid objects in Lethe have to be defined using triangular (simplex) meshes. Only triangular 2D meshes of 3D surfaces in simulations are currently supported, meaning that any other meshes will not work.
 
 This subsection explains the solid objects information. First of all, the ``number of solids`` is specified. Then, for each solid object, we need a ``mesh`` subsection. In these subsections, the ``type``, ``initial refinement``, and other properties of the objects are defined. Note that currently, only ``solid surfaces``, meaning ``dim=2, spacedim=3`` meshes, are usable. The ``simplex`` parameter must be set to ``true`` for all ``solid surfaces``. For more information on mesh subsection, visit `CFD mesh <https://chaos-polymtl.github.io/lethe/documentation/parameters/cfd/mesh.html>`_
 
