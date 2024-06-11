@@ -140,6 +140,8 @@ SerialSolid<dim, spacedim>::map_solid_in_background_triangulation(
     }
   else if constexpr (dim == 3)
     {
+      throw std::runtime_error(
+        "Solid volumes are not yet implemented in Lethe. Please, remove the whole \"solid volumes\" subsection from your parameter file.");
     }
 
 

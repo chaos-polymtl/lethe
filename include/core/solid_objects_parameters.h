@@ -179,7 +179,7 @@ namespace Parameters
       const std::vector<double> temp =
         convert_string_to_vector<double>(prm, "center of rotation");
 
-      AssertThrow(temp.size() >= dim,
+      AssertThrow(temp.size() != dim,
                   ExcMessage("Invalid center of rotation. This should be a " +
                              Utilities::int_to_string(dim) +
                              " dimensional point."));
@@ -349,7 +349,9 @@ namespace Parameters
                                           unsigned int      id)
   {
     // Use ParsedFunction<dim> during parameter declaration. We need to do this
-    // to use the parse_parameters function.
+    // to use the parse_parameters function, which is not possible with
+    // std::make_shared<Function<dim>> type. Please refer to the comment before
+    // the translational_velocity and angular_velocity attributes declaration.
     auto translational_velocity_parsed =
       std::make_shared<Functions::ParsedFunction<dim>>(dim);
     auto angular_velocity_parsed =
