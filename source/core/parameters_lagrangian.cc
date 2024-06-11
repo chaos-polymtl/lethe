@@ -135,19 +135,10 @@ namespace Parameters
     {
       prm.enter_subsection("lagrangian physical properties");
       {
-        prm.declare_entry("gx",
-                          "0.",
-                          Patterns::Double(),
-                          "Gravitational acceleration in x direction");
-        prm.declare_entry("gy",
-                          "0.",
-                          Patterns::Double(),
-                          "Gravitational acceleration in y direction");
-        prm.declare_entry("gz",
-                          "0.",
-                          Patterns::Double(),
-                          "Gravitational acceleration in z direction");
-
+        prm.declare_entry("g",
+                          "0., 0., 0.",
+                          Patterns::List(Patterns::Double()),
+                          "Gravitational acceleration vector");
 
         prm.declare_entry("number of particle types",
                           "1",
@@ -212,9 +203,7 @@ namespace Parameters
                             rolling_friction_coefficient_particle,
                             surface_energy_particle);
 
-      g[0] = prm.get_double("gx");
-      g[1] = prm.get_double("gy");
-      g[2] = prm.get_double("gz");
+      g = entry_string_to_tensor3(prm, "g");
 
       particle_type_number = prm.get_integer("number of particle types");
 

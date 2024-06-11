@@ -3767,14 +3767,17 @@ namespace Parameters
       Utilities::split_string_list(full_str));
     std::vector<double> vector_of_double =
       Utilities::string_to_double(vector_of_string);
-
-    AssertThrow(vector_of_double.size() == 3,
-                ExcMessage(
-                  "Invalid " + entry_string +
-                  ". This should be a three dimensional vector or point."));
-
     Tensor<1, 3> output_tensor;
-    for (unsigned int i = 0; i < 3; ++i)
+
+    AssertThrow(
+      vector_of_double.size() == 3 || vector_of_double.size() == 2,
+      ExcMessage(
+        "Invalid " + entry_string +
+        ". This should be a two or three dimensional vector or point."));
+
+    // Assign the values to the tensor, if the vector is dim 2, the third
+    // component is 0. by default
+    for (unsigned int i = 0; i < vector_of_double.size(); ++i)
       output_tensor[i] = vector_of_double[i];
 
     return output_tensor;
