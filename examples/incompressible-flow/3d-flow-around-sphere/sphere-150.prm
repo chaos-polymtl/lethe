@@ -112,9 +112,7 @@ subsection manifolds
   subsection manifold 0
     set id   = 0
     set type = spherical
-    set arg1 = 0 # Co-ordinates of sphere centre
-    set arg2 = 0
-    set arg3 = 0
+    set point coordinates = 0, 0, 0
   end
 end
 
