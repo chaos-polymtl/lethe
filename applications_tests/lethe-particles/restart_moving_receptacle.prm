@@ -105,7 +105,7 @@ end
 #---------------------------------------------------
 
 subsection solid objects
-  subsection two dimensions
+  subsection solid surfaces
     set number of solids = 1
     subsection solid object 0
       subsection mesh

@@ -130,8 +130,8 @@ public:
    * collision pairs will be investigated in the fine search to check if they
    * are in contact or not
    *
-   * @param floating_mesh_information Information of the floating mesh mapped in the
-   * background triangulation
+   * @param solid_surfaces_mesh_information Information of the solid surfaces mapped
+   * in the background triangulation.
    * @param particle_handler
    * @param particle_floating_mesh_contact_candidates Particle-floating mesh contact
    * candidates
@@ -141,9 +141,9 @@ public:
 
   void
   particle_floating_mesh_contact_search(
-    const typename DEM::dem_data_structures<dim>::floating_mesh_information
-                                          &floating_mesh_information,
-    const Particles::ParticleHandler<dim> &particle_handler,
+    const typename DEM::dem_data_structures<
+      dim>::solid_surfaces_mesh_information &solid_surfaces_mesh_information,
+    const Particles::ParticleHandler<dim>   &particle_handler,
     typename DEM::dem_data_structures<dim>::particle_floating_mesh_candidates
       &particle_floating_mesh_contact_candidates,
     typename DEM::dem_data_structures<dim>::cells_total_neighbor_list
@@ -151,9 +151,9 @@ public:
 
   void
   particle_floating_mesh_contact_search(
-    const typename DEM::dem_data_structures<dim>::floating_mesh_information
-                                          &floating_mesh_information,
-    const Particles::ParticleHandler<dim> &particle_handler,
+    const typename DEM::dem_data_structures<
+      dim>::solid_surfaces_mesh_information &solid_surfaces_mesh_information,
+    const Particles::ParticleHandler<dim>   &particle_handler,
     typename DEM::dem_data_structures<dim>::particle_floating_mesh_candidates
       &particle_floating_mesh_contact_candidates,
     typename DEM::dem_data_structures<dim>::cells_total_neighbor_list

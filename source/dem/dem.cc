@@ -55,7 +55,7 @@ DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
   , insertion_frequency(parameters.insertion_info.insertion_frequency)
   , has_periodic_boundaries(false)
   , background_dh(triangulation)
-  , has_floating_mesh(false)
+  , has_solid_objects(false)
   , size_distribution_object_container(
       parameters.lagrangian_physical_properties.particle_type_number)
   , has_sparse_contacts(false)
@@ -199,32 +199,31 @@ DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
                                            simulation_control->get_time_step());
 
   for (unsigned int i_solid = 0;
-       i_solid < parameters.solid_objects->number_solids_2d;
+       i_solid < parameters.solid_objects->number_solid_surfaces;
        ++i_solid)
     {
-      solids_2d.push_back(std::make_shared<SerialSolid<dim - 1, dim>>(
-        this->parameters.solid_objects->solids_2d[i_solid], i_solid));
+      solid_surfaces.push_back(std::make_shared<SerialSolid<dim - 1, dim>>(
+        this->parameters.solid_objects->solid_surfaces[i_solid], i_solid));
     }
 
   for (unsigned int i_solid = 0;
-       i_solid < parameters.solid_objects->number_solids_3d;
+       i_solid < parameters.solid_objects->number_solid_volumes;
        ++i_solid)
     {
-      solids_3d.push_back(std::make_shared<SerialSolid<dim, dim>>(
-        this->parameters.solid_objects->solids_3d[i_solid], i_solid));
+      solid_volumes.push_back(std::make_shared<SerialSolid<dim, dim>>(
+        this->parameters.solid_objects->solid_volumes[i_solid], i_solid));
     }
 
   // Generate solid objects
-  floating_mesh_info.resize(solids_2d.size());
-
-  manifold_mesh_information.resize(solids_3d.size());
+  solid_surfaces_mesh_info.resize(solid_surfaces.size());
+  solid_volumes_mesh_info.resize(solid_volumes.size());
 
   // Resize particle_floating_mesh_in_contact
-  if ((solids_2d.size() + solids_3d.size()) > 0)
+  if ((solid_surfaces.size() + solid_volumes.size()) > 0)
     {
-      has_floating_mesh = true;
+      has_solid_objects = true;
       contact_manager.particle_floating_mesh_in_contact.resize(
-        solids_2d.size() + solids_3d.size());
+        solid_surfaces.size() + solid_volumes.size());
     }
 
   // Check if there are periodic boundaries
@@ -475,17 +474,17 @@ DEMSolver<dim>::load_balance()
 
   // Update the container with all the combinations of background and
   // solid cells
-  for (unsigned int i_solid = 0; i_solid < solids_2d.size(); ++i_solid)
+  for (unsigned int i_solid = 0; i_solid < solid_surfaces.size(); ++i_solid)
     {
-      floating_mesh_info[i_solid] =
-        solids_2d[i_solid]->map_solid_in_background_triangulation(
+      solid_surfaces_mesh_info[i_solid] =
+        solid_surfaces[i_solid]->map_solid_in_background_triangulation(
           triangulation);
     }
 
-  for (unsigned int i_solid = 0; i_solid < solids_3d.size(); ++i_solid)
+  for (unsigned int i_solid = 0; i_solid < solid_volumes.size(); ++i_solid)
     {
-      manifold_mesh_information[i_solid] =
-        solids_3d[i_solid]->map_solid_in_background_triangulation(
+      solid_volumes_mesh_info[i_solid] =
+        solid_volumes[i_solid]->map_solid_in_background_triangulation(
           triangulation);
     }
 
@@ -502,7 +501,7 @@ DEMSolver<dim>::load_balance()
   contact_manager.update_cell_neighbors(triangulation,
                                         periodic_boundaries_cells_information,
                                         has_periodic_boundaries,
-                                        has_floating_mesh);
+                                        has_solid_objects);
 
   boundary_cell_object.build(
     triangulation,
@@ -873,7 +872,7 @@ DEMSolver<dim>::particle_wall_contact_force()
     }
 
   // Particle - floating mesh contact force
-  if (has_floating_mesh)
+  if (has_solid_objects)
     {
       particle_wall_contact_force_object
         ->calculate_particle_floating_wall_contact_force(
@@ -881,7 +880,7 @@ DEMSolver<dim>::particle_wall_contact_force()
           simulation_control->get_time_step(),
           torque,
           force,
-          solids_2d);
+          solid_surfaces);
     }
 
   particle_point_line_contact_force_object
@@ -1089,10 +1088,10 @@ DEMSolver<dim>::write_output_results()
     }
 
   // Write all solid objects
-  for (const auto &solid_object : solids_2d)
+  for (const auto &solid_object : solid_surfaces)
     solid_object->write_output_results(simulation_control);
 
-  for (const auto &solid_object : solids_3d)
+  for (const auto &solid_object : solid_volumes)
     solid_object->write_output_results(simulation_control);
 }
 
@@ -1196,17 +1195,17 @@ DEMSolver<dim>::solve()
             parameters.boundary_conditions);
 
   // Store information about floating mesh/background mesh intersection
-  for (unsigned int i_solid = 0; i_solid < solids_2d.size(); ++i_solid)
+  for (unsigned int i_solid = 0; i_solid < solid_surfaces.size(); ++i_solid)
     {
-      floating_mesh_info[i_solid] =
-        solids_2d[i_solid]->map_solid_in_background_triangulation(
+      solid_surfaces_mesh_info[i_solid] =
+        solid_surfaces[i_solid]->map_solid_in_background_triangulation(
           triangulation);
     }
 
-  for (unsigned int i_solid = 0; i_solid < solids_3d.size(); ++i_solid)
+  for (unsigned int i_solid = 0; i_solid < solid_volumes.size(); ++i_solid)
     {
-      manifold_mesh_information[i_solid] =
-        solids_3d[i_solid]->map_solid_in_background_triangulation(
+      solid_volumes_mesh_info[i_solid] =
+        solid_volumes[i_solid]->map_solid_in_background_triangulation(
           triangulation);
     }
 
@@ -1230,7 +1229,7 @@ DEMSolver<dim>::solve()
                       triangulation,
                       particle_handler,
                       insertion_object,
-                      solids_2d);
+                      solid_surfaces);
 
       displacement.resize(particle_handler.get_max_local_particle_index());
       force.resize(displacement.size());
@@ -1242,17 +1241,17 @@ DEMSolver<dim>::solve()
     }
 
   // Store information about floating mesh/background mesh intersection
-  for (unsigned int i_solid = 0; i_solid < solids_2d.size(); ++i_solid)
+  for (unsigned int i_solid = 0; i_solid < solid_surfaces.size(); ++i_solid)
     {
-      floating_mesh_info[i_solid] =
-        solids_2d[i_solid]->map_solid_in_background_triangulation(
+      solid_surfaces_mesh_info[i_solid] =
+        solid_surfaces[i_solid]->map_solid_in_background_triangulation(
           triangulation);
     }
 
-  for (unsigned int i_solid = 0; i_solid < solids_3d.size(); ++i_solid)
+  for (unsigned int i_solid = 0; i_solid < solid_volumes.size(); ++i_solid)
     {
-      manifold_mesh_information[i_solid] =
-        solids_3d[i_solid]->map_solid_in_background_triangulation(
+      solid_volumes_mesh_info[i_solid] =
+        solid_volumes[i_solid]->map_solid_in_background_triangulation(
           triangulation);
     }
 
@@ -1308,7 +1307,7 @@ DEMSolver<dim>::solve()
     triangulation,
     periodic_boundaries_cells_information,
     has_periodic_boundaries,
-    has_floating_mesh);
+    has_solid_objects);
 
   // Finding boundary cells with faces
   boundary_cell_object.build(
@@ -1368,27 +1367,32 @@ DEMSolver<dim>::solve()
       // Check to see if it is contact search step
       contact_detection_step = contact_detection_iteration_check_function();
 
-      bool floating_mesh_map_step = false;
+      bool solid_object_map_step = false;
       // Check to see if floating meshes need to be mapped in background mesh
-      if (has_floating_mesh)
+      if (has_solid_objects)
         {
-          floating_mesh_map_step = find_floating_mesh_mapping_step(
-            smallest_floating_mesh_mapping_criterion, this->solids_2d);
+          solid_object_map_step = find_floating_mesh_mapping_step(
+            smallest_floating_mesh_mapping_criterion, this->solid_surfaces);
 
-          if (floating_mesh_map_step)
+          if (solid_object_map_step)
             {
               // Update floating mesh information in the container manager
-              for (unsigned int i_solid = 0; i_solid < solids_2d.size();
+              for (unsigned int i_solid = 0; i_solid < solid_surfaces.size();
                    ++i_solid)
                 {
-                  floating_mesh_info[i_solid] =
-                    solids_2d[i_solid]->map_solid_in_background_triangulation(
-                      triangulation);
+                  solid_surfaces_mesh_info[i_solid] =
+                    solid_surfaces[i_solid]
+                      ->map_solid_in_background_triangulation(triangulation);
+                }
+
+              for (unsigned int i_solid = 0; i_solid < solid_volumes.size();
+                   ++i_solid)
+                {
                 }
             }
         }
 
-      contact_detection_step = contact_detection_step || floating_mesh_map_step;
+      contact_detection_step = contact_detection_step || solid_object_map_step;
 
       // Sort particles in cells
       if (particles_insertion_step || load_balance_step ||
@@ -1434,10 +1438,10 @@ DEMSolver<dim>::solve()
               contact_manager.execute_particle_wall_broad_search(
                 particle_handler,
                 boundary_cell_object,
-                floating_mesh_info,
+                solid_surfaces_mesh_info,
                 parameters.floating_walls,
                 simulation_control->get_current_time(),
-                has_floating_mesh);
+                has_solid_objects);
             }
           else
             {
@@ -1449,11 +1453,11 @@ DEMSolver<dim>::solve()
               contact_manager.execute_particle_wall_broad_search(
                 particle_handler,
                 boundary_cell_object,
-                floating_mesh_info,
+                solid_surfaces_mesh_info,
                 parameters.floating_walls,
                 simulation_control->get_current_time(),
                 sparse_contacts_object,
-                has_floating_mesh);
+                has_solid_objects);
             }
 
           // Updating number of contact builds
@@ -1482,7 +1486,7 @@ DEMSolver<dim>::solve()
             parameters.floating_walls,
             simulation_control->get_current_time(),
             neighborhood_threshold_squared,
-            has_floating_mesh);
+            has_solid_objects);
         }
       else
         {
@@ -1513,12 +1517,12 @@ DEMSolver<dim>::solve()
 
       // Move the solid triangulations, previous time must be used here
       // instead of current time.
-      for (auto &solid_object : solids_2d)
+      for (auto &solid_object : solid_surfaces)
         solid_object->move_solid_triangulation(
           simulation_control->get_time_step(),
           simulation_control->get_previous_time());
 
-      for (auto &solid_object : solids_3d)
+      for (auto &solid_object : solid_volumes)
         solid_object->move_solid_triangulation(
           simulation_control->get_time_step(),
           simulation_control->get_previous_time());
@@ -1600,7 +1604,7 @@ DEMSolver<dim>::solve()
                            triangulation,
                            particle_handler,
                            insertion_object,
-                           solids_2d,
+                           solid_surfaces,
                            pcout,
                            mpi_communicator);
         }

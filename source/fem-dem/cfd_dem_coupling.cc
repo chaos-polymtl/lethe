@@ -1004,7 +1004,7 @@ CFDDEMSolver<dim>::dem_contact_build(unsigned int counter)
           contact_manager.execute_particle_wall_broad_search(
             this->particle_handler,
             boundary_cell_object,
-            floating_mesh_info,
+            solid_surfaces_mesh_info,
             dem_parameters.floating_walls,
             this->simulation_control->get_current_time());
         }
@@ -1018,7 +1018,7 @@ CFDDEMSolver<dim>::dem_contact_build(unsigned int counter)
           contact_manager.execute_particle_wall_broad_search(
             this->particle_handler,
             boundary_cell_object,
-            floating_mesh_info,
+            solid_surfaces_mesh_info,
             dem_parameters.floating_walls,
             this->simulation_control->get_current_time(),
             sparse_contacts_object);

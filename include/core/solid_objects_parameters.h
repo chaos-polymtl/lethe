@@ -287,7 +287,11 @@ namespace Parameters
     // Output management
     bool output_bool;
 
-    // Solid velocity
+    // Solid object velocity
+    // Velocities are std::shared_ptr<Function<dim>> type, this way it is
+    // possible to define a velocity using any type of function, like
+    // ParsedFunction (which is used in the declared and parsing functions)
+    // or ConstantFunctions (which is useful for unit test).
     std::shared_ptr<Function<dim>> translational_velocity;
     std::shared_ptr<Function<dim>> angular_velocity;
     Point<dim>
@@ -302,7 +306,9 @@ namespace Parameters
                                             unsigned int      id)
   {
     // Use ParsedFunction<dim> during parameter declaration. We need to do this
-    // to use the declare_parameters function.
+    // to use the declare_parameters function, which is not possible with
+    // std::make_shared<Function<dim>> type. Please refer to the comment before
+    // the translational_velocity and angular_velocity attributes declaration.
     auto translational_velocity_parsed =
       std::make_shared<Functions::ParsedFunction<dim>>(dim);
     auto angular_velocity_parsed =
@@ -332,7 +338,7 @@ namespace Parameters
     }
     prm.leave_subsection();
 
-    // Cast to std::shared_ptr<Function<dim>> after parameter declaration
+    // Cast to std::shared_ptr<Function<dim>> after parameter declaration.
     translational_velocity = translational_velocity_parsed;
     angular_velocity       = angular_velocity_parsed;
   }
@@ -397,10 +403,10 @@ namespace Parameters
     Verbosity verbosity;
 
     // DEM solid objects
-    std::vector<std::shared_ptr<RigidSolidObject<dim>>> solids_2d;
-    std::vector<std::shared_ptr<RigidSolidObject<dim>>> solids_3d;
-    unsigned int                                        number_solids_2d;
-    unsigned int                                        number_solids_3d;
+    std::vector<std::shared_ptr<RigidSolidObject<dim>>> solid_surfaces;
+    std::vector<std::shared_ptr<RigidSolidObject<dim>>> solid_volumes;
+    unsigned int                                        number_solid_surfaces;
+    unsigned int                                        number_solid_volumes;
 
     static const unsigned int max_number_of_solids = 50;
   };
@@ -409,14 +415,14 @@ namespace Parameters
   void
   DEMSolidObjects<dim>::declare_parameters(ParameterHandler &prm)
   {
-    solids_2d.resize(max_number_of_solids);
-    solids_3d.resize(max_number_of_solids);
-    number_solids_2d = 0;
-    number_solids_3d = 0;
+    solid_surfaces.resize(max_number_of_solids);
+    solid_volumes.resize(max_number_of_solids);
+    number_solid_surfaces = 0;
+    number_solid_volumes  = 0;
 
     prm.enter_subsection("solid objects");
     {
-      prm.enter_subsection("two dimensions");
+      prm.enter_subsection("solid surfaces");
       {
         prm.declare_entry("number of solids",
                           "0",
@@ -426,13 +432,13 @@ namespace Parameters
         for (unsigned int i_solid = 0; i_solid < max_number_of_solids;
              ++i_solid)
           {
-            solids_2d[i_solid] = std::make_shared<RigidSolidObject<dim>>();
-            solids_2d[i_solid]->declare_parameters(prm, i_solid);
+            solid_surfaces[i_solid] = std::make_shared<RigidSolidObject<dim>>();
+            solid_surfaces[i_solid]->declare_parameters(prm, i_solid);
           }
       }
       prm.leave_subsection();
 
-      prm.enter_subsection("three dimensions");
+      prm.enter_subsection("solid volumes");
       {
         prm.declare_entry("number of solids",
                           "0",
@@ -442,8 +448,8 @@ namespace Parameters
         for (unsigned int i_solid = 0; i_solid < max_number_of_solids;
              ++i_solid)
           {
-            solids_3d[i_solid] = std::make_shared<RigidSolidObject<dim>>();
-            solids_3d[i_solid]->declare_parameters(prm, i_solid);
+            solid_volumes[i_solid] = std::make_shared<RigidSolidObject<dim>>();
+            solid_volumes[i_solid]->declare_parameters(prm, i_solid);
           }
       }
       prm.leave_subsection();
@@ -457,22 +463,24 @@ namespace Parameters
   {
     prm.enter_subsection("solid objects");
     {
-      prm.enter_subsection("two dimensions");
+      prm.enter_subsection("solid surfaces");
       {
-        number_solids_2d = prm.get_integer("number of solids");
-        for (unsigned int i_solid = 0; i_solid < number_solids_2d; ++i_solid)
+        number_solid_surfaces = prm.get_integer("number of solids");
+        for (unsigned int i_solid = 0; i_solid < number_solid_surfaces;
+             ++i_solid)
           {
-            solids_2d[i_solid]->parse_parameters(prm, i_solid);
+            solid_surfaces[i_solid]->parse_parameters(prm, i_solid);
           }
       }
       prm.leave_subsection();
 
-      prm.enter_subsection("three dimensions");
+      prm.enter_subsection("solid volumes");
       {
-        number_solids_3d = prm.get_integer("number of solids");
-        for (unsigned int i_solid = 0; i_solid < number_solids_3d; ++i_solid)
+        number_solid_volumes = prm.get_integer("number of solids");
+        for (unsigned int i_solid = 0; i_solid < number_solid_volumes;
+             ++i_solid)
           {
-            solids_3d[i_solid]->parse_parameters(prm, i_solid);
+            solid_volumes[i_solid]->parse_parameters(prm, i_solid);
           }
       }
       prm.leave_subsection();

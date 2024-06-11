@@ -1,5 +1,5 @@
 =============================
-Floating Mesh (Solid Objects)
+Solid Objects
 =============================
 
 Floating meshes (solid objects) are finite (limited) auxiliary objects that can be stationary or moving. Rotating impellers, sliding surfaces, and finite stoppers are examples of floating meshes. The main differences between floating meshes and floating walls are:
@@ -10,13 +10,13 @@ Floating meshes (solid objects) are finite (limited) auxiliary objects that can 
 .. note:: 
     At the moment, solid objects (floating meshes) in Lethe have to be defined using triangular (simplex) meshes. Only triangular 2D meshes of 3D surfaces in 3D DEM simulations are presently supported. Quadrilateral 2D meshes of 3D surfaces and 1D mesh of 2D surfaces are not supported at the moment.
 
-This subsection explains the solid objects (floating meshes) information. First of all, the ``number of solids`` is specified. Then, for each solid object, we need a ``mesh`` subsection. In these subsections, the ``type``, ``initial refinement``, and other properties of the objects are defined. Note that currently, only ``two dimensions`` solid object are usable. The ``simplex`` parameter must be set to ``true`` for all the objects since 2D solid objects are defined using simplex meshes. For more information on mesh subsection, visit `CFD mesh <https://chaos-polymtl.github.io/lethe/documentation/parameters/cfd/mesh.html>`_
+This subsection explains the solid objects information. First of all, the ``number of solids`` is specified. Then, for each solid object, we need a ``mesh`` subsection. In these subsections, the ``type``, ``initial refinement``, and other properties of the objects are defined. Note that currently, only ``solid surfaces``, meaning ``dim=2, spacedim=3`` meshes, are usable. The ``simplex`` parameter must be set to ``true`` for all ``solid surfaces``. For more information on mesh subsection, visit `CFD mesh <https://chaos-polymtl.github.io/lethe/documentation/parameters/cfd/mesh.html>`_
 
 .. code-block:: text
 
  subsection solid objects
-   subsection two dimensions
-     # Total number of floating walls
+   subsection solid surfaces
+     # Total number of solid surfaces
      set number of solids  = 1
      subsection solid object 0
        subsection mesh

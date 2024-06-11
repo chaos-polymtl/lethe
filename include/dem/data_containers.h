@@ -205,13 +205,13 @@ namespace DEM
     typedef std::vector<std::vector<
       std::pair<typename Triangulation<dim>::active_cell_iterator,
                 typename Triangulation<dim - 1, dim>::active_cell_iterator>>>
-      floating_mesh_information;
+      solid_surfaces_mesh_information;
 
     // [[(cell iterator, cell iterator)]]
     typedef std::vector<std::vector<
       std::pair<typename Triangulation<dim>::active_cell_iterator,
                 typename Triangulation<dim, dim>::active_cell_iterator>>>
-      manifold_mesh_information;
+      solid_volumes_mesh_info;
 
     // <cell id, [cell iterator]>
     typedef ankerl::unordered_dense::map<

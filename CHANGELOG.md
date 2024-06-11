@@ -3,7 +3,11 @@
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
-## [Master] - 2024-06-11
+## [Master] - 2024-06-16
+
+### Added
+
+- MINOR A cylindrical manifold type has been added in the manifold parameter file option. Input arguments arg1, arg2, arg3, etc. used to describe the manifold geometry were modified to point coordinates and direction vector. A manifold section has been added to the documentation [#1169](https://github.com/chaos-polymtl/lethe/pull/1169)
 
 ### Changed
 
@@ -20,12 +24,6 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 ### Changed
 
 - MINOR The parameters <gx>, <gy> and <gz> of the DEM solver are changed to the parameter <g>. [#1171](https://github.com/chaos-polymtl/lethe/pull/1171)
-
-## [Master] - 2024-06-05
-
-### Added
-
-- MINOR A cylindrical manifold type has been added in the manifold parameter file option. Input arguments arg1, arg2, arg3, etc. used to describe the manifold geometry were modified to point coordinates and direction vector. A manifold section has been added to the documentation [#1167](https://github.com/chaos-polymtl/lethe/pull/1167)
 
 ## [Master] - 2024-05-27
 

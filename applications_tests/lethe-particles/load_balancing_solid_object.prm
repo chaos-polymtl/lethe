@@ -96,7 +96,7 @@ end
 #---------------------------------------------------
 
 subsection solid objects
-  subsection two dimensions
+  subsection solid surfaces
     set number of solids = 1
     subsection solid object 0
       subsection mesh
@@ -108,12 +108,12 @@ subsection solid objects
 
       subsection translational velocity
         set Function expression = 0 ; if(t>0.5,if(t<0.7,1,0),0) ; 0
-      end # translational velocity
+      end
       subsection angular velocity
         set Function expression = 0 ; 0  ; 0
-      end # angular velocity
+      end
 
       set center of rotation =  0.1, 0., 0.05
-    end # solid object 0
-  end # two dimensions
-end # solid objects
+    end
+  end
+end
