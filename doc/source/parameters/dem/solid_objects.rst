@@ -43,15 +43,15 @@ This subsection explains the solid objects information. First of all, the ``numb
    end
  end
 
-* The ``number of solids`` parameter defines the total number of floating meshes we wish to use during the simulation.
+* The ``number of solids`` parameter defines the total number of solid surfaces used during the simulation.
 
-* For each floating mesh, we need a separate subsection (for instance 	``subsection solid object 0``) in which the information of the floating mesh (``type``, ``file name``, ``initial refinement``, ``initial translation``, ``initial rotation axis``, ``initial rotation angle``  ) is defined. Each component of the ``initial translation`` and of the ``initial rotation axis`` parameters represent the ``x``, ``y`` and ``z`` axis. The rotation is apply before the translation.
+* For each solid object, we need a separate subsections (for instance 	``subsection solid object 0``) in which the information of the solid surface 0 (``type``, ``file name``, ``initial refinement``, ``initial translation``, ``initial rotation axis``, ``initial rotation angle``  ) is defined. Each component of the ``initial translation`` and of the ``initial rotation axis`` parameters represent the ``x``, ``y`` and ``z`` axis. The rotation is apply before the translation.
 
-* In the subsection ``translational velocity``, we define the translational velocity of the floating mesh.
+* In the subsection ``translational velocity``, we define the translational velocity function of the solid object.
 
-* In the subsection ``angular velocity``, we define the angular velocity of the floating mesh.
+* In the subsection ``angular velocity``, we define the angular velocity function of the solid object.
 
-* The ``center of rotation`` defines the center of rotation of the solid object (in the case of rotational motion).
+* The ``center of rotation`` defines the center of rotation of the solid object (in the case of rotational motion) in the ``x``, ``y`` and ``z`` directions. This center of rotation will move according to the ``translational velocity`` parameter.
 
 * The ``output solid object`` defines if we want an output file to be generated for the solid object at every output time step.
 

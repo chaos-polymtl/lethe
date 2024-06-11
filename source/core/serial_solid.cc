@@ -505,10 +505,24 @@ SerialSolid<dim, spacedim>::write_output_results(
 
   data_out.build_patches();
 
-  const std::string folder = simulation_control->get_output_path();
-  const std::string solution_name =
-    simulation_control->get_output_name() + ".solid_object." +
-    Utilities::int_to_string(dim, 1) + "." + Utilities::int_to_string(id, 2);
+  const std::string folder        = simulation_control->get_output_path();
+  const std::string solution_name = [&] {
+    if constexpr (dim == 1)
+      {
+        return simulation_control->get_output_name() + ".solid_line." +
+               Utilities::int_to_string(id, 2);
+      }
+    if constexpr (dim == 2)
+      {
+        return simulation_control->get_output_name() + ".solid_surface." +
+               Utilities::int_to_string(id, 2);
+      }
+    if constexpr (dim == 3)
+      {
+        return simulation_control->get_output_name() + ".solid_volume." +
+               Utilities::int_to_string(id, 2);
+      }
+  }();
   const unsigned int iter        = simulation_control->get_step_number();
   const double       time        = simulation_control->get_current_time();
   const unsigned int group_files = simulation_control->get_group_files();

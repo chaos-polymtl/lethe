@@ -42,7 +42,9 @@ test()
 
   // Functions
   std::vector<double> translational_vector = {1., 0., 0.};
-  std::vector<double> angular_vector = {-0.39269908169, 0., 0.}; //  0.125 * pi
+  std::vector<double> angular_vector       = {-0.39269908169,
+                                              0.,
+                                              0.}; //  - 0.125 * pi
 
   param->translational_velocity =
     std::make_shared<Functions::ConstantFunction<dim>>(translational_vector);
