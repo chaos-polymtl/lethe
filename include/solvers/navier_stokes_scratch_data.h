@@ -1209,15 +1209,6 @@ public:
   std::vector<bool>         is_boundary_face;
   std::vector<unsigned int> boundary_face_id;
 
-  // If distribute force enabled
-  // These are used to get neighbor cells when assemble drag force
-  std::map<unsigned int,
-           std::set<typename DoFHandler<dim>::active_cell_iterator>>
-    vertices_to_cell;
-  std::map<unsigned int,
-           std::set<typename DoFHandler<dim>::active_cell_iterator>>
-    vertices_to_periodic_cell;
-
   // Quadrature
   std::vector<std::vector<double>>         face_JxW;
   std::vector<std::vector<Point<dim>>>     face_quadrature_points;
