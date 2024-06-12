@@ -20,7 +20,7 @@ Features
 Files Used in This Example
 ---------------------------
 
-Both files mentioned below are located in the example's folder (``examples/unresolved-cfd-dem/dense-pneumatic-conveying``).
+all the files mentioned below are located in the example folder (``examples/unresolved-cfd-dem/dense-pneumatic-conveying``).
 
 - Parameter files for particle generation and settling: ``loading_particles.prm`` and ``settling_particles.prm``
 - Parameter file for CFD-DEM simulation of the pneumatic conveying: ``pneumatic-conveying.prm``
