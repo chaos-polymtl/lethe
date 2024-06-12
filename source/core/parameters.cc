@@ -3779,10 +3779,13 @@ namespace Parameters
       }
     else // Depreciated individual entries
       {
+        // Since the first parameter is the alias of the new parameter,
+        // the value of the first parameter is obtained for its entry
         output_tensor[0] = prm.get_double(entry_string);
         output_tensor[1] = prm.get_double(entry_string_1);
         output_tensor[2] = prm.get_double(entry_string_2);
       }
+
     return output_tensor;
   }
 
