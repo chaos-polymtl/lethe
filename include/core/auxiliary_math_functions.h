@@ -35,4 +35,4 @@ harmonic_mean(const double &value_one, const double &value_two)
           (value_one + value_two + std::numeric_limits<double>::min()));
 }
 
-#endif // lethe_auxiliary_math_functions_h
+#endif

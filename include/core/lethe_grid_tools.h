@@ -13,8 +13,8 @@
  *
  * -------------------------------------------------------------------*/
 
-#ifndef lethe_lethegridtools_h
-#define lethe_lethegridtools_h
+#ifndef lethe_lethe_grid_tools_h
+#define lethe_lethe_grid_tools_h
 
 #include <core/serial_solid.h>
 

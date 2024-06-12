@@ -14,8 +14,8 @@
  * ---------------------------------------------------------------------
  */
 
-#ifndef tensors_and_points_dimension_manipulation_h
-#define tensors_and_points_dimension_manipulation_h
+#ifndef lethe_tensors_and_points_dimension_manipulation_h
+#define lethe_tensors_and_points_dimension_manipulation_h
 
 #include <deal.II/base/point.h>
 #include <deal.II/base/tensor.h>
