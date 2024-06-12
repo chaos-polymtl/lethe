@@ -15,8 +15,8 @@
  */
 
 
-#ifndef solid_objects_parameters_h
-#define solid_objects_parameters_h
+#ifndef lethe_solid_objects_parameters_h
+#define lethe_solid_objects_parameters_h
 
 #include <core/parameters.h>
 
