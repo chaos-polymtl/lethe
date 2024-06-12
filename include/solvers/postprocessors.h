@@ -14,8 +14,8 @@
  * ---------------------------------------------------------------------
  */
 
-#ifndef lethe_post_processors_h
-#define lethe_post_processors_h
+#ifndef lethe_postprocessors_h
+#define lethe_postprocessors_h
 
 #include <core/rheological_model.h>
 
