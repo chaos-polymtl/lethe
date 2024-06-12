@@ -14,7 +14,7 @@
  * ---------------------------------------------------------------------
  */
 
-#ifndef lethe_navier_stokes_solver_parameters_h
+#ifndef lethe_simulation_parameters_h
 #define lethe_navier_stokes_solver_parameters_h
 
 #include <core/ale.h>
