@@ -135,10 +135,23 @@ namespace Parameters
     {
       prm.enter_subsection("lagrangian physical properties");
       {
+        // Parameter <g> is a list of values, its deprecated version are
+        // individual parameters <gx>, <gy> and <gz>
         prm.declare_entry("g",
                           "0., 0., 0.",
                           Patterns::List(Patterns::Double()),
                           "Gravitational acceleration vector");
+        prm.declare_alias("g", "gx", true);
+        prm.declare_entry(
+          "gy",
+          "0.",
+          Patterns::Double(),
+          "Gravitational acceleration in y direction (deprecated, use <g> as vector)");
+        prm.declare_entry(
+          "gz",
+          "0.",
+          Patterns::Double(),
+          "Gravitational acceleration in z direction (deprecated, use <g> as vector)");
 
         prm.declare_entry("number of particle types",
                           "1",
@@ -203,7 +216,22 @@ namespace Parameters
                             rolling_friction_coefficient_particle,
                             surface_energy_particle);
 
-      g = entry_string_to_tensor3(prm, "g");
+      // Depreciated parameter handling
+      // <g> used to be 3 parameters: <gx>, <gy> and <gz>
+      // If <gx> is in the input file, it will be used as the value for <g>
+      // as an alias. This way, the parameter <g> is not a tensor and allows the
+      // parsing of depreciated parameters.
+      bool is_tensor = check_entry_tensor(prm, "g");
+      if (!is_tensor)
+        {
+          g[0] = prm.get_double("g");
+          g[1] = prm.get_double("gy");
+          g[2] = prm.get_double("gz");
+        }
+      else
+        {
+          g = entry_string_to_tensor3(prm, "g");
+        }
 
       particle_type_number = prm.get_integer("number of particle types");
 

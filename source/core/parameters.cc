@@ -3758,6 +3758,18 @@ namespace Parameters
     prm.leave_subsection();
   }
 
+  bool
+  check_entry_tensor(ParameterHandler &prm, const std::string &entry_string)
+  {
+    std::string              full_str = prm.get(entry_string);
+    std::vector<std::string> vector_of_string(
+      Utilities::split_string_list(full_str));
+    if (vector_of_string.size() > 1)
+      return true;
+    else
+      return false;
+  }
+
   Tensor<1, 3>
   entry_string_to_tensor3(ParameterHandler  &prm,
                           const std::string &entry_string)

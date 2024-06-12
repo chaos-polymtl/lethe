@@ -1616,6 +1616,8 @@ namespace Parameters
     parse_parameters(ParameterHandler &prm);
   };
 
+  bool
+  check_entry_tensor(ParameterHandler &prm, const std::string &entry_string);
 
   /**
    * @brief Return the tensor of entry @p entry_string. If the entry is specified
