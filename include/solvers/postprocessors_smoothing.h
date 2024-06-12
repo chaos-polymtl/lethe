@@ -14,8 +14,8 @@
  * ---------------------------------------------------------------------
  */
 
-#ifndef lethe_post_processors_smoothing_h
-#define lethe_post_processors_smoothing_h
+#ifndef lethe_postprocessors_smoothing_h
+#define lethe_postprocessors_smoothing_h
 
 #include <core/vector.h>
 
