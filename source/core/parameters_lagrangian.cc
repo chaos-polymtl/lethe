@@ -221,17 +221,7 @@ namespace Parameters
       // If <gx> is in the input file, it will be used as the value for <g>
       // as an alias. This way, the parameter <g> is not a tensor and allows the
       // parsing of depreciated parameters.
-      bool is_tensor = check_entry_tensor(prm, "g");
-      if (!is_tensor)
-        {
-          g[0] = prm.get_double("g");
-          g[1] = prm.get_double("gy");
-          g[2] = prm.get_double("gz");
-        }
-      else
-        {
-          g = entry_string_to_tensor3(prm, "g");
-        }
+      g = entry_string_to_tensor3(prm, "g", "gy", "gz");
 
       particle_type_number = prm.get_integer("number of particle types");
 

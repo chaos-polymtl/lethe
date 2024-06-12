@@ -3758,16 +3758,32 @@ namespace Parameters
     prm.leave_subsection();
   }
 
-  bool
-  check_entry_tensor(ParameterHandler &prm, const std::string &entry_string)
+  Tensor<1, 3>
+  entry_string_to_tensor3(ParameterHandler  &prm,
+                          const std::string &entry_string,
+                          const std::string &entry_string_1,
+                          const std::string &entry_string_2)
   {
     std::string              full_str = prm.get(entry_string);
     std::vector<std::string> vector_of_string(
       Utilities::split_string_list(full_str));
+    Tensor<1, 3> output_tensor;
+
+    // The used parameter is a list of values
     if (vector_of_string.size() > 1)
-      return true;
-    else
-      return false;
+      {
+        std::vector<double> vector_of_double =
+          Utilities::string_to_double(vector_of_string);
+        for (unsigned int i = 0; i < vector_of_double.size(); ++i)
+          output_tensor[i] = vector_of_double[i];
+      }
+    else // Depreciated individual entries
+      {
+        output_tensor[0] = prm.get_double(entry_string);
+        output_tensor[1] = prm.get_double(entry_string_1);
+        output_tensor[2] = prm.get_double(entry_string_2);
+      }
+    return output_tensor;
   }
 
   Tensor<1, 3>
