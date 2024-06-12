@@ -12,35 +12,32 @@
  * the top level of the Lethe distribution.
  *
  * ---------------------------------------------------------------------
-
- *
- * Author: Audrey Collard-Daigneault, Bruno Blais, Polytechnique Montreal, 2020
- -
  */
 
 
 #ifndef lethe_postprocessing_cfd_h
+#define lethe_postprocessing_cfd_h
 
 
 // Base
-#  include <deal.II/base/quadrature_lib.h>
+#include <deal.II/base/quadrature_lib.h>
 
 // Lac
-#  include <deal.II/lac/dynamic_sparsity_pattern.h>
-#  include <deal.II/lac/vector.h>
+#include <deal.II/lac/dynamic_sparsity_pattern.h>
+#include <deal.II/lac/vector.h>
 
 // Dofs
-#  include <deal.II/dofs/dof_handler.h>
+#include <deal.II/dofs/dof_handler.h>
 
 // Fe
-#  include <deal.II/fe/fe.h>
-#  include <deal.II/fe/mapping_fe.h>
+#include <deal.II/fe/fe.h>
+#include <deal.II/fe/mapping_fe.h>
 
 // Lethe includes
-#  include <core/boundary_conditions.h>
-#  include <core/parameters.h>
+#include <core/boundary_conditions.h>
+#include <core/parameters.h>
 
-#  include <solvers/physical_properties_manager.h>
+#include <solvers/physical_properties_manager.h>
 
 /**
  * @brief Calculate the pressure drop and total pressure drop between two boundaries.
@@ -379,6 +376,6 @@ calculate_average_velocity(const DoFHandler<dim> &dof_handler,
 
 
 
-#  define lethe_postprocessing_cfd_h
+#define lethe_postprocessing_cfd_h
 
 #endif

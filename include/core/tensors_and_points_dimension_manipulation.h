@@ -12,18 +12,15 @@
  * the top level of the Lethe distribution.
  *
  * ---------------------------------------------------------------------
-
- *
- * Author: Shahab Golshan, Polytechnique Montreal, 2019
  */
+
+#ifndef tensors_and_points_dimension_manipulation_h
+#define tensors_and_points_dimension_manipulation_h
 
 #include <deal.II/base/point.h>
 #include <deal.II/base/tensor.h>
 
 using namespace dealii;
-
-#ifndef tensors_and_points_dimension_manipulation_h
-#  define tensors_and_points_dimension_manipulation_h
 
 /**
  * Copies a two-dimensional tensor in a three-dimensional tensor. The third

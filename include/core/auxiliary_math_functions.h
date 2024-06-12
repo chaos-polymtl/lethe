@@ -13,12 +13,12 @@
  *
  * ---------------------------------------------------------------------
  */
-#include "core/parameters.h"
 
-#include <cfloat>
 
-#ifndef LETHE_AUXILIARY_MATH_FUNCTIONS_H
-#  define LETHE_AUXILIARY_MATH_FUNCTIONS_H
+#ifndef lethe_auxiliary_math_functions_h
+#define lethe_auxiliary_math_functions_h
+
+#include <limits>
 
 /**
  * Carries out the calculation of the harmonic mean of two values.
@@ -31,7 +31,8 @@
 inline double
 harmonic_mean(const double &value_one, const double &value_two)
 {
-  return (2 * value_one * value_two / (value_one + value_two + DBL_MIN));
+  return (2 * value_one * value_two /
+          (value_one + value_two + std::numeric_limits<double>::min()));
 }
 
-#endif // LETHE_AUXILIARY_MATH_FUNCTIONS_H
+#endif // lethe_auxiliary_math_functions_h

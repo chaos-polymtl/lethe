@@ -17,9 +17,6 @@
 #ifndef lethe_mesh_controler_h
 #define lethe_mesh_controler_h
 
-#include <iostream>
-
-
 /**
  * @Class Controller that target a given number of elements in the mesh. This
  * controller is used to define the coarsening factor.

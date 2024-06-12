@@ -13,6 +13,8 @@
  *
  * ---------------------------------------------------------------------*/
 
+#ifndef lethe_navier_stokes_assemblers_h
+#define lethe_navier_stokes_assemblers_h
 
 #include <core/ale.h>
 #include <core/boundary_conditions.h>
@@ -21,9 +23,6 @@
 
 #include <solvers/copy_data.h>
 #include <solvers/navier_stokes_scratch_data.h>
-
-#ifndef lethe_navier_stokes_assemblers_h
-#  define lethe_navier_stokes_assemblers_h
 
 
 /*

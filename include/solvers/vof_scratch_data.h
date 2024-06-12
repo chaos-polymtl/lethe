@@ -16,6 +16,10 @@
  * Scratch data for the VOF auxiliary physics
  */
 
+
+#ifndef lethe_vof_scratch_data_h
+#define lethe_vof_scratch_data_h
+
 #include <core/multiphysics.h>
 #include <core/time_integration_utilities.h>
 
@@ -32,8 +36,6 @@
 
 #include <deal.II/numerics/vector_tools.h>
 
-#ifndef lethe_VOF_scratch_data_h
-#  define lethe_VOF_scratch_data_h
 
 using namespace dealii;
 
