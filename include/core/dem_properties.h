@@ -24,7 +24,7 @@
 
 namespace DEM
 {
-  /* This enum class is reponsible for the handling the specific indexes of the
+  /* This enum class is responsible for the handling the specific indexes of the
    * particles properties within the property pool and also to generate
    * the associative names for the properties
    * This is the only part where we should use a classical enum because it is
