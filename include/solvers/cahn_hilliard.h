@@ -26,8 +26,8 @@
  * phase field parameter and the chemical potential.
  */
 
-#ifndef cahn_hilliard_h
-#define cahn_hilliard_h
+#ifndef lethe_cahn_hilliard_h
+#define lethe_cahn_hilliard_h
 
 #include <core/bdf.h>
 #include <core/simulation_control.h>

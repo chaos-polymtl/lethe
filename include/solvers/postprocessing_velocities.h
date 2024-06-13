@@ -12,9 +12,6 @@
  * the top level of the Lethe distribution.
  *
  * ---------------------------------------------------------------------
-
- *
- * Author: Audrey Collard-Daigneault, Polytechnique Montreal, 2020 -
  */
 
 #ifndef lethe_postprocessing_velocities_h

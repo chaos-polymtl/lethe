@@ -17,7 +17,6 @@
 #ifndef lethe_cahn_hilliard_filter_h
 #define lethe_cahn_hilliard_filter_h
 
-
 #include <core/parameters_multiphysics.h>
 
 /**

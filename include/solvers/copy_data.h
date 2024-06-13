@@ -15,15 +15,15 @@
  */
 
 
+#ifndef lethe_copy_data_h
+#define lethe_copy_data_h
+
 #include <deal.II/dofs/dof_handler.h>
 
 #include <deal.II/lac/full_matrix.h>
 #include <deal.II/lac/vector.h>
 
 #include <vector>
-
-#ifndef copy_data_navier_stokes_h
-#  define copy_data_navier_stokes_h
 
 using namespace dealii;
 

@@ -12,10 +12,6 @@
  * the top level of the Lethe distribution.
  *
  * ---------------------------------------------------------------------
-
- *
- * Author: Bruno Blais, Carole-Anne Daunais, Valérie Bibeau, Polytechnique
- Montreal, 2020-
  */
 
 #ifndef lethe_gls_nitsche_navier_stokes_h

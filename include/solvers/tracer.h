@@ -19,7 +19,6 @@
  * dT/dt +  u * gradT = D * div(grad T) + f
  * with T the tracer function, D the diffusivity and f the forcing
  *
- * Author: Bruno Blais, Polytechnique Montreal, 2020-
  */
 
 #ifndef lethe_tracer_h

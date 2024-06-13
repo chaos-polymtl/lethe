@@ -12,9 +12,6 @@
  * the top level of the Lethe distribution.
  *
  * ---------------------------------------------------------------------
-
- *
- * Author: Audrey Collard-Daigneault, Polytechnique Montreal, 2020 -
  */
 
 #ifndef lethe_flow_control_h

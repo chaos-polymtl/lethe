@@ -12,14 +12,11 @@
  * the top level of the Lethe distribution.
  *
  * ---------------------------------------------------------------------
-
- *
- * Author: Carole-Anne Daunais, Polytechnique Montreal, 2020 -
  */
 
 
-#ifndef nitsche_h
-#define nitsche_h
+#ifndef lethe_solid_objects_parameters_h
+#define lethe_solid_objects_parameters_h
 
 #include <core/parameters.h>
 
