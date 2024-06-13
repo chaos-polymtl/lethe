@@ -39,58 +39,163 @@ The insertion of particles are done with the plane insertion.
 Second, we use ``lethe-particles`` to settle the particles with the file ``settling_particles.prm``. Only the direction of gravity is changed.
 Finally, we use ``lethe-fluid-particles`` to simulate the dense pneumatic conveying with the file ``pneumatic-conveying.prm`` with periodic boundary conditions.
 We enable check-pointing in order to write the DEM checkpoint files which will be used as the starting point of the CFD-DEM simulation.
+The geometry of the pipe and the particle properties are based on the work of Lavrinec *et al*. `[1] <https://doi.org/10.1016/j.powtec.2020.07.070>`_.
 
-# here
 
 -------------------
-DEM Parameter File
+Particle Insertion
 -------------------
 
-The syntax of this parameter file is flexible. Parameters do not need to be specified in a specific order, but only within the subsection in which they belong. All parameter subsections are described in the `parameter section <../../../parameters/parameters.html>`_ of the documentation.
-
-We introduce the different sections of the parameter file ``dem-packing-in-fluidized-bed.prm`` needed to run this simulation. Most subsections are explained in detail in other CFD-DEM examples such as:  `Gas-solid spouted bed <../../../examples/unresolved-cfd-dem/gas-solid-spouted-bed/gas-solid-spouted-bed.html>`_. Therefore, we will not go over them in detail.
+In this section we introduce the different sections of the parameter file ``loading_particles.prm`` needed to load the particles of the simulation and the parameter file ``settling_particles.prm`` needed to settle the particles with the gravity in the vertical direction as the CFD-DEM simulation.
 
 Mesh
 ~~~~~
 
-In this example, we are simulating a rectangular channel. We use the deal.II GridGenerator in order to generate a hyper rectangle that is subdivided along its height. The following portion of the DEM parameter file shows the function called:
+In this example, we are simulating a horizontal cylindrical pipe. We use the `custom cylinder <https://chaos-polymtl.github.io/lethe/documentation/parameters/cfd/mesh.html>`_ of type balanced. We use this type of mesh in order to have a uniformized cells size in the radial direction. Each the length of a cell is about 2 times the diameter of the particles. The classical cylinder mesh of deal.II has smaller cells in the center which restrict the size of the particles. The length of the pipe is 1 m and the diameter is 0.084 m. The conveying is processed in the x-direction through periodic boundary conditions.
 
 .. code-block:: text
 
-    subsection mesh
-      set type                                = dealii
-      set grid type                           = subdivided_hyper_rectangle
-      set grid arguments                      = 15,70,15:-0.03,0,-0.03:0.03,0.4,0.03:true
-      set initial refinement                  = 0
-      set expand particle-wall contact search = false
+   subsection mesh
+     set type                                = cylinder
+     set grid type                           = balanced
+     set grid arguments                      = 45 : 0.042 : 0.5
+     set initial refinement                  = 1
+     set expand particle-wall contact search = true
+   end
+
+.. note::
+    Note that, since the mesh is cylindrical, ``set expand particle-wall contact search = true``. Details on this in the `DEM mesh parameters guide <../../../parameters/dem/mesh.html>`_.
+
+A cross-section of the resulting mesh is presented in the following figure.
+
+.. figure:: images/mesh-particle.png
+    :alt: Mesh cross-section.
+    :align: center
+
+    Cross-section of the mesh used in the pneumatic conveying simulation.
+
+Lagrangian Physical Properties
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The lagrangian properties were based from the work of Lavrinec *et al*. `[1] <https://doi.org/10.1016/j.powtec.2020.07.070>`_, except for the Young's modulus that was deliberately reduced to get a smaller Rayleigh critical time step.
+The gravity is set in the x-direction to allow the packing of the particles from the right side of the pipe.
+The number of particles in the simulation is 32279. When the example was setup, the number specified in the simulation was higher since the insertion is done with the `plane insertion method <https://chaos-polymtl.github.io/lethe/documentation/parameters/dem/insertion_info.html>`_, which will insert the particles up to when they reach the plan.
+In order to avoid confusion with the number of particles in the parameter file, we did give the real number of particles inserted after 30 seconds.
+
+.. code-block:: text
+
+   subsection lagrangian physical properties
+     set g                        = -9.81, 0, 0
+     set number of particle types = 1
+     subsection particle type 0
+       set size distribution type            = uniform
+       set diameter                          = 0.005
+       set number of particles               = 32279
+       set density particles                 = 890
+       set young modulus particles           = 1e6
+       set poisson ratio particles           = 0.33
+       set restitution coefficient particles = 0.3
+       set friction coefficient particles    = 0.3
+       set rolling friction particles        = 0.2
+     end
+     set young modulus wall           = 1e6
+     set poisson ratio wall           = 0.33
+     set restitution coefficient wall = 0.3
+     set friction coefficient wall    = 0.4
+     set rolling friction wall        = 0.2
+   end
+
+Insertion Info
+~~~~~~~~~~~~~~
+As said in the previous section, the particles are inserted with the plane insertion method. The insertion plane is located at the right side of the pipe. As we can see of the following figure, the plane is placed in a inclined manner. Since the plane insertion method will insert in al
+
+
+The particles are inserted with a velocity of -0.35 m/s in the x-direction.
+
+.. code-block:: text
+   subsection insertion info
+     set insertion method              = plane
+     set insertion frequency           = 400
+     set insertion plane point         = 0.475, -0.0325, 0
+     set insertion plane normal vector = -0.25, 4.75, 0
+     set insertion maximum offset      = 0.001
+     set insertion prn seed            = 19
+     set initial velocity              = -0.35, 0.1, 0.0
+   end
+
+
+Boundary Conditions DEM
+~~~~~~~~~~~~~~~~~~~~~~~
+Periodic boundary conditions need to be setup in the DEM simulation since we used them in the CFD-DEM simulation. However, we do not want to use them during the loading of the particles.
+
+.. code-block:: text
+   subsection DEM boundary conditions
+     set number of boundary conditions = 1
+
+     subsection boundary condition 0
+       set type               = periodic
+       set periodic id 0      = 1
+       set periodic id 1      = 2
+       set periodic direction = 0
+     end
+   end
+
+Floating Walls
+~~~~~~~~~~~~~~~~~~~
+
+A floating wall is added :math:`10 \: \text{cm}` above the bottom of the mesh, so that void fraction discontinuities can be avoided. The remaining region above the floating wall is :math:`1 \: \text{m}` high, as in the experimental setup.
+
+.. code-block:: text
+
+    subsection floating walls
+      set number of floating walls = 1
+      subsection wall 0
+        subsection point on wall
+          set x = -0.45
+          set y = 0
+          set z = 0
+        end
+        subsection normal vector
+          set nx = 1
+          set ny = 0
+          set nz = 0
+        end
+        set start time = 0
+        set end time   = 50
+      end
     end
+
+.. note::
+    Note that ``end time`` is higher than ``time end`` in ``simulation control``, so that the floating wall remains for the whole simulation.
 
 Simulation Control
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The time step in this case is the same as the time end. Since we only seek to insert the particles at the top of the channel, we only require 1 insertion time step. We do not need the particles to be packed, therefore by doing this, the particles will be inserted, but will not fall under the action of gravity.
-
+Here, we define the time-step and the simulation end time.
 
 .. code-block:: text
 
-   subsection simulation control
-      set time step        = 1e-6
-      set time end         = 1e-6
-      set log frequency    = 1000
-      set output frequency = 1
+    subsection simulation control
+      set time step        = 0.000005
+      set time end         = 2.5
+      set log frequency    = 20000
+      set output frequency = 20000
       set output path      = ./output_dem/
     end
 
-Restart
-~~~~~~~~~~~~~~~~~~~
+.. important::
+    It is important to define the ``time end`` to include the time required to insert the particles and the time the it takes for particles to settle.
 
-We save the files obtained from the single iteration by setting the frequency = 1. These files will be used to start the CFD-DEM simulation.
+Restart
+~~~~~~~~
+
+The ``lethe-fluid-particles`` solver requires reading several DEM files to start the simulation. For this, we have to write the DEM simulation information. This is done by enabling the check-pointing option in the restart subsection. We give the written files a prefix "dem" set in the ``set filename`` option. The DEM parameter file is initialized exactly as the cylindrical packed bed example. The difference is in the number of particles, their physical properties, and the insertion box defined based on the new geometry. For more explanation about the individual subsections, refer to the `DEM parameters <../../../parameters/dem/dem.html>`_ and the `CFD-DEM parameters <../../../parameters/unresolved-cfd-dem/unresolved-cfd-dem.html>`_.
 
 .. code-block:: text
 
     subsection restart
       set checkpoint = true
-      set frequency  = 1
+      set frequency  = 20000
       set restart    = false
       set filename   = dem
     end
@@ -99,68 +204,78 @@ We save the files obtained from the single iteration by setting the frequency = 
 Model Parameters
 ~~~~~~~~~~~~~~~~~
 
-The section on model parameters is explained in the DEM examples. We show the chosen parameters for this section:
+The subsection on model parameters is explained in the `DEM model parameters guide <../../../parameters/dem/model_parameters.html>`_ and `DEM examples <../../dem/dem.html>`_.
 
 .. code-block:: text
 
     subsection model parameters
       subsection contact detection
         set contact detection method = dynamic
-        set neighborhood threshold   = 1.3
-        set frequency                = 1
+        set neighborhood threshold   = 1.5
       end
-      set rolling resistance torque method       = constant_resistance
-      set particle particle contact force method = hertz_mindlin_limit_force
+      subsection load balancing
+        set load balance method     = dynamic
+        set threshold               = 0.5
+        set dynamic check frequency = 10000
+      end
+      set particle particle contact force method = hertz_mindlin_limit_overlap
       set particle wall contact force method     = nonlinear
       set integration method                     = velocity_verlet
     end
 
+
 Lagrangian Physical Properties
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The gravity is set to 0 as we only need to insert the particles in the specified insertion box.
+The lagrangian properties were taken from Ferreira *et al*
 
 .. code-block:: text
 
     subsection lagrangian physical properties
-      set gx                       = 0.0
-      set gy                       = 0.0
-      set gz                       = 0.0
+      set gx                       = -9.81
+      set gy                       = 0
+      set gz                       = 0
       set number of particle types = 1
       subsection particle type 0
         set size distribution type            = uniform
-        set diameter                          = 0.002
-        set number                            = 8379
-        set density particles                 = 1200
-        set young modulus particles           = 1e6
-        set poisson ratio particles           = 0.25
-        set restitution coefficient particles = 0.97
-        set friction coefficient particles    = 0.3
-        set rolling friction particles        = 0.1
+        set diameter                          = 0.003087
+        set number                            = 72400
+        set density particles                 = 3585.9
+        set young modulus particles           = 1e7
+        set poisson ratio particles           = 0.3
+        set restitution coefficient particles = 0.9
+        set friction coefficient particles    = 0.1
+        set rolling friction particles        = 0.2
       end
-      set young modulus wall           = 1e6
-      set poisson ratio wall           = 0.25
-      set restitution coefficient wall = 0.97
-      set friction coefficient wall    = 0.3
-      set rolling friction wall        = 0.1
+      set young modulus wall           = 1e7
+      set poisson ratio wall           = 0.3
+      set restitution coefficient wall = 0.2
+      set friction coefficient wall    = 0.1
+      set rolling friction wall        = 0.3
     end
+
+The number of particles used for alginate particles is :math:`107\;\! 960`.
 
 Insertion Info
 ~~~~~~~~~~~~~~~~~~~
 
-We insert the particles uniformly in the specified insertion box at the top of the channel.
+The volume of the insertion box should be large enough to fit all particles. Also, its bounds should be located within the mesh generated in the Mesh subsection.
 
 .. code-block:: text
 
     subsection insertion info
       set insertion method                               = volume
-      set inserted number of particles at each time step = 8379
-      set insertion frequency                            = 2000
-      set insertion box points coordinates               = -0.025, 0.3, -0.025 : 0.026, 0.396, 0.026
-      set insertion distance threshold                   = 1.2
-      set insertion maximum offset                       = 0.
+      set inserted number of particles at each time step = 48841 # for alginate, we recommend 79600
+      set insertion frequency                            = 200000
+      set insertion box points coordinates               = -0.15, -0.035, -0.035 : 0.53, 0.035, 0.035
+      set insertion distance threshold                   = 1.3
+      set insertion maximum offset                       = 0.3
       set insertion prn seed                             = 19
     end
+
+.. note::
+    Particles need to be fully settled before the fluid injection. Hence, ``time end`` in ``subsection simulation control`` needs to be chosen accordingly.
+
 
 ---------------------------
 Running the DEM Simulation
@@ -170,62 +285,61 @@ Launching the simulation is as simple as specifying the executable name and the 
 .. code-block:: text
   :class: copy-button
 
-  lethe-particles particle-generator.prm
+  lethe-particles dem-packing-in-fluidized-bed.prm
 
-or in parallel (where 8 represents the number of processors)
+or in parallel (where :math:`8` represents the number of processors)
 
 .. code-block:: text
   :class: copy-button
 
-  mpirun -np 8 lethe-particles particle-generator.prm
+  mpirun -np 8 lethe-particles dem-packing-in-fluidized-bed.prm
 
-The figure below shoes the particles inserted at the top of the channel at the end of the DEM simulation.
+Lethe will generate a number of files. The most important one bears the extension ``.pvd``. It can be read by popular visualization programs such as `Paraview <https://www.paraview.org/>`_.
 
-.. image:: images/packing.png
-    :alt: inserted particles at the top of the channel
-    :align: center
 
-After the particles have been inserted it is now possible to simulate the sedimentation of particles.
+.. note::
+    Running the packing of alumina particles should take approximately :math:`57 \: \text{minutes}` on :math:`16 \: \text{cores}`. For the alginate particles, it takes approximately :math:`1 \: \text{hour}` and :math:`53 \: \text{minutes}`.
 
+Now that the particles have been packed inside the cylinder, it is possible to simulate the fluidization of particles.
 
 -----------------------
 CFD-DEM Parameter File
 -----------------------
 
-The CFD simulation is to be carried out using the particles inserted within the previous step. We will discuss the different parameter file sections. Some sections are identical to that of the DEM so they will not be shown again.
+The CFD simulation is to be carried out using the packed bed simulated in the previous step. We will discuss the different parameter file sections. The mesh section is identical to that of the DEM so it will not be shown again.
 
 Simulation Control
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The simulation is run for :math:`2` s with a time step of :math:`0.005` s. The time scheme chosen for the simulation is first order backward difference method (BDF1). The simulation control section is shown:
+The long simulation is due to the small difference between particles and liquid densities, meaning that it takes very long to reach the pseudo-steady state.
 
 .. code-block:: text
 
     subsection simulation control
-      set method               = bdf1
-      set number mesh adapt    = 0
-      set output name          = result_
-      set output frequency     = 20
-      set time end             = 2
-      set time step            = 0.005
-      set output path          = ./output/
+      set method            = bdf1
+      set output name       = cfd_dem
+      set output frequency  = 100
+      set time end          = 20
+      set time step         = 0.001
+      set output path       = ./output/
     end
+
+Since the alumina particles are more than :math:`3 \: \text{times}` denser than alginate particles, the pseudo-steady state is reached after very different times (according to Ferreira *et al*.:math:`4` and :math:`10 \: \text{seconds}` of real time, respectively). Because of this, we use ``set time end = 35`` for the alginate.
 
 Physical Properties
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The physical properties subsection allows us to determine the density and viscosity of the fluid. We choose a density of :math:`1115.6` and a kinematic viscosity of :math:`0.00000177` as to simulate the flow of a sugar-water solution with :math:`20` % by weight sugar at :math:`20^{\circ}` C.
-The dynamic viscosity of a 20 % sugar-water solution by weight at :math:`20^{\circ} C` is 1.97 cP.
-
+The physical properties subsection allows us to determine the density and viscosity of the fluid. The values are meant to reproduce the characteristics of water at :math:`30 \: \text{°C}`.
 
 .. code-block:: text
 
     subsection physical properties
       subsection fluid 0
-        set kinematic viscosity = 0.00000177
-        set density             = 1115.6
+        set kinematic viscosity = 0.0000008379
+        set density             = 997
       end
     end
+
 
 Initial Conditions
 ~~~~~~~~~~~~~~~~~~
@@ -237,108 +351,97 @@ For the initial conditions, we choose zero initial conditions for the velocity.
     subsection initial conditions
       set type = nodal
       subsection uvwp
-        set Function expression = 0; 0; 0; 0
+          set Function expression = 0; 0; 0; 0
       end
     end
+
 
 Boundary Conditions
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-For the boundary conditions, we choose a slip boundary condition on all the walls of the channel and the channel except the bottom and the top of the channel where a no-slip boundary condition is imposed. For more information about the boundary conditions, please refer to the `Boundary Conditions Section <../../../parameters/cfd/boundary_conditions_cfd.html>`_
+For the boundary conditions, we choose a slip boundary condition on the walls (``id = 0``) and an inlet velocity of :math:`0.157\;\! 033 \: \text{m/s}` at the lower face of the bed (``id = 1``).
 
 .. code-block:: text
 
     subsection boundary conditions
-      set number = 6
+      set number = 2
       subsection bc 0
         set id   = 0
         set type = slip
       end
       subsection bc 1
         set id   = 1
-        set type = slip
-      end
-      subsection bc 2
-        set id   = 2
-        set type = noslip
-      end
-      subsection bc 3
-        set id   = 3
-        set type = noslip
-      end
-      subsection bc 4
-        set id   = 4
-        set type = slip
-      end
-      subsection bc 5
-        set id   = 5
-        set type = slip
+        set type = function
+        subsection u
+          set Function expression = 0.157033
+        end
+        subsection v
+          set Function expression = 0
+        end
+        subsection w
+          set Function expression = 0
+        end
       end
     end
 
-Lagrangian Physical Properties
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-This section is identical to the one previously mentioned for the DEM simulation of particle insertion. The only difference is the definition of gravity. For the vertical case, we set :math:`g_y = -9.81` and :math:`g_x = g_z = 0`. For the inclined case, we determine the gravity by setting: :math:`g_x = \frac{-9.81}{cos \theta}, \; g_y = \frac{-9.81}{sin \theta}, \; g_z = 0` where :math:`\theta` is the angle of inclination with the vertical.
-
-The additional sections for the CFD-DEM simulations are the void fraction subsection and the CFD-DEM subsection. These subsections are descrichannel in detail in the `CFD-DEM parameters <../../../parameters/unresolved-cfd-dem/unresolved-cfd-dem.html>`_ .
+The following sections for the CFD-DEM simulations are the void fraction subsection and the CFD-DEM subsection. These subsections are described in detail in the `CFD-DEM parameters <../../../parameters/unresolved-cfd-dem/unresolved-cfd-dem.html>`_ .
 
 Void Fraction
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-Since we are calculating the void fraction using the particle insertion of the DEM simulation, we set the ``mode`` to ``dem``. For this, we need to read the dem files which we already wrote using check-pointing. We, therefore, set the ``read dem`` to ``true`` and specify the prefix of the dem files to be dem.
-We choose to use the quadrature centered method (`QCM <../../../theory/unresolved_cfd-dem/unresolved_cfd-dem.html>`_) to calculate the void fraction. For this, we specify the ``mode`` to be ``qcm``. We want the radius of our volume averaging sphere to be equal to the length of the element where the void fraction is being calculated. We don't want the volume of the sphere to be equal to the volume of the element.
-For this, we set the ``qcm sphere equal cell volume`` equals to ``false``. Since we want to keep the mass conservative properties of the :math:`L^2` projection, we do not bound the void fraction and as such we set ``bound void fraction`` to ``false``. Unlike the other schemes, we do not smooth the void fraction as we usually do using the PCM and SPM void fraction schemes since QCM is continuous in time and space.
+~~~~~~~~~~~~~~~
+
+We choose the `particle centroid method (PCM) <../../../parameters/unresolved-cfd-dem/void-fraction.html>`_ to calculate void fraction. The ``l2 smoothing factor`` we choose is around the square of twice the particle’s diameter, as in the other examples.
 
 .. code-block:: text
 
     subsection void fraction
-      set mode                         = qcm
-      set qcm sphere equal cell volume = false
-      set read dem                     = true
-      set dem file name                = dem
-      set bound void fraction          = false
+      set mode                = pcm
+      set read dem            = true
+      set dem file name       = dem
+      set l2 smoothing factor = 2.8387584e-5
     end
 
-CFD-DEM
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.. note::
+    Note that void fraction is not bound in this case. The size of the particles used in this example forces us to use a very coarse mesh. Bounding void fraction would lead to instability in the present case.
 
-We also enable grad-div stabilization in order to improve local mass conservation. If we were using PCM and SPM void fraction schemes, the void fraction time derivative should be disabled as the time variation of the void fraction will lead to unstable simulations. The source of such instability is the first term of the continuity equation :math:`\rho_f \frac{\partial \varepsilon_f}{\partial t}`, which is stiff and unstable for the slightest temporal discontinuity of the void fraction and as :math:`\Delta t \to 0`. However, as we are using the QCM void fraction scheme, this term can be enabled. Usually, this term is neglected, however; disabling this term affects the results as we are no longer solving for the actual `Volume Averaged Navier-Stokes equations <../../../theory/unresolved_cfd-dem/unresolved_cfd-dem.html>`_. Therefore, we should not neglect this term based on numerical reasoning without any physical explanation.
+CFD-DEM
+~~~~~~~~~~
+
+Different from gas-solid fluidized beds, buoyancy, pressure force, shear stress are not negligible. All these forces are considered in this example.
+
+Saffman lift force is proven to be very important to properly reproduce particles' dynamics in the liquid-fluidized bed 
 
 .. code-block:: text
 
     subsection cfd-dem
-      set grad div                      = true
-      set void fraction time derivative = true
-      set drag force                    = true
-      set buoyancy force                = true
-      set shear force                   = true
-      set pressure force                = true
-      set drag model                    = difelice
-      set coupling frequency            = 250
-      set grad-div length scale         = 0.005
-      set vans model                    = modelA
+      set vans model         = modelA
+      set grad div           = true
+      set drag model         = rong
+      set buoyancy force     = true
+      set shear force        = true
+      set pressure force     = true
+      set saffman lift force = true
+      set coupling frequency = 100
+      set void fraction time derivative = false
     end
 
-We determine the drag model to be used for the calculation of particle-fluid forces. We enable buoyancy, drag, shear and pressure forces. For drag, we use the Di Felice model to determine the momentum transfer exchange coefficient. The VANS model we are solving is model A. Other possible option is model B.
-
-Finally, the linear and non-linear solver controls are defined.
+.. warning::
+    Void-fraction time-derivative lead to significant instability in the case of liquid-fluidized beds, hence we do not use it.
 
 Non-linear Solver
 ~~~~~~~~~~~~~~~~~
+
+We use the inexact Newton non-linear solver to minimize the number of time the matrix of the system is assembled. This is used to increase the speed of the simulation, since the matrix assembly requires significant computations.
 
 .. code-block:: text
 
     subsection non-linear solver
       subsection fluid dynamics
         set solver           = inexact_newton
-        set tolerance        = 1e-8
+        set tolerance        = 1e-10
         set max iterations   = 10
         set verbosity        = verbose
-        set matrix tolerance = 0.75
       end
     end
-
-We use the ``inexact_newton`` solver as to avoid the reconstruction of the system matrix at each Newton iteration. For more information about the non-linear solver, please refer to the `Non Linear Solver Section <../../../parameters/cfd/non-linear_solver_control.html>`_
 
 Linear Solver
 ~~~~~~~~~~~~~
@@ -350,35 +453,110 @@ Linear Solver
         set method                                = gmres
         set max iters                             = 5000
         set relative residual                     = 1e-3
-        set minimum residual                      = 1e-10
+        set minimum residual                      = 1e-11
         set preconditioner                        = ilu
-        set ilu preconditioner fill               = 0
-        set ilu preconditioner absolute tolerance = 1e-12
-        set ilu preconditioner relative tolerance = 1
+        set ilu preconditioner fill               = 1
+        set ilu preconditioner absolute tolerance = 1e-14
+        set ilu preconditioner relative tolerance = 1.00
         set verbosity                             = verbose
-        set max krylov vectors                    = 200
       end
     end
 
-For more information about the linear solver, please refer to the `Linear Solver Section <../../../parameters/cfd/linear_solver_control.html>`_
 
 ------------------------------
 Running the CFD-DEM Simulation
 ------------------------------
 
-The simulation is run using the ``lethe-fluid-particles`` application.  Assuming that the executable is within your path, the simulation can be launched as per the following command:
+The simulation is run (on :math:`8 \: \text{cores}`) using the ``lethe-fluid-particles`` application as follows:
 
 .. code-block:: text
   :class: copy-button
 
-  lethe-fluid-particles boycott-effect.prm
+  mpirun -np 8 lethe-fluid-particles liquid-solid-fluidized-bed.prm
+
+
+The :math:`20`-second simulations with alumina took approximately :math:`24 \: \text{hours}` and :math:`30 \: \text{minutes}` on :math:`16 \: \text{cores}` and :math:`8 \: \text{hours}` and :math:`44 \: \text{minutes}` on :math:`32 \: \text{cores}`.
+
+The :math:`35`-second simulations with alginate particles took about :math:`28 \: \text{hours}` on :math:`16 \: \text{cores}`.
+
 
 --------
 Results
 --------
 
-The results are shown in an animation below. The sedimentation of the particles in a vertical and inclined channel demonstrate different behaviors. This clearly shows the boycott effect as the fluid circulates in the inclined channel resulting in a larger velocity for both the fluid and particles. Thus, the particles fall further compared to the vertical channel where the fluid velocity is almost null, and the particles' acceleration is low.
+We briefly comment on some results that can be extracted from this example.
+
+.. important::
+
+    This example includes a postprocessing file written in Python that uses the `lethe_pyvista_tools <../../../tools/postprocessing/postprocessing.html>`_. module.
+
+.. important::
+
+    To use the code, run ``python3 lsfb_postprocessing.py $PATH_TO_YOUR_CASE_FOLDER``. The code will generate several graphics showing the pressure profile within the bed, which are going to be stored in ``$PATH_TO_YOUR_CASE_FOLDER/P_x``. It will also generate a ``deltaP_t.csv`` file with the total pressure difference for each time-step. Additionally, it generates a void fraction as a function of time graphic (``eps_t.png``).
+
+.. important::
+
+    You need to ensure that the ``lethe_pyvista_tools`` is working on your machine. Click `here <../../../tools/postprocessing/postprocessing.html>`_ for details.
+
+Side View
+~~~~~~~~~~~
+
+Here we show comparison between the experimentally observed and simulated behavior of the liquid-solid fluidized bed with alumina.
+
+The void fraction and velocity profile of the fluid are also shown.
 
 .. raw:: html
 
-    <iframe width="560" height="315" src="https://www.youtube.com/embed/ZyY5C6o6R8Q" frameborder="0" allowfullscreen></iframe>
+    <p align="center"><iframe width="560" height="315" src="https://www.youtube.com/embed/Ra7d-p7wD8Y" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+
+
+Total Pressure Drop and Bed Expansion
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+In fluidized beds, the total pressure drop (:math:`- \Delta p`) reflects the total weight of particles (:math:`M`). The following equation is derived from a force balance inside the fluidized bed
+
+.. math::
+
+    H(1 - \bar{\varepsilon}_f) = \frac{- \Delta p}{(\rho_p - \rho_f)g} = \frac{M}{\rho_p A} = \mathrm{constant}
+
+where :math:`H` is the total bed height, :math:`\bar{\varepsilon}_f` is the average fluid fraction (void fraction) at the bed region, :math:`\rho_p` and :math:`\rho_f` are the densities of the particles and the fluid (respectively), and :math:`A` is the cross-section area of the equipment.
+
+Liquid fluidized beds are very uniform in terms of particles distribution, resulting in an uniform distribution of  :math:`\varepsilon_f` along the be height. From this hypothesis, we can conclude that, for a constant and uniform fluid inlet flow rate, the pressure slope is:
+
+.. math::
+
+    \left.- \frac{\mathrm{d} p }{\mathrm{d} z}\right|_{z = 0}^{z = H}  \approx \mathrm{constant}
+
+With the pressure slope, it is also possible to determine the bed void fraction manipulating the first equation, which gives:
+
+.. math::
+
+    \bar{\varepsilon}_f = 1 - \frac{\left.- \frac{\mathrm{d} p }{\mathrm{d} z}\right|_{z = 0}^{z = H} }{(\rho_p - \rho_f)g}
+
+The resulting behavior of the pressure along the bed height and the void fraction with time is shown in the following animation.
+
+.. image:: images/pressure_time.gif
+    :alt: Pressure drop as a function of time
+    :align: center
+    :name: press_t
+
+
+Particles Dynamics
+~~~~~~~~~~~~~~~~~~~~
+
+Since the fluidization occurs in a high density fluid, the density difference between alginate and alumina particles have a significant impact on the velocity of the particles inside the bed.
+
+The following animation is in real time. It is possible to notice that, for a similar bed height, the bed of alumina particles expands way faster than the alginate.
+
+.. raw:: html
+
+    <p align="center"><iframe width="560" height="315" src="https://www.youtube.com/embed/kMp86PdZ6tU" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+
+
+
+-----------
+References
+-----------
+
+`[1] <https://doi.org/10.1016/j.powtec.2020.07.070>`_ A. Lavrinec, O. Orozovic, H. Rajabnia, K. Williams, M. Jones & G. Klinzing, “Velocity and porosity relationships within dense phase pneumatic conveying as studied using coupled CFD-DEM,” *Powder Technology*, vol. 375, p. 89–100, 2020 doi:10.1016/j.powtec.2020.07.070
+
