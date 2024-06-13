@@ -15,7 +15,6 @@ subsection simulation control
   set time end          = 1.
   set time step         = 0.001
   set output path       = ./output/
-  #  set output boundaries    = true
 end
 
 #---------------------------------------------------
