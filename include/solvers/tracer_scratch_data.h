@@ -12,9 +12,11 @@
  * the top level of the Lethe distribution.
  *
  * ---------------------------------------------------------------------
- *
- * Scratch data for the tracer auxiliary physics
  */
+
+
+#ifndef lethe_tracer_scratch_data_h
+#define lethe_tracer_scratch_data_h
 
 #include <core/ale.h>
 #include <core/multiphysics.h>
@@ -32,9 +34,6 @@
 
 #include <deal.II/numerics/vector_tools.h>
 
-
-#ifndef lethe_tracer_scratch_data_h
-#  define lethe_tracer_scratch_data_h
 
 using namespace dealii;
 

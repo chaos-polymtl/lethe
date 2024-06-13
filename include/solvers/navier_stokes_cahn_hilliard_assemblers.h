@@ -14,15 +14,15 @@
  * ---------------------------------------------------------------------*/
 
 
+#ifndef lethe_navier_stokes_cahn_hilliard_assemblers_h
+#define lethe_navier_stokes_cahn_hilliard_assemblers_h
+
 #include <core/simulation_control.h>
 
 #include <solvers/auxiliary_physics.h>
 #include <solvers/copy_data.h>
 #include <solvers/navier_stokes_assemblers.h>
 #include <solvers/navier_stokes_scratch_data.h>
-
-#ifndef lethe_navier_stokes_cahn_hilliard_assemblers_h
-#  define lethe_navier_stokes_cahn_hilliard_assemblers_h
 
 
 /**

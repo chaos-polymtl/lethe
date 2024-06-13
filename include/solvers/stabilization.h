@@ -15,6 +15,9 @@
  *
  */
 
+#ifndef lethe_stabilization_h
+#define lethe_stabilization_h
+
 #include <deal.II/base/utilities.h>
 
 #include <cmath>
@@ -69,3 +72,6 @@ calculate_navier_stokes_gls_tau_transient(const double u_mag,
                         9 * Utilities::fixed_power<2>(4 * kinematic_viscosity /
                                                       (h * h)));
 }
+
+
+#endif

@@ -14,8 +14,8 @@
  * ---------------------------------------------------------------------
  */
 
-#ifndef lethe_inexact_newton_iteration_non_linear_solver_h
-#define lethe_inexact_newton_iteration_non_linear_solver_h
+#ifndef lethe_inexact_newton_non_linear_solver_h
+#define lethe_inexact_newton_non_linear_solver_h
 
 #include <core/non_linear_solver.h>
 

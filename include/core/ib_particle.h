@@ -15,10 +15,14 @@
  *
  */
 
+
+
+#ifndef lethe_ib_particle_h
+#define lethe_ib_particle_h
+
 #include <core/dem_properties.h>
 #include <core/shape.h>
 
-#include <deal.II/base/auto_derivative_function.h>
 #include <deal.II/base/function_signed_distance.h>
 #include <deal.II/base/parsed_function.h>
 #include <deal.II/base/point.h>
@@ -26,9 +30,6 @@
 #include <deal.II/physics/transformations.h>
 
 #include <vector>
-
-#ifndef lethe_ib_particle_h
-#  define lethe_ib_particle_h
 
 using namespace dealii;
 

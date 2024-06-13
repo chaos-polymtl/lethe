@@ -12,8 +12,6 @@
  * the top level of the Lethe distribution.
  *
  * ---------------------------------------------------------------------
- *
- * Author: Lucka Barbeau, Bruno Blais, Polytechnique Montreal, 2019 -
  */
 
 #ifndef lethe_ib_stencil_h

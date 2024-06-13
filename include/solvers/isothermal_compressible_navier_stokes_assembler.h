@@ -13,6 +13,11 @@
  *
  * ---------------------------------------------------------------------*/
 
+
+
+#ifndef lethe_isothermal_compressible_navier_stokes_assembler_h
+#define lethe_isothermal_compressible_navier_stokes_assembler_h
+
 #include <core/boundary_conditions.h>
 #include <core/rheological_model.h>
 #include <core/simulation_control.h>
@@ -20,9 +25,6 @@
 #include <solvers/copy_data.h>
 #include <solvers/navier_stokes_assemblers.h>
 #include <solvers/navier_stokes_scratch_data.h>
-
-#ifndef lethe_isothermal_compressible_navier_stokes_assembler_h
-#  define lethe_isothermal_compressible_navier_stokes_assembler_h
 
 
 /**
