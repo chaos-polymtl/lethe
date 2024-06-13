@@ -1619,10 +1619,10 @@ namespace Parameters
   /**
    * @brief Return the tensor of entry @p entry_string. If the entry is
    * specified in the parameter file, then the changed value is returned,
-   * otherwise the default value is returned. It can be used for 2 ou 3
+   * otherwise the default value is returned. It can be used for 2 or 3
    * dimensions parameters that require a tensor of dimension 3 in any case.
-   * If the entry do not have 2 or 3 values in the list, an error is throw.
-   * This function can be use for Point<3> variables.
+   * If the entry does not have 2 or 3 values in the list, an error is thrown.
+   * This function can be used for Point<3> variables.
    *
    * @param[in,out] prm A parameter handler which is currently used to parse the
    * simulation information.
@@ -1635,9 +1635,9 @@ namespace Parameters
                           const std::string &entry_string);
 
   /**
-   * @brief Return the tensor of entry @p entry_string. But it can allow handle
+   * @brief Return the tensor of entry @p entry_string. But it can allow for
    * the usage of deprecated parameters that used to be 3 individual entries
-   * instead of a list of value.
+   * instead of a list of values.
    *
    * Note: It does not throw an error if the new entry is not equivalent to a
    * tensor.

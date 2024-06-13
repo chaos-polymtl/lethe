@@ -52,7 +52,7 @@ In this subsection, gravitational acceleration, and the physical properties of t
     set surface energy wall          = 0.0
   end
 
-* The ``g`` parameter defines the gravitational acceleration in `x`, `y`, and `z` directions. The depreciated version of this parameter is the 3 parameters ``gx``, ``gy``, and ``gz``.
+* The ``g`` parameter defines the gravitational acceleration in `x`, `y`, and `z` directions. The deprecated version of this parameter is the 3 parameters ``gx``, ``gy``, and ``gz``.
 
 * The ``number of particle types`` parameter specifies the number of particle types in a simulation. Particles with different sizes, size distributions, and physical properties have to be defined as separate particle types.
 
