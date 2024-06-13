@@ -51,9 +51,12 @@ public:
    * @param iter the iteration number associated with the file
    */
   virtual void
-  write_force_chains(const MPI_Comm     mpi_communicator,
+  write_force_chains(PVDHandler        &pvd_handler,
+                     const MPI_Comm     mpi_communicator,
                      const std::string  folder,
-                     const unsigned int iter) = 0;
+                     const unsigned int group_files,
+                     const unsigned int iter,
+                     const double       time) = 0;
 };
 
 /**
@@ -114,9 +117,12 @@ public:
    * @param iter the iteration number associated with the file
    */
   void
-  write_force_chains(const MPI_Comm     mpi_communicator,
+  write_force_chains(PVDHandler        &pvd_handler,
+                     const MPI_Comm     mpi_communicator,
                      const std::string  folder,
-                     const unsigned int iter) override;
+                     const unsigned int group_files,
+                     const unsigned int iter,
+                     const double       time) override;
 
 private:
   /// vector of normal forces between each touching particles.

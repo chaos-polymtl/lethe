@@ -79,9 +79,8 @@ ParticlesForceChains<dim, contact_model, rolling_friction_model>::
 {
   auto &local_adjacent_particles = container_manager.local_adjacent_particles;
   // Lines 89 to 101 kept for future ghost particles implementation.
-  auto &ghost_adjacent_particles =
-    container_manager.ghost_adjacent_particles; 
-    //auto &local_periodic_adjacent_particles =
+  auto &ghost_adjacent_particles = container_manager.ghost_adjacent_particles;
+  // auto &local_periodic_adjacent_particles =
   //  container_manager.local_periodic_adjacent_particles;
   // auto &ghost_periodic_adjacent_particles =
   //  container_manager.ghost_periodic_adjacent_particles;
@@ -479,11 +478,12 @@ ParticlesForceChains<dim, contact_model, rolling_friction_model>::
                         rolling_resistance_torque);
                     }
 
-                  if (particle_one->get_id()>particle_two->get_id())
-                  {vertices.push_back(particle_one_location);
-                  vertices.push_back(particle_two_location);
-                  force_normal.push_back(sqrt(normal_force.norm()));
-                  }
+                  if (particle_one->get_id() > particle_two->get_id())
+                    {
+                      vertices.push_back(particle_one_location);
+                      vertices.push_back(particle_two_location);
+                      force_normal.push_back(sqrt(normal_force.norm()));
+                    }
                 }
             }
         }
@@ -496,9 +496,12 @@ template <
   Parameters::Lagrangian::RollingResistanceMethod rolling_friction_model>
 void
 ParticlesForceChains<dim, contact_model, rolling_friction_model>::
-  write_force_chains(MPI_Comm           mpi_communicator,
+  write_force_chains(PVDHandler        &pvd_handler,
+                     MPI_Comm           mpi_communicator,
                      const std::string  folder,
-                     const unsigned int iter)
+                     const unsigned int group_files,
+                     const unsigned int iter,
+                     const double       time)
 {
   Triangulation<1, 3> triangulation;
   multi_general_cell(triangulation, vertices);
@@ -518,6 +521,29 @@ ParticlesForceChains<dim, contact_model, rolling_friction_model>::
   const std::string face_filename =
     (folder + "force_chains." + Utilities::int_to_string(iter, 5) + ".vtu");
   data_out.write_vtu_in_parallel(face_filename.c_str(), mpi_communicator);
+
+  std::vector<std::string> filenames;
+  const unsigned int       n_processes =
+    Utilities::MPI::n_mpi_processes(mpi_communicator);
+  const unsigned int n_files =
+    (group_files == 0) ? n_processes : std::min(group_files, n_processes);
+
+  for (unsigned int i = 0; i < n_files; ++i)
+    filenames.push_back("force_chains." + Utilities::int_to_string(iter, 5) +
+                        ".vtu");
+
+  std::string pvtu_filename =
+    ("force_chains." + Utilities::int_to_string(iter, 5) + ".pvtu");
+
+  std::string   pvtu_filename_with_folder = folder + pvtu_filename;
+  std::ofstream master_output(pvtu_filename_with_folder.c_str());
+
+  data_out.write_pvtu_record(master_output, filenames);
+
+  std::string pvdPrefix = (folder + "force_chains.pvd");
+  pvd_handler.append(time, pvtu_filename);
+  std::ofstream pvd_output(pvdPrefix.c_str());
+  DataOutBase::write_pvd_record(pvd_output, pvd_handler.times_and_names);
 }
 
 // No resistance

@@ -363,6 +363,7 @@ private:
   Visualization<dim>            visualization_object;
   LagrangianPostProcessing<dim> post_processing_object;
   PVDHandler                    particles_pvdhandler;
+  PVDHandler                    particles_pvdhandler_force_chains;
 
   std::vector<Tensor<1, 3>> torque;
   std::vector<Tensor<1, 3>> force;
