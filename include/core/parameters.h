@@ -1636,7 +1636,7 @@ namespace Parameters
 
   /**
    * @brief Return the tensor of entry @p entry_string. But it can allow handle
-   * the usage of depreciated parameters that used to be 3 individual entries
+   * the usage of deprecated parameters that used to be 3 individual entries
    * instead of a list of value.
    *
    * Note: It does not throw an error if the new entry is not equivalent to a
@@ -1646,10 +1646,10 @@ namespace Parameters
    * simulation information.
    * @param[in] entry_string A declare string in the parameter file.
    * @param[in] entry_string_1 A declare string in the parameter file that is
-   * the equivalent of the second double depreciated parameter of the new list
+   * the equivalent of the second double deprecated parameter of the new list
    * parameter.
    * @param[in] entry_string_2 A declare string in the parameter file that is
-   * the equivalent of the second double depreciated parameter of the new list
+   * the equivalent of the second double deprecated parameter of the new list
    * parameter.
    *
    * @return A tensor<1,3> corresponding to the entry_string in the prm file.

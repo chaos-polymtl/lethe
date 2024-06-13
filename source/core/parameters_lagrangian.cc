@@ -220,7 +220,7 @@ namespace Parameters
       // <g> used to be 3 parameters: <gx>, <gy> and <gz>
       // If <gx> is in the input file, it will be used as the value for <g>
       // as an alias. This way, the parameter <g> is not a tensor and allows the
-      // parsing of depreciated parameters.
+      // parsing of deprecated parameters.
       g = entry_string_to_tensor3(prm, "g", "gy", "gz");
 
       particle_type_number = prm.get_integer("number of particle types");
