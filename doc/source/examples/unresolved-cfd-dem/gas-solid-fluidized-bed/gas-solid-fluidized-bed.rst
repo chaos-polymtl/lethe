@@ -119,9 +119,7 @@ The physical properties section of the particles allows us to specify the differ
 .. code-block:: text
 
     subsection lagrangian physical properties
-      set gx                       = 0
-      set gy                       = -9.81
-      set gz                       = 0
+      set g                        = 0.0, -9.81, 0.0
       set number of particle types = 1
       subsection particle type 0
         set size distribution type            = uniform
