@@ -43,9 +43,7 @@ end
 #---------------------------------------------------
 
 subsection lagrangian physical properties
-  set gx                       = 0
-  set gy                       = 0
-  set gz                       = -10
+  set g                        = 0, 0, -10
   set number of particle types = 1
   subsection particle type 0
     set size distribution type            = uniform

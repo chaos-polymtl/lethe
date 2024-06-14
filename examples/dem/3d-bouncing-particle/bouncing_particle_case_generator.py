@@ -5,8 +5,8 @@ from scipy import optimize
 import jinja2
 import os
 
-## This small code provides the Young's modulus of the particle to optain a certain value of normal rigidity constant.
-## To run this code correcly, you just need to enter the next three sets of inputs and run it.
+## This small code provides the Young's modulus of the particle to obtain a certain value of normal rigidity constant.
+## To run this code correctly, you just need to enter the next three sets of inputs and run it.
 
 class Wall_prop:
     poisson_coef_wall = 0.3    # Wall poisson ratio
