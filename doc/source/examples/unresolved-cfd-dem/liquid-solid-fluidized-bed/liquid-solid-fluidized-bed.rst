@@ -173,9 +173,7 @@ The lagrangian properties were taken from Ferreira *et al*. `[1] <https://doi.or
 .. code-block:: text
 
     subsection lagrangian physical properties
-      set gx                       = -9.81
-      set gy                       = 0
-      set gz                       = 0
+      set g                        = -9.81, 0, 0
       set number of particle types = 1
       subsection particle type 0
         set size distribution type            = uniform

@@ -15,7 +15,6 @@ subsection simulation control
   set time end          = 1.
   set time step         = 0.001
   set output path       = ./output/
-  #  set output boundaries    = true
 end
 
 #---------------------------------------------------
@@ -155,9 +154,7 @@ end
 #---------------------------------------------------
 
 subsection lagrangian physical properties
-  set gx                       = 0
-  set gy                       = -9.81
-  set gz                       = 0
+  set g                        = 0, -9.81, 0
   set number of particle types = 1
   subsection particle type 0
     set size distribution type            = uniform

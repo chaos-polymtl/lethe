@@ -60,9 +60,7 @@ The particles are mono dispersed with a radius of 0.005 m and a density of 2560 
 .. code-block:: text
 
   subsection lagrangian physical properties
-    set gx                       = 0
-    set gy                       = -9.81
-    set gz                       = 0.0
+    set g                        = 0, -9.81, 0.0
     set number of particle types = 1
     subsection particle type 0
       set size distribution type            = uniform

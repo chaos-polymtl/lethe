@@ -1,17 +1,18 @@
 # Listing of Parameters
 #----------------------
 
-set dimension = 2
+set dimension = 3
 
 #---------------------------------------------------
 # Simulation Control
 #---------------------------------------------------
 
 subsection simulation control
-  set time step        = 0.00001
-  set time end         = 0.0001
-  set log frequency    = 100
+  set time step        = 0.0001
+  set time end         = 0.001
+  set log frequency    = 1000000
   set output frequency = 0
+  #set output path     = ./output_dem/
 end
 
 #---------------------------------------------------
@@ -36,28 +37,30 @@ end
 
 subsection model parameters
   subsection contact detection
-    set contact detection method                = dynamic
-    set dynamic contact search size coefficient = 0.9
-    set neighborhood threshold                  = 1.5
+    set contact detection method = dynamic
+    set frequency                = 10
+    set neighborhood threshold   = 1.8
   end
   set particle particle contact force method = hertz_mindlin_limit_overlap
   set particle wall contact force method     = nonlinear
-  set rolling resistance torque method       = constant_resistance
+  set rolling resistance torque method       = no_resistance
   set integration method                     = velocity_verlet
 end
 
 #---------------------------------------------------
-# Lagrangian Physical Properties
+# Physical Properties
 #---------------------------------------------------
 
 subsection lagrangian physical properties
-  set g                        = 0.0, 0
+  set gx                       = 0.0
+  set gy                       = -9.81
+  set gz                       = 0
   set number of particle types = 1
   subsection particle type 0
     set size distribution type            = uniform
-    set diameter                          = 0.005
-    set number of particles               = 2
-    set density particles                 = 1000
+    set diameter                          = 0.01
+    set number of particles               = 50
+    set density particles                 = 2500
     set young modulus particles           = 1000000
     set poisson ratio particles           = 0.3
     set restitution coefficient particles = 0.2
@@ -76,15 +79,14 @@ end
 #---------------------------------------------------
 
 subsection insertion info
-  set insertion method                               = list
+  set insertion method                               = volume
   set inserted number of particles at each time step = 50
-  set insertion frequency                            = 20000
-  set list x                                         = 0.000 , 0.010
-  set list y                                         = 0.010 , 0.020
-  set list velocity x                                = 0.000 , 0.000
-  set list velocity y                                = 0.000 , 0.000
-  set list omega z                                   = 0.000 , 0.000
-  set list diameters                                 = 0.005 , 0.005
+  set insertion frequency                            = 2000
+  set insertion box points coordinates               = -0.05, -0.05, -0.05 : 0.05, 0.05, 0.05
+  set insertion direction sequence                   = 2, 0, 1
+  set insertion distance threshold                   = 1.5
+  set insertion maximum offset                       = 0.1
+  set insertion prn seed                             = 19
 end
 
 #---------------------------------------------------
@@ -92,9 +94,8 @@ end
 #---------------------------------------------------
 
 subsection mesh
-  set type                                = dealii
-  set grid type                           = hyper_cube
-  set grid arguments                      = -0.11 : 0.111 : true
-  set initial refinement                  = 3
-  set expand particle-wall contact search = false
+  set type               = dealii
+  set grid type          = hyper_cube
+  set grid arguments     = -0.05 : 0.05 : false
+  set initial refinement = 0
 end

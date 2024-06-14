@@ -109,9 +109,7 @@ The following properties are chosen according to the Anand et al. paper :
 .. code-block:: text
 
     subsection lagrangian physical properties
-      set gx                       = 0.0
-      set gy                       = -9.81
-      set gz                       = 0.0
+      set g                        = 0.0, -9.81, 0.0
       set number of particle types = 1
       subsection particle type 0
         set size distribution type            = uniform
@@ -315,9 +313,7 @@ The total number of particles of this simulation is 6790: 6 times less than the 
 .. code-block:: text
 
     subsection lagrangian physical properties
-        set gx                       = 0.0
-        set gy                       = -9.81
-        set gz                       = 0.0
+        set g                        = 0.0, -9.81, 0.0
         set number of particle types = 1
         subsection particle type 0
             set size distribution type            = uniform

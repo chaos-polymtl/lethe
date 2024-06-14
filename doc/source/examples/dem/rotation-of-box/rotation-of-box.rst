@@ -70,9 +70,7 @@ The ``number`` of particles (4000) is equal to the specified ``inserted number o
 .. code-block:: text
 
     subsection lagrangian physical properties
-      set gx                       = 0.0
-      set gy                       = 0.0
-      set gz                       = -9.81
+      set g                        = 0.0, 0.0, -9.81
       set number of particle types = 1
       subsection particle type 0
         set size distribution type            = uniform

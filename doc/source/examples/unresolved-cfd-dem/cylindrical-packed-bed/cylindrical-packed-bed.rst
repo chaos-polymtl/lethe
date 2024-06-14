@@ -109,9 +109,7 @@ The gravitational acceleration as well as the physical properties of particles a
 .. code-block:: text
 
   subsection lagrangian physical properties
-    set gx                       = -9.8
-    set gy                       = 0.0
-    set gz                       = 0
+    set g                        = -9.8, 0.0, 0.0
     set number of particle types = 1
     subsection particle type 0
       set size distribution type            = uniform
