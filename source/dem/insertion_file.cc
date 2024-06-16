@@ -19,12 +19,9 @@ InsertionFile<dim>::InsertionFile(
   , number_of_files(dem_parameters.insertion_info.list_of_input_files.size())
   , insertion_files(dem_parameters.insertion_info.list_of_input_files)
 {
-  // Initializing current inserting particle type
-  this->current_inserting_particle_type = 0;
-
   // Initializing current inserting particle type and file id
-  current_inserting_particle_type = 0;
-  current_file_id                 = 0;
+  this->current_inserting_particle_type = 0;
+  this->current_file_id                 = 0;
 }
 template <int dim>
 void
