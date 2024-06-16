@@ -144,7 +144,7 @@ The sluice gate which prevents the particle from floating is made of a 3D surfac
           set Function expression = 0 ; if(t>0.5,if(t<0.7,1,0),0) ; 0
         end
         subsection angular velocity
-          set Function expression = 0 ; 0  ; 0
+          set Function expression = 0 ; 0 ; 0
         end
       end
     end

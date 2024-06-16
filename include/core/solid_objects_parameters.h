@@ -450,7 +450,7 @@ namespace Parameters
         prm.declare_entry("number of solids",
                           "0",
                           Patterns::Integer(),
-                          "Number of solid object");
+                          "Number of solid surfaces");
 
         for (unsigned int i_solid = 0; i_solid < max_number_of_solids;
              ++i_solid)
@@ -466,7 +466,7 @@ namespace Parameters
         prm.declare_entry("number of solids",
                           "0",
                           Patterns::Integer(),
-                          "Number of solid object");
+                          "Number of solid volumes");
 
         for (unsigned int i_solid = 0; i_solid < max_number_of_solids;
              ++i_solid)

@@ -113,7 +113,7 @@ subsection solid objects
         set Function expression = 0 ; if(t>0.5,if(t<0.7,1,0),0) ; 0
       end
       subsection angular velocity
-        set Function expression = 0 ; 0  ; 0
+        set Function expression = 0 ; 0 ; 0
       end
     end
   end

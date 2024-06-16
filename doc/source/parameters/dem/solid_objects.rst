@@ -3,7 +3,7 @@ Solid Objects
 =============================
 
 Solid objects are finite auxiliary objects that can be stationary or in motion. Rotating impellers, sliding surfaces, and finite stoppers are examples of solid objects. The main differences between them and floating walls are:
-1. floating wall is a plan, while a solid object can be either a volume or a surface
+1. floating wall is a plane, while a solid object can be either a volume or a surface
 2. floating wall is infinite, while solid object is finite
 3. floating wall is stationary while solid object may be stationary or moving.
 
@@ -45,7 +45,7 @@ This subsection explains the solid objects information. First of all, the ``numb
 
 * The ``number of solids`` parameter defines the total number of solid surfaces used during the simulation.
 
-* For each solid object, we need a separate subsections (for instance 	``subsection solid object 0``) in which the information of the solid surface 0 (``type``, ``file name``, ``initial refinement``, ``initial translation``, ``initial rotation axis``, ``initial rotation angle``  ) is defined. Each component of the ``initial translation`` and of the ``initial rotation axis`` parameters represent the ``x``, ``y`` and ``z`` axis. The rotation is apply before the translation.
+* For each solid object, we need a separate subsections (for instance 	``subsection solid object 0``) in which the information of the solid surface 0 (``type``, ``file name``, ``initial refinement``, ``initial translation``, ``initial rotation axis``, ``initial rotation angle``) is defined. Each component of the ``initial translation`` and of the ``initial rotation axis`` parameters represent the ``x``, ``y`` and ``z`` axes. The rotation is applied before the translation.
 
 * In the subsection ``translational velocity``, we define the translational velocity function of the solid object.
 

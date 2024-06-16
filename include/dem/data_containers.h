@@ -201,17 +201,13 @@ namespace DEM
       std::vector<typename Triangulation<dim>::active_cell_iterator>>
       cells_neighbor_list;
 
-    // [[(cell iterator, cell iterator)]]
-    // First cell iterator is for the background triangulation, second cell
-    // iterator is for the solid surfaces.
+    // [[(background cell iterator, solid surface cell iterator)]]
     typedef std::vector<std::vector<
       std::pair<typename Triangulation<dim>::active_cell_iterator,
                 typename Triangulation<dim - 1, dim>::active_cell_iterator>>>
       solid_surfaces_mesh_information;
 
-    // [[(cell iterator, cell iterator)]]
-    // First cell iterator is for the background triangulation, second cell
-    // iterator is for the solid volumes.
+    // [[(background cell iterator, solid volume cell iterator)]]
     typedef std::vector<std::vector<
       std::pair<typename Triangulation<dim>::active_cell_iterator,
                 typename Triangulation<dim, dim>::active_cell_iterator>>>

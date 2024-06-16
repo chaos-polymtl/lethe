@@ -155,7 +155,7 @@ SolidBase<dim, spacedim>::setup_triangulation(const bool restart)
       else
         { // Grid creation
           GridIn<dim, spacedim> grid_in;
-          // Attach triangulation to the griread_d
+          // Attach triangulation to the grid
           grid_in.attach_triangulation(*solid_tria);
           // Read input gmsh file
           std::ifstream input_file(param->solid_mesh.file_name);

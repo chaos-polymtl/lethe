@@ -7,7 +7,7 @@ Insertion information including the dimensions of the insertion box, insertion f
 The``mesh`` section defines the simulation triangulation and refinements. 
 In the ``DEM boundary conditions`` section, boundaries can be defined as outlets or they can get periodicity, rotation or translation.  
 In the ``floating walls`` section, hyperplanes can be added to the simulation domain. 
-In the ``solid objects`` section, surface meshes can defined and their motion can be controled.
+In the ``solid objects`` section, surface meshes can defined and their motion can be controlled.
 
 .. toctree::
    :maxdepth: 1
