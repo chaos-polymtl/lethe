@@ -5,18 +5,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ## [Master] - 2024-06-16
 
-### Added
-
-- MINOR A cylindrical manifold type has been added in the manifold parameter file option. Input arguments arg1, arg2, arg3, etc. used to describe the manifold geometry were modified to point coordinates and direction vector. A manifold section has been added to the documentation [#1169](https://github.com/chaos-polymtl/lethe/pull/1169)
-
 ### Changed
 
-- MINOR A new subsection ``solid surfaces`` need to be used when defining solid objects in the parameter file. For more information, see the solid object documentation. [#1169](https://github.com/chaos-polymtl/lethe/pull/1169)
-
-## [Master] - 2024-06-11
-
-### Changed
-
+- MINOR A new subsection ``solid surfaces`` needs to be used when defining solid objects in the parameter file. For more information, see the solid object documentation. [#1169](https://github.com/chaos-polymtl/lethe/pull/1169)
 - MINOR The center of rotation of a solid object is no longer being defined using a subsection and three parameters. It is now defined with one parameter and a list of double. For more information, see the solid object documentation. [#1169](https://github.com/chaos-polymtl/lethe/pull/1169)
 
 ## [Master] - 2024-06-13
@@ -25,11 +16,15 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 - MINOR The DEM solver supports deprecated parameters when 3 individual component parameters are changed to a list of values parameter. [#1171](https://github.com/chaos-polymtl/lethe/pull/1171)
 
-## [Master] - 2024-06-13
-
 ### Changed
 
 - MINOR The parameters <gx>, <gy> and <gz> of the DEM solver are changed to the parameter <g>. [#1171](https://github.com/chaos-polymtl/lethe/pull/1171)
+
+## [Master] - 2024-06-05
+
+### Added
+
+- MINOR A cylindrical manifold type has been added in the manifold parameter file option. Input arguments arg1, arg2, arg3, etc. used to describe the manifold geometry were modified to point coordinates and direction vector. A manifold section has been added to the documentation [#1167](https://github.com/chaos-polymtl/lethe/pull/1167)
 
 ## [Master] - 2024-05-27
 
