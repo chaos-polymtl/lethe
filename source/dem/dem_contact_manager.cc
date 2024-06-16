@@ -294,7 +294,7 @@ DEMContactManager<dim>::execute_particle_wall_broad_search(
   // Particle-floating mesh broad search
   if (has_solid_objects)
     {
-      particle_wall_broad_search_object.particle_floating_mesh_contact_search(
+      particle_wall_broad_search_object.particle_solid_surfaces_contact_search(
         solid_surfaces_mesh_info,
         particle_handler,
         particle_floating_mesh_candidates,
@@ -350,7 +350,7 @@ DEMContactManager<dim>::execute_particle_wall_broad_search(
   // Particle-floating mesh broad search
   if (has_solid_objects)
     {
-      particle_wall_broad_search_object.particle_floating_mesh_contact_search(
+      particle_wall_broad_search_object.particle_solid_surfaces_contact_search(
         solid_surfaces_mesh_info,
         particle_handler,
         particle_floating_mesh_candidates,

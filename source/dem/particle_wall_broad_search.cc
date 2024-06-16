@@ -127,7 +127,7 @@ ParticleWallBroadSearch<dim>::find_particle_floating_wall_contact_pairs(
 
 template <int dim>
 void
-ParticleWallBroadSearch<dim>::particle_floating_mesh_contact_search(
+ParticleWallBroadSearch<dim>::particle_solid_surfaces_contact_search(
   const typename DEM::dem_data_structures<dim>::solid_surfaces_mesh_information
                                         &solid_surfaces_mesh_information,
   const Particles::ParticleHandler<dim> &particle_handler,
@@ -337,7 +337,7 @@ ParticleWallBroadSearch<dim>::find_particle_floating_wall_contact_pairs(
 
 template <int dim>
 void
-ParticleWallBroadSearch<dim>::particle_floating_mesh_contact_search(
+ParticleWallBroadSearch<dim>::particle_solid_surfaces_contact_search(
   const typename DEM::dem_data_structures<dim>::solid_surfaces_mesh_information
                                         &solid_surfaces_mesh_information,
   const Particles::ParticleHandler<dim> &particle_handler,

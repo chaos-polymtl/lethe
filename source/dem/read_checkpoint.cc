@@ -78,23 +78,25 @@ read_checkpoint(
 }
 
 template void
-read_checkpoint(TimerOutput                             &computing_timer,
-                const DEMSolverParameters<2>            &parameters,
-                std::shared_ptr<SimulationControl>      &simulation_control,
-                PVDHandler                              &particles_pvdhandler,
-                PVDHandler                              &grid_pvdhandler,
-                parallel::distributed::Triangulation<2> &triangulation,
-                Particles::ParticleHandler<2>           &particle_handler,
-                std::shared_ptr<Insertion<2>>           &insertion_object,
-                std::vector<std::shared_ptr<SerialSolid<1, 2>>> &solid_surfaces);
+read_checkpoint(
+  TimerOutput                                     &computing_timer,
+  const DEMSolverParameters<2>                    &parameters,
+  std::shared_ptr<SimulationControl>              &simulation_control,
+  PVDHandler                                      &particles_pvdhandler,
+  PVDHandler                                      &grid_pvdhandler,
+  parallel::distributed::Triangulation<2>         &triangulation,
+  Particles::ParticleHandler<2>                   &particle_handler,
+  std::shared_ptr<Insertion<2>>                   &insertion_object,
+  std::vector<std::shared_ptr<SerialSolid<1, 2>>> &solid_surfaces);
 
 template void
-read_checkpoint(TimerOutput                             &computing_timer,
-                const DEMSolverParameters<3>            &parameters,
-                std::shared_ptr<SimulationControl>      &simulation_control,
-                PVDHandler                              &particles_pvdhandler,
-                PVDHandler                              &grid_pvdhandler,
-                parallel::distributed::Triangulation<3> &triangulation,
-                Particles::ParticleHandler<3>           &particle_handler,
-                std::shared_ptr<Insertion<3>>           &insertion_object,
-                std::vector<std::shared_ptr<SerialSolid<2, 3>>> &solid_surfaces);
+read_checkpoint(
+  TimerOutput                                     &computing_timer,
+  const DEMSolverParameters<3>                    &parameters,
+  std::shared_ptr<SimulationControl>              &simulation_control,
+  PVDHandler                                      &particles_pvdhandler,
+  PVDHandler                                      &grid_pvdhandler,
+  parallel::distributed::Triangulation<3>         &triangulation,
+  Particles::ParticleHandler<3>                   &particle_handler,
+  std::shared_ptr<Insertion<3>>                   &insertion_object,
+  std::vector<std::shared_ptr<SerialSolid<2, 3>>> &solid_surfaces);
