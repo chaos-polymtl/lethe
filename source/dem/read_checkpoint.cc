@@ -13,7 +13,7 @@ read_checkpoint(
   parallel::distributed::Triangulation<dim>               &triangulation,
   Particles::ParticleHandler<dim>                         &particle_handler,
   std::shared_ptr<Insertion<dim>>                         &insertion_object,
-  std::vector<std::shared_ptr<SerialSolid<dim - 1, dim>>> &solid_objects)
+  std::vector<std::shared_ptr<SerialSolid<dim - 1, dim>>> &solid_surfaces)
 {
   TimerOutput::Scope timer(computing_timer, "read_checkpoint");
   std::string        prefix = parameters.restart.filename;
@@ -70,10 +70,10 @@ read_checkpoint(
                                                  boost::archive::no_header);
   insertion_object->deserialize(ia_insertion_obj, 0);
 
-  // Load solid objects
-  for (unsigned int i = 0; i < solid_objects.size(); ++i)
+  // Load solid surfaces
+  for (unsigned int i = 0; i < solid_surfaces.size(); ++i)
     {
-      solid_objects[i]->read_checkpoint(prefix);
+      solid_surfaces[i]->read_checkpoint(prefix);
     }
 }
 
@@ -86,7 +86,7 @@ read_checkpoint(TimerOutput                             &computing_timer,
                 parallel::distributed::Triangulation<2> &triangulation,
                 Particles::ParticleHandler<2>           &particle_handler,
                 std::shared_ptr<Insertion<2>>           &insertion_object,
-                std::vector<std::shared_ptr<SerialSolid<1, 2>>> &solid_objects);
+                std::vector<std::shared_ptr<SerialSolid<1, 2>>> &solid_surfaces);
 
 template void
 read_checkpoint(TimerOutput                             &computing_timer,
@@ -97,4 +97,4 @@ read_checkpoint(TimerOutput                             &computing_timer,
                 parallel::distributed::Triangulation<3> &triangulation,
                 Particles::ParticleHandler<3>           &particle_handler,
                 std::shared_ptr<Insertion<3>>           &insertion_object,
-                std::vector<std::shared_ptr<SerialSolid<2, 3>>> &solid_objects);
+                std::vector<std::shared_ptr<SerialSolid<2, 3>>> &solid_surfaces);

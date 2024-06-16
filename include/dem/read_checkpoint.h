@@ -49,7 +49,7 @@ using namespace std;
  * @param triangulation Triangulation
  * @param particle_handler Particle handler
  * @param insertion_object Shared pointer of Insertion type.
- * @param solid_objects Vector of solids objects used in DEM simulations
+ * @param solid_surfaces Vector of solids surfaces used in DEM simulations
  */
 template <int dim>
 void
@@ -62,6 +62,6 @@ read_checkpoint(
   parallel::distributed::Triangulation<dim>               &triangulation,
   Particles::ParticleHandler<dim>                         &particle_handler,
   std::shared_ptr<Insertion<dim>>                         &insertion_object,
-  std::vector<std::shared_ptr<SerialSolid<dim - 1, dim>>> &solid_objects);
+  std::vector<std::shared_ptr<SerialSolid<dim - 1, dim>>> &solid_surfaces);
 
 #endif /* read_checkpoint_h */
