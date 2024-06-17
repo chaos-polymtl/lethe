@@ -1051,7 +1051,7 @@ DEMSolver<dim>::write_output_results()
   particle_data_out.build_patches(particle_handler,
                                   properties_class.get_properties_name());
 
-  write_vtu_and_pvd<0, dim>(particles_pvdhandler_force_chains,
+  write_vtu_and_pvd<0, dim>(particles_pvdhandler,
                             particle_data_out,
                             folder,
                             particles_solution_name,
@@ -1082,12 +1082,14 @@ DEMSolver<dim>::write_output_results()
       particles_force_chains_object =
         set_force_chains_contact_force_model(parameters);
       particles_force_chains_object->calculate_force_chains(contact_manager);
-      particles_force_chains_object->write_force_chains(particles_pvdhandler,
-                                                        this->mpi_communicator,
-                                                        folder,
-                                                        group_files,
-                                                        iter,
-                                                        time);
+      particles_force_chains_object->write_force_chains(
+        parameters,
+        particles_pvdhandler_force_chains,
+        this->mpi_communicator,
+        folder,
+        group_files,
+        iter,
+        time);
     }
 
   // Write all solid objects
