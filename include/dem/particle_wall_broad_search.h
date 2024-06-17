@@ -137,6 +137,8 @@ public:
    * candidates
    * @param cells_total_neighbor_list A container in which all the neighbor cells
    * of the local cells are stored
+   * @param sparse_contacts_object The object that contains the
+   * information about the mobility status of cells
    */
 
   void
