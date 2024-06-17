@@ -301,7 +301,7 @@ namespace Parameters
     // Velocities are std::shared_ptr<Function<dim>> type, this way it is
     // possible to define a velocity using any type of function, like
     // ParsedFunction (which is used in the declared and parsing functions)
-    // or ConstantFunctions (which is useful for unit test).
+    // or ConstantFunctions (which is useful for unit tests).
     std::shared_ptr<Function<dim>> translational_velocity;
     std::shared_ptr<Function<dim>> angular_velocity;
     Point<dim>
