@@ -65,7 +65,7 @@ public:
    * cells used if periodic boundaries are enabled (next parameter).
    * @param[in] has_periodic_boundaries Allow manipulations of periodic
    * containers if required.
-   * @param[in] has_floating_mesh Allow the computation of full neighbor lists
+   * @param[in] has_solid_objects Allow the computation of full neighbor lists
    * of active cells computation if required.
    */
   void
@@ -74,7 +74,7 @@ public:
     const typename DEM::dem_data_structures<dim>::periodic_boundaries_cells_info
                periodic_boundaries_cells_information,
     const bool has_periodic_boundaries = false,
-    const bool has_floating_mesh       = false);
+    const bool has_solid_objects       = false);
 
   /**
    * @brief Execute functions to clear and update the neighbor lists of all the
@@ -86,7 +86,7 @@ public:
    * cells used if periodic boundaries are enabled (next parameter).
    * @param[in] has_periodic_boundaries Allow manipulations of periodic
    * containers if required.
-   * @param[in] has_floating_mesh Allow the computation of full neighbor lists
+   * @param[in] has_solid_objects Allow the computation of full neighbor lists
    * of active cells computation if required.
    */
   void
@@ -95,7 +95,7 @@ public:
     const typename DEM::dem_data_structures<dim>::periodic_boundaries_cells_info
                periodic_boundaries_cells_information,
     const bool has_periodic_boundaries = false,
-    const bool has_floating_mesh       = false)
+    const bool has_solid_objects       = false)
   {
     cells_local_neighbor_list.clear();
     cells_ghost_neighbor_list.clear();
@@ -107,7 +107,7 @@ public:
     execute_cell_neighbors_search(triangulation,
                                   periodic_boundaries_cells_information,
                                   has_periodic_boundaries,
-                                  has_floating_mesh);
+                                  has_solid_objects);
   }
 
   /**
@@ -200,20 +200,20 @@ public:
    * functions.
    * @param[in] boundary_cells_object Information of the boundary cells and
    * faces.
-   * @param[in] floating_mesh_info Mapping of floating meshes.
+   * @param[in] solid_surfaces_mesh_info Mapping of solid surfaces meshes.
    * @param[in] floating_wall Properties of the floating walls.
    * @param[in] simulation_time Current simulation time.
-   * @param[in] has_floating_mesh Allow dealing with floating mesh neighbors.
+   * @param[in] has_solid_objects Allow dealing with floating mesh neighbors.
    */
   void
   execute_particle_wall_broad_search(
     const Particles::ParticleHandler<dim> &particle_handler,
     BoundaryCellsInformation<dim>         &boundary_cell_object,
-    const typename dem_data_structures<dim>::floating_mesh_information
-                                                      floating_mesh_info,
+    const typename dem_data_structures<dim>::solid_surfaces_mesh_information
+                                                      solid_surfaces_mesh_info,
     const Parameters::Lagrangian::FloatingWalls<dim> &floating_walls,
     const double                                      simulation_time,
-    const bool has_floating_mesh = false);
+    const bool has_solid_objects = false);
 
   /**
    * @brief Execute the particle-wall broad searches with adaptive sparse
@@ -229,23 +229,23 @@ public:
    * functions.
    * @param[in] boundary_cells_object Information of the boundary cells and
    * faces.
-   * @param[in] floating_mesh_info Mapping of floating meshes.
+   * @param[in] solid_surfaces_mesh_info Mapping of solid surfaces meshes.
    * @param[in] floating_wall Properties of the floating walls.
    * @param[in] simulation_time Current simulation time.
    * @param[in] sparse_particle_contact_object Allow to check the mobility
    * status of cells
-   * @param[in] has_floating_mesh Allow dealing with floating mesh neighbors.
+   * @param[in] has_solid_objects Allow dealing with floating mesh neighbors.
    */
   void
   execute_particle_wall_broad_search(
     const Particles::ParticleHandler<dim> &particle_handler,
     BoundaryCellsInformation<dim>         &boundary_cell_object,
-    const typename dem_data_structures<dim>::floating_mesh_information
-                                                      floating_mesh_info,
+    const typename dem_data_structures<dim>::solid_surfaces_mesh_information
+                                                      solid_surfaces_mesh_info,
     const Parameters::Lagrangian::FloatingWalls<dim> &floating_walls,
     const double                                      simulation_time,
     const AdaptiveSparseContacts<dim> &sparse_particle_contact_object,
-    const bool                         has_floating_mesh = false);
+    const bool                         has_solid_objects = false);
 
   /**
    * @brief Execute the particle-particles fine searches.
@@ -274,14 +274,14 @@ public:
    * @param[in] floating_wall Properties of the floating walls.
    * @param[in] simulation_time Current simulation time.
    * @param[in] neighborhood_threshold Threshold value of contact detection.
-   * @param[in] has_floating_mesh Allow the fine search with floating meshes.
+   * @param[in] has_solid_objects Allow the fine search with floating meshes.
    */
   void
   execute_particle_wall_fine_search(
     const Parameters::Lagrangian::FloatingWalls<dim> &floating_walls,
     const double                                      simulation_time,
     const double                                      neighborhood_threshold,
-    const bool has_floating_mesh = false);
+    const bool has_solid_objects = false);
 
 
   // Container with the iterators to all local and ghost particles
