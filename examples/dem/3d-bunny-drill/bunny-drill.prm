@@ -92,21 +92,23 @@ end
 #---------------------------------------------------
 
 subsection solid objects
-  set number of solids = 1
-  subsection solid object 0
-    subsection mesh
-      set type                   = gmsh
-      set file name              = bunny-low-poly.msh
-      set simplex                = true
-      set initial rotation axis  = 0, 1, 0
-      set initial rotation angle = 1.5708 # pi/2
-      set initial translation    = 0.05, 0, 0.035
-    end
-    subsection translational velocity
-      set Function expression = if (t>2,-0.27*sin(0.8*3.1416*(t-2)),0) ; 0 ; 0
-    end
-    subsection angular velocity
-      set Function expression = if (t>2,31.42,0) ; 0 ; 0
+  subsection solid surfaces
+    set number of solids = 1
+    subsection solid object 0
+      subsection mesh
+        set type                   = gmsh
+        set file name              = bunny-low-poly.msh
+        set simplex                = true
+        set initial rotation axis  = 0, 1, 0
+        set initial rotation angle = 1.5708 # pi/2
+        set initial translation    = 0.05, 0, 0.035
+      end
+      subsection translational velocity
+        set Function expression = if (t>2,-0.27*sin(0.8*3.1416*(t-2)),0) ; 0 ; 0
+      end
+      subsection angular velocity
+        set Function expression = if (t>2,31.42,0) ; 0 ; 0
+      end
     end
   end
 end

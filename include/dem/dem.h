@@ -370,8 +370,10 @@ private:
   std::vector<double>       MOI;
 
   // Mesh and boundary information
-  typename dem_data_structures<dim>::floating_mesh_information
-    floating_mesh_info;
+  typename dem_data_structures<dim>::solid_surfaces_mesh_information
+    solid_surfaces_mesh_info;
+  typename dem_data_structures<dim>::solid_volumes_mesh_info
+    solid_volumes_mesh_info;
   typename dem_data_structures<dim>::boundary_points_and_normal_vectors
     updated_boundary_points_and_normal_vectors;
   typename dem_data_structures<dim>::vector_on_boundary
@@ -389,14 +391,15 @@ private:
   // Information for parallel grid processing
   DoFHandler<dim> background_dh;
   PVDHandler      grid_pvdhandler;
-  bool            has_floating_mesh;
+  bool            has_solid_objects;
 
   // Storage of statistics about time and contact lists
   statistics contact_list;
   statistics simulation_time;
 
   // Solid DEM objects
-  std::vector<std::shared_ptr<SerialSolid<dim - 1, dim>>> solids;
+  std::vector<std::shared_ptr<SerialSolid<dim - 1, dim>>> solid_surfaces;
+  std::vector<std::shared_ptr<SerialSolid<dim, dim>>>     solid_volumes;
 
   // Distribution objects
   std::vector<std::shared_ptr<Distribution>> size_distribution_object_container;

@@ -128,11 +128,20 @@ namespace Parameters
         "inserted points will be higher for higher dimensions. Increasing this"
         "number will lead to a higher points density inside the solid.");
 
-      prm.enter_subsection("center of rotation");
-      prm.declare_entry("x", "0", Patterns::Double(), "X COR");
-      prm.declare_entry("y", "0", Patterns::Double(), "Y COR");
-      prm.declare_entry("z", "0", Patterns::Double(), "Z COR");
-      prm.leave_subsection();
+      if constexpr (dim == 2)
+        {
+          prm.declare_entry("center of rotation",
+                            "0., 0.",
+                            Patterns::List(Patterns::Double()),
+                            "Solid object center of rotation");
+        }
+      if constexpr (dim == 3)
+        {
+          prm.declare_entry("center of rotation",
+                            "0., 0., 0.",
+                            Patterns::List(Patterns::Double()),
+                            "Solid object center of rotation");
+        }
 
       prm.declare_entry("calculate force on solid",
                         "false",
@@ -177,12 +186,18 @@ namespace Parameters
       stop_particles_lost      = prm.get_bool("stop if particles lost");
       number_quadrature_points = prm.get_integer("number quadrature points");
 
-      prm.enter_subsection("center of rotation");
-      center_of_rotation[0] = prm.get_double("x");
-      center_of_rotation[1] = prm.get_double("y");
-      if (dim == 3)
-        center_of_rotation[2] = prm.get_double("z");
-      prm.leave_subsection();
+      const std::vector<double> temp =
+        convert_string_to_vector<double>(prm, "center of rotation");
+
+      AssertThrow(temp.size() == dim,
+                  ExcMessage("Invalid center of rotation. This should be a " +
+                             Utilities::int_to_string(dim) +
+                             " dimensional point."));
+
+      for (unsigned int i = 0; i < dim; ++i)
+        {
+          center_of_rotation[i] = temp.at(i);
+        }
 
       calculate_force_on_solid  = prm.get_bool("calculate force on solid");
       calculate_torque_on_solid = prm.get_bool("calculate torque on solid");
@@ -269,8 +284,6 @@ namespace Parameters
   {
   public:
     RigidSolidObject()
-      : translational_velocity(dim)
-      , angular_velocity(3)
     {}
 
     void
@@ -284,9 +297,13 @@ namespace Parameters
     // Output management
     bool output_bool;
 
-    // Solid velocity
-    Functions::ParsedFunction<dim> translational_velocity;
-    Functions::ParsedFunction<dim> angular_velocity;
+    // Solid object velocity
+    // Velocities are std::shared_ptr<Function<dim>> type, this way it is
+    // possible to define a velocity using any type of function, like
+    // ParsedFunction (which is used in the declared and parsing functions)
+    // or ConstantFunctions (which is useful for unit tests).
+    std::shared_ptr<Function<dim>> translational_velocity;
+    std::shared_ptr<Function<dim>> angular_velocity;
     Point<dim>
       center_of_rotation; // Center of rotation used to locate the center of the
                           // object and also used to rotate the object
@@ -298,24 +315,42 @@ namespace Parameters
   RigidSolidObject<dim>::declare_parameters(ParameterHandler &prm,
                                             unsigned int      id)
   {
+    // Use ParsedFunction<dim> during parameter declaration. We need to do this
+    // to use the declare_parameters function, which is not possible with
+    // std::make_shared<Function<dim>> type. Please refer to the comment before
+    // the translational_velocity and angular_velocity attributes declaration.
+    auto translational_velocity_parsed =
+      std::make_shared<Functions::ParsedFunction<dim>>(dim);
+    auto angular_velocity_parsed =
+      std::make_shared<Functions::ParsedFunction<dim>>(3);
+
     prm.enter_subsection("solid object " + Utilities::int_to_string(id, 1));
     {
       solid_mesh.declare_parameters(prm);
 
       prm.enter_subsection("translational velocity");
-      translational_velocity.declare_parameters(prm, dim);
+      translational_velocity_parsed->declare_parameters(prm, dim);
       prm.leave_subsection();
 
       prm.enter_subsection("angular velocity");
-      angular_velocity.declare_parameters(prm, 3);
+      angular_velocity_parsed->declare_parameters(prm, 3);
       prm.leave_subsection();
 
+      if constexpr (dim == 2)
+        {
+          prm.declare_entry("center of rotation",
+                            "0., 0.",
+                            Patterns::List(Patterns::Double()),
+                            "Solid object center of rotation");
+        }
+      if constexpr (dim == 3)
+        {
+          prm.declare_entry("center of rotation",
+                            "0., 0., 0.",
+                            Patterns::List(Patterns::Double()),
+                            "Solid object center of rotation");
+        }
 
-      prm.enter_subsection("center of rotation");
-      prm.declare_entry("x", "0", Patterns::Double(), "X COR");
-      prm.declare_entry("y", "0", Patterns::Double(), "Y COR");
-      prm.declare_entry("z", "0", Patterns::Double(), "Z COR");
-      prm.leave_subsection();
 
       prm.declare_entry("output solid object",
                         "true",
@@ -323,6 +358,10 @@ namespace Parameters
                         "Controls the generation of output files");
     }
     prm.leave_subsection();
+
+    // Cast to std::shared_ptr<Function<dim>> after parameter declaration.
+    translational_velocity = translational_velocity_parsed;
+    angular_velocity       = angular_velocity_parsed;
   }
 
   template <int dim>
@@ -330,27 +369,44 @@ namespace Parameters
   RigidSolidObject<dim>::parse_parameters(ParameterHandler &prm,
                                           unsigned int      id)
   {
+    // Use ParsedFunction<dim> during parameter declaration. We need to do this
+    // to use the parse_parameters function, which is not possible with
+    // std::make_shared<Function<dim>> type. Please refer to the comment before
+    // the translational_velocity and angular_velocity attributes declaration.
+    auto translational_velocity_parsed =
+      std::make_shared<Functions::ParsedFunction<dim>>(dim);
+    auto angular_velocity_parsed =
+      std::make_shared<Functions::ParsedFunction<dim>>(3);
+
     prm.enter_subsection("solid object " + Utilities::int_to_string(id, 1));
     {
       solid_mesh.parse_parameters(prm);
       prm.enter_subsection("translational velocity");
-      translational_velocity.parse_parameters(prm);
+      translational_velocity_parsed->parse_parameters(prm);
       prm.leave_subsection();
 
       prm.enter_subsection("angular velocity");
-      angular_velocity.parse_parameters(prm);
+      angular_velocity_parsed->parse_parameters(prm);
       prm.leave_subsection();
 
-      prm.enter_subsection("center of rotation");
-      center_of_rotation[0] = prm.get_double("x");
-      center_of_rotation[1] = prm.get_double("y");
-      if (dim == 3)
-        center_of_rotation[2] = prm.get_double("z");
-      prm.leave_subsection();
+      const std::vector<double> temp =
+        convert_string_to_vector<double>(prm, "center of rotation");
+
+      AssertThrow(temp.size() == dim,
+                  ExcMessage("Invalid center of rotation. This should be a " +
+                             Utilities::int_to_string(dim) +
+                             " dimensional point."));
+
+      for (unsigned int i = 0; i < dim; ++i)
+        {
+          center_of_rotation[i] = temp.at(i);
+        }
 
       output_bool = prm.get_bool("output solid object");
     }
     prm.leave_subsection();
+    translational_velocity = translational_velocity_parsed;
+    angular_velocity       = angular_velocity_parsed;
   }
 
 
@@ -370,8 +426,11 @@ namespace Parameters
     Verbosity verbosity;
 
     // DEM solid objects
-    std::vector<std::shared_ptr<RigidSolidObject<dim>>> solids;
-    unsigned int                                        number_solids;
+    std::vector<std::shared_ptr<RigidSolidObject<dim>>> solid_surfaces;
+    std::vector<std::shared_ptr<RigidSolidObject<dim>>> solid_volumes;
+    unsigned int                                        number_solid_surfaces;
+    unsigned int                                        number_solid_volumes;
+
     static const unsigned int max_number_of_solids = 50;
   };
 
@@ -379,21 +438,44 @@ namespace Parameters
   void
   DEMSolidObjects<dim>::declare_parameters(ParameterHandler &prm)
   {
-    solids.resize(max_number_of_solids);
-    number_solids = 0;
+    solid_surfaces.resize(max_number_of_solids);
+    solid_volumes.resize(max_number_of_solids);
+    number_solid_surfaces = 0;
+    number_solid_volumes  = 0;
 
     prm.enter_subsection("solid objects");
     {
-      prm.declare_entry("number of solids",
-                        "0",
-                        Patterns::Integer(),
-                        "Number of solid object");
+      prm.enter_subsection("solid surfaces");
+      {
+        prm.declare_entry("number of solids",
+                          "0",
+                          Patterns::Integer(),
+                          "Number of solid surfaces");
 
-      for (unsigned int i_solid = 0; i_solid < max_number_of_solids; ++i_solid)
-        {
-          solids[i_solid] = std::make_shared<RigidSolidObject<dim>>();
-          solids[i_solid]->declare_parameters(prm, i_solid);
-        }
+        for (unsigned int i_solid = 0; i_solid < max_number_of_solids;
+             ++i_solid)
+          {
+            solid_surfaces[i_solid] = std::make_shared<RigidSolidObject<dim>>();
+            solid_surfaces[i_solid]->declare_parameters(prm, i_solid);
+          }
+      }
+      prm.leave_subsection();
+
+      prm.enter_subsection("solid volumes");
+      {
+        prm.declare_entry("number of solids",
+                          "0",
+                          Patterns::Integer(),
+                          "Number of solid volumes");
+
+        for (unsigned int i_solid = 0; i_solid < max_number_of_solids;
+             ++i_solid)
+          {
+            solid_volumes[i_solid] = std::make_shared<RigidSolidObject<dim>>();
+            solid_volumes[i_solid]->declare_parameters(prm, i_solid);
+          }
+      }
+      prm.leave_subsection();
     }
     prm.leave_subsection();
   }
@@ -404,11 +486,27 @@ namespace Parameters
   {
     prm.enter_subsection("solid objects");
     {
-      number_solids = prm.get_integer("number of solids");
-      for (unsigned int i_solid = 0; i_solid < number_solids; ++i_solid)
-        {
-          solids[i_solid]->parse_parameters(prm, i_solid);
-        }
+      prm.enter_subsection("solid surfaces");
+      {
+        number_solid_surfaces = prm.get_integer("number of solids");
+        for (unsigned int i_solid = 0; i_solid < number_solid_surfaces;
+             ++i_solid)
+          {
+            solid_surfaces[i_solid]->parse_parameters(prm, i_solid);
+          }
+      }
+      prm.leave_subsection();
+
+      prm.enter_subsection("solid volumes");
+      {
+        number_solid_volumes = prm.get_integer("number of solids");
+        for (unsigned int i_solid = 0; i_solid < number_solid_volumes;
+             ++i_solid)
+          {
+            solid_volumes[i_solid]->parse_parameters(prm, i_solid);
+          }
+      }
+      prm.leave_subsection();
     }
     prm.leave_subsection();
   }
