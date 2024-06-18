@@ -44,6 +44,42 @@
 
 #include <deal.II/numerics/vector_tools.h>
 
+
+
+template <typename MatrixType, typename VectorType, typename PreconditionerType>
+class MyIterationMatrix : public Subscriptor
+{
+public:
+  MyIterationMatrix(const double              omega,
+                    const MatrixType         &matrix,
+                    const PreconditionerType &precon)
+    : omega(omega)
+    , matrix(matrix)
+    , precon(precon)
+  {}
+
+  void
+  vmult(VectorType &dst, const VectorType &src) const
+  {
+    tmp.reinit(dst, false);
+
+    matrix.vmult(dst, src);
+    precon.vmult(tmp, dst);
+
+    dst = src;
+    dst.add(-omega, tmp);
+  }
+
+private:
+  const double              omega;
+  const MatrixType         &matrix;
+  const PreconditionerType &precon;
+
+  mutable VectorType tmp;
+};
+
+
+
 /**
  * @brief Helper function that allows to convert deal.II vectors to Trilinos vectors.
  *
@@ -998,6 +1034,58 @@ MFNavierStokesPreconditionGMG<dim>::initialize(
           this->pcout << "    Maximum eigenvalue: "
                       << evs.max_eigenvalue_estimate << std::endl;
           this->pcout << std::endl;
+
+          if (true)
+            {
+              // create iteration matrix
+              MyIterationMatrix<OperatorType,
+                                VectorType,
+                                DiagonalMatrix<VectorType>>
+                iteration_matrix(mg_smoother->smoothers[level].get_relaxation(),
+                                 *this->mg_operators[level],
+                                 *smoother_data[level].preconditioner);
+
+              // create dummy relaxation scheme -> estimate evs
+              PreconditionRelaxation<
+                MyIterationMatrix<OperatorType,
+                                  VectorType,
+                                  DiagonalMatrix<VectorType>>,
+                PreconditionIdentity>
+                relaxation;
+
+              // configure
+              typename PreconditionRelaxation<
+                MyIterationMatrix<OperatorType,
+                                  VectorType,
+                                  DiagonalMatrix<VectorType>>,
+                PreconditionIdentity>::AdditionalData ad;
+
+              ad.preconditioner = std::make_shared<PreconditionIdentity>();
+              ad.n_iterations   = this->simulation_parameters.linear_solver
+                                  .at(PhysicsID::fluid_dynamics)
+                                  .mg_smoother_iterations;
+
+              ad.relaxation      = 0.0;
+              ad.smoothing_range = this->simulation_parameters.linear_solver
+                                     .at(PhysicsID::fluid_dynamics)
+                                     .eig_estimation_smoothing_range;
+              ad.eig_cg_n_iterations = this->simulation_parameters.linear_solver
+                                         .at(PhysicsID::fluid_dynamics)
+                                         .eig_estimation_cg_n_iterations;
+              ad.eigenvalue_algorithm = SmootherType::AdditionalData::
+                EigenvalueAlgorithm::power_iteration;
+              ad.constraints.copy_from(this->mg_operators[level]
+                                         ->get_system_matrix_free()
+                                         .get_affine_constraints());
+
+              relaxation.initialize(iteration_matrix, ad);
+
+              // estimate eigenvalues of iteration matrix
+              const auto evs = relaxation.estimate_eigenvalues(vec);
+
+              this->pcout << "    Maximum eigenvalue: "
+                          << evs.max_eigenvalue_estimate << std::endl;
+            }
         }
     }
 #else
