@@ -29,7 +29,7 @@ end
 
 subsection restart
   set checkpoint = true
-  set frequency  = 10000
+  set frequency  = 30000
   set restart    = false
   set filename   = dem
 end

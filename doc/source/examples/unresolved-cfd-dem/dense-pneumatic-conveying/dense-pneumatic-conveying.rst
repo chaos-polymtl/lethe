@@ -79,7 +79,7 @@ Lagrangian Physical Properties
 
 The lagrangian properties were based from the work of Lavrinec *et al*. `[1] <https://doi.org/10.1016/j.powtec.2020.07.070>`_, except for the Young's modulus that was deliberately reduced to get a smaller Rayleigh critical time step.
 The gravity is set in the x-direction to allow the packing of the particles from the right side of the pipe.
-The number of particles in the simulation is 32279. When the example was setup, the number specified in the simulation was higher since the insertion is done with the `plane insertion method <https://chaos-polymtl.github.io/lethe/documentation/parameters/dem/insertion_info.html>`_, which will insert the particles up to when they reach the plan.
+The number of particles in the simulation is 32279. When the example was setup, the number specified in the simulation was higher since the insertion is done with the `plane insertion method <../../../parameters/dem/insertion_info.html#plane>`_, which will insert the particles up to when they reach the plan.
 In order to avoid confusion with the number of particles in the parameter file, we did give the real number of particles inserted after 30 seconds.
 
 .. code-block:: text
@@ -107,12 +107,16 @@ In order to avoid confusion with the number of particles in the parameter file, 
 
 Insertion Info
 ~~~~~~~~~~~~~~
-As said in the previous section, the particles are inserted with the plane insertion method. The insertion plane is located at the right side of the pipe. As we can see of the following figure, the plane is placed in a inclined manner. Since the plane insertion method will insert in al
+As said in the previous section, the particles are inserted with the plane insertion method. The insertion plane is located at the right side of the pipe. As we can see of the following figure, the plane is placed in a inclined manner. Since the plane insertion method will insert one particle in a cell that is intersected by the plane, we need to place the plane so it does not intersect the area above the solid object. Particles have a initial velocity in x-direction in order to speed up the packing process and in y-direction to have more collisions and randomness in the distribution.
 
+.. figure:: images/insertion.png
+    :alt: insertion.
+    :align: center
 
-The particles are inserted with a velocity of -0.35 m/s in the x-direction.
+    Side view of the pipe during the insertion of particles in the x-direction with the solid object (green) and the insertion plane (red).
 
 .. code-block:: text
+
    subsection insertion info
      set insertion method              = plane
      set insertion frequency           = 400
@@ -129,6 +133,7 @@ Boundary Conditions DEM
 Periodic boundary conditions need to be setup in the DEM simulation since we used them in the CFD-DEM simulation. However, we do not want to use them during the loading of the particles.
 
 .. code-block:: text
+
    subsection DEM boundary conditions
      set number of boundary conditions = 1
 
@@ -141,61 +146,120 @@ Periodic boundary conditions need to be setup in the DEM simulation since we use
    end
 
 Floating Walls
-~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~
 
-A floating wall is added :math:`10 \: \text{cm}` above the bottom of the mesh, so that void fraction discontinuities can be avoided. The remaining region above the floating wall is :math:`1 \: \text{m}` high, as in the experimental setup.
+In order to avoid particles to pass through the periodic boundary conditions, we use floating walls. The floating walls are placed at the left and right side of the pipe. We need this pair of walls because periodic particles do not interact with the wall on the other side of the periodic boundary condition.
 
 .. code-block:: text
 
-    subsection floating walls
-      set number of floating walls = 1
-      subsection wall 0
-        subsection point on wall
-          set x = -0.45
-          set y = 0
-          set z = 0
-        end
-        subsection normal vector
-          set nx = 1
-          set ny = 0
-          set nz = 0
-        end
-        set start time = 0
-        set end time   = 50
-      end
-    end
+   subsection floating walls
+   set number of floating walls = 2
+   subsection wall 0
+     subsection point on wall
+       set x = -0.5
+       set y = 0
+       set z = 0
+     end
+     subsection normal vector
+       set nx = 1
+       set ny = 0
+       set nz = 0
+     end
+     set start time = 0
+     set end time   = 30
+   end
+   subsection wall 1
+     subsection point on wall
+       set x = 0.5
+       set y = 0
+       set z = 0
+     end
+     subsection normal vector
+       set nx = -1
+       set ny = 0
+       set nz = 0
+     end
+     set start time = 0
+     set end time   = 30
+   end
+  end
 
-.. note::
-    Note that ``end time`` is higher than ``time end`` in ``simulation control``, so that the floating wall remains for the whole simulation.
+Solid Objects
+~~~~~~~~~~~~~~
+
+The solid object is a simplex surface mesh that represents the shape of a slug. The mesh is generated with the `Gmsh <https://gmsh.info/>`_ software.
+The length of the slug is 0.5 m for the area that fully obstruct the pipe, and there are 45° inclined planes for the read and the front of the slug. The stationary layer (the layer between periodic slugs) has a height of 0.021 m which represents a fraction of 20% of the cross-section area of the pipe.
+
+.. code-block:: text
+
+   subsection solid objects
+     set number of solids = 1
+     subsection solid object 0
+       subsection mesh
+         set type      = gmsh
+         set file name = slug-shape.msh
+         set simplex   = true
+       end
+     end
+   end
+
+Model Parameters
+~~~~~~~~~~~~~~~~
+The model parameters are quite standard for a DEM simulation with the nonlinear Hertz-Mindlin contact force method, a constant rolling resistance torque method, and the velocity Verlet integration method. Here, we use the `Adaptive Sparse Contacts <../../../parameters/dem/model_parameters.html#adaptive-sparse-contacts-asc>`_
+method to speedup the simulation. The method will disabled the contact computation in quasi-static areas which represents a significant part of the domain during the loading of the particles. Weight factor parameters for the ASC status are use in the load balancing method. No further explanation a given about the method, a future example will be added in order to detail it and to compare the performance gain.
+
+.. code-block:: text
+
+   subsection model parameters
+     subsection contact detection
+       set contact detection method = dynamic
+       set neighborhood threshold   = 1.3
+     end
+     subsection load balancing
+       set load balance method     = dynamic_with_sparse_contacts
+       set threshold               = 0.5
+       set dynamic check frequency = 8000
+       set active weight factor    = 0.8
+       set inactive weight factor  = 0.6
+     end
+     set particle particle contact force method = hertz_mindlin_limit_overlap
+     set particle wall contact force method     = nonlinear
+     set integration method                     = velocity_verlet
+     set rolling resistance torque method       = constant_resistance
+     subsection adaptive sparse contacts
+       set enable adaptive sparse contacts = true
+       set enable particle advection       = false
+       set granular temperature threshold  = 1e-4
+       set solid fraction threshold        = 0.4
+     end
+   end
+
 
 Simulation Control
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Here, we define the time-step and the simulation end time.
+Here, we define the time-step and the simulation end time. 30 seconds of simulation are needed to load the particles. This is a long simulation time caused by the fact that the plane insertion method inserts a small number of particles at a time (about 1000 particles per second).
 
 .. code-block:: text
 
     subsection simulation control
-      set time step        = 0.000005
-      set time end         = 2.5
-      set log frequency    = 20000
-      set output frequency = 20000
+      set time step        = 5e-5
+      set time end         = 30
+      set log frequency    = 500
+      set output frequency = 1200
       set output path      = ./output_dem/
     end
-
-.. important::
-    It is important to define the ``time end`` to include the time required to insert the particles and the time the it takes for particles to settle.
 
 Restart
 ~~~~~~~~
 
-The ``lethe-fluid-particles`` solver requires reading several DEM files to start the simulation. For this, we have to write the DEM simulation information. This is done by enabling the check-pointing option in the restart subsection. We give the written files a prefix "dem" set in the ``set filename`` option. The DEM parameter file is initialized exactly as the cylindrical packed bed example. The difference is in the number of particles, their physical properties, and the insertion box defined based on the new geometry. For more explanation about the individual subsections, refer to the `DEM parameters <../../../parameters/dem/dem.html>`_ and the `CFD-DEM parameters <../../../parameters/unresolved-cfd-dem/unresolved-cfd-dem.html>`_.
+Check pointing is enabled since we need the output to rerun the DEM solver with the particles settled in the pipe.
 
 .. code-block:: text
 
     subsection restart
       set checkpoint = true
-      set frequency  = 20000
+      set frequency  = 10000
       set restart    = false
       set filename   = dem
     end
@@ -558,5 +622,4 @@ The following animation is in real time. It is possible to notice that, for a si
 References
 -----------
 
-`[1] <https://doi.org/10.1016/j.powtec.2020.07.070>`_ A. Lavrinec, O. Orozovic, H. Rajabnia, K. Williams, M. Jones & G. Klinzing, “Velocity and porosity relationships within dense phase pneumatic conveying as studied using coupled CFD-DEM,” *Powder Technology*, vol. 375, p. 89–100, 2020 doi:10.1016/j.powtec.2020.07.070
-
+`[1] <https://doi.org/10.1016/j.partic.2021.04.007>`_ A. Lavrinec, O. Orozovic, H. Rajabnia, K. Williams, M. Jones & G. Klinzing, “An assessment of steady-state conditions in single slug horizontal pneumatic conveying.” *Particuology*, vol. 58, p. 187-195, 2021 doi:10.1016/j.partic.2021.04.007

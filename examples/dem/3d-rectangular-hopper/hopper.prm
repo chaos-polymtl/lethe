@@ -102,7 +102,7 @@ subsection floating walls
     end
     subsection normal vector
       set nx = 0
-      set ny = 1
+      set ny = -1
       set nz = 0
     end
     set start time = 0
