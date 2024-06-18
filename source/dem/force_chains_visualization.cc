@@ -527,7 +527,7 @@ ParticlesForceChains<dim, contact_model, rolling_friction_model>::
 
   for (unsigned int i = 0; i < n_files; ++i)
     filenames.push_back(file_prefix + "." + Utilities::int_to_string(iter, 5) +
-                        "." + Utilities::int_to_string(i, 5) + ".vtu");
+                        ".vtu");
 
   std::string pvtu_filename =
     (file_prefix + "." + Utilities::int_to_string(iter, 5) + ".pvtu");
