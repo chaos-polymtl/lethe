@@ -64,7 +64,7 @@ end
 #---------------------------------------------------
 
 subsection insertion info
-  set insertion method                               = file
+  set insertion method                               = volume
   set inserted number of particles at each time step = 100
   set insertion frequency                            = 10000
   set insertion box points coordinates               = 0.0025, 0.0025, 0.0025 : 0.597, 0.340, 0.397
