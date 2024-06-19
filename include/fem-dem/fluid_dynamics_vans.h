@@ -15,6 +15,9 @@
  *
  */
 
+#ifndef lethe_gls_vans_h
+#  define lethe_gls_vans_h
+
 #include <core/bdf.h>
 #include <core/dem_properties.h>
 #include <core/grids.h>
@@ -41,7 +44,7 @@
 #include <boost/archive/text_oarchive.hpp>
 
 #ifndef lethe_fluid_dynamics_vans_h
-#  define lethe_fluid_dynamics_vans_h
+#define lethe_fluid_dynamics_vans_h
 
 using namespace dealii;
 
