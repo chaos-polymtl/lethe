@@ -20,6 +20,9 @@
 #include <deal.II/grid/tria_accessor.h>
 #include <deal.II/grid/tria_iterator.h>
 
+#include <deal.II/grid/grid_tools.h>
+#include <deal.II/grid/grid_tools_cache.h>
+
 #include <deal.II/lac/affine_constraints.h>
 #include <deal.II/lac/dynamic_sparsity_pattern.h>
 #include <deal.II/lac/full_matrix.h>
@@ -50,6 +53,34 @@
 #include <iostream>
 
 using namespace dealii;
+
+template <int dim>
+inline double compute_point_2_interface_min_distance(const Point<dim> &point_0,const Point<dim> &point_1,const Point<dim> &y)
+{
+  const Tensor<1,dim> d = point_1 - point_0;
+  
+  const double t_bar = d*(y-point_0)/(d.norm()*d.norm());
+  
+  double D;
+  
+  if (t_bar <= 0.0)
+  {
+    const Tensor<1,dim> y_minus_p0 = y-point_0;
+    D = y_minus_p0.norm();
+  }
+  else if (t_bar >= 1.0)
+  {
+    const Tensor<1,dim> y_minus_p1 = y-point_1;
+    D = y_minus_p1.norm();
+  }
+  else
+  {
+    const Tensor<1,dim> projection = y-(point_0+t_bar*d);
+    D = projection.norm();
+  }
+  
+  return D;
+}
 
 template <typename T>
 int
@@ -247,7 +278,7 @@ private:
   
   void compute_level_set_from_phase_fraction();
   void compute_phase_fraction_from_level_set();
-  void identify_cell_location();
+  void compute_sign_distance();
   
   
   void refine_grid();
@@ -255,6 +286,8 @@ private:
   
   parallel::distributed::Triangulation<dim> triangulation;
   const MappingQ<dim>                       mapping;
+  
+  GridTools::Cache<dim> grid_tools_cache;
   
   const FE_Q<dim>           fe;
   DoFHandler<dim>           dof_handler;
@@ -280,7 +313,10 @@ private:
   VectorType signed_distance;
   
   
-  std::map<types::global_cell_index,Point<dim>> intersection_point;
+  std::map<types::global_cell_index,std::unordered_set<Point<dim>>> intersection_point;
+  
+  std::map<types::global_cell_index,Point<dim>> intersection_cell;
+  
     
   VectorType system_rhs;
   
@@ -303,6 +339,7 @@ AdvectionProblem<dim>::AdvectionProblem()
                     Triangulation<dim>::smoothing_on_refinement |
                     Triangulation<dim>::smoothing_on_coarsening))
   , mapping(1)
+  , grid_tools_cache(triangulation, mapping)
   , fe(1)
   , dof_handler(triangulation)
   , fe_level_set(1)
@@ -554,22 +591,22 @@ AdvectionProblem<dim>::compute_level_set_from_phase_fraction()
 
 template <int dim>
 void 
-AdvectionProblem<dim>::identify_cell_location()
+AdvectionProblem<dim>::compute_sign_distance()
 {   
+  
+  auto vetex_2_cells = grid_tools_cache.get_vertex_to_cell_map();
+  
   VectorType distance_owned(this->locally_owned_dofs,
                                            mpi_communicator);
   std::unordered_set<types::global_dof_index> dofs_location_status;
                                            
   distance_owned = DBL_MAX;
   
-  
   const QGaussLobatto<1> quadrature_1D(2);
   
   NonMatching::RegionUpdateFlags region_update_flags;
   region_update_flags.surface = update_quadrature_points |
                                 update_normal_vectors;
-                                
-
                                 
   NonMatching::FEValues<dim> non_matching_fe_values(fe_collection,
                                                     quadrature_1D,
@@ -616,48 +653,103 @@ AdvectionProblem<dim>::identify_cell_location()
       const Point<dim> &point_0 = surface_fe_values->quadrature_point(0);
       const Point<dim> &point_1 = surface_fe_values->quadrature_point(1);
       
+      std::unordered_set<Point<dim>> intersection_point_set;
+      // rescontruct interface
       for (const unsigned int q :
            surface_fe_values->quadrature_point_indices())
         {
           const Point<dim> &point = surface_fe_values->quadrature_point(q);
-          intersection_point[cell_index] = point;
+          intersection_point_set.insert(point);
         }
+      
+      intersection_point[cell_index] = intersection_point_set;
       
       const Tensor<1,dim> d = point_1 - point_0;
       
+      // compute sign distance of intersected cell's dof 
       for (unsigned int i = 0; i < dofs_per_cell; ++i)
       {
         const Point<dim> y = dof_support_points.at(dof_indices[i]);
         
-        const double t_bar = d*(y-point_0)/(d.norm()*d.norm());
+        // const double t_bar = d*(y-point_0)/(d.norm()*d.norm());
+        // 
+        // double D_square;
+        // 
+        // if (t_bar <= 0.0)
+        // {
+        //   const Tensor<1,dim> y_minus_p0 = y-point_0;
+        //   D_square = y_minus_p0.norm()*y_minus_p0.norm();
+        // }
+        // else if (t_bar >= 1.0)
+        // {
+        //   const Tensor<1,dim> y_minus_p1 = y-point_1;
+        //   D_square = y_minus_p1.norm()*y_minus_p1.norm();
+        // }
+        // else
+        // {
+        //   const Tensor<1,dim> projection = y-(point_0+t_bar*d);
+        //   D_square = projection.norm()*projection.norm();
+        // }
         
-        double D_square;
-        
-        if (t_bar <= 0.0)
-        {
-          const Tensor<1,dim> y_minus_p0 = y-point_0;
-          D_square = y_minus_p0.norm()*y_minus_p0.norm();
-        }
-        else if (t_bar >= 1.0)
-        {
-          const Tensor<1,dim> y_minus_p1 = y-point_1;
-          D_square = y_minus_p1.norm()*y_minus_p1.norm();
-        }
-        else
-        {
-          const Tensor<1,dim> projection = y-(point_0+t_bar*d);
-          D_square = projection.norm()*projection.norm();
-        }
+        double D = compute_point_2_interface_min_distance(point_0, point_1, y);
         const double previous_D = distance_owned[dof_indices[i]];
         const double level_set_value = level_set[dof_indices[i]];
         
-        distance_owned[dof_indices[i]] = std::min(std::abs(previous_D), std::abs(std::sqrt(D_square)))*sgn(level_set_value);
+        distance_owned[dof_indices[i]] = std::min(std::abs(previous_D), std::abs(D))*sgn(level_set_value);
         dofs_location_status.insert(dof_indices[i]);
       }
+      
     }
     }
   }
-  signed_distance = distance_owned;
+  // signed_distance = distance_owned;
+  
+  // compute second neighbors
+  for (const auto &cell : dof_handler.active_cell_iterators())
+  {
+    if (cell->is_locally_owned())
+    {
+      const unsigned int cell_index = cell->global_active_cell_index();
+      
+      if (intersection_point.find(cell_index) == intersection_point.end())
+      {
+        continue;
+      }
+      
+      const Point<dim> &point_0 = intersection_point;
+      const Point<dim> &point_1 = surface_fe_values->quadrature_point(1);
+      
+      const unsigned int vertices_per_cell =
+            GeometryInfo<dim>::vertices_per_cell;
+      for (unsigned int i = 0; i < vertices_per_cell; i++)
+      {
+        unsigned int vextex_index = cell->vertex_index(i);
+        
+        for (const auto &neighbor_cell : vetex_2_cells[vextex_index])
+        {
+          const unsigned int neighbor_cell_index = neighbor_cell->global_active_cell_index();
+          
+          const unsigned int dofs_per_cell = fe.n_dofs_per_cell();
+
+          std::vector<types::global_dof_index> dof_indices(dofs_per_cell);
+
+          cell->get_dof_indices(dof_indices);
+          
+          for (unsigned int i = 0; i < dofs_per_cell; ++i)
+          {
+            const Point<dim> y = dof_support_points.at(dof_indices[i]);
+            
+          }
+          
+        }
+      }
+      
+    }
+  }
+  
+  
+  
+  // For the rest of the mesh
   
   
   // Edge distance approximation
@@ -778,7 +870,7 @@ void AdvectionProblem<dim>::run()
   mesh_classifier.reclassify();
 
 
-  identify_cell_location();
+  compute_sign_distance();
 
 
     
