@@ -427,7 +427,10 @@ protected:
 
   /**
    * @brief Checks if the cell is located in the constraining domain defined by
-   * a plane with its normal vector.
+   * a plane with its normal vector. The check is done through a scalar product
+   * between a vector formed a vertex of the cell to @plane_point and
+   * @plane_normal_vector. If one of the vertices of the cell gives a negative
+   * scalar product result, the cell is excluded from the constrained domain.
    *
    * @param[in] cell Pointer to an active cell of the fluid dynamics DoFHandler.
    *
@@ -520,9 +523,8 @@ protected:
   }
 
   /**
-   * @brief Flag cell DOFs (either "solid" or "connected to fluid") and
-   * constrain velocity DOFs with homogeneous constraints if cell is considered
-   * solid.
+   * @brief Check if temperature DOFs of the cell are within the constraining
+   * range and if they are constrain velocity DOFs of the cell with homogeneous.
    *
    * @param[in] local_dof_indices Vector of a cell's local DOF indices.
    *
@@ -533,29 +535,10 @@ protected:
    * containers, temperature range information and fluid id.
    */
   void
-  add_flags_and_constrain_velocity(
+  check_cell_and_constrain_velocity(
     const std::vector<types::global_dof_index> &local_dof_indices,
     const std::vector<double>                  &local_temperature_values,
     StasisConstraintWithTemperature            &stasis_constraint_struct);
-
-  /**
-   * @brief Check if solid cells are connected to fluid ones and constrain null
-   * pressure DOFs if they are not.
-   *
-   * The check is done by looking if the global DOF indices are located in the
-   * flag containers (@p dofs_are_in_solid and @p dofs_are_connected_to_fluid)
-   * of @p stasis_constraint_struct.
-   *
-   * @param[in] stasis_constraint_struct Struct containing flagged DOF
-   * containers, temperature range information and fluid id.
-   *
-   * @param[in,out] local_dof_indices Vector for storing a cell's local DOF
-   * indices.
-   */
-  void
-  check_and_constrain_pressure(
-    const StasisConstraintWithTemperature &stasis_constraint_struct,
-    std::vector<types::global_dof_index>  &local_dof_indices);
 
   /**
    * @brief Constrain velocity DOFs of a solid cell.
@@ -617,30 +600,6 @@ protected:
             dofs_are_in_solid.insert(local_dof_indices[i]);
           }
       }
-  }
-
-  /**
-   * @brief Check if the cell is a solid.
-   *
-   * @param[in] dofs_are_in_solid Container of global DOF indices located in
-   * solid cells.
-   *
-   * @param[in] local_dof_indices Vector of a cell's local DOF indices.
-   *
-   * @return Boolean indicating if the cell is in a solid (true) or not (false).
-   */
-  inline bool
-  check_cell_is_in_solid(
-    const std::unordered_set<types::global_dof_index> &dofs_are_in_solid,
-    const std::vector<types::global_dof_index>        &local_dof_indices)
-  {
-    for (unsigned int i = 0; i < local_dof_indices.size(); ++i)
-      {
-        auto search = dofs_are_in_solid.find(local_dof_indices[i]);
-        if (search != dofs_are_in_solid.end())
-          return true;
-      }
-    return false;
   }
 
   /**

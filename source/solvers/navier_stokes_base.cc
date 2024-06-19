@@ -2000,13 +2000,12 @@ NavierStokesBase<dim, VectorType, DofsType>::constrain_stasis_with_temperature(
                                           dof_handler_ht,
                                           temperature_solution,
                                           local_temperature_values);
-              add_flags_and_constrain_velocity(local_dof_indices,
-                                               local_temperature_values,
-                                               stasis_constraint_struct);
+              check_cell_and_constrain_velocity(local_dof_indices,
+                                                local_temperature_values,
+                                                stasis_constraint_struct);
             }
         }
     }
-  check_and_constrain_pressure(stasis_constraint_struct, local_dof_indices);
 }
 
 template <int dim, typename VectorType, typename DofsType>
@@ -2081,90 +2080,41 @@ NavierStokesBase<dim, VectorType, DofsType>::
                     }
 
                   // If the cell is not in the right fluid, no solid constraint
-                  // will be applied on the cell's DOFs. We flag the current
-                  // cell's DOFs as "connected to fluid" and we skip to the next
+                  // will be applied on the cell's DOFs; we skip to the next
                   // cell.
                   if (!cell_is_in_right_fluid)
-                    {
-                      flag_dofs_connected_to_fluid(
-                        local_dof_indices,
-                        stasis_constraint_struct.dofs_are_connected_to_fluid);
                       continue;
-                    }
 
                   get_cell_temperature_values(cell,
                                               dof_handler_ht,
                                               temperature_solution,
                                               local_temperature_values);
-                  add_flags_and_constrain_velocity(local_dof_indices,
-                                                   local_temperature_values,
-                                                   stasis_constraint_struct);
+                  check_cell_and_constrain_velocity(local_dof_indices,
+                                                    local_temperature_values,
+                                                    stasis_constraint_struct);
                 }
             }
         }
-      check_and_constrain_pressure(stasis_constraint_struct, local_dof_indices);
     }
 }
 
 template <int dim, typename VectorType, typename DofsType>
 void
-NavierStokesBase<dim, VectorType, DofsType>::add_flags_and_constrain_velocity(
+NavierStokesBase<dim, VectorType, DofsType>::check_cell_and_constrain_velocity(
   const std::vector<types::global_dof_index> &local_dof_indices,
   const std::vector<double>                  &local_temperature_values,
   StasisConstraintWithTemperature            &stasis_constraint_struct)
 {
   for (const double &temperature : local_temperature_values)
     {
-      // Flag non-solid cell DOFs to identify which pressure DOFs should not
-      // be constrained.
+      // Skip cells with at least 1 DOF that is outbound the temperature limit.
       if (temperature < stasis_constraint_struct.min_solid_temperature ||
           temperature > stasis_constraint_struct.max_solid_temperature)
-        {
-          flag_dofs_connected_to_fluid(
-            local_dof_indices,
-            stasis_constraint_struct.dofs_are_connected_to_fluid);
-          return;
-        }
-
-      // If the cell is solid, flag it as solid and constrain its velocity DOFs
-      flag_dofs_in_solid(local_dof_indices,
-                         stasis_constraint_struct.dofs_are_in_solid);
-      constrain_solid_cell_velocity_dofs(false,
-                                         local_dof_indices,
-                                         this->dynamic_zero_constraints);
+        return;
     }
-}
-
-template <int dim, typename VectorType, typename DofsType>
-void
-NavierStokesBase<dim, VectorType, DofsType>::check_and_constrain_pressure(
-  const StasisConstraintWithTemperature &stasis_constraint_struct,
-  std::vector<types::global_dof_index>  &local_dof_indices)
-{
-  for (const auto &cell : dof_handler.active_cell_iterators())
-    {
-      if (cell->is_locally_owned() || cell->is_ghost())
-        {
-          cell->get_dof_indices(local_dof_indices);
-          bool cell_is_solid =
-            check_cell_is_in_solid(stasis_constraint_struct.dofs_are_in_solid,
-                                   local_dof_indices);
-          if (cell_is_solid)
-            {
-              bool connected_to_fluid = check_cell_is_connected_to_fluid(
-                stasis_constraint_struct.dofs_are_connected_to_fluid,
-                local_dof_indices);
-              if (!connected_to_fluid)
-                {
-                  // Set homogeneous constraints to pressure DOFs that are not
-                  // connected to a fluid.
-                  constrain_pressure(false,
+  constrain_solid_cell_velocity_dofs(false,
                                      local_dof_indices,
                                      this->dynamic_zero_constraints);
-                }
-            }
-        }
-    }
 }
 
 template <int dim, typename VectorType, typename DofsType>
