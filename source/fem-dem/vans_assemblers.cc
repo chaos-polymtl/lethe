@@ -1020,7 +1020,15 @@ GLSVansAssemblerRong<dim>::calculate_particle_fluid_interactions(
          pow(particle_properties[DEM::PropertiesIndex::dp], 2) / 4) *
         relative_velocity[particle_number].norm();
 
-      beta_drag += momentum_transfer_coefficient;
+      if (cfd_dem.distribute_drag_force)
+        {
+          particle_properties[DEM::PropertiesIndex::distributed_drag]
+           = momentum_transfer_coefficient;
+        }
+      else
+        {
+          beta_drag += momentum_transfer_coefficient;
+        }
 
       drag_force = density * momentum_transfer_coefficient *
                    relative_velocity[particle_number];
@@ -1034,83 +1042,14 @@ GLSVansAssemblerRong<dim>::calculate_particle_fluid_interactions(
       particle_number += 1;
     }
 
-  beta_drag = beta_drag / scratch_data.cell_volume;
+  if (!cfd_dem.distribute_drag_force)
+    {
+      beta_drag = beta_drag / scratch_data.cell_volume;
+    }
 }
 
 template class GLSVansAssemblerRong<2>;
 template class GLSVansAssemblerRong<3>;
-
-template <int dim>
-void
-GLSVansAssemblerDistributedRong<dim>::calculate_particle_fluid_interactions(
-  NavierStokesScratchData<dim> &scratch_data)
-{
-  double      cell_void_fraction = 0;
-  double      C_d                = 0;
-  const auto &relative_velocity =
-    scratch_data.fluid_particle_relative_velocity_at_particle_location;
-  const auto &Re_p      = scratch_data.Re_particle;
-  //auto       &beta_drag = scratch_data.beta_drag;
-
-  Tensor<1, dim> drag_force;
-
-  // Physical Properties
-  Assert(!scratch_data.properties_manager.is_non_newtonian(),
-         RequiresConstantViscosity(
-           "GLSVansAssemblerRong<dim>::calculate_particle_fluid_interactions"));
-
-  Assert(scratch_data.properties_manager.density_is_constant(),
-         RequiresConstantDensity(
-           "GLSVansAssemblerRong<dim>::calculate_particle_fluid_interactions"));
-  const double density = scratch_data.properties_manager.get_density_scale();
-
-  const auto pic               = scratch_data.pic;
-  //beta_drag                    = 0;
-  unsigned int particle_number = 0;
-
-  // Loop over particles in cell
-  for (auto &particle : pic)
-    {
-      auto particle_properties = particle.get_properties();
-
-      particle_properties[DEM::PropertiesIndex::distributed_drag] = 0;
-
-      cell_void_fraction =
-        std::min(scratch_data.cell_void_fraction[particle_number], 1.0);
-
-      // Rong Drag Model CD Calculation
-      C_d = pow((0.63 + 4.8 / sqrt(Re_p[particle_number])), 2) *
-            pow(cell_void_fraction,
-                2 - (2.65 * (cell_void_fraction + 1) -
-                     (5.3 - (3.5 * cell_void_fraction)) *
-                       pow(cell_void_fraction, 2) *
-                       exp(-pow(1.5 - log10(Re_p[particle_number]), 2) / 2)));
-
-      double momentum_transfer_coefficient =
-        (0.5 * C_d * M_PI *
-         pow(particle_properties[DEM::PropertiesIndex::dp], 2) / 4) *
-        relative_velocity[particle_number].norm();
-
-      particle_properties[DEM::PropertiesIndex::distributed_drag]
-       = momentum_transfer_coefficient;
-
-      drag_force = density * momentum_transfer_coefficient *
-                   relative_velocity[particle_number];
-
-      for (int d = 0; d < dim; ++d)
-        {
-          particle_properties[DEM::PropertiesIndex::fem_force_x + d] +=
-            drag_force[d];
-        }
-
-      particle_number += 1;
-    }
-
-  //beta_drag = beta_drag / scratch_data.cell_volume;
-}
-
-template class GLSVansAssemblerDistributedRong<2>;
-template class GLSVansAssemblerDistributedRong<3>;
 
 template <int dim>
 void
@@ -2142,7 +2081,6 @@ GLSVansAssemblerFPI<dim>::assemble_matrix(
   auto &strong_residual        = copy_data.strong_residual;
   auto &strong_jacobian        = copy_data.strong_jacobian;
   auto &local_matrix           = copy_data.local_matrix;
-  //auto  quadrature_beta_drag   = scratch_data.quadrature_beta_drag;
   auto &undisturbed_flow_force = scratch_data.undisturbed_flow_force;
   const Tensor<1, dim> average_particles_velocity =
     scratch_data.average_particle_velocity;
@@ -2196,9 +2134,9 @@ GLSVansAssemblerFPI<dim>::assemble_matrix(
           for (auto &particle : pic)
           {
             double distance = 0;
-            distance = particle.get_location().distance(quadrature_point_location[q]);
-
             auto particle_properties = particle.get_properties();
+
+            distance = particle.get_location().distance(quadrature_point_location[q]);
 
             // If the center of the particle is included in sphere
             if (distance <= r_sphere)
@@ -2362,9 +2300,9 @@ GLSVansAssemblerFPI<dim>::assemble_rhs(
           for (auto &particle : pic)
           {
             double distance = 0;
-            distance = particle.get_location().distance(quadrature_point_location[q]);
-
             auto particle_properties = particle.get_properties();
+            
+            distance = particle.get_location().distance(quadrature_point_location[q]);
 
             // If the center of the particle is included in sphere
             if (distance <= r_sphere)

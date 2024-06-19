@@ -1454,18 +1454,10 @@ GLSVANSSolver<dim>::setup_assemblers()
       if (this->cfd_dem_simulation_parameters.cfd_dem.drag_model ==
           Parameters::DragModel::rong)
         {
-          if (this->cfd_dem_simulation_parameters.cfd_dem.distribute_drag_force == true)
-            {
-              particle_fluid_assemblers.push_back(
-              std::make_shared<GLSVansAssemblerDistributedRong<dim>>(
-                this->cfd_dem_simulation_parameters.cfd_dem));
-            }
-          else
-            {
-              particle_fluid_assemblers.push_back(
-              std::make_shared<GLSVansAssemblerRong<dim>>(
-                this->cfd_dem_simulation_parameters.cfd_dem));
-            } 
+          // Rong Model drag Assembler
+          particle_fluid_assemblers.push_back(
+            std::make_shared<GLSVansAssemblerRong<dim>>(
+              this->cfd_dem_simulation_parameters.cfd_dem));
         }
 
       if (this->cfd_dem_simulation_parameters.cfd_dem.drag_model ==
