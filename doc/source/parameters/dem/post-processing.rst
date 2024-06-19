@@ -48,4 +48,4 @@ The following video shows force chains for the `Rectangular Hopper example <../.
 
  .. raw:: html
 
-    <iframe width="600" height="303" src="https://youtu.be/XrXXCz00Yjk?si=6T9_PhBDX3SkUsne" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+    <iframe width="560" height="315" src="https://www.youtube.com/embed/XrXXCz00Yjk?si=45mRK2E4yzT0BQIe" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
