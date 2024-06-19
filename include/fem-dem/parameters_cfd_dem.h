@@ -49,10 +49,10 @@ namespace Parameters
 
 
   template <int dim>
-  class VoidFraction
+  class VoidFractionParameters
   {
   public:
-    VoidFraction()
+    VoidFractionParameters()
       : void_fraction(1)
 
     {}

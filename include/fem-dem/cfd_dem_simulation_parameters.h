@@ -24,7 +24,7 @@ public:
   SimulationParameters<dim> cfd_parameters;
   DEMSolverParameters<dim>  dem_parameters;
 
-  std::shared_ptr<Parameters::VoidFraction<dim>> void_fraction;
+  std::shared_ptr<Parameters::VoidFractionParameters<dim>> void_fraction;
   Parameters::CFDDEM                             cfd_dem;
 
   void
@@ -34,7 +34,7 @@ public:
     cfd_parameters.declare(prm, size_of_subsections);
     dem_parameters.declare(prm);
 
-    void_fraction = std::make_shared<Parameters::VoidFraction<dim>>();
+    void_fraction = std::make_shared<Parameters::VoidFractionParameters<dim>>();
     void_fraction->declare_parameters(prm);
     Parameters::CFDDEM::declare_parameters(prm);
   }

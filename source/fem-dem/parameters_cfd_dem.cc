@@ -7,7 +7,7 @@ namespace Parameters
 {
   template <int dim>
   void
-  VoidFraction<dim>::declare_parameters(ParameterHandler &prm)
+  VoidFractionParameters<dim>::declare_parameters(ParameterHandler &prm)
   {
     prm.enter_subsection("void fraction");
     prm.declare_entry(
@@ -63,7 +63,7 @@ namespace Parameters
 
   template <int dim>
   void
-  VoidFraction<dim>::parse_parameters(ParameterHandler &prm)
+  VoidFractionParameters<dim>::parse_parameters(ParameterHandler &prm)
   {
     prm.enter_subsection("void fraction");
     const std::string op = prm.get("mode");
@@ -228,5 +228,5 @@ namespace Parameters
   }
 } // namespace Parameters
 // Pre-compile the 2D and 3D
-template class Parameters::VoidFraction<2>;
-template class Parameters::VoidFraction<3>;
+template class Parameters::VoidFractionParameters<2>;
+template class Parameters::VoidFractionParameters<3>;
