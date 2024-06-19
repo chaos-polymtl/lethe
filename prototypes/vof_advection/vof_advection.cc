@@ -711,12 +711,16 @@ AdvectionProblem<dim>::compute_sign_distance()
     {
       const unsigned int cell_index = cell->global_active_cell_index();
       
-      if (intersection_point.find(cell_index) == intersection_point.end())
+      auto intersection_point_it = intersection_point.find(cell_index);
+      if (intersection_point_set == intersection_point.end())
       {
         continue;
       }
       
-      const Point<dim> &point_0 = intersection_point;
+      auto intersection_point_set = intersection_point_it.at(cell_index);
+      
+      for 
+      const Point<dim> &point_0 = intersection_point_set.at(cell_index);
       const Point<dim> &point_1 = surface_fe_values->quadrature_point(1);
       
       const unsigned int vertices_per_cell =
