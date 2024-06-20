@@ -29,7 +29,10 @@ The default parameters are:
 
 * The ``enable`` parameter is set to ``true`` to enable an imposed average velocity.
 
-* The ``enable beta particle`` parameter is set to ``true`` to apply a proportional beta force on particles.
+* The ``enable beta particle`` parameter is set to ``true`` to apply a proportional beta force on particles:
+
+.. math::
+    \beta^{n+1}_{p} = \frac{\beta^{n+1}\rho}{\rho_{p}}
 
 * The ``average velocity`` parameter specifies the targeted average velocity (:math:`m/s`). The value is compared to the calculated value at a boundary (for CFD solvers) or the whole domain (for CFD-DEM solver).
 
