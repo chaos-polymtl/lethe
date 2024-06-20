@@ -16,6 +16,10 @@
  * Scratch data for the CahnHilliard auxiliary physics
  */
 
+
+#ifndef lethe_cahn_hilliard_scratch_data_h
+#define lethe_cahn_hilliard_scratch_data_h
+
 #include <core/multiphysics.h>
 
 #include <solvers/multiphysics_interface.h>
@@ -32,9 +36,6 @@
 
 #include <deal.II/numerics/vector_tools.h>
 
-
-#ifndef lethe_cahn_hilliard_scratch_data_h
-#  define lethe_cahn_hilliard_scratch_data_h
 
 using namespace dealii;
 

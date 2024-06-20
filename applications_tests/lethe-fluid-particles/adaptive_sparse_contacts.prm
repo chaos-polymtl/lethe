@@ -61,9 +61,7 @@ end
 #---------------------------------------------------
 
 subsection lagrangian physical properties
-  set gx                       = -9.81
-  set gy                       = 0.01205
-  set gz                       = 0.0
+  set g                        = -9.81, 0.01205, 0.0
   set number of particle types = 1
   subsection particle type 0
     set diameter                          = 0.0125

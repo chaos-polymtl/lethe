@@ -96,7 +96,8 @@ public:
   virtual void
   serialize(boost::archive::text_oarchive &ar, const unsigned int) override
   {
-    ar &remaining_particles_of_each_type &current_inserting_particle_type;
+    ar &remaining_particles_of_each_type &current_inserting_particle_type
+      &current_file_id;
   }
 
   /**
@@ -108,7 +109,8 @@ public:
   virtual void
   deserialize(boost::archive::text_iarchive &ar, const unsigned int) override
   {
-    ar &remaining_particles_of_each_type &current_inserting_particle_type;
+    ar &remaining_particles_of_each_type &current_inserting_particle_type
+      &current_file_id;
   }
 
   // Number of remaining particles of each type that should be inserted in the

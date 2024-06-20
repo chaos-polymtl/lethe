@@ -14,11 +14,8 @@
  * ---------------------------------------------------------------------*/
 
 
-#ifndef lethe_mesh_controler_h
-#define lethe_mesh_controler_h
-
-#include <iostream>
-
+#ifndef lethe_mesh_controller_h
+#define lethe_mesh_controller_h
 
 /**
  * @Class Controller that target a given number of elements in the mesh. This

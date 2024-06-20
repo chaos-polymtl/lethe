@@ -74,9 +74,7 @@ The total number of particles in this simulation is 8000. All particles have a d
 .. code-block:: text
 
   subsection lagrangian physical properties
-    set gx                       = -9.81
-    set gy                       = 0
-    set gz                       = 0
+    set g                        = -9.81, 0, 0
     set number of particle types = 1
     subsection particle type 0
       set size distribution type            = uniform
@@ -140,21 +138,23 @@ The bunny is defined using the solid objects feature of Lethe. The surface mesh 
 .. code-block:: text
 
   subsection solid objects
-    set number of solids = 1
-    subsection solid object 0
-      subsection mesh
-        set type                   = gmsh
-        set file name              = bunny-low-poly.msh
-        set simplex                = true
-        set initial rotation axis  = 0, 1, 0
-        set initial rotation angle = 1.5708 # pi/2
-        set initial translation    = 0.05, 0, 0.035
-      end
-      subsection translational velocity
-        set Function expression = if (t>2,-0.27*sin(0.8*3.1416*(t-2)),0) ; 0 ; 0
-      end
-      subsection angular velocity
-        set Function expression = if (t>2,31.42,0) ; 0 ; 0
+    subsection solid surfaces
+      set number of solids = 1
+      subsection solid object 0
+        subsection mesh
+          set type                   = gmsh
+          set file name              = bunny-low-poly.msh
+          set simplex                = true
+          set initial rotation axis  = 0, 1, 0
+          set initial rotation angle = 1.5708 # pi/2
+          set initial translation    = 0.05, 0, 0.035
+        end
+        subsection translational velocity
+          set Function expression = if (t>2,-0.27*sin(0.8*3.1416*(t-2)),0) ; 0 ; 0
+        end
+        subsection angular velocity
+          set Function expression = if (t>2,31.42,0) ; 0 ; 0
+        end
       end
     end
   end

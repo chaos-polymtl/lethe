@@ -72,7 +72,6 @@ The physical properties section is almost the same as the previous spouted bed e
 .. code-block:: text
 
     subsection lagrangian physical properties
-      set gz                       = -9.81
       set number of particle types = 1
       subsection particle type 0
         set size distribution type            = uniform

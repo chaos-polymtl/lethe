@@ -78,15 +78,7 @@ ParticlesForceChains<dim, contact_model, rolling_friction_model>::
   calculate_force_chains(DEMContactManager<dim> &container_manager)
 {
   auto &local_adjacent_particles = container_manager.local_adjacent_particles;
-  // Lines 89 to 101 kept for future ghost particles implementation.
-  // auto &ghost_adjacent_particles =
-  // container_manager.ghost_adjacent_particles; auto
-  // &local_periodic_adjacent_particles =
-  //  container_manager.local_periodic_adjacent_particles;
-  // auto &ghost_periodic_adjacent_particles =
-  //  container_manager.ghost_periodic_adjacent_particles;
-  // auto &ghost_local_periodic_adjacent_particles =
-  //  container_manager.ghost_local_periodic_adjacent_particles;
+  auto &ghost_adjacent_particles = container_manager.ghost_adjacent_particles;
 
   // Define local variables which will be used within the contact calculation
   //  Namely: normal and tangential contact forces, tangential and rolling
@@ -294,6 +286,203 @@ ParticlesForceChains<dim, contact_model, rolling_friction_model>::
             }
         }
     }
+  // Calculate force for local-ghost particle pairs
+
+  // Looping over ghost_adjacent_particles pairs
+  for (auto &&adjacent_particles_list :
+       ghost_adjacent_particles | boost::adaptors::map_values)
+    {
+      if (!adjacent_particles_list.empty())
+        {
+          // Gather information about particle 1 and set it up.
+          auto first_contact_info = adjacent_particles_list.begin();
+          auto particle_one       = first_contact_info->second.particle_one;
+          auto particle_one_properties = particle_one->get_properties();
+
+
+          // Fix particle one location for 2d and 3d
+          Point<3> particle_one_location = [&] {
+            if constexpr (dim == 3)
+              {
+                return particle_one->get_location();
+              }
+            if constexpr (dim == 2)
+              {
+                return (point_nd_to_3d(particle_one->get_location()));
+              }
+          }();
+
+          for (auto &&contact_info :
+               adjacent_particles_list | boost::adaptors::map_values)
+            {
+              // Getting information (location and properties) of particle 2 in
+              // contact with particle 1
+              auto particle_two            = contact_info.particle_two;
+              auto particle_two_properties = particle_two->get_properties();
+
+              // Get particle 2 location in dimension independent way
+              Point<3> particle_two_location = [&] {
+                if constexpr (dim == 3)
+                  {
+                    return particle_two->get_location();
+                  }
+                if constexpr (dim == 2)
+                  {
+                    return (point_nd_to_3d(particle_two->get_location()));
+                  }
+              }();
+
+              // Calculation of normal overlap
+              double normal_overlap =
+                0.5 * (particle_one_properties[PropertiesIndex::dp] +
+                       particle_two_properties[PropertiesIndex::dp]) -
+                particle_one_location.distance(particle_two_location);
+
+              if (normal_overlap > 0.0)
+                {
+                  // This means that the adjacent particles are in contact
+                  // Since the normal overlap is already calculated, we update
+                  // this element of the container here. The rest of information
+                  // are updated using the following function
+                  this->update_contact_information(
+                    contact_info,
+                    tangential_relative_velocity,
+                    normal_relative_velocity_value,
+                    normal_unit_vector,
+                    particle_one_properties,
+                    particle_two_properties,
+                    particle_one_location,
+                    particle_two_location,
+                    0);
+                  if constexpr (contact_model ==
+                                Parameters::Lagrangian::
+                                  ParticleParticleContactForceModel::DMT)
+                    {
+                      this->calculate_DMT_contact(
+                        contact_info,
+                        tangential_relative_velocity,
+                        normal_relative_velocity_value,
+                        normal_unit_vector,
+                        normal_overlap,
+                        particle_one_properties,
+                        particle_two_properties,
+                        normal_force,
+                        tangential_force,
+                        particle_one_tangential_torque,
+                        particle_two_tangential_torque,
+                        rolling_resistance_torque);
+                    }
+
+                  if constexpr (contact_model ==
+                                Parameters::Lagrangian::
+                                  ParticleParticleContactForceModel::linear)
+                    {
+                      this->calculate_linear_contact(
+                        contact_info,
+                        tangential_relative_velocity,
+                        normal_relative_velocity_value,
+                        normal_unit_vector,
+                        normal_overlap,
+                        particle_one_properties,
+                        particle_two_properties,
+                        normal_force,
+                        tangential_force,
+                        particle_one_tangential_torque,
+                        particle_two_tangential_torque,
+                        rolling_resistance_torque);
+                    }
+
+                  if constexpr (contact_model ==
+                                Parameters::Lagrangian::
+                                  ParticleParticleContactForceModel::hertz)
+                    {
+                      this->calculate_hertz_contact(
+                        contact_info,
+                        tangential_relative_velocity,
+                        normal_relative_velocity_value,
+                        normal_unit_vector,
+                        normal_overlap,
+                        particle_one_properties,
+                        particle_two_properties,
+                        normal_force,
+                        tangential_force,
+                        particle_one_tangential_torque,
+                        particle_two_tangential_torque,
+                        rolling_resistance_torque);
+                    }
+
+                  if constexpr (contact_model ==
+                                Parameters::Lagrangian::
+                                  ParticleParticleContactForceModel::hertz_JKR)
+                    {
+                      this->calculate_hertz_JKR_contact(
+                        contact_info,
+                        tangential_relative_velocity,
+                        normal_relative_velocity_value,
+                        normal_unit_vector,
+                        normal_overlap,
+                        particle_one_properties,
+                        particle_two_properties,
+                        normal_force,
+                        tangential_force,
+                        particle_one_tangential_torque,
+                        particle_two_tangential_torque,
+                        rolling_resistance_torque);
+                    }
+
+                  if constexpr (contact_model ==
+                                Parameters::Lagrangian::
+                                  ParticleParticleContactForceModel::
+                                    hertz_mindlin_limit_force)
+                    {
+                      this->calculate_hertz_mindlin_limit_force_contact(
+                        contact_info,
+                        tangential_relative_velocity,
+                        normal_relative_velocity_value,
+                        normal_unit_vector,
+                        normal_overlap,
+                        particle_one_properties,
+                        particle_two_properties,
+                        normal_force,
+                        tangential_force,
+                        particle_one_tangential_torque,
+                        particle_two_tangential_torque,
+                        rolling_resistance_torque);
+                    }
+
+                  if constexpr (contact_model ==
+                                Parameters::Lagrangian::
+                                  ParticleParticleContactForceModel::
+                                    hertz_mindlin_limit_overlap)
+                    {
+                      this->calculate_hertz_mindlin_limit_overlap_contact(
+                        contact_info,
+                        tangential_relative_velocity,
+                        normal_relative_velocity_value,
+                        normal_unit_vector,
+                        normal_overlap,
+                        particle_one_properties,
+                        particle_two_properties,
+                        normal_force,
+                        tangential_force,
+                        particle_one_tangential_torque,
+                        particle_two_tangential_torque,
+                        rolling_resistance_torque);
+                    }
+
+                  /* Allowing only one core to write the force chains for ghost
+                    particles to avoid doubles. The core having the particle
+                    with the highest ID gets to write the force chains. */
+                  if (particle_one->get_id() > particle_two->get_id())
+                    {
+                      vertices.push_back(particle_one_location);
+                      vertices.push_back(particle_two_location);
+                      force_normal.push_back(sqrt(normal_force.norm()));
+                    }
+                }
+            }
+        }
+    }
 }
 
 template <
@@ -302,9 +491,12 @@ template <
   Parameters::Lagrangian::RollingResistanceMethod rolling_friction_model>
 void
 ParticlesForceChains<dim, contact_model, rolling_friction_model>::
-  write_force_chains(MPI_Comm           mpi_communicator,
-                     const std::string  folder,
-                     const unsigned int iter)
+  write_force_chains(const DEMSolverParameters<dim> &dem_parameters,
+                     PVDHandler                     &pvd_handler,
+                     MPI_Comm                        mpi_communicator,
+                     const std::string               folder,
+                     const unsigned int              iter,
+                     const double                    time)
 {
   Triangulation<1, 3> triangulation;
   multi_general_cell(triangulation, vertices);
@@ -318,12 +510,30 @@ ParticlesForceChains<dim, contact_model, rolling_friction_model>::
       force_values[i] = force_normal[i];
     }
   data_out.add_data_vector(force_values, "force");
-
   data_out.build_patches();
 
+  const std::string file_prefix =
+    dem_parameters.simulation_control.output_name + "-force_chains";
   const std::string face_filename =
-    (folder + "force_chains." + Utilities::int_to_string(iter, 5) + ".vtu");
+    (folder + file_prefix + "." + Utilities::int_to_string(iter, 5) + ".vtu");
   data_out.write_vtu_in_parallel(face_filename.c_str(), mpi_communicator);
+
+  std::vector<std::string> filenames;
+  filenames.push_back(file_prefix + "." + Utilities::int_to_string(iter, 5) +
+                      ".vtu");
+
+  std::string pvtu_filename =
+    (file_prefix + "." + Utilities::int_to_string(iter, 5) + ".pvtu");
+
+  std::string   pvtu_filename_with_folder = folder + pvtu_filename;
+  std::ofstream master_output(pvtu_filename_with_folder.c_str());
+
+  data_out.write_pvtu_record(master_output, filenames);
+
+  std::string pvdPrefix = (folder + file_prefix + ".pvd");
+  pvd_handler.append(time, pvtu_filename);
+  std::ofstream pvd_output(pvdPrefix.c_str());
+  DataOutBase::write_pvd_record(pvd_output, pvd_handler.times_and_names);
 }
 
 // No resistance

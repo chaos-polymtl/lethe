@@ -13,15 +13,13 @@
  *
  * ---------------------------------------------------------------------*/
 
+#ifndef lethe_tracer_assemblers_h
+#define lethe_tracer_assemblers_h
 
 #include <core/simulation_control.h>
 
 #include <solvers/copy_data.h>
 #include <solvers/tracer_scratch_data.h>
-
-
-#ifndef lethe_tracer_assemblers_h
-#  define lethe_tracer_assemblers_h
 
 /**
  * @brief A pure virtual class that serves as an interface for all

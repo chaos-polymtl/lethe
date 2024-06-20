@@ -7,7 +7,7 @@ DEMContactManager<dim>::execute_cell_neighbors_search(
   const typename DEM::dem_data_structures<dim>::periodic_boundaries_cells_info
              periodic_boundaries_cells_information,
   const bool has_periodic_boundaries,
-  const bool has_floating_mesh)
+  const bool has_solid_objects)
 {
   // Find cell neighbors
   cell_neighbors_object.find_cell_neighbors(triangulation,
@@ -26,7 +26,7 @@ DEMContactManager<dim>::execute_cell_neighbors_search(
     }
 
   // Get total (with repetition) neighbors list for floating mesh.
-  if (has_floating_mesh)
+  if (has_solid_objects)
     {
       cell_neighbors_object.find_full_cell_neighbors(triangulation,
                                                      total_neighbor_list);
@@ -267,11 +267,11 @@ void
 DEMContactManager<dim>::execute_particle_wall_broad_search(
   const Particles::ParticleHandler<dim> &particle_handler,
   BoundaryCellsInformation<dim>         &boundary_cell_object,
-  const typename dem_data_structures<dim>::floating_mesh_information
-                                                    floating_mesh_info,
+  const typename dem_data_structures<dim>::solid_surfaces_mesh_information
+                                                    solid_surfaces_mesh_info,
   const Parameters::Lagrangian::FloatingWalls<dim> &floating_walls,
   const double                                      simulation_time,
-  const bool                                        has_floating_mesh)
+  const bool                                        has_solid_objects)
 {
   // Particle-wall contact candidates
   particle_wall_broad_search_object.find_particle_wall_contact_pairs(
@@ -292,10 +292,10 @@ DEMContactManager<dim>::execute_particle_wall_broad_search(
     }
 
   // Particle-floating mesh broad search
-  if (has_floating_mesh)
+  if (has_solid_objects)
     {
-      particle_wall_broad_search_object.particle_floating_mesh_contact_search(
-        floating_mesh_info,
+      particle_wall_broad_search_object.particle_solid_surfaces_contact_search(
+        solid_surfaces_mesh_info,
         particle_handler,
         particle_floating_mesh_candidates,
         total_neighbor_list);
@@ -320,12 +320,12 @@ void
 DEMContactManager<dim>::execute_particle_wall_broad_search(
   const Particles::ParticleHandler<dim> &particle_handler,
   BoundaryCellsInformation<dim>         &boundary_cell_object,
-  const typename dem_data_structures<dim>::floating_mesh_information
-                                                    floating_mesh_info,
+  const typename dem_data_structures<dim>::solid_surfaces_mesh_information
+                                                    solid_surfaces_mesh_info,
   const Parameters::Lagrangian::FloatingWalls<dim> &floating_walls,
   const double                                      simulation_time,
   const AdaptiveSparseContacts<dim>                &sparse_contacts_object,
-  const bool                                        has_floating_mesh)
+  const bool                                        has_solid_objects)
 {
   // Particle-wall contact candidates
   particle_wall_broad_search_object.find_particle_wall_contact_pairs(
@@ -348,10 +348,10 @@ DEMContactManager<dim>::execute_particle_wall_broad_search(
     }
 
   // Particle-floating mesh broad search
-  if (has_floating_mesh)
+  if (has_solid_objects)
     {
-      particle_wall_broad_search_object.particle_floating_mesh_contact_search(
-        floating_mesh_info,
+      particle_wall_broad_search_object.particle_solid_surfaces_contact_search(
+        solid_surfaces_mesh_info,
         particle_handler,
         particle_floating_mesh_candidates,
         total_neighbor_list,
@@ -430,7 +430,7 @@ DEMContactManager<dim>::execute_particle_wall_fine_search(
   const Parameters::Lagrangian::FloatingWalls<dim> &floating_walls,
   const double                                      simulation_time,
   const double                                      neighborhood_threshold,
-  const bool                                        has_floating_mesh)
+  const bool                                        has_solid_objects)
 {
   // Particle - wall fine search
   particle_wall_fine_search_object.particle_wall_fine_search(
@@ -447,7 +447,7 @@ DEMContactManager<dim>::execute_particle_wall_fine_search(
     }
 
   // Particle - floating mesh fine search
-  if (has_floating_mesh)
+  if (has_solid_objects)
     {
       particle_wall_fine_search_object.particle_floating_mesh_fine_search(
         particle_floating_mesh_candidates, particle_floating_mesh_in_contact);

@@ -55,9 +55,7 @@ As mentioned earlier, there are two types of particles with the same size and pr
 .. code-block:: text
 
     subsection lagrangian physical properties
-      set gx                                  = -9.81
-      set gy                                  = 0.0
-      set gz                                  = 0.0
+      set g                                   = -9.81, 0.0, 0.0
       set number of particle types            = 2
       subsection particle type 0
         set size distribution type              = uniform
@@ -94,29 +92,23 @@ In this subsection, the floating meshes are defined. We can use dealii or gmsh t
 .. code-block:: text
 
     subsection solid objects
-      set number of solids = 1
-      subsection solid object 0
-        subsection mesh
-          set type               = gmsh
-          set file name          = pitched-blade-impeller.msh
-          set simplex            = true
-          set initial refinement = 0
-        end
+      subsection solid surfaces
+        set number of solids = 1
+        subsection solid object 0
+          subsection mesh
+            set type               = gmsh
+            set file name          = pitched-blade-impeller.msh
+            set simplex            = true
+            set initial refinement = 0
+          end
     
-        subsection translational velocity
-          set Function expression = 0 ; 0 ; 0
-        end
-        subsection angular velocity
-          set Function expression = if(t>0.5,6,0) ; 0 ; 0
-        end
-    
-        subsection center of rotation
-          # X COR
-          set x = 0
-          # Y COR
-          set y = 0
-          # Z COR
-          set z = 0
+          subsection translational velocity
+            set Function expression = 0 ; 0 ; 0
+          end
+          subsection angular velocity
+            set Function expression = if(t>0.5,6,0) ; 0 ; 0
+          end
+          set center of rotation = 0, 0, 0
         end
       end
     end

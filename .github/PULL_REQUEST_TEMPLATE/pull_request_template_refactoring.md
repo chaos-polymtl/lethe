@@ -32,6 +32,8 @@ Code related list:
 - [ ] Lethe documentation is up to date
 - [ ] The branch is rebased onto master
 - [ ] Code is indented with indent-all and .prm files (examples and tests) with prm-indent
+- [ ] If parameters are modified, the tests and the documentation of examples are up to date
+- [ ] Changelog (CHANGELOG.md) is up to date if the refactor affects the user experience or the codebase
 
 Pull request related list:
 - [ ] No other PR is open related to this refactoring

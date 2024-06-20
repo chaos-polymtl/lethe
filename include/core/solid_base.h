@@ -12,10 +12,6 @@
  * the top level of the Lethe distribution.
  *
  * ---------------------------------------------------------------------
-
- *
- * Authors: Carole-Anne Daunais, Valérie Bibeau, Polytechnique Montreal, 2020
- * Jeanne Joachim, Polytechnique Montreal, 2020-
  */
 
 #ifndef lethe_solid_base_h

@@ -13,12 +13,11 @@
  *
  * -------------------------------------------------------------------*/
 
-#ifndef lethe_lethegridtools_h
-#define lethe_lethegridtools_h
+#ifndef lethe_lethe_grid_tools_h
+#define lethe_lethe_grid_tools_h
 
 #include <core/serial_solid.h>
 
-#include <deal.II/base/table_handler.h>
 #include <deal.II/base/tensor.h>
 
 #include <deal.II/dofs/dof_handler.h>

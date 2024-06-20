@@ -13,8 +13,8 @@
  *
  * ---------------------------------------------------------------------*/
 
-#ifndef LETHE_PHYSICSSOLVER
-#define LETHE_PHYSICSSOLVER
+#ifndef lethe_physics_solver_h
+#define lethe_physics_solver_h
 
 #include <core/inexact_newton_non_linear_solver.h>
 #include <core/kinsol_newton_non_linear_solver.h>

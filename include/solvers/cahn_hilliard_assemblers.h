@@ -13,16 +13,14 @@
  *
  * ---------------------------------------------------------------------*/
 
+#ifndef lethe_cahn_hilliard_assemblers_h
+#define lethe_cahn_hilliard_assemblers_h
 
 #include <core/simulation_control.h>
 
 #include <solvers/cahn_hilliard_scratch_data.h>
 #include <solvers/copy_data.h>
 #include <solvers/multiphysics_interface.h>
-
-
-#ifndef lethe_cahn_hilliard_assemblers_h
-#  define lethe_cahn_hilliard_assemblers_h
 
 /**
  * @brief A pure virtual class that serves as an interface for all

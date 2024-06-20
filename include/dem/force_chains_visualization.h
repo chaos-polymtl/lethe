@@ -44,25 +44,33 @@ public:
   virtual void
   calculate_force_chains(DEMContactManager<dim> &container_manager) = 0;
   /**
-   * @brief Output the force chains in a single vtu file for each iteration.
+   * @brief Output the force chains in VTU and PVTU files for each iteration and a PVD file.
    *
+   * @param dem_parameters DEM parameters declared in the .prm file
+   * @param pvd_handler a PVDHandler to store the information about the file name and time associated with it
    * @param mpi_communicator The mpi communicator
    * @param folder a string that contains the path where the results are to be saved
+   * @param group_files the number of vtu files that will be generated.
    * @param iter the iteration number associated with the file
+   * @param time the time associated with the file
    */
   virtual void
-  write_force_chains(const MPI_Comm     mpi_communicator,
-                     const std::string  folder,
-                     const unsigned int iter) = 0;
+  write_force_chains(const DEMSolverParameters<dim> &dem_parameters,
+                     PVDHandler                     &pvd_handler,
+                     const MPI_Comm                  mpi_communicator,
+                     const std::string               folder,
+                     const unsigned int              iter,
+                     const double                    time) = 0;
 };
 
 /**
  * @brief Class that carries out the calculation of
  * particle-particle contact force and the visualization of force chains
- * by writing vtu files. Instead of using a inheritance hiearchy to distinguish
- * between the contact model, the class is templated with the type of force
- * model and rolling friction model. Consequently, the code for each combination
- * of force model is generated at compile time.
+ * by writing vtu files, pvtu files and a pvd file. Instead of using a
+ * inheritance hiearchy to distinguish between the contact model, the class is
+ * templated with the type of force model and rolling friction model.
+ * Consequently, the code for each combination of force model is generated at
+ * compile time.
  *
  * @tparam dim The dimension of the problem
  * @tparam force_model The particle-particle contact force model
@@ -102,21 +110,27 @@ public:
    * @param container_manager The container manager object that contains
    * containers to modify of contact pair periodic candidates with other
    * containers with periodic neighbors lists
-   * @param dt DEM time step
    */
   void
   calculate_force_chains(DEMContactManager<dim> &container_manager) override;
   /**
-   * @brief Output the force chains in a single vtu file for each iteration.
+   * @brief Output the force chains in VTU and PVTU files for each iteration and a PVD file.
    *
+   * @param dem_parameters DEM parameters declared in the .prm file
+   * @param pvd_handler a PVDHandler to store the information about the file name and time associated with it
    * @param mpi_communicator The mpi communicator
    * @param folder a string that contains the path where the results are to be saved
+   * @param group_files the number of vtu files that will be generated.
    * @param iter the iteration number associated with the file
+   * @param time the time associated with the file
    */
   void
-  write_force_chains(const MPI_Comm     mpi_communicator,
-                     const std::string  folder,
-                     const unsigned int iter) override;
+  write_force_chains(const DEMSolverParameters<dim> &dem_parameters,
+                     PVDHandler                     &pvd_handler,
+                     const MPI_Comm                  mpi_communicator,
+                     const std::string               folder,
+                     const unsigned int              iter,
+                     const double                    time) override;
 
 private:
   /// vector of normal forces between each touching particles.

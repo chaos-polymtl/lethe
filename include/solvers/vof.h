@@ -14,8 +14,8 @@
  * ---------------------------------------------------------------------
  */
 
-#ifndef lethe_VOF_h
-#define lethe_VOF_h
+#ifndef lethe_vof_h
+#define lethe_vof_h
 
 #include <core/bdf.h>
 #include <core/simulation_control.h>

@@ -60,9 +60,7 @@ The particles are mono dispersed with a radius of 0.005 m and a density of 2560 
 .. code-block:: text
 
   subsection lagrangian physical properties
-    set gx                       = 0
-    set gy                       = -9.81
-    set gz                       = 0.0
+    set g                        = 0, -9.81, 0.0
     set number of particle types = 1
     subsection particle type 0
       set size distribution type            = uniform
@@ -132,20 +130,22 @@ The sluice gate which prevents the particle from floating is made of a 3D surfac
 .. code-block:: text
 
   subsection solid objects
-  set number of solids = 1
-    subsection solid object 0
-      subsection mesh
-        set type               = gmsh
-        set file name          = square.msh
-        set simplex            = true
-        set initial refinement = 0
-      end
+    subsection solid surfaces
+      set number of solids = 1
+      subsection solid object 0
+        subsection mesh
+          set type               = gmsh
+          set file name          = square.msh
+          set simplex            = true
+          set initial refinement = 0
+        end
   
-      subsection translational velocity
-        set Function expression = 0 ; if(t>0.5,if(t<0.7,1,0),0) ; 0
-      end
-      subsection angular velocity
-        set Function expression = 0 ; 0  ; 0
+        subsection translational velocity
+          set Function expression = 0 ; if(t>0.5,if(t<0.7,1,0),0) ; 0
+        end
+        subsection angular velocity
+          set Function expression = 0 ; 0 ; 0
+        end
       end
     end
   end

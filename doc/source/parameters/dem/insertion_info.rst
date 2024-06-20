@@ -15,8 +15,8 @@ In this subsection, insertion methods which are ``volume``, ``plane``, ``list`` 
 
     # Every method
     set insertion frequency                            = 20000
-    set remove particles                             = false
-    set removal box points coordinates                = 0., 0., 0.: 1., 1., 1.
+    set remove particles                               = false
+    set removal box points coordinates                 = 0., 0., 0.: 1., 1., 1.
 
     # If method = volume
     set inserted number of particles at each time step = 100

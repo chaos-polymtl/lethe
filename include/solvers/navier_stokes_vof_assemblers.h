@@ -13,6 +13,9 @@
  *
  * ---------------------------------------------------------------------*/
 
+#ifndef lethe_navier_stokes_vof_assemblers_h
+#define lethe_navier_stokes_vof_assemblers_h
+
 #include <core/evaporation_model.h>
 #include <core/simulation_control.h>
 
@@ -20,9 +23,6 @@
 #include <solvers/navier_stokes_assemblers.h>
 #include <solvers/navier_stokes_scratch_data.h>
 #include <solvers/simulation_parameters.h>
-
-#ifndef lethe_navier_stokes_vof_assemblers_h
-#  define lethe_navier_stokes_vof_assemblers_h
 
 
 /**

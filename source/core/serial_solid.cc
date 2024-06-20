@@ -15,7 +15,6 @@
  */
 
 #include <core/lethe_grid_tools.h>
-#include <core/serial_solid.h>
 #include <core/solutions_output.h>
 
 #include <deal.II/base/point.h>
@@ -45,8 +44,8 @@ SerialSolid<dim, spacedim>::SerialSolid(
   , param(param)
   , id(id)
   , output_bool(param->output_bool)
-  , translational_velocity(&param->translational_velocity)
-  , angular_velocity(&param->angular_velocity)
+  , translational_velocity(param->translational_velocity)
+  , angular_velocity(param->angular_velocity)
   , center_of_rotation(param->center_of_rotation)
 {
   if (param->solid_mesh.simplex)
@@ -95,47 +94,56 @@ SerialSolid<dim, spacedim>::map_solid_in_background_triangulation(
               typename Triangulation<dim, spacedim>::active_cell_iterator>>
     mapped_solid;
 
-  // Gather the amount of vertices per cell in the solid cells once to have
-  // a static memory allocation of the vector. This prevents reallocating
-  // the vector dynamically using push_back if the solid triangulation
-  // has many triangles
-  auto                         temporary_solid_cell = solid_tria->begin();
-  std::vector<Point<spacedim>> triangle(temporary_solid_cell->n_vertices());
-
-  // Calculate distance from cell center to solid_cell
-  for (const auto &background_cell : background_tr.active_cell_iterators())
+  if constexpr (dim == 2)
     {
-      // If the cell is owned by the processor
-      if (background_cell->is_locally_owned())
+      // Gather the amount of vertices per cell in the solid cells once to have
+      // a static memory allocation of the vector. This prevents reallocating
+      // the vector dynamically using push_back if the solid triangulation
+      // has many triangles
+      auto                         temporary_solid_cell = solid_tria->begin();
+      std::vector<Point<spacedim>> triangle(temporary_solid_cell->n_vertices());
+
+      // Calculate distance from cell center to solid_cell
+      for (const auto &background_cell : background_tr.active_cell_iterators())
         {
-          // Calculate the characteristic size of the background cell
-          const double bg_cell_length = background_cell->diameter();
-
-          // Calculate the center of the cell
-          Point<spacedim> bg_cell_center = background_cell->center();
-
-          // Calculate distance from center of the cell to triangle
-          for (auto &solid_cell : solid_tria->active_cell_iterators())
+          // If the cell is owned by the processor
+          if (background_cell->is_locally_owned())
             {
-              // Gather triangle vertices
-              for (unsigned int v = 0; v < solid_cell->n_vertices(); ++v)
-                {
-                  triangle[v] = solid_cell->vertex(v);
-                }
+              // Calculate the characteristic size of the background cell
+              const double bg_cell_length = background_cell->diameter();
 
-              // Calculate distance between triangle and center
-              const double distance =
-                LetheGridTools::find_point_triangle_distance(triangle,
-                                                             bg_cell_center);
+              // Calculate the center of the cell
+              Point<spacedim> bg_cell_center = background_cell->center();
 
-              if (distance < bg_cell_length)
+              // Calculate distance from center of the cell to triangle
+              for (auto &solid_cell : solid_tria->active_cell_iterators())
                 {
-                  mapped_solid.push_back(
-                    std::make_pair(background_cell, solid_cell));
+                  // Gather triangle vertices
+                  for (unsigned int v = 0; v < solid_cell->n_vertices(); ++v)
+                    {
+                      triangle[v] = solid_cell->vertex(v);
+                    }
+
+                  // Calculate distance between triangle and center
+                  const double distance =
+                    LetheGridTools::find_point_triangle_distance(
+                      triangle, bg_cell_center);
+
+                  if (distance < bg_cell_length)
+                    {
+                      mapped_solid.push_back(
+                        std::make_pair(background_cell, solid_cell));
+                    }
                 }
             }
         }
     }
+  else if constexpr (dim == 3)
+    {
+      throw std::runtime_error(
+        "Solid volumes are not yet implemented in Lethe. Please, remove the whole \"solid volumes\" subsection from your parameter file.");
+    }
+
 
   reset_displacement_monitoring();
 
@@ -500,9 +508,23 @@ SerialSolid<dim, spacedim>::write_output_results(
   data_out.build_patches();
 
   const std::string folder        = simulation_control->get_output_path();
-  const std::string solution_name = simulation_control->get_output_name() +
-                                    ".solid_object." +
-                                    Utilities::int_to_string(id, 2);
+  const std::string solution_name = [&] {
+    if constexpr (dim == 1)
+      {
+        return simulation_control->get_output_name() + ".solid_line." +
+               Utilities::int_to_string(id, 2);
+      }
+    if constexpr (dim == 2)
+      {
+        return simulation_control->get_output_name() + ".solid_surface." +
+               Utilities::int_to_string(id, 2);
+      }
+    if constexpr (dim == 3)
+      {
+        return simulation_control->get_output_name() + ".solid_volume." +
+               Utilities::int_to_string(id, 2);
+      }
+  }();
   const unsigned int iter        = simulation_control->get_step_number();
   const double       time        = simulation_control->get_current_time();
   const unsigned int group_files = simulation_control->get_group_files();

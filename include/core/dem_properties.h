@@ -12,22 +12,19 @@
  * the top level of the Lethe distribution.
  *
  * ---------------------------------------------------------------------
-
- *
- * Author: Bruno Blais, Polytechnique Montreal, 2020-
  */
 
-#include <iostream>
-#include <string>
-#include <tuple>
-#include <vector>
 
-#ifndef Lethe_DEM_properties_h
-#  define Lethe_DEM_properties_h
+
+#ifndef lethe_dem_properties_h
+#define lethe_dem_properties_h
+
+#include <string>
+#include <vector>
 
 namespace DEM
 {
-  /* This enum class is reponsible for the handling the specific indexes of the
+  /* This enum class is responsible for the handling the specific indexes of the
    * particles properties within the property pool and also to generate
    * the associative names for the properties
    * This is the only part where we should use a classical enum because it is

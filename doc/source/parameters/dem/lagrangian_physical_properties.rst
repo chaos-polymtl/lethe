@@ -7,14 +7,8 @@ In this subsection, gravitational acceleration, and the physical properties of t
 .. code-block:: text
 
   subsection lagrangian physical properties
-    # Gravitational acceleration in x direction
-    set gx                       = 0.0
-
-    # Gravitational acceleration in y direction
-    set gy                       = 0.0
-
-    # Gravitational acceleration in z direction
-    set gz                       = -9.81
+    # Gravitational acceleration vector
+    set g                       = 0.0, 0.0, 0.0
 
     # Number of particle types
     set number of particle types = 1
@@ -58,7 +52,7 @@ In this subsection, gravitational acceleration, and the physical properties of t
     set surface energy wall          = 0.0
   end
 
-* The ``gx``, ``gy``, and ``gz`` parameters define the gravitational acceleration in `x`, `y`, and `z` directions.
+* The ``g`` parameter defines the gravitational acceleration in `x`, `y`, and `z` directions. The deprecated version of this parameter is the 3 parameters ``gx``, ``gy``, and ``gz``.
 
 * The ``number of particle types`` parameter specifies the number of particle types in a simulation. Particles with different sizes, size distributions, and physical properties have to be defined as separate particle types.
 

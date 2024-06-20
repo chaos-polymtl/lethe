@@ -201,11 +201,17 @@ namespace DEM
       std::vector<typename Triangulation<dim>::active_cell_iterator>>
       cells_neighbor_list;
 
-    // [[(cell iterator, cell iterator)]]
+    // [[(background cell iterator, solid surface cell iterator)]]
     typedef std::vector<std::vector<
       std::pair<typename Triangulation<dim>::active_cell_iterator,
                 typename Triangulation<dim - 1, dim>::active_cell_iterator>>>
-      floating_mesh_information;
+      solid_surfaces_mesh_information;
+
+    // [[(background cell iterator, solid volume cell iterator)]]
+    typedef std::vector<std::vector<
+      std::pair<typename Triangulation<dim>::active_cell_iterator,
+                typename Triangulation<dim, dim>::active_cell_iterator>>>
+      solid_volumes_mesh_info;
 
     // <cell id, [cell iterator]>
     typedef ankerl::unordered_dense::map<

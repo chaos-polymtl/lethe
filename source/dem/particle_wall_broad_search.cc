@@ -127,9 +127,9 @@ ParticleWallBroadSearch<dim>::find_particle_floating_wall_contact_pairs(
 
 template <int dim>
 void
-ParticleWallBroadSearch<dim>::particle_floating_mesh_contact_search(
-  const typename DEM::dem_data_structures<dim>::floating_mesh_information
-                                        &floating_mesh_information,
+ParticleWallBroadSearch<dim>::particle_solid_surfaces_contact_search(
+  const typename DEM::dem_data_structures<dim>::solid_surfaces_mesh_information
+                                        &solid_surfaces_mesh_information,
   const Particles::ParticleHandler<dim> &particle_handler,
   typename DEM::dem_data_structures<dim>::particle_floating_mesh_candidates
     &particle_floating_mesh_contact_candidates,
@@ -139,10 +139,10 @@ ParticleWallBroadSearch<dim>::particle_floating_mesh_contact_search(
   // Clear the candidate container
   particle_floating_mesh_contact_candidates.clear();
   particle_floating_mesh_contact_candidates.resize(
-    floating_mesh_information.size());
+    solid_surfaces_mesh_information.size());
 
   for (unsigned int solid_counter = 0;
-       solid_counter < floating_mesh_information.size();
+       solid_counter < solid_surfaces_mesh_information.size();
        ++solid_counter)
     {
       auto &candidates =
@@ -156,7 +156,7 @@ ParticleWallBroadSearch<dim>::particle_floating_mesh_contact_search(
       // global ids. If it's not the case, we have to modify the code" - ???
 
       // Loop through solids
-      auto &solid_iterator = floating_mesh_information[solid_counter];
+      auto &solid_iterator = solid_surfaces_mesh_information[solid_counter];
 
       // Loop through the pairs (first -> background cell, second -> floating
       // cell)
@@ -337,9 +337,9 @@ ParticleWallBroadSearch<dim>::find_particle_floating_wall_contact_pairs(
 
 template <int dim>
 void
-ParticleWallBroadSearch<dim>::particle_floating_mesh_contact_search(
-  const typename DEM::dem_data_structures<dim>::floating_mesh_information
-                                        &floating_mesh_information,
+ParticleWallBroadSearch<dim>::particle_solid_surfaces_contact_search(
+  const typename DEM::dem_data_structures<dim>::solid_surfaces_mesh_information
+                                        &solid_surfaces_mesh_information,
   const Particles::ParticleHandler<dim> &particle_handler,
   typename DEM::dem_data_structures<dim>::particle_floating_mesh_candidates
     &particle_floating_mesh_contact_candidates,
@@ -350,10 +350,10 @@ ParticleWallBroadSearch<dim>::particle_floating_mesh_contact_search(
   // Clear the candidate container
   particle_floating_mesh_contact_candidates.clear();
   particle_floating_mesh_contact_candidates.resize(
-    floating_mesh_information.size());
+    solid_surfaces_mesh_information.size());
 
   for (unsigned int solid_counter = 0;
-       solid_counter < floating_mesh_information.size();
+       solid_counter < solid_surfaces_mesh_information.size();
        ++solid_counter)
     {
       auto &candidates =
@@ -363,7 +363,7 @@ ParticleWallBroadSearch<dim>::particle_floating_mesh_contact_search(
       // global ids. If it's not the case, we have to modify the code
 
       // Loop through solids
-      auto &solid_iterator = floating_mesh_information[solid_counter];
+      auto &solid_iterator = solid_surfaces_mesh_information[solid_counter];
 
       // Loop through the pairs (first -> background cell, second -> floating
       // cell)

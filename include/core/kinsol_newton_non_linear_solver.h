@@ -14,8 +14,8 @@
  * ---------------------------------------------------------------------
  */
 
-#ifndef kinsol_non_linear_solver_h
-#define kinsol_non_linear_solver_h
+#ifndef lethe_kinsol_non_linear_solver_h
+#define lethe_kinsol_non_linear_solver_h
 
 #include <core/non_linear_solver.h>
 #include <core/parameters.h>

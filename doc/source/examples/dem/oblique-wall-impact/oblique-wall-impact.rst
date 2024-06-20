@@ -77,9 +77,7 @@ The particle is made of aluminium oxide and the wall is made of soda-lime glass.
 .. code-block:: text
 
   subsection lagrangian physical properties
-    set gx                       = 0.0
-    set gy                       = 0.0
-    set gz                       = 0.0
+    set g                        = 0.0, 0.0, 0.0
     set number of particle types = 1
     subsection particle type 0
       set size distribution type                 = uniform

@@ -112,9 +112,7 @@ The gravity is set to 0 as we only need to insert the particles in the specified
 .. code-block:: text
 
     subsection lagrangian physical properties
-      set gx                       = 0.0
-      set gy                       = 0.0
-      set gz                       = 0.0
+      set g                        = 0.0, 0.0, 0.0
       set number of particle types = 1
       subsection particle type 0
         set size distribution type            = uniform

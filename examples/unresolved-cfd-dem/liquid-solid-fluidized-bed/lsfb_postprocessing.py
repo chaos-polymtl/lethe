@@ -60,11 +60,11 @@ dp = particle.prm_dict['diameter']
 rp = dp/2
 Vp = 4/3*pi*rp**3
 rhop = particle.prm_dict['density particles']
-Np = particle.prm_dict['number'][1]
+Np = particle.prm_dict['number of particles']
 inlet_velocity = fluid.prm_dict['u']
 
 
-g = abs(particle.prm_dict['gx'])       #m/s^2
+g = abs(float(particle.prm_dict['g'].split(', ')[0])) #m/s^2
 Vnp = Np * 4/3 * pi * rp**3
 
 rhol = fluid.prm_dict['density']  #kg/m^3

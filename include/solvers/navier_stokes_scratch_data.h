@@ -14,6 +14,10 @@
  * ---------------------------------------------------------------------
  */
 
+
+#ifndef lethe_navier_stokes_scratch_data_h
+#define lethe_navier_stokes_scratch_data_h
+
 #include <core/bdf.h>
 #include <core/dem_properties.h>
 #include <core/density_model.h>
@@ -38,11 +42,6 @@
 #include <deal.II/numerics/vector_tools.h>
 
 #include <deal.II/particles/particle_handler.h>
-
-
-
-#ifndef lethe_navier_stokes_scratch_data_h
-#  define lethe_navier_stokes_scratch_data_h
 
 using namespace dealii;
 

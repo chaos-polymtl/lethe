@@ -7,6 +7,7 @@ file(COPY square.msh DESTINATION "${CMAKE_CURRENT_BINARY_DIR}")
 file(COPY cylinder_structured.msh DESTINATION "${CMAKE_CURRENT_BINARY_DIR}")
 file(COPY taylorCouette.msh DESTINATION "${CMAKE_CURRENT_BINARY_DIR}")
 file(COPY box.msh DESTINATION "${CMAKE_CURRENT_BINARY_DIR}")
+file(COPY cylinder_manifold.msh DESTINATION "${CMAKE_CURRENT_BINARY_DIR}")
 
 file(COPY cavity_ht_average_velocity_restart_files/restart.averagevelocities DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/cavity_ht_average_velocity_restart.${_build_type}/mpirun=1/")
 file(COPY cavity_ht_average_velocity_restart_files/restart.pvdhandler DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/cavity_ht_average_velocity_restart.${_build_type}/mpirun=1/")

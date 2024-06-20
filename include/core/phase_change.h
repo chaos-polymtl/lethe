@@ -14,8 +14,8 @@
  * ---------------------------------------------------------------------
  */
 
-#ifndef phase_change_h
-#define phase_change_h
+#ifndef lethe_phase_change_h
+#define lethe_phase_change_h
 
 #include <core/physical_property_model.h>
 
