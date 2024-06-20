@@ -1658,24 +1658,13 @@ GLSVANSSolver<dim>::assemble_local_system_matrix(
     {
       if (this->cfd_dem_simulation_parameters.cfd_dem.distribute_drag_force == true)
         {
-          if (auto force_distributed_assembler =
-                std::dynamic_pointer_cast<GLSVansAssemblerFPI<dim>>(assembler))
-            {
-              force_distributed_assembler->assemble_matrix(this,
-                                                           cell,
-                                                           particle_handler,
-                                                           scratch_data,
-                                                           copy_data);
-            }
-          else
-            {
-              assembler->assemble_matrix(scratch_data, copy_data);
-            }
+            if (auto force_distributed_assembler = std::dynamic_pointer_cast<GLSVansAssemblerFPI<dim>>(assembler))
+             {
+                 force_distributed_assembler->assemble_matrix(this, cell, particle_handler, scratch_data, copy_data);
+                 continue;
+             }
         }
-      else
-        {
-          assembler->assemble_matrix(scratch_data, copy_data);
-        }
+      assembler->assemble_matrix(scratch_data, copy_data);
     }
 
   cell->get_dof_indices(copy_data.local_dof_indices);
@@ -1786,24 +1775,13 @@ GLSVANSSolver<dim>::assemble_local_system_rhs(
     {
       if (this->cfd_dem_simulation_parameters.cfd_dem.distribute_drag_force == true)
         {
-          if (auto force_distributed_assembler =
-                std::dynamic_pointer_cast<GLSVansAssemblerFPI<dim>>(assembler))
-            {
-              force_distributed_assembler->assemble_rhs(this,
-                                                           cell,
-                                                           particle_handler,
-                                                           scratch_data,
-                                                           copy_data);
-            }
-          else
-            {
-              assembler->assemble_rhs(scratch_data, copy_data);
-            }
+            if (auto force_distributed_assembler = std::dynamic_pointer_cast<GLSVansAssemblerFPI<dim>>(assembler))
+             {
+                 force_distributed_assembler->assemble_rhs(this, cell, particle_handler, scratch_data, copy_data);
+                 continue;
+             }
         }
-      else
-        {
-          assembler->assemble_rhs(scratch_data, copy_data);
-        }
+      assembler->assemble_rhs(scratch_data, copy_data);
     }
 
   cell->get_dof_indices(copy_data.local_dof_indices);
