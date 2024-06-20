@@ -495,7 +495,6 @@ ParticlesForceChains<dim, contact_model, rolling_friction_model>::
                      PVDHandler                     &pvd_handler,
                      MPI_Comm                        mpi_communicator,
                      const std::string               folder,
-                     const unsigned int              group_files,
                      const unsigned int              iter,
                      const double                    time)
 {
@@ -520,11 +519,6 @@ ParticlesForceChains<dim, contact_model, rolling_friction_model>::
   data_out.write_vtu_in_parallel(face_filename.c_str(), mpi_communicator);
 
   std::vector<std::string> filenames;
-  const unsigned int       n_processes =
-    Utilities::MPI::n_mpi_processes(mpi_communicator);
-  const unsigned int n_files =
-    (group_files == 0) ? n_processes : std::min(group_files, n_processes);
-
   filenames.push_back(file_prefix + "." + Utilities::int_to_string(iter, 5) +
                       ".vtu");
 

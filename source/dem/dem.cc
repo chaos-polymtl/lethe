@@ -1087,7 +1087,6 @@ DEMSolver<dim>::write_output_results()
         particles_pvdhandler_force_chains,
         this->mpi_communicator,
         folder,
-        group_files,
         iter,
         time);
     }

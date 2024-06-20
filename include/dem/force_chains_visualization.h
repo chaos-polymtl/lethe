@@ -59,7 +59,6 @@ public:
                      PVDHandler                     &pvd_handler,
                      const MPI_Comm                  mpi_communicator,
                      const std::string               folder,
-                     const unsigned int              group_files,
                      const unsigned int              iter,
                      const double                    time) = 0;
 };
@@ -130,7 +129,6 @@ public:
                      PVDHandler                     &pvd_handler,
                      const MPI_Comm                  mpi_communicator,
                      const std::string               folder,
-                     const unsigned int              group_files,
                      const unsigned int              iter,
                      const double                    time) override;
 
