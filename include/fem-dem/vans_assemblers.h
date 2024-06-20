@@ -22,7 +22,6 @@
 #include <solvers/navier_stokes_scratch_data.h>
 
 #include <fem-dem/cfd_dem_simulation_parameters.h>
-#include <solvers/gls_navier_stokes.h>
 
 #include <deal.II/particles/particle_handler.h>
 
