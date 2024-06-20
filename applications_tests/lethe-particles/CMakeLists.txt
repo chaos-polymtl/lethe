@@ -40,6 +40,16 @@ file(COPY moving_receptacle_files/restart.solid_object.00.displacement DESTINATI
 file(COPY moving_receptacle_files/restart.solid_object.00.dof DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/restart_moving_receptacle.${_build_type}/mpirun=1/")
 file(COPY moving_receptacle_files/restart.solid_object.00.pvdhandler DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/restart_moving_receptacle.${_build_type}/mpirun=1/")
 
+file(COPY restart_file_insertion_files/insertion_file_restart.insertion_object DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/restart_file_insertion.${_build_type}/mpirun=1/")
+file(COPY restart_file_insertion_files/insertion_file_restart.particles DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/restart_file_insertion.${_build_type}/mpirun=1/")
+file(COPY restart_file_insertion_files/insertion_file_restart.pvdhandler DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/restart_file_insertion.${_build_type}/mpirun=1/")
+file(COPY restart_file_insertion_files/insertion_file_restart.simulationcontrol DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/restart_file_insertion.${_build_type}/mpirun=1/")
+file(COPY restart_file_insertion_files/insertion_file_restart.triangulation DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/restart_file_insertion.${_build_type}/mpirun=1/")
+file(COPY restart_file_insertion_files/insertion_file_restart.triangulation.info DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/restart_file_insertion.${_build_type}/mpirun=1/")
+file(COPY restart_file_insertion_files/insertion_file_restart.triangulation_fixed.data DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/restart_file_insertion.${_build_type}/mpirun=1/")
+file(COPY restart_file_insertion_files/insertion_file_restart.triangulation_variable.data DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/restart_file_insertion.${_build_type}/mpirun=1/")
+file(COPY restart_file_insertion_files/particles_01.input DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/restart_file_insertion.${_build_type}/mpirun=1/")
+
 deal_ii_pickup_tests()
 
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
