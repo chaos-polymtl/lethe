@@ -1082,9 +1082,13 @@ DEMSolver<dim>::write_output_results()
       particles_force_chains_object =
         set_force_chains_contact_force_model(parameters);
       particles_force_chains_object->calculate_force_chains(contact_manager);
-      particles_force_chains_object->write_force_chains(this->mpi_communicator,
-                                                        folder,
-                                                        iter);
+      particles_force_chains_object->write_force_chains(
+        parameters,
+        particles_pvdhandler_force_chains,
+        this->mpi_communicator,
+        folder,
+        iter,
+        time);
     }
 
   // Write all solid objects
