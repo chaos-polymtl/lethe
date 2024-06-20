@@ -10,9 +10,10 @@ Features
 
 - Solvers: ``lethe-particles`` and ``lethe-fluid-particles``
 - Three-dimensional problem
-- Shows how to insert particles according to a shape with a solid objects
-- Has periodic boundary conditions in DEM and CFD-DEM
-- Uses a flow controller in CFD-DEM
+- Shows how to insert particles according to a shape with a `solid object <../../../parameters/dem/solid_objects.html>`_ and the `plane insertion method <../../../parameters/dem/insertion_info.html#plane>`_
+- Has `periodic boundary conditions <../../../parameters/dem/boundary_conditions.html>`_  in DEM and CFD-DEM
+- Uses a `dynamic flow controller <../../../parameters/cfd/dynamic_flow_control.html>`_ in CFD-DEM
+- Uses the `adaptive sparse contacts <../../../parameters/dem/model_parameters.html#adaptive-sparse-contacts-asc>`_ for particle loading in DEM
 - Simulates a dense pneumatic conveying system
 
 
@@ -39,7 +40,7 @@ The insertion of particles are done with the plane insertion.
 Second, we use ``lethe-particles`` to settle the particles with the file ``settling_particles.prm``. Only the direction of gravity is changed.
 Finally, we use ``lethe-fluid-particles`` to simulate the dense pneumatic conveying with the file ``pneumatic-conveying.prm`` with periodic boundary conditions.
 We enable check-pointing in order to write the DEM checkpoint files which will be used as the starting point of the CFD-DEM simulation.
-The geometry of the pipe and the particle properties are based on the work of Lavrinec *et al*. `[1] <https://doi.org/10.1016/j.powtec.2020.07.070>`_.
+The geometry of the pipe and the particle properties are based on the work of Lavrinec *et al*. [#lavrinec2021]_
 
 
 ---------------------------
@@ -57,10 +58,22 @@ Launching the simulations is as simple as specifying the executable name and the
 
   mpirun -np 8 lethe-particles settling_particles.prm
 
+The particle loading and settling simulation should look like this:
+
+.. raw:: html
+
+    <p align="center"><iframe width="560" height="315" src="https://www.youtube.com/embed/4uM51PCypZc?si=Xrisa4h87QLjvTWO" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
 .. code-block:: text
   :class: copy-button
 
   mpirun -np 8 lethe-fluid-particles pneumatic-conveying.prm
+
+The pneumatic conveying simulation should look like this:
+
+.. raw:: html
+
+    <p align="center"><iframe width="560" height="315" src="https://www.youtube.com/embed/ESfSrmmlzYE?si=1RTsvFzcwvyelGme" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 
 Lethe will generate a number of files. The most important one bears the extension ``.pvd``. It can be read by popular visualization programs such as `Paraview <https://www.paraview.org/>`_.
 
@@ -100,7 +113,7 @@ A cross-section of the resulting mesh is presented in the following figure.
 Lagrangian Physical Properties
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The lagrangian properties were based from the work of Lavrinec *et al*. `[1] <https://doi.org/10.1016/j.powtec.2020.07.070>`_, except for the Young's modulus that was deliberately reduced to get a smaller Rayleigh critical time step.
+The lagrangian properties were based from the work of Lavrinec *et al*. [#lavrinec2021]_, except for the Young's modulus that was deliberately reduced to get a smaller Rayleigh critical time step.
 The gravity is set in the x-direction to allow the packing of the particles from the right side of the pipe.
 The number of particles in the simulation is 32194. When the example was setup, the number specified in the simulation was higher since the insertion is done with the `plane insertion method <../../../parameters/dem/insertion_info.html#plane>`_, which will insert the particles up to when they reach the plan.
 In order to avoid confusion with the number of particles in the parameter file, we did give the real number of particles inserted after 30 seconds.
@@ -410,15 +423,14 @@ Model parameters are the same as in the DEM simulation, but we do not use any st
 Simulation Control
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The simulation lasts 10 seconds and the CFD time step is 5e-4 seconds.
+The simulation lasts 5 seconds and the CFD time step is 5e-4 seconds.
 
 .. code-block:: text
 
     subsection simulation control
       set method               = bdf1
       set output name          = cfd_dem
-      set output frequency     = 10
-      set startup time scaling = 0.6
+      set output frequency     = 5
       set time end             = 10
       set time step            = 5e-4
       set output path          = ./output/
@@ -427,7 +439,7 @@ The simulation lasts 10 seconds and the CFD time step is 5e-4 seconds.
 Physical Properties
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The physical properties of air are the same as Lavrinec *et al*. `[1] <https://doi.org/10.1016/j.powtec.2020.07.070>`_
+The physical properties of air are the same as Lavrinec *et al*. [#lavrinec2021]_
 
 .. code-block:: text
 
@@ -503,20 +515,19 @@ We choose the `quadrature centred method (QCM) <../../../theory/multiphase/cfd_d
 CFD-DEM
 ~~~~~~~~~~
 
-The chosen drag model is Kock and Hill, and we use the Saffman lift force, the buoyancy force, and the pressure force. The coupling frequency is set to 100, which means that the DEM time step is 1e-3 s, for a Rayleigh critical time step of about 7%. The grad-div stabilization is used with a length scale of 0.084, the diameter of the pipe.
+The chosen drag model is Di Felice, and we use the Saffman lift force, the buoyancy force, and the pressure force. The coupling frequency is set to 100, which means that the DEM time step is 5e-6 s, for a Rayleigh critical time step of about 3.5%. The grad-div stabilization is used with a length scale of 0.084, the diameter of the pipe.
 
 .. code-block:: text
 
    subsection cfd-dem
-     set vans model             = modelA
      set grad div               = true
-     set drag model             = kochhill
+     set drag model             = difelice
      set saffman lift force     = true
      set buoyancy force         = true
      set pressure force         = true
      set coupling frequency     = 100
      set implicit stabilization = false
-     set grad-div length scale  = 0.082
+     set grad-div length scale  = 0.084
      set particle statistics    = true
    end
 
@@ -558,84 +569,59 @@ Linear Solver
    end
 
 
-
-
 --------
 Results
 --------
 
-We briefly comment on some results that can be extracted from this example.
+The results presented here are obtained from a custom post-processing code that is currently not provided with the example.
 
-.. important::
+Mass Flow Rate and Velocities
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    This example includes a postprocessing file written in Python that uses the `lethe_pyvista_tools <../../../tools/postprocessing/postprocessing.html>`_. module.
+Here we show the average velocities for the fluid, the slug and the particles in slug. The beta force, the averaged solid mass flow rate and the slug length over time are also shown. The shaded area represents the transient state.
 
-.. important::
+.. figure:: images/pneumatic-conveying-data.png
+   :alt: Mass flow rate and velocities
+   :align: center
+   :name: data
 
-    To use the code, run ``python3 lsfb_postprocessing.py $PATH_TO_YOUR_CASE_FOLDER``. The code will generate several graphics showing the pressure profile within the bed, which are going to be stored in ``$PATH_TO_YOUR_CASE_FOLDER/P_x``. It will also generate a ``deltaP_t.csv`` file with the total pressure difference for each time-step. Additionally, it generates a void fraction as a function of time graphic (``eps_t.png``).
+   Results of the pneumatic conveying simulation.
 
-.. important::
+The time-averaged values of velocities at quasi-steady state are shown in the following table.
 
-    You need to ensure that the ``lethe_pyvista_tools`` is working on your machine. Click `here <../../../tools/postprocessing/postprocessing.html>`_ for details.
+.. list-table::
+   :widths: 25 20 20 20
+   :header-rows: 1
+   :align: center
 
-Side View
-~~~~~~~~~~~
+   * -
+     - Fluid
+     - Slug
+     - Particles
+   * - Velocity (m/s)
+     - 2.98
+     - 1.31
+     - 0.84
+   * - Standard deviation (m/s)
+     - 0.02
+     - 0.05
+     - 0.02
 
-Here we show comparison between the experimentally observed and simulated behavior of the liquid-solid fluidized bed with alumina.
-
-The void fraction and velocity profile of the fluid are also shown.
-
-.. raw:: html
-
-    <p align="center"><iframe width="560" height="315" src="https://www.youtube.com/embed/Ra7d-p7wD8Y" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
-
-
-Total Pressure Drop and Bed Expansion
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-In fluidized beds, the total pressure drop (:math:`- \Delta p`) reflects the total weight of particles (:math:`M`). The following equation is derived from a force balance inside the fluidized bed
-
-.. math::
-
-    H(1 - \bar{\varepsilon}_f) = \frac{- \Delta p}{(\rho_p - \rho_f)g} = \frac{M}{\rho_p A} = \mathrm{constant}
-
-where :math:`H` is the total bed height, :math:`\bar{\varepsilon}_f` is the average fluid fraction (void fraction) at the bed region, :math:`\rho_p` and :math:`\rho_f` are the densities of the particles and the fluid (respectively), and :math:`A` is the cross-section area of the equipment.
-
-Liquid fluidized beds are very uniform in terms of particles distribution, resulting in an uniform distribution of  :math:`\varepsilon_f` along the be height. From this hypothesis, we can conclude that, for a constant and uniform fluid inlet flow rate, the pressure slope is:
+According to Lavrinec *et al.* [#lavrinec2020]_, the average slug velocity as a linear relationship with the particle in slug velocity and the diameter of the pipe such as:
 
 .. math::
 
-    \left.- \frac{\mathrm{d} p }{\mathrm{d} z}\right|_{z = 0}^{z = H}  \approx \mathrm{constant}
+   \bar{u}_{\mathrm{slug}} = 0.967 \bar{u}_{\mathrm{particles}} + 0.5\sqrt{gD}
 
-With the pressure slope, it is also possible to determine the bed void fraction manipulating the first equation, which gives:
+From this formula, the calculated slug velocity is 1.26 m/s. Considering that this case was simplified for the sake of the example, that the data in quasi-steady state is not computed for a long simulation time (1.5 s), and especially considering the standard deviation of the results, this value is considered satisfactory.
 
-.. math::
-
-    \bar{\varepsilon}_f = 1 - \frac{\left.- \frac{\mathrm{d} p }{\mathrm{d} z}\right|_{z = 0}^{z = H} }{(\rho_p - \rho_f)g}
-
-The resulting behavior of the pressure along the bed height and the void fraction with time is shown in the following animation.
-
-.. image:: images/pressure_time.gif
-    :alt: Pressure drop as a function of time
-    :align: center
-    :name: press_t
-
-
-Particles Dynamics
-~~~~~~~~~~~~~~~~~~~~
-
-Since the fluidization occurs in a high density fluid, the density difference between alginate and alumina particles have a significant impact on the velocity of the particles inside the bed.
-
-The following animation is in real time. It is possible to notice that, for a similar bed height, the bed of alumina particles expands way faster than the alginate.
-
-.. raw:: html
-
-    <p align="center"><iframe width="560" height="315" src="https://www.youtube.com/embed/kMp86PdZ6tU" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
-
+The time-averaged solid mass flow rate is 1.364 kg/s (no standard deviation are given since the instant mass flow rate always fluctuates) and the length of the slug is 0.48 ± 0.03 m.
 
 
 -----------
 References
 -----------
 
-`[1] <https://doi.org/10.1016/j.partic.2021.04.007>`_ A. Lavrinec, O. Orozovic, H. Rajabnia, K. Williams, M. Jones & G. Klinzing, “An assessment of steady-state conditions in single slug horizontal pneumatic conveying.” *Particuology*, vol. 58, p. 187-195, 2021 doi:10.1016/j.partic.2021.04.007
+.. [#lavrinec2021] `<https://doi.org/10.1016/j.partic.2021.04.007>`_ A. Lavrinec, O. Orozovic, H. Rajabnia, K. Williams, M. Jones & G. Klinzing, “An assessment of steady-state conditions in single slug horizontal pneumatic conveying.” *Particuology*, vol. 58, p. 187-195, 2021 doi:10.1016/j.partic.2021.04.007
+
+.. [#lavrinec2020] `<https://doi.org/10.1016/j.powtec.2020.07.070>`_ A. Lavrinec, O. Orozovic, H. Rajabnia, K. Williams, M. Jones et G. Klinzing, “Velocity and porosity relationships within dense phase pneumatic conveying as studied using coupled CFD-DEM,” Powder Technology, vol. 375, p. 89–100, 2020. doi:10.1016/j.powtec.2020.07.070

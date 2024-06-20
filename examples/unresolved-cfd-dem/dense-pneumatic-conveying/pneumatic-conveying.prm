@@ -10,10 +10,10 @@ set dimension = 3
 subsection simulation control
   set method               = bdf1
   set output name          = cfd_dem
-  set output frequency     = 20
+  set output frequency     = 10
   set time end             = 5
-  set time step            = 1e-3
-  set output path          = ./output_cfddem/
+  set time step            = 5e-4
+  set output path          = ./output/
 end
 
 #---------------------------------------------------
@@ -94,7 +94,17 @@ subsection boundary conditions
   set number = 2
   subsection bc 0
     set id   = 0
-    set type = noslip
+    set type = function weak
+    set beta = 100
+    subsection u
+      set Function expression = 0
+    end
+    subsection v
+      set Function expression = 0
+    end
+    subsection w
+      set Function expression = 0
+    end
   end
   subsection bc 1
     set id                 = 1
@@ -135,9 +145,8 @@ end
 #---------------------------------------------------
 
 subsection cfd-dem
-  set vans model             = modelA
   set grad div               = true
-  set drag model             = kochhill
+  set drag model             = difelice
   set saffman lift force     = true
   set buoyancy force         = true
   set pressure force         = true
