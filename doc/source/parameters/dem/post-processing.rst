@@ -37,12 +37,12 @@ Force chains post-processing
 ----------------------------
 The ``force chains`` feature enables VTU, PTVU, and PVD files to visualize force chains between particles. The name of the generated files is set by the ``output name`` parameter in the simulation_control section plus the suffix ``-force_chains``. The files include:
 
-* Lines to represent forces between particles in contact (use wireframe display with paraview).
+* Lines to represent normal forces between particles in contact (use wireframe display with paraview).
 
 * The force value for each line.
 
 .. warning::
- The force chains feature is not implemented for periodic domains. 
+ The force chains feature is not implemented for contact occurring through periodic boundaries. 
 
 The following video shows force chains for the `Rectangular Hopper example <../../examples/dem/rectangular-hopper/rectangular-hopper.html>`_.
 

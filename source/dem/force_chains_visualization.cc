@@ -525,9 +525,8 @@ ParticlesForceChains<dim, contact_model, rolling_friction_model>::
   const unsigned int n_files =
     (group_files == 0) ? n_processes : std::min(group_files, n_processes);
 
-  for (unsigned int i = 0; i < n_files; ++i)
-    filenames.push_back(file_prefix + "." + Utilities::int_to_string(iter, 5) +
-                        ".vtu");
+  filenames.push_back(file_prefix + "." + Utilities::int_to_string(iter, 5) +
+                      ".vtu");
 
   std::string pvtu_filename =
     (file_prefix + "." + Utilities::int_to_string(iter, 5) + ".pvtu");
