@@ -2,7 +2,7 @@
 Oblique Wall Impact
 ====================
 
-This example of Lethe simulates the impact of a single  aluminium oxide particle on a soda-lime glass wall using the Hertz collision model in 3D. This simulation is being setup according to MFIX DEM05 verification test `[1] <https://mfix.netl.doe.gov/doc/vvuq-manual/main/html/dem/dem-05.html>`_ and comparisons are made with the experimental results of  Kharaz, D.A. Gorham, and A.D. Salman `[2] <https://doi.org/10.1016/S0032-5910(01)00283-2>`_. It is recommended to visit `DEM parameters <../../../parameters/dem/dem.html>`_ for more detailed information on the concepts and physical meanings of the parameters in Lethe.
+This example of Lethe simulates the impact of a single  aluminium oxide particle on a soda-lime glass wall using the Hertz collision model in 3D. This simulation is being setup according to MFIX DEM05 verification test [#mfix]_ and comparisons are made with the experimental results of  Kharaz, D.A. Gorham, and A.D. Salman [#kharaz2001]_. It is recommended to visit `DEM parameters <../../../parameters/dem/dem.html>`_ for more detailed information on the concepts and physical meanings of the parameters in Lethe.
 
 
 --------
@@ -184,7 +184,7 @@ The agreement for the tangential coefficient of restitution is less convincing, 
 Reference
 ---------
 
-`[1] <https://mfix.netl.doe.gov/doc/vvuq-manual/main/html/dem/dem-05.html>`_ “4.5. DEM05: Oblique particle collision,” 4.2. DEM05: Oblique particle collision - MFiX Third Edition documentation, https://mfix.netl.doe.gov/doc/vvuq-manual/main/html/dem/dem-05.html  (accessed Sept. 2023).
+.. [#mfix] NETL Multiphase Flow Science Team, “4.5. DEM05: Oblique particle collision,” 4.2. DEM05: Oblique particle collision - MFiX Third Edition documentation, https://mfix.netl.doe.gov/doc/vvuq-manual/main/html/dem/dem-05.html  (accessed Sept. 2023).
 
-`[2] <https://doi.org/10.1016/S0032-5910(01)00283-2>`_ A.H. Kharaz, D.A. Gorham, and A.D. Salman. An experimental study of the elastic rebound of spheres. Powder Technology, 120(3):281 – 291, 2001.  
+.. [#kharaz2001] \A.H. Kharaz, D.A. Gorham, and A.D. Salman. "An experimental study of the elastic rebound of spheres." *Powder Technology*, vol. 120, no. 3, pp. 281–291, 2001. doi: `10.1016/S0032-5910(01)00283-2 <https://doi.org/10.1016/S0032-5910(01)00283-2>`_.\
 
