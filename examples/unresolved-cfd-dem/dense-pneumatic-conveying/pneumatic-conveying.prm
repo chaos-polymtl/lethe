@@ -8,12 +8,12 @@ set dimension = 3
 #---------------------------------------------------
 
 subsection simulation control
-  set method               = bdf1
-  set output name          = cfd_dem
-  set output frequency     = 10
-  set time end             = 5
-  set time step            = 5e-4
-  set output path          = ./output/
+  set method           = bdf1
+  set output name      = cfd_dem
+  set output frequency = 10
+  set time end         = 5
+  set time step        = 5e-4
+  set output path      = ./output/
 end
 
 #---------------------------------------------------

@@ -155,12 +155,14 @@ end
 #---------------------------------------------------
 
 subsection solid objects
-  set number of solids = 1
-  subsection solid object 0
-    subsection mesh
-      set type      = gmsh
-      set file name = slug-shape.msh
-      set simplex   = true
+  subsection solid surfaces
+    set number of solids = 1
+    subsection solid object 0
+      subsection mesh
+        set type      = gmsh
+        set file name = slug-shape.msh
+        set simplex   = true
+      end
     end
   end
 end
