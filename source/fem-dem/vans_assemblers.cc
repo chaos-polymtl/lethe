@@ -1020,10 +1020,12 @@ GLSVansAssemblerRong<dim>::calculate_particle_fluid_interactions(
          pow(particle_properties[DEM::PropertiesIndex::dp], 2) / 4) *
         relative_velocity[particle_number].norm();
 
+      // If distributing the drag force is disabled, store the drag force as
+      // perticle properties
       if (cfd_dem.distribute_drag_force)
         {
-          particle_properties[DEM::PropertiesIndex::distributed_drag]
-           = momentum_transfer_coefficient;
+          particle_properties[DEM::PropertiesIndex::distributed_drag] =
+            momentum_transfer_coefficient;
         }
       else
         {
@@ -1042,6 +1044,8 @@ GLSVansAssemblerRong<dim>::calculate_particle_fluid_interactions(
       particle_number += 1;
     }
 
+  // If distributing the drag force is disabled, you divide beta_drag by cell
+  // volume here
   if (!cfd_dem.distribute_drag_force)
     {
       beta_drag = beta_drag / scratch_data.cell_volume;
@@ -2178,6 +2182,8 @@ GLSVansAssemblerFPI<dim>::assemble_matrix(
             distance = particle_location.distance(
               quadrature_point_location[q]);
 
+            // If the center of particle is included in the sphere, the drag
+            // force is taken into account
             if (distance <= r_sphere)
               {
                 quadrature_beta_drag += particle_properties[DEM::PropertiesIndex::distributed_drag];
@@ -2246,7 +2252,6 @@ GLSVansAssemblerFPI<dim>::assemble_rhs(
   // Copy data elements
   auto &strong_residual        = copy_data.strong_residual;
   auto &local_rhs              = copy_data.local_rhs;
-  //auto  quadrature_beta_drag              = scratch_data.quadrature_beta_drag;
   auto &undisturbed_flow_force = scratch_data.undisturbed_flow_force;
   const Tensor<1, dim> average_particles_velocity =
     scratch_data.average_particle_velocity;
@@ -2304,7 +2309,8 @@ GLSVansAssemblerFPI<dim>::assemble_rhs(
             
             distance = particle.get_location().distance(quadrature_point_location[q]);
 
-            // If the center of the particle is included in sphere
+            // If the center of particle is included in the sphere, the drag
+            // force is taken into account
             if (distance <= r_sphere)
               {
                 quadrature_beta_drag += particle_properties[DEM::PropertiesIndex::distributed_drag];
@@ -2350,7 +2356,7 @@ GLSVansAssemblerFPI<dim>::assemble_rhs(
               }
           }
         }
-      
+      // Divide by the cell volume. This was implemented in calculate_particle_interaciton previously
       quadrature_beta_drag = quadrature_beta_drag / cell->measure(); 
 
       // Velocity
