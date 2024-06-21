@@ -10,7 +10,7 @@ Features
 
 - Solvers: ``lethe-particles`` and ``lethe-fluid-particles``
 - Three-dimensional problem
-- Shows how to insert particles according to a shape with a `solid object <../../../parameters/dem/solid_objects.html>`_ and the `plane insertion method <../../../parameters/dem/insertion_info.html#plane>`_
+- Displays how to insert particles according to a shape with a `solid object <../../../parameters/dem/solid_objects.html>`_ and the `plane insertion method <../../../parameters/dem/insertion_info.html#plane>`_
 - Has `periodic boundary conditions <../../../parameters/dem/boundary_conditions.html>`_  in DEM and CFD-DEM
 - Uses a `dynamic flow controller <../../../parameters/cfd/dynamic_flow_control.html>`_ in CFD-DEM
 - Uses the `adaptive sparse contacts <../../../parameters/dem/model_parameters.html#adaptive-sparse-contacts-asc>`_ for particle loading in DEM
@@ -34,11 +34,11 @@ Description of the Case
 This example simulates the conveying of particles arranged in a plug/slug with a stationary layer.
 Since the initial particle layout plays an important role in the regime of the pneumatic conveying, the particles are already forming a plug at the beginning of the CFD-DEM simulation.
 Three simulation runs need to be performed.
-First, we use ``lethe-particles`` to load the particles with the file ``loading-particles.prm``.
-The setup of the simulation is a pipe with a solid objects (mesh) that represents the shape of a slug.
-The insertion of particles are done with the plane insertion.
-Second, we use ``lethe-particles`` to settle the particles with the file ``settling-particles.prm``. Only the direction of gravity is changed.
-Finally, we use ``lethe-fluid-particles`` to simulate the dense pneumatic conveying with the file ``pneumatic-conveying.prm`` with periodic boundary conditions.
+First, we call ``lethe-particles`` to load the particles with the file ``loading-particles.prm``.
+The setup of the simulation is a pipe with a solid object (mesh) that represents the shape of a slug.
+The insertion of particles is done with the plane insertion.
+Second, we call ``lethe-particles`` to settle the particles with the file ``settling-particles.prm``. Only the direction of gravity is changed.
+Finally, we call ``lethe-fluid-particles`` to simulate the dense pneumatic conveying with the file ``pneumatic-conveying.prm`` using periodic boundary conditions.
 We enable checkpointing in order to write the DEM checkpoint files which will be used as the starting point of the CFD-DEM simulation.
 The geometry of the pipe and the particle properties are based on the work of Lavrinec *et al*. [#lavrinec2021]_
 
@@ -131,7 +131,7 @@ As said in the previous section, the particles are inserted with the `plane inse
 
 Boundary Conditions DEM
 ~~~~~~~~~~~~~~~~~~~~~~~
-Periodic boundary conditions need to be setup in the DEM simulation since we used them in the CFD-DEM simulation. They are therefore already configured for compatibility. However, we do not want periodicity during the loading of the particles.
+Periodic boundary conditions need to be setup in the DEM simulation since we use them in the CFD-DEM simulation. They are therefore already configured for compatibility. However, we do not want periodicity during the loading of the particles.
 
 .. code-block:: text
 
@@ -149,7 +149,7 @@ Periodic boundary conditions need to be setup in the DEM simulation since we use
 Floating Walls
 ~~~~~~~~~~~~~~
 
-In order to avoid particles to pass through the periodic boundary conditions, we use floating walls. The floating walls are placed at the left and right side of the pipe. We need this pair of walls because periodic particles do not interact with the walls on the other side of the periodic boundary condition.
+In order to avoid particles passing through the periodic boundary conditions, we use floating walls. The floating walls are placed at the left and right side of the pipe. We need this pair of walls because periodic particles do not interact with the walls on the other side of the periodic boundary condition.
 
 .. code-block:: text
 
@@ -189,7 +189,7 @@ Solid Objects
 ~~~~~~~~~~~~~~
 
 The solid object is a simplex surface mesh that represents the shape of a slug. The mesh is generated with the `Gmsh <https://gmsh.info/>`_ software.
-The length of the slug is 0.5 m for the area that fully obstruct the pipe, and there are 45° inclined planes for the rear and the front of the slug. The stationary layer (the layer between periodic slugs) has a height of 0.021 m which represents a fraction of 20% of the cross-section area of the pipe. The following figure shows the different parts of the slug.
+The following figure shows the different parts of the slug. The length of the slug core (where particles fully obstruct the pipe; in green) is 0.5 m, and 45° planes inclined are placed the rear and the front of the slug (in blue). The stationary layer (the layer between periodic slugs; in red) has a height of 0.021 m which represents 20 % of the cross-section area of the pipe. 
 
 .. figure:: images/slug.png
     :alt: Slug
@@ -212,7 +212,8 @@ The length of the slug is 0.5 m for the area that fully obstruct the pipe, and t
 
 Model Parameters
 ~~~~~~~~~~~~~~~~
-The model parameters are quite standard for a DEM simulation with the nonlinear Hertz-Mindlin contact force model, a constant rolling resistance torque, and the velocity Verlet integration method.
+The model parameters are quite standard for a DEM simulation with the nonlinear Hertz-Mindlin contact force model, a constant rolling resistance torque, and the velocity Verlet integration method. Here, we use the `Adaptive Sparse Contacts (ASC) <../../../parameters/dem/model_parameters.html#adaptive-sparse-contacts-asc>`_
+method to speedup the simulation. The method disables the contact computation in quasi-static areas which represents a significant part of the domain during the loading of the particles. Weight factor parameters for the ASC status are use in the load balancing method. No further explanation is given about the method, a future example will be added in order to detail it and to compare the performance gain.
 
 .. note::
 
@@ -296,9 +297,23 @@ Here we allow a 2.5 seconds for the settling of the particles. Since this simula
       set output path      = ./output_dem/
     end
 
+Restart
+~~~~~~~~
+
+This simulation reads the restart, meaning this option is set to true. Also, the checkpointing is reduce to 0.5 seconds.
+
+.. code-block:: text
+
+    subsection restart
+      set checkpoint = true
+      set frequency  = 10000
+      set restart    = true
+      set filename   = dem
+    end
+
 Lagrangian Physical Properties
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-The main difference in this simulation is the gravity now in y-direction, according to the next simulation using the CFD-DEM solver.
+The main difference in this simulation is the gravity. It changes to the y-direction to be coherent with the next simulation using the CFD-DEM solver.
 
 .. code-block:: text
 
@@ -333,7 +348,7 @@ The mesh and the DEM boundary condition sections are identical to the ones in th
 
 Lagrangian Physical Properties
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-The physical properties of the particles are the same as in the DEM simulations, except for the Young's modulus that was increased.
+The physical properties of the particles are the same as in the DEM simulations, except for the Young's modulus that was increased to use the same value as the article [#lavrinec2021]_.
 
 .. code-block:: text
 
@@ -470,7 +485,7 @@ We choose the `quadrature centred method (QCM) <../../../theory/multiphase/cfd_d
 CFD-DEM
 ~~~~~~~~~~
 
-The chosen drag model is Di Felice, and we use the Saffman lift force, the buoyancy force, and the pressure force. The coupling frequency is set to 100, which means that the DEM time step is 5e-6 s, for a Rayleigh critical time step of about 3.5%. The grad-div stabilization is used with a length scale of 0.084, the diameter of the pipe.
+The chosen drag model is Di Felice, and we use the Saffman lift force, the buoyancy force, and the pressure force. The coupling frequency is set to 100, which means that the DEM time step is 5e-6 s, for a Rayleigh critical time step of about 3.5 %. The grad-div stabilization is used with a length scale of 0.084, the diameter of the pipe.
 
 .. code-block:: text
 
