@@ -51,18 +51,20 @@ Launching the simulations is as simple as specifying the executable name and the
 .. code-block:: text
   :class: copy-button
 
-  mpirun -np 8 lethe-particles loading_particles.prm
+  mpirun -np 8 lethe-particles loading-particles.prm
 
 .. code-block:: text
   :class: copy-button
 
-  mpirun -np 8 lethe-particles settling_particles.prm
+  mpirun -np 8 lethe-particles settling-particles.prm
 
 The particle loading and settling simulation should look like this:
 
 .. raw:: html
 
     <p align="center"><iframe width="560" height="315" src="https://www.youtube.com/embed/4uM51PCypZc?si=Xrisa4h87QLjvTWO" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
+Once the previous programs have finished running, you can finally launch the pneumatic conveying simulation with the following command:
 
 .. code-block:: text
   :class: copy-button
@@ -327,7 +329,7 @@ Here we allow a 2.5 seconds for the settling of the particles. Since this simula
 
     subsection simulation control
       set time step        = 5e-5
-      set time end         = 30
+      set time end         = 32.5
       set log frequency    = 500
       set output frequency = 1200
       set output path      = ./output_dem/
@@ -466,7 +468,7 @@ The boundary condition at the wall of the pipe is a weak function where the Diri
     subsection boundary conditions
       set number = 2
       subsection bc 0
-        set id   = 1
+        set id   = 0
         set type = function weak
         set beta = 100
         subsection u
@@ -584,7 +586,7 @@ The results presented here are obtained from a custom post-processing code that 
 Mass Flow Rate and Velocities
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Here we show the average velocities for the fluid, the slug and the particles in slug. The beta force, the averaged solid mass flow rate and the slug length over time are also shown. The shaded area represents the transient state.
+Here we show the average velocities for the fluid, the slug and the particles in slug. The beta force, the averaged solid mass flow rate and the slug length over time are also shown. The shaded area represents the transient state. The quasi-steady state is approximated when velocities fluctuate around the same values.
 
 .. figure:: images/pneumatic-conveying-data.png
    :alt: Mass flow rate and velocities
@@ -607,12 +609,12 @@ The time-averaged values of velocities at quasi-steady state are shown in the fo
      - Particles
    * - Velocity (m/s)
      - 2.98
-     - 1.31
-     - 0.84
+     - 1.30
+     - 0.82
    * - Standard deviation (m/s)
      - 0.02
-     - 0.05
-     - 0.02
+     - 0.06
+     - 0.01
 
 According to Lavrinec *et al.* [#lavrinec2020]_, the average slug velocity has a linear relationship with the particle in slug velocity and the diameter of the pipe such as:
 
@@ -620,9 +622,9 @@ According to Lavrinec *et al.* [#lavrinec2020]_, the average slug velocity has a
 
    \bar{u}_{\mathrm{slug}} = 0.967 \bar{u}_{\mathrm{particles}} + 0.5\sqrt{gD}
 
-From this formula, the calculated slug velocity is 1.26 m/s. Considering that this case was simplified for the sake of the example, that the data in quasi-steady state is not computed for a long simulation time (1.5 s), and especially considering the standard deviation of the results, this value is considered satisfactory.
+From this formula, the calculated slug velocity is 1.25 m/s. Considering that this case was simplified for the sake of the example, that the data in quasi-steady state is not computed for a long simulation time (1 s), and especially considering the standard deviation of the results, this value is considered satisfactory.
 
-The time-averaged solid mass flow rate is 1.364 kg/s (no standard deviation are given since the instant mass flow rate always fluctuates) and the length of the slug is 0.48 ± 0.03 m.
+The time-averaged solid mass flow rate is 1.35 kg/s (no standard deviation are given since the instant mass flow rate always fluctuates) and the length of the slug is 0.48 ± 0.04 m.
 
 
 -----------
