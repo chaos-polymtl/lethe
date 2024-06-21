@@ -629,6 +629,6 @@ The time-averaged solid mass flow rate is 1.364 kg/s (no standard deviation are 
 References
 -----------
 
-.. [#lavrinec2021] `<https://doi.org/10.1016/j.partic.2021.04.007>`_ A. Lavrinec, O. Orozovic, H. Rajabnia, K. Williams, M. Jones & G. Klinzing, “An assessment of steady-state conditions in single slug horizontal pneumatic conveying.” *Particuology*, vol. 58, p. 187-195, 2021 doi:10.1016/j.partic.2021.04.007
+.. [#lavrinec2021] \A. Lavrinec, O. Orozovic, H. Rajabnia, K. Williams, M. Jones & G. Klinzing, “An assessment of steady-state conditions in single slug horizontal pneumatic conveying.” *Particuology*, vol. 58, pp. 187-195, 2021. doi: `10.1016/j.partic.2021.04.007 <https://doi.org/10.1016/j.partic.2021.04.007>`_\.
 
-.. [#lavrinec2020] `<https://doi.org/10.1016/j.powtec.2020.07.070>`_ A. Lavrinec, O. Orozovic, H. Rajabnia, K. Williams, M. Jones et G. Klinzing, “Velocity and porosity relationships within dense phase pneumatic conveying as studied using coupled CFD-DEM,” Powder Technology, vol. 375, p. 89–100, 2020. doi:10.1016/j.powtec.2020.07.070
+.. [#lavrinec2020] \A. Lavrinec, O. Orozovic, H. Rajabnia, K. Williams, M. Jones et G. Klinzing, “Velocity and porosity relationships within dense phase pneumatic conveying as studied using coupled CFD-DEM.” *Powder Technology*, vol. 375, pp. 89–100, 2020. doi: `10.1016/j.powtec.2020.07.070 <https://doi.org/10.1016/j.powtec.2020.07.070>`_\.
