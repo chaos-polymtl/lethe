@@ -2,7 +2,7 @@
 Dense Pneumatic Conveying
 ==================================
 
-It is strongly recommended to visit `DEM parameters <../../../parameters/dem/dem.html>`_  and `CFD-DEM parameters <../../../parameters/unresolved-cfd-dem/unresolved-cfd-dem.html>`_ for more detailed information on the concepts and physical meaning of the parameters used in the DEM and CFD-DEM solvers.
+This example simulates the dense pneumatic conveying of particles in a horizontal periodic pipe.
 
 ----------------------------------
 Features
@@ -41,46 +41,6 @@ Second, we use ``lethe-particles`` to settle the particles with the file ``settl
 Finally, we use ``lethe-fluid-particles`` to simulate the dense pneumatic conveying with the file ``pneumatic-conveying.prm`` with periodic boundary conditions.
 We enable checkpointing in order to write the DEM checkpoint files which will be used as the starting point of the CFD-DEM simulation.
 The geometry of the pipe and the particle properties are based on the work of Lavrinec *et al*. [#lavrinec2021]_
-
-
----------------------------
-Running the Simulations
----------------------------
-Launching the simulations is as simple as specifying the executable name and the parameter file. Assuming that the ``lethe-particles`` and ``lethe-fluid-particles`` executables are within your path, the simulations can be launched in parallel as follows:
-
-.. code-block:: text
-  :class: copy-button
-
-  mpirun -np 8 lethe-particles loading-particles.prm
-
-.. code-block:: text
-  :class: copy-button
-
-  mpirun -np 8 lethe-particles settling-particles.prm
-
-The particle loading and settling simulation should look like this:
-
-.. raw:: html
-
-    <p align="center"><iframe width="560" height="315" src="https://www.youtube.com/embed/4uM51PCypZc?si=Xrisa4h87QLjvTWO" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
-
-Once the previous programs have finished running, you can finally launch the pneumatic conveying simulation with the following command:
-
-.. code-block:: text
-  :class: copy-button
-
-  mpirun -np 8 lethe-fluid-particles pneumatic-conveying.prm
-
-The pneumatic conveying simulation should look like this:
-
-.. raw:: html
-
-    <p align="center"><iframe width="560" height="315" src="https://www.youtube.com/embed/ESfSrmmlzYE?si=1RTsvFzcwvyelGme" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
-
-.. note::
-   The pneumatic conveying simulation lasts 5 seconds in this example, but last 10 seconds in the video. You can change the end time in the parameter file.
-
-Lethe will generate a number of files. The most important one bears the extension ``.pvd``. It can be read by popular visualization programs such as `Paraview <https://www.paraview.org/>`_.
 
 
 -------------------
@@ -252,11 +212,11 @@ The length of the slug is 0.5 m for the area that fully obstruct the pipe, and t
 
 Model Parameters
 ~~~~~~~~~~~~~~~~
-The model parameters are quite standard for a DEM simulation with the nonlinear Hertz-Mindlin contact force model, a constant rolling resistance torque, and the velocity Verlet integration method. Here, we use the `Adaptive Sparse Contacts <../../../parameters/dem/model_parameters.html#adaptive-sparse-contacts-asc>`_
-method to speedup the simulation. The method will disabled the contact computation in quasi-static areas which represents a significant part of the domain during the loading of the particles. Weight factor parameters for the ASC status are use in the load balancing method. No further explanation a given about the method, a future example will be added in order to detail it and to compare the performance gain.
+The model parameters are quite standard for a DEM simulation with the nonlinear Hertz-Mindlin contact force model, a constant rolling resistance torque, and the velocity Verlet integration method.
 
-.. todo::
-    Add an example to detail the Adaptive Sparse Contacts method.
+.. note::
+
+    Here, we use the `Adaptive Sparse Contacts <../../../parameters/dem/model_parameters.html#adaptive-sparse-contacts-asc>`_ method to speedup the simulation. The method will disabled the contact computation in quasi-static areas which represents a significant part of the domain during the loading of the particles. Weight factor parameters for the ASC status are use in the load balancing method. No further explanation a given about the method, a future example will be added in order to detail it and to compare the performance gain.
 
 .. code-block:: text
 
@@ -323,6 +283,7 @@ In this section we show the difference of the parameter file ``settling-particle
 
 Simulation Control
 ~~~~~~~~~~~~~~~~~~~~
+
 Here we allow a 2.5 seconds for the settling of the particles. Since this simulation is a restart of the loading particle simulation, the end time is 32.5 seconds.
 
 .. code-block:: text
@@ -333,20 +294,6 @@ Here we allow a 2.5 seconds for the settling of the particles. Since this simula
       set log frequency    = 500
       set output frequency = 1200
       set output path      = ./output_dem/
-    end
-
-Restart
-~~~~~~~~
-
-This simulation reads the restart, meaning this option is set to true. Also, the checkpointing is reduce to 0.5 seconds.
-
-.. code-block:: text
-
-    subsection restart
-      set checkpoint = true
-      set frequency  = 30000
-      set restart    = true
-      set filename   = dem
     end
 
 Lagrangian Physical Properties
@@ -577,11 +524,57 @@ Linear Solver
    end
 
 
+---------------------------
+Running the Simulations
+---------------------------
+Launching the simulations is as simple as specifying the executable name and the parameter file. Assuming that the ``lethe-particles`` and ``lethe-fluid-particles`` executables are within your path, the simulations can be launched in parallel as follows:
+
+.. code-block:: text
+  :class: copy-button
+
+  mpirun -np 8 lethe-particles loading-particles.prm
+
+.. code-block:: text
+  :class: copy-button
+
+  mpirun -np 8 lethe-particles settling-particles.prm
+
+.. note::
+   Running the particle loading simulation using 8 cores takes approximately 30 minutes and the particle settling simulation takes approximately 1 minute.
+
+Once the previous programs have finished running, you can finally launch the pneumatic conveying simulation with the following command:
+
+.. code-block:: text
+  :class: copy-button
+
+  mpirun -np 8 lethe-fluid-particles pneumatic-conveying.prm
+
+.. note::
+   Running the pneumatics conveying simulation using 8 cores takes approximately 2.25 hours. Running all the executables in sequence will take less tham 3 hours.
+
+Lethe will generate a number of files. The most important one bears the extension ``.pvd``. It can be read by popular visualization programs such as `Paraview <https://www.paraview.org/>`_.
+
 --------
 Results
 --------
 
 The results presented here are obtained from a custom post-processing code that is currently not provided with the example.
+
+The particle loading and settling simulation should look like this:
+
+.. raw:: html
+
+    <p align="center"><iframe width="560" height="315" src="https://www.youtube.com/embed/4uM51PCypZc?si=Xrisa4h87QLjvTWO" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
+The pneumatic conveying simulation should look like this:
+
+.. raw:: html
+
+    <p align="center"><iframe width="560" height="315" src="https://www.youtube.com/embed/ESfSrmmlzYE?si=1RTsvFzcwvyelGme" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
+.. note::
+   The pneumatic conveying simulation lasts 5 seconds in this example, but last 10 seconds in the video. You can change the end time in the parameter file.
+
 
 Mass Flow Rate and Velocities
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
