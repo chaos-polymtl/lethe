@@ -42,6 +42,18 @@ Finally, we call ``lethe-fluid-particles`` to simulate the dense pneumatic conve
 We enable checkpointing in order to write the DEM checkpoint files which will be used as the starting point of the CFD-DEM simulation.
 The geometry of the pipe and the particle properties are based on the work of Lavrinec *et al*. [#lavrinec2021]_
 
+.. figure:: images/insertion.png
+    :alt: insertion
+    :align: center
+
+    View of the pipe after the loading of particles with the insertion plane.
+
+
+.. figure:: images/pneumatic.png
+    :alt: pneumatic-conveying
+    :align: center
+
+    View of the pipe during the pneumatic conveying.
 
 -------------------
 DEM Parameter files
@@ -114,7 +126,7 @@ Insertion Info
 
 As said in the previous section, the particles are inserted with the `plane insertion method <../../../parameters/dem/insertion_info.html#plane>`_. The plane is located at the right side of the pipe. As we can see from the following figure, the plane is positioned at an angle. Since the plane insertion method will insert one particle in a cell that is intersected by the plane, we need to place the plane so it does not intersect the area above the solid object. Particles have an initial velocity in x-direction in order to speed up the packing process and in y-direction to have more collisions and randomness in the distribution.
 
-.. figure:: images/insertion.png
+.. figure:: images/insertion-plane.png
     :alt: insertion.
     :align: center
 
@@ -218,7 +230,8 @@ The following figure shows the different parts of the slug. The length of the sl
 Model Parameters
 ----------------
 
-The model parameters are quite standard for a DEM simulation with the nonlinear Hertz-Mindlin contact force model, a constant rolling resistance torque, and the velocity Verlet integration method.
+The model parameters are quite standard for a DEM simulation with the non-linear Hertz-Mindlin contact force model, a constant rolling resistance torque, and the velocity Verlet integration method.
+
 .. note::
 
     Here, we use the `Adaptive Sparse Contacts <../../../parameters/dem/model_parameters.html#adaptive-sparse-contacts-asc>`_ method to speedup the simulation. The method will disabled the contact computation in quasi-static areas which represents a significant part of the domain during the loading of the particles. Weight factor parameters for the ASC status are use in the load balancing method. No further explanation a given about the method, a future example will be added in order to detail it and to compare the performance gain.
@@ -284,7 +297,7 @@ Checkpointing is enabled since we need the output to rerun the DEM solver to set
 Settling Particles
 ~~~~~~~~~~~~~~~~~~
 
-In this section we show the difference of the parameter file ``settling-particles.prm`` needed to settle the particles with the same gravity direction as the pneumatic conveying simulation. Also, many sections related to the loading are not needed such as the the insertion info, the floating walls, and the solid objects.
+In this section we show the difference in the parameter file ``settling-particles.prm`` needed to settle the particles with the same gravity vector as the pneumatic conveying simulation. Consequently, many sections related to the loading are not needed such as the the insertion info, the floating walls, and the solid objects.
 
 Simulation Control
 ------------------
@@ -350,7 +363,7 @@ CFD-DEM Parameter file
 Pneumatic Conveying Simulation
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The CFD simulation is to be carried out using the slug in the previous step. We will discuss the different parameter file sections.
+The CFD simulation is to be carried out using the slug generated in the previous step. We will discuss the different sections of the parameter file used for the CFD-DEM simulation.
 The mesh and the DEM boundary condition sections are identical to the ones in the DEM simulations and will not be shown again.
 
 Lagrangian Physical Properties
@@ -494,7 +507,8 @@ We choose the `quadrature centred method (QCM) <../../../theory/multiphase/cfd_d
 CFD-DEM
 -------
 
-The chosen drag model is Di Felice, and we use the Saffman lift force, the buoyancy force, and the pressure force. The coupling frequency is set to 100, which means that the DEM time step is 5e-6 s, for a Rayleigh critical time step of about 3.5 %. The grad-div stabilization is used with a length scale of 0.084, the diameter of the pipe.
+We use the Di Felice drag model, the Saffman lift force, the buoyancy force, and the pressure force. The coupling frequency is set to 100, which means that the DEM time step is 5e-6 s. The DEM time step is 3.5% of the Rayleigh critical time step. The grad-div stabilization is used with a length scale of 0.084, the diameter of the pipe.
+
 
 .. code-block:: text
 
