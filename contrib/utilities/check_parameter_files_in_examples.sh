@@ -47,7 +47,7 @@ for folder in ${lethe_fluid_particles[@]}; do
     echo $file
     # If "generator" or "particle" is in the filename this is a
     # lethe-particles file
-    if [[ "$file" == *"generator"* ]] || [[ "$file" == *"particle"* ]];then
+    if [[ "$file" == *"particles"* ]];then
         lethe-parameter-check $file lethe-particles
     #else we assume it's a CFD-DEM file
     else
