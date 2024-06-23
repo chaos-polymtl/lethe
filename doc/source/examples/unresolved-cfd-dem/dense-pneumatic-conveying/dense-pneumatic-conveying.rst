@@ -561,12 +561,12 @@ Launching the simulations is as simple as specifying the executable name and the
 .. note::
    Running the particle loading simulation using 8 cores takes approximately 30 minutes and the particle settling simulation takes approximately 1 minute.
 
-Once the previous programs have finished running, you can finally launch the pneumatic conveying simulation with the following command:
+Once the previous programs have finished running, you can finally launch the pneumatic conveying simulation and get the simulation log for post-processing with the following command:
 
 .. code-block:: text
   :class: copy-button
 
-  mpirun -np 8 lethe-fluid-particles pneumatic-conveying.prm
+  mpirun -np 8 lethe-fluid-particles pneumatic-conveying.prm | tee pneumatic-log.out
 
 .. note::
    Running the pneumatics conveying simulation using 8 cores takes approximately 2.25 hours. Running all the executables in sequence will take less than 3 hours.
@@ -576,8 +576,6 @@ Lethe will generate a number of files. The most important one bears the extensio
 -------
 Results
 -------
-
-The results presented here are obtained from a custom post-processing code that is currently not provided with the example.
 
 The particle loading and settling simulation should look like this:
 
@@ -594,6 +592,17 @@ The pneumatic conveying simulation should look like this:
 .. note::
    The pneumatic conveying simulation lasts 5 seconds in this example, but last 10 seconds in the video. You can change the end time in the parameter file.
 
+Post-processing
+~~~~~~~~~~~~~~~
+The data is extracted with the Lethe PyVista tool and post-processed with custom functions in the files ``pyvista_utilities.py`` and ``log_utilities.py``.
+Extraction, post-processing and plotting are automated in the script ``pneumatic-conveying_post_processing.py``:
+
+.. code-block:: text
+  :class: copy-button
+
+  python3 pneumatic-conveying_post_processing.py
+
+The script will generate the figure and print the results in the console. If you want to modify the path or the filenames, you have to modify the script.
 
 Mass Flow Rate and Velocities
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -622,10 +631,10 @@ The time-averaged values of velocities at quasi-steady state are shown in the fo
    * - Velocity (m/s)
      - 2.98
      - 1.30
-     - 0.82
+     - 0.83
    * - Standard deviation (m/s)
      - 0.02
-     - 0.06
+     - 0.02
      - 0.01
 
 According to Lavrinec *et al.* [#lavrinec2020]_, the average slug velocity has a linear relationship with the particle in slug velocity and the diameter of the pipe such as:
@@ -636,7 +645,7 @@ According to Lavrinec *et al.* [#lavrinec2020]_, the average slug velocity has a
 
 From this formula, the calculated slug velocity is 1.25 m/s. Considering that this case was simplified for the sake of the example, that the data in quasi-steady state is not computed for a long simulation time (1 s), and especially considering the standard deviation of the results, this value is considered satisfactory.
 
-The time-averaged solid mass flow rate is 1.35 kg/s (no standard deviation are given since the instant mass flow rate always fluctuates) and the length of the slug is 0.48 ± 0.04 m.
+The time-averaged solid mass flow rate is 1.40 kg/s (no standard deviation are given since the instant mass flow rate always fluctuates) and the length of the slug is 0.47 ± 0.01 m.
 
 ----------
 References
