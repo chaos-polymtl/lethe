@@ -543,12 +543,12 @@ CahnHilliard<dim>::calculate_phase_energy()
             present_solution, local_phase_order_gradients);
           for (unsigned int q = 0; q < n_q_points; q++)
             {
-              bulk_energy += (1 - local_phase_order_values[q] *
+              bulk_energy += (0.25/(epsilon * epsilon))*(1 - local_phase_order_values[q] *
                                     local_phase_order_values[q]) *
                              (1 - local_phase_order_values[q] *
                                     local_phase_order_values[q]) *
                              fe_values.JxW(q);
-              interface_energy += epsilon * epsilon * 0.5 *
+              interface_energy +=  0.5 *
                                   (local_phase_order_gradients[q] *
                                    local_phase_order_gradients[q]) *
                                   fe_values.JxW(q);
