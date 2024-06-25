@@ -47,7 +47,9 @@ jobs:
 
           echo "Github actions is sane!"
           echo "Running build with deal.ii version ${{ matrix.dealii_version }} on branch ${GITHUB_REF#refs/heads/}"
-          export  | grep DIR
+          ls
+          export
+          
 
 
       # Checks-out Lethe with branch of triggering commit
