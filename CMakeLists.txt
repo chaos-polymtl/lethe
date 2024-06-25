@@ -1,3 +1,5 @@
+#Dummy line added to trigger CI
+
 cmake_minimum_required(VERSION 3.8...3.21)
 if(CMAKE_VERSION VERSION_LESS 3.12) # To support the version range
   cmake_policy(VERSION ${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION})
