@@ -595,12 +595,12 @@ The pneumatic conveying simulation should look like this:
 Post-processing
 ~~~~~~~~~~~~~~~
 The data is extracted with the Lethe PyVista tool and post-processed with custom functions in the files ``pyvista_utilities.py`` and ``log_utilities.py``.
-Extraction, post-processing and plotting are automated in the script ``pneumatic-conveying_post_processing.py``:
+Extraction, post-processing and plotting are automated in the script ``pneumatic-conveying_post-processing.py``:
 
 .. code-block:: text
   :class: copy-button
 
-  python3 pneumatic-conveying_post_processing.py
+  python3 pneumatic-conveying_post-processing.py
 
 The script will generate the figure and print the results in the console. If you want to modify the path or the filenames, you have to modify the script.
 
