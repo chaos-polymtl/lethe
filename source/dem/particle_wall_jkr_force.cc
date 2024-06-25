@@ -429,15 +429,14 @@ ParticleWallJKRForce<dim>::calculate_jkr_contact_force_and_torque(
   const double P  = -Utilities::fixed_power<2>(c2) / 12. - c0;
   const double Q  = -Utilities::fixed_power<3>(c2) / 108. + c0 * c2 / 3. -
                    Utilities::fixed_power<2>(c1) * 0.125;
-  const double root1  = std::max(0.,
-                                (0.25 * Utilities::fixed_power<2>(Q)) +
-                                  (Utilities::fixed_power<3>(P) / 27.));
-  const double U      = std::cbrt(-0.5 * Q + std::sqrt(root1));
+  const double root1 =
+    0.25 * Utilities::fixed_power<2>(Q) + (Utilities::fixed_power<3>(P) / 27.);
+  const double U      = std::cbrt(-0.5 * Q + std::sqrt(std::abs(root1)));
   const double s      = -c2 * (5. / 6.) + U - P / (3. * U);
-  const double w      = std::sqrt(std::max(1e-16, c2 + 2. * s));
+  const double w      = std::sqrt(1e-16 + c2 + 2. * s);
   const double lambda = 0.5 * c1 / w;
-  const double root2  = std::max(1e-16, w * w - 4. * (c2 + s + lambda));
-  const double a      = 0.5 * (w + std::sqrt(root2));
+  const double root2  = w * w - 4. * (c2 + s + lambda);
+  const double a      = 0.5 * (w + std::sqrt(root2 + 1e-16));
 
   // Calculation of normal damping and tangential spring and dashpot constants
   // using particle and wall properties.
@@ -464,9 +463,10 @@ ParticleWallJKRForce<dim>::calculate_jkr_contact_force_and_torque(
   const double normal_force_norm =
     4. * this->effective_youngs_modulus[particle_type] *
       Utilities::fixed_power<3>(a) / (3. * effective_radius) -
-    std::sqrt(8 * M_PI * this->effective_surface_energy[particle_type] *
-              this->effective_youngs_modulus[particle_type] *
-              Utilities::fixed_power<3>(a)) +
+    std::sqrt(8. * M_PI * this->effective_surface_energy[particle_type] *
+                this->effective_youngs_modulus[particle_type] *
+                Utilities::fixed_power<3>(a) +
+              1E-16) +
     normal_damping_constant * contact_info.normal_relative_velocity;
 
   // Calculation of normal force using the normal_force_norm and the
