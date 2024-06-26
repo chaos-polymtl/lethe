@@ -640,6 +640,9 @@ private:
   // particles.
   IBParticlesDEM<dim> ib_dem;
 
+  // Function that describes all solids signed distance functions together
+  std::shared_ptr<Shape<dim>> combined_shapes;
+
   // Postprocessors to output the signed distance function of the immersed
   // solids
   std::shared_ptr<LevelsetPostprocessor<dim>> levelset_postprocessor;

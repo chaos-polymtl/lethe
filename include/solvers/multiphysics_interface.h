@@ -564,6 +564,17 @@ public:
   DoFHandler<dim> *
   get_projected_phase_fraction_gradient_dof_handler();
 
+  /**
+   * @brief Request immersed solid signed distance function
+   */
+  std::shared_ptr<Function<dim>>
+  get_immersed_solid_signed_distance_function();
+
+  /**
+   * @brief Share immersed solid signed distance function
+   */
+  void
+    set_immersed_solid_signed_distance_function(std::shared_ptr<Function<dim>>);
 
   /**
    * @brief Request the previous solutions of a given physics
@@ -909,7 +920,8 @@ private:
   // solver.
   GlobalVectorType *reynolds_stress_solutions;
 
-
+  // Immersed solid signed distance function to be used by auxiliary physics
+  std::shared_ptr<Function<dim>> immersed_solid_signed_distance_function;
 
   // past (minus 1) solution
   std::map<PhysicsID, GlobalVectorType *>      physics_solutions_m1;

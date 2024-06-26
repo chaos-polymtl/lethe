@@ -51,6 +51,9 @@ Tracer<dim>::assemble_system_matrix()
   this->system_matrix = 0;
   setup_assemblers();
 
+  immersed_solid_signed_distance_function =
+    this->multiphysics->get_immersed_solid_signed_distance_function();
+
   const DoFHandler<dim> *dof_handler_fluid =
     multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
 
@@ -95,8 +98,7 @@ Tracer<dim>::assemble_local_system_matrix(
                           this->evaluation_point,
                           this->previous_solutions,
                           &(*source_term),
-                          &(*sphere_function) // TODO METTRE LA BONNE FONCTION
-      );
+                          &(*immersed_solid_signed_distance_function));
     }
   else
     {
@@ -197,6 +199,9 @@ Tracer<dim>::assemble_system_rhs()
   this->system_rhs = 0;
   setup_assemblers();
 
+  immersed_solid_signed_distance_function =
+    this->multiphysics->get_immersed_solid_signed_distance_function();
+
   const DoFHandler<dim> *dof_handler_fluid =
     multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
 
@@ -241,8 +246,7 @@ Tracer<dim>::assemble_local_system_rhs(
                           this->evaluation_point,
                           this->previous_solutions,
                           &(*source_term),
-                          &(*sphere_function) // TODO METTRE LA BONNE FONCTION
-      );
+                          &(*immersed_solid_signed_distance_function));
     }
   else
     {

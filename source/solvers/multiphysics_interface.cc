@@ -217,6 +217,25 @@ MultiphysicsInterface<dim>::get_projected_phase_fraction_gradient_dof_handler()
 }
 
 template <int dim>
+std::shared_ptr<Function<dim>>
+MultiphysicsInterface<dim>::get_immersed_solid_signed_distance_function()
+{
+  if (!this->immersed_solid_signed_distance_function)
+    this->immersed_solid_signed_distance_function =
+      std::make_shared<Functions::ZeroFunction<dim>>();
+
+  return this->immersed_solid_signed_distance_function;
+}
+
+template <int dim>
+void
+MultiphysicsInterface<dim>::set_immersed_solid_signed_distance_function(
+  std::shared_ptr<Function<dim>> function)
+{
+  this->immersed_solid_signed_distance_function = function;
+}
+
+template <int dim>
 void
 MultiphysicsInterface<dim>::inspect_multiphysics_models_dependencies(
   const SimulationParameters<dim> &nsparam)
