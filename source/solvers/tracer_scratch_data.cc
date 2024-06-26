@@ -28,6 +28,8 @@ TracerScratchData<dim>::allocate()
   this->tracer_diffusivity_0 = std::vector<double>(n_q_points);
   this->tracer_diffusivity_1 = std::vector<double>(n_q_points);
 
+  // Solid signed distance function
+  this->sdf_values = std::vector<double>(n_q_points);
 
   // Velocity for BDF schemes
   this->previous_tracer_values =
@@ -85,6 +87,12 @@ TracerScratchData<dim>::calculate_physical_properties()
       default:
         throw std::runtime_error("Unsupported number of fluids (>2)");
     }
+
+  // TODO Change to the solid diffusivity. For now, we assume it is 0 just for
+  // testing.
+  for (unsigned int q = 0; q < this->n_q_points; ++q)
+    if (sdf_values[q] < 0)
+      tracer_diffusivity[q] = 0.;
 }
 
 
