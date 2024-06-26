@@ -1125,16 +1125,6 @@ GLSNavierStokesVOFAssemblerNonNewtonianCore<dim>::assemble_rhs(
           calculate_navier_stokes_gls_tau_transient(
             u_mag, viscosity_for_stabilization_vector[q] / density_eq, h, sdt);
 
-
-      // Filtered phase fraction gradient for strong residual
-      const Tensor<1, dim> &filtered_phase_gradient =
-        scratch_data.filtered_phase_gradient_values[q];
-
-      // Calculate viscosity jump for additional strong residual term
-      const double dynamic_viscosity_jump =
-        scratch_data.dynamic_viscosity_1[q] -
-        scratch_data.dynamic_viscosity_0[q];
-
       // Calculate the strong residual for GLS stabilization. According to the
       // mathematical formulation, the viscosity jump term (-
       // dynamic_viscosity_jump * (shear_rate * filtered_phase_gradient)) should
