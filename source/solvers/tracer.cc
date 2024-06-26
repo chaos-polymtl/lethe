@@ -92,8 +92,6 @@ Tracer<dim>::assemble_local_system_matrix(
 
   if (this->simulation_parameters.particlesParameters->nb_particles > 0)
     {
-      std::shared_ptr<Function<dim>> sphere_function =
-        std::make_shared<Functions::SignedDistance::Sphere<dim>>();
       scratch_data.reinit(cell,
                           this->evaluation_point,
                           this->previous_solutions,
@@ -240,8 +238,6 @@ Tracer<dim>::assemble_local_system_rhs(
 
   if (this->simulation_parameters.particlesParameters->nb_particles > 0)
     {
-      std::shared_ptr<Function<dim>> sphere_function =
-        std::make_shared<Functions::SignedDistance::Sphere<dim>>();
       scratch_data.reinit(cell,
                           this->evaluation_point,
                           this->previous_solutions,
