@@ -22,7 +22,7 @@ end
 #---------------------------------------------------
 
 subsection multiphysics
-  set VOF = true
+  set VOF           = true
   set heat transfer = true
 end
 
@@ -31,11 +31,11 @@ end
 #---------------------------------------------------
 
 subsection mesh
-  set type               = gmsh
+  set type = gmsh
 
   # GMSH file name
-  set file name          = 2d-benchmark.msh
-  
+  set file name = ../../2d-benchmark.msh
+
   # Initial refinement of the mesh
   set initial refinement = 2
 end
@@ -76,7 +76,7 @@ subsection boundary conditions
     set id   = 4
     set type = function
     subsection u
-      set Function expression = 0.1 
+      set Function expression = 0.1
     end
     subsection v
       set Function expression = 0
@@ -91,37 +91,36 @@ end
 subsection boundary conditions heat transfer
   set number = 6
   subsection bc 0
-    set id    = 2
-    set type  = temperature
+    set id   = 2
+    set type = temperature
     subsection value
       set Function expression = 298
     end
   end
   subsection bc 1
-    set id    = 5
-    set type  = noflux
+    set id   = 5
+    set type = noflux
   end
   subsection bc 2
-    set id    = 6
-    set type  = noflux
+    set id   = 6
+    set type = noflux
   end
   subsection bc 3
-    set id    = 7
-    set type  = noflux
+    set id   = 7
+    set type = noflux
   end
   subsection bc 4
-    set id    = 4
-    set type  = temperature
+    set id   = 4
+    set type = temperature
     subsection value
       set Function expression = 298
     end
   end
   subsection bc 5
-    set id    = 3
-    set type  = noflux
+    set id   = 3
+    set type = noflux
   end
 end
-
 
 #---------------------------------------------------
 # Initial condition
@@ -151,50 +150,33 @@ end
 subsection physical properties
   set number of fluids = 2
   subsection fluid 1
-    set density             = 4420e-9
-    
+    set density = 4420e-9
+
     set thermal conductivity model = phase_change
     set thermal expansion model    = phase_change
     set rheological model          = phase_change
     set specific heat model        = phase_change
 
     subsection phase change
-      # Enthalpy of the phase change
-      set latent enthalpy      		= 290000e6
-      
-      # Temperature of the liquidus
-      set liquidus temperature 		= 1928.0
-
-      # Temperature of the solidus
-      set solidus temperature  		= 1878.0
-      
-      # viscosity of the liquid phase
-      set viscosity liquid 		= 0.905
-
-      # viscosity of the solid phase
-      set viscosity solid  		= 90500
-      
-      # thermal conductivity of the liquid phase
-      set thermal conductivity liquid	= 28.8e3
-      
-      # thermal conductivity of the solid phase
-      set thermal conductivity solid	= 28.8e3
-      
-      # Specific heat of the liquid phase
-      set specific heat liquid 		= 1126e6
-
-      # Specific heat of the solid phase
-      set specific heat solid  		= 800e6
+      set latent enthalpy             = 290000e6
+      set liquidus temperature        = 1928.0
+      set solidus temperature         = 1878.0
+      set viscosity liquid            = 0.905
+      set viscosity solid             = 90500
+      set thermal conductivity liquid = 28.8e3
+      set thermal conductivity solid  = 28.8e3
+      set specific heat liquid        = 1126e6
+      set specific heat solid         = 800e6
     end
   end
-  
+
   subsection fluid 0
-    set density             = 1.784e-9
-    set kinematic viscosity = 56.1
+    set density              = 1.784e-9
+    set kinematic viscosity  = 56.1
     set thermal conductivity = 0.018e3
-    set specific heat = 520e6
+    set specific heat        = 520e6
   end
-  
+
   set number of material interactions = 1
   subsection material interaction 0
     set type = fluid-fluid
@@ -205,8 +187,8 @@ subsection physical properties
       set surface tension coefficient                 = 1.52
       set reference state temperature                 = 1928
       set temperature-driven surface tension gradient = -5.5e-4
-      set liquidus temperature 		= 1928 # Theta
-      set solidus temperature  		= 1878 # Theta
+      set liquidus temperature                        = 1928
+      set solidus temperature                         = 1878
     end
   end
 end
@@ -251,7 +233,7 @@ subsection VOF
     set max iterations          = 50
     set monitored fluid         = fluid 1
     set tolerance               = 1e-7
-    set verbosity = quiet
+    set verbosity               = quiet
   end
   subsection surface tension force
     set enable                                   = true
@@ -268,17 +250,17 @@ end
 
 subsection evaporation
   set evaporation mass flux model = temperature_dependent
-  set enable evaporative cooling = true
-  set enable recoil pressure = true
-  set evaporation latent heat = 8.9e12 
-  set molar mass = 4.58e-2
-  set boiling temperature = 3550
-  
-  set evaporation coefficient = 0.82
+  set enable evaporative cooling  = true
+  set enable recoil pressure      = true
+  set evaporation latent heat     = 8.9e12
+  set molar mass                  = 4.58e-2
+  set boiling temperature         = 3550
+
+  set evaporation coefficient     = 0.82
   set recoil pressure coefficient = 0.56
-  set ambient pressure = 101325e-3
-  set liquid density = 4420.0e-9
-  set universal gas constant = 8.314e6
+  set ambient pressure            = 101325e-3
+  set liquid density              = 4420.0e-9
+  set universal gas constant      = 8.314e6
 end
 
 #---------------------------------------------------
@@ -286,10 +268,10 @@ end
 #---------------------------------------------------
 
 subsection post-processing
-  set calculate mass conservation = true
-  set verbosity                   = verbose
+  set calculate mass conservation      = true
+  set calculate temperature statistics = true
+  set verbosity                        = verbose
 end
-
 
 #---------------------------------------------------
 # Non-Linear Solver Control
@@ -351,7 +333,6 @@ subsection linear solver
 end
 
 subsection restart
-  set filename   = restart
-  set restart    = true
+  set filename = restart
+  set restart  = true
 end
-
