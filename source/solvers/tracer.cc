@@ -87,11 +87,27 @@ Tracer<dim>::assemble_local_system_matrix(
   auto source_term = simulation_parameters.source_term.tracer_source;
   source_term->set_time(simulation_control->get_current_time());
 
-  scratch_data.reinit(cell,
-                      this->evaluation_point,
-                      this->previous_solutions,
-                      &(*source_term));
-
+  if (this->simulation_parameters.particlesParameters->nb_particles > 0)
+    {
+      std::shared_ptr<Function<dim>> sphere_function =
+        std::make_shared<Functions::SignedDistance::Sphere<dim>>();
+      scratch_data.reinit(cell,
+                          this->evaluation_point,
+                          this->previous_solutions,
+                          &(*source_term),
+                          &(*sphere_function) // TODO METTRE LA BONNE FONCTION
+      );
+    }
+  else
+    {
+      std::shared_ptr<Function<dim>> zero_function =
+        std::make_shared<Functions::ZeroFunction<dim>>(1);
+      scratch_data.reinit(cell,
+                          this->evaluation_point,
+                          this->previous_solutions,
+                          &(*source_term),
+                          &(*zero_function));
+    }
   const DoFHandler<dim> *dof_handler_fluid =
     multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
 
@@ -217,10 +233,27 @@ Tracer<dim>::assemble_local_system_rhs(
   auto source_term = simulation_parameters.source_term.tracer_source;
   source_term->set_time(simulation_control->get_current_time());
 
-  scratch_data.reinit(cell,
-                      this->evaluation_point,
-                      this->previous_solutions,
-                      &(*source_term));
+  if (this->simulation_parameters.particlesParameters->nb_particles > 0)
+    {
+      std::shared_ptr<Function<dim>> sphere_function =
+        std::make_shared<Functions::SignedDistance::Sphere<dim>>();
+      scratch_data.reinit(cell,
+                          this->evaluation_point,
+                          this->previous_solutions,
+                          &(*source_term),
+                          &(*sphere_function) // TODO METTRE LA BONNE FONCTION
+      );
+    }
+  else
+    {
+      std::shared_ptr<Function<dim>> zero_function =
+        std::make_shared<Functions::ZeroFunction<dim>>(1);
+      scratch_data.reinit(cell,
+                          this->evaluation_point,
+                          this->previous_solutions,
+                          &(*source_term),
+                          &(*zero_function));
+    }
 
   const DoFHandler<dim> *dof_handler_fluid =
     multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
