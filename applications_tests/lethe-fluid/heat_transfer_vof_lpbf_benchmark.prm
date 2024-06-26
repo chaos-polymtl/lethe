@@ -9,12 +9,11 @@ set dimension = 2
 
 subsection simulation control
   set method           = bdf2
-  set output frequency = 100
-  set output path      = ./output/
+  set output frequency = 0
   set time end         = 0.002
-  set time step        = 1.9e-8
+  set time step        = 1e-7
   set max cfl          = 0.75
-  set max time step    = 1.9e-8
+  set max time step    = 1e-7
   set adapt            = true
 end
 
@@ -33,8 +32,8 @@ end
 
 subsection mesh
   set type               = gmsh
-  set file name          = ../mesh/2d-benchmark.msh
-  set initial refinement = 4
+  set file name          = ../../2d-benchmark.msh
+  set initial refinement = 3
 end
 
 subsection box refinement
@@ -56,8 +55,8 @@ subsection mesh adaptation
   set variable                   = temperature
   set fraction type              = fraction
   set mesh refinement controller = false
-  set max refinement level       = 7
-  set min refinement level       = 4
+  set max refinement level       = 6
+  set min refinement level       = 3
   set frequency                  = 1
   set fraction refinement        = 0.4
   set fraction coarsening        = 0.0
