@@ -311,12 +311,15 @@ private:
   VectorType previous_solution;
   VectorType location;
   VectorType signed_distance;
+  VectorType distance;
+  
   
   
   std::map<types::global_cell_index,std::vector<Point<dim>>> intersection_point;
   
   std::map<types::global_cell_index,Point<dim>> intersection_cell;
   
+  std::set<types::global_cell_index> intersection_halo_cell;
     
   VectorType system_rhs;
   
@@ -380,6 +383,8 @@ void AdvectionProblem<dim>::setup_system()
   level_set.reinit(locally_owned_dofs, locally_relevant_dofs, mpi_communicator);
   location.reinit(locally_owned_dofs, locally_relevant_dofs, mpi_communicator);
   signed_distance.reinit(locally_owned_dofs, locally_relevant_dofs, mpi_communicator);
+  distance.reinit(locally_owned_dofs, locally_relevant_dofs, mpi_communicator);
+  
   
   system_rhs.reinit(locally_owned_dofs, mpi_communicator);
                      
@@ -601,10 +606,12 @@ AdvectionProblem<dim>::compute_sign_distance()
   if constexpr (dim == 2)
     n = 2;
     
-  auto vetex_2_cells = grid_tools_cache.get_vertex_to_cell_map();
+  const auto vetex_2_cells = grid_tools_cache.get_vertex_to_cell_map();
   
   VectorType distance_owned(this->locally_owned_dofs,
                                            mpi_communicator);
+  VectorType signed_distance_owned(this->locally_owned_dofs,
+                                           mpi_communicator);                                         
   std::unordered_set<types::global_dof_index> dofs_location_status;
                                            
   distance_owned = DBL_MAX;
@@ -685,8 +692,6 @@ AdvectionProblem<dim>::compute_sign_distance()
       
       std::vector<types::global_dof_index> dof_indices(dofs_per_cell);
 
-      cell->get_dof_indices(dof_indices);
-      
       if (intersection_point.find(cell_index) == intersection_point.end())
       {
         continue;
@@ -697,48 +702,69 @@ AdvectionProblem<dim>::compute_sign_distance()
       const Point<dim> point_0 = cells_intersection_point[0];
       const Point<dim> point_1 = cells_intersection_point[1];
       
-      // compute sign distance of intersected cell's dof 
-      for (unsigned int i = 0; i < dofs_per_cell; ++i)
-      {
-        const Point<dim> y = dof_support_points.at(dof_indices[i]);
-      
-        double D = compute_point_2_interface_min_distance(point_0, point_1, y);
-        const double previous_D = distance_owned[dof_indices[i]];
-        const double level_set_value = level_set[dof_indices[i]];
-      
-        distance_owned[dof_indices[i]] = std::min(std::abs(previous_D), std::abs(D))*sgn(level_set_value);
-        dofs_location_status.insert(dof_indices[i]);
-      }
-      
       const unsigned int vertices_per_cell =
             GeometryInfo<dim>::vertices_per_cell;
       for (unsigned int i = 0; i < vertices_per_cell; i++)
       {
-      //   unsigned int vextex_index = cell->vertex_index(i);
-      // 
-      //   for (const auto &neighbor_cell : vetex_2_cells[vextex_index])
-      //   {
-      //     const unsigned int neighbor_cell_index = neighbor_cell->global_active_cell_index();
-      // 
-      //     const unsigned int dofs_per_cell = fe.n_dofs_per_cell();
-      // 
-      //     std::vector<types::global_dof_index> dof_indices(dofs_per_cell);
-      // 
-      //     cell->get_dof_indices(dof_indices);
-      // 
-      //     for (unsigned int i = 0; i < dofs_per_cell; ++i)
-      //     {
-      //       const Point<dim> y = dof_support_points.at(dof_indices[i]);
-      // 
-      //     }
-      // 
-      //   }
+        unsigned int vextex_index = cell->vertex_index(i);
+      
+        for (const auto &neighbor_cell_acc : vetex_2_cells[vextex_index])
+        {
+          const auto neighbor_cell = neighbor_cell_acc->as_dof_handler_iterator(dof_handler);
+          
+          const unsigned int neighbor_cell_index = neighbor_cell->global_active_cell_index();
+      
+          const unsigned int dofs_per_cell = fe.n_dofs_per_cell();
+      
+          std::vector<types::global_dof_index> dof_indices(dofs_per_cell);
+      
+          neighbor_cell->get_dof_indices(dof_indices);
+          
+          intersection_halo_cell.insert(neighbor_cell_index);
+      
+          // compute sign distance of intersected cell's dof 
+          for (unsigned int i = 0; i < dofs_per_cell; ++i)
+          {
+            const Point<dim> y = dof_support_points.at(dof_indices[i]);
+          
+            double D = compute_point_2_interface_min_distance(point_0, point_1, y);
+            const double previous_D = distance_owned[dof_indices[i]];
+          
+            distance_owned[dof_indices[i]] = std::min(std::abs(previous_D), std::abs(D));
+            dofs_location_status.insert(dof_indices[i]);
+          }
+      
+        }
       }
       
     }
   }
+    
+  for (const auto &cell : dof_handler.active_cell_iterators())
+  {
+    if (cell->is_locally_owned())
+    {
+      const unsigned int cell_index = cell->global_active_cell_index();
+      
+      const unsigned int dofs_per_cell = fe.n_dofs_per_cell();
+      
+      std::vector<types::global_dof_index> dof_indices(dofs_per_cell);
+      
+      cell->get_dof_indices(dof_indices);
+      
+      for (unsigned int i = 0; i < dofs_per_cell; ++i)
+      {
+        const double level_set_value = level_set[dof_indices[i]];
+      
+        signed_distance_owned[dof_indices[i]] = distance_owned[dof_indices[i]]*sgn(level_set_value);
+      }
+    }
+  }
+      
   
-  signed_distance = distance_owned;
+  signed_distance = signed_distance_owned;
+  distance = distance_owned;
+  
   
   
   
@@ -771,12 +797,12 @@ void AdvectionProblem<dim>::output_results(const int time_iteration, const doubl
   
   // data_out.add_data_vector(location, "location");
   
-  data_out.set_cell_selection(
-        [this](const typename Triangulation<dim>::cell_iterator &cell) {
-          return cell->is_active() &&
-                 mesh_classifier.location_to_level_set(cell) ==
-                   NonMatching::LocationToLevelSet::intersected;
-        });
+  // data_out.set_cell_selection(
+  //       [this](const typename Triangulation<dim>::cell_iterator &cell) {
+  //         return cell->is_active() &&
+  //                mesh_classifier.location_to_level_set(cell) ==
+  //                  NonMatching::LocationToLevelSet::intersected;
+  //       });
   data_out.build_patches();
 
   DataOutBase::VtkFlags vtk_flags;
