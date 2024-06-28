@@ -11,7 +11,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Changed
 
-- MINOR LPBF benchmark .prm are up to date with the current working version. [#1180](https://github.com/chaos-polymtl/lethe/pull/1180)
+- MINOR LPBF benchmark example prm files are up to date with the current working version. [#1180](https://github.com/chaos-polymtl/lethe/pull/1180)
 
 ### Added
 
