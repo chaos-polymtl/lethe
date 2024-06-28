@@ -204,21 +204,13 @@ subsection timer
 end
 
 #---------------------------------------------------
-# Timer
+# Restart
 #---------------------------------------------------
 
 subsection restart
-  # Enable checkpointing. Checkpointing creates a restartpoint from which the
-  # simulation can be restarted from.
   set checkpoint = false
-
-  # Prefix for the filename of checkpoints
   set filename = check_point
-
-  # Frequency for checkpointing
   set frequency = 1
-
-  # Frequency for
   set restart = true
 end
 

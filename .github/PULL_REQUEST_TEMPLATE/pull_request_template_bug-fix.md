@@ -35,7 +35,7 @@ See [this page](https://chaos-polymtl.github.io/lethe/documentation/contributing
 Code related list:
 - [ ] All in-code documentation related to this PR is up to date (Doxygen format)
 - [ ] Lethe documentation is up to date
-- [ ] Fix has unit test(s) (preferred) or application test(s)
+- [ ] Fix has unit test(s) (preferred) or application test(s), and restart files are in the generator folder
 - [ ] The branch is rebased onto master
 - [ ] Changelog (CHANGELOG.md) is up to date
 - [ ] Code is indented with indent-all and .prm files (examples and tests) with prm-indent
