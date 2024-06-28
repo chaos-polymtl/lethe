@@ -35,6 +35,10 @@ subsection physical properties
   end
 end
 
+#---------------------------------------------------
+# Post-processing
+#---------------------------------------------------
+
 subsection post-processing
   set calculate pressure drop = true
   set verbosity               = verbose
@@ -42,10 +46,15 @@ subsection post-processing
   set outlet boundary id      = 3
 end
 
+#---------------------------------------------------
+# Restart
+#---------------------------------------------------
+
 subsection restart
   set checkpoint = true
   set frequency  = 1
   set restart    = false
+  set filename   = ../restart_fluidized_bed_files/restart
 end
 
 #---------------------------------------------------
@@ -66,7 +75,7 @@ end
 subsection void fraction
   set mode                = qcm
   set read dem            = true
-  set dem file name       = dem
+  set dem file name       = ../restart_fluidized_bed_files/dem
   set l2 smoothing factor = 0.000005
   set l2 lower bound      = 0
   set l2 upper bound      = 1
@@ -245,29 +254,13 @@ subsection linear solver
     set ilu preconditioner relative tolerance = 1.00
     set verbosity                             = verbose
     set max krylov vectors                    = 200
-
-    # AMG preconditioner ILU smoother fill
     set amg preconditioner ilu fill = 1
-
-    # AMG preconditioner ILU smoother absolute tolerance
     set amg preconditioner ilu absolute tolerance = 1e-12
-
-    # AMG preconditioner ILU smoother relative tolerance
     set amg preconditioner ilu relative tolerance = 1.00
-
-    # AMG aggregation threshold
     set amg aggregation threshold = 1e-14
-
-    # AMG number of cycles
     set amg n cycles = 1
-
-    # AMG w cycling. If this is set to true, W cycling is used. Otherwise, V cycling is used.
     set amg w cycles = false
-
-    # AMG smoother sweeps
     set amg smoother sweeps = 2
-
-    # AMG smoother overlap
     set amg smoother overlap = 1
   end
 end

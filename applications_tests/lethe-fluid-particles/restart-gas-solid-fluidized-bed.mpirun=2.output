@@ -16,7 +16,7 @@ Finished initializing DEM parameters
 DEM time-step is 5e-06 s 
 
 ********************************************************************************
-Transient iteration: 6        Time: 0.00125  Time step: 0.00025  CFL: 0.0331839
+Transient iteration: 6        Time: 0.00125  Time step: 0.00025  CFL: 0.0331766
 ********************************************************************************
 --------------
 Void Fraction
@@ -29,9 +29,9 @@ DEM
 ----
 DEM contact search at dem step 0
 DEM contact search at dem step 32
-Finished 50 DEM iterations 
+Finished 50 DEM iterations
 ---------------------------------------------------------------
-Pressure drop: 18.8605 Pa
-Total pressure drop: 18.867 Pa
-Global continuity equation error: -1.40001e-09 s^-1
-Max local continuity error: 1.00743e-06 s^-1
+Pressure drop: 18.8895 Pa
+Total pressure drop: 18.8959 Pa
+Global continuity equation error: -1.41452e-09 s^-1
+Max local continuity error: 1.00741e-06 s^-1

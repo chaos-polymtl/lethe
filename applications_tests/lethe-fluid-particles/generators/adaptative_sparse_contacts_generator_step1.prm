@@ -10,9 +10,8 @@ set dimension = 3
 subsection simulation control
   set time step        = 1e-4
   set time end         = 1
-  set log frequency    = 100
-  set output frequency = 1000
-  set output boundaries = true
+  set log frequency    = 1000
+  set output frequency = 0
 end
 
 #---------------------------------------------------
@@ -21,9 +20,9 @@ end
 
 subsection restart
   set checkpoint = true
-  set frequency  = 10
+  set frequency  = 5000
   set restart    = false
-  set filename   = dem
+  set filename   = ../adaptive_sparse_contacts_files/dem
 end
 
 #---------------------------------------------------
@@ -95,18 +94,11 @@ subsection insertion info
   set insertion method                               = volume
   set inserted number of particles at each time step = 350
   set insertion frequency                            = 25000
-  set insertion box minimum x                        = 0.0
-  set insertion box minimum y                        = 0.0
-  set insertion box minimum z                        = 0.0
-  set insertion box maximum x                        = 0.05
-  set insertion box maximum y                        = 0.5
-  set insertion box maximum z                        = 0.05
+  set insertion box points coordinates               = 0.0,0.0,0.0 : 0.05,0.5,0.05
+  set insertion direction sequence                   = 0,2,1
   set insertion distance threshold                   = 1.01
   set insertion maximum offset                       = 0.005
   set insertion prn seed                             = 20
-  set insertion first direction                      = 0
-  set insertion second direction                     = 2
-  set insertion third direction                      = 1
 end
 
 #---------------------------------------------------
