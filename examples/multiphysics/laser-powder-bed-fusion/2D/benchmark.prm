@@ -58,7 +58,7 @@ subsection mesh adaptation
   set mesh refinement controller = false
   set max refinement level       = 7
   set min refinement level       = 4
-  set frequency                  = 1
+  set frequency                  = 20
   set fraction refinement        = 0.4
   set fraction coarsening        = 0.0
   set initial refinement steps   = 0
@@ -185,7 +185,7 @@ subsection physical properties
       set viscosity liquid = 0.905 # L^2*T^-1
 
       # viscosity of the solid phase
-      set viscosity solid = 905 # L^2*T^-1
+      set viscosity solid = 90500 # L^2*T^-1
 
       # thermal conductivity of the liquid phase
       set thermal conductivity liquid = 28.8e3 # M*L*T^-3*Theta^-1
@@ -253,6 +253,17 @@ subsection VOF
     set type      = tanh
     set verbosity = quiet
     set beta      = 20
+  end
+  subsection interface sharpening
+    set enable                  = true
+    set interface sharpness     = 1.5
+    set frequency               = 10
+    set type                    = adaptive
+    set threshold max deviation = 0.4
+    set max iterations          = 50
+    set monitored fluid         = fluid 1
+    set tolerance               = 1e-7
+    set verbosity               = verbose
   end
   subsection surface tension force
     set enable                                   = true
