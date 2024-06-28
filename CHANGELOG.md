@@ -7,6 +7,13 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Changed
 
+- MINOR Some application-test restart files have been updated using p4est 2.3.6. Some test results have changed for lethe-fluid-particles and lethe-fluid-vans, since the DEM solver has slightly changed since the previous restart files generation. [#1181](https://github.com/chaos-polymtl/lethe/pull/1181)
+
+
+## [Master] - 2024-06-16
+
+### Changed
+
 - MINOR A new subsection ``solid surfaces`` needs to be used when defining solid objects in the parameter file. For more information, see the solid object documentation. [#1169](https://github.com/chaos-polymtl/lethe/pull/1169)
 - MINOR The center of rotation of a solid object is no longer being defined using a subsection and three parameters. It is now defined with one parameter and a list of doubles. For more information, see the solid object documentation. [#1169](https://github.com/chaos-polymtl/lethe/pull/1169)
 
