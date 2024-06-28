@@ -20,7 +20,7 @@ end
 
 subsection restart
   set checkpoint = true
-  set filename = ../poiseuille_restart_files/poiseuille_restart
+  set filename   = ../poiseuille_restart_files/poiseuille_restart
 end
 
 #---------------------------------------------------
