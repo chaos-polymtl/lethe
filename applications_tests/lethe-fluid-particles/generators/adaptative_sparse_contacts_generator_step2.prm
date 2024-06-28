@@ -8,10 +8,10 @@ set dimension = 3
 #---------------------------------------------------
 
 subsection simulation control
-  set time step        = 1e-4
-  set time end         = 3
-  set log frequency    = 1000
-  set output frequency = 0
+  set time step         = 1e-4
+  set time end          = 3
+  set log frequency     = 1000
+  set output frequency  = 0
   set output boundaries = true
 end
 
@@ -87,7 +87,6 @@ subsection DEM boundary conditions
   end
 end
 
-
 #---------------------------------------------------
 # Mesh
 #---------------------------------------------------
@@ -98,5 +97,3 @@ subsection mesh
   set grid arguments     = 1,8,1 : 0.0,0.0,0.0 : 0.05,0.5,0.05 : true
   set initial refinement = 0
 end
-
-
