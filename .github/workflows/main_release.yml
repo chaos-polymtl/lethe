@@ -65,7 +65,9 @@ jobs:
       # These tests require a single core each so we will run them in parallel
       - name: Run Lethe tests (Release-deal.ii:${{ matrix.dealii_version }})
         run: |
-          if [[ ${{ matrix.dealii_version }} = "master ]]; then
+          # Only run tests on deal.ii master version 
+          # Restart files are not compatible with deal.ii v9.5.0
+          if [[ ${{ matrix.dealii_version }} = "master" ]]; then
             #Allow OMPI to run as root
             export OMPI_ALLOW_RUN_AS_ROOT=1
             export OMPI_ALLOW_RUN_AS_ROOT_CONFIRM=1
@@ -80,6 +82,8 @@ jobs:
       # These tests require two cores each so we will run them sequencially
       - name: Run multi-core Lethe tests (Release-deal.ii:${{ matrix.dealii_version }})
         run: |
+          # Only run tests on deal.ii master version 
+          # Restart files are not compatible with deal.ii v9.5.0
           if [[ ${{ matrix.dealii_version }} = "master" ]]; then
             #Allow OMPI to run as root
             export OMPI_ALLOW_RUN_AS_ROOT=1
