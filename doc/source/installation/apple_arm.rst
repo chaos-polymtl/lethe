@@ -24,7 +24,31 @@ To install the dependencies (mpi, p4est, trilinos and METIS) all together using 
 
   sudo apt-get install libmuparser-dev
 
-Clone the candi git repository in a folder of your choice  (e.g. ``$HOME/sofware/``). You can edit the ``candi.cfg`` file if you want to force the installation of the deal.II master version instead of the current stable version by setting the ``STABLE_BUILD=false``. Under Apple ARM, we only recommend the installation of the required libraries, namely parmetis, trilinos and p4est.
+Clone the candi git repository in a folder of your choice  (e.g. ``$HOME/software/``). You can edit the ``candi.cfg`` file if you want to force the installation of the deal.II master version instead of the current stable version by setting ``DEAL_II_VERSION=master`` on line 97. Under Apple ARM, we only recommend the installation of the required libraries, namely parmetis, trilinos and p4est.
+
+To ensure that the the Lethe test suite works, deal.II must be configured with p4est version 2.3.6. In the subfolder ``deal.II-toolchain/packages/``, open the ``p4est.package`` file with a text editor and change the following lines:
+
+- Comment lines 9 to 12:
+
+  +--------+------------------------------------------------+-----------------------------------------------+
+  | line # | initial line                                   | changed line                                  |
+  +========+================================================+===============================================+
+  |     9  | ``VERSION=2.3.2``                              | ``#VERSION=2.3.2``                            |
+  +--------+------------------------------------------------+-----------------------------------------------+
+  |     10 | ``CHECKSUM=076df9e...``                        | ``#CHECKSUM=076df9e...``                      |
+  +--------+------------------------------------------------+-----------------------------------------------+
+  |     11 | ``CHECKSUM="${CHECKSUM} b41c8ef29ca...``       | ``#CHECKSUM="${CHECKSUM} b41c8ef29ca...``     |
+  +--------+------------------------------------------------+-----------------------------------------------+
+  |     12 | ``CHECKSUM="${CHECKSUM} 0ea6e4806b6...``       | ``#CHECKSUM="${CHECKSUM} 0ea6e4806b6...``     |
+  +--------+------------------------------------------------+-----------------------------------------------+
+
+- Starting on line #13, add:
+
+  .. code-block:: text
+    :class: copy-button
+
+    VERSION=2.3.6
+    CHECKSUM=4b35d9cc374e3b05cd29c552070940124f04af8f8e5e01ff046e39833de5e153
 
 From the candi folder, the installation of candi can be launched using:
 
@@ -45,18 +69,18 @@ After installation, add an environment variable to your ``~/.zshrc`` either manu
 Setting the Library and Include Paths
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The deal.II installation procedure might not set the correct path for the libraries agaisnt which it needs to link. These include parmetis, p4est and trilinos. To fix this issue, the include and library path must be manually added by appending the following lines to the ``~/.zshrc`` file.
+The deal.II installation procedure might not set the correct path for the libraries towards which it needs to link. These include parmetis, p4est and trilinos. To fix this issue, the include and library path must be manually added by appending the following lines to the ``~/.zshrc`` file.
 
 .. code-block::
   :class: copy-button
 
   export PATH=/opt/homebrew/bin:$PATH
   export DYLD_LIBRARY_PATH=$DYLD_LIBRARY_PATH:path/to/candi/install/trilinos-release-12-18-1/lib/
-  export DYLD_LIBRARY_PATH=$DYLD_LIBRARY_PATH:path/to/candi/install/p4est-2.3.2/FAST/lib
-  export DYLD_LIBRARY_PATH=$DYLD_LIBRARY_PATH:path/to/candi/install/p4est-2.3.2/DEBUG/lib
+  export DYLD_LIBRARY_PATH=$DYLD_LIBRARY_PATH:path/to/candi/install/p4est-2.3.6/FAST/lib
+  export DYLD_LIBRARY_PATH=$DYLD_LIBRARY_PATH:path/to/candi/install/p4est-2.3.6/DEBUG/lib
   export DYLD_LIBRARY_PATH=$DYLD_LIBRARY_PATH:path/to/candi/install//parmetis-4.0.3/lib
   export CPLUS_INCLUDE_PATH=$CPLUS_INCLUDE_PATH:path/to/candi/install/trilinos-release-12-18-1/include/
-  export CPLUS_INCLUDE_PATH=$CPLUS_INCLUDE_PATH:path/to/candi/install/p4est-2.3.2/FAST/include/
+  export CPLUS_INCLUDE_PATH=$CPLUS_INCLUDE_PATH:path/to/candi/install/p4est-2.3.6/FAST/include/
   export CPLUS_INCLUDE_PATH=$CPLUS_INCLUDE_PATH:path/to/candi/install/parmetis-4.0.3/lib/
 
 .. note::
