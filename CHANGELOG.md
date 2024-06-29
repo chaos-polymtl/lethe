@@ -7,7 +7,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Changed
 
-- MINOR Some application-test restart files have been updated using p4est 2.3.6. Some test results have changed for lethe-fluid-particles and lethe-fluid-vans, since the DEM solver has slightly changed since the previous restart files generation. [#1181](https://github.com/chaos-polymtl/lethe/pull/1181)
+- MINOR Some application-test restart files have been updated using p4est 2.3.6. Some test results have changed for lethe-fluid-particles and lethe-fluid-vans, since the DEM solver has slightly changed since the previous restart files generation, and it is now impossible to regenerate the exact same initial condition. [#1181](https://github.com/chaos-polymtl/lethe/pull/1181)
 
 
 ## [Master] - 2024-06-16
