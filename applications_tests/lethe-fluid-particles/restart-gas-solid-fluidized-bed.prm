@@ -89,7 +89,7 @@ subsection cfd-dem
   set drag model            = difelice
   set coupling frequency    = 50
   set grad-div length scale = 0.01
-  set particle statistics   = false
+  set particle statistics   = true
 end
 
 #---------------------------------------------------

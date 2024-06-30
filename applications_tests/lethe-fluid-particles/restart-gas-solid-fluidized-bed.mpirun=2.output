@@ -16,7 +16,7 @@ Finished initializing DEM parameters
 DEM time-step is 5e-06 s 
 
 ********************************************************************************
-Transient iteration: 6        Time: 0.00125  Time step: 0.00025  CFL: 0.0331766
+Transient iteration: 6        Time: 0.00125  Time step: 0.00025  CFL: 0.0354915
 ********************************************************************************
 --------------
 Void Fraction
@@ -31,7 +31,16 @@ DEM contact search at dem step 0
 DEM contact search at dem step 32
 Finished 50 DEM iterations
 ---------------------------------------------------------------
-Pressure drop: 18.8895 Pa
-Total pressure drop: 18.8959 Pa
-Global continuity equation error: -1.41452e-09 s^-1
-Max local continuity error: 1.00741e-06 s^-1
+Pressure drop: 22.2064 Pa
+Total pressure drop: 22.2129 Pa
+Global continuity equation error: -1.33596e-09 s^-1
+Max local continuity error: 1.008e-06 s^-1
+--------------------
+Particle statistics
+--------------------
+| Variable                     | Min        | Max        | Average    | Total      |
+| Contact list generation      | 0.0000e+00 | 3.2957e+09 | 5.4928e+08 | 3.2957e+09 |
+| Velocity magnitude           | 1.6049e-03 | 9.9472e-01 | 8.0066e-01 | 8.0066e+03 |
+| Angular velocity magnitude   | 0.0000e+00 | 3.1447e+02 | 8.1549e+00 | 8.1549e+04 |
+| Translational kinetic energy | 1.6858e-12 | 6.4761e-07 | 4.8330e-07 | 4.8330e-03 |
+| Rotational kinetic energy    | 0.0000e+00 | 1.2945e-08 | 6.7033e-11 | 6.7033e-07 |
