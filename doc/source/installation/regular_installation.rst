@@ -95,7 +95,7 @@ A dependency required by Lethe, and that deal.II needs to be compiled with, is m
 
 Other packages can be disabled by simply commenting out the lines (adding a ``#`` at the beginning of the lines)
 
-To ensure that the the Lethe test suite works, deal.II must be configured with p4est version 2.3.6. In the subfolder ``deal.II-toolchain/packages/``, open the ``p4est.package`` file with a text editor and change the following lines:
+To ensure that the Lethe test suite works, deal.II must be configured with p4est version 2.3.6. In the subfolder ``deal.II-toolchain/packages/``, open the ``p4est.package`` file with a text editor and change the following lines:
 
   +--------+------------------------------------------------+------------------------------------------------------------------------------+
   | line # | initial line                                   | changed line                                                                 |
