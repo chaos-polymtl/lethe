@@ -27,9 +27,6 @@ To install the dependencies (mpi, p4est, trilinos and METIS) all together using 
 Clone the candi git repository in a folder of your choice  (e.g. ``$HOME/software/``). You can edit the ``candi.cfg`` file if you want to force the installation of the deal.II master version instead of the current stable version by setting ``DEAL_II_VERSION=master`` on line 97. Under Apple ARM, we only recommend the installation of the required libraries, namely parmetis, trilinos and p4est.
 
 To ensure that the Lethe test suite works, deal.II must be configured with p4est version 2.3.6. In the subfolder ``deal.II-toolchain/packages/``, open the ``p4est.package`` file with a text editor and change the following lines:
-
-- Comment lines 9 to 12:
-
   +--------+------------------------------------------------+-------------------------------------------------------------------------------+
   | line # | initial line                                   | changed line                                                                  |
   +========+================================================+===============================================================================+
