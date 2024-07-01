@@ -45,8 +45,9 @@ lethe_fluid_particles=("examples/unresolved-cfd-dem")
 for folder in ${lethe_fluid_particles[@]}; do
   for file in $(find "$folder" -type f -name "*.prm"); do
     echo $file
-    # If generator is in the file name this is a lethe-particles file
-    if [[ "$file" == *"generator"* ]];then
+    # If "particles" is in the filename this is a
+    # lethe-particles file
+    if [[ "$file" == *"particles"* ]];then
         lethe-parameter-check $file lethe-particles
     #else we assume it's a CFD-DEM file
     else

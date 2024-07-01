@@ -2,7 +2,7 @@
 Unresolved CFD-DEM
 ****************************
 
-This section includes examples related to multiphase fluid-solid flows. We organize the examples from the single phase flow in porous media (packed bed example) to multiphase flows (solid-gas and solid-liquid fluidized beds). The packed bed example uses the ``lethe-fluid-vans`` solver which solves the Volume Average Navier Stokes (VANS) equations. The fluidized bed, the spouted bed and the Boycott effect examples use the ``lethe-fluid-particles`` solver which solves the VANS equations for the fluid phase coupled with the DEM equations for the solid phase.
+This section includes examples related to multiphase fluid-solid flows. We organize the examples from the single phase flow in porous media (packed bed example) to multiphase flows (solid-gas, solid-liquid fluidized beds, and pneumatic conveying). The packed bed example uses the ``lethe-fluid-vans`` solver which solves the Volume Average Navier Stokes (VANS) equations. The fluidized bed, the spouted bed, the Boycott effect, and the pneumatic conveying examples use the ``lethe-fluid-particles`` solver which solves the VANS equations for the fluid phase coupled with the DEM equations for the solid phase.
 
 .. toctree::
     :hidden:
@@ -15,6 +15,7 @@ This section includes examples related to multiphase fluid-solid flows. We organ
     liquid-solid-fluidized-bed/liquid-solid-fluidized-bed
     boycott-effect/boycott-effect
     gas-solid-spouted-cylinder-bed/gas-solid-spouted-cylinder-bed
+    dense-pneumatic-conveying/dense-pneumatic-conveying
 
 .. graphviz:: 
 
@@ -38,11 +39,14 @@ This section includes examples related to multiphase fluid-solid flows. We organ
       cfd_dem_5 [label="Boycott Effect", href="https://chaos-polymtl.github.io/lethe/documentation/examples/unresolved-cfd-dem/boycott-effect/boycott-effect.html"];
 
       cfd_dem_6 [label="Gas-Solid Spouted Cylinder Bed", href="https://chaos-polymtl.github.io/lethe/documentation/examples/unresolved-cfd-dem/gas-solid-spouted-cylinder-bed/gas-solid-spouted-cylinder-bed.html"];
-      
+
+      cfd_dem_7 [label="Dense Pneumatic Conveying", href="https://chaos-polymtl.github.io/lethe/documentation/examples/unresolved-cfd-dem/dense-pneumatic-conveying/dense-pneumatic-conveying.html"];
+
       unresolved_cfd_dem -> cfd_dem_1:w;
       unresolved_cfd_dem -> cfd_dem_2:w;
       unresolved_cfd_dem -> cfd_dem_3:w;
       unresolved_cfd_dem -> cfd_dem_4:w;
       unresolved_cfd_dem -> cfd_dem_5:w;
       unresolved_cfd_dem -> cfd_dem_6:w;
+      unresolved_cfd_dem -> cfd_dem_7:w;
     }

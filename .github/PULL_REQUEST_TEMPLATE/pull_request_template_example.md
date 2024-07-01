@@ -21,7 +21,8 @@ Code related list:
 - [ ] Lethe documentation is up to date
 - [ ] The branch is rebased onto master
 - [ ] Code is indented with indent-all and .prm files (examples and tests) with prm-indent
-- [ ] Links are added to parent .rst files.
+- [ ] Links are added to parent .rst files
+- [ ] The example is following the [standard format](https://chaos-polymtl.github.io/lethe/documentation/contributing.html#general-rules-and-format)
 
 Pull request related list:
 - [ ] Labels are applied
