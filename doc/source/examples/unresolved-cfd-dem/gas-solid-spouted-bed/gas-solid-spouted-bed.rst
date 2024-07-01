@@ -21,9 +21,8 @@ Files Used in This Example
 
 Both files mentioned below are located in the example's folder (``examples/unresolved-cfd-dem/gas-solid-spouted-bed``).
 
+- Parameter file for particle generation and packing: ``packing-particles.prm``
 - Parameter file for CFD-DEM simulation of the spouted bed: ``gas-solid-spouted-bed.prm``
-- Parameter file for particle generation and packing: ``dem-packing-in-spouted-bed.prm``
-
 
 
 -----------------------
@@ -41,7 +40,7 @@ All parameter subsections are described in the `parameter section <../../../para
 
 To set-up the rectangular spouted bed case, we first fill the bed with particles.
 
-We introduce the different sections of the parameter file ``dem-packing-in-fluidized-bed.prm`` needed to run this simulation.
+We introduce the different sections of the parameter file ``packing-particles.prm`` needed to run this simulation.
 
 Mesh
 ~~~~~
@@ -196,19 +195,12 @@ We need to pack the particles in the bottom of the rectangular bed while prevent
 ---------------------------
 Running the DEM Simulation
 ---------------------------
-Launching the simulation is as simple as specifying the executable name and the parameter file. Assuming that the ``lethe-particles`` executable is within your path, the simulation can be launched on a single processor by typing:
+Launching the simulation is as simple as specifying the executable name and the parameter file. Assuming that the ``lethe-particles`` executable is within your path, the simulation can be launched in parallel as follows:
 
 .. code-block:: text
   :class: copy-button
 
-  lethe-particles dem-packing-in-spouted-bed.prm
-
-or in parallel (where 8 represents the number of processors)
-
-.. code-block:: text
-  :class: copy-button
-
-  mpirun -np 8 lethe-particles dem-packing-in-spouted-bed.prm
+  mpirun -np 8 lethe-particles packing-particles.prm
 
 .. note::
     Running the packing should take approximately 10-15 minutes on 8 cores.

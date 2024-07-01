@@ -169,6 +169,7 @@ Rolling friction models
 Rolling friction may be computed through a constant torque model or a viscous torque model. It is also possible to ignore the rolling resistance. The corresponding model can be described by the following equations:
 
 .. list-table:: Rolling Friction Models used in Lethe.
+   :width: 80%
    :widths: 30 30 30
    :header-rows: 1
    :align: center

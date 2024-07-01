@@ -11,6 +11,7 @@ Features
 
 - Solvers: ``lethe-particles`` and ``lethe-fluid-vans``
 - Three-dimensional problem
+- Uses the VANS solver without the coupling with DEM
 - Displays the selection of models and physical properties
 
 
@@ -20,8 +21,8 @@ Files Used in This Example
 
 Both files mentioned below are located in the example's folder (``examples/unresolved-cfd-dem/cylindrical-packed-bed``).
 
-- Parameter file for CFD-DEM simulation of the packed bed: ``cylindrical-packed-bed/flow-in-bed.prm``
-- Parameter file for particle generation and packing: ``packing-in-cylinder.prm``
+- Parameter file for particle generation and packing: ``packing-particles.prm``
+- Parameter file for CFD-DEM simulation of the packed bed: ``flow-in-bed.prm``
 
 
 -----------------------
@@ -35,7 +36,8 @@ This example simulates air flow through a packing of particles. First, we use ``
 DEM Parameter File
 -------------------
 
-All parameter subsections are described in the `parameter section <../../../parameters.html>`_ of the documentation. To set-up the cylindrical packed bed case, we first fill the bed with particles. We introduce the different sections of the parameter file (``packing-in-cylinder.prm)`` needed to run this simulation. 
+All parameter subsections are described in the `parameter section <../../../parameters.html>`_ of the documentation. To set-up the cylindrical packed bed case, we first fill the bed with particles. We introduce the different sections of the parameter file (``packing-particles.prm``) needed to run this simulation.
+
 
 Mesh
 ~~~~~
@@ -181,14 +183,14 @@ Launching the simulation is as simple as specifying the executable name and the 
 .. code-block:: text
   :class: copy-button
 
-  lethe-particles packing-in-circle.prm
+  lethe-particles packing-particles.prm
 
 or in parallel (where 8 represents the number of processors)
 
 .. code-block:: text
   :class: copy-button
 
-  mpirun -np 8 lethe-particles packing-in-circle.prm
+  mpirun -np 8 lethe-particles packing-particles.prm
 
 Lethe will generate a number of files. The most important one bears the extension ``.pvd``. It can be read by popular visualization programs such as `Paraview <https://www.paraview.org/>`_. 
 

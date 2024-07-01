@@ -1,0 +1,123 @@
+# Listing of Parameters
+# ---------------------
+
+set dimension = 3
+
+#---------------------------------------------------
+# Simulation and IO Control
+#---------------------------------------------------
+
+subsection simulation control
+  set time step        = 5e-5
+  set time end         = 32.5
+  set log frequency    = 500
+  set output frequency = 1200
+  set output path      = ./output_dem/
+end
+
+#---------------------------------------------------
+# Timer
+#---------------------------------------------------
+
+subsection timer
+  set type = iteration
+end
+
+#---------------------------------------------------
+# Restart
+#---------------------------------------------------
+
+subsection restart
+  set checkpoint = true
+  set frequency  = 10000
+  set restart    = true
+  set filename   = dem
+end
+
+#---------------------------------------------------
+# Mesh
+#---------------------------------------------------
+
+subsection mesh
+  set type                                = cylinder
+  set grid type                           = balanced
+  set grid arguments                      = 45 : 0.042 : 0.5
+  set initial refinement                  = 1
+  set expand particle-wall contact search = true
+end
+
+# --------------------------------------------------
+# Model parameters
+#---------------------------------------------------
+
+subsection model parameters
+  subsection contact detection
+    set contact detection method = dynamic
+    set neighborhood threshold   = 1.3
+  end
+  subsection load balancing
+    set load balance method     = dynamic_with_sparse_contacts
+    set threshold               = 0.5
+    set dynamic check frequency = 8000
+    set active weight factor    = 0.8
+    set inactive weight factor  = 0.6
+  end
+  set particle particle contact force method = hertz_mindlin_limit_overlap
+  set particle wall contact force method     = nonlinear
+  set integration method                     = velocity_verlet
+  set rolling resistance torque method       = constant_resistance
+  subsection adaptive sparse contacts
+    set enable adaptive sparse contacts = true
+    set enable particle advection       = false
+    set granular temperature threshold  = 1e-4
+    set solid fraction threshold        = 0.4
+  end
+end
+
+#---------------------------------------------------
+# Physical Properties
+#---------------------------------------------------
+
+subsection lagrangian physical properties
+  set g                        = 0, -9.81, 0
+  set number of particle types = 1
+  subsection particle type 0
+    set size distribution type            = uniform
+    set diameter                          = 0.005
+    set number of particles               = 32194
+    set density particles                 = 890
+    set young modulus particles           = 1e6
+    set poisson ratio particles           = 0.33
+    set restitution coefficient particles = 0.3
+    set friction coefficient particles    = 0.3
+    set rolling friction particles        = 0.2
+  end
+  set young modulus wall           = 1e6
+  set poisson ratio wall           = 0.33
+  set restitution coefficient wall = 0.3
+  set friction coefficient wall    = 0.4
+  set rolling friction wall        = 0.2
+end
+
+#---------------------------------------------------
+# Boundary conditions DEM
+#---------------------------------------------------
+
+subsection DEM boundary conditions
+  set number of boundary conditions = 1
+
+  subsection boundary condition 0
+    set type               = periodic
+    set periodic id 0      = 1
+    set periodic id 1      = 2
+    set periodic direction = 0
+  end
+end
+
+#---------------------------------------------------
+# DEM Post-Processing
+#---------------------------------------------------
+
+subsection post-processing
+  set Lagrangian post-processing = true
+end

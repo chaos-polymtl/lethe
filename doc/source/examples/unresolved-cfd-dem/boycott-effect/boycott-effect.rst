@@ -20,8 +20,8 @@ Files Used in This Example
 
 Both files mentioned below are located in the example's folder (``examples/unresolved-cfd-dem/boycott-effect``).
 
+- Parameter file for initial particles generation: ``initial-particles.prm``
 - Parameter file for CFD-DEM simulation of the Boycott effect: ``boycott-effect.prm``
-- Parameter file for particle generation and packing: ``particle_generator.prm``
 
 
 -----------------------
@@ -37,7 +37,7 @@ DEM Parameter File
 
 The syntax of this parameter file is flexible. Parameters do not need to be specified in a specific order, but only within the subsection in which they belong. All parameter subsections are described in the `parameter section <../../../parameters/parameters.html>`_ of the documentation.
 
-We introduce the different sections of the parameter file ``dem-packing-in-fluidized-bed.prm`` needed to run this simulation. Most subsections are explained in detail in other CFD-DEM examples such as:  `Gas-solid spouted bed <../../../examples/unresolved-cfd-dem/gas-solid-spouted-bed/gas-solid-spouted-bed.html>`_. Therefore, we will not go over them in detail.
+We introduce the different sections of the parameter file ``boycott-effect.prm`` needed to run this simulation. Most subsections are explained in detail in other CFD-DEM examples such as:  `Gas-solid spouted bed <../../../examples/unresolved-cfd-dem/gas-solid-spouted-bed/gas-solid-spouted-bed.html>`_. Therefore, we will not go over them in detail.
 
 Mesh
 ~~~~~
@@ -157,16 +157,16 @@ Launching the simulation is as simple as specifying the executable name and the 
 .. code-block:: text
   :class: copy-button
 
-  lethe-particles particle-generator.prm
+  lethe-particles initial-particles.prm
 
 or in parallel (where 8 represents the number of processors)
 
 .. code-block:: text
   :class: copy-button
 
-  mpirun -np 8 lethe-particles particle-generator.prm
+  mpirun -np 8 lethe-particles initial-particles.prm
 
-The figure below shoes the particles inserted at the top of the channel at the end of the DEM simulation.
+The figure below shows the particles inserted at the top of the channel at the end of the DEM simulation.
 
 .. image:: images/packing.png
     :alt: inserted particles at the top of the channel

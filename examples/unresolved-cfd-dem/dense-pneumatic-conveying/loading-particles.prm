@@ -1,0 +1,191 @@
+# Listing of Parameters
+# ---------------------
+
+set dimension = 3
+
+#---------------------------------------------------
+# Simulation and IO Control
+#---------------------------------------------------
+
+subsection simulation control
+  set time step        = 5e-5
+  set time end         = 30
+  set log frequency    = 500
+  set output frequency = 1200
+  set output path      = ./output_dem/
+end
+
+#---------------------------------------------------
+# Timer
+#---------------------------------------------------
+
+subsection timer
+  set type = iteration
+end
+
+#---------------------------------------------------
+# Restart
+#---------------------------------------------------
+
+subsection restart
+  set checkpoint = true
+  set frequency  = 30000
+  set restart    = false
+  set filename   = dem
+end
+
+#---------------------------------------------------
+# Mesh
+#---------------------------------------------------
+
+subsection mesh
+  set type                                = cylinder
+  set grid type                           = balanced
+  set grid arguments                      = 45 : 0.042 : 0.5
+  set initial refinement                  = 1
+  set expand particle-wall contact search = true
+end
+
+# --------------------------------------------------
+# Model parameters
+#---------------------------------------------------
+
+subsection model parameters
+  subsection contact detection
+    set contact detection method = dynamic
+    set neighborhood threshold   = 1.3
+  end
+  subsection load balancing
+    set load balance method     = dynamic_with_sparse_contacts
+    set threshold               = 0.5
+    set dynamic check frequency = 8000
+    set active weight factor    = 0.8
+    set inactive weight factor  = 0.6
+  end
+  set particle particle contact force method = hertz_mindlin_limit_overlap
+  set particle wall contact force method     = nonlinear
+  set integration method                     = velocity_verlet
+  set rolling resistance torque method       = constant_resistance
+  subsection adaptive sparse contacts
+    set enable adaptive sparse contacts = true
+    set enable particle advection       = false
+    set granular temperature threshold  = 1e-4
+    set solid fraction threshold        = 0.4
+  end
+end
+
+#---------------------------------------------------
+# Physical Properties
+#---------------------------------------------------
+
+subsection lagrangian physical properties
+  set g                        = -9.81, 0, 0
+  set number of particle types = 1
+  subsection particle type 0
+    set size distribution type            = uniform
+    set diameter                          = 0.005
+    set number of particles               = 32194
+    set density particles                 = 890
+    set young modulus particles           = 1e6
+    set poisson ratio particles           = 0.33
+    set restitution coefficient particles = 0.3
+    set friction coefficient particles    = 0.3
+    set rolling friction particles        = 0.2
+  end
+  set young modulus wall           = 1e6
+  set poisson ratio wall           = 0.33
+  set restitution coefficient wall = 0.3
+  set friction coefficient wall    = 0.4
+  set rolling friction wall        = 0.2
+end
+
+#---------------------------------------------------
+# Insertion Info
+#---------------------------------------------------
+
+subsection insertion info
+  set insertion method              = plane
+  set insertion frequency           = 400
+  set insertion plane point         = 0.475, -0.0325, 0
+  set insertion plane normal vector = -0.25, 4.75, 0
+  set insertion maximum offset      = 0.001
+  set insertion prn seed            = 19
+  set initial velocity              = -0.35, 0.1, 0.0
+end
+
+#---------------------------------------------------
+# Floating Walls
+#---------------------------------------------------
+
+subsection floating walls
+  set number of floating walls = 2
+  subsection wall 0
+    subsection point on wall
+      set x = -0.5
+      set y = 0
+      set z = 0
+    end
+    subsection normal vector
+      set nx = 1
+      set ny = 0
+      set nz = 0
+    end
+    set start time = 0
+    set end time   = 30
+  end
+
+  subsection wall 1
+    subsection point on wall
+      set x = 0.5
+      set y = 0
+      set z = 0
+    end
+    subsection normal vector
+      set nx = -1
+      set ny = 0
+      set nz = 0
+    end
+    set start time = 0
+    set end time   = 30
+  end
+end
+
+#---------------------------------------------------
+# Solid Objects
+#---------------------------------------------------
+
+subsection solid objects
+  subsection solid surfaces
+    set number of solids = 1
+    subsection solid object 0
+      subsection mesh
+        set type      = gmsh
+        set file name = slug-shape.msh
+        set simplex   = true
+      end
+    end
+  end
+end
+
+#---------------------------------------------------
+# Boundary conditions DEM
+#---------------------------------------------------
+
+subsection DEM boundary conditions
+  set number of boundary conditions = 1
+
+  subsection boundary condition 0
+    set type               = periodic
+    set periodic id 0      = 1
+    set periodic id 1      = 2
+    set periodic direction = 0
+  end
+end
+
+#---------------------------------------------------
+# DEM Post-Processing
+#---------------------------------------------------
+
+subsection post-processing
+  set Lagrangian post-processing = true
+end

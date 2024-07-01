@@ -22,8 +22,8 @@ Files Used in This Example
 
 All files mentioned below are located in the example's folder (``examples/unresolved-cfd-dem/liquid-solid-fluidized-bed``).
 
+- Parameter file of particles generation and packing: ``packing-particles.prm``
 - Parameter file for CFD-DEM simulation of the liquid-solid fluidized bed: ``liquid-solid-fluidized-bed.prm``
-- Parameter file of particles generation and packing: ``dem-packing-in-lsfb.prm``
 - Postprocessing Python script: ``lsfb_postprocessing.py``
 
 
@@ -53,7 +53,7 @@ All parameter subsections are described in the `Parameters section <../../../par
 
 To set-up the cylinder fluidized bed case, we first fill the bed with particles.
 
-We first introduce the different sections of the parameter file ``dem-packing-in-lsfb.prm`` needed to run this simulation.
+We first introduce the different sections of the parameter file ``packing-particles.prm`` needed to run this simulation.
 
 Mesh
 ~~~~~
@@ -219,19 +219,12 @@ The volume of the insertion box should be large enough to fit all particles. Als
 ---------------------------
 Running the DEM Simulation
 ---------------------------
-Launching the simulation is as simple as specifying the executable name and the parameter file. Assuming that the ``lethe-particles`` executable is within your path, the simulation can be launched on a single processor by typing:
+Launching the simulation is as simple as specifying the executable name and the parameter file. Assuming that the ``lethe-particles`` executable is within your path, the simulation can be launched in parallel as follows:
 
 .. code-block:: text
   :class: copy-button
 
-  lethe-particles dem-packing-in-fluidized-bed.prm
-
-or in parallel (where :math:`8` represents the number of processors)
-
-.. code-block:: text
-  :class: copy-button
-
-  mpirun -np 8 lethe-particles dem-packing-in-fluidized-bed.prm
+  mpirun -np 8 lethe-particles packing-particles.prm
 
 Lethe will generate a number of files. The most important one bears the extension ``.pvd``. It can be read by popular visualization programs such as `Paraview <https://www.paraview.org/>`_. 
 
