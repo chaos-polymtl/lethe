@@ -10,13 +10,6 @@ file(COPY particle_sedimentation_files/dem.triangulation.info DESTINATION "${CMA
 file(COPY particle_sedimentation_files/dem.triangulation_fixed.data DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/particle_sedimentation.${_build_type}/mpirun=1/")
 file(COPY particle_sedimentation_files/dem.triangulation_variable.data DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/particle_sedimentation.${_build_type}/mpirun=1/")
 
-file(COPY restart_particle_sedimentation_files/dem.particles DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/restart_particle_sedimentation.${_build_type}/mpirun=1/")
-file(COPY restart_particle_sedimentation_files/dem.pvdhandler DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/restart_particle_sedimentation.${_build_type}/mpirun=1/")
-file(COPY restart_particle_sedimentation_files/dem.simulationcontrol DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/restart_particle_sedimentation.${_build_type}/mpirun=1/")
-file(COPY restart_particle_sedimentation_files/dem.triangulation DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/restart_particle_sedimentation.${_build_type}/mpirun=1/")
-file(COPY restart_particle_sedimentation_files/dem.triangulation.info DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/restart_particle_sedimentation.${_build_type}/mpirun=1/")
-file(COPY restart_particle_sedimentation_files/dem.triangulation_fixed.data DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/restart_particle_sedimentation.${_build_type}/mpirun=1/")
-file(COPY restart_particle_sedimentation_files/dem.triangulation_variable.data DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/restart_particle_sedimentation.${_build_type}/mpirun=1/")
 file(COPY restart_particle_sedimentation_files/case.particles DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/restart_particle_sedimentation.${_build_type}/mpirun=1/")
 file(COPY restart_particle_sedimentation_files/case.pvdhandler DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/restart_particle_sedimentation.${_build_type}/mpirun=1/")
 file(COPY restart_particle_sedimentation_files/case_particles.pvdhandler DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/restart_particle_sedimentation.${_build_type}/mpirun=1/")

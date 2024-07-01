@@ -1,0 +1,105 @@
+# Listing of Parameters
+#----------------------
+
+set dimension = 3
+
+#---------------------------------------------------
+# Simulation Control
+#---------------------------------------------------
+
+subsection simulation control
+  set time step     = 1e-5
+  set time end      = 0.10
+  set log frequency = 1000
+
+  set output frequency = 0
+end
+
+#---------------------------------------------------
+# Timer
+#---------------------------------------------------
+
+subsection timer
+  set type = none
+end
+
+#---------------------------------------------------
+# Restart
+#---------------------------------------------------
+
+subsection restart
+  set checkpoint = true # = true to generate the restart files.
+  set frequency  = 10000
+  set restart    = false
+  set filename   = ../restart_file_insertion_files/insertion_file_restart
+end
+
+#---------------------------------------------------
+# Test
+#---------------------------------------------------
+
+subsection test
+  set enable = true
+end
+
+#---------------------------------------------------
+# Model parameters
+#---------------------------------------------------
+
+subsection model parameters
+  subsection contact detection
+    set contact detection method                = dynamic
+    set dynamic contact search size coefficient = 0.9
+    set neighborhood threshold                  = 1.3
+  end
+  set particle particle contact force method = hertz_mindlin_limit_overlap
+  set particle wall contact force method     = nonlinear
+  set rolling resistance torque method       = constant_resistance
+  set integration method                     = velocity_verlet
+end
+
+#---------------------------------------------------
+# Lagrangian Physical Properties
+#---------------------------------------------------
+
+subsection lagrangian physical properties
+  set g                        = 0.0, -10.0, 0.0
+  set number of particle types = 1
+  subsection particle type 0
+    set size distribution type            = uniform
+    set number of particles               = 4
+    set density particles                 = 1000
+    set young modulus particles           = 1000000
+    set poisson ratio particles           = 0.3
+    set restitution coefficient particles = 0.3
+    set friction coefficient particles    = 0.1
+    set rolling friction particles        = 0.05
+  end
+  set young modulus wall           = 1000000
+  set poisson ratio wall           = 0.3
+  set restitution coefficient wall = 0.3
+  set friction coefficient wall    = 0.1
+  set rolling friction wall        = 0.05
+end
+
+#---------------------------------------------------
+# Insertion Info
+#---------------------------------------------------
+
+subsection insertion info
+  set insertion method    = file
+  set list of input files = ../restart_file_insertion_files/particles_00.input, ../restart_file_insertion_files/particles_01.input
+  set insertion frequency = 11000
+end
+
+#---------------------------------------------------
+# Mesh
+#---------------------------------------------------
+
+subsection mesh
+  set type                                = dealii
+  set grid type                           = hyper_cube
+  set grid arguments                      = -0.5 : 0.5 : false
+  set initial refinement                  = 3
+  set expand particle-wall contact search = false
+end

@@ -11,7 +11,7 @@ subsection simulation control
   set time step        = 0.00005
   set time end         = 0.4
   set log frequency    = 1000
-  set output frequency = 1000
+  set output frequency = 0
   set output path      = ./output_dem/
 end
 
@@ -31,7 +31,7 @@ subsection restart
   set checkpoint = true
   set frequency  = 1000
   set restart    = false
-  set filename   = dem
+  set filename   = ../liquid_fluidized_bed_files/dem
 end
 
 #---------------------------------------------------
@@ -64,7 +64,7 @@ subsection lagrangian physical properties
   subsection particle type 0
     set size distribution type            = uniform
     set diameter                          = 0.003
-    set number                            = 10000
+    set number of particles               = 10000
     set density particles                 = 2505
     set young modulus particles           = 1000000
     set poisson ratio particles           = 0.3
@@ -84,7 +84,7 @@ end
 #---------------------------------------------------
 
 subsection insertion info
-  set insertion method                               = non_uniform
+  set insertion method                               = volume
   set inserted number of particles at each time step = 10000
   set insertion frequency                            = 200
   set insertion box points coordinates               = -0.05, -0.04, -0.05 : 0.05, -0.005, 0.05

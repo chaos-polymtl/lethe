@@ -35,12 +35,20 @@ subsection physical properties
   end
 end
 
+#---------------------------------------------------
+# Post-processing
+#---------------------------------------------------
+
 subsection post-processing
   set calculate pressure drop = true
   set verbosity               = verbose
   set inlet boundary id       = 2
   set outlet boundary id      = 3
 end
+
+#---------------------------------------------------
+# Restart
+#---------------------------------------------------
 
 subsection restart
   set checkpoint = false

@@ -43,8 +43,8 @@ file(COPY taylor-green-vortex-restart-bdf1-adaptive/enstrophy.checkpoint DESTINA
 file(COPY taylor-green-vortex-restart-bdf1-adaptive/kinetic_energy.checkpoint DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/taylor-green-vortex-restart-bdf1-adaptive.${_build_type}/mpirun=1/")
 file(COPY taylor-green-vortex-restart-bdf1-adaptive/L2Error_FD.checkpoint DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/taylor-green-vortex-restart-bdf1-adaptive.${_build_type}/mpirun=1/")
 
-
 file(COPY cylinder_unstructured.msh DESTINATION "${CMAKE_CURRENT_BINARY_DIR}")
+
 file(COPY poiseuille_restart_files/poiseuille_restart.averagevelocities DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/poiseuille_restart.${_build_type}/mpirun=1/")
 file(COPY poiseuille_restart_files/poiseuille_restart.flowcontrol DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/poiseuille_restart.${_build_type}/mpirun=1/")
 file(COPY poiseuille_restart_files/poiseuille_restart.pvdhandler DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/poiseuille_restart.${_build_type}/mpirun=1/")
@@ -52,14 +52,6 @@ file(COPY poiseuille_restart_files/poiseuille_restart.simulationcontrol DESTINAT
 file(COPY poiseuille_restart_files/poiseuille_restart.triangulation DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/poiseuille_restart.${_build_type}/mpirun=1/")
 file(COPY poiseuille_restart_files/poiseuille_restart.triangulation_fixed.data DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/poiseuille_restart.${_build_type}/mpirun=1/")
 file(COPY poiseuille_restart_files/poiseuille_restart.triangulation.info DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/poiseuille_restart.${_build_type}/mpirun=1/")
-file(COPY poiseuille_restart_files/poiseuille_restart-output.0000.pvtu DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/poiseuille_restart.${_build_type}/mpirun=1/")
-file(COPY poiseuille_restart_files/poiseuille_restart-output.0005.pvtu DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/poiseuille_restart.${_build_type}/mpirun=1/")
-file(COPY poiseuille_restart_files/poiseuille_restart-output.0010.pvtu DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/poiseuille_restart.${_build_type}/mpirun=1/")
-file(COPY poiseuille_restart_files/poiseuille_restart-output.0015.pvtu DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/poiseuille_restart.${_build_type}/mpirun=1/")
-file(COPY poiseuille_restart_files/poiseuille_restart-output.0000.0000.vtu DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/poiseuille_restart.${_build_type}/mpirun=1/")
-file(COPY poiseuille_restart_files/poiseuille_restart-output.0005.0000.vtu DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/poiseuille_restart.${_build_type}/mpirun=1/")
-file(COPY poiseuille_restart_files/poiseuille_restart-output.0010.0000.vtu DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/poiseuille_restart.${_build_type}/mpirun=1/")
-file(COPY poiseuille_restart_files/poiseuille_restart-output.0015.0000.vtu DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/poiseuille_restart.${_build_type}/mpirun=1/")
 
 deal_ii_pickup_tests()
 
