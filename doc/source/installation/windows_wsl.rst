@@ -70,7 +70,7 @@ When prompted "do you want to continue?", proceed by typing ``y`` and hitting ``
 5. |win_shell| (optional) For better ease in the Linux terminal (better coloring, multiple tabs), change the default terminal:
 
   * in the microsoft store, download ``Windows Terminal``
-  * in the ``parameters`` of ``Windows Terminal``, select on the left pannel "start": change default profile with ``Ubuntu-22.04``
+  * in the ``parameters`` of ``Windows Terminal``, select on the left panel "start": change default profile with ``Ubuntu-22.04``
   * from now on, you can use this application instead to launch Ubuntu terminal
 
 .. tip::
@@ -202,7 +202,7 @@ Do not forget the ``.`` at the end of the command, which means "here".
   * open the ``candi.cfg`` file with notepad (or other text editor) and change the following lines:
 
   +--------+------------------------------------------+----------------------------------------+
-  | line # | initial parameter                        | changed parameter                      |
+  | line # | initial line                             | changed line                           |
   +========+==========================================+========================================+
   |      7 | ``CLEAN_BUILD=OFF``                      | ``CLEAN_BUILD=ON``                     |
   +--------+------------------------------------------+----------------------------------------+
@@ -219,7 +219,7 @@ Do not forget the ``.`` at the end of the command, which means "here".
     The prefix ``#`` is used to comment a line. Here we are simply commenting lines 44 and 45, and uncommenting lines 50 and 51, to change the trilinos version.
 
   +--------+------------------------------------------------+-----------------------------------------------+
-  | line # | initial parameter                              | changed parameter                             |
+  | line # | initial line                                   | changed line                                  |
   +========+================================================+===============================================+
   |     44 | ``VERSION=12-18-1``                            | ``#VERSION=12-18-1``                          |
   +--------+------------------------------------------------+-----------------------------------------------+
@@ -234,21 +234,25 @@ Do not forget the ``.`` at the end of the command, which means "here".
   * still in the subfolder ``deal.II-toolchain/packages/``, open the ``p4est.package`` file with notepad and change the following lines:
 
   .. tip::
-    The prefix ``#`` is used to comment a line. Here we are simply uncommenting line 7, and commenting lines 9 to 12, to change the p4est version.
+    The prefix ``#`` is used to comment a line. Here we are commenting lines 9 to 12 and adding 2 new lines to change the p4est version.
 
-  +--------+------------------------------------------------+-----------------------------------------------+
-  | line # | initial parameter                              | changed parameter                             |
-  +========+================================================+===============================================+
-  |     7  | ``#VERSION=2.2;CHECKSUM=6943949a...``          | ``VERSION=2.2;CHECKSUM=6943949a...``          |
-  +--------+------------------------------------------------+-----------------------------------------------+
-  |     9  | ``VERSION=2.3.2``                              | ``#VERSION=2.3.2``                            |
-  +--------+------------------------------------------------+-----------------------------------------------+
-  |     10 | ``CHECKSUM=076df9e...``                        | ``#CHECKSUM=076df9e...``                      |
-  +--------+------------------------------------------------+-----------------------------------------------+
-  |     11 | ``CHECKSUM="${CHECKSUM} b41c8ef29ca...``       | ``#CHECKSUM="${CHECKSUM} b41c8ef29ca...``     |
-  +--------+------------------------------------------------+-----------------------------------------------+
-  |     12 | ``CHECKSUM="${CHECKSUM} 0ea6e4806b6...``       | ``#CHECKSUM="${CHECKSUM} 0ea6e4806b6...``     |
-  +--------+------------------------------------------------+-----------------------------------------------+
+  +--------+------------------------------------------------+-------------------------------------------------------------------------------+
+  | line # | initial line                                   | changed line                                                                  |
+  +========+================================================+===============================================================================+
+  |     9  | ``VERSION=2.3.2``                              | ``#VERSION=2.3.2``                                                            |
+  +--------+------------------------------------------------+-------------------------------------------------------------------------------+
+  |     10 | ``CHECKSUM=076df9e...``                        | ``#CHECKSUM=076df9e...``                                                      |
+  +--------+------------------------------------------------+-------------------------------------------------------------------------------+
+  |     11 | ``CHECKSUM="${CHECKSUM} b41c8ef29ca...``       | ``#CHECKSUM="${CHECKSUM} b41c8ef29ca...``                                     |
+  +--------+------------------------------------------------+-------------------------------------------------------------------------------+
+  |     12 | ``CHECKSUM="${CHECKSUM} 0ea6e4806b6...``       | ``#CHECKSUM="${CHECKSUM} 0ea6e4806b6...``                                     |
+  +--------+------------------------------------------------+-------------------------------------------------------------------------------+
+  |     13 |                                                | .. code-block:: text                                                          |
+  |        |                                                |   :class: copy-button                                                         |
+  |        |                                                |                                                                               |
+  |        |                                                |   VERSION=2.3.6                                                               |
+  |        |                                                |   CHECKSUM=4b35d9cc374e3b05cd29c552070940124f04af8f8e5e01ff046e39833de5e153   |
+  +--------+------------------------------------------------+-------------------------------------------------------------------------------+
 
   * save and close
 
@@ -297,7 +301,7 @@ Where ``$numprocs`` corresponds to the number of processors used for the compila
 Installing Lethe (Step #2)
 -------------------------------------
 
-1. |linux_shell| Set-up the folder structure. Create the ``Software`` folder (if you are doing the candi installation, this folder should alredy exist from Step #1).
+1. |linux_shell| Set-up the folder structure. Create the ``Software`` folder (if you are doing the candi installation, this folder should already exist from Step #1).
 
 .. code-block:: text
   :class: copy-button
