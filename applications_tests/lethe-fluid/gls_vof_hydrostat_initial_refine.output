@@ -47,33 +47,33 @@ Running on 1 MPI rank(s)...
 *******************************************************************************
 Transient iteration: 1        Time: 0.02     Time step: 0.02     CFL: 0       
 *******************************************************************************
-L2 error velocity : 1.10499e-07
+L2 error velocity : 1.09509e-07
 L2 error phase : 0.000174446
 
 **********************************************************************************
-Transient iteration: 2        Time: 0.04     Time step: 0.02     CFL: 6.36404e-06
+Transient iteration: 2        Time: 0.04     Time step: 0.02     CFL: 7.71695e-06
 **********************************************************************************
    Number of active cells:       2032
    Number of degrees of freedom: 6948
    Volume of triangulation:      1
    Number of VOF degrees of freedom: 2316
-L2 error velocity : 1.10592e-07
+L2 error velocity : 1.09511e-07
 L2 error phase : 0.000174449
 
 **********************************************************************************
-Transient iteration: 3        Time: 0.06     Time step: 0.02     CFL: 6.35238e-06
+Transient iteration: 3        Time: 0.06     Time step: 0.02     CFL: 7.71707e-06
 **********************************************************************************
-   Number of active cells:       1360
-   Number of degrees of freedom: 4923
+   Number of active cells:       2032
+   Number of degrees of freedom: 6948
    Volume of triangulation:      1
-   Number of VOF degrees of freedom: 1641
-L2 error velocity : 1.6422e-07
+   Number of VOF degrees of freedom: 2316
+L2 error velocity : 1.0951e-07
 L2 error phase : 0.000174452
  time  error_velocity error_pressure 
-0.0200   1.104989e-07         0.0028 
-0.0400   1.105916e-07         0.0028 
-0.0600   1.642202e-07         0.0028 
+0.0200   1.095089e-07         0.0028 
+0.0400   1.095107e-07         0.0028 
+0.0600   1.095098e-07         0.0028 
  time  error_phase  
 0.0200 1.744461e-04 
-0.0400 1.744492e-04 
-0.0600 1.744517e-04 
+0.0400 1.744490e-04 
+0.0600 1.744518e-04 
