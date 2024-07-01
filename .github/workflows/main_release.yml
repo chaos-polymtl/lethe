@@ -63,7 +63,10 @@ jobs:
           make -j${{ env.COMPILE_JOBS }}
 
       # These tests require a single core each so we will run them in parallel
+      # Only run tests on deal.ii master version
+      # Restart files are not compatible with deal.ii v9.5.0
       - name: Run Lethe tests (Release-deal.ii:${{ matrix.dealii_version }})
+        if: ${{ matrix.dealii_version == 'master'}}
         run: |
           #Allow OMPI to run as root
           export OMPI_ALLOW_RUN_AS_ROOT=1
@@ -73,9 +76,13 @@ jobs:
           ctest -N --exclude-regex ${{ env.MULTI_CORE_TESTS_REGEX }}
           # Run in parallel
           ctest --output-on-failure -j${{ env.COMPILE_JOBS }} --exclude-regex ${{ env.MULTI_CORE_TESTS_REGEX }}
-      
+
+
       # These tests require two cores each so we will run them sequencially
+      # Only run tests on deal.ii master version
+      # Restart files are not compatible with deal.ii v9.5.0
       - name: Run multi-core Lethe tests (Release-deal.ii:${{ matrix.dealii_version }})
+        if: ${{ matrix.dealii_version == 'master'}}
         run: |
           #Allow OMPI to run as root
           export OMPI_ALLOW_RUN_AS_ROOT=1

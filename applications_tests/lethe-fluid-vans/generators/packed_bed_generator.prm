@@ -11,7 +11,7 @@ subsection simulation control
   set time step        = 0.00001
   set time end         = 0.6
   set log frequency    = 1000
-  set output frequency = 10000
+  set output frequency = 0
 end
 
 #---------------------------------------------------
@@ -30,7 +30,7 @@ subsection restart
   set checkpoint = true
   set frequency  = 10000
   set restart    = false
-  set filename   = dem
+  set filename   = ../packed_bed_files/dem
 end
 
 #---------------------------------------------------
@@ -38,9 +38,11 @@ end
 #---------------------------------------------------
 
 subsection model parameters
-  set contact detection method               = dynamic
-  set contact detection frequency            = 10
-  set neighborhood threshold                 = 1.8
+  subsection contact detection
+    set contact detection method = dynamic
+    set frequency                = 10
+    set neighborhood threshold   = 1.8
+  end
   set particle particle contact force method = hertz_mindlin_limit_overlap
   set particle wall contact force method     = nonlinear
   set integration method                     = velocity_verlet
@@ -51,14 +53,12 @@ end
 #---------------------------------------------------
 
 subsection lagrangian physical properties
-  set gx                       = -9.8
-  set gy                       = 0.0
-  set gz                       = 0
+  set g                        = -9.8, 0.0, 0.0
   set number of particle types = 1
   subsection particle type 0
     set size distribution type            = uniform
     set diameter                          = 0.001
-    set number                            = 10000
+    set number of particles               = 10000
     set density particles                 = 2500
     set young modulus particles           = 1000000
     set poisson ratio particles           = 0.3
@@ -78,13 +78,13 @@ end
 #---------------------------------------------------
 
 subsection insertion info
-  set insertion method                               = non_uniform
+  set insertion method                               = volume
   set inserted number of particles at each time step = 10000
   set insertion frequency                            = 1000
   set insertion box points coordinates               = -0.01, -0.0065, -0.0065 : 0.065, 0.0065, 0.0065
   set insertion distance threshold                   = 1.05
-  set insertion random number range                  = 0.02
-  set insertion random number seed                   = 19
+  set insertion maximum offset                       = 0.02
+  set insertion prn seed                             = 19
 end
 
 #---------------------------------------------------

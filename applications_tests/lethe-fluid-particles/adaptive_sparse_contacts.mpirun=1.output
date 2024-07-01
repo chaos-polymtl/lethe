@@ -32,11 +32,11 @@ DEM contact search at dem step 0
 DEM contact search at dem step 1
 Finished 50 DEM iterations
 ---------------------------------------------------------------
-Global continuity equation error: 3.13678e-09 s^-1
-Max local continuity error: 6.13917e-08 s^-1
+Global continuity equation error: 2.803e-09 s^-1
+Max local continuity error: 7.07295e-08 s^-1
 
 **********************************************************************************
-Transient iteration: 2        Time: 0.002    Time step: 0.001    CFL: 7.47157e-05
+Transient iteration: 2        Time: 0.002    Time step: 0.001    CFL: 7.48857e-05
 **********************************************************************************
 --------------
 Void Fraction
@@ -50,11 +50,11 @@ DEM
 DEM contact search at dem step 1
 Finished 50 DEM iterations
 ---------------------------------------------------------------
-Global continuity equation error: -7.56756e-09 s^-1
-Max local continuity error: 3.10857e-06 s^-1
+Global continuity equation error: -1.26904e-09 s^-1
+Max local continuity error: 7.28588e-07 s^-1
 
 **********************************************************************************
-Transient iteration: 3        Time: 0.003    Time step: 0.001    CFL: 0.000162479
+Transient iteration: 3        Time: 0.003    Time step: 0.001    CFL: 0.000149645
 **********************************************************************************
 --------------
 Void Fraction
@@ -68,11 +68,11 @@ DEM
 DEM contact search at dem step 1
 Finished 50 DEM iterations
 ---------------------------------------------------------------
-Global continuity equation error: 1.94709e-09 s^-1
-Max local continuity error: 5.08953e-07 s^-1
+Global continuity equation error: 3.9841e-09 s^-1
+Max local continuity error: 1.05602e-06 s^-1
 
 **********************************************************************************
-Transient iteration: 4        Time: 0.004    Time step: 0.001    CFL: 0.000224045
+Transient iteration: 4        Time: 0.004    Time step: 0.001    CFL: 0.000224447
 **********************************************************************************
 --------------
 Void Fraction
@@ -86,12 +86,12 @@ DEM
 DEM contact search at dem step 1
 Finished 50 DEM iterations
 ---------------------------------------------------------------
-Global continuity equation error: 7.6613e-09 s^-1
-Max local continuity error: 5.17523e-07 s^-1
+Global continuity equation error: 1.16336e-09 s^-1
+Max local continuity error: 1.41713e-06 s^-1
 
-*********************************************************************************
-Transient iteration: 5        Time: 0.005    Time step: 0.001    CFL: 0.00029829
-*********************************************************************************
+**********************************************************************************
+Transient iteration: 5        Time: 0.005    Time step: 0.001    CFL: 0.000299344
+**********************************************************************************
 --------------
 Void Fraction
 --------------
@@ -107,7 +107,7 @@ print_from_processor_0
 0 1
 0
 1 8
-3 3 3 3 3 3 3 3
+4 4 4 4 4 4 4 4
 
 
 [deal.II intermediate Patch<3,3>]
@@ -117,7 +117,7 @@ print_from_processor_0
 1 1
 0
 1 8
-2 2 2 2 2 2 2 2
+4 4 4 4 4 4 4 4
 
 
 [deal.II intermediate Patch<3,3>]
@@ -127,7 +127,7 @@ print_from_processor_0
 2 1
 0
 1 8
-2 2 2 2 2 2 2 2
+4 4 4 4 4 4 4 4
 
 
 [deal.II intermediate Patch<3,3>]
@@ -137,7 +137,7 @@ print_from_processor_0
 3 1
 0
 1 8
-2 2 2 2 2 2 2 2
+4 4 4 4 4 4 4 4
 
 
 [deal.II intermediate Patch<3,3>]
@@ -147,7 +147,7 @@ print_from_processor_0
 4 1
 0
 1 8
-3 3 3 3 3 3 3 3
+4 4 4 4 4 4 4 4
 
 
 [deal.II intermediate Patch<3,3>]
@@ -188,5 +188,5 @@ DEM
 DEM contact search at dem step 1
 Finished 50 DEM iterations
 ---------------------------------------------------------------
-Global continuity equation error: 6.76463e-10 s^-1
-Max local continuity error: 6.79928e-07 s^-1
+Global continuity equation error: -8.07686e-10 s^-1
+Max local continuity error: 1.81029e-06 s^-1
