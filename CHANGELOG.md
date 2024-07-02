@@ -3,6 +3,12 @@
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Master] - 2024-07-02
+
+### Fixed
+
+- MINOR Box refinement was applied when restarting simulations, changing the restarting triangulation and leading to undesirable behavior. A boolean stating if the simulation restarts is now checked before applying the box refinement. [#1184](https://github.com/chaos-polymtl/lethe/pull/1184) 
+
 ## [Master] - 2024-06-16
 
 ### Changed
