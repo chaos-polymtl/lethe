@@ -143,8 +143,8 @@ Protected Member Functions</h2></td></tr>
 <tr class="separator:a98a7f846709b83df0ea64c361fee192c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5cb26099e84a166b982c052ffa9c43a8"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNavierStokesBase.html#a5cb26099e84a166b982c052ffa9c43a8">enable_dynamic_zero_constraints_fd</a> ()</td></tr>
 <tr class="separator:a5cb26099e84a166b982c052ffa9c43a8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0ae507879c1f61a95b7ff255ebcfff58"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNavierStokesBase.html#a0ae507879c1f61a95b7ff255ebcfff58">box_refine_mesh</a> ()</td></tr>
-<tr class="separator:a0ae507879c1f61a95b7ff255ebcfff58"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a035087ab1aa51daa4d7bcee2aeb6c16d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNavierStokesBase.html#a035087ab1aa51daa4d7bcee2aeb6c16d">box_refine_mesh</a> (const bool restart)</td></tr>
+<tr class="separator:a035087ab1aa51daa4d7bcee2aeb6c16d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a57ffa198f9fabb15e3af4c9fa2921e18"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNavierStokesBase.html#a57ffa198f9fabb15e3af4c9fa2921e18">refine_mesh</a> ()</td></tr>
 <tr class="separator:a57ffa198f9fabb15e3af4c9fa2921e18"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a050bce04127b14f96659bfa4627892e0"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNavierStokesBase.html#a050bce04127b14f96659bfa4627892e0">refine_mesh_kelly</a> ()</td></tr>
@@ -375,7 +375,7 @@ template&lt;int dim, typename VectorType , typename DofsType &gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="navier__stokes__base_8cc_source.html#l00061">61</a> of file <a class="el" href="navier__stokes__base_8cc_source.html">navier_stokes_base.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="navier__stokes__base_8h_source.html#l00843">NavierStokesBase&lt; dim, VectorType, DofsType &gt;::cell_quadrature</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00807">NavierStokesBase&lt; dim, VectorType, DofsType &gt;::dof_handler</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00844">NavierStokesBase&lt; dim, VectorType, DofsType &gt;::face_quadrature</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00808">NavierStokesBase&lt; dim, VectorType, DofsType &gt;::fe</a>, <a class="el" href="simulation__parameters_8h_source.html#l00048">SimulationParameters&lt; dim &gt;::fem_parameters</a>, <a class="el" href="multiphysics_8h_source.html#l00026">fluid_dynamics</a>, <a class="el" href="simulation__parameters_8h_source.html#l00039">SimulationParameters&lt; dim &gt;::linear_solver</a>, <a class="el" href="structParameters_1_1LinearSolver.html#a704cb5844fa228c463633aafdc87a482a5d266332fc0c9664dfb1414b629535f6">Parameters::LinearSolver::lsmg</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00842">NavierStokesBase&lt; dim, VectorType, DofsType &gt;::mapping</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00802">NavierStokesBase&lt; dim, VectorType, DofsType &gt;::mpi_communicator</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00839">NavierStokesBase&lt; dim, VectorType, DofsType &gt;::number_quadrature_points</a>, <a class="el" href="parameters_8h_source.html#l00956">Parameters::FEM::pressure_order</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00812">NavierStokesBase&lt; dim, VectorType, DofsType &gt;::simulation_parameters</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00806">NavierStokesBase&lt; dim, VectorType, DofsType &gt;::triangulation</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00837">NavierStokesBase&lt; dim, VectorType, DofsType &gt;::velocity_fem_degree</a>, and <a class="el" href="parameters_8h_source.html#l00953">Parameters::FEM::velocity_order</a>.</p>
+<p class="reference">References <a class="el" href="navier__stokes__base_8h_source.html#l00845">NavierStokesBase&lt; dim, VectorType, DofsType &gt;::cell_quadrature</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00809">NavierStokesBase&lt; dim, VectorType, DofsType &gt;::dof_handler</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00846">NavierStokesBase&lt; dim, VectorType, DofsType &gt;::face_quadrature</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00810">NavierStokesBase&lt; dim, VectorType, DofsType &gt;::fe</a>, <a class="el" href="simulation__parameters_8h_source.html#l00048">SimulationParameters&lt; dim &gt;::fem_parameters</a>, <a class="el" href="multiphysics_8h_source.html#l00026">fluid_dynamics</a>, <a class="el" href="simulation__parameters_8h_source.html#l00039">SimulationParameters&lt; dim &gt;::linear_solver</a>, <a class="el" href="structParameters_1_1LinearSolver.html#a704cb5844fa228c463633aafdc87a482a5d266332fc0c9664dfb1414b629535f6">Parameters::LinearSolver::lsmg</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00844">NavierStokesBase&lt; dim, VectorType, DofsType &gt;::mapping</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00804">NavierStokesBase&lt; dim, VectorType, DofsType &gt;::mpi_communicator</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00841">NavierStokesBase&lt; dim, VectorType, DofsType &gt;::number_quadrature_points</a>, <a class="el" href="parameters_8h_source.html#l00956">Parameters::FEM::pressure_order</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00814">NavierStokesBase&lt; dim, VectorType, DofsType &gt;::simulation_parameters</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00808">NavierStokesBase&lt; dim, VectorType, DofsType &gt;::triangulation</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00839">NavierStokesBase&lt; dim, VectorType, DofsType &gt;::velocity_fem_degree</a>, and <a class="el" href="parameters_8h_source.html#l00953">Parameters::FEM::velocity_order</a>.</p>
 
 </div>
 </div>
@@ -461,14 +461,14 @@ template&lt;int dim, typename VectorType , typename DofsType &gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="navier__stokes__base_8cc_source.html#l02045">2045</a> of file <a class="el" href="navier__stokes__base_8cc_source.html">navier_stokes_base.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="navier__stokes__base_8cc_source.html#l02049">2049</a> of file <a class="el" href="navier__stokes__base_8cc_source.html">navier_stokes_base.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="navier__stokes__base_8h_source.html#l00100">StasisConstraintWithTemperature::dofs_are_connected_to_fluid</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00098">StasisConstraintWithTemperature::dofs_are_in_solid</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00094">StasisConstraintWithTemperature::max_solid_temperature</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00092">StasisConstraintWithTemperature::min_solid_temperature</a>, and <a class="el" href="physical__property__model_8h_source.html#l00053">temperature</a>.</p>
 
 </div>
 </div>
-<a id="a0ae507879c1f61a95b7ff255ebcfff58"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a0ae507879c1f61a95b7ff255ebcfff58">&#9670;&nbsp;</a></span>box_refine_mesh()</h2>
+<a id="a035087ab1aa51daa4d7bcee2aeb6c16d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a035087ab1aa51daa4d7bcee2aeb6c16d">&#9670;&nbsp;</a></span>box_refine_mesh()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -479,7 +479,11 @@ template&lt;int dim, typename VectorType , typename DofsType &gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void <a class="el" href="classNavierStokesBase.html">NavierStokesBase</a>&lt; dim, VectorType, DofsType &gt;::box_refine_mesh</td>
+          <td class="memname">void <a class="el" href="classNavierStokesBase.html">NavierStokesBase</a>&lt; dim, VectorType, DofsType &gt;::box_refine_mesh </td>
+          <td>(</td>
+          <td class="paramtype">const bool&#160;</td>
+          <td class="paramname"><em>restart</em></td><td>)</td>
+          <td></td>
         </tr>
       </table>
   </td>
@@ -490,6 +494,12 @@ template&lt;int dim, typename VectorType , typename DofsType &gt; </div>
 </div><div class="memdoc">
 
 <p>Allow the initial refinement of all cells of the principal mesh that are partially contained in one of the cells of the box refinement mesh given in the parameter. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">restart</td><td>Indicator if the simulation is being restarted or not. </td></tr>
+  </table>
+  </dd>
+</dl>
 
 <p class="definition">Definition at line <a class="el" href="navier__stokes__base_8cc_source.html#l00691">691</a> of file <a class="el" href="navier__stokes__base_8cc_source.html">navier_stokes_base.cc</a>.</p>
 
@@ -543,7 +553,7 @@ template&lt;int dim, typename VectorType , typename DofsType &gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="navier__stokes__base_8cc_source.html#l02074">2074</a> of file <a class="el" href="navier__stokes__base_8cc_source.html">navier_stokes_base.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="navier__stokes__base_8cc_source.html#l02078">2078</a> of file <a class="el" href="navier__stokes__base_8cc_source.html">navier_stokes_base.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="navier__stokes__base_8h_source.html#l00100">StasisConstraintWithTemperature::dofs_are_connected_to_fluid</a>, and <a class="el" href="navier__stokes__base_8h_source.html#l00098">StasisConstraintWithTemperature::dofs_are_in_solid</a>.</p>
 
@@ -595,7 +605,7 @@ template&lt;int dim, typename VectorType , typename DofsType &gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Boolean indicating if the cell is connected to a fluid (true) or not (false). </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="navier__stokes__base_8h_source.html#l00642">642</a> of file <a class="el" href="navier__stokes__base_8h_source.html">navier_stokes_base.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="navier__stokes__base_8h_source.html#l00644">644</a> of file <a class="el" href="navier__stokes__base_8h_source.html">navier_stokes_base.h</a>.</p>
 
 </div>
 </div>
@@ -645,7 +655,7 @@ template&lt;int dim, typename VectorType , typename DofsType &gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Boolean indicating if the cell is in a solid (true) or not (false). </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="navier__stokes__base_8h_source.html#l00593">593</a> of file <a class="el" href="navier__stokes__base_8h_source.html">navier_stokes_base.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="navier__stokes__base_8h_source.html#l00595">595</a> of file <a class="el" href="navier__stokes__base_8h_source.html">navier_stokes_base.h</a>.</p>
 
 </div>
 </div>
@@ -739,7 +749,7 @@ template&lt;int dim, typename VectorType , typename DofsType &gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="navier__stokes__base_8h_source.html#l00670">670</a> of file <a class="el" href="navier__stokes__base_8h_source.html">navier_stokes_base.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="navier__stokes__base_8h_source.html#l00672">672</a> of file <a class="el" href="navier__stokes__base_8h_source.html">navier_stokes_base.h</a>.</p>
 
 </div>
 </div>
@@ -795,7 +805,7 @@ template&lt;int dim, typename VectorType , typename DofsType &gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="navier__stokes__base_8h_source.html#l00533">533</a> of file <a class="el" href="navier__stokes__base_8h_source.html">navier_stokes_base.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="navier__stokes__base_8h_source.html#l00535">535</a> of file <a class="el" href="navier__stokes__base_8h_source.html">navier_stokes_base.h</a>.</p>
 
 </div>
 </div>
@@ -834,7 +844,7 @@ template&lt;int dim, typename VectorType , typename DofsType &gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="navier__stokes__base_8cc_source.html#l01932">1932</a> of file <a class="el" href="navier__stokes__base_8cc_source.html">navier_stokes_base.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="navier__stokes__base_8cc_source.html#l01936">1936</a> of file <a class="el" href="navier__stokes__base_8cc_source.html">navier_stokes_base.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="multiphysics_8h_source.html#l00027">heat_transfer</a>.</p>
 
@@ -885,7 +895,7 @@ template&lt;int dim, typename VectorType , typename DofsType &gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="navier__stokes__base_8cc_source.html#l01967">1967</a> of file <a class="el" href="navier__stokes__base_8cc_source.html">navier_stokes_base.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="navier__stokes__base_8cc_source.html#l01971">1971</a> of file <a class="el" href="navier__stokes__base_8cc_source.html">navier_stokes_base.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="multiphysics_8h_source.html#l00027">heat_transfer</a>, and <a class="el" href="multiphysics_8h_source.html#l00029">VOF</a>.</p>
 
@@ -989,7 +999,7 @@ template&lt;int dim, typename VectorType , typename DofsType &gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="navier__stokes__base_8cc_source.html#l01855">1855</a> of file <a class="el" href="navier__stokes__base_8cc_source.html">navier_stokes_base.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="navier__stokes__base_8cc_source.html#l01859">1859</a> of file <a class="el" href="navier__stokes__base_8cc_source.html">navier_stokes_base.cc</a>.</p>
 
 </div>
 </div>
@@ -1082,8 +1092,6 @@ template&lt;int dim, typename VectorType , typename DofsType &gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="navier__stokes__base_8cc_source.html#l00518">518</a> of file <a class="el" href="navier__stokes__base_8cc_source.html">navier_stokes_base.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="utilities_8h_source.html#l00415">announce_string()</a>, <a class="el" href="postprocessing__cfd_8cc_source.html#l00231">calculate_CFL()</a>, <a class="el" href="structParameters_1_1Timer.html#ae1d96ff22b9dbb46d965a0df44142f42a6f012ea8d7efd87146dd62db83f2ed99">Parameters::Timer::iteration</a>, <a class="el" href="structParameters_1_1SimulationControl.html#a75b33ae454da14bc72dbe078c121d7e9a4f997f546b68779b58e9f6f19dc2b9e5">Parameters::SimulationControl::steady</a>, and <a class="el" href="write__checkpoint_8cc_source.html#l00007">write_checkpoint()</a>.</p>
-
 </div>
 </div>
 <a id="a625f286aafd1c4ff0ec6f796985fa316"></a>
@@ -1131,7 +1139,7 @@ template&lt;int dim, typename VectorType , typename DofsType &gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="navier__stokes__base_8h_source.html#l00615">615</a> of file <a class="el" href="navier__stokes__base_8h_source.html">navier_stokes_base.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="navier__stokes__base_8h_source.html#l00617">617</a> of file <a class="el" href="navier__stokes__base_8h_source.html">navier_stokes_base.h</a>.</p>
 
 </div>
 </div>
@@ -1180,7 +1188,7 @@ template&lt;int dim, typename VectorType , typename DofsType &gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="navier__stokes__base_8h_source.html#l00567">567</a> of file <a class="el" href="navier__stokes__base_8h_source.html">navier_stokes_base.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="navier__stokes__base_8h_source.html#l00569">569</a> of file <a class="el" href="navier__stokes__base_8h_source.html">navier_stokes_base.h</a>.</p>
 
 </div>
 </div>
@@ -1243,7 +1251,7 @@ template&lt;int dim, typename VectorType , typename DofsType &gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="navier__stokes__base_8h_source.html#l00468">468</a> of file <a class="el" href="navier__stokes__base_8h_source.html">navier_stokes_base.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="navier__stokes__base_8h_source.html#l00470">470</a> of file <a class="el" href="navier__stokes__base_8h_source.html">navier_stokes_base.h</a>.</p>
 
 </div>
 </div>
@@ -1306,7 +1314,7 @@ template&lt;int dim, typename VectorType , typename DofsType &gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="navier__stokes__base_8h_source.html#l00438">438</a> of file <a class="el" href="navier__stokes__base_8h_source.html">navier_stokes_base.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="navier__stokes__base_8h_source.html#l00440">440</a> of file <a class="el" href="navier__stokes__base_8h_source.html">navier_stokes_base.h</a>.</p>
 
 </div>
 </div>
@@ -1528,7 +1536,7 @@ template&lt;int dim, typename VectorType , typename DofsType &gt; </div>
 
 <p>init_temporary_vector <a class="el" href="classThis.html">This</a> function initializes correctly a temporary vector depending on the vector type </p>
 
-<p class="definition">Definition at line <a class="el" href="navier__stokes__base_8cc_source.html#l02696">2696</a> of file <a class="el" href="navier__stokes__base_8cc_source.html">navier_stokes_base.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="navier__stokes__base_8cc_source.html#l02700">2700</a> of file <a class="el" href="navier__stokes__base_8cc_source.html">navier_stokes_base.cc</a>.</p>
 
 </div>
 </div>
@@ -1594,7 +1602,7 @@ template&lt;int dim, typename VectorType , typename DofsType &gt; </div>
 
 <p>Reimplemented in <a class="el" href="classGLSVANSSolver.html#a72b2bb3f8699bbbd4f76e859a3aa7b67">GLSVANSSolver&lt; dim &gt;</a>, and <a class="el" href="classGLSSharpNavierStokesSolver.html#af236b69c1b5c443d9d6c2c1985b2da45">GLSSharpNavierStokesSolver&lt; dim &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="navier__stokes__base_8cc_source.html#l02106">2106</a> of file <a class="el" href="navier__stokes__base_8cc_source.html">navier_stokes_base.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="navier__stokes__base_8cc_source.html#l02110">2110</a> of file <a class="el" href="navier__stokes__base_8cc_source.html">navier_stokes_base.cc</a>.</p>
 
 </div>
 </div>
@@ -1634,7 +1642,7 @@ template&lt;int dim, typename VectorType , typename DofsType &gt; </div>
 
 <p>Implements <a class="el" href="classPhysicsSolver.html#a33c67d4913c1e92d0404cc67f70caca4">PhysicsSolver&lt; VectorType &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="navier__stokes__base_8cc_source.html#l02606">2606</a> of file <a class="el" href="navier__stokes__base_8cc_source.html">navier_stokes_base.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="navier__stokes__base_8cc_source.html#l02610">2610</a> of file <a class="el" href="navier__stokes__base_8cc_source.html">navier_stokes_base.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="physical__property__model_8h_source.html#l00056">pressure</a>.</p>
 
@@ -1736,7 +1744,7 @@ template&lt;int dim, typename VectorType , typename DofsType &gt; </div>
 
 <p>Reimplemented in <a class="el" href="classGLSSharpNavierStokesSolver.html#aef5e975b65e2096b6f3e25f61ccf70d3">GLSSharpNavierStokesSolver&lt; dim &gt;</a>, and <a class="el" href="classCFDDEMSolver.html#aef7bc5774f96b116540adad012ffdc65">CFDDEMSolver&lt; dim &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="navier__stokes__base_8cc_source.html#l01199">1199</a> of file <a class="el" href="navier__stokes__base_8cc_source.html">navier_stokes_base.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="navier__stokes__base_8cc_source.html#l01203">1203</a> of file <a class="el" href="navier__stokes__base_8cc_source.html">navier_stokes_base.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="utilities_8h_source.html#l00415">announce_string()</a>, <a class="el" href="postprocessing__cfd_8cc_source.html#l00752">calculate_apparent_viscosity()</a>, <a class="el" href="postprocessing__cfd_8cc_source.html#l00334">calculate_enstrophy()</a>, <a class="el" href="postprocessing__cfd_8cc_source.html#l01387">calculate_flow_rate()</a>, <a class="el" href="postprocessing__cfd_8cc_source.html#l00655">calculate_kinetic_energy()</a>, <a class="el" href="postprocessing__cfd_8cc_source.html#l01228">calculate_L2_error()</a>, <a class="el" href="postprocessing__cfd_8cc_source.html#l00038">calculate_pressure_drop()</a>, <a class="el" href="postprocessing__cfd_8cc_source.html#l00443">calculate_pressure_power()</a>, <a class="el" href="postprocessing__cfd_8cc_source.html#l00538">calculate_viscous_dissipation()</a>, <a class="el" href="structParameters_1_1SimulationControl.html#a75b33ae454da14bc72dbe078c121d7e9a4f997f546b68779b58e9f6f19dc2b9e5">Parameters::SimulationControl::steady</a>, and <a class="el" href="namespaceParameters.html#ad408350a21239600add83c5e91fcfa26a2c7aea4237e25b4f8ee3b0bf77d6fed0">Parameters::verbose</a>.</p>
 
@@ -1833,7 +1841,7 @@ template&lt;int dim, typename VectorType , typename DofsType &gt; </div>
 
 <p>Reimplemented in <a class="el" href="classGLSNitscheNavierStokesSolver.html#a23b4d411a6d70f502972e800e857bf80">GLSNitscheNavierStokesSolver&lt; dim, spacedim &gt;</a>, <a class="el" href="classGLSSharpNavierStokesSolver.html#a288ccb40a043df27c99caad27f04166a">GLSSharpNavierStokesSolver&lt; dim &gt;</a>, and <a class="el" href="classCFDDEMSolver.html#a8e1bf1e148eb7c08ddc4da5d1b1f2304">CFDDEMSolver&lt; dim &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="navier__stokes__base_8cc_source.html#l01692">1692</a> of file <a class="el" href="navier__stokes__base_8cc_source.html">navier_stokes_base.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="navier__stokes__base_8cc_source.html#l01696">1696</a> of file <a class="el" href="navier__stokes__base_8cc_source.html">navier_stokes_base.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="parameters_8h_source.html#l00874">Parameters::PostProcessing::apparent_viscosity_output_name</a>, <a class="el" href="parameters_8h_source.html#l00829">Parameters::PostProcessing::calculate_apparent_viscosity</a>, <a class="el" href="parameters_8h_source.html#l00820">Parameters::PostProcessing::calculate_enstrophy</a>, <a class="el" href="parameters_8h_source.html#l00844">Parameters::PostProcessing::calculate_flow_rate</a>, <a class="el" href="parameters_8h_source.html#l00817">Parameters::PostProcessing::calculate_kinetic_energy</a>, <a class="el" href="parameters_8h_source.html#l00835">Parameters::PostProcessing::calculate_pressure_drop</a>, <a class="el" href="parameters_8h_source.html#l00823">Parameters::PostProcessing::calculate_pressure_power</a>, <a class="el" href="parameters_8h_source.html#l00826">Parameters::PostProcessing::calculate_viscous_dissipation</a>, <a class="el" href="utilities_8h_source.html#l00447">deserialize_table()</a>, <a class="el" href="parameters_8h_source.html#l00865">Parameters::PostProcessing::enstrophy_output_name</a>, <a class="el" href="parameters_8h_source.html#l00862">Parameters::PostProcessing::flow_rate_output_name</a>, <a class="el" href="parameters_8h_source.html#l00856">Parameters::PostProcessing::kinetic_energy_output_name</a>, <a class="el" href="parameters_8h_source.html#l00859">Parameters::PostProcessing::pressure_drop_output_name</a>, <a class="el" href="parameters_8h_source.html#l00868">Parameters::PostProcessing::pressure_power_output_name</a>, and <a class="el" href="parameters_8h_source.html#l00871">Parameters::PostProcessing::viscous_dissipation_output_name</a>.</p>
 
@@ -1895,7 +1903,7 @@ template&lt;int dim, typename VectorType , typename DofsType &gt; </div>
 
 <p>Allow the refinement of the mesh based on the Kelly error estimator. See : <a href="https://www.dealii.org/current/doxygen/deal.II/classKellyErrorEstimator.html">https://www.dealii.org/current/doxygen/deal.II/classKellyErrorEstimator.html</a> for more information on the Kelly error estimator. </p>
 
-<p class="definition">Definition at line <a class="el" href="navier__stokes__base_8cc_source.html#l00904">904</a> of file <a class="el" href="navier__stokes__base_8cc_source.html">navier_stokes_base.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="navier__stokes__base_8cc_source.html#l00908">908</a> of file <a class="el" href="navier__stokes__base_8cc_source.html">navier_stokes_base.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="structParameters_1_1MeshAdaptation.html#a0351d569653bf8e1cac39326ac10f606a03f0356d2d1c334d3567c9d67818f5d0">Parameters::MeshAdaptation::fraction</a>, <a class="el" href="structParameters_1_1MeshAdaptation.html#a0351d569653bf8e1cac39326ac10f606ab1bc248a7ff2b2e95569f56de68615df">Parameters::MeshAdaptation::number</a>, <a class="el" href="physical__property__model_8h_source.html#l00056">pressure</a>, and <a class="el" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fddaac1a453d0cdc1f19d9479ccfaa8b082c">velocity</a>.</p>
 
@@ -1925,7 +1933,7 @@ template&lt;int dim, typename VectorType , typename DofsType &gt; </div>
 
 <p>Allow the uniform refinement of all the mesh. </p>
 
-<p class="definition">Definition at line <a class="el" href="navier__stokes__base_8cc_source.html#l01123">1123</a> of file <a class="el" href="navier__stokes__base_8cc_source.html">navier_stokes_base.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="navier__stokes__base_8cc_source.html#l01127">1127</a> of file <a class="el" href="navier__stokes__base_8cc_source.html">navier_stokes_base.cc</a>.</p>
 
 </div>
 </div>
@@ -1953,7 +1961,7 @@ template&lt;int dim, typename VectorType , typename DofsType &gt; </div>
 
 <p>rescale_pressure_dofs_in_newton_update <a class="el" href="classThis.html">This</a> function is used to rescale pressure DOFs in the newton correction </p>
 
-<p class="definition">Definition at line <a class="el" href="navier__stokes__base_8cc_source.html#l02558">2558</a> of file <a class="el" href="navier__stokes__base_8cc_source.html">navier_stokes_base.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="navier__stokes__base_8cc_source.html#l02562">2562</a> of file <a class="el" href="navier__stokes__base_8cc_source.html">navier_stokes_base.cc</a>.</p>
 
 </div>
 </div>
@@ -2070,7 +2078,7 @@ template&lt;int dim, typename VectorType , typename DofsType &gt; </div>
 
 <p>set_nodal_values Set the nodal values of velocity and pressure </p>
 
-<p class="definition">Definition at line <a class="el" href="navier__stokes__base_8cc_source.html#l01645">1645</a> of file <a class="el" href="navier__stokes__base_8cc_source.html">navier_stokes_base.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="navier__stokes__base_8cc_source.html#l01649">1649</a> of file <a class="el" href="navier__stokes__base_8cc_source.html">navier_stokes_base.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="structParameters_1_1SimulationControl.html#a4560ab579df469caea9d52cc5a7a53baacf19a123f91d5ec145a21245ba8597ec">Parameters::SimulationControl::initial_solution</a>, and <a class="el" href="physical__property__model_8h_source.html#l00056">pressure</a>.</p>
 
@@ -2199,7 +2207,7 @@ template&lt;int dim, typename VectorType , typename DofsType &gt; </div>
 
 <p>Reimplemented in <a class="el" href="classGLSNitscheNavierStokesSolver.html#ac4cf9f18a4ab157c0005bb743682c0e2">GLSNitscheNavierStokesSolver&lt; dim, spacedim &gt;</a>, <a class="el" href="classGLSSharpNavierStokesSolver.html#a76da870c0d01761ae939f83fc7d9a8ad">GLSSharpNavierStokesSolver&lt; dim &gt;</a>, and <a class="el" href="classCFDDEMSolver.html#af85e466d9fa806d09e531d1e9203c53a">CFDDEMSolver&lt; dim &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="navier__stokes__base_8cc_source.html#l02446">2446</a> of file <a class="el" href="navier__stokes__base_8cc_source.html">navier_stokes_base.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="navier__stokes__base_8cc_source.html#l02450">2450</a> of file <a class="el" href="navier__stokes__base_8cc_source.html">navier_stokes_base.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="parameters_8h_source.html#l00874">Parameters::PostProcessing::apparent_viscosity_output_name</a>, <a class="el" href="parameters_8h_source.html#l00829">Parameters::PostProcessing::calculate_apparent_viscosity</a>, <a class="el" href="parameters_8h_source.html#l00820">Parameters::PostProcessing::calculate_enstrophy</a>, <a class="el" href="parameters_8h_source.html#l00844">Parameters::PostProcessing::calculate_flow_rate</a>, <a class="el" href="parameters_8h_source.html#l00817">Parameters::PostProcessing::calculate_kinetic_energy</a>, <a class="el" href="parameters_8h_source.html#l00835">Parameters::PostProcessing::calculate_pressure_drop</a>, <a class="el" href="parameters_8h_source.html#l00823">Parameters::PostProcessing::calculate_pressure_power</a>, <a class="el" href="parameters_8h_source.html#l00826">Parameters::PostProcessing::calculate_viscous_dissipation</a>, <a class="el" href="parameters_8h_source.html#l00865">Parameters::PostProcessing::enstrophy_output_name</a>, <a class="el" href="parameters_8h_source.html#l00862">Parameters::PostProcessing::flow_rate_output_name</a>, <a class="el" href="parameters_8h_source.html#l00856">Parameters::PostProcessing::kinetic_energy_output_name</a>, <a class="el" href="parameters_8h_source.html#l00859">Parameters::PostProcessing::pressure_drop_output_name</a>, <a class="el" href="parameters_8h_source.html#l00868">Parameters::PostProcessing::pressure_power_output_name</a>, <a class="el" href="utilities_8h_source.html#l00432">serialize_table()</a>, and <a class="el" href="parameters_8h_source.html#l00871">Parameters::PostProcessing::viscous_dissipation_output_name</a>.</p>
 
@@ -2229,7 +2237,7 @@ template&lt;int dim, typename VectorType , typename DofsType &gt; </div>
 
 <p>write_output_forces Writes the forces per boundary condition to a text file output </p>
 
-<p class="definition">Definition at line <a class="el" href="navier__stokes__base_8cc_source.html#l02402">2402</a> of file <a class="el" href="navier__stokes__base_8cc_source.html">navier_stokes_base.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="navier__stokes__base_8cc_source.html#l02406">2406</a> of file <a class="el" href="navier__stokes__base_8cc_source.html">navier_stokes_base.cc</a>.</p>
 
 </div>
 </div>
@@ -2261,7 +2269,7 @@ template&lt;int dim, typename VectorType , typename DofsType &gt; </div>
 
 <p>write_output_results Post-processing as parallel VTU files </p>
 
-<p class="definition">Definition at line <a class="el" href="navier__stokes__base_8cc_source.html#l02112">2112</a> of file <a class="el" href="navier__stokes__base_8cc_source.html">navier_stokes_base.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="navier__stokes__base_8cc_source.html#l02116">2116</a> of file <a class="el" href="navier__stokes__base_8cc_source.html">navier_stokes_base.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="postprocessors__smoothing_8cc_source.html#l00149">PostProcessorSmoothing&lt; dim, VectorType &gt;::calculate_smoothed_field()</a>, <a class="el" href="postprocessors__smoothing_8cc_source.html#l00161">PostProcessorSmoothing&lt; dim, VectorType &gt;::get_dof_handler()</a>, and <a class="el" href="structParameters_1_1VelocitySource.html#a3d594539cc118d4406cc7bcb298d2ca2a9fa1e546d34dd62a768567052aaa9f92">Parameters::VelocitySource::srf</a>.</p>
 
@@ -2291,7 +2299,7 @@ template&lt;int dim, typename VectorType , typename DofsType &gt; </div>
 
 <p>write_output_torques Writes the torques per boundary condition to a text file output </p>
 
-<p class="definition">Definition at line <a class="el" href="navier__stokes__base_8cc_source.html#l02424">2424</a> of file <a class="el" href="navier__stokes__base_8cc_source.html">navier_stokes_base.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="navier__stokes__base_8cc_source.html#l02428">2428</a> of file <a class="el" href="navier__stokes__base_8cc_source.html">navier_stokes_base.cc</a>.</p>
 
 </div>
 </div>
@@ -2318,7 +2326,7 @@ template&lt;int dim, typename VectorType , typename DofsType &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="navier__stokes__base_8h_source.html#l00860">860</a> of file <a class="el" href="navier__stokes__base_8h_source.html">navier_stokes_base.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="navier__stokes__base_8h_source.html#l00862">862</a> of file <a class="el" href="navier__stokes__base_8h_source.html">navier_stokes_base.h</a>.</p>
 
 </div>
 </div>
@@ -2344,7 +2352,7 @@ template&lt;int dim, typename VectorType , typename DofsType &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="navier__stokes__base_8h_source.html#l00847">847</a> of file <a class="el" href="navier__stokes__base_8h_source.html">navier_stokes_base.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="navier__stokes__base_8h_source.html#l00849">849</a> of file <a class="el" href="navier__stokes__base_8h_source.html">navier_stokes_base.h</a>.</p>
 
 </div>
 </div>
@@ -2370,7 +2378,7 @@ template&lt;int dim, typename VectorType , typename DofsType &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="navier__stokes__base_8h_source.html#l00865">865</a> of file <a class="el" href="navier__stokes__base_8h_source.html">navier_stokes_base.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="navier__stokes__base_8h_source.html#l00867">867</a> of file <a class="el" href="navier__stokes__base_8h_source.html">navier_stokes_base.h</a>.</p>
 
 </div>
 </div>
@@ -2396,7 +2404,7 @@ template&lt;int dim, typename VectorType , typename DofsType &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="navier__stokes__base_8h_source.html#l00864">864</a> of file <a class="el" href="navier__stokes__base_8h_source.html">navier_stokes_base.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="navier__stokes__base_8h_source.html#l00866">866</a> of file <a class="el" href="navier__stokes__base_8h_source.html">navier_stokes_base.h</a>.</p>
 
 </div>
 </div>
@@ -2422,7 +2430,7 @@ template&lt;int dim, typename VectorType , typename DofsType &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="navier__stokes__base_8h_source.html#l00843">843</a> of file <a class="el" href="navier__stokes__base_8h_source.html">navier_stokes_base.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="navier__stokes__base_8h_source.html#l00845">845</a> of file <a class="el" href="navier__stokes__base_8h_source.html">navier_stokes_base.h</a>.</p>
 
 </div>
 </div>
@@ -2448,7 +2456,7 @@ template&lt;int dim, typename VectorType , typename DofsType &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="navier__stokes__base_8h_source.html#l00810">810</a> of file <a class="el" href="navier__stokes__base_8h_source.html">navier_stokes_base.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="navier__stokes__base_8h_source.html#l00812">812</a> of file <a class="el" href="navier__stokes__base_8h_source.html">navier_stokes_base.h</a>.</p>
 
 </div>
 </div>
@@ -2474,7 +2482,7 @@ template&lt;int dim, typename VectorType , typename DofsType &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="navier__stokes__base_8h_source.html#l00807">807</a> of file <a class="el" href="navier__stokes__base_8h_source.html">navier_stokes_base.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="navier__stokes__base_8h_source.html#l00809">809</a> of file <a class="el" href="navier__stokes__base_8h_source.html">navier_stokes_base.h</a>.</p>
 
 </div>
 </div>
@@ -2501,7 +2509,7 @@ template&lt;int dim, typename VectorType , typename DofsType &gt; </div>
 </div><div class="memdoc">
 <p>Dynamic homogeneous constraints used for temperature-dependent solid domain constraints </p>
 
-<p class="definition">Definition at line <a class="el" href="navier__stokes__base_8h_source.html#l00889">889</a> of file <a class="el" href="navier__stokes__base_8h_source.html">navier_stokes_base.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="navier__stokes__base_8h_source.html#l00891">891</a> of file <a class="el" href="navier__stokes__base_8h_source.html">navier_stokes_base.h</a>.</p>
 
 </div>
 </div>
@@ -2527,7 +2535,7 @@ template&lt;int dim, typename VectorType , typename DofsType &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="navier__stokes__base_8h_source.html#l00856">856</a> of file <a class="el" href="navier__stokes__base_8h_source.html">navier_stokes_base.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="navier__stokes__base_8h_source.html#l00858">858</a> of file <a class="el" href="navier__stokes__base_8h_source.html">navier_stokes_base.h</a>.</p>
 
 </div>
 </div>
@@ -2553,7 +2561,7 @@ template&lt;int dim, typename VectorType , typename DofsType &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="navier__stokes__base_8h_source.html#l00871">871</a> of file <a class="el" href="navier__stokes__base_8h_source.html">navier_stokes_base.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="navier__stokes__base_8h_source.html#l00873">873</a> of file <a class="el" href="navier__stokes__base_8h_source.html">navier_stokes_base.h</a>.</p>
 
 </div>
 </div>
@@ -2579,7 +2587,7 @@ template&lt;int dim, typename VectorType , typename DofsType &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="navier__stokes__base_8h_source.html#l00827">827</a> of file <a class="el" href="navier__stokes__base_8h_source.html">navier_stokes_base.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="navier__stokes__base_8h_source.html#l00829">829</a> of file <a class="el" href="navier__stokes__base_8h_source.html">navier_stokes_base.h</a>.</p>
 
 </div>
 </div>
@@ -2605,7 +2613,7 @@ template&lt;int dim, typename VectorType , typename DofsType &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="navier__stokes__base_8h_source.html#l00816">816</a> of file <a class="el" href="navier__stokes__base_8h_source.html">navier_stokes_base.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="navier__stokes__base_8h_source.html#l00818">818</a> of file <a class="el" href="navier__stokes__base_8h_source.html">navier_stokes_base.h</a>.</p>
 
 </div>
 </div>
@@ -2631,7 +2639,7 @@ template&lt;int dim, typename VectorType , typename DofsType &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="navier__stokes__base_8h_source.html#l00844">844</a> of file <a class="el" href="navier__stokes__base_8h_source.html">navier_stokes_base.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="navier__stokes__base_8h_source.html#l00846">846</a> of file <a class="el" href="navier__stokes__base_8h_source.html">navier_stokes_base.h</a>.</p>
 
 </div>
 </div>
@@ -2657,7 +2665,7 @@ template&lt;int dim, typename VectorType , typename DofsType &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="navier__stokes__base_8h_source.html#l00808">808</a> of file <a class="el" href="navier__stokes__base_8h_source.html">navier_stokes_base.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="navier__stokes__base_8h_source.html#l00810">810</a> of file <a class="el" href="navier__stokes__base_8h_source.html">navier_stokes_base.h</a>.</p>
 
 </div>
 </div>
@@ -2685,7 +2693,7 @@ template&lt;int dim, typename VectorType , typename DofsType &gt; </div>
 
 <p>FEValues object used for temperature-dependent solid domain constraints. </p>
 
-<p class="definition">Definition at line <a class="el" href="navier__stokes__base_8h_source.html#l00880">880</a> of file <a class="el" href="navier__stokes__base_8h_source.html">navier_stokes_base.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="navier__stokes__base_8h_source.html#l00882">882</a> of file <a class="el" href="navier__stokes__base_8h_source.html">navier_stokes_base.h</a>.</p>
 
 </div>
 </div>
@@ -2712,7 +2720,7 @@ template&lt;int dim, typename VectorType , typename DofsType &gt; </div>
 </div><div class="memdoc">
 <p>FEValues object used for temperature-dependent solid domain constraints in VOF simulations </p>
 
-<p class="definition">Definition at line <a class="el" href="navier__stokes__base_8h_source.html#l00883">883</a> of file <a class="el" href="navier__stokes__base_8h_source.html">navier_stokes_base.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="navier__stokes__base_8h_source.html#l00885">885</a> of file <a class="el" href="navier__stokes__base_8h_source.html">navier_stokes_base.h</a>.</p>
 
 </div>
 </div>
@@ -2738,7 +2746,7 @@ template&lt;int dim, typename VectorType , typename DofsType &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="navier__stokes__base_8h_source.html#l00820">820</a> of file <a class="el" href="navier__stokes__base_8h_source.html">navier_stokes_base.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="navier__stokes__base_8h_source.html#l00822">822</a> of file <a class="el" href="navier__stokes__base_8h_source.html">navier_stokes_base.h</a>.</p>
 
 </div>
 </div>
@@ -2764,7 +2772,7 @@ template&lt;int dim, typename VectorType , typename DofsType &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="navier__stokes__base_8h_source.html#l00862">862</a> of file <a class="el" href="navier__stokes__base_8h_source.html">navier_stokes_base.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="navier__stokes__base_8h_source.html#l00864">864</a> of file <a class="el" href="navier__stokes__base_8h_source.html">navier_stokes_base.h</a>.</p>
 
 </div>
 </div>
@@ -2790,7 +2798,7 @@ template&lt;int dim, typename VectorType , typename DofsType &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="navier__stokes__base_8h_source.html#l00874">874</a> of file <a class="el" href="navier__stokes__base_8h_source.html">navier_stokes_base.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="navier__stokes__base_8h_source.html#l00876">876</a> of file <a class="el" href="navier__stokes__base_8h_source.html">navier_stokes_base.h</a>.</p>
 
 </div>
 </div>
@@ -2816,7 +2824,7 @@ template&lt;int dim, typename VectorType , typename DofsType &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="navier__stokes__base_8h_source.html#l00876">876</a> of file <a class="el" href="navier__stokes__base_8h_source.html">navier_stokes_base.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="navier__stokes__base_8h_source.html#l00878">878</a> of file <a class="el" href="navier__stokes__base_8h_source.html">navier_stokes_base.h</a>.</p>
 
 </div>
 </div>
@@ -2842,7 +2850,7 @@ template&lt;int dim, typename VectorType , typename DofsType &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="navier__stokes__base_8h_source.html#l00817">817</a> of file <a class="el" href="navier__stokes__base_8h_source.html">navier_stokes_base.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="navier__stokes__base_8h_source.html#l00819">819</a> of file <a class="el" href="navier__stokes__base_8h_source.html">navier_stokes_base.h</a>.</p>
 
 </div>
 </div>
@@ -2868,7 +2876,7 @@ template&lt;int dim, typename VectorType , typename DofsType &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="navier__stokes__base_8h_source.html#l00859">859</a> of file <a class="el" href="navier__stokes__base_8h_source.html">navier_stokes_base.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="navier__stokes__base_8h_source.html#l00861">861</a> of file <a class="el" href="navier__stokes__base_8h_source.html">navier_stokes_base.h</a>.</p>
 
 </div>
 </div>
@@ -2894,7 +2902,7 @@ template&lt;int dim, typename VectorType , typename DofsType &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="navier__stokes__base_8h_source.html#l00828">828</a> of file <a class="el" href="navier__stokes__base_8h_source.html">navier_stokes_base.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="navier__stokes__base_8h_source.html#l00830">830</a> of file <a class="el" href="navier__stokes__base_8h_source.html">navier_stokes_base.h</a>.</p>
 
 </div>
 </div>
@@ -2920,7 +2928,7 @@ template&lt;int dim, typename VectorType , typename DofsType &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="navier__stokes__base_8h_source.html#l00799">799</a> of file <a class="el" href="navier__stokes__base_8h_source.html">navier_stokes_base.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="navier__stokes__base_8h_source.html#l00801">801</a> of file <a class="el" href="navier__stokes__base_8h_source.html">navier_stokes_base.h</a>.</p>
 
 </div>
 </div>
@@ -2946,7 +2954,7 @@ template&lt;int dim, typename VectorType , typename DofsType &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="navier__stokes__base_8h_source.html#l00800">800</a> of file <a class="el" href="navier__stokes__base_8h_source.html">navier_stokes_base.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="navier__stokes__base_8h_source.html#l00802">802</a> of file <a class="el" href="navier__stokes__base_8h_source.html">navier_stokes_base.h</a>.</p>
 
 </div>
 </div>
@@ -2972,7 +2980,7 @@ template&lt;int dim, typename VectorType , typename DofsType &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="navier__stokes__base_8h_source.html#l00842">842</a> of file <a class="el" href="navier__stokes__base_8h_source.html">navier_stokes_base.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="navier__stokes__base_8h_source.html#l00844">844</a> of file <a class="el" href="navier__stokes__base_8h_source.html">navier_stokes_base.h</a>.</p>
 
 </div>
 </div>
@@ -2998,7 +3006,7 @@ template&lt;int dim, typename VectorType , typename DofsType &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="navier__stokes__base_8h_source.html#l00868">868</a> of file <a class="el" href="navier__stokes__base_8h_source.html">navier_stokes_base.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="navier__stokes__base_8h_source.html#l00870">870</a> of file <a class="el" href="navier__stokes__base_8h_source.html">navier_stokes_base.h</a>.</p>
 
 </div>
 </div>
@@ -3024,7 +3032,7 @@ template&lt;int dim, typename VectorType , typename DofsType &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="navier__stokes__base_8h_source.html#l00802">802</a> of file <a class="el" href="navier__stokes__base_8h_source.html">navier_stokes_base.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="navier__stokes__base_8h_source.html#l00804">804</a> of file <a class="el" href="navier__stokes__base_8h_source.html">navier_stokes_base.h</a>.</p>
 
 </div>
 </div>
@@ -3050,7 +3058,7 @@ template&lt;int dim, typename VectorType , typename DofsType &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="navier__stokes__base_8h_source.html#l00850">850</a> of file <a class="el" href="navier__stokes__base_8h_source.html">navier_stokes_base.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="navier__stokes__base_8h_source.html#l00852">852</a> of file <a class="el" href="navier__stokes__base_8h_source.html">navier_stokes_base.h</a>.</p>
 
 </div>
 </div>
@@ -3076,7 +3084,7 @@ template&lt;int dim, typename VectorType , typename DofsType &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="navier__stokes__base_8h_source.html#l00803">803</a> of file <a class="el" href="navier__stokes__base_8h_source.html">navier_stokes_base.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="navier__stokes__base_8h_source.html#l00805">805</a> of file <a class="el" href="navier__stokes__base_8h_source.html">navier_stokes_base.h</a>.</p>
 
 </div>
 </div>
@@ -3102,7 +3110,7 @@ template&lt;int dim, typename VectorType , typename DofsType &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="navier__stokes__base_8h_source.html#l00829">829</a> of file <a class="el" href="navier__stokes__base_8h_source.html">navier_stokes_base.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="navier__stokes__base_8h_source.html#l00831">831</a> of file <a class="el" href="navier__stokes__base_8h_source.html">navier_stokes_base.h</a>.</p>
 
 </div>
 </div>
@@ -3128,7 +3136,7 @@ template&lt;int dim, typename VectorType , typename DofsType &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="navier__stokes__base_8h_source.html#l00824">824</a> of file <a class="el" href="navier__stokes__base_8h_source.html">navier_stokes_base.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="navier__stokes__base_8h_source.html#l00826">826</a> of file <a class="el" href="navier__stokes__base_8h_source.html">navier_stokes_base.h</a>.</p>
 
 </div>
 </div>
@@ -3154,7 +3162,7 @@ template&lt;int dim, typename VectorType , typename DofsType &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="navier__stokes__base_8h_source.html#l00839">839</a> of file <a class="el" href="navier__stokes__base_8h_source.html">navier_stokes_base.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="navier__stokes__base_8h_source.html#l00841">841</a> of file <a class="el" href="navier__stokes__base_8h_source.html">navier_stokes_base.h</a>.</p>
 
 </div>
 </div>
@@ -3180,7 +3188,7 @@ template&lt;int dim, typename VectorType , typename DofsType &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="navier__stokes__base_8h_source.html#l00830">830</a> of file <a class="el" href="navier__stokes__base_8h_source.html">navier_stokes_base.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="navier__stokes__base_8h_source.html#l00832">832</a> of file <a class="el" href="navier__stokes__base_8h_source.html">navier_stokes_base.h</a>.</p>
 
 </div>
 </div>
@@ -3206,7 +3214,7 @@ template&lt;int dim, typename VectorType , typename DofsType &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="navier__stokes__base_8h_source.html#l00861">861</a> of file <a class="el" href="navier__stokes__base_8h_source.html">navier_stokes_base.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="navier__stokes__base_8h_source.html#l00863">863</a> of file <a class="el" href="navier__stokes__base_8h_source.html">navier_stokes_base.h</a>.</p>
 
 </div>
 </div>
@@ -3232,7 +3240,7 @@ template&lt;int dim, typename VectorType , typename DofsType &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="navier__stokes__base_8h_source.html#l00838">838</a> of file <a class="el" href="navier__stokes__base_8h_source.html">navier_stokes_base.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="navier__stokes__base_8h_source.html#l00840">840</a> of file <a class="el" href="navier__stokes__base_8h_source.html">navier_stokes_base.h</a>.</p>
 
 </div>
 </div>
@@ -3258,7 +3266,7 @@ template&lt;int dim, typename VectorType , typename DofsType &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="navier__stokes__base_8h_source.html#l00857">857</a> of file <a class="el" href="navier__stokes__base_8h_source.html">navier_stokes_base.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="navier__stokes__base_8h_source.html#l00859">859</a> of file <a class="el" href="navier__stokes__base_8h_source.html">navier_stokes_base.h</a>.</p>
 
 </div>
 </div>
@@ -3284,7 +3292,7 @@ template&lt;int dim, typename VectorType , typename DofsType &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="navier__stokes__base_8h_source.html#l00834">834</a> of file <a class="el" href="navier__stokes__base_8h_source.html">navier_stokes_base.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="navier__stokes__base_8h_source.html#l00836">836</a> of file <a class="el" href="navier__stokes__base_8h_source.html">navier_stokes_base.h</a>.</p>
 
 </div>
 </div>
@@ -3310,7 +3318,7 @@ template&lt;int dim, typename VectorType , typename DofsType &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="navier__stokes__base_8h_source.html#l00813">813</a> of file <a class="el" href="navier__stokes__base_8h_source.html">navier_stokes_base.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="navier__stokes__base_8h_source.html#l00815">815</a> of file <a class="el" href="navier__stokes__base_8h_source.html">navier_stokes_base.h</a>.</p>
 
 </div>
 </div>
@@ -3336,7 +3344,7 @@ template&lt;int dim, typename VectorType , typename DofsType &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="navier__stokes__base_8h_source.html#l00853">853</a> of file <a class="el" href="navier__stokes__base_8h_source.html">navier_stokes_base.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="navier__stokes__base_8h_source.html#l00855">855</a> of file <a class="el" href="navier__stokes__base_8h_source.html">navier_stokes_base.h</a>.</p>
 
 </div>
 </div>
@@ -3362,7 +3370,7 @@ template&lt;int dim, typename VectorType , typename DofsType &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="navier__stokes__base_8h_source.html#l00812">812</a> of file <a class="el" href="navier__stokes__base_8h_source.html">navier_stokes_base.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="navier__stokes__base_8h_source.html#l00814">814</a> of file <a class="el" href="navier__stokes__base_8h_source.html">navier_stokes_base.h</a>.</p>
 
 </div>
 </div>
@@ -3389,7 +3397,7 @@ template&lt;int dim, typename VectorType , typename DofsType &gt; </div>
 </div><div class="memdoc">
 <p>Vector containing solid domain constraint structs for temperature-dependent solid domain constraints in VOF simulations </p>
 
-<p class="definition">Definition at line <a class="el" href="navier__stokes__base_8h_source.html#l00886">886</a> of file <a class="el" href="navier__stokes__base_8h_source.html">navier_stokes_base.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="navier__stokes__base_8h_source.html#l00888">888</a> of file <a class="el" href="navier__stokes__base_8h_source.html">navier_stokes_base.h</a>.</p>
 
 </div>
 </div>
@@ -3415,7 +3423,7 @@ template&lt;int dim, typename VectorType , typename DofsType &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="navier__stokes__base_8h_source.html#l00831">831</a> of file <a class="el" href="navier__stokes__base_8h_source.html">navier_stokes_base.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="navier__stokes__base_8h_source.html#l00833">833</a> of file <a class="el" href="navier__stokes__base_8h_source.html">navier_stokes_base.h</a>.</p>
 
 </div>
 </div>
@@ -3441,7 +3449,7 @@ template&lt;int dim, typename VectorType , typename DofsType &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="navier__stokes__base_8h_source.html#l00804">804</a> of file <a class="el" href="navier__stokes__base_8h_source.html">navier_stokes_base.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="navier__stokes__base_8h_source.html#l00806">806</a> of file <a class="el" href="navier__stokes__base_8h_source.html">navier_stokes_base.h</a>.</p>
 
 </div>
 </div>
@@ -3467,7 +3475,7 @@ template&lt;int dim, typename VectorType , typename DofsType &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="navier__stokes__base_8h_source.html#l00875">875</a> of file <a class="el" href="navier__stokes__base_8h_source.html">navier_stokes_base.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="navier__stokes__base_8h_source.html#l00877">877</a> of file <a class="el" href="navier__stokes__base_8h_source.html">navier_stokes_base.h</a>.</p>
 
 </div>
 </div>
@@ -3493,7 +3501,7 @@ template&lt;int dim, typename VectorType , typename DofsType &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="navier__stokes__base_8h_source.html#l00877">877</a> of file <a class="el" href="navier__stokes__base_8h_source.html">navier_stokes_base.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="navier__stokes__base_8h_source.html#l00879">879</a> of file <a class="el" href="navier__stokes__base_8h_source.html">navier_stokes_base.h</a>.</p>
 
 </div>
 </div>
@@ -3519,7 +3527,7 @@ template&lt;int dim, typename VectorType , typename DofsType &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="navier__stokes__base_8h_source.html#l00806">806</a> of file <a class="el" href="navier__stokes__base_8h_source.html">navier_stokes_base.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="navier__stokes__base_8h_source.html#l00808">808</a> of file <a class="el" href="navier__stokes__base_8h_source.html">navier_stokes_base.h</a>.</p>
 
 </div>
 </div>
@@ -3545,7 +3553,7 @@ template&lt;int dim, typename VectorType , typename DofsType &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="navier__stokes__base_8h_source.html#l00837">837</a> of file <a class="el" href="navier__stokes__base_8h_source.html">navier_stokes_base.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="navier__stokes__base_8h_source.html#l00839">839</a> of file <a class="el" href="navier__stokes__base_8h_source.html">navier_stokes_base.h</a>.</p>
 
 </div>
 </div>
@@ -3571,7 +3579,7 @@ template&lt;int dim, typename VectorType , typename DofsType &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="navier__stokes__base_8h_source.html#l00858">858</a> of file <a class="el" href="navier__stokes__base_8h_source.html">navier_stokes_base.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="navier__stokes__base_8h_source.html#l00860">860</a> of file <a class="el" href="navier__stokes__base_8h_source.html">navier_stokes_base.h</a>.</p>
 
 </div>
 </div>
@@ -3597,7 +3605,7 @@ template&lt;int dim, typename VectorType , typename DofsType &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="navier__stokes__base_8h_source.html#l00823">823</a> of file <a class="el" href="navier__stokes__base_8h_source.html">navier_stokes_base.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="navier__stokes__base_8h_source.html#l00825">825</a> of file <a class="el" href="navier__stokes__base_8h_source.html">navier_stokes_base.h</a>.</p>
 
 </div>
 </div>
