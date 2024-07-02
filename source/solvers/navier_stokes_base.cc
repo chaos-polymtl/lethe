@@ -689,7 +689,7 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh()
 template <int dim, typename VectorType, typename DofsType>
 void
 NavierStokesBase<dim, VectorType, DofsType>::box_refine_mesh(
-  const bool &restart)
+  const bool restart)
 {
   if (restart)
     {

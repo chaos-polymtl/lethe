@@ -354,9 +354,11 @@ protected:
    * @brief Allow the initial refinement of all cells of the principal mesh that are partially
    * contained in one of the cells of the box refinement mesh given in the
    * parameter.
+   *
+   * @param restart Indicator if the simulation is being restarted or not.
    */
   void
-  box_refine_mesh(const bool &restart);
+  box_refine_mesh(const bool restart);
 
   /**
    * @brief Allow the refinement of the mesh according to one of the 2 methods proposed
