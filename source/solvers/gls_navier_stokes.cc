@@ -1793,7 +1793,7 @@ GLSNavierStokesSolver<dim>::solve()
 
   this->setup_dofs();
   this->enable_dynamic_zero_constraints_fd();
-  this->box_refine_mesh();
+  this->box_refine_mesh(this->simulation_parameters.restart_parameters.restart);
   this->set_initial_condition(
     this->simulation_parameters.initial_condition->type,
     this->simulation_parameters.restart_parameters.restart);
