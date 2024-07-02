@@ -356,7 +356,7 @@ protected:
    * parameter.
    */
   void
-  box_refine_mesh();
+  box_refine_mesh(const bool &restart);
 
   /**
    * @brief Allow the refinement of the mesh according to one of the 2 methods proposed

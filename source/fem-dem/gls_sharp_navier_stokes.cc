@@ -380,7 +380,7 @@ GLSSharpNavierStokesSolver<dim>::refinement_control(
   if (initial_refinement)
     {
       // Apply the initial box refinement
-      this->box_refine_mesh();
+      this->box_refine_mesh(false);
       update_precalculations_for_ib();
     }
   if (this->simulation_parameters.particlesParameters

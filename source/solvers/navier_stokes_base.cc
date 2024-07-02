@@ -688,8 +688,12 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh()
 
 template <int dim, typename VectorType, typename DofsType>
 void
-NavierStokesBase<dim, VectorType, DofsType>::box_refine_mesh()
+NavierStokesBase<dim, VectorType, DofsType>::box_refine_mesh(const bool &restart)
 {
+  if (restart)
+    {
+      return;
+    }
   // Read the mesh that define the box use in this function
   Triangulation<dim> box_to_refine;
   if (this->simulation_parameters.mesh_box_refinement->box_mesh->type ==
