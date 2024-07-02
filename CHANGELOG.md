@@ -7,7 +7,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Fixed
 
-- MINOR The term associated with the viscosity jump in the strong residual for the NS-VOF assembler added in [#1049] (https://github.com/chaos-polymtl/lethe/pull/1149) led to a ill-posed formulation in phase change cases where the solid is represented by a highly viscous fluid. Hence, this term in was removed from the current formulation. [#1180](https://github.com/chaos-polymtl/lethe/pull/1180)
+- MINOR The term associated with the viscosity jump in the strong residual for the NS-VOF assembler added in [#1049] (https://github.com/chaos-polymtl/lethe/pull/1149) led to an ill-posed formulation in solid-liquid phase change cases where the solid is represented by a highly viscous fluid. Hence, this term was removed from the current formulation. [#1180](https://github.com/chaos-polymtl/lethe/pull/1180)
 
 ### Changed
 

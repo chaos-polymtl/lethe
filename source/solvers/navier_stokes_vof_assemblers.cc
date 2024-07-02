@@ -90,12 +90,12 @@ GLSNavierStokesVOFAssemblerCore<dim>::assemble_matrix(
           calculate_navier_stokes_gls_tau_transient(
             u_mag, viscosity_for_stabilization_vector[q] / density_eq, h, sdt);
 
-      // Calculate the strong residual for GLS stabilization. According to the
-      // mathematical formulation, the viscosity jump term (-
-      // dynamic_viscosity_jump * (shear_rate * filtered_phase_gradient)) should
-      // be included. However, it is ill-posed for phase change cases where the
-      // solid is represented by a highly viscous fluid. Hence, we don't
-      // consider this term in the current formulation.
+      // Calculate the strong residual for GLS stabilization.
+      // According to the mathematical formulation, the viscosity jump term
+      // (-dynamic_viscosity_jump * (shear_rate * filtered_phase_gradient))
+      // should be included. However, it is ill-posed for phase change cases
+      // where the solid is represented by a highly viscous fluid. Hence, we
+      // don't consider this term in the current formulation.
       auto strong_residual = density_eq * velocity_gradient * velocity +
                              pressure_gradient -
                              dynamic_viscosity_eq * velocity_laplacian -
@@ -276,12 +276,12 @@ GLSNavierStokesVOFAssemblerCore<dim>::assemble_rhs(
             u_mag, viscosity_for_stabilization_vector[q] / density_eq, h, sdt);
 
 
-      // Calculate the strong residual for GLS stabilization. According to the
-      // mathematical formulation, the viscosity jump term (-
-      // dynamic_viscosity_jump * (shear_rate * filtered_phase_gradient)) should
-      // be included. However, it is ill-posed for phase change cases where the
-      // solid is represented by a highly viscous fluid. Hence, we don't
-      // consider this term in the current formulation.
+      // Calculate the strong residual for GLS stabilization.
+      // According to the mathematical formulation, the viscosity jump term
+      // (-dynamic_viscosity_jump * (shear_rate * filtered_phase_gradient))
+      // should be included. However, it is ill-posed for phase change cases
+      // where the solid is represented by a highly viscous fluid. Hence, we
+      // don't consider this term in the current formulation.
       auto strong_residual = density_eq * velocity_gradient * velocity +
                              pressure_gradient -
                              dynamic_viscosity_eq * velocity_laplacian -
@@ -922,12 +922,12 @@ GLSNavierStokesVOFAssemblerNonNewtonianCore<dim>::assemble_matrix(
             u_mag, viscosity_for_stabilization_vector[q] / density_eq, h, sdt);
 
 
-      // Calculate the strong residual for GLS stabilization. According to the
-      // mathematical formulation, the viscosity jump term (-
-      // dynamic_viscosity_jump * (shear_rate * filtered_phase_gradient)) should
-      // be included. However, it is ill-posed for phase change cases where the
-      // solid is represented by a highly viscous fluid. Hence, we don't
-      // consider this term in the current formulation.
+      // Calculate the strong residual for GLS stabilization.
+      // According to the mathematical formulation, the viscosity jump term
+      // (-dynamic_viscosity_jump * (shear_rate * filtered_phase_gradient))
+      // should be included. However, it is ill-posed for phase change cases
+      // where the solid is represented by a highly viscous fluid. Hence, we
+      // don't consider this term in the current formulation.
       auto strong_residual = density_eq * velocity_gradient * velocity +
                              pressure_gradient -
                              shear_rate * dynamic_viscosity_gradient -
@@ -1125,12 +1125,12 @@ GLSNavierStokesVOFAssemblerNonNewtonianCore<dim>::assemble_rhs(
           calculate_navier_stokes_gls_tau_transient(
             u_mag, viscosity_for_stabilization_vector[q] / density_eq, h, sdt);
 
-      // Calculate the strong residual for GLS stabilization. According to the
-      // mathematical formulation, the viscosity jump term (-
-      // dynamic_viscosity_jump * (shear_rate * filtered_phase_gradient)) should
-      // be included. However, it is ill-posed for phase change cases where the
-      // solid is represented by a highly viscous fluid. Hence, we don't
-      // consider this term in the current formulation.
+      // Calculate the strong residual for GLS stabilization.
+      // According to the mathematical formulation, the viscosity jump term
+      // (-dynamic_viscosity_jump * (shear_rate * filtered_phase_gradient))
+      // should be included. However, it is ill-posed for phase change cases
+      // where the solid is represented by a highly viscous fluid. Hence, we
+      // don't consider this term in the current formulation.
       auto strong_residual = density_eq * velocity_gradient * velocity +
                              pressure_gradient -
                              shear_rate * dynamic_viscosity_gradient -
