@@ -815,10 +815,7 @@ GLSSharpNavierStokesSolver<dim>::define_particles()
     {
       all_shapes.push_back(particle.shape);
     }
-  if (particles.size() == 1)
-    combined_shapes = particles[0].shape;
-  else
-    combined_shapes = std::make_shared<CompositeShape<dim>>(all_shapes,
+  combined_shapes = std::make_shared<CompositeShape<dim>>(all_shapes,
                                                             Point<dim>(),
                                                             Point<3>());
   this->multiphysics->set_immersed_solid_signed_distance_function(
@@ -1676,19 +1673,6 @@ template <int dim>
 void
 GLSSharpNavierStokesSolver<dim>::output_field_hook(DataOut<dim> &data_out)
 {
-  std::vector<std::shared_ptr<Shape<dim>>> all_shapes;
-  for (const IBParticle<dim> &particle : particles)
-    {
-      all_shapes.push_back(particle.shape);
-    }
-  std::shared_ptr<Shape<dim>> combined_shapes;
-  if (particles.size() == 1)
-    combined_shapes = particles[0].shape;
-  else
-    combined_shapes = std::make_shared<CompositeShape<dim>>(all_shapes,
-                                                            Point<dim>(),
-                                                            Point<3>());
-
   levelset_postprocessor =
     std::make_shared<LevelsetPostprocessor<dim>>(combined_shapes);
   data_out.add_data_vector(this->present_solution, *levelset_postprocessor);
