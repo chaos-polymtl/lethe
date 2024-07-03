@@ -3,7 +3,7 @@
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
-## [Master] - 2024-07-02
+## [Master] - 2024-07-03
 
 ### Fixed
 
@@ -16,6 +16,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 ### Added
 
 - MINOR There was no appropriate application test for lpbf/phase change with vof cases that could have allowed us to identify this ill-posed formulation prior to the merge of [#1049] (https://github.com/chaos-polymtl/lethe/pull/1149). A new application test is now included to avoid future mistake in lpbf/phase change with vof cases. [#1180](https://github.com/chaos-polymtl/lethe/pull/1180)
+
 ## [Master] - 2024-07-02
 
 ### Fixed
