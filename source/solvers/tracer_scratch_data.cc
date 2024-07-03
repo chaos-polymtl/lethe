@@ -29,7 +29,8 @@ TracerScratchData<dim>::allocate()
   this->tracer_diffusivity_1 = std::vector<double>(n_q_points);
 
   // Solid signed distance function
-  this->sdf_values = std::vector<double>(n_q_points);
+  if (properties_manager.field_is_required(field::levelset))
+    this->sdf_values = std::vector<double>(n_q_points);
 
   // Velocity for BDF schemes
   this->previous_tracer_values =
@@ -47,9 +48,9 @@ TracerScratchData<dim>::allocate()
   this->laplacian_phi =
     std::vector<std::vector<double>>(n_q_points, std::vector<double>(n_dofs));
 
-  // Physical properties: diffusivity
-  fields.insert(
-    std::pair<field, std::vector<double>>(field::levelset, n_q_points));
+  if (properties_manager.field_is_required(field::levelset))
+    fields.insert(
+      std::pair<field, std::vector<double>>(field::levelset, n_q_points));
 }
 
 
@@ -62,12 +63,12 @@ TracerScratchData<dim>::calculate_physical_properties()
 
   switch (properties_manager.get_number_of_solids())
     {
-      // Case where you have no solid
+      // No solid
       case 0:
         {
           switch (properties_manager.get_number_of_fluids())
             {
-              // Case where you have one fluid
+              // One fluid
               case 1:
                 {
                   // In this case, only viscosity is the required property
@@ -76,6 +77,7 @@ TracerScratchData<dim>::calculate_physical_properties()
                   diffusivity_model->vector_value(fields, tracer_diffusivity);
                   break;
                 }
+                // Two fluids
               case 2:
                 {
                   // In this case, we need both density and viscosity
@@ -104,14 +106,13 @@ TracerScratchData<dim>::calculate_physical_properties()
             }
           break;
         }
-        // Case where you have one solid
+        // One solid
       case 1:
         {
           switch (properties_manager.get_number_of_fluids())
             {
               case 1:
                 {
-                  // In this case, only viscosity is the required property
                   const auto diffusivity_model_fluid =
                     properties_manager.get_tracer_diffusivity();
                   const auto diffusivity_model_solid =

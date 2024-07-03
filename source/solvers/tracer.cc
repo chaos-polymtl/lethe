@@ -51,6 +51,7 @@ Tracer<dim>::assemble_system_matrix()
   this->system_matrix = 0;
   setup_assemblers();
 
+  // We get the immersed function, which is zero when no solids are involved
   immersed_solid_signed_distance_function =
     this->multiphysics->get_immersed_solid_signed_distance_function();
 
@@ -90,24 +91,12 @@ Tracer<dim>::assemble_local_system_matrix(
   auto source_term = simulation_parameters.source_term.tracer_source;
   source_term->set_time(simulation_control->get_current_time());
 
-  if (this->simulation_parameters.particlesParameters->nb_particles > 0)
-    {
-      scratch_data.reinit(cell,
-                          this->evaluation_point,
-                          this->previous_solutions,
-                          &(*source_term),
-                          &(*immersed_solid_signed_distance_function));
-    }
-  else
-    {
-      std::shared_ptr<Function<dim>> zero_function =
-        std::make_shared<Functions::ZeroFunction<dim>>(1);
-      scratch_data.reinit(cell,
-                          this->evaluation_point,
-                          this->previous_solutions,
-                          &(*source_term),
-                          &(*zero_function));
-    }
+  scratch_data.reinit(cell,
+                      this->evaluation_point,
+                      this->previous_solutions,
+                      &(*source_term),
+                      &(*immersed_solid_signed_distance_function));
+
   const DoFHandler<dim> *dof_handler_fluid =
     multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
 
@@ -197,6 +186,7 @@ Tracer<dim>::assemble_system_rhs()
   this->system_rhs = 0;
   setup_assemblers();
 
+  // We get the immersed function, which is zero when no solids are involved
   immersed_solid_signed_distance_function =
     this->multiphysics->get_immersed_solid_signed_distance_function();
 
@@ -236,24 +226,11 @@ Tracer<dim>::assemble_local_system_rhs(
   auto source_term = simulation_parameters.source_term.tracer_source;
   source_term->set_time(simulation_control->get_current_time());
 
-  if (this->simulation_parameters.particlesParameters->nb_particles > 0)
-    {
-      scratch_data.reinit(cell,
-                          this->evaluation_point,
-                          this->previous_solutions,
-                          &(*source_term),
-                          &(*immersed_solid_signed_distance_function));
-    }
-  else
-    {
-      std::shared_ptr<Function<dim>> zero_function =
-        std::make_shared<Functions::ZeroFunction<dim>>(1);
-      scratch_data.reinit(cell,
-                          this->evaluation_point,
-                          this->previous_solutions,
-                          &(*source_term),
-                          &(*zero_function));
-    }
+  scratch_data.reinit(cell,
+                      this->evaluation_point,
+                      this->previous_solutions,
+                      &(*source_term),
+                      &(*immersed_solid_signed_distance_function));
 
   const DoFHandler<dim> *dof_handler_fluid =
     multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);

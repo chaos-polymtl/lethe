@@ -159,7 +159,8 @@ public:
     auto &fe_tracer   = this->fe_values_tracer.get_fe();
 
     source_function->value_list(quadrature_points, source);
-    levelset_function->value_list(quadrature_points, sdf_values);
+    if (properties_manager.field_is_required(field::levelset))
+      levelset_function->value_list(quadrature_points, sdf_values);
 
     if (dim == 2)
       this->cell_size =
