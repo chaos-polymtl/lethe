@@ -115,19 +115,19 @@ TracerScratchData<dim>::calculate_physical_properties()
                   diffusivity_model_solid->vector_value(fields,
                                                         tracer_diffusivity_1);
 
-                  // We change mix the properties of each phase depending on the
-                  // repartition of quadrature points. This makes the property
-                  // jumps smoother. A possible improvement would be smoothing
-                  // with tanh or a similar function.
-                  unsigned int number_inside = 0;
+                  // We use tanh to mix the properties of each phase. This makes
+                  // the property jumps smoother.
+                  double delta_diffusivity;
                   for (unsigned int q = 0; q < this->n_q_points; ++q)
-                    if (sdf_values[q] < 0.)
-                      number_inside++;
-                  double fraction_inside = number_inside / this->n_q_points;
-                  for (unsigned int q = 0; q < this->n_q_points; ++q)
-                    tracer_diffusivity[q] =
-                      fraction_inside * tracer_diffusivity_1[q] +
-                      (1 - fraction_inside) * tracer_diffusivity_0[q];
+                    {
+                      delta_diffusivity =
+                        tracer_diffusivity_0[q] - tracer_diffusivity_1[q];
+                      tracer_diffusivity[q] =
+                        tracer_diffusivity_1[q] +
+                        delta_diffusivity *
+                          (0.5 +
+                           0.5 * tanh(4. * sdf_values[q] / this->cell_size));
+                    }
                   break;
                 }
               default:
