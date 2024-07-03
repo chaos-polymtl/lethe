@@ -815,9 +815,8 @@ GLSSharpNavierStokesSolver<dim>::define_particles()
     {
       all_shapes.push_back(particle.shape);
     }
-  combined_shapes = std::make_shared<CompositeShape<dim>>(all_shapes,
-                                                            Point<dim>(),
-                                                            Point<3>());
+  combined_shapes =
+    std::make_shared<CompositeShape<dim>>(all_shapes, Point<dim>(), Point<3>());
   this->multiphysics->set_immersed_solid_signed_distance_function(
     combined_shapes);
 }
