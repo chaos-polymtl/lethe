@@ -46,6 +46,10 @@ TracerScratchData<dim>::allocate()
     n_q_points, std::vector<Tensor<2, dim>>(n_dofs));
   this->laplacian_phi =
     std::vector<std::vector<double>>(n_q_points, std::vector<double>(n_dofs));
+
+  // Physical properties: diffusivity
+  fields.insert(
+    std::pair<field, std::vector<double>>(field::levelset, n_q_points));
 }
 
 
@@ -53,6 +57,9 @@ template <int dim>
 void
 TracerScratchData<dim>::calculate_physical_properties()
 {
+  if (properties_manager.field_is_required(field::levelset))
+    set_field_vector(field::levelset, this->sdf_values, this->fields);
+
   switch (properties_manager.get_number_of_solids())
     {
       // Case where you have no solid
@@ -115,19 +122,11 @@ TracerScratchData<dim>::calculate_physical_properties()
                   diffusivity_model_solid->vector_value(fields,
                                                         tracer_diffusivity_1);
 
-                  // We use tanh to mix the properties of each phase. This makes
-                  // the property jumps smoother.
-                  double delta_diffusivity;
                   for (unsigned int q = 0; q < this->n_q_points; ++q)
-                    {
-                      delta_diffusivity =
-                        tracer_diffusivity_0[q] - tracer_diffusivity_1[q];
-                      tracer_diffusivity[q] =
-                        tracer_diffusivity_1[q] +
-                        delta_diffusivity *
-                          (0.5 +
-                           0.5 * tanh(4. * sdf_values[q] / this->cell_size));
-                    }
+                    if (sdf_values[q] > 0)
+                      tracer_diffusivity[q] = tracer_diffusivity_0[q];
+                    else
+                      tracer_diffusivity[q] = tracer_diffusivity_1[q];
                   break;
                 }
               default:

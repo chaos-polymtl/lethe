@@ -55,7 +55,8 @@ enum field : int
   temperature_p2, // temperature at time t-dt
   pressure,
   phase_order_cahn_hilliard,
-  phase_order_cahn_hilliard_filtered
+  phase_order_cahn_hilliard_filtered,
+  levelset
 };
 
 inline void
@@ -64,7 +65,7 @@ set_field_vector(const field                          &id,
                  std::map<field, std::vector<double>> &fields)
 {
   std::vector<double> &target = fields.at(id);
-  size_t               sz     = target.size();
+  size_t sz = target.size();
   for (size_t i = 0; i < sz; ++i)
     {
       target[i] = data[i];
@@ -96,6 +97,7 @@ public:
     model_depends_on[temperature_p2]            = false;
     model_depends_on[pressure]                  = false;
     model_depends_on[phase_order_cahn_hilliard] = false;
+    model_depends_on[levelset]                  = false;
   }
 
   /**

@@ -937,11 +937,36 @@ namespace Parameters
         Patterns::Double(),
         "Thermal expansion coefficient for the fluid corresponding to Phase = " +
           Utilities::int_to_string(id, 1));
+
+      prm.declare_entry(
+        "tracer diffusivity model",
+        "constant",
+        Patterns::Selection("constant|tanh levelset"),
+        "Model used for the calculation of the tracer diffusivity"
+        "Choices are <constant|tanh levelset>.");
       prm.declare_entry(
         "tracer diffusivity",
         "0",
         Patterns::Double(),
         "Tracer diffusivity for the fluid corresponding to Phase = " +
+          Utilities::int_to_string(id, 1));
+      prm.declare_entry(
+        "tracer diffusivity inside",
+        "0",
+        Patterns::Double(),
+        "Tracer diffusivity inside for the fluid corresponding to Phase = " +
+          Utilities::int_to_string(id, 1));
+      prm.declare_entry(
+        "tracer diffusivity outside",
+        "0",
+        Patterns::Double(),
+        "Tracer diffusivity at the edge for the fluid corresponding to Phase = " +
+          Utilities::int_to_string(id, 1));
+      prm.declare_entry(
+        "tracer diffusivity thickness",
+        "1",
+        Patterns::Double(),
+        "Tracer diffusivity thickness for the tanh levelset-dependent model corresponding to Phase = " +
           Utilities::int_to_string(id, 1));
 
       prm.declare_entry(
@@ -1108,9 +1133,20 @@ namespace Parameters
       //-------------------
       // Tracer diffusivity
       //-------------------
-      tracer_diffusivity = prm.get_double("tracer diffusivity");
+      op = prm.get("tracer diffusivity model");
+      if (op == "tanh levelset")
+        tracer_diffusivity_model = TracerDiffusivityModel::tanh_levelset;
+      else
+        tracer_diffusivity_model = TracerDiffusivityModel::constant;
+      tracer_diffusivity         = prm.get_double("tracer diffusivity");
+      tracer_diffusivity_inside  = prm.get_double("tracer diffusivity inside");
+      tracer_diffusivity_outside = prm.get_double("tracer diffusivity outside");
+      tracer_diffusivity_thickness =
+        prm.get_double("tracer diffusivity thickness");
       // Diffusivity is in L^2 T^-1
       tracer_diffusivity *= dimensions.diffusivity_scaling;
+      tracer_diffusivity_inside *= dimensions.diffusivity_scaling;
+      tracer_diffusivity_outside *= dimensions.diffusivity_scaling;
 
       //--------------------------------
       // Phase change properties

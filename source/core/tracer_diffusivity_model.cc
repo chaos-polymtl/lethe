@@ -20,6 +20,13 @@ std::shared_ptr<TracerDiffusivityModel>
 TracerDiffusivityModel::model_cast(
   const Parameters::Material &material_properties)
 {
-  return std::make_shared<ConstantTracerDiffusivity>(
-    material_properties.tracer_diffusivity);
+  if (material_properties.tracer_diffusivity_model ==
+      Parameters::Material::TracerDiffusivityModel::tanh_levelset)
+    return std::make_shared<TanhLevelsetTracerDiffusivity>(
+      material_properties.tracer_diffusivity_outside,
+      material_properties.tracer_diffusivity_inside,
+      material_properties.tracer_diffusivity_thickness);
+  else
+    return std::make_shared<ConstantTracerDiffusivity>(
+      material_properties.tracer_diffusivity);
 }

@@ -389,8 +389,13 @@ namespace Parameters
     double thermal_conductivity;
     // thermal expansion coefficient (alpha) in 1/K
     double thermal_expansion;
+
     // tracer diffusivity in L^2/s
     double tracer_diffusivity;
+    // parameters used for the tanh levelset model
+    double tracer_diffusivity_inside;
+    double tracer_diffusivity_outside;
+    double tracer_diffusivity_thickness;
 
     // Phase change parameters
     PhaseChange phase_change_parameters;
@@ -430,6 +435,12 @@ namespace Parameters
       constant,
       phase_change
     } thermal_expansion_model;
+
+    enum class TracerDiffusivityModel
+    {
+      constant,
+      tanh_levelset
+    } tracer_diffusivity_model;
 
     // Linear thermal conductivity parameters: k = k_A0 + k_A1 * T
     double k_A0;
