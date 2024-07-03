@@ -23,9 +23,12 @@ TracerDiffusivityModel::model_cast(
   if (material_properties.tracer_diffusivity_model ==
       Parameters::Material::TracerDiffusivityModel::tanh_levelset)
     return std::make_shared<TanhLevelsetTracerDiffusivity>(
-      material_properties.tracer_diffusivity_outside,
-      material_properties.tracer_diffusivity_inside,
-      material_properties.tracer_diffusivity_thickness);
+      material_properties.immersed_solid_parameters.tanh_levelset_parameters
+        .tracer_diffusivity_outside,
+      material_properties.immersed_solid_parameters.tanh_levelset_parameters
+        .tracer_diffusivity_inside,
+      material_properties.immersed_solid_parameters.tanh_levelset_parameters
+        .tracer_diffusivity_thickness);
   else
     return std::make_shared<ConstantTracerDiffusivity>(
       material_properties.tracer_diffusivity);

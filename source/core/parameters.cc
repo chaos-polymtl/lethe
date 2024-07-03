@@ -393,6 +393,69 @@ namespace Parameters
     prm.leave_subsection();
   }
 
+
+  void
+  TanhLevelsetParameters::declare_parameters(ParameterHandler &prm)
+  {
+    prm.enter_subsection("tanh levelset");
+    {
+      prm.declare_entry("tracer diffusivity inside",
+                        "1.0",
+                        Patterns::Double(),
+                        "Tracer diffusivity inside the solid");
+      prm.declare_entry(
+        "tracer diffusivity outside",
+        "1.0",
+        Patterns::Double(),
+        "Tracer diffusivity outside (or at the edge of) the solid");
+      prm.declare_entry("tracer diffusivity thickness",
+                        "1.0",
+                        Patterns::Double(),
+                        "Thickness to be used with the tanh function");
+    }
+    prm.leave_subsection();
+  }
+
+  void
+  TanhLevelsetParameters::parse_parameters(ParameterHandler    &prm,
+                                           const Dimensionality dimensions)
+  {
+    prm.enter_subsection("tanh levelset");
+    {
+      tracer_diffusivity_inside  = prm.get_double("tracer diffusivity inside");
+      tracer_diffusivity_outside = prm.get_double("tracer diffusivity outside");
+      tracer_diffusivity_thickness =
+        prm.get_double("tracer diffusivity thickness");
+
+      // Diffusivity is in L^2 T^-1
+      tracer_diffusivity_inside *= dimensions.diffusivity_scaling;
+      tracer_diffusivity_outside *= dimensions.diffusivity_scaling;
+    }
+    prm.leave_subsection();
+  }
+
+  void
+  ImmersedSolidPhysicalProperties::declare_parameters(ParameterHandler &prm)
+  {
+    prm.enter_subsection("immersed solid");
+    {
+      tanh_levelset_parameters.declare_parameters(prm);
+    }
+    prm.leave_subsection();
+  }
+
+  void
+  ImmersedSolidPhysicalProperties::parse_parameters(
+    ParameterHandler    &prm,
+    const Dimensionality dimensions)
+  {
+    prm.enter_subsection("immersed solid");
+    {
+      tanh_levelset_parameters.parse_parameters(prm, dimensions);
+    }
+    prm.leave_subsection();
+  }
+
   void
   IsothermalIdealGasDensityParameters::declare_parameters(ParameterHandler &prm)
   {
@@ -941,33 +1004,18 @@ namespace Parameters
       prm.declare_entry(
         "tracer diffusivity model",
         "constant",
-        Patterns::Selection("constant|tanh levelset"),
+        Patterns::Selection("constant|immersed solid tanh"),
         "Model used for the calculation of the tracer diffusivity"
-        "Choices are <constant|tanh levelset>.");
+        "Choices are <constant|immersed solid tanh>.");
       prm.declare_entry(
         "tracer diffusivity",
         "0",
         Patterns::Double(),
         "Tracer diffusivity for the fluid corresponding to Phase = " +
           Utilities::int_to_string(id, 1));
-      prm.declare_entry(
-        "tracer diffusivity inside",
-        "0",
-        Patterns::Double(),
-        "Tracer diffusivity inside for the fluid corresponding to Phase = " +
-          Utilities::int_to_string(id, 1));
-      prm.declare_entry(
-        "tracer diffusivity outside",
-        "0",
-        Patterns::Double(),
-        "Tracer diffusivity at the edge for the fluid corresponding to Phase = " +
-          Utilities::int_to_string(id, 1));
-      prm.declare_entry(
-        "tracer diffusivity thickness",
-        "1",
-        Patterns::Double(),
-        "Tracer diffusivity thickness for the tanh levelset-dependent model corresponding to Phase = " +
-          Utilities::int_to_string(id, 1));
+
+      // Declaration of the immersed solids models parameters
+      immersed_solid_parameters.declare_parameters(prm);
 
       prm.declare_entry(
         "rheological model",
@@ -1134,19 +1182,16 @@ namespace Parameters
       // Tracer diffusivity
       //-------------------
       op = prm.get("tracer diffusivity model");
-      if (op == "tanh levelset")
+      if (op == "immersed solid tanh")
         tracer_diffusivity_model = TracerDiffusivityModel::tanh_levelset;
       else
         tracer_diffusivity_model = TracerDiffusivityModel::constant;
-      tracer_diffusivity         = prm.get_double("tracer diffusivity");
-      tracer_diffusivity_inside  = prm.get_double("tracer diffusivity inside");
-      tracer_diffusivity_outside = prm.get_double("tracer diffusivity outside");
-      tracer_diffusivity_thickness =
-        prm.get_double("tracer diffusivity thickness");
+      tracer_diffusivity = prm.get_double("tracer diffusivity");
       // Diffusivity is in L^2 T^-1
       tracer_diffusivity *= dimensions.diffusivity_scaling;
-      tracer_diffusivity_inside *= dimensions.diffusivity_scaling;
-      tracer_diffusivity_outside *= dimensions.diffusivity_scaling;
+
+      // Parsing of the immersed solids models parameters
+      immersed_solid_parameters.parse_parameters(prm, dimensions);
 
       //--------------------------------
       // Phase change properties
