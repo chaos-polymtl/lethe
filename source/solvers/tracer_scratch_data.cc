@@ -53,46 +53,92 @@ template <int dim>
 void
 TracerScratchData<dim>::calculate_physical_properties()
 {
-  // Case where you have one fluid
-  switch (properties_manager.get_number_of_fluids())
+  switch (properties_manager.get_number_of_solids())
     {
-      case 1:
+      // Case where you have no solid
+      case 0:
         {
-          // In this case, only viscosity is the required property
-          const auto diffusivity_model =
-            properties_manager.get_tracer_diffusivity();
-          diffusivity_model->vector_value(fields, tracer_diffusivity);
+          switch (properties_manager.get_number_of_fluids())
+            {
+              // Case where you have one fluid
+              case 1:
+                {
+                  // In this case, only viscosity is the required property
+                  const auto diffusivity_model =
+                    properties_manager.get_tracer_diffusivity();
+                  diffusivity_model->vector_value(fields, tracer_diffusivity);
+                  break;
+                }
+              case 2:
+                {
+                  // In this case, we need both density and viscosity
+                  const auto diffusivity_models =
+                    properties_manager.get_tracer_diffusivity_vector();
+
+                  diffusivity_models[0]->vector_value(fields,
+                                                      tracer_diffusivity_0);
+                  diffusivity_models[1]->vector_value(fields,
+                                                      tracer_diffusivity_1);
+
+                  // TODO Incomplete at the present time because the tracer VOF
+                  // complete is not finished Blend the physical properties
+                  // using the VOF field
+                  for (unsigned int q = 0; q < this->n_q_points; ++q)
+                    {
+                      //          tracer_diffusivity[q] =
+                      //            calculate_point_property(this->phase_values[q],
+                      //                                     this->density_0[q],
+                      //                                     this->density_1[q]);
+                    }
+                  break;
+                }
+              default:
+                throw std::runtime_error("Unsupported number of fluids (>2)");
+            }
           break;
         }
-      case 2:
+        // Case where you have one solid
+      case 1:
         {
-          // In this case, we need both density and viscosity
-          const auto diffusivity_models =
-            properties_manager.get_tracer_diffusivity_vector();
-
-          diffusivity_models[0]->vector_value(fields, tracer_diffusivity_0);
-          diffusivity_models[1]->vector_value(fields, tracer_diffusivity_1);
-
-          // TODO Incomplete at the present time because the tracer VOF complete
-          // is not finished Blend the physical properties using the VOF field
-          for (unsigned int q = 0; q < this->n_q_points; ++q)
+          switch (properties_manager.get_number_of_fluids())
             {
-              //          tracer_diffusivity[q] =
-              //            calculate_point_property(this->phase_values[q],
-              //                                     this->density_0[q],
-              //                                     this->density_1[q]);
+              case 1:
+                {
+                  // In this case, only viscosity is the required property
+                  const auto diffusivity_model_fluid =
+                    properties_manager.get_tracer_diffusivity();
+                  const auto diffusivity_model_solid =
+                    properties_manager.get_tracer_diffusivity(0, 1);
+
+                  diffusivity_model_fluid->vector_value(fields,
+                                                        tracer_diffusivity_0);
+                  diffusivity_model_solid->vector_value(fields,
+                                                        tracer_diffusivity_1);
+
+                  // We change mix the properties of each phase depending on the
+                  // repartition of quadrature points. This makes the property
+                  // jumps smoother. A possible improvement would be smoothing
+                  // with tanh or a similar function.
+                  unsigned int number_inside = 0;
+                  for (unsigned int q = 0; q < this->n_q_points; ++q)
+                    if (sdf_values[q] < 0.)
+                      number_inside++;
+                  double fraction_inside = number_inside / this->n_q_points;
+                  for (unsigned int q = 0; q < this->n_q_points; ++q)
+                    tracer_diffusivity[q] =
+                      fraction_inside * tracer_diffusivity_1[q] +
+                      (1 - fraction_inside) * tracer_diffusivity_0[q];
+                  break;
+                }
+              default:
+                throw std::runtime_error(
+                  "Unsupported number of fluids and solids (1 solid and >1 fluid)");
             }
           break;
         }
       default:
-        throw std::runtime_error("Unsupported number of fluids (>2)");
+        throw std::runtime_error("Unsupported number of solids (>1)");
     }
-
-  // TODO Change to the solid diffusivity. For now, we assume it is 0 just for
-  // testing.
-  for (unsigned int q = 0; q < this->n_q_points; ++q)
-    if (sdf_values[q] < 0)
-      tracer_diffusivity[q] = 0.;
 }
 
 
