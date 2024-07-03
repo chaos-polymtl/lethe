@@ -65,7 +65,7 @@ set_field_vector(const field                          &id,
                  std::map<field, std::vector<double>> &fields)
 {
   std::vector<double> &target = fields.at(id);
-  size_t sz = target.size();
+  size_t               sz     = target.size();
   for (size_t i = 0; i < sz; ++i)
     {
       target[i] = data[i];

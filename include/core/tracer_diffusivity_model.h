@@ -119,8 +119,10 @@ public:
   /**
    * @brief Constructor of the levelset-dependent diffusivity model.
    *
-   * @param[in] p_phase_change_parameters Set of parameters of the phase change
-   * model.
+   * @param[in] p_tracer_diffusivity_outside Diffusivity outside the solid
+   * @param[in] p_tracer_diffusivity_inside Diffusivity inside the solid
+   * @param[in] p_thickness Thickness of the tanh used to smooth the property
+   * jump
    */
   TanhLevelsetTracerDiffusivity(const double p_tracer_diffusivity_outside,
                                 const double p_tracer_diffusivity_inside,
@@ -137,10 +139,10 @@ public:
    * @brief Compute the diffusivity.
    *
    * @param[in] field_values Values of the various fields on which the property
-   * may depend. In this case, the diffusivity depends on levelset.
+   * may depend. In this case, the diffusivity depends on the levelset.
    * The map stores a single value per field.
    *
-   * @return Value of the specific heat computed with the @p field_values.
+   * @return Value of the diffusivity computed with the @p field_values.
    */
   double
   value(const std::map<field, double> &field_values) override
@@ -155,13 +157,13 @@ public:
   }
 
   /**
-   * @brief Compute a vector of specific heat values for an isothermal ideal gas.
+   * @brief Compute a vector of diffusivity.
    *
-   * @param[in] field_vectors Vectors of the fields on which the specific heat
-   * may depend. In this case, the specific heat depends on temperature. The map
+   * @param[in] field_vectors Vectors of the fields on which the diffusivity
+   * may depend. In this case, the diffusivity depends on the levelset. The map
    * stores a vector of values per field.
    *
-   * @param[out] property_vector Vectors of computed specific heat values.
+   * @param[out] property_vector Vectors of computed diffusivities.
    */
   void
   vector_value(const std::map<field, std::vector<double>> &field_vectors,
@@ -224,8 +226,7 @@ public:
    * should be computed.
    *
    * @param[out] jacobian Vector of computed derivative values of the
-   * diffusivity
-   * with respect to the field of the specified @p id.
+   * diffusivity with respect to the field of the specified @p id.
    */
   void
   vector_jacobian(const std::map<field, std::vector<double>> &field_vectors,

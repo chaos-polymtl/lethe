@@ -118,14 +118,22 @@ TracerScratchData<dim>::calculate_physical_properties()
                     properties_manager.get_tracer_diffusivity(0, 1);
 
                   diffusivity_model_fluid->vector_value(fields,
-                                                        tracer_diffusivity_0);
+                                                        tracer_diffusivity);
                   diffusivity_model_solid->vector_value(fields,
                                                         tracer_diffusivity_1);
 
+                  // We let the solid diffusivity model manage diffusivity
+                  // assignation close to the solid
+                  bool at_least_one_solid_q_point = false;
                   for (unsigned int q = 0; q < this->n_q_points; ++q)
-                    if (sdf_values[q] > 0)
-                      tracer_diffusivity[q] = tracer_diffusivity_0[q];
-                    else
+                    if (sdf_values[q] < 0)
+                      {
+                        at_least_one_solid_q_point = true;
+                        break;
+                      }
+
+                  if (at_least_one_solid_q_point)
+                    for (unsigned int q = 0; q < this->n_q_points; ++q)
                       tracer_diffusivity[q] = tracer_diffusivity_1[q];
                   break;
                 }
