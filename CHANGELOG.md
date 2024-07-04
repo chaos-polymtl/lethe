@@ -3,6 +3,12 @@
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Master] - 2024-07-04
+
+### Changed
+
+- MINOR  The `entry_string_to_tensor` functions were duplicated; they were in `utilities.h` and `parameters.h`. In one case, it was templated with `spacedim` and the other not. This PR merges both functions in `utilities.h` as `value_string_to_tensor`. Since these are small functions, they are now inline functions. [#1186](https://github.com/chaos-polymtl/lethe/pull/1186)
+
 ## [Master] - 2024-07-03
 
 ### Fixed
