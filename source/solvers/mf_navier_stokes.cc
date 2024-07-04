@@ -1471,7 +1471,10 @@ MFNavierStokesSolver<dim>::solve()
   this->set_initial_condition(
     this->simulation_parameters.initial_condition->type,
     this->simulation_parameters.restart_parameters.restart);
-  this->update_multiphysics_time_average_solution();
+
+  // Only needed if other physics apart from fluid dynamics are enabled.
+  if (this->multiphysics->get_active_physics().size() > 1)
+    this->update_multiphysics_time_average_solution();
 
   while (this->simulation_control->integrate())
     {
@@ -1524,8 +1527,10 @@ MFNavierStokesSolver<dim>::solve()
         }
 
       // Provide the fluid dynamics dof_handler, present solution and previous
-      // solution to the multiphysics interface
-      update_solutions_for_multiphysics();
+      // solution to the multiphysics interface only if other physics
+      // apart from fluid dynamics are enabled
+      if (this->multiphysics->get_active_physics().size() > 1)
+        update_solutions_for_multiphysics();
 
       this->iterate();
       this->postprocess(false);
@@ -1673,8 +1678,10 @@ MFNavierStokesSolver<dim>::setup_dofs_fd()
                     this->locally_relevant_dofs,
                     this->mpi_communicator);
 
-  // Provide relevant solution to multiphysics interface
-  update_solutions_for_multiphysics();
+  // Provide relevant solution to multiphysics interface only if other physics
+  // apart from fluid dynamics are enabled.
+  if (this->multiphysics->get_active_physics().size() > 1)
+    update_solutions_for_multiphysics();
 }
 
 template <int dim>
