@@ -537,7 +537,7 @@ value_string_to_tensor(const std::string &value_string)
  * @tparam spacedim Number of spatial dimensions (2D or 3D).
  *
  * @param[in] value_string_0 A string in the parameter file corresponding to the
- * first component of the tensor or to a tensor itself.
+ * first component of the tensor or to the tensor itself.
  * @param[in] value_1 A double in the parameter file corresponding to the
  * second component of the tensor.
  * @param[in] value_2 A double in the parameter file corresponding to the
