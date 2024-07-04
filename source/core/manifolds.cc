@@ -244,7 +244,7 @@ attach_manifolds_to_triangulation(
         {
           // Create a point using the parameter file input
           Point<spacedim> circle_center(
-            entry_string_to_tensor<spacedim>(manifolds.manifold_point[i]));
+            value_string_to_tensor<spacedim>(manifolds.manifold_point[i]));
 
           static const SphericalManifold<dim, spacedim> manifold_description(
             circle_center);
@@ -257,12 +257,12 @@ attach_manifolds_to_triangulation(
             {
               // Create a point using the parameter file input
               Point<spacedim> point_on_axis(
-                entry_string_to_tensor<spacedim>(manifolds.manifold_point[i]));
+                value_string_to_tensor<spacedim>(manifolds.manifold_point[i]));
 
               // Create a tensor representing the direction of the length of the
               // cylinder
               Tensor<1, spacedim> cylinder_axis(
-                entry_string_to_tensor<spacedim>(
+                value_string_to_tensor<spacedim>(
                   manifolds.manifold_direction[i]));
 
               static const CylindricalManifold<dim, spacedim>
