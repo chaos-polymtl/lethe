@@ -1,7 +1,7 @@
 # Listing of Parameters
 #----------------------
 
-set dimension = 3
+set dimension = 2
 
 #---------------------------------------------------
 # Simulation Control
@@ -9,12 +9,11 @@ set dimension = 3
 
 subsection simulation control
   set method           = bdf2
-  set output frequency = 100
-  set output path      = ./output/
-  set time end         = 0.002
-  set time step        = 1.9e-8
+  set output frequency = 0
+  set time end         = 8e-6
+  set time step        = 2e-7
   set max cfl          = 0.75
-  set max time step    = 1.9e-8
+  set max time step    = 2e-7
   set adapt            = true
 end
 
@@ -32,38 +31,13 @@ end
 #---------------------------------------------------
 
 subsection mesh
-  set type               = gmsh
-  set file name          = ../mesh/3d-benchmark.msh
-  set initial refinement = 4
-end
+  set type = gmsh
 
-#---------------------------------------------------
-# Box Refinement
-#---------------------------------------------------
+  # GMSH file name
+  set file name = ../../lpbf_benchmark_mesh.msh
 
-subsection box refinement
-  subsection mesh
-    set type               = dealii
-    set grid type          = subdivided_hyper_rectangle
-    set grid arguments     = 8,1,8 : 0,0.41,-0.3 : 0.6,0.44,0.3 : false
-    set initial refinement = 0
-  end
+  # Initial refinement of the mesh
   set initial refinement = 3
-end
-
-#---------------------------------------------------
-# Mesh Adaptation
-#---------------------------------------------------
-
-subsection mesh adaptation
-  set type                 = kelly
-  set variable             = temperature, phase
-  set min refinement level = 4
-  set max refinement level = 7
-  set fraction coarsening  = 0.0, 0.0
-  set fraction refinement  = 0.4, 0.99
-  set fraction type        = fraction
-  set frequency            = 20
 end
 
 #---------------------------------------------------
@@ -71,47 +45,25 @@ end
 #---------------------------------------------------
 
 subsection boundary conditions
-  set number = 10
-  # Solid metal region
+  set number = 6
   subsection bc 0
     set id   = 2
     set type = noslip
   end
   subsection bc 1
-    set id   = 3
-    set type = noslip
-  end
-  subsection bc 2
-    set id   = 4
-    set type = noslip
-  end
-  subsection bc 3
     set id   = 5
     set type = noslip
   end
-  subsection bc 4
+  subsection bc 2
     set id   = 6
-    set type = noslip
+    set type = outlet
   end
-  subsection bc 4
-    set id   = 6
-    set type = noslip
-  end
-  # Gas region
-  subsection bc 5
+  subsection bc 3
     set id   = 7
     set type = slip
   end
-  subsection bc 6
-    set id   = 8
-    set type = slip
-  end
-  subsection bc 7
-    set id   = 9
-    set type = slip
-  end
-  subsection bc 8
-    set id   = 10
+  subsection bc 4
+    set id   = 4
     set type = function
     subsection u
       set Function expression = 0.1
@@ -120,15 +72,14 @@ subsection boundary conditions
       set Function expression = 0
     end
   end
-  subsection bc 9
-    set id   = 11
-    set type = outlet
+  subsection bc 5
+    set id   = 3
+    set type = noslip
   end
 end
 
 subsection boundary conditions heat transfer
-  set number = 10
-  # Solid metal region
+  set number = 6
   subsection bc 0
     set id   = 2
     set type = temperature
@@ -137,43 +88,26 @@ subsection boundary conditions heat transfer
     end
   end
   subsection bc 1
-    set id   = 3
-    set type = noflux
-  end
-  subsection bc 2
-    set id   = 4
-    set type = noflux
-  end
-  subsection bc 3
     set id   = 5
     set type = noflux
   end
-  subsection bc 4
+  subsection bc 2
     set id   = 6
     set type = noflux
   end
-  # Gaz region
-  subsection bc 5
+  subsection bc 3
     set id   = 7
     set type = noflux
   end
-  subsection bc 6
-    set id   = 8
-    set type = noflux
-  end
-  subsection bc 7
-    set id   = 9
-    set type = noflux
-  end
-  subsection bc 8
-    set id   = 10
+  subsection bc 4
+    set id   = 4
     set type = temperature
     subsection value
       set Function expression = 298
     end
   end
-  subsection bc 9
-    set id   = 11
+  subsection bc 5
+    set id   = 3
     set type = noflux
   end
 end
@@ -185,7 +119,7 @@ end
 subsection initial conditions
   set type = nodal
   subsection uvwp
-    set Function expression = 0; 0; 0; 0
+    set Function expression = 0; 0; 0
   end
   subsection VOF
     set Function expression = if (y<0.43 , 1, 0)
@@ -206,7 +140,7 @@ end
 subsection physical properties
   set number of fluids = 2
   subsection fluid 1
-    set density = 4420e-9 # M*L^-3
+    set density = 4420e-9
 
     set thermal conductivity model = phase_change
     set thermal expansion model    = phase_change
@@ -214,23 +148,23 @@ subsection physical properties
     set specific heat model        = phase_change
 
     subsection phase change
-      set latent enthalpy             = 290000e6 # L^2*T^-2
-      set liquidus temperature        = 1928.0   # Theta
-      set solidus temperature         = 1878.0   # Theta
-      set viscosity liquid            = 0.905    # L^2*T^-1
-      set viscosity solid             = 90500      # L^2*T^-1
-      set thermal conductivity liquid = 28.8e3   # M*L*T^-3*Theta^-1
-      set thermal conductivity solid  = 28.8e3   # M*L*T^-3*Theta^-1
-      set specific heat liquid        = 1126e6   # L^2*Theta^-1*T^-2
-      set specific heat solid         = 800e6    # L^2*Theta^-1*T^-2
+      set latent enthalpy             = 290000e6
+      set liquidus temperature        = 1928.0
+      set solidus temperature         = 1878.0
+      set viscosity liquid            = 0.905
+      set viscosity solid             = 90500
+      set thermal conductivity liquid = 28.8e3
+      set thermal conductivity solid  = 28.8e3
+      set specific heat liquid        = 1126e6
+      set specific heat solid         = 800e6
     end
   end
 
   subsection fluid 0
-    set density              = 1.784e-9 # M*L^-3
-    set kinematic viscosity  = 56.1     # L^2*T^-1
-    set thermal conductivity = 0.018e3  # M*L*T^-3*Theta^-1
-    set specific heat        = 520e6    # L^2*Theta^-1*T^-2
+    set density              = 1.784e-9
+    set kinematic viscosity  = 56.1
+    set thermal conductivity = 0.018e3
+    set specific heat        = 520e6
   end
 
   set number of material interactions = 1
@@ -240,11 +174,11 @@ subsection physical properties
       set first fluid id                              = 0
       set second fluid id                             = 1
       set surface tension model                       = phase change
-      set surface tension coefficient                 = 1.52 # M*T^-2
+      set surface tension coefficient                 = 1.52
       set reference state temperature                 = 1928
-      set temperature-driven surface tension gradient = -5.5e-4 # M*T^-2*Theta^-1
-      set liquidus temperature                        = 1928    # Theta
-      set solidus temperature                         = 1878    # Theta
+      set temperature-driven surface tension gradient = -5.5e-4
+      set liquidus temperature                        = 1928
+      set solidus temperature                         = 1878
     end
   end
 end
@@ -265,7 +199,7 @@ subsection laser parameters
   set end time             = 0.002
   set beam orientation     = y-
   subsection path
-    set Function expression = 0.3; 0.43; 0.0
+    set Function expression = 0.3; 0.43
   end
 end
 
@@ -275,11 +209,13 @@ end
 
 subsection VOF
   subsection phase filtration
-    set type = tanh
-    set beta = 20
+    set type      = tanh
+    set verbosity = quiet
+    set beta      = 20
   end
   subsection interface sharpening
     set enable                  = true
+    set threshold               = 0.5
     set interface sharpness     = 1.5
     set frequency               = 10
     set type                    = adaptive
@@ -287,7 +223,7 @@ subsection VOF
     set max iterations          = 50
     set monitored fluid         = fluid 1
     set tolerance               = 1e-7
-    set verbosity               = verbose
+    set verbosity               = quiet
   end
   subsection surface tension force
     set enable                                   = true
@@ -306,9 +242,10 @@ subsection evaporation
   set evaporation mass flux model = temperature_dependent
   set enable evaporative cooling  = true
   set enable recoil pressure      = true
-  set evaporation latent heat     = 8.9e12 # L^2*T^-2
+  set evaporation latent heat     = 8.9e12
   set molar mass                  = 4.58e-2
   set boiling temperature         = 3550
+
   set evaporation coefficient     = 0.82
   set recoil pressure coefficient = 0.56
   set ambient pressure            = 101325e-3
@@ -321,8 +258,9 @@ end
 #---------------------------------------------------
 
 subsection post-processing
-  set verbosity                   = verbose
-  set calculate mass conservation = true
+  set calculate mass conservation      = true
+  set calculate temperature statistics = true
+  set verbosity                        = verbose
 end
 
 #---------------------------------------------------
@@ -333,17 +271,17 @@ subsection non-linear solver
   subsection fluid dynamics
     set tolerance      = 1e-4
     set max iterations = 20
-    set verbosity      = verbose
+    set verbosity      = quiet
   end
   subsection heat transfer
     set tolerance      = 100
     set max iterations = 20
-    set verbosity      = verbose
+    set verbosity      = quiet
   end
   subsection VOF
     set tolerance      = 1e-4
     set max iterations = 20
-    set verbosity      = verbose
+    set verbosity      = quiet
   end
 end
 
@@ -353,52 +291,40 @@ end
 
 subsection linear solver
   subsection fluid dynamics
-    set verbosity                             = verbose
+    set verbosity                             = quiet
     set method                                = gmres
     set relative residual                     = 1e-3
-    set minimum residual                      = 1e-6
+    set minimum residual                      = 1e-5
     set preconditioner                        = ilu
-    set ilu preconditioner fill               = 0
+    set ilu preconditioner fill               = 1
     set ilu preconditioner absolute tolerance = 1e-12
     set ilu preconditioner relative tolerance = 1.00
   end
   subsection heat transfer
-    set verbosity                             = verbose
+    set verbosity                             = quiet
     set method                                = gmres
-    set relative residual                     = 1e-1
-    set minimum residual                      = 1
+    set relative residual                     = 1e-2
+    set minimum residual                      = 1e-1
     set preconditioner                        = ilu
-    set ilu preconditioner fill               = 0
+    set ilu preconditioner fill               = 1
     set ilu preconditioner absolute tolerance = 1e-12
     set ilu preconditioner relative tolerance = 1.00
   end
   subsection VOF
-    set verbosity                             = verbose
+    set verbosity                             = quiet
     set method                                = gmres
     set relative residual                     = 1e-3
-    set minimum residual                      = 1e-10
+    set minimum residual                      = 1e-5
     set preconditioner                        = ilu
-    set ilu preconditioner fill               = 0
+    set ilu preconditioner fill               = 1
     set ilu preconditioner absolute tolerance = 1e-12
     set ilu preconditioner relative tolerance = 1.00
   end
 end
 
-#---------------------------------------------------
-# Restart
-#---------------------------------------------------
-
 subsection restart
   set checkpoint = true
-  set frequency  = 500
+  set frequency  = 30
   set filename   = restart
   set restart    = false
-end
-
-#---------------------------------------------------
-# Timer
-#---------------------------------------------------
-
-subsection timer
-  set type = iteration
 end

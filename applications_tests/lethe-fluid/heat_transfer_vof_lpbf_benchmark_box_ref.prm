@@ -34,7 +34,7 @@ subsection mesh
   set type = gmsh
 
   # GMSH file name
-  set file name = ../../2d-benchmark.msh
+  set file name = ../../lpbf_benchmark_mesh.msh
 
   # Initial refinement of the mesh
   set initial refinement = 2

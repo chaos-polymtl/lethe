@@ -8,7 +8,7 @@ file(COPY cylinder_structured.msh DESTINATION "${CMAKE_CURRENT_BINARY_DIR}")
 file(COPY taylorCouette.msh DESTINATION "${CMAKE_CURRENT_BINARY_DIR}")
 file(COPY box.msh DESTINATION "${CMAKE_CURRENT_BINARY_DIR}")
 file(COPY cylinder_manifold.msh DESTINATION "${CMAKE_CURRENT_BINARY_DIR}")
-file(COPY 2d-benchmark.msh DESTINATION "${CMAKE_CURRENT_BINARY_DIR}")
+file(COPY lpbf_benchmark_mesh.msh DESTINATION "${CMAKE_CURRENT_BINARY_DIR}")
 
 file(COPY cavity_ht_average_velocity_restart_files/restart.averagevelocities DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/cavity_ht_average_velocity_restart.${_build_type}/mpirun=1/")
 file(COPY cavity_ht_average_velocity_restart_files/restart.pvdhandler DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/cavity_ht_average_velocity_restart.${_build_type}/mpirun=1/")
@@ -54,6 +54,15 @@ file(COPY poiseuille_restart_files/poiseuille_restart.triangulation DESTINATION 
 file(COPY poiseuille_restart_files/poiseuille_restart.triangulation_fixed.data DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/poiseuille_restart.${_build_type}/mpirun=1/")
 file(COPY poiseuille_restart_files/poiseuille_restart.triangulation.info DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/poiseuille_restart.${_build_type}/mpirun=1/")
 
+file(COPY heat_transfer_vof_lpbf_benchmark_restart_files/restart.pvdhandler DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/heat_transfer_vof_lpbf_benchmark.${_build_type}/mpirun=1/")
+file(COPY heat_transfer_vof_lpbf_benchmark_restart_files/restart.simulationcontrol DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/heat_transfer_vof_lpbf_benchmark.${_build_type}/mpirun=1/")
+file(COPY heat_transfer_vof_lpbf_benchmark_restart_files/restart.triangulation DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/heat_transfer_vof_lpbf_benchmark.${_build_type}/mpirun=1/")
+file(COPY heat_transfer_vof_lpbf_benchmark_restart_files/restart.triangulation.info DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/heat_transfer_vof_lpbf_benchmark.${_build_type}/mpirun=1/")
+file(COPY heat_transfer_vof_lpbf_benchmark_restart_files/restart.triangulation_fixed.data DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/heat_transfer_vof_lpbf_benchmark.${_build_type}/mpirun=1/")
+file(COPY heat_transfer_vof_lpbf_benchmark_restart_files/mass_conservation_information.checkpoint DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/heat_transfer_vof_lpbf_benchmark.${_build_type}/mpirun=1/")
+file(COPY heat_transfer_vof_lpbf_benchmark_restart_files/temperature_statistics.checkpoint DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/heat_transfer_vof_lpbf_benchmark.${_build_type}/mpirun=1/")
+
+
 file(COPY heat_transfer_vof_lpbf_benchmark_box_ref_restart_files/restart.pvdhandler DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/heat_transfer_vof_lpbf_benchmark_box_ref.${_build_type}/mpirun=1/")
 file(COPY heat_transfer_vof_lpbf_benchmark_box_ref_restart_files/restart.simulationcontrol DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/heat_transfer_vof_lpbf_benchmark_box_ref.${_build_type}/mpirun=1/")
 file(COPY heat_transfer_vof_lpbf_benchmark_box_ref_restart_files/restart.triangulation DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/heat_transfer_vof_lpbf_benchmark_box_ref.${_build_type}/mpirun=1/")
@@ -61,6 +70,7 @@ file(COPY heat_transfer_vof_lpbf_benchmark_box_ref_restart_files/restart.triangu
 file(COPY heat_transfer_vof_lpbf_benchmark_box_ref_restart_files/restart.triangulation_fixed.data DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/heat_transfer_vof_lpbf_benchmark_box_ref.${_build_type}/mpirun=1/")
 file(COPY heat_transfer_vof_lpbf_benchmark_box_ref_restart_files/mass_conservation_information.checkpoint DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/heat_transfer_vof_lpbf_benchmark_box_ref.${_build_type}/mpirun=1/")
 file(COPY heat_transfer_vof_lpbf_benchmark_box_ref_restart_files/temperature_statistics.checkpoint DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/heat_transfer_vof_lpbf_benchmark_box_ref.${_build_type}/mpirun=1/")
+
 
 deal_ii_pickup_tests()
 

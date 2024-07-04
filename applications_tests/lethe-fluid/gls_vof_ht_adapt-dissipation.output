@@ -8,52 +8,52 @@ Running on 1 MPI rank(s)...
 *******************************************************************************
 Transient iteration: 1        Time: 0.02     Time step: 0.02     CFL: 1.11831 
 *******************************************************************************
-L2 error velocity : 0.991497
-L2 error temperature : 5.04546e-13
+L2 error velocity : 0.99151
+L2 error temperature : 4.95887e-13
 L2 error phase : 0.00279114
 
 *******************************************************************************
-Transient iteration: 2        Time: 0.04     Time step: 0.02     CFL: 1.25784 
+Transient iteration: 2        Time: 0.04     Time step: 0.02     CFL: 1.25786 
 *******************************************************************************
-L2 error velocity : 1.09119
-L2 error temperature : 4.79375e-12
-L2 error phase : 0.00284483
+L2 error velocity : 1.09115
+L2 error temperature : 4.68382e-12
+L2 error phase : 0.00284754
 
 *******************************************************************************
-Transient iteration: 3        Time: 0.06     Time step: 0.02     CFL: 1.28669 
+Transient iteration: 3        Time: 0.06     Time step: 0.02     CFL: 1.28682 
 *******************************************************************************
-L2 error velocity : 1.12532
-L2 error temperature : 2.21811e-11
-L2 error phase : 0.00291762
+L2 error velocity : 1.12524
+L2 error temperature : 2.14831e-11
+L2 error phase : 0.00292325
 
 *******************************************************************************
-Transient iteration: 4        Time: 0.08     Time step: 0.02     CFL: 1.29494 
+Transient iteration: 4        Time: 0.08     Time step: 0.02     CFL: 1.29512 
 *******************************************************************************
-L2 error velocity : 1.13547
-L2 error temperature : 6.70904e-11
-L2 error phase : 0.00300328
+L2 error velocity : 1.13541
+L2 error temperature : 6.41882e-11
+L2 error phase : 0.00301194
 
 *******************************************************************************
-Transient iteration: 5        Time: 0.1      Time step: 0.02     CFL: 1.29732 
+Transient iteration: 5        Time: 0.1      Time step: 0.02     CFL: 1.2975  
 *******************************************************************************
-L2 error velocity : 1.13703
-L2 error temperature : 1.51809e-10
-L2 error phase : 0.00309775
+L2 error velocity : 1.137
+L2 error temperature : 1.43343e-10
+L2 error phase : 0.0031096
  time  error_velocity error_pressure 
-0.0200   9.914971e-01        12.1306 
-0.0400   1.091190e+00        11.7612 
-0.0600   1.125321e+00        11.7044 
-0.0800   1.135472e+00        11.8180 
-0.1000   1.137030e+00        11.9356 
+0.0200   9.915105e-01        12.1545 
+0.0400   1.091154e+00        11.7510 
+0.0600   1.125244e+00        11.6955 
+0.0800   1.135406e+00        11.8167 
+0.1000   1.136995e+00        11.9363 
 cells error_temperature 
-  256      5.045460e-13 
-  256      4.793753e-12 
-  256      2.218107e-11 
-  256      6.709042e-11 
-  256      1.518086e-10 
+  256      4.958868e-13 
+  256      4.683819e-12 
+  256      2.148313e-11 
+  256      6.418823e-11 
+  256      1.433433e-10 
  time  error_phase  
 0.0200 2.791137e-03 
-0.0400 2.844827e-03 
-0.0600 2.917617e-03 
-0.0800 3.003282e-03 
-0.1000 3.097754e-03 
+0.0400 2.847543e-03 
+0.0600 2.923250e-03 
+0.0800 3.011940e-03 
+0.1000 3.109602e-03 
