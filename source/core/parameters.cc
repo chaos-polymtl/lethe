@@ -2247,10 +2247,11 @@ namespace Parameters
       target_size = prm.get_double("target size");
 
       // Initial translation
-      translation = entry_string_to_tensor3(prm, "initial translation");
+      translation = value_string_to_tensor<3>(prm.get("initial translation"));
 
       // Initial rotation axis and angle
-      rotation_axis  = entry_string_to_tensor3(prm, "initial rotation axis");
+      rotation_axis =
+        value_string_to_tensor<3>(prm.get("initial rotation axis"));
       rotation_angle = prm.get_double("initial rotation angle");
     }
     prm.leave_subsection();
@@ -3756,62 +3757,6 @@ namespace Parameters
       universal_gas_constant  = prm.get_double("universal gas constant");
     }
     prm.leave_subsection();
-  }
-
-  Tensor<1, 3>
-  entry_string_to_tensor3(ParameterHandler  &prm,
-                          const std::string &entry_string,
-                          const std::string &entry_string_1,
-                          const std::string &entry_string_2)
-  {
-    std::string              full_str = prm.get(entry_string);
-    std::vector<std::string> vector_of_string(
-      Utilities::split_string_list(full_str));
-    Tensor<1, 3> output_tensor;
-
-    // The used parameter is a list of values
-    if (vector_of_string.size() > 1)
-      {
-        std::vector<double> vector_of_double =
-          Utilities::string_to_double(vector_of_string);
-        for (unsigned int i = 0; i < vector_of_double.size(); ++i)
-          output_tensor[i] = vector_of_double[i];
-      }
-    else // Depreciated individual entries
-      {
-        // Since the first parameter is the alias of the new parameter,
-        // the value of the first parameter is obtained for its entry
-        output_tensor[0] = prm.get_double(entry_string);
-        output_tensor[1] = prm.get_double(entry_string_1);
-        output_tensor[2] = prm.get_double(entry_string_2);
-      }
-
-    return output_tensor;
-  }
-
-  Tensor<1, 3>
-  entry_string_to_tensor3(ParameterHandler  &prm,
-                          const std::string &entry_string)
-  {
-    std::string              full_str = prm.get(entry_string);
-    std::vector<std::string> vector_of_string(
-      Utilities::split_string_list(full_str));
-    std::vector<double> vector_of_double =
-      Utilities::string_to_double(vector_of_string);
-    Tensor<1, 3> output_tensor;
-
-    AssertThrow(
-      vector_of_double.size() == 3 || vector_of_double.size() == 2,
-      ExcMessage(
-        "Invalid " + entry_string +
-        ". This should be a two or three dimensional vector or point."));
-
-    // Assign the values to the tensor, if the vector is dim 2, the third
-    // component is 0. by default
-    for (unsigned int i = 0; i < vector_of_double.size(); ++i)
-      output_tensor[i] = vector_of_double[i];
-
-    return output_tensor;
   }
 
   template class Laser<2>;

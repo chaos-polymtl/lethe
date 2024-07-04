@@ -718,15 +718,8 @@ value_string_to_tensor(const std::string &value_string)
 
   AssertThrow(vector_of_double.size() == 3 || vector_of_double.size() == 2,
               ExcMessage("Invalid string: " + value_string +
-                         ". This should be a " +
-                         Utilities::to_string(spacedim) +
-                         " dimensional vector or point."));
-
-  AssertThrow(
-    vector_of_double.size() == spacedim,
-    ExcMessage(
-      "Invalid entry in the parameter file. An entry's dimension does not "
-      "match the expected problem dimension."));
+                         ". This should be a two or three dimensional vector "
+                         "or point."));
 
   Tensor<1, spacedim> output_tensor;
   for (unsigned int i = 0; i < spacedim; ++i)
@@ -735,8 +728,53 @@ value_string_to_tensor(const std::string &value_string)
   return output_tensor;
 }
 
+template <int spacedim>
+Tensor<1, spacedim>
+value_string_to_tensor(const std::string &value_string_0,
+                       const double      &value_1,
+                       const double      &value_2)
+{
+  std::vector<std::string> vector_of_string(
+    Utilities::split_string_list(value_string_0));
+  Tensor<1, spacedim> output_tensor;
+
+  // The used parameter is a list of values
+  if (vector_of_string.size() > 1)
+    {
+      std::vector<double> vector_of_double =
+        Utilities::string_to_double(vector_of_string);
+      AssertThrow(vector_of_double.size() == 3 || vector_of_double.size() == 2,
+                  ExcMessage(
+                    "Invalid string: " + value_string_0 +
+                    ". This should be a two or three dimensional vector "
+                    "or point."));
+      for (unsigned int i = 0; i < vector_of_double.size(); ++i)
+        output_tensor[i] = vector_of_double[i];
+    }
+  else // Depreciated individual entries
+    {
+      // Since the first parameter is the alias of the new parameter,
+      // the value of the first parameter is obtained for its entry
+      output_tensor[0] = Utilities::string_to_double(value_string_0);
+      output_tensor[1] = value_1;
+      if constexpr (spacedim == 3)
+        output_tensor[2] = value_2;
+    }
+  return output_tensor;
+}
+
 template Tensor<1, 2>
 value_string_to_tensor(const std::string &value_string);
 
 template Tensor<1, 3>
 value_string_to_tensor(const std::string &value_string);
+
+template Tensor<1, 2>
+value_string_to_tensor(const std::string &value_string_0,
+                       const double      &value_1,
+                       const double      &value_2 = 0);
+
+template Tensor<1, 3>
+value_string_to_tensor(const std::string &value_string_0,
+                       const double      &value_1,
+                       const double      &value_2 = 0);

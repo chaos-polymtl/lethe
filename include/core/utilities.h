@@ -488,34 +488,11 @@ get_dimension(const std::string &file_name);
 int
 get_max_number_of_boundary_conditions(const std::string &file_name);
 
-///**
-// * @brief Return the tensor corresponding to the entry (@p entry_string). If
-// * the dimension correspondence of the @p entry_string is not equivalent to
-// * @p spacedim (either 2 or 3), an exception will be thrown. The delimiter
-// * separating the elements of the @p entry_string is a comma (",").
-// *
-// * @remark The function can be use to construct Point<spacedim> objects.
-// *
-// * @tparam spacedim Number of spatial dimensions (2D or 3D).
-// *
-// * @param[in] prm ParameterHandler object used to parse simulation
-// * information.
-// * @param[in] entry_string A string in the parameter file corresponding to the
-// * name of a parameter.
-// *
-// * @return A Tensor<1,spacedim> corresponding to the @p entry_string in the
-// * parameter file.
-// */
-//template <int spacedim>
-//Tensor<1, spacedim>
-//entry_string_to_tensor(const ParameterHandler &prm,
-//                       const std::string      &entry_string);
-
 /**
  * @brief Return the tensor corresponding to the @p value_string. If the
  * dimension correspondence of the @p value_string is not equivalent to
  * @p spacedim (either 2 or 3), an exception will be thrown. The delimiter
- * separating the elements of the @p entry_string is a comma (",").
+ * separating the elements of the @p value_string is a comma (",").
  *
  * @remark The function can be use to construct Point<spacedim> objects.
  *
@@ -529,6 +506,35 @@ get_max_number_of_boundary_conditions(const std::string &file_name);
  */
 template <int spacedim>
 Tensor<1, spacedim>
-value_string_to_tensor(const std::string &entry_string);
+value_string_to_tensor(const std::string &value_string);
+
+/**
+ * @brief Return the tensor corresponding to the @p value_string_0, but it can
+ * also allow the usage of deprecated parameters that used to be 3 individual
+ * entries instead of a list of values.
+ * In the case of a single entry declaration, the delimiter separating the
+ * elements of the @p value_string_0 is a comma (",").
+ *
+ * @remark The function can be use to construct Point<spacedim> objects.
+ *
+ * @tparam spacedim Number of spatial dimensions (2D or 3D).
+ *
+ * @param[in] value_string_0 A string in the parameter file corresponding to the
+ * first component of the tensor or to a tensor itself.
+ * @param[in] value_1 A double in the parameter file corresponding to the
+ * second component of the tensor.
+ * @param[in] value_2 A double in the parameter file corresponding to the
+ * third component of the tensor. Only specify if @p spacedim = 3.
+ *
+ * @return A Tensor<1,spacedim> corresponding to the input parameters in the
+ * parameter file.
+ */
+template <int spacedim>
+Tensor<1, spacedim>
+value_string_to_tensor(const std::string &value_string_0,
+                       const double      &value_1,
+                       const double      &value_2 = 0);
+
+
 
 #endif
