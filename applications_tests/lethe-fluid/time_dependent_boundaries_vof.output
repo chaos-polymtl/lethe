@@ -24,26 +24,26 @@ Transient iteration: 1        Time: 0.5      Time step: 0.5      CFL: 2.79578
 VOF Mass Conservation
 ----------------------
    time    surface_fluid_0 mass_per_length_fluid_0 momentum-x_fluid_0 momentum-y_fluid_0 surface_fluid_1 mass_per_length_fluid_1 momentum-x_fluid_1 momentum-y_fluid_1 sharpening_threshold 
-5.0000e-01      8.7890e-01              8.7890e-02         2.3386e-03         7.6087e-03      1.2110e-01              1.2110e+01         7.9638e-01         5.8617e-01           5.0000e-01 
+5.0000e-01      8.7890e-01              8.7890e-02         5.7680e-03         1.2469e-03      1.2110e-01              1.2110e+01         1.3232e+00         1.7497e-01           5.0000e-01 
 
 ---------------
 VOF Barycenter
 ---------------
   time    x_vof    y_vof    vx_vof   vy_vof  
-0.500000 0.482726 0.508347 0.137519 0.013424 
+0.500000 0.482726 0.508347 0.147377 0.011681 
 
 *******************************************************************************
-Transient iteration: 2        Time: 1        Time step: 0.5      CFL: 4.12416 
+Transient iteration: 2        Time: 1        Time step: 0.5      CFL: 3.72386 
 *******************************************************************************
 
 ----------------------
 VOF Mass Conservation
 ----------------------
    time    surface_fluid_0 mass_per_length_fluid_0 momentum-x_fluid_0 momentum-y_fluid_0 surface_fluid_1 mass_per_length_fluid_1 momentum-x_fluid_1 momentum-y_fluid_1 sharpening_threshold 
-1.0000e+00      7.9960e-01              7.9960e-02         3.3587e-02         2.9026e-02      2.0040e-01              2.0040e+01         4.9507e+00         1.9483e-01           5.0000e-01 
+1.0000e+00      8.2664e-01              8.2664e-02         5.7127e-03        -6.0725e-05      1.7336e-01              1.7336e+01         6.0198e+00        -3.8167e-01           5.0000e-01 
 
 ---------------
 VOF Barycenter
 ---------------
-  time    x_vof    y_vof    vx_vof   vy_vof  
-1.000000 0.512900 0.576332 0.363353 0.013339 
+  time    x_vof    y_vof    vx_vof   vy_vof   
+1.000000 0.513510 0.638807 0.449408 -0.013436 

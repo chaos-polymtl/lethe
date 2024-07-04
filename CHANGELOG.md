@@ -3,6 +3,20 @@
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Master] - 2024-07-03
+
+### Fixed
+
+- MINOR The term associated with the viscosity jump in the strong residual for the NS-VOF assembler added in [#1049] (https://github.com/chaos-polymtl/lethe/pull/1149) led to an ill-posed formulation in solid-liquid phase change cases where the solid is represented by a highly viscous fluid. Hence, this term was removed from the current formulation. [#1180](https://github.com/chaos-polymtl/lethe/pull/1180)
+
+### Changed
+
+- MINOR LPBF benchmark example prm files are up to date with the current working version. [#1180](https://github.com/chaos-polymtl/lethe/pull/1180)
+
+### Added
+
+- MINOR There was no appropriate application test for lpbf/phase change with vof cases that could have allowed us to identify this ill-posed formulation prior to the merge of [#1049] (https://github.com/chaos-polymtl/lethe/pull/1149). A new application test is now included to avoid future mistake in lpbf/phase change with vof cases. [#1180](https://github.com/chaos-polymtl/lethe/pull/1180)
+
 ## [Master] - 2024-07-02
 
 ### Fixed
