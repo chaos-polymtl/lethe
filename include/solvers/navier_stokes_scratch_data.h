@@ -315,21 +315,14 @@ public:
 
     for (unsigned int q = 0; q < n_q_points; ++q)
       {
-        std::cout<< " q = " << q << std:: endl;
-        
         this->JxW[q] = this->fe_values.JxW(q);
         for (unsigned int k = 0; k < n_dofs; ++k)
           {
             // Velocity
             this->phi_u[q][k] = this->fe_values[velocities].value(k, q);
-            std::cout<< " k = " << k << std:: endl;
-            std::cout<< " phi_u[q][k] = " << phi_u[q][k] << std:: endl;
-            
             this->div_phi_u[q][k] =
               this->fe_values[velocities].divergence(k, q);
             this->grad_phi_u[q][k] = this->fe_values[velocities].gradient(k, q);
-            std::cout<< " grad_phi_u[q][k] = " << grad_phi_u[q][k] << std:: endl;
-            
             this->hess_phi_u[q][k] = this->fe_values[velocities].hessian(k, q);
             for (int d = 0; d < dim; ++d)
               this->laplacian_phi_u[q][k][d] = trace(this->hess_phi_u[q][k][d]);
