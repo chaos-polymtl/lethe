@@ -1,6 +1,5 @@
 /**
- * @brief Tests the Power law rheology model. This model should always return
- * K*gamma^{n-1}.
+ * @brief Tests the Tanh Levelset diffusivity model.
  */
 
 // Lethe
@@ -34,7 +33,7 @@ test()
           << diffusivity_model.numerical_jacobian(field_values, field::levelset)
           << std::endl;
   field_values[field::levelset] = -100;
-  deallog << " levelset = 0, diffusivity =  "
+  deallog << " levelset = -100, diffusivity =  "
           << diffusivity_model.value(field_values)
           << ", dD/dlevelset numerical = "
           << diffusivity_model.numerical_jacobian(field_values, field::levelset)
