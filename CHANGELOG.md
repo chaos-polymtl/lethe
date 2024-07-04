@@ -17,6 +17,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ## [Master] - 2024-07-08
 
+### Added
+
+- MINOR A tracer diffusivity model is added, to be used with the `lethe-fluid-sharp` solver. It makes it possible to assign distance-based (depth) diffusivity to the immersed solids. [#1185](https://github.com/chaos-polymtl/lethe/pull/1185)
+
+## [Master] - 2024-07-08
+
 ### Changed
 
 - MINOR  The timer output for the lethe-fluid and lethe-fluid-matrix-free applications contains now more detailed elements. Including post-processing capabilities that were not timed, the time spent in reading mesh and manifolds, and setting the initial conditions. [#1187](https://github.com/chaos-polymtl/lethe/pull/1187) 
