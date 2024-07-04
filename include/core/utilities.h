@@ -505,8 +505,25 @@ get_max_number_of_boundary_conditions(const std::string &file_name);
  * parameter file.
  */
 template <int spacedim>
-Tensor<1, spacedim>
-value_string_to_tensor(const std::string &value_string);
+inline Tensor<1, spacedim>
+value_string_to_tensor(const std::string &value_string)
+{
+  std::vector<std::string> vector_of_string(
+    Utilities::split_string_list(value_string));
+  std::vector<double> vector_of_double =
+    Utilities::string_to_double(vector_of_string);
+
+  AssertThrow(vector_of_double.size() == 3 || vector_of_double.size() == 2,
+              ExcMessage("Invalid string: " + value_string +
+                         ". This should be a two or three dimensional vector "
+                         "or point."));
+
+  Tensor<1, spacedim> output_tensor;
+  for (unsigned int i = 0; i < spacedim; ++i)
+    output_tensor[i] = vector_of_double[i];
+
+  return output_tensor;
+}
 
 /**
  * @brief Return the tensor corresponding to the @p value_string_0, but it can
@@ -530,11 +547,38 @@ value_string_to_tensor(const std::string &value_string);
  * parameter file.
  */
 template <int spacedim>
-Tensor<1, spacedim>
+inline Tensor<1, spacedim>
 value_string_to_tensor(const std::string &value_string_0,
                        const double      &value_1,
-                       const double      &value_2 = 0);
+                       const double      &value_2 = 0)
+{
+  std::vector<std::string> vector_of_string(
+    Utilities::split_string_list(value_string_0));
+  Tensor<1, spacedim> output_tensor;
 
-
+  // The used parameter is a list of values
+  if (vector_of_string.size() > 1)
+    {
+      std::vector<double> vector_of_double =
+        Utilities::string_to_double(vector_of_string);
+      AssertThrow(vector_of_double.size() == 3 || vector_of_double.size() == 2,
+                  ExcMessage(
+                    "Invalid string: " + value_string_0 +
+                    ". This should be a two or three dimensional vector "
+                    "or point."));
+      for (unsigned int i = 0; i < vector_of_double.size(); ++i)
+        output_tensor[i] = vector_of_double[i];
+    }
+  else // Depreciated individual entries
+    {
+      // Since the first parameter is the alias of the new parameter,
+      // the value of the first parameter is obtained for its entry
+      output_tensor[0] = Utilities::string_to_double(value_string_0);
+      output_tensor[1] = value_1;
+      if constexpr (spacedim == 3)
+        output_tensor[2] = value_2;
+    }
+  return output_tensor;
+}
 
 #endif
