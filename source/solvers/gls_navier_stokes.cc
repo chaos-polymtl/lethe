@@ -1123,6 +1123,8 @@ GLSNavierStokesSolver<dim>::set_initial_condition_fd(
   Parameters::InitialConditionType initial_condition_type,
   bool                             restart)
 {
+  TimerOutput::Scope t(this->computing_timer, "Set initial conditions");
+
   if (restart)
     {
       this->pcout << "************************" << std::endl;
@@ -1608,7 +1610,15 @@ GLSNavierStokesSolver<dim>::solve_system_GMRES(const bool   initial_step,
                   << solver_control.last_value() << std::endl;
               }
           }
+
+          this->computing_timer.enter_subsection(
+            "Distribute constraints after linear solve");
+
           constraints_used.distribute(completely_distributed_solution);
+
+          this->computing_timer.leave_subsection(
+            "Distribute constraints after linear solve");
+
           auto &newton_update = this->newton_update;
           newton_update       = completely_distributed_solution;
           success             = true;

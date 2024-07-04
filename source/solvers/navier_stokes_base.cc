@@ -520,6 +520,9 @@ NavierStokesBase<dim, VectorType, DofsType>::finish_time_step()
   if (simulation_parameters.simulation_control.method !=
       Parameters::SimulationControl::TimeSteppingMethod::steady)
     {
+      TimerOutput::Scope t(this->computing_timer,
+                           "Calculate CFL and percolate time vectors");
+
       percolate_time_vectors_fd();
       const double CFL = calculate_CFL(this->dof_handler,
                                        this->present_solution,
@@ -1202,8 +1205,9 @@ template <int dim, typename VectorType, typename DofsType>
 void
 NavierStokesBase<dim, VectorType, DofsType>::postprocess_fd(bool firstIter)
 {
-  auto &present_solution = this->present_solution;
+  TimerOutput::Scope t(this->computing_timer, "Postprocessing");
 
+  auto &present_solution = this->present_solution;
 
   // Enstrophy
   if (this->simulation_parameters.post_processing.calculate_enstrophy)
@@ -1341,8 +1345,7 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess_fd(bool firstIter)
 
   if (this->simulation_parameters.post_processing.calculate_kinetic_energy)
     {
-      TimerOutput::Scope t(this->computing_timer, "kinetic_energy_calculation");
-      double             kE = calculate_kinetic_energy(this->dof_handler,
+      double kE = calculate_kinetic_energy(this->dof_handler,
                                            present_solution,
                                            *this->cell_quadrature,
                                            *this->mapping);
@@ -1375,9 +1378,7 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess_fd(bool firstIter)
   // Calculate apparent viscosity
   if (this->simulation_parameters.post_processing.calculate_apparent_viscosity)
     {
-      TimerOutput::Scope t(this->computing_timer,
-                           "apparent_viscosity_calculation");
-      double             apparent_viscosity = calculate_apparent_viscosity(
+      double apparent_viscosity = calculate_apparent_viscosity(
         this->dof_handler,
         this->present_solution,
         *this->cell_quadrature,
@@ -1416,8 +1417,7 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess_fd(bool firstIter)
   // Calculate pressure drop between two boundaries
   if (this->simulation_parameters.post_processing.calculate_pressure_drop)
     {
-      TimerOutput::Scope t(this->computing_timer, "pressure_drop_calculation");
-      double             pressure_drop, total_pressure_drop;
+      double pressure_drop, total_pressure_drop;
       std::tie(pressure_drop, total_pressure_drop) = calculate_pressure_drop(
         this->dof_handler,
         *this->mapping,
@@ -1474,8 +1474,6 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess_fd(bool firstIter)
       this->flow_rate_table.add_value("time",
                                       simulation_control->get_current_time());
       this->flow_rate_table.set_scientific("time", true);
-
-      TimerOutput::Scope t(this->computing_timer, "flow_rate_calculation");
 
       if (this->simulation_parameters.post_processing.verbosity ==
           Parameters::Verbosity::verbose)
@@ -2610,6 +2608,8 @@ void
 NavierStokesBase<dim, VectorType, DofsType>::output_newton_update_norms(
   const unsigned int display_precision)
 {
+  TimerOutput::Scope t(this->computing_timer, "Output Newton update norms");
+
   if constexpr (std::is_same_v<VectorType, GlobalVectorType> ||
                 std::is_same_v<VectorType,
                                LinearAlgebra::distributed::Vector<double>>)

@@ -1456,12 +1456,16 @@ template <int dim>
 void
 MFNavierStokesSolver<dim>::solve()
 {
+  this->computing_timer.enter_subsection("Read mesh and manifolds");
+
   read_mesh_and_manifolds(
     *this->triangulation,
     this->simulation_parameters.mesh,
     this->simulation_parameters.manifolds_parameters,
     this->simulation_parameters.restart_parameters.restart,
     this->simulation_parameters.boundary_conditions);
+
+  this->computing_timer.leave_subsection("Read mesh and manifolds");
 
   this->setup_dofs();
   this->set_initial_condition(
@@ -1503,10 +1507,16 @@ MFNavierStokesSolver<dim>::solve()
 
       if (is_bdf(this->simulation_control->get_assembly_method()))
         {
+          this->computing_timer.enter_subsection(
+            "Calculate time derivative previous solutions");
+
           calculate_time_derivative_previous_solutions();
           this->time_derivative_previous_solutions.update_ghost_values();
           this->system_operator->evaluate_time_derivative_previous_solutions(
             this->time_derivative_previous_solutions);
+
+          this->computing_timer.leave_subsection(
+            "Calculate time derivative previous solutions");
 
           if (this->simulation_parameters.flow_control.enable_flow_control)
             this->system_operator->update_beta_force(
@@ -1702,6 +1712,8 @@ MFNavierStokesSolver<dim>::set_initial_condition_fd(
   Parameters::InitialConditionType initial_condition_type,
   bool                             restart)
 {
+  TimerOutput::Scope t(this->computing_timer, "Set initial conditions");
+
   if (restart)
     {
       this->pcout << "************************" << std::endl;
@@ -1933,9 +1945,7 @@ void
 MFNavierStokesSolver<dim>::assemble_system_matrix()
 {
   // Required for compilation but not used for matrix free solvers.
-  this->computing_timer.enter_subsection("Assemble matrix");
-
-  this->computing_timer.leave_subsection("Assemble matrix");
+  TimerOutput::Scope t(this->computing_timer, "Assemble matrix");
 }
 
 template <int dim>
@@ -1959,6 +1969,9 @@ template <int dim>
 void
 MFNavierStokesSolver<dim>::update_multiphysics_time_average_solution()
 {
+  TimerOutput::Scope t(this->computing_timer,
+                       "Update multiphysics average solution");
+
   if (this->simulation_parameters.post_processing.calculate_average_velocities)
     {
       TrilinosWrappers::MPI::Vector temp_average_velocities(
@@ -1996,7 +2009,7 @@ template <int dim>
 void
 MFNavierStokesSolver<dim>::setup_GMG()
 {
-  this->computing_timer.enter_subsection("Setup GMG");
+  TimerOutput::Scope t(this->computing_timer, "Setup GMG");
 
   if (!gmg_preconditioner)
     gmg_preconditioner = std::make_shared<MFNavierStokesPreconditionGMG<dim>>(
@@ -2013,15 +2026,13 @@ MFNavierStokesSolver<dim>::setup_GMG()
                                  this->flow_control,
                                  this->present_solution,
                                  this->time_derivative_previous_solutions);
-
-  this->computing_timer.leave_subsection("Setup GMG");
 }
 
 template <int dim>
 void
 MFNavierStokesSolver<dim>::setup_ILU()
 {
-  this->computing_timer.enter_subsection("Setup ILU");
+  TimerOutput::Scope t(this->computing_timer, "Setup ILU");
 
   int current_preconditioner_fill_level =
     this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
@@ -2039,8 +2050,6 @@ MFNavierStokesSolver<dim>::setup_ILU()
 
   ilu_preconditioner->initialize(system_operator->get_system_matrix(),
                                  preconditionerOptions);
-
-  this->computing_timer.leave_subsection("Setup ILU");
 }
 
 
@@ -2085,6 +2094,9 @@ template <int dim>
 void
 MFNavierStokesSolver<dim>::update_solutions_for_multiphysics()
 {
+  TimerOutput::Scope t(this->computing_timer,
+                       "Update solutions for multiphysics");
+
   // Provide the fluid dynamics dof_handler to the multiphysics interface
   this->multiphysics->set_dof_handler(PhysicsID::fluid_dynamics,
                                       &this->dof_handler);
@@ -2301,8 +2313,13 @@ void
 MFNavierStokesSolver<dim>::setup_preconditioner()
 {
   this->present_solution.update_ghost_values();
+
+  this->computing_timer.enter_subsection("Evaluate non linear term and tau");
+
   this->system_operator->evaluate_non_linear_term_and_calculate_tau(
     this->present_solution);
+
+  this->computing_timer.leave_subsection("Evaluate non linear term and tau");
 
   if (this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
         .preconditioner == Parameters::LinearSolver::PreconditionerType::ilu)
@@ -2444,7 +2461,13 @@ MFNavierStokesSolver<dim>::solve_system_GMRES(const bool   initial_step,
                   << solver_control.last_value() << std::endl;
     }
 
+  this->computing_timer.enter_subsection(
+    "Distribute constraints after linear solve");
+
   constraints_used.distribute(this->newton_update);
+
+  this->computing_timer.leave_subsection(
+    "Distribute constraints after linear solve");
 }
 
 template class MFNavierStokesSolver<2>;
