@@ -229,7 +229,7 @@ Conjugate heat transfer enables the addition of solid regions in which the fluid
 .. _immersed solid models:
 
 Immersed Solid Models
-~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~
 
 Solid models can be used to affect specific behavior to immersed solids when ``lethe-fluid-sharp`` is used. At the moment, such a model is only available for the ``tracer`` multiphysics, but additional multiphysics will be included in the future.
 
