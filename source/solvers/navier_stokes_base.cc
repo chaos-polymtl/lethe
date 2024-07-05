@@ -1888,8 +1888,8 @@ NavierStokesBase<dim, VectorType, DofsType>::establish_solid_domain(
   // boundary method.
   const bool using_immersed_boundary_solid =
     (multiphysics->get_immersed_solid_signed_distance_function()) &&
-    simulation_parameters.physical_properties_manager.get_number_of_solids() >
-      0;
+    simulation_parameters.physical_properties_manager.get_number_of_solids() ==
+      1;
   if (simulation_parameters.physical_properties_manager
           .get_number_of_solids() == 0 ||
       using_immersed_boundary_solid)

@@ -143,7 +143,7 @@ public:
    *
    * @param source_function The function describing the tracer source term
    *
-   * @param levelset_function The function describing the particles (if there are)
+   * @param levelset_function The function describing the particles (if there are any)
    */
   template <typename VectorType>
   void

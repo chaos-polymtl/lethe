@@ -870,7 +870,7 @@ GLSNavierStokesSolver<dim>::assemble_local_system_matrix(
   const bool using_immersed_boundary_solid =
     (this->multiphysics->get_immersed_solid_signed_distance_function()) &&
     this->simulation_parameters.physical_properties_manager
-        .get_number_of_solids() > 0;
+        .get_number_of_solids() == 1;
   if (this->simulation_parameters.physical_properties_manager
           .get_number_of_solids() < 1 ||
       cell->material_id() == 0 || using_immersed_boundary_solid)
