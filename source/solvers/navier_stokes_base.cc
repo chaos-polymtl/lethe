@@ -1205,13 +1205,13 @@ template <int dim, typename VectorType, typename DofsType>
 void
 NavierStokesBase<dim, VectorType, DofsType>::postprocess_fd(bool firstIter)
 {
-  TimerOutput::Scope t(this->computing_timer, "Postprocessing");
-
   auto &present_solution = this->present_solution;
 
   // Enstrophy
   if (this->simulation_parameters.post_processing.calculate_enstrophy)
     {
+      TimerOutput::Scope t(this->computing_timer, "Calculate enstrophy");
+
       double enstrophy = calculate_enstrophy(this->dof_handler,
                                              present_solution,
                                              *this->cell_quadrature,
@@ -1248,6 +1248,8 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess_fd(bool firstIter)
   // Pressure power
   if (this->simulation_parameters.post_processing.calculate_pressure_power)
     {
+      TimerOutput::Scope t(this->computing_timer, "Calculate pressure power");
+
       const double pressure_power =
         calculate_pressure_power(this->dof_handler,
                                  present_solution,
@@ -1286,6 +1288,9 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess_fd(bool firstIter)
   // Viscous dissipation
   if (this->simulation_parameters.post_processing.calculate_viscous_dissipation)
     {
+      TimerOutput::Scope t(this->computing_timer,
+                           "Calculate viscous dissipation");
+
       const double viscous_dissipation = calculate_viscous_dissipation(
         this->dof_handler,
         present_solution,
@@ -1329,6 +1334,9 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess_fd(bool firstIter)
   // tolerance.
   if (this->simulation_parameters.post_processing.calculate_average_velocities)
     {
+      TimerOutput::Scope t(this->computing_timer,
+                           "Calculate average velocities");
+
       // Calculate average velocities when the time reaches the initial time.
       // time >= initial time with the epsilon as tolerance.
       const double dt = simulation_control->get_time_step();
@@ -1345,6 +1353,8 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess_fd(bool firstIter)
 
   if (this->simulation_parameters.post_processing.calculate_kinetic_energy)
     {
+      TimerOutput::Scope t(this->computing_timer, "Calculate kinetic energy");
+
       double kE = calculate_kinetic_energy(this->dof_handler,
                                            present_solution,
                                            *this->cell_quadrature,
@@ -1378,6 +1388,9 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess_fd(bool firstIter)
   // Calculate apparent viscosity
   if (this->simulation_parameters.post_processing.calculate_apparent_viscosity)
     {
+      TimerOutput::Scope t(this->computing_timer,
+                           "Calculate apparent viscosity");
+
       double apparent_viscosity = calculate_apparent_viscosity(
         this->dof_handler,
         this->present_solution,
@@ -1417,6 +1430,8 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess_fd(bool firstIter)
   // Calculate pressure drop between two boundaries
   if (this->simulation_parameters.post_processing.calculate_pressure_drop)
     {
+      TimerOutput::Scope t(this->computing_timer, "Calculate pressure drop");
+
       double pressure_drop, total_pressure_drop;
       std::tie(pressure_drop, total_pressure_drop) = calculate_pressure_drop(
         this->dof_handler,
@@ -1471,6 +1486,8 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess_fd(bool firstIter)
   // Calculate flow rate at every boundary
   if (this->simulation_parameters.post_processing.calculate_flow_rate)
     {
+      TimerOutput::Scope t(this->computing_timer, "Calculate flow rate");
+
       this->flow_rate_table.add_value("time",
                                       simulation_control->get_current_time());
       this->flow_rate_table.set_scientific("time", true);
@@ -1529,6 +1546,8 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess_fd(bool firstIter)
         }
     }
 
+  // this->computing_timer.leave_subsection("Postprocessing");
+
   if (!firstIter)
     {
       // Calculate forces on the boundary conditions
@@ -1564,6 +1583,9 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess_fd(bool firstIter)
       // Calculate error with respect to analytical solution
       if (this->simulation_parameters.analytical_solution->calculate_error())
         {
+          TimerOutput::Scope t(this->computing_timer,
+                               "Calculate error w.r.t. analytical solution");
+
           // Update the time of the exact solution to the actual time
           this->exact_solution->set_time(
             simulation_control->get_current_time());
@@ -1693,7 +1715,7 @@ template <int dim, typename VectorType, typename DofsType>
 void
 NavierStokesBase<dim, VectorType, DofsType>::read_checkpoint()
 {
-  TimerOutput::Scope timer(this->computing_timer, "read_checkpoint");
+  TimerOutput::Scope timer(this->computing_timer, "Read checkpoint");
   std::string        prefix =
     this->simulation_parameters.simulation_control.output_folder +
     this->simulation_parameters.restart_parameters.filename;
@@ -2403,7 +2425,7 @@ template <int dim, typename VectorType, typename DofsType>
 void
 NavierStokesBase<dim, VectorType, DofsType>::write_output_forces()
 {
-  TimerOutput::Scope t(this->computing_timer, "output_forces");
+  TimerOutput::Scope t(this->computing_timer, "Output forces");
   if (this->this_mpi_process == 0)
     {
       for (unsigned int boundary_id = 0;
@@ -2425,7 +2447,7 @@ template <int dim, typename VectorType, typename DofsType>
 void
 NavierStokesBase<dim, VectorType, DofsType>::write_output_torques()
 {
-  TimerOutput::Scope t(this->computing_timer, "output_torques");
+  TimerOutput::Scope t(this->computing_timer, "Output torques");
   if (this->this_mpi_process == 0)
     {
       for (unsigned int boundary_id = 0;
@@ -2447,7 +2469,7 @@ template <int dim, typename VectorType, typename DofsType>
 void
 NavierStokesBase<dim, VectorType, DofsType>::write_checkpoint()
 {
-  TimerOutput::Scope timer(this->computing_timer, "write_checkpoint");
+  TimerOutput::Scope timer(this->computing_timer, "Write checkpoint");
   std::string        prefix =
     this->simulation_parameters.simulation_control.output_folder +
     this->simulation_parameters.restart_parameters.filename;
@@ -2608,7 +2630,8 @@ void
 NavierStokesBase<dim, VectorType, DofsType>::output_newton_update_norms(
   const unsigned int display_precision)
 {
-  TimerOutput::Scope t(this->computing_timer, "Output Newton update norms");
+  TimerOutput::Scope t(this->computing_timer,
+                       "Calculate and output norms after Newton its");
 
   if constexpr (std::is_same_v<VectorType, GlobalVectorType> ||
                 std::is_same_v<VectorType,
