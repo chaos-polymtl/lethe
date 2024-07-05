@@ -306,6 +306,8 @@ GLSNavierStokesVOFAssemblerCore<dim>::assemble_rhs(
       // Assembly of the right-hand side
       for (unsigned int i = 0; i < n_dofs; ++i)
         {
+          const unsigned int component_i = scratch_data.components[i];
+          
           const auto phi_u_i      = scratch_data.phi_u[q][i];
           const auto grad_phi_u_i = scratch_data.grad_phi_u[q][i];
           const auto phi_p_i      = scratch_data.phi_p[q][i];
@@ -321,13 +323,15 @@ GLSNavierStokesVOFAssemblerCore<dim>::assemble_rhs(
              pressure * div_phi_u_i + density_eq * force * phi_u_i) *
             JxW;
 
-          // Continuity
-          local_rhs(i) += -(velocity_divergence * phi_p_i) * JxW;
+          if (component_i == dim)
+            {
+              // Continuity
+              local_rhs(i) += -(velocity_divergence * phi_p_i) * JxW;
 
-          // PSPG GLS term
-          local_rhs(i) +=
-            -tau / density_eq * (strong_residual * grad_phi_p_i) * JxW;
-
+              // PSPG GLS term
+              local_rhs(i) +=
+                -tau / density_eq * (strong_residual * grad_phi_p_i) * JxW;
+            }
           // SUPG GLS term
           if (SUPG)
             {
