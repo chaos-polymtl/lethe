@@ -153,7 +153,7 @@ An insertion box is defined inside the cylinder. 10,000 particles are inserted e
 
 
 Solid Object
-------------
+~~~~~~~~~~~~
 
 Two mesh files are necessary to reproduce the granuheap example; ``cylinder.msh`` and ``support.msh``. The cylinder is 0.02 tall with a radius of 0.005 and the support is 0.005 tall with the same diameter as the cylinder.
 
