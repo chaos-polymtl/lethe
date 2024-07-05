@@ -220,10 +220,8 @@ template <int dim>
 std::shared_ptr<Function<dim>>
 MultiphysicsInterface<dim>::get_immersed_solid_signed_distance_function()
 {
-  if (!this->immersed_solid_signed_distance_function)
-    this->immersed_solid_signed_distance_function =
-      std::make_shared<Functions::ZeroFunction<dim>>();
-
+  // This pointer is also used to check if an immersed boundary solid method is
+  // being used, depending on whether the pointer is assigned.
   return this->immersed_solid_signed_distance_function;
 }
 

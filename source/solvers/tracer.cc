@@ -51,7 +51,8 @@ Tracer<dim>::assemble_system_matrix()
   this->system_matrix = 0;
   setup_assemblers();
 
-  // We get the immersed function, which is zero when no solids are involved
+  // We get the immersed function, which is null when no immersed solids are
+  // involved
   immersed_solid_signed_distance_function =
     this->multiphysics->get_immersed_solid_signed_distance_function();
 
@@ -186,7 +187,8 @@ Tracer<dim>::assemble_system_rhs()
   this->system_rhs = 0;
   setup_assemblers();
 
-  // We get the immersed function, which is zero when no solids are involved
+  // We get the immersed function, which is null when no immersed solids are
+  // involved
   immersed_solid_signed_distance_function =
     this->multiphysics->get_immersed_solid_signed_distance_function();
 

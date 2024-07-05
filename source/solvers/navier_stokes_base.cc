@@ -1884,9 +1884,15 @@ NavierStokesBase<dim, VectorType, DofsType>::establish_solid_domain(
   const bool non_zero_constraints)
 {
   // If there are no solid regions, there is no work to be done and we can
-  // return
+  // return. We do not have to work if the solid is used as part of an immersed
+  // boundary method.
+  const bool using_immersed_boundary_solid =
+    (multiphysics->get_immersed_solid_signed_distance_function()) &&
+    simulation_parameters.physical_properties_manager.get_number_of_solids() >
+      0;
   if (simulation_parameters.physical_properties_manager
-        .get_number_of_solids() == 0)
+          .get_number_of_solids() == 0 ||
+      using_immersed_boundary_solid)
     return;
 
   const unsigned int                   dofs_per_cell = this->fe->dofs_per_cell;
