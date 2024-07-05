@@ -74,62 +74,12 @@ namespace Parameters
                         "Number of boundary conditions");
       id.resize(max_size);
       types.resize(max_size);
-
-      prm.enter_subsection("manifold 0");
-      declareDefaultEntry(prm, 0);
-      prm.leave_subsection();
-
-      prm.enter_subsection("manifold 1");
-      declareDefaultEntry(prm, 1);
-      prm.leave_subsection();
-
-      prm.enter_subsection("manifold 2");
-      declareDefaultEntry(prm, 2);
-      prm.leave_subsection();
-
-      prm.enter_subsection("manifold 3");
-      declareDefaultEntry(prm, 3);
-      prm.leave_subsection();
-
-      prm.enter_subsection("manifold 4");
-      declareDefaultEntry(prm, 4);
-      prm.leave_subsection();
-
-      prm.enter_subsection("manifold 5");
-      declareDefaultEntry(prm, 5);
-      prm.leave_subsection();
-
-      prm.enter_subsection("manifold 6");
-      declareDefaultEntry(prm, 6);
-      prm.leave_subsection();
-
-      prm.enter_subsection("manifold 7");
-      declareDefaultEntry(prm, 7);
-      prm.leave_subsection();
-
-      prm.enter_subsection("manifold 8");
-      declareDefaultEntry(prm, 8);
-      prm.leave_subsection();
-
-      prm.enter_subsection("manifold 9");
-      declareDefaultEntry(prm, 9);
-      prm.leave_subsection();
-
-      prm.enter_subsection("manifold 10");
-      declareDefaultEntry(prm, 10);
-      prm.leave_subsection();
-
-      prm.enter_subsection("manifold 11");
-      declareDefaultEntry(prm, 11);
-      prm.leave_subsection();
-
-      prm.enter_subsection("manifold 12");
-      declareDefaultEntry(prm, 12);
-      prm.leave_subsection();
-
-      prm.enter_subsection("manifold 13");
-      declareDefaultEntry(prm, 13);
-      prm.leave_subsection();
+      for (unsigned int i = 0; i < max_size; i++)
+        {
+          prm.enter_subsection("manifold " + Utilities::int_to_string(i));
+          declareDefaultEntry(prm, i);
+          prm.leave_subsection();
+        }
     }
     prm.leave_subsection();
   }
@@ -142,89 +92,10 @@ namespace Parameters
       size = prm.get_integer("number");
       types.resize(size);
       id.resize(size);
-      if (size >= 1)
+      for (unsigned int i = 0; i < size; i++)
         {
-          prm.enter_subsection("manifold 0");
-          parse_boundary(prm, 0);
-          prm.leave_subsection();
-        }
-      if (size >= 2)
-        {
-          prm.enter_subsection("manifold 1");
-          parse_boundary(prm, 1);
-          prm.leave_subsection();
-        }
-      if (size >= 3)
-        {
-          prm.enter_subsection("manifold 2");
-          parse_boundary(prm, 2);
-          prm.leave_subsection();
-        }
-      if (size >= 4)
-        {
-          prm.enter_subsection("manifold 3");
-          parse_boundary(prm, 3);
-          prm.leave_subsection();
-        }
-      if (size >= 5)
-        {
-          prm.enter_subsection("manifold 4");
-          parse_boundary(prm, 4);
-          prm.leave_subsection();
-        }
-
-      if (size >= 6)
-        {
-          prm.enter_subsection("manifold 5");
-          parse_boundary(prm, 5);
-          prm.leave_subsection();
-        }
-      if (size >= 7)
-        {
-          prm.enter_subsection("manifold 6");
-          parse_boundary(prm, 6);
-          prm.leave_subsection();
-        }
-      if (size >= 8)
-        {
-          prm.enter_subsection("manifold 7");
-          parse_boundary(prm, 7);
-          prm.leave_subsection();
-        }
-      if (size >= 9)
-        {
-          prm.enter_subsection("manifold 8");
-          parse_boundary(prm, 8);
-          prm.leave_subsection();
-        }
-      if (size >= 10)
-        {
-          prm.enter_subsection("manifold 9");
-          parse_boundary(prm, 9);
-          prm.leave_subsection();
-        }
-      if (size >= 11)
-        {
-          prm.enter_subsection("manifold 10");
-          parse_boundary(prm, 10);
-          prm.leave_subsection();
-        }
-      if (size >= 12)
-        {
-          prm.enter_subsection("manifold 11");
-          parse_boundary(prm, 11);
-          prm.leave_subsection();
-        }
-      if (size >= 13)
-        {
-          prm.enter_subsection("manifold 12");
-          parse_boundary(prm, 12);
-          prm.leave_subsection();
-        }
-      if (size >= 14)
-        {
-          prm.enter_subsection("manifold 13");
-          parse_boundary(prm, 13);
+          prm.enter_subsection("manifold " + Utilities::int_to_string(i));
+          parse_boundary(prm, i);
           prm.leave_subsection();
         }
     }
@@ -244,7 +115,7 @@ attach_manifolds_to_triangulation(
         {
           // Create a point using the parameter file input
           Point<spacedim> circle_center(
-            entry_string_to_tensor<spacedim>(manifolds.manifold_point[i]));
+            value_string_to_tensor<spacedim>(manifolds.manifold_point[i]));
 
           static const SphericalManifold<dim, spacedim> manifold_description(
             circle_center);
@@ -257,12 +128,12 @@ attach_manifolds_to_triangulation(
             {
               // Create a point using the parameter file input
               Point<spacedim> point_on_axis(
-                entry_string_to_tensor<spacedim>(manifolds.manifold_point[i]));
+                value_string_to_tensor<spacedim>(manifolds.manifold_point[i]));
 
               // Create a tensor representing the direction of the length of the
               // cylinder
               Tensor<1, spacedim> cylinder_axis(
-                entry_string_to_tensor<spacedim>(
+                value_string_to_tensor<spacedim>(
                   manifolds.manifold_direction[i]));
 
               static const CylindricalManifold<dim, spacedim>

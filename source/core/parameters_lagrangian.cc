@@ -221,7 +221,9 @@ namespace Parameters
       // If <gx> is in the input file, it will be used as the value for <g>
       // as an alias. This way, the parameter <g> is not a tensor and allows the
       // parsing of deprecated parameters.
-      g = entry_string_to_tensor3(prm, "g", "gy", "gz");
+      g = value_string_to_tensor<3>(prm.get("g"),
+                                    prm.get_double("gy"),
+                                    prm.get_double("gz"));
 
       particle_type_number = prm.get_integer("number of particle types");
 
@@ -473,11 +475,11 @@ namespace Parameters
         // Plane:
         // Insertion plane normal vector
         insertion_plane_normal_vector =
-          entry_string_to_tensor3(prm, "insertion plane normal vector");
+          value_string_to_tensor<3>(prm.get("insertion plane normal vector"));
 
         // Insertion plane point
         insertion_plane_point =
-          entry_string_to_tensor3(prm, "insertion plane point");
+          value_string_to_tensor<3>(prm.get("insertion plane point"));
 
         // List:
         // Read x, y and z lists
@@ -558,9 +560,9 @@ namespace Parameters
         insertion_maximum_offset = prm.get_double("insertion maximum offset");
         seed_for_insertion       = prm.get_integer("insertion prn seed");
 
-        initial_vel = entry_string_to_tensor3(prm, "initial velocity");
+        initial_vel = value_string_to_tensor<3>(prm.get("initial velocity"));
         initial_omega =
-          entry_string_to_tensor3(prm, "initial angular velocity");
+          value_string_to_tensor<3>(prm.get("initial angular velocity"));
       }
       prm.leave_subsection();
     }
@@ -1208,7 +1210,7 @@ namespace Parameters
 
           // Read the rotational vector from a list of doubles
           Tensor<1, 3> rotational_vector =
-            entry_string_to_tensor3(prm, "rotational vector");
+            value_string_to_tensor<3>(prm.get("rotational vector"));
           if (rotational_vector.norm() == 0.)
             {
               throw(std::runtime_error(
@@ -1216,7 +1218,7 @@ namespace Parameters
             }
           // Read the point from a list of doubles
           Tensor<1, 3> point_on_rotation_axis_tensor =
-            entry_string_to_tensor3(prm, "point on rotational vector");
+            value_string_to_tensor<3>(prm.get("point on rotational vector"));
 
           this->boundary_rotational_speed.at(boundary_id) = rotational_speed;
           this->boundary_rotational_vector.at(boundary_id) =
