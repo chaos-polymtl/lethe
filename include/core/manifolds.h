@@ -80,7 +80,7 @@ namespace Parameters
 } // namespace Parameters
 
 /**
- * @brief BounearyPostprocessor Post-processor class used to attach the boundary
+ * @brief BoundaryPostprocessor Post-processor class used to attach the boundary
  * id to the faces when outputting the surfaces within the domain.
  */
 template <int dim>
