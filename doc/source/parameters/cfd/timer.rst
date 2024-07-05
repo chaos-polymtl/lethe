@@ -19,20 +19,18 @@ The following table shows an example of the output of the timer:
 .. code-block:: text
 
     +---------------------------------------------------------+------------+------------+
-    | Total wallclock time elapsed since start                |      16.1s |            |
+    | Total wallclock time elapsed since start                |      1.11s |            |
     |                                                         |            |            |
     | Section                                     | no. calls |  wall time | % of total |
     +---------------------------------------------+-----------+------------+------------+
-    | Assemble RHS                                |         9 |      5.72s |        36% |
-    | Assemble matrix                             |         7 |      7.59s |        47% |
-    | Calculate and output norms after Newton its |         8 |     0.318s |         2% |
-    | Distribute constraints after linear solve   |         7 |   0.00887s |         0% |
-    | Output VTU                                  |         2 |     0.765s |       4.8% |
-    | Read mesh and manifolds                     |         1 |     0.296s |       1.8% |
-    | Set initial conditions                      |         1 |     0.243s |       1.5% |
-    | Setup DOFs                                  |         1 |     0.727s |       4.5% |
-    | Setup ILU                                   |         7 |     0.104s |      0.65% |
-    | Solve linear system                         |         7 |     0.267s |       1.7% |
+    | Assemble RHS                                |         9 |     0.275s |        25% |
+    | Assemble matrix                             |         7 |     0.293s |        26% |
+    | Calculate and output norms after Newton its |         8 |    0.0135s |       1.2% |
+    | Output VTU                                  |         2 |    0.0491s |       4.4% |
+    | Read mesh and manifolds                     |         1 |   0.00733s |      0.66% |
+    | Setup DOFs                                  |         1 |    0.0144s |       1.3% |
+    | Setup ILU                                   |         7 |    0.0801s |       7.2% |
+    | Solve linear system                         |         7 |     0.369s |        33% |
     +---------------------------------------------+-----------+------------+------------+
 
 For every block of functions, Lethe reports the number of calls, the wall time spent and the percentage of time spent in the function. It is important to monitor this when running a simulation. The most important ones from a user perspective in most of the simulations are:
