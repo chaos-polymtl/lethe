@@ -266,10 +266,6 @@ Enumerations</h2></td></tr>
 Functions</h2></td></tr>
 <tr class="memitem:abf9a3d883f67a19bea80ba4d93ad1c1c"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structParameters_1_1SizeOfSubsections.html">SizeOfSubsections</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceParameters.html#abf9a3d883f67a19bea80ba4d93ad1c1c">get_size_of_subsections</a> (const std::string &amp;file_name)</td></tr>
 <tr class="separator:abf9a3d883f67a19bea80ba4d93ad1c1c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae131fa9ac73a7013e3b40ec3cae4f447"><td class="memItemLeft" align="right" valign="top">Tensor&lt; 1, 3 &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceParameters.html#ae131fa9ac73a7013e3b40ec3cae4f447">entry_string_to_tensor3</a> (ParameterHandler &amp;prm, const std::string &amp;entry_string)</td></tr>
-<tr class="separator:ae131fa9ac73a7013e3b40ec3cae4f447"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0c49c08eb477cb540f57b45db269d0fb"><td class="memItemLeft" align="right" valign="top">Tensor&lt; 1, 3 &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceParameters.html#a0c49c08eb477cb540f57b45db269d0fb">entry_string_to_tensor3</a> (ParameterHandler &amp;prm, const std::string &amp;entry_string, const std::string &amp;entry_string_1, const std::string &amp;entry_string_2)</td></tr>
-<tr class="separator:a0c49c08eb477cb540f57b45db269d0fb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae1528b636b8f324833068b9739e93f0b"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
 <tr class="memitem:ae1528b636b8f324833068b9739e93f0b"><td class="memTemplItemLeft" align="right" valign="top">std::vector&lt; T &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceParameters.html#ae1528b636b8f324833068b9739e93f0b">convert_string_to_vector</a> (ParameterHandler &amp;prm, const std::string &amp;entry_string)</td></tr>
 <tr class="separator:ae1528b636b8f324833068b9739e93f0b"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -606,102 +602,7 @@ template&lt;typename T &gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>A std::vector&lt;double&gt; corresponding to the entry_string in the prm file. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01678">1678</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
-
-</div>
-</div>
-<a id="ae131fa9ac73a7013e3b40ec3cae4f447"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae131fa9ac73a7013e3b40ec3cae4f447">&#9670;&nbsp;</a></span>entry_string_to_tensor3() <span class="overload">[1/2]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">Tensor&lt; 1, 3 &gt; Parameters::entry_string_to_tensor3 </td>
-          <td>(</td>
-          <td class="paramtype">ParameterHandler &amp;&#160;</td>
-          <td class="paramname"><em>prm</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const std::string &amp;&#160;</td>
-          <td class="paramname"><em>entry_string</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Return the tensor of entry <code>entry_string</code>. If the entry is specified in the parameter file, then the changed value is returned, otherwise the default value is returned. It can be used for 2 or 3 dimensions parameters that require a tensor of dimension 3 in any case. If the entry does not have 2 or 3 values in the list, an error is thrown. <a class="el" href="classThis.html">This</a> function can be used for Point&lt;3&gt; variables. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramdir">[in,out]</td><td class="paramname">prm</td><td>A parameter handler which is currently used to parse the simulation information. </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">entry_string</td><td>A declare string in the parameter file.</td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>A tensor&lt;1,3&gt; corresponding to the entry_string in the prm file. </dd></dl>
-
-<p class="definition">Definition at line <a class="el" href="parameters_8cc_source.html#l03793">3793</a> of file <a class="el" href="parameters_8cc_source.html">parameters.cc</a>.</p>
-
-</div>
-</div>
-<a id="a0c49c08eb477cb540f57b45db269d0fb"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a0c49c08eb477cb540f57b45db269d0fb">&#9670;&nbsp;</a></span>entry_string_to_tensor3() <span class="overload">[2/2]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">Tensor&lt; 1, 3 &gt; Parameters::entry_string_to_tensor3 </td>
-          <td>(</td>
-          <td class="paramtype">ParameterHandler &amp;&#160;</td>
-          <td class="paramname"><em>prm</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const std::string &amp;&#160;</td>
-          <td class="paramname"><em>entry_string</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const std::string &amp;&#160;</td>
-          <td class="paramname"><em>entry_string_1</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const std::string &amp;&#160;</td>
-          <td class="paramname"><em>entry_string_2</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Return the tensor of entry <code>entry_string</code>. But it can allow for the usage of deprecated parameters that used to be 3 individual entries instead of a list of values. </p>
-<p>Note: It does not throw an error if the new entry is not equivalent to a tensor.</p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramdir">[in,out]</td><td class="paramname">prm</td><td>A parameter handler which is currently used to parse the simulation information. </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">entry_string</td><td>A declare string in the parameter file. </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">entry_string_1</td><td>A declare string in the parameter file that is the equivalent of the second double deprecated parameter of the new list parameter. </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">entry_string_2</td><td>A declare string in the parameter file that is the equivalent of the second double deprecated parameter of the new list parameter.</td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>A tensor&lt;1,3&gt; corresponding to the entry_string in the prm file. </dd></dl>
-
-<p class="definition">Definition at line <a class="el" href="parameters_8cc_source.html#l03762">3762</a> of file <a class="el" href="parameters_8cc_source.html">parameters.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01634">1634</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>

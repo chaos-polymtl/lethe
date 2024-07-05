@@ -218,9 +218,12 @@ Functions</h2></td></tr>
 <tr class="separator:a2f4c4c70d98da93b973297b97e085b90"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa286625bb871dd4165a509b7ebc41763"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="utilities_8h.html#aa286625bb871dd4165a509b7ebc41763">get_max_number_of_boundary_conditions</a> (const std::string &amp;file_name)</td></tr>
 <tr class="separator:aa286625bb871dd4165a509b7ebc41763"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac4144177824387394dbca8305620853f"><td class="memTemplParams" colspan="2">template&lt;int spacedim&gt; </td></tr>
-<tr class="memitem:ac4144177824387394dbca8305620853f"><td class="memTemplItemLeft" align="right" valign="top">Tensor&lt; 1, spacedim &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="utilities_8h.html#ac4144177824387394dbca8305620853f">entry_string_to_tensor</a> (const std::string &amp;entry_string)</td></tr>
-<tr class="separator:ac4144177824387394dbca8305620853f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6350c3985200701a29d4d02467074843"><td class="memTemplParams" colspan="2">template&lt;int spacedim&gt; </td></tr>
+<tr class="memitem:a6350c3985200701a29d4d02467074843"><td class="memTemplItemLeft" align="right" valign="top">Tensor&lt; 1, spacedim &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="utilities_8h.html#a6350c3985200701a29d4d02467074843">value_string_to_tensor</a> (const std::string &amp;value_string)</td></tr>
+<tr class="separator:a6350c3985200701a29d4d02467074843"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abec407d2ea0c7cddba952fe0fb392803"><td class="memTemplParams" colspan="2">template&lt;int spacedim&gt; </td></tr>
+<tr class="memitem:abec407d2ea0c7cddba952fe0fb392803"><td class="memTemplItemLeft" align="right" valign="top">Tensor&lt; 1, spacedim &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="utilities_8h.html#abec407d2ea0c7cddba952fe0fb392803">value_string_to_tensor</a> (const std::string &amp;value_string_0, const double &amp;value_1, const double &amp;value_2=0)</td></tr>
+<tr class="separator:abec407d2ea0c7cddba952fe0fb392803"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Function Documentation</h2>
 <a id="a28e3647b49b871d119c8e19d390d6d66"></a>
@@ -572,44 +575,6 @@ template&lt;typename T &gt; </div>
 </dl>
 
 <p class="definition">Definition at line <a class="el" href="utilities_8h_source.html#l00447">447</a> of file <a class="el" href="utilities_8h_source.html">utilities.h</a>.</p>
-
-</div>
-</div>
-<a id="ac4144177824387394dbca8305620853f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac4144177824387394dbca8305620853f">&#9670;&nbsp;</a></span>entry_string_to_tensor()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;int spacedim&gt; </div>
-      <table class="memname">
-        <tr>
-          <td class="memname">template Tensor&lt; 1, 3 &gt; entry_string_to_tensor </td>
-          <td>(</td>
-          <td class="paramtype">const std::string &amp;&#160;</td>
-          <td class="paramname"><em>entry_string</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Return the tensor corresponding to the entry (<code>entry_string</code>). If the dimension correspondence of the <code>entry_string</code> is not equivalent to <code>spacedim</code> (either 2 or 3), an exception will be thrown. The delimiter separating the elements of the <code>entry_string</code> is a comma (","). </p>
-<dl class="section remark"><dt>Remarks</dt><dd>The function can be use to construct Point&lt;spacedim&gt; objects.</dd></dl>
-<dl class="tparams"><dt>Template Parameters</dt><dd>
-  <table class="tparams">
-    <tr><td class="paramname">spacedim</td><td>Number of spatial dimensions (2D or 3D).</td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">entry_string</td><td>A string in the parameter file.</td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>A Tensor&lt;1,spacedim&gt; corresponding to the <code>entry_string</code> in the parameter file. </dd></dl>
-
-<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00712">712</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
 
 </div>
 </div>
@@ -1321,6 +1286,116 @@ template&lt;typename T &gt; </div>
 <dl class="section return"><dt>Returns</dt><dd>an integer -1 or 1 depending of the sign of the phase parameter </dd></dl>
 
 <p class="definition">Definition at line <a class="el" href="utilities_8h_source.html#l00301">301</a> of file <a class="el" href="utilities_8h_source.html">utilities.h</a>.</p>
+
+</div>
+</div>
+<a id="a6350c3985200701a29d4d02467074843"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6350c3985200701a29d4d02467074843">&#9670;&nbsp;</a></span>value_string_to_tensor() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int spacedim&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">Tensor&lt;1, spacedim&gt; value_string_to_tensor </td>
+          <td>(</td>
+          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramname"><em>value_string</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Return the tensor corresponding to the <code>value_string</code>. If the dimension correspondence of the <code>value_string</code> is not equivalent to <code>spacedim</code> (either 2 or 3), an exception will be thrown. The delimiter separating the elements of the <code>value_string</code> is a comma (","). </p>
+<dl class="section remark"><dt>Remarks</dt><dd>The function can be use to construct Point&lt;spacedim&gt; objects.</dd></dl>
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">spacedim</td><td>Number of spatial dimensions (2D or 3D).</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">value_string</td><td>A string in the parameter file corresponding to a given tensor.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>A Tensor&lt;1,spacedim&gt; corresponding to the <code>value_string</code> in the parameter file. </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="utilities_8h_source.html#l00509">509</a> of file <a class="el" href="utilities_8h_source.html">utilities.h</a>.</p>
+
+</div>
+</div>
+<a id="abec407d2ea0c7cddba952fe0fb392803"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abec407d2ea0c7cddba952fe0fb392803">&#9670;&nbsp;</a></span>value_string_to_tensor() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int spacedim&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">Tensor&lt;1, spacedim&gt; value_string_to_tensor </td>
+          <td>(</td>
+          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramname"><em>value_string_0</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const double &amp;&#160;</td>
+          <td class="paramname"><em>value_1</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const double &amp;&#160;</td>
+          <td class="paramname"><em>value_2</em> = <code>0</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Return the tensor corresponding to the <code>value_string_0</code>, but it can also allow the usage of deprecated parameters that used to be 3 individual entries instead of a list of values. In the case of a single entry declaration, the delimiter separating the elements of the <code>value_string_0</code> is a comma (","). </p>
+<dl class="section remark"><dt>Remarks</dt><dd>The function can be use to construct Point&lt;spacedim&gt; objects.</dd></dl>
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">spacedim</td><td>Number of spatial dimensions (2D or 3D).</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">value_string_0</td><td>A string in the parameter file corresponding to the first component of the tensor or to the tensor itself. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">value_1</td><td>A double in the parameter file corresponding to the second component of the tensor. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">value_2</td><td>A double in the parameter file corresponding to the third component of the tensor. Only specify if <code>spacedim</code> = 3.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>A Tensor&lt;1,spacedim&gt; corresponding to the input parameters in the parameter file. </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="utilities_8h_source.html#l00551">551</a> of file <a class="el" href="utilities_8h_source.html">utilities.h</a>.</p>
 
 </div>
 </div>

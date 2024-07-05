@@ -172,9 +172,6 @@ Functions</h2></td></tr>
 <tr class="separator:a2f4c4c70d98da93b973297b97e085b90"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa286625bb871dd4165a509b7ebc41763"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="utilities_8cc.html#aa286625bb871dd4165a509b7ebc41763">get_max_number_of_boundary_conditions</a> (const std::string &amp;file_name)</td></tr>
 <tr class="separator:aa286625bb871dd4165a509b7ebc41763"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a41f0122032feefd5bf9950f471b1f5a5"><td class="memTemplParams" colspan="2">template&lt;int spacedim&gt; </td></tr>
-<tr class="memitem:a41f0122032feefd5bf9950f471b1f5a5"><td class="memTemplItemLeft" align="right" valign="top">Tensor&lt; 1, spacedim &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="utilities_8cc.html#a41f0122032feefd5bf9950f471b1f5a5">entry_string_to_tensor</a> (const std::string &amp;entry_string)</td></tr>
-<tr class="separator:a41f0122032feefd5bf9950f471b1f5a5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Function Documentation</h2>
 <a id="a4b182f49ed10ffa3d2d50a9a309cd2f0"></a>
@@ -205,44 +202,6 @@ Functions</h2></td></tr>
 </ul>
 
 <p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00365">365</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
-
-</div>
-</div>
-<a id="a41f0122032feefd5bf9950f471b1f5a5"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a41f0122032feefd5bf9950f471b1f5a5">&#9670;&nbsp;</a></span>entry_string_to_tensor()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;int spacedim&gt; </div>
-      <table class="memname">
-        <tr>
-          <td class="memname">Tensor&lt;1, spacedim&gt; entry_string_to_tensor </td>
-          <td>(</td>
-          <td class="paramtype">const std::string &amp;&#160;</td>
-          <td class="paramname"><em>entry_string</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Return the tensor corresponding to the entry (<code>entry_string</code>). If the dimension correspondence of the <code>entry_string</code> is not equivalent to <code>spacedim</code> (either 2 or 3), an exception will be thrown. The delimiter separating the elements of the <code>entry_string</code> is a comma (","). </p>
-<dl class="section remark"><dt>Remarks</dt><dd>The function can be use to construct Point&lt;spacedim&gt; objects.</dd></dl>
-<dl class="tparams"><dt>Template Parameters</dt><dd>
-  <table class="tparams">
-    <tr><td class="paramname">spacedim</td><td>Number of spatial dimensions (2D or 3D).</td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">entry_string</td><td>A string in the parameter file.</td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>A Tensor&lt;1,spacedim&gt; corresponding to the <code>entry_string</code> in the parameter file. </dd></dl>
-
-<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00712">712</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
 
 </div>
 </div>

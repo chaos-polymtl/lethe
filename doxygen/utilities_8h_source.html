@@ -570,27 +570,99 @@ $(function() {
 <div class="line"><a name="l00489"></a><span class="lineno">  489</span>&#160;<a class="code" href="utilities_8h.html#aa286625bb871dd4165a509b7ebc41763">get_max_number_of_boundary_conditions</a>(<span class="keyword">const</span> std::string &amp;file_name);</div>
 <div class="line"><a name="l00490"></a><span class="lineno">  490</span>&#160;<span class="comment"></span> </div>
 <div class="line"><a name="l00491"></a><span class="lineno">  491</span>&#160;<span class="comment">/**</span></div>
-<div class="line"><a name="l00492"></a><span class="lineno">  492</span>&#160;<span class="comment"> * @brief Return the tensor corresponding to the entry (@p entry_string). If</span></div>
-<div class="line"><a name="l00493"></a><span class="lineno">  493</span>&#160;<span class="comment"> * the dimension correspondence of the @p entry_string is not equivalent to</span></div>
+<div class="line"><a name="l00492"></a><span class="lineno">  492</span>&#160;<span class="comment"> * @brief Return the tensor corresponding to the @p value_string. If the</span></div>
+<div class="line"><a name="l00493"></a><span class="lineno">  493</span>&#160;<span class="comment"> * dimension correspondence of the @p value_string is not equivalent to</span></div>
 <div class="line"><a name="l00494"></a><span class="lineno">  494</span>&#160;<span class="comment"> * @p spacedim (either 2 or 3), an exception will be thrown. The delimiter</span></div>
-<div class="line"><a name="l00495"></a><span class="lineno">  495</span>&#160;<span class="comment"> * separating the elements</span></div>
-<div class="line"><a name="l00496"></a><span class="lineno">  496</span>&#160;<span class="comment"> * of the @p entry_string is a comma (&quot;,&quot;).</span></div>
-<div class="line"><a name="l00497"></a><span class="lineno">  497</span>&#160;<span class="comment"> *</span></div>
-<div class="line"><a name="l00498"></a><span class="lineno">  498</span>&#160;<span class="comment"> * @remark The function can be use to construct Point&lt;spacedim&gt; objects.</span></div>
-<div class="line"><a name="l00499"></a><span class="lineno">  499</span>&#160;<span class="comment"> *</span></div>
-<div class="line"><a name="l00500"></a><span class="lineno">  500</span>&#160;<span class="comment"> * @tparam spacedim Number of spatial dimensions (2D or 3D).</span></div>
-<div class="line"><a name="l00501"></a><span class="lineno">  501</span>&#160;<span class="comment"> *</span></div>
-<div class="line"><a name="l00502"></a><span class="lineno">  502</span>&#160;<span class="comment"> * @param[in] entry_string A string in the parameter file.</span></div>
+<div class="line"><a name="l00495"></a><span class="lineno">  495</span>&#160;<span class="comment"> * separating the elements of the @p value_string is a comma (&quot;,&quot;).</span></div>
+<div class="line"><a name="l00496"></a><span class="lineno">  496</span>&#160;<span class="comment"> *</span></div>
+<div class="line"><a name="l00497"></a><span class="lineno">  497</span>&#160;<span class="comment"> * @remark The function can be use to construct Point&lt;spacedim&gt; objects.</span></div>
+<div class="line"><a name="l00498"></a><span class="lineno">  498</span>&#160;<span class="comment"> *</span></div>
+<div class="line"><a name="l00499"></a><span class="lineno">  499</span>&#160;<span class="comment"> * @tparam spacedim Number of spatial dimensions (2D or 3D).</span></div>
+<div class="line"><a name="l00500"></a><span class="lineno">  500</span>&#160;<span class="comment"> *</span></div>
+<div class="line"><a name="l00501"></a><span class="lineno">  501</span>&#160;<span class="comment"> * @param[in] value_string A string in the parameter file corresponding to a</span></div>
+<div class="line"><a name="l00502"></a><span class="lineno">  502</span>&#160;<span class="comment"> * given tensor.</span></div>
 <div class="line"><a name="l00503"></a><span class="lineno">  503</span>&#160;<span class="comment"> *</span></div>
-<div class="line"><a name="l00504"></a><span class="lineno">  504</span>&#160;<span class="comment"> * @return A Tensor&lt;1,spacedim&gt; corresponding to the @p entry_string in the</span></div>
+<div class="line"><a name="l00504"></a><span class="lineno">  504</span>&#160;<span class="comment"> * @return A Tensor&lt;1,spacedim&gt; corresponding to the @p value_string in the</span></div>
 <div class="line"><a name="l00505"></a><span class="lineno">  505</span>&#160;<span class="comment"> * parameter file.</span></div>
 <div class="line"><a name="l00506"></a><span class="lineno">  506</span>&#160;<span class="comment"> */</span></div>
-<div class="line"><a name="l00507"></a><span class="lineno">  507</span>&#160; </div>
-<div class="line"><a name="l00508"></a><span class="lineno">  508</span>&#160;<span class="keyword">template</span> &lt;<span class="keywordtype">int</span> spacedim&gt;</div>
-<div class="line"><a name="l00509"></a><span class="lineno">  509</span>&#160;Tensor&lt;1, spacedim&gt;</div>
-<div class="line"><a name="l00510"></a><span class="lineno">  510</span>&#160;<a class="code" href="utilities_8h.html#ac4144177824387394dbca8305620853f">entry_string_to_tensor</a>(<span class="keyword">const</span> std::string &amp;entry_string);</div>
-<div class="line"><a name="l00511"></a><span class="lineno">  511</span>&#160; </div>
-<div class="line"><a name="l00512"></a><span class="lineno">  512</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00507"></a><span class="lineno">  507</span>&#160;<span class="keyword">template</span> &lt;<span class="keywordtype">int</span> spacedim&gt;</div>
+<div class="line"><a name="l00508"></a><span class="lineno">  508</span>&#160;<span class="keyword">inline</span> Tensor&lt;1, spacedim&gt;</div>
+<div class="line"><a name="l00509"></a><span class="lineno"><a class="line" href="utilities_8h.html#a6350c3985200701a29d4d02467074843">  509</a></span>&#160;<a class="code" href="utilities_8h.html#a6350c3985200701a29d4d02467074843">value_string_to_tensor</a>(<span class="keyword">const</span> std::string &amp;value_string)</div>
+<div class="line"><a name="l00510"></a><span class="lineno">  510</span>&#160;{</div>
+<div class="line"><a name="l00511"></a><span class="lineno">  511</span>&#160;  std::vector&lt;std::string&gt; vector_of_string(</div>
+<div class="line"><a name="l00512"></a><span class="lineno">  512</span>&#160;    Utilities::split_string_list(value_string));</div>
+<div class="line"><a name="l00513"></a><span class="lineno">  513</span>&#160;  std::vector&lt;double&gt; vector_of_double =</div>
+<div class="line"><a name="l00514"></a><span class="lineno">  514</span>&#160;    Utilities::string_to_double(vector_of_string);</div>
+<div class="line"><a name="l00515"></a><span class="lineno">  515</span>&#160; </div>
+<div class="line"><a name="l00516"></a><span class="lineno">  516</span>&#160;  AssertThrow(vector_of_double.size() == 3 || vector_of_double.size() == 2,</div>
+<div class="line"><a name="l00517"></a><span class="lineno">  517</span>&#160;              ExcMessage(<span class="stringliteral">&quot;Invalid string: &quot;</span> + value_string +</div>
+<div class="line"><a name="l00518"></a><span class="lineno">  518</span>&#160;                         <span class="stringliteral">&quot;. This should be a two or three dimensional vector &quot;</span></div>
+<div class="line"><a name="l00519"></a><span class="lineno">  519</span>&#160;                         <span class="stringliteral">&quot;or point.&quot;</span>));</div>
+<div class="line"><a name="l00520"></a><span class="lineno">  520</span>&#160; </div>
+<div class="line"><a name="l00521"></a><span class="lineno">  521</span>&#160;  Tensor&lt;1, spacedim&gt; output_tensor;</div>
+<div class="line"><a name="l00522"></a><span class="lineno">  522</span>&#160;  <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> i = 0; i &lt; spacedim; ++i)</div>
+<div class="line"><a name="l00523"></a><span class="lineno">  523</span>&#160;    output_tensor[i] = vector_of_double[i];</div>
+<div class="line"><a name="l00524"></a><span class="lineno">  524</span>&#160; </div>
+<div class="line"><a name="l00525"></a><span class="lineno">  525</span>&#160;  <span class="keywordflow">return</span> output_tensor;</div>
+<div class="line"><a name="l00526"></a><span class="lineno">  526</span>&#160;}</div>
+<div class="line"><a name="l00527"></a><span class="lineno">  527</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00528"></a><span class="lineno">  528</span>&#160;<span class="comment">/**</span></div>
+<div class="line"><a name="l00529"></a><span class="lineno">  529</span>&#160;<span class="comment"> * @brief Return the tensor corresponding to the @p value_string_0, but it can</span></div>
+<div class="line"><a name="l00530"></a><span class="lineno">  530</span>&#160;<span class="comment"> * also allow the usage of deprecated parameters that used to be 3 individual</span></div>
+<div class="line"><a name="l00531"></a><span class="lineno">  531</span>&#160;<span class="comment"> * entries instead of a list of values.</span></div>
+<div class="line"><a name="l00532"></a><span class="lineno">  532</span>&#160;<span class="comment"> * In the case of a single entry declaration, the delimiter separating the</span></div>
+<div class="line"><a name="l00533"></a><span class="lineno">  533</span>&#160;<span class="comment"> * elements of the @p value_string_0 is a comma (&quot;,&quot;).</span></div>
+<div class="line"><a name="l00534"></a><span class="lineno">  534</span>&#160;<span class="comment"> *</span></div>
+<div class="line"><a name="l00535"></a><span class="lineno">  535</span>&#160;<span class="comment"> * @remark The function can be use to construct Point&lt;spacedim&gt; objects.</span></div>
+<div class="line"><a name="l00536"></a><span class="lineno">  536</span>&#160;<span class="comment"> *</span></div>
+<div class="line"><a name="l00537"></a><span class="lineno">  537</span>&#160;<span class="comment"> * @tparam spacedim Number of spatial dimensions (2D or 3D).</span></div>
+<div class="line"><a name="l00538"></a><span class="lineno">  538</span>&#160;<span class="comment"> *</span></div>
+<div class="line"><a name="l00539"></a><span class="lineno">  539</span>&#160;<span class="comment"> * @param[in] value_string_0 A string in the parameter file corresponding to the</span></div>
+<div class="line"><a name="l00540"></a><span class="lineno">  540</span>&#160;<span class="comment"> * first component of the tensor or to the tensor itself.</span></div>
+<div class="line"><a name="l00541"></a><span class="lineno">  541</span>&#160;<span class="comment"> * @param[in] value_1 A double in the parameter file corresponding to the</span></div>
+<div class="line"><a name="l00542"></a><span class="lineno">  542</span>&#160;<span class="comment"> * second component of the tensor.</span></div>
+<div class="line"><a name="l00543"></a><span class="lineno">  543</span>&#160;<span class="comment"> * @param[in] value_2 A double in the parameter file corresponding to the</span></div>
+<div class="line"><a name="l00544"></a><span class="lineno">  544</span>&#160;<span class="comment"> * third component of the tensor. Only specify if @p spacedim = 3.</span></div>
+<div class="line"><a name="l00545"></a><span class="lineno">  545</span>&#160;<span class="comment"> *</span></div>
+<div class="line"><a name="l00546"></a><span class="lineno">  546</span>&#160;<span class="comment"> * @return A Tensor&lt;1,spacedim&gt; corresponding to the input parameters in the</span></div>
+<div class="line"><a name="l00547"></a><span class="lineno">  547</span>&#160;<span class="comment"> * parameter file.</span></div>
+<div class="line"><a name="l00548"></a><span class="lineno">  548</span>&#160;<span class="comment"> */</span></div>
+<div class="line"><a name="l00549"></a><span class="lineno">  549</span>&#160;<span class="keyword">template</span> &lt;<span class="keywordtype">int</span> spacedim&gt;</div>
+<div class="line"><a name="l00550"></a><span class="lineno">  550</span>&#160;<span class="keyword">inline</span> Tensor&lt;1, spacedim&gt;</div>
+<div class="line"><a name="l00551"></a><span class="lineno"><a class="line" href="utilities_8h.html#abec407d2ea0c7cddba952fe0fb392803">  551</a></span>&#160;<a class="code" href="utilities_8h.html#a6350c3985200701a29d4d02467074843">value_string_to_tensor</a>(<span class="keyword">const</span> std::string &amp;value_string_0,</div>
+<div class="line"><a name="l00552"></a><span class="lineno">  552</span>&#160;                       <span class="keyword">const</span> <span class="keywordtype">double</span>      &amp;value_1,</div>
+<div class="line"><a name="l00553"></a><span class="lineno">  553</span>&#160;                       <span class="keyword">const</span> <span class="keywordtype">double</span>      &amp;value_2 = 0)</div>
+<div class="line"><a name="l00554"></a><span class="lineno">  554</span>&#160;{</div>
+<div class="line"><a name="l00555"></a><span class="lineno">  555</span>&#160;  std::vector&lt;std::string&gt; vector_of_string(</div>
+<div class="line"><a name="l00556"></a><span class="lineno">  556</span>&#160;    Utilities::split_string_list(value_string_0));</div>
+<div class="line"><a name="l00557"></a><span class="lineno">  557</span>&#160;  Tensor&lt;1, spacedim&gt; output_tensor;</div>
+<div class="line"><a name="l00558"></a><span class="lineno">  558</span>&#160; </div>
+<div class="line"><a name="l00559"></a><span class="lineno">  559</span>&#160;  <span class="comment">// The used parameter is a list of values</span></div>
+<div class="line"><a name="l00560"></a><span class="lineno">  560</span>&#160;  <span class="keywordflow">if</span> (vector_of_string.size() &gt; 1)</div>
+<div class="line"><a name="l00561"></a><span class="lineno">  561</span>&#160;    {</div>
+<div class="line"><a name="l00562"></a><span class="lineno">  562</span>&#160;      std::vector&lt;double&gt; vector_of_double =</div>
+<div class="line"><a name="l00563"></a><span class="lineno">  563</span>&#160;        Utilities::string_to_double(vector_of_string);</div>
+<div class="line"><a name="l00564"></a><span class="lineno">  564</span>&#160;      AssertThrow(vector_of_double.size() == 3 || vector_of_double.size() == 2,</div>
+<div class="line"><a name="l00565"></a><span class="lineno">  565</span>&#160;                  ExcMessage(</div>
+<div class="line"><a name="l00566"></a><span class="lineno">  566</span>&#160;                    <span class="stringliteral">&quot;Invalid string: &quot;</span> + value_string_0 +</div>
+<div class="line"><a name="l00567"></a><span class="lineno">  567</span>&#160;                    <span class="stringliteral">&quot;. This should be a two or three dimensional vector &quot;</span></div>
+<div class="line"><a name="l00568"></a><span class="lineno">  568</span>&#160;                    <span class="stringliteral">&quot;or point.&quot;</span>));</div>
+<div class="line"><a name="l00569"></a><span class="lineno">  569</span>&#160;      <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> i = 0; i &lt; vector_of_double.size(); ++i)</div>
+<div class="line"><a name="l00570"></a><span class="lineno">  570</span>&#160;        output_tensor[i] = vector_of_double[i];</div>
+<div class="line"><a name="l00571"></a><span class="lineno">  571</span>&#160;    }</div>
+<div class="line"><a name="l00572"></a><span class="lineno">  572</span>&#160;  <span class="keywordflow">else</span> <span class="comment">// Depreciated individual entries</span></div>
+<div class="line"><a name="l00573"></a><span class="lineno">  573</span>&#160;    {</div>
+<div class="line"><a name="l00574"></a><span class="lineno">  574</span>&#160;      <span class="comment">// Since the first parameter is the alias of the new parameter,</span></div>
+<div class="line"><a name="l00575"></a><span class="lineno">  575</span>&#160;      <span class="comment">// the value of the first parameter is obtained for its entry</span></div>
+<div class="line"><a name="l00576"></a><span class="lineno">  576</span>&#160;      output_tensor[0] = Utilities::string_to_double(value_string_0);</div>
+<div class="line"><a name="l00577"></a><span class="lineno">  577</span>&#160;      output_tensor[1] = value_1;</div>
+<div class="line"><a name="l00578"></a><span class="lineno">  578</span>&#160;      <span class="keywordflow">if</span> constexpr (spacedim == 3)</div>
+<div class="line"><a name="l00579"></a><span class="lineno">  579</span>&#160;        output_tensor[2] = value_2;</div>
+<div class="line"><a name="l00580"></a><span class="lineno">  580</span>&#160;    }</div>
+<div class="line"><a name="l00581"></a><span class="lineno">  581</span>&#160;  <span class="keywordflow">return</span> output_tensor;</div>
+<div class="line"><a name="l00582"></a><span class="lineno">  582</span>&#160;}</div>
+<div class="line"><a name="l00583"></a><span class="lineno">  583</span>&#160; </div>
+<div class="line"><a name="l00584"></a><span class="lineno">  584</span>&#160;<span class="preprocessor">#endif</span></div>
 <div class="ttc" id="aclassstatistics_html"><div class="ttname"><a href="classstatistics.html">statistics</a></div><div class="ttdoc">Small class that is used to store statistics (min,max,total,average) of variables that are used in si...</div><div class="ttdef"><b>Definition:</b> <a href="utilities_8h_source.html#l00041">utilities.h:42</a></div></div>
 <div class="ttc" id="aclassstatistics_html_a0288afba1bf979183eed4fe63c9d6677"><div class="ttname"><a href="classstatistics.html#a0288afba1bf979183eed4fe63c9d6677">statistics::average</a></div><div class="ttdeci">double average</div><div class="ttdef"><b>Definition:</b> <a href="utilities_8h_source.html#l00054">utilities.h:54</a></div></div>
 <div class="ttc" id="aclassstatistics_html_a04dec28f738b790becb32245ef23a1d0"><div class="ttname"><a href="classstatistics.html#a04dec28f738b790becb32245ef23a1d0">statistics::max</a></div><div class="ttdeci">double max</div><div class="ttdef"><b>Definition:</b> <a href="utilities_8h_source.html#l00052">utilities.h:52</a></div></div>
@@ -609,6 +681,7 @@ $(function() {
 <div class="ttc" id="autilities_8h_html_a4b182f49ed10ffa3d2d50a9a309cd2f0"><div class="ttname"><a href="utilities_8h.html#a4b182f49ed10ffa3d2d50a9a309cd2f0">create_output_folder</a></div><div class="ttdeci">void create_output_folder(const std::string &amp;dirname)</div><div class="ttdoc">Creates the simulation output folder.</div><div class="ttdef"><b>Definition:</b> <a href="utilities_8cc_source.html#l00365">utilities.cc:365</a></div></div>
 <div class="ttc" id="autilities_8h_html_a56a967052620929f4db03cee351d6890"><div class="ttname"><a href="utilities_8h.html#a56a967052620929f4db03cee351d6890">announce_string</a></div><div class="ttdeci">void announce_string(const ConditionalOStream &amp;pcout, const std::string expression, const char delimiter='-')</div><div class="ttdoc">Prints a string and then adds a line above and below made with dashes containing as many dashes as th...</div><div class="ttdef"><b>Definition:</b> <a href="utilities_8h_source.html#l00415">utilities.h:415</a></div></div>
 <div class="ttc" id="autilities_8h_html_a5a470018cf7c417efd11a163d465f951"><div class="ttname"><a href="utilities_8h.html#a5a470018cf7c417efd11a163d465f951">fill_vectors_from_file</a></div><div class="ttdeci">void fill_vectors_from_file(std::map&lt; std::string, std::vector&lt; double &gt;&gt; &amp;map, const std::string file_name, const std::string delimiter=&quot; &quot;)</div><div class="ttdoc">function that read a file that was build from a dealii table and fill 2 vectors. The first vector con...</div><div class="ttdef"><b>Definition:</b> <a href="utilities_8cc_source.html#l00261">utilities.cc:261</a></div></div>
+<div class="ttc" id="autilities_8h_html_a6350c3985200701a29d4d02467074843"><div class="ttname"><a href="utilities_8h.html#a6350c3985200701a29d4d02467074843">value_string_to_tensor</a></div><div class="ttdeci">Tensor&lt; 1, spacedim &gt; value_string_to_tensor(const std::string &amp;value_string)</div><div class="ttdoc">Return the tensor corresponding to the value_string. If the dimension correspondence of the value_str...</div><div class="ttdef"><b>Definition:</b> <a href="utilities_8h_source.html#l00509">utilities.h:509</a></div></div>
 <div class="ttc" id="autilities_8h_html_a704ab7e8f1f853cd7433b31d571df760"><div class="ttname"><a href="utilities_8h.html#a704ab7e8f1f853cd7433b31d571df760">deserialize_table</a></div><div class="ttdeci">void deserialize_table(TableHandler &amp;table, const std::string filename)</div><div class="ttdoc">Loads a table using boost serialization feature the filename should contain the desired extension.</div><div class="ttdef"><b>Definition:</b> <a href="utilities_8h_source.html#l00447">utilities.h:447</a></div></div>
 <div class="ttc" id="autilities_8h_html_a7c64fcbe9b1f3d396d37076c4b40afe8"><div class="ttname"><a href="utilities_8h.html#a7c64fcbe9b1f3d396d37076c4b40afe8">fill_string_vectors_from_file</a></div><div class="ttdeci">void fill_string_vectors_from_file(std::map&lt; std::string, std::vector&lt; std::string &gt;&gt; &amp;map, const std::string file_name, const std::string delimiter=&quot; &quot;)</div><div class="ttdoc">Function that read a file that was build from a dealii table and create a map with the key being the ...</div><div class="ttdef"><b>Definition:</b> <a href="utilities_8cc_source.html#l00314">utilities.cc:314</a></div></div>
 <div class="ttc" id="autilities_8h_html_a7d7935807703948c95807db1f02eca18"><div class="ttname"><a href="utilities_8h.html#a7d7935807703948c95807db1f02eca18">make_table_scalars_tensors</a></div><div class="ttdeci">TableHandler make_table_scalars_tensors(const std::vector&lt; T &gt; &amp;independent_values, const std::string &amp;independent_column_name, const std::vector&lt; Tensor&lt; 1, dim &gt;&gt; &amp;dependent_vector, const std::vector&lt; std::string &gt; &amp;dependent_column_names, const unsigned int display_precision, const bool display_scientific_notation=false)</div><div class="ttdoc">Generate a table from a vector of scalars (independent variable) and a vector of Tensor&lt;1,...</div><div class="ttdef"><b>Definition:</b> <a href="utilities_8cc_source.html#l00047">utilities.cc:47</a></div></div>
@@ -619,7 +692,6 @@ $(function() {
 <div class="ttc" id="autilities_8h_html_aaa1167f0e0a2bb3cc269b124d4b0158a"><div class="ttname"><a href="utilities_8h.html#aaa1167f0e0a2bb3cc269b124d4b0158a">make_table_tensors_scalars</a></div><div class="ttdeci">TableHandler make_table_tensors_scalars(const std::vector&lt; Tensor&lt; 1, dim &gt;&gt; &amp;independent_vector, const std::vector&lt; std::string &gt; &amp;independent_column_names, const std::vector&lt; double &gt; &amp;dependent_values, const std::string &amp;dependent_column_name, const unsigned int display_precision, const bool display_scientific_notation=false)</div><div class="ttdoc">Generate a table from a vector of Tensor&lt;1,dim&gt; (independent variables) and a vector of scalars (depe...</div><div class="ttdef"><b>Definition:</b> <a href="utilities_8cc_source.html#l00177">utilities.cc:177</a></div></div>
 <div class="ttc" id="autilities_8h_html_ab305d2e75368dcfbb1cc79526eb28493"><div class="ttname"><a href="utilities_8h.html#ab305d2e75368dcfbb1cc79526eb28493">make_table_scalars_vectors</a></div><div class="ttdeci">TableHandler make_table_scalars_vectors(const std::vector&lt; T &gt; &amp;independent_values, const std::string &amp;independent_column_name, const std::vector&lt; std::vector&lt; double &gt;&gt; &amp;dependent_vector, const std::vector&lt; std::string &gt; &amp;dependent_column_names, const unsigned int display_precision, const bool display_scientific_notation=false)</div><div class="ttdoc">Generate a table from a vector of scalars (independent variable) and a vector of vectors of scalars (...</div><div class="ttdef"><b>Definition:</b> <a href="utilities_8cc_source.html#l00010">utilities.cc:10</a></div></div>
 <div class="ttc" id="autilities_8h_html_ac2174ef369010698c8197b717864e4a3"><div class="ttname"><a href="utilities_8h.html#ac2174ef369010698c8197b717864e4a3">calculate_point_property_cahn_hilliard</a></div><div class="ttdeci">double calculate_point_property_cahn_hilliard(const double phase_cahn_hilliard, const double property0, const double property1)</div><div class="ttdoc">Calculate the equivalent properties for a given phase. Method called in quadrature points loops in Ca...</div><div class="ttdef"><b>Definition:</b> <a href="utilities_8h_source.html#l00333">utilities.h:333</a></div></div>
-<div class="ttc" id="autilities_8h_html_ac4144177824387394dbca8305620853f"><div class="ttname"><a href="utilities_8h.html#ac4144177824387394dbca8305620853f">entry_string_to_tensor</a></div><div class="ttdeci">Tensor&lt; 1, spacedim &gt; entry_string_to_tensor(const std::string &amp;entry_string)</div><div class="ttdoc">Return the tensor corresponding to the entry (entry_string). If the dimension correspondence of the e...</div><div class="ttdef"><b>Definition:</b> <a href="utilities_8cc_source.html#l00712">utilities.cc:712</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
