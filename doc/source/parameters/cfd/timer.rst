@@ -18,29 +18,35 @@ The following table shows an example of the output of the timer:
 
 .. code-block:: text
 
-   +---------------------------------------------+------------+------------+
-   | Total wallclock time elapsed since start    |      11.5s |            |
-   |                                             |            |            |
-   | Section                         | no. calls |  wall time | % of total |
-   +---------------------------------+-----------+------------+------------+
-   | assemble_rhs                    |         4 |      2.28s |        20% |
-   | assemble_system                 |         4 |      7.78s |        68% |
-   | output                          |         2 |      1.21s |        11% |
-   | setup_ILU                       |         4 |     0.164s |       1.4% |
-   | solve_linear_system             |         4 |    0.0812s |      0.71% |
-   +---------------------------------+-----------+------------+------------+
+    +---------------------------------------------------------+------------+------------+
+    | Total wallclock time elapsed since start                |      16.1s |            |
+    |                                                         |            |            |
+    | Section                                     | no. calls |  wall time | % of total |
+    +---------------------------------------------+-----------+------------+------------+
+    | Assemble RHS                                |         9 |      5.72s |        36% |
+    | Assemble matrix                             |         7 |      7.59s |        47% |
+    | Calculate and output norms after Newton its |         8 |     0.318s |         2% |
+    | Distribute constraints after linear solve   |         7 |   0.00887s |         0% |
+    | Output VTU                                  |         2 |     0.765s |       4.8% |
+    | Read mesh and manifolds                     |         1 |     0.296s |       1.8% |
+    | Set initial conditions                      |         1 |     0.243s |       1.5% |
+    | Setup DOFs                                  |         1 |     0.727s |       4.5% |
+    | Setup ILU                                   |         7 |     0.104s |      0.65% |
+    | Solve linear system                         |         7 |     0.267s |       1.7% |
+    +---------------------------------------------+-----------+------------+------------+
 
-For every block of functions, Lethe reports the number of calls, the wall time spent and the percentage of time spent in the function. It is important to monitor this when running a simulation.
+For every block of functions, Lethe reports the number of calls, the wall time spent and the percentage of time spent in the function. It is important to monitor this when running a simulation. The most important ones from a user perspective in most of the simulations are:
 
-* ``assemble_rhs`` refers to the assembly of the right-hand side of the equation, that is the residual of the equation.
+* ``Assemble RHS`` refers to the assembly of the right-hand side of the equation, that is the residual of the equation.
 
-* ``assemble_system`` refers to the time spent assembling the matrix associated with the equation.
+* ``Assemble matrix`` refers to the time spent assembling the matrix associated with the equation.
 
-* ``output`` refers to the output of the ``.vtu``, ``.pvtu`` and ``.pvd`` files.
+* ``Output VTU`` refers to the output of the ``.vtu``, ``.pvtu`` and ``.pvd`` files.
 
-* ``setup_ILU`` or ``setup_AMG`` describe the time spent to set-up the preconditioner.
+* ``Read mesh and manifolds`` refers to the time it takes to create a ``dealii`` triangulation or read a ``gmsh`` one, and attach corresponding manifolds.
 
-* ``solve_linear_system`` refers to the time spent solving the linear system of equations, without the time required to assemble the preconditioner.
+* ``Setup ILU`` describe the time spent to set-up the preconditioner. Other options are ``Setup AMG`` and ``Setup GMG``.
 
+* ``Solve linear system`` refers to the time spent solving the linear system of equations, without the time required to assemble the preconditioner.
 
 Depending on the type of simulation, there may be other categories that appear in the timer. This is useful to monitor the functions responsible for taking up most of the simulation time. 
