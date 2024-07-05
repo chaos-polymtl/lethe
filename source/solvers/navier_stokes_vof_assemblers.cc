@@ -135,7 +135,7 @@ GLSNavierStokesVOFAssemblerCore<dim>::assemble_matrix(
       for (unsigned int i = 0; i < n_dofs; ++i)
         {
           const unsigned int component_i = scratch_data.components[i];
-          
+
           const auto &phi_u_i      = scratch_data.phi_u[q][i];
           const auto &grad_phi_u_i = scratch_data.grad_phi_u[q][i];
           const auto &div_phi_u_i  = scratch_data.div_phi_u[q][i];
@@ -150,11 +150,11 @@ GLSNavierStokesVOFAssemblerCore<dim>::assemble_matrix(
           for (unsigned int j = 0; j < n_dofs; ++j)
             {
               const unsigned int component_j = scratch_data.components[j];
-              
+
               const auto &phi_u_j      = scratch_data.phi_u[q][j];
               const auto &grad_phi_u_j = scratch_data.grad_phi_u[q][j];
               // const auto &div_phi_u_j  = scratch_data.div_phi_u[q][j];
-              const auto  shear_rate_j = grad_phi_u_j + transpose(grad_phi_u_j);
+              const auto shear_rate_j = grad_phi_u_j + transpose(grad_phi_u_j);
 
               const auto &phi_p_j =
                 scratch_data.phi_p[q][j] * pressure_scaling_factor;
@@ -166,21 +166,23 @@ GLSNavierStokesVOFAssemblerCore<dim>::assemble_matrix(
 
               if (component_i == dim)
                 {
-                  const auto &div_phi_u_j  = scratch_data.div_phi_u[q][j];
-                  
+                  const auto &div_phi_u_j = scratch_data.div_phi_u[q][j];
+
                   local_matrix_ij += phi_p_i * div_phi_u_j;
-                  
-                  local_matrix_ij += tau / density_eq * (strong_jac * grad_phi_p_i);
+
+                  local_matrix_ij +=
+                    tau / density_eq * (strong_jac * grad_phi_p_i);
                 }
 
               if (component_i < dim && component_j < dim)
                 {
-                  local_matrix_ij += dynamic_viscosity_eq *
-                  scalar_product(shear_rate_j, grad_phi_u_i) + density_eq * velocity_gradient_x_phi_u_j[j] * phi_u_i +
-                density_eq * grad_phi_u_j_x_velocity[j] * phi_u_i;
-                
+                  local_matrix_ij +=
+                    dynamic_viscosity_eq *
+                      scalar_product(shear_rate_j, grad_phi_u_i) +
+                    density_eq * velocity_gradient_x_phi_u_j[j] * phi_u_i +
+                    density_eq * grad_phi_u_j_x_velocity[j] * phi_u_i;
                 }
-                
+
               if (component_i < dim)
                 {
                   // Jacobian is currently incomplete
@@ -307,7 +309,7 @@ GLSNavierStokesVOFAssemblerCore<dim>::assemble_rhs(
       for (unsigned int i = 0; i < n_dofs; ++i)
         {
           const unsigned int component_i = scratch_data.components[i];
-          
+
           const auto phi_u_i      = scratch_data.phi_u[q][i];
           const auto grad_phi_u_i = scratch_data.grad_phi_u[q][i];
           const auto phi_p_i      = scratch_data.phi_p[q][i];
