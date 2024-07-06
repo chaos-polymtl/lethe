@@ -134,6 +134,8 @@ GLSNavierStokesVOFAssemblerCore<dim>::assemble_matrix(
 
       for (unsigned int i = 0; i < n_dofs; ++i)
         {
+          const unsigned int component_i = scratch_data.components[i];
+
           const auto &phi_u_i      = scratch_data.phi_u[q][i];
           const auto &grad_phi_u_i = scratch_data.grad_phi_u[q][i];
           const auto &div_phi_u_i  = scratch_data.div_phi_u[q][i];
@@ -147,10 +149,12 @@ GLSNavierStokesVOFAssemblerCore<dim>::assemble_matrix(
 
           for (unsigned int j = 0; j < n_dofs; ++j)
             {
+              const unsigned int component_j = scratch_data.components[j];
+
               const auto &phi_u_j      = scratch_data.phi_u[q][j];
               const auto &grad_phi_u_j = scratch_data.grad_phi_u[q][j];
-              const auto &div_phi_u_j  = scratch_data.div_phi_u[q][j];
-              const auto  shear_rate_j = grad_phi_u_j + transpose(grad_phi_u_j);
+              // const auto &div_phi_u_j  = scratch_data.div_phi_u[q][j];
+              const auto shear_rate_j = grad_phi_u_j + transpose(grad_phi_u_j);
 
               const auto &phi_p_j =
                 scratch_data.phi_p[q][j] * pressure_scaling_factor;
@@ -158,24 +162,36 @@ GLSNavierStokesVOFAssemblerCore<dim>::assemble_matrix(
               const auto &strong_jac = strong_jacobian_vec[q][j];
 
               double local_matrix_ij =
-                dynamic_viscosity_eq *
-                  scalar_product(shear_rate_j, grad_phi_u_i) +
-                density_eq * velocity_gradient_x_phi_u_j[j] * phi_u_i +
-                density_eq * grad_phi_u_j_x_velocity[j] * phi_u_i -
-                div_phi_u_i * phi_p_j;
+                component_j == dim ? -div_phi_u_i * phi_p_j : 0;
 
-              // Continuity
-              local_matrix_ij += phi_p_i * div_phi_u_j;
+              if (component_i == dim)
+                {
+                  const auto &div_phi_u_j = scratch_data.div_phi_u[q][j];
 
-              // PSPG GLS term
-              local_matrix_ij += tau / density_eq * (strong_jac * grad_phi_p_i);
+                  local_matrix_ij += phi_p_i * div_phi_u_j;
 
-              // Jacobian is currently incomplete
-              if (SUPG)
+                  local_matrix_ij +=
+                    tau / density_eq * (strong_jac * grad_phi_p_i);
+                }
+
+              if (component_i < dim && component_j < dim)
                 {
                   local_matrix_ij +=
-                    tau * (strong_jac * grad_phi_u_i_x_velocity +
-                           strong_residual_x_grad_phi_u_i * phi_u_j);
+                    dynamic_viscosity_eq *
+                      scalar_product(shear_rate_j, grad_phi_u_i) +
+                    density_eq * velocity_gradient_x_phi_u_j[j] * phi_u_i +
+                    density_eq * grad_phi_u_j_x_velocity[j] * phi_u_i;
+                }
+
+              if (component_i < dim)
+                {
+                  // Jacobian is currently incomplete
+                  if (SUPG)
+                    {
+                      local_matrix_ij +=
+                        tau * (strong_jac * grad_phi_u_i_x_velocity +
+                               strong_residual_x_grad_phi_u_i * phi_u_j);
+                    }
                 }
               local_matrix_ij *= JxW;
               local_matrix(i, j) += local_matrix_ij;
@@ -292,6 +308,8 @@ GLSNavierStokesVOFAssemblerCore<dim>::assemble_rhs(
       // Assembly of the right-hand side
       for (unsigned int i = 0; i < n_dofs; ++i)
         {
+          const unsigned int component_i = scratch_data.components[i];
+
           const auto phi_u_i      = scratch_data.phi_u[q][i];
           const auto grad_phi_u_i = scratch_data.grad_phi_u[q][i];
           const auto phi_p_i      = scratch_data.phi_p[q][i];
@@ -307,13 +325,15 @@ GLSNavierStokesVOFAssemblerCore<dim>::assemble_rhs(
              pressure * div_phi_u_i + density_eq * force * phi_u_i) *
             JxW;
 
-          // Continuity
-          local_rhs(i) += -(velocity_divergence * phi_p_i) * JxW;
+          if (component_i == dim)
+            {
+              // Continuity
+              local_rhs(i) += -(velocity_divergence * phi_p_i) * JxW;
 
-          // PSPG GLS term
-          local_rhs(i) +=
-            -tau / density_eq * (strong_residual * grad_phi_p_i) * JxW;
-
+              // PSPG GLS term
+              local_rhs(i) +=
+                -tau / density_eq * (strong_residual * grad_phi_p_i) * JxW;
+            }
           // SUPG GLS term
           if (SUPG)
             {

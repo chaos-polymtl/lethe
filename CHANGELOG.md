@@ -3,6 +3,12 @@
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Master] - 2024-07-05
+
+### Changed
+
+- MINOR  The NS-VOF assembler was not optimized as the NS assembler. The if conditions on the dof components were added to not compute multiplications that are a priori 0 in the matrix and rhs assembly. [#1188](https://github.com/chaos-polymtl/lethe/pull/1188)
+
 ## [Master] - 2024-07-04
 
 ### Changed
