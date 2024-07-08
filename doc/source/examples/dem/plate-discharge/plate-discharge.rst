@@ -2,7 +2,7 @@
 Plate Discharge
 ==================================
 
-This example compares the angle of repose and performance results of a plate discharging particles with performance enhancement methods.
+This example compares the angles of repose and performance results of a plate discharging particles with performance enhancement methods.
 
 ----------------------------------
 Features
@@ -11,6 +11,7 @@ Features
 - Solvers: ``lethe-particles``
 - Three-dimensional problem
 - Uses the `adaptive sparse contacts <../../../parameters/dem/model_parameters.html#adaptive-sparse-contacts-asc>`_
+- Uses the `dynamic load balancing <../../../parameters/dem/model_parameters.html#load-balancing>`_
 - Post-processes results and compares them to the literature
 
 
@@ -20,7 +21,7 @@ Files Used in this Example
 
 All the files mentioned below are located in the example folder ``examples/dem/plate-discharge``.
 
-- There are 4 parameters files: a baseline case and three other cases with different features using enhanced performance methods. The parameters files are:
+- There are 4 parameters files: a baseline case and three other cases with different features using one or a combination of enhanced performance methods. The parameters files are:
 
   .. list-table::
      :width: 100%
@@ -44,13 +45,13 @@ All the files mentioned below are located in the example folder ``examples/dem/p
        - ×
        - ×
 
-- Those parameters files are ready for the simulations. Since we want the data from the cases and the performance of the simulation not affected by the writing of data files, we run 2 sets of simulation (performance and data). The performance analysis parameter files are in the folder ``performance/``, and the ones for the data analysis are in the folder ``data/``.
+- Those parameters files are ready for the simulations. Since we want the physical data from the cases and the computational performance information of the simulation not affected by the writing of data files, we run 2 sets of simulation (performance and data). The performance analysis parameter files are in the folder ``performance/``, and the ones for the data analysis are in the folder ``data/``.
 
 -----------------------
 Description of the Case
 -----------------------
 
-This example simulates the discharge of particles at the side of a plate in a rectangular container in order to get the angle of repose of the granular material as done by Zhou *et al*. [#zhou2002]_. The example compares the angle of repose and the performance of the simulation with the use of the adaptive sparse contacts and the load balancing methods. The angle is also compared to the literature.
+This example simulates the discharge of particles at the side of a plate in a rectangular container in order to get the angle of repose of the granular material as done by Zhou *et al*. [#zhou2002]_. The example compares the angles of repose and the performance of the simulations with the use of the adaptive sparse contacts and the load balancing methods. The angles are also compared to the literature.
 
 .. figure:: images/plate-discharge-diagram.png
     :width: 50%
@@ -88,7 +89,7 @@ The simulation lasts 15 seconds and the DEM time step is 0.0001 seconds. The out
 Mesh
 ----
 
-The rectangular container is a 1m x 1m x 0.2m box with a 0.9m x 0.2m plate at a height of 0.4m.
+The rectangular container is a 1 m x 1 m x 0.2 m box with a 0.9 m x 0.2 m plate placed at a height of 0.4 m.
 
 .. code-block:: text
 
@@ -130,7 +131,7 @@ The lagrangian properties are relatively arbitrary. The simulation contains 5200
 Insertion Info
 --------------
 
-The particles are inserted right above the plate with the volume insertion method.
+The particles are inserted above the plate with the volume insertion method.
 
 .. code-block:: text
 
@@ -148,7 +149,7 @@ The particles are inserted right above the plate with the volume insertion metho
 Floating Walls
 --------------
 
-The particles all stay on the plate with floating walls that are placed vertically at both sides of the plate. The walls are removed after 0.75 seconds of simulation, starting the discharge.
+The particles all stay on the plate with floating walls that are placed vertically at both extremities of the plate. The walls are removed after 0.75 seconds of simulation, starting the discharge.
 
 .. code-block:: text
 
@@ -188,7 +189,7 @@ The particles all stay on the plate with floating walls that are placed vertical
 Solid Objects
 -------------
 
-The plate is a solid object with a simple mesh of 2 triangles placed at 0.4m in the container.
+The plate is a solid object with a simple mesh of 2 triangles placed at 0.4 m in the container.
 
 .. code-block:: text
 
@@ -235,8 +236,7 @@ The model parameters are quite standard for a DEM simulation with the non-linear
 Timer
 -------
 
-Since we want to profile the performance of the simulation we enable the timer. The timer print the total wallclock time elapsed since the start at every log frequency iteration.
-
+The timer is enabled since we want to profile the computational performance of the simulations. The timer prints the total wallclock time elapsed since the start at every log frequency iterations.
 
 .. code-block:: text
 
@@ -248,12 +248,12 @@ Since we want to profile the performance of the simulation we enable the timer. 
 ASC Simulation
 ~~~~~~~~~~~~~~~~~~
 
-The only difference between ``plate-discharge_base.prm`` and ``plate-discharge_asc.prm`` is the enabling of the adaptive sparse contacts and the name of the folder for outputs.
+The only differences between ``plate-discharge_base.prm`` and ``plate-discharge_asc.prm`` are the enabling of the adaptive sparse contacts and the name of the folder for outputs.
 
 Model Parameters
 ----------------
 
-Here the adaptive sparse contacts are enabled with a granular temperature threshold of 0.0001 m²/s² and a solid fraction threshold of 0.4.
+Here the ASC is enabled with a granular temperature threshold of 0.0001 m²/s² and a solid fraction threshold of 0.4.
 
 .. code-block:: text
 
@@ -281,12 +281,12 @@ Here the adaptive sparse contacts are enabled with a granular temperature thresh
 Load Balancing Simulation
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The only difference between ``plate-discharge_base.prm`` and ``plate-discharge_lb.prm`` is the usage of the load balancing and the name of the folder for outputs.
+The only differences between ``plate-discharge_base.prm`` and ``plate-discharge_lb.prm`` are the usage of the load balancing and the name of the folder for outputs.
 
 Model Parameters
 ----------------
 
-Here the dynamic load balancing that check is a load balancing is needed every 2500 iterations with a load threshold of 0.5.
+Here, the dynamic load balancing checks if a load balancing is needed every 2500 iterations with a load threshold of 0.5.
 
 .. code-block:: text
 
@@ -314,12 +314,12 @@ Here the dynamic load balancing that check is a load balancing is needed every 2
 ASC with Load Balancing Simulation
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The only difference between ``plate-discharge_base.prm`` and ``plate-discharge_asc-lb.prm`` is the usage of the adaptive sparse contacts method with the load balancing, and the name of the folder for outputs.
+The only differences between ``plate-discharge_base.prm`` and ``plate-discharge_asc-lb.prm`` are the usage of the ASC method with the load balancing, and the name of the folder for outputs.
 
 Model Parameters
 ----------------
 
-Here we use the adaptive sparse contacts method with the dynamic load balancing that check is a load balancing is needed every 2500 iterations with a load threshold of 0.5. In with case, the mobility status of the cell from the adaptive sparse contacts with influence the weight of the cell in the load balancing. The weight factor of the active cells is 0.7 and the weight factor of the inactive cells is 0.5, while the mobile cells keep the same weight.
+Here, we use the ASC with the dynamic load balancing still checking if a load balancing is needed every 2500 iterations with a load threshold of 0.5. In with case, the mobility status of the cells from the adaptive sparse contacts will influence the weight, or the computational contribution, of the cell in the load balancing evaluation. The weight factor of the active cells is 0.7, and the weight factor of the inactive cells is 0.5, while the mobile cells always have a fixed weight factor of 1.
 
 .. code-block:: text
 
@@ -352,7 +352,7 @@ Here we use the adaptive sparse contacts method with the dynamic load balancing 
 Running the Simulations
 -----------------------
 
-Simulations can be launched individually with the executable ``lethe-particles`` and the parameter file, while logging the display in the terminal.
+Simulations can be launched individually with the executable ``lethe-particles`` and the parameter files with the logging of the display in the terminal.
 To make things easier a script is provided to run all the simulations in sequence from the ``dem/3d-plate-discharge/`` folder.
 
 In order to run the simulations for the performance analysis, you can use the following command:
@@ -400,15 +400,14 @@ In order to run the simulations for the data analysis, you can use the following
 Results
 -------
 
-The particle loading and settling simulation should look like this:
+The simulations should look like the following video:
 
-.. raw:: html
-
-    <p align="center"><iframe width="800" height="450" src="https://www.youtube.com/embed/4uM51PCypZc?si=Xrisa4h87QLjvTWO" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+[WIP: Add video here]
 
 
 Post-Processing Code
 ~~~~~~~~~~~~~~~~~~~~
+
 The data is extracted with the Lethe PyVista tool and post-processed with custom functions in the files ``pyvista_utilities.py`` and ``log_utilities.py``.
 Extraction, post-processing and plotting are automated in the script ``plate-discharge_post-processing.py``:
 
@@ -424,7 +423,7 @@ Performance Analysis
 
 The log files (outputs displayed in the terminal) are read to extract the simulation and wall times.
 
-The speedup is calculated with the baseline case as the reference. The results are plotted in the figure below, where the solid lines show the walltime during the simulation, the dashed lines show the speedup, and the points show to total speedup.
+The speedup is calculated with the baseline case as the reference. The results are plotted in the following figure, where the solid lines show the walltime during the simulation, the dashed lines show the speedup, and the points show to total speedup.
 
 
 .. figure:: images/performance.png
@@ -435,22 +434,22 @@ The speedup is calculated with the baseline case as the reference. The results a
    The walltime during the simulations (solid line) and the speedup (dashed line) for the performance enhancement methods with the Adaptive Sparse Contacts (ASC) and the Load Balancing (LB) compared to the baseline case.
 
 .. note::
-   The slight oscillations of the speedup are cause by the scientific notation format of the walltime by the timer feature after 1000 seconds. The walltimes are attenuated by the moving average, but the division operation for the speedup accentuates the lack of time precision.
+   The slight oscillations of the speedup are caused by the scientific notation format of the walltime by the timer feature after 1000 seconds. The walltimes are attenuated by the moving average, but the division operation for the speedup accentuates the lack of time precision.
 
 Without going into much details, the load balancing method will help the performance of the simulation from the start, since the particles move within the domain during the discharge. The load balancing allows to distribute the particles, therefore all their related computation, more evenly between the cores. Once the discharge of the particles is mostly done, and only a few particles are still falling from the top part, the performance gain brought by the load balancing stays constant since the load across the cores is already balanced.
-The adaptive sparse contacts method will help the performance of the simulation mostly when there are large areas of motionless particles. As it is showed in the next section, those areas are located in the core of the pile at the top and at the corners of settled particles below the plate. This explains why the ASC gives a limited performance gain at the start of the simulation (only from the core of the pile) and an increasing gain through the simulation (accumulation of motionless particles at the bottom part). Given that both methods help the computation performance at different times, the combination of both methods give the best performance as observed.
+The adaptive sparse contacts method will help the performance of the simulation mostly when there are large areas of motionless particles. As it was showed in the video, those areas are located in the core of the pile at the top and at the corners of settled particles below the plate. This explains why the ASC gives a limited performance gain at the start of the simulation (only from the core of the pile) and an increasing gain through the simulation (accumulation of motionless particles at the bottom part). Given that both methods help the computation performance at different times, the combination of both methods gives the best performance as observed.
 
 
 Angle of Repose
 ~~~~~~~~~~~~~~~
 
-The angle of repose is calculated from the data extract fro the VTU output files. Angles of repose are calculated from the pile of particles on the plate for comparison with the literature, and from the piles formed by the discharge for curiosity.
+The angle of repose is calculated from the data extracted from the VTU output files. Angles of repose are calculated from the pile of particles on the plate for comparison with the literature, and from the piles formed by the discharge for curiosity.
 
 The configuration of the case gives a symmetrical formation of the piles, meaning that there are 2 angles of repose to calculate over and below the plate.
-In order to show how the results may fluctuated in regards of that, we show the angle from the particle positions at the left and the right sides and shaded areas are the angles from both sides.
+In order to show how the results may fluctuated in regards of that, we show the angle obtained from the particle positions from the left and the right sides.
 
 
-The angle of repose is calculated by linear regressions from the highest particle positions in y-axis from -0.35 m to -0.15 m for the left angles and from 0.15 m to 0.35 m for the right angles in x-axis. The following figure shows the areas where the angles are calculated. The given angle of reposes are the linear regressions from the positions with absolute x coordinates.
+The angles of repose are calculated by linear regressions from the highest particle positions in y-axis from -0.35 m to -0.15 m for the left angles and from 0.15 m to 0.35 m for the right angles in x-axis. The following figure shows the areas where the angles are calculated. The given angles of reposes are the linear regressions from the positions with absolute x coordinates.
 
 .. figure:: images/angle-areas.png
    :alt: Angle of repose areas
@@ -468,13 +467,13 @@ According to Zhou *et al.* [#zhou2002]_, the angle of repose from this type of c
    \phi = 68.61 \mu_{\text{f,pp}}^{0.27} \mu_{\text{f,pw}}^{0.22} \mu_{\text{r,pp}}^{0.06} \mu_{\text{r,pw}}^{0.12} d_p^{-0.2}
 
 
-where :math:`\mu_{\text{f,pp}}` and :math:`\mu_{\text{f,pw}}` are the friction coefficients of the particle-particle and particle-wall interactions, respectively, :math:`\mu_{\text{r,pp}}` and :math:`\mu_{\text{r,pw}}` are the rolling friction, and :math:`d_p` is the particle diameter.
+where :math:`\mu_{\text{f,pp}}` and :math:`\mu_{\text{f,pw}}` are the friction coefficients of the particle-particle and particle-wall interactions, respectively, :math:`\mu_{\text{r,pp}}` and :math:`\mu_{\text{r,pw}}` are the rolling friction coefficients, and :math:`d_p` is the particle diameter.
 
 
 The meaning of the rolling friction coefficient by the authors [#zhou2002]_ is different than found in Lethe. They express the coefficient as aa length in the `rolling friction model <../../../theory/multiphase/cfd_dem/dem.html#rolling-friction-models>`_. However, they also use the constant torque, therefore the rolling friction coefficient in Lethe as to be multiplied by the effective radius of the particle for results comparison:
 
 .. math::
-   \mu_{\text{r}}^{\text{eqt}} = \mu_{\text{r}}^{\text{lethe}}R_{e}
+   \mu_{\text{r}}^{\text{eqt}} = \mu_{\text{r}}^{\text{lethe}}D_p
 
 .. figure:: images/angle-of-repose.png
    :alt: Angle of repose results
@@ -483,9 +482,9 @@ The meaning of the rolling friction coefficient by the authors [#zhou2002]_ is d
 
    The angles of repose calculated from the simulation data. The solid lines are the angles computed from the highest particles on both side, while the shaded areas represent the angles for the left and the right.
 
-The theoretical angle of repose is 19.7°. We did not compute a mean of the angle of repose in order to compare the results with the literature since, even after 15 seconds of simulation, some particles are still falling from the top and the angles are still not oscillating around the same value. We can however state that the angles are close to the literature.
+The theoretical angle of repose is 19.7°. We did not compute the mean of the angled of repose in order to compare the results with the literature since, even after 15 seconds of simulation, some particles are still falling from the top and the angles are still not oscillating around the same value. We can however state that the angles are close to the literature.
 
-Here we can see that the top angles from all simulations are in a range of around ±1.5 from the baseline case, which can be considered as a good agreement. We can clearly see a trend in the bottom angles using the ASC. The angles of repose are around 2° below the baseline and load balancing cases. It seems to be cause by the accumulation of particles at the bottom of the piles.
+Here we can see that the top angles from all simulations are in a range of around ±1.5 from the baseline case, which can be considered as a good agreement. We can clearly see a trend in the bottom angles using the ASC. The angles of repose are about 2° below the baseline and load balancing cases. It seems to be caused by the accumulation of particles at the bottom of the piles.
 
 
 ----------
