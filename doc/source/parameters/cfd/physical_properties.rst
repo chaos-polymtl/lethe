@@ -104,11 +104,11 @@ Physical Properties
 
     where :math:`F_B` denotes the buoyant force source term, :math:`\beta` is the thermal expansion coefficient, :math:`T` is temperature, and :math:`T_\text{ref}` is the reference temperature. This is only used when a constant thermal expansion model is used.
 
-  * The ``tracer diffusivity model`` specifies the model used to calculate the tracer diffusivity. At the moment, a constant tracer diffusivity and level set based :math:`\tanh` model are supported. The ``immersed solid tanh`` model is intended to be used in a solid with the ``lethe-fluid-sharp`` executable as a way to smooth the transition between a fluid and an immersed solid (described more in `Immersed Solid Models`_).
+  * The ``tracer diffusivity model`` specifies the model used to calculate the tracer diffusivity. At the moment, a constant tracer diffusivity and level set based :math:`\tanh` model are supported. The ``immersed solid tanh`` model is intended to be used with immersed solids with the ``lethe-fluid-sharp`` executable as a way to set diffusivity inside solids as wells (described more in `Immersed Solid Models`_).
 
   * The ``tracer diffusivity`` parameter is the diffusivity coefficient of the tracer in units of :math:`\text{Length}^{2} \cdot \text{Time}^{-1}` . In SI, this is :math:`\text{m}^{2} \cdot \text{s}^{-1}`.
 
-* The ``number of solids`` parameter controls the number of solid regions. Solid regions are currently only implemented for `Conjugate Heat Transfer`_ and with ``lethe-fluid-sharp`` as described in `Immersed Solid Models`_.
+* The ``number of solids`` parameter controls the number of solid regions. Solid regions are currently only implemented for `Conjugate Heat Transfer`_.
 
 * The ``number of material interactions`` parameter controls the number of physical properties that are due to the interaction between two materials. At the moment, only the surface tension between two fluids is implemented in `Two Phase Simulations`_.
 
@@ -231,9 +231,9 @@ Conjugate heat transfer enables the addition of solid regions in which the fluid
 Immersed Solid Models
 ~~~~~~~~~~~~~~~~~~~~~~
 
-Solid models can be used to affect specific behavior to immersed solids when ``lethe-fluid-sharp`` is used. At the moment, such a model is only available for the ``tracer`` multiphysics, but additional multiphysics will be included in the future.
+Immersed solid models can be used to affect specific behavior to immersed solids when ``lethe-fluid-sharp`` is used. At the moment, such a model is only available for the ``tracer`` multiphysics, but additional multiphysics will be included in the future.
 
-The immersed solid properties models are based on the signed distance function of the immersed solids, and therefore depend on the depth inside the solid. One of the intents of these models is to smoothen the transition of physical properties between the fluid and solid phase.
+The immersed solid properties models are based on the signed distance function of the immersed solids, and therefore depend on the depth inside the solid. The intent behind these models is to define physical properties in the fluid and solid phases as well as the transitive regions.
 
 The ``tracer diffusivity model`` parameter sets which diffusivity model is used. The default ``tracer diffusivity model`` is ``constant``, which uses a constant ``tracer diffusivity``. The alternative is ``immersed solid tanh``, whose parameters are defined as such:
 
@@ -242,27 +242,21 @@ The ``tracer diffusivity model`` parameter sets which diffusivity model is used.
     subsection physical properties
       set number of fluids = 1
       subsection fluid 0
-        set tracer diffusivity model = constant
-        set tracer diffusivity       = 1
-      end
-      set number of solids = 1
-      subsection solid 0
+        set kinematic viscosity = 0.01
         set tracer diffusivity model = immersed solid tanh
-        subsection immersed solid
-          subsection tanh levelset
-            set tracer diffusivity inside    = 1
-            set tracer diffusivity outside   = 1
-            set tracer diffusivity thickness = 1
-          end
+        subsection immersed solid tanh
+          set tracer diffusivity inside    = 1
+          set tracer diffusivity outside   = 1
+          set thickness                    = 1
         end
       end
     end
 
 * The ``tracer diffusivity inside`` parameter represents the desired diffusivity inside of the solid.
 
-* The ``tracer diffusivity outside`` parameter represents the desired diffusivity outside (or at the edge) of the solid. Setting it equal to the fluid diffusivity should provide a smooth transition.
+* The ``tracer diffusivity outside`` parameter represents the desired diffusivity outside (or at the edge) of the solid.
 
-* The ``tracer diffusivity thickness`` parameter represents thickness of the applied :math:`\tanh` function.
+* The ``thickness`` parameter represents thickness of the applied :math:`\tanh` function.
 
 .. _rheological_models:
 

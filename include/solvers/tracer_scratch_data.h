@@ -150,8 +150,8 @@ public:
   reinit(const typename DoFHandler<dim>::active_cell_iterator &cell,
          const VectorType                                     &current_solution,
          const std::vector<VectorType> &previous_solutions,
-         Function<dim>                 *source_function,
-         Function<dim>                 *levelset_function)
+         const Function<dim>           *source_function,
+         const Function<dim>           *levelset_function)
   {
     this->fe_values_tracer.reinit(cell);
 

@@ -18,7 +18,7 @@ Initial refinement around IB particles - Step : 3 of 3
    Number of degrees of freedom: 1719
    Volume of triangulation:      0.5
    Number of tracer degrees of freedom: 573
-Tracer statistics : 
+Tracer statistics :
 	     Min : 0
 	     Max : 0.7887
 	 Average : 0.01367
@@ -27,3 +27,8 @@ Tracer statistics :
 *****************************
 Steady iteration:        1/1
 *****************************
+Tracer statistics :
+	     Min : -0.0071
+	     Max : 1.007
+	 Average : 0.441
+	 Std-Dev : 0.3645

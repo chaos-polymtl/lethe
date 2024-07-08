@@ -4939,7 +4939,7 @@ GLSSharpNavierStokesSolver<dim>::solve()
           this->iterate();
         }
 
-      this->postprocess_fd(false);
+      this->postprocess(false);
 
       if (this->simulation_parameters.particlesParameters->calculate_force_ib)
         force_on_ib();

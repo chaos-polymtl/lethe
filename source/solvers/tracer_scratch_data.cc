@@ -63,7 +63,6 @@ TracerScratchData<dim>::calculate_physical_properties()
 
   switch (properties_manager.get_number_of_fluids())
     {
-      // One fluid
       case 1:
         {
           // In this case, only viscosity is the required property
@@ -72,7 +71,6 @@ TracerScratchData<dim>::calculate_physical_properties()
           diffusivity_model->vector_value(fields, tracer_diffusivity);
           break;
         }
-        // Two fluids
       case 2:
         {
           // In this case, we need both density and viscosity
