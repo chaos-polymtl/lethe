@@ -18,29 +18,33 @@ The following table shows an example of the output of the timer:
 
 .. code-block:: text
 
-   +---------------------------------------------+------------+------------+
-   | Total wallclock time elapsed since start    |      11.5s |            |
-   |                                             |            |            |
-   | Section                         | no. calls |  wall time | % of total |
-   +---------------------------------+-----------+------------+------------+
-   | assemble_rhs                    |         4 |      2.28s |        20% |
-   | assemble_system                 |         4 |      7.78s |        68% |
-   | output                          |         2 |      1.21s |        11% |
-   | setup_ILU                       |         4 |     0.164s |       1.4% |
-   | solve_linear_system             |         4 |    0.0812s |      0.71% |
-   +---------------------------------+-----------+------------+------------+
+    +---------------------------------------------------------+------------+------------+
+    | Total wallclock time elapsed since start                |      1.11s |            |
+    |                                                         |            |            |
+    | Section                                     | no. calls |  wall time | % of total |
+    +---------------------------------------------+-----------+------------+------------+
+    | Assemble RHS                                |         9 |     0.275s |        25% |
+    | Assemble matrix                             |         7 |     0.293s |        26% |
+    | Calculate and output norms after Newton its |         8 |    0.0135s |       1.2% |
+    | Output VTU                                  |         2 |    0.0491s |       4.4% |
+    | Read mesh and manifolds                     |         1 |   0.00733s |      0.66% |
+    | Setup DOFs                                  |         1 |    0.0144s |       1.3% |
+    | Setup ILU                                   |         7 |    0.0801s |       7.2% |
+    | Solve linear system                         |         7 |     0.369s |        33% |
+    +---------------------------------------------+-----------+------------+------------+
 
-For every block of functions, Lethe reports the number of calls, the wall time spent and the percentage of time spent in the function. It is important to monitor this when running a simulation.
+For every block of functions, Lethe reports the number of calls, the wall time spent and the percentage of time spent in the function. It is important to monitor this when running a simulation. The most important ones from a user perspective in most of the simulations are:
 
-* ``assemble_rhs`` refers to the assembly of the right-hand side of the equation, that is the residual of the equation.
+* ``Assemble RHS`` refers to the assembly of the right-hand side of the equation, that is the residual of the equation.
 
-* ``assemble_system`` refers to the time spent assembling the matrix associated with the equation.
+* ``Assemble matrix`` refers to the time spent assembling the matrix associated with the equation.
 
-* ``output`` refers to the output of the ``.vtu``, ``.pvtu`` and ``.pvd`` files.
+* ``Output VTU`` refers to the output of the ``.vtu``, ``.pvtu`` and ``.pvd`` files.
 
-* ``setup_ILU`` or ``setup_AMG`` describe the time spent to set-up the preconditioner.
+* ``Read mesh and manifolds`` refers to the time it takes to create a ``dealii`` triangulation or read a ``gmsh`` one, and attach corresponding manifolds.
 
-* ``solve_linear_system`` refers to the time spent solving the linear system of equations, without the time required to assemble the preconditioner.
+* ``Setup ILU`` describe the time spent to set-up the preconditioner. Other options are ``Setup AMG`` and ``Setup GMG``.
 
+* ``Solve linear system`` refers to the time spent solving the linear system of equations, without the time required to assemble the preconditioner.
 
 Depending on the type of simulation, there may be other categories that appear in the timer. This is useful to monitor the functions responsible for taking up most of the simulation time. 

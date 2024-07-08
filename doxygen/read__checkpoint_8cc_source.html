@@ -96,7 +96,7 @@ $(function() {
 <div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;  std::shared_ptr&lt;<a class="code" href="classInsertion.html">Insertion&lt;dim&gt;</a>&gt;                         &amp;insertion_object,</div>
 <div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;  std::vector&lt;std::shared_ptr&lt;<a class="code" href="classSerialSolid.html">SerialSolid&lt;dim - 1, dim&gt;</a>&gt;&gt; &amp;solid_surfaces)</div>
 <div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;{</div>
-<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;  TimerOutput::Scope timer(computing_timer, <span class="stringliteral">&quot;read_checkpoint&quot;</span>);</div>
+<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;  TimerOutput::Scope timer(computing_timer, <span class="stringliteral">&quot;Read checkpoint&quot;</span>);</div>
 <div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;  std::string        prefix = parameters.<a class="code" href="classDEMSolverParameters.html#a518770fc42973abc4721c1ec7c5cac7c">restart</a>.<a class="code" href="structParameters_1_1Restart.html#a37b14091bf2827a90e3f279f4e191b44">filename</a>;</div>
 <div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;  simulation_control-&gt;read(prefix);</div>
 <div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;  particles_pvdhandler.<a class="code" href="classPVDHandler.html#a6a070f0f774ba16e46d88616e6b49569">read</a>(prefix);</div>
