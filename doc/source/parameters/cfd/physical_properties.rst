@@ -104,7 +104,7 @@ Physical Properties
 
     where :math:`F_B` denotes the buoyant force source term, :math:`\beta` is the thermal expansion coefficient, :math:`T` is temperature, and :math:`T_\text{ref}` is the reference temperature. This is only used when a constant thermal expansion model is used.
 
-  * The ``tracer diffusivity model`` specifies the model used to calculate the tracer diffusivity. At the moment, a constant tracer diffusivity and level set based :math:`\tanh` model are supported. The ``immersed solid tanh`` model is intended to be used with immersed solids with the ``lethe-fluid-sharp`` executable as a way to set diffusivity inside solids as wells (described more in `Immersed Solid Models`_).
+  * The ``tracer diffusivity model`` specifies the model used to calculate the tracer diffusivity. At the moment, a constant tracer diffusivity and level set based :math:`\tanh` model are supported. The ``immersed solid tanh`` model is intended to be used with immersed solids with the ``lethe-fluid-sharp`` executable as a way to set diffusivity inside solids as well (described more in `Immersed Solid Models`_).
 
   * The ``tracer diffusivity`` parameter is the diffusivity coefficient of the tracer in units of :math:`\text{Length}^{2} \cdot \text{Time}^{-1}` . In SI, this is :math:`\text{m}^{2} \cdot \text{s}^{-1}`.
 
