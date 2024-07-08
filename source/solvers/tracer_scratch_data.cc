@@ -93,12 +93,12 @@ TracerScratchData<dim>::calculate_physical_properties()
                   // complete is not finished Blend the physical properties
                   // using the VOF field
                   // for (unsigned int q = 0; q < this->n_q_points; ++q)
-                    // {
-                      //          tracer_diffusivity[q] =
-                      //            calculate_point_property(this->phase_values[q],
-                      //                                     this->density_0[q],
-                      //                                     this->density_1[q]);
-                    // }
+                  // {
+                  //          tracer_diffusivity[q] =
+                  //            calculate_point_property(this->phase_values[q],
+                  //                                     this->density_0[q],
+                  //                                     this->density_1[q]);
+                  // }
                   break;
                 }
               default:
