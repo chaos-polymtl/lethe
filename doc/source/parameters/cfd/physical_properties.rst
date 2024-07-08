@@ -235,7 +235,11 @@ Immersed solid models can be used to affect specific behavior to immersed solids
 
 The immersed solid properties models are based on the signed distance function of the immersed solids, and therefore depend on the depth inside the solid. The intent behind these models is to define physical properties in the fluid and solid phases as well as the transitive regions.
 
-The ``tracer diffusivity model`` parameter sets which diffusivity model is used. The default ``tracer diffusivity model`` is ``constant``, which uses a constant ``tracer diffusivity``. The alternative is ``immersed solid tanh``, whose parameters are defined as such:
+The ``tracer diffusivity model`` parameter sets which diffusivity model is used. The default ``tracer diffusivity model`` is ``constant``, which uses a constant ``tracer diffusivity``. The alternative is ``immersed solid tanh``, whose parameters are defined as such, with :math:`D` being the tracer diffusivity, :math:`\lambda` being signed distance and :math:`t` the thickness:
+
+.. math::
+
+  D(\lambda) = D_\text{inside} + \left(D_\text{outside} - D_\text{inside}\right) \left( 0.5 + 0.5 \tanh \left(\frac{\lambda}{t}\right)\right)
 
 .. code-block:: text
 
