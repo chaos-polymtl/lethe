@@ -1160,7 +1160,8 @@ namespace Parameters
       //-------------------
       op = prm.get("tracer diffusivity model");
       if (op == "immersed solid tanh")
-        tracer_diffusivity_model = TracerDiffusivityModel::immersed_boundary_tanh;
+        tracer_diffusivity_model =
+          TracerDiffusivityModel::immersed_boundary_tanh;
       else
         tracer_diffusivity_model = TracerDiffusivityModel::constant;
       tracer_diffusivity = prm.get_double("tracer diffusivity");
