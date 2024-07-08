@@ -9,6 +9,7 @@ class LogUtilities:
         log_data_type = ['time', 'dem_walltime']
         self.log_dataframe = pd.DataFrame(columns=log_data_type)
         self.log_dataframe['time'] = self.get_times()
+        self.total_walltime = []
 
     def get_times(self):
         # Find the time in the log file through the keyword "Transient" and some hardcoded indices
@@ -40,6 +41,7 @@ class LogUtilities:
                     walltime.append(float(line[n_char_0:n_char_0 + n_char].strip()))
 
         self.log_dataframe['dem_walltime'] = walltime
+        self.total_walltime.append(walltime[-1])
 
         print("DEM time monitoring done.")
 

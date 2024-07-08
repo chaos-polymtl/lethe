@@ -220,3 +220,17 @@ class PlateDischargeUtilities:
     def linear_regression(self, x, y):
         slope, intercept, r_value, p_value, std_err = sc.stats.linregress(x, y)
         return slope, intercept, r_value
+
+
+    def theoretical_angle_of_repose(self):
+        dp = self.dp * 1000 # mm
+        mu_f_pp = self.prm_dict['friction coefficient particles']
+        mu_f_pw = self.prm_dict['friction coefficient wall']
+        mu_r_pp = self.prm_dict['rolling friction particles'] * dp
+        mu_r_pw = self.prm_dict['rolling friction wall'] * dp
+
+        self.theoritical_angle = (68.61 * mu_f_pp ** 0.27 * mu_f_pw ** 0.22 *
+                                  mu_r_pp ** 0.06 * mu_r_pw ** 0.12 * dp ** -0.2)
+        print(self.theoritical_angle)
+
+        print(f"Theoretical angle of repose computing done.")
