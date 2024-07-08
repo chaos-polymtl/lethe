@@ -402,7 +402,9 @@ Results
 
 The simulations should look like the following video:
 
-[WIP: Add video here]
+.. raw:: html
+
+  <p align="center"><iframe width="800" height="450" src="https://www.youtube.com/embed/awRXtTLyM94?si=E1uzfONZ1QhQuN2T" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 
 
 Post-Processing Code
