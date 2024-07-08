@@ -296,30 +296,16 @@ namespace Parameters
   };
 
   /**
-   * @brief Tanh Levelset physical properties model to handle properties close to solid surfaces.
+   * @brief Tanh-based physical properties model to handle properties in/out of immersed solids
    */
-  struct TanhLevelsetParameters
+  struct ImmersedSolidTanhParameters
   {
     // Properties that apply to the tracer physics with immersed solids
     double tracer_diffusivity_inside;
     double tracer_diffusivity_outside;
-    double tracer_diffusivity_thickness;
+    double thickness;
 
     static void
-    declare_parameters(ParameterHandler &prm);
-    void
-    parse_parameters(ParameterHandler &prm, const Dimensionality dimensions);
-  };
-
-  /**
-   * @brief ImmersedSolidPhysicalProperties - Defines the parameters for immersed solids
-   * and more specifically how they behave close to their interface.
-   */
-  struct ImmersedSolidPhysicalProperties
-  {
-    TanhLevelsetParameters tanh_levelset_parameters;
-
-    void
     declare_parameters(ParameterHandler &prm);
     void
     parse_parameters(ParameterHandler &prm, const Dimensionality dimensions);
@@ -464,12 +450,12 @@ namespace Parameters
     enum class TracerDiffusivityModel
     {
       constant,
-      tanh_levelset
+      immersed_boundary_tanh
     } tracer_diffusivity_model;
 
-    // Struct that containts the parameters to handle physical properties when
+    // Struct that contains the parameters to handle physical properties when
     // immersed solids models are used
-    ImmersedSolidPhysicalProperties immersed_solid_parameters;
+    ImmersedSolidTanhParameters immersed_solid_tanh_parameters;
 
     // Linear thermal conductivity parameters: k = k_A0 + k_A1 * T
     double k_A0;

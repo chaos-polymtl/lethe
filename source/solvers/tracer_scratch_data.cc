@@ -61,91 +61,41 @@ TracerScratchData<dim>::calculate_physical_properties()
   if (properties_manager.field_is_required(field::levelset))
     set_field_vector(field::levelset, this->sdf_values, this->fields);
 
-  switch (properties_manager.get_number_of_solids())
+  switch (properties_manager.get_number_of_fluids())
     {
-      // No solid
-      case 0:
-        {
-          switch (properties_manager.get_number_of_fluids())
-            {
-              // One fluid
-              case 1:
-                {
-                  // In this case, only viscosity is the required property
-                  const auto diffusivity_model =
-                    properties_manager.get_tracer_diffusivity();
-                  diffusivity_model->vector_value(fields, tracer_diffusivity);
-                  break;
-                }
-                // Two fluids
-              case 2:
-                {
-                  // In this case, we need both density and viscosity
-                  const auto diffusivity_models =
-                    properties_manager.get_tracer_diffusivity_vector();
-
-                  diffusivity_models[0]->vector_value(fields,
-                                                      tracer_diffusivity_0);
-                  diffusivity_models[1]->vector_value(fields,
-                                                      tracer_diffusivity_1);
-
-                  // TODO Incomplete at the present time because the tracer VOF
-                  // complete is not finished Blend the physical properties
-                  // using the VOF field
-                  // for (unsigned int q = 0; q < this->n_q_points; ++q)
-                  // {
-                  //          tracer_diffusivity[q] =
-                  //            calculate_point_property(this->phase_values[q],
-                  //                                     this->density_0[q],
-                  //                                     this->density_1[q]);
-                  // }
-                  break;
-                }
-              default:
-                throw std::runtime_error("Unsupported number of fluids (>2)");
-            }
-          break;
-        }
-        // One solid
+      // One fluid
       case 1:
         {
-          switch (properties_manager.get_number_of_fluids())
-            {
-              case 1:
-                {
-                  const auto diffusivity_model_fluid =
-                    properties_manager.get_tracer_diffusivity();
-                  const auto diffusivity_model_solid =
-                    properties_manager.get_tracer_diffusivity(0, 1);
+          // In this case, only viscosity is the required property
+          const auto diffusivity_model =
+            properties_manager.get_tracer_diffusivity();
+          diffusivity_model->vector_value(fields, tracer_diffusivity);
+          break;
+        }
+        // Two fluids
+      case 2:
+        {
+          // In this case, we need both density and viscosity
+          const auto diffusivity_models =
+            properties_manager.get_tracer_diffusivity_vector();
 
-                  diffusivity_model_fluid->vector_value(fields,
-                                                        tracer_diffusivity);
-                  diffusivity_model_solid->vector_value(fields,
-                                                        tracer_diffusivity_1);
+          diffusivity_models[0]->vector_value(fields, tracer_diffusivity_0);
+          diffusivity_models[1]->vector_value(fields, tracer_diffusivity_1);
 
-                  // We let the solid diffusivity model manage diffusivity
-                  // assignation close to the solid
-                  bool at_least_one_solid_q_point = false;
-                  for (unsigned int q = 0; q < this->n_q_points; ++q)
-                    if (sdf_values[q] < 0)
-                      {
-                        at_least_one_solid_q_point = true;
-                        break;
-                      }
-
-                  if (at_least_one_solid_q_point)
-                    for (unsigned int q = 0; q < this->n_q_points; ++q)
-                      tracer_diffusivity[q] = tracer_diffusivity_1[q];
-                  break;
-                }
-              default:
-                throw std::runtime_error(
-                  "Unsupported number of fluids and solids (1 solid and >1 fluid)");
-            }
+          // TODO Incomplete at the present time because the tracer VOF
+          // complete is not finished Blend the physical properties
+          // using the VOF field
+          // for (unsigned int q = 0; q < this->n_q_points; ++q)
+          // {
+          //          tracer_diffusivity[q] =
+          //            calculate_point_property(this->phase_values[q],
+          //                                     this->density_0[q],
+          //                                     this->density_1[q]);
+          // }
           break;
         }
       default:
-        throw std::runtime_error("Unsupported number of solids (>1)");
+        throw std::runtime_error("Unsupported number of fluids (>2)");
     }
 }
 
