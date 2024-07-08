@@ -1123,6 +1123,9 @@ GLSNavierStokesSolver<dim>::set_initial_condition_fd(
   Parameters::InitialConditionType initial_condition_type,
   bool                             restart)
 {
+  if (this->simulation_parameters.timer.type == Parameters::Timer::Type::end)
+    TimerOutput::Scope t(this->computing_timer, "Set initial conditions");
+
   if (restart)
     {
       this->pcout << "************************" << std::endl;
@@ -1608,7 +1611,15 @@ GLSNavierStokesSolver<dim>::solve_system_GMRES(const bool   initial_step,
                   << solver_control.last_value() << std::endl;
               }
           }
+
+          this->computing_timer.enter_subsection(
+            "Distribute constraints after linear solve");
+
           constraints_used.distribute(completely_distributed_solution);
+
+          this->computing_timer.leave_subsection(
+            "Distribute constraints after linear solve");
+
           auto &newton_update = this->newton_update;
           newton_update       = completely_distributed_solution;
           success             = true;
@@ -1784,12 +1795,16 @@ template <int dim>
 void
 GLSNavierStokesSolver<dim>::solve()
 {
+  this->computing_timer.enter_subsection("Read mesh and manifolds");
+
   read_mesh_and_manifolds(
     *this->triangulation,
     this->simulation_parameters.mesh,
     this->simulation_parameters.manifolds_parameters,
     this->simulation_parameters.restart_parameters.restart,
     this->simulation_parameters.boundary_conditions);
+
+  this->computing_timer.leave_subsection("Read mesh and manifolds");
 
   this->setup_dofs();
   this->enable_dynamic_zero_constraints_fd();

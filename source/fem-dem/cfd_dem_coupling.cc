@@ -207,7 +207,7 @@ template <int dim>
 void
 CFDDEMSolver<dim>::write_checkpoint()
 {
-  TimerOutput::Scope timer(this->computing_timer, "write_checkpoint");
+  TimerOutput::Scope timer(this->computing_timer, "Write checkpoint");
 
   std::string prefix =
     this->simulation_parameters.simulation_control.output_folder +
@@ -290,7 +290,7 @@ template <int dim>
 void
 CFDDEMSolver<dim>::read_checkpoint()
 {
-  TimerOutput::Scope timer(this->computing_timer, "read_checkpoint");
+  TimerOutput::Scope timer(this->computing_timer, "Read checkpoint");
   std::string        prefix =
     this->simulation_parameters.simulation_control.output_folder +
     this->simulation_parameters.restart_parameters.filename;

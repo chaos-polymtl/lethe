@@ -15,7 +15,7 @@ read_checkpoint(
   std::shared_ptr<Insertion<dim>>                         &insertion_object,
   std::vector<std::shared_ptr<SerialSolid<dim - 1, dim>>> &solid_surfaces)
 {
-  TimerOutput::Scope timer(computing_timer, "read_checkpoint");
+  TimerOutput::Scope timer(computing_timer, "Read checkpoint");
   std::string        prefix = parameters.restart.filename;
   simulation_control->read(prefix);
   particles_pvdhandler.read(prefix);

@@ -17,7 +17,7 @@ write_checkpoint(
   const ConditionalOStream                                &pcout,
   MPI_Comm                                                &mpi_communicator)
 {
-  TimerOutput::Scope timer(computing_timer, "write_checkpoint");
+  TimerOutput::Scope timer(computing_timer, "Write checkpoint");
 
   pcout << "Writing restart file" << std::endl;
 

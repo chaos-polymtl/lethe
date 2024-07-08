@@ -3,6 +3,12 @@
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Master] - 2024-07-08
+
+### Changed
+
+- MINOR  The timer output for the lethe-fluid and lethe-fluid-matrix-free applications contains now more detailed elements. Including post-processing capabilities that were not timed, the time spent in reading mesh and manifolds, and setting the initial conditions. [#1187](https://github.com/chaos-polymtl/lethe/pull/1187) 
+
 ## [Master] - 2024-07-05
 
 ### Changed
