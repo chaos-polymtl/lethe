@@ -722,14 +722,28 @@ template <int dim, int spacedim>
 void
 SolidBase<dim, spacedim>::write_checkpoint(std::string prefix)
 {
-#if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 4)
-  parallel::distributed::
-    SolutionTransfer<dim, GlobalVectorType, DoFHandler<dim, spacedim>>
-      system_trans_vectors(this->displacement_dh);
-#else
+  // First manage the serialization of the particle information
+  // The particles are attached to the background triangulation and not
+  // the solid triangulation. Consequently, they only need to be prepared
+  // for serialization and will be serialized when the background triangulation
+  // itself is serialized by the main solver.
+  std::string                   prefix_particles = prefix + "_particles";
+  std::ostringstream            oss;
+  boost::archive::text_oarchive oa(oss, boost::archive::no_header);
+  oa << *(this->solid_particle_handler);
+
+  // Write additional particle information for deserialization
+  std::string   particle_filename = prefix + ".particles";
+  std::ofstream output(particle_filename.c_str());
+  output << oss.str() << std::endl;
+
+  //   Prepare particle handler for serialization
+  this->solid_particle_handler->prepare_for_serialization();
+
+  // Prepare serialization of the solid triangulation which is
+  // only used for visualization purposes
   parallel::distributed::SolutionTransfer<dim, GlobalVectorType, spacedim>
     system_trans_vectors(this->displacement_dh);
-#endif
 
   std::vector<const GlobalVectorType *> sol_set_transfer;
   displacement_relevant = displacement;
@@ -773,14 +787,8 @@ SolidBase<dim, spacedim>::read_checkpoint(std::string prefix)
   std::vector<GlobalVectorType *> x_system(1);
   x_system[0] = &(displacement);
 
-#if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 4)
-  parallel::distributed::
-    SolutionTransfer<dim, GlobalVectorType, DoFHandler<dim, spacedim>>
-      system_trans_vectors(this->displacement_dh);
-#else
   parallel::distributed::SolutionTransfer<dim, GlobalVectorType, spacedim>
     system_trans_vectors(this->displacement_dh);
-#endif
 
   system_trans_vectors.deserialize(x_system);
   displacement_relevant = displacement;
@@ -791,8 +799,28 @@ SolidBase<dim, spacedim>::read_checkpoint(std::string prefix)
   if (!param->solid_mesh.simplex)
     move_solid_triangulation_with_displacement();
 
-  // We did not checkpoint particles, we re-create them from scratch
-  setup_particles();
+  // Gather particle serialization information and deserialize them
+  std::string   particle_filename = prefix + ".particles";
+  std::ifstream input(particle_filename.c_str());
+  AssertThrow(input, ExcFileNotOpen(particle_filename));
+
+  std::string buffer;
+  std::getline(input, buffer);
+  std::istringstream            iss(buffer);
+  boost::archive::text_iarchive ia(iss, boost::archive::no_header);
+
+
+  // At this stage, the pointer for the particle handler has not been allocated
+  // it thus needs to be done by calling the setup
+  // TODO, this function should be called in the constructor
+  this->setup_particles_handler();
+  ia >> *(this->solid_particle_handler);
+
+  this->solid_particle_handler->deserialize();
+
+  // Number of particles is reset to the number of particles in the
+  // solid_particle_handler after deserialization
+  initial_number_of_particles = solid_particle_handler->n_global_particles();
 }
 
 
