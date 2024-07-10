@@ -121,8 +121,8 @@ public:
    *
    * @param[in] p_tracer_diffusivity_outside Diffusivity outside the solid
    * @param[in] p_tracer_diffusivity_inside Diffusivity inside the solid
-   * @param[in] p_thickness Thickness of the tanh function used to smooth the property
-   * jump
+   * @param[in] p_thickness Thickness of the tanh function used to smooth the
+   * property jump
    */
   TanhLevelsetTracerDiffusivity(const double p_tracer_diffusivity_outside,
                                 const double p_tracer_diffusivity_inside,
@@ -149,7 +149,7 @@ public:
   {
     AssertThrow(field_values.find(field::levelset) != field_values.end(),
                 PhysicialPropertyModelFieldUndefined(
-                  "LevelsetDependentTracerDiffusivity", "levelset"));
+                  "TanhLevelsetTracerDiffusivity", "levelset"));
     double levelset = field_values.at(field::levelset);
 
     return tracer_diffusivity_inside +
@@ -171,7 +171,7 @@ public:
   {
     AssertThrow(field_vectors.find(field::levelset) != field_vectors.end(),
                 PhysicialPropertyModelFieldUndefined(
-                  "LevelsetDependentTracerDiffusivity", "levelset"));
+                  "TanhLevelsetTracerDiffusivity", "levelset"));
 
     const std::vector<double> &levelset_vec = field_vectors.at(field::levelset);
 
@@ -209,7 +209,7 @@ public:
       {
         AssertThrow(field_values.find(field::levelset) != field_values.end(),
                     PhysicialPropertyModelFieldUndefined(
-                      "LevelsetDependentTracerDiffusivity", "levelset"));
+                      "TanhLevelsetTracerDiffusivity", "levelset"));
         return numerical_jacobian(field_values, field::levelset);
       }
     else
@@ -233,10 +233,19 @@ public:
                   const field                                 id,
                   std::vector<double> &jacobian_vector) override
   {
-    AssertThrow(field_vectors.find(field::levelset) != field_vectors.end(),
-                PhysicialPropertyModelFieldUndefined(
-                  "LevelsetDependentTracerDiffusivity", "levelset"));
-    vector_numerical_jacobian(field_vectors, id, jacobian_vector);
+    if (id == field::levelset)
+      {
+        AssertThrow(field_vectors.find(field::levelset) != field_vectors.end(),
+                    PhysicialPropertyModelFieldUndefined(
+                      "TanhLevelsetTracerDiffusivity", "levelset"));
+        vector_numerical_jacobian(field_vectors, id, jacobian_vector);
+      }
+    else
+      {
+        unsigned int n_pts = jacobian_vector.size();
+        for (unsigned int i = 0; i < n_pts; ++i)
+          jacobian_vector[i] = 0.;
+      }
   };
 
 
