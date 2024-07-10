@@ -121,7 +121,7 @@ public:
    *
    * @param[in] p_tracer_diffusivity_outside Diffusivity outside the solid
    * @param[in] p_tracer_diffusivity_inside Diffusivity inside the solid
-   * @param[in] p_thickness Thickness of the tanh used to smooth the property
+   * @param[in] p_thickness Thickness of the tanh function used to smooth the property
    * jump
    */
   TanhLevelsetTracerDiffusivity(const double p_tracer_diffusivity_outside,
