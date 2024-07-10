@@ -221,14 +221,8 @@ MFNavierStokesPreconditionGMG<dim>::MFNavierStokesPreconditionGMG(
   , simulation_parameters(simulation_parameters)
   , dof_handler(dof_handler)
   , dof_handler_fe_q_iso_q1(dof_handler_fe_q_iso_q1)
-  , mg_setup_timer(MPI_COMM_WORLD,
-                   this->pcout,
-                   TimerOutput::never,
-                   TimerOutput::wall_times)
-  , mg_vmult_timer(MPI_COMM_WORLD,
-                   this->pcout,
-                   TimerOutput::never,
-                   TimerOutput::wall_times)
+  , mg_setup_timer(this->pcout, TimerOutput::never, TimerOutput::wall_times)
+  , mg_vmult_timer(this->pcout, TimerOutput::never, TimerOutput::wall_times)
 {
   if (this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
         .preconditioner == Parameters::LinearSolver::PreconditionerType::lsmg)
