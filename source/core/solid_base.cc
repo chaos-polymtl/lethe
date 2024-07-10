@@ -722,7 +722,7 @@ template <int dim, int spacedim>
 void
 SolidBase<dim, spacedim>::write_checkpoint(std::string prefix)
 {
-  // First manage the serialization of the particle information
+  // First, manage the serialization of the particle information.
   // The particles are attached to the background triangulation and not
   // the solid triangulation. Consequently, they only need to be prepared
   // for serialization and will be serialized when the background triangulation
