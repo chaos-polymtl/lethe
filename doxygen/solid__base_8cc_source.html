@@ -803,103 +803,131 @@ $(function() {
 <div class="line"><a name="l00722"></a><span class="lineno">  722</span>&#160;<span class="keywordtype">void</span></div>
 <div class="line"><a name="l00723"></a><span class="lineno"><a class="line" href="classSolidBase.html#a76e8a2bbcc379ab82b12932eae9baf0a">  723</a></span>&#160;<a class="code" href="classSolidBase.html#a76e8a2bbcc379ab82b12932eae9baf0a">SolidBase&lt;dim, spacedim&gt;::write_checkpoint</a>(std::string prefix)</div>
 <div class="line"><a name="l00724"></a><span class="lineno">  724</span>&#160;{</div>
-<div class="line"><a name="l00725"></a><span class="lineno">  725</span>&#160;<span class="preprocessor">#if (DEAL_II_VERSION_MAJOR &lt; 10 &amp;&amp; DEAL_II_VERSION_MINOR &lt; 4)</span></div>
-<div class="line"><a name="l00726"></a><span class="lineno">  726</span>&#160;  parallel::distributed::</div>
-<div class="line"><a name="l00727"></a><span class="lineno">  727</span>&#160;    SolutionTransfer&lt;dim, GlobalVectorType, DoFHandler&lt;dim, spacedim&gt;&gt;</div>
-<div class="line"><a name="l00728"></a><span class="lineno">  728</span>&#160;      system_trans_vectors(this-&gt;displacement_dh);</div>
-<div class="line"><a name="l00729"></a><span class="lineno">  729</span>&#160;<span class="preprocessor">#else</span></div>
-<div class="line"><a name="l00730"></a><span class="lineno">  730</span>&#160;  parallel::distributed::SolutionTransfer&lt;dim, GlobalVectorType, spacedim&gt;</div>
-<div class="line"><a name="l00731"></a><span class="lineno">  731</span>&#160;    system_trans_vectors(this-&gt;displacement_dh);</div>
-<div class="line"><a name="l00732"></a><span class="lineno">  732</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="line"><a name="l00733"></a><span class="lineno">  733</span>&#160; </div>
-<div class="line"><a name="l00734"></a><span class="lineno">  734</span>&#160;  std::vector&lt;const GlobalVectorType *&gt; sol_set_transfer;</div>
-<div class="line"><a name="l00735"></a><span class="lineno">  735</span>&#160;  displacement_relevant = displacement;</div>
-<div class="line"><a name="l00736"></a><span class="lineno">  736</span>&#160;  sol_set_transfer.push_back(&amp;displacement_relevant);</div>
-<div class="line"><a name="l00737"></a><span class="lineno">  737</span>&#160; </div>
-<div class="line"><a name="l00738"></a><span class="lineno">  738</span>&#160;  system_trans_vectors.prepare_for_serialization(sol_set_transfer);</div>
+<div class="line"><a name="l00725"></a><span class="lineno">  725</span>&#160;  <span class="comment">// First, manage the serialization of the particle information.</span></div>
+<div class="line"><a name="l00726"></a><span class="lineno">  726</span>&#160;  <span class="comment">// The particles are attached to the background triangulation and not</span></div>
+<div class="line"><a name="l00727"></a><span class="lineno">  727</span>&#160;  <span class="comment">// the solid triangulation. Consequently, they only need to be prepared</span></div>
+<div class="line"><a name="l00728"></a><span class="lineno">  728</span>&#160;  <span class="comment">// for serialization and will be serialized when the background triangulation</span></div>
+<div class="line"><a name="l00729"></a><span class="lineno">  729</span>&#160;  <span class="comment">// itself is serialized by the main solver.</span></div>
+<div class="line"><a name="l00730"></a><span class="lineno">  730</span>&#160;  std::string                   prefix_particles = prefix + <span class="stringliteral">&quot;_particles&quot;</span>;</div>
+<div class="line"><a name="l00731"></a><span class="lineno">  731</span>&#160;  std::ostringstream            oss;</div>
+<div class="line"><a name="l00732"></a><span class="lineno">  732</span>&#160;  boost::archive::text_oarchive oa(oss, boost::archive::no_header);</div>
+<div class="line"><a name="l00733"></a><span class="lineno">  733</span>&#160;  oa &lt;&lt; *(this-&gt;solid_particle_handler);</div>
+<div class="line"><a name="l00734"></a><span class="lineno">  734</span>&#160; </div>
+<div class="line"><a name="l00735"></a><span class="lineno">  735</span>&#160;  <span class="comment">// Write additional particle information for deserialization</span></div>
+<div class="line"><a name="l00736"></a><span class="lineno">  736</span>&#160;  std::string   particle_filename = prefix + <span class="stringliteral">&quot;.particles&quot;</span>;</div>
+<div class="line"><a name="l00737"></a><span class="lineno">  737</span>&#160;  std::ofstream output(particle_filename.c_str());</div>
+<div class="line"><a name="l00738"></a><span class="lineno">  738</span>&#160;  output &lt;&lt; oss.str() &lt;&lt; std::endl;</div>
 <div class="line"><a name="l00739"></a><span class="lineno">  739</span>&#160; </div>
-<div class="line"><a name="l00740"></a><span class="lineno">  740</span>&#160;  std::string triangulationName = prefix + <span class="stringliteral">&quot;.triangulation&quot;</span>;</div>
-<div class="line"><a name="l00741"></a><span class="lineno">  741</span>&#160;  this-&gt;solid_tria.get()-&gt;save(prefix + <span class="stringliteral">&quot;.triangulation&quot;</span>);</div>
-<div class="line"><a name="l00742"></a><span class="lineno">  742</span>&#160;}</div>
-<div class="line"><a name="l00743"></a><span class="lineno">  743</span>&#160; </div>
-<div class="line"><a name="l00744"></a><span class="lineno">  744</span>&#160;<span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim, <span class="keywordtype">int</span> spacedim&gt;</div>
-<div class="line"><a name="l00745"></a><span class="lineno">  745</span>&#160;<span class="keywordtype">void</span></div>
-<div class="line"><a name="l00746"></a><span class="lineno"><a class="line" href="classSolidBase.html#a7b7cc0d95af40cb2e1148cf37d40e7a9">  746</a></span>&#160;<a class="code" href="classSolidBase.html#a7b7cc0d95af40cb2e1148cf37d40e7a9">SolidBase&lt;dim, spacedim&gt;::read_checkpoint</a>(std::string prefix)</div>
-<div class="line"><a name="l00747"></a><span class="lineno">  747</span>&#160;{</div>
-<div class="line"><a name="l00748"></a><span class="lineno">  748</span>&#160;  <span class="comment">// Setup an un-refined triangulation before loading if we have a fully</span></div>
-<div class="line"><a name="l00749"></a><span class="lineno">  749</span>&#160;  <span class="comment">// distributed triangulation. If we have a fully distributed triangulation,</span></div>
-<div class="line"><a name="l00750"></a><span class="lineno">  750</span>&#160;  <span class="comment">// nothing should be done to setup the triangulation since it will be fully</span></div>
-<div class="line"><a name="l00751"></a><span class="lineno">  751</span>&#160;  <span class="comment">// generated during the restart process.</span></div>
-<div class="line"><a name="l00752"></a><span class="lineno">  752</span>&#160;  <span class="keywordflow">if</span> (!param-&gt;solid_mesh.simplex)</div>
-<div class="line"><a name="l00753"></a><span class="lineno">  753</span>&#160;    setup_triangulation(<span class="keyword">true</span>);</div>
-<div class="line"><a name="l00754"></a><span class="lineno">  754</span>&#160; </div>
-<div class="line"><a name="l00755"></a><span class="lineno">  755</span>&#160;  <span class="comment">// Read the triangulation from the checkpoint</span></div>
-<div class="line"><a name="l00756"></a><span class="lineno">  756</span>&#160;  <span class="keyword">const</span> std::string filename = prefix + <span class="stringliteral">&quot;.triangulation&quot;</span>;</div>
-<div class="line"><a name="l00757"></a><span class="lineno">  757</span>&#160;  <span class="keywordflow">try</span></div>
-<div class="line"><a name="l00758"></a><span class="lineno">  758</span>&#160;    {</div>
-<div class="line"><a name="l00759"></a><span class="lineno">  759</span>&#160;      this-&gt;solid_tria-&gt;load(filename.c_str());</div>
-<div class="line"><a name="l00760"></a><span class="lineno">  760</span>&#160;    }</div>
-<div class="line"><a name="l00761"></a><span class="lineno">  761</span>&#160;  <span class="keywordflow">catch</span> (...)</div>
-<div class="line"><a name="l00762"></a><span class="lineno">  762</span>&#160;    {</div>
-<div class="line"><a name="l00763"></a><span class="lineno">  763</span>&#160;      AssertThrow(<span class="keyword">false</span>,</div>
-<div class="line"><a name="l00764"></a><span class="lineno">  764</span>&#160;                  ExcMessage(<span class="stringliteral">&quot;Cannot open snapshot mesh file or read the &quot;</span></div>
-<div class="line"><a name="l00765"></a><span class="lineno">  765</span>&#160;                             <span class="stringliteral">&quot;triangulation stored there.&quot;</span>));</div>
-<div class="line"><a name="l00766"></a><span class="lineno">  766</span>&#160;    }</div>
-<div class="line"><a name="l00767"></a><span class="lineno">  767</span>&#160; </div>
-<div class="line"><a name="l00768"></a><span class="lineno">  768</span>&#160;  <span class="comment">// Setup dof-handler for solid and displacement</span></div>
-<div class="line"><a name="l00769"></a><span class="lineno">  769</span>&#160;  solid_dh.distribute_dofs(*fe);</div>
-<div class="line"><a name="l00770"></a><span class="lineno">  770</span>&#160;  setup_displacement();</div>
-<div class="line"><a name="l00771"></a><span class="lineno">  771</span>&#160; </div>
-<div class="line"><a name="l00772"></a><span class="lineno">  772</span>&#160;  <span class="comment">// Read displacement vector</span></div>
-<div class="line"><a name="l00773"></a><span class="lineno">  773</span>&#160;  std::vector&lt;GlobalVectorType *&gt; x_system(1);</div>
-<div class="line"><a name="l00774"></a><span class="lineno">  774</span>&#160;  x_system[0] = &amp;(displacement);</div>
-<div class="line"><a name="l00775"></a><span class="lineno">  775</span>&#160; </div>
-<div class="line"><a name="l00776"></a><span class="lineno">  776</span>&#160;<span class="preprocessor">#if (DEAL_II_VERSION_MAJOR &lt; 10 &amp;&amp; DEAL_II_VERSION_MINOR &lt; 4)</span></div>
-<div class="line"><a name="l00777"></a><span class="lineno">  777</span>&#160;  parallel::distributed::</div>
-<div class="line"><a name="l00778"></a><span class="lineno">  778</span>&#160;    SolutionTransfer&lt;dim, GlobalVectorType, DoFHandler&lt;dim, spacedim&gt;&gt;</div>
-<div class="line"><a name="l00779"></a><span class="lineno">  779</span>&#160;      system_trans_vectors(this-&gt;displacement_dh);</div>
-<div class="line"><a name="l00780"></a><span class="lineno">  780</span>&#160;<span class="preprocessor">#else</span></div>
-<div class="line"><a name="l00781"></a><span class="lineno">  781</span>&#160;  parallel::distributed::SolutionTransfer&lt;dim, GlobalVectorType, spacedim&gt;</div>
-<div class="line"><a name="l00782"></a><span class="lineno">  782</span>&#160;    system_trans_vectors(this-&gt;displacement_dh);</div>
-<div class="line"><a name="l00783"></a><span class="lineno">  783</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="line"><a name="l00784"></a><span class="lineno">  784</span>&#160; </div>
-<div class="line"><a name="l00785"></a><span class="lineno">  785</span>&#160;  system_trans_vectors.deserialize(x_system);</div>
-<div class="line"><a name="l00786"></a><span class="lineno">  786</span>&#160;  displacement_relevant = displacement;</div>
-<div class="line"><a name="l00787"></a><span class="lineno">  787</span>&#160; </div>
-<div class="line"><a name="l00788"></a><span class="lineno">  788</span>&#160;  <span class="comment">// Reset triangulation position using displacement vector if is not a simplex</span></div>
-<div class="line"><a name="l00789"></a><span class="lineno">  789</span>&#160;  <span class="comment">// triangulation fullydistributed::triangulation store their displacement when</span></div>
-<div class="line"><a name="l00790"></a><span class="lineno">  790</span>&#160;  <span class="comment">// they are saved wheras distributed::triangulation do not.</span></div>
-<div class="line"><a name="l00791"></a><span class="lineno">  791</span>&#160;  <span class="keywordflow">if</span> (!param-&gt;solid_mesh.simplex)</div>
-<div class="line"><a name="l00792"></a><span class="lineno">  792</span>&#160;    move_solid_triangulation_with_displacement();</div>
-<div class="line"><a name="l00793"></a><span class="lineno">  793</span>&#160; </div>
-<div class="line"><a name="l00794"></a><span class="lineno">  794</span>&#160;  <span class="comment">// We did not checkpoint particles, we re-create them from scratch</span></div>
-<div class="line"><a name="l00795"></a><span class="lineno">  795</span>&#160;  setup_particles();</div>
-<div class="line"><a name="l00796"></a><span class="lineno">  796</span>&#160;}</div>
-<div class="line"><a name="l00797"></a><span class="lineno">  797</span>&#160; </div>
-<div class="line"><a name="l00798"></a><span class="lineno">  798</span>&#160; </div>
-<div class="line"><a name="l00799"></a><span class="lineno">  799</span>&#160;<span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim, <span class="keywordtype">int</span> spacedim&gt;</div>
-<div class="line"><a name="l00800"></a><span class="lineno">  800</span>&#160;<span class="keywordtype">void</span></div>
-<div class="line"><a name="l00801"></a><span class="lineno"><a class="line" href="classSolidBase.html#ac8bd2ffa327601876162a5d44d0b4d5b">  801</a></span>&#160;<a class="code" href="classSolidBase.html#ac8bd2ffa327601876162a5d44d0b4d5b">SolidBase&lt;dim, spacedim&gt;::setup_displacement</a>()</div>
-<div class="line"><a name="l00802"></a><span class="lineno">  802</span>&#160;{</div>
-<div class="line"><a name="l00803"></a><span class="lineno">  803</span>&#160;  displacement_dh.distribute_dofs(*this-&gt;displacement_fe);</div>
-<div class="line"><a name="l00804"></a><span class="lineno">  804</span>&#160;  locally_owned_dofs = displacement_dh.locally_owned_dofs();</div>
-<div class="line"><a name="l00805"></a><span class="lineno">  805</span>&#160;  locally_relevant_dofs =</div>
-<div class="line"><a name="l00806"></a><span class="lineno">  806</span>&#160;    DoFTools::extract_locally_relevant_dofs(displacement_dh);</div>
-<div class="line"><a name="l00807"></a><span class="lineno">  807</span>&#160; </div>
-<div class="line"><a name="l00808"></a><span class="lineno">  808</span>&#160;  displacement.reinit(locally_owned_dofs, mpi_communicator);</div>
-<div class="line"><a name="l00809"></a><span class="lineno">  809</span>&#160;  displacement_relevant.reinit(locally_owned_dofs,</div>
-<div class="line"><a name="l00810"></a><span class="lineno">  810</span>&#160;                               locally_relevant_dofs,</div>
-<div class="line"><a name="l00811"></a><span class="lineno">  811</span>&#160;                               mpi_communicator);</div>
+<div class="line"><a name="l00740"></a><span class="lineno">  740</span>&#160;  <span class="comment">//   Prepare particle handler for serialization</span></div>
+<div class="line"><a name="l00741"></a><span class="lineno">  741</span>&#160;  this-&gt;solid_particle_handler-&gt;prepare_for_serialization();</div>
+<div class="line"><a name="l00742"></a><span class="lineno">  742</span>&#160; </div>
+<div class="line"><a name="l00743"></a><span class="lineno">  743</span>&#160;  <span class="comment">// Prepare serialization of the solid triangulation which is</span></div>
+<div class="line"><a name="l00744"></a><span class="lineno">  744</span>&#160;  <span class="comment">// only used for visualization purposes</span></div>
+<div class="line"><a name="l00745"></a><span class="lineno">  745</span>&#160;  parallel::distributed::SolutionTransfer&lt;dim, GlobalVectorType, spacedim&gt;</div>
+<div class="line"><a name="l00746"></a><span class="lineno">  746</span>&#160;    system_trans_vectors(this-&gt;displacement_dh);</div>
+<div class="line"><a name="l00747"></a><span class="lineno">  747</span>&#160; </div>
+<div class="line"><a name="l00748"></a><span class="lineno">  748</span>&#160;  std::vector&lt;const GlobalVectorType *&gt; sol_set_transfer;</div>
+<div class="line"><a name="l00749"></a><span class="lineno">  749</span>&#160;  displacement_relevant = displacement;</div>
+<div class="line"><a name="l00750"></a><span class="lineno">  750</span>&#160;  sol_set_transfer.push_back(&amp;displacement_relevant);</div>
+<div class="line"><a name="l00751"></a><span class="lineno">  751</span>&#160; </div>
+<div class="line"><a name="l00752"></a><span class="lineno">  752</span>&#160;  system_trans_vectors.prepare_for_serialization(sol_set_transfer);</div>
+<div class="line"><a name="l00753"></a><span class="lineno">  753</span>&#160; </div>
+<div class="line"><a name="l00754"></a><span class="lineno">  754</span>&#160;  std::string triangulationName = prefix + <span class="stringliteral">&quot;.triangulation&quot;</span>;</div>
+<div class="line"><a name="l00755"></a><span class="lineno">  755</span>&#160;  this-&gt;solid_tria.get()-&gt;save(prefix + <span class="stringliteral">&quot;.triangulation&quot;</span>);</div>
+<div class="line"><a name="l00756"></a><span class="lineno">  756</span>&#160;}</div>
+<div class="line"><a name="l00757"></a><span class="lineno">  757</span>&#160; </div>
+<div class="line"><a name="l00758"></a><span class="lineno">  758</span>&#160;<span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim, <span class="keywordtype">int</span> spacedim&gt;</div>
+<div class="line"><a name="l00759"></a><span class="lineno">  759</span>&#160;<span class="keywordtype">void</span></div>
+<div class="line"><a name="l00760"></a><span class="lineno"><a class="line" href="classSolidBase.html#a7b7cc0d95af40cb2e1148cf37d40e7a9">  760</a></span>&#160;<a class="code" href="classSolidBase.html#a7b7cc0d95af40cb2e1148cf37d40e7a9">SolidBase&lt;dim, spacedim&gt;::read_checkpoint</a>(std::string prefix)</div>
+<div class="line"><a name="l00761"></a><span class="lineno">  761</span>&#160;{</div>
+<div class="line"><a name="l00762"></a><span class="lineno">  762</span>&#160;  <span class="comment">// Setup an un-refined triangulation before loading if we have a fully</span></div>
+<div class="line"><a name="l00763"></a><span class="lineno">  763</span>&#160;  <span class="comment">// distributed triangulation. If we have a fully distributed triangulation,</span></div>
+<div class="line"><a name="l00764"></a><span class="lineno">  764</span>&#160;  <span class="comment">// nothing should be done to setup the triangulation since it will be fully</span></div>
+<div class="line"><a name="l00765"></a><span class="lineno">  765</span>&#160;  <span class="comment">// generated during the restart process.</span></div>
+<div class="line"><a name="l00766"></a><span class="lineno">  766</span>&#160;  <span class="keywordflow">if</span> (!param-&gt;solid_mesh.simplex)</div>
+<div class="line"><a name="l00767"></a><span class="lineno">  767</span>&#160;    setup_triangulation(<span class="keyword">true</span>);</div>
+<div class="line"><a name="l00768"></a><span class="lineno">  768</span>&#160; </div>
+<div class="line"><a name="l00769"></a><span class="lineno">  769</span>&#160;  <span class="comment">// Read the triangulation from the checkpoint</span></div>
+<div class="line"><a name="l00770"></a><span class="lineno">  770</span>&#160;  <span class="keyword">const</span> std::string filename = prefix + <span class="stringliteral">&quot;.triangulation&quot;</span>;</div>
+<div class="line"><a name="l00771"></a><span class="lineno">  771</span>&#160;  <span class="keywordflow">try</span></div>
+<div class="line"><a name="l00772"></a><span class="lineno">  772</span>&#160;    {</div>
+<div class="line"><a name="l00773"></a><span class="lineno">  773</span>&#160;      this-&gt;solid_tria-&gt;load(filename.c_str());</div>
+<div class="line"><a name="l00774"></a><span class="lineno">  774</span>&#160;    }</div>
+<div class="line"><a name="l00775"></a><span class="lineno">  775</span>&#160;  <span class="keywordflow">catch</span> (...)</div>
+<div class="line"><a name="l00776"></a><span class="lineno">  776</span>&#160;    {</div>
+<div class="line"><a name="l00777"></a><span class="lineno">  777</span>&#160;      AssertThrow(<span class="keyword">false</span>,</div>
+<div class="line"><a name="l00778"></a><span class="lineno">  778</span>&#160;                  ExcMessage(<span class="stringliteral">&quot;Cannot open snapshot mesh file or read the &quot;</span></div>
+<div class="line"><a name="l00779"></a><span class="lineno">  779</span>&#160;                             <span class="stringliteral">&quot;triangulation stored there.&quot;</span>));</div>
+<div class="line"><a name="l00780"></a><span class="lineno">  780</span>&#160;    }</div>
+<div class="line"><a name="l00781"></a><span class="lineno">  781</span>&#160; </div>
+<div class="line"><a name="l00782"></a><span class="lineno">  782</span>&#160;  <span class="comment">// Setup dof-handler for solid and displacement</span></div>
+<div class="line"><a name="l00783"></a><span class="lineno">  783</span>&#160;  solid_dh.distribute_dofs(*fe);</div>
+<div class="line"><a name="l00784"></a><span class="lineno">  784</span>&#160;  setup_displacement();</div>
+<div class="line"><a name="l00785"></a><span class="lineno">  785</span>&#160; </div>
+<div class="line"><a name="l00786"></a><span class="lineno">  786</span>&#160;  <span class="comment">// Read displacement vector</span></div>
+<div class="line"><a name="l00787"></a><span class="lineno">  787</span>&#160;  std::vector&lt;GlobalVectorType *&gt; x_system(1);</div>
+<div class="line"><a name="l00788"></a><span class="lineno">  788</span>&#160;  x_system[0] = &amp;(displacement);</div>
+<div class="line"><a name="l00789"></a><span class="lineno">  789</span>&#160; </div>
+<div class="line"><a name="l00790"></a><span class="lineno">  790</span>&#160;  parallel::distributed::SolutionTransfer&lt;dim, GlobalVectorType, spacedim&gt;</div>
+<div class="line"><a name="l00791"></a><span class="lineno">  791</span>&#160;    system_trans_vectors(this-&gt;displacement_dh);</div>
+<div class="line"><a name="l00792"></a><span class="lineno">  792</span>&#160; </div>
+<div class="line"><a name="l00793"></a><span class="lineno">  793</span>&#160;  system_trans_vectors.deserialize(x_system);</div>
+<div class="line"><a name="l00794"></a><span class="lineno">  794</span>&#160;  displacement_relevant = displacement;</div>
+<div class="line"><a name="l00795"></a><span class="lineno">  795</span>&#160; </div>
+<div class="line"><a name="l00796"></a><span class="lineno">  796</span>&#160;  <span class="comment">// Reset triangulation position using displacement vector if is not a simplex</span></div>
+<div class="line"><a name="l00797"></a><span class="lineno">  797</span>&#160;  <span class="comment">// triangulation fullydistributed::triangulation store their displacement when</span></div>
+<div class="line"><a name="l00798"></a><span class="lineno">  798</span>&#160;  <span class="comment">// they are saved wheras distributed::triangulation do not.</span></div>
+<div class="line"><a name="l00799"></a><span class="lineno">  799</span>&#160;  <span class="keywordflow">if</span> (!param-&gt;solid_mesh.simplex)</div>
+<div class="line"><a name="l00800"></a><span class="lineno">  800</span>&#160;    move_solid_triangulation_with_displacement();</div>
+<div class="line"><a name="l00801"></a><span class="lineno">  801</span>&#160; </div>
+<div class="line"><a name="l00802"></a><span class="lineno">  802</span>&#160;  <span class="comment">// Gather particle serialization information and deserialize them</span></div>
+<div class="line"><a name="l00803"></a><span class="lineno">  803</span>&#160;  std::string   particle_filename = prefix + <span class="stringliteral">&quot;.particles&quot;</span>;</div>
+<div class="line"><a name="l00804"></a><span class="lineno">  804</span>&#160;  std::ifstream input(particle_filename.c_str());</div>
+<div class="line"><a name="l00805"></a><span class="lineno">  805</span>&#160;  AssertThrow(input, ExcFileNotOpen(particle_filename));</div>
+<div class="line"><a name="l00806"></a><span class="lineno">  806</span>&#160; </div>
+<div class="line"><a name="l00807"></a><span class="lineno">  807</span>&#160;  std::string buffer;</div>
+<div class="line"><a name="l00808"></a><span class="lineno">  808</span>&#160;  std::getline(input, buffer);</div>
+<div class="line"><a name="l00809"></a><span class="lineno">  809</span>&#160;  std::istringstream            iss(buffer);</div>
+<div class="line"><a name="l00810"></a><span class="lineno">  810</span>&#160;  boost::archive::text_iarchive ia(iss, boost::archive::no_header);</div>
+<div class="line"><a name="l00811"></a><span class="lineno">  811</span>&#160; </div>
 <div class="line"><a name="l00812"></a><span class="lineno">  812</span>&#160; </div>
-<div class="line"><a name="l00813"></a><span class="lineno">  813</span>&#160;  displacement = 0;</div>
-<div class="line"><a name="l00814"></a><span class="lineno">  814</span>&#160;}</div>
-<div class="line"><a name="l00815"></a><span class="lineno">  815</span>&#160; </div>
-<div class="line"><a name="l00816"></a><span class="lineno">  816</span>&#160; </div>
-<div class="line"><a name="l00817"></a><span class="lineno">  817</span>&#160;<span class="comment">// Pre-compile the 2D, 3D and the 2D in 3D versions with the types that can</span></div>
-<div class="line"><a name="l00818"></a><span class="lineno">  818</span>&#160;<span class="comment">// occur</span></div>
-<div class="line"><a name="l00819"></a><span class="lineno">  819</span>&#160;<span class="keyword">template</span> <span class="keyword">class </span><a class="code" href="classSolidBase.html">SolidBase&lt;2&gt;</a>;</div>
-<div class="line"><a name="l00820"></a><span class="lineno">  820</span>&#160;<span class="keyword">template</span> <span class="keyword">class </span><a class="code" href="classSolidBase.html">SolidBase&lt;3&gt;</a>;</div>
-<div class="line"><a name="l00821"></a><span class="lineno">  821</span>&#160;<span class="keyword">template</span> <span class="keyword">class </span><a class="code" href="classSolidBase.html">SolidBase&lt;2, 3&gt;</a>;</div>
+<div class="line"><a name="l00813"></a><span class="lineno">  813</span>&#160;  <span class="comment">// At this stage, the pointer for the particle handler has not been allocated</span></div>
+<div class="line"><a name="l00814"></a><span class="lineno">  814</span>&#160;  <span class="comment">// it thus needs to be done by calling the setup</span></div>
+<div class="line"><a name="l00815"></a><span class="lineno">  815</span>&#160;  <span class="comment">// TODO, this function should be called in the constructor</span></div>
+<div class="line"><a name="l00816"></a><span class="lineno">  816</span>&#160;  this-&gt;setup_particles_handler();</div>
+<div class="line"><a name="l00817"></a><span class="lineno">  817</span>&#160;  ia &gt;&gt; *(this-&gt;solid_particle_handler);</div>
+<div class="line"><a name="l00818"></a><span class="lineno">  818</span>&#160; </div>
+<div class="line"><a name="l00819"></a><span class="lineno">  819</span>&#160;  this-&gt;solid_particle_handler-&gt;deserialize();</div>
+<div class="line"><a name="l00820"></a><span class="lineno">  820</span>&#160; </div>
+<div class="line"><a name="l00821"></a><span class="lineno">  821</span>&#160;  <span class="comment">// Number of particles is reset to the number of particles in the</span></div>
+<div class="line"><a name="l00822"></a><span class="lineno">  822</span>&#160;  <span class="comment">// solid_particle_handler after deserialization</span></div>
+<div class="line"><a name="l00823"></a><span class="lineno">  823</span>&#160;  initial_number_of_particles = solid_particle_handler-&gt;n_global_particles();</div>
+<div class="line"><a name="l00824"></a><span class="lineno">  824</span>&#160;}</div>
+<div class="line"><a name="l00825"></a><span class="lineno">  825</span>&#160; </div>
+<div class="line"><a name="l00826"></a><span class="lineno">  826</span>&#160; </div>
+<div class="line"><a name="l00827"></a><span class="lineno">  827</span>&#160;<span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim, <span class="keywordtype">int</span> spacedim&gt;</div>
+<div class="line"><a name="l00828"></a><span class="lineno">  828</span>&#160;<span class="keywordtype">void</span></div>
+<div class="line"><a name="l00829"></a><span class="lineno"><a class="line" href="classSolidBase.html#ac8bd2ffa327601876162a5d44d0b4d5b">  829</a></span>&#160;<a class="code" href="classSolidBase.html#ac8bd2ffa327601876162a5d44d0b4d5b">SolidBase&lt;dim, spacedim&gt;::setup_displacement</a>()</div>
+<div class="line"><a name="l00830"></a><span class="lineno">  830</span>&#160;{</div>
+<div class="line"><a name="l00831"></a><span class="lineno">  831</span>&#160;  displacement_dh.distribute_dofs(*this-&gt;displacement_fe);</div>
+<div class="line"><a name="l00832"></a><span class="lineno">  832</span>&#160;  locally_owned_dofs = displacement_dh.locally_owned_dofs();</div>
+<div class="line"><a name="l00833"></a><span class="lineno">  833</span>&#160;  locally_relevant_dofs =</div>
+<div class="line"><a name="l00834"></a><span class="lineno">  834</span>&#160;    DoFTools::extract_locally_relevant_dofs(displacement_dh);</div>
+<div class="line"><a name="l00835"></a><span class="lineno">  835</span>&#160; </div>
+<div class="line"><a name="l00836"></a><span class="lineno">  836</span>&#160;  displacement.reinit(locally_owned_dofs, mpi_communicator);</div>
+<div class="line"><a name="l00837"></a><span class="lineno">  837</span>&#160;  displacement_relevant.reinit(locally_owned_dofs,</div>
+<div class="line"><a name="l00838"></a><span class="lineno">  838</span>&#160;                               locally_relevant_dofs,</div>
+<div class="line"><a name="l00839"></a><span class="lineno">  839</span>&#160;                               mpi_communicator);</div>
+<div class="line"><a name="l00840"></a><span class="lineno">  840</span>&#160; </div>
+<div class="line"><a name="l00841"></a><span class="lineno">  841</span>&#160;  displacement = 0;</div>
+<div class="line"><a name="l00842"></a><span class="lineno">  842</span>&#160;}</div>
+<div class="line"><a name="l00843"></a><span class="lineno">  843</span>&#160; </div>
+<div class="line"><a name="l00844"></a><span class="lineno">  844</span>&#160; </div>
+<div class="line"><a name="l00845"></a><span class="lineno">  845</span>&#160;<span class="comment">// Pre-compile the 2D, 3D and the 2D in 3D versions with the types that can</span></div>
+<div class="line"><a name="l00846"></a><span class="lineno">  846</span>&#160;<span class="comment">// occur</span></div>
+<div class="line"><a name="l00847"></a><span class="lineno">  847</span>&#160;<span class="keyword">template</span> <span class="keyword">class </span><a class="code" href="classSolidBase.html">SolidBase&lt;2&gt;</a>;</div>
+<div class="line"><a name="l00848"></a><span class="lineno">  848</span>&#160;<span class="keyword">template</span> <span class="keyword">class </span><a class="code" href="classSolidBase.html">SolidBase&lt;3&gt;</a>;</div>
+<div class="line"><a name="l00849"></a><span class="lineno">  849</span>&#160;<span class="keyword">template</span> <span class="keyword">class </span><a class="code" href="classSolidBase.html">SolidBase&lt;2, 3&gt;</a>;</div>
 <div class="ttc" id="aclassParameters_1_1NitscheObject_html"><div class="ttname"><a href="classParameters_1_1NitscheObject.html">Parameters::NitscheObject</a></div><div class="ttdef"><b>Definition:</b> <a href="solid__objects__parameters_8h_source.html#l00031">solid_objects_parameters.h:32</a></div></div>
 <div class="ttc" id="aclassSolidBase_html"><div class="ttname"><a href="classSolidBase.html">SolidBase</a></div><div class="ttdef"><b>Definition:</b> <a href="solid__base_8h_source.html#l00059">solid_base.h:60</a></div></div>
 <div class="ttc" id="aclassSolidBase_html_a1529113b1b385784b7fe404f0849fe04"><div class="ttname"><a href="classSolidBase.html#a1529113b1b385784b7fe404f0849fe04">SolidBase::get_solid_particle_handler</a></div><div class="ttdeci">std::shared_ptr&lt; Particles::ParticleHandler&lt; spacedim &gt; &gt; &amp; get_solid_particle_handler()</div><div class="ttdef"><b>Definition:</b> <a href="solid__base_8cc_source.html#l00443">solid_base.cc:443</a></div></div>
@@ -911,7 +939,7 @@ $(function() {
 <div class="ttc" id="aclassSolidBase_html_a74e83d98f02c979151c56429d8eee162"><div class="ttname"><a href="classSolidBase.html#a74e83d98f02c979151c56429d8eee162">SolidBase::rotate_grid</a></div><div class="ttdeci">void rotate_grid(const double angle, const Tensor&lt; 1, 3 &gt; axis)</div><div class="ttdoc">Rotates the grid by a given angle around an axis.</div></div>
 <div class="ttc" id="aclassSolidBase_html_a761e2ca79e01c421e94595c64c7fefa5"><div class="ttname"><a href="classSolidBase.html#a761e2ca79e01c421e94595c64c7fefa5">SolidBase::update_temperature_time</a></div><div class="ttdeci">void update_temperature_time(double time)</div><div class="ttdoc">Updates the time in the function used to describe the solid temperature.</div><div class="ttdef"><b>Definition:</b> <a href="solid__base_8cc_source.html#l00470">solid_base.cc:470</a></div></div>
 <div class="ttc" id="aclassSolidBase_html_a76e8a2bbcc379ab82b12932eae9baf0a"><div class="ttname"><a href="classSolidBase.html#a76e8a2bbcc379ab82b12932eae9baf0a">SolidBase::write_checkpoint</a></div><div class="ttdeci">void write_checkpoint(std::string prefix_name)</div><div class="ttdoc">write solid base triangulation checkpoint</div><div class="ttdef"><b>Definition:</b> <a href="solid__base_8cc_source.html#l00723">solid_base.cc:723</a></div></div>
-<div class="ttc" id="aclassSolidBase_html_a7b7cc0d95af40cb2e1148cf37d40e7a9"><div class="ttname"><a href="classSolidBase.html#a7b7cc0d95af40cb2e1148cf37d40e7a9">SolidBase::read_checkpoint</a></div><div class="ttdeci">void read_checkpoint(std::string prefix_name)</div><div class="ttdoc">read solid base triangulation checkpoint</div><div class="ttdef"><b>Definition:</b> <a href="solid__base_8cc_source.html#l00746">solid_base.cc:746</a></div></div>
+<div class="ttc" id="aclassSolidBase_html_a7b7cc0d95af40cb2e1148cf37d40e7a9"><div class="ttname"><a href="classSolidBase.html#a7b7cc0d95af40cb2e1148cf37d40e7a9">SolidBase::read_checkpoint</a></div><div class="ttdeci">void read_checkpoint(std::string prefix_name)</div><div class="ttdoc">read solid base triangulation checkpoint</div><div class="ttdef"><b>Definition:</b> <a href="solid__base_8cc_source.html#l00760">solid_base.cc:760</a></div></div>
 <div class="ttc" id="aclassSolidBase_html_a7d82e6a453f72017699c4e5fb64a3ec5"><div class="ttname"><a href="classSolidBase.html#a7d82e6a453f72017699c4e5fb64a3ec5">SolidBase::quadrature</a></div><div class="ttdeci">std::shared_ptr&lt; Quadrature&lt; dim &gt; &gt; quadrature</div><div class="ttdef"><b>Definition:</b> <a href="solid__base_8h_source.html#l00250">solid_base.h:250</a></div></div>
 <div class="ttc" id="aclassSolidBase_html_a7f7dc77812dcd58d7e749b48b29516c4"><div class="ttname"><a href="classSolidBase.html#a7f7dc77812dcd58d7e749b48b29516c4">SolidBase::setup_triangulation</a></div><div class="ttdeci">void setup_triangulation(const bool restart)</div><div class="ttdoc">Generates a solid triangulation from a dealii or gmsh mesh.</div><div class="ttdef"><b>Definition:</b> <a href="solid__base_8cc_source.html#l00125">solid_base.cc:125</a></div></div>
 <div class="ttc" id="aclassSolidBase_html_a84500afc387de8b522dffaf8f7739a73"><div class="ttname"><a href="classSolidBase.html#a84500afc387de8b522dffaf8f7739a73">SolidBase::get_displacement_vector</a></div><div class="ttdeci">GlobalVectorType &amp; get_displacement_vector()</div><div class="ttdef"><b>Definition:</b> <a href="solid__base_8cc_source.html#l00435">solid_base.cc:435</a></div></div>
@@ -924,7 +952,7 @@ $(function() {
 <div class="ttc" id="aclassSolidBase_html_aa287aebb7afed84a74093eb454a33ca8"><div class="ttname"><a href="classSolidBase.html#aa287aebb7afed84a74093eb454a33ca8">SolidBase::translate_grid</a></div><div class="ttdeci">void translate_grid(const Tensor&lt; 1, 3 &gt; translate)</div><div class="ttdoc">Translate the grid. In spacedim=2, the third component is ignore.</div></div>
 <div class="ttc" id="aclassSolidBase_html_abc72772fae98f0895b24993626323465"><div class="ttname"><a href="classSolidBase.html#abc72772fae98f0895b24993626323465">SolidBase::get_solid_triangulation</a></div><div class="ttdeci">std::shared_ptr&lt; parallel::DistributedTriangulationBase&lt; dim, spacedim &gt; &gt; get_solid_triangulation()</div><div class="ttdef"><b>Definition:</b> <a href="solid__base_8cc_source.html#l00450">solid_base.cc:450</a></div></div>
 <div class="ttc" id="aclassSolidBase_html_ac11318594a4f5f71f515549866869b78"><div class="ttname"><a href="classSolidBase.html#ac11318594a4f5f71f515549866869b78">SolidBase::get_solid_velocity</a></div><div class="ttdeci">Function&lt; spacedim &gt; * get_solid_velocity()</div><div class="ttdef"><b>Definition:</b> <a href="solid__base_8cc_source.html#l00457">solid_base.cc:457</a></div></div>
-<div class="ttc" id="aclassSolidBase_html_ac8bd2ffa327601876162a5d44d0b4d5b"><div class="ttname"><a href="classSolidBase.html#ac8bd2ffa327601876162a5d44d0b4d5b">SolidBase::setup_displacement</a></div><div class="ttdeci">void setup_displacement()</div><div class="ttdoc">Sets-up particles with particle handler, in the fluid triangulation domain that holds the particles o...</div><div class="ttdef"><b>Definition:</b> <a href="solid__base_8cc_source.html#l00801">solid_base.cc:801</a></div></div>
+<div class="ttc" id="aclassSolidBase_html_ac8bd2ffa327601876162a5d44d0b4d5b"><div class="ttname"><a href="classSolidBase.html#ac8bd2ffa327601876162a5d44d0b4d5b">SolidBase::setup_displacement</a></div><div class="ttdeci">void setup_displacement()</div><div class="ttdoc">Sets-up particles with particle handler, in the fluid triangulation domain that holds the particles o...</div><div class="ttdef"><b>Definition:</b> <a href="solid__base_8cc_source.html#l00829">solid_base.cc:829</a></div></div>
 <div class="ttc" id="aclassSolidBase_html_ac8c08d6c4700089c55a19f7c15ef26d4"><div class="ttname"><a href="classSolidBase.html#ac8c08d6c4700089c55a19f7c15ef26d4">SolidBase::load_particles</a></div><div class="ttdeci">void load_particles(const std::string filename_part)</div><div class="ttdoc">Loads a particle handler in the fluid triangulation domain that holds the particles of the solid acco...</div><div class="ttdef"><b>Definition:</b> <a href="solid__base_8cc_source.html#l00399">solid_base.cc:399</a></div></div>
 <div class="ttc" id="aclassSolidBase_html_ac93de90305e6424167de7e5da2d0af0d"><div class="ttname"><a href="classSolidBase.html#ac93de90305e6424167de7e5da2d0af0d">SolidBase::fe</a></div><div class="ttdeci">std::shared_ptr&lt; FiniteElement&lt; dim, spacedim &gt; &gt; fe</div><div class="ttdef"><b>Definition:</b> <a href="solid__base_8h_source.html#l00246">solid_base.h:246</a></div></div>
 <div class="ttc" id="aclassSolidBase_html_ac9d1e9d5547ab7a4ae27b718bbefed4b"><div class="ttname"><a href="classSolidBase.html#ac9d1e9d5547ab7a4ae27b718bbefed4b">SolidBase::mpi_communicator</a></div><div class="ttdeci">MPI_Comm mpi_communicator</div><div class="ttdef"><b>Definition:</b> <a href="solid__base_8h_source.html#l00236">solid_base.h:236</a></div></div>
