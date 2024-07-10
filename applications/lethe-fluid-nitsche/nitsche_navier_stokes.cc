@@ -43,9 +43,6 @@ main(int argc, char *argv[])
           prm.parse_input(argv[1]);
           NSparam.parse(prm);
 
-          AssertThrow(NSparam.nitsche->number_solids > 0,
-                      NoSolidWarning("gls_nitsche_navier_stokes_22"));
-
           GLSNitscheNavierStokesSolver<2> problem_22(NSparam);
           problem_22.solve();
         }
@@ -58,9 +55,6 @@ main(int argc, char *argv[])
           // Parsing of the file
           prm.parse_input(argv[1]);
           NSparam.parse(prm);
-
-          AssertThrow(NSparam.nitsche->number_solids > 0,
-                      NoSolidWarning("gls_nitsche_navier_stokes_22"));
 
           GLSNitscheNavierStokesSolver<3> problem_33(NSparam);
           problem_33.solve();

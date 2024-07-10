@@ -73,6 +73,14 @@ subsection initial conditions
 end
 
 #---------------------------------------------------
+# Boundary Conditions
+#---------------------------------------------------
+
+subsection boundary conditions
+  set number = 0
+end
+
+#---------------------------------------------------
 # Physical Properties
 #---------------------------------------------------
 

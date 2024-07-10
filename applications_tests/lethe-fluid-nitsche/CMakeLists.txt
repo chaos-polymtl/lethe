@@ -13,6 +13,8 @@ file(COPY two-bar-mixer-restart/restart.triangulation_variable.data DESTINATION 
 file(COPY two-bar-mixer-restart/restart.triangulation.info DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/two-bar-mixer-restart.${_build_type}/mpirun=1/")
 file(COPY two-bar-mixer-restart/restart_solid_particles_00.pvdhandler DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/two-bar-mixer-restart.${_build_type}/mpirun=1/")
 file(COPY two-bar-mixer-restart/restart_solid_particles_01.pvdhandler DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/two-bar-mixer-restart.${_build_type}/mpirun=1/")
+file(COPY two-bar-mixer-restart/restart_solid_00.particles DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/two-bar-mixer-restart.${_build_type}/mpirun=1/")
+file(COPY two-bar-mixer-restart/restart_solid_01.particles DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/two-bar-mixer-restart.${_build_type}/mpirun=1/")
 file(COPY two-bar-mixer-restart/restart_solid_00.triangulation DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/two-bar-mixer-restart.${_build_type}/mpirun=1/")
 file(COPY two-bar-mixer-restart/restart_solid_00.triangulation.info DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/two-bar-mixer-restart.${_build_type}/mpirun=1/")
 file(COPY two-bar-mixer-restart/restart_solid_00.triangulation_fixed.data DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/two-bar-mixer-restart.${_build_type}/mpirun=1/")
