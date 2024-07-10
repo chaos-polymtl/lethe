@@ -33,7 +33,7 @@ end
 
 subsection restart
   # Enable checkpointing
-  set checkpoint = false
+  set checkpoint = true
 
   # Enable restart
   set restart = true

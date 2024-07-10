@@ -114,13 +114,8 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::assemble_nitsche_restriction()
           local_rhs    = 0;
 
 
-#if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 4)
-          const auto &cell =
-            particle->get_surrounding_cell(*this->triangulation);
-#else
-          const auto &cell = particle->get_surrounding_cell();
-#endif
-          double h_cell = 0;
+          const auto &cell   = particle->get_surrounding_cell();
+          double      h_cell = 0;
           if (dim == 2)
             h_cell = std::sqrt(4. * cell->measure() / M_PI) /
                      this->velocity_fem_degree;
@@ -977,9 +972,16 @@ template <int dim, int spacedim>
 void
 GLSNitscheNavierStokesSolver<dim, spacedim>::write_checkpoint()
 {
-  // Prepare solid particles for serialization
-  for (auto solid : solids)
-    solid->get_solid_particle_handler()->prepare_for_serialization();
+  // Write solid base checkpoint
+  for (unsigned int i_solid = 0; i_solid < solids.size(); ++i_solid)
+    {
+      std::string filename =
+        this->simulation_parameters.simulation_control.output_folder +
+        this->simulation_parameters.restart_parameters.filename + "_solid_" +
+        Utilities::int_to_string(i_solid, 2);
+
+      this->solids[i_solid]->write_checkpoint(filename);
+    }
 
   // Call regular checkpointing routine
   this->GLSNavierStokesSolver<spacedim>::write_checkpoint();
@@ -1005,16 +1007,6 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::write_checkpoint()
             Utilities::int_to_string(i_solid, 2));
         }
     }
-
-  // Write solid base checkpoint
-  for (unsigned int i_solid = 0; i_solid < solids.size(); ++i_solid)
-    {
-      std::string filename =
-        this->simulation_parameters.simulation_control.output_folder +
-        this->simulation_parameters.restart_parameters.filename + "_solid_" +
-        Utilities::int_to_string(i_solid, 2);
-      this->solids[i_solid]->write_checkpoint(filename);
-    }
 }
 
 template <int dim, int spacedim>
@@ -1024,10 +1016,12 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::read_checkpoint()
   this->GLSNavierStokesSolver<spacedim>::read_checkpoint();
 
   TimerOutput::Scope t(this->computing_timer,
-                       "Reset Nitsche solid mesh and particles");
-
+                       "Reload Nitsche solid mesh and particles");
 
   // Reload initial configurations
+  // This must be done after the background triangulation is read
+  // because the solid particle_handler is deserialized physically
+  // after the triangulation is read.
   for (unsigned int i_solid = 0; i_solid < solids.size(); ++i_solid)
     {
       std::string prefix =
@@ -1037,6 +1031,7 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::read_checkpoint()
 
       solids[i_solid]->read_checkpoint(prefix);
     }
+
 
   // Reload particle and solid pvd handlers
   std::string prefix =
