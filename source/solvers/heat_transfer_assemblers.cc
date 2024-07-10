@@ -92,7 +92,10 @@ HeatTransferAssemblerCore<dim>::assemble_matrix(
 
       // Calculate the artificial viscosity of the shock capture as in equation
       // (79) of Tezduyar 2003
-      const double nu_dcdd = 0.5 * h * h * u_mag *
+      const double nu_dcdd = is_steady(method) ? 
+                            // DCDD shock capture can create problems in steady-state problems when a Dirichlet or Robin boundary condition is present and the initial temperature field is constant. In this case, the important gradient at the boundary can lead to important non-linearities. To avoid this, we set the nu_dcdd to 0 in steady-state problems.
+                            0 : 
+                            0.5 * h * h * u_mag *
                              dcdd_temperature_gradient.norm() /
                              scratch_data.global_delta_T_ref;
 
@@ -231,7 +234,10 @@ HeatTransferAssemblerCore<dim>::assemble_rhs(
 
       // Calculate the artificial viscosity of the shock capture as in equation
       // (79) of Tezduyar 2003
-      const double nu_dcdd = 0.5 * h * h * u_mag *
+      const double nu_dcdd = is_steady(method) ? 
+                            // DCDD shock capture can create problems in steady-state problems when a Dirichlet or Robin boundary condition is present and the initial temperature field is constant. In this case, the important gradient at the boundary can lead to important non-linearities. To avoid this, we set the nu_dcdd to 0 in steady-state problems.
+                            0 : 
+                            0.5 * h * h * u_mag *
                              dcdd_temperature_gradient.norm() /
                              scratch_data.global_delta_T_ref;
 
