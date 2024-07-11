@@ -2083,7 +2083,7 @@ NavierStokesBase<dim, VectorType, DofsType>::
                   // will be applied on the cell's DOFs; we skip to the next
                   // cell.
                   if (!cell_is_in_right_fluid)
-                      continue;
+                    continue;
 
                   get_cell_temperature_values(cell,
                                               dof_handler_ht,

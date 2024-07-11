@@ -1658,55 +1658,6 @@ namespace Parameters
   };
 
   /**
-   * @brief Return the tensor corresponding to the entry (@p entry_string). If
-   * the dimension correspondence of the @p entry_string is not equivalent to
-   * @p dim, an exception will be thrown. The delimiter separating the elements
-   * of the @p entry_string is a comma (",").
-   *
-   * @remark The function can be use to construct Point<dim> objects.
-   *
-   * @tparam dim Number of dimensions of the problem (2D or 3D).
-   *
-   * @param[in] prm ParameterHandler object used to parse simulation
-   * information.
-   *
-   * @param[in] entry_string Declare string in the parameter file.
-   *
-   * @return A Tensor<1,dim> corresponding to the @p entry_string in the
-   * parameter file.
-   */
-  template <int dim>
-  Tensor<1, dim>
-  entry_string_to_tensor(ParameterHandler  &prm,
-                             const std::string &entry_string);
-
-  /**
-   * @brief Return the tensor of entry @p entry_string. But it can allow for
-   * the usage of deprecated parameters that used to be 3 individual entries
-   * instead of a list of values.
-   *
-   * Note: It does not throw an error if the new entry is not equivalent to a
-   * tensor.
-   *
-   * @param[in,out] prm A parameter handler which is currently used to parse the
-   * simulation information.
-   * @param[in] entry_string A declare string in the parameter file.
-   * @param[in] entry_string_1 A declare string in the parameter file that is
-   * the equivalent of the second double deprecated parameter of the new list
-   * parameter.
-   * @param[in] entry_string_2 A declare string in the parameter file that is
-   * the equivalent of the second double deprecated parameter of the new list
-   * parameter.
-   *
-   * @return A tensor<1,3> corresponding to the entry_string in the prm file.
-   */
-  Tensor<1, 3>
-  entry_string_to_tensor3(ParameterHandler  &prm,
-                          const std::string &entry_string,
-                          const std::string &entry_string_1,
-                          const std::string &entry_string_2);
-
-  /**
    * @brief Return the vector of size N of entry @entry_string. If the entry is
    * specified in the .prm file, then the changed value is returned, otherwise
    * the default value is returned. If the entry is not equivalent to a vector,

@@ -641,9 +641,9 @@ namespace Parameters
       this->enable_domain_restriction_with_plane =
         prm.get_bool("enable domain restriction with plane");
       this->restriction_plane_point =
-        entry_string_to_tensor<dim>(prm, "restriction plane point");
+        value_string_to_tensor<dim>(prm.get("restriction plane point"));
       this->restriction_plane_normal_vector =
-        entry_string_to_tensor<dim>(prm, "restriction plane normal vector");
+        value_string_to_tensor<dim>(prm.get("restriction plane normal vector"));
 
       this->number_of_constraints = prm.get_integer("number of constraints");
 
@@ -3848,60 +3848,6 @@ namespace Parameters
       universal_gas_constant  = prm.get_double("universal gas constant");
     }
     prm.leave_subsection();
-  }
-
-
-  Tensor<1, 3>
-  entry_string_to_tensor3(ParameterHandler  &prm,
-                          const std::string &entry_string,
-                          const std::string &entry_string_1,
-                          const std::string &entry_string_2)
-  {
-    std::string              full_str = prm.get(entry_string);
-    std::vector<std::string> vector_of_string(
-      Utilities::split_string_list(full_str));
-    Tensor<1, 3> output_tensor;
-
-    // The used parameter is a list of values
-    if (vector_of_string.size() > 1)
-      {
-        std::vector<double> vector_of_double =
-          Utilities::string_to_double(vector_of_string);
-        for (unsigned int i = 0; i < vector_of_double.size(); ++i)
-          output_tensor[i] = vector_of_double[i];
-      }
-    else // Depreciated individual entries
-      {
-        // Since the first parameter is the alias of the new parameter,
-        // the value of the first parameter is obtained for its entry
-        output_tensor[0] = prm.get_double(entry_string);
-        output_tensor[1] = prm.get_double(entry_string_1);
-        output_tensor[2] = prm.get_double(entry_string_2);
-      }
-
-    return output_tensor;
-  }
-
-  template <int dim>
-  Tensor<1, dim>
-  entry_string_to_tensor(ParameterHandler  &prm,
-                             const std::string &entry_string)
-  {
-    std::string              full_str = prm.get(entry_string);
-    std::vector<std::string> vector_of_string(
-      Utilities::split_string_list(full_str));
-    std::vector<double> vector_of_double =
-      Utilities::string_to_double(vector_of_string);
-    AssertThrow(vector_of_double.size() == dim,
-                ExcMessage("Invalid " + entry_string + ". This should be a" +
-                           Utilities::to_string(dim) +
-                           "dimensional vector or point."));
-
-    Tensor<1, dim> output_tensor;
-    for (unsigned int i = 0; i < dim; ++i)
-      output_tensor[i] = vector_of_double[i];
-
-    return output_tensor;
   }
 
   // Explicitly instantiate template classes and structs
