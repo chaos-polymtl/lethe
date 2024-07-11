@@ -1994,24 +1994,11 @@ FluidDynamicsVANS<dim>::solve()
   while (this->simulation_control->integrate())
     {
       this->simulation_control->print_progression(this->pcout);
-      bool refinement_step;
-      if (this->simulation_parameters.mesh_adaptation.refinement_at_frequency)
-        refinement_step =
-          this->simulation_control->get_step_number() %
-            this->simulation_parameters.mesh_adaptation.frequency !=
-          0;
-      else
-        refinement_step = this->simulation_control->get_step_number() == 0;
-      if ((refinement_step ||
-           this->simulation_parameters.mesh_adaptation.type ==
-             Parameters::MeshAdaptation::Type::none ||
-           this->simulation_control->is_at_start()))
-        {
-          // We allow the physics to update their boundary conditions
-          // according to their own parameters
-          this->update_boundary_conditions();
-          this->multiphysics->update_boundary_conditions();
-        }
+
+      // We allow the physics to update their boundary conditions
+      // according to their own parameters
+      this->update_boundary_conditions();
+      this->multiphysics->update_boundary_conditions();
 
       this->dynamic_flow_control();
 
