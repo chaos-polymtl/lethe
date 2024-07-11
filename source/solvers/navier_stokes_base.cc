@@ -1548,8 +1548,6 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess_fd(bool firstIter)
         }
     }
 
-  // this->computing_timer.leave_subsection("Postprocessing");
-
   if (!firstIter)
     {
       // Calculate forces on the boundary conditions
