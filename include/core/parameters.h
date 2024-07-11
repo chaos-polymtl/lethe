@@ -883,6 +883,9 @@ namespace Parameters
     /// Enable flow rate post-processing
     bool calculate_flow_rate;
 
+    /// Enable flow rate post-processing
+    bool calculate_tracer_flow_rate;
+
     /// Set initial time to start calculations for velocities
     double initial_time;
 
@@ -900,6 +903,9 @@ namespace Parameters
 
     /// Prefix for flow rate output
     std::string flow_rate_output_name;
+
+    /// Prefix for flow rate output
+    std::string tracer_flow_rate_output_name;
 
     /// Prefix for the enstrophy output
     std::string enstrophy_output_name;

@@ -1807,6 +1807,12 @@ namespace Parameters
                         "Enable calculation of flow rate at boundaries.");
 
       prm.declare_entry(
+        "calculate tracer flow rate",
+        "false",
+        Patterns::Bool(),
+        "Enable calculation of tracer flow rate at boundaries.");
+
+      prm.declare_entry(
         "initial time",
         "0.0",
         Patterns::Double(),
@@ -1826,6 +1832,11 @@ namespace Parameters
                         "flow_rate",
                         Patterns::FileName(),
                         "File output volumetric flux");
+
+      prm.declare_entry("tracer flow rate name",
+                        "tracer_flow_rate",
+                        Patterns::FileName(),
+                        "File output tracer flux");
 
       prm.declare_entry("enstrophy name",
                         "enstrophy",
