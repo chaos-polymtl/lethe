@@ -1178,6 +1178,8 @@ GLSNavierStokesSolver<dim>::set_initial_condition_fd(
       this->pcout << " Initial condition using ramp " << std::endl;
       this->pcout << "*********************************" << std::endl;
 
+      Timer timer(this->mpi_communicator);
+
       this->set_nodal_values();
 
       // Create a pointer to the current viscosity model
@@ -1255,6 +1257,17 @@ GLSNavierStokesSolver<dim>::set_initial_condition_fd(
 
       // Reset kinematic viscosity to simulation parameters
       viscosity_model->set_kinematic_viscosity(viscosity_end);
+
+      timer.stop();
+
+      if (this->simulation_parameters.timer.type !=
+          Parameters::Timer::Type::none)
+        {
+          this->pcout << "*********************************" << std::endl;
+          this->pcout << " Time spent in ramp: " << timer.wall_time() << "s"
+                      << std::endl;
+          this->pcout << "*********************************" << std::endl;
+        }
     }
   else
     {

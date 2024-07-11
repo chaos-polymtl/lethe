@@ -1853,6 +1853,8 @@ MFNavierStokesSolver<dim>::set_initial_condition_fd(
       this->pcout << " Initial condition using ramp " << std::endl;
       this->pcout << "*********************************" << std::endl;
 
+      Timer timer(this->mpi_communicator);
+
       // Set the nodal values to have an initial condition that is adequate
       this->set_nodal_values();
       this->present_solution.update_ghost_values();
@@ -1960,6 +1962,17 @@ MFNavierStokesSolver<dim>::set_initial_condition_fd(
             {
               mg_operators[level]->set_kinematic_viscosity(viscosity_end);
             }
+        }
+
+      timer.stop();
+
+      if (this->simulation_parameters.timer.type !=
+          Parameters::Timer::Type::none)
+        {
+          this->pcout << "*********************************" << std::endl;
+          this->pcout << " Time spent in ramp: " << timer.wall_time() << "s"
+                      << std::endl;
+          this->pcout << "*********************************" << std::endl;
         }
     }
   else
