@@ -1,0 +1,155 @@
+# Listing of Parameters
+#----------------------
+
+set dimension = 3
+
+#---------------------------------------------------
+# Simulation Control
+#---------------------------------------------------
+
+subsection simulation control
+  set time step         = 7.54e-6
+  set time end          = 2.2
+  set log frequency     = 1000
+  set output frequency  = 1000
+  set output path       = ./output/
+  set output name       = granuheap
+  set output boundaries = true
+end
+
+#---------------------------------------------------
+# Timer
+#---------------------------------------------------
+
+subsection timer
+  set type = iteration
+end
+
+#---------------------------------------------------
+# Model parameters
+#---------------------------------------------------
+
+subsection model parameters
+  subsection contact detection
+    set contact detection method                = dynamic
+    set dynamic contact search size coefficient = 0.9
+    set neighborhood threshold                  = 1.3
+  end
+  subsection load balancing
+    set load balance method = frequent
+    set frequency           = 100000
+  end
+  set particle particle contact force method = hertz_JKR
+  set rolling resistance torque method       = constant_resistance
+  set particle wall contact force method     = JKR
+  set integration method                     = velocity_verlet
+end
+
+subsection restart
+  set checkpoint = true
+  set frequency  = 10000
+  set restart    = false
+  set filename   = dem
+end
+
+#---------------------------------------------------
+# Physical Properties
+#---------------------------------------------------
+
+subsection lagrangian physical properties
+  set g                        = -9.81, 0, 0
+  set number of particle types = 1
+  subsection particle type 0
+    set size distribution type            = custom
+    set custom diameters                  = 1.02e-4 , 1.16e-4 , 1.33e-4 , 1.52e-4 , 1.75e-4 , 2.00e-4 , 2.29e-4 , 2.62e-4 , 3.01e-4 , 3.44e-4
+    set custom volume fractions	          = 0.04 , 0.06 , 0.07 , 0.10 , 0.13 , 0.15 , 0.16 , 0.14 , 0.10 , 0.05
+    set number of particles               = 200000
+    set density particles                 = 1922
+    set young modulus particles           = 5.94e4
+    set poisson ratio particles           = 0.4
+    set restitution coefficient particles = 0.9
+    set friction coefficient particles    = 0.5
+    set rolling friction particles        = {{rolling_friction}}
+    set surface energy particles          = {{energy}}
+  end
+  set young modulus wall           = 1e7
+  set poisson ratio wall           = 0.33
+  set restitution coefficient wall = 0.9
+  set friction coefficient wall    = 0.5
+  set rolling friction wall        = 0.5
+  set surface energy wall          = 1e-4
+end
+
+#---------------------------------------------------
+# Timer
+#---------------------------------------------------
+
+subsection timer
+  set type = iteration
+end
+
+#---------------------------------------------------
+# Insertion Info
+#---------------------------------------------------
+
+subsection insertion info
+  set insertion method                               = volume
+  set inserted number of particles at each time step = 10000
+  set insertion frequency                            = 9000
+  set insertion box points coordinates               = 0.015, -0.00325, -0.00325: 0.035, 0.00325, 0.00325
+  set insertion distance threshold                   = 1.2
+  set insertion maximum offset                       = 0.05
+  set insertion prn seed                             = 19
+  set insertion direction sequence                   =  1, 2, 0
+end
+
+#---------------------------------------------------
+# Mesh
+#---------------------------------------------------
+
+subsection mesh
+  set type               = dealii
+  set grid type          = subdivided_hyper_rectangle
+  set grid arguments     = 3,1,1 : -0.010,-0.01,-0.01 : 0.035, 0.01,0.01 : true
+  set initial refinement = 6
+end
+
+#---------------------------------------------------
+# DEM boundary conditions
+#---------------------------------------------------
+
+subsection DEM boundary conditions
+  set number of boundary conditions = 1
+
+  subsection boundary condition 0
+    set boundary id         = 0
+    set type                = outlet
+  end
+end
+
+#---------------------------------------------------
+# Solid Objects
+#---------------------------------------------------
+
+subsection solid objects
+  subsection solid surfaces
+    set number of solids = 2
+    subsection solid object 0
+      subsection mesh
+        set type                   = gmsh
+        set file name              = cylinder.msh
+        set simplex                = true
+      end
+      subsection translational velocity
+        set Function expression = if (t>1.6, 0.05, 0) ; 0 ; 0
+      end
+    end
+    subsection solid object 1
+      subsection mesh
+        set type                   = gmsh
+        set file name              = support.msh
+        set simplex                = true
+      end
+    end
+  end
+end
