@@ -3,10 +3,7 @@ Constrain Stasis
 =================
 
 This subsection is used to define temperature-dependent solid domains within a defined fluid.
-Homogenous constraints are applied on velocity and pressure degrees of freedom (DoFs) of cells found within the prescribed temperature range to mimic a solid.
-
-.. note::
-  Pressure DoFs of solid cells that are adjacent to fluid cells (i.e., cells with temperature values outside the specified range) are left unconstrained in order to adequately solve fluid flows.
+Homogenous constraints are applied on velocity degrees of freedom (DoFs) of cells found within the prescribed temperature range to mimic a solid.
 
 .. attention::
     In order to use this feature, the ``heat transfer`` physic must be enabled (``true``) in the :doc:`./multiphysics` subsection.
