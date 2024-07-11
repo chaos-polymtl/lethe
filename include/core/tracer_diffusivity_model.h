@@ -241,11 +241,7 @@ public:
         vector_numerical_jacobian(field_vectors, id, jacobian_vector);
       }
     else
-      {
-        unsigned int n_pts = jacobian_vector.size();
-        for (unsigned int i = 0; i < n_pts; ++i)
-          jacobian_vector[i] = 0.;
-      }
+      std::fill(jacobian_vector.begin(), jacobian_vector.end(), 0.);
   };
 
 
