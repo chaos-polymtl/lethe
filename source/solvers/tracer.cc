@@ -588,11 +588,11 @@ Tracer<dim>::postprocess_tracer_flow_rate(const VectorType &current_solution_fd)
   std::map<field, double>              field_values;
   std::map<field, std::vector<double>> fields;
 
-  double diffusivity(0.);
+  const auto diffusivity_model = properties_manager.get_tracer_diffusivity();
 
-  const auto conductivity_model = properties_manager.get_tracer_diffusivity();
-
-  diffusivity = conductivity_model->value(field_values);
+  std::vector<double> tracer_diffusivity(n_q_points_face);
+  diffusivity_model->vector_value(fields, tracer_diffusivity);
+  std::vector<Point<dim>> face_quadrature_points;
 
   std::vector<double> tracer_flow_rate_vector(
     this->simulation_parameters.boundary_conditions.size, 0);
@@ -626,6 +626,15 @@ Tracer<dim>::postprocess_tracer_flow_rate(const VectorType &current_solution_fd)
                       fe_face_values_tracer.get_function_gradients(
                         this->present_solution, tracer_gradient);
 
+
+                      // TODO Add check to see if we need the levelset field
+                      // if (diffusivity_model->depends_on(field::levelset))
+                      face_quadrature_points =
+                        fe_face_values_tracer.get_quadrature_points();
+                      // TODO Reset the field with the proper levelset values
+                      // (if applicable), using the function passed by
+                      // multiphysics
+
                       // Get fluid dynamics active cell iterator
                       typename DoFHandler<dim>::active_cell_iterator cell_fd(
                         &(*(this->triangulation)),
@@ -645,7 +654,7 @@ Tracer<dim>::postprocess_tracer_flow_rate(const VectorType &current_solution_fd)
                             -fe_face_values_tracer.normal_vector(q);
 
                           tracer_flow_rate_vector[vector_index] +=
-                            (-diffusivity * tracer_gradient[q] *
+                            (-tracer_diffusivity[q] * tracer_gradient[q] *
                                normal_vector_tracer +
                              local_tracer_values[q] * local_velocity_values[q] *
                                normal_vector_tracer) *
@@ -666,7 +675,6 @@ Tracer<dim>::postprocess_tracer_flow_rate(const VectorType &current_solution_fd)
       tracer_flow_rate_vector[i_bc] =
         Utilities::MPI::sum(tracer_flow_rate_vector[i_bc], mpi_communicator);
     }
-
 
   // Filling table
   this->tracer_flow_rate_table.add_value(
