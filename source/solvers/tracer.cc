@@ -52,7 +52,7 @@ Tracer<dim>::assemble_system_matrix()
   setup_assemblers();
 
   // We get the immersed function, which is null when no immersed solids are
-  // involved
+  // involved.
   immersed_solid_signed_distance_function =
     this->multiphysics->get_immersed_solid_signed_distance_function();
 
