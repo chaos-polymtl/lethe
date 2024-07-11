@@ -73,6 +73,8 @@ TracerScratchData<dim>::calculate_physical_properties()
         }
       case 2:
         {
+          throw std::runtime_error(
+            "Unsupported number of fluids (2) with the tracer physics.");
           // In this case, we need both density and viscosity
           const auto diffusivity_models =
             properties_manager.get_tracer_diffusivity_vector();
