@@ -1123,9 +1123,6 @@ GLSNavierStokesSolver<dim>::set_initial_condition_fd(
   Parameters::InitialConditionType initial_condition_type,
   bool                             restart)
 {
-  if (this->simulation_parameters.timer.type == Parameters::Timer::Type::end)
-    TimerOutput::Scope t(this->computing_timer, "Set initial conditions");
-
   if (restart)
     {
       this->pcout << "************************" << std::endl;
