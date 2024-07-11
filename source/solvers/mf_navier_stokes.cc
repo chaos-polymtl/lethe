@@ -303,6 +303,21 @@ MFNavierStokesPreconditionGMG<dim>::MFNavierStokesPreconditionGMG(
           this->pcout << std::endl;
         }
 
+      if (this->simulation_parameters.linear_solver
+            .at(PhysicsID::fluid_dynamics)
+            .mg_verbosity == Parameters::Verbosity::extra_verbose)
+        {
+          this->pcout << "  -MG vertical communication efficiency: "
+                      << MGTools::vertical_communication_efficiency(
+                           this->dof_handler.get_triangulation())
+                      << std::endl;
+
+          this->pcout << "  -MG workload imbalance: "
+                      << MGTools::workload_imbalance(
+                           this->dof_handler.get_triangulation())
+                      << std::endl;
+        }
+
       std::vector<std::shared_ptr<const Utilities::MPI::Partitioner>>
         partitioners(this->dof_handler.get_triangulation().n_global_levels());
 
@@ -643,6 +658,21 @@ MFNavierStokesPreconditionGMG<dim>::MFNavierStokesPreconditionGMG(
                              ->n_global_active_cells()
                         << " cells" << std::endl;
           this->pcout << std::endl;
+        }
+
+      if (this->simulation_parameters.linear_solver
+            .at(PhysicsID::fluid_dynamics)
+            .mg_verbosity == Parameters::Verbosity::extra_verbose)
+        {
+          this->pcout << "  -MG vertical communication efficiency: "
+                      << MGTools::vertical_communication_efficiency(
+                           this->coarse_grid_triangulations)
+                      << std::endl;
+
+          this->pcout << "  -MG workload imbalance: "
+                      << MGTools::workload_imbalance(
+                           this->coarse_grid_triangulations)
+                      << std::endl;
         }
 
       // Apply constraints and create mg operators for each level
