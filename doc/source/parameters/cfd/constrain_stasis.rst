@@ -35,7 +35,7 @@ The subsection with default parameters goes as follows:
 
 * The ``enable`` parameter is set to ``true`` when at least one temperature-dependent stasis constraint should be applied.
 
-* The ``enable domain restriction with plane`` parameter is set to ``true`` when it is desired to restrain the domain using a plane in addition to the temperature range. The plane cuts the domain in two subdomains. Only cells in the subdomain in the opposite direction to the normal vector can be constrained.
+* The ``enable domain restriction with plane`` parameter is set to ``true`` when it is desired to reduce the constrained domain using a plane in addition to the temperature range. The plane cuts the domain in two subdomains. Only cells in the subdomain in the opposite direction to the normal vector can be constrained.
 
 * The ``restriction plane point`` parameter is a point on the plane.
 
