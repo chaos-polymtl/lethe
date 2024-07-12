@@ -1992,17 +1992,17 @@ NavierStokesBase<dim, VectorType, DofsType>::constrain_stasis_with_temperature(
           // If a restriction plane is defined, check if the cell is in the
           // valid domain.
           if (!restrain_domain_with_plane ||
-              check_cell_in_constraining_domain(cell,
-                                                plane_point,
-                                                plane_normal_vector))
+              cell_in_constraining_domain(cell,
+                                          plane_point,
+                                          plane_normal_vector))
             {
               get_cell_temperature_values(cell,
                                           dof_handler_ht,
                                           temperature_solution,
                                           local_temperature_values);
-              check_cell_and_constrain_velocity(local_dof_indices,
-                                                local_temperature_values,
-                                                stasis_constraint_struct);
+              identify_cell_and_constrain_velocity(local_dof_indices,
+                                                   local_temperature_values,
+                                                   stasis_constraint_struct);
             }
         }
     }
@@ -2052,9 +2052,9 @@ NavierStokesBase<dim, VectorType, DofsType>::
               // If a restriction plane is defined, check if the cell is in the
               // valid domain.
               if (!restrain_domain_with_plane ||
-                  check_cell_in_constraining_domain(cell,
-                                                    plane_point,
-                                                    plane_normal_vector))
+                  cell_in_constraining_domain(cell,
+                                              plane_point,
+                                              plane_normal_vector))
                 {
                   bool cell_is_in_right_fluid = true;
                   get_cell_filtered_phase_fraction_values(
@@ -2089,9 +2089,10 @@ NavierStokesBase<dim, VectorType, DofsType>::
                                               dof_handler_ht,
                                               temperature_solution,
                                               local_temperature_values);
-                  check_cell_and_constrain_velocity(local_dof_indices,
-                                                    local_temperature_values,
-                                                    stasis_constraint_struct);
+                  identify_cell_and_constrain_velocity(
+                    local_dof_indices,
+                    local_temperature_values,
+                    stasis_constraint_struct);
                 }
             }
         }
@@ -2100,14 +2101,15 @@ NavierStokesBase<dim, VectorType, DofsType>::
 
 template <int dim, typename VectorType, typename DofsType>
 void
-NavierStokesBase<dim, VectorType, DofsType>::check_cell_and_constrain_velocity(
-  const std::vector<types::global_dof_index> &local_dof_indices,
-  const std::vector<double>                  &local_temperature_values,
-  StasisConstraintWithTemperature            &stasis_constraint_struct)
+NavierStokesBase<dim, VectorType, DofsType>::
+  identify_cell_and_constrain_velocity(
+    const std::vector<types::global_dof_index> &local_dof_indices,
+    const std::vector<double>                  &local_temperature_values,
+    StasisConstraintWithTemperature            &stasis_constraint_struct)
 {
   for (const double &temperature : local_temperature_values)
     {
-      // Skip cells with at least 1 DOF that is outbound the temperature limit.
+      // Skip cells with at least 1 DOF that is outbound the temperature limits.
       if (temperature < stasis_constraint_struct.min_solid_temperature ||
           temperature > stasis_constraint_struct.max_solid_temperature)
         return;

@@ -593,8 +593,8 @@ namespace Parameters
     /// constraint application domain
     Point<dim> restriction_plane_point;
 
-    /// Outward pointing normal vector to define the restriction plane for the
-    /// stasis constraint application domain
+    /// Outward-pointing normal vector from the restricted domain to define the
+    /// restriction plane for the stasis constraint application domain
     Tensor<1, dim> restriction_plane_normal_vector;
 
     /**

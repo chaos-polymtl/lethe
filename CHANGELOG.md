@@ -13,7 +13,6 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 - MINOR Previously, the pressure DOFs were also constrained with the "constrain stasis" feature, but this resulted in an ill-posed problem when sources terms in the momentum equation were pressure-dependent. Therefore, the constraints on pressure DOFs are now removed. [#1193](https://github.com/chaos-polymtl/lethe/pull/1193)
 
-
 ## [Master] - 2024-07-12
 
 ### Added

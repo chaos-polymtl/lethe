@@ -426,25 +426,26 @@ protected:
   establish_solid_domain(const bool non_zero_constraints);
 
   /**
-   * @brief Checks if the cell is located in the constraining domain defined by
-   * a plane with its normal vector. The check is done through a scalar product
-   * between a vector formed a vertex of the cell to @plane_point and
-   * @plane_normal_vector. If one of the vertices of the cell gives a negative
-   * scalar product result, the cell is excluded from the constrained domain.
+   * @brief Checks and identifies if the cell is located in the constraining
+   * domain defined by a plane with its outward-pointing normal vector. The
+   * check is done through a scalar product between a vector formed by a vertex
+   * of the cell to @plane_point and @plane_normal_vector. If one of the
+   * vertices of the cell results in a negative scalar product result, the cell
+   * is excluded from the constrained domain.
    *
    * @param[in] cell Pointer to an active cell of the fluid dynamics DoFHandler.
    *
    * @param[in] plane_point Coordinates of a point on the restriction plane for
    * the stasis constraint application domain.
    *
-   * @param[in] plane_normal_vector Outward pointing normal vector to define the
+   * @param[in] plane_normal_vector Outward-pointing normal vector to define the
    * restriction plane for the stasis constraint application domain.
    *
    * @return Boolean indicating if the cell is in the domain of interest
    * (@p true) or not (@p false).
    */
   inline bool
-  check_cell_in_constraining_domain(
+  cell_in_constraining_domain(
     const typename DoFHandler<dim>::active_cell_iterator &cell,
     const Point<dim>                                     &plane_point,
     const Tensor<1, dim>                                 &plane_normal_vector)
@@ -523,8 +524,8 @@ protected:
   }
 
   /**
-   * @brief Check if temperature DOFs of the cell are within the constraining
-   * range and if they are constrain velocity DOFs of the cell with homogeneous.
+   * @brief Indentify if temperature DOFs of the cell are within the
+   * constraining range. If they are, velocity DOFs of the cell are constrained.
    *
    * @param[in] local_dof_indices Vector of a cell's local DOF indices.
    *
@@ -535,7 +536,7 @@ protected:
    * containers, temperature range information and fluid id.
    */
   void
-  check_cell_and_constrain_velocity(
+  identify_cell_and_constrain_velocity(
     const std::vector<types::global_dof_index> &local_dof_indices,
     const std::vector<double>                  &local_temperature_values,
     StasisConstraintWithTemperature            &stasis_constraint_struct);
