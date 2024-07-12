@@ -5,6 +5,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ## [Master] - 2024-07-09
 
+### Added
+
+- MINOR The multigrid output now also prints the workload imbalance and vertical communication efficiency of the multigrid hierarchy being used. In addition, the mulrigrid timers now print the min max and average times correctly with the appropriate rank. [#1194](https://github.com/chaos-polymtl/lethe/pull/1194)
+
+## [Master] - 2024-07-09
+
 ### Fixed
 
 - MINOR The lethe-fluid-nitsche solver could not checkpoint once it had been restarted. This has been fixed by ensuring that the particles are properly checkpointed and read from the restart files. [#1192](https://github.com/chaos-polymtl/lethe/pull/1192)

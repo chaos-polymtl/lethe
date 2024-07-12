@@ -1122,7 +1122,9 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_kelly()
   if (this->simulation_parameters.post_processing.calculate_average_velocities)
     average_velocities->post_mesh_adaptation();
 
-  this->update_multiphysics_time_average_solution();
+  // Only needed if other physics apart from fluid dynamics are enabled.
+  if (this->multiphysics->get_active_physics().size() > 1)
+    this->update_multiphysics_time_average_solution();
 }
 
 template <int dim, typename VectorType, typename DofsType>
@@ -1198,7 +1200,9 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_uniform()
   if (this->simulation_parameters.post_processing.calculate_average_velocities)
     average_velocities->post_mesh_adaptation();
 
-  this->update_multiphysics_time_average_solution();
+  // Only needed if other physics apart from fluid dynamics are enabled.
+  if (this->multiphysics->get_active_physics().size() > 1)
+    this->update_multiphysics_time_average_solution();
 }
 
 template <int dim, typename VectorType, typename DofsType>
