@@ -295,6 +295,21 @@ namespace Parameters
     parse_parameters(ParameterHandler &prm, const Dimensionality dimensions);
   };
 
+  /**
+   * @brief Tanh-based physical properties model to handle properties in/out of immersed solids
+   */
+  struct ImmersedSolidTanhParameters
+  {
+    // Properties that apply to the tracer physics with immersed solids
+    double tracer_diffusivity_inside;
+    double tracer_diffusivity_outside;
+    double thickness;
+
+    static void
+    declare_parameters(ParameterHandler &prm);
+    void
+    parse_parameters(ParameterHandler &prm, const Dimensionality dimensions);
+  };
 
   /**
    * @brief Isothermal ideal gas model to solve for isothermal weakly
@@ -389,6 +404,7 @@ namespace Parameters
     double thermal_conductivity;
     // thermal expansion coefficient (alpha) in 1/K
     double thermal_expansion;
+
     // tracer diffusivity in L^2/s
     double tracer_diffusivity;
 
@@ -430,6 +446,16 @@ namespace Parameters
       constant,
       phase_change
     } thermal_expansion_model;
+
+    enum class TracerDiffusivityModel
+    {
+      constant,
+      immersed_boundary_tanh
+    } tracer_diffusivity_model;
+
+    // Struct that contains the parameters to handle physical properties when
+    // immersed solids models are used
+    ImmersedSolidTanhParameters immersed_solid_tanh_parameters;
 
     // Linear thermal conductivity parameters: k = k_A0 + k_A1 * T
     double k_A0;

@@ -51,6 +51,11 @@ Tracer<dim>::assemble_system_matrix()
   this->system_matrix = 0;
   setup_assemblers();
 
+  // We get the immersed function, which is null when no immersed solids are
+  // involved.
+  immersed_solid_signed_distance_function =
+    this->multiphysics->get_immersed_solid_signed_distance_function();
+
   const DoFHandler<dim> *dof_handler_fluid =
     multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
 
@@ -90,7 +95,8 @@ Tracer<dim>::assemble_local_system_matrix(
   scratch_data.reinit(cell,
                       this->evaluation_point,
                       this->previous_solutions,
-                      &(*source_term));
+                      &(*source_term),
+                      &(*immersed_solid_signed_distance_function));
 
   const DoFHandler<dim> *dof_handler_fluid =
     multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
@@ -181,6 +187,11 @@ Tracer<dim>::assemble_system_rhs()
   this->system_rhs = 0;
   setup_assemblers();
 
+  // We get the immersed function, which is null when no immersed solids are
+  // involved
+  immersed_solid_signed_distance_function =
+    this->multiphysics->get_immersed_solid_signed_distance_function();
+
   const DoFHandler<dim> *dof_handler_fluid =
     multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
 
@@ -220,7 +231,8 @@ Tracer<dim>::assemble_local_system_rhs(
   scratch_data.reinit(cell,
                       this->evaluation_point,
                       this->previous_solutions,
-                      &(*source_term));
+                      &(*source_term),
+                      &(*immersed_solid_signed_distance_function));
 
   const DoFHandler<dim> *dof_handler_fluid =
     multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);

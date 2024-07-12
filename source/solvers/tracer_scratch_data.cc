@@ -28,6 +28,9 @@ TracerScratchData<dim>::allocate()
   this->tracer_diffusivity_0 = std::vector<double>(n_q_points);
   this->tracer_diffusivity_1 = std::vector<double>(n_q_points);
 
+  // Solid signed distance function
+  if (properties_manager.field_is_required(field::levelset))
+    this->sdf_values = std::vector<double>(n_q_points);
 
   // Velocity for BDF schemes
   this->previous_tracer_values =
@@ -44,6 +47,10 @@ TracerScratchData<dim>::allocate()
     n_q_points, std::vector<Tensor<2, dim>>(n_dofs));
   this->laplacian_phi =
     std::vector<std::vector<double>>(n_q_points, std::vector<double>(n_dofs));
+
+  if (properties_manager.field_is_required(field::levelset))
+    fields.insert(
+      std::pair<field, std::vector<double>>(field::levelset, n_q_points));
 }
 
 
@@ -51,7 +58,9 @@ template <int dim>
 void
 TracerScratchData<dim>::calculate_physical_properties()
 {
-  // Case where you have one fluid
+  if (properties_manager.field_is_required(field::levelset))
+    set_field_vector(field::levelset, this->sdf_values, this->fields);
+
   switch (properties_manager.get_number_of_fluids())
     {
       case 1:
@@ -64,6 +73,8 @@ TracerScratchData<dim>::calculate_physical_properties()
         }
       case 2:
         {
+          throw std::runtime_error(
+            "Unsupported number of fluids (2) with the tracer physics.");
           // In this case, we need both density and viscosity
           const auto diffusivity_models =
             properties_manager.get_tracer_diffusivity_vector();
@@ -71,15 +82,16 @@ TracerScratchData<dim>::calculate_physical_properties()
           diffusivity_models[0]->vector_value(fields, tracer_diffusivity_0);
           diffusivity_models[1]->vector_value(fields, tracer_diffusivity_1);
 
-          // TODO Incomplete at the present time because the tracer VOF complete
-          // is not finished Blend the physical properties using the VOF field
-          for (unsigned int q = 0; q < this->n_q_points; ++q)
-            {
-              //          tracer_diffusivity[q] =
-              //            calculate_point_property(this->phase_values[q],
-              //                                     this->density_0[q],
-              //                                     this->density_1[q]);
-            }
+          // TODO Incomplete at the present time because the tracer VOF
+          // complete is not finished Blend the physical properties
+          // using the VOF field
+          // for (unsigned int q = 0; q < this->n_q_points; ++q)
+          // {
+          //          tracer_diffusivity[q] =
+          //            calculate_point_property(this->phase_values[q],
+          //                                     this->density_0[q],
+          //                                     this->density_1[q]);
+          // }
           break;
         }
       default:

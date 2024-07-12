@@ -1,0 +1,7 @@
+
+DEAL::Beginning
+DEAL::Testing diffusivity of immersed solids tanh model
+DEAL:: levelset = 0, diffusivity =  1.00000, dD/dlevelset numerical = 20.0000
+DEAL:: levelset = 100, diffusivity =  2.00000, dD/dlevelset numerical = 0.00000
+DEAL:: levelset = -100, diffusivity =  0.00000, dD/dlevelset numerical = 0.00000
+DEAL::OK

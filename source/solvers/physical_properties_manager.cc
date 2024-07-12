@@ -71,6 +71,7 @@ PhysicalPropertiesManager::initialize(
   required_fields[field::shear_rate]                = false;
   required_fields[field::pressure]                  = false;
   required_fields[field::phase_order_cahn_hilliard] = false;
+  required_fields[field::levelset]                  = false;
 
   // For each fluid, declare the physical properties
   for (unsigned int f = 0; f < number_of_fluids; ++f)
@@ -123,7 +124,7 @@ PhysicalPropertiesManager::initialize(
     {
       density.push_back(
         DensityModel::model_cast(physical_properties.solids[s]));
-      establish_fields_required_by_model(*density[s]);
+      establish_fields_required_by_model(*density[s + number_of_fluids]);
 
       // Store an indicator for the density to indicate if it is not constant
       // This indicator is used elsewhere in the code to throw assertions
@@ -133,24 +134,27 @@ PhysicalPropertiesManager::initialize(
 
       specific_heat.push_back(
         SpecificHeatModel::model_cast(physical_properties.solids[s]));
-      establish_fields_required_by_model(*specific_heat[s]);
+      establish_fields_required_by_model(*specific_heat[s + number_of_fluids]);
 
       thermal_conductivity.push_back(
         ThermalConductivityModel::model_cast(physical_properties.solids[s]));
-      establish_fields_required_by_model(*thermal_conductivity[s]);
+      establish_fields_required_by_model(
+        *thermal_conductivity[s + number_of_fluids]);
 
       rheology.push_back(
         RheologicalModel::model_cast(physical_properties.solids[s]));
-      this->establish_fields_required_by_model(*rheology[s]);
+      this->establish_fields_required_by_model(*rheology[s + number_of_fluids]);
       rheology.back()->set_dynamic_viscosity(density.back()->get_density_ref());
 
       tracer_diffusivity.push_back(
         TracerDiffusivityModel::model_cast(physical_properties.solids[s]));
-      establish_fields_required_by_model(*tracer_diffusivity[s]);
+      establish_fields_required_by_model(
+        *tracer_diffusivity[s + number_of_fluids]);
 
       thermal_expansion.push_back(
         ThermalExpansionModel::model_cast(physical_properties.solids[s]));
-      establish_fields_required_by_model(*thermal_expansion[s]);
+      establish_fields_required_by_model(
+        *thermal_expansion[s + number_of_fluids]);
     }
 
   // For each pair of interacting materials (fluid-fluid or fluid-solid), append

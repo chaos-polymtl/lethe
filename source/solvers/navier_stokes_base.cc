@@ -1884,7 +1884,7 @@ NavierStokesBase<dim, VectorType, DofsType>::establish_solid_domain(
   const bool non_zero_constraints)
 {
   // If there are no solid regions, there is no work to be done and we can
-  // return
+  // return.
   if (simulation_parameters.physical_properties_manager
         .get_number_of_solids() == 0)
     return;
