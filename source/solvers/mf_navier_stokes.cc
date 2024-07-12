@@ -221,14 +221,8 @@ MFNavierStokesPreconditionGMG<dim>::MFNavierStokesPreconditionGMG(
   , simulation_parameters(simulation_parameters)
   , dof_handler(dof_handler)
   , dof_handler_fe_q_iso_q1(dof_handler_fe_q_iso_q1)
-  , mg_setup_timer(MPI_COMM_WORLD,
-                   this->pcout,
-                   TimerOutput::never,
-                   TimerOutput::wall_times)
-  , mg_vmult_timer(MPI_COMM_WORLD,
-                   this->pcout,
-                   TimerOutput::never,
-                   TimerOutput::wall_times)
+  , mg_setup_timer(this->pcout, TimerOutput::never, TimerOutput::wall_times)
+  , mg_vmult_timer(this->pcout, TimerOutput::never, TimerOutput::wall_times)
 {
   if (this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
         .preconditioner == Parameters::LinearSolver::PreconditionerType::lsmg)
@@ -307,6 +301,21 @@ MFNavierStokesPreconditionGMG<dim>::MFNavierStokesPreconditionGMG(
                         << this->dof_handler.n_dofs(level) << " DoFs, "
                         << n_cells_on_levels[level] << " cells" << std::endl;
           this->pcout << std::endl;
+        }
+
+      if (this->simulation_parameters.linear_solver
+            .at(PhysicsID::fluid_dynamics)
+            .mg_verbosity == Parameters::Verbosity::extra_verbose)
+        {
+          this->pcout << "  -MG vertical communication efficiency: "
+                      << MGTools::vertical_communication_efficiency(
+                           this->dof_handler.get_triangulation())
+                      << std::endl;
+
+          this->pcout << "  -MG workload imbalance: "
+                      << MGTools::workload_imbalance(
+                           this->dof_handler.get_triangulation())
+                      << std::endl;
         }
 
       std::vector<std::shared_ptr<const Utilities::MPI::Partitioner>>
@@ -649,6 +658,21 @@ MFNavierStokesPreconditionGMG<dim>::MFNavierStokesPreconditionGMG(
                              ->n_global_active_cells()
                         << " cells" << std::endl;
           this->pcout << std::endl;
+        }
+
+      if (this->simulation_parameters.linear_solver
+            .at(PhysicsID::fluid_dynamics)
+            .mg_verbosity == Parameters::Verbosity::extra_verbose)
+        {
+          this->pcout << "  -MG vertical communication efficiency: "
+                      << MGTools::vertical_communication_efficiency(
+                           this->coarse_grid_triangulations)
+                      << std::endl;
+
+          this->pcout << "  -MG workload imbalance: "
+                      << MGTools::workload_imbalance(
+                           this->coarse_grid_triangulations)
+                      << std::endl;
         }
 
       // Apply constraints and create mg operators for each level
@@ -1719,9 +1743,6 @@ MFNavierStokesSolver<dim>::set_initial_condition_fd(
   Parameters::InitialConditionType initial_condition_type,
   bool                             restart)
 {
-  if (this->simulation_parameters.timer.type == Parameters::Timer::Type::end)
-    TimerOutput::Scope t(this->computing_timer, "Set initial conditions");
-
   if (restart)
     {
       this->pcout << "************************" << std::endl;
@@ -1832,6 +1853,8 @@ MFNavierStokesSolver<dim>::set_initial_condition_fd(
       this->pcout << " Initial condition using ramp " << std::endl;
       this->pcout << "*********************************" << std::endl;
 
+      Timer timer(this->mpi_communicator);
+
       // Set the nodal values to have an initial condition that is adequate
       this->set_nodal_values();
       this->present_solution.update_ghost_values();
@@ -1939,6 +1962,17 @@ MFNavierStokesSolver<dim>::set_initial_condition_fd(
             {
               mg_operators[level]->set_kinematic_viscosity(viscosity_end);
             }
+        }
+
+      timer.stop();
+
+      if (this->simulation_parameters.timer.type !=
+          Parameters::Timer::Type::none)
+        {
+          this->pcout << "*********************************" << std::endl;
+          this->pcout << " Time spent in ramp: " << timer.wall_time() << "s"
+                      << std::endl;
+          this->pcout << "*********************************" << std::endl;
         }
     }
   else
