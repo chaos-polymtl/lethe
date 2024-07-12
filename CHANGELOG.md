@@ -3,6 +3,12 @@
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Master] - 2024-07-12
+
+### Added
+
+- MINOR A tracer diffusivity model is added, to be used with the `lethe-fluid-sharp` solver. It makes it possible to assign distance-based (depth) diffusivity to the immersed solids. [#1185](https://github.com/chaos-polymtl/lethe/pull/1185)
+
 ## [Master] - 2024-07-09
 
 ### Added

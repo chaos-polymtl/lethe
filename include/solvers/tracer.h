@@ -117,13 +117,11 @@ public:
   void
   attach_solution_to_output(DataOut<dim> &data_out) override;
 
-
   /**
    * @brief Calculates the L2 error of the solution
    */
   double
   calculate_L2_error();
-
 
   /**
    * @brief Carry out the operations required to finish a simulation correctly.
@@ -408,6 +406,8 @@ private:
   AffineConstraints<double>      zero_constraints;
   TrilinosWrappers::SparseMatrix system_matrix;
 
+  // Immersed solid signed distance function with immersed solid solver
+  std::shared_ptr<Function<dim>> immersed_solid_signed_distance_function;
 
   // Previous solutions vectors
   std::vector<GlobalVectorType> previous_solutions;

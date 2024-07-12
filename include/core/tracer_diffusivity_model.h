@@ -110,4 +110,146 @@ private:
   const double tracer_diffusivity;
 };
 
+/**
+ * @brief Diffusivity that depends on the levelset
+ */
+class TanhLevelsetTracerDiffusivity : public TracerDiffusivityModel
+{
+public:
+  /**
+   * @brief Constructor of the levelset-dependent diffusivity model.
+   *
+   * @param[in] p_tracer_diffusivity_outside Diffusivity outside the solid
+   * @param[in] p_tracer_diffusivity_inside Diffusivity inside the solid
+   * @param[in] p_thickness Thickness of the tanh function used to smooth the
+   * property jump
+   */
+  TanhLevelsetTracerDiffusivity(const double p_tracer_diffusivity_outside,
+                                const double p_tracer_diffusivity_inside,
+                                const double p_thickness)
+    : tracer_diffusivity_outside(p_tracer_diffusivity_outside)
+    , tracer_diffusivity_inside(p_tracer_diffusivity_inside)
+    , thickness(p_thickness)
+    , delta_diffusivity(tracer_diffusivity_outside - tracer_diffusivity_inside)
+  {
+    this->model_depends_on[field::levelset] = true;
+  }
+
+  /**
+   * @brief Compute the diffusivity.
+   *
+   * @param[in] field_values Values of the various fields on which the property
+   * may depend. In this case, the diffusivity depends on the levelset.
+   * The map stores a single value per field.
+   *
+   * @return Value of the diffusivity computed with the @p field_values.
+   */
+  double
+  value(const std::map<field, double> &field_values) override
+  {
+    AssertThrow(field_values.find(field::levelset) != field_values.end(),
+                PhysicialPropertyModelFieldUndefined(
+                  "TanhLevelsetTracerDiffusivity", "levelset"));
+    double levelset = field_values.at(field::levelset);
+
+    return tracer_diffusivity_inside +
+           delta_diffusivity * (0.5 + 0.5 * tanh(levelset / thickness));
+  }
+
+  /**
+   * @brief Compute a vector of diffusivity.
+   *
+   * @param[in] field_vectors Vectors of the fields on which the diffusivity
+   * may depend. In this case, the diffusivity depends on the levelset. The map
+   * stores a vector of values per field.
+   *
+   * @param[out] property_vector Vectors of computed diffusivities.
+   */
+  void
+  vector_value(const std::map<field, std::vector<double>> &field_vectors,
+               std::vector<double> &property_vector) override
+  {
+    AssertThrow(field_vectors.find(field::levelset) != field_vectors.end(),
+                PhysicialPropertyModelFieldUndefined(
+                  "TanhLevelsetTracerDiffusivity", "levelset"));
+
+    const std::vector<double> &levelset_vec = field_vectors.at(field::levelset);
+
+    const unsigned int n_values = levelset_vec.size();
+
+    Assert(n_values == levelset_vec.size(),
+           SizeOfFields(n_values, levelset_vec.size()));
+
+    for (unsigned int i = 0; i < n_values; ++i)
+      {
+        double levelset = levelset_vec[i];
+        property_vector[i] =
+          tracer_diffusivity_inside +
+          delta_diffusivity * (0.5 + 0.5 * tanh(levelset / thickness));
+      }
+  }
+
+  /**
+   * @brief Compute the jacobian (the partial derivative) of the diffusivity
+   * with respect to a specified field.
+   *
+   * @param[in] field_values Values of the various fields on which the specific
+   * heat may depend. The map stores a single value per field.
+   *
+   * @param[in] id Indicator of the field with respect to which the jacobian
+   * should be computed.
+   *
+   * @return Value of the derivative of the diffusivity with respect to the
+   * specified field.
+   */
+  double
+  jacobian(const std::map<field, double> &field_values, field id) override
+  {
+    if (id == field::levelset)
+      {
+        AssertThrow(field_values.find(field::levelset) != field_values.end(),
+                    PhysicialPropertyModelFieldUndefined(
+                      "TanhLevelsetTracerDiffusivity", "levelset"));
+        return numerical_jacobian(field_values, field::levelset);
+      }
+    else
+      return 0;
+  };
+
+  /**
+   * @brief Compute the derivative of the diffusivity with respect to a field.
+   *
+   * @param[in] field_vectors Vector of values of the fields used to evaluate
+   * the diffusivity. The map stores a vector of values per field.
+   *
+   * @param[in] id Identifier of the field with respect to which a derivative
+   * should be computed.
+   *
+   * @param[out] jacobian Vector of computed derivative values of the
+   * diffusivity with respect to the field of the specified @p id.
+   */
+  void
+  vector_jacobian(const std::map<field, std::vector<double>> &field_vectors,
+                  const field                                 id,
+                  std::vector<double> &jacobian_vector) override
+  {
+    if (id == field::levelset)
+      {
+        AssertThrow(field_vectors.find(field::levelset) != field_vectors.end(),
+                    PhysicialPropertyModelFieldUndefined(
+                      "TanhLevelsetTracerDiffusivity", "levelset"));
+        vector_numerical_jacobian(field_vectors, id, jacobian_vector);
+      }
+    else
+      std::fill(jacobian_vector.begin(), jacobian_vector.end(), 0.);
+  };
+
+
+private:
+  const double tracer_diffusivity_outside;
+  const double tracer_diffusivity_inside;
+  const double thickness;
+  const double delta_diffusivity;
+};
+
 #endif

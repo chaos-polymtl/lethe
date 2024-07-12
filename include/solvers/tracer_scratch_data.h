@@ -131,7 +131,7 @@ public:
 
   /** @brief Reinitialize the content of the scratch
    *
-   * Using the FeValues and the content ofthe solutions and previous solutions,
+   * Using the FeValues and the content of the solutions and previous solutions,
    * fills all of the class member of the scratch
    *
    * @param cell The cell over which the assembly is being carried.
@@ -143,14 +143,15 @@ public:
    *
    * @param source_function The function describing the tracer source term
    *
+   * @param levelset_function The function describing the particles (if there are any)
    */
-
   template <typename VectorType>
   void
   reinit(const typename DoFHandler<dim>::active_cell_iterator &cell,
          const VectorType                                     &current_solution,
          const std::vector<VectorType> &previous_solutions,
-         Function<dim>                 *source_function)
+         const Function<dim>           *source_function,
+         const Function<dim>           *levelset_function)
   {
     this->fe_values_tracer.reinit(cell);
 
@@ -158,6 +159,8 @@ public:
     auto &fe_tracer   = this->fe_values_tracer.get_fe();
 
     source_function->value_list(quadrature_points, source);
+    if (properties_manager.field_is_required(field::levelset))
+      levelset_function->value_list(quadrature_points, sdf_values);
 
     if (dim == 2)
       this->cell_size =
@@ -291,6 +294,9 @@ public:
   std::vector<Tensor<1, dim>>      tracer_gradients;
   std::vector<double>              tracer_laplacians;
   std::vector<std::vector<double>> previous_tracer_values;
+
+  // Solid signed distance function
+  std::vector<double> sdf_values;
 
   // Source term
   std::vector<double> source;
