@@ -1192,6 +1192,12 @@ namespace Parameters
     /// MG coarse-grid solver preconditioner
     PreconditionerType mg_gmres_preconditioner;
 
+    /// MG use FE_Q_iso_Q1 elements for coarse grid preconditioner
+    bool mg_gmres_preconditioner_use_fe_q_iso_q1;
+
+    /// MG enable hessians in the coarse grid preconditioner
+    bool mg_gmres_preconditioner_enable_hessians;
+
     /// MG use default parameters for AMG
     bool mg_amg_use_default_parameters;
 
