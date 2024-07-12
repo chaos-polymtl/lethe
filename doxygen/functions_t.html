@@ -120,6 +120,9 @@ $(function() {
 : <a class="el" href="structIBParticlesDEM_1_1ContactInfo.html#a1a5fdc174f0ad61d5f20bdef5d96aa1f">IBParticlesDEM&lt; dim &gt;::ContactInfo</a>
 , <a class="el" href="classparticle__wall__contact__info.html#ad558e190a2cf82c5b71de369f33e7f2a">particle_wall_contact_info&lt; dim &gt;</a>
 </li>
+<li>TanhLevelsetTracerDiffusivity()
+: <a class="el" href="classTanhLevelsetTracerDiffusivity.html#a43f7024de53b2e939ee805a2911d06ce">TanhLevelsetTracerDiffusivity</a>
+</li>
 <li>target_number_of_elements
 : <a class="el" href="classMeshController.html#a0c0393a0c582b3f565942b172ef41960">MeshController</a>
 </li>
@@ -241,6 +244,10 @@ $(function() {
 </li>
 <li>theta_cri
 : <a class="el" href="classParticleDetectorInteractions.html#a0095aa7ccb3e17c8f6d3356f62292c47">ParticleDetectorInteractions&lt; dim &gt;</a>
+</li>
+<li>thickness
+: <a class="el" href="structParameters_1_1ImmersedSolidTanhParameters.html#aceddb454177bdd832bd8ed6a414eb2bc">Parameters::ImmersedSolidTanhParameters</a>
+, <a class="el" href="classTanhLevelsetTracerDiffusivity.html#a120695ecf9fbd8106c1603f1de133053">TanhLevelsetTracerDiffusivity</a>
 </li>
 <li>this_mpi_process
 : <a class="el" href="classCFDDEMSolver.html#ad6eda52696a2c480a218cf80ce951399">CFDDEMSolver&lt; dim &gt;</a>
@@ -372,6 +379,17 @@ $(function() {
 <li>tracer_diffusivity_1
 : <a class="el" href="classTracerScratchData.html#a244a7a150f0287ab94f026fb3b11e5b2">TracerScratchData&lt; dim &gt;</a>
 </li>
+<li>tracer_diffusivity_inside
+: <a class="el" href="structParameters_1_1ImmersedSolidTanhParameters.html#a6ab483465c3131a76ebe327b294def66">Parameters::ImmersedSolidTanhParameters</a>
+, <a class="el" href="classTanhLevelsetTracerDiffusivity.html#ac7cdf4e5de66e51654d776152df88b1d">TanhLevelsetTracerDiffusivity</a>
+</li>
+<li>tracer_diffusivity_model
+: <a class="el" href="classParameters_1_1Material.html#a6a95a5c2976c8556d47e0dbbb5b68874">Parameters::Material</a>
+</li>
+<li>tracer_diffusivity_outside
+: <a class="el" href="structParameters_1_1ImmersedSolidTanhParameters.html#aef75f4fc0a223d16cb04030eb0d5de2d">Parameters::ImmersedSolidTanhParameters</a>
+, <a class="el" href="classTanhLevelsetTracerDiffusivity.html#a08cc82ed2272f58fce67fe14725732b8">TanhLevelsetTracerDiffusivity</a>
+</li>
 <li>tracer_drift_velocity
 : <a class="el" href="classSimulationParameters.html#a936fbb68ded505a3cb927639e7b0a0cf">SimulationParameters&lt; dim &gt;</a>
 </li>
@@ -398,6 +416,9 @@ $(function() {
 </li>
 <li>TracerAssemblerCore()
 : <a class="el" href="classTracerAssemblerCore.html#a2d76d11b596a8c3365e590e75cd46ef3">TracerAssemblerCore&lt; dim &gt;</a>
+</li>
+<li>TracerDiffusivityModel
+: <a class="el" href="classParameters_1_1Material.html#a66662d34dd196af7f5845330c47752bd">Parameters::Material</a>
 </li>
 <li>TracerDriftVelocity()
 : <a class="el" href="classParameters_1_1TracerDriftVelocity.html#a2964b0580ce6ffc2e392a718618d40a6">Parameters::TracerDriftVelocity&lt; dim &gt;</a>
@@ -446,21 +467,25 @@ $(function() {
 : <a class="el" href="classBoundaryConditions_1_1BoundaryConditions.html#a7852339da7c9700fe048748f99fc98bf">BoundaryConditions::BoundaryConditions&lt; dim &gt;</a>
 , <a class="el" href="structParameters_1_1CahnHilliard__PhaseFilter.html#a7e20242d24138ca8b65c9dfaa5764a4a">Parameters::CahnHilliard_PhaseFilter</a>
 , <a class="el" href="classParameters_1_1InitialConditions.html#a683199f2f31194b94c614279ec37c7c8">Parameters::InitialConditions&lt; dim &gt;</a>
-, <a class="el" href="structParameters_1_1Mesh.html#afbb15a0da03130fc18838e64ad9c8659">Parameters::Mesh</a>
 </li>
 <li>Type
 : <a class="el" href="structParameters_1_1Mesh.html#a9be2ccd9771c7cc7df861429a0c7864c">Parameters::Mesh</a>
 </li>
 <li>type
-: <a class="el" href="structParameters_1_1MeshAdaptation.html#a3d3887253d40863c0fc67c9c4bd0dcb0">Parameters::MeshAdaptation</a>
+: <a class="el" href="structParameters_1_1Mesh.html#afbb15a0da03130fc18838e64ad9c8659">Parameters::Mesh</a>
 </li>
 <li>Type
 : <a class="el" href="structParameters_1_1MeshAdaptation.html#a20a32a04c8c684495ff2d3c7be73c5a2">Parameters::MeshAdaptation</a>
-, <a class="el" href="structParameters_1_1Timer.html#ae1d96ff22b9dbb46d965a0df44142f42">Parameters::Timer</a>
 </li>
 <li>type
-: <a class="el" href="structParameters_1_1Timer.html#aa4dd41703e6225d984f8696119f763a7">Parameters::Timer</a>
-, <a class="el" href="structParameters_1_1VOF__InterfaceSharpening.html#a80f696fbb9ddcc0f8c36bad580db3ee3">Parameters::VOF_InterfaceSharpening</a>
+: <a class="el" href="structParameters_1_1MeshAdaptation.html#a3d3887253d40863c0fc67c9c4bd0dcb0">Parameters::MeshAdaptation</a>
+, <a class="el" href="structParameters_1_1Timer.html#aa4dd41703e6225d984f8696119f763a7">Parameters::Timer</a>
+</li>
+<li>Type
+: <a class="el" href="structParameters_1_1Timer.html#ae1d96ff22b9dbb46d965a0df44142f42">Parameters::Timer</a>
+</li>
+<li>type
+: <a class="el" href="structParameters_1_1VOF__InterfaceSharpening.html#a80f696fbb9ddcc0f8c36bad580db3ee3">Parameters::VOF_InterfaceSharpening</a>
 , <a class="el" href="structParameters_1_1VOF__PhaseFilter.html#af0a4fd5e123794a52f33835eb35a6817">Parameters::VOF_PhaseFilter</a>
 , <a class="el" href="classShape.html#a6b530422aac8aacdf7bba3648a32d658">Shape&lt; dim &gt;</a>
 </li>

@@ -5,7 +5,7 @@
 <area shape="rect" id="node10" href="$classSpecificHeatModel.html" title="Abstract class for calculating the specific heat of materials on quadrature points using the temperat..." alt="" coords="252,360,395,387"/>
 <area shape="rect" id="node13" href="$classThermalConductivityModel.html" title="Abstract class that allows to calculate the thermal conductivity on each quadrature point using the t..." alt="" coords="224,436,423,463"/>
 <area shape="rect" id="node17" href="$classThermalExpansionModel.html" title="Abstract class that allows to calculate the thermal expansion coefficient (with unit of inverse tempe..." alt="" coords="232,579,415,605"/>
-<area shape="rect" id="node20" href="$classTracerDiffusivityModel.html" title="Abstract class that allows to calculates the tracer diffusivity." alt="" coords="239,655,407,681"/>
+<area shape="rect" id="node20" href="$classTracerDiffusivityModel.html" title="Abstract class that allows to calculates the tracer diffusivity." alt="" coords="239,680,407,707"/>
 <area shape="rect" id="node3" href="$classDensityConstant.html" title="Constant density model." alt="" coords="521,5,651,32"/>
 <area shape="rect" id="node4" href="$classDensityIsothermalIdealGas.html" title="Isothermal ideal gas density." alt="" coords="487,56,685,83"/>
 <area shape="rect" id="node6" href="$classCarreau.html" title=" " alt="" coords="549,107,623,133"/>
@@ -20,4 +20,5 @@
 <area shape="rect" id="node18" href="$classConstantThermalExpansion.html" title="Constant thermal expansion coefficient." alt="" coords="485,579,687,605"/>
 <area shape="rect" id="node19" href="$classThermalExpansionPhaseChange.html" title="Implements a phase&#45;dependent thermal expansion coefficient." alt="" coords="471,629,701,656"/>
 <area shape="rect" id="node21" href="$classConstantTracerDiffusivity.html" title="Constant tracer diffusivity." alt="" coords="493,680,679,707"/>
+<area shape="rect" id="node22" href="$classTanhLevelsetTracerDiffusivity.html" title="Diffusivity that depends on the levelset." alt="" coords="479,731,693,757"/>
 </map>

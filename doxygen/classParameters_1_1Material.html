@@ -112,6 +112,10 @@ Public Types</h2></td></tr>
 , <a class="el" href="classParameters_1_1Material.html#a822ebfba0d5a0b0b8f5df1ff6104e1bcad0b50e5bdf6e59d6f8ce448465e09069">phase_change</a>
  }</td></tr>
 <tr class="separator:a822ebfba0d5a0b0b8f5df1ff6104e1bc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a66662d34dd196af7f5845330c47752bd"><td class="memItemLeft" align="right" valign="top">enum class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParameters_1_1Material.html#a66662d34dd196af7f5845330c47752bd">TracerDiffusivityModel</a> { <a class="el" href="classParameters_1_1Material.html#a66662d34dd196af7f5845330c47752bda617ac08757d38a5a7ed91c224f0e90a0">constant</a>
+, <a class="el" href="classParameters_1_1Material.html#a66662d34dd196af7f5845330c47752bda192644cfea8ad845bf0e958e58e471d6">immersed_boundary_tanh</a>
+ }</td></tr>
+<tr class="separator:a66662d34dd196af7f5845330c47752bd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
@@ -152,6 +156,10 @@ Public Attributes</h2></td></tr>
 <tr class="separator:ab5fb0cccc4cf72b4cf025354978285a1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4e4afc26711146553e7a3f9934772b41"><td class="memItemLeft" align="right" valign="top">enum <a class="el" href="classParameters_1_1Material.html#a822ebfba0d5a0b0b8f5df1ff6104e1bc">Parameters::Material::ThermalExpansionModel</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParameters_1_1Material.html#a4e4afc26711146553e7a3f9934772b41">thermal_expansion_model</a></td></tr>
 <tr class="separator:a4e4afc26711146553e7a3f9934772b41"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6a95a5c2976c8556d47e0dbbb5b68874"><td class="memItemLeft" align="right" valign="top">enum <a class="el" href="classParameters_1_1Material.html#a66662d34dd196af7f5845330c47752bd">Parameters::Material::TracerDiffusivityModel</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParameters_1_1Material.html#a6a95a5c2976c8556d47e0dbbb5b68874">tracer_diffusivity_model</a></td></tr>
+<tr class="separator:a6a95a5c2976c8556d47e0dbbb5b68874"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7412ca075eb12d74a8db7c04feea3f51"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structParameters_1_1ImmersedSolidTanhParameters.html">ImmersedSolidTanhParameters</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParameters_1_1Material.html#a7412ca075eb12d74a8db7c04feea3f51">immersed_solid_tanh_parameters</a></td></tr>
+<tr class="separator:a7412ca075eb12d74a8db7c04feea3f51"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5f75a0c722cc946859f32a6e45b1966a"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParameters_1_1Material.html#a5f75a0c722cc946859f32a6e45b1966a">k_A0</a></td></tr>
 <tr class="separator:a5f75a0c722cc946859f32a6e45b1966a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a88abfaa16ebb0f74d2688cc9cbb623df"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParameters_1_1Material.html#a88abfaa16ebb0f74d2688cc9cbb623df">k_A1</a></td></tr>
@@ -160,7 +168,7 @@ Public Attributes</h2></td></tr>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p><a class="el" href="classParameters_1_1Material.html" title="Material - Class that defines the physical property of a material. Generally a material will be a flu...">Material</a> - Class that defines the physical property of a material. Generally a material will be a fluid, but for conjugated heat transfer, this may also be a solid. </p>
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00366">366</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00381">381</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 </div><h2 class="groupheader">Member Enumeration Documentation</h2>
 <a id="a1cfc779217cd4a46b803d142be3dcad0"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a1cfc779217cd4a46b803d142be3dcad0">&#9670;&nbsp;</a></span>DensityModel</h2>
@@ -186,7 +194,7 @@ Public Attributes</h2></td></tr>
 <tr><td class="fieldname"><a id="a1cfc779217cd4a46b803d142be3dcad0af56942eecd31415147f110ceeb2eb980"></a>isothermal_ideal_gas&#160;</td><td class="fielddoc"></td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00408">408</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00424">424</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>
@@ -216,7 +224,7 @@ Public Attributes</h2></td></tr>
 <tr><td class="fieldname"><a id="a16a1e74c1322d187f42c7a3587bf2ab1ad0b50e5bdf6e59d6f8ce448465e09069"></a>phase_change&#160;</td><td class="fielddoc"></td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00399">399</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00415">415</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>
@@ -244,7 +252,7 @@ Public Attributes</h2></td></tr>
 <tr><td class="fieldname"><a id="acc7336ee0289363a01ec2df5d5f1f2c7ad0b50e5bdf6e59d6f8ce448465e09069"></a>phase_change&#160;</td><td class="fielddoc"></td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00415">415</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00431">431</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>
@@ -273,7 +281,7 @@ Public Attributes</h2></td></tr>
 <tr><td class="fieldname"><a id="ae70f161c2e9614a2c459221de746743fad0b50e5bdf6e59d6f8ce448465e09069"></a>phase_change&#160;</td><td class="fielddoc"></td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00421">421</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00437">437</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>
@@ -301,7 +309,35 @@ Public Attributes</h2></td></tr>
 <tr><td class="fieldname"><a id="a822ebfba0d5a0b0b8f5df1ff6104e1bcad0b50e5bdf6e59d6f8ce448465e09069"></a>phase_change&#160;</td><td class="fielddoc"></td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00428">428</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00444">444</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+
+</div>
+</div>
+<a id="a66662d34dd196af7f5845330c47752bd"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a66662d34dd196af7f5845330c47752bd">&#9670;&nbsp;</a></span>TracerDiffusivityModel</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">enum <a class="el" href="classParameters_1_1Material.html#a66662d34dd196af7f5845330c47752bd">Parameters::Material::TracerDiffusivityModel</a></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">strong</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<table class="fieldtable">
+<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="a66662d34dd196af7f5845330c47752bda617ac08757d38a5a7ed91c224f0e90a0"></a>constant&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a66662d34dd196af7f5845330c47752bda192644cfea8ad845bf0e958e58e471d6"></a>immersed_boundary_tanh&#160;</td><td class="fielddoc"></td></tr>
+</table>
+
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00450">450</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>
@@ -329,7 +365,7 @@ Public Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00369">369</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00384">384</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>
@@ -366,9 +402,9 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parameters_8cc_source.html#l00904">904</a> of file <a class="el" href="parameters_8cc_source.html">parameters.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8cc_source.html#l00944">944</a> of file <a class="el" href="parameters_8cc_source.html">parameters.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="parameters_8cc_source.html#l00717">Parameters::PhaseChange::declare_parameters()</a>, <a class="el" href="parameters_8cc_source.html#l00374">Parameters::NonNewtonian::declare_parameters()</a>, <a class="el" href="parameters_8cc_source.html#l00397">Parameters::IsothermalIdealGasDensityParameters::declare_parameters()</a>, <a class="el" href="parameters_8h_source.html#l00413">isothermal_ideal_gas_density_parameters</a>, <a class="el" href="parameters_8h_source.html#l00406">non_newtonian_parameters</a>, and <a class="el" href="parameters_8h_source.html#l00396">phase_change_parameters</a>.</p>
+<p class="reference">References <a class="el" href="parameters_8cc_source.html#l00757">Parameters::PhaseChange::declare_parameters()</a>, <a class="el" href="parameters_8cc_source.html#l00374">Parameters::NonNewtonian::declare_parameters()</a>, <a class="el" href="parameters_8cc_source.html#l00398">Parameters::ImmersedSolidTanhParameters::declare_parameters()</a>, <a class="el" href="parameters_8cc_source.html#l00437">Parameters::IsothermalIdealGasDensityParameters::declare_parameters()</a>, <a class="el" href="parameters_8h_source.html#l00458">immersed_solid_tanh_parameters</a>, <a class="el" href="parameters_8h_source.html#l00429">isothermal_ideal_gas_density_parameters</a>, <a class="el" href="parameters_8h_source.html#l00422">non_newtonian_parameters</a>, and <a class="el" href="parameters_8h_source.html#l00412">phase_change_parameters</a>.</p>
 
 </div>
 </div>
@@ -410,9 +446,9 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parameters_8cc_source.html#l01001">1001</a> of file <a class="el" href="parameters_8cc_source.html">parameters.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8cc_source.html#l01051">1051</a> of file <a class="el" href="parameters_8cc_source.html">parameters.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="classParameters_1_1Material.html#a16a1e74c1322d187f42c7a3587bf2ab1a2feb8649b74af645feff78ba004ed0c2">carreau</a>, <a class="el" href="classParameters_1_1Material.html#a1cfc779217cd4a46b803d142be3dcad0a617ac08757d38a5a7ed91c224f0e90a0">constant</a>, <a class="el" href="parameters_8h_source.html#l00385">density</a>, <a class="el" href="classParameters_1_1Material.html#a2607c68b29e7059fae4ecbef7b65d742">density_model</a>, <a class="el" href="dimensionality_8h_source.html#l00097">Parameters::Dimensionality::density_scaling</a>, <a class="el" href="dimensionality_8h_source.html#l00103">Parameters::Dimensionality::diffusivity_scaling</a>, <a class="el" href="classParameters_1_1Material.html#a1cfc779217cd4a46b803d142be3dcad0af56942eecd31415147f110ceeb2eb980">isothermal_ideal_gas</a>, <a class="el" href="parameters_8h_source.html#l00413">isothermal_ideal_gas_density_parameters</a>, <a class="el" href="parameters_8h_source.html#l00435">k_A0</a>, <a class="el" href="parameters_8h_source.html#l00436">k_A1</a>, <a class="el" href="parameters_8h_source.html#l00383">kinematic_viscosity</a>, <a class="el" href="classParameters_1_1Material.html#ae70f161c2e9614a2c459221de746743fa9a932b3cb396238423eb2f33ec17d6aa">linear</a>, <a class="el" href="classParameters_1_1Material.html#a16a1e74c1322d187f42c7a3587bf2ab1aae02ec5bee6f2a01b6d635cc0e0b09fb">newtonian</a>, <a class="el" href="parameters_8h_source.html#l00406">non_newtonian_parameters</a>, <a class="el" href="parameters_8cc_source.html#l00663">Parameters::PhaseChange::parse_parameters()</a>, <a class="el" href="parameters_8cc_source.html#l00385">Parameters::NonNewtonian::parse_parameters()</a>, <a class="el" href="parameters_8cc_source.html#l00424">Parameters::IsothermalIdealGasDensityParameters::parse_parameters()</a>, <a class="el" href="classParameters_1_1Material.html#a16a1e74c1322d187f42c7a3587bf2ab1ad0b50e5bdf6e59d6f8ce448465e09069">phase_change</a>, <a class="el" href="parameters_8h_source.html#l00396">phase_change_parameters</a>, <a class="el" href="classParameters_1_1Material.html#a16a1e74c1322d187f42c7a3587bf2ab1ae9f7a4aafeda67a0dab579ba480c24d6">powerlaw</a>, <a class="el" href="classParameters_1_1Material.html#a3c4fc2f23a985ad07d01750c5c478c7f">rheological_model</a>, <a class="el" href="parameters_8h_source.html#l00387">specific_heat</a>, <a class="el" href="classParameters_1_1Material.html#ab98fb9cfe47b1047371f1b54f62cb319">specific_heat_model</a>, <a class="el" href="dimensionality_8h_source.html#l00100">Parameters::Dimensionality::specific_heat_scaling</a>, <a class="el" href="dimensionality_8h_source.html#l00088">Parameters::Dimensionality::temperature</a>, <a class="el" href="parameters_8h_source.html#l00389">thermal_conductivity</a>, <a class="el" href="classParameters_1_1Material.html#ab5fb0cccc4cf72b4cf025354978285a1">thermal_conductivity_model</a>, <a class="el" href="dimensionality_8h_source.html#l00101">Parameters::Dimensionality::thermal_conductivity_scaling</a>, <a class="el" href="parameters_8h_source.html#l00391">thermal_expansion</a>, <a class="el" href="classParameters_1_1Material.html#a4e4afc26711146553e7a3f9934772b41">thermal_expansion_model</a>, <a class="el" href="parameters_8h_source.html#l00393">tracer_diffusivity</a>, and <a class="el" href="dimensionality_8h_source.html#l00099">Parameters::Dimensionality::viscosity_scaling</a>.</p>
+<p class="reference">References <a class="el" href="classParameters_1_1Material.html#a16a1e74c1322d187f42c7a3587bf2ab1a2feb8649b74af645feff78ba004ed0c2">carreau</a>, <a class="el" href="classParameters_1_1Material.html#a1cfc779217cd4a46b803d142be3dcad0a617ac08757d38a5a7ed91c224f0e90a0">constant</a>, <a class="el" href="parameters_8h_source.html#l00400">density</a>, <a class="el" href="classParameters_1_1Material.html#a2607c68b29e7059fae4ecbef7b65d742">density_model</a>, <a class="el" href="dimensionality_8h_source.html#l00097">Parameters::Dimensionality::density_scaling</a>, <a class="el" href="dimensionality_8h_source.html#l00103">Parameters::Dimensionality::diffusivity_scaling</a>, <a class="el" href="classParameters_1_1Material.html#a66662d34dd196af7f5845330c47752bda192644cfea8ad845bf0e958e58e471d6">immersed_boundary_tanh</a>, <a class="el" href="parameters_8h_source.html#l00458">immersed_solid_tanh_parameters</a>, <a class="el" href="classParameters_1_1Material.html#a1cfc779217cd4a46b803d142be3dcad0af56942eecd31415147f110ceeb2eb980">isothermal_ideal_gas</a>, <a class="el" href="parameters_8h_source.html#l00429">isothermal_ideal_gas_density_parameters</a>, <a class="el" href="parameters_8h_source.html#l00461">k_A0</a>, <a class="el" href="parameters_8h_source.html#l00462">k_A1</a>, <a class="el" href="parameters_8h_source.html#l00398">kinematic_viscosity</a>, <a class="el" href="classParameters_1_1Material.html#ae70f161c2e9614a2c459221de746743fa9a932b3cb396238423eb2f33ec17d6aa">linear</a>, <a class="el" href="classParameters_1_1Material.html#a16a1e74c1322d187f42c7a3587bf2ab1aae02ec5bee6f2a01b6d635cc0e0b09fb">newtonian</a>, <a class="el" href="parameters_8h_source.html#l00422">non_newtonian_parameters</a>, <a class="el" href="parameters_8cc_source.html#l00703">Parameters::PhaseChange::parse_parameters()</a>, <a class="el" href="parameters_8cc_source.html#l00385">Parameters::NonNewtonian::parse_parameters()</a>, <a class="el" href="parameters_8cc_source.html#l00420">Parameters::ImmersedSolidTanhParameters::parse_parameters()</a>, <a class="el" href="parameters_8cc_source.html#l00464">Parameters::IsothermalIdealGasDensityParameters::parse_parameters()</a>, <a class="el" href="classParameters_1_1Material.html#a16a1e74c1322d187f42c7a3587bf2ab1ad0b50e5bdf6e59d6f8ce448465e09069">phase_change</a>, <a class="el" href="parameters_8h_source.html#l00412">phase_change_parameters</a>, <a class="el" href="classParameters_1_1Material.html#a16a1e74c1322d187f42c7a3587bf2ab1ae9f7a4aafeda67a0dab579ba480c24d6">powerlaw</a>, <a class="el" href="classParameters_1_1Material.html#a3c4fc2f23a985ad07d01750c5c478c7f">rheological_model</a>, <a class="el" href="parameters_8h_source.html#l00402">specific_heat</a>, <a class="el" href="classParameters_1_1Material.html#ab98fb9cfe47b1047371f1b54f62cb319">specific_heat_model</a>, <a class="el" href="dimensionality_8h_source.html#l00100">Parameters::Dimensionality::specific_heat_scaling</a>, <a class="el" href="dimensionality_8h_source.html#l00088">Parameters::Dimensionality::temperature</a>, <a class="el" href="parameters_8h_source.html#l00404">thermal_conductivity</a>, <a class="el" href="classParameters_1_1Material.html#ab5fb0cccc4cf72b4cf025354978285a1">thermal_conductivity_model</a>, <a class="el" href="dimensionality_8h_source.html#l00101">Parameters::Dimensionality::thermal_conductivity_scaling</a>, <a class="el" href="parameters_8h_source.html#l00406">thermal_expansion</a>, <a class="el" href="classParameters_1_1Material.html#a4e4afc26711146553e7a3f9934772b41">thermal_expansion_model</a>, <a class="el" href="parameters_8h_source.html#l00409">tracer_diffusivity</a>, <a class="el" href="classParameters_1_1Material.html#a6a95a5c2976c8556d47e0dbbb5b68874">tracer_diffusivity_model</a>, and <a class="el" href="dimensionality_8h_source.html#l00099">Parameters::Dimensionality::viscosity_scaling</a>.</p>
 
 </div>
 </div>
@@ -429,7 +465,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00385">385</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00400">400</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>
@@ -447,6 +483,22 @@ Public Attributes</h2></td></tr>
 
 </div>
 </div>
+<a id="a7412ca075eb12d74a8db7c04feea3f51"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7412ca075eb12d74a8db7c04feea3f51">&#9670;&nbsp;</a></span>immersed_solid_tanh_parameters</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="structParameters_1_1ImmersedSolidTanhParameters.html">ImmersedSolidTanhParameters</a> Parameters::Material::immersed_solid_tanh_parameters</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00458">458</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+
+</div>
+</div>
 <a id="a379e486438f4cfa6fe09698826074bbc"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a379e486438f4cfa6fe09698826074bbc">&#9670;&nbsp;</a></span>isothermal_ideal_gas_density_parameters</h2>
 
@@ -459,7 +511,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00413">413</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00429">429</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>
@@ -475,7 +527,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00435">435</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00461">461</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>
@@ -491,7 +543,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00436">436</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00462">462</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>
@@ -507,7 +559,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00383">383</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00398">398</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>
@@ -523,7 +575,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00406">406</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00422">422</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>
@@ -539,7 +591,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00396">396</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00412">412</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>
@@ -569,7 +621,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00387">387</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00402">402</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>
@@ -599,7 +651,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00389">389</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00404">404</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>
@@ -629,7 +681,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00391">391</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00406">406</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>
@@ -659,7 +711,21 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00393">393</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00409">409</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+
+</div>
+</div>
+<a id="a6a95a5c2976c8556d47e0dbbb5b68874"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6a95a5c2976c8556d47e0dbbb5b68874">&#9670;&nbsp;</a></span>tracer_diffusivity_model</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">enum <a class="el" href="classParameters_1_1Material.html#a66662d34dd196af7f5845330c47752bd">Parameters::Material::TracerDiffusivityModel</a> Parameters::Material::tracer_diffusivity_model</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
 
 </div>
 </div>
