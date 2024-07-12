@@ -630,6 +630,22 @@ MFNavierStokesPreconditionGMG<dim>::MFNavierStokesPreconditionGMG(
             }
           else
             this->dof_handlers[l].distribute_dofs(this->dof_handler.get_fe());
+
+          if (this->simulation_parameters.linear_solver
+                .at(PhysicsID::fluid_dynamics)
+                .mg_gmres_preconditioner_use_fe_q_iso_q1 &&
+              l == this->minlevel)
+            {
+              const auto points =
+                QGaussLobatto<1>(this->dof_handler.get_fe().degree + 1)
+                  .get_points();
+
+              this->gc_dof_handler_fe_q_iso_q1.reinit(
+                *this->coarse_grid_triangulations[l]);
+
+              this->gc_dof_handler_fe_q_iso_q1.distribute_dofs(
+                FESystem<dim>(FE_Q_iso_Q1<dim>(points), dim + 1));
+            }
         }
 
       this->mg_setup_timer.leave_subsection(
@@ -810,6 +826,40 @@ MFNavierStokesPreconditionGMG<dim>::MFNavierStokesPreconditionGMG(
               .mg_enable_hessians_jacobian,
             true);
 
+          if ((this->simulation_parameters.linear_solver
+                 .at(PhysicsID::fluid_dynamics)
+                 .mg_use_fe_q_iso_q1 == false) &&
+              (this->simulation_parameters.linear_solver
+                 .at(PhysicsID::fluid_dynamics)
+                 .mg_gmres_preconditioner_use_fe_q_iso_q1 == true) &&
+              (level == this->minlevel))
+            {
+              const auto quadrature_mg =
+                QIterated<dim>(QGauss<1>(2),
+                               QGaussLobatto<1>(
+                                 this->dof_handler.get_fe().degree + 1)
+                                 .get_points());
+
+              this->mg_operator_for_coarse_grid_preconditioner =
+                std::make_shared<NavierStokesStabilizedOperator<dim, double>>();
+
+              this->mg_operator_for_coarse_grid_preconditioner->reinit(
+                *mapping,
+                gc_dof_handler_fe_q_iso_q1,
+                level_constraint,
+                quadrature_mg,
+                forcing_function,
+                this->simulation_parameters.physical_properties_manager
+                  .get_kinematic_viscosity_scale(),
+                this->simulation_parameters.stabilization.stabilization,
+                numbers::invalid_unsigned_int,
+                simulation_control,
+                this->simulation_parameters.linear_solver
+                  .at(PhysicsID::fluid_dynamics)
+                  .mg_gmres_preconditioner_enable_hessians,
+                true);
+            }
+
           this->mg_setup_timer.leave_subsection("Set up operators");
         }
 
@@ -902,6 +952,11 @@ MFNavierStokesPreconditionGMG<dim>::initialize(
       this->mg_operators[level]->evaluate_non_linear_term_and_calculate_tau(
         mg_solution[level]);
 
+      if ((level == this->minlevel) &&
+          mg_operator_for_coarse_grid_preconditioner)
+        mg_operator_for_coarse_grid_preconditioner
+          ->evaluate_non_linear_term_and_calculate_tau(mg_solution[level]);
+
       if (is_bdf(simulation_control->get_assembly_method()))
         {
           mg_time_derivative_previous_solutions[level].update_ghost_values();
@@ -912,6 +967,18 @@ MFNavierStokesPreconditionGMG<dim>::initialize(
           if (this->simulation_parameters.flow_control.enable_flow_control)
             this->mg_operators[level]->update_beta_force(
               flow_control.get_beta());
+
+          if ((level == this->minlevel) &&
+              mg_operator_for_coarse_grid_preconditioner)
+            {
+              mg_operator_for_coarse_grid_preconditioner
+                ->evaluate_time_derivative_previous_solutions(
+                  mg_time_derivative_previous_solutions[level]);
+
+              if (this->simulation_parameters.flow_control.enable_flow_control)
+                mg_operator_for_coarse_grid_preconditioner->update_beta_force(
+                  flow_control.get_beta());
+            }
         }
     }
 
@@ -1301,7 +1368,9 @@ MFNavierStokesPreconditionGMG<dim>::setup_AMG()
 
   // Extract matrix of the minlevel to avoid building it twice
   const TrilinosWrappers::SparseMatrix &min_level_matrix =
-    this->mg_operators[this->minlevel]->get_system_matrix();
+    mg_operator_for_coarse_grid_preconditioner ?
+      this->mg_operator_for_coarse_grid_preconditioner->get_system_matrix() :
+      this->mg_operators[this->minlevel]->get_system_matrix();
 
   if (!this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
          .mg_amg_use_default_parameters)
@@ -1419,7 +1488,9 @@ MFNavierStokesPreconditionGMG<dim>::setup_ILU()
     std::make_shared<TrilinosWrappers::PreconditionILU>();
 
   this->precondition_ilu->initialize(
-    this->mg_operators[this->minlevel]->get_system_matrix(),
+    mg_operator_for_coarse_grid_preconditioner ?
+      this->mg_operator_for_coarse_grid_preconditioner->get_system_matrix() :
+      this->mg_operators[this->minlevel]->get_system_matrix(),
     preconditionerOptions);
 }
 

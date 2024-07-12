@@ -2485,6 +2485,18 @@ namespace Parameters
                           "The preconditioner for the mg gmres solver"
                           "Choices are <amg|ilu>.");
 
+        prm.declare_entry("mg gmres preconditioner use fe q iso q1",
+                          "false",
+                          Patterns::Bool(),
+                          "use elements with linear interpolation for "
+                          "preconditioner of coarse grid problem");
+
+        prm.declare_entry("mg gmres preconditioner enable hessians",
+                          "true",
+                          Patterns::Bool(),
+                          "Turns off the terms involving the hessian in the "
+                          "preconditioner of coarse grid problem");
+
         prm.declare_entry("mg amg use default parameters",
                           "false",
                           Patterns::Bool(),
@@ -2629,6 +2641,11 @@ namespace Parameters
         else
           throw std::logic_error(
             "Error, invalid preconditioner type for mg gmres solver. Choices are amg or ilu.");
+
+        mg_gmres_preconditioner_use_fe_q_iso_q1 =
+          prm.get_bool("mg gmres preconditioner use fe q iso q1");
+        mg_gmres_preconditioner_enable_hessians =
+          prm.get_bool("mg gmres preconditioner enable hessians");
 
         mg_amg_use_default_parameters =
           prm.get_bool("mg amg use default parameters");

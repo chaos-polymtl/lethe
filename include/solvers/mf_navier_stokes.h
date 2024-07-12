@@ -157,6 +157,9 @@ private:
   /// Level operators for the geometric multigrid
   MGLevelObject<std::shared_ptr<OperatorType>> mg_operators;
 
+  /// Coarse-grid operator for coarse-grid preconitioner (optional)
+  std::shared_ptr<OperatorType> mg_operator_for_coarse_grid_preconditioner;
+
   /// Multigrid level object storing all operators
   std::shared_ptr<mg::Matrix<VectorType>> mg_matrix;
 
@@ -225,6 +228,12 @@ private:
 
   /// Describes the layout of DoFs for FE_Q_iso_Q1 elements.
   const DoFHandler<dim> &dof_handler_fe_q_iso_q1;
+
+  /// Describes the layout of DoFs for FE_Q_iso_Q1 elements
+  /// (only used in the case of global coarsening if
+  /// coarse-grid operator and coarse-grid operator are
+  /// different).
+  DoFHandler<dim> gc_dof_handler_fe_q_iso_q1;
 
   /// Vector holding number of coarse grid iterations
   mutable std::vector<unsigned int> coarse_grid_iterations;
