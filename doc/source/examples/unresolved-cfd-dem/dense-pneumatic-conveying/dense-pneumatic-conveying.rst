@@ -234,7 +234,7 @@ The model parameters are quite standard for a DEM simulation with the non-linear
 
 .. note::
 
-    Here, we use the `Adaptive Sparse Contacts <../../../parameters/dem/model_parameters.html#adaptive-sparse-contacts-asc>`_ method to speedup the simulation. The method will disabled the contact computation in quasi-static areas which represents a significant part of the domain during the loading of the particles. Weight factor parameters for the ASC status are use in the load balancing method. The `discharge plate exemple <../../../examples/dem/plate-discharge/plate-discharge.html>`_ is a good example of the use of the ASC method with DEM.
+    Here, we use the `Adaptive Sparse Contacts (ASC) <../../../parameters/dem/model_parameters.html#adaptive-sparse-contacts-asc>`_ method to speedup the simulation. The method will disabled the contact computation in quasi-static areas which represents a significant part of the domain during the loading of the particles. Weight factor parameters for the ASC status are use in the load balancing method. The `discharge plate example <../../../examples/dem/plate-discharge/plate-discharge.html>`_ is a good example of the use of the ASC method with DEM.
 
 .. code-block:: text
 

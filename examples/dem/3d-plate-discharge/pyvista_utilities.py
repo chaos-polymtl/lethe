@@ -8,18 +8,25 @@ def position_string_to_int(coord_str):
 
 class PlateDischargeUtilities:
     def __init__(self, dataframe, prm_dict, time_list,  plate_norm, plate_direction):
+        # Storing the dataframe data with the particles information, the
+        # parameter for the prm file, and the time list
         self.dataframe = dataframe
         self.prm_dict = prm_dict
         self.time_list = time_list
-        self.direction = plate_direction#position_string_to_int(plate_direction)
+
+        # Save the direction and the norm of the plate as number for string
+        self.direction = plate_direction
         self.direction_str = plate_direction
         self.norm = plate_norm
         self.norm_str = position_string_to_int(plate_norm)
+
+        # Save the position, the height, and the length of the plate
         p0 = prm_dict['initial translation'].split(', ')
         self.H = float(p0[self.norm_str])
         self.plate_extremities = prm_dict[plate_direction]
         self.L = self.plate_extremities[1] - self.plate_extremities[0]
 
+        # Initialize the dataframe for the particles position
         self.particles_x_top = [pd.Series()] * len(time_list)
         self.particles_y_top = [pd.Series()] * len(time_list)
         self.particles_x_bottom = [pd.Series()] * len(time_list)

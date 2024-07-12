@@ -45,6 +45,11 @@ subsection model parameters
   subsection adaptive sparse contacts
     set enable adaptive sparse contacts = false
   end
+  subsection load balancing
+    set load balance method     = dynamic
+    set threshold               = 0.5
+    set dynamic check frequency = 2500
+  end
 end
 
 #---------------------------------------------------

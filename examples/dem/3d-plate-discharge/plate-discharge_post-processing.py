@@ -94,7 +94,7 @@ for k, name in enumerate(names):
         log_list.append(log_dataframe)
 
 if process_data:
-    # All simulation have the same time list
+    # All simulations have the same time list
     time = data_list[0]['time'].values
 
     angle_top_plot.plot(time, postprocessing.theoritical_angle * np.ones(len(time)), '--', color='k', label='Theoretical angle', linewidth=1.00)
