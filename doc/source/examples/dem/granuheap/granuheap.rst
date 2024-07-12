@@ -377,10 +377,9 @@ Results
 
 The video below presents the Granuheap simulation for a ``rolling friction`` of 0.5 and a ``surface energy`` of 0.0100. 
 
+.. raw:: html
 
-
-EMBED YOUTUBE VIDEO TO COME 
-
+    <iframe width="560" height="315" src="https://www.youtube.com/embed/EZPuYZ9wQ0c?si=Px5PiotBox0GzBx3" frameborder="0" allowfullscreen></iframe>
 
 ---------
 Reference
