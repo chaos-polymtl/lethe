@@ -383,12 +383,14 @@ NavierStokesOperatorBase<dim, number>::vmult(VectorType       &dst,
   this->matrix_free.cell_loop(
     &NavierStokesOperatorBase::do_cell_integral_range, this, dst, src, true);
 
-  // set constrained dofs as the sum of current dst value and src value
+  // copy constrained dofs from src to dst (corresponding to diagonal
+  // entries with value 1.0)
   for (unsigned int i = 0; i < constrained_indices.size(); ++i)
     dst.local_element(constrained_indices[i]) =
       src.local_element(constrained_indices[i]);
 
-  // restoring edge constrained dofs in src and dst
+  // restoring edge constrained dofs in src and copy the values to dst
+  // (corresponding to diagonal entries with value 1.0)
   for (unsigned int i = 0; i < edge_constrained_indices.size(); ++i)
     {
       const_cast<LinearAlgebra::distributed::Vector<number> &>(src)
@@ -577,6 +579,25 @@ NavierStokesOperatorBase<dim, number>::get_system_matrix() const
 
         column++;
       });
+
+  // make sure that diagonal entries related to constrained dofs
+  // have a value of 1.0 (note this is consistent to vmult() and
+  // compute_inverse_diagonal())
+  for (const auto &local_row : constrained_indices)
+    {
+      const auto global_row =
+        get_vector_partitioner()->local_to_global(local_row);
+      system_matrix.set(global_row, global_row, 1.0);
+    }
+
+  for (const auto &local_row : edge_constrained_indices)
+    {
+      const auto global_row =
+        get_vector_partitioner()->local_to_global(local_row);
+      system_matrix.set(global_row, global_row, 1.0);
+    }
+
+  system_matrix.compress(VectorOperation::insert);
 
   this->timer.leave_subsection("operator::get_system_matrix");
 
