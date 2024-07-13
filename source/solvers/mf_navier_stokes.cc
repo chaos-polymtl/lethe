@@ -1134,6 +1134,36 @@ MFNavierStokesPreconditionGMG<dim>::initialize(
             *this->mg_operators[this->minlevel],
             *this->precondition_ilu);
         }
+      else if (this->simulation_parameters.linear_solver
+                 .at(PhysicsID::fluid_dynamics)
+                 .mg_gmres_preconditioner ==
+               Parameters::LinearSolver::PreconditionerType::direct)
+        {
+          TrilinosWrappers::SolverDirect::AdditionalData data;
+          this->direct_solver_control =
+            std::make_shared<SolverControl>(100, 1.e-10);
+
+          this->precondition_direct =
+            std::make_shared<TrilinosWrappers::SolverDirect>(
+              *this->direct_solver_control, data);
+
+          const auto &system_matrix =
+            mg_operator_for_coarse_grid_preconditioner ?
+              this->mg_operator_for_coarse_grid_preconditioner
+                ->get_system_matrix() :
+              this->mg_operators[this->minlevel]->get_system_matrix();
+
+          this->precondition_direct->initialize(system_matrix);
+
+          this->mg_coarse = std::make_shared<
+            MGCoarseGridIterativeSolver<VectorType,
+                                        SolverGMRES<VectorType>,
+                                        OperatorType,
+                                        TrilinosWrappers::SolverDirect>>(
+            *this->coarse_grid_solver,
+            *this->mg_operators[this->minlevel],
+            *this->precondition_direct);
+        }
     }
   else if (this->simulation_parameters.linear_solver
              .at(PhysicsID::fluid_dynamics)
