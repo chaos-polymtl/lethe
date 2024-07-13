@@ -2481,9 +2481,9 @@ namespace Parameters
 
         prm.declare_entry("mg gmres preconditioner",
                           "amg",
-                          Patterns::Selection("amg|ilu"),
+                          Patterns::Selection("amg|direct|ilu"),
                           "The preconditioner for the mg gmres solver"
-                          "Choices are <amg|ilu>.");
+                          "Choices are <amg|direct|ilu>.");
 
         prm.declare_entry("mg gmres preconditioner use fe q iso q1",
                           "false",
@@ -2636,6 +2636,8 @@ namespace Parameters
         const std::string cg_precond = prm.get("mg gmres preconditioner");
         if (cg_precond == "amg")
           mg_gmres_preconditioner = PreconditionerType::amg;
+        else if (cg_precond == "direct")
+          mg_gmres_preconditioner = PreconditionerType::direct;
         else if (cg_precond == "ilu")
           mg_gmres_preconditioner = PreconditionerType::ilu;
         else

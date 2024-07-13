@@ -1091,6 +1091,7 @@ namespace Parameters
     /// Type of preconditioner
     enum class PreconditionerType
     {
+      direct,
       ilu,
       amg,
       lsmg,
