@@ -590,8 +590,7 @@ Tracer<dim>::postprocess_tracer_flow_rate(const VectorType &current_solution_fd)
 
   const auto diffusivity_model = properties_manager.get_tracer_diffusivity();
 
-  std::vector<double> tracer_diffusivity(n_q_points_face);
-  diffusivity_model->vector_value(fields, tracer_diffusivity);
+  std::vector<double>     tracer_diffusivity(n_q_points_face);
   std::vector<Point<dim>> face_quadrature_points;
 
   std::vector<double> tracer_flow_rate_vector(
@@ -626,14 +625,29 @@ Tracer<dim>::postprocess_tracer_flow_rate(const VectorType &current_solution_fd)
                       fe_face_values_tracer.get_function_gradients(
                         this->present_solution, tracer_gradient);
 
+                      // We set update the fields required by the diffusivity
+                      // model
+                      fields.clear();
+                      if (diffusivity_model->depends_on(field::levelset))
+                        {
+                          std::vector<double> levelset_values(n_q_points_face);
+                          fields.insert(std::pair<field, std::vector<double>>(
+                            field::levelset, n_q_points_face));
+                          face_quadrature_points =
+                            fe_face_values_tracer.get_quadrature_points();
+                          immersed_solid_signed_distance_function =
+                            this->multiphysics
+                              ->get_immersed_solid_signed_distance_function();
+                          this->immersed_solid_signed_distance_function
+                            ->value_list(face_quadrature_points,
+                                         levelset_values);
+                          set_field_vector(field::levelset,
+                                           levelset_values,
+                                           fields);
+                        }
 
-                      // TODO Add check to see if we need the levelset field
-                      // if (diffusivity_model->depends_on(field::levelset))
-                      face_quadrature_points =
-                        fe_face_values_tracer.get_quadrature_points();
-                      // TODO Reset the field with the proper levelset values
-                      // (if applicable), using the function passed by
-                      // multiphysics
+                      diffusivity_model->vector_value(fields,
+                                                      tracer_diffusivity);
 
                       // Get fluid dynamics active cell iterator
                       typename DoFHandler<dim>::active_cell_iterator cell_fd(
