@@ -524,7 +524,7 @@ protected:
   }
 
   /**
-   * @brief Indentify if temperature DOFs of the cell are within the
+   * @brief Identify if temperature DOFs of the cell are within the
    * constraining range. If they are, velocity DOFs of the cell are constrained.
    *
    * @param[in] local_dof_indices Vector of a cell's local DOF indices.
