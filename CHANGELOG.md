@@ -3,6 +3,16 @@
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Master] - 2024-07-14
+
+### Added
+
+- MINOR Following the implementation of temperature-dependent solid domain constraint for both single-phase and two-phase flows, a need for an additional condition was identified. Indeed, in some simulations, splatters may happen, and with the previous implementation, splatter could freeze "mid-air" which is non-physical and therefore undesired. A plane to divide the domain in two parts and only the one in the opposite direction to the normal vector is considered for stasis constraints to be applied. The plane is defined through a point and an outward pointing normal vector. [#1193](https://github.com/chaos-polymtl/lethe/pull/1193)
+
+### Fixed
+
+- MINOR Previously, the pressure DOFs were also constrained with the "constrain stasis" feature, but this resulted in an ill-posed problem when sources terms in the momentum equation were pressure-dependent. Therefore, the constraints on pressure DOFs are now removed. [#1193](https://github.com/chaos-polymtl/lethe/pull/1193)
+
 ## [Master] - 2024-07-12
 
 ### Added
@@ -14,8 +24,6 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 ### Added
 
 - MINOR The multigrid output now also prints the workload imbalance and vertical communication efficiency of the multigrid hierarchy being used. In addition, the mulrigrid timers now print the min max and average times correctly with the appropriate rank. [#1194](https://github.com/chaos-polymtl/lethe/pull/1194)
-
-## [Master] - 2024-07-09
 
 ### Fixed
 

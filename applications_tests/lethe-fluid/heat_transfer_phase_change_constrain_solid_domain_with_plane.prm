@@ -123,8 +123,10 @@ end
 #---------------------------------------------------
 
 subsection constrain stasis
-  set enable                = true
-  set number of constraints = 1
+  set enable                               = true
+  set enable domain restriction with plane = true
+  set restriction plane normal vector      = -1.0, 1.0
+  set number of constraints                = 1
   subsection constraint 0
     set fluid id        = 0
     set min temperature = 0

@@ -558,9 +558,12 @@ namespace Parameters
    * @remark Pressure DOFs in "solid" cells that are next to "fluid" cells are
    * not constrained.
    *
+   * @tparam dim Number of dimensions of the problem (2D or 3D).
+   *
    * @note At the moment, only the temperature field is used to constrain the
    * "solid" domain.
    */
+  template <int dim>
   struct ConstrainSolidDomain
   {
     /// Enable/disable (@p true/false) the solid domain constraining feature.
@@ -581,6 +584,18 @@ namespace Parameters
 
     /// Upper threshold values of the constraining field (temperature)
     std::vector<double> temperature_max_values;
+
+    /// Enable/disable (@p true/false) the definition of a plane for geometrical
+    /// restrictions on the domain where the stasis constraint is applied.
+    bool enable_domain_restriction_with_plane;
+
+    /// Coordinates of a point on the restriction plane for the stasis
+    /// constraint application domain
+    Point<dim> restriction_plane_point;
+
+    /// Outward-pointing normal vector from the restricted domain to define the
+    /// restriction plane for the stasis constraint application domain
+    Tensor<1, dim> restriction_plane_normal_vector;
 
     /**
      * @brief Declare the parameters.

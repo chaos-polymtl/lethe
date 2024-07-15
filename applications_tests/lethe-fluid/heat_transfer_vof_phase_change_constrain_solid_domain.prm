@@ -54,31 +54,31 @@ end
 subsection physical properties
   set number of fluids      = 2
   set reference temperature = 29.8
-  
+
   subsection fluid 0
-    set thermal conductivity       = 0.040516842071415184
+    set thermal conductivity    = 0.040516842071415184
     set thermal expansion model = phase_change
     set thermal expansion model = phase_change
-    set specific heat model = phase_change
+    set specific heat model     = phase_change
     subsection phase change
-      set latent enthalpy = 200
+      set latent enthalpy      = 200
       set liquidus temperature = 29.8
-      set solidus temperature = 29.6
-      set viscosity liquid = 0.0007366698558439125
-      set viscosity solid = 10
+      set solidus temperature  = 29.6
+      set viscosity liquid     = 0.0007366698558439125
+      set viscosity solid      = 10
     end
   end
-  subsection fluid 0
-    set thermal conductivity       = 0.040516842071415184
+  subsection fluid 1
+    set thermal conductivity    = 0.040516842071415184
     set thermal expansion model = phase_change
     set thermal expansion model = phase_change
-    set specific heat model = phase_change
+    set specific heat model     = phase_change
     subsection phase change
-      set latent enthalpy = 200
+      set latent enthalpy      = 200
       set liquidus temperature = 34.8
-      set solidus temperature = 34.6
-      set viscosity liquid = 0.0007366698558439125
-      set viscosity solid = 10
+      set solidus temperature  = 34.6
+      set viscosity liquid     = 0.0007366698558439125
+      set viscosity solid      = 10
     end
   end
 end
@@ -196,16 +196,16 @@ end
 
 subsection linear solver
   subsection fluid dynamics
-    set verbosity                             = quiet
-    set minimum residual                      = 1e-7
-    set max krylov vectors                    = 1000
+    set verbosity          = quiet
+    set minimum residual   = 1e-7
+    set max krylov vectors = 1000
   end
   subsection heat transfer
-    set verbosity                             = quiet
-    set minimum residual                      = 1e-8
+    set verbosity        = quiet
+    set minimum residual = 1e-8
   end
   subsection VOF
-    set verbosity                             = quiet
-    set minimum residual                      = 1e-10
+    set verbosity        = quiet
+    set minimum residual = 1e-10
   end
 end
