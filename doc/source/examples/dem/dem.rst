@@ -21,6 +21,7 @@ We organize the DEM examples from the simplest to the most complicated example:
     silo/silo
     rectangular-hopper/rectangular-hopper
     granular-dam-break/granular-dam-break
+    plate-discharge/plate-discharge
     bunny-drill/bunny-drill
     granular-mixer/granular-mixer
 
