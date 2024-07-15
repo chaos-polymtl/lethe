@@ -3,10 +3,7 @@ Constrain Stasis
 =================
 
 This subsection is used to define temperature-dependent solid domains within a defined fluid.
-Homogenous constraints are applied on velocity and pressure degrees of freedom (DoFs) of cells found within the prescribed temperature range to mimic a solid.
-
-.. note::
-  Pressure DoFs of solid cells that are adjacent to fluid cells (i.e., cells with temperature values outside the specified range) are left unconstrained in order to adequately solve fluid flows.
+Homogenous constraints are applied on velocity degrees of freedom (DoFs) of cells found within the prescribed temperature range to mimic a solid.
 
 .. attention::
     In order to use this feature, the ``heat transfer`` physic must be enabled (``true``) in the :doc:`./multiphysics` subsection.
@@ -16,8 +13,15 @@ The subsection with default parameters goes as follows:
 .. code-block:: text
 
     subsection constrain stasis
-      set enable                = false
-      set number of constraints = 0
+      set enable                               = false
+      set enable domain restriction with plane = false
+      # In 2D
+      set restriction plane point              = 0.0, 0.0
+      set restriction plane normal vector      = 0.0, 0.0
+      # In 3D
+      set restriction plane point              = 0.0, 0.0, 0.0
+      set restriction plane normal vector      = 0.0, 0.0, 0.0
+      set number of constraints                = 0
       subsection constraint 0
         set fluid id                 = 0
         set phase fraction tolerance = 1e-4
@@ -27,6 +31,12 @@ The subsection with default parameters goes as follows:
     end
 
 * The ``enable`` parameter is set to ``true`` when at least one temperature-dependent stasis constraint should be applied.
+
+* The ``enable domain restriction with plane`` parameter is set to ``true`` when it is desired to reduce the constrained domain using a plane in addition to the temperature range. The plane cuts the domain in two subdomains. Only cells in the subdomain in the opposite direction to the normal vector can be constrained.
+
+* The ``restriction plane point`` parameter is a point on the plane.
+
+* The ``restriction plane normal vector`` parameter is an outward-pointing normal vector of the plane. This vector points to the side of the plane that contains cells to constrain.
 
 * The ``number of constraints`` parameter is an integer representing the number of constraints that will be applied. It is used in multiphase (VOF) simulations to apply different constraints to each fluid. Only one constraint per fluid can be imposed. Each constraint comes with its own subsection (starting with number ``0``) containing its own set of parameters as detailed below.
 

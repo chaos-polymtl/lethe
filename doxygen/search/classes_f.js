@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['qcriterionpostprocessor_3719',['QCriterionPostprocessor',['../classQCriterionPostprocessor.html',1,'']]],
-  ['qcriterionpostprocessorsmoothing_3720',['QcriterionPostProcessorSmoothing',['../classQcriterionPostProcessorSmoothing.html',1,'']]]
+  ['qcriterionpostprocessor_3720',['QCriterionPostprocessor',['../classQCriterionPostprocessor.html',1,'']]],
+  ['qcriterionpostprocessorsmoothing_3721',['QcriterionPostProcessorSmoothing',['../classQcriterionPostProcessorSmoothing.html',1,'']]]
 ];
