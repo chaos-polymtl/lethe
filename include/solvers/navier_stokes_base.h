@@ -62,20 +62,23 @@ using namespace dealii;
  * @brief Struct containing fluid id, temperature and phase fraction range
  * information, and flag containers for DOFs used in temperature-dependent
  * stasis constraints.
- *
- * @param[in] fluid_id Identifier of the fluid that is constrained.
- *
- * @param[in] min_solid_temperature Lower threshold value of the constraining
- * field (temperature).
- *
- * @param[in] max_solid_temperature Upper threshold values of the constraining
- * field (temperature).
- *
- * @param[in] filtered_phase_fraction_tolerance Tolerance applied on filtered
- * phase fraction.
  */
 struct StasisConstraintWithTemperature
 {
+  /**
+   * @brief Default constructor of the struct.
+   *
+   * @param[in] fluid_id Identifier of the fluid that is constrained.
+   *
+   * @param[in] min_solid_temperature Lower threshold value of the constraining
+   * field (temperature).
+   *
+   * @param[in] max_solid_temperature Upper threshold values of the constraining
+   * field (temperature).
+   *
+   * @param[in] filtered_phase_fraction_tolerance Tolerance applied on filtered
+   * phase fraction.
+   */
   StasisConstraintWithTemperature(
     const unsigned int fluid_id,
     const double       min_solid_temperature,
@@ -423,6 +426,45 @@ protected:
   establish_solid_domain(const bool non_zero_constraints);
 
   /**
+   * @brief Checks and identifies if the cell is located in the constraining
+   * domain defined by a plane with its outward-pointing normal vector. The
+   * check is done through a scalar product between a vector formed by a vertex
+   * of the cell to @plane_point and @plane_normal_vector. If one of the
+   * vertices of the cell results in a negative scalar product result, the cell
+   * is excluded from the constrained domain.
+   *
+   * @param[in] cell Pointer to an active cell of the fluid dynamics DoFHandler.
+   *
+   * @param[in] plane_point Coordinates of a point on the restriction plane for
+   * the stasis constraint application domain.
+   *
+   * @param[in] plane_normal_vector Outward-pointing normal vector to define the
+   * restriction plane for the stasis constraint application domain.
+   *
+   * @return Boolean indicating if the cell is in the domain of interest
+   * (@p true) or not (@p false).
+   */
+  inline bool
+  cell_in_constraining_domain(
+    const typename DoFHandler<dim>::active_cell_iterator &cell,
+    const Point<dim>                                     &plane_point,
+    const Tensor<1, dim>                                 &plane_normal_vector)
+  {
+    for (unsigned int v = 0; v < cell->n_vertices(); ++v)
+      {
+        Point<dim>     cell_vertex = cell->vertex(v);
+        Tensor<1, dim> cell_vertex_to_plane_point_vector =
+          plane_point - cell_vertex;
+        double scalar_product_result =
+          scalar_product(cell_vertex_to_plane_point_vector,
+                         plane_normal_vector);
+        if (scalar_product_result <= 0)
+          return false;
+      }
+    return true;
+  }
+
+  /**
    * @brief Get cell's local temperature values at quadrature points.
    *
    * @param[in] cell Pointer to an active cell of the fluid dynamics DoFHandler.
@@ -482,9 +524,8 @@ protected:
   }
 
   /**
-   * @brief Flag cell DOFs (either "solid" or "connected to fluid") and
-   * constrain velocity DOFs with homogeneous constraints if cell is considered
-   * solid.
+   * @brief Identify if temperature DOFs of the cell are within the
+   * constraining range. If they are, velocity DOFs of the cell are constrained.
    *
    * @param[in] local_dof_indices Vector of a cell's local DOF indices.
    *
@@ -495,29 +536,10 @@ protected:
    * containers, temperature range information and fluid id.
    */
   void
-  add_flags_and_constrain_velocity(
+  identify_cell_and_constrain_velocity(
     const std::vector<types::global_dof_index> &local_dof_indices,
     const std::vector<double>                  &local_temperature_values,
     StasisConstraintWithTemperature            &stasis_constraint_struct);
-
-  /**
-   * @brief Check if solid cells are connected to fluid ones and constrain null
-   * pressure DOFs if they are not.
-   *
-   * The check is done by looking if the global DOF indices are located in the
-   * flag containers (@p dofs_are_in_solid and @p dofs_are_connected_to_fluid)
-   * of @p stasis_constraint_struct.
-   *
-   * @param[in] stasis_constraint_struct Struct containing flagged DOF
-   * containers, temperature range information and fluid id.
-   *
-   * @param[in,out] local_dof_indices Vector for storing a cell's local DOF
-   * indices.
-   */
-  void
-  check_and_constrain_pressure(
-    const StasisConstraintWithTemperature &stasis_constraint_struct,
-    std::vector<types::global_dof_index>  &local_dof_indices);
 
   /**
    * @brief Constrain velocity DOFs of a solid cell.
@@ -579,30 +601,6 @@ protected:
             dofs_are_in_solid.insert(local_dof_indices[i]);
           }
       }
-  }
-
-  /**
-   * @brief Check if the cell is a solid.
-   *
-   * @param[in] dofs_are_in_solid Container of global DOF indices located in
-   * solid cells.
-   *
-   * @param[in] local_dof_indices Vector of a cell's local DOF indices.
-   *
-   * @return Boolean indicating if the cell is in a solid (true) or not (false).
-   */
-  inline bool
-  check_cell_is_in_solid(
-    const std::unordered_set<types::global_dof_index> &dofs_are_in_solid,
-    const std::vector<types::global_dof_index>        &local_dof_indices)
-  {
-    for (unsigned int i = 0; i < local_dof_indices.size(); ++i)
-      {
-        auto search = dofs_are_in_solid.find(local_dof_indices[i]);
-        if (search != dofs_are_in_solid.end())
-          return true;
-      }
-    return false;
   }
 
   /**

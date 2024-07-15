@@ -545,8 +545,9 @@ namespace Parameters
       prm.get_double("cahn hilliard mobility constant");
   }
 
+  template <int dim>
   void
-  ConstrainSolidDomain::declare_parameters(
+  ConstrainSolidDomain<dim>::declare_parameters(
     dealii::ParameterHandler &prm,
     const unsigned int        number_of_constraints)
   {
@@ -557,11 +558,31 @@ namespace Parameters
         "false",
         Patterns::Bool(),
         "Enable/disable (true/false) the solid domain constraining feature.");
+
+      prm.declare_entry(
+        "enable domain restriction with plane",
+        "false",
+        Patterns::Bool(),
+        "Enable/disable (true/false) the definition of a plane for geometrical\n"
+        " restrictions on the domain where the solid domain constraining feature\n"
+        " is applied.");
+      std::string default_entry_sting = (dim == 2) ? "0., 0." : "0., 0., 0.";
+      prm.declare_entry("restriction plane point",
+                        default_entry_sting,
+                        Patterns::List(Patterns::Double()),
+                        "Domain restriction plane point coordinates.");
+      prm.declare_entry(
+        "restriction plane normal vector",
+        default_entry_sting,
+        Patterns::List(Patterns::Double()),
+        "Domain restriction plane outward pointing normal vector.");
+
       prm.declare_entry(
         "number of constraints",
         "0",
         Patterns::Integer(),
         "Number of solid constraints (maximum of 1 per fluid).");
+
       // Resize vectors
       this->fluid_ids.resize(number_of_constraints);
       this->filtered_phase_fraction_tolerance.resize(number_of_constraints);
@@ -578,12 +599,13 @@ namespace Parameters
           prm.leave_subsection();
         }
     }
-
     prm.leave_subsection();
   }
 
+  template <int dim>
   void
-  ConstrainSolidDomain::declare_default_entries(dealii::ParameterHandler &prm)
+  ConstrainSolidDomain<dim>::declare_default_entries(
+    dealii::ParameterHandler &prm)
   {
     prm.declare_entry("fluid id",
                       "0",
@@ -607,12 +629,22 @@ namespace Parameters
                       "considered as a solid.");
   }
 
+  template <int dim>
   void
-  ConstrainSolidDomain::parse_parameters(dealii::ParameterHandler &prm)
+  ConstrainSolidDomain<dim>::parse_parameters(dealii::ParameterHandler &prm)
   {
     prm.enter_subsection("constrain stasis");
     {
-      this->enable                = prm.get_bool("enable");
+      this->enable = prm.get_bool("enable");
+
+      // Restriction plane parameters
+      this->enable_domain_restriction_with_plane =
+        prm.get_bool("enable domain restriction with plane");
+      this->restriction_plane_point =
+        value_string_to_tensor<dim>(prm.get("restriction plane point"));
+      this->restriction_plane_normal_vector =
+        value_string_to_tensor<dim>(prm.get("restriction plane normal vector"));
+
       this->number_of_constraints = prm.get_integer("number of constraints");
 
       // Resize vectors
@@ -634,9 +666,9 @@ namespace Parameters
     }
   }
 
-
+  template <int dim>
   void
-  ConstrainSolidDomain::parse_constraint_parameters(
+  ConstrainSolidDomain<dim>::parse_constraint_parameters(
     dealii::ParameterHandler &prm,
     const unsigned int        constraint_id)
   {
@@ -3818,8 +3850,12 @@ namespace Parameters
     prm.leave_subsection();
   }
 
+  // Explicitly instantiate template classes and structs
   template class Laser<2>;
   template class Laser<3>;
   template class IBParticles<2>;
   template class IBParticles<3>;
+  template struct ConstrainSolidDomain<2>;
+  template struct ConstrainSolidDomain<3>;
+
 } // namespace Parameters
