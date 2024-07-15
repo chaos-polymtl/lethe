@@ -320,7 +320,10 @@ ParticleWallDMTForce<dim>::calculate_particle_floating_wall_contact_force(
                          0.5) -
                         particle_triangle_distance;
 
-                      if (normal_overlap > 0)
+                      double overlap_for_force_calculation =
+                        -0.0; // Pas la vrai valeur pour le moment
+
+                      if (normal_overlap > overlap_for_force_calculation)
                         {
                           contact_info.normal_overlap = normal_overlap;
 

@@ -68,6 +68,15 @@ namespace Parameters
                         "0.0",
                         Patterns::Double(),
                         "Particle surface energy");
+      prm.declare_entry("Hamaker constant particles",
+                        "40.e-20",
+                        Patterns::Double(),
+                        "Material Hamaker constant");
+      prm.declare_entry(
+        "cut-off threshold particles",
+        "0.1",
+        Patterns::Double(),
+        "Cut-off threshold where Van der Waal forces are ignored for the DMT model");
     }
 
     void
@@ -128,6 +137,8 @@ namespace Parameters
         prm.get_double("rolling friction particles");
       surface_energy_particle.at(particle_type) =
         prm.get_double("surface energy particles");
+      Hamaker_particle.at(particle_type) =
+        prm.get_double("Hamaker constant particles");
     }
 
     void
@@ -214,7 +225,8 @@ namespace Parameters
                             restitution_coefficient_particle,
                             friction_coefficient_particle,
                             rolling_friction_coefficient_particle,
-                            surface_energy_particle);
+                            surface_energy_particle,
+                            Hamaker_particle);
 
       // Deprecated parameter handling
       // <g> used to be 3 parameters: <gx>, <gy> and <gz>
@@ -265,7 +277,8 @@ namespace Parameters
       std::unordered_map<unsigned int, double> &friction_coefficient_particle,
       std::unordered_map<unsigned int, double>
         &rolling_friction_coefficient_particle,
-      std::unordered_map<unsigned int, double> &surface_energy_particle)
+      std::unordered_map<unsigned int, double> &surface_energy_particle,
+      std::unordered_map<unsigned int, double> &Hamaker_particle)
     {
       for (unsigned int counter = 0; counter < particle_type_maximum_number;
            ++counter)
@@ -283,6 +296,7 @@ namespace Parameters
           friction_coefficient_particle.insert({counter, 0.});
           rolling_friction_coefficient_particle.insert({counter, 0.});
           surface_energy_particle.insert({counter, 0.});
+          Hamaker_particle.insert({counter, 0.});
         }
       seed_for_distributions.reserve(particle_type_maximum_number);
     }
@@ -672,6 +686,12 @@ namespace Parameters
                           "Choices are <linear|nonlinear|JKR|DMT>.");
 
         prm.declare_entry(
+          "DMT cut-off threshold",
+          "0.1",
+          Patterns::Double(),
+          "Cut-off threshold where Van der Waal forces are ignored for the DMT model");
+
+        prm.declare_entry(
           "rolling resistance torque method",
           "constant_resistance",
           Patterns::Selection(
@@ -862,6 +882,8 @@ namespace Parameters
             throw(
               std::runtime_error("Invalid particle-wall contact force model "));
           }
+
+        dmt_cut_off_threshold = prm.get_double("DMT cut-off threshold");
 
         const std::string rolling_resistance_torque =
           prm.get("rolling resistance torque method");

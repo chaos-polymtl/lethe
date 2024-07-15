@@ -98,6 +98,9 @@ namespace Parameters
       // Surface energy of each particle type
       std::unordered_map<unsigned int, double> surface_energy_particle;
 
+      // Hamaker constant of each particle type
+      std::unordered_map<unsigned int, double> Hamaker_particle;
+
       // Coefficients of restitution of each particle type
       std::unordered_map<unsigned int, double> restitution_coefficient_particle;
 
@@ -158,7 +161,8 @@ namespace Parameters
         std::unordered_map<unsigned int, double> &friction_coefficient_particle,
         std::unordered_map<unsigned int, double>
           &rolling_friction_coefficient_particle,
-        std::unordered_map<unsigned int, double> &surface_energy_particle);
+        std::unordered_map<unsigned int, double> &surface_energy_particle,
+        std::unordered_map<unsigned int, double> &Hamaker_particle);
     };
 
     struct InsertionInfo
@@ -267,6 +271,9 @@ namespace Parameters
       // Contact search neighborhood threshold (neighborhood diameter to
       // particle diameter)
       double neighborhood_threshold;
+
+      // Cut-off threshold where Van der Waals forces are ignored.
+      double dmt_cut_off_threshold;
 
       // Particle-particle contact force model
       ParticleParticleContactForceModel particle_particle_contact_force_model;

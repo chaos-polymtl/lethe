@@ -11,6 +11,7 @@ template <
   Parameters::Lagrangian::RollingResistanceMethod rolling_friction_model>
 ParticleParticleContactForce<dim, contact_model, rolling_friction_model>::
   ParticleParticleContactForce(const DEMSolverParameters<dim> &dem_parameters)
+  : dmt_cut_off_threshold(dem_parameters.model_parameters.dmt_cut_off_threshold)
 {
   auto properties  = dem_parameters.lagrangian_physical_properties;
   n_particle_types = properties.particle_type_number;
@@ -22,6 +23,7 @@ ParticleParticleContactForce<dim, contact_model, rolling_friction_model>::
   effective_coefficient_of_rolling_friction.resize(n_particle_types *
                                                    n_particle_types);
   effective_surface_energy.resize(n_particle_types * n_particle_types);
+  hamaker_constant.resize(n_particle_types * n_particle_types);
   model_parameter_beta.resize(n_particle_types * n_particle_types);
 
   for (unsigned int i = 0; i < n_particle_types; ++i)
@@ -35,6 +37,7 @@ ParticleParticleContactForce<dim, contact_model, rolling_friction_model>::
       const double rolling_friction_coefficient_i =
         properties.rolling_friction_coefficient_particle.at(i);
       const double surface_energy_i = properties.surface_energy_particle.at(i);
+      const double hamaker_constant_i = properties.Hamaker_particle.at(i);
 
       for (unsigned int j = 0; j < n_particle_types; ++j)
         {
@@ -52,6 +55,7 @@ ParticleParticleContactForce<dim, contact_model, rolling_friction_model>::
             properties.rolling_friction_coefficient_particle.at(j);
           const double surface_energy_j =
             properties.surface_energy_particle.at(j);
+          const double hamaker_constant_j = properties.Hamaker_particle.at(j);
 
           this->effective_youngs_modulus[k] =
             (youngs_modulus_i * youngs_modulus_j) /
@@ -81,6 +85,9 @@ ParticleParticleContactForce<dim, contact_model, rolling_friction_model>::
             surface_energy_i + surface_energy_j -
             std::pow(std::sqrt(surface_energy_i) - std::sqrt(surface_energy_j),
                      2);
+
+          this->hamaker_constant[k] =
+            0.5 * (hamaker_constant_i + hamaker_constant_j);
 
           double restitution_coefficient_particle_log =
             std::log(this->effective_coefficient_of_restitution[k]);
@@ -187,7 +194,39 @@ ParticleParticleContactForce<dim, contact_model, rolling_friction_model>::
                        particle_two_properties[PropertiesIndex::dp]) -
                 particle_one_location.distance(particle_two_location);
 
-              if (normal_overlap > 0.0)
+              double overlap_for_force_calculation = 0.0;
+              if constexpr (contact_model ==
+                            Parameters::Lagrangian::
+                              ParticleParticleContactForceModel::DMT)
+                {
+                  // Effective radius
+                  this->effective_radius =
+                    (particle_one_properties[PropertiesIndex::dp] *
+                     particle_two_properties[PropertiesIndex::dp]) /
+                    (particle_one_properties[PropertiesIndex::dp] +
+                     particle_two_properties[PropertiesIndex::dp]);
+
+                  this->effective_hamaker_constant =
+                    this->hamaker_constant.at(vec_particle_type_index(
+                      particle_one_properties[PropertiesIndex::type],
+                      particle_two_properties[PropertiesIndex::type]));
+
+                  this->F_so =
+                    -12.56637061435917 * // 4 * M_PI
+                    this->effective_surface_energy.at(vec_particle_type_index(
+                      particle_one_properties[PropertiesIndex::type],
+                      particle_two_properties[PropertiesIndex::type])) *
+                    this->effective_radius;
+
+                  this->delta_0 =
+                    -std::sqrt(this->effective_hamaker_constant *
+                               this->effective_radius / (6. * -F_so));
+
+                  overlap_for_force_calculation =
+                    delta_0 / std::sqrt(dmt_cut_off_threshold);
+                }
+
+              if (normal_overlap > overlap_for_force_calculation)
                 {
                   // This means that the adjacent particles are in contact
                   // Since the normal overlap is already calculated, we update
@@ -404,7 +443,39 @@ ParticleParticleContactForce<dim, contact_model, rolling_friction_model>::
                        particle_two_properties[PropertiesIndex::dp]) -
                 particle_one_location.distance(particle_two_location);
 
-              if (normal_overlap > 0.0)
+              double overlap_for_force_calculation = 0.0;
+              if constexpr (contact_model ==
+                            Parameters::Lagrangian::
+                              ParticleParticleContactForceModel::DMT)
+                {
+                  // Effective radius
+                  this->effective_radius =
+                    (particle_one_properties[PropertiesIndex::dp] *
+                     particle_two_properties[PropertiesIndex::dp]) /
+                    (particle_one_properties[PropertiesIndex::dp] +
+                     particle_two_properties[PropertiesIndex::dp]);
+
+                  this->effective_hamaker_constant =
+                    this->hamaker_constant.at(vec_particle_type_index(
+                      particle_one_properties[PropertiesIndex::type],
+                      particle_two_properties[PropertiesIndex::type]));
+
+                  this->F_so =
+                    -12.56637061435917 * // 4 * M_PI
+                    this->effective_surface_energy.at(vec_particle_type_index(
+                      particle_one_properties[PropertiesIndex::type],
+                      particle_two_properties[PropertiesIndex::type])) *
+                    this->effective_radius;
+
+                  this->delta_0 =
+                    -std::sqrt(this->effective_hamaker_constant *
+                               this->effective_radius / (6. * -F_so));
+
+                  overlap_for_force_calculation =
+                    delta_0 / std::sqrt(dmt_cut_off_threshold);
+                }
+
+              if (normal_overlap > overlap_for_force_calculation)
                 {
                   // This means that the adjacent particles are in contact
 
@@ -613,7 +684,39 @@ ParticleParticleContactForce<dim, contact_model, rolling_friction_model>::
                        particle_two_properties[PropertiesIndex::dp]) -
                 particle_one_location.distance(particle_two_location);
 
-              if (normal_overlap > 0.0)
+              double overlap_for_force_calculation = 0.0;
+              if constexpr (contact_model ==
+                            Parameters::Lagrangian::
+                              ParticleParticleContactForceModel::DMT)
+                {
+                  // Effective radius
+                  this->effective_radius =
+                    (particle_one_properties[PropertiesIndex::dp] *
+                     particle_two_properties[PropertiesIndex::dp]) /
+                    (particle_one_properties[PropertiesIndex::dp] +
+                     particle_two_properties[PropertiesIndex::dp]);
+
+                  this->effective_hamaker_constant =
+                    this->hamaker_constant.at(vec_particle_type_index(
+                      particle_one_properties[PropertiesIndex::type],
+                      particle_two_properties[PropertiesIndex::type]));
+
+                  this->F_so =
+                    -12.56637061435917 * // 4 * M_PI
+                    this->effective_surface_energy.at(vec_particle_type_index(
+                      particle_one_properties[PropertiesIndex::type],
+                      particle_two_properties[PropertiesIndex::type])) *
+                    this->effective_radius;
+
+                  this->delta_0 =
+                    -std::sqrt(this->effective_hamaker_constant *
+                               this->effective_radius / (6. * -F_so));
+
+                  overlap_for_force_calculation =
+                    delta_0 / std::sqrt(dmt_cut_off_threshold);
+                }
+
+              if (normal_overlap > overlap_for_force_calculation)
                 {
                   // This means that the adjacent particles are in contact
 
@@ -833,7 +936,39 @@ ParticleParticleContactForce<dim, contact_model, rolling_friction_model>::
                        particle_two_properties[PropertiesIndex::dp]) -
                 particle_one_location.distance(particle_two_location);
 
-              if (normal_overlap > 0.0)
+              double overlap_for_force_calculation = 0.0;
+              if constexpr (contact_model ==
+                            Parameters::Lagrangian::
+                              ParticleParticleContactForceModel::DMT)
+                {
+                  // Effective radius
+                  this->effective_radius =
+                    (particle_one_properties[PropertiesIndex::dp] *
+                     particle_two_properties[PropertiesIndex::dp]) /
+                    (particle_one_properties[PropertiesIndex::dp] +
+                     particle_two_properties[PropertiesIndex::dp]);
+
+                  this->effective_hamaker_constant =
+                    this->hamaker_constant.at(vec_particle_type_index(
+                      particle_one_properties[PropertiesIndex::type],
+                      particle_two_properties[PropertiesIndex::type]));
+
+                  this->F_so =
+                    -12.56637061435917 * // 4 * M_PI
+                    this->effective_surface_energy.at(vec_particle_type_index(
+                      particle_one_properties[PropertiesIndex::type],
+                      particle_two_properties[PropertiesIndex::type])) *
+                    this->effective_radius;
+
+                  this->delta_0 =
+                    -std::sqrt(this->effective_hamaker_constant *
+                               this->effective_radius / (6. * -F_so));
+
+                  overlap_for_force_calculation =
+                    delta_0 / std::sqrt(dmt_cut_off_threshold);
+                }
+
+              if (normal_overlap > overlap_for_force_calculation)
                 {
                   // This means that the adjacent particles are in contact
 
@@ -1041,7 +1176,39 @@ ParticleParticleContactForce<dim, contact_model, rolling_friction_model>::
                        particle_two_properties[PropertiesIndex::dp]) -
                 particle_one_location.distance(particle_two_location);
 
-              if (normal_overlap > 0.0)
+              double overlap_for_force_calculation = 0.0;
+              if constexpr (contact_model ==
+                            Parameters::Lagrangian::
+                              ParticleParticleContactForceModel::DMT)
+                {
+                  // Effective radius
+                  this->effective_radius =
+                    (particle_one_properties[PropertiesIndex::dp] *
+                     particle_two_properties[PropertiesIndex::dp]) /
+                    (particle_one_properties[PropertiesIndex::dp] +
+                     particle_two_properties[PropertiesIndex::dp]);
+
+                  this->effective_hamaker_constant =
+                    this->hamaker_constant.at(vec_particle_type_index(
+                      particle_one_properties[PropertiesIndex::type],
+                      particle_two_properties[PropertiesIndex::type]));
+
+                  this->F_so =
+                    -12.56637061435917 * // 4 * M_PI
+                    this->effective_surface_energy.at(vec_particle_type_index(
+                      particle_one_properties[PropertiesIndex::type],
+                      particle_two_properties[PropertiesIndex::type])) *
+                    this->effective_radius;
+
+                  this->delta_0 =
+                    -std::sqrt(this->effective_hamaker_constant *
+                               this->effective_radius / (6. * -F_so));
+
+                  overlap_for_force_calculation =
+                    delta_0 / std::sqrt(dmt_cut_off_threshold);
+                }
+
+              if (normal_overlap > overlap_for_force_calculation)
                 {
                   // This means that the adjacent particles are in contact
 
