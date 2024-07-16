@@ -1,14 +1,13 @@
 """
-Making round spreader.
+Making cylinders.
 
-By: Olivier Gaboriault
-Date: February 16th, 2024
+By: Cléo Delêtre
+Date: July 16th, 2024
 """
 # Import modules:
 import gmsh
 import numpy as np
 import sys
-
 
 def cylinder(x0, radius, n_points, height):
     """
@@ -176,9 +175,6 @@ def support(x0, radius, n_points, height):
         lines_id_x0.append(gmsh.model.geo.add_line(points_id_0[j + 1], points_id_0[j]))
         lines_id_x1.append(gmsh.model.geo.add_line(points_id_1[j + 1], points_id_1[j] ))
     
- 
-
-
     # Line loops
 
     for j in range(len(points_id_1) - 1):
@@ -213,8 +209,6 @@ def support(x0, radius, n_points, height):
     print(f"support.msh saved")
     return
 
-
 # (x0, radius, n_points, height)
-    
 cylinder(-0.005, 0.005, 50, 0.02)
 support(-0.01 ,0.005 ,50, 0.005)
