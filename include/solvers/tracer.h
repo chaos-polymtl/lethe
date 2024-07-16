@@ -399,7 +399,7 @@ private:
   std::shared_ptr<SimulationControl> simulation_control;
   DoFHandler<dim>                    dof_handler;
 
-  // Finite element spce
+  // Finite element space
   std::shared_ptr<FiniteElement<dim>> fe;
 
   // Mapping and Quadrature

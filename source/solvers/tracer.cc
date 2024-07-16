@@ -687,7 +687,7 @@ Tracer<dim>::postprocess_tracer_flow_rate(const VectorType &current_solution_fd)
     tracer_flow_rate_vector[i_bc] =
       Utilities::MPI::sum(tracer_flow_rate_vector[i_bc], mpi_communicator);
 
-  // Filling table
+  // Fill table
   this->tracer_flow_rate_table.add_value(
     "time", this->simulation_control->get_current_time());
   this->tracer_flow_rate_table.set_precision("time", 12);
@@ -707,11 +707,11 @@ Tracer<dim>::postprocess_tracer_flow_rate(const VectorType &current_solution_fd)
   if (simulation_parameters.post_processing.verbosity ==
       Parameters::Verbosity::verbose)
     {
-      this->pcout << "Tracer flow rate at the boundaries : " << std::endl;
+      this->pcout << "Tracer flow rate at the boundaries: " << std::endl;
       for (unsigned int i_bc = 0;
            i_bc < this->simulation_parameters.boundary_conditions.size;
            ++i_bc)
-        this->pcout << "\t boundary " << i_bc << " : "
+        this->pcout << "\t boundary " << i_bc << ": "
                     << tracer_flow_rate_vector[i_bc] << std::endl;
     }
 
