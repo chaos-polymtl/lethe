@@ -7,7 +7,7 @@ Incompressible Flow
     :maxdepth: 1
     :glob:
 
-    2d-lid‐driven-cavity-flow/lid‐driven-cavity-flow
+    2d-lid-driven-cavity-flow/lid-driven-cavity-flow
     2d-flow-around-cylinder/2d-flow-around-cylinder
     2d-taylor-couette-flow/2d-taylor-couette-flow
     2d-backward-facing-step/2d-backward-facing-step
@@ -45,7 +45,7 @@ Incompressible Flow
       
       incompressible_1 [label="2D"]; 
 
-      incompressible_1_1 [label="Lid-Driven Cavity Flow",href="https://chaos-polymtl.github.io/lethe/documentation/examples/incompressible-flow/2d-lid%E2%80%90driven-cavity-flow/lid%E2%80%90driven-cavity-flow.html"];
+      incompressible_1_1 [label="Lid-Driven Cavity Flow",href="https://chaos-polymtl.github.io/lethe/documentation/examples/incompressible-flow/2d-lid-driven-cavity-flow/lid-driven-cavity-flow.html"];
 
       incompressible_1_2 [label="Flow around a Cylinder", href="https://chaos-polymtl.github.io/lethe/documentation/examples/incompressible-flow/2d-flow-around-cylinder/2d-flow-around-cylinder.html"];
 
