@@ -3,7 +3,7 @@ Particle FEM Reconstruction
 ==================================================
 
 In this example, we use the inverse of Finite Element Method (FEM) to reconstruct positions from a radioactive particle tracking experiment.
-The calculation is performed for a given set of positions inside a square.
+The calculation is performed for a given set of positions inside a square and is based on the work of Mirakhori *et al.* [#mirakhori2023]_.
 
 ----------------------------------
 Features
