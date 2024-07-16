@@ -563,7 +563,7 @@ Tracer<dim>::postprocess_tracer_flow_rate(const VectorType &current_solution_fd)
   const MPI_Comm     mpi_communicator = this->dof_handler.get_communicator();
 
   // Initialize tracer information
-  std::vector<double>         local_tracer_values(n_q_points_face);
+  std::vector<double>         tracer_values(n_q_points_face);
   std::vector<Tensor<1, dim>> tracer_gradient(n_q_points_face);
   FEFaceValues<dim>           fe_face_values_tracer(*this->mapping,
                                           this->dof_handler.get_fe(),
@@ -576,7 +576,7 @@ Tracer<dim>::postprocess_tracer_flow_rate(const VectorType &current_solution_fd)
   const DoFHandler<dim> *dof_handler_fd =
     multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
   const FEValuesExtractors::Vector velocities(0);
-  std::vector<Tensor<1, dim>>      local_velocity_values(n_q_points_face);
+  std::vector<Tensor<1, dim>>      velocity_values(n_q_points_face);
   FEFaceValues<dim>                fe_face_values_fd(*this->mapping,
                                       dof_handler_fd->get_fe(),
                                       *this->face_quadrature,
@@ -585,7 +585,6 @@ Tracer<dim>::postprocess_tracer_flow_rate(const VectorType &current_solution_fd)
   // Initialize fluid properties
   auto &properties_manager =
     this->simulation_parameters.physical_properties_manager;
-  std::map<field, double>              field_values;
   std::map<field, std::vector<double>> fields;
 
   const auto diffusivity_model = properties_manager.get_tracer_diffusivity();
@@ -621,11 +620,11 @@ Tracer<dim>::postprocess_tracer_flow_rate(const VectorType &current_solution_fd)
                       // Gather tracer information
                       fe_face_values_tracer.reinit(cell, face);
                       fe_face_values_tracer.get_function_values(
-                        this->present_solution, local_tracer_values);
+                        this->present_solution, tracer_values);
                       fe_face_values_tracer.get_function_gradients(
                         this->present_solution, tracer_gradient);
 
-                      // We set update the fields required by the diffusivity
+                      // We update the fields required by the diffusivity
                       // model
                       fields.clear();
                       if (diffusivity_model->depends_on(field::levelset))
@@ -659,7 +658,7 @@ Tracer<dim>::postprocess_tracer_flow_rate(const VectorType &current_solution_fd)
                       // Gather fluid dynamics information
                       fe_face_values_fd.reinit(cell_fd, face);
                       fe_face_values_fd[velocities].get_function_values(
-                        current_solution_fd, local_velocity_values);
+                        current_solution_fd, velocity_values);
 
                       // Loop on the quadrature points
                       for (unsigned int q = 0; q < n_q_points_face; q++)
@@ -670,7 +669,7 @@ Tracer<dim>::postprocess_tracer_flow_rate(const VectorType &current_solution_fd)
                           tracer_flow_rate_vector[vector_index] +=
                             (-tracer_diffusivity[q] * tracer_gradient[q] *
                                normal_vector_tracer +
-                             local_tracer_values[q] * local_velocity_values[q] *
+                             tracer_values[q] * velocity_values[q] *
                                normal_vector_tracer) *
                             fe_face_values_tracer.JxW(q);
                         } // end loop on quadrature points
@@ -685,10 +684,8 @@ Tracer<dim>::postprocess_tracer_flow_rate(const VectorType &current_solution_fd)
   for (unsigned int i_bc = 0;
        i_bc < this->simulation_parameters.boundary_conditions.size;
        ++i_bc)
-    {
-      tracer_flow_rate_vector[i_bc] =
-        Utilities::MPI::sum(tracer_flow_rate_vector[i_bc], mpi_communicator);
-    }
+    tracer_flow_rate_vector[i_bc] =
+      Utilities::MPI::sum(tracer_flow_rate_vector[i_bc], mpi_communicator);
 
   // Filling table
   this->tracer_flow_rate_table.add_value(
