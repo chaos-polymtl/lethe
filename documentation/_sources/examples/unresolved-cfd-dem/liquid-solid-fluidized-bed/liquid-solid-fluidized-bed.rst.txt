@@ -33,15 +33,15 @@ Description of the Case
 
 This example simulates the fluidization of spherical particles in water. It is meant to reproduce the behavior observed experimentally in a pilot-scale equipment with the same characteristics as the simulations.
 
-We use two different types of particles `[1] <https://doi.org/10.1016/j.powtec.2023.118652>`_: alginate :math:`(d_p = 2.66 \: \text{mm}`, :math:`\rho_p = 1029 \: \text{kg} \cdot \text{m}^{-3})` and alumina :math:`(d_p = 3.09 \: \text{mm}`, :math:`\rho_p = 3586 \: \text{kg} \cdot \text{m}^{-3})`.
+We use two different types of particles [#ferreira2023]_: alginate :math:`(d_p = 2.66 \: \text{mm}`, :math:`\rho_p = 1029 \: \text{kg} \cdot \text{m}^{-3})` and alumina :math:`(d_p = 3.09 \: \text{mm}`, :math:`\rho_p = 3586 \: \text{kg} \cdot \text{m}^{-3})`.
 
-A representation of this equipment is shown. The fluidization region comprises a :math:`1.0 \: \text{m}` height, :math:`10 \: \text{cm}` diameter cylinder made of acrylic. More details about the experimental setup can be found in Ferreira *et al*. `[1] <https://doi.org/10.1016/j.powtec.2023.118652>`_ and Ferreira *et al*. `[2] <https://doi.org/10.1016/j.enconman.2023.117224>`_
+A representation of this equipment is shown. The fluidization region comprises a :math:`1.0 \: \text{m}` height, :math:`10 \: \text{cm}` diameter cylinder made of acrylic. More details about the experimental setup can be found in Ferreira *et al*. [#ferreira2023]_ and Ferreira *et al* [#ferreira2023b]_.
 
 .. figure:: images/experimental_setup.png
     :alt: particle packing
     :align: center
 
-    Pilot-scale fluidized bed used as reference for simulations in this example. Image includes (a) schematic representation of the bed and (b) picture of the equipment in operation. Adapted from Ferreira *et al*. [1]
+    Pilot-scale fluidized bed used as reference for simulations in this example. Image includes (a) schematic representation of the bed and (b) picture of the equipment in operation. Adapted from Ferreira *et al* [#ferreira2023]_.
 
 -------------------
 DEM Parameter File
@@ -168,7 +168,7 @@ The subsection on model parameters is explained in the `DEM model parameters gui
 Lagrangian Physical Properties
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The lagrangian properties were taken from Ferreira *et al*. `[1] <https://doi.org/10.1016/j.powtec.2023.118652>`_
+The lagrangian properties were taken from Ferreira *et al* [#ferreira2023]_.
 
 .. code-block:: text
 
@@ -256,7 +256,7 @@ The long simulation is due to the small difference between particles and liquid 
       set output path       = ./output/
     end
 
-Since the alumina particles are more than :math:`3 \: \text{times}` denser than alginate particles, the pseudo-steady state is reached after very different times (according to Ferreira *et al*. `[1] <https://doi.org/10.1016/j.powtec.2023.118652>`_ :math:`4` and :math:`10 \: \text{seconds}` of real time, respectively). Because of this, we use ``set time end = 35`` for the alginate.
+Since the alumina particles are more than :math:`3 \: \text{times}` denser than alginate particles, the pseudo-steady state is reached after very different times (according to Ferreira *et al* [#ferreira2023]_. :math:`4` and :math:`10 \: \text{seconds}` of real time, respectively). Because of this, we use ``set time end = 35`` for the alginate.
 
 Physical Properties
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -340,7 +340,7 @@ CFD-DEM
 
 Different from gas-solid fluidized beds, buoyancy, pressure force, shear stress are not negligible. All these forces are considered in this example.
 
-Saffman lift force is proven to be very important to properly reproduce particles' dynamics in the liquid-fluidized bed `[1] <https://doi.org/10.1016/j.powtec.2023.118652>`_.
+Saffman lift force is proven to be very important to properly reproduce particles' dynamics in the liquid-fluidized bed [#ferreira2023]_.
 
 .. code-block:: text
 
@@ -445,7 +445,7 @@ The void fraction and velocity profile of the fluid are also shown.
 Total Pressure Drop and Bed Expansion
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-In fluidized beds, the total pressure drop (:math:`- \Delta p`) reflects the total weight of particles (:math:`M`). The following equation is derived from a force balance inside the fluidized bed `[3] <https://doi.org/10.1201/9780203912744>`_.
+In fluidized beds, the total pressure drop (:math:`- \Delta p`) reflects the total weight of particles (:math:`M`). The following equation is derived from a force balance inside the fluidized bed [#yang2003]_.
 
 .. math::
 
@@ -486,12 +486,12 @@ The following animation is in real time. It is possible to notice that, for a si
 
 
 
------------
+-----------\
 References
 -----------
 
-`[1] <https://doi.org/10.1016/j.powtec.2023.118652>`_ V. O. Ferreira, T. E. Geitani, D. Silva, B. Blais, and G. C. Lopes, “In-depth validation of unresolved CFD-DEM simulations of liquid fluidized beds,” *Powder Technol.*, vol. 426, p. 118652, Aug. 2023, doi: 10.1016/j.powtec.2023.118652.
+.. [#ferreira2023] \V. O. Ferreira, T. E. Geitani, D. Silva, B. Blais, and G. C. Lopes, “In-depth validation of unresolved CFD-DEM simulations of liquid fluidized beds,” *Powder Technol.*, vol. 426, pp. 118652, Aug. 2023, doi: `10.1016/j.powtec.2023.118652 <https://doi.org/10.1016/j.powtec.2023.118652>`_\.
 
-`[2] <https://doi.org/10.1016/j.enconman.2023.117224>`_ V. O. Ferreira, D. Silva Junior, K. R. B. de Melo, B. Blais, and G. C. Lopes, “Prediction of the bed expansion of a liquid fluidized bed bioreactor applied to wastewater treatment and biogas production,” *Energy Convers. Manag.*, vol. 290, p. 117224, Aug. 2023, doi: 10.1016/j.enconman.2023.117224.
+.. [#ferreira2023b] \V. O. Ferreira, D. Silva Junior, K. R. B. de Melo, B. Blais, and G. C. Lopes, “Prediction of the bed expansion of a liquid fluidized bed bioreactor applied to wastewater treatment and biogas production,” *Energy Convers. Manag.*, vol. 290, pp. 117224, Aug. 2023, doi: `10.1016/j.enconman.2023.117224 <https://doi.org/10.1016/j.enconman.2023.117224>`_\.
 
-`[3] <https://doi.org/10.1201/9780203912744>`_ W.-C. Yang, Ed., *Handbook of Fluidization and Fluid-Particle Systems*, 1st ed. Boca Raton: CRC Press, 2003. doi: 10.1201/9780203912744.
+.. [#yang2003] \W.-C. Yang, Ed., *Handbook of Fluidization and Fluid-Particle Systems*, 1st ed. Boca Raton: CRC Press, 2003. doi: `10.1201/9780203912744 <https://doi.org/10.1201/9780203912744>`_\.

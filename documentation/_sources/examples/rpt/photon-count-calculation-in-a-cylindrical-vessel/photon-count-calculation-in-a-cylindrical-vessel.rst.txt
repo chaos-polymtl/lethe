@@ -2,7 +2,7 @@
 Photon Count Calculation in a Cylindrical Vessel
 ==================================================
 
-In this example, using a Monte Carlo technique, we perform the calculation of photon counts of a single radioactive particle that emits :math:`\gamma`-rays. The calculation is performed for a given set of positions inside a cylindrical vessel. The Monte Carlo method allows us to estimate the photon counts of a particle at a given position inside the vessel with respect to a given detector.
+In this example, using a Monte Carlo technique, we perform the calculation of photon counts of a single radioactive particle that emits :math:`\gamma`-rays. The calculation is performed for a given set of positions inside a cylindrical vessel. The Monte Carlo method allows us to estimate the photon counts of a particle at a given position inside the vessel with respect to a given detector [#beam1978]_ [#larachi1994]_.
 
 --------
 Features
@@ -300,6 +300,6 @@ Looking back at the second scenario's results (Case A), we notice that the count
 References
 -----------
 
-`[1] <https://doi.org/10.1016/0029-554X(78)90081-2>`_ G. B. Beam, L. Wielopolski, R. P. Gardner, and K. Verghese, “Monte Carlo calculation of efficiencies of right-circular cylindrical NaI detectors for arbitrarily located point sources,” *Nucl. Instrum. Methods*, vol. 154, no. 3, pp. 501–508, Sep. 1978, doi: 10.1016/0029-554X(78)90081-2.
+.. [#beam1978] \G. B. Beam, L. Wielopolski, R. P. Gardner, and K. Verghese, “Monte Carlo calculation of efficiencies of right-circular cylindrical NaI detectors for arbitrarily located point sources,” *Nucl. Instrum. Methods*, vol. 154, no. 3, pp. 501–508, Sep. 1978, doi: `10.1016/0029-554X(78)90081-2 <https://doi.org/10.1016/0029-554X(78)90081-2>`_.
 
-`[2] <https://doi.org/10.1016/0168-9002(94)91343-9>`_ F. Larachi, G. Kennedy, and J. Chaouki, “A γ-ray detection system for 3-D particle tracking in multiphase reactors,” *Nucl. Instrum. Methods Phys. Res. Sect. Accel. Spectrometers Detect. Assoc. Equip.*, vol. 338, no. 2, pp. 568–576, Jan. 1994, doi: 10.1016/0168-9002(94)91343-9.
+.. [#larachi1994] \F. Larachi, G. Kennedy, and J. Chaouki, “A γ-ray detection system for 3-D particle tracking in multiphase reactors,” *Nucl. Instrum. Methods Phys. Res. Sect. Accel. Spectrometers Detect. Assoc. Equip.*, vol. 338, no. 2, pp. 568–576, Jan. 1994, doi: `10.1016/0168-9002(94)91343-9 <https://doi.org/10.1016/0168-9002(94)91343-9>`_\.

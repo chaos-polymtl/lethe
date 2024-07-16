@@ -233,7 +233,7 @@
 </li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="examples/examples.html">Examples</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><div class="visually-hidden">Toggle navigation of Examples</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2 has-children"><a class="reference internal" href="examples/incompressible-flow/incompressible-flow.html">Incompressible Flow</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" role="switch" type="checkbox"/><label for="toctree-checkbox-8"><div class="visually-hidden">Toggle navigation of Incompressible Flow</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l3"><a class="reference internal" href="examples/incompressible-flow/2d-lid%E2%80%90driven-cavity-flow/lid%E2%80%90driven-cavity-flow.html">Lid-Driven Cavity Flow</a></li>
+<li class="toctree-l3"><a class="reference internal" href="examples/incompressible-flow/2d-lid-driven-cavity-flow/lid-driven-cavity-flow.html">Lid-Driven Cavity Flow</a></li>
 <li class="toctree-l3"><a class="reference internal" href="examples/incompressible-flow/2d-flow-around-cylinder/2d-flow-around-cylinder.html">Flow around a Cylinder</a></li>
 <li class="toctree-l3"><a class="reference internal" href="examples/incompressible-flow/2d-taylor-couette-flow/2d-taylor-couette-flow.html">Taylor-Couette Flow</a></li>
 <li class="toctree-l3"><a class="reference internal" href="examples/incompressible-flow/2d-backward-facing-step/2d-backward-facing-step.html">Flow past a Backward-Facing Step</a></li>
@@ -558,13 +558,22 @@ make<span class="w"> </span>html
 <p>Here is an example of how references should appear in:</p>
 <ul>
 <li><p>In-text citation:</p>
-<p>The <em>Lethe: An open-source parallel high-order adaptative CFD solver for incompressible flows</em> article by Blais <em>et al.</em> <a class="reference external" href="https://doi.org/10.1016/j.softx.2020.100579">[1]</a> is used as an example.</p>
+<p>The <em>Lethe: An open-source parallel high-order adaptative CFD solver for incompressible flows</em> article by Blais <em>et al.</em> <a class="footnote-reference brackets" href="#blais2020" id="id1" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a> is used as an example.</p>
 </li>
 <li><p>The <code class="docutils literal notranslate"><span class="pre">References</span></code> list:</p>
-<p><a class="reference external" href="https://doi.org/10.1016/j.softx.2020.100579">[1]</a> B. Blais <em>et al.</em>, “Lethe: An open-source parallel high-order adaptative CFD solver for incompressible flows,” <em>SoftwareX</em>, vol. 12, p. 100579, Jul. 2020, doi: 10.1016/j.softx.2020.100579.</p>
+<aside class="footnote-list brackets">
+<aside class="footnote brackets" id="blais2020" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id1">1</a><span class="fn-bracket">]</span></span>
+<p>B. Blais <em>et al.</em> “Lethe: An open-source parallel high-order adaptative CFD solver for incompressible flows,” <em>SoftwareX</em>, vol. 12, pp. 100579, Jul. 2020, doi: <a class="reference external" href="https://doi.org/10.1016/j.softx.2020.100579">10.1016/j.softx.2020.100579</a>.</p>
+</aside>
+</aside>
 <p>Following the format:</p>
 <div class="docutils container">
-<p>[#] A. A. Author, “Name of the paper,” <em>Abbreviated Title of the Journal</em>, vol. x, no. x, pp. xxx-xxx, Abbreviated month, year, doi: xxx.</p>
+<p>[#AuthorYear] A. A. Author, “Name of the paper,” <em>Abbreviated Title of the Journal</em>, vol. x, no. x, pp. xxx-xxx, Abbreviated month, year, doi: xxx.</p>
+</div>
+<p>The code in the documentation should be formatted as follows:</p>
+<div class="highlight-RST notranslate"><div class="highlight"><pre><span></span><span class="p">..</span> <span class="nt">[#blais2020]</span> \B. Blais <span class="ge">*et al.*</span> “Lethe: An open-source parallel high-order adaptative CFD solver for incompressible flows,” <span class="ge">*SoftwareX*</span>, vol. 12, pp. 100579, Jul. 2020, doi: <span class="s">`10.1016/j.softx.2020.100579 </span><span class="si">&lt;https://doi.org/10.1016/j.softx.2020.100579&gt;</span><span class="s">`_</span>.\&quot;&quot;&quot;
+</pre></div>
 </div>
 <div class="admonition important">
 <p class="admonition-title">Important</p>
@@ -641,8 +650,8 @@ make<span class="w"> </span>html
 <p class="admonition-title">Warning</p>
 <p>Keep in mind the proper indentation of the sections of the parameter file. We recommend the use of the <code class="docutils literal notranslate"><span class="pre">prmindent</span></code> script located in the <code class="docutils literal notranslate"><span class="pre">contrib/utilities</span></code> folder before copying sections of a parameter file to the documentation. Do NOT use tabs in these blocks of code, as they will not be recognized, leading to the wrong indentation.</p>
 </div>
-<section id="id3">
-<h4>Examples<a class="headerlink" href="#id3" title="Link to this heading">#</a></h4>
+<section id="id2">
+<h4>Examples<a class="headerlink" href="#id2" title="Link to this heading">#</a></h4>
 <div class="highlight-RST notranslate"><div class="highlight"><pre><span></span><span class="p">..</span> <span class="ow">code-block</span><span class="p">::</span> python
     for i in range(5):
     print(i)
@@ -775,7 +784,7 @@ make<span class="w"> </span>html
 </ul>
 </li>
 <li><a class="reference internal" href="#code">Code</a><ul>
-<li><a class="reference internal" href="#id3">Examples</a></li>
+<li><a class="reference internal" href="#id2">Examples</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#tables">Tables</a></li>

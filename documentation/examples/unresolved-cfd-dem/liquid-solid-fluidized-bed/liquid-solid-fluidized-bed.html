@@ -233,7 +233,7 @@
 </li>
 <li class="toctree-l1 current has-children"><a class="reference internal" href="../../examples.html">Examples</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><div class="visually-hidden">Toggle navigation of Examples</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
 <li class="toctree-l2 has-children"><a class="reference internal" href="../../incompressible-flow/incompressible-flow.html">Incompressible Flow</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" role="switch" type="checkbox"/><label for="toctree-checkbox-8"><div class="visually-hidden">Toggle navigation of Incompressible Flow</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l3"><a class="reference internal" href="../../incompressible-flow/2d-lid%E2%80%90driven-cavity-flow/lid%E2%80%90driven-cavity-flow.html">Lid-Driven Cavity Flow</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../incompressible-flow/2d-lid-driven-cavity-flow/lid-driven-cavity-flow.html">Lid-Driven Cavity Flow</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../incompressible-flow/2d-flow-around-cylinder/2d-flow-around-cylinder.html">Flow around a Cylinder</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../incompressible-flow/2d-taylor-couette-flow/2d-taylor-couette-flow.html">Taylor-Couette Flow</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../incompressible-flow/2d-backward-facing-step/2d-backward-facing-step.html">Flow past a Backward-Facing Step</a></li>
@@ -450,12 +450,12 @@
 <section id="description-of-the-case">
 <h2>Description of the Case<a class="headerlink" href="#description-of-the-case" title="Link to this heading">#</a></h2>
 <p>This example simulates the fluidization of spherical particles in water. It is meant to reproduce the behavior observed experimentally in a pilot-scale equipment with the same characteristics as the simulations.</p>
-<p>We use two different types of particles <a class="reference external" href="https://doi.org/10.1016/j.powtec.2023.118652">[1]</a>: alginate <span class="math notranslate nohighlight">\((d_p = 2.66 \: \text{mm}\)</span>, <span class="math notranslate nohighlight">\(\rho_p = 1029 \: \text{kg} \cdot \text{m}^{-3})\)</span> and alumina <span class="math notranslate nohighlight">\((d_p = 3.09 \: \text{mm}\)</span>, <span class="math notranslate nohighlight">\(\rho_p = 3586 \: \text{kg} \cdot \text{m}^{-3})\)</span>.</p>
-<p>A representation of this equipment is shown. The fluidization region comprises a <span class="math notranslate nohighlight">\(1.0 \: \text{m}\)</span> height, <span class="math notranslate nohighlight">\(10 \: \text{cm}\)</span> diameter cylinder made of acrylic. More details about the experimental setup can be found in Ferreira <em>et al</em>. <a class="reference external" href="https://doi.org/10.1016/j.powtec.2023.118652">[1]</a> and Ferreira <em>et al</em>. <a class="reference external" href="https://doi.org/10.1016/j.enconman.2023.117224">[2]</a></p>
-<figure class="align-center" id="id15">
+<p>We use two different types of particles <a class="footnote-reference brackets" href="#ferreira2023" id="id1" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>: alginate <span class="math notranslate nohighlight">\((d_p = 2.66 \: \text{mm}\)</span>, <span class="math notranslate nohighlight">\(\rho_p = 1029 \: \text{kg} \cdot \text{m}^{-3})\)</span> and alumina <span class="math notranslate nohighlight">\((d_p = 3.09 \: \text{mm}\)</span>, <span class="math notranslate nohighlight">\(\rho_p = 3586 \: \text{kg} \cdot \text{m}^{-3})\)</span>.</p>
+<p>A representation of this equipment is shown. The fluidization region comprises a <span class="math notranslate nohighlight">\(1.0 \: \text{m}\)</span> height, <span class="math notranslate nohighlight">\(10 \: \text{cm}\)</span> diameter cylinder made of acrylic. More details about the experimental setup can be found in Ferreira <em>et al</em>. <a class="footnote-reference brackets" href="#ferreira2023" id="id2" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a> and Ferreira <em>et al</em> <a class="footnote-reference brackets" href="#ferreira2023b" id="id3" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a>.</p>
+<figure class="align-center" id="id14">
 <img alt="particle packing" src="../../../_images/experimental_setup.png" />
 <figcaption>
-<p><span class="caption-text">Pilot-scale fluidized bed used as reference for simulations in this example. Image includes (a) schematic representation of the bed and (b) picture of the equipment in operation. Adapted from Ferreira <em>et al</em>. [1]</span><a class="headerlink" href="#id15" title="Link to this image">#</a></p>
+<p><span class="caption-text">Pilot-scale fluidized bed used as reference for simulations in this example. Image includes (a) schematic representation of the bed and (b) picture of the equipment in operation. Adapted from Ferreira <em>et al</em> <a class="footnote-reference brackets" href="#ferreira2023" id="id4" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>.</span><a class="headerlink" href="#id14" title="Link to this image">#</a></p>
 </figcaption>
 </figure>
 </section>
@@ -482,10 +482,10 @@ end
 <p>Note that, since the mesh is cylindrical, <code class="docutils literal notranslate"><span class="pre">set</span> <span class="pre">expand</span> <span class="pre">particle-wall</span> <span class="pre">contact</span> <span class="pre">search</span> <span class="pre">=</span> <span class="pre">true</span></code>. Details on this in the <a class="reference external" href="../../../parameters/dem/mesh.html">DEM mesh parameters guide</a>.</p>
 </div>
 <p>A cross-section of the resulting mesh is presented in the following figure.</p>
-<figure class="align-center" id="id16">
+<figure class="align-center" id="id15">
 <img alt="Mesh cross-section." src="../../../_images/mesh_cross_sec.png" />
 <figcaption>
-<p><span class="caption-text">Cross-section of the mesh used in liquid-solid fluidized bed simulations.</span><a class="headerlink" href="#id16" title="Link to this image">#</a></p>
+<p><span class="caption-text">Cross-section of the mesh used in liquid-solid fluidized bed simulations.</span><a class="headerlink" href="#id15" title="Link to this image">#</a></p>
 </figcaption>
 </figure>
 </section>
@@ -567,7 +567,7 @@ end
 </section>
 <section id="lagrangian-physical-properties">
 <h3>Lagrangian Physical Properties<a class="headerlink" href="#lagrangian-physical-properties" title="Link to this heading">#</a></h3>
-<p>The lagrangian properties were taken from Ferreira <em>et al</em>. <a class="reference external" href="https://doi.org/10.1016/j.powtec.2023.118652">[1]</a></p>
+<p>The lagrangian properties were taken from Ferreira <em>et al</em> <a class="footnote-reference brackets" href="#ferreira2023" id="id7" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection lagrangian physical properties
   set g                        = -9.81, 0, 0
   set number of particle types = 1
@@ -628,8 +628,8 @@ end
 <section id="cfd-dem-parameter-file">
 <h2>CFD-DEM Parameter File<a class="headerlink" href="#cfd-dem-parameter-file" title="Link to this heading">#</a></h2>
 <p>The CFD simulation is to be carried out using the packed bed simulated in the previous step. We will discuss the different parameter file sections. The mesh section is identical to that of the DEM so it will not be shown again.</p>
-<section id="id7">
-<h3>Simulation Control<a class="headerlink" href="#id7" title="Link to this heading">#</a></h3>
+<section id="id8">
+<h3>Simulation Control<a class="headerlink" href="#id8" title="Link to this heading">#</a></h3>
 <p>The long simulation is due to the small difference between particles and liquid densities, meaning that it takes very long to reach the pseudo-steady state.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection simulation control
   set method            = bdf1
@@ -641,7 +641,7 @@ end
 end
 </pre></div>
 </div>
-<p>Since the alumina particles are more than <span class="math notranslate nohighlight">\(3 \: \text{times}\)</span> denser than alginate particles, the pseudo-steady state is reached after very different times (according to Ferreira <em>et al</em>. <a class="reference external" href="https://doi.org/10.1016/j.powtec.2023.118652">[1]</a> <span class="math notranslate nohighlight">\(4\)</span> and <span class="math notranslate nohighlight">\(10 \: \text{seconds}\)</span> of real time, respectively). Because of this, we use <code class="docutils literal notranslate"><span class="pre">set</span> <span class="pre">time</span> <span class="pre">end</span> <span class="pre">=</span> <span class="pre">35</span></code> for the alginate.</p>
+<p>Since the alumina particles are more than <span class="math notranslate nohighlight">\(3 \: \text{times}\)</span> denser than alginate particles, the pseudo-steady state is reached after very different times (according to Ferreira <em>et al</em> <a class="footnote-reference brackets" href="#ferreira2023" id="id9" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>. <span class="math notranslate nohighlight">\(4\)</span> and <span class="math notranslate nohighlight">\(10 \: \text{seconds}\)</span> of real time, respectively). Because of this, we use <code class="docutils literal notranslate"><span class="pre">set</span> <span class="pre">time</span> <span class="pre">end</span> <span class="pre">=</span> <span class="pre">35</span></code> for the alginate.</p>
 </section>
 <section id="physical-properties">
 <h3>Physical Properties<a class="headerlink" href="#physical-properties" title="Link to this heading">#</a></h3>
@@ -713,7 +713,7 @@ end
 <section id="cfd-dem">
 <h3>CFD-DEM<a class="headerlink" href="#cfd-dem" title="Link to this heading">#</a></h3>
 <p>Different from gas-solid fluidized beds, buoyancy, pressure force, shear stress are not negligible. All these forces are considered in this example.</p>
-<p>Saffman lift force is proven to be very important to properly reproduce particles’ dynamics in the liquid-fluidized bed <a class="reference external" href="https://doi.org/10.1016/j.powtec.2023.118652">[1]</a>.</p>
+<p>Saffman lift force is proven to be very important to properly reproduce particles’ dynamics in the liquid-fluidized bed <a class="footnote-reference brackets" href="#ferreira2023" id="id11" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection cfd-dem
   set vans model         = modelA
   set grad div           = true
@@ -796,7 +796,7 @@ end
 <p align="center"><iframe width="560" height="315" src="https://www.youtube.com/embed/Ra7d-p7wD8Y" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></section>
 <section id="total-pressure-drop-and-bed-expansion">
 <h3>Total Pressure Drop and Bed Expansion<a class="headerlink" href="#total-pressure-drop-and-bed-expansion" title="Link to this heading">#</a></h3>
-<p>In fluidized beds, the total pressure drop (<span class="math notranslate nohighlight">\(- \Delta p\)</span>) reflects the total weight of particles (<span class="math notranslate nohighlight">\(M\)</span>). The following equation is derived from a force balance inside the fluidized bed <a class="reference external" href="https://doi.org/10.1201/9780203912744">[3]</a>.</p>
+<p>In fluidized beds, the total pressure drop (<span class="math notranslate nohighlight">\(- \Delta p\)</span>) reflects the total weight of particles (<span class="math notranslate nohighlight">\(M\)</span>). The following equation is derived from a force balance inside the fluidized bed <a class="footnote-reference brackets" href="#yang2003" id="id12" role="doc-noteref"><span class="fn-bracket">[</span>3<span class="fn-bracket">]</span></a>.</p>
 <div class="math-wrapper docutils container">
 <div class="math notranslate nohighlight">
 \[H(1 - \bar{\varepsilon}_f) = \frac{- \Delta p}{(\rho_p - \rho_f)g} = \frac{M}{\rho_p A} = \mathrm{constant}\]</div>
@@ -819,13 +819,24 @@ end
 <h3>Particles Dynamics<a class="headerlink" href="#particles-dynamics" title="Link to this heading">#</a></h3>
 <p>Since the fluidization occurs in a high density fluid, the density difference between alginate and alumina particles have a significant impact on the velocity of the particles inside the bed.</p>
 <p>The following animation is in real time. It is possible to notice that, for a similar bed height, the bed of alumina particles expands way faster than the alginate.</p>
-<p align="center"><iframe width="560" height="315" src="https://www.youtube.com/embed/kMp86PdZ6tU" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></section>
+<p align="center"><iframe width="560" height="315" src="https://www.youtube.com/embed/kMp86PdZ6tU" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe><p>———–References
+———–</p>
+<aside class="footnote-list brackets">
+<aside class="footnote brackets" id="ferreira2023" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></span>
+<span class="backrefs">(<a role="doc-backlink" href="#id1">1</a>,<a role="doc-backlink" href="#id2">2</a>,<a role="doc-backlink" href="#id4">3</a>,<a role="doc-backlink" href="#id7">4</a>,<a role="doc-backlink" href="#id9">5</a>,<a role="doc-backlink" href="#id11">6</a>)</span>
+<p>V. O. Ferreira, T. E. Geitani, D. Silva, B. Blais, and G. C. Lopes, “In-depth validation of unresolved CFD-DEM simulations of liquid fluidized beds,” <em>Powder Technol.</em>, vol. 426, pp. 118652, Aug. 2023, doi: <a class="reference external" href="https://doi.org/10.1016/j.powtec.2023.118652">10.1016/j.powtec.2023.118652</a>.</p>
+</aside>
+<aside class="footnote brackets" id="ferreira2023b" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id3">2</a><span class="fn-bracket">]</span></span>
+<p>V. O. Ferreira, D. Silva Junior, K. R. B. de Melo, B. Blais, and G. C. Lopes, “Prediction of the bed expansion of a liquid fluidized bed bioreactor applied to wastewater treatment and biogas production,” <em>Energy Convers. Manag.</em>, vol. 290, pp. 117224, Aug. 2023, doi: <a class="reference external" href="https://doi.org/10.1016/j.enconman.2023.117224">10.1016/j.enconman.2023.117224</a>.</p>
+</aside>
+<aside class="footnote brackets" id="yang2003" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id12">3</a><span class="fn-bracket">]</span></span>
+<p>W.-C. Yang, Ed., <em>Handbook of Fluidization and Fluid-Particle Systems</em>, 1st ed. Boca Raton: CRC Press, 2003. doi: <a class="reference external" href="https://doi.org/10.1201/9780203912744">10.1201/9780203912744</a>.</p>
+</aside>
+</aside>
 </section>
-<section id="references">
-<h2>References<a class="headerlink" href="#references" title="Link to this heading">#</a></h2>
-<p><a class="reference external" href="https://doi.org/10.1016/j.powtec.2023.118652">[1]</a> V. O. Ferreira, T. E. Geitani, D. Silva, B. Blais, and G. C. Lopes, “In-depth validation of unresolved CFD-DEM simulations of liquid fluidized beds,” <em>Powder Technol.</em>, vol. 426, p. 118652, Aug. 2023, doi: 10.1016/j.powtec.2023.118652.</p>
-<p><a class="reference external" href="https://doi.org/10.1016/j.enconman.2023.117224">[2]</a> V. O. Ferreira, D. Silva Junior, K. R. B. de Melo, B. Blais, and G. C. Lopes, “Prediction of the bed expansion of a liquid fluidized bed bioreactor applied to wastewater treatment and biogas production,” <em>Energy Convers. Manag.</em>, vol. 290, p. 117224, Aug. 2023, doi: 10.1016/j.enconman.2023.117224.</p>
-<p><a class="reference external" href="https://doi.org/10.1201/9780203912744">[3]</a> W.-C. Yang, Ed., <em>Handbook of Fluidization and Fluid-Particle Systems</em>, 1st ed. Boca Raton: CRC Press, 2003. doi: 10.1201/9780203912744.</p>
 </section>
 </section>
 
@@ -900,7 +911,7 @@ end
 </li>
 <li><a class="reference internal" href="#running-the-dem-simulation">Running the DEM Simulation</a></li>
 <li><a class="reference internal" href="#cfd-dem-parameter-file">CFD-DEM Parameter File</a><ul>
-<li><a class="reference internal" href="#id7">Simulation Control</a></li>
+<li><a class="reference internal" href="#id8">Simulation Control</a></li>
 <li><a class="reference internal" href="#physical-properties">Physical Properties</a></li>
 <li><a class="reference internal" href="#initial-conditions">Initial Conditions</a></li>
 <li><a class="reference internal" href="#boundary-conditions">Boundary Conditions</a></li>
@@ -917,7 +928,6 @@ end
 <li><a class="reference internal" href="#particles-dynamics">Particles Dynamics</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#references">References</a></li>
 </ul>
 </li>
 </ul>

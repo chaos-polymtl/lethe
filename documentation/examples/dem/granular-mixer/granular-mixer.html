@@ -233,7 +233,7 @@
 </li>
 <li class="toctree-l1 current has-children"><a class="reference internal" href="../../examples.html">Examples</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><div class="visually-hidden">Toggle navigation of Examples</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
 <li class="toctree-l2 has-children"><a class="reference internal" href="../../incompressible-flow/incompressible-flow.html">Incompressible Flow</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" role="switch" type="checkbox"/><label for="toctree-checkbox-8"><div class="visually-hidden">Toggle navigation of Incompressible Flow</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l3"><a class="reference internal" href="../../incompressible-flow/2d-lid%E2%80%90driven-cavity-flow/lid%E2%80%90driven-cavity-flow.html">Lid-Driven Cavity Flow</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../incompressible-flow/2d-lid-driven-cavity-flow/lid-driven-cavity-flow.html">Lid-Driven Cavity Flow</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../incompressible-flow/2d-flow-around-cylinder/2d-flow-around-cylinder.html">Flow around a Cylinder</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../incompressible-flow/2d-taylor-couette-flow/2d-taylor-couette-flow.html">Taylor-Couette Flow</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../incompressible-flow/2d-backward-facing-step/2d-backward-facing-step.html">Flow past a Backward-Facing Step</a></li>
@@ -451,7 +451,7 @@
 <h2>Parameter File<a class="headerlink" href="#parameter-file" title="Link to this heading">#</a></h2>
 <section id="mesh">
 <h3>Mesh<a class="headerlink" href="#mesh" title="Link to this heading">#</a></h3>
-<p>The background mesh (mixer body) is created using dealii <code class="docutils literal notranslate"><span class="pre">subdivided_cylinder</span></code>.</p>
+<p>The background mesh (mixer body) is created using deal.II <code class="docutils literal notranslate"><span class="pre">subdivided_cylinder</span></code>.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection mesh
   set type                = dealii
   set grid type           = subdivided_cylinder
@@ -497,7 +497,7 @@ end
 </section>
 <section id="solid-objects">
 <h3>Solid Objects<a class="headerlink" href="#solid-objects" title="Link to this heading">#</a></h3>
-<p>In this subsection, the floating meshes are defined. We can use dealii or gmsh to create the floating meshes. At the moment, solid objects (floating meshes) in Lethe have to be defined using triangular (simplex) meshes. Only triangular 2D meshes of 3D surfaces in the <code class="docutils literal notranslate"><span class="pre">lethe-particles</span></code> solver are presently supported. Quadrilateral 2D meshes of 3D surfaces and 1D mesh of 2D surfaces are not supported at the moment. For each floating mesh, we need to specify a <code class="docutils literal notranslate"><span class="pre">translational</span> <span class="pre">velocity</span></code>, an <code class="docutils literal notranslate"><span class="pre">angular</span> <span class="pre">velocity</span></code>, and a <code class="docutils literal notranslate"><span class="pre">center</span> <span class="pre">of</span> <span class="pre">rotation</span></code>. In this example, we only need an angular motion of the impeller. Note that the <code class="docutils literal notranslate"><span class="pre">center</span> <span class="pre">of</span> <span class="pre">rotation</span></code> of the impeller is at 0, 0, 0.</p>
+<p>In this subsection, the floating meshes are defined. We can use deal.II or Gmsh to create the floating meshes. At the moment, solid objects in Lethe have to be defined using triangular (simplex) meshes. Only triangular 2D meshes of 3D surfaces in the <code class="docutils literal notranslate"><span class="pre">lethe-particles</span></code> solver are presently supported. Quadrilateral 2D meshes of 3D surfaces and 1D mesh of 2D surfaces are not supported at the moment. For each floating mesh, we need to specify a <code class="docutils literal notranslate"><span class="pre">translational</span> <span class="pre">velocity</span></code>, an <code class="docutils literal notranslate"><span class="pre">angular</span> <span class="pre">velocity</span></code>, and a <code class="docutils literal notranslate"><span class="pre">center</span> <span class="pre">of</span> <span class="pre">rotation</span></code>. In this example, we only need an angular motion of the impeller. Note that the <code class="docutils literal notranslate"><span class="pre">center</span> <span class="pre">of</span> <span class="pre">rotation</span></code> of the impeller is at 0, 0, 0.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection solid objects
   subsection solid surfaces
     set number of solids = 1

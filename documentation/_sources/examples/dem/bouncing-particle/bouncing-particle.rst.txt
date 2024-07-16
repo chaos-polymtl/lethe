@@ -2,7 +2,7 @@
 Bouncing Particle
 =================
 
-This example of Lethe simulates the bounces of a single particle using the linear spring-dashpot collision model in 3D. This simulation is being setup according to MFIX DEM02 verification test `[1] <https://mfix.netl.doe.gov/doc/vvuq-manual/main/html/dem/dem-02.html>`_. It is recommended to visit `DEM parameters <../../../parameters/dem/dem.html>`_ for more detailed information on the concepts and physical meanings of the parameters in Lethe.
+This example of Lethe simulates the bounces of a single particle using the linear spring-dashpot collision model in 3D. This simulation is being setup according to MFIX DEM02 verification test [#mfix]_. It is recommended to visit `DEM parameters <../../../parameters/dem/dem.html>`_ for more detailed information on the concepts and physical meanings of the parameters in Lethe.
 
 
 --------
@@ -172,4 +172,4 @@ As the stiffness is increased, the agreement between the results obtained in the
 Reference
 ---------
 
-`[1] <https://mfix.netl.doe.gov/doc/vvuq-manual/main/html/dem/dem-02.html>`_ “4.2. DEM02: Bouncing particle,” 4.2. DEM02: Bouncing particle - MFiX Third Edition documentation, https://mfix.netl.doe.gov/doc/vvuq-manual/main/html/dem/dem-02.html  (accessed Jun. 8, 2023).
+.. [#mfix] NETL Multiphase Flow Science Team, “4.2. DEM02: Bouncing particle", 4.2. DEM02: Bouncing particle - MFiX Third Edition documentation. https://mfix.netl.doe.gov/doc/vvuq-manual/main/html/dem/dem-02.html  (accessed Jun. 8, 2023).

@@ -154,17 +154,23 @@ Throughout the documentation, you may notice that the different pages follow a c
 
       - In-text citation:
 
-        The *Lethe: An open-source parallel high-order adaptative CFD solver for incompressible flows* article by Blais *et al.* `[1] <https://doi.org/10.1016/j.softx.2020.100579>`_ is used as an example.
+        The *Lethe: An open-source parallel high-order adaptative CFD solver for incompressible flows* article by Blais *et al.* [#blais2020]_ is used as an example.
 
       - The ``References`` list:
 
-        `[1] <https://doi.org/10.1016/j.softx.2020.100579>`_ B. Blais *et al.*, “Lethe: An open-source parallel high-order adaptative CFD solver for incompressible flows,” *SoftwareX*, vol. 12, p. 100579, Jul. 2020, doi: 10.1016/j.softx.2020.100579.
+        .. [#blais2020] \B. Blais *et al.* “Lethe: An open-source parallel high-order adaptative CFD solver for incompressible flows,” *SoftwareX*, vol. 12, pp. 100579, Jul. 2020, doi: `10.1016/j.softx.2020.100579 <https://doi.org/10.1016/j.softx.2020.100579>`_.\
 
         Following the format:
 
         .. container::
 
-          [#] A. A. Author, "Name of the paper," *Abbreviated Title of the Journal*, vol. x, no. x, pp. xxx-xxx, Abbreviated month, year, doi: xxx.
+          [#AuthorYear] A. A. Author, "Name of the paper," *Abbreviated Title of the Journal*, vol. x, no. x, pp. xxx-xxx, Abbreviated month, year, doi: xxx.
+
+        The code in the documentation should be formatted as follows:
+
+        .. code-block:: RST
+
+           .. [#blais2020] \B. Blais *et al.* “Lethe: An open-source parallel high-order adaptative CFD solver for incompressible flows,” *SoftwareX*, vol. 12, pp. 100579, Jul. 2020, doi: `10.1016/j.softx.2020.100579 <https://doi.org/10.1016/j.softx.2020.100579>`_.\"""
 
         .. Important::
 

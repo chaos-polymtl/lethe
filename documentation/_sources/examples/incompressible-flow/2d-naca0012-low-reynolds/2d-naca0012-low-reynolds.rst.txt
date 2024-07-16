@@ -42,7 +42,7 @@ Parameter File
 Simulation Control
 ~~~~~~~~~~~~~~~~~~
 
-The problem is transient. An adaptative time step is used to ensure that the CFL :math:`<10` condition is obtained. This boundary for the CFL number was chosen to get relevant results while having reasonable simulation times. The reader is referred to the :doc:`../2d-lid‐driven-cavity-flow/lid‐driven-cavity-flow` example for a better understanding of the time step adaptation to keep the CFL below a certain threshold. A second-order backward differentiation (BDF2) scheme was chosen.
+The problem is transient. An adaptative time step is used to ensure that the CFL :math:`<10` condition is obtained. This boundary for the CFL number was chosen to get relevant results while having reasonable simulation times. The reader is referred to the :doc:`../2d-lid-driven-cavity-flow/lid-driven-cavity-flow` example for a better understanding of the time step adaptation to keep the CFL below a certain threshold. A second-order backward differentiation (BDF2) scheme was chosen.
 
 .. code-block:: text
 
