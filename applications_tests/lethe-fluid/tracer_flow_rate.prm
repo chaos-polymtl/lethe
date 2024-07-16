@@ -1,7 +1,7 @@
 set dimension = 2
 
 subsection simulation control
-  set output frequency = 0
+  set output frequency = 1
 end
 
 subsection physical properties

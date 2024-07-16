@@ -612,72 +612,69 @@ Tracer<dim>::postprocess_tracer_flow_rate(const VectorType &current_solution_fd)
                               end(boundary_conditions_ids),
                               cell->face(face)->boundary_id());
 
-                  if (boundary_id != end(boundary_conditions_ids))
+
+                  unsigned int vector_index =
+                    boundary_id - boundary_conditions_ids.begin();
+
+                  // Gather tracer information
+                  fe_face_values_tracer.reinit(cell, face);
+                  fe_face_values_tracer.get_function_values(
+                    this->present_solution, tracer_values);
+                  fe_face_values_tracer.get_function_gradients(
+                    this->present_solution, tracer_gradient);
+
+                  // We update the fields required by the diffusivity
+                  // model
+                  fields.clear();
+                  if (diffusivity_model->depends_on(field::levelset))
                     {
-                      unsigned int vector_index =
-                        boundary_id - boundary_conditions_ids.begin();
+                      std::vector<double> levelset_values(n_q_points_face);
+                      fields.insert(
+                        std::pair<field, std::vector<double>>(field::levelset,
+                                                              n_q_points_face));
+                      face_quadrature_points =
+                        fe_face_values_tracer.get_quadrature_points();
+                      immersed_solid_signed_distance_function =
+                        this->multiphysics
+                          ->get_immersed_solid_signed_distance_function();
+                      this->immersed_solid_signed_distance_function->value_list(
+                        face_quadrature_points, levelset_values);
+                      set_field_vector(field::levelset,
+                                       levelset_values,
+                                       fields);
+                    }
 
-                      // Gather tracer information
-                      fe_face_values_tracer.reinit(cell, face);
-                      fe_face_values_tracer.get_function_values(
-                        this->present_solution, tracer_values);
-                      fe_face_values_tracer.get_function_gradients(
-                        this->present_solution, tracer_gradient);
+                  diffusivity_model->vector_value(fields, tracer_diffusivity);
 
-                      // We update the fields required by the diffusivity
-                      // model
-                      fields.clear();
-                      if (diffusivity_model->depends_on(field::levelset))
-                        {
-                          std::vector<double> levelset_values(n_q_points_face);
-                          fields.insert(std::pair<field, std::vector<double>>(
-                            field::levelset, n_q_points_face));
-                          face_quadrature_points =
-                            fe_face_values_tracer.get_quadrature_points();
-                          immersed_solid_signed_distance_function =
-                            this->multiphysics
-                              ->get_immersed_solid_signed_distance_function();
-                          this->immersed_solid_signed_distance_function
-                            ->value_list(face_quadrature_points,
-                                         levelset_values);
-                          set_field_vector(field::levelset,
-                                           levelset_values,
-                                           fields);
-                        }
+                  // Get fluid dynamics active cell iterator
+                  typename DoFHandler<dim>::active_cell_iterator cell_fd(
+                    &(*(this->triangulation)),
+                    cell->level(),
+                    cell->index(),
+                    dof_handler_fd);
 
-                      diffusivity_model->vector_value(fields,
-                                                      tracer_diffusivity);
+                  // Gather fluid dynamics information
+                  fe_face_values_fd.reinit(cell_fd, face);
+                  fe_face_values_fd[velocities].get_function_values(
+                    current_solution_fd, velocity_values);
 
-                      // Get fluid dynamics active cell iterator
-                      typename DoFHandler<dim>::active_cell_iterator cell_fd(
-                        &(*(this->triangulation)),
-                        cell->level(),
-                        cell->index(),
-                        dof_handler_fd);
+                  // Loop on the quadrature points
+                  for (unsigned int q = 0; q < n_q_points_face; q++)
+                    {
+                      Tensor<1, dim> normal_vector_tracer =
+                        -fe_face_values_tracer.normal_vector(q);
 
-                      // Gather fluid dynamics information
-                      fe_face_values_fd.reinit(cell_fd, face);
-                      fe_face_values_fd[velocities].get_function_values(
-                        current_solution_fd, velocity_values);
-
-                      // Loop on the quadrature points
-                      for (unsigned int q = 0; q < n_q_points_face; q++)
-                        {
-                          Tensor<1, dim> normal_vector_tracer =
-                            -fe_face_values_tracer.normal_vector(q);
-
-                          tracer_flow_rate_vector[vector_index] +=
-                            (-tracer_diffusivity[q] * tracer_gradient[q] *
-                               normal_vector_tracer +
-                             tracer_values[q] * velocity_values[q] *
-                               normal_vector_tracer) *
-                            fe_face_values_tracer.JxW(q);
-                        } // end loop on quadrature points
-                    }     // end condition face at boundary
-                }         // end loop on faces
-            }             // end face is a boundary face
-        }                 // end condition cell at boundary
-    }                     // end loop on cells
+                      tracer_flow_rate_vector[vector_index] +=
+                        (-tracer_diffusivity[q] * tracer_gradient[q] *
+                           normal_vector_tracer +
+                         tracer_values[q] * velocity_values[q] *
+                           normal_vector_tracer) *
+                        fe_face_values_tracer.JxW(q);
+                    } // end loop on quadrature points
+                }     // end face is a boundary face
+            }         // end loop on faces
+        }             // end condition cell at boundary
+    }                 // end loop on cells
 
 
   // Sum across all cores

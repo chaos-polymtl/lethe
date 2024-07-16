@@ -375,6 +375,8 @@ private:
    *
    * @param current_solution_fd current solution for the fluid dynamics, parsed
    * by postprocess
+   *
+   * @tparam GlobalVectorType The type of the global vector used for the tracer physics
    */
 
   template <typename GlobalVectorType>

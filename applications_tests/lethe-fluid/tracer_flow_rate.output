@@ -11,16 +11,16 @@ Tracer statistics :
 ------------------
 Tracer flow rates
 ------------------
-Tracer flow rate at the boundaries : 
-	 boundary 0 : 8.2
-	 boundary 1 : 0
-	 boundary 2 : 0
-	 boundary 3 : 0
+Tracer flow rate at the boundaries:
+	 boundary 0: 8.2
+	 boundary 1: 0
+	 boundary 2: 0
+	 boundary 3: 0
 
 *****************************
 Steady iteration:        1/1
 *****************************
-Tracer statistics : 
+Tracer statistics :
 	     Min : 1
 	     Max : 1
 	 Average : 1
@@ -28,8 +28,8 @@ Tracer statistics :
 ------------------
 Tracer flow rates
 ------------------
-Tracer flow rate at the boundaries : 
-	 boundary 0 : 0.2
-	 boundary 1 : -0.200001
-	 boundary 2 : 9.02388e-10
-	 boundary 3 : 2.18592e-09
+Tracer flow rate at the boundaries:
+	 boundary 0: 0.2
+	 boundary 1: -0.200001
+	 boundary 2: 9.02388e-10
+	 boundary 3: 2.18592e-09
