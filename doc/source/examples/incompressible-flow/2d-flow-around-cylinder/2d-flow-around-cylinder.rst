@@ -43,7 +43,7 @@ We simulate the flow around a fixed cylinder with a constant upstream fluid velo
 Parameter File
 --------------
 
-Only the subsections of the parameter file that change significantly in comparison to :doc:`../2d-lid‐driven-cavity-flow/lid‐driven-cavity-flow` and :doc:`../2d-taylor-couette-flow/2d-taylor-couette-flow` examples are explained in this section.
+Only the subsections of the parameter file that change significantly in comparison to :doc:`../2d-lid-driven-cavity-flow/lid-driven-cavity-flow` and :doc:`../2d-taylor-couette-flow/2d-taylor-couette-flow` examples are explained in this section.
 
 Mesh
 ~~~~~
