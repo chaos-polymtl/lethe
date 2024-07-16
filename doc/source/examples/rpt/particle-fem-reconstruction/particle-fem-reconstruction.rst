@@ -157,4 +157,4 @@ With the figure shown below we assess the validity of the reconstruction algorit
 References
 -----------
 
-`[1] <https://doi.org/10.1016/j.nima.2023.168504>`_  G. Mirakhori, A. Collard-Daigneault, A. Alphonius, J. Doucet, B. Blais, and J. Chaouki, “An improved position reconstruction method for radioactive particle tracking,” *Nucl. Instrum. Methods Phys. Res. Sect. Accel. Spectrometers Detect. Assoc. Equip.*, vol. 1055, p. 168504, Oct. 2023, doi: 10.1016/j.nima.2023.168504.
+.. [#mirakhori2023] \G. Mirakhori, A. Collard-Daigneault, A. Alphonius, J. Doucet, B. Blais, and J. Chaouki, “An improved position reconstruction method for radioactive particle tracking,” *Nucl. Instrum. Methods Phys. Res. Sect. Accel. Spectrometers Detect. Assoc. Equip.*, vol. 1055, pp. 168504, Oct. 2023, doi: `10.1016/j.nima.2023.168504 <https://doi.org/10.1016/j.nima.2023.168504>`_\.
