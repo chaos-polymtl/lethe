@@ -3,7 +3,7 @@ Rectangular Hopper
 ==================================
 
 This example simulates the filling and discharging of particles in a rectangular hopper.
-We set up this simulation based on the simulation of Anand *et al.* `[1] <https://doi.org/10.1016/j.ces.2008.08.015>`_ It is recommended to visit `DEM parameters <../../../parameters/dem/dem.html>`_ for more detailed information on the concepts and physical meanings of the parameters in Lethe-DEM.
+We set up this simulation based on the simulation of Anand *et al.* [#anand2008]_ It is recommended to visit `DEM parameters <../../../parameters/dem/dem.html>`_ for more detailed information on the concepts and physical meanings of the parameters in Lethe-DEM.
 The main example does not use periodic boundary conditions in the depth of the hopper like article, but an extended case, presented at the end, does.
 
 
@@ -27,7 +27,7 @@ Files Used in This Example
 Description of the Case
 -----------------------
 
-This simulation consists of two stages: filling (0-4 s) and discharge (4-7.5 s) of particles. Anand et al. uses periodic boundaries in the z axis allowing to use a thin width for simulation.
+This simulation consists of two stages: filling (0-4 s) and discharge (4-7.5 s) of particles. Anand *et al.* uses periodic boundaries in the z axis allowing to use a thin width for simulation.
 In the main example, we do not consider periodic boundaries. To minimize the impact of collision of particle with walls along the z axis, the width and the number of particle were multiplied by 6 (40740 particles instead of 6790). This corresponds to a width of 15 times the particle diameter.
 
 --------------
@@ -38,7 +38,7 @@ Mesh
 ~~~~~
 
 The mesh is a hopper with 90° angle generated with GMSH having a top part for the filling and a bottom part which acts as a collector of the particle.
-The geometry follow the Anand *et al.* `[1] <https://doi.org/10.1016/j.ces.2008.08.015>`_ base case and was handled in order to generate a structured mesh.
+The geometry follow the Anand *et al.* [#anand2008]_ base case and was handled in order to generate a structured mesh.
 
 .. code-block:: text
 
@@ -366,4 +366,4 @@ The simulated mass discharging rate is 85.09 g/s from the original simulation an
 ---------
 Reference
 ---------
-`[1] <https://doi.org/10.1016/j.ces.2008.08.015>`_ A. Anand, J. S. Curtis, C. R. Wassgren, B. C. Hancock, and W. R. Ketterhagen, “Predicting discharge dynamics from a rectangular hopper using the discrete element method (DEM),” *Chem. Eng. Sci.*, vol. 63, no. 24, pp. 5821–5830, Dec. 2008, doi: 10.1016/j.ces.2008.08.015.
+.. [#anand2008] \A. Anand, J. S. Curtis, C. R. Wassgren, B. C. Hancock, and W. R. Ketterhagen, “Predicting discharge dynamics from a rectangular hopper using the discrete element method (DEM),” *Chem. Eng. Sci.*, vol. 63, no. 24, pp. 5821–5830, Dec. 2008, doi: `10.1016/j.ces.2008.08.015 <https://doi.org/10.1016/j.ces.2008.08.015>`_.\
