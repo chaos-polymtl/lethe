@@ -39,7 +39,7 @@ This subsection contains the general information required for the photon count c
     Options: Any positive float *(default value: 0.1)*
 
 
-The following parameters are variables in the gamma-ray Monte-Carlo model from Beam *et al.* (1978) `[1] <https://doi.org/10.1016/0029-554X(78)90081-2>`_:
+The following parameters are variables in the gamma-ray Monte-Carlo model from Beam *et al.* (1978) [#beam1978]_:
 
 - ``peak-to-total ratio``: The proportion of the events appearing in the full energy peak to the total number of events []
     Options: Any positive float *(default value: 1)*
@@ -54,5 +54,5 @@ The following parameters are variables in the gamma-ray Monte-Carlo model from B
 References
 ~~~~~~~~~~~
 
-`[1] <https://doi.org/10.1016/0029-554X(78)90081-2>`_ G. B. Beam, L. Wielopolski, R. P. Gardner, and K. Verghese, “Monte Carlo calculation of efficiencies of right-circular cylindrical NaI detectors for arbitrarily located point sources,” *Nucl. Instrum. Methods*, vol. 154, no. 3, pp. 501–508, Sep. 1978, doi: 10.1016/0029-554X(78)90081-2.
+.. [#beam1978] \G. B. Beam, L. Wielopolski, R. P. Gardner, and K. Verghese, “Monte Carlo calculation of efficiencies of right-circular cylindrical NaI detectors for arbitrarily located point sources,” *Nucl. Instrum. Methods*, vol. 154, no. 3, pp. 501–508, Sep. 1978, doi: `10.1016/0029-554X(78)90081-2 <https://doi.org/10.1016/0029-554X(78)90081-2>`_\.
 
