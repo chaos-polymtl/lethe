@@ -15,6 +15,10 @@
  *
  */
 
+
+#ifndef find_boundary_cells_information_h
+#define find_boundary_cells_information_h
+
 #include <dem/boundary_cells_info_struct.h>
 #include <dem/data_containers.h>
 #include <dem/dem_solver_parameters.h>
@@ -34,17 +38,10 @@
 
 using namespace dealii;
 
-#ifndef find_boundary_cells_information_h
-#  define find_boundary_cells_information_h
-
 /**
- * Finds all the boundary cells and faces in the triangulation, for each cell
- * the boundary face is specified and the normal vector as well as a point on
- * the boundary face are obtained
- *
- * @note
- *
- * @author Shahab Golshan, Polytechnique Montreal 2019-
+ * @brief Finds all the boundary cells and faces in the triangulation, for each
+ * cell the boundary face is specified and the normal vector as well as a point
+ * on the boundary face are obtained.
  */
 
 template <int dim>
