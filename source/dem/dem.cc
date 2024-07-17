@@ -87,30 +87,13 @@ DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
   simulation_control = std::make_shared<SimulationControlTransientDEM>(
     parameters.simulation_control);
 
-  // In order to consider the particles when repartitioning the triangulation
-  // the algorithm needs to know three things:
-  //
-  // 1. How much weight to assign to each cell (how many particles are in
-  // there)
-  // 2. How to pack the particles before shipping data around
-  // 3. How to unpack the particles after repartitioning
-  //
-  // Attach the correct functions to the signals inside
-  // parallel::distributed::Triangulation, which will be called every time the
-  // repartition() or refinement functions are called.
-  // These connections only need to be created once, so we might as well
-  // have set them up in the constructor of this class, but for the purpose
-  // of this example we want to group the particle related instructions.
-  triangulation.signals.weight.connect(
-    [](const typename Triangulation<dim>::cell_iterator &,
-       const CellStatus) -> unsigned int { return 1000; });
+  // Setup load balancing parameters
+  load_balancing.set_parameters(parameters.model_parameters);
 
-  triangulation.signals.weight.connect(
-    [&](const typename parallel::distributed::Triangulation<dim>::cell_iterator
-                        &cell,
-        const CellStatus status) -> unsigned int {
-      return this->cell_weight(cell, status);
-    });
+  // Attach the correct functions to the signals inside the triangulation
+  load_balancing.connect_weight_signals(
+    triangulation,
+    particle_handler);
 
 
   if (parameters.model_parameters.sparse_particle_contacts)
@@ -227,133 +210,6 @@ DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
 
   // Assign gravity/acceleration
   g = parameters.lagrangian_physical_properties.g;
-}
-
-template <int dim>
-unsigned int
-DEMSolver<dim>::cell_weight(
-  const typename parallel::distributed::Triangulation<dim>::cell_iterator &cell,
-  const CellStatus status) const
-{
-  // Assign no weight to cells we do not own.
-  if (!cell->is_locally_owned())
-    return 0;
-
-  // This determines how important particle work is compared to cell
-  // work (by default every cell has a weight of 1000).
-  // We set the weight per particle much higher to indicate that
-  // the particle load is the only one that is important to distribute
-  // in this example. The optimal value of this number depends on the
-  // application and can range from 0 (cheap particle operations,
-  // expensive cell operations) to much larger than 1000 (expensive
-  // particle operations, cheap cell operations, like in this case).
-  // This parameter will need to be tuned for the case of DEM.
-  const unsigned int particle_weight =
-    parameters.model_parameters.load_balance_particle_weight;
-
-  switch (status)
-    {
-      case CellStatus::cell_will_persist:
-
-      case CellStatus::cell_will_be_refined:
-        // If CELL_PERSIST, do as CELL_REFINE
-        {
-          const unsigned int n_particles_in_cell =
-            particle_handler.n_particles_in_cell(cell);
-          return n_particles_in_cell * particle_weight;
-          break;
-        }
-      case CellStatus::cell_invalid:
-        break;
-
-      case CellStatus::children_will_be_coarsened:
-        {
-          unsigned int n_particles_in_cell = 0;
-
-          for (unsigned int child_index = 0;
-               child_index < GeometryInfo<dim>::max_children_per_cell;
-               ++child_index)
-            n_particles_in_cell +=
-              particle_handler.n_particles_in_cell(cell->child(child_index));
-
-          return n_particles_in_cell * particle_weight;
-          break;
-        }
-
-      default:
-        Assert(false, ExcInternalError());
-        break;
-    }
-
-  return 0;
-}
-
-template <int dim>
-unsigned int
-DEMSolver<dim>::cell_weight_with_mobility_status(
-  const typename parallel::distributed::Triangulation<dim>::cell_iterator &cell,
-  const CellStatus status) const
-{
-  // Assign no weight to cells we do not own.
-  if (!cell->is_locally_owned())
-    return 0;
-
-  const unsigned int particle_weight =
-    parameters.model_parameters.load_balance_particle_weight;
-
-  // Get mobility status of the cell
-  const unsigned int cell_mobility_status =
-    sparse_contacts_object.check_cell_mobility(cell);
-
-  // Applied a factor on the particle weight regards the mobility status
-  // Factor of 1 when mobile cell
-  double alpha = 1.0;
-  if (cell_mobility_status == sparse_contacts_object.static_active ||
-      cell_mobility_status == sparse_contacts_object.advected_active)
-    {
-      alpha = parameters.model_parameters.active_load_balancing_factor;
-    }
-  else if (cell_mobility_status == sparse_contacts_object.inactive ||
-           cell_mobility_status == sparse_contacts_object.advected)
-    {
-      alpha = parameters.model_parameters.inactive_load_balancing_factor;
-    }
-
-  switch (status)
-    {
-      case dealii::CellStatus::cell_will_persist:
-
-      case dealii::CellStatus::cell_will_be_refined:
-        {
-          const unsigned int n_particles_in_cell =
-            particle_handler.n_particles_in_cell(cell);
-          return alpha * n_particles_in_cell * particle_weight;
-          break;
-        }
-
-      case dealii::CellStatus::cell_invalid:
-        break;
-
-      case dealii::CellStatus::children_will_be_coarsened:
-        {
-          unsigned int n_particles_in_cell = 0;
-
-          for (unsigned int child_index = 0;
-               child_index < GeometryInfo<dim>::max_children_per_cell;
-               ++child_index)
-            n_particles_in_cell +=
-              particle_handler.n_particles_in_cell(cell->child(child_index));
-
-          return alpha * n_particles_in_cell * particle_weight;
-          break;
-        }
-
-      default:
-        Assert(false, ExcInternalError());
-        break;
-    }
-
-  return 0;
 }
 
 template <int dim>
@@ -640,35 +496,10 @@ DEMSolver<dim>::check_load_balance_with_sparse_contacts()
     }
 
   // Clear and connect a new cell weight function
-  triangulation.signals.weight.disconnect_all_slots();
-
-#if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 6)
-  triangulation.signals.weight.connect(
-    [](const typename Triangulation<dim>::cell_iterator &,
-       const typename Triangulation<dim>::CellStatus) -> unsigned int {
-      return 1000;
-    });
-
-  triangulation.signals.weight.connect(
-    [&](const typename parallel::distributed::Triangulation<dim>::cell_iterator
-          &cell,
-        const typename parallel::distributed::Triangulation<dim>::CellStatus
-          status) -> unsigned int {
-      return this->cell_weight_with_mobility_status(cell, status);
-    });
-
-#else
-  triangulation.signals.weight.connect(
-    [](const typename Triangulation<dim>::cell_iterator &,
-       const CellStatus) -> unsigned int { return 1000; });
-
-  triangulation.signals.weight.connect(
-    [&](const typename parallel::distributed::Triangulation<dim>::cell_iterator
-                        &cell,
-        const CellStatus status) -> unsigned int {
-      return this->cell_weight_with_mobility_status(cell, status);
-    });
-#endif
+  load_balancing.connect_mobility_status_weight_signals(
+    triangulation,
+    particle_handler,
+    sparse_contacts_object.get_mobility_status());
 
   return false;
 }
