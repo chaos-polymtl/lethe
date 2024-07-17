@@ -11,11 +11,11 @@ import sys
 
 def cylinder(x0, radius, n_points, height):
     """
-    Creates a gmsh of the rounded blade and saves it in ./gmsh
-    :param radius: Radius at the bottom of the blade.
-    :param n_points: Number of points used to create the radius on each sides of the blade
-    :param angle_fraction: The last point on the radius will be at this value. Usually between 0.5 and 1.0
-    :param dept: Thickness of the blade in the z direction.
+    Creates a mesh of the cylinder and saves it in ./gmsh
+    :x0: Position at the bottom.
+    :radius: Radius of cylinder.
+    :param n_points: Number of points used to create the circumference. 
+    :height: Height of the cylinder
     """
 
     # Initialize parameters
@@ -101,11 +101,11 @@ def cylinder(x0, radius, n_points, height):
 
 def support(x0, radius, n_points, height):
     """
-    Creates a gmsh of the rounded blade and saves it in ./gmsh
-    :param radius: Radius at the bottom of the blade.
-    :param n_points: Number of points used to create the radius on each sides of the blade
-    :param angle_fraction: The last point on the radius will be at this value. Usually between 0.5 and 1.0
-    :param dept: Thickness of the blade in the z direction.
+    Creates a mesh of the support and saves it in ./gmsh
+    :x0: Position at the bottom.
+    :radius: Radius of support.
+    :param n_points: Number of points used to create the circumference. 
+    :height: Height of the support
     """
 
     # Initialize parameters

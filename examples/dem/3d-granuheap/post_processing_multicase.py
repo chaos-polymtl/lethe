@@ -35,7 +35,7 @@ scaling, height, width, to_print = scaling_paraview(width_exp, f'{num_name}_{par
 scale_list = [scale]
 width_list =[width]
 i = 0
-while scaling is False and i < 20: # This small boucle is necessary to test maximum 5 time the scaling by adding 1e9 to the scale. Sometimes a bug occurs and the first scaling output FALSE even if the scale is right.
+while scaling is False and i < 25: # This loop is necessary to scale. The scaling use a maximum of 25 iterations.
     if i < 3:
         if width_list[i] > width_exp:
             scale += 0.01
