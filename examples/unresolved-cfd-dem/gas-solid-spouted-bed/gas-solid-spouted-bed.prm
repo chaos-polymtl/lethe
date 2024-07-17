@@ -11,9 +11,9 @@ subsection simulation control
   set method               = bdf1
   set number mesh adapt    = 0
   set output name          = result
-  set output frequency     = 50
+  set output frequency     = 5
   set startup time scaling = 0.6
-  set time end             = 5
+  set time end             = 0.01
   set time step            = 0.001
   set subdivision          = 1
   set log precision        = 10
@@ -86,30 +86,14 @@ subsection cfd-dem
   set pressure force                = true
   set saffman lift force            = false
   set drag model                    = rong
-  set coupling frequency            = 100
+  set coupling frequency            = 50
   set implicit stabilization        = false
   set grad-div length scale         = 0.005
   set vans model                    = modelA
+  set particle statistics = false
 end
 
-#---------------------------------------------------
-# Post-processing
-#---------------------------------------------------
 
-subsection post-processing
-  # Enable calculation of pressure drop
-  set calculate pressure drop = true
-
-  # Boundary id of the inlet for the pressure drop calculation
-  set inlet boundary id = 1
-
-  # Boundary id of the outlet for the pressure drop calculation
-  set outlet boundary id = 2
-
-  set output frequency = 10
-
-  set verbosity = verbose
-end
 
 #---------------------------------------------------
 # Lagrangian post-processing
@@ -185,7 +169,7 @@ end
 #---------------------------------------------------
 
 subsection timer
-  set type = iteration
+  set type = none
 end
 
 #---------------------------------------------------
@@ -198,6 +182,12 @@ subsection model parameters
     set dynamic contact search size coefficient = 0.9
     set neighborhood threshold                  = 1.3
   end
+    subsection load balancing
+      set load balance method     = dynamic
+      set threshold               = 0.01
+      set dynamic check frequency = 5
+      set particle weight = 1000000
+    end
   set particle particle contact force method = hertz_mindlin_limit_overlap
   set particle wall contact force method     = nonlinear
   set integration method                     = velocity_verlet
@@ -259,7 +249,7 @@ subsection non-linear solver
     set solver           = inexact_newton
     set tolerance        = 1e-8
     set max iterations   = 20
-    set verbosity        = verbose
+    set verbosity        = quiet
     set matrix tolerance = 0.75
   end
 end
@@ -278,7 +268,7 @@ subsection linear solver
     set ilu preconditioner fill               = 1
     set ilu preconditioner absolute tolerance = 1e-12
     set ilu preconditioner relative tolerance = 1
-    set verbosity                             = verbose
+    set verbosity                             = quiet
     set max krylov vectors                    = 200
   end
 end
