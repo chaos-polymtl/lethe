@@ -67,7 +67,7 @@ In this section we introduce the different sections of the parameter file ``load
 Mesh
 ----
 
-In this example, we are simulating a horizontal cylindrical pipe. We use the `custom cylinder <https://chaos-polymtl.github.io/lethe/documentation/parameters/cfd/mesh.html>`_ of type balanced. We use this type of mesh in order to have uniform cell size in the radial direction. The length of a cell is about 2 times the diameter of the particles in each direction. The classical cylinder mesh of deal.II has smaller cells in the center which restrict the size of the particles. The length of the pipe is 1 m and the diameter is 0.084 m. The conveying is processed in the x-direction through periodic boundary conditions.
+In this example, we are simulating a horizontal cylindrical pipe. We use the `custom cylinder <../../../parameters/cfd/mesh.html>`_ of type balanced. We use this type of mesh in order to have uniform cell size in the radial direction. The length of a cell is about 2 times the diameter of the particles in each direction. The classical cylinder mesh of deal.II has smaller cells in the center which restrict the size of the particles. The length of the pipe is 1 m and the diameter is 0.084 m. The conveying is processed in the x-direction through periodic boundary conditions.
 
 .. code-block:: text
 
@@ -234,7 +234,7 @@ The model parameters are quite standard for a DEM simulation with the non-linear
 
 .. note::
 
-    Here, we use the `Adaptive Sparse Contacts <../../../parameters/dem/model_parameters.html#adaptive-sparse-contacts-asc>`_ method to speedup the simulation. The method will disabled the contact computation in quasi-static areas which represents a significant part of the domain during the loading of the particles. Weight factor parameters for the ASC status are use in the load balancing method. No further explanation a given about the method, a future example will be added in order to detail it and to compare the performance gain.
+    Here, we use the `Adaptive Sparse Contacts (ASC) <../../../parameters/dem/model_parameters.html#adaptive-sparse-contacts-asc>`_ method to speedup the simulation. The method will disabled the contact computation in quasi-static areas which represents a significant part of the domain during the loading of the particles. Weight factor parameters for the ASC status are use in the load balancing method. The `discharge plate example <../../dem/plate-discharge/plate-discharge.html>`_ is a good example of the use of the ASC method with DEM.
 
 .. code-block:: text
 
@@ -315,7 +315,7 @@ Here we allow a 2.5 seconds for the settling of the particles. Since this simula
     end
 
 Restart
-~~~~~~~~
+-------
 
 This simulation reads the restart, meaning this option is set to true. Also, the checkpointing is reduce to 0.5 seconds.
 
