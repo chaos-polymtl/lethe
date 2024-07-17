@@ -42,7 +42,7 @@ The following schematic describes the simulation.
 * bc = 1 (u = 1; flow in the x-direction)
 * bc = 2 (Slip boundary condition)
 
-The basic geometry for the Ahmed body is given below, as defined in Ahmed et al. `[1] <https://www.jstor.org/stable/44434262>`_, with all measures in mm.
+The basic geometry for the Ahmed body is given below, as defined in Ahmed et al. [#ahmed1984]_, with all measures in mm.
 
 .. image:: images/ahmed-geometry.png
     :alt: Geometry detailed description
@@ -236,4 +236,4 @@ Possibilities for Extension
 ----------
 Reference
 ----------
-`[1] <https://www.jstor.org/stable/44434262>`_ Ahmed, S. R., et al. “Some Salient Features of the Time -Averaged Ground Vehicle Wake.” *SAE Transactions*, vol. 93, 1984, pp. 473–503. http://www.jstor.org/stable/44434262.
+.. [#ahmed1984] \Ahmed, S. R., et al. “Some Salient Features of the Time -Averaged Ground Vehicle Wake.” *SAE Transactions*, vol. 93, pp. 473–503, 1984. http://www.jstor.org/stable/44434262\.
