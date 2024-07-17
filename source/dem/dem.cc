@@ -101,20 +101,6 @@ DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
   // These connections only need to be created once, so we might as well
   // have set them up in the constructor of this class, but for the purpose
   // of this example we want to group the particle related instructions.
-#if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 6)
-  triangulation.signals.weight.connect(
-    [](const typename Triangulation<dim>::cell_iterator &,
-       const typename Triangulation<dim>::CellStatus) -> unsigned int {
-      return 1000;
-    });
-
-  triangulation.signals.weight.connect(
-    [&](const typename parallel::distributed::Triangulation<dim>::cell_iterator
-          &cell,
-        const typename parallel::distributed::Triangulation<dim>::CellStatus
-          status) -> unsigned int { return this->cell_weight(cell, status); });
-
-#else
   triangulation.signals.weight.connect(
     [](const typename Triangulation<dim>::cell_iterator &,
        const CellStatus) -> unsigned int { return 1000; });
@@ -125,7 +111,7 @@ DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
         const CellStatus status) -> unsigned int {
       return this->cell_weight(cell, status);
     });
-#endif
+
 
   if (parameters.model_parameters.sparse_particle_contacts)
     {
@@ -243,20 +229,11 @@ DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
   g = parameters.lagrangian_physical_properties.g;
 }
 
-#if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 6)
-template <int dim>
-unsigned int
-DEMSolver<dim>::cell_weight(
-  const typename parallel::distributed::Triangulation<dim>::cell_iterator &cell,
-  const typename parallel::distributed::Triangulation<dim>::CellStatus status)
-  const
-#else
 template <int dim>
 unsigned int
 DEMSolver<dim>::cell_weight(
   const typename parallel::distributed::Triangulation<dim>::cell_iterator &cell,
   const CellStatus status) const
-#endif
 {
   // Assign no weight to cells we do not own.
   if (!cell->is_locally_owned())
@@ -276,14 +253,9 @@ DEMSolver<dim>::cell_weight(
 
   switch (status)
     {
-#if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 6)
-      case parallel::distributed::Triangulation<dim>::CELL_PERSIST:
-      case parallel::distributed::Triangulation<dim>::CELL_REFINE:
-
-#else
       case CellStatus::cell_will_persist:
+
       case CellStatus::cell_will_be_refined:
-#endif
         // If CELL_PERSIST, do as CELL_REFINE
         {
           const unsigned int n_particles_in_cell =
@@ -291,19 +263,10 @@ DEMSolver<dim>::cell_weight(
           return n_particles_in_cell * particle_weight;
           break;
         }
-#if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 6)
-      case parallel::distributed::Triangulation<dim>::CELL_INVALID:
-        break;
-#else
       case CellStatus::cell_invalid:
         break;
-#endif
 
-#if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 6)
-      case parallel::distributed::Triangulation<dim>::CELL_COARSEN:
-#else
       case CellStatus::children_will_be_coarsened:
-#endif
         {
           unsigned int n_particles_in_cell = 0;
 
@@ -325,20 +288,11 @@ DEMSolver<dim>::cell_weight(
   return 0;
 }
 
-#if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 6)
-template <int dim>
-unsigned int
-DEMSolver<dim>::cell_weight_with_mobility_status(
-  const typename parallel::distributed::Triangulation<dim>::cell_iterator &cell,
-  const typename parallel::distributed::Triangulation<dim>::CellStatus status)
-  const
-#else
 template <int dim>
 unsigned int
 DEMSolver<dim>::cell_weight_with_mobility_status(
   const typename parallel::distributed::Triangulation<dim>::cell_iterator &cell,
   const CellStatus status) const
-#endif
 {
   // Assign no weight to cells we do not own.
   if (!cell->is_locally_owned())
@@ -367,14 +321,9 @@ DEMSolver<dim>::cell_weight_with_mobility_status(
 
   switch (status)
     {
-#if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 6)
-      case parallel::distributed::Triangulation<dim>::CELL_PERSIST:
-      case parallel::distributed::Triangulation<dim>::CELL_REFINE:
-#else
       case dealii::CellStatus::cell_will_persist:
-      case dealii::CellStatus::cell_will_be_refined:
 
-#endif
+      case dealii::CellStatus::cell_will_be_refined:
         {
           const unsigned int n_particles_in_cell =
             particle_handler.n_particles_in_cell(cell);
@@ -382,19 +331,10 @@ DEMSolver<dim>::cell_weight_with_mobility_status(
           break;
         }
 
-#if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 6)
-      case parallel::distributed::Triangulation<dim>::CELL_INVALID:
-        break;
-#else
       case dealii::CellStatus::cell_invalid:
         break;
-#endif
 
-#if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 6)
-      case parallel::distributed::Triangulation<dim>::CELL_COARSEN:
-#else
       case dealii::CellStatus::children_will_be_coarsened:
-#endif
         {
           unsigned int n_particles_in_cell = 0;
 

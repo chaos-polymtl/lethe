@@ -15,6 +15,9 @@
  *
  */
 
+#ifndef lethe_dem_h
+#define lethe_dem_h
+
 #include <core/dem_properties.h>
 #include <core/pvd_handler.h>
 #include <core/serial_solid.h>
@@ -49,9 +52,6 @@
 #include <iostream>
 #include <unordered_set>
 
-#ifndef lethe_dem_h
-#  define lethe_dem_h
-
 using namespace DEM;
 
 /**
@@ -65,7 +65,7 @@ public:
   DEMSolver(DEMSolverParameters<dim> dem_parameters);
 
   /**
-   * Initialiazes all the required parameters and iterates over the DEM iterator
+   * Initializes all the required parameters and iterates over the DEM iterator
    * (DEM engine).
    */
   void
@@ -90,20 +90,11 @@ private:
    * repartitions the domain between ranks (the connection is created inside the
    * particles_generation() function of this class).
    */
-#  if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 6)
-  unsigned int
-  cell_weight(
-    const typename parallel::distributed::Triangulation<dim>::cell_iterator
-                                                                        &cell,
-    const typename parallel::distributed::Triangulation<dim>::CellStatus status)
-    const;
-#  else
   unsigned int
   cell_weight(
     const typename parallel::distributed::Triangulation<dim>::cell_iterator
                     &cell,
     const CellStatus status) const;
-#  endif
 
   /**
    * Similar to the cell_weight() function, this function is used when the cell
@@ -124,21 +115,12 @@ private:
    * @param mobility_status The mobility status of the cell
    */
 
-#  if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 6)
-  unsigned int
-  cell_weight_with_mobility_status(
-    const typename parallel::distributed::Triangulation<dim>::cell_iterator
-                                                                        &cell,
-    const typename parallel::distributed::Triangulation<dim>::CellStatus status)
-    const;
-#  else
   unsigned int
   cell_weight_with_mobility_status(
     const typename parallel::distributed::Triangulation<dim>::cell_iterator
                     &cell,
     const CellStatus status) const;
-#  endif
-
+  
   /**
    * @brief Sets the right iteration check function according to the chosen contact detection method.
    *
@@ -347,7 +329,7 @@ private:
   const unsigned int contact_detection_frequency;
   const unsigned int insertion_frequency;
 
-  // Initilization of classes and building objects
+  // Initialization of classes and building objects
   DEMContactManager<dim>             contact_manager;
   std::shared_ptr<SimulationControl> simulation_control;
   BoundaryCellsInformation<dim>      boundary_cell_object;
