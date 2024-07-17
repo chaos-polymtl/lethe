@@ -292,6 +292,7 @@
 <li class="toctree-l3"><a class="reference internal" href="../../dem/silo/silo.html">Silo</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../dem/rectangular-hopper/rectangular-hopper.html">Rectangular Hopper</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../dem/granular-dam-break/granular-dam-break.html">Granular Dam-Break</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../dem/plate-discharge/plate-discharge.html">Plate Discharge</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../dem/bunny-drill/bunny-drill.html">Bunny Drill</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../dem/granular-mixer/granular-mixer.html">Granular Mixer</a></li>
 </ul>
@@ -460,16 +461,16 @@ Second, we call <code class="docutils literal notranslate"><span class="pre">let
 Finally, we call <code class="docutils literal notranslate"><span class="pre">lethe-fluid-particles</span></code> to simulate the dense pneumatic conveying with the file <code class="docutils literal notranslate"><span class="pre">pneumatic-conveying.prm</span></code> using periodic boundary conditions.
 We enable checkpointing in order to write the DEM checkpoint files which will be used as the starting point of the CFD-DEM simulation.
 The geometry of the pipe and the particle properties are based on the work of Lavrinec <em>et al</em>. <a class="footnote-reference brackets" href="#lavrinec2021" id="id1" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a></p>
-<figure class="align-center" id="id16">
+<figure class="align-center" id="id15">
 <img alt="insertion" src="../../../_images/insertion.png" />
 <figcaption>
-<p><span class="caption-text">View of the pipe after the loading of particles with the insertion plane.</span><a class="headerlink" href="#id16" title="Link to this image">#</a></p>
+<p><span class="caption-text">View of the pipe after the loading of particles with the insertion plane.</span><a class="headerlink" href="#id15" title="Link to this image">#</a></p>
 </figcaption>
 </figure>
-<figure class="align-center" id="id17">
+<figure class="align-center" id="id16">
 <img alt="pneumatic-conveying" src="../../../_images/pneumatic.png" />
 <figcaption>
-<p><span class="caption-text">View of the pipe during the pneumatic conveying.</span><a class="headerlink" href="#id17" title="Link to this image">#</a></p>
+<p><span class="caption-text">View of the pipe during the pneumatic conveying.</span><a class="headerlink" href="#id16" title="Link to this image">#</a></p>
 </figcaption>
 </figure>
 </section>
@@ -480,7 +481,7 @@ The geometry of the pipe and the particle properties are based on the work of La
 <p>In this section we introduce the different sections of the parameter file <code class="docutils literal notranslate"><span class="pre">loading-particles.prm</span></code> needed to load the particles of the simulation.</p>
 <section id="mesh">
 <h4>Mesh<a class="headerlink" href="#mesh" title="Link to this heading">#</a></h4>
-<p>In this example, we are simulating a horizontal cylindrical pipe. We use the <a class="reference external" href="https://chaos-polymtl.github.io/lethe/documentation/parameters/cfd/mesh.html">custom cylinder</a> of type balanced. We use this type of mesh in order to have uniform cell size in the radial direction. The length of a cell is about 2 times the diameter of the particles in each direction. The classical cylinder mesh of deal.II has smaller cells in the center which restrict the size of the particles. The length of the pipe is 1 m and the diameter is 0.084 m. The conveying is processed in the x-direction through periodic boundary conditions.</p>
+<p>In this example, we are simulating a horizontal cylindrical pipe. We use the <a class="reference external" href="../../../parameters/cfd/mesh.html">custom cylinder</a> of type balanced. We use this type of mesh in order to have uniform cell size in the radial direction. The length of a cell is about 2 times the diameter of the particles in each direction. The classical cylinder mesh of deal.II has smaller cells in the center which restrict the size of the particles. The length of the pipe is 1 m and the diameter is 0.084 m. The conveying is processed in the x-direction through periodic boundary conditions.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection mesh
   set type                                = cylinder
   set grid type                           = balanced
@@ -495,10 +496,10 @@ end
 <p>Note that, since the mesh is cylindrical, <code class="docutils literal notranslate"><span class="pre">set</span> <span class="pre">expand</span> <span class="pre">particle-wall</span> <span class="pre">contact</span> <span class="pre">search</span> <span class="pre">=</span> <span class="pre">true</span></code>. Details on this in the <a class="reference external" href="../../../parameters/dem/mesh.html">DEM mesh parameters guide</a>.</p>
 </div>
 <p>A cross-section of the resulting mesh is presented in the following figure.</p>
-<figure class="align-center" id="id18">
+<figure class="align-center" id="id17">
 <img alt="Mesh cross-section." src="../../../_images/mesh-particle.png" />
 <figcaption>
-<p><span class="caption-text">Cross-section of the mesh used in the pneumatic conveying simulation.</span><a class="headerlink" href="#id18" title="Link to this image">#</a></p>
+<p><span class="caption-text">Cross-section of the mesh used in the pneumatic conveying simulation.</span><a class="headerlink" href="#id17" title="Link to this image">#</a></p>
 </figcaption>
 </figure>
 </section>
@@ -534,10 +535,10 @@ end
 <section id="insertion-info">
 <h4>Insertion Info<a class="headerlink" href="#insertion-info" title="Link to this heading">#</a></h4>
 <p>As said in the previous section, the particles are inserted with the <a class="reference external" href="../../../parameters/dem/insertion_info.html#plane">plane insertion method</a>. The plane is located at the right side of the pipe. As we can see from the following figure, the plane is positioned at an angle. Since the plane insertion method will insert one particle in a cell that is intersected by the plane, we need to place the plane so it does not intersect the area above the solid object. Particles have an initial velocity in x-direction in order to speed up the packing process and in y-direction to have more collisions and randomness in the distribution.</p>
-<figure class="align-center" id="id19">
+<figure class="align-center" id="id18">
 <img alt="insertion." src="../../../_images/insertion-plane.png" />
 <figcaption>
-<p><span class="caption-text">Side view of the pipe during the insertion of particles in the x-direction with the solid object (green) and the insertion plane (red).</span><a class="headerlink" href="#id19" title="Link to this image">#</a></p>
+<p><span class="caption-text">Side view of the pipe during the insertion of particles in the x-direction with the solid object (green) and the insertion plane (red).</span><a class="headerlink" href="#id18" title="Link to this image">#</a></p>
 </figcaption>
 </figure>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection insertion info
@@ -609,10 +610,10 @@ end
 <h4>Solid Objects<a class="headerlink" href="#solid-objects" title="Link to this heading">#</a></h4>
 <p>The solid object is a simplex surface mesh that represents the shape of a slug. The mesh is generated with the <a class="reference external" href="https://gmsh.info/">Gmsh</a> software.
 The following figure shows the different parts of the slug. The length of the slug core (where particles fully obstruct the pipe; in green) is 0.5 m, and 45° planes inclined are placed the rear and the front of the slug (in blue). The stationary layer (the layer between periodic slugs; in red) has a height of 0.021 m which represents 20 % of the cross-section area of the pipe.</p>
-<figure class="align-center" id="id20">
+<figure class="align-center" id="id19">
 <img alt="Slug" src="../../../_images/slug.png" />
 <figcaption>
-<p><span class="caption-text">Different parts of the slug in a dense pneumatic conveying.</span><a class="headerlink" href="#id20" title="Link to this image">#</a></p>
+<p><span class="caption-text">Different parts of the slug in a dense pneumatic conveying.</span><a class="headerlink" href="#id19" title="Link to this image">#</a></p>
 </figcaption>
 </figure>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection solid objects
@@ -633,7 +634,7 @@ end
 <p>The model parameters are quite standard for a DEM simulation with the non-linear Hertz-Mindlin contact force model, a constant rolling resistance torque, and the velocity Verlet integration method.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>Here, we use the <a class="reference external" href="../../../parameters/dem/model_parameters.html#adaptive-sparse-contacts-asc">Adaptive Sparse Contacts</a> method to speedup the simulation. The method will disabled the contact computation in quasi-static areas which represents a significant part of the domain during the loading of the particles. Weight factor parameters for the ASC status are use in the load balancing method. No further explanation a given about the method, a future example will be added in order to detail it and to compare the performance gain.</p>
+<p>Here, we use the <a class="reference external" href="../../../parameters/dem/model_parameters.html#adaptive-sparse-contacts-asc">Adaptive Sparse Contacts (ASC)</a> method to speedup the simulation. The method will disabled the contact computation in quasi-static areas which represents a significant part of the domain during the loading of the particles. Weight factor parameters for the ASC status are use in the load balancing method. The <a class="reference external" href="../../dem/plate-discharge/plate-discharge.html">discharge plate example</a> is a good example of the use of the ASC method with DEM.</p>
 </div>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection model parameters
   subsection contact detection
@@ -690,8 +691,8 @@ end
 <section id="settling-particles">
 <h3>Settling Particles<a class="headerlink" href="#settling-particles" title="Link to this heading">#</a></h3>
 <p>In this section we show the difference in the parameter file <code class="docutils literal notranslate"><span class="pre">settling-particles.prm</span></code> needed to settle the particles with the same gravity vector as the pneumatic conveying simulation. Consequently, many sections related to the loading are not needed such as the the insertion info, the floating walls, and the solid objects.</p>
-<section id="id6">
-<h4>Simulation Control<a class="headerlink" href="#id6" title="Link to this heading">#</a></h4>
+<section id="id5">
+<h4>Simulation Control<a class="headerlink" href="#id5" title="Link to this heading">#</a></h4>
 <p>Here we allow a 2.5 seconds for the settling of the particles. Since this simulation is a restart of the loading particle simulation, the end time is 32.5 seconds.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection simulation control
   set time step        = 5e-5
@@ -703,9 +704,8 @@ end
 </pre></div>
 </div>
 </section>
-</section>
-<section id="id7">
-<h3>Restart<a class="headerlink" href="#id7" title="Link to this heading">#</a></h3>
+<section id="id6">
+<h4>Restart<a class="headerlink" href="#id6" title="Link to this heading">#</a></h4>
 <p>This simulation reads the restart, meaning this option is set to true. Also, the checkpointing is reduce to 0.5 seconds.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection restart
   set checkpoint = true
@@ -715,8 +715,9 @@ end
 end
 </pre></div>
 </div>
-<section id="id8">
-<h4>Lagrangian Physical Properties<a class="headerlink" href="#id8" title="Link to this heading">#</a></h4>
+</section>
+<section id="id7">
+<h4>Lagrangian Physical Properties<a class="headerlink" href="#id7" title="Link to this heading">#</a></h4>
 <p>The main difference in this simulation is the gravity. It changes to the y-direction to be coherent with the next simulation using the CFD-DEM solver.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection lagrangian physical properties
   set g                        = 0, -9.81, 0
@@ -749,9 +750,9 @@ end
 <h3>Pneumatic Conveying Simulation<a class="headerlink" href="#pneumatic-conveying-simulation" title="Link to this heading">#</a></h3>
 <p>The CFD simulation is to be carried out using the slug generated in the previous step. We will discuss the different sections of the parameter file used for the CFD-DEM simulation.
 The mesh and the DEM boundary condition sections are identical to the ones in the DEM simulations and will not be shown again.</p>
-<section id="id9">
-<h4>Lagrangian Physical Properties<a class="headerlink" href="#id9" title="Link to this heading">#</a></h4>
-<p>The physical properties of the particles are the same as in the DEM simulations, except for the Young’s modulus that was increased to use the same value as the article <a class="footnote-reference brackets" href="#lavrinec2021" id="id10" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>.</p>
+<section id="id8">
+<h4>Lagrangian Physical Properties<a class="headerlink" href="#id8" title="Link to this heading">#</a></h4>
+<p>The physical properties of the particles are the same as in the DEM simulations, except for the Young’s modulus that was increased to use the same value as the article <a class="footnote-reference brackets" href="#lavrinec2021" id="id9" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection lagrangian physical properties
   set g                        = 0, -9.81, 0
   set number of particle types = 1
@@ -775,8 +776,8 @@ end
 </pre></div>
 </div>
 </section>
-<section id="id11">
-<h4>Model Parameters<a class="headerlink" href="#id11" title="Link to this heading">#</a></h4>
+<section id="id10">
+<h4>Model Parameters<a class="headerlink" href="#id10" title="Link to this heading">#</a></h4>
 <p>Model parameters are the same as in the DEM simulation, but we do not use any strategies for performance enhancement, such as load balancing or adaptive sparse contacts.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection model parameters
   subsection contact detection
@@ -791,8 +792,8 @@ end
 </pre></div>
 </div>
 </section>
-<section id="id12">
-<h4>Simulation Control<a class="headerlink" href="#id12" title="Link to this heading">#</a></h4>
+<section id="id11">
+<h4>Simulation Control<a class="headerlink" href="#id11" title="Link to this heading">#</a></h4>
 <p>The simulation lasts 5 seconds and the CFD time step is 5e-4 seconds.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection simulation control
   set method               = bdf1
@@ -807,7 +808,7 @@ end
 </section>
 <section id="physical-properties">
 <h4>Physical Properties<a class="headerlink" href="#physical-properties" title="Link to this heading">#</a></h4>
-<p>The physical properties of air are the same as Lavrinec <em>et al</em>. <a class="footnote-reference brackets" href="#lavrinec2021" id="id13" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a></p>
+<p>The physical properties of air are the same as Lavrinec <em>et al</em>. <a class="footnote-reference brackets" href="#lavrinec2021" id="id12" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a></p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection physical properties
   subsection fluid 0
     set kinematic viscosity = 1.5e-5
@@ -958,9 +959,9 @@ Extraction, post-processing and plotting are automated in the script <code class
 </figcaption>
 </figure>
 <p>The time-averaged values of velocities at quasi-steady state are shown in the following table.</p>
-<div class="table-wrapper colwidths-given docutils container" id="id21">
-<table class="docutils align-center" id="id21" style="width: 70.25%">
-<caption><span class="caption-text">Time-averaged velocities at quasi-steady state.</span><a class="headerlink" href="#id21" title="Link to this table">#</a></caption>
+<div class="table-wrapper colwidths-given docutils container" id="id20">
+<table class="docutils align-center" id="id20" style="width: 70.25%">
+<caption><span class="caption-text">Time-averaged velocities at quasi-steady state.</span><a class="headerlink" href="#id20" title="Link to this table">#</a></caption>
 <colgroup>
 <col style="width: 36.8%" />
 <col style="width: 21.1%" />
@@ -988,7 +989,7 @@ Extraction, post-processing and plotting are automated in the script <code class
 </tbody>
 </table>
 </div>
-<p>According to Lavrinec <em>et al.</em> <a class="footnote-reference brackets" href="#lavrinec2020" id="id15" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a>, the average slug velocity has a linear relationship with the particle in slug velocity and the diameter of the pipe such as:</p>
+<p>According to Lavrinec <em>et al.</em> <a class="footnote-reference brackets" href="#lavrinec2020" id="id14" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a>, the average slug velocity has a linear relationship with the particle in slug velocity and the diameter of the pipe such as:</p>
 <div class="math-wrapper docutils container">
 <div class="math notranslate nohighlight">
 \[\bar{u}_{\mathrm{slug}} = 0.967 \bar{u}_{\mathrm{particles}} + 0.5\sqrt{gD}\]</div>
@@ -1002,11 +1003,11 @@ Extraction, post-processing and plotting are automated in the script <code class
 <aside class="footnote-list brackets">
 <aside class="footnote brackets" id="lavrinec2021" role="doc-footnote">
 <span class="label"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></span>
-<span class="backrefs">(<a role="doc-backlink" href="#id1">1</a>,<a role="doc-backlink" href="#id2">2</a>,<a role="doc-backlink" href="#id10">3</a>,<a role="doc-backlink" href="#id13">4</a>)</span>
+<span class="backrefs">(<a role="doc-backlink" href="#id1">1</a>,<a role="doc-backlink" href="#id2">2</a>,<a role="doc-backlink" href="#id9">3</a>,<a role="doc-backlink" href="#id12">4</a>)</span>
 <p>A. Lavrinec, O. Orozovic, H. Rajabnia, K. Williams, M. Jones &amp; G. Klinzing, “An assessment of steady-state conditions in single slug horizontal pneumatic conveying.” <em>Particuology</em>, vol. 58, pp. 187-195, 2021. doi: <a class="reference external" href="https://doi.org/10.1016/j.partic.2021.04.007">10.1016/j.partic.2021.04.007</a>.</p>
 </aside>
 <aside class="footnote brackets" id="lavrinec2020" role="doc-footnote">
-<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id15">2</a><span class="fn-bracket">]</span></span>
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id14">2</a><span class="fn-bracket">]</span></span>
 <p>A. Lavrinec, O. Orozovic, H. Rajabnia, K. Williams, M. Jones et G. Klinzing, “Velocity and porosity relationships within dense phase pneumatic conveying as studied using coupled CFD-DEM.” <em>Powder Technology</em>, vol. 375, pp. 89–100, 2020. doi: <a class="reference external" href="https://doi.org/10.1016/j.powtec.2020.07.070">10.1016/j.powtec.2020.07.070</a>.</p>
 </aside>
 </aside>
@@ -1086,20 +1087,18 @@ Extraction, post-processing and plotting are automated in the script <code class
 </ul>
 </li>
 <li><a class="reference internal" href="#settling-particles">Settling Particles</a><ul>
-<li><a class="reference internal" href="#id6">Simulation Control</a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#id7">Restart</a><ul>
-<li><a class="reference internal" href="#id8">Lagrangian Physical Properties</a></li>
+<li><a class="reference internal" href="#id5">Simulation Control</a></li>
+<li><a class="reference internal" href="#id6">Restart</a></li>
+<li><a class="reference internal" href="#id7">Lagrangian Physical Properties</a></li>
 </ul>
 </li>
 </ul>
 </li>
 <li><a class="reference internal" href="#cfd-dem-parameter-file">CFD-DEM Parameter file</a><ul>
 <li><a class="reference internal" href="#pneumatic-conveying-simulation">Pneumatic Conveying Simulation</a><ul>
-<li><a class="reference internal" href="#id9">Lagrangian Physical Properties</a></li>
-<li><a class="reference internal" href="#id11">Model Parameters</a></li>
-<li><a class="reference internal" href="#id12">Simulation Control</a></li>
+<li><a class="reference internal" href="#id8">Lagrangian Physical Properties</a></li>
+<li><a class="reference internal" href="#id10">Model Parameters</a></li>
+<li><a class="reference internal" href="#id11">Simulation Control</a></li>
 <li><a class="reference internal" href="#physical-properties">Physical Properties</a></li>
 <li><a class="reference internal" href="#boundary-conditions">Boundary Conditions</a></li>
 <li><a class="reference internal" href="#flow-control">Flow control</a></li>
