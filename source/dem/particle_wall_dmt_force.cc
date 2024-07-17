@@ -9,87 +9,10 @@ template <int dim>
 ParticleWallDMTForce<dim>::ParticleWallDMTForce(
   const DEMSolverParameters<dim>       &dem_parameters,
   const std::vector<types::boundary_id> boundary_index)
-  : ParticleWallContactForce<dim>(dem_parameters)
+  : ParticleWallNonLinearForce<dim>(dem_parameters)
+  , dmt_cut_off_threshold(dem_parameters.model_parameters.dmt_cut_off_threshold)
 {
-  const double wall_youngs_modulus =
-    dem_parameters.lagrangian_physical_properties.youngs_modulus_wall;
-  const double wall_poisson_ratio =
-    dem_parameters.lagrangian_physical_properties.poisson_ratio_wall;
-  const double wall_restitution_coefficient =
-    dem_parameters.lagrangian_physical_properties.restitution_coefficient_wall;
-  const double wall_friction_coefficient =
-    dem_parameters.lagrangian_physical_properties.friction_coefficient_wall;
-  const double wall_rolling_friction_coefficient =
-    dem_parameters.lagrangian_physical_properties.rolling_friction_wall;
-  const double wall_surface_energy =
-    dem_parameters.lagrangian_physical_properties.surface_energy_wall;
-  for (unsigned int i = 0;
-       i < dem_parameters.lagrangian_physical_properties.particle_type_number;
-       ++i)
-    {
-      const double particle_youngs_modulus =
-        dem_parameters.lagrangian_physical_properties.youngs_modulus_particle
-          .at(i);
-      const double particle_poisson_ratio =
-        dem_parameters.lagrangian_physical_properties.poisson_ratio_particle.at(
-          i);
-      const double particle_restitution_coefficient =
-        dem_parameters.lagrangian_physical_properties
-          .restitution_coefficient_particle.at(i);
-      const double particle_friction_coefficient =
-        dem_parameters.lagrangian_physical_properties
-          .friction_coefficient_particle.at(i);
-      const double particle_rolling_friction_coefficient =
-        dem_parameters.lagrangian_physical_properties
-          .rolling_friction_coefficient_particle.at(i);
-      const double particle_surface_energy =
-        dem_parameters.lagrangian_physical_properties.surface_energy_particle
-          .at(i);
-
-      this->effective_youngs_modulus[i] =
-        (particle_youngs_modulus * wall_youngs_modulus) /
-        (wall_youngs_modulus *
-           (1 - particle_poisson_ratio * particle_poisson_ratio) +
-         particle_youngs_modulus *
-           (1 - wall_poisson_ratio * wall_poisson_ratio) +
-         DBL_MIN);
-
-      this->effective_shear_modulus[i] =
-        (particle_youngs_modulus * wall_youngs_modulus) /
-        ((2 * wall_youngs_modulus * (2 - particle_poisson_ratio) *
-          (1 + particle_poisson_ratio)) +
-         (2 * particle_youngs_modulus * (2 - wall_poisson_ratio) *
-          (1 + wall_poisson_ratio)) +
-         DBL_MIN);
-
-      this->effective_coefficient_of_restitution[i] =
-        2 * particle_restitution_coefficient * wall_restitution_coefficient /
-        (particle_restitution_coefficient + wall_restitution_coefficient +
-         DBL_MIN);
-
-      this->effective_surface_energy[i] =
-        particle_surface_energy + wall_surface_energy -
-        std::pow(std::sqrt(particle_surface_energy) -
-                   std::sqrt(wall_surface_energy),
-                 2);
-
-      const double log_coeff_restitution =
-        log(this->effective_coefficient_of_restitution[i]);
-      this->model_parameter_beta[i] =
-        log_coeff_restitution /
-        sqrt((log_coeff_restitution * log_coeff_restitution) + 9.8696);
-
-      this->effective_coefficient_of_friction[i] =
-        2 * particle_friction_coefficient * wall_friction_coefficient /
-        (particle_friction_coefficient + wall_friction_coefficient + DBL_MIN);
-
-      this->effective_coefficient_of_rolling_friction[i] =
-        2 * particle_rolling_friction_coefficient *
-        wall_rolling_friction_coefficient /
-        (particle_rolling_friction_coefficient +
-         wall_rolling_friction_coefficient + DBL_MIN);
-    }
-
+  initialize_particle_wall_properties(dem_parameters);
   if (dem_parameters.model_parameters.rolling_resistance_method ==
       Parameters::Lagrangian::RollingResistanceMethod::no_resistance)
     {
@@ -125,10 +48,17 @@ ParticleWallDMTForce<dim>::calculate_particle_wall_contact_force(
   std::vector<Tensor<1, 3>> &torque,
   std::vector<Tensor<1, 3>> &force)
 {
+  constexpr double M_2PI = 6.283185307179586; // 2. * M_PI
+
   ParticleWallContactForce<dim>::force_on_walls =
     ParticleWallContactForce<dim>::initialize();
   ParticleWallContactForce<dim>::torque_on_walls =
     ParticleWallContactForce<dim>::initialize();
+
+  // Set the force_calculation_threshold_distance. This is useful for non-
+  // contact cohesive force models such as the DMT force model.
+  const double force_calculation_threshold_distance =
+    set_dmt_cut_off_distance();
 
   // Looping over particle_wall_pairs_in_contact, which means looping over all
   // the active particles with iterator particle_wall_pairs_in_contact_iterator
@@ -179,28 +109,110 @@ ParticleWallDMTForce<dim>::calculate_particle_wall_contact_force(
             ((particle_properties[DEM::PropertiesIndex::dp]) * 0.5) -
             (projected_vector.norm());
 
-          if (normal_overlap > 0)
+          // Minimal delta_star. We know a force has to be computed.
+          if (normal_overlap > force_calculation_threshold_distance)
             {
-              contact_information.normal_overlap = normal_overlap;
+              // i is the particle, j is the wall.
+              // we need to put a minus sign in front of the
+              // normal_vector to respect the convention (i ->
+              // j)
+              const unsigned int particle_type =
+                particle_properties[DEM::PropertiesIndex::type];
+              const double effective_radius =
+                0.5 * particle_properties[DEM::PropertiesIndex::dp];
+              const double effective_surface_energy =
+                this->effective_surface_energy[particle_type];
+              const double effective_hamaker_constant =
+                this->effective_hamaker_constant[particle_type];
 
-              this->update_contact_information(contact_information,
-                                               particle_location_3d,
-                                               particle_properties,
-                                               dt);
+              const double F_po =
+                M_2PI * effective_radius * effective_surface_energy;
 
-              // This tuple (forces and torques) contains four elements which
-              // are: 1, normal force, 2, tangential force, 3, tangential torque
-              // and 4, rolling resistance torque, respectively
+              const double delta_0 = -std::sqrt(effective_hamaker_constant *
+                                                effective_radius / (6. * F_po));
+              // Cohesive force. This will need to be added to the
+              // first vector inside the tuple.
+              Tensor<1, 3> cohesive_force;
+
+              // This tuple (forces and torques) contains four
+              // elements which are: 1, normal force, 2,
+              // tangential force, 3, tangential torque and 4,
+              // rolling resistance torque, respectively
               std::tuple<Tensor<1, 3>, Tensor<1, 3>, Tensor<1, 3>, Tensor<1, 3>>
-                forces_and_torques =
-                  this->calculate_dmt_contact_force_and_torque(
-                    contact_information, particle_properties);
+                forces_and_torques;
+
+              forces_and_torques = std::make_tuple(Tensor<1, 3>(),
+                                                   Tensor<1, 3>(),
+                                                   Tensor<1, 3>(),
+                                                   Tensor<1, 3>());
+              // Contact + constant cohesive force.
+              if (normal_overlap > 0.)
+                {
+                  // i is the particle, j is the wall.
+                  // we need to put a minus sign infront of the
+                  // normal_vector to respect the convention (i ->
+                  // j)
+                  cohesive_force = -F_po * -normal_vector;
+
+                  contact_information.normal_overlap = normal_overlap;
+                  this->update_contact_information(contact_information,
+                                                   particle_location_3d,
+                                                   particle_properties,
+                                                   dt);
+
+                  // This tuple (forces and torques) contains
+                  // four elements which are: 1, normal force,
+                  // 2, tangential force, 3, tangential torque
+                  // and 4, rolling resistance torque,
+                  // respectively
+                  forces_and_torques =
+                    this->calculate_nonlinear_contact_force_and_torque(
+                      contact_information, particle_properties);
+                }
+              // No contact, but still in the constant zone for the cohesive
+              // force.
+              else if (normal_overlap > delta_0)
+                {
+                  // i is the particle, j is the wall.
+                  // we need to put a minus sign infront of the
+                  // normal_vector to respect the convention (i ->
+                  // j)
+                  cohesive_force = -F_po * -normal_vector;
+
+                  // No contact means there is no tangential
+                  // overlap.
+                  for (int d = 0; d < dim; ++d)
+                    {
+                      contact_information.tangential_overlap[d] = 0.;
+                    }
+                }
+              else // between delta_* and delta_0.
+                {
+                  // i is the particle, j is the wall.
+                  // we need to put a minus sign infront of the
+                  // normal_vector to respect the convention (i ->
+                  // j)
+                  const double F_cohesion =
+                    effective_hamaker_constant * effective_radius /
+                    (6. * Utilities::fixed_power<2>(normal_overlap));
+
+                  // No contact means there is not tangential
+                  // overlap.
+                  for (int d = 0; d < dim; ++d)
+                    {
+                      contact_information.tangential_overlap[d] = 0.;
+                    }
+                  cohesive_force = -F_cohesion * -normal_vector;
+                }
 
               // Get particle's torque and force
               types::particle_index particle_id = particle->get_local_index();
 
               Tensor<1, 3> &particle_torque = torque[particle_id];
               Tensor<1, 3> &particle_force  = force[particle_id];
+
+              // Added the cohesive term
+              std::get<0>(forces_and_torques) += cohesive_force;
 
               // Apply the calculated forces and torques on the particle
               this->apply_force_and_torque(forces_and_torques,
@@ -209,12 +221,13 @@ ParticleWallDMTForce<dim>::calculate_particle_wall_contact_force(
                                            point_on_boundary,
                                            contact_information.boundary_id);
             }
-          else
+          else // No cohesive force
             {
-              contact_information.normal_overlap = 0;
+              // No contact means there is not tangential
+              // overlap.
               for (int d = 0; d < dim; ++d)
                 {
-                  contact_information.tangential_overlap[d] = 0;
+                  contact_information.tangential_overlap[d] = 0.;
                 }
             }
         }
@@ -232,21 +245,19 @@ ParticleWallDMTForce<dim>::calculate_particle_floating_wall_contact_force(
   std::vector<Tensor<1, 3>> &force,
   const std::vector<std::shared_ptr<SerialSolid<dim - 1, dim>>> &solids)
 {
+  constexpr double M_2PI = 6.283185307179586; // 2. * M_PI
+
   std::vector<Particles::ParticleIterator<dim>> particle_locations;
   std::vector<Point<dim>> triangle(this->vertices_per_triangle);
+
+  // Set the force_calculation_threshold_distance. This is useful for non-
+  // contact cohesive force models such as the DMT force model.
+  const double force_calculation_threshold_distance =
+    set_dmt_cut_off_distance();
 
   for (unsigned int solid_counter = 0; solid_counter < solids.size();
        ++solid_counter)
     {
-      // Get translational and rotational velocities and center of
-      // rotation
-      Tensor<1, 3> translational_velocity =
-        solids[solid_counter]->get_translational_velocity();
-      Tensor<1, 3> angular_velocity =
-        solids[solid_counter]->get_angular_velocity();
-      Point<3> center_of_rotation =
-        solids[solid_counter]->get_center_of_rotation();
-
       auto &particle_floating_mesh_contact_pair =
         particle_floating_mesh_in_contact[solid_counter];
 
@@ -320,48 +331,122 @@ ParticleWallDMTForce<dim>::calculate_particle_floating_wall_contact_force(
                          0.5) -
                         particle_triangle_distance;
 
-                      double overlap_for_force_calculation =
-                        -0.0; // Pas la vrai valeur pour le moment
-
-                      if (normal_overlap > overlap_for_force_calculation)
+                      // We check if a force need to be computed.
+                      if (normal_overlap > force_calculation_threshold_distance)
                         {
-                          contact_info.normal_overlap = normal_overlap;
+                          // i is the particle, j is the wall.
+                          // we need to put a minus sign in front of the
+                          // normal_vector to respect the convention (i ->
+                          // j)
+                          const unsigned int particle_type =
+                            particle_properties[DEM::PropertiesIndex::type];
+                          const double effective_radius =
+                            0.5 * particle_properties[DEM::PropertiesIndex::dp];
+                          const double effective_surface_energy =
+                            this->effective_surface_energy[particle_type];
+                          const double effective_hamaker_constant =
+                            this->effective_hamaker_constant[particle_type];
 
-                          contact_info.normal_vector =
-                            normal_vectors[particle_counter];
+                          const double F_po =
+                            M_2PI * effective_radius * effective_surface_energy;
 
-                          contact_info.point_on_boundary = projection_point;
+                          const double delta_0 =
+                            -std::sqrt(effective_hamaker_constant *
+                                       effective_radius / (6. * F_po));
 
-                          contact_info.boundary_id = solid_counter;
-
-                          this
-                            ->update_particle_floating_wall_contact_information(
-                              contact_info,
-                              particle_properties,
-                              dt,
-                              translational_velocity,
-                              angular_velocity,
-                              center_of_rotation.distance(
-                                particle_location_3d));
+                          // Cohesive force. This will need to be added to the
+                          // first vector inside the tuple.
+                          Tensor<1, 3> cohesive_force;
 
                           // This tuple (forces and torques) contains four
-                          // elements which are: 1, normal force, 2, tangential
-                          // force, 3, tangential torque and 4, rolling
-                          // resistance torque, respectively
+                          // elements which are: 1, normal force, 2,
+                          // tangential force, 3, tangential torque and 4,
+                          // rolling resistance torque, respectively
                           std::tuple<Tensor<1, 3>,
                                      Tensor<1, 3>,
                                      Tensor<1, 3>,
                                      Tensor<1, 3>>
-                            forces_and_torques =
-                              this->calculate_dmt_contact_force_and_torque(
-                                contact_info, particle_properties);
+                            forces_and_torques;
 
+                          forces_and_torques = std::make_tuple(Tensor<1, 3>(),
+                                                               Tensor<1, 3>(),
+                                                               Tensor<1, 3>(),
+                                                               Tensor<1, 3>());
+
+                          // Contact + constant cohesive force.
+                          if (normal_overlap > 0.)
+                            {
+                              // i is the particle, j is the wall.
+                              // we need to put a minus sign infront of the
+                              // normal_vector to respect the convention (i ->
+                              // j)
+                              cohesive_force =
+                                -F_po * -normal_vectors[particle_counter];
+
+                              contact_info.normal_overlap = normal_overlap;
+                              this->update_contact_information(
+                                contact_info,
+                                particle_location_3d,
+                                particle_properties,
+                                dt);
+
+                              // This tuple (forces and torques) contains
+                              // four elements which are: 1, normal force,
+                              // 2, tangential force, 3, tangential torque
+                              // and 4, rolling resistance torque,
+                              // respectively
+                              forces_and_torques =
+                                this
+                                  ->calculate_nonlinear_contact_force_and_torque(
+                                    contact_info, particle_properties);
+                            }
+                          // No contact, but still in the constant zone for the
+                          // cohesive force.
+                          else if (normal_overlap > delta_0)
+                            {
+                              // i is the particle, j is the wall.
+                              // we need to put a minus sign infront of the
+                              // normal_vector to respect the convention (i ->
+                              // j)
+                              cohesive_force =
+                                -F_po * -normal_vectors[particle_counter];
+
+                              // No contact means there is no tangential
+                              // overlap.
+                              for (int d = 0; d < dim; ++d)
+                                {
+                                  contact_info.tangential_overlap[d] = 0.;
+                                }
+                            }
+                          else // between delta_* and delta_0.
+                            {
+                              // i is the particle, j is the wall.
+                              // we need to put a minus sign infront of the
+                              // normal_vector to respect the convention (i ->
+                              // j)
+                              const double F_cohesion =
+                                effective_hamaker_constant * effective_radius /
+                                (6. *
+                                 Utilities::fixed_power<2>(normal_overlap));
+
+                              // No contact means there is not tangential
+                              // overlap.
+                              for (int d = 0; d < dim; ++d)
+                                {
+                                  contact_info.tangential_overlap[d] = 0.;
+                                }
+                              cohesive_force =
+                                -F_cohesion * -normal_vectors[particle_counter];
+                            }
                           // Get particle's torque and force
                           types::particle_index particle_id =
                             particle->get_local_index();
 
                           Tensor<1, 3> &particle_torque = torque[particle_id];
                           Tensor<1, 3> &particle_force  = force[particle_id];
+
+                          // Added the cohesive term
+                          std::get<0>(forces_and_torques) += cohesive_force;
 
                           // Apply the calculated forces and torques on the
                           // particle
@@ -372,139 +457,21 @@ ParticleWallDMTForce<dim>::calculate_particle_floating_wall_contact_force(
                             projection_point,
                             contact_info.boundary_id);
                         }
-                      else
+                      else // No cohesive force
                         {
-                          contact_info.normal_overlap = 0;
+                          // No contact means there is not tangential
+                          // overlap.
                           for (int d = 0; d < dim; ++d)
                             {
-                              contact_info.tangential_overlap[d] = 0;
+                              contact_info.tangential_overlap[d] = 0.;
                             }
                         }
+                      particle_counter++;
                     }
-                  particle_counter++;
                 }
             }
         }
     }
 }
-
-// Calculates DMT contact force and torques
-template <int dim>
-std::tuple<Tensor<1, 3>, Tensor<1, 3>, Tensor<1, 3>, Tensor<1, 3>>
-ParticleWallDMTForce<dim>::calculate_dmt_contact_force_and_torque(
-  particle_wall_contact_info<dim> &contact_info,
-  const ArrayView<const double>   &particle_properties)
-{
-  // i is the particle, j is the wall.
-  // we need to put a minus sign in front of the normal_vector to respect the
-  // convention (i -> j)
-  Tensor<1, 3>       normal_vector = -contact_info.normal_vector;
-  const unsigned int particle_type =
-    particle_properties[DEM::PropertiesIndex::type];
-
-  const double effective_radius =
-    0.5 * particle_properties[DEM::PropertiesIndex::dp];
-
-  // Calculation of model parameters (beta, sn and st). These values
-  // are used to consider non-linear relation of the contact force to
-  // the normal overlap
-  const double radius_times_overlap_sqrt =
-    sqrt(effective_radius * contact_info.normal_overlap);
-  const double model_parameter_sn =
-    2 * this->effective_youngs_modulus[particle_type] *
-    radius_times_overlap_sqrt;
-
-  const double model_parameter_st =
-    8 * this->effective_shear_modulus[particle_type] *
-    radius_times_overlap_sqrt;
-
-  // Calculation of normal and tangential spring and dashpot constants
-  // using particle and wall properties
-  const double normal_spring_constant =
-    1.3333 * this->effective_youngs_modulus[particle_type] *
-    radius_times_overlap_sqrt;
-
-  // Calculation of normal damping and tangential spring and dashpot constants
-  //  using particle and wall properties.
-  //  There is no minus sign here since model_parameter_beta is negative or
-  //  equal to zero.
-  const double normal_damping_constant =
-    1.8257 * this->model_parameter_beta[particle_type] * // 2. * sqrt(5./6.)
-    sqrt(model_parameter_sn * particle_properties[DEM::PropertiesIndex::mass]);
-
-  // Tangential spring constant is set as a negative just like in the other
-  // particle-wall models. This must be taken into account for the square root
-  // in the tangential_damping_calculation.
-  double tangential_spring_constant =
-    -8. * this->effective_shear_modulus[particle_type] *
-      radius_times_overlap_sqrt +
-    DBL_MIN;
-
-  // There is no minus sign here since model_parameter_beta is negative or
-  // equal to zero.
-  const double tangential_damping_constant =
-    normal_damping_constant *
-    sqrt(model_parameter_st / (model_parameter_sn + DBL_MIN));
-
-  // Calculation of the normal force coefficient (F_n_DMT)
-  const double cohesive_term = 2. * M_PI * effective_radius *
-                               this->effective_surface_energy[particle_type];
-  double normal_force_norm =
-    normal_spring_constant * contact_info.normal_overlap +
-    normal_damping_constant * contact_info.normal_relative_velocity;
-
-  // Calculation of tangential force
-  Tensor<1, 3> damping_tangential_force =
-    tangential_damping_constant * contact_info.tangential_relative_velocity;
-  Tensor<1, 3> tangential_force =
-    tangential_spring_constant * contact_info.tangential_overlap +
-    damping_tangential_force;
-  double tangential_force_norm = tangential_force.norm();
-
-  // Coulomb limit need to be modified (Thornton 1991)
-  double coulomb_threshold =
-    this->effective_coefficient_of_friction[particle_type] * normal_force_norm;
-
-  // Check for gross sliding
-  if (tangential_force_norm > coulomb_threshold)
-    {
-      // Gross sliding occurs and the tangential overlap and tangential
-      // force are limited to Coulomb's criterion
-      contact_info.tangential_overlap =
-        (coulomb_threshold *
-           (tangential_force / (tangential_force_norm + DBL_MIN)) -
-         damping_tangential_force) /
-        (tangential_spring_constant + DBL_MIN);
-
-      tangential_force =
-        (tangential_spring_constant * contact_info.tangential_overlap) +
-        damping_tangential_force;
-    }
-  normal_force_norm -= cohesive_term;
-  Tensor<1, 3> normal_force = normal_force_norm * normal_vector;
-
-  // Calculation torque caused by tangential force
-  // We add the minus sign here since the tangential_force is applied on the
-  // particle is in the opposite direction
-  Tensor<1, 3> tangential_torque =
-    cross_product_3d((0.5 * particle_properties[DEM::PropertiesIndex::dp] *
-                      normal_vector),
-                     -tangential_force);
-
-  // Rolling resistance torque
-  Tensor<1, 3> rolling_resistance_torque =
-    (this->*calculate_rolling_resistance_torque)(
-      particle_properties,
-      this->effective_coefficient_of_rolling_friction[particle_type],
-      normal_force.norm(),
-      contact_info.normal_vector);
-
-  return std::make_tuple(normal_force,
-                         tangential_force,
-                         tangential_torque,
-                         rolling_resistance_torque);
-}
-
-
 template class ParticleWallDMTForce<2>;
 template class ParticleWallDMTForce<3>;

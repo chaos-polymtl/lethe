@@ -17,8 +17,8 @@
 #include <core/dem_properties.h>
 
 #include <dem/dem_solver_parameters.h>
-#include <dem/particle_wall_contact_force.h>
 #include <dem/particle_wall_contact_info.h>
+#include <dem/particle_wall_nonlinear_force.h>
 
 #include <deal.II/particles/particle.h>
 
@@ -37,7 +37,7 @@ using namespace dealii;
  * particles and walls
  */
 template <int dim>
-class ParticleWallDMTForce : public ParticleWallContactForce<dim>
+class ParticleWallDMTForce : public ParticleWallNonLinearForce<dim>
 {
   using FuncPtrType =
     Tensor<1, 3> (ParticleWallDMTForce<dim>::*)(const ArrayView<const double> &,
@@ -202,20 +202,137 @@ private:
   }
 
   /**
-   * Carries out the calculation of the particle-wall DMT contact force and
-   * torques based on the updated values in contact_info
+   * @brief Initialize every particle-wall properties required
+   * for the force calculation. This function is required for the DMT force
+   * model, since the dmt_cut_off_distance attribute needs the be set to const.
+   * To do so, the effective surface energy and of the effective hamaker contant
+   * need to be initialized before hand. For code clarity, we also initialized
+   * every other parameter, otherwise the initialization would take place at two
+   * different places in the code.
    *
-   * @param contact_info A container that contains the required information for
-   * calculation of the contact force for a particle pair in contact
-   * @param particle_properties Properties of particle in contact
-   * @return A tuple which contains: 1, normal force, 2,
-   * tangential force, 3, tangential torque and 4, rolling resistance torque of
-   * a contact pair
+   * @param[in] dem_parameters DEM parameters declared in the .prm file
    */
-  std::tuple<Tensor<1, 3>, Tensor<1, 3>, Tensor<1, 3>, Tensor<1, 3>>
-  calculate_dmt_contact_force_and_torque(
-    particle_wall_contact_info<dim> &contact_info,
-    const ArrayView<const double>   &particle_properties);
+  void
+  initialize_particle_wall_properties(
+    const DEMSolverParameters<dim> &dem_parameters)
+  {
+    const double wall_youngs_modulus =
+      dem_parameters.lagrangian_physical_properties.youngs_modulus_wall;
+    const double wall_poisson_ratio =
+      dem_parameters.lagrangian_physical_properties.poisson_ratio_wall;
+    const double wall_restitution_coefficient =
+      dem_parameters.lagrangian_physical_properties
+        .restitution_coefficient_wall;
+    const double wall_friction_coefficient =
+      dem_parameters.lagrangian_physical_properties.friction_coefficient_wall;
+    const double wall_rolling_friction_coefficient =
+      dem_parameters.lagrangian_physical_properties.rolling_friction_wall;
+    const double wall_surface_energy =
+      dem_parameters.lagrangian_physical_properties.surface_energy_wall;
+    const double wall_hamaker_constant =
+      dem_parameters.lagrangian_physical_properties.hamaker_constant_wall;
+    for (unsigned int i = 0;
+         i < dem_parameters.lagrangian_physical_properties.particle_type_number;
+         ++i)
+      {
+        const double particle_youngs_modulus =
+          dem_parameters.lagrangian_physical_properties.youngs_modulus_particle
+            .at(i);
+        const double particle_poisson_ratio =
+          dem_parameters.lagrangian_physical_properties.poisson_ratio_particle
+            .at(i);
+        const double particle_restitution_coefficient =
+          dem_parameters.lagrangian_physical_properties
+            .restitution_coefficient_particle.at(i);
+        const double particle_friction_coefficient =
+          dem_parameters.lagrangian_physical_properties
+            .friction_coefficient_particle.at(i);
+        const double particle_rolling_friction_coefficient =
+          dem_parameters.lagrangian_physical_properties
+            .rolling_friction_coefficient_particle.at(i);
+        const double particle_surface_energy =
+          dem_parameters.lagrangian_physical_properties.surface_energy_particle
+            .at(i);
+        const double particle_hamaker_constant =
+          dem_parameters.lagrangian_physical_properties
+            .hamaker_constant_particle.at(i);
+
+        this->effective_youngs_modulus[i] =
+          (particle_youngs_modulus * wall_youngs_modulus) /
+          (wall_youngs_modulus *
+             (1 - particle_poisson_ratio * particle_poisson_ratio) +
+           particle_youngs_modulus *
+             (1 - wall_poisson_ratio * wall_poisson_ratio) +
+           DBL_MIN);
+
+        this->effective_shear_modulus[i] =
+          (particle_youngs_modulus * wall_youngs_modulus) /
+          ((2 * wall_youngs_modulus * (2 - particle_poisson_ratio) *
+            (1 + particle_poisson_ratio)) +
+           (2 * particle_youngs_modulus * (2 - wall_poisson_ratio) *
+            (1 + wall_poisson_ratio)) +
+           DBL_MIN);
+
+        this->effective_coefficient_of_restitution[i] =
+          2 * particle_restitution_coefficient * wall_restitution_coefficient /
+          (particle_restitution_coefficient + wall_restitution_coefficient +
+           DBL_MIN);
+
+        const double log_coeff_restitution =
+          log(this->effective_coefficient_of_restitution[i]);
+        this->model_parameter_beta[i] =
+          log_coeff_restitution /
+          sqrt((log_coeff_restitution * log_coeff_restitution) + 9.8696);
+
+        this->effective_coefficient_of_friction[i] =
+          2 * particle_friction_coefficient * wall_friction_coefficient /
+          (particle_friction_coefficient + wall_friction_coefficient + DBL_MIN);
+
+        this->effective_coefficient_of_rolling_friction[i] =
+          2 * particle_rolling_friction_coefficient *
+          wall_rolling_friction_coefficient /
+          (particle_rolling_friction_coefficient +
+           wall_rolling_friction_coefficient + DBL_MIN);
+
+        this->effective_surface_energy[i] =
+          particle_surface_energy + wall_surface_energy -
+          std::pow(std::sqrt(particle_surface_energy) -
+                     std::sqrt(wall_surface_energy),
+                   2);
+        this->effective_hamaker_constant[i] =
+          0.5 * (particle_hamaker_constant + wall_hamaker_constant);
+      }
+  }
+
+
+  /**
+   * @brief This function uses the effective surface energy and effective hamaker
+   * constant to compute the cut off distance for the force calculation.
+   *
+   * @param[in] dem_parameters DEM parameters declared in the .prm file
+   *
+   * @return Cut off distance for the force calculation.
+   */
+  double
+  set_dmt_cut_off_distance()
+  {
+    // We are searching for the large delta_o, thus the smallest effective
+    // surface energy and largest Hamaker constant.
+    double max_effective_hamaker_constant =
+      *(std::max_element(this->effective_hamaker_constant.begin(),
+                         this->effective_hamaker_constant.end()));
+    double min_effective_surface_energy =
+      *(std::min_element(this->effective_surface_energy.begin(),
+                         this->effective_surface_energy.end()));
+
+    const double delta_0 =
+      -std::sqrt(max_effective_hamaker_constant /
+                 (12. * M_PI * min_effective_surface_energy));
+
+    return delta_0 / std::sqrt(dmt_cut_off_threshold);
+  };
+
+  const double dmt_cut_off_threshold;
 };
 
 #endif

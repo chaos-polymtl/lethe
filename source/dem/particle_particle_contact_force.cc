@@ -13,92 +13,7 @@ ParticleParticleContactForce<dim, contact_model, rolling_friction_model>::
   ParticleParticleContactForce(const DEMSolverParameters<dim> &dem_parameters)
   : dmt_cut_off_threshold(dem_parameters.model_parameters.dmt_cut_off_threshold)
 {
-  auto properties  = dem_parameters.lagrangian_physical_properties;
-  n_particle_types = properties.particle_type_number;
-  effective_youngs_modulus.resize(n_particle_types * n_particle_types);
-  effective_shear_modulus.resize(n_particle_types * n_particle_types);
-  effective_coefficient_of_restitution.resize(n_particle_types *
-                                              n_particle_types);
-  effective_coefficient_of_friction.resize(n_particle_types * n_particle_types);
-  effective_coefficient_of_rolling_friction.resize(n_particle_types *
-                                                   n_particle_types);
-  effective_surface_energy.resize(n_particle_types * n_particle_types);
-  hamaker_constant.resize(n_particle_types * n_particle_types);
-  model_parameter_beta.resize(n_particle_types * n_particle_types);
-
-  for (unsigned int i = 0; i < n_particle_types; ++i)
-    {
-      const double youngs_modulus_i = properties.youngs_modulus_particle.at(i);
-      const double poisson_ratio_i  = properties.poisson_ratio_particle.at(i);
-      const double restitution_coefficient_i =
-        properties.restitution_coefficient_particle.at(i);
-      const double friction_coefficient_i =
-        properties.friction_coefficient_particle.at(i);
-      const double rolling_friction_coefficient_i =
-        properties.rolling_friction_coefficient_particle.at(i);
-      const double surface_energy_i = properties.surface_energy_particle.at(i);
-      const double hamaker_constant_i = properties.Hamaker_particle.at(i);
-
-      for (unsigned int j = 0; j < n_particle_types; ++j)
-        {
-          const unsigned int k = i * n_particle_types + j;
-
-          const double youngs_modulus_j =
-            properties.youngs_modulus_particle.at(j);
-          const double poisson_ratio_j =
-            properties.poisson_ratio_particle.at(j);
-          const double restitution_coefficient_j =
-            properties.restitution_coefficient_particle.at(j);
-          const double friction_coefficient_j =
-            properties.friction_coefficient_particle.at(j);
-          const double rolling_friction_coefficient_j =
-            properties.rolling_friction_coefficient_particle.at(j);
-          const double surface_energy_j =
-            properties.surface_energy_particle.at(j);
-          const double hamaker_constant_j = properties.Hamaker_particle.at(j);
-
-          this->effective_youngs_modulus[k] =
-            (youngs_modulus_i * youngs_modulus_j) /
-            ((youngs_modulus_j * (1.0 - poisson_ratio_i * poisson_ratio_i)) +
-             (youngs_modulus_i * (1.0 - poisson_ratio_j * poisson_ratio_j)) +
-             DBL_MIN);
-
-          this->effective_shear_modulus[k] =
-            (youngs_modulus_i * youngs_modulus_j) /
-            (2.0 * ((youngs_modulus_j * (2.0 - poisson_ratio_i) *
-                     (1.0 + poisson_ratio_i)) +
-                    (youngs_modulus_i * (2.0 - poisson_ratio_j) *
-                     (1.0 + poisson_ratio_j))) +
-             DBL_MIN);
-
-          this->effective_coefficient_of_restitution[k] =
-            harmonic_mean(restitution_coefficient_i, restitution_coefficient_j);
-
-          this->effective_coefficient_of_friction[k] =
-            harmonic_mean(friction_coefficient_i, friction_coefficient_j);
-
-          this->effective_coefficient_of_rolling_friction[k] =
-            harmonic_mean(rolling_friction_coefficient_i,
-                          rolling_friction_coefficient_j);
-
-          this->effective_surface_energy[k] =
-            surface_energy_i + surface_energy_j -
-            std::pow(std::sqrt(surface_energy_i) - std::sqrt(surface_energy_j),
-                     2);
-
-          this->hamaker_constant[k] =
-            0.5 * (hamaker_constant_i + hamaker_constant_j);
-
-          double restitution_coefficient_particle_log =
-            std::log(this->effective_coefficient_of_restitution[k]);
-
-          this->model_parameter_beta[k] =
-            restitution_coefficient_particle_log /
-            sqrt(restitution_coefficient_particle_log *
-                   restitution_coefficient_particle_log +
-                 9.8696);
-        }
-    }
+  set_effective_properties(dem_parameters);
 }
 
 template <
@@ -138,6 +53,12 @@ ParticleParticleContactForce<dim, contact_model, rolling_friction_model>::
 
   // Contact forces calculations of local-local and local-ghost particle
   // pairs are performed in separate loops
+
+  // Set the force_calculation_threshold_distance. This is useful for non-
+  // contact cohesive force models such as the DMT force model. This is used in
+  // every loop.
+  const double force_calculation_threshold_distance =
+    set_force_calculation_threshold_distance();
 
   // Looping over local_adjacent_particles values with iterator
   // adjacent_particles_list
@@ -194,39 +115,7 @@ ParticleParticleContactForce<dim, contact_model, rolling_friction_model>::
                        particle_two_properties[PropertiesIndex::dp]) -
                 particle_one_location.distance(particle_two_location);
 
-              double overlap_for_force_calculation = 0.0;
-              if constexpr (contact_model ==
-                            Parameters::Lagrangian::
-                              ParticleParticleContactForceModel::DMT)
-                {
-                  // Effective radius
-                  this->effective_radius =
-                    (particle_one_properties[PropertiesIndex::dp] *
-                     particle_two_properties[PropertiesIndex::dp]) /
-                    (particle_one_properties[PropertiesIndex::dp] +
-                     particle_two_properties[PropertiesIndex::dp]);
-
-                  this->effective_hamaker_constant =
-                    this->hamaker_constant.at(vec_particle_type_index(
-                      particle_one_properties[PropertiesIndex::type],
-                      particle_two_properties[PropertiesIndex::type]));
-
-                  this->F_so =
-                    -12.56637061435917 * // 4 * M_PI
-                    this->effective_surface_energy.at(vec_particle_type_index(
-                      particle_one_properties[PropertiesIndex::type],
-                      particle_two_properties[PropertiesIndex::type])) *
-                    this->effective_radius;
-
-                  this->delta_0 =
-                    -std::sqrt(this->effective_hamaker_constant *
-                               this->effective_radius / (6. * -F_so));
-
-                  overlap_for_force_calculation =
-                    delta_0 / std::sqrt(dmt_cut_off_threshold);
-                }
-
-              if (normal_overlap > overlap_for_force_calculation)
+              if (normal_overlap > force_calculation_threshold_distance)
                 {
                   // This means that the adjacent particles are in contact
                   // Since the normal overlap is already calculated, we update
@@ -342,19 +231,19 @@ ParticleParticleContactForce<dim, contact_model, rolling_friction_model>::
                                   ParticleParticleContactForceModel::
                                     hertz_mindlin_limit_overlap)
                     {
-                      calculate_hertz_mindlin_limit_overlap_contact(
-                        contact_info,
-                        tangential_relative_velocity,
-                        normal_relative_velocity_value,
-                        normal_unit_vector,
-                        normal_overlap,
-                        particle_one_properties,
-                        particle_two_properties,
-                        normal_force,
-                        tangential_force,
-                        particle_one_tangential_torque,
-                        particle_two_tangential_torque,
-                        rolling_resistance_torque);
+                      calculate_hertz_mindlin_limit_overlap_contact<
+                        contact_model>(contact_info,
+                                       tangential_relative_velocity,
+                                       normal_relative_velocity_value,
+                                       normal_unit_vector,
+                                       normal_overlap,
+                                       particle_one_properties,
+                                       particle_two_properties,
+                                       normal_force,
+                                       tangential_force,
+                                       particle_one_tangential_torque,
+                                       particle_two_tangential_torque,
+                                       rolling_resistance_torque);
                     }
 
 
@@ -443,39 +332,7 @@ ParticleParticleContactForce<dim, contact_model, rolling_friction_model>::
                        particle_two_properties[PropertiesIndex::dp]) -
                 particle_one_location.distance(particle_two_location);
 
-              double overlap_for_force_calculation = 0.0;
-              if constexpr (contact_model ==
-                            Parameters::Lagrangian::
-                              ParticleParticleContactForceModel::DMT)
-                {
-                  // Effective radius
-                  this->effective_radius =
-                    (particle_one_properties[PropertiesIndex::dp] *
-                     particle_two_properties[PropertiesIndex::dp]) /
-                    (particle_one_properties[PropertiesIndex::dp] +
-                     particle_two_properties[PropertiesIndex::dp]);
-
-                  this->effective_hamaker_constant =
-                    this->hamaker_constant.at(vec_particle_type_index(
-                      particle_one_properties[PropertiesIndex::type],
-                      particle_two_properties[PropertiesIndex::type]));
-
-                  this->F_so =
-                    -12.56637061435917 * // 4 * M_PI
-                    this->effective_surface_energy.at(vec_particle_type_index(
-                      particle_one_properties[PropertiesIndex::type],
-                      particle_two_properties[PropertiesIndex::type])) *
-                    this->effective_radius;
-
-                  this->delta_0 =
-                    -std::sqrt(this->effective_hamaker_constant *
-                               this->effective_radius / (6. * -F_so));
-
-                  overlap_for_force_calculation =
-                    delta_0 / std::sqrt(dmt_cut_off_threshold);
-                }
-
-              if (normal_overlap > overlap_for_force_calculation)
+              if (normal_overlap > force_calculation_threshold_distance)
                 {
                   // This means that the adjacent particles are in contact
 
@@ -592,19 +449,19 @@ ParticleParticleContactForce<dim, contact_model, rolling_friction_model>::
                                   ParticleParticleContactForceModel::
                                     hertz_mindlin_limit_overlap)
                     {
-                      calculate_hertz_mindlin_limit_overlap_contact(
-                        contact_info,
-                        tangential_relative_velocity,
-                        normal_relative_velocity_value,
-                        normal_unit_vector,
-                        normal_overlap,
-                        particle_one_properties,
-                        particle_two_properties,
-                        normal_force,
-                        tangential_force,
-                        particle_one_tangential_torque,
-                        particle_two_tangential_torque,
-                        rolling_resistance_torque);
+                      calculate_hertz_mindlin_limit_overlap_contact<
+                        contact_model>(contact_info,
+                                       tangential_relative_velocity,
+                                       normal_relative_velocity_value,
+                                       normal_unit_vector,
+                                       normal_overlap,
+                                       particle_one_properties,
+                                       particle_two_properties,
+                                       normal_force,
+                                       tangential_force,
+                                       particle_one_tangential_torque,
+                                       particle_two_tangential_torque,
+                                       rolling_resistance_torque);
                     }
 
 
@@ -684,39 +541,7 @@ ParticleParticleContactForce<dim, contact_model, rolling_friction_model>::
                        particle_two_properties[PropertiesIndex::dp]) -
                 particle_one_location.distance(particle_two_location);
 
-              double overlap_for_force_calculation = 0.0;
-              if constexpr (contact_model ==
-                            Parameters::Lagrangian::
-                              ParticleParticleContactForceModel::DMT)
-                {
-                  // Effective radius
-                  this->effective_radius =
-                    (particle_one_properties[PropertiesIndex::dp] *
-                     particle_two_properties[PropertiesIndex::dp]) /
-                    (particle_one_properties[PropertiesIndex::dp] +
-                     particle_two_properties[PropertiesIndex::dp]);
-
-                  this->effective_hamaker_constant =
-                    this->hamaker_constant.at(vec_particle_type_index(
-                      particle_one_properties[PropertiesIndex::type],
-                      particle_two_properties[PropertiesIndex::type]));
-
-                  this->F_so =
-                    -12.56637061435917 * // 4 * M_PI
-                    this->effective_surface_energy.at(vec_particle_type_index(
-                      particle_one_properties[PropertiesIndex::type],
-                      particle_two_properties[PropertiesIndex::type])) *
-                    this->effective_radius;
-
-                  this->delta_0 =
-                    -std::sqrt(this->effective_hamaker_constant *
-                               this->effective_radius / (6. * -F_so));
-
-                  overlap_for_force_calculation =
-                    delta_0 / std::sqrt(dmt_cut_off_threshold);
-                }
-
-              if (normal_overlap > overlap_for_force_calculation)
+              if (normal_overlap > force_calculation_threshold_distance)
                 {
                   // This means that the adjacent particles are in contact
 
@@ -833,19 +658,19 @@ ParticleParticleContactForce<dim, contact_model, rolling_friction_model>::
                                   ParticleParticleContactForceModel::
                                     hertz_mindlin_limit_overlap)
                     {
-                      calculate_hertz_mindlin_limit_overlap_contact(
-                        contact_info,
-                        tangential_relative_velocity,
-                        normal_relative_velocity_value,
-                        normal_unit_vector,
-                        normal_overlap,
-                        particle_one_properties,
-                        particle_two_properties,
-                        normal_force,
-                        tangential_force,
-                        particle_one_tangential_torque,
-                        particle_two_tangential_torque,
-                        rolling_resistance_torque);
+                      calculate_hertz_mindlin_limit_overlap_contact<
+                        contact_model>(contact_info,
+                                       tangential_relative_velocity,
+                                       normal_relative_velocity_value,
+                                       normal_unit_vector,
+                                       normal_overlap,
+                                       particle_one_properties,
+                                       particle_two_properties,
+                                       normal_force,
+                                       tangential_force,
+                                       particle_one_tangential_torque,
+                                       particle_two_tangential_torque,
+                                       rolling_resistance_torque);
                     }
 
 
@@ -936,39 +761,7 @@ ParticleParticleContactForce<dim, contact_model, rolling_friction_model>::
                        particle_two_properties[PropertiesIndex::dp]) -
                 particle_one_location.distance(particle_two_location);
 
-              double overlap_for_force_calculation = 0.0;
-              if constexpr (contact_model ==
-                            Parameters::Lagrangian::
-                              ParticleParticleContactForceModel::DMT)
-                {
-                  // Effective radius
-                  this->effective_radius =
-                    (particle_one_properties[PropertiesIndex::dp] *
-                     particle_two_properties[PropertiesIndex::dp]) /
-                    (particle_one_properties[PropertiesIndex::dp] +
-                     particle_two_properties[PropertiesIndex::dp]);
-
-                  this->effective_hamaker_constant =
-                    this->hamaker_constant.at(vec_particle_type_index(
-                      particle_one_properties[PropertiesIndex::type],
-                      particle_two_properties[PropertiesIndex::type]));
-
-                  this->F_so =
-                    -12.56637061435917 * // 4 * M_PI
-                    this->effective_surface_energy.at(vec_particle_type_index(
-                      particle_one_properties[PropertiesIndex::type],
-                      particle_two_properties[PropertiesIndex::type])) *
-                    this->effective_radius;
-
-                  this->delta_0 =
-                    -std::sqrt(this->effective_hamaker_constant *
-                               this->effective_radius / (6. * -F_so));
-
-                  overlap_for_force_calculation =
-                    delta_0 / std::sqrt(dmt_cut_off_threshold);
-                }
-
-              if (normal_overlap > overlap_for_force_calculation)
+              if (normal_overlap > force_calculation_threshold_distance)
                 {
                   // This means that the adjacent particles are in contact
 
@@ -1085,19 +878,19 @@ ParticleParticleContactForce<dim, contact_model, rolling_friction_model>::
                                   ParticleParticleContactForceModel::
                                     hertz_mindlin_limit_overlap)
                     {
-                      calculate_hertz_mindlin_limit_overlap_contact(
-                        contact_info,
-                        tangential_relative_velocity,
-                        normal_relative_velocity_value,
-                        normal_unit_vector,
-                        normal_overlap,
-                        particle_one_properties,
-                        particle_two_properties,
-                        normal_force,
-                        tangential_force,
-                        particle_one_tangential_torque,
-                        particle_two_tangential_torque,
-                        rolling_resistance_torque);
+                      calculate_hertz_mindlin_limit_overlap_contact<
+                        contact_model>(contact_info,
+                                       tangential_relative_velocity,
+                                       normal_relative_velocity_value,
+                                       normal_unit_vector,
+                                       normal_overlap,
+                                       particle_one_properties,
+                                       particle_two_properties,
+                                       normal_force,
+                                       tangential_force,
+                                       particle_one_tangential_torque,
+                                       particle_two_tangential_torque,
+                                       rolling_resistance_torque);
                     }
 
 
@@ -1176,39 +969,7 @@ ParticleParticleContactForce<dim, contact_model, rolling_friction_model>::
                        particle_two_properties[PropertiesIndex::dp]) -
                 particle_one_location.distance(particle_two_location);
 
-              double overlap_for_force_calculation = 0.0;
-              if constexpr (contact_model ==
-                            Parameters::Lagrangian::
-                              ParticleParticleContactForceModel::DMT)
-                {
-                  // Effective radius
-                  this->effective_radius =
-                    (particle_one_properties[PropertiesIndex::dp] *
-                     particle_two_properties[PropertiesIndex::dp]) /
-                    (particle_one_properties[PropertiesIndex::dp] +
-                     particle_two_properties[PropertiesIndex::dp]);
-
-                  this->effective_hamaker_constant =
-                    this->hamaker_constant.at(vec_particle_type_index(
-                      particle_one_properties[PropertiesIndex::type],
-                      particle_two_properties[PropertiesIndex::type]));
-
-                  this->F_so =
-                    -12.56637061435917 * // 4 * M_PI
-                    this->effective_surface_energy.at(vec_particle_type_index(
-                      particle_one_properties[PropertiesIndex::type],
-                      particle_two_properties[PropertiesIndex::type])) *
-                    this->effective_radius;
-
-                  this->delta_0 =
-                    -std::sqrt(this->effective_hamaker_constant *
-                               this->effective_radius / (6. * -F_so));
-
-                  overlap_for_force_calculation =
-                    delta_0 / std::sqrt(dmt_cut_off_threshold);
-                }
-
-              if (normal_overlap > overlap_for_force_calculation)
+              if (normal_overlap > force_calculation_threshold_distance)
                 {
                   // This means that the adjacent particles are in contact
 
@@ -1307,19 +1068,19 @@ ParticleParticleContactForce<dim, contact_model, rolling_friction_model>::
                                   ParticleParticleContactForceModel::
                                     hertz_mindlin_limit_overlap)
                     {
-                      calculate_hertz_mindlin_limit_overlap_contact(
-                        contact_info,
-                        tangential_relative_velocity,
-                        normal_relative_velocity_value,
-                        normal_unit_vector,
-                        normal_overlap,
-                        particle_two_properties,
-                        particle_one_properties,
-                        normal_force,
-                        tangential_force,
-                        particle_two_tangential_torque,
-                        particle_one_tangential_torque,
-                        rolling_resistance_torque);
+                      calculate_hertz_mindlin_limit_overlap_contact<
+                        contact_model>(contact_info,
+                                       tangential_relative_velocity,
+                                       normal_relative_velocity_value,
+                                       normal_unit_vector,
+                                       normal_overlap,
+                                       particle_two_properties,
+                                       particle_one_properties,
+                                       normal_force,
+                                       tangential_force,
+                                       particle_two_tangential_torque,
+                                       particle_one_tangential_torque,
+                                       rolling_resistance_torque);
                     }
                   if constexpr (contact_model ==
                                 Parameters::Lagrangian::

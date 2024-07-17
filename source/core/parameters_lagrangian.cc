@@ -68,15 +68,10 @@ namespace Parameters
                         "0.0",
                         Patterns::Double(),
                         "Particle surface energy");
-      prm.declare_entry("Hamaker constant particles",
-                        "40.e-20",
+      prm.declare_entry("hamaker constant particles",
+                        "4.e-19",
                         Patterns::Double(),
                         "Material Hamaker constant");
-      prm.declare_entry(
-        "cut-off threshold particles",
-        "0.1",
-        Patterns::Double(),
-        "Cut-off threshold where Van der Waal forces are ignored for the DMT model");
     }
 
     void
@@ -137,8 +132,8 @@ namespace Parameters
         prm.get_double("rolling friction particles");
       surface_energy_particle.at(particle_type) =
         prm.get_double("surface energy particles");
-      Hamaker_particle.at(particle_type) =
-        prm.get_double("Hamaker constant particles");
+      hamaker_constant_particle.at(particle_type) =
+        prm.get_double("hamaker constant particles");
     }
 
     void
@@ -204,6 +199,10 @@ namespace Parameters
                           "0.0",
                           Patterns::Double(),
                           "Surface energy of wall");
+        prm.declare_entry("hamaker constant wall",
+                          "4.e-19",
+                          Patterns::Double(),
+                          "Hamaker constant of wall");
       }
       prm.leave_subsection();
     }
@@ -226,7 +225,7 @@ namespace Parameters
                             friction_coefficient_particle,
                             rolling_friction_coefficient_particle,
                             surface_energy_particle,
-                            Hamaker_particle);
+                            hamaker_constant_particle);
 
       // Deprecated parameter handling
       // <g> used to be 3 parameters: <gx>, <gy> and <gz>
@@ -254,6 +253,7 @@ namespace Parameters
       friction_coefficient_wall = prm.get_double("friction coefficient wall");
       rolling_friction_wall     = prm.get_double("rolling friction wall");
       surface_energy_wall       = prm.get_double("surface energy wall");
+      hamaker_constant_wall     = prm.get_double("hamaker constant wall");
 
       prm.leave_subsection();
     }
@@ -278,7 +278,7 @@ namespace Parameters
       std::unordered_map<unsigned int, double>
         &rolling_friction_coefficient_particle,
       std::unordered_map<unsigned int, double> &surface_energy_particle,
-      std::unordered_map<unsigned int, double> &Hamaker_particle)
+      std::unordered_map<unsigned int, double> &hamaker_constant_particle)
     {
       for (unsigned int counter = 0; counter < particle_type_maximum_number;
            ++counter)
@@ -296,7 +296,7 @@ namespace Parameters
           friction_coefficient_particle.insert({counter, 0.});
           rolling_friction_coefficient_particle.insert({counter, 0.});
           surface_energy_particle.insert({counter, 0.});
-          Hamaker_particle.insert({counter, 0.});
+          hamaker_constant_particle.insert({counter, 0.});
         }
       seed_for_distributions.reserve(particle_type_maximum_number);
     }
@@ -686,10 +686,10 @@ namespace Parameters
                           "Choices are <linear|nonlinear|JKR|DMT>.");
 
         prm.declare_entry(
-          "DMT cut-off threshold",
+          "dmt cut-off threshold",
           "0.1",
           Patterns::Double(),
-          "Cut-off threshold where Van der Waal forces are ignored for the DMT model");
+          "Cut-off threshold above which the Van der Waal forces are ignored for the DMT model relative to the pull-off force");
 
         prm.declare_entry(
           "rolling resistance torque method",
@@ -883,7 +883,7 @@ namespace Parameters
               std::runtime_error("Invalid particle-wall contact force model "));
           }
 
-        dmt_cut_off_threshold = prm.get_double("DMT cut-off threshold");
+        dmt_cut_off_threshold = prm.get_double("dmt cut-off threshold");
 
         const std::string rolling_resistance_torque =
           prm.get("rolling resistance torque method");

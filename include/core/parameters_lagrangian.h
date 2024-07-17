@@ -99,7 +99,7 @@ namespace Parameters
       std::unordered_map<unsigned int, double> surface_energy_particle;
 
       // Hamaker constant of each particle type
-      std::unordered_map<unsigned int, double> Hamaker_particle;
+      std::unordered_map<unsigned int, double> hamaker_constant_particle;
 
       // Coefficients of restitution of each particle type
       std::unordered_map<unsigned int, double> restitution_coefficient_particle;
@@ -128,6 +128,9 @@ namespace Parameters
 
       // Surface energy wall
       double surface_energy_wall;
+
+      // Hamaker constant wall
+      double hamaker_constant_wall;
 
       void
       declare_parameters(ParameterHandler &prm);
@@ -162,7 +165,7 @@ namespace Parameters
         std::unordered_map<unsigned int, double>
           &rolling_friction_coefficient_particle,
         std::unordered_map<unsigned int, double> &surface_energy_particle,
-        std::unordered_map<unsigned int, double> &Hamaker_particle);
+        std::unordered_map<unsigned int, double> &hamaker_constant_particle);
     };
 
     struct InsertionInfo
