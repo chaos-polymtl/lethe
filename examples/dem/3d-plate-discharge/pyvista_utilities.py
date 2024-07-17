@@ -109,7 +109,6 @@ class PlateDischargeUtilities:
             highest_particles = pd.DataFrame(columns=['x', 'y', 'z'])
 
             # Get the IDs and the positions of the particles
-            ids = df.index
             positions_x = df[self.direction].values
             positions_y = df[self.norm].values
             if top:

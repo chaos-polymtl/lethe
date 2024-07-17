@@ -67,7 +67,7 @@ In this section we introduce the different sections of the parameter file ``load
 Mesh
 ----
 
-In this example, we are simulating a horizontal cylindrical pipe. We use the `custom cylinder <../../../documentation/parameters/cfd/mesh.html>`_ of type balanced. We use this type of mesh in order to have uniform cell size in the radial direction. The length of a cell is about 2 times the diameter of the particles in each direction. The classical cylinder mesh of deal.II has smaller cells in the center which restrict the size of the particles. The length of the pipe is 1 m and the diameter is 0.084 m. The conveying is processed in the x-direction through periodic boundary conditions.
+In this example, we are simulating a horizontal cylindrical pipe. We use the `custom cylinder <../../../parameters/cfd/mesh.html>`_ of type balanced. We use this type of mesh in order to have uniform cell size in the radial direction. The length of a cell is about 2 times the diameter of the particles in each direction. The classical cylinder mesh of deal.II has smaller cells in the center which restrict the size of the particles. The length of the pipe is 1 m and the diameter is 0.084 m. The conveying is processed in the x-direction through periodic boundary conditions.
 
 .. code-block:: text
 

@@ -44,7 +44,7 @@ for k, name in enumerate(names):
         prm_dict = particles.prm_dict
         dataframe = []
 
-        # Some plate informations
+        # Some plate information
         plate_norm = 'y'
         plate_direction = 'x'
 

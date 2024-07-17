@@ -45,13 +45,13 @@ All the files mentioned below are located in the example folder ``examples/dem/3
        - ×
        - ×
 
-- Those parameters files are ready for the simulations. We run 2 sets of simulation: performance and data. In the performance simulations, speedup is computed. Hence, the writing of solution files is deactivated. In the data simulations, those files are outputted to analyze the results. The performance analysis parameter files are in the folder ``performance/``, and the ones for the data analysis are in the folder ``data/``.
+- These parameters files are ready for the simulations. We run 2 sets of simulation: performance and data. In the performance simulations, speedup is computed. Hence, the writing of solution files is deactivated. In the data simulations, those files are outputted to analyze the results. The performance analysis parameter files are in the folder ``performance/``, and the ones for the data analysis are in the folder ``data/``.
 
 -----------------------
 Description of the Case
 -----------------------
 
-This example simulates the discharge of particles at the sides of a plate in a rectangular container in order to get the angle of repose of the granular material as done by Zhou *et al*. [#zhou2002]_ The example compares the angles of repose and the performance of the simulations with the use of adaptive sparse contacts and load balancing methods. The angles are also compared to the literature values.
+This example simulates the discharge of particles at the sides of a plate in a rectangular container in order to get the angle of repose of the granular material as done by Zhou *et al*. [#zhou2002]_ The example compares the angles of repose and the performance of the simulations with the use of adaptive sparse contacts and load balancing methods. The angles are also compared to literature values.
 
 .. figure:: images/plate-discharge-diagram.png
     :width: 50%
@@ -68,13 +68,13 @@ DEM Parameter files
 Baseline case simulation
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
-In this section we introduce the different sections of the parameter file ``plate-discharge_base.prm`` which do not use any performance enhancement methods.
+In this section, we introduce the different sections of the parameter file ``plate-discharge_base.prm`` which do not use any performance enhancement methods.
 
 
 Simulation Control
 ------------------
 
-The simulation lasts :math:`15 \ \text{s}`  and the DEM time step is :math:`0.0001` seconds. The output are generated every  :math:`0.01 \ \text{s}` for the simulation for data analysis.
+The simulation lasts :math:`15 \ \text{s}`  and the DEM time step is :math:`0.0001 \ \text{s}`. The output are generated every  :math:`0.01 \ \text{s}` for the simulation for data analysis.
 
 .. code-block:: text
 
@@ -103,7 +103,7 @@ The rectangular container is a :math:`1.0 \times 1.0 \times 0.2 \ \text{m}` box.
 Solid Objects
 -------------
 
-The plate is a solid object with a simple mesh of 2 triangles placed at a height of :math:`0.4 \text{m}` in the container.
+The plate is a solid object with a simple mesh of 2 triangles placed at a height of :math:`0.4 \ \text{m}` in the container.
 
 .. code-block:: text
 
@@ -124,7 +124,7 @@ The plate is a solid object with a simple mesh of 2 triangles placed at a height
 Lagrangian Physical Properties
 ------------------------------
 
-The lagrangian properties are relatively arbitrary. The simulation contains :math:`52000` particles with a diameter of :math:`0.01 \ \text{m}`, a density of :math:`2400 \ \frac{\text{kg}}{\text{m}^3}`. Both properties of particle-particles and particle-wall interactions are the same.
+The lagrangian properties are relatively arbitrary. The simulation contains :math:`52000` particles with a diameter of :math:`0.01 \ \text{m}`, and a density of :math:`2400 \ \frac{\text{kg}}{\text{m}^3}`. Both properties of particle-particle and particle-wall interactions are the same.
 
 .. code-block:: text
 
@@ -238,7 +238,7 @@ The model parameters are quite standard for a DEM simulation with the non-linear
 Timer
 -------
 
-The timer is enabled since we want to profile the computational performance of the simulations. We print the total wallclock time elapsed since the start at every `log frequency` iterations.
+The timer is enabled since we want to profile the computational performance of the simulations. We print the total wallclock time elapsed since the start at every `log frequency` iteration.
 
 .. code-block:: text
 
@@ -255,7 +255,7 @@ The only differences between ``plate-discharge_base.prm`` and ``plate-discharge_
 Model Parameters
 ----------------
 
-Here the ASC is enabled with a granular temperature threshold of :math:`0.0001 \ \frac{\text{m}^2}{\text{s}^2}` and a solid fraction threshold of :math:`0.4`. Those parameters have shown to be efficient on other DEM simulations with a good threshold between performance gain and low impact of the simulation results. These parameters can be adjusted.
+Here the ASC is enabled with a granular temperature threshold of :math:`0.0001 \ \frac{\text{m}^2}{\text{s}^2}` and a solid fraction threshold of :math:`0.4`. Those parameters have shown to be efficient in other DEM simulations with a good balance between performance gain and low impact on the simulation results. These parameters can be adjusted.
 
 .. code-block:: text
 
@@ -321,7 +321,7 @@ The only differences between ``plate-discharge_base.prm`` and ``plate-discharge_
 Model Parameters
 ----------------
 
-Here, we use the ASC with the dynamic load balancing, using the same load balancing parameters. In this case, the mobility status of the cells from the ASC will influence the weight, i.e. the computational contribution, of the cell in the load balancing evaluation. The additional parameters for `active` cells `weight factor` is :math:`0.7`, and the `inactive` cells `weight factor` is :math:`0.5`, while the mobile cells always have a fixed weight factor of :math:`1`.
+Here, we use the ASC with the dynamic load balancing, using the same load balancing parameters. In this case, the mobility status of the cells from the ASC will influence the weight, i.e. the computational contribution of the cell in the load balancing evaluation. The additional parameters for `active` cells `weight factor` is :math:`0.7`, and the `inactive` cells `weight factor` is :math:`0.5`, while the mobile cells always have a fixed weight factor of :math:`1`.
 
 .. code-block:: text
 
@@ -362,7 +362,7 @@ In order to run the simulations for the performance analysis, you can use the fo
 .. code-block:: text
   :class: copy-button
 
-  bash run-performance-simulation.sh
+  bash run-performance-simulations.sh
 
 Which corresponds to:
 
@@ -393,7 +393,7 @@ In order to run the simulations for the data analysis, you can use the following
 .. code-block:: text
   :class: copy-button
 
-  bash data-performance-simulation.sh
+  bash run-data-simulations.sh
 
 .. note::
    Running the simulations for the performance analysis using 8 cores takes between 25 and 45 minutes per simulation, for a total of around 2 hours. Running the simulations for data analysis takes a few minutes longer per simulation.
@@ -440,8 +440,8 @@ The speedup is calculated with the baseline case as the reference. The results a
 .. note::
    The slight oscillations of the speedup are caused by the scientific notation format of the walltime by the timer feature after :math:`1000 \ \text{s}`. The walltimes are attenuated by the moving average, but the division operation for the speedup accentuates the lack of time precision.
 
-The load balancing method will help the performance of the simulation from the start, since the particles move within the domain during the discharge. The load balancing allows to distribute the particles, and therefore all their related computations, more evenly between the cores. Once the discharge of the particles is mostly done and only a few particles are still falling from the top part, the performance gain brought by the load balancing stays constant since the load across the cores is already balanced.
-The adaptive sparse contacts method will help the performance of the simulation mostly when there are large areas of motionless particles. As it was showed in the video, those areas are located in the core of the pile at the top and at the corners of settled particles below the plate. This explains why the ASC gives a limited performance gain at the start of the simulation (only from the core of the pile) and an increasing gain through the simulation (accumulation of motionless particles at the bottom part). Given that both methods help the computation performance at different times, the combination of both methods gives the best performance as observed.
+The load balancing method helps the performance of the simulation from the start, since the particles move within the domain during the discharge. The load balancing allows to distribute the particles, and therefore all their related computations, more evenly between the cores. Once the discharge of the particles is mostly done and only a few particles are still falling from the top part, the performance gain brought by the load balancing stays constant since the load across the cores is already balanced.
+The adaptive sparse contacts method helps the performance of the simulation mostly when there are large areas of motionless particles. As it was showed in the video, those areas are located in the core of the pile at the top and at the corners of settled particles below the plate. This explains why the ASC gives a limited performance gain at the start of the simulation (only from the core of the pile) and an increasing gain through the simulation (accumulation of motionless particles at the bottom part). Given that both methods help the computation performance at different times, their combination gives the best performance as observed.
 
 
 Angle of Repose
@@ -449,7 +449,7 @@ Angle of Repose
 
 The angles of repose are calculated from the data extracted from the VTU output files. The 2 angles of repose are calculated from the pile of particles on the plate for comparison with the literature, and from the piles formed by the discharge for curiosity.
 
-The configuration of the case gives a symmetrical formation of the piles, meaning that there are 2 angles of repose to calculate for the pile and the top of the plate and for the 2 piles at the bottom. The angles of repose are calculated by linear regressions from the highest particle positions in y-axis from :math:`-0.35 \ \text{m}` to :math:`-0.15 \ \text{m}` for the left angles and from :math:`0.15 \ \text{m}` to :math`0.35 \ \text{m}` for the right angles in x-axis. The following figure shows the areas where the angles are calculated. The areas where the angle of repose is calculated for the left (blue) and right (red) sides of the piles.
+The configuration of the case gives a symmetrical formation of the piles, meaning that there are 2 angles of repose to calculate for the pile at the top of the plate and for the 2 piles at the bottom. The angles of repose are calculated by linear regressions from the highest particle positions in y-axis from :math:`-0.35 \ \text{m}` to :math:`-0.15 \ \text{m}` for the left angles and from :math:`0.15 \ \text{m}` to :math`0.35 \ \text{m}` for the right angles along the x-axis. The following figure shows the areas where the angles are calculated. The areas where the angle of repose is calculated for the left (blue) and right (red) sides of the piles.
 
 
 .. figure:: images/angle-areas.png
@@ -459,7 +459,7 @@ The configuration of the case gives a symmetrical formation of the piles, meanin
 
 
 In order to show how the results may fluctuate, we show the angle obtained from the particle positions from the left and the right sides of the top pile (left plot) and of the 2 piles at bottom (right plot) as solid lines.
- The given angles of repose are the linear regressions from the positions with absolute x coordinates.
+The given angles of repose are the linear regressions from the positions with absolute x coordinates.
 
 .. figure:: images/angle-of-repose.png
    :alt: Angle of repose results
@@ -468,7 +468,7 @@ In order to show how the results may fluctuate, we show the angle obtained from 
 
    The angles of repose calculated from the simulation data. The solid lines are the angles computed from the highest particles on both side, while the shaded areas represent the angles for the left and the right.
 
-According to Zhou *et al.* [#zhou2002]_, the angle of repose from this type of configuration is calculated with the following theoretical formula:
+According to Zhou *et al.* [#zhou2002]_, the angle of repose for this type of configuration is calculated with the following theoretical formula:
 
 .. math::
    \phi = 68.61 \mu_{\text{f,pp}}^{0.27} \mu_{\text{f,pw}}^{0.22} \mu_{\text{r,pp}}^{0.06} \mu_{\text{r,pw}}^{0.12} d_p^{-0.2}
