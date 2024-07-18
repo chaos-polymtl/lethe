@@ -65,68 +65,6 @@ check_contact_detection_method(
     }
 }
 
-template <int dim>
-bool
-check_load_balance_method(
-  CFDDEMSimulationParameters<dim>      &param,
-  Particles::ParticleHandler<dim, dim> &particle_handler,
-  const MPI_Comm                       &mpi_communicator,
-  const unsigned int                    n_mpi_processes,
-  std::shared_ptr<SimulationControl>    simulation_control)
-{ // Setting load-balance method (single-step, frequent or dynamic)
-  if (param.dem_parameters.model_parameters.load_balance_method ==
-      Parameters::Lagrangian::ModelParameters::LoadBalanceMethod::once)
-    {
-      return (simulation_control->get_step_number() ==
-              param.dem_parameters.model_parameters.load_balance_step);
-    }
-  else if (param.dem_parameters.model_parameters.load_balance_method ==
-           Parameters::Lagrangian::ModelParameters::LoadBalanceMethod::frequent)
-    {
-      return (simulation_control->get_step_number() %
-                param.dem_parameters.model_parameters.load_balance_frequency ==
-              0);
-    }
-  else if (param.dem_parameters.model_parameters.load_balance_method ==
-           Parameters::Lagrangian::ModelParameters::LoadBalanceMethod::dynamic)
-    {
-      bool load_balance_step = false;
-      if (simulation_control->get_step_number() %
-            param.dem_parameters.model_parameters
-              .dynamic_load_balance_check_frequency ==
-          0)
-        {
-          unsigned int maximum_particle_number_on_proc = 0;
-          unsigned int minimum_particle_number_on_proc = 0;
-
-          maximum_particle_number_on_proc =
-            Utilities::MPI::max(particle_handler.n_locally_owned_particles(),
-                                mpi_communicator);
-          minimum_particle_number_on_proc =
-            Utilities::MPI::min(particle_handler.n_locally_owned_particles(),
-                                mpi_communicator);
-
-          if ((maximum_particle_number_on_proc -
-               minimum_particle_number_on_proc) >
-              param.dem_parameters.model_parameters.load_balance_threshold *
-                (particle_handler.n_global_particles() / n_mpi_processes))
-            {
-              load_balance_step = true;
-            }
-        }
-      return load_balance_step;
-    }
-  else if (param.dem_parameters.model_parameters.load_balance_method ==
-           Parameters::Lagrangian::ModelParameters::LoadBalanceMethod::none)
-    {
-      return false;
-    }
-  else
-    {
-      throw std::runtime_error("Specified load balance method is not valid");
-    }
-}
-
 // Constructor for class CFD-DEM
 template <int dim>
 CFDDEMSolver<dim>::CFDDEMSolver(CFDDEMSimulationParameters<dim> &nsparam)
@@ -433,78 +371,6 @@ CFDDEMSolver<dim>::read_checkpoint()
   this->particle_handler.deserialize();
 }
 
-#if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 6)
-template <int dim>
-unsigned int
-CFDDEMSolver<dim>::cell_weight(
-  const typename parallel::distributed::Triangulation<dim>::cell_iterator &cell,
-  const typename parallel::distributed::Triangulation<dim>::CellStatus status)
-  const
-#else
-template <int dim>
-unsigned int
-CFDDEMSolver<dim>::cell_weight(
-  const typename parallel::distributed::Triangulation<dim>::cell_iterator &cell,
-  const CellStatus status) const
-#endif
-
-
-{
-  // Assign no weight to cells we do not own.
-  if (!cell->is_locally_owned())
-    return 0;
-
-  // This determines how important particle work is compared to cell
-  // work (by default every cell has a weight of 1000).
-  // We set the weight per particle higher to indicate that
-  // the particle load is more important than the fluid load. The optimal
-  // value of this number depends on the application and can range from 0
-  // (cheap particle operations, expensive cell operations) to much larger
-  // than 1000 (expensive particle operations, cheap cell operations, like in
-  // this case). This parameter will need to be tuned for different cases of
-  // CFD-DEM coupling.
-  const unsigned int particle_weight =
-    dem_parameters.model_parameters.load_balance_particle_weight;
-
-  // This does not use adaptive refinement, therefore every cell
-  // should have the status CELL_PERSIST. However this function can also
-  // be used to distribute load during refinement, therefore we consider
-  // refined or coarsened cells as well.
-
-#if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 6)
-  if (status == parallel::distributed::Triangulation<dim>::CELL_PERSIST ||
-      status == parallel::distributed::Triangulation<dim>::CELL_REFINE)
-#else
-  if (status == CellStatus::cell_will_persist ||
-      status == CellStatus::cell_will_be_refined)
-#endif
-
-    {
-      const unsigned int n_particles_in_cell =
-        this->particle_handler.n_particles_in_cell(cell);
-      return n_particles_in_cell * particle_weight;
-    }
-#if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 6)
-  else if (status == parallel::distributed::Triangulation<dim>::CELL_COARSEN)
-#else
-  else if (status == CellStatus::children_will_be_coarsened)
-#endif
-    {
-      unsigned int n_particles_in_cell = 0;
-
-      for (unsigned int child_index = 0;
-           child_index < GeometryInfo<dim>::max_children_per_cell;
-           ++child_index)
-        n_particles_in_cell +=
-          this->particle_handler.n_particles_in_cell(cell->child(child_index));
-
-      return n_particles_in_cell * particle_weight;
-    }
-
-  Assert(false, ExcInternalError());
-  return 0;
-}
-
 template <int dim>
 void
 CFDDEMSolver<dim>::load_balance()
@@ -696,6 +562,16 @@ CFDDEMSolver<dim>::initialize_dem_parameters()
       // Initialize the flag for particle displacement in PBC
       particle_displaced_in_pbc = false;
     }
+
+  // Setup load balancing parameters
+  load_balancing.set_parameters(dem_parameters.model_parameters);
+  load_balancing.copy_references(this->simulation_control,
+                                 *parallel_triangulation,
+                                 this->particle_handler,
+                                 sparse_contacts_object);
+
+  // Attach the correct functions to the signals inside the triangulation
+  load_balancing.connect_weight_signals();
 
   if (dem_parameters.model_parameters.sparse_particle_contacts)
     {
@@ -1549,54 +1425,6 @@ CFDDEMSolver<dim>::dem_setup_contact_parameters()
 
 template <int dim>
 void
-CFDDEMSolver<dim>::manage_triangulation_connections()
-{
-  // Necessary signals for load balancing. This signals are only connected if
-  // load balancing is enabled. This helps prevent errors in read_dem function
-  // for Deal.II version 9.3
-  //  const auto parallel_triangulation =
-  //    dynamic_cast<parallel::distributed::Triangulation<dim> *>(
-  //      &*this->triangulation);
-
-  const auto parallel_triangulation =
-    dynamic_cast<parallel::distributed::Triangulation<dim> *>(
-      &*this->triangulation);
-
-  if (dem_parameters.model_parameters.load_balance_method !=
-      Parameters::Lagrangian::ModelParameters::LoadBalanceMethod::none)
-    {
-#if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 6)
-      parallel_triangulation->signals.weight.connect(
-        [](const typename Triangulation<dim>::cell_iterator &,
-           const typename Triangulation<dim>::CellStatus) -> unsigned int {
-          return 1000;
-        });
-
-      parallel_triangulation->signals.weight.connect(
-        [&](const typename parallel::distributed::Triangulation<
-              dim>::cell_iterator &cell,
-            const typename parallel::distributed::Triangulation<dim>::CellStatus
-              status) -> unsigned int {
-          return this->cell_weight(cell, status);
-        });
-
-#else
-      parallel_triangulation->signals.weight.connect(
-        [](const typename Triangulation<dim>::cell_iterator &,
-           const CellStatus) -> unsigned int { return 1000; });
-
-      parallel_triangulation->signals.weight.connect(
-        [&](const typename parallel::distributed::Triangulation<
-              dim>::cell_iterator &cell,
-            const CellStatus       status) -> unsigned int {
-          return this->cell_weight(cell, status);
-        });
-#endif
-    }
-}
-
-template <int dim>
-void
 CFDDEMSolver<dim>::solve()
 {
   read_mesh_and_manifolds(
@@ -1605,8 +1433,6 @@ CFDDEMSolver<dim>::solve()
     this->cfd_dem_simulation_parameters.cfd_parameters.manifolds_parameters,
     true,
     this->cfd_dem_simulation_parameters.cfd_parameters.boundary_conditions);
-
-  manage_triangulation_connections();
 
   dem_setup_contact_parameters();
 
@@ -1636,6 +1462,7 @@ CFDDEMSolver<dim>::solve()
 
   // Initialize the DEM parameters and generate the required ghost particles
   initialize_dem_parameters();
+
   this->particle_handler.exchange_ghost_particles(true);
 
 
@@ -1751,12 +1578,7 @@ CFDDEMSolver<dim>::solve()
       // The input argument to this function is set to zero as this integer is
       // not used for the check_load_balance_step function and is only important
       // for the check_contact_search_step function.
-      load_balance_step =
-        check_load_balance_method(this->cfd_dem_simulation_parameters,
-                                  this->particle_handler,
-                                  this->mpi_communicator,
-                                  this->n_mpi_processes,
-                                  this->simulation_control);
+      load_balance_step = load_balancing.check_load_balance_iteration();
 
       if (load_balance_step || checkpoint_step)
         {
