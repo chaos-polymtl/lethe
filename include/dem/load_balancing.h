@@ -20,7 +20,9 @@
 #define lethe_load_balancing_h
 
 #include <core/parameters_lagrangian.h>
+#include <core/simulation_control.h>
 
+#include <dem/adaptive_sparse_contacts.h>
 #include <dem/data_containers.h>
 
 #include <deal.II/distributed/tria.h>
@@ -39,16 +41,118 @@ public:
   LoadBalancing();
 
 public:
-  void
+  inline void
   set_parameters(
     const Parameters::Lagrangian::ModelParameters &model_parameters)
   {
-    particle_weight = model_parameters.load_balance_particle_weight;
-    inactive_load_balancing_factor =
-      model_parameters.inactive_load_balancing_factor;
-    active_load_balancing_factor =
-      model_parameters.active_load_balancing_factor;
+    // Load balancing method
+    load_balance_method      = model_parameters.load_balance_method;
+    iteration_check_function = set_iteration_check_function();
+
+    // Parameters related to the total cell weight
+    particle_weight        = model_parameters.load_balance_particle_weight;
+    inactive_status_factor = model_parameters.inactive_load_balancing_factor;
+    active_status_factor   = model_parameters.active_load_balancing_factor;
+
+    // Parameters related to the frequency of the load balance;
+    dynamic_check_frequency =
+      model_parameters.dynamic_load_balance_check_frequency;
+    load_balance_step      = model_parameters.load_balance_step;
+    load_balance_frequency = model_parameters.load_balance_frequency;
+    load_threshold         = model_parameters.load_balance_threshold;
   }
+
+  inline void
+  copy_references(std::shared_ptr<SimulationControl>        &simulation_control,
+                  parallel::distributed::Triangulation<dim> &triangulation,
+                  Particles::ParticleHandler<dim>           &particle_handler,
+                  AdaptiveSparseContacts<dim> &adaptive_sparse_contacts)
+  {
+    this->simulation_control       = simulation_control;
+    this->triangulation            = &triangulation;
+    this->particle_handler         = &particle_handler;
+    this->adaptive_sparse_contacts = &adaptive_sparse_contacts;
+  }
+
+  bool
+  check_load_balance_iteration()
+  {
+    return iteration_check_function();
+  }
+
+
+  /**
+   * @brief Sets the right contact iteration check function according to the chosen load balancing method.
+   *
+   * @return Return a function. This function returns a bool indicating if the current time step is a load balance iteration.
+   */
+  inline std::function<bool()>
+  set_iteration_check_function()
+  {
+    using namespace Parameters::Lagrangian;
+
+    switch (load_balance_method)
+      {
+        case ModelParameters::LoadBalanceMethod::none:
+          return [&]() { return false; };
+        case ModelParameters::LoadBalanceMethod::once:
+          return [&] { return check_load_balance_once(); };
+        case ModelParameters::LoadBalanceMethod::frequent:
+          return [&] { return check_load_balance_frequent(); };
+        case ModelParameters::LoadBalanceMethod::dynamic:
+          return [&] { return check_load_balance_dynamic(); };
+        case ModelParameters::LoadBalanceMethod::dynamic_with_sparse_contacts:
+          return [&] { return check_load_balance_with_sparse_contacts(); };
+        default:
+          {
+            throw std::runtime_error(
+              "Specified load balance method is not valid");
+          }
+      }
+  }
+
+  /**
+   * @brief For `load balance method = once`, determines whether the present is the load balance step.
+   *
+   * @return bool indicating if this is a load balance iteration.
+   */
+  bool
+  check_load_balance_once();
+
+  /**
+   * @brief Determine whether the present is a load-balance step given a user-defined frequency.
+   *
+   * @return bool indicating if this is a load balance iteration.
+   */
+  bool
+  check_load_balance_frequent();
+
+  /**
+   * @brief Establish if this is a load-balance step using the dynamic method. The dynamic method
+   * uses the load imbalance between the core as a load balancing criteria.
+   *
+   * @return bool indicating if this is a load balance iteration.
+   */
+  bool
+  check_load_balance_dynamic();
+
+  /**
+   * @brief Establish if this is a load-balance step using the dynamic method when the sparse contacts mechanism is enabled.
+   * The dynamic method uses the load imbalance between the core as a load
+   * balancing criteria.
+   *
+   * @return bool indicating if this is a load balance iteration.
+   */
+  bool
+  check_load_balance_with_sparse_contacts();
+
+  /**
+   * @brief Manages the call to the load balance by first identifying if
+   * load balancing is required and then performing the load balance.
+   */
+  void
+  load_balance();
+
 
 
   /**
@@ -69,44 +173,37 @@ public:
    * @param particle_handler The particle handler that contains the particles
    */
   void
-  connect_weight_signals(
-    parallel::distributed::Triangulation<dim> &triangulation,
-    const Particles::ParticleHandler<dim>     &particle_handler)
+  connect_weight_signals()
   {
-    triangulation.signals.weight.connect(
+    triangulation->signals.weight.connect(
       [](const typename Triangulation<dim>::cell_iterator &,
          const CellStatus) -> unsigned int { return 1000; });
 
-    triangulation.signals.weight.connect(
+    triangulation->signals.weight.connect(
       [&](const typename parallel::distributed::Triangulation<
             dim>::cell_iterator &cell,
           const CellStatus       status) -> unsigned int {
         return this->calculate_total_cell_weight(cell,
-                                                 status,
-                                                 particle_handler);
+                                                 status);
       });
   }
 
   void
-  connect_mobility_status_weight_signals(
-    parallel::distributed::Triangulation<dim> &triangulation,
-    const Particles::ParticleHandler<dim>     &particle_handler,
-    const typename DEM::dem_data_structures<dim>::cell_index_int_map
-      mobility_status)
+  connect_mobility_status_weight_signals()
   {
     // Clear and connect a new cell weight function
-    triangulation.signals.weight.disconnect_all_slots();
+    triangulation->signals.weight.disconnect_all_slots();
 
-    triangulation.signals.weight.connect(
+    triangulation->signals.weight.connect(
       [](const typename Triangulation<dim>::cell_iterator &,
          const CellStatus) -> unsigned int { return 1000; });
 
-    triangulation.signals.weight.connect(
+    triangulation->signals.weight.connect(
       [&](const typename parallel::distributed::Triangulation<
             dim>::cell_iterator &cell,
           const CellStatus       status) -> unsigned int {
         return this->calculate_total_cell_weight_with_mobility_status(
-          cell, status, particle_handler, mobility_status);
+          cell, status);
       });
   }
 
@@ -136,8 +233,7 @@ private:
   calculate_total_cell_weight(
     const typename parallel::distributed::Triangulation<dim>::cell_iterator
                                           &cell,
-    const CellStatus                       status,
-    const Particles::ParticleHandler<dim> &particle_handler) const;
+    const CellStatus                       status) const;
 
   /**
    * Similar to the cell_weight() function, this function is used when the cell
@@ -159,18 +255,38 @@ private:
   calculate_total_cell_weight_with_mobility_status(
     const typename parallel::distributed::Triangulation<dim>::cell_iterator
                                           &cell,
-    const CellStatus                       status,
-    const Particles::ParticleHandler<dim> &particle_handler,
-    const typename DEM::dem_data_structures<dim>::cell_index_int_map
-      mobility_status) const;
+    const CellStatus                       status) const;
+
+  // Load balancing method
+  Parameters::Lagrangian::ModelParameters::LoadBalanceMethod
+    load_balance_method;
+
+  // Function
+  std::function<bool()> iteration_check_function;
 
   // Weight of the cell and particles in the cells
   const unsigned int cell_weight = 1000;
   unsigned int       particle_weight;
 
   // Factors with dynamic load balancing with adaptive sparse contacts
-  double inactive_load_balancing_factor;
-  double active_load_balancing_factor;
+  double inactive_status_factor;
+  double active_status_factor;
+
+  // Load balancing given frequencies
+  unsigned int dynamic_check_frequency;
+  unsigned int load_balance_step;
+  unsigned int load_balance_frequency;
+  double       load_threshold;
+
+  MPI_Comm           mpi_communicator;
+  const unsigned int n_mpi_processes;
+  const unsigned int this_mpi_process;
+
+  // Variables for load balacing check step
+  std::shared_ptr<SimulationControl>         simulation_control;
+  parallel::distributed::Triangulation<dim> *triangulation;
+  Particles::ParticleHandler<dim>           *particle_handler;
+  AdaptiveSparseContacts<dim>               *adaptive_sparse_contacts;
 };
 
 

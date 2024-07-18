@@ -74,6 +74,13 @@ public:
 
 private:
   /**
+   * @brief Manages the call to the load balance by first identifying if
+   * load balancing is required and then performing the load balance.
+   */
+  void
+  load_balance();
+
+  /**
    * @brief Sets the right iteration check function according to the chosen contact detection method.
    *
    * @return Return a function. This function returns a bool indicating if the contact search should be carried out in the current iteration.
@@ -100,56 +107,6 @@ private:
    */
   inline bool
   check_contact_search_iteration_dynamic();
-
-  /**
-   * @brief Sets the right contact iteration check function according to the chosen load balancing method.
-   *
-   * @return Return a function. This function returns a bool indicating if the current time step is a load balance iteration.
-   */
-  inline std::function<bool()>
-  set_load_balance_iteration_check_function();
-
-  /**
-   * @brief For `load balance method = once`, determines whether the present is the load balance step.
-   *
-   * @return bool indicating if this is a load balance iteration.
-   */
-  inline bool
-  check_load_balance_once();
-
-  /**
-   * @brief Determine whether the present is a load-balance step given a user-defined frequency.
-   *
-   * @return bool indicating if this is a load balance iteration.
-   */
-  inline bool
-  check_load_balance_frequent();
-
-  /**
-   * @brief Establish if this is a load-balance step using the dynamic method. The dynamic method
-   * uses the load imbalance between the core as a load balancing criteria.
-   *
-   * @return bool indicating if this is a load balance iteration.
-   */
-  inline bool
-  check_load_balance_dynamic();
-
-  /**
-   * @brief Establish if this is a load-balance step using the dynamic method when the sparse contacts mechanism is enabled.
-   * The dynamic method uses the load imbalance between the core as a load
-   * balancing criteria.
-   *
-   * @return bool indicating if this is a load balance iteration.
-   */
-  inline bool
-  check_load_balance_with_sparse_contacts();
-
-  /**
-   * @brief Manages the call to the load balance by first identifying if
-   * load balancing is required and then performing the load balance.
-   */
-  void
-  load_balance();
 
   /**
    * @brief Manages the call to the particle insertion. Returns true if
@@ -269,7 +226,7 @@ private:
   double                               smallest_floating_mesh_mapping_criterion;
   Particles::ParticleHandler<dim, dim> particle_handler;
   bool                                 contact_detection_step;
-  bool                                 load_balance_step;
+  bool                                 load_balance_iteration;
   bool                                 checkpoint_step;
   Tensor<1, 3>                         g;
 
