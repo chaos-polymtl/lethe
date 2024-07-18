@@ -1550,6 +1550,17 @@ CFDDEMSolver<dim>::solve()
         announce_string(this->pcout, "DEM");
         TimerOutput::Scope t(this->computing_timer, "DEM_Iterator");
 
+        // Load balancing
+        // The input argument to this function is set to zero as this integer is
+        // not used for the check_load_balance_step function and is only
+        // important for the check_contact_search_step function.
+        load_balance_step = load_balancing.check_load_balance_iteration();
+
+        if (load_balance_step)
+          {
+            load_balance();
+          }
+
         contact_search_counter = 0;
         for (unsigned int dem_counter = 0; dem_counter < coupling_frequency;
              ++dem_counter)
@@ -1573,17 +1584,6 @@ CFDDEMSolver<dim>::solve()
 
       if (this->cfd_dem_simulation_parameters.cfd_dem.particle_statistics)
         dem_post_process_results();
-
-      // Load balancing
-      // The input argument to this function is set to zero as this integer is
-      // not used for the check_load_balance_step function and is only important
-      // for the check_contact_search_step function.
-      load_balance_step = load_balancing.check_load_balance_iteration();
-
-      if (load_balance_step || checkpoint_step)
-        {
-          load_balance();
-        }
     }
 
   this->finish_simulation();
