@@ -48,7 +48,7 @@ DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
                     TimerOutput::wall_times)
   , particle_handler(triangulation, mapping, DEM::get_number_properties())
   , contact_detection_step(true)
-  , load_balance_iteration(true)
+  , load_balance_step(true)
   , checkpoint_step(true)
   , contact_detection_frequency(
       parameters.model_parameters.contact_detection_frequency)
@@ -254,9 +254,9 @@ template <int dim>
 void
 DEMSolver<dim>::load_balance()
 {
-  load_balance_iteration = load_balancing.check_load_balance_iteration();
+  load_balance_step = load_balancing.check_load_balance_iteration();
 
-  if (!load_balance_iteration)
+  if (!load_balance_step)
     return;
 
   TimerOutput::Scope t(this->computing_timer, "Load balancing");
@@ -364,8 +364,7 @@ inline bool
 DEMSolver<dim>::check_contact_search_iteration_dynamic()
 {
   bool sorting_in_subdomains_step =
-    (particles_insertion_step || load_balance_iteration ||
-     contact_detection_step);
+    (particles_insertion_step || load_balance_step || contact_detection_step);
 
   return find_particle_contact_detection_step<dim>(
     particle_handler,
@@ -927,7 +926,7 @@ DEMSolver<dim>::solve()
       // Load balancing
       load_balance();
 
-      if (load_balance_iteration || checkpoint_step)
+      if (load_balance_step || checkpoint_step)
         {
           displacement.resize(particle_handler.get_max_local_particle_index());
 
@@ -969,7 +968,7 @@ DEMSolver<dim>::solve()
       contact_detection_step = contact_detection_step || solid_object_map_step;
 
       // Sort particles in cells
-      if (particles_insertion_step || load_balance_iteration ||
+      if (particles_insertion_step || load_balance_step ||
           contact_detection_step || checkpoint_step)
         {
           // Particles displacement if passing through a periodic boundary
@@ -1045,7 +1044,7 @@ DEMSolver<dim>::solve()
           // Updates the iterators to particles in local-local contact
           // containers
           contact_manager.update_local_particles_in_cells(
-            particle_handler, load_balance_iteration, has_periodic_boundaries);
+            particle_handler, load_balance_step, has_periodic_boundaries);
 
           // Execute fine search by updating particle-particle contact
           // containers according to the neighborhood threshold
