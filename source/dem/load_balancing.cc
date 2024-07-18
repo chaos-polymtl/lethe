@@ -164,7 +164,7 @@ template <int dim>
 unsigned int
 LoadBalancing<dim>::calculate_total_cell_weight(
   const typename parallel::distributed::Triangulation<dim>::cell_iterator &cell,
-  const CellStatus                       status) const
+  const CellStatus status) const
 {
   // Assign no weight to cells we do not own.
   if (!cell->is_locally_owned())
@@ -208,7 +208,7 @@ template <int dim>
 unsigned int
 LoadBalancing<dim>::calculate_total_cell_weight_with_mobility_status(
   const typename parallel::distributed::Triangulation<dim>::cell_iterator &cell,
-  const CellStatus                       status) const
+  const CellStatus status) const
 {
   // Assign no weight to cells we do not own.
   if (!cell->is_locally_owned())

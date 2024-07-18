@@ -226,7 +226,7 @@ private:
   double                               smallest_floating_mesh_mapping_criterion;
   Particles::ParticleHandler<dim, dim> particle_handler;
   bool                                 contact_detection_step;
-  bool                                 load_balance_iteration;
+  bool                                 load_balance_step;
   bool                                 checkpoint_step;
   Tensor<1, 3>                         g;
 
