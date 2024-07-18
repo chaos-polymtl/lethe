@@ -24,6 +24,7 @@ We organize the DEM examples from the simplest to the most complicated example:
     plate-discharge/plate-discharge
     bunny-drill/bunny-drill
     granular-mixer/granular-mixer
+    granuheap/granuheap
 
 .. graphviz:: 
 
@@ -66,7 +67,7 @@ We organize the DEM examples from the simplest to the most complicated example:
 
       dem_15 [label="Granular Mixer", href="https://chaos-polymtl.github.io/lethe/documentation/examples/dem/granular-mixer/granular-mixer.html"];
 
-      
+      dem_16 [label="Granuheap", href="https://chaos-polymtl.github.io/lethe/documentation/examples/dem/granuheap/granuheap.html"];
 
       dem -> dem_1:w;
       dem -> dem_2:w;
@@ -83,4 +84,5 @@ We organize the DEM examples from the simplest to the most complicated example:
       dem -> dem_13:w;
       dem -> dem_14:w;
       dem -> dem_15:w;
+      dem -> dem_16:w;
     }
