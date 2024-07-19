@@ -45,7 +45,7 @@ Global continuity equation error: 0 s^-1
 Max local continuity error: 0 s^-1
 
 *******************************************************************************
-Transient iteration: 2        Time: 0.002    Time step: 0.001    CFL: 1.39605
+Transient iteration: 2        Time: 0.002    Time step: 0.001    CFL: 1.39637
 *******************************************************************************
 --------------
 Void Fraction

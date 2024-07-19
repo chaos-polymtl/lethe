@@ -109,16 +109,7 @@ subsection boundary conditions
   end
   subsection bc 3
     set id   = 3
-    set type = function
-    subsection u
-      set Function expression = 0
-    end
-    subsection v
-      set Function expression = 1.25
-    end
-    subsection w
-      set Function expression = 0
-    end
+    set type = noslip
   end
 end
 
