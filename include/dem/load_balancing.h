@@ -197,15 +197,32 @@ public:
    * Attach the correct functions to the signals inside
    * parallel::distributed::Triangulation, which will be called every time the
    * load balancing or refinement functions are called.
+   *
+   * TODO: Remove preprocessor directives after deal.ii v.9.6 release
    */
   inline void
   connect_weight_signals()
   {
+#if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 6)
+    triangulation->signals.weight.connect(
+      [&](const typename Triangulation<dim>::cell_iterator &,
+          const typename Triangulation<dim>::CellStatus) -> unsigned int {
+        return cell_weight;
+      });
+
+    triangulation->signals.weight.connect(
+      [&](const typename parallel::distributed::Triangulation<
+            dim>::cell_iterator &cell,
+          const typename parallel::distributed::Triangulation<dim>::CellStatus
+            status) -> unsigned int {
+        return this->calculate_total_cell_weight(cell, status);
+      });
+
+#else
     // Connect the default cell weight function
     triangulation->signals.weight.connect(
-      [this](const typename Triangulation<dim>::cell_iterator &,
-             const CellStatus) -> unsigned int { return cell_weight; });
-
+      [&](const typename Triangulation<dim>::cell_iterator &,
+          const CellStatus) -> unsigned int { return cell_weight; });
 
     triangulation->signals.weight.connect(
       [&](const typename parallel::distributed::Triangulation<
@@ -213,11 +230,15 @@ public:
           const CellStatus       status) -> unsigned int {
         return this->calculate_total_cell_weight(cell, status);
       });
+#endif
   }
 
   /**
    * @brief Connects the weight signals of the cells to the triangulation with
-   * the mobility status. This is recalled when mobility status changes.
+   * the mobility status. Cells are reconnected when load balancing is checked
+   * with the new mobility status.
+   *
+   * TODO: Remove preprocessor directives after deal.ii v.9.6 release
    */
   inline void
   connect_mobility_status_weight_signals()
@@ -225,10 +246,28 @@ public:
     // Clear and connect a new cell weight function
     triangulation->signals.weight.disconnect_all_slots();
 
+
+#if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 6)
+    triangulation->signals.weight.connect(
+      [&](const typename Triangulation<dim>::cell_iterator &,
+          const typename Triangulation<dim>::CellStatus) -> unsigned int {
+        return cell_weight;
+      });
+
+    triangulation->signals.weight.connect(
+      [&](const typename parallel::distributed::Triangulation<
+            dim>::cell_iterator &cell,
+          const typename parallel::distributed::Triangulation<dim>::CellStatus
+            status) -> unsigned int {
+        return this->calculate_total_cell_weight_with_mobility_status(cell,
+                                                                      status);
+      });
+
+#else
     // Connect, or reconnect, the default cell weight function
     triangulation->signals.weight.connect(
-      [this](const typename Triangulation<dim>::cell_iterator &,
-             const CellStatus) -> unsigned int { return cell_weight; });
+      [&](const typename Triangulation<dim>::cell_iterator &,
+          const CellStatus) -> unsigned int { return cell_weight; });
 
     triangulation->signals.weight.connect(
       [&](const typename parallel::distributed::Triangulation<
@@ -237,37 +276,49 @@ public:
         return this->calculate_total_cell_weight_with_mobility_status(cell,
                                                                       status);
       });
+#endif
   }
 
 private:
-  /**
-   * @brief Indicates to the triangulation how much computational work is
-   * expected to happen on this cell, and consequently how the domain needs to
-   * be partitioned.
-   *
-   * Every MPI rank receives a roughly equal amount of work (potentially not an
-   * equal number of cells). While the function is called from the outside,
-   * it is connected to the corresponding signal from inside this class,
-   * therefore it can be private. This function is the key component that allows
-   * dynamically balance the computational load. The function attributes a
-   * weight to every cell that represents the computational work on this cell.
-   * Here the majority of work is expected to happen on the particles, therefore
-   * the return value of this function is calculated based on the number of
-   * particles in the current cell. The function is connected to the
-   * cell_weight() signal inside the triangulation, and will be called once per
-   * cell, whenever the triangulation repartitions the domain between ranks.
-   *
-   * @param[in] cell The cell for which the load is calculated.
-   *
-   * @param[in] status The status of the cell related to the coarsening level.
-   *
-   * @return The total weight of the cell.
-   */
+/**
+ * @brief Indicates to the triangulation how much computational work is
+ * expected to happen on this cell, and consequently how the domain needs to
+ * be partitioned.
+ *
+ * Every MPI rank receives a roughly equal amount of work (potentially not an
+ * equal number of cells). While the function is called from the outside,
+ * it is connected to the corresponding signal from inside this class,
+ * therefore it can be private. This function is the key component that allows
+ * dynamically balance the computational load. The function attributes a
+ * weight to every cell that represents the computational work on this cell.
+ * Here the majority of work is expected to happen on the particles, therefore
+ * the return value of this function is calculated based on the number of
+ * particles in the current cell. The function is connected to the
+ * cell_weight() signal inside the triangulation, and will be called once per
+ * cell, whenever the triangulation repartitions the domain between ranks.
+ *
+ * @param[in] cell The cell for which the load is calculated.
+ *
+ * @param[in] status The status of the cell related to the coarsening level.
+ *
+ * TODO: Remove preprocessor directives after deal.ii v.9.6 release
+ *
+ * @return The total weight of the cell.
+ */
+#if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 6)
+  unsigned int
+  calculate_total_cell_weight(
+    const typename parallel::distributed::Triangulation<dim>::cell_iterator
+                                                                        &cell,
+    const typename parallel::distributed::Triangulation<dim>::CellStatus status)
+    const;
+#else
   unsigned int
   calculate_total_cell_weight(
     const typename parallel::distributed::Triangulation<dim>::cell_iterator
                     &cell,
     const CellStatus status) const;
+#endif
 
   /**
    * @brief Indicates to the triangulation how much computational work is
@@ -281,19 +332,30 @@ private:
    * integration for the particles that lie within it. The weight of the cells
    * must thus be adapted to the status of the cell.
    *
-   * cell load = cell weight + load balancing factor * n particles * particle
-   * weight
+   * total cell weight = cell weight +
+   *                     load balancing factor * n particles * particle weight
+   *
+   * TODO: Remove preprocessor directives after deal.ii v.9.6 release
    *
    * @param[in] cell The cell for which the load is calculated
    * @param[in] status The status of the cell related to the coarsening level
    *
    * @return The total weight of the cell
    */
+#if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 6)
+  unsigned int
+  calculate_total_cell_weight_with_mobility_status(
+    const typename parallel::distributed::Triangulation<dim>::cell_iterator
+                                                                        &cell,
+    const typename parallel::distributed::Triangulation<dim>::CellStatus status)
+    const;
+#else
   unsigned int
   calculate_total_cell_weight_with_mobility_status(
     const typename parallel::distributed::Triangulation<dim>::cell_iterator
                     &cell,
     const CellStatus status) const;
+#endif
 
   /**
    * @brief The load balancing method chosen by the user.
