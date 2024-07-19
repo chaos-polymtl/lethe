@@ -136,11 +136,20 @@ LagrangianLoadBalancing<dim>::check_load_balance_with_sparse_contacts()
   return false;
 }
 
+#if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 6)
+template <int dim>
+unsigned int
+LagrangianLoadBalancing<dim>::calculate_total_cell_weight(
+  const typename parallel::distributed::Triangulation<dim>::cell_iterator &cell,
+  const typename parallel::distributed::Triangulation<dim>::CellStatus status)
+  const
+#else
 template <int dim>
 unsigned int
 LagrangianLoadBalancing<dim>::calculate_total_cell_weight(
   const typename parallel::distributed::Triangulation<dim>::cell_iterator &cell,
   const CellStatus status) const
+#endif
 {
   // Assign no weight to cells we do not own.
   if (!cell->is_locally_owned())
@@ -148,17 +157,32 @@ LagrangianLoadBalancing<dim>::calculate_total_cell_weight(
 
   switch (status)
     {
+#if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 6)
+      case parallel::distributed::Triangulation<dim>::CELL_PERSIST:
+      case parallel::distributed::Triangulation<dim>::CELL_REFINE:
+#else
       case CellStatus::cell_will_persist:
       case CellStatus::cell_will_be_refined:
+#endif
         // If CELL_PERSIST, do as CELL_REFINE
         {
           const unsigned int n_particles_in_cell =
             particle_handler->n_particles_in_cell(cell);
           return n_particles_in_cell * particle_weight;
         }
+#if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 6)
+      case parallel::distributed::Triangulation<dim>::CELL_INVALID:
+        break;
+#else
       case CellStatus::cell_invalid:
         break;
+#endif
+
+#if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 6)
+      case parallel::distributed::Triangulation<dim>::CELL_COARSEN:
+#else
       case CellStatus::children_will_be_coarsened:
+#endif
         {
           unsigned int n_particles_in_cell = 0;
 
@@ -178,11 +202,20 @@ LagrangianLoadBalancing<dim>::calculate_total_cell_weight(
   return 0;
 }
 
+#if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 6)
+template <int dim>
+unsigned int
+LagrangianLoadBalancing<dim>::calculate_total_cell_weight_with_mobility_status(
+  const typename parallel::distributed::Triangulation<dim>::cell_iterator &cell,
+  const typename parallel::distributed::Triangulation<dim>::CellStatus status)
+  const
+#else
 template <int dim>
 unsigned int
 LagrangianLoadBalancing<dim>::calculate_total_cell_weight_with_mobility_status(
   const typename parallel::distributed::Triangulation<dim>::cell_iterator &cell,
   const CellStatus status) const
+#endif
 {
   // Assign no weight to cells we do not own.
   if (!cell->is_locally_owned())
@@ -208,16 +241,30 @@ LagrangianLoadBalancing<dim>::calculate_total_cell_weight_with_mobility_status(
 
   switch (status)
     {
+#if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 6)
+      case parallel::distributed::Triangulation<dim>::CELL_PERSIST:
+      case parallel::distributed::Triangulation<dim>::CELL_REFINE:
+#else
       case dealii::CellStatus::cell_will_persist:
       case dealii::CellStatus::cell_will_be_refined:
+#endif
         {
           const unsigned int n_particles_in_cell =
             particle_handler->n_particles_in_cell(cell);
           return alpha * n_particles_in_cell * particle_weight;
         }
+#if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 6)
+      case parallel::distributed::Triangulation<dim>::CELL_INVALID:
+        break;
+#else
       case dealii::CellStatus::cell_invalid:
         break;
+#endif
+#if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 6)
+      case parallel::distributed::Triangulation<dim>::CELL_COARSEN:
+#else
       case dealii::CellStatus::children_will_be_coarsened:
+#endif
         {
           unsigned int n_particles_in_cell = 0;
 
