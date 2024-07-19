@@ -271,7 +271,7 @@ private:
   double                                     smallest_contact_search_criterion;
 
   DEMContactManager<dim>           contact_manager;
-  LoadBalancing<dim>               load_balancing;
+  LagrangianLoadBalancing<dim>     load_balancing;
   ParticlePointLineForce<dim>      particle_point_line_contact_force_object;
   std::shared_ptr<Integrator<dim>> integrator_object;
   std::shared_ptr<Insertion<dim>>  insertion_object;
