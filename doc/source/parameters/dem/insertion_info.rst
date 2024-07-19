@@ -2,7 +2,7 @@
 Insertion Info
 ==============
 
-In this subsection, insertion methods which are ``volume``, ``plane``, ``list`` and ``file`` are defined.
+In this subsection, insertion methods ``volume``, ``plane``, ``list`` and ``file`` are defined.
 
 .. note::
     Insertion in Lethe starts inserting particles from type 0 and proceeds to the next type when all the particles from the previous type are inserted.
@@ -14,30 +14,25 @@ In this subsection, insertion methods which are ``volume``, ``plane``, ``list`` 
     set insertion method                               = volume
 
     # Every method
-    set insertion frequency                            = 20000
-    set remove particles                               = false
-    set removal box points coordinates                 = 0., 0., 0.: 1., 1., 1.
+    set insertion frequency                            = 1
 
     # If method = volume
-    set inserted number of particles at each time step = 100
-
-    set insertion box points coordinates               = -0.05, -0.05, -0.03 : 0.05, 0.05, 0.07
-
-    set insertion order of direction                   = 0, 1, 2
-
-    set initial velocity                               = 0.0, 0.0, 0.0
-    set initial angular velocity                       = 0.0, 0.0, 0.0
-
-    set insertion distance threshold                   = 2
+    set inserted number of particles at each time step = 1
+    set insertion box points coordinates               = 0., 0., 0. : 1., 1., 1.
+    set insertion insertion direction sequence         = 0, 1, 2
+    set insertion distance threshold                   = 1.
 
     # If method = plane
     set insertion method                               = plane
     set insertion plane point                          = 0, 0, 0
     set insertion plane normal vector                  = 1, 0, 0
+    set insertion plane threshold distance             = 0.
 
     # If method = volume or plane
-    set insertion maximum offset                       = 0.75
-    set insertion prn seed                             = 19
+    set initial velocity                               = 0.0, 0.0, 0.0
+    set initial angular velocity                       = 0.0, 0.0, 0.0
+    set insertion maximum offset                       = 1.
+    set insertion prn seed                             = 1
 
     # If method = list
     set list x                                         = 0.
@@ -53,38 +48,38 @@ In this subsection, insertion methods which are ``volume``, ``plane``, ``list`` 
 
     # If method = file
     set list of input files                            = particles.input
+
+    # Box removal
+    set remove particles                               = false
+    set removal box points coordinates                 = 0., 0., 0.: 1., 1., 1.
   end
 
-The ``insertion method`` parameter chooses the type of insertion. Acceptable choices are ``volume``, ``plane``, ``list`` and ``file``. Different insertion method can share the same parameter.
-
-* The ``insertion frequency`` parameter defines the frequency of insertion. For example, if the ``insertion frequency`` is set equal to 10000, the iterations 1, 10001, 20001, ... will be defined as insertion steps.  The ``insertion frequency`` should be selected adequately depending on the insertion method. For ``volume`` it should be large, so that the inserted particles at the previous insertion step have enough time to leave the insertion box for the next insertion step, otherwise large overlap may occur which leads to a large velocity of particles. For the ``plane`` method, it should be small so that particles are being inserted as soon as a cell is empty.
-
-* The ``insertion maximum offset`` and ``insertion prn seed`` parameters defines the random offset values to the initial positions of particles during a ``volume`` and ``plane`` insertion. The ``insertion maximum offset`` parameter defines the maximum value for an offset. The ``insertion prn seed`` parameter defines the pseudo-random number (PRN) with which offset values are getting generated.
-
-* The ``removal box points coordinates`` parameter defines a removal box where particles will be removed from the triangulation just before the insertion of new particles. This assures that there is no excessive overlap between new and previously inserted particles. If the ``remove particles`` parameter is set to ``false`` particle removal will not be performed.
+The ``insertion method`` parameter defines insertion type, where choices are: ``volume``, ``plane``, ``list`` and ``file``. Different insertion methods can share the same parameter. In order to simplify the explanation on those parameters, they are introduced in each method with their specificities.
 
 -------
 Volume
 -------
-The ``volume`` insertion method uses an insertion box where particles will be inserted. The insertion locations of particles are randomly selected if the ``insertion maximum offset`` is not equal to zero, otherwise, the particles will perfectly aligns with the x, y and z directions.
+The ``volume`` insertion method uses an insertion box where particles will be inserted. The box can inserts particles in a structured manner or in a random manner according to the  ``insertion maximum offset`` and ``insertion prn seed`` settings.
 
-* The ``inserted number of particles at each time step`` defines the desired number of particles to be inserted at each insertion step. If the insertion box is not adequately large to insert ``inserted number of particles at each time step`` particles with the defined arrangement (initial distance between the inserted particles), Lethe prints a warning and inserts the maximum number of particles that fit inside the insertion box at each insertion step.
+* ``insertion frequency`` defines the frequency of the insertion of particles in the box. For example, if the ``insertion frequency`` is set to 10000, the iterations 1, 10001, 20001, ... will be defined as insertion steps. The frequency should be large, so that the inserted particles at the previous insertion step have enough time to leave the insertion box for the next insertion step, otherwise large overlap may occur which leads to a large velocity of particles.
 
-* The ``insertion box points coordinates`` parameter defines the insertion box dimensions using two points: ``x1, y1, z1 : x2, y2, z2``. It is the same principle has what is being done for the `CFD <https://chaos-polymtl.github.io/lethe/documentation/parameters/cfd/mesh.html>`_ triangulation.
+* ``insertion maximum offset`` defines the maximum value of the offset in relation to the structured discrete positions in the box. The insertion locations of particles are randomly selected if the offset is not equal to zero, otherwise, the particles will perfectly aligns along the x, y and z directions.
+
+* ``insertion prn seed`` seeds the pseudo-random number (PRN) generator. It defines the starting value from which the offset values are generated.
+
+* ``inserted number of particles at each time step`` defines the desired number of particles to be inserted at each insertion step. If the insertion box is not adequately large to insert this number of particles with the defined arrangement (initial distance between the inserted particles), the maximum number of particles that fit inside the insertion box at each insertion step are inserted and a warning is displayed.
+
+* ``insertion box points coordinates`` defines the insertion box dimensions using two points: ``x1, y1, z1 : x2, y2, z2``. It is based on the same principle as for the rectangular mesh `CFD <../../parameters/cfd/mesh.html>`_ triangulation.
 
 .. note::
-    We recommend that the defined insertion box have at least a distance of :math:`{d^{max}_p}` (maximum diameter of particles) from the triangulation boundaries. Otherwise, particles may have an overlap with the triangulation walls in the insertion.
+    We recommend that the defined insertion box has at least a distance of :math:`{d^{max}_p}` (maximum diameter of particles) from the triangulation boundaries. Otherwise, particles may have an overlap with the triangulation walls in the insertion.
 
-* The ``insertion order of direction`` parameter defines the directions of insertion. For example, if the parameter is equal to ``0, 1, 2``, the particles are inserted in priority in the x, in y, and then in z directions. This is the default configuration. This is useful to specify the insertion directions to cover a specific area of the insertion box with the first and second direction parameters.
-
-* The ``initial velocity`` determine the initial translational velocity (in :math:`\frac{m}{s}`) at which particles are inserted in the x, y, and z directions.
-
-* The ``initial angular velocity`` determine the initial rotational velocity (in :math:`\frac{rad}{s}`) at which particles are inserted in the x, y, and z directions.
+* ``insertion direction sequence`` defines the sequence of directions of insertion in the box. For example, if the parameter is equal to ``0, 1, 2``, the particles are inserted in priority in the x, in y, and then in z directions. This is the default configuration. This is useful to specify the insertion directions to cover a specific area of the insertion box with the first and second direction parameters.
 
 .. note:: 
-    Since the ``insertion info`` subsection is valid for all particle types, by using ``velocity x``, ``velocity y``, ``velocity z``, ``omega x``, ``omega y``, or ``omega z``, the given condition is applied to all particles, indistinctively.
+    Since the ``insertion info`` subsection is valid for all particle types, by using ``initial velocity`` or ``initial angular velocity`` the given conditions are applied to all particles, regardless of the type.
 
-* The ``insertion distance threshold`` parameter determines the initial distance between the particles in the insertion box. As a result, it must be larger than 1 to avoid any initial collision between the inserted particles.
+* ``insertion distance threshold`` determines the initial distance between the particles in the insertion box. As a result, it must be larger than 1 to avoid any initial collision between the inserted particles.
 
 The distance between the inserted particles is equal to:
 
@@ -94,23 +89,39 @@ The distance between the inserted particles is equal to:
 Where, :math:`{\epsilon}`, :math:`{\psi}`, and :math:`{d^{max}_p}` denote ``insertion distance threshold``, a generated random number (in the range of 0-``insertion maximum offset``, and from the seed of ``insertion prn seed``), and maximum particle diameter.
  
 .. note::
-    ``insertion distance threshold`` should also be compatible with the ``insertion maximum offset``; especially if the ``insertion maximum offset`` is large, a large value should be defined for ``insertion distance threshold``. Generally, we recommend users to use a value in the range of 1.3-2 (depending on the value of ``insertion maximum offset``) for the ``insertion distance threshold``.
+    ``insertion distance threshold`` should also be compatible with the ``insertion maximum offset``, especially if the ``insertion maximum offset`` is large, a large value should be defined for ``insertion distance threshold``. Generally, we recommend users to use a value in the range of 1.3-2 (depending on the value of ``insertion maximum offset``) for the ``insertion distance threshold``.
+
+* ``initial velocity`` determine the initial translational velocity (in :math:`\frac{m}{s}`) at which particles are inserted in the x, y, and z directions.
+
+* ``initial angular velocity`` determine the initial rotational velocity (in :math:`\frac{rad}{s}`) at which particles are inserted in the x, y, and z directions.
 
 --------------------
 Plane
 --------------------
-The ``plane`` insertion method inserts particles at the centroid of insertion cells. These cells are defined as intersected by a mathematical plane. This plane is define by an ``insertion plane point`` and an ``insertion plane normal vector``. A cell is considered as intersected by the plane if at least one of its vertex is on each side of the plane of if at least one of its vertex is directly on the plane (the normal distance between the vertex and the plane is zero). At each insertion step, a particle will be inserted in a insertion cell if that cell is empty (no particle is present inside it). This guarantee the absence of big overlap with the particles already inserted. This method of inserting is useful when dealing with a domain dense with particles.
+The ``plane`` insertion method inserts particles at the centroid of insertion cells. These cells are defined as intersected by a mathematical plane. This plane is defined by an ``insertion plane point`` and an ``insertion plane normal vector``. A cell is considered as intersected by the plane if at least one of its vertex is on each side of the plane of if at least one of its vertex is directly on the plane (the normal distance between the vertex and the plane is zero). At each insertion step, a particle will be inserted in a insertion cell if that cell is empty (no particle is present inside it). This guarantee the absence of big overlap with the particles already inserted. This method of inserting is useful when dealing with a domain dense with particles.
 
-* The ``insert plane point`` defines the point coordinates for the plane. Each component of this parameter represent the x, y and z directions, respectively.
+* ``insertion frequency`` defines the frequency of the check for particle insertion. The insertion method will check if the cell in empty, and will only insert a particle if so. The frequency should be small so that particles are being inserted as soon as a cell is empty.
 
-* The ``insertion plane normal vector`` define the normal vector component for the plane. of the  Each component of the parameter represent the x, y and z directions, respectively.
+* ``insertion maximum offset`` defines the maximum value of the offset in relation to centroid of the cell. The insertion locations of particles are randomly selected if the offset is not equal to zero, otherwise, the particles will be inserted at the centroid.
+
+* ``insertion prn seed`` seeds the pseudo-random number (PRN) generator. It defines the starting value from which the offset values are generated.
+
+* ``insert plane point`` defines the point coordinates for the plane. Each component of this parameter represent the x, y and z directions, respectively.
+
+* ``insertion plane normal vector`` define the normal vector component for the plane. Each component of the parameter represent the x, y and z directions, respectively.
+
+* ``initial velocity`` determine the initial translational velocity (in :math:`\frac{m}{s}`) at which particles are inserted in the x, y, and z directions.
+
+* ``initial angular velocity`` determine the initial rotational velocity (in :math:`\frac{rad}{s}`) at which particles are inserted in the x, y, and z directions.
 
 --------------------
 List
 --------------------
 The ``list`` insertion method insert particles at precis coordinates with specific velocities (translational and angular) and diameters.  This method is preferred for small number of particles.
 
-* The ``list x``, ``list y`` and ``list z`` define the coordinates of every particles in the x, y and z directions, respectively. For example, if you want to insert particles at two locations, ``(0.,0.,0.) and (1.,2.,3.)`` , the list parameters should look like this :
+* ``insertion frequency`` defines the frequency of the insertion of particles based on the list. If the list contains 3 coordinates, 3 new particles will be inserted at the same positions at each insertion step.
+
+* ``list x``, ``list y``, and ``list z``: define the coordinates of every particles in the x, y and z directions, respectively. For example, if you want to insert particles at two locations, ``(0.,0.,0.) and (1.,2.,3.)`` , the list parameters should look like this :
 
 .. code-block:: text
 
@@ -118,7 +129,11 @@ The ``list`` insertion method insert particles at precis coordinates with specif
     set list y = 0., 2.
     set list z = 0., 3.
 
-* The ``list velocity x``, ``list velocity y``, ``list velocity z``, ``list omega x``, ``list omega y``, ``list omega z`` and ``list diameters`` define the initial translational velocities, the initial angular velocities and diameters of each particles respectively following the same logic as the insertion coordinates.
+* ``list velocity x``, ``list velocity y``, and ``list velocity z`` define the initial translational velocities of each particles respectively following the same logic as the insertion coordinates.
+
+* ``list omega x``, ``list omega y``, and ``list omega z`` define the initial angular velocities of each particles respectively following the same logic as the insertion coordinates.
+
+* ``list diameters`` defines the diameters of each particles respectively following the same logic as the insertion coordinates.
 
 ---------------------
 File
@@ -133,8 +148,21 @@ The ``file`` insertion method inserts particles in a similar way to the ``list``
 
 Each line is associated with a particle and its properties. The ``fem_force`` and ``fem_torque`` properties are only used in the CFD-DEM solver, but must be specified in all cases. The main advantage of using the ``file`` method over the ``list`` method is that the number of inserted particles is not limited to the maximum number of characters on a single line of parameter files. To generate an insertion file, particle positions and properties can be generated manually or with any script. An other option is to use the python code ``extract-particles-properties-from-vtu.py`` in ``lethe/contrib/preprocessing/`` directory. This code extracts particle properties from the last vtu file from a given simulation.
 
+* ``insertion frequency`` defines the frequency of the insertion of particles based on the list in the file(s)
+
+* ``list of input files`` defines the list of files to be used for the insertion. The default value is ``particles.input``.
+
 .. note::
     The ``file`` insertion combine with the ``extract-particles-properties-from-vtu.py`` python code can be a useful tool. The loading of particles and the rest of the simulation can be performed in two different triangulations, witch is not the case of the the restart feature. This means that the loading triangulation can have smaller cells and a bigger domain to allow for the use of larger insertion boxes. Then, particles properties can be extracted and the remainder of the simulation can be performed in the appropriate triangulation.
 
 .. warning::
     The critical Rayleigh time step is computed from the parameters in the ``particle type`` subsections, not the ``insertion info`` subsection. It is the user's responsibility to fill the ``particle type`` subsections correctly according to the diameter values stored in the insertion input file, otherwise Rayleigh time percentage displayed at the start of every DEM simulation may not be accurate.
+
+--------------------
+Removal
+--------------------
+With all insertion methods, it is possible to define a removal box where particles will be removed from the triangulation just before the insertion of new particles.
+
+* ``remove particles`` enables (true) or disables (false) the particle removal.
+
+* ``removal box points coordinates`` defines a removal box where particles will be removed.
