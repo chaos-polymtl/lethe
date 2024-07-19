@@ -32,7 +32,7 @@ DEM
 
 Warning: There are diamond-shaped cells in the input triangulation. It is strongly recommended to use a different triangulation without such cells. It should be mentioned that these cells are not detected if you have grid motion
 Load balance finished
-Average, minimum and maximum number of particles on the processors are 15525 , 1727 and 29323
+Average, minimum and maximum number of particles on the processors are 15525 , 1731 and 29319
 Minimum and maximum number of cells owned by the processors are 679 and 679
 Setup DOFs
    Number of active cells:       679
@@ -45,7 +45,7 @@ Global continuity equation error: 0 s^-1
 Max local continuity error: 0 s^-1
 
 *******************************************************************************
-Transient iteration: 2        Time: 0.002    Time step: 0.001    CFL: 1.39606
+Transient iteration: 2        Time: 0.002    Time step: 0.001    CFL: 1.39605
 *******************************************************************************
 --------------
 Void Fraction
@@ -58,7 +58,7 @@ DEM
 ----
 -->Repartitionning triangulation
 Load balance finished
-Average, minimum and maximum number of particles on the processors are 15525 , 15431 and 15619
+Average, minimum and maximum number of particles on the processors are 15525 , 15444 and 15606
 Minimum and maximum number of cells owned by the processors are 679 and 679
 Setup DOFs
    Number of active cells:       679
