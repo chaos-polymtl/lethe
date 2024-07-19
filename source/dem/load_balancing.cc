@@ -40,13 +40,10 @@ LoadBalancing<dim>::check_load_balance_dynamic()
 {
   if (simulation_control->get_step_number() % dynamic_check_frequency == 0)
     {
-      unsigned int maximum_particle_number_on_proc = 0;
-      unsigned int minimum_particle_number_on_proc = 0;
-
-      maximum_particle_number_on_proc =
+      unsigned int maximum_particle_number_on_proc =
         Utilities::MPI::max(particle_handler->n_locally_owned_particles(),
                             mpi_communicator);
-      minimum_particle_number_on_proc =
+      unsigned int minimum_particle_number_on_proc =
         Utilities::MPI::min(particle_handler->n_locally_owned_particles(),
                             mpi_communicator);
 
@@ -72,17 +69,16 @@ LoadBalancing<dim>::check_load_balance_with_sparse_contacts()
       // Process to accumulate the load of each process regards the number
       // of cells and particles with their selected weight and with a factor
       // related to the mobility status of the cells
-      std::vector<double> process_to_load_weight(n_mpi_processes, 0.0);
-
+      double load_weight = 0.0;
 
       for (const auto &cell : triangulation->active_cell_iterators())
         {
           if (cell->is_locally_owned())
             {
-              // Apply a weight of 1000 to the cell (default value)
-              process_to_load_weight[this_mpi_process] += 1000;
+              // Apply the cell weight
+              load_weight += cell_weight;
 
-              // Get the mobility status of the cell & the number of particles
+              // Get the mobility status of the cell and the number of particles
               const unsigned int cell_mobility_status =
                 adaptive_sparse_contacts->check_cell_mobility(cell);
               const unsigned int n_particles_in_cell =
@@ -109,47 +105,27 @@ LoadBalancing<dim>::check_load_balance_with_sparse_contacts()
 
               // Add the particle weight time the number of particles in the
               // cell to the processor load
-              process_to_load_weight[this_mpi_process] +=
-                alpha * n_particles_in_cell * particle_weight;
+              load_weight += alpha * n_particles_in_cell * particle_weight;
             }
         }
 
-      // Exchange information
-      double maximum_load_on_proc = 0.0;
-      double minimum_load_on_proc = 0.0;
-      double total_load           = 0.0;
+      // Find the minimum load on a processor
+      double maximum_load_on_proc =
+        Utilities::MPI::max(load_weight, mpi_communicator);
 
-      maximum_load_on_proc =
-        Utilities::MPI::max(*std::max_element(process_to_load_weight.begin(),
-                                              process_to_load_weight.end()),
-                            mpi_communicator);
-
-      // Find the minimum load on a process
-      // First it finds the minimum load on a process, but since values in
-      // the vector that are not on this process are 0.0, it looks for
-      // values > 1e-8. After that, it finds the minimum load of all the
-      // processors
-      minimum_load_on_proc =
-        Utilities::MPI::min(*std::min_element(process_to_load_weight.begin(),
-                                              process_to_load_weight.end(),
-                                              [](double a, double b) {
-                                                return (a > 1e-8) ?
-                                                         (b > 1e-8 ? a < b :
-                                                                     true) :
-                                                         false;
-                                              }),
-                            mpi_communicator);
+      // Find the minimum load on a processor
+      double minimum_load_on_proc =
+        Utilities::MPI::min(load_weight, mpi_communicator);
 
       // Get the total load
-      total_load =
-        Utilities::MPI::sum(std::accumulate(process_to_load_weight.begin(),
-                                            process_to_load_weight.end(),
-                                            0.0),
-                            mpi_communicator);
+      double total_load = Utilities::MPI::sum(load_weight, mpi_communicator);
 
       if ((maximum_load_on_proc - minimum_load_on_proc) >
           load_threshold * (total_load / n_mpi_processes))
         {
+          // Clear and connect a new cell weight function
+          connect_mobility_status_weight_signals();
+
           return true;
         }
     }
@@ -179,7 +155,6 @@ LoadBalancing<dim>::calculate_total_cell_weight(
           const unsigned int n_particles_in_cell =
             particle_handler->n_particles_in_cell(cell);
           return n_particles_in_cell * particle_weight;
-          break;
         }
       case CellStatus::cell_invalid:
         break;
@@ -194,7 +169,6 @@ LoadBalancing<dim>::calculate_total_cell_weight(
               particle_handler->n_particles_in_cell(cell->child(child_index));
 
           return n_particles_in_cell * particle_weight;
-          break;
         }
       default:
         Assert(false, ExcInternalError());
@@ -240,7 +214,6 @@ LoadBalancing<dim>::calculate_total_cell_weight_with_mobility_status(
           const unsigned int n_particles_in_cell =
             particle_handler->n_particles_in_cell(cell);
           return alpha * n_particles_in_cell * particle_weight;
-          break;
         }
       case dealii::CellStatus::cell_invalid:
         break;
@@ -255,7 +228,6 @@ LoadBalancing<dim>::calculate_total_cell_weight_with_mobility_status(
               particle_handler->n_particles_in_cell(cell->child(child_index));
 
           return alpha * n_particles_in_cell * particle_weight;
-          break;
         }
       default:
         Assert(false, ExcInternalError());
