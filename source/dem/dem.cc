@@ -59,13 +59,16 @@ DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
   , size_distribution_object_container(
       parameters.lagrangian_physical_properties.particle_type_number)
   , has_sparse_contacts(false)
-{
-  // Print simulation starting information
+{}
+
+template <int dim>
+void
+DEMSolver<dim>::setup_parameters()
+{ // Print simulation starting information
+
   pcout << std::endl;
   std::stringstream ss;
-
   ss << "Running on " << n_mpi_processes << " rank(s)";
-
   announce_string(pcout, ss.str(), '*');
 
   // Check if the output directory exists
@@ -84,6 +87,8 @@ DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
   // Change the behavior of the timer for situations when you don't want outputs
   if (parameters.timer.type == Parameters::Timer::Type::none)
     computing_timer.disable_output();
+
+  // Set the simulation control as transient DEM
   simulation_control = std::make_shared<SimulationControlTransientDEM>(
     parameters.simulation_control);
 
@@ -97,7 +102,7 @@ DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
   // Attach the correct functions to the signals inside the triangulation
   load_balancing.connect_weight_signals();
 
-
+  // Set the adaptive sparse contacts parameters
   if (parameters.model_parameters.sparse_particle_contacts)
     {
       has_sparse_contacts = true;
@@ -107,95 +112,21 @@ DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
         parameters.model_parameters.advect_particles);
     }
 
-  maximum_particle_diameter = 0;
-  for (unsigned int particle_type = 0;
-       particle_type <
-       parameters.lagrangian_physical_properties.particle_type_number;
-       particle_type++)
-    {
-      if (parameters.lagrangian_physical_properties.distribution_type.at(
-            particle_type) ==
-          Parameters::Lagrangian::SizeDistributionType::uniform)
-        {
-          size_distribution_object_container[particle_type] =
-            std::make_shared<UniformDistribution>(
-              parameters.lagrangian_physical_properties
-                .particle_average_diameter.at(particle_type));
-        }
-      else if (parameters.lagrangian_physical_properties.distribution_type.at(
-                 particle_type) ==
-               Parameters::Lagrangian::SizeDistributionType::normal)
-        {
-          size_distribution_object_container[particle_type] =
-            std::make_shared<NormalDistribution>(
-              parameters.lagrangian_physical_properties
-                .particle_average_diameter.at(particle_type),
-              parameters.lagrangian_physical_properties.particle_size_std.at(
-                particle_type),
-              parameters.lagrangian_physical_properties
-                  .seed_for_distributions[particle_type] +
-                this_mpi_process);
-        }
-      else if (parameters.lagrangian_physical_properties.distribution_type.at(
-                 particle_type) ==
-               Parameters::Lagrangian::SizeDistributionType::custom)
-        {
-          size_distribution_object_container[particle_type] =
-            std::make_shared<CustomDistribution>(
-              parameters.lagrangian_physical_properties.particle_custom_diameter
-                .at(particle_type),
-              parameters.lagrangian_physical_properties
-                .particle_custom_probability.at(particle_type),
-              parameters.lagrangian_physical_properties
-                  .seed_for_distributions[particle_type] +
-                this_mpi_process);
-        }
-      maximum_particle_diameter = std::max(
-        maximum_particle_diameter,
-        size_distribution_object_container[particle_type]->find_max_diameter());
-    }
-
-  neighborhood_threshold_squared =
-    std::pow(parameters.model_parameters.neighborhood_threshold *
-               maximum_particle_diameter,
-             2);
+  // Set the distribution type and initialize the neighborhood threshold
+  setup_distribution_type();
 
   if (this_mpi_process == 0)
     input_parameter_inspection(parameters,
                                pcout,
                                size_distribution_object_container);
 
+  // Set the grid motion type
   grid_motion_object =
     std::make_shared<GridMotion<dim, dim>>(parameters.grid_motion,
                                            simulation_control->get_time_step());
 
-  for (unsigned int i_solid = 0;
-       i_solid < parameters.solid_objects->number_solid_surfaces;
-       ++i_solid)
-    {
-      solid_surfaces.push_back(std::make_shared<SerialSolid<dim - 1, dim>>(
-        this->parameters.solid_objects->solid_surfaces[i_solid], i_solid));
-    }
-
-  for (unsigned int i_solid = 0;
-       i_solid < parameters.solid_objects->number_solid_volumes;
-       ++i_solid)
-    {
-      solid_volumes.push_back(std::make_shared<SerialSolid<dim, dim>>(
-        this->parameters.solid_objects->solid_volumes[i_solid], i_solid));
-    }
-
-  // Generate solid objects
-  solid_surfaces_mesh_info.resize(solid_surfaces.size());
-  solid_volumes_mesh_info.resize(solid_volumes.size());
-
-  // Resize particle_floating_mesh_in_contact
-  if ((solid_surfaces.size() + solid_volumes.size()) > 0)
-    {
-      has_solid_objects = true;
-      contact_manager.particle_floating_mesh_in_contact.resize(
-        solid_surfaces.size() + solid_volumes.size());
-    }
+  // Set up the solid objects
+  setup_solid_objects();
 
   // Check if there are periodic boundaries
   for (unsigned int i_bc = 0;
@@ -209,6 +140,18 @@ DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
           break;
         }
     }
+
+  // Set insertion object type before the restart because the restart only
+  // rebuilds the member of the insertion object
+  insertion_object = set_insertion_type(parameters);
+
+  contact_detection_iteration_check_function =
+    set_contact_search_iteration_function();
+
+  // Setting chosen contact force, insertion and integration methods
+  integrator_object = set_integrator_type(parameters);
+  particle_particle_contact_force_object =
+    set_particle_particle_contact_force_model(parameters);
 
   // Assign gravity/acceleration
   g = parameters.lagrangian_physical_properties.g;
@@ -246,6 +189,85 @@ DEMSolver<dim>::setup_background_dofs()
       background_constraints.close();
 
       sparse_contacts_object.map_periodic_nodes(background_constraints);
+    }
+}
+
+template <int dim>
+void
+DEMSolver<dim>::setup_distribution_type()
+{
+  // Use namespace and alias to make the code more readable
+  using namespace Parameters::Lagrangian;
+  LagrangianPhysicalProperties &lpp = parameters.lagrangian_physical_properties;
+
+  maximum_particle_diameter = 0;
+  for (unsigned int particle_type = 0; particle_type < lpp.particle_type_number;
+       particle_type++)
+    {
+      switch (lpp.distribution_type.at(particle_type))
+        {
+          case SizeDistributionType::uniform:
+            size_distribution_object_container[particle_type] =
+              std::make_shared<UniformDistribution>(
+                lpp.particle_average_diameter.at(particle_type));
+            break;
+          case SizeDistributionType::normal:
+            size_distribution_object_container[particle_type] =
+              std::make_shared<NormalDistribution>(
+                lpp.particle_average_diameter.at(particle_type),
+                lpp.particle_size_std.at(particle_type),
+                lpp.seed_for_distributions[particle_type] + this_mpi_process);
+            break;
+          case SizeDistributionType::custom:
+            size_distribution_object_container[particle_type] =
+              std::make_shared<CustomDistribution>(
+                lpp.particle_custom_diameter.at(particle_type),
+                lpp.particle_custom_probability.at(particle_type),
+                lpp.seed_for_distributions[particle_type] + this_mpi_process);
+            break;
+        }
+
+      maximum_particle_diameter = std::max(
+        maximum_particle_diameter,
+        size_distribution_object_container[particle_type]->find_max_diameter());
+    }
+
+  neighborhood_threshold_squared =
+    std::pow(parameters.model_parameters.neighborhood_threshold *
+               maximum_particle_diameter,
+             2);
+}
+
+template <int dim>
+void
+DEMSolver<dim>::setup_solid_objects()
+{
+  for (unsigned int i_solid = 0;
+       i_solid < parameters.solid_objects->number_solid_surfaces;
+       ++i_solid)
+    {
+      solid_surfaces.push_back(std::make_shared<SerialSolid<dim - 1, dim>>(
+        this->parameters.solid_objects->solid_surfaces[i_solid], i_solid));
+    }
+
+  for (unsigned int i_solid = 0;
+       i_solid < parameters.solid_objects->number_solid_volumes;
+       ++i_solid)
+    {
+      solid_volumes.push_back(std::make_shared<SerialSolid<dim, dim>>(
+        this->parameters.solid_objects->solid_volumes[i_solid], i_solid));
+    }
+
+  // Generate solid objects
+  solid_surfaces_mesh_info.resize(solid_surfaces.size());
+  solid_volumes_mesh_info.resize(solid_volumes.size());
+
+  // Resize particle_floating_mesh_in_contact
+  if ((solid_surfaces.size() + solid_volumes.size()) > 0)
+    {
+      has_solid_objects = true;
+      contact_manager.particle_floating_mesh_in_contact.resize(
+        solid_surfaces.size() + solid_volumes.size());
     }
 }
 
@@ -333,30 +355,6 @@ DEMSolver<dim>::load_balance()
         << average_minimum_maximum_cells.max << std::endl;
 
   setup_background_dofs();
-}
-
-
-
-template <int dim>
-inline std::function<bool()>
-DEMSolver<dim>::set_contact_search_iteration_function()
-{
-  if (parameters.model_parameters.contact_detection_method ==
-      Parameters::Lagrangian::ModelParameters::ContactDetectionMethod::constant)
-    {
-      return [&] { return check_contact_search_iteration_constant(); };
-    }
-  else if (parameters.model_parameters.contact_detection_method ==
-           Parameters::Lagrangian::ModelParameters::ContactDetectionMethod::
-             dynamic)
-    {
-      return [&] { return check_contact_search_iteration_dynamic(); };
-    }
-  else
-    {
-      throw std::runtime_error(
-        "Specified contact detection method is not valid");
-    }
 }
 
 template <int dim>
@@ -539,70 +537,59 @@ template <int dim>
 std::shared_ptr<Insertion<dim>>
 DEMSolver<dim>::set_insertion_type(const DEMSolverParameters<dim> &parameters)
 {
-  if (parameters.insertion_info.insertion_method ==
-      Parameters::Lagrangian::InsertionInfo::InsertionMethod::file)
+  using namespace Parameters::Lagrangian;
+  InsertionInfo::InsertionMethod insertion_method =
+    parameters.insertion_info.insertion_method;
+
+  switch (insertion_method)
     {
-      insertion_object =
-        std::make_shared<InsertionFile<dim>>(size_distribution_object_container,
-                                             triangulation,
-                                             parameters);
+      case InsertionInfo::InsertionMethod::file:
+        {
+          return std::make_shared<InsertionFile<dim>>(
+            size_distribution_object_container, triangulation, parameters);
+        }
+      case InsertionInfo::InsertionMethod::list:
+        {
+          return std::make_shared<InsertionList<dim>>(
+            size_distribution_object_container, triangulation, parameters);
+        }
+      case InsertionInfo::InsertionMethod::plane:
+        {
+          return std::make_shared<InsertionPlane<dim>>(
+            size_distribution_object_container, triangulation, parameters);
+        }
+      case InsertionInfo::InsertionMethod::volume:
+        {
+          return std::make_shared<InsertionVolume<dim>>(
+            size_distribution_object_container,
+            triangulation,
+            parameters,
+            maximum_particle_diameter);
+        }
+      default:
+        throw(std::runtime_error("Invalid insertion method."));
     }
-  else if (parameters.insertion_info.insertion_method ==
-           Parameters::Lagrangian::InsertionInfo::InsertionMethod::list)
-    {
-      insertion_object =
-        std::make_shared<InsertionList<dim>>(size_distribution_object_container,
-                                             triangulation,
-                                             parameters);
-    }
-  else if (parameters.insertion_info.insertion_method ==
-           Parameters::Lagrangian::InsertionInfo::InsertionMethod::plane)
-    {
-      insertion_object = std::make_shared<InsertionPlane<dim>>(
-        size_distribution_object_container, triangulation, parameters);
-    }
-  else if (parameters.insertion_info.insertion_method ==
-           Parameters::Lagrangian::InsertionInfo::InsertionMethod::volume)
-    {
-      insertion_object = std::make_shared<InsertionVolume<dim>>(
-        size_distribution_object_container,
-        triangulation,
-        parameters,
-        maximum_particle_diameter);
-    }
-  else
-    {
-      throw "The chosen insertion method is invalid";
-    }
-  return insertion_object;
 }
 
 template <int dim>
 std::shared_ptr<Integrator<dim>>
 DEMSolver<dim>::set_integrator_type(const DEMSolverParameters<dim> &parameters)
 {
-  if (parameters.model_parameters.integration_method ==
-      Parameters::Lagrangian::ModelParameters::IntegrationMethod::
-        velocity_verlet)
+  using namespace Parameters::Lagrangian;
+  ModelParameters::IntegrationMethod integration_method =
+    parameters.model_parameters.integration_method;
+
+  switch (integration_method)
     {
-      integrator_object = std::make_shared<VelocityVerletIntegrator<dim>>();
+      case ModelParameters::IntegrationMethod::velocity_verlet:
+          return std::make_shared<VelocityVerletIntegrator<dim>>();
+      case ModelParameters::IntegrationMethod::explicit_euler:
+          return std::make_shared<ExplicitEulerIntegrator<dim>>();
+      case ModelParameters::IntegrationMethod::gear3:
+          return std::make_shared<Gear3Integrator<dim>>();
+      default:
+        throw(std::runtime_error("Invalid integration method."));
     }
-  else if (parameters.model_parameters.integration_method ==
-           Parameters::Lagrangian::ModelParameters::IntegrationMethod::
-             explicit_euler)
-    {
-      integrator_object = std::make_shared<ExplicitEulerIntegrator<dim>>();
-    }
-  else if (parameters.model_parameters.integration_method ==
-           Parameters::Lagrangian::ModelParameters::IntegrationMethod::gear3)
-    {
-      integrator_object = std::make_shared<Gear3Integrator<dim>>();
-    }
-  else
-    {
-      throw "The chosen integration method is invalid";
-    }
-  return integrator_object;
 }
 
 template <int dim>
@@ -761,57 +748,10 @@ DEMSolver<dim>::report_statistics()
 
 template <int dim>
 void
-DEMSolver<dim>::solve()
+  DEMSolver<dim>::setup_triangulation_dependent_parameters()
 {
-  // Reading mesh
-  read_mesh(parameters.mesh,
-            parameters.restart.restart,
-            pcout,
-            triangulation,
-            parameters.boundary_conditions);
-
-  // Store information about floating mesh/background mesh intersection
-  for (unsigned int i_solid = 0; i_solid < solid_surfaces.size(); ++i_solid)
-    {
-      solid_surfaces_mesh_info[i_solid] =
-        solid_surfaces[i_solid]->map_solid_in_background_triangulation(
-          triangulation);
-    }
-
-  for (unsigned int i_solid = 0; i_solid < solid_volumes.size(); ++i_solid)
-    {
-      solid_volumes_mesh_info[i_solid] =
-        solid_volumes[i_solid]->map_solid_in_background_triangulation(
-          triangulation);
-    }
-
-  // Set insertion object type before the restart because the restart only
-  // rebuilds the member of the insertion object
-  insertion_object = set_insertion_type(parameters);
-
-  contact_detection_iteration_check_function =
-    set_contact_search_iteration_function();
-
-  if (parameters.restart.restart == true)
-    {
-      read_checkpoint(computing_timer,
-                      parameters,
-                      simulation_control,
-                      particles_pvdhandler,
-                      grid_pvdhandler,
-                      triangulation,
-                      particle_handler,
-                      insertion_object,
-                      solid_surfaces);
-
-      displacement.resize(particle_handler.get_max_local_particle_index());
-      force.resize(displacement.size());
-      torque.resize(displacement.size());
-
-      update_moment_of_inertia(particle_handler, MOI);
-
-      checkpoint_step = true;
-    }
+  particle_wall_contact_force_object =
+    set_particle_wall_contact_force_model(parameters, triangulation);
 
   // Store information about floating mesh/background mesh intersection
   for (unsigned int i_solid = 0; i_solid < solid_surfaces.size(); ++i_solid)
@@ -840,24 +780,17 @@ DEMSolver<dim>::solve()
               maximum_particle_diameter * 0.5));
 
   // Find the smallest cell size and use this as the floating mesh mapping
-  // criterion
-
-  double mapping_criterion_constant;
-  if constexpr (dim == 2)
-    mapping_criterion_constant = 0.70710678118; // 2^-0.5
-
-  if constexpr (dim == 3)
-    mapping_criterion_constant = 0.57735026919; // 3^-0.5
-
-  smallest_floating_mesh_mapping_criterion =
-    mapping_criterion_constant *
-    GridTools::minimal_cell_diameter(triangulation);
-
-  // The edge case comes when the cell are completely square/cubic. In that
-  // case, every sides of a cell are 2^-0.5 or 3^-0.5 times the cell_diameter.
-  // We want to refresh the mapping each time the solid-objet pass through a
-  // cell or there will be late contact detection. Thus, we use this value.
-
+  // criterion. The edge case comes when the cell are completely square/cubic.
+  // In that case, every sides of a cell are 2^-0.5 or 3^-0.5 times the
+  // cell_diameter. We want to refresh the mapping each time the solid-objet
+  // pass through a cell or there will be late contact detection. Thus, we use
+  // this value.
+  smallest_solid_object_mapping_criterion = [&] {
+    if constexpr (dim == 2) // 2^-0.5 * D_c,min
+      return 0.70710678118 * GridTools::minimal_cell_diameter(triangulation);
+    if constexpr (dim == 3) // 3^-0.5 * D_c,min
+      return 0.57735026919 * GridTools::minimal_cell_diameter(triangulation);
+  }();
 
   if (has_periodic_boundaries)
     {
@@ -874,6 +807,40 @@ DEMSolver<dim>::solve()
       periodic_offset =
         periodic_boundaries_object.get_periodic_offset_distance();
     }
+}
+
+template <int dim>
+void
+DEMSolver<dim>::solve()
+{
+  setup_parameters();
+
+  // Reading mesh
+  read_mesh(parameters.mesh,
+            parameters.restart.restart,
+            pcout,
+            triangulation,
+            parameters.boundary_conditions);
+
+  if (parameters.restart.restart == true)
+    {
+      read_checkpoint(computing_timer,
+                      parameters,
+                      simulation_control,
+                      particles_pvdhandler,
+                      grid_pvdhandler,
+                      triangulation,
+                      particle_handler,
+                      insertion_object,
+                      solid_surfaces);
+
+      resize_containers();
+      update_moment_of_inertia(particle_handler, MOI);
+
+      checkpoint_step = true;
+    }
+
+  setup_triangulation_dependent_parameters();
 
   // Find cell neighbors
   contact_manager.execute_cell_neighbors_search(
@@ -890,13 +857,6 @@ DEMSolver<dim>::solve()
     parameters.mesh.check_for_diamond_cells,
     parameters.mesh.expand_particle_wall_contact_search,
     pcout);
-
-  // Setting chosen contact force, insertion and integration methods
-  integrator_object = set_integrator_type(parameters);
-  particle_particle_contact_force_object =
-    set_particle_particle_contact_force_model(parameters);
-  particle_wall_contact_force_object =
-    set_particle_wall_contact_force_model(parameters, triangulation);
 
   // Setup background dof
   setup_background_dofs();
@@ -945,7 +905,7 @@ DEMSolver<dim>::solve()
       if (has_solid_objects)
         {
           solid_object_map_step = find_floating_mesh_mapping_step(
-            smallest_floating_mesh_mapping_criterion, this->solid_surfaces);
+            smallest_solid_object_mapping_criterion, this->solid_surfaces);
 
           if (solid_object_map_step)
             {
@@ -965,17 +925,14 @@ DEMSolver<dim>::solve()
             }
         }
 
-      contact_detection_step = contact_detection_step || solid_object_map_step;
-
       // Sort particles in cells
-      if (particles_insertion_step || load_balance_step ||
-          contact_detection_step || checkpoint_step)
+      if (check_contact_search_step(solid_object_map_step))
         {
           // Particles displacement if passing through a periodic boundary
           periodic_boundaries_object.execute_particles_displacement(
             particle_handler, periodic_boundaries_cells_information);
 
-          particle_handler.sort_particles_into_subdomains_and_cells();
+          sort_particles_into_subdomains_and_cells();
 
           if (has_sparse_contacts && !simulation_control->is_at_start())
             {
@@ -987,18 +944,6 @@ DEMSolver<dim>::solve()
                 triangulation.n_active_cells(),
                 mpi_communicator);
             }
-
-          displacement.resize(particle_handler.get_max_local_particle_index());
-          force.resize(displacement.size());
-          torque.resize(displacement.size());
-
-          // Updating moment of inertia container
-          update_moment_of_inertia(particle_handler, MOI);
-
-          particle_handler.exchange_ghost_particles(true);
-
-          // Reset checkpoint step
-          checkpoint_step = false;
 
           // Execute broad search by filling containers of particle-particle
           // contact pair candidates and containers of particle-wall
@@ -1033,9 +978,6 @@ DEMSolver<dim>::solve()
                 has_solid_objects);
             }
 
-          // Updating number of contact builds
-          contact_build_number++;
-
           // Update contacts, remove replicates and add new contact pairs
           // to the contact containers when particles are exchanged between
           // processors
@@ -1060,6 +1002,9 @@ DEMSolver<dim>::solve()
             simulation_control->get_current_time(),
             neighborhood_threshold_squared,
             has_solid_objects);
+
+          // Updating number of contact builds
+          contact_build_number++;
         }
       else
         {
@@ -1181,6 +1126,9 @@ DEMSolver<dim>::solve()
                            pcout,
                            mpi_communicator);
         }
+
+      // Reset checkpoint step
+      checkpoint_step = false;
     }
 
   finish_simulation();

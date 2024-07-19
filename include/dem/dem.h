@@ -73,6 +73,22 @@ public:
   solve();
 
 private:
+  void
+  setup_parameters();
+
+  void
+  setup_triangulation_dependent_parameters();
+  /**
+   * @brief Initializes the distribution type for the particles, and sets the
+   * maximum particle diameter and the neighborhood threshold squared in the
+   * process.
+   */
+  inline void
+  setup_distribution_type();
+
+  void
+  setup_solid_objects();
+
   /**
    * @brief Manages the call to the load balance by first identifying if
    * load balancing is required and then performing the load balance.
@@ -87,6 +103,43 @@ private:
    */
   inline std::function<bool()>
   set_contact_search_iteration_function();
+
+  inline void
+  resize_containers()
+  {
+    displacement.resize(particle_handler.get_max_local_particle_index());
+    force.resize(displacement.size());
+    torque.resize(displacement.size());
+  }
+
+  inline void
+  sort_particles_into_subdomains_and_cells()
+  {
+    particle_handler.sort_particles_into_subdomains_and_cells();
+
+    // Resizing displacement, force and torque containers
+    resize_containers();
+
+    // Updating moment of inertia container
+    update_moment_of_inertia(particle_handler, MOI);
+
+    particle_handler.exchange_ghost_particles(true);
+  }
+
+  inline bool
+  check_contact_search_step(bool solid_object_map_step)
+  {
+    if (particles_insertion_step || load_balance_step ||
+        contact_detection_step || checkpoint_step || solid_object_map_step)
+      {
+        return true;
+      }
+    else
+      {
+        return false;
+      }
+  }
+
 
   /**
    * @brief Establish if this is a contact detection iteration using the constant contact detection frequency.
@@ -161,28 +214,6 @@ private:
   set_integrator_type(const DEMSolverParameters<dim> &dem_parameters);
 
   /**
-   * Sets the chosen particle-particle contact force model in the parameter
-   * handler file
-   *
-   * @param dem_parameters DEM parameters
-   * @return A pointer to the particle-particle contact force object
-   */
-  std::shared_ptr<ParticleParticleContactForceBase<dim>>
-  set_particle_particle_contact_force(
-    const DEMSolverParameters<dim> &dem_parameters);
-
-  /**
-   * Sets the chosen particle-wall contact force model in the parameter handler
-   * file
-   *
-   * @param dem_parameters DEM parameters
-   * @return A pointer to the particle-wall contact force object
-   */
-  std::shared_ptr<ParticleWallContactForce<dim>>
-  set_particle_wall_contact_force(
-    const DEMSolverParameters<dim> &dem_parameters);
-
-  /**
    * Sets the background degree of freedom used for parallel grid output
    *
    */
@@ -223,7 +254,7 @@ private:
   unsigned int                         contact_build_number;
   TimerOutput                          computing_timer;
   double                               smallest_contact_search_criterion;
-  double                               smallest_floating_mesh_mapping_criterion;
+  double                               smallest_solid_object_mapping_criterion;
   Particles::ParticleHandler<dim, dim> particle_handler;
   bool                                 contact_detection_step;
   bool                                 load_balance_step;

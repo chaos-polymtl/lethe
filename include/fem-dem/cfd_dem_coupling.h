@@ -23,6 +23,7 @@
 
 #include <dem/adaptive_sparse_contacts.h>
 #include <dem/data_containers.h>
+#include <dem/dem.h>
 #include <dem/dem_contact_manager.h>
 #include <dem/dem_solver_parameters.h>
 #include <dem/find_contact_detection_step.h>
@@ -49,7 +50,6 @@ template <int dim>
 class CFDDEMSolver : public GLSVANSSolver<dim>
 {
   using FuncPtrType = bool (CFDDEMSolver<dim>::*)(const unsigned int &counter);
-  FuncPtrType check_contact_search_step;
 
 public:
   CFDDEMSolver(CFDDEMSimulationParameters<dim> &nsparam);
@@ -146,24 +146,6 @@ private:
   void
   add_fluid_particle_interaction_torque();
 
-  /**
-   * Sets the chosen particle-particle contact force model in the parameter
-   * handler file
-   *
-   * @return A pointer to the particle-particle contact force object
-   */
-  std::shared_ptr<ParticleParticleContactForceBase<dim>>
-  set_particle_particle_contact_force();
-
-  /**
-   * Sets the chosen particle-wall contact force model in the parameter handler
-   * file
-   *
-   * @return A pointer to the particle-wall contact force object
-   */
-  std::shared_ptr<ParticleWallContactForce<dim>>
-  set_particle_wall_contact_force();
-
   void
   read_dem();
 
@@ -204,6 +186,62 @@ private:
   void
   dynamic_flow_control() override;
 
+  inline bool
+  check_contact_detection_method(
+    unsigned int                          counter,
+    CFDDEMSimulationParameters<dim>      &param,
+    std::vector<double>                  &displacement,
+    Particles::ParticleHandler<dim, dim> &particle_handler,
+    MPI_Comm                              mpi_communicator,
+    std::shared_ptr<SimulationControl>    simulation_control,
+    bool                                  contact_detection_step,
+    bool                                  checkpoint_step,
+    bool                                  load_balance_step,
+    double                                smallest_contact_search_criterion)
+  {
+    // Use namespace and alias to make the code more readable
+    using namespace Parameters::Lagrangian;
+    Parameters::Lagrangian::ModelParameters &model_parameters =
+      param.dem_parameters.model_parameters;
+
+    switch (model_parameters.contact_detection_method)
+      {
+        case ModelParameters::ContactDetectionMethod::constant:
+          {
+            return ((counter % model_parameters.contact_detection_frequency) ==
+                    0);
+          }
+        case ModelParameters::ContactDetectionMethod::dynamic:
+          {
+            // The sorting into subdomain step checks whether the current
+            // time step is a step that requires sorting particles into
+            // subdomains and cells. This is applicable if any of the following
+            // three conditions apply: a load balancing step, a restart
+            // simulation step, or a contact detection step.
+            bool sorting_in_subdomains_step =
+              (checkpoint_step || load_balance_step || contact_detection_step);
+
+            if (sorting_in_subdomains_step)
+              displacement.resize(
+                particle_handler.get_max_local_particle_index());
+
+            contact_detection_step = find_particle_contact_detection_step<dim>(
+              particle_handler,
+              simulation_control->get_time_step() /
+                param.cfd_dem.coupling_frequency,
+              smallest_contact_search_criterion,
+              mpi_communicator,
+              sorting_in_subdomains_step,
+              displacement);
+
+            return contact_detection_step;
+          }
+        default: // Invalid contact detection method parameter is already
+                 // checked
+          return false;
+      }
+  }
+
   /**
    * @brief Checks all the conditions that require a contact search step. The
    * check of conditions is done in order of suspected frequency occurrence.
@@ -211,7 +249,7 @@ private:
    * @param counter The counter of DEM iterations in a CFD iteration.
    */
   inline bool
-  contact_search_step(const unsigned int counter)
+  check_contact_search_step(const unsigned int counter)
   {
     if (contact_detection_step)
       {
