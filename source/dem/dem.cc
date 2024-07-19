@@ -63,9 +63,7 @@ DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
   // Print simulation starting information
   pcout << std::endl;
   std::stringstream ss;
-
   ss << "Running on " << n_mpi_processes << " rank(s)";
-
   announce_string(pcout, ss.str(), '*');
 
   // Check if the output directory exists
@@ -84,6 +82,8 @@ DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
   // Change the behavior of the timer for situations when you don't want outputs
   if (parameters.timer.type == Parameters::Timer::Type::none)
     computing_timer.disable_output();
+
+  // Set the simulation control as transient DEM
   simulation_control = std::make_shared<SimulationControlTransientDEM>(
     parameters.simulation_control);
 
@@ -97,7 +97,7 @@ DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
   // Attach the correct functions to the signals inside the triangulation
   load_balancing.connect_weight_signals();
 
-
+  // Set the adaptive sparse contacts parameters
   if (parameters.model_parameters.sparse_particle_contacts)
     {
       has_sparse_contacts = true;
@@ -107,95 +107,21 @@ DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
         parameters.model_parameters.advect_particles);
     }
 
-  maximum_particle_diameter = 0;
-  for (unsigned int particle_type = 0;
-       particle_type <
-       parameters.lagrangian_physical_properties.particle_type_number;
-       particle_type++)
-    {
-      if (parameters.lagrangian_physical_properties.distribution_type.at(
-            particle_type) ==
-          Parameters::Lagrangian::SizeDistributionType::uniform)
-        {
-          size_distribution_object_container[particle_type] =
-            std::make_shared<UniformDistribution>(
-              parameters.lagrangian_physical_properties
-                .particle_average_diameter.at(particle_type));
-        }
-      else if (parameters.lagrangian_physical_properties.distribution_type.at(
-                 particle_type) ==
-               Parameters::Lagrangian::SizeDistributionType::normal)
-        {
-          size_distribution_object_container[particle_type] =
-            std::make_shared<NormalDistribution>(
-              parameters.lagrangian_physical_properties
-                .particle_average_diameter.at(particle_type),
-              parameters.lagrangian_physical_properties.particle_size_std.at(
-                particle_type),
-              parameters.lagrangian_physical_properties
-                  .seed_for_distributions[particle_type] +
-                this_mpi_process);
-        }
-      else if (parameters.lagrangian_physical_properties.distribution_type.at(
-                 particle_type) ==
-               Parameters::Lagrangian::SizeDistributionType::custom)
-        {
-          size_distribution_object_container[particle_type] =
-            std::make_shared<CustomDistribution>(
-              parameters.lagrangian_physical_properties.particle_custom_diameter
-                .at(particle_type),
-              parameters.lagrangian_physical_properties
-                .particle_custom_probability.at(particle_type),
-              parameters.lagrangian_physical_properties
-                  .seed_for_distributions[particle_type] +
-                this_mpi_process);
-        }
-      maximum_particle_diameter = std::max(
-        maximum_particle_diameter,
-        size_distribution_object_container[particle_type]->find_max_diameter());
-    }
-
-  neighborhood_threshold_squared =
-    std::pow(parameters.model_parameters.neighborhood_threshold *
-               maximum_particle_diameter,
-             2);
+  // Set the distribution type and initialize the neighborhood threshold
+  setup_distribution_type();
 
   if (this_mpi_process == 0)
     input_parameter_inspection(parameters,
                                pcout,
                                size_distribution_object_container);
 
+  // Set the grid motion type
   grid_motion_object =
     std::make_shared<GridMotion<dim, dim>>(parameters.grid_motion,
                                            simulation_control->get_time_step());
 
-  for (unsigned int i_solid = 0;
-       i_solid < parameters.solid_objects->number_solid_surfaces;
-       ++i_solid)
-    {
-      solid_surfaces.push_back(std::make_shared<SerialSolid<dim - 1, dim>>(
-        this->parameters.solid_objects->solid_surfaces[i_solid], i_solid));
-    }
-
-  for (unsigned int i_solid = 0;
-       i_solid < parameters.solid_objects->number_solid_volumes;
-       ++i_solid)
-    {
-      solid_volumes.push_back(std::make_shared<SerialSolid<dim, dim>>(
-        this->parameters.solid_objects->solid_volumes[i_solid], i_solid));
-    }
-
-  // Generate solid objects
-  solid_surfaces_mesh_info.resize(solid_surfaces.size());
-  solid_volumes_mesh_info.resize(solid_volumes.size());
-
-  // Resize particle_floating_mesh_in_contact
-  if ((solid_surfaces.size() + solid_volumes.size()) > 0)
-    {
-      has_solid_objects = true;
-      contact_manager.particle_floating_mesh_in_contact.resize(
-        solid_surfaces.size() + solid_volumes.size());
-    }
+  // Set up the solid objects
+  setup_solid_objects();
 
   // Check if there are periodic boundaries
   for (unsigned int i_bc = 0;
@@ -246,6 +172,88 @@ DEMSolver<dim>::setup_background_dofs()
       background_constraints.close();
 
       sparse_contacts_object.map_periodic_nodes(background_constraints);
+    }
+}
+
+template <int dim>
+void
+  DEMSolver<dim>::setup_distribution_type()
+{
+  // Use namespace and alias to make the code more readable
+  using namespace Parameters::Lagrangian;
+  LagrangianPhysicalProperties &lpp =
+    parameters.lagrangian_physical_properties;
+
+  maximum_particle_diameter = 0;
+  for (unsigned int particle_type = 0;
+       particle_type < lpp.particle_type_number;
+       particle_type++)
+    {
+      switch (lpp.distribution_type.at(particle_type))
+        {
+          case SizeDistributionType::uniform:
+            size_distribution_object_container[particle_type] =
+              std::make_shared<UniformDistribution>(
+                lpp.particle_average_diameter.at(particle_type));
+            break;
+          case SizeDistributionType::normal:
+            size_distribution_object_container[particle_type] =
+              std::make_shared<NormalDistribution>(
+                lpp.particle_average_diameter.at(particle_type),
+                lpp.particle_size_std.at(particle_type),
+                lpp.seed_for_distributions[particle_type] + this_mpi_process);
+            break;
+          case SizeDistributionType::custom:
+            size_distribution_object_container[particle_type] =
+              std::make_shared<CustomDistribution>(
+                lpp.particle_custom_diameter.at(particle_type),
+                lpp.particle_custom_probability.at(particle_type),
+                lpp.seed_for_distributions[particle_type] + this_mpi_process);
+            break;
+        }
+
+      maximum_particle_diameter =
+        std::max(maximum_particle_diameter,
+                 size_distribution_object_container[particle_type]
+                   ->find_max_diameter());
+    }
+
+  neighborhood_threshold_squared =
+    std::pow(parameters.model_parameters.neighborhood_threshold *
+               maximum_particle_diameter,
+             2);
+}
+
+template <int dim>
+void
+  DEMSolver<dim>::setup_solid_objects()
+{
+  for (unsigned int i_solid = 0;
+       i_solid < parameters.solid_objects->number_solid_surfaces;
+       ++i_solid)
+    {
+      solid_surfaces.push_back(std::make_shared<SerialSolid<dim - 1, dim>>(
+        this->parameters.solid_objects->solid_surfaces[i_solid], i_solid));
+    }
+
+  for (unsigned int i_solid = 0;
+       i_solid < parameters.solid_objects->number_solid_volumes;
+       ++i_solid)
+    {
+      solid_volumes.push_back(std::make_shared<SerialSolid<dim, dim>>(
+        this->parameters.solid_objects->solid_volumes[i_solid], i_solid));
+    }
+
+  // Generate solid objects
+  solid_surfaces_mesh_info.resize(solid_surfaces.size());
+  solid_volumes_mesh_info.resize(solid_volumes.size());
+
+  // Resize particle_floating_mesh_in_contact
+  if ((solid_surfaces.size() + solid_volumes.size()) > 0)
+    {
+      has_solid_objects = true;
+      contact_manager.particle_floating_mesh_in_contact.resize(
+        solid_surfaces.size() + solid_volumes.size());
     }
 }
 

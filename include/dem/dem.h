@@ -74,6 +74,17 @@ public:
 
 private:
   /**
+   * @brief Initializes the distribution type for the particles, and sets the
+   * maximum particle diameter and the neighborhood threshold squared in the
+   * process.
+   */
+  inline void
+  setup_distribution_type();
+
+  void
+  setup_solid_objects();
+
+  /**
    * @brief Manages the call to the load balance by first identifying if
    * load balancing is required and then performing the load balance.
    */
@@ -159,28 +170,6 @@ private:
    */
   std::shared_ptr<Integrator<dim>>
   set_integrator_type(const DEMSolverParameters<dim> &dem_parameters);
-
-  /**
-   * Sets the chosen particle-particle contact force model in the parameter
-   * handler file
-   *
-   * @param dem_parameters DEM parameters
-   * @return A pointer to the particle-particle contact force object
-   */
-  std::shared_ptr<ParticleParticleContactForceBase<dim>>
-  set_particle_particle_contact_force(
-    const DEMSolverParameters<dim> &dem_parameters);
-
-  /**
-   * Sets the chosen particle-wall contact force model in the parameter handler
-   * file
-   *
-   * @param dem_parameters DEM parameters
-   * @return A pointer to the particle-wall contact force object
-   */
-  std::shared_ptr<ParticleWallContactForce<dim>>
-  set_particle_wall_contact_force(
-    const DEMSolverParameters<dim> &dem_parameters);
 
   /**
    * Sets the background degree of freedom used for parallel grid output
