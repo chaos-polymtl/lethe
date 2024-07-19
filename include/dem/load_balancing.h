@@ -32,7 +32,7 @@
 using namespace dealii;
 
 /**
- * @brief Manages the load balancing, or repartitioning, of the domain according
+ * @brief Manages the load balancing (repartitioning), of the domain according
  * to the computational load of the cells and the particles.
  * It is used by the DEM and the coupling CFD-DEM solvers.
  */
@@ -113,8 +113,8 @@ public:
   }
 
   /**
-   * @brief Sets the right load balancing iteration check function according
-   * to the chosen load balancing method. During the setup on the parameter,
+   * @brief Sets the load balancing iteration check function according
+   * to the chosen load balancing method. During the setup of the parameters,
    * the validation of the method is already checked, so the default value is
    * when the method is `none`.
    *
@@ -173,13 +173,6 @@ public:
   check_load_balance_dynamic();
 
   /**
-   * @brief Establish if this is a load-balance step using the dynamic method when the sparse contacts mechanism is enabled.
-   * The dynamic method uses the load imbalance between the core as a load
-   * balancing criteria.
-   *
-   * @return bool indicating if this is a load balance iteration.
-   */
-  /**
    * @brief Determines whether the present is the load balance step when
    * load balance method is `dynamic_with_sparse_contacts`. It used the same
    * method as `dynamic` but with the addition of factors according to the cell
@@ -205,7 +198,7 @@ public:
    * parallel::distributed::Triangulation, which will be called every time the
    * load balancing or refinement functions are called.
    */
-  void
+  inline void
   connect_weight_signals()
   {
     // Connect the default cell weight function
@@ -226,7 +219,7 @@ public:
    * @brief Connects the weight signals of the cells to the triangulation with
    * the mobility status. This is recalled when mobility status changes.
    */
-  void
+  inline void
   connect_mobility_status_weight_signals()
   {
     // Clear and connect a new cell weight function
@@ -325,13 +318,13 @@ private:
   unsigned int particle_weight;
 
   /**
-   * @brief Load weight factor of weight particle in a cell having an inactive
+   * @brief Load weight factor of particle weight in a cell with an inactive
    * mobility status (only with ASC).
    */
   double inactive_status_factor;
 
   /**
-   * @brief Load weight factor of weight particle in a cell having an active
+   * @brief Load weight factor of particle weight in a cell with an active
    * mobility status (only with ASC).
    */
   double active_status_factor;
