@@ -240,7 +240,7 @@ private:
 
   // Initialization of classes and building objects
   DEMContactManager<dim>             contact_manager;
-  LoadBalancing<dim>                 load_balancing;
+  LagrangianLoadBalancing<dim>       load_balancing;
   std::shared_ptr<SimulationControl> simulation_control;
   BoundaryCellsInformation<dim>      boundary_cell_object;
   std::shared_ptr<GridMotion<dim>>   grid_motion_object;

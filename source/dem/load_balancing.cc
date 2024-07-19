@@ -4,7 +4,7 @@
 using namespace dealii;
 
 template <int dim>
-LoadBalancing<dim>::LoadBalancing()
+LagrangianLoadBalancing<dim>::LagrangianLoadBalancing()
   : mpi_communicator(MPI_COMM_WORLD)
   , n_mpi_processes(Utilities::MPI::n_mpi_processes(mpi_communicator))
   , this_mpi_process(Utilities::MPI::this_mpi_process(mpi_communicator))
@@ -12,7 +12,7 @@ LoadBalancing<dim>::LoadBalancing()
 
 template <int dim>
 inline bool
-LoadBalancing<dim>::check_load_balance_once()
+LagrangianLoadBalancing<dim>::check_load_balance_once()
 {
   if (simulation_control->get_step_number() == load_balance_step)
     {
@@ -24,7 +24,7 @@ LoadBalancing<dim>::check_load_balance_once()
 
 template <int dim>
 inline bool
-LoadBalancing<dim>::check_load_balance_frequent()
+LagrangianLoadBalancing<dim>::check_load_balance_frequent()
 {
   if ((simulation_control->get_step_number() % load_balance_frequency) == 0)
     {
@@ -36,7 +36,7 @@ LoadBalancing<dim>::check_load_balance_frequent()
 
 template <int dim>
 inline bool
-LoadBalancing<dim>::check_load_balance_dynamic()
+LagrangianLoadBalancing<dim>::check_load_balance_dynamic()
 {
   if (simulation_control->get_step_number() % dynamic_check_frequency == 0)
     {
@@ -62,7 +62,7 @@ LoadBalancing<dim>::check_load_balance_dynamic()
 
 template <int dim>
 inline bool
-LoadBalancing<dim>::check_load_balance_with_sparse_contacts()
+LagrangianLoadBalancing<dim>::check_load_balance_with_sparse_contacts()
 {
   if (simulation_control->get_step_number() % dynamic_check_frequency == 0)
     {
@@ -138,7 +138,7 @@ LoadBalancing<dim>::check_load_balance_with_sparse_contacts()
 
 template <int dim>
 unsigned int
-LoadBalancing<dim>::calculate_total_cell_weight(
+LagrangianLoadBalancing<dim>::calculate_total_cell_weight(
   const typename parallel::distributed::Triangulation<dim>::cell_iterator &cell,
   const CellStatus status) const
 {
@@ -180,7 +180,7 @@ LoadBalancing<dim>::calculate_total_cell_weight(
 
 template <int dim>
 unsigned int
-LoadBalancing<dim>::calculate_total_cell_weight_with_mobility_status(
+LagrangianLoadBalancing<dim>::calculate_total_cell_weight_with_mobility_status(
   const typename parallel::distributed::Triangulation<dim>::cell_iterator &cell,
   const CellStatus status) const
 {
@@ -237,5 +237,5 @@ LoadBalancing<dim>::calculate_total_cell_weight_with_mobility_status(
   return 0;
 }
 
-template class LoadBalancing<2>;
-template class LoadBalancing<3>;
+template class LagrangianLoadBalancing<2>;
+template class LagrangianLoadBalancing<3>;

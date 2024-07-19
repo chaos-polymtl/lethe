@@ -37,10 +37,10 @@ using namespace dealii;
  * It is used by the DEM and the coupling CFD-DEM solvers.
  */
 template <int dim>
-class LoadBalancing
+class LagrangianLoadBalancing
 {
 public:
-  LoadBalancing();
+  LagrangianLoadBalancing();
 
 public:
   /**
