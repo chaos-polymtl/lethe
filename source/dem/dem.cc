@@ -177,16 +177,14 @@ DEMSolver<dim>::setup_background_dofs()
 
 template <int dim>
 void
-  DEMSolver<dim>::setup_distribution_type()
+DEMSolver<dim>::setup_distribution_type()
 {
   // Use namespace and alias to make the code more readable
   using namespace Parameters::Lagrangian;
-  LagrangianPhysicalProperties &lpp =
-    parameters.lagrangian_physical_properties;
+  LagrangianPhysicalProperties &lpp = parameters.lagrangian_physical_properties;
 
   maximum_particle_diameter = 0;
-  for (unsigned int particle_type = 0;
-       particle_type < lpp.particle_type_number;
+  for (unsigned int particle_type = 0; particle_type < lpp.particle_type_number;
        particle_type++)
     {
       switch (lpp.distribution_type.at(particle_type))
@@ -212,10 +210,9 @@ void
             break;
         }
 
-      maximum_particle_diameter =
-        std::max(maximum_particle_diameter,
-                 size_distribution_object_container[particle_type]
-                   ->find_max_diameter());
+      maximum_particle_diameter = std::max(
+        maximum_particle_diameter,
+        size_distribution_object_container[particle_type]->find_max_diameter());
     }
 
   neighborhood_threshold_squared =
@@ -226,7 +223,7 @@ void
 
 template <int dim>
 void
-  DEMSolver<dim>::setup_solid_objects()
+DEMSolver<dim>::setup_solid_objects()
 {
   for (unsigned int i_solid = 0;
        i_solid < parameters.solid_objects->number_solid_surfaces;

@@ -12,59 +12,6 @@
 #include <fstream>
 #include <sstream>
 
-template <int dim>
-bool
-check_contact_detection_method(
-  unsigned int                          counter,
-  CFDDEMSimulationParameters<dim>      &param,
-  std::vector<double>                  &displacement,
-  Particles::ParticleHandler<dim, dim> &particle_handler,
-  MPI_Comm                              mpi_communicator,
-  std::shared_ptr<SimulationControl>    simulation_control,
-  bool                                  contact_detection_step,
-  bool                                  checkpoint_step,
-  bool                                  load_balance_step,
-  double                                smallest_contact_search_criterion)
-{
-  if (param.dem_parameters.model_parameters.contact_detection_method ==
-      Parameters::Lagrangian::ModelParameters::ContactDetectionMethod::constant)
-    {
-      return ((counter % param.dem_parameters.model_parameters
-                           .contact_detection_frequency) == 0);
-    }
-  else if (param.dem_parameters.model_parameters.contact_detection_method ==
-           Parameters::Lagrangian::ModelParameters::ContactDetectionMethod::
-             dynamic)
-    {
-      // The sorting into subdomain step checks whether or not the current time
-      // step is a step that requires sorting particles into subdomains and
-      // cells.
-      // This is applicable if any of the following three conditions apply:if
-      // its a load balancing step, a restart simulation step, or a contact
-      // detection tsep.
-      bool sorting_in_subdomains_step =
-        (checkpoint_step || load_balance_step || contact_detection_step);
-
-      if (sorting_in_subdomains_step)
-        displacement.resize(particle_handler.get_max_local_particle_index());
-
-      contact_detection_step = find_particle_contact_detection_step<dim>(
-        particle_handler,
-        simulation_control->get_time_step() / param.cfd_dem.coupling_frequency,
-        smallest_contact_search_criterion,
-        mpi_communicator,
-        sorting_in_subdomains_step,
-        displacement);
-
-      return contact_detection_step;
-    }
-  else
-    {
-      throw std::runtime_error(
-        "Specified contact detection method is not valid");
-    }
-}
-
 // Constructor for class CFD-DEM
 template <int dim>
 CFDDEMSolver<dim>::CFDDEMSolver(CFDDEMSimulationParameters<dim> &nsparam)
@@ -539,10 +486,21 @@ void
 CFDDEMSolver<dim>::initialize_dem_parameters()
 {
   this->pcout << "Initializing DEM parameters " << std::endl;
-
   const auto parallel_triangulation =
     dynamic_cast<parallel::distributed::Triangulation<dim> *>(
       &*this->triangulation);
+
+  // Finding the smallest contact search frequency criterion between (smallest
+  // cell size - largest particle radius) and (security factor * (blob diameter
+  // - 1) *  largest particle radius). This value is used in
+  // find_contact_detection_frequency function
+  smallest_contact_search_criterion =
+    std::min((GridTools::minimal_cell_diameter(*this->triangulation) -
+              maximum_particle_diameter * 0.5),
+             (dem_parameters.model_parameters.dynamic_contact_search_factor *
+              (dem_parameters.model_parameters.neighborhood_threshold - 1) *
+              maximum_particle_diameter * 0.5));
+
 
   if (has_periodic_boundaries)
     {
@@ -561,25 +519,6 @@ CFDDEMSolver<dim>::initialize_dem_parameters()
 
       // Initialize the flag for particle displacement in PBC
       particle_displaced_in_pbc = false;
-    }
-
-  // Setup load balancing parameters
-  load_balancing.set_parameters(dem_parameters.model_parameters);
-  load_balancing.copy_references(this->simulation_control,
-                                 *parallel_triangulation,
-                                 this->particle_handler,
-                                 sparse_contacts_object);
-
-  // Attach the correct functions to the signals inside the triangulation
-  load_balancing.connect_weight_signals();
-
-  if (dem_parameters.model_parameters.sparse_particle_contacts)
-    {
-      has_sparse_contacts = true;
-      sparse_contacts_object.set_parameters(
-        dem_parameters.model_parameters.granular_temperature_threshold,
-        dem_parameters.model_parameters.solid_fraction_threshold,
-        dem_parameters.model_parameters.advect_particles);
     }
 
   // Finding cell neighbors
@@ -1313,69 +1252,71 @@ CFDDEMSolver<dim>::dem_setup_contact_parameters()
   size_distribution_object_container.reserve(
     dem_parameters.lagrangian_physical_properties.particle_type_number);
 
-  maximum_particle_diameter = 0.;
-  for (unsigned int particle_type = 0;
-       particle_type <
-       dem_parameters.lagrangian_physical_properties.particle_type_number;
-       particle_type++)
-    {
-      if (dem_parameters.lagrangian_physical_properties.distribution_type.at(
-            particle_type) ==
-          Parameters::Lagrangian::SizeDistributionType::uniform)
-        {
-          size_distribution_object_container.push_back(
-            std::make_shared<UniformDistribution>(
-              dem_parameters.lagrangian_physical_properties
-                .particle_average_diameter.at(particle_type)));
-        }
-      else if (dem_parameters.lagrangian_physical_properties.distribution_type
-                 .at(particle_type) ==
-               Parameters::Lagrangian::SizeDistributionType::normal)
-        {
-          size_distribution_object_container.push_back(
-            std::make_shared<NormalDistribution>(
-              dem_parameters.lagrangian_physical_properties
-                .particle_average_diameter.at(particle_type),
-              dem_parameters.lagrangian_physical_properties.particle_size_std
-                .at(particle_type),
-              dem_parameters.lagrangian_physical_properties
-                .seed_for_distributions[particle_type]));
-        }
-      else if (dem_parameters.lagrangian_physical_properties.distribution_type
-                 .at(particle_type) ==
-               Parameters::Lagrangian::SizeDistributionType::custom)
-        {
-          size_distribution_object_container.push_back(
-            std::make_shared<CustomDistribution>(
-              dem_parameters.lagrangian_physical_properties
-                .particle_custom_diameter.at(particle_type),
-              dem_parameters.lagrangian_physical_properties
-                .particle_custom_probability.at(particle_type),
-              dem_parameters.lagrangian_physical_properties
-                .seed_for_distributions[particle_type]));
-        }
+  const auto parallel_triangulation =
+    dynamic_cast<parallel::distributed::Triangulation<dim> *>(
+      &*this->triangulation);
 
-      maximum_particle_diameter = std::max(
-        maximum_particle_diameter,
-        size_distribution_object_container[particle_type]->find_max_diameter());
+  // Setup load balancing parameters
+  load_balancing.set_parameters(dem_parameters.model_parameters);
+  load_balancing.copy_references(this->simulation_control,
+                                 *parallel_triangulation,
+                                 this->particle_handler,
+                                 sparse_contacts_object);
+
+  // Attach the correct functions to the signals inside the triangulation
+  load_balancing.connect_weight_signals();
+
+  if (dem_parameters.model_parameters.sparse_particle_contacts)
+    {
+      has_sparse_contacts = true;
+      sparse_contacts_object.set_parameters(
+        dem_parameters.model_parameters.granular_temperature_threshold,
+        dem_parameters.model_parameters.solid_fraction_threshold,
+        dem_parameters.model_parameters.advect_particles);
     }
 
-  neighborhood_threshold_squared =
-    std::pow(dem_parameters.model_parameters.neighborhood_threshold *
-               maximum_particle_diameter,
-             2);
+  {
+    // Use namespace and alias to make the code more readable
+    using namespace Parameters::Lagrangian;
+    LagrangianPhysicalProperties &lpp = dem_parameters.lagrangian_physical_properties;
 
+    maximum_particle_diameter = 0;
+    for (unsigned int particle_type = 0; particle_type < lpp.particle_type_number;
+         particle_type++)
+      {
+        switch (lpp.distribution_type.at(particle_type))
+          {
+            case SizeDistributionType::uniform:
+              size_distribution_object_container[particle_type] =
+                std::make_shared<UniformDistribution>(
+                  lpp.particle_average_diameter.at(particle_type));
+              break;
+            case SizeDistributionType::normal:
+              size_distribution_object_container[particle_type] =
+                std::make_shared<NormalDistribution>(
+                  lpp.particle_average_diameter.at(particle_type),
+                  lpp.particle_size_std.at(particle_type),
+                  lpp.seed_for_distributions[particle_type] + this_mpi_process);
+              break;
+            case SizeDistributionType::custom:
+              size_distribution_object_container[particle_type] =
+                std::make_shared<CustomDistribution>(
+                  lpp.particle_custom_diameter.at(particle_type),
+                  lpp.particle_custom_probability.at(particle_type),
+                  lpp.seed_for_distributions[particle_type] + this_mpi_process);
+              break;
+          }
 
-  // Finding the smallest contact search frequency criterion between (smallest
-  // cell size - largest particle radius) and (security factor * (blob diameter
-  // - 1) *  largest particle radius). This value is used in
-  // find_contact_detection_frequency function
-  smallest_contact_search_criterion =
-    std::min((GridTools::minimal_cell_diameter(*this->triangulation) -
-              maximum_particle_diameter * 0.5),
-             (dem_parameters.model_parameters.dynamic_contact_search_factor *
-              (dem_parameters.model_parameters.neighborhood_threshold - 1) *
-              maximum_particle_diameter * 0.5));
+        maximum_particle_diameter = std::max(
+          maximum_particle_diameter,
+          size_distribution_object_container[particle_type]->find_max_diameter());
+      }
+
+    neighborhood_threshold_squared =
+      std::pow(dem_parameters.model_parameters.neighborhood_threshold *
+                 maximum_particle_diameter,
+               2);
+  }
 
   dem_time_step =
     this->simulation_control->get_time_step() / coupling_frequency;
