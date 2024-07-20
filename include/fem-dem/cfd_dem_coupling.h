@@ -49,7 +49,6 @@ template <int dim>
 class CFDDEMSolver : public GLSVANSSolver<dim>
 {
   using FuncPtrType = bool (CFDDEMSolver<dim>::*)(const unsigned int &counter);
-  FuncPtrType check_contact_search_step;
 
 public:
   CFDDEMSolver(CFDDEMSimulationParameters<dim> &nsparam);
@@ -236,7 +235,8 @@ private:
 
             return contact_detection_step;
           }
-        default: // Invalid contact detection method parameter is already checked
+        default: // Invalid contact detection method parameter is already
+                 // checked
           return false;
       }
   }
@@ -248,7 +248,7 @@ private:
    * @param counter The counter of DEM iterations in a CFD iteration.
    */
   inline bool
-  contact_search_step(const unsigned int counter)
+  check_contact_search_step(const unsigned int counter)
   {
     if (contact_detection_step)
       {

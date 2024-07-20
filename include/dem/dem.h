@@ -99,6 +99,43 @@ private:
   inline std::function<bool()>
   set_contact_search_iteration_function();
 
+  inline void
+  resize_containers()
+  {
+    displacement.resize(particle_handler.get_max_local_particle_index());
+    force.resize(displacement.size());
+    torque.resize(displacement.size());
+  }
+
+  inline void
+  sort_particles_into_subdomains_and_cells()
+  {
+    particle_handler.sort_particles_into_subdomains_and_cells();
+
+    // Resizing displacement, force and torque containers
+    resize_containers();
+
+    // Updating moment of inertia container
+    update_moment_of_inertia(particle_handler, MOI);
+
+    particle_handler.exchange_ghost_particles(true);
+  }
+
+  inline bool
+  check_contact_search_step(bool solid_object_map_step)
+  {
+    if (particles_insertion_step || load_balance_step ||
+        contact_detection_step || checkpoint_step || solid_object_map_step)
+      {
+        return true;
+      }
+    else
+      {
+        return false;
+      }
+  }
+
+
   /**
    * @brief Establish if this is a contact detection iteration using the constant contact detection frequency.
    * If the iteration number is a multiple of the frequency, this iteration is

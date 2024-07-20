@@ -809,10 +809,7 @@ DEMSolver<dim>::solve()
                       insertion_object,
                       solid_surfaces);
 
-      displacement.resize(particle_handler.get_max_local_particle_index());
-      force.resize(displacement.size());
-      torque.resize(displacement.size());
-
+      resize_containers();
       update_moment_of_inertia(particle_handler, MOI);
 
       checkpoint_step = true;
@@ -970,24 +967,14 @@ DEMSolver<dim>::solve()
             }
         }
 
-      contact_detection_step = contact_detection_step || solid_object_map_step;
-
       // Sort particles in cells
-      if (particles_insertion_step || load_balance_step ||
-          contact_detection_step || checkpoint_step)
+      if (check_contact_search_step(solid_object_map_step))
         {
           // Particles displacement if passing through a periodic boundary
           periodic_boundaries_object.execute_particles_displacement(
             particle_handler, periodic_boundaries_cells_information);
 
-          particle_handler.sort_particles_into_subdomains_and_cells();
-
-          displacement.resize(particle_handler.get_max_local_particle_index());
-          force.resize(displacement.size());
-          torque.resize(displacement.size());
-
-          // Updating moment of inertia container
-          update_moment_of_inertia(particle_handler, MOI);
+          sort_particles_into_subdomains_and_cells();
 
           if (has_sparse_contacts && !simulation_control->is_at_start())
             {
@@ -999,11 +986,6 @@ DEMSolver<dim>::solve()
                 triangulation.n_active_cells(),
                 mpi_communicator);
             }
-
-          particle_handler.exchange_ghost_particles(true);
-
-          // Reset checkpoint step
-          checkpoint_step = false;
 
           // Execute broad search by filling containers of particle-particle
           // contact pair candidates and containers of particle-wall
@@ -1038,9 +1020,6 @@ DEMSolver<dim>::solve()
                 has_solid_objects);
             }
 
-          // Updating number of contact builds
-          contact_build_number++;
-
           // Update contacts, remove replicates and add new contact pairs
           // to the contact containers when particles are exchanged between
           // processors
@@ -1065,6 +1044,9 @@ DEMSolver<dim>::solve()
             simulation_control->get_current_time(),
             neighborhood_threshold_squared,
             has_solid_objects);
+
+          // Updating number of contact builds
+          contact_build_number++;
         }
       else
         {
@@ -1186,6 +1168,9 @@ DEMSolver<dim>::solve()
                            pcout,
                            mpi_communicator);
         }
+
+      // Reset checkpoint step
+      checkpoint_step = false;
     }
 
   finish_simulation();

@@ -783,7 +783,7 @@ CFDDEMSolver<dim>::dem_contact_build(unsigned int counter)
                                    smallest_contact_search_criterion);
 
   // Sort particles in cells
-  if (contact_search_step(counter))
+  if (check_contact_search_step(counter))
     {
       this->pcout << "DEM contact search at dem step " << counter << std::endl;
       contact_search_counter++;
@@ -797,6 +797,9 @@ CFDDEMSolver<dim>::dem_contact_build(unsigned int counter)
         this->particle_handler.get_max_local_particle_index());
       force.resize(displacement.size());
       torque.resize(displacement.size());
+
+      // Updating moment of inertia container
+      update_moment_of_inertia(this->particle_handler, MOI);
 
       this->particle_handler.exchange_ghost_particles(true);
 
@@ -814,9 +817,6 @@ CFDDEMSolver<dim>::dem_contact_build(unsigned int counter)
             this->mpi_communicator,
             counter);
         }
-
-      // Updating moment of inertia container
-      update_moment_of_inertia(this->particle_handler, MOI);
 
       // Execute broad search by filling containers of particle-particle
       // contact pair candidates and containers of particle-wall
