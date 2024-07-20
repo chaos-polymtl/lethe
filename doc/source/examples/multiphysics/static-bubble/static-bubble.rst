@@ -2,7 +2,7 @@
 Static Bubble
 ==========================
 
-This example simulates a two-dimensional static bubble `[1] <https://doi.org/10.1002/fld.2643>`_.
+This example simulates a two-dimensional static bubble [#zahedi2012]_.
 
 
 ----------------------------------
@@ -43,13 +43,13 @@ Surface Tension Force
 
 When including the surface tension force in the resolution of the Navier-Stokes equations, the numerical computation of the curvature can give rise to parasitic flows near the interface between the two fluids, as presented in :doc:`../../../theory/multiphase/cfd/vof` theory guide.
 
-The static bubble case is a relevant case to study the parasitic currents, since the analytical solution is zero for the velocity. Therefore, non-zero velocities in the computed velocity field are considered parasitic currents `[1] <https://doi.org/10.1002/fld.2643>`_. The analytical pressure drop between the interior (:math:`p_{int}`) and exterior (:math:`p_{ext}`) of the bubble is given by the Young-Laplace relation:
+The static bubble case is a relevant case to study the parasitic currents, since the analytical solution is zero for the velocity. Therefore, non-zero velocities in the computed velocity field are considered parasitic currents [#zahedi2012]_. The analytical pressure drop between the interior (:math:`p_{int}`) and exterior (:math:`p_{ext}`) of the bubble is given by the Young-Laplace relation:
 
 .. math::
 
     \Delta p = p_{int} - p_{ext} = \sigma \kappa
 
-with the analytical curvature of the 2D bubble : :math:`\kappa = 1/R`. This example is based on the static droplet case reported in `[1] <https://doi.org/10.1002/fld.2643>`_, where :math:`\sigma = 1.0`, :math:`R = 0.5` and :math:`\kappa = 2.0`.
+with the analytical curvature of the 2D bubble : :math:`\kappa = 1/R`. This example is based on the static droplet case reported in [#zahedi2012]_, where :math:`\sigma = 1.0`, :math:`R = 0.5` and :math:`\kappa = 2.0`.
 
 --------------
 Parameter File
@@ -257,6 +257,6 @@ Finally, the time evolution of the :math:`\mathcal{L}^2` norm of the error on th
 References
 -----------
 
-`[1] <https://doi.org/10.1002/fld.2643>`_ S. Zahedi, M. Kronbichler, and G. Kreiss, “Spurious currents in finite element based level set methods for two-phase flow,” *Int. J. Numer. Methods Fluids*, vol. 69, no. 9, pp. 1433–1456, 2012, doi: 10.1002/fld.2643.
+.. [#zahedi2012] \S. Zahedi, M. Kronbichler, and G. Kreiss, “Spurious currents in finite element based level set methods for two-phase flow,” *Int. J. Numer. Methods Fluids*, vol. 69, no. 9, pp. 1433–1456, 2012, doi: `10.1002/fld.2643 <https://doi.org/10.1002/fld.2643>`_\.
 
-`[2] <https://doi.org/10.1016/0021-9991(92)90240-Y>`_ J. U. Brackbill, D. B. Kothe, and C. Zemach, “A continuum method for modeling surface tension,” *J. Comput. Phys.*, vol. 100, no. 2, pp. 335–354, Jun. 1992, doi: 10.1016/0021-9991(92)90240-Y.
+.. [#brackbill1992] \J. U. Brackbill, D. B. Kothe, and C. Zemach, “A continuum method for modeling surface tension,” *J. Comput. Phys.*, vol. 100, no. 2, pp. 335–354, Jun. 1992, doi: `10.1016/0021-9991(92)90240-Y <https://doi.org/10.1016/0021-9991(92)90240-Y>`_\.

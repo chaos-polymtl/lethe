@@ -74,7 +74,7 @@ The dimensions of the system are listed in the following table:
 | :math:`D`               | Impeller diameter                | :math:`27` cm           |
 +-------------------------+----------------------------------+-------------------------+
 
-To simulate the flow in such complex geometry, we take advantage of the system's symmetry and opt for a Lagrangian reference frame. Instead of observing the velocity profile from an Eulerian reference frame (or "lab reference frame"), we place ourselves on the impeller's reference making it static and inducing a no-slip boundary condition. This way, the cylindrical tank will be the only moving geometry in our system. The figure below illustrates the difference between the Eulerian and Lagrangian reference frames.
+To simulate the flow in such complex geometry, we take advantage of the system's symmetry and opt for a Lagrangian reference frame. Instead of observing the velocity profile from an Eulerian reference frame (or "lab reference frame"), we place ourselves on the impeller's reference making it static and inducing a no-slip boundary condition. This way, the cylindrical tank will be the only moving geometry in our system. The figure below illustrates the difference between the Eulerian and Lagrangian reference frames [#delacroix2020]_.
 
 .. image:: images/eulerian-vs-langrangian-reference.jpg
    :alt: Eulerian and Lagrangian reference frames
@@ -503,4 +503,4 @@ It could be interesting to simulate at higher Reynolds numbers in a transient si
 Reference
 -----------
 
-`[1] <https://doi.org/10.1016/j.powtec.2020.05.006>`_ B. Delacroix, A. Bouarab, L. Fradette, F. Bertrand, and B. Blais, “Simulation of granular flow in a rotating frame of reference using the discrete element method,” *Powder Technol.*, vol. 369, pp. 146–161, Jun. 2020, doi: 10.1016/j.powtec.2020.05.006.
+.. [#delacroix2020] \B. Delacroix, A. Bouarab, L. Fradette, F. Bertrand, and B. Blais, “Simulation of granular flow in a rotating frame of reference using the discrete element method,” *Powder Technol.*, vol. 369, pp. 146–161, Jun. 2020, doi: `10.1016/j.powtec.2020.05.006 <https://doi.org/10.1016/j.powtec.2020.05.006>`_\.

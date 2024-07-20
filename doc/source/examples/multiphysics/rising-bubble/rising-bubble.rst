@@ -2,7 +2,7 @@
 Rising Bubble
 ==========================
 
-This example simulates a two-dimensional rising bubble `[1] <https://doi.org/10.1002/fld.2643>`_.
+This example simulates a two-dimensional rising bubble [#zahedi2012]_.
 
 
 --------
@@ -261,7 +261,7 @@ to run the simulation using eight CPU cores. Feel free to use more.
 Results and Discussion
 -----------------------
 
-The following image shows the shape and dimensions of the bubble after :math:`3` seconds of simulation, and compares it with results of `[1] <https://doi.org/10.1002/fld.2643>`_.
+The following image shows the shape and dimensions of the bubble after :math:`3` seconds of simulation, and compares it with results of [#zahedi2012]_.
 
 .. image:: images/bubble.png
     :alt: bubble
@@ -277,7 +277,7 @@ Run
   python3 ./rising-bubble.py output
 
 to execute this post-processing code, where ``output`` is the directory that
-contains the simulation results. The results for the barycenter position and velocity of the bubble are compared with the simulations of Zahedi *et al.* `[1] <https://doi.org/10.1002/fld.2643>`_ and Hysing *et al.* `[2] <https://doi.org/10.1002/fld.1934>`_. The following images show the results of these comparisons. The agreement between the two simulations is remarkable considering the coarse mesh used within this example.
+contains the simulation results. The results for the barycenter position and velocity of the bubble are compared with the simulations of Zahedi *et al.* [#zahedi2012]_ and Hysing *et al.* [#hysing2009]_. The following images show the results of these comparisons. The agreement between the two simulations is remarkable considering the coarse mesh used within this example.
 
 .. image:: images/ymean-t.png
     :alt: ymean_t
@@ -299,8 +299,8 @@ Animation of the rising bubble example:
 References
 -----------
 
-`[1] <https://doi.org/10.1002/fld.2643>`_ S. Zahedi, M. Kronbichler, and G. Kreiss, “Spurious currents in finite element based level set methods for two-phase flow,” *Int. J. Numer. Methods Fluids*, vol. 69, no. 9, pp. 1433–1456, 2012, doi: 10.1002/fld.2643.
+.. [#zahedi2012] \S. Zahedi, M. Kronbichler, and G. Kreiss, “Spurious currents in finite element based level set methods for two-phase flow,” *Int. J. Numer. Methods Fluids*, vol. 69, no. 9, pp. 1433–1456, 2012, doi: `10.1002/fld.2643 <https://doi.org/10.1002/fld.2643>`_\.
 
-`[2] <https://doi.org/10.1002/fld.1934>`_ S. Hysing *et al.*, “Quantitative benchmark computations of two-dimensional bubble dynamics,” *Int. J. Numer. Methods Fluids*, vol. 60, no. 11, pp. 1259–1288, 2009, doi: 10.1002/fld.1934.
+.. [#hysing2009] \S. Hysing *et al.*, “Quantitative benchmark computations of two-dimensional bubble dynamics,” *Int. J. Numer. Methods Fluids*, vol. 60, no. 11, pp. 1259–1288, 2009, doi: `10.1002/fld.1934 <https://doi.org/10.1002/fld.1934>`_\.
 
-`[3] <https://doi.org/10.1016/0021-9991(92)90240-Y>`_ J. U. Brackbill, D. B. Kothe, and C. Zemach, “A continuum method for modeling surface tension,” *J. Comput. Phys.*, vol. 100, no. 2, pp. 335–354, Jun. 1992, doi: 10.1016/0021-9991(92)90240-Y.
+.. [#brackbill1992] \J. U. Brackbill, D. B. Kothe, and C. Zemach, “A continuum method for modeling surface tension,” *J. Comput. Phys.*, vol. 100, no. 2, pp. 335–354, Jun. 1992, doi: `10.1016/0021-9991(92)90240-Y <https://doi.org/10.1016/0021-9991(92)90240-Y>`_\.

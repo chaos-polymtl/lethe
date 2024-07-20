@@ -354,9 +354,4 @@ The results are shown in the animation below. We can see the complex motion of t
     <iframe width="560" height="315" src="https://www.youtube.com/embed/Js73OUr08rM" frameborder="0" allowfullscreen></iframe>
 
 
----------------
-Reference
----------------
-
-`[1] <https://doi.org/10.1063/1.1512918>`_ A. ten Cate, C. H. Nieuwstad, J. J. Derksen, and H. E. A. Van den Akker, “Particle imaging velocimetry experiments and lattice-Boltzmann simulations on a single sphere settling under gravity,” *Phys. Fluids*, vol. 14, no. 11, pp. 4012–4025, Oct. 2002, doi: 10.1063/1.1512918.
 
