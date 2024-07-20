@@ -2,7 +2,7 @@
 Sedimentation of One Particle
 ==============================================================================
 
-This example aims to numerically reproduce the results obtained by Ten Cate `et al.` `[1] <https://doi.org/10.1063/1.1512918>`_ for the E4 experience. This experience measures the velocity of the sedimentation of a 1.5 cm particle in a container filled with a viscous fluid. The container is sufficiently small to impact the particle sedimentation.
+This example aims to numerically reproduce the results obtained by Ten Cate `et al.` [#tencate2002]_ for the E4 experience. This experience measures the velocity of the sedimentation of a 1.5 cm particle in a container filled with a viscous fluid. The container is sufficiently small to impact the particle sedimentation.
 
 
 .. warning:: 
@@ -64,7 +64,7 @@ Simulation Control
 
 * The ``time step`` is set to  0.0025. This ensures a low error due to the time discretization for this case.
 
-* The ``time end`` is set to  1.3. This is slightly longer than the experimental results of Ten Cate `et al.` `[1] <https://doi.org/10.1063/1.1512918>`_. This ensures that the entire trajectory of the particle has been simulated.
+* The ``time end`` is set to  1.3. This is slightly longer than the experimental results of Ten Cate `et al.` [#tencate2002]_. This ensures that the entire trajectory of the particle has been simulated.
 
 Physical Properties
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -348,7 +348,7 @@ First, we look at a slice of the velocity profile during the acceleration phase.
     :alt: flow_field_acceleration
     :align: center
 
-We can also compare the results obtained for the velocity in time with the results proposed by the article of Ten Cate `et al.` `[1] <https://doi.org/10.1063/1.1512918>`_
+We can also compare the results obtained for the velocity in time with the results proposed by the article of Ten Cate `et al.` [#tencate2002]_
 
 .. image:: images/velocity-comparison.png
     :alt: flow_field_acceleration
@@ -359,5 +359,5 @@ We can also compare the results obtained for the velocity in time with the resul
 Reference
 ---------------
 
-`[1] <https://doi.org/10.1063/1.1512918>`_ A. ten Cate, C. H. Nieuwstad, J. J. Derksen, and H. E. A. Van den Akker, “Particle imaging velocimetry experiments and lattice-Boltzmann simulations on a single sphere settling under gravity,” *Phys. Fluids*, vol. 14, no. 11, pp. 4012–4025, Oct. 2002, doi: 10.1063/1.1512918.
+.. [#tencate2002] \A. ten Cate, C. H. Nieuwstad, J. J. Derksen, and H. E. A. Van den Akker, “Particle imaging velocimetry experiments and lattice-Boltzmann simulations on a single sphere settling under gravity,” *Phys. Fluids*, vol. 14, no. 11, pp. 4012–4025, Oct. 2002, doi: `10.1063/1.1512918 <https://doi.org/10.1063/1.1512918>`_\.
 

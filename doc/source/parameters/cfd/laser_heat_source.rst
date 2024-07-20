@@ -39,7 +39,7 @@ If a laser heat source is present in a simulation, it can be added in this secti
 
 * The ``power`` parameter sets the power of the laser :math:`[ML^2T^{-3}]`.
 
-* The ``absorptivity`` parameter is defined as the fraction of incident radiation that is absorbed by the surface, and it is measured using diffuse reﬂectance spectroscopy (DRS). Generally, a constant value in the range of :math:`0.3`-:math:`0.8` (for welding processes with titanium) is used in the literature. However, recent studies show that it varies with powder particle size distribution and the angle of incidence that changes due to the dynamic melt pool surface `[1] <https://doi.org/10.1016/j.optlastec.2018.08.012>`_.
+* The ``absorptivity`` parameter is defined as the fraction of incident radiation that is absorbed by the surface, and it is measured using diffuse reﬂectance spectroscopy (DRS). Generally, a constant value in the range of :math:`0.3`-:math:`0.8` (for welding processes with titanium) is used in the literature. However, recent studies show that it varies with powder particle size distribution and the angle of incidence that changes due to the dynamic melt pool surface [#zhang2019]_.
 
 * The ``penetration depth`` parameter determines the penetration depth of the laser in the simulation domain in the direction of emission.
 
@@ -97,7 +97,7 @@ Laser types
         q(x,y,z) = \frac{|\nabla \psi| \alpha P}{\pi R^2}
 
 
-* When the ``type`` parameter is set to ``exponential_decay``, the exponential model from Zhang *et al.* `[2] <https://doi.org/10.1016/j.matdes.2018.01.022>`_ is used to simulate the laser heat source:
+* When the ``type`` parameter is set to ``exponential_decay``, the exponential model from Liu *et al.* [#liu2018]_ is used to simulate the laser heat source:
 
   .. math::
       q(x,y,z) = \frac{\eta \alpha P}{\pi R^2 \mu} \exp{\left(-\eta \frac{r^2}{R^2}\right)} \exp{\left(- \frac{|z|}{\mu}\right)}
@@ -117,6 +117,6 @@ Laser types
 -----------
 References
 -----------
-`[1] <https://doi.org/10.1016/j.optlastec.2018.08.012>`_ Z. Zhang *et al.*, “3-Dimensional heat transfer modeling for laser powder-bed fusion additive manufacturing with volumetric heat sources based on varied thermal conductivity and absorptivity,” *Opt. Laser Technol.*, vol. 109, pp. 297–312, Jan. 2019, doi: 10.1016/j.optlastec.2018.08.012.
+.. [#zhang2019] \Z. Zhang *et al.*, “3-Dimensional heat transfer modeling for laser powder-bed fusion additive manufacturing with volumetric heat sources based on varied thermal conductivity and absorptivity,” *Opt. Laser Technol.*, vol. 109, pp. 297–312, Jan. 2019, doi: `10.1016/j.optlastec.2018.08.012 <https://doi.org/10.1016/j.optlastec.2018.08.012>`_\.
 
-`[2] <https://doi.org/10.1016/j.matdes.2018.01.022>`_ 	S. Liu, H. Zhu, G. Peng, J. Yin, and X. Zeng, “Microstructure prediction of selective laser melting AlSi10Mg using finite element analysis,” *Mater. Des.*, vol. 142, pp. 319–328, Mar. 2018, doi: 10.1016/j.matdes.2018.01.022.
+.. [#liu2018] \S. Liu, H. Zhu, G. Peng, J. Yin, and X. Zeng, “Microstructure prediction of selective laser melting AlSi10Mg using finite element analysis,” *Mater. Des.*, vol. 142, pp. 319–328, Mar. 2018, doi: `10.1016/j.matdes.2018.01.022 <https://doi.org/10.1016/j.matdes.2018.01.022>`_\.

@@ -3,7 +3,7 @@ Water Injection in a Closed Cell
 ================================
 
 This example simulates the compression of air in a closed cell by injection of water.
-The problem is inspired by the test case of Caltagirone *et al.* `[1] <https://doi.org/10.1016/j.compfluid.2011.06.011>`_
+The problem is inspired by the test case of Caltagirone *et al.* [#caltagirone2011]_
 
 
 --------
@@ -303,4 +303,4 @@ The following figures present the comparison between the analytical results and 
 References
 ----------
 
-`[1] <https://doi.org/10.1016/j.compfluid.2011.06.011>`_ J.-P. Caltagirone, S. Vincent, and C. Caruyer, “A multiphase compressible model for the simulation of multiphase flows,” *Comput. Fluids*, vol. 50, no. 1, pp. 24–34, Nov. 2011, doi: 10.1016/j.compfluid.2011.06.011.
+.. [#caltagirone2011] \J.-P. Caltagirone, S. Vincent, and C. Caruyer, “A multiphase compressible model for the simulation of multiphase flows,” *Comput. Fluids*, vol. 50, no. 1, pp. 24–34, Nov. 2011, doi: `10.1016/j.compfluid.2011.06.011 <https://doi.org/10.1016/j.compfluid.2011.06.011>`_\.

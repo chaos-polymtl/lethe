@@ -24,7 +24,7 @@ Files Used in This Example
 Description of the Case
 -----------------------
 
-In this case a well-defined flow passes over a series of hills which repeat along a channel in a periodic fashion as it can be seen in the following figure (taken from ERCOFTAC `[1] <https://kbwiki.ercoftac.org/w/index.php/File:Hill3d.jpg>`_):
+In this case a well-defined flow passes over a series of hills which repeat along a channel in a periodic fashion as it can be seen in the following figure (taken from ERCOFTAC [#ercoftac2010]_):
 
 .. image:: images/geometry-description.jpg
     :alt: The geometry
@@ -232,7 +232,7 @@ Due to the complexity of this example we recommend that you run this example usi
 ----------------------
 Results and Discussion
 ----------------------
-To summarize, a coarse mesh of 250K cells was simulated, using a time step of 0.1 and taking average quantities between 207s and 1000s. The results are compared against established test data from both experiments and another CFD simulation. The experimental data corresponds to the data obtained from Rapp `[2] <https://mediatum.ub.tum.de/doc/677970/677970.pdf>`_ and the computational data is extracted from the results of the LESOCC CFD code by Breuer et al. `[3] <https://doi.org/10.1016/j.compfluid.2008.05.002>`_.
+To summarize, a coarse mesh of 250K cells was simulated, using a time step of 0.1 and taking average quantities between 207s and 1000s. The results are compared against established test data from both experiments and another CFD simulation. The experimental data corresponds to the data obtained from Rapp [#rapp2009]_ and the computational data is extracted from the results of the LESOCC CFD code by Breuer et al. [#breuer2009]_.
 
 The following image shows the average velocity profiles in the x-direction:
 
@@ -266,15 +266,15 @@ Possibilities for Extension
 
 - **High-order elements**: It would be interesting to observe the effect of high-order elements in the simulation of the periodic hills flow. For example, Q2-Q2 elements. The only part of the parameter file that would need to change would be the ``FEM`` section.
 
-- **High Reynolds numbers**: The example could be run at higher Reynolds numbers. In fact, one can find experimental and numerical results in the literature for Reynolds numbers equal to 10600 or 37000. This comes of course with a higher computational effort.
+- **High Reynolds numbers**: The example could be run at higher Reynolds numbers. In fact, one can find experimental and numerical results in the literature for Reynolds numbers equal to 10600 [#breuer2009]_ or 37000. This comes of course with a higher computational effort.
 
 
 ----------
 References
 ----------
 
-`[1] <https://kbwiki.ercoftac.org/w/index.php/File:Hill3d.jpg>`_ ERCOFTAC. "File: hill3d.jpg". 2010. https://kbwiki.ercoftac.org/w/index.php/File:Hill3d.jpg.
+.. [#ercoftac2010] \ERCOFTAC. "File: hill3d.jpg". 2010. https://kbwiki.ercoftac.org/w/index.php/File:Hill3d.jpg\.
 
-`[2] <https://mediatum.ub.tum.de/doc/677970/677970.pdf>`_ C. R. Rapp, "Experimentelle studie der turbulenten strömung über periodische hügel", PhD dissertation, Technische Universität München, Munich, Germany, 2009. [Online] Available: https://mediatum.ub.tum.de/doc/677970/677970.pdf
+.. [#rapp2009] \C. R. Rapp, "Experimentelle studie der turbulenten strömung über periodische hügel", PhD dissertation, Technische Universität München, Munich, Germany, 2009. [Online] Available: https://mediatum.ub.tum.de/doc/677970/677970.pdf\.
 
-`[3] <https://doi.org/10.1016/j.compfluid.2008.05.002>`_ M. Breuer, N. Peller, Ch. Rapp, and M. Manhart, “Flow over periodic hills – Numerical and experimental study in a wide range of Reynolds numbers,” *Comput. Fluids*, vol. 38, no. 2, pp. 433–457, Feb. 2009, doi: 10.1016/j.compfluid.2008.05.002.
+.. [#breuer2009] \M. Breuer, N. Peller, Ch. Rapp, and M. Manhart, “Flow over periodic hills – Numerical and experimental study in a wide range of Reynolds numbers,” *Comput. Fluids*, vol. 38, no. 2, pp. 433–457, Feb. 2009, doi: `10.1016/j.compfluid.2008.05.002 <https://doi.org/10.1016/j.compfluid.2008.05.002>`_\.

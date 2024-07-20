@@ -2,7 +2,7 @@
 3D Dam-Break with an Obstacle
 ===============================
 
-This example simulates a dam-break experiment from the Maritime Research Institute Netherlands (MARIN) `[1] <https://www.spheric-sph.org/tests/test-02>`_.
+This example simulates a dam-break experiment from the Maritime Research Institute Netherlands (MARIN) [#issa2002]_.
 
 .. warning::
     This example displays the need for improvement of low-viscosity fluid flow simulation of the current numeric model. Further work will be done to improve this aspect of the model.
@@ -278,4 +278,4 @@ References
 -----------
 
 
-`[1] <https://www.spheric-sph.org/tests/test-02>`_ R. Issa and D. Violeau, “Test-case 2, 3D dambreaking, Release 1.1,” *ERCOFTAC SPH Eur. Res. Interest Community SIG Électricité Fr. Lab. Natl. Hydraul. Environ.*, 2006, Accessed: Dec. 07, 2022. [Online]. Available: https://www.spheric-sph.org/tests/test-02
+.. [#issa2002] \R. Issa and D. Violeau, “Test-case 2, 3D dambreaking, Release 1.1,” *ERCOFTAC SPH Eur. Res. Interest Community SIG Électricité Fr. Lab. Natl. Hydraul. Environ.*, 2006, Accessed: Dec. 07, 2022. [Online]. Available: https://www.spheric-sph.org/tests/test-02\.

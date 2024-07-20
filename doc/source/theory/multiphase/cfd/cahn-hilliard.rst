@@ -2,7 +2,7 @@
 Cahn-Hilliard Method
 ================================
 
-The Cahn-Hilliard system of equations `[1] <https://dx.doi.org/10.1063/1.1744102>`_ is a model used to describe the process of phase separation based on the principle of free energy minimization. The key idea at the heart of the Cahn-Hilliard equation is that the system try to achieve a state where the free energy is minimized while competing with the energy cost associated with creating new interfaces between phases. Let us introduce those concepts formally.
+The Cahn-Hilliard system of equations [#cahn1958]_ is a model used to describe the process of phase separation based on the principle of free energy minimization. The key idea at the heart of the Cahn-Hilliard equation is that the system try to achieve a state where the free energy is minimized while competing with the energy cost associated with creating new interfaces between phases. Let us introduce those concepts formally.
 
 Let :math:`\Omega = \Omega_0 \cup \Omega_1` be the domain formed by two fluids, namely fluid :math:`0` and :math:`1`, with :math:`\Gamma` the boundaries of the system. Like in :doc:`vof`, we define a scalar function :math:`\phi` as a phase indicator such that:
 
@@ -142,9 +142,8 @@ This tensor is added to the usual viscous stress tensor to take into account the
    \mathbf{f_\sigma} & = \nabla \cdot (\lambda(\nabla \phi \otimes \nabla \phi))\\
   & = \eta\nabla\phi + \nabla\Psi
   \end{align}
-  
-We then define a modified pressure :math:`\hat{p}`, which corresponds to the usual pressure with the additional :math:`\Psi` term. This new pressure is the same in the bulk phases and varies more smoothly in the interface `[2] <https://doi.org/10.48550/arXiv.1911.06718>`_. 
-Then, to take into account the change of momentum of the system due to the diffusive flux of species, we add the following term into the :doc:`usual momentum equation<../../multiphysics/fluid_dynamics/navier-stokes>`:
+
+We then define a modified pressure :math:`\hat{p}`, which corresponds to the usual pressure with the additional :math:`\Psi` term. This new pressure is the same in the bulk phases and varies more smoothly in the interface [#lovric2019]_. Then, to take into account the change of momentum of the system due to the diffusive flux of species, we add the following term into the :doc:`usual momentum equation<../../multiphysics/fluid_dynamics/navier-stokes>`:
 
 .. math::
   (\mathbf{\tilde{J}}\cdot \nabla)\mathbf{v} = (\frac{\rho_0-\rho_1}{2}\mathbf{J}\cdot \nabla)\mathbf{v}
@@ -165,7 +164,7 @@ The Cahn-Hilliard-Navier-Stokes momentum equation solved in Lethe is:
    & - \nabla \cdot \left(\mu(\phi)(\nabla\mathbf{u} + \nabla\mathbf{u}^\mathbf{T})\right) + \nabla \hat{p} - \eta\nabla\phi = 0 \\
   \end{align}
   
-With an adequate choice of definition of velocity (see `[3] <https://doi.org/10.48550/arXiv.1104.1336>`_), the velocity field remains divergence-free:
+With an adequate choice of definition of velocity [#abels2011]_, the velocity field remains divergence-free:
 
 .. math::
   \nabla \cdot \mathbf{u} = 0
@@ -191,6 +190,9 @@ References
 
 
   
+.. [#cahn1958] \J. W. Cahn and J. E. Hilliard, ‘Free Energy of a Nonuniform System. I. Interfacial Free Energy’, The Journal of Chemical Physics, vol. 28, no. 2, pp. 258–267, Feb. 1958, doi: `10.1063/1.1744102 <https://dx.doi.org/10.1063/1.1744102>`_\.
 
-  
+.. [#lovric2019] \A. Lovrić, W. G. Dettmer, and D. Perić, ‘Low Order Finite Element Methods for the Navier-Stokes-Cahn-Hilliard Equations’. arXiv, Nov. 15, 2019. doi: `10.48550/arXiv.1911.06718 <https://doi.org/10.48550/arXiv.1911.06718>`_\.
+
+.. [#abels2011] \H. Abels, H. Garcke, and G. Grün, ‘Thermodynamically Consistent, Frame Indifferent Diffuse Interface Models for Incompressible Two-Phase Flows with Different Densities’. arXiv, Apr. 07, 2011. doi: `10.48550/arXiv.1104.1336 <https://doi.org/10.48550/arXiv.1104.1336>`_\.
 

@@ -2,7 +2,7 @@
 Laser Melt Pool
 ==========================
 
-This example simulates a two-dimensional melt pool with a laser `[1] <https://doi.org/10.1016/j.powtec.2022.117533>`_.
+This example simulates a two-dimensional melt pool with a laser [#li2022]_.
 
 
 ----------------------------------
@@ -165,7 +165,7 @@ The ``multiphysics`` subsection enables to turn on (``true``) and off (``false``
 Laser Parameters
 ~~~~~~~~~~~~~~~~
 
-In the ``laser parameters`` section, the parameters of the laser model are defined. The exponential decaying model `[2] <https://doi.org/10.1016/j.matdes.2018.01.022>`_ is used to simulate the laser heat source. In the exponential decaying model, the laser heat flux is calculated using the following equation:
+In the ``laser parameters`` section, the parameters of the laser model are defined. The exponential decaying model [#liu2018]_ is used to simulate the laser heat source. In the exponential decaying model, the laser heat flux is calculated using the following equation:
 
 .. math::
     q(x,y,z) = \frac{\eta \alpha P}{\pi r^2 \mu} \exp{\left(-\eta \frac{r^2}{R^2}\right)} \exp{\left(- \frac{|z|}{\mu}\right)}
@@ -306,6 +306,7 @@ The following animation shows the temperature distribution in the simulations do
 References
 -----------
 
-`[1] <https://doi.org/10.1016/j.powtec.2022.117533>`_ E. Li, Z. Zhou, L. Wang, Q. Zheng, R. Zou, and A. Yu, “Melt pool dynamics and pores formation in multi-track studies in laser powder bed fusion process,” *Powder Technol.*, vol. 405, p. 117533, Jun. 2022, doi: 10.1016/j.powtec.2022.117533.
+.. [#li2022] \E. Li, Z. Zhou, L. Wang, Q. Zheng, R. Zou, and A. Yu, “Melt pool dynamics and pores formation in multi-track studies in laser powder bed fusion process,” *Powder Technol.*, vol. 405, p. 117533, Jun. 2022, doi: `10.1016/j.powtec.2022.117533 <https://doi.org/10.1016/j.powtec.2022.117533>`_\.
 
-`[2] <https://doi.org/10.1016/j.matdes.2018.01.022>`_ S. Liu, H. Zhu, G. Peng, J. Yin, and X. Zeng, “Microstructure prediction of selective laser melting AlSi10Mg using finite element analysis,” *Mater. Des.*, vol. 142, pp. 319–328, Mar. 2018, doi: 10.1016/j.matdes.2018.01.022
+.. [#liu2018] \S. Liu, H. Zhu, G. Peng, J. Yin, and X. Zeng, “Microstructure prediction of selective laser melting AlSi10Mg using finite element analysis,” *Mater. Des.*, vol. 142, pp. 319–328, Mar. 2018, doi: `10.1016/j.matdes.2018.01.022
+ <https://doi.org/10.1016/j.matdes.2018.01.022>`_\.

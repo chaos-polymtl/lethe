@@ -21,8 +21,8 @@ Files Used in This Example
 All files mentioned below are located in the example's folder (``examples/incompressible-flow/2d-lid-driven-cavity``).
 
 - Base case parameter file (:math:`Re=400`): ``cavity.prm``
-- Experimental data file from Ghia `et al.` (1982) `[1] <https://doi.org/10.1016/0021-9991(82)90058-4>`_: ``ref-2d-ghia-u.txt``
-- Experimental data file from Erturk `et al.` (2005) `[2] <https://doi.org/10.1002/fld.953>`_: ``ref-2d-erturk-u.txt``
+- Experimental data file from Ghia `et al.` (1982) [#ghia1982]_: ``ref-2d-ghia-u.txt``
+- Experimental data file from Erturk `et al.` (2005) [#erturk2005]_: ``ref-2d-erturk-u.txt``
 - Higher-Reynolds case parameter file (:math:`Re=7500`): ``Reynolds_7500/cavity.prm``
 - Postprocessing Python script for the :math:`Re=400` case: ``post_process_Reynolds_400.py``
 - Postprocessing Python script for the :math:`Re=7500` case: ``Reynolds_7500/post_process_Reynolds_7500.py``
@@ -299,7 +299,7 @@ Increasing the number of cells by a factor 4 (to :math:`\approx` 65k cells) allo
 Possibilities for Extension
 ----------------------------
 
-- **Validate at even higher Reynolds numbers:** The Erturk `[2] <https://doi.org/10.1002/fld.953>`_ data within the example investigates this case up to a Reynolds number of 20000.  It is an interesting exercise to simulate these more complex cases using the adjoint time-stepping ``steady_bdf`` scheme.
+- **Validate at even higher Reynolds numbers:** The Erturk [#erturk2005]_ data within the example investigates this case up to a Reynolds number of 20000.  It is an interesting exercise to simulate these more complex cases using the adjoint time-stepping ``steady_bdf`` scheme.
 
 - **High-order methods:** Lethe supports higher order interpolation. This can yield much better results with an equal number of degrees of freedom than traditional second-order (Q1-Q1) methods, especially at higher Reynolds numbers. 
 
@@ -310,6 +310,6 @@ Possibilities for Extension
 References
 -----------
 
-`[1] <https://doi.org/10.1016/0021-9991(82)90058-4>`_ U. Ghia, K. N. Ghia, and C. T. Shin, “High-Re solutions for incompressible flow using the Navier-Stokes equations and a multigrid method,” *J. Comput. Phys.*, vol. 48, no. 3, pp. 387–411, Dec. 1982, doi: 10.1016/0021-9991(82)90058-4.
+.. [#ghia1982] \U. Ghia, K. N. Ghia, and C. T. Shin, “High-Re solutions for incompressible flow using the Navier-Stokes equations and a multigrid method,” *J. Comput. Phys.*, vol. 48, no. 3, pp. 387–411, Dec. 1982, doi: `10.1016/0021-9991(82)90058-4 <https://doi.org/10.1016/0021-9991(82)90058-4>`_\.
 
-`[2] <https://doi.org/10.1002/fld.953>`_ E. Erturk, T. C. Corke, and C. Gökçöl, “Numerical solutions of 2-D steady incompressible driven cavity flow at high Reynolds numbers,” *Int. J. Numer. Methods Fluids*, vol. 48, no. 7, pp. 747–774, 2005, doi: 10.1002/fld.953.
+.. [#erturk2005] \E. Erturk, T. C. Corke, and C. Gökçöl, “Numerical solutions of 2-D steady incompressible driven cavity flow at high Reynolds numbers,” *Int. J. Numer. Methods Fluids*, vol. 48, no. 7, pp. 747–774, 2005, doi: `10.1002/fld.953 <https://doi.org/10.1002/fld.953>`_\.
