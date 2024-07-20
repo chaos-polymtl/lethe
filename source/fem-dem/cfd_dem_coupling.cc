@@ -1275,54 +1275,56 @@ CFDDEMSolver<dim>::dem_setup_contact_parameters()
         dem_parameters.model_parameters.advect_particles);
     }
 
-  {
-    // Use namespace and alias to make the code more readable
-    using namespace Parameters::Lagrangian;
-    LagrangianPhysicalProperties &lpp = dem_parameters.lagrangian_physical_properties;
 
-    maximum_particle_diameter = 0;
-    for (unsigned int particle_type = 0; particle_type < lpp.particle_type_number;
-         particle_type++)
-      {
-        switch (lpp.distribution_type.at(particle_type))
-          {
-            case SizeDistributionType::uniform:
-              size_distribution_object_container[particle_type] =
-                std::make_shared<UniformDistribution>(
-                  lpp.particle_average_diameter.at(particle_type));
-              break;
-            case SizeDistributionType::normal:
-              size_distribution_object_container[particle_type] =
-                std::make_shared<NormalDistribution>(
-                  lpp.particle_average_diameter.at(particle_type),
-                  lpp.particle_size_std.at(particle_type),
-                  lpp.seed_for_distributions[particle_type] + this_mpi_process);
-              break;
-            case SizeDistributionType::custom:
-              size_distribution_object_container[particle_type] =
-                std::make_shared<CustomDistribution>(
-                  lpp.particle_custom_diameter.at(particle_type),
-                  lpp.particle_custom_probability.at(particle_type),
-                  lpp.seed_for_distributions[particle_type] + this_mpi_process);
-              break;
-          }
+  // Use namespace and alias to make the code more readable
+  using namespace Parameters::Lagrangian;
+  LagrangianPhysicalProperties &lpp =
+    dem_parameters.lagrangian_physical_properties;
 
-        maximum_particle_diameter = std::max(
-          maximum_particle_diameter,
-          size_distribution_object_container[particle_type]->find_max_diameter());
-      }
+  maximum_particle_diameter = 0;
+  for (unsigned int particle_type = 0; particle_type < lpp.particle_type_number;
+       particle_type++)
+    {
+      switch (lpp.distribution_type.at(particle_type))
+        {
+          case SizeDistributionType::uniform:
+            size_distribution_object_container[particle_type] =
+              std::make_shared<UniformDistribution>(
+                lpp.particle_average_diameter.at(particle_type));
+            break;
+          case SizeDistributionType::normal:
+            size_distribution_object_container[particle_type] =
+              std::make_shared<NormalDistribution>(
+                lpp.particle_average_diameter.at(particle_type),
+                lpp.particle_size_std.at(particle_type),
+                lpp.seed_for_distributions[particle_type] + this_mpi_process);
+            break;
+          case SizeDistributionType::custom:
+            size_distribution_object_container[particle_type] =
+              std::make_shared<CustomDistribution>(
+                lpp.particle_custom_diameter.at(particle_type),
+                lpp.particle_custom_probability.at(particle_type),
+                lpp.seed_for_distributions[particle_type] + this_mpi_process);
+            break;
+        }
 
-    neighborhood_threshold_squared =
-      std::pow(dem_parameters.model_parameters.neighborhood_threshold *
-                 maximum_particle_diameter,
-               2);
-  }
+      maximum_particle_diameter = std::max(
+        maximum_particle_diameter,
+        size_distribution_object_container[particle_type]->find_max_diameter());
+    }
+
+  neighborhood_threshold_squared =
+    std::pow(dem_parameters.model_parameters.neighborhood_threshold *
+               maximum_particle_diameter,
+             2);
+
 
   dem_time_step =
     this->simulation_control->get_time_step() / coupling_frequency;
 
   double rayleigh_time_step = 0;
 
+  // Calculation is wrong, what not changed as done for the DEM
   for (unsigned int i = 0;
        i < dem_parameters.lagrangian_physical_properties.particle_type_number;
        ++i)

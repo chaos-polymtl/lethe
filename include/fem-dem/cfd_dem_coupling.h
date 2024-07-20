@@ -207,8 +207,10 @@ private:
     switch (model_parameters.contact_detection_method)
       {
         case ModelParameters::ContactDetectionMethod::constant:
-          return ((counter % model_parameters.contact_detection_frequency) ==
-                  0);
+          {
+            return ((counter % model_parameters.contact_detection_frequency) ==
+                    0);
+          }
         case ModelParameters::ContactDetectionMethod::dynamic:
           {
             // The sorting into subdomain step checks whether the current
@@ -234,8 +236,8 @@ private:
 
             return contact_detection_step;
           }
-        default: // Invalid contact detection method is checked in the parsing parameters
-          break;
+        default: // Invalid contact detection method parameter is already checked
+          return false;
       }
   }
 
