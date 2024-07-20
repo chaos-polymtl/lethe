@@ -59,8 +59,13 @@ DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
   , size_distribution_object_container(
       parameters.lagrangian_physical_properties.particle_type_number)
   , has_sparse_contacts(false)
-{
-  // Print simulation starting information
+{}
+
+template <int dim>
+void
+DEMSolver<dim>::setup_parameters()
+{ // Print simulation starting information
+
   pcout << std::endl;
   std::stringstream ss;
   ss << "Running on " << n_mpi_processes << " rank(s)";
@@ -135,6 +140,18 @@ DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
           break;
         }
     }
+
+  // Set insertion object type before the restart because the restart only
+  // rebuilds the member of the insertion object
+  insertion_object = set_insertion_type(parameters);
+
+  contact_detection_iteration_check_function =
+    set_contact_search_iteration_function();
+
+  // Setting chosen contact force, insertion and integration methods
+  integrator_object = set_integrator_type(parameters);
+  particle_particle_contact_force_object =
+    set_particle_particle_contact_force_model(parameters);
 
   // Assign gravity/acceleration
   g = parameters.lagrangian_physical_properties.g;
@@ -340,30 +357,6 @@ DEMSolver<dim>::load_balance()
   setup_background_dofs();
 }
 
-
-
-template <int dim>
-inline std::function<bool()>
-DEMSolver<dim>::set_contact_search_iteration_function()
-{
-  if (parameters.model_parameters.contact_detection_method ==
-      Parameters::Lagrangian::ModelParameters::ContactDetectionMethod::constant)
-    {
-      return [&] { return check_contact_search_iteration_constant(); };
-    }
-  else if (parameters.model_parameters.contact_detection_method ==
-           Parameters::Lagrangian::ModelParameters::ContactDetectionMethod::
-             dynamic)
-    {
-      return [&] { return check_contact_search_iteration_dynamic(); };
-    }
-  else
-    {
-      throw std::runtime_error(
-        "Specified contact detection method is not valid");
-    }
-}
-
 template <int dim>
 inline bool
 DEMSolver<dim>::check_contact_search_iteration_dynamic()
@@ -544,70 +537,59 @@ template <int dim>
 std::shared_ptr<Insertion<dim>>
 DEMSolver<dim>::set_insertion_type(const DEMSolverParameters<dim> &parameters)
 {
-  if (parameters.insertion_info.insertion_method ==
-      Parameters::Lagrangian::InsertionInfo::InsertionMethod::file)
+  using namespace Parameters::Lagrangian;
+  InsertionInfo::InsertionMethod insertion_method =
+    parameters.insertion_info.insertion_method;
+
+  switch (insertion_method)
     {
-      insertion_object =
-        std::make_shared<InsertionFile<dim>>(size_distribution_object_container,
-                                             triangulation,
-                                             parameters);
+      case InsertionInfo::InsertionMethod::file:
+        {
+          return std::make_shared<InsertionFile<dim>>(
+            size_distribution_object_container, triangulation, parameters);
+        }
+      case InsertionInfo::InsertionMethod::list:
+        {
+          return std::make_shared<InsertionList<dim>>(
+            size_distribution_object_container, triangulation, parameters);
+        }
+      case InsertionInfo::InsertionMethod::plane:
+        {
+          return std::make_shared<InsertionPlane<dim>>(
+            size_distribution_object_container, triangulation, parameters);
+        }
+      case InsertionInfo::InsertionMethod::volume:
+        {
+          return std::make_shared<InsertionVolume<dim>>(
+            size_distribution_object_container,
+            triangulation,
+            parameters,
+            maximum_particle_diameter);
+        }
+      default:
+        throw(std::runtime_error("Invalid insertion method."));
     }
-  else if (parameters.insertion_info.insertion_method ==
-           Parameters::Lagrangian::InsertionInfo::InsertionMethod::list)
-    {
-      insertion_object =
-        std::make_shared<InsertionList<dim>>(size_distribution_object_container,
-                                             triangulation,
-                                             parameters);
-    }
-  else if (parameters.insertion_info.insertion_method ==
-           Parameters::Lagrangian::InsertionInfo::InsertionMethod::plane)
-    {
-      insertion_object = std::make_shared<InsertionPlane<dim>>(
-        size_distribution_object_container, triangulation, parameters);
-    }
-  else if (parameters.insertion_info.insertion_method ==
-           Parameters::Lagrangian::InsertionInfo::InsertionMethod::volume)
-    {
-      insertion_object = std::make_shared<InsertionVolume<dim>>(
-        size_distribution_object_container,
-        triangulation,
-        parameters,
-        maximum_particle_diameter);
-    }
-  else
-    {
-      throw "The chosen insertion method is invalid";
-    }
-  return insertion_object;
 }
 
 template <int dim>
 std::shared_ptr<Integrator<dim>>
 DEMSolver<dim>::set_integrator_type(const DEMSolverParameters<dim> &parameters)
 {
-  if (parameters.model_parameters.integration_method ==
-      Parameters::Lagrangian::ModelParameters::IntegrationMethod::
-        velocity_verlet)
+  using namespace Parameters::Lagrangian;
+  ModelParameters::IntegrationMethod integration_method =
+    parameters.model_parameters.integration_method;
+
+  switch (integration_method)
     {
-      integrator_object = std::make_shared<VelocityVerletIntegrator<dim>>();
+      case ModelParameters::IntegrationMethod::velocity_verlet:
+          return std::make_shared<VelocityVerletIntegrator<dim>>();
+      case ModelParameters::IntegrationMethod::explicit_euler:
+          return std::make_shared<ExplicitEulerIntegrator<dim>>();
+      case ModelParameters::IntegrationMethod::gear3:
+          return std::make_shared<Gear3Integrator<dim>>();
+      default:
+        throw(std::runtime_error("Invalid integration method."));
     }
-  else if (parameters.model_parameters.integration_method ==
-           Parameters::Lagrangian::ModelParameters::IntegrationMethod::
-             explicit_euler)
-    {
-      integrator_object = std::make_shared<ExplicitEulerIntegrator<dim>>();
-    }
-  else if (parameters.model_parameters.integration_method ==
-           Parameters::Lagrangian::ModelParameters::IntegrationMethod::gear3)
-    {
-      integrator_object = std::make_shared<Gear3Integrator<dim>>();
-    }
-  else
-    {
-      throw "The chosen integration method is invalid";
-    }
-  return integrator_object;
 }
 
 template <int dim>
@@ -766,54 +748,10 @@ DEMSolver<dim>::report_statistics()
 
 template <int dim>
 void
-DEMSolver<dim>::solve()
+  DEMSolver<dim>::setup_triangulation_dependent_parameters()
 {
-  // Reading mesh
-  read_mesh(parameters.mesh,
-            parameters.restart.restart,
-            pcout,
-            triangulation,
-            parameters.boundary_conditions);
-
-  // Store information about floating mesh/background mesh intersection
-  for (unsigned int i_solid = 0; i_solid < solid_surfaces.size(); ++i_solid)
-    {
-      solid_surfaces_mesh_info[i_solid] =
-        solid_surfaces[i_solid]->map_solid_in_background_triangulation(
-          triangulation);
-    }
-
-  for (unsigned int i_solid = 0; i_solid < solid_volumes.size(); ++i_solid)
-    {
-      solid_volumes_mesh_info[i_solid] =
-        solid_volumes[i_solid]->map_solid_in_background_triangulation(
-          triangulation);
-    }
-
-  // Set insertion object type before the restart because the restart only
-  // rebuilds the member of the insertion object
-  insertion_object = set_insertion_type(parameters);
-
-  contact_detection_iteration_check_function =
-    set_contact_search_iteration_function();
-
-  if (parameters.restart.restart == true)
-    {
-      read_checkpoint(computing_timer,
-                      parameters,
-                      simulation_control,
-                      particles_pvdhandler,
-                      grid_pvdhandler,
-                      triangulation,
-                      particle_handler,
-                      insertion_object,
-                      solid_surfaces);
-
-      resize_containers();
-      update_moment_of_inertia(particle_handler, MOI);
-
-      checkpoint_step = true;
-    }
+  particle_wall_contact_force_object =
+    set_particle_wall_contact_force_model(parameters, triangulation);
 
   // Store information about floating mesh/background mesh intersection
   for (unsigned int i_solid = 0; i_solid < solid_surfaces.size(); ++i_solid)
@@ -842,24 +780,17 @@ DEMSolver<dim>::solve()
               maximum_particle_diameter * 0.5));
 
   // Find the smallest cell size and use this as the floating mesh mapping
-  // criterion
-
-  double mapping_criterion_constant;
-  if constexpr (dim == 2)
-    mapping_criterion_constant = 0.70710678118; // 2^-0.5
-
-  if constexpr (dim == 3)
-    mapping_criterion_constant = 0.57735026919; // 3^-0.5
-
-  smallest_floating_mesh_mapping_criterion =
-    mapping_criterion_constant *
-    GridTools::minimal_cell_diameter(triangulation);
-
-  // The edge case comes when the cell are completely square/cubic. In that
-  // case, every sides of a cell are 2^-0.5 or 3^-0.5 times the cell_diameter.
-  // We want to refresh the mapping each time the solid-objet pass through a
-  // cell or there will be late contact detection. Thus, we use this value.
-
+  // criterion. The edge case comes when the cell are completely square/cubic.
+  // In that case, every sides of a cell are 2^-0.5 or 3^-0.5 times the
+  // cell_diameter. We want to refresh the mapping each time the solid-objet
+  // pass through a cell or there will be late contact detection. Thus, we use
+  // this value.
+  smallest_solid_object_mapping_criterion = [&] {
+    if constexpr (dim == 2) // 2^-0.5 * D_c,min
+      return 0.70710678118 * GridTools::minimal_cell_diameter(triangulation);
+    if constexpr (dim == 3) // 3^-0.5 * D_c,min
+      return 0.57735026919 * GridTools::minimal_cell_diameter(triangulation);
+  }();
 
   if (has_periodic_boundaries)
     {
@@ -876,6 +807,40 @@ DEMSolver<dim>::solve()
       periodic_offset =
         periodic_boundaries_object.get_periodic_offset_distance();
     }
+}
+
+template <int dim>
+void
+DEMSolver<dim>::solve()
+{
+  setup_parameters();
+
+  // Reading mesh
+  read_mesh(parameters.mesh,
+            parameters.restart.restart,
+            pcout,
+            triangulation,
+            parameters.boundary_conditions);
+
+  if (parameters.restart.restart == true)
+    {
+      read_checkpoint(computing_timer,
+                      parameters,
+                      simulation_control,
+                      particles_pvdhandler,
+                      grid_pvdhandler,
+                      triangulation,
+                      particle_handler,
+                      insertion_object,
+                      solid_surfaces);
+
+      resize_containers();
+      update_moment_of_inertia(particle_handler, MOI);
+
+      checkpoint_step = true;
+    }
+
+  setup_triangulation_dependent_parameters();
 
   // Find cell neighbors
   contact_manager.execute_cell_neighbors_search(
@@ -892,13 +857,6 @@ DEMSolver<dim>::solve()
     parameters.mesh.check_for_diamond_cells,
     parameters.mesh.expand_particle_wall_contact_search,
     pcout);
-
-  // Setting chosen contact force, insertion and integration methods
-  integrator_object = set_integrator_type(parameters);
-  particle_particle_contact_force_object =
-    set_particle_particle_contact_force_model(parameters);
-  particle_wall_contact_force_object =
-    set_particle_wall_contact_force_model(parameters, triangulation);
 
   // Setup background dof
   setup_background_dofs();
@@ -947,7 +905,7 @@ DEMSolver<dim>::solve()
       if (has_solid_objects)
         {
           solid_object_map_step = find_floating_mesh_mapping_step(
-            smallest_floating_mesh_mapping_criterion, this->solid_surfaces);
+            smallest_solid_object_mapping_criterion, this->solid_surfaces);
 
           if (solid_object_map_step)
             {

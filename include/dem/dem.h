@@ -73,6 +73,11 @@ public:
   solve();
 
 private:
+  void
+  setup_parameters();
+
+  void
+  setup_triangulation_dependent_parameters();
   /**
    * @brief Initializes the distribution type for the particles, and sets the
    * maximum particle diameter and the neighborhood threshold squared in the
@@ -249,7 +254,7 @@ private:
   unsigned int                         contact_build_number;
   TimerOutput                          computing_timer;
   double                               smallest_contact_search_criterion;
-  double                               smallest_floating_mesh_mapping_criterion;
+  double                               smallest_solid_object_mapping_criterion;
   Particles::ParticleHandler<dim, dim> particle_handler;
   bool                                 contact_detection_step;
   bool                                 load_balance_step;

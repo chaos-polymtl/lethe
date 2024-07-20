@@ -23,6 +23,7 @@
 
 #include <dem/adaptive_sparse_contacts.h>
 #include <dem/data_containers.h>
+#include <dem/dem.h>
 #include <dem/dem_contact_manager.h>
 #include <dem/dem_solver_parameters.h>
 #include <dem/find_contact_detection_step.h>
