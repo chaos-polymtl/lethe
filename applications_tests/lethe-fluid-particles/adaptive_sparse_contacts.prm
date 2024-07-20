@@ -13,7 +13,7 @@ subsection simulation control
   set output frequency     = 0
   set log frequency        = 1
   set startup time scaling = 0.6
-  set time end             = 0.005
+  set time end             = 0.002
   set time step            = 0.001
 end
 
@@ -51,7 +51,7 @@ subsection model parameters
   subsection adaptive sparse contacts
     set enable adaptive sparse contacts = true
     set enable particle advection       = true
-    set granular temperature threshold  = 1e-4
+    set granular temperature threshold  = 5e-4
     set solid fraction threshold        = 0.1
   end
 end
