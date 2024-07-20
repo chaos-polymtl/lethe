@@ -2,7 +2,7 @@
 Sloshing in a Rectangular Tank
 ================================
 
-This example simulates the damping of a small amplitude wave for Reynolds number of (:math:`2`, :math:`20`, :math:`200` and :math:`2000`). The problem is inspired by the test case of Carrica *et al.* `[1] <https://onlinelibrary.wiley.com/doi/abs/10.1002/fld.1279>`_
+This example simulates the damping of a small amplitude wave for Reynolds number of (:math:`2`, :math:`20`, :math:`200` and :math:`2000`). The problem is inspired by the test case of Carrica *et al.* [#carrica2007]_
 
 
 --------
@@ -179,7 +179,7 @@ to run the simulation using eight CPU cores. Feel free to use more.
 Results
 -------
 
-We compare the relative height of the free surface at :math:`x=0` with an analytical solution proposed by Wu *et al.* `[2] <https://link.springer.com/article/10.1023/A:1017558826258>`_ For the Reynolds number of :math:`2`, :math:`20` and :math:`200`, data were directly extracted from Carrica *et al.* `[1] <https://onlinelibrary.wiley.com/doi/abs/10.1002/fld.1279>`_, whereas for the Reynolds of :math:`2000`, the simplified analytical expression of Wu *et al.* `[2] <https://link.springer.com/article/10.1023/A:1017558826258>`_ is used. The results for Reynolds number of :math:`2`, :math:`20`, :math:`200` and :math:`2000` can be post-processed by invoking the following command from the folder of the Reynolds number of interest (:math:`Re=20` in the example below):
+We compare the relative height of the free surface at :math:`x=0` with an analytical solution proposed by Wu *et al.* [#wu2001]_ For the Reynolds number of :math:`2`, :math:`20` and :math:`200`, data were directly extracted from Carrica *et al.* [#carrica2007]_, whereas for the Reynolds of :math:`2000`, the simplified analytical expression of Wu *et al.* [#wu2001]_ is used. The results for Reynolds number of :math:`2`, :math:`20`, :math:`200` and :math:`2000` can be post-processed by invoking the following command from the folder of the Reynolds number of interest (:math:`Re=20` in the example below):
 
 .. code-block:: text
   :class: copy-button
@@ -217,7 +217,7 @@ The following table presents a comparison between the analytical results and the
 References
 ----------
 
-`[1] <https://onlinelibrary.wiley.com/doi/abs/10.1002/fld.1279>`_ P. M. Carrica, R. V. Wilson, and F. Stern, “An unsteady single-phase level set method for viscous free surface flows,” *Int. J. Numer. Methods Fluids*, vol. 53, no. 2, pp. 229–256, 2007, doi: 10.1002/fld.1279.
+.. [#carrica2007] \P. M. Carrica, R. V. Wilson, and F. Stern, “An unsteady single-phase level set method for viscous free surface flows,” *Int. J. Numer. Methods Fluids*, vol. 53, no. 2, pp. 229–256, 2007, doi: `10.1002/fld.1279 <https://onlinelibrary.wiley.com/doi/abs/10.1002/fld.1279>`_\.
 
 
-`[2] <https://link.springer.com/article/10.1023/A:1017558826258>`_ G. X. Wu, R. Eatock Taylor, and D. M. Greaves, “The effect of viscosity on the transient free-surface waves in a two-dimensional tank,” *J. Eng. Math.*, vol. 40, no. 1, pp. 77–90, May 2001, doi: 10.1023/A:1017558826258.
+.. [#wu2001] \G. X. Wu, R. Eatock Taylor, and D. M. Greaves, “The effect of viscosity on the transient free-surface waves in a two-dimensional tank,” *J. Eng. Math.*, vol. 40, no. 1, pp. 77–90, May 2001, doi: `10.1023/A:1017558826258 <https://link.springer.com/article/10.1023/A:1017558826258>`_\.

@@ -432,7 +432,7 @@
 <p>The purpose of this subsection is to enable dynamic flow control. It is important when we want to simulate an average
 velocity on a specific boundary (CFD) or the whole domain (for CFD-DEM). To control the average velocity of the flow, the code
 calculates a <span class="math notranslate nohighlight">\(\beta\)</span> coefficient at each time step that is used as a source term in the momentum equation to keep the average velocity at a targeted value.</p>
-<p>The main controller of the average velocity is the following equation and is based on approach of Wang <a class="reference external" href="https://www.proquest.com/docview/304905306">[1]</a>:</p>
+<p>The main controller of the average velocity is the following equation and is based on approach of Wang <a class="footnote-reference brackets" href="#wang2023" id="id1" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>:</p>
 <div class="math-wrapper docutils container">
 <div class="math notranslate nohighlight">
 \[\beta^{n+1} = \beta^n + \frac{\alpha}{\Delta t} \left[ \bar{U}^{0} - 2\bar{U}^{n} + \bar{U}^{n-1} \right]\]</div>
@@ -481,7 +481,12 @@ end
 </ul>
 <section id="reference">
 <h2>Reference<a class="headerlink" href="#reference" title="Link to this heading">#</a></h2>
-<p><a class="reference external" href="https://www.proquest.com/docview/304905306">[1]</a> W. Wang, “A non-body conformal grid method for simulations of laminar and turbulent flows with a compressible large eddy simulation solver,” Ph.D., Ann Arbor, United States, 2009. Accessed: May 4, 2023. [Online]. Available: <a class="reference external" href="https://www.proquest.com/docview/304905306">https://www.proquest.com/docview/304905306</a></p>
+<aside class="footnote-list brackets">
+<aside class="footnote brackets" id="wang2023" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id1">1</a><span class="fn-bracket">]</span></span>
+<p>W. Wang, “A non-body conformal grid method for simulations of laminar and turbulent flows with a compressible large eddy simulation solver,” Ph.D., Ann Arbor, United States, 2009. Accessed: May 4, 2023. [Online]. Available: <a class="reference external" href="https://www.proquest.com/docview/304905306">https://www.proquest.com/docview/304905306</a>.</p>
+</aside>
+</aside>
 </section>
 </section>
 

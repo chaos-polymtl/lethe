@@ -443,8 +443,8 @@
 <p>All files mentioned below are located in the example’s folder (<code class="docutils literal notranslate"><span class="pre">examples/incompressible-flow/2d-lid-driven-cavity</span></code>).</p>
 <ul class="simple">
 <li><p>Base case parameter file (<span class="math notranslate nohighlight">\(Re=400\)</span>): <code class="docutils literal notranslate"><span class="pre">cavity.prm</span></code></p></li>
-<li><p>Experimental data file from Ghia <cite>et al.</cite> (1982) <a class="reference external" href="https://doi.org/10.1016/0021-9991(82)90058-4">[1]</a>: <code class="docutils literal notranslate"><span class="pre">ref-2d-ghia-u.txt</span></code></p></li>
-<li><p>Experimental data file from Erturk <cite>et al.</cite> (2005) <a class="reference external" href="https://doi.org/10.1002/fld.953">[2]</a>: <code class="docutils literal notranslate"><span class="pre">ref-2d-erturk-u.txt</span></code></p></li>
+<li><p>Experimental data file from Ghia <cite>et al.</cite> (1982) <a class="footnote-reference brackets" href="#ghia1982" id="id1" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>: <code class="docutils literal notranslate"><span class="pre">ref-2d-ghia-u.txt</span></code></p></li>
+<li><p>Experimental data file from Erturk <cite>et al.</cite> (2005) <a class="footnote-reference brackets" href="#erturk2005" id="id2" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a>: <code class="docutils literal notranslate"><span class="pre">ref-2d-erturk-u.txt</span></code></p></li>
 <li><p>Higher-Reynolds case parameter file (<span class="math notranslate nohighlight">\(Re=7500\)</span>): <code class="docutils literal notranslate"><span class="pre">Reynolds_7500/cavity.prm</span></code></p></li>
 <li><p>Postprocessing Python script for the <span class="math notranslate nohighlight">\(Re=400\)</span> case: <code class="docutils literal notranslate"><span class="pre">post_process_Reynolds_400.py</span></code></p></li>
 <li><p>Postprocessing Python script for the <span class="math notranslate nohighlight">\(Re=7500\)</span> case: <code class="docutils literal notranslate"><span class="pre">Reynolds_7500/post_process_Reynolds_7500.py</span></code></p></li>
@@ -641,15 +641,24 @@ end
 <section id="possibilities-for-extension">
 <h2>Possibilities for Extension<a class="headerlink" href="#possibilities-for-extension" title="Link to this heading">#</a></h2>
 <ul class="simple">
-<li><p><strong>Validate at even higher Reynolds numbers:</strong> The Erturk <a class="reference external" href="https://doi.org/10.1002/fld.953">[2]</a> data within the example investigates this case up to a Reynolds number of 20000.  It is an interesting exercise to simulate these more complex cases using the adjoint time-stepping <code class="docutils literal notranslate"><span class="pre">steady_bdf</span></code> scheme.</p></li>
+<li><p><strong>Validate at even higher Reynolds numbers:</strong> The Erturk <a class="footnote-reference brackets" href="#erturk2005" id="id3" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a> data within the example investigates this case up to a Reynolds number of 20000.  It is an interesting exercise to simulate these more complex cases using the adjoint time-stepping <code class="docutils literal notranslate"><span class="pre">steady_bdf</span></code> scheme.</p></li>
 <li><p><strong>High-order methods:</strong> Lethe supports higher order interpolation. This can yield much better results with an equal number of degrees of freedom than traditional second-order (Q1-Q1) methods, especially at higher Reynolds numbers.</p></li>
 <li><p><strong>Dynamic mesh adaptation:</strong> Lethe supports dynamic mesh adaptation. Running this case with dynamic mesh adaptation could potentially yield better results.</p></li>
 </ul>
 </section>
 <section id="references">
 <h2>References<a class="headerlink" href="#references" title="Link to this heading">#</a></h2>
-<p><a class="reference external" href="https://doi.org/10.1016/0021-9991(82)90058-4">[1]</a> U. Ghia, K. N. Ghia, and C. T. Shin, “High-Re solutions for incompressible flow using the Navier-Stokes equations and a multigrid method,” <em>J. Comput. Phys.</em>, vol. 48, no. 3, pp. 387–411, Dec. 1982, doi: 10.1016/0021-9991(82)90058-4.</p>
-<p><a class="reference external" href="https://doi.org/10.1002/fld.953">[2]</a> E. Erturk, T. C. Corke, and C. Gökçöl, “Numerical solutions of 2-D steady incompressible driven cavity flow at high Reynolds numbers,” <em>Int. J. Numer. Methods Fluids</em>, vol. 48, no. 7, pp. 747–774, 2005, doi: 10.1002/fld.953.</p>
+<aside class="footnote-list brackets">
+<aside class="footnote brackets" id="ghia1982" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id1">1</a><span class="fn-bracket">]</span></span>
+<p>U. Ghia, K. N. Ghia, and C. T. Shin, “High-Re solutions for incompressible flow using the Navier-Stokes equations and a multigrid method,” <em>J. Comput. Phys.</em>, vol. 48, no. 3, pp. 387–411, Dec. 1982, doi: <a class="reference external" href="https://doi.org/10.1016/0021-9991(82)90058-4">10.1016/0021-9991(82)90058-4</a>.</p>
+</aside>
+<aside class="footnote brackets" id="erturk2005" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></span>
+<span class="backrefs">(<a role="doc-backlink" href="#id2">1</a>,<a role="doc-backlink" href="#id3">2</a>)</span>
+<p>E. Erturk, T. C. Corke, and C. Gökçöl, “Numerical solutions of 2-D steady incompressible driven cavity flow at high Reynolds numbers,” <em>Int. J. Numer. Methods Fluids</em>, vol. 48, no. 7, pp. 747–774, 2005, doi: <a class="reference external" href="https://doi.org/10.1002/fld.953">10.1002/fld.953</a>.</p>
+</aside>
+</aside>
 </section>
 </section>
 

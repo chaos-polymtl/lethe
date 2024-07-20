@@ -31,7 +31,7 @@ All files mentioned below are located in the example's folder (``/examples/sharp
 **RBF preparation files:**
 
 * Parameter file: ``rbf_generation/RBF.param``;
-* Surface grid file: ``rbf_generation/helix.stl``. This surface grid was taken from `[1] <https://www.thingiverse.com/thing:3915237>`_ under CC BY 4.0.
+* Surface grid file: ``rbf_generation/helix.stl``. This surface grid was taken from Thingiverse [#thingiverse]_ under CC BY 4.0.
 
 **Lethe's fluid simulation files:**
 
@@ -369,4 +369,4 @@ As the plot shows, the mass conservation is constant after only a few time steps
 Reference
 ---------
 
-`[1] <https://www.thingiverse.com/thing:3915237>`_ Group 9., «Helix Static Mixer» on Thingiverse.
+.. [#thingiverse] "Group 9., Helix Static Mixer," *Thingiverse* Available: https://www.thingiverse.com/thing:3915237

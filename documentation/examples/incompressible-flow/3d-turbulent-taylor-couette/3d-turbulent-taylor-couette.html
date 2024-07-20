@@ -444,14 +444,14 @@
 <p>All files mentioned below are located in the example’s folder (<code class="docutils literal notranslate"><span class="pre">examples/incompressible-flow/3d-turbulent-taylor-couette</span></code>).</p>
 <ul class="simple">
 <li><p>Parameter file: <code class="docutils literal notranslate"><span class="pre">tc-matrix-free.prm</span></code></p></li>
-<li><p>Reference data files from Wang and Jourdan (2021): <a class="reference external" href="https://doi.org/10.1186/s42774-021-00071-0">[1]</a> (<code class="docutils literal notranslate"><span class="pre">enstrophy_wang_p%.dat</span></code>)</p></li>
+<li><p>Reference data files from Wang and Jourdan (2021): <a class="footnote-reference brackets" href="#wang2021" id="id1" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a> (<code class="docutils literal notranslate"><span class="pre">enstrophy_wang_p%.dat</span></code>)</p></li>
 <li><p>Postprocessing Python scripts: <code class="docutils literal notranslate"><span class="pre">tc-postprocessing.py</span></code> and <code class="docutils literal notranslate"><span class="pre">tc-functions.py</span></code></p></li>
 </ul>
 </section>
 <section id="description-of-the-case">
 <h2>Description of the Case<a class="headerlink" href="#description-of-the-case" title="Link to this heading">#</a></h2>
-<p>The Taylor-Couette flow occurs in the annular space between two coaxial cylinders with different angular velocities. For a laminar flow, an analytical solution exists (see <a class="reference external" href="https://chaos-polymtl.github.io/lethe/documentation/examples/incompressible-flow/2d-taylor-couette-flow/2d-taylor-couette-flow.html">Taylor-Couette Flow</a>). As the Reynolds number increases, the flow undergoes a transition where Taylor vortices emerge (symmetrical vortices in the radial-vertical plane). Eventually, as the flow becomes fully turbulent, a chaotic vortex structure appears with intense fluid agitation <a class="reference external" href="https://en.wikipedia.org/wiki/Taylor%E2%80%93Couette_flow">[2]</a> .</p>
-<p>This example is drawn from a case study by Wang and Jourdan <a class="reference external" href="https://doi.org/10.1186/s42774-021-00071-0">[1]</a>. It simulates a turbulent Taylor-Couette flow with a Reynolds number of 4000. It incorporates initial conditions based on a modified version of the laminar solution to generate specific vortical structures, inspired by the Taylor-Green vortex.</p>
+<p>The Taylor-Couette flow occurs in the annular space between two coaxial cylinders with different angular velocities. For a laminar flow, an analytical solution exists (see <a class="reference external" href="https://chaos-polymtl.github.io/lethe/documentation/examples/incompressible-flow/2d-taylor-couette-flow/2d-taylor-couette-flow.html">Taylor-Couette Flow</a>). As the Reynolds number increases, the flow undergoes a transition where Taylor vortices emerge (symmetrical vortices in the radial-vertical plane). Eventually, as the flow becomes fully turbulent, a chaotic vortex structure appears with intense fluid agitation <a class="footnote-reference brackets" href="#wikipedia2024" id="id3" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a> .</p>
+<p>This example is drawn from a case study by Wang and Jourdan <a class="footnote-reference brackets" href="#wang2021" id="id4" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>. It simulates a turbulent Taylor-Couette flow with a Reynolds number of 4000. It incorporates initial conditions based on a modified version of the laminar solution to generate specific vortical structures, inspired by the Taylor-Green vortex.</p>
 <p>The inner cylinder rotates counterclockwise at a constant angular velocity <span class="math notranslate nohighlight">\(\omega\)</span>, while the outer cylinder remains fixed. Periodic boundary conditions are applied to the upper and lower openings of the annular section. The following figure illustrates the geometry of this case:</p>
 <a class="reference internal image-reference" href="../../../_images/geometry.png" id="geometry"><img alt="The geometry and surface ID" class="align-center" id="geometry" src="../../../_images/geometry.png" style="height: 6cm;" /></a>
 <p>The initial conditions for velocity and pressure are defined as follow:</p>
@@ -727,8 +727,17 @@ end
 </section>
 <section id="references">
 <h2>References<a class="headerlink" href="#references" title="Link to this heading">#</a></h2>
-<p><a class="reference external" href="https://doi.org/10.1186/s42774-021-00071-0">[1]</a> Z. J. Wang and E. Jourdan, “Benchmark for scale-resolving simulation with curved walls: the Taylor Couette flow,” Advances in Aerodynamics, vol. 3, no. 1, Jun. 2021, doi: 10.1186/s42774-021-00071-0.</p>
-<p><a class="reference external" href="https://en.wikipedia.org/wiki/Taylor%E2%80%93Couette_flow">[2]</a> “Taylor–Couette flow,” <em>Wikipedia</em>. Feb. 15, 2024. Available: <a class="reference external" href="https://en.wikipedia.org/wiki/Taylor%E2%80%93Couette_flow">https://en.wikipedia.org/wiki/Taylor%E2%80%93Couette_flow</a></p>
+<aside class="footnote-list brackets">
+<aside class="footnote brackets" id="wang2021" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></span>
+<span class="backrefs">(<a role="doc-backlink" href="#id1">1</a>,<a role="doc-backlink" href="#id4">2</a>)</span>
+<p>Z. J. Wang and E. Jourdan, “Benchmark for scale-resolving simulation with curved walls: the Taylor Couette flow,” Advances in Aerodynamics, vol. 3, no. 1, Jun. 2021, doi: <a class="reference external" href="https://doi.org/10.1186/s42774-021-00071-0">10.1186/s42774-021-00071-0</a>.</p>
+</aside>
+<aside class="footnote brackets" id="wikipedia2024" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id3">2</a><span class="fn-bracket">]</span></span>
+<p>“Taylor–Couette flow,” <em>Wikipedia</em>. Feb. 15, 2024. Available: <a class="reference external" href="https://en.wikipedia.org/wiki/Taylor%E2%80%93Couette_flow">https://en.wikipedia.org/wiki/Taylor%E2%80%93Couette_flow</a>.</p>
+</aside>
+</aside>
 </section>
 </section>
 

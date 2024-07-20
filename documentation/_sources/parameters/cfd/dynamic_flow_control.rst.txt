@@ -6,7 +6,7 @@ The purpose of this subsection is to enable dynamic flow control. It is importan
 velocity on a specific boundary (CFD) or the whole domain (for CFD-DEM). To control the average velocity of the flow, the code
 calculates a :math:`\beta` coefficient at each time step that is used as a source term in the momentum equation to keep the average velocity at a targeted value.
 
-The main controller of the average velocity is the following equation and is based on approach of Wang `[1] <https://www.proquest.com/docview/304905306>`_:
+The main controller of the average velocity is the following equation and is based on approach of Wang [#wang2023]_:
 
 .. math::
     \beta^{n+1} = \beta^n + \frac{\alpha}{\Delta t} \left[ \bar{U}^{0} - 2\bar{U}^{n} + \bar{U}^{n-1} \right]
@@ -56,4 +56,4 @@ The default parameters are:
 
 Reference
 ---------
-`[1] <https://www.proquest.com/docview/304905306>`_ W. Wang, “A non-body conformal grid method for simulations of laminar and turbulent flows with a compressible large eddy simulation solver,” Ph.D., Ann Arbor, United States, 2009. Accessed: May 4, 2023. [Online]. Available: https://www.proquest.com/docview/304905306
+.. [#wang2023] \W. Wang, “A non-body conformal grid method for simulations of laminar and turbulent flows with a compressible large eddy simulation solver,” Ph.D., Ann Arbor, United States, 2009. Accessed: May 4, 2023. [Online]. Available: https://www.proquest.com/docview/304905306\.

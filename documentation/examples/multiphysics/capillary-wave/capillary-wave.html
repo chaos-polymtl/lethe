@@ -429,7 +429,7 @@
         <article role="main">
           <section id="capillary-wave">
 <h1>Capillary Wave<a class="headerlink" href="#capillary-wave" title="Link to this heading">#</a></h1>
-<p>This example simulates the damping of a small amplitude capillary wave for different time-steps allowing us to study the capillary time-step constraint. The problem is inspired by the test case of Denner <em>et al.</em> <a class="reference external" href="https://doi.org/10.1016/j.jcp.2022.111128">[1]</a></p>
+<p>This example simulates the damping of a small amplitude capillary wave for different time-steps allowing us to study the capillary time-step constraint. The problem is inspired by the test case of Denner <em>et al.</em> <a class="footnote-reference brackets" href="#denner2022" id="id1" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a></p>
 <section id="features">
 <h2>Features<a class="headerlink" href="#features" title="Link to this heading">#</a></h2>
 <ul class="simple">
@@ -507,7 +507,7 @@
 <div class="math notranslate nohighlight">
 \[\Delta t_\sigma = \frac{\Delta x}{\sqrt{2} c_\sigma} = \sqrt{\frac{\hat{\rho}}{2\pi\sigma}{{\Delta x}^3}}\]</div>
 </div>
-<p>with the shortest unambiguously resolved capillary wave having a wavelength of <span class="math notranslate nohighlight">\(\lambda_\sigma = 2 \Delta x\)</span> <a class="reference external" href="https://doi.org/10.1016/j.jcp.2015.01.021">[2]</a>.</p>
+<p>with the shortest unambiguously resolved capillary wave having a wavelength of <span class="math notranslate nohighlight">\(\lambda_\sigma = 2 \Delta x\)</span> <a class="footnote-reference brackets" href="#denner2015" id="id4" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a>.</p>
 <p>Therefore, in order to get stable simulation results, <span class="math notranslate nohighlight">\(\Delta t &lt; \Delta t_\sigma\)</span> should be respected. In this example, different time-steps will be used to explore the stability limit of Lethe’s current implementation.</p>
 </section>
 <section id="parameter-file">
@@ -655,7 +655,7 @@ Make sure that the information entered in the Python script corresponds to the o
 </section>
 <section id="results">
 <h2>Results<a class="headerlink" href="#results" title="Link to this heading">#</a></h2>
-<p>We compare the relative amplitude <span class="math notranslate nohighlight">\(\left(\frac{a}{a_0} \right)\)</span> of the wave at <span class="math notranslate nohighlight">\(x=0\)</span> with the analytical solution (equation 22) proposed by Prosperetti <a class="reference external" href="https://doi.org/10.1063/1.863522">[3]</a>.</p>
+<p>We compare the relative amplitude <span class="math notranslate nohighlight">\(\left(\frac{a}{a_0} \right)\)</span> of the wave at <span class="math notranslate nohighlight">\(x=0\)</span> with the analytical solution (equation 22) proposed by Prosperetti <a class="footnote-reference brackets" href="#prosperetti1981" id="id5" role="doc-noteref"><span class="fn-bracket">[</span>3<span class="fn-bracket">]</span></a>.</p>
 <p>The analytical solution csv file can be generated using:</p>
 <div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>python3 capillary-wave-prosperetti-solution.py ./capillaryWaveData_rho_1_nu_5e-6_prosperetti.csv
 </pre></div>
@@ -759,9 +759,20 @@ Make sure that the information entered in the Python script corresponds to the o
 </section>
 <section id="references">
 <h2>References<a class="headerlink" href="#references" title="Link to this heading">#</a></h2>
-<p><a class="reference external" href="https://doi.org/10.1016/j.jcp.2022.111128">[1]</a> F. Denner, F. Evrard, and B. van Wachem, “Breaching the capillary time-step constraint using a coupled VOF method with implicit surface tension,” <em>J. Comput. Phys.</em>, vol. 459, p. 111128, Jun. 2022, doi: 10.1016/j.jcp.2022.111128.</p>
-<p><a class="reference external" href="https://doi.org/10.1016/j.jcp.2015.01.021">[2]</a> F. Denner and B. G. M. van Wachem, “Numerical time-step restrictions as a result of capillary waves,” <em>J. Comput. Phys.</em>, vol. 285, pp. 24–40, Mar. 2015, doi: 10.1016/j.jcp.2015.01.021.</p>
-<p><a class="reference external" href="https://doi.org/10.1063/1.863522">[3]</a> A. Prosperetti, “Motion of two superposed viscous fluids,” <em>Phys. Fluids</em>, vol. 24, no. 7, pp. 1217–1223, Jul. 1981, doi: 10.1063/1.863522.</p>
+<aside class="footnote-list brackets">
+<aside class="footnote brackets" id="denner2022" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id1">1</a><span class="fn-bracket">]</span></span>
+<p>F. Denner, F. Evrard, and B. van Wachem, “Breaching the capillary time-step constraint using a coupled VOF method with implicit surface tension,” <em>J. Comput. Phys.</em>, vol. 459, p. 111128, Jun. 2022, doi: <a class="reference external" href="https://doi.org/10.1016/j.jcp.2022.111128">10.1016/j.jcp.2022.111128</a>.</p>
+</aside>
+<aside class="footnote brackets" id="denner2015" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id4">2</a><span class="fn-bracket">]</span></span>
+<p>F. Denner and B. G. M. van Wachem, “Numerical time-step restrictions as a result of capillary waves,” <em>J. Comput. Phys.</em>, vol. 285, pp. 24–40, Mar. 2015, doi: <a class="reference external" href="https://doi.org/10.1016/j.jcp.2015.01.021">10.1016/j.jcp.2015.01.021</a>.</p>
+</aside>
+<aside class="footnote brackets" id="prosperetti1981" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id5">3</a><span class="fn-bracket">]</span></span>
+<p>A. Prosperetti, “Motion of two superposed viscous fluids,” <em>Phys. Fluids</em>, vol. 24, no. 7, pp. 1217–1223, Jul. 1981, doi: <a class="reference external" href="https://doi.org/10.1063/1.863522">10.1063/1.863522</a>.</p>
+</aside>
+</aside>
 </section>
 </section>
 

@@ -2,7 +2,7 @@
 Capillary Wave
 ================================
 
-This example simulates the damping of a small amplitude capillary wave for different time-steps allowing us to study the capillary time-step constraint. The problem is inspired by the test case of Denner *et al.* `[1] <https://doi.org/10.1016/j.jcp.2022.111128>`_
+This example simulates the damping of a small amplitude capillary wave for different time-steps allowing us to study the capillary time-step constraint. The problem is inspired by the test case of Denner *et al.* [#denner2022]_
 
 
 --------
@@ -84,7 +84,7 @@ Since, the phase fraction (:math:`\phi`) is treated explicitly, the temporal res
 .. math::
   \Delta t_\sigma = \frac{\Delta x}{\sqrt{2} c_\sigma} = \sqrt{\frac{\hat{\rho}}{2\pi\sigma}{{\Delta x}^3}}
 
-with the shortest unambiguously resolved capillary wave having a wavelength of :math:`\lambda_\sigma = 2 \Delta x` `[2] <https://doi.org/10.1016/j.jcp.2015.01.021>`_.
+with the shortest unambiguously resolved capillary wave having a wavelength of :math:`\lambda_\sigma = 2 \Delta x` [#denner2015]_.
 
 Therefore, in order to get stable simulation results, :math:`\Delta t < \Delta t_\sigma` should be respected. In this example, different time-steps will be used to explore the stability limit of Lethe's current implementation.
 
@@ -258,7 +258,7 @@ to run the simulation using four CPU cores. Feel free to use more CPU cores.
 Results
 -------
 
-We compare the relative amplitude :math:`\left(\frac{a}{a_0} \right)` of the wave at :math:`x=0` with the analytical solution (equation 22) proposed by Prosperetti `[3] <https://doi.org/10.1063/1.863522>`_.
+We compare the relative amplitude :math:`\left(\frac{a}{a_0} \right)` of the wave at :math:`x=0` with the analytical solution (equation 22) proposed by Prosperetti [#prosperetti1981]_.
 
 The analytical solution csv file can be generated using:
 
@@ -373,8 +373,8 @@ We would like to thank Prof. Fabian Denner for sharing his time and knowledge th
 References
 ----------
 
-`[1] <https://doi.org/10.1016/j.jcp.2022.111128>`_ F. Denner, F. Evrard, and B. van Wachem, “Breaching the capillary time-step constraint using a coupled VOF method with implicit surface tension,” *J. Comput. Phys.*, vol. 459, p. 111128, Jun. 2022, doi: 10.1016/j.jcp.2022.111128.
+.. [#denner2022] \F. Denner, F. Evrard, and B. van Wachem, “Breaching the capillary time-step constraint using a coupled VOF method with implicit surface tension,” *J. Comput. Phys.*, vol. 459, p. 111128, Jun. 2022, doi: `10.1016/j.jcp.2022.111128 <https://doi.org/10.1016/j.jcp.2022.111128>`_\.
 
-`[2] <https://doi.org/10.1016/j.jcp.2015.01.021>`_ F. Denner and B. G. M. van Wachem, “Numerical time-step restrictions as a result of capillary waves,” *J. Comput. Phys.*, vol. 285, pp. 24–40, Mar. 2015, doi: 10.1016/j.jcp.2015.01.021.
+.. [#denner2015] \F. Denner and B. G. M. van Wachem, “Numerical time-step restrictions as a result of capillary waves,” *J. Comput. Phys.*, vol. 285, pp. 24–40, Mar. 2015, doi: `10.1016/j.jcp.2015.01.021 <https://doi.org/10.1016/j.jcp.2015.01.021>`_\.
 
-`[3] <https://doi.org/10.1063/1.863522>`_ A. Prosperetti, “Motion of two superposed viscous fluids,” *Phys. Fluids*, vol. 24, no. 7, pp. 1217–1223, Jul. 1981, doi: 10.1063/1.863522.
+.. [#prosperetti1981] \A. Prosperetti, “Motion of two superposed viscous fluids,” *Phys. Fluids*, vol. 24, no. 7, pp. 1217–1223, Jul. 1981, doi: `10.1063/1.863522 <https://doi.org/10.1063/1.863522>`_\.

@@ -454,7 +454,7 @@
 <p>Heat exchangers are common unit operations used in many types of industries to transfer energy from one fluid to another. In this case, we simulate the most simple heat exchanger geometry, which is a concentric tube in which the hot fluid circulates within the inner tube, and a cold fluid circulates within the outer tube. We model the full heat transfer by simulating the motion of the fluid in both regions and the heat transfer within the entire domain.</p>
 <a class="reference internal image-reference" href="../../../_images/schematic.png"><img alt="problem_illustration" class="align-center" src="../../../_images/schematic.png" style="width: 300px;" /></a>
 <p>We consider copper concentric tubes with radii of <span class="math notranslate nohighlight">\(R_0=1\text{mm} ,R_1=2\text{mm},R_2=3\text{mm}\)</span> in which water circulates. We consider a counter-current flow with an inner tube velocity of <span class="math notranslate nohighlight">\(u_i=10\text{mm/s}\)</span> and an outer tube velocity of <span class="math notranslate nohighlight">\(u_o=-4\text{mm/s}\)</span>. The inlet temperature within the inner tube is <span class="math notranslate nohighlight">\(100^\circ C\)</span> and it is <span class="math notranslate nohighlight">\(0^\circ C\)</span> in the outer tube. We do not formulate the problem in SI units, but instead we express the fundamental length in mm. This ensures that most variables of interest are close to unit value and this leads to a system matrix with an improved condition number.</p>
-<p>We will compare the results we obtain with the CFD simulations with results obtained using the Number of Transfer Unit (NTU) approach (see <a class="reference internal" href="#id1">[1]</a>). Since the flow within both pipes is not developed, the Nusselt number in the inner pipe can be estimated as:</p>
+<p>We will compare the results we obtain with the CFD simulations with results obtained using the Number of Transfer Unit (NTU) approach <a class="footnote-reference brackets" href="#incropera2006" id="id1" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>. Since the flow within both pipes is not developed, the Nusselt number in the inner pipe can be estimated as:</p>
 <div class="math-wrapper docutils container">
 <div class="math notranslate nohighlight">
 \[\overline{Nu}_D = 1.86 + \left(\frac{Re_D Pr D}{L}\right)^{1/3}\]</div>
@@ -640,7 +640,12 @@ run in parallel using mpirun.</p>
 </section>
 <section id="references">
 <h2>References<a class="headerlink" href="#references" title="Link to this heading">#</a></h2>
-<p id="id1">[1] F. P. Incropera, D. P. DeWitt, T. L. Bergman, and A. S. Lavine, <em>Fundamentals of heat and mass transfer</em>, 6th ed. John Wiley &amp; Sons, 2006.</p>
+<aside class="footnote-list brackets">
+<aside class="footnote brackets" id="incropera2006" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id1">1</a><span class="fn-bracket">]</span></span>
+<p>F. P. Incropera, D. P. DeWitt, T. L. Bergman, and A. S. Lavine, <em>Fundamentals of heat and mass transfer</em>, 6th ed. John Wiley &amp; Sons, 2006.</p>
+</aside>
+</aside>
 </section>
 </section>
 

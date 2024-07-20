@@ -429,7 +429,7 @@
         <article role="main">
           <section id="stefan-problem-melting-of-a-solid">
 <h1>Stefan Problem: Melting of a Solid<a class="headerlink" href="#stefan-problem-melting-of-a-solid" title="Link to this heading">#</a></h1>
-<p>This example simulates the Stefan <a class="reference external" href="https://en.wikipedia.org/wiki/Stefan_problem">[1]</a> problem following the approach taken by Blais and Ilinca (2018) <a class="reference external" href="https://doi.org/10.1016/j.compfluid.2018.03.037">[2]</a>.</p>
+<p>This example simulates the Stefan <a class="footnote-reference brackets" href="#wikipedia2023" id="id1" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a> problem following the approach taken by Blais and Ilinca (2018) <a class="footnote-reference brackets" href="#blais2018" id="id2" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a>.</p>
 <section id="features">
 <h2>Features<a class="headerlink" href="#features" title="Link to this heading">#</a></h2>
 <ul class="simple">
@@ -449,7 +449,7 @@
 </section>
 <section id="description-of-the-case">
 <h2>Description of the Case<a class="headerlink" href="#description-of-the-case" title="Link to this heading">#</a></h2>
-<p>The Stefan problem describes the melting or the solidification of a pure substance by conduction in a 1D semi-infinite domain. This classical problem, extensively described in the literature <a class="reference external" href="https://doi.org/10.1016/j.applthermaleng.2007.01.008">[3]</a>, is often used as the core test case to establish the accuracy and the robustness of numerical models for phase change. Although it is established for a semi-infinite domain, it can be solved on a finite domain provided that it is sufficiently long. This problem is illustrated in the following figure:</p>
+<p>The Stefan problem describes the melting or the solidification of a pure substance by conduction in a 1D semi-infinite domain. This classical problem, extensively described in the literature <a class="footnote-reference brackets" href="#wiesche2007" id="id3" role="doc-noteref"><span class="fn-bracket">[</span>3<span class="fn-bracket">]</span></a>, is often used as the core test case to establish the accuracy and the robustness of numerical models for phase change. Although it is established for a semi-infinite domain, it can be solved on a finite domain provided that it is sufficiently long. This problem is illustrated in the following figure:</p>
 <img alt="problem_illustration" class="align-center" src="../../../_images/stefan-problem-illustration.png" />
 <p>The analytical solution for the temperature in the liquid is given by:</p>
 <div class="math-wrapper docutils container">
@@ -474,7 +474,7 @@
 </div>
 <p>the diffusivity coefficient in the liquid phase and <span class="math notranslate nohighlight">\(\delta (t)\)</span> the melting front displacement. In this example, we consider the case where <span class="math notranslate nohighlight">\(\alpha=1\)</span>, <span class="math notranslate nohighlight">\(h_l=100\)</span>, <span class="math notranslate nohighlight">\(T_W=1\)</span> and <span class="math notranslate nohighlight">\(T_S=0\)</span>. This corresponds to <span class="math notranslate nohighlight">\(St=100\)</span>. However, the model within Lethe is sufficiently robust to manage any values of the Stefan number.</p>
 <p>Although simple, this problem can be challenging to solve numerically because of the sharp impact of the phase change on the specific heat within the solidification interval. Even if this problem is inherently a 1D problem, we analyse it in 2D by generating structured quadrilateral meshes on a [0, 0]X[1, 0.1] domain. The number of nodes in the y direction is kept at 2 (one cell), but it is adjusted to 101 in the x direction which is the direction in which the heat transfer occurs and in which the interface displaces.</p>
-<p>Lethe uses a specific heat phase change model to solve this type of problem. This model is quasi-identical to the one described by Blais and Ilinca (2018) <a class="reference external" href="https://doi.org/10.1016/j.compfluid.2018.03.037">[2]</a>. It is also described in the <a class="reference internal" href="../../../parameters/cfd/physical_properties.html"><span class="doc">Physical Properties</span></a> section of the documentation.</p>
+<p>Lethe uses a specific heat phase change model to solve this type of problem. This model is quasi-identical to the one described by Blais and Ilinca (2018) <a class="footnote-reference brackets" href="#blais2018" id="id4" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a>. It is also described in the <a class="reference internal" href="../../../parameters/cfd/physical_properties.html"><span class="doc">Physical Properties</span></a> section of the documentation.</p>
 </section>
 <section id="parameter-file">
 <h2>Parameter File<a class="headerlink" href="#parameter-file" title="Link to this heading">#</a></h2>
@@ -542,7 +542,7 @@ end
 end
 </pre></div>
 </div>
-<p>This subsection defines the various parameters of the specific heat model for phase change. Key parameters to note are the solidus and liquidus temperatures. These parameters define the phase change interval, that is the temperature interval over which the phase change occurs. For pure substance, this interval should, in theory, be infinitely small. However, this leads to a numerically unstable solution. Consequently, we set a finite value which should be relatively small, but not too small as to lead to numerical instabilities. In the present case, we set this interval to 0.02C, which is sufficient to guarantee a high degree of accuracy while maintaining numerical stability. The impact of this parameter on the stability and the accuracy of the model has been studied in depth by Blais and Ilinca (2018) <a class="reference external" href="https://doi.org/10.1016/j.compfluid.2018.03.037">[2]</a>.</p>
+<p>This subsection defines the various parameters of the specific heat model for phase change. Key parameters to note are the solidus and liquidus temperatures. These parameters define the phase change interval, that is the temperature interval over which the phase change occurs. For pure substance, this interval should, in theory, be infinitely small. However, this leads to a numerically unstable solution. Consequently, we set a finite value which should be relatively small, but not too small as to lead to numerical instabilities. In the present case, we set this interval to 0.02C, which is sufficient to guarantee a high degree of accuracy while maintaining numerical stability. The impact of this parameter on the stability and the accuracy of the model has been studied in depth by Blais and Ilinca (2018) <a class="footnote-reference brackets" href="#blais2018" id="id5" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a>.</p>
 </section>
 <section id="simulation-control">
 <h3>Simulation Control<a class="headerlink" href="#simulation-control" title="Link to this heading">#</a></h3>
@@ -585,9 +585,21 @@ end
 </section>
 <section id="references">
 <h2>References<a class="headerlink" href="#references" title="Link to this heading">#</a></h2>
-<p><a class="reference external" href="https://en.wikipedia.org/wiki/Stefan_problem">[1]</a> “Stefan problem,” Wikipedia. Jul. 29, 2023. Accessed: Feb. 19, 2022. [Online]. Available: <a class="reference external" href="https://en.wikipedia.org/wiki/Stefan_problem">https://en.wikipedia.org/wiki/Stefan_problem</a></p>
-<p><a class="reference external" href="https://doi.org/10.1016/j.compfluid.2018.03.037">[2]</a> B. Blais and F. Ilinca, “Development and validation of a stabilized immersed boundary CFD model for freezing and melting with natural convection,” <em>Comput. Fluids</em>, vol. 172, pp. 564–581, Aug. 2018, doi: 10.1016/j.compfluid.2018.03.037.</p>
-<p><a class="reference external" href="https://doi.org/10.1016/j.applthermaleng.2007.01.008">[3]</a> S. aus der Wiesche, “Numerical heat transfer and thermal engineering of AdBlue (SCR) tanks for combustion engine emission reduction,” <em>Appl. Therm. Eng.</em>, vol. 27, no. 11, pp. 1790–1798, Aug. 2007, doi: 10.1016/j.applthermaleng.2007.01.008.</p>
+<aside class="footnote-list brackets">
+<aside class="footnote brackets" id="wikipedia2023" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id1">1</a><span class="fn-bracket">]</span></span>
+<p>“Stefan problem,” Wikipedia. Jul. 29, 2023. Accessed: Feb. 19, 2022. [Online]. Available: <a class="reference external" href="https://en.wikipedia.org/wiki/Stefan_problem">https://en.wikipedia.org/wiki/Stefan_problem</a>.</p>
+</aside>
+<aside class="footnote brackets" id="blais2018" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></span>
+<span class="backrefs">(<a role="doc-backlink" href="#id2">1</a>,<a role="doc-backlink" href="#id4">2</a>,<a role="doc-backlink" href="#id5">3</a>)</span>
+<p>B. Blais and F. Ilinca, “Development and validation of a stabilized immersed boundary CFD model for freezing and melting with natural convection,” <em>Comput. Fluids</em>, vol. 172, pp. 564–581, Aug. 2018, doi: <a class="reference external" href="https://doi.org/10.1016/j.compfluid.2018.03.037">10.1016/j.compfluid.2018.03.037</a>.</p>
+</aside>
+<aside class="footnote brackets" id="wiesche2007" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id3">3</a><span class="fn-bracket">]</span></span>
+<p>S. aus der Wiesche, “Numerical heat transfer and thermal engineering of AdBlue (SCR) tanks for combustion engine emission reduction,” <em>Appl. Therm. Eng.</em>, vol. 27, no. 11, pp. 1790–1798, Aug. 2007, doi: <a class="reference external" href="https://doi.org/10.1016/j.applthermaleng.2007.01.008">10.1016/j.applthermaleng.2007.01.008</a>.</p>
+</aside>
+</aside>
 </section>
 </section>
 

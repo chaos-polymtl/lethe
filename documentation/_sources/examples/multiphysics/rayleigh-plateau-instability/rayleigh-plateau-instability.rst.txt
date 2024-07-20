@@ -2,7 +2,7 @@
 Rayleigh-Plateau Instability
 ================================
 
-This example simulates the transition of a continuous jet to a droplet regime under the influence of a perturbation. The case simulated in this example corresponds to the case J1 in absence of gravity from the work of Denner *et al.* `[1] <https://link.springer.com/article/10.1007/s10494-021-00291-w>`_ with the Weber number :math:`We = 20` and the Ohnesorge number :math:`Oh = 0.1`.
+This example simulates the transition of a continuous jet to a droplet regime under the influence of a perturbation. The case simulated in this example corresponds to the case J1 in absence of gravity from the work of Denner *et al.* [#denner2022]_ with the Weber number :math:`We = 20` and the Ohnesorge number :math:`Oh = 0.1`.
 
 ****
 
@@ -104,7 +104,7 @@ The ``multiphysics`` subsection is used to enable the VOF solver.
 Physical Properties
 ~~~~~~~~~~~~~~~~~~~~
 
-In the ``physical properties`` subsection, we define the jet fluid (``fluid 1``) as presented for case J1 in Denner *et al.* `[1] <https://link.springer.com/article/10.1007/s10494-021-00291-w>`_ The viscosity is deduced from the imposed Ohnesorge number :math:`\left(Oh=\frac{\mu_1}{\sigma\rho_1 R_\mathrm{inlet}} \right)` value of :math:`0.1`. The ambient fluid (``fluid 0``) is defined such that the density :math:`\left(\frac{\rho_1}{\rho_0} = 10^3 \right)` and dynamic viscosity :math:`\left(\frac{\mu_1}{\mu_0} = 10^2\right)` ratios are respected. A ``fluid-fluid`` type of material interaction is also defined to specify the ``surface tension model``. In this case, it is set to ``constant`` (default value) with the ``surface tension coefficient`` (:math:`\sigma`) set to :math:`0.0674 \; \mathrm{N \, m^{-1}}`.
+In the ``physical properties`` subsection, we define the jet fluid (``fluid 1``) as presented for case J1 in Denner *et al.* [#denner2022]_ The viscosity is deduced from the imposed Ohnesorge number :math:`\left(Oh=\frac{\mu_1}{\sigma\rho_1 R_\mathrm{inlet}} \right)` value of :math:`0.1`. The ambient fluid (``fluid 0``) is defined such that the density :math:`\left(\frac{\rho_1}{\rho_0} = 10^3 \right)` and dynamic viscosity :math:`\left(\frac{\mu_1}{\mu_0} = 10^2\right)` ratios are respected. A ``fluid-fluid`` type of material interaction is also defined to specify the ``surface tension model``. In this case, it is set to ``constant`` (default value) with the ``surface tension coefficient`` (:math:`\sigma`) set to :math:`0.0674 \; \mathrm{N \, m^{-1}}`.
 
 .. code-block:: text
 
@@ -288,7 +288,7 @@ This 3D simulation was simulated using the ``3D-delta0_30/rayleigh-plateau-J1-3D
 Code to Code Comparison
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-We compare the dimensionless breakup length :math:`\left(\frac{L_\mathrm{b}}{R_\mathrm{jet}}\right)` with the simulation results from Denner *et al.* `[1] <https://link.springer.com/article/10.1007/s10494-021-00291-w>`_ :math:`L_\mathrm{b}` is the breakup length defined as **the shortest distance from the nozzle (inlet) to the tip of the continuous jet**.
+We compare the dimensionless breakup length :math:`\left(\frac{L_\mathrm{b}}{R_\mathrm{jet}}\right)` with the simulation results from Denner *et al.* [#denner2022]_ :math:`L_\mathrm{b}` is the breakup length defined as **the shortest distance from the nozzle (inlet) to the tip of the continuous jet**.
 
 The results can be postprocessed using the provided Bash script (``rayleigh-plateau-postprocess.sh``). Make sure that the file has executable permissions before calling it with:
 
@@ -317,7 +317,7 @@ The script then calculates an average :math:`L_\mathrm{b}` which is used to eval
 +-------------------------------------------------------------------------------------------------------------------+
 
 As it can be seen above, for :math:`\delta_0 \leq 0.1`, we observe no breakup. The jet stabilizes despite the perturbation. An additional case was studied at :math:`\delta_0 = 0.12` to check the increasing stabilizing tendency of the jet for lower excitation amplitude values.
-We also observe that none of the other evaluation points match with the work of Denner *et al.* `[1] <https://link.springer.com/article/10.1007/s10494-021-00291-w>`_  However, a similar trend in values is observed for :math:`\delta_0 \in [0.2,0.5]`. At :math:`\delta_0 = 0.6`, a huge difference is observed. This is due to the way the satellite droplets are formed. As opposed to previous simulations, the satellite droplets are formed from the broken-off part of the jet, decreasing significantly :math:`L_\mathrm{b}` as displayed in the video below. This might have not been the case in the work of Denner *et al.* `[1] <https://link.springer.com/article/10.1007/s10494-021-00291-w>`_
+We also observe that none of the other evaluation points match with the work of Denner *et al.* [#denner2022]_  However, a similar trend in values is observed for :math:`\delta_0 \in [0.2,0.5]`. At :math:`\delta_0 = 0.6`, a huge difference is observed. This is due to the way the satellite droplets are formed. As opposed to previous simulations, the satellite droplets are formed from the broken-off part of the jet, decreasing significantly :math:`L_\mathrm{b}` as displayed in the video below. This might have not been the case in the work of Denner *et al.* [#denner2022]_
 
 .. raw:: html
 
@@ -329,4 +329,4 @@ We also observe that none of the other evaluation points match with the work of 
 References
 ----------
 
-`[1] <https://link.springer.com/article/10.1007/s10494-021-00291-w>`_ F. Denner, F. Evrard, A. A. Castrejón-Pita, J. R. Castrejón-Pita, and B. van Wachem, “Reversal and Inversion of Capillary Jet Breakup at Large Excitation Amplitudes,” *Flow Turbul. Combust.*, vol. 108, no. 3, pp. 843–863, Mar. 2022, doi: 10.1007/s10494-021-00291-w.
+.. [#denner2022] \F. Denner, F. Evrard, A. A. Castrejón-Pita, J. R. Castrejón-Pita, and B. van Wachem, “Reversal and Inversion of Capillary Jet Breakup at Large Excitation Amplitudes,” *Flow Turbul. Combust.*, vol. 108, no. 3, pp. 843–863, Mar. 2022, doi: `10.1007/s10494-021-00291-w <https://link.springer.com/article/10.1007/s10494-021-00291-w>`_\.

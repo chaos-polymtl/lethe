@@ -2,7 +2,7 @@
 Discrete Element Method (DEM)
 ====================================
 
-In this guide, we summarize the theory behind DEM. For further details, we refer the reader to the article by Blais *et al.*  `[1] <https://https://onlinelibrary.wiley.com/doi/full/10.1002/cjce.23501>`_ and the one by Golshan *et al.* `[2] <https://doi.org/10.1007/s40571-022-00478-6>`_
+In this guide, we summarize the theory behind DEM. For further details, we refer the reader to the article by Blais *et al.*  [#blais2019]_ and the one by Golshan *et al.* [#golshan2023]_
 
 
 .. math::
@@ -51,7 +51,7 @@ Where:
     :align: center
     :alt: particle-particle_collision
 
-    Representation of a typical particle-particle contact. [2]
+    Representation of a typical particle-particle contact. [#golshan2023]_
 
 The contact normal vector :math:`\mathbf{n}_{ij}` is computed as:
 
@@ -87,7 +87,7 @@ The spring and damping constants for the linear and nonlinear viscoelastic model
 
    * - Parameters
      - Linear model definitions
-     - Nonlinear viscoelastic model definitions
+     - Nonlinear viscoelastic model definitions [#garg2012]_
    * - Normal spring constant
      - :math:`k_n = \frac{16}{15}\sqrt{R_{e}}Y_{e}\left(\frac{15m_{e}V^2}{16\sqrt{R_{e}}Y_{e}}\right)^{0.2}`
      - :math:`k_n = \frac{4}{3}Y_{e}\sqrt{R_{e}\delta_n}`
@@ -198,7 +198,7 @@ The parameters are computed as follows:
 Cohesive force models
 -----------------------
 
-Lethe supports two cohesive force models: the Johnson-Kendall-Roberts (JKR) and the Derjaguin-Muller-Toporov (DMT). Both models describe attractive forces due to van der Waals effects. Choosing the right model can be based on the Tabor parameter :math:`\mathbf{\tau}` which represents the ratio between the normal elastic deformation caused by adhesion and the distance at which adhesion forces occur. `[4] <https://doi.org/10.1163/1568561054352685>`_
+Lethe supports two cohesive force models: the Johnson-Kendall-Roberts (JKR) and the Derjaguin-Muller-Toporov (DMT). Both models describe attractive forces due to van der Waals effects. Choosing the right model can be based on the Tabor parameter :math:`\mathbf{\tau}` which represents the ratio between the normal elastic deformation caused by adhesion and the distance at which adhesion forces occur. [#grierson2005]_
 
 This parameter can be described as:
 
@@ -212,7 +212,7 @@ Where :math:`\mathbf{z_{o}}` is the equilibrium separation of the surfaces and :
 Johnson-Kendall-Roberts force model
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The Johnson-Kendall-Roberts (JKR) model describes attractive forces due to van der Waals effects. `[5] <https://doi.org/10.3390/pr11010005>`_
+The Johnson-Kendall-Roberts (JKR) model describes attractive forces due to van der Waals effects. [#coetzee2023]_
 This model modifies the Hertz formulation by defining a larger contact path radius (:math:`\mathbf{a}`) and by taking into account the effective surface energy (:math:`\mathbf{\gamma}_{e}`).
 The model is defined by:
 
@@ -228,7 +228,7 @@ The effective surface energy can be computed as:
     \gamma_{e} = \gamma_{i} + \gamma_{j} - 2\gamma_{i,j}
 
 Where :math:`\gamma_{i}` and :math:`\gamma_{j}` are the surface energy of each material (particle or wall) and where :math:`\gamma_{i,j}` is the interface energy which is equal to zero when both surfaces are the same material.
-The interface energy term is approximated using `[6] <https://doi.org/10.1016/B978-0-12-391927-4.10013-1>`_:
+The interface energy term is approximated using [#israelachvili–289]_:
 
 .. math::
     \gamma_{i,j} \approx \left( \sqrt{\gamma_{i}} - \sqrt{\gamma_{j}}  \right)^{2}
@@ -243,7 +243,7 @@ This equation can be rewritten as a fourth-order polynomial function with two co
 .. math::
     0 = a^{4} - 2R_{e}\delta_{n}a^{2} - 2\pi\gamma_{e}R_{e}^{2}a + R_{e}^{2}\delta_{n}^{2}
 
-Since we are always solving for the same real root, a straightforward procedure, described by Parteli et al. can be used `[7] <https://doi.org/10.1038/srep06227>`_:
+Since we are always solving for the same real root, a straightforward procedure, described by Parteli et al. can be used [#parteli2014]_:
 
 .. math::
     c_{0} &= R_{e}^{2}\delta_{n}^{2} \\
@@ -268,9 +268,9 @@ Finally, the :math:`\mathbf{F_{n}^{JKR}}` can be computed as follows:
 
 The normal damping, tangential damping and tangential spring constants need to be computed using the same procedure as the nonlinear model.
 
-A simplified version of the JKR model (SJKR-A) is implemented in Lethe. Please refer to C. J. Coetzee and O. C. Scheffler for more information on the different versions of the JKR model and their specific features `[5] <https://doi.org/10.3390/pr11010005>`_.
+A simplified version of the JKR model (SJKR-A) is implemented in Lethe. Please refer to C. J. Coetzee and O. C. Scheffler for more information on the different versions of the JKR model and their specific features [#coetzee2023]_.
 
-A modified Coulomb's limit, based on the work of C. Thornton `[9] <https://doi.org/10.1088/0022-3727/24/11/007>`_, is used for the JKR model. Using the usual limit can result in permanent slip since the total normal force can be equal to zero even when there is a substantial overlap between particles.
+A modified Coulomb's limit, based on the work of C. Thornton [#thornton1991]_, is used for the JKR model. Using the usual limit can result in permanent slip since the total normal force can be equal to zero even when there is a substantial overlap between particles.
 
 The modified Coulomb's criterion is breached when the following condition is broken during a collision:
 
@@ -287,7 +287,7 @@ Where :math:`\mathbf{F_{po}}` is the pull-off force, which can be computed as fo
 Derjaguin-Muller-Toporov force model
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The Derjaguin-Muller-Toporov (DMT) model describes attractive forces due to van der Waals effects. This model is more suitable for particles with smaller diameter, lower surface energy and higher Young's modulus. In Lethe, the DMT model is implemented using the Maugis approximation which simply adds an adhesion term :math:`\mathbf{F_{ad}^{DMT}}` to the normal force calculation `[8] <https://doi.org/10.1016/j.prostr.2018.11.106.>`_.
+The Derjaguin-Muller-Toporov (DMT) model describes attractive forces due to van der Waals effects. This model is more suitable for particles with smaller diameter, lower surface energy and higher Young's modulus. In Lethe, the DMT model is implemented using the Maugis approximation which simply adds an adhesion term :math:`\mathbf{F_{ad}^{DMT}}` to the normal force calculation [#violano2018]_.
 
 .. math::
     \mathbf{F_{ad}^{DMT}} = -2\pi\gamma_{e}R_{e} \mathbf{n}_{ij}
@@ -321,20 +321,20 @@ And velocity Verlet method is calculated with half-step velocity as:
 References
 -------------
 
-`[1] <https://https://onlinelibrary.wiley.com/doi/full/10.1002/cjce.23501>`_ Bruno Blais, David Vidal, Francois Bertrand, Gregory S. Patience and Jamal Chaouki, “Experimental Methods in Chemical Engineering: Discrete Element Method—DEM,” *Can. J. Chem. Eng.*, 97: 1964-1973. https://doi.org/10.1002/cjce.23501.
+.. [#blais2019] \B. Blais, D. Vidal, F. Bertrand, G. S. Patience and J. Chaouki, “Experimental Methods in Chemical Engineering: Discrete Element Method—DEM,” *Can. J. Chem. Eng.*, vol. 97, pp. 1964-1973, 2019, doi: `10.1002/cjce.23501 <https://doi.org/10.1002/cjce.23501>`_\.
 
-`[2] <https://doi.org/10.1007/s40571-022-00478-6>`_ S. Golshan, P. Munch, R. Gassmöller, M. Kronbichler, and B. Blais, “Lethe-DEM: an open-source parallel discrete element solver with load balancing,” *Comput. Part. Mech.*, vol. 10, no. 1, pp. 77–96, Feb. 2023, doi: 10.1007/s40571-022-00478-6.
+.. [#golshan2023] \S. Golshan, P. Munch, R. Gassmöller, M. Kronbichler, and B. Blais, “Lethe-DEM: an open-source parallel discrete element solver with load balancing,” *Comput. Part. Mech.*, vol. 10, no. 1, pp. 77–96, Feb. 2023, doi: `10.1007/s40571-022-00478-6 <https://doi.org/10.1007/s40571-022-00478-6>`_\.
 
-`[3] <https://mfix.netl.doe.gov/doc/mfix-archive/mfix_current_documentation/dem_doc_2012-1.pdf>`_ R. Garg, J. Galvin-Carney, T. Li, and S. Pannala, “Documentation of open-source MFIX–DEM software for gas-solids flows,” Tingwen Li Dr., p. 10, Sep. 2012.
+.. [#garg2012] \R. Garg, J. Galvin-Carney, T. Li, and S. Pannala, “Documentation of open-source MFIX–DEM software for gas-solids flows,” Tingwen Li Dr., p. 10, Accessed: Sep. 2012, Available: https://mfix.netl.doe.gov/doc/mfix-archive/mfix_current_documentation/dem_doc_2012-1.pdf\.
 
-`[4]  <https://doi.org/10.1163/1568561054352685>`_ D. S. Grierson, E. E. Flater, and R. W. Carpick, “Accounting for the JKR–DMT transition in adhesion and friction measurements with atomic force microscopy,” Journal of Adhesion Science and Technology, vol. 19, no. 3–5, pp. 291–311, Jan. 2005, doi: 10.1163/1568561054352685.
+.. [#grierson2005] \D. S. Grierson, E. E. Flater, and R. W. Carpick, “Accounting for the JKR–DMT transition in adhesion and friction measurements with atomic force microscopy,” *Journal of Adhesion Science and Technology*, vol. 19, no. 3–5, pp. 291–311, Jan. 2005, doi: `10.1163/1568561054352685 <https://doi.org/10.1163/1568561054352685>`_\.
 
-`[5] <https://doi.org/10.3390/pr11010005>`_ C. J. Coetzee and O. C. Scheffler, “Review: The Calibration of DEM Parameters for the Bulk Modelling of Cohesive Materials,” Processes, vol. 11, no. 1, Art. no. 1, Jan. 2023, doi: 10.3390/pr11010005.
+.. [#coetzee2023] \C. J. Coetzee and O. C. Scheffler, “Review: The Calibration of DEM Parameters for the Bulk Modelling of Cohesive Materials,” *Processes*, vol. 11, no. 1, Art. no. 1, Jan. 2023, doi: `10.3390/pr11010005 <https://doi.org/10.3390/pr11010005>`_\.
 
-`[6] <https://doi.org/10.1016/B978-0-12-391927-4.10013-1>`_ J. N. Israelachvili, “Chapter 13 - Van der Waals Forces between Particles and Surfaces,” in Intermolecular and Surface Forces (Third Edition), Third Edition., J. N. Israelachvili, Ed., Boston: Academic Press, 2011, pp. 253–289. doi: https://doi.org/10.1016/B978-0-12-391927-4.10013-1.
+.. [#israelachvili2011] \J. N. Israelachvili, “Chapter 13 - Van der Waals Forces between Particles and Surfaces,” in *Intermolecular and Surface Forces*, 3rd ed., J. N. Israelachvili, Ed., Boston: Academic Press, 2011, pp. 253–289, doi: `10.1016/B978-0-12-391927-4.10013-1 <https://doi.org/10.1016/B978-0-12-391927-4.10013-1>`_\.
 
-`[7] <https://doi.org/10.1038/srep06227>`_ E. J. R. Parteli, J. Schmidt, C. Blümel, K.-E. Wirth, W. Peukert, and T. Pöschel, “Attractive particle interaction forces and packing density of fine glass powders,” Sci Rep, vol. 4, no. 1, Art. no. 1, Sep. 2014, doi: 10.1038/srep06227.
+.. [#parteli2014] \E. J. R. Parteli, J. Schmidt, C. Blümel, K.-E. Wirth, W. Peukert, and T. Pöschel, “Attractive particle interaction forces and packing density of fine glass powders,” *Sci Rep*, vol. 4, no. 1, Art. no. 1, Sep. 2014, doi: `10.1038/srep06227 <https://doi.org/10.1038/srep06227>`_\.
 
-`[8] <https://doi.org/10.1016/j.prostr.2018.11.106.>`_ Violano, Guido, Giuseppe Pompeo Demelio, and Luciano Afferrante. “On the DMT Adhesion Theory: From the First Studies to the Modern Applications in Rough Contacts.” Procedia Structural Integrity, AIAS 2018 international conference on stress analysis, 12 (January 1, 2018): 58–70. https://doi.org/10.1016/j.prostr.2018.11.106.
+.. [#violano2018] \G. Violano, G. P. Demelio, and L. Afferrante, “On the DMT Adhesion Theory: From the First Studies to the Modern Applications in Rough Contacts.” *Procedia Structural Integrity*, vol. 12, pp. 58–70, Jan. 2018, doi: `0.1016/j.prostr.2018.11.106 <https://doi.org/10.1016/j.prostr.2018.11.106.>`_\.
 
-`[9] <https://doi.org/10.1088/0022-3727/24/11/007>`_ C. Thornton, “ Interparticle sliding in the presence of adhesion,” Journal of Physics D: Applied Physics, vol. 24, no. 11, pp. 1942–1946, 1991, https://doi.org/10.1088/0022-3727/24/11/007.
+.. [#thornton1991] \C. Thornton, “ Interparticle sliding in the presence of adhesion,” *Journal of Physics D: Applied Physics*, vol. 24, no. 11, pp. 1942–1946, 1991, doi: `10.1088/0022-3727/24/11/007 <https://doi.org/10.1088/0022-3727/24/11/007>`_\.

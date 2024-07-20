@@ -449,7 +449,7 @@
 </section>
 <section id="description-of-the-case">
 <h2>Description of the Case<a class="headerlink" href="#description-of-the-case" title="Link to this heading">#</a></h2>
-<p>We simulate the flow around a fixed cylinder with a constant upstream fluid velocity. We re-use the geometry and mesh presented in <a class="reference external" href="https://chaos-polymtl.github.io/lethe/documentation/examples/incompressible-flow/2d-flow-around-cylinder/2d-flow-around-cylinder.html">2D Flow around a cylinder</a>, which were taken from Blais <em>et al.</em> <a class="reference external" href="https://doi.org/10.1016/j.compchemeng.2015.10.019">[1]</a>:</p>
+<p>We simulate the flow around a fixed cylinder with a constant upstream fluid velocity. We re-use the geometry and mesh presented in <a class="reference external" href="https://chaos-polymtl.github.io/lethe/documentation/examples/incompressible-flow/2d-flow-around-cylinder/2d-flow-around-cylinder.html">2D Flow around a cylinder</a>, which were taken from Blais <em>et al.</em> <a class="footnote-reference brackets" href="#blais2016" id="id1" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>:</p>
 <img alt="The geometry" class="align-center" id="geometry-description" src="../../../_images/geometry-description1.png" />
 <p>The flow field features a stable laminar boundary layer at the cylinder leading edge and a recirculation zone behind it formed by two unstable vortices of opposite signs. These vortices successively detach from the cylinder in a periodic manner (vortex shedding), leading to the generation of the von Kármán vortex street pattern in the wake. This vortex shedding causes a fluctuating pressure force acting on the cylinder, resulting in oscillations of the drag and lift coefficients in time. The frequency of vortex shedding is related to the Strouhal number:</p>
 <div class="math-wrapper docutils container">
@@ -658,12 +658,12 @@ end
 <td><p>-0.003 <span class="math notranslate nohighlight">\(\pm\)</span> 0.072</p></td>
 <td><p>0.2</p></td>
 </tr>
-<tr class="row-odd"><td><p>Lethe Sharp <a class="reference external" href="https://doi.org/10.1016/j.compfluid.2022.105415">[2]</a></p></td>
+<tr class="row-odd"><td><p>Lethe Sharp <a class="footnote-reference brackets" href="#barbeau2022" id="id4" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a></p></td>
 <td><p>1.395 <span class="math notranslate nohighlight">\(\pm\)</span> 0.047</p></td>
 <td><p><span class="math notranslate nohighlight">\(\pm\)</span> 0.071</p></td>
 <td><p>0.2</p></td>
 </tr>
-<tr class="row-even"><td><p>Braza et al. <a class="reference external" href="https://doi.org/10.1017/S0022112086003014">[3]</a></p></td>
+<tr class="row-even"><td><p>Braza et al. <a class="footnote-reference brackets" href="#braza1986" id="id5" role="doc-noteref"><span class="fn-bracket">[</span>3<span class="fn-bracket">]</span></a></p></td>
 <td><p>1.400 <span class="math notranslate nohighlight">\(\pm\)</span> 0.050</p></td>
 <td><p><span class="math notranslate nohighlight">\(\pm\)</span> 0.075</p></td>
 <td><p>0.2</p></td>
@@ -686,9 +686,20 @@ end
 </section>
 <section id="references">
 <h2>References<a class="headerlink" href="#references" title="Link to this heading">#</a></h2>
-<p><a class="reference external" href="https://doi.org/10.1016/j.compchemeng.2015.10.019">[1]</a> B. Blais, M. Lassaigne, C. Goniva, L. Fradette, and F. Bertrand, “A semi-implicit immersed boundary method and its application to viscous mixing,” <em>Comput. Chem. Eng.</em>, vol. 85, pp. 136–146, Feb. 2016, doi: 10.1016/j.compchemeng.2015.10.019.</p>
-<p><a class="reference external" href="https://doi.org/10.1016/j.compfluid.2022.105415">[2]</a> L. Barbeau, S. Étienne, C. Béguin, and B. Blais, “Development of a high-order continuous Galerkin sharp-interface immersed boundary method and its application to incompressible flow problems,” <em>Comput. Fluids</em>, vol. 239, p. 105415, May 2022, doi: 10.1016/j.compfluid.2022.105415.</p>
-<p><a class="reference external" href="https://doi.org/10.1017/S0022112086003014">[3]</a>      M. Braza, P. Chassaing, and H. H. Minh, “Numerical study and physical analysis of the pressure and velocity fields in the near wake of a circular cylinder,” <em>J. Fluid Mech.</em>, vol. 165, pp. 79–130, Apr. 1986, doi: 10.1017/S0022112086003014.</p>
+<aside class="footnote-list brackets">
+<aside class="footnote brackets" id="blais2016" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id1">1</a><span class="fn-bracket">]</span></span>
+<p>B. Blais, M. Lassaigne, C. Goniva, L. Fradette, and F. Bertrand, “A semi-implicit immersed boundary method and its application to viscous mixing,” <em>Comput. Chem. Eng.</em>, vol. 85, pp. 136–146, Feb. 2016, doi: <a class="reference external" href="https://doi.org/10.1016/j.compchemeng.2015.10.019">10.1016/j.compchemeng.2015.10.019</a>.</p>
+</aside>
+<aside class="footnote brackets" id="barbeau2022" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id4">2</a><span class="fn-bracket">]</span></span>
+<p>L. Barbeau, S. Étienne, C. Béguin, and B. Blais, “Development of a high-order continuous Galerkin sharp-interface immersed boundary method and its application to incompressible flow problems,” <em>Comput. Fluids</em>, vol. 239, p. 105415, May 2022, doi: <a class="reference external" href="https://doi.org/10.1016/j.compfluid.2022.105415">10.1016/j.compfluid.2022.105415</a>.</p>
+</aside>
+<aside class="footnote brackets" id="braza1986" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id5">3</a><span class="fn-bracket">]</span></span>
+<p>M. Braza, P. Chassaing, and H. H. Minh, “Numerical study and physical analysis of the pressure and velocity fields in the near wake of a circular cylinder,” <em>J. Fluid Mech.</em>, vol. 165, pp. 79–130, Apr. 1986, doi: <a class="reference external" href="https://doi.org/10.1017/S0022112086003014">10.1017/S0022112086003014</a>.</p>
+</aside>
+</aside>
 </section>
 </section>
 

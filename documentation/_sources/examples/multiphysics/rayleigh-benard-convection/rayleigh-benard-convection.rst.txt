@@ -2,7 +2,7 @@
 Rayleigh-Bénard Convection
 ==========================
 
-This example simulates two-dimensional Rayleigh–Benard convection `[1] <https://doi.org/10.1017/S0022112009993685>`_ at Rayleigh numbers of :math:`10^4` and :math:`2.5 \times 10^4` .
+This example simulates two-dimensional Rayleigh–Benard convection [#venturi2010]_ [#mpi2022]_ at Rayleigh numbers of :math:`10^4` and :math:`2.5 \times 10^4` .
 
 
 ----------------------------------
@@ -187,6 +187,6 @@ Note that at Ra=10000, two vortices exist in the fluid, while an extra (relative
 References
 -----------
 
-`[1] <https://doi.org/10.1017/S0022112009993685>`_ D. Venturi, X. Wan, and G. E. Karniadakis, “Stochastic bifurcation analysis of Rayleigh–Bénard convection,” *J. Fluid Mech.*, vol. 650, pp. 391–413, May 2010, doi: 10.1017/S0022112009993685.
+.. [#venturi2010] \D. Venturi, X. Wan, and G. E. Karniadakis, “Stochastic bifurcation analysis of Rayleigh–Bénard convection,” *J. Fluid Mech.*, vol. 650, pp. 391–413, May 2010, doi: `10.1017/S0022112009993685 <https://doi.org/10.1017/S0022112009993685>`_\.
 
-`[2] <https://www.mis.mpg.de/applan/research/rayleigh.html>`_ “Optimal transport.” https://www.mis.mpg.de/applan/research/optimal-transport.html (accessed Jul. 06, 2022).
+.. [#mpi2022] \“Rayleigh-Bénard Convection” *Max Planck Institute*, Accessed: 17 Jul. 2024, Available: https://archive.ph/XrJXx\.

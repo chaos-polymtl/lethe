@@ -501,7 +501,7 @@
 </tbody>
 </table>
 </div>
-<p>To simulate the flow in such complex geometry, we take advantage of the system’s symmetry and opt for a Lagrangian reference frame. Instead of observing the velocity profile from an Eulerian reference frame (or “lab reference frame”), we place ourselves on the impeller’s reference making it static and inducing a no-slip boundary condition. This way, the cylindrical tank will be the only moving geometry in our system. The figure below illustrates the difference between the Eulerian and Lagrangian reference frames.</p>
+<p>To simulate the flow in such complex geometry, we take advantage of the system’s symmetry and opt for a Lagrangian reference frame. Instead of observing the velocity profile from an Eulerian reference frame (or “lab reference frame”), we place ourselves on the impeller’s reference making it static and inducing a no-slip boundary condition. This way, the cylindrical tank will be the only moving geometry in our system. The figure below illustrates the difference between the Eulerian and Lagrangian reference frames <a class="footnote-reference brackets" href="#delacroix2020" id="id1" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>.</p>
 <a class="reference internal image-reference" href="../../../_images/eulerian-vs-langrangian-reference.jpg" id="eulerian-and-lagrangian-reference-frames"><img alt="Eulerian and Lagrangian reference frames" class="align-center" id="eulerian-and-lagrangian-reference-frames" src="../../../_images/eulerian-vs-langrangian-reference.jpg" style="height: 5cm;" /></a>
 <p>The rotating Lagrangian frame of reference is non-Galilean. Consequently, the Coriolis and the centrifugal forces must be added to the incompressible Navier-Stokes equations. The resulting set of equations is:</p>
 <div class="math-wrapper docutils container">
@@ -688,7 +688,7 @@ Using Gmsh, with the <code class="docutils literal notranslate"><span class="pre
 <p>If it is your first time running simulations from Lethe on an Alliance cluster, you may want to see our installation guide on how to setup and install all the necessary software and modules: <a class="reference internal" href="../../../installation/digital_alliance.html"><span class="doc">Running Lethe on Digital Research Alliance of Canada Clusters</span></a>.</p>
 </div>
 <section id="generating-the-different-cases">
-<span id="id1"></span><h4>Generating the Different Cases<a class="headerlink" href="#generating-the-different-cases" title="Link to this heading">#</a></h4>
+<span id="id2"></span><h4>Generating the Different Cases<a class="headerlink" href="#generating-the-different-cases" title="Link to this heading">#</a></h4>
 <p>Using <code class="docutils literal notranslate"><span class="pre">lethe_case_generator.py</span></code>, we generate the <span class="math notranslate nohighlight">\(25\)</span> cases with <span class="math notranslate nohighlight">\(Re\)</span> ranging from <span class="math notranslate nohighlight">\(0.1\)</span> to <span class="math notranslate nohighlight">\(100\)</span>. Before running the Python script, it is important to <strong>specify your group account name</strong>, next to <code class="docutils literal notranslate"><span class="pre">#SBATCH</span> <span class="pre">--account=</span></code> among the job directives of the <code class="docutils literal notranslate"><span class="pre">launch-mixer.sh</span></code> script located in the <code class="docutils literal notranslate"><span class="pre">template</span></code> folder.</p>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
@@ -778,15 +778,15 @@ Using Gmsh, with the <code class="docutils literal notranslate"><span class="pre
 </section>
 <section id="results-and-discussion">
 <h2>Results and Discussion<a class="headerlink" href="#results-and-discussion" title="Link to this heading">#</a></h2>
-<section id="id2">
-<h3>Simulating for a Specific Flow Condition <span class="math notranslate nohighlight">\((Re=1)\)</span><a class="headerlink" href="#id2" title="Link to this heading">#</a></h3>
+<section id="id3">
+<h3>Simulating for a Specific Flow Condition <span class="math notranslate nohighlight">\((Re=1)\)</span><a class="headerlink" href="#id3" title="Link to this heading">#</a></h3>
 <p>In the <code class="docutils literal notranslate"><span class="pre">output</span></code> subdirectory, you will find the <code class="docutils literal notranslate"><span class="pre">mixer.pvd</span></code> file that can be visualized using <a class="reference external" href="https://www.paraview.org/download/">Paraview</a>. In the figure below, the velocity magnitude are shown for a flow at <span class="math notranslate nohighlight">\(Re = 1\)</span>. Because a SRF is used, we can notice the rotational velocity imposed on the walls and the no-slip condition on the ribbon.</p>
 <img alt="Ribbon Mixer Velocity magnitude" class="align-center" id="ribbon-mixer-velocity-magnitude" src="../../../_images/velocity-magnitude.png" />
 <p>In the reference frame of the tank, the velocity field and its streamlines are visualized in an Eulerian frame. It is possible to do so by simply selecting <code class="docutils literal notranslate"><span class="pre">velocity_eulerian</span></code> in Paraview.</p>
 <img alt="Ribbon Mixer Velocity in an Eulerian frame" class="align-center" id="ribbon-mixer-velocity-in-an-eulerian-frame" src="../../../_images/velocity-eulerian.png" />
 </section>
-<section id="id3">
-<h3>Generating <span class="math notranslate nohighlight">\(N_p\)</span> vs <span class="math notranslate nohighlight">\(Re\)</span> Curves <span class="math notranslate nohighlight">\((Re \in [0.1, 100])\)</span><a class="headerlink" href="#id3" title="Link to this heading">#</a></h3>
+<section id="id4">
+<h3>Generating <span class="math notranslate nohighlight">\(N_p\)</span> vs <span class="math notranslate nohighlight">\(Re\)</span> Curves <span class="math notranslate nohighlight">\((Re \in [0.1, 100])\)</span><a class="headerlink" href="#id4" title="Link to this heading">#</a></h3>
 <section id="copying-files-to-your-local-computer-using-sftp">
 <h4>Copying Files to Your Local Computer (Using SFTP)<a class="headerlink" href="#copying-files-to-your-local-computer-using-sftp" title="Link to this heading">#</a></h4>
 <p>Before postprocessing the results of the simulations, you may want to copy the files from the remote machine to your local one. You may do so by connecting to the remote computer with the Secure File Transfer Protocol (SFTP):</p>
@@ -833,7 +833,12 @@ Using Gmsh, with the <code class="docutils literal notranslate"><span class="pre
 </section>
 <section id="reference">
 <h2>Reference<a class="headerlink" href="#reference" title="Link to this heading">#</a></h2>
-<p><a class="reference external" href="https://doi.org/10.1016/j.powtec.2020.05.006">[1]</a> B. Delacroix, A. Bouarab, L. Fradette, F. Bertrand, and B. Blais, “Simulation of granular flow in a rotating frame of reference using the discrete element method,” <em>Powder Technol.</em>, vol. 369, pp. 146–161, Jun. 2020, doi: 10.1016/j.powtec.2020.05.006.</p>
+<aside class="footnote-list brackets">
+<aside class="footnote brackets" id="delacroix2020" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id1">1</a><span class="fn-bracket">]</span></span>
+<p>B. Delacroix, A. Bouarab, L. Fradette, F. Bertrand, and B. Blais, “Simulation of granular flow in a rotating frame of reference using the discrete element method,” <em>Powder Technol.</em>, vol. 369, pp. 146–161, Jun. 2020, doi: <a class="reference external" href="https://doi.org/10.1016/j.powtec.2020.05.006">10.1016/j.powtec.2020.05.006</a>.</p>
+</aside>
+</aside>
 </section>
 </section>
 
@@ -919,8 +924,8 @@ Using Gmsh, with the <code class="docutils literal notranslate"><span class="pre
 </ul>
 </li>
 <li><a class="reference internal" href="#results-and-discussion">Results and Discussion</a><ul>
-<li><a class="reference internal" href="#id2">Simulating for a Specific Flow Condition <span class="math notranslate nohighlight">\((Re=1)\)</span></a></li>
-<li><a class="reference internal" href="#id3">Generating <span class="math notranslate nohighlight">\(N_p\)</span> vs <span class="math notranslate nohighlight">\(Re\)</span> Curves <span class="math notranslate nohighlight">\((Re \in [0.1, 100])\)</span></a><ul>
+<li><a class="reference internal" href="#id3">Simulating for a Specific Flow Condition <span class="math notranslate nohighlight">\((Re=1)\)</span></a></li>
+<li><a class="reference internal" href="#id4">Generating <span class="math notranslate nohighlight">\(N_p\)</span> vs <span class="math notranslate nohighlight">\(Re\)</span> Curves <span class="math notranslate nohighlight">\((Re \in [0.1, 100])\)</span></a><ul>
 <li><a class="reference internal" href="#copying-files-to-your-local-computer-using-sftp">Copying Files to Your Local Computer (Using SFTP)</a></li>
 <li><a class="reference internal" href="#postprocess-data">Postprocess Data</a></li>
 </ul>

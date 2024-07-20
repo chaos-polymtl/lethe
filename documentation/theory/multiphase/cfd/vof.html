@@ -430,7 +430,7 @@
           <section id="the-volume-of-fluid-vof-method">
 <h1>The Volume of Fluid (VOF) Method<a class="headerlink" href="#the-volume-of-fluid-vof-method" title="Link to this heading">#</a></h1>
 <p>Numerous examples of flow encountered in engineering involve multiple fluids: sloshing of fuel in aircraft tanks, mixing of bread dough, and motion of droplets and bubbles to name a few. In these cases, the involved fluids can be immiscible, and we are interested in the evolution of the interfaces between those fluids.</p>
-<p>Let <span class="math notranslate nohighlight">\(\Omega = \Omega_0 \cup \Omega_1\)</span> be the domain formed by two fluids, namely fluid <span class="math notranslate nohighlight">\(0\)</span> and <span class="math notranslate nohighlight">\(1\)</span>, with <span class="math notranslate nohighlight">\(\Gamma\)</span> denoting their interface and <span class="math notranslate nohighlight">\(\partial \Omega\)</span>, the remaining boundaries, as illustrated in the figure below. In the VOF method <a class="reference external" href="https://doi.org/10.1016/0021-9991(81)90145-5">[1]</a>, we define the scalar function <span class="math notranslate nohighlight">\(\phi\)</span> as a phase indicator such that:</p>
+<p>Let <span class="math notranslate nohighlight">\(\Omega = \Omega_0 \cup \Omega_1\)</span> be the domain formed by two fluids, namely fluid <span class="math notranslate nohighlight">\(0\)</span> and <span class="math notranslate nohighlight">\(1\)</span>, with <span class="math notranslate nohighlight">\(\Gamma\)</span> denoting their interface and <span class="math notranslate nohighlight">\(\partial \Omega\)</span>, the remaining boundaries, as illustrated in the figure below. In the VOF method <a class="footnote-reference brackets" href="#hirt1981" id="id1" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>, we define the scalar function <span class="math notranslate nohighlight">\(\phi\)</span> as a phase indicator such that:</p>
 <div class="math-wrapper docutils container">
 <div class="math notranslate nohighlight">
 \[\begin{split}\phi =
@@ -500,7 +500,7 @@
 </section>
 <section id="stabilization">
 <h2>Stabilization<a class="headerlink" href="#stabilization" title="Link to this heading">#</a></h2>
-<p>The numerical resolution of the advection equation requires stabilization because of its purely advective character, which makes the equation hyperbolic. Furthermore, a second stabilization term is added to improve the capturing of the interface due to sharp gradient across <span class="math notranslate nohighlight">\(\Gamma\)</span>. Since SUPG only adds diffusion along the streamlines, crosswind oscillations may occur if no appropriate shock capturing scheme is used. To that end, a Discontinuity-Capturing Directional Dissipation (DCDD) shock capturing scheme is used <a class="reference external" href="https://doi.org/10.1002/fld.505">[2]</a>:</p>
+<p>The numerical resolution of the advection equation requires stabilization because of its purely advective character, which makes the equation hyperbolic. Furthermore, a second stabilization term is added to improve the capturing of the interface due to sharp gradient across <span class="math notranslate nohighlight">\(\Gamma\)</span>. Since SUPG only adds diffusion along the streamlines, crosswind oscillations may occur if no appropriate shock capturing scheme is used. To that end, a Discontinuity-Capturing Directional Dissipation (DCDD) shock capturing scheme is used <a class="footnote-reference brackets" href="#tezduyar2003" id="id2" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a>:</p>
 <div class="math-wrapper docutils container">
 <div class="math notranslate nohighlight">
 \[\begin{split}&amp;\int_\Omega v^h \left( \partial_t \phi^h + \phi^h\partial_i u_i + u_i\partial_i\phi^h\right) d \Omega \\
@@ -546,7 +546,7 @@ c^{1-\alpha} \phi^{\alpha} &amp;  (0 \leq \phi &lt; c  ) \\
 \end{cases}\end{split}\]</div>
 </div>
 <p>where <span class="math notranslate nohighlight">\(c\)</span> denotes the sharpening threshold, which defines
-a phase fraction threshold (generally <span class="math notranslate nohighlight">\(0.5\)</span>), and <span class="math notranslate nohighlight">\(\alpha\)</span> corresponds to the interface sharpness, which is a model parameter generally in the range of <span class="math notranslate nohighlight">\((1,2]\)</span>. This interface sharpening method was proposed by Aliabadi and Tezduyar (2000) <a class="reference external" href="https://doi.org/10.1016/S0045-7825(00)00200-0">[3]</a>.</p>
+a phase fraction threshold (generally <span class="math notranslate nohighlight">\(0.5\)</span>), and <span class="math notranslate nohighlight">\(\alpha\)</span> corresponds to the interface sharpness, which is a model parameter generally in the range of <span class="math notranslate nohighlight">\((1,2]\)</span>. This interface sharpening method was proposed by Aliabadi and Tezduyar (2000) <a class="footnote-reference brackets" href="#aliabadi2000" id="id3" role="doc-noteref"><span class="fn-bracket">[</span>3<span class="fn-bracket">]</span></a>.</p>
 </section>
 <section id="interface-filtration">
 <h3>Interface Filtration<a class="headerlink" href="#interface-filtration" title="Link to this heading">#</a></h3>
@@ -560,14 +560,14 @@ a phase fraction threshold (generally <span class="math notranslate nohighlight"
 </section>
 <section id="surface-tension">
 <h2>Surface Tension<a class="headerlink" href="#surface-tension" title="Link to this heading">#</a></h2>
-<p>When two immiscible fluids are in contact, surface tension tends to deform their interface (also called the free surface) into a shape that ensures a minimal energy state. An example would be the force that drives a droplet into its spherical shape <a class="reference external" href="https://doi.org/10.1016/0021-9991(92)90240-Y">[4]</a>.</p>
+<p>When two immiscible fluids are in contact, surface tension tends to deform their interface (also called the free surface) into a shape that ensures a minimal energy state. An example would be the force that drives a droplet into its spherical shape <a class="footnote-reference brackets" href="#brackbill1992" id="id4" role="doc-noteref"><span class="fn-bracket">[</span>4<span class="fn-bracket">]</span></a>.</p>
 <p>Resolution of the interface motion via the advection equation allows to compute the surface tension term and add its effect to the Navier-Stokes momentum equations.</p>
 <p>As its name suggests, the surface tension <span class="math notranslate nohighlight">\(\bf{f_{\sigma}}\)</span> is a surface force. It is applied at the interface between two immiscible fluids and is given by:</p>
 <div class="math-wrapper docutils container">
 <div class="math notranslate nohighlight">
 \[{\bf{f_{\sigma}}} = \sigma \kappa {\bf{n}}\]</div>
 </div>
-<p>where <span class="math notranslate nohighlight">\(\sigma\)</span> is the surface tension coefficient, <span class="math notranslate nohighlight">\(\kappa\)</span> is the curvature and <span class="math notranslate nohighlight">\(\bf{n}\)</span> is the unit normal vector of the free surface. Here, <span class="math notranslate nohighlight">\({\bf{f_{\sigma}}}\)</span> is a force per unit of area. To account for its effect in the Navier-Stokes equations, the surface force is transformed in a volumetric surface force <span class="math notranslate nohighlight">\(\bf{F_{\sigma}}\)</span> using the continuous surface force (CSF) model <a class="reference external" href="https://doi.org/10.1016/0021-9991(92)90240-Y">[4]</a>, that is:</p>
+<p>where <span class="math notranslate nohighlight">\(\sigma\)</span> is the surface tension coefficient, <span class="math notranslate nohighlight">\(\kappa\)</span> is the curvature and <span class="math notranslate nohighlight">\(\bf{n}\)</span> is the unit normal vector of the free surface. Here, <span class="math notranslate nohighlight">\({\bf{f_{\sigma}}}\)</span> is a force per unit of area. To account for its effect in the Navier-Stokes equations, the surface force is transformed in a volumetric surface force <span class="math notranslate nohighlight">\(\bf{F_{\sigma}}\)</span> using the continuous surface force (CSF) model <a class="footnote-reference brackets" href="#brackbill1992" id="id5" role="doc-noteref"><span class="fn-bracket">[</span>4<span class="fn-bracket">]</span></a>, that is:</p>
 <div class="math-wrapper docutils container">
 <div class="math notranslate nohighlight">
 \[{\bf{F_{\sigma}}} = \bf{f_{\sigma}} \delta = \sigma \kappa {\bf{n}}\delta\]</div>
@@ -587,7 +587,7 @@ a phase fraction threshold (generally <span class="math notranslate nohighlight"
 <div class="math notranslate nohighlight">
 \[\bf{n} = \frac{\nabla \phi}{|\nabla \phi|}\]</div>
 </div>
-<p>When including the surface tension force in the resolution of the Navier-Stokes equations, the numerical computation of the curvature can give rise to parasitic flows near the interface between the two fluids. To avoid such spurious currents, the phase fraction gradient and curvature are filtered using projection steps <a class="reference external" href="https://doi.org/10.1002/fld.2643">[5]</a>, as presented in section <a class="reference internal" href="#normal-and-curvature-computations"><span class="std std-ref">Normal and Curvature Computations</span></a>.</p>
+<p>When including the surface tension force in the resolution of the Navier-Stokes equations, the numerical computation of the curvature can give rise to parasitic flows near the interface between the two fluids. To avoid such spurious currents, the phase fraction gradient and curvature are filtered using projection steps <a class="footnote-reference brackets" href="#zahedi2012" id="id6" role="doc-noteref"><span class="fn-bracket">[</span>5<span class="fn-bracket">]</span></a>, as presented in section <a class="reference internal" href="#normal-and-curvature-computations"><span class="std std-ref">Normal and Curvature Computations</span></a>.</p>
 <section id="normal-and-curvature-computations">
 <span id="id7"></span><h3>Normal and Curvature Computations<a class="headerlink" href="#normal-and-curvature-computations" title="Link to this heading">#</a></h3>
 <p>The following equations are used to compute the filtered phase fraction gradient and filtered curvature. They correspond to the projection steps previously mentioned.</p>
@@ -611,11 +611,29 @@ a phase fraction threshold (generally <span class="math notranslate nohighlight"
 </section>
 <section id="references">
 <h2>References<a class="headerlink" href="#references" title="Link to this heading">#</a></h2>
-<p><a class="reference external" href="https://doi.org/10.1016/0021-9991(81)90145-5">[1]</a> C. W. Hirt and B. D. Nichols, “Volume of fluid (VOF) method for the dynamics of free boundaries,” <em>J. Comput. Phys.</em>, vol. 39, no. 1, pp. 201–225, Jan. 1981, doi: 10.1016/0021-9991(81)90145-5.</p>
-<p><a class="reference external" href="https://doi.org/10.1002/fld.505">[2]</a> T. E. Tezduyar, “Computation of moving boundaries and interfaces and stabilization parameters,” <em>Int. J. Numer. Methods Fluids</em>, vol. 43, no. 5, pp. 555–575, 2003, doi: 10.1002/fld.505.</p>
-<p><a class="reference external" href="https://doi.org/10.1016/S0045-7825(00)00200-0">[3]</a> S. Aliabadi and T. E. Tezduyar, “Stabilized-finite-element/interface-capturing technique for parallel computation of unsteady flows with interfaces,” <em>Comput. Methods Appl. Mech. Eng.</em>, vol. 190, no. 3, pp. 243–261, Oct. 2000, doi: 10.1016/S0045-7825(00)00200-0.</p>
-<p><a class="reference external" href="https://doi.org/10.1016/0021-9991(92)90240-Y">[4]</a>   J. U. Brackbill, D. B. Kothe, and C. Zemach, “A continuum method for modeling surface tension,” <em>J. Comput. Phys.</em>, vol. 100, no. 2, pp. 335–354, Jun. 1992, doi: 10.1016/0021-9991(92)90240-Y.</p>
-<p><a class="reference external" href="https://doi.org/10.1002/fld.2643">[5]</a> S. Zahedi, M. Kronbichler, and G. Kreiss, “Spurious currents in finite element based level set methods for two-phase flow,” <em>Int. J. Numer. Methods Fluids</em>, vol. 69, no. 9, pp. 1433–1456, 2012, doi: 10.1002/fld.2643.</p>
+<aside class="footnote-list brackets">
+<aside class="footnote brackets" id="hirt1981" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id1">1</a><span class="fn-bracket">]</span></span>
+<p>C. W. Hirt and B. D. Nichols, “Volume of fluid (VOF) method for the dynamics of free boundaries,” <em>J. Comput. Phys.</em>, vol. 39, no. 1, pp. 201–225, Jan. 1981, doi: <a class="reference external" href="https://doi.org/10.1016/0021-9991(81)90145-5">10.1016/0021-9991(81)90145-5</a>.</p>
+</aside>
+<aside class="footnote brackets" id="tezduyar2003" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id2">2</a><span class="fn-bracket">]</span></span>
+<p>T. E. Tezduyar, “Computation of moving boundaries and interfaces and stabilization parameters,” <em>Int. J. Numer. Methods Fluids</em>, vol. 43, no. 5, pp. 555–575, 2003, doi: <a class="reference external" href="https://doi.org/10.1002/fld.505">10.1002/fld.505</a>.</p>
+</aside>
+<aside class="footnote brackets" id="aliabadi2000" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id3">3</a><span class="fn-bracket">]</span></span>
+<p>S. Aliabadi and T. E. Tezduyar, “Stabilized-finite-element/interface-capturing technique for parallel computation of unsteady flows with interfaces,” <em>Comput. Methods Appl. Mech. Eng.</em>, vol. 190, no. 3, pp. 243–261, Oct. 2000, doi: <a class="reference external" href="https://doi.org/10.1016/S0045-7825(00)00200-0">10.1016/S0045-7825(00)00200-0</a>.</p>
+</aside>
+<aside class="footnote brackets" id="brackbill1992" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span>4<span class="fn-bracket">]</span></span>
+<span class="backrefs">(<a role="doc-backlink" href="#id4">1</a>,<a role="doc-backlink" href="#id5">2</a>)</span>
+<p>J. U. Brackbill, D. B. Kothe, and C. Zemach, “A continuum method for modeling surface tension,” <em>J. Comput. Phys.</em>, vol. 100, no. 2, pp. 335–354, Jun. 1992, doi: <a class="reference external" href="https://doi.org/10.1016/0021-9991(92)90240-Y">10.1016/0021-9991(92)90240-Y</a>.</p>
+</aside>
+<aside class="footnote brackets" id="zahedi2012" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id6">5</a><span class="fn-bracket">]</span></span>
+<p>S. Zahedi, M. Kronbichler, and G. Kreiss, “Spurious currents in finite element based level set methods for two-phase flow,” <em>Int. J. Numer. Methods Fluids</em>, vol. 69, no. 9, pp. 1433–1456, 2012, doi: <a class="reference external" href="https://doi.org/10.1002/fld.2643">10.1002/fld.2643</a>.</p>
+</aside>
+</aside>
 </section>
 </section>
 

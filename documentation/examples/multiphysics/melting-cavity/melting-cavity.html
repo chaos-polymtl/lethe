@@ -429,7 +429,7 @@
         <article role="main">
           <section id="melting-cavity">
 <h1>Melting Cavity<a class="headerlink" href="#melting-cavity" title="Link to this heading">#</a></h1>
-<p>This example simulates a two-dimensional gallium melting cavity and is inspired by the work of Blais and Ilinca <a class="reference external" href="https://doi.org/10.1016/j.compfluid.2018.03.037">[1]</a>.</p>
+<p>This example simulates a two-dimensional gallium melting cavity and is inspired by the work of Blais and Ilinca <a class="footnote-reference brackets" href="#blais2018" id="id1" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>.</p>
 <section id="features">
 <h2>Features<a class="headerlink" href="#features" title="Link to this heading">#</a></h2>
 <ul class="simple">
@@ -468,7 +468,7 @@
 <p>where <span class="math notranslate nohighlight">\(\beta\)</span> and <span class="math notranslate nohighlight">\(T_{ref}\)</span> denote thermal expansion coefficient and a reference temperature, respectively.</p>
 <p>A two-dimensional block of gallium (initially in solid phase) is heated from its left wall at <span class="math notranslate nohighlight">\(t = 0\)</span> s. Its initial temperature is close to (but slightly smaller than) the melting point and the temperature of the left wall is higher than the melting point. Hence, the block starts melting from the left wall. In the melted zone, close to the left wall, the buoyant force (natural convection) creates vortices inside the liquid.</p>
 <dl>
-<dt>The simulation parameters are selected according to the references <a class="reference external" href="https://doi.org/10.1016/j.compfluid.2018.03.037">[1]</a>, <a class="reference external" href="https://doi.org/10.1115/1.3246884">[2]</a> to satisfy the desired values for the dimensionless numbers</dt><dd><div class="math-wrapper docutils container">
+<dt>The simulation parameters are selected according to the references <a class="footnote-reference brackets" href="#blais2018" id="id2" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a> <a class="footnote-reference brackets" href="#gau1986" id="id3" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a> to satisfy the desired values for the dimensionless numbers</dt><dd><div class="math-wrapper docutils container">
 <div class="math notranslate nohighlight">
 \[\text{Ra} = \frac{\rho^2 \beta g (T_w - T_m) L^3 c_p}{k \mu} = 10^5\]</div>
 </div>
@@ -633,7 +633,7 @@ run in parallel using mpirun. This simulation takes
 is added to the example folder to post-process the results.
 Run <code class="docutils literal notranslate"><span class="pre">python3</span> <span class="pre">./melting-cavity.py</span> <span class="pre">./output</span></code> to execute this
 post-processing code, where <code class="docutils literal notranslate"><span class="pre">./output</span></code> is the directory that
-contains the simulation results. In post-processing, the position of the solid-liquid interface at the top, center and bottom of the cavity, as well as the melted volume fraction are plotted and compared with experiments of Gau and Viskanta <a class="reference external" href="https://doi.org/10.1115/1.3246884">[2]</a>. Note that the discrepancies in the interfaces are attributed to the two-dimensional simulations and they were also observed and reported by Blais and Ilinca <a class="reference external" href="https://doi.org/10.1016/j.compfluid.2018.03.037">[1]</a>.</p>
+contains the simulation results. In post-processing, the position of the solid-liquid interface at the top, center and bottom of the cavity, as well as the melted volume fraction are plotted and compared with experiments of Gau and Viskanta <a class="footnote-reference brackets" href="#gau1986" id="id4" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a>. Note that the discrepancies in the interfaces are attributed to the two-dimensional simulations and they were also observed and reported by Blais and Ilinca <a class="footnote-reference brackets" href="#blais2018" id="id5" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>.</p>
 <a class="reference internal image-reference" href="../../../_images/xmax-t1.png"><img alt="bubble_rise_velocity" class="align-center" src="../../../_images/xmax-t1.png" style="width: 500px;" /></a>
 <a class="reference internal image-reference" href="../../../_images/melted-volume-fraction.png"><img alt="ymean_t" class="align-center" src="../../../_images/melted-volume-fraction.png" style="width: 500px;" /></a>
 </section>
@@ -726,8 +726,18 @@ end
 </section>
 <section id="references">
 <h2>References<a class="headerlink" href="#references" title="Link to this heading">#</a></h2>
-<p><a class="reference external" href="https://doi.org/10.1016/j.compfluid.2018.03.037">[1]</a> B. Blais and F. Ilinca, “Development and validation of a stabilized immersed boundary CFD model for freezing and melting with natural convection,” <em>Comput. Fluids</em>, vol. 172, pp. 564–581, Aug. 2018, doi: 10.1016/j.compfluid.2018.03.037.</p>
-<p><a class="reference external" href="https://doi.org/10.1115/1.3246884">[2]</a> C. Gau and R. Viskanta, “Melting and Solidification of a Pure Metal on a Vertical Wall,” <em>J. Heat Transf.</em>, vol. 108, no. 1, pp. 174–181, Feb. 1986, doi: 10.1115/1.3246884.</p>
+<aside class="footnote-list brackets">
+<aside class="footnote brackets" id="blais2018" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></span>
+<span class="backrefs">(<a role="doc-backlink" href="#id1">1</a>,<a role="doc-backlink" href="#id2">2</a>,<a role="doc-backlink" href="#id5">3</a>)</span>
+<p>B. Blais and F. Ilinca, “Development and validation of a stabilized immersed boundary CFD model for freezing and melting with natural convection,” <em>Comput. Fluids</em>, vol. 172, pp. 564–581, Aug. 2018, doi: <a class="reference external" href="https://doi.org/10.1016/j.compfluid.2018.03.037">10.1016/j.compfluid.2018.03.037</a>.</p>
+</aside>
+<aside class="footnote brackets" id="gau1986" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></span>
+<span class="backrefs">(<a role="doc-backlink" href="#id3">1</a>,<a role="doc-backlink" href="#id4">2</a>)</span>
+<p>C. Gau and R. Viskanta, “Melting and Solidification of a Pure Metal on a Vertical Wall,” <em>J. Heat Transf.</em>, vol. 108, no. 1, pp. 174–181, Feb. 1986, doi: <a class="reference external" href="https://doi.org/10.1115/1.3246884">10.1115/1.3246884</a>.</p>
+</aside>
+</aside>
 </section>
 </section>
 

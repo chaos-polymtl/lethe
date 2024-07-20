@@ -429,7 +429,7 @@
         <article role="main">
           <section id="taylor-couette-flow-using-nitsche-immersed-boundary">
 <h1>Taylor-Couette Flow Using Nitsche Immersed Boundary<a class="headerlink" href="#taylor-couette-flow-using-nitsche-immersed-boundary" title="Link to this heading">#</a></h1>
-<p>This example revisits the same taylor-couette flow problem in <a class="reference internal" href="../2d-taylor-couette-flow/2d-taylor-couette-flow.html"><span class="doc">Taylor-Couette Flow</span></a>,
+<p>This example revisits the same taylor-couette flow <a class="footnote-reference brackets" href="#bird2006" id="id1" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a> problem in <a class="reference internal" href="../2d-taylor-couette-flow/2d-taylor-couette-flow.html"><span class="doc">Taylor-Couette Flow</span></a>,
 now using immersed boundaries to represent the inner cylinder. This example demonstrates some of the capabilities of Lethe to simulate the flow around complex geometries without meshing them explicitly with a conformal mesh, but instead by using the Nitsche immersed boundary method available within Lethe.</p>
 <section id="features">
 <h2>Features<a class="headerlink" href="#features" title="Link to this heading">#</a></h2>
@@ -643,8 +643,8 @@ end
 </section>
 <section id="results-and-discussion">
 <h2>Results and Discussion<a class="headerlink" href="#results-and-discussion" title="Link to this heading">#</a></h2>
-<section id="id1">
-<h3>Uniform Mesh Refinement<a class="headerlink" href="#id1" title="Link to this heading">#</a></h3>
+<section id="id2">
+<h3>Uniform Mesh Refinement<a class="headerlink" href="#id2" title="Link to this heading">#</a></h3>
 <p>For the uniform mesh refinement problem, the evolution of the L2 error is as follows:</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>cells error_velocity  error_pressure
   320 2.6290e-02    - 1.5068e-02     -
@@ -678,8 +678,8 @@ the error converges to zero at first order (error is divided by two when the mes
 The torque on the inner cylinder should be -0.83776 and we note that the torque on both cylinder converges close to that value.
 Running the simulation with finer meshes lead to this results.</p>
 </section>
-<section id="id2">
-<h3>Adaptative Mesh Refinement<a class="headerlink" href="#id2" title="Link to this heading">#</a></h3>
+<section id="id3">
+<h3>Adaptative Mesh Refinement<a class="headerlink" href="#id3" title="Link to this heading">#</a></h3>
 <p>Using Paraview, the steady-state velocity profile can be visualized for the adaptative mesh refinement case:</p>
 <a class="reference internal image-reference" href="../../../_images/taylor-couette-with-nitsche-velocity-adapt.png"><img alt="velocity distribution" class="align-center" src="../../../_images/taylor-couette-with-nitsche-velocity-adapt.png" style="height: 10cm;" /></a>
 <p>The end of the simulation log provides the following information about the convergence of the error:</p>
@@ -716,7 +716,12 @@ Running the simulation with finer meshes lead to this results.</p>
 </section>
 <section id="reference">
 <h2>Reference<a class="headerlink" href="#reference" title="Link to this heading">#</a></h2>
-<p>[1] R. B. Bird, W. E. Stewart, and E. N. Lightfoot, <em>Transport Phenomena</em>, vol. 1. John Wiley &amp; Sons, 2006.</p>
+<aside class="footnote-list brackets">
+<aside class="footnote brackets" id="bird2006" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id1">1</a><span class="fn-bracket">]</span></span>
+<p>R. B. Bird, W. E. Stewart, and E. N. Lightfoot, <em>Transport Phenomena</em>, vol. 1. John Wiley &amp; Sons, 2006.</p>
+</aside>
+</aside>
 </section>
 </section>
 
@@ -797,8 +802,8 @@ Running the simulation with finer meshes lead to this results.</p>
 </li>
 <li><a class="reference internal" href="#running-the-simulation">Running the Simulation</a></li>
 <li><a class="reference internal" href="#results-and-discussion">Results and Discussion</a><ul>
-<li><a class="reference internal" href="#id1">Uniform Mesh Refinement</a></li>
-<li><a class="reference internal" href="#id2">Adaptative Mesh Refinement</a></li>
+<li><a class="reference internal" href="#id2">Uniform Mesh Refinement</a></li>
+<li><a class="reference internal" href="#id3">Adaptative Mesh Refinement</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#possibilities-for-extension">Possibilities for Extension</a></li>

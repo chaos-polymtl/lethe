@@ -28,7 +28,7 @@ All files mentioned below are located in the example's folder (``examples/incomp
 Description of the Case
 -----------------------
 
-The Taylor–Green vortex is an unsteady flow of a decaying vortex, which has an exact closed form solution of the incompressible Navier–Stokes equations in Cartesian coordinates. It is named after the British physicist and mathematician Geoffrey Ingram Taylor and his collaborator A. E. Green `[1] <https://en.wikipedia.org/wiki/Taylor%E2%80%93Green_vortex>`_. In the present case, we simulate one Taylor-Green vortex at a Reynolds number of 1600 in a domain :math:`\Omega = [-\pi,\pi]\times[-\pi,\pi]\times[-\pi,\pi]` using periodic boundary conditions.
+The Taylor–Green vortex is an unsteady flow of a decaying vortex, which has an exact closed form solution of the incompressible Navier–Stokes equations in Cartesian coordinates. It is named after the British physicist and mathematician Geoffrey Ingram Taylor and his collaborator A. E. Green [#wikipedia2023]_. In the present case, we simulate one Taylor-Green vortex at a Reynolds number of 1600 in a domain :math:`\Omega = [-\pi,\pi]\times[-\pi,\pi]\times[-\pi,\pi]` using periodic boundary conditions.
 
 The three velocity components :math:`[u_x,u_y,u_z]^T` and the pressure :math:`p` are specified at time :math:`t=0` by:
 
@@ -49,7 +49,7 @@ In this case, the vortex, which is initially 2D, will decay by generating smalle
   E_k &= \frac{1}{\Omega} \int_{\Omega} \frac{\mathbf{u}\cdot \mathbf{u}}{2} \mathrm{d}\Omega \\
   \mathcal{E} &= \frac{1}{\Omega} \int_{\Omega} \frac{\mathbf{\omega}\cdot \mathbf{\omega}}{2} \mathrm{d}\Omega
 
-where :math:`\mathbf{\omega}=\nabla \times \mathbf{u}` is the vorticity. The results we obtain are compared to reference spectral results extracted from Wang *et al.* `[2] <https://doi.org/10.1002/fld.3767>`_
+where :math:`\mathbf{\omega}=\nabla \times \mathbf{u}` is the vorticity. The results we obtain are compared to reference spectral results extracted from Wang *et al.* [#wang2013]_.
 
 
 --------------
@@ -361,6 +361,6 @@ Possibilities for Extension
 References
 ------------
 
-`[1] <https://en.wikipedia.org/wiki/Taylor%E2%80%93Green_vortex>`_ “Taylor–Green vortex,” *Wikipedia*. Dec. 01, 2023. Available: https://en.wikipedia.org/wiki/Taylor%E2%80%93Green_vortex
+.. [#wikipedia2023] \“Taylor–Green vortex,” *Wikipedia*. Dec. 01, 2023. Available: https://en.wikipedia.org/wiki/Taylor%E2%80%93Green_vortex\.
 
-`[2] <https://doi.org/10.1002/fld.3767>`_ Z. J. Wang *et al.*, “High-order CFD methods: current status and perspective,” *Int. J. Numer. Meth. Fluids*, vol. 72, no. 8, pp. 811–845, 2013, doi: 10.1002/fld.3767.
+.. [#wang2013] \Z. J. Wang *et al.*, “High-order CFD methods: current status and perspective,” *Int. J. Numer. Meth. Fluids*, vol. 72, no. 8, pp. 811–845, 2013, doi: `10.1002/fld.3767 <https://doi.org/10.1002/fld.3767>`_\.

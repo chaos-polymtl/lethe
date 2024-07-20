@@ -429,7 +429,7 @@
         <article role="main">
           <section id="cahn-hilliard-method">
 <h1>Cahn-Hilliard Method<a class="headerlink" href="#cahn-hilliard-method" title="Link to this heading">#</a></h1>
-<p>The Cahn-Hilliard system of equations <a class="reference external" href="https://dx.doi.org/10.1063/1.1744102">[1]</a> is a model used to describe the process of phase separation based on the principle of free energy minimization. The key idea at the heart of the Cahn-Hilliard equation is that the system try to achieve a state where the free energy is minimized while competing with the energy cost associated with creating new interfaces between phases. Let us introduce those concepts formally.</p>
+<p>The Cahn-Hilliard system of equations <a class="footnote-reference brackets" href="#cahn1958" id="id1" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a> is a model used to describe the process of phase separation based on the principle of free energy minimization. The key idea at the heart of the Cahn-Hilliard equation is that the system try to achieve a state where the free energy is minimized while competing with the energy cost associated with creating new interfaces between phases. Let us introduce those concepts formally.</p>
 <p>Let <span class="math notranslate nohighlight">\(\Omega = \Omega_0 \cup \Omega_1\)</span> be the domain formed by two fluids, namely fluid <span class="math notranslate nohighlight">\(0\)</span> and <span class="math notranslate nohighlight">\(1\)</span>, with <span class="math notranslate nohighlight">\(\Gamma\)</span> the boundaries of the system. Like in <a class="reference internal" href="vof.html"><span class="doc">The Volume of Fluid (VOF) Method</span></a>, we define a scalar function <span class="math notranslate nohighlight">\(\phi\)</span> as a phase indicator such that:</p>
 <div class="math-wrapper docutils container">
 <div class="math notranslate nohighlight">
@@ -549,8 +549,7 @@ First, the surface tension forces will deform the interface to minimize the inte
 &amp; = \eta\nabla\phi + \nabla\Psi
 \end{align}\end{split}\]</div>
 </div>
-<p>We then define a modified pressure <span class="math notranslate nohighlight">\(\hat{p}\)</span>, which corresponds to the usual pressure with the additional <span class="math notranslate nohighlight">\(\Psi\)</span> term. This new pressure is the same in the bulk phases and varies more smoothly in the interface <a class="reference external" href="https://doi.org/10.48550/arXiv.1911.06718">[2]</a>.
-Then, to take into account the change of momentum of the system due to the diffusive flux of species, we add the following term into the <a class="reference internal" href="../../multiphysics/fluid_dynamics/navier-stokes.html"><span class="doc">usual momentum equation</span></a>:</p>
+<p>We then define a modified pressure <span class="math notranslate nohighlight">\(\hat{p}\)</span>, which corresponds to the usual pressure with the additional <span class="math notranslate nohighlight">\(\Psi\)</span> term. This new pressure is the same in the bulk phases and varies more smoothly in the interface <a class="footnote-reference brackets" href="#lovric2019" id="id2" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a>. Then, to take into account the change of momentum of the system due to the diffusive flux of species, we add the following term into the <a class="reference internal" href="../../multiphysics/fluid_dynamics/navier-stokes.html"><span class="doc">usual momentum equation</span></a>:</p>
 <div class="math-wrapper docutils container">
 <div class="math notranslate nohighlight">
 \[(\mathbf{\tilde{J}}\cdot \nabla)\mathbf{v} = (\frac{\rho_0-\rho_1}{2}\mathbf{J}\cdot \nabla)\mathbf{v}\]</div>
@@ -571,7 +570,7 @@ Then, to take into account the change of momentum of the system due to the diffu
  &amp; - \nabla \cdot \left(\mu(\phi)(\nabla\mathbf{u} + \nabla\mathbf{u}^\mathbf{T})\right) + \nabla \hat{p} - \eta\nabla\phi = 0 \\
 \end{align}\end{split}\]</div>
 </div>
-<p>With an adequate choice of definition of velocity (see <a class="reference external" href="https://doi.org/10.48550/arXiv.1104.1336">[3]</a>), the velocity field remains divergence-free:</p>
+<p>With an adequate choice of definition of velocity <a class="footnote-reference brackets" href="#abels2011" id="id3" role="doc-noteref"><span class="fn-bracket">[</span>3<span class="fn-bracket">]</span></a>, the velocity field remains divergence-free:</p>
 <div class="math-wrapper docutils container">
 <div class="math notranslate nohighlight">
 \[\nabla \cdot \mathbf{u} = 0\]</div>
@@ -588,6 +587,20 @@ Then, to take into account the change of momentum of the system due to the diffu
 <p><a class="reference external" href="https://dx.doi.org/10.1063/1.1744102">[1]</a> J. W. Cahn and J. E. Hilliard, ‘Free Energy of a Nonuniform System. I. Interfacial Free Energy’, The Journal of Chemical Physics, vol. 28, no. 2, pp. 258–267, Feb. 1958, doi: 10.1063/1.1744102.</p>
 <p><a class="reference external" href="https://doi.org/10.48550/arXiv.1911.06718">[2]</a> A. Lovrić, W. G. Dettmer, and D. Perić, ‘Low Order Finite Element Methods for the Navier-Stokes-Cahn-Hilliard Equations’. arXiv, Nov. 15, 2019. doi: 10.48550/arXiv.1911.06718.</p>
 <p><a class="reference external" href="https://doi.org/10.48550/arXiv.1104.1336">[3]</a> H. Abels, H. Garcke, and G. Grün, ‘Thermodynamically Consistent, Frame Indifferent Diffuse Interface Models for Incompressible Two-Phase Flows with Different Densities’. arXiv, Apr. 07, 2011. doi: 10.48550/arXiv.1104.1336.</p>
+<aside class="footnote-list brackets">
+<aside class="footnote brackets" id="cahn1958" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id1">1</a><span class="fn-bracket">]</span></span>
+<p>J. W. Cahn and J. E. Hilliard, ‘Free Energy of a Nonuniform System. I. Interfacial Free Energy’, The Journal of Chemical Physics, vol. 28, no. 2, pp. 258–267, Feb. 1958, doi: <a class="reference external" href="https://dx.doi.org/10.1063/1.1744102">10.1063/1.1744102</a>.</p>
+</aside>
+<aside class="footnote brackets" id="lovric2019" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id2">2</a><span class="fn-bracket">]</span></span>
+<p>A. Lovrić, W. G. Dettmer, and D. Perić, ‘Low Order Finite Element Methods for the Navier-Stokes-Cahn-Hilliard Equations’. arXiv, Nov. 15, 2019. doi: <a class="reference external" href="https://doi.org/10.48550/arXiv.1911.06718">10.48550/arXiv.1911.06718</a>.</p>
+</aside>
+<aside class="footnote brackets" id="abels2011" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id3">3</a><span class="fn-bracket">]</span></span>
+<p>H. Abels, H. Garcke, and G. Grün, ‘Thermodynamically Consistent, Frame Indifferent Diffuse Interface Models for Incompressible Two-Phase Flows with Different Densities’. arXiv, Apr. 07, 2011. doi: <a class="reference external" href="https://doi.org/10.48550/arXiv.1104.1336">10.48550/arXiv.1104.1336</a>.</p>
+</aside>
+</aside>
 </section>
 </section>
 

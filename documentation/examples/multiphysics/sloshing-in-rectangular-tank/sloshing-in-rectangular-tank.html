@@ -429,7 +429,7 @@
         <article role="main">
           <section id="sloshing-in-a-rectangular-tank">
 <h1>Sloshing in a Rectangular Tank<a class="headerlink" href="#sloshing-in-a-rectangular-tank" title="Link to this heading">#</a></h1>
-<p>This example simulates the damping of a small amplitude wave for Reynolds number of (<span class="math notranslate nohighlight">\(2\)</span>, <span class="math notranslate nohighlight">\(20\)</span>, <span class="math notranslate nohighlight">\(200\)</span> and <span class="math notranslate nohighlight">\(2000\)</span>). The problem is inspired by the test case of Carrica <em>et al.</em> <a class="reference external" href="https://onlinelibrary.wiley.com/doi/abs/10.1002/fld.1279">[1]</a></p>
+<p>This example simulates the damping of a small amplitude wave for Reynolds number of (<span class="math notranslate nohighlight">\(2\)</span>, <span class="math notranslate nohighlight">\(20\)</span>, <span class="math notranslate nohighlight">\(200\)</span> and <span class="math notranslate nohighlight">\(2000\)</span>). The problem is inspired by the test case of Carrica <em>et al.</em> <a class="footnote-reference brackets" href="#carrica2007" id="id1" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a></p>
 <section id="features">
 <h2>Features<a class="headerlink" href="#features" title="Link to this heading">#</a></h2>
 <ul class="simple">
@@ -579,7 +579,7 @@ run in parallel using mpirun. This simulation takes
 </section>
 <section id="results">
 <h2>Results<a class="headerlink" href="#results" title="Link to this heading">#</a></h2>
-<p>We compare the relative height of the free surface at <span class="math notranslate nohighlight">\(x=0\)</span> with an analytical solution proposed by Wu <em>et al.</em> <a class="reference external" href="https://link.springer.com/article/10.1023/A:1017558826258">[2]</a> For the Reynolds number of <span class="math notranslate nohighlight">\(2\)</span>, <span class="math notranslate nohighlight">\(20\)</span> and <span class="math notranslate nohighlight">\(200\)</span>, data were directly extracted from Carrica <em>et al.</em> <a class="reference external" href="https://onlinelibrary.wiley.com/doi/abs/10.1002/fld.1279">[1]</a>, whereas for the Reynolds of <span class="math notranslate nohighlight">\(2000\)</span>, the simplified analytical expression of Wu <em>et al.</em> <a class="reference external" href="https://link.springer.com/article/10.1023/A:1017558826258">[2]</a> is used. The results for Reynolds number of <span class="math notranslate nohighlight">\(2\)</span>, <span class="math notranslate nohighlight">\(20\)</span>, <span class="math notranslate nohighlight">\(200\)</span> and <span class="math notranslate nohighlight">\(2000\)</span> can be post-processed by invoking the following command from the folder of the Reynolds number of interest (<span class="math notranslate nohighlight">\(Re=20\)</span> in the example below):</p>
+<p>We compare the relative height of the free surface at <span class="math notranslate nohighlight">\(x=0\)</span> with an analytical solution proposed by Wu <em>et al.</em> <a class="footnote-reference brackets" href="#wu2001" id="id3" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a> For the Reynolds number of <span class="math notranslate nohighlight">\(2\)</span>, <span class="math notranslate nohighlight">\(20\)</span> and <span class="math notranslate nohighlight">\(200\)</span>, data were directly extracted from Carrica <em>et al.</em> <a class="footnote-reference brackets" href="#carrica2007" id="id4" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>, whereas for the Reynolds of <span class="math notranslate nohighlight">\(2000\)</span>, the simplified analytical expression of Wu <em>et al.</em> <a class="footnote-reference brackets" href="#wu2001" id="id5" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a> is used. The results for Reynolds number of <span class="math notranslate nohighlight">\(2\)</span>, <span class="math notranslate nohighlight">\(20\)</span>, <span class="math notranslate nohighlight">\(200\)</span> and <span class="math notranslate nohighlight">\(2000\)</span> can be post-processed by invoking the following command from the folder of the Reynolds number of interest (<span class="math notranslate nohighlight">\(Re=20\)</span> in the example below):</p>
 <div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>python3 ../sloshing_postprocessing.py . sloshing-in-rectangular-tank_Re0020.prm
 </pre></div>
 </div>
@@ -618,8 +618,18 @@ run in parallel using mpirun. This simulation takes
 </section>
 <section id="references">
 <h2>References<a class="headerlink" href="#references" title="Link to this heading">#</a></h2>
-<p><a class="reference external" href="https://onlinelibrary.wiley.com/doi/abs/10.1002/fld.1279">[1]</a> P. M. Carrica, R. V. Wilson, and F. Stern, “An unsteady single-phase level set method for viscous free surface flows,” <em>Int. J. Numer. Methods Fluids</em>, vol. 53, no. 2, pp. 229–256, 2007, doi: 10.1002/fld.1279.</p>
-<p><a class="reference external" href="https://link.springer.com/article/10.1023/A:1017558826258">[2]</a> G. X. Wu, R. Eatock Taylor, and D. M. Greaves, “The effect of viscosity on the transient free-surface waves in a two-dimensional tank,” <em>J. Eng. Math.</em>, vol. 40, no. 1, pp. 77–90, May 2001, doi: 10.1023/A:1017558826258.</p>
+<aside class="footnote-list brackets">
+<aside class="footnote brackets" id="carrica2007" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></span>
+<span class="backrefs">(<a role="doc-backlink" href="#id1">1</a>,<a role="doc-backlink" href="#id4">2</a>)</span>
+<p>P. M. Carrica, R. V. Wilson, and F. Stern, “An unsteady single-phase level set method for viscous free surface flows,” <em>Int. J. Numer. Methods Fluids</em>, vol. 53, no. 2, pp. 229–256, 2007, doi: <a class="reference external" href="https://onlinelibrary.wiley.com/doi/abs/10.1002/fld.1279">10.1002/fld.1279</a>.</p>
+</aside>
+<aside class="footnote brackets" id="wu2001" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></span>
+<span class="backrefs">(<a role="doc-backlink" href="#id3">1</a>,<a role="doc-backlink" href="#id5">2</a>)</span>
+<p>G. X. Wu, R. Eatock Taylor, and D. M. Greaves, “The effect of viscosity on the transient free-surface waves in a two-dimensional tank,” <em>J. Eng. Math.</em>, vol. 40, no. 1, pp. 77–90, May 2001, doi: <a class="reference external" href="https://link.springer.com/article/10.1023/A:1017558826258">10.1023/A:1017558826258</a>.</p>
+</aside>
+</aside>
 </section>
 </section>
 

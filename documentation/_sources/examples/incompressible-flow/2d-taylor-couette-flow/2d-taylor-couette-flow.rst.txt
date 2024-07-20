@@ -2,7 +2,7 @@
 Taylor-Couette Flow
 ==================================
 
-This example showcases another classical fluid mechanics problem, the Taylor-Couette flow. This example introduces the usage of analytical solution and monitors the convergence of the CFD solver by using progressively refined meshes.
+This example showcases another classical fluid mechanics problem, the Taylor-Couette flow [#bird2006]_. This example introduces the usage of analytical solution and monitors the convergence of the CFD solver by using progressively refined meshes.
 
 
 ---------
@@ -293,4 +293,4 @@ Possibilities for Extension
 References
 ------------
 
-[1] R. B. Bird, W. E. Stewart, and E. N. Lightfoot, *Transport Phenomena*, vol. 1. John Wiley & Sons, 2006.
+.. [#bird2006] \R. B. Bird, W. E. Stewart, and E. N. Lightfoot, *Transport Phenomena*, vol. 1. John Wiley & Sons, 2006\.

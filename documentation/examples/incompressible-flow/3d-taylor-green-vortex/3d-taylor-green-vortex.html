@@ -448,7 +448,7 @@
 </section>
 <section id="description-of-the-case">
 <h2>Description of the Case<a class="headerlink" href="#description-of-the-case" title="Link to this heading">#</a></h2>
-<p>The Taylor–Green vortex is an unsteady flow of a decaying vortex, which has an exact closed form solution of the incompressible Navier–Stokes equations in Cartesian coordinates. It is named after the British physicist and mathematician Geoffrey Ingram Taylor and his collaborator A. E. Green <a class="reference external" href="https://en.wikipedia.org/wiki/Taylor%E2%80%93Green_vortex">[1]</a>. In the present case, we simulate one Taylor-Green vortex at a Reynolds number of 1600 in a domain <span class="math notranslate nohighlight">\(\Omega = [-\pi,\pi]\times[-\pi,\pi]\times[-\pi,\pi]\)</span> using periodic boundary conditions.</p>
+<p>The Taylor–Green vortex is an unsteady flow of a decaying vortex, which has an exact closed form solution of the incompressible Navier–Stokes equations in Cartesian coordinates. It is named after the British physicist and mathematician Geoffrey Ingram Taylor and his collaborator A. E. Green <a class="footnote-reference brackets" href="#wikipedia2023" id="id1" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>. In the present case, we simulate one Taylor-Green vortex at a Reynolds number of 1600 in a domain <span class="math notranslate nohighlight">\(\Omega = [-\pi,\pi]\times[-\pi,\pi]\times[-\pi,\pi]\)</span> using periodic boundary conditions.</p>
 <p>The three velocity components <span class="math notranslate nohighlight">\([u_x,u_y,u_z]^T\)</span> and the pressure <span class="math notranslate nohighlight">\(p\)</span> are specified at time <span class="math notranslate nohighlight">\(t=0\)</span> by:</p>
 <div class="math-wrapper docutils container">
 <div class="math notranslate nohighlight">
@@ -464,7 +464,7 @@ p &amp;=  \frac{1}{16}*\left[\cos(2x)+\cos(2y)\right]\left[\cos(2z)+2\right]\end
 E_k &amp;= \frac{1}{\Omega} \int_{\Omega} \frac{\mathbf{u}\cdot \mathbf{u}}{2} \mathrm{d}\Omega \\
 \mathcal{E} &amp;= \frac{1}{\Omega} \int_{\Omega} \frac{\mathbf{\omega}\cdot \mathbf{\omega}}{2} \mathrm{d}\Omega\end{split}\]</div>
 </div>
-<p>where <span class="math notranslate nohighlight">\(\mathbf{\omega}=\nabla \times \mathbf{u}\)</span> is the vorticity. The results we obtain are compared to reference spectral results extracted from Wang <em>et al.</em> <a class="reference external" href="https://doi.org/10.1002/fld.3767">[2]</a></p>
+<p>where <span class="math notranslate nohighlight">\(\mathbf{\omega}=\nabla \times \mathbf{u}\)</span> is the vorticity. The results we obtain are compared to reference spectral results extracted from Wang <em>et al.</em> <a class="footnote-reference brackets" href="#wang2013" id="id2" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a>.</p>
 </section>
 <section id="parameter-file">
 <h2>Parameter File<a class="headerlink" href="#parameter-file" title="Link to this heading">#</a></h2>
@@ -739,8 +739,16 @@ end
 </section>
 <section id="references">
 <h2>References<a class="headerlink" href="#references" title="Link to this heading">#</a></h2>
-<p><a class="reference external" href="https://en.wikipedia.org/wiki/Taylor%E2%80%93Green_vortex">[1]</a> “Taylor–Green vortex,” <em>Wikipedia</em>. Dec. 01, 2023. Available: <a class="reference external" href="https://en.wikipedia.org/wiki/Taylor%E2%80%93Green_vortex">https://en.wikipedia.org/wiki/Taylor%E2%80%93Green_vortex</a></p>
-<p><a class="reference external" href="https://doi.org/10.1002/fld.3767">[2]</a> Z. J. Wang <em>et al.</em>, “High-order CFD methods: current status and perspective,” <em>Int. J. Numer. Meth. Fluids</em>, vol. 72, no. 8, pp. 811–845, 2013, doi: 10.1002/fld.3767.</p>
+<aside class="footnote-list brackets">
+<aside class="footnote brackets" id="wikipedia2023" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id1">1</a><span class="fn-bracket">]</span></span>
+<p>“Taylor–Green vortex,” <em>Wikipedia</em>. Dec. 01, 2023. Available: <a class="reference external" href="https://en.wikipedia.org/wiki/Taylor%E2%80%93Green_vortex">https://en.wikipedia.org/wiki/Taylor%E2%80%93Green_vortex</a>.</p>
+</aside>
+<aside class="footnote brackets" id="wang2013" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id2">2</a><span class="fn-bracket">]</span></span>
+<p>Z. J. Wang <em>et al.</em>, “High-order CFD methods: current status and perspective,” <em>Int. J. Numer. Meth. Fluids</em>, vol. 72, no. 8, pp. 811–845, 2013, doi: <a class="reference external" href="https://doi.org/10.1002/fld.3767">10.1002/fld.3767</a>.</p>
+</aside>
+</aside>
 </section>
 </section>
 

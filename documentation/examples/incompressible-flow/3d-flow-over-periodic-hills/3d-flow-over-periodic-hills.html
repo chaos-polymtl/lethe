@@ -445,7 +445,7 @@
 </section>
 <section id="description-of-the-case">
 <h2>Description of the Case<a class="headerlink" href="#description-of-the-case" title="Link to this heading">#</a></h2>
-<p>In this case a well-defined flow passes over a series of hills which repeat along a channel in a periodic fashion as it can be seen in the following figure (taken from ERCOFTAC <a class="reference external" href="https://kbwiki.ercoftac.org/w/index.php/File:Hill3d.jpg">[1]</a>):</p>
+<p>In this case a well-defined flow passes over a series of hills which repeat along a channel in a periodic fashion as it can be seen in the following figure (taken from ERCOFTAC <a class="footnote-reference brackets" href="#ercoftac2010" id="id1" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>):</p>
 <img alt="The geometry" class="align-center" id="geometry-description" src="../../../_images/geometry-description.jpg" />
 <p>As the flow passes over the hill, it is subjected to the effects of both the curvature of the hill and the pressure gradient. The adverse pressure gradient on the leeward side of the hill and resulting deceleration of the flow causes the boundary layer to separate from the curved hill surface. The flow then recirculates on the leeward side of the hill and reattaches in the base of the channel before the next hill. There is a short distance remaining before the subsequent hill which allows the boundary layer to recover. The flow then accelerates up and over the second hill, and the flow pattern repeats in a periodic manner.</p>
 </section>
@@ -606,7 +606,7 @@ end
 </section>
 <section id="results-and-discussion">
 <h2>Results and Discussion<a class="headerlink" href="#results-and-discussion" title="Link to this heading">#</a></h2>
-<p>To summarize, a coarse mesh of 250K cells was simulated, using a time step of 0.1 and taking average quantities between 207s and 1000s. The results are compared against established test data from both experiments and another CFD simulation. The experimental data corresponds to the data obtained from Rapp <a class="reference external" href="https://mediatum.ub.tum.de/doc/677970/677970.pdf">[2]</a> and the computational data is extracted from the results of the LESOCC CFD code by Breuer et al. <a class="reference external" href="https://doi.org/10.1016/j.compfluid.2008.05.002">[3]</a>.</p>
+<p>To summarize, a coarse mesh of 250K cells was simulated, using a time step of 0.1 and taking average quantities between 207s and 1000s. The results are compared against established test data from both experiments and another CFD simulation. The experimental data corresponds to the data obtained from Rapp <a class="footnote-reference brackets" href="#rapp2009" id="id3" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a> and the computational data is extracted from the results of the LESOCC CFD code by Breuer et al. <a class="footnote-reference brackets" href="#breuer2009" id="id4" role="doc-noteref"><span class="fn-bracket">[</span>3<span class="fn-bracket">]</span></a>.</p>
 <p>The following image shows the average velocity profiles in the x-direction:</p>
 <img alt="average velocity" class="align-center" id="average-velocity" src="../../../_images/average-velocity.png" />
 <p>The values obtained for the reynolds normal stress in the x-direction:</p>
@@ -620,14 +620,26 @@ end
 <ul class="simple">
 <li><p><strong>Parameter tuning</strong>: It is possible to play with different parameters of the simulation such as time average, time step and number of cells of the mesh and see the effects on the results.</p></li>
 <li><p><strong>High-order elements</strong>: It would be interesting to observe the effect of high-order elements in the simulation of the periodic hills flow. For example, Q2-Q2 elements. The only part of the parameter file that would need to change would be the <code class="docutils literal notranslate"><span class="pre">FEM</span></code> section.</p></li>
-<li><p><strong>High Reynolds numbers</strong>: The example could be run at higher Reynolds numbers. In fact, one can find experimental and numerical results in the literature for Reynolds numbers equal to 10600 or 37000. This comes of course with a higher computational effort.</p></li>
+<li><p><strong>High Reynolds numbers</strong>: The example could be run at higher Reynolds numbers. In fact, one can find experimental and numerical results in the literature for Reynolds numbers equal to 10600 <a class="footnote-reference brackets" href="#breuer2009" id="id5" role="doc-noteref"><span class="fn-bracket">[</span>3<span class="fn-bracket">]</span></a> or 37000. This comes of course with a higher computational effort.</p></li>
 </ul>
 </section>
 <section id="references">
 <h2>References<a class="headerlink" href="#references" title="Link to this heading">#</a></h2>
-<p><a class="reference external" href="https://kbwiki.ercoftac.org/w/index.php/File:Hill3d.jpg">[1]</a> ERCOFTAC. “File: hill3d.jpg”. 2010. <a class="reference external" href="https://kbwiki.ercoftac.org/w/index.php/File:Hill3d.jpg">https://kbwiki.ercoftac.org/w/index.php/File:Hill3d.jpg</a>.</p>
-<p><a class="reference external" href="https://mediatum.ub.tum.de/doc/677970/677970.pdf">[2]</a> C. R. Rapp, “Experimentelle studie der turbulenten strömung über periodische hügel”, PhD dissertation, Technische Universität München, Munich, Germany, 2009. [Online] Available: <a class="reference external" href="https://mediatum.ub.tum.de/doc/677970/677970.pdf">https://mediatum.ub.tum.de/doc/677970/677970.pdf</a></p>
-<p><a class="reference external" href="https://doi.org/10.1016/j.compfluid.2008.05.002">[3]</a> M. Breuer, N. Peller, Ch. Rapp, and M. Manhart, “Flow over periodic hills – Numerical and experimental study in a wide range of Reynolds numbers,” <em>Comput. Fluids</em>, vol. 38, no. 2, pp. 433–457, Feb. 2009, doi: 10.1016/j.compfluid.2008.05.002.</p>
+<aside class="footnote-list brackets">
+<aside class="footnote brackets" id="ercoftac2010" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id1">1</a><span class="fn-bracket">]</span></span>
+<p>ERCOFTAC. “File: hill3d.jpg”. 2010. <a class="reference external" href="https://kbwiki.ercoftac.org/w/index.php/File:Hill3d.jpg">https://kbwiki.ercoftac.org/w/index.php/File:Hill3d.jpg</a>.</p>
+</aside>
+<aside class="footnote brackets" id="rapp2009" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id3">2</a><span class="fn-bracket">]</span></span>
+<p>C. R. Rapp, “Experimentelle studie der turbulenten strömung über periodische hügel”, PhD dissertation, Technische Universität München, Munich, Germany, 2009. [Online] Available: <a class="reference external" href="https://mediatum.ub.tum.de/doc/677970/677970.pdf">https://mediatum.ub.tum.de/doc/677970/677970.pdf</a>.</p>
+</aside>
+<aside class="footnote brackets" id="breuer2009" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span>3<span class="fn-bracket">]</span></span>
+<span class="backrefs">(<a role="doc-backlink" href="#id4">1</a>,<a role="doc-backlink" href="#id5">2</a>)</span>
+<p>M. Breuer, N. Peller, Ch. Rapp, and M. Manhart, “Flow over periodic hills – Numerical and experimental study in a wide range of Reynolds numbers,” <em>Comput. Fluids</em>, vol. 38, no. 2, pp. 433–457, Feb. 2009, doi: <a class="reference external" href="https://doi.org/10.1016/j.compfluid.2008.05.002">10.1016/j.compfluid.2008.05.002</a>.</p>
+</aside>
+</aside>
 </section>
 </section>
 

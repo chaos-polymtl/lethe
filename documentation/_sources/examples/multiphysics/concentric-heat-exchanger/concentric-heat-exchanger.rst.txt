@@ -40,7 +40,7 @@ Heat exchangers are common unit operations used in many types of industries to t
 We consider copper concentric tubes with radii of :math:`R_0=1\text{mm} ,R_1=2\text{mm},R_2=3\text{mm}` in which water circulates. We consider a counter-current flow with an inner tube velocity of :math:`u_i=10\text{mm/s}` and an outer tube velocity of :math:`u_o=-4\text{mm/s}`. The inlet temperature within the inner tube is :math:`100^\circ C` and it is :math:`0^\circ C` in the outer tube. We do not formulate the problem in SI units, but instead we express the fundamental length in mm. This ensures that most variables of interest are close to unit value and this leads to a system matrix with an improved condition number.
 
 
-We will compare the results we obtain with the CFD simulations with results obtained using the Number of Transfer Unit (NTU) approach (see `[1]`_). Since the flow within both pipes is not developed, the Nusselt number in the inner pipe can be estimated as:
+We will compare the results we obtain with the CFD simulations with results obtained using the Number of Transfer Unit (NTU) approach [#incropera2006]_. Since the flow within both pipes is not developed, the Nusselt number in the inner pipe can be estimated as:
 
 .. math::
 
@@ -262,6 +262,4 @@ Possibilities for Extension
 References
 ----------------------------
 
-.. _[1]:
-
-[1] F. P. Incropera, D. P. DeWitt, T. L. Bergman, and A. S. Lavine, *Fundamentals of heat and mass transfer*, 6th ed. John Wiley & Sons, 2006.
+.. [#incropera2006] \F. P. Incropera, D. P. DeWitt, T. L. Bergman, and A. S. Lavine, *Fundamentals of heat and mass transfer*, 6th ed. John Wiley & Sons, 2006\.

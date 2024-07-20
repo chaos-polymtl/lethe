@@ -12,7 +12,7 @@ The micro-meso scale approach allows for particle-fluid simulations involving la
     :name: geometry
     :scale: 40
 
-In this guide, we summarize the theory behind Unresolved CFD-DEM. For further details, we refer the reader to the articles by Bérard *et al.* `[1] <https://doi.org/10.1002/cjce.23686>`_, and Zhou *et al.* `[2] <https://doi.org/10.1017/S002211201000306X>`_.
+In this guide, we summarize the theory behind Unresolved CFD-DEM. For further details, we refer the reader to the articles by Bérard *et al.* [#berard2020]_, and Zhou *et al.* [#zhou2010]_.
 
 Particles
 ----------
@@ -28,7 +28,7 @@ where:
 * :math:`m_i` is the mass of the particle;
 * :math:`\mathbf{v}_i` is the velocity vector;
 * :math:`\mathbf{f}_{c,ij}` are the contact forces between particles :math:`i` and :math:`j` (detailed in the DEM section of this guide);
-* :math:`\mathbf{f}_{nc,ij}` are the non-contact forces between particles :math:`i` and :math:`j`, such as lubrication forces `[3] <https://doi.org/10.1002/aic.690400418>`_ (**not yet available on Lethe**);
+* :math:`\mathbf{f}_{nc,ij}` are the non-contact forces between particles :math:`i` and :math:`j`, such as lubrication forces [#nitsche1994]_ (**not yet available on Lethe**);
 * :math:`\mathbf{f}_{pf,i}` is the force exerted by the surrounding fluid over particle :math:`i`;
 * :math:`\mathbf{f}_{g,i}` is the gravitational force;
 * :math:`I_i` is the moment of inertia;
@@ -72,7 +72,7 @@ where:
 * :math:`\mathbf{u}` is the the fluid velocity vector;
 * :math:`\varepsilon_f` is the void fraction.
 
-Models A and B differ from each other in the way the momentum equation is calculated. In Model A, we consider that the pressure and the viscous shear stress are in both phases, while for Model B both are only in the fluid `[2] <https://doi.org/10.1017/S002211201000306X>`_:
+Models A and B differ from each other in the way the momentum equation is calculated. In Model A, we consider that the pressure and the viscous shear stress are in both phases, while for Model B both are only in the fluid [#zhou2010]_:
 
 Model A:
 
@@ -107,7 +107,7 @@ Lethe is capable of simulating unresolved CFD-DEM cases with both Models A and B
 
 Void Fraction
 --------------
-Determining the void fraction is an important step in unresolved CFD-DEM, as can be noted by the VANS equations and the drag models `[4] <http://dx.doi.org/10.1016/j.ces.2013.05.036>`_. There exist several methods for the calculation of the void fraction in a CFD-DEM simulation. Some are approximations while others are analytical approaches. In the finite element method, the void fraction is initially calculated inside a cell but must then be projected to the mesh nodes so that one can assemble the system of equations. This is done by :math:`\mathcal{L}^2` projection `[6] <https://link.springer.com/book/10.1007/978-3-642-33287-6>`_:
+Determining the void fraction is an important step in unresolved CFD-DEM, as can be noted by the VANS equations and the drag models [#rong2013]_. There exist several methods for the calculation of the void fraction in a CFD-DEM simulation. Some are approximations while others are analytical approaches. In the finite element method, the void fraction is initially calculated inside a cell but must then be projected to the mesh nodes so that one can assemble the system of equations. This is done by :math:`\mathcal{L}^2` projection [#larson2013]_:
 
 .. math:: 
     \min_{\varepsilon_f \in \mathbb{R}} \frac{1}{2} \sum_i \left (\sum_j \varepsilon_{f,j} \varphi_j - \varepsilon_{f,i} \right )
@@ -130,7 +130,7 @@ where :math:`L` is the smoothing length, used as parameter in Lethe unresolved C
 
 The Particle Centroid Method
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-The Particle Centroid Method (PCM) `[5] <https://doi.org/10.1002/aic.14421>`_ is simple and the most popular method. It consists of tracking the position of the centroid of each particle and applying the total volume of the particle to the calculation of the void fraction of the cell. This means that in either of the following situations the void fraction of the colored cell is the same:
+The Particle Centroid Method (PCM) [#peng2014]_ is simple and the most popular method. It consists of tracking the position of the centroid of each particle and applying the total volume of the particle to the calculation of the void fraction of the cell. This means that in either of the following situations the void fraction of the colored cell is the same:
 
 .. image:: images/void_frac1.png
    :width: 49% 
@@ -165,7 +165,7 @@ where :math:`n_{sp}` is the number of pseudo-particles j belonging to particle i
 
 The Quadrature Centered Method
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-The Quadrature Centered Method (QCM) `[7] <https://doi.org/10.1021/acs.iecr.3c00172>`_  is an analytical method that decouples the averaging volume from the mesh cells. It constructs an averaging sphere centered at each quadrature point in a given cell, and it calculates the void fraction directly in the averaging volume at the quadrature point. Since the sphere-sphere (particle-averaging sphere) intersection is analytically easier to calculate than sphere-polyhedron (particle-mesh cell), this method is less expensive than other analytical methods as the intersection does not involve the calculation of trigonometric functions at each CFD time step. The advantage of this method is that the void fraction varies within a cell. Additionally, particles in neighboring cells can affect the void fraction of the current cell. This allows the method to be continuous in both space and time. This is advantageous, especially in solid-liquid systems where the term :math:`\rho_f \frac{\partial \epsilon_f}{\partial t}` of the continuity equation is very stiff and unstable, when there exist even small discontinuities in the void fraction, and where it explodes when :math:`\Delta t_{CFD} \to 0`.
+The Quadrature Centered Method (QCM) [#geitani2023]_  is an analytical method that decouples the averaging volume from the mesh cells. It constructs an averaging sphere centered at each quadrature point in a given cell, and it calculates the void fraction directly in the averaging volume at the quadrature point. Since the sphere-sphere (particle-averaging sphere) intersection is analytically easier to calculate than sphere-polyhedron (particle-mesh cell), this method is less expensive than other analytical methods as the intersection does not involve the calculation of trigonometric functions at each CFD time step. The advantage of this method is that the void fraction varies within a cell. Additionally, particles in neighboring cells can affect the void fraction of the current cell. This allows the method to be continuous in both space and time. This is advantageous, especially in solid-liquid systems where the term :math:`\rho_f \frac{\partial \epsilon_f}{\partial t}` of the continuity equation is very stiff and unstable, when there exist even small discontinuities in the void fraction, and where it explodes when :math:`\Delta t_{CFD} \to 0`.
 
 An averaging volume sphere is constructed around each quadrature point. All particles lying in the sphere will contribute to the void fraction value of this quadrature point. Therefore, a cell will be affected by the particles lying in it and in its neighboring cells.
 
@@ -183,19 +183,19 @@ where :math:`V^N_{sphere}` is the normalized volume of the volume averaging sphe
 .. math:: 
     \frac{h_{\Omega}}{2} \leq R_s \leq h_{\Omega}
     
-    
-Reference
+
+References
 -----------
-`[1] <https://doi.org/10.1002/cjce.23686>`_ A. Bérard, G. S. Patience, and B. Blais, “Experimental methods in chemical engineering: Unresolved CFD-DEM,” *Can. J. Chem. Eng.*, vol. 98, no. 2, pp. 424–440, 2020, doi: 10.1002/cjce.23686.
+.. [#berard2020] \A. Bérard, G. S. Patience, and B. Blais, “Experimental methods in chemical engineering: Unresolved CFD-DEM,” *Can. J. Chem. Eng.*, vol. 98, no. 2, pp. 424–440, 2020, doi: `10.1002/cjce.23686 <https://doi.org/10.1002/cjce.23686>`_\.
 
-`[2] <https://doi.org/10.1017/S002211201000306X>`_ Z. Y. Zhou, S. B. Kuang, K. W. Chu, and A. B. Yu, “Discrete particle simulation of particle–fluid flow: model formulations and their applicability,” *J. Fluid Mech.*, vol. 661, pp. 482–510, Oct. 2010, doi: 10.1017/S002211201000306X.
+.. [#zhou2010] \Z. Y. Zhou, S. B. Kuang, K. W. Chu, and A. B. Yu, “Discrete particle simulation of particle–fluid flow: model formulations and their applicability,” *J. Fluid Mech.*, vol. 661, pp. 482–510, Oct. 2010, doi: `10.1017/S002211201000306X <https://doi.org/10.1017/S002211201000306X>`_\.
 
-`[3] <https://doi.org/10.1002/aic.690400418>`_ L. C. Nitsche, “Microhydrodynamics: Principles and selected applications. By Sangtae Kim and Seppo J. Karrila, Butterworth-Heinemann, Boston, 1991” *AIChE J.*, vol. 40, no. 4, pp. 739–743, 1994, doi: 10.1002/aic.690400418.
+.. [#nitsche1994] \L. C. Nitsche, “Microhydrodynamics: Principles and selected applications. By Sangtae Kim and Seppo J. Karrila, Butterworth-Heinemann, Boston, 1991” *AIChE J.*, vol. 40, no. 4, pp. 739–743, 1994, doi: `10.1002/aic.690400418 <https://doi.org/10.1002/aic.690400418>`_\.
 
-`[4] <http://dx.doi.org/10.1016/j.ces.2013.05.036>`_ L. W. Rong, K. J. Dong, and A. B. Yu, “Lattice-Boltzmann simulation of fluid flow through packed beds of uniform spheres: Effect of porosity,” *Chem. Eng. Sci.*, vol. 99, pp. 44–58, Aug. 2013, doi: 10.1016/j.ces.2013.05.036.
+.. [#rong2013] \L. W. Rong, K. J. Dong, and A. B. Yu, “Lattice-Boltzmann simulation of fluid flow through packed beds of uniform spheres: Effect of porosity,” *Chem. Eng. Sci.*, vol. 99, pp. 44–58, Aug. 2013, doi: `10.1016/j.ces.2013.05.036 <http://dx.doi.org/10.1016/j.ces.2013.05.036>`_\.
 
-`[5] <https://doi.org/10.1002/aic.14421>`_ Z. Peng, E. Doroodchi, C. Luo, and B. Moghtaderi, “Influence of void fraction calculation on fidelity of CFD-DEM simulation of gas-solid bubbling fluidized beds,” *AIChE J.*, vol. 60, no. 6, pp. 2000–2018, 2014, doi: 10.1002/aic.14421.
+.. [#peng2014] \Z. Peng, E. Doroodchi, C. Luo, and B. Moghtaderi, “Influence of void fraction calculation on fidelity of CFD-DEM simulation of gas-solid bubbling fluidized beds,” *AIChE J.*, vol. 60, no. 6, pp. 2000–2018, 2014, doi: `10.1002/aic.14421 <https://doi.org/10.1002/aic.14421>`_\.
 
-`[6] <https://link.springer.com/book/10.1007/978-3-642-33287-6>`_ M. G. Larson and F. Bengzon, *The Finite Element Method: Theory, Implementation, and Applications*. Springer Science & Business Media, 2013.
+.. [#larson2013] \M. G. Larson and F. Bengzon, *The Finite Element Method: Theory, Implementation, and Applications*. Springer Science & Business Media, 2013. https://link.springer.com/book/10.1007/978-3-642-33287-6\.
 
-`[7] <https://doi.org/10.1021/acs.iecr.3c00172>`_ T. El Geitani and B. Blais, “Quadrature-Centered Averaging Scheme for Accurate and Continuous Void Fraction Calculation in Computational Fluid Dynamics–Discrete Element Method Simulations,” *Ind. Eng. Chem. Res.*, vol. 62, no. 12, pp. 5394–5407, Mar. 2023, doi: 10.1021/acs.iecr.3c00172.
+.. [#geitani2023] \T. El Geitani and B. Blais, “Quadrature-Centered Averaging Scheme for Accurate and Continuous Void Fraction Calculation in Computational Fluid Dynamics–Discrete Element Method Simulations,” *Ind. Eng. Chem. Res.*, vol. 62, no. 12, pp. 5394–5407, Mar. 2023, doi: `10.1021/acs.iecr.3c00172 <https://doi.org/10.1021/acs.iecr.3c00172>`_\.

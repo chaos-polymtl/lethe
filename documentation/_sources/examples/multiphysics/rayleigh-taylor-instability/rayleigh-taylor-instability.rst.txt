@@ -2,7 +2,7 @@
 Rayleigh-Taylor Instability
 ============================
 
-This example simulates the dynamic evolution of the single-mode Rayleigh-Taylor instability `[1] <https://doi.org/10.1006/jcph.1999.6257>`_ by density contrast.
+This example simulates the dynamic evolution of the single-mode Rayleigh-Taylor instability [#he1999]_ by density contrast.
 
 
 --------
@@ -56,7 +56,7 @@ which result in Reynolds and Atwood numbers equal to
         At = \frac{\rho_r - 1}{\rho_r + 1} = 0.5
 
 
-A perturbed interface defined as :math:`y = 2H + 0.1 H \cos{(2 \pi x / H)}` separates the fluids. At the top and bottom boundaries, a ``no-slip`` boundary condition is applied, while on the left and right walls, a ``periodic`` boundary condition is used. The temporal evolution of the interface is visually compared with the simulations of Garoosi and Hooman `[2] <https://doi.org/10.1016/j.ijmecsci.2021.106956>`_ at dimensionless times (:math:`t^* = t \sqrt{\mathbf{g} / H}`) of :math:`1.5`, :math:`2.5`, :math:`3.5`, :math:`4.0` and :math:`4.5`. The temporal evolution of the spike and the bubble positions are then compared to the results of He *et al.* `[1] <https://doi.org/10.1006/jcph.1999.6257>`_ The term "spike" refers to the lowest point of ``fluid 1`` and the term "bubble" refers to the highest point of ``fluid 0``.
+A perturbed interface defined as :math:`y = 2H + 0.1 H \cos{(2 \pi x / H)}` separates the fluids. At the top and bottom boundaries, a ``no-slip`` boundary condition is applied, while on the left and right walls, a ``periodic`` boundary condition is used. The temporal evolution of the interface is visually compared with the simulations of Garoosi and Hooman [#garoosi2022]_ at dimensionless times (:math:`t^* = t \sqrt{\mathbf{g} / H}`) of :math:`1.5`, :math:`2.5`, :math:`3.5`, :math:`4.0` and :math:`4.5`. The temporal evolution of the spike and the bubble positions are then compared to the results of He *et al.* [#he1999]_ The term "spike" refers to the lowest point of ``fluid 1`` and the term "bubble" refers to the highest point of ``fluid 0``.
 
 
 --------------
@@ -315,7 +315,7 @@ The following animation shows the results of this simulation:
     <iframe width="560" height="315" src="https://www.youtube.com/embed/hZwbFob_Jj4" frameborder="0" allowfullscreen></iframe>
 
 
-In the following figure, we compare the simulation results with that of Garoosi and Hooman (2022) `<[2]_>`_.
+In the following figure, we compare the simulation results with that of Garoosi and Hooman (2022) [#garoosi2022]_.
 
 
 .. image:: images/comparison.png
@@ -331,9 +331,9 @@ By invoking the ``rayleigh-taylor_postprocess.py`` postprocessing script found w
   python3 rayleigh-taylor_postprocess.py ./output/adaptive/
 
 
-we compare the position of the spike and the bubble with the results of He *et al.* `[1] <https://doi.org/10.1006/jcph.1999.6257>`_
+we compare the position of the spike and the bubble with the results of He *et al.* [#he1999]_
 
-In the figure below, it can be seen that as :math:`t^*` increases, there is a growing difference between the spike position of the current simulation and that of He *et al.* `[1] <https://doi.org/10.1006/jcph.1999.6257>`_  Nevertheless, the bubble position follows the same evolution as the reference.
+In the figure below, it can be seen that as :math:`t^*` increases, there is a growing difference between the spike position of the current simulation and that of He *et al.* [#he1999]_  Nevertheless, the bubble position follows the same evolution as the reference.
 
 +---------------------------------------------------------------------------------------+
 | .. image:: images/spike_and_bubble_evolution_He_et_al_comparison.png                  |
@@ -369,6 +369,6 @@ The following figures show the mass of ``fluid 1`` throughout the simulation wit
 References
 -----------
 
-`[1] <https://doi.org/10.1006/jcph.1999.6257>`_ X. He, S. Chen, and R. Zhang, “A Lattice Boltzmann Scheme for Incompressible Multiphase Flow and Its Application in Simulation of Rayleigh–Taylor Instability,” *J. Comput. Phys.*, vol. 152, no. 2, pp. 642–663, Jul. 1999, doi: 10.1006/jcph.1999.6257.
+.. [#he1999] \X. He, S. Chen, and R. Zhang, “A Lattice Boltzmann Scheme for Incompressible Multiphase Flow and Its Application in Simulation of Rayleigh–Taylor Instability,” *J. Comput. Phys.*, vol. 152, no. 2, pp. 642–663, Jul. 1999, doi: `10.1006/jcph.1999.6257 <https://doi.org/10.1006/jcph.1999.6257>`_\.
 
-`[2] <https://doi.org/10.1016/j.ijmecsci.2021.106956>`_ F. Garoosi and K. Hooman, “Numerical simulation of multiphase flows using an enhanced Volume-of-Fluid (VOF) method,” *Int. J. Mech. Sci.*, vol. 215, p. 106956, Feb. 2022, doi: 10.1016/j.ijmecsci.2021.106956.
+.. [#garoosi2022] \F. Garoosi and K. Hooman, “Numerical simulation of multiphase flows using an enhanced Volume-of-Fluid (VOF) method,” *Int. J. Mech. Sci.*, vol. 215, p. 106956, Feb. 2022, doi: `10.1016/j.ijmecsci.2021.106956 <https://doi.org/10.1016/j.ijmecsci.2021.106956>`_\.

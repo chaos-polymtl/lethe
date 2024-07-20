@@ -429,7 +429,7 @@
         <article role="main">
           <section id="laser-melt-pool">
 <h1>Laser Melt Pool<a class="headerlink" href="#laser-melt-pool" title="Link to this heading">#</a></h1>
-<p>This example simulates a two-dimensional melt pool with a laser <a class="reference external" href="https://doi.org/10.1016/j.powtec.2022.117533">[1]</a>.</p>
+<p>This example simulates a two-dimensional melt pool with a laser <a class="footnote-reference brackets" href="#li2022" id="id1" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>.</p>
 <section id="features">
 <h2>Features<a class="headerlink" href="#features" title="Link to this heading">#</a></h2>
 <ul class="simple">
@@ -566,7 +566,7 @@ end
 </section>
 <section id="laser-parameters">
 <h3>Laser Parameters<a class="headerlink" href="#laser-parameters" title="Link to this heading">#</a></h3>
-<p>In the <code class="docutils literal notranslate"><span class="pre">laser</span> <span class="pre">parameters</span></code> section, the parameters of the laser model are defined. The exponential decaying model <a class="reference external" href="https://doi.org/10.1016/j.matdes.2018.01.022">[2]</a> is used to simulate the laser heat source. In the exponential decaying model, the laser heat flux is calculated using the following equation:</p>
+<p>In the <code class="docutils literal notranslate"><span class="pre">laser</span> <span class="pre">parameters</span></code> section, the parameters of the laser model are defined. The exponential decaying model <a class="footnote-reference brackets" href="#liu2018" id="id2" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a> is used to simulate the laser heat source. In the exponential decaying model, the laser heat flux is calculated using the following equation:</p>
 <div class="math-wrapper docutils container">
 <div class="math notranslate nohighlight">
 \[q(x,y,z) = \frac{\eta \alpha P}{\pi r^2 \mu} \exp{\left(-\eta \frac{r^2}{R^2}\right)} \exp{\left(- \frac{|z|}{\mu}\right)}\]</div>
@@ -681,8 +681,16 @@ run in parallel using mpirun. This simulation takes
 </section>
 <section id="references">
 <h2>References<a class="headerlink" href="#references" title="Link to this heading">#</a></h2>
-<p><a class="reference external" href="https://doi.org/10.1016/j.powtec.2022.117533">[1]</a> E. Li, Z. Zhou, L. Wang, Q. Zheng, R. Zou, and A. Yu, “Melt pool dynamics and pores formation in multi-track studies in laser powder bed fusion process,” <em>Powder Technol.</em>, vol. 405, p. 117533, Jun. 2022, doi: 10.1016/j.powtec.2022.117533.</p>
-<p><a class="reference external" href="https://doi.org/10.1016/j.matdes.2018.01.022">[2]</a> S. Liu, H. Zhu, G. Peng, J. Yin, and X. Zeng, “Microstructure prediction of selective laser melting AlSi10Mg using finite element analysis,” <em>Mater. Des.</em>, vol. 142, pp. 319–328, Mar. 2018, doi: 10.1016/j.matdes.2018.01.022</p>
+<aside class="footnote-list brackets">
+<aside class="footnote brackets" id="li2022" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id1">1</a><span class="fn-bracket">]</span></span>
+<p>E. Li, Z. Zhou, L. Wang, Q. Zheng, R. Zou, and A. Yu, “Melt pool dynamics and pores formation in multi-track studies in laser powder bed fusion process,” <em>Powder Technol.</em>, vol. 405, p. 117533, Jun. 2022, doi: <a class="reference external" href="https://doi.org/10.1016/j.powtec.2022.117533">10.1016/j.powtec.2022.117533</a>.</p>
+</aside>
+<aside class="footnote brackets" id="liu2018" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id2">2</a><span class="fn-bracket">]</span></span>
+<p>S. Liu, H. Zhu, G. Peng, J. Yin, and X. Zeng, “Microstructure prediction of selective laser melting AlSi10Mg using finite element analysis,” <em>Mater. Des.</em>, vol. 142, pp. 319–328, Mar. 2018, doi: <a class="reference external" href="https://doi.org/10.1016/j.matdes.2018.01.022">10.1016/j.matdes.2018.01.022</a>.</p>
+</aside>
+</aside>
 </section>
 </section>
 

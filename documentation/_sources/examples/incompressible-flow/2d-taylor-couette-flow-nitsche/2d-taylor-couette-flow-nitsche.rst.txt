@@ -2,7 +2,7 @@
 Taylor-Couette Flow Using Nitsche Immersed Boundary
 ========================================================
 
-This example revisits the same taylor-couette flow problem in :doc:`../2d-taylor-couette-flow/2d-taylor-couette-flow`, 
+This example revisits the same taylor-couette flow [#bird2006]_ problem in :doc:`../2d-taylor-couette-flow/2d-taylor-couette-flow`,
 now using immersed boundaries to represent the inner cylinder. This example demonstrates some of the capabilities of Lethe to simulate the flow around complex geometries without meshing them explicitly with a conformal mesh, but instead by using the Nitsche immersed boundary method available within Lethe.
 
 
@@ -384,4 +384,4 @@ Possibilities for Extension
 Reference
 ------------
 
-[1] R. B. Bird, W. E. Stewart, and E. N. Lightfoot, *Transport Phenomena*, vol. 1. John Wiley & Sons, 2006.
+.. [#bird2006] \R. B. Bird, W. E. Stewart, and E. N. Lightfoot, *Transport Phenomena*, vol. 1. John Wiley & Sons, 2006\.
