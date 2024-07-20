@@ -3,6 +3,12 @@
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Master] - 2024-07-20
+
+### Fixed
+
+- MINOR The ratio of the critical Rayleigh time step was wrong in CFD-DEM and was modified as done in DEM. [#1203](https://github.com/chaos-polymtl/lethe/pull/1203)
+
 ## [Master] - 2024-07-14
 
 ### Added
