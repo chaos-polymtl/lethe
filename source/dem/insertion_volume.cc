@@ -156,7 +156,7 @@ InsertionVolume<dim>::insert(
     }
 }
 
-// This function creates a vector of random doubles using the input paramteres
+// This function creates a vector of random doubles using the input parameters
 // in the parameter handler
 template <int dim>
 void

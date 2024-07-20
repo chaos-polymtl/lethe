@@ -63,42 +63,52 @@ The ``volume`` insertion method uses an insertion box where particles will be in
 
 * ``insertion frequency`` defines the frequency of the insertion of particles in the box. For example, if the ``insertion frequency`` is set to 10000, the iterations 1, 10001, 20001, ... will be defined as insertion steps. The frequency should be large, so that the inserted particles at the previous insertion step have enough time to leave the insertion box for the next insertion step, otherwise large overlap may occur which leads to a large velocity of particles.
 
-* ``insertion maximum offset`` defines the maximum value of the offset in relation to the structured discrete positions in the box. The insertion locations of particles are randomly selected if the offset is not equal to zero, otherwise, the particles will perfectly aligns along the x, y and z directions.
-
-* ``insertion prn seed`` seeds the pseudo-random number (PRN) generator. It defines the starting value from which the offset values are generated.
-
-* ``inserted number of particles at each time step`` defines the desired number of particles to be inserted at each insertion step. If the insertion box is not adequately large to insert this number of particles with the defined arrangement (initial distance between the inserted particles), the maximum number of particles that fit inside the insertion box at each insertion step are inserted and a warning is displayed.
-
 * ``insertion box points coordinates`` defines the insertion box dimensions using two points: ``x1, y1, z1 : x2, y2, z2``. It is based on the same principle as for the rectangular mesh `CFD <../../parameters/cfd/mesh.html>`_ triangulation.
 
 .. note::
-    We recommend that the defined insertion box has at least a distance of :math:`{d^{max}_p}` (maximum diameter of particles) from the triangulation boundaries. Otherwise, particles may have an overlap with the triangulation walls in the insertion.
+    The insertion box may fit tightly to the triangulation, but the following condition must be met:
+
+    .. math::
+        \psi < \frac{\epsilon - 1}{2}
+
+    Where, :math:`{\psi}`, :math:`{\epsilon}`, and :math:`{d^{max}_p}` denote a generated random number (in the range of 0-``insertion maximum offset``, and from the seed of ``insertion prn seed``), the ``insertion distance threshold``, and the maximum particle diameter, respectively.
+
+    Otherwise, particles may have an overlap with the triangulation walls during the insertion. The minimal insertion box coordinates should be adjusted so that:
+
+    .. math::
+        (x_1, y_1, z_1) > (x_{min}, y_{min}, z_{min}) + \left(\frac{1-\epsilon}{2} + \psi\right) d^{max}_p
+
+* ``inserted number of particles at each time step`` defines the desired number of particles to be inserted at each insertion step. If the insertion box is not adequately large to insert this number of particles with the defined arrangement (initial distance between the inserted particles), the maximum number of particles that fits inside the insertion box at each insertion step are inserted and a warning is displayed.
+
+* ``insertion maximum offset`` defines the maximum value of the offset in relation to the structured discrete positions in the box. If the offset is equal to 0.0, the particles will perfectly aligns along the x, y and z directions. Otherwise, the particle insertion locations are randomly selected within the offset of this positions.
+
+* ``insertion prn seed`` seeds the pseudo-random number (PRN) generator. It defines the starting value from which the offset values are generated.
+
+* ``insertion distance threshold`` determines the initial distance between the particles in the insertion box. It must be larger than 1 to avoid any initial collision between the inserted particles.
+  The distance between the inserted particles is equal to:
+
+  .. math::
+      D_i=(\epsilon + \psi)  d^{max}_p
+
+.. note::
+    ``insertion distance threshold`` should also be compatible with the ``insertion maximum offset``. Inserted particles will not overlap if:
+    :math:`\epsilon < \psi + 1` See note on the ``insertion box points coordinates`` parameter.
+
+    Generally, we recommend users to use a threshold in the range of 1.3-2.0, depending on the value of offset.
 
 * ``insertion direction sequence`` defines the sequence of directions of insertion in the box. For example, if the parameter is equal to ``0, 1, 2``, the particles are inserted in priority in the x, in y, and then in z directions. This is the default configuration. This is useful to specify the insertion directions to cover a specific area of the insertion box with the first and second direction parameters.
-
-.. note:: 
-    Since the ``insertion info`` subsection is valid for all particle types, by using ``initial velocity`` or ``initial angular velocity`` the given conditions are applied to all particles, regardless of the type.
-
-* ``insertion distance threshold`` determines the initial distance between the particles in the insertion box. As a result, it must be larger than 1 to avoid any initial collision between the inserted particles.
-
-The distance between the inserted particles is equal to:
-
-.. math::
-    D_i=(\epsilon + \psi)  d^{max}_p
-
-Where, :math:`{\epsilon}`, :math:`{\psi}`, and :math:`{d^{max}_p}` denote ``insertion distance threshold``, a generated random number (in the range of 0-``insertion maximum offset``, and from the seed of ``insertion prn seed``), and maximum particle diameter.
- 
-.. note::
-    ``insertion distance threshold`` should also be compatible with the ``insertion maximum offset``, especially if the ``insertion maximum offset`` is large, a large value should be defined for ``insertion distance threshold``. Generally, we recommend users to use a value in the range of 1.3-2 (depending on the value of ``insertion maximum offset``) for the ``insertion distance threshold``.
 
 * ``initial velocity`` determine the initial translational velocity (in :math:`\frac{m}{s}`) at which particles are inserted in the x, y, and z directions.
 
 * ``initial angular velocity`` determine the initial rotational velocity (in :math:`\frac{rad}{s}`) at which particles are inserted in the x, y, and z directions.
 
+.. note::
+    Since the ``insertion info`` subsection is valid for all particle types, by using ``initial velocity`` or ``initial angular velocity`` the given conditions are applied to all particles, regardless of the type.
+
 --------------------
 Plane
 --------------------
-The ``plane`` insertion method inserts particles at the centroid of insertion cells. These cells are defined as intersected by a mathematical plane. This plane is defined by an ``insertion plane point`` and an ``insertion plane normal vector``. A cell is considered as intersected by the plane if at least one of its vertex is on each side of the plane of if at least one of its vertex is directly on the plane (the normal distance between the vertex and the plane is zero). At each insertion step, a particle will be inserted in a insertion cell if that cell is empty (no particle is present inside it). This guarantee the absence of big overlap with the particles already inserted. This method of inserting is useful when dealing with a domain dense with particles.
+The ``plane`` insertion method inserts particles at the centroid of insertion cells. These cells are defined as intersected by a mathematical plane. This plane is defined by an ``insertion plane point`` and an ``insertion plane normal vector``. A cell is considered as intersected by the plane if at least one of its vertex is on each side of the plane or if at least one of its vertex is directly on the plane (the normal distance between the vertex and the plane is zero). At each insertion step, a particle will be inserted in a insertion cell if that cell is empty (no particle is present inside it). This guarantee the absence of big overlap with the particles already inserted. This method of inserting is useful when dealing with a domain dense with particles.
 
 * ``insertion frequency`` defines the frequency of the check for particle insertion. The insertion method will check if the cell in empty, and will only insert a particle if so. The frequency should be small so that particles are being inserted as soon as a cell is empty.
 
@@ -138,7 +148,7 @@ The ``list`` insertion method insert particles at precis coordinates with specif
 ---------------------
 File
 ---------------------
-The ``file`` insertion method inserts particles in a similar way to the ``list`` insertion method. The main difference between these two methods is the option to use external files provided by the ``list of input files`` parameter. This parameter is set at ``particles.input`` by default, but a file list can be specified. At each insertion time step, a different file will be used. If the end of the list is reached and there are still particles to be inserted, the list returns to the first file. An insertion file must follow this structure:
+The ``file`` insertion method inserts particles in a similar way to the ``list`` insertion method. The main difference between these two methods is the use of external files provided by the ``list of input files`` parameter. A single file or a list of files may be specified. At each insertion time step, a different file will be used. If the end of the file list is reached and there are still particles to be inserted, the list returns to the first file. An insertion file must follow this structure:
 
 .. code-block:: text
 
@@ -165,4 +175,4 @@ With all insertion methods, it is possible to define a removal box where particl
 
 * ``remove particles`` enables (true) or disables (false) the particle removal.
 
-* ``removal box points coordinates`` defines a removal box where particles will be removed.
+* ``removal box points coordinates`` defines a removal box where particles will be removed. It uses the same principle as the insertion box.
