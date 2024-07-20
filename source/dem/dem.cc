@@ -982,6 +982,13 @@ DEMSolver<dim>::solve()
 
           particle_handler.sort_particles_into_subdomains_and_cells();
 
+          displacement.resize(particle_handler.get_max_local_particle_index());
+          force.resize(displacement.size());
+          torque.resize(displacement.size());
+
+          // Updating moment of inertia container
+          update_moment_of_inertia(particle_handler, MOI);
+
           if (has_sparse_contacts && !simulation_control->is_at_start())
             {
               // Compute cell mobility for all cells after the sort particles
@@ -992,13 +999,6 @@ DEMSolver<dim>::solve()
                 triangulation.n_active_cells(),
                 mpi_communicator);
             }
-
-          displacement.resize(particle_handler.get_max_local_particle_index());
-          force.resize(displacement.size());
-          torque.resize(displacement.size());
-
-          // Updating moment of inertia container
-          update_moment_of_inertia(particle_handler, MOI);
 
           particle_handler.exchange_ghost_particles(true);
 

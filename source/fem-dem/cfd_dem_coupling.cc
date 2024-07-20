@@ -490,6 +490,16 @@ CFDDEMSolver<dim>::initialize_dem_parameters()
     dynamic_cast<parallel::distributed::Triangulation<dim> *>(
       &*this->triangulation);
 
+  // No solid objects
+
+  // No insertion
+
+  // Contact detection func?
+
+  // Read check point, not done here
+
+  // No floating mesh
+
   // Finding the smallest contact search frequency criterion between (smallest
   // cell size - largest particle radius) and (security factor * (blob diameter
   // - 1) *  largest particle radius). This value is used in
@@ -547,10 +557,10 @@ CFDDEMSolver<dim>::initialize_dem_parameters()
     this->cfd_dem_simulation_parameters.dem_parameters,
     *parallel_triangulation);
 
+  // The folowinf lines are not done outside of solve in DEM
   this->particle_handler.sort_particles_into_subdomains_and_cells();
 
   displacement.resize(this->particle_handler.get_max_local_particle_index());
-
   force.resize(displacement.size());
   torque.resize(displacement.size());
 
@@ -1324,7 +1334,6 @@ CFDDEMSolver<dim>::dem_setup_contact_parameters()
 
   double rayleigh_time_step = 0;
 
-  // Calculation is wrong, what not changed as done for the DEM
   for (unsigned int i = 0;
        i < dem_parameters.lagrangian_physical_properties.particle_type_number;
        ++i)
@@ -1348,6 +1357,9 @@ CFDDEMSolver<dim>::dem_setup_contact_parameters()
   const double time_step_rayleigh_ratio = dem_time_step / rayleigh_time_step;
   this->pcout << "DEM time-step is " << time_step_rayleigh_ratio * 100
               << "% of Rayleigh time step" << std::endl;
+
+  // No grid motion
+  // No solid objects
 
   // Initialize contact detection step
   contact_detection_step = false;
