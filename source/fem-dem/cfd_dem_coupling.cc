@@ -1259,7 +1259,7 @@ CFDDEMSolver<dim>::dem_setup_contact_parameters()
   dem_parameters.mesh = this->cfd_dem_simulation_parameters.dem_parameters.mesh;
   dem_parameters.restart =
     this->cfd_dem_simulation_parameters.dem_parameters.restart;
-  size_distribution_object_container.reserve(
+  size_distribution_object_container.resize(
     dem_parameters.lagrangian_physical_properties.particle_type_number);
 
   const auto parallel_triangulation =
@@ -1327,7 +1327,6 @@ CFDDEMSolver<dim>::dem_setup_contact_parameters()
     std::pow(dem_parameters.model_parameters.neighborhood_threshold *
                maximum_particle_diameter,
              2);
-
 
   dem_time_step =
     this->simulation_control->get_time_step() / coupling_frequency;
