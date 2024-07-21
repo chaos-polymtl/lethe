@@ -15,6 +15,9 @@
  *
  */
 
+#ifndef lethe_adaptive_sparse_contacts_h
+#define lethe_adaptive_sparse_contacts_h
+
 #include <core/dem_properties.h>
 
 #include <dem/data_containers.h>
@@ -34,9 +37,6 @@
 #include <vector>
 
 using namespace dealii;
-
-#ifndef lethe_adaptive_sparse_contacts_h
-#  define lethe_adaptive_sparse_contacts_h
 
 // Special template instance for this class.
 // Unsigned integer would have been a better choice, but is not working

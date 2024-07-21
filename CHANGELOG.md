@@ -3,6 +3,16 @@
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Master] - 2024-07-21
+
+### Changed
+
+- MINOR The load balancing functions of the DEM and coupling CFD-DEM solvers are encapsulated in a new class, removing the duplicated code. [#1199](https://github.com/chaos-polymtl/lethe/pull/1199)
+
+### Fixed
+
+- MINOR The load balancing is fixed and working for the coupling CFD-DEM solver. It was not working after a small refactoring. An application test is also added. [#1199](https://github.com/chaos-polymtl/lethe/pull/1199)
+
 ## [Master] - 2024-07-20
 
 ### Fixed
