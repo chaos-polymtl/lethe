@@ -465,6 +465,12 @@ $(function() {
 : <a class="el" href="classGLSNitscheNavierStokesSolver.html#abc24556892fd0c637e2e12b075ba6ad2">GLSNitscheNavierStokesSolver&lt; dim, spacedim &gt;</a>
 , <a class="el" href="classParameters_1_1NitscheObject.html#a3c98f027f0e39b8987ece20855150e98">Parameters::NitscheObject&lt; dim &gt;</a>
 </li>
+<li>calculate_total_cell_weight()
+: <a class="el" href="classLagrangianLoadBalancing.html#a84d3bef6f0afca5b2bb33a44f5884c22">LagrangianLoadBalancing&lt; dim &gt;</a>
+</li>
+<li>calculate_total_cell_weight_with_mobility_status()
+: <a class="el" href="classLagrangianLoadBalancing.html#abc106fc2119aeb10ce6a2ca9b4ed1e2d">LagrangianLoadBalancing&lt; dim &gt;</a>
+</li>
 <li>calculate_tracer_statistics
 : <a class="el" href="structParameters_1_1PostProcessing.html#af0e7ae0df3e725a518de01665f7033f8">Parameters::PostProcessing</a>
 , <a class="el" href="classTracer.html#adcc81d835a1e2e9b71ea0c897d16dcf9">Tracer&lt; dim &gt;</a>
@@ -556,12 +562,8 @@ $(function() {
 <li>cell_volume
 : <a class="el" href="classNavierStokesScratchData.html#a15f3549bb83f7157db104857b22f0a4a">NavierStokesScratchData&lt; dim &gt;</a>
 </li>
-<li>cell_weight()
-: <a class="el" href="classCFDDEMSolver.html#a18ebde479bb197807dcdc334fcb06636">CFDDEMSolver&lt; dim &gt;</a>
-, <a class="el" href="classDEMSolver.html#abd498600735e4834d03cdad3ea0fbae7">DEMSolver&lt; dim &gt;</a>
-</li>
-<li>cell_weight_with_mobility_status()
-: <a class="el" href="classDEMSolver.html#abec077344d5b7310b726a6835a9632a5">DEMSolver&lt; dim &gt;</a>
+<li>cell_weight
+: <a class="el" href="classLagrangianLoadBalancing.html#acd54766e7c9bffcd0f0b6072516d0f99">LagrangianLoadBalancing&lt; dim &gt;</a>
 </li>
 <li>cells_centers
 : <a class="el" href="classInsertionPlane.html#ad5fa37da99423f411bdbdaf2063c5ae4">InsertionPlane&lt; dim &gt;</a>
@@ -664,19 +666,19 @@ $(function() {
 : <a class="el" href="structParameters_1_1Mesh.html#ac814f076b58498e7063a570ee1955f06">Parameters::Mesh</a>
 </li>
 <li>check_load_balance_dynamic()
-: <a class="el" href="classDEMSolver.html#a6a126aaa9f4c8a7a2b6bcd3be3ef0575">DEMSolver&lt; dim &gt;</a>
+: <a class="el" href="classLagrangianLoadBalancing.html#ab1e5b0055c593ac9ab811c0d982156bb">LagrangianLoadBalancing&lt; dim &gt;</a>
 </li>
 <li>check_load_balance_frequent()
-: <a class="el" href="classDEMSolver.html#aa916456f1e7d3ca407a546301c3fcb8a">DEMSolver&lt; dim &gt;</a>
+: <a class="el" href="classLagrangianLoadBalancing.html#add5cb4917b647aea55170eb88f47f583">LagrangianLoadBalancing&lt; dim &gt;</a>
+</li>
+<li>check_load_balance_iteration()
+: <a class="el" href="classLagrangianLoadBalancing.html#aa6cd5393e0f4a074b0fcc3875cbb7123">LagrangianLoadBalancing&lt; dim &gt;</a>
 </li>
 <li>check_load_balance_once()
-: <a class="el" href="classDEMSolver.html#ae4a65804536285c29437097cab5b4d30">DEMSolver&lt; dim &gt;</a>
-</li>
-<li>check_load_balance_step
-: <a class="el" href="classCFDDEMSolver.html#a6053b1f5ae13f181ad5233cb2970b3d8">CFDDEMSolver&lt; dim &gt;</a>
+: <a class="el" href="classLagrangianLoadBalancing.html#a16805cf8007b0a430bb53ae870fe7f66">LagrangianLoadBalancing&lt; dim &gt;</a>
 </li>
 <li>check_load_balance_with_sparse_contacts()
-: <a class="el" href="classDEMSolver.html#aa201198d3cbfe1654cb51330aff69015">DEMSolver&lt; dim &gt;</a>
+: <a class="el" href="classLagrangianLoadBalancing.html#a0f2e6317098c24833a0197866b8861b0">LagrangianLoadBalancing&lt; dim &gt;</a>
 </li>
 <li>check_whether_all_particles_are_sphere()
 : <a class="el" href="classGLSSharpNavierStokesSolver.html#a92713b7b7dd089e7d61e0b6587a44b1c">GLSSharpNavierStokesSolver&lt; dim &gt;</a>
@@ -826,6 +828,12 @@ $(function() {
 <li>cone
 : <a class="el" href="classShape.html#a3e44e2b1f6fca48f7b7b2151977b3abdac24574f62365dbabb94ca975e18bcf11">Shape&lt; dim &gt;</a>
 </li>
+<li>connect_mobility_status_weight_signals()
+: <a class="el" href="classLagrangianLoadBalancing.html#aa5d81d7eb20c13b2593ed052708ad31d">LagrangianLoadBalancing&lt; dim &gt;</a>
+</li>
+<li>connect_weight_signals()
+: <a class="el" href="classLagrangianLoadBalancing.html#a4a7871198521c989f1d7efb239fad8b7">LagrangianLoadBalancing&lt; dim &gt;</a>
+</li>
 <li>constant_density
 : <a class="el" href="classPhysicalPropertiesManager.html#ad9df317accd7d147c24d316cc04c5145">PhysicalPropertiesManager</a>
 </li>
@@ -962,6 +970,9 @@ $(function() {
 , <a class="el" href="classHeatTransfer.html#ae5d4296410bc22c1564ab2ebbc359f16">HeatTransfer&lt; dim &gt;</a>
 , <a class="el" href="classTracer.html#a43f8facd06187b6f2e2f219883e2a698">Tracer&lt; dim &gt;</a>
 , <a class="el" href="classVolumeOfFluid.html#a43b54cb67b0991e20b9618be3160065b">VolumeOfFluid&lt; dim &gt;</a>
+</li>
+<li>copy_references()
+: <a class="el" href="classLagrangianLoadBalancing.html#a5822945b326436fbce253c13fd6923db">LagrangianLoadBalancing&lt; dim &gt;</a>
 </li>
 <li>CopyData()
 : <a class="el" href="classCopyData.html#abd5bc538e7505074f8c46f2b24f4f97c">CopyData</a>
